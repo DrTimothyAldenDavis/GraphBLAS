@@ -1447,6 +1447,8 @@
 #define GxB_BXOR_UINT8_MONOID GxM_BXOR_UINT8_MONOID
 #define GxB_CARG_FC32 GxM_CARG_FC32
 #define GxB_CARG_FC64 GxM_CARG_FC64
+#define GxB_CBRT_FP32 GxM_CBRT_FP32
+#define GxB_CBRT_FP64 GxM_CBRT_FP64
 #define GxB_CEIL_FC32 GxM_CEIL_FC32
 #define GxB_CEIL_FC64 GxM_CEIL_FC64
 #define GxB_CEIL_FP32 GxM_CEIL_FP32
@@ -3711,8 +3713,8 @@
 #define GB_LZ4_compress_fast_extState GM_LZ4_compress_fast_extState
 #define GB_LZ4_compress_fast_extState_fastReset GM_LZ4_compress_fast_extState_fastReset
 #define GB_LZ4_compress_forceExtDict GM_LZ4_compress_forceExtDict
-#define GB_LZ4_compressHC GM_LZ4_compressHC
 #define GB_LZ4_compress_HC GM_LZ4_compress_HC
+#define GB_LZ4_compressHC GM_LZ4_compressHC
 #define GB_LZ4_compressHC2 GM_LZ4_compressHC2
 #define GB_LZ4_compressHC2_continue GM_LZ4_compressHC2_continue
 #define GB_LZ4_compressHC2_limitedOutput GM_LZ4_compressHC2_limitedOutput
@@ -3791,6 +3793,7 @@
 #define GB_Matrix_check GM_Matrix_check
 #define GB_Matrix_diag GM_Matrix_diag
 #define GB_Matrix_free GM_Matrix_free
+#define GB_Matrix_new GM_Matrix_new
 #define GB_Matrix_removeElement GM_Matrix_removeElement
 #define GB_matvec_check GM_matvec_check
 #define GB_matvec_type GM_matvec_type

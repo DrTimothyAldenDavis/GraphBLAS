@@ -148,6 +148,13 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
+\item Version 7.1.0 (May 17, 2022)
+
+    \begin{packed_itemize}
+    \item  added cube root: \verb'GxB_CBRT_FP32' and \verb'GxB_CBRT_FP64'
+        unary operators
+    \end{packed_itemize}
+
 \item Version 7.0.4 (Apr 25, 2022)
 
     \begin{packed_itemize}
@@ -2554,17 +2561,27 @@ GraphBLAS name          & types (domains)   & $z=f(x)$      & description \\
 \verb'GxB_ROUND_'$F$    & $F \rightarrow F$ & $z = \mbox{round}(x)$        & round to nearest \\
 \verb'GxB_TRUNC_'$F$    & $F \rightarrow F$ & $z = \mbox{trunc}(x)$        & round towards zero \\
 \hline
+\verb'GxB_ISINF_'$F$    & $F \rightarrow $ \verb'bool' & $z = \mbox{isinf}(x)$ & true if $\pm \infty$ \\
+\verb'GxB_ISNAN_'$F$    & $F \rightarrow $ \verb'bool' & $z = \mbox{isnan}(x)$ & true if \verb'NaN' \\
+\verb'GxB_ISFINITE_'$F$ & $F \rightarrow $ \verb'bool' & $z = \mbox{isfinite}(x)$ & true if finite \\
+\hline
+\end{tabular}
+\vspace{0.2in}
+
+\begin{tabular}{|llll|}
+\hline
+\multicolumn{4}{|c|}{Unary operators for floating-point types (real only)} \\
+\hline
+GraphBLAS name          & types (domains)   & $z=f(x)$      & description \\
+\hline
 \verb'GxB_LGAMMA_'$F$   & $F \rightarrow F$ & $z = \log(|\Gamma (x)|)$  & log of gamma function \\
 \verb'GxB_TGAMMA_'$F$   & $F \rightarrow F$ & $z = \Gamma(x)$        & gamma function \\
 \verb'GxB_ERF_'$F$      & $F \rightarrow F$ & $z = \erf(x)$          & error function \\
 \verb'GxB_ERFC_'$F$     & $F \rightarrow F$ & $z = \erfc(x)$         & complimentary error function \\
+\verb'GxB_CBRT_'$F$     & $F \rightarrow F$ & $z = x^(1/3)$          & cube root \\
 \hline
 \verb'GxB_FREXPX_'$F$   & $F \rightarrow F$ & $z = \mbox{frexpx}(x)$  & normalized fraction \\
 \verb'GxB_FREXPE_'$F$   & $F \rightarrow F$ & $z = \mbox{frexpe}(x)$  & normalized exponent \\
-\hline
-\verb'GxB_ISINF_'$F$    & $F \rightarrow $ \verb'bool' & $z = \mbox{isinf}(x)$ & true if $\pm \infty$ \\
-\verb'GxB_ISNAN_'$F$    & $F \rightarrow $ \verb'bool' & $z = \mbox{isnan}(x)$ & true if \verb'NaN' \\
-\verb'GxB_ISFINITE_'$F$ & $F \rightarrow $ \verb'bool' & $z = \mbox{isfinite}(x)$ & true if finite \\
 \hline
 \end{tabular}
 \vspace{0.2in}

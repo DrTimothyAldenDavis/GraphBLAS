@@ -221,10 +221,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Apr 25, 2022"
+#define GxB_IMPLEMENTATION_DATE "May 17, 2022"
 #define GxB_IMPLEMENTATION_MAJOR 7
-#define GxB_IMPLEMENTATION_MINOR 0
-#define GxB_IMPLEMENTATION_SUB   4
+#define GxB_IMPLEMENTATION_MINOR 1
+#define GxB_IMPLEMENTATION_SUB   0
 #define GxB_SPEC_DATE "Nov 15, 2021"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 0
@@ -944,6 +944,10 @@ GB_PUBLIC GrB_UnaryOp
     // z = lgamma (x)   z = tgamma (x)      z = erf (x)         z = erfc (x)
     GxB_LGAMMA_FP32,    GxB_TGAMMA_FP32,    GxB_ERF_FP32,       GxB_ERFC_FP32,
     GxB_LGAMMA_FP64,    GxB_TGAMMA_FP64,    GxB_ERF_FP64,       GxB_ERFC_FP64,
+
+    // z = cbrt (x)
+    GxB_CBRT_FP32,
+    GxB_CBRT_FP64,
 
     // frexpx and frexpe return the mantissa and exponent, respectively,
     // from the ANSI C11 frexp function.  The exponent is returned as a

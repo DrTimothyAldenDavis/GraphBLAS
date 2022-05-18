@@ -26,10 +26,10 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Apr 25, 2022" )
+set ( GraphBLAS_DATE "May 17, 2022" )
 set ( GraphBLAS_VERSION_MAJOR 7 )
-set ( GraphBLAS_VERSION_MINOR 0 )
-set ( GraphBLAS_VERSION_SUB   4 )
+set ( GraphBLAS_VERSION_MINOR 1 )
+set ( GraphBLAS_VERSION_SUB   0 )
 
 message ( STATUS "Building SuiteSparse:GraphBLAS version: v" ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}  " date: " ${GraphBLAS_DATE} )
 
@@ -103,7 +103,7 @@ else ( )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-# set ( CMAKE_CUDA off)
+  set ( CMAKE_CUDA off)
 
 # Edit these lines for code development only, not for end-users:
 # set ( CMAKE_BUILD_TYPE Debug )
