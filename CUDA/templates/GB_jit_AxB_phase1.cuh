@@ -437,7 +437,11 @@ int64_t j = k ; // HACK, does not need to be initialized here
             dump = (i >= 1235609 && i <= 1235611) ||
                    (j >= 1235609 && j <= 1235611) ;
 
-if (dump) printf ("tid%d looking at (%ld,%ld):\n", threadIdx.x, i, j) ;
+int64_t k_good = GB_search_for_vector_device (pM, Mp, 0, mnvec, mvlen) ;
+if (dump)
+{
+    printf ("tid%d looking at (%ld, j=%ld, k=%ld):\n", threadIdx.x, i, j, k_good) ;
+}
 
             if ( MX ( pM ) )
             { 
