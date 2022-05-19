@@ -1,10 +1,15 @@
-function testc4
+function testc4(use_builtin)
 %TESTC4 test complex extractElement and setElement
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 rng ('default') ;
+
+if (nargin < 1)
+    use_builtin = true ;
+end
+GB_builtin_complex_set (use_builtin) ;
 
 seed = 1 ;
 for m = [1 5 10 100]
@@ -77,3 +82,4 @@ fprintf ('All complex setElement A(i,j) = x tests passed\n') ;
 
 fprintf ('\ntestc4: all tests passed\n') ;
 
+GB_builtin_complex_set (true) ;

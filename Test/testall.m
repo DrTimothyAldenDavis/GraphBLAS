@@ -76,6 +76,7 @@ GB_mex_hack (hack) ;
 %----------------------------------------
 
 logstat ('test01' ,t) ; % error handling
+logstat ('test199',t) ; % test dot2 with hypersparse
 logstat ('test83' ,t) ; % GrB_assign with C_replace and empty J
 logstat ('test210',t) ; % test iso assign25: C<M,struct>=A, C empty, A dense
 logstat ('test165',t) ; % test C=A*B' where A is diagonal and B becomes bitmap
@@ -93,7 +94,6 @@ logstat ('test186',t) ; % test saxpy for all sparsity formats
 logstat ('test150',t) ; % mxm with zombies and typecasting (dot3 and saxpy)
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
-logstat ('test199',t) ; % test dot2 with hypersparse
 logstat ('test239',t) ; % test GxB_eWiseUnion
 logstat ('test235',t) ; % test GxB_eWiseUnion and GrB_eWiseAdd
 logstat ('test226',t) ; % test kron with iso matrices
@@ -117,7 +117,7 @@ logstat ('test159',t) ; % test A*B
 logstat ('test09' ,t) ; % duplicate I,J test of GB_mex_subassign
 logstat ('test132',t) ; % setElement
 logstat ('test141',t) ; % eWiseAdd with dense matrices
-logstat ('testc2(1)',t) ; % complex tests (quick case)
+logstat ('testc2(1,1)',t) ; % complex tests (quick case, builtin)
 logstat ('test214',t) ; % test C<M>=A'*B (tricount)
 logstat ('test213',t) ; % test iso assign (method 05d)
 logstat ('test206',t) ; % test iso select
@@ -214,8 +214,7 @@ logstat ('test135',t) ; % reduce to scalar
 logstat ('test160',s) ; % test A*B, single threaded
 logstat ('test54' ,t) ; % assign and extract with begin:inc:end
 logstat ('test104',t) ; % export/import
-logstat ('test11' ,t) ; % exhaustive test of GrB_extractTuples
-logstat ('test107',t) ; % monoids with terminal values
+logstat ('test129',t) ; % test GxB_select (tril and nonzero, hypersparse)
 
 % longer tests
 logstat ('test230',t) ; % test apply with idxunops
@@ -226,6 +225,7 @@ logstat ('test127',t) ; % test eWiseAdd, eWiseMult (all types and operators)
 % tests with very low coverage/sec rates  (< 1/sec)
 %----------------------------------------
 
+logstat ('test11' ,t) ; % exhaustive test of GrB_extractTuples
 logstat ('test175',t) ; % test142 updated
 logstat ('test160',t) ; % test A*B, parallel
 logstat ('test215',t) ; % test C<M>=A'*B (dot2, ANY_PAIR semiring)
@@ -236,20 +236,19 @@ logstat ('test195',t) ; % test all variants of saxpy3
 logstat ('test233',t) ; % test bitmap saxpy C=A*B with A sparse and B bitmap
 logstat ('test243',t) ; % test GxB_Vector_Iterator
 logstat ('test29' ,t) ; % reduce with zombies
-logstat ('testca',t) ;  % test complex mxm, mxv, and vxm
+logstat ('testca(1)',t) ;  % test complex mxm, mxv, and vxm
 
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
-logstat ('test181',s) ; % test transpose with explicit zeros in the mask
 logstat ('test187',t) ; % test dup/assign for all sparsity formats
 logstat ('test192',t) ; % test C<C,struct>=scalar
+logstat ('test181',s) ; % test transpose with explicit zeros in the mask
 logstat ('test185',s) ; % test dot4, saxpy for all sparsity formats
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
-logstat ('test129',t) ; % test GxB_select (tril and nonzero, hypersparse)
-logstat ('test76' ,s) ; % GxB_resize (single threaded)
 logstat ('test69' ,t) ; % assign and subassign with alias
-logstat ('test17' ,t) ; % quick test of GrB_*_extractElement
+logstat ('test76' ,s) ; % GxB_resize (single threaded)
 logstat ('test53' ,t) ; % quick test of GB_mex_Matrix_extract
+logstat ('test17' ,t) ; % quick test of GrB_*_extractElement
 logstat ('test19',t) ;  % GxB_subassign, many pending operators
 logstat ('test231',t) ; % test GrB_select with idxunp
 
@@ -269,7 +268,12 @@ end
 
 logstat ('test10' ,t) ; % GrB_apply
 logstat ('test75b',t) ; % test GrB_mxm A'*B (quicker than test75)
-logstat ('test16' ,t) ; % user-defined complex operators
+
+logstat ('testc2(0,0)',t) ;  % A'*B, A+B, A*B, user-defined complex type
+logstat ('testc4(0)',t) ;  % extractElement, setElement, user-defined complex
+logstat ('testc7(1)',t) ;  % assign, builtin complex
+logstat ('testcc(1)',t) ;  % transpose, builtin complex
+
 logstat ('test81' ,t) ; % GrB_Matrix_extract with stride, range, backwards
 logstat ('test21b',t) ; % quick test of GB_mex_assign
 logstat ('test18' ,t) ; % quick tests of GrB_eWiseAdd and eWiseMult
@@ -297,6 +301,7 @@ logstat ('test09b',t) ;    %      % duplicate I,J test of GB_mex_assign
 
 logstat ('test13',t) ;     %      % simple tests of GB_mex_transpose
 logstat ('test15',t) ;            % simple test of GB_mex_AxB
+logstat ('test16' ,t) ;    %  177 % user-defined complex operators
 logstat ('test18(1)',t) ;  %      % lengthy tests of GrB_eWiseAdd and eWiseMult
 
 logstat ('test20',t) ;            % quick test of GB_mex_mxm on a few semirings
@@ -388,6 +393,7 @@ logstat ('test102',t);     %    1 % GB_AxB_saxpy3_flopcount
 logstat ('test103',t) ;    %      % GrB_transpose aliases
 logstat ('test105',t) ;    %    2 % eWiseAdd for hypersparse
 logstat ('test106',t) ;    %    4 % GxB_subassign with alias
+logstat ('test107',t) ;    %    2 % monoids with terminal values
 
 logstat ('test110',t) ;    %    0 % binary search of M(:,j) in accum/mask
 logstat ('test111',t) ;    %      % performance test for eWiseAdd
@@ -433,7 +439,6 @@ logstat ('test205',t) ;    %    0 % test iso kron
 logstat ('test217',t) ;    %    0 % test C<repl>(I,J)=A, bitmap assign
 logstat ('test218',t) ;    %    0 % test C=A+B, C and A are full, B is bitmap
 
-% tested via test16:
 logstat ('testc1',t) ;     %      % test complex operators
 logstat ('testc2',t) ;     %      % test complex A*B, A'*B, A*B', A'*B', A+B
 logstat ('testc3',t) ;     %      % test complex GrB_extract
