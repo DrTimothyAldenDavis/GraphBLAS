@@ -411,7 +411,7 @@ __global__ void AxB_phase1
 
     // if B is hypersparse, bpleft ... TODO describe
     // int64_t bpleft = 0 ;
-    
+
         //----------------------------------------------------------------------
         // no binary search variant
         //----------------------------------------------------------------------
@@ -426,12 +426,18 @@ __global__ void AxB_phase1
                       pM < pfirst + chunk_end;
                       pM += blockDim.x )
         {
+            bool dump = false ;
             GB_bucket_code bucket = GB_BUCKET_ZOMBIE ;
             int64_t k = ks[ pM - pfirst ] ;
             //k += ( pM == Mp[k+1] ) ;
 //            printf ("tid%d  k %ld pM %ld MX(pM): %d\n", threadIdx.x, k, pM, MX (pM));
             int64_t i = Mi [ pM ] ;
 int64_t j = k ; // HACK, does not need to be initialized here
+
+            dump = (i >= 1235609 && i <= 1235611) ||
+                   (j >= 1235609 && j <= 1235611) ;
+
+if (dump) printf ("tid%d looking at (%ld,%ld):\n", threadIdx.x, i, j) ;
 
             if ( MX ( pM ) )
             { 
@@ -483,8 +489,8 @@ pA_end = Ap [i+1] ;
 
                         //bucket = GB_BUCKET_MERGEPATH ;
                         bucket= GB_bucket_assignment ( ainz, bjnz, bvlen) ;
-//                        printf ("tid%d  i %ld j %ld ainz %ld bjnz %ld: bucket %d\n",
-//                            threadIdx.x, i, j, ainz, bjnz, (int) bucket) ;
+if (dump) printf ("tid%d  i %ld j %ld ainz %ld bjnz %ld: bucket %d\n",
+    threadIdx.x, i, j, ainz, bjnz, (int) bucket) ;
                     }
                 }
             }
@@ -492,7 +498,7 @@ pA_end = Ap [i+1] ;
             if (bucket == GB_BUCKET_ZOMBIE)
             {
                 // mark C(i,j) is a zombie
-//                printf ("tid%d pM=%d %d,%d prezombie\n",threadIdx.x,pM,i,j) ;
+if (dump) printf ("tid%d pM=%ld (%ld,%ld) prezombie\n",threadIdx.x,pM,i,j) ;
                 Ci [pM] = GB_FLIP (i) << 4 ;
                 // GB_BUCKET_COUNT (GB_BUCKET_ZOMBIE) ;
                 my_bucket_0++ ; //0 is the zombie bucket
@@ -500,9 +506,9 @@ pA_end = Ap [i+1] ;
             else
             {
                 // place C(i,j) in its bucket
+if (dump) printf ("tid%d pM=%ld (%ld,%ld) b=%d\n",threadIdx.x, pM, i,j, (int)bucket) ;
                 Ci [pM] = (k << 4) + bucket ;
                 GB_BUCKET_COUNT (bucket) ;
-//                printf ("tid%d pM=%d %d,%d b=%d\n",threadIdx.x, pM, i,j, (int)bucket) ;
             }
          }
             

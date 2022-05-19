@@ -151,13 +151,12 @@ __global__ void AxB_dot3_phase3_vsvs
          int64_t pA       = Ap[i] ;
          int64_t pA_end   = Ap[i+1] ;
 
-         if(j < 0) {
-             printf("J IS LESS THAN 0!!! %ld\n", j);
-         }
+        bool mydump = (i >= 1235609 && i <= 1235611) || (j >= 1235609 && j <= 1235611) ;
+
          int64_t pB       = Bp[j] ;
          int64_t pB_end   = Bp[j+1] ;
-//     printf(":pfirst=%ld, kk=%d, pair_id=%ld, ci %ld, (i,j)=%ld,%ld, nzA=%ld, nzB=%ld\n",
-//      pfirst, kk, pair_id, Ci [pair_id], i,j,pA_end-pA,pB_end-pB);
+// if (mydump) printf(":pfirst=%ld, kk=%d, pair_id=%ld, ci %ld, (i,j)=%ld,%ld, nzA=%ld, nzB=%ld\n",
+//     pfirst, kk, pair_id, Ci [pair_id], i,j,pA_end-pA,pB_end-pB);
 
          GB_DECLAREA (aki) ;
          GB_DECLAREB (bkj) ;
@@ -182,7 +181,7 @@ __global__ void AxB_dot3_phase3_vsvs
                 pA++ ;
                 pB++ ;
                 #endif
-//              printf(" %lld, %lld intersect at %lld cij=%d!\n",i,j,ia,cij);
+// if (mydump) printf(" %lld, %lld intersect at %lld cij=%d!\n",i,j,ia,cij);
             }
             else 
             {
@@ -195,10 +194,10 @@ __global__ void AxB_dot3_phase3_vsvs
          if (cij_exists){
             Ci[pair_id] = i ;
             GB_PUTC ( Cx[pair_id] = (T_C)cij ) ;
-//          printf(" %lld, %lld is alive %d!\n",i,j,cij);
+if (mydump) { printf("tid%d %lld, %lld is alive %d!\n",threadIdx.x, i,j,cij); }
          }
          else{
-//          printf(" %lld, %lld is zombie %d!\n",i,j,my_nzombies);
+if (mydump) { printf("tid%d %lld, %lld is zombie %d!\n",threadIdx.x, i,j,my_nzombies); }
             my_nzombies++;
             Ci[pair_id] = GB_FLIP( i ) ;
          }
