@@ -352,21 +352,24 @@ GrB_Info ;
 
 typedef enum
 {
-    GrB_NONBLOCKING = 0,    // methods may return with pending computations
-    GrB_BLOCKING = 1        // no computations are ever left pending
+    GrB_NONBLOCKING = 0,        // methods may return with pending computations
+    GrB_BLOCKING = 1,           // no computations are ever left pending
+    GxB_NONBLOCKING_GPU = 2,    // non-blocking mode, allow use of GPU(s)
+    GxB_BLOCKING_GPU = 3,       // blocking mode, allow use of GPU(s)
 }
 GrB_Mode ;
 
 GB_PUBLIC
 GrB_Info GrB_init           // start up GraphBLAS
 (
-    GrB_Mode mode           // blocking or non-blocking mode
+    GrB_Mode mode           // blocking or non-blocking mode, no GPU
 ) ;
 
 GB_PUBLIC
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 (
-    GrB_Mode mode,          // blocking or non-blocking mode
+    GrB_Mode mode,          // blocking or non-blocking mode,
+                            // with or without GPU
     // pointers to memory management functions
     void * (* user_malloc_function  ) (size_t),
     void * (* user_calloc_function  ) (size_t, size_t),
