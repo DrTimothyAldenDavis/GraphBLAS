@@ -194,7 +194,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
             info = (GB_AxB_dot3 (C, C_iso, cscalar, M, Mask_struct, A, B,
                 semiring, flipxy, Context)) ;
         }
-        GxB_print (C,3) ;
+        // GxB_print (C,3) ;
         return (info) ;
     }
 

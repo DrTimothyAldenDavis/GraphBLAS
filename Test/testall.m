@@ -63,9 +63,9 @@ hack = GB_mex_hack ;
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
-%-------------------------------------------------------------------------------
-% quick tests for statement coverage
-%-------------------------------------------------------------------------------
+%===============================================================================
+% quick tests for statement coverage, with malloc debugging
+%===============================================================================
 
 % Timings below are for test coverage (Tcov), with malloc debuging enabled, on
 % hypersparse.cse.tamu.edu (20 core Xeon).  Times will differ if this test is
@@ -129,20 +129,8 @@ logstat ('test82' ,t) ; % GrB_extract with index range (hypersparse)
 % tests with good rates (30 to 100/sec)
 %----------------------------------------
 
-logstat ('test201',t) ; % test iso reduce to vector
-logstat ('test225',t) ; % test mask operations (GB_masker)
-logstat ('test170',t) ; % test C<B>=A+B (alias M==B)
-logstat ('test176',t) ; % test GrB_assign, method 09, 11
 logstat ('test229',t) ; % test setElement
-logstat ('test208',t) ; % test iso apply, bind 1st and 2nd
-logstat ('test216',t) ; % test C<A>=A, iso case
-logstat ('test142',t) ; % test GrB_assign with accum
-logstat ('test137',s) ; % GrB_eWiseMult with FIRST and SECOND operators
-logstat ('test139',s) ; % merge sort, special cases
 logstat ('test144',t) ; % cumsum
-logstat ('test145',t) ; % dot4 for C += A'*B
-logstat ('test172',t) ; % test eWiseMult with M bitmap/full
-logstat ('test148',t) ; % ewise with alias
 
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
 logstat ('test14' ,t) ; % GrB_reduce
@@ -155,26 +143,14 @@ hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
 logstat ('test180',s) ; % test assign and subassign (single threaded)
 logstat ('test236',t) ; % test GxB_Matrix_sort and GxB_Vector_sort
-logstat ('test186',s) ; % test saxpy for all sparsity formats
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
-
-logstat ('test157',t) ; % test sparsity formats
-logstat ('test182',s) ; % test for internal wait
 
 %----------------------------------------
 % tests with decent rates (10 to 20/sec)
 %----------------------------------------
 
 logstat ('test232',t) ; % test assign with GrB_Scalar
-logstat ('test108',t) ; % boolean monoids
-logstat ('test130',t) ; % GrB_apply, hypersparse cases
-logstat ('test124',t) ; % GrB_extract, case 6
-logstat ('test138',s) ; % test assign, with coarse-only tasks in IxJ slice
 logstat ('test228',t) ; % test serialize/deserialize
-logstat ('test227',t) ; % test kron
-
-% longer tests but with decent coverage rates:
-logstat ('test125',t) ; % test GrB_mxm: row and column scaling
 
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
 logstat ('test154',t) ; % apply with binop and scalar binding
@@ -194,49 +170,22 @@ logstat ('test237',t) ; % test GrB_mxm (saxpy4)
 logstat ('test240',t) ; % test dot4 and saxpy5 again
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
-logstat ('test234',t) ; % test GxB_eWiseUnion
 logstat ('test224',t) ; % test unpack/pack
-logstat ('test242',t) ; % test GxB_Iterator for matrices
-logstat ('test173',t) ; % test GrB_assign C<A>=A
-logstat ('test200',t) ; % test iso full matrix multiply
-logstat ('test197',t) ; % test large sparse split
 logstat ('test196',t) ; % test hypersparse concat
 logstat ('test209',t) ; % test iso build
-logstat ('test158',t) ; % test colscale and rowscale
-logstat ('test84' ,t) ; % GrB_assign (row and column with C in CSR/CSC format)
-logstat ('test19b',t) ; % GrB_assign, many pending operators
-logstat ('test19b',s) ; % GrB_assign, many pending operators
-logstat ('test133',t) ; % test mask operations (GB_masker)
-logstat ('test80' ,t) ; % test GrB_mxm on all semirings (different matrix)
-logstat ('test151',t) ; % test bitwise operators
-logstat ('test23' ,t) ; % quick test of GB_*_build
-logstat ('test135',t) ; % reduce to scalar
-logstat ('test160',s) ; % test A*B, single threaded
-logstat ('test54' ,t) ; % assign and extract with begin:inc:end
 logstat ('test104',t) ; % export/import
-logstat ('test129',t) ; % test GxB_select (tril and nonzero, hypersparse)
 
 %----------------------------------------
 % tests with very low coverage/sec rates  (< 1/sec)
 %----------------------------------------
 
-logstat ('test11' ,t) ; % exhaustive test of GrB_extractTuples
-logstat ('test175',t) ; % test142 updated
-logstat ('test160',t) ; % test A*B, parallel
-logstat ('test215',t) ; % test C<M>=A'*B (dot2, ANY_PAIR semiring)
 logstat ('test189',t) ; % test large assign
-logstat ('test193',t) ; % test GxB_Matrix_diag
 logstat ('test194',t) ; % test GxB_Vector_diag
-logstat ('test195',t) ; % test all variants of saxpy3
-logstat ('test233',t) ; % test bitmap saxpy C=A*B with A sparse and B bitmap
-logstat ('test243',t) ; % test GxB_Vector_Iterator
-logstat ('test29' ,t) ; % reduce with zombies
-
 logstat ('test76' ,s) ; % GxB_resize (single threaded). ***
 
-%----------------------------------------
+%===============================================================================
 % tests with no malloc debugging
-%----------------------------------------
+%===============================================================================
 
 % Turn off malloc debugging
 malloc_debugging = stat ;
@@ -249,9 +198,73 @@ if (malloc_debugging)
 end
 
 %----------------------------------------
+% tests with good rates (30 to 100/sec)
+%----------------------------------------
+
+logstat ('test201',t) ; % test iso reduce to vector
+logstat ('test225',t) ; % test mask operations (GB_masker)
+logstat ('test170',t) ; % test C<B>=A+B (alias M==B)
+logstat ('test176',t) ; % test GrB_assign, method 09, 11
+
+logstat ('test208',t) ; % test iso apply, bind 1st and 2nd
+logstat ('test216',t) ; % test C<A>=A, iso case
+logstat ('test142',t) ; % test GrB_assign with accum
+logstat ('test137',s) ; % GrB_eWiseMult with FIRST and SECOND operators
+logstat ('test139',s) ; % merge sort, special cases
+
+logstat ('test145',t) ; % dot4 for C += A'*B
+logstat ('test172',t) ; % test eWiseMult with M bitmap/full
+logstat ('test148',t) ; % ewise with alias
+
+%----------------------------------------
+% tests with decent rates (20 to 30/sec)
+%----------------------------------------
+
+hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
+logstat ('test186',s) ; % test saxpy for all sparsity formats
+hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
+
+logstat ('test157',t) ; % test sparsity formats
+logstat ('test182',s) ; % test for internal wait
+
+%----------------------------------------
+% tests with decent rates (10 to 20/sec)
+%----------------------------------------
+
+logstat ('test108',t) ; % boolean monoids
+logstat ('test130',t) ; % GrB_apply, hypersparse cases
+logstat ('test124',t) ; % GrB_extract, case 6
+logstat ('test138',s) ; % test assign, with coarse-only tasks in IxJ slice
+
+logstat ('test227',t) ; % test kron
+
+% longer tests but with decent coverage rates:
+logstat ('test125',t) ; % test GrB_mxm: row and column scaling
+
+%----------------------------------------
 % 1 to 10/sec
 %----------------------------------------
 
+logstat ('test234',t) ; % test GxB_eWiseUnion
+
+logstat ('test242',t) ; % test GxB_Iterator for matrices
+logstat ('test173',t) ; % test GrB_assign C<A>=A
+logstat ('test200',t) ; % test iso full matrix multiply
+logstat ('test197',t) ; % test large sparse split
+
+logstat ('test158',t) ; % test colscale and rowscale
+logstat ('test84' ,t) ; % GrB_assign (row and column with C in CSR/CSC format)
+logstat ('test19b',t) ; % GrB_assign, many pending operators
+logstat ('test19b',s) ; % GrB_assign, many pending operators
+logstat ('test133',t) ; % test mask operations (GB_masker)
+logstat ('test80' ,t) ; % test GrB_mxm on all semirings (different matrix)
+logstat ('test151',t) ; % test bitwise operators
+logstat ('test23' ,t) ; % quick test of GB_*_build
+logstat ('test135',t) ; % reduce to scalar
+logstat ('test160',s) ; % test A*B, single threaded
+logstat ('test54' ,t) ; % assign and extract with begin:inc:end
+
+logstat ('test129',t) ; % test GxB_select (tril and nonzero, hypersparse)
 logstat ('test69' ,t) ; % assign and subassign with alias
 logstat ('test230',t) ; % test apply with idxunops
 logstat ('test74' ,t) ; % test GrB_mxm on all semirings
@@ -261,6 +274,17 @@ logstat ('test19',t) ;  % GxB_subassign, many pending operators
 %----------------------------------------
 % < 1 per sec
 %----------------------------------------
+
+logstat ('test11' ,t) ; % exhaustive test of GrB_extractTuples
+logstat ('test175',t) ; % test142 updated
+logstat ('test160',t) ; % test A*B, parallel
+logstat ('test215',t) ; % test C<M>=A'*B (dot2, ANY_PAIR semiring)
+
+logstat ('test193',t) ; % test GxB_Matrix_diag
+logstat ('test195',t) ; % test all variants of saxpy3
+logstat ('test233',t) ; % test bitmap saxpy C=A*B with A sparse and B bitmap
+logstat ('test243',t) ; % test GxB_Vector_Iterator
+logstat ('test29' ,t) ; % reduce with zombies
 
 logstat ('testca(1)',t) ;  % test complex mxm, mxv, and vxm
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
@@ -279,17 +303,16 @@ logstat ('test231',t) ; % test GrB_select with idxunp
 
 logstat ('test10' ,t) ; % GrB_apply
 logstat ('test75b',t) ; % test GrB_mxm A'*B (quicker than test75)
-
 logstat ('testc2(0,0)',t) ;  % A'*B, A+B, A*B, user-defined complex type
 logstat ('testc4(0)',t) ;  % extractElement, setElement, user-defined complex
-logstat ('testc7(1)',t) ;  % assign, builtin complex
+logstat ('testc7(0)',t) ;  % assign, builtin complex
 logstat ('testcc(1)',t) ;  % transpose, builtin complex
-
 logstat ('test81' ,t) ; % GrB_Matrix_extract with stride, range, backwards
 logstat ('test21b',t) ; % quick test of GB_mex_assign
 logstat ('test18' ,t) ; % quick tests of GrB_eWiseAdd and eWiseMult
 
-%-------------------------------------------------------------------------------
+
+%===============================================================================
 % The following tests are not required for statement coverage.  Some need
 % other packages in SuiteSparse (CSparse, SSMULT, ssget).  By default, these
 % tests are not run.  To install them, see test_other.m.  Timing is with malloc
