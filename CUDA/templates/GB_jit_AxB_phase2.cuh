@@ -217,7 +217,6 @@ __global__ void AxB_phase2
         // Cumulative sum across blocks for each bucket 
         if (blockIdx.x <12) {
             blockBucketExclusiveSum( blockIdx.x, blockbucket, nblocks ) ;
-            printf("Performing cumsum over blocks\n");
         }
     }
     else
