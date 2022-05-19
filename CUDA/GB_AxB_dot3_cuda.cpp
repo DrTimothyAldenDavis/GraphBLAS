@@ -148,6 +148,9 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         cnz+1,  // add one to cnz for GB_cumsum of Cwork 
         true, C_iso, Context) ;
 
+    CHECK_CUDA_SIMPLE(cudaMemset(C->i, 0, (cnz+1) * sizeof(int64_t)));
+    CHECK_CUDA_SIMPLE(cudaMemset(C->x, 0, (cnz+1) * sizeof(ctype->size)));
+
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -176,7 +179,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     C->magic = GB_MAGIC ;
     C->nvec_nonempty = M->nvec_nonempty ;
-    C->nvec = M->nvec ;
+//    C->nvec = M->nvec ;
     // the dot3 CUDA kernel will produce C->i with jumbled indices
     C->jumbled = true ;
 

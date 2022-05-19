@@ -158,7 +158,6 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // enumify the multiplier
     //--------------------------------------------------------------------------
 
-
     int mult_ecode ;
     GB_enumify_binop (&mult_ecode, mult_opcode, xcode, true) ;
 
@@ -188,7 +187,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     int mtype_code = (mtype == NULL) ? 0 : mtype->code ; // 0 to 14
     int mask_ecode ;
     GB_enumify_mask (&mask_ecode, mtype_code, Mask_struct, Mask_comp) ;
-    printf ("got mask_ecode: %d\n", mask_ecode) ;
+//    printf ("got mask_ecode: %d\n", mask_ecode) ;
 
     //--------------------------------------------------------------------------
     // enumify the sparsity structures of C, M, A, and B
