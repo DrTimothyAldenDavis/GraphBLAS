@@ -216,11 +216,6 @@ logstat ('test54' ,t) ; % assign and extract with begin:inc:end
 logstat ('test104',t) ; % export/import
 logstat ('test129',t) ; % test GxB_select (tril and nonzero, hypersparse)
 
-% longer tests
-logstat ('test230',t) ; % test apply with idxunops
-logstat ('test74' ,t) ; % test GrB_mxm on all semirings
-logstat ('test127',t) ; % test eWiseAdd, eWiseMult (all types and operators)
-
 %----------------------------------------
 % tests with very low coverage/sec rates  (< 1/sec)
 %----------------------------------------
@@ -236,24 +231,11 @@ logstat ('test195',t) ; % test all variants of saxpy3
 logstat ('test233',t) ; % test bitmap saxpy C=A*B with A sparse and B bitmap
 logstat ('test243',t) ; % test GxB_Vector_Iterator
 logstat ('test29' ,t) ; % reduce with zombies
-logstat ('testca(1)',t) ;  % test complex mxm, mxv, and vxm
 
-hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
-logstat ('test187',t) ; % test dup/assign for all sparsity formats
-logstat ('test192',t) ; % test C<C,struct>=scalar
-logstat ('test181',s) ; % test transpose with explicit zeros in the mask
-logstat ('test185',s) ; % test dot4, saxpy for all sparsity formats
-hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
-
-logstat ('test69' ,t) ; % assign and subassign with alias
-logstat ('test76' ,s) ; % GxB_resize (single threaded)
-logstat ('test53' ,t) ; % quick test of GB_mex_Matrix_extract
-logstat ('test17' ,t) ; % quick test of GrB_*_extractElement
-logstat ('test19',t) ;  % GxB_subassign, many pending operators
-logstat ('test231',t) ; % test GrB_select with idxunp
+logstat ('test76' ,s) ; % GxB_resize (single threaded). ***
 
 %----------------------------------------
-% longer tests (200 seconds to 600 seconds)
+% tests with no malloc debugging
 %----------------------------------------
 
 % Turn off malloc debugging
@@ -265,6 +247,35 @@ if (malloc_debugging)
     fprintf (f, '[malloc debugging turned off]\n') ;
     fclose (f) ;
 end
+
+%----------------------------------------
+% 1 to 10/sec
+%----------------------------------------
+
+logstat ('test69' ,t) ; % assign and subassign with alias
+logstat ('test230',t) ; % test apply with idxunops
+logstat ('test74' ,t) ; % test GrB_mxm on all semirings
+logstat ('test127',t) ; % test eWiseAdd, eWiseMult (all types and operators)
+logstat ('test19',t) ;  % GxB_subassign, many pending operators
+
+%----------------------------------------
+% < 1 per sec
+%----------------------------------------
+
+logstat ('testca(1)',t) ;  % test complex mxm, mxv, and vxm
+hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
+logstat ('test187',t) ; % test dup/assign for all sparsity formats
+logstat ('test192',t) ; % test C<C,struct>=scalar
+logstat ('test181',s) ; % test transpose with explicit zeros in the mask
+logstat ('test185',s) ; % test dot4, saxpy for all sparsity formats
+hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
+logstat ('test53' ,t) ; % quick test of GB_mex_Matrix_extract
+logstat ('test17' ,t) ; % quick test of GrB_*_extractElement
+logstat ('test231',t) ; % test GrB_select with idxunp
+
+%----------------------------------------
+% longer tests (200 seconds to 600 seconds)
+%----------------------------------------
 
 logstat ('test10' ,t) ; % GrB_apply
 logstat ('test75b',t) ; % test GrB_mxm A'*B (quicker than test75)
