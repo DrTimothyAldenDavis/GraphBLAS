@@ -354,6 +354,7 @@ typedef enum
 {
     GrB_NONBLOCKING = 0,        // methods may return with pending computations
     GrB_BLOCKING = 1,           // no computations are ever left pending
+//  DRAFT: in progress, do not use:
     GxB_NONBLOCKING_GPU = 2,    // non-blocking mode, allow use of GPU(s)
     GxB_BLOCKING_GPU = 3,       // blocking mode, allow use of GPU(s)
 }

@@ -276,7 +276,6 @@ logstat ('test19',t) ;  % GxB_subassign, many pending operators
 %----------------------------------------
 
 logstat ('test11' ,t) ; % exhaustive test of GrB_extractTuples
-logstat ('test175',t) ; % test142 updated
 logstat ('test160',t) ; % test A*B, parallel
 logstat ('test215',t) ; % test C<M>=A'*B (dot2, ANY_PAIR semiring)
 
@@ -462,6 +461,7 @@ logstat ('test168',t) ;           % test C=A+B with C and B full, A bitmap
 logstat ('test169',t) ;    %    0 % test C<!M>=A+B with C sparse, M hyper, A and B sparse
 
 logstat ('test171',t) ;    %    1 % test conversion and GB_memset
+logstat ('test175',t) ;    %    8 % test142 updated
 logstat ('test177',t) ;    %  1.2 % test C<!M>=A*B, C and B bitmap, M and A sparse
 
 logstat ('test180',t) ;    %  16  % test assign and subassign (multi threaded)

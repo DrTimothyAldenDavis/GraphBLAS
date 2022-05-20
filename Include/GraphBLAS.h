@@ -221,7 +221,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "May 18, 2022"
+#define GxB_IMPLEMENTATION_DATE "May 20, 2022"
 #define GxB_IMPLEMENTATION_MAJOR 7
 #define GxB_IMPLEMENTATION_MINOR 1
 #define GxB_IMPLEMENTATION_SUB   0
@@ -354,6 +354,7 @@ typedef enum
 {
     GrB_NONBLOCKING = 0,        // methods may return with pending computations
     GrB_BLOCKING = 1,           // no computations are ever left pending
+//  DRAFT: in progress, do not use:
     GxB_NONBLOCKING_GPU = 2,    // non-blocking mode, allow use of GPU(s)
     GxB_BLOCKING_GPU = 3,       // blocking mode, allow use of GPU(s)
 }
