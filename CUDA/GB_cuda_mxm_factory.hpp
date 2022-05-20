@@ -75,7 +75,7 @@ class GB_cuda_mxm_factory: public jit::File_Desc {
     )
     {
 //       std::cout<<" calling stringify semiring: " << std::endl;
-       GxB_Semiring_fprint (semiring, "stringfiy the smiering", GxB_COMPLETE, stdout) ;
+//     GxB_Semiring_fprint (semiring, "stringfiy the smiering", GxB_COMPLETE, stdout) ;
 //       std::cout<<" Mask_struct: " << Mask_struct << std::endl;
        uint64_t scode; 
        GB_enumify_mxm (

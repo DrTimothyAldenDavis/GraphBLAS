@@ -63,7 +63,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // get the semiring
     //--------------------------------------------------------------------------
 
-    GxB_print (semiring, 3) ;
+    // GxB_print (semiring, 3) ;
     GrB_Monoid add = semiring->add ;
     GrB_BinaryOp mult = semiring->multiply ;
     GrB_BinaryOp addop = add->op ;
@@ -183,7 +183,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // enumify the mask
     //--------------------------------------------------------------------------
 
-    GxB_print (mtype, 3) ;
+    // GxB_print (mtype, 3) ;
     int mtype_code = (mtype == NULL) ? 0 : mtype->code ; // 0 to 14
     int mask_ecode ;
     GB_enumify_mask (&mask_ecode, mtype_code, Mask_struct, Mask_comp) ;
