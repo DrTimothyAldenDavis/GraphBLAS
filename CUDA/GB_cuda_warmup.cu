@@ -23,11 +23,6 @@ bool GB_cuda_warmup (int device)
 
     double gpu_memory_size = GB_Global_gpu_memorysize_get (device);
 
-//    printf ("warming up device %d memsize %g sms %d\n",
-        device,
-        gpu_memory_size, 
-        GB_Global_gpu_sm_get (device)) ;
-
     size_t size = 0 ;
     void *p = GB_malloc_memory (1, 1, &size) ;
     if (p == NULL)

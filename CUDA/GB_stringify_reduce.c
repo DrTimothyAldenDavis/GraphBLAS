@@ -99,8 +99,7 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
                 LSHIFT (acode      ,  2) |  // 0 to 14      4
 
                 // sparsity structure of A
-                LSHIFT (asparsity  ,  0) |  // 0 to 3       2
-
+                LSHIFT (asparsity  ,  0);  // 0 to 3       2
 }
 
 //------------------------------------------------------------------------------
