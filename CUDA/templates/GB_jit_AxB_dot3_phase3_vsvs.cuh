@@ -37,7 +37,6 @@ T warp_ReduceSumPlus( thread_block_tile<tile_sz> g, T val)
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
     for (int i = g.size() / 2; i > 0; i /= 2) {
-        //printf("thd%d   %d OP %d is %d\n", threadIdx.x, val, fold, OP( val, fold));
         val +=  g.shfl_down( val, i);
     }
     return val; // note: only thread 0 will return full sum
@@ -73,15 +72,11 @@ T block_ReduceSum(thread_block g, T val)
   // Wait for all partial reductions
   if (lane==0) shared[wid]=val; // Write reduced value to shared memory
   __syncthreads();              // Wait for all partial reductions
-  //for(int i = threadIdx.x; i < warpSize; i+= blockDim.x) {
-  //        printf("blockIdx.x=%d, wid=%d, val=%d\n", blockIdx.x, i, shared[i]);
-  //}
 
   if (wid > 0 ) return val;
 
   //read from shared memory only if that warp existed
   val = (threadIdx.x <  (blockDim.x / warpSize ) ) ? shared[lane] : 0;
-  //printf("thd%d warp loaded val = %d\n", threadIdx.x, lane, val);
 
   if (wid==0) val = warp_ReduceSumPlus<T, warpSize>( tile, val); //Final reduce within first warp
 
@@ -103,7 +98,6 @@ __global__ void AxB_dot3_phase3_vsvs
   int sz            // unused
 )
 {
-//    printf("start=%lu, end=%lu\n", start, end);
    int64_t dots = end - start;
    // sz = expected non-zeros per dot
 //   /*
@@ -126,15 +120,6 @@ __global__ void AxB_dot3_phase3_vsvs
     int64_t pfirst, plast;
 
     GB_PARTITION (pfirst, plast, dots, blockIdx.x, gridDim.x ) ;
-    /*
-    if( threadIdx.x ==0 )
-    {
-        printf("block%d %d dots/thrd, start,end = %ld,%ld pf,pl=%d,%d blockDim=%d\n",
-                 blockIdx.x, (dots + blockDim.x*gridDim.x -1)/(blockDim.x*gridDim.x),
-                 start, end, pfirst, plast, blockDim.x);
-    }
-    __syncthreads();
-    */
 
     int64_t my_nzombies = 0 ;
     int64_t pair_id;
@@ -155,8 +140,6 @@ __global__ void AxB_dot3_phase3_vsvs
 
          int64_t pB       = Bp[j] ;
          int64_t pB_end   = Bp[j+1] ;
-// if (mydump) printf(":pfirst=%ld, kk=%d, pair_id=%ld, ci %ld, (i,j)=%ld,%ld, nzA=%ld, nzB=%ld\n",
-//     pfirst, kk, pair_id, Ci [pair_id], i,j,pA_end-pA,pB_end-pB);
 
          GB_DECLAREA (aki) ;
          GB_DECLAREB (bkj) ;
@@ -181,7 +164,6 @@ __global__ void AxB_dot3_phase3_vsvs
                 pA++ ;
                 pB++ ;
                 #endif
-// if (mydump) printf(" %lld, %lld intersect at %lld cij=%d!\n",i,j,ia,cij);
             }
             else 
             {
@@ -194,10 +176,8 @@ __global__ void AxB_dot3_phase3_vsvs
          if (cij_exists){
             Ci[pair_id] = i ;
             GB_PUTC ( Cx[pair_id] = (T_C)cij ) ;
-if (mydump) { printf("tid%d %lld, %lld is alive %d!\n",threadIdx.x, i,j,cij); }
          }
          else{
-if (mydump) { printf("tid%d %lld, %lld is zombie %d!\n",threadIdx.x, i,j,my_nzombies); }
             my_nzombies++;
             Ci[pair_id] = GB_FLIP( i ) ;
          }
@@ -205,13 +185,10 @@ if (mydump) { printf("tid%d %lld, %lld is zombie %d!\n",threadIdx.x, i,j,my_nzom
 
    __syncthreads();
 
-   //printf("thd%d zombie count = %d\n",threadIdx.x,my_nzombies);
    my_nzombies = block_ReduceSum<int64_t , 32>( this_thread_block(), my_nzombies);
    __syncthreads();
    if( threadIdx.x == 0 && my_nzombies > 0) {
-      //printf ("block%d zombie count = %ld\n", blockIdx.x, my_nzombies);
       atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)my_nzombies);
-      //printf ("blk:%d Czombie = %ld\n", blockIdx.x,C->nzombies);
    }
-
 }
+
