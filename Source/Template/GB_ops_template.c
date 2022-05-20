@@ -88,6 +88,7 @@ GXB_OP1 (ONE, "one") ;
     GXB_OP1 (TGAMMA   , "tgamma"   ) ;
     GXB_OP1 (ERF      , "erf"      ) ;
     GXB_OP1 (ERFC     , "erfc"     ) ;
+    GXB_OP1 (CBRT     , "cbrt"     ) ;
     GXB_OP1 (FREXPX   , "frexpx"   ) ;
     GXB_OP1 (FREXPE   , "frexpe"   ) ;
     #endif

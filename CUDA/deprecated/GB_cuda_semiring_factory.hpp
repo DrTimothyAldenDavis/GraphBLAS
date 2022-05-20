@@ -53,7 +53,13 @@ class GB_cuda_semiring_factory: public jit::File_Desc {
     //before, and avoids the need to generate and manage strings at this stage.
     //--------------------------------------------------------------------------
 
-    void semiring_factory 
+    // FIXME: need to know if A and B are iso-valued.
+    // FIXME: need C_iso
+    // FIXME: pass in user's C_in matrix, in case C_in<M>+=A*B can be done
+    //        in-place 
+    // FIXME: handle hypersparse case in dot3
+
+    void semiring_factory       // rename this mxm_problem_spec
     (  
         // input:
         GrB_Semiring semiring,  // the semiring to enumify

@@ -253,6 +253,7 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     GB_OP (TGAMMA, tgammaf )
     GB_OP (ERF   , erff    )
     GB_OP (ERFC  , erfcf   )
+    GB_OP (CBRT  , cbrtf   )
 
 #elif defined ( GB_DOUBLE )
 
@@ -297,6 +298,7 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     GB_OP (TGAMMA, tgamma )
     GB_OP (ERF   , erf    )
     GB_OP (ERFC  , erfc   )
+    GB_OP (CBRT  , cbrt   )
 
 #elif defined ( GB_FLOAT_COMPLEX )
 

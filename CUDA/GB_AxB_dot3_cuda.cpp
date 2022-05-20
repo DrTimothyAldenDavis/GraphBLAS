@@ -139,12 +139,17 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     int64_t cnz = mnz ;
     int64_t cnvec = mnvec ;
 
-    int sparsity_M = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+    int M_sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+    int C_sparsity = M_sparsity ;
+    bool C_iso = false ;
     info = GB_new_bix (&C, // sparse or hyper (from M), existing header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        sparsity_M, false, M->hyper_switch, cnvec,
+        M_sparsity, false, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork 
-        true, /* not iso: */ false, Context) ;
+        true, C_iso, Context) ;
+
+    CHECK_CUDA_SIMPLE(cudaMemset(C->i, 0, (cnz+1) * sizeof(int64_t)));
+    CHECK_CUDA_SIMPLE(cudaMemset(C->x, 0, (cnz+1) * sizeof(ctype->size)));
 
     if (info != GrB_SUCCESS)
     { 
@@ -174,7 +179,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     C->magic = GB_MAGIC ;
     C->nvec_nonempty = M->nvec_nonempty ;
-    C->nvec = M->nvec ;
+//    C->nvec = M->nvec ;
     // the dot3 CUDA kernel will produce C->i with jumbled indices
     C->jumbled = true ;
 
@@ -183,16 +188,15 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // stringify the semiring and the mask
     //--------------------------------------------------------------------------
 
-    GB_cuda_semiring_factory mysemiring = GB_cuda_semiring_factory ( ) ;
+    GB_cuda_mxm_factory my_mxm_spec = GB_cuda_mxm_factory ( ) ;
 
-    // (1) create the semiring code and name
-    mysemiring.semiring_factory ( semiring, flipxy,
-        ctype, M->type, A->type, B->type, Mask_struct,  // matrix types
-        false, GB_sparsity(C), GB_sparsity(M), GB_sparsity(A), GB_sparsity(B) ) ;
+    // (1) create the mxm code and name
+    my_mxm_spec.mxm_factory ( C_iso, C_sparsity, ctype,
+        M, Mask_struct, false, semiring, flipxy, A, B) ;
 
-    // (2) ensure the jitifier has "GB_semiring_[mysemiring.sr_code].h"
+    // (2) ensure the jitifier has "GB_mxm_[my_mxm_spec.sr_code].h"
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
-    filecache.getFile (mysemiring) ;
+    filecache.getFile (my_mxm_spec) ;
 
     GBURBLE ("(GPU stringified) ") ;
     //--------------------------------------------------------------------------
@@ -201,7 +205,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     // on the CPU: nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
     // on the GPU:
-    phase1launchFactory p1lf(mysemiring);
+    phase1launchFactory p1lf(my_mxm_spec);
     phase2launchFactory p2lf;
     phase2endlaunchFactory p2elf;
 
@@ -233,11 +237,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     CHECK_CUDA_SIMPLE(cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
     CHECK_CUDA_SIMPLE(cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, device));
 
-    offset = (int64_t*)rmm_wrap_malloc( (NBUCKETS)*sizeof(int64_t)) ;
     CHECK_CUDA_SIMPLE(cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
     CHECK_CUDA_SIMPLE(cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, device));
-
-    memset( offset, 0, NBUCKETS * sizeof(int64_t) );
 
     //--------------------------------------------------------------------------
     // Pre-fetch arrays that will be used on the device
@@ -245,14 +246,19 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->p, (mnvec+1) * sizeof (int64_t), device, NULL)) ; //stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->i, mnz * sizeof (int64_t), device, NULL )) ; //stream_data) ;
+    // FIXME: if Mask_struct is true, skip this:
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->x, mnz * M->type->size, device, NULL )) ; //stream_data) ;
+
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->i, (cnz+1) * sizeof (int64_t), device, NULL )); //stream_data) ;
+    // FIXME: skip if C iso:
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->x, (cnz+1) * C->type->size, device, NULL )); //stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( A->p, (anvec+1) * sizeof (int64_t), device, NULL)); // stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( A->i, anz * sizeof (int64_t), device, NULL )) ; //stream_data) ;
+    // FIXME: skip if A iso:
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( A->x, anz * A->type->size, device, NULL )) ; //stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( B->p, (bnvec+1) * sizeof (int64_t), device, NULL)); //stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( B->i, bnz * sizeof (int64_t), device, NULL )); //stream_data) ;
+    // FIXME: skip if B iso:
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( B->x, bnz * B->type->size, device, NULL )); //stream_data) ;
 
     // The work to compute C(i,j) is held in Ci [p], if C(i,j) appears in
@@ -281,6 +287,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     p2lf.jitGridBlockLaunch(Blockbucket, offset, M );
 
     int64_t s= offset[0];
+    C->nzombies = s;
     for ( int bucket = 1 ; bucket < NBUCKETS+1; ++bucket)
     {
         Bucketp[bucket] = s; 
@@ -316,7 +323,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         if(end - start > 0) {
             printf("Executing bucket: %d with %ld edges\n", bucket, end-start);
             // TODO: We might want to consider submitting these in different cuda streams (maybe use cuda stream pool?)
-            phase3launchFactory p3lf(mysemiring, (GB_bucket_code)bucket);
+            phase3launchFactory p3lf(my_mxm_spec, (GB_bucket_code)bucket);
             p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C, M, A, B);
         } else {
             printf("Skipping bucket %d, no work to do\n", bucket);

@@ -42,7 +42,7 @@ extern "C" {
 #include "GraphBLAS.h"
 };
 #include "GB_jit_launcher.h"
-#include "GB_cuda_semiring_factory.hpp"
+#include "GB_cuda_mxm_factory.hpp"
 #include "GB_cuda_buckets.h"
 #include "GB_cuda_type_wrap.hpp"
 #include "GB_cuda_error.h"
@@ -109,7 +109,7 @@ class phase1launchFactory
   std::string base_name = "GB_jit";
   std::string kernel_name = "AxB_phase1";
 
-  GB_cuda_semiring_factory &semiring_factory_;
+  GB_cuda_mxm_factory &mxm_factory_;
 
 public:
 
@@ -123,9 +123,9 @@ public:
       return threads_per_block;
   }
 
-  // This assumes the needed state on the GB_cuda_semiring_factory
+  // This assumes the needed state on the GB_cuda_mxm_factory
   // has already been populated
-  phase1launchFactory(GB_cuda_semiring_factory &semiring_factory): semiring_factory_(semiring_factory){}
+  phase1launchFactory(GB_cuda_mxm_factory &mxm_factory): mxm_factory_(mxm_factory){}
 
   bool jitGridBlockLaunch(int64_t *nanobuckets, int64_t *blockBucket,
                           GrB_Matrix C, GrB_Matrix M, GrB_Matrix A, GrB_Matrix B) {
@@ -140,20 +140,21 @@ public:
 
     std::cout << "A TYpe: " << A->type << std::endl;
     std::cout << "B TYpe: " << B->type << std::endl;
-//    // (1) create the semiring code and name
+//    // (1) create the mxm code and name
 
-//    // (2) ensure the jitifier has "GB_semiring_[mysemiring.sr_code].h"
+//    // (2) ensure the jitifier has "GB_mxm_[mymxm.sr_code].h"
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
-    filecache.getFile (semiring_factory_) ;
+    filecache.getFile (mxm_factory_) ;
 
-    auto sr_code = std::to_string(semiring_factory_.sr_code);
+    auto sr_code = std::to_string(mxm_factory_.sr_code);
 
     std::stringstream string_to_be_jitted ;
+    // FIXME: use mask_ecode instead, not even M->type->name
     std::vector<std::string> template_types = {M->type->name, sr_code};
 
     std::string hashable_name = base_name + "_" + kernel_name;
     string_to_be_jitted << hashable_name << std::endl <<
-    R"(#include ")" << jit::get_user_home_cache_dir() << "/" << semiring_factory_.filename << R"(")" << std::endl <<
+    R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "templates/)" << hashable_name << R"(.cuh")" << std::endl;
     std::cout << string_to_be_jitted.str();
 
@@ -167,7 +168,7 @@ public:
 //      std::cout << "Compiler Flags: " << s << std::endl ;
 //  }
 
-    jit::launcher( hashable_name + "_" + M->type->name + "_" + sr_code,
+    jit::launcher( hashable_name + "_" + sr_code,   // FIXME: use mask_ecode
                    string_to_be_jitted.str(),
                    header_names,
                    compiler_flags,
@@ -308,7 +309,7 @@ class phase3launchFactory
   std::string base_name = "GB_jit";
   std::string kernel_name = "AxB_dot3";
 
-  GB_cuda_semiring_factory &semiring_factory_;
+  GB_cuda_mxm_factory &mxm_factory_;
 
   GB_bucket_code bucket_code_;
 
@@ -317,11 +318,11 @@ public:
 
 
   /**
-   * This assumes the needed state on the GB_cuda_semiring_factory has already been populated.
+   * This assumes the needed state on the GB_cuda_mxm_factory has already been populated.
    * The `bucket_code` determines which kernel is launched
    */
-  phase3launchFactory(GB_cuda_semiring_factory &mysemiringfactory, GB_bucket_code bucket_code):
-      semiring_factory_(mysemiringfactory), bucket_code_(bucket_code) {}
+  phase3launchFactory(GB_cuda_mxm_factory &mymxmfactory, GB_bucket_code bucket_code):
+      mxm_factory_(mymxmfactory), bucket_code_(bucket_code) {}
 
   bool jitGridBlockLaunch(int64_t start, int64_t end, int64_t *bucketp, int64_t *bucket,
                           GrB_Matrix C,  GrB_Matrix M, GrB_Matrix A, GrB_Matrix B) {
@@ -346,24 +347,31 @@ public:
      */
     configure( nz, mnvec, final_kernel_name_ss, blocksz, gridsz, sz);
 
-    auto sr_code = std::to_string(semiring_factory_.sr_code);
+    auto sr_code = std::to_string(mxm_factory_.sr_code);
+
+    GrB_BinaryOp mult = mxm_factory_.semiring->multiply ;
 
     std::string hashable_name = base_name + "_" + final_kernel_name_ss.str();
     std::stringstream string_to_be_jitted ;
-    std::vector<std::string> template_types = {C->type->name, A->type->name, B->type->name};
+    std::vector<std::string> template_types =
+    {
+        C->type->name, A->type->name, B->type->name,
+        mult->ztype->name, mult->xtype->name, mult->ytype->name,
+        sr_code
+    };
 
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
-    filecache.getFile (semiring_factory_) ;
+    filecache.getFile (mxm_factory_) ;
 
     string_to_be_jitted << hashable_name << std::endl <<
-    R"(#include ")" << jit::get_user_home_cache_dir() << "/" << semiring_factory_.filename << R"(")" << std::endl <<
+    R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
     dim3 grid(gridsz);
     dim3 block(blocksz);
 
     GBURBLE ("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
-    jit::launcher( hashable_name + "_" + M->type->name + "_" + sr_code,
+    jit::launcher( hashable_name + "_" + sr_code,
                    string_to_be_jitted.str(),
                    header_names,
                    compiler_flags,
@@ -559,6 +567,9 @@ public:
       dim3 grid(gridsz);
       dim3 block(blocksz);
 
+      // FIXME: call GB_stringify_reduce to create GB_ADD and related
+      // macros, in an include file: GB_reduce_123412341234.h
+
       jit::launcher(hashable_name,
                     string_to_be_jitted.str(),
                     header_names,
@@ -581,9 +592,9 @@ public:
 };
 
 template<  int threads_per_block=32, int chunk_size = 128>
-inline bool GB_cuda_mxm_phase1(GB_cuda_semiring_factory &semiring_factory, int64_t *nanobuckets, int64_t *blockBucket,
+inline bool GB_cuda_mxm_phase1(GB_cuda_mxm_factory &mxm_factory, int64_t *nanobuckets, int64_t *blockBucket,
                         GrB_Matrix C, GrB_Matrix M, GrB_Matrix A, GrB_Matrix B) {
-    phase1launchFactory<threads_per_block, chunk_size> lf(semiring_factory);
+    phase1launchFactory<threads_per_block, chunk_size> lf(mxm_factory);
     return lf.jitGridBlockLaunch(nanobuckets, blockBucket, C, M, A, B);
 }
 
@@ -607,10 +618,10 @@ inline bool GB_cuda_mxm_phase2end(int64_t *nanobuckets, int64_t *blockBucket,
 
 
 
-inline bool GB_cuda_mxm_phase3(GB_cuda_semiring_factory &mysemiringfactory, GB_bucket_code bucket_code,
+inline bool GB_cuda_mxm_phase3(GB_cuda_mxm_factory &mymxmfactory, GB_bucket_code bucket_code,
                         int64_t start, int64_t end, int64_t *bucketp, int64_t *bucket,
                           GrB_Matrix C,  GrB_Matrix M, GrB_Matrix A, GrB_Matrix B) {
-    phase3launchFactory lf(mysemiringfactory, bucket_code);
+    phase3launchFactory lf(mymxmfactory, bucket_code);
     return lf.jitGridBlockLaunch(start, end, bucketp, bucket, C, M, A, B);
 }
 

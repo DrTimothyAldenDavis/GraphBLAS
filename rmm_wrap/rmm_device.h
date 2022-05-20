@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+// rmm_wrap/rmm_device.h: GPU device descriptor
+//------------------------------------------------------------------------------
+
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
+// FIXME: does this belong here?  It isn't used in rmm_wrap.
+// Move to CUDA folder and rename?
 
 #ifndef RMM_META_H
 #define RMM_META_H
@@ -17,3 +27,4 @@ typedef struct
 rmm_device ;      // TODO: rename this?
 
 #endif
+

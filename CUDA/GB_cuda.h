@@ -21,7 +21,7 @@ extern "C"
 #include "cuda_runtime.h"
 #include "cuda.h"
 #include "jitify.hpp"
-#include "GB_cuda_semiring_factory.hpp"
+#include "GB_cuda_mxm_factory.hpp"
 
 #include <cassert>
 #include <cmath>

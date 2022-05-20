@@ -18,7 +18,7 @@
 #define GB_CUDA_KERNEL
 #include <limits>
 #include <type_traits>
-#include "matrix.h"
+#include "GB_cuda_kernel.h"
 #include "GB_cuda_atomics.cuh"
 #include <cstdint>
 #include <cooperative_groups.h>

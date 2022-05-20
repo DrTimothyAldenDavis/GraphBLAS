@@ -8,7 +8,7 @@
 #define GB_CUDA_KERNEL
 
 #include "GB_cuda_buckets.h"
-#include "matrix.h"
+#include "GB_cuda_kernel.h"
 #include <cooperative_groups.h>
 #include <cub/block/block_scan.cuh>
 
@@ -194,7 +194,7 @@ __global__ void AxB_phase2
        //printf("summing blk,tid=%d,%d\n",blockIdx.x,threadIdx.x);
        if (threadIdx.x ==0 )
        {
-          printf("blk_Id=%d s_0: %lu, s_1=%lu, s_10=%lu, s_11=%lu\n", blockIdx.x, s_0, s_1, s_10, s_11);
+//          printf("blk_Id=%d s_0: %lu, s_1=%lu, s_10=%lu, s_11=%lu\n", blockIdx.x, s_0, s_1, s_10, s_11);
           atomicAdd( (unsigned long long int*)&(offset[0]), s_0);
           atomicAdd( (unsigned long long int*)&(offset[1]), s_1);
           atomicAdd( (unsigned long long int*)&(offset[2]), s_2);
@@ -215,8 +215,9 @@ __global__ void AxB_phase2
     if( gridDim.x >= 12)
     {
         // Cumulative sum across blocks for each bucket 
-        if (blockIdx.x <12)
-           blockBucketExclusiveSum( blockIdx.x, blockbucket, nblocks ) ;
+        if (blockIdx.x <12) {
+            blockBucketExclusiveSum( blockIdx.x, blockbucket, nblocks ) ;
+        }
     }
     else
     {

@@ -10,7 +10,7 @@
 
 #define GB_CUDA_KERNEL
 #include <limits>
-#include "matrix.h"
+#include "GB_cuda_kernel.h"
 #include "GB_cuda_buckets.h"
 #include <cub/block/block_scan.cuh>
 
@@ -311,44 +311,7 @@ __global__ void AxB_phase1
      __shared__ int64_t ks [chunksize];
 
     __syncthreads();
-    /*
-    if (threadIdx.x==0 && blockIdx.x == 0)
-    {
-//        printf ("Here in phase1, what I see is this:\n") ;
-//        printf ("MX(pM) is: %s\n", GB_XSTR (MX (pM))) ;
-//        printf ("GB_MULT(x,y) is: %s\n", GB_XSTR (GB_MULT (x,y))) ;
-//        printf ("GB_ADD(x,y)  is: %s\n", GB_XSTR (GB_ADD (x,y))) ;
-        // #define GB_GETA(blob)
-        // #define GB_GETB(blob)
-        // #define GB_MULT(x,y) (1)
-        // #define GB_ADD(x,y) ((x) + (y))
-        // #define GB_IDENTITY (0)
-        // #define GB_TERMINAL_CONDITION(cij) (false)
-        // #define GB_IF_TERMINAL_BREAK  
-        // #define GB_PUTC(blob) blob
-        // #define GB_MTYPE void
-        // #define MX(p) true
-        // #define GB_MASK_COMP false
-        // #define GB_NO_MASK false
-        // #define GB_C_IS_SPARSE 1
-        // #define GB_C_IS_HYPER  0
-        // #define GB_C_IS_BITMAP 0
-        // #define GB_C_IS_FULL   0
-        // #define GB_M_IS_SPARSE 1
-        // #define GB_M_IS_HYPER  0
-        // #define GB_M_IS_BITMAP 0
-        // #define GB_M_IS_FULL   0
-        // #define GB_A_IS_SPARSE 1
-        // #define GB_A_IS_HYPER  0
-        // #define GB_A_IS_BITMAP 0
-        // #define GB_A_IS_FULL   0
-        // #define GB_B_IS_SPARSE 1
-        // #define GB_B_IS_HYPER  0
-        // #define GB_B_IS_BITMAP 0
-        // #define GB_B_IS_FULL   0
-    }
-    __syncthreads();
-    */
+
     //--------------------------------------------------------------------------
     // compute the task descriptor
     //--------------------------------------------------------------------------
@@ -448,7 +411,7 @@ __global__ void AxB_phase1
 
     // if B is hypersparse, bpleft ... TODO describe
     // int64_t bpleft = 0 ;
-    
+
         //----------------------------------------------------------------------
         // no binary search variant
         //----------------------------------------------------------------------
@@ -463,12 +426,22 @@ __global__ void AxB_phase1
                       pM < pfirst + chunk_end;
                       pM += blockDim.x )
         {
+            bool dump = false ;
             GB_bucket_code bucket = GB_BUCKET_ZOMBIE ;
             int64_t k = ks[ pM - pfirst ] ;
             //k += ( pM == Mp[k+1] ) ;
 //            printf ("tid%d  k %ld pM %ld MX(pM): %d\n", threadIdx.x, k, pM, MX (pM));
             int64_t i = Mi [ pM ] ;
 int64_t j = k ; // HACK, does not need to be initialized here
+
+            dump = (i >= 1235609 && i <= 1235611) ||
+                   (j >= 1235609 && j <= 1235611) ;
+
+int64_t k_good = GB_search_for_vector_device (pM, Mp, 0, mnvec, mvlen) ;
+if (dump)
+{
+    printf ("tid%d looking at (%ld, j=%ld, k=%ld):\n", threadIdx.x, i, j, k_good) ;
+}
 
             if ( MX ( pM ) )
             { 
@@ -520,8 +493,8 @@ pA_end = Ap [i+1] ;
 
                         //bucket = GB_BUCKET_MERGEPATH ;
                         bucket= GB_bucket_assignment ( ainz, bjnz, bvlen) ;
-//                        printf ("tid%d  i %ld j %ld ainz %ld bjnz %ld: bucket %d\n",
-//                            threadIdx.x, i, j, ainz, bjnz, (int) bucket) ;
+if (dump) printf ("tid%d  i %ld j %ld ainz %ld bjnz %ld: bucket %d\n",
+    threadIdx.x, i, j, ainz, bjnz, (int) bucket) ;
                     }
                 }
             }
@@ -529,7 +502,7 @@ pA_end = Ap [i+1] ;
             if (bucket == GB_BUCKET_ZOMBIE)
             {
                 // mark C(i,j) is a zombie
-//                printf ("tid%d pM=%d %d,%d prezombie\n",threadIdx.x,pM,i,j) ;
+if (dump) printf ("tid%d pM=%ld (%ld,%ld) prezombie\n",threadIdx.x,pM,i,j) ;
                 Ci [pM] = GB_FLIP (i) << 4 ;
                 // GB_BUCKET_COUNT (GB_BUCKET_ZOMBIE) ;
                 my_bucket_0++ ; //0 is the zombie bucket
@@ -537,12 +510,9 @@ pA_end = Ap [i+1] ;
             else
             {
                 // place C(i,j) in its bucket
-                if(k < 0) {
-                    printf("K == %ld\n", k);
-                }
+if (dump) printf ("tid%d pM=%ld (%ld,%ld) b=%d\n",threadIdx.x, pM, i,j, (int)bucket) ;
                 Ci [pM] = (k << 4) + bucket ;
                 GB_BUCKET_COUNT (bucket) ;
-//                printf ("tid%d pM=%d %d,%d b=%d\n",threadIdx.x, pM, i,j, (int)bucket) ;
             }
          }
             

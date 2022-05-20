@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // AxB_dot3_phase3_dndn.cu 
 //------------------------------------------------------------------------------
@@ -34,7 +33,7 @@
 #pragma once
 #include <limits>
 #include <cstdint>
-#include "matrix.h"
+#include "GB_cuda_kernel.h"
 
 #include <cooperative_groups.h>
 
@@ -83,7 +82,10 @@ T block_ReduceSum(thread_block g, T val, T Ident)
 }
 
 
-template< typename T_C, typename T_A, typename T_B>
+template<
+    typename T_C, typename T_A, typename T_B,
+    typename T_Z, typename T_X, typename T_Y,
+    uint64_t srcode>
 __global__ void AxB_dot3_phase3_dndn 
 (
     int64_t start,
@@ -141,35 +143,37 @@ __global__ void AxB_dot3_phase3_dndn
 
     
     // convert global data pointer to the local pointer of this block
-    T_A  aki; // *xdata = &Ax[xstart]; 
-    T_B  bkj; // *ydata = &Bx[ystart];
-    T_C  cij;
+    GB_DECLAREA (aki) ;
+    GB_DECLAREB (bkj) ;
+    T_Z  cij;
 
-    GB_GETA ( aki=(T_C)Ax[pA+threadIdx.x] ) ;             // aki = A(0,i)
-    GB_GETB ( bkj=(T_C)Bx[pB+threadIdx.x] ) ;             // bkj = B(0,j)
-    GB_C_MULT ( cij, aki, bkj ) ;                        // cij = aki * bkj
+    GB_GETA ( aki, Ax, pA+threadIdx.x) ;        // aki = A(0,i)
+    GB_GETB ( bkj, Bx, pB+threadIdx.x) ;        // bkj = B(0,j)
+    GB_C_MULT ( cij, aki, bkj ) ;               // cij = aki * bkj
 
     for ( int tid = threadIdx.x + s; tid < nnzA; tid+= s) { 
           // cij += A(k,i) * B(k,j)
           // GB_DOT_TERMINAL ( cij ) ;             // break if cij == terminal
-          GB_GETA ( aki=(T_C)Ax[pA+tid] ) ;         // aki = A(k,i)
-          GB_GETB ( bkj=(T_C)Bx[pB+tid] ) ;        // bkj = B(k,j)
+          GB_GETA (aki, Ax, pA+tid) ;           // aki = A(k,i)
+          GB_GETB (bkj, Bx, pB+tid) ;           // bkj = B(k,j)
           GB_MULTADD ( cij, aki, bkj ) ;        // cij += aki * bkj
     }
-
 
     //--------------------------------------------------------------------------
     // reduce per-thread sums to a single scalar
     //--------------------------------------------------------------------------
+
+    #if !GB_C_ISO
     thread_block_tile<32> tile = tiled_partition<32>( this_thread_block() );
-    cij = warp_ReduceSum<T_C, 32> ( tile, cij);
+    cij = warp_ReduceSum<T_Z, 32> ( tile, cij);
+    #endif
 
     // write result for this block to global mem
     if (threadIdx.x == 0)
     {
        //printf("tid: %d final sum after reduce = %d\n", threadIdx.x, sum);
        GB_PUTC( Cx[pair_id]=(T_C)cij ) ;
-       GB_PUTC( Ci[pair_id]=i ) ;
+       Ci[pair_id]=i ;
     }
     //__syncthreads ( ) ;
     // FIXME: add atomics to sum up block zombies to C->nzombies

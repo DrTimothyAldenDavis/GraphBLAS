@@ -1,8 +1,8 @@
 
 #ifndef GB_MATRIX_ALLOCATE_H
 #define GB_MATRIX_ALLOCATE_H
-#include "matrix.h"
-#include "pmr_malloc.h"
+#include "GB_cuda_kernel.h"
+#include "rmm_wrap.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -8,7 +8,7 @@
 #define GB_CUDA_KERNEL
 
 #include "GB_cuda_buckets.h"
-#include "matrix.h"
+#include "GB_cuda_kernel.h"
 #include <cooperative_groups.h>
 #include <cub/block/block_scan.cuh>
 
@@ -136,7 +136,8 @@ void AxB_phase2end
 
             switch (ibucket)
             {
-                case  0: bucket [my_bucket_0++ ] = p ; Ci[p] = Ci[p] >>4; break ; //unshift zombies
+                case  0: bucket [my_bucket_0++ ] = p ;
+                         Ci[p] = Ci[p] >>4; break ; //unshift zombies
                 case  1: bucket [my_bucket_1++ ] = p ; break ;
                 case  2: bucket [my_bucket_2++ ] = p ; break ;
                 case  3: bucket [my_bucket_3++ ] = p ; break ;
