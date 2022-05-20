@@ -137,9 +137,6 @@ public:
     // 128*number_of_sms (say 128*80 = 10,240 on a V100).
 
     // Defining dummy instance only so we can introspect type
-
-    std::cout << "A TYpe: " << A->type << std::endl;
-    std::cout << "B TYpe: " << B->type << std::endl;
 //    // (1) create the mxm code and name
 
 //    // (2) ensure the jitifier has "GB_mxm_[mymxm.sr_code].h"
@@ -156,17 +153,11 @@ public:
     string_to_be_jitted << hashable_name << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "templates/)" << hashable_name << R"(.cuh")" << std::endl;
-    std::cout << string_to_be_jitted.str();
 
     bool result = false;
 
     dim3 grid(get_number_of_blocks(M));
     dim3 block(get_threads_per_block());
-
-//  for (auto s:compiler_flags)
-//  {
-//      std::cout << "Compiler Flags: " << s << std::endl ;
-//  }
 
     jit::launcher( hashable_name + "_" + sr_code,   // FIXME: use mask_ecode
                    string_to_be_jitted.str(),
@@ -225,9 +216,6 @@ public:
       string_to_be_jitted <<
       hashable_name << std::endl << R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
-      // dump it:
-      std::cout << string_to_be_jitted.str();
-
       const int64_t mnz = GB_nnz (M) ;
       jit::launcher( hashable_name,
                      string_to_be_jitted.str(),
@@ -283,9 +271,6 @@ public:
       std::stringstream string_to_be_jitted ;
       string_to_be_jitted <<
       hashable_name << std::endl << R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
-
-      // dump it:
-      std::cout << string_to_be_jitted.str();
 
       jit::launcher( hashable_name,
                      string_to_be_jitted.str(),
@@ -410,7 +395,6 @@ private:
     std::string Opname;
     // TODO: make sure this works with different geometry
 
-    printf("LAUNCHING BUCKET CODE: %d\n", (int)bucket_code_);
     switch (bucket_code_)
     {
 
@@ -451,7 +435,6 @@ private:
         case GB_BUCKET_DNSP :
         // A(:,i) is sparse (>= 256 entries) and B(:,j) is dense
         case GB_BUCKET_SPDN :
-            printf("Confiring spdn");
             sz = 256 ;
             Opname = "phase3_spdn" ;
             blocksz = 32;
@@ -475,7 +458,6 @@ private:
 
         // let len = nnz (A (:,i) + nnz (B (:,j)), then:
 
-        printf("number_of_sms=%d\n", number_of_sms);
         case GB_BUCKET_VSVS_256 : sz += 256-64 ;
         case GB_BUCKET_VSVS_64 :  sz += 64-16  ;
         case GB_BUCKET_VSVS_16 :  sz += 16-4   ;

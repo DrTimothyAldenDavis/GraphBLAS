@@ -67,8 +67,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
-
-    printf ("HERE IN cuda dot3, mask_struct is %d\n", Mask_struct) ;
+//
+//    printf ("HERE IN cuda dot3, mask_struct is %d\n", Mask_struct) ;
 
     // when CUDA is enabled, no static headers are used in all of GraphBLAS
     GrB_Info info ;
@@ -275,7 +275,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     GBURBLE ("(GPU phase1 done) ") ;
 
     //print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
-    printf(" using %ld blockbuckets \n", blockbuckets_size); 
+//    printf(" using %ld blockbuckets \n", blockbuckets_size);
     //print_array<int64_t>(Blockbucket, blockbuckets_size , "Blockbucket");
 
     //----------------------------------------------------------------------
@@ -292,7 +292,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     {
         Bucketp[bucket] = s; 
         s+= offset[bucket];
-        printf("bucketp[%d] = %ld, offset=%ld\n", bucket, Bucketp[bucket], offset[bucket]);
+//        printf("bucketp[%d] = %ld, offset=%ld\n", bucket, Bucketp[bucket], offset[bucket]);
     }
 
     GBURBLE ("(GPU phase2 done) ") ;
@@ -312,8 +312,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // phase3: do the numerical work
     //----------------------------------------------------------------------
 
-    print_array<int64_t>(Bucketp, NBUCKETS + 1 , "Bucketp");
-    printf("pre-phase3 kernel C->nzombies=%ld\n", C->nzombies);
+//    print_array<int64_t>(Bucketp, NBUCKETS + 1 , "Bucketp");
+//    printf("pre-phase3 kernel C->nzombies=%ld\n", C->nzombies);
 
     for ( int bucket = 1 ; bucket < NBUCKETS; ++bucket)
     {
@@ -321,19 +321,21 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         int64_t end   = Bucketp[bucket + 1 ];
 
         if(end - start > 0) {
-            printf("Executing bucket: %d with %ld edges\n", bucket, end-start);
+//            printf("Executing bucket: %d with %ld edges\n", bucket, end-start);
             // TODO: We might want to consider submitting these in different cuda streams (maybe use cuda stream pool?)
             phase3launchFactory p3lf(my_mxm_spec, (GB_bucket_code)bucket);
             p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C, M, A, B);
-        } else {
-            printf("Skipping bucket %d, no work to do\n", bucket);
         }
 
+//        else {
+//            printf("Skipping bucket %d, no work to do\n", bucket);
+//        }
+//
         GBURBLE ("(GPU phase3 done ) ") ;
     }
     //printf("C->p[0]=%ld\n", C->p[0]);
     //printf("C->p[1]=%ld\n", C->p[1]);
-    printf("C->nzombies=%ld\n", C->nzombies);
+//    printf("C->nzombies=%ld\n", C->nzombies);
 
     GB_FREE_WORKSPACE ;
     return GrB_SUCCESS; 

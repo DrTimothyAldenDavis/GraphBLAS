@@ -15,7 +15,6 @@ bool GB_reduce_to_scalar_cuda_branch
 
     int ngpus_to_use = GB_ngpus_to_use (work) ;
     GBURBLE (" work:%g gpus:%d ", work, ngpus_to_use) ;
-    printf (" work:%g gpus:%d ", work, ngpus_to_use) ;
 
     GB_Opcode opcode = reduce->op->opcode ;
 
