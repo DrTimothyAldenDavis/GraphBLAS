@@ -65,7 +65,7 @@ GrB_Info GB_init            // start up GraphBLAS
 
     GB_Global_GrB_init_called_set (true) ;
 
-    if (! (mode == GrB_BLOCKING || mode == GrB_NONBLOCKING))
+    if (mode < GrB_NONBLOCKING || mode > GxB_BLOCKING_GPU)
     { 
         // invalid mode
         return (GrB_INVALID_VALUE) ;
@@ -148,21 +148,14 @@ GrB_Info GB_init            // start up GraphBLAS
     // CUDA initializations
     //--------------------------------------------------------------------------
 
-// FIXME for CUDA: MOVE THIS to rmm_wrap (or call it something else)
-
     #if defined ( GBCUDA )
+    if (mode == GxB_BLOCKING_GPU || mode == GxB_NONBLOCKING_GPU)
     {
         // TODO: move this code into a function inside CUDA folder
-#if 0
-        GB_cuda_init ( ) ; or something
-#else
-        // If CUDA exists (#define GBCUDA) and if the caller is GxB_cuda_init,
-        // then query the system for the # of GPUs available, their memory
-        // sizes, SM counts, and other capabilities.  Unified Memory support is
-        // assumed.  Then warmup each GPU.
-
-        // query the system for the # of GPUs
-        // TODO for GPU: make this a function in the CUDA folder
+        // If CUDA exists (#define GBCUDA) and if the mode allows the use of
+        // the GPU(s), then query the system for the # of GPUs available, their
+        // memory sizes, SM counts, and other capabilities.  Unified Memory
+        // support is assumed.  Then warmup each GPU.
         GB_Global_gpu_control_set (GxB_DEFAULT) ;
         if (!GB_Global_gpu_count_set (true)) return (GrB_PANIC) ;
         int gpu_count = GB_Global_gpu_count_get ( ) ;
@@ -180,17 +173,15 @@ GrB_Info GB_init            // start up GraphBLAS
         }
         // make GPU 0 the default device
         GB_cuda_set_device( 0 );
-
         // also check for jit cache, pre-load library of common kernels ...
-#endif
     }
-    #else
+    else
+    #endif
     { 
-        // CUDA not available at compile-time
+        // CUDA not available at compile-time, or not requested at run time
         GB_Global_gpu_control_set (GxB_GPU_NEVER) ;
         GB_Global_gpu_count_set (0) ;
     }
-    #endif
 
     GB_Global_gpu_chunk_set (GxB_DEFAULT) ;
 

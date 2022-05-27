@@ -26,7 +26,8 @@ typedef struct
     // blocking/non-blocking mode, set by GrB_init
     //--------------------------------------------------------------------------
 
-    GrB_Mode mode ;             // GrB_NONBLOCKING or GrB_BLOCKING
+    GrB_Mode mode ;             // GrB_NONBLOCKING, GrB_BLOCKING
+                                // GxB_NONBLOCKING_GPU, or GxB_BLOCKING_GPU
     bool GrB_init_called ;      // true if GrB_init already called
 
     //--------------------------------------------------------------------------
@@ -163,7 +164,7 @@ GB_Global_struct GB_Global =
 {
 
     // GraphBLAS mode
-    .mode = GrB_NONBLOCKING,    // default is nonblocking
+    .mode = GrB_NONBLOCKING,    // default is nonblocking, no GPU
 
     // initialization flag
     .GrB_init_called = false,   // GrB_init has not yet been called

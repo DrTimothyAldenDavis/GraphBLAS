@@ -221,10 +221,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Apr 25, 2022"
+#define GxB_IMPLEMENTATION_DATE "May 20, 2022"
 #define GxB_IMPLEMENTATION_MAJOR 7
-#define GxB_IMPLEMENTATION_MINOR 0
-#define GxB_IMPLEMENTATION_SUB   4
+#define GxB_IMPLEMENTATION_MINOR 1
+#define GxB_IMPLEMENTATION_SUB   0
 #define GxB_SPEC_DATE "Nov 15, 2021"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 0
@@ -352,21 +352,25 @@ GrB_Info ;
 
 typedef enum
 {
-    GrB_NONBLOCKING = 0,    // methods may return with pending computations
-    GrB_BLOCKING = 1        // no computations are ever left pending
+    GrB_NONBLOCKING = 0,        // methods may return with pending computations
+    GrB_BLOCKING = 1,           // no computations are ever left pending
+//  DRAFT: in progress, do not use:
+    GxB_NONBLOCKING_GPU = 2,    // non-blocking mode, allow use of GPU(s)
+    GxB_BLOCKING_GPU = 3,       // blocking mode, allow use of GPU(s)
 }
 GrB_Mode ;
 
 GB_PUBLIC
 GrB_Info GrB_init           // start up GraphBLAS
 (
-    GrB_Mode mode           // blocking or non-blocking mode
+    GrB_Mode mode           // blocking or non-blocking mode, no GPU
 ) ;
 
 GB_PUBLIC
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 (
-    GrB_Mode mode,          // blocking or non-blocking mode
+    GrB_Mode mode,          // blocking or non-blocking mode,
+                            // with or without GPU
     // pointers to memory management functions
     void * (* user_malloc_function  ) (size_t),
     void * (* user_calloc_function  ) (size_t, size_t),
@@ -944,6 +948,10 @@ GB_PUBLIC GrB_UnaryOp
     // z = lgamma (x)   z = tgamma (x)      z = erf (x)         z = erfc (x)
     GxB_LGAMMA_FP32,    GxB_TGAMMA_FP32,    GxB_ERF_FP32,       GxB_ERFC_FP32,
     GxB_LGAMMA_FP64,    GxB_TGAMMA_FP64,    GxB_ERF_FP64,       GxB_ERFC_FP64,
+
+    // z = cbrt (x)
+    GxB_CBRT_FP32,
+    GxB_CBRT_FP64,
 
     // frexpx and frexpe return the mantissa and exponent, respectively,
     // from the ANSI C11 frexp function.  The exponent is returned as a
@@ -3196,6 +3204,17 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
     (x, v, i)
 #endif
 
+// GxB_Vector_isStoredElement determines if v(i) is present in the structure
+// of the vector v, as a stored element.  It does not return the value.  It
+// returns GrB_SUCCESS if the element is present, or GrB_NO_VALUE otherwise.
+
+GB_PUBLIC
+GrB_Info GxB_Vector_isStoredElement // determine if v(i) is a stored element
+(
+    const GrB_Vector v,             // vector to check
+    GrB_Index i                     // row index
+) ;
+
 //------------------------------------------------------------------------------
 // GrB_Vector_removeElement
 //------------------------------------------------------------------------------
@@ -3993,6 +4012,18 @@ GrB_Info GrB_Matrix_extractElement      // x = A(i,j)
     )                                                           \
     (x, A, i, j)
 #endif
+
+// GxB_Matrix_isStoredElement determines if A(i,j) is present in the structure
+// of the matrix A, as a stored element.  It does not return the value.  It
+// returns GrB_SUCCESS if the element is present, or GrB_NO_VALUE otherwise.
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_isStoredElement // determine if A(i,j) is a stored element
+(
+    const GrB_Matrix A,                 // matrix to check
+    GrB_Index i,                        // row index
+    GrB_Index j                         // column index
+) ;
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_removeElement

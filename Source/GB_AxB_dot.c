@@ -170,6 +170,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         GBURBLE ("(%sdot3) ", iso_kind) ;
         (*mask_applied) = true ;    // mask is always applied
         (*done_in_place) = false ;
+        GrB_Info info ;
 
         #if defined ( GBCUDA )
         if (!C_iso &&   // FIXME for CUDA, remove and create C iso on output
@@ -182,7 +183,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
                 && !GB_IS_HYPERSPARSE (M)   // FIXME for CUDA, remove this
             )
             {
-                return (GB_AxB_dot3_cuda (C, M, Mask_struct, A, B, semiring,
+                info = (GB_AxB_dot3_cuda (C, M, Mask_struct, A, B, semiring,
                     flipxy, Context)) ;
             }
         }
@@ -190,9 +191,11 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         #endif
         { 
             // use the CPU
-            return (GB_AxB_dot3 (C, C_iso, cscalar, M, Mask_struct, A, B,
+            info = (GB_AxB_dot3 (C, C_iso, cscalar, M, Mask_struct, A, B,
                 semiring, flipxy, Context)) ;
         }
+        // GxB_print (C,3) ;
+        return (info) ;
     }
 
     //--------------------------------------------------------------------------

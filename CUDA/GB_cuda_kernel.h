@@ -1,4 +1,13 @@
-//SPDX-License-Identifier: Apache-2.0
+//------------------------------------------------------------------------------
+// CUDA/GB_cuda_kernel.h: definitions for all GraphBLAS CUDA kernels
+//------------------------------------------------------------------------------
+
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
+// This file is #include'd into all CUDA kernels for GraphBLAS.  It provides
+// a
 
 #pragma once
 #undef  ASSERT
@@ -8,7 +17,9 @@
 // TODO: this will be in the jit code:
 #define chunksize 128 
 
-#undef GB_DOT_MERGE
+//------------------------------------------------------------------------------
+// GETA, GETB: get entries from input matrices A and B
+//------------------------------------------------------------------------------
 
 #if GB_FLIPXY
 
@@ -72,6 +83,10 @@
 
 #endif
 
+//------------------------------------------------------------------------------
+// operators
+//------------------------------------------------------------------------------
+
 #if GB_C_ISO
 
     #define GB_ADD_F( f , s)
@@ -111,11 +126,11 @@
 #endif
 
 //------------------------------------------------------------------------------
+// subset of GraphBLAS.h
+//------------------------------------------------------------------------------
 
 #ifndef GRAPHBLAS_H
 #define GRAPHBLAS_H
-
-// #include "GraphBLAS.h"
 
 #undef restrict
 #undef GB_restrict
@@ -130,10 +145,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
-
-//------------------------------------------------------------------------------
-// remainder of this file is extracted from GraphBLAS.h:
-//------------------------------------------------------------------------------
 
 // GB_STR: convert the content of x into a string "x"
 #define GB_XSTR(x) GB_STR(x)
@@ -213,6 +224,9 @@ GrB_Desc_Value ;
 #include "GB_opaque.h"
 #endif
 
+//------------------------------------------------------------------------------
+// subset of GB.h
+//------------------------------------------------------------------------------
 
 #include "GB_imin.h"
 #include "GB_zombie.h"

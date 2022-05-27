@@ -25,6 +25,64 @@
 #define GB_CUDA_STRLEN 2048
 
 //------------------------------------------------------------------------------
+// left and right shift
+//------------------------------------------------------------------------------
+
+#define LSHIFT(x,k) (((uint64_t) x) << k)
+#define RSHIFT(x,k,b) ((x >> k) & ((((uint64_t)0x00000001) << b) -1))
+
+//------------------------------------------------------------------------------
+// GB_stringify_reduce
+//------------------------------------------------------------------------------
+
+void GB_enumify_reduce      // enumerate a GrB_reduce problem
+(
+    // output:
+    uint64_t *rcode,        // unique encoding of the entire problem
+    // input:
+    GrB_Monoid reduce,      // the monoid to enumify
+    GrB_Matrix A
+) ;
+
+void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
+(
+    // input:
+    FILE *fp,               // target file to write, already open
+    uint64_t rcode
+) ;
+
+//------------------------------------------------------------------------------
+// GB_stringify_ewise
+//------------------------------------------------------------------------------
+
+void GB_enumify_ewise         // enumerate a GrB_eWise problem
+(
+    // output:    2 x uint64?
+    uint64_t *ecode,        // unique encoding of the entire operation
+    // input:
+    // C matrix:
+    bool C_iso,             // if true, operator is ignored
+    int C_sparsity,         // sparse, hyper, bitmap, or full
+    GrB_Type ctype,         // C=((ctype) T) is the final typecast
+    // M matrix:
+    GrB_Matrix M,           // may be NULL
+    bool Mask_struct,       // mask is structural
+    bool Mask_comp,         // mask is complemented
+    // operator:
+    GrB_BinaryOp binaryop,  // the binary operator to enumify
+    // A and B:
+    GrB_Matrix A,
+    GrB_Matrix B
+) ;
+
+void GB_macrofy_ewise           // construct all macros for GrB_eWise
+(
+    // input:
+    FILE *fp,                   // target file to write, already open
+    uint64_t ecode
+) ;
+
+//------------------------------------------------------------------------------
 // GB_stringify_mxm
 //------------------------------------------------------------------------------
 

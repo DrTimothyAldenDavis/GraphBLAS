@@ -51,6 +51,15 @@ end
 assert (ok) ;
 
 try
+    C = cbrt (Z)
+    ok = false ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
     C = atan2 (Z,G)
     ok = false ;
 catch expected_error

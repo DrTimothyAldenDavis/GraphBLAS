@@ -8,7 +8,7 @@
 #define GB_CUDA_KERNEL
 
 #include "GB_cuda_buckets.h"
-#include "matrix.h"
+#include "GB_cuda_kernel.h"
 #include <cooperative_groups.h>
 #include <cub/block/block_scan.cuh>
 
@@ -217,7 +217,6 @@ __global__ void AxB_phase2
         // Cumulative sum across blocks for each bucket 
         if (blockIdx.x <12) {
             blockBucketExclusiveSum( blockIdx.x, blockbucket, nblocks ) ;
-            printf("Performing cumsum over blocks\n");
         }
     }
     else

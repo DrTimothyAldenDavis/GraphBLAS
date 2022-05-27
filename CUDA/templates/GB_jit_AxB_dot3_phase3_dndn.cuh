@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // AxB_dot3_phase3_dndn.cu 
 //------------------------------------------------------------------------------
@@ -34,7 +33,7 @@
 #pragma once
 #include <limits>
 #include <cstdint>
-#include "matrix.h"
+#include "GB_cuda_kernel.h"
 
 #include <cooperative_groups.h>
 
