@@ -30,6 +30,19 @@
 //  GrB_Matrix B           <- input matrix B
 //  int sz                 <- size parameter (not used) 
 
+/* fixme: This kernel needs to be split into 4 methods:
+
+        (A bitmap) * (B bitmap)
+        (A full ) * (B bitmap)
+        (A bitmap) * (B full)
+        (A full) * (B full)
+
+    The buckets are not needed at all.  A single pass can be done.
+    C and M would still be sparse or hypersparse.
+
+    See also denseDotProduct.cu.
+*/
+
 #pragma once
 #include <limits>
 #include <cstdint>
@@ -135,10 +148,10 @@ __global__ void AxB_dot3_phase3_dndn
          int64_t yend = Bp[j+1];
          nnzB = yend - pB;
 
-        if (threadIdx.x == 0 ){
-            printf("tid=%d, i,j = %d,%d  nnzA= %d, nnzB=%d\n",
-                   threadIdx.x, (int)i,(int)j,  (int)nnzA, (int)nnzB);
-        }
+//      if (threadIdx.x == 0 ){
+//          printf("tid=%d, i,j = %d,%d  nnzA= %d, nnzB=%d\n",
+//                 threadIdx.x, (int)i,(int)j,  (int)nnzA, (int)nnzB);
+//      }
         __syncthreads();
 
     
