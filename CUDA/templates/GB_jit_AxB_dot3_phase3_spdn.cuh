@@ -15,6 +15,27 @@
 //  matrix<T_B> *B         <- B matrix to multiply, dense in sparse format? 
 //  int sz                 <- size hint for smaller vector
 //******************************************************************************
+
+/* fixme: This kernel needs to be split into 4 methods.  Perhaps a single
+    file with #ifdef's could be used to keep the code size down.
+
+        (A sparse or hypersparse) * (B bitmap)
+        (A sparse or hypersparse) * (B full)
+        (A bitmap) * (B sparse or hypersparse)
+        (A full) * (B sparse or hypersparse)
+
+    The buckets are not needed, unless the sparse matrix needs to be
+    split into "very sparse vectors" (one thread per dot) and "longer
+    sparse vectors" (one warp or threadblock cooperates on a single dot).
+    Then only 2 buckets are needed ... or the work could be done in a single
+    pass, and the test for these 2 cases could be done on the fly.
+
+    The buckets are entirely different from the general case when both A and
+    B are sparse.
+
+    C and M would still be sparse or hypersparse.
+*/
+
 #pragma once
 
 #include <limits>

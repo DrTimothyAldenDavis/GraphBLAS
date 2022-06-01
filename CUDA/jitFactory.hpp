@@ -27,6 +27,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/* fixme:  need to split this into multiple files.  One for the general
+bucket-based dot3 method (A and B both sparse/hyper), one for non-bucket-
+based dot3 methods (A and/or B bitmap/full), one for reduction, etc
+
+Otherwise, this will get too large when constructing all the CUDA kernels
+for all of GraphBLAS.
+*/
+
 /*
   Extended example for building on-the-fly kernels with C interface.
   Simple examples demonstrating different ways to load source code
@@ -48,6 +56,7 @@ extern "C" {
 #include "GB_cuda_error.h"
 #include "../rmm_wrap/rmm_wrap.h"
 
+// fixme: C11 is already required for all of GraphBLAS.  No need to test here:
 #if __cplusplus >= 201103L
 
 /**
@@ -395,6 +404,38 @@ private:
     std::string Opname;
     // TODO: make sure this works with different geometry
 
+    /* fixme: the final bucket-based dot3 method should only have the following
+        buckets:
+
+        case GB_BUCKET_ZOMBIE : // C(i,j) is a zombie (not a bucket)
+        case GB_BUCKET_VSSP :       // one vector very sparse, other longer
+        case GB_BUCKET_VSVS_256 :   // both vectors very sparse
+        case GB_BUCKET_VSVS_64 :    // (or just one VSVS bucket, not 4)
+        case GB_BUCKET_VSVS_16 :
+        case GB_BUCKET_VSVS_4 :
+        case GB_BUCKET_MERGEPATH :  // both vectors are long
+        case GB_BUCKET_WARP_IX :    // currently unused
+
+    If unused buckets are removed, this list becomes very short.  Just
+    4 buckets:
+
+        case GB_BUCKET_ZOMBIE : // C(i,j) is a zombie (not a bucket)
+        case GB_BUCKET_VSSP :       // one vector very sparse, other longer
+        case GB_BUCKET_VSVS :       // both vectors very sparse
+        case GB_BUCKET_MERGEPATH :  // both vectors are long
+
+    These buckets should be handled in different kernels, mostly non-bucket-
+    based:
+
+        case GB_BUCKET_DNDN :   both A and B bitmap/full
+
+        case GB_BUCKET_DNVS :   A bitmap/full, B sparse/hyper
+        case GB_BUCKET_DNSP :   A bitmap/full, B very sparse/hyper
+
+        case GB_BUCKET_VSDN :   A sparse/hyper, B bitmap/full
+        case GB_BUCKET_SPDN :   A very sparse/hyper, B bitmap/full
+    */
+
     switch (bucket_code_)
     {
 
@@ -410,9 +451,8 @@ private:
         //--------------------------------------------------------------
 
         // both A(:,i) and B(:,j) are dense
-        case GB_BUCKET_DNDN :
+        case GB_BUCKET_DNDN : // fixme: remove bucket, use dedicated kernel
             Opname = "phase3_dndn" ;
-
             blocksz = 32;
             gridsz = ( Cnz -1 + blocksz)/blocksz;
             break ;
@@ -422,9 +462,9 @@ private:
         //--------------------------------------------------------------
 
         // A(:,i) is dense and B(:,j) is very sparse (< 256 entries)
-        case GB_BUCKET_DNVS :
+        case GB_BUCKET_DNVS :  // fixme: remove bucket, use dedicated kernel
         // A(:,i) is very sparse (< 256 entries) and B(:,j) is dense
-        case GB_BUCKET_VSDN :
+        case GB_BUCKET_VSDN : // fixme: remove bucket, use dedicated kernel
             sz = 64 ;
             Opname = "phase3_spdn" ;
             blocksz = 32;
@@ -432,9 +472,9 @@ private:
             break ;
 
         // A(:,i) is dense and B(:,j) is sparse (>= 256 entries)
-        case GB_BUCKET_DNSP :
+        case GB_BUCKET_DNSP : // fixme: remove bucket, use dedicated kernel
         // A(:,i) is sparse (>= 256 entries) and B(:,j) is dense
-        case GB_BUCKET_SPDN :
+        case GB_BUCKET_SPDN : // fixme: remove bucket, use dedicated kernel
             sz = 256 ;
             Opname = "phase3_spdn" ;
             blocksz = 32;
@@ -458,6 +498,7 @@ private:
 
         // let len = nnz (A (:,i) + nnz (B (:,j)), then:
 
+        // fixme: do we need 4 buckets?  currently only using 1 for all these
         case GB_BUCKET_VSVS_256 : sz += 256-64 ;
         case GB_BUCKET_VSVS_64 :  sz += 64-16  ;
         case GB_BUCKET_VSVS_16 :  sz += 16-4   ;
@@ -559,7 +600,6 @@ public:
                     file_callback)
                .set_kernel_inst(  kernel_name , { A->type->name, op->op->ztype->name, "true" })
                .configure(grid, block)
-
                // FIXME: GB_ADD is hardcoded into kernel for now
                .launch( A, temp_scalar, N, is_sparse);
 
