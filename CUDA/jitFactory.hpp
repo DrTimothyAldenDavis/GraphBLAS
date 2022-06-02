@@ -414,24 +414,18 @@ private:
         case GB_BUCKET_VSVS_16 :
         case GB_BUCKET_VSVS_4 :
         case GB_BUCKET_MERGEPATH :  // both vectors are long
-        case GB_BUCKET_WARP_IX :    // currently unused
-
-    If unused buckets are removed, this list becomes very short.  Just
-    4 buckets:
-
-        case GB_BUCKET_ZOMBIE : // C(i,j) is a zombie (not a bucket)
-        case GB_BUCKET_VSSP :       // one vector very sparse, other longer
-        case GB_BUCKET_VSVS :       // both vectors very sparse
-        case GB_BUCKET_MERGEPATH :  // both vectors are long
+        case GB_BUCKET_WARP_IX :    // currently unused; remove this
 
     These buckets should be handled in different kernels, mostly non-bucket-
     based:
 
         case GB_BUCKET_DNDN :   both A and B bitmap/full
 
+        case GB_BUCKET_ZOMBIE : // C(i,j) is a zombie (not a bucket)
         case GB_BUCKET_DNVS :   A bitmap/full, B sparse/hyper
         case GB_BUCKET_DNSP :   A bitmap/full, B very sparse/hyper
 
+        case GB_BUCKET_ZOMBIE : // C(i,j) is a zombie (not a bucket)
         case GB_BUCKET_VSDN :   A sparse/hyper, B bitmap/full
         case GB_BUCKET_SPDN :   A very sparse/hyper, B bitmap/full
     */
