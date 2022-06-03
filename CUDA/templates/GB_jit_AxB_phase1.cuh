@@ -75,7 +75,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
         b = (((b == 0) * (condition)) * (bucket+1)) + b ;
 
 //  if (ia_last < ib_first || ib_last < ia_first)
-    { 
+    {
 
         //----------------------------------------------------------------------
         // pattern of A(:,i) and B(:,j) do not overlap
@@ -110,11 +110,11 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
     }
 //  else if (ainz == vlen)
     {
- 
+
         //----------------------------------------------------------------------
         // A(:,i) is dense and B(:,j) is sparse
         //----------------------------------------------------------------------
- 
+
         // No search of A(:,i) is needed.  Total work is O(bjnz), via a linear
         // time scan of B(:,j).  Since A(:,i) is dense and B(:,j) is non-empty,
         // the intersection is non-empty, so C(i,j) cannot be a zombie.
@@ -123,7 +123,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
         // Two buckets are used, depending on bjnz.
 //      GB_BUCKET (ainz == vlen && bjnz <  256, GB_BUCKET_DNVS) ;
 //      GB_BUCKET (ainz == vlen && bjnz >= 256, GB_BUCKET_DNSP) ;
- 
+
     }
 //  else if (bjnz == vlen)
     {
@@ -291,6 +291,8 @@ __global__ void AxB_phase1
     const int64_t bnz = GB_nnz(B);
     const bool B_is_hyper = B->h != NULL ;
 
+    int64_t my_bucket[NBUCKETS];
+
     // int64_t *restrict Cp = C->p ;    // copy of Mp
     // int64_t *restrict Ch = C->h ;    // copy of Mh
     int64_t *__restrict__ Ci = C->i ;       // for zombies, or bucket assignment
@@ -298,7 +300,7 @@ __global__ void AxB_phase1
     // Ci [p] for an entry C(i,j) contains either GB_FLIP(i) if C(i,j) is a
     // zombie, or (k << 4) + bucket otherwise, where C(:,j) is the kth vector
     // of C (j = Ch [k] if hypersparse or j = k if standard sparse), and
-    // where bucket is the bucket assignment for C(i,j). 
+    // where bucket is the bucket assignment for C(i,j).
     // bucket can be recovered from Ci by bucket = Ci & 0xF
 
     //--------------------------------------------------------------------------
@@ -309,10 +311,10 @@ __global__ void AxB_phase1
     // ASSERT (gridDim.x <= mnz) ;
 
     // each thread uses NBUCKETS bucket counters, held in register
-    int64_t my_bucket_0  = 0 ;
-    int64_t my_bucket_1  = 0 ;
-    int64_t my_bucket_2  = 0 ;
-    int64_t my_bucket_3  = 0 ;
+    #pragma unroll
+    for(int b = 0; b < NBUCKETS; ++b) {
+        my_bucket[b] = 0;
+    }
 
     __shared__ int64_t ks [chunk_size] ;
 
@@ -328,7 +330,7 @@ __global__ void AxB_phase1
     int64_t chunk_max= (mnz + chunk_size -1)/chunk_size;
     for ( int64_t chunk = blockIdx.x;
                   chunk < chunk_max;
-                  chunk += gridDim.x ) 
+                  chunk += gridDim.x )
     {
 
         //----------------------------------------------------------------------
@@ -339,7 +341,7 @@ __global__ void AxB_phase1
         // This iteration "chunk" computes Ci and Cx [pfirst...plast-1], using
         // Mi and Mx [pfirst:plast-1].  All threads in the thread block are
         // used for this "chunk".
-        pfirst = chunk_size * chunk ; 
+        pfirst = chunk_size * chunk ;
         plast  = GB_IMIN (chunk_size * (chunk+1), mnz) ;
 
         // TODO: isn't this chunk_end just equal plast-pfirst?
@@ -347,7 +349,7 @@ __global__ void AxB_phase1
         if (mnz > chunk_size)
         {
             chunk_end = GB_IMIN (  chunk_size,
-                                   mnz - chunk_size*(chunk) ) ; 
+                                   mnz - chunk_size*(chunk) ) ;
         }
         else
         {
@@ -381,7 +383,7 @@ __global__ void AxB_phase1
             // search for k values for each entry pfirst:plast
             float slope = (float)(nk) / (float)(chunk_end) ;
             for (int64_t kk = threadIdx.x ; kk < chunk_end ; kk += blockDim.x)
-            {   
+            {
                 // get a rough estimate of k for the kkth entry in ks
                 int64_t k = kfirst + slope*(float)(kk) ;
                 // look for p in Mp, where p is in range pfirst:plast-1
@@ -413,7 +415,7 @@ __global__ void AxB_phase1
             int64_t j = k ; // HACK, does not need to be initialized here
 
             if ( MX ( pM ) )
-            { 
+            {
 
                 // do a binary search for k (and j) that has this entry M(i,j)
 
@@ -472,20 +474,15 @@ __global__ void AxB_phase1
             {
                 // mark C(i,j) is a zombie
                 Ci [pM] = GB_FLIP (i) << 4 ;
-                my_bucket_0++ ; // 0 is the zombie bucket
+                my_bucket[0]++ ; // 0 is the zombie bucket
             }
             else
             {
                 // place C(i,j) in its bucket
                 Ci [pM] = (k << 4) + bucket ;
                 // GB_BUCKET_COUNT (bucket) ;
-                switch (bucket)
-                {
-//                  case  0: my_bucket_0++  ; break ;
-                    case  1: my_bucket_1++  ; break ;
-                    case  2: my_bucket_2++  ; break ;
-                    case  3: my_bucket_3++  ; break ;
-                }
+                if(bucket > 0) my_bucket[bucket]++ ;
+
             }
         }
     }
@@ -506,20 +503,19 @@ __global__ void AxB_phase1
     int64_t *nanobucket =
         nanobuckets + blockIdx.x * (NBUCKETS * blockDim.x) + threadIdx.x ;
 
-    #define CUMSUM_AND_STORE_NANOBUCKET(bucket) \
-        if( threadIdx.x == blockDim.x-1)                                    \
-        {   blockbucket [blockIdx.x + bucket * gridDim.x] =                 \
-            my_bucket_ ## bucket ;   }                                      \
-            __syncthreads();                                                \
-        BlockCumSum(temp_storage).ExclusiveSum                              \
-            ( my_bucket_ ## bucket, my_bucket_ ## bucket) ;                 \
-            __syncthreads();                                                \
-        nanobucket [bucket * blockDim.x] = my_bucket_ ## bucket ;
+    #pragma unroll
+    for(int b = 0; b < NBUCKETS; ++b) {
+        if( threadIdx.x == blockDim.x-1) {
+            blockbucket [blockIdx.x + b * gridDim.x] = my_bucket[b] ;
+        }
 
-    CUMSUM_AND_STORE_NANOBUCKET (0) ;
-    CUMSUM_AND_STORE_NANOBUCKET (1) ;
-    CUMSUM_AND_STORE_NANOBUCKET (2) ;
-    CUMSUM_AND_STORE_NANOBUCKET (3) ;
+        __syncthreads();
+        BlockCumSum(temp_storage).ExclusiveSum( my_bucket[b], my_bucket[b]) ;
+
+        __syncthreads();
+
+        nanobucket [b * blockDim.x] = my_bucket[b] ;
+    }
 
     // The last thread now has the sum of all nanobuckets, which is then saved
     // to the global bucket counts.   blockbucket is an array of size
@@ -527,16 +523,12 @@ __global__ void AxB_phase1
     // The last thread saves its result in the column of this thread block.
     // Note that this write to global memory is not coalesced.
 
-    #define STORE_GLOBAL_BUCKET_COUNT(bucket)                    \
-        blockbucket [bucket * gridDim.x + blockIdx.x] +=         \
-            my_bucket_ ## bucket ;
-
-    if (threadIdx.x == blockDim.x - 1 ) 
+    if (threadIdx.x == blockDim.x - 1 )
     {
-        STORE_GLOBAL_BUCKET_COUNT (0) ;
-        STORE_GLOBAL_BUCKET_COUNT (1) ;
-        STORE_GLOBAL_BUCKET_COUNT (2) ;
-        STORE_GLOBAL_BUCKET_COUNT (3) ;
+        #pragma unroll
+        for(int b = 0; b < NBUCKETS; ++b) {
+            blockbucket [b * gridDim.x + blockIdx.x] += my_bucket[b];
+        }
     }
 }
 
