@@ -300,7 +300,7 @@ __global__ void AxB_dot3_phase3_mp
         }
         else
         {
-           printf(" dot %d is a zombie\n", pair_id);
+           // printf(" dot %d is a zombie\n", pair_id);
            zc++;
            Ci[pair_id]=GB_FLIP (i) ;
         }

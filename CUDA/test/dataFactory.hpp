@@ -239,7 +239,7 @@ class SpGEMM_problem_generator {
     int64_t Cnz;
     int64_t *Bucket = nullptr;
 
-    int64_t BucketStart[13];
+    int64_t BucketStart[NBUCKETS+1];
     unsigned seed = 13372801;
     bool ready = false;
 
@@ -348,16 +348,16 @@ class SpGEMM_problem_generator {
 
        //Fill buckets with random extents such that they sum to Cnz, set BucketStart
            BucketStart[0] = 0; 
-           BucketStart[12] = Cnz;
-           for (int b = 1; b < 12; ++b){
-              BucketStart[b] = BucketStart[b-1] + (Cnz / 12);
+           BucketStart[NBUCKETS] = Cnz;
+           for (int b = 1; b < NBUCKETS; ++b){
+              BucketStart[b] = BucketStart[b-1] + (Cnz / NBUCKETS);
               //std::cout<< "bucket "<< b<<" starts at "<<BucketStart[b]<<std::endl;
               for (int j = BucketStart[b-1]; j < BucketStart[b]; ++j) { 
                 Bucket[j] = b ;
               }
            }
-           int b = 11;
-           for (int j = BucketStart[11]; j < BucketStart[12]; ++j) { 
+           int b = GB_BUCKET_MERGEPATH;
+           for (int j = BucketStart[GB_BUCKET_MERGEPATH]; j < BucketStart[NBUCKETS]; ++j) { 
                 Bucket[j] = b ; 
            }
        }
@@ -369,8 +369,8 @@ class SpGEMM_problem_generator {
            }
 
            BucketStart[0] = 0;
-           BucketStart[12] = Cnz;
-           for (int b= 0; b<12; ++b){
+           BucketStart[NBUCKETS] = Cnz;
+           for (int b= 0; b<NBUCKETS; ++b){
               if (b <= fill_bucket) BucketStart[b] = 0;
               if (b  > fill_bucket) BucketStart[b] = Cnz;
               //std::cout<< " one  bucket "<< b<<"starts at "<<BucketStart[b]<<std::endl;
