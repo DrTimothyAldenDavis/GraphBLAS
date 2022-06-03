@@ -338,6 +338,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     GB_FREE_WORKSPACE ;
 
+    CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
     CHECK_CUDA_SIMPLE(cudaStreamDestroy(stream));
     return GrB_SUCCESS; 
 }
