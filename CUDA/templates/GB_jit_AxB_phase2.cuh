@@ -114,7 +114,7 @@ __inline__ __device__ T block_ReduceSum(thread_block g, T val)
   }
   __syncthreads();              // Wait for all partial reductions
 
-  if (wid > 0 ) return val ;
+  if (wid > 0 ) return val ;git2
 
   //read from shared memory only if that warp existed
   val = (threadIdx.x <  (blockDim.x / warpSize ) ) ? shared[lane] : 0;
