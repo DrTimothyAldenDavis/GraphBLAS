@@ -41,8 +41,7 @@
 // GB_BUCKET_VSSP:      A(:,i) is sparse and B(:,j) is very sparse, or
 //                      visa versa
 
-// GB_BUCKET_VSVS_256   both A(:,i) and B(:,j) are very sparse.
-//                      TODO: rename this GB_BUCKET_VSVS
+// GB_BUCKET_VSVS_*     both A(:,i) and B(:,j) are very sparse.
 
 // GB_BUCKET_MERGEPATH  both A(:,i) and B(:,j) are sparse, but neither are
 //                      very sparse
@@ -106,7 +105,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_dndn.cu.jit
 
-        GB_BUCKET (bjnz == vlen && ainz == vlen && vlen > 256, GB_BUCKET_DNDN) ;
+//      GB_BUCKET (bjnz == vlen && ainz == vlen && vlen > 256, GB_BUCKET_DNDN) ;
 
     }
 //  else if (ainz == vlen)
@@ -122,8 +121,8 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_spdn.cu.jit
         // Two buckets are used, depending on bjnz.
-        GB_BUCKET (ainz == vlen && bjnz <  256, GB_BUCKET_DNVS) ;
-        GB_BUCKET (ainz == vlen && bjnz >= 256, GB_BUCKET_DNSP) ;
+//      GB_BUCKET (ainz == vlen && bjnz <  256, GB_BUCKET_DNVS) ;
+//      GB_BUCKET (ainz == vlen && bjnz >= 256, GB_BUCKET_DNSP) ;
  
     }
 //  else if (bjnz == vlen)
@@ -139,8 +138,8 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_spdn.cu.jit
         // Two buckets are used, depending on ainz.
-        GB_BUCKET (bjnz == vlen && ainz <  256, GB_BUCKET_VSDN) ;
-        GB_BUCKET (bjnz == vlen && ainz >= 256, GB_BUCKET_SPDN) ;
+//      GB_BUCKET (bjnz == vlen && ainz <  256, GB_BUCKET_VSDN) ;
+//      GB_BUCKET (bjnz == vlen && ainz >= 256, GB_BUCKET_SPDN) ;
 
     }
 //  else if ((ainz > 32 * bjnz && bjnz < 256)
@@ -171,7 +170,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
         //----------------------------------------------------------------------
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vsvs.cu.jit
-        // GB_BUCKET (ainz + bjnz <= 4, GB_BUCKET_VSVS_4) ;
+//      GB_BUCKET (ainz + bjnz <= 4, GB_BUCKET_VSVS_4) ;
 
         // This bucket is currently unused.
 
@@ -197,7 +196,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
         //----------------------------------------------------------------------
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vsvs.cu.jit
-        // GB_BUCKET (ainz + bjnz <= 64, GB_BUCKET_VSVS_64) ;
+        GB_BUCKET (ainz + bjnz <= 64, GB_BUCKET_VSVS) ;
 
         // This bucket is currently unused.
 
@@ -210,7 +209,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
         //----------------------------------------------------------------------
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vsvs.cu.jit
-        GB_BUCKET (ainz + bjnz <= 256, GB_BUCKET_VSVS_256) ;
+//      GB_BUCKET (ainz + bjnz <= 256, GB_BUCKET_VSVS_256) ;
 
         // TODO: replace this with a single bucket, GB_BUCKET_VSVS.
 
@@ -241,21 +240,21 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 //------------------------------------------------------------------------------
 
 // GB_AxB_cuda_dot3_phase1 is a CUDA kernel that scans all entries in C and
-// assigns them to each of the 12 buckets.  The output is a 12-by-blockDim
-// array of bucket counts, per threadblock (the nanobucket array).  Each of the
-// blockDim.x threads has its own set of 12 bucket counts.  Each threadblock in
-// this kernel then computes the first part of the cumulative sum of the
-// nanobuckets, and writes it to global memory.
+// assigns them to each of the NBUCKETS buckets.  The output is a
+// NBUCKETS-by-blockDim array of bucket counts, per threadblock (the nanobucket
+// array).  Each of the blockDim.x threads has its own set of NBUCKETS bucket
+// counts.  Each threadblock in this kernel then computes the first part of the
+// cumulative sum of the nanobuckets, and writes it to global memory.
 
 // The kernel also computes Ci, of size nnz(C), which contains the
 // zombie assignment or bucket assignment for non-zombies in C.
 
-template<typename T_M, uint64_t srcode>
+template<typename T_M, uint64_t srcode, int chunk_size = 128>
 __global__ void AxB_phase1
 (
     // outputs, preallocated in global memory:
-    int64_t *nanobuckets,       // array of size 12-blockDim.x-by-gridDim.x
-    int64_t *blockbucket,       // bucket counts, of size 12-by-gridDim.x
+    int64_t *nanobuckets,       // array of size NBUCKETS-blockDim.x-by-gridDim.x
+    int64_t *blockbucket,       // bucket counts, of size NBUCKETS-by-gridDim.x
     // input/output:
     GrB_Matrix C,               // final output matrix
     // inputs, not modified:
@@ -309,46 +308,13 @@ __global__ void AxB_phase1
     // ASSERT (mnz > 0) ;
     // ASSERT (gridDim.x <= mnz) ;
 
-    // each thread uses 12 bucket counters, held in register
+    // each thread uses NBUCKETS bucket counters, held in register
     int64_t my_bucket_0  = 0 ;
     int64_t my_bucket_1  = 0 ;
     int64_t my_bucket_2  = 0 ;
     int64_t my_bucket_3  = 0 ;
-    int64_t my_bucket_4  = 0 ;
-    int64_t my_bucket_5  = 0 ;
-    int64_t my_bucket_6  = 0 ;
-    int64_t my_bucket_7  = 0 ;
-    int64_t my_bucket_8  = 0 ;
-    int64_t my_bucket_9  = 0 ;
-    int64_t my_bucket_10 = 0 ;
-    int64_t my_bucket_11 = 0 ;
 
-    // Registers cannot be indexed (!) so this macro is used instead.
-    // The bucket registers are indexed by the GB_bucket_code enum.
-    #define GB_BUCKET_COUNT(bucket)                 \
-    {                                               \
-        switch (bucket)                             \
-        {                                           \
-            case  0: my_bucket_0++  ; break ;       \
-            case  1: my_bucket_1++  ; break ;       \
-            case  2: my_bucket_2++  ; break ;       \
-            case  3: my_bucket_3++  ; break ;       \
-            case  4: my_bucket_4++  ; break ;       \
-            case  5: my_bucket_5++  ; break ;       \
-            case  6: my_bucket_6++  ; break ;       \
-            case  7: my_bucket_7++  ; break ;       \
-            case  8: my_bucket_8++  ; break ;       \
-            case  9: my_bucket_9++  ; break ;       \
-            case 10: my_bucket_10++ ; break ;       \
-            case 11: my_bucket_11++ ; break ;       \
-        }                                           \
-    }
-
-     #define POINTERCHUNK 256
-     #define CHUNKSIZE 128
-
-//  __shared__ int64_t Mps [POINTERCHUNK] ;
-    __shared__ int64_t ks [CHUNKSIZE] ;
+    __shared__ int64_t ks [chunk_size] ;
 
     __syncthreads ( ) ;
 
@@ -359,7 +325,7 @@ __global__ void AxB_phase1
     // all threads in this block will compute the same values for these:
     int64_t pfirst, plast, kfirst, klast ;
 
-    int64_t chunk_max= (mnz + CHUNKSIZE -1)/CHUNKSIZE;
+    int64_t chunk_max= (mnz + chunk_size -1)/chunk_size;
     for ( int64_t chunk = blockIdx.x;
                   chunk < chunk_max;
                   chunk += gridDim.x ) 
@@ -373,15 +339,15 @@ __global__ void AxB_phase1
         // This iteration "chunk" computes Ci and Cx [pfirst...plast-1], using
         // Mi and Mx [pfirst:plast-1].  All threads in the thread block are
         // used for this "chunk".
-        pfirst = CHUNKSIZE * chunk ; 
-        plast  = GB_IMIN (CHUNKSIZE * (chunk+1), mnz) ;
+        pfirst = chunk_size * chunk ; 
+        plast  = GB_IMIN (chunk_size * (chunk+1), mnz) ;
 
         // TODO: isn't this chunk_end just equal plast-pfirst?
         int64_t chunk_end ;
-        if (mnz > CHUNKSIZE)
+        if (mnz > chunk_size)
         {
-            chunk_end = GB_IMIN (  CHUNKSIZE,
-                                   mnz - CHUNKSIZE*(chunk) ) ; 
+            chunk_end = GB_IMIN (  chunk_size,
+                                   mnz - chunk_size*(chunk) ) ; 
         }
         else
         {
@@ -405,49 +371,6 @@ __global__ void AxB_phase1
         //----------------------------------------------------------------------
         // fill ks to find all indices
         //----------------------------------------------------------------------
-
-#if 0
-        if (nk <= POINTERCHUNK)
-        {
-
-            //------------------------------------------------------------------
-            // nk is small, so cache Mp into Mps
-            //------------------------------------------------------------------
-
-            // make a shared-memory copy of Mp [kfirst:klast] but prepend 0
-            // and append mnz, as sentinel values
-
-            // Mps [0:nk] = [0, Mp [kfirst:klast], mnz]
-            Mps [0] = 0 ;
-            for (int64_t kk = threadIdx.x ; kk < nk ; kk += blockDim.x)
-            {
-                // all of Mps [0:nk-1] are in range pfirst:plast-1
-                Mps [kk+1] = Mp [kk + kfirst] ;
-            }
-            Mps [nk+1] = mnz ;
-
-            // Mps [k-kfirst+1] holds a cached copy of Mp [k]
-            #define MP(k) Mps [k - kfirst + 1]
-
-            __syncthreads ( ) ;
-
-            // search for k values for each entry pfirst:plast
-            float slope = (float)(nk) / (float)(chunk_end) ;
-            for (int64_t kk = threadIdx.x ; kk < chunk_end ; kk += blockDim.x)
-            {   
-                // get a rough estimate of k for the kkth entry in ks
-                int64_t k = kfirst + slope*(float)(kk) ;
-                // look for p in Mp, where p is in range pfirst:plast-1
-                // where pfirst >= 0 and plast < mnz
-                int64_t p = kk + pfirst ;
-                // linear-time search for the k value of the pth entry
-                while ( MP ( k + 1 ) <= p ) k++ ;
-                while ( MP ( k     ) >  p ) k-- ;
-                ks [kk] = k ;
-            }
-        }
-        else
-#endif
 
         {
 
@@ -544,6 +467,7 @@ __global__ void AxB_phase1
                 }
             }
 
+            // TODO: remove the if statement
             if (bucket == GB_BUCKET_ZOMBIE)
             {
                 // mark C(i,j) is a zombie
@@ -554,7 +478,14 @@ __global__ void AxB_phase1
             {
                 // place C(i,j) in its bucket
                 Ci [pM] = (k << 4) + bucket ;
-                GB_BUCKET_COUNT (bucket) ;
+                // GB_BUCKET_COUNT (bucket) ;
+                switch (bucket)
+                {
+//                  case  0: my_bucket_0++  ; break ;
+                    case  1: my_bucket_1++  ; break ;
+                    case  2: my_bucket_2++  ; break ;
+                    case  3: my_bucket_3++  ; break ;
+                }
             }
         }
     }
@@ -569,8 +500,8 @@ __global__ void AxB_phase1
     __shared__ typename BlockCumSum::TempStorage temp_storage ;
 
     // The taskbucket for this thread block is an array of size
-    // 12-by-blockDim.x, held by row.  Each thread owns one column of this
-    // taskbucket, the nanobucket.  The nanobucket is a column of length 12,
+    // NBUCKETS-by-blockDim.x, held by row.  Each thread owns one column of this
+    // taskbucket, the nanobucket.  The nanobucket is a column of length NBUCKETS,
     // with stride equal to blockDim.x.
     int64_t *nanobucket =
         nanobuckets + blockIdx.x * (NBUCKETS * blockDim.x) + threadIdx.x ;
@@ -589,18 +520,10 @@ __global__ void AxB_phase1
     CUMSUM_AND_STORE_NANOBUCKET (1) ;
     CUMSUM_AND_STORE_NANOBUCKET (2) ;
     CUMSUM_AND_STORE_NANOBUCKET (3) ;
-    CUMSUM_AND_STORE_NANOBUCKET (4) ;
-    CUMSUM_AND_STORE_NANOBUCKET (5) ;
-    CUMSUM_AND_STORE_NANOBUCKET (6) ;
-    CUMSUM_AND_STORE_NANOBUCKET (7) ;
-    CUMSUM_AND_STORE_NANOBUCKET (8) ;
-    CUMSUM_AND_STORE_NANOBUCKET (9) ;
-    CUMSUM_AND_STORE_NANOBUCKET (10) ;
-    CUMSUM_AND_STORE_NANOBUCKET (11) ;
 
     // The last thread now has the sum of all nanobuckets, which is then saved
     // to the global bucket counts.   blockbucket is an array of size
-    // 12-by-gridDim.x, held by row, with one column per thread block.
+    // NBUCKETS-by-gridDim.x, held by row, with one column per thread block.
     // The last thread saves its result in the column of this thread block.
     // Note that this write to global memory is not coalesced.
 
@@ -614,14 +537,6 @@ __global__ void AxB_phase1
         STORE_GLOBAL_BUCKET_COUNT (1) ;
         STORE_GLOBAL_BUCKET_COUNT (2) ;
         STORE_GLOBAL_BUCKET_COUNT (3) ;
-        STORE_GLOBAL_BUCKET_COUNT (4) ;
-        STORE_GLOBAL_BUCKET_COUNT (5) ;
-        STORE_GLOBAL_BUCKET_COUNT (6) ;
-        STORE_GLOBAL_BUCKET_COUNT (7) ;
-        STORE_GLOBAL_BUCKET_COUNT (8) ;
-        STORE_GLOBAL_BUCKET_COUNT (9) ;
-        STORE_GLOBAL_BUCKET_COUNT (10) ;
-        STORE_GLOBAL_BUCKET_COUNT (11) ;
     }
 }
 

@@ -18,11 +18,11 @@ __global__
 void AxB_phase2end
         (
                 // input, not modified:
-                const int64_t *__restrict__ nanobuckets,    // array of size 12-blockDim.x-by-nblocks
-                const int64_t *__restrict__ blockbucket,    // global bucket count, of size 12*nblocks
+                const int64_t *__restrict__ nanobuckets,    // array of size NBUCKETS-blockDim.x-by-nblocks
+                const int64_t *__restrict__ blockbucket,    // global bucket count, of size NBUCKETS*nblocks
                 // output:
-                const int64_t *__restrict__ bucketp,        // global bucket cumsum, of size 13
-                int64_t *__restrict__ bucket,         // global buckets, of size cnz (== mnz)
+                const int64_t *__restrict__ bucketp,        // global bucket cumsum, of size NBUCKETS+1
+                int64_t *__restrict__ bucket,               // global buckets, of size cnz (== mnz)
                 const int64_t *__restrict__ offset,         // global offsets, for each bucket
                 // inputs, not modified:
                 const GrB_Matrix C,            // output matrix
@@ -49,7 +49,7 @@ void AxB_phase2end
     //--------------------------------------------------------------------------
 
     // The taskbucket for this threadblock is an array of size
-    // 12-by-blockDim.x, held by row.  It forms a 2D array within the 3D
+    // NBUCKETS-by-blockDim.x, held by row.  It forms a 2D array within the 3D
     // nanobuckets array.
     const int64_t *taskbucket = nanobuckets + blockIdx.x * (NBUCKETS * blockDim.x) ;
 
@@ -57,11 +57,11 @@ void AxB_phase2end
     //                                           blockbucket[blockIdx.x*gridDim.x+blockIdx.x]);
 
     // Each thread in this threadblock owns one column of this taskbucket, for
-    // its set of 12 nanobuckets.  The nanobuckets are a column of length 12,
+    // its set of NBUCKETS nanobuckets.  The nanobuckets are a column of length NBUCKETS,
     // with stride equal to blockDim.x.
     const int64_t *nanobucket = taskbucket + threadIdx.x;
 
-    // Each thread loads its 12 nanobucket values into registers.
+    // Each thread loads its NBUCKETS nanobucket values into registers.
 #define LOAD_NANOBUCKET(bucket)                     \
         int64_t my_bucket_ ## bucket =                  \
             nanobucket [bucket * blockDim.x]        \
@@ -72,16 +72,8 @@ void AxB_phase2end
     LOAD_NANOBUCKET (1) ;
     LOAD_NANOBUCKET (2) ;
     LOAD_NANOBUCKET (3) ;
-    LOAD_NANOBUCKET (4) ;
-    LOAD_NANOBUCKET (5) ;
-    LOAD_NANOBUCKET (6) ;
-    LOAD_NANOBUCKET (7) ;
-    LOAD_NANOBUCKET (8) ;
-    LOAD_NANOBUCKET (9) ;
-    LOAD_NANOBUCKET (10) ;
-    LOAD_NANOBUCKET (11) ;
 
-    // Now each thread has an index into the global set of 12 buckets,
+    // Now each thread has an index into the global set of NBUCKETS buckets,
     // held in bucket, of where to place its own entries.
 
     //--------------------------------------------------------------------------
@@ -129,7 +121,7 @@ void AxB_phase2end
             // place the entry C(i,j) in the global bucket it belongs to.
 
             // TODO: these writes to global are not coalesced.  Instead: each
-            // threadblock could buffer its writes to 12 buffers and when the
+            // threadblock could buffer its writes to NBUCKETS buffers and when the
             // buffers are full they can be written to global.
             int ibucket = Ci[p] & 0xF;
             //printf(" thd: %d p,Ci[p] = %ld,%ld,%d\n", threadIdx.x, p, Ci[p], irow );
@@ -141,14 +133,6 @@ void AxB_phase2end
                 case  1: bucket [my_bucket_1++ ] = p ; break ;
                 case  2: bucket [my_bucket_2++ ] = p ; break ;
                 case  3: bucket [my_bucket_3++ ] = p ; break ;
-                case  4: bucket [my_bucket_4++ ] = p ; break ;
-                case  5: bucket [my_bucket_5++ ] = p ; break ;
-                case  6: bucket [my_bucket_6++ ] = p ; break ;
-                case  7: bucket [my_bucket_7++ ] = p ; break ;
-                case  8: bucket [my_bucket_8++ ] = p ; break ;
-                case  9: bucket [my_bucket_9++ ] = p ; break ;
-                case 10: bucket [my_bucket_10++] = p ; break ;
-                case 11: bucket [my_bucket_11++] = p ; break ;
                 default: break;
             }
 

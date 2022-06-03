@@ -68,9 +68,10 @@ extern "C"
         return (GB_ERROR (info, (GB_LOG, "CUDA died\n"))) ;                    \
     }
 
-// 12 buckets: computed by up to 11 kernel launches (zombies need no work...),
-// using 5 different kernels (with different configurations depending on the
-// bucket).
+// NBUCKETS buckets: computed by up to NBUCKETS-1 kernel launches (zombies need
+// no work...), using different kernels (with different configurations
+// depending on the bucket).
+
     #include "GB_cuda_buckets.h"
 extern "C"
 {
