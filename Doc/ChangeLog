@@ -1,3 +1,7 @@
+Version 7.1.1, June 3, 2022
+
+    * minor updates to documentation and error messages
+
 Version 7.1.0, May 20, 2022
 
     * added cube root: GxB_CBRT_FP* unary operators

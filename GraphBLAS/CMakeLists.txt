@@ -28,11 +28,13 @@ endif ( )
 # MacOS settings
 set ( CMAKE_MACOSX_RPATH TRUE )
 
-# version of SuiteSparse:GraphBLAS (must match ../CMakeLists.txt)
-set ( GraphBLAS_DATE "May 20, 2022" )
+# version must match ../CMakeLists.txt:
+
+# version of SuiteSparse:GraphBLAS
+set ( GraphBLAS_DATE "June 3, 2022" )
 set ( GraphBLAS_VERSION_MAJOR 7 )
 set ( GraphBLAS_VERSION_MINOR 1 )
-set ( GraphBLAS_VERSION_SUB   0 )
+set ( GraphBLAS_VERSION_SUB   1 )
 
 message ( STATUS "Building SuiteSparse:GraphBLAS version: v" ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}  " date: " ${GraphBLAS_DATE} )
 

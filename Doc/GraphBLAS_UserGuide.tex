@@ -944,6 +944,7 @@ into MATLAB R2021a.
     C=S+S:   MATLAB:  14.3368 GrB:   1.5539 speedup:     9.23
     C=S+B:   MATLAB:  15.5600 GrB:   1.5098 speedup:    10.31
     C=S(p,q) MATLAB:  95.6219 GrB:  15.9468 speedup:     6.00    \end{verbatim}
+}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -5575,6 +5576,12 @@ blob, constructed by
 Deserializing a vector is identical to deserializing a matrix;
 see Section \ref{matrix_deserialize_GxB} for more information.
 
+The blob is allocated with the \verb'malloc' function passed to
+\verb'GxB_init', or the ANSI C11 \verb'malloc' if \verb'GrB_init' was used
+to initialize GraphBLAS.  The blob must be freed by the matching \verb'free'
+method, either the \verb'free' function passed to \verb'GxB_init' or
+the ANSI C11 \verb'free' if \verb'GrB_init' was used.
+
 % Identical to \verb'GrB_Vector_deserialize', except that the descriptor
 % appears as the last parameter to control the number of threads used.
 
@@ -5655,10 +5662,15 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 } \end{mdframed}
 
 \verb'GxB_Matrix_serialize' is identical to \verb'GrB_Matrix_serialize', except
-that it does not require a pre-allocated blob.  Instead, it \verb'malloc''s the
-blob internally, and fills it with the serialized matrix.
-By default, LZ4 compression is used, but other options can be selected
-via the descriptor.
+that it does not require a pre-allocated blob.  Instead, it allocates the blob
+internally, and fills it with the serialized matrix.  By default, LZ4
+compression is used, but other options can be selected via the descriptor.
+
+The blob is allocated with the \verb'malloc' function passed to
+\verb'GxB_init', or the ANSI C11 \verb'malloc' if \verb'GrB_init' was used
+to initialize GraphBLAS.  The blob must be freed by the matching \verb'free'
+method, either the \verb'free' function passed to \verb'GxB_init' or
+the ANSI C11 \verb'free' if \verb'GrB_init' was used.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -13310,7 +13322,7 @@ The Octave/MATLAB analog of the code above is \verb'C=spones(C)'.
 The second case for where iso matrices and vectors are useful is to use them
 with operations that do not necessarily access all of their content.
 Suppose you have a matrix \verb'A' of arbitrarily large dimension (say
-\verb'n'-by-\verb'n' where \verb'n=2^60', of type \verb'GrB_FP64'.  A matrix
+\verb'n'-by-\verb'n' where \verb'n=2^60', of type \verb'GrB_FP64').  A matrix
 this large can be represented by SuiteSparse:GraphBLAS, but only in a
 hypersparse form.
 
@@ -14699,7 +14711,7 @@ The following instructions work on MacOS Big Sur (v11.3)
 and MacOS Monterey (12.1), using
 cmake 3.13 or later:
 
-First install Xcode (see \url{https://developer.apple.com/xcode},
+First install Xcode (see \url{https://developer.apple.com/xcode}),
 and then install the command line tools for Xcode:
 
     {\small
@@ -15172,7 +15184,7 @@ include file as \verb'/usr/local/include/GraphBLAS.h'.  This command fails:
 Revising my \verb'LD_LIBRARY_PATH' to put \verb'/usr/local/lib' first in the
 library directory order didn't help.  If you encounter this problem, try one of
 the following options (all four work for me, and link against the proper
-version (\verb'/usr/local/lib/libgraphblas.so.6.1.4' for example):
+version, \verb'/usr/local/lib/libgraphblas.so.6.1.4' for example):
 
     {\small
     \begin{verbatim}
@@ -15228,6 +15240,12 @@ GraphBLAS folder.
 %-------------------------------------------------------------------------------
 
 \begin{itemize}
+
+\item Version 7.1.1 (June 3, 2022)
+
+    \begin{packed_itemize}
+    \item minor updates to documentation and error messages
+    \end{packed_itemize}
 
 \item Version 7.1.0 (May 20, 2022)
 
