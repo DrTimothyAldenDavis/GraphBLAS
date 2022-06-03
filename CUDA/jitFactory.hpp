@@ -125,7 +125,7 @@ public:
   int get_number_of_blocks(GrB_Matrix M) {
       int number_of_sms = GB_Global_gpu_sm_get (0);
       int nblks = ( GB_nnz (M) + chunk_size - 1)/chunk_size;
-      return GB_IMIN( nblks,  128 * number_of_sms);
+      return GB_IMIN( nblks,  chunk_size * number_of_sms);
   }
 
   int get_threads_per_block() {
@@ -141,9 +141,10 @@ public:
 
     // Idea is to have each task work on a continguous block of columns of C
     // Note: for small tests, mnz is small so ntasks is be governed by
-    // chunksize, not 128*number_of_sms.  For large problems in production,
-    // chunksize is less important since ntasks will likely be bounded by
-    // 128*number_of_sms (say 128*80 = 10,240 on a V100).
+    // chunksize, not chunk_size*number_of_sms.  For large problems in
+    // production, chunksize is less important since ntasks will likely be
+    // bounded by chunk_size*number_of_sms (say 128*80 = 10,240 on a V100, for
+    // the default chunk_size of 128).
 
     // Defining dummy instance only so we can introspect type
 //    // (1) create the mxm code and name
@@ -201,7 +202,7 @@ public:
     const int64_t mnz = GB_nnz (M) ;
     int ntasks = ( mnz +chunk_size -1)/chunk_size;
     // Idea is to have each task work on a continguous block of columns of C
-    ntasks = GB_IMIN( ntasks,  128*GB_Global_gpu_sm_get (0)) ;    // ntasks will be grid.x
+    ntasks = GB_IMIN( ntasks,  chunk_size*GB_Global_gpu_sm_get (0)) ;    // ntasks will be grid.x
     return (ntasks + threads_per_block - 1) / threads_per_block ;
   }
 
@@ -209,7 +210,7 @@ public:
     const int64_t mnz = GB_nnz (M) ;
     int number_of_sms = GB_Global_gpu_sm_get (0);
     int nblks = ( GB_nnz (M) + chunk_size - 1)/chunk_size;
-    return GB_IMIN( nblks,  128 * number_of_sms);
+    return GB_IMIN( nblks,  chunk_size * number_of_sms);
   }
 
   bool jitGridBlockLaunch(// parameters to AxB_phase2:
@@ -263,7 +264,7 @@ public:
     int number_of_sms = GB_Global_gpu_sm_get (0);
 
     // Idea is to have each task work on a continguous block of columns of C
-    return GB_IMIN( ntasks,  128*number_of_sms) ;    // ntasks will be grid.x
+    return GB_IMIN( ntasks,  chunk_size*number_of_sms) ;    // ntasks will be grid.x
   }
 
   bool jitGridBlockLaunch(int64_t *nanobuckets, int64_t *blockBucket,
@@ -414,24 +415,18 @@ private:
         case GB_BUCKET_VSVS_16 :
         case GB_BUCKET_VSVS_4 :
         case GB_BUCKET_MERGEPATH :  // both vectors are long
-        case GB_BUCKET_WARP_IX :    // currently unused
-
-    If unused buckets are removed, this list becomes very short.  Just
-    4 buckets:
-
-        case GB_BUCKET_ZOMBIE : // C(i,j) is a zombie (not a bucket)
-        case GB_BUCKET_VSSP :       // one vector very sparse, other longer
-        case GB_BUCKET_VSVS :       // both vectors very sparse
-        case GB_BUCKET_MERGEPATH :  // both vectors are long
+        case GB_BUCKET_WARP_IX :    // currently unused; remove this
 
     These buckets should be handled in different kernels, mostly non-bucket-
     based:
 
         case GB_BUCKET_DNDN :   both A and B bitmap/full
 
+        case GB_BUCKET_ZOMBIE : // C(i,j) is a zombie (not a bucket)
         case GB_BUCKET_DNVS :   A bitmap/full, B sparse/hyper
         case GB_BUCKET_DNSP :   A bitmap/full, B very sparse/hyper
 
+        case GB_BUCKET_ZOMBIE : // C(i,j) is a zombie (not a bucket)
         case GB_BUCKET_VSDN :   A sparse/hyper, B bitmap/full
         case GB_BUCKET_SPDN :   A very sparse/hyper, B bitmap/full
     */
@@ -450,36 +445,36 @@ private:
         // CUDA kernel: dndn, handles a single bucket:
         //--------------------------------------------------------------
 
-        // both A(:,i) and B(:,j) are dense
-        case GB_BUCKET_DNDN : // fixme: remove bucket, use dedicated kernel
-            Opname = "phase3_dndn" ;
-            blocksz = 32;
-            gridsz = ( Cnz -1 + blocksz)/blocksz;
-            break ;
+//      // both A(:,i) and B(:,j) are dense
+//      case GB_BUCKET_DNDN : // fixme: remove bucket, use dedicated kernel
+//          Opname = "phase3_dndn" ;
+//          blocksz = 32;
+//          gridsz = ( Cnz -1 + blocksz)/blocksz;
+//          break ;
 
         //--------------------------------------------------------------
         // CUDA kernel: spdn, handles 4 buckets:
         //--------------------------------------------------------------
 
-        // A(:,i) is dense and B(:,j) is very sparse (< 256 entries)
-        case GB_BUCKET_DNVS :  // fixme: remove bucket, use dedicated kernel
-        // A(:,i) is very sparse (< 256 entries) and B(:,j) is dense
-        case GB_BUCKET_VSDN : // fixme: remove bucket, use dedicated kernel
-            sz = 64 ;
-            Opname = "phase3_spdn" ;
-            blocksz = 32;
-            gridsz = ( Cnz -1 + blocksz)/blocksz;
-            break ;
+//      // A(:,i) is dense and B(:,j) is very sparse (< 256 entries)
+//      case GB_BUCKET_DNVS :  // fixme: remove bucket, use dedicated kernel
+//      // A(:,i) is very sparse (< 256 entries) and B(:,j) is dense
+//      case GB_BUCKET_VSDN : // fixme: remove bucket, use dedicated kernel
+//          sz = 64 ;
+//          Opname = "phase3_spdn" ;
+//          blocksz = 32;
+//          gridsz = ( Cnz -1 + blocksz)/blocksz;
+//          break ;
 
-        // A(:,i) is dense and B(:,j) is sparse (>= 256 entries)
-        case GB_BUCKET_DNSP : // fixme: remove bucket, use dedicated kernel
-        // A(:,i) is sparse (>= 256 entries) and B(:,j) is dense
-        case GB_BUCKET_SPDN : // fixme: remove bucket, use dedicated kernel
-            sz = 256 ;
-            Opname = "phase3_spdn" ;
-            blocksz = 32;
-            gridsz = ( Cnz -1 + blocksz)/blocksz;
-            break ;
+//      // A(:,i) is dense and B(:,j) is sparse (>= 256 entries)
+//      case GB_BUCKET_DNSP : // fixme: remove bucket, use dedicated kernel
+//      // A(:,i) is sparse (>= 256 entries) and B(:,j) is dense
+//      case GB_BUCKET_SPDN : // fixme: remove bucket, use dedicated kernel
+//          sz = 256 ;
+//          Opname = "phase3_spdn" ;
+//          blocksz = 32;
+//          gridsz = ( Cnz -1 + blocksz)/blocksz;
+//          break ;
 
         //--------------------------------------------------------------
         // CUDA kernel: vssp, handles 1 bucket, uses binary search:
@@ -497,12 +492,12 @@ private:
         //--------------------------------------------------------------
 
         // let len = nnz (A (:,i) + nnz (B (:,j)), then:
+//      case GB_BUCKET_VSVS_256 : sz += 256-64 ;
+//      case GB_BUCKET_VSVS_64 :  sz += 64-4   ;
+//      case GB_BUCKET_VSVS_16 :  sz += 16-4   ;
+//      case GB_BUCKET_VSVS_4 :   sz += 4      ;
 
-        // fixme: do we need 4 buckets?  currently only using 1 for all these
-        case GB_BUCKET_VSVS_256 : sz += 256-64 ;
-        case GB_BUCKET_VSVS_64 :  sz += 64-16  ;
-        case GB_BUCKET_VSVS_16 :  sz += 16-4   ;
-        case GB_BUCKET_VSVS_4 :   sz += 4      ;
+        case GB_BUCKET_VSVS :
             Opname = "phase3_vsvs" ;
             blocksz = 512;
 
@@ -521,11 +516,11 @@ private:
             gridsz = ( Cnz -1 + blocksz)/blocksz;
             break ;
 
-        case GB_BUCKET_WARP_IX :   sz = 32      ;
-            Opname = "phase3_warpix" ;
-            blocksz = 32;
-            gridsz =  GB_IMIN( (mnvec+15)/16, 256*number_of_sms);
-            break ;
+//      case GB_BUCKET_WARP_IX :   sz = 32      ;
+//          Opname = "phase3_warpix" ;
+//          blocksz = 32;
+//          gridsz =  GB_IMIN( (mnvec+15)/16, 256*number_of_sms);
+//          break ;
 
         default:
             break ;

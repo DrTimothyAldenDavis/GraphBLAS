@@ -224,6 +224,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     Bucket = (int64_t*)rmm_wrap_malloc(mnz * sizeof (int64_t));
     offset = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
 
+    // fixme: do async with streams
     CHECK_CUDA_SIMPLE(cudaMemset(Nanobuckets, 0, nanobuckets_size * sizeof(int64_t)));
     CHECK_CUDA_SIMPLE(cudaMemset(Blockbucket, 0, blockbuckets_size * sizeof(int64_t)));
     CHECK_CUDA_SIMPLE(cudaMemset(Bucketp, 0, (NBUCKETS+1) * sizeof(int64_t)));

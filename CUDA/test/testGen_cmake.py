@@ -8,7 +8,7 @@ SUPPORTED_TYPES = {
     "uint32_t": "UINT32"
 }
 
-DOT3_BUCKETS = [1, 5, 6, 7, 8, 9, 10, 11]
+DOT3_BUCKETS = [1, 2, 3]    # NBUCKETS, hard-coded
 
 def std_type_to_gb_type(t):
     return SUPPORTED_TYPES[t]
