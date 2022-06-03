@@ -16,18 +16,18 @@ using namespace cooperative_groups;
 
 __global__
 void AxB_phase2end
-        (
-                // input, not modified:
-                const int64_t *__restrict__ nanobuckets,    // array of size NBUCKETS-blockDim.x-by-nblocks
-                const int64_t *__restrict__ blockbucket,    // global bucket count, of size NBUCKETS*nblocks
-                // output:
-                const int64_t *__restrict__ bucketp,        // global bucket cumsum, of size NBUCKETS+1
-                int64_t *__restrict__ bucket,               // global buckets, of size cnz (== mnz)
-                const int64_t *__restrict__ offset,         // global offsets, for each bucket
-                // inputs, not modified:
-                const GrB_Matrix C,            // output matrix
-                const int64_t cnz        // number of entries in C and M
-        )
+    (
+        // input, not modified:
+        const int64_t *__restrict__ nanobuckets,    // array of size NBUCKETS-blockDim.x-by-nblocks
+        const int64_t *__restrict__ blockbucket,    // global bucket count, of size NBUCKETS*nblocks
+        // output:
+        const int64_t *__restrict__ bucketp,        // global bucket cumsum, of size NBUCKETS+1
+        int64_t *__restrict__ bucket,               // global buckets, of size cnz (== mnz)
+        const int64_t *__restrict__ offset,         // global offsets, for each bucket
+        // inputs, not modified:
+        const GrB_Matrix C,            // output matrix
+        const int64_t cnz        // number of entries in C and M
+    )
 {
 
     //--------------------------------------------------------------------------
@@ -62,16 +62,13 @@ void AxB_phase2end
     const int64_t *nanobucket = taskbucket + threadIdx.x;
 
     // Each thread loads its NBUCKETS nanobucket values into registers.
-#define LOAD_NANOBUCKET(bucket)                     \
-        int64_t my_bucket_ ## bucket =                  \
-            nanobucket [bucket * blockDim.x]        \
-         + blockbucket [bucket * gridDim.x + blockIdx.x]\
-         + bucketp [bucket] ;                       \
+    int64_t my_bucket[NBUCKETS];
 
-    LOAD_NANOBUCKET (0) ;
-    LOAD_NANOBUCKET (1) ;
-    LOAD_NANOBUCKET (2) ;
-    LOAD_NANOBUCKET (3) ;
+    #pragma unroll
+    for(int b = 0; b < NBUCKETS; ++b) {
+        my_bucket[b] = nanobucket [b * blockDim.x]
+         + blockbucket [b * gridDim.x + blockIdx.x] + bucketp [b] ;
+    }
 
     // Now each thread has an index into the global set of NBUCKETS buckets,
     // held in bucket, of where to place its own entries.
@@ -126,16 +123,12 @@ void AxB_phase2end
             int ibucket = Ci[p] & 0xF;
             //printf(" thd: %d p,Ci[p] = %ld,%ld,%d\n", threadIdx.x, p, Ci[p], irow );
 
-            switch (ibucket)
-            {
-                case  0: bucket [my_bucket_0++ ] = p ;
-                         Ci[p] = Ci[p] >>4; break ; //unshift zombies
-                case  1: bucket [my_bucket_1++ ] = p ; break ;
-                case  2: bucket [my_bucket_2++ ] = p ; break ;
-                case  3: bucket [my_bucket_3++ ] = p ; break ;
-                default: break;
+            if(ibucket == 0) {
+                bucket[my_bucket[0]++] = p;
+                Ci[p] = Ci[p] >> 4;
+            } else {
+                bucket[my_bucket[ibucket]++] = p;
             }
-
         }
         //__syncthreads();
     }
