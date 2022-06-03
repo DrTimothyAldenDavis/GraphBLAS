@@ -11402,13 +11402,6 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 // These settings can be added, so to use LZ4HC at level 5, use method =
 // GxB_COMPRESSION_LZ4HC + 5.
 
-// If the Intel IPPS compression methods are available, they can be selected
-// by adding GxB_COMPRESSION_INTEL.  For example, to use the Intel IPPS
-// implementation of LZ4HC at level 9, use method = GxB_COMPRESSION_INTEL +
-// GxB_COMPRESSION_LZ4HC + 9 = 1,002,009.  If the Intel methods are requested
-// but not available, this setting is ignored and the non-Intel methods are
-// used instead.
-
 // If the level setting is out of range, the default is used for that method.
 // If the method is negative, no compression is performed.  If the method is
 // positive but unrecognized, the default is used (GxB_COMPRESSION_LZ4, with no

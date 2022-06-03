@@ -125,7 +125,7 @@ public:
   int get_number_of_blocks(GrB_Matrix M) {
       int number_of_sms = GB_Global_gpu_sm_get (0);
       int nblks = ( GB_nnz (M) + chunk_size - 1)/chunk_size;
-      return GB_IMIN( nblks,  128 * number_of_sms);
+      return GB_IMIN( nblks,  chunk_size * number_of_sms);
   }
 
   int get_threads_per_block() {
@@ -201,7 +201,7 @@ public:
     const int64_t mnz = GB_nnz (M) ;
     int ntasks = ( mnz +chunk_size -1)/chunk_size;
     // Idea is to have each task work on a continguous block of columns of C
-    ntasks = GB_IMIN( ntasks,  128*GB_Global_gpu_sm_get (0)) ;    // ntasks will be grid.x
+    ntasks = GB_IMIN( ntasks,  chunk_size*GB_Global_gpu_sm_get (0)) ;    // ntasks will be grid.x
     return (ntasks + threads_per_block - 1) / threads_per_block ;
   }
 
@@ -209,7 +209,7 @@ public:
     const int64_t mnz = GB_nnz (M) ;
     int number_of_sms = GB_Global_gpu_sm_get (0);
     int nblks = ( GB_nnz (M) + chunk_size - 1)/chunk_size;
-    return GB_IMIN( nblks,  128 * number_of_sms);
+    return GB_IMIN( nblks,  chunk_size * number_of_sms);
   }
 
   bool jitGridBlockLaunch(// parameters to AxB_phase2:
@@ -263,7 +263,7 @@ public:
     int number_of_sms = GB_Global_gpu_sm_get (0);
 
     // Idea is to have each task work on a continguous block of columns of C
-    return GB_IMIN( ntasks,  128*number_of_sms) ;    // ntasks will be grid.x
+    return GB_IMIN( ntasks,  chunk_size*number_of_sms) ;    // ntasks will be grid.x
   }
 
   bool jitGridBlockLaunch(int64_t *nanobuckets, int64_t *blockBucket,
