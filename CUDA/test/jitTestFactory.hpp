@@ -142,6 +142,8 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
 //
 //    std::cout << "INvoking grid block launch for phase1" << std::endl;
     p1lF.jitGridBlockLaunch(Nanobuckets, Blockbucket, C, M, A, B);
+
+    CHECK_CUDA(cudaStreamSynchronize(0));
     kernTimer.Stop();
     std::cout<<"returned from phase1 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 //
@@ -221,6 +223,7 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
 //
 //    // launch phase2 (just with p2ntasks as the # of tasks)
     p2lF.jitGridBlockLaunch(blockbucket, offset, M);
+    CHECK_CUDA(cudaStreamSynchronize(0));
 //
 //    // do the reduction between phase2 and phase2end
     int64_t s= 0;
@@ -443,6 +446,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
            GB_cuda_mxm_phase3(mymxmfactory, (GB_bucket_code )b,
                               b_start, b_end, bucketp, Bucket, C, M, B, A);
+            CHECK_CUDA(cudaStreamSynchronize(0));
 
             print_array<int64_t>(bucketp, NBUCKETS+1, "bucketp");
 
@@ -579,6 +583,7 @@ bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
 
     GrB_Matrix A;
     make_grb_matrix(A, N, N, indptr, index, d_data, GxB_SPARSE, GxB_BY_ROW);
+    CHECK_CUDA(cudaStreamSynchronize(0));
 
     GRB_TRY (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
     GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout));
@@ -602,6 +607,7 @@ bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
     printf("Invoking grb reduce\n");
     T expected;
     GRB_TRY(cuda::jit::vector_reduce(&expected, v, monoid));
+    CHECK_CUDA(cudaStreamSynchronize(0));
     printf("Done.\n");
 
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
