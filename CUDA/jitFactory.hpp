@@ -596,7 +596,8 @@ public:
                .launch( A, temp_scalar, N, is_sparse);
 
 
-      checkCudaErrors( cudaStreamSynchronize(stream) );
+      // Need to synchronize before copying result to host
+      CHECK_CUDA( cudaStreamSynchronize(stream) );
 
       memcpy(output, temp_scalar->x, op->op->ztype->size);
 
