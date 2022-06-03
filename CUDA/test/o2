@@ -1,0 +1,523 @@
+include: SuiteSparse:GraphBLAS v7.1.1 [June 3, 2022]
+library: SuiteSparse:GraphBLAS v7.1.1 [June 3, 2022]
+# of trials: 1
+threads to test:  40 0
+matrix: ../data/pushpull.mtx
+[.mtx]
+Reading matrix market file: ../data/pushpull.mtx
+ [ GrB_Matrix_build_BOOL (build) (post iso) (hyper to sparse) 
+   0.0191 sec ]
+ [ GrB_assign (C iso assign) (pending: 0) Method 05e: (C empty)<M,struct> = scalar 
+   0.00027 sec ]
+ [ GrB_select (iso select) 
+   0.000341 sec ]
+ [ GrB_transpose (iso transpose) (3-thread non-atomic bucket transpose) 
+   0.0014 sec ]
+ [ GrB_eWiseMult emult:(S<.>=S.*S) (iso emult) 
+   0.000626 sec ]
+ [ GrB_Matrix_nvals 
+   1.03e-06 sec ]
+ [ GrB_Matrix_nvals 
+   1.51e-07 sec ]
+read time: 0.0558159
+ [ GrB_Matrix_nvals 
+   1.18e-07 sec ]
+Graph: kind: undirected, nodes: 4000 entries: 194194 type: bool
+  structural symmetry: symmetric  self-edges: 0
+  adjacency matrix:  [ GrB_Matrix_nvals 
+   6.2e-08 sec ]
+GrB_BOOL matrix: 4000-by-4000 entries: 194194
+ [ GrB_Matrix_extractTuples 
+   0.000326 sec ]
+    (0, 7)   1
+    (0, 13)   1
+    (0, 14)   1
+    (0, 22)   1
+    (0, 35)   1
+    (0, 37)   1
+    (0, 43)   1
+    (0, 71)   1
+    (0, 83)   1
+    (0, 84)   1
+    (0, 90)   1
+    (0, 106)   1
+    (0, 107)   1
+    (0, 114)   1
+    (0, 115)   1
+    (0, 143)   1
+    (0, 178)   1
+    (0, 186)   1
+    (0, 197)   1
+    (0, 208)   1
+    (0, 215)   1
+    (0, 219)   1
+    (0, 232)   1
+    (0, 244)   1
+    (0, 246)   1
+    (0, 247)   1
+    (0, 266)   1
+    (0, 267)   1
+    (0, 277)   1
+    (0, 294)   1
+    ...
+ [ GrB_assign (C iso assign) (pending: 0) Method 21: (C full) = scalar (sparse to full) 
+   1.48e-05 sec ]
+ [ GrB_mxv C=A'*B, dot_product (dot2) (nthreads: 2 naslice 64 nbslice 1) (dot F = S'*F) 
+   0.000102 sec ]
+ [ GrB_Matrix_nvals 
+   1.78e-07 sec ]
+info 0
+setting A(0,13) = 0
+
+  4000x4000 GraphBLAS bool matrix, sparse by row
+  G->A, 194194 entries, memory: 1.8 MB
+
+    (0,7)   1
+    (0,13)   0
+    (0,14)   1
+    (0,22)   1
+    (0,35)   1
+    (0,37)   1
+    (0,43)   1
+    (0,71)   1
+    (0,83)   1
+    (0,84)   1
+    (0,90)   1
+    (0,106)   1
+    (0,107)   1
+    (0,114)   1
+    (0,115)   1
+    (0,143)   1
+    (0,178)   1
+    (0,186)   1
+    (0,197)   1
+    (0,208)   1
+    (0,215)   1
+    (0,219)   1
+    (0,232)   1
+    (0,244)   1
+    (0,246)   1
+    (0,247)   1
+    (0,266)   1
+    (0,267)   1
+    (0,277)   1
+    ...
+ [ GrB_Matrix_exportSize  [ GrB_Matrix_export_BOOL 
+   0.000199 sec ]
+# of triangles: 286641 slow time: 0.0604229 sec
+
+warmup method: SandiaDot2: sum ((U*L') .* U)    sort: none
+ [ GrB_select 
+   0.000351 sec ]
+ [ GrB_select 
+   0.000227 sec ]
+ [ GrB_mxm C<M>=A'*B, masked_dot_product (dot3)  work:2.35696e+06 GPUs:0 Not using cuda path. M_is_hypersparse: 0, A->iso: 0, B->iso: 0, A_BITMAP: 0, B_BITMAP: 0, GB_IS_FULL(A): 0, GB_IS_FULL(B): 0, semiring header size: 0
+(S{S} = S'*S) nthreads 40 ntasks 70 
+   0.00612 sec ]
+ [ GrB_mxm C<M>=A'*B, masked_dot_product (dot3) (using the GPU: 4)  work:2.35696e+06 GPUs:4 (GPU dot3) (GPU C created and copied from M) (GPU stringified) (GPU phase1 start) GB_cuda_kernel.h(145): warning: stdbool.h: [jitify] File not found
+About to instantiate kernel
+ABout to compile kernel
+done compilling
+instantiated kernel
+Inside serialize!!!!
+(GPU phase1 done) (GPU phase1 start) bucket for (2981,2186): 3
+bucket for (2981,2314): 3
+bucket for (2981,2312): 3
+bucket for (2981,2284): 3
+bucket for (2981,2320): 3
+bucket for (2981,2436): 3
+bucket for (2981,2239): 3
+bucket for (2981,2399): 3
+bucket for (2981,2341): 3
+bucket for (2981,2102): 3
+bucket for (2981,2051): 3
+bucket for (2981,2316): 3
+bucket for (2981,2101): 3
+bucket for (2981,2050): 3
+bucket for (2981,2328): 3
+bucket for (2981,2165): 3
+bucket for (2981,2154): 3
+bucket for (2981,2217): 3
+bucket for (2981,2326): 3
+bucket for (2981,2332): 3
+bucket for (2981,2088): 3
+bucket for (2981,2030): 3
+bucket for (2981,2309): 3
+bucket for (2981,2432): 3
+bucket for (2981,2231): 3
+bucket for (2981,2357): 3
+bucket for (2981,2133): 3
+bucket for (2981,2115): 3
+bucket for (2981,2060): 3
+bucket for (2981,2049): 3
+bucket for (2981,2377): 3
+bucket for (2981,2298): 3
+bucket for (2981,2109): 3
+bucket for (2981,2094): 3
+bucket for (2981,2351): 3
+bucket for (2981,2244): 3
+bucket for (2981,2025): 3
+bucket for (2981,2093): 3
+bucket for (2981,2076): 3
+bucket for (2981,2006): 3
+bucket for (2981,2201): 3
+bucket for (2981,2366): 3
+bucket for (2981,2248): 3
+bucket for (2981,2419): 3
+bucket for (2981,2161): 3
+bucket for (2981,2482): 3
+bucket for (2981,2606): 3
+bucket for (2981,2805): 3
+bucket for (2981,2574): 3
+bucket for (2981,2627): 3
+bucket for (2981,2746): 3
+bucket for (2981,2863): 3
+bucket for (2981,2751): 3
+bucket for (2981,2854): 3
+bucket for (2981,2791): 3
+bucket for (2981,2887): 3
+bucket for (2981,2899): 3
+bucket for (2981,2455): 3
+bucket for (2981,2688): 3
+bucket for (2981,2675): 3
+bucket for (2981,2531): 3
+bucket for (2981,2600): 3
+bucket for (2981,2736): 3
+bucket for (2981,2712): 3
+bucket for (2981,2800): 3
+bucket for (2981,2764): 3
+bucket for (2981,2781): 3
+bucket for (2981,2917): 3
+bucket for (2981,2955): 3
+bucket for (2981,2960): 1
+bucket for (2981,2961): 3
+bucket for (2981,2460): 3
+bucket for (2981,2476): 3
+bucket for (2981,2663): 3
+bucket for (2981,2840): 3
+bucket for (2981,2529): 3
+bucket for (2981,2685): 3
+bucket for (2981,2777): 3
+bucket for (2981,2636): 3
+bucket for (2981,2851): 3
+bucket for (2981,2743): 3
+bucket for (2981,2944): 3
+bucket for (2981,2947): 3
+bucket for (2981,2703): 3
+bucket for (2981,2880): 3
+bucket for (2981,2605): 3
+bucket for (2981,2790): 3
+bucket for (2981,2575): 3
+bucket for (2981,2762): 3
+bucket for (2981,2888): 3
+bucket for (2981,2866): 3
+bucket for (2981,2972): 1
+bucket for (2981,2484): 3
+bucket for (2981,2765): 3
+bucket for (2981,2766): 3
+bucket for (2981,2778): 3
+bucket for (2981,2950): 3
+bucket for (2981,2852): 3
+bucket for (2981,2882): 3
+bucket for (2981,2756): 3
+bucket for (2981,2975): 1
+bucket for (2981,2977): 1
+bucket for (2981,2872): 3
+bucket for (2981,2767): 3
+GB_cuda_kernel.h(145): warning: stdbool.h: [jitify] File not found
+About to instantiate kernel
+ABout to compile kernel
+done compilling
+instantiated kernel
+Inside serialize!!!!
+(GPU phase2 done) (GPU phase2end start) GB_cuda_kernel.h(145): warning: stdbool.h: [jitify] File not found
+About to instantiate kernel
+ABout to compile kernel
+done compilling
+instantiated kernel
+Inside serialize!!!!
+(GPU phase2end done) (GPU phase3 launch st,end=0,157 nblocks,blocksize= 5,32 )
+GB_cuda_kernel.h(145): warning: stdbool.h: [jitify] File not found
+About to instantiate kernel
+ABout to compile kernel
+done compilling
+instantiated kernel
+Inside serialize!!!!
+(GPU phase3 done) (GPU phase3 done ) (GPU phase3 launch st,end=157,2158 nblocks,blocksize= 4,512 )
+GB_cuda_kernel.h(145): warning: stdbool.h: [jitify] File not found
+About to instantiate kernel
+ABout to compile kernel
+done compilling
+instantiated kernel
+Inside serialize!!!!
+(GPU phase3 done) (GPU phase3 done ) (GPU phase3 launch st,end=2158,97097 nblocks,blocksize= 2967,32 )
+GB_cuda_kernel.h(145): warning: stdbool.h: [jitify] File not found
+About to instantiate kernel
+ABout to compile kernel
+done compilling
+instantiated kernel
+Inside serialize!!!!
+(GPU phase3 done) (GPU phase3 done ) 
+Computing (2986,2981)
+
+A(:,2986): nnzA 88
+  94790: 2000
+  94791: 2028
+  94792: 2054
+  94793: 2059
+  94794: 2062
+  94795: 2066
+  94796: 2067
+  94797: 2104
+  94798: 2116
+  94799: 2201
+  94800: 2207
+  94801: 2218
+  94802: 2221
+  94803: 2224
+  94804: 2227
+  94805: 2228
+  94806: 2231
+  94807: 2232
+  94808: 2235
+  94809: 2238
+  94810: 2245
+  94811: 2247
+  94812: 2262
+  94813: 2264
+  94814: 2276
+  94815: 2296
+  94816: 2312
+  94817: 2315
+  94818: 2333
+  94819: 2341
+  94820: 2376
+  94821: 2378
+  94822: 2382
+  94823: 2383
+  94824: 2411
+  94825: 2419
+  94826: 2427
+  94827: 2442
+  94828: 2456
+  94829: 2463
+  94830: 2464
+  94831: 2467
+  94832: 2482
+  94833: 2494
+  94834: 2499
+  94835: 2501
+  94836: 2502
+  94837: 2509
+  94838: 2519
+  94839: 2524
+  94840: 2527
+  94841: 2537
+  94842: 2543
+  94843: 2545
+  94844: 2549
+  94845: 2571
+  94846: 2572
+  94847: 2584
+  94848: 2589
+  94849: 2595
+  94850: 2603
+  94851: 2608
+  94852: 2624
+  94853: 2632
+  94854: 2635
+  94855: 2640
+  94856: 2648
+  94857: 2657
+  94858: 2723
+  94859: 2725
+  94860: 2728
+  94861: 2730
+  94862: 2776
+  94863: 2792
+  94864: 2805
+  94865: 2836
+  94866: 2859
+  94867: 2863
+  94868: 2879
+  94869: 2880
+  94870: 2899
+  94871: 2903
+  94872: 2929
+  94873: 2950
+  94874: 2977
+  94875: 2981
+  94876: 2982
+  94877: 2984
+
+B(:,2981): nnzB 3
+  96080: 2986
+  96081: 2995
+  96082: 2996
+work_per_thread 3 nxy 91 parts 32 diag 0 diag_end 3
+0 tx_start 94790
+1 tx_start 94793
+2 tx_start 94796
+3 tx_start 94799
+4 tx_start 94802
+5 tx_start 94805
+6 tx_start 94808
+7 tx_start 94811
+8 tx_start 94814
+9 tx_start 94817
+10 tx_start 94820
+11 tx_start 94823
+12 tx_start 94826
+13 tx_start 94829
+14 tx_start 94832
+15 tx_start 94835
+16 tx_start 94838
+17 tx_start 94841
+18 tx_start 94844
+19 tx_start 94847
+20 tx_start 94850
+21 tx_start 94853
+22 tx_start 94856
+23 tx_start 94859
+24 tx_start 94862
+25 tx_start 94865
+26 tx_start 94868
+27 tx_start 94871
+28 tx_start 94874
+29 tx_start 94877
+30 tx_start 94878
+31 tx_start 94878
+0 tx_end   94793
+1 tx_end   94796
+2 tx_end   94799
+3 tx_end   94802
+4 tx_end   94805
+5 tx_end   94808
+6 tx_end   94811
+7 tx_end   94814
+8 tx_end   94817
+9 tx_end   94820
+10 tx_end   94823
+11 tx_end   94826
+12 tx_end   94829
+13 tx_end   94832
+14 tx_end   94835
+15 tx_end   94838
+16 tx_end   94841
+17 tx_end   94844
+18 tx_end   94847
+19 tx_end   94850
+20 tx_end   94853
+21 tx_end   94856
+22 tx_end   94859
+23 tx_end   94862
+24 tx_end   94865
+25 tx_end   94868
+26 tx_end   94871
+27 tx_end   94874
+28 tx_end   94877
+29 tx_end   94878
+30 tx_end   94878
+31 tx_end   94878
+0 ty_start 96080
+1 ty_start 96080
+2 ty_start 96080
+3 ty_start 96080
+4 ty_start 96080
+5 ty_start 96080
+6 ty_start 96080
+7 ty_start 96080
+8 ty_start 96080
+9 ty_start 96080
+10 ty_start 96080
+11 ty_start 96080
+12 ty_start 96080
+13 ty_start 96080
+14 ty_start 96080
+15 ty_start 96080
+16 ty_start 96080
+17 ty_start 96080
+18 ty_start 96080
+19 ty_start 96080
+20 ty_start 96080
+21 ty_start 96080
+22 ty_start 96080
+23 ty_start 96080
+24 ty_start 96080
+25 ty_start 96080
+26 ty_start 96080
+27 ty_start 96080
+28 ty_start 96080
+29 ty_start 96079
+30 ty_start 96082
+31 ty_start 96083
+0 ty_end   96080
+1 ty_end   96080
+2 ty_end   96080
+3 ty_end   96080
+4 ty_end   96080
+5 ty_end   96080
+6 ty_end   96080
+7 ty_end   96080
+8 ty_end   96080
+9 ty_end   96080
+10 ty_end   96080
+11 ty_end   96080
+12 ty_end   96080
+13 ty_end   96080
+14 ty_end   96080
+15 ty_end   96080
+16 ty_end   96080
+17 ty_end   96080
+18 ty_end   96080
+19 ty_end   96080
+20 ty_end   96080
+21 ty_end   96080
+22 ty_end   96080
+23 ty_end   96080
+24 ty_end   96080
+25 ty_end   96080
+26 ty_end   96080
+27 ty_end   96080
+28 ty_end   96080
+29 ty_end   96082
+30 ty_end   96083
+31 ty_end   96083
+29 Found k: 94877, l 96079, Ai[k]: 2984, Bi[l]:2984
+Result for (2986,2981): 1
+
+   32.2 sec ]
+ [ GrB_eWiseAdd (wait:A 20836 zombies, 0 pending) (wait:B 20835 zombies, 0 pending, jumbled) add:(S<.>=S+S) 
+   0.0042 sec ]
+ [ GrB_select (sparse to hyper) 
+   0.000271 sec ]
+
+  4000x4000 GraphBLAS int64_t matrix, hypersparse by row
+  Delta, 1 entry, memory: 296 bytes
+
+    (2981,2986)   1
+
+ [ GrB_assign (pending: 0) Method 06n: C(:,:)<M> = Z ; no S 
+   1.53e-05 sec ]
+
+relevant entries in C:
+
+  4000x4000 GraphBLAS int64_t matrix, hypersparse by row
+  Work, no entries, memory: 280 bytes
+
+ [ GrB_assign (pending: 0) Method 06n: C(:,:)<M> = Z ; no S 
+   3.83e-05 sec ]
+
+relevant entries in C_gpu:
+
+  4000x4000 GraphBLAS int64_t matrix, hypersparse by row
+  Work, no entries, memory: 6.4 KB
+  pending tuples: 1 max pending: 256 zombies: 0
+  pending tuples:
+    GraphBLAS type:  int64_t size: 8
+    row: 2981 col: 2986   1
+  pending operator: implicit 2nd
+
+ [ GrB_reduce  work:76261 gpus:0 
+   5.43e-05 sec ]
+

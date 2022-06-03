@@ -196,7 +196,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
         //----------------------------------------------------------------------
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vsvs.cu.jit
-        GB_BUCKET (ainz + bjnz <= 256, GB_BUCKET_VSVS) ;
+        GB_BUCKET (ainz + bjnz <= 64, GB_BUCKET_VSVS) ;
 
         // This bucket is currently unused.
 
@@ -413,6 +413,12 @@ __global__ void AxB_phase1
             int64_t k = ks [pM - pfirst] ;
             int64_t i = Mi [ pM ] ;
             int64_t j = k ; // HACK, does not need to be initialized here
+        
+            int64_t kgood = GB_search_for_vector_device (pM, Mp, 0, mnvec, mvlen) ;
+            if (k != kgood)
+            {
+                printf ("HEY! %ld %ld: %ld %ld\n", i, pM, k, kgood) ;
+            }
 
             if ( MX ( pM ) )
             {
@@ -469,6 +475,12 @@ __global__ void AxB_phase1
                 }
             }
 
+            bool mydump = (i == 2981) ; // && (j == 2986) ;
+            if (mydump)
+            {
+                printf ("bucket for (%ld,%ld): %d\n", i, j, bucket) ;
+            }
+
             // TODO: remove the if statement
             if (bucket == GB_BUCKET_ZOMBIE)
             {
@@ -483,7 +495,7 @@ __global__ void AxB_phase1
                 // GB_BUCKET_COUNT (bucket) ;
                 if(bucket > 0) my_bucket[bucket]++ ;
 
-            }
+           }
         }
     }
 

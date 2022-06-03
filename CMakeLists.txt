@@ -103,14 +103,14 @@ else ( )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-set ( CMAKE_CUDA off)
+# set ( CMAKE_CUDA off)
 
 # Edit these lines for code development only, not for end-users:
 # set ( CMAKE_BUILD_TYPE Debug )
 
 if ( CMAKE_CUDA )
     # for CUDA development only; not for production use
-    set ( CMAKE_CUDA_DEV on )
+    set ( CMAKE_CUDA_DEV off )
     project ( graphblas
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES CUDA C )

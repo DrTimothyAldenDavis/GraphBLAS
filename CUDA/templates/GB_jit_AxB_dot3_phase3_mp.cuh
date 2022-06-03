@@ -133,6 +133,9 @@ __global__ void AxB_dot3_phase3_mp
          int64_t i = Mi[pair_id];
          int64_t j = Ci[pair_id] >> 4;
 
+         bool mydump = ((i == 2981) && (j == 2986))
+                ||     ((i == 2986) && (j == 2981)) ;
+
          int64_t xstart = Ap[i];
          int64_t xend   = Ap[i+1];
          nnzA = xend - xstart;
@@ -140,6 +143,15 @@ __global__ void AxB_dot3_phase3_mp
          int64_t ystart = Bp[j];
          int64_t yend   = Bp[j+1];
          nnzB = yend - ystart;
+
+         if (threadIdx.x == 0 && mydump)
+         {
+            printf ("\nComputing (%ld,%ld)\n", i, j) ;
+            printf ("\nA(:,%ld): nnzA %ld\n", i, nnzA) ;
+            for (int64_t p = xstart ; p < xend ; p++) printf ("  %ld: %ld\n", p, Ai [p]) ;
+            printf ("\nB(:,%ld): nnzB %ld\n", j, nnzB) ;
+            for (int64_t p = ystart ; p < yend ; p++) printf ("  %ld: %ld\n", p, Bi [p]) ;
+         }
 
 //         if(threadIdx.x == 0 && j == 139 && i == 945)
 //             printf("blk%d tid=%d, nnzA=%d, nnzB=%d\n", blockIdx.x, tid_global, nnzA, nnzB);
@@ -158,6 +170,12 @@ __global__ void AxB_dot3_phase3_mp
     int diag_end = GB_IMIN( diag + work_per_thread, nxy);
     //printf(" thd%d parts = %u wpt = %u diag, diag_end  = %u,%u\n",tid, parts, work_per_thread, diag, diag_end); 
 
+    if (mydump && threadIdx.x == 0)
+    {
+        printf ("work_per_thread %d nxy %ld parts %d diag %d diag_end %d\n",
+            work_per_thread, nxy, parts, diag, diag_end) ;
+    }
+    
     int x_min = GB_IMAX( (int)(diag - nnzB), 0);
     int x_max = GB_IMIN( diag, nnzA);
 
@@ -220,6 +238,14 @@ __global__ void AxB_dot3_phase3_mp
     int k = tx_start;
     int l = ty_start;
 
+    if (mydump) //  && threadIdx.x == 0)
+    {
+        printf ("%d tx_start %d\n", threadIdx.x, tx_start) ;
+        printf ("%d tx_end   %d\n", threadIdx.x, tx_end  ) ;
+        printf ("%d ty_start %d\n", threadIdx.x, ty_start) ;
+        printf ("%d ty_end   %d\n", threadIdx.x, ty_end  ) ;
+    }
+
 //    if(threadIdx.x == 0 && j == 139) {
 //        printf("blk%d, thd%d k=%d, l=%d, tx_start=%d, ty_start=%d, tx_end=%d, ty_end=%d\n", blockIdx.x, tid_global, k, l, tx_start, ty_start, tx_end, ty_end);
 //    }
@@ -239,6 +265,8 @@ __global__ void AxB_dot3_phase3_mp
             else
             {
                 cij_exists = 1 ;
+                if (mydump) printf ("%d Found k: %d, l %d, Ai[k]: %ld, Bi[l]:%ld\n",
+                    threadIdx.x, k, l, Ai [k], Bi [l]) ;
                 GB_C_MULT (cij, aki, bkj) ;    // cij = aki * bkj
 //                    if(j == 139 && i == 945)
 //                        printf("blk%d thd%d ix at %lld %lld  cij = %d * %d, k=%d, l=%d i=%lld j=%lld \n", blockIdx.x, tid_global, Ai[k], Bi[l], Ax[k], Bx[l], k, l, i, j);
@@ -287,6 +315,8 @@ __global__ void AxB_dot3_phase3_mp
     if (tid == 0)
     {
         //printf ("final %d : %d exists = %d\n", b,  cij, cij_exists) ;
+        if (mydump) printf ("Result for (%ld,%ld): %d\n", i, j, cij_exists); 
+
         if (cij_exists)
         {
 //
