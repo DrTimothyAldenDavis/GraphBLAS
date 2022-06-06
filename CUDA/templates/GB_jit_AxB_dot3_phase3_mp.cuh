@@ -49,6 +49,7 @@ T GB_reduce_sum(thread_block_tile<warp_sz> g, T val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
+    // Temporary T is necessary to handle arbirary ops
     for (int i = g.size() / 2; i > 0; i /= 2)
     {
         T next = g.shfl_down( val, i);
@@ -70,7 +71,6 @@ T reduce_plus(thread_block_tile<warp_sz> g, T val)
     return val; // note: only thread 0 will return full sum and flag value
 }
 
-#define intersects_per_thread 8
 
 template<
     typename T_C, typename T_A, typename T_B,
@@ -118,7 +118,7 @@ __global__ void AxB_dot3_phase3_mp
 
     thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( this_thread_block());
 
-    int parts = blockDim.x; //(n_intersect+ intersects_per_thread -1)/ intersects_per_thread; 
+    int parts = blockDim.x; // whole block (at least 32 threads) per dot product
 
     // int has_zombies = 0 ;
 
@@ -191,7 +191,12 @@ __global__ void AxB_dot3_phase3_mp
     }
     int xcoord = x_min;
     int ycoord = diag -x_min -1;
-    if (( diag > 0) &&(diag < (nnzA+nnzB)) && (Ai[xcoord+xstart] == Bi[ycoord+ystart]) ) { 
+    if ( ( diag > 0) 
+      && (diag < (nnzA+nnzB)) 
+      && (Ai[xcoord+xstart] == Bi[ycoord+ystart]) 
+      && (ycoord >= 0 ) 
+      ) 
+    { 
        diag--; //adjust for intersection incrementing both pointers 
     }
     // two start points are known now
