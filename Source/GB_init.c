@@ -148,32 +148,12 @@ GrB_Info GB_init            // start up GraphBLAS
     // CUDA initializations
     //--------------------------------------------------------------------------
 
+    GrB_Info info = GrB_SUCCESS ;
     #if defined ( GBCUDA )
     if (mode == GxB_BLOCKING_GPU || mode == GxB_NONBLOCKING_GPU)
     {
-        // TODO: move this code into a function inside CUDA folder
-        // If CUDA exists (#define GBCUDA) and if the mode allows the use of
-        // the GPU(s), then query the system for the # of GPUs available, their
-        // memory sizes, SM counts, and other capabilities.  Unified Memory
-        // support is assumed.  Then warmup each GPU.
-        GB_Global_gpu_control_set (GxB_DEFAULT) ;
-        if (!GB_Global_gpu_count_set (true)) return (GrB_PANIC) ;
-        int gpu_count = GB_Global_gpu_count_get ( ) ;
-        for (int device = 0 ; device < 1 ; device++) // TODO for GPU: gpu_count
-        {
-            // query the GPU and then warm it up
-            if (!GB_Global_gpu_device_properties_get (device))
-            {
-                return (GrB_PANIC) ;
-            }
-            if (!GB_cuda_warmup (device))
-            {
-                return (GrB_PANIC) ;
-            }
-        }
-        // make GPU 0 the default device
-        GB_cuda_set_device( 0 );
-        // also check for jit cache, pre-load library of common kernels ...
+        // initialize the GPUs
+        info = GB_cuda_init ( ) ;
     }
     else
     #endif
@@ -181,14 +161,13 @@ GrB_Info GB_init            // start up GraphBLAS
         // CUDA not available at compile-time, or not requested at run time
         GB_Global_gpu_control_set (GxB_GPU_NEVER) ;
         GB_Global_gpu_count_set (0) ;
+        GB_Global_gpu_chunk_set (GxB_DEFAULT) ;
     }
-
-    GB_Global_gpu_chunk_set (GxB_DEFAULT) ;
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
-    return (GrB_SUCCESS) ;
+    return (info) ;
 }
 

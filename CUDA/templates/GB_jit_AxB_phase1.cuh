@@ -414,11 +414,11 @@ __global__ void AxB_phase1
             int64_t i = Mi [ pM ] ;
             int64_t j = k ; // HACK, does not need to be initialized here
         
-            int64_t kgood = GB_search_for_vector_device (pM, Mp, 0, mnvec, mvlen) ;
-            if (k != kgood)
-            {
-                printf ("HEY! %ld %ld: %ld %ld\n", i, pM, k, kgood) ;
-            }
+//          int64_t kgood = GB_search_for_vector_device (pM, Mp, 0, mnvec, mvlen) ;
+//          if (k != kgood)
+//          {
+//              printf ("HEY! %ld %ld: %ld %ld\n", i, pM, k, kgood) ;
+//          }
 
             if ( MX ( pM ) )
             {
@@ -475,11 +475,11 @@ __global__ void AxB_phase1
                 }
             }
 
-            bool mydump = (i == 2981) ; // && (j == 2986) ;
-            if (mydump)
-            {
-                printf ("bucket for (%ld,%ld): %d\n", i, j, bucket) ;
-            }
+//          bool mydump = (i == 2981) ; // && (j == 2986) ;
+//          if (mydump)
+//          {
+//              printf ("bucket for (%ld,%ld): %d\n", i, j, bucket) ;
+//          }
 
             // TODO: remove the if statement
             if (bucket == GB_BUCKET_ZOMBIE)

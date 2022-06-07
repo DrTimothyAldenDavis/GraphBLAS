@@ -30,7 +30,7 @@ extern "C"
 #define CHECK_CUDA_SIMPLE(call)                                           \
   do {                                                                    \
     cudaError_t err = call;                                               \
-    if (err != cudaSuccess) {                                            \
+    if (err != cudaSuccess) {                                             \
       const char* str = cudaGetErrorName( err);                           \
       std::cout << "(CUDA runtime) returned " << str;                     \
       std::cout << " (" << __FILE__ << ":" << __LINE__ << ":" << __func__ \
@@ -38,7 +38,6 @@ extern "C"
       return (GrB_PANIC) ;                                                \
     }                                                                     \
   } while (0)
-
 
 //------------------------------------------------------------------------------
 // GB_CUDA_CATCH: catch error from a try { ... } region
@@ -72,11 +71,11 @@ extern "C"
 // no work...), using different kernels (with different configurations
 // depending on the bucket).
 
-    #include "GB_cuda_buckets.h"
+#include "GB_cuda_buckets.h"
+
 extern "C"
 {
     #include "GB_stringify.h"
-    
 }
 #endif
 

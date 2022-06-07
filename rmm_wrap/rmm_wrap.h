@@ -10,18 +10,22 @@
 
 /*
     GrB_init (mode) ;       // ANSI C11 malloc/calloc/realloc/free, no PMR
-    GxB_init (mode, mymalloc, mycalloc, myrealloc, myfree)
+    GxB_init (mode, mymalloc, mycalloc, myrealloc, myfree) ;
 
-    GxB_init (mode, mymalloc, NULL, NULL, myfree)
+    GxB_init (mode, mymalloc, NULL, NULL, myfree) ;
 
-    GxB_init (mode, mxMalloc, NULL, NULL, mxFree)
-    GxB_init (mode, pymalloc, pycalloc, pyrealloc, pyfree)
-    GxB_init (mode, jl_malloc, jl_calloc, jl_realloc, jl_free)
+    GxB_init (mode, mxMalloc, NULL, NULL, mxFree) ;
+    GxB_init (mode, pymalloc, pycalloc, pyrealloc, pyfree) ;
+    GxB_init (mode, jl_malloc, jl_calloc, jl_realloc, jl_free) ;
     GxB_init (mode, RedisModule_malloc, RedisModule_calloc,
-        RedisModule_realloc, RedisModule_realloc)
+        RedisModule_realloc, RedisModule_realloc) ;
 
-    GxB_init (mode, rmm_wrap_malloc, rmm_wrap_calloc, rmm_wrap_realloc,
-        rmm_wrap_free)
+    // using the RMM functions:
+    rmm_wrap_initialize (rmm_wrap_managed, 256 * 1000000L, 256 * 1000000000L) ;
+    GxB_init (GxB_NONBLOCKING_GPU, rmm_wrap_malloc, rmm_wrap_calloc,
+        rmm_wrap_realloc, rmm_wrap_free) ;
+    // ... use GraphBLAS on the GPU
+    rmm_wrap_finalize ( ) ;
 */
 
 //------------------------------------------------------------------------------
