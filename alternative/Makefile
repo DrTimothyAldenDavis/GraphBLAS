@@ -34,19 +34,22 @@ VER3 = 1
 # CC = c++
 
 # when using clang
-CFLAGS += -Xclang
+# CFLAGS += -Xclang
 
 SRC = ../Source/*.c ../Source/Generated1/*.c ../Source/Generated2/*.c
 INC = ../Include/*.h ../Source/*.h ../Source/Template/* ../Source/Generated1/*.h ../Source/Generated2/*.h ../rmm_wrap/*.h*
 SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
+
+# pick OpenMP options:
 # LDFLAGS = -fopenmp -lm
-LDFLAGS = -openmp -lm
+# LDFLAGS = -openmp -lm
 CFLAGS += -fopenmp -fexceptions -fPIC
 
 # pick the optimization level:
-# CFLAGS += -O3
-  CFLAGS += -g
+  CFLAGS += -O3
+# CFLAGS += -g
+
 ifneq ($(CC),c++)
     CFLAGS += -std=c11
 endif
@@ -82,6 +85,7 @@ ifeq ($(UNAME),Darwin)
     SO_OPTS += -dynamiclib -shared  -Wl,-install_name -Wl,$(SO_NAME1) -undefined dynamic_lookup
 else
     # Linux
+    CFLAGS += -DHAVE_DLFCN_H=1 -DHAVE_STRONG_GETAUXVAL=1
     SO_NAME = libgraphblas.so.$(VER1).$(VER2).$(VER3)
     SO_NAME0 = libgraphblas.so
     SO_NAME1 = libgraphblas.so.$(VER1)

@@ -65,7 +65,6 @@ message ( STATUS "GraphBLAS C API: v" "${GraphBLAS_API_VERSION_MAJOR}.${GraphBLA
 
 if ( ${CMAKE_VERSION} VERSION_LESS "3.17.0" )
 
-
     # CUDA requires cmake 3.17 or later
     set ( CMAKE_CUDA off )
     message ( STATUS "CUDA: not enabled (cmake 3.17.0 or later required)" )
@@ -103,7 +102,7 @@ else ( )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-# set ( CMAKE_CUDA off)
+  set ( CMAKE_CUDA off)
 
 # Edit these lines for code development only, not for end-users:
 # set ( CMAKE_BUILD_TYPE Debug )
