@@ -196,7 +196,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
         //----------------------------------------------------------------------
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vsvs.cu.jit
-        GB_BUCKET (ainz + bjnz <= 64, GB_BUCKET_VSVS) ;
+//      GB_BUCKET (ainz + bjnz <= 64, GB_BUCKET_VSVS) ;
 
         // This bucket is currently unused.
 
@@ -210,6 +210,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vsvs.cu.jit
 //      GB_BUCKET (ainz + bjnz <= 256, GB_BUCKET_VSVS_256) ;
+        GB_BUCKET (ainz + bjnz <= 256, GB_BUCKET_VSVS) ;
 
         // TODO: replace this with a single bucket, GB_BUCKET_VSVS.
 
