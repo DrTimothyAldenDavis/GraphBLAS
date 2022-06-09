@@ -140,6 +140,7 @@ void GB_burble_assign
 // define the function to use to burble
 #define GBURBLE(...)                                \
 {                                                   \
+    GB_NVTX ; /* HACK */ \
     if (GB_Global_burble_get ( ))                   \
     {                                               \
         GBDUMP (__VA_ARGS__) ;                      \
