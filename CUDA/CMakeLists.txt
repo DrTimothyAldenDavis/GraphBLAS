@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.20.1)
 
 project(GRAPHBLAS_CUDA VERSION 0.1 LANGUAGES CXX CUDA)
 
-set(CMAKE_CUDA_FLAGS "-cudart=static -lineinfo -G")
+set(CMAKE_CUDA_FLAGS "-cudart=static -lineinfo ")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fPIC ")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DGBNCPUFEAT")
@@ -39,7 +39,7 @@ set_target_properties(graphblascuda PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(graphblascuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 set_target_properties(graphblascuda PROPERTIES CUDA_ARCHITECTURES "75")
 
-target_link_libraries(graphblascuda CUDA::nvrtc CUDA::cudart_static )
+target_link_libraries(graphblascuda CUDA::nvrtc CUDA::cudart_static CUDA::nvToolsExt )
 
 install ( TARGETS graphblascuda
         LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -133,7 +133,7 @@ add_executable(graphblascuda_test ${CUDA_TEST_CPP_FILES} ${CMAKE_CURRENT_SOURCE_
 
 set_target_properties(graphblascuda_test PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(graphblascuda_test PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-set_target_properties(graphblascuda_test PROPERTIES CUDA_ARCHITECTURES "70")
+set_target_properties(graphblascuda_test PROPERTIES CUDA_ARCHITECTURES "75")
 
 include(GoogleTest)
 
