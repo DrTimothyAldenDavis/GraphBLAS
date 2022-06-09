@@ -170,6 +170,7 @@ void GB_burble_assign
     #define GB_BURBLE_START(func)                       \
     double t_burble = 0 ;                               \
     {                                                   \
+        GB_NVTX /* HACK */ \
         if (GB_Global_burble_get ( ))                   \
         {                                               \
             GBURBLE (" [ " func " ") ;                  \
@@ -179,6 +180,7 @@ void GB_burble_assign
 
     #define GB_BURBLE_END                               \
     {                                                   \
+        GB_NVTX /* HACK */ \
         if (GB_Global_burble_get ( ))                   \
         {                                               \
             t_burble = GB_OPENMP_GET_WTIME - t_burble ; \
