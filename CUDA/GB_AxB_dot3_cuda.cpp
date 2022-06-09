@@ -157,13 +157,13 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     }
 
     // FIXME: why set C->i and C->x to zero?
-    CHECK_CUDA_SIMPLE(cudaMemsetAsync(C->i, 0, (cnz+1) * sizeof(int64_t),
-        stream));
-    if (!C_iso)
-    {
-        CHECK_CUDA_SIMPLE(cudaMemsetAsync(C->x, 0,
-            (cnz+1) * sizeof(ctype->size), stream));
-    }
+//  CHECK_CUDA_SIMPLE(cudaMemsetAsync(C->i, 0, (cnz+1) * sizeof(int64_t),
+//      stream));
+//  if (!C_iso)
+//  {
+//      CHECK_CUDA_SIMPLE(cudaMemsetAsync(C->x, 0,
+//          (cnz+1) * sizeof(ctype->size), stream));
+//  }
 
     CHECK_CUDA_SIMPLE(cudaMemAdvise( C->i, (cnz+1) * sizeof ( int64_t),
         cudaMemAdviseSetPreferredLocation, device));
