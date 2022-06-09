@@ -14,7 +14,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DGBNCPUFEAT")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGBNCPUFEAT")
 set(CMAKE_C_STANDARD 11)
 
-message(STATUS "${CMAKE_CXX_FLAGS}")
+message(STATUS "C++ flags for CUDA:" "${CMAKE_CXX_FLAGS}")
 
 file(GLOB GRAPHBLAS_CUDA_SOURCES "*.cu" "*.c" "*.cpp")
 
@@ -32,14 +32,14 @@ set(GRAPHBLAS_CUDA_INCLUDES
         ../Include
         ../CUDA)
 
-message(STATUS "${GRAPHBLAS_CUDA_INCLUDES}")
+message(STATUS "GraphBLAS CUDA includes: " "${GRAPHBLAS_CUDA_INCLUDES}")
 
 target_include_directories(graphblascuda PUBLIC  ${CUDAToolkit_INCLUDE_DIRS} ${GRAPHBLAS_CUDA_INCLUDES})
 set_target_properties(graphblascuda PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(graphblascuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 set_target_properties(graphblascuda PROPERTIES CUDA_ARCHITECTURES "75")
 
-target_link_libraries(graphblascuda CUDA::nvrtc CUDA::cudart_static)
+target_link_libraries(graphblascuda CUDA::nvrtc CUDA::cudart_static )
 
 install ( TARGETS graphblascuda
         LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -127,7 +127,7 @@ endif()
 # 3. Compile/link individual {test_suite_name}_cuda_tests.cpp files into a gtest executable
 set(GRAPHBLAS_CUDA_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/test)
 
-message(STATUS "${CUDA_TEST_CPP_FILES}")
+message(STATUS "CUDA tests files: " "${CUDA_TEST_CPP_FILES}")
 
 add_executable(graphblascuda_test ${CUDA_TEST_CPP_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/test/run_tests.cpp)
 
