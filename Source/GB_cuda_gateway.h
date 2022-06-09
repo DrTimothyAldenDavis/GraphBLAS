@@ -151,8 +151,8 @@ bool GB_AxB_dot3_cuda_branch
 );
 
 #ifdef GBCUDA
-#include <nvToolsExtCuda.h>
-#define GB_NVTX { nvtxMarkA ("nvtx:" __FILE__ ":" GB_XSTR(__LINE__)) ; }
+#include <nvToolsExt.h>
+#define GB_NVTX { nvtxMark ("nvtx:" __FILE__ ":" GB_XSTR(__LINE__)) ; }
 #else
 #define GB_NVTX
 #endif

@@ -102,7 +102,7 @@ else ( )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-  set ( CMAKE_CUDA off)
+# set ( CMAKE_CUDA off)
 
 # Edit these lines for code development only, not for end-users:
 # set ( CMAKE_BUILD_TYPE Debug )
@@ -128,15 +128,16 @@ find_package ( OpenMP )
 
 if ( CMAKE_CUDA )
     # with CUDA and RMM
+    find_package ( NVTX )
     message ( STATUS "CUDA: enabled" )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
     add_subdirectory ( CUDA )
-    set ( GB_CUDA graphblascuda  ${CUDA_LIBRARIES} )
-    link_directories ( "CUDA" ${CUDA_LIBRARIES} )
+    set ( GB_CUDA graphblascuda  ${CUDA_LIBRARIES}  nvToolsExt )
+    link_directories ( "CUDA" ${CUDA_LIBRARIES} nvToolsExt  )
     set ( GB_RMM rmm_wrap ${CUDA_LIBRARIES} stdc++ )
     add_subdirectory ( rmm_wrap )
     include_directories ( "rmm_wrap" ${CUDA_INCLUDE_DIRS} )
-    link_directories ( "CUDA" "${CUDA_LIBRARIES}" "/usr/local/cuda/lib64/stubs" "rmm_wrap"  )
+    link_directories ( "CUDA" "${CUDA_LIBRARIES}" "/usr/local/cuda/lib64/stubs" "rmm_wrap" nvToolsExt )
 else ( )
     # without CUDA and RMM
     message ( STATUS "CUDA: not enabled" )
