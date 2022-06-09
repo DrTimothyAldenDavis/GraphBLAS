@@ -120,8 +120,8 @@ __global__ void AxB_dot3_phase3_vssp
         int64_t pA_end  = Ap[i+1];
         int64_t nnzA = pA_end - pA;
 
-        int64_t pB      = B->p[j];
-        int64_t pB_end  = B->p[j+1];
+        int64_t pB      = Bp[j];
+        int64_t pB_end  = Bp[j+1];
         int64_t nnzB = pB_end - pB;
 
         //Search for each nonzero in the smaller vector to find intersection 
@@ -229,7 +229,7 @@ __global__ void AxB_dot3_phase3_vssp
     thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( this_thread_block());
     zc = reduce_sum<int,tile_sz>(tile, zc);
 
-    if( threadIdx.x ==0) {
+    if( threadIdx.x ==0 && zc > 0) {
       //printf("vssp warp %d zombie count = %d\n", blockIdx.x, zc);
       atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)zc);
       //printf(" vssp Czombie = %lld\n",C->nzombies);

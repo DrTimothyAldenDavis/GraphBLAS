@@ -480,7 +480,7 @@ private:
         // A(:,i) is very sparse compared to B(:,j), or visa versa
         case GB_BUCKET_VSSP :
             Opname = "phase3_vssp" ;
-            blocksz = 32;
+            blocksz = 128;
             gridsz = ( Cnz -1 + blocksz)/blocksz;
             break ;
 
