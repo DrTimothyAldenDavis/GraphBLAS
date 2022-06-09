@@ -128,7 +128,6 @@ find_package ( OpenMP )
 
 if ( CMAKE_CUDA )
     # with CUDA and RMM
-    find_package ( NVTX )
     message ( STATUS "CUDA: enabled" )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
     add_subdirectory ( CUDA )
