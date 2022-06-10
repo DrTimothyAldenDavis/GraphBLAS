@@ -198,6 +198,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
             GBURBLE ("(wait, so zombies are not typecasted) ") ;
             GB_OK (GB_wait (T, "T", Context)) ;
         }
+        GBURBLE ("(transplant) ") ;
         GB_OK (GB_transplant_conform (C, C->type, &T, Context)) ;
         // C may be returned with zombies and jumbled, but no pending tuples
         ASSERT_MATRIX_OK (C, "C from GB_mxm (transplanted)", GB0) ;
@@ -210,6 +211,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     { 
         // C<M> = accum (C,T)
         // GB_accum_mask also conforms C to its desired hypersparsity.
+        GBURBLE ("(accum_mask) ") ;
         info = GB_accum_mask (C, M, (M_transposed) ? MT : NULL, accum, &T,
             C_replace, Mask_comp, Mask_struct, Context) ;
         GB_Matrix_free (&MT) ;

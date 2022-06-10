@@ -343,19 +343,10 @@ __global__ void AxB_phase1
         // Mi and Mx [pfirst:plast-1].  All threads in the thread block are
         // used for this "chunk".
         pfirst = chunk_size * chunk ;
-        plast  = GB_IMIN (chunk_size * (chunk+1), mnz) ;
-
-        // TODO: isn't this chunk_end just equal plast-pfirst?
-        int64_t chunk_end ;
-        if (mnz > chunk_size)
-        {
-            chunk_end = GB_IMIN (  chunk_size,
-                                   mnz - chunk_size*(chunk) ) ;
-        }
-        else
-        {
-            chunk_end = mnz ;
-        }
+        plast  = pfirst + chunk_size ;
+        // plast = GB_IMIN (plast, mnz) ;
+        if (plast > mnz) plast = mnz ;
+        int64_t my_chunk_size = plast - pfirst ;
 
         // find the first vector of the slice for this chunk: the
         // vector that owns the entry Mi [pfirst] and Mx [pfirst].
@@ -366,35 +357,35 @@ __global__ void AxB_phase1
         klast = GB_search_for_vector_device (plast-1, Mp, kfirst, mnvec, mvlen);
 
         // number of vectors in C and M for this "chunk" iteration, where
-        // Mp [kfirst:klast] will be operatoed on.
+        // Mp [kfirst:klast] will be operated on.
         int64_t nk = klast - kfirst + 1 ;
-
-        __syncthreads ( ) ;
 
         //----------------------------------------------------------------------
         // fill ks to find all indices
         //----------------------------------------------------------------------
 
+        // search for k values for each entry pfirst:plast-1
+        float slope = ((float) nk) / ((float) my_chunk_size) ;
+        int64_t mnvec1 = mnvec - 1 ;
+        for (int64_t kk = threadIdx.x ; kk < my_chunk_size ; kk += blockDim.x)
         {
-
-            //------------------------------------------------------------------
-            // nk is large, so use Mp in global memory directly
-            //------------------------------------------------------------------
-
-            // search for k values for each entry pfirst:plast
-            float slope = (float)(nk) / (float)(chunk_end) ;
-            for (int64_t kk = threadIdx.x ; kk < chunk_end ; kk += blockDim.x)
-            {
-                // get a rough estimate of k for the kkth entry in ks
-                int64_t k = kfirst + slope*(float)(kk) ;
-                // look for p in Mp, where p is in range pfirst:plast-1
-                // where pfirst >= 0 and plast < mnz
-                int64_t p = kk + pfirst ;
-                // linear-time search for the k value of the pth entry
-                while ( Mp [ k + 1 ] <= p ) k++ ;
-                while ( Mp [ k     ] >  p ) k-- ;
-                ks [kk] = k ;
-            }
+            // get a rough estimate of k for the kkth entry in ks
+            int64_t k = kfirst + (int64_t) (slope * ((float) kk)) ;
+//          if (k >= mnvec-1) printf ("\nHey!! %ld %ld: slope %g kk %ld"
+//              " kfirst %ld klast %ld slope*kk %g pfirst %ld plast %ld\n",
+//              k, mnvec, slope, kk, kfirst, klast, slope * (float) kk,
+//              pfirst, plast) ;
+            // k cannot be smaller than kfirst, but might be bigger than
+            // mnvec-1, so ensure it is in the valid range, kfirst to mnvec-1
+            // k = GB_IMIN (k, mnvec-1) ;
+            if (k > mnvec1) k = mnvec1 ; 
+            // look for p in Mp, where p is in range pfirst:plast-1
+            // where pfirst >= 0 and plast < mnz
+            int64_t p = kk + pfirst ;
+            // linear-time search for the k value of the pth entry
+            while ( Mp [ k + 1 ] <= p ) k++ ;
+            while ( Mp [ k     ] >  p ) k-- ;
+            ks [kk] = k ;
         }
 
         __syncthreads ( ) ;
@@ -407,11 +398,11 @@ __global__ void AxB_phase1
         // int64_t bpleft = 0 ;
 
         for ( int64_t pM = pfirst + threadIdx.x;
-                      pM < pfirst + chunk_end;
+                      pM < pfirst + my_chunk_size;
                       pM += blockDim.x )
         {
             GB_bucket_code bucket = GB_BUCKET_ZOMBIE ;
-            int64_t k = ks [pM - pfirst] ;
+            int64_t k = ks [pM - pfirst] ;  // get the k value of Mi,Mx [pM].
             int64_t i = Mi [ pM ] ;
             int64_t j = k ; // HACK, does not need to be initialized here
         

@@ -480,7 +480,7 @@ private:
         // A(:,i) is very sparse compared to B(:,j), or visa versa
         case GB_BUCKET_VSSP :
             Opname = "phase3_vssp" ;
-            blocksz = 32;
+            blocksz = 128;
             gridsz = ( Cnz -1 + blocksz)/blocksz;
             break ;
 
@@ -532,7 +532,7 @@ class reduceFactory
   std::string base_name = "GB_jit";
   std::string kernel_name = "reduceNonZombiesWarp";
 
-  int threads_per_block = 128;
+  int threads_per_block = 1024;
 
 public:
 
@@ -548,6 +548,7 @@ public:
   bool jitGridBlockLaunch(GrB_Matrix A, void* output,
                           GrB_Monoid op, cudaStream_t stream = 0)
   {
+      GBURBLE ("\n(launch reduce factory) \n") ;
 
       // TODO: We probably want to "macrofy" the GrB_Monoid and define it in the `string_to_be_jitted`
 //      void GB_stringify_binop
@@ -644,7 +645,10 @@ inline bool GB_cuda_mxm_phase3(GB_cuda_mxm_factory &mymxmfactory, GB_bucket_code
 
 inline bool GB_cuda_reduce(GrB_Matrix A, void *output, GrB_Monoid op, cudaStream_t stream = 0) {
     reduceFactory rf;
-    return rf.jitGridBlockLaunch(A, output, op, stream);
+    GBURBLE ("(starting cuda reduce)" ) ;
+    bool result = rf.jitGridBlockLaunch(A, output, op, stream);
+    GBURBLE ("(ending cuda reduce)" ) ;
+    return (result) ;
 }
 
 #endif  // C++11

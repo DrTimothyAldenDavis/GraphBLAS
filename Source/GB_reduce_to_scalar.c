@@ -76,6 +76,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     // assemble any pending tuples; zombies are OK
     //--------------------------------------------------------------------------
 
+    GBURBLE ("(start reduce to scalar) ") ;
     GB_MATRIX_WAIT_IF_PENDING (A) ;
     GB_BURBLE_DENSE (A, "(A %s) ") ;
 
@@ -108,7 +109,9 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         // use the GPU(s)
         //----------------------------------------------------------------------
 
+        GBURBLE ("(start GPU) ") ;
         GB_OK (GB_reduce_to_scalar_cuda (s, reduce, A, Context)) ;
+        GBURBLE ("(done GPU) ") ;
 
     }
     else
@@ -322,6 +325,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
     GB_FREE_ALL ;
     #pragma omp flush
+    GBURBLE ("(done reduce to scalar) ") ;
     return (GrB_SUCCESS) ;
 }
 

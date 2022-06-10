@@ -44,6 +44,7 @@ GrB_Info GB_block   // apply all pending computations if blocking mode enabled
     if (many_pending || blocking)
     { 
         // delete any lingering zombies and assemble any pending tuples
+        GBURBLE ("(block: %d %d) ", many_pending, blocking) ;
         GB_MATRIX_WAIT (A) ;
     }
     return (GrB_SUCCESS) ;
