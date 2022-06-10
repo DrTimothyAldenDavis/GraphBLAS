@@ -532,7 +532,7 @@ class reduceFactory
   std::string base_name = "GB_jit";
   std::string kernel_name = "reduceNonZombiesWarp";
 
-  int threads_per_block = 128;
+  int threads_per_block = 1024;
 
 public:
 
