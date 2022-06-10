@@ -136,9 +136,6 @@ if ( CMAKE_CUDA )
     add_subdirectory ( rmm_wrap )
     include_directories ( "rmm_wrap" ${CUDA_INCLUDE_DIRS} )
     link_directories ( "CUDA" "${CUDA_LIBRARIES}" "/usr/local/cuda/lib64/stubs" "rmm_wrap" "/usr/local/cuda/lib64" )
-
-    find_library ( NVTOOLSEXT_LIBRARY nvToolsExt HINTS /usr/local/cuda/lib64 )
-
 else ( )
     # without CUDA and RMM
     message ( STATUS "CUDA: not enabled" )
@@ -462,10 +459,8 @@ endif ( )
 
 if ( CMAKE_CUDA )
     target_link_libraries ( graphblas PUBLIC ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( graphblas PUBLIC ${NVTOOLSEXT_LIBRARY} )
     if ( BUILD_GRB_STATIC_LIBRARY )
         target_link_libraries ( graphblas_static PUBLIC ${GB_CUDA} ${GB_RMM} )
-        target_link_libraries ( graphblas_static PUBLIC ${NVTOOLSEXT_LIBRARY} )
     endif ( )
 endif ( )
 
