@@ -32,6 +32,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     // check inputs
     //--------------------------------------------------------------------------
 
+    GBBURBLE ("\n(HACK: start transplant)\n") ;
     ASSERT (Ahandle != NULL) ;
     GrB_Matrix A = *Ahandle ;
     ASSERT (!GB_aliased (C, A)) ;
@@ -51,16 +52,21 @@ GrB_Info GB_transplant          // transplant one matrix into another
     // the ctype and A->type must be compatible.  C->type is ignored
     ASSERT (GB_Type_compatible (ctype, A->type)) ;
 
+    GBBURBLE ("\n(HACK: t1)\n") ;
     int64_t avdim = A->vdim ;
     int64_t avlen = A->vlen ;
     const bool A_iso = A->iso ;
+    GBBURBLE ("(HACK)\n") ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
+    GBBURBLE ("(HACK)\n") ;
     int64_t anz = GB_nnz_held (A) ;
+    GBBURBLE ("(HACK)\n") ;
     int64_t anvec = A->nvec ;
+    GBBURBLE ("(HACK)\n") ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
 
@@ -69,19 +75,23 @@ GrB_Info GB_transplant          // transplant one matrix into another
     //--------------------------------------------------------------------------
 
     // free all content of C
+    GBBURBLE ("(HACK)\n") ;
     GB_phbix_free (C) ;
+    GBBURBLE ("(HACK)\n") ;
 
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
 
     // It is now safe to change the type and dimension of C
+    GBBURBLE ("(HACK)\n") ;
     C->type = ctype ;
     C->is_csc = A->is_csc ;
     C->vlen = avlen ;
     C->vdim = avdim ;
     C->nvec_nonempty = A->nvec_nonempty ;
     C->iso = A_iso ;        // OK:transplant
+    GBBURBLE ("(HACK)\n") ;
 
     // C is not shallow, and has no content yet
     ASSERT (!GB_is_shallow (C)) ;
@@ -92,16 +102,19 @@ GrB_Info GB_transplant          // transplant one matrix into another
     ASSERT (C->x == NULL) ;
     ASSERT (C->Pending == NULL) ;
 
+    GBBURBLE ("(HACK)\n") ;
     // determine if C should be constructed as a bitmap or full matrix
     bool C_is_bitmap = GB_IS_BITMAP (A) ;
     bool C_is_full = GB_as_if_full (A) && !C_is_bitmap ;
 
+    GBBURBLE ("(HACK)\n") ;
     //--------------------------------------------------------------------------
     // transplant pending tuples from A to C
     //--------------------------------------------------------------------------
 
     C->Pending = A->Pending ;
     A->Pending = NULL ;
+    GBBURBLE ("(HACK)\n") ;
 
     //--------------------------------------------------------------------------
     // allocate new space for C->b, C->i, and C->x if A is shallow
@@ -111,9 +124,11 @@ GrB_Info GB_transplant          // transplant one matrix into another
     // C->i is not allocated if C is full or bitmap.
     // C->x is allocated if A->x is shallow, or if the type is changing
 
+    GBBURBLE ("(HACK)\n") ;
     bool allocate_Cb = (A->b_shallow) && (C_is_bitmap) ;
     bool allocate_Ci = (A->i_shallow) && (!(C_is_full || C_is_bitmap)) ;
     bool allocate_Cx = (A->x_shallow || C->type != A->type) ;
+    GBBURBLE ("(HACK)\n") ;
 
     // allocate new components if needed
     bool ok = true ;
@@ -121,23 +136,28 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (allocate_Cb)
     { 
         // allocate new C->b component
+    GBBURBLE ("(HACK)\n") ;
         C->b = GB_MALLOC (anz, int8_t, &(C->b_size)) ;
         ok = ok && (C->b != NULL) ;
     }
+    GBBURBLE ("(HACK)\n") ;
 
     if (allocate_Ci)
     { 
         // allocate new C->i component
+    GBBURBLE ("(HACK)\n") ;
         C->i = GB_MALLOC (anz, int64_t, &(C->i_size)) ;
         ok = ok && (C->i != NULL) ;
     }
 
+    GBBURBLE ("(HACK)\n") ;
     if (allocate_Cx)
     { 
         // allocate new C->x component; use calloc if C is bitmap
         C->x = GB_XALLOC (C_is_bitmap, A_iso, anz, // x:OK
             C->type->size, &(C->x_size)) ;
         ok = ok && (C->x != NULL) ;
+    GBBURBLE ("(HACK)\n") ;
     }
 
     if (!ok)
@@ -154,6 +174,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
     ASSERT_TYPE_OK (C->type, "target C->type for values", GB0) ;
     ASSERT_TYPE_OK (A->type, "source A->type for values", GB0) ;
+    GBBURBLE ("(HACK)\n") ;
 
     if (C->type == A->type)
     {
@@ -161,20 +182,26 @@ GrB_Info GB_transplant          // transplant one matrix into another
         if (A->x_shallow)
         { 
             // A is shallow so make a deep copy; no typecast needed
+    GBBURBLE ("(HACK)\n") ;
             GB_cast_matrix (C, A, Context) ;
+    GBBURBLE ("(HACK)\n") ;
             A->x = NULL ;
         }
         else
         { 
             // OK to move pointers instead
+    GBBURBLE ("(HACK)\n") ;
             C->x = A->x ; C->x_size = A->x_size ;
             A->x = NULL ;
+    GBBURBLE ("(HACK)\n") ;
         }
     }
     else
     {
         // types differ, must typecast from A to C.
+    GBBURBLE ("(HACK)\n") ;
         GB_cast_matrix (C, A, Context) ;
+    GBBURBLE ("(HACK)\n") ;
         if (!A->x_shallow)
         { 
             GB_FREE (&(A->x), A->x_size) ;
@@ -183,8 +210,10 @@ GrB_Info GB_transplant          // transplant one matrix into another
     }
 
     ASSERT (A->x == NULL) ;     // has been freed or removed
+    GBBURBLE ("(HACK)\n") ;
     A->x_shallow = false ;
     C->x_shallow = false ;
+    GBBURBLE ("(HACK)\n") ;
 
     //--------------------------------------------------------------------------
     // transplant A->p vector pointers and A->h hyperlist
@@ -197,11 +226,14 @@ GrB_Info GB_transplant          // transplant one matrix into another
         // C is full or bitmap: C->p and C->h do not exist
         //----------------------------------------------------------------------
 
+    GBBURBLE ("(HACK)\n") ;
         C->plen = -1 ;
         C->nvec = avdim ;
 
         // free any non-shallow A->p and A->h content of A
+    GBBURBLE ("(HACK)\n") ;
         GB_ph_free (A) ;
+    GBBURBLE ("(HACK)\n") ;
 
     }
     else if (A->p_shallow || A->h_shallow)
@@ -216,10 +248,12 @@ GrB_Info GB_transplant          // transplant one matrix into another
         if (A->h != NULL)
         {
             // A is hypersparse, create new C->p and C->h
+    GBBURBLE ("(HACK)\n") ;
             C->plen = anvec ;
             C->nvec = anvec ;
             C->p = GB_MALLOC (C->plen+1, int64_t, &(C->p_size)) ;
             C->h = GB_MALLOC (C->plen  , int64_t, &(C->h_size)) ;
+    GBBURBLE ("(HACK)\n") ;
             if (C->p == NULL || C->h == NULL)
             { 
                 // out of memory
@@ -255,7 +289,9 @@ GrB_Info GB_transplant          // transplant one matrix into another
         }
 
         // free any non-shallow A->p and A->h content of A
+    GBBURBLE ("(HACK)\n") ;
         GB_ph_free (A) ;
+    GBBURBLE ("(HACK)\n") ;
 
     }
     else
@@ -269,10 +305,12 @@ GrB_Info GB_transplant          // transplant one matrix into another
         // sparse and hypersparse cases.
         ASSERT (C->p == NULL) ;
         ASSERT (C->h == NULL) ;
+    GBBURBLE ("(HACK)\n") ;
         C->p = A->p ; C->p_size = A->p_size ;
         C->h = A->h ; C->h_size = A->h_size ;
         C->plen = A->plen ;
         C->nvec = anvec ;
+    GBBURBLE ("(HACK)\n") ;
     }
 
     // A->p and A->h have been freed or removed from A
@@ -282,6 +320,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     A->h_shallow = false ;
     C->p_shallow = false ;
     C->h_shallow = false ;
+    GBBURBLE ("(HACK)\n") ;
 
     C->magic = GB_MAGIC ;           // C is now initialized
     A->magic = GB_MAGIC2 ;          // A is now invalid
@@ -299,6 +338,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
         // C is full or bitmap; C->i stays NULL
         C->i = NULL ;
+    GBBURBLE ("(HACK)\n") ;
 
     }
     else if (A->i_shallow)
@@ -323,14 +363,18 @@ GrB_Info GB_transplant          // transplant one matrix into another
         // A->i is not shallow, so just transplant the pointer from A to C
         //----------------------------------------------------------------------
 
+    GBBURBLE ("(HACK)\n") ;
         C->i = A->i ; C->i_size = A->i_size ;
         A->i = NULL ;
         A->i_shallow = false ;
+    GBBURBLE ("(HACK)\n") ;
     }
 
     C->i_shallow = false ;
+    GBBURBLE ("(HACK)\n") ;
     C->nzombies = A->nzombies ;     // zombies may have been transplanted into C
     C->jumbled = A->jumbled ;       // C is jumbled if A is jumbled
+    GBBURBLE ("(HACK)\n") ;
 
     //--------------------------------------------------------------------------
     // transplant or copy A->b bitmap
@@ -345,6 +389,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
         // C is not bitmap; C->b stays NULL
         C->b = NULL ;
+    GBBURBLE ("(HACK)\n") ;
 
     }
     else if (A->b_shallow)
@@ -369,20 +414,26 @@ GrB_Info GB_transplant          // transplant one matrix into another
         // A->b is not shallow, so just transplant the pointer from A to C
         //----------------------------------------------------------------------
 
+    GBBURBLE ("(HACK)\n") ;
         C->b = A->b ; C->b_size = A->b_size ;
         A->b = NULL ;
         A->b_shallow = false ;
+    GBBURBLE ("(HACK)\n") ;
     }
 
     C->b_shallow = false ;
+    GBBURBLE ("(HACK)\n") ;
     C->nvals = A->nvals ;
 
+    GBBURBLE ("(HACK)\n") ;
     //--------------------------------------------------------------------------
     // free A and return result
     //--------------------------------------------------------------------------
 
+    GBBURBLE ("(HACK)\n") ;
     GB_Matrix_free (Ahandle) ;
     ASSERT_MATRIX_OK (C, "C after transplant", GB0) ;
+    GBBURBLE ("(HACK)\n") ;
     return (GrB_SUCCESS) ;
 }
 
