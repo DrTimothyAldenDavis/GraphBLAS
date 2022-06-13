@@ -143,7 +143,7 @@ __global__ void AxB_dot3_phase3_vsvs
 
          GB_DECLAREA (aki) ;
          GB_DECLAREB (bkj) ;
-         T_Z cij ;
+         T_Z cij = GB_IDENTITY ;
 
          bool cij_exists = false;
 

@@ -158,7 +158,7 @@ __global__ void AxB_dot3_phase3_dndn
     // convert global data pointer to the local pointer of this block
     GB_DECLAREA (aki) ;
     GB_DECLAREB (bkj) ;
-    T_Z  cij;
+    T_Z cij ; // = GB_IDENTITY ; not needed
 
     GB_GETA ( aki, Ax, pA+threadIdx.x) ;        // aki = A(0,i)
     GB_GETB ( bkj, Bx, pB+threadIdx.x) ;        // bkj = B(0,j)

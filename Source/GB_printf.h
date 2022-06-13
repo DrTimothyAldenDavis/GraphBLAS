@@ -143,7 +143,6 @@ void GB_burble_assign
     GB_NVTX ; /* HACK */ \
     if (GB_Global_burble_get ( ))                   \
     {                                               \
-        printf ("\nFile: %s line: %d\n", __FILE__, __LINE__) ; \
         GBDUMP (__VA_ARGS__) ;                      \
     }                                               \
 }

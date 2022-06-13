@@ -103,10 +103,19 @@
     #define GB_ADD_F( f , s)  f = GB_ADD ( f, s ) 
     #define GB_C_MULT( c, a, b)  c = GB_MULT( (a), (b) )
     #define GB_MULTADD( c, a ,b ) GB_ADD_F( (c), GB_MULT( (a),(b) ) )
-    #define GB_DOT_TERMINAL ( c )   
+    #define GB_DOT_TERMINAL ( c )
     //# if ( c == TERMINAL_VALUE) break;
     // cij += A(k,i) * B(k,j), for merge operation
 
+    #define GB_DOT_MERGE                                                \
+    {                                                                   \
+        GB_GETA (aki, Ax, pA) ;         /* aki = A(k,i) */              \
+        GB_GETB (bkj, Bx, pB) ;         /* bkj = B(k,j) */              \
+        cij_exists = true ;                                             \
+        GB_MULTADD (cij, aki, bkj) ;    /* cij += aki * bkj */          \
+    }
+
+#if 0
     #define GB_DOT_MERGE                                                \
     {                                                                   \
         GB_GETA ( aki, Ax, pA) ;       /* aki = A(k,i) */               \
@@ -122,6 +131,7 @@
             GB_C_MULT (cij, aki, bkj) ;     /* cij  = aki * bkj */      \
         }                                                               \
     }
+#endif
 
 #endif
 

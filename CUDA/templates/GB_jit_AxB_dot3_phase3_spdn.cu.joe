@@ -90,7 +90,7 @@ __global__ void AxB_dot3_phase3_spdn
           int64_t nnzB   = pB_end - pB;
           T_A aki;
           T_B bkj;
-          T_Z cij;
+          T_Z cij = GB_IDENTITY ;
 
           if (nnzA == 0 || nnzB == 0)
           {

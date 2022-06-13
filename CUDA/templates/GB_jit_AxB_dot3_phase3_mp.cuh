@@ -136,13 +136,15 @@ __global__ void AxB_dot3_phase3_mp
 //       bool mydump = ((i == 2981) && (j == 2986))
 //              ||     ((i == 2986) && (j == 2981)) ;
 
-         int64_t xstart = Ap[i];
-         int64_t xend   = Ap[i+1];
-         nnzA = xend - xstart;
+         // find A(:,i)
+         int64_t xstart = Ap[i];        // pA_start
+         int64_t xend   = Ap[i+1];      // pA_end
+         nnzA = xend - xstart;          // ainz
 
-         int64_t ystart = Bp[j];
-         int64_t yend   = Bp[j+1];
-         nnzB = yend - ystart;
+         // find B(:,j)
+         int64_t ystart = Bp[j];        // pB_start
+         int64_t yend   = Bp[j+1];      // pB_ed
+         nnzB = yend - ystart;          // bjnz
 
 //       if (threadIdx.x == 0 && mydump)
 //       {
@@ -240,8 +242,8 @@ __global__ void AxB_dot3_phase3_mp
     //printf(" thd%u has init value %f\n",tid, cij);
 
     //merge-path dot product
-    int k = tx_start;
-    int l = ty_start;
+    int k = tx_start;       // pA
+    int l = ty_start;       // pB
 
 //  if (mydump) //  && threadIdx.x == 0)
 //  {
@@ -255,18 +257,20 @@ __global__ void AxB_dot3_phase3_mp
 //        printf("blk%d, thd%d k=%d, l=%d, tx_start=%d, ty_start=%d, tx_end=%d, ty_end=%d\n", blockIdx.x, tid_global, k, l, tx_start, ty_start, tx_end, ty_end);
 //    }
 
-    while ( k < tx_end && l < ty_end && nnzA != 0 && nnzB != 0)
+    while ( k < tx_end && l < ty_end ) // && nnzA != 0 && nnzB != 0)
     {
         if (Ai [k] == Bi [l])
         {
             GB_GETA (aki, Ax, k) ;      // aki = Ax [k]
             GB_GETB (bkj, Bx, l) ;      // bkj = Bx [l]
-            if (cij_exists)
+            // if (cij_exists)
             {
+                // HACK: cij_exists = 1 ;
                 GB_MULTADD (cij, aki, bkj) ;   // cij += aki * bkj
 //                    if(j == 139 && i == 945)
 //                        printf("blk%d thd%d ix at %lld  %lld cij += %d * %d \n", blockIdx.x, tid_global, Ai[k], Bi[l], aki, bkj);
             }
+#if 0
             else
             {
                 cij_exists = 1 ;
@@ -276,9 +280,10 @@ __global__ void AxB_dot3_phase3_mp
 //                    if(j == 139 && i == 945)
 //                        printf("blk%d thd%d ix at %lld %lld  cij = %d * %d, k=%d, l=%d i=%lld j=%lld \n", blockIdx.x, tid_global, Ai[k], Bi[l], Ax[k], Bx[l], k, l, i, j);
             }
+#endif
             // TODO check terminal condition
-            k+= 1;
-            l+= 1;
+            k++ ;
+            l++ ;
 //                if(j == 139 && i == 945)
 //                    printf(" block%u work value = %d, exists = %d\n", b, cij, cij_exists);
         }
@@ -302,7 +307,9 @@ __global__ void AxB_dot3_phase3_mp
     */
 
     // Do vote here for control.
-    cij_exists  = tile.any( cij_exists);
+    // HACK for PLUS_PAIR:
+    cij_exists = (cij > 0) ;
+    cij_exists = tile.any( cij_exists);
     //tile.sync();
 
     #if !GB_C_ISO
