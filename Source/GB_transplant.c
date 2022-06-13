@@ -229,8 +229,10 @@ GrB_Info GB_transplant          // transplant one matrix into another
             }
 
             // copy A->p and A->h into the newly created C->p and C->h
+            GBURBLE ("(HACK memcpy Cp and Ch)" ) ;
             GB_memcpy (C->p, A->p, (anvec+1) * sizeof (int64_t), nth) ;
             GB_memcpy (C->h, A->h,  anvec    * sizeof (int64_t), nth) ;
+            GBURBLE ("(HACK did memcpy Cp and Ch)" ) ;
         }
         else
         {
@@ -247,7 +249,9 @@ GrB_Info GB_transplant          // transplant one matrix into another
             }
 
             // copy A->p into the newly created C->p
+            GBURBLE ("(HACK memcpy Cp)" ) ;
             GB_memcpy (C->p, A->p, (avdim+1) * sizeof (int64_t), nth) ;
+            GBURBLE ("(HACK memcpy Cp)" ) ;
         }
 
         // free any non-shallow A->p and A->h content of A
@@ -305,7 +309,9 @@ GrB_Info GB_transplant          // transplant one matrix into another
         //----------------------------------------------------------------------
 
         // copy A->i into C->i
+        GBURBLE ("(HACK memcpy Ci)" ) ;
         GB_memcpy (C->i, A->i, anz * sizeof (int64_t), nthreads) ;
+        GBURBLE ("(HACK did memcpy Ci)" ) ;
         A->i = NULL ;
         A->i_shallow = false ;
 
@@ -349,7 +355,9 @@ GrB_Info GB_transplant          // transplant one matrix into another
         //----------------------------------------------------------------------
 
         // copy A->b into C->b
+        GBURBLE ("(HACK memcpy Cb)" ) ;
         GB_memcpy (C->b, A->b, anz * sizeof (int8_t), nthreads) ;
+        GBURBLE ("(HACK did memcpy Cb)" ) ;
         A->b = NULL ;
         A->b_shallow = false ;
 

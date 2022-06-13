@@ -39,7 +39,9 @@ GrB_Info GB_transplant_conform      // transplant and conform sparsity structure
     // transplant and typecast T into C, and free T
     //--------------------------------------------------------------------------
 
+    GBURBLE ("(HACK: transplant start) ") ;
     GrB_Info info = GB_transplant (C, ctype, Thandle, Context) ;
+    GBURBLE ("(HACK: transplant done) ") ;
 
     // T is always freed, even if the transplant runs out of memory
     ASSERT (*Thandle == NULL ||
@@ -57,7 +59,9 @@ GrB_Info GB_transplant_conform      // transplant and conform sparsity structure
     // conform C to its desired sparsity structure
     //--------------------------------------------------------------------------
 
+    GBURBLE ("(HACK: conform start) ") ;
     info = GB_conform (C, Context) ;
+    GBURBLE ("(HACK: conform done) ") ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
