@@ -110,11 +110,13 @@ __global__ void AxB_dot3_phase3_vssp
         int64_t i = Mi[pair_id];
         int64_t j = Ci[pair_id] >> 4;
 
+        /*
         if( j < 0) //Pre-zombie
         {
             zc++;
             continue;
         }
+        */
 
         int64_t pA      = Ap[i];
         int64_t pA_end  = Ap[i+1];

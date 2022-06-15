@@ -35,6 +35,7 @@ T warp_ReduceSum( thread_block_tile<tile_sz> g, T val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
+    #pragma unroll
     for (int i = g.size() / 2; i > 0; i /= 2) {
         T fold = g.shfl_down( val, i);
         //printf("thd%d   %d OP %d is %d\n", threadIdx.x, val, fold, OP( val, fold));
@@ -81,29 +82,33 @@ template< typename T, typename Accum, bool atomic_reduce = true>
 __global__ void reduceNonZombiesWarp
 (
     GrB_Matrix A,
-    GrB_Scalar O,      // array of size grid.x if atomic_reduce==false and size 1 if atomic_reduce==true
-    int64_t N,  // number of edges for sparse, size of x array for full/bitmap
+    GrB_Scalar R,      // array of size grid.x if atomic_reduce==false and size 1 if atomic_reduce==true
+    int64_t N,         // number of edges for sparse, size of x array for full/bitmap
     bool is_sparse
 )
 {
     // set thread ID
     int tid = threadIdx.x ;
 
-    int64_t *index = A->i;
-    T *g_idata = (T*) A->x;
-    Accum *g_odata = (Accum*) O->x;
+    const int64_t *__restrict__ index = A->i;
+    const T *__restrict__ g_idata = (T*) A->x;
+    Accum *g_odata = (Accum*) R->x;
 
     // each thread tid reduces its result into sum
     Accum sum = (Accum) GB_IDENTITY;
 
+    #pragma unroll
     for(int i = blockIdx.x * blockDim.x + threadIdx.x; 
         i < N;
         i += blockDim.x * gridDim.x) {
+
         if (is_sparse && index[i] < 0) continue; // skip zombies
+        //T fold = index[i] < 0 ? GB_IDENTITY : g_idata[i];
         T fold = g_idata[i];
         sum = GB_ADD( sum, fold );
     }
     __syncthreads();
+
     //--------------------------------------------------------------------------
     // reduce work [0..s-1] to a single scalar
     //--------------------------------------------------------------------------

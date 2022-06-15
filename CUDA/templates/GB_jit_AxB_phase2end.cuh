@@ -41,7 +41,7 @@ void AxB_phase2end
     // need k, just the bucket for each entry C(i,j).
 
     int64_t *Ci = C->i ;       // for zombies, or bucket assignment
-    int64_t *Mp = C->p ;       // for offset calculations
+    //int64_t *Mp = C->p ;       // for offset calculations
     int64_t mnvec = C->nvec;
 
     //--------------------------------------------------------------------------

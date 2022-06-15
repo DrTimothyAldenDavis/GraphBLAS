@@ -399,6 +399,8 @@ private:
                    int &blocksz, int &gridsz, int &sz) {
     int number_of_sms = GB_Global_gpu_sm_get (0) ;
 
+    int work_per_thread;
+
     std::string Opname;
     // TODO: make sure this works with different geometry
 
@@ -480,8 +482,9 @@ private:
         // A(:,i) is very sparse compared to B(:,j), or visa versa
         case GB_BUCKET_VSSP :
             Opname = "phase3_vssp" ;
-            blocksz = 128;
-            gridsz = ( Cnz -1 + blocksz)/blocksz;
+            blocksz = 64;
+            work_per_thread = 4;
+            gridsz = ( Cnz -1 + work_per_thread*blocksz)/(work_per_thread*blocksz);
             break ;
 
         //--------------------------------------------------------------
@@ -500,7 +503,7 @@ private:
 
             // FIXME: Is the first line not needed?
             gridsz = GB_IMIN( 1024*number_of_sms, ( Cnz  + blocksz -1 )/blocksz);
-            gridsz =  ( Cnz  + blocksz -1 )/blocksz;
+            //gridsz =  ( Cnz  + blocksz -1 )/blocksz;
             break ;
 
         //--------------------------------------------------------------
@@ -510,7 +513,8 @@ private:
         case GB_BUCKET_MERGEPATH :
             Opname = "phase3_mp" ;
             blocksz = 32;
-            gridsz = ( Cnz -1 + blocksz)/blocksz;
+            work_per_thread = 4 ;
+            gridsz = ( Cnz -1 + work_per_thread*blocksz)/(work_per_thread*blocksz);
             break ;
 
 //      case GB_BUCKET_WARP_IX :   sz = 32      ;
@@ -532,7 +536,8 @@ class reduceFactory
   std::string base_name = "GB_jit";
   std::string kernel_name = "reduceNonZombiesWarp";
 
-  int threads_per_block = 1024;
+  int threads_per_block = 128 ;
+  int work_per_thread = 128;
 
 public:
 
@@ -541,7 +546,7 @@ public:
   }
 
   int get_number_of_blocks(unsigned int N) {
-      return (N + threads_per_block - 1)/threads_per_block;
+      return (N + work_per_thread*threads_per_block - 1)/(work_per_thread*threads_per_block);
   }
 
   // Note: this does assume the erased types are compatible w/ the monoid's ztype
@@ -585,6 +590,7 @@ public:
 
       // FIXME: call GB_stringify_reduce to create GB_ADD and related
       // macros, in an include file: GB_reduce_123412341234.h
+      GBURBLE ("(cuda reduce launch %d threads in %d blocks)", blocksz, gridsz ) ;
 
       jit::launcher(hashable_name,
                     string_to_be_jitted.str(),
@@ -607,7 +613,7 @@ public:
   }
 };
 
-template<  int threads_per_block=32, int chunk_size = 128>
+template<  int threads_per_block=32, int chunk_size = 256>
 inline bool GB_cuda_mxm_phase1(GB_cuda_mxm_factory &mxm_factory, int64_t *nanobuckets, int64_t *blockBucket,
                         GrB_Matrix C, GrB_Matrix M, GrB_Matrix A, GrB_Matrix B,
                         cudaStream_t stream = 0) {
@@ -616,7 +622,7 @@ inline bool GB_cuda_mxm_phase1(GB_cuda_mxm_factory &mxm_factory, int64_t *nanobu
 }
 
 
-template<int threads_per_block = 32, int chunk_size = 128>
+template<int threads_per_block = 32, int chunk_size = 256>
 bool GB_cuda_mxm_phase2(int64_t *nanobuckets, int64_t *blockBucket,
                           int64_t *bucketp, int64_t *bucket, int64_t *offset,
                           GrB_Matrix M, cudaStream_t stream = 0) {
