@@ -461,8 +461,7 @@ __global__ void AxB_phase1
                         //   int64_t ia_first = Ai [pA] ;
                         //   int64_t ia_last  = Ai [pA_end-1] ;
 
-                        //bucket = GB_bucket_assignment ( ainz, bjnz, bvlen) ;
-                        bucket = GB_BUCKET_MERGEPATH;
+                        bucket = GB_bucket_assignment ( ainz, bjnz, bvlen) ;
                     }
                 }
             }
