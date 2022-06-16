@@ -47,10 +47,17 @@ __device__ T reduce_sum(thread_block_tile<warpSize> g, T val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
-    for (int i = g.size() / 2; i > 0; i /= 2)
+    /*
+    for (int i = warpSize >> 1; i > 0; i >>= 1)
     {
         val += g.shfl_down(val,i) ;
     }
+    */
+        val += g.shfl_down(val,16) ;
+        val += g.shfl_down(val,8) ;
+        val += g.shfl_down(val,4) ;
+        val += g.shfl_down(val,2) ;
+        val += g.shfl_down(val,1) ;
     return val; // note: only thread 0 will return full sum
 }
 

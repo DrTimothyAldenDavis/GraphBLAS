@@ -375,8 +375,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             phase3launchFactory p3lf(my_mxm_spec, (GB_bucket_code)bucket);
             p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket,
                 C, M, A, B, stream);
+            GBURBLE ("(GPU phase3 bucket %d done ) ", bucket) ;
         }
-        GBURBLE ("(GPU phase3 done ) ") ;
     }
 
     GB_FREE_WORKSPACE ;

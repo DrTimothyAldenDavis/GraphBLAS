@@ -309,7 +309,7 @@ class phase3launchFactory
 
 public:
 
-
+   std::string Opname;
 
   /**
    * This assumes the needed state on the GB_cuda_mxm_factory has already been populated.
@@ -365,7 +365,8 @@ public:
     dim3 grid(gridsz);
     dim3 block(blocksz);
 
-    GBURBLE ("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
+    GBURBLE ("(GPU phase3 launch %s st,end=%ld,%ld nblocks,blocksize= %d,%d )\n", this->Opname.c_str(),
+              start,end,gridsz,blocksz) ;
     jit::launcher( hashable_name + "_" + sr_code,
                    string_to_be_jitted.str(),
                    header_names,
@@ -388,7 +389,6 @@ public:
                         sz                 // only used for sparse-sparse cases
                     );
 
-    GBURBLE ("(GPU phase3 done) ") ;
     result= true;
 
     return result;
@@ -401,7 +401,6 @@ private:
 
     int work_per_thread;
 
-    std::string Opname;
     // TODO: make sure this works with different geometry
 
     /* fixme: the final bucket-based dot3 method should only have the following
@@ -483,7 +482,7 @@ private:
         case GB_BUCKET_VSSP :
             Opname = "phase3_vssp" ;
             blocksz = 64;
-            work_per_thread = 4;
+            work_per_thread = 8;
             gridsz = ( Cnz -1 + work_per_thread*blocksz)/(work_per_thread*blocksz);
             break ;
 
@@ -500,10 +499,11 @@ private:
         case GB_BUCKET_VSVS :
             Opname = "phase3_vsvs" ;
             blocksz = 512;
+            work_per_thread = 2;
 
             // FIXME: Is the first line not needed?
-            gridsz = GB_IMIN( 1024*number_of_sms, ( Cnz  + blocksz -1 )/blocksz);
-            //gridsz =  ( Cnz  + blocksz -1 )/blocksz;
+            //gridsz = GB_IMIN( 1024*number_of_sms, ( Cnz  + work_per_thread*blocksz -1 )/(work_per_thread*blocksz));
+            gridsz =  ( Cnz  + blocksz -1 )/blocksz;
             break ;
 
         //--------------------------------------------------------------
@@ -515,6 +515,7 @@ private:
             blocksz = 32;
             work_per_thread = 4 ;
             gridsz = ( Cnz -1 + work_per_thread*blocksz)/(work_per_thread*blocksz);
+            //gridsz = GB_IMIN( 1024*number_of_sms, ( Cnz  + work_per_thread*blocksz -1 )/(work_per_thread*blocksz));
             break ;
 
 //      case GB_BUCKET_WARP_IX :   sz = 32      ;
@@ -536,8 +537,9 @@ class reduceFactory
   std::string base_name = "GB_jit";
   std::string kernel_name = "reduceNonZombiesWarp";
 
-  int threads_per_block = 128 ;
+  int threads_per_block = 256 ;
   int work_per_thread = 128;
+  int number_of_sms = GB_Global_gpu_sm_get (0);
 
 public:
 
