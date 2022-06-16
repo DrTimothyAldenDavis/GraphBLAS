@@ -35,12 +35,23 @@ T warp_ReduceSum( thread_block_tile<tile_sz> g, T val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
-    #pragma unroll
+    /*
     for (int i = g.size() / 2; i > 0; i /= 2) {
         T fold = g.shfl_down( val, i);
-        //printf("thd%d   %d OP %d is %d\n", threadIdx.x, val, fold, OP( val, fold));
         val = GB_ADD( val, fold );
+        //printf("thd%d   %d OP %d is %d\n", threadIdx.x, val, fold, OP( val, fold));
     }
+    */
+        T fold = g.shfl_down( val, 16);
+        val = GB_ADD( val, fold );
+         fold = g.shfl_down( val, 8);
+        val = GB_ADD( val, fold );
+         fold = g.shfl_down( val, 4);
+        val = GB_ADD( val, fold );
+         fold = g.shfl_down( val, 2);
+        val = GB_ADD( val, fold );
+         fold = g.shfl_down( val, 1);
+        val = GB_ADD( val, fold );
     //if (threadIdx.x ==0) printf("thd%d single warp sum is %d\n", threadIdx.x,  val);
     return val; // note: only thread 0 will return full sum
 }
