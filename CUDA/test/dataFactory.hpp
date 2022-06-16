@@ -135,6 +135,8 @@ class matrix : public Managed {
                     }
                 }
             }
+
+            std::cout << "done." << std::endl;
         }
         else
         {

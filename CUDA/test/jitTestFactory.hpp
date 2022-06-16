@@ -213,7 +213,7 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
     fillvector_constant(NBUCKETS * nthrd * ntasks, nanobuckets, (int64_t)0);
     fillvector_constant(Cnz, nanobuckets, (int64_t)1);
     fillvector_constant(NBUCKETS * ntasks, blockbucket, (int64_t)0);
-    blockbucket[10] = Cnz;
+    blockbucket[3] = Cnz;
     fillvector_constant(NBUCKETS, bucketp, (int64_t)0);
     fillvector_constant(NBUCKETS, offset, (int64_t)0);
     fillvector_constant(Cnz, bucket, (int64_t)0);
@@ -238,6 +238,7 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
     p2elF.jitGridBlockLaunch( nanobuckets, blockbucket,
                               bucketp, bucket, offset, C,
                               M);
+    CHECK_CUDA(cudaStreamSynchronize(0));
 //    kernTimer.Stop();
 //    std::cout<<"returned from phase2 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 //
@@ -482,7 +483,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             GrB_Index nvals1 = 0, nvals2 = 0 ;
             GRB_TRY (GrB_Matrix_nvals (&nvals1, C)) ;
             GRB_TRY (GrB_Matrix_nvals (&nvals2, C_actual)) ;
-            if (nvals1 != nvals2) { printf ("!!\n") ; abort ( ) ; } 
+            if (nvals1 != nvals2) { printf ("Aborting!!!\n") ; abort ( ) ; }
             GrB_Index nrows, ncols ;
             GrB_Matrix_nrows (&nrows, C) ;
             GrB_Matrix_ncols (&ncols, C) ;
