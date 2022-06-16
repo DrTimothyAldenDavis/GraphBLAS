@@ -58,7 +58,7 @@ message ( STATUS "GraphBLAS C API: v" "${GraphBLAS_API_VERSION_MAJOR}.${GraphBLA
 
 # TODO: use something like this:
 # if ( set some flag to ignore cuda )
-#   set ( CMAKE_CUDA off )
+set ( CMAKE_CUDA on )
 #   message ( STATUS "CUDA: disabled" )
 # elseif ( ${CMAKE_VERSION} VERSION_LESS "3.17.0" )
 #   ...
@@ -102,8 +102,7 @@ else ( )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-# FIXME: uncomment this for stable release
-  set ( CMAKE_CUDA off)
+set ( CMAKE_CUDA on)
 
 # Edit these lines for code development only, not for end-users:
 # set ( CMAKE_BUILD_TYPE Debug )
