@@ -158,8 +158,8 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vssp.cu.jit
 
-        GB_BUCKET ((ainz > 32 * bjnz && bjnz < 256)
-                || (bjnz > 32 * ainz && ainz < 256), GB_BUCKET_VSSP) ;
+        GB_BUCKET ((ainz > 8 * bjnz && bjnz < 256)
+                || (bjnz > 8 * ainz && ainz < 256), GB_BUCKET_VSSP) ;
 
     }
 //  else if (ainz + bjnz <= 4)

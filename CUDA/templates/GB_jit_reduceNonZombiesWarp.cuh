@@ -36,7 +36,8 @@ T warp_ReduceSum( thread_block_tile<tile_sz> g, T val)
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
     /*
-    for (int i = g.size() / 2; i > 0; i /= 2) {
+    #pragma unroll
+    for (int i = tile_sz >> 1; i > 0; i >>= 1) {
         T fold = g.shfl_down( val, i);
         val = GB_ADD( val, fold );
         //printf("thd%d   %d OP %d is %d\n", threadIdx.x, val, fold, OP( val, fold));
@@ -108,7 +109,6 @@ __global__ void reduceNonZombiesWarp
     // each thread tid reduces its result into sum
     Accum sum = (Accum) GB_IDENTITY;
 
-    #pragma unroll
     for(int i = blockIdx.x * blockDim.x + threadIdx.x; 
         i < N;
         i += blockDim.x * gridDim.x) {

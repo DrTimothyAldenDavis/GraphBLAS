@@ -40,8 +40,8 @@ def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds= "tiny-tiny", SUM="PLU
     gb_monoid = build_gb_monioid(typeC, SUM)
     gb_binop = build_gb_binop(typeC, PRODUCT)
 
-    phase1_body= f""" test_AxB_phase1_factory< {typeC}, {typeM}, {typeA}, {typeB}>( 5, {N}, {Anz}, {Bnz}, monoid, binop);"""
-    phase2_body= f""" test_AxB_phase2_factory< {typeC} >( 5, {N}, {Anz},{Bnz});"""
+    phase1_body= f""" test_AxB_phase1_factory< {typeC}, {typeM}, {typeA}, {typeB}>( 3, {N}, {Anz}, {Bnz}, monoid, binop);"""
+    phase2_body= f""" test_AxB_phase2_factory< {typeC} >( 3, {N}, {Anz},{Bnz});"""
     phase3_body = ''.join([f""" test_AxB_dot3_full_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > ({kern}, {N}, {Anz}, {Bnz}, monoid, binop);\n""" for kern in kernels])
     reduce_body = f""" test_reduce_factory<{typeC}>({N}, monoid);"""
     phasedict = { 1: phase1_body, 2: phase2_body, 3: phase3_body, 4: reduce_body }

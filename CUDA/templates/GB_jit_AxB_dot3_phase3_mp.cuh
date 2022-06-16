@@ -50,11 +50,23 @@ T GB_reduce_sum(thread_block_tile<warp_sz> g, T val)
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
     // Temporary T is necessary to handle arbirary ops
+    /*
     for (int i = warp_sz >> 1; i > 0; i >>= 1)
     {
         T next = g.shfl_down( val, i);
         val = GB_ADD( val, next ) ;
     }
+    */
+        T next = g.shfl_down( val, 16);
+        val = GB_ADD( val, next ) ;
+        next = g.shfl_down( val, 8);
+        val = GB_ADD( val, next ) ;
+        next = g.shfl_down( val, 4);
+        val = GB_ADD( val, next ) ;
+        next = g.shfl_down( val, 2);
+        val = GB_ADD( val, next ) ;
+        next = g.shfl_down( val, 1);
+        val = GB_ADD( val, next ) ;
     return val;
 }
 
@@ -64,10 +76,17 @@ T reduce_plus(thread_block_tile<warp_sz> g, T val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
-    for (int i = g.size() / 2; i > 0; i /= 2)
+    /*
+    for (int i = warp_sz >> 1; i > 0; i >>= 1)
     {
         val += g.shfl_down( val, i) ;
     }
+    */
+        val += g.shfl_down(val,16) ;
+        val += g.shfl_down(val,8) ;
+        val += g.shfl_down(val,4) ;
+        val += g.shfl_down(val,2) ;
+        val += g.shfl_down(val,1) ;
     return val; // note: only thread 0 will return full sum and flag value
 }
 
@@ -114,13 +133,11 @@ __global__ void AxB_dot3_phase3_mp
     // total items to be inspected
     int64_t nnzA = 0;
     int64_t nnzB = 0;
-    int64_t n_intersect = 0;
 
     thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( this_thread_block());
 
     int parts = blockDim.x; // whole block (at least 32 threads) per dot product
-
-    // int has_zombies = 0 ;
+// int has_zombies = 0 ;
 
     // Main loop over pairs 
     int64_t kk ;
@@ -158,7 +175,6 @@ __global__ void AxB_dot3_phase3_mp
 //         if(threadIdx.x == 0 && j == 139 && i == 945)
 //             printf("blk%d tid=%d, nnzA=%d, nnzB=%d\n", blockIdx.x, tid_global, nnzA, nnzB);
 //
-         n_intersect = GB_IMIN( xend -xstart, yend -ystart); 
     /* 
     if (threadIdx.x ==0 ) {
       printf("block %d  doing dot %lld  i,j= %lld,%lld\n", blockIdx.x, pair_id, i, j);
@@ -167,7 +183,7 @@ __global__ void AxB_dot3_phase3_mp
     //we want more than one intersection per thread
     int64_t nxy = nnzA + nnzB;
 
-    int work_per_thread = (nxy +parts -1)/parts;
+    int work_per_thread = (nxy +blockDim.x -1)/blockDim.x;
     int diag = GB_IMIN( work_per_thread*tid, nxy);
     int diag_end = GB_IMIN( diag + work_per_thread, nxy);
     //printf(" thd%d parts = %u wpt = %u diag, diag_end  = %u,%u\n",tid, parts, work_per_thread, diag, diag_end); 
@@ -178,7 +194,7 @@ __global__ void AxB_dot3_phase3_mp
 //          work_per_thread, nxy, parts, diag, diag_end) ;
 //  }
     
-    int x_min = GB_IMAX( (int)(diag - nnzB), 0);
+    int x_min = GB_IMAX( (diag - nnzB), 0);
     int x_max = GB_IMIN( diag, nnzA);
 
     //printf("start thd%u x_min = %u x_max = %u\n", tid_global, x_min,x_max);
@@ -194,9 +210,9 @@ __global__ void AxB_dot3_phase3_mp
     int xcoord = x_min;
     int ycoord = diag -x_min -1;
     if ( ( diag > 0) 
-      && (diag < (nnzA+nnzB)) 
-      && (Ai[xcoord+xstart] == Bi[ycoord+ystart]) 
+      && (diag < nxy ) 
       && (ycoord >= 0 ) 
+      && (Ai[xcoord+xstart] == Bi[ycoord+ystart]) 
       ) 
     { 
        diag--; //adjust for intersection incrementing both pointers 
@@ -224,7 +240,10 @@ __global__ void AxB_dot3_phase3_mp
     }
     xcoord = x_min;
     ycoord = diag_end -x_min -1;
-    if ( (diag_end < (nnzA +nnzB)) && (Ai[xcoord +xstart] == Bi[ycoord + ystart]) ) { 
+    if ( (diag_end < nxy) 
+      && (ycoord > 0)
+      && (Ai[xcoord +xstart] == Bi[ycoord + ystart]) 
+      ) { 
         diag--; //adjust for intersection incrementing both pointers  
     }
     // two end points are known now
