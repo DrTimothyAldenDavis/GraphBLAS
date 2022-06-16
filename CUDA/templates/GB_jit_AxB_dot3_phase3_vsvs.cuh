@@ -136,7 +136,6 @@ __global__ void AxB_dot3_phase3_vsvs
          int64_t pA       = Ap[i] ;
          int64_t pA_end   = Ap[i+1] ;
 
-//      bool mydump = (i >= 1235609 && i <= 1235611) || (j >= 1235609 && j <= 1235611) ;
 
          int64_t pB       = Bp[j] ;
          int64_t pB_end   = Bp[j+1] ;

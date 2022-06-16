@@ -50,7 +50,7 @@ T GB_reduce_sum(thread_block_tile<warp_sz> g, T val)
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
     // Temporary T is necessary to handle arbirary ops
-    for (int i = warp_sz >> 1; i > 0; i >>= 1)
+    for (int i = g.size() / 2; i > 0; i /= 2)
     {
         T next = g.shfl_down( val, i);
         val = GB_ADD( val, next ) ;
@@ -101,7 +101,7 @@ __global__ void AxB_dot3_phase3_mp
     const int64_t *__restrict__ Bp = B->p ;
 
     // zombie count
-    int zc = 0;
+    int64_t zc = 0;
 
     int64_t pair_id;
 
@@ -112,8 +112,8 @@ __global__ void AxB_dot3_phase3_mp
     int b = blockIdx.x ;
 
     // total items to be inspected
-    int64_t nnzA = 0;
-    int64_t nnzB = 0;
+    int64_t ainz = 0;
+    int64_t bjnz = 0;
     int64_t n_intersect = 0;
 
     thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( this_thread_block());
@@ -133,18 +133,45 @@ __global__ void AxB_dot3_phase3_mp
          int64_t i = Mi[pair_id];
          int64_t j = Ci[pair_id] >> 4;
 
-//       bool mydump = ((i == 2981) && (j == 2986))
-//              ||     ((i == 2986) && (j == 2981)) ;
 
          // find A(:,i)
-         int64_t xstart = Ap[i];        // pA_start
-         int64_t xend   = Ap[i+1];      // pA_end
-         nnzA = xend - xstart;          // ainz
+         int64_t pA_start = Ap[i];        // pA_start
+         int64_t pA_end   = Ap[i+1];      // pA_end
+         ainz = pA_end - pA_start;          // ainz
+         
+         #define shared_vector_size 512
+         __shared__ int64_t Ai_s[shared_vector_size];
+         bool use_A_shared = false;
+
+         if (ainz < shared_vector_size)
+         {
+            use_A_shared = true;
+            #pragma unroll
+            for ( int i = pA_start +tid; i< pA_end; i+= blockDim.x)
+            {   Ai_s[i- pA_start] = Ai[ i];
+            }   
+            __syncthreads();
+         }
+         
 
          // find B(:,j)
-         int64_t ystart = Bp[j];        // pB_start
-         int64_t yend   = Bp[j+1];      // pB_ed
-         nnzB = yend - ystart;          // bjnz
+         int64_t pB_start = Bp[j];        // pB_start
+         int64_t pB_end   = Bp[j+1];      // pB_end
+         bjnz = pB_end - pB_start;          // bjnz
+         
+         __shared__ int64_t Bj_s[shared_vector_size];
+         bool use_B_shared = false;
+
+         if (bjnz < shared_vector_size)
+         {
+            use_B_shared = true;
+            #pragma unroll
+            for ( int i = pB_start +tid; i< pB_end; i+= blockDim.x)
+            {   Bj_s[i- pB_start] = Bi[ i];
+            }   
+            __syncthreads();
+         }
+        
 
 //       if (threadIdx.x == 0 && mydump)
 //       {
@@ -158,14 +185,14 @@ __global__ void AxB_dot3_phase3_mp
 //         if(threadIdx.x == 0 && j == 139 && i == 945)
 //             printf("blk%d tid=%d, nnzA=%d, nnzB=%d\n", blockIdx.x, tid_global, nnzA, nnzB);
 //
-         n_intersect = GB_IMIN( xend -xstart, yend -ystart); 
+         n_intersect = GB_IMIN( pA_end -pA_start, pB_end -pB_start); 
     /* 
     if (threadIdx.x ==0 ) {
       printf("block %d  doing dot %lld  i,j= %lld,%lld\n", blockIdx.x, pair_id, i, j);
     }
     */
     //we want more than one intersection per thread
-    int64_t nxy = nnzA + nnzB;
+    int64_t nxy = ainz + bjnz;
 
     int work_per_thread = (nxy +parts -1)/parts;
     int diag = GB_IMIN( work_per_thread*tid, nxy);
@@ -178,58 +205,128 @@ __global__ void AxB_dot3_phase3_mp
 //          work_per_thread, nxy, parts, diag, diag_end) ;
 //  }
     
-    int x_min = GB_IMAX( (int)(diag - nnzB), 0);
-    int x_max = GB_IMIN( diag, nnzA);
+    int x_min = GB_IMAX( diag - bjnz , 0);
+    int x_max = GB_IMIN( diag, ainz);
 
     //printf("start thd%u x_min = %u x_max = %u\n", tid_global, x_min,x_max);
     while ( x_min < x_max) { //binary search for correct diag break
-      int pivot = (x_min +x_max)/2;
-      if ( Ai[pivot + xstart] < Bi[ diag -pivot -1 + ystart]) {
-         x_min = pivot +1;
+      int pivot = (x_min +x_max) >> 1;
+      if ( use_A_shared && use_B_shared ) 
+      {
+          if ( Ai_s[pivot ] < Bj_s[ diag -pivot -1 ]) {
+             x_min = pivot +1;
+          }
+          else {
+             x_max = pivot;
+          }
+
       }
       else {
-         x_max = pivot;
+          if ( Ai[pivot + pA_start] < Bi[ diag -pivot -1 + pB_start]) {
+             x_min = pivot +1;
+          }
+          else {
+             x_max = pivot;
+          }
       }
+      
+       /*
+          if ( Ai[pivot + pA_start] < Bi[ diag -pivot -1 + pB_start]) {
+             x_min = pivot +1;
+          }
+          else {
+             x_max = pivot;
+          }
+       */
     }
     int xcoord = x_min;
     int ycoord = diag -x_min -1;
+    int64_t Atest;
+    int64_t Btest;
+    if ( use_A_shared && use_B_shared)
+    {
+       Atest = Ai_s[xcoord];
+       Btest = Bj_s[ycoord];
+    }
+    else
+    {
+       Atest = Ai[xcoord+pA_start];
+       Btest = Bi[ycoord+pB_start];
+    }
     if ( ( diag > 0) 
-      && (diag < (nnzA+nnzB)) 
-      && (Ai[xcoord+xstart] == Bi[ycoord+ystart]) 
+      && (diag < nxy ) 
+      && (Atest == Btest)
       && (ycoord >= 0 ) 
       ) 
     { 
        diag--; //adjust for intersection incrementing both pointers 
     }
     // two start points are known now
-    int tx_start = xcoord +xstart;
-    int ty_start = diag -xcoord +ystart; 
+    int tx_start = xcoord +pA_start;
+    int ty_start = diag -xcoord +pB_start; 
 
     //if (x_start != y_start)
     //   printf("start thd%u  xs,ys = %i,%i\n", tid_global, x_start, y_start);
 
-    x_min = GB_IMAX( (int)(diag_end - nnzB), 0);
-    x_max = GB_IMIN( diag_end, nnzA);
+    x_min = GB_IMAX( diag_end - bjnz, 0);
+    x_max = GB_IMIN( diag_end, ainz);
 
     while ( x_min < x_max) {
-       int pivot = (x_min +x_max)/2;
+      int pivot = (x_min +x_max) >> 1;
+      
+      if ( use_A_shared && use_B_shared ) 
+      {
+          if ( Ai_s[pivot ] < Bj_s[ diag_end -pivot -1 ]) {
+             x_min = pivot +1;
+          }
+          else {
+             x_max = pivot;
+          }
+
+      }
+      else {
+          if ( Ai[pivot + pA_start] < Bi[ diag_end -pivot -1 + pB_start]) {
+             x_min = pivot +1;
+          }
+          else {
+             x_max = pivot;
+          }
+      }
+      /*
        //printf("thd%u pre_sw piv=%u diag_e = %u  xmin,xmax=%u,%u\n", tid_global, pivot, diag_end,x_min, x_max);
-       if ( Ai[pivot+ xstart] < Bi[ diag_end -pivot -1 +ystart]) {
+       if ( Ai[pivot+ pA_start] < Bi[ diag_end -pivot -1 +pB_start]) {
           x_min = pivot +1;
        }
        else {
           x_max = pivot;
        }
+       */
+       
        //printf("thd%u piv=%u xmin,xmax = %u,%u\n", tid_global, pivot, x_min, x_max);
     }
     xcoord = x_min;
     ycoord = diag_end -x_min -1;
-    if ( (diag_end < (nnzA +nnzB)) && (Ai[xcoord +xstart] == Bi[ycoord + ystart]) ) { 
-        diag--; //adjust for intersection incrementing both pointers  
+    if ( use_A_shared && use_B_shared)
+    {
+       Atest = Ai_s[xcoord];
+       Btest = Bj_s[ycoord];
     }
+    else
+    {
+       Atest = Ai[xcoord+pA_start];
+       Btest = Bi[ycoord+pB_start];
+    }
+    if ( (diag_end > 0)
+      && (diag_end < nxy) 
+      && (ycoord >= 0)
+      && (Atest == Btest)
+      ) 
+      { 
+        diag--; //adjust for intersection incrementing both pointers  
+      }
     // two end points are known now
-    int tx_end = xcoord +xstart; 
-    int ty_end = diag_end - xcoord + ystart; 
+    int tx_end = xcoord +pA_start; 
+    int ty_end = diag_end - xcoord + pB_start; 
 
     GB_DECLAREA (aki) ;
     GB_DECLAREB (bkj) ;
@@ -242,9 +339,17 @@ __global__ void AxB_dot3_phase3_mp
     //printf(" thd%u has init value %f\n",tid, cij);
 
     //merge-path dot product
-    int k = tx_start;       // pA
-    int l = ty_start;       // pB
+    int pA = tx_start;       // pA
+    int pB = ty_start;       // pB
 
+    if (use_A_shared && use_B_shared)
+    {
+       pA -=  pA_start;
+       pB -=  pB_start;
+       tx_end -= pA_start;
+       ty_end -= pB_start;
+
+    }
 //  if (mydump) //  && threadIdx.x == 0)
 //  {
 //      printf ("%d tx_start %d\n", threadIdx.x, tx_start) ;
@@ -257,12 +362,38 @@ __global__ void AxB_dot3_phase3_mp
 //        printf("blk%d, thd%d k=%d, l=%d, tx_start=%d, ty_start=%d, tx_end=%d, ty_end=%d\n", blockIdx.x, tid_global, k, l, tx_start, ty_start, tx_end, ty_end);
 //    }
 
-    while ( k < tx_end && l < ty_end ) // && nnzA != 0 && nnzB != 0)
+    while ( pA < tx_end && pB < ty_end ) 
     {
-        if (Ai [k] == Bi [l])
+      if( use_A_shared && use_B_shared)
+      {
+        if (Ai_s [pA] == Bj_s[pB])
         {
-            GB_GETA (aki, Ax, k) ;      // aki = Ax [k]
-            GB_GETB (bkj, Bx, l) ;      // bkj = Bx [l]
+            GB_GETA (aki, Ax, pA) ;      // aki = Ax [k]
+            GB_GETB (bkj, Bx, pB) ;      // bkj = Bx [l]
+            // if (cij_exists)
+            {
+                // HACK: cij_exists = 1 ;
+                GB_MULTADD (cij, aki, bkj) ;   // cij += aki * bkj
+            }
+            // TODO check terminal condition
+            pA++ ;
+            pB++ ;
+//                if(j == 139 && i == 945)
+//                    printf(" block%u work value = %d, exists = %d\n", b, cij, cij_exists);
+        }
+        else
+        {
+            pA += ( Ai_s[pA] < Bj_s[pB] ) ;
+            pB += ( Ai_s[pA] > Bj_s[pB] ) ;
+        }
+
+
+      }
+      else {
+        if (Ai [pA] == Bi [pB])
+        {
+            GB_GETA (aki, Ax, pA) ;      // aki = Ax [k]
+            GB_GETB (bkj, Bx, pB) ;      // bkj = Bx [l]
             // if (cij_exists)
             {
                 // HACK: cij_exists = 1 ;
@@ -282,16 +413,17 @@ __global__ void AxB_dot3_phase3_mp
             }
 #endif
             // TODO check terminal condition
-            k++ ;
-            l++ ;
+            pA++ ;
+            pB++ ;
 //                if(j == 139 && i == 945)
 //                    printf(" block%u work value = %d, exists = %d\n", b, cij, cij_exists);
         }
         else
         {
-            k += ( Ai[k] < Bi[l] ) ;
-            l += ( Ai[k] > Bi[l] ) ;
+            pA += ( Ai[pA] < Bi[pB] ) ;
+            pB += ( Ai[pA] > Bi[pB] ) ;
         }
+      }
     }
 
     //tile.sync( ) ;

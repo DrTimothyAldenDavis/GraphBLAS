@@ -292,11 +292,10 @@ __global__ void AxB_phase1
     const int64_t bnz = GB_nnz(B);
     const bool B_is_hyper = B->h != NULL ;
 
-    int64_t my_bucket[NBUCKETS];
 
     // int64_t *restrict Cp = C->p ;    // copy of Mp
     // int64_t *restrict Ch = C->h ;    // copy of Mh
-    int64_t *__restrict__ Ci = C->i ;       // for zombies, or bucket assignment
+    int64_t *__restrict__ Ci = C->i ;   // for zombies, or bucket assignment
 
     // Ci [p] for an entry C(i,j) contains either GB_FLIP(i) if C(i,j) is a
     // zombie, or (k << 4) + bucket otherwise, where C(:,j) is the kth vector
@@ -307,6 +306,7 @@ __global__ void AxB_phase1
     //--------------------------------------------------------------------------
     // clear the bucket counters
     //--------------------------------------------------------------------------
+    int64_t my_bucket[NBUCKETS];
 
     // ASSERT (mnz > 0) ;
     // ASSERT (gridDim.x <= mnz) ;
@@ -319,7 +319,6 @@ __global__ void AxB_phase1
 
     __shared__ int64_t ks [chunk_size] ;
 
-    __syncthreads ( ) ;
 
     //--------------------------------------------------------------------------
     // assign all entries of C to the buckets
@@ -428,7 +427,7 @@ __global__ void AxB_phase1
                 int64_t pB, pB_end ;
 
                 // HACK: for sparse only, not hypersparse
-                pB = Bp [j] ;
+                pB     = Bp [j] ;
                 pB_end = Bp [j+1] ;
                 // GB_lookup_device (B_is_hyper, Bh, Bp, &bpleft, bnvec-1, j,
                 //                  &pB, &pB_end) ;
@@ -446,7 +445,7 @@ __global__ void AxB_phase1
                     int64_t pA, pA_end ;
                     // int64_t apleft = 0 ;
                     // HACK: for sparse only, not hypersparse
-                    pA = Ap [i] ;
+                    pA     = Ap [i] ;
                     pA_end = Ap [i+1] ;
                     // GB_lookup_device (A_is_hyper, Ah, Ap, &apleft, anvec-1,
                     //      i, &pA, &pA_end) ;
@@ -512,8 +511,8 @@ __global__ void AxB_phase1
         if( threadIdx.x == blockDim.x-1) {
             blockbucket [blockIdx.x + b * gridDim.x] = my_bucket[b] ;
         }
-
         __syncthreads();
+
         BlockCumSum(temp_storage).ExclusiveSum( my_bucket[b], my_bucket[b]) ;
 
         __syncthreads();
