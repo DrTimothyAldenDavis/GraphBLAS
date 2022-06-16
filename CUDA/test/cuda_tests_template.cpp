@@ -11,6 +11,7 @@
 #include <random>
 #include <algorithm>
 #include <cstdint>
+#include "problem_spec.hpp"
 #include "jitTestFactory.hpp"
 #include "../GB_cuda_buckets.h"
 
