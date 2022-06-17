@@ -87,7 +87,7 @@ class matrix : public Managed {
 
     void fill_random( int64_t nnz, int gxb_sparsity_control, int gxb_format, std::int64_t seed = 12345ULL, T val_min = 0.0, T val_max = 2.0 , bool debug_print = false) {
 
-        std::cout << "inside fill_random, using seed "<< seed << std::endl;
+//        std::cout << "inside fill_random, using seed "<< seed << std::endl;
         alloc();
 
         double inv_sparsity ;
@@ -100,12 +100,12 @@ class matrix : public Managed {
         {
             inv_sparsity = ceil(((double)nrows_*ncols_)/nnz);   //= values not taken per value occupied in index space
         }
-
-        std::cout<< "fill_random nrows="<< nrows_<<"ncols=" << ncols_ <<" need "<< nnz<<" values, invsparse = "<<inv_sparsity<<std::endl;
-        std::cout<< "fill_random"<<" after alloc values"<<std::endl;
-        std::cout<<"vdim ready "<<std::endl;
-        std::cout<<"vlen ready "<<std::endl;
-        std::cout<<"ready to fill p"<<std::endl;
+//
+//        std::cout<< "fill_random nrows="<< nrows_<<"ncols=" << ncols_ <<" need "<< nnz<<" values, invsparse = "<<inv_sparsity<<std::endl;
+//        std::cout<< "fill_random"<<" after alloc values"<<std::endl;
+//        std::cout<<"vdim ready "<<std::endl;
+//        std::cout<<"vlen ready "<<std::endl;
+//        std::cout<<"ready to fill p"<<std::endl;
 
         bool make_symmetric = false;
         bool no_self_edges = false;
@@ -115,7 +115,7 @@ class matrix : public Managed {
 
         if (nnz < 0 || inv_sparsity == 1.)
         {
-            std::cout<<"filling dense"<<std::endl;
+//            std::cout<<"filling dense"<<std::endl;
             for (int64_t i = 0 ; i < nrows_ ; i++)
             {
                 for (int64_t j = 0 ; j < ncols_ ; j++)
@@ -136,11 +136,11 @@ class matrix : public Managed {
                 }
             }
 
-            std::cout << "done." << std::endl;
+//            std::cout << "done." << std::endl;
         }
         else
         {
-            std::cout<<"filling sparse"<<std::endl;
+//            std::cout<<"filling sparse"<<std::endl;
             unordered_set<std::int64_t> row_lookup;
             unordered_set<std::int64_t> key_lookup;
             for ( int co = 0; co < 2*nrows_; co++ )
@@ -153,7 +153,7 @@ class matrix : public Managed {
 
             while ( remain > 0) 
             { 
-            std::cout<< remain<<" nonzeroes left to fill.."<<std::endl;
+//            std::cout<< remain<<" nonzeroes left to fill.."<<std::endl;
             for ( GrB_Index i : row_lookup)
             {
                 GrB_Index col_guess = ((GrB_Index) (dis(r) * nnz/row_lookup.size() )) % ((GrB_Index) ncols_) ;
