@@ -177,7 +177,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // copy Mp and Mh into C
     //--------------------------------------------------------------------------
 
-    CHECK_CUDA_SIMPLE(cudaMemcpyAsync (C->p, M->p, (cnvec+1) * sizeof (int64_t),
+    CHECK_CUDA_SIMPLE( cudaMemcpyAsync (C->p, M->p, (cnvec+1) * sizeof (int64_t),
         cudaMemcpyDefault, stream)) ;
     if (M_is_hyper)
     { 

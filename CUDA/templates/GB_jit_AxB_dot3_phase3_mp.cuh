@@ -88,7 +88,7 @@ T block_Reduce_Op(thread_block g, T val)
   if (lane==0) shared[wid]=val; // Write reduced value to shared memory
   __syncthreads();              // Wait for all partial reductions
 
-  if (wid > 0 ) return val;
+  //if (wid > 0 ) return val;
 
   //read from shared memory only if that warp existed
   val = (threadIdx.x <  (blockDim.x / warpSize ) ) ? shared[lane] : GB_IDENTITY;
@@ -98,19 +98,17 @@ T block_Reduce_Op(thread_block g, T val)
   return val;
 }
 
-
+/*
 template< typename T, int warp_sz>
 __device__ __inline__ 
 T reduce_plus(thread_block_tile<warp_sz> g, T val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
-    /*
-    for (int i = warp_sz >> 1; i > 0; i >>= 1)
-    {
-        val += g.shfl_down( val, i) ;
-    }
-    */
+    //for (int i = warp_sz >> 1; i > 0; i >>= 1)
+    //{
+    //    val += g.shfl_down( val, i) ;
+    //}
         val += g.shfl_down(val,16) ;
         val += g.shfl_down(val,8) ;
         val += g.shfl_down(val,4) ;
@@ -118,6 +116,7 @@ T reduce_plus(thread_block_tile<warp_sz> g, T val)
         val += g.shfl_down(val,1) ;
     return val; // note: only thread 0 will return full sum and flag value
 }
+*/
 
 
 template<
@@ -141,7 +140,7 @@ __global__ void AxB_dot3_phase3_mp
     const T_A *__restrict__ Ax = (T_A *)A->x  ;
     const T_B *__restrict__ Bx = (T_B *)B->x  ;
           T_C *__restrict__ Cx = (T_C *)C->x  ;
-      int64_t *__restrict__ Ci = C->i ;
+          int64_t *__restrict__ Ci = C->i ;
     const int64_t *__restrict__ Mi = M->i ;
     const int64_t *__restrict__ Ai = A->i ;
     const int64_t *__restrict__ Bi = B->i ;
@@ -165,7 +164,7 @@ __global__ void AxB_dot3_phase3_mp
 
     thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( this_thread_block());
 
-    int parts = blockDim.x; // whole block (at least 32 threads) per dot product
+    // int parts = blockDim.x; // whole block (at least 32 threads) per dot product
 // int has_zombies = 0 ;
 
     // Main loop over pairs 

@@ -504,10 +504,12 @@ private:
             Opname = "phase3_vsvs" ;
             blocksz = 512;
             work_per_thread = 1;
+            
             if( Cnz < 1024){
               blocksz = 64;
               work_per_thread = 8;
             }
+            
 
             // FIXME: Is the first line not needed?
             //gridsz = GB_IMIN( 1024*number_of_sms, ( Cnz  + work_per_thread*blocksz -1 )/(work_per_thread*blocksz));
@@ -520,8 +522,8 @@ private:
 
         case GB_BUCKET_MERGEPATH :
             Opname = "phase3_mp" ;
-            blocksz = 64;
-            work_per_thread = 1 ;
+            blocksz = 32;
+            work_per_thread = 4 ;
             gridsz = ( Cnz -1 + work_per_thread*blocksz)/(work_per_thread*blocksz);
             //gridsz = GB_IMIN( 1024*number_of_sms, ( Cnz  + work_per_thread*blocksz -1 )/(work_per_thread*blocksz));
             break ;
