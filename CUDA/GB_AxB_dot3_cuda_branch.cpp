@@ -18,9 +18,6 @@ bool GB_AxB_dot3_cuda_branch
     GB_Context Context
 )
 {
-
-    printf ("HERE IN cuda branch, mask_struct is %d\n", Mask_struct) ;
-
         // very rough estimate of the work to do
         double adeg = ((double) GB_nnz (A)) / ((double) GB_IMAX (1, A->nvec)) ;
         double bdeg = ((double) GB_nnz (B)) / ((double) GB_IMAX (1, B->nvec)) ;
@@ -43,15 +40,14 @@ bool GB_AxB_dot3_cuda_branch
             // FIXME: FUTURE: user-defined types and operators
             && (A->type->code != GB_UDT_code)
             && (B->type->code != GB_UDT_code)
-            // FIXME: M could be hypersparse.  we should handle this
+            // FIXME: handle M, A, B hypersparse
             && !GB_IS_HYPERSPARSE (M)
-            // FIXME: this is easy
-            && !A->iso && !B->iso
-            // FIXME:
+            && !GB_IS_HYPERSPARSE (A)
+            && !GB_IS_HYPERSPARSE (B)
+            // FIXME: handle A, B bitmap and/or full
             && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B)
             && !GB_IS_FULL (A) && !GB_IS_FULL (B))
         {
-            printf("Using CUDA Path.\n");
             return true;
         }
         else

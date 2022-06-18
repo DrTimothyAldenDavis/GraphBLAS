@@ -87,7 +87,7 @@ class matrix : public Managed {
 
     void fill_random( int64_t nnz, int gxb_sparsity_control, int gxb_format, std::int64_t seed = 12345ULL, T val_min = 0.0, T val_max = 2.0 , bool debug_print = false) {
 
-        std::cout << "inside fill_random, using seed "<< seed << std::endl;
+//        std::cout << "inside fill_random, using seed "<< seed << std::endl;
         alloc();
 
         double inv_sparsity ;
@@ -100,12 +100,12 @@ class matrix : public Managed {
         {
             inv_sparsity = ceil(((double)nrows_*ncols_)/nnz);   //= values not taken per value occupied in index space
         }
-
-        std::cout<< "fill_random nrows="<< nrows_<<"ncols=" << ncols_ <<" need "<< nnz<<" values, invsparse = "<<inv_sparsity<<std::endl;
-        std::cout<< "fill_random"<<" after alloc values"<<std::endl;
-        std::cout<<"vdim ready "<<std::endl;
-        std::cout<<"vlen ready "<<std::endl;
-        std::cout<<"ready to fill p"<<std::endl;
+//
+//        std::cout<< "fill_random nrows="<< nrows_<<"ncols=" << ncols_ <<" need "<< nnz<<" values, invsparse = "<<inv_sparsity<<std::endl;
+//        std::cout<< "fill_random"<<" after alloc values"<<std::endl;
+//        std::cout<<"vdim ready "<<std::endl;
+//        std::cout<<"vlen ready "<<std::endl;
+//        std::cout<<"ready to fill p"<<std::endl;
 
         bool make_symmetric = false;
         bool no_self_edges = false;
@@ -115,7 +115,7 @@ class matrix : public Managed {
 
         if (nnz < 0 || inv_sparsity == 1.)
         {
-            std::cout<<"filling dense"<<std::endl;
+//            std::cout<<"filling dense"<<std::endl;
             for (int64_t i = 0 ; i < nrows_ ; i++)
             {
                 for (int64_t j = 0 ; j < ncols_ ; j++)
@@ -135,10 +135,12 @@ class matrix : public Managed {
                     }
                 }
             }
+
+//            std::cout << "done." << std::endl;
         }
         else
         {
-            std::cout<<"filling sparse"<<std::endl;
+//            std::cout<<"filling sparse"<<std::endl;
             unordered_set<std::int64_t> row_lookup;
             unordered_set<std::int64_t> key_lookup;
             for ( int co = 0; co < 2*nrows_; co++ )
@@ -151,7 +153,7 @@ class matrix : public Managed {
 
             while ( remain > 0) 
             { 
-            std::cout<< remain<<" nonzeroes left to fill.."<<std::endl;
+//            std::cout<< remain<<" nonzeroes left to fill.."<<std::endl;
             for ( GrB_Index i : row_lookup)
             {
                 GrB_Index col_guess = ((GrB_Index) (dis(r) * nnz/row_lookup.size() )) % ((GrB_Index) ncols_) ;
@@ -215,6 +217,7 @@ class matrix : public Managed {
         // TODO: Need to specify these
         GRB_TRY (GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL, gxb_sparsity_control)) ;
         GRB_TRY (GxB_Matrix_Option_set(mat, GxB_FORMAT, gxb_format));
+        GRB_TRY (GrB_Matrix_wait (mat, GrB_MATERIALIZE)) ;
         GRB_TRY (GrB_Matrix_nvals ((GrB_Index *) &nnz, mat)) ;
         //GRB_TRY (GxB_Matrix_fprint (mat, "my random mat", GxB_SHORT_VERBOSE, stdout)) ;
 
@@ -235,11 +238,11 @@ class matrix : public Managed {
 template< typename T_C, typename T_M, typename T_A, typename T_B>
 class SpGEMM_problem_generator {
 
-    float Anzpercent,Bnzpercent,Cnzpercent;
-    int64_t Cnz;
+    float Anzpercent,Bnzpercent,Mnzpercent;
+    int64_t Mnz;
     int64_t *Bucket = nullptr;
 
-    int64_t BucketStart[13];
+    int64_t BucketStart[NBUCKETS+1];
     unsigned seed = 13372801;
     bool ready = false;
 
@@ -307,17 +310,26 @@ class SpGEMM_problem_generator {
        }
     }
 
-    void init_C(float Cnzp, std::int64_t seed_c = 23456ULL, std::int64_t seed_m = 4567ULL){
+    void revertCj() {
+        // Load C_i with column j info to avoid another lookup
+        for (int c = 0 ; c< M->mat->vdim; ++c) {
+            for ( int r = M->mat->p[c]; r< M->mat->p[c+1]; ++r){
+                C->mat->i[r] = c >> 4 ; //shift to store bucket info
+            }
+        }
+    }
+
+    void init_C(float Mnzp, std::int64_t seed_c = 23456ULL, std::int64_t seed_m = 4567ULL){
 
        // Get sizes relative to fully dense matrices
-       Cnzpercent = Cnzp;
-       Cnz = (int64_t)(Cnzp * nrows_ * ncols_);
+       Mnzpercent = Mnzp;
+       Mnz = (int64_t)(Mnzp * nrows_ * ncols_);
 
        //Seed the generator
        std::cout<<"filling matrices"<<std::endl;
 
-       C->fill_random(Cnz, GxB_SPARSE, GxB_BY_ROW, seed_m);
-       M->fill_random(Cnz, GxB_SPARSE, GxB_BY_ROW, seed_m);
+       C->fill_random(Mnz, GxB_SPARSE, GxB_BY_ROW, seed_m);
+       M->fill_random(Mnz, GxB_SPARSE, GxB_BY_ROW, seed_m);
 
 //       std::cout<<"fill complete"<<std::endl;
 //       C->mat->p = M->mat->p; //same column pointers (assuming CSC here)
@@ -329,7 +341,7 @@ class SpGEMM_problem_generator {
        M->clear();
        A->clear();
        B->clear();
-       if (Bucket != nullptr) CHECK_CUDA( cudaFree(Bucket) );
+       //if (Bucket != nullptr) CHECK_CUDA( cudaFree(Bucket) );
        delete C;
        delete M;
        delete A;
@@ -337,42 +349,43 @@ class SpGEMM_problem_generator {
        CHECK_CUDA( cudaDeviceSynchronize() );
     }
 
+    //
     void fill_buckets( int fill_bucket){
 
-       std::cout<<Cnz<<" slots to fill"<<std::endl;
+       std::cout<<Mnz<<" slots to fill"<<std::endl;
 
        if (fill_bucket == -1){  
 
        // Allocate Bucket space
-       CHECK_CUDA( cudaMallocManaged((void**)&Bucket, Cnz*sizeof(int64_t)) );
+       CHECK_CUDA( cudaMallocManaged((void**)&Bucket, Mnz*sizeof(int64_t)) );
 
-       //Fill buckets with random extents such that they sum to Cnz, set BucketStart
+       //Fill buckets with random extents such that they sum to Mnz, set BucketStart
            BucketStart[0] = 0; 
-           BucketStart[12] = Cnz;
-           for (int b = 1; b < 12; ++b){
-              BucketStart[b] = BucketStart[b-1] + (Cnz / 12);
+           BucketStart[NBUCKETS] = Mnz;
+           for (int b = 1; b < NBUCKETS; ++b){
+              BucketStart[b] = BucketStart[b-1] + (Mnz / NBUCKETS);
               //std::cout<< "bucket "<< b<<" starts at "<<BucketStart[b]<<std::endl;
               for (int j = BucketStart[b-1]; j < BucketStart[b]; ++j) { 
                 Bucket[j] = b ;
               }
            }
-           int b = 11;
-           for (int j = BucketStart[11]; j < BucketStart[12]; ++j) { 
+           int b = GB_BUCKET_MERGEPATH;
+           for (int j = BucketStart[GB_BUCKET_MERGEPATH]; j < BucketStart[NBUCKETS]; ++j) { 
                 Bucket[j] = b ; 
            }
        }
        else {// all in one test bucket
 
-           CHECK_CUDA( cudaMallocManaged((void**)&Bucket, Cnz*sizeof(int64_t)) );
-           for (int j = 0; j < Cnz; ++j) {
+           CHECK_CUDA( cudaMallocManaged((void**)&Bucket, Mnz*sizeof(int64_t)) );
+           for (int j = 0; j < Mnz; ++j) {
                Bucket[j] = j ;
            }
 
            BucketStart[0] = 0;
-           BucketStart[12] = Cnz;
-           for (int b= 0; b<12; ++b){
+           BucketStart[NBUCKETS] = Mnz;
+           for (int b= 0; b<NBUCKETS; ++b){
               if (b <= fill_bucket) BucketStart[b] = 0;
-              if (b  > fill_bucket) BucketStart[b] = Cnz;
+              if (b  > fill_bucket) BucketStart[b] = Mnz;
               //std::cout<< " one  bucket "<< b<<"starts at "<<BucketStart[b]<<std::endl;
            } 
            std::cout<<"all pairs to bucket "<<fill_bucket<<", no filling"<<std::endl;

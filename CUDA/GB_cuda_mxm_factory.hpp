@@ -35,7 +35,7 @@ class GB_cuda_mxm_factory: public jit::File_Desc {
 
     void open( const char *path_and_file, const char *mode)
     {
-        std::cout<< "opening "<< path_and_file<<" for write"<< std::endl;  
+//        std::cout<< "opening "<< path_and_file<<" for write"<< std::endl;
         fp = fopen( path_and_file, mode);
     }
 
@@ -74,9 +74,9 @@ class GB_cuda_mxm_factory: public jit::File_Desc {
         GrB_Matrix B
     )
     {
-       std::cout<<" calling stringify semiring: " << std::endl;
-       GxB_Semiring_fprint (semiring, "stringfiy the smiering", GxB_COMPLETE, stdout) ;
-       std::cout<<" Mask_struct: " << Mask_struct << std::endl;
+//       std::cout<<" calling stringify semiring: " << std::endl;
+//     GxB_Semiring_fprint (semiring, "stringfiy the smiering", GxB_COMPLETE, stdout) ;
+//       std::cout<<" Mask_struct: " << Mask_struct << std::endl;
        uint64_t scode; 
        GB_enumify_mxm (
 	    // output:
@@ -97,8 +97,8 @@ class GB_cuda_mxm_factory: public jit::File_Desc {
             B
        ) ;
 
-       printf("scode=%lu\n", scode);
-       std::cout << "done stringify mxm" << std::endl;
+//       printf("scode=%lu\n", scode);
+//       std::cout << "done stringify mxm" << std::endl;
        this->sr_code = scode;
 
        this->semiring = semiring ;
@@ -110,7 +110,7 @@ class GB_cuda_mxm_factory: public jit::File_Desc {
        filename.resize(new_filename.size());
        strcpy(filename.data(), new_filename.data());
 
-       std::cout<<" returned from  stringify mxm"<< std::endl;
+//       std::cout<<" returned from  stringify mxm"<< std::endl;
     }
 
 //------------------------------------------------------------------------------
@@ -120,14 +120,14 @@ class GB_cuda_mxm_factory: public jit::File_Desc {
 
     void macrofy ( ) override
     {
-       std::cout<<" calling macrofy mxm. sr_code="<< this->sr_code << std::endl;
+//       std::cout<<" calling macrofy mxm. sr_code="<< this->sr_code << std::endl;
        GB_macrofy_mxm (
 	    // output to file :
 	    fp, 
 	    // input:
 	    this->sr_code  
        ) ;
-       std::cout<<" returned from  macrofy mxm"<< std::endl; 
+//       std::cout<<" returned from  macrofy mxm"<< std::endl;
 
     }
 

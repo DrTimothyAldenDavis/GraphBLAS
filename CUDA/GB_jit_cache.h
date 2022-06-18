@@ -46,6 +46,7 @@ public:
    virtual void macrofy() {
 
        printf("Uh oh. this isn't good\n");
+
    }
    std::string filename;
 };

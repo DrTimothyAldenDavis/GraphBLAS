@@ -85,10 +85,6 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
 
     // total rcode bits: 25
 
-    printf("before: red_ecode: %d, id_ecode: %d, term_ecode: %d, zcode: %d, "
-           "acode: %d, asparsity: %d\n",
-            red_ecode, id_ecode, term_ecode, zcode, acode, asparsity) ;
-
     (*rcode) =
                                             // range        bits
                 // monoid
@@ -103,9 +99,7 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
                 LSHIFT (acode      ,  2) |  // 0 to 14      4
 
                 // sparsity structure of A
-                LSHIFT (asparsity  ,  0) |  // 0 to 3       2
-
-    printf("serialized_rcode: %lu\n", *rcode);
+                LSHIFT (asparsity  ,  0);  // 0 to 3       2
 }
 
 //------------------------------------------------------------------------------
@@ -138,11 +132,6 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
 
     // format of A
     int asparsity   = RSHIFT (rcode, 0, 2) ;
-
-    printf("after: red_ecode: %d, id_ecode: %d, term_ecode: %d, zcode: %d, "
-           "acode: %d, asparsity: %d\n",
-            red_ecode, id_ecode, term_ecode, zcode,
-            acode, asparsity) ;
 
     //--------------------------------------------------------------------------
     // construct macros to load scalars from A (and typecast) them

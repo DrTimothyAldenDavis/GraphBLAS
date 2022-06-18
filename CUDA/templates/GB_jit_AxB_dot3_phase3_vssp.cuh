@@ -47,10 +47,17 @@ __device__ T reduce_sum(thread_block_tile<warpSize> g, T val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
-    for (int i = g.size() / 2; i > 0; i /= 2)
+    /*
+    for (int i = warpSize >> 1; i > 0; i >>= 1)
     {
         val += g.shfl_down(val,i) ;
     }
+    */
+        val += g.shfl_down(val,16) ;
+        val += g.shfl_down(val,8) ;
+        val += g.shfl_down(val,4) ;
+        val += g.shfl_down(val,2) ;
+        val += g.shfl_down(val,1) ;
     return val; // note: only thread 0 will return full sum
 }
 
@@ -110,18 +117,20 @@ __global__ void AxB_dot3_phase3_vssp
         int64_t i = Mi[pair_id];
         int64_t j = Ci[pair_id] >> 4;
 
+        /*
         if( j < 0) //Pre-zombie
         {
             zc++;
             continue;
         }
+        */
 
         int64_t pA      = Ap[i];
         int64_t pA_end  = Ap[i+1];
         int64_t nnzA = pA_end - pA;
 
-        int64_t pB      = B->p[j];
-        int64_t pB_end  = B->p[j+1];
+        int64_t pB      = Bp[j];
+        int64_t pB_end  = Bp[j+1];
         int64_t nnzB = pB_end - pB;
 
         //Search for each nonzero in the smaller vector to find intersection 
@@ -129,7 +138,7 @@ __global__ void AxB_dot3_phase3_vssp
 
         GB_DECLAREA (aki) ;
         GB_DECLAREB (bkj) ;
-        T_Z cij;
+        T_Z cij = GB_IDENTITY ;
 
         if (nnzA <= nnzB) {
             //----------------------------------------------------------------------
@@ -229,7 +238,7 @@ __global__ void AxB_dot3_phase3_vssp
     thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( this_thread_block());
     zc = reduce_sum<int,tile_sz>(tile, zc);
 
-    if( threadIdx.x ==0) {
+    if( threadIdx.x ==0 && zc > 0) {
       //printf("vssp warp %d zombie count = %d\n", blockIdx.x, zc);
       atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)zc);
       //printf(" vssp Czombie = %lld\n",C->nzombies);

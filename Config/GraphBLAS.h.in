@@ -11278,10 +11278,10 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 
 // GrB_Matrix_serialize/deserialize are slightly different from their GxB*
 // counterparts.  The blob is allocated by GxB_Matrix_serialize, and must be
-// freed by GxB_serialize_free (which calls the ANSI C11 free if GrB_init was
-// used).  By contrast, the GrB* methods require the user application to pass
-// in a preallocated blob to GrB_Matrix_serialize, whose size can be given by
-// GrB_Matrix_serializeSize (as a loose upper bound).
+// freed by the same free() method passed to GxB_init (or the ANSI C11 free()
+// if GrB_init was used).  By contrast, the GrB* methods require the user
+// application to pass in a preallocated blob to GrB_Matrix_serialize, whose
+// size can be given by GrB_Matrix_serializeSize (as a loose upper bound).
 
 // The GrB* and GxB* methods can be mixed.  GrB_Matrix_serialize and
 // GxB_Matrix_serialize construct the same blob (assuming they are given the
@@ -11401,13 +11401,6 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 // For all methods, a level of zero results in the default level setting.
 // These settings can be added, so to use LZ4HC at level 5, use method =
 // GxB_COMPRESSION_LZ4HC + 5.
-
-// If the Intel IPPS compression methods are available, they can be selected
-// by adding GxB_COMPRESSION_INTEL.  For example, to use the Intel IPPS
-// implementation of LZ4HC at level 9, use method = GxB_COMPRESSION_INTEL +
-// GxB_COMPRESSION_LZ4HC + 9 = 1,002,009.  If the Intel methods are requested
-// but not available, this setting is ignored and the non-Intel methods are
-// used instead.
 
 // If the level setting is out of range, the default is used for that method.
 // If the method is negative, no compression is performed.  If the method is
@@ -12573,15 +12566,28 @@ extern "C" {
 #endif
 
 // TODO describe the modes
-typedef enum { rmm_wrap_host=0, rmm_wrap_host_pinned=1, rmm_wrap_device=2, rmm_wrap_managed=3 } RMM_MODE ;
+typedef enum
+{
+    rmm_wrap_host = 0,
+    rmm_wrap_host_pinned = 1,
+    rmm_wrap_device = 2,
+    rmm_wrap_managed = 3
+} RMM_MODE ;
 
 void rmm_wrap_finalize (void) ;
-int rmm_wrap_initialize (RMM_MODE mode, size_t init_pool_size, size_t max_pool_size) ;
+
+int rmm_wrap_initialize
+(
+    RMM_MODE mode,
+    size_t init_pool_size,
+    size_t max_pool_size
+) ;
 
 // example usage:
     //  rmm_wrap_initialize (rmm_wrap_managed, INT32_MAX, INT64_MAX) ;
-    //  GxB_init (GrB_NONBLOCKING, rmm_wrap_malloc, rmm_wrap_calloc, rmm_wrap_realloc, rmm_wrap_free) ;
-    //  use GraphBLAS ...
+    //  GxB_init (GxB_NONBLOCKING_GPU, rmm_wrap_malloc, rmm_wrap_calloc,
+    //      rmm_wrap_realloc, rmm_wrap_free) ;
+    //  use GraphBLAS ... with the GPU
     //  GrB_finalize ( ) ;
     //  rmm_wrap_finalize ( ) ;
 

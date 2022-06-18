@@ -15,6 +15,8 @@
 // Thus, threadblock b owns g_idata [b*s*8 ... min(n,(b+1)*s*8-1)].  It's job
 // is to reduce this data to a scalar, and write it to g_odata [b].
 
+/* fixme: currently unused */
+
 #include <limits>
 #include <cooperative_groups.h>
 
