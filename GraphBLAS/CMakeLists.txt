@@ -31,7 +31,7 @@ set ( CMAKE_MACOSX_RPATH TRUE )
 # version must match ../CMakeLists.txt:
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "June 3, 2022" )
+set ( GraphBLAS_DATE "June 17, 2022" )
 set ( GraphBLAS_VERSION_MAJOR 7 )
 set ( GraphBLAS_VERSION_MINOR 1 )
 set ( GraphBLAS_VERSION_SUB   1 )
