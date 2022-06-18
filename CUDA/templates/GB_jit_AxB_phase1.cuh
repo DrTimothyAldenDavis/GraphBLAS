@@ -158,8 +158,8 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vssp.cu.jit
 
-        GB_BUCKET ((ainz > 8 * bjnz && bjnz < 256)
-                || (bjnz > 8 * ainz && ainz < 256), GB_BUCKET_VSSP) ;
+        GB_BUCKET ((ainz > 16 * bjnz && bjnz < 256)
+                || (bjnz > 16 * ainz && ainz < 256), GB_BUCKET_VSSP) ;
 
     }
 //  else if (ainz + bjnz <= 4)
@@ -210,7 +210,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vsvs.cu.jit
 //      GB_BUCKET (ainz + bjnz <= 256, GB_BUCKET_VSVS_256) ;
-        GB_BUCKET (ainz + bjnz <= 256, GB_BUCKET_VSVS) ;
+        GB_BUCKET (ainz + bjnz <= 512, GB_BUCKET_VSVS) ;
 
         // TODO: replace this with a single bucket, GB_BUCKET_VSVS.
 

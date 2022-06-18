@@ -45,7 +45,7 @@ using namespace cooperative_groups;
 
 template< typename T, int warp_sz>
 __device__ __inline__ 
-T GB_reduce_sum(thread_block_tile<warp_sz> g, T val)
+T warp_Reduce_Op(thread_block_tile<warp_sz> g, T val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
@@ -69,6 +69,35 @@ T GB_reduce_sum(thread_block_tile<warp_sz> g, T val)
         val = GB_ADD( val, next ) ;
     return val;
 }
+
+template<typename T, int warpSize>
+__inline__ __device__
+T block_Reduce_Op(thread_block g, T val)
+{
+  static __shared__ T shared[warpSize]; // Shared mem for 32 partial sums
+  
+
+  int lane = threadIdx.x & 31 ; // % warpSize;
+  int wid  = threadIdx.x >> 5 ; // / warpSize;
+  thread_block_tile<warpSize> tile = tiled_partition<warpSize>( g );
+
+  // Each warp performs partial reduction
+  val = warp_Reduce_Op<T, warpSize>( tile, val);    
+
+  // Wait for all partial reductions
+  if (lane==0) shared[wid]=val; // Write reduced value to shared memory
+  __syncthreads();              // Wait for all partial reductions
+
+  if (wid > 0 ) return val;
+
+  //read from shared memory only if that warp existed
+  val = (threadIdx.x <  (blockDim.x / warpSize ) ) ? shared[lane] : GB_IDENTITY;
+
+  if (wid==0) val = warp_Reduce_Op<T, warpSize>( tile, val); //Final reduce within first warp
+
+  return val;
+}
+
 
 template< typename T, int warp_sz>
 __device__ __inline__ 
@@ -334,7 +363,7 @@ __global__ void AxB_dot3_phase3_mp
     #if !GB_C_ISO
     if (cij_exists)
     {
-       cij = GB_reduce_sum<T_Z, tile_sz>( tile, cij );
+       cij = block_Reduce_Op<T_Z, tile_sz>( this_thread_block(), cij );
     }
     #endif
     // else has_zombies = 1;

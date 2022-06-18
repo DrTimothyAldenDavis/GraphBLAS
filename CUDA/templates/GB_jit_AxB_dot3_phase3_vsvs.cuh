@@ -42,7 +42,7 @@ T warp_ReduceSumPlus( thread_block_tile<tile_sz> g, T val)
     }
     return val; // note: only thread 0 will return full sum
 }
-
+/*
 template< typename T, int tile_sz>
 __inline__ __device__ 
 T warp_Reduce( thread_block_tile<tile_sz> g, T val)
@@ -52,17 +52,17 @@ T warp_Reduce( thread_block_tile<tile_sz> g, T val)
     #pragma unroll
     for (int i = tile_sz >> 1; i > 0; i >>= 1) {
         T next = g.shfl_down( val, i) ;
-        val = GB_ADD( sum, next ) ; 
+        val = GB_ADD( val, next ) ; 
     }
     return val; // note: only thread 0 will return full sum
 }
+*/
 
 template<typename T, int warpSize>
 __inline__ __device__
 T block_ReduceSum(thread_block g, T val)
 {
   static __shared__ T shared[warpSize]; // Shared mem for 32 partial sums
-  
 
   int lane = threadIdx.x & 31 ; // % warpSize;
   int wid  = threadIdx.x >> 5 ; // / warpSize;
@@ -73,9 +73,9 @@ T block_ReduceSum(thread_block g, T val)
 
   // Wait for all partial reductions
   if (lane==0) shared[wid]=val; // Write reduced value to shared memory
-  __syncthreads();              // Wait for all partial reductions
+  g.sync();                     // Wait for all partial reductions
 
-  if (wid > 0 ) return val;
+  //if (wid > 0 ) return val;
 
   //read from shared memory only if that warp existed
   val = (threadIdx.x <  (blockDim.x / warpSize ) ) ? shared[lane] : 0;
@@ -111,8 +111,8 @@ __global__ void AxB_dot3_phase3_vsvs
 //   */
    const T_A *__restrict__ Ax = (T_A *)A->x  ;
    const T_B *__restrict__ Bx = (T_B *)B->x  ;
-   T_C *__restrict__ Cx = (T_C *)C->x  ;
-   int64_t *__restrict__ Ci = C->i ;
+         T_C *__restrict__ Cx = (T_C *)C->x  ;
+         int64_t *__restrict__ Ci = C->i ;
    const int64_t *__restrict__ Mi = M->i ;
    const int64_t *__restrict__ Ai = A->i ;
    const int64_t *__restrict__ Bi = B->i ;
@@ -124,20 +124,18 @@ __global__ void AxB_dot3_phase3_vsvs
     GB_PARTITION (pfirst, plast, dots, blockIdx.x, gridDim.x ) ;
 
     int64_t my_nzombies = 0 ;
-    int64_t pair_id;
 
     for ( int64_t kk = pfirst+ threadIdx.x ;
                   kk < plast;
                   kk += blockDim.x )
     {
-        pair_id = Bucket[ start + kk ];
+         int64_t pair_id = Bucket[ start + kk ];
 
          int64_t i = Mi [pair_id] ;
          int64_t j = Ci [pair_id]>>4 ; 
-//         if (j < 0) continue; //don't operate on zombies
+
          int64_t pA       = Ap[i] ;
          int64_t pA_end   = Ap[i+1] ;
-
 
          int64_t pB       = Bp[j] ;
          int64_t pB_end   = Bp[j+1] ;
@@ -183,11 +181,11 @@ __global__ void AxB_dot3_phase3_vsvs
             Ci[pair_id] = GB_FLIP( i ) ;
          }
    }
-
-   __syncthreads();
+   this_thread_block().sync(); 
 
    my_nzombies = block_ReduceSum<int64_t , 32>( this_thread_block(), my_nzombies);
-   __syncthreads();
+   this_thread_block().sync(); 
+
    if( threadIdx.x == 0 && my_nzombies > 0) {
       atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)my_nzombies);
    }

@@ -78,13 +78,13 @@ T block_ReduceSum(thread_block g, T val)
   }
   __syncthreads();              // Wait for all partial reductions
 
-  if (wid > 0 ) return val;
+  //if (wid > 0 ) return val;
   //read from shared memory only if that warp existed
-  else { 
+  //else { 
     val = (threadIdx.x < (blockDim.x / warpSize) ) ? shared[lane] : GB_IDENTITY ;
     //if (lane < (blockDim.x/ warpSize) ) printf("thd%d warp%d loaded val = %d\n", threadIdx.x, lane, val);
     val = warp_ReduceSum<T, warpSize>( tile, val); //Final reduce within first warp
-  }
+  //}
 
   return val;
 }
@@ -118,18 +118,19 @@ __global__ void reduceNonZombiesWarp
         T fold = g_idata[i];
         sum = GB_ADD( sum, fold );
     }
-    __syncthreads();
+    this_thread_block().sync(); 
 
     //--------------------------------------------------------------------------
     // reduce work [0..s-1] to a single scalar
     //--------------------------------------------------------------------------
     // this assumes blockDim is a multiple of 32
     sum = block_ReduceSum< T, 32 >( this_thread_block(), sum) ; 
+    this_thread_block().sync(); 
 
     // write result for this block to global mem
     if (tid == 0)
     {
-        // TODO: Assuming sum for now (liek the rest of the kernel)
+        // TODO: Assuming sum for now (like the rest of the kernel)
         if(atomic_reduce) {
             atomic_add<Accum>(g_odata, sum);
         } else {
