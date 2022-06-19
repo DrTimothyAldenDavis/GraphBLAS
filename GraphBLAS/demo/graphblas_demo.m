@@ -827,25 +827,8 @@ fprintf ('Results of GrB and %s match perfectly.\n', demo_whoami)
 % the equivalent built-in operators and functions in MATLAB.
 %
 % There are few notable exceptions; these will be addressed in the future.
-% These include bandwidth, istriu, istril, isdiag, reshape, issymmetric,
-% and ishermitian, all of which should be faster in a future release.
-
-%%
-% Here is an example that illustrates the performance of istril.
-A = sparse (rand (2000)) ;
-tic
-c1 = istril (A) ;
-builtin_time = toc ;
-A = GrB (A) ;
-tic
-c2 = istril (A) ;
-gb_time = toc ;
-fprintf ('\n%s: %g sec, GraphBLAS: %g sec\n', ...
-    demo_whoami, builtin_time, gb_time) ;
-if (gb_time > builtin_time)
-    fprintf ('GraphBLAS is slower by a factor of %g\n', ...
-        gb_time / builtin_time) ;
-end
+% These include reshape, issymmetric, and ishermitian, all of which should
+% be faster in a future release.
 
 %%
 % (4) Linear indexing:
