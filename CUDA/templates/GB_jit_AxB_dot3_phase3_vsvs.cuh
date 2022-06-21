@@ -36,10 +36,17 @@ T warp_ReduceSumPlus( thread_block_tile<tile_sz> g, T val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
+    /*
     #pragma unroll
     for (int i = tile_sz >> 1; i > 0; i >>= 1) {
         val +=  g.shfl_down( val, i);
     }
+    */
+    val +=  g.shfl_down( val, 16);
+    val +=  g.shfl_down( val, 8);
+    val +=  g.shfl_down( val, 4);
+    val +=  g.shfl_down( val, 2);
+    val +=  g.shfl_down( val, 1);
     return val; // note: only thread 0 will return full sum
 }
 /*
@@ -119,17 +126,21 @@ __global__ void AxB_dot3_phase3_vsvs
    const int64_t *__restrict__ Ap = A->p ;
    const int64_t *__restrict__ Bp = B->p ;
 
-    int64_t pfirst, plast;
+    //int64_t pfirst, plast;
 
-    GB_PARTITION (pfirst, plast, dots, blockIdx.x, gridDim.x ) ;
+    //GB_PARTITION (pfirst, plast, dots, blockIdx.x, gridDim.x ) ;
 
     int64_t my_nzombies = 0 ;
 
-    for ( int64_t kk = pfirst+ threadIdx.x ;
-                  kk < plast;
-                  kk += blockDim.x )
+  //for ( int64_t kk = pfirst+ threadIdx.x ;
+  //              kk < plast;
+  //              kk += blockDim.x )
+    for ( int64_t kk = start+ threadIdx.x +blockDim.x*blockIdx.x ;
+                  kk < end;
+                  kk += blockDim.x*gridDim.x )
     {
-         int64_t pair_id = Bucket[ start + kk ];
+       //  int64_t pair_id = Bucket[ start + kk ];
+         int64_t pair_id = Bucket[ kk ];
 
          int64_t i = Mi [pair_id] ;
          int64_t j = Ci [pair_id]>>4 ; 

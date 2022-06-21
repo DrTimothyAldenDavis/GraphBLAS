@@ -80,26 +80,29 @@ __global__ void AxB_dot3_phase3_vssp
 )
 {
    // Typed pointers to access data in A,B,C
-   T_A *__restrict__ Ax = (T_A*)A->x;
-   T_B *__restrict__ Bx = (T_B*)B->x;
-   T_C *__restrict__ Cx = (T_C*)C->x;
-   int64_t *__restrict__ Ci = C->i;
-   int64_t *__restrict__ Mi = M->i;
-   int64_t *__restrict__ Ai = A->i;
-   int64_t *__restrict__ Bi = B->i;
-   int64_t *__restrict__ Ap = A->p;
-   int64_t *__restrict__ Bp = B->p;
+   const T_A *__restrict__ Ax = (T_A*)A->x;
+   const T_B *__restrict__ Bx = (T_B*)B->x;
+         T_C *__restrict__ Cx = (T_C*)C->x;
+         int64_t *__restrict__ Ci = C->i;
+   const int64_t *__restrict__ Mi = M->i;
+   const int64_t *__restrict__ Ai = A->i;
+   const int64_t *__restrict__ Bi = B->i;
+   const int64_t *__restrict__ Ap = A->p;
+   const int64_t *__restrict__ Bp = B->p;
 
    // sz = expected non-zeros per dot 
+  /* 
    int m = 256/sz;
    int nvecs = end - start;
-   int dpt = nvecs/(gridDim.x*32);
+   int dpt = nvecs/(gridDim.x);
    
    int dots = (nvecs +dpt -1)/dpt; 
+   */
+   
 
    // zombie count
-   int zc = 0;
-   int64_t pair_id, im;
+   int64_t zc = 0;
+   int64_t pair_id;// im;
 
    // set thread ID
    unsigned int tid_global = threadIdx.x+ blockDim.x* blockIdx.x;
@@ -107,23 +110,18 @@ __global__ void AxB_dot3_phase3_vssp
    unsigned long int b = blockIdx.x ;
 
     // Main loop over pairs in Bucket [start:end-1]
-    for (int64_t kk = start+ tid_global, im = 0; 
-                 kk < end && im < m;  
-                 kk += gridDim.x*blockDim.x, ++im)
+  //for (int64_t kk = start+ tid_global, im = 0; 
+  //             kk < end && im < m;  
+  //             kk += gridDim.x*blockDim.x, ++im)
+    for (int64_t kk = start+ tid_global; 
+                 kk < end ;  
+                 kk += gridDim.x*blockDim.x)
     {
 
         pair_id = Bucket[ kk ];
 
         int64_t i = Mi[pair_id];
         int64_t j = Ci[pair_id] >> 4;
-
-        /*
-        if( j < 0) //Pre-zombie
-        {
-            zc++;
-            continue;
-        }
-        */
 
         int64_t pA      = Ap[i];
         int64_t pA_end  = Ap[i+1];
@@ -149,12 +147,15 @@ __global__ void AxB_dot3_phase3_vssp
             {
                 int64_t ia = Ai [pA] ;
                 int64_t ib = Bi [pB] ;
+                 /*
                 if (ia < ib)
                 { 
                     // A(ia,i) appears before B(ib,j)
                     pA++ ;
                 }
-                else if (ib < ia)
+                */
+                pA += ( ia < ib );
+                if (ib < ia)
                 { 
                     // B(ib,j) appears before A(ia,i)
                     // discard all entries B(ib:ia-1,j)
@@ -164,7 +165,7 @@ __global__ void AxB_dot3_phase3_vssp
                     //ASSERT (pleft > pB) ;
                     pB = pleft ;
                 }
-                else // ia == ib == k
+                else if (ia == ib) // ia == ib == k
                 { 
                     // A(k,i) and B(k,j) are the next entries to merge
                     #if defined ( GB_PHASE_1_OF_2 )
@@ -188,6 +189,9 @@ __global__ void AxB_dot3_phase3_vssp
             {
                 int64_t ia = Ai [pA] ;
                 int64_t ib = Bi [pB] ;
+
+                pB += ( ib < ia);
+
                 if (ia < ib)
                 { 
                     // A(ia,i) appears before B(ib,j)
@@ -198,12 +202,14 @@ __global__ void AxB_dot3_phase3_vssp
                     //ASSERT (pleft > pA) ;
                     pA = pleft ;
                 }
+                /*
                 else if (ib < ia)
                 { 
                     // B(ib,j) appears before A(ia,i)
                     pB++ ;
                 }
-                else // ia == ib == k
+                */
+                else if (ia == ib)// ia == ib == k
                 { 
                     // A(k,i) and B(k,j) are the next entries to merge
                     #if defined ( GB_PHASE_1_OF_2 )
@@ -231,6 +237,7 @@ __global__ void AxB_dot3_phase3_vssp
 
 
     }
+    this_thread_block().sync();
 
     //--------------------------------------------------------------------------
     // reduce sum per-thread values to a single scalar

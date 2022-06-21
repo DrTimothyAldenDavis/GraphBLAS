@@ -153,7 +153,7 @@ __global__ void AxB_dot3_phase3_mp
     int64_t pair_id;
 
     // set thread ID
-    int tid_global = threadIdx.x+ blockDim.x* blockIdx.x;
+    //int tid_global = threadIdx.x+ blockDim.x* blockIdx.x;
     int tid = threadIdx.x;
 
     int b = blockIdx.x ;
@@ -169,7 +169,7 @@ __global__ void AxB_dot3_phase3_mp
 
     // Main loop over pairs 
     int64_t kk ;
-    for (kk = start+ blockIdx.x; //warp per pair 
+    for (kk = start+ blockIdx.x; //block per pair 
          kk < end;  
          kk += gridDim.x )
     {
@@ -177,9 +177,6 @@ __global__ void AxB_dot3_phase3_mp
          pair_id = Bucket [kk] ;
          int64_t i = Mi[pair_id];
          int64_t j = Ci[pair_id] >> 4;
-
-//       bool mydump = ((i == 2981) && (j == 2986))
-//              ||     ((i == 2986) && (j == 2981)) ;
 
          // find A(:,i)
          int64_t xstart = Ap[i];        // pA_start
@@ -191,14 +188,15 @@ __global__ void AxB_dot3_phase3_mp
          int64_t yend   = Bp[j+1];      // pB_ed
          nnzB = yend - ystart;          // bjnz
 
-//       if (threadIdx.x == 0 && mydump)
+//       if (threadIdx.x == 0 )
 //       {
-//          printf ("\nComputing (%ld,%ld)\n", i, j) ;
+//          printf ("\nblockId: %d Computing (%ld,%ld)\n",blockIdx.x, i, j) ;
 //          printf ("\nA(:,%ld): nnzA %ld\n", i, nnzA) ;
 //          for (int64_t p = xstart ; p < xend ; p++) printf ("  %ld: %ld\n", p, Ai [p]) ;
 //          printf ("\nB(:,%ld): nnzB %ld\n", j, nnzB) ;
 //          for (int64_t p = ystart ; p < yend ; p++) printf ("  %ld: %ld\n", p, Bi [p]) ;
 //       }
+//       this_thread_block().sync();
 
 //         if(threadIdx.x == 0 && j == 139 && i == 945)
 //             printf("blk%d tid=%d, nnzA=%d, nnzB=%d\n", blockIdx.x, tid_global, nnzA, nnzB);
@@ -289,8 +287,8 @@ __global__ void AxB_dot3_phase3_mp
     //printf(" thd%u has init value %f\n",tid, cij);
 
     //merge-path dot product
-    int k = tx_start;       // pA
-    int l = ty_start;       // pB
+    int64_t pA = tx_start;       // pA
+    int64_t pB = ty_start;       // pB
 
 //  if (mydump) //  && threadIdx.x == 0)
 //  {
@@ -304,9 +302,9 @@ __global__ void AxB_dot3_phase3_mp
 //        printf("blk%d, thd%d k=%d, l=%d, tx_start=%d, ty_start=%d, tx_end=%d, ty_end=%d\n", blockIdx.x, tid_global, k, l, tx_start, ty_start, tx_end, ty_end);
 //    }
 
-    while ( k < tx_end && l < ty_end ) // && nnzA != 0 && nnzB != 0)
+    while ( pA < tx_end && pB < ty_end ) // && nnzA != 0 && nnzB != 0)
     {
-        if (Ai [k] == Bi [l])
+        if (Ai [pA] == Bi [pB])
         {
             GB_GETA (aki, Ax, k) ;      // aki = Ax [k]
             GB_GETB (bkj, Bx, l) ;      // bkj = Bx [l]
@@ -329,15 +327,15 @@ __global__ void AxB_dot3_phase3_mp
             }
 #endif
             // TODO check terminal condition
-            k++ ;
-            l++ ;
+            pA++ ;
+            pB++ ;
 //                if(j == 139 && i == 945)
 //                    printf(" block%u work value = %d, exists = %d\n", b, cij, cij_exists);
         }
         else
         {
-            k += ( Ai[k] < Bi[l] ) ;
-            l += ( Ai[k] > Bi[l] ) ;
+            pA += ( Ai[pA] < Bi[pB] ) ;
+            pB += ( Ai[pA] > Bi[pB] ) ;
         }
     }
 
@@ -362,13 +360,12 @@ __global__ void AxB_dot3_phase3_mp
     #if !GB_C_ISO
     if (cij_exists)
     {
-       cij = block_Reduce_Op<T_Z, tile_sz>( this_thread_block(), cij );
+       cij = warp_Reduce_Op<T_Z, tile_sz>( tile, cij );
     }
     #endif
     // else has_zombies = 1;
 
-
-        //__syncthreads();
+    //__syncthreads();
     //tile.sync( );
     // write result for this block to global mem
     if (tid == 0)
@@ -383,7 +380,7 @@ __global__ void AxB_dot3_phase3_mp
 //                printf("what's the deal here? %d, %ld\n", cij, i);
 //            }
 
-            //printf(" cij = %d\n", cij);
+            //printf(" cij = %d\n", cij); 
            GB_PUTC ( Cx[pair_id]=(T_C)cij ) ;
            Ci[pair_id] = i ;
         }
@@ -394,8 +391,8 @@ __global__ void AxB_dot3_phase3_mp
            Ci[pair_id]=GB_FLIP (i) ;
         }
     }
-    //__syncthreads(); 
   }
+  //this_thread_block().sync();  //needed for multi-warp correctness
 
 //--------------------------------------------------------------------------
 

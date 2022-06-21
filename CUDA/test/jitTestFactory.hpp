@@ -404,11 +404,11 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
      * Run Phase 3: Execute dot3 on all buckets
      */
     for (int b =1; b < NBUCKETS; ++b) {// loop on buckets
-            int64_t b_start = bucketp[b];
-            int64_t b_end = bucketp[b+1];
-            int64_t nvecs = b_end - b_start;
+           int64_t b_start = bucketp[b];
+           int64_t b_end = bucketp[b+1];
+           int64_t nvecs = b_end - b_start;
 
-            std::cout<< "bucket "<<b<<" has "<<nvecs<<" dots to do"<<std::endl;
+           std::cout<< "bucket "<<b<<" has "<<nvecs<<" dots to do"<<std::endl;
 
            if (nvecs == 0) continue;
 
@@ -418,7 +418,7 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
            phase3launchFactory p3lf(mymxm, (GB_bucket_code)b);
            p3lf.jitGridBlockLaunch( b_start, b_end, bucketp, bucket, C, M,
                                     A, B, strm);
-            CHECK_CUDA(cudaStreamSynchronize(strm));
+           CHECK_CUDA(cudaStreamSynchronize(strm));
 
            kernTimer.Stop();
 
@@ -455,7 +455,7 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
             GrB_Index nvals1 = 0, nvals2 = 0 ;
             GRB_TRY (GrB_Matrix_nvals (&nvals1, C)) ;
             GRB_TRY (GrB_Matrix_nvals (&nvals2, C_expected)) ;
-            if (nvals1 != nvals2) { printf ("Aborting!!!\n") ; abort ( ) ; }
+            if (nvals1 != nvals2) { printf ("Wrong number of nonzeroes found, Aborting!!!\n") ; abort ( ) ; }
             GrB_Index nrows, ncols ;
             GrB_Matrix_nrows (&nrows, C_expected) ;
             GrB_Matrix_ncols (&ncols, C_expected) ;

@@ -481,11 +481,11 @@ private:
         // A(:,i) is very sparse compared to B(:,j), or visa versa
         case GB_BUCKET_VSSP :
             Opname = "phase3_vssp" ;
-            blocksz = 64;
-            work_per_thread = 8;
-            if( Cnz < 512){
+            blocksz = 256;
+            work_per_thread = 16;
+            if( Cnz < 2048){
               blocksz = 32;
-              work_per_thread = 8;
+              work_per_thread = 1;
             }
             gridsz = ( Cnz -1 + work_per_thread*blocksz)/(work_per_thread*blocksz);
             break ;
@@ -523,8 +523,8 @@ private:
         case GB_BUCKET_MERGEPATH :
             Opname = "phase3_mp" ;
             blocksz = 32;
-            work_per_thread = 4 ;
-            gridsz = ( Cnz -1 + work_per_thread*blocksz)/(work_per_thread*blocksz);
+            work_per_thread = 32*8 ;
+            gridsz = ( Cnz -1 + work_per_thread)/(work_per_thread);
             //gridsz = GB_IMIN( 1024*number_of_sms, ( Cnz  + work_per_thread*blocksz -1 )/(work_per_thread*blocksz));
             break ;
 
