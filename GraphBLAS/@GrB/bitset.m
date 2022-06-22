@@ -126,13 +126,13 @@ if (V_is_scalar)
             C = gbeunion (op, A, 0, B, 0) ;
         else
             % A is a scalar, B is a matrix
-            C = gbapply2 (op, A, B) ;
+            C = gbapply2 (op, gbfull (A), B) ;
         end
     else
         % A is a matrix
         if (b_is_scalar)
             % A is a matrix, B is scalar
-            C = gbapply2 (op, A, B) ;
+            C = gbapply2 (op, A, gbfull (B)) ;
         else
             % both A and B are matrices
             C = gbeunion (op, A, 0, B, 0) ;
