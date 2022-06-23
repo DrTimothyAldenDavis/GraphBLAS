@@ -562,14 +562,14 @@ bool test_reduce_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
     GrB_Type t = cuda::jit::to_grb_type<T_C>();
 
     GrB_Matrix A;
-    make_grb_matrix(problem_spec.getA(), N, N, indptr, index, d_data.data(), GxB_SPARSE, GxB_BY_ROW);
+    make_grb_matrix(A, N, N, indptr, index, d_data.data(), GxB_SPARSE, GxB_BY_ROW);
     CHECK_CUDA(cudaStreamSynchronize(0));
 
-    GRB_TRY (GrB_Matrix_wait (problem_spec.getA(), GrB_MATERIALIZE)) ;
-    GRB_TRY (GxB_Matrix_fprint (problem_spec.getA(), "A", GxB_SHORT_VERBOSE, stdout));
-
+    GRB_TRY (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
+    GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout));
+    
     T_C actual;
-    GB_cuda_reduce( problem_spec.getA(), &actual, monoid );
+    GB_cuda_reduce( A, &actual, monoid );
 
     GrB_Vector v;
     GrB_Vector_new(&v, t, N);
