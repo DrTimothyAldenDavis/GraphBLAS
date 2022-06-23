@@ -24,10 +24,8 @@ function [I, J, X] = find (G, k, search)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
-% FUTURE: add linear indexing
-
-% FUTURE: find (G,k,'first') and find (G,k,'last') are slow, since as
-% they are currently implemented, all entries are extracted and then the
+% FUTURE: find (G,k,'first') and find (G,k,'last') are slow.
+% They are currently implemented, all entries are extracted and then the
 % first or last k are selected from the extracted tuples.  It would be
 % faster to use a mexFunction that directly accesses the opaque content
 % of G, instead of using GrB_Matrix_extractTuples_*, which always extracts
