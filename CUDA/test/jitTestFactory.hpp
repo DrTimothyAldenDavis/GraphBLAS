@@ -17,6 +17,7 @@
 
 extern "C" {
     #include "GB.h"
+    #include "GraphBLAS.h"
 }
 
 #include "../jitFactory.hpp"
@@ -438,8 +439,8 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
             GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
 
             // Use GrB_DESC_S for structural because dot3 mask will never be complemented
-            GRB_TRY (GrB_mxm(C_expected, problem_spec.getM(), NULL, problem_spec.get_semiring(), problem_spec.getA(),
-                             problem_spec.getB(), problem_spec.get_mask_struct() ? GrB_DESC_ST1 : GrB_DESC_T1));
+            GRB_TRY (GrB_mxm(C_expected, problem_spec.getM(), NULL, problem_spec.get_semiring(), problem_spec.getB(),
+                             problem_spec.getA(), problem_spec.get_mask_struct() ? GrB_DESC_ST1 : GrB_DESC_T1));
 
             GRB_TRY (GxB_Matrix_fprint (problem_spec.getM(), "M actual", GxB_SHORT_VERBOSE, stdout));
             GRB_TRY (GxB_Matrix_fprint (problem_spec.getA(), "A actual", GxB_SHORT_VERBOSE, stdout));
@@ -550,44 +551,33 @@ bool test_reduce_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
     GrB_Monoid monoid = problem_spec.getMonoid();
     int64_t N = problem_spec.getN();
     //std::cout<<" alloc'ing data and output"<<std::endl;
-    std::vector<int64_t> indptr(N+1);
-    std::vector<int64_t> index(N);
-    std::vector<T_A> d_data(N);
+    GrB_Matrix A = problem_spec.getA();
 
-    indptr[N] = N;
-    fillvector_linear<int64_t>((int)N, indptr.data(), (int64_t)0);
-    fillvector_constant<int64_t>((int)N, index.data(), (int64_t)1);
-    fillvector_linear<T_C> ( N, d_data.data());
+    reduceFactory red_factory = reduceFactory();
 
     GrB_Type t = cuda::jit::to_grb_type<T_C>();
 
-    GrB_Matrix A;
-    make_grb_matrix(problem_spec.getA(), N, N, indptr, index, d_data.data(), GxB_SPARSE, GxB_BY_ROW);
+    GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout));
+
+    T_A actual;
+    red_factory.jitGridBlockLaunch( A, &actual, monoid);
     CHECK_CUDA(cudaStreamSynchronize(0));
 
-    GRB_TRY (GrB_Matrix_wait (problem_spec.getA(), GrB_MATERIALIZE)) ;
-    GRB_TRY (GxB_Matrix_fprint (problem_spec.getA(), "A", GxB_SHORT_VERBOSE, stdout));
-
-    T_C actual;
-    GB_cuda_reduce( problem_spec.getA(), &actual, monoid );
-
-    GrB_Vector v;
-    GrB_Vector_new(&v, t, N);
-
-    // Just sum in place for now (since we are assuming sum)
-    int sum = 0;
-    for(int i = 0; i < N; ++i) {
-        sum+= d_data[i];
-        cuda::jit::vector_set_element<T_C>(v, i, d_data[i]);
-    }
-    printf("Sum: %d\n", sum);
 
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
 
-    printf("Invoking grb reduce\n");
-    T_C expected;
-    GRB_TRY(cuda::jit::vector_reduce(&expected, v, monoid));
-    CHECK_CUDA(cudaStreamSynchronize(0));
+    printf("Invoking grb reduce on CPU\n");
+    T_A expected;
+    GrB_Index nnz_A;
+    GRB_TRY( GrB_Matrix_nvals( &nnz_A, A) ) ;
+    //GRB_TRY (GrB_reduce ( &expected, NULL, monoid, problem_spec.getA(), NULL ));
+    //CHECK_CUDA(cudaStreamSynchronize(0));
+    expected = 0 ; // initialize
+    const T_A* Ax = (T_A*)(A->x);
+    for ( int i = 0; i < nnz_A; i++)
+    {
+       expected += Ax[i];
+    }
     printf("Done.\n");
 
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
