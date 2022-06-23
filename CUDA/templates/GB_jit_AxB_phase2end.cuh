@@ -9,10 +9,10 @@
 
 #include "GB_cuda_buckets.h"
 #include "GB_cuda_kernel.h"
-#include <cooperative_groups.h>
-#include <cub/block/block_scan.cuh>
+//#include <cooperative_groups.h>
+//#include <cub/block/block_scan.cuh>
 
-using namespace cooperative_groups;
+//using namespace cooperative_groups;
 
 __global__
 void AxB_phase2end
@@ -22,10 +22,10 @@ void AxB_phase2end
         const int64_t *__restrict__ blockbucket,    // global bucket count, of size NBUCKETS*nblocks
         // output:
         const int64_t *__restrict__ bucketp,        // global bucket cumsum, of size NBUCKETS+1
-        int64_t *__restrict__ bucket,               // global buckets, of size cnz (== mnz)
+              int64_t *__restrict__ bucket,         // global buckets, of size cnz (== mnz)
         const int64_t *__restrict__ offset,         // global offsets, for each bucket
         // inputs, not modified:
-        const GrB_Matrix C,            // output matrix
+        const GrB_Matrix C,      // output matrix
         const int64_t cnz        // number of entries in C and M
     )
 {

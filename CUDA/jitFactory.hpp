@@ -503,7 +503,7 @@ private:
         case GB_BUCKET_VSVS :
             Opname = "phase3_vsvs" ;
             blocksz = 512;
-            work_per_thread = 1;
+            work_per_thread = 4;
             
             if( Cnz < 1024){
               blocksz = 64;

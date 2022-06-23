@@ -394,8 +394,7 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
     // launch phase2end: note same # of tasks as phase1
     kernTimer.Start();
     p2elF.jitGridBlockLaunch( nanobuckets, blockbucket,
-                              bucketp, bucket, offset, C,
-                              problem_spec.getM(), strm);
+                              bucketp, bucket, offset, C, M, strm);
     CHECK_CUDA(cudaStreamSynchronize(strm));
     kernTimer.Stop();
     std::cout << "phase3 test phase2end " <<kernTimer.Elapsed()<<"ms"<<std::endl;
@@ -425,10 +424,11 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
        }
        C->nzombies += (bucketp[1]); //add pre-zombies to the count;
 
-            fflush(stdout);
 
            std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
            GRB_TRY (GxB_Matrix_fprint (C, "C GPU", GxB_SHORT_VERBOSE, stdout)) ;
+           GRB_TRY(GrB_Matrix_wait(C, GrB_MATERIALIZE));
+           fflush(stdout);
 
             GrB_Matrix C_expected;
             GrB_Type type = cuda::jit::to_grb_type<T_C>();
@@ -445,7 +445,8 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
             GRB_TRY (GxB_Matrix_fprint (problem_spec.getA(), "A actual", GxB_SHORT_VERBOSE, stdout));
             GRB_TRY (GxB_Matrix_fprint (problem_spec.getB(), "B actual", GxB_SHORT_VERBOSE, stdout));
 
-            GRB_TRY(GrB_Matrix_wait(C, GrB_MATERIALIZE));
+            GRB_TRY (GxB_Matrix_fprint (C_expected, "C GPU", GxB_SHORT_VERBOSE, stdout)) ;
+
             GRB_TRY(GrB_Matrix_wait(C_expected, GrB_MATERIALIZE));
 
             GRB_TRY (GxB_Matrix_fprint (C, "C GPU", GxB_SHORT_VERBOSE, stdout));
