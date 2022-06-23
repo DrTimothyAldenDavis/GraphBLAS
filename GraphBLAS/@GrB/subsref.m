@@ -2,7 +2,8 @@ function C = subsref (A, S)
 %SUBSREF C = A(I,J) or C = A(I); extract submatrix.
 % C = A(I,J) extracts the A(I,J) submatrix of the GraphBLAS matrix A.
 % With a single index, C = A(I) extracts a subvector C of a vector A.
-% Linear indexing of a matrix is not yet supported.
+% For linear indexing of a 2D matrix, only C=A(:) is currently supported.
+% C=A(I) is not yet supported if A is a 2D matrix.
 %
 % x = A (M) for a logical matrix M constructs an nnz(M)-by-1 vector x, for
 % built-in-style logical indexing.  A or M may be built-in sparse or full
@@ -62,9 +63,9 @@ if (ndims == 1)
         C = GrB (gblogextract (A, S)) ;
     else
         % C = A (I)
+        [I, whole] = gb_index (S) ;
         if (m == 1 || n == 1)
             % C = A (I) for a vector A
-            [I, whole] = gb_index (S) ;
             if (m > 1)
                 C = gbextract (A, I, { }) ;
             else
@@ -77,7 +78,22 @@ if (ndims == 1)
             C = GrB (C) ;
         else
             % C = A (I) for a matrix A
-            error ('Linear indexing not yet supported') ;
+            if (whole)
+                % C = A(:), whole matrix case
+                % FUTURE: this would be faster as a mexFunction that uses
+                % GxB_Matrix_unpack, GxB_Matrix_resize, then GxB_Matrix_pack.
+                desc.base = 'zero-based' ;
+                [I, J, X] = gbextracttuples (A, desc) ;
+                mn = double (m) * double (n) ;
+                if (mn > 2^60)
+                    error ('Problem too large') ;
+                end
+                mn = int64 (m) * int64 (n) ;
+                C = GrB (gbbuild (I + J*m, int64 (0), X, mn, 1, desc)) ;
+            else
+                % C = A(I), general case
+                error ('Except for C=A(:), linear indexing not yet supported') ;
+            end
         end
     end
 
@@ -88,7 +104,8 @@ elseif (ndims == 2)
 
 else
 
-    error ('%dD indexing not yet supported', ndims) ;
+    % sparse N-dimensional arrays for N > 2 will not be supported
+    error ('%dD indexing not supported', ndims) ;
 
 end
 

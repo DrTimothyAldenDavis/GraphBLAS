@@ -90,7 +90,8 @@ elseif (ndims == 2)
 
 else
 
-    error ('%dD indexing not yet supported', ndims) ;
+    % sparse N-dimensional arrays for N > 2 will not be supported
+    error ('%dD indexing not supported', ndims) ;
 
 end
 

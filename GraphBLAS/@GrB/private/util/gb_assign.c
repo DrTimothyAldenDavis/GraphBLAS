@@ -116,7 +116,7 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
 
     if (cnrows > 1 && cncols > 1 && ncells == 1)
     {
-        ERROR ("linear indexing not yet supported") ;
+        ERROR ("Linear indexing not supported") ;
     }
 
     if (cnrows == 1 && ncells == 1)

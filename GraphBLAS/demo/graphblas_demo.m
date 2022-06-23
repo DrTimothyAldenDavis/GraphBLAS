@@ -836,15 +836,15 @@ fprintf ('Results of GrB and %s match perfectly.\n', demo_whoami)
 % If A is an m-by-n 2D MATLAB matrix, with n > 1, A(:) is a column vector
 % of length m*n.  The index operation A(i) accesses the ith entry in the
 % vector A(:).  This is called linear indexing in MATLAB.  It is not yet
-% available for GraphBLAS matrices in this MATLAB interface to GraphBLAS,
-% but will be added in the future.
+% fully available for GraphBLAS matrices in this MATLAB interface to
+% GraphBLAS, but will be added in the future.
 
 %%
 % (5) Implicit singleton dimension expansion 
 %
 % In MATLAB C=A+B where A is m-by-n and B is a 1-by-n row vector
 % implicitly expands B to a matrix, computing C(i,j)=A(i,j)+B(j).  This
-% implicit expansion is not yet suported in GraphBLAS with C=A+B.
+% implicit expansion is not yet supported in GraphBLAS with C=A+B.
 % However, it can be done with C = GrB.mxm ('+.+', A, diag(GrB(B))).
 % That's a nice example of the power of semirings, but it's not
 % immediately obvious, and not as clear a syntax as C=A+B.  The

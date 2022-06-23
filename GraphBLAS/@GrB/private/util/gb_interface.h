@@ -374,6 +374,12 @@ bool gb_mxarray_is_scalar   // true if built-in array is a scalar
     const mxArray *S
 ) ;
 
+uint64_t gb_mxget_uint64_scalar // return uint64 value of a MATLAB scalar
+(
+    const mxArray *mxscalar,    // MATLAB scalar to extract
+    char *name                  // name of the scalar
+) ;
+
 bool gb_mxarray_is_empty    // true if built-in array is NULL, or 2D and 0-by-0
 (
     const mxArray *S
