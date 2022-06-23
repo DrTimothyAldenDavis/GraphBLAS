@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <iostream>
 //#include "GB_binary_search.h"
+#include "GB_cuda_reduce_factory.hpp"
 #include "GpuTimer.h"
 #include "GB_cuda_buckets.h"
 #include "../../rmm_wrap/rmm_wrap.h"
@@ -554,8 +555,11 @@ bool test_reduce_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
 
     GRB_TRY (GxB_Matrix_fprint (A, "my mat", GxB_SHORT_VERBOSE, stdout)) ;
 
+    GB_cuda_reduce_factory myreducefactory;
+    myreducefactory.reduce_factory(monoid, A);
+
     T_C actual;
-    GB_cuda_reduce(A, &actual, monoid );
+    GB_cuda_reduce(myreducefactory, A, &actual, monoid );
     CHECK_CUDA(cudaStreamSynchronize(0));
 
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;

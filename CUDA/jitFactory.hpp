@@ -51,6 +51,7 @@ extern "C" {
 };
 #include "GB_jit_launcher.h"
 #include "GB_cuda_mxm_factory.hpp"
+#include "GB_cuda_reduce_factory.hpp"
 #include "GB_cuda_buckets.h"
 #include "GB_cuda_type_wrap.hpp"
 #include "GB_cuda_error.h"
@@ -551,7 +552,11 @@ class reduceFactory
   int work_per_thread = 128;
   int number_of_sms = GB_Global_gpu_sm_get (0);
 
+  GB_cuda_reduce_factory &reduce_factory_;
+
 public:
+
+  reduceFactory(GB_cuda_reduce_factory &myreducefactory) : reduce_factory_(myreducefactory) {}
 
   int get_threads_per_block() {
     return threads_per_block;
@@ -583,14 +588,19 @@ public:
       GrB_Scalar_new(&temp_scalar, op->op->ztype);
 
       cuda::jit::scalar_set_element(temp_scalar, 0);
-
       GrB_Scalar_wait(temp_scalar, GrB_MATERIALIZE);
+
+      jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
+      filecache.getFile (reduce_factory_) ;
+
+      auto rcode = std::to_string(reduce_factory_.rcode);
 
       std::string hashable_name = base_name + "_" + kernel_name;
       std::stringstream string_to_be_jitted ;
       string_to_be_jitted <<
-      hashable_name << std::endl << R"(#include ")" <<
-        hashable_name << R"(.cuh")" << std::endl;
+      hashable_name << std::endl <<
+      R"(#include ")" << jit::get_user_home_cache_dir() << "/" << reduce_factory_.filename << R"(")" << std::endl <<
+      R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
       bool is_sparse = GB_IS_SPARSE(A);
       int64_t N = is_sparse ? GB_nnz(A) : GB_NCOLS(A) * GB_NROWS(A);
@@ -604,12 +614,12 @@ public:
       // macros, in an include file: GB_reduce_123412341234.h
       GBURBLE ("(cuda reduce launch %d threads in %d blocks)", blocksz, gridsz ) ;
 
-      jit::launcher(hashable_name,
+      jit::launcher(hashable_name + "_" + rcode,
                     string_to_be_jitted.str(),
                     header_names,
                     compiler_flags,
                     file_callback)
-               .set_kernel_inst(  kernel_name , { A->type->name, op->op->ztype->name, "true" })
+               .set_kernel_inst(  kernel_name , { A->type->name, op->op->ztype->name, rcode, "true" })
                .configure(grid, block, SMEM, stream)
                // FIXME: GB_ADD is hardcoded into kernel for now
                .launch( A, temp_scalar, N, is_sparse);
@@ -661,8 +671,10 @@ inline bool GB_cuda_mxm_phase3(GB_cuda_mxm_factory &mymxmfactory, GB_bucket_code
 }
 
 
-inline bool GB_cuda_reduce(GrB_Matrix A, void *output, GrB_Monoid op, cudaStream_t stream = 0) {
-    reduceFactory rf;
+inline bool GB_cuda_reduce(GB_cuda_reduce_factory &myreducefactory,
+                           GrB_Matrix A, void *output, GrB_Monoid op,
+                           cudaStream_t stream = 0) {
+    reduceFactory rf(myreducefactory);
     GBURBLE ("(starting cuda reduce)" ) ;
     bool result = rf.jitGridBlockLaunch(A, output, op, stream);
     GBURBLE ("(ending cuda reduce)" ) ;

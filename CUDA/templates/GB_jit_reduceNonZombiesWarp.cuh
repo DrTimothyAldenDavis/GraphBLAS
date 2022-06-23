@@ -29,7 +29,7 @@
 
 using namespace cooperative_groups;
 
-template< typename T, int tile_sz>
+template< typename T, int tile_sz, int sr_code>
 __inline__ __device__ 
 T warp_ReduceSum( thread_block_tile<tile_sz> g, T val)
 {
@@ -58,7 +58,7 @@ T warp_ReduceSum( thread_block_tile<tile_sz> g, T val)
 }
 
 
-template<typename T, int warpSize>
+template<typename T, int warpSize, int sr_code>
 __inline__ __device__
 T block_ReduceSum(thread_block g, T val)
 {
@@ -68,7 +68,7 @@ T block_ReduceSum(thread_block g, T val)
   thread_block_tile<warpSize> tile = tiled_partition<warpSize>( g );
 
   // Each warp performs partial reduction
-  val = warp_ReduceSum<T, warpSize>( tile, val);    
+  val = warp_ReduceSum<T, warpSize, sr_code>( tile, val);
 
   // Wait for all partial reductions
   if (lane==0) { 
@@ -83,14 +83,14 @@ T block_ReduceSum(thread_block g, T val)
   //else { 
     val = (threadIdx.x < (blockDim.x / warpSize) ) ? shared[lane] : GB_IDENTITY ;
     //if (lane < (blockDim.x/ warpSize) ) printf("thd%d warp%d loaded val = %d\n", threadIdx.x, lane, val);
-    val = warp_ReduceSum<T, warpSize>( tile, val); //Final reduce within first warp
+    val = warp_ReduceSum<T, warpSize, sr_code>( tile, val); //Final reduce within first warp
   //}
 
   return val;
 }
 
 
-template< typename T, typename Accum, bool atomic_reduce = true>
+template< typename T, typename Accum, int sr_code, bool atomic_reduce = true>
 __global__ void reduceNonZombiesWarp
 (
     GrB_Matrix A,
@@ -124,7 +124,7 @@ __global__ void reduceNonZombiesWarp
     // reduce work [0..s-1] to a single scalar
     //--------------------------------------------------------------------------
     // this assumes blockDim is a multiple of 32
-    sum = block_ReduceSum< T, 32 >( this_thread_block(), sum) ; 
+    sum = block_ReduceSum< T, 32, sr_code >( this_thread_block(), sum) ;
     this_thread_block().sync(); 
 
     // write result for this block to global mem
