@@ -23,10 +23,6 @@
 #include <cstdint>
 #include <cooperative_groups.h>
 
-// TODO: Temporary
-#define GB_IDENTITY 0
-#define GB_ADD(a, b) a + b
-
 using namespace cooperative_groups;
 
 template< typename T, int tile_sz, int sr_code>

@@ -572,18 +572,6 @@ public:
   {
       GBURBLE ("\n(launch reduce factory) \n") ;
 
-      // TODO: We probably want to "macrofy" the GrB_Monoid and define it in the `string_to_be_jitted`
-//      void GB_stringify_binop
-//        (
-//            // input:
-//            FILE *fp,                 // File to write macros, assumed open already
-//            const char *macro_name,   // name of macro to construct
-//            GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
-//            GB_Type_code xcode, // op->xtype->code of the operator
-//            bool for_semiring,  // if true: op is a multiplier in a semiring
-//            bool flipxy         // if true, use mult(y,x) else mult(x,y)
-//        )
-
       GrB_Scalar temp_scalar;
       GrB_Scalar_new(&temp_scalar, op->op->ztype);
 
