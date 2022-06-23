@@ -30,15 +30,15 @@ function C = subsasgn (C, S, A)
 % before passing them to GraphBLAS.  See GrB.subassign instead.  See also
 % the example with 'help GrB.extract'.
 %
-% Unlike the built-in C(I,J)=A, the GraphBLAS assignment does not change
-% the size of C.
+% Just the built-in C(I,J)=A, the GraphBLAS assignment can change the size
+% of C if the indices I and J extend past the current dimesions of C.
 %
 % See also GrB/subsref, GrB/subsindex, GrB.assign, GrB.subassign.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
-% FUTURE: add linear indexing, and allow the matrix to grow/shrink in size.
+% FUTURE: add linear indexing
 
 if (~isequal (S.type, '()'))
     error ('index type %s not supported', S.type) ;

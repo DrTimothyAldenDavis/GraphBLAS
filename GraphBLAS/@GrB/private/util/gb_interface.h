@@ -399,7 +399,8 @@ GrB_Index *gb_mxcell_to_index   // return index list I
     base_enum_t base,           // I is one-based or zero-based
     const GrB_Index n,          // dimension of matrix being indexed
     bool *I_allocated,          // true if output array I is allocated
-    GrB_Index *ni               // length (I)
+    GrB_Index *ni,              // length (I)
+    int64_t *I_max              // max (I) is computed if I_max is not NULL
 ) ;
 
 GrB_BinaryOp gb_first_binop         // return GrB_FIRST_[type] operator
