@@ -44,8 +44,8 @@ bool test_AxB_dot3_phase2_factory( int , int64_t , int64_t , int64_t, int64_t ) 
 
 template<typename T>
 void make_grb_matrix(GrB_Matrix mat, int64_t n_rows, int64_t n_cols,
-                     std::vector<int64_t> indptr,
-                     std::vector<int64_t> indices, T *data,
+                     std::vector<int64_t> &indptr,
+                     std::vector<int64_t> &indices, T *data,
                      int gxb_sparsity_control = GxB_SPARSE,
                      int gxb_format = GxB_BY_ROW) ;
 
@@ -242,8 +242,8 @@ bool test_AxB_phase2_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
 
 template<typename T>
 void make_grb_matrix(GrB_Matrix mat, int64_t n_rows, int64_t n_cols,
-                     std::vector<int64_t> indptr,
-                     std::vector<int64_t> indices, T *data,
+                     std::vector<int64_t> &indptr,
+                     std::vector<int64_t> &indices, T *data,
                      int gxb_sparsity_control,
                      int gxb_format ) 
 {
@@ -267,18 +267,10 @@ void make_grb_matrix(GrB_Matrix mat, int64_t n_rows, int64_t n_cols,
 
     GRB_TRY (GrB_Matrix_wait (mat, GrB_MATERIALIZE)) ;
     GRB_TRY (GB_convert_any_to_non_iso (mat, true, NULL)) ;
-    // TODO: Need to specify these
     GRB_TRY (GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL, gxb_sparsity_control)) ;
     GRB_TRY (GxB_Matrix_Option_set(mat, GxB_FORMAT, gxb_format));
     GRB_TRY (GxB_Matrix_fprint (mat, "my mat", GxB_SHORT_VERBOSE, stdout)) ;
 
-    bool iso ;
-    GRB_TRY (GxB_Matrix_iso (&iso, mat)) ;
-    if (iso)
-    {
-        printf ("(can do iso)\n") ;
-        //GrB_Matrix_free (&mat) ;
-    }
 
 }
 
@@ -438,8 +430,8 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
             GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
 
             // Use GrB_DESC_S for structural because dot3 mask will never be complemented
-            GRB_TRY (GrB_mxm(C_expected, problem_spec.getM(), NULL, problem_spec.get_semiring(), problem_spec.getA(),
-                             problem_spec.getB(), problem_spec.get_mask_struct() ? GrB_DESC_ST1 : GrB_DESC_T1));
+            GRB_TRY (GrB_mxm(C_expected, problem_spec.getM(), NULL, problem_spec.get_semiring(), problem_spec.getB(),
+                             problem_spec.getA(), problem_spec.get_mask_struct() ? GrB_DESC_ST1 : GrB_DESC_T1));
 
             GRB_TRY (GxB_Matrix_fprint (problem_spec.getM(), "M actual", GxB_SHORT_VERBOSE, stdout));
             GRB_TRY (GxB_Matrix_fprint (problem_spec.getA(), "A actual", GxB_SHORT_VERBOSE, stdout));
@@ -546,57 +538,39 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
 template <typename T_C, typename T_M, typename T_A, typename T_B>
 bool test_reduce_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
 
+    std::cout << "reduce test ======================" << std::endl;
+
     // TODO: This test doesn't really fit the `mxm` category
     GrB_Monoid monoid = problem_spec.getMonoid();
     int64_t N = problem_spec.getN();
-    //std::cout<<" alloc'ing data and output"<<std::endl;
-    std::vector<int64_t> indptr(N+1);
-    std::vector<int64_t> index(N);
-    std::vector<T_A> d_data(N);
-
-    indptr[N] = N;
-    fillvector_linear<int64_t>((int)N, indptr.data(), (int64_t)0);
-    fillvector_constant<int64_t>((int)N, index.data(), (int64_t)1);
-    fillvector_linear<T_C> ( N, d_data.data());
-
-    GrB_Type t = cuda::jit::to_grb_type<T_C>();
 
     GrB_Matrix A;
-    make_grb_matrix(A, N, N, indptr, index, d_data.data(), GxB_SPARSE, GxB_BY_ROW);
-    CHECK_CUDA(cudaStreamSynchronize(0));
+    GrB_Matrix_dup(&A, problem_spec.getA());
 
-    GRB_TRY (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
-    GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout));
-    
+    A->i[0] = GB_FLIP (0);
+    A->i[A->p[2]] = GB_FLIP(A->i[A->p[2]]);
+    A->nzombies = 2;
+
+    GRB_TRY (GxB_Matrix_fprint (A, "my mat", GxB_SHORT_VERBOSE, stdout)) ;
+
     T_C actual;
-    GB_cuda_reduce( A, &actual, monoid );
-
-    GrB_Vector v;
-    GrB_Vector_new(&v, t, N);
-
-    // Just sum in place for now (since we are assuming sum)
-    int sum = 0;
-    for(int i = 0; i < N; ++i) {
-        sum+= d_data[i];
-        cuda::jit::vector_set_element<T_C>(v, i, d_data[i]);
-    }
-    printf("Sum: %d\n", sum);
+    GB_cuda_reduce(A, &actual, monoid );
+    CHECK_CUDA(cudaStreamSynchronize(0));
 
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
 
-    printf("Invoking grb reduce\n");
     T_C expected;
-    GRB_TRY(cuda::jit::vector_reduce(&expected, v, monoid));
-    CHECK_CUDA(cudaStreamSynchronize(0));
-    printf("Done.\n");
+    GRB_TRY(cuda::jit::matrix_reduce(&expected, A, monoid));
 
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
     if(expected != actual) {
         std::cout << "results do not match: reduced=" << expected << ", actual=" << actual << std::endl;
         exit(1);
     } else {
-        std::cout << "Results matched!" << std::endl;
+        std::cout << "Results matched: " << expected << std::endl;
     }
+
+    std::cout << "reduce test complete ======================" << std::endl;
 
     return expected == actual;
 }

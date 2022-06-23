@@ -71,6 +71,7 @@ def load_types(argv):
     # Hard-coding data shapes for now
 
     DataShapes ={
+        "nanoxnano": {'N': 8, 'Anz':16, 'Bnz': 8, 'Cnz': 8},
         "tinyxtiny": {'N':32, 'Anz':256, 'Bnz':128, 'Cnz': 64},
         "smallxsmall": {'N':1024, 'Anz': 65_536, 'Bnz':65_536, 'Cnz': 10000}
         # "medxmed": {'N':4096, 'Anz': 2**20, 'Bnz':2**20}
