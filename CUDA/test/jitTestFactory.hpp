@@ -549,7 +549,7 @@ bool test_reduce_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
     GrB_Matrix_dup(&A, problem_spec.getA());
 
     A->i[0] = GB_FLIP (0);
-    A->i[A->p[2]] = GB_FLIP(A->i[A->p[2]]);
+    A->i[A->p[2]+1] = GB_FLIP(A->i[A->p[2]+1]);
     A->nzombies = 2;
 
     GRB_TRY (GxB_Matrix_fprint (A, "my mat", GxB_SHORT_VERBOSE, stdout)) ;
