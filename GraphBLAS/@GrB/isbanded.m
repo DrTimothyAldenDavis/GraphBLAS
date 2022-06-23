@@ -14,6 +14,6 @@ end
 lo = gb_get_scalar (lo) ;
 hi = gb_get_scalar (hi) ;
 
-[alo, ahi] = gbbandwidth (A) ;
+[alo, ahi] = gbbandwidth (A, 1, 1) ;
 s = (alo <= lo) & (ahi <= hi) ;
 
