@@ -6,14 +6,14 @@ function i = end (G, k, ndims)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
-% FUTURE: add linear indexing
-% FUTURE: use hypersparse matrices to implement multidimensionl nD arrays
-
 if (ndims == 1)
-    if (~isvector (G))
-        error ('Linear indexing not yet supported') ;
+    if (isvector (G))
+        % G(end) of a vector G
+        i = length (G) ;
+    else
+        % G(end) of a matrix G, for linear indexing
+        i = numel (G) ;
     end
-    i = length (G) ;
 elseif (ndims == 2)
     s = size (G) ;
     i = s (k) ;

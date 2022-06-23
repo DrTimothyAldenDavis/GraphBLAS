@@ -76,10 +76,10 @@ else
         % extract indices from a column vector
         I = gbextracttuples (G) ;
     else
-        % FUTURE: this does not return the same thing as I = find (G)
-        % for the built-in find (..). (need to add 1D linear indexing)
-        error ('Linear indexing not yet supported') ;
-        % I = gbextracttuples (G) ;
+        % extract linear indices from a matrix
+        [I, J] = gbextracttuples (G) ;
+        % use the built-in sub2ind to convert the 2D indices to linear indices
+        I = sub2ind ([m n], I, J) ;
     end
 end
 
