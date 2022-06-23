@@ -79,19 +79,16 @@ if (ndims == 1)
         else
             % C = A (I) for a matrix A
             if (whole)
-                % C = A(:), whole matrix case
-                % FUTURE: this would be faster as a mexFunction that uses
-                % GxB_Matrix_unpack, GxB_Matrix_resize, then GxB_Matrix_pack.
+                % C = A (:), whole matrix case
+                % FUTURE: C=A(:) would be faster with GxB_reshape
                 desc.base = 'zero-based' ;
-                [I, J, X] = gbextracttuples (A, desc) ;
-                mn = double (m) * double (n) ;
-                if (mn > 2^60)
-                    error ('Problem too large') ;
-                end
-                mn = int64 (m) * int64 (n) ;
-                C = GrB (gbbuild (I + J*m, int64 (0), X, mn, 1, desc)) ;
+                [I0, J0, X] = gbextracttuples (A, desc) ;
+                [I1, mn] = gb_2d_to_1d (I0, J0, m, n) ;
+                J1 = int64 (0) ;
+                clear I0 J0 ;
+                C = GrB (gbbuild (I1, J1, X, mn, 1, desc)) ;
             else
-                % C = A(I), general case
+                % C = A (I), general case not yet supported
                 error ('Except for C=A(:), linear indexing not yet supported') ;
             end
         end

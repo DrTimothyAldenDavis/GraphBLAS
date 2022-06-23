@@ -78,14 +78,33 @@ if (ndims == 1)
             % C (I) = A for a vector or scalar C
             C = GrB (gbsubassign (C, gb_index (S), A)) ;
         else
-            % C (I) = A for a matrix C
-            error ('Linear indexing not yet supported') ;
+            [I, whole] = gb_index (S) ;
+            if (whole)
+                [am, an] = gbsize (A) ;
+                if (am == 1 && an == 1)
+                    % C (:) = scalar, the same as C (:,:) = scalar.
+                    % C becomes an iso full matrix
+                    C_empty = gbnew (cm, cn, gbtype (C)) ;
+                    C = GrB (gbsubassign (C_empty, { }, { }, A)) ;
+                else
+                    % C (:) = A for a matrix C and vector A
+                    % FUTURE: C(:)=A would be faster with GxB_reshape
+                    desc.base = 'zero-based' ;
+                    [I0, ~, X] = gbextracttuples (A, desc) ;
+                    [I1, J1] = gb_1d_to_2d (I0, cm) ;
+                    clear I0 ;
+                    C = GrB (gbbuild (I1, J1, X, cm, cn, desc)) ;
+                end
+            else
+                % C (I) = A, general case not yet supported
+                error ('Except for C(:)=A, linear indexing not yet supported') ;
+            end
         end
     end
 
 elseif (ndims == 2)
 
-    % C(I,J) = A where A is length(I)-by-length(J), or a scalar
+    % C (I,J) = A where A is length(I)-by-length(J), or a scalar
     C = GrB (gbsubassign (C, gb_index (S.subs {1}), gb_index (S.subs {2}), A)) ;
 
 else
