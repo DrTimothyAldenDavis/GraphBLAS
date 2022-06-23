@@ -17,6 +17,7 @@
 
 extern "C" {
     #include "GB.h"
+    #include "GraphBLAS.h"
 }
 
 #include "../jitFactory.hpp"
