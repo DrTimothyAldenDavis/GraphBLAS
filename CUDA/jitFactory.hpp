@@ -607,11 +607,10 @@ public:
                     header_names,
                     compiler_flags,
                     file_callback)
-               .set_kernel_inst(  kernel_name , { A->type->name, op->op->ztype->name, rcode, "true" })
+               .set_kernel_inst(  kernel_name , { A->type->name, op->op->ztype->name, rcode, "false" })
                .configure(grid, block, SMEM, stream)
                // FIXME: GB_ADD is hardcoded into kernel for now
                .launch( A, temp_scalar, N, is_sparse);
-
 
       // Need to synchronize before copying result to host
       CHECK_CUDA( cudaStreamSynchronize(stream) );

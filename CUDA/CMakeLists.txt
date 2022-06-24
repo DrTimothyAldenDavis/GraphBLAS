@@ -34,7 +34,24 @@ set(GRAPHBLAS_CUDA_INCLUDES
 
 message(STATUS "GraphBLAS CUDA includes: " "${GRAPHBLAS_CUDA_INCLUDES}")
 
-target_include_directories(graphblascuda PUBLIC  ${CUDAToolkit_INCLUDE_DIRS} ${GRAPHBLAS_CUDA_INCLUDES})
+set(EXTERNAL_INCLUDES_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
+
+IF(NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY})
+    file(MAKE_DIRECTORY ${EXTERNAL_INCLUDES_DIRECTORY})
+endif()
+
+IF(NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY}/cuco)
+    execute_process(
+            COMMAND git clone "https://github.com/NVIDIA/cuCollections.git" --branch main --recursive cuco
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
+endif()
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/external_includes/cuco/include)
+
+target_include_directories(graphblascuda PUBLIC
+        ${CMAKE_CURRENT_BINARY_DIR}/external_includes/cuco/include
+        ${CUDAToolkit_INCLUDE_DIRS}
+        ${GRAPHBLAS_CUDA_INCLUDES})
 set_target_properties(graphblascuda PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(graphblascuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 set_target_properties(graphblascuda PROPERTIES CUDA_ARCHITECTURES "75")
@@ -45,7 +62,6 @@ install ( TARGETS graphblascuda
         LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
-
 
 # 1. Execute enumify/stringify/jitify logic to compile ptx kernels and compile/link w/ relevant *.cu files.
 

@@ -63,6 +63,7 @@ public:
 
         std::cout << "Calling G.del()" << std::endl;
         G.del();
+
     }
 
     GrB_Matrix getC(){ return G.getC(); }
