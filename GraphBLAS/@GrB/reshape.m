@@ -23,6 +23,7 @@ nold = int64 (nold) ;
 mnew = int64 (mnew) ;
 nnew = int64 (nnew) ;
 
+% m*n can overflow, but this is caught by gb_2d_to_1d
 if (mold * nold ~= mnew * nnew)
     error ('number of elements must not change') ;
 end
@@ -30,7 +31,7 @@ end
 desc.base = 'zero-based' ;
 [iold, jold, x] = gbextracttuples (G, desc) ;
 % convert i and j from 2D (mold-by-nold) to 1D indices
-k = gb_2d_to_1d (iold, jold, mold) ;
+k = gb_2d_to_1d (iold, jold, mold, nold) ;
 % convert k from 1D indices to 2D (mnew-by-nnew)
 [inew, jnew] = gb_1d_to_2d (k, mnew) ;
 % rebuild the new matrix

@@ -374,6 +374,12 @@ bool gb_mxarray_is_scalar   // true if built-in array is a scalar
     const mxArray *S
 ) ;
 
+uint64_t gb_mxget_uint64_scalar // return uint64 value of a MATLAB scalar
+(
+    const mxArray *mxscalar,    // MATLAB scalar to extract
+    char *name                  // name of the scalar
+) ;
+
 bool gb_mxarray_is_empty    // true if built-in array is NULL, or 2D and 0-by-0
 (
     const mxArray *S
@@ -399,7 +405,8 @@ GrB_Index *gb_mxcell_to_index   // return index list I
     base_enum_t base,           // I is one-based or zero-based
     const GrB_Index n,          // dimension of matrix being indexed
     bool *I_allocated,          // true if output array I is allocated
-    GrB_Index *ni               // length (I)
+    GrB_Index *ni,              // length (I)
+    int64_t *I_max              // max (I) is computed if I_max is not NULL
 ) ;
 
 GrB_BinaryOp gb_first_binop         // return GrB_FIRST_[type] operator

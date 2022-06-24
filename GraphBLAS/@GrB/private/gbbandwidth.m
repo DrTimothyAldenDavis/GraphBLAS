@@ -1,4 +1,4 @@
-function [lo, hi] = gbbandwidth (G)        %#ok
+function [lo, hi] = gbbandwidth (G, compute_hi, compute_lo)        %#ok
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later

@@ -10,6 +10,6 @@ function s = istril (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
-[lo,hi] = gbbandwidth (G.opaque) ;
+[lo,hi] = gbbandwidth (G.opaque, 0, 1) ;
 s = (hi == 0) ;
 

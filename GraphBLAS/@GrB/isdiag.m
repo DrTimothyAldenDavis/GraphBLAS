@@ -7,6 +7,6 @@ function s = isdiag (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
-[lo,hi] = gbbandwidth (G.opaque) ;
+[lo,hi] = gbbandwidth (G.opaque, 1, 1) ;
 s = (lo == 0) && (hi == 0) ;
 
