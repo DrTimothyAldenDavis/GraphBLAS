@@ -40,7 +40,10 @@ GrB_Info GB_reduce_to_scalar_cuda
     int64_t nz = GB_nnz(A);
     GBURBLE ("(got nnz) ") ;
 
-    GB_cuda_reduce( A, s, reduce, stream);
+    GB_cuda_reduce_factory myreducefactory;
+    myreducefactory.reduce_factory(reduce, A);
+
+    GB_cuda_reduce( myreducefactory, A, s, reduce, stream);
     GBURBLE ("(did reduce) ") ;
 
     CHECK_CUDA(cudaStreamSynchronize(stream));

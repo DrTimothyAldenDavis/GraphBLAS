@@ -22,6 +22,7 @@ extern "C"
 
 #include "jitFactory.hpp"
 #include "GB_cuda_type_wrap.hpp"
+#include "test/GpuTimer.h"
 
 template<typename T, typename I>
 void print_array(void *arr, I size, const char *name) {
@@ -67,6 +68,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     cudaStream_t stream;
     CHECK_CUDA_SIMPLE(cudaStreamCreate(&stream));
+
+    GpuTimer kernel_timer; 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -149,6 +152,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         M_sparsity, false, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork 
         true, C_iso, Context) ;
+
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -174,11 +178,38 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     }
 
     //--------------------------------------------------------------------------
+    // Pre-fetch arrays that will be used on the device
+    //--------------------------------------------------------------------------
+
+    // prefetch M
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->p, (mnvec+1) * sizeof (int64_t),
+        device, stream)) ; //stream_data) ;
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->i, mnz * sizeof (int64_t),
+        device, stream )) ; //stream_data) ;
+    if (!(Mask_struct || M->iso))
+    {
+        // prefetch M->x only if the mask is valued and M is non-iso
+        CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->x, mnz * M->type->size,
+            device, stream )) ; //stream_data) ;
+    }
+
+    // prefetch C
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->i, (cnz+1) * sizeof (int64_t),
+        device, stream )); //stream_data) ;
+    if (!C_iso)
+    {
+        // FIXME: why prefect C->x?
+        CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->x, (cnz+1) * C->type->size,
+            device, stream )); //stream_data) ;
+    }
+
+    //--------------------------------------------------------------------------
     // copy Mp and Mh into C
     //--------------------------------------------------------------------------
 
     CHECK_CUDA_SIMPLE( cudaMemcpyAsync (C->p, M->p, (cnvec+1) * sizeof (int64_t),
         cudaMemcpyDefault, stream)) ;
+    //memcpy( C->p, M->p, (cnvec+1)* sizeof( int64_t) );
     if (M_is_hyper)
     { 
         // FIXME: this method does not yet handle the hypersparse case
@@ -207,7 +238,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (my_mxm_spec) ;
 
-    GBURBLE ("(GPU stringified) ") ;
+    GBURBLE ("(GPU stringified)\n") ;
 
     //--------------------------------------------------------------------------
     // construct the tasks for phase1 and phase2
@@ -252,10 +283,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         blockbuckets_size * sizeof(int64_t), stream));
     CHECK_CUDA_SIMPLE(cudaMemsetAsync(Bucketp, 0,
         (NBUCKETS+1) * sizeof(int64_t), stream));
-    CHECK_CUDA_SIMPLE(cudaMemsetAsync(Bucket, 0,
-        mnz * sizeof(int64_t), stream));
     CHECK_CUDA_SIMPLE(cudaMemsetAsync(offset, 0,
         NBUCKETS * sizeof(int64_t), stream));
+  //CHECK_CUDA_SIMPLE(cudaMemsetAsync(Bucket, 0,
+  //    mnz * sizeof(int64_t), stream));
 
     //--------------------------------------------------------------------------
     // phase1 and phase2: place each C(i,j) in a bucket
@@ -276,26 +307,30 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     // prefetch M
-    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->p, (mnvec+1) * sizeof (int64_t),
-        device, stream)) ; //stream_data) ;
-    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->i, mnz * sizeof (int64_t),
-        device, stream )) ; //stream_data) ;
-    if (!(Mask_struct || M->iso))
-    {
-        // prefetch M->x only if the mask is valued and M is non-iso
-        CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->x, mnz * M->type->size,
-            device, stream )) ; //stream_data) ;
-    }
+//  CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->p, (mnvec+1) * sizeof (int64_t),
+//      device, stream)) ; //stream_data) ;
+//  CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->i, mnz * sizeof (int64_t),
+//      device, stream )) ; //stream_data) ;
+//  if (!(Mask_struct || M->iso))
+//  {
+//      // prefetch M->x only if the mask is valued and M is non-iso
+//      CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->x, mnz * M->type->size,
+//          device, stream )) ; //stream_data) ;
+//  }
 
-    // prefetch C
-    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->i, (cnz+1) * sizeof (int64_t),
-        device, stream )); //stream_data) ;
-    if (!C_iso)
-    {
-        // FIXME: why prefect C->x?
-        CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->x, (cnz+1) * C->type->size,
-            device, stream )); //stream_data) ;
-    }
+//  // prefetch C
+//  CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->i, (cnz+1) * sizeof (int64_t),
+//      device, stream )); //stream_data) ;
+//  if (!C_iso)
+//  {
+//      // FIXME: why prefect C->x?
+//      CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->x, (cnz+1) * C->type->size,
+//          device, stream )); //stream_data) ;
+//  }
+
+    //--------------------------------------------------------------------------
+    // Pre-fetch arrays that will be used on the device
+    //--------------------------------------------------------------------------
 
     // prefetch A
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( A->p, (anvec+1) * sizeof (int64_t),
@@ -327,18 +362,22 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     GBURBLE ("(GPU phase1 start) ") ;
-
+    kernel_timer.Start();
     p1lf.jitGridBlockLaunch(Nanobuckets, Blockbucket, C, M, A, B, stream);
+    CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
+    kernel_timer.Stop();
 
-    GBURBLE ("(GPU phase1 done) ") ;
+    GBURBLE ("(GPU phase1 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
 
     //--------------------------------------------------------------------------
     // phase2: cumsum across the blockbuckets, propagate to thread level
     //--------------------------------------------------------------------------
 
-    GBURBLE ("(GPU phase1 start) ") ;
+    GBURBLE ("(GPU phase2 start) ") ;
 
+    kernel_timer.Start();
     p2lf.jitGridBlockLaunch(Blockbucket, offset, M, stream);
+    kernel_timer.Stop();
 
     CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
 
@@ -350,20 +389,22 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         s+= offset[bucket];
     }
 
-    GBURBLE ("(GPU phase2 done) ") ;
+    GBURBLE ("(GPU phase2 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
 
     GBURBLE ("(GPU phase2end start) ") ;
 
+    kernel_timer.Start();
     p2elf.jitGridBlockLaunch(Nanobuckets, Blockbucket,
                              Bucketp, Bucket, offset, C, M, stream);
 
-    GBURBLE ("(GPU phase2end done) ") ;
+    CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
+    kernel_timer.Stop();
+    GBURBLE ("(GPU phase2end done %12.6g ms)\n",kernel_timer.Elapsed()) ;
 
     //--------------------------------------------------------------------------
     // phase3: do the numerical work
     //--------------------------------------------------------------------------
 
-    CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
 
     for ( int bucket = 1 ; bucket < NBUCKETS; ++bucket)
     {
@@ -373,10 +414,12 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         if(end - start > 0) {
             // TODO: Use stream pool
             phase3launchFactory p3lf(my_mxm_spec, (GB_bucket_code)bucket);
-            p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket,
-                C, M, A, B, stream);
-            GBURBLE ("(GPU phase3 bucket %d done ) ", bucket) ;
-        }
+            GBURBLE ("(GPU phase3 bucket %d launch ) ", bucket) ;
+            kernel_timer.Start();
+            p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C, M, A, B, stream);
+            CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));  // only for timing
+            kernel_timer.Stop();
+            GBURBLE ("(GPU phase3 bucket %d done %12.6g ms)\n", bucket, kernel_timer.Elapsed()) ; }
     }
 
     GB_FREE_WORKSPACE ;
