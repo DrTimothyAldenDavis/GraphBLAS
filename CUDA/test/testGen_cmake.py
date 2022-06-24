@@ -5,7 +5,12 @@ GB_TYPE_PREFIX = "GrB"
 
 SUPPORTED_TYPES = {
     "int32_t": "INT32",
-    "uint32_t": "UINT32"
+    "uint32_t": "UINT32",
+    "int64_t": "INT64",
+    "uint64_t": "UINT64",
+    "bool": "BOOL",
+    "float": "FP32",
+    "double": "FP64"
 }
 
 DOT3_BUCKETS = [1, 2, 3]    # NBUCKETS, hard-coded
@@ -41,7 +46,6 @@ def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds="tiny-tiny", SUM="PLUS
     gb_monoid = build_gb_monioid(typeC, SUM)
     gb_binop = build_gb_binop(typeC, PRODUCT)
 
-# TODO: Build dataset and
     TEST_HEAD = f"""
     TEST( {Test_suite}, {Test_name}) {{
 
@@ -54,7 +58,7 @@ def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds="tiny-tiny", SUM="PLUS
         mxm_problem_spec<{typeC}, {typeM}, {typeA}, {typeB}> problem_spec(monoid, binop, {N}, {Anz}, {Bnz}, {Cnz});
     """
     phase1_body= f""" test_AxB_phase1_factory< {typeC}, {typeM}, {typeA}, {typeB}>(problem_spec);"""
-    phase2_body= f""" test_AxB_phase2_factory< {typeC}, {typeM}, {typeA}, {typeB} >( problem_spec);"""
+    phase2_body= f""" test_AxB_phase2_factory< {typeC}, {typeM}, {typeA}, {typeB} >(problem_spec);"""
     phase3_body = f""" test_AxB_dot3_full_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > (problem_spec);\n"""
     reduce_body = f""" test_reduce_factory<{typeC}, {typeM}, {typeA}, {typeB}>(problem_spec);"""
     phasedict = { 1: phase1_body, 2: phase2_body, 3: phase3_body, 4: reduce_body }
@@ -93,7 +97,7 @@ def write_test_instances_header(test_suite_name, Monoids, Binops, Semirings, Dat
                     dtX = dtC
                     dtY = dtC
                     dtZ = dtC
-                    for dtM in ["bool", "int32_t"]:
+                    for dtM in ["bool", "int32_t", "int64_t", "float", "double"]:
                         for dtA in DataTypes:
                             for dtB in DataTypes:
                                 for ds in DataShapes:
