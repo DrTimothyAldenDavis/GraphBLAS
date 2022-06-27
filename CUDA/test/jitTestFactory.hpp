@@ -114,6 +114,10 @@ bool test_AxB_phase1_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
 
     CHECK_CUDA(cudaStreamSynchronize(strm));
     kernTimer.Stop();
+    std::cout<<"returned from phase1 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+//
+//  print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
+//  print_array<int64_t>(Blockbucket, blockbuckets_size, "Blockbucket");
     std::cout<<"==== phase1 done=============================" <<std::endl;
 
     int64_t bucket_count = 0;
@@ -171,7 +175,7 @@ bool test_AxB_phase2_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
 
     fillvector_constant(NBUCKETS, bucketp, (int64_t)0);
     fillvector_constant(NBUCKETS, offset, (int64_t)0);
-    fillvector_constant(problem_spec.getCnnz(), bucket, (int64_t)0);
+    //fillvector_constant(problem_spec.getCnnz(), bucket, (int64_t)0);
 
     std::cout << "Running phase1 kernel" << std::endl;
     kernTimer.Start();
@@ -208,6 +212,11 @@ bool test_AxB_phase2_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
                               problem_spec.getM(),strm);
     CHECK_CUDA(cudaStreamSynchronize(strm));
     kernTimer.Stop();
+    std::cout<<"returned from phase2end kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+//
+//
+    print_array<int64_t>(bucketp, NBUCKETS, "bucketp");
+//  print_array<int64_t>(bucket, mnz, "bucket");
     std::cout<<"phase2 done =================="<<std::endl;
 
     EXPECT_EQ( bucketp[NBUCKETS], problem_spec.getCnnz()); //check we sum to the right structural counts
@@ -220,7 +229,7 @@ bool test_AxB_phase2_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
 
     CHECK_CUDA(cudaStreamDestroy(strm));
 
-   return true;
+    return true;
 }
 
 template<typename T>
@@ -310,14 +319,14 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
   //    // out of memory
   //    return (info) ;
   //}
-    GrB_Matrix C_actual;
-    std::vector<int64_t> C_act_p(N+1);
-    std::vector<int64_t> C_act_i(cnz+1);
+  //GrB_Matrix C_actual;
+  //std::vector<int64_t> C_act_p(N+1);
+  //std::vector<int64_t> C_act_i(cnz+1);
 
-    make_grb_matrix<T_C>( C_actual, N, N,
-                     C_act_p, C_act_i, (T_C*)(M->x), 
-                     M_sparsity,
-                     GxB_BY_ROW);
+  //make_grb_matrix<T_C>( C_actual, N, N,
+  //                 C_act_p, C_act_i, (T_C*)(M->x), 
+  //                 M_sparsity,
+  //                 GxB_BY_ROW);
 
     int nthrd = p2lF.get_threads_per_block();
     int ntasks = p2elF.get_number_of_blocks(M);
@@ -331,7 +340,7 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
 
     fillvector_constant(NBUCKETS, bucketp, (int64_t)0);
     fillvector_constant(NBUCKETS, offset, (int64_t)0);
-    fillvector_constant(problem_spec.getCnnz(), bucket, (int64_t)0);
+    //fillvector_constant(problem_spec.getCnnz(), bucket, (int64_t)0);
 
     std::cout << "Running phase1 kernel" << std::endl;
     kernTimer.Start();
@@ -413,7 +422,7 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
             GrB_Index nvals1 = 0, nvals2 = 0 ;
             GRB_TRY (GrB_Matrix_nvals (&nvals1, C)) ;
             GRB_TRY (GrB_Matrix_nvals (&nvals2, C_expected)) ;
-            if (nvals1 != nvals2) { printf ("Wrong number of nonzeroes found, Aborting!!!\n") ; abort ( ) ; }
+            if (nvals1 != nvals2) { printf ("Wrong number of nonzeroes found, test fail!!!\n") ; ADD_FAILURE( ) ; }
             GrB_Index nrows, ncols ;
             GrB_Matrix_nrows (&nrows, C_expected) ;
             GrB_Matrix_ncols (&ncols, C_expected) ;
@@ -433,28 +442,28 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
             else if (type == GrB_UINT32) op = GrB_EQ_UINT32 ;
             else if (type == GrB_UINT64) op = GrB_EQ_UINT64 ;
             else if (type == GrB_FP32  )
-            {
+            {   tol = 1e-6;
                 op = (tol == 0)? GrB_EQ_FP32 : GrB_MINUS_FP32   ;
                 op_abs = GrB_ABS_FP32 ;
             }
             else if (type == GrB_FP64  )
-            {
+            {   tol = 1e12;
                 op = (tol == 0)? GrB_EQ_FP64 : GrB_MINUS_FP64   ;
                 op_abs = GrB_ABS_FP64 ;
             }
             else if (type == GxB_FC32  )
-            {
+            {   tol = 2e-6;
                 op = (tol == 0)? GxB_EQ_FC32 : GxB_MINUS_FC32   ;
                 op_abs = GxB_ABS_FC32 ;
             }
             else if (type == GxB_FC64  )
-            {
+            {   tol = 2e-12;
                 op = (tol == 0)? GxB_EQ_FC64 : GxB_MINUS_FC64   ;
                 op_abs = GxB_ABS_FC64 ;
             }
 
 
-            // Diff = C - C_actual
+            // Diff = C - C_expected
             GrB_Matrix Diff ;
             GRB_TRY (GrB_Matrix_new (&Diff, GrB_FP64, nrows, ncols)) ;
             GRB_TRY (GrB_Matrix_apply (Diff, NULL, NULL, GrB_AINV_FP64, C_expected, NULL)) ;
@@ -469,17 +478,35 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
                     NULL)) ;
                 GrB_Index nvals3 = 1 ;
                 GRB_TRY (GrB_Matrix_nvals (&nvals3, T)) ;
-                if (nvals1 != nvals3) { printf ("!!\n") ; abort ( ) ; } 
+                if (nvals1 != nvals3) { printf (" difference matrix wrong size, test fail!!\n") ; ADD_FAILURE( ) ; } 
                 bool is_same = false ;
                 GRB_TRY (GrB_Matrix_reduce_BOOL (&is_same, NULL, GrB_LAND_MONOID_BOOL,
                     T, NULL)) ;
-                if (!is_same) { printf ("!!\n") ; abort ( ) ; } 
+                if (!is_same) { printf (" results don't match, test fail!!\n") ; ADD_FAILURE ( ) ; } 
                 GRB_TRY (GrB_Matrix_free (&T)) ;
             }
             else
             {
                 // TODO: check with roundoff
-                { printf ("!!\n") ; abort ( ) ; } 
+                { printf ("Not checking tolerant equals yet!!\n") ;} // ADD_FAILURE() ; } 
+             // GRB_TRY (GrB_Matrix_eWiseMult_BinaryOp (T, NULL, NULL, op, C, C_expected,
+             //     NULL)) ;
+             // GRB_TRY( GrB_Matrix_apply( T, NULL, NULL, op_abs, T, NULL);
+
+             // double sum 1.0; 
+             // EXPECT_LT( tol, sum) ;
+                GRB_TRY (GrB_Matrix_eWiseMult_BinaryOp (T, NULL, NULL, op, C, C_expected,
+                    NULL)) ;
+                GrB_Index nvals3 = 1 ;
+                GRB_TRY (GrB_Matrix_nvals (&nvals3, T)) ;
+                if (nvals1 != nvals3) { printf (" difference matrix wrong size, test fail!!\n") ; ADD_FAILURE( ) ; } 
+                double is_same = false ;
+                GRB_TRY (GrB_Matrix_reduce_FP64 (&is_same, NULL, GrB_PLUS_MONOID_FP64,
+                    T, NULL)) ;
+                GRB_TRY (GrB_Matrix_free (&T)) ;
+                printf("difference = %12.6g\n", is_same);
+                EXPECT_LT( is_same, tol);
+
             }
 
             // re-enable the GPU
@@ -491,7 +518,6 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
     rmm_wrap_free(bucketp);
     rmm_wrap_free(bucket);
     rmm_wrap_free(offset);
-    GRB_TRY(GrB_Matrix_free(&C_actual));
     GRB_TRY(GrB_Matrix_free(&C_expected));
     CHECK_CUDA(cudaStreamDestroy(strm));
 
@@ -512,10 +538,13 @@ bool test_reduce_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
 
     // TODO: Using C here so that the reduced type matches
     GrB_Matrix_dup(&A, problem_spec.getC());
+    GrB_Type type = cuda::jit::to_grb_type<T_C>();
 
-    A->i[0] = GB_FLIP (A->i[0]);
+    A->i[0] = GB_FLIP(A->i[0]);
     A->i[1] = GB_FLIP(A->i[1]);
     A->nzombies = 2;
+
+    //GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout)) ;
 
     GB_cuda_reduce_factory myreducefactory;
     myreducefactory.reduce_factory(monoid, A);
@@ -529,14 +558,51 @@ bool test_reduce_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
     GRB_TRY(cuda::jit::matrix_reduce(&expected, A, monoid));
 
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
-    if(expected != actual) {
-        std::cout << "results do not match: reduced=" << expected << ", actual=" << actual << std::endl;
-        exit(1);
-    } else {
-        std::cout << "Results matched: " << expected << std::endl;
+
+    double tol = 0;
+    GrB_BinaryOp op = NULL;
+    GrB_UnaryOp op_abs = NULL ;
+
+    if      (type == GrB_BOOL  ) op = GrB_EQ_BOOL   ;
+    else if (type == GrB_INT8  ) op = GrB_EQ_INT8   ;
+    else if (type == GrB_INT16 ) op = GrB_EQ_INT16  ;
+    else if (type == GrB_INT32 ) op = GrB_EQ_INT32  ;
+    else if (type == GrB_INT64 ) op = GrB_EQ_INT64  ;
+    else if (type == GrB_UINT8 ) op = GrB_EQ_UINT8  ;
+    else if (type == GrB_UINT16) op = GrB_EQ_UINT16 ;
+    else if (type == GrB_UINT32) op = GrB_EQ_UINT32 ;
+    else if (type == GrB_UINT64) op = GrB_EQ_UINT64 ;
+    else if (type == GrB_FP32  )
+    {   tol = 1e-6;
+        op = (tol == 0)? GrB_EQ_FP32 : GrB_MINUS_FP32   ;
+        op_abs = GrB_ABS_FP32 ;
+    }
+    else if (type == GrB_FP64  )
+    {   tol = 1e12;
+        op = (tol == 0)? GrB_EQ_FP64 : GrB_MINUS_FP64   ;
+        op_abs = GrB_ABS_FP64 ;
+    }
+    else if (type == GxB_FC32  )
+    {   tol = 2e-6;
+        op = (tol == 0)? GxB_EQ_FC32 : GxB_MINUS_FC32   ;
+        op_abs = GxB_ABS_FC32 ;
+    }
+    else if (type == GxB_FC64  )
+    {   tol = 2e-12;
+        op = (tol == 0)? GxB_EQ_FC64 : GxB_MINUS_FC64   ;
+        op_abs = GxB_ABS_FC64 ;
     }
 
-    std::cout << "reduce test complete ======================" << std::endl;
+    if(tol == 0) {
+       EXPECT_EQ( actual , expected);
+        //std::cout << "results do not match: reduced=" << expected << ", actual=" << actual << std::endl;
+        //exit(1);
+    } else if ( (tol > 0) && ( ( type ==GrB_FP32) || ( type ==GxB_FC32) 
+                            || ( type ==GrB_FP64) || ( type ==GxB_FC64) ) ){
+       EXPECT_LT( abs((double)actual - (double)expected)/(double)expected, tol) ;
+    }
+
+    std::cout<< expected<< " " << actual<< "reduce test complete ======================" << std::endl;
     GRB_TRY(GrB_Matrix_free(&A));
 
     return expected == actual;
