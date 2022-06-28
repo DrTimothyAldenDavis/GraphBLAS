@@ -599,7 +599,7 @@ bool test_reduce_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
         //exit(1);
     } else if ( (tol > 0) && ( ( type ==GrB_FP32) || ( type ==GxB_FC32) 
                             || ( type ==GrB_FP64) || ( type ==GxB_FC64) ) ){
-       EXPECT_LT( abs((double)actual - (double)expected)/(double)expected, tol) ;
+       EXPECT_LT( abs((double)actual - (double)expected)/(double)(expected+1.e-12), tol) ;
     }
 
     std::cout<< expected<< " " << actual<< "reduce test complete ======================" << std::endl;
