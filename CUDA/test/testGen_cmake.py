@@ -90,23 +90,22 @@ def write_test_instances_header(test_suite_name, Monoids, Binops, Semirings, Dat
     outfile = f'{test_suite_name}_{Semirings}_test_instances.hpp'
     with open(outfile, 'w') as fp:
         fp.write("#pragma once\n#include \"problem_spec.hpp\"\n");
-        for m in Monoids:
-            for b in Binops:
-                Test_suite = f'{test_suite_name}_tests_{m}_{b}'
-                for dtC in DataTypes:
-                    dtX = dtC
-                    dtY = dtC
-                    dtZ = dtC
-                    for dtM in ["bool", "int32_t", "int64_t", "float", "double"]:
-                        for dtA in DataTypes:
-                            for dtB in DataTypes:
-                                for ds in DataShapes:
-                                    TEST_HEAD, TEST_BODY = buildTest( Test_suite, Kernels, ds, m, b,
-                                                                      dtC, dtM, dtA, dtB, dtX, dtY, dtZ)
-                                    fp.write( TEST_HEAD)
-                                    for phase in [1, 2, 3, 4]:
-                                        fp.write( TEST_BODY[phase])
-                                    fp.write( "}\n")
+        m, b = Semirings.split("_")
+        Test_suite = f'{test_suite_name}_tests_{m}_{b}'
+        for dtC in DataTypes:
+            dtX = dtC
+            dtY = dtC
+            dtZ = dtC
+            for dtM in ["bool", "int32_t", "int64_t", "float", "double"]:
+                for dtA in DataTypes:
+                    for dtB in DataTypes:
+                        for ds in DataShapes:
+                            TEST_HEAD, TEST_BODY = buildTest( Test_suite, Kernels, ds, m, b,
+                                                              dtC, dtM, dtA, dtB, dtX, dtY, dtZ)
+                            fp.write( TEST_HEAD)
+                            for phase in [1, 2, 3, 4]:
+                                fp.write( TEST_BODY[phase])
+                            fp.write( "}\n")
 
 def write_cuda_test(source_dir, test_suite_name, semiring, kernel):
     import shutil
