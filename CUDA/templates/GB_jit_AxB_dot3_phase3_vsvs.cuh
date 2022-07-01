@@ -24,6 +24,7 @@
 #define GB_CUDA_KERNEL
 #include <limits>
 #include <cstdint>
+#include <cmath>
 #include <stdio.h>
 #include <cooperative_groups.h>
 #include "GB_cuda_kernel.h"
@@ -107,7 +108,13 @@ __global__ void AxB_dot3_phase3_vsvs
   int sz            // unused
 )
 {
-   int64_t dots = end - start;
+
+    // TODO: Figure out how to use graphblas-specific INFINITY macro
+    #ifndef INFINITY
+    #define INFINITY std::numeric_limits<T_C>::max()
+    #endif
+
+    int64_t dots = end - start;
    // sz = expected non-zeros per dot
 //   /*
 //   int m = (gridDim.x*blockDim.x)*256/sz;

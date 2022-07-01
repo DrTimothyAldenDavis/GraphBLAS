@@ -278,6 +278,8 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
     cudaStream_t strm;
     CHECK_CUDA(cudaStreamCreate(&strm));
 
+    std::cout << "sr_code: " << problem_spec.get_mxm_factory().sr_code << std::endl;
+
     bool result = false;
 
     int64_t N = problem_spec.getN();
