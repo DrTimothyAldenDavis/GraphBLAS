@@ -92,7 +92,7 @@ template<  typename T_C, typename T_M,
 
 static const std::vector<std::string> compiler_flags{
    "-std=c++14",
-   "-G",
+   //"-G",
    "-remove-unused-globals",
    "-w",
    "-D__CUDACC_RTC__",
@@ -607,7 +607,7 @@ public:
                     header_names,
                     compiler_flags,
                     file_callback)
-               .set_kernel_inst(  kernel_name , { A->type->name, op->op->ztype->name, rcode, "false" })
+               .set_kernel_inst(  kernel_name , { A->type->name, op->op->ztype->name, rcode, "true" })
                .configure(grid, block, SMEM, stream)
                // FIXME: GB_ADD is hardcoded into kernel for now
                .launch( A, temp_scalar, N, is_sparse);

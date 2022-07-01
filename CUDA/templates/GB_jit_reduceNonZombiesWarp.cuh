@@ -72,7 +72,7 @@ T block_ReduceSum(thread_block g, T val)
      shared[wid] = val; // Write reduced value to shared memory
      //printf("thd%d stored warp%d sum %d\n", threadIdx.x, wid, val);
   }
-  __syncthreads();              // Wait for all partial reductions
+  this_thread_block().sync();     // Wait for all partial reductions
 
   //if (wid > 0 ) return val;
   //read from shared memory only if that warp existed
