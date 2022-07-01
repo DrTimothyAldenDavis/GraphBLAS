@@ -63,7 +63,12 @@ T block_ReduceSum(thread_block g, T val)
   int wid  = threadIdx.x >> 5 ; // / warpSize;
   thread_block_tile<warpSize> tile = tiled_partition<warpSize>( g );
 
-  // Each warp performs partial reduction
+    // TODO: Figure out how to use graphblas-specific INFINITY macro
+    #ifndef INFINITY
+    #define INFINITY std::numeric_limits<T>::max()
+    #endif
+
+    // Each warp performs partial reduction
   val = warp_ReduceSum<T, warpSize, rcode>( tile, val);
 
   // Wait for all partial reductions
@@ -95,6 +100,12 @@ __global__ void reduceNonZombiesWarp
     bool is_sparse
 )
 {
+
+    // TODO: Figure out how to use graphblas-specific INFINITY macro
+    #ifndef INFINITY
+    #define INFINITY std::numeric_limits<T>::max()
+    #endif
+
     // set thread ID
     int tid = threadIdx.x ;
 

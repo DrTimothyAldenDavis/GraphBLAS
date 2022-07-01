@@ -32,6 +32,7 @@
 //  GrB_Matrix B         <- input matrix B
 #pragma once
 
+#include <cmath>
 #include <limits>
 #include <cstdint>
 #include <cooperative_groups.h>
@@ -79,7 +80,12 @@ __global__ void AxB_dot3_phase3_vssp
     int sz
 )
 {
-   // Typed pointers to access data in A,B,C
+    // TODO: Figure out how to use graphblas-specific INFINITY macro
+    #ifndef INFINITY
+    #define INFINITY std::numeric_limits<T_C>::max()
+    #endif
+
+    // Typed pointers to access data in A,B,C
    const T_A *__restrict__ Ax = (T_A*)A->x;
    const T_B *__restrict__ Bx = (T_B*)B->x;
          T_C *__restrict__ Cx = (T_C*)C->x;

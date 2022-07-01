@@ -136,6 +136,11 @@ __global__ void AxB_dot3_phase3_mp
 )
 {
 
+    // TODO: Figure out how to use graphblas-specific INFINITY macro
+    #ifndef INFINITY
+    #define INFINITY std::numeric_limits<T_C>::max()
+    #endif
+
     C->jumbled = true;
     const T_A *__restrict__ Ax = (T_A *)A->x  ;
     const T_B *__restrict__ Bx = (T_B *)B->x  ;
