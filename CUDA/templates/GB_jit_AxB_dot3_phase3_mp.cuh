@@ -131,7 +131,8 @@ __global__ void AxB_dot3_phase3_mp
          kk += gridDim.x )
     {
 
-         pair_id = Bucket [kk] ;
+         //pair_id = Bucket [kk] ;
+         pair_id = kk ;
          int64_t i = Mi[pair_id];
          int64_t j = Ci[pair_id] >> 4;
 
@@ -150,9 +151,8 @@ __global__ void AxB_dot3_phase3_mp
          int cij_exists  = 0 ;
          //printf(" thd%u has init value %f\n",tid, cij);
          
-         #define shared_vector_size 256 
+         #define shared_vector_size 128 
          __shared__ int64_t Ai_s[shared_vector_size];
-         bool use_A_shared = true;
          int shared_steps_A = (ainz + shared_vector_size -1)/shared_vector_size;
 
          int64_t step_end = (shared_steps_A <= 1? ainz : shared_vector_size);
@@ -168,7 +168,6 @@ __global__ void AxB_dot3_phase3_mp
          int shared_steps_B = (bjnz + shared_vector_size -1)/shared_vector_size;
          
          __shared__ int64_t Bj_s[shared_vector_size];
-         bool use_B_shared = true;
 
          step_end = (shared_steps_B <= 1 ? bjnz : shared_vector_size);
          for ( int64_t i =tid; i< step_end; i+= blockDim.x)
@@ -211,26 +210,24 @@ __global__ void AxB_dot3_phase3_mp
     while ( x_min < x_max) { //binary search for correct diag break
       int pivot = (x_min +x_max) >> 1;
       //printf("start search thd%u piv=%u xmin,xmax = %u,%u diag_end=%d\n", tid_global, pivot, x_min, x_max, diag_end);
-      //int64_t Apiv = use_A_shared ? Ai_s[pivot] : Ai[pivot + pA_start];
       int64_t Apiv =  Ai_s[pivot] ;
-      //int64_t Bpiv = use_B_shared ? Bj_s[diag -pivot -1] : Bi[diag -pivot -1 + pB_start] ;
       int64_t Bpiv = Bj_s[diag -pivot -1] ;
 
-      if ( Apiv < Bpiv ) {
-         x_min = pivot +1;
-      }
-      else {
-         x_max = pivot;
-      }
+   // if ( Apiv < Bpiv ) {
+   //    x_min = pivot +1;
+   // }
+   // else {
+   //    x_max = pivot;
+   // }
+      x_min = (pivot + 1)* (Apiv < Bpiv)   + x_min * (1 - (Apiv < Bpiv));
+      x_max = pivot * (1 - (Apiv < Bpiv))  + x_max * (Apiv < Bpiv);
 
     }
     //printf("start search thd%u xcoord= %u diag=%d, diag_end=%d\n", tid_global, x_min, diag, diag_end);
 
     int xcoord = x_min;
     int ycoord = diag -x_min -1;
-    //int64_t Atest = use_A_shared ?  Ai_s[xcoord] : Ai[xcoord +pA_start] ;
     int64_t Atest = Ai_s[xcoord] ;
-    //int64_t Btest = use_B_shared ?  Bj_s[ycoord] : Bi[ycoord +pB_start] ;
     int64_t Btest = Bj_s[ycoord] ;
     if ( (diag > 0)
       && (diag < nxy ) 
@@ -252,38 +249,26 @@ __global__ void AxB_dot3_phase3_mp
 
     while ( x_min < x_max) {
       int pivot = (x_min +x_max) >> 1;
-      //int64_t Apiv = use_A_shared ? Ai_s[pivot] : Ai[pivot + pA_start];
       int64_t Apiv = Ai_s[pivot] ;
-      //int64_t Bpiv = use_B_shared ? Bj_s[diag_end -pivot -1] : Bi[diag_end -pivot -1 + pB_start] ;
       int64_t Bpiv = Bj_s[diag_end -pivot -1] ;
       
-      if ( Apiv < Bpiv ) {
-         x_min = pivot +1;
-      }
-      else {
-         x_max = pivot;
-      }
+    //if ( Apiv < Bpiv ) {
+    //   x_min = pivot +1;
+    //}
+    //else {
+    //   x_max = pivot;
+    //}
+      x_min = (pivot + 1)* (Apiv < Bpiv)   + x_min * (1 - (Apiv < Bpiv));
+      x_max = pivot * (1 - (Apiv < Bpiv))  + x_max * (Apiv < Bpiv);
 
     }
     //printf("end search thd%u x_coord = %u diag=%d, diag_end=%d\n", tid_global, x_min, diag, diag_end);
     xcoord = x_min;
     ycoord = diag_end -x_min -1;
-////Atest = use_A_shared ?  Ai_s[xcoord] : Ai[xcoord +pA_start] ;
-//  Atest = Ai_s[xcoord] ;
-////Btest = use_B_shared ?  Bj_s[ycoord] : Bi[ycoord +pB_start] ;
-//  Btest = Bj_s[ycoord] ;
-//  if ( (diag_end > 0)
-//    && (diag_end < nxy) 
-//    && (ycoord >= 0)
-//    && (Atest == Btest)
-//    ) 
-//    { 
-//      diag_end--; //adjust for intersection incrementing both pointers  
-//    }
+
     // two end points are known now
     int tx_end = xcoord; // +pA_start; 
     int ty_end = diag_end - xcoord; // + pB_start; 
-
 
     //merge-path dot product
     int64_t pA = tx_start;       // pA
@@ -304,9 +289,7 @@ __global__ void AxB_dot3_phase3_mp
 //  this_thread_block().sync();
     while ( pA < tx_end && pB < ty_end ) 
     {
-      //int64_t Aind = use_A_shared ? Ai_s[pA] : Ai[pA];
       int64_t Aind = Ai_s[pA] ;
-      //int64_t Bind = use_B_shared ? Bj_s[pB] : Bi[pB];
       int64_t Bind = Bj_s[pB] ;
 
       if ( Aind == Bind)
@@ -329,17 +312,17 @@ __global__ void AxB_dot3_phase3_mp
 //                        printf("blk%d thd%d ix at %lld %lld  cij = %d * %d, k=%d, l=%d i=%lld j=%lld \n", blockIdx.x, tid_global, Ai[k], Bi[l], Ax[k], Bx[l], k, l, i, j);
             }
 #endif
-          // TODO check terminal condition
-          pA++ ;
-          pB++ ;
+         // TODO check terminal condition
+         // pA++ ;
+         // pB++ ;
       }
-      else
-      {
-          pA += (Aind < Bind); // ( Ai_s[pA] < Bj_s[pB] ) ;
-          pB += (Aind > Bind); // ( Ai_s[pA] > Bj_s[pB] ) ;
+   // else
+   // {
+          pA += (Aind <= Bind); // ( Ai_s[pA] < Bj_s[pB] ) ;
+          pB += (Aind >= Bind); // ( Ai_s[pA] > Bj_s[pB] ) ;
           //pA += ( Ai_s[pA] < Bj_s[pB] ) ;
           //pB += ( Ai_s[pA] > Bj_s[pB] ) ;
-      }
+   // }
 
 
     } // end while pA < tx_end && pB < ty_end

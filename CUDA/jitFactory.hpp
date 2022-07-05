@@ -484,7 +484,8 @@ private:
             Opname = "phase3_vssp" ;
             blocksz = 256;
             work_per_thread = 16;
-            if( Cnz < 2048){
+            if( Cnz < 2048)
+            {
               blocksz = 32;
               work_per_thread = 1;
             }

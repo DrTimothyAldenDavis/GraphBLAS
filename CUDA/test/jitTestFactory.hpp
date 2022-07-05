@@ -397,6 +397,7 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
            CHECK_CUDA(cudaStreamSynchronize(strm));
 
            kernTimer.Stop();
+           std::cout << "phase3 bucket="<<b<<" done " <<kernTimer.Elapsed()<<"ms"<<std::endl;
 
        }
        C->nzombies += (bucketp[1]); //add pre-zombies to the count;
@@ -413,6 +414,7 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
             GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
 
             // Use GrB_DESC_S for structural because dot3 mask will never be complemented
+            // The order of B and A is swapped to account for CSR vs CSC assumption
             GRB_TRY (GrB_mxm(C_expected, problem_spec.getM(), NULL, problem_spec.get_semiring(), problem_spec.getB(),
                              problem_spec.getA(), problem_spec.get_mask_struct() ? GrB_DESC_ST1 : GrB_DESC_T1));
 
@@ -465,13 +467,6 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
             }
 
 
-            // Diff = C - C_expected
-            GrB_Matrix Diff ;
-            GRB_TRY (GrB_Matrix_new (&Diff, GrB_FP64, nrows, ncols)) ;
-            GRB_TRY (GrB_Matrix_apply (Diff, NULL, NULL, GrB_AINV_FP64, C_expected, NULL)) ;
-            GRB_TRY (GrB_Matrix_eWiseAdd_BinaryOp (Diff, NULL, NULL, GrB_PLUS_FP64,
-                C, Diff, NULL)) ;
-            GRB_TRY (GrB_Matrix_free (&Diff)) ;
 
             if (tol == 0)
             {
@@ -490,24 +485,22 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
             else
             {
                 // TODO: check with roundoff
-                { printf ("Not checking tolerant equals yet!!\n") ;} // ADD_FAILURE() ; } 
-             // GRB_TRY (GrB_Matrix_eWiseMult_BinaryOp (T, NULL, NULL, op, C, C_expected,
-             //     NULL)) ;
-             // GRB_TRY( GrB_Matrix_apply( T, NULL, NULL, op_abs, T, NULL);
-
-             // double sum 1.0; 
-             // EXPECT_LT( tol, sum) ;
-                GRB_TRY (GrB_Matrix_eWiseMult_BinaryOp (T, NULL, NULL, op, C, C_expected,
-                    NULL)) ;
+                // Diff = C - C_expected
+                GrB_Matrix Diff ;
+                GRB_TRY (GrB_Matrix_new (&Diff, GrB_FP64, nrows, ncols)) ;
+                GRB_TRY (GrB_Matrix_apply (Diff, NULL, NULL, GrB_AINV_FP64, C_expected, NULL)) ;
+                GRB_TRY (GrB_Matrix_eWiseAdd_BinaryOp (Diff, NULL, NULL, GrB_PLUS_FP64,
+                    C, Diff, NULL)) ;
+                GRB_TRY( GrB_Matrix_apply( Diff, NULL, NULL, op_abs, Diff, NULL) );
                 GrB_Index nvals3 = 1 ;
-                GRB_TRY (GrB_Matrix_nvals (&nvals3, T)) ;
-                if (nvals1 != nvals3) { printf (" difference matrix wrong size, test fail!!\n") ; ADD_FAILURE( ) ; } 
+                GRB_TRY (GrB_Matrix_nvals (&nvals3, Diff)) ;
+                if (nvals1 != nvals3) { printf ("fp difference matrix wrong size, test fail!!\n") ; ADD_FAILURE( ) ; } 
                 double is_same = false ;
                 GRB_TRY (GrB_Matrix_reduce_FP64 (&is_same, NULL, GrB_PLUS_MONOID_FP64,
-                    T, NULL)) ;
-                GRB_TRY (GrB_Matrix_free (&T)) ;
-                printf("difference = %12.6g\n", is_same);
-                EXPECT_LT( is_same, tol);
+                    Diff, NULL)) ;
+                printf("difference = %12.6g, rel_l1_err=%12.6g\n", is_same, is_same/nrows );
+                EXPECT_LT( is_same/nrows, tol);
+                GRB_TRY (GrB_Matrix_free (&Diff)) ;
 
             }
 
@@ -601,7 +594,7 @@ bool test_reduce_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
         //exit(1);
     } else if ( (tol > 0) && ( ( type ==GrB_FP32) || ( type ==GxB_FC32) 
                             || ( type ==GrB_FP64) || ( type ==GxB_FC64) ) ){
-       EXPECT_LT( abs((double)actual - (double)expected)/(double)(expected+1.e-12), tol) ;
+       EXPECT_LT( abs((double)actual - (double)expected)/(abs((double)expected)+1.e-12), tol) ;
     }
 
     std::cout<< expected<< " " << actual<< "reduce test complete ======================" << std::endl;

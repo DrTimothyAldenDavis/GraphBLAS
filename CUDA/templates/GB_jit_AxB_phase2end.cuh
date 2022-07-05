@@ -31,7 +31,7 @@ void AxB_phase2end
 {
 
     //--------------------------------------------------------------------------
-    // get C and M
+    // get C information 
     //--------------------------------------------------------------------------
 
     // Ci [p] for an entry C(i,j) contains either GB_FLIP(i) if C(i,j) is a
@@ -40,9 +40,9 @@ void AxB_phase2end
     // where bucket is the bucket assignment for C(i,j).  This phase does not
     // need k, just the bucket for each entry C(i,j).
 
-    int64_t *Ci = C->i ;       // for zombies, or bucket assignment
+    int64_t *__restrict__ Ci = C->i ;       // for zombies, or bucket assignment
     //int64_t *Mp = C->p ;       // for offset calculations
-    int64_t mnvec = C->nvec;
+    //int64_t mnvec = C->nvec;
 
     //--------------------------------------------------------------------------
     // load and shift the nanobuckets for this thread block
@@ -64,10 +64,11 @@ void AxB_phase2end
     // Each thread loads its NBUCKETS nanobucket values into registers.
     int64_t my_bucket[NBUCKETS];
 
-    #pragma unroll
+    #pragma unroll 
     for(int b = 0; b < NBUCKETS; ++b) {
         my_bucket[b] = nanobucket [b * blockDim.x]
-         + blockbucket [b * gridDim.x + blockIdx.x] + bucketp [b] ;
+                     + blockbucket [b * gridDim.x + blockIdx.x]
+                     + bucketp [b] ;
     }
 
     // Now each thread has an index into the global set of NBUCKETS buckets,
@@ -81,37 +82,17 @@ void AxB_phase2end
     // C, which is the part of C operated on by this threadblock.
     int64_t pfirst, plast ;
 
-    /*
-    for ( int tid_global = threadIdx.x + blockIdx.x * blockDim.x ;
-              tid_global < (mnvec+7)/8 ;
-              tid_global += blockDim.x * gridDim.x)
-    */
     int chunk_max= (cnz + chunksize -1)/chunksize;
     for ( int chunk = blockIdx.x;
           chunk < chunk_max;
           chunk += gridDim.x )
     {
 
-        //GB_PARTITION (pfirst, plast, cnz, tid_global, (mnvec+7)/8 ) ;
         pfirst = chunksize * chunk ;
         plast  = GB_IMIN( chunksize * (chunk+1), cnz ) ;
 
-        int chunk_end;
-        if ( cnz > chunksize) chunk_end = GB_IMIN(  chunksize,
-                                                    cnz - chunksize*(chunk) );
-        else chunk_end = cnz;
-
-        // find the first vector of the slice for task blockIdx.x: the
-        // vector that owns the entry Ai [pfirst] and Ax [pfirst].
-        //kfirst = GB_search_for_vector_device (pfirst, Mp, 0, mnvec) ;
-
-        // find the last vector of the slice for task blockIdx.x: the
-        // vector that owns the entry Ai [plast-1] and Ax [plast-1].
-        //klast = GB_search_for_vector_device (plast-1, Mp, kfirst, mnvec) ;
-
-
-        for ( int p = pfirst + threadIdx.x;
-              p < pfirst + chunk_end;
+        for ( int64_t p = pfirst + threadIdx.x;
+              p < plast ;
               p += blockDim.x )
         {
             // get the entry C(i,j), and extract its bucket.  Then
@@ -123,14 +104,15 @@ void AxB_phase2end
             int ibucket = Ci[p] & 0xF;
             //printf(" thd: %d p,Ci[p] = %ld,%ld,%d\n", threadIdx.x, p, Ci[p], irow );
 
-            if(ibucket == 0) {
-                bucket[my_bucket[0]++] = p;
-                Ci[p] = Ci[p] >> 4;
-            } else {
-                bucket[my_bucket[ibucket]++] = p;
-            }
+            bucket[my_bucket[ibucket]++] = p;
+            Ci[p] = (ibucket==0) * (Ci[p] >> 4) + (ibucket > 0)* Ci[p];
+          //if(ibucket == 0) {
+          ////    bucket[my_bucket[0]++] = p;
+          //    Ci[p] = Ci[p] >> 4;
+          //} else {
+          //  bucket[my_bucket[ibucket]++] = p;
+          //}
         }
-        //__syncthreads();
     }
 }
 
