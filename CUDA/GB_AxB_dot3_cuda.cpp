@@ -238,7 +238,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (my_mxm_spec) ;
 
-    GBURBLE ("(GPU stringified)\n") ;
+    GBURBLE ("(GPU stringified srcode = %lu)\n", my_mxm_spec.sr_code) ;
 
     //--------------------------------------------------------------------------
     // construct the tasks for phase1 and phase2
@@ -265,8 +265,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     Blockbucket = (int64_t*)
         rmm_wrap_malloc(blockbuckets_size * sizeof (int64_t));
     Bucketp = (int64_t*)rmm_wrap_malloc((NBUCKETS+1) * sizeof (int64_t));
-    Bucket = (int64_t*)rmm_wrap_malloc(mnz * sizeof (int64_t));
     offset = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
+    Bucket = (int64_t*)rmm_wrap_malloc(mnz * sizeof (int64_t));
     if (Nanobuckets == NULL || Blockbucket == NULL || Bucketp == NULL
         || Bucket == NULL || offset == NULL)
     {
@@ -277,10 +277,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     // fixme: do async with streams
     // FIXME: do we need any of these?
-    CHECK_CUDA_SIMPLE(cudaMemsetAsync(Nanobuckets, 0,
-        nanobuckets_size * sizeof(int64_t), stream));
-    CHECK_CUDA_SIMPLE(cudaMemsetAsync(Blockbucket, 0,
-        blockbuckets_size * sizeof(int64_t), stream));
+//  CHECK_CUDA_SIMPLE(cudaMemsetAsync(Nanobuckets, 0,
+//      nanobuckets_size * sizeof(int64_t), stream));
+//  CHECK_CUDA_SIMPLE(cudaMemsetAsync(Blockbucket, 0,
+//      blockbuckets_size * sizeof(int64_t), stream));
     CHECK_CUDA_SIMPLE(cudaMemsetAsync(Bucketp, 0,
         (NBUCKETS+1) * sizeof(int64_t), stream));
     CHECK_CUDA_SIMPLE(cudaMemsetAsync(offset, 0,
@@ -307,16 +307,16 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     // prefetch M
-//  CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->p, (mnvec+1) * sizeof (int64_t),
-//      device, stream)) ; //stream_data) ;
-//  CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->i, mnz * sizeof (int64_t),
-//      device, stream )) ; //stream_data) ;
-//  if (!(Mask_struct || M->iso))
-//  {
-//      // prefetch M->x only if the mask is valued and M is non-iso
-//      CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->x, mnz * M->type->size,
-//          device, stream )) ; //stream_data) ;
-//  }
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->p, (mnvec+1) * sizeof (int64_t),
+        device, stream)) ; //stream_data) ;
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->i, mnz * sizeof (int64_t),
+        device, stream )) ; //stream_data) ;
+    if (!(Mask_struct || M->iso))
+    {
+        // prefetch M->x only if the mask is valued and M is non-iso
+        CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->x, mnz * M->type->size,
+            device, stream )) ; //stream_data) ;
+    }
 
 //  // prefetch C
 //  CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->i, (cnz+1) * sizeof (int64_t),
@@ -373,7 +373,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // phase2: cumsum across the blockbuckets, propagate to thread level
     //--------------------------------------------------------------------------
 
-    GBURBLE ("(GPU phase2 start) ") ;
+    GBURBLE ("(GPU phase2 start nblk=%d ) ", ntasks) ;
 
     kernel_timer.Start();
     p2lf.jitGridBlockLaunch(Blockbucket, offset, M, stream);
@@ -391,7 +391,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     GBURBLE ("(GPU phase2 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
 
-    GBURBLE ("(GPU phase2end start) ") ;
+    GBURBLE ("(GPU phase2end start nblk=%d) ",  ntasks) ;
 
     kernel_timer.Start();
     p2elf.jitGridBlockLaunch(Nanobuckets, Blockbucket,
@@ -410,6 +410,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     {
         int64_t start = Bucketp[bucket];
         int64_t end   = Bucketp[bucket + 1 ];
+      //int64_t start = 0;
+      //int64_t end   = cnz;
 
         if(end - start > 0) {
             // TODO: Use stream pool
