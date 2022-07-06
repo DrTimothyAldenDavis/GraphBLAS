@@ -82,6 +82,9 @@ void AxB_phase2end
     // C, which is the part of C operated on by this threadblock.
     int64_t pfirst, plast ;
 
+    __shared__ int64_t bucket_idx[chunksize];
+    __shared__ int64_t bucket_val[chunksize];
+
     int chunk_max= (cnz + chunksize -1)/chunksize;
     for ( int chunk = blockIdx.x;
           chunk < chunk_max;
@@ -104,7 +107,9 @@ void AxB_phase2end
             int ibucket = Ci[p] & 0xF;
             //printf(" thd: %d p,Ci[p] = %ld,%ld,%d\n", threadIdx.x, p, Ci[p], irow );
 
-            bucket[my_bucket[ibucket]++] = p;
+            //bucket[my_bucket[ibucket]++] = p;
+            bucket_idx[p - pfirst] = my_bucket[ibucket]++;
+            bucket_val[p - pfirst] = p;
             Ci[p] = (ibucket==0) * (Ci[p] >> 4) + (ibucket > 0)* Ci[p];
           //if(ibucket == 0) {
           ////    bucket[my_bucket[0]++] = p;
@@ -113,6 +118,12 @@ void AxB_phase2end
           //  bucket[my_bucket[ibucket]++] = p;
           //}
         }
+        for ( int p =  pfirst + threadIdx.x; p < plast ; p+= blockDim.x ){
+            int tid = p - pfirst;
+            bucket[ bucket_idx[tid] ] = bucket_val[tid];
+
+        }
+
     }
 }
 
