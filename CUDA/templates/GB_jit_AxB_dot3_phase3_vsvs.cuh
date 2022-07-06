@@ -178,17 +178,12 @@ __global__ void AxB_dot3_phase3_vsvs
                 #else
                 GB_DOT_MERGE ;
                 //GB_DOT_TERMINAL (cij) ;         // break if cij == terminal
-                pA++ ;
-                pB++ ;
                 #endif
             }
-            else 
-            {
-                // A(ia,i) appears before B(ib,j)
-                pA += ( ia < ib);
-                // B(ib,j) appears before A(ia,i)
-                pB += ( ib < ia);
-            }
+            // A(ia,i) appears before B(ib,j)
+            pA += ( ia <= ib);
+            // B(ib,j) appears before A(ia,i)
+            pB += ( ib <= ia);
          }
          if (cij_exists){
             Ci[pair_id] = i ;
