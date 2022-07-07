@@ -168,23 +168,20 @@ __global__ void AxB_dot3_phase3_vsvs
          {
             int64_t ia = Ai [pA] ;
             int64_t ib = Bi [pB] ;
-            if( ia == ib)
-            { 
-                // A(k,i) and B(k,j) are the next entries to merge
-                
-                #if defined ( GB_PHASE_1_OF_2 )
-                cij_exists = true ;
-                break ;
-                #else
-                GB_DOT_MERGE ;
-                //GB_DOT_TERMINAL (cij) ;         // break if cij == terminal
-                #endif
-            }
-            // A(ia,i) appears before B(ib,j)
-            pA += ( ia <= ib);
-            // B(ib,j) appears before A(ia,i)
-            pB += ( ib <= ia);
+            #if GB_IS_PLUS_PAIR_REAL_SEMIRING && GB_ZTYPE_IGNORE_OVERFLOW
+                cij += (ia == ib) ;
+            #else
+                if (ia == ib)
+                { 
+                    // A(k,i) and B(k,j) are the next entries to merge
+                    GB_DOT_MERGE (pA, pB) ;
+                    //GB_DOT_TERMINAL (cij) ;   // break if cij == terminal
+                }
+            #endif
+            pA += ( ia <= ib);  // incr pA if A(ia,i) at or before B(ib,j)
+            pB += ( ib <= ia);  // incr pB if B(ib,j) at or before A(ia,i)
          }
+         GB_CIJ_EXIST_POSTCHECK ;
          if (cij_exists){
             Ci[pair_id] = i ;
             GB_PUTC ( Cx[pair_id] = (T_C)cij ) ;

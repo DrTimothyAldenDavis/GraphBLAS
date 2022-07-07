@@ -144,10 +144,11 @@ __global__ void AxB_dot3_phase3_vssp
         GB_DECLAREB (bkj) ;
         T_Z cij = GB_IDENTITY ;
 
-        if (nnzA <= nnzB) {
-            //----------------------------------------------------------------------
+        if (nnzA <= nnzB)
+        {
+            //------------------------------------------------------------------
             // A(:,i) is very sparse compared to B(:,j)
-            //----------------------------------------------------------------------
+            //------------------------------------------------------------------
 
             while (pA < pA_end && pB < pB_end)
             {
@@ -174,22 +175,18 @@ __global__ void AxB_dot3_phase3_vssp
                 else if (ia == ib) // ia == ib == k
                 { 
                     // A(k,i) and B(k,j) are the next entries to merge
-                    #if defined ( GB_PHASE_1_OF_2 )
-                    cij_exists = true ;
-                    break ;
-                    #else
-                    GB_DOT_MERGE ;
-                    //GB_DOT_TERMINAL (cij) ;         // break if cij == terminal
+                    GB_DOT_MERGE (pA, pB);
+                    //GB_DOT_TERMINAL (cij) ;   // break if cij == terminal
                     pA++ ;
                     pB++ ;
-                    #endif
                 }
             }
         }
-        else {
-            //----------------------------------------------------------------------
+        else
+        {
+            //------------------------------------------------------------------
             // B(:,j) is very sparse compared to A(:,i)
-            //----------------------------------------------------------------------
+            //------------------------------------------------------------------
 
             while (pA < pA_end && pB < pB_end)
             {
@@ -218,19 +215,15 @@ __global__ void AxB_dot3_phase3_vssp
                 else if (ia == ib)// ia == ib == k
                 { 
                     // A(k,i) and B(k,j) are the next entries to merge
-                    #if defined ( GB_PHASE_1_OF_2 )
-                    cij_exists = true ;
-                    break ;
-                    #else
-                    GB_DOT_MERGE ;
-                    //GB_DOT_TERMINAL (cij) ;         // break if cij == terminal
+                    GB_DOT_MERGE (pA, pB) ;
+                    //GB_DOT_TERMINAL (cij) ;   // break if cij == terminal
                     pA++ ;
                     pB++ ;
-                    #endif
                 }
             }
 
         }
+        GB_CIJ_EXIST_POSTCHECK ;
         if ( cij_exists){
            Ci[pair_id] = i ;
            GB_PUTC ( Cx[pair_id] = (T_C)cij ) ;

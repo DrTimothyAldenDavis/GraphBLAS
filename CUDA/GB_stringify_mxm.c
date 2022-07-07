@@ -166,7 +166,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     //--------------------------------------------------------------------------
 
     int add_ecode, id_ecode, term_ecode ;
-    GB_enumify_monoid (&add_ecode, &id_ecode, &term_ecode, add_opcode, zcode ) ;
+    GB_enumify_monoid (&add_ecode, &id_ecode, &term_ecode, add_opcode, zcode) ;
 
     //--------------------------------------------------------------------------
     // enumify the types
@@ -322,6 +322,29 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     //--------------------------------------------------------------------------
 
     GB_macrofy_monoid (fp, add_ecode, id_ecode, term_ecode, is_term) ;
+
+    //--------------------------------------------------------------------------
+    // special cases
+    //--------------------------------------------------------------------------
+
+    // semiring is plus_pair_real
+    bool is_plus_pair_real =
+        (add_ecode == 11 // plus monoid
+        && mult_ecode == 133 // pair multiplicative operator
+        && !(zcode == GB_FC32_code || zcode == GB_FC64_code)) ; // real
+
+    fprintf (fp, "#define GB_IS_PLUS_PAIR_REAL_SEMIRING %d\n",
+        is_plus_pair_real) ;
+
+    // can ignore overflow in ztype when accumulating the result via the monoid
+    bool ztype_ignore_overflow = (
+        zcode == GB_INT64_code || zcode == GB_UINT64_code ||
+        zcode == GB_FP32_code  || zcode == GB_FP64_code ||
+        zcode == GB_FC32_code  || zcode == GB_FC64_code) ;
+
+    // note "CTYPE" is in the name in the CPU kernels (fix them to use ZTYPE)
+    fprintf (fp, "#define GB_ZTYPE_IGNORE_OVERFLOW %d\n",
+        ztype_ignore_overflow) ;
 
     //--------------------------------------------------------------------------
     // macro to typecast the result back into C

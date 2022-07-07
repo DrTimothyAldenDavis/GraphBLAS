@@ -287,45 +287,26 @@ __global__ void AxB_dot3_phase3_mp
 //        printf("blk%d, thd%d k=%d, l=%d, tx_start=%d, ty_start=%d, tx_end=%d, ty_end=%d\n", blockIdx.x, tid_global, k, l, tx_start, ty_start, tx_end, ty_end);
 //    }
 //  this_thread_block().sync();
+
     while ( pA < tx_end && pB < ty_end ) 
     {
-      int64_t Aind = Ai_s[pA] ;
-      int64_t Bind = Bj_s[pB] ;
-
-      if ( Aind == Bind)
-      {
-          GB_GETA (aki, Ax, pA +pA_start) ;      // aki = Ax [k]
-          GB_GETB (bkj, Bx, pB +pB_start) ;      // bkj = Bx [l]
-          // if (cij_exists)
-          {
-              // HACK: cij_exists = 1 ;
-              GB_MULTADD (cij, aki, bkj) ;   // cij += aki * bkj
-          }
-#if 0
-            else
+        int64_t Aind = Ai_s[pA] ;
+        int64_t Bind = Bj_s[pB] ;
+        #if GB_IS_PLUS_PAIR_REAL_SEMIRING && GB_ZTYPE_IGNORE_OVERFLOW
+            cij += (Aind == Bind) ;
+        #else
+            if (Aind == Bind)
             {
-                cij_exists = 1 ;
-//              if (mydump) printf ("%d Found k: %d, l %d, Ai[k]: %ld, Bi[l]:%ld\n",
-//                  threadIdx.x, k, l, Ai [k], Bi [l]) ;
-                GB_C_MULT (cij, aki, bkj) ;    // cij = aki * bkj
-//                    if(j == 139 && i == 945)
-//                        printf("blk%d thd%d ix at %lld %lld  cij = %d * %d, k=%d, l=%d i=%lld j=%lld \n", blockIdx.x, tid_global, Ai[k], Bi[l], Ax[k], Bx[l], k, l, i, j);
+                // cij += aki + bkj
+                GB_DOT_MERGE (pA + pA_start, pB + pB_start) ;
+                // TODO check terminal condition
             }
-#endif
-         // TODO check terminal condition
-         // pA++ ;
-         // pB++ ;
-      }
-   // else
-   // {
-          pA += (Aind <= Bind); // ( Ai_s[pA] < Bj_s[pB] ) ;
-          pB += (Aind >= Bind); // ( Ai_s[pA] > Bj_s[pB] ) ;
-          //pA += ( Ai_s[pA] < Bj_s[pB] ) ;
-          //pB += ( Ai_s[pA] > Bj_s[pB] ) ;
-   // }
+        #endif
+        pA += (Aind <= Bind) ;
+        pB += (Aind >= Bind) ;
+    }
+    GB_CIJ_EXIST_POSTCHECK ;
 
-
-    } // end while pA < tx_end && pB < ty_end
     this_thread_block().sync();
 
     if  (  (shared_steps_A >= 1) 
@@ -386,8 +367,6 @@ __global__ void AxB_dot3_phase3_mp
     */
 
     // Do vote here for control.
-    // HACK for PLUS_PAIR:
-    cij_exists = (cij > 0) ;
     cij_exists = tile.any( cij_exists);
     tile.sync();
 
