@@ -131,8 +131,8 @@ __global__ void AxB_dot3_phase3_mp
          kk += gridDim.x )
     {
 
-         //pair_id = Bucket [kk] ;
-         pair_id = kk ;
+         pair_id = Bucket [kk] ;
+         //pair_id = kk ;
          int64_t i = Mi[pair_id];
          int64_t j = Ci[pair_id] >> 4;
 

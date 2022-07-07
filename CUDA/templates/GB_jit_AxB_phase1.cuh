@@ -158,8 +158,8 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vssp.cu.jit
 
-        GB_BUCKET ((ainz > 32 * bjnz && bjnz < 256)
-                || (bjnz > 32 * ainz && ainz < 256), GB_BUCKET_VSSP) ;
+      //GB_BUCKET ((ainz > 32 * bjnz && bjnz < 256)
+      //        || (bjnz > 32 * ainz && ainz < 256), GB_BUCKET_VSSP) ;
 
     }
 //  else if (ainz + bjnz <= 4)
@@ -210,7 +210,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vsvs.cu.jit
 //      GB_BUCKET (ainz + bjnz <= 256, GB_BUCKET_VSVS_256) ;
-        GB_BUCKET (ainz + bjnz <= 512, GB_BUCKET_VSVS) ;
+        GB_BUCKET (ainz + bjnz <= 128, GB_BUCKET_VSVS) ;
 
         // TODO: replace this with a single bucket, GB_BUCKET_VSVS.
 
@@ -461,8 +461,8 @@ __global__ void AxB_phase1
                         //   int64_t ia_first = Ai [pA] ;
                         //   int64_t ia_last  = Ai [pA_end-1] ;
 
-                        bucket = GB_bucket_assignment ( ainz, bjnz, bvlen) ;
-                        //bucket = GB_BUCKET_MERGEPATH;
+                        //bucket = GB_bucket_assignment ( ainz, bjnz, bvlen) ;
+                        bucket = GB_BUCKET_MERGEPATH;
                     }
                 }
             }

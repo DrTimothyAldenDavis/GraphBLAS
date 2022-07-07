@@ -69,6 +69,8 @@ void AxB_phase2end
         my_bucket[b] = nanobucket [b * blockDim.x]
                      + blockbucket [b * gridDim.x + blockIdx.x]
                      + bucketp [b] ;
+
+    //if(b==3) printf("blk:%d tid: %d my_buck[%d]=%lu \n", blockIdx.x, threadIdx.x,  b, my_bucket[b]);
     }
 
     // Now each thread has an index into the global set of NBUCKETS buckets,
@@ -83,7 +85,8 @@ void AxB_phase2end
     int64_t pfirst, plast ;
 
     __shared__ int64_t bucket_idx[chunksize];
-    __shared__ int64_t bucket_val[chunksize];
+  //__shared__ int64_t bucket_val[chunksize];
+  //__shared__ int64_t bucket_s[NBUCKETS][chunksize];
 
     int chunk_max= (cnz + chunksize -1)/chunksize;
     for ( int chunk = blockIdx.x;
@@ -100,6 +103,7 @@ void AxB_phase2end
         {
             // get the entry C(i,j), and extract its bucket.  Then
             // place the entry C(i,j) in the global bucket it belongs to.
+            int tid = p - pfirst;
 
             // TODO: these writes to global are not coalesced.  Instead: each
             // threadblock could buffer its writes to NBUCKETS buffers and when the
@@ -108,8 +112,12 @@ void AxB_phase2end
             //printf(" thd: %d p,Ci[p] = %ld,%ld,%d\n", threadIdx.x, p, Ci[p], irow );
 
             //bucket[my_bucket[ibucket]++] = p;
-            bucket_idx[p - pfirst] = my_bucket[ibucket]++;
-            bucket_val[p - pfirst] = p;
+          //int idx = (my_bucket[ibucket]  - pfirst); 
+          //my_bucket[ibucket] +=  1; //blockDim.x;
+          //int idx = (my_bucket[ibucket]++ - pfirst) & 0x7F;
+          //bucket_s[ibucket][ idx ] = p;
+            bucket_idx[tid] = my_bucket[ibucket]++;
+          //bucket_val[tid] = p;
             Ci[p] = (ibucket==0) * (Ci[p] >> 4) + (ibucket > 0)* Ci[p];
           //if(ibucket == 0) {
           ////    bucket[my_bucket[0]++] = p;
@@ -118,9 +126,13 @@ void AxB_phase2end
           //  bucket[my_bucket[ibucket]++] = p;
           //}
         }
-        for ( int p =  pfirst + threadIdx.x; p < plast ; p+= blockDim.x ){
+        for ( int64_t p = pfirst + threadIdx.x; p < plast ; p+= blockDim.x ){
             int tid = p - pfirst;
-            bucket[ bucket_idx[tid] ] = bucket_val[tid];
+          //int ibucket = Ci[p] & 0xF;
+          //bucket[ p ] = bucket_s[ibucket][tid];
+            bucket [ bucket_idx[tid]  ]  = p;
+          //printf("ibucket = %d tid=%d p=%lu idx = %lu  val = %lu \n",ibucket, threadIdx.x,p, tid, bucket_s[ibucket][tid]);
+          //printf("ibucket = %d tid=%d p=%lu idx = %lu  val = %lu \n",ibucket, threadIdx.x,p, bucket_idx[tid], bucket_val[tid]);
 
         }
 

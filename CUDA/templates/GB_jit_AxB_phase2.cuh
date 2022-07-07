@@ -63,19 +63,19 @@ __device__ void blockBucketExclusiveSum(int bucketId, int64_t *d_data, int nbloc
         //printf("block %di loading tid=%d\n",block_id,tid);
         data  = blockbucket[bucketId*nblocks +loc ] ;
       }
-      __syncthreads();
+      this_thread_block().sync();
 
       //printf("bb%d_%d s0 before prefix= %ld \n", block_id,bucketId,
       //                     blockbucket[bucketId*nblocks +loc] )  ;
       // Collectively compute the block-wide exclusive prefix sum
       BlockScan(temp_storage).ExclusiveSum( data, data, prefix_op);
-      __syncthreads();
+      this_thread_block().sync();
 
       if ( loc < nblocks)
       {
         blockbucket[bucketId*nblocks   +loc ]  = data  ;
       }
-      __syncthreads();
+      //this_thread_block().sync();
 
       //printf("bb%d_%d = %ld \n", block_id, bucketId, blockbucket[bucketId*nblocks +loc] )  ;
 
@@ -112,7 +112,7 @@ __inline__ __device__ T block_ReduceSum(thread_block g, T val)
      shared[wid]=val; // Write reduced value to shared memory
      //printf("thd%d stored warp %d sum %d\n", threadIdx.x, wid, val);
   }
-  __syncthreads();              // Wait for all partial reductions
+  this_thread_block().sync(); // Wait for all partial reductions
 
   if (wid > 0 ) return val ;git2
 
@@ -169,8 +169,8 @@ __global__ void AxB_phase2
               tid += blockDim.x*gridDim.x) {
             s[b]  += blockbucket[  b * nblocks +tid] ;
          }
+         this_thread_block().sync(); 
 
-         __syncthreads();
          s[b]  = warp_ReduceSumPlus<uint64_t , 32>( tile, s[b]);
      }
 
@@ -181,7 +181,7 @@ __global__ void AxB_phase2
             atomicAdd( (unsigned long long int*)&(offset[b]), s[b]);
         }
     }
-    __syncthreads();
+    this_thread_block().sync(); 
 
     if( gridDim.x >= NBUCKETS)
     {

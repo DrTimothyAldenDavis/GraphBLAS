@@ -483,7 +483,7 @@ private:
         case GB_BUCKET_VSSP :
             Opname = "phase3_vssp" ;
             blocksz = 256;
-            work_per_thread = 16;
+            work_per_thread = 4;
             if( Cnz < 2048)
             {
               blocksz = 32;
