@@ -210,7 +210,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vsvs.cu.jit
 //      GB_BUCKET (ainz + bjnz <= 256, GB_BUCKET_VSVS_256) ;
-        GB_BUCKET (ainz + bjnz <= 128, GB_BUCKET_VSVS) ;
+        GB_BUCKET (ainz + bjnz <= 64, GB_BUCKET_VSVS) ;
 
         // TODO: replace this with a single bucket, GB_BUCKET_VSVS.
 
@@ -462,7 +462,7 @@ __global__ void AxB_phase1
                         //   int64_t ia_last  = Ai [pA_end-1] ;
 
                         bucket = GB_bucket_assignment ( ainz, bjnz, bvlen) ;
-                        // bucket = GB_BUCKET_MERGEPATH;
+                        //bucket = GB_BUCKET_MERGEPATH;
                     }
                 }
             }

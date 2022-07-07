@@ -85,7 +85,6 @@ void AxB_phase2end
     int64_t pfirst, plast ;
 
     __shared__ int64_t bucket_idx[chunksize];
-  //__shared__ int64_t bucket_val[chunksize];
   //__shared__ int64_t bucket_s[NBUCKETS][chunksize];
 
     int chunk_max= (cnz + chunksize -1)/chunksize;
@@ -117,7 +116,6 @@ void AxB_phase2end
           //int idx = (my_bucket[ibucket]++ - pfirst) & 0x7F;
           //bucket_s[ibucket][ idx ] = p;
             bucket_idx[tid] = my_bucket[ibucket]++;
-          //bucket_val[tid] = p;
             Ci[p] = (ibucket==0) * (Ci[p] >> 4) + (ibucket > 0)* Ci[p];
           //if(ibucket == 0) {
           ////    bucket[my_bucket[0]++] = p;
@@ -132,7 +130,7 @@ void AxB_phase2end
           //bucket[ p ] = bucket_s[ibucket][tid];
             bucket [ bucket_idx[tid]  ]  = p;
           //printf("ibucket = %d tid=%d p=%lu idx = %lu  val = %lu \n",ibucket, threadIdx.x,p, tid, bucket_s[ibucket][tid]);
-          //printf("ibucket = %d tid=%d p=%lu idx = %lu  val = %lu \n",ibucket, threadIdx.x,p, bucket_idx[tid], bucket_val[tid]);
+          //printf("ibucket = %d tid=%d p=%lu idx = %lu  \n",ibucket, threadIdx.x, p, bucket_idx[tid]);
 
         }
 

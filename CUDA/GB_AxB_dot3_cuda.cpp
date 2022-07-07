@@ -383,23 +383,28 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     int64_t s= offset[0];
     C->nzombies = s;
+    bool all_in_one = false;
     for ( int bucket = 1 ; bucket < NBUCKETS+1; ++bucket)
     {
         Bucketp[bucket] = s; 
         s+= offset[bucket];
+        if ( (Bucketp[bucket] - Bucketp[bucket-1] ) == mnz ) all_in_one = true;
     }
 
     GBURBLE ("(GPU phase2 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
 
-    GBURBLE ("(GPU phase2end start nblk=%d) ",  ntasks) ;
+    if( !all_in_one) 
+    {
+        GBURBLE ("(GPU phase2end start nblk=%d) ",  ntasks) ;
 
-    kernel_timer.Start();
-    p2elf.jitGridBlockLaunch(Nanobuckets, Blockbucket,
-                             Bucketp, Bucket, offset, C, M, stream);
+        kernel_timer.Start();
+        p2elf.jitGridBlockLaunch(Nanobuckets, Blockbucket,
+                                 Bucketp, Bucket, offset, C, M, stream);
 
-    CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
-    kernel_timer.Stop();
-    GBURBLE ("(GPU phase2end done %12.6g ms)\n",kernel_timer.Elapsed()) ;
+        CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
+        kernel_timer.Stop();
+        GBURBLE ("(GPU phase2end done %12.6g ms)\n",kernel_timer.Elapsed()) ;
+    }
 
     //--------------------------------------------------------------------------
     // phase3: do the numerical work

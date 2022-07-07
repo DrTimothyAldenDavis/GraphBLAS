@@ -122,7 +122,7 @@ __global__ void AxB_dot3_phase3_mp
     int64_t bjnz = 0;
 
     thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( this_thread_block());
-
+    int all_in_one = ( (end - start) == (M->p)[(M->nvec)] ) ;
 
     // Main loop over pairs 
     int64_t kk ;
@@ -131,7 +131,7 @@ __global__ void AxB_dot3_phase3_mp
          kk += gridDim.x )
     {
 
-         pair_id = Bucket [kk] ;
+         pair_id = all_in_one ? kk : Bucket [kk] ;
          //pair_id = kk ;
          int64_t i = Mi[pair_id];
          int64_t j = Ci[pair_id] >> 4;

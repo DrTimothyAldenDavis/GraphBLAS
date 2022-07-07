@@ -139,6 +139,8 @@ __global__ void AxB_dot3_phase3_vsvs
 
     int64_t my_nzombies = 0 ;
 
+    int all_in_one = ( (end - start) == (M->p)[(M->nvec)] ) ;
+
   //for ( int64_t kk = pfirst+ threadIdx.x ;
   //              kk < plast;
   //              kk += blockDim.x )
@@ -146,8 +148,7 @@ __global__ void AxB_dot3_phase3_vsvs
                   kk < end;
                   kk += blockDim.x*gridDim.x )
     {
-       //  int64_t pair_id = Bucket[ start + kk ];
-         int64_t pair_id = Bucket[ kk ];
+         int64_t pair_id = all_in_one ? kk : Bucket[ kk ];
 
          int64_t i = Mi [pair_id] ;
          int64_t j = Ci [pair_id]>>4 ; 
