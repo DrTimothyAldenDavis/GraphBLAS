@@ -74,11 +74,11 @@ if (ndims == 1)
     else
         % C (I) = A
         [cm, cn] = gbsize (C) ;
+        [I, whole] = gb_index (S) ;
         if (cm == 1 || cn == 1)
             % C (I) = A for a vector or scalar C
-            C = GrB (gbsubassign (C, gb_index (S), A)) ;
+            C = GrB (gbsubassign (C, I, A)) ;
         else
-            [I, whole] = gb_index (S) ;
             if (whole)
                 [am, an] = gbsize (A) ;
                 if (am == 1 && an == 1)

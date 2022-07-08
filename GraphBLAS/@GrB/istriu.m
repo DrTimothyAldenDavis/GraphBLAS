@@ -10,6 +10,6 @@ function s = istriu (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
-[lo,hi] = gbbandwidth (G.opaque, 1, 0) ;
+[lo,~] = gbbandwidth (G.opaque, 1, 0) ;
 s = (lo == 0) ;
 

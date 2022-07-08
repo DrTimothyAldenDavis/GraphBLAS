@@ -18,10 +18,10 @@ else
     if (nargout > 1)
         error ('too many output arguments') ;
     elseif isequal (uplo, 'lower')
-        [lo, hi] = gbbandwidth (G.opaque, 1, 0) ;
+        [lo, ~] = gbbandwidth (G.opaque, 1, 0) ;
         arg1 = lo ;
     elseif isequal (uplo, 'upper')
-        [lo, hi] = gbbandwidth (G.opaque, 0, 1) ;
+        [~, hi] = gbbandwidth (G.opaque, 0, 1) ;
         arg1 = hi ;
     else
         error ('unrecognized option') ;
