@@ -15241,10 +15241,19 @@ GraphBLAS folder.
 
 \begin{itemize}
 
+\item Version 7.1.2 (July 8, 2022)
+
+    \begin{packed_itemize}
+    \item MATLAB interface: linear indexing added for C(:)=A, C=A(:), and
+        single-output I=find(C).  Faster bandwidth, istriu, istril,
+        isbanded, isdiag.  C(I,J)=A can now grow the size of A.
+    \end{packed_itemize}
+
 \item Version 7.1.1 (June 3, 2022)
 
     \begin{packed_itemize}
     \item minor updates to documentation and error messages
+    \item MATLAB interface: minor revision of GrB.deserialize
     \end{packed_itemize}
 
 \item Version 7.1.0 (May 20, 2022)
