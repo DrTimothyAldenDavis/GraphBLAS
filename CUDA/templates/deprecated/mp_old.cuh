@@ -45,33 +45,79 @@ using namespace cooperative_groups;
 
 template< typename T, int warp_sz>
 __device__ __inline__ 
-T GB_reduce_sum(thread_block_tile<warp_sz> g, T val)
+T warp_Reduce_Op(thread_block_tile<warp_sz> g, T val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
     // Temporary T is necessary to handle arbirary ops
-    #pragma unroll
+    /*
     for (int i = warp_sz >> 1; i > 0; i >>= 1)
     {
         T next = g.shfl_down( val, i);
         val = GB_ADD( val, next ) ;
     }
+    */
+        T next = g.shfl_down( val, 16);
+        val = GB_ADD( val, next ) ;
+        next = g.shfl_down( val, 8);
+        val = GB_ADD( val, next ) ;
+        next = g.shfl_down( val, 4);
+        val = GB_ADD( val, next ) ;
+        next = g.shfl_down( val, 2);
+        val = GB_ADD( val, next ) ;
+        next = g.shfl_down( val, 1);
+        val = GB_ADD( val, next ) ;
     return val;
 }
 
+template<typename T, int warpSize>
+__inline__ __device__
+T block_Reduce_Op(thread_block g, T val)
+{
+  static __shared__ T shared[warpSize]; // Shared mem for 32 partial sums
+  
+
+  int lane = threadIdx.x & 31 ; // % warpSize;
+  int wid  = threadIdx.x >> 5 ; // / warpSize;
+  thread_block_tile<warpSize> tile = tiled_partition<warpSize>( g );
+
+  // Each warp performs partial reduction
+  val = warp_Reduce_Op<T, warpSize>( tile, val);    
+
+  // Wait for all partial reductions
+  if (lane==0) shared[wid]=val; // Write reduced value to shared memory
+  __syncthreads();              // Wait for all partial reductions
+
+  //if (wid > 0 ) return val;
+
+  //read from shared memory only if that warp existed
+  val = (threadIdx.x <  (blockDim.x / warpSize ) ) ? shared[lane] : GB_IDENTITY;
+
+  if (wid==0) val = warp_Reduce_Op<T, warpSize>( tile, val); //Final reduce within first warp
+
+  return val;
+}
+
+/*
 template< typename T, int warp_sz>
 __device__ __inline__ 
 T reduce_plus(thread_block_tile<warp_sz> g, T val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
-    #pragma unroll
-    for (int i = warp_sz >> 1; i > 0; i >>= 1)
-    {
-        val += g.shfl_down( val, i) ;
-    }
+    //for (int i = warp_sz >> 1; i > 0; i >>= 1)
+    //{
+    //    val += g.shfl_down( val, i) ;
+    //}
+        val += g.shfl_down(val,16) ;
+        val += g.shfl_down(val,8) ;
+        val += g.shfl_down(val,4) ;
+        val += g.shfl_down(val,2) ;
+        val += g.shfl_down(val,1) ;
     return val; // note: only thread 0 will return full sum and flag value
-} 
+}
+*/
+
 
 template<
     typename T_C, typename T_A, typename T_B,
@@ -102,26 +148,28 @@ __global__ void AxB_dot3_phase3_mp
     const int64_t *__restrict__ Bp = B->p ;
 
     // zombie count
-    int64_t zc = 0;
+    int zc = 0;
 
     int64_t pair_id;
 
     // set thread ID
-    int tid_global = threadIdx.x+ blockDim.x* blockIdx.x;
+    //int tid_global = threadIdx.x+ blockDim.x* blockIdx.x;
     int tid = threadIdx.x;
 
     int b = blockIdx.x ;
 
     // total items to be inspected
-    int64_t ainz = 0;
-    int64_t bjnz = 0;
+    int64_t nnzA = 0;
+    int64_t nnzB = 0;
 
     thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( this_thread_block());
 
+    // int parts = blockDim.x; // whole block (at least 32 threads) per dot product
+// int has_zombies = 0 ;
 
     // Main loop over pairs 
     int64_t kk ;
-    for (kk = start+ blockIdx.x; //warp per pair 
+    for (kk = start+ blockIdx.x; //block per pair 
          kk < end;  
          kk += gridDim.x )
     {
@@ -130,115 +178,25 @@ __global__ void AxB_dot3_phase3_mp
          int64_t i = Mi[pair_id];
          int64_t j = Ci[pair_id] >> 4;
 
-
          // find A(:,i)
-         int64_t pA_start = Ap[i];        // pA_start
-         int64_t pA_end   = Ap[i+1];      // pA_end
-         ainz = pA_end - pA_start;          // ainz
-         
-         #define shared_vector_size 512 
-         __shared__ int64_t Ai_s[shared_vector_size];
-         bool use_A_shared = false;
-         int shared_steps_A = (ainz + shared_vector_size -1)/shared_vector_size;
-
-         if (1) //(shared_steps_A <= 1)
-         {
-            use_A_shared = true;
-            //int trips = ( ainz + blockDim.x -1)/blockDim.x;
-            //for ( int64_t i = pA_start +tid; i< blockDim.x*trips; i+= blockDim.x)
-            for ( int64_t i = tid; i< ainz; i+= blockDim.x)
-            {   Ai_s[i] = Ai[ i + pA_start];
-            }   
-            __syncthreads();
-         }
-         else
-         {  // load first step
-            use_A_shared = true;
-            for ( int64_t i = pA_start +tid; i< pA_start + shared_vector_size; i+= blockDim.x)
-            {   Ai_s[i- pA_start] = Ai[ i];
-            }
-
-         }
-         
+         int64_t xstart = Ap[i];        // pA_start
+         int64_t xend   = Ap[i+1];      // pA_end
+         nnzA = xend - xstart;          // ainz
 
          // find B(:,j)
-         int64_t pB_start = Bp[j];        // pB_start
-         int64_t pB_end   = Bp[j+1];      // pB_end
-         bjnz = pB_end - pB_start;          // bjnz
-         int shared_steps_B = (bjnz + shared_vector_size -1)/shared_vector_size;
-         
-         __shared__ int64_t Bj_s[shared_vector_size];
-         bool use_B_shared = false;
+         int64_t ystart = Bp[j];        // pB_start
+         int64_t yend   = Bp[j+1];      // pB_ed
+         nnzB = yend - ystart;          // bjnz
 
-         if (1) //(shared_steps_B <= 1)
-         {
-            use_B_shared = true;
-            //int trips = ( bjnz + blockDim.x -1)/blockDim.x;
-            //for ( int i = pB_start +tid; i< blockDim.x*trips; i+= blockDim.x)
-            for ( int64_t i =tid; i< bjnz; i+= blockDim.x)
-            {   Bj_s[i] = Bi[ i + pB_start];
-            }   
-            __syncthreads();
-         }
-         else
-         {  // load first step
-            use_B_shared = true;
-            for ( int64_t i = pB_start +tid; i< pB_start + shared_vector_size; i+= blockDim.x)
-            {   Bj_s[i- pB_start] = Bi[ i];
-            }
-
-         }
-
-         GB_DECLAREA (aki) ;
-         GB_DECLAREB (bkj) ;
-         T_Z cij = GB_IDENTITY ;
-
-         // TODO PLUS_PAIR_INT64, FP32, FP64: no need for cij_exists.
-         // just check if cij > 0
-
-         int cij_exists  = 0 ;
-
-
-         for ( int64_t pA = threadIdx.x;
-                       pA < ainz; 
-                       pA += blockDim.x)
-             {
-                int64_t Aind = Ai_s[pA] ;
-                int64_t Bind ;
-                int64_t min = 0;
-                int64_t max = bjnz-1;
-                while ( min < max)
-                {
-                    int64_t pB = (min + max +1) /2; 
-                    Bind = Bj_s[pB] ;
-
-                    if ( Aind < Bind) max = pB-1;
-                    else  min = pB;
-                }
-                Bind = Bj_s[min];
-                if ( Aind == Bind)
-                {
-                    GB_GETA (aki, Ax, pA) ;      // aki = Ax [k]
-                    GB_GETB (bkj, Bx, pB) ;      // bkj = Bx [l]
-                    // if (cij_exists)
-                    {
-                        // HACK: cij_exists = 1 ;
-                        GB_MULTADD (cij, aki, bkj) ;   // cij += aki * bkj
-                    }
-                }
-                //__syncthreads();
-                
-            }
-
-
-//       if (threadIdx.x == 0 && mydump)
+//       if (threadIdx.x == 0 )
 //       {
-//          printf ("\nComputing (%ld,%ld)\n", i, j) ;
+//          printf ("\nblockId: %d Computing (%ld,%ld)\n",blockIdx.x, i, j) ;
 //          printf ("\nA(:,%ld): nnzA %ld\n", i, nnzA) ;
 //          for (int64_t p = xstart ; p < xend ; p++) printf ("  %ld: %ld\n", p, Ai [p]) ;
 //          printf ("\nB(:,%ld): nnzB %ld\n", j, nnzB) ;
 //          for (int64_t p = ystart ; p < yend ; p++) printf ("  %ld: %ld\n", p, Bi [p]) ;
 //       }
+//       this_thread_block().sync();
 
 //         if(threadIdx.x == 0 && j == 139 && i == 945)
 //             printf("blk%d tid=%d, nnzA=%d, nnzB=%d\n", blockIdx.x, tid_global, nnzA, nnzB);
@@ -249,18 +207,12 @@ __global__ void AxB_dot3_phase3_mp
     }
     */
     //we want more than one intersection per thread
-//  int64_t awork = ainz;
-//  int64_t bwork = bjnz;
-//  if ( shared_steps_A > 1) awork = shared_vector_size;  
-//  if ( shared_steps_B > 1) bwork = shared_vector_size;  
-//  int64_t nxy = awork + bwork;
+    int64_t nxy = nnzA + nnzB;
 
-    /*
-
-    int work_per_thread = (nxy + blockDim.x -1)/blockDim.x;  // ceil Divide by 32 = blockDim.x 
-    int diag     = GB_IMIN( work_per_thread*tid, nxy);
+    int work_per_thread = (nxy +blockDim.x -1)/blockDim.x;
+    int diag = GB_IMIN( work_per_thread*tid, nxy);
     int diag_end = GB_IMIN( diag + work_per_thread, nxy);
-    //printf(" thd%d parts = %u wpt = %u diag, diag_end  = %u,%u\n",tid, blockDim.x, work_per_thread, diag, diag_end); 
+    //printf(" thd%d parts = %u wpt = %u diag, diag_end  = %u,%u\n",tid, parts, work_per_thread, diag, diag_end); 
 
 //  if (mydump && threadIdx.x == 0)
 //  {
@@ -268,79 +220,61 @@ __global__ void AxB_dot3_phase3_mp
 //          work_per_thread, nxy, parts, diag, diag_end) ;
 //  }
     
-    int x_min = GB_IMAX( diag - bjnz , 0);
-    int x_max = GB_IMIN( diag, ainz);
+    int x_min = GB_IMAX( (diag - nnzB), 0);
+    int x_max = GB_IMIN( diag, nnzA);
 
     //printf("start thd%u x_min = %u x_max = %u\n", tid_global, x_min,x_max);
     while ( x_min < x_max) { //binary search for correct diag break
-      int pivot = (x_min +x_max) >> 1;
-      //int64_t Apiv = use_A_shared ? Ai_s[pivot] : Ai[pivot + pA_start];
-      int64_t Apiv =  Ai_s[pivot] ;
-      //int64_t Bpiv = use_B_shared ? Bj_s[diag -pivot -1] : Bi[diag -pivot -1 + pB_start] ;
-      int64_t Bpiv = Bj_s[diag -pivot -1] ;
-
-      if ( Apiv < Bpiv ) {
+      int pivot = (x_min +x_max)/2;
+      if ( Ai[pivot + xstart] < Bi[ diag -pivot -1 + ystart]) {
          x_min = pivot +1;
       }
       else {
          x_max = pivot;
       }
-
     }
-
     int xcoord = x_min;
     int ycoord = diag -x_min -1;
-    int64_t Atest = use_A_shared ?  Ai_s[xcoord] : Ai[xcoord +pA_start] ;
-    int64_t Btest = use_B_shared ?  Bj_s[ycoord] : Bi[ycoord +pB_start] ;
-    if ( (diag > 0)
+    if ( ( diag > 0) 
       && (diag < nxy ) 
       && (ycoord >= 0 ) 
-      && (Atest == Btest)
+      && (Ai[xcoord+xstart] == Bi[ycoord+ystart]) 
       ) 
     { 
        diag--; //adjust for intersection incrementing both pointers 
     }
     // two start points are known now
-    int64_t tx_start = xcoord +pA_start;
-    int64_t ty_start = diag -xcoord +pB_start; 
+    int tx_start = xcoord +xstart;
+    int ty_start = diag -xcoord +ystart; 
 
     //if (x_start != y_start)
     //   printf("start thd%u  xs,ys = %i,%i\n", tid_global, x_start, y_start);
 
-    x_min = GB_IMAX( diag_end - bjnz, 0);
-    x_max = GB_IMIN( diag_end, ainz);
+    x_min = GB_IMAX( (int)(diag_end - nnzB), 0);
+    x_max = GB_IMIN( diag_end, nnzA);
 
     while ( x_min < x_max) {
-      int pivot = (x_min +x_max) >> 1;
-      //int64_t Apiv = use_A_shared ? Ai_s[pivot] : Ai[pivot + pA_start];
-      int64_t Apiv = Ai_s[pivot] ;
-      //int64_t Bpiv = use_B_shared ? Bj_s[diag_end -pivot -1] : Bi[diag_end -pivot -1 + pB_start] ;
-      int64_t Bpiv = Bj_s[diag_end -pivot -1] ;
-      
-      if ( Apiv < Bpiv ) {
-         x_min = pivot +1;
-      }
-      else {
-         x_max = pivot;
-      }
-
+       int pivot = (x_min +x_max)/2;
+       //printf("thd%u pre_sw piv=%u diag_e = %u  xmin,xmax=%u,%u\n", tid_global, pivot, diag_end,x_min, x_max);
+       if ( Ai[pivot+ xstart] < Bi[ diag_end -pivot -1 +ystart]) {
+          x_min = pivot +1;
+       }
+       else {
+          x_max = pivot;
+       }
        //printf("thd%u piv=%u xmin,xmax = %u,%u\n", tid_global, pivot, x_min, x_max);
     }
     xcoord = x_min;
     ycoord = diag_end -x_min -1;
-    Atest = use_A_shared ?  Ai_s[xcoord] : Ai[xcoord +pA_start] ;
-    Btest = use_B_shared ?  Bj_s[ycoord] : Bi[ycoord +pB_start] ;
-    if ( (diag_end > 0)
-      && (diag_end < nxy) 
-      && (ycoord >= 0)
-      && (Atest == Btest)
-      ) 
-      { 
+    if ( (diag_end < nxy) 
+      && (ycoord > 0)
+      && (Ai[xcoord +xstart] == Bi[ycoord + ystart]) 
+      ) { 
         diag--; //adjust for intersection incrementing both pointers  
-      }
+    }
     // two end points are known now
-    int64_t tx_end = xcoord +pA_start; 
-    int64_t ty_end = diag_end - xcoord + pB_start; 
+    int tx_end = xcoord +xstart; 
+    int ty_end = diag_end - xcoord + ystart; 
 
     GB_DECLAREA (aki) ;
     GB_DECLAREB (bkj) ;
@@ -356,16 +290,6 @@ __global__ void AxB_dot3_phase3_mp
     int64_t pA = tx_start;       // pA
     int64_t pB = ty_start;       // pB
 
-    if (use_A_shared)
-    {
-       pA -=  pA_start;
-       tx_end -= pA_start;
-    }
-    if ( use_B_shared)
-    {
-       pB -=  pB_start;
-       ty_end -= pB_start;
-    }
 //  if (mydump) //  && threadIdx.x == 0)
 //  {
 //      printf ("%d tx_start %d\n", threadIdx.x, tx_start) ;
@@ -377,22 +301,20 @@ __global__ void AxB_dot3_phase3_mp
 //    if(threadIdx.x == 0 && j == 139) {
 //        printf("blk%d, thd%d k=%d, l=%d, tx_start=%d, ty_start=%d, tx_end=%d, ty_end=%d\n", blockIdx.x, tid_global, k, l, tx_start, ty_start, tx_end, ty_end);
 //    }
-    while ( pA < tx_end && pB < ty_end ) 
-    {
-      //int64_t Aind = use_A_shared ? Ai_s[pA] : Ai[pA];
-      int64_t Aind = Ai_s[pA] ;
-      //int64_t Bind = use_B_shared ? Bj_s[pB] : Bi[pB];
-      int64_t Bind = Bj_s[pB] ;
 
-      if ( Aind == Bind)
-      {
-          GB_GETA (aki, Ax, pA) ;      // aki = Ax [k]
-          GB_GETB (bkj, Bx, pB) ;      // bkj = Bx [l]
-          // if (cij_exists)
-          {
-              // HACK: cij_exists = 1 ;
-              GB_MULTADD (cij, aki, bkj) ;   // cij += aki * bkj
-          }
+    while ( pA < tx_end && pB < ty_end ) // && nnzA != 0 && nnzB != 0)
+    {
+        if (Ai [pA] == Bi [pB])
+        {
+            GB_GETA (aki, Ax, k) ;      // aki = Ax [k]
+            GB_GETB (bkj, Bx, l) ;      // bkj = Bx [l]
+            // if (cij_exists)
+            {
+                // HACK: cij_exists = 1 ;
+                GB_MULTADD (cij, aki, bkj) ;   // cij += aki * bkj
+//                    if(j == 139 && i == 945)
+//                        printf("blk%d thd%d ix at %lld  %lld cij += %d * %d \n", blockIdx.x, tid_global, Ai[k], Bi[l], aki, bkj);
+            }
 #if 0
             else
             {
@@ -404,21 +326,17 @@ __global__ void AxB_dot3_phase3_mp
 //                        printf("blk%d thd%d ix at %lld %lld  cij = %d * %d, k=%d, l=%d i=%lld j=%lld \n", blockIdx.x, tid_global, Ai[k], Bi[l], Ax[k], Bx[l], k, l, i, j);
             }
 #endif
-          // TODO check terminal condition
-          pA++ ;
-          pB++ ;
-//              if(j == 139 && i == 945)
-//                  printf(" block%u work value = %d, exists = %d\n", b, cij, cij_exists);
-      }
-      else
-      {
-          pA += (Aind < Bind); // ( Ai_s[pA] < Bj_s[pB] ) ;
-          pB += (Aind > Bind); // ( Ai_s[pA] > Bj_s[pB] ) ;
-          //pA += ( Ai_s[pA] < Bj_s[pB] ) ;
-          //pB += ( Ai_s[pA] > Bj_s[pB] ) ;
-      }
-
-
+            // TODO check terminal condition
+            pA++ ;
+            pB++ ;
+//                if(j == 139 && i == 945)
+//                    printf(" block%u work value = %d, exists = %d\n", b, cij, cij_exists);
+        }
+        else
+        {
+            pA += ( Ai[pA] < Bi[pB] ) ;
+            pB += ( Ai[pA] > Bi[pB] ) ;
+        }
     }
 
     //tile.sync( ) ;
@@ -437,18 +355,17 @@ __global__ void AxB_dot3_phase3_mp
     // HACK for PLUS_PAIR:
     cij_exists = (cij > 0) ;
     cij_exists = tile.any( cij_exists);
-    tile.sync();
+    //tile.sync();
 
     #if !GB_C_ISO
     if (cij_exists)
     {
-       cij = GB_reduce_sum<T_Z, tile_sz>( tile, cij );
+       cij = warp_Reduce_Op<T_Z, tile_sz>( tile, cij );
     }
     #endif
     // else has_zombies = 1;
 
-
-        //__syncthreads();
+    //__syncthreads();
     //tile.sync( );
     // write result for this block to global mem
     if (tid == 0)
@@ -463,7 +380,7 @@ __global__ void AxB_dot3_phase3_mp
 //                printf("what's the deal here? %d, %ld\n", cij, i);
 //            }
 
-            //printf(" cij = %d\n", cij);
+            //printf(" cij = %d\n", cij); 
            GB_PUTC ( Cx[pair_id]=(T_C)cij ) ;
            Ci[pair_id] = i ;
         }
@@ -474,8 +391,8 @@ __global__ void AxB_dot3_phase3_mp
            Ci[pair_id]=GB_FLIP (i) ;
         }
     }
-    //__syncthreads(); 
   }
+  //this_thread_block().sync();  //needed for multi-warp correctness
 
 //--------------------------------------------------------------------------
 

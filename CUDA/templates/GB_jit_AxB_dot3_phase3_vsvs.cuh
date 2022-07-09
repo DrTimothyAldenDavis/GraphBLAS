@@ -24,6 +24,7 @@
 #define GB_CUDA_KERNEL
 #include <limits>
 #include <cstdint>
+#include <cmath>
 #include <stdio.h>
 #include <cooperative_groups.h>
 #include "GB_cuda_kernel.h"
@@ -36,10 +37,17 @@ T warp_ReduceSumPlus( thread_block_tile<tile_sz> g, T val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
+    /*
     #pragma unroll
     for (int i = tile_sz >> 1; i > 0; i >>= 1) {
         val +=  g.shfl_down( val, i);
     }
+    */
+    val +=  g.shfl_down( val, 16);
+    val +=  g.shfl_down( val, 8);
+    val +=  g.shfl_down( val, 4);
+    val +=  g.shfl_down( val, 2);
+    val +=  g.shfl_down( val, 1);
     return val; // note: only thread 0 will return full sum
 }
 /*
@@ -100,7 +108,13 @@ __global__ void AxB_dot3_phase3_vsvs
   int sz            // unused
 )
 {
-   int64_t dots = end - start;
+
+    // TODO: Figure out how to use graphblas-specific INFINITY macro
+    #ifndef INFINITY
+    #define INFINITY std::numeric_limits<T_C>::max()
+    #endif
+
+    int64_t dots = end - start;
    // sz = expected non-zeros per dot
 //   /*
 //   int m = (gridDim.x*blockDim.x)*256/sz;
@@ -119,17 +133,22 @@ __global__ void AxB_dot3_phase3_vsvs
    const int64_t *__restrict__ Ap = A->p ;
    const int64_t *__restrict__ Bp = B->p ;
 
-    int64_t pfirst, plast;
+    //int64_t pfirst, plast;
 
-    GB_PARTITION (pfirst, plast, dots, blockIdx.x, gridDim.x ) ;
+    //GB_PARTITION (pfirst, plast, dots, blockIdx.x, gridDim.x ) ;
 
     int64_t my_nzombies = 0 ;
 
-    for ( int64_t kk = pfirst+ threadIdx.x ;
-                  kk < plast;
-                  kk += blockDim.x )
+    int all_in_one = ( (end - start) == (M->p)[(M->nvec)] ) ;
+
+  //for ( int64_t kk = pfirst+ threadIdx.x ;
+  //              kk < plast;
+  //              kk += blockDim.x )
+    for ( int64_t kk = start+ threadIdx.x +blockDim.x*blockIdx.x ;
+                  kk < end;
+                  kk += blockDim.x*gridDim.x )
     {
-         int64_t pair_id = Bucket[ start + kk ];
+         int64_t pair_id = all_in_one ? kk : Bucket[ kk ];
 
          int64_t i = Mi [pair_id] ;
          int64_t j = Ci [pair_id]>>4 ; 
@@ -150,28 +169,20 @@ __global__ void AxB_dot3_phase3_vsvs
          {
             int64_t ia = Ai [pA] ;
             int64_t ib = Bi [pB] ;
-            if( ia == ib)
-            { 
-                // A(k,i) and B(k,j) are the next entries to merge
-                
-                #if defined ( GB_PHASE_1_OF_2 )
-                cij_exists = true ;
-                break ;
-                #else
-                GB_DOT_MERGE ;
-                //GB_DOT_TERMINAL (cij) ;         // break if cij == terminal
-                pA++ ;
-                pB++ ;
-                #endif
-            }
-            else 
-            {
-                // A(ia,i) appears before B(ib,j)
-                pA += ( ia < ib);
-                // B(ib,j) appears before A(ia,i)
-                pB += ( ib < ia);
-            }
+            #if GB_IS_PLUS_PAIR_REAL_SEMIRING && GB_ZTYPE_IGNORE_OVERFLOW
+                cij += (ia == ib) ;
+            #else
+                if (ia == ib)
+                { 
+                    // A(k,i) and B(k,j) are the next entries to merge
+                    GB_DOT_MERGE (pA, pB) ;
+                    //GB_DOT_TERMINAL (cij) ;   // break if cij == terminal
+                }
+            #endif
+            pA += ( ia <= ib);  // incr pA if A(ia,i) at or before B(ib,j)
+            pB += ( ib <= ia);  // incr pB if B(ib,j) at or before A(ia,i)
          }
+         GB_CIJ_EXIST_POSTCHECK ;
          if (cij_exists){
             Ci[pair_id] = i ;
             GB_PUTC ( Cx[pair_id] = (T_C)cij ) ;

@@ -64,6 +64,13 @@ class matrix : public Managed {
          return mat;
      }
 
+     ~matrix() {
+        if(mat != NULL) {
+            GrB_Matrix_free(&mat);
+            mat = NULL;
+        }
+    }
+
      uint64_t get_zombie_count() { return mat->nzombies;}
 
      void clear() {

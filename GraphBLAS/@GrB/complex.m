@@ -94,7 +94,7 @@ else
         else
             % both A and B are matrices.  C is sparse or full.
             desc.kind = 'builtin' ;
-            C = gbeadd (A, '+', gbapply2 (1i, '*', B), desc) ;
+            C = gbeadd (A, '+', gbapply2 (B, '*', 1i), desc) ;
         end
     end
 

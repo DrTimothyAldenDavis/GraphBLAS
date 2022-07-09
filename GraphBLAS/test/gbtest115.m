@@ -26,6 +26,15 @@ for k = 1:length(types)
         B = GrB.deserialize (blob) ;
         assert (isequal (A, B)) ;
 
+        B = GrB.deserialize (blob, 'fast') ;
+        assert (isequal (A, B)) ;
+
+        B = GrB.deserialize (blob, 'secure') ;
+        assert (isequal (A, B)) ;
+
+        B = GrB.deserialize (blob, 'secure', type) ;
+        assert (isequal (A, B)) ;
+
         % levels 0:9 for lz4hc
         if (k2 == 3)
             for level = 0:9

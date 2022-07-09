@@ -30,15 +30,15 @@ function C = subsasgn (C, S, A)
 % before passing them to GraphBLAS.  See GrB.subassign instead.  See also
 % the example with 'help GrB.extract'.
 %
-% Unlike the built-in C(I,J)=A, the GraphBLAS assignment does not change
-% the size of C.
+% Just the built-in C(I,J)=A, the GraphBLAS assignment can change the size
+% of C if the indices I and J extend past the current dimesions of C.
 %
 % See also GrB/subsref, GrB/subsindex, GrB.assign, GrB.subassign.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
-% FUTURE: add linear indexing, and allow the matrix to grow/shrink in size.
+% FUTURE: add linear indexing
 
 if (~isequal (S.type, '()'))
     error ('index type %s not supported', S.type) ;
@@ -74,23 +74,43 @@ if (ndims == 1)
     else
         % C (I) = A
         [cm, cn] = gbsize (C) ;
+        [I, whole] = gb_index (S) ;
         if (cm == 1 || cn == 1)
             % C (I) = A for a vector or scalar C
-            C = GrB (gbsubassign (C, gb_index (S), A)) ;
+            C = GrB (gbsubassign (C, I, A)) ;
         else
-            % C (I) = A for a matrix C
-            error ('Linear indexing not yet supported') ;
+            if (whole)
+                [am, an] = gbsize (A) ;
+                if (am == 1 && an == 1)
+                    % C (:) = scalar, the same as C (:,:) = scalar.
+                    % C becomes an iso full matrix
+                    C_empty = gbnew (cm, cn, gbtype (C)) ;
+                    C = GrB (gbsubassign (C_empty, { }, { }, A)) ;
+                else
+                    % C (:) = A for a matrix C and vector A
+                    % FUTURE: C(:)=A would be faster with GxB_reshape
+                    desc.base = 'zero-based' ;
+                    [I0, ~, X] = gbextracttuples (A, desc) ;
+                    [I1, J1] = gb_1d_to_2d (I0, cm) ;
+                    clear I0 ;
+                    C = GrB (gbbuild (I1, J1, X, cm, cn, desc)) ;
+                end
+            else
+                % C (I) = A, general case not yet supported
+                error ('Except for C(:)=A, linear indexing not yet supported') ;
+            end
         end
     end
 
 elseif (ndims == 2)
 
-    % C(I,J) = A where A is length(I)-by-length(J), or a scalar
+    % C (I,J) = A where A is length(I)-by-length(J), or a scalar
     C = GrB (gbsubassign (C, gb_index (S.subs {1}), gb_index (S.subs {2}), A)) ;
 
 else
 
-    error ('%dD indexing not yet supported', ndims) ;
+    % sparse N-dimensional arrays for N > 2 will not be supported
+    error ('%dD indexing not supported', ndims) ;
 
 end
 

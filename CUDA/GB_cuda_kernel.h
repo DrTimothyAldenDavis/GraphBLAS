@@ -93,10 +93,11 @@
     #define GB_C_MULT( c, a, b)
     #define GB_MULTADD( c, a ,b )
     #define GB_DOT_TERMINAL ( c )   
-    #define GB_DOT_MERGE                                                \
+    #define GB_DOT_MERGE(pA,pB)                                         \
     {                                                                   \
         cij_exists = true ;                                             \
     }
+    #define GB_CIJ_EXIST_POSTCHECK
 
 #else
 
@@ -105,33 +106,37 @@
     #define GB_MULTADD( c, a ,b ) GB_ADD_F( (c), GB_MULT( (a),(b) ) )
     #define GB_DOT_TERMINAL ( c )
     //# if ( c == TERMINAL_VALUE) break;
-    // cij += A(k,i) * B(k,j), for merge operation
 
-    #define GB_DOT_MERGE                                                \
-    {                                                                   \
-        GB_GETA (aki, Ax, pA) ;         /* aki = A(k,i) */              \
-        GB_GETB (bkj, Bx, pB) ;         /* bkj = B(k,j) */              \
-        cij_exists = true ;                                             \
-        GB_MULTADD (cij, aki, bkj) ;    /* cij += aki * bkj */          \
-    }
+    #if GB_IS_PLUS_PAIR_REAL_SEMIRING
 
-#if 0
-    #define GB_DOT_MERGE                                                \
-    {                                                                   \
-        GB_GETA ( aki, Ax, pA) ;       /* aki = A(k,i) */               \
-        GB_GETB ( bkj, Bx, pB) ;       /* bkj = B(k,j) */               \
-        if (cij_exists)                                                 \
-        {                                                               \
-            GB_MULTADD (cij, aki, bkj) ;    /* cij += aki * bkj */      \
-        }                                                               \
-        else                                                            \
-        {                                                               \
-            /* cij = A(k,i) * B(k,j), and add to the pattern    */      \
-            cij_exists = true ;                                         \
-            GB_C_MULT (cij, aki, bkj) ;     /* cij  = aki * bkj */      \
-        }                                                               \
-    }
-#endif
+        // cij += A(k,i) * B(k,j), for merge operation (plus_pair_real semiring)
+        #if GB_ZTYPE_IGNORE_OVERFLOW
+            // plus_pair for int64, uint64, float, or double
+            #define GB_DOT_MERGE(pA,pB) cij++ ;
+            #define GB_CIJ_EXIST_POSTCHECK cij_exists = (cij != 0) ;
+        #else
+            // plus_pair semiring for small integers
+            #define GB_DOT_MERGE(pA,pB)                                     \
+            {                                                               \
+                cij_exists = true ;                                         \
+                cij++ ;                                                     \
+            }
+            #define GB_CIJ_EXIST_POSTCHECK
+        #endif
+
+    #else
+
+        // cij += A(k,i) * B(k,j), for merge operation (general case)
+        #define GB_DOT_MERGE(pA,pB)                                         \
+        {                                                                   \
+            GB_GETA (aki, Ax, pA) ;         /* aki = A(k,i) */              \
+            GB_GETB (bkj, Bx, pB) ;         /* bkj = B(k,j) */              \
+            cij_exists = true ;                                             \
+            GB_MULTADD (cij, aki, bkj) ;    /* cij += aki * bkj */          \
+        }
+        #define GB_CIJ_EXIST_POSTCHECK
+
+    #endif
 
 #endif
 

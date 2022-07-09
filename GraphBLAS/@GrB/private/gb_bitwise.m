@@ -48,11 +48,17 @@ if (isequal (op, 'bitshift'))
         B = gbnew (B, 'int8') ;
     end
 
-    if (gb_isscalar (A) || gb_isscalar (B))
-        % either A or B are scalars
-        C = gbapply2 (['bitshift.' atype], A, B) ;
+    a_is_scalar = gb_isscalar (A) ;
+    b_is_scalar = gb_isscalar (B) ;
+
+    if (a_is_scalar && ~b_is_scalar)
+        % A is a scalar, B is a matrix
+        C = gbapply2 (['bitshift.' atype], gbfull (A), B) ;
+    elseif (~a_is_scalar && b_is_scalar)
+        % A is a matrix, B is a scalar
+        C = gbapply2 (['bitshift.' atype], A, gbfull (B)) ;
     else
-        % both A and B are matrices.
+        % both A and B are matrices, or both are scalars
         % expand B by padding it with zeros from the pattern of A
         B = gbeadd ('1st.int8', B, gb_expand (0, A, 'int8')) ;
         C = gbemult (['bitshift.' atype], A, B) ;

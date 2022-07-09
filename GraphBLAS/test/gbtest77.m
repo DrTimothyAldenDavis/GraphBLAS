@@ -486,7 +486,7 @@ end
 assert (ok) ;
 
 try
-    find (G)
+    norm (G, 3)
     ok = false ;
 catch expected_error
     expected_error
@@ -498,7 +498,83 @@ end
 assert (ok) ;
 
 try
-    norm (G, 3)
+    C = GrB.apply2 (G, '', '', pi, G) ;
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
+try
+    C = GrB.select ('garbage', G) ;
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
+try
+    C = GrB.eunion (G, G, G, G, G, G, G) ;
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
+try
+    blob = GrB.serialize (G, 'garbage') ;
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
+try
+    I = [1 2] ;
+    J = [3 4] ;
+    X = [pi 2] ;
+    gunk = magic (3) ;
+    C = GrB.build (I, J, X, gunk, gunk) ;
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
+try
+    [C,P] = GrB.argsort (G, 2, 'garbage') ;
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
+try
+    [f,s,iso] = GrB.format ;
     ok = false ;
 catch expected_error
     expected_error

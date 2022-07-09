@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <iostream>
 //#include "GB_binary_search.h"
+#include "GB_cuda_reduce_factory.hpp"
 #include "GpuTimer.h"
 #include "GB_cuda_buckets.h"
 #include "../../rmm_wrap/rmm_wrap.h"
@@ -17,6 +18,7 @@
 
 extern "C" {
     #include "GB.h"
+    #include "GraphBLAS.h"
 }
 
 #include "../jitFactory.hpp"
@@ -44,8 +46,8 @@ bool test_AxB_dot3_phase2_factory( int , int64_t , int64_t , int64_t, int64_t ) 
 
 template<typename T>
 void make_grb_matrix(GrB_Matrix mat, int64_t n_rows, int64_t n_cols,
-                     std::vector<int64_t> indptr,
-                     std::vector<int64_t> indices, T *data,
+                     std::vector<int64_t> &indptr,
+                     std::vector<int64_t> &indices, T *data,
                      int gxb_sparsity_control = GxB_SPARSE,
                      int gxb_format = GxB_BY_ROW) ;
 
@@ -102,13 +104,9 @@ bool test_AxB_phase1_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
     int nanobuckets_size = NBUCKETS * nthrd * ntasks;
     int blockbuckets_size = NBUCKETS * ntasks;
 
-    printf("nanobuckets_size: %d\n", nanobuckets_size);
-    printf("blockbuckets_size: %d\n", blockbuckets_size);
-
     int64_t *Nanobuckets = (int64_t*)rmm_wrap_malloc(nanobuckets_size * sizeof (int64_t));
     int64_t *Blockbucket = (int64_t*)rmm_wrap_malloc(blockbuckets_size * sizeof (int64_t));
-//
-//    std::cout << "INvoking grid block launch for phase1" << std::endl;
+
     kernTimer.Start();
     p1lF.jitGridBlockLaunch(Nanobuckets, Blockbucket,
                             problem_spec.getC(), problem_spec.getM(),
@@ -118,8 +116,8 @@ bool test_AxB_phase1_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
     kernTimer.Stop();
     std::cout<<"returned from phase1 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 //
-    print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
-    print_array<int64_t>(Blockbucket, blockbuckets_size, "Blockbucket");
+//  print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
+//  print_array<int64_t>(Blockbucket, blockbuckets_size, "Blockbucket");
     std::cout<<"==== phase1 done=============================" <<std::endl;
 
     int64_t bucket_count = 0;
@@ -149,8 +147,6 @@ bool test_AxB_phase2_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
     int gpuID;
     cudaGetDevice( &gpuID);
 
-    std::cout<< "found device "<<gpuID<<std::endl;
-
     cudaStream_t strm;
     CHECK_CUDA(cudaStreamCreate(&strm));
 
@@ -177,10 +173,9 @@ bool test_AxB_phase2_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
     int64_t *offset = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
     int64_t *bucket = (int64_t*)rmm_wrap_malloc(mnz * sizeof (int64_t));
 
-    std::cout << "nthrd: " << nthrd << ", ntasks: " << ntasks << std::endl;
     fillvector_constant(NBUCKETS, bucketp, (int64_t)0);
     fillvector_constant(NBUCKETS, offset, (int64_t)0);
-    fillvector_constant(problem_spec.getCnnz(), bucket, (int64_t)0);
+    //fillvector_constant(problem_spec.getCnnz(), bucket, (int64_t)0);
 
     std::cout << "Running phase1 kernel" << std::endl;
     kernTimer.Start();
@@ -193,8 +188,6 @@ bool test_AxB_phase2_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
     kernTimer.Stop();
 
     std::cout << " phase1 internal phase2 "<< kernTimer.Elapsed() <<"ms Done." << std::endl;
-    //print_array<int64_t>(nanobuckets, NBUCKETS*nthrd*ntasks, "nanobuckets");
-    //print_array<int64_t>(blockbucket, NBUCKETS*ntasks, "blockbucket");
 
     //    // launch phase2 (just with p2ntasks as the # of tasks)
     kernTimer.Start();
@@ -210,7 +203,6 @@ bool test_AxB_phase2_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
     {
         bucketp[bucket] = s;
         s+= offset[bucket];
-        //printf("bucketp[%d] = %ld, offset= %ld\n", bucket, bucketp[bucket],offset[bucket]);
     }
 
     // launch phase2end: note same # of tasks as phase1
@@ -224,7 +216,7 @@ bool test_AxB_phase2_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
 //
 //
     print_array<int64_t>(bucketp, NBUCKETS, "bucketp");
-    print_array<int64_t>(bucket, mnz, "bucket");
+//  print_array<int64_t>(bucket, mnz, "bucket");
     std::cout<<"phase2 done =================="<<std::endl;
 
     EXPECT_EQ( bucketp[NBUCKETS], problem_spec.getCnnz()); //check we sum to the right structural counts
@@ -237,13 +229,13 @@ bool test_AxB_phase2_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
 
     CHECK_CUDA(cudaStreamDestroy(strm));
 
-   return true;
+    return true;
 }
 
 template<typename T>
 void make_grb_matrix(GrB_Matrix mat, int64_t n_rows, int64_t n_cols,
-                     std::vector<int64_t> indptr,
-                     std::vector<int64_t> indices, T *data,
+                     std::vector<int64_t> &indptr,
+                     std::vector<int64_t> &indices, T *data,
                      int gxb_sparsity_control,
                      int gxb_format ) 
 {
@@ -267,18 +259,9 @@ void make_grb_matrix(GrB_Matrix mat, int64_t n_rows, int64_t n_cols,
 
     GRB_TRY (GrB_Matrix_wait (mat, GrB_MATERIALIZE)) ;
     GRB_TRY (GB_convert_any_to_non_iso (mat, true, NULL)) ;
-    // TODO: Need to specify these
     GRB_TRY (GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL, gxb_sparsity_control)) ;
     GRB_TRY (GxB_Matrix_Option_set(mat, GxB_FORMAT, gxb_format));
-    GRB_TRY (GxB_Matrix_fprint (mat, "my mat", GxB_SHORT_VERBOSE, stdout)) ;
 
-    bool iso ;
-    GRB_TRY (GxB_Matrix_iso (&iso, mat)) ;
-    if (iso)
-    {
-        printf ("(can do iso)\n") ;
-        //GrB_Matrix_free (&mat) ;
-    }
 
 }
 
@@ -294,6 +277,8 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
 
     cudaStream_t strm;
     CHECK_CUDA(cudaStreamCreate(&strm));
+
+    std::cout << "sr_code: " << problem_spec.get_mxm_factory().sr_code << std::endl;
 
     bool result = false;
 
@@ -326,7 +311,6 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
     int M_sparsity = GB_sparsity (M) ;
     GrB_Type ctype = problem_spec.getBinaryOp()->ztype ;
 
-    std::cout << "Creating new bix: " << cnz << std::endl;
   //GrB_Info info = GB_new_bix (&C_actual, // sparse or hyper (from M), existing header
   //                   ctype, cvlen, cvdim, GB_Ap_malloc, true,
   //                   M_sparsity, false, problem_spec.getM()->hyper_switch, cnvec,
@@ -337,16 +321,14 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
   //    // out of memory
   //    return (info) ;
   //}
-    GrB_Matrix C_actual;
-    std::vector<int64_t> C_act_p(N+1);
-    std::vector<int64_t> C_act_i(cnz+1);
+  //GrB_Matrix C_actual;
+  //std::vector<int64_t> C_act_p(N+1);
+  //std::vector<int64_t> C_act_i(cnz+1);
 
-    make_grb_matrix<T_C>( C_actual, N, N,
-                     C_act_p, C_act_i, (T_C*)(M->x), 
-                     M_sparsity,
-                     GxB_BY_ROW);
-
-    std::cout << "Done creating new bix" << std::endl;
+  //make_grb_matrix<T_C>( C_actual, N, N,
+  //                 C_act_p, C_act_i, (T_C*)(M->x), 
+  //                 M_sparsity,
+  //                 GxB_BY_ROW);
 
     int nthrd = p2lF.get_threads_per_block();
     int ntasks = p2elF.get_number_of_blocks(M);
@@ -358,10 +340,9 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
     int64_t *bucket = (int64_t*)rmm_wrap_malloc(mnz * sizeof (int64_t));
     int64_t *offset = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
 
-    std::cout << "nthrd: " << nthrd << ", ntasks: " << ntasks << std::endl;
     fillvector_constant(NBUCKETS, bucketp, (int64_t)0);
     fillvector_constant(NBUCKETS, offset, (int64_t)0);
-    fillvector_constant(problem_spec.getCnnz(), bucket, (int64_t)0);
+    //fillvector_constant(problem_spec.getCnnz(), bucket, (int64_t)0);
 
     std::cout << "Running phase1 kernel" << std::endl;
     kernTimer.Start();
@@ -385,17 +366,14 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
     {
         bucketp[bucket] = s;
         s+= offset[bucket];
-        //printf("bucketp[%d] = %ld, offset= %ld\n", bucket, bucketp[bucket],offset[bucket]);
     }
 
     std::cout << "Launching phase2end" << std::endl;
 
-
     // launch phase2end: note same # of tasks as phase1
     kernTimer.Start();
     p2elF.jitGridBlockLaunch( nanobuckets, blockbucket,
-                              bucketp, bucket, offset, C,
-                              problem_spec.getM(), strm);
+                              bucketp, bucket, offset, C, M, strm);
     CHECK_CUDA(cudaStreamSynchronize(strm));
     kernTimer.Stop();
     std::cout << "phase3 test phase2end " <<kernTimer.Elapsed()<<"ms"<<std::endl;
@@ -404,11 +382,9 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
      * Run Phase 3: Execute dot3 on all buckets
      */
     for (int b =1; b < NBUCKETS; ++b) {// loop on buckets
-            int64_t b_start = bucketp[b];
-            int64_t b_end = bucketp[b+1];
-            int64_t nvecs = b_end - b_start;
-
-            std::cout<< "bucket "<<b<<" has "<<nvecs<<" dots to do"<<std::endl;
+           int64_t b_start = bucketp[b];
+           int64_t b_end = bucketp[b+1];
+           int64_t nvecs = b_end - b_start;
 
            if (nvecs == 0) continue;
 
@@ -418,17 +394,17 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
            phase3launchFactory p3lf(mymxm, (GB_bucket_code)b);
            p3lf.jitGridBlockLaunch( b_start, b_end, bucketp, bucket, C, M,
                                     A, B, strm);
-            CHECK_CUDA(cudaStreamSynchronize(strm));
+           CHECK_CUDA(cudaStreamSynchronize(strm));
 
            kernTimer.Stop();
+           std::cout << "phase3 bucket="<<b<<" done " <<kernTimer.Elapsed()<<"ms"<<std::endl;
 
        }
        C->nzombies += (bucketp[1]); //add pre-zombies to the count;
 
-            fflush(stdout);
 
-           std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
-           GRB_TRY (GxB_Matrix_fprint (C, "C GPU", GxB_SHORT_VERBOSE, stdout)) ;
+           GRB_TRY(GrB_Matrix_wait(C, GrB_MATERIALIZE));
+           fflush(stdout);
 
             GrB_Matrix C_expected;
             GrB_Type type = cuda::jit::to_grb_type<T_C>();
@@ -438,24 +414,19 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
             GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
 
             // Use GrB_DESC_S for structural because dot3 mask will never be complemented
-            GRB_TRY (GrB_mxm(C_expected, problem_spec.getM(), NULL, problem_spec.get_semiring(), problem_spec.getA(),
-                             problem_spec.getB(), problem_spec.get_mask_struct() ? GrB_DESC_ST1 : GrB_DESC_T1));
+            // The order of B and A is swapped to account for CSR vs CSC assumption
+            GRB_TRY (GrB_mxm(C_expected, problem_spec.getM(), NULL, problem_spec.get_semiring(), problem_spec.getB(),
+                             problem_spec.getA(), problem_spec.get_mask_struct() ? GrB_DESC_ST1 : GrB_DESC_T1));
 
-            GRB_TRY (GxB_Matrix_fprint (problem_spec.getM(), "M actual", GxB_SHORT_VERBOSE, stdout));
-            GRB_TRY (GxB_Matrix_fprint (problem_spec.getA(), "A actual", GxB_SHORT_VERBOSE, stdout));
-            GRB_TRY (GxB_Matrix_fprint (problem_spec.getB(), "B actual", GxB_SHORT_VERBOSE, stdout));
 
-            GRB_TRY(GrB_Matrix_wait(C, GrB_MATERIALIZE));
             GRB_TRY(GrB_Matrix_wait(C_expected, GrB_MATERIALIZE));
 
-            GRB_TRY (GxB_Matrix_fprint (C, "C GPU", GxB_SHORT_VERBOSE, stdout));
-            GRB_TRY (GxB_Matrix_fprint (C_expected, "C_actual", GxB_SHORT_VERBOSE, stdout));
             // compare
             double tol = 0 ;
             GrB_Index nvals1 = 0, nvals2 = 0 ;
             GRB_TRY (GrB_Matrix_nvals (&nvals1, C)) ;
             GRB_TRY (GrB_Matrix_nvals (&nvals2, C_expected)) ;
-            if (nvals1 != nvals2) { printf ("Aborting!!!\n") ; abort ( ) ; }
+            if (nvals1 != nvals2) { printf ("Wrong number of nonzeroes found, test fail!!!\n") ; ADD_FAILURE( ) ; }
             GrB_Index nrows, ncols ;
             GrB_Matrix_nrows (&nrows, C_expected) ;
             GrB_Matrix_ncols (&ncols, C_expected) ;
@@ -475,35 +446,27 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
             else if (type == GrB_UINT32) op = GrB_EQ_UINT32 ;
             else if (type == GrB_UINT64) op = GrB_EQ_UINT64 ;
             else if (type == GrB_FP32  )
-            {
+            {   tol = 1e-6;
                 op = (tol == 0)? GrB_EQ_FP32 : GrB_MINUS_FP32   ;
                 op_abs = GrB_ABS_FP32 ;
             }
             else if (type == GrB_FP64  )
-            {
+            {   tol = 1e12;
                 op = (tol == 0)? GrB_EQ_FP64 : GrB_MINUS_FP64   ;
                 op_abs = GrB_ABS_FP64 ;
             }
             else if (type == GxB_FC32  )
-            {
+            {   tol = 2e-6;
                 op = (tol == 0)? GxB_EQ_FC32 : GxB_MINUS_FC32   ;
                 op_abs = GxB_ABS_FC32 ;
             }
             else if (type == GxB_FC64  )
-            {
+            {   tol = 2e-12;
                 op = (tol == 0)? GxB_EQ_FC64 : GxB_MINUS_FC64   ;
                 op_abs = GxB_ABS_FC64 ;
             }
 
 
-            // Diff = C - C_actual
-            GrB_Matrix Diff ;
-            GRB_TRY (GrB_Matrix_new (&Diff, GrB_FP64, nrows, ncols)) ;
-            GRB_TRY (GrB_Matrix_apply (Diff, NULL, NULL, GrB_AINV_FP64, C_expected, NULL)) ;
-            GRB_TRY (GrB_Matrix_eWiseAdd_BinaryOp (Diff, NULL, NULL, GrB_PLUS_FP64,
-                C, Diff, NULL)) ;
-            GRB_TRY (GxB_Matrix_fprint (Diff, "Diff actual", GxB_SHORT_VERBOSE, stdout));
-            GRB_TRY (GrB_Matrix_free (&Diff)) ;
 
             if (tol == 0)
             {
@@ -511,19 +474,34 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
                 GRB_TRY (GrB_Matrix_eWiseMult_BinaryOp (T, NULL, NULL, op, C, C_expected,
                     NULL)) ;
                 GrB_Index nvals3 = 1 ;
-                GRB_TRY (GxB_Matrix_fprint (T, "T actual", GxB_SHORT_VERBOSE, stdout));
                 GRB_TRY (GrB_Matrix_nvals (&nvals3, T)) ;
-                if (nvals1 != nvals3) { printf ("!!\n") ; abort ( ) ; } 
+                if (nvals1 != nvals3) { printf (" difference matrix wrong size, test fail!!\n") ; ADD_FAILURE( ) ; } 
                 bool is_same = false ;
                 GRB_TRY (GrB_Matrix_reduce_BOOL (&is_same, NULL, GrB_LAND_MONOID_BOOL,
                     T, NULL)) ;
-                if (!is_same) { printf ("!!\n") ; abort ( ) ; } 
+                if (!is_same) { printf (" results don't match, test fail!!\n") ; ADD_FAILURE ( ) ; } 
                 GRB_TRY (GrB_Matrix_free (&T)) ;
             }
             else
             {
                 // TODO: check with roundoff
-                { printf ("!!\n") ; abort ( ) ; } 
+                // Diff = C - C_expected
+                GrB_Matrix Diff ;
+                GRB_TRY (GrB_Matrix_new (&Diff, GrB_FP64, nrows, ncols)) ;
+                GRB_TRY (GrB_Matrix_apply (Diff, NULL, NULL, GrB_AINV_FP64, C_expected, NULL)) ;
+                GRB_TRY (GrB_Matrix_eWiseAdd_BinaryOp (Diff, NULL, NULL, GrB_PLUS_FP64,
+                    C, Diff, NULL)) ;
+                GRB_TRY( GrB_Matrix_apply( Diff, NULL, NULL, op_abs, Diff, NULL) );
+                GrB_Index nvals3 = 1 ;
+                GRB_TRY (GrB_Matrix_nvals (&nvals3, Diff)) ;
+                if (nvals1 != nvals3) { printf ("fp difference matrix wrong size, test fail!!\n") ; ADD_FAILURE( ) ; } 
+                double is_same = false ;
+                GRB_TRY (GrB_Matrix_reduce_FP64 (&is_same, NULL, GrB_PLUS_MONOID_FP64,
+                    Diff, NULL)) ;
+                printf("difference = %12.6g, rel_l1_err=%12.6g\n", is_same, is_same/nrows );
+                EXPECT_LT( is_same/nrows, tol);
+                GRB_TRY (GrB_Matrix_free (&Diff)) ;
+
             }
 
             // re-enable the GPU
@@ -535,7 +513,7 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
     rmm_wrap_free(bucketp);
     rmm_wrap_free(bucket);
     rmm_wrap_free(offset);
-
+    GRB_TRY(GrB_Matrix_free(&C_expected));
     CHECK_CUDA(cudaStreamDestroy(strm));
 
     std::cout << "phase 3 test complete ======================" << std::endl;
@@ -545,57 +523,82 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
 template <typename T_C, typename T_M, typename T_A, typename T_B>
 bool test_reduce_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
 
+    std::cout << "reduce test ======================" << std::endl;
+
     // TODO: This test doesn't really fit the `mxm` category
     GrB_Monoid monoid = problem_spec.getMonoid();
     int64_t N = problem_spec.getN();
-    //std::cout<<" alloc'ing data and output"<<std::endl;
-    std::vector<int64_t> indptr(N+1);
-    std::vector<int64_t> index(N);
-    std::vector<T_A> d_data(N);
-
-    indptr[N] = N;
-    fillvector_linear<int64_t>((int)N, indptr.data(), (int64_t)0);
-    fillvector_constant<int64_t>((int)N, index.data(), (int64_t)1);
-    fillvector_linear<T_C> ( N, d_data.data());
-
-    GrB_Type t = cuda::jit::to_grb_type<T_C>();
 
     GrB_Matrix A;
-    make_grb_matrix(problem_spec.getA(), N, N, indptr, index, d_data.data(), GxB_SPARSE, GxB_BY_ROW);
-    CHECK_CUDA(cudaStreamSynchronize(0));
 
-    GRB_TRY (GrB_Matrix_wait (problem_spec.getA(), GrB_MATERIALIZE)) ;
-    GRB_TRY (GxB_Matrix_fprint (problem_spec.getA(), "A", GxB_SHORT_VERBOSE, stdout));
+    // TODO: Using C here so that the reduced type matches
+    GrB_Matrix_dup(&A, problem_spec.getC());
+    GrB_Type type = cuda::jit::to_grb_type<T_C>();
+
+    A->i[0] = GB_FLIP(A->i[0]);
+    A->i[1] = GB_FLIP(A->i[1]);
+    A->nzombies = 2;
+
+    //GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout)) ;
+
+    GB_cuda_reduce_factory myreducefactory;
+    myreducefactory.reduce_factory(monoid, A);
 
     T_C actual;
-    GB_cuda_reduce( problem_spec.getA(), &actual, monoid );
-
-    GrB_Vector v;
-    GrB_Vector_new(&v, t, N);
-
-    // Just sum in place for now (since we are assuming sum)
-    int sum = 0;
-    for(int i = 0; i < N; ++i) {
-        sum+= d_data[i];
-        cuda::jit::vector_set_element<T_C>(v, i, d_data[i]);
-    }
-    printf("Sum: %d\n", sum);
+    GB_cuda_reduce(myreducefactory, A, &actual, monoid );
 
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
 
-    printf("Invoking grb reduce\n");
     T_C expected;
-    GRB_TRY(cuda::jit::vector_reduce(&expected, v, monoid));
-    CHECK_CUDA(cudaStreamSynchronize(0));
-    printf("Done.\n");
+    GRB_TRY(cuda::jit::matrix_reduce(&expected, A, monoid));
 
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
-    if(expected != actual) {
-        std::cout << "results do not match: reduced=" << expected << ", actual=" << actual << std::endl;
-        exit(1);
-    } else {
-        std::cout << "Results matched!" << std::endl;
+
+    double tol = 0;
+    GrB_BinaryOp op = NULL;
+    GrB_UnaryOp op_abs = NULL ;
+
+    if      (type == GrB_BOOL  ) op = GrB_EQ_BOOL   ;
+    else if (type == GrB_INT8  ) op = GrB_EQ_INT8   ;
+    else if (type == GrB_INT16 ) op = GrB_EQ_INT16  ;
+    else if (type == GrB_INT32 ) op = GrB_EQ_INT32  ;
+    else if (type == GrB_INT64 ) op = GrB_EQ_INT64  ;
+    else if (type == GrB_UINT8 ) op = GrB_EQ_UINT8  ;
+    else if (type == GrB_UINT16) op = GrB_EQ_UINT16 ;
+    else if (type == GrB_UINT32) op = GrB_EQ_UINT32 ;
+    else if (type == GrB_UINT64) op = GrB_EQ_UINT64 ;
+    else if (type == GrB_FP32  )
+    {   tol = 1e-6;
+        op = (tol == 0)? GrB_EQ_FP32 : GrB_MINUS_FP32   ;
+        op_abs = GrB_ABS_FP32 ;
     }
+    else if (type == GrB_FP64  )
+    {   tol = 1e12;
+        op = (tol == 0)? GrB_EQ_FP64 : GrB_MINUS_FP64   ;
+        op_abs = GrB_ABS_FP64 ;
+    }
+    else if (type == GxB_FC32  )
+    {   tol = 2e-6;
+        op = (tol == 0)? GxB_EQ_FC32 : GxB_MINUS_FC32   ;
+        op_abs = GxB_ABS_FC32 ;
+    }
+    else if (type == GxB_FC64  )
+    {   tol = 2e-12;
+        op = (tol == 0)? GxB_EQ_FC64 : GxB_MINUS_FC64   ;
+        op_abs = GxB_ABS_FC64 ;
+    }
+
+    if(tol == 0) {
+       EXPECT_EQ( actual , expected);
+        //std::cout << "results do not match: reduced=" << expected << ", actual=" << actual << std::endl;
+        //exit(1);
+    } else if ( (tol > 0) && ( ( type ==GrB_FP32) || ( type ==GxB_FC32) 
+                            || ( type ==GrB_FP64) || ( type ==GxB_FC64) ) ){
+       EXPECT_LT( abs((double)actual - (double)expected)/(abs((double)expected)+1.e-12), tol) ;
+    }
+
+    std::cout<< expected<< " " << actual<< "reduce test complete ======================" << std::endl;
+    GRB_TRY(GrB_Matrix_free(&A));
 
     return expected == actual;
 }

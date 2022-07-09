@@ -5,7 +5,12 @@ GB_TYPE_PREFIX = "GrB"
 
 SUPPORTED_TYPES = {
     "int32_t": "INT32",
-    "uint32_t": "UINT32"
+    "uint32_t": "UINT32",
+    "int64_t": "INT64",
+    "uint64_t": "UINT64",
+    "bool": "BOOL",
+    "float": "FP32",
+    "double": "FP64"
 }
 
 DOT3_BUCKETS = [1, 2, 3]    # NBUCKETS, hard-coded
@@ -41,7 +46,6 @@ def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds="tiny-tiny", SUM="PLUS
     gb_monoid = build_gb_monioid(typeC, SUM)
     gb_binop = build_gb_binop(typeC, PRODUCT)
 
-# TODO: Build dataset and
     TEST_HEAD = f"""
     TEST( {Test_suite}, {Test_name}) {{
 
@@ -54,7 +58,7 @@ def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds="tiny-tiny", SUM="PLUS
         mxm_problem_spec<{typeC}, {typeM}, {typeA}, {typeB}> problem_spec(monoid, binop, {N}, {Anz}, {Bnz}, {Cnz});
     """
     phase1_body= f""" test_AxB_phase1_factory< {typeC}, {typeM}, {typeA}, {typeB}>(problem_spec);"""
-    phase2_body= f""" test_AxB_phase2_factory< {typeC}, {typeM}, {typeA}, {typeB} >( problem_spec);"""
+    phase2_body= f""" test_AxB_phase2_factory< {typeC}, {typeM}, {typeA}, {typeB} >(problem_spec);"""
     phase3_body = f""" test_AxB_dot3_full_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > (problem_spec);\n"""
     reduce_body = f""" test_reduce_factory<{typeC}, {typeM}, {typeA}, {typeB}>(problem_spec);"""
     phasedict = { 1: phase1_body, 2: phase2_body, 3: phase3_body, 4: reduce_body }
@@ -71,7 +75,8 @@ def load_types(argv):
     # Hard-coding data shapes for now
 
     DataShapes ={
-        "tinyxtiny": {'N':32, 'Anz':256, 'Bnz':128, 'Cnz': 64},
+        "nanoxnano": {'N':32, 'Anz':64, 'Bnz':56, 'Cnz': 256},
+        "tinyxtiny": {'N':128, 'Anz':1256, 'Bnz':1028, 'Cnz': 1640},
         "smallxsmall": {'N':1024, 'Anz': 65_536, 'Bnz':65_536, 'Cnz': 10000}
         # "medxmed": {'N':4096, 'Anz': 2**20, 'Bnz':2**20}
         # "largexlarge": {'N':2**16, 'Anz': 64*2**20, 'Bnz':64*2**20}
@@ -85,23 +90,22 @@ def write_test_instances_header(test_suite_name, Monoids, Binops, Semirings, Dat
     outfile = f'{test_suite_name}_{Semirings}_test_instances.hpp'
     with open(outfile, 'w') as fp:
         fp.write("#pragma once\n#include \"problem_spec.hpp\"\n");
-        for m in Monoids:
-            for b in Binops:
-                Test_suite = f'{test_suite_name}_tests_{m}_{b}'
-                for dtC in DataTypes:
-                    dtX = dtC
-                    dtY = dtC
-                    dtZ = dtC
-                    for dtM in ["bool", "int32_t"]:
-                        for dtA in DataTypes:
-                            for dtB in DataTypes:
-                                for ds in DataShapes:
-                                    TEST_HEAD, TEST_BODY = buildTest( Test_suite, Kernels, ds, m, b,
-                                                                      dtC, dtM, dtA, dtB, dtX, dtY, dtZ)
-                                    fp.write( TEST_HEAD)
-                                    for phase in [1, 2, 3, 4]:
-                                        fp.write( TEST_BODY[phase])
-                                    fp.write( "}\n")
+        m, b = Semirings.split("_")
+        Test_suite = f'{test_suite_name}_tests_{m}_{b}'
+        for dtC in DataTypes:
+            dtX = dtC
+            dtY = dtC
+            dtZ = dtC
+            for dtM in ["bool", "int32_t", "int64_t", "float", "double"]:
+                for dtA in DataTypes:
+                    for dtB in DataTypes:
+                        for ds in DataShapes:
+                            TEST_HEAD, TEST_BODY = buildTest( Test_suite, Kernels, ds, m, b,
+                                                              dtC, dtM, dtA, dtB, dtX, dtY, dtZ)
+                            fp.write( TEST_HEAD)
+                            for phase in [1, 2, 3, 4]:
+                                fp.write( TEST_BODY[phase])
+                            fp.write( "}\n")
 
 def write_cuda_test(source_dir, test_suite_name, semiring, kernel):
     import shutil

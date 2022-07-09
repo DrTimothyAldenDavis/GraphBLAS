@@ -23,13 +23,9 @@
 #include <cstdint>
 #include <cooperative_groups.h>
 
-// TODO: Temporary
-#define GB_IDENTITY 0
-#define GB_ADD(a, b) a + b
-
 using namespace cooperative_groups;
 
-template< typename T, int tile_sz>
+template< typename T, int tile_sz, int rcode>
 __inline__ __device__ 
 T warp_ReduceSum( thread_block_tile<tile_sz> g, T val)
 {
@@ -58,7 +54,7 @@ T warp_ReduceSum( thread_block_tile<tile_sz> g, T val)
 }
 
 
-template<typename T, int warpSize>
+template<typename T, int warpSize, int rcode>
 __inline__ __device__
 T block_ReduceSum(thread_block g, T val)
 {
@@ -67,8 +63,13 @@ T block_ReduceSum(thread_block g, T val)
   int wid  = threadIdx.x >> 5 ; // / warpSize;
   thread_block_tile<warpSize> tile = tiled_partition<warpSize>( g );
 
-  // Each warp performs partial reduction
-  val = warp_ReduceSum<T, warpSize>( tile, val);    
+    // TODO: Figure out how to use graphblas-specific INFINITY macro
+    #ifndef INFINITY
+    #define INFINITY std::numeric_limits<T>::max()
+    #endif
+
+    // Each warp performs partial reduction
+  val = warp_ReduceSum<T, warpSize, rcode>( tile, val);
 
   // Wait for all partial reductions
   if (lane==0) { 
@@ -76,21 +77,21 @@ T block_ReduceSum(thread_block g, T val)
      shared[wid] = val; // Write reduced value to shared memory
      //printf("thd%d stored warp%d sum %d\n", threadIdx.x, wid, val);
   }
-  __syncthreads();              // Wait for all partial reductions
+  this_thread_block().sync();     // Wait for all partial reductions
 
   //if (wid > 0 ) return val;
   //read from shared memory only if that warp existed
   //else { 
     val = (threadIdx.x < (blockDim.x / warpSize) ) ? shared[lane] : GB_IDENTITY ;
     //if (lane < (blockDim.x/ warpSize) ) printf("thd%d warp%d loaded val = %d\n", threadIdx.x, lane, val);
-    val = warp_ReduceSum<T, warpSize>( tile, val); //Final reduce within first warp
+    val = warp_ReduceSum<T, warpSize, rcode>( tile, val); //Final reduce within first warp
   //}
 
   return val;
 }
 
 
-template< typename T, typename Accum, bool atomic_reduce = true>
+template< typename T, typename Accum, int rcode, bool atomic_reduce = true>
 __global__ void reduceNonZombiesWarp
 (
     GrB_Matrix A,
@@ -99,6 +100,12 @@ __global__ void reduceNonZombiesWarp
     bool is_sparse
 )
 {
+
+    // TODO: Figure out how to use graphblas-specific INFINITY macro
+    #ifndef INFINITY
+    #define INFINITY std::numeric_limits<T>::max()
+    #endif
+
     // set thread ID
     int tid = threadIdx.x ;
 
@@ -124,7 +131,7 @@ __global__ void reduceNonZombiesWarp
     // reduce work [0..s-1] to a single scalar
     //--------------------------------------------------------------------------
     // this assumes blockDim is a multiple of 32
-    sum = block_ReduceSum< T, 32 >( this_thread_block(), sum) ; 
+    sum = block_ReduceSum< T, 32, rcode >( this_thread_block(), sum) ;
     this_thread_block().sync(); 
 
     // write result for this block to global mem
