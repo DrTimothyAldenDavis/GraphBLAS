@@ -13,6 +13,7 @@
 #include "GB_cuda_kernel.h"
 #include "GB_cuda_buckets.h"
 #include <cub/block/block_scan.cuh>
+#include <cooperative_groups.h>
 
 //------------------------------------------------------------------------------
 // GB_bucket_code:  assign the dot product for C(i,j) to a specific bucket
@@ -158,8 +159,8 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vssp.cu.jit
 
-      //GB_BUCKET ((ainz > 32 * bjnz && bjnz < 256)
-      //        || (bjnz > 32 * ainz && ainz < 256), GB_BUCKET_VSSP) ;
+      //GB_BUCKET ((ainz > 128 * bjnz && bjnz < 32)
+      //        || (bjnz > 128 * ainz && ainz < 32), GB_BUCKET_VSSP) ;
 
     }
 //  else if (ainz + bjnz <= 4)
@@ -210,7 +211,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vsvs.cu.jit
 //      GB_BUCKET (ainz + bjnz <= 256, GB_BUCKET_VSVS_256) ;
-        GB_BUCKET (ainz + bjnz <= 64, GB_BUCKET_VSVS) ;
+        GB_BUCKET (ainz + bjnz <= 128, GB_BUCKET_VSVS) ;
 
         // TODO: replace this with a single bucket, GB_BUCKET_VSVS.
 
@@ -386,7 +387,6 @@ __global__ void AxB_phase1
             while ( Mp [ k     ] >  p ) k-- ;
             ks [kk] = k ;
         }
-
         __syncthreads ( ) ;
 
         //----------------------------------------------------------------------

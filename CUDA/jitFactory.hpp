@@ -482,8 +482,8 @@ private:
         // A(:,i) is very sparse compared to B(:,j), or visa versa
         case GB_BUCKET_VSSP :
             Opname = "phase3_vssp" ;
-            blocksz = 256;
-            work_per_thread = 4;
+            blocksz = 1;
+            work_per_thread = 64;
             if( Cnz < 2048)
             {
               blocksz = 32;
@@ -525,7 +525,7 @@ private:
         case GB_BUCKET_MERGEPATH :
             Opname = "phase3_mp" ;
             blocksz = 32;
-            work_per_thread = 32*8 ;
+            work_per_thread = 32*8*4 ;
             gridsz = ( Cnz -1 + work_per_thread)/(work_per_thread);
             //gridsz = GB_IMIN( 1024*number_of_sms, ( Cnz  + work_per_thread*blocksz -1 )/(work_per_thread*blocksz));
             break ;
@@ -549,8 +549,8 @@ class reduceFactory
   std::string base_name = "GB_jit";
   std::string kernel_name = "reduceNonZombiesWarp";
 
-  int threads_per_block = 256 ;
-  int work_per_thread = 128;
+  int threads_per_block = 320 ;
+  int work_per_thread = 256;
   int number_of_sms = GB_Global_gpu_sm_get (0);
 
   GB_cuda_reduce_factory &reduce_factory_;

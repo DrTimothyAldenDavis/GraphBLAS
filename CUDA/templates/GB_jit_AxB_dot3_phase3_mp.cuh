@@ -376,11 +376,7 @@ __global__ void AxB_dot3_phase3_mp
        cij = GB_reduce_sum<T_Z, tile_sz>( tile, cij );
     }
     #endif
-    // else has_zombies = 1;
 
-
-        //__syncthreads();
-    //tile.sync( );
     // write result for this block to global mem
     if (tid == 0)
     {

@@ -277,10 +277,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     // fixme: do async with streams
     // FIXME: do we need any of these?
-//  CHECK_CUDA_SIMPLE(cudaMemsetAsync(Nanobuckets, 0,
-//      nanobuckets_size * sizeof(int64_t), stream));
-//  CHECK_CUDA_SIMPLE(cudaMemsetAsync(Blockbucket, 0,
-//      blockbuckets_size * sizeof(int64_t), stream));
+  //CHECK_CUDA_SIMPLE(cudaMemsetAsync(Nanobuckets, 0,
+  //    nanobuckets_size * sizeof(int64_t), stream));
+  //CHECK_CUDA_SIMPLE(cudaMemsetAsync(Blockbucket, 0,
+  //    blockbuckets_size * sizeof(int64_t), stream));
     CHECK_CUDA_SIMPLE(cudaMemsetAsync(Bucketp, 0,
         (NBUCKETS+1) * sizeof(int64_t), stream));
     CHECK_CUDA_SIMPLE(cudaMemsetAsync(offset, 0,
@@ -361,7 +361,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // phase1: assign each C(i,j) to a bucket, and count them
     //--------------------------------------------------------------------------
 
-    GBURBLE ("(GPU phase1 start) ") ;
+    GBURBLE ("(GPU phase1 start nblk = %d) ", p1lf.get_number_of_blocks(M)) ;
     kernel_timer.Start();
     p1lf.jitGridBlockLaunch(Nanobuckets, Blockbucket, C, M, A, B, stream);
     CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
@@ -426,7 +426,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C, M, A, B, stream);
             CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));  // only for timing
             kernel_timer.Stop();
-            GBURBLE ("(GPU phase3 bucket %d done %12.6g ms)\n", bucket, kernel_timer.Elapsed()) ; }
+            GBURBLE ("(GPU phase3 bucket %d done %12.6g ms, rate=%12.6g)\n", bucket, kernel_timer.Elapsed(), (end-start)/(1000*kernel_timer.Elapsed())) ; }
     }
 
     GB_FREE_WORKSPACE ;
