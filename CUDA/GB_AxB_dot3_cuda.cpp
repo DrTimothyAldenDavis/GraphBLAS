@@ -219,8 +219,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     C->magic = GB_MAGIC ;
     C->nvec_nonempty = M->nvec_nonempty ;
-    // the dot3 CUDA kernel will produce C->i with jumbled indices
-    C->jumbled = true ;
+    C->jumbled = GB_JUMBLED (M) ;   // C is jumbled if M is jumbled
 
     GBURBLE ("(GPU C created and copied from M) ") ;
 
@@ -239,6 +238,36 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     filecache.getFile (my_mxm_spec) ;
 
     GBURBLE ("(GPU stringified srcode = %lu)\n", my_mxm_spec.sr_code) ;
+
+//  cases:
+
+// (1)
+//      A full          B full
+//      A bit           B full
+//      A full          B bit
+//      A bit           B bit
+
+// (2)
+//      A sparse        B full
+//      A hyper         B full      GB_IS_HYPERSPARSE(A) && GB_IS_FULL (B))
+//      A sparse        B bit
+//      A hyper         B bit
+
+// (3)
+//      A full          B sparse
+//      A bit           B sparse
+//      A full          B hyper
+//      A bit           B hyper
+
+// (4) phase1, phase2, phase2end, phase3:
+//      A sparse        B sparse    <<<
+//      A hyper         B sparse
+//      A sparse        B hyper
+//      A hyper         B hyper
+
+
+//          && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B)
+//          && !GB_IS_FULL (A) && !GB_IS_FULL (B))
 
     //--------------------------------------------------------------------------
     // construct the tasks for phase1 and phase2

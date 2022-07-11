@@ -6,6 +6,7 @@
 //  This kernel scans the non-zero pattern in A and B, takes into account the
 //  mask and computes total work required to form C. Then it classifies each
 //  dot product into a set of buckets for efficient compute. 
+
 #pragma once
 
 #define GB_CUDA_KERNEL
@@ -25,24 +26,7 @@
 // GB_BUCKET_ZOMBIE:    C(i,j) is a prezombie, either A(:,i) or B(:,j) are
 //                      empty.
 
-// GB_BUCKET_DNDN:      A(:,i) and B(:,j) are both dense.  TODO This bucket
-//                      should be removed from the general case and only used
-//                      when both A and B are bitmap/full.
-
-// GB_BUCKET_DNVS:      A(:,i) is dense and B(:,j) is very sparse
-// GB_BUCKET_DNSP:      A(:,i) is dense and B(:,j) is sparse
-// GB_BUCKET_VSDN:      B(:,j) is dense and A(:,j) is very sparse
-// GB_BUCKET_SPDN:      B(:,j) is dense and A(:,j) is sparse
-
-//      TODO: the four D*S* and *S*D* buckets should be split into different
-//      kernels when A is bitmap/full and B is sparse/hypersparse or visa
-//      versa.  They would still need a preprocessing phase1 to split the
-//      entries of C into 2 buckets.
-
-// GB_BUCKET_VSSP:      A(:,i) is sparse and B(:,j) is very sparse, or
-//                      visa versa
-
-// GB_BUCKET_VSVS_*     both A(:,i) and B(:,j) are very sparse.
+// GB_BUCKET_VSVS       both A(:,i) and B(:,j) are very sparse.
 
 // GB_BUCKET_MERGEPATH  both A(:,i) and B(:,j) are sparse, but neither are
 //                      very sparse
@@ -55,7 +39,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 )
 {
 
-    int b = 0 ; // no bucket assigned yet
+#if 0
 
     // GB_BUCKET (condition,bucket) :  assigns an entry to a bucket, if the
     // condition holds, but without using if statements (which are slow).  An
@@ -74,135 +58,6 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 
     #define GB_BUCKET(condition,bucket) \
         b = (((b == 0) * (condition)) * (bucket+1)) + b ;
-
-//  if (ia_last < ib_first || ib_last < ia_first)
-    {
-
-        //----------------------------------------------------------------------
-        // pattern of A(:,i) and B(:,j) do not overlap
-        //----------------------------------------------------------------------
-
-        // The patterns of A(:,i) and B(:,j) are always sorted.  If the last
-        // entry in A(:,i) comes before the first entry in B(:,j), or visa
-        // versa, then there is no work to do since C(i,j) must be a zombie.
-
-        // GB_BUCKET (ia_last < ib_first || ib_last < ia_first,
-        //      GB_BUCKET_ZOMBIE) ;
-
-        // This condition is not checked here, and so one of the buckets
-        // below will be used.  The entry C(i,j) will be determined later to
-        // be zombie.  It is not a prezombie.
-
-    }
-//  else if (bjnz == vlen && ainz == vlen && vlen > 256)
-    {
-
-        //----------------------------------------------------------------------
-        // both A(:,i) and B(:,j) are dense
-        //----------------------------------------------------------------------
-
-        // No search of A(:,i) or B(:,j) is needed.  Total work is O(vlen).
-        // The intersection is non-empty, so C(i,j) cannot be a zombie.
-
-        // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_dndn.cu.jit
-
-//      GB_BUCKET (bjnz == vlen && ainz == vlen && vlen > 256, GB_BUCKET_DNDN) ;
-
-    }
-//  else if (ainz == vlen)
-    {
-
-        //----------------------------------------------------------------------
-        // A(:,i) is dense and B(:,j) is sparse
-        //----------------------------------------------------------------------
-
-        // No search of A(:,i) is needed.  Total work is O(bjnz), via a linear
-        // time scan of B(:,j).  Since A(:,i) is dense and B(:,j) is non-empty,
-        // the intersection is non-empty, so C(i,j) cannot be a zombie.
-
-        // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_spdn.cu.jit
-        // Two buckets are used, depending on bjnz.
-//      GB_BUCKET (ainz == vlen && bjnz <  256, GB_BUCKET_DNVS) ;
-//      GB_BUCKET (ainz == vlen && bjnz >= 256, GB_BUCKET_DNSP) ;
-
-    }
-//  else if (bjnz == vlen)
-    {
-
-        //----------------------------------------------------------------------
-        // A(:,i) is sparse and B(:,j) is dense
-        //----------------------------------------------------------------------
-
-        // No search of B(:,j) is needed.  Total work is O(ainz), via a linear
-        // time scan of A(:,i).  Since B(:,j) is dense and A(:,i) is non-empty,
-        // the intersection is non-empty, so C(i,j) cannot be a zombie.
-
-        // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_spdn.cu.jit
-        // Two buckets are used, depending on ainz.
-//      GB_BUCKET (bjnz == vlen && ainz <  256, GB_BUCKET_VSDN) ;
-//      GB_BUCKET (bjnz == vlen && ainz >= 256, GB_BUCKET_SPDN) ;
-
-    }
-//  else if ((ainz > 32 * bjnz && bjnz < 256)
-//        || (bjnz > 32 * ainz && ainz < 256))
-    {
-
-        //----------------------------------------------------------------------
-        // A(:,i) is very sparse compared to B(:,j), or visa versa
-        //----------------------------------------------------------------------
-
-        // Since B(:,j) is small, and much smaller than A(:,i), the efficient
-        // way to compute C(i,j) is a linear scan of B(:,j).  For each B(k,j),
-        // a binary search for the index A(k,i) is done.  The expected work to
-        // compute C(i,j) is thus O(bjnz * log2 (ainz)).  If A(:,i) is very
-        // sparse compared to B(:,j), the opposite is done inside the kernel.
-
-        // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vssp.cu.jit
-
-      //GB_BUCKET ((ainz > 128 * bjnz && bjnz < 32)
-      //        || (bjnz > 128 * ainz && ainz < 32), GB_BUCKET_VSSP) ;
-
-    }
-//  else if (ainz + bjnz <= 4)
-    {
-
-        //----------------------------------------------------------------------
-        // both A(:,i) and B(:,j) are very tiny (total size 4 or less)
-        //----------------------------------------------------------------------
-
-        // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vsvs.cu.jit
-//      GB_BUCKET (ainz + bjnz <= 4, GB_BUCKET_VSVS_4) ;
-
-        // This bucket is currently unused.
-
-    }
-//  else if (ainz + bjnz <= 16)
-    {
-
-        //----------------------------------------------------------------------
-        // both A(:,i) and B(:,j) are tiny (total size 16 or less)
-        //----------------------------------------------------------------------
-
-        // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vsvs.cu.jit
-        // GB_BUCKET (ainz + bjnz <= 16, GB_BUCKET_VSVS_16) ;
-
-        // This bucket is currently unused.
-
-    }
-//  else if (ainz + bjnz <= 64)
-    {
-
-        //----------------------------------------------------------------------
-        // both A(:,i) and B(:,j) are small (total size 64 or less)
-        //----------------------------------------------------------------------
-
-        // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vsvs.cu.jit
-//      GB_BUCKET (ainz + bjnz <= 64, GB_BUCKET_VSVS) ;
-
-        // This bucket is currently unused.
-
-    }
-//  else if (ainz + bjnz <= 256)
     {
 
         //----------------------------------------------------------------------
@@ -210,13 +65,9 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
         //----------------------------------------------------------------------
 
         // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vsvs.cu.jit
-//      GB_BUCKET (ainz + bjnz <= 256, GB_BUCKET_VSVS_256) ;
         GB_BUCKET (ainz + bjnz <= 128, GB_BUCKET_VSVS) ;
 
-        // TODO: replace this with a single bucket, GB_BUCKET_VSVS.
-
     }
-//  else
     {
 
         //----------------------------------------------------------------------
@@ -234,6 +85,8 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
     // subtract one to undo the "bucket+1" assignment in the
     // GB_BUCKET macro assignment expression.
     return (GB_bucket_code) (b-1) ;
+#endif
+
 }
 
 
@@ -251,18 +104,21 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 // The kernel also computes Ci, of size nnz(C), which contains the
 // zombie assignment or bucket assignment for non-zombies in C.
 
+// FIXME: use 2 buckets?  mp and vsvs?  What if all entries are in one bucket;
+// can we skip the bucket creation?
+
 template<typename T_M, uint64_t srcode, int chunk_size = 128>
 __global__ void AxB_phase1
 (
     // outputs, preallocated in global memory:
-    int64_t *nanobuckets,       // array of size NBUCKETS-blockDim.x-by-gridDim.x
-    int64_t *blockbucket,       // bucket counts, of size NBUCKETS-by-gridDim.x
+    int64_t *nanobuckets,   // array of size NBUCKETS-blockDim.x-by-gridDim.x
+    int64_t *blockbucket,   // bucket counts, of size NBUCKETS-by-gridDim.x
     // input/output:
-    GrB_Matrix C,               // final output matrix
+    GrB_Matrix C,           // final output matrix
     // inputs, not modified:
-    const GrB_Matrix M,         // mask matrix
-    const GrB_Matrix A,         // input matrix
-    const GrB_Matrix B          // input matrix
+    const GrB_Matrix M,     // mask matrix
+    const GrB_Matrix A,     // input matrix
+    const GrB_Matrix B      // input matrix
 )
 {
 
@@ -292,7 +148,6 @@ __global__ void AxB_phase1
     const int64_t bvlen = B->vlen ;
     const int64_t bnz = GB_nnz(B);
     const bool B_is_hyper = B->h != NULL ;
-
 
     // int64_t *restrict Cp = C->p ;    // copy of Mp
     // int64_t *restrict Ch = C->h ;    // copy of Mh
@@ -328,7 +183,8 @@ __global__ void AxB_phase1
     // all threads in this block will compute the same values for these:
     int64_t pfirst, plast, kfirst, klast ;
 
-    int64_t chunk_max= (mnz + chunk_size -1)/chunk_size;
+    int64_t chunk_max = GB_ICEIL (mnz, chunk_size) ;
+    //      (mnz + chunk_size -1)/chunk_size;
     for ( int64_t chunk = blockIdx.x;
                   chunk < chunk_max;
                   chunk += gridDim.x )
@@ -371,10 +227,6 @@ __global__ void AxB_phase1
         {
             // get a rough estimate of k for the kkth entry in ks
             int64_t k = kfirst + (int64_t) (slope * ((float) kk)) ;
-//          if (k >= mnvec-1) printf ("\nHey!! %ld %ld: slope %g kk %ld"
-//              " kfirst %ld klast %ld slope*kk %g pfirst %ld plast %ld\n",
-//              k, mnvec, slope, kk, kfirst, klast, slope * (float) kk,
-//              pfirst, plast) ;
             // k cannot be smaller than kfirst, but might be bigger than
             // mnvec-1, so ensure it is in the valid range, kfirst to mnvec-1
             // k = GB_IMIN (k, mnvec-1) ;
@@ -404,17 +256,10 @@ __global__ void AxB_phase1
             int64_t k = ks [pM - pfirst] ;  // get the k value of Mi,Mx [pM].
             int64_t i = Mi [ pM ] ;
             int64_t j = k ; // HACK, does not need to be initialized here
-        
-//          int64_t kgood = GB_search_for_vector_device (pM, Mp, 0, mnvec, mvlen) ;
-//          if (k != kgood)
-//          {
-//              printf ("HEY! %ld %ld: %ld %ld\n", i, pM, k, kgood) ;
-//          }
-
             if ( MX ( pM ) )
             {
 
-                // do a binary search for k (and j) that has this entry M(i,j)
+                // FIXME: handle the case where M, A, B are hypersparse
 
                 // HACK
                 j = k ;
@@ -434,9 +279,6 @@ __global__ void AxB_phase1
                 int64_t bjnz = pB_end - pB ;
                 if (bjnz > 0)
                 {
-                    // first and last entry of B(:,j), no longer used:
-                    //   int64_t ib_first = Bi [pB] ;
-                    //   int64_t ib_last  = Bi [pB_end-1] ;
 
                     //----------------------------------------------------------
                     // get A(:,i)
@@ -452,44 +294,18 @@ __global__ void AxB_phase1
                     int64_t ainz = pA_end - pA ;
                     if (ainz > 0)
                     {
-
-                        //------------------------------------------------------
                         // determine the bucket for C(i,j)
-                        //------------------------------------------------------
-
-                        // first and last entry of A(:,i), no longer used:
-                        //   int64_t ia_first = Ai [pA] ;
-                        //   int64_t ia_last  = Ai [pA_end-1] ;
-
-                        bucket = GB_bucket_assignment ( ainz, bjnz, bvlen) ;
-                        //bucket = GB_BUCKET_MERGEPATH;
+                        bool vsvs = (ainz + bjnz <= 128) ;
+                        bucket = (GB_bucket_code)
+                           (  ((int) ( vsvs)) * ((int) GB_BUCKET_VSVS)
+                            + ((int) (!vsvs)) * ((int) GB_BUCKET_MERGEPATH)) ;
                     }
                 }
             }
 
-//          bool mydump = (i == 2981) ; // && (j == 2986) ;
-//          if (mydump)
-//          {
-//              printf ("bucket for (%ld,%ld): %d\n", i, j, bucket) ;
-//          }
-
-            Ci[pM] = (bucket == GB_BUCKET_ZOMBIE) * ( GB_FLIP(i) << 4) + (bucket >0) * ((k<<4) + bucket);
+            Ci[pM] = (bucket == GB_BUCKET_ZOMBIE) * ( GB_FLIP(i) << 4)
+                   + (bucket != GB_BUCKET_ZOMBIE) * ((k<<4) + bucket) ;
             my_bucket[bucket]++;
-            // TODO: remove the if statement
-         // if (bucket == GB_BUCKET_ZOMBIE)
-         // {
-         //     // mark C(i,j) is a zombie
-         //     Ci [pM] = GB_FLIP (i) << 4 ;
-         //     my_bucket[0]++ ; // 0 is the zombie bucket
-         // }
-         // else
-         // {
-         //     // place C(i,j) in its bucket
-         //     Ci [pM] = (k << 4) + bucket ;
-         //     // GB_BUCKET_COUNT (bucket) ;
-         //     if(bucket > 0) my_bucket[bucket]++ ;
-
-         // }
         }
     }
 
@@ -503,9 +319,9 @@ __global__ void AxB_phase1
     __shared__ typename BlockCumSum::TempStorage temp_storage ;
 
     // The taskbucket for this thread block is an array of size
-    // NBUCKETS-by-blockDim.x, held by row.  Each thread owns one column of this
-    // taskbucket, the nanobucket.  The nanobucket is a column of length NBUCKETS,
-    // with stride equal to blockDim.x.
+    // NBUCKETS-by-blockDim.x, held by row.  Each thread owns one column of
+    // this taskbucket, the nanobucket.  The nanobucket is a column of length
+    // NBUCKETS, with stride equal to blockDim.x.
     int64_t *nanobucket =
         nanobuckets + blockIdx.x * (NBUCKETS * blockDim.x) + threadIdx.x ;
 

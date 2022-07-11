@@ -13,7 +13,7 @@ SUPPORTED_TYPES = {
     "double": "FP64"
 }
 
-DOT3_BUCKETS = [1, 2, 3]    # NBUCKETS, hard-coded
+DOT3_BUCKETS = [1, 2]    # NBUCKETS, hard-coded
 
 def std_type_to_gb_type(t):
     return SUPPORTED_TYPES[t]

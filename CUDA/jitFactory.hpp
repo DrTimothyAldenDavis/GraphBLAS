@@ -56,6 +56,7 @@ extern "C" {
 #include "GB_cuda_type_wrap.hpp"
 #include "GB_cuda_error.h"
 #include "../rmm_wrap/rmm_wrap.h"
+#include "GB_iceil.h"
 
 // fixme: C11 is already required for all of GraphBLAS.  No need to test here:
 #if __cplusplus >= 201103L
@@ -112,9 +113,14 @@ static const std::vector<std::string> compiler_flags{
 
 static const std::vector<std::string> header_names ={};
 
-// FIXME: We probably want to remove this type template altogether and provide a
-// macro/function that can convert from a GrB_Type instance to the name of a type
-// that the jitifier will accept.
+//------------------------------------------------------------------------------
+// dot3: phase1launchFactory 
+//------------------------------------------------------------------------------
+
+// FIXME: We probably want to remove this type template altogether and provide
+// a macro/function that can convert from a GrB_Type instance to the name of a
+// type that the jitifier will accept.
+
 template<int threads_per_block=32, int chunk_size = 128>
 class phase1launchFactory 
 {
@@ -187,6 +193,10 @@ public:
      }
 };
 
+//------------------------------------------------------------------------------
+// dot3: phase2launchFactory
+//------------------------------------------------------------------------------
+
 template<int threads_per_block = 32, int chunk_size = 128>
 class phase2launchFactory
 {
@@ -246,6 +256,10 @@ public:
 
 };
 
+//------------------------------------------------------------------------------
+// dot3: phase2endlaunchFactory
+//------------------------------------------------------------------------------
+
 template< int threads_per_block = 32, int chunk_size = 128>
 class phase2endlaunchFactory
 {
@@ -299,6 +313,10 @@ public:
 
 };
 
+//------------------------------------------------------------------------------
+// dot3: phase3launchFactory
+//------------------------------------------------------------------------------
+
 class phase3launchFactory
 {
   std::string base_name = "GB_jit";
@@ -329,7 +347,6 @@ public:
     // phase3: do the numerical work
     //----------------------------------------------------------------------
 
-    C->jumbled = true;
     const int64_t nz = end - start; // number of dots in this bucket  
     const int64_t mnvec = M->nvec ;
 
@@ -402,34 +419,6 @@ private:
 
     int work_per_thread;
 
-    // TODO: make sure this works with different geometry
-
-    /* fixme: the final bucket-based dot3 method should only have the following
-        buckets:
-
-        case GB_BUCKET_ZOMBIE : // C(i,j) is a zombie (not a bucket)
-        case GB_BUCKET_VSSP :       // one vector very sparse, other longer
-        case GB_BUCKET_VSVS_256 :   // both vectors very sparse
-        case GB_BUCKET_VSVS_64 :    // (or just one VSVS bucket, not 4)
-        case GB_BUCKET_VSVS_16 :
-        case GB_BUCKET_VSVS_4 :
-        case GB_BUCKET_MERGEPATH :  // both vectors are long
-        case GB_BUCKET_WARP_IX :    // currently unused; remove this
-
-    These buckets should be handled in different kernels, mostly non-bucket-
-    based:
-
-        case GB_BUCKET_DNDN :   both A and B bitmap/full
-
-        case GB_BUCKET_ZOMBIE : // C(i,j) is a zombie (not a bucket)
-        case GB_BUCKET_DNVS :   A bitmap/full, B sparse/hyper
-        case GB_BUCKET_DNSP :   A bitmap/full, B very sparse/hyper
-
-        case GB_BUCKET_ZOMBIE : // C(i,j) is a zombie (not a bucket)
-        case GB_BUCKET_VSDN :   A sparse/hyper, B bitmap/full
-        case GB_BUCKET_SPDN :   A very sparse/hyper, B bitmap/full
-    */
-
     switch (bucket_code_)
     {
 
@@ -441,66 +430,8 @@ private:
             break ;
 
         //--------------------------------------------------------------
-        // CUDA kernel: dndn, handles a single bucket:
+        // CUDA kernel: vsvs bucket:
         //--------------------------------------------------------------
-
-//      // both A(:,i) and B(:,j) are dense
-//      case GB_BUCKET_DNDN : // fixme: remove bucket, use dedicated kernel
-//          Opname = "phase3_dndn" ;
-//          blocksz = 32;
-//          gridsz = ( Cnz -1 + blocksz)/blocksz;
-//          break ;
-
-        //--------------------------------------------------------------
-        // CUDA kernel: spdn, handles 4 buckets:
-        //--------------------------------------------------------------
-
-//      // A(:,i) is dense and B(:,j) is very sparse (< 256 entries)
-//      case GB_BUCKET_DNVS :  // fixme: remove bucket, use dedicated kernel
-//      // A(:,i) is very sparse (< 256 entries) and B(:,j) is dense
-//      case GB_BUCKET_VSDN : // fixme: remove bucket, use dedicated kernel
-//          sz = 64 ;
-//          Opname = "phase3_spdn" ;
-//          blocksz = 32;
-//          gridsz = ( Cnz -1 + blocksz)/blocksz;
-//          break ;
-
-//      // A(:,i) is dense and B(:,j) is sparse (>= 256 entries)
-//      case GB_BUCKET_DNSP : // fixme: remove bucket, use dedicated kernel
-//      // A(:,i) is sparse (>= 256 entries) and B(:,j) is dense
-//      case GB_BUCKET_SPDN : // fixme: remove bucket, use dedicated kernel
-//          sz = 256 ;
-//          Opname = "phase3_spdn" ;
-//          blocksz = 32;
-//          gridsz = ( Cnz -1 + blocksz)/blocksz;
-//          break ;
-
-        //--------------------------------------------------------------
-        // CUDA kernel: vssp, handles 1 bucket, uses binary search:
-        //--------------------------------------------------------------
-
-        // A(:,i) is very sparse compared to B(:,j), or visa versa
-        case GB_BUCKET_VSSP :
-            Opname = "phase3_vssp" ;
-            blocksz = 1;
-            work_per_thread = 64;
-            if( Cnz < 2048)
-            {
-              blocksz = 32;
-              work_per_thread = 1;
-            }
-            gridsz = ( Cnz -1 + work_per_thread*blocksz)/(work_per_thread*blocksz);
-            break ;
-
-        //--------------------------------------------------------------
-        // CUDA kernel: vsvs, handles 4 buckets:
-        //--------------------------------------------------------------
-
-        // let len = nnz (A (:,i) + nnz (B (:,j)), then:
-//      case GB_BUCKET_VSVS_256 : sz += 256-64 ;
-//      case GB_BUCKET_VSVS_64 :  sz += 64-4   ;
-//      case GB_BUCKET_VSVS_16 :  sz += 16-4   ;
-//      case GB_BUCKET_VSVS_4 :   sz += 4      ;
 
         case GB_BUCKET_VSVS :
             Opname = "phase3_vsvs" ;
@@ -511,11 +442,9 @@ private:
               blocksz = 64;
               work_per_thread = 8;
             }
-            
 
-            // FIXME: Is the first line not needed?
-            //gridsz = GB_IMIN( 1024*number_of_sms, ( Cnz  + work_per_thread*blocksz -1 )/(work_per_thread*blocksz));
-            gridsz =  ( Cnz  + work_per_thread*blocksz -1 )/(work_per_thread*blocksz);
+            // gridsz = ceiling (Cnz / work_per_thread*blocksz)
+            gridsz = GB_ICEIL (Cnz, work_per_thread*blocksz) ;
             break ;
 
         //--------------------------------------------------------------
@@ -526,15 +455,8 @@ private:
             Opname = "phase3_mp" ;
             blocksz = 32;
             work_per_thread = 32*8*4 ;
-            gridsz = ( Cnz -1 + work_per_thread)/(work_per_thread);
-            //gridsz = GB_IMIN( 1024*number_of_sms, ( Cnz  + work_per_thread*blocksz -1 )/(work_per_thread*blocksz));
+            gridsz = GB_ICEIL (Cnz, work_per_thread) ;
             break ;
-
-//      case GB_BUCKET_WARP_IX :   sz = 32      ;
-//          Opname = "phase3_warpix" ;
-//          blocksz = 32;
-//          gridsz =  GB_IMIN( (mnvec+15)/16, 256*number_of_sms);
-//          break ;
 
         default:
             break ;
@@ -543,6 +465,10 @@ private:
     opname << Opname;
   }
 };
+
+//------------------------------------------------------------------------------
+// reduceFactory
+//------------------------------------------------------------------------------
 
 class reduceFactory
 {
@@ -623,6 +549,8 @@ public:
   }
 };
 
+//------------------------------------------------------------------------------
+
 template<  int threads_per_block=32, int chunk_size = 256>
 inline bool GB_cuda_mxm_phase1(GB_cuda_mxm_factory &mxm_factory, int64_t *nanobuckets, int64_t *blockBucket,
                         GrB_Matrix C, GrB_Matrix M, GrB_Matrix A, GrB_Matrix B,
@@ -631,6 +559,7 @@ inline bool GB_cuda_mxm_phase1(GB_cuda_mxm_factory &mxm_factory, int64_t *nanobu
     return lf.jitGridBlockLaunch(nanobuckets, blockBucket, C, M, A, B, stream);
 }
 
+//------------------------------------------------------------------------------
 
 template<int threads_per_block = 32, int chunk_size = 256>
 bool GB_cuda_mxm_phase2(int64_t *nanobuckets, int64_t *blockBucket,
@@ -641,6 +570,8 @@ bool GB_cuda_mxm_phase2(int64_t *nanobuckets, int64_t *blockBucket,
   return lf.jitGridBlockLaunch(nanobuckets, blockBucket, bucketp, bucket, offset, M, stream);
 }
 
+//------------------------------------------------------------------------------
+
 template<int threads_per_block = 32, int chunk_size = 128>
 inline bool GB_cuda_mxm_phase2end(int64_t *nanobuckets, int64_t *blockBucket,
                            int64_t *bucketp, int64_t *bucket, int64_t *offset,
@@ -649,7 +580,7 @@ inline bool GB_cuda_mxm_phase2end(int64_t *nanobuckets, int64_t *blockBucket,
     return lf.jitGridBlockLaunch(nanobuckets, blockBucket, bucketp, bucket, offset, C, M, stream);
 }
 
-
+//------------------------------------------------------------------------------
 
 inline bool GB_cuda_mxm_phase3(GB_cuda_mxm_factory &mymxmfactory, GB_bucket_code bucket_code,
                         int64_t start, int64_t end, int64_t *bucketp, int64_t *bucket,
@@ -658,6 +589,7 @@ inline bool GB_cuda_mxm_phase3(GB_cuda_mxm_factory &mymxmfactory, GB_bucket_code
     return lf.jitGridBlockLaunch(start, end, bucketp, bucket, C, M, A, B, stream);
 }
 
+//------------------------------------------------------------------------------
 
 inline bool GB_cuda_reduce(GB_cuda_reduce_factory &myreducefactory,
                            GrB_Matrix A, void *output, GrB_Monoid op,

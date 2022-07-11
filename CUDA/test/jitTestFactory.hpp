@@ -311,25 +311,6 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
     int M_sparsity = GB_sparsity (M) ;
     GrB_Type ctype = problem_spec.getBinaryOp()->ztype ;
 
-  //GrB_Info info = GB_new_bix (&C_actual, // sparse or hyper (from M), existing header
-  //                   ctype, cvlen, cvdim, GB_Ap_malloc, true,
-  //                   M_sparsity, false, problem_spec.getM()->hyper_switch, cnvec,
-  //                   cnz+1,  // add one to cnz for GB_cumsum of Cwork
-  //                   true, C_iso, NULL) ;//Context) ;
-  //if (info != GrB_SUCCESS)
-  //{
-  //    // out of memory
-  //    return (info) ;
-  //}
-  //GrB_Matrix C_actual;
-  //std::vector<int64_t> C_act_p(N+1);
-  //std::vector<int64_t> C_act_i(cnz+1);
-
-  //make_grb_matrix<T_C>( C_actual, N, N,
-  //                 C_act_p, C_act_i, (T_C*)(M->x), 
-  //                 M_sparsity,
-  //                 GxB_BY_ROW);
-
     int nthrd = p2lF.get_threads_per_block();
     int ntasks = p2elF.get_number_of_blocks(M);
 

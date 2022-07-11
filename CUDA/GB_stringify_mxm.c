@@ -206,7 +206,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // construct the semiring scode
     //--------------------------------------------------------------------------
 
-    // total scode bits: 60
+    // total scode bits: 62
 
     (*scode) =
                                             // range        bits

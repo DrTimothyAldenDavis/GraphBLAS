@@ -249,4 +249,5 @@ GrB_Desc_Value ;
 #include "GB_partition.h"
 #include "GB_binary_search.h"
 #include "GB_search_for_vector_template.c"
+#include "GB_iceil.h"
 
