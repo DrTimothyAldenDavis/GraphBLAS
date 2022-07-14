@@ -16,6 +16,7 @@
 #include <cub/block/block_scan.cuh>
 #include <cooperative_groups.h>
 
+using namespace cooperative_groups;
 //------------------------------------------------------------------------------
 // GB_bucket_code:  assign the dot product for C(i,j) to a specific bucket
 //------------------------------------------------------------------------------
@@ -239,7 +240,7 @@ __global__ void AxB_phase1
             while ( Mp [ k     ] >  p ) k-- ;
             ks [kk] = k ;
         }
-        __syncthreads ( ) ;
+        this_thread_block().sync();
 
         //----------------------------------------------------------------------
         // assign entries in C(i,j) to the buckets
@@ -308,8 +309,7 @@ __global__ void AxB_phase1
             my_bucket[bucket]++;
         }
     }
-
-    __syncthreads ( ) ;
+    this_thread_block().sync();
 
     //--------------------------------------------------------------------------
     // cumulative sum of each bucket
@@ -330,11 +330,11 @@ __global__ void AxB_phase1
         if( threadIdx.x == blockDim.x-1) {
             blockbucket [blockIdx.x + b * gridDim.x] = my_bucket[b] ;
         }
-        __syncthreads();
+        this_thread_block().sync();
 
         BlockCumSum(temp_storage).ExclusiveSum( my_bucket[b], my_bucket[b]) ;
 
-        __syncthreads();
+        this_thread_block().sync();
 
         nanobucket [b * blockDim.x] = my_bucket[b] ;
     }

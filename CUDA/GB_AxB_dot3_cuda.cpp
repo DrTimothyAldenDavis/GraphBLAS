@@ -160,14 +160,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         return (info) ;
     }
 
-    // FIXME: why set C->i and C->x to zero?
-//  CHECK_CUDA_SIMPLE(cudaMemsetAsync(C->i, 0, (cnz+1) * sizeof(int64_t),
-//      stream));
-//  if (!C_iso)
-//  {
-//      CHECK_CUDA_SIMPLE(cudaMemsetAsync(C->x, 0,
-//          (cnz+1) * sizeof(ctype->size), stream));
-//  }
 
     CHECK_CUDA_SIMPLE(cudaMemAdvise( C->i, (cnz+1) * sizeof ( int64_t),
         cudaMemAdviseSetPreferredLocation, device));
@@ -246,6 +238,35 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 //      A bit           B full
 //      A full          B bit
 //      A bit           B bit
+    if ( GB_IS_FULL(A) && GB_IS_FULL(B) ){
+
+        dense_phase1launchFactory dp1lf(my_mxm_spec);
+
+        GBURBLE ("(GPU phase1 start nblk = %d) ", dp1lf.get_number_of_blocks(M)) ;
+        kernel_timer.Start();
+        dp1lf.jitGridBlockLaunch(C, M, A, B, stream);
+        CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
+        kernel_timer.Stop();
+        GBURBLE ("(GPU phase1 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
+
+        //  mxm_DenselaunchFactory mdlf(my_mxm_spec);
+        GBURBLE ("(GPU Dense full x full launch ) ") ;
+        kernel_timer.Start();
+        //  mdlf.jitGridBlockLaunch( C, M, A, B, stream);
+        CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));  // only for timing
+        kernel_timer.Stop();
+        GBURBLE ("(GPU Dense full x full done %12.6g ms, rate=%12.6g)\n", 
+                   kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
+
+    } // Full x Full
+    else if ( GB_IS_FULL(A) && GB_IS_BITMAP(B) ) {
+
+    }//  Full x Bitmap
+    else if ( GB_IS_BITMAP(A) && GB_IS_FULL(B) ) {
+
+    }//  Bitmap x Full
+    else if ( GB_IS_BITMAP(A) && GB_IS_BITMAP(B) ) {
+    }//  Bitmap x Bitmap
 
 // (2)
 //      A sparse        B full
@@ -268,7 +289,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
 //          && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B)
 //          && !GB_IS_FULL (A) && !GB_IS_FULL (B))
-
+    if ( GB_IS_SPARSE(A) && GB_IS_SPARSE(B) )
+    {
     //--------------------------------------------------------------------------
     // construct the tasks for phase1 and phase2
     //--------------------------------------------------------------------------
@@ -459,6 +481,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     }
 
     GB_FREE_WORKSPACE ;
+    } // Sparse x Sparse
 
     CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
     CHECK_CUDA_SIMPLE(cudaStreamDestroy(stream));
