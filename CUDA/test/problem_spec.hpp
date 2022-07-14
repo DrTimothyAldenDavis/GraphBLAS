@@ -24,7 +24,7 @@ class mxm_problem_spec {
 public:
     mxm_problem_spec(GrB_Monoid monoid_, GrB_BinaryOp binop_, int64_t N_, int64_t Annz_, int64_t Bnnz_, int64_t Cnnz_) :
         mymxmfactory(GB_cuda_mxm_factory ( )), mysemiring(), binop(binop_), monoid(monoid_), N(N_),
-        G(N_, N_), Annz(Annz_), Bnnz(Bnnz_), Cnnz(Cnnz_), mask_struct(false) {
+        G(N_, N_), Annz(Annz_), Bnnz(Bnnz_), Cnnz(Cnnz_), mask_struct(true) {
 
         // FIXME: This should be getting set automatically somehow.
         bool flipxy = false;

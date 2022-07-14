@@ -563,15 +563,15 @@ bool test_AxB_dot3_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_s
     GRB_TRY (GrB_mxm(C_expected, problem_spec.getM(), NULL, problem_spec.get_semiring(), problem_spec.getB(),
                      problem_spec.getA(), problem_spec.get_mask_struct() ? GrB_DESC_ST1 : GrB_DESC_T1));
 
-
     GRB_TRY(GrB_Matrix_wait(C_expected, GrB_MATERIALIZE));
+    std::cout << "nnz: " << GB_nnz (C_expected) << std::endl ;
 
     // compare
     double tol = 0 ;
     GrB_Index nvals1 = 0, nvals2 = 0 ;
     GRB_TRY (GrB_Matrix_nvals (&nvals1, C)) ;
     GRB_TRY (GrB_Matrix_nvals (&nvals2, C_expected)) ;
-//    if (nvals1 != nvals2) { printf ("Wrong number of nonzeroes found, test fail!!!\n") ; ADD_FAILURE( ) ; }
+    if (nvals1 != nvals2) { printf ("Wrong number of nonzeroes found, test fail!!! nvals1=%ud, nvals2=%ud\n", nvals1, nvals2) ; ADD_FAILURE( ) ; }
     GrB_Index nrows, ncols ;
     GrB_Matrix_nrows (&nrows, C_expected) ;
     GrB_Matrix_ncols (&ncols, C_expected) ;
