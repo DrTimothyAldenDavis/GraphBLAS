@@ -59,9 +59,10 @@ def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds="tiny-tiny", SUM="PLUS
     """
     phase1_body= f""" test_AxB_phase1_factory< {typeC}, {typeM}, {typeA}, {typeB}>(problem_spec);"""
     phase2_body= f""" test_AxB_phase2_factory< {typeC}, {typeM}, {typeA}, {typeB} >(problem_spec);"""
-    phase3_body = f""" test_AxB_dot3_full_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > (problem_spec);\n"""
+    mxm_full_body = f""" test_AxB_dot3_full_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > (problem_spec);\n"""
+    mxm_dense_body = f""" test_AxB_dot3_dense_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > (problem_spec);\n"""
     reduce_body = f""" test_reduce_factory<{typeC}, {typeM}, {typeA}, {typeB}>(problem_spec);"""
-    phasedict = { 1: phase1_body, 2: phase2_body, 3: phase3_body, 4: reduce_body }
+    phasedict = { 1: phase1_body, 2: phase2_body, 3: mxm_full_body, 4: mxm_dense_body, 5: reduce_body }
 
     return TEST_HEAD, phasedict
 
@@ -104,7 +105,7 @@ def write_test_instances_header(test_suite_name, Monoids, Binops, Semirings, Dat
                             TEST_HEAD, TEST_BODY = buildTest( Test_suite, Kernels, ds, m, b,
                                                               dtC, dtM, dtA, dtB, dtX, dtY, dtZ)
                             fp.write( TEST_HEAD)
-                            for phase in [1, 2, 3, 4]:
+                            for phase in [ 4]:
                                 fp.write( TEST_BODY[phase])
                             fp.write( "}\n")
 

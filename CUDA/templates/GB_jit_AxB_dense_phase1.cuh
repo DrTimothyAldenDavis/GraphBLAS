@@ -26,7 +26,7 @@ using namespace cooperative_groups;
 
 
 template<typename T_M, uint64_t srcode, int chunk_size = 128>
-__global__ void AxB_phase1
+__global__ void AxB_dense_phase1
 (
     // input/output:
     GrB_Matrix C,           // final output matrix

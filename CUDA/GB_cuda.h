@@ -14,6 +14,8 @@
 
 extern "C"
 {
+#include <cassert>
+#include <cmath>
     #include "GB.h"
 }
 
@@ -23,8 +25,6 @@ extern "C"
 #include "jitify.hpp"
 #include "GB_cuda_mxm_factory.hpp"
 
-#include <cassert>
-#include <cmath>
 #include <iostream>
 
 #define CHECK_CUDA_SIMPLE(call)                                           \

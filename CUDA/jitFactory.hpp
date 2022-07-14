@@ -401,7 +401,7 @@ public:
 class mxm_dense_launchFactory
 {
   std::string base_name = "GB_jit";
-  std::string kernel_name = "AxB_dot3_dndn";
+  std::string kernel_name = "AxB_dot3_phase3_dndn";
 
   GB_cuda_mxm_factory &mxm_factory_;
 

@@ -99,7 +99,7 @@ template<
     typename T_C, typename T_A, typename T_B,
     typename T_Z, typename T_X, typename T_Y,
     uint64_t srcode>
-__global__ void AxB_dot3_dndn 
+__global__ void AxB_dot3_phase3_dndn
 (
     GrB_Matrix C,
     GrB_Matrix M,
@@ -128,7 +128,7 @@ __global__ void AxB_dot3_dndn
     int64_t pair_id;
 
     int64_t start = 0;
-    int64_t end   = GB_nnz(M);
+    int64_t end   = M->p[M->nvec];
 
     // total items to be inspected
     int64_t nnzA = 0;
