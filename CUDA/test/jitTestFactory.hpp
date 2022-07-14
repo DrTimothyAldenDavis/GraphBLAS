@@ -479,8 +479,8 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
                 double is_same = false ;
                 GRB_TRY (GrB_Matrix_reduce_FP64 (&is_same, NULL, GrB_PLUS_MONOID_FP64,
                     Diff, NULL)) ;
-                printf("difference = %12.6g, rel_l1_err=%12.6g\n", is_same, is_same/nrows );
-                EXPECT_LT( is_same/nrows, tol);
+                printf("difference = %12.6g, rel_l1_err=%12.6g\n", is_same, is_same/nvals3 );
+                EXPECT_LT( is_same/nvals3, tol);
                 GRB_TRY (GrB_Matrix_free (&Diff)) ;
 
             }
@@ -542,11 +542,15 @@ bool test_AxB_dot3_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_s
     p1lF.jitGridBlockLaunch(C, M, A, B, strm);
     CHECK_CUDA(cudaStreamSynchronize(strm));
     kernTimer.Stop();
-    std::cout<<"phase3 dense test internal phase1 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+    std::cout<<"Dense internal phase1 kernel done "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 
+    std::cout << "Running dense kernel" << std::endl;
     mxm_dense_launchFactory p3lf(mymxm);
+    kernTimer.Start();
     p3lf.jitGridBlockLaunch( C, M, A, B, strm);
     CHECK_CUDA(cudaStreamSynchronize(strm));
+    kernTimer.Stop();
+    std::cout<<"Dense kernel done "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 
     GRB_TRY(GrB_Matrix_wait(C, GrB_MATERIALIZE));
     fflush(stdout);
@@ -571,7 +575,7 @@ bool test_AxB_dot3_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_s
     GrB_Index nvals1 = 0, nvals2 = 0 ;
     GRB_TRY (GrB_Matrix_nvals (&nvals1, C)) ;
     GRB_TRY (GrB_Matrix_nvals (&nvals2, C_expected)) ;
-    if (nvals1 != nvals2) { printf ("Wrong number of nonzeroes found, test fail!!! nvals1=%ud, nvals2=%ud\n", nvals1, nvals2) ; ADD_FAILURE( ) ; }
+    if (nvals1 != nvals2) { printf ("Wrong number of nonzeroes found, test fail!!! nvals1=%lu, nvals2=%lu\n", nvals1, nvals2) ; ADD_FAILURE( ) ; }
     GrB_Index nrows, ncols ;
     GrB_Matrix_nrows (&nrows, C_expected) ;
     GrB_Matrix_ncols (&ncols, C_expected) ;
@@ -591,7 +595,7 @@ bool test_AxB_dot3_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_s
     else if (type == GrB_UINT32) op = GrB_EQ_UINT32 ;
     else if (type == GrB_UINT64) op = GrB_EQ_UINT64 ;
     else if (type == GrB_FP32  )
-    {   tol = 1e-6;
+    {   tol = 5e-6;
         op = (tol == 0)? GrB_EQ_FP32 : GrB_MINUS_FP32   ;
         op_abs = GrB_ABS_FP32 ;
     }
@@ -643,8 +647,8 @@ bool test_AxB_dot3_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_s
         double is_same = false ;
         GRB_TRY (GrB_Matrix_reduce_FP64 (&is_same, NULL, GrB_PLUS_MONOID_FP64,
                                          Diff, NULL)) ;
-        printf("difference = %12.6g, rel_l1_err=%12.6g\n", is_same, is_same/nrows );
-        EXPECT_LT( is_same/nrows, tol);
+        printf("difference = %12.6g, rel_l1_err=%12.6g\n", is_same, is_same/nvals3 );
+        EXPECT_LT( is_same/nvals3, tol);
         GRB_TRY (GrB_Matrix_free (&Diff)) ;
 
     }
