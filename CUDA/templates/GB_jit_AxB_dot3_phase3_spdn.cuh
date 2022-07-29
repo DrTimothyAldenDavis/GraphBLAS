@@ -125,10 +125,10 @@ __global__ void AxB_dot3_phase3_spdn
           int64_t pA_end   = Ap[i+1];
           int64_t nnzA   = pA_end - pA;
 
-#if GB_B_IS_SPARSE == 1
+#if GB_B_IS_SPARSE
           int64_t pB       = Bp[j];   // col of C
           int64_t pB_end   = Bp[j+1];
-#elif GB_B_IS_FULL == 1
+#elif GB_B_IS_FULL
           int64_t pB   = (B->vlen)*j;
           int64_t pB_end = pB +(B->vlen);
 #endif
