@@ -89,9 +89,6 @@ bool test_AxB_phase1_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
     /********************
      * Launch kernel
      */
-    problem_spec.set_sparsity_control(problem_spec.getA(), GxB_SPARSE, GxB_BY_ROW);
-    problem_spec.set_sparsity_control(problem_spec.getB(), GxB_SPARSE, GxB_BY_ROW);
-
     GB_cuda_mxm_factory mysemiringfactory = problem_spec.get_mxm_factory();
     phase1launchFactory p1lF(mysemiringfactory);
 
@@ -147,9 +144,6 @@ bool test_AxB_dense_phase1_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem
     /********************
      * Launch kernel
      */
-    problem_spec.set_sparsity_control(problem_spec.getA(), GxB_FULL, GxB_BY_ROW);
-    problem_spec.set_sparsity_control(problem_spec.getB(), GxB_FULL, GxB_BY_ROW);
-
     GB_cuda_mxm_factory mysemiringfactory = problem_spec.get_mxm_factory();
     dense_phase1launchFactory p1lF(mysemiringfactory);
     p1lF.jitGridBlockLaunch(problem_spec.getC(), problem_spec.getM(), problem_spec.getA(), problem_spec.getB(), strm);
@@ -177,9 +171,6 @@ bool test_AxB_phase2_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
     phase1launchFactory p1lF(mymxm);
     phase2launchFactory p2lF;
     phase2endlaunchFactory p2elF;
-
-    problem_spec.set_sparsity_control(problem_spec.getA(), GxB_SPARSE, GxB_BY_ROW);
-    problem_spec.set_sparsity_control(problem_spec.getB(), GxB_SPARSE, GxB_BY_ROW);
 
    GpuTimer kernTimer;
    kernTimer.Start();
@@ -319,9 +310,6 @@ bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_sp
     GrB_Matrix M = problem_spec.getM();
     GrB_Matrix A = problem_spec.getA();
     GrB_Matrix B = problem_spec.getB();
-
-    problem_spec.set_sparsity_control( A, GxB_SPARSE, GxB_BY_ROW);
-    problem_spec.set_sparsity_control( B, GxB_SPARSE, GxB_BY_ROW);
 
     const int64_t mnz = GB_nnz (M) ;
     const int64_t cnz = GB_nnz (C) ;
@@ -548,9 +536,6 @@ bool test_AxB_dot3_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_s
     GrB_Matrix A = problem_spec.getA();
     GrB_Matrix B = problem_spec.getB();
 
-    problem_spec.set_sparsity_control( A, GxB_FULL, GxB_BY_ROW);
-    problem_spec.set_sparsity_control( B, GxB_FULL, GxB_BY_ROW);
-
     const int64_t mnz = GB_nnz (M) ;
     const int64_t cnz = GB_nnz (C) ;
     const int64_t cvlen = C->vlen ;
@@ -707,11 +692,6 @@ bool test_AxB_dot3_sparse_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &pr
     GrB_Matrix M = problem_spec.getM();
     GrB_Matrix A = problem_spec.getA();
     GrB_Matrix B = problem_spec.getB();
-
-    problem_spec.set_sparsity_control( A, GxB_SPARSE, GxB_BY_ROW);
-
-    // TODO: Need to make sure the format itself is actually dense.
-    problem_spec.set_sparsity_control( B, GxB_FULL, GxB_BY_ROW);
 
     auto mymxm = problem_spec.get_mxm_factory();
     dense_phase1launchFactory p1lF(mymxm);
