@@ -244,16 +244,16 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
         GBURBLE ("(GPU phase1 start nblk = %d) ", dp1lf.get_number_of_blocks(M)) ;
         kernel_timer.Start();
-        dp1lf.jitGridBlockLaunch(C, M, A, B, stream);
-        CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
+            dp1lf.jitGridBlockLaunch(C, M, A, B, stream);
+            CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
         kernel_timer.Stop();
         GBURBLE ("(GPU phase1 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
 
-        //  mxm_DenselaunchFactory mdlf(my_mxm_spec);
+        mxm_dense_launchFactory mdlf(my_mxm_spec);
         GBURBLE ("(GPU Dense full x full launch ) ") ;
         kernel_timer.Start();
-        //  mdlf.jitGridBlockLaunch( C, M, A, B, stream);
-        CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));  // only for timing
+            mdlf.jitGridBlockLaunch( C, M, A, B, stream);
+            CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));  // only for timing
         kernel_timer.Stop();
         GBURBLE ("(GPU Dense full x full done %12.6g ms, rate=%12.6g)\n", 
                    kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
@@ -273,6 +273,35 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 //      A hyper         B full      GB_IS_HYPERSPARSE(A) && GB_IS_FULL (B))
 //      A sparse        B bit
 //      A hyper         B bit
+    if ( GB_IS_SPARSE(A) && GB_IS_FULL(B) ){
+
+        dense_phase1launchFactory dp1lf(my_mxm_spec);
+
+        GBURBLE ("(GPU phase1 start nblk = %d) ", dp1lf.get_number_of_blocks(M)) ;
+        kernel_timer.Start();
+            dp1lf.jitGridBlockLaunch(C, M, A, B, stream);
+            CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
+        kernel_timer.Stop();
+        GBURBLE ("(GPU phase1 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
+
+        mxm_sparse_dense_launchFactory spdnlf(my_mxm_spec);
+        GBURBLE ("(GPU Dense sparse x full launch ) ") ;
+        kernel_timer.Start();
+            spdnlf.jitGridBlockLaunch( C, M, A, B, stream);
+            CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));  // only for timing
+        kernel_timer.Stop();
+        GBURBLE ("(GPU Dense sparse x full done %12.6g ms, rate=%12.6g)\n", 
+                   kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
+
+    } // Sparse x Full
+    else if ( GB_IS_HYPERSPARSE(A) && GB_IS_FULL(B) ) {
+
+    }//  Hyper x Full 
+    else if ( GB_IS_HYPERSPARSE(A) && GB_IS_BITMAP(B) ) {
+
+    }//  Sparse x Bitmap 
+    else if ( GB_IS_BITMAP(A) && GB_IS_BITMAP(B) ) {
+    }//  Hyper x Bitmap
 
 // (3)
 //      A full          B sparse

@@ -6,14 +6,10 @@
 //  Template on <T_C, T_A, T_B, T_X, T_Y, T_Z >
 //  Parameters:
 
-//  int64_t start          <- beginning of bucket  
-//  int64_t end            <- end of bucket
-//  int64_t *Bucket        <- index of each pair in this bucket
 //  matrix<T_C> *C         <- C result matrix 
 //  matrix<T_C> *M         <- Mask matrix 
 //  matrix<T_A> *A         <- A matrix to multiply, sparse 
 //  matrix<T_B> *B         <- B matrix to multiply, dense in sparse format? 
-//  int sz                 <- size hint for smaller vector
 //******************************************************************************
 
 /* fixme: This kernel needs to be split into 4 methods.  Perhaps a single
@@ -72,14 +68,10 @@ template<
     uint64_t srcode>
 __global__ void AxB_dot3_phase3_spdn
 ( 
-  int64_t start, 
-  int64_t end,
-  int64_t *Bucket,  // do the work in Bucket [start:end-1]
   GrB_Matrix C, 
   GrB_Matrix M, 
   GrB_Matrix A, 
   GrB_Matrix B,
-  int sz 
 )
 {
     // TODO: Figure out how to use graphblas-specific INFINITY macro
@@ -87,7 +79,7 @@ __global__ void AxB_dot3_phase3_spdn
     #define INFINITY std::numeric_limits<T_C>::max()
     #endif
 
-    const T_A *__restrict__ Ax = (T_A *)A->x  ;
+   const T_A *__restrict__ Ax = (T_A *)A->x  ;
    const T_B *__restrict__ Bx = (T_B *)B->x  ;
          T_C *__restrict__ Cx = (T_C *)C->x  ;
          int64_t *__restrict__ Ci = C->i ;
@@ -100,32 +92,23 @@ __global__ void AxB_dot3_phase3_spdn
 //   typedef cub::BlockReduce<int, 32> BlockReduce;
 //   __shared__ typename BlockReduce::TempStorage temp_storage;
 
-   // sz = expected non-zeros per dot 
-   int m = 256/sz;
-   int nvec = end - start;
-   int dpt = nvec/32;
-   m = dpt < m ? dpt : m;
 //   if( threadIdx.x ==0)
 //      printf("thd:%d %d dots/thrd, nvec = %d blockDim=%d\n",threadIdx.x, sz, nvec, blockDim.x);
 //   __syncthreads();
-   int dots = (nvec +m -1)/m;
 
-//   printf("dots=%d, m=%d, dpt=%d\n", dots, m, dpt);
-   int zc = 0;
-     
-   for ( int tid= threadIdx.x +blockDim.x*blockIdx.x;
-             tid < dots;
-             tid += blockDim.x * gridDim.x) {
-      int64_t kk, pair_id, im; 
+      int64_t pair_id; 
+
+      int64_t start = 0;
+      int64_t end = M->p[M->nvec];
 //       if (threadIdx.x ==0)
 //         printf("thd%u pi=%lld\n",tid, start+threadIdx.x);
 //       __syncthreads();
 
-      for (int64_t kk = start+tid, im = 0; 
-                   kk < end && im < m  ;  
-                   kk += dots,  ++im     ){
+      for (int64_t kk = start +threadIdx.x +blockIdx.x*blockDim.x; 
+                   kk < end ;  
+                   kk += gridDim.x*blockDim.x  ){
 
-         pair_id = Bucket[ kk ] ;
+         pair_id =  kk ;
          int64_t i = Mi[pair_id];  // cols from mask
 
          int64_t j = Ci[pair_id] >> 4;  // row number of C previously encoded in phase1
@@ -136,6 +119,7 @@ __global__ void AxB_dot3_phase3_spdn
 //         printf("thd%u i,j=%lld,%lld\n",tid, i,j);
 //      __syncthreads();
 
+          // FIXME:  this should use flags on A and B instead
           // Prep row offsets for both A and B
           int64_t pA       = Ap[i];   // row of C
           int64_t pA_end   = Ap[i+1];
@@ -322,7 +306,4 @@ __global__ void AxB_dot3_phase3_spdn
          if(threadIdx.x == 0 && zc > 0)
             atomicAdd(&(C->nzombies), zc);
       }
-  
-   }
-   
 }

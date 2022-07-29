@@ -505,6 +505,116 @@ private:
 };
 
 //------------------------------------------------------------------------------
+// dot3: mxm_sparse_dense_launchFactory
+//------------------------------------------------------------------------------
+
+class mxm_sparse_dense_launchFactory
+{
+  std::string base_name = "GB_jit";
+  std::string kernel_name = "AxB_dot3_phase3_spdn";
+
+  GB_cuda_mxm_factory &mxm_factory_;
+
+public:
+
+  /**
+   * This assumes the needed state on the GB_cuda_mxm_factory has already been populated.
+   * The `bucket_code` determines which kernel is launched
+   */
+  mxm_sparse_dense_launchFactory(GB_cuda_mxm_factory &mymxmfactory):
+      mxm_factory_(mymxmfactory) {}
+
+  bool jitGridBlockLaunch( GrB_Matrix C,  GrB_Matrix M, GrB_Matrix A, GrB_Matrix B,
+                          cudaStream_t stream = 0) {
+
+      bool result = false;
+
+    //----------------------------------------------------------------------
+    // do the numerical work
+    //----------------------------------------------------------------------
+
+    const int64_t nz = GB_nnz(M); // number of dots in the mask
+    const int64_t mnvec = M->nvec ;
+
+    int gridsz, blocksz;
+
+    std::stringstream final_kernel_name_ss;
+    final_kernel_name_ss << kernel_name;
+
+    /**
+     * Configure geometry and kernel function name based on sparsity of C and number of vectors in M
+     */
+    configure( nz, mnvec, final_kernel_name_ss, blocksz, gridsz);
+
+    auto sr_code = std::to_string(mxm_factory_.sr_code);
+
+    GrB_BinaryOp mult = mxm_factory_.semiring->multiply ;
+
+    std::string hashable_name = base_name + "_" + final_kernel_name_ss.str();
+    std::stringstream string_to_be_jitted ;
+    std::vector<std::string> template_types =
+    {
+        C->type->name, A->type->name, B->type->name,
+        mult->ztype->name, mult->xtype->name, mult->ytype->name,
+        sr_code
+    };
+
+    jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
+    filecache.getFile (mxm_factory_) ;
+
+    string_to_be_jitted << hashable_name << std::endl <<
+    R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
+    R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
+
+    dim3 grid(gridsz);
+    dim3 block(blocksz);
+
+    GBURBLE ("(GPU dot3 mxm sparse_dense launch nblocks,blocksize= %d,%d )\n", gridsz,blocksz) ;
+    jit::launcher( hashable_name + "_" + sr_code,
+                   string_to_be_jitted.str(),
+                   header_names,
+                   compiler_flags,
+                   file_callback)
+               .set_kernel_inst(final_kernel_name_ss.str(), template_types )
+                               // { C->type->name,
+                               //   A->type->name,
+                               //   B->type->name })
+               .configure(grid, block, SMEM, stream) //if commented, use implicit 1D configure in launch
+               .launch(
+                        C,                 // final output matrix
+                                           // inputs, not modified:
+                        M,                 // Mi used for column index
+                        A,                 // A matrix
+                        B                  // B matrix
+                    );
+
+    result= true;
+
+    return result;
+  }
+
+private:
+    void configure(std::int64_t Cnz, std::int64_t mnvec, std::stringstream &opname,
+                   int &blocksz, int &gridsz) {
+    int number_of_sms = GB_Global_gpu_sm_get (0) ;
+
+    int work_per_thread;
+
+     blocksz = 64;
+     work_per_thread = 8;
+     
+     if( Cnz > 1024){
+       blocksz = 512;
+       work_per_thread = 64;
+     }
+
+     // gridsz = ceiling (Cnz / work_per_thread*blocksz)
+     gridsz = GB_ICEIL (Cnz, work_per_thread*blocksz) ;
+
+  }
+};
+
+//------------------------------------------------------------------------------
 // dot3: phase3launchFactory
 //------------------------------------------------------------------------------
 
