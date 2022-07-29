@@ -79,7 +79,7 @@ set(CUDA_TEST_BINOPS TIMES PLUS MIN MAX DIV) #MINUS RDIV RMINUS FIRST SECOND PAI
 set(CUDA_TEST_SEMIRINGS PLUS_TIMES MIN_PLUS MAX_PLUS)
 set(CUDA_TEST_DATATYPES int32_t int64_t uint32_t uint64_t float double)
 set(CUDA_TEST_KERNELS vsvs) # mp vsvs dndn spdn vssp)
-set(CUDA_TEST_FORMATS full dense sparse_dense reduce)
+set(CUDA_TEST_FORMATS sparse_dense )#full dense sparse_dense reduce)
 
 
 # TODO: Update testGen.py to accept the above CUDA_TEST_* params as arguments
