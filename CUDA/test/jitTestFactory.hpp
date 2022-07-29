@@ -285,7 +285,7 @@ template <
 bool test_AxB_dot3_sparse_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
 
     // FIXME: Allow the adaptive tests in this guy
-    std::cout << "phase 3 test ======================" << std::endl;
+    std::cout << "sparse phase 3 test ======================" << std::endl;
 
     GpuTimer kernTimer;
 
@@ -680,7 +680,7 @@ template <
         typename T_X, typename T_Y, typename T_Z>
 bool test_AxB_dot3_sparse_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
 
-    std::cout << "phase dense  test ======================" << std::endl;
+    std::cout << "sparse dense test ======================" << std::endl;
 
     GpuTimer kernTimer;
 
@@ -713,20 +713,20 @@ bool test_AxB_dot3_sparse_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &pr
     bool C_iso = false ;
     GrB_Type ctype = problem_spec.getBinaryOp()->ztype ;
 
-    std::cout << "Running phase1 kernel" << std::endl;
+    std::cout << "Running dense_phase1 kernel" << std::endl;
     kernTimer.Start();
     p1lF.jitGridBlockLaunch(C, M, A, B, strm);
     CHECK_CUDA(cudaStreamSynchronize(strm));
     kernTimer.Stop();
     std::cout<<"Dense internal phase1 kernel done "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 
-    std::cout << "Running dense kernel" << std::endl;
+    std::cout << "Running sparse dense kernel" << std::endl;
     mxm_sparse_dense_launchFactory p3lf(mymxm);
     kernTimer.Start();
     p3lf.jitGridBlockLaunch( C, M, A, B, strm);
     CHECK_CUDA(cudaStreamSynchronize(strm));
     kernTimer.Stop();
-    std::cout<<"Dense kernel done "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+    std::cout<<"Sparse_Dense done "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 
     GRB_TRY(GrB_Matrix_wait(C, GrB_MATERIALIZE));
     fflush(stdout);
