@@ -690,9 +690,6 @@ bool test_AxB_dot3_sparse_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &pr
     // TODO: Need to make sure the format itself is actually dense.
     problem_spec.set_sparsity_control( B, GxB_FULL, GxB_BY_ROW);
 
-    GRB_TRY (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
-    GRB_TRY (GrB_Matrix_wait (B, GrB_MATERIALIZE)) ;
-
     auto mymxm = problem_spec.get_mxm_factory();
     dense_phase1launchFactory p1lF(mymxm);
 

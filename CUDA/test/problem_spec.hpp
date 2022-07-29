@@ -22,7 +22,8 @@ template<typename T_C, typename T_M, typename T_A, typename T_B>
 class mxm_problem_spec {
 
 public:
-    mxm_problem_spec(GrB_Monoid monoid_, GrB_BinaryOp binop_, int64_t N_, int64_t Annz_, int64_t Bnnz_, int64_t Cnnz_) :
+    mxm_problem_spec(GrB_Monoid monoid_, GrB_BinaryOp binop_, int64_t N_, int64_t Annz_, int64_t Bnnz_, int64_t Cnnz_,
+                     int sparsity_control_A_ = GxB_SPARSE, int sparsity_control_B_ = GxB_SPARSE) :
         mysemiring(), binop(binop_), monoid(monoid_), N(N_),
         G(N_, N_), Annz(Annz_), Bnnz(Bnnz_), Cnnz(Cnnz_), mask_struct(true), flipxy(false), mask_comp(false) {
 
@@ -30,8 +31,8 @@ public:
         float Cnzpercent = (float) Cnnz_/(N_*N_);
 
         // TODO: Allocate and fill arrays for buckets and nano buckets
-        G.init_A(Annz_, GxB_SPARSE, GxB_BY_ROW);
-        G.init_B(Bnnz_, GxB_SPARSE, GxB_BY_ROW);
+        G.init_A(Annz_, sparsity_control_A_, GxB_BY_ROW);
+        G.init_B(Bnnz_, sparsity_control_B_, GxB_BY_ROW);
         G.init_C(Cnzpercent);
 //        G.fill_buckets( TB ); // all elements go to testbucket= TB
 
@@ -40,6 +41,11 @@ public:
          */
         auto grb_info = GrB_Semiring_new(&mysemiring, monoid_, binop_);
         GRB_TRY (grb_info) ;
+        GrB_Matrix A = G.getA();
+        GrB_Matrix B = G.getB();
+
+        GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout)) ;
+        GRB_TRY (GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout)) ;
 
     }
 
