@@ -52,6 +52,7 @@ public:
         int C_sparsity = GB_sparsity (M) ;
         GrB_Type ctype = binop_->ztype ;
 
+
         mymxmfactory.mxm_factory (
                 C_iso, C_sparsity, ctype,
                 M, mask_struct, mask_comp,

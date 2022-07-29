@@ -71,7 +71,7 @@ __global__ void AxB_dot3_phase3_spdn
   GrB_Matrix C, 
   GrB_Matrix M, 
   GrB_Matrix A, 
-  GrB_Matrix B,
+  GrB_Matrix B
 )
 {
     // TODO: Figure out how to use graphblas-specific INFINITY macro
@@ -124,6 +124,7 @@ __global__ void AxB_dot3_phase3_spdn
           int64_t pA       = Ap[i];   // row of C
           int64_t pA_end   = Ap[i+1];
           int64_t nnzA   = pA_end - pA;
+
           int64_t pB       = Bp[j];   // col of C
           int64_t pB_end   = Bp[j+1];
           int64_t nnzB   = pB_end - pB;
@@ -151,7 +152,7 @@ __global__ void AxB_dot3_phase3_spdn
               // TODO: Check tha GB_C_MULT applies the identity automatically since cij has not been initialized
               GB_C_MULT ( cij, aki, bkj ) ;           // cij = aki * bkj
 
-              //printf("A_dense: tid=%d, pair_id=%d, i=%lu, j=%lu, nnzA=%lu, nnzB=%lu, k[B]=%lu, aki=%d, bkj=%d, cij=%d\n", threadIdx.x, pair_id, i, j, nnzA, nnzB, k, aki, bkj, cij);
+              printf("A_dense: tid=%d, pair_id=%d, i=%lu, j=%lu, nnzA=%lu, nnzB=%lu, k[B]=%lu, aki=%d, bkj=%d, cij=%d\n", threadIdx.x, pair_id, i, j, nnzA, nnzB, k, aki, bkj, cij);
 
               /**
                *

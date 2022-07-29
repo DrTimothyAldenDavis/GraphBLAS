@@ -94,7 +94,7 @@ template<  typename T_C, typename T_M,
 
 static const std::vector<std::string> compiler_flags{
    "-std=c++14",
-   //"-G",
+//   "-G",
    "-remove-unused-globals",
    "-w",
    "-D__CUDACC_RTC__",
