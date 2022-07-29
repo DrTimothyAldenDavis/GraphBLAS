@@ -41,10 +41,10 @@ public:
          */
         auto grb_info = GrB_Semiring_new(&mysemiring, monoid_, binop_);
         GRB_TRY (grb_info) ;
-//        GrB_Matrix A = G.getA();
-//        GrB_Matrix B = G.getB();
-//        GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout)) ;
-//        GRB_TRY (GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout)) ;
+        GrB_Matrix A = G.getA();
+        GrB_Matrix B = G.getB();
+        GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout)) ;
+        GRB_TRY (GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout)) ;
     }
 
     ~mxm_problem_spec() {

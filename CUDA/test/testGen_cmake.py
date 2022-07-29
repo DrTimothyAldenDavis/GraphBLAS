@@ -31,10 +31,10 @@ FORMATS = { "sparse": ["phase1", "phase2", "mxm_sparse"],
             "reduce": ["reduce"]}
 
 FORMAT_INPUTS = {
-    "sparse": ("GxB_SPARSE", "GxB_SPARSE"),
-    "dense": ("GxB_FULL", "GxB_FULL"),
-    "sparse_dense": ("GxB_SPARSE", "GxB_FULL"),
-    "reduce": ("GxB_SPARSE", "GxB_SPARSE")
+    "sparse": [("GxB_SPARSE", "GxB_SPARSE")],
+    "dense": [("GxB_FULL", "GxB_FULL"), ("GxB_BITMAP", "GxB_BITMAP")],
+    "sparse_dense": [("GxB_SPARSE", "GxB_FULL")],
+    "reduce": [("GxB_SPARSE", "GxB_SPARSE")]
 }
 
 FORMAT_DATASETS = {
@@ -60,13 +60,16 @@ def build_gb_binop(t, b):
 
 
 
-def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds="tiny-tiny", 
-              SUM="PLUS", PRODUCT="TIMES", mat_format = "full",
-              typeC="int32_t",typeM="int32_t",typeA="int32_t",typeB="int32_t",type_x="int32_t",
-              type_y="int32_t",type_z="int32_t"):
+def buildTest(ts="TestsuiteName", ds="tiny-tiny", df=("GxB_SPARSE", "GxB_SPARSE"),
+              SUM="PLUS", PRODUCT="TIMES",
+              typeC="int32_t",typeM="int32_t",
+              typeA="int32_t",typeB="int32_t",
+              type_x="int32_t", type_y="int32_t",type_z="int32_t"):
 
     # build string interpolation from pieces
-    Test_name = f"{ds}{SUM}_{PRODUCT}_C{typeC}M{typeM}A{typeA}B{typeB}X{type_x}Y{type_y}Z{type_z}"
+    format_A, format_B = df
+
+    Test_name = f"{ds}{SUM}_{PRODUCT}__{format_A}_{format_B}__C{typeC}M{typeM}A{typeA}B{typeB}X{type_x}Y{type_y}Z{type_z}"
     Test_suite = f"{ts}"
 
     N = DataShapes[ds]['N']
@@ -76,8 +79,6 @@ def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds="tiny-tiny",
 
     gb_monoid = build_gb_monioid(typeC, SUM)
     gb_binop = build_gb_binop(typeC, PRODUCT)
-
-    format_A, format_B = FORMAT_INPUTS[mat_format]
 
     TEST_HEAD = f"""
     TEST( {Test_suite}, {Test_name}) {{
@@ -134,12 +135,13 @@ def write_test_instances_header(test_suite_name, mat_format, tests, Monoids, Bin
                 for dtA in DataTypes:
                     for dtB in DataTypes:
                         for ds in FORMAT_DATASETS[mat_format]:
-                            TEST_HEAD, TEST_BODY = buildTest( Test_suite, Kernels, ds, m, b, mat_format,
-                                                              dtC, dtM, dtA, dtB, dtX, dtY, dtZ)
-                            fp.write( TEST_HEAD)
-                            for test in tests:
-                                fp.write( TEST_BODY[test] )
-                            fp.write( "}\n")
+                            for df in FORMAT_INPUTS[mat_format]:
+                                TEST_HEAD, TEST_BODY = buildTest( Test_suite, ds, df, m, b,
+                                                                  dtC, dtM, dtA, dtB, dtX, dtY, dtZ)
+                                fp.write( TEST_HEAD)
+                                for test in tests:
+                                    fp.write( TEST_BODY[test] )
+                                fp.write( "}\n")
 
 def write_cuda_test(source_dir, test_suite_name, mat_format, semiring, kernel):
     import shutil
