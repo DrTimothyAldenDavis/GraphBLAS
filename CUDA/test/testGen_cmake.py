@@ -44,7 +44,8 @@ def build_gb_binop(t, b):
 
 
 
-def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds="tiny-tiny", SUM="PLUS", PRODUCT="TIMES",
+def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds="tiny-tiny", 
+              SUM="PLUS", PRODUCT="TIMES", mat_format = "full",
               typeC="int32_t",typeM="int32_t",typeA="int32_t",typeB="int32_t",type_x="int32_t",
               type_y="int32_t",type_z="int32_t"):
 
@@ -60,7 +61,7 @@ def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds="tiny-tiny", SUM="PLUS
     gb_monoid = build_gb_monioid(typeC, SUM)
     gb_binop = build_gb_binop(typeC, PRODUCT)
 
-    format_A, format_B = FORMAT_INPUTS[format]
+    format_A, format_B = FORMAT_INPUTS[mat_format]
 
     TEST_HEAD = f"""
     TEST( {Test_suite}, {Test_name}) {{
@@ -114,12 +115,12 @@ def load_types(argv):
 
     return argv[1], test_suite_name, Monoids, Binops, Semirings, DataTypes, DataShapes, Kernels
 
-def write_test_instances_header(test_suite_name, format, tests, Monoids, Binops, Semirings, DataTypes, DataShapes, Kernels):
-    outfile = f'{test_suite_name}_{Semirings}_{format}_test_instances.hpp'
+def write_test_instances_header(test_suite_name, mat_format, tests, Monoids, Binops, Semirings, DataTypes, DataShapes, Kernels):
+    outfile = f'{test_suite_name}_{Semirings}_{mat_format}_test_instances.hpp'
     with open(outfile, 'w') as fp:
         fp.write("#pragma once\n#include \"problem_spec.hpp\"\n");
         m, b = Semirings.split("_")
-        Test_suite = f'{test_suite_name}_tests_{format}_{m}_{b}'
+        Test_suite = f'{test_suite_name}_tests_{mat_format}_{m}_{b}'
         for dtC in DataTypes:
             dtX = dtC
             dtY = dtC
@@ -128,22 +129,22 @@ def write_test_instances_header(test_suite_name, format, tests, Monoids, Binops,
                 for dtA in DataTypes:
                     for dtB in DataTypes:
                         for ds in DataShapes:
-                            TEST_HEAD, TEST_BODY = buildTest( Test_suite, Kernels, ds, m, b,
+                            TEST_HEAD, TEST_BODY = buildTest( Test_suite, Kernels, ds, m, b, mat_format,
                                                               dtC, dtM, dtA, dtB, dtX, dtY, dtZ)
                             fp.write( TEST_HEAD)
                             for test in tests:
                                 fp.write( TEST_BODY[test] )
                             fp.write( "}\n")
 
-def write_cuda_test(source_dir, test_suite_name, format, semiring, kernel):
+def write_cuda_test(source_dir, test_suite_name, mat_format, semiring, kernel):
     import shutil
 
-    shutil.copy(f"{source_dir}/test/cuda_tests_template.cpp", f"{test_suite_name}_{semiring}_{format}_cuda_tests.cpp")
+    shutil.copy(f"{source_dir}/test/cuda_tests_template.cpp", f"{test_suite_name}_{semiring}_{mat_format}_cuda_tests.cpp")
 
-    with open(f"{test_suite_name}_{semiring}_{format}_cuda_tests.cpp", "a") as file_object:
+    with open(f"{test_suite_name}_{semiring}_{mat_format}_cuda_tests.cpp", "a") as file_object:
         # Keeping this as a separate file for now to allow for further nesting
         # of test instances for each test_suite_name
-        file_object.write(f"\n#include \"{test_suite_name}_{semiring}_{format}_test_instances.hpp\"")
+        file_object.write(f"\n#include \"{test_suite_name}_{semiring}_{mat_format}_test_instances.hpp\"")
 
 if __name__ == "__main__":
     import sys
@@ -156,6 +157,6 @@ if __name__ == "__main__":
     """
     source_dir, test_suite_name, Monoids, Binops, Semirings, DataTypes, DataShapes, Kernels = load_types(sys.argv)
 
-    for format, tests in FORMATS.items():
-        write_test_instances_header(test_suite_name, format, tests, Monoids, Binops, Semirings, DataTypes, DataShapes, DOT3_BUCKETS)
-        write_cuda_test(source_dir, test_suite_name, format, Semirings, Kernels)
+    for mat_format, tests in FORMATS.items():
+        write_test_instances_header(test_suite_name, mat_format, tests, Monoids, Binops, Semirings, DataTypes, DataShapes, DOT3_BUCKETS)
+        write_cuda_test(source_dir, test_suite_name, mat_format, Semirings, Kernels)
