@@ -18,7 +18,8 @@ DOT3_BUCKETS = [1, 2]    # NBUCKETS, hard-coded
 
 FORMATS = { "full": ["phase1", "phase2", "mxm_full"],
             "dense": ["mxm_dense"],
-            "sparse_dense": ["mxm_sparse_dense"] }
+            "sparse_dense": ["mxm_sparse_dense"],
+            "reduce": ["reduce"]}
 
 
 def std_type_to_gb_type(t):
@@ -67,7 +68,12 @@ def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds="tiny-tiny", SUM="PLUS
     mxm_dense_body = f""" test_AxB_dot3_dense_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > (problem_spec);\n"""
     mxm_sparse_dense_body = f""" test_AxB_dot3_sparse_dense_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > (problem_spec);\n"""
     reduce_body = f""" test_reduce_factory<{typeC}, {typeM}, {typeA}, {typeB}>(problem_spec);"""
-    phasedict = { "phase1": phase1_body, "phase2": phase2_body, "mxm_full": mxm_full_body, "mxm_dense": mxm_dense_body, "mxm_sparse_dense": mxm_sparse_dense_body, "mxm_reduce": reduce_body }
+    phasedict = { "phase1": phase1_body,
+                  "phase2": phase2_body,
+                  "mxm_full": mxm_full_body,
+                  "mxm_dense": mxm_dense_body,
+                  "mxm_sparse_dense": mxm_sparse_dense_body,
+                  "reduce": reduce_body }
 
     return TEST_HEAD, phasedict
 
