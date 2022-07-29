@@ -15,17 +15,33 @@ SUPPORTED_TYPES = {
 
 DOT3_BUCKETS = [1, 2]    # NBUCKETS, hard-coded
 
+DataShapes ={
+    "nanoxnano": {'N':32, 'Anz':64, 'Bnz':56, 'Cnz': 256},
+    "tinyxtiny": {'N':128, 'Anz':1256, 'Bnz':1028, 'Cnz': 1640},
+    "smallxsmall": {'N':1024, 'Anz': 65_536, 'Bnz':65_536, 'Cnz': 10000},
+    "ti_denxti_den": {'N':32, 'Anz':1024, 'Bnz':1024, 'Cnz': 1024},
+    "ti_spaxti_den": {'N':32, 'Anz':256, 'Bnz':1024, 'Cnz': 1024},
+    "medxmed": {'N':4096, 'Anz': 2**20, 'Bnz':2**20},
+    "largexlarge": {'N':2**16, 'Anz': 64*2**20, 'Bnz':64*2**20}
+}
 
-FORMATS = { "full": ["phase1", "phase2", "mxm_full"],
+FORMATS = { "sparse": ["phase1", "phase2", "mxm_sparse"],
             "dense": ["dense_phase1", "mxm_dense"],
             "sparse_dense": ["dense_phase1", "mxm_sparse_dense"],
             "reduce": ["reduce"]}
 
 FORMAT_INPUTS = {
-    "full": ("GxB_SPARSE", "GxB_SPARSE"),
+    "sparse": ("GxB_SPARSE", "GxB_SPARSE"),
     "dense": ("GxB_FULL", "GxB_FULL"),
     "sparse_dense": ("GxB_SPARSE", "GxB_FULL"),
     "reduce": ("GxB_SPARSE", "GxB_SPARSE")
+}
+
+FORMAT_DATASETS = {
+    "sparse": ["nanoxnano", "tinyxtiny", "smallxsmall"],
+    "dense": ["ti_denxti_den"],
+    "sparse_dense": ["ti_spaxti_den"],
+    "reduce": ["nanoxnano", "smallxsmall", "ti_denxti_den", "ti_spaxti_den"]
 }
 
 def std_type_to_gb_type(t):
@@ -77,13 +93,13 @@ def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds="tiny-tiny", SUM="PLUS
     phase1_body= f""" test_AxB_phase1_factory< {typeC}, {typeM}, {typeA}, {typeB}>(problem_spec);"""
     phase2_body= f""" test_AxB_phase2_factory< {typeC}, {typeM}, {typeA}, {typeB} >(problem_spec);"""
     dense_phase1_body = f""" test_AxB_dense_phase1_factory<{typeC}, {typeM}, {typeA}, {typeB}>(problem_spec);"""
-    mxm_full_body = f""" test_AxB_dot3_full_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > (problem_spec);\n"""
+    mxm_sparse_body = f""" test_AxB_dot3_sparse_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > (problem_spec);\n"""
     mxm_dense_body = f""" test_AxB_dot3_dense_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > (problem_spec);\n"""
     mxm_sparse_dense_body = f""" test_AxB_dot3_sparse_dense_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > (problem_spec);\n"""
     reduce_body = f""" test_reduce_factory<{typeC}, {typeM}, {typeA}, {typeB}>(problem_spec);"""
     phasedict = { "phase1": phase1_body,
                   "phase2": phase2_body,
-                  "mxm_full": mxm_full_body,
+                  "mxm_sparse": mxm_sparse_body,
                   "mxm_dense": mxm_dense_body,
                   "mxm_sparse_dense": mxm_sparse_dense_body,
                   "reduce": reduce_body,
@@ -99,17 +115,6 @@ def load_types(argv):
     DataTypes = argv[6].split(";")
 
     # Hard-coding data shapes for now
-
-    DataShapes ={
-        #"nanoxnano": {'N':32, 'Anz':64, 'Bnz':56, 'Cnz': 256},
-        #"tinyxtiny": {'N':128, 'Anz':1256, 'Bnz':1028, 'Cnz': 1640},
-        #"smallxsmall": {'N':1024, 'Anz': 65_536, 'Bnz':65_536, 'Cnz': 10000},
-        # "ti_denxti_den": {'N':32, 'Anz':1024, 'Bnz':1024, 'Cnz': 1024},
-        "ti_spaxti_den": {'N':32, 'Anz':256, 'Bnz':1024, 'Cnz': 1024}
-        # "medxmed": {'N':4096, 'Anz': 2**20, 'Bnz':2**20}
-        # "largexlarge": {'N':2**16, 'Anz': 64*2**20, 'Bnz':64*2**20}
-    }
-
     Kernels= argv[7]
 
     return argv[1], test_suite_name, Monoids, Binops, Semirings, DataTypes, DataShapes, Kernels
@@ -127,7 +132,7 @@ def write_test_instances_header(test_suite_name, format, tests, Monoids, Binops,
             for dtM in ["bool", "int32_t", "int64_t", "float", "double"]:
                 for dtA in DataTypes:
                     for dtB in DataTypes:
-                        for ds in DataShapes:
+                        for ds in FORMAT_DATASETS[format]:
                             TEST_HEAD, TEST_BODY = buildTest( Test_suite, Kernels, ds, m, b,
                                                               dtC, dtM, dtA, dtB, dtX, dtY, dtZ)
                             fp.write( TEST_HEAD)

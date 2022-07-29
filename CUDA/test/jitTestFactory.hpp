@@ -282,7 +282,7 @@ void make_grb_matrix(GrB_Matrix mat, int64_t n_rows, int64_t n_cols,
 template <
     typename T_C, typename T_M, typename T_A,typename T_B,
     typename T_X, typename T_Y, typename T_Z>
-bool test_AxB_dot3_full_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
+bool test_AxB_dot3_sparse_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
 
     // FIXME: Allow the adaptive tests in this guy
     std::cout << "phase 3 test ======================" << std::endl;
@@ -536,6 +536,9 @@ bool test_AxB_dot3_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_s
     GrB_Matrix A = problem_spec.getA();
     GrB_Matrix B = problem_spec.getB();
 
+    problem_spec.set_sparsity_control( A, GxB_FULL, GxB_BY_ROW);
+    problem_spec.set_sparsity_control( B, GxB_FULL, GxB_BY_ROW);
+
     const int64_t mnz = GB_nnz (M) ;
     const int64_t cnz = GB_nnz (C) ;
     const int64_t cvlen = C->vlen ;
@@ -692,6 +695,11 @@ bool test_AxB_dot3_sparse_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &pr
     GrB_Matrix M = problem_spec.getM();
     GrB_Matrix A = problem_spec.getA();
     GrB_Matrix B = problem_spec.getB();
+
+    problem_spec.set_sparsity_control( A, GxB_SPARSE, GxB_BY_ROW);
+
+    // TODO: Need to make sure the format itself is actually dense.
+    problem_spec.set_sparsity_control( B, GxB_FULL, GxB_BY_ROW);
 
     auto mymxm = problem_spec.get_mxm_factory();
     dense_phase1launchFactory p1lF(mymxm);
