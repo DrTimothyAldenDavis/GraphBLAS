@@ -17,10 +17,16 @@ DOT3_BUCKETS = [1, 2]    # NBUCKETS, hard-coded
 
 
 FORMATS = { "full": ["phase1", "phase2", "mxm_full"],
-            "dense": ["mxm_dense"],
-            "sparse_dense": ["mxm_sparse_dense"],
+            "dense": ["dense_phase1", "mxm_dense"],
+            "sparse_dense": ["dense_phase1", "mxm_sparse_dense"],
             "reduce": ["reduce"]}
 
+FORMAT_INPUTS = {
+    "full": ("GxB_SPARSE", "GxB_SPARSE"),
+    "dense": ("GxB_FULL", "GxB_FULL"),
+    "sparse_dense": ("GxB_SPARSE", "GxB_FULL"),
+    "reduce": ("GxB_SPARSE", "GxB_SPARSE")
+}
 
 def std_type_to_gb_type(t):
     return SUPPORTED_TYPES[t]
@@ -34,6 +40,9 @@ def build_gb_binop(t, b):
     # Example: GrB_TIMES_UINT64
     gb_type = std_type_to_gb_type(t)
     return f"{GB_TYPE_PREFIX}_{b}_{gb_type}"
+
+
+
 
 def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds="tiny-tiny", SUM="PLUS", PRODUCT="TIMES",
               typeC="int32_t",typeM="int32_t",typeA="int32_t",typeB="int32_t",type_x="int32_t",
@@ -51,6 +60,8 @@ def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds="tiny-tiny", SUM="PLUS
     gb_monoid = build_gb_monioid(typeC, SUM)
     gb_binop = build_gb_binop(typeC, PRODUCT)
 
+    format_A, format_B = FORMAT_INPUTS[format]
+
     TEST_HEAD = f"""
     TEST( {Test_suite}, {Test_name}) {{
 
@@ -61,10 +72,11 @@ def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds="tiny-tiny", SUM="PLUS
         GrB_BinaryOp binop = {gb_binop};
 
         mxm_problem_spec<{typeC}, {typeM}, {typeA}, {typeB}> problem_spec(monoid, binop, {N}, {Anz}, {Bnz}, {Cnz},
-                                                                          GxB_SPARSE, GxB_FULL);
+                                                                          {format_A}, {format_B});
     """
     phase1_body= f""" test_AxB_phase1_factory< {typeC}, {typeM}, {typeA}, {typeB}>(problem_spec);"""
     phase2_body= f""" test_AxB_phase2_factory< {typeC}, {typeM}, {typeA}, {typeB} >(problem_spec);"""
+    dense_phase1_body = f""" test_AxB_dense_phase1_factory<{typeC}, {typeM}, {typeA}, {typeB}>(problem_spec);"""
     mxm_full_body = f""" test_AxB_dot3_full_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > (problem_spec);\n"""
     mxm_dense_body = f""" test_AxB_dot3_dense_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > (problem_spec);\n"""
     mxm_sparse_dense_body = f""" test_AxB_dot3_sparse_dense_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > (problem_spec);\n"""
@@ -74,7 +86,8 @@ def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds="tiny-tiny", SUM="PLUS
                   "mxm_full": mxm_full_body,
                   "mxm_dense": mxm_dense_body,
                   "mxm_sparse_dense": mxm_sparse_dense_body,
-                  "reduce": reduce_body }
+                  "reduce": reduce_body,
+                  "dense_phase1": dense_phase1_body }
 
     return TEST_HEAD, phasedict
 

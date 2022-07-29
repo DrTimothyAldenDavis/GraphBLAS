@@ -136,6 +136,29 @@ bool test_AxB_phase1_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
     return true;
 }
 
+// Test generator code, to allow parameterized tests
+// Uses jitFactory, dataFactory and GB_jit
+template <typename T_C, typename T_M, typename T_A,typename T_B>
+bool test_AxB_dense_phase1_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
+{
+    cudaStream_t strm;
+    CHECK_CUDA(cudaStreamCreate(&strm));
+
+    /********************
+     * Launch kernel
+     */
+    problem_spec.set_sparsity_control(problem_spec.getA(), GxB_FULL, GxB_BY_ROW);
+    problem_spec.set_sparsity_control(problem_spec.getB(), GxB_FULL, GxB_BY_ROW);
+
+    GB_cuda_mxm_factory mysemiringfactory = problem_spec.get_mxm_factory();
+    dense_phase1launchFactory p1lF(mysemiringfactory);
+    p1lF.jitGridBlockLaunch(problem_spec.getC(), problem_spec.getM(), problem_spec.getA(), problem_spec.getB(), strm);
+
+    CHECK_CUDA(cudaStreamSynchronize(strm));
+    return true;
+}
+
+
 //------------------------------------------------------------------------------
 // test_AxB_phase2_factory: test phase2 and phase2end
 //------------------------------------------------------------------------------
