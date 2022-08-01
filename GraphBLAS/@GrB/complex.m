@@ -54,7 +54,7 @@ else
     b_is_scalar = (bm == 1) && (bn == 1) ;
 
     if (gb_contains (atype, 'complex') || gb_contains (btype, 'complex'))
-        error ('inputs must be real') ;
+        error ('GrB:error', 'inputs must be real') ;
     end
 
     if (a_is_scalar)

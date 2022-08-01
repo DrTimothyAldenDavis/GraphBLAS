@@ -56,11 +56,11 @@ end
 [bm, bn, btype] = gbsize (B) ;
 
 if (gb_contains (atype, 'complex') || gb_contains (btype, 'complex'))
-    error ('inputs must be real') ;
+    error ('GrB:error', 'inputs must be real') ;
 end
 
 if (isequal (atype, 'logical') || isequal (btype, 'logical'))
-    error ('inputs must not be logical') ;
+    error ('GrB:error', 'inputs must not be logical') ;
 end
 
 a_is_scalar = (am == 1) && (an == 1) ;
@@ -84,7 +84,7 @@ else
 end
 
 if (~gb_contains (assumedtype, 'int'))
-    error ('assumedtype must be an integer type') ;
+    error ('GrB:error', 'assumedtype must be an integer type') ;
 end
 
 % C will have the same type as A on input

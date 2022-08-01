@@ -58,14 +58,21 @@ void gbcov_put (void) ;
 
 #define CHECK_ERROR(error,message) if (error) ERROR (message) ;
 
-#define OK(method) CHECK_ERROR ((method) != GrB_SUCCESS, "GrB:error") ;
+#define OK(method)                                          \
+{                                                           \
+    GrB_Info info = method ;                                \
+    if (info != GrB_SUCCESS)                                \
+    {                                                       \
+        ERROR (gb_error (info)) ;                           \
+    }                                                       \
+}
 
 #define OK0(method)                                         \
 {                                                           \
     GrB_Info info = method ;                                \
     if (!(info == GrB_SUCCESS || info == GrB_NO_VALUE))     \
     {                                                       \
-        ERROR ("GrB:error") ;                               \
+        ERROR (gb_error (info)) ;                           \
     }                                                       \
 }
 
@@ -212,6 +219,11 @@ void gb_usage       // check usage and make sure GxB_init has been called
 (
     bool ok,                // if false, then usage is not correct
     const char *message     // error message if usage is not correct
+) ;
+
+const char *gb_error        // return an error string from a GrB_Info value
+(
+    GrB_Info info
 ) ;
 
 void gb_find_dot            // find 1st and 2nd dot ('.') in a string

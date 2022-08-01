@@ -38,7 +38,7 @@ end
 if (nargin > 1)
     k = ceil (double (gb_get_scalar (k))) ;
     if (k < 1)
-        error ('k must be positive') ;
+        error ('GrB:error', 'k must be positive') ;
     end
     if (~isequal (gbformat (G), 'by col'))
         % find (G, k) assumes the matrix is stored by column, so reformat G
@@ -109,7 +109,8 @@ if (nargin > 1)
             X = X (n-k+1:n) ;
         end
     else
-        error ('invalid search option; must be ''first'' or ''last''') ;
+        error ('GrB:error', ...
+            'invalid search option; must be ''first'' or ''last''') ;
     end
 end
 

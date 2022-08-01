@@ -122,5 +122,5 @@ messages during the test.  This is expected.
         See also the discussion in the User Guide.
 
 These functions are supported, but are not yet as fast as they could be:
-reshape, eps, ishermitian, issymmetric, spfun, C(:)=A, and C=A(:).
+eps, ishermitian, issymmetric, spfun.
 

@@ -56,8 +56,10 @@ C1 = A ; C1 (:) = pi ;
 C2 = G ; C2 (:) = pi ;
 assert (isequal (C1, C2)) ;
 X = sprand (12, 1, 0.5) ;
-C1 = A ; C1 (:) = X ;
-C2 = G ; C2 (:) = X ;
+X
+C1 = A ; C1 (:) = X
+C2 = G ; C2 (:) = X
+whos
 assert (isequal (C1, C2)) ;
 
 fprintf ('gbtest44: all tests passed\n') ;

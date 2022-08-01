@@ -19,6 +19,6 @@ elseif (ndims == 2)
     i = s (k) ;
 else
     % sparse N-dimensional arrays for N > 2 will not be supported
-    error ('%dD indexing not supported', ndims) ;
+    error ('GrB:error', '%dD indexing not supported', ndims) ;
 end
 

@@ -5122,7 +5122,6 @@ extracted.
 \end{alert}
 
 %-------------------------------------------------------------------------------
-\newpage
 \subsubsection{{\sf GrB\_Matrix\_resize:}          resize a matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_resize}
@@ -5138,11 +5137,89 @@ GrB_Info GrB_Matrix_resize      // change the size of a matrix
 ) ;
 \end{verbatim} } \end{mdframed}
 
-\verb'GrB_Matrix_resize' changes the size of a matrix.
-If the dimensions decrease, entries that fall outside the resized
-matrix are deleted.
+\verb'GrB_Matrix_resize' changes the size of a matrix.  If the dimensions
+decrease, entries that fall outside the resized matrix are deleted.  Unlike
+\verb'GxB_Matrix_reshape*' (see Sections \ref{matrix_reshape} and
+\ref{matrix_reshapedup}), entries remain in their same position after resizing
+the matrix.
 
 %-------------------------------------------------------------------------------
+\newpage
+\subsubsection{{\sf GxB\_Matrix\_reshape:} reshape a matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_reshape}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_reshape     // reshape a GrB_Matrix in place
+(
+    // input/output:
+    GrB_Matrix C,               // input/output matrix, reshaped in place
+    // input:
+    bool by_col,                // true if reshape by column, false if by row
+    GrB_Index nrows_new,        // new number of rows of C
+    GrB_Index ncols_new,        // new number of columns of C
+    const GrB_Descriptor desc   // to control # of threads used
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Matrix_reshape' changes the size of a matrix \verb'C', taking entries
+from the input matrix either column-wise or row-wise.  If matrix \verb'C' on
+input is \verb'nrows'-by-\verb'ncols', and the requested dimensions of
+\verb'C' on output are \verb'nrows_new'-by-\verb'nrows_cols', then
+the condition \verb'nrows*ncols == nrows_new*nrows_cols' must hold.
+The matrix \verb'C' is modified in-place, as both an input and output for
+this method.  To create a new matrix, use \verb'GxB_Matrix_reshapeDup'
+instead (Section \ref{matrix_reshapedup}).
+
+For example, if \verb'C' is 3-by-4 on input, and is reshaped column-wise to
+have dimensions 2-by-6:
+
+\begin{verbatim}
+        C on input      C on output (by_col true)
+        00 01 02 03     00 20 11 02 22 13
+        10 11 12 13     10 01 21 12 03 23
+        20 21 22 23
+\end{verbatim}
+
+If the same \verb'C' on input is reshaped row-wise to dimensions 2-by-6:
+
+\begin{verbatim}
+        C on input      C on output (by_col false)
+        00 01 02 03     00 01 02 03 10 11
+        10 11 12 13     12 13 20 21 22 23
+        20 21 22 23
+\end{verbatim}
+
+%-------------------------------------------------------------------------------
+\newpage
+\subsubsection{{\sf GxB\_Matrix\_reshapeDup:} reshape a matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_reshapedup}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_reshapeDup // reshape a GrB_Matrix into another GrB_Matrix
+(
+    // output:
+    GrB_Matrix *C,              // newly created output matrix, not in place
+    // input:
+    GrB_Matrix A,               // input matrix, not modified
+    bool by_col,                // true if reshape by column, false if by row
+    GrB_Index nrows_new,        // number of rows of C
+    GrB_Index ncols_new,        // number of columns of C
+    const GrB_Descriptor desc   // to control # of threads used
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Matrix_reshapeDup' is identical to \verb'GxB_Matrix_reshape' (see
+Section \ref{matrix_reshape}), except that creates a new output matrix
+\verb'C' that is reshaped from the input matrix \verb'A'.
+
+%-------------------------------------------------------------------------------
+% \newpage
 \subsubsection{{\sf GxB\_Matrix\_concat:} concatenate matrices   }
 %-------------------------------------------------------------------------------
 \label{matrix_concat}
@@ -5194,8 +5271,8 @@ into the type of \verb'C'.  Any settings made to \verb'C' by
 \verb'GxB_Matrix_Option_set' (format by row or by column, bitmap switch, hyper
 switch, and sparsity control) are unchanged.
 
-\newpage
 %-------------------------------------------------------------------------------
+% \newpage
 \subsubsection{{\sf GxB\_Matrix\_split:} split a matrix   }
 %-------------------------------------------------------------------------------
 \label{matrix_split}
@@ -5257,7 +5334,7 @@ statement \verb'C=diag(v,k)', where \verb'v' is a vector.
 The output matrix \verb'C' is a newly-constructed square matrix with the
 same type as the input vector \verb'v'.  No typecasting is performed.
 
-\newpage
+% \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_diag:} build a diagonal matrix}
 %-------------------------------------------------------------------------------
@@ -5322,7 +5399,7 @@ GrB_Info GxB_Matrix_memoryUsage  // return # of bytes used for a matrix
 Returns the memory space required for a matrix, in bytes.
 
 %-------------------------------------------------------------------------------
-\newpage
+% \newpage
 \subsubsection{{\sf GrB\_Matrix\_free:} free a matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_free}
@@ -15240,6 +15317,14 @@ GraphBLAS folder.
 %-------------------------------------------------------------------------------
 
 \begin{itemize}
+
+\item Version 7.2.0 (Aug FIXME, 2022)
+
+    \begin{packed_itemize}
+    \item \verb'GxB_Matrix_reshape*' added.
+    \item MATLAB interface: \verb'reshape', \verb'C(:)=A', \verb'C=A(:)' are
+        faster.  Better error messages.
+    \end{packed_itemize}
 
 \item Version 7.1.2 (July 8, 2022)
 

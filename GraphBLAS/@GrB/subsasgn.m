@@ -8,9 +8,9 @@ function C = subsasgn (C, S, A)
 % sparse matrix C, both statements delete all entries in C(I,J) since
 % Built-in sparse matrices never include explicit zeros.
 %
-% With a single index, C(I) = A, both C and A must be vectors; linear
-% indexing is not yet supported.  In this case A must either be a vector
-% of length the same as I, or a scalar.
+% Linear indexing is not fully yet supported.  With a single index,
+% C(I) = A, both C and A must be vectors, except for C(:) = A where A is
+% a matrix and C is a vector.
 %
 % If M is a logical matrix, C (M) = x is an assignment via logical
 % indexing, where C and M have the same size, and x(:) is either a vector
@@ -25,23 +25,23 @@ function C = subsasgn (C, S, A)
 % times faster than C (M) = A (M) using purely built-in sparse matrices C,
 % M, and A, when the matrices are large.
 %
-% If I or J are very large colon notation expressions, then C(I,J)=A is
+% If I or J are very large colon notation expressions, then C(I,J) = A is
 % not possible, because I and J are created as explicit lists first,
 % before passing them to GraphBLAS.  See GrB.subassign instead.  See also
 % the example with 'help GrB.extract'.
 %
-% Just the built-in C(I,J)=A, the GraphBLAS assignment can change the size
-% of C if the indices I and J extend past the current dimesions of C.
+% Just as the built-in C(I,J) = A, the GraphBLAS assignment can change the
+% size of C if the indices I and J extend past the current dimesions of C.
 %
 % See also GrB/subsref, GrB/subsindex, GrB.assign, GrB.subassign.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
-% FUTURE: add linear indexing
+% FUTURE: add all forms of linear indexing.
 
 if (~isequal (S.type, '()'))
-    error ('index type %s not supported', S.type) ;
+    error ('GrB:error', 'index type %s not supported', S.type) ;
 end
 
 if (isobject (C))
@@ -88,16 +88,12 @@ if (ndims == 1)
                     C = GrB (gbsubassign (C_empty, { }, { }, A)) ;
                 else
                     % C (:) = A for a matrix C and vector A
-                    % FUTURE: C(:)=A would be faster with GxB_reshape
-                    desc.base = 'zero-based' ;
-                    [I0, ~, X] = gbextracttuples (A, desc) ;
-                    [I1, J1] = gb_1d_to_2d (I0, cm) ;
-                    clear I0 ;
-                    C = GrB (gbbuild (I1, J1, X, cm, cn, desc)) ;
+                    C = GrB (gbreshape (A, cm, cn, 'by column')) ;
                 end
             else
                 % C (I) = A, general case not yet supported
-                error ('Except for C(:)=A, linear indexing not yet supported') ;
+                error ('GrB:error', ...
+                    'Except for C(:)=A, linear indexing not yet supported') ;
             end
         end
     end
@@ -110,7 +106,7 @@ elseif (ndims == 2)
 else
 
     % sparse N-dimensional arrays for N > 2 will not be supported
-    error ('%dD indexing not supported', ndims) ;
+    error ('GrB:error', '%dD indexing not supported', ndims) ;
 
 end
 
