@@ -11575,7 +11575,7 @@ GrB_Info GxB_Matrix_sort
 //      10 11 12 13     10 01 21 12 03 23
 //      20 21 22 23
 
-// If the same C on input is reshaped by row to dimesions 2-by-6:
+// If the same C on input is reshaped by row to dimensions 2-by-6:
 
 //      C on input      C on output (by_col false)
 //      00 01 02 03     00 01 02 03 10 11

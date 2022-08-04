@@ -1,5 +1,5 @@
 function gbtest35
-%GBTEST35 test reshape
+%GBTEST35 test reshape (built-in variant)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later

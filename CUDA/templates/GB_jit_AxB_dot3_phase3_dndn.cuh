@@ -162,23 +162,71 @@ __global__ void AxB_dot3_phase3_dndn
     // convert global data pointer to the local pointer of this block
     GB_DECLAREA (aki) ;
     GB_DECLAREB (bkj) ;
-    T_Z cij ; // = GB_IDENTITY ; not needed
 
-    GB_GETA ( aki, Ax, pA+threadIdx.x) ;        // aki = A(0,i)
-    GB_GETB ( bkj, Bx, pB+threadIdx.x) ;        // bkj = B(0,j)
-    GB_C_MULT ( cij, aki, bkj ) ;               // cij = aki * bkj
+    #if GB_A_IS_FULL && GB_B_IS_FULL
 
-    for ( int tid = threadIdx.x + s; tid < nnzA; tid+= s) { 
-          // cij += A(k,i) * B(k,j)
-          // GB_DOT_TERMINAL ( cij ) ;             // break if cij == terminal
-          GB_GETA (aki, Ax, pA+tid) ;           // aki = A(k,i)
-          GB_GETB (bkj, Bx, pB+tid) ;           // bkj = B(k,j)
-          GB_MULTADD ( cij, aki, bkj ) ;        // cij += aki * bkj
-    }
+        T_Z cij ; // = GB_IDENTITY ; not needed
+        GB_GETA ( aki, Ax, pA+threadIdx.x) ;        // aki = A(0,i)
+        GB_GETB ( bkj, Bx, pB+threadIdx.x) ;        // bkj = B(0,j)
+        GB_C_MULT ( cij, aki, bkj ) ;               // cij = aki * bkj
+        for ( int tid = threadIdx.x + s; tid < nnzA; tid+= s) { 
+              // cij += A(k,i) * B(k,j)
+              GB_GETA (aki, Ax, pA+tid) ;           // aki = A(k,i)
+              GB_GETB (bkj, Bx, pB+tid) ;           // bkj = B(k,j)
+              GB_MULTADD ( cij, aki, bkj ) ;        // cij += aki * bkj
+        }
+
+    #elif GB_A_IS_BITMAP && GB_B_IS_BITMAP
+
+        T_Z cij = GB_IDENTITY ;
+        bool cij_exists = false ;
+        for ( int tid = threadIdx.x ; tid < nnzA; tid+= s) { 
+            if (Ab [pA+tid] && Bb [pB+tid])
+            {
+              GB_GETA (aki, Ax, pA+tid) ;           // aki = A(k,i)
+              GB_GETB (bkj, Bx, pB+tid) ;           // bkj = B(k,j)
+              GB_MULTADD ( cij, aki, bkj ) ;        // cij += aki * bkj
+              cij_exists = true ;
+            }
+        }
+
+    #elif GB_A_IS_FULL && GB_B_IS_BITMAP
+
+        T_Z cij = GB_IDENTITY ;
+        bool cij_exists = false ;
+        for ( int tid = threadIdx.x ; tid < nnzA; tid+= s) { 
+            if (Bb [pB+tid])
+            {
+              GB_GETA (aki, Ax, pA+tid) ;           // aki = A(k,i)
+              GB_GETB (bkj, Bx, pB+tid) ;           // bkj = B(k,j)
+              GB_MULTADD ( cij, aki, bkj ) ;        // cij += aki * bkj
+              cij_exists = true ;
+            }
+        }
+
+    #elif GB_A_IS_BITMAP && GB_B_IS_FULL
+
+        T_Z cij = GB_IDENTITY ;
+        bool cij_exists = false ;
+        for ( int tid = threadIdx.x ; tid < nnzA; tid+= s) { 
+            if (Ab [pB+tid])
+            {
+              GB_GETA (aki, Ax, pA+tid) ;           // aki = A(k,i)
+              GB_GETB (bkj, Bx, pB+tid) ;           // bkj = B(k,j)
+              GB_MULTADD ( cij, aki, bkj ) ;        // cij += aki * bkj
+              cij_exists = true ;
+            }
+        }
+
+    #endif
 
     //--------------------------------------------------------------------------
     // reduce per-thread sums to a single scalar
     //--------------------------------------------------------------------------
+
+    // FIXME: need to check if cij_exists for any thread, for the 3
+    // cases of bitmap*bitmap, full*bitmap, and bitmap*full, and if not,
+    // C(i,j) is a zombie.
 
     #if !GB_C_ISO
     thread_block_tile<32> tile = tiled_partition<32>( this_thread_block() );

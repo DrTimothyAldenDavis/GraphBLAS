@@ -238,8 +238,11 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 //      A bit           B full
 //      A full          B bit
 //      A bit           B bit
-    if ( GB_IS_FULL(A) && GB_IS_FULL(B) ){
 
+    if ( GB_IS_FULL(A) && GB_IS_FULL(B) )
+    {
+
+        // Full x Full
         dense_phase1launchFactory dp1lf(my_mxm_spec);
 
         GBURBLE ("(GPU phase1 start nblk = %d) ", dp1lf.get_number_of_blocks(M)) ;
@@ -258,22 +261,27 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         GBURBLE ("(GPU Dense full x full done %12.6g ms, rate=%12.6g)\n", 
                    kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
 
-    } // Full x Full
-    else if ( GB_IS_FULL(A) && GB_IS_BITMAP(B) ) {
+    }
+    else if ( GB_IS_FULL(A) && GB_IS_BITMAP(B) )
+    {
+        //  FIXME: Full x Bitmap
+    }
+    else if ( GB_IS_BITMAP(A) && GB_IS_FULL(B) )
+    {
+        //  FIXME: Bitmap x Full
+    }
+    else if ( GB_IS_BITMAP(A) && GB_IS_BITMAP(B) )
+    {
+        //  FIXME Bitmap x Bitmap
+    }
+    else if ( GB_IS_SPARSE(A) && GB_IS_FULL(B) )
+    {
 
-    }//  Full x Bitmap
-    else if ( GB_IS_BITMAP(A) && GB_IS_FULL(B) ) {
-
-    }//  Bitmap x Full
-    else if ( GB_IS_BITMAP(A) && GB_IS_BITMAP(B) ) {
-    }//  Bitmap x Bitmap
-
-// (2)
-//      A sparse        B full
-//      A hyper         B full      GB_IS_HYPERSPARSE(A) && GB_IS_FULL (B))
-//      A sparse        B bit
-//      A hyper         B bit
-    if ( GB_IS_SPARSE(A) && GB_IS_FULL(B) ){
+        // (2) Sparse x Full
+        //      A sparse        B full
+        //      A hyper         B full      GB_IS_HYPERSPARSE(A) && GB_IS_FULL (B))
+        //      A sparse        B bit
+        //      A hyper         B bit
 
         dense_phase1launchFactory dp1lf(my_mxm_spec);
 
@@ -293,15 +301,19 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         GBURBLE ("(GPU Dense sparse x full done %12.6g ms, rate=%12.6g)\n", 
                    kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
 
-    } // Sparse x Full
-    else if ( GB_IS_HYPERSPARSE(A) && GB_IS_FULL(B) ) {
-
-    }//  Hyper x Full 
-    else if ( GB_IS_HYPERSPARSE(A) && GB_IS_BITMAP(B) ) {
-
-    }//  Sparse x Bitmap 
-    else if ( GB_IS_BITMAP(A) && GB_IS_BITMAP(B) ) {
-    }//  Hyper x Bitmap
+    }
+    else if ( GB_IS_HYPERSPARSE(A) && GB_IS_FULL(B) )
+    {
+        //  FIXME: Hyper x Full 
+    }
+    else if ( GB_IS_HYPERSPARSE(A) && GB_IS_BITMAP(B) )
+    {
+        //  FIXME: Sparse x Bitmap 
+    }
+    else if ( GB_IS_BITMAP(A) && GB_IS_BITMAP(B) )
+    {
+        //  FIXME: Hyper x Bitmap
+    }
 
 // (3)
 //      A full          B sparse
@@ -318,8 +330,12 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
 //          && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B)
 //          && !GB_IS_FULL (A) && !GB_IS_FULL (B))
-    if ( GB_IS_SPARSE(A) && GB_IS_SPARSE(B) )
+
+    else if ( GB_IS_SPARSE(A) && GB_IS_SPARSE(B) )
     {
+
+    // Sparse x Sparse
+
     //--------------------------------------------------------------------------
     // construct the tasks for phase1 and phase2
     //--------------------------------------------------------------------------
@@ -510,7 +526,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     }
 
     GB_FREE_WORKSPACE ;
-    } // Sparse x Sparse
+    }
 
     CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
     CHECK_CUDA_SIMPLE(cudaStreamDestroy(stream));

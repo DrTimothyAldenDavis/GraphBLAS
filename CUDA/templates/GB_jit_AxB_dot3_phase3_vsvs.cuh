@@ -150,12 +150,17 @@ __global__ void AxB_dot3_phase3_vsvs
     {
          int64_t pair_id = all_in_one ? kk : Bucket[ kk ];
 
+         // HACK: assumes C and M are sparse, not hypersparse
          int64_t i = Mi [pair_id] ;
-         int64_t j = Ci [pair_id]>>4 ; 
+         int64_t j = Ci [pair_id]>>4 ;      // this is "k", not "j"
+         // C, M hypersparse, we do: j = Mh [k].
+         // Note Ch == Mh, even with zombies in C.
 
+         // HACK: assumes A is sparse, not hypersparse
          int64_t pA       = Ap[i] ;
          int64_t pA_end   = Ap[i+1] ;
 
+         // HACK: assumes B is sparse, not hypersparse
          int64_t pB       = Bp[j] ;
          int64_t pB_end   = Bp[j+1] ;
 
