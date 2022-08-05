@@ -54,7 +54,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
     int64_t ncols_new,      // number of columns of C
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -127,6 +127,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
     }
 
     // T is now in the format required for the reshape
+    ASSERT_MATRIX_OK (T, "T for reshape", GB0) ;
     ASSERT (T->is_csc == by_col) ;
 
     //--------------------------------------------------------------------------
@@ -171,6 +172,8 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         // change the size of C
         C->vlen = vlen_new ;
         C->vdim = vdim_new ;
+        C->nvec = vdim_new ;
+        C->nvec_nonempty = (vlen_new == 0) ? 0 : vdim_new ;
 
     }
     else
@@ -186,6 +189,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         int64_t *Ti = T->i ;
         bool T_iso = T->iso ;
         int64_t tvlen = T->vlen ;
+        bool T_jumbled = T->jumbled ;
 
         GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
         int T_nthreads, T_ntasks ;
@@ -346,7 +350,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             &J_work_size,
             &S_work,        // array of values; transplanted into C->x in-place
             &S_work_size,
-            true,           // indices are sorted on input
+            !T_jumbled,     // indices may be jumbled on input
             true,           // no duplicates exist
             nvals,          // number of entries in T and C 
             true,           // C is a matrix
@@ -369,6 +373,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
     // transpose C if needed, to change its format to match the format of A
     //--------------------------------------------------------------------------
 
+    ASSERT_MATRIX_OK (C, "C for reshape before transpose", GB0) ;
     ASSERT (C->is_csc == T_is_csc) ;
     if (A_is_csc != T_is_csc)
     { 
@@ -381,8 +386,9 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
 
     GB_FREE_WORKSPACE ;
     GB_OK (GB_conform (C, Context)) ;
+    ASSERT_MATRIX_OK (C, "C result for reshape", GB0) ;
     if (Chandle != NULL)
-    {
+    { 
         (*Chandle) = C ;
     }
     return (GrB_SUCCESS) ;

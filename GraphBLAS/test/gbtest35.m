@@ -14,7 +14,7 @@ for m = 0:6
             else
                 A = sprand (m, n, 0.3) ;
             end
-            G = GrB (A)
+            G = GrB (A) ;
             mn = m*n ;
             if (mn == 0)
                 C1 = reshape (A, n, m) ;
