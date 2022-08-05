@@ -310,7 +310,7 @@ class SpGEMM_problem_generator {
        Mnz = (int64_t)(Mnzp * nrows_ * ncols_);
 
        //Seed the generator
-       std::cout<<"filling matrices"<<std::endl;
+       //std::cout<<"filling matrices"<<std::endl;
 
        C->fill_random(Mnz, GxB_SPARSE, GxB_BY_ROW, seed_m);
        M->fill_random(Mnz, GxB_SPARSE, GxB_BY_ROW, seed_m);

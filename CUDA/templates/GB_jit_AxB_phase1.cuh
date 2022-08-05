@@ -133,21 +133,21 @@ __global__ void AxB_phase1
     const T_M *__restrict__ Mx = (T_M*) M->x ; // not accessed if M structural
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
-    const int64_t mnz =  GB_nnz(M) ;
+    const int64_t mnz =  M->p[M->nvec]; //GB_nnz(M) ;
     const bool M_is_hyper = M->h != NULL ;
 
     const int64_t *__restrict__ Ah = A->h ;
     const int64_t *__restrict__ Ap = A->p ;
     const int64_t *__restrict__ Ai = A->i ;
     const int64_t avlen = A->vlen ;
-    const int64_t anz = GB_nnz(A) ;
+    const int64_t anz = A->p[A->nvec]; //GB_nnz(A) ;
     const bool A_is_hyper = A->h != NULL ;
 
     const int64_t *__restrict__ Bh = B->h ;
     const int64_t *__restrict__ Bp = B->p ;
     const int64_t *__restrict__ Bi = B->i ;
     const int64_t bvlen = B->vlen ;
-    const int64_t bnz = GB_nnz(B);
+    const int64_t bnz = A->p[A->nvec]; //GB_nnz(B);
     const bool B_is_hyper = B->h != NULL ;
 
     // int64_t *restrict Cp = C->p ;    // copy of Mp

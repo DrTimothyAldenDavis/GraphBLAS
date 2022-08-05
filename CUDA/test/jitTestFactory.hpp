@@ -285,7 +285,7 @@ template <
 bool test_AxB_dot3_sparse_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
 
     // FIXME: Allow the adaptive tests in this guy
-    std::cout << "sparse phase 3 test ======================" << std::endl;
+    std::cout << "sparse test ======================" << std::endl;
 
     GpuTimer kernTimer;
 
@@ -336,20 +336,20 @@ bool test_AxB_dot3_sparse_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_
     fillvector_constant(NBUCKETS, offset, (int64_t)0);
     //fillvector_constant(problem_spec.getCnnz(), bucket, (int64_t)0);
 
-    std::cout << "Running phase1 kernel" << std::endl;
+    std::cout << "sparse phase1 kernel" << std::endl;
     kernTimer.Start();
     p1lF.jitGridBlockLaunch(nanobuckets, blockbucket,
                             C, M, A, B, strm);
     CHECK_CUDA(cudaStreamSynchronize(strm));
     kernTimer.Stop();
-    std::cout<<"phase3 test internal phase1 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+    std::cout<<"sparse test phase1 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 
     //    // launch phase2 (just with p2ntasks as the # of tasks)
     kernTimer.Start();
     p2lF.jitGridBlockLaunch(blockbucket, offset, M, strm);
     CHECK_CUDA(cudaStreamSynchronize(strm));
     kernTimer.Stop();
-    std::cout<<"phase3 test phase2 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+    std::cout<<"sparse test phase2 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 
 //
 //    // do the reduction between phase2 and phase2end
@@ -368,19 +368,17 @@ bool test_AxB_dot3_sparse_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_
                               bucketp, bucket, offset, C, M, strm);
     CHECK_CUDA(cudaStreamSynchronize(strm));
     kernTimer.Stop();
-    std::cout << "phase3 test phase2end " <<kernTimer.Elapsed()<<"ms"<<std::endl;
+    std::cout << "sparse test phase2end " <<kernTimer.Elapsed()<<"ms"<<std::endl;
 
     /**
      * Run Phase 3: Execute dot3 on all buckets
      */
-    for (int b =1; b < NBUCKETS; ++b) {// loop on buckets
+    for (int b = 1; b < NBUCKETS; ++b) {// loop on buckets
            int64_t b_start = bucketp[b];
            int64_t b_end = bucketp[b+1];
            int64_t nvecs = b_end - b_start;
 
            if (nvecs == 0) continue;
-
-           fflush(stdout);
 
            kernTimer.Start();
            phase3launchFactory p3lf(mymxm, (GB_bucket_code)b);
@@ -390,10 +388,10 @@ bool test_AxB_dot3_sparse_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_
 
            kernTimer.Stop();
            std::cout << "phase3 bucket="<<b<<" done " <<kernTimer.Elapsed()<<"ms"<<std::endl;
+           fflush(stdout);
 
        }
        C->nzombies += (bucketp[1]); //add pre-zombies to the count;
-
 
            GRB_TRY(GrB_Matrix_wait(C, GrB_MATERIALIZE));
            fflush(stdout);
@@ -721,9 +719,9 @@ bool test_AxB_dot3_sparse_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &pr
     std::cout<<"Dense internal phase1 kernel done "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 
     std::cout << "Running sparse dense kernel" << std::endl;
-    mxm_sparse_dense_launchFactory p3lf(mymxm);
+    mxm_sparse_dense_launchFactory spdnlf(mymxm);
     kernTimer.Start();
-    p3lf.jitGridBlockLaunch( C, M, A, B, strm);
+    spdnlf.jitGridBlockLaunch( C, M, A, B, strm);
     CHECK_CUDA(cudaStreamSynchronize(strm));
     kernTimer.Stop();
     std::cout<<"Sparse_Dense done "<<kernTimer.Elapsed()<<"ms"<<std::endl;
