@@ -94,21 +94,21 @@ template<  typename T_C, typename T_M,
 
 static const std::vector<std::string> compiler_flags{
    "-std=c++14",
-   "-G",
+   //"-G",
    "-remove-unused-globals",
    "-w",
    "-D__CUDACC_RTC__",
    "-I.",
    "-I..",
-   "-I../../Source",
-   "-I../../Source/Template",
+  // "-I../../Source",
+  // "-I../../Source/Template",
    "-I../templates",
 
    // Add includes relative to GRAPHBLAS_SOURCE_PATH variable
    "-I" + jit::get_user_graphblas_source_path() + "/CUDA",
    "-I" + jit::get_user_graphblas_source_path() + "/CUDA/templates",
-   "-I" + jit::get_user_graphblas_source_path() + "/Source",
-   "-I" + jit::get_user_graphblas_source_path() + "/Source/Template",
+  // "-I" + jit::get_user_graphblas_source_path() + "/Source",
+  // "-I" + jit::get_user_graphblas_source_path() + "/Source/Template",
    "-I/usr/local/cuda/include",
 };
 

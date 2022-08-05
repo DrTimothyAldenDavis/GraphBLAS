@@ -157,7 +157,7 @@
 #define restrict GB_restrict
 
 #include <stdint.h>
-#include <stdbool.h>
+//#include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -242,12 +242,120 @@ GrB_Desc_Value ;
 //------------------------------------------------------------------------------
 // subset of GB.h
 //------------------------------------------------------------------------------
+//#include GB_iceil.h
+#define GB_ICEIL(a,b) (((a) + (b) - 1) / (b))
+//#include GB_imin.h
+#define GB_IMAX(x,y) (((x) > (y)) ? (x) : (y))
+#define GB_IMIN(x,y) (((x) < (y)) ? (x) : (y))
+//#include GB_zombie.h
+#define GB_FLIP(i)             (-(i)-2)
+#define GB_IS_FLIPPED(i)       ((i) < 0)
+#define GB_IS_ZOMBIE(i)        ((i) < 0)
+#define GB_IS_NOT_FLIPPED(i)   ((i) >= 0)
+#define GB_UNFLIP(i)           (((i) < 0) ? GB_FLIP(i) : (i))
+#define GBI_UNFLIP(Ai,p,avlen)      \
+    ((Ai == NULL) ? ((p) % (avlen)) : GB_UNFLIP (Ai [p]))
 
-#include "GB_imin.h"
-#include "GB_zombie.h"
 #include "GB_nnz.h"
 #include "GB_partition.h"
-#include "GB_binary_search.h"
-#include "GB_search_for_vector_template.c"
-#include "GB_iceil.h"
+//#include "GB_binary_search.h"
+// version for the GPU, with fewer branches
+#define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                             \
+{                                                                           \
+    /* binary search of X [pleft ... pright] for integer i */               \
+    while (pleft < pright)                                                  \
+    {                                                                       \
+        int64_t pmiddle = (pleft + pright) >> 1 ;                           \
+        bool less = (X [pmiddle] < i) ;                                     \
+        pleft  = less ? (pmiddle+1) : pleft ;                               \
+        pright = less ? pright : pmiddle ;                                  \
+    }                                                                       \
+    /* binary search is narrowed down to a single item */                   \
+    /* or it has found the list is empty */                                 \
+    ASSERT (pleft == pright || pleft == pright + 1) ;                       \
+}
+#define GB_BINARY_SEARCH(i,X,pleft,pright,found)                            \
+{                                                                           \
+    GB_TRIM_BINARY_SEARCH (i, X, pleft, pright) ;                           \
+    found = (pleft == pright && X [pleft] == i) ;                           \
+}
+#define GB_SPLIT_BINARY_SEARCH(i,X,pleft,pright,found)                      \
+{                                                                           \
+    GB_BINARY_SEARCH (i, X, pleft, pright, found)                           \
+    if (!found && (pleft == pright))                                        \
+    {                                                                       \
+        if (i > X [pleft])                                                  \
+        {                                                                   \
+            pleft++ ;                                                       \
+        }                                                                   \
+        else                                                                \
+        {                                                                   \
+            pright++ ;                                                      \
+        }                                                                   \
+    }                                                                       \
+}
 
+//#include "GB_search_for_vector_template.c"
+__device__
+static inline int64_t GB_search_for_vector_device
+(
+    const int64_t p,                // search for vector k that contains p
+    const int64_t *restrict Ap,  // vector pointers to search
+    int64_t kleft,                  // left-most k to search
+    int64_t anvec,                  // Ap is of size anvec+1
+    int64_t avlen                   // A->vlen
+)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    if (Ap == NULL)
+    { 
+        // A is full or bitmap
+        ASSERT (p >= 0 && p < avlen * anvec) ;
+        return ((avlen == 0) ? 0 : (p / avlen)) ;
+    }
+
+    // A is sparse
+    ASSERT (p >= 0 && p < Ap [anvec]) ;
+
+    //--------------------------------------------------------------------------
+    // search for k
+    //--------------------------------------------------------------------------
+
+    int64_t k = kleft ;
+    int64_t kright = anvec ;
+    bool found ;
+    GB_SPLIT_BINARY_SEARCH (p, Ap, k, kright, found) ;
+    if (found)
+    {
+        // Ap [k] == p has been found, but if k is an empty vector, then the
+        // next vector will also contain the entry p.  In that case, k needs to
+        // be incremented until finding the first non-empty vector for which
+        // Ap [k] == p.
+        ASSERT (Ap [k] == p) ;
+        while (k < anvec-1 && Ap [k+1] == p)
+        { 
+            k++ ;
+        }
+    }
+    else
+    { 
+        // p has not been found in Ap, so it appears in the middle of Ap [k-1]
+        // ... Ap [k], as computed by the binary search.  This is the range of
+        // entries for the vector k-1, so k must be decremented.
+        k-- ;
+    }
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
+    // The entry p must reside in a non-empty vector.
+    ASSERT (k >= 0 && k < anvec) ;
+    ASSERT (Ap [k] <= p && p < Ap [k+1]) ;
+
+    return (k) ;
+}
