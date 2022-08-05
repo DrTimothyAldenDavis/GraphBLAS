@@ -5466,6 +5466,7 @@ method                           &  description \\
 \verb'GxB_COMPRESSION_DEFAULT'   &  LZ4 \\
 \verb'GxB_COMPRESSION_LZ4'       &  LZ4 \\
 \verb'GxB_COMPRESSION_LZ4HC'     &  LZ4HC, with default level 9 \\
+\verb'GxB_COMPRESSION_ZSTD'      &  ZSTD, with default level 3 \\
 \hline
 \end{tabular} }
 \vspace{0.2in}
@@ -5478,6 +5479,13 @@ vector with LZ4HC with level 6, use:
     {\footnotesize
     \begin{verbatim}
     GxB_set (desc, GxB_COMPRESSION, GxB_COMPRESSION_LZ4HC + 6) ; \end{verbatim}}
+
+The ZSTD method can be specified as level 1 to 19, with 3 being the default.
+To compress with ZSTD at level 6, use:
+
+    {\footnotesize
+    \begin{verbatim}
+    GxB_set (desc, GxB_COMPRESSION, GxB_COMPRESSION_ZSTD + 6) ; \end{verbatim}}
 
 Deserialization of untrusted data is a common security problem; see
 \url{https://cwe.mitre.org/data/definitions/502.html}. The deserialization
@@ -15326,6 +15334,11 @@ GraphBLAS folder.
 \item Version 7.2.0 (Aug 4, 2022)
 
     \begin{packed_itemize}
+    \item added ZSTD as a compression option for serialize/deserialize:
+        Version 1.5.3 by Yann Collet,
+        \url{https://github.com/facebook/zstd.git}.
+        Copyright (c) 2016-present, Facebook, Inc. All rights reserved.
+        Included in SuiteSparse:GraphBLAS via its BSD-3-clause license.
     \item \verb'GxB_Matrix_reshape*' added.
     \item MATLAB interface: \verb'reshape', \verb'C(:)=A', \verb'C=A(:)' are
         faster.  Better error messages.

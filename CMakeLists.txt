@@ -26,7 +26,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Aug 4, 2022" )
+set ( GraphBLAS_DATE "Aug 5, 2022" )
 set ( GraphBLAS_VERSION_MAJOR 7 )
 set ( GraphBLAS_VERSION_MINOR 2 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -252,9 +252,9 @@ set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 if ( CMAKE_CUDA_DEV )
     # for CUDA development only; not for production use
-    include_directories ( Source/Template Source Include Source/Generated1 lz4 Demo/Include rmm_wrap )
+    include_directories ( Source/Template Source Include Source/Generated1 lz4 zstd zstd/zstd_subset Demo/Include rmm_wrap )
 else ( )
-    include_directories ( Source/Template Source Include Source/Generated1 lz4 Source/Generated2 Demo/Include rmm_wrap )
+    include_directories ( Source/Template Source Include Source/Generated1 lz4 zstd zstd/zstd_subset Source/Generated2 Demo/Include rmm_wrap )
 endif ( )
 
 #-------------------------------------------------------------------------------
