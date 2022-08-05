@@ -10,7 +10,7 @@ function C = cbrt (G)
 G = G.opaque ;
 type = gbtype (G) ;
 if (gb_contains (type, 'complex'))
-    error ('input must be real') ;
+    error ('GrB:error', 'input must be real') ;
 elseif (gb_isfloat (type))
     op = 'cbrt' ;
 else

@@ -6,7 +6,7 @@ function [k, mn] = gb_2d_to_1d (i, j, m, n)
 
 % check for overflow
 if (double (m) * double (n) > 2^60)
-    error ('problem too large') ;
+    error ('GrB:error', 'problem too large') ;
 end
 
 % mn = the length of the vector x=A(:), if A is m by n

@@ -52,6 +52,7 @@ bool GB_AxB_dot3_cuda_branch
         }
         else
         {
+            // FIXME: remove debug outout here:
             std::cout << "Not using cuda path. M_is_hypersparse: " << GB_IS_HYPERSPARSE(M) <<
                          ", A->iso: " << A->iso << ", B->iso: " << B->iso << ", A_BITMAP: " << GB_IS_BITMAP(A) <<
                          ", B_BITMAP: " << GB_IS_BITMAP(B) << ", GB_IS_FULL(A): " << GB_IS_FULL(A)

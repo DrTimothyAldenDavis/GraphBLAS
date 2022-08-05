@@ -95,7 +95,6 @@ __global__ void AxB_dot3_phase3_mp
     #define INFINITY std::numeric_limits<T_C>::max()
     #endif
 
-    C->jumbled = true;
     const T_A *__restrict__ Ax = (T_A *)A->x  ;
     const T_B *__restrict__ Bx = (T_B *)B->x  ;
           T_C *__restrict__ Cx = (T_C *)C->x  ;
@@ -376,11 +375,7 @@ __global__ void AxB_dot3_phase3_mp
        cij = GB_reduce_sum<T_Z, tile_sz>( tile, cij );
     }
     #endif
-    // else has_zombies = 1;
 
-
-        //__syncthreads();
-    //tile.sync( );
     // write result for this block to global mem
     if (tid == 0)
     {

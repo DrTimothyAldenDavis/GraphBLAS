@@ -919,7 +919,7 @@ methods
 
     C = real (G) ;
     C = repmat (G, m, n) ;
-    C = reshape (G, arg1, arg2) ;
+    C = reshape (G, m, n, by_col) ;
     C = round (G) ;
 
     C = sec (G) ;

@@ -160,14 +160,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         return (info) ;
     }
 
-    // FIXME: why set C->i and C->x to zero?
-//  CHECK_CUDA_SIMPLE(cudaMemsetAsync(C->i, 0, (cnz+1) * sizeof(int64_t),
-//      stream));
-//  if (!C_iso)
-//  {
-//      CHECK_CUDA_SIMPLE(cudaMemsetAsync(C->x, 0,
-//          (cnz+1) * sizeof(ctype->size), stream));
-//  }
 
     CHECK_CUDA_SIMPLE(cudaMemAdvise( C->i, (cnz+1) * sizeof ( int64_t),
         cudaMemAdviseSetPreferredLocation, device));
@@ -219,8 +211,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     C->magic = GB_MAGIC ;
     C->nvec_nonempty = M->nvec_nonempty ;
-    // the dot3 CUDA kernel will produce C->i with jumbled indices
-    C->jumbled = true ;
+    C->jumbled = GB_JUMBLED (M) ;   // C is jumbled if M is jumbled
 
     GBURBLE ("(GPU C created and copied from M) ") ;
 
@@ -239,6 +230,111 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     filecache.getFile (my_mxm_spec) ;
 
     GBURBLE ("(GPU stringified srcode = %lu)\n", my_mxm_spec.sr_code) ;
+
+//  cases:
+
+// (1)
+//      A full          B full
+//      A bit           B full
+//      A full          B bit
+//      A bit           B bit
+
+    if ( GB_IS_FULL(A) && GB_IS_FULL(B) )
+    {
+
+        // Full x Full
+        dense_phase1launchFactory dp1lf(my_mxm_spec);
+
+        GBURBLE ("(GPU phase1 start nblk = %d) ", dp1lf.get_number_of_blocks(M)) ;
+        kernel_timer.Start();
+            dp1lf.jitGridBlockLaunch(C, M, A, B, stream);
+            CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
+        kernel_timer.Stop();
+        GBURBLE ("(GPU phase1 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
+
+        mxm_dense_launchFactory mdlf(my_mxm_spec);
+        GBURBLE ("(GPU Dense full x full launch ) ") ;
+        kernel_timer.Start();
+            mdlf.jitGridBlockLaunch( C, M, A, B, stream);
+            CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));  // only for timing
+        kernel_timer.Stop();
+        GBURBLE ("(GPU Dense full x full done %12.6g ms, rate=%12.6g)\n", 
+                   kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
+
+    }
+    else if ( GB_IS_FULL(A) && GB_IS_BITMAP(B) )
+    {
+        //  FIXME: Full x Bitmap
+    }
+    else if ( GB_IS_BITMAP(A) && GB_IS_FULL(B) )
+    {
+        //  FIXME: Bitmap x Full
+    }
+    else if ( GB_IS_BITMAP(A) && GB_IS_BITMAP(B) )
+    {
+        //  FIXME Bitmap x Bitmap
+    }
+    else if ( GB_IS_SPARSE(A) && GB_IS_FULL(B) )
+    {
+
+        // (2) Sparse x Full
+        //      A sparse        B full
+        //      A hyper         B full      GB_IS_HYPERSPARSE(A) && GB_IS_FULL (B))
+        //      A sparse        B bit
+        //      A hyper         B bit
+
+        dense_phase1launchFactory dp1lf(my_mxm_spec);
+
+        GBURBLE ("(GPU phase1 start nblk = %d) ", dp1lf.get_number_of_blocks(M)) ;
+        kernel_timer.Start();
+            dp1lf.jitGridBlockLaunch(C, M, A, B, stream);
+            CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
+        kernel_timer.Stop();
+        GBURBLE ("(GPU phase1 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
+
+        mxm_sparse_dense_launchFactory spdnlf(my_mxm_spec);
+        GBURBLE ("(GPU Dense sparse x full launch ) ") ;
+        kernel_timer.Start();
+            spdnlf.jitGridBlockLaunch( C, M, A, B, stream);
+            CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));  // only for timing
+        kernel_timer.Stop();
+        GBURBLE ("(GPU Dense sparse x full done %12.6g ms, rate=%12.6g)\n", 
+                   kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
+
+    }
+    else if ( GB_IS_HYPERSPARSE(A) && GB_IS_FULL(B) )
+    {
+        //  FIXME: Hyper x Full 
+    }
+    else if ( GB_IS_HYPERSPARSE(A) && GB_IS_BITMAP(B) )
+    {
+        //  FIXME: Sparse x Bitmap 
+    }
+    else if ( GB_IS_BITMAP(A) && GB_IS_BITMAP(B) )
+    {
+        //  FIXME: Hyper x Bitmap
+    }
+
+// (3)
+//      A full          B sparse
+//      A bit           B sparse
+//      A full          B hyper
+//      A bit           B hyper
+
+// (4) phase1, phase2, phase2end, phase3:
+//      A sparse        B sparse    <<<
+//      A hyper         B sparse
+//      A sparse        B hyper
+//      A hyper         B hyper
+
+
+//          && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B)
+//          && !GB_IS_FULL (A) && !GB_IS_FULL (B))
+
+    else if ( GB_IS_SPARSE(A) && GB_IS_SPARSE(B) )
+    {
+
+    // Sparse x Sparse
 
     //--------------------------------------------------------------------------
     // construct the tasks for phase1 and phase2
@@ -277,10 +373,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     // fixme: do async with streams
     // FIXME: do we need any of these?
-//  CHECK_CUDA_SIMPLE(cudaMemsetAsync(Nanobuckets, 0,
-//      nanobuckets_size * sizeof(int64_t), stream));
-//  CHECK_CUDA_SIMPLE(cudaMemsetAsync(Blockbucket, 0,
-//      blockbuckets_size * sizeof(int64_t), stream));
+  //CHECK_CUDA_SIMPLE(cudaMemsetAsync(Nanobuckets, 0,
+  //    nanobuckets_size * sizeof(int64_t), stream));
+  //CHECK_CUDA_SIMPLE(cudaMemsetAsync(Blockbucket, 0,
+  //    blockbuckets_size * sizeof(int64_t), stream));
     CHECK_CUDA_SIMPLE(cudaMemsetAsync(Bucketp, 0,
         (NBUCKETS+1) * sizeof(int64_t), stream));
     CHECK_CUDA_SIMPLE(cudaMemsetAsync(offset, 0,
@@ -361,7 +457,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // phase1: assign each C(i,j) to a bucket, and count them
     //--------------------------------------------------------------------------
 
-    GBURBLE ("(GPU phase1 start) ") ;
+    GBURBLE ("(GPU phase1 start nblk = %d) ", p1lf.get_number_of_blocks(M)) ;
     kernel_timer.Start();
     p1lf.jitGridBlockLaunch(Nanobuckets, Blockbucket, C, M, A, B, stream);
     CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
@@ -426,10 +522,11 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C, M, A, B, stream);
             CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));  // only for timing
             kernel_timer.Stop();
-            GBURBLE ("(GPU phase3 bucket %d done %12.6g ms)\n", bucket, kernel_timer.Elapsed()) ; }
+            GBURBLE ("(GPU phase3 bucket %d done %12.6g ms, rate=%12.6g)\n", bucket, kernel_timer.Elapsed(), (end-start)/(1000*kernel_timer.Elapsed())) ; }
     }
 
     GB_FREE_WORKSPACE ;
+    }
 
     CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
     CHECK_CUDA_SIMPLE(cudaStreamDestroy(stream));

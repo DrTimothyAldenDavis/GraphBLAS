@@ -30,7 +30,7 @@ switch (GrB.type (G))
         C = max (eps (double (real (G))), eps (double (imag (G)))) ;
 
     otherwise
-        error ('input must be floating-point') ;
+        error ('GrB:error', 'input must be floating-point') ;
 
 end
 

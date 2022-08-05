@@ -1,3 +1,9 @@
+Version 7.2.0, Aug 4, 2022
+
+    * added GxB_Matrix_reshape and GxB_Matrix_reshapeDup
+    * MATLAB interface: faster C(:)=A, C=A(:), and reshape.
+        Better error messages.
+
 Version 7.1.2, July 8, 2022
 
     * MATLAB interface: linear indexing added for C(:)=A, C=A(:), and

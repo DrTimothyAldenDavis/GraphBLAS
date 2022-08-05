@@ -16,7 +16,7 @@ if (nargin == 1)
     arg2 = hi ;
 else
     if (nargout > 1)
-        error ('too many output arguments') ;
+        error ('GrB:error', 'too many output arguments') ;
     elseif isequal (uplo, 'lower')
         [lo, ~] = gbbandwidth (G.opaque, 1, 0) ;
         arg1 = lo ;
@@ -24,7 +24,7 @@ else
         [~, hi] = gbbandwidth (G.opaque, 0, 1) ;
         arg1 = hi ;
     else
-        error ('unrecognized option') ;
+        error ('GrB:error', 'unrecognized option') ;
     end
 end
 

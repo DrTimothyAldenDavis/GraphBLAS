@@ -177,15 +177,8 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
             GB_AxB_dot3_cuda_branch (M, Mask_struct, A, B, semiring,
             flipxy, Context))
         {
-            // FIXME for CUDA: can M be jumbled for the CUDA kernel?
-            GB_MATRIX_WAIT (M) ;    // make sure it's not jumbled
-            if (GB_AxB_dot3_control (M, Mask_comp)
-                && !GB_IS_HYPERSPARSE (M)   // FIXME for CUDA, remove this
-            )
-            {
-                info = (GB_AxB_dot3_cuda (C, M, Mask_struct, A, B, semiring,
-                    flipxy, Context)) ;
-            }
+            info = (GB_AxB_dot3_cuda (C, M, Mask_struct, A, B, semiring,
+                flipxy, Context)) ;
         }
         else
         #endif
@@ -199,7 +192,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     }
 
     //--------------------------------------------------------------------------
-    // general case: C<M>=A'*B, C<!M>=A'B*, or C=A'*B, not in-place
+    // general case: C<M>=A'*B, C<!M>=A'*B, or C=A'*B, not in-place
     //--------------------------------------------------------------------------
 
     GBURBLE ("(%sdot2) ", iso_kind) ;

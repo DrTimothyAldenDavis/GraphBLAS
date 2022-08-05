@@ -2040,6 +2040,8 @@
 #define GxB_Matrix_pack_HyperCSR GxM_Matrix_pack_HyperCSR
 #define GxB_Matrix_reduce_FC32 GxM_Matrix_reduce_FC32
 #define GxB_Matrix_reduce_FC64 GxM_Matrix_reduce_FC64
+#define GxB_Matrix_reshape GxM_Matrix_reshape
+#define GxB_Matrix_reshapeDup GxM_Matrix_reshapeDup
 #define GxB_Matrix_resize GxM_Matrix_resize
 #define GxB_Matrix_select GxM_Matrix_select
 #define GxB_Matrix_select_FC32 GxM_Matrix_select_FC32
@@ -3857,6 +3859,7 @@
 #define GB_realloc_memory GM_realloc_memory
 #define GB_reduce_to_scalar GM_reduce_to_scalar
 #define GB_reduce_to_vector GM_reduce_to_vector
+#define GB_reshape GM_reshape
 #define GB_resize GM_resize
 #define GB_Scalar_check GM_Scalar_check
 #define GB_Scalar_reduce GM_Scalar_reduce

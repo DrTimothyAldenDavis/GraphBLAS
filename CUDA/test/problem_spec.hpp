@@ -22,41 +22,29 @@ template<typename T_C, typename T_M, typename T_A, typename T_B>
 class mxm_problem_spec {
 
 public:
-    mxm_problem_spec(GrB_Monoid monoid_, GrB_BinaryOp binop_, int64_t N_, int64_t Annz_, int64_t Bnnz_, int64_t Cnnz_) :
-        mymxmfactory(GB_cuda_mxm_factory ( )), mysemiring(), binop(binop_), monoid(monoid_), N(N_),
-        G(N_, N_), Annz(Annz_), Bnnz(Bnnz_), Cnnz(Cnnz_), mask_struct(false) {
+    mxm_problem_spec(GrB_Monoid monoid_, GrB_BinaryOp binop_, int64_t N_, int64_t Annz_, int64_t Bnnz_, int64_t Cnnz_,
+                     int sparsity_control_A_ = GxB_SPARSE, int sparsity_control_B_ = GxB_SPARSE) :
+        mysemiring(), binop(binop_), monoid(monoid_), N(N_),
+        G(N_, N_), Annz(Annz_), Bnnz(Bnnz_), Cnnz(Cnnz_), mask_struct(true), flipxy(false), mask_comp(false) {
 
         // FIXME: This should be getting set automatically somehow.
-        bool flipxy = false;
-        bool mask_comp = false;
         float Cnzpercent = (float) Cnnz_/(N_*N_);
 
         // TODO: Allocate and fill arrays for buckets and nano buckets
-        G.init_A(Annz_, GxB_SPARSE, GxB_BY_ROW);
-        G.init_B(Bnnz_, GxB_SPARSE, GxB_BY_ROW);
+        G.init_A(Annz_, sparsity_control_A_, GxB_BY_ROW);
+        G.init_B(Bnnz_, sparsity_control_B_, GxB_BY_ROW);
         G.init_C(Cnzpercent);
 //        G.fill_buckets( TB ); // all elements go to testbucket= TB
-
-        GrB_Matrix C = G.getC();
-        GrB_Matrix M = G.getM();
-        GrB_Matrix A = G.getA();
-        GrB_Matrix B = G.getB();
 
         /************************
          * Create mxm factory
          */
         auto grb_info = GrB_Semiring_new(&mysemiring, monoid_, binop_);
         GRB_TRY (grb_info) ;
-
-        bool C_iso = false ;
-        int C_sparsity = GB_sparsity (M) ;
-        GrB_Type ctype = binop_->ztype ;
-
-        mymxmfactory.mxm_factory (
-                C_iso, C_sparsity, ctype,
-                M, mask_struct, mask_comp,
-                mysemiring, flipxy,
-                A, B) ;
+        GrB_Matrix A = G.getA();
+        GrB_Matrix B = G.getB();
+        GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout)) ;
+        GRB_TRY (GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout)) ;
     }
 
     ~mxm_problem_spec() {
@@ -81,7 +69,30 @@ public:
 
     auto &getG() { return G; }
 
-    GB_cuda_mxm_factory &get_mxm_factory() { return mymxmfactory; }
+
+    GB_cuda_mxm_factory &get_mxm_factory() {
+
+        // Lazily create the mxm factory
+        if(!mymxmfactory.has_value()) {
+
+            mymxmfactory.emplace(GB_cuda_mxm_factory());
+            GrB_Matrix C = G.getC();
+            GrB_Matrix M = G.getM();
+            GrB_Matrix A = G.getA();
+            GrB_Matrix B = G.getB();
+
+            bool C_iso = false ;
+            int C_sparsity = GB_sparsity (M) ;
+            GrB_Type ctype = binop->ztype ;
+
+            (*mymxmfactory).mxm_factory (
+                    C_iso, C_sparsity, ctype,
+                    M, mask_struct, mask_comp,
+                    mysemiring, flipxy,
+                    A, B) ;
+        }
+        return *mymxmfactory;
+    }
     GrB_Semiring get_semiring() { return mysemiring; }
 
     void set_sparsity_control(GrB_Matrix mat, int gxb_sparsity_control, int gxb_format) {
@@ -94,7 +105,10 @@ public:
 
 private:
 
-    bool mask_struct;
+    bool mask_struct{false};
+    bool flipxy{false};
+    bool mask_comp{false};
+
     int64_t Annz;
     int64_t Bnnz;
     int64_t Cnnz;
@@ -102,6 +116,6 @@ private:
     GrB_BinaryOp binop;
     GrB_Monoid  monoid;
     GrB_Semiring  mysemiring;
-    GB_cuda_mxm_factory mymxmfactory;
+    std::optional<GB_cuda_mxm_factory> mymxmfactory;
     SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G;
 };

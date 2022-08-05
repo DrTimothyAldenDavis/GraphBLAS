@@ -9,7 +9,6 @@
 
 #include "GB.h"
 #include "../GB_cuda_type_wrap.hpp"
-#include "../GB_Matrix_allocate.h"
 #include "test_utility.hpp"
 #include "../GB_cuda_error.h"
 
@@ -81,14 +80,11 @@ class matrix : public Managed {
          GrB_Type type = cuda::jit::to_grb_type<T>();
 
          GRB_TRY (GrB_Matrix_new (&mat, type, nrows_, ncols_)) ;
+
          // GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL,
             // GxB_SPARSE) ;
             // or:
             // GxB_HYPERSPARSE, GxB_BITMAP, GxB_FULL
-
-//         mat = GB_Matrix_allocate(
-//            type,   /// <<<<<<<BUG HERE, was NULL, which is broken
-//            sizeof(T), nrows, ncols, 2, false, false, Nz, -1);
      }
 
 

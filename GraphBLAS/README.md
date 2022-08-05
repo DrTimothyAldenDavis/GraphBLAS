@@ -112,6 +112,7 @@ messages during the test.  This is expected.
 # FUTURE: Not yet supported for GrB matrices in Octave/MATLAB:
 
     linear indexing, except for C=A(:) to index the whole matrix A
+        or C(:)=A to index the whole matrix C.
     2nd output for [x,i] = max (...) and [x,i] = min (...):
         use GrB.argmin and GrB.argmax instead.
     'includenan' for min and max
