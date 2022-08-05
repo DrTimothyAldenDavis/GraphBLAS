@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_about9: still more basic tests
+// GB_mex_about9: still more basic tests (not for Windows)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Test a particular case of GrB_mxm for 0-by-0 iso full matrices.
+// Windows is limited to user-defined types of size 128 or less.
 
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
@@ -39,7 +39,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     bool malloc_debug = GB_mx_get_global (true) ;
-    int expected = GrB_SUCCESS ;
 
     //--------------------------------------------------------------------------
     // user-defined type of 256 bytes

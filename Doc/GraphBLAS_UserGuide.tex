@@ -5035,6 +5035,7 @@ functions.  Everything will work correctly and results will be predictable, it
 will just be slow.
 
 %-------------------------------------------------------------------------------
+\newpage
 \subsubsection{{\sf GxB\_Matrix\_isStoredElement:} check if entry present in matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_isStoredElement}
@@ -5191,6 +5192,10 @@ If the same \verb'C' on input is reshaped row-wise to dimensions 2-by-6:
         10 11 12 13     12 13 20 21 22 23
         20 21 22 23
 \end{verbatim}
+
+NOTE: because an intermediate linear index must be computed for each entry,
+\verb'GxB_Matrix_reshape' cannot be used on matrices for which
+\verb'nrows*ncols' exceeds $2^{60}$.
 
 %-------------------------------------------------------------------------------
 \newpage
@@ -15318,7 +15323,7 @@ GraphBLAS folder.
 
 \begin{itemize}
 
-\item Version 7.2.0 (Aug FIXME, 2022)
+\item Version 7.2.0 (Aug 4, 2022)
 
     \begin{packed_itemize}
     \item \verb'GxB_Matrix_reshape*' added.

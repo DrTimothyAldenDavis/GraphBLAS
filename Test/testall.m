@@ -183,6 +183,8 @@ logstat ('test189',t) ; % test large assign
 logstat ('test194',t) ; % test GxB_Vector_diag
 logstat ('test76' ,s) ; % GxB_resize (single threaded). ***
 
+logstat ('test244',t) ; % test GxB_Matrix_reshape*
+
 %===============================================================================
 % tests with no malloc debugging
 %===============================================================================

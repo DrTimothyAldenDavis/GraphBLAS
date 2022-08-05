@@ -1,4 +1,4 @@
-Version 7.2.0, Aug FIXME, 2022
+Version 7.2.0, Aug 4, 2022
 
     * added GxB_Matrix_reshape and GxB_Matrix_reshapeDup
     * MATLAB interface: faster C(:)=A, C=A(:), and reshape.

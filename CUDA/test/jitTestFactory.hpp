@@ -856,9 +856,9 @@ bool test_reduce_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
     GrB_Matrix_dup(&A, problem_spec.getC());
     GrB_Type type = cuda::jit::to_grb_type<T_C>();
 
-    A->i[0] = GB_FLIP(A->i[0]);
-    A->i[1] = GB_FLIP(A->i[1]);
-    A->nzombies = 2;
+    A->i[0] = GB_FLIP(A->i[0]); // FIXME
+    A->i[1] = GB_FLIP(A->i[1]); // FIXME
+    A->nzombies = 2; // FIXME: use an opaque method to insert zombies into A
 
     //GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout)) ;
 
