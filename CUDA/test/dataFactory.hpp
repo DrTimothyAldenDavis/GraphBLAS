@@ -303,25 +303,6 @@ class SpGEMM_problem_generator {
     int64_t* getBucket() { return Bucket;}
     int64_t* getBucketStart(){ return BucketStart;}
 
-    void loadCj() {
-
-       // Load C_i with column j info to avoid another lookup
-       for (int c = 0 ; c< M->mat->vdim; ++c) {
-           for ( int r = M->mat->p[c]; r< M->mat->p[c+1]; ++r){
-               C->mat->i[r] = c << 4 ; //shift to store bucket info
-           }
-       }
-    }
-
-    void revertCj() {
-        // Load C_i with column j info to avoid another lookup
-        for (int c = 0 ; c< M->mat->vdim; ++c) {
-            for ( int r = M->mat->p[c]; r< M->mat->p[c+1]; ++r){
-                C->mat->i[r] = c >> 4 ; //shift to store bucket info
-            }
-        }
-    }
-
     void init_C(float Mnzp, std::int64_t seed_c = 23456ULL, std::int64_t seed_m = 4567ULL){
 
        // Get sizes relative to fully dense matrices
@@ -334,9 +315,6 @@ class SpGEMM_problem_generator {
        C->fill_random(Mnz, GxB_SPARSE, GxB_BY_ROW, seed_m);
        M->fill_random(Mnz, GxB_SPARSE, GxB_BY_ROW, seed_m);
 
-//       std::cout<<"fill complete"<<std::endl;
-//       C->mat->p = M->mat->p; //same column pointers (assuming CSC here)
-//       C->mat->p_shallow = true ; // C->mat does not own M->mat->p
     }
 
     void del(){
