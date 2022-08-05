@@ -40,6 +40,7 @@ void mexFunction
 
     bool malloc_debug = GB_mx_get_global (true) ;
     int expected = GrB_SUCCESS ;
+    GrB_Matrix C = NULL ;
 
     //--------------------------------------------------------------------------
     // user-defined type of 256 bytes
@@ -51,6 +52,22 @@ void mexFunction
     OK (GxB_Type_fprint (BigType, "(256-byte big type)", GxB_COMPLETE,
         stdout)) ;
     OK (GrB_Type_free (&BigType)) ;
+
+    //--------------------------------------------------------------------------
+    // reshape error handling
+    //--------------------------------------------------------------------------
+
+    GrB_Index n =  (1L << 40) ;
+    OK (GrB_Matrix_new (&C, GrB_BOOL, n, n)) ;
+    expected = GrB_OUT_OF_MEMORY ;
+    ERR (GxB_Matrix_reshape (C, true, n/2, 2*n, NULL)) ;
+    OK (GrB_Matrix_free (&C)) ;
+
+    n = 12 ;
+    OK (GrB_Matrix_new (&C, GrB_BOOL, n, n)) ;
+    expected = GrB_DIMENSION_MISMATCH ;
+    ERR (GxB_Matrix_reshape (C, true, n, 2*n, NULL)) ;
+    OK (GrB_Matrix_free (&C)) ;
 
     //--------------------------------------------------------------------------
     // wrapup
