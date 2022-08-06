@@ -34,7 +34,7 @@ public:
         G.init_A(Annz_, sparsity_control_A_, GxB_BY_ROW);
         G.init_B(Bnnz_, sparsity_control_B_, GxB_BY_ROW);
         G.init_C(Cnzpercent);
-//        G.fill_buckets( TB ); // all elements go to testbucket= TB
+//      G.fill_buckets( TB ); // all elements go to testbucket= TB
 
         /************************
          * Create mxm factory
@@ -43,8 +43,8 @@ public:
         GRB_TRY (grb_info) ;
         GrB_Matrix A = G.getA();
         GrB_Matrix B = G.getB();
-        GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout)) ;
-        GRB_TRY (GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout)) ;
+        //GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout)) ;
+        //GRB_TRY (GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout)) ;
     }
 
     ~mxm_problem_spec() {
@@ -68,7 +68,6 @@ public:
     int64_t getCnnz() { return Cnnz; }
 
     auto &getG() { return G; }
-
 
     GB_cuda_mxm_factory &get_mxm_factory() {
 

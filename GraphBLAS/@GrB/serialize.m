@@ -24,6 +24,8 @@ function blob = serialize (G, method, level)
 %            provides excellent compression compared with LZ4, and higher
 %            levels of LZ4HC only slightly improve compression quality.
 %
+%   'zstd'   ZSTD.  The level can be 1 to 19 with 3 the default.
+%
 % Example:
 %   G = GrB (magic (5))
 %   blob = GrB.serialize (G) ;      % compressed via LZ4

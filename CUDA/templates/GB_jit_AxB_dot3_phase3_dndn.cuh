@@ -121,6 +121,12 @@ __global__ void AxB_dot3_phase3_dndn
    const int64_t *__restrict__ Bi = B->i ;
    const int64_t *__restrict__ Ap = A->p ;
    const int64_t *__restrict__ Bp = B->p ;
+   #if GB_A_IS_BITMAP
+   const int8_t  *__restrict__ Ab = A->b ;
+   #endif
+   #if GB_B_IS_BITMAP
+   const int8_t  *__restrict__ Bb = B->b ;
+   #endif
 
     // zombie count
     int zc = 0;
@@ -169,10 +175,10 @@ __global__ void AxB_dot3_phase3_dndn
         GB_GETA ( aki, Ax, pA+threadIdx.x) ;        // aki = A(0,i)
         GB_GETB ( bkj, Bx, pB+threadIdx.x) ;        // bkj = B(0,j)
         GB_C_MULT ( cij, aki, bkj ) ;               // cij = aki * bkj
-        for ( int tid = threadIdx.x + s; tid < nnzA; tid+= s) { 
+        for ( int64_t k = threadIdx.x + s; k < nnzA; k+= s) { 
               // cij += A(k,i) * B(k,j)
-              GB_GETA (aki, Ax, pA+tid) ;           // aki = A(k,i)
-              GB_GETB (bkj, Bx, pB+tid) ;           // bkj = B(k,j)
+              GB_GETA (aki, Ax, pA+k) ;           // aki = A(k,i)
+              GB_GETB (bkj, Bx, pB+k) ;           // bkj = B(k,j)
               GB_MULTADD ( cij, aki, bkj ) ;        // cij += aki * bkj
         }
 
@@ -180,14 +186,15 @@ __global__ void AxB_dot3_phase3_dndn
 
         T_Z cij = GB_IDENTITY ;
         bool cij_exists = false ;
-        for ( int tid = threadIdx.x ; tid < nnzA; tid+= s) { 
-            if (Ab [pA+tid] && Bb [pB+tid])
-            {
-              GB_GETA (aki, Ax, pA+tid) ;           // aki = A(k,i)
-              GB_GETB (bkj, Bx, pB+tid) ;           // bkj = B(k,j)
-              GB_MULTADD ( cij, aki, bkj ) ;        // cij += aki * bkj
-              cij_exists = true ;
-            }
+        for ( int64_t k = threadIdx.x ; k < nnzA; k+= s) { 
+              GB_GETA (aki, Ax, pA+k) ;           // aki = A(k,i)
+              GB_GETB (bkj, Bx, pB+k) ;           // bkj = B(k,j)
+              int8_t b = (Ab [pA+k] && Bb [pB+k]) ;
+              cij_exists |= b ;
+              if (b)
+              {
+                  GB_MULTADD ( cij, aki, bkj ) ;        // cij += aki * bkj
+              }
         }
 
     #elif GB_A_IS_FULL && GB_B_IS_BITMAP

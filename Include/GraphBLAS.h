@@ -221,7 +221,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Aug 4, 2022"
+#define GxB_IMPLEMENTATION_DATE "Aug 6, 2022"
 #define GxB_IMPLEMENTATION_MAJOR 7
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   0
@@ -11370,17 +11370,19 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     free (blob) ;
 */
 
-// Three methods are currently implemented: no compression, LZ4, and LZ4HC
+// Currently implemented: no compression, LZ4, LZ4HC, and ZSTD
 #define GxB_COMPRESSION_NONE -1     // no compression
 #define GxB_COMPRESSION_DEFAULT 0   // LZ4
 #define GxB_COMPRESSION_LZ4   1000  // LZ4
 #define GxB_COMPRESSION_LZ4HC 2000  // LZ4HC, with default level 9
+#define GxB_COMPRESSION_ZSTD  3000  // ZSTD, with default level 6
 
 // possible future methods that could be added:
-// #define GxB_COMPRESSION_ZLIB  3000  // ZLIB, with default level 6
 // #define GxB_COMPRESSION_LZO   4000  // LZO, with default level 2
 // #define GxB_COMPRESSION_BZIP2 5000  // BZIP2, with default level 9
 // #define GxB_COMPRESSION_LZSS  6000  // LZSS
+// #define GxB_COMPRESSION_ZLIB  7000  // ZLIB, with default level 6
+// ...
 
 // using the Intel IPP versions, if available (not yet supported);
 #define GxB_COMPRESSION_INTEL   1000000
@@ -11391,6 +11393,7 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 
 //  LZ4     no level setting
 //  LZ4HC   1: fast, 9: default, 9: max
+//  ZSTD:   1: fast, 3: default, 19: max
 
 //  these methos are not yet supported but may be added in the future:
 //  ZLIB    1: fast, 6: default, 9: max

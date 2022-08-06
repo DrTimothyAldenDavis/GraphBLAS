@@ -57,6 +57,10 @@ void mexFunction
         { 
             method = GxB_COMPRESSION_LZ4HC ;
         }
+        else if (MATCH (method_name, "zstd"))
+        {
+            method = GxB_COMPRESSION_ZSTD ;
+        }
         else if (MATCH (method_name, "debug"))
         { 
             // use GrB_Matrix_serializeSize and GrB_Matrix_serialize, just
@@ -115,7 +119,7 @@ void mexFunction
         { 
             level = (int) mxGetScalar (pargin [2]) ;
         }
-        if (level < 0 || level > 9) level = 0 ;
+        if (level < 0 || level > 999) level = 0 ;
         // set the descriptor
         OK (GxB_Desc_set (desc, GxB_COMPRESSION, method + level)) ;
     }
