@@ -1,4 +1,4 @@
-Version 7.2.0, Aug 5, 2022
+Version 7.2.0, Aug 6, 2022
 
     * added ZSTD as a compression option for serialize/deserialize:
         Version 1.5.3 by Yann Collet, https://github.com/facebook/zstd.git

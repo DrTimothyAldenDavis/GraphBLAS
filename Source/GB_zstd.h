@@ -648,6 +648,9 @@ GBZSTD (ZSTD_XXH_versionNumber)
 // when GraphBLAS is built, so silence them with this #define:
 #define ZSTD_DISABLE_DEPRECATE_WARNINGS
 
+// do not use multithreading in ZSTD itself.  GraphBLAS does the parallelism.
+#undef ZSTD_MULTITHREAD
+
 // do not use asm
 #define ZSTD_DISABLE_ASM
 #include "zstd.h"

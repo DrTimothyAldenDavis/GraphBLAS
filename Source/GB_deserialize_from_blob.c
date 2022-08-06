@@ -146,7 +146,7 @@ GrB_Info GB_deserialize_from_blob
                 const char *src = (const char *) (blob + s + s_start) ;
                 char *dst = (char *) (X + kstart) ;
                 if (algo == GxB_COMPRESSION_ZSTD)
-                {
+                { 
                     // ZSTD
                     size_t u = ZSTD_decompress (dst, d_size, src, s_size) ;
                     if (u != d_size)
@@ -156,7 +156,7 @@ GrB_Info GB_deserialize_from_blob
                     }
                 }
                 else
-                {
+                { 
                     // LZ4 or LZ4HC
                     int src_size = (int) s_size ;
                     int dst_size = (int) d_size ;
