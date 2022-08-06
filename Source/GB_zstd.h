@@ -493,8 +493,6 @@ GBZSTD (ZSTD_insertAndFindFirstIndex)
 GBZSTD (ZSTD_insertBlock)
 #define ZSTD_invalidateRepCodes                  \
 GBZSTD (ZSTD_invalidateRepCodes)
-// #define ZSTD_isError                          \
-// GBZSTD (ZSTD_isError)
 #define ZSTD_isFrame                             \
 GBZSTD (ZSTD_isFrame)
 #define ZSTD_isSkippableFrame                    \

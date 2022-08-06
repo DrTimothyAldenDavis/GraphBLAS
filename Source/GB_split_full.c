@@ -137,11 +137,6 @@ GrB_Info GB_split_full              // split a full matrix
 
                         case GB_16BYTE : // double complex or 16-byte user
                             #define GB_CTYPE GB_blob16
-//                          #define GB_CTYPE uint64_t
-//                          #undef  GB_COPY
-//                          #define GB_COPY(pC,pA)                          \
-//                              Cx [2*pC  ] = Ax [2*pA  ] ;                 \
-//                              Cx [2*pC+1] = Ax [2*pA+1] ;
                             #include "GB_split_full_template.c"
                             break ;
 
