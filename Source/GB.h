@@ -31,7 +31,7 @@
 // internal #include files
 //------------------------------------------------------------------------------
 
-#define restrict GB_restrict
+#define GB_restrict restrict
 
 #include "GB_prefix.h"
 #include "GB_bytes.h"
