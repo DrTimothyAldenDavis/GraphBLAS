@@ -5452,9 +5452,10 @@ There are two forms of serialization: \verb'GrB*serialize' and
 allocated by the user application, and it must be large enough to hold the
 matrix or vector.
 
-By default, LZ4 compression is used for serialization, but other options can be
-selected via the descriptor: \verb'GxB_set (desc, GxB_COMPRESSION, method)',
-where \verb'method' is an integer selected from the following options:
+By default, ZSTD (level 1) compression is used for serialization, but other
+options can be selected via the descriptor:
+\verb'GxB_set (desc, GxB_COMPRESSION, method)', where \verb'method' is an
+integer selected from the following options:
 
 \vspace{0.2in}
 {\footnotesize
@@ -5463,10 +5464,10 @@ where \verb'method' is an integer selected from the following options:
 method                           &  description \\
 \hline
 \verb'GxB_COMPRESSION_NONE'      &  no compression \\
-\verb'GxB_COMPRESSION_DEFAULT'   &  LZ4 \\
+\verb'GxB_COMPRESSION_DEFAULT'   &  ZSTD, with default level 1 \\
 \verb'GxB_COMPRESSION_LZ4'       &  LZ4 \\
 \verb'GxB_COMPRESSION_LZ4HC'     &  LZ4HC, with default level 9 \\
-\verb'GxB_COMPRESSION_ZSTD'      &  ZSTD, with default level 3 \\
+\verb'GxB_COMPRESSION_ZSTD'      &  ZSTD, with default level 1 \\
 \hline
 \end{tabular} }
 \vspace{0.2in}
@@ -5480,7 +5481,7 @@ vector with LZ4HC with level 6, use:
     \begin{verbatim}
     GxB_set (desc, GxB_COMPRESSION, GxB_COMPRESSION_LZ4HC + 6) ; \end{verbatim}}
 
-The ZSTD method can be specified as level 1 to 19, with 3 being the default.
+The ZSTD method can be specified as level 1 to 19, with 1 being the default.
 To compress with ZSTD at level 6, use:
 
     {\footnotesize
@@ -5580,7 +5581,7 @@ GraphBLAS function   & purpose                                      & Section \\
 % On output, it is reduced to the numbed of bytes actually used to serialize
 % the vector.  After calling \verb'GrB_Vector_serialize', the blob may be
 % \verb'realloc''d to this revised size if desired (this is optional).
-% LZ4 compression is used to construct a compact blob.
+% ZSTD (level 1) compression is used to construct a compact blob.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_serialize:}      serialize a vector}
@@ -5605,10 +5606,9 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
 
 \verb'GxB_Vector_serialize' serializes a vector into a single array of bytes
 (the blob), which is \verb'malloc''ed and filled with the serialized vector.
-By default, LZ4 compression is used, but other options can be selected
-via the descriptor.
-Serializing a vector is identical to serializing a matrix;
-see Section \ref{matrix_serialize_GxB} for more information.
+By default, ZSTD (level 1) compression is used, but other options can be
+selected via the descriptor.  Serializing a vector is identical to serializing
+a matrix; see Section \ref{matrix_serialize_GxB} for more information.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -5728,7 +5728,7 @@ On input, \verb'&blob_size' is the size of the allocated blob in bytes.
 On output, it is reduced to the numbed of bytes actually used to serialize
 the matrix.  After calling \verb'GrB_Matrix_serialize', the blob may be
 \verb'realloc''d to this revised size if desired (this is optional).
-LZ4 compression is used to construct a compact blob.
+ZSTD (level 1) compression is used to construct a compact blob.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_serialize:}      serialize a matrix}
@@ -5753,7 +5753,7 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 
 \verb'GxB_Matrix_serialize' is identical to \verb'GrB_Matrix_serialize', except
 that it does not require a pre-allocated blob.  Instead, it allocates the blob
-internally, and fills it with the serialized matrix.  By default, LZ4
+internally, and fills it with the serialized matrix.  By default, ZSTD (level 1)
 compression is used, but other options can be selected via the descriptor.
 
 The blob is allocated with the \verb'malloc' function passed to
@@ -7676,8 +7676,8 @@ GrB_Desc_Value ;
     value will inform the matrix multiplication to sort its result, instead.
 
 \item \verb'GxB_COMPRESSION' selects the compression method for serialization.
-    The default is LZ4.  See Section~\ref{serialize_deserialize} for other
-    options.
+    The default is ZSTD (level 1).  See Section~\ref{serialize_deserialize} for
+    other options.
 
 \item \verb'GxB_IMPORT' informs the \verb'GxB' pack methods
     that they can trust their input data, or not.  The default is to trust
@@ -15331,7 +15331,7 @@ GraphBLAS folder.
 
 \begin{itemize}
 
-\item Version 7.2.0 (Aug 6, 2022)
+\item Version 7.2.0 (Aug 8, 2022)
 
     \begin{packed_itemize}
     \item added ZSTD as a compression option for serialize/deserialize:
@@ -15339,6 +15339,7 @@ GraphBLAS folder.
         \url{https://github.com/facebook/zstd.git}.
         Copyright (c) 2016-present, Facebook, Inc. All rights reserved.
         Included in SuiteSparse:GraphBLAS via its BSD-3-clause license.
+        The default method is now ZSTD, level 1.
     \item \verb'GxB_Matrix_reshape*' added.
     \item MATLAB interface: \verb'reshape', \verb'C(:)=A', \verb'C=A(:)' are
         faster.  Better error messages.

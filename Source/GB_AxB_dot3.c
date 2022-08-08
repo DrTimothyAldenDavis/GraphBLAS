@@ -18,6 +18,7 @@
 #ifndef GBCUDA_DEV
 #include "GB_AxB__include2.h"
 #endif
+#include "GB_unused.h"
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \

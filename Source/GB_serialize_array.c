@@ -48,7 +48,6 @@ GrB_Info GB_serialize_array
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     ASSERT (Blocks_handle != NULL) ;
     ASSERT (Blocks_size_handle != NULL) ;
     ASSERT (Sblocks_handle != NULL) ;
@@ -172,11 +171,11 @@ GrB_Info GB_serialize_array
         size_t s ;
         switch (algo)
         {
-            default :
             case GxB_COMPRESSION_LZ4 : 
             case GxB_COMPRESSION_LZ4HC : 
                 s = (size_t) LZ4_compressBound ((int) uncompressed) ;
                 break ;
+            default :
             case GxB_COMPRESSION_ZSTD : 
                 s = ZSTD_compressBound (uncompressed) ;
                 break ;
@@ -236,7 +235,6 @@ GrB_Info GB_serialize_array
         switch (algo)
         {
 
-            default :
             case GxB_COMPRESSION_LZ4 : 
                 s = LZ4_compress_default (src, dst, srcSize, dstCapacity) ;
                 ok = ok && (s > 0) ;
@@ -251,6 +249,7 @@ GrB_Info GB_serialize_array
                 Sblocks [blockid] = (int64_t) s ;
                 break ;
 
+            default :
             case GxB_COMPRESSION_ZSTD : 
                 s64 = ZSTD_compress (dst, dstCapacity, src, srcSize, level) ;
                 ok = ok && (s64 <= dstCapacity) ;

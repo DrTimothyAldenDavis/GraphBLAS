@@ -12,8 +12,10 @@ function blob = serialize (G, method, level)
 % more compact blob at the cost of higher run time.  Levels outside
 % the allowable range are changed to the default level.
 %
-%   'lz4'   LZ4, with no level setting.  This is the default if the
-%           method is not specified.  Very fast with good compression.
+%   'zstd'  ZSTD.  The level can be 1 to 19 with 1 the default.
+%           This is the default method if no method is specified.
+%
+%   'lz4'   LZ4, with no level setting. Fast with decent compression.
 %           For large problems, lz4 can be faster than no compression,
 %           and it cuts the size of the blob by about 3x on average.
 %
@@ -24,16 +26,9 @@ function blob = serialize (G, method, level)
 %           provides excellent compression compared with LZ4, and higher
 %           levels of LZ4HC only slightly improve compression quality.
 %
-%   'zstd'  ZSTD.  The level can be 1 to 19 with 3 the default.  About 2x
-%           slower than lz4 at the default level 3, but better compression
-%           (about 60% the size of the default lz4 blob).  With level 1:
-%           about as fast as lz4 but better compression than lz4.
-%
-% In the future, ZSTD level 1 may become the new default.
-%
 % Example:
 %   G = GrB (magic (5))
-%   blob = GrB.serialize (G) ;      % compressed via LZ4
+%   blob = GrB.serialize (G) ;      % compressed via ZSTD, level 1
 %   f = fopen ('G.bin', 'wb') ;
 %   fwrite (f, blob) ;
 %   fclose (f)

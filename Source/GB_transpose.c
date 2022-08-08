@@ -122,8 +122,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     //--------------------------------------------------------------------------
 
     GrB_Type atype = A->type ;
-    size_t asize = atype->size ;
-    GB_Type_code acode = atype->code ;
+//  size_t asize = atype->size ;
+//  GB_Type_code acode = atype->code ;
 
     bool A_is_bitmap = GB_IS_BITMAP (A) ;
     bool A_is_hyper  = GB_IS_HYPERSPARSE (A) ;

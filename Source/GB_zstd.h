@@ -493,8 +493,7 @@ GBZSTD (ZSTD_insertAndFindFirstIndex)
 GBZSTD (ZSTD_insertBlock)
 #define ZSTD_invalidateRepCodes                  \
 GBZSTD (ZSTD_invalidateRepCodes)
-// #define ZSTD_isError                          \
-// GBZSTD (ZSTD_isError)
+
 #define ZSTD_isFrame                             \
 GBZSTD (ZSTD_isFrame)
 #define ZSTD_isSkippableFrame                    \
@@ -640,6 +639,219 @@ GBZSTD (ZSTD_XXH64_update)
 #define ZSTD_XXH_versionNumber                   \
 GBZSTD (ZSTD_XXH_versionNumber)
 
+#define HIST_count                               \
+GBZSTD (HIST_count)
+#define HIST_countFast                           \
+GBZSTD (HIST_countFast)
+#define HIST_countFast_wksp                      \
+GBZSTD (HIST_countFast_wksp)
+#define HIST_count_simple                        \
+GBZSTD (HIST_count_simple)
+#define HIST_count_wksp                          \
+GBZSTD (HIST_count_wksp)
+#define HIST_isError                             \
+GBZSTD (HIST_isError)
+
+#define HUF_buildCTable                          \
+GBZSTD (HUF_buildCTable)
+#define HUF_buildCTable_wksp                     \
+GBZSTD (HUF_buildCTable_wksp)
+#define HUF_compress                             \
+GBZSTD (HUF_compress)
+#define HUF_compress1X                           \
+GBZSTD (HUF_compress1X)
+#define HUF_compress1X_repeat                    \
+GBZSTD (HUF_compress1X_repeat)
+#define HUF_compress1X_usingCTable               \
+GBZSTD (HUF_compress1X_usingCTable)
+#define HUF_compress1X_usingCTable_bmi2          \
+GBZSTD (HUF_compress1X_usingCTable_bmi2)
+#define HUF_compress1X_wksp                      \
+GBZSTD (HUF_compress1X_wksp)
+#define HUF_compress2                            \
+GBZSTD (HUF_compress2)
+#define HUF_compress4X_repeat                    \
+GBZSTD (HUF_compress4X_repeat)
+#define HUF_compress4X_usingCTable               \
+GBZSTD (HUF_compress4X_usingCTable)
+#define HUF_compress4X_usingCTable_bmi2          \
+GBZSTD (HUF_compress4X_usingCTable_bmi2)
+#define HUF_compress4X_wksp                      \
+GBZSTD (HUF_compress4X_wksp)
+#define HUF_compressBound                        \
+GBZSTD (HUF_compressBound)
+#define HUF_decompress                           \
+GBZSTD (HUF_decompress)
+#define HUF_decompress1X1                        \
+GBZSTD (HUF_decompress1X1)
+#define HUF_decompress1X1_DCtx                   \
+GBZSTD (HUF_decompress1X1_DCtx)
+#define HUF_decompress1X1_DCtx_wksp              \
+GBZSTD (HUF_decompress1X1_DCtx_wksp)
+#define HUF_decompress1X1_DCtx_wksp_bmi2         \
+GBZSTD (HUF_decompress1X1_DCtx_wksp_bmi2)
+#define HUF_decompress1X1_usingDTable            \
+GBZSTD (HUF_decompress1X1_usingDTable)
+#define HUF_decompress1X2                        \
+GBZSTD (HUF_decompress1X2)
+#define HUF_decompress1X2_DCtx                   \
+GBZSTD (HUF_decompress1X2_DCtx)
+#define HUF_decompress1X2_DCtx_wksp              \
+GBZSTD (HUF_decompress1X2_DCtx_wksp)
+#define HUF_decompress1X2_usingDTable            \
+GBZSTD (HUF_decompress1X2_usingDTable)
+#define HUF_decompress1X_DCtx                    \
+GBZSTD (HUF_decompress1X_DCtx)
+#define HUF_decompress1X_DCtx_wksp               \
+GBZSTD (HUF_decompress1X_DCtx_wksp)
+#define HUF_decompress1X_usingDTable             \
+GBZSTD (HUF_decompress1X_usingDTable)
+#define HUF_decompress1X_usingDTable_bmi2        \
+GBZSTD (HUF_decompress1X_usingDTable_bmi2)
+#define HUF_decompress4X1                        \
+GBZSTD (HUF_decompress4X1)
+#define HUF_decompress4X1_DCtx                   \
+GBZSTD (HUF_decompress4X1_DCtx)
+#define HUF_decompress4X1_DCtx_wksp              \
+GBZSTD (HUF_decompress4X1_DCtx_wksp)
+#define HUF_decompress4X1_usingDTable            \
+GBZSTD (HUF_decompress4X1_usingDTable)
+#define HUF_decompress4X2                        \
+GBZSTD (HUF_decompress4X2)
+#define HUF_decompress4X2_DCtx                   \
+GBZSTD (HUF_decompress4X2_DCtx)
+#define HUF_decompress4X2_DCtx_wksp              \
+GBZSTD (HUF_decompress4X2_DCtx_wksp)
+#define HUF_decompress4X2_usingDTable            \
+GBZSTD (HUF_decompress4X2_usingDTable)
+#define HUF_decompress4X_DCtx                    \
+GBZSTD (HUF_decompress4X_DCtx)
+#define HUF_decompress4X_hufOnly                 \
+GBZSTD (HUF_decompress4X_hufOnly)
+#define HUF_decompress4X_hufOnly_wksp            \
+GBZSTD (HUF_decompress4X_hufOnly_wksp)
+#define HUF_decompress4X_hufOnly_wksp_bmi2       \
+GBZSTD (HUF_decompress4X_hufOnly_wksp_bmi2)
+#define HUF_decompress4X_usingDTable             \
+GBZSTD (HUF_decompress4X_usingDTable)
+#define HUF_decompress4X_usingDTable_bmi2        \
+GBZSTD (HUF_decompress4X_usingDTable_bmi2)
+#define HUF_estimateCompressedSize               \
+GBZSTD (HUF_estimateCompressedSize)
+#define HUF_getErrorName                         \
+GBZSTD (HUF_getErrorName)
+#define HUF_getNbBitsFromCTable                  \
+GBZSTD (HUF_getNbBitsFromCTable)
+#define HUF_optimalTableLog                      \
+GBZSTD (HUF_optimalTableLog)
+#define HUF_readCTable                           \
+GBZSTD (HUF_readCTable)
+#define HUF_readDTableX1                         \
+GBZSTD (HUF_readDTableX1)
+#define HUF_readDTableX1_wksp                    \
+GBZSTD (HUF_readDTableX1_wksp)
+#define HUF_readDTableX1_wksp_bmi2               \
+GBZSTD (HUF_readDTableX1_wksp_bmi2)
+#define HUF_readDTableX2                         \
+GBZSTD (HUF_readDTableX2)
+#define HUF_readDTableX2_wksp                    \
+GBZSTD (HUF_readDTableX2_wksp)
+#define HUF_readDTableX2_wksp_bmi2               \
+GBZSTD (HUF_readDTableX2_wksp_bmi2)
+#define HUF_readStats                            \
+GBZSTD (HUF_readStats)
+#define HUF_readStats_wksp                       \
+GBZSTD (HUF_readStats_wksp)
+#define HUF_selectDecoder                        \
+GBZSTD (HUF_selectDecoder)
+#define HUF_validateCTable                       \
+GBZSTD (HUF_validateCTable)
+#define HUF_writeCTable                          \
+GBZSTD (HUF_writeCTable)
+#define HUF_writeCTable_wksp                     \
+GBZSTD (HUF_writeCTable_wksp)
+
+#define POOL_add                                 \
+GBZSTD (POOL_add)
+#define POOL_create                              \
+GBZSTD (POOL_create)
+#define POOL_create_advanced                     \
+GBZSTD (POOL_create_advanced)
+#define POOL_free                                \
+GBZSTD (POOL_free)
+#define POOL_joinJobs                            \
+GBZSTD (POOL_joinJobs)
+#define POOL_resize                              \
+GBZSTD (POOL_resize)
+#define POOL_sizeof                              \
+GBZSTD (POOL_sizeof)
+#define POOL_tryAdd                              \
+GBZSTD (POOL_tryAdd)
+
+#define ERR_getErrorString                       \
+GBZSTD (ERR_getErrorString)
+
+#define FSE_buildCTable_raw                      \
+GBZSTD (FSE_buildCTable_raw)
+#define FSE_buildCTable_rle                      \
+GBZSTD (FSE_buildCTable_rle)
+#define FSE_buildCTable_wksp                     \
+GBZSTD (FSE_buildCTable_wksp)
+#define FSE_buildDTable                          \
+GBZSTD (FSE_buildDTable)
+#define FSE_buildDTable_raw                      \
+GBZSTD (FSE_buildDTable_raw)
+#define FSE_buildDTable_rle                      \
+GBZSTD (FSE_buildDTable_rle)
+#define FSE_buildDTable_wksp                     \
+GBZSTD (FSE_buildDTable_wksp)
+#define FSE_compress                             \
+GBZSTD (FSE_compress)
+#define FSE_compress2                            \
+GBZSTD (FSE_compress2)
+#define FSE_compressBound                        \
+GBZSTD (FSE_compressBound)
+#define FSE_compress_usingCTable                 \
+GBZSTD (FSE_compress_usingCTable)
+#define FSE_compress_wksp                        \
+GBZSTD (FSE_compress_wksp)
+#define FSE_createCTable                         \
+GBZSTD (FSE_createCTable)
+#define FSE_createDTable                         \
+GBZSTD (FSE_createDTable)
+#define FSE_decompress                           \
+GBZSTD (FSE_decompress)
+#define FSE_decompress_usingDTable               \
+GBZSTD (FSE_decompress_usingDTable)
+#define FSE_decompress_wksp                      \
+GBZSTD (FSE_decompress_wksp)
+#define FSE_decompress_wksp_bmi2                 \
+GBZSTD (FSE_decompress_wksp_bmi2)
+#define FSE_freeCTable                           \
+GBZSTD (FSE_freeCTable)
+#define FSE_freeDTable                           \
+GBZSTD (FSE_freeDTable)
+#define FSE_getErrorName                         \
+GBZSTD (FSE_getErrorName)
+#define FSE_NCountWriteBound                     \
+GBZSTD (FSE_NCountWriteBound)
+#define FSE_normalizeCount                       \
+GBZSTD (FSE_normalizeCount)
+#define FSE_optimalTableLog                      \
+GBZSTD (FSE_optimalTableLog)
+#define FSE_optimalTableLog_internal             \
+GBZSTD (FSE_optimalTableLog_internal)
+#define FSE_readNCount                           \
+GBZSTD (FSE_readNCount)
+#define FSE_readNCount_bmi2                      \
+GBZSTD (FSE_readNCount_bmi2)
+#define FSE_versionNumber                        \
+GBZSTD (FSE_versionNumber)
+#define FSE_writeNCount                          \
+GBZSTD (FSE_writeNCount)
+
+// not renamed: ZSTD_isError, FSE_isError, HUF_isError
+
 //------------------------------------------------------------------------------
 // disable ZSTD deprecation warnings and include all ZSTD definitions  
 //------------------------------------------------------------------------------
@@ -653,6 +865,7 @@ GBZSTD (ZSTD_XXH_versionNumber)
 
 // do not use asm
 #define ZSTD_DISABLE_ASM
+
 #include "zstd.h"
 #endif
 
