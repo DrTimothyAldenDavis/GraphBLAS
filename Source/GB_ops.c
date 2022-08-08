@@ -45,19 +45,19 @@
     } ;                                                     \
     GrB_Type prefix ## _ ## type = & GB_OPAQUE (type) ;
 
-GB_TYPEDEF (GrB, BOOL  , bool      , "bool"          )
-GB_TYPEDEF (GrB, INT8  , int8_t    , "int8_t"        )
-GB_TYPEDEF (GrB, INT16 , int16_t   , "int16_t"       )
-GB_TYPEDEF (GrB, INT32 , int32_t   , "int32_t"       )
-GB_TYPEDEF (GrB, INT64 , int64_t   , "int64_t"       )
-GB_TYPEDEF (GrB, UINT8 , uint8_t   , "uint8_t"       )
-GB_TYPEDEF (GrB, UINT16, uint16_t  , "uint16_t"      )
-GB_TYPEDEF (GrB, UINT32, uint32_t  , "uint32_t"      )
-GB_TYPEDEF (GrB, UINT64, uint64_t  , "uint64_t"      )
-GB_TYPEDEF (GrB, FP32  , float     , "float"         )
-GB_TYPEDEF (GrB, FP64  , double    , "double"        )
-GB_TYPEDEF (GxB, FC32  , GxB_FC32_t, "float complex" )
-GB_TYPEDEF (GxB, FC64  , GxB_FC64_t, "double complex")
+GB_TYPEDEF (GrB, BOOL  , bool      , "bool"          ) ;
+GB_TYPEDEF (GrB, INT8  , int8_t    , "int8_t"        ) ;
+GB_TYPEDEF (GrB, INT16 , int16_t   , "int16_t"       ) ;
+GB_TYPEDEF (GrB, INT32 , int32_t   , "int32_t"       ) ;
+GB_TYPEDEF (GrB, INT64 , int64_t   , "int64_t"       ) ;
+GB_TYPEDEF (GrB, UINT8 , uint8_t   , "uint8_t"       ) ;
+GB_TYPEDEF (GrB, UINT16, uint16_t  , "uint16_t"      ) ;
+GB_TYPEDEF (GrB, UINT32, uint32_t  , "uint32_t"      ) ;
+GB_TYPEDEF (GrB, UINT64, uint64_t  , "uint64_t"      ) ;
+GB_TYPEDEF (GrB, FP32  , float     , "float"         ) ;
+GB_TYPEDEF (GrB, FP64  , double    , "double"        ) ;
+GB_TYPEDEF (GxB, FC32  , GxB_FC32_t, "float complex" ) ;
+GB_TYPEDEF (GxB, FC64  , GxB_FC64_t, "double complex") ;
 
 //------------------------------------------------------------------------------
 // built-in descriptors
@@ -236,32 +236,32 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
     } ;                                                                     \
     GrB_BinaryOp GXB (op ## _ ## type) = & GB_OPAQUE (op ## _ ## type) ;
 
-GXB_OP1_POS (POSITIONI , "positioni" , INT32)
-GXB_OP1_POS (POSITIONI , "positioni" , INT64)
-GXB_OP1_POS (POSITIONI1, "positioni1", INT32)
-GXB_OP1_POS (POSITIONI1, "positioni1", INT64)
-GXB_OP1_POS (POSITIONJ , "positionj" , INT32)
-GXB_OP1_POS (POSITIONJ , "positionj" , INT64)
-GXB_OP1_POS (POSITIONJ1, "positionj1", INT32)
-GXB_OP1_POS (POSITIONJ1, "positionj1", INT64)
+GXB_OP1_POS (POSITIONI , "positioni" , INT32) ;
+GXB_OP1_POS (POSITIONI , "positioni" , INT64) ;
+GXB_OP1_POS (POSITIONI1, "positioni1", INT32) ;
+GXB_OP1_POS (POSITIONI1, "positioni1", INT64) ;
+GXB_OP1_POS (POSITIONJ , "positionj" , INT32) ;
+GXB_OP1_POS (POSITIONJ , "positionj" , INT64) ;
+GXB_OP1_POS (POSITIONJ1, "positionj1", INT32) ;
+GXB_OP1_POS (POSITIONJ1, "positionj1", INT64) ;
 
-GXB_OP2_POS (FIRSTI    , "firsti"    , INT32)
-GXB_OP2_POS (FIRSTI    , "firsti"    , INT64)
-GXB_OP2_POS (FIRSTI1   , "firsti1"   , INT32)
-GXB_OP2_POS (FIRSTI1   , "firsti1"   , INT64)
-GXB_OP2_POS (FIRSTJ    , "firstj"    , INT32)
-GXB_OP2_POS (FIRSTJ    , "firstj"    , INT64)
-GXB_OP2_POS (FIRSTJ1   , "firstj1"   , INT32)
-GXB_OP2_POS (FIRSTJ1   , "firstj1"   , INT64)
+GXB_OP2_POS (FIRSTI    , "firsti"    , INT32) ;
+GXB_OP2_POS (FIRSTI    , "firsti"    , INT64) ;
+GXB_OP2_POS (FIRSTI1   , "firsti1"   , INT32) ;
+GXB_OP2_POS (FIRSTI1   , "firsti1"   , INT64) ;
+GXB_OP2_POS (FIRSTJ    , "firstj"    , INT32) ;
+GXB_OP2_POS (FIRSTJ    , "firstj"    , INT64) ;
+GXB_OP2_POS (FIRSTJ1   , "firstj1"   , INT32) ;
+GXB_OP2_POS (FIRSTJ1   , "firstj1"   , INT64) ;
 
-GXB_OP2_POS (SECONDI   , "secondi"   , INT32)
-GXB_OP2_POS (SECONDI   , "secondi"   , INT64)
-GXB_OP2_POS (SECONDI1  , "secondi1"  , INT32)
-GXB_OP2_POS (SECONDI1  , "secondi1"  , INT64)
-GXB_OP2_POS (SECONDJ   , "secondj"   , INT32)
-GXB_OP2_POS (SECONDJ   , "secondj"   , INT64)
-GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT32)
-GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64)
+GXB_OP2_POS (SECONDI   , "secondi"   , INT32) ;
+GXB_OP2_POS (SECONDI   , "secondi"   , INT64) ;
+GXB_OP2_POS (SECONDI1  , "secondi1"  , INT32) ;
+GXB_OP2_POS (SECONDI1  , "secondi1"  , INT64) ;
+GXB_OP2_POS (SECONDJ   , "secondj"   , INT32) ;
+GXB_OP2_POS (SECONDJ   , "secondj"   , INT64) ;
+GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT32) ;
+GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
 
 //------------------------------------------------------------------------------
 // built-in index_unary operators
@@ -378,24 +378,24 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64)
     } ;                                                                     \
     GxB_SelectOp GXB (op) = & GB_OPAQUE (op) ;
 
-GXB_SEL (TRIL     , "tril"    )
-GXB_SEL (TRIU     , "triu"    )
-GXB_SEL (DIAG     , "diag"    )
-GXB_SEL (OFFDIAG  , "offdiag" )
+GXB_SEL (TRIL     , "tril"    ) ;
+GXB_SEL (TRIU     , "triu"    ) ;
+GXB_SEL (DIAG     , "diag"    ) ;
+GXB_SEL (OFFDIAG  , "offdiag" ) ;
 
-GXB_SEL (NONZERO  , "nonzero" )
-GXB_SEL (EQ_ZERO  , "eq_zero" )
-GXB_SEL (GT_ZERO  , "gt_zero" )
-GXB_SEL (GE_ZERO  , "ge_zero" )
-GXB_SEL (LT_ZERO  , "lt_zero" )
-GXB_SEL (LE_ZERO  , "le_zero" )
+GXB_SEL (NONZERO  , "nonzero" ) ;
+GXB_SEL (EQ_ZERO  , "eq_zero" ) ;
+GXB_SEL (GT_ZERO  , "gt_zero" ) ;
+GXB_SEL (GE_ZERO  , "ge_zero" ) ;
+GXB_SEL (LT_ZERO  , "lt_zero" ) ;
+GXB_SEL (LE_ZERO  , "le_zero" ) ;
 
-GXB_SEL (NE_THUNK , "ne_thunk")
-GXB_SEL (EQ_THUNK , "eq_thunk")
-GXB_SEL (GT_THUNK , "gt_thunk")
-GXB_SEL (GE_THUNK , "ge_thunk")
-GXB_SEL (LT_THUNK , "lt_thunk")
-GXB_SEL (LE_THUNK , "le_thunk")
+GXB_SEL (NE_THUNK , "ne_thunk") ;
+GXB_SEL (EQ_THUNK , "eq_thunk") ;
+GXB_SEL (GT_THUNK , "gt_thunk") ;
+GXB_SEL (GE_THUNK , "ge_thunk") ;
+GXB_SEL (LT_THUNK , "lt_thunk") ;
+GXB_SEL (LE_THUNK , "le_thunk") ;
 
 //------------------------------------------------------------------------------
 // define all built-in operators
