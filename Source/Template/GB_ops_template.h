@@ -24,7 +24,7 @@
 // z = one (x)
 //------------------------------------------------------------------------------
 
-GB_UNOP_STRUCT (ONE,GB_XTYPE) ;
+GB_UNOP_STRUCT (ONE,GB_XTYPE)
 inline void GB_FUNC (ONE) (GB_TYPE *z, const GB_TYPE *x)
 {
     #if defined ( GB_FLOAT_COMPLEX )
@@ -40,7 +40,7 @@ inline void GB_FUNC (ONE) (GB_TYPE *z, const GB_TYPE *x)
 // z = identity (x)
 //------------------------------------------------------------------------------
 
-GB_UNOP_STRUCT (IDENTITY, GB_XTYPE) ;
+GB_UNOP_STRUCT (IDENTITY, GB_XTYPE)
 inline void GB_FUNC (IDENTITY) (GB_TYPE *z, const GB_TYPE *x)
 {
     (*z) = (*x) ;
@@ -50,7 +50,7 @@ inline void GB_FUNC (IDENTITY) (GB_TYPE *z, const GB_TYPE *x)
 // z = ainv (x)
 //------------------------------------------------------------------------------
 
-GB_UNOP_STRUCT (AINV, GB_XTYPE) ;
+GB_UNOP_STRUCT (AINV, GB_XTYPE)
 inline void GB_FUNC (AINV) (GB_TYPE *z, const GB_TYPE *x)
 {
     #if defined ( GB_FLOAT_COMPLEX )
@@ -69,7 +69,7 @@ inline void GB_FUNC (AINV) (GB_TYPE *z, const GB_TYPE *x)
 // z = minv (x)
 //------------------------------------------------------------------------------
 
-GB_UNOP_STRUCT (MINV, GB_XTYPE) ;
+GB_UNOP_STRUCT (MINV, GB_XTYPE)
 inline void GB_FUNC (MINV) (GB_TYPE *z, const GB_TYPE *x)
 {
     #if defined ( GB_BOOLEAN )
@@ -93,7 +93,7 @@ inline void GB_FUNC (MINV) (GB_TYPE *z, const GB_TYPE *x)
 // z = abs (x)
 //------------------------------------------------------------------------------
 
-GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
+GB_UNOP_STRUCT (ABS, GB_XTYPE)
 
 #if defined ( GB_REAL )
 
@@ -136,7 +136,7 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
 
 #if defined ( GB_REAL )
 
-    GB_UNOP_STRUCT (LNOT, GB_XTYPE) ;
+    GB_UNOP_STRUCT (LNOT, GB_XTYPE)
     inline void GB_FUNC (LNOT) (GB_TYPE *z, const GB_TYPE *x)
     {
         #if defined ( GB_BOOLEAN )
@@ -154,7 +154,7 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
 
 #if defined ( GB_SIGNED_INT ) || defined ( GB_UNSIGNED_INT )
 
-    GB_UNOP_STRUCT (BNOT, GB_XTYPE) ;
+    GB_UNOP_STRUCT (BNOT, GB_XTYPE)
     inline void GB_FUNC (BNOT) (GB_TYPE *z, const GB_TYPE *x)
     {
         (*z) = ~ (*x) ;
@@ -168,13 +168,13 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
 
 #if defined ( GB_FLOAT )
 
-    GB_UNOP_STRUCT (FREXPX, GB_XTYPE) ;
+    GB_UNOP_STRUCT (FREXPX, GB_XTYPE)
     inline void GB_FUNC (FREXPX) (float *z, const float *x)
     {
         (*z) = GB_frexpxf (*x) ;
     }
 
-    GB_UNOP_STRUCT (FREXPE, GB_XTYPE) ;
+    GB_UNOP_STRUCT (FREXPE, GB_XTYPE)
     inline void GB_FUNC (FREXPE) (float *z, const float *x)
     {
         (*z) = GB_frexpef (*x) ;
@@ -182,13 +182,13 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
 
 #elif defined ( GB_DOUBLE )
 
-    GB_UNOP_STRUCT (FREXPX, GB_XTYPE) ;
+    GB_UNOP_STRUCT (FREXPX, GB_XTYPE)
     inline void GB_FUNC (FREXPX) (double *z, const double *x)
     {
         (*z) = GB_frexpx (*x) ;
     }
 
-    GB_UNOP_STRUCT (FREXPE, GB_XTYPE) ;
+    GB_UNOP_STRUCT (FREXPE, GB_XTYPE)
     inline void GB_FUNC (FREXPE) (double *z, const double *x)
     {
         (*z) = GB_frexpe (*x) ;
@@ -204,7 +204,7 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
 
 #undef  GB_OP
 #define GB_OP(op,func)                                          \
-    GB_UNOP_STRUCT (op, GB_XTYPE) ;                             \
+    GB_UNOP_STRUCT (op, GB_XTYPE)                               \
     inline void GB_FUNC (op) (GB_TYPE *z, const GB_TYPE *x)     \
     {                                                           \
         (*z) = func (*x) ;                                      \
@@ -392,7 +392,7 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
 
 #undef  GB_OP
 #define GB_OP(op,expression,z_t,x_t)                        \
-    GB_UNOP_STRUCT(op, GB_XTYPE) ;                          \
+    GB_UNOP_STRUCT(op, GB_XTYPE)                            \
     inline void GB_FUNC (op) (z_t *z, const x_t *x)         \
     {                                                       \
         (*z) = expression ;                                 \
@@ -442,19 +442,19 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
 
 #define GB_Z_X_Y_ARGS GB_TYPE *z, const GB_TYPE *x, const GB_TYPE *y
 
-GB_BINOP_STRUCT (FIRST, GB_XTYPE) ;
+GB_BINOP_STRUCT (FIRST, GB_XTYPE)
 inline void GB_FUNC (FIRST) (GB_Z_X_Y_ARGS)
 {
     (*z) = (*x) ;
 }
 
-GB_BINOP_STRUCT (SECOND, GB_XTYPE) ;
+GB_BINOP_STRUCT (SECOND, GB_XTYPE)
 inline void GB_FUNC (SECOND) (GB_Z_X_Y_ARGS)
 {
     (*z) = (*y) ;
 }
 
-GB_BINOP_STRUCT (PAIR, GB_XTYPE) ;
+GB_BINOP_STRUCT (PAIR, GB_XTYPE)
 inline void GB_FUNC (PAIR) (GB_Z_X_Y_ARGS)
 {
     #if defined ( GB_FLOAT_COMPLEX )
@@ -466,13 +466,13 @@ inline void GB_FUNC (PAIR) (GB_Z_X_Y_ARGS)
     #endif
 }
 
-GB_BINOP_STRUCT (ANY, GB_XTYPE) ;
+GB_BINOP_STRUCT (ANY, GB_XTYPE)
 inline void GB_FUNC (ANY) (GB_Z_X_Y_ARGS)      // same as SECOND
 {
     (*z) = (*y) ; 
 }
 
-GB_BINOP_STRUCT (PLUS, GB_XTYPE) ;
+GB_BINOP_STRUCT (PLUS, GB_XTYPE)
 inline void GB_FUNC (PLUS) (GB_Z_X_Y_ARGS)
 {
     #if defined ( GB_FLOAT_COMPLEX )
@@ -484,7 +484,7 @@ inline void GB_FUNC (PLUS) (GB_Z_X_Y_ARGS)
     #endif
 }
 
-GB_BINOP_STRUCT (MINUS, GB_XTYPE) ;
+GB_BINOP_STRUCT (MINUS, GB_XTYPE)
 inline void GB_FUNC (MINUS) (GB_Z_X_Y_ARGS)
 {
     #if defined ( GB_FLOAT_COMPLEX )
@@ -496,7 +496,7 @@ inline void GB_FUNC (MINUS) (GB_Z_X_Y_ARGS)
     #endif
 }
 
-GB_BINOP_STRUCT (RMINUS, GB_XTYPE) ;
+GB_BINOP_STRUCT (RMINUS, GB_XTYPE)
 inline void GB_FUNC (RMINUS) (GB_Z_X_Y_ARGS)
 {
     #if defined ( GB_FLOAT_COMPLEX )
@@ -508,7 +508,7 @@ inline void GB_FUNC (RMINUS) (GB_Z_X_Y_ARGS)
     #endif
 }
 
-GB_BINOP_STRUCT (TIMES, GB_XTYPE) ;
+GB_BINOP_STRUCT (TIMES, GB_XTYPE)
 inline void GB_FUNC (TIMES) (GB_Z_X_Y_ARGS)
 {
     #if defined ( GB_FLOAT_COMPLEX )
@@ -520,7 +520,7 @@ inline void GB_FUNC (TIMES) (GB_Z_X_Y_ARGS)
     #endif
 }
 
-GB_BINOP_STRUCT (DIV, GB_XTYPE) ;
+GB_BINOP_STRUCT (DIV, GB_XTYPE)
 inline void GB_FUNC (DIV) (GB_Z_X_Y_ARGS)
 {
     #if defined ( GB_BOOLEAN )
@@ -539,7 +539,7 @@ inline void GB_FUNC (DIV) (GB_Z_X_Y_ARGS)
     #endif
 }
 
-GB_BINOP_STRUCT (RDIV, GB_XTYPE) ;
+GB_BINOP_STRUCT (RDIV, GB_XTYPE)
 inline void GB_FUNC (RDIV) (GB_Z_X_Y_ARGS)
 {
     #if defined ( GB_BOOLEAN )
@@ -559,7 +559,7 @@ inline void GB_FUNC (RDIV) (GB_Z_X_Y_ARGS)
 }
 
 // z = pow (x,y)
-GB_BINOP_STRUCT (POW, GB_XTYPE) ;
+GB_BINOP_STRUCT (POW, GB_XTYPE)
 inline void GB_FUNC (POW) (GB_Z_X_Y_ARGS)
 {
     #if defined ( GB_BOOLEAN )
@@ -602,7 +602,7 @@ inline void GB_FUNC (POW) (GB_Z_X_Y_ARGS)
 // min and max: real only, not complex
 #if defined ( GB_REAL )
 
-    GB_BINOP_STRUCT (MIN, GB_XTYPE) ;
+    GB_BINOP_STRUCT (MIN, GB_XTYPE)
     inline void GB_FUNC (MIN) (GB_Z_X_Y_ARGS)
     {
         #if defined ( GB_FLOAT )
@@ -614,7 +614,7 @@ inline void GB_FUNC (POW) (GB_Z_X_Y_ARGS)
         #endif
     }
 
-    GB_BINOP_STRUCT (MAX, GB_XTYPE) ;
+    GB_BINOP_STRUCT (MAX, GB_XTYPE)
     inline void GB_FUNC (MAX) (GB_Z_X_Y_ARGS)
     {
         #if defined ( GB_FLOAT )
@@ -634,19 +634,19 @@ inline void GB_FUNC (POW) (GB_Z_X_Y_ARGS)
 
 #if defined ( GB_SIGNED_INT ) || defined ( GB_UNSIGNED_INT )
 
-    GB_BINOP_STRUCT (BOR, GB_XTYPE) ;
+    GB_BINOP_STRUCT (BOR, GB_XTYPE)
     inline void GB_FUNC (BOR  ) (GB_Z_X_Y_ARGS) { (*z) = (*x) | (*y) ; }
 
-    GB_BINOP_STRUCT (BAND, GB_XTYPE) ;
+    GB_BINOP_STRUCT (BAND, GB_XTYPE)
     inline void GB_FUNC (BAND ) (GB_Z_X_Y_ARGS) { (*z) = (*x) & (*y) ; }
 
-    GB_BINOP_STRUCT (BXOR, GB_XTYPE) ;
+    GB_BINOP_STRUCT (BXOR, GB_XTYPE)
     inline void GB_FUNC (BXOR ) (GB_Z_X_Y_ARGS) { (*z) = (*x) ^ (*y) ; }
 
-    GB_BINOP_STRUCT (BXNOR, GB_XTYPE) ;
+    GB_BINOP_STRUCT (BXNOR, GB_XTYPE)
     inline void GB_FUNC (BXNOR) (GB_Z_X_Y_ARGS) { (*z) = ~((*x) ^ (*y)) ; }
 
-    GB_BINOP_STRUCT (BGET, GB_XTYPE) ;
+    GB_BINOP_STRUCT (BGET, GB_XTYPE)
     inline void GB_FUNC (BGET) (GB_Z_X_Y_ARGS)
     {
         // bitget (x,y) returns a single bit from x, as 0 or 1, whose position
@@ -682,7 +682,7 @@ inline void GB_FUNC (POW) (GB_Z_X_Y_ARGS)
         #endif
     }
 
-    GB_BINOP_STRUCT (BSET, GB_XTYPE) ;
+    GB_BINOP_STRUCT (BSET, GB_XTYPE)
     inline void GB_FUNC (BSET) (GB_Z_X_Y_ARGS)
     {
         // bitset (x,y) returns x modified by setting a bit from x to 1, whose
@@ -718,7 +718,7 @@ inline void GB_FUNC (POW) (GB_Z_X_Y_ARGS)
         #endif
     }
 
-    GB_BINOP_STRUCT (BCLR, GB_XTYPE) ;
+    GB_BINOP_STRUCT (BCLR, GB_XTYPE)
     inline void GB_FUNC (BCLR) (GB_Z_X_Y_ARGS)
     {
         // bitclr (x,y) returns x modified by setting a bit from x to 0, whose
@@ -756,7 +756,7 @@ inline void GB_FUNC (POW) (GB_Z_X_Y_ARGS)
 
 
     // z = bitshift (x,y)
-    GB_BINOP_STRUCT (BSHIFT, GB_XTYPE) ;
+    GB_BINOP_STRUCT (BSHIFT, GB_XTYPE)
     inline void GB_FUNC (BSHIFT) (GB_TYPE *z, const GB_TYPE *x, const int8_t *y)
     {
         // bitshift (x,k) shifts x to the left by k bits if k > 0, and the
@@ -847,13 +847,13 @@ inline void GB_FUNC (POW) (GB_Z_X_Y_ARGS)
 
 #if defined (GB_FLOAT) || defined (GB_DOUBLE)
 
-    GB_BINOP_STRUCT (ATAN2, GB_XTYPE) ;
-    GB_BINOP_STRUCT (HYPOT, GB_XTYPE) ;
-    GB_BINOP_STRUCT (FMOD, GB_XTYPE) ;
-    GB_BINOP_STRUCT (REMAINDER, GB_XTYPE) ;
-    GB_BINOP_STRUCT (COPYSIGN, GB_XTYPE) ;
-    GB_BINOP_STRUCT (LDEXP, GB_XTYPE) ;
-    GB_BINOP_STRUCT (CMPLX, GB_XTYPE) ;
+    GB_BINOP_STRUCT (ATAN2, GB_XTYPE)
+    GB_BINOP_STRUCT (HYPOT, GB_XTYPE)
+    GB_BINOP_STRUCT (FMOD, GB_XTYPE)
+    GB_BINOP_STRUCT (REMAINDER, GB_XTYPE)
+    GB_BINOP_STRUCT (COPYSIGN, GB_XTYPE)
+    GB_BINOP_STRUCT (LDEXP, GB_XTYPE)
+    GB_BINOP_STRUCT (CMPLX, GB_XTYPE)
 
 #endif
 
@@ -864,7 +864,7 @@ inline void GB_FUNC (POW) (GB_Z_X_Y_ARGS)
 // iseq and isne: all 13 types, including complex types.
 // isgt, islt, isge, isle: 11 real types only.
 
-GB_BINOP_STRUCT (ISEQ, GB_XTYPE) ;
+GB_BINOP_STRUCT (ISEQ, GB_XTYPE)
 inline void GB_FUNC (ISEQ) (GB_Z_X_Y_ARGS)
 {
     #if defined ( GB_FLOAT_COMPLEX )
@@ -876,7 +876,7 @@ inline void GB_FUNC (ISEQ) (GB_Z_X_Y_ARGS)
     #endif
 }
 
-GB_BINOP_STRUCT (ISNE, GB_XTYPE) ;
+GB_BINOP_STRUCT (ISNE, GB_XTYPE)
 inline void GB_FUNC (ISNE) (GB_Z_X_Y_ARGS)
 {
     #if defined ( GB_FLOAT_COMPLEX )
@@ -890,25 +890,25 @@ inline void GB_FUNC (ISNE) (GB_Z_X_Y_ARGS)
 
 #if defined ( GB_REAL )
 
-    GB_BINOP_STRUCT (ISGT, GB_XTYPE) ;
+    GB_BINOP_STRUCT (ISGT, GB_XTYPE)
     inline void GB_FUNC (ISGT) (GB_Z_X_Y_ARGS)
     {
         (*z) = (GB_TYPE) ((*x) >  (*y)) ;
     }
 
-    GB_BINOP_STRUCT (ISLT, GB_XTYPE) ;
+    GB_BINOP_STRUCT (ISLT, GB_XTYPE)
     inline void GB_FUNC (ISLT) (GB_Z_X_Y_ARGS)
     {
         (*z) = (GB_TYPE) ((*x) <  (*y)) ;
     }
 
-    GB_BINOP_STRUCT (ISGE, GB_XTYPE) ;
+    GB_BINOP_STRUCT (ISGE, GB_XTYPE)
     inline void GB_FUNC (ISGE) (GB_Z_X_Y_ARGS)
     {
         (*z) = (GB_TYPE) ((*x) >= (*y)) ;
     }
 
-    GB_BINOP_STRUCT (ISLE, GB_XTYPE) ;
+    GB_BINOP_STRUCT (ISLE, GB_XTYPE)
     inline void GB_FUNC (ISLE) (GB_Z_X_Y_ARGS)
     {
         (*z) = (GB_TYPE) ((*x) <= (*y)) ;
@@ -937,7 +937,7 @@ inline void GB_FUNC (ISNE) (GB_Z_X_Y_ARGS)
             (*z) = (GB_TYPE) (((*x) != 0) || ((*y) != 0)) ;
         }
 
-        inline void GB_FUNC (LAND) (GB_Z_X_Y_ARGS) 
+        inline void GB_FUNC (LAND) (GB_Z_X_Y_ARGS)
         {
             (*z) = (GB_TYPE) (((*x) != 0) && ((*y) != 0)) ;
         }
@@ -949,9 +949,9 @@ inline void GB_FUNC (ISNE) (GB_Z_X_Y_ARGS)
 
     #endif
 
-    GB_BINOP_STRUCT (LOR, GB_XTYPE) ;
-    GB_BINOP_STRUCT (LAND, GB_XTYPE) ;
-    GB_BINOP_STRUCT (LXOR, GB_XTYPE) ;
+    GB_BINOP_STRUCT (LOR, GB_XTYPE)
+    GB_BINOP_STRUCT (LAND, GB_XTYPE)
+    GB_BINOP_STRUCT (LXOR, GB_XTYPE)
 
 #endif
 
@@ -966,7 +966,7 @@ inline void GB_FUNC (ISNE) (GB_Z_X_Y_ARGS)
 
 #define GB_Zbool_X_Y_ARGS bool *z, const GB_TYPE *x, const GB_TYPE *y
 
-GB_BINOP_STRUCT (EQ, GB_XTYPE) ;
+GB_BINOP_STRUCT (EQ, GB_XTYPE)
 inline void GB_FUNC (EQ) (GB_Zbool_X_Y_ARGS)
 {
     #if defined ( GB_FLOAT_COMPLEX )
@@ -978,7 +978,7 @@ inline void GB_FUNC (EQ) (GB_Zbool_X_Y_ARGS)
     #endif
 }
 
-GB_BINOP_STRUCT (NE, GB_XTYPE) ;
+GB_BINOP_STRUCT (NE, GB_XTYPE)
 inline void GB_FUNC (NE) (GB_Zbool_X_Y_ARGS)
 {
     #if defined ( GB_FLOAT_COMPLEX )
@@ -992,16 +992,16 @@ inline void GB_FUNC (NE) (GB_Zbool_X_Y_ARGS)
 
 #if !defined ( GB_COMPLEX )
 
-    GB_BINOP_STRUCT (GT, GB_XTYPE) ;
+    GB_BINOP_STRUCT (GT, GB_XTYPE)
     inline void GB_FUNC (GT) (GB_Zbool_X_Y_ARGS) { (*z) = ((*x) >  (*y)) ; }
 
-    GB_BINOP_STRUCT (LT, GB_XTYPE) ;
+    GB_BINOP_STRUCT (LT, GB_XTYPE)
     inline void GB_FUNC (LT) (GB_Zbool_X_Y_ARGS) { (*z) = ((*x) <  (*y)) ; }
 
-    GB_BINOP_STRUCT (GE, GB_XTYPE) ;
+    GB_BINOP_STRUCT (GE, GB_XTYPE)
     inline void GB_FUNC (GE) (GB_Zbool_X_Y_ARGS) { (*z) = ((*x) >= (*y)) ; }
 
-    GB_BINOP_STRUCT (LE, GB_XTYPE) ;
+    GB_BINOP_STRUCT (LE, GB_XTYPE)
     inline void GB_FUNC (LE) (GB_Zbool_X_Y_ARGS) { (*z) = ((*x) <= (*y)) ; }
 
 #endif
@@ -1018,25 +1018,25 @@ inline void GB_FUNC (NE) (GB_Zbool_X_Y_ARGS)
     // z = f (x, i, j, thunk) where z and thunk are both int32 or int64
     //--------------------------------------------------------------------------
 
-    GB_IDXOP_STRUCT (ROWINDEX, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (ROWINDEX, GB_XTYPE)
     inline void GB_FUNC (ROWINDEX) (GB_TYPE *z, const void *unused,
         GrB_Index i, GrB_Index j_unused, const GB_TYPE *thunk)
     {
         (*z) = (GB_TYPE) (((int64_t) i) + (*thunk)) ;
     }
-    GB_IDXOP_STRUCT (COLINDEX, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (COLINDEX, GB_XTYPE)
     inline void GB_FUNC (COLINDEX) (GB_TYPE *z, const void *unused,
         GrB_Index i_unused, GrB_Index j, const GB_TYPE *thunk)
     {
         (*z) = (GB_TYPE) (((int64_t) j) + (*thunk)) ;
     }
-    GB_IDXOP_STRUCT (DIAGINDEX, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (DIAGINDEX, GB_XTYPE)
     inline void GB_FUNC (DIAGINDEX) (GB_TYPE *z, const void *unused,
         GrB_Index i, GrB_Index j, const GB_TYPE *thunk)
     {
         (*z) = (GB_TYPE) (((int64_t) j) - (((int64_t) i) + (*thunk))) ;
     }
-    GB_IDXOP_STRUCT (FLIPDIAGINDEX, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (FLIPDIAGINDEX, GB_XTYPE)
     inline void GB_FUNC (FLIPDIAGINDEX) (GB_TYPE *z, const void *unused,
         GrB_Index i, GrB_Index j, const GB_TYPE *thunk)
     {
@@ -1051,56 +1051,56 @@ inline void GB_FUNC (NE) (GB_Zbool_X_Y_ARGS)
     // z = f (x, i, j, thunk) where z is bool, thunk is type int64
     //--------------------------------------------------------------------------
 
-    GB_IDXOP_STRUCT (TRIL, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (TRIL, GB_XTYPE)
     inline void GB_FUNC (TRIL) (bool *z, const void *unused,
         GrB_Index i, GrB_Index j, const GB_TYPE *thunk)
     {
         (*z) = (((int64_t) j) <= (((int64_t) i) + (*thunk))) ;
     }
 
-    GB_IDXOP_STRUCT (TRIU, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (TRIU, GB_XTYPE)
     inline void GB_FUNC (TRIU) (bool *z, const void *unused,
         GrB_Index i, GrB_Index j, const GB_TYPE *thunk)
     {
         (*z) = (((int64_t) j) >= (((int64_t) i) + (*thunk))) ;
     }
 
-    GB_IDXOP_STRUCT (DIAG, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (DIAG, GB_XTYPE)
     inline void GB_FUNC (DIAG) (bool *z, const void *unused,
         GrB_Index i, GrB_Index j, const GB_TYPE *thunk)
     {
         (*z) = (((int64_t) j) == (((int64_t) i) + (*thunk))) ;
     }
 
-    GB_IDXOP_STRUCT (OFFDIAG, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (OFFDIAG, GB_XTYPE)
     inline void GB_FUNC (OFFDIAG) (bool *z, const void *unused,
         GrB_Index i, GrB_Index j, const GB_TYPE *thunk)
     {
         (*z) = (((int64_t) j) != (((int64_t) i) + (*thunk))) ;
     }
 
-    GB_IDXOP_STRUCT (COLLE, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (COLLE, GB_XTYPE)
     inline void GB_FUNC (COLLE) (bool *z, const void *unused,
         GrB_Index i_unused, GrB_Index j, const GB_TYPE *thunk)
     {
         (*z) = (((int64_t) j) <= (*thunk)) ;
     }
 
-    GB_IDXOP_STRUCT (COLGT, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (COLGT, GB_XTYPE)
     inline void GB_FUNC (COLGT) (bool *z, const void *unused,
         GrB_Index i_unused, GrB_Index j, const GB_TYPE *thunk)
     {
         (*z) = (((int64_t) j) > (*thunk)) ;
     }
 
-    GB_IDXOP_STRUCT (ROWLE, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (ROWLE, GB_XTYPE)
     inline void GB_FUNC (ROWLE) (bool *z, const void *unused,
         GrB_Index i, GrB_Index j_unused, const GB_TYPE *thunk)
     {
         (*z) = (((int64_t) i) <= (*thunk)) ;
     }
 
-    GB_IDXOP_STRUCT (ROWGT, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (ROWGT, GB_XTYPE)
     inline void GB_FUNC (ROWGT) (bool *z, const void *unused,
         GrB_Index i, GrB_Index j_unused, const GB_TYPE *thunk)
     {
@@ -1113,7 +1113,7 @@ inline void GB_FUNC (NE) (GB_Zbool_X_Y_ARGS)
     // z = f (x, i, j, thunk) where z is bool, thunk is any built-in type
     //--------------------------------------------------------------------------
 
-    GB_IDXOP_STRUCT (VALUEEQ, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (VALUEEQ, GB_XTYPE)
     inline void GB_FUNC (VALUEEQ) (bool *z, const GB_TYPE *x,
         GrB_Index i_unused, GrB_Index j_unused, const GB_TYPE *thunk)
     {
@@ -1126,7 +1126,7 @@ inline void GB_FUNC (NE) (GB_Zbool_X_Y_ARGS)
         #endif
     }
 
-    GB_IDXOP_STRUCT (VALUENE, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (VALUENE, GB_XTYPE)
     inline void GB_FUNC (VALUENE) (bool *z, const GB_TYPE *x,
         GrB_Index i_unused, GrB_Index j_unused, const GB_TYPE *thunk)
     {
@@ -1145,28 +1145,28 @@ inline void GB_FUNC (NE) (GB_Zbool_X_Y_ARGS)
     // z = f (x, i, j, thunk) where z is bool, thunk is any real built-in type
     //--------------------------------------------------------------------------
 
-    GB_IDXOP_STRUCT (VALUELT, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (VALUELT, GB_XTYPE)
     inline void GB_FUNC (VALUELT) (bool *z, const GB_TYPE *x,
         GrB_Index i_unused, GrB_Index j_unused, const GB_TYPE *thunk)
     {
         (*z) = ((*x) < (*thunk)) ;
     }
 
-    GB_IDXOP_STRUCT (VALUELE, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (VALUELE, GB_XTYPE)
     inline void GB_FUNC (VALUELE) (bool *z, const GB_TYPE *x,
         GrB_Index i_unused, GrB_Index j_unused, const GB_TYPE *thunk)
     {
         (*z) = ((*x) <= (*thunk)) ;
     }
 
-    GB_IDXOP_STRUCT (VALUEGT, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (VALUEGT, GB_XTYPE)
     inline void GB_FUNC (VALUEGT) (bool *z, const GB_TYPE *x,
         GrB_Index i_unused, GrB_Index j_unused, const GB_TYPE *thunk)
     {
         (*z) = ((*x) > (*thunk)) ;
     }
 
-    GB_IDXOP_STRUCT (VALUEGE, GB_XTYPE) ;
+    GB_IDXOP_STRUCT (VALUEGE, GB_XTYPE)
     inline void GB_FUNC (VALUEGE) (bool *z, const GB_TYPE *x,
         GrB_Index i_unused, GrB_Index j_unused, const GB_TYPE *thunk)
     {

@@ -16,81 +16,81 @@
 // unary functions z=f(x) where z and x have the same type
 //------------------------------------------------------------------------------
 
-GXB_OP1 (ONE, "one") ;
+GXB_OP1 (ONE, "one")
 
 #if defined ( GB_COMPLEX )
 
     // complex types
-    GXB_OP1 (IDENTITY , "identity" ) ;
-    GXB_OP1 (AINV     , "ainv"     ) ;
-    GXB_OP1 (MINV     , "minv"     ) ;
+    GXB_OP1 (IDENTITY , "identity" )
+    GXB_OP1 (AINV     , "ainv"     )
+    GXB_OP1 (MINV     , "minv"     )
 
 #else
 
     // real types
-    GRB_OP1 (IDENTITY , "identity" ) ;
-    GRB_OP1 (AINV     , "ainv"     ) ;
-    GRB_OP1 (MINV     , "minv"     ) ;
+    GRB_OP1 (IDENTITY , "identity" )
+    GRB_OP1 (AINV     , "ainv"     )
+    GRB_OP1 (MINV     , "minv"     )
 
     // z=abs(x), z and x have the same type
-    GRB_OP1 (ABS      , "abs"      ) ;
+    GRB_OP1 (ABS      , "abs"      )
 
     // GxB_ABS_* is now GrB_ABS_*, and GxB_ABS_* is historical.
     // The new name is preferred.  The old name will be kept for historical
     // compatibility.
-    GXB_OP1_RENAME (ABS) ;
+    GXB_OP1_RENAME (ABS)
 
     // LNOT is only defined for real types, not complex
-    GXB_OP1 (LNOT     , "not"      ) ;
+    GXB_OP1 (LNOT     , "not"      )
 
 #endif
 
 #if defined ( GB_FLOATING_POINT )
 
-    GXB_OP1 (SQRT     , "sqrt"     ) ;
-    GXB_OP1 (LOG      , "log"      ) ;
-    GXB_OP1 (EXP      , "exp"      ) ;
+    GXB_OP1 (SQRT     , "sqrt"     )
+    GXB_OP1 (LOG      , "log"      )
+    GXB_OP1 (EXP      , "exp"      )
 
-    GXB_OP1 (SIN      , "sin"      ) ;
-    GXB_OP1 (COS      , "cos"      ) ;
-    GXB_OP1 (TAN      , "tan"      ) ;
+    GXB_OP1 (SIN      , "sin"      )
+    GXB_OP1 (COS      , "cos"      )
+    GXB_OP1 (TAN      , "tan"      )
 
-    GXB_OP1 (ASIN     , "asin"     ) ;
-    GXB_OP1 (ACOS     , "acos"     ) ;
-    GXB_OP1 (ATAN     , "atan"     ) ;
+    GXB_OP1 (ASIN     , "asin"     )
+    GXB_OP1 (ACOS     , "acos"     )
+    GXB_OP1 (ATAN     , "atan"     )
 
-    GXB_OP1 (SINH     , "sinh"     ) ;
-    GXB_OP1 (COSH     , "cosh"     ) ;
-    GXB_OP1 (TANH     , "tanh"     ) ;
+    GXB_OP1 (SINH     , "sinh"     )
+    GXB_OP1 (COSH     , "cosh"     )
+    GXB_OP1 (TANH     , "tanh"     )
 
-    GXB_OP1 (ASINH    , "asinh"    ) ;
-    GXB_OP1 (ACOSH    , "acosh"    ) ;
-    GXB_OP1 (ATANH    , "atanh"    ) ;
+    GXB_OP1 (ASINH    , "asinh"    )
+    GXB_OP1 (ACOSH    , "acosh"    )
+    GXB_OP1 (ATANH    , "atanh"    )
 
-    GXB_OP1 (SIGNUM   , "signum"   ) ;
-    GXB_OP1 (CEIL     , "ceil"     ) ;
-    GXB_OP1 (FLOOR    , "floor"    ) ;
-    GXB_OP1 (ROUND    , "round"    ) ;
-    GXB_OP1 (TRUNC    , "trunc"    ) ;
+    GXB_OP1 (SIGNUM   , "signum"   )
+    GXB_OP1 (CEIL     , "ceil"     )
+    GXB_OP1 (FLOOR    , "floor"    )
+    GXB_OP1 (ROUND    , "round"    )
+    GXB_OP1 (TRUNC    , "trunc"    )
 
-    GXB_OP1 (EXP2     , "exp2"     ) ;
-    GXB_OP1 (EXPM1    , "expm1"    ) ;
-    GXB_OP1 (LOG10    , "log10"    ) ;
-    GXB_OP1 (LOG1P    , "log1p"    ) ;
-    GXB_OP1 (LOG2     , "log2"     ) ;
+    GXB_OP1 (EXP2     , "exp2"     )
+    GXB_OP1 (EXPM1    , "expm1"    )
+    GXB_OP1 (LOG10    , "log10"    )
+    GXB_OP1 (LOG1P    , "log1p"    )
+    GXB_OP1 (LOG2     , "log2"     )
 
     #if defined ( GB_COMPLEX )
     // complex only
-    GXB_OP1 (CONJ     , "conj"     ) ;
+    GXB_OP1 (CONJ     , "conj"     )
     #else
     // real only
-    GXB_OP1 (LGAMMA   , "lgamma"   ) ;
-    GXB_OP1 (TGAMMA   , "tgamma"   ) ;
-    GXB_OP1 (ERF      , "erf"      ) ;
-    GXB_OP1 (ERFC     , "erfc"     ) ;
-    GXB_OP1 (CBRT     , "cbrt"     ) ;
-    GXB_OP1 (FREXPX   , "frexpx"   ) ;
-    GXB_OP1 (FREXPE   , "frexpe"   ) ;
+    GXB_OP1 (LGAMMA   , "lgamma"   )
+    GXB_OP1 (TGAMMA   , "tgamma"   )
+    GXB_OP1 (ERF      , "erf"      )
+    GXB_OP1 (ERFC     , "erfc"     )
+    GXB_OP1 (CBRT     , "cbrt"     )
+    GXB_OP1 (FREXPX   , "frexpx"   )
+    GXB_OP1 (FREXPE   , "frexpe"   )
     #endif
 
 #endif
@@ -98,7 +98,7 @@ GXB_OP1 (ONE, "one") ;
 #if defined ( GB_SIGNED_INT ) || defined ( GB_UNSIGNED_INT )
 
     // bitwise complement
-    GRB_OP1 (BNOT     , "bnot"     ) ;
+    GRB_OP1 (BNOT     , "bnot"     )
 
 #endif
 
@@ -109,40 +109,40 @@ GXB_OP1 (ONE, "one") ;
 #if defined ( GB_FLOAT )
 
     // z = f(x) where x is float, and z is bool
-    GXB_OP1z (ISINF     , "isinf"     , bool   , BOOL ) ;
-    GXB_OP1z (ISNAN     , "isnan"     , bool   , BOOL ) ;
-    GXB_OP1z (ISFINITE  , "isfinite"  , bool   , BOOL ) ;
+    GXB_OP1z (ISINF     , "isinf"     , bool   , BOOL)
+    GXB_OP1z (ISNAN     , "isnan"     , bool   , BOOL)
+    GXB_OP1z (ISFINITE  , "isfinite"  , bool   , BOOL)
 
 #elif defined ( GB_DOUBLE )
 
     // z = f(x) where x is double, and z is bool
-    GXB_OP1z (ISINF     , "isinf"     , bool   , BOOL ) ;
-    GXB_OP1z (ISNAN     , "isnan"     , bool   , BOOL ) ;
-    GXB_OP1z (ISFINITE  , "isfinite"  , bool   , BOOL ) ;
+    GXB_OP1z (ISINF     , "isinf"     , bool   , BOOL)
+    GXB_OP1z (ISNAN     , "isnan"     , bool   , BOOL)
+    GXB_OP1z (ISFINITE  , "isfinite"  , bool   , BOOL)
 
 #elif defined ( GB_FLOAT_COMPLEX )
 
     // z = f(x) where x is float complex, and the type of z is listed below:
-    GXB_OP1z (ABS       , "abs"       , float  , FP32) ;
-    GXB_OP1z (ISINF     , "isinf"     , bool   , BOOL) ;
-    GXB_OP1z (ISNAN     , "isnan"     , bool   , BOOL) ;
-    GXB_OP1z (ISFINITE  , "isfinite"  , bool   , BOOL ) ;
+    GXB_OP1z (ABS       , "abs"       , float  , FP32)
+    GXB_OP1z (ISINF     , "isinf"     , bool   , BOOL)
+    GXB_OP1z (ISNAN     , "isnan"     , bool   , BOOL)
+    GXB_OP1z (ISFINITE  , "isfinite"  , bool   , BOOL)
 
-    GXB_OP1z (CREAL     , "creal"     , float  , FP32) ;
-    GXB_OP1z (CIMAG     , "cimag"     , float  , FP32) ;
-    GXB_OP1z (CARG      , "carg"      , float  , FP32) ;
+    GXB_OP1z (CREAL     , "creal"     , float  , FP32)
+    GXB_OP1z (CIMAG     , "cimag"     , float  , FP32)
+    GXB_OP1z (CARG      , "carg"      , float  , FP32)
 
 #elif defined ( GB_DOUBLE_COMPLEX )
 
     // z = f(x) where x is double complex, and the type of z is listed below:
-    GXB_OP1z (ABS       , "abs"       , double , FP64) ;
-    GXB_OP1z (ISINF     , "isinf"     , bool   , BOOL) ;
-    GXB_OP1z (ISNAN     , "isnan"     , bool   , BOOL) ;
-    GXB_OP1z (ISFINITE  , "isfinite"  , bool   , BOOL ) ;
+    GXB_OP1z (ABS       , "abs"       , double , FP64)
+    GXB_OP1z (ISINF     , "isinf"     , bool   , BOOL)
+    GXB_OP1z (ISNAN     , "isnan"     , bool   , BOOL)
+    GXB_OP1z (ISFINITE  , "isfinite"  , bool   , BOOL)
 
-    GXB_OP1z (CREAL     , "creal"     , double , FP64) ;
-    GXB_OP1z (CIMAG     , "cimag"     , double , FP64) ;
-    GXB_OP1z (CARG      , "carg"      , double , FP64) ;
+    GXB_OP1z (CREAL     , "creal"     , double , FP64)
+    GXB_OP1z (CIMAG     , "cimag"     , double , FP64)
+    GXB_OP1z (CARG      , "carg"      , double , FP64)
 
 #endif
 
@@ -207,16 +207,16 @@ GXB_OP2 (POW    , "pow"   )
 #if defined ( GB_SIGNED_INT ) || defined ( GB_UNSIGNED_INT )
 
     // bitwise binary operators
-    GRB_OP2 (BOR      , "bitor"   ) ;
-    GRB_OP2 (BAND     , "bitand"  ) ;
-    GRB_OP2 (BXOR     , "bitxor"  ) ;
-    GRB_OP2 (BXNOR    , "bitxnor" ) ;
+    GRB_OP2 (BOR      , "bitor"   )
+    GRB_OP2 (BAND     , "bitand"  )
+    GRB_OP2 (BXOR     , "bitxor"  )
+    GRB_OP2 (BXNOR    , "bitxnor" )
 
-    GXB_OP2 (BGET     , "bitget"   ) ;
-    GXB_OP2 (BSET     , "bitset"   ) ;
-    GXB_OP2 (BCLR     , "bitclear" ) ;
+    GXB_OP2 (BGET     , "bitget"   )
+    GXB_OP2 (BSET     , "bitset"   )
+    GXB_OP2 (BCLR     , "bitclear" )
 
-    GXB_OP2shift (BSHIFT, "bitshift") ;
+    GXB_OP2shift (BSHIFT, "bitshift")
 
 #endif
 
@@ -263,42 +263,42 @@ GXB_OP2 (POW    , "pow"   )
 #if defined ( GB_SIGNED_INDEX )
 
     // z = f (x, i, j, thunk) where z and thunk have type int32 or int64
-    GRB_IDXOP_POSITIONAL (ROWINDEX,  "rowindex" ) ;
-    GRB_IDXOP_POSITIONAL (COLINDEX,  "colindex" ) ;
-    GRB_IDXOP_POSITIONAL (DIAGINDEX, "diagindex") ;
-    GXB_IDXOP_POSITIONAL (FLIPDIAGINDEX, "flipdiagindex") ;
+    GRB_IDXOP_POSITIONAL (ROWINDEX,  "rowindex" )
+    GRB_IDXOP_POSITIONAL (COLINDEX,  "colindex" )
+    GRB_IDXOP_POSITIONAL (DIAGINDEX, "diagindex")
+    GXB_IDXOP_POSITIONAL (FLIPDIAGINDEX, "flipdiagindex")
 
 #endif
 
 #if defined ( GB_SIGNED_INDEX64 )
 
     // z = f (x, i, j, thunk) where z is bool; thunk has type int64 only
-    GRB_IDXOP_POSITIONAL_BOOL (TRIL,    "tril" ) ;
-    GRB_IDXOP_POSITIONAL_BOOL (TRIU,    "triu" ) ;
-    GRB_IDXOP_POSITIONAL_BOOL (DIAG,    "diag" ) ;
-    GRB_IDXOP_POSITIONAL_BOOL (OFFDIAG, "offdiag" ) ;
-    GRB_IDXOP_POSITIONAL_BOOL (COLLE,   "colle" ) ;
-    GRB_IDXOP_POSITIONAL_BOOL (COLGT,   "colgt" ) ;
-    GRB_IDXOP_POSITIONAL_BOOL (ROWLE,   "rowle" ) ;
-    GRB_IDXOP_POSITIONAL_BOOL (ROWGT,   "rowgt" ) ;
+    GRB_IDXOP_POSITIONAL_BOOL (TRIL,    "tril" )
+    GRB_IDXOP_POSITIONAL_BOOL (TRIU,    "triu" )
+    GRB_IDXOP_POSITIONAL_BOOL (DIAG,    "diag" )
+    GRB_IDXOP_POSITIONAL_BOOL (OFFDIAG, "offdiag" )
+    GRB_IDXOP_POSITIONAL_BOOL (COLLE,   "colle" )
+    GRB_IDXOP_POSITIONAL_BOOL (COLGT,   "colgt" )
+    GRB_IDXOP_POSITIONAL_BOOL (ROWLE,   "rowle" )
+    GRB_IDXOP_POSITIONAL_BOOL (ROWGT,   "rowgt" )
 
 #endif
 
 #if defined ( GB_COMPLEX )
 
     // z = f (x, i, j, thunk) where z is bool; thunk is complex
-    GXB_IDXOP_VALUE (VALUEEQ, "valueeq") ;
-    GXB_IDXOP_VALUE (VALUENE, "valuene") ;
+    GXB_IDXOP_VALUE (VALUEEQ, "valueeq")
+    GXB_IDXOP_VALUE (VALUENE, "valuene")
 
 #else
 
     // z = f (x, i, j, thunk) where z is bool; thunk is real
-    GRB_IDXOP_VALUE (VALUEEQ, "valueeq") ;
-    GRB_IDXOP_VALUE (VALUENE, "valuene") ;
-    GRB_IDXOP_VALUE (VALUELT, "valuelt") ;
-    GRB_IDXOP_VALUE (VALUELE, "valuele") ;
-    GRB_IDXOP_VALUE (VALUEGT, "valuegt") ;
-    GRB_IDXOP_VALUE (VALUEGE, "valuege") ;
+    GRB_IDXOP_VALUE (VALUEEQ, "valueeq")
+    GRB_IDXOP_VALUE (VALUENE, "valuene")
+    GRB_IDXOP_VALUE (VALUELT, "valuelt")
+    GRB_IDXOP_VALUE (VALUELE, "valuele")
+    GRB_IDXOP_VALUE (VALUEGT, "valuegt")
+    GRB_IDXOP_VALUE (VALUEGE, "valuege")
 
 #endif
 
