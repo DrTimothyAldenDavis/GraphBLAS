@@ -43,7 +43,7 @@
         name,                                               \
         NULL                                                \
     } ;                                                     \
-    GrB_Type prefix ## _ ## type = & GB_OPAQUE (type) ;
+    GrB_Type prefix ## _ ## type = & GB_OPAQUE (type)
 
 GB_TYPEDEF (GrB, BOOL  , bool      , "bool"          ) ;
 GB_TYPEDEF (GrB, INT8  , int8_t    , "int8_t"        ) ;
@@ -151,18 +151,18 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 
 #define GRB_OP1z(op,str,z_t,ztype)                                          \
     GB_OP1zx (op, str, z_t, ztype, GB_TYPE, GB_XTYPE)                       \
-    GrB_UnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+    GrB_UnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
 
 #define GRB_OP1(op,str) GRB_OP1z (op, str, GB_TYPE, GB_XTYPE)
 
 #define GXB_OP1z(op,str,z_t,ztype)                                          \
     GB_OP1zx (op, str, z_t, ztype, GB_TYPE, GB_XTYPE)                       \
-    GrB_UnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+    GrB_UnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
 
 #define GXB_OP1(op,str) GXB_OP1z (op, str, GB_TYPE, GB_XTYPE)
 
 #define GXB_OP1_RENAME(op)                                                  \
-    GrB_UnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+    GrB_UnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
 
 //------------------------------------------------------------------------------
 // helper macros to define binary operators
@@ -219,7 +219,7 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
         GB_ ## op ## _unop_code,                                            \
         NULL                                                                \
     } ;                                                                     \
-    GrB_UnaryOp GXB (op ## _ ## type) = & GB_OPAQUE (op ## _ ## type) ;
+    GrB_UnaryOp GXB (op ## _ ## type) = & GB_OPAQUE (op ## _ ## type)
 
 // helper macros to define positional binary operators
 #define GXB_OP2_POS(op,str,type)                                            \
@@ -234,7 +234,7 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
         GB_ ## op ## _binop_code,                                           \
         NULL                                                                \
     } ;                                                                     \
-    GrB_BinaryOp GXB (op ## _ ## type) = & GB_OPAQUE (op ## _ ## type) ;
+    GrB_BinaryOp GXB (op ## _ ## type) = & GB_OPAQUE (op ## _ ## type)
 
 GXB_OP1_POS (POSITIONI , "positioni" , INT32) ;
 GXB_OP1_POS (POSITIONI , "positioni" , INT64) ;
@@ -284,7 +284,7 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
         GB_ ## op ## _idxunop_code,                                         \
         NULL                                                                \
     } ;                                                                     \
-    GrB_IndexUnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+    GrB_IndexUnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
 
 // GxB_IndexUnaryOps that depend on i,j,thunk but not A(i,j), and result has
 // the same type as the thunk: FLIPDIAGINDEX
@@ -303,7 +303,7 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
         GB_ ## op ## _idxunop_code,                                         \
         NULL                                                                \
     } ;                                                                     \
-    GrB_IndexUnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+    GrB_IndexUnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
 
 // IndexUnaryOps that depend on i,j, and thunk but not A(i,j), and result is
 // bool: TRIL, TRIU, DIAG, OFFDIAG, COLLE, COLGT, ROWLE, ROWGT
@@ -322,7 +322,7 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
         GB_ ## op ## _idxunop_code,                                         \
         NULL                                                                \
     } ;                                                                     \
-    GrB_IndexUnaryOp GRB (op) = & GB_OPAQUE (GB_OP (op)) ;
+    GrB_IndexUnaryOp GRB (op) = & GB_OPAQUE (GB_OP (op))
 
 // GrB_IndexUnaryOps that depend on A(i,j), and result is bool: VALUE* ops
 #define GRB_IDXOP_VALUE(op,str)                                             \
@@ -340,7 +340,7 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
         GB_ ## op ## _idxunop_code,                                         \
         NULL                                                                \
     } ;                                                                     \
-    GrB_IndexUnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+    GrB_IndexUnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
 
 // GrB_IndexUnaryOps that depend on A(i,j), result is bool: VALUE* complex ops
 #define GXB_IDXOP_VALUE(op,str)                                             \
@@ -358,7 +358,7 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
         GB_ ## op ## _idxunop_code,                                         \
         NULL                                                                \
     } ;                                                                     \
-    GrB_IndexUnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+    GrB_IndexUnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
 
 //------------------------------------------------------------------------------
 // built-in select operators
@@ -376,7 +376,7 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
         GB_ ## op ## _selop_code,                                           \
         NULL                                                                \
     } ;                                                                     \
-    GxB_SelectOp GXB (op) = & GB_OPAQUE (op) ;
+    GxB_SelectOp GXB (op) = & GB_OPAQUE (op)
 
 GXB_SEL (TRIL     , "tril"    ) ;
 GXB_SEL (TRIU     , "triu"    ) ;
