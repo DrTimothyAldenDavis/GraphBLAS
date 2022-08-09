@@ -49,7 +49,7 @@ void mexFunction
         {
             method = GxB_COMPRESSION_NONE ;
         }
-        else if (MATCH (method_name, "default") || MATCH (method_name, "lz4"))
+        else if (MATCH (method_name, "lz4"))
         { 
             method = GxB_COMPRESSION_LZ4 ;
         }
@@ -57,8 +57,9 @@ void mexFunction
         { 
             method = GxB_COMPRESSION_LZ4HC ;
         }
-        else if (MATCH (method_name, "zstd"))
+        else if (MATCH (method_name, "default") || MATCH (method_name, "zstd"))
         {
+            // the default is ZSTD, with level 1
             method = GxB_COMPRESSION_ZSTD ;
         }
         else if (MATCH (method_name, "debug"))

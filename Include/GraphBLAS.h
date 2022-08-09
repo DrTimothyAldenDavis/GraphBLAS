@@ -221,7 +221,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Aug 6, 2022"
+#define GxB_IMPLEMENTATION_DATE "Aug 8, 2022"
 #define GxB_IMPLEMENTATION_MAJOR 7
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   0
@@ -471,7 +471,7 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
 //      done, and this setting has no effect.
 //
 // GxB_COMPRESSION: compression method for GxB_Matrix_serialize and
-//      GxB_Vector_serialize.  The default is LZ4.
+//      GxB_Vector_serialize.  The default is ZSTD (level 1).
 //
 // GxB_IMPORT:  GxB_FAST_IMPORT (faster, for trusted input data) or
 //      GxB_SECURE_IMPORT (slower, for untrusted input data), for the
@@ -11372,20 +11372,12 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 
 // Currently implemented: no compression, LZ4, LZ4HC, and ZSTD
 #define GxB_COMPRESSION_NONE -1     // no compression
-#define GxB_COMPRESSION_DEFAULT 0   // LZ4
+#define GxB_COMPRESSION_DEFAULT 0   // ZSTD (level 1)
 #define GxB_COMPRESSION_LZ4   1000  // LZ4
 #define GxB_COMPRESSION_LZ4HC 2000  // LZ4HC, with default level 9
-#define GxB_COMPRESSION_ZSTD  3000  // ZSTD, with default level 6
+#define GxB_COMPRESSION_ZSTD  3000  // ZSTD, with default level 1
 
-// possible future methods that could be added:
-// #define GxB_COMPRESSION_LZO   4000  // LZO, with default level 2
-// #define GxB_COMPRESSION_BZIP2 5000  // BZIP2, with default level 9
-// #define GxB_COMPRESSION_LZSS  6000  // LZSS
-// #define GxB_COMPRESSION_ZLIB  7000  // ZLIB, with default level 6
-// ...
-
-// using the Intel IPP versions, if available (not yet supported);
-#define GxB_COMPRESSION_INTEL   1000000
+#define GxB_COMPRESSION_INTEL   1000000 // not yet supported
 
 // Most of the above methods have a level parameter that controls the tradeoff
 // between run time and the amount of compression obtained.  Higher levels
@@ -11393,13 +11385,7 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 
 //  LZ4     no level setting
 //  LZ4HC   1: fast, 9: default, 9: max
-//  ZSTD:   1: fast, 3: default, 19: max
-
-//  these methos are not yet supported but may be added in the future:
-//  ZLIB    1: fast, 6: default, 9: max
-//  LZO     1: fast (X1ST), 2: default (XST)
-//  BZIP2   1: fast, 9: default, 9: max
-//  LZSS    no level setting
+//  ZSTD:   1: fast, 1: default, 19: max
 
 // For all methods, a level of zero results in the default level setting.
 // These settings can be added, so to use LZ4HC at level 5, use method =
@@ -11407,11 +11393,8 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 
 // If the level setting is out of range, the default is used for that method.
 // If the method is negative, no compression is performed.  If the method is
-// positive but unrecognized, the default is used (GxB_COMPRESSION_LZ4, with no
-// level setting, and the non-Intel version).
-
-// If a method is not implemented, LZ4 is used instead, and the level setting
-// is ignored.
+// positive but unrecognized, the default is used (GxB_COMPRESSION_ZSTD,
+// level 1).
 
 GB_PUBLIC
 GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
@@ -11590,6 +11573,7 @@ GrB_Info GxB_Matrix_sort
 // The format of the input matrix (by row or by column) is unchanged; this
 // format need not match the by_col input parameter.
 
+GB_PUBLIC
 GrB_Info GxB_Matrix_reshape     // reshape a GrB_Matrix in place
 (
     // input/output:
@@ -11609,6 +11593,7 @@ GrB_Info GxB_Matrix_reshape     // reshape a GrB_Matrix in place
 // determines the format of the output matrix C, which need not match the
 // by_col input parameter.
 
+GB_PUBLIC
 GrB_Info GxB_Matrix_reshapeDup // reshape a GrB_Matrix into another GrB_Matrix
 (
     // output:
