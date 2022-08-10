@@ -129,7 +129,7 @@ __global__ void AxB_dot3_phase3_dndn
    #endif
 
     // zombie count
-    int zc = 0;
+    int64_t zc = 0;
     // dot pair and index in bucket
     int64_t pair_id;
 
@@ -243,12 +243,29 @@ __global__ void AxB_dot3_phase3_dndn
     // write result for this block to global mem
     if (threadIdx.x == 0)
     {
-       //printf("tid: %d final sum after reduce = %d\n", threadIdx.x, sum);
-       GB_PUTC( Cx[pair_id]=(T_C)cij ) ;
-       Ci[pair_id]=i ;
+        if (cij_exists)
+        {
+           //printf("tid: %d final sum after reduce = %d\n", threadIdx.x, sum);
+           GB_PUTC( Cx[pair_id]=(T_C)cij ) ;
+           Ci[pair_id]=i ;
+        }
+        else
+        {
+           zc++;
+           Ci[pair_id]=GB_FLIP (i) ;
+        }
     }
     //__syncthreads ( ) ;
-    // never have block zombies to add to C->nzombies
+
+    // never have block zombies to add to C->nzombies unless bitmap
+    #if GB_A_IS_BITMAP || GB_B_IS_BITMAP
+    if( tid ==0 && zc > 0)
+    {
+//      printf("warp %d zombie count = %d, nzombies = %d\n", blockIdx.x, zc, C->nzombies);
+        atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)zc);
+//      printf(" Czombie = %lld\n",C->nzombies);
+    }
+    #endif
   }
 
 }
