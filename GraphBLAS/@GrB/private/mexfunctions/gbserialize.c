@@ -49,13 +49,18 @@ void mexFunction
         {
             method = GxB_COMPRESSION_NONE ;
         }
-        else if (MATCH (method_name, "default") || MATCH (method_name, "lz4"))
+        else if (MATCH (method_name, "lz4"))
         { 
             method = GxB_COMPRESSION_LZ4 ;
         }
         else if (MATCH (method_name, "lz4hc"))
         { 
             method = GxB_COMPRESSION_LZ4HC ;
+        }
+        else if (MATCH (method_name, "default") || MATCH (method_name, "zstd"))
+        {
+            // the default is ZSTD, with level 1
+            method = GxB_COMPRESSION_ZSTD ;
         }
         else if (MATCH (method_name, "debug"))
         { 
@@ -115,7 +120,7 @@ void mexFunction
         { 
             level = (int) mxGetScalar (pargin [2]) ;
         }
-        if (level < 0 || level > 9) level = 0 ;
+        if (level < 0 || level > 999) level = 0 ;
         // set the descriptor
         OK (GxB_Desc_set (desc, GxB_COMPRESSION, method + level)) ;
     }

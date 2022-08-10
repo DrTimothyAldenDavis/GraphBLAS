@@ -7,7 +7,7 @@ function gbtest115
 rng ('default') ;
 
 types = gbtest_types ;
-compression_methods = { 'none', 'lz4', 'lz4hc', 'debug' } ;
+compression_methods = { 'none', 'lz4', 'lz4hc', 'zstd', 'debug' } ;
 
 for k = 1:length(types)
     type = types {k} ;
@@ -35,9 +35,16 @@ for k = 1:length(types)
         B = GrB.deserialize (blob, 'secure', type) ;
         assert (isequal (A, B)) ;
 
-        % levels 0:9 for lz4hc
         if (k2 == 3)
+            % levels 0:9 for lz4hc
             for level = 0:9
+                blob = GrB.serialize (A, method, level) ;
+                B = GrB.deserialize (blob) ;
+                assert (isequal (A, B)) ;
+            end
+        elseif (k2 == 4)
+            % levels 0:19 for zstd
+            for level = 0:19
                 blob = GrB.serialize (A, method, level) ;
                 B = GrB.deserialize (blob) ;
                 assert (isequal (A, B)) ;

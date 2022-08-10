@@ -31,7 +31,7 @@ set ( CMAKE_MACOSX_RPATH TRUE )
 # version must match ../CMakeLists.txt:
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Aug 4, 2022" )
+set ( GraphBLAS_DATE "Aug 8, 2022" )
 set ( GraphBLAS_VERSION_MAJOR 7 )
 set ( GraphBLAS_VERSION_MINOR 2 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -135,7 +135,7 @@ message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
 
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
-include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../lz4 ../rmm_wrap ../Source/Generated2 )
+include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../lz4 ../zstd ../zstd/zstd_subset ../rmm_wrap ../Source/Generated2 )
 
 #-------------------------------------------------------------------------------
 # compiler options:
