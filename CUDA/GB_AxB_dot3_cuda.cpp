@@ -185,12 +185,19 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             device, stream )) ; //stream_data) ;
     }
 
+    if (M_is_hyper)
+    {
+        // prefetch M->h if M is hypersparse
+        CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->h, (mnvec) * sizeof (int64_t),
+            device, stream)) ; //stream_data) ;
+    }
+
     // prefetch C
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->i, (cnz+1) * sizeof (int64_t),
         device, stream )); //stream_data) ;
     if (!C_iso)
     {
-        // FIXME: why prefect C->x?
+        // FIXME: why prefetch C->x?
         CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->x, (cnz+1) * C->type->size,
             device, stream )); //stream_data) ;
     }
@@ -239,10 +246,14 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 //      A full          B bit
 //      A bit           B bit
 
-    if ( GB_IS_FULL(A) && GB_IS_FULL(B) )
+    if ((GB_IS_FULL(A) || GB_IS_BITMAP(A)) &&
+        (GB_IS_FULL(B) || GB_IS_BITMAP(B)))
     {
 
         // Full x Full
+        // Full x Bitmap
+        // Bitmap x Full
+        // Bitmap x Bitmap
         dense_phase1launchFactory dp1lf(my_mxm_spec);
 
         GBURBLE ("(GPU phase1 start nblk = %d) ", dp1lf.get_number_of_blocks(M)) ;
@@ -261,18 +272,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         GBURBLE ("(GPU Dense full x full done %12.6g ms, rate=%12.6g)\n", 
                    kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
 
-    }
-    else if ( GB_IS_FULL(A) && GB_IS_BITMAP(B) )
-    {
-        //  FIXME: Full x Bitmap
-    }
-    else if ( GB_IS_BITMAP(A) && GB_IS_FULL(B) )
-    {
-        //  FIXME: Bitmap x Full
-    }
-    else if ( GB_IS_BITMAP(A) && GB_IS_BITMAP(B) )
-    {
-        //  FIXME Bitmap x Bitmap
     }
     else if ( GB_IS_SPARSE(A) && GB_IS_FULL(B) )
     {
@@ -306,11 +305,11 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     {
         //  FIXME: Hyper x Full 
     }
-    else if ( GB_IS_HYPERSPARSE(A) && GB_IS_BITMAP(B) )
+    else if ( GB_IS_SPARSE(A) && GB_IS_BITMAP(B) )
     {
         //  FIXME: Sparse x Bitmap 
     }
-    else if ( GB_IS_BITMAP(A) && GB_IS_BITMAP(B) )
+    else if ( GB_IS_HYPERSPARSE(A) && GB_IS_BITMAP(B) )
     {
         //  FIXME: Hyper x Bitmap
     }
