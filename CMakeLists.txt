@@ -18,13 +18,6 @@ message ( STATUS "GrapphBLAS source: " ${CMAKE_SOURCE_DIR} )
 message ( STATUS "GrapphBLAS build:  " ${CMAKE_BINARY_DIR} )
 message ( STATUS "CMake version: " ${CMAKE_VERSION} )
 
-if ( CMAKE_VERSION VERSION_GREATER "3.0" )
-    cmake_policy ( SET CMP0042 NEW )
-    cmake_policy ( SET CMP0048 NEW )
-    cmake_policy ( SET CMP0054 NEW )
-endif ( )
-set ( CMAKE_MACOSX_RPATH TRUE )
-
 # version of SuiteSparse:GraphBLAS
 set ( GraphBLAS_DATE "Aug 8, 2022" )
 set ( GraphBLAS_VERSION_MAJOR 7 )

@@ -19,15 +19,6 @@ cmake_minimum_required ( VERSION 3.13 )
 
 message ( STATUS "CMake version: " ${CMAKE_VERSION} )
 
-if ( CMAKE_VERSION VERSION_GREATER "3.0" )
-    cmake_policy ( SET CMP0042 NEW )
-    cmake_policy ( SET CMP0048 NEW )
-    cmake_policy ( SET CMP0054 NEW )
-endif ( )
-
-# MacOS settings
-set ( CMAKE_MACOSX_RPATH TRUE )
-
 # version must match ../CMakeLists.txt:
 
 # version of SuiteSparse:GraphBLAS
