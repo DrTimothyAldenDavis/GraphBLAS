@@ -126,6 +126,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         GxB_SPARSE, true, A->hyper_switch, vlen, anz, true, C_iso, Context)) ;
 
     int64_t *restrict Cp = C->p ;
+    C->nvals = anz ;
 
     //--------------------------------------------------------------------------
     // allocate workspace

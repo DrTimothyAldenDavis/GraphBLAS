@@ -54,6 +54,8 @@ GrB_Info GB_hypermatrix_prune
         int64_t *restrict Ap_new = NULL ; size_t Ap_new_size = 0 ;
         int64_t *restrict Ah_new = NULL ; size_t Ah_new_size = 0 ;
         int64_t nvec_new ;
+        int64_t anz = A->nvals ;
+        ASSERT (anz == A->p [A->nvec]) ;
         GrB_Info info = GB_hyper_prune (&Ap_new, &Ap_new_size,
             &Ah_new, &Ah_new_size, &nvec_new, A->p, A->h, A->nvec, Context) ;
         if (info != GrB_SUCCESS)
@@ -73,6 +75,8 @@ GrB_Info GB_hypermatrix_prune
         A->nvec = nvec_new ;
         A->plen = nvec_new ;
         A->nvec_nonempty = nvec_new ;
+        A->nvals = anz ;
+        ASSERT (anz == A->p [A->nvec]) ;
         A->magic = GB_MAGIC ;
     }
 

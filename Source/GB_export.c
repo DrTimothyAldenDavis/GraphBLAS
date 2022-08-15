@@ -188,6 +188,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
             GB_Global_memtable_remove ((*A)->h) ;
             (*Ah) = (GrB_Index *) ((*A)->h) ; (*A)->h = NULL ;
             (*Ah_size) = (*A)->h_size ;
+            // fall through to the sparse case
 
         case GxB_SPARSE : 
             if (jumbled != NULL)

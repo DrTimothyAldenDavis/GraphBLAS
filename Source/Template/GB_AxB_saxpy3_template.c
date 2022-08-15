@@ -320,6 +320,7 @@
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
+    C->nvals = cnz ;
 
     int64_t  *restrict Ci = C->i ;
     #if ( !GB_IS_ANY_PAIR_SEMIRING )

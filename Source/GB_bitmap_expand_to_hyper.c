@@ -172,7 +172,7 @@ GrB_Info GB_bitmap_expand_to_hyper
     C->nzombies = (C_is_bitmap) ? (cnz - C->nvals) : 0 ;
     C->vdim = cvdim_final ;
     C->vlen = cvlen_final ;
-    C->nvals = -1 ;
+    C->nvals = cnz ;
     C->nvec = cvdim ;
     C->plen = cvdim ;
     C->nvec_nonempty = (cvlen == 0) ? 0 : cvdim ;

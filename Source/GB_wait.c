@@ -426,6 +426,7 @@ GrB_Info GB_wait                // finish all pending computations
             A1p [a1nvec] = anz1 ;
             A1->nvec = a1nvec ;
             A1->nvec_nonempty = a1nvec ;
+            A1->nvals = anz1 ;
             A1->magic = GB_MAGIC ;
 
             ASSERT_MATRIX_OK (A1, "A1 slice for GB_wait", GB0) ;

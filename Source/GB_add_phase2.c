@@ -270,6 +270,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         C->nvec_nonempty = Cnvec_nonempty ;
         C->p = (int64_t *) Cp ; C->p_size = Cp_size ;
         (*Cp_handle) = NULL ;
+        C->nvals = cnz ;
     }
 
     // add Ch as the hypersparse list for C, from GB_add_phase0

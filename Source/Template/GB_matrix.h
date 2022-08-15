@@ -57,6 +57,8 @@ GrB_Type type ;         // the type of each numerical entry
 // vectors, where A->nvec <= A->plen <= A->vdim.  The arrays Ai and Ax define
 // the indices and values in each sparse vector.  The total number of entries
 // in the matrix is Ap [nvec] <= GB_nnz_max (A).
+// A->nvals is equal to Ap [nvec].
+
 // For the bitmap and full sparsity structures, Ap and Ai are NULL.
 
 // For both hypersparse and non-hypersparse matrices, if A->nvec_nonempty is
@@ -217,7 +219,7 @@ int64_t *i ;            // indices:  i_size >= 8*max(anz,1)
 void *x ;               // values:   x_size >= max(anz*A->type->size,1),
                         //           or x_size >= 1 if A is iso
 int8_t *b ;             // bitmap:   b_size >= max(anz,1)
-int64_t nvals ;         // nvals(A) if A is bitmap
+int64_t nvals ;         // nvals(A) if A is sparse, hypersparse, or bitmap
 
 size_t p_size ;         // exact size of A->p in bytes, zero if A->p is NULL
 size_t h_size ;         // exact size of A->h in bytes, zero if A->h is NULL

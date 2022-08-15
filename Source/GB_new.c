@@ -162,7 +162,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->i = NULL ; A->i_shallow = false ; A->i_size = 0 ;
     A->x = NULL ; A->x_shallow = false ; A->x_size = 0 ;
 
-    A->nvals = 0 ;              // for bitmapped matrices only
+    A->nvals = 0 ;
     A->nzombies = 0 ;
     A->jumbled = false ;
     A->Pending = NULL ;

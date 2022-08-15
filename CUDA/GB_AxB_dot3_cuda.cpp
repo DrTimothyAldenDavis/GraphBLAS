@@ -216,6 +216,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             cudaMemcpyDefault, stream)) ;
     }
 
+    C->nvals = cnz ;
     C->magic = GB_MAGIC ;
     C->nvec_nonempty = M->nvec_nonempty ;
     C->jumbled = GB_JUMBLED (M) ;   // C is jumbled if M is jumbled

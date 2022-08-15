@@ -210,6 +210,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     //--------------------------------------------------------------------------
 
     Cp [vnz] = vnz ;
+    C->nvals = vnz ;
     C->nvec = vnz ;
     C->nvec_nonempty = vnz ;
     C->magic = GB_MAGIC ;

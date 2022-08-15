@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_hyper_shallow: create a sparse shallow copy of a hypersparse matrix
+// GB_hyper_shallow: create a sparse shallow version of a hypersparse matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -31,7 +31,7 @@ GrB_Matrix GB_hyper_shallow         // return C
     ASSERT (GB_IS_HYPERSPARSE (A)) ;
 
     //--------------------------------------------------------------------------
-    // construct the shallow copy
+    // construct the hyper_shallow version
     //--------------------------------------------------------------------------
 
     // save the C header status

@@ -112,7 +112,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     C->nvec = A->nvec ;
     C->nvec_nonempty = A->nvec_nonempty ;
     C->jumbled = A->jumbled ;           // C is jumbled if A is jumbled
-    C->nvals = A->nvals ;               // if A bitmap 
+    C->nvals = A->nvals ;
     C->magic = GB_MAGIC ;
     C->iso = C_iso ;                    // OK
     if (C_iso)

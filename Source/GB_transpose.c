@@ -454,6 +454,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         T->p [anz] = anz ;
 
         T->iso = C_iso ;
+        T->nvals = anz ;
         T->magic = GB_MAGIC ;
 
     }
@@ -671,6 +672,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         ASSERT (T->nvec == 1) ;
         T->nvec_nonempty = (anz == 0) ? 0 : 1 ;
         T->p [1] = anz ;
+        T->nvals = anz ;
         T->magic = GB_MAGIC ;
         ASSERT (!GB_JUMBLED (T)) ;
 

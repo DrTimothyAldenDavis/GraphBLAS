@@ -8,7 +8,8 @@
 //------------------------------------------------------------------------------
 
 // for code development only:
-// #define GB_DEVELOPER 1
+// FIXME
+   #define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
 #include "GB.h"
@@ -669,6 +670,13 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     { 
         // bitmap with invalid nvals
         GBPR0 ("  invalid bitmap count: " GBd " exist but"
+            " A->nvals = " GBd "\n", anz_actual, anz) ;
+        return (GrB_INVALID_OBJECT) ;
+    }
+    else if ((is_sparse || is_hyper) && anz != anz_actual)
+    {
+        // sparse/hypersparse with invalid nvals
+        GBPR0 ("  invalid sparse/hypersparse entry count: " GBd " exist but"
             " A->nvals = " GBd "\n", anz_actual, anz) ;
         return (GrB_INVALID_OBJECT) ;
     }

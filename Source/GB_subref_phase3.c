@@ -104,6 +104,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     ASSERT ((*Cp_handle) == NULL) ;
     ASSERT ((*Ch_handle) == NULL) ;
     C->nvec_nonempty = Cnvec_nonempty ;
+    C->nvals = cnz ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------

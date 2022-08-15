@@ -534,6 +534,7 @@ GrB_Info GB_sort
             }
         }
 
+        P->nvals = cnz ;
         P->magic = GB_MAGIC ;
     }
 

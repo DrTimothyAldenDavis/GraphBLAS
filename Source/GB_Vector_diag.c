@@ -139,6 +139,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
 
     V->p [0] = 0 ;
     V->p [1] = vnz ;
+    V->nvals = vnz ;
     if (k >= 0)
     { 
         // transplant T->i into V->i
@@ -171,7 +172,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     {
         // V->x = (vtype) T->x
         // V is sparse so malloc is OK
-        V->x = GB_XALLOC (false, V->iso, vnz, vtype->size, &(V->x_size)) ; // x:OK
+        V->x = GB_XALLOC (false, V->iso, vnz, vtype->size, &(V->x_size)) ;
         if (V->x == NULL)
         { 
             // out of memory

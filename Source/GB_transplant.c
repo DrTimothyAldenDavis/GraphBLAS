@@ -59,6 +59,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
+    int64_t anvals = A->nvals ;
     int64_t anz = GB_nnz_held (A) ;
     int64_t anvec = A->nvec ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
@@ -279,6 +280,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     C->p_shallow = false ;
     C->h_shallow = false ;
 
+    C->nvals = anvals ;
     C->magic = GB_MAGIC ;           // C is now initialized
     A->magic = GB_MAGIC2 ;          // A is now invalid
 
@@ -367,7 +369,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
     }
 
     C->b_shallow = false ;
-    C->nvals = A->nvals ;
 
     //--------------------------------------------------------------------------
     // free A and return result

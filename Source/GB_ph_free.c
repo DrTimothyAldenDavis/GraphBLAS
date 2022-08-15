@@ -53,6 +53,7 @@ void GB_ph_free                 // free A->p and A->h of a matrix
 
     A->plen = 0 ;
     A->nvec = 0 ;
+    A->nvals = 0 ;
     A->nvec_nonempty = 0 ;
 
     //--------------------------------------------------------------------------

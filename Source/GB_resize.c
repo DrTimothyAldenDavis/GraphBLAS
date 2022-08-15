@@ -267,6 +267,7 @@ GrB_Info GB_resize              // change the size of a matrix
             bool found ;
             GB_SPLIT_BINARY_SEARCH (vdim_new, Ah, pleft, pright, found) ;
             A->nvec = pleft ;
+            A->nvals = Ap [A->nvec] ;
         }
 
         if (vdim_new < vdim_old)

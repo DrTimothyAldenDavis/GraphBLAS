@@ -247,6 +247,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
         case GxB_SPARSE : 
             (*A)->jumbled = jumbled ;   // import jumbled status
             (*A)->nvec_nonempty = -1 ;  // not computed; delay until required
+            (*A)->nvals = nvals ;
 
             if (is_sparse_vector)
             { 

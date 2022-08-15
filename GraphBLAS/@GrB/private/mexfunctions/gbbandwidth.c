@@ -153,6 +153,7 @@ void mexFunction
         }
     }
 
+    OK (GrB_Matrix_free (&A)) ;
     OK (GrB_Matrix_free (&x)) ;
     OK (GrB_Matrix_free (&idiag)) ;
     OK (GrB_Matrix_free (&imin)) ;

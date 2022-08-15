@@ -194,6 +194,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     }
     C->nvec_nonempty = M->nvec_nonempty ;
     C->nvec = M->nvec ;
+    C->nvals = M->nvals ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------

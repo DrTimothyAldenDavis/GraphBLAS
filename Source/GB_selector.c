@@ -584,6 +584,7 @@ GrB_Info GB_selector
         C->magic = GB_MAGIC ;
         C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled
         C->iso = C_iso ;            // OK: burble already done above
+        C->nvals = Cp [cnvec] ;
         C->nvec_nonempty = GB_nvec_nonempty (C, Context) ;
         ASSERT_MATRIX_OK (C, "C output for GB_selector (column select)", GB0) ;
         return (GrB_SUCCESS) ;
@@ -780,6 +781,7 @@ GrB_Info GB_selector
         A->nvec_nonempty = C_nvec_nonempty ;
         A->jumbled = A_jumbled ;        // A remains jumbled (in-place select)
         A->iso = C_iso ;                // OK: burble already done above
+        A->nvals = A->p [A->nvec] ;
 
         // the NONZOMBIE opcode may have removed all zombies, but A->nzombie
         // is still nonzero.  It is set to zero in GB_wait.
@@ -840,6 +842,7 @@ GrB_Info GB_selector
         C->nvec_nonempty = C_nvec_nonempty ;
         C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled
         C->iso = C_iso ;            // OK: burble already done above
+        C->nvals = C->p [C->nvec] ;
 
         ASSERT_MATRIX_OK (C, "C output for GB_selector", GB0) ;
     }

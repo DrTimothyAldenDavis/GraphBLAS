@@ -933,6 +933,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     T->nvec_nonempty = tnvec ;
     T->nvec = tnvec ;
     Tp [tnvec] = tnz ;
+    T->nvals = tnz ;
     ASSERT (T->nvec == T->plen) ;
     T->magic = GB_MAGIC ;
 

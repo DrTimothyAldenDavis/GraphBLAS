@@ -209,7 +209,9 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         A->plen = n ;
         A->p_shallow = false ;
         A->h_shallow = false ;
+        A->nvals = anz ;
         A->magic = GB_MAGIC ;
+        ASSERT (anz == A->p [n]) ;
         ASSERT (anz == GB_nnz (A)) ;
 
         //----------------------------------------------------------------------
