@@ -18,15 +18,8 @@ message ( STATUS "GrapphBLAS source: " ${CMAKE_SOURCE_DIR} )
 message ( STATUS "GrapphBLAS build:  " ${CMAKE_BINARY_DIR} )
 message ( STATUS "CMake version: " ${CMAKE_VERSION} )
 
-if ( CMAKE_VERSION VERSION_GREATER "3.0" )
-    cmake_policy ( SET CMP0042 NEW )
-    cmake_policy ( SET CMP0048 NEW )
-    cmake_policy ( SET CMP0054 NEW )
-endif ( )
-set ( CMAKE_MACOSX_RPATH TRUE )
-
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Aug 15, 2022" )
+set ( GraphBLAS_DATE "Aug 19, 2022" )
 set ( GraphBLAS_VERSION_MAJOR 7 )
 set ( GraphBLAS_VERSION_MINOR 2 )
 set ( GraphBLAS_VERSION_SUB   1 )
@@ -267,8 +260,6 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" )
     # The -g option is useful for the Intel VTune tool, but it should be
     # removed in production.  Comment this line out if not in use:
     # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
-    # cmake 2.8 workaround: gcc needs to be told to do ANSI C11.
-    # cmake 3.0 doesn't have this problem.
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -lm -Wno-pragmas " )
     # operations may be carried out in higher precision
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fexcess-precision=fast " )

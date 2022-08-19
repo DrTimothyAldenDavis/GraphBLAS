@@ -17,79 +17,6 @@
 #include <cooperative_groups.h>
 
 using namespace cooperative_groups;
-//------------------------------------------------------------------------------
-// GB_bucket_code:  assign the dot product for C(i,j) to a specific bucket
-//------------------------------------------------------------------------------
-
-// Assigns the dot product C(i,j) = A(:,i)'*B(:,j) to a specific bucket.  Both
-// A(:,i) and B(:,j) are non-empty when this method is called.
-
-// GB_BUCKET_ZOMBIE:    C(i,j) is a prezombie, either A(:,i) or B(:,j) are
-//                      empty.
-
-// GB_BUCKET_VSVS       both A(:,i) and B(:,j) are very sparse.
-
-// GB_BUCKET_MERGEPATH  both A(:,i) and B(:,j) are sparse, but neither are
-//                      very sparse
-
-__device__ static inline GB_bucket_code GB_bucket_assignment
-(
-    int64_t ainz,       // # of entries A(:,i), always > 0
-    int64_t bjnz,       // # of entries B(:,j), always > 0
-    int64_t vlen        // vector length of A(:,i) and B(:,j)
-)
-{
-
-#if 0
-
-    // GB_BUCKET (condition,bucket) :  assigns an entry to a bucket, if the
-    // condition holds, but without using if statements (which are slow).  An
-    // entry is assigned once and not reassigned.
-
-    // If the bucket b has not assigned, it is b = 0.  The GB_BUCKET function
-    // tests this case, and if the condition is also true, the expression
-    // (b==0) * condition * (bucket+1) becomes equal to bucket+1.  This value
-    // is added to b, which is zero, so the final result is that b is set to
-    // bucket+1.
-
-    // If the bucket b has been assigned already, we have b > 0.  Thus, the
-    // expression ((b==0) * condition * (bucket+1)) becomes zero.  When added
-    // to b, the result is that b doesn't change, so the bucket assignment b is
-    // unmodified.
-
-    #define GB_BUCKET(condition,bucket) \
-        b = (((b == 0) * (condition)) * (bucket+1)) + b ;
-    {
-
-        //----------------------------------------------------------------------
-        // both A(:,i) and B(:,j) are modest in size (total size 256 or less)
-        //----------------------------------------------------------------------
-
-        // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_vsvs.cu.jit
-        GB_BUCKET (ainz + bjnz <= 128, GB_BUCKET_VSVS) ;
-
-    }
-    {
-
-        //----------------------------------------------------------------------
-        // default: use the merge-path method
-        //----------------------------------------------------------------------
-
-        // A(:,i) and B(:,j) are both sparse, but not very sparse.  The total #
-        // of entries in both vectors are > 256, so the merge-path path method
-        // is used.
-
-        // CUDA kernel: templates/GB_jit_AxB_dot3_phase3_mp.cu.jit
-        GB_BUCKET (true, GB_BUCKET_MERGEPATH) ;
-    }
-
-    // subtract one to undo the "bucket+1" assignment in the
-    // GB_BUCKET macro assignment expression.
-    return (GB_bucket_code) (b-1) ;
-#endif
-
-}
-
 
 //------------------------------------------------------------------------------
 // GB_AxB_cuda_phase1: build nanobuckets, hunt for pre-zombies
@@ -105,7 +32,15 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 // The kernel also computes Ci, of size nnz(C), which contains the
 // zombie assignment or bucket assignment for non-zombies in C.
 
-// FIXME: use 2 buckets?  mp and vsvs?  What if all entries are in one bucket;
+// Assigns the dot product C(i,j) = A(:,i)'*B(:,j) to a specific bucket.  Both
+// A(:,i) and B(:,j) are non-empty when this method is called.
+// GB_BUCKET_ZOMBIE:    C(i,j) is a prezombie, either A(:,i) or B(:,j) are
+//                      empty.
+// GB_BUCKET_VSVS       both A(:,i) and B(:,j) are very sparse.
+// GB_BUCKET_MERGEPATH  both A(:,i) and B(:,j) are sparse, but neither are
+//                      very sparse
+
+// FIXME: What if all entries are in one bucket;
 // can we skip the bucket creation?
 
 template<typename T_M, uint64_t srcode, int chunk_size = 128>
@@ -133,22 +68,25 @@ __global__ void AxB_phase1
     const T_M *__restrict__ Mx = (T_M*) M->x ; // not accessed if M structural
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
-    const int64_t mnz =  M->p[M->nvec]; //GB_nnz(M) ;
+    const int64_t mnz = GB_nnz(M) ;
     const bool M_is_hyper = M->h != NULL ;
+    ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
 
     const int64_t *__restrict__ Ah = A->h ;
     const int64_t *__restrict__ Ap = A->p ;
     const int64_t *__restrict__ Ai = A->i ;
     const int64_t avlen = A->vlen ;
-    const int64_t anz = A->p[A->nvec]; //GB_nnz(A) ;
+    const int64_t anz = GB_nnz(A) ;
     const bool A_is_hyper = A->h != NULL ;
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
     const int64_t *__restrict__ Bh = B->h ;
     const int64_t *__restrict__ Bp = B->p ;
     const int64_t *__restrict__ Bi = B->i ;
     const int64_t bvlen = B->vlen ;
-    const int64_t bnz = A->p[A->nvec]; //GB_nnz(B);
+    const int64_t bnz = GB_nnz(B);
     const bool B_is_hyper = B->h != NULL ;
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
     // int64_t *restrict Cp = C->p ;    // copy of Mp
     // int64_t *restrict Ch = C->h ;    // copy of Mh
@@ -256,15 +194,15 @@ __global__ void AxB_phase1
             GB_bucket_code bucket = GB_BUCKET_ZOMBIE ;
             int64_t k = ks [pM - pfirst] ;  // get the k value of Mi,Mx [pM].
             int64_t i = Mi [ pM ] ;
-            int64_t j = k ; // HACK, does not need to be initialized here
+            #if GB_M_IS_HYPER
+            int64_t j = Mh [k] ;        // Note that Ch and Mh are the same
+            #else
+            int64_t j = k ;
+            #endif
             if ( MX ( pM ) )
             {
 
-                // FIXME: handle the case where M, A, B are hypersparse
-
-                // HACK
-                j = k ;
-                //          int64_t j = (Mh == NULL) ? k : Mh [k] ;
+                // FIXME: handle the case where A, B are hypersparse
 
                 //--------------------------------------------------------------
                 // get B(:,j)

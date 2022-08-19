@@ -227,6 +227,14 @@ size_t b_size ;         // exact size of A->b in bytes, zero if A->b is NULL
 size_t i_size ;         // exact size of A->i in bytes, zero if A->i is NULL
 size_t x_size ;         // exact size of A->x in bytes, zero if A->x is NULL
 
+//-----------------------------------------------------------------------------
+// hashing the hypersparse list
+//-----------------------------------------------------------------------------
+
+// add either:
+// struct GB_Matrix_opaque *Hash ;       // always sparse
+// GrB_Matrix Hash ;
+
 //------------------------------------------------------------------------------
 // pending tuples
 //------------------------------------------------------------------------------
