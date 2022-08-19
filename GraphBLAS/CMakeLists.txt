@@ -19,15 +19,6 @@ cmake_minimum_required ( VERSION 3.13 )
 
 message ( STATUS "CMake version: " ${CMAKE_VERSION} )
 
-if ( CMAKE_VERSION VERSION_GREATER "3.0" )
-    cmake_policy ( SET CMP0042 NEW )
-    cmake_policy ( SET CMP0048 NEW )
-    cmake_policy ( SET CMP0054 NEW )
-endif ( )
-
-# MacOS settings
-set ( CMAKE_MACOSX_RPATH TRUE )
-
 # version must match ../CMakeLists.txt:
 
 # version of SuiteSparse:GraphBLAS
@@ -144,7 +135,6 @@ include_directories ( ../Source/Template ../Source ../Include rename ../Source/G
 # check which compiler is being used.  If you need to make
 # compiler-specific modifications, here is the place to do it.
 if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-    # cmake 3.0 doesn't have this problem.
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -lm -Wno-pragmas " )
     # operations may be carried out in higher precision
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fexcess-precision=fast " )
