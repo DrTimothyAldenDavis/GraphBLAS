@@ -54,7 +54,7 @@ GrB_Info GB_hyper_realloc
         if (!ok)
         { 
             // out of memory
-            GB_phbix_free (A) ;
+            GB_phybix_free (A) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 

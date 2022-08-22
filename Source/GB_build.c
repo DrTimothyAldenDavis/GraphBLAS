@@ -244,7 +244,7 @@ GrB_Info GB_build               // build matrix
 
     // the type, dimensions, hyper_switch, bitmap_switch and sparsity control
     // are still preserved in C.
-    GB_phbix_free (C) ;
+    GB_phybix_free (C) ;
 
     //--------------------------------------------------------------------------
     // build the matrix T

@@ -35,7 +35,7 @@
 
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_phbix_free (C) ;                     \
+    GB_phybix_free (C) ;                     \
     GB_FREE_WORKSPACE ;                     \
 }
 
@@ -208,7 +208,7 @@ GrB_Info GB_selector
             (GrB_Matrix) S, ithunk, athunk, ythunk, Context)) ;
         ASSERT_MATRIX_OK (C, "C from iso scalar test", GB0) ;
         bool C_empty = (GB_nnz (C) == 0) ;
-        GB_phbix_free (C) ;
+        GB_phybix_free (C) ;
 
         // check if C has 0 or 1 entry
         if (C_empty)
@@ -597,7 +597,7 @@ GrB_Info GB_selector
     #undef  GB_FREE_ALL
     #define GB_FREE_ALL                         \
     {                                           \
-        GB_phbix_free (C) ;                     \
+        GB_phybix_free (C) ;                    \
         GB_FREE_WORKSPACE ;                     \
     }
 
@@ -606,8 +606,9 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     int64_t cnz = 0 ;
+    int64_t cplen = GB_IMAX (1, anvec) ;
 
-    Cp = GB_CALLOC (anvec+1, int64_t, &Cp_size) ;
+    Cp = GB_CALLOC (cplen+1, int64_t, &Cp_size) ;
     if (Cp == NULL)
     { 
         // out of memory
@@ -650,7 +651,7 @@ GrB_Info GB_selector
     if (op_is_positional)
     {
         // allocate Zp
-        Zp = GB_MALLOC_WORK (anvec, int64_t, &Zp_size) ;
+        Zp = GB_MALLOC_WORK (cplen, int64_t, &Zp_size) ;
         if (Zp == NULL)
         { 
             // out of memory
@@ -769,7 +770,7 @@ GrB_Info GB_selector
             // free the old A->p and transplant in Cp as the new A->p
             GB_FREE (&Ap, Ap_size) ;
             A->p = Cp ; Cp = NULL ; A->p_size = Cp_size ;
-            A->plen = anvec ;
+            A->plen = cplen ;
         }
 
         ASSERT (Cp == NULL) ;
@@ -837,7 +838,7 @@ GrB_Info GB_selector
         C->h = Ch ; Ch = NULL ; C->h_size = Ch_size ;
         C->i = Ci ; Ci = NULL ; C->i_size = Ci_size ;
         C->x = Cx ; Cx = NULL ; C->x_size = Cx_size ;
-        C->plen = anvec ;
+        C->plen = cplen ;
         C->magic = GB_MAGIC ;
         C->nvec_nonempty = C_nvec_nonempty ;
         C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled

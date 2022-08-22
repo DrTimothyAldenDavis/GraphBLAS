@@ -22,7 +22,7 @@
 #define GB_FREE_ALL         \
 {                           \
     GB_FREE_WORKSPACE ;     \
-    GB_phbix_free (C) ;     \
+    GB_phybix_free (C) ;    \
 }
 
 #include "GB_concat.h"
@@ -66,7 +66,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     float hyper_switch = C->hyper_switch ;
     float bitmap_switch = C->bitmap_switch ;
     int sparsity_control = C->sparsity_control ;
-    GB_phbix_free (C) ;
+    GB_phybix_free (C) ;
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // existing header
         ctype, cvlen, cvdim, GB_Ap_malloc, csc, GxB_SPARSE, false,

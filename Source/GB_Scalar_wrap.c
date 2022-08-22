@@ -52,6 +52,7 @@ GrB_Scalar GB_Scalar_wrap   // create a new GrB_Scalar with one entry
     s->b = NULL ; s->b_size = 0 ; s->b_shallow = false ;
     s->i = NULL ; s->i_size = 0 ; s->i_shallow = false ;
     s->x = Sx   ; s->x_size = type->size ; s->x_shallow = true ;
+    s->Y = NULL ;
 
     s->nvals = 0 ;
 

@@ -4821,7 +4821,7 @@ void mexFunction
     OK (GB_Matrix_check (A, "A pattern 2", G3, NULL)) ;
 
     GB_bix_free (NULL) ;
-    GB_ph_free (NULL) ;
+    GB_phy_free (NULL) ;
 
     GrB_Matrix_free_(&C) ;
     GrB_Matrix_free_(&B) ;

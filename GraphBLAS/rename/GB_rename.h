@@ -3765,6 +3765,7 @@
 #define GB_HUF_validateCTable GM_HUF_validateCTable
 #define GB_HUF_writeCTable GM_HUF_writeCTable
 #define GB_HUF_writeCTable_wksp GM_HUF_writeCTable_wksp
+#define GB_hyper_hash GM_hyper_hash
 #define GB_hypermatrix_prune GM_hypermatrix_prune
 #define GB_hyper_prune GM_hyper_prune
 #define GB_hyper_realloc GM_hyper_realloc
@@ -3925,8 +3926,8 @@
 #define GB_Pending_free GM_Pending_free
 #define GB_Pending_n GM_Pending_n
 #define GB_Pending_realloc GM_Pending_realloc
-#define GB_phbix_free GM_phbix_free
-#define GB_ph_free GM_ph_free
+#define GB_phybix_free GM_phybix_free
+#define GB_phy_free GM_phy_free
 #define GB_POOL_add GM_POOL_add
 #define GB_POOL_create GM_POOL_create
 #define GB_POOL_create_advanced GM_POOL_create_advanced

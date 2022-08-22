@@ -26,7 +26,7 @@
 
 #include "GB_apply.h"
 
-#define GB_FREE_ALL GB_phbix_free (C) ;
+#define GB_FREE_ALL GB_phybix_free (C) ;
 
 GB_PUBLIC
 GrB_Info GB_shallow_op      // create shallow matrix and apply operator

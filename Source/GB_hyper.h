@@ -49,5 +49,45 @@ GrB_Info GB_hypermatrix_prune
     GB_Context Context
 ) ;
 
+GrB_Info GB_hyper_hash      // construct A->Y if not already constructed
+(
+    GrB_Matrix A,
+    GB_Context Context
+) ;
+
+static inline void GB_hyper_hash_lookup
+(
+    // input, not modified
+    const int64_t *restrict Ap,     // A->p [0..A->nvec  ]: pointers to vectors
+    const int64_t *restrict Yp,     // A->Y->p
+    const int64_t *restrict Yi,     // A->Y->i
+    const int64_t *restrict Yx,     // A->Y->x
+    const int64_t hash_bits,        // hash table size - 1
+    const int64_t j,                // find j in Ah [0..anvec-1], using A->Y
+    int64_t *restrict pstart,       // start of vector: Ap [k]
+    int64_t *restrict pend          // end of vector: Ap [k+1]
+)
+{
+    const int64_t jhash = GB_HASHF2 (j, hash_bits) ;
+    const int64_t ypstart = Yp [jhash] ;
+    const int64_t ypend = Yp [jhash+1] ;
+    for (int64_t p = ypstart ; p < ypend ; p++)
+    {
+        if (j == Yi [p])
+        {
+            // found: j = Ah [k] where k is given by k = Yx [p]
+            const int64_t k = Yx [p] ;
+            (*pstart) = Ap [k] ;
+            (*pend  ) = Ap [k+1] ;
+            return ;
+//          return (k) ;
+        }
+    }
+    // not found: j is not in the hyperlist Ah [0..anvec-1]
+    (*pstart) = -1 ;
+    (*pend  ) = -1 ;
+//  return (-1) ;
+}
+
 #endif
 

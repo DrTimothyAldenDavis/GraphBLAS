@@ -569,7 +569,7 @@ break ;
 //      }
 
 #define GB_HASH(i) \
-    int64_t hash = GB_HASHF (i) ; ; GB_REHASH (hash,i)
+    int64_t hash = GB_HASHF (i,hash_bits) ; ; GB_REHASH (hash,i,hash_bits)
 
 //------------------------------------------------------------------------------
 // define macros for any sparsity of A and B

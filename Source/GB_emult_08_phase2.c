@@ -33,7 +33,7 @@
 
 #define GB_FREE_ALL             \
 {                               \
-    GB_phbix_free (C) ;         \
+    GB_phybix_free (C) ;        \
 }
 
 GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B

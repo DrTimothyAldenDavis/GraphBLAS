@@ -15,7 +15,7 @@
 #define GB_FREE_ALL         \
 {                           \
     GB_FREE_WORKSPACE ;     \
-    GB_phbix_free (C) ;     \
+    GB_phybix_free (C) ;    \
 }
 
 #include "GB_diag.h"
@@ -57,7 +57,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     //--------------------------------------------------------------------------
 
     GB_MATRIX_WAIT (V_in) ;
-    GB_phbix_free (C) ;
+    GB_phybix_free (C) ;
 
     //--------------------------------------------------------------------------
     // ensure V is not bitmap

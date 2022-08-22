@@ -47,7 +47,7 @@
 #define GB_FREE_ALL                 \
 {                                   \
     GB_FREE_WORKSPACE ;             \
-    GB_phbix_free (C) ;             \
+    GB_phybix_free (C) ;            \
 }
 
 GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
@@ -125,6 +125,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     bool op_is_second = (opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
 
+#ifdef GB_DEBUG
     if (op == NULL)
     { 
         // GB_wait does no typecasting.  A and T have the same type when
@@ -137,14 +138,22 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     }
     else
     { 
-        ASSERT (GB_Type_compatible (ctype, A->type)) ;
-        ASSERT (GB_Type_compatible (ctype, B->type)) ;
+        // assert that the op is compatible with A, B, and C
+        if (!(GB_as_if_full (A) && GB_as_if_full (B)))
+        {
+            // eWiseMult uses GB_add when A and B are both as-if-full,
+            // and in this case, the entries of A and B are never typecasted
+            // directly to C.
+            ASSERT (GB_Type_compatible (ctype, A->type)) ;
+            ASSERT (GB_Type_compatible (ctype, B->type)) ;
+        }
         ASSERT (GB_Type_compatible (ctype, op->ztype)) ;
         ASSERT (GB_IMPLIES (!(op_is_second || op_is_pair || op_is_positional),
                 GB_Type_compatible (A->type, op->xtype))) ;
         ASSERT (GB_IMPLIES (!(op_is_first  || op_is_pair || op_is_positional),
                 GB_Type_compatible (B->type, op->ytype))) ;
     }
+#endif
 
     //--------------------------------------------------------------------------
     // get the typecasting functions

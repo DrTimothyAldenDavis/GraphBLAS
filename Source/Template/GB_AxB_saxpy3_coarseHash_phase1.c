@@ -86,7 +86,8 @@
                 int64_t hash ;
                 bool marked = false ;
                 bool done = false ;
-                for (hash = GB_HASHF (i) ; ; GB_REHASH (hash, i))
+                for (hash = GB_HASHF (i, hash_bits) ; ;
+                    GB_REHASH (hash, i, hash_bits))
                 { 
                     // if the hash entry is marked then it is occuppied with
                     // some row index in the current C(:,j).

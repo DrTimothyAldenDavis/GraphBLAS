@@ -253,7 +253,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     { 
         // unpack: clear the matrix, leaving it hypersparse (or sparse if
         // it is a vector (vdim of 1) or has vdim of zero)
-        GB_phbix_free (*A) ;
+        GB_phybix_free (*A) ;
         (*A)->plen = plen_new ;
         (*A)->nvec = nvec_new ;
         (*A)->p = Ap_new ; (*A)->p_size = Ap_new_size ;

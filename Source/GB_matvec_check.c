@@ -8,10 +8,12 @@
 //------------------------------------------------------------------------------
 
 // for code development only:
-// #define GB_DEVELOPER 1
+// FIXME: developer is enabled
+#define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
 #include "GB.h"
+#include "GB_hash.h"
 
 GB_PUBLIC
 GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
@@ -56,9 +58,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     bool pr_mem_shallow = GB_Global_print_mem_shallow_get ( ) ;
     int64_t offset = (one_based) ? 1 : 0 ;
     #if GB_DEVELOPER
-    int pr_type = pr ;
+    int pr_developer = pr ;
     #else
-    int pr_type = 0 ;
+    int pr_developer = 0 ;
     #endif
 
     GBPR0 ("\n  " GBd "x" GBd " GraphBLAS %s %s",
@@ -306,7 +308,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check the type
     //--------------------------------------------------------------------------
 
-    info = GB_Type_check (A->type, "", pr_type, f) ;
+    info = GB_Type_check (A->type, "", pr_developer, f) ;
     if (info != GrB_SUCCESS)
     { 
         GBPR0 ("  %s has an invalid type\n", kind) ;
@@ -823,6 +825,72 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         // invalid nvec_nonempty
         GBPR0 ("  invalid count of non-empty vectors\n") ;
         return (GrB_INVALID_OBJECT) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // check A->Y
+    //--------------------------------------------------------------------------
+
+    GrB_Matrix Y = A->Y ;
+    if (Y != NULL)
+    {
+        int64_t yvdim = Y->vdim ;
+        int64_t anvec = A->nvec ;
+        if (!is_hyper)
+        { 
+            GBPR0 ("  Y can only exist if the matrix is hypersparse\n") ;
+            return (GrB_INVALID_OBJECT) ;
+        }
+
+        info = GB_matvec_check (Y, "Y hyper_hash", pr_developer, f, "matrix") ;
+        if (info != GrB_SUCCESS)
+        {
+            GBPR0 ("  Y invalid") ;
+            return (info) ;
+        }
+        if (Y->vlen != A->vdim || !GB_IS_POWER_OF_TWO (yvdim) ||
+            Y->nvals != anvec)
+        { 
+            GBPR0 ("  Y has invalid dimensions or invalid # of entries\n") ;
+            return (GrB_INVALID_OBJECT) ;
+        }
+        if (!GB_IS_SPARSE (Y) || Y->type != GrB_INT64 || !Y->is_csc)
+        { 
+            GBPR0 ("  Y must be sparse, int64, and held by column\n") ;
+            return (GrB_INVALID_OBJECT) ;
+        }
+
+        // ensure that Y is the inverse of A->h
+        int64_t hash_bits = yvdim - 1 ;
+        const int64_t *restrict Ah = (int64_t *) A->h ;
+        const int64_t *restrict Yp = (int64_t *) Y->p ;
+        const int64_t *restrict Yi = (int64_t *) Y->i ;
+        const int64_t *restrict Yx = (int64_t *) Y->x ;
+
+        for (int64_t k = 0 ; k < anvec ; k++)
+        {
+            int64_t j = Ah [k] ;
+            int64_t jhash = GB_HASHF2 (j, hash_bits) ;
+            bool found = false ;
+            for (int64_t p = Yp [jhash] ; p < Yp [jhash+1] ; p++)
+            {
+                if (j == Yi [p])
+                {
+                    if (k != Yx [p])
+                    {
+                        GBPR0 ("  hyper_hash invalid; k is wrong\n") ;
+                        return (GrB_INVALID_OBJECT) ;
+                    }
+                    found = true ;
+                    break ;
+                }
+            }
+            if (!found)
+            {
+                GBPR0 ("  hyper_hash invalid; not found\n") ;
+                return (GrB_INVALID_OBJECT) ;
+            }
+        }
     }
 
     //--------------------------------------------------------------------------

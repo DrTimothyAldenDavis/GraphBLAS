@@ -65,7 +65,7 @@ GrB_Info GB_hypermatrix_prune
         }
         // free the old A->p and A->h.  If shallow, just remove them from A
         // but do not free them since they come from another matrix.
-        GB_ph_free (A) ;
+        GB_phy_free (A) ;
         // A->p and A->h are now NULL and thus not shallow
         ASSERT (!A->p_shallow) ;
         ASSERT (!A->h_shallow) ;

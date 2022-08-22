@@ -187,7 +187,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        GB_phbix_free (C) ;
+        GB_phybix_free (C) ;
         return (info) ;
     }
 

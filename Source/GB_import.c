@@ -201,7 +201,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
     if (packing)
     { 
         // clear the content and reuse the header
-        GB_phbix_free (*A) ;
+        GB_phybix_free (*A) ;
         ASSERT (!((*A)->static_header)) ;
     }
 

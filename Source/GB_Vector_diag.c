@@ -15,7 +15,7 @@
 #define GB_FREE_ALL         \
 {                           \
     GB_FREE_WORKSPACE ;     \
-    GB_phbix_free (V) ;     \
+    GB_phybix_free (V) ;    \
 }
 
 #include "GB_diag.h"
@@ -83,7 +83,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     //--------------------------------------------------------------------------
 
     GB_MATRIX_WAIT (A) ;
-    GB_phbix_free (V) ;
+    GB_phybix_free (V) ;
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format of A

@@ -227,13 +227,73 @@ size_t b_size ;         // exact size of A->b in bytes, zero if A->b is NULL
 size_t i_size ;         // exact size of A->i in bytes, zero if A->i is NULL
 size_t x_size ;         // exact size of A->x in bytes, zero if A->x is NULL
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // hashing the hypersparse list
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-// add either:
-// struct GB_Matrix_opaque *Hash ;       // always sparse
-// GrB_Matrix Hash ;
+/* The matrix Y is a hashed inverse of the A->h hyperlist, for a hypersparse
+    matrix A.  It allows for fast lookup of entries in Ah.  Given j, the goal
+    is to find k so that j = Ah [k], or to report that j is not in Ah.  The
+    matrix A->Y allows for a fast lookup to compute this, to replace the binary
+    search for k in GB_lookup.
+
+        anvec = A->nvec
+        avdim = A->vdim
+        Ah = A->h
+        nhash is the size of the hash table Y, which is always a power of 2.
+            Its size is determined by GB_hyper_hash.
+
+    Then A->Y has dimension Y->vdim = nhash (one vector in Y for each hash
+    bucket), and Y->vlen = avdim.  If Y is considered as held in column-format,
+    then Y is avlen-by-nhash.  The row/col format of Y is not important.  Each
+    of its vectors (nhash of them) corresponds to a single hash bucket, and
+    each hash bucket can hold up to avdim entries (assuming worst-case
+    collisions where all entries j land in the same hash bucket).  Y is always
+    in sparse format; never full, bitmap, or hypersparse.  Its type is always
+    GrB_INT64, and it is never iso-valued.  The # of entries in Y is exactly
+    anvec.
+
+    Let f(j) = GB_HASHF2(j,nhash-1) be the hash function for the value j.  Its
+    value is in the range 0 to nhash-1, where nhash is always a power of 2.
+
+    If j = Ah [k], then k = Y (j,f (j)).
+    If j is not in the Ah hyperlist, then Y (j,f(j)) does not appear
+    as an entry in Y.
+
+    Ideally, if the hash function had no collisions, each vector in Y would
+    have length 0 or 1, and k = Y (j,f(j)) would be O(1) time lookup.
+    However, the load factor is normally in the range of 2 to 4, so ideally
+    each bucket will contain about 4 entries on average, if the load factor
+    is 4.
+
+    A->Y is only computed when required, or if GrB_Matrix_wait (Y) is
+    explicitly called.  Once computed, k can be found as follows:
+
+        // Given a value j to find in the list Ah: find the entry k =
+        // Y(j,f(j)), if it exists, or k=-1 if j is not in the Ah
+        // hyperlist.
+        int64_t nhash = A->Y->vdim ;    // # of buckets in the hash table
+        int64_t jhash = GB_HASHF2 (j, nhash-1) ;     // in range 0 to nhash-1
+        int64_t *Yp = A->Y->p ;         // pointers to each hash bucket
+                                        // Yp has size nhash+1.
+        int64_t *Yi = A->Y->i ;         // "row" indices j; Yi has size anvec.
+        int64_t *Yx = A->Y->x ;         // values k; Yx has size anvec.
+        int64_t k = -1 ;
+        for (int64_t p = Yp [jhash] ; p < Yp [jhash+1] ; p++)
+        {
+            if (j == Yi [p])
+            {
+                k = Yx [p] ;        // k = Y (j,jhash) has been found
+                break ;
+            }
+        }
+
+*/
+
+GrB_Matrix Y ;      // Y is a matrix that represents the inverse of A->h.
+                    // It can only be non-NULL if A is hypersparse.  Not all
+                    // hypersparse matrices need the A->Y matrix.  It is
+                    // constructed whenever it is needed.
 
 //------------------------------------------------------------------------------
 // pending tuples

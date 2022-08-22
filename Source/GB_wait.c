@@ -33,7 +33,7 @@
 
 #define GB_FREE_ALL                     \
 {                                       \
-    GB_phbix_free (A) ;                 \
+    GB_phybix_free (A) ;                \
     GB_Matrix_free (&T) ;               \
     GB_Matrix_free (&S) ;               \
     GB_Matrix_free (&A1) ;              \
@@ -499,6 +499,9 @@ GrB_Info GB_wait                // finish all pending computations
 
         // need to recompute the # of non-empty vectors in GB_conform
         A->nvec_nonempty = -1 ;     // recomputed just below
+
+        // A->h has been modified so A->Y is now invalid
+        GB_Matrix_free (A->Y) ;
 
         ASSERT_MATRIX_OK (A, "A after GB_wait:append", GB0) ;
 

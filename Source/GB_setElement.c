@@ -407,7 +407,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
                 stype, accum, i, j, C->vdim > 1, Context))
             { 
                 // out of memory
-                GB_phbix_free (C) ;
+                GB_phybix_free (C) ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
 

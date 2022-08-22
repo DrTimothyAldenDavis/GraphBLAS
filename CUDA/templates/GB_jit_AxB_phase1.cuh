@@ -213,8 +213,7 @@ __global__ void AxB_phase1
                 // HACK: for sparse only, not hypersparse
                 pB     = Bp [j] ;
                 pB_end = Bp [j+1] ;
-                // GB_lookup_device (B_is_hyper, Bh, Bp, &bpleft, bnvec-1, j,
-                //                  &pB, &pB_end) ;
+                // For B hypersparse, use B->Y
                 int64_t bjnz = pB_end - pB ;
                 if (bjnz > 0)
                 {
@@ -228,8 +227,7 @@ __global__ void AxB_phase1
                     // HACK: for sparse only, not hypersparse
                     pA     = Ap [i] ;
                     pA_end = Ap [i+1] ;
-                    // GB_lookup_device (A_is_hyper, Ah, Ap, &apleft, anvec-1,
-                    //      i, &pA, &pA_end) ;
+                    // For A hypersparse, use A->Y
                     int64_t ainz = pA_end - pA ;
                     if (ainz > 0)
                     {

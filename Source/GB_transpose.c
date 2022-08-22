@@ -47,7 +47,7 @@
     GB_FREE_WORKSPACE ;                 \
     GB_Matrix_free (&T) ;               \
     /* freeing C also frees A if transpose is done in-place */ \
-    GB_phbix_free (C) ;                 \
+    GB_phybix_free (C) ;                \
 }
 
 #include "GB_transpose.h"
@@ -369,8 +369,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         ASSERT (info == GrB_SUCCESS) ;
 
         // allocate T->p, T->i, and optionally T->x, but not T->h
-        T->p = GB_MALLOC (anz+1, int64_t, &(T->p_size)) ;
-        T->i = GB_MALLOC (anz  , int64_t, &(T->i_size)) ;
+        int64_t tplen = GB_IMAX (1, anz) ;
+        T->p = GB_MALLOC (tplen+1, int64_t, &(T->p_size)) ;
+        T->i = GB_MALLOC (anz    , int64_t, &(T->i_size)) ;
         bool allocate_Tx = (op != NULL || C_iso) || (ctype != atype) ;
         if (allocate_Tx)
         { 
@@ -438,7 +439,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         }
 
         // T->p = 0:anz and T->i = zeros (1,anz), newly allocated
-        T->plen = anz ;
+        T->plen = tplen ;
         T->nvec = anz ;
         T->nvec_nonempty = anz ;
 
@@ -900,7 +901,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     if (in_place)
     { 
         // free prior space of A, if transpose is done in-place
-        GB_phbix_free (A) ;
+        GB_phybix_free (A) ;
     }
 
     //--------------------------------------------------------------------------

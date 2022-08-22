@@ -205,7 +205,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     int64_t *restrict I_work = (*I_work_handle) ;
     int64_t *restrict J_work = (*J_work_handle) ;
     int64_t *restrict K_work = NULL ; size_t K_work_size = 0 ;
-//  ASSERT (*J_work_size_handle == GB_Global_memtable_size (J_work)) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -934,7 +933,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     T->nvec = tnvec ;
     Tp [tnvec] = tnz ;
     T->nvals = tnz ;
-    ASSERT (T->nvec == T->plen) ;
+    ASSERT (T->nvec == T->plen || (T->plen == 1 && T->nvec == 0)) ;
     T->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
@@ -972,7 +971,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         if (T->i == NULL)
         { 
             // out of memory
-            GB_phbix_free (T) ;
+            GB_phybix_free (T) ;
             GB_FREE_WORKSPACE ;
             return (GrB_OUT_OF_MEMORY) ;
         }
@@ -1160,7 +1159,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         if (T->x == NULL)
         { 
             // out of memory
-            GB_phbix_free (T) ;
+            GB_phybix_free (T) ;
             GB_FREE_WORKSPACE ;
             return (GrB_OUT_OF_MEMORY) ;
         }

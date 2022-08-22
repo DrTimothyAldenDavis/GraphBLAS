@@ -39,7 +39,7 @@
 #define GB_FREE_ALL                         \
 {                                           \
     GB_FREE_WORKSPACE ;                     \
-    GB_phbix_free (R) ;                     \
+    GB_phybix_free (R) ;                    \
 }
 
 GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)

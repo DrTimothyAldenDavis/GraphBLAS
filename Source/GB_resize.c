@@ -13,7 +13,7 @@
 {                                       \
     GB_FREE (&Ax_new, Ax_new_size) ;    \
     GB_FREE (&Ab_new, Ab_new_size) ;    \
-    GB_phbix_free (A) ;                 \
+    GB_phybix_free (A) ;                \
 }
 
 //------------------------------------------------------------------------------

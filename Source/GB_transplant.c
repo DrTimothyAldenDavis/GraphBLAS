@@ -70,7 +70,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     //--------------------------------------------------------------------------
 
     // free all content of C
-    GB_phbix_free (C) ;
+    GB_phybix_free (C) ;
 
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
@@ -144,7 +144,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (!ok)
     { 
         // out of memory
-        GB_phbix_free (C) ;
+        GB_phybix_free (C) ;
         GB_Matrix_free (Ahandle) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -202,7 +202,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         C->nvec = avdim ;
 
         // free any non-shallow A->p and A->h content of A
-        GB_ph_free (A) ;
+        GB_phy_free (A) ;
 
     }
     else if (A->p_shallow || A->h_shallow)
@@ -217,14 +217,14 @@ GrB_Info GB_transplant          // transplant one matrix into another
         if (A->h != NULL)
         {
             // A is hypersparse, create new C->p and C->h
-            C->plen = anvec ;
+            C->plen = GB_IMAX (1, anvec) ;
             C->nvec = anvec ;
             C->p = GB_MALLOC (C->plen+1, int64_t, &(C->p_size)) ;
             C->h = GB_MALLOC (C->plen  , int64_t, &(C->h_size)) ;
             if (C->p == NULL || C->h == NULL)
             { 
                 // out of memory
-                GB_phbix_free (C) ;
+                GB_phybix_free (C) ;
                 GB_Matrix_free (Ahandle) ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
@@ -242,7 +242,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
             if (C->p == NULL)
             { 
                 // out of memory
-                GB_phbix_free (C) ;
+                GB_phybix_free (C) ;
                 GB_Matrix_free (Ahandle) ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
@@ -251,8 +251,10 @@ GrB_Info GB_transplant          // transplant one matrix into another
             GB_memcpy (C->p, A->p, (avdim+1) * sizeof (int64_t), nth) ;
         }
 
+        // FIXME: transplant A->Y into C
+
         // free any non-shallow A->p and A->h content of A
-        GB_ph_free (A) ;
+        GB_phy_free (A) ;
 
     }
     else
@@ -369,6 +371,13 @@ GrB_Info GB_transplant          // transplant one matrix into another
     }
 
     C->b_shallow = false ;
+
+    //--------------------------------------------------------------------------
+    // transplant A->Y
+    //--------------------------------------------------------------------------
+
+    C->Y = A->Y ;
+    A->Y = NULL ;
 
     //--------------------------------------------------------------------------
     // free A and return result
