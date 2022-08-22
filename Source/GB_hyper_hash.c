@@ -16,7 +16,6 @@
 
 #define GB_FREE_ALL                     \
 {                                       \
-    GB_Matrix_free (&(A->Y)) ;          \
     GB_phybix_free (A) ;                \
 }
 
@@ -76,6 +75,12 @@ GrB_Info GB_hyper_hash      // construct A->Y if not already constructed
     I_work = GB_MALLOC (anvec, int64_t, &I_work_size) ;
     J_work = GB_MALLOC (anvec, int64_t, &J_work_size) ;
     X_work = GB_MALLOC (anvec, int64_t, &X_work_size) ;
+    if (I_work == NULL || J_work == NULL || X_work == NULL)
+    {
+        // out of memory
+        GB_FREE_ALL ;
+        return (GrB_OUT_OF_MEMORY) ;
+    }
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
