@@ -124,8 +124,8 @@ GrB_Info GB_subassign_symbolic
             int64_t p = Sx [pS] ;
             ASSERT (p >= 0 && p < GB_nnz (C)) ;
             int64_t pC_start, pC_end, pleft = 0, pright = C->nvec-1 ;
-            bool found = GB_lookup (C->h != NULL, C->h, C->p, C->vlen,
-                &pleft, pright, jC, &pC_start, &pC_end) ;
+            bool found = GB_lookup (C->h != NULL, // for debug only
+                C->h, C->p, C->vlen, &pleft, pright, jC, &pC_start, &pC_end) ;
             ASSERT (found) ;
             // If iC == I [inew] and jC == J [jnew], (or the equivaleent
             // for GB_ALL, GB_RANGE, GB_STRIDE) then A(inew,jnew) will be

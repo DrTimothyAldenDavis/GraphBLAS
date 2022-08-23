@@ -764,6 +764,8 @@ GrB_Info GB_selector
             A->nvec = cnvec ;
             ASSERT (A->nvec == C_nvec_nonempty) ;
             GB_FREE (&Cp, Cp_size) ;
+            // the A->Y hyper_hash is now invalid
+            GB_Matrix_free (&(A->Y)) ;
         }
         else
         { 
@@ -834,6 +836,7 @@ GrB_Info GB_selector
             ASSERT (C->nvec == C_nvec_nonempty) ;
         }
 
+        // note that C->Y is not yet constructed
         C->p = Cp ; Cp = NULL ; C->p_size = Cp_size ;
         C->h = Ch ; Ch = NULL ; C->h_size = Ch_size ;
         C->i = Ci ; Ci = NULL ; C->i_size = Ci_size ;

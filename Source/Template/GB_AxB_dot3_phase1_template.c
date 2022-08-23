@@ -25,10 +25,7 @@
             // a fine task operates on a slice of a single vector
             klast = kfirst ;
         }
-        #if 0
-        int64_t bpleft = 0 ;    // Ch is not jumbled
-        #else
-        #endif
+//      int64_t bpleft = 0 ;    // Ch is not jumbled
 
         //----------------------------------------------------------------------
         // compute all vectors in this task
@@ -58,17 +55,12 @@
             #if GB_B_IS_HYPER
                 // B is hyper
                 int64_t pB_start, pB_end ;
-
-                #if 0
-                // using binary search
-                GB_lookup (true, Bh, Bp, vlen, &bpleft, bnvec-1,
-                    j, &pB_start, &pB_end) ;
-                #else
-                // using the B->Y hyper hash
+//              // using binary search
+//              GB_lookup (true, Bh, Bp, vlen, &bpleft, bnvec-1, // FIXME:REMOVE
+//                  j, &pB_start, &pB_end) ;
+                // find B(:,j) using the B->Y hyper hash
                 GB_hyper_hash_lookup (Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
                     j, &pB_start, &pB_end) ;
-                #endif
-
             #elif GB_B_IS_SPARSE
                 // B is sparse
                 const int64_t pB_start = Bp [j] ;
@@ -116,18 +108,13 @@
                         #if GB_A_IS_HYPER
                         // A is hyper
                         int64_t pA, pA_end ;
-
-                        #if 0
-                        // using binary search of Ah 
-                        int64_t apleft = 0 ;    // M might be jumbled
-                        GB_lookup (true, Ah, Ap, vlen, &apleft, anvec-1,
-                            i, &pA, &pA_end) ;
-                        #else
-                        // using the A->Y hyper hash
+//                      // using binary search of Ah
+//                      int64_t apleft = 0 ;    // M might be jumbled
+//                      GB_lookup (true, Ah, Ap, vlen,  // FIXME: REMOVE
+//                          &apleft, anvec-1, i, &pA, &pA_end) ;
+                        // find A(:,i) using the A->Y hyper hash
                         GB_hyper_hash_lookup (Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
                             i, &pA, &pA_end) ;
-                        #endif
-
                         const int64_t ainz = pA_end - pA ;
                         work += GB_IMIN (ainz, bjnz) ;
                         #elif GB_A_IS_SPARSE

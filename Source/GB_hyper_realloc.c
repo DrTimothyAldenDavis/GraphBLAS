@@ -41,6 +41,7 @@ GrB_Info GB_hyper_realloc
 
         // old size of A->p and A->h
         int64_t plen_old = A->plen ;
+        plen_new = GB_IMAX (1, plen_new) ;
 
         // change the size of A->h and A->p
         bool ok1 = true, ok2 = true ;

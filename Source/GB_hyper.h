@@ -33,9 +33,10 @@ GrB_Info GB_conform_hyper       // conform a matrix to sparse/hypersparse
 GrB_Info GB_hyper_prune
 (
     // output, not allocated on input:
-    int64_t *restrict *p_Ap, size_t *p_Ap_size,      // size nvec+1
-    int64_t *restrict *p_Ah, size_t *p_Ah_size,      // size nvec
+    int64_t *restrict *p_Ap, size_t *p_Ap_size,      // size plen+1
+    int64_t *restrict *p_Ah, size_t *p_Ah_size,      // size plen
     int64_t *p_nvec,                // # of vectors, all nonempty
+    int64_t *p_plen,                // size of Ap and Ah
     // input, not modified
     const int64_t *Ap_old,          // size nvec_old+1
     const int64_t *Ah_old,          // size nvec_old
