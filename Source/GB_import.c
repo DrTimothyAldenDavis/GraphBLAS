@@ -98,7 +98,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
         case GxB_HYPERSPARSE : 
             // check Ap and get nvals
             if (nvec > vdim) return (GrB_INVALID_VALUE) ;
-            if (Ap_size < (nvec+1) * sizeof (int64_t))
+            if (Ap_size < (((vdim == 1) ? 1 : nvec)+1) * sizeof (int64_t))
             { 
                 return (GrB_INVALID_VALUE) ;
             }

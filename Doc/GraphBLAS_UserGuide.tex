@@ -6599,8 +6599,9 @@ unpacked.
 GrB_Info GxB_Matrix_pack_HyperCSR      // pack a hypersparse CSR matrix
 (
     GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // row "pointers", Ap_size >= (nvec+1)*sizeof(int64_t)
-    GrB_Index **Ah,     // row indices, Ah_size >= nvec*sizeof(int64_t)
+    GrB_Index **Ap,     // row "pointers", Ap_size >= (plen+1)*sizeof(int64_t)
+    GrB_Index **Ah,     // row indices, Ah_size >= plen*sizeof(int64_t)
+                        // where plen = 1 if nrows = 1, or nvec otherwise.
     GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
     void **Ax,          // values, Ax_size >= nvals(A) * (type size)
                         // or Ax_size >= (type size), if iso is true
@@ -6615,7 +6616,6 @@ GrB_Info GxB_Matrix_pack_HyperCSR      // pack a hypersparse CSR matrix
 ) ;
 \end{verbatim}
 } \end{mdframed}
-
 
 \verb'GxB_Matrix_pack_HyperCSR' packs a matrix in hypersparse CSR format.
 The hypersparse HyperCSR format is identical to the CSR format, except that the
@@ -6754,21 +6754,22 @@ unpacked.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GxB_Matrix_pack_HyperCSR      // pack a hypersparse CSR matrix
+GrB_Info GxB_Matrix_pack_HyperCSC      // pack a hypersparse CSC matrix
 (
     GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // row "pointers", Ap_size >= (nvec+1)*sizeof(int64_t)
-    GrB_Index **Ah,     // row indices, Ah_size >= nvec*sizeof(int64_t)
-    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
-    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
+    GrB_Index **Ap,     // col "pointers", Ap_size >= (plen+1)*sizeof(int64_t)
+    GrB_Index **Ah,     // column indices, Ah_size >= plen*sizeof(int64_t)
+                        // where plen = 1 if ncols = 1, or nvec otherwise.
+    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
+    void **Ax,          // values, Ax_size >= nvals(A)*(type size)
                         // or Ax_size >= (type size), if iso is true
     GrB_Index Ap_size,  // size of Ap in bytes
     GrB_Index Ah_size,  // size of Ah in bytes
-    GrB_Index Aj_size,  // size of Aj in bytes
+    GrB_Index Ai_size,  // size of Ai in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
     bool iso,           // if true, A is iso
-    GrB_Index nvec,     // number of rows that appear in Ah
-    bool jumbled,       // if true, indices in each row may be unsorted
+    GrB_Index nvec,     // number of columns that appear in Ah
+    bool jumbled,       // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
 ) ;
 \end{verbatim}
@@ -6806,20 +6807,20 @@ assuming it has type \verb'GrB_FP64':
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GxB_Matrix_unpack_HyperCSR  // unpack a hypersparse CSR matrix
+GrB_Info GxB_Matrix_unpack_HyperCSC  // unpack a hypersparse CSC matrix
 (
     GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // row "pointers"
-    GrB_Index **Ah,     // row indices
-    GrB_Index **Aj,     // column indices
+    GrB_Index **Ap,     // column "pointers"
+    GrB_Index **Ah,     // column indices
+    GrB_Index **Ai,     // row indices
     void **Ax,          // values
     GrB_Index *Ap_size, // size of Ap in bytes
     GrB_Index *Ah_size, // size of Ah in bytes
-    GrB_Index *Aj_size, // size of Aj in bytes
+    GrB_Index *Ai_size, // size of Ai in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
     bool *iso,          // if true, A is iso
-    GrB_Index *nvec,    // number of rows that appear in Ah
-    bool *jumbled,      // if true, indices in each row may be unsorted
+    GrB_Index *nvec,    // number of columns that appear in Ah
+    bool *jumbled,      // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
 ) ;
 \end{verbatim}
