@@ -16,6 +16,7 @@
 
 #define GB_FREE_ALL                     \
 {                                       \
+    GB_FREE_WORKSPACE ;                 \
     GB_phybix_free (A) ;                \
 }
 
