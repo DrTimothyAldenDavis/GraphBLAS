@@ -1,8 +1,10 @@
-Version 7.2.1, Aug FIXME, 2022
+Version 7.2.2, Aug FIXME, 2022
 
     * GrB_Matrix: changes to the internal data structure
         * minor internal changes: A->nvals for sparse/hypersparse
         * more significant cahnges: added A->Y hyper_hash for hypersparse case
+    * faster matrix multiply: C<M>=A'*B (dot3) for hypersparse A and/or B,
+        using the A->Y and B->Y hyper_hash
 
 Version 7.2.0, Aug 8, 2022
 

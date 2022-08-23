@@ -118,7 +118,7 @@ set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBRENAME=1 " )
 
 message ( STATUS "CMAKE build type:          " ${CMAKE_BUILD_TYPE} )
 
-if ( ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+if ( ${CMAKE_BUILD_TYPE} STREQUAL "Debug" )
     message ( STATUS "CMAKE C Flags debug:       " ${CMAKE_C_FLAGS_DEBUG} )
 else ( )
     message ( STATUS "CMAKE C Flags release:     " ${CMAKE_C_FLAGS_RELEASE} )
@@ -153,11 +153,11 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     # faster single complex multiplication and division
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fcx-limited-range " )
     # math functions do not need to report errno
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fno-math-errno ")
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fno-math-errno " )
     # integer operations wrap
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fwrapv ")
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fwrapv " )
     # check all warnings (uncomment for development only)
-#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Werror " )
+#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic " )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 4.9 )
         message ( FATAL_ERROR "gcc version must be at least 4.9" )
     endif ( )
@@ -191,10 +191,10 @@ elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC" )
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /O2 -wd\"4244\" -wd\"4146\" -wd\"4018\" -wd\"4996\" -wd\"4047\" -wd\"4554\"")
 endif ( )
 
-if ( ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+if ( ${CMAKE_BUILD_TYPE} STREQUAL "Debug" )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG}" )
 else ( )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}")
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}" )
 endif ( )
 
 #-------------------------------------------------------------------------------
