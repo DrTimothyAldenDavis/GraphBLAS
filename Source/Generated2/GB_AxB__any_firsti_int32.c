@@ -591,7 +591,7 @@ GrB_Info GB (_Asaxpy3B__any_firsti_int32)
 }
 
 //------------------------------------------------------------------------------
-// GB_Asaxpy3B_M: C<M>=A*Bi: saxpy method (Gustavson + Hash)
+// GB_Asaxpy3B_M: C<M>=A*B: saxpy method (Gustavson + Hash)
 //------------------------------------------------------------------------------
 
 #if ( !GB_DISABLE )

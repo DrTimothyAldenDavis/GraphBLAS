@@ -71,12 +71,8 @@
             //------------------------------------------------------------------
 
             #if GB_B_IS_HYPER
-                // B is hyper
+                // B is hyper: find B(:,j) using the B->Y hyper hash
                 int64_t pB_start, pB_end ;
-//              // using binary search of Bh
-//              GB_lookup (true, Bh, Bp, vlen,      // FIXME: REMOVE
-//                  &bpleft, bnvec-1, j, &pB_start, &pB_end) ;
-                // find B(:,j) using the B->Y hyper hash
                 GB_hyper_hash_lookup (Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
                     j, &pB_start, &pB_end) ;
             #elif GB_B_IS_SPARSE
@@ -136,13 +132,8 @@
                     //----------------------------------------------------------
 
                     #if GB_A_IS_HYPER
-                    // A is hyper
+                    // A is hyper: find A(:,i) using the A->Y hyper hash
                     int64_t pA, pA_end ;
-//                  // using binary search of Ah
-//                  int64_t apleft = 0 ;    // M might be jumbled
-//                  GB_lookup (true, Ah, Ap, vlen,  // FIXME REMOVE
-//                      &apleft, anvec-1, i, &pA, &pA_end) ;
-                    // using the A->Y hyper hash
                     GB_hyper_hash_lookup (Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
                         i, &pA, &pA_end) ;
                     const int64_t ainz = pA_end - pA ;

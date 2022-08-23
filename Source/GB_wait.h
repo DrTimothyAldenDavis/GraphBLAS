@@ -57,8 +57,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     (GB_PENDING (A) || GB_ZOMBIES (A) || GB_JUMBLED (A))
 
 // true if a matrix is hypersparse but has no A->Y component
-#define GB_NEED_HYPER_HASH(A) \
-    (GB_IS_HYPERSPARSE (A) && (((A)->Y) == NULL))
+#define GB_NEED_HYPER_HASH(A) (GB_IS_HYPERSPARSE (A) && (((A)->Y) == NULL))
 
 // wait if condition holds
 #define GB_WAIT_IF(condition,A,name)                                    \

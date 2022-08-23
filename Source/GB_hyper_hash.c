@@ -28,7 +28,7 @@ GrB_Info GB_hyper_hash      // construct A->Y if not already constructed
     GrB_Matrix A,
     GB_Context Context
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -79,7 +79,7 @@ GrB_Info GB_hyper_hash      // construct A->Y if not already constructed
     J_work = GB_MALLOC (anvec, int64_t, &J_work_size) ;
     X_work = GB_MALLOC (anvec, int64_t, &X_work_size) ;
     if (I_work == NULL || J_work == NULL || X_work == NULL)
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
