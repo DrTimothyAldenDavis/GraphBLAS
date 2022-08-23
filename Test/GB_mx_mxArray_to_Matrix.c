@@ -492,7 +492,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         {
             bool burble = GB_Global_burble_get ( ) ;
             if (burble) printf (" [ GB_mx_mxArray_to_Matrix ") ;
-            GB_convert_hyper_to_sparse (A, Context) ;
+            GB_convert_hyper_to_sparse (A, true, Context) ;
             if (burble) printf ("]\n") ;
         }
         ASSERT (!A->is_csc) ;

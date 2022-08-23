@@ -25,6 +25,7 @@ GB_PUBLIC
 GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
 (
     GrB_Matrix A,           // matrix to convert to non-hypersparse
+    bool do_burble,         // if true, then burble is allowed
     GB_Context Context
 )
 {
@@ -48,7 +49,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
     // convert A from hypersparse to sparse
     //--------------------------------------------------------------------------
 
-    GBURBLE ("(hyper to sparse) ") ;
+    if (do_burble) GBURBLE ("(hyper to sparse) ") ;
     int64_t n = A->vdim ;
     int64_t anz = GB_nnz (A) ;
 

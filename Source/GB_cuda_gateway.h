@@ -150,12 +150,5 @@ bool GB_AxB_dot3_cuda_branch
     GB_Context Context
 );
 
-#ifdef GBCUDA
-#include <nvToolsExt.h>
-#define GB_NVTX { nvtxMark ("nvtx:" __FILE__ ":" GB_XSTR(__LINE__)) ; }
-#else
-#define GB_NVTX
-#endif
-
 #endif
 

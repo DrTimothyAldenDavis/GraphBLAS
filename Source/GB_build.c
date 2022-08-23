@@ -289,6 +289,7 @@ GrB_Info GB_build               // build matrix
         nvals,          // number of tuples
         dup2,           // operator to assemble duplicates (may be NULL)
         xtype,          // type of the X array
+        true,           // burble is OK
         Context
     )) ;
 

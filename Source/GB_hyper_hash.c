@@ -47,6 +47,8 @@ GrB_Info GB_hyper_hash      // construct A->Y if not already constructed
         return (GrB_SUCCESS) ;
     }
 
+    GB_BURBLE_MATRIX (A, "(build hyper hash) ") ;
+
     //--------------------------------------------------------------------------
     // allocate A->Y
     //--------------------------------------------------------------------------
@@ -122,6 +124,7 @@ GrB_Info GB_hyper_hash      // construct A->Y if not already constructed
         anvec,                  // # of tuples
         NULL,                   // no duplicates, so dup is NUL
         GrB_INT64,              // the type of X_work
+        false,                  // no burble (already burbled above)
         Context
     )) ;
 
@@ -139,9 +142,10 @@ GrB_Info GB_hyper_hash      // construct A->Y if not already constructed
     //--------------------------------------------------------------------------
 
     // GB_builder always constructs its matrix as hypersparse.  Y is now
-    // conformed to its required sparsity format: always sparse.
+    // conformed to its required sparsity format: always sparse.  No burble;
+    // (already burbled above).
 
-    GB_OK (GB_convert_hyper_to_sparse (Y, Context)) ;
+    GB_OK (GB_convert_hyper_to_sparse (Y, false, Context)) ;
     ASSERT (anvec == GB_nnz (Y)) ;
     ASSERT (GB_IS_SPARSE (Y)) ;         // Y is now sparse and will remain so
 

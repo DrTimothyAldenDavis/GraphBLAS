@@ -4582,7 +4582,7 @@ void mexFunction
         OK (GxB_Matrix_fprint (Eleven, "Eleven", pr, ff)) ;
     }
 
-    OK (GB_convert_hyper_to_sparse (Eleven, Context)) ;
+    OK (GB_convert_hyper_to_sparse (Eleven, true, Context)) ;
     int64_t nothing = 42 ;
     printf ("\nEleven invalid hypersparse:\n") ;
     GB_free_memory ((void **) &(Eleven->h), Eleven->h_size) ;

@@ -861,6 +861,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                 anz,        // number of tuples
                 NULL,       // no dup operator needed (input has no duplicates)
                 stype,      // type of S_input or Swork
+                false,      // no burble (already burbled above)
                 Context
             )) ;
 

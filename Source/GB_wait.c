@@ -178,6 +178,7 @@ GrB_Info GB_wait                // finish all pending computations
             A->Pending->op,         // dup operator for assembling duplicates,
                                     // NULL if A is iso
             stype,                  // type of Pending->x
+            true,                   // burble is allowed
             Context
         ) ;
 

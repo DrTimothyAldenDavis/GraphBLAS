@@ -155,6 +155,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                                     // if NULL use the SECOND operator to
                                     // keep the most recent duplicate.
     const GrB_Type stype,           // the type of S_work or S_input
+    bool do_burble,                 // if true, then burble is allowed
     GB_Context Context
 )
 {
@@ -818,7 +819,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     ASSERT (T->x == NULL) ;
 
     T->iso = S_iso ;                // OK: T is iso if and only if Sx is iso
-    bool do_burble = (vlen > 1 || vdim > 1) && (nvals > 1) ;
+    do_burble = do_burble && (vlen > 1 || vdim > 1) && (nvals > 1) ;
     if (do_burble)
     {
         if (S_iso)

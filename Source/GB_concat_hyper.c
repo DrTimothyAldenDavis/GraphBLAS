@@ -205,6 +205,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
         cnz,                    // # of tuples
         NULL,                   // no duplicates, so dup is NUL
         ctype,                  // the type of Wx (no typecasting)
+        true,                   // burble is allowed
         Context
     )) ;
 
