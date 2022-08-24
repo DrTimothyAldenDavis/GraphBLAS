@@ -10,6 +10,8 @@
 // mxArray pargout [0] = gb_export (&C, kind) ; exports C as a built-in matrix
 // and frees the remaining content of C.
 
+// FIXME: use GxB_Matrix_unpack instead of GxB_Matrix_export
+
 #include "gb_interface.h"
 
 mxArray *gb_export              // return the exported built-in matrix or struct

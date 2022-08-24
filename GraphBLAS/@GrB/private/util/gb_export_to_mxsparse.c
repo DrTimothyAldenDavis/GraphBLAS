@@ -12,6 +12,8 @@
 // The input GrB_Matrix A may be shallow or deep.  The output is a standard
 // built-in sparse matrix as an mxArray.
 
+// FIXME: use GxB_Matrix_unpack instead of GxB_Matrix_export
+
 #include "gb_interface.h"
 
 mxArray *gb_export_to_mxsparse  // return exported built-in sparse matrix S

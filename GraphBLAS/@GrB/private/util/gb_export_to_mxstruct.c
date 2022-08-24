@@ -25,6 +25,8 @@
 // they work fine for MATLAB since GraphBLAS requires R2018a with the
 // interleaved complex data type.
 
+// FIXME: use GxB_Matrix_unpack instead of GxB_Matrix_export
+
 #include "gb_interface.h"
 
 // for hypersparse, sparse, or full matrices
@@ -80,6 +82,8 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     // make sure the matrix is finished
     //--------------------------------------------------------------------------
 
+    // FIXME: only if A has zombies, pending tuples, or is jumbled.  Do not
+    // wait if it is hypersparse and needs A->Y.
     OK1 (A, GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
 
     //--------------------------------------------------------------------------
@@ -161,6 +165,9 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
                     &nvec, NULL, NULL)) ;
             }
             break ;
+
+        // FIXME write a new hypersparse unpack that unpacks the
+        // A->Y matrix as well.
 
         case GxB_BITMAP :
             if (by_col)
