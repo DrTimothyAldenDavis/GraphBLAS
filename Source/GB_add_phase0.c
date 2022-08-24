@@ -56,12 +56,14 @@
 // C: not present here, but its sparsity structure is finalized, via the
 // input/output parameter C_sparsity.
 
-#include "GB_add.h"
-
 #define GB_FREE_WORKSPACE           \
 {                                   \
     GB_WERK_POP (Work, int64_t) ;   \
 }
+
+#define GB_FREE_ALL GB_FREE_WORKSPACE
+
+#include "GB_add.h"
 
 //------------------------------------------------------------------------------
 // GB_allocate_result
@@ -151,6 +153,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 
     // M, A, and B can be jumbled for this phase, but not phase1 or phase2
 
+    GrB_Info info ;
     ASSERT (p_Cnvec != NULL) ;
     ASSERT (Ch_handle != NULL) ;
     ASSERT (C_to_A_handle != NULL) ;
@@ -227,7 +230,6 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     const int64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
     bool A_is_hyper = (Ah != NULL) ;
-    #define GB_Ah(k) (A_is_hyper ? Ah [k] : (k))
 
     int64_t Bnvec = B->nvec ;
     const int64_t *restrict Bp = B->p ;
@@ -283,6 +285,21 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         // construct the mapping from C to A and B, if they are hypersparse
         if (A_is_hyper || B_is_hyper)
         {
+
+            // create the A->Y and B->Y hyper_hashes
+            GB_OK (GB_hyper_hash (A, Context)) ;
+            GB_OK (GB_hyper_hash (B, Context)) ;
+
+            const int64_t *restrict A_Yp = (A_is_hyper) ? A->Y->p : NULL ;
+            const int64_t *restrict A_Yi = (A_is_hyper) ? A->Y->i : NULL ;
+            const int64_t *restrict A_Yx = (A_is_hyper) ? A->Y->x : NULL ;
+            const int64_t A_hash_bits = (A_is_hyper) ? (A->Y->vdim - 1) : 0 ;
+
+            const int64_t *restrict B_Yp = (B_is_hyper) ? B->Y->p : NULL ;
+            const int64_t *restrict B_Yi = (B_is_hyper) ? B->Y->i : NULL ;
+            const int64_t *restrict B_Yx = (B_is_hyper) ? B->Y->x : NULL ;
+            const int64_t B_hash_bits = (B_is_hyper) ? (B->Y->vdim - 1) : 0 ;
+
             int64_t k ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (k = 0 ; k < Cnvec ; k++)
@@ -291,17 +308,17 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
                 if (A_is_hyper)
                 { 
                     // C_to_A [k] = kA if Ah [kA] == j and A(:,j) is non-empty
-                    int64_t kA = 0, pA, pA_end ;
-                    GB_lookup (true, Ah, Ap, vlen, &kA, Anvec-1, j,
-                        &pA, &pA_end) ;
+                    int64_t pA, pA_end ;
+                    int64_t kA = GB_hyper_hash_lookup (Ap, A_Yp, A_Yi, A_Yx,
+                        A_hash_bits, j, &pA, &pA_end) ;
                     C_to_A [k] = (pA < pA_end) ? kA : -1 ;
                 }
                 if (B_is_hyper)
                 { 
                     // C_to_B [k] = kB if Bh [kB] == j and B(:,j) is non-empty
-                    int64_t kB = 0, pB, pB_end ;
-                    GB_lookup (true, Bh, Bp, vlen, &kB, Bnvec-1, j,
-                        &pB, &pB_end) ;
+                    int64_t pB, pB_end ;
+                    int64_t kB = GB_hyper_hash_lookup (Bp, B_Yp, B_Yi, B_Yx,
+                        B_hash_bits, j, &pB, &pB_end) ;
                     C_to_B [k] = (pB < pB_end) ? kB : -1 ;
                 }
             }
@@ -376,7 +393,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             int64_t kC = 0 ;
             for ( ; kA < kA_end && kB < kB_end ; kC++)
             {
-                int64_t jA = GB_Ah (kA) ;
+                int64_t jA = Ah [kA] ;
                 int64_t jB = Bh [kB] ;
                 if (jA < jB)
                 { 
@@ -440,7 +457,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             // merge Ah and Bh into Ch
             for ( ; kA < kA_end && kB < kB_end ; kC++)
             {
-                int64_t jA = GB_Ah (kA) ;
+                int64_t jA = Ah [kA] ;
                 int64_t jB = Bh [kB] ;
                 if (jA < jB)
                 { 
@@ -470,7 +487,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
                 for ( ; kA < kA_end ; kA++, kC++)
                 { 
                     // append jA to Ch
-                    int64_t jA = GB_Ah (kA) ;
+                    int64_t jA = Ah [kA] ;
                     Ch     [kC] = jA ;
                     C_to_A [kC] = kA ;
                     C_to_B [kC] = -1 ;
@@ -502,7 +519,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         int64_t kC = 0 ;
         for ( ; kA < Anvec && kB < Bnvec ; kC++)
         {
-            int64_t jA = GB_Ah (kA) ;
+            int64_t jA = Ah [kA] ;
             int64_t jB = Bh [kB] ;
             if (jA < jB)
             {
@@ -532,7 +549,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             for ( ; kA < Anvec ; kA++, kC++)
             {
                 // append jA to Ch
-                int64_t jA = GB_Ah (kA) ;
+                int64_t jA = Ah [kA] ;
                 ASSERT (Ch     [kC] == jA) ;
                 ASSERT (C_to_A [kC] == kA) ;
                 ASSERT (C_to_B [kC] == -1) ;
@@ -589,7 +606,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (kA = 0 ; kA < Anvec ; kA++)
         { 
-            int64_t jA = GB_Ah (kA) ;
+            int64_t jA = Ah [kA] ;
             C_to_A [jA] = kA ;
         }
 
@@ -667,14 +684,24 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         if (Ch != NULL)
         {
             // C is hypersparse
+
+            // create the M->Y hyper_hash
+            GB_OK (GB_hyper_hash (M, Context)) ;
+
+            const int64_t *restrict M_Yp = M->Y->p ;
+            const int64_t *restrict M_Yi = M->Y->i ;
+            const int64_t *restrict M_Yx = M->Y->x ;
+            const int64_t M_hash_bits = M->Y->vdim - 1 ;
+
             int64_t k ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (k = 0 ; k < Cnvec ; k++)
             { 
                 int64_t j = Ch [k] ;
                 // C_to_M [k] = kM if Mh [kM] == j and M(:,j) is non-empty
-                int64_t kM = 0, pM, pM_end ;
-                GB_lookup (true, Mh, Mp, vlen, &kM, Mnvec-1, j, &pM, &pM_end) ;
+                int64_t pM, pM_end ;
+                int64_t kM = GB_hyper_hash_lookup (Mp, M_Yp, M_Yi, M_Yx,
+                    M_hash_bits, j, &pM, &pM_end) ;
                 C_to_M [k] = (pM < pM_end) ? kM : -1 ;
             }
         }
@@ -758,7 +785,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             ASSERT (kA >= -1 && kA < A->nvec) ;
             if (kA >= 0)
             {
-                int64_t jA = GB_Ah (kA) ;
+                int64_t jA = A->h [kA] ;
                 ASSERT (j == jA) ;
             }
         }

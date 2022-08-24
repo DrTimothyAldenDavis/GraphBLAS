@@ -218,8 +218,9 @@ GrB_Info GB_subassign_08n
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            GB_LOOKUP_VECTOR_jC ;
+            GB_LOOKUP_VECTOR_jC (fine_task, taskid) ;
             bool cjdense = (pC_end - pC_start == Cvlen) ;
+
 
             //------------------------------------------------------------------
             // C(I,jC)<M(:,j)> += A(:,j) ; no S
@@ -353,7 +354,7 @@ GrB_Info GB_subassign_08n
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            GB_LOOKUP_VECTOR_jC ;
+            GB_LOOKUP_VECTOR_jC (fine_task, taskid) ;
             bool cjdense = (pC_end - pC_start == Cvlen) ;
             if (cjdense) continue ;
 

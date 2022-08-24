@@ -236,7 +236,7 @@ GrB_Info GB_subassign_one_slice
             ASSERT (k >= 0 && k < mnvec) ;
             int64_t j = GBH (Mh, k) ;
             ASSERT (j >= 0 && j < nJ) ;
-            int64_t GB_LOOKUP_jC ;
+            GB_LOOKUP_VECTOR_jC (false, 0) ;
 
             bool jC_dense = (pC_end - pC_start == Cvlen) ;
 

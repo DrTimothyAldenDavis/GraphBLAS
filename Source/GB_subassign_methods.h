@@ -195,36 +195,6 @@
         if (is_zombie) iC = GB_FLIP (iC) ;
 
     //--------------------------------------------------------------------------
-    // GB_LOOKUP_VECTOR
-    //--------------------------------------------------------------------------
-
-    // Find pX_start and pX_end for the vector X (:,j)
-
-    #define GB_LOOKUP_VECTOR(pX_start,pX_end,X,j)                           \
-    {                                                                       \
-        int64_t pleft = 0, pright = X ## nvec-1 ;                           \
-        GB_lookup (X ## _is_hyper, X ## h, X ## p, X ## vlen, &pleft,       \
-            pright, j, &pX_start, &pX_end) ;                                \
-    }
-
-    //--------------------------------------------------------------------------
-    // get the C(:,jC) vector where jC = J [j]
-    //--------------------------------------------------------------------------
-
-    // C may be standard sparse, or hypersparse
-    // time: O(1) if standard, O(log(Cnvec)) if hyper
-
-    // This used for GB_subassign_one_slice and GB_subassign_08n_slice,
-    // which compute the parallel schedule for Methods 05, 06n, 07, and 08n.
-
-    #define GB_LOOKUP_jC                                                    \
-        /* lookup jC in C */                                                \
-        /* jC = J [j] ; or J is ":" or jbegin:jend or jbegin:jinc:jend */   \
-        jC = GB_ijlist (J, j, Jkind, Jcolon) ;                              \
-        int64_t pC_start, pC_end ;                                          \
-        GB_LOOKUP_VECTOR (pC_start, pC_end, C, jC) ;
-
-    //--------------------------------------------------------------------------
     // C(:,jC) is dense: iC = I [iA], and then look up C(iC,jC)
     //--------------------------------------------------------------------------
 
@@ -1715,23 +1685,6 @@ GrB_Info GB_subassign_08n_slice
     }
 
 //------------------------------------------------------------------------------
-// GB_LOOKUP_VECTOR_jC: get the vector C(:,jC)
-//------------------------------------------------------------------------------
-
-#define GB_LOOKUP_VECTOR_jC                                                 \
-    int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;                          \
-    int64_t pC_start, pC_end ;                                              \
-    if (fine_task)                                                          \
-    {                                                                       \
-        pC_start = TaskList [taskid].pC ;                                   \
-        pC_end   = TaskList [taskid].pC_end ;                               \
-    }                                                                       \
-    else                                                                    \
-    {                                                                       \
-        GB_LOOKUP_VECTOR (pC_start, pC_end, C, jC) ;                        \
-    }
-
-//------------------------------------------------------------------------------
 // GB_GET_IXJ_TASK_DESCRIPTOR*: get the task descriptor for IxJ
 //------------------------------------------------------------------------------
 
@@ -1755,6 +1708,41 @@ GrB_Info GB_subassign_08n_slice
     GB_GET_IXJ_TASK_DESCRIPTOR (iQ_start, iQ_end)                           \
     GB_START_PENDING_INSERTION ;
 
+//--------------------------------------------------------------------------
+// GB_LOOKUP_VECTOR
+//--------------------------------------------------------------------------
+
+// Find pX_start and pX_end for the vector X (:,j)
+
+// FIXME:  revise GB_lookup to pass in X_Yp, etc., and use them
+// with GB_hyper_hash_lookup if present.
+
+#define GB_LOOKUP_VECTOR(pX_start,pX_end,X,j)                           \
+{                                                                       \
+    int64_t pleft = 0, pright = X ## nvec-1 ;                           \
+    GB_lookup (X ## _is_hyper, X ## h, X ## p, X ## vlen, &pleft,       \
+        pright, j, &pX_start, &pX_end) ;                                \
+}
+
+//------------------------------------------------------------------------------
+// GB_LOOKUP_VECTOR_jC: get the vector C(:,jC)
+//------------------------------------------------------------------------------
+
+#define GB_LOOKUP_VECTOR_jC(fine_task,taskid)                               \
+    /* lookup jC in C */                                                    \
+    /* jC = J [j] ; or J is ":" or jbegin:jend or jbegin:jinc:jend */       \
+    int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;                          \
+    int64_t pC_start, pC_end ;                                              \
+    if (fine_task)                                                          \
+    {                                                                       \
+        pC_start = TaskList [taskid].pC ;                                   \
+        pC_end   = TaskList [taskid].pC_end ;                               \
+    }                                                                       \
+    else                                                                    \
+    {                                                                       \
+        GB_LOOKUP_VECTOR (pC_start, pC_end, C, jC) ;                        \
+    }
+
 //------------------------------------------------------------------------------
 // GB_LOOKUP_VECTOR_FOR_IXJ: get the start of a vector for scalar assignment
 //------------------------------------------------------------------------------
@@ -1762,7 +1750,7 @@ GrB_Info GB_subassign_08n_slice
 // Find pX and pX_end for the vector X (iQ_start:iQ_end, j), for a scalar
 // assignment method, or a method iterating over all IxJ for a bitmap M or A.
 
-#define GB_LOOKUP_VECTOR_FOR_IXJ(X,iQ_start)                                   \
+#define GB_LOOKUP_VECTOR_FOR_IXJ(X,iQ_start)                                \
     int64_t p ## X, p ## X ## _end ;                                        \
     GB_LOOKUP_VECTOR (p ## X, p ## X ## _end, X, j) ;                       \
     if (iQ_start != 0)                                                      \
