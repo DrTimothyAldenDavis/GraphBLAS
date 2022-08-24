@@ -39,14 +39,13 @@ GrB_Info GB_hyper_hash      // construct A->Y if not already constructed
     int64_t *restrict J_work = NULL ; size_t J_work_size = 0 ;
     int64_t *restrict X_work = NULL ; size_t X_work_size = 0 ;
 
-    ASSERT_MATRIX_OK (A, "A for hyper_hash", GB0) ;
-
-    if (!GB_NEED_HYPER_HASH (A))
+    if (A == NULL || !GB_NEED_HYPER_HASH (A))
     { 
-        // quick return: A is not hypersparse, or A->Y already computed
+        // quick return: A is NULL, not hypersparse, or A->Y already computed
         return (GrB_SUCCESS) ;
     }
 
+    ASSERT_MATRIX_OK (A, "A for hyper_hash", GB0) ;
     GB_BURBLE_MATRIX (A, "(build hyper hash) ") ;
 
     //--------------------------------------------------------------------------

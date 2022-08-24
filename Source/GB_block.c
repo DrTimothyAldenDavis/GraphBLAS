@@ -32,6 +32,7 @@ GrB_Info GB_block   // apply all pending computations if blocking mode enabled
     if (!GB_ANY_PENDING_WORK (A))
     { 
         // no pending work, so no need to block
+        // FIXME: also block if A->Y needs to be computed
         return (GrB_SUCCESS) ;
     }
 

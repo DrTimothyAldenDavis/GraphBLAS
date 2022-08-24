@@ -138,7 +138,7 @@ GrB_Info GB_subassign_08s_and_16
                 // get S(iA_start:iA_end,j)
                 //--------------------------------------------------------------
 
-                GB_GET_VECTOR_FOR_IXJ (S, iA_start) ;
+                GB_LOOKUP_VECTOR_FOR_IXJ (S, iA_start) ;
                 int64_t pA_start = j * Avlen ;
 
                 //--------------------------------------------------------------
@@ -146,7 +146,7 @@ GrB_Info GB_subassign_08s_and_16
                 //--------------------------------------------------------------
 
                 int64_t pM_start, pM_end ;
-                GB_VECTOR_LOOKUP (pM_start, pM_end, M, j) ;
+                GB_LOOKUP_VECTOR (pM_start, pM_end, M, j) ;
                 bool mjdense = (pM_end - pM_start) == Mvlen ;
 
                 //--------------------------------------------------------------
@@ -242,7 +242,7 @@ GrB_Info GB_subassign_08s_and_16
                 //--------------------------------------------------------------
 
                 int64_t pM_start, pM_end ;
-                GB_VECTOR_LOOKUP (pM_start, pM_end, M, j) ;
+                GB_LOOKUP_VECTOR (pM_start, pM_end, M, j) ;
                 bool mjdense = (pM_end - pM_start) == Mvlen ;
 
                 //--------------------------------------------------------------
@@ -359,7 +359,7 @@ GrB_Info GB_subassign_08s_and_16
                 // get S(iA_start:iA_end,j)
                 //--------------------------------------------------------------
 
-                GB_GET_VECTOR_FOR_IXJ (S, iA_start) ;
+                GB_LOOKUP_VECTOR_FOR_IXJ (S, iA_start) ;
                 int64_t pA_start = j * Avlen ;
 
                 //--------------------------------------------------------------
@@ -367,7 +367,7 @@ GrB_Info GB_subassign_08s_and_16
                 //--------------------------------------------------------------
 
                 int64_t pM_start, pM_end ;
-                GB_VECTOR_LOOKUP (pM_start, pM_end, M, j) ;
+                GB_LOOKUP_VECTOR (pM_start, pM_end, M, j) ;
                 bool mjdense = (pM_end - pM_start) == Mvlen ;
 
                 //--------------------------------------------------------------
@@ -444,7 +444,7 @@ GrB_Info GB_subassign_08s_and_16
                 //--------------------------------------------------------------
 
                 int64_t pM_start, pM_end ;
-                GB_VECTOR_LOOKUP (pM_start, pM_end, M, j) ;
+                GB_LOOKUP_VECTOR (pM_start, pM_end, M, j) ;
                 bool mjdense = (pM_end - pM_start) == Mvlen ;
 
                 //--------------------------------------------------------------

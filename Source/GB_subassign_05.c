@@ -123,7 +123,7 @@ GrB_Info GB_subassign_05
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            GB_GET_jC ;
+            GB_LOOKUP_VECTOR_jC ;
             int64_t cjnz = pC_end - pC_start ;
             bool cjdense = (cjnz == Cvlen) ;
 
@@ -239,7 +239,7 @@ GrB_Info GB_subassign_05
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            GB_GET_jC ;
+            GB_LOOKUP_VECTOR_jC ;
             bool cjdense = ((pC_end - pC_start) == Cvlen) ;
 
             //------------------------------------------------------------------

@@ -185,6 +185,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     GB_saxpy3task_struct *SaxpyTasks = NULL ; size_t SaxpyTasks_size = 0 ;
 
     //--------------------------------------------------------------------------
+    // construct the hyper hashes for M and A
+    //--------------------------------------------------------------------------
+
+// double t = omp_get_wtime ( ) ;
+    GB_OK (GB_hyper_hash (M, Context)) ;    // does nothing if M is NULL
+    GB_OK (GB_hyper_hash (A, Context)) ;
+// t = omp_get_wtime ( ) - t ;
+// printf ("Hyper time: %g\n", t) ;
+
+    //--------------------------------------------------------------------------
     // get the semiring operators
     //--------------------------------------------------------------------------
 

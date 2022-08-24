@@ -234,8 +234,8 @@ size_t x_size ;         // exact size of A->x in bytes, zero if A->x is NULL
 /* The matrix Y is a hashed inverse of the A->h hyperlist, for a hypersparse
     matrix A.  It allows for fast lookup of entries in Ah.  Given j, the goal
     is to find k so that j = Ah [k], or to report that j is not in Ah.  The
-    matrix A->Y allows for a fast lookup to compute this, to replace the binary
-    search for k in GB_lookup.
+    matrix A->Y allows for a fast lookup to compute this, without using a
+    binary search.
 
         anvec = A->nvec
         avdim = A->vdim

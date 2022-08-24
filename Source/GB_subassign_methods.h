@@ -195,12 +195,12 @@
         if (is_zombie) iC = GB_FLIP (iC) ;
 
     //--------------------------------------------------------------------------
-    // GB_VECTOR_LOOKUP
+    // GB_LOOKUP_VECTOR
     //--------------------------------------------------------------------------
 
     // Find pX_start and pX_end for the vector X (:,j)
 
-    #define GB_VECTOR_LOOKUP(pX_start,pX_end,X,j)                           \
+    #define GB_LOOKUP_VECTOR(pX_start,pX_end,X,j)                           \
     {                                                                       \
         int64_t pleft = 0, pright = X ## nvec-1 ;                           \
         GB_lookup (X ## _is_hyper, X ## h, X ## p, X ## vlen, &pleft,       \
@@ -222,7 +222,7 @@
         /* jC = J [j] ; or J is ":" or jbegin:jend or jbegin:jinc:jend */   \
         jC = GB_ijlist (J, j, Jkind, Jcolon) ;                              \
         int64_t pC_start, pC_end ;                                          \
-        GB_VECTOR_LOOKUP (pC_start, pC_end, C, jC) ;
+        GB_LOOKUP_VECTOR (pC_start, pC_end, C, jC) ;
 
     //--------------------------------------------------------------------------
     // C(:,jC) is dense: iC = I [iA], and then look up C(iC,jC)
@@ -1715,10 +1715,10 @@ GrB_Info GB_subassign_08n_slice
     }
 
 //------------------------------------------------------------------------------
-// GB_GET_jC: get the vector C(:,jC)
+// GB_LOOKUP_VECTOR_jC: get the vector C(:,jC)
 //------------------------------------------------------------------------------
 
-#define GB_GET_jC                                                           \
+#define GB_LOOKUP_VECTOR_jC                                                 \
     int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;                          \
     int64_t pC_start, pC_end ;                                              \
     if (fine_task)                                                          \
@@ -1728,7 +1728,7 @@ GrB_Info GB_subassign_08n_slice
     }                                                                       \
     else                                                                    \
     {                                                                       \
-        GB_VECTOR_LOOKUP (pC_start, pC_end, C, jC) ;                        \
+        GB_LOOKUP_VECTOR (pC_start, pC_end, C, jC) ;                        \
     }
 
 //------------------------------------------------------------------------------
@@ -1756,15 +1756,15 @@ GrB_Info GB_subassign_08n_slice
     GB_START_PENDING_INSERTION ;
 
 //------------------------------------------------------------------------------
-// GB_GET_VECTOR_FOR_IXJ: get the start of a vector for scalar assignment
+// GB_LOOKUP_VECTOR_FOR_IXJ: get the start of a vector for scalar assignment
 //------------------------------------------------------------------------------
 
 // Find pX and pX_end for the vector X (iQ_start:iQ_end, j), for a scalar
 // assignment method, or a method iterating over all IxJ for a bitmap M or A.
 
-#define GB_GET_VECTOR_FOR_IXJ(X,iQ_start)                                   \
+#define GB_LOOKUP_VECTOR_FOR_IXJ(X,iQ_start)                                   \
     int64_t p ## X, p ## X ## _end ;                                        \
-    GB_VECTOR_LOOKUP (p ## X, p ## X ## _end, X, j) ;                       \
+    GB_LOOKUP_VECTOR (p ## X, p ## X ## _end, X, j) ;                       \
     if (iQ_start != 0)                                                      \
     {                                                                       \
         if (X ## i == NULL)                                                 \
