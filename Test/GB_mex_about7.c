@@ -27,7 +27,7 @@ void mexFunction
 {
 
     GrB_Info info ;
-    GrB_Matrix A = NULL ;
+    GrB_Matrix A = NULL, Y_mangled = NULL, Y_save = NULL ;
 
     //--------------------------------------------------------------------------
     // startup GraphBLAS
@@ -56,9 +56,46 @@ void mexFunction
     printf ("\ninvalid A->h:\n") ;
     save = A->h_size ;
     A->h_size = 3 ;
-    expected = GrB_INVALID_OBJECT ;
     ERR (GxB_Matrix_fprint (A, "A with invalid A->h", 3, NULL)) ;
     A->h_size = save ;
+
+    printf ("\ninvalid A->Y:\n") ;
+    A->Y->magic = GB_MAGIC2 ;
+    ERR (GxB_Matrix_fprint (A, "A with invalid A->Y", 3, NULL)) ;
+    A->Y->magic = GB_MAGIC ;
+
+    OK (GrB_Matrix_new (&Y_mangled, GrB_FP64, 100, 100)) ;
+    OK (GrB_Matrix_free (&(A->Y))) ;
+    A->Y = Y_mangled ;
+    ERR (GxB_Matrix_fprint (A, "A with invalid A->Y (wrong type)", 3, NULL)) ;
+
+    OK (GrB_Matrix_free (&A)) ;
+
+    OK (GrB_Matrix_new (&A, GrB_FP64, 100, 100)) ;
+    OK (GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+    OK (GrB_Matrix_setElement_FP64 (A, (double) 1.2, 0, 0)) ;
+    OK (GrB_Matrix_wait (A, 1)) ;
+    OK (GxB_Matrix_fprint (A, "A valid (sparse)", 3, NULL)) ;
+
+    A->Y = Y_mangled ;
+    ERR (GxB_Matrix_fprint (A, "A with invalid A->Y (not hyper)", 3, NULL)) ;
+
+    OK (GrB_Matrix_free (&Y_mangled)) ;
+    OK (GrB_Matrix_free (&A)) ;
+
+    OK (GrB_Matrix_new (&A, GrB_FP64, 100, 100)) ;
+    OK (GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE)) ;
+    OK (GrB_Matrix_setElement_FP64 (A, (double) 1.2, 0, 0)) ;
+    OK (GrB_Matrix_wait (A, 1)) ;
+    OK (GxB_Matrix_fprint (A, "A valid (hypersparse)", 3, NULL)) ;
+
+    A->Y->i [0] = 99 ;
+    ERR (GxB_Matrix_fprint (A, "A->Y invalid (not found) ", 3, NULL)) ;
+    A->Y->i [0] = 0 ;
+
+    int64_t *Yx = A->Y->x ;
+    Yx [0] = 99 ;
+    ERR (GxB_Matrix_fprint (A, "A->Y invalid (wrong k) ", 3, NULL)) ;
 
     OK (GrB_Matrix_free (&A)) ;
 
@@ -68,7 +105,7 @@ void mexFunction
 
     bool have_avx2 = GB_Global_cpu_features_avx2 ( ) ;
     bool have_avx512f = GB_Global_cpu_features_avx512f ( ) ;
-    printf ("avx2: %d avx512f: %d\n", have_avx2, have_avx512f) ;
+    printf ("\navx2: %d avx512f: %d\n", have_avx2, have_avx512f) ;
 
     //--------------------------------------------------------------------------
     // compiler

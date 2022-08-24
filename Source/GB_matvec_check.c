@@ -833,51 +833,46 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     GrB_Matrix Y = A->Y ;
     if (Y != NULL)
     {
-        int64_t yvdim = Y->vdim ;
-        int64_t anvec = A->nvec ;
         if (!is_hyper)
         { 
-            GBPR0 ("  Y can only exist if the matrix is hypersparse\n") ;
+            // A->Y is optional, but A must be hypersparse for A->Y to exist
+            GBPR0 ("  hyper_hash invalid\n") ;
             return (GrB_INVALID_OBJECT) ;
         }
-
         info = GB_matvec_check (Y, "Y hyper_hash", pr_developer, f, "matrix") ;
         if (info != GrB_SUCCESS)
-        {
-            GBPR0 ("  Y invalid") ;
+        { 
+            // A->Y fails the tests in GB_matvec_check
+            GBPR0 ("  hyper_hash invalid") ;
             return (info) ;
         }
-        if (Y->vlen != A->vdim || !GB_IS_POWER_OF_TWO (yvdim) ||
-            Y->nvals != anvec)
+        if (Y->vlen != A->vdim || !GB_IS_POWER_OF_TWO (Y->vdim) ||
+            Y->nvals != A->nvec || !GB_IS_SPARSE (Y) || Y->type != GrB_INT64 ||
+            !Y->is_csc)
         { 
-            GBPR0 ("  Y has invalid dimensions or invalid # of entries\n") ;
+            // Y must be sparse, int64, held by column, with A->nvec values,
+            // vector length the same as A->vdim, and with a Y->vdim that is
+            // a power of 2.
+            GBPR0 ("  hyper_hash invalid") ;
             return (GrB_INVALID_OBJECT) ;
         }
-        if (!GB_IS_SPARSE (Y) || Y->type != GrB_INT64 || !Y->is_csc)
-        { 
-            GBPR0 ("  Y must be sparse, int64, and held by column\n") ;
-            return (GrB_INVALID_OBJECT) ;
-        }
-
         // ensure that Y is the inverse of A->h
-        int64_t hash_bits = yvdim - 1 ;
-        const int64_t *restrict Ah = (int64_t *) A->h ;
-        const int64_t *restrict Yp = (int64_t *) Y->p ;
-        const int64_t *restrict Yi = (int64_t *) Y->i ;
+        int64_t hash_bits = Y->vdim - 1 ;
         const int64_t *restrict Yx = (int64_t *) Y->x ;
-
-        for (int64_t k = 0 ; k < anvec ; k++)
+        for (int64_t k = 0 ; k < A->nvec ; k++)
         {
-            int64_t j = Ah [k] ;
+            // look for j in the hyper_hash; it must be at position k
+            int64_t j = A->h [k] ;
             int64_t jhash = GB_HASHF2 (j, hash_bits) ;
             bool found = false ;
-            for (int64_t p = Yp [jhash] ; p < Yp [jhash+1] ; p++)
+            for (int64_t p = Y->p [jhash] ; p < Y->p [jhash+1] ; p++)
             {
-                if (j == Yi [p])
+                if (j == Y->i [p])
                 {
                     if (k != Yx [p])
-                    {
-                        GBPR0 ("  hyper_hash invalid; k is wrong\n") ;
+                    { 
+                        // j is found but not with the right value of k
+                        GBPR0 ("  hyper_hash invalid\n") ;
                         return (GrB_INVALID_OBJECT) ;
                     }
                     found = true ;
@@ -885,8 +880,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 }
             }
             if (!found)
-            {
-                GBPR0 ("  hyper_hash invalid; not found\n") ;
+            { 
+                // j must appear in the hyper_hash
+                GBPR0 ("  hyper_hash invalid\n") ;
                 return (GrB_INVALID_OBJECT) ;
             }
         }

@@ -127,7 +127,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
 #ifdef GB_DEBUG
     if (op == NULL)
-    { 
+    {
         // GB_wait does no typecasting.  A and T have the same type when
         // computing A=A+T, and no operator is used since A and T have disjoint
         // nonzero patterns.  No mask is used.
@@ -137,7 +137,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         ASSERT (C_is_sparse_or_hyper) ;
     }
     else
-    { 
+    {
         // assert that the op is compatible with A, B, and C
         if (!(GB_as_if_full (A) && GB_as_if_full (B)))
         {
