@@ -308,14 +308,18 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     else if ( GB_IS_HYPERSPARSE(A) && GB_IS_FULL(B) )
     {
         //  FIXME: Hyper x Full 
+        printf ("FIXME: hyper times full\n") ;
+
     }
     else if ( GB_IS_SPARSE(A) && GB_IS_BITMAP(B) )
     {
         //  FIXME: Sparse x Bitmap 
+        printf ("FIXME: sparse times bitmap\n") ;
     }
     else if ( GB_IS_HYPERSPARSE(A) && GB_IS_BITMAP(B) )
     {
         //  FIXME: Hyper x Bitmap
+        printf ("FIXME: hyper times bitmap\n") ;
     }
 
 // (3)
@@ -530,6 +534,12 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     GB_FREE_WORKSPACE ;
     }
+    else
+    {
+        printf ("FIXME: case not handled\n") ;
+    }
+
+
 
     CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
     CHECK_CUDA_SIMPLE(cudaStreamDestroy(stream));

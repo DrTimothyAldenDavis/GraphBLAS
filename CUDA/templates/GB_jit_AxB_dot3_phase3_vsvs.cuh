@@ -173,15 +173,14 @@ __global__ void AxB_dot3_phase3_vsvs
     {
         int64_t pair_id = all_in_one ? kk : Bucket[ kk ];
 
-        // FIXME: assumes C and M are sparse, not hypersparse
         int64_t i = Mi [pair_id] ;
         int64_t k = Ci [pair_id]>>4 ;
 
-        // j = kk or j = Mh [kk] if C and M are hypersparse
+        // j = k or j = Mh [k] if C and M are hypersparse
         #if GB_M_IS_HYPER
-        int64_t j = Mh [kk] ;
+        int64_t j = Mh [k] ;
         #else
-        int64_t j = kk ;
+        int64_t j = k ;
         #endif
 
         // find A(:,i):  A is always sparse or hypersparse
