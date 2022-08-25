@@ -269,15 +269,18 @@ size_t x_size ;         // exact size of A->x in bytes, zero if A->x is NULL
     A->Y is only computed when required, or if GrB_Matrix_wait (Y) is
     explicitly called.  Once computed, k can be found as follows:
 
-        // Given a value j to find in the list Ah: find the entry k =
-        // Y(j,f(j)), if it exists, or k=-1 if j is not in the Ah
-        // hyperlist.
+        // This can be done once, and reused for many searches:
         int64_t nhash = A->Y->vdim ;    // # of buckets in the hash table
-        int64_t jhash = GB_HASHF2 (j, nhash-1) ;     // in range 0 to nhash-1
+        int64_t hash_bits = nhash-1 ;
         int64_t *Yp = A->Y->p ;         // pointers to each hash bucket
                                         // Yp has size nhash+1.
         int64_t *Yi = A->Y->i ;         // "row" indices j; Yi has size anvec.
         int64_t *Yx = A->Y->x ;         // values k; Yx has size anvec.
+
+        // Given a value j to find in the list Ah: find the entry k =
+        // Y(j,f(j)), if it exists, or k=-1 if j is not in the Ah
+        // hyperlist.
+        int64_t jhash = GB_HASHF2 (j, hash_bits) ;     // in range 0 to nhash-1
         int64_t k = -1 ;
         for (int64_t p = Yp [jhash] ; p < Yp [jhash+1] ; p++)
         {
