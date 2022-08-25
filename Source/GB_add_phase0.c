@@ -61,7 +61,14 @@
     GB_WERK_POP (Work, int64_t) ;   \
 }
 
-#define GB_FREE_ALL GB_FREE_WORKSPACE
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_FREE (&Ch, Ch_size) ;                \
+    GB_FREE_WORK (&C_to_M, C_to_M_size) ;   \
+    GB_FREE_WORK (&C_to_A, C_to_A_size) ;   \
+    GB_FREE_WORK (&C_to_B, C_to_B_size) ;   \
+    GB_FREE_WORKSPACE ;                     \
+}
 
 #include "GB_add.h"
 
@@ -98,27 +105,6 @@ static inline bool GB_allocate_result
     { 
         *C_to_B_handle = GB_MALLOC_WORK (Cnvec, int64_t, C_to_B_size_handle) ;
         ok = ok && (*C_to_B_handle != NULL) ;
-    }
-
-    if (!ok)
-    {
-        // out of memory
-        if (Ch_handle != NULL)
-        { 
-            GB_FREE (Ch_handle, *Ch_size_handle) ;
-        }
-        if (C_to_M_handle != NULL)
-        { 
-            GB_FREE_WORK (C_to_M_handle, *C_to_M_size_handle) ;
-        }
-        if (C_to_A_handle != NULL)
-        { 
-            GB_FREE_WORK (C_to_A_handle, *C_to_A_size_handle) ;
-        }
-        if (C_to_B_handle != NULL)
-        { 
-            GB_FREE_WORK (C_to_B_handle, *C_to_B_size_handle) ;
-        }
     }
     return (ok) ;
 }
@@ -275,7 +261,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             (B_is_hyper) ? (&C_to_B) : NULL, &C_to_B_size))
         { 
             // out of memory
-            GB_FREE_WORKSPACE ;
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -352,7 +338,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         if (Work == NULL)
         { 
             // out of memory
-            GB_FREE_WORKSPACE ;
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
         int64_t *restrict kA_start = Work ;
@@ -436,7 +422,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             &C_to_B, &C_to_B_size))
         { 
             // out of memory
-            GB_FREE_WORKSPACE ;
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -590,7 +576,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             NULL, NULL))
         { 
             // out of memory
-            GB_FREE_WORKSPACE ;
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -630,7 +616,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             &C_to_B, &C_to_B_size))
         { 
             // out of memory
-            GB_FREE_WORKSPACE ;
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -669,7 +655,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             NULL, NULL))
         { 
             // out of memory
-            GB_FREE_WORKSPACE ;
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
     }
