@@ -60,6 +60,8 @@ GrB_Info GB_hyper_hash      // construct A->Y if not already constructed
 // GB_hyper_hash_lookup: find k so that j == Ah [k], using the A->Y hyper_hash
 //------------------------------------------------------------------------------
 
+// k = A->Y (j, hash(j)), if present, or k=-1 if not found.
+
 static inline int64_t GB_hyper_hash_lookup  // k if j==Ah[k], or -1 if not found
 (
     // input, not modified
@@ -67,7 +69,7 @@ static inline int64_t GB_hyper_hash_lookup  // k if j==Ah[k], or -1 if not found
     const int64_t *restrict Yp,     // A->Y->p
     const int64_t *restrict Yi,     // A->Y->i
     const int64_t *restrict Yx,     // A->Y->x
-    const int64_t hash_bits,        // hash table size - 1
+    const int64_t hash_bits,        // A->Y->vdim-1, which is hash table size-1
     const int64_t j,                // find j in Ah [0..anvec-1], using A->Y
     int64_t *restrict pstart,       // start of vector: Ap [k]
     int64_t *restrict pend          // end of vector: Ap [k+1]

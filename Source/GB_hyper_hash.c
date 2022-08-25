@@ -34,16 +34,16 @@ GrB_Info GB_hyper_hash      // construct A->Y if not already constructed
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
-    int64_t *restrict I_work = NULL ; size_t I_work_size = 0 ;
-    int64_t *restrict J_work = NULL ; size_t J_work_size = 0 ;
-    int64_t *restrict X_work = NULL ; size_t X_work_size = 0 ;
-
     if (A == NULL || !GB_NEED_HYPER_HASH (A))
     { 
         // quick return: A is NULL, not hypersparse, or A->Y already computed
         return (GrB_SUCCESS) ;
     }
+
+    GrB_Info info ;
+    int64_t *restrict I_work = NULL ; size_t I_work_size = 0 ;
+    int64_t *restrict J_work = NULL ; size_t J_work_size = 0 ;
+    int64_t *restrict X_work = NULL ; size_t X_work_size = 0 ;
 
     ASSERT_MATRIX_OK (A, "A for hyper_hash", GB0) ;
     GB_BURBLE_MATRIX (A, "(build hyper hash) ") ;
@@ -59,7 +59,7 @@ GrB_Info GB_hyper_hash      // construct A->Y if not already constructed
     int64_t anvec = A->nvec ;
     // this ensures a load factor of 0.5 to 1:
     int64_t yvdim = ((uint64_t) 1) << (GB_FLOOR_LOG2 (anvec) + 1) ;
-    // divide by 4 to get a load faster of 2 to 4:
+    // divide by 4 to get a load factor of 2 to 4:
     yvdim = yvdim / 4 ;
     yvdim = GB_IMAX (yvdim, 4) ;
     int64_t yvlen = A->vdim ;

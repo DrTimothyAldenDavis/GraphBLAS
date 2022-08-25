@@ -286,6 +286,8 @@ size_t x_size ;         // exact size of A->x in bytes, zero if A->x is NULL
                 k = Yx [p] ;        // k = Y (j,jhash) has been found
                 break ;
             }
+            // or this could be done instead:
+            // k = (j == Yi [p]) ? Yx [p] : k ;  // break not needed.
         }
 
 */
