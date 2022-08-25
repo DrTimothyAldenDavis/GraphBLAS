@@ -70,6 +70,7 @@ GrB_Info GB_subassign_one_slice
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (p_TaskList != NULL) ;
     ASSERT (p_ntasks != NULL) ;
     ASSERT (p_nthreads != NULL) ;
@@ -123,6 +124,8 @@ GrB_Info GB_subassign_one_slice
     int ntasks = 0 ;
     int ntasks0 = (nthreads == 1) ? 1 : (32 * nthreads) ;
     GB_REALLOC_TASK_WORK (TaskList, ntasks0, max_ntasks) ;
+
+    GB_GET_C_HYPER_HASH ;
 
     //--------------------------------------------------------------------------
     // check for quick return for a single task

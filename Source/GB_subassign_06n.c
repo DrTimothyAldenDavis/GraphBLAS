@@ -77,12 +77,19 @@ GrB_Info GB_subassign_06n
     const int64_t *restrict Ch = C->h ;
     const int64_t *restrict Cp = C->p ;
     const bool C_is_hyper = (Ch != NULL) ;
+    GB_GET_C_HYPER_HASH ;
     GB_GET_MASK ;
     GB_GET_A ;
     const int64_t *restrict Ah = A->h ;
     const int64_t Anvec = A->nvec ;
     const bool A_is_hyper = (Ah != NULL) ;
     GrB_BinaryOp accum = NULL ;
+
+    GB_OK (GB_hyper_hash (A, Context)) ;
+    const int64_t *restrict A_Yp = (A_is_hyper) ? A->Y->p : NULL ;
+    const int64_t *restrict A_Yi = (A_is_hyper) ? A->Y->i : NULL ;
+    const int64_t *restrict A_Yx = (A_is_hyper) ? A->Y->x : NULL ;
+    const int64_t A_hash_bits = (A_is_hyper) ? (A->Y->vdim - 1) : 0 ;
 
     //--------------------------------------------------------------------------
     // Method 06n: C(I,J)<M> = A ; no S

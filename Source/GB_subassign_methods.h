@@ -77,6 +77,13 @@
     int64_t nzombies = C->nzombies ;                                        \
     const bool is_matrix = (cvdim > 1) ;
 
+#define GB_GET_C_HYPER_HASH                                                 \
+    GB_OK (GB_hyper_hash (C, Context)) ;                                    \
+    const int64_t *restrict C_Yp = (C_is_hyper) ? C->Y->p : NULL ;          \
+    const int64_t *restrict C_Yi = (C_is_hyper) ? C->Y->i : NULL ;          \
+    const int64_t *restrict C_Yx = (C_is_hyper) ? C->Y->x : NULL ;          \
+    const int64_t C_hash_bits = (C_is_hyper) ? (C->Y->vdim - 1) : 0 ;
+
 //------------------------------------------------------------------------------
 // GB_GET_MASK: get the mask matrix M
 //------------------------------------------------------------------------------
@@ -94,7 +101,14 @@
     const size_t Mvlen = M->vlen ;                                          \
     const int64_t Mnvec = M->nvec ;                                         \
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;                         \
-    const bool M_is_bitmap = GB_IS_BITMAP (M) ;
+    const bool M_is_bitmap = GB_IS_BITMAP (M)
+
+#define GB_GET_MASK_HYPER_HASH                                              \
+    GB_OK (GB_hyper_hash (M, Context)) ;                                    \
+    const int64_t *restrict M_Yp = (M_is_hyper) ? M->Y->p : NULL ;          \
+    const int64_t *restrict M_Yi = (M_is_hyper) ? M->Y->i : NULL ;          \
+    const int64_t *restrict M_Yx = (M_is_hyper) ? M->Y->x : NULL ;          \
+    const int64_t M_hash_bits = (M_is_hyper) ? (M->Y->vdim - 1) : 0 ;
 
 //------------------------------------------------------------------------------
 // GB_GET_ACCUM: get the accumulator op and its related typecasting functions
@@ -167,7 +181,11 @@
     const int64_t *restrict Sx = (int64_t *) S->x ;                         \
     const int64_t Svlen = S->vlen ;                                         \
     const int64_t Snvec = S->nvec ;                                         \
-    const bool S_is_hyper = GB_IS_HYPERSPARSE (S) ;
+    const bool S_is_hyper = GB_IS_HYPERSPARSE (S) ;                         \
+    const int64_t *restrict S_Yp = (S_is_hyper) ? S->Y->p : NULL ;          \
+    const int64_t *restrict S_Yi = (S_is_hyper) ? S->Y->i : NULL ;          \
+    const int64_t *restrict S_Yx = (S_is_hyper) ? S->Y->x : NULL ;          \
+    const int64_t S_hash_bits = (S_is_hyper) ? (S->Y->vdim - 1) : 0 ;
 
 //------------------------------------------------------------------------------
 // basic actions
@@ -1714,14 +1732,18 @@ GrB_Info GB_subassign_08n_slice
 
 // Find pX_start and pX_end for the vector X (:,j)
 
-// FIXME:  revise GB_lookup to pass in X_Yp, etc., and use them
-// with GB_hyper_hash_lookup if present.
-
 #define GB_LOOKUP_VECTOR(pX_start,pX_end,X,j)                           \
 {                                                                       \
-    int64_t pleft = 0, pright = X ## nvec-1 ;                           \
-    GB_lookup (X ## _is_hyper, X ## h, X ## p, X ## vlen, &pleft,       \
-        pright, j, &pX_start, &pX_end) ;                                \
+    if (X ## _is_hyper)                                                 \
+    {                                                                   \
+        GB_hyper_hash_lookup (X ## p, X ## _Yp, X ## _Yi, X ## _Yx,     \
+            X ## _hash_bits, j, &pX_start, &pX_end) ;                   \
+    }                                                                   \
+    else                                                                \
+    {                                                                   \
+        pX_start = GBP (X ## p, j  , X ## vlen) ;                       \
+        pX_end   = GBP (X ## p, j+1, X ## vlen) ;                       \
+    }                                                                   \
 }
 
 //------------------------------------------------------------------------------

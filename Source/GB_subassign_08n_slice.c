@@ -107,6 +107,7 @@ GrB_Info GB_subassign_08n_slice
     const int64_t *restrict Ch = C->h ;
     const int64_t *restrict Cp = C->p ;
     const bool C_is_hyper = (Ch != NULL) ;
+    GB_GET_C_HYPER_HASH ;
 
     const int64_t *restrict Mp = M->p ;
     const int64_t *restrict Mh = M->h ;

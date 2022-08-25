@@ -70,6 +70,7 @@ GrB_Info GB_subassign_08s_and_16
 
     GB_GET_C ;      // C must not be bitmap
     GB_GET_MASK ;
+    GB_GET_MASK_HYPER_HASH ;
     GB_GET_A ;
     GB_GET_S ;
     GB_GET_ACCUM ;

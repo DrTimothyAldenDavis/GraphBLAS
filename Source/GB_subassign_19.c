@@ -71,6 +71,7 @@ GrB_Info GB_subassign_19
     const bool C_is_hyper = (Ch != NULL) ;
     const int64_t Cnvec = C->nvec ;
     GB_GET_MASK ;
+    GB_GET_MASK_HYPER_HASH ;
     GB_GET_S ;
     GB_GET_ACCUM_SCALAR ;
 

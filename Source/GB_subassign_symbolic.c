@@ -68,13 +68,14 @@ GrB_Info GB_subassign_symbolic
     ASSERT (GB_JUMBLED_OK (S)) ;    // GB_subref can return S as unsorted
 
     //--------------------------------------------------------------------------
-    // sort S if requested
+    // sort S and compute S->Y if requested
     //--------------------------------------------------------------------------
 
     if (S_must_not_be_jumbled)
     { 
         GB_MATRIX_WAIT_IF_JUMBLED (S) ; // but the caller requires S sorted
         ASSERT (!GB_JUMBLED (S)) ;
+        GB_OK (GB_hyper_hash (S, Context)) ;    // construct S->Y
     }
 
     //--------------------------------------------------------------------------

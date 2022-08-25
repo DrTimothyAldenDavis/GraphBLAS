@@ -69,6 +69,7 @@ GrB_Info GB_subassign_10_and_18
 
     GB_GET_C ;      // C must not be bitmap
     GB_GET_MASK ;
+    GB_GET_MASK_HYPER_HASH ;
     GB_GET_A ;
     GB_GET_S ;
     GrB_BinaryOp accum = NULL ;
