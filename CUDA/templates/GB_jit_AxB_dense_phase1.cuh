@@ -29,8 +29,6 @@ __global__ void AxB_dense_phase1
 (
     // input/output:
     GrB_Matrix C,           // final output matrix
-    // FIXME: just pass in Ci, not the whole C matrix
-    // inputs, not modified:
     const GrB_Matrix M      // mask matrix
 )
 {
@@ -39,7 +37,6 @@ __global__ void AxB_dense_phase1
     // get C, M, A, and B
     //--------------------------------------------------------------------------
 
-    const int64_t *__restrict__ Mh = M->h ;
     const int64_t *__restrict__ Mp = M->p ;
     const int64_t *__restrict__ Mi = M->i ;
     const T_M *__restrict__ Mx = (T_M*) M->x ; // not accessed if M structural
@@ -48,8 +45,6 @@ __global__ void AxB_dense_phase1
     const int64_t mnz =  GB_nnz(M) ;
     const bool M_is_hyper = M->h != NULL ;
 
-    // int64_t *restrict Cp = C->p ;    // copy of Mp
-    // int64_t *restrict Ch = C->h ;    // copy of Mh
     int64_t *__restrict__ Ci = C->i ;   // for zombies, or bucket assignment
 
     // Ci [p] for an entry C(i,j) contains either GB_FLIP(i) if C(i,j) is a
@@ -63,7 +58,6 @@ __global__ void AxB_dense_phase1
 
     // shared cache used for coordinate search
     __shared__ int64_t ks [chunk_size] ;
-
 
     //--------------------------------------------------------------------------
     // assign all entries of C to the buckets
@@ -139,7 +133,8 @@ __global__ void AxB_dense_phase1
                       pM += blockDim.x )
         {
             int64_t k = ks [pM - pfirst] ;  // get the k value of Mi,Mx [pM].
-            // j = k or j = Mh [k] if C and M are hypersparse
+            // j = k or j = Mh [k] if C and M are hypersparse, but j is not
+            // needed here.
 
             #if GB_MASK_STRUCT
             {

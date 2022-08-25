@@ -77,7 +77,6 @@ __global__ void AxB_phase1
     const int64_t *__restrict__ Ai = A->i ;
     const int64_t avlen = A->vlen ;
     const int64_t anz = GB_nnz(A) ;
-    const bool A_is_hyper = A->h != NULL ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
     const int64_t *__restrict__ Bh = B->h ;
@@ -85,8 +84,21 @@ __global__ void AxB_phase1
     const int64_t *__restrict__ Bi = B->i ;
     const int64_t bvlen = B->vlen ;
     const int64_t bnz = GB_nnz(B);
-    const bool B_is_hyper = B->h != NULL ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
+
+    #if GB_A_IS_HYPER
+    const int64_t *__restrict__ A_Yp = A->Y->p ;
+    const int64_t *__restrict__ A_Yi = A->Y->i ;
+    const int64_t *__restrict__ A_Yx = A->Y->x ;
+    const int64_t A_hash_bits = A->Y->vdim - 1 ;
+    #endif
+
+    #if GB_B_IS_HYPER
+    const int64_t *__restrict__ B_Yp = B->Y->p ;
+    const int64_t *__restrict__ B_Yi = B->Y->i ;
+    const int64_t *__restrict__ B_Yx = B->Y->x ;
+    const int64_t B_hash_bits = B->Y->vdim - 1 ;
+    #endif
 
     // int64_t *restrict Cp = C->p ;    // copy of Mp
     // int64_t *restrict Ch = C->h ;    // copy of Mh
@@ -184,9 +196,6 @@ __global__ void AxB_phase1
         // assign entries in C(i,j) to the buckets
         //----------------------------------------------------------------------
 
-        // if B is hypersparse, bpleft ... TODO describe
-        // int64_t bpleft = 0 ;
-
         for ( int64_t pM = pfirst + threadIdx.x;
                       pM < pfirst + my_chunk_size;
                       pM += blockDim.x )
@@ -202,18 +211,19 @@ __global__ void AxB_phase1
             if ( MX ( pM ) )
             {
 
-                // FIXME: handle the case where A, B are hypersparse
-
                 //--------------------------------------------------------------
                 // get B(:,j)
                 //--------------------------------------------------------------
 
                 int64_t pB, pB_end ;
+                #if GB_B_IS_HYPER
+                GB_hyper_hash_lookup (Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
+                    j, &pB_start, &pB_end) ;
+                #else
+                pB       = Bp[j] ;
+                pB_end   = Bp[j+1] ;
+                #endif
 
-                // HACK: for sparse only, not hypersparse
-                pB     = Bp [j] ;
-                pB_end = Bp [j+1] ;
-                // For B hypersparse, use B->Y
                 int64_t bjnz = pB_end - pB ;
                 if (bjnz > 0)
                 {
@@ -223,11 +233,14 @@ __global__ void AxB_phase1
                     //----------------------------------------------------------
 
                     int64_t pA, pA_end ;
-                    // int64_t apleft = 0 ;
-                    // HACK: for sparse only, not hypersparse
-                    pA     = Ap [i] ;
-                    pA_end = Ap [i+1] ;
-                    // For A hypersparse, use A->Y
+                    #if GB_A_IS_HYPER
+                    GB_hyper_hash_lookup (Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
+                        i, &pA, &pA_end) ;
+                    #else
+                    pA       = Ap[i] ;
+                    pA_end   = Ap[i+1] ;
+                    #endif
+
                     int64_t ainz = pA_end - pA ;
                     if (ainz > 0)
                     {
@@ -262,8 +275,10 @@ __global__ void AxB_phase1
         nanobuckets + blockIdx.x * (NBUCKETS * blockDim.x) + threadIdx.x ;
 
     #pragma unroll
-    for(int b = 0; b < NBUCKETS; ++b) {
-        if( threadIdx.x == blockDim.x-1) {
+    for (int b = 0; b < NBUCKETS; ++b)
+    {
+        if ( threadIdx.x == blockDim.x-1)
+        {
             blockbucket [blockIdx.x + b * gridDim.x] = my_bucket[b] ;
         }
         this_thread_block().sync();
@@ -284,7 +299,8 @@ __global__ void AxB_phase1
     if (threadIdx.x == blockDim.x - 1 )
     {
         #pragma unroll
-        for(int b = 0; b < NBUCKETS; ++b) {
+        for(int b = 0; b < NBUCKETS; ++b)
+        {
             blockbucket [b * gridDim.x + blockIdx.x] += my_bucket[b];
         }
     }

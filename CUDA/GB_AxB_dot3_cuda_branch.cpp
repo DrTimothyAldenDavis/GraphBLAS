@@ -40,10 +40,6 @@ bool GB_AxB_dot3_cuda_branch
             // FIXME: FUTURE: user-defined types and operators
             && (A->type->code != GB_UDT_code)
             && (B->type->code != GB_UDT_code)
-            // FIXME: handle M, A, B hypersparse
-            && !GB_IS_HYPERSPARSE (M)
-            && !GB_IS_HYPERSPARSE (A)
-            && !GB_IS_HYPERSPARSE (B)
             // FIXME: handle A, B bitmap and/or full
             && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B)
             && !GB_IS_FULL (A) && !GB_IS_FULL (B))
