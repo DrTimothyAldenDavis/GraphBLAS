@@ -12,6 +12,8 @@
 #define GB_CUDA_KERNEL
 #include <limits>
 #include "GB_cuda_kernel.h"
+#include "GB_hash.h"
+#include "GB_hyper_hash_lookup.h"
 #include "GB_cuda_buckets.h"
 #include <cub/block/block_scan.cuh>
 #include <cooperative_groups.h>
@@ -89,14 +91,14 @@ __global__ void AxB_phase1
     #if GB_A_IS_HYPER
     const int64_t *__restrict__ A_Yp = A->Y->p ;
     const int64_t *__restrict__ A_Yi = A->Y->i ;
-    const int64_t *__restrict__ A_Yx = A->Y->x ;
+    const int64_t *__restrict__ A_Yx = (int64_t *) A->Y->x ;
     const int64_t A_hash_bits = A->Y->vdim - 1 ;
     #endif
 
     #if GB_B_IS_HYPER
     const int64_t *__restrict__ B_Yp = B->Y->p ;
     const int64_t *__restrict__ B_Yi = B->Y->i ;
-    const int64_t *__restrict__ B_Yx = B->Y->x ;
+    const int64_t *__restrict__ B_Yx = (int64_t *) B->Y->x ;
     const int64_t B_hash_bits = B->Y->vdim - 1 ;
     #endif
 
@@ -218,7 +220,7 @@ __global__ void AxB_phase1
                 int64_t pB, pB_end ;
                 #if GB_B_IS_HYPER
                 GB_hyper_hash_lookup (Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
-                    j, &pB_start, &pB_end) ;
+                    j, &pB, &pB_end) ;
                 #else
                 pB       = Bp[j] ;
                 pB_end   = Bp[j+1] ;

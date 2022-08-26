@@ -38,6 +38,8 @@
 #include <cstdint>
 #include <stdio.h>
 #include "GB_cuda_kernel.h"
+#include "GB_hash.h"
+#include "GB_hyper_hash_lookup.h"
 
 #include <cooperative_groups.h>
 
@@ -101,14 +103,14 @@ __global__ void AxB_dot3_phase3_spdn
     #if GB_A_IS_HYPER
     const int64_t *__restrict__ A_Yp = A->Y->p ;
     const int64_t *__restrict__ A_Yi = A->Y->i ;
-    const int64_t *__restrict__ A_Yx = A->Y->x ;
+    const int64_t *__restrict__ A_Yx = (int64_t *) A->Y->x ;
     const int64_t A_hash_bits = A->Y->vdim - 1 ;
     #endif
 
     #if GB_B_IS_HYPER
     const int64_t *__restrict__ B_Yp = B->Y->p ;
     const int64_t *__restrict__ B_Yi = B->Y->i ;
-    const int64_t *__restrict__ B_Yx = B->Y->x ;
+    const int64_t *__restrict__ B_Yx = (int64_t *) B->Y->x ;
     const int64_t B_hash_bits = B->Y->vdim - 1 ;
     #endif
 
