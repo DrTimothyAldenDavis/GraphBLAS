@@ -332,6 +332,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             A->b, A->b_shallow, A->b_size) ;
         GBPR ("  ->x: %p shallow: %d size: " GBd "\n",
             A->x, A->x_shallow, A->x_size) ;
+        GBPR ("  ->Y: %p shallow: %d\n", A->Y, A->Y_shallow) ;
     }
     #endif
 
@@ -834,6 +835,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     GrB_Matrix Y = A->Y ;
     if (Y != NULL)
     {
+
         if (!is_hyper)
         { 
             // A->Y is optional, but A must be hypersparse for A->Y to exist

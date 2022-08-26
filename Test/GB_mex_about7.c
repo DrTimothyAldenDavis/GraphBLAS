@@ -27,7 +27,7 @@ void mexFunction
 {
 
     GrB_Info info ;
-    GrB_Matrix A = NULL, Y_mangled = NULL, Y_save = NULL ;
+    GrB_Matrix A = NULL, B = NULL, Y_mangled = NULL, Y_save = NULL ;
 
     //--------------------------------------------------------------------------
     // startup GraphBLAS
@@ -88,6 +88,19 @@ void mexFunction
     OK (GrB_Matrix_setElement_FP64 (A, (double) 1.2, 0, 0)) ;
     OK (GrB_Matrix_wait (A, 1)) ;
     OK (GxB_Matrix_fprint (A, "A valid (hypersparse)", 3, NULL)) ;
+
+    OK (GrB_Matrix_new (&B, GrB_FP64, 100, 100)) ;
+    OK (GxB_Matrix_Option_set (B, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE)) ;
+    OK (GrB_Matrix_setElement_FP64 (B, (double) 1.2, 0, 0)) ;
+    OK (GrB_Matrix_wait (B, 1)) ;
+    OK (GrB_Matrix_free (&(B->Y))) ;
+    B->Y = A->Y ;
+    B->Y_shallow = true ;
+    OK (GxB_Matrix_fprint (B, "B valid (shallow hypersparse)", 3, NULL)) ;
+    CHECK (GB_aliased (A, B)) ;
+    OK (GrB_Matrix_free (&B)) ;
+
+    OK (GxB_Matrix_fprint (A, "A still valid (hypersparse)", 3, NULL)) ;
 
     A->Y->i [0] = 99 ;
     ERR (GxB_Matrix_fprint (A, "A->Y invalid (not found) ", 3, NULL)) ;
