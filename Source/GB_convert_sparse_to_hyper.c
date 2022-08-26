@@ -161,10 +161,11 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         }
 
         //----------------------------------------------------------------------
-        // A is now hypersparse
+        // A is now hypersparse, but A->Y is not yet constructed
         //----------------------------------------------------------------------
 
         ASSERT (GB_IS_HYPERSPARSE (A)) ;
+        ASSERT (A->Y == NULL && A->Y_shallow == false) ;
     }
 
     //--------------------------------------------------------------------------

@@ -65,13 +65,12 @@ GrB_Info GB_hypermatrix_prune
             // out of memory
             return (info) ;
         }
-        // free the old A->p, A->h, and A->Y.  If shallow, just remove A->p and
-        // A->h from A but do not free them since they come from another
-        // matrix.
+        // free the old A->p, A->h, and A->Y
         GB_phy_free (A) ;
-        // A->p and A->h are now NULL and thus not shallow
+        // A->p, A->h, A->Y are now NULL and thus not shallow
         ASSERT (!A->p_shallow) ;
         ASSERT (!A->h_shallow) ;
+        ASSERT (!A->Y_shallow) ;
         // transplant the new hyperlist into A
         A->p = Ap_new ; A->p_size = Ap_new_size ;
         A->h = Ah_new ; A->h_size = Ah_new_size ;

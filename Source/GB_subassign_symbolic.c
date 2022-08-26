@@ -75,7 +75,7 @@ GrB_Info GB_subassign_symbolic
     { 
         GB_MATRIX_WAIT_IF_JUMBLED (S) ; // but the caller requires S sorted
         ASSERT (!GB_JUMBLED (S)) ;
-        GB_OK (GB_hyper_hash (S, Context)) ;    // construct S->Y
+        GB_OK (GB_hyper_hash_build (S, Context)) ;    // construct S->Y
     }
 
     //--------------------------------------------------------------------------

@@ -83,7 +83,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         A->h = NULL ;
         A->h_size = 0 ;
         A->h_shallow = false ;
-        GB_Matrix_free (&(A->Y)) ;
+        GB_hyper_hash_free (A) ;
 
     }
     else
@@ -237,7 +237,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
             }
         }
 
-        // free the old A->p and A->h hyperlist content, and also free A->Y;
+        // free the old A->p, A->h, and A->H hyperlist content.
         // this clears A->nvec_nonempty so it must be restored below.
         GB_phy_free (A) ;
 

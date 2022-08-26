@@ -245,7 +245,7 @@ GrB_Info GB_resize              // change the size of a matrix
         ASSERT (GB_IS_HYPERSPARSE (A)) ;
 
         // A->Y will be invalidated, so free it
-        GB_Matrix_free (&(A->Y)) ;
+        GB_hyper_hash_free (A) ;
 
         // resize the number of sparse vectors
         int64_t *restrict Ah = A->h ;

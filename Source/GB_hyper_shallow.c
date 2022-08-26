@@ -49,6 +49,7 @@ GrB_Matrix GB_hyper_shallow         // return C
     C->h = NULL ;
     C->h_shallow = false ;
     C->Y = NULL ;
+    C->Y_shallow = false ;
 
     // flag all content of C as shallow
     C->p_shallow = true ;

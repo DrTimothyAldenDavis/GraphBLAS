@@ -273,8 +273,8 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         {
 
             // create the A->Y and B->Y hyper_hashes
-            GB_OK (GB_hyper_hash (A, Context)) ;
-            GB_OK (GB_hyper_hash (B, Context)) ;
+            GB_OK (GB_hyper_hash_build (A, Context)) ;
+            GB_OK (GB_hyper_hash_build (B, Context)) ;
 
             const int64_t *restrict A_Yp = (A_is_hyper) ? A->Y->p : NULL ;
             const int64_t *restrict A_Yi = (A_is_hyper) ? A->Y->i : NULL ;
@@ -672,7 +672,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             // C is hypersparse
 
             // create the M->Y hyper_hash
-            GB_OK (GB_hyper_hash (M, Context)) ;
+            GB_OK (GB_hyper_hash_build (M, Context)) ;
 
             const int64_t *restrict M_Yp = M->Y->p ;
             const int64_t *restrict M_Yi = M->Y->i ;

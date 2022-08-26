@@ -78,11 +78,7 @@ in $O(e \log e)$ time (or $O(e)$ in some cases), and in practice that
 means GraphBLAS can compute \verb'C(M)=A' for a large problem in under
 a second, while MATLAB takes about 4 to 5 days.
 
-SuiteSparse:GraphBLAS is under the Apache-2.0 license, except for the
-\verb'@GrB' Octave/MATLAB interface, which is licensed under the GNU GPLv3 (or
-later).  Refer to the SPDX license identifier in each file for details.  Note
-that all of the compiled \verb'libgraphblas.so' is under the Apache-2.0
-license.
+SuiteSparse:GraphBLAS is under the Apache-2.0 license.
 
 \end{abstract}
 
@@ -15331,6 +15327,16 @@ GraphBLAS folder.
 %-------------------------------------------------------------------------------
 
 \begin{itemize}
+
+\item Version 7.3.0 (Aug FIXME, 2022)
+
+    \begin{packed_itemize}
+    \item \verb'GrB_Matrix': changes to the internal data structure
+        \item minor internal changes: \verb'A->nvals' for sparse/hypersparse
+        \item more significant cahnges: added hyper-hash for
+        hypersparse case, speeds up many operations on hypersparse matrices.
+    \item \verb'@GrB' MATLAB/Octave interface: changed license to Apache-2.0.
+    \end{packed_itemize}
 
 \item Version 7.2.0 (Aug 8, 2022)
 

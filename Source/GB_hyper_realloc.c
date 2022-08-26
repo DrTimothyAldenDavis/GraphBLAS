@@ -9,6 +9,7 @@
 
 // Change the size of the A->h and A->p hyperlist.
 // No change is made if A is not hypersparse.
+// No change is made to A->Y.
 
 #include "GB.h"
 #include "GB_unused.h"

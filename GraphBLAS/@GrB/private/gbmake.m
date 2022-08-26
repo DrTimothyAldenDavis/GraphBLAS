@@ -17,10 +17,7 @@ function gbmake (what)
 % See also mex, version, GrB.clear.
 %
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
-% SPDX-License-Identifier: GPL-3.0-or-later
-
-fprintf ('Note that this @GrB interface is under the GNU GPLv3 (or later).\n') ;
-input ('Hit enter to confirm and agree; control-C to decline: ') ;
+% SPDX-License-Identifier: Apache-2.0
 
 have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 need_rename = false ;

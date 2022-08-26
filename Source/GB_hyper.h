@@ -50,7 +50,7 @@ GrB_Info GB_hypermatrix_prune
     GB_Context Context
 ) ;
 
-GrB_Info GB_hyper_hash      // construct A->Y if not already constructed
+GrB_Info GB_hyper_hash_build    // construct A->Y if not already constructed
 (
     GrB_Matrix A,
     GB_Context Context

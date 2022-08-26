@@ -35,7 +35,7 @@
 
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_phybix_free (C) ;                     \
+    GB_phybix_free (C) ;                    \
     GB_FREE_WORKSPACE ;                     \
 }
 
@@ -765,7 +765,7 @@ GrB_Info GB_selector
             ASSERT (A->nvec == C_nvec_nonempty) ;
             GB_FREE (&Cp, Cp_size) ;
             // the A->Y hyper_hash is now invalid
-            GB_Matrix_free (&(A->Y)) ;
+            GB_hyper_hash_free (A) ;
         }
         else
         { 

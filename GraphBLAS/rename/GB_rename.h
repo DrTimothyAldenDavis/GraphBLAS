@@ -3765,7 +3765,8 @@
 #define GB_HUF_validateCTable GM_HUF_validateCTable
 #define GB_HUF_writeCTable GM_HUF_writeCTable
 #define GB_HUF_writeCTable_wksp GM_HUF_writeCTable_wksp
-#define GB_hyper_hash GM_hyper_hash
+#define GB_hyper_hash_build GM_hyper_hash_build
+#define GB_hyper_hash_free GM_hyper_hash_free
 #define GB_hypermatrix_prune GM_hypermatrix_prune
 #define GB_hyper_prune GM_hyper_prune
 #define GB_hyper_realloc GM_hyper_realloc

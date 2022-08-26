@@ -97,6 +97,12 @@ void GB_phy_free                // free A->p, A->h, and A->Y of a matrix
     GrB_Matrix A                // matrix with content to free
 ) ;
 
+GB_PUBLIC
+void GB_hyper_hash_free         // free the A->Y hyper_hash of a matrix
+(
+    GrB_Matrix A                // matrix with content to free
+) ;
+
 void GB_phybix_free             // free all content of a matrix
 (
     GrB_Matrix A                // matrix with content to free

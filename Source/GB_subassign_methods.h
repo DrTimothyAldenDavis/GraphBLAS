@@ -78,7 +78,7 @@
     const bool is_matrix = (cvdim > 1) ;
 
 #define GB_GET_C_HYPER_HASH                                                 \
-    GB_OK (GB_hyper_hash (C, Context)) ;                                    \
+    GB_OK (GB_hyper_hash_build (C, Context)) ;                              \
     const int64_t *restrict C_Yp = (C_is_hyper) ? C->Y->p : NULL ;          \
     const int64_t *restrict C_Yi = (C_is_hyper) ? C->Y->i : NULL ;          \
     const int64_t *restrict C_Yx = (C_is_hyper) ? C->Y->x : NULL ;          \
@@ -104,7 +104,7 @@
     const bool M_is_bitmap = GB_IS_BITMAP (M)
 
 #define GB_GET_MASK_HYPER_HASH                                              \
-    GB_OK (GB_hyper_hash (M, Context)) ;                                    \
+    GB_OK (GB_hyper_hash_build (M, Context)) ;                              \
     const int64_t *restrict M_Yp = (M_is_hyper) ? M->Y->p : NULL ;          \
     const int64_t *restrict M_Yi = (M_is_hyper) ? M->Y->i : NULL ;          \
     const int64_t *restrict M_Yx = (M_is_hyper) ? M->Y->x : NULL ;          \

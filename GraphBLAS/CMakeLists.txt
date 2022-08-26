@@ -3,8 +3,7 @@
 #-------------------------------------------------------------------------------
 
 # SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
-# The @GrB interface is under the GNU GPLv3 (or later) license.
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: Apache-2.0.
 
 # CMakeLists.txt: instructions for cmake to build GraphBLAS for use in MATLAB
 # R2021a and following, includes v3.3.3 of GraphBLAS, used by the built-in
@@ -22,10 +21,10 @@ message ( STATUS "CMake version: " ${CMAKE_VERSION} )
 # version must match ../CMakeLists.txt:
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Aug 22, 2022" )
+set ( GraphBLAS_DATE "Aug 25, 2022" )
 set ( GraphBLAS_VERSION_MAJOR 7 )
-set ( GraphBLAS_VERSION_MINOR 2 )
-set ( GraphBLAS_VERSION_SUB   2 )
+set ( GraphBLAS_VERSION_MINOR 3 )
+set ( GraphBLAS_VERSION_SUB   0 )
 
 message ( STATUS "Building SuiteSparse:GraphBLAS version: v" ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}  " date: " ${GraphBLAS_DATE} )
 

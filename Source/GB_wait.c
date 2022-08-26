@@ -502,7 +502,7 @@ GrB_Info GB_wait                // finish all pending computations
         A->nvec_nonempty = -1 ;     // recomputed just below
 
         // A->h has been modified so A->Y is now invalid
-        GB_Matrix_free (&(A->Y)) ;
+        GB_hyper_hash_free (A) ;
 
         ASSERT_MATRIX_OK (A, "A after GB_wait:append", GB0) ;
 

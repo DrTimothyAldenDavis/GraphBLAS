@@ -23,16 +23,16 @@ GrB_Info GB_block   // apply all pending computations if blocking mode enabled
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (A != NULL) ;
 
     //--------------------------------------------------------------------------
     // wait if mode is blocking, or if too many pending tuples
     //--------------------------------------------------------------------------
 
-    if (!GB_ANY_PENDING_WORK (A))
+    if (!GB_ANY_PENDING_WORK (A) || !GB_NEED_HYPER_HASH (A))
     { 
         // no pending work, so no need to block
-        // FIXME: also block if A->Y needs to be computed
         return (GrB_SUCCESS) ;
     }
 
@@ -44,8 +44,10 @@ GrB_Info GB_block   // apply all pending computations if blocking mode enabled
 
     if (many_pending || blocking)
     { 
-        // delete any lingering zombies and assemble any pending tuples
-        GB_MATRIX_WAIT (A) ;
+        // delete any lingering zombies, assemble any pending tuples,
+        // sort the vectors, and construct the A->Y hyper_hash
+        GB_OK (GB_wait (A, "matrix", Context)) ;
+        GB_OK (GB_hyper_hash_build (A, Context)) ;
     }
     return (GrB_SUCCESS) ;
 }

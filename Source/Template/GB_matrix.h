@@ -241,7 +241,7 @@ size_t x_size ;         // exact size of A->x in bytes, zero if A->x is NULL
         avdim = A->vdim
         Ah = A->h
         nhash is the size of the hash table Y, which is always a power of 2.
-            Its size is determined by GB_hyper_hash.
+            Its size is determined by GB_hyper_hash_build.
 
     Then A->Y has dimension Y->vdim = nhash (one vector in Y for each hash
     bucket), and Y->vlen = avdim.  If Y is considered as held in column-format,
@@ -455,9 +455,10 @@ int sparsity_control ;  // controls sparsity structure: hypersparse,
 
 // Internal matrices in this implementation of GraphBLAS may have "shallow"
 // components.  These are pointers A->p, A->h, A->i, A->b, and A->x that point
-// to the content of another matrix.  Using shallow components speeds up
-// computations and saves memory, but shallow matrices are never passed back to
-// the user application.
+// to the content of another matrix, or A->Y which points to the Y hyper_hash
+// of another matrix.  Using shallow components speeds up computations and
+// saves memory, but shallow matrices are never passed back to the user
+// application.
 
 // If the following are true, then the corresponding component of the
 // object is a pointer into components of another object.  They must not
@@ -468,6 +469,7 @@ bool h_shallow ;        // true if h is a shallow copy
 bool b_shallow ;        // true if b is a shallow copy
 bool i_shallow ;        // true if i is a shallow copy
 bool x_shallow ;        // true if x is a shallow copy
+bool Y_shallow ;        // true if Y is a shallow matrix
 bool static_header ;    // true if this struct is statically allocated
 
 //------------------------------------------------------------------------------
