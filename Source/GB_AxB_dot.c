@@ -173,8 +173,8 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         GrB_Info info ;
 
         // construct the hyper hashes for A and B
-        GB_OK (GB_hyper_hash (A, Context)) ;
-        GB_OK (GB_hyper_hash (B, Context)) ;
+        GB_OK (GB_hyper_hash_build (A, Context)) ;
+        GB_OK (GB_hyper_hash_build (B, Context)) ;
 
         #if defined ( GBCUDA )
         if (!C_iso &&   // FIXME for CUDA, remove and create C iso on output

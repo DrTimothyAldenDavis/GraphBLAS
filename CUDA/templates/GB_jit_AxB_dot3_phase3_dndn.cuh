@@ -117,10 +117,10 @@ __global__ void AxB_dot3_phase3_dndn
           T_C *__restrict__ Cx = (T_C *)C->x  ;
           int64_t *__restrict__ Ci = C->i ;
     const int64_t *__restrict__ Mi = M->i ;
-    const int64_t *__restrict__ Ai = A->i ;
-    const int64_t *__restrict__ Bi = B->i ;
-    const int64_t *__restrict__ Ap = A->p ;
-    const int64_t *__restrict__ Bp = B->p ;
+    #if GB_M_IS_HYPER
+    const int64_t *__restrict__ Mh = M->h ;
+    #endif
+    // A and B are either bitmap or full
     #if GB_A_IS_BITMAP
     const int8_t  *__restrict__ Ab = A->b ;
     #endif
@@ -135,8 +135,8 @@ __global__ void AxB_dot3_phase3_dndn
     int64_t end   = M->p[M->nvec];
 
     // total items to be inspected
-    int64_t nnzA = 0;
-    int64_t nnzB = 0;
+    int64_t nnzA = A->vlen;
+    int64_t nnzB = B->vlen;
     int s = blockDim.x;
 
     // Main loop over pairs 
@@ -147,7 +147,7 @@ __global__ void AxB_dot3_phase3_dndn
 
         // get M(i,j) and C(i,j)
         int64_t i = Mi[pair_id];
-        int64_t kk = Ci[pair_id] >> 4;      // FIXME: remove ">> 4"
+        int64_t kk = Ci[pair_id] >> 4;      // FIXME: can remove ">> 4"
         bool cij_exists = false ;
         T_Z cij = GB_IDENTITY ;
 
@@ -156,15 +156,17 @@ __global__ void AxB_dot3_phase3_dndn
         {
 
             // j = kk or j = Mh [kk] if C and M are hypersparse
-            int64_t j = kk ;    // FIXME
+            #if GB_M_IS_HYPER
+            int64_t j = Mh [kk] ;
+            #else
+            int64_t j = kk ;
+            #endif
 
-            int64_t pA   = (A->vlen)*i;
-            int64_t xend = pA +(A->vlen);
-            nnzA = xend - pA;
+            int64_t pA     = (A->vlen)*i;
+            int64_t pA_end = pA +(A->vlen);
 
-            int64_t pB   = (B->vlen)*j;
-            int64_t yend = pB +(B->vlen);
-            nnzB = yend - pB;
+            int64_t pB     = (B->vlen)*j;
+            int64_t pB_end = pB +(B->vlen);
 
             //      if (threadIdx.x == 0 ){
             //          printf("tid=%d, i,j = %d,%d  nnzA= %d, nnzB=%d\n",

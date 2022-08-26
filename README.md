@@ -4,11 +4,7 @@ SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 
 SPDX-License-Identifier: Apache-2.0
 
-For the GraphBLAS/GraphBLAS Octave/MATLAB interface *only*:
-SPDX-License-Identifier: GPL-3.0-or-later
-(see below for a discussion of the licensing of this package).
-
-VERSION 7.2.2, Aug 22, 2022
+VERSION 7.3.0, Aug 25, 2022
 
 SuiteSparse:GraphBLAS is a complete implementation of the GraphBLAS standard,
 which defines a set of sparse matrix operations on an extended algebra of
@@ -76,11 +72,7 @@ Doc:            SuiteSparse:GraphBLAS User Guide and license
 GraphBLAS:      the @GrB Octave/MATLAB interface, including its test suite and
                 demos.  This folder is called 'GraphBLAS' so that typing 'help
                 graphblas' or 'doc graphblas' in the Octave or MATLAB Command
-                Window can locate the Contents.m file.  Note that this folder
-                and all its contents are under the GNU GPLv3 (or later), not
-                Apache-2.0.  All other components of GraphBLAS (in particular,
-                all code in libgraphblas.so, and the entire CUDA folder) are
-                licensed as Apache-2.0.
+                Window can locate the Contents.m file.
 
 Include:        user-accessible include file, GraphBLAS.h
 
@@ -188,21 +180,12 @@ create.  If you are using GraphBLAS in a commercial closed-source product and
 are not supporting its development, please consider supporting this project
 to ensure that it will continue to be developed and enhanced in the future.
 
-The Octave/MATLAB interface is now licensed under the GNU GPLv3.0 (or later)
-license, so if any code from the GraphBLAS/GraphBLAS folder is needed in a
-commercial closed-source application, you will either need to license your
-commercial application as GNU GPLv3.0, or you can ask me for a non-GNU and
-non-Apache license.
-
-This licensing change has no impact at all on the use of GraphBLAS in Octave,
-since Octave itself is already under the GNU GPLv3.0 license.
-
 To support the development of GraphBLAS, contact the author (davis@tamu.edu) or
 the Texas A&M Foundation (True Brown, tbrown@txamfoundation.com; or Kevin
 McGinnis, kmcginnis@txamfoundation.com) for details.
 
 SuiteSparse:GraphBLAS, is copyrighted by Timothy A. Davis, (c) 2017-2022, All
-Rights Reserved.  davis@tamu.edu.  Contact me if you need a non-GNU license.
+Rights Reserved.  davis@tamu.edu.
 
 --------------------------------------------------------------------------------
 

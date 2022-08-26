@@ -19,10 +19,10 @@ message ( STATUS "GrapphBLAS build:  " ${CMAKE_BINARY_DIR} )
 message ( STATUS "CMake version: " ${CMAKE_VERSION} )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Aug 22, 2022" )
+set ( GraphBLAS_DATE "Aug 25, 2022" )
 set ( GraphBLAS_VERSION_MAJOR 7 )
-set ( GraphBLAS_VERSION_MINOR 2 )
-set ( GraphBLAS_VERSION_SUB   2 )
+set ( GraphBLAS_VERSION_MINOR 3 )
+set ( GraphBLAS_VERSION_SUB   0 )
 
 message ( STATUS "Building SuiteSparse:GraphBLAS version: v" ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}  " date: " ${GraphBLAS_DATE} )
 
@@ -102,8 +102,7 @@ endif ( )
 
 if ( CMAKE_CUDA )
     # for CUDA development only; not for production use
-    # FIXME
-    set ( CMAKE_CUDA_DEV on )
+    set ( CMAKE_CUDA_DEV off )
     project ( graphblas
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES CUDA C )

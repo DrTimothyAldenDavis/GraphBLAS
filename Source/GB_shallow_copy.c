@@ -88,11 +88,8 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     // make a shallow copy of the A->Y hyper_hash
     //--------------------------------------------------------------------------
 
-    // FIXME:  add A->Y_shallow to the GrB_Matrix
-    /*
     C->Y = A->Y ;
-    A->Y_shallow = true ;
-    */
+    C->Y_shallow = (A->Y != NULL) ;
 
     //--------------------------------------------------------------------------
     // check for empty matrix

@@ -30,7 +30,8 @@ GrB_Info GB_memoryUsage     // count # allocated blocks and their sizes
     // count the allocated blocks and their sizes
     //--------------------------------------------------------------------------
 
-    // a matrix contains 0 to 10 dynamically malloc'd blocks
+    // a matrix contains 0 to 10 dynamically malloc'd blocks, not including
+    // A->Y
     (*nallocs) = 0 ;
     (*mem_deep) = 0 ;
     (*mem_shallow) = 0 ;
@@ -136,6 +137,17 @@ GrB_Info GB_memoryUsage     // count # allocated blocks and their sizes
     { 
         (*nallocs)++ ;
         (*mem_deep) += Pending->x_size ;
+    }
+
+    if (A->Y != NULL && !A->Y_shallow)
+    {
+        int64_t Y_nallocs = 0 ;
+        size_t Y_mem_deep = 0 ;
+        size_t Y_mem_shallow = 0 ;
+        GB_memoryUsage (&Y_nallocs, &Y_mem_deep, &Y_mem_shallow, A->Y) ;
+        (*nallocs) += Y_nallocs ;
+        (*mem_deep) += Y_mem_deep ;
+        (*mem_shallow) += Y_mem_shallow ;
     }
 
     #pragma omp flush

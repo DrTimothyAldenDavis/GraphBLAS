@@ -85,7 +85,7 @@ GrB_Info GB_subassign_06n
     const bool A_is_hyper = (Ah != NULL) ;
     GrB_BinaryOp accum = NULL ;
 
-    GB_OK (GB_hyper_hash (A, Context)) ;
+    GB_OK (GB_hyper_hash_build (A, Context)) ;
     const int64_t *restrict A_Yp = (A_is_hyper) ? A->Y->p : NULL ;
     const int64_t *restrict A_Yi = (A_is_hyper) ? A->Y->i : NULL ;
     const int64_t *restrict A_Yx = (A_is_hyper) ? A->Y->x : NULL ;

@@ -189,8 +189,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //--------------------------------------------------------------------------
 
 // double t = omp_get_wtime ( ) ;
-    GB_OK (GB_hyper_hash (M, Context)) ;    // does nothing if M is NULL
-    GB_OK (GB_hyper_hash (A, Context)) ;
+    GB_OK (GB_hyper_hash_build (M, Context)) ;    // does nothing if M is NULL
+    GB_OK (GB_hyper_hash_build (A, Context)) ;
 // t = omp_get_wtime ( ) - t ;
 // printf ("Hyper time: %g\n", t) ;
 

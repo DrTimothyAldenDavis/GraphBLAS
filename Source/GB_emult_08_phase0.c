@@ -420,7 +420,7 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         }
 
         // create the M->Y hyper_hash
-        GB_OK (GB_hyper_hash (M, Context)) ;
+        GB_OK (GB_hyper_hash_build (M, Context)) ;
 
         const int64_t *restrict Mp = M->p ;
         const int64_t *restrict M_Yp = M->Y->p ;
@@ -458,7 +458,7 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         }
 
         // create the A->Y hyper_hash
-        GB_OK (GB_hyper_hash (A, Context)) ;
+        GB_OK (GB_hyper_hash_build (A, Context)) ;
 
         const int64_t *restrict Ap = A->p ;
         const int64_t *restrict A_Yp = A->Y->p ;
@@ -496,7 +496,7 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         }
 
         // create the B->Y hyper_hash
-        GB_OK (GB_hyper_hash (B, Context)) ;
+        GB_OK (GB_hyper_hash_build (B, Context)) ;
 
         const int64_t *restrict Bp = B->p ;
         const int64_t *restrict B_Yp = B->Y->p ;

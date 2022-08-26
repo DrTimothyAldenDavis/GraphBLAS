@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_hyper_hash: construct A->Y for a hypersparse matrix A
+// GB_hyper_hash_build: construct A->Y for a hypersparse matrix A
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -23,7 +23,7 @@
 #include "GB_build.h"
 #include "GB_hash.h"
 
-GrB_Info GB_hyper_hash      // construct A->Y if not already constructed
+GrB_Info GB_hyper_hash_build    // construct A->Y if not already constructed
 (
     GrB_Matrix A,
     GB_Context Context

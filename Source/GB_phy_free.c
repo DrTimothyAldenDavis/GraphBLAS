@@ -56,7 +56,7 @@ void GB_phy_free                // free A->p, A->h, and A->Y of a matrix
     A->nvals = 0 ;
     A->nvec_nonempty = 0 ;
 
-    GB_Matrix_free (&(A->Y)) ;
+    GB_hyper_hash_free (A) ;
 
     //--------------------------------------------------------------------------
     // set the status to invalid

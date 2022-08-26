@@ -17,6 +17,12 @@
 // C->hyper_switch, C->bitmap_switch, C->sparsity_control, and C->static_header
 // are not modified by the transplant.
 
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_phybix_free (C) ;            \
+    GB_Matrix_free (Ahandle) ;      \
+}
+
 #include "GB.h"
 
 GrB_Info GB_transplant          // transplant one matrix into another
@@ -32,6 +38,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (Ahandle != NULL) ;
     GrB_Matrix A = *Ahandle ;
     ASSERT (!GB_aliased (C, A)) ;
@@ -91,11 +98,34 @@ GrB_Info GB_transplant          // transplant one matrix into another
     ASSERT (C->b == NULL) ;
     ASSERT (C->i == NULL) ;
     ASSERT (C->x == NULL) ;
+    ASSERT (C->Y == NULL) ;
     ASSERT (C->Pending == NULL) ;
 
     // determine if C should be constructed as a bitmap or full matrix
+    bool C_is_hyper = GB_IS_HYPERSPARSE (A) ;
     bool C_is_bitmap = GB_IS_BITMAP (A) ;
-    bool C_is_full = GB_as_if_full (A) && !C_is_bitmap ;
+    bool C_is_full = GB_as_if_full (A) && !C_is_bitmap && !C_is_hyper ;
+
+    //--------------------------------------------------------------------------
+    // transplant A->Y into C->Y
+    //--------------------------------------------------------------------------
+
+    if (C_is_hyper && A->Y != NULL)
+    {
+        if (A->Y_shallow || GB_is_shallow (A->Y))
+        {
+            // A->Y is shallow, so create a deep copy for C
+            GB_OK (GB_dup (&(C->Y), A->Y, Context)) ;
+        }
+        else
+        {
+            // A->Y is not shallow, so transplant it into C
+            C->Y = A->Y ;
+            A->Y = NULL ;
+            A->Y_shallow = false ;
+        }
+        C->Y_shallow = false ;
+    }
 
     //--------------------------------------------------------------------------
     // transplant pending tuples from A to C
@@ -144,8 +174,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (!ok)
     { 
         // out of memory
-        GB_phybix_free (C) ;
-        GB_Matrix_free (Ahandle) ;
+        GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -224,8 +253,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
             if (C->p == NULL || C->h == NULL)
             { 
                 // out of memory
-                GB_phybix_free (C) ;
-                GB_Matrix_free (Ahandle) ;
+                GB_FREE_ALL ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
 
@@ -242,16 +270,13 @@ GrB_Info GB_transplant          // transplant one matrix into another
             if (C->p == NULL)
             { 
                 // out of memory
-                GB_phybix_free (C) ;
-                GB_Matrix_free (Ahandle) ;
+                GB_FREE_ALL ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
 
             // copy A->p into the newly created C->p
             GB_memcpy (C->p, A->p, (avdim+1) * sizeof (int64_t), nth) ;
         }
-
-        // FIXME: transplant A->Y into C
 
         // free any non-shallow A->p and A->h content of A
         GB_phy_free (A) ;
@@ -371,13 +396,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
     }
 
     C->b_shallow = false ;
-
-    //--------------------------------------------------------------------------
-    // transplant A->Y
-    //--------------------------------------------------------------------------
-
-    C->Y = A->Y ;
-    A->Y = NULL ;
 
     //--------------------------------------------------------------------------
     // free A and return result

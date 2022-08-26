@@ -102,6 +102,9 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     ASSERT (A->vlen == B->vlen) ;
     GBURBLE ("(GPU dot3) ") ;
+    printf ("\nM -------------\n") ; GxB_Matrix_fprint (M, "M", GxB_SHORT, stdout) ;
+    printf ("\nA -------------\n") ; GxB_Matrix_fprint (A, "A", GxB_SHORT, stdout) ;
+    printf ("\nB -------------\n") ; GxB_Matrix_fprint (B, "B", GxB_SHORT, stdout) ;
 
     //--------------------------------------------------------------------------
     // initializations
@@ -247,14 +250,28 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 //      A full          B bit
 //      A bit           B bit
 
-    if ((GB_IS_FULL(A) || GB_IS_BITMAP(A)) &&
-        (GB_IS_FULL(B) || GB_IS_BITMAP(B)))
+    bool A_is_sparse = GB_IS_SPARSE (A) ;
+    bool A_is_hyper  = GB_IS_HYPERSPARSE (A) ;
+    bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    bool A_is_full   = GB_IS_FULL (A) ;
+    bool A_is_sparse_or_hyper = A_is_sparse || A_is_hyper ;
+    bool A_is_bitmap_or_full  = A_is_bitmap || A_is_full  ;
+
+    bool B_is_sparse = GB_IS_SPARSE (B) ;
+    bool B_is_hyper  = GB_IS_HYPERSPARSE (B) ;
+    bool B_is_bitmap = GB_IS_BITMAP (B) ;
+    bool B_is_full   = GB_IS_FULL (B) ;
+    bool B_is_sparse_or_hyper = B_is_sparse || B_is_hyper ;
+    bool B_is_bitmap_or_full  = B_is_bitmap || B_is_full  ;
+
+    if (A_is_bitmap_or_full && B_is_bitmap_or_full)
     {
 
         // Full x Full
         // Full x Bitmap
         // Bitmap x Full
         // Bitmap x Bitmap
+
         dense_phase1launchFactory dp1lf(my_mxm_spec);
 
         GBURBLE ("(GPU phase1 start nblk = %d) ", dp1lf.get_number_of_blocks(M)) ;
@@ -274,12 +291,12 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
                    kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
 
     }
-    else if ( GB_IS_SPARSE(A) && GB_IS_FULL(B) )
+    else if ( A_is_sparse_or_hyper && B_is_bitmap_or_full)
     {
 
         // (2) Sparse x Full
         //      A sparse        B full
-        //      A hyper         B full      GB_IS_HYPERSPARSE(A) && GB_IS_FULL (B))
+        //      A hyper         B full
         //      A sparse        B bit
         //      A hyper         B bit
 
@@ -302,39 +319,27 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
                    kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
 
     }
-    else if ( GB_IS_HYPERSPARSE(A) && GB_IS_FULL(B) )
+    else if (A_is_bitmap_or_full && B_is_sparse_or_hyper)
     {
-        //  FIXME: Hyper x Full 
+
+        // (3)
+        //      A full          B sparse
+        //      A bit           B sparse
+        //      A full          B hyper
+        //      A bit           B hyper
+
+        // FIXME
     }
-    else if ( GB_IS_SPARSE(A) && GB_IS_BITMAP(B) )
-    {
-        //  FIXME: Sparse x Bitmap 
-    }
-    else if ( GB_IS_HYPERSPARSE(A) && GB_IS_BITMAP(B) )
-    {
-        //  FIXME: Hyper x Bitmap
-    }
-
-// (3)
-//      A full          B sparse
-//      A bit           B sparse
-//      A full          B hyper
-//      A bit           B hyper
-
-// (4) phase1, phase2, phase2end, phase3:
-//      A sparse        B sparse    <<<
-//      A hyper         B sparse
-//      A sparse        B hyper
-//      A hyper         B hyper
-
-
-//          && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B)
-//          && !GB_IS_FULL (A) && !GB_IS_FULL (B))
-
-    else if ( GB_IS_SPARSE(A) && GB_IS_SPARSE(B) )
+    else if ( A_is_sparse_or_hyper && B_is_sparse_or_hyper )
     {
 
-    // Sparse x Sparse
+        // Sparse x Sparse
+
+        // (4) phase1, phase2, phase2end, phase3:
+        //      A sparse        B sparse    <<<
+        //      A hyper         B sparse
+        //      A sparse        B hyper
+        //      A hyper         B hyper
 
     //--------------------------------------------------------------------------
     // construct the tasks for phase1 and phase2
@@ -527,6 +532,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     GB_FREE_WORKSPACE ;
     }
+
 
     CHECK_CUDA_SIMPLE(cudaStreamSynchronize(stream));
     CHECK_CUDA_SIMPLE(cudaStreamDestroy(stream));
