@@ -53,6 +53,14 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     GrB_Info info ;
     ASSERT (C != NULL) ;
     GB_RETURN_IF_NULL (scalar) ;
+    ASSERT_MATRIX_OK (C, "C input for setElement", GB0) ;
+//  if (C->p != NULL)
+//      for (int64_t k = 0 ; k <= C->nvec ; k++) printf ("Cp [%ld] = %ld\n",
+//          k, C->p [k]) ;
+//  if (C->h != NULL)
+//      for (int64_t k = 0 ; k < C->nvec ; k++) printf ("Ch [%ld] = %ld\n",
+//          k, C->h [k]) ;
+//  printf ("setElement, row %lu col %lu code %d\n", row, col, scalar_code) ;
 
     if (row >= GB_NROWS (C))
     { 
@@ -145,12 +153,15 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             convert_to_non_iso = (memcmp (C->x, scalar, csize) != 0) ;
         }
 
+//      printf ("Converting to non-iso\n") ;
+
         if (convert_to_non_iso)
         { 
             // The new entry differs from the iso value of C.  Assemble all
             // pending tuples and convert C to non-iso.  Zombies are OK.
             if (C->Pending != NULL)
             { 
+// printf ("do the wait before convert to non-iso\n") ;
                 GB_OK (GB_wait (C, "C (setElement:to non-iso)", Context)) ;
             }
             GB_OK (GB_convert_any_to_non_iso (C, true, Context)) ;
@@ -197,9 +208,13 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     }
 
     int64_t pleft ;
-    bool found ;
+    bool found = false ;
     bool is_zombie ;
     bool C_is_bitmap = GB_IS_BITMAP (C) ;
+    C_is_full = GB_IS_FULL (C) ;
+
+    ASSERT_MATRIX_OK (C, "C start the search for setElement", GB0) ;
+//        printf ("here C->h is %p C->p is %p\n", C->h, C->p) ;
 
     if (C_is_full || C_is_bitmap)
     { 
@@ -211,6 +226,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         pleft = i + j * C->vlen ;
         found = true ;
         is_zombie = false ;
+//      printf ("C is full or bitmap\n") ;
 
     }
     else
@@ -222,8 +238,21 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
 
         int64_t pC_start, pC_end, pright = C->nvec - 1 ;
         pleft = 0 ;
+//      printf ("look for j: pleft %ld pright %ld\n", pleft, pright) ;
+
+//      printf ("before lookup C->h is %p C->p is %p\n", C->h, C->p) ;
         found = GB_lookup (C->h != NULL, C->h, C->p, C->vlen, &pleft,
             pright, j, &pC_start, &pC_end) ;
+
+//      printf ("found %d pleft %ld pright %ld\n", found, pleft, pright) ;
+//      printf ("here pC_start %ld pC_end %ld\n", pC_start, pC_end) ;
+//      printf ("C->h is %p C->p is %p\n", C->h, C->p) ;
+//      if (C->h == NULL)
+//      {
+//          printf ("C is sparse, Cp [j] = %ld, Cp [j+1] = %ld\n",
+//              C->p [j],
+//              C->p [j+1]) ;
+//      }
 
         //----------------------------------------------------------------------
         // binary search in kth vector for index i
@@ -234,11 +263,15 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             // vector j has been found; now look for index i
             pleft = pC_start ;
             pright = pC_end - 1 ;
+//          printf ("look for i: pleft %ld pright %ld\n", pleft, pright) ;
 
             // Time taken for this step is at most O(log(nnz(C(:,j))).
             const int64_t *restrict Ci = C->i ;
             GB_BINARY_SEARCH_ZOMBIE (i, Ci, pleft, pright, found, C->nzombies,
                 is_zombie) ;
+
+ //     printf ("now found %d pleft %ld pright %ld\n", found, pleft, pright) ;
+
         }
     }
 
@@ -384,6 +417,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             // tuples, so this recursion will only happen once.  The
             // pending operator will become the implicit SECOND_ctype, or
             // accum, and the type of the pending tuples will become stype.
+//          printf ("wait\n") ;
             return (GB_setElement (C, accum, scalar, row, col, scalar_code,
                 Context)) ;
 

@@ -8,7 +8,8 @@
 //------------------------------------------------------------------------------
 
 // for code development only:
-// #define GB_DEVELOPER 1
+// FIXME
+#define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
 #include "GB.h"
