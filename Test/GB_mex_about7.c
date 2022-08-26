@@ -96,7 +96,13 @@ void mexFunction
     OK (GrB_Matrix_free (&(B->Y))) ;
     B->Y = A->Y ;
     B->Y_shallow = true ;
-    OK (GxB_Matrix_fprint (B, "B valid (shallow hypersparse)", 3, NULL)) ;
+    GB_Global_print_mem_shallow_set (true) ;
+    OK (GxB_Matrix_fprint (B,
+        "B valid (shallow hypersparse: print_mem_shallow true)", 3, NULL)) ;
+    GB_Global_print_mem_shallow_set (false) ;
+    OK (GxB_Matrix_fprint (B,
+        "B valid (shallow hypersparse: print_mem_shallow false)", 3, NULL)) ;
+
     CHECK (GB_aliased (A, B)) ;
     OK (GrB_Matrix_free (&B)) ;
 

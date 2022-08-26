@@ -12,13 +12,14 @@ function gbmake (what)
 % libgraphblas.dylib.  It cannot be used where it is created in ../build,
 % because of the default Mac security settings.  For Unix/Linux, the library
 % used is ../build/libgraphblas.so if found, or in /usr/local/lib if not found
-% there.
+% there.  For MATLAB R2021a and later, libgraphblas_renamed is used.
 %
 % See also mex, version, GrB.clear.
 %
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+help gbmake
 have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 need_rename = false ;
 
@@ -124,10 +125,6 @@ else
 end
 
 if (need_rename)
-    fprintf ('R2021a and later include an earlier version of\n') ;
-    fprintf ('GraphBLAS, as a built-in library.  This interface to the\n') ;
-    fprintf ('latest version of GraphBLAS links against a library with\n') ;
-    fprintf ('with renamed symbols, to avoid a library conflict.\n') ;
     flags = [flags ' -DGBRENAME=1 ' ] ;
     inc = [inc ' -I../../rename ' ] ;
     libgraphblas = '-lgraphblas_renamed' ;

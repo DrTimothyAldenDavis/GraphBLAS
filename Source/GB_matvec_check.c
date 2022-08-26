@@ -8,8 +8,13 @@
 //------------------------------------------------------------------------------
 
 // for code development only:
-// FIXME
+#ifdef GBCUDA
+// CUDA kernels enabled: turn on developer flag
 #define GB_DEVELOPER 1
+#else
+// in production: turn off developer flag
+#define GB_DEVELOPER 0
+#endif
 
 #include "GB_Pending.h"
 #include "GB.h"
@@ -31,6 +36,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // decide what to print
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     bool is_hyper = GB_IS_HYPERSPARSE (A) ;
     bool is_full = GB_IS_FULL (A) ;
     bool is_bitmap = GB_IS_BITMAP (A) ;
@@ -278,13 +284,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     int64_t nallocs ;
     size_t mem_deep, mem_shallow, memsize ;
-    GrB_Info info = GB_memoryUsage (&nallocs, &mem_deep, &mem_shallow, A) ;
-    if (info != GrB_SUCCESS)
-    {
-        GBPR0 ("  internal memory error\n") ;
-        return (info) ;
-    }
-
+    GB_memoryUsage (&nallocs, &mem_deep, &mem_shallow, A) ;
     memsize = mem_deep + (pr_mem_shallow ? mem_shallow : 0) ;
 
     #if GB_DEVELOPER

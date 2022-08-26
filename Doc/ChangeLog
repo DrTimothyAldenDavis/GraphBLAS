@@ -2,7 +2,7 @@ Version 7.3.0, Aug FIXME, 2022
 
     * GrB_Matrix: changes to the internal data structure
         * minor internal changes: A->nvals for sparse/hypersparse
-        * more significant cahnges: added A->Y hyper_hash for hypersparse case,
+        * more significant changes: added A->Y hyper_hash for hypersparse case,
             speeds up GrB_mxm (C=A*B, C<M>=A*B' (for CSR A'*B for CSC)),
             C<M>=A+B (eWiseAdd), C<M>A.*B (eWiseMult), some cases for
             GrB_assign, for hypersparse matrices.
