@@ -72,7 +72,11 @@ GrB_Info GB_hyper_hash_build    // construct A->Y if not already constructed
 // pstart and pend are defined for all sparsity structures: hypersparse,
 // sparse, bitmap, or full.
 
-static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
+// With the introduction of the hyper_hash, this is used only for debugging.
+
+#ifdef GB_DEBUG
+
+static inline bool GB_lookup        // find j = Ah [k] (for debugging only)
 (
     // input:
     const bool A_is_hyper,          // true if A is hypersparse
@@ -95,14 +99,14 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
         bool found ;
         GB_BINARY_SEARCH (j, Ah, (*pleft), pright, found) ;
         if (found)
-        { 
+        {
             // j appears in the hyperlist at Ah [pleft]
             // k = (*pleft)
             (*pstart) = Ap [(*pleft)] ;
             (*pend)   = Ap [(*pleft)+1] ;
         }
         else
-        { 
+        {
             // j does not appear in the hyperlist Ah
             // k = -1
             (*pstart) = -1 ;
@@ -111,7 +115,7 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
         return (found) ;
     }
     else
-    { 
+    {
         // A is sparse, bitmap, or full; j always appears
         // k = j
         (*pstart) = GBP (Ap, j, avlen) ;
@@ -120,5 +124,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
     }
 }
 
+#endif
 #endif
 

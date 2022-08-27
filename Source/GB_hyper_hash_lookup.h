@@ -57,7 +57,7 @@ int64_t GB_hyper_hash_lookup  // k if j==Ah[k], or -1 if not found
         for (int64_t p = ypstart ; p < ypend ; p++)
         {
             if (j == Yi [p])
-            {
+            { 
                 // found: j = Ah [k] where k is given by k = Yx [p]
                 k = Yx [p] ;
                 break ;
@@ -65,13 +65,13 @@ int64_t GB_hyper_hash_lookup  // k if j==Ah[k], or -1 if not found
         }
     }
     if (k >= 0)
-    {
+    { 
         // found: j == Ah [k], get the vector A(:,j)
         (*pstart) = Ap [k] ;
         (*pend  ) = Ap [k+1] ;
     }
     else
-    {
+    { 
         // not found: j is not in the hyperlist Ah [0..anvec-1]
         (*pstart) = -1 ;
         (*pend  ) = -1 ;
