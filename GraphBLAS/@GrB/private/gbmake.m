@@ -6,7 +6,7 @@ function gbmake (what)
 %
 % gbmake compiles the @GrB interface for SuiteSparse:GraphBLAS.  The
 % GraphBLAS library must already be compiled and installed.
-% Octave 7 (recommended) or MATLAB 9.4 (R2018a) or later is required.
+% MATLAB 9.4 (R2018a) or Octave 7 later is required.
 %
 % For the Mac, the GraphBLAS library must be installed in /usr/local/lib/ as
 % libgraphblas.dylib.  It cannot be used where it is created in ../build,
