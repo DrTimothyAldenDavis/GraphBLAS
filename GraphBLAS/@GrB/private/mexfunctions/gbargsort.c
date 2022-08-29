@@ -116,8 +116,7 @@ void mexFunction
     // sort the matrix
     //--------------------------------------------------------------------------
 
-    GrB_Info info = (GxB_Matrix_sort (C, P, op, A, desc)) ;
-    OK (info) ;
+    OK (GxB_Matrix_sort (C, P, op, A, desc)) ;
 
     //--------------------------------------------------------------------------
     // add 1 to the entries in P, to convert to 1-based indexing

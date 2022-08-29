@@ -18,7 +18,7 @@ for k = 1:length(types)
     B = GrB.deserialize (blob) ;
     assert (isequal (A, B)) ;
 
-    for k2 = 1:4
+    for k2 = 1:5
         method = compression_methods {k2} ;
 
         % default level

@@ -17,10 +17,6 @@ if (isobject (G))
     G = G.opaque ;
 end
 
-[mold, nold, ~] = gbsize (G) ;
-mold = int64 (mold) ;
-nold = int64 (nold) ;
-
 % the third output of gb_parse_args is not actually a type, but 'by row', 'by
 % col', or 'double' if not present on input.
 [mnew, nnew, type] = gb_parse_args ('reshape', varargin {:}) ;
