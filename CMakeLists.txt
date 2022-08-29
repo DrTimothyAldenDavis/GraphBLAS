@@ -547,7 +547,7 @@ endif ( )
 # dump all variables, for debugging only
 #-------------------------------------------------------------------------------
 
-# uncomment this line to dump all cmake variables:
+# uncomment this line or add -DDUMP=true to your cmake call to dump all cmake variables:
 # set ( DUMP true )
 
 if ( DUMP )
