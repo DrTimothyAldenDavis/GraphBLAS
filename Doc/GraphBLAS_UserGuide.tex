@@ -6741,6 +6741,12 @@ This method takes $O(1)$ time if the matrix is already in HyperCSR format
 internally.  Otherwise, the matrix is converted to HyperCSR format and then
 unpacked.
 
+In v7.3.0 and later, a hypersparse matrix A also may include a hash table for
+\verb'Ah', called the {\em hyper-hash}, based on \cite{Green19}.  It allows
+for fast lookups of entries in \verb'Ah'.  The hyper-hash is not exported
+by this method.  Instead, it is discarded.  If the matrix is re-imported,
+it is recomputed from \verb'Ah' when needed.
+
 \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_pack\_HyperCSC:} pack a HyperCSC matrix}
@@ -6838,6 +6844,12 @@ Section~\ref{matrix_pack_hypercsc}.
 This method takes $O(1)$ time if the matrix is already in HyperCSC format
 internally.  Otherwise, the matrix is converted to HyperCSC format and then
 unpacked.
+
+In v7.3.0 and later, a hypersparse matrix A also may include a hash table for
+\verb'Ah', called the {\em hyper-hash}, based on \cite{Green19}.  It allows
+for fast lookups of entries in \verb'Ah'.  The hyper-hash is not exported
+by this method.  Instead, it is discarded.  If the matrix is re-imported,
+it is recomputed from \verb'Ah' when needed.
 
 
 \newpage
@@ -15335,6 +15347,7 @@ GraphBLAS folder.
         \item minor internal changes: \verb'A->nvals' for sparse/hypersparse
         \item more significant changes: added hyper-hash for
         hypersparse case, speeds up many operations on hypersparse matrices.
+        Based on \cite{Green19}.
     \item \verb'@GrB' MATLAB/Octave interface: changed license to Apache-2.0.
     \end{packed_itemize}
 

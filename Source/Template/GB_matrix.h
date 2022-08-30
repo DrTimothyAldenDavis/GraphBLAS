@@ -293,6 +293,8 @@ size_t x_size ;         // exact size of A->x in bytes, zero if A->x is NULL
             // k = (j == Yi [p]) ? Yx [p] : k ;  // break not needed.
         }
 
+    The hyper_hash is based on the HashGraph method by Oded Green,
+    https://doi.org/10.48550/arXiv.1907.02900
 */
 
 GrB_Matrix Y ;      // Y is a matrix that represents the inverse of A->h.
