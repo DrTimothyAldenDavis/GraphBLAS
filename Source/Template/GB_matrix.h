@@ -294,7 +294,7 @@ size_t x_size ;         // exact size of A->x in bytes, zero if A->x is NULL
         }
 
     The hyper_hash is based on the HashGraph method by Oded Green,
-    https://doi.org/10.48550/arXiv.1907.02900
+    ACM Trans. Parallel Computing, June 2021, https://doi.org/10.1145/3460872
 */
 
 GrB_Matrix Y ;      // Y is a matrix that represents the inverse of A->h.
