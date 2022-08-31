@@ -102,9 +102,9 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     ASSERT (A->vlen == B->vlen) ;
     GBURBLE ("(GPU dot3) ") ;
-    printf ("\nM -------------\n") ; GxB_Matrix_fprint (M, "M", GxB_SHORT, stdout) ;
-    printf ("\nA -------------\n") ; GxB_Matrix_fprint (A, "A", GxB_SHORT, stdout) ;
-    printf ("\nB -------------\n") ; GxB_Matrix_fprint (B, "B", GxB_SHORT, stdout) ;
+    //printf ("\nM -------------\n") ; GxB_Matrix_fprint (M, "M", GxB_SHORT, stdout) ;
+    //printf ("\nA -------------\n") ; GxB_Matrix_fprint (A, "A", GxB_SHORT, stdout) ;
+    //printf ("\nB -------------\n") ; GxB_Matrix_fprint (B, "B", GxB_SHORT, stdout) ;
 
     //--------------------------------------------------------------------------
     // initializations
