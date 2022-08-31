@@ -30,7 +30,7 @@ const char *gb_error        // return an error message from a GrB_Info value
         // errors:
         //----------------------------------------------------------------------
 
-        case GrB_UNINITIALIZED_OBJECT : return ("unitialized object") ;
+        case GrB_UNINITIALIZED_OBJECT : return ("uninitialized object") ;
         case GrB_NULL_POINTER :         return ("input pointer is NULL") ;
         case GrB_INVALID_VALUE :        return ("invalid value") ;
         case GrB_INVALID_INDEX :        return ("row or column index out of bounds") ;

@@ -7,6 +7,7 @@ function gbtest122
 rng ('default')
 
 for m = 1:12
+    fprintf ('.') ;
     for n = 1:12
         for kind = [0 1]
             if (kind == 0)
@@ -61,4 +62,4 @@ for m = 1:12
     end
 end
 
-fprintf ('gbtest122: all tests passed\n') ;
+fprintf ('\ngbtest122: all tests passed\n') ;

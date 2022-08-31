@@ -28,8 +28,6 @@
 // they work fine for MATLAB since GraphBLAS requires R2018a with the
 // interleaved complex data type.
 
-// FIXME: use GxB_Matrix_unpack instead of GxB_Matrix_export
-
 #include "gb_interface.h"
 
 // for hypersparse, sparse, or full matrices

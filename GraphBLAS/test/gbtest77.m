@@ -585,5 +585,17 @@ catch expected_error
 end
 assert (ok) ;
 
+try
+    H = reshape (GrB (rand (3,4)), 2, 6, 'garbage') ;
+    ok = false ;
+catch expected_error
+    expected_error
+    s = expected_error.stack ;
+    for k = 1:length (s)
+        disp (s (k)) ;
+    end
+end
+assert (ok) ;
+
 fprintf ('gbtest77: all tests passed\n') ;
 
