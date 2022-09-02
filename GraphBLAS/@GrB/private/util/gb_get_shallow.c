@@ -357,7 +357,9 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
                 &Yp, &Yi, &Yx, Yp_size, Yi_size, Yx_size, false,
                 false, NULL)) ;
             OK (GxB_Matrix_Option_set (Y, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
-            A->Y = Y ;
+//          OK (GxB_print (Y, 2)) ;
+            OK (GxB_pack_HyperHash (A, &Y, NULL)) ;
+//          OK (GxB_print (A, 2)) ;
         }
 
         // tell GraphBLAS the matrix is shallow

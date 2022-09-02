@@ -1,4 +1,4 @@
-Version 7.3.0, Aug 29, 2022
+Version 7.3.0, Sept 1, 2022
 
     * GrB_Matrix: changes to the internal data structure
         * minor internal changes: A->nvals for sparse/hypersparse
@@ -6,6 +6,8 @@ Version 7.3.0, Aug 29, 2022
             speeds up GrB_mxm (C=A*B, C<M>=A*B' (for CSR A'*B for CSC)),
             C<M>=A+B (eWiseAdd), C<M>A.*B (eWiseMult), some cases for
             GrB_assign, for hypersparse matrices.
+        * added GxB_unpack_HyperHash and GxB_pack_HyperHash: to pack/unpack
+            the A->Y hyper_hash
     * @GrB MATLAB/Octave interface: changed license to Apache-2.0
 
 Version 7.2.0, Aug 8, 2022

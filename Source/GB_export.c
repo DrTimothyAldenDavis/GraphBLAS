@@ -249,6 +249,8 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     // free or clear the GrB_Matrix
     //--------------------------------------------------------------------------
 
+    // both export and unpack free the hyper_hash, A->Y
+
     if (unpacking)
     { 
         // unpack: clear the matrix, leaving it hypersparse (or sparse if

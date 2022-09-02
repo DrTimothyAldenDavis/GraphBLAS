@@ -84,6 +84,7 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     }
 
     GrB_Matrix A = (*A_handle) ;
+    GrB_Matrix Y = NULL ;
 
     //--------------------------------------------------------------------------
     // make sure the matrix is finished, including the creation of A->Y
@@ -119,15 +120,15 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     int8_t *Ab = NULL ;
     uint64_t *Ap = NULL, *Ah = NULL, *Ai = NULL ;
     void *Ax = NULL ;
-    int64_t Ap_size = 0, Ah_size = 0, Ab_size = 0, Ai_size = 0, Ax_size = 0 ;
+    GrB_Index Ap_size = 0, Ah_size = 0, Ab_size = 0, Ai_size = 0, Ax_size = 0 ;
     int64_t nvals = 0, nvec = 0 ;
     bool by_col = (fmt == GxB_BY_COL) ;
     bool iso = false ;
 
     GrB_Type ytype = NULL ;
-    uint64_t *Yp = NULL ; size_t Yp_size = 0 ;
-    uint64_t *Yi = NULL ; size_t Yi_size = 0 ;
-    void     *Yx = NULL ; size_t Yx_size = 0 ;
+    uint64_t *Yp = NULL ; GrB_Index Yp_size = 0 ;
+    uint64_t *Yi = NULL ; GrB_Index Yi_size = 0 ;
+    void     *Yx = NULL ; GrB_Index Yx_size = 0 ;
     uint64_t yvdim, ynrows ;
 
     switch (sparsity_status)
@@ -164,7 +165,13 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
 
             // export and free the A->Y hyper_hash.  It is always sparse,
             // GrB_INT64, held by column, and non-iso
-            OK (GxB_Matrix_export_CSC (&(A->Y), &ytype, &ynrows, &yvdim,
+//          printf ("unpacking hypersparse A\n") ;
+//          OK (GxB_print (A, 2)) ;
+            OK (GxB_unpack_HyperHash (A, &Y, NULL)) ;
+//          printf ("did unpacking hypersparse A\n") ;
+//          OK (GxB_print (A, 2)) ;
+//          OK (GxB_print (Y, 2)) ;
+            OK (GxB_Matrix_export_CSC (&Y, &ytype, &ynrows, &yvdim,
                 &Yp, &Yi, &Yx, &Yp_size, &Yi_size, &Yx_size,
                 NULL, NULL, NULL)) ;
 

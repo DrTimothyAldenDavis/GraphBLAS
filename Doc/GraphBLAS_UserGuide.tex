@@ -5993,6 +5993,9 @@ method & purpose & Section \\
 \verb'GxB_Matrix_pack_HyperCSC'   & pack a matrix in HyperCSC form & \ref{matrix_pack_hypercsc} \\
 \verb'GxB_Matrix_unpack_HyperCSC' & unpack a matrix in HyperCSC form & \ref{matrix_unpack_hypercsc} \\
 \hline
+\verb'GxB_unpack_HyperHash' & unpack a hyper-hash & \ref{unpack_hyperhash} \\
+\verb'GxB_pack_HyperHash'   & pack a hyper-hash & \ref{pack_hyperhash} \\
+\hline
 \verb'GxB_Matrix_pack_BitmapR'    & pack a matrix in BitmapR form & \ref{matrix_pack_bitmapr} \\
 \verb'GxB_Matrix_unpack_BitmapR'  & unpack a matrix in BitmapR form & \ref{matrix_unpack_bitmapr} \\
 \hline
@@ -6741,11 +6744,13 @@ This method takes $O(1)$ time if the matrix is already in HyperCSR format
 internally.  Otherwise, the matrix is converted to HyperCSR format and then
 unpacked.
 
-In v7.3.0 and later, a hypersparse matrix A also may include a hash table for
-\verb'Ah', called the {\em hyper-hash}, based on \cite{Green19}.  It allows
-for fast lookups of entries in \verb'Ah'.  The hyper-hash is not exported
-by this method.  Instead, it is discarded.  If the matrix is re-imported,
-it is recomputed from \verb'Ah' when needed.
+In v7.3.0 and later, a hypersparse matrix \verb'A' also may include a hash
+table for \verb'Ah', called the {\em hyper-hash}, based on \cite{Green19}.  It
+allows for fast lookups of entries in \verb'Ah'.  The hyper-hash is not
+exported by this method.  Instead, it is discarded.  Use
+\verb'GxB_unpack_HyperHash' (Section~\ref{unpack_hyperhash}) to preserve it,
+prior to calling this method.  If the matrix is re-imported, and the hyper-hash
+is not preserved, it is recomputed from \verb'Ah' when needed.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -6845,12 +6850,116 @@ This method takes $O(1)$ time if the matrix is already in HyperCSC format
 internally.  Otherwise, the matrix is converted to HyperCSC format and then
 unpacked.
 
-In v7.3.0 and later, a hypersparse matrix A also may include a hash table for
-\verb'Ah', called the {\em hyper-hash}, based on \cite{Green19}.  It allows
-for fast lookups of entries in \verb'Ah'.  The hyper-hash is not exported
-by this method.  Instead, it is discarded.  If the matrix is re-imported,
-it is recomputed from \verb'Ah' when needed.
+In v7.3.0 and later, a hypersparse matrix \verb'A' also may include a hash
+table for \verb'Ah', called the {\em hyper-hash}, based on \cite{Green19}.  It
+allows for fast lookups of entries in \verb'Ah'.  The hyper-hash is not
+exported by this method.  Instead, it is discarded.  Use
+\verb'GxB_unpack_HyperHash' (Section~\ref{unpack_hyperhash}) to preserve it,
+prior to calling this method.  If the matrix is re-imported, and the hyper-hash
+is not preserved, it is recomputed from \verb'Ah' when needed.
 
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_unpack\_HyperHash:} unpack the hypersparse hash}
+%-------------------------------------------------------------------------------
+\label{unpack_hyperhash}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_unpack_HyperHash       // move A->Y into Y
+(
+    GrB_Matrix A,                   // matrix to modify
+    GrB_Matrix *Y,                  // hyper_hash matrix to move from A
+    const GrB_Descriptor desc       // unused
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+
+SuiteSparse:GraphBLAS v7.3.0 adds a new internal component to the
+hypersparse matrix format: the {\em hyper-hash} \verb'GrB_Matrix' \verb'A->Y'.
+The matrix provides a fast lookup into the hyperlist \verb'Ah'.
+
+\verb'GxB_unpack_HyperHash' unpacks the hyper-hash from the hypersparse matrix
+\verb'A'.  Normally, this method is called immediately before calling one of
+the two methods \verb'GxB_Matrix_unpack_Hyper(CSR/CSC)'.  For example, to
+unpack then pack a hypersparse CSC matrix:
+
+    {\footnotesize
+    \begin{verbatim}
+    GrB_Matrix Y = NULL ;
+    // to unpack all of A:
+    GxB_unpack_HyperHash (A, &Y, desc) ;    // first unpack A->Y into Y
+    GxB_Matrix_unpack_HyperCSC (A,          // then unpack the rest of A
+        &Ap, &Ah, &Ai, &Ax, &Ap_size, &Ah_size, &Ai_size, &Ax_size,
+        &iso, &nvec, &jumbled, descriptor) ;
+    // use the unpacked contents of A here, but do not change Ah or nvec.
+    ...
+    // to pack the data back into A:
+    GxB_Matrix_pack_HyperCSC (A, ...) ;     // pack most of A, except A->Y 
+    GxB_pack_HyperHash (A, &Y, desc) ;      // then pack A->Y \end{verbatim}}
+
+The same process is used with \verb'GxB_Matrix_unpack_HyperCSR'.
+
+If \verb'A' is not hypersparse on input to \verb'GxB_unpack_HyperHash', or if
+\verb'A' is hypersparse but does yet not have a hyper-hash, then \verb'Y' is
+returned as \verb'NULL'.  This is not an error condition, and
+\verb'GrB_SUCCESS' is returned.  The hyper-hash of a hypersparse matrix
+\verb'A' is a matrix that provides quick access to the inverse of \verb'Ah'.
+It is not always needed and may not be present.  It is left as pending work to
+be computed when needed.  To ensure that the hyper-hash is constructed for a
+hypersparse matrix \verb'A', use \verb'GrB_Matrix_wait (A, GrB_MATERIALIZE)' 
+
+If \verb'Y' is moved from \verb'A' and returned as non-\verb'NULL' to the
+caller, then it is the responsibility of the user application to free it, or to
+re-pack it back into \verb'A' via \verb'GxB_pack_HyperHash', as shown in the
+example above.
+
+If this method is called to remove the hyper-hash \verb'Y' from the hypersparse
+matrix \verb'A', and then \verb'GrB_Matrix_wait (A, GrB_MATERIALZE)' is called,
+a new hyper-hash matrix is constructed for \verb'A'.
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_pack\_HyperHash:} pack the hypersparse hash}
+%-------------------------------------------------------------------------------
+\label{pack_hyperhash}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_pack_HyperHash         // move Y into A->Y
+(
+    GrB_Matrix A,                   // matrix to modify
+    GrB_Matrix *Y,                  // hyper_hash matrix to pack into A
+    const GrB_Descriptor desc       // unused
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_pack_HyperHash' assigns the input \verb'Y' matrix as the \verb'A->Y'
+hyper-hash of the hypersparse matrix \verb'A'.  Normally, this method is called
+immediately after calling one of the two methods
+\verb'GxB_Matrix_pack_Hyper(CSR/CSC)'.
+
+If \verb'A' is not hypersparse on input to \verb'GxB_pack_HyperHash', or if
+\verb'A' already has a hyper-hash matrix, or if \verb'Y' is \verb'NULL' on
+input, then nothing happens and \verb'Y' is unchanged.  This is not an error
+condition and this method returns \verb'GrB_SUCCESS'.  In this case, if
+\verb'Y' is non-\verb'NULL' after calling this method, it owned by the user
+application and freeing it is the responsibility of the user application.
+
+If \verb'Y' is moved into \verb'A' as its hyper-hash, then the caller's
+\verb'Y' is set to \verb'NULL' to indicate that it has been moved into
+\verb'A'.  It is no longer owned by the caller, but is instead becomes an
+opaque component of the \verb'A' matrix.  It will be freed by
+SuiteSparse:GraphBLAS if \verb'A' is modified or freed.
+
+Results are undefined if the input \verb'Y' was not created by
+\verb'GxB_unpack_HyperHash' (see the example in Section \ref{unpack_hyperhash})
+or if the \verb'Ah' contents or \verb'nvec' of the matrix \verb'A' are modified
+after they were unpacked by \verb'GxB_Matrix_unpack_Hyper(CSR/CSC)'.
 
 \newpage
 %-------------------------------------------------------------------------------
