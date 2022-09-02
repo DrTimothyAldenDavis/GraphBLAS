@@ -130,7 +130,7 @@ void mexFunction
 
     #define GET_DEEP_COPY           \
         GrB_Matrix_dup (&C, A) ;    \
-        GrB_Matrix_wait (C) ;
+        GrB_Matrix_wait (C, GrB_MATERIALIZE) ;
 
     #define FREE_DEEP_COPY  GrB_Matrix_free (&C) ;
 
