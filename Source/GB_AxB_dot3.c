@@ -28,7 +28,7 @@
 #define GB_FREE_ALL                             \
 {                                               \
     GB_FREE_WORKSPACE ;                         \
-    GB_phbix_free (C) ;                         \
+    GB_phybix_free (C) ;                        \
 }
 
 GB_PUBLIC
@@ -152,6 +152,18 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     ASSERT (A->vlen == B->vlen) ;
     ASSERT (vlen > 0) ;
 
+    const GrB_Matrix A_Y = A->Y ;
+    const int64_t *restrict A_Yp = (A_is_hyper) ? A_Y->p : NULL ;
+    const int64_t *restrict A_Yi = (A_is_hyper) ? A_Y->i : NULL ;
+    const int64_t *restrict A_Yx = (A_is_hyper) ? A_Y->x : NULL ;
+    const int64_t A_hash_bits = (A_is_hyper) ? (A_Y->vdim - 1) : 0 ;
+
+    const GrB_Matrix B_Y = B->Y ;
+    const int64_t *restrict B_Yp = (B_is_hyper) ? B_Y->p : NULL ;
+    const int64_t *restrict B_Yi = (B_is_hyper) ? B_Y->i : NULL ;
+    const int64_t *restrict B_Yx = (B_is_hyper) ? B_Y->x : NULL ;
+    const int64_t B_hash_bits = (B_is_hyper) ? (B_Y->vdim - 1) : 0 ;
+
     //--------------------------------------------------------------------------
     // allocate C, the same size and # of entries as M
     //--------------------------------------------------------------------------
@@ -194,6 +206,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     }
     C->nvec_nonempty = M->nvec_nonempty ;
     C->nvec = M->nvec ;
+    C->nvals = M->nvals ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------

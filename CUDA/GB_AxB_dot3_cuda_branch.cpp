@@ -37,13 +37,9 @@ bool GB_AxB_dot3_cuda_branch
         int ngpus_to_use = GB_ngpus_to_use (work) ;
         GBURBLE (" work:%g GPUs:%d ", work, ngpus_to_use) ;
         if (ngpus_to_use > 0
-            // FIXME: FUTURE: user-defined types and operators
-            && (A->type->code != GB_UDT_code)
-            && (B->type->code != GB_UDT_code)
-            // FIXME: handle M, A, B hypersparse
-            && !GB_IS_HYPERSPARSE (M)
-            && !GB_IS_HYPERSPARSE (A)
-            && !GB_IS_HYPERSPARSE (B)
+            // FIXME: FUTURE: user-defined and complex types and operators
+            && (A->type->code < GB_FC32_code)
+            && (B->type->code < GB_FC32_code)
             // FIXME: handle A, B bitmap and/or full
             && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B)
             && !GB_IS_FULL (A) && !GB_IS_FULL (B))

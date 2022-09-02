@@ -19,9 +19,9 @@ message ( STATUS "GrapphBLAS build:  " ${CMAKE_BINARY_DIR} )
 message ( STATUS "CMake version: " ${CMAKE_VERSION} )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Aug 8, 2022" )
+set ( GraphBLAS_DATE "Sept 1, 2022 (beta2)" )   # FIXME
 set ( GraphBLAS_VERSION_MAJOR 7 )
-set ( GraphBLAS_VERSION_MINOR 2 )
+set ( GraphBLAS_VERSION_MINOR 3 )
 set ( GraphBLAS_VERSION_SUB   0 )
 
 message ( STATUS "Building SuiteSparse:GraphBLAS version: v" ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}  " date: " ${GraphBLAS_DATE} )
@@ -247,7 +247,7 @@ if ( CMAKE_CUDA_DEV )
     # for CUDA development only; not for production use
     include_directories ( Source/Template Source Include Source/Generated1 lz4 zstd zstd/zstd_subset Demo/Include rmm_wrap )
 else ( )
-    include_directories ( Source/Template Source Include Source/Generated1 lz4 zstd zstd/zstd_subset Source/Generated2 Demo/Include rmm_wrap )
+    include_directories ( Source/Template Source Include Source/Generated1 lz4 zstd zstd/zstd_subset Demo/Include rmm_wrap Source/Generated2 )
 endif ( )
 
 #-------------------------------------------------------------------------------

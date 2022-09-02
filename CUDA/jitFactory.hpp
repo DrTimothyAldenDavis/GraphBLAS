@@ -185,7 +185,7 @@ public:
                    file_callback)
                  .set_kernel_inst(  kernel_name, template_types)
                  .configure(grid, block, SMEM, stream)
-                 .launch( C, M, A, B);
+                 .launch( C, M);
 
       result = true;
 
