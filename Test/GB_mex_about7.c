@@ -92,7 +92,7 @@ void mexFunction
     OK (GxB_Matrix_fprint (A, "A valid (hypersparse)", 3, NULL)) ;
 
     OK (GrB_Matrix_new (&B, GrB_FP64, 100, 100)) ;
-    ERR (GxB_pack_HyperHash (A, B, NULL)) ;
+    ERR (GxB_pack_HyperHash (A, &B, NULL)) ;
 
     OK (GxB_Matrix_Option_set (B, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE)) ;
     OK (GrB_Matrix_setElement_FP64 (B, (double) 1.2, 0, 0)) ;
@@ -113,7 +113,7 @@ void mexFunction
     OK (GxB_Matrix_fprint (A, "A still valid (hypersparse)", 3, NULL)) ;
 
     Y = NULL ;
-    OK (GxB_pack_HyperHash (A, Y, NULL)) ;
+    OK (GxB_pack_HyperHash (A, &Y, NULL)) ;
     OK (GxB_Matrix_fprint (A, "A hypersparse (pack did nothing)", 3, NULL)) ;
 
     A->Y->i [0] = 99 ;
