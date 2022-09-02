@@ -311,7 +311,8 @@ GrB_Info unpack_pack
 
             OK (GxB_pack_HyperHash (C, &Y, NULL)) ;
 
-            OK ( GxB_print (C,2)) ;
+            // silently check the result to make sure the hyper_hash is valid
+            OK (GxB_Matrix_fprint (C, "C", GxB_SILENT, stdout)) ;
 
             break ;
 
@@ -331,9 +332,10 @@ GrB_Info unpack_pack
                 Cp_size, Ch_size, Ci_size, Cx_size, iso,
                 nvec, jumbled, NULL)) ;
 
+            // silently check the result to make sure the hyper_hash is valid
             OK (GxB_pack_HyperHash (C, &Y, NULL)) ;
 
-            OK ( GxB_print (C,2)) ;
+            OK (GxB_Matrix_fprint (C, "C", GxB_SILENT, stdout)) ;
             break ;
 
         //----------------------------------------------------------------------

@@ -2574,6 +2574,7 @@
 #define GxB_ONE_UINT32 GxM_ONE_UINT32
 #define GxB_ONE_UINT64 GxM_ONE_UINT64
 #define GxB_ONE_UINT8 GxM_ONE_UINT8
+#define GxB_pack_HyperHash GxM_pack_HyperHash
 #define GxB_PAIR_BOOL GxM_PAIR_BOOL
 #define GxB_PAIR_FC32 GxM_PAIR_FC32
 #define GxB_PAIR_FC64 GxM_PAIR_FC64
@@ -3238,6 +3239,7 @@
 #define GxB_UnaryOp_xtype_name GxM_UnaryOp_xtype_name
 #define GxB_UnaryOp_ztype GxM_UnaryOp_ztype
 #define GxB_UnaryOp_ztype_name GxM_UnaryOp_ztype_name
+#define GxB_unpack_HyperHash GxM_unpack_HyperHash
 #define GxB_VALUEEQ_FC32 GxM_VALUEEQ_FC32
 #define GxB_VALUEEQ_FC64 GxM_VALUEEQ_FC64
 #define GxB_VALUENE_FC32 GxM_VALUENE_FC32
