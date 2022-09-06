@@ -12695,9 +12695,6 @@ GB_PUBLIC void       GxB_Iterator_get_UDT    (GxB_Iterator iterator,
 #ifndef RMM_WRAP_H
 #define RMM_WRAP_H
 
-#include <stddef.h>
-#include <stdio.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif

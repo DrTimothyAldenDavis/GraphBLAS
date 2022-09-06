@@ -47,7 +47,7 @@ remake:
 	( cd build ; $(MAKE) --jobs=$(JOBS) )
 
 # just run cmake; do not compile
-cmake:
+setup:
 	( cd build ; cmake $(CMAKE_OPTIONS) .. ; )
 
 # build both the static and dynamic libraries; do not run the demo

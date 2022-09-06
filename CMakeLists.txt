@@ -18,6 +18,12 @@ message ( STATUS "GraphBLAS source: " ${CMAKE_SOURCE_DIR} )
 message ( STATUS "GraphBLAS build:  " ${CMAKE_BINARY_DIR} )
 message ( STATUS "CMake version: " ${CMAKE_VERSION} )
 
+set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+    ${CMAKE_SOURCE_DIR}/cmake_modules
+    ${CMAKE_SOURCE_DIR}/../cmake_modules
+    ${CMAKE_SOURCE_DIR}/../SuiteSparse/cmake_modules
+    )
+
 # version of SuiteSparse:GraphBLAS
 set ( GraphBLAS_DATE "Sept 5, 2022 (beta4)" )   # FIXME
 set ( GraphBLAS_VERSION_MAJOR 7 )
@@ -107,6 +113,7 @@ endif ( )
 #-------------------------------------------------------------------------------
 
 find_package ( OpenMP )
+# find_package ( SuiteSparse_config )
 
 if ( CMAKE_CUDA )
     # with CUDA and RMM
