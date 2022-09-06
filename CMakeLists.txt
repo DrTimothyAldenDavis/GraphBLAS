@@ -14,8 +14,8 @@
 # cmake 3.13 is required; cmake 3.17 or later required for CUDA
 cmake_minimum_required ( VERSION 3.13 )
 
-message ( STATUS "GrapphBLAS source: " ${CMAKE_SOURCE_DIR} )
-message ( STATUS "GrapphBLAS build:  " ${CMAKE_BINARY_DIR} )
+message ( STATUS "GraphBLAS source: " ${CMAKE_SOURCE_DIR} )
+message ( STATUS "GraphBLAS build:  " ${CMAKE_BINARY_DIR} )
 message ( STATUS "CMake version: " ${CMAKE_VERSION} )
 
 # version of SuiteSparse:GraphBLAS
@@ -27,21 +27,10 @@ set ( GraphBLAS_VERSION_SUB   0 )
 message ( STATUS "Building SuiteSparse:GraphBLAS version: v" ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}  " date: " ${GraphBLAS_DATE} )
 
 # GraphBLAS C API Specification version, at graphblas.org
-if ( GraphBLAS_VERSION_MAJOR GREATER_EQUAL 6 )
-    # SuiteSparse:GraphBLAS v6.0.0 and later fully implement the v2 spec
-    set ( GraphBLAS_API_DATE "Nov 15, 2021" )
-    set ( GraphBLAS_API_VERSION_MAJOR 2 )
-    set ( GraphBLAS_API_VERSION_MINOR 0 )
-    set ( GraphBLAS_API_VERSION_SUB   0 )
-else ( )
-    # SuiteSparse:GraphBLAS v5.2.0 has much of the v2 spec but not all.
-    # It is backward compatible with all v5.x which have little of the new
-    # features of the v2 C API Specification.
-    set ( GraphBLAS_API_DATE "Sept 25, 2019" )
-    set ( GraphBLAS_API_VERSION_MAJOR 1 )
-    set ( GraphBLAS_API_VERSION_MINOR 3 )
-    set ( GraphBLAS_API_VERSION_SUB   0 )
-endif ( )
+set ( GraphBLAS_API_DATE "Nov 15, 2021" )
+set ( GraphBLAS_API_VERSION_MAJOR 2 )
+set ( GraphBLAS_API_VERSION_MINOR 0 )
+set ( GraphBLAS_API_VERSION_SUB   0 )
 
 message ( STATUS "GraphBLAS C API: v" "${GraphBLAS_API_VERSION_MAJOR}.${GraphBLAS_API_VERSION_MINOR}, date: ${GraphBLAS_API_DATE}" )
 
