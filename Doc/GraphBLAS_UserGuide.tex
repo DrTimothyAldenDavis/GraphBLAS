@@ -15273,6 +15273,13 @@ placed in the same system-wide location as the standard \verb'libgraphblas'
 libraries, such as \verb'/usr/local/lib' for Linux.  The two pairs of
 libraries share the identical \verb'GraphBLAS.h' include file.
 
+If you do not have system privileges to install the GraphBLAS compiled
+libraries via \verb'sudo make install', then augment your
+\verb'LD_LIBRARY_PATH' (Linux) or \verb'DYLD_LIBRARY_PATH' (MacOS) to point to
+your personal copy \verb'SuiteSparse/GraphBLAS/GraphBLAS/build' folder.  See
+\url{https://www.mathworks.com/help/matlab/matlab_external/building-on-unix-operating-systems.html}
+for details. 
+
 Next, compile the MATLAB interface as described in Section~\ref{gbmake}.  For
 any instructions in that Section that refer to the \verb'GraphBLAS/build'
 folder (Linux and Mac) or \verb'GraphBLAS/build/Release' (Windows), use \newline
