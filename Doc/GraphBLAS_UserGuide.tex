@@ -14869,7 +14869,7 @@ AVX2 but not AVX512F, and use 40 threads to compile:
     make CMAKE_OPTIONS='-DGBNCPUFEAT=1 -DGBAVX2=1' JOBS=40 \end{verbatim} }
 
 After compiling the library, you can compile the demos with
-\verb'make all' and then \verb'make run' while in the top-level
+\verb'make all' and then \verb'make demo' while in the top-level
 GraphBLAS folder.
 
 If \verb'cmake' or \verb'make' fail, it might be that your default compiler
@@ -15348,7 +15348,7 @@ from \verb'libgraphblas' to \verb'libgraphbas_renamed'.
 %----------------------------------------
 
 After \verb'make' in the top-level directory to compile the library, type
-\verb'make run' to run the demos (also in the top-level directory).
+\verb'make demo' to run the demos (also in the top-level directory).
 You can also run the demos after compiling with \verb'make all':
 
     {\small
@@ -15431,12 +15431,12 @@ Compile the program above, then use this command to ensure
 \subsection{Running the tests}
 %----------------------------------------
 
-To run a short test, type \verb'make run' at the top-level \verb'GraphBLAS'
+To run a short test, type \verb'make demo' at the top-level \verb'GraphBLAS'
 folder.  This will run all the demos in \verb'GraphBLAS/Demos'.  MATLAB is not
 required.
 
 To perform the extensive tests in the \verb'Test' folder, and the statement
-coverage tests in \verb'Tcov', MATLAB R2017A is required.  See the
+coverage tests in \verb'Tcov', MATLAB R2018a or later is required.  See the
 \verb'README.txt' files in those two folders for instructions on how to run the
 tests.  The tests in the \verb'Test' folder have been ported to MATLAB on
 Linux, MacOS, and Windows.  The \verb'Tcov' tests do not work on Windows.  The

@@ -143,8 +143,6 @@ DEMO_PRG = $(notdir $(wildcard ../Demo/Program/*_demo.c))
 DEMO = $(DEMO_PRG:.c=)
 
 demo: $(DEMO)
-
-run: $(DEMO)
 	./altdemo
 
 clean:
