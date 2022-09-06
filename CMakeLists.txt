@@ -536,14 +536,21 @@ endif ( )
 # dump all variables, for debugging only
 #-------------------------------------------------------------------------------
 
-# uncomment this line to dump all cmake variables:
+# uncomment this line or add -DDUMP=true to your cmake call to dump all cmake variables:
 # set ( DUMP true )
 
 if ( DUMP )
+    message("====")
+    message("Begin dumping all CMake varialbes in alphabetic order")
+    message("====")
     get_cmake_property ( _variableNames VARIABLES )
     list ( SORT _variableNames )
     foreach ( _variableName ${_variableNames} )
         message ( STATUS "${_variableName}=${${_variableName}}" )
     endforeach ( )
+    message("====")
+    message("End dumping all CMake varialbes in alphabetic order")
+    message("====")
 endif ( )
+
 
