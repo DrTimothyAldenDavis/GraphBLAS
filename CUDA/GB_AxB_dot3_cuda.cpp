@@ -41,18 +41,18 @@ void print_array(void *arr, I size, const char *name) {
     /* FIXME: use a stream pool instead */                              \
     CU_OK (cudaStreamSynchronize(stream));                              \
     CU_OK (cudaStreamDestroy(stream));                                  \
-    GB_FREE_WORK (Nanobuckets, Nb_size) ;                               \
-    GB_FREE_WORK (Blockbucket, Bb_size) ;                               \
-    GB_FREE_WORK (Bucketp, Bup_size) ;                                  \
-    GB_FREE_WORK (offset, O_size) ;                                     \
-    GB_FREE_WORK (Bucket, Bu_size) ;                                    \
+    GB_FREE_WORK (&Nanobuckets, Nb_size) ;                              \
+    GB_FREE_WORK (&Blockbucket, Bb_size) ;                              \
+    GB_FREE_WORK (&Bucketp, Bup_size) ;                                 \
+    GB_FREE_WORK (&offset, O_size) ;                                    \
+    GB_FREE_WORK (&Bucket, Bu_size) ;                                   \
 }
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                                                     \
 {                                                                       \
     GB_FREE_WORKSPACE ;                                                 \
-    GB_Matrix_free (&C) ;                                               \
+    GB_phybix_free (C) ;                                                \
 }
 
 
@@ -362,21 +362,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         int64_t nanobuckets_size = NBUCKETS * nthrd * ntasks;
         int64_t blockbuckets_size = NBUCKETS * ntasks;
 
-//      Nanobuckets = (int64_t*)
-//      rmm_wrap_malloc(nanobuckets_size * sizeof (int64_t));
         Nanobuckets = GB_MALLOC_WORK (nanobuckets_size, int64_t, &Nb_size) ;
-
-//      Blockbucket = (int64_t*)
-//      rmm_wrap_malloc(blockbuckets_size * sizeof (int64_t));
         Blockbucket = GB_MALLOC_WORK (blockbuckets_size, int64_t, &Bb_size) ;
-
-//      Bucketp = (int64_t*)rmm_wrap_malloc((NBUCKETS+1) * sizeof (int64_t));
         Bucketp = GB_MALLOC_WORK (NBUCKETS+1, int64_t, &Bup_size) ;
-
-//      offset = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
         offset = GB_MALLOC_WORK (NBUCKETS, int64_t, &O_size) ;
-
-//      Bucket = (int64_t*)rmm_wrap_malloc(mnz * sizeof (int64_t));
         Bucket = GB_MALLOC_WORK (mnz, int64_t, &Bu_size) ;
 
         if (Nanobuckets == NULL || Blockbucket == NULL || Bucketp == NULL
