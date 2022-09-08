@@ -14,6 +14,10 @@
 # cmake 3.13 is required; cmake 3.17 or later required for CUDA
 cmake_minimum_required ( VERSION 3.13 )
 
+cmake_policy ( SET CMP0042 NEW )
+cmake_policy ( SET CMP0048 NEW )
+set ( CMAKE_MACOSX_RPATH TRUE )
+
 message ( STATUS "GraphBLAS source: " ${CMAKE_SOURCE_DIR} )
 message ( STATUS "GraphBLAS build:  " ${CMAKE_BINARY_DIR} )
 message ( STATUS "CMake version: " ${CMAKE_VERSION} )
