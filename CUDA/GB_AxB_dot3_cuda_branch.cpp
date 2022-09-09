@@ -35,10 +35,7 @@ bool GB_AxB_dot3_cuda_branch
             // FIXME: FUTURE: user-defined and complex types and operators
             // FIXME: guard against user-defined ADD and MULT
             && (A->type->code < GB_FC32_code)
-            && (B->type->code < GB_FC32_code)
-            // FIXME: handle A, B bitmap and/or full
-            && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B)
-            && !GB_IS_FULL (A) && !GB_IS_FULL (B))
+            && (B->type->code < GB_FC32_code))
         {
             return true;
         }

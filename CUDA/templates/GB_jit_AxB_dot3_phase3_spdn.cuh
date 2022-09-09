@@ -136,7 +136,7 @@ __global__ void AxB_dot3_phase3_spdn
 
         pair_id =  kk ;
         int64_t i = Mi[pair_id];  // cols from mask
-        int64_t k = Ci[pair_id] >> 4;  // vector of C previously encoded in phase1
+        int64_t k = Ci[pair_id] >> 4;  // vector of C encoded in phase1
 
         // j = k or j = Mh [k] if C and M are hypersparse
         #if GB_M_IS_HYPER
@@ -144,11 +144,6 @@ __global__ void AxB_dot3_phase3_spdn
         #else
         int64_t j = k ;
         #endif
-
-        //printf("tid=%d, i=%lu, j=%lu\n", threadIdx.x, i, j);
-        //      if (threadIdx.x ==0)
-        //         printf("thd%u i,j=%lld,%lld\n",tid, i,j);
-        //      __syncthreads();
 
         // Prep row offsets for both A and B
 
@@ -166,7 +161,7 @@ __global__ void AxB_dot3_phase3_spdn
         pA_end = pA +(A->vlen);
         #endif
 
-        int64_t nnzA   = pA_end - pA;
+        int64_t nnzA = pA_end - pA ;
 
         // find B(:,j)
         int64_t pB, pB_end ;
@@ -182,183 +177,130 @@ __global__ void AxB_dot3_phase3_spdn
         pB_end = pB +(B->vlen);
         #endif
 
-        int64_t nnzB = pB_end - pB;
+        int64_t nnzB = pB_end - pB ;
 
         GB_DECLAREA (aki) ;
         GB_DECLAREB (bkj) ;
+        #if !GB_C_ISO
         T_Z cij = GB_IDENTITY ;
+        #endif
+        bool cij_exists = false ;
 
-        int zombie_count = 0;
+        int my_nzombies = 0;
 
-        if (nnzA == 0 || nnzB == 0)
+        if (nnzA > 0 && nnzB > 0)
         {
-            i = GB_FLIP (i) ;
-            zombie_count +=1;
-        }
-        else if( nnzA == A->vlen) // A is dense
-        {
-            /**
-            * A is dense, iterate over columns of B, applying monoid and binary op to current
-            */
-            int64_t k = Bi [pB] ;               // first row index of B(:,j)
-            // cij = A(k,i) * B(k,j)
-            GB_GETA ( aki, Ax, pA+k ) ;         // aki = A(k,i)
-            GB_GETB ( bkj, Bx, pB ) ;           // bkj = B(k,j)
 
-            // TODO: Check tha GB_C_MULT applies the identity automatically since cij has not been initialized
-            GB_C_MULT ( cij, aki, bkj ) ;           // cij = aki * bkj
-
-            printf("A_dense: tid=%d, pair_id=%d, i=%lu, j=%lu, nnzA=%lu, nnzB=%lu, k[B]=%lu, aki=%d, bkj=%d, cij=%d\n", threadIdx.x, pair_id, i, j, nnzA, nnzB, k, aki, bkj, cij);
-
-            for (int64_t p = pB+1 ; p < pB_end ; ++p)
+            #if ( GB_A_IS_FULL )
             {
-                //GB_DOT_TERMINAL (cij) ;             // break if cij == terminal
-                int64_t k = Bi [p] ;                // next row index of B(:,j)
-                // cij += A(k,i) * B(k,j)
-                GB_GETA ( aki, Ax, pA+k ) ;           // aki = A(k,i)
-                GB_GETB ( bkj, Bx, p ) ;              // bkj = B(k,j)
-                GB_MULTADD ( cij, aki, bkj ) ;        // cij += aki * bkj
-                //printf("in_loop: tid=%d, pair_id=%d, i=%lu, j=%lu, nnzA=%lu, nnzB=%lu, k[B]=%lu, aki=%d, bkj=%d, cij=%d\n", threadIdx.x, pair_id, i, j, nnzA, nnzB, k, aki, bkj, cij);
+
+                //--------------------------------------------------------------
+                // A is full and B is sparse/hyper
+                //--------------------------------------------------------------
+
+                int64_t k = Bi [pB] ;               // first row index of B(:,j)
+                // cij = A(k,i) * B(k,j)
+                GB_GETA ( aki, Ax, pA+k ) ;         // aki = A(k,i)
+                GB_GETB ( bkj, Bx, pB ) ;           // bkj = B(k,j)
+                GB_C_MULT ( cij, aki, bkj ) ;           // cij = aki * bkj
+                cij_exists = true ;
+                for (int64_t p = pB+1 ; p < pB_end ; ++p)
+                {
+                    GB_DOT_TERMINAL (cij) ;     // break if cij == terminal
+                    int64_t k = Bi [p] ;        // next row index of B(:,j)
+                    // cij += A(k,i) * B(k,j)
+                    GB_GETA ( aki, Ax, pA+k ) ;           // aki = A(k,i)
+                    GB_GETB ( bkj, Bx, p ) ;              // bkj = B(k,j)
+                    GB_MULTADD ( cij, aki, bkj ) ;        // cij += aki * bkj
+                }
+
             }
-
-        }
-        else if( nnzB == B->vlen) // B is dense
-        {
-            int64_t k = Ai [pA] ;               // first col index of A(i, :)
-            // cij = A(i,k) * B(j,k)
-            GB_GETA ( aki, Ax, pA ) ;           // aki = A(i,k)
-
-            // Jump straight to position in B vector (since we know it's dense)
-            GB_GETB ( bkj, Bx, pB+k ) ;           // bkj = B(k,j)
-
-            GB_C_MULT ( cij, aki, bkj) ;           // cij = aki * bkj
-            //printf("B_dense: tid=%d, pair_id=%d, i=%lu, j=%lu, nnzA=%lu, nnzB=%lu, k[B]=%lu, aki=%d, bkj=%d, cij=%d\n", threadIdx.x, pair_id, i, j, nnzA, nnzB, k, aki, bkj, cij);
-
-            for (int64_t p = pA+1 ; p < pA_end ; ++p)
+            #elif ( GB_A_IS_BITMAP )
             {
-                //GB_DOT_TERMINAL (cij) ;             // break if cij == terminal
-                int64_t k = Ai [p] ;                // next row index of A(:,i)
-                // cij += A(k,i) * B(k,j)
-                GB_GETA ( aki, Ax, p ) ;              // aki = A(i,k)
-                GB_GETB ( bkj, Bx, pB+k) ;            // bkj = B(j,k)
-                GB_MULTADD ( cij, aki, bkj) ;         // cij += aik * bjk
-                //printf("in_loop: tid=%d, pair_id=%d, i=%lu, j=%lu, nnzA=%lu, nnzB=%lu, k[B]=%lu, aki=%d, bkj=%d, cij=%d\n", threadIdx.x, pair_id, i, j, nnzA, nnzB, k, aki, bkj, cij);
+
+                //--------------------------------------------------------------
+                // A is bitmap and B is sparse/hyper
+                //--------------------------------------------------------------
+
+                for (int64_t p = pB ; p < pB_end ; ++p)
+                {
+                    int64_t k = Bi [p] ;        // next row index of B(:,j)
+                    if (Ab [k])
+                    {
+                        // cij += A(k,i) * B(k,j)
+                        GB_DOT_MERGE (pA+k, p) ;
+                        GB_DOT_TERMINAL (cij) ;     // break if cij == terminal
+                    }
+                }
+
             }
+            #elif ( GB_B_IS_FULL )
+            {
+
+                //--------------------------------------------------------------
+                // A is sparse/hyper and B is full
+                //--------------------------------------------------------------
+
+                int64_t k = Ai [pA] ;       // first col index of A(i, :)
+                // cij = A(i,k) * B(j,k)
+                GB_GETA ( aki, Ax, pA ) ;   // aki = A(i,k)
+                GB_GETB ( bkj, Bx, pB+k ) ; // bkj = B(k,j)
+                GB_C_MULT ( cij, aki, bkj) ;           // cij = aki * bkj
+                cij_exists = true ;
+                for (int64_t p = pA+1 ; p < pA_end ; ++p)
+                {
+                    GB_DOT_TERMINAL (cij) ;     // break if cij == terminal
+                    int64_t k = Ai [p] ;        // next row index of A(:,i)
+                    // cij += A(k,i) * B(k,j)
+                    GB_GETA ( aki, Ax, p ) ;              // aki = A(i,k)
+                    GB_GETB ( bkj, Bx, pB+k) ;            // bkj = B(j,k)
+                    GB_MULTADD ( cij, aki, bkj) ;         // cij += aik * bjk
+                }
+
+            }
+            #else
+            {
+
+                //--------------------------------------------------------------
+                // A is sparse/hyper and B is bitmap
+                //--------------------------------------------------------------
+
+                for (int64_t p = pA ; p < pA_end ; ++p)
+                {
+                    int64_t k = Ai [p] ;        // next row index of A(:,i)
+                    if (Bb [pB+k])
+                    {
+                        // cij += A(k,i) * B(k,j)
+                        GB_DOT_MERGE (p, pB+k) ;
+                        GB_DOT_TERMINAL (cij) ;     // break if cij == terminal
+                    }
+                }
+
+            }
+            #endif
         }
 
-        // C(i,j) = A(:,i) * B(:,j)
-        //        /**
-        //         * If A is bitmap, we need to look up offset and nnz of B
-        //         * and treat Ax as fully dense (size=n*k).
-        //         */
-        //
-        //        // TODO: We probably want to pull this into a separate and
-        //        //  much smaller kernel just for these formats (e.g. spdn w/ B=bitmap, A=sparse)
-        //        #if ( GB_A_IS_BITMAP ) // A is dense
-        //        {
-        //             int64_t pB = Bp[i];
-        //             int64_t pB_end   = Bp[i+1];
-        //             int64_t nnzB   = pB_end - pB;
-        //             int64_t k = Bi [pB] ;               // first row index of B(:,j)
-        //            // cij = A(k,i) * B(k,j)
-        //
-        ////             printf("tid=%d, A is dense, k=%ld, i=%ld\n", threadIdx.x, k, i);
-        //            GB_GETA ( aki, Ax,pA + i ) ;           // aki = A(k,i)
-        //            GB_GETB ( bkj, Bx,pB ) ;           // bkj = B(k,j)
-        //            cij = GB_MULT(aki, bkj ) ;           // cij = aki * bkj
-        //
-        //        }
-        //
-        //        //TODO: We probably want to pull this into a separate
-        //        // much smaller kernel just for these formats (e.g. spdn w/ B=full, A=sparse)
-        //        /**
-        //         * If A is full, we need to look up offset and nzz of B
-        //         * and treat Ax as fully dense (size=n*k)
-        //         */
-        //        #elif ( GB_A_IS_FULL ) // A is dense
-        //        {
-        //             int64_t pB = Bp[i];
-        //             int64_t pB_end   = Bp[i+1];
-        //             int64_t nnzB   = pB_end - pB;
-        //
-        //            int64_t k = Bi [pB] ;               // first row index of B(:,j)
-        //            // cij = A(k,i) * B(k,j)
-        //
-        ////             printf("tid=%d, A is dense, k=%ld, i=%ld\n", threadIdx.x, k, i);
-        //            GB_GETA ( aki, Ax,pA + i ) ;           // aki = A(k,i)
-        //            GB_GETB ( bkj, Bx,pB ) ;           // bkj = B(k,j)
-        //            cij = GB_MULT(aki, bkj ) ;           // cij = aki * bkj
-        //
-        //            for (int64_t p = pB+1 ; p < pB_end ; p++)
-        //            {
-        //                //GB_DOT_TERMINAL (cij) ;           // break if cij == terminal
-        //                int64_t k = Bi [p] ;                // next row index of B(:,j)
-        //                // cij += A(k,i) * B(k,j)
-        //                GB_GETA ( aki, Ax,A->vlen * i + k ) ;      // aki = A(k,i)
-        //                GB_GETB ( bkj, Bx,p ) ;                    // bkj = B(k,j)
-        //                cij = GB_ADD ( cij, GB_MULT(aki, bkj ) ) ;      // cij += aki * bkj
-        //            }
-        //        }
-        //
-        //        /**
-        //         * If A is sparse but current row of A is dense, we need to look up
-        //         * offset of B and offset of A
-        //         */
-        //        #elif (GB_B_IS_BITMAP)
-        //        {
-        //
-        //        }
-        //
-        //        #elif (GB_B_IS_FULL)
-        //        {
-        //
-        //        }
-        //
-        //        /**
-        //         * If
-        //         */
-        //        #else
-        //        {
-        //
-        //
-        //             int64_t pA = Ap[i];
-        //             int64_t pA_end   = Ap[i+1];
-        //             int64_t nnzA   = pA_end - pA;
-        //
-        //            int64_t k = Ai [pA] ;               // first row index of A(:,i)
-        ////             printf("tid=%d, B is dense, k=%ld, j=%ld\n", threadIdx.x, k, j);
-        //            // cij = A(k,i) * B(k,j)
-        //            GB_GETA ( aki, Ax, pA  ) ;           // aki = A(k,i)
-        //            GB_GETB ( bkj, Bx, B->vlen*k+j ) ;           // bkj = B(k,j)
-        //
-        //            cij =  GB_MULT(aki, bkj) ;           // cij = aki * bkj
-        ////             printf("aki=%d, bkj=%d, cij=%d\n", aki, bkj, cij);
-        //
-        //            for (int64_t p = pA+1 ; p < pA_end ; p++)
-        //            {
-        //                //GB_DOT_TERMINAL (cij) ;             // break if cij == terminal
-        //                int64_t k = Ai [p] ;                // next row index of A(:,i)
-        //                // cij += A(k,i) * B(k,j)
-        //                GB_GETA ( aki,Ax, p  ) ;           // aki = A(k,i)
-        //                GB_GETB ( bkj,Bx, B->vlen*k+j ) ;           // bkj = B(k,j)
-        //                cij = GB_ADD ( cij, GB_MULT(aki, bkj) );        // cij += aki * bkj
-        ////                printf("aki=%d, bkj=%d, cij=%d\n", aki, bkj, cij);
-        //            }
-        //         } else {
-        //             if(threadIdx.x == 0 && blockIdx.x == 0) {
-        //                 printf("ERROR: At least one side must be dense.\n");
-        //                 break;
-        //             }
-        //         }
+        GB_CIJ_EXIST_POSTCHECK
+        if (cij_exists)
+        {
+            Ci [pair_id] = i ;
+            GB_PUTC ( Cx [pair_id] = (T_C) cij ) ;
+        }
+        else
+        {
+            my_nzombies++ ;
+            Ci [pair_id] = GB_FLIP (i) ;
+        }
 
-        Ci[pair_id]=i ;
-        GB_PUTC( Cx[pair_id]=(T_C) cij ) ;
-
-        //         int zc = BlockReduce(temp_storage).Sum(zombie_count);
+        // sum up the zombie count: FIXME: this must use int64, not int
+        // see vsvs kernel.  Why is this inside the "for kk" loop?
         thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( this_thread_block());
-        int zc = reduce_sum<int,tile_sz>(tile, zombie_count);
-
+        int zc = reduce_sum<int,tile_sz>(tile, my_nzombies);
         if(threadIdx.x == 0 && zc > 0)
-        atomicAdd(&(C->nzombies), zc);
+        {
+            // this threadblock accumulates its zombie count into the global
+            // zombie count
+            atomicAdd(&(C->nzombies), zc);
+        }
     }
 }

@@ -301,11 +301,13 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
                    kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
 
     }
-    else if ( A_is_sparse_or_hyper && B_is_bitmap_or_full)
+    else if ((A_is_sparse_or_hyper && B_is_bitmap_or_full )
+         ||  (A_is_bitmap_or_full  && B_is_sparse_or_hyper))
     {
 
         //----------------------------------------------------------------------
         // (sparse or hyper) times (full or bitmap)
+        // (full or bitmap) times (sparse or hyper)
         //----------------------------------------------------------------------
 
         dense_phase1launchFactory dp1lf(my_mxm_spec);
@@ -325,16 +327,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         kernel_timer.Stop();
         GBURBLE ("(GPU Dense sparse x full done %12.6g ms, rate=%12.6g)\n", 
                    kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
-
-    }
-    else if (A_is_bitmap_or_full && B_is_sparse_or_hyper)
-    {
-
-        //----------------------------------------------------------------------
-        // (full or bitmap) times (sparse or hyper)
-        //----------------------------------------------------------------------
-
-        // FIXME: same as above?
 
     }
     else if ( A_is_sparse_or_hyper && B_is_sparse_or_hyper )
