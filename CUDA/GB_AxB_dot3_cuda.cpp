@@ -301,39 +301,13 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
                    kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
 
     }
-    else if ((A_is_sparse_or_hyper && B_is_bitmap_or_full )
-         ||  (A_is_bitmap_or_full  && B_is_sparse_or_hyper))
-    {
-
-        //----------------------------------------------------------------------
-        // (sparse or hyper) times (full or bitmap)
-        // (full or bitmap) times (sparse or hyper)
-        //----------------------------------------------------------------------
-
-        dense_phase1launchFactory dp1lf(my_mxm_spec);
-
-        GBURBLE ("(GPU phase1 start nblk = %d) ", dp1lf.get_number_of_blocks(M)) ;
-        kernel_timer.Start();
-            dp1lf.jitGridBlockLaunch(C, M, A, B, stream);
-            CU_OK (cudaStreamSynchronize(stream));
-        kernel_timer.Stop();
-        GBURBLE ("(GPU phase1 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
-
-        mxm_sparse_dense_launchFactory spdnlf(my_mxm_spec);
-        GBURBLE ("(GPU Dense sparse x full launch ) ") ;
-        kernel_timer.Start();
-            spdnlf.jitGridBlockLaunch( C, M, A, B, stream);
-            CU_OK (cudaStreamSynchronize(stream));  // only for timing
-        kernel_timer.Stop();
-        GBURBLE ("(GPU Dense sparse x full done %12.6g ms, rate=%12.6g)\n", 
-                   kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
-
-    }
-    else if ( A_is_sparse_or_hyper && B_is_sparse_or_hyper )
+    else
     {
 
         //----------------------------------------------------------------------
         // (sparse or hyper) times (sparse or hyper)
+        // (sparse or hyper) times (bitmap or full)
+        // (bitmap or full) times (sparse or hyper)
         //----------------------------------------------------------------------
 
         //----------------------------------------------------------------------

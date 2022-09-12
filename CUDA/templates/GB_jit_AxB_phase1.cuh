@@ -221,9 +221,13 @@ __global__ void AxB_phase1
                 #if GB_B_IS_HYPER
                 GB_hyper_hash_lookup (Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
                     j, &pB, &pB_end) ;
-                #else
+                #elif GB_B_IS_SPARSE
                 pB       = Bp[j] ;
                 pB_end   = Bp[j+1] ;
+                #else
+                // B is bitmap or full
+                pB       = bvlen * j ;
+                pB_end   = pB + j ;
                 #endif
 
                 int64_t bjnz = pB_end - pB ;
@@ -238,19 +242,40 @@ __global__ void AxB_phase1
                     #if GB_A_IS_HYPER
                     GB_hyper_hash_lookup (Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
                         i, &pA, &pA_end) ;
-                    #else
+                    #elif GB_A_IS_SPARSE
                     pA       = Ap[i] ;
                     pA_end   = Ap[i+1] ;
+                    #else
+                    // A is bitmap or full
+                    pA       = avlen * i ;
+                    pA_end   = pA + i ;
                     #endif
 
                     int64_t ainz = pA_end - pA ;
                     if (ainz > 0)
                     {
                         // determine the bucket for C(i,j)
+                        #if (GB_A_IS_SPARSE || GB_A_IS_HYPER) && \
+                            (GB_B_IS_SPARSE || GB_B_IS_HYPER)
+                        // A and B are both sparse/hyper
                         bool vsvs = (ainz + bjnz <= 128) ;
                         bucket = (GB_bucket_code)
                            (  ((int) ( vsvs)) * ((int) GB_BUCKET_VSVS)
                             + ((int) (!vsvs)) * ((int) GB_BUCKET_MERGEPATH)) ;
+                        #elif (GB_A_IS_SPARSE || GB_A_IS_HYPER) && \
+                              (GB_B_IS_BITMAP || GB_B_IS_FULL)
+                        // A is sparse/hyper, B is bitmap/full
+                        bool vsvs = (ainz <= 128) ;
+                        bucket = (GB_bucket_code)
+                           (  ((int) ( vsvs)) * ((int) GB_BUCKET_VSDN)
+                            + ((int) (!vsvs)) * ((int) GB_BUCKET_SPDN)) ;
+                        #else
+                        // A is bitmap/full, B is sparse/hyper
+                        bool vsvs = (bjnz <= 128) ;
+                        bucket = (GB_bucket_code)
+                           (  ((int) ( vsvs)) * ((int) GB_BUCKET_VSDN)
+                            + ((int) (!vsvs)) * ((int) GB_BUCKET_SPDN)) ;
+                        #endif
                     }
                 }
             }

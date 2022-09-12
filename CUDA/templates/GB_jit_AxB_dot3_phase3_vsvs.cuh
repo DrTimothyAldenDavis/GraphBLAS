@@ -243,6 +243,8 @@ __global__ void AxB_dot3_phase3_vsvs
             Ci[pair_id] = GB_FLIP( i ) ;
         }
     }
+
+    // FIXME: use this in spdn and vsdn:
     this_thread_block().sync(); 
 
     my_nzombies = block_ReduceSum<int64_t , 32>( this_thread_block(), my_nzombies);
