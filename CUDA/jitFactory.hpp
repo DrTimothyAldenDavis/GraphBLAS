@@ -721,11 +721,11 @@ private:
 
     int work_per_thread;
 
+    // 0:hyper, 1:sparse, 2:bitmap, 3:full
     int asparsity   = RSHIFT (sr_code,  2, 2) ;
     int bsparsity   = RSHIFT (sr_code,  0, 2) ;
 
-    if (((asparsity == GxB_SPARSE) || (asparsity == GxB_HYPERSPARSE)) &&
-        ((bsparsity == GxB_SPARSE) || (bsparsity == GxB_HYPERSPARSE)))
+    if (asparsity <= 1 && bsparsity <= 1)
     {
         // both A and B are sparse/hyper
         switch (bucket_code_)

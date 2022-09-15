@@ -42,7 +42,7 @@ static inline int GB_sparsity (GrB_Matrix A)
     if (A == NULL)
     {
         // if A is NULL, pretend it is sparse
-        return (GxB_SPARSE) ;
+        return (GxB_SPARSE) ;       // FIXME: try GxB_HYPERSPARSE
     }
     else if (GB_IS_HYPERSPARSE (A))
     { 

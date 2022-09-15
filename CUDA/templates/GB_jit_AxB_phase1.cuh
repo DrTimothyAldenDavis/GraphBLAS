@@ -18,6 +18,21 @@
 #include <cub/block/block_scan.cuh>
 #include <cooperative_groups.h>
 
+// FIXME: use #include "GB_is.h"
+// true if A is bitmap
+#define GB_IS_BITMAP(A) ((A) != NULL && ((A)->b != NULL))
+
+// true if A is full (but not bitmap)
+#define GB_IS_FULL(A) \
+    ((A) != NULL && (A)->h == NULL && (A)->p == NULL && (A)->i == NULL \
+        && (A)->b == NULL)
+
+// true if A is hypersparse
+#define GB_IS_HYPERSPARSE(A) ((A) != NULL && ((A)->h != NULL))
+
+// true if A is sparse (but not hypersparse)
+#define GB_IS_SPARSE(A) ((A) != NULL && ((A)->h == NULL) && (A)->p != NULL)
+
 using namespace cooperative_groups;
 
 //------------------------------------------------------------------------------
@@ -79,14 +94,20 @@ __global__ void AxB_phase1
     const int64_t *__restrict__ Ai = A->i ;
     const int64_t avlen = A->vlen ;
     const int64_t anz = GB_nnz(A) ;
-    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
+
+//  printf ("\non the GPU: A is %d %d %d %d\n",
+//  GB_IS_SPARSE (A), GB_IS_HYPERSPARSE (A),
+//  GB_IS_BITMAP (A), GB_IS_FULL (A)) ;
+
+//  printf ("\non the GPU: B is %d %d %d %d\n",
+//  GB_IS_SPARSE (B), GB_IS_HYPERSPARSE (B),
+//  GB_IS_BITMAP (B), GB_IS_FULL (B)) ;
 
     const int64_t *__restrict__ Bh = B->h ;
     const int64_t *__restrict__ Bp = B->p ;
     const int64_t *__restrict__ Bi = B->i ;
     const int64_t bvlen = B->vlen ;
     const int64_t bnz = GB_nnz(B);
-    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
     #if GB_A_IS_HYPER
     const int64_t *__restrict__ A_Yp = A->Y->p ;
