@@ -511,7 +511,7 @@ private:
 class mxm_sparse_dense_launchFactory
 {
   std::string base_name = "GB_jit";
-  std::string kernel_name = "AxB_dot3_phase3_spdn";
+  std::string kernel_name = "AxB_dot3";
 
   GB_cuda_mxm_factory &mxm_factory_;
 
@@ -661,7 +661,7 @@ public:
      */
     auto sr_code = std::to_string(mxm_factory_.sr_code);
 
-    configure2( nz, mnvec, final_kernel_name_ss, blocksz, gridsz, sz, sr_code);
+    configure2( nz, mnvec, final_kernel_name_ss, blocksz, gridsz, sz, mxm_factory_.sr_code);
 
 
     GrB_BinaryOp mult = mxm_factory_.semiring->multiply ;

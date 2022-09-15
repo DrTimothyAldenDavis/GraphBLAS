@@ -73,7 +73,7 @@ template<
     typename T_C, typename T_A, typename T_B,
     typename T_Z, typename T_X, typename T_Y,
     uint64_t srcode>
-__global__ void AxB_dot3_phase3_sdpn
+__global__ void AxB_dot3_phase3_spdn
 (
     int64_t start,
     int64_t end,
@@ -273,7 +273,7 @@ __global__ void AxB_dot3_phase3_sdpn
                 }
             }
         }
-        #else
+        #elif ( GB_B_IS_BITMAP )
         {
 
             //------------------------------------------------------------------
