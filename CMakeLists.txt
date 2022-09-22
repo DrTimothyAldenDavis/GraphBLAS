@@ -43,11 +43,11 @@ set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
     ${CMAKE_SOURCE_DIR}/../SuiteSparse/cmake_modules
     )
 
-include ( SuiteSparsePolicy )
-
 # CUDA is under development for now, and not deployed in production:
-# FIXME:
-# set ( SUITESPARSE_CUDA off )
+# FIXME: set to false in production
+# set ( ENABLE_CUDA false )
+  set ( ENABLE_CUDA true )
+include ( SuiteSparsePolicy )
 
 #-------------------------------------------------------------------------------
 # define the project
