@@ -77,7 +77,6 @@ constexpr unsigned int SMEM = 0;
 
 //Kernel jitifiers
 class reduceFactory ;
-template<typename T1, typename T2, typename T3> class dotFactory ;
 template<typename T1, typename T2, typename T3> class spdotFactory ;
 
 inline std::istream* (*file_callback)(std::string, std::iostream&);
@@ -125,8 +124,7 @@ static const std::vector<std::string> header_names ={};
 template<int threads_per_block=32, int chunk_size = 128>
 class dense_phase1launchFactory 
 {
-  std::string base_name = "GB_jit";
-  std::string kernel_name = "AxB_dense_phase1";
+  std::string kernel_name = "GB_jit_AxB_dot3_dense_phase1";
 
   GB_cuda_mxm_factory &mxm_factory_;
 
@@ -162,27 +160,29 @@ public:
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (mxm_factory_) ;
 
-    auto sr_code = std::to_string(mxm_factory_.sr_code);
+    uint64_t sr_code = mxm_factory_.sr_code  ;
+    int mask_ecode = RSHIFT (sr_code, 20, 4) ;
+    bool mask_no_type = (mask_ecode < 4) ;
+    auto sr_code_str = std::to_string(sr_code) ;
+    std::vector<std::string> template_types = {
+        (mask_no_type) ? "bool" : M->type->name, sr_code_str };
 
     std::stringstream string_to_be_jitted ;
-    // FIXME: use mask_ecode instead, not even M->type->name
-    std::vector<std::string> template_types = {M->type->name, sr_code};
 
-    std::string hashable_name = base_name + "_" + kernel_name;
-    string_to_be_jitted << hashable_name << std::endl <<
+    string_to_be_jitted << kernel_name << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
-    R"(#include "templates/)" << hashable_name << R"(.cuh")" << std::endl;
+    R"(#include "templates/)" << kernel_name << R"(.cuh")" << std::endl;
 
     bool result = false;
 
     dim3 grid(get_number_of_blocks(M));
     dim3 block(get_threads_per_block());
 
-    jit::launcher( hashable_name + "_" + sr_code,   // FIXME: use mask_ecode
+    jit::launcher( kernel_name + "_" + sr_code_str + ".jtfy",
                    string_to_be_jitted.str(),
                    header_names,
                    compiler_flags,
-                   file_callback)
+                   file_callback /* FIXME: make NULL */)
                  .set_kernel_inst(  kernel_name, template_types)
                  .configure(grid, block, SMEM, stream)
                  .launch( C, M);
@@ -204,8 +204,7 @@ public:
 template<int threads_per_block=32, int chunk_size = 128>
 class phase1launchFactory 
 {
-  std::string base_name = "GB_jit";
-  std::string kernel_name = "AxB_phase1";
+  std::string kernel_name = "GB_jit_AxB_dot3_phase1";
 
   GB_cuda_mxm_factory &mxm_factory_;
 
@@ -242,23 +241,24 @@ public:
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (mxm_factory_) ;
 
-    auto sr_code = std::to_string(mxm_factory_.sr_code);
+    uint64_t sr_code = mxm_factory_.sr_code ;
+    int mask_ecode = RSHIFT (sr_code, 20, 4) ;
+    bool mask_no_type = (mask_ecode < 4) ;
+    auto sr_code_str = std::to_string(sr_code) ;
+    std::vector<std::string> template_types = {
+        (mask_no_type) ? "bool" : M->type->name, sr_code_str };
 
     std::stringstream string_to_be_jitted ;
-    // FIXME: use mask_ecode instead, not even M->type->name
-    std::vector<std::string> template_types = {M->type->name, sr_code};
-
-    std::string hashable_name = base_name + "_" + kernel_name;
-    string_to_be_jitted << hashable_name << std::endl <<
+    string_to_be_jitted << kernel_name << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
-    R"(#include "templates/)" << hashable_name << R"(.cuh")" << std::endl;
+    R"(#include "templates/)" << kernel_name << R"(.cuh")" << std::endl;
 
     bool result = false;
 
     dim3 grid(get_number_of_blocks(M));
     dim3 block(get_threads_per_block());
 
-    jit::launcher( hashable_name + "_" + sr_code,   // FIXME: use mask_ecode
+    jit::launcher( kernel_name + "_" + sr_code_str + ".jtfy",
                    string_to_be_jitted.str(),
                    header_names,
                    compiler_flags,
@@ -436,7 +436,7 @@ public:
      */
     configure( nz, mnvec, final_kernel_name_ss, blocksz, gridsz);
 
-    auto sr_code = std::to_string(mxm_factory_.sr_code);
+    auto sr_code = std::to_string(mxm_factory_.sr_code);    // FIXME: make hexadecimal
 
     GrB_BinaryOp mult = mxm_factory_.semiring->multiply ;
 
@@ -933,43 +933,11 @@ public:
 
 //------------------------------------------------------------------------------
 
-template<  int threads_per_block=32, int chunk_size = 256>
-inline bool GB_cuda_mxm_phase1(GB_cuda_mxm_factory &mxm_factory, int64_t *nanobuckets, int64_t *blockBucket,
-                        GrB_Matrix C, GrB_Matrix M, GrB_Matrix A, GrB_Matrix B,
-                        cudaStream_t stream = 0) {
-    phase1launchFactory<threads_per_block, chunk_size> lf(mxm_factory);
-    return lf.jitGridBlockLaunch(nanobuckets, blockBucket, C, M, A, B, stream);
-}
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 
-template<int threads_per_block = 32, int chunk_size = 256>
-bool GB_cuda_mxm_phase2(int64_t *nanobuckets, int64_t *blockBucket,
-                          int64_t *bucketp, int64_t *bucket, int64_t *offset,
-                          GrB_Matrix M, cudaStream_t stream = 0) {
-
-  phase2launchFactory<threads_per_block, chunk_size> lf;
-  return lf.jitGridBlockLaunch(nanobuckets, blockBucket, bucketp, bucket, offset, M, stream);
-}
-
 //------------------------------------------------------------------------------
-
-template<int threads_per_block = 32, int chunk_size = 128>
-inline bool GB_cuda_mxm_phase2end(int64_t *nanobuckets, int64_t *blockBucket,
-                           int64_t *bucketp, int64_t *bucket, int64_t *offset,
-                           GrB_Matrix C, GrB_Matrix M, cudaStream_t stream) {
-    phase2endlaunchFactory lf;
-    return lf.jitGridBlockLaunch(nanobuckets, blockBucket, bucketp, bucket, offset, C, M, stream);
-}
-
-//------------------------------------------------------------------------------
-
-inline bool GB_cuda_mxm_phase3(GB_cuda_mxm_factory &mymxmfactory, GB_bucket_code bucket_code,
-                        int64_t start, int64_t end, int64_t *bucketp, int64_t *bucket,
-                          GrB_Matrix C,  GrB_Matrix M, GrB_Matrix A, GrB_Matrix B, cudaStream_t stream = 0) {
-    phase3launchFactory lf(mymxmfactory, bucket_code);
-    return lf.jitGridBlockLaunch(start, end, bucketp, bucket, C, M, A, B, stream);
-}
 
 //------------------------------------------------------------------------------
 

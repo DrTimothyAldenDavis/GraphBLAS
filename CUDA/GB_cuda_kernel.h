@@ -21,8 +21,18 @@
 // GETA, GETB: get entries from input matrices A and B
 //------------------------------------------------------------------------------
 
+// The entries are typecasted to the type of the inputs to the operator f(x,y),
+// which is either the multiplicative operator of a semiring, or a binary
+// operator for eWise operations.  GETA and GETB can also be used for loading
+// values to be passed to the binary accumulator operator.
+
 #if GB_FLIPXY
 
+    // The operator is "flipped", so that f(b,a) is to be computed.
+    // In this case, aval must be typecasted to the ytype of f, which is
+    // T_Y, and bval to the xtype of f (that is, T_X).
+
+    // aval = (T_Y) A (i,j)
     #if GB_A_IS_PATTERN
         #define GB_DECLAREA(aval)
         #define GB_SHAREDA(aval)
@@ -37,6 +47,7 @@
         #endif
     #endif
 
+    // bval = (T_X) B (i,j)
     #if GB_B_IS_PATTERN
         #define GB_DECLAREB(bval)
         #define GB_SHAREDB(bval)
@@ -53,6 +64,11 @@
 
 #else
 
+    // The operator is not "flipped", so that f(a,b) is to be computed.
+    // In this case, aval must be typecasted to the xtype of f, which is
+    // T_X, and bval to the xtype of f (that is, T_Y).
+
+    // aval = (T_X) A (i,j)
     #if GB_A_IS_PATTERN
         #define GB_DECLAREA(aval)
         #define GB_SHAREDA(aval)
@@ -67,6 +83,7 @@
         #endif
     #endif
 
+    // bval = (T_Y) B (i,j)
     #if GB_B_IS_PATTERN
         #define GB_DECLAREB(bval)
         #define GB_SHAREDB(bval)
@@ -101,7 +118,8 @@
 
 #else
 
-    #define GB_ADD_F( f , s)  f = GB_ADD ( f, s ) 
+    // the result s of the multiply must be typecast to ztype of the add.
+    #define GB_ADD_F( f , s)  f = GB_ADD ( f, (T_Z) s ) 
     #define GB_C_MULT( c, a, b)  c = GB_MULT( (a), (b) )
     #define GB_MULTADD( c, a ,b ) GB_ADD_F( (c), GB_MULT( (a),(b) ) )
     #define GB_DOT_TERMINAL( c ) GB_IF_TERMINAL_BREAK (c)

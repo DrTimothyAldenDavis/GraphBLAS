@@ -109,9 +109,14 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
 
 void GB_macrofy_mxm        // construct all macros for GrB_mxm
 (
-    // input:
+    // output:
     FILE *fp,                   // target file to write, already open
-    uint64_t scode
+    // input:
+    uint64_t scode,
+    GrB_Semiring semiring,  // the semiring to macrofy
+    GrB_Type ctype,
+    GrB_Type atype,
+    GrB_Type btype
 ) ;
 
 //------------------------------------------------------------------------------

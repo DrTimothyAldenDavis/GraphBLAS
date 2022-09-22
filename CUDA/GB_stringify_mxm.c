@@ -179,6 +179,9 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     int A_iso_code = A->iso ? 1 : 0 ;
     int B_iso_code = B->iso ? 1 : 0 ;
 
+    printf ("#define GB_A_TYPE %s\n", atype->name) ;
+    printf ("#define GB_A_TYPEDEF %s\n", atype->defn ? atype->defn : "null") ;
+
     //--------------------------------------------------------------------------
     // enumify the mask
     //--------------------------------------------------------------------------
@@ -249,9 +252,14 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
 
 void GB_macrofy_mxm        // construct all macros for GrB_mxm
 (
-    // input:
+    // output:
     FILE *fp,                   // target file to write, already open
-    uint64_t scode
+    // input:
+    uint64_t scode,
+    GrB_Semiring semiring,  // the semiring to macrofy
+    GrB_Type ctype,
+    GrB_Type atype,
+    GrB_Type btype
 )
 {
 
@@ -264,9 +272,9 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     int B_iso_code  = RSHIFT (scode, 60, 1) ;
 
     // monoid
-    int add_ecode   = RSHIFT (scode, 55, 5) ;
-    int id_ecode    = RSHIFT (scode, 50, 5) ;
-    int term_ecode  = RSHIFT (scode, 45, 5) ;
+    int add_ecode   = RSHIFT (scode, 55, 5) ;   // string: function
+    int id_ecode    = RSHIFT (scode, 50, 5) ;   // string: "0"
+    int term_ecode  = RSHIFT (scode, 45, 5) ;   // string
     bool is_term    = (term_ecode < 30) ;
 
     // multiplier
@@ -289,7 +297,6 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     int msparsity   = RSHIFT (scode,  4, 2) ;
     int asparsity   = RSHIFT (scode,  2, 2) ;
     int bsparsity   = RSHIFT (scode,  0, 2) ;
-
 
     //--------------------------------------------------------------------------
     // construct macros to load scalars from A and B (and typecast) them
