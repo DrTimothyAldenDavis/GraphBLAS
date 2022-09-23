@@ -262,11 +262,6 @@ int main (void)
     GxB_Type_new (&WildType, sizeof (wildtype), "wildtype", WILDTYPE_DEFN) ;
     GxB_print (WildType, 3) ;
 
-GrB_Type_new (&WildType, sizeof (wildtype)) ;
-GrB_set (WildType, GRB_NAME, "wildtype") ;
-GrB_set (WildType, GRB_DEFN, WILDTYPE_DEFN) ;
-GrB_set (WildType, GRB_GPUDEFN, WILDTYPE_DEFN_GPU) ;
-
     // get its properties
     size_t s ;
     GxB_Type_size (&s, WildType) ;
