@@ -27,7 +27,8 @@ void GB_stringify_binop
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
     GB_Type_code xcode, // op->xtype->code of the operator
     bool for_semiring,  // if true: op is a multiplier in a semiring
-    bool flipxy         // if true, use mult(y,x) else mult(x,y)
+    bool flipxy,        // if true, use mult(y,x) else mult(x,y)
+    GrB_BinaryOp op
 )
 {
 
@@ -36,6 +37,8 @@ void GB_stringify_binop
 
     // get ecode from opcode, xcode, and for_semiring
     GB_enumify_binop (&ecode, opcode, xcode, for_semiring) ;
+
+    // FIXME: do user-defined ops
 
     // convert ecode to string
     GB_charify_binop (&op_string, ecode) ;
@@ -543,7 +546,7 @@ void GB_charify_binop
         // f must be defined by a string provided by the user.  This is
         // only a place-holder
 
-        case   0 : f = "user-defined"               ; break ;
+        case   0 : f = "" ;                         ; break ;
 
         //----------------------------------------------------------------------
         // built-in ops, can be used in a monoid
@@ -810,6 +813,49 @@ void GB_macrofy_binop
         // operator is not flipped
         fprintf ( fp, 
             "#define %s(x,y) (%s)\n", macro_name, op_string) ;
+    }
+}
+
+//------------------------------------------------------------------------------
+// GB_charify_and_macrofy_binop: convert an op into a macro
+//------------------------------------------------------------------------------
+
+void GB_charify_and_macrofy_binop
+(
+    FILE *fp,
+    // input:
+    const char *macro_name,
+    bool flipxy,
+    int ecode,
+    GrB_BinaryOp op,
+    bool skip_defn
+)
+{
+
+    const char *s ;
+    if (ecode == 0)
+    {
+        // user-defined operator
+        if (flipxy)
+        {
+            fprintf (fp, "\n#define %s(z,y,x) %s (&(z), &(x), &(y))\n",
+                macro_name, op->name) ;
+        }
+        else
+        {
+            fprintf (fp, "\n#define %s(z,x,y) %s (&(z), &(x), &(y))\n",
+                macro_name, op->name) ;
+        }
+        if (!skip_defn)
+        {
+            fprintf (fp, "%s\n", op->defn) ;
+        }
+    }
+    else
+    {
+        // built-in operator
+        GB_charify_binop (&s, ecode) ;
+        GB_macrofy_binop (fp, macro_name, s, flipxy) ;
     }
 }
 
