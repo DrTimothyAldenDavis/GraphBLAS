@@ -119,7 +119,7 @@ void wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)
             z->stuff [i][j] = x->stuff [i][j] + y->stuff [i][j] ;
         }
     }
-    sprintf (z->whatstuff, "this was added") ;
+    strcpy (z->whatstuff, "this was added") ;
     printf ("\ndo the add:\n    [%s] = [%s] + [%s]\n",
         z->whatstuff, x->whatstuff, y->whatstuff) ;
     wildtype_print (z, "z = x+y:") ;
@@ -137,7 +137,7 @@ void wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)
 "           z->stuff [i][j] = x->stuff [i][j] + y->stuff [i][j] ; \n"       \
 "       } \n"                                                               \
 "   } \n"                                                                   \
-"   sprintf (z->whatstuff, \"this was added\") ; \n"                        \
+"   strcpy (z->whatstuff, \"this was added\") ; \n"                         \
 "} \n"
 
 //------------------------------------------------------------------------------
@@ -159,7 +159,7 @@ void wildtype_mult (wildtype *z, const wildtype *x, const wildtype *y)
             }
         }
     }
-    sprintf (z->whatstuff, "this was multiplied") ;
+    strcpy (z->whatstuff, "this was multiplied") ;
     printf ("\ndo the multiply:\n   [%s] = [%s] * [%s]\n",
         z->whatstuff, x->whatstuff, y->whatstuff) ;
     wildtype_print (z, "z = x*y:") ;
@@ -180,7 +180,7 @@ void wildtype_mult (wildtype *z, const wildtype *x, const wildtype *y)
 "           } \n"                                                           \
 "       } \n"                                                               \
 "   } \n"                                                                   \
-"   sprintf (z->whatstuff, \"this was multiplied\") ; \n"                   \
+"   strcpy (z->whatstuff, \"this was multiplied\") ; \n"                    \
 "} \n"
 
 //------------------------------------------------------------------------------
@@ -262,6 +262,11 @@ int main (void)
     GxB_Type_new (&WildType, sizeof (wildtype), "wildtype", WILDTYPE_DEFN) ;
     GxB_print (WildType, 3) ;
 
+GrB_Type_new (&WildType, sizeof (wildtype)) ;
+GrB_set (WildType, GRB_NAME, "wildtype") ;
+GrB_set (WildType, GRB_DEFN, WILDTYPE_DEFN) ;
+GrB_set (WildType, GRB_GPUDEFN, WILDTYPE_DEFN_GPU) ;
+
     // get its properties
     size_t s ;
     GxB_Type_size (&s, WildType) ;
@@ -280,21 +285,21 @@ int main (void)
             scalar1.stuff [i][j] = 100*i + j ;
         }
     }
-    sprintf (scalar1.whatstuff, "this is from scalar1") ;
+    strcpy (scalar1.whatstuff, "this is from scalar1") ;
     wildtype_print (&scalar1, "scalar1") ;
 
     // A(2,7) = scalar1
-    sprintf (scalar1.whatstuff, "this is A(2,7)") ;
+    strcpy (scalar1.whatstuff, "this is A(2,7)") ;
     GrB_Matrix_setElement_UDT (A, &scalar1, 2, 7) ;
 
     // A(3,7) = scalar1 modified
     scalar1.stuff [2][3] = 909 ;
-    sprintf (scalar1.whatstuff, "this is A(3,7)") ;
+    strcpy (scalar1.whatstuff, "this is A(3,7)") ;
     GrB_Matrix_setElement_UDT (A, &scalar1, 3, 7) ;
 
     // A(2,4) = scalar1 modified again
     scalar1.stuff [3][3] = 42 ;
-    sprintf (scalar1.whatstuff, "this is A(2,4)") ;
+    strcpy (scalar1.whatstuff, "this is A(2,4)") ;
     GrB_Matrix_setElement_UDT (A, &scalar1, 2, 4) ;
 
     // C = A'
@@ -308,7 +313,7 @@ int main (void)
     {
         wildtype_print (&scalar2, "got scalar2 = C(7,2)") ;
     }
-    sprintf (scalar2.whatstuff, "here is scalar2") ;
+    strcpy (scalar2.whatstuff, "here is scalar2") ;
 
     // create the WildAdd operator
     GrB_BinaryOp WildAdd ;
@@ -341,17 +346,17 @@ int main (void)
     wildtype_print (&scalar2, "scalar2") ;
 
     // B(7,2) = scalar2
-    sprintf (scalar2.whatstuff, "this is B(7,2)") ;
+    strcpy (scalar2.whatstuff, "this is B(7,2)") ;
     GrB_Matrix_setElement_UDT (B, &scalar2, 7, 2) ;
 
     // B(7,5) = scalar2 modified
     scalar2.stuff [0][0] = -1 ;
-    sprintf (scalar2.whatstuff, "here is B(7,5)") ;
+    strcpy (scalar2.whatstuff, "here is B(7,5)") ;
     GrB_Matrix_setElement_UDT (B, &scalar2, 7, 5) ;
 
     // B(4,2) = scalar2 changed 
     scalar2.stuff [0][3] = 77 ;
-    sprintf (scalar2.whatstuff, "finally, B(4,2)") ;
+    strcpy (scalar2.whatstuff, "finally, B(4,2)") ;
     GrB_Matrix_setElement_UDT (B, &scalar2, 4, 2) ;
 
     // create the WildAdder monoid 
@@ -364,7 +369,7 @@ int main (void)
             scalar_identity.stuff [i][j] = 0 ;
         }
     }
-    sprintf (scalar_identity.whatstuff, "identity") ;
+    strcpy (scalar_identity.whatstuff, "identity") ;
     wildtype_print (&scalar_identity, "scalar_identity for the monoid") ;
     GrB_Monoid_new_UDT (&WildAdder, WildAdd, &scalar_identity) ;
 
@@ -385,7 +390,7 @@ int main (void)
     wildtype_print_matrix (C, "output C") ;
 
     // C<M> = C*C'
-    printf ("\n------ C<C>=C*C'----------------------------------------\n") ;
+    printf ("\n------ C<M>=C*C'----------------------------------------\n") ;
     GrB_Matrix M ;
     GrB_Matrix_new (&M, GrB_BOOL, 10, 10) ;
     GrB_Matrix_setElement (M, true, 2, 2) ;

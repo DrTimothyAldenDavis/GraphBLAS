@@ -33,6 +33,7 @@
 
 using namespace cooperative_groups;
 
+// FIXME: move this out into its own *.cuh
 template< typename T, int tile_sz>
 __inline__ __device__ 
 T GB_warp_ReduceSumPlus( thread_block_tile<tile_sz> g, T val)
@@ -52,21 +53,6 @@ T GB_warp_ReduceSumPlus( thread_block_tile<tile_sz> g, T val)
     val +=  g.shfl_down( val, 1);
     return val; // note: only thread 0 will return full sum
 }
-/*
-template< typename T, int tile_sz>
-__inline__ __device__ 
-T warp_Reduce( thread_block_tile<tile_sz> g, T val)
-{
-    // Each iteration halves the number of active threads
-    // Each thread adds its partial sum[i] to sum[lane+i]
-    #pragma unroll
-    for (int i = tile_sz >> 1; i > 0; i >>= 1) {
-        T next = g.shfl_down( val, i) ;
-        val = GB_ADD( val, next ) ; 
-    }
-    return val; // note: only thread 0 will return full sum
-}
-*/
 
 template<typename T, int warpSize>
 __inline__ __device__
@@ -94,6 +80,8 @@ T GB_block_ReduceSum(thread_block g, T val)
 
   return val;
 }
+
+//------------------------------------------------------------------------------
 
 template<
     typename T_C, typename T_A, typename T_B,

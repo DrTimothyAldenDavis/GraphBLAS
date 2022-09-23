@@ -106,9 +106,7 @@
 
 #if GB_C_ISO
 
-    #define GB_ADD_F( f , s)
-    #define GB_C_MULT( c, a, b)
-    #define GB_MULTADD( c, a ,b )
+    #define GB_MULTADD( c, a ,b, i, k, j)
     #define GB_DOT_TERMINAL( c ) break
     #define GB_DOT_MERGE(pA,pB)                                         \
     {                                                                   \
@@ -118,10 +116,14 @@
 
 #else
 
-    // the result s of the multiply must be typecast to ztype of the add.
-    #define GB_ADD_F( f , s)  f = GB_ADD ( f, (T_Z) s ) 
-    #define GB_C_MULT( c, a, b)  c = GB_MULT( (a), (b) )
-    #define GB_MULTADD( c, a ,b ) GB_ADD_F( (c), GB_MULT( (a),(b) ) )
+    // the result the multiply must be typecast to ztype of the add.
+    #define GB_MULTADD( c, a, b, i, k, j )                              \
+    {                                                                   \
+        T_Z x_op_y ;                                                    \
+        GB_MULT (x_op_y, a, b, i, k, j) ;   /* x_op_y = a*b */          \
+        GB_ADD (c, c, x_op_y) ;             /* c += x_op_y  */          \
+    }
+
     #define GB_DOT_TERMINAL( c ) GB_IF_TERMINAL_BREAK (c)
 
     #if GB_IS_PLUS_PAIR_REAL_SEMIRING
@@ -149,7 +151,7 @@
             GB_GETA (aki, Ax, pA) ;         /* aki = A(k,i) */              \
             GB_GETB (bkj, Bx, pB) ;         /* bkj = B(k,j) */              \
             cij_exists = true ;                                             \
-            GB_MULTADD (cij, aki, bkj) ;    /* cij += aki * bkj */          \
+            GB_MULTADD (cij, aki, bkj, i, k, j) ;  /* cij += aki * bkj */   \
         }
         #define GB_CIJ_EXIST_POSTCHECK
 
