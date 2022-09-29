@@ -55,7 +55,7 @@ include ( SuiteSparsePolicy )
 
 if ( SUITESPARSE_CUDA )
     # for CUDA development only; not for production use
-    set ( CMAKE_CUDA_DEV off )
+    set ( CMAKE_CUDA_DEV off ) 
     project ( graphblas
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES CUDA C )

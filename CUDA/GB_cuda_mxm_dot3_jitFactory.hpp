@@ -27,41 +27,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* fixme:  need to split this into multiple files.  One for the general
-bucket-based dot3 method (A and B both sparse/hyper), one for non-bucket-
-based dot3 methods (A and/or B bitmap/full), one for reduction, etc
-
-Otherwise, this will get too large when constructing all the CUDA kernels
-for all of GraphBLAS.
-*/
-
-/*
-  Extended example for building on-the-fly kernels with C interface.
-  Simple examples demonstrating different ways to load source code
-    and call kernels.
- */
-
-#ifndef GB_JITFACTORY_H
-#define GB_JITFACTORY_H
+#ifndef GB_MXM_DOT3_JITFACTORY_H
+#define GB_MXM_DOT3_JITFACTORY_H
 
 #pragma once
-
-extern "C" {
-#include "GraphBLAS.h"
-};
-#include "GB_jit_launcher.h"
-#include "GB_cuda_mxm_factory.hpp"
-#include "GB_cuda_reduce_factory.hpp"
-#include "GB_cuda_buckets.h"
-#include "GB_cuda_type_wrap.hpp"
-#include "GB_cuda_error.h"
-#include "../rmm_wrap/rmm_wrap.h"
-#include "GB_iceil.h"
-
-// fixme: C11 is already required for all of GraphBLAS.  No need to test here:
-#if __cplusplus >= 201103L
-
-constexpr unsigned int SMEM = 0;
 
 /**
  * This file is responsible for picking all the parameters and what kernel variaiton we will use for a given instance
@@ -73,46 +42,12 @@ constexpr unsigned int SMEM = 0;
  * Kernel factory says "Here's the actual instance I want you to build with the given parameters"
  */
 
-//bool GB_cuda_reduce(int64_t *index, void *in_data, void *output, unsigned int N, GrB_Monoid op);
-
-//Kernel jitifiers
-class reduceFactory ;
-template<typename T1, typename T2, typename T3> class spdotFactory ;
-
-inline std::istream* (*file_callback)(std::string, std::iostream&);
 
 //AxB_dot3_phase1 kernel launchers
 template<int threads_per_block, int chunk_size> class phase1launchFactory ;
 template<int threads_per_block, int chunk_size> class dense_phase1launchFactory ;
 
 //AxB_dot3_phase3 kernel launchers
-
-template<  typename T_C, typename T_M, 
-         typename T_A, typename T_B, typename T_xy, typename T_z> class launchFactory ;
-
-
-static const std::vector<std::string> compiler_flags{
-   "-std=c++14",
-   //"-G",
-   "-remove-unused-globals",
-   "-w",
-   "-D__CUDACC_RTC__",
-   "-I.",
-   "-I..",
-  // "-I../../Source",
-  // "-I../../Source/Template",
-   "-I../templates",
-
-   // Add includes relative to GRAPHBLAS_SOURCE_PATH variable
-   "-I" + jit::get_user_graphblas_source_path() + "/CUDA",
-   "-I" + jit::get_user_graphblas_source_path() + "/CUDA/templates",
-  // "-I" + jit::get_user_graphblas_source_path() + "/Source",
-  // "-I" + jit::get_user_graphblas_source_path() + "/Source/Template",
-   "-I/usr/local/cuda/include",
-};
-
-static const std::vector<std::string> header_names ={};
-
 //------------------------------------------------------------------------------
 // dot3: dense_phase1launchFactory 
 //------------------------------------------------------------------------------
@@ -848,100 +783,4 @@ private:
   }
 };
 
-//------------------------------------------------------------------------------
-// reduceFactory
-//------------------------------------------------------------------------------
-
-class reduceFactory
-{
-  std::string base_name = "GB_jit";
-  std::string kernel_name = "reduceNonZombiesWarp";
-
-  int threads_per_block = 320 ;
-  int work_per_thread = 256;
-  int number_of_sms = GB_Global_gpu_sm_get (0);
-
-  GB_cuda_reduce_factory &reduce_factory_;
-
-public:
-
-  reduceFactory(GB_cuda_reduce_factory &myreducefactory) : reduce_factory_(myreducefactory) {}
-
-  int get_threads_per_block() {
-    return threads_per_block;
-  }
-
-  int get_number_of_blocks(unsigned int N) {
-      return (N + work_per_thread*threads_per_block - 1)/(work_per_thread*threads_per_block);
-  }
-
-  // Note: this does assume the erased types are compatible w/ the monoid's ztype
-  bool jitGridBlockLaunch(GrB_Matrix A, void* output,
-                          GrB_Monoid op, cudaStream_t stream = 0)
-  {
-      GBURBLE ("\n(launch reduce factory) \n") ;
-
-      GrB_Scalar temp_scalar;
-      GrB_Scalar_new(&temp_scalar, op->op->ztype);
-
-      cuda::jit::scalar_set_element(temp_scalar, 0);
-      GrB_Scalar_wait(temp_scalar, GrB_MATERIALIZE);
-
-      jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
-      filecache.getFile (reduce_factory_) ;
-
-      auto rcode = std::to_string(reduce_factory_.rcode);
-
-      std::string hashable_name = base_name + "_" + kernel_name;
-      std::stringstream string_to_be_jitted ;
-      string_to_be_jitted <<
-      hashable_name << std::endl <<
-      R"(#include ")" << jit::get_user_home_cache_dir() << "/" << reduce_factory_.filename << R"(")" << std::endl <<
-      R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
-
-      bool is_sparse = GB_IS_SPARSE(A);
-      int64_t N = is_sparse ? GB_nnz(A) : GB_NCOLS(A) * GB_NROWS(A);
-
-      int blocksz = get_threads_per_block();
-      int gridsz = get_number_of_blocks(N);
-      dim3 grid(gridsz);
-      dim3 block(blocksz);
-
-      // FIXME: call GB_stringify_reduce to create GB_ADD and related
-      // macros, in an include file: GB_reduce_123412341234.h
-      GBURBLE ("(cuda reduce launch %d threads in %d blocks)", blocksz, gridsz ) ;
-
-      jit::launcher(hashable_name + "_" + rcode,
-                    string_to_be_jitted.str(),
-                    header_names,
-                    compiler_flags,
-                    file_callback)
-               .set_kernel_inst(  kernel_name , { A->type->name, op->op->ztype->name, rcode, "true" })
-               .configure(grid, block, SMEM, stream)
-               // FIXME: GB_ADD is hardcoded into kernel for now
-               .launch( A, temp_scalar, N, is_sparse);
-
-      // Need to synchronize before copying result to host
-      CHECK_CUDA( cudaStreamSynchronize(stream) );
-
-      memcpy(output, temp_scalar->x, op->op->ztype->size);
-
-      rmm_wrap_free(temp_scalar);
-      return true;
-  }
-};
-
-//------------------------------------------------------------------------------
-
-inline bool GB_cuda_reduce(GB_cuda_reduce_factory &myreducefactory,
-                           GrB_Matrix A, void *output, GrB_Monoid op,
-                           cudaStream_t stream = 0) {
-    reduceFactory rf(myreducefactory);
-    GBURBLE ("(starting cuda reduce)" ) ;
-    bool result = rf.jitGridBlockLaunch(A, output, op, stream);
-    GBURBLE ("(ending cuda reduce)" ) ;
-    return (result) ;
-}
-
-#endif  // C++11
 #endif
