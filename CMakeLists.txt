@@ -44,9 +44,8 @@ set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
     )
 
 # CUDA is under development for now, and not deployed in production:
-# FIXME: set to false in production
-# set ( ENABLE_CUDA false )
-  set ( ENABLE_CUDA true )
+  set ( ENABLE_CUDA false )
+# set ( ENABLE_CUDA true )
 include ( SuiteSparsePolicy )
 
 #-------------------------------------------------------------------------------
@@ -55,7 +54,7 @@ include ( SuiteSparsePolicy )
 
 if ( SUITESPARSE_CUDA )
     # for CUDA development only; not for production use
-    set ( CMAKE_CUDA_DEV off ) 
+    set ( CMAKE_CUDA_DEV off )
     project ( graphblas
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES CUDA C )
@@ -154,19 +153,6 @@ configure_file ( "Config/GraphBLAS_version.tex.in" "${PROJECT_SOURCE_DIR}/Doc/Gr
 configure_file ( "Config/GraphBLAS_API_version.tex.in"
     "${PROJECT_SOURCE_DIR}/Doc/GraphBLAS_API_version.tex" )
 configure_file ( "Config/README.md.in" "${PROJECT_SOURCE_DIR}/README.md" )
-
-#-------------------------------------------------------------------------------
-# report status
-#-------------------------------------------------------------------------------
-
-if ( ${CMAKE_BUILD_TYPE} STREQUAL "Debug" )
-    message ( STATUS "CMAKE C Flags debug:       " ${CMAKE_C_FLAGS_DEBUG} )
-else ( )
-    message ( STATUS "CMAKE C Flags release:     " ${CMAKE_C_FLAGS_RELEASE} )
-endif ( )
-
-message ( STATUS "CMAKE compiler ID:         " ${CMAKE_C_COMPILER_ID} )
-message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
 
 #-------------------------------------------------------------------------------
 # include directories for both graphblas and graphblasdemo libraries
@@ -504,4 +490,10 @@ if ( DUMP )
     message("End dumping all CMake variables in alphabetic order")
     message("====")
 endif ( )
+
+#-------------------------------------------------------------------------------
+# report status
+#-------------------------------------------------------------------------------
+
+include ( SuiteSparseReport )
 
