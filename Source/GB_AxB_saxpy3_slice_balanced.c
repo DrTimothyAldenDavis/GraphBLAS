@@ -16,7 +16,6 @@
 // control parameters for generating parallel tasks
 #define GB_NTASKS_PER_THREAD 2
 #define GB_COSTLY 1.2
-#define GB_VERY_COSTLY (8 * GB_COSTLY)
 #define GB_FINE_WORK 2
 #define GB_MWORK_ALPHA 0.01
 #define GB_MWORK_BETA 0.10
@@ -449,6 +448,8 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     target_task_size = GB_IMAX (target_task_size, chunk) ;
     double target_fine_size = target_task_size / GB_FINE_WORK ;
     target_fine_size = GB_IMAX (target_fine_size, chunk) ;
+    double very_costly = GB_Global_hack_get (0) ;       // modified for testing
+    if (very_costly <= GxB_DEFAULT) very_costly = 8 ;   // default is 8
 
     //--------------------------------------------------------------------------
     // determine # of parallel tasks
@@ -492,7 +493,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
                 // This coarse task is empty, having been squeezed out by
                 // costly vectors in adjacent coarse tasks.
             }
-            else if (task_flops > GB_VERY_COSTLY * target_task_size)
+            else if (task_flops > very_costly * GB_COSTLY * target_task_size)
             {
                 // This coarse task is too costly, because it contains one or
                 // more costly vectors.  Split its vectors into a mixture of
@@ -615,7 +616,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
                 // This coarse task is empty, having been squeezed out by
                 // costly vectors in adjacent coarse tasks.
             }
-            else if (task_flops > GB_VERY_COSTLY * target_task_size)
+            else if (task_flops > very_costly * GB_COSTLY * target_task_size)
             {
                 // This coarse task is too costly, because it contains one or
                 // more costly vectors.  Split its vectors into a mixture of
