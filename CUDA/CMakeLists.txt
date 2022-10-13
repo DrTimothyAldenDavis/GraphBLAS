@@ -1,4 +1,4 @@
-cmake_minimum_required ( VERSION 3.22 )
+cmake_minimum_required ( VERSION 3.19 )
 
 # CMake build for generating googletest c++ files that can be compiled and executed in parallel.
 # Build can be customized to speed up development by allowing the targeting of specific

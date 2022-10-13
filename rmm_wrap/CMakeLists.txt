@@ -6,7 +6,7 @@
 
 #-------------------------------------------------------------------------------
 
-cmake_minimum_required ( VERSION 3.22 )
+cmake_minimum_required ( VERSION 3.19 )
 
 project(rmm_wrap VERSION 0.1)
 
