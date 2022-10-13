@@ -39,7 +39,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         // built-in monoid: a simple assignment
         const char *id_value = GB_charify_identity_or_terminal (id_ecode) ;
         fprintf (fp, "#define GB_DECLARE_MONOID_IDENTITY(z) "
-            "%s z = (%s) ;\n", ztype_name, id_value) ;
+            "%s z = (%s) (%s) ;\n", ztype_name, ztype_name, id_value) ;
     }
     else
     {
@@ -71,7 +71,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         // built-in terminal monoid: terminal value is a simple assignment
         const char *term_value = GB_charify_identity_or_terminal (term_ecode) ;
         fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL(z) "
-            "%s z = (%s) ;\n", ztype_name, term_value) ;
+            "%s z = (%s) (%s) ;\n", ztype_name, ztype_name, term_value) ;
         fprintf (fp, "#define GB_TERMINAL_CONDITION(cij,z) ((cij) == (z))\n") ;
         fprintf (fp, "#define GB_IF_TERMINAL_BREAK(cij,z) "
             "if ((cij) == (z)) break\n") ;
@@ -81,6 +81,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         // user-defined terminal monoid
         GB_macrofy_bytes (fp, "MONOID_TERMINAL", ztype_name,
             monoid->terminal, monoid->op->ztype->size) ;
+        // FIXME for CUDA, can't do "==", use memcmp instead
         fprintf (fp, "#define GB_TERMINAL_CONDITION(cij,z) ((cij) == (z))\n") ;
         fprintf (fp, "#define GB_IF_TERMINAL_BREAK(cij,z) "
             "if ((cij) == (z)) break\n") ;
