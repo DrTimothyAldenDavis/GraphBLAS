@@ -49,6 +49,7 @@ A.class = 'single complex' ;
 B.class = 'single complex' ;
 T.matrix = sparse (m,n) ;
 T.class = 'single complex' ;
+GrB.burble (1) ;
 for B_hyper = 0:1
     for A_hyper = 0:1
         A.is_hyper = A_hyper ;
@@ -61,6 +62,7 @@ for B_hyper = 0:1
         GB_spec_compare (C1, C4) ;
     end
 end
+GrB.burble (0) ;
 
 A.class = 'double' ;
 B.class = 'double' ;
