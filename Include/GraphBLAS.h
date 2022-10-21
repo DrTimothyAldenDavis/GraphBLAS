@@ -9623,6 +9623,16 @@ GrB_Info GxB_Vector_resize      // change the size of a vector (historical)
     (arg1, __VA_ARGS__)
 #endif
 
+//------------------------------------------------------------------------------
+// GxB_Matrix_pending:  Checks to see if matrix has pending operations
+//------------------------------------------------------------------------------
+
+GrB_Info GxB_Matrix_pending
+(
+	GrB_Matrix A,                   // matrix to query
+	bool *pending                   // are there any pending operations
+) ;
+
 //==============================================================================
 // GxB_fprint and GxB_print: print the contents of a GraphBLAS object
 //==============================================================================
