@@ -175,6 +175,11 @@
 
 #endif
 
+// This flag disables the FIRST_FC32 and SECOND_FC32 binary operatators
+// for the MS Visual Studio 2019 compiler (versions 19.20 to 19.29)
+#define GB_COMPILER_MSC_2019 ( GB_COMPILER_MSC && (GB_COMPILER_MAJOR == 19) \
+    && (GB_COMPILER_MINOR >= 20) && (GB_COMPILER_MINOR <= 29) )
+
 //------------------------------------------------------------------------------
 // malloc.h: required include file for Microsoft Visual Studio
 //------------------------------------------------------------------------------
