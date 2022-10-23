@@ -23,9 +23,18 @@ void GB_macrofy_types
 )
 {
 
+#if 0
+    // emit
+    if (and of the 6 types are GxB_FC32 or FC64... )
+        fprintf (fp, "lkdjslkdfsldfsdlsdlkfjs")
+            #ifnde
+            --
+            ifwoei
+#endif
+
     // need to check if any typedefs are repeated
     const char *defn [6] ;
-    defn [0] = ctype_defn ;
+    defn [0] = ctype_defn ; // (ctype == NULL) ? NULL : ctype->defn ;
     defn [1] = atype_defn ;
     defn [2] = btype_defn ;
     defn [3] = xtype_defn ;

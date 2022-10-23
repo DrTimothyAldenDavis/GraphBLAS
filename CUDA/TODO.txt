@@ -1,16 +1,14 @@
 
-rename functions and filenames to GB_*
-
-refactor jitFactor.hpp
-
 hexadecimal
 
 stream pool
 
 complex types/ops, CPU & GPU 
 
-reduce: do any monoid (but Tim needs to do the GB*reduce_23482304823094.h)
+reduce: do any monoid
+    terminal condition?
 
-CPU:    #define GB_STATIC_INLINE static inline
-CUDA:   #define GB_STATIC_INLINE static __device__  __inline__
+Tim: GB_math.h -> macrofy_binop
+
+user-defined: wildtype and its ops
 

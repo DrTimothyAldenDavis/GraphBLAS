@@ -51,7 +51,7 @@ void GB_macrofy_binop
 
         if (!skip_defn && op->defn != NULL)
         {
-            fprintf (fp, "%s\n", op->defn) ;
+            fprintf (fp, "GB_STATIC_INLINE\n%s\n", op->defn) ;
         }
 
     }
@@ -77,6 +77,11 @@ void GB_macrofy_binop
             // any, second
             case   2 : f = "z = (y)"                         ; break ;
 
+            // FIXME: GB_IMIN, see GB_IMAX in GB_imin.h, or just repeat
+            // them here in the string f.
+            // #define GB_IMAX(x,y) (((x) > (y)) ? (x) : (y))
+            // #define GB_IMIN(x,y) (((x) < (y)) ? (x) : (y))
+
             // min
             case   3 : f = "z = fminf (x,y)"                 ; break ;
             case   4 : f = "z = fmin (x,y)"                  ; break ;
@@ -86,6 +91,8 @@ void GB_macrofy_binop
             case   6 : f = "z = fmaxf (x,y)"                 ; break ;
             case   7 : f = "z = fmax (x,y)"                  ; break ;
             case   8 : f = "z = GB_IMAX (x,y)"               ; break ;
+
+            // FIXME: see GB_math.h for GB_idiv_*, GB_FC* ops.
 
             // plus
             case   9 : f = "z = GB_FC32_add (x,y)"           ; break ;
@@ -199,6 +206,8 @@ void GB_macrofy_binop
 
             // le, isle
             case  74 : f = "z = ((x) <= (y))"                ; break ;
+
+            // FIXME: see GB_bitwise.h for definitions
 
             // bget
             case  75 : f = "z = GB_BITGET (x,y,int8_t, 8)"   ; break ;
@@ -330,6 +339,49 @@ void GB_macrofy_binop
             // unflipped multiplicative or ewise operator
             fprintf (fp, "#define %s(z,x,y,i,k,j) %s\n", macro_name, f) ;
         }
+
+
+        // OK ... gnarly cases here:  defn the function
+
+#if 0
+        if (ecode == 118)
+        {
+            fprintf
+
+                "B_MATH_KERNEL GxB_FC64_t GB_cpow (GxB_FC64_t x, GxB_FC64_t y)
+                "
+                "   double xr = creal (x) ;
+                "   double yr = creal (y) ;
+                "   int xr_class = fpclassify (xr) ;
+                "   int yr_class = fpclassify (yr) ;
+                "   int xi_class = fpclassify (cimag (x)) ;
+                "   int yi_class = fpclassify (cimag (y)) ;
+                "   if (xi_class == FP_ZERO && yi_class == FP_ZERO)
+                "   {
+                "       // both x and y are real; see if z should be real
+                "       if (xr >= 0 || yr_class == FP_NAN || yr_class == FP_INFINITE ||
+                "           yr == trunc (yr))
+                "       {
+                "           // z is real if x >= 0, or if y is an integer, NaN, or Inf
+                "           return (GxB_CMPLX (GB_pow (xr, yr), 0)) ;
+                "       }
+                "   }
+                "   if (xr_class == FP_NAN || xi_class == FP_NAN ||
+                "       yr_class == FP_NAN || yi_class == FP_NAN)
+                "   {
+                "       // z is (nan,nan) if any part of x or y are nan
+                "       return (GxB_CMPLX (NAN, NAN)) ;
+                "   }
+                "   if (yr_class == FP_ZERO && yi_class == FP_ZERO)
+                "   {
+                "       // z is (1,0) if y is (0,0)
+                "       return (GxB_CMPLX (1, 0)) ;
+                "   }
+                "   return (cpow (x, y)) ;
+
+        }
+#endif
+
     }
 }
 

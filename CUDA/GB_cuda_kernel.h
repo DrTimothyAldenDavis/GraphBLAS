@@ -18,6 +18,12 @@
 #define chunksize 128 
 
 //------------------------------------------------------------------------------
+// for user-defined operations
+//------------------------------------------------------------------------------
+
+#define GB_STATIC_INLINE static __device__ __inline__
+
+//------------------------------------------------------------------------------
 // GETA, GETB: get entries from input matrices A and B
 //------------------------------------------------------------------------------
 
@@ -25,6 +31,9 @@
 // which is either the multiplicative operator of a semiring, or a binary
 // operator for eWise operations.  GETA and GETB can also be used for loading
 // values to be passed to the binary accumulator operator.
+
+// FIXME: need casting for GETA and GETB, which is wierd sometimes.
+// See GB_casting.h.  Move this to ...macrofy.h
 
 #if GB_FLIPXY
 
