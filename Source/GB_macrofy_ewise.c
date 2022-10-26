@@ -63,7 +63,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     if (binaryop == NULL)
     {  
         // GB_wait: A and B are disjoint and the operator is not applied
-        fprintf (fp, "// op: 2nd, type: %s\n\n", ctype->name) ;
+        fprintf (fp, "// op: none, type: %s\n\n", ctype->name) ;
     }
     else
     { 

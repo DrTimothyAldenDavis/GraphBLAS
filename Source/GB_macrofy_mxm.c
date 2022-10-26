@@ -69,8 +69,9 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     GrB_BinaryOp addop = add->op ;
 
     GB_macrofy_copyright (fp) ;
-    fprintf (fp, "// semiring: (%s, %s%s)\n\n",
-        addop->name, mult->name, flipxy ? " (flipped)" : "") ;
+    fprintf (fp, "// semiring: (%s, %s%s, %s)\n\n",
+        addop->name, mult->name, flipxy ? " (flipped)" : "",
+        mult->xtype->name) ;
 
     //--------------------------------------------------------------------------
     // construct the typedefs

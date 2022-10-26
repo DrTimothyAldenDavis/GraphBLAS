@@ -41,7 +41,7 @@ void GB_debugify_ewise
     // namify the ewise problem
     char ewise_name [256 + 8*GxB_MAX_NAME_LEN] ;
     GB_namify_problem (ewise_name, scode,
-        (binaryop == NULL) ? "nop" : binaryop->name,
+        (binaryop == NULL) ? "none" : binaryop->name,
         NULL,
         (binaryop == NULL) ? NULL : binaryop->xtype->name,
         (binaryop == NULL) ? NULL : binaryop->ytype->name,
