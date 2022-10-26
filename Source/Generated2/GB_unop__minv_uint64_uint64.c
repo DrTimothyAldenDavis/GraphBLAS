@@ -24,7 +24,7 @@
 // C type:   uint64_t
 // A type:   uint64_t
 // cast:     uint64_t cij = aij
-// unaryop:  cij = GB_IMINV_UNSIGNED (aij, 64)
+// unaryop:  cij = GB_idiv_uint64 (1, aij)
 
 #define GB_ATYPE \
     uint64_t
@@ -40,7 +40,7 @@
 
 // unary operator
 #define GB_OP(z, x) \
-    z = GB_IMINV_UNSIGNED (x, 64) ;
+    z = GB_idiv_uint64 (1, x) ;
 
 // casting
 #define GB_CAST(z, aij) \
@@ -53,7 +53,7 @@
     uint64_t aij = Ax [pA] ;          \
     /* Cx [pC] = op (cast (aij)) */ \
     uint64_t z = aij ;               \
-    Cx [pC] = GB_IMINV_UNSIGNED (z, 64) ;        \
+    Cx [pC] = GB_idiv_uint64 (1, z) ;        \
 }
 
 // disable this operator and use the generic case if these conditions hold
@@ -85,7 +85,7 @@ GrB_Info GB (_unop_apply__minv_uint64_uint64)
         {
             uint64_t aij = Ax [p] ;
             uint64_t z = aij ;
-            Cx [p] = GB_IMINV_UNSIGNED (z, 64) ;
+            Cx [p] = GB_idiv_uint64 (1, z) ;
         }
     }
     else
@@ -97,7 +97,7 @@ GrB_Info GB (_unop_apply__minv_uint64_uint64)
             if (!Ab [p]) continue ;
             uint64_t aij = Ax [p] ;
             uint64_t z = aij ;
-            Cx [p] = GB_IMINV_UNSIGNED (z, 64) ;
+            Cx [p] = GB_idiv_uint64 (1, z) ;
         }
     }
     return (GrB_SUCCESS) ;

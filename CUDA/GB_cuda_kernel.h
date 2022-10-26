@@ -32,6 +32,7 @@
 // operator for eWise operations.  GETA and GETB can also be used for loading
 // values to be passed to the binary accumulator operator.
 
+#if 0
 // FIXME: need casting for GETA and GETB, which is wierd sometimes.
 // See GB_casting.h.  Move this to ...macrofy.h
 
@@ -107,6 +108,7 @@
         #endif
     #endif
 
+#endif
 #endif
 
 //------------------------------------------------------------------------------
@@ -326,8 +328,7 @@ GrB_Desc_Value ;
     }                                                                       \
 }
 
-__device__
-static inline int64_t GB_search_for_vector_device
+GB_STATIC_INLINE int64_t GB_search_for_vector_device
 (
     const int64_t p,                // search for vector k that contains p
     const int64_t *restrict Ap,  // vector pointers to search

@@ -24,7 +24,7 @@
 // C type:   GxB_FC64_t
 // A type:   GxB_FC64_t
 // cast:     GxB_FC64_t cij = aij
-// unaryop:  cij = GB_FC64_minv (aij)
+// unaryop:  cij = GB_FC64_div (GxB_CMPLX  (1,0), aij)
 
 #define GB_ATYPE \
     GxB_FC64_t
@@ -40,7 +40,7 @@
 
 // unary operator
 #define GB_OP(z, x) \
-    z = GB_FC64_minv (x) ;
+    z = GB_FC64_div (GxB_CMPLX  (1,0), x) ;
 
 // casting
 #define GB_CAST(z, aij) \
@@ -53,7 +53,7 @@
     GxB_FC64_t aij = Ax [pA] ;          \
     /* Cx [pC] = op (cast (aij)) */ \
     GxB_FC64_t z = aij ;               \
-    Cx [pC] = GB_FC64_minv (z) ;        \
+    Cx [pC] = GB_FC64_div (GxB_CMPLX  (1,0), z) ;        \
 }
 
 // disable this operator and use the generic case if these conditions hold
@@ -85,7 +85,7 @@ GrB_Info GB (_unop_apply__minv_fc64_fc64)
         {
             GxB_FC64_t aij = Ax [p] ;
             GxB_FC64_t z = aij ;
-            Cx [p] = GB_FC64_minv (z) ;
+            Cx [p] = GB_FC64_div (GxB_CMPLX  (1,0), z) ;
         }
     }
     else
@@ -97,7 +97,7 @@ GrB_Info GB (_unop_apply__minv_fc64_fc64)
             if (!Ab [p]) continue ;
             GxB_FC64_t aij = Ax [p] ;
             GxB_FC64_t z = aij ;
-            Cx [p] = GB_FC64_minv (z) ;
+            Cx [p] = GB_FC64_div (GxB_CMPLX  (1,0), z) ;
         }
     }
     return (GrB_SUCCESS) ;

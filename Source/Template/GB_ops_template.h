@@ -75,17 +75,33 @@ inline void GB_FUNC (MINV) (GB_TYPE *z, const GB_TYPE *x)
     #if defined ( GB_BOOLEAN )
         (*z) = true ;
     #elif defined ( GB_SIGNED_INT )
-        (*z) = GB_IMINV_SIGNED ((*x), GB_BITS) ;
+        #if ( GB_BITS == 8)
+            (*z) = GB_idiv_int8 (1, (*x)) ;
+        #elif ( GB_BITS == 16)
+            (*z) = GB_idiv_int16 (1, (*x)) ;
+        #elif ( GB_BITS == 32)
+            (*z) = GB_idiv_int32 (1, (*x)) ;
+        #elif ( GB_BITS == 64)
+            (*z) = GB_idiv_int64 (1, (*x)) ;
+        #endif
     #elif defined ( GB_UNSIGNED_INT )
-        (*z) = GB_IMINV_UNSIGNED ((*x), GB_BITS) ;
+        #if ( GB_BITS == 8)
+            (*z) = GB_idiv_uint8 (1, (*x)) ;
+        #elif ( GB_BITS == 16)
+            (*z) = GB_idiv_uint16 (1, (*x)) ;
+        #elif ( GB_BITS == 32)
+            (*z) = GB_idiv_uint32 (1, (*x)) ;
+        #elif ( GB_BITS == 64)
+            (*z) = GB_idiv_uint64 (1, (*x)) ;
+        #endif
     #elif defined ( GB_FLOAT )
         (*z) = 1 / (*x) ;
     #elif defined ( GB_DOUBLE )
         (*z) = 1 / (*x) ;
     #elif defined ( GB_FLOAT_COMPLEX )
-        (*z) = GB_FC32_minv (*x) ;
+        (*z) = GB_FC32_div (GxB_CMPLXF (1,0), *x) ;
     #elif defined ( GB_DOUBLE_COMPLEX )
-        (*z) = GB_FC64_minv (*x) ;
+        (*z) = GB_FC64_div (GxB_CMPLX  (1,0), *x) ;
     #endif
 }
 
@@ -527,9 +543,25 @@ inline void GB_FUNC (DIV) (GB_Z_X_Y_ARGS)
         // boolean div (== first)
         (*z) = (*x) ;
     #elif defined ( GB_SIGNED_INT )
-        (*z) = GB_IDIV_SIGNED ((*x), (*y), GB_BITS) ;
+        #if ( GB_BITS == 8)
+            (*z) = GB_idiv_int8 ((*x), (*y)) ;
+        #elif ( GB_BITS == 16)
+            (*z) = GB_idiv_int16 ((*x), (*y)) ;
+        #elif ( GB_BITS == 32)
+            (*z) = GB_idiv_int32 ((*x), (*y)) ;
+        #elif ( GB_BITS == 64)
+            (*z) = GB_idiv_int64 ((*x), (*y)) ;
+        #endif
     #elif defined ( GB_UNSIGNED_INT )
-        (*z) = GB_IDIV_UNSIGNED ((*x), (*y), GB_BITS) ;
+        #if ( GB_BITS == 8)
+            (*z) = GB_idiv_uint8 ((*x), (*y)) ;
+        #elif ( GB_BITS == 16)
+            (*z) = GB_idiv_uint16 ((*x), (*y)) ;
+        #elif ( GB_BITS == 32)
+            (*z) = GB_idiv_uint32 ((*x), (*y)) ;
+        #elif ( GB_BITS == 64)
+            (*z) = GB_idiv_uint64 ((*x), (*y)) ;
+        #endif
     #elif defined ( GB_FLOAT ) || defined ( GB_DOUBLE )
         (*z) = (*x) / (*y) ;
     #elif defined ( GB_FLOAT_COMPLEX )
@@ -546,9 +578,25 @@ inline void GB_FUNC (RDIV) (GB_Z_X_Y_ARGS)
         // boolean rdiv (== second)
         (*z) = (*y) ;
     #elif defined ( GB_SIGNED_INT )
-        (*z) = GB_IDIV_SIGNED ((*y), (*x), GB_BITS) ;
+        #if ( GB_BITS == 8)
+            (*z) = GB_idiv_int8 ((*y), (*x)) ;
+        #elif ( GB_BITS == 16)
+            (*z) = GB_idiv_int16 ((*y), (*x)) ;
+        #elif ( GB_BITS == 32)
+            (*z) = GB_idiv_int32 ((*y), (*x)) ;
+        #elif ( GB_BITS == 64)
+            (*z) = GB_idiv_int64 ((*y), (*x)) ;
+        #endif
     #elif defined ( GB_UNSIGNED_INT )
-        (*z) = GB_IDIV_UNSIGNED ((*y), (*x), GB_BITS) ;
+        #if ( GB_BITS == 8)
+            (*z) = GB_idiv_uint8 ((*y), (*x)) ;
+        #elif ( GB_BITS == 16)
+            (*z) = GB_idiv_uint16 ((*y), (*x)) ;
+        #elif ( GB_BITS == 32)
+            (*z) = GB_idiv_uint32 ((*y), (*x)) ;
+        #elif ( GB_BITS == 64)
+            (*z) = GB_idiv_uint64 ((*y), (*x)) ;
+        #endif
     #elif defined ( GB_FLOAT ) || defined ( GB_DOUBLE )
         (*z) = (*y) / (*x) ;
     #elif defined ( GB_FLOAT_COMPLEX )

@@ -55,6 +55,9 @@ void GB_debugify_ewise
     sprintf (filename, "/tmp/GB_ewise_%s.h", ewise_name);
     FILE *fp = fopen (filename, "w") ;
 
+    // FIXME: pass this to GB_macrofy_ewise
+    fprintf (fp, "// GB_ewise_%s.h\n", ewise_name) ;
+
     // macrofy the ewise problem
     GB_macrofy_ewise (fp, scode, binaryop, ctype, atype, btype) ;
     fclose (fp) ;

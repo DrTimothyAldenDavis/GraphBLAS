@@ -24,7 +24,7 @@
 // C type:   int8_t
 // A type:   int8_t
 // cast:     int8_t cij = aij
-// unaryop:  cij = GB_IMINV_SIGNED (aij, 8)
+// unaryop:  cij = GB_idiv_int8 (1, aij)
 
 #define GB_ATYPE \
     int8_t
@@ -40,7 +40,7 @@
 
 // unary operator
 #define GB_OP(z, x) \
-    z = GB_IMINV_SIGNED (x, 8) ;
+    z = GB_idiv_int8 (1, x) ;
 
 // casting
 #define GB_CAST(z, aij) \
@@ -53,7 +53,7 @@
     int8_t aij = Ax [pA] ;          \
     /* Cx [pC] = op (cast (aij)) */ \
     int8_t z = aij ;               \
-    Cx [pC] = GB_IMINV_SIGNED (z, 8) ;        \
+    Cx [pC] = GB_idiv_int8 (1, z) ;        \
 }
 
 // disable this operator and use the generic case if these conditions hold
@@ -85,7 +85,7 @@ GrB_Info GB (_unop_apply__minv_int8_int8)
         {
             int8_t aij = Ax [p] ;
             int8_t z = aij ;
-            Cx [p] = GB_IMINV_SIGNED (z, 8) ;
+            Cx [p] = GB_idiv_int8 (1, z) ;
         }
     }
     else
@@ -97,7 +97,7 @@ GrB_Info GB (_unop_apply__minv_int8_int8)
             if (!Ab [p]) continue ;
             int8_t aij = Ax [p] ;
             int8_t z = aij ;
-            Cx [p] = GB_IMINV_SIGNED (z, 8) ;
+            Cx [p] = GB_idiv_int8 (1, z) ;
         }
     }
     return (GrB_SUCCESS) ;
