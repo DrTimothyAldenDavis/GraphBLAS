@@ -21,53 +21,48 @@
     //--------------------------------------------------------------------------
 
     // complex-complex multiply: z = x*y where both x and y are complex
-    #define GB_FC32_mul(x,y) (_FCmulcc (x, y))
     #define GB_FC32_MUL_DEFN                                                \
            "GB_FC32_mul(x,y) (_FCmulcc (x, y))"
+    #define GB_FC32_mul(x,y) (_FCmulcc (x, y))
 
-    #define GB_FC64_mul(x,y) ( _Cmulcc (x, y))
     #define GB_FC64_MUL_DEFN                                                \
            "GB_FC64_mul(x,y) ( _Cmulcc (x, y))"
-
-    // complex-real multiply: z = x*y where x is complex and y is real
-    // (not used, but kept for possible future use)
-//  #define GB_FC32_rmul(x,y) (_FCmulcr (x, y))
-//  #define GB_FC64_rmul(x,y) ( _Cmulcr (x, y))
+    #define GB_FC64_mul(x,y) ( _Cmulcc (x, y))
 
     // complex-complex addition: z = x+y where both x and y are complex
-    #define GB_FC32_add(x,y)                                                \
-        GxB_CMPLXF (crealf (x) + crealf (y), cimagf (x) + cimagf (y))
     #define GB_FC32_ADD_DEFN                                                \
        "    GB_FC32_add(x,y) "                                              \
        "GxB_CMPLXF (crealf (x) + crealf (y), cimagf (x) + cimagf (y))"
+    #define GB_FC32_add(x,y)                                                \
+        GxB_CMPLXF (crealf (x) + crealf (y), cimagf (x) + cimagf (y))
 
-    #define GB_FC64_add(x,y)                                                \
-        GxB_CMPLX  (creal  (x) + creal  (y), cimag  (x) + cimag  (y))
     #define GB_FC64_ADD_DEFN                                                \
        "    GB_FC64_add(x,y) "                                              \
        "GxB_CMPLX  (creal  (x) + creal  (y), cimag  (x) + cimag  (y))"
+    #define GB_FC64_add(x,y)                                                \
+        GxB_CMPLX  (creal  (x) + creal  (y), cimag  (x) + cimag  (y))
 
     // complex-complex subtraction: z = x-y where both x and y are complex
-    #define GB_FC32_minus(x,y)                                              \
-        GxB_CMPLXF (crealf (x) - crealf (y), cimagf (x) - cimagf (y))
     #define GB_FC32_MINUS_DEFN                                              \
        "    GB_FC32_minus(x,y) "                                            \
        "GxB_CMPLXF (crealf (x) - crealf (y), cimagf (x) - cimagf (y))"
+    #define GB_FC32_minus(x,y)                                              \
+        GxB_CMPLXF (crealf (x) - crealf (y), cimagf (x) - cimagf (y))
 
-    #define GB_FC64_minus(x,y)                                              \
-        GxB_CMPLX  (creal  (x) - creal  (y), cimag  (x) - cimag  (y))
     #define GB_FC64_MINUS_DEFN                                              \
        "    GB_FC64_minus(x,y) "                                            \
        "GxB_CMPLX  (creal  (x) - creal  (y), cimag  (x) - cimag  (y))"
+    #define GB_FC64_minus(x,y)                                              \
+        GxB_CMPLX  (creal  (x) - creal  (y), cimag  (x) - cimag  (y))
 
     // complex negation: z = -x
-    #define GB_FC32_ainv(x) GxB_CMPLXF (-crealf (x), -cimagf (x))
     #define GB_FC32_AINV_DEFN                                               \
            "GB_FC32_ainv(x) GxB_CMPLXF (-crealf (x), -cimagf (x))"
+    #define GB_FC32_ainv(x) GxB_CMPLXF (-crealf (x), -cimagf (x))
 
-    #define GB_FC64_ainv(x) GxB_CMPLX (-creal  (x), -cimag  (x))
     #define GB_FC64_AINV_DEFN                                               \
-           "GB_FC64_ainv(x) GxB_CMPLX (-creal  (x), -cimag  (x))"
+           "GB_FC64_ainv(x) GxB_CMPLX  (-creal  (x), -cimag  (x))"
+    #define GB_FC64_ainv(x) GxB_CMPLX  (-creal  (x), -cimag  (x))
 
 #else
 
@@ -76,45 +71,40 @@
     //--------------------------------------------------------------------------
 
     // complex-complex multiply: z = x*y where both x and y are complex
-    #define GB_FC32_mul(x,y) ((x) * (y))
     #define GB_FC32_MUL_DEFN                                                \
            "GB_FC32_mul(x,y) ((x) * (y))"
+    #define GB_FC32_mul(x,y) ((x) * (y))
 
-    #define GB_FC64_mul(x,y) ((x) * (y))
     #define GB_FC64_MUL_DEFN                                                \
            "GB_FC64_mul(x,y) ((x) * (y))"
-
-    // complex-real multiply: z = x*y where x is complex and y is real
-    // (not used, but kept for possible future use)
-//  #define GB_FC32_rmul(x,y) ((x) * (y))
-//  #define GB_FC64_rmul(x,y) ((x) * (y))
+    #define GB_FC64_mul(x,y) ((x) * (y))
 
     // complex-complex addition: z = x+y where both x and y are complex
-    #define GB_FC32_add(x,y) ((x) + (y))
     #define GB_FC32_ADD_DEFN                                                \
            "GB_FC32_add(x,y) ((x) + (y))"
+    #define GB_FC32_add(x,y) ((x) + (y))
 
-    #define GB_FC64_add(x,y) ((x) + (y))
     #define GB_FC64_ADD_DEFN                                                \
            "GB_FC64_add(x,y) ((x) + (y))"
+    #define GB_FC64_add(x,y) ((x) + (y))
 
     // complex-complex subtraction: z = x-y where both x and y are complex
-    #define GB_FC32_minus(x,y) ((x) - (y))
     #define GB_FC32_MINUS_DEFN                                              \
            "GB_FC32_minus(x,y) ((x) - (y))"
+    #define GB_FC32_minus(x,y) ((x) - (y))
 
-    #define GB_FC64_minus(x,y) ((x) - (y))
     #define GB_FC64_MINUS_DEFN                                              \
            "GB_FC64_minus(x,y) ((x) - (y))"
+    #define GB_FC64_minus(x,y) ((x) - (y))
 
     // complex negation
-    #define GB_FC32_ainv(x) (-(x))
     #define GB_FC32_AINV_DEFN                                               \
            "GB_FC32_ainv(x) (-(x))"
+    #define GB_FC32_ainv(x) (-(x))
 
-    #define GB_FC64_ainv(x) (-(x))
     #define GB_FC64_AINV_DEFN                                               \
            "GB_FC64_ainv(x) (-(x))"
+    #define GB_FC64_ainv(x) (-(x))
 
 #endif
 
@@ -128,65 +118,65 @@
 #define GB_GUARD_GB_FC64_AINV_DEFINED
 
 // complex comparators
-#define GB_FC32_eq(x,y) ((crealf(x) == crealf(y)) && (cimagf(x) == cimagf(y)))
+#define GB_GUARD_GB_FC32_EQ_DEFINED
 #define GB_FC32_EQ_DEFN                                                     \
        "GB_FC32_eq(x,y) ((crealf(x) == crealf(y)) && (cimagf(x) == cimagf(y)))"
-#define GB_GUARD_GB_FC32_EQ_DEFINED
+#define GB_FC32_eq(x,y) ((crealf(x) == crealf(y)) && (cimagf(x) == cimagf(y)))
 
-#define GB_FC64_eq(x,y) ((creal (x) == creal (y)) && (cimag (x) == cimag (y)))
+#define GB_GUARD_GB_FC64_EQ_DEFINED
 #define GB_FC64_EQ_DEFN                                                     \
        "GB_FC64_eq(x,y) ((creal (x) == creal (y)) && (cimag (x) == cimag (y)))"
-#define GB_GUARD_GB_FC64_EQ_DEFINED
+#define GB_FC64_eq(x,y) ((creal (x) == creal (y)) && (cimag (x) == cimag (y)))
 
-#define GB_FC32_ne(x,y) ((crealf(x) != crealf(y)) || (cimagf(x) != cimagf(y)))
+#define GB_GUARD_GB_FC32_NE_DEFINED
 #define GB_FC32_NE_DEFN                                                     \
        "GB_FC32_ne(x,y) ((crealf(x) != crealf(y)) || (cimagf(x) != cimagf(y)))"
-#define GB_GUARD_GB_FC32_NE_DEFINED
+#define GB_FC32_ne(x,y) ((crealf(x) != crealf(y)) || (cimagf(x) != cimagf(y)))
 
-#define GB_FC64_ne(x,y) ((creal (x) != creal (y)) || (cimag (x) != cimag (y)))
+#define GB_GUARD_GB_FC64_NE_DEFINED
 #define GB_FC64_NE_DEFN                                                     \
        "GB_FC64_ne(x,y) ((creal (x) != creal (y)) || (cimag (x) != cimag (y)))"
-#define GB_GUARD_GB_FC64_NE_DEFINED
+#define GB_FC64_ne(x,y) ((creal (x) != creal (y)) || (cimag (x) != cimag (y)))
 
-#define GB_FC32_iseq(x,y) GxB_CMPLXF ((float)  GB_FC32_eq (x,y), 0)
+#define GB_GUARD_GB_FC32_ISEQ_DEFINED
 #define GB_FC32_ISEQ_DEFN                                                   \
        "GB_FC32_iseq(x,y) GxB_CMPLXF ((float)  GB_FC32_eq (x,y), 0)"
-#define GB_GUARD_GB_FC32_ISEQ_DEFINED
+#define GB_FC32_iseq(x,y) GxB_CMPLXF ((float)  GB_FC32_eq (x,y), 0)
 
-#define GB_FC64_iseq(x,y) GxB_CMPLX  ((double) GB_FC64_eq (x,y), 0)
+#define GB_GUARD_GB_FC64_ISEQ_DEFINED
 #define GB_FC64_ISEQ_DEFN                                                   \
        "GB_FC64_iseq(x,y) GxB_CMPLX  ((double) GB_FC64_eq (x,y), 0)"
-#define GB_GUARD_GB_FC64_ISEQ_DEFINED
+#define GB_FC64_iseq(x,y) GxB_CMPLX  ((double) GB_FC64_eq (x,y), 0)
 
-#define GB_FC32_isne(x,y) GxB_CMPLXF ((float)  GB_FC32_ne (x,y), 0)
+#define GB_GUARD_GB_FC32_ISNE_DEFINED
 #define GB_FC32_ISNE_DEFN                                                   \
        "GB_FC32_isne(x,y) GxB_CMPLXF ((float)  GB_FC32_ne (x,y), 0)"
-#define GB_GUARD_GB_FC32_ISNE_DEFINED
+#define GB_FC32_isne(x,y) GxB_CMPLXF ((float)  GB_FC32_ne (x,y), 0)
 
-#define GB_FC64_isne(x,y) GxB_CMPLX  ((double) GB_FC64_ne (x,y), 0)
+#define GB_GUARD_GB_FC64_ISNE_DEFINED
 #define GB_FC64_ISNE_DEFN                                                   \
        "GB_FC64_isne(x,y) GxB_CMPLX  ((double) GB_FC64_ne (x,y), 0)"
-#define GB_GUARD_GB_FC64_ISNE_DEFINED
+#define GB_FC64_isne(x,y) GxB_CMPLX  ((double) GB_FC64_ne (x,y), 0)
 
-#define GB_FC32_eq0(x) ((crealf(x) == 0) && (cimagf(x) == 0))
-#define GB_FC32_EQ0_DEFN                                                    \
-       "GB_FC32_eq0(x) ((crealf(x) == 0) && (cimagf(x) == 0))"
 #define GB_GUARD_GB_FC32_EQ0_DEFINED
+#define GB_FC32_EQ0_DEFN                                                    \
+       "GB_FC32_eq0(x) ((crealf (x) == 0) && (cimagf (x) == 0))"
+#define GB_FC32_eq0(x) ((crealf (x) == 0) && (cimagf (x) == 0))
 
-#define GB_FC64_eq0(x) ((creal (x) == 0) && (cimag (x) == 0))
-#define GB_FC64_EQ0_DEFN                                                    \
-       "GB_FC64_eq0(x) ((creal (x) == 0) && (cimag (x) == 0))"
 #define GB_GUARD_GB_FC64_EQ0_DEFINED
+#define GB_FC64_EQ0_DEFN                                                    \
+       "GB_FC64_eq0(x) ((creal  (x) == 0) && (cimag  (x) == 0))"
+#define GB_FC64_eq0(x) ((creal  (x) == 0) && (cimag  (x) == 0))
 
-#define GB_FC32_ne0(x) ((crealf(x) != 0) || (cimagf(x) != 0))
-#define GB_FC32_NE0_DEFN                                                    \
-       "GB_FC32_ne0(x) ((crealf(x) != 0) || (cimagf(x) != 0))"
 #define GB_GUARD_GB_FC32_NE0_DEFINED
+#define GB_FC32_NE0_DEFN                                                    \
+       "GB_FC32_ne0(x) ((crealf (x) != 0) || (cimagf (x) != 0))"
+#define GB_FC32_ne0(x) ((crealf (x) != 0) || (cimagf (x) != 0))
 
-#define GB_FC64_ne0(x) ((creal (x) != 0) || (cimag (x) != 0))
-#define GB_FC64_NE0_DEFN                                                    \
-       "GB_FC64_ne0(x) ((creal (x) != 0) || (cimag (x) != 0))"
 #define GB_GUARD_GB_FC64_NE0_DEFINED
+#define GB_FC64_NE0_DEFN                                                    \
+       "GB_FC64_ne0(x) ((creal  (x) != 0) || (cimag  (x) != 0))"
+#define GB_FC64_ne0(x) ((creal  (x) != 0) || (cimag  (x) != 0))
 
 //------------------------------------------------------------------------------
 // min, max, and NaN handling
@@ -524,12 +514,12 @@
         if (yi_class == FP_ZERO)
         {
             // (zr,zi) = (xr,xi) / (yr,0)
-            return (GxB_CMPLX (creal (x) / yr, cimag (x) / yr)) ;
+            return (GxB_CMPLX (xr / yr, cimag (x) / yr)) ;
         }
         else if (yr_class == FP_ZERO)
         {
             // (zr,zi) = (xr,xi) / (0,yi) = (xi,-xr) / (yi,0)
-            return (GxB_CMPLX (cimag (x) / yi, -creal (x) / yi)) ;
+            return (GxB_CMPLX (xi / yi, -xr / yi)) ;
         }
         else if (yi_class == FP_INFINITE && yr_class == FP_INFINITE)
         {
@@ -565,11 +555,11 @@
    "    int yi_class = fpclassify (yi) ;                                \n" \
    "    if (yi_class == FP_ZERO)                                        \n" \
    "    {                                                               \n" \
-   "        return (GxB_CMPLX (creal (x) / yr, cimag (x) / yr)) ;       \n" \
+   "        return (GxB_CMPLX (xr / yr, xi / yr)) ;                     \n" \
    "    }                                                               \n" \
    "    else if (yr_class == FP_ZERO)                                   \n" \
    "    {                                                               \n" \
-   "        return (GxB_CMPLX (cimag (x) / yi, -creal (x) / yi)) ;      \n" \
+   "        return (GxB_CMPLX (xi / yi, -xr / yi)) ;                    \n" \
    "    }                                                               \n" \
    "    else if (yi_class == FP_INFINITE && yr_class == FP_INFINITE)    \n" \
    "    {                                                               \n" \

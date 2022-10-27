@@ -42,8 +42,8 @@
     #define GB_MULTADD( c, a, b, i, k, j )                              \
     {                                                                   \
         T_Z x_op_y ;                                                    \
-        GB_MULT (x_op_y, a, b, i, k, j) ;   /* x_op_y = a*b */          \
-        GB_ADD (c, c, x_op_y) ;             /* c += x_op_y  */          \
+        GB_MULT ( x_op_y, a, b, i, k, j ) ; /* x_op_y = a*b */          \
+        GB_ADD ( c, c, x_op_y ) ;           /* c += x_op_y  */          \
     }
 
     #define GB_DOT_TERMINAL( c ) GB_IF_TERMINAL_BREAK ( c, z )
@@ -70,10 +70,10 @@
         // cij += A(k,i) * B(k,j), for merge operation (general case)
         #define GB_DOT_MERGE(pA,pB)                                         \
         {                                                                   \
-            GB_GETA (aki, Ax, pA) ;         /* aki = A(k,i) */              \
-            GB_GETB (bkj, Bx, pB) ;         /* bkj = B(k,j) */              \
+            GB_GETA ( aki, Ax, pA, ) ;      /* aki = A(k,i) */              \
+            GB_GETB ( bkj, Bx, pB, ) ;      /* bkj = B(k,j) */              \
             cij_exists = true ;                                             \
-            GB_MULTADD (cij, aki, bkj, i, k, j) ;  /* cij += aki * bkj */   \
+            GB_MULTADD ( cij, aki, bkj, i, k, j ) ;  /* cij += aki * bkj */ \
         }
         #define GB_CIJ_EXIST_POSTCHECK
 

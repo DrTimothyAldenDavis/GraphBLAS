@@ -125,8 +125,8 @@ void GB_macrofy_cast
                         break ;
                     default:;
                 }
-                GB_macrofy_defn (fp,
-                    0, "GB_CAST_TO_INT8", GB_CAST_TO_INT8_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GB_CAST_TO_INT8",
+                    GB_CAST_TO_INT8_DEFN) ;
                 break ;
 
             case GB_INT16_code  : 
@@ -147,8 +147,8 @@ void GB_macrofy_cast
                         break ;
                     default:;
                 }
-                GB_macrofy_defn (fp,
-                    0, "GB_CAST_TO_INT16", GB_CAST_TO_INT16_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GB_CAST_TO_INT16",
+                    GB_CAST_TO_INT16_DEFN) ;
                 break ;
 
             case GB_INT32_code  : 
@@ -169,8 +169,8 @@ void GB_macrofy_cast
                         break ;
                     default:;
                 }
-                GB_macrofy_defn (fp,
-                    0, "GB_CAST_TO_INT32", GB_CAST_TO_INT32_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GB_CAST_TO_INT32",
+                    GB_CAST_TO_INT32_DEFN) ;
                 break ;
 
             case GB_INT64_code  : 
@@ -191,8 +191,8 @@ void GB_macrofy_cast
                         break ;
                     default:;
                 }
-                GB_macrofy_defn (fp,
-                    0, "GB_CAST_TO_INT64", GB_CAST_TO_INT64_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GB_CAST_TO_INT64",
+                    GB_CAST_TO_INT64_DEFN) ;
                 break ;
 
             case GB_UINT8_code  : 
@@ -213,8 +213,8 @@ void GB_macrofy_cast
                         break ;
                     default:;
                 }
-                GB_macrofy_defn (fp,
-                    0, "GB_CAST_TO_UINT8", GB_CAST_TO_UINT8_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GB_CAST_TO_UINT8",
+                    GB_CAST_TO_UINT8_DEFN) ;
                 break ;
 
             case GB_UINT16_code : 
@@ -235,8 +235,8 @@ void GB_macrofy_cast
                         break ;
                     default:;
                 }
-                GB_macrofy_defn (fp,
-                    0, "GB_CAST_TO_UINT16", GB_CAST_TO_UINT16_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GB_CAST_TO_UINT16",
+                    GB_CAST_TO_UINT16_DEFN) ;
                 break ;
 
             case GB_UINT32_code : 
@@ -257,8 +257,8 @@ void GB_macrofy_cast
                         break ;
                     default:;
                 }
-                GB_macrofy_defn (fp,
-                    0, "GB_CAST_TO_UINT32", GB_CAST_TO_UINT32_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GB_CAST_TO_UINT32",
+                    GB_CAST_TO_UINT32_DEFN) ;
                 break ;
 
             case GB_UINT64_code : 
@@ -279,8 +279,8 @@ void GB_macrofy_cast
                         break ;
                     default:;
                 }
-                GB_macrofy_defn (fp,
-                    0, "GB_CAST_TO_UINT64", GB_CAST_TO_UINT64_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GB_CAST_TO_UINT64",
+                    GB_CAST_TO_UINT64_DEFN) ;
                 break ;
 
             default:;
@@ -311,8 +311,7 @@ void GB_macrofy_cast
         {
             snprintf (s, SLEN, f, zarg, xexpr) ;
         }
-        fprintf (fp, "#define %s(%s,%s) %s\n",
-            macro_name, zarg, xargs, s) ;
+        fprintf (fp, "#define %s(%s,%s) %s\n", macro_name, zarg, xargs, s) ;
     }
 }
 

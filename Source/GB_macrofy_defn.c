@@ -13,7 +13,7 @@
 void GB_macrofy_defn
 (
     FILE *fp,
-    bool is_macro,
+    int kind,
     const char *name,
     const char *defn
 )
@@ -21,24 +21,36 @@ void GB_macrofy_defn
 
     if (name != NULL && defn != NULL)
     {
+        if (kind == 2)
+        {
+            // built-in macro only need for CUDA
+            fprintf (fp, "#if defined ( __NVCC__)\n") ;
+        }
+
         // construct the guard to prevent duplicate definitions
         fprintf (fp, "#ifndef GB_GUARD_%s_DEFINED\n", name) ;
         fprintf (fp, "#define GB_GUARD_%s_DEFINED\n", name) ;
 
-        if (is_macro)
-        {
-            // built-in operator defined by a macro
-            fprintf (fp, "#define %s\n", defn) ;
-        }
-        else
+        if (kind == 0)
         {
             // built-in operator defined by a function,
             // or a user-defined operator
             fprintf (fp, "GB_STATIC_INLINE\n%s\n", defn) ;
         }
+        else // kind is 1 or 2
+        {
+            // built-in operator defined by a macro
+            fprintf (fp, "#define %s\n", defn) ;
+        }
 
         // end the guard
         fprintf (fp, "#endif\n") ;
+
+        if (kind == 2)
+        {
+            // end the NVCC guard
+            fprintf (fp, "#endif\n") ;
+        }
     }
 }
 

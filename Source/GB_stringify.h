@@ -216,7 +216,7 @@ void GB_macrofy_binop
 void GB_macrofy_defn
 (
     FILE *fp,
-    bool is_macro,
+    int kind,
     const char *name,
     const char *defn
 ) ;

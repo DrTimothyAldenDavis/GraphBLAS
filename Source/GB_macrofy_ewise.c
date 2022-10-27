@@ -117,7 +117,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // macros for the C matrix
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "// C matrix:\n") ;
+    fprintf (fp, "\n// C matrix:\n") ;
     if (C_iso)
     {
         fprintf (fp, "#define GB_PUTC(blob)\n") ;
