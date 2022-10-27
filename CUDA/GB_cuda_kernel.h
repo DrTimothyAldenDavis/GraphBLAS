@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------------
 
 // This file is #include'd into all CUDA kernels for GraphBLAS.  It provides
-// a
+// a subset of GraphBLAS.h and GB.h, plus other definitions.
 
 #pragma once
 #undef  ASSERT
@@ -39,7 +39,6 @@
 
 #else
 
-    // the result the multiply must be typecast to ztype of the add.
     #define GB_MULTADD( c, a, b, i, k, j )                              \
     {                                                                   \
         T_Z x_op_y ;                                                    \
