@@ -102,15 +102,15 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
     // do not print the user-defined multiplicative function if it is identical
     // to the user-defined additive function.
-    fprintf (fp, "\n// multiplicative operator:\n") ;
+    fprintf (fp, "\n// multiplicative operator%s:\n",
+        flipxy ? " (flipped)" : "") ;
     GB_macrofy_binop (fp, "GB_MULT", flipxy, false, mult_ecode, mult) ;
-    fprintf (fp, "#define GB_FLIPXY %d\n\n", flipxy ? 1 : 0) ;
 
     //--------------------------------------------------------------------------
     // special cases
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "// special cases:\n") ;
+    fprintf (fp, "\n// special cases:\n") ;
 
     // semiring is plus_pair_real
     bool is_plus_pair_real =

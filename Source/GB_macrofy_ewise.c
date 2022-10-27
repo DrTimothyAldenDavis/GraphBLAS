@@ -110,9 +110,8 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // construct macros for the multiply
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "\n// binary operator:\n") ;
+    fprintf (fp, "\n// binary operator%s:\n", flipxy ? " (flipped)" : "") ;
     GB_macrofy_binop (fp, "GB_BINOP", flipxy, false, binop_ecode, binaryop) ;
-    fprintf (fp, "#define GB_FLIPXY %d\n\n", flipxy ? 1 : 0) ;
 
     //--------------------------------------------------------------------------
     // macros for the C matrix

@@ -42,38 +42,52 @@ void GB_macrofy_types
         ztype == GxB_FC32 || ztype == GxB_FC64)
     {
 
-        fprintf (fp,
-           "// complex types                                    \n"
-           "#if defined ( __cplusplus )                         \n"
-           "    extern \"C++\"                                  \n"
-           "    {                                               \n"
-           "        // C++ complex types                        \n"
-           "        #include <cmath>                            \n"
-           "        #include <complex>                          \n"
-           "        #undef I                                    \n"
-           "        typedef std::complex<float>  GxB_FC32_t ;   \n"
-           "        typedef std::complex<double> GxB_FC64_t ;   \n"
-           "    }                                               \n"
-           "    #define GxB_CMPLXF(r,i) GxB_FC32_t(r,i)         \n"
-           "    #define GxB_CMPLX(r,i)  GxB_FC64_t(r,i)         \n"
-           "#elif ( _MSC_VER &&"
-           " !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )    \n"
-           "    // Microsoft Windows complex types              \n"
-           "    #include <complex.h>                            \n"
-           "    #undef I                                        \n"
-           "    typedef _Fcomplex GxB_FC32_t ;                  \n"
-           "    typedef _Dcomplex GxB_FC64_t ;                  \n"
-           "    #define GxB_CMPLXF(r,i) (_FCbuild (r,i))        \n"
-           "    #define GxB_CMPLX(r,i)  ( _Cbuild (r,i))        \n"
-           "#else                                               \n"
-           "    // ANSI C11 complex types                       \n"
-           "    #include <complex.h>                            \n"
-           "    #undef I                                        \n"
-           "    typedef float  complex GxB_FC32_t ;             \n"
-           "    typedef double complex GxB_FC64_t ;             \n"
-           "    #define GxB_CMPLX(r,i)  CMPLX (r,i)             \n"
-           "    #define GxB_CMPLXF(r,i) CMPLXF (r,i)            \n"
-           "#endif                                              \n\n") ;
+        fprintf (fp, "#ifndef GB_COMPLEX_H\n"
+                     "#define GB_COMPLEX_H\n") ;
+
+        #if GB_COMPILER_MSC
+
+            // CPU only, since Windows doesn't support the
+            // unified shared memory model of CUDA.
+            fprintf (fp,
+               "    // Microsoft Windows complex types              \n"
+               "    #include <complex.h>                            \n"
+               "    #undef I                                        \n"
+               "    typedef _Fcomplex GxB_FC32_t ;                  \n"
+               "    typedef _Dcomplex GxB_FC64_t ;                  \n"
+               "    #define GxB_CMPLXF(r,i) (_FCbuild (r,i))        \n"
+               "    #define GxB_CMPLX(r,i)  ( _Cbuild (r,i))        \n") ;
+
+        #else
+
+            // for the CPU (in C) and GPU (CUDA, using C++)
+            fprintf (fp,
+               "    // complex types                                    \n"
+               "    #if defined ( __cplusplus )                         \n"
+               "        // C++ complex types                            \n"
+               "        extern \"C++\"                                  \n"
+               "        {                                               \n"
+               "            #include <cmath>                            \n"
+               "            #include <complex>                          \n"
+               "            #undef I                                    \n"
+               "            typedef std::complex<float>  GxB_FC32_t ;   \n"
+               "            typedef std::complex<double> GxB_FC64_t ;   \n"
+               "        }                                               \n"
+               "        #define GxB_CMPLXF(r,i) GxB_FC32_t(r,i)         \n"
+               "        #define GxB_CMPLX(r,i)  GxB_FC64_t(r,i)         \n"
+               "    #else                                               \n"
+               "        // ANSI C11 complex types                       \n"
+               "        #include <complex.h>                            \n"
+               "        #undef I                                        \n"
+               "        typedef float  complex GxB_FC32_t ;             \n"
+               "        typedef double complex GxB_FC64_t ;             \n"
+               "        #define GxB_CMPLX(r,i)  CMPLX (r,i)             \n"
+               "        #define GxB_CMPLXF(r,i) CMPLXF (r,i)            \n"
+               "    #endif                                              \n") ;
+
+        #endif
+
+        fprintf (fp, "#endif\n\n") ;
     }
 
     //--------------------------------------------------------------------------

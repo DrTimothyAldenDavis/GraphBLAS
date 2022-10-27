@@ -3549,7 +3549,6 @@
 #define GB_Descriptor_get GM_Descriptor_get
 #define GB_deserialize GM_deserialize
 #define GB_deserialize_from_blob GM_deserialize_from_blob
-#define GB_divcomplex GM_divcomplex
 #define GB_dup GM_dup
 #define GB_dup_worker GM_dup_worker
 #define GB_ek_slice GM_ek_slice
@@ -3899,7 +3898,11 @@
 #define GB_LZ4_versionString GM_LZ4_versionString
 #define GB_macrofy_binop GM_macrofy_binop
 #define GB_macrofy_bytes GM_macrofy_bytes
+#define GB_macrofy_cast GM_macrofy_cast
+#define GB_macrofy_copyright GM_macrofy_copyright
+#define GB_macrofy_defn GM_macrofy_defn
 #define GB_macrofy_ewise GM_macrofy_ewise
+#define GB_macrofy_input GM_macrofy_input
 #define GB_macrofy_mask GM_macrofy_mask
 #define GB_macrofy_monoid GM_macrofy_monoid
 #define GB_macrofy_mxm GM_macrofy_mxm
