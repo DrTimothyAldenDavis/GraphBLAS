@@ -3,12 +3,8 @@ hexadecimal
 
 stream pool
 
-complex types/ops, CPU & GPU 
+test complex and user-defined ops (wildtype) on the GPU
 
 reduce: do any monoid
     terminal condition?
-
-Tim: GB_math.h -> macrofy_binop
-
-user-defined: wildtype and its ops
 
