@@ -35,7 +35,8 @@ void GB_macrofy_defn
         {
             // built-in operator defined by a function,
             // or a user-defined operator
-            fprintf (fp, "GB_STATIC_INLINE\n%s\n", defn) ;
+fprintf (fp, "static __device__ __inline__\n%s\n", defn) ;  // FIXME
+//            fprintf (fp, "GB_STATIC_INLINE\n%s\n", defn) ;
         }
         else // kind is 1 or 2
         {
