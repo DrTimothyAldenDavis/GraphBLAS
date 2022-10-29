@@ -6,6 +6,7 @@ cmake_minimum_required ( VERSION 3.19 )
 # run the gtests.
 
 project(GRAPHBLAS_CUDA VERSION 0.1 LANGUAGES CXX CUDA)
+cmake_policy ( SET CMP0135 NEW )    # URL download timestamp policy
 
 set(CMAKE_CUDA_FLAGS "-cudart=static -lineinfo ")
 set(CMAKE_CXX_STANDARD 17)

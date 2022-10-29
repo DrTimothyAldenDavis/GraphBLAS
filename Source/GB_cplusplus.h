@@ -22,23 +22,23 @@
 #define GB_cimag_DEFN   "cimag(x)    std::imag(x)"
 #define GB_cpowf_DEFN   "cpowf(x,y)  std::pow(x,y)"
 #define GB_cpow_DEFN    "cpow(x,y)   std::pow(x,y)"
-#define GB_cexpf_DEFN   "cexpf(x,y)  std::exp(x,y)"
-#define GB_cexp_DEFN    "cexp(x,y)   std::exp(x,y)"
-#define GB_clogf_DEFN   "clogf(x,y)  std::log(x,y)"
-#define GB_clog_DEFN    "clog(x,y)   std::log(x,y)"
-#define GB_cabsf_DEFN   "cabsf(x,y)  std::abs(x,y)"
-#define GB_cabs_DEFN    "cabs(x,y)   std::abs(x,y)"
+#define GB_cexpf_DEFN   "cexpf(x)    std::exp(x)"
+#define GB_cexp_DEFN    "cexp(x)     std::exp(x)"
+#define GB_clogf_DEFN   "clogf(x)    std::log(x)"
+#define GB_clog_DEFN    "clog(x)     std::log(x)"
+#define GB_cabsf_DEFN   "cabsf(x)    std::abs(x)"
+#define GB_cabs_DEFN    "cabs(x)     std::abs(x)"
 #define GB_csqrtf_DEFN  "csqrtf(x)   std::sqrt(x)"
 #define GB_csqrt_DEFN   "csqrt(x)    std::sqrt(x)"
 #define GB_conjf_DEFN   "conjf(x)    std::conj(x)"
-#define GB_cargf_DEFN   "cargf(x,y)  std::arg(x,y)"
-#define GB_carg_DEFN    "carg(x,y)   std::arg(x,y)"
-#define GB_csinf_DEFN   "csinf(x,y)  std::sin(x,y)"
-#define GB_csin_DEFN    "csin(x,y)   std::sin(x,y)"
-#define GB_ccosf_DEFN   "ccosf(x,y)  std::cos(x,y)"
-#define GB_ccos_DEFN    "ccos(x,y)   std::cos(x,y)"
-#define GB_ctanf_DEFN   "ctanf(x,y)  std::tan(x,y)"
-#define GB_ctan_DEFN    "ctan(x,y)   std::tan(x,y)"
+#define GB_cargf_DEFN   "cargf(x)    std::arg(x)"
+#define GB_carg_DEFN    "carg(x)     std::arg(x)"
+#define GB_csinf_DEFN   "csinf(x)    std::sin(x)"
+#define GB_csin_DEFN    "csin(x)     std::sin(x)"
+#define GB_ccosf_DEFN   "ccosf(x)    std::cos(x)"
+#define GB_ccos_DEFN    "ccos(x)     std::cos(x)"
+#define GB_ctanf_DEFN   "ctanf(x)    std::tan(x)"
+#define GB_ctan_DEFN    "ctan(x)     std::tan(x)"
 #define GB_casinf_DEFN  "casinf(x)   std::asin(x)"
 #define GB_casin_DEFN   "casin(x)    std::asin(x)"
 #define GB_cacosf_DEFN  "cacosf(x)   std::acos(x)"
@@ -110,23 +110,23 @@
     #define cimag(x)    std::imag(x)
     #define cpowf(x,y)  std::pow(x,y)
     #define cpow(x,y)   std::pow(x,y)
-    #define cexpf(x,y)  std::exp(x,y)
-    #define cexp(x,y)   std::exp(x,y)
-    #define clogf(x,y)  std::log(x,y)
-    #define clog(x,y)   std::log(x,y)
-    #define cabsf(x,y)  std::abs(x,y)
-    #define cabs(x,y)   std::abs(x,y)
+    #define cexpf(x)    std::exp(x)
+    #define cexp(x)     std::exp(x)
+    #define clogf(x)    std::log(x)
+    #define clog(x)     std::log(x)
+    #define cabsf(x)    std::abs(x)
+    #define cabs(x)     std::abs(x)
     #define csqrtf(x)   std::sqrt(x)
     #define csqrt(x)    std::sqrt(x)
     #define conjf(x)    std::conj(x)
-    #define cargf(x,y)  std::arg(x,y)
-    #define carg(x,y)   std::arg(x,y)
-    #define csinf(x,y)  std::sin(x,y)
-    #define csin(x,y)   std::sin(x,y)
-    #define ccosf(x,y)  std::cos(x,y)
-    #define ccos(x,y)   std::cos(x,y)
-    #define ctanf(x,y)  std::tan(x,y)
-    #define ctan(x,y)   std::tan(x,y)
+    #define cargf(x)    std::arg(x)
+    #define carg(x)     std::arg(x)
+    #define csinf(x)    std::sin(x)
+    #define csin(x)     std::sin(x)
+    #define ccosf(x)    std::cos(x)
+    #define ccos(x)     std::cos(x)
+    #define ctanf(x)    std::tan(x)
+    #define ctan(x)     std::tan(x)
     #define casinf(x)   std::asin(x)
     #define casin(x)    std::asin(x)
     #define cacosf(x)   std::acos(x)

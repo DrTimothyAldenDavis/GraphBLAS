@@ -26,6 +26,7 @@ message ( STATUS "Build:         ${CMAKE_BINARY_DIR} ")
 cmake_policy ( SET CMP0042 NEW )    # enable MACOSX_RPATH by default
 cmake_policy ( SET CMP0048 NEW )    # VERSION variable policy
 cmake_policy ( SET CMP0054 NEW )    # if ( expression ) handling policy
+cmake_policy ( SET CMP0135 NEW )    # URL download timestamp policy
 
 set ( CMAKE_MACOSX_RPATH TRUE )
 enable_language ( C )
