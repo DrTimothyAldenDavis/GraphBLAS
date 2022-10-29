@@ -5,7 +5,9 @@ cmake_minimum_required ( VERSION 3.19 )
 # specific parameters. The output of this build is an executable that can be used to
 # run the gtests.
 
-project(GRAPHBLAS_CUDA VERSION 0.1 LANGUAGES CXX CUDA)
+project ( GRAPHBLAS_CUDA
+    VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
+    LANGUAGES CXX CUDA )
 cmake_policy ( SET CMP0135 NEW )    # URL download timestamp policy
 
 set(CMAKE_CUDA_FLAGS "-cudart=static -lineinfo ")
@@ -22,6 +24,11 @@ file(GLOB GRAPHBLAS_CUDA_SOURCES "*.cu" "*.c" "*.cpp")
 add_library(graphblascuda SHARED
             ${GRAPHBLAS_CUDA_SOURCES}
 )
+
+set_target_properties ( graphblascuda PROPERTIES
+    VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
+    SOVERSION ${GraphBLAS_VERSION_MAJOR}
+    C_STANDARD_REQUIRED 11 )
 
 set(RMM_WRAP_INCLUDES "../rmm_wrap")
 

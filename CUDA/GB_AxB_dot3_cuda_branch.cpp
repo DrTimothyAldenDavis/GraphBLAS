@@ -31,14 +31,9 @@ bool GB_AxB_dot3_cuda_branch
 
         int ngpus_to_use = GB_ngpus_to_use (work) ;
         GBURBLE (" work:%g GPUs:%d ", work, ngpus_to_use) ;
-        if (ngpus_to_use > 0
-            // FIXME: FUTURE: user-defined and complex types and operators
-            // FIXME: guard against user-defined ADD and MULT
-//          && (A->type->code < GB_FC32_code)
- //         && (B->type->code < GB_FC32_code)
-            )
+        if (ngpus_to_use > 0)
         {
-            return true;
+            return true ;
         }
         else
         {

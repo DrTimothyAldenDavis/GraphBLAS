@@ -44,8 +44,9 @@ set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
     )
 
 # CUDA is under development for now, and not deployed in production:
-  set ( ENABLE_CUDA false )
-# set ( ENABLE_CUDA true )
+# FIXME
+# set ( ENABLE_CUDA false )
+  set ( ENABLE_CUDA true )
 include ( SuiteSparsePolicy )
 
 #-------------------------------------------------------------------------------
