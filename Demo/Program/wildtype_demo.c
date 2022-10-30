@@ -36,6 +36,7 @@ wildtype ;                      // C version of wildtype
 
 // repeat the typedef as a string, to give to GraphBLAS
 #define WILDTYPE_DEFN           \
+"#include <string.h>\n"         \
 "typedef struct "               \
 "{ "                            \
    "float stuff [4][4] ; "      \
