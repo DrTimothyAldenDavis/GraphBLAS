@@ -35,6 +35,11 @@ void GB_macrofy_defn
         {
             // built-in operator defined by a function,
             // or a user-defined operator
+
+// FIXME: need to be able to use GB_STATIC_INLINE, and need to
+// put it just before the first "void" token, and after any #include
+// statements needed by the operator definition.
+
 fprintf (fp, "static __device__ __inline__\n%s\n", defn) ;  // FIXME
 //            fprintf (fp, "GB_STATIC_INLINE\n%s\n", defn) ;
         }
