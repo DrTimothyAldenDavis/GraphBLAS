@@ -161,9 +161,13 @@ configure_file ( "Config/README.md.in" "${PROJECT_SOURCE_DIR}/README.md" )
 
 if ( CMAKE_CUDA_DEV )
     # for CUDA development only; not for production use
-    include_directories ( Source/Template Source Include Source/Generated1 lz4 zstd zstd/zstd_subset Demo/Include rmm_wrap )
+    include_directories ( Source/Template Source Include Source/Generated1
+        Source/Shared Source/SharedTemplate
+        lz4 zstd zstd/zstd_subset Demo/Include rmm_wrap )
 else ( )
-    include_directories ( Source/Template Source Include Source/Generated1 lz4 zstd zstd/zstd_subset Source/Generated2 Demo/Include rmm_wrap )
+    include_directories ( Source/Template Source Include Source/Generated1
+        Source/Shared Source/SharedTemplate
+        lz4 zstd zstd/zstd_subset Source/Generated2 Demo/Include rmm_wrap )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -260,9 +264,13 @@ endif ( )
 
 if ( CMAKE_CUDA_DEV )
     # for CUDA development only; not for production use
-    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Source/Generated1/*.c" )
+    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Source/Generated1/*.c" 
+        "Source/Shared/*.c" 
+        )
 else ( )
-    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Source/Generated1/*.c" "Source/Generated2/*.c" )
+    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Source/Generated1/*.c"
+        "Source/Shared/*.c" 
+        "Source/Generated2/*.c" )
 endif ( )
 
 add_library ( graphblas SHARED ${GRAPHBLAS_SOURCES} )

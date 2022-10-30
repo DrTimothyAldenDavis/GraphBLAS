@@ -91,7 +91,7 @@ else
     object_suffix = '.o' ;
 end
 
-inc = '-Iutil -I../../../Include -I../../../Source -I../../../Source/Template -I../../../rmm_wrap' ;
+inc = '-Iutil -I../../../Include -I../../../Source -I../../../Source/Shared -I../../../Source/Template -I../../../Source/SharedTemplate -I../../../rmm_wrap' ;
 
 if ispc
     % First do the following in GraphBLAS/build, in the Windows console:

@@ -36,7 +36,9 @@ message(STATUS "RMM_WRAP_INCLUDES: ${RMM_WRAP_INCLUDES}")
 set(GRAPHBLAS_CUDA_INCLUDES
         ${RMM_WRAP_INCLUDES}
         ../Source
+        ../Source/Shared
         ../Source/Template
+        ../Source/SharedTemplate
         ../Include
         ../CUDA)
 

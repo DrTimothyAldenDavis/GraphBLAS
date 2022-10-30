@@ -46,6 +46,8 @@ static const std::vector<std::string> compiler_flags{
 
    // Add includes relative to GRAPHBLAS_SOURCE_PATH variable
    "-I" + jit::get_user_graphblas_source_path() + "/CUDA",
+   "-I" + jit::get_user_graphblas_source_path() + "/Source/Shared",
+   "-I" + jit::get_user_graphblas_source_path() + "/Source/SharedTemplate",
    "-I" + jit::get_user_graphblas_source_path() + "/CUDA/templates",
    "-I/usr/local/cuda/include",
 };

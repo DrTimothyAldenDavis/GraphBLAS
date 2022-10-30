@@ -744,7 +744,7 @@ methods
     %       condensation inedges isdag predecessors successors toposort
     %       transclosure transreduction
 
-    % methods in LAGraph: (see the LAGraph/Source folder)
+    % methods in LAGraph: (see the LAGraph/src folder)
 
     %---------------------------------------------------------------------
     % operator overloading
