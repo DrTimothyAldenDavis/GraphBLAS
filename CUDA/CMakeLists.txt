@@ -64,7 +64,7 @@ target_include_directories(graphblascuda PUBLIC
         ${GRAPHBLAS_CUDA_INCLUDES})
 set_target_properties(graphblascuda PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(graphblascuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-set_target_properties(graphblascuda PROPERTIES CUDA_ARCHITECTURES "75")
+set_target_properties(graphblascuda PROPERTIES CUDA_ARCHITECTURES "52;75;80" )
 
 target_link_libraries(graphblascuda CUDA::nvrtc CUDA::cudart_static CUDA::nvToolsExt )
 
@@ -199,7 +199,7 @@ add_executable(graphblascuda_test ${CUDA_TEST_CPP_FILES} ${CMAKE_CURRENT_SOURCE_
 
 set_target_properties(graphblascuda_test PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(graphblascuda_test PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-set_target_properties(graphblascuda_test PROPERTIES CUDA_ARCHITECTURES "75")
+set_target_properties(graphblascuda_test PROPERTIES CUDA_ARCHITECTURES "52;75;80" )
 
 include(GoogleTest)
 
