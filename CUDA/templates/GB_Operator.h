@@ -1,1 +1,0 @@
-../../Source/SharedTemplate/GB_Operator.h
