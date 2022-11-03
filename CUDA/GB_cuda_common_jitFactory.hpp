@@ -43,6 +43,7 @@ static const std::vector<std::string> compiler_flags{
    "-I.",
    "-I..",
    "-I../templates",
+   "-I../../Source/Shared",
 
    // Add includes relative to GRAPHBLAS_SOURCE_PATH variable
    "-I" + jit::get_user_graphblas_source_path() + "/CUDA",

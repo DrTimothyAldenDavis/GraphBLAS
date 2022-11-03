@@ -8,3 +8,4 @@ test complex and user-defined ops (wildtype) on the GPU
 reduce: do any monoid
     terminal condition?
 
+GxB_VOID
