@@ -36,7 +36,6 @@ wildtype ;                      // C version of wildtype
 
 // repeat the typedef as a string, to give to GraphBLAS
 #define WILDTYPE_DEFN           \
-"#include <string.h>\n"         \
 "typedef struct "               \
 "{ "                            \
    "float stuff [4][4] ; "      \
@@ -109,6 +108,8 @@ void wildtype_print_matrix (GrB_Matrix A, char *name)
 // add two wildtype "scalars"
 //------------------------------------------------------------------------------
 
+// strcpy is not available for use in a GPU kernel, so a while loop is used.
+
 void wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)
 {
     for (int i = 0 ; i < 4 ; i++)
@@ -118,22 +119,38 @@ void wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)
             z->stuff [i][j] = x->stuff [i][j] + y->stuff [i][j] ;
         }
     }
-    strcpy (z->whatstuff, "this was added") ;
+    // strcpy (z->whatstuff, "this was added") ;
+    const char *psrc = "this was added" ;
+    char *pdst = z->whatstuff ;
+    while ((*pdst++ = *psrc++)) ;
 }
 
-// the newlines (\n) are optional.  They just make GxB_print output readable:
+// The newlines (\n) in the defintion below are optional.  They just make
+// GxB_print output readable.
+
+// The use of GxB_STATIC_INLINE_VOID is optional.  The string "void" could be
+// used instead.  The macro is defined as "static inline void" if the
+// user-defined operator is compiled on the CPU JIT.  It becomes
+// "static __device__ __inline__ void" when compiled for the CUDA JIT.
+
+// FIXME: in the CUDA JIT: #include GB_cuda_kernel.h before #include
+// of GB_mxm_0000000*.h
+
 #define WILDTYPE_ADD_DEFN                                                   \
-"void wildtype_add (wildtype *z, const wildtype *x, const wildtype *y) \n"  \
-"{ \n"                                                                      \
-"   for (int i = 0 ; i < 4 ; i++) \n"                                       \
-"   { \n"                                                                   \
-"       for (int j = 0 ; j < 4 ; j++) \n"                                   \
-"       { \n"                                                               \
-"           z->stuff [i][j] = x->stuff [i][j] + y->stuff [i][j] ; \n"       \
-"       } \n"                                                               \
-"   } \n"                                                                   \
-"   strcpy (z->whatstuff, \"this was added\") ; \n"                         \
-"} \n"
+"GxB_STATIC_INLINE_VOID                                                 \n" \
+"wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)       \n" \
+"{                                                                      \n" \
+"   for (int i = 0 ; i < 4 ; i++)                                       \n" \
+"   {                                                                   \n" \
+"       for (int j = 0 ; j < 4 ; j++)                                   \n" \
+"       {                                                               \n" \
+"           z->stuff [i][j] = x->stuff [i][j] + y->stuff [i][j] ;       \n" \
+"       }                                                               \n" \
+"   }                                                                   \n" \
+"   const char *psrc = \"this was added\" ;                             \n" \
+"   char *pdst = z->whatstuff ;                                         \n" \
+"   while ((*pdst++ = *psrc++)) ;                                       \n" \
+"}"
 
 //------------------------------------------------------------------------------
 // multiply two wildtypes "scalars"
@@ -152,25 +169,31 @@ void wildtype_mult (wildtype *z, const wildtype *x, const wildtype *y)
             }
         }
     }
-    strcpy (z->whatstuff, "this was multiplied") ;
+    // strcpy (z->whatstuff, "this was multiplied") ;
+    const char *psrc = "this was multiplied" ;
+    char *pdst = z->whatstuff ;
+    while ((*pdst++ = *psrc++)) ;
 }
 
 #define WILDTYPE_MULT_DEFN                                                  \
-"void wildtype_mult (wildtype *z, const wildtype *x, const wildtype *y) \n" \
-"{ \n"                                                                      \
-"   for (int i = 0 ; i < 4 ; i++) \n"                                       \
-"   { \n"                                                                   \
-"       for (int j = 0 ; j < 4 ; j++) \n"                                   \
-"       { \n"                                                               \
-"           z->stuff [i][j] = 0 ; \n"                                       \
-"           for (int k = 0 ; k < 4 ; k++) \n"                               \
-"           { \n"                                                           \
-"               z->stuff [i][j] += (x->stuff [i][k] * y->stuff [k][j]) ; \n"\
-"           } \n"                                                           \
-"       } \n"                                                               \
-"   } \n"                                                                   \
-"   strcpy (z->whatstuff, \"this was multiplied\") ; \n"                    \
-"} \n"
+"GxB_STATIC_INLINE_VOID                                                 \n" \
+"wildtype_mult (wildtype *z, const wildtype *x, const wildtype *y)      \n" \
+"{                                                                      \n" \
+"   for (int i = 0 ; i < 4 ; i++)                                       \n" \
+"   {                                                                   \n" \
+"       for (int j = 0 ; j < 4 ; j++)                                   \n" \
+"       {                                                               \n" \
+"           z->stuff [i][j] = 0 ;                                       \n" \
+"           for (int k = 0 ; k < 4 ; k++)                               \n" \
+"           {                                                           \n" \
+"               z->stuff [i][j] += (x->stuff [i][k] * y->stuff [k][j]) ;\n" \
+"           }                                                           \n" \
+"       }                                                               \n" \
+"   }                                                                   \n" \
+"   const char *psrc = \"this was multiplied\" ;                        \n" \
+"   char *pdst = z->whatstuff ;                                         \n" \
+"   while ((*pdst++ = *psrc++)) ;                                       \n" \
+"}"
 
 //------------------------------------------------------------------------------
 // wildtype main program
@@ -185,7 +208,7 @@ int main (void)
 {
 
     // start GraphBLAS
-    #if 0
+    #if 1
     GrB_init (GrB_NONBLOCKING) ;
     #else
     rmm_wrap_initialize (rmm_wrap_managed, 256 * 1000000L, 256 * 1000000000L) ;

@@ -1025,6 +1025,13 @@ GB_PUBLIC GrB_UnaryOp
 // methods for unary operators
 //------------------------------------------------------------------------------
 
+// Use this instead of "static inline void" when declaring the string for a
+// user-defined operator to use in the CUDA or CPU JIT.  In CUDA, it becomes
+// "static __device__ __inline__device__ void".
+
+#undef  GxB_STATIC_INLINE_VOID
+#define GxB_STATIC_INLINE_VOID static inline void
+
 typedef void (*GxB_unary_function)  (void *, const void *) ;
 
 // GrB_UnaryOp_new creates a user-defined unary op, with an automatic
