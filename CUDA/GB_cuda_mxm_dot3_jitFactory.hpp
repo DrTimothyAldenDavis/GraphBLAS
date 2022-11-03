@@ -105,6 +105,7 @@ public:
     std::stringstream string_to_be_jitted ;
 
     string_to_be_jitted << kernel_name << std::endl <<
+    R"(#include GB_cuda_kernel.h ")" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "templates/)" << kernel_name << R"(.cuh")" << std::endl;
 
