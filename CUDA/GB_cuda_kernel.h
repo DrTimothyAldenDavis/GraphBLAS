@@ -21,7 +21,12 @@
 // for user-defined operations
 //------------------------------------------------------------------------------
 
-#define GB_STATIC_INLINE static __device__ __inline__
+// Use this instead of "static inline void" when declaring the string for a
+// user-defined operator to use in the CUDA JIT.  On the CPU, it becomes
+// "static inline void", for the CPU JIT.
+
+#undef  GxB_STATIC_INLINE_VOID
+#define GxB_STATIC_INLINE_VOID static __device__ __inline__ void
 
 //------------------------------------------------------------------------------
 // operators
@@ -239,7 +244,7 @@ GrB_Desc_Value ;
     }                                                                       \
 }
 
-GB_STATIC_INLINE int64_t GB_search_for_vector_device
+static __device__ __inline__ int64_t GB_search_for_vector_device
 (
     const int64_t p,                // search for vector k that contains p
     const int64_t *restrict Ap,  // vector pointers to search

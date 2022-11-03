@@ -13,8 +13,8 @@
 ../build/wildtype_demo                 > wildtype_demo.out
 
 echo "Comparing output:"
-diff Output/simple_demo.out       simple_demo.out
-diff Output/complex_demo_out.m    complex_demo_out.m
-diff Output/wildtype_demo.out     wildtype_demo.out
+diff -w Output/simple_demo.out       simple_demo.out
+diff -w Output/complex_demo_out.m    complex_demo_out.m
+diff -w Output/wildtype_demo.out     wildtype_demo.out
 
 exit 0

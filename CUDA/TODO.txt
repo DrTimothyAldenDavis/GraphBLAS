@@ -8,4 +8,6 @@ test complex and user-defined ops (wildtype) on the GPU
 reduce: do any monoid
     terminal condition?
 
-GxB_VOID
+need to #include GB_cuda_kernal.h before #include of
+GB_mxm_0000*.h header.
+
