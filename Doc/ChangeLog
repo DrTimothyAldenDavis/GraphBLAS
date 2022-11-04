@@ -1,6 +1,11 @@
-Version 7.3.2, ...
+Version 7.3.3 ...
 
-    * math kernels: revised for the CUDA JIT.
+    * math kernels: revised for CUDA JIT
+
+Version 7.3.2, Nov 3, 2022
+    
+    * cmake_modules: SuiteSparsePolicy.cmake did not correctly detect if
+        GraphBLAS was being compiled inside SuiteSparse or not.
 
 Version 7.3.1, Oct 21, 2022
 
