@@ -1,4 +1,4 @@
-Version 7.3.2, Nov 3, 2022
+Version 7.3.2, Nov 12, 2022
 
     * cmake_modules: minor revision to build system, to sync 
         with SuiteSparse v6.0.0
