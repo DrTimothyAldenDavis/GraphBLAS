@@ -14,10 +14,10 @@
 cmake_minimum_required ( VERSION 3.19 )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Nov 5, 2022" )
+set ( GraphBLAS_DATE "Dec 1, 2022" )
 set ( GraphBLAS_VERSION_MAJOR 7 )
-set ( GraphBLAS_VERSION_MINOR 3 )
-set ( GraphBLAS_VERSION_SUB   3 )
+set ( GraphBLAS_VERSION_MINOR 4 )
+set ( GraphBLAS_VERSION_SUB   0 )
 
 # GraphBLAS C API Specification version, at graphblas.org
 set ( GraphBLAS_API_DATE "Nov 15, 2021" )
@@ -75,7 +75,7 @@ endif ( )
 
 option ( NOPENMP "ON: do not use OpenMP.  OFF (default): use OpenMP" off )
 if ( NOPENMP )
-    # OpenMP has been disabled
+    # OpenMP has been disabled.
     set ( OPENMP_FOUND false )
 else ( )
     find_package ( OpenMP )
@@ -378,6 +378,17 @@ if ( OPENMP_FOUND )
     message ( STATUS "CMAKE OpenMP C flags:      " ${OpenMP_C_FLAGS} )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} " )
     include_directories ( ${OpenMP_C_INCLUDE_DIRS} )
+else ( )
+    message  ( WARNING
+    "WARNING:  OpenMP was not found (or was disabled with NOPENMP).  See the "
+    "GrapBLAS user guide on the consequences of compiling GraphBLAS without "
+    "OpenMP. GraphBLAS will work but may not be thread-safe, since it relies "
+    "on '#pragma omp flush' to ensure the work performed by one user thread is "
+    "available to another, in GrB_wait.  If OpenMP is not in use, the "
+    "thread-safety of GrB_wait becomes the responsibilty of the user "
+    "application (perhaps through a pthreads construct).  Compiling GraphBLAS "
+    "without OpenMP is not recommended for installation in a package manager "
+    "(Linux, conda-forge, spack, brew, vcpkg, etc). " )
 endif ( )
 
 if ( SUITESPARSE_CUDA )

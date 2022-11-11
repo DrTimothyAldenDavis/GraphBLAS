@@ -18,21 +18,6 @@
 // by k.  k = 1 is the least significant bit, and k = bits (64 for uint64)
 // is the most significant bit. If k is outside this range, the result is zero.
 
-#if 0
-#define GB_BITGET(x,k,type,bits)                                \
-(                                                               \
-    (k >= 1 && k <= bits) ?                                     \
-    (                                                           \
-        /* get the kth bit */                                   \
-        ((x & (((type) 1) << (k-1))) ? 1 : 0)                   \
-    )                                                           \
-    :                                                           \
-    (                                                           \
-        0                                                       \
-    )                                                           \
-)
-#endif
-
     inline
     int8_t GB_bitget_int8 (int8_t x, int8_t k)
     {
@@ -161,21 +146,6 @@
 // is given by k.  If k is in the range 1 to bits, then k gives the position
 // of the bit to set.  If k is outside the range 1 to bits, then z = x is
 // returned, unmodified.
-
-#if 1
-#define GB_BITSET(x,k,type,bits)                                \
-(                                                               \
-    (k >= 1 && k <= bits) ?                                     \
-    (                                                           \
-        /* set the kth bit to 1 */                              \
-        (x | (((type) 1) << (k-1)))                             \
-    )                                                           \
-    :                                                           \
-    (                                                           \
-        x                                                       \
-    )                                                           \
-)
-#endif
 
     inline
     int8_t GB_bitset_int8 (int8_t x, int8_t k)
@@ -306,21 +276,6 @@
 // is given by k.  If k is in the range 1 to bits, then k gives the position of
 // the bit to clear.  If k is outside the range 1 to GB_BITS, then z = x is
 // returned, unmodified.
-
-#if 0
-#define GB_BITCLR(x,k,type,bits)                                \
-(                                                               \
-    (k >= 1 && k <= bits) ?                                     \
-    (                                                           \
-        /* set the kth bit to 0 */                              \
-        (x & ~(((type) 1) << (k-1)))                            \
-    )                                                           \
-    :                                                           \
-    (                                                           \
-        x                                                       \
-    )                                                           \
-)
-#endif
 
     inline
     int8_t GB_bitclr_int8 (int8_t x, int8_t k)
