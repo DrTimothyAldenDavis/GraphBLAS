@@ -105,9 +105,15 @@ public:
     std::stringstream string_to_be_jitted ;
 
     string_to_be_jitted << kernel_name << std::endl <<
-    R"(#include GB_cuda_kernel.h ")" << std::endl <<
+//  R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#undef  GxB_STATIC_INLINE_VOID\n
+    #define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "templates/)" << kernel_name << R"(.cuh")" << std::endl;
+
+    // FIXME
+    std::cout << "=========== RAW JIT INPUT:\n" ;
+    std::cout << string_to_be_jitted.str() ;
 
     bool result = false;
 
@@ -186,8 +192,15 @@ public:
 
     std::stringstream string_to_be_jitted ;
     string_to_be_jitted << kernel_name << std::endl <<
+//  R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#undef  GxB_STATIC_INLINE_VOID\n
+    #define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "templates/)" << kernel_name << R"(.cuh")" << std::endl;
+
+    // FIXME
+    std::cout << "=========== RAW JIT INPUT(2):\n" ;
+    std::cout << string_to_be_jitted.str() ;
 
     bool result = false;
 
@@ -389,8 +402,15 @@ public:
     filecache.getFile (mxm_factory_) ;
 
     string_to_be_jitted << hashable_name << std::endl <<
+//  R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#undef  GxB_STATIC_INLINE_VOID\n
+    #define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
+
+    // FIXME
+    std::cout << "=========== RAW JIT INPUT(3):\n" ;
+    std::cout << string_to_be_jitted.str() ;
 
     dim3 grid(gridsz);
     dim3 block(blocksz);
@@ -441,7 +461,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-// dot3: mxm_sparse_dense_launchFactory
+// FIXME: rename GB_cuda_mxm_dot3_jitFactory_sparse_dense_launchFactory
 //------------------------------------------------------------------------------
 
 class mxm_sparse_dense_launchFactory
@@ -499,8 +519,15 @@ public:
     filecache.getFile (mxm_factory_) ;
 
     string_to_be_jitted << hashable_name << std::endl <<
+//  R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#undef  GxB_STATIC_INLINE_VOID\n
+    #define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
+
+    // FIXME
+    std::cout << "=========== RAW JIT INPUT(4):\n" ;
+    std::cout << string_to_be_jitted.str() ;
 
     dim3 grid(gridsz);
     dim3 block(blocksz);
@@ -615,8 +642,15 @@ public:
     filecache.getFile (mxm_factory_) ;
 
     string_to_be_jitted << hashable_name << std::endl <<
+//  R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#undef  GxB_STATIC_INLINE_VOID\n
+    #define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
+
+    // FIXME
+    std::cout << "=========== RAW JIT INPUT(5):\n" ;
+    std::cout << string_to_be_jitted.str() ;
 
     dim3 grid(gridsz);
     dim3 block(blocksz);

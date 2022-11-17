@@ -10,7 +10,9 @@
 // for code development only:
 #ifdef GBCUDA
 // CUDA kernels enabled: turn on developer flag
-#define GB_DEVELOPER 1
+// FIXME
+#define GB_DEVELOPER 0
+// #define GB_DEVELOPER 1
 #else
 // in production: turn off developer flag
 #define GB_DEVELOPER 0
