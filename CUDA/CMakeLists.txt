@@ -92,6 +92,7 @@ target_include_directories(graphblascuda PUBLIC
         ${GRAPHBLAS_CUDA_INCLUDES})
 set_target_properties(graphblascuda PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(graphblascuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+# FIXME: use SUITESPARSE_CUDA_ARCHITECTURES
 set_target_properties(graphblascuda PROPERTIES CUDA_ARCHITECTURES "52;75;80" )
 
 target_link_libraries(graphblascuda CUDA::nvrtc CUDA::cudart_static CUDA::nvToolsExt )
