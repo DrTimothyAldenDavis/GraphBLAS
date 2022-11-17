@@ -106,8 +106,8 @@ public:
 
     string_to_be_jitted << kernel_name << std::endl <<
 //  R"(#include "GB_cuda_kernel.h")" << std::endl <<
-    R"(#undef  GxB_STATIC_INLINE_VOID\n
-    #define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
+    R"(#undef  GxB_STATIC_INLINE_VOID)" << std::endl <<
+    R"(#define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "templates/)" << kernel_name << R"(.cuh")" << std::endl;
 
@@ -193,8 +193,8 @@ public:
     std::stringstream string_to_be_jitted ;
     string_to_be_jitted << kernel_name << std::endl <<
 //  R"(#include "GB_cuda_kernel.h")" << std::endl <<
-    R"(#undef  GxB_STATIC_INLINE_VOID\n
-    #define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
+    R"(#undef  GxB_STATIC_INLINE_VOID)" << std::endl <<
+    R"(#define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "templates/)" << kernel_name << R"(.cuh")" << std::endl;
 
@@ -403,8 +403,8 @@ public:
 
     string_to_be_jitted << hashable_name << std::endl <<
 //  R"(#include "GB_cuda_kernel.h")" << std::endl <<
-    R"(#undef  GxB_STATIC_INLINE_VOID\n
-    #define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
+    R"(#undef  GxB_STATIC_INLINE_VOID)" << std::endl <<
+    R"(#define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
@@ -520,8 +520,8 @@ public:
 
     string_to_be_jitted << hashable_name << std::endl <<
 //  R"(#include "GB_cuda_kernel.h")" << std::endl <<
-    R"(#undef  GxB_STATIC_INLINE_VOID\n
-    #define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
+    R"(#undef  GxB_STATIC_INLINE_VOID)" << std::endl <<
+    R"(#define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
@@ -643,8 +643,8 @@ public:
 
     string_to_be_jitted << hashable_name << std::endl <<
 //  R"(#include "GB_cuda_kernel.h")" << std::endl <<
-    R"(#undef  GxB_STATIC_INLINE_VOID\n
-    #define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
+    R"(#undef  GxB_STATIC_INLINE_VOID)" << std::endl <<
+    R"(#define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
