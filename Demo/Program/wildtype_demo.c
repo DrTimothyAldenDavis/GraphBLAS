@@ -29,7 +29,7 @@
 
 typedef struct
 {
-    float stuff [4][4] ;
+    double stuff [4][4] ;
     char whatstuff [64] ;
 }
 wildtype ;                      // C version of wildtype
@@ -38,7 +38,7 @@ wildtype ;                      // C version of wildtype
 #define WILDTYPE_DEFN           \
 "typedef struct "               \
 "{ "                            \
-   "float stuff [4][4] ; "      \
+   "double stuff [4][4] ; "      \
    "char whatstuff [64] ; "     \
 "} "                            \
 "wildtype ;"
@@ -342,7 +342,7 @@ int main (void)
     {
         for (int j = 0 ; j < 4 ; j++)
         {
-            scalar2.stuff [i][j] = (float) (j - i) + 0.5 ;
+            scalar2.stuff [i][j] = (double) (j - i) + 0.5 ;
         }
     }
     wildtype_print (&scalar2, "scalar2") ;
