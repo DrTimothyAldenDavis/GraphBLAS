@@ -2,9 +2,8 @@
 // GB_cuda_cumsum: cumlative sum of an array using GPU acceleration
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
@@ -28,6 +27,7 @@ GrB_Info GB_cuda_cumsum             // compute the cumulative sum of an array
     const int64_t n
 )
 {
+
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
@@ -38,9 +38,11 @@ GrB_Info GB_cuda_cumsum             // compute the cumulative sum of an array
     //--------------------------------------------------------------------------
     // count = cumsum ([0 count[0:n-1]]) ;
     //--------------------------------------------------------------------------
+
     void *d_temp_storage = NULL;
     size_t temp_storage_bytes;
-    cub::DeviceScan::ExclusiveSum(d_temp_storage, temp_storage_bytes, count, count, (int)n);
+    cub::DeviceScan::ExclusiveSum(d_temp_storage, temp_storage_bytes, count,
+        count, (int) n) ;
     size_t size ;
     d_temp_storage  = GB_malloc_memory( temp_storage_bytes, 1, &size);
     if ( d_temp_storage == NULL){

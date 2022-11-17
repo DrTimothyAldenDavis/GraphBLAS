@@ -1,62 +1,90 @@
+#-------------------------------------------------------------------------------
+# GraphBLAS/CUDA/CMakeLists.txt:  cmake script for GraphBLAS/CUDA
+#-------------------------------------------------------------------------------
+
+# FIXME:
+# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+
+# Some files in this folder are (c) NVIDIA or (c) Google.  Please refer
+# to their individual licenses (Apache, BSD, or others).
+# SPDX-License-Identifier: Apache-2.0
+
+#-------------------------------------------------------------------------------
+
 cmake_minimum_required ( VERSION 3.19 )
 
-# CMake build for generating googletest c++ files that can be compiled and executed in parallel.
-# Build can be customized to speed up development by allowing the targeting of specific
-# specific parameters. The output of this build is an executable that can be used to
-# run the gtests.
+# CMake build for generating googletest c++ files that can be compiled and
+# executed in parallel.  Build can be customized to speed up development by
+# allowing the targeting of specific specific parameters. The output of this
+# build is an executable that can be used to run the gtests.
 
 project ( GRAPHBLAS_CUDA
     VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
     LANGUAGES CXX CUDA )
+
 cmake_policy ( SET CMP0135 NEW )    # URL download timestamp policy
 
-set(CMAKE_CUDA_FLAGS "-cudart=static -lineinfo ")
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fPIC ")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DGBNCPUFEAT")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGBNCPUFEAT")
-set(CMAKE_C_STANDARD 11)
+set ( CMAKE_C_STANDARD 11)
+set ( CMAKE_CXX_STANDARD 17 )
 
-message(STATUS "C++ flags for CUDA:" "${CMAKE_CXX_FLAGS}")
+set ( CMAKE_CUDA_FLAGS "-cudart=static -lineinfo " )
+set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fPIC " )
 
-file(GLOB GRAPHBLAS_CUDA_SOURCES "*.cu" "*.c" "*.cpp")
+# set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DGBNCPUFEAT")
+# set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGBNCPUFEAT")
+add_compile_definitions ( GBNCPUFEAT )
 
-add_library(graphblascuda SHARED
-            ${GRAPHBLAS_CUDA_SOURCES}
-)
+# silence warning in local_cub:
+add_compile_definitions ( __CDPRT_SUPPRESS_SYNC_DEPRECATION_WARNING )
+
+message ( STATUS "C++ flags for CUDA: ${CMAKE_CXX_FLAGS}" )
+
+file ( GLOB GRAPHBLAS_CUDA_SOURCES "*.cu" "*.c" "*.cpp" )
+
+add_library ( graphblascuda SHARED ${GRAPHBLAS_CUDA_SOURCES} )
 
 set_target_properties ( graphblascuda PROPERTIES
     VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
     SOVERSION ${GraphBLAS_VERSION_MAJOR}
     C_STANDARD_REQUIRED 11 )
 
-set(RMM_WRAP_INCLUDES "../rmm_wrap")
+# find rmm_wrap, the malloc/calloc/realloc/free wrapper for the Rapids
+# memory manager
+set ( RMM_WRAP_INCLUDES "../rmm_wrap" )
 
-message(STATUS "RMM_WRAP_INCLUDES: ${RMM_WRAP_INCLUDES}")
-set(GRAPHBLAS_CUDA_INCLUDES
+message ( STATUS "RMM_WRAP_INCLUDES: ${RMM_WRAP_INCLUDES}" )
+set ( GRAPHBLAS_CUDA_INCLUDES
         ${RMM_WRAP_INCLUDES}
         ../Source
         ../Source/Shared
         ../Source/Template
         ../Source/SharedTemplate
         ../Include
-        ../CUDA)
+        ../CUDA )
 
-message(STATUS "GraphBLAS CUDA includes: " "${GRAPHBLAS_CUDA_INCLUDES}")
+message ( STATUS "GraphBLAS CUDA includes: ${GRAPHBLAS_CUDA_INCLUDES}" )
 
-set(EXTERNAL_INCLUDES_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
+#-------------------------------------------------------------------------------
+# add folder for cuco and download it if necessary
+#-------------------------------------------------------------------------------
 
-IF(NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY})
-    file(MAKE_DIRECTORY ${EXTERNAL_INCLUDES_DIRECTORY})
-endif()
+set ( EXTERNAL_INCLUDES_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
 
-IF(NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY}/cuco)
-    execute_process(
+IF ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY} )
+    file ( MAKE_DIRECTORY ${EXTERNAL_INCLUDES_DIRECTORY} )
+endif ( )
+
+IF ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY}/cuco )
+    execute_process (
             COMMAND git clone "https://github.com/NVIDIA/cuCollections.git" --branch main --recursive cuco
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
-endif()
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
+endif ( )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/external_includes/cuco/include)
+
+#-------------------------------------------------------------------------------
+# graphblascuda properties
+#-------------------------------------------------------------------------------
 
 target_include_directories(graphblascuda PUBLIC
         ${CMAKE_CURRENT_BINARY_DIR}/external_includes/cuco/include
@@ -105,25 +133,27 @@ endif ( )
 #         ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
 
 #-------------------------------------------------------------------------------
+# test suite for the CUDA kernels
+#-------------------------------------------------------------------------------
 
-# 1. Execute enumify/stringify/jitify logic to compile ptx kernels and compile/link w/ relevant *.cu files.
+# 1. Execute enumify/stringify/jitify logic to compile ptx kernels and
+# compile/link w/ relevant *.cu files.
 
 # TODO: Need to do this piece in cmake
 
 # 2. Generate test .cu files named "{semiring_operation}_test_instances.hpp"
-set(CUDA_TEST_SUITES
+set ( CUDA_TEST_SUITES
     AxB_dot3
 #    reduce_to_scalar
 )
 
 #
-set(CUDA_TEST_MONOIDS PLUS MIN MAX) # TIMES ANY)
-set(CUDA_TEST_BINOPS TIMES PLUS MIN MAX DIV) #MINUS RDIV RMINUS FIRST SECOND PAIR)
-set(CUDA_TEST_SEMIRINGS PLUS_TIMES MIN_PLUS MAX_PLUS)
-set(CUDA_TEST_DATATYPES int32_t int64_t uint32_t uint64_t float double)
-set(CUDA_TEST_KERNELS vsvs) # mp vsvs dndn spdn vssp)
-set(CUDA_TEST_FORMATS sparse dense sparse_dense reduce)
-
+set ( CUDA_TEST_MONOIDS PLUS MIN MAX) # TIMES ANY )
+set ( CUDA_TEST_BINOPS TIMES PLUS MIN MAX DIV ) #MINUS RDIV RMINUS FIRST SECOND PAIR )
+set ( CUDA_TEST_SEMIRINGS PLUS_TIMES MIN_PLUS MAX_PLUS )
+set ( CUDA_TEST_DATATYPES int32_t int64_t uint32_t uint64_t float double )
+set ( CUDA_TEST_KERNELS vsvs) # mp vsvs dndn spdn vssp )
+set ( CUDA_TEST_FORMATS sparse dense sparse_dense reduce )
 
 # TODO: Update testGen.py to accept the above CUDA_TEST_* params as arguments
 

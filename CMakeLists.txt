@@ -43,8 +43,9 @@ set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 
 # CUDA is under development for now, and not deployed in production:
 # option ( ENABLE_CUDA "Enable CUDA acceleration" off )
-  set ( ENABLE_CUDA false )
-# set ( ENABLE_CUDA true )
+# FIXME
+# set ( ENABLE_CUDA false )
+  set ( ENABLE_CUDA true )
 
 # GraphBLAS takes a long time to build, so do not build the static library
 # by default
@@ -163,6 +164,10 @@ configure_file ( "Config/GraphBLAS_version.tex.in" "${PROJECT_SOURCE_DIR}/Doc/Gr
 configure_file ( "Config/GraphBLAS_API_version.tex.in"
     "${PROJECT_SOURCE_DIR}/Doc/GraphBLAS_API_version.tex" )
 configure_file ( "Config/README.md.in" "${PROJECT_SOURCE_DIR}/README.md" )
+
+# for CUDA
+configure_file ( "CUDA/Config/GB_cuda_common_jitFactory.hpp.in"
+    "${PROJECT_SOURCE_DIR}/CUDA/GB_cuda_common_jitFactory.hpp" )
 
 #-------------------------------------------------------------------------------
 # include directories for both graphblas and graphblasdemo libraries

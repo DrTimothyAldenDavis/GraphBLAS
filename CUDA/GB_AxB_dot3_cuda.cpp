@@ -2,9 +2,8 @@
 // GB_AxB_dot3_cuda: compute C<M> = A'*B in parallel, on the GPU(s)
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
@@ -286,7 +285,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
         dense_phase1launchFactory dp1lf(my_mxm_spec);
 
-        GBURBLE ("(GPU phase1 start nblk = %d) ", dp1lf.get_number_of_blocks(M)) ;
+        GBURBLE ("(GPU phase1 start nblk = %d) ",
+            dp1lf.get_number_of_blocks(M)) ;
         kernel_timer.Start();
             dp1lf.jitGridBlockLaunch(C, M, A, B, stream);
             CU_OK (cudaStreamSynchronize(stream));
@@ -300,7 +300,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             CU_OK (cudaStreamSynchronize(stream));  // only for timing
         kernel_timer.Stop();
         GBURBLE ("(GPU Dense full x full done %12.6g ms, rate=%12.6g)\n", 
-                   kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
+               kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
 
     }
     else
@@ -375,7 +375,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         // phase1: assign each C(i,j) to a bucket, and count them
         //----------------------------------------------------------------------
 
-        GBURBLE ("(GPU phase1 start nblk = %d) ", p1lf.get_number_of_blocks(M)) ;
+        GBURBLE ("(GPU phase1 start nblk = %d) ", p1lf.get_number_of_blocks(M));
         kernel_timer.Start();
         p1lf.jitGridBlockLaunch(Nanobuckets, Blockbucket, C, M, A, B, stream);
         CU_OK (cudaStreamSynchronize(stream));
@@ -383,9 +383,9 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
         GBURBLE ("(GPU phase1 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
 
-        //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
         // phase2: cumsum across the blockbuckets, propagate to thread level
-        //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
 
         GBURBLE ("(GPU phase2 start nblk=%d ) ", ntasks) ;
 
@@ -402,7 +402,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         {
             Bucketp[bucket] = s; 
             s += offset[bucket];
-            if ( (Bucketp[bucket] - Bucketp[bucket-1] ) == mnz ) all_in_one = true;
+            if ( (Bucketp[bucket] - Bucketp[bucket-1] ) == mnz )
+            {
+                all_in_one = true;
+            }
         }
 
         GBURBLE ("(GPU phase2 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
@@ -417,13 +420,12 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
             CU_OK (cudaStreamSynchronize(stream));
             kernel_timer.Stop();
-            GBURBLE ("(GPU phase2end done %12.6g ms)\n",kernel_timer.Elapsed()) ;
+            GBURBLE ("(GPU phase2end done %12.6g ms)\n",kernel_timer.Elapsed());
         }
 
-        //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
         // phase3: do the numerical work
-        //--------------------------------------------------------------------------
-
+        //----------------------------------------------------------------------
 
         for ( int bucket = 1 ; bucket < NBUCKETS; ++bucket)
         {
@@ -435,10 +437,13 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
                 phase3launchFactory p3lf(my_mxm_spec, (GB_bucket_code)bucket);
                 GBURBLE ("(GPU phase3 bucket %d launch ) ", bucket) ;
                 kernel_timer.Start();
-                p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C, M, A, B, stream);
+                p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket,
+                    C, M, A, B, stream);
                 CU_OK (cudaStreamSynchronize(stream));  // only for timing
                 kernel_timer.Stop();
-                GBURBLE ("(GPU phase3 bucket %d done %12.6g ms, rate=%12.6g)\n", bucket, kernel_timer.Elapsed(), (end-start)/(1000*kernel_timer.Elapsed())) ; 
+                GBURBLE ("(GPU phase3 bucket %d done %12.6g ms, rate=%12.6g)\n",
+                    bucket, kernel_timer.Elapsed(),
+                    (end-start)/(1000*kernel_timer.Elapsed())) ; 
             }
         }
     }

@@ -4,10 +4,6 @@ RMM
 http://github.com/rapidsai/rmm
 Apache-2.0 license
 
-CNMEM 
-http://github.com/NVIDIA/cnmem
-BSD 3-Clause
-
 Jitify
 http://github.com/NVIDIA/jitify
 BSD 3-Clause "New" or "Revised" License
