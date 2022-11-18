@@ -208,7 +208,7 @@ int main (void)
 {
 
     // start GraphBLAS
-    #if 0
+    #if 1
     GrB_init (GrB_NONBLOCKING) ;
     #else
     rmm_wrap_initialize (rmm_wrap_managed, 256 * 1000000L, 256 * 1000000000L) ;

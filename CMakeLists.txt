@@ -43,9 +43,8 @@ set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 
 # CUDA is under development for now, and not deployed in production:
 # option ( ENABLE_CUDA "Enable CUDA acceleration" off )
-# FIXME
-# set ( ENABLE_CUDA false )
-  set ( ENABLE_CUDA true )
+  set ( ENABLE_CUDA false )
+# set ( ENABLE_CUDA true )
 
 # GraphBLAS takes a long time to build, so do not build the static library
 # by default
