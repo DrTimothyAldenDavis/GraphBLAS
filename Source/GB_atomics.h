@@ -436,16 +436,10 @@
     // compare/exchange for gcc, icc, and clang on x86 and Power8/9
     //--------------------------------------------------------------------------
 
-    #include <stdatomic.h>
-
     // the compare/exchange function is generic for any type
     #define GB_ATOMIC_COMPARE_EXCHANGE_X(target, expected, desired)     \
-        atomic_compare_exchange_weak (target, &expected, desired)
-
-    // the compare/exchange function is generic for any type
-//  #define GB_ATOMIC_COMPARE_EXCHANGE_X(target, expected, desired)     \
-//      __atomic_compare_exchange (target, &expected, &desired,         \
-//          true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)                   \
+        __atomic_compare_exchange (target, &expected, &desired,         \
+            true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)                   \
 
     // bool, int8_t, and uint8_t
     #define GB_ATOMIC_COMPARE_EXCHANGE_8(target, expected, desired)     \
