@@ -82,6 +82,7 @@ cfiles = [ dir('../Demo/Source/usercomplex.c') ; dir('GB_mx_*.c') ] ;
 hfiles = [ dir('*.h') ; dir('Template/*.c') ] ;
 inc = '-ITemplate -I../Include -I../Source -I../Source/Template -I../lz4 -I../rmm_wrap' ;
 inc = [inc ' -I../zstd -I../zstd/zstd_subset -I.'] ;
+inc = [inc ' -I../Source/Shared -I../Source/SharedTemplate '] ;
 
 if (ismac)
     % Mac (do 'make install' for GraphBLAS first)
