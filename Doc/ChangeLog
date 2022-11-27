@@ -1,6 +1,16 @@
 Version 7.4.0, Dec 1, 2022 (FIXME: DATE)
 
     * math kernels: revised for CUDA JIT
+    * Demo/wildtype_demo: change to double so that CPU and GPU versions compute
+        the same result.
+    * GxB_STATIC_INLINE_VOID: for user-defined functions
+
+Version 7.3.3, Dec 1, 2022
+
+    * stdatomic.h: using #include <stdatomic.h> and atomic_compare_exchange_weak
+        instead of GCC/clang/icx __atomic_* variants.
+        Added -latomic if required.
+    * chunk factor for C=A*B (saxpy3 method): revised for non-builtin-semirings
 
 Version 7.3.2, Nov 12, 2022
 
