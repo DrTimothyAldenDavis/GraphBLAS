@@ -46,9 +46,9 @@ check_c_source_runs ( "${atomic_source}" TEST_FOR_STDATOMIC )
 
 if ( NOT TEST_FOR_STDATOMIC )
     # try with -latomic
-    set ( CMAKE_REQUIRE_LIBRARIES "atomic" )
-    check_c_source_runs ( "${atomic_source}" TEST_FOR_STDATOMIC )
-    if ( NOT TEST_FOR_STDATOMIC )
+    set ( CMAKE_REQUIRED_LIBRARIES "atomic" )
+    check_c_source_runs ( "${atomic_source}" TEST_FOR_STDATOMIC_WITH_LIBATOMIC )
+    if ( NOT TEST_FOR_STDATOMIC_WITH_LIBATOMIC )
         # fails with -latomic
         message ( FATAL_ERROR "ANSI C11 atomics: failed" )
     endif ( )
