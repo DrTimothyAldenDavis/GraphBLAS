@@ -13,6 +13,7 @@
 
 // Create/destroy an RMM resource:
 //      rmm_wrap_initialize: create the RMM resource
+//      rmm_wrap_is_initialized: query if the RMM resource has been created
 //      rmm_wrap_finalize: destroy the RMM resource
 
 // C-style malloc/calloc/realloc/free methods:
@@ -32,9 +33,9 @@
 // RMM_Wrap_Handle: a global object containing the RMM context
 //------------------------------------------------------------------------------
 
-// rmm_wrap_context is a pointer to a single, global RMM_Wrap_Handle object
-// that all methods in this file can access.  The object and its pointer
-// cannot be accessed outside this file.
+// rmm_wrap_context is a pointer to an array of global RMM_Wrap_Handle objects
+// (one per GPU) that all methods in this file can access.  The array of
+// objects cannot be accessed outside this file.
 
 typedef struct
 {
@@ -47,7 +48,8 @@ typedef struct
 }
 RMM_Wrap_Handle ;
 
-// rmm_wrap_context: global pointer to the single RMM_Wrap_Handle object
+// rmm_wrap_context: global pointer to the single array of RMM_Wrap_Handle
+// objects, one per GPU
 static RMM_Wrap_Handle *rmm_wrap_context = NULL ;
 
 //------------------------------------------------------------------------------
@@ -145,6 +147,16 @@ inline cudaStream_t make_cuda_stream()
     RMM_WRAP_CHECK_CUDA(cudaStreamCreate(&user_stream));
     return user_stream;
 }
+
+//------------------------------------------------------------------------------
+// rmm_wrap_is_initialized: determine if rmm_wrap_context exists
+//------------------------------------------------------------------------------
+
+bool rmm_wrap_is_initialized (void)
+{
+    return (rmm_wrap_context != NULL) ;
+}
+
 //------------------------------------------------------------------------------
 // rmm_wrap_finalize: destroy the global rmm_wrap_context
 //------------------------------------------------------------------------------
@@ -172,7 +184,8 @@ int rmm_wrap_initialize             // returns -1 on error, 0 on success
     RMM_MODE mode,                  // TODO: describe
     std::size_t init_pool_size,     // TODO: describe
     std::size_t max_pool_size,       // TODO: describe
-    std::size_t stream_pool_size
+    std::size_t stream_pool_size,
+    int device                      // 2, 5, or 7
 )
 {
 
@@ -180,7 +193,7 @@ int rmm_wrap_initialize             // returns -1 on error, 0 on success
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (rmm_wrap_context != NULL)
+    if (rmm_wrap_context [device] != NULL)
     {
         // rmm_wrap_initialize cannot be called twice
         return (-1) ;
@@ -194,7 +207,7 @@ int rmm_wrap_initialize             // returns -1 on error, 0 on success
     }
 
     // create the RMM wrap handle and save it as a global pointer.
-    rmm_wrap_context = new RMM_Wrap_Handle() ;
+    rmm_wrap_context [device] = new RMM_Wrap_Handle() ;
 
     //  std::cout<< " init called with mode "<<mode<<" init_size "
     // <<init_pool_size<<" max_size "<<max_pool_size<<"\n";
@@ -254,15 +267,15 @@ int rmm_wrap_initialize             // returns -1 on error, 0 on success
     return (0) ;
 }
 
-cudaStream_t get_next_stream_from_pool() {
+cudaStream_t rmm_wrap_get_next_stream_from_pool() {
     return rmm_wrap_context->stream_pool->get_stream();
 }
 
-cudaStream_t get_stream_from_pool(std::size_t stream_id) {
+cudaStream_t rmm_wrap_get_stream_from_pool(std::size_t stream_id) {
     return rmm_wrap_context->stream_pool->get_stream(stream_id);
 }
 
-cudaStream_t get_main_stream() {
+cudaStream_t rmm_wrap_get_main_stream() {
     return rmm_wrap_context->main_stream;
 }
 //------------------------------------------------------------------------------

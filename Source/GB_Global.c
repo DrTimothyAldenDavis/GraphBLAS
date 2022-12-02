@@ -806,6 +806,11 @@ void * GB_Global_malloc_function (size_t size)
     return (p) ;
 }
 
+void * GxB_malloc (size_t size)
+{
+    return (GB_Global.malloc_function (size)) ;
+}
+
 //------------------------------------------------------------------------------
 // realloc_function
 //------------------------------------------------------------------------------

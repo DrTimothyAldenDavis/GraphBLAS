@@ -63,6 +63,9 @@ typedef enum
 }
 RMM_MODE ;
 
+// determine if RMM has been initialized
+bool rmm_wrap_is_initialized (void) ;
+
 // create an RMM resource
 int rmm_wrap_initialize
 (
