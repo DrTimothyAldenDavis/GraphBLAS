@@ -52,13 +52,14 @@ typedef struct
     void (* abort_function ) (void) ;
 
     //--------------------------------------------------------------------------
-    // malloc/realloc/free: memory management functions
+    // malloc/calloc/realloc/free: memory management functions
     //--------------------------------------------------------------------------
 
-    // All threads must use the same malloc/realloc/free functions.
+    // All threads must use the same malloc/calloc/realloc/free functions.
     // They default to the ANSI C11 functions, but can be defined by GxB_init.
 
     void * (* malloc_function  ) (size_t)         ;     // required
+    void * (* calloc_function  ) (size_t, size_t) ;     // may be NULL
     void * (* realloc_function ) (void *, size_t) ;     // may be NULL
     void   (* free_function    ) (void *)         ;     // required
     bool malloc_is_thread_safe ;   // default is true
@@ -806,9 +807,26 @@ void * GB_Global_malloc_function (size_t size)
     return (p) ;
 }
 
+// user-callable wrapper for calling the malloc_function given to GxB_init
 void * GxB_malloc (size_t size)
-{
+{ 
     return (GB_Global.malloc_function (size)) ;
+}
+
+//------------------------------------------------------------------------------
+// calloc_function
+//------------------------------------------------------------------------------
+
+void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
+{ 
+    GB_Global.calloc_function = calloc_function ;
+}
+
+// user-callable wrapper for calling the calloc_function given to GxB_init
+void * GxB_calloc (size_t n, size_t size)
+{ 
+    return (GB_Global.calloc_function == NULL ? NULL :
+            GB_Global.calloc_function (n, size)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -850,6 +868,13 @@ void * GB_Global_realloc_function (void *p, size_t size)
     return (pnew) ;
 }
 
+// user-callable wrapper for calling the realloc_function given to GxB_init
+void * GxB_realloc (void *p, size_t size)
+{ 
+    return (GB_Global.realloc_function == NULL ? NULL :
+            GB_Global.realloc_function (p, size)) ;
+}
+
 //------------------------------------------------------------------------------
 // free_function
 //------------------------------------------------------------------------------
@@ -873,6 +898,12 @@ void GB_Global_free_function (void *p)
         }
     }
     GB_Global_memtable_remove (p) ;
+}
+
+// user-callable wrapper for calling the free_function given to GxB_init
+void GxB_free (void *p)
+{ 
+    GB_Global.free_function (p) ;
 }
 
 //------------------------------------------------------------------------------

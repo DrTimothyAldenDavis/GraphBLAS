@@ -1243,6 +1243,59 @@ The following usage is identical to \verb'GrB_init(mode)':
     GxB_init (mode, malloc, calloc, realloc, free) ; \end{verbatim}}
 
 \newpage
+
+% The following four GxB functions provide the user application access to the
+% same functions passed to GxB_init.  They have the same signatures as
+% malloc/calloc/realloc/free.  If the calloc and realloc functions passed to
+% GxB_init are NULL, GraphBLAS itself will work but GxB_calloc and GxB_realloc
+% will always return NULL.
+
+\subsection{{\sf GxB\_malloc:} malloc memory}
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+void * GxB_malloc (size_t size) ;
+\end{verbatim}
+}\end{mdframed}
+
+    \verb'GxB_malloc' calls the \verb'user_malloc_function' given to
+    GraphBLAS.
+
+\subsection{{\sf GxB\_calloc:} calloc memory}
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+void * GxB_calloc (size_t n, size_t size) ;
+\end{verbatim}
+}\end{mdframed}
+
+    \verb'GxB_calloc' calls the \verb'user_calloc_function' given to
+    GraphBLAS.  If the function pointer was passed as \verb'NULL' to
+    \verb'GxB_init', then \verb'GxB_calloc' will always return \verb'NULL'.
+
+\subsection{{\sf GxB\_realloc:} realloc memory}
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+void * GxB_realloc (void *p, size_t size) ;
+\end{verbatim}
+}\end{mdframed}
+
+    \verb'GxB_realloc' calls the \verb'user_realloc_function' given to
+    GraphBLAS.  If the function pointer was passed as \verb'NULL' to
+    \verb'GxB_init', then \verb'GxB_realloc' will always return \verb'NULL'.
+
+\subsection{{\sf GxB\_free:} free memory}
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+void GxB_free (void *p) ;
+\end{verbatim}
+}\end{mdframed}
+
+    \verb'GxB_free' calls the \verb'user_free_function' given to GraphBLAS.
+
+\newpage
 %===============================================================================
 \subsection{{\sf GrB\_Info:} status code returned by GraphBLAS} %===============
 %===============================================================================
@@ -15488,7 +15541,7 @@ GraphBLAS folder.
 
 \begin{itemize}
 
-\item Version 7.3.3 (Dec 1, 2022)
+\item Version 7.3.3 (Dec 9, 2022)
 
     \begin{itemize}
     \item \verb'stdatomic.h': using \verb'#include <stdatomic.h>' and

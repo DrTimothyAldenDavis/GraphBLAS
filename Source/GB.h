@@ -71,7 +71,6 @@
 #include "GB_Pending_n.h"
 #include "GB_nvals.h"
 #include "GB_aliased.h"
-#include "GB_init.h"
 #include "GB_new.h"
 #include "GB_clear.h"
 #include "GB_resize.h"

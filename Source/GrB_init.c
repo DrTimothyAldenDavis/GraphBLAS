@@ -11,6 +11,7 @@
 // GrB_finalize must be called as the last GraphBLAS operation.
 
 #include "GB.h"
+#include "GB_init.h"
 
 GrB_Info GrB_init           // start up GraphBLAS
 (
@@ -30,7 +31,7 @@ GrB_Info GrB_init           // start up GraphBLAS
 
     // default:  use the ANSI C11 malloc memory manager, which is thread-safe 
 
-#if SUITESPARSE_CUDA
+#if defined ( GBCUDA )
     if (mode == GxB_BLOCKING_GPU || mode == GxB_NONBLOCKING_GPU)
     {
         return (GB_init (mode,              // blocking or non-blocking mode
@@ -40,8 +41,7 @@ GrB_Info GrB_init           // start up GraphBLAS
     }
 #endif
 
-    return (GB_init
-        (mode,                          // blocking or non-blocking mode
+    return (GB_init (mode,              // blocking or non-blocking mode
         malloc, calloc, realloc, free,  // ANSI C memory management functions
         Context)) ;
 }

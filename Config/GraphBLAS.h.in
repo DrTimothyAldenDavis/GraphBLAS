@@ -359,6 +359,7 @@ GrB_Info ;
 
 // The extension GxB_init does the work of GrB_init, but it also defines the
 // memory management functions that SuiteSparse:GraphBLAS will use internally.
+// Currently, only the malloc and free functions are required.
 
 typedef enum
 {
@@ -387,6 +388,16 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     void * (* user_realloc_function ) (void *, size_t),
     void   (* user_free_function    ) (void *)
 ) ;
+
+// The following four GxB functions provide the user application access to the
+// same functions passed to GxB_init.  They have the same signatures as
+// malloc/calloc/realloc/free.  If the calloc and realloc functions passed to
+// GxB_init are NULL, GraphBLAS itself will work but GxB_calloc and GxB_realloc
+// will always return NULL.
+void * GxB_malloc (size_t size) ;
+void * GxB_calloc (size_t n, size_t size) ;
+void * GxB_realloc (void *p, size_t size) ;
+void   GxB_free (void *p) ;
 
 GB_PUBLIC
 GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
