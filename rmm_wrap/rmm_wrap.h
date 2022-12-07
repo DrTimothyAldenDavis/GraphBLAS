@@ -75,6 +75,13 @@ int rmm_wrap_initialize
     size_t stream_pool_size
 ) ;
 
+int rmm_wrap_initialize_all_same(
+    RMM_MODE mode,
+    std::size_t init_pool_size,
+    std::size_t max_pool_size,
+    std::size_t stream_pool_size,
+) ;
+
 // destroy an RMM resource
 void rmm_wrap_finalize (void) ;
 

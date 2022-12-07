@@ -28,6 +28,8 @@
 
 #include "rmm_wrap.hpp"
 #include <iostream>
+#include <string>
+#include <vector>
 
 //------------------------------------------------------------------------------
 // RMM_Wrap_Handle: a global object containing the RMM context
@@ -39,6 +41,7 @@
 
 typedef struct
 {
+    uint32_t device_id;
     RMM_MODE mode;
     std::shared_ptr<rmm::mr::device_memory_resource>   resource;
     std::shared_ptr<std::pmr::memory_resource>         host_resource;
@@ -51,6 +54,8 @@ RMM_Wrap_Handle ;
 // rmm_wrap_context: global pointer to the single array of RMM_Wrap_Handle
 // objects, one per GPU
 static RMM_Wrap_Handle *rmm_wrap_context = NULL ;
+static std::vector<uint32_t> devices;
+
 
 //------------------------------------------------------------------------------
 // make a resource pool
@@ -175,17 +180,23 @@ void rmm_wrap_finalize (void)
     }
 }
 
+int get_current_device() {
+    int device;
+    cudaGetDevice(&device);
+    return device;
+}
+
 //------------------------------------------------------------------------------
 // rmm_wrap_initialize: initialize the global rmm_wrap_context
 //------------------------------------------------------------------------------
 
 int rmm_wrap_initialize             // returns -1 on error, 0 on success
 (
-    RMM_MODE mode,                  // TODO: describe
-    std::size_t init_pool_size,     // TODO: describe
-    std::size_t max_pool_size,       // TODO: describe
-    std::size_t stream_pool_size,
-    int device                      // 2, 5, or 7
+    uint32_t device_id              // 2, 5, or 7
+    RMM_MODE mode,                  // TODO: describe. Should we default this?
+    std::size_t init_pool_size,     // TODO: describe. Should we default this?
+    std::size_t max_pool_size,       // TODO: describe. Should we default this?
+    std::size_t stream_pool_size,   // TODO: describe. Should we default this?
 )
 {
 
@@ -267,16 +278,66 @@ int rmm_wrap_initialize             // returns -1 on error, 0 on success
     return (0) ;
 }
 
+
+int rmm_wrap_initialize_all_same(
+    RMM_MODE mode,                  // TODO: describe. Should we default this?
+    std::size_t init_pool_size,     // TODO: describe. Should we default this?
+    std::size_t max_pool_size,       // TODO: describe. Should we default this?
+    std::size_t stream_pool_size,   // TODO: describe. Should we default this?
+) {
+
+    if(rmm_wrap_context != NULL) {
+        return (-1);
+    }
+
+    devices.clear();
+
+    const char* cuda_visible_devices = std::getenv("CUDA_VISIBLE_DEVICES");
+    std::vector<uint32_t> tokens;
+
+    /**
+     * Start with "CUDA_VISIBLE_DEVICES" var if it's defined.
+     */
+    if(cuda_visible_devices != nullptr) {
+        stringstream check1(cuda_visible_devices);
+        string intermediate;
+        while(getline(check1, intermediate, ','))
+        {
+            intermediate.erase(std::remove_if(intermediate.begin(), intermediate.end(), ::isspace), intermediate.end());
+            tokens.push_back(static_cast<uint32_t>(stoi(intermediate));
+        }
+    /**
+     * If CUDA_VISIBLE_DEVICES not explicitly specified,
+     * default to device 0.
+     */
+    } else {
+        tokens.push_back(0);
+    }
+
+    if(tokens.size() == 0) {
+    }
+
+    rmm_wrap_context = (RMM_Wrap_Handle*)malloc(tokens.size() * sizeof(RMM_Wrap_Handle));
+    for(int i = 0; i < tokens.size(); ++i) {
+        rmm_wrap_context[i] = NULL;
+        uint32_t device_id = devices[i];
+        ret = rmm_wrap_initialize(device_id, mode, init_pool_size, max_pool_size, stream_pool_size);
+        if(ret < 0) {
+            return ret;
+        }
+    }
+}
+
 cudaStream_t rmm_wrap_get_next_stream_from_pool() {
-    return rmm_wrap_context->stream_pool->get_stream();
+    return rmm_wrap_context[get_current_device()]->stream_pool->get_stream();
 }
 
 cudaStream_t rmm_wrap_get_stream_from_pool(std::size_t stream_id) {
-    return rmm_wrap_context->stream_pool->get_stream(stream_id);
+    return rmm_wrap_context[get_current_device()]->stream_pool->get_stream(stream_id);
 }
 
 cudaStream_t rmm_wrap_get_main_stream() {
-    return rmm_wrap_context->main_stream;
+    return rmm_wrap_context[get_current_device()]->main_stream;
 }
 //------------------------------------------------------------------------------
 // rmm_wrap_malloc: malloc-equivalent method using RMM
