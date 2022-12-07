@@ -25,12 +25,16 @@
 // pending, and are computed only when needed.
 
 // GxB_init is the same as GrB_init except that it also defines the
-// malloc/realloc/free functions to use.
+// malloc/calloc/realloc/free functions to use.
 
 // The realloc function pointer is optional and can be NULL.  If realloc is
 // NULL, it is not used, and malloc/memcpy/free are used instead.
 
+// The calloc function pointer is also optional and can be NULL.  Calloc is
+// never used by GraphBLAS, except for the GxB_calloc wrapper function.
+
 #include "GB.h"
+#include "GB_init.h"
 
 //------------------------------------------------------------------------------
 // GB_init
@@ -42,6 +46,7 @@ GrB_Info GB_init            // start up GraphBLAS
 
     // pointers to memory management functions.
     void * (* malloc_function  ) (size_t),          // required
+    void * (* calloc_function  ) (size_t, size_t),  // optional, can be NULL
     void * (* realloc_function ) (void *, size_t),  // optional, can be NULL
     void   (* free_function    ) (void *),          // required
 
@@ -71,6 +76,13 @@ GrB_Info GB_init            // start up GraphBLAS
         return (GrB_INVALID_VALUE) ;
     }
 
+    if (malloc_function == NULL || free_function == NULL)
+    { 
+        // only malloc and free are required.  calloc and/or realloc may be
+        // NULL
+        return (GrB_NULL_POINTER) ;
+    }
+
     //--------------------------------------------------------------------------
     // query hardware features for future use
     //--------------------------------------------------------------------------
@@ -78,14 +90,16 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_cpu_features_query ( ) ;
 
     //--------------------------------------------------------------------------
-    // establish malloc/realloc/free
+    // establish malloc/calloc/realloc/free
     //--------------------------------------------------------------------------
 
-    // GrB_init passes in the ANSI C11 malloc/realloc/free
+    // GrB_init passes in the ANSI C11 malloc/calloc/realloc/free.
 
     GB_Global_malloc_function_set  (malloc_function ) ; // cannot be NULL
+    GB_Global_calloc_function_set  (calloc_function ) ; // ok if NULL
     GB_Global_realloc_function_set (realloc_function) ; // ok if NULL
     GB_Global_free_function_set    (free_function   ) ; // cannot be NULL
+
     GB_Global_malloc_is_thread_safe_set (true) ; // malloc must be thread-safe
     GB_Global_memtable_clear ( ) ;
     GB_Global_free_pool_init (true) ;
