@@ -241,6 +241,14 @@ endif ( )
 
 target_link_libraries ( graphblas_matlab PUBLIC ${M_LIB} )
 
+include ( SuiteSparseAtomic )
+if ( LIBATOMIC_REQUIRED )
+    target_link_libraries ( graphblas PUBLIC atomic )
+    if ( NOT NSTATIC )
+        target_link_libraries ( graphblas_static PUBLIC atomic )
+    endif ( )
+endif ( )
+
 #-------------------------------------------------------------------------------
 # add library dependencies
 #-------------------------------------------------------------------------------
