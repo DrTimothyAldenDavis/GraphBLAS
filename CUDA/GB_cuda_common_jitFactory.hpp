@@ -61,7 +61,7 @@ static const std::vector<std::string> compiler_flags{
    "-I" + jit::get_user_graphblas_source_path() + "/CUDA/templates",
    "-I/usr/local/cuda/include",
 
-   // FIXME: add  here, via config
+   // FIXME: add 52;75;80 here, via config
 };
 
 static const std::vector<std::string> header_names ={};

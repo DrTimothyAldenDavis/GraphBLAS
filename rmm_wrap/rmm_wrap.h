@@ -34,7 +34,9 @@
 #define RMM_WRAP_H
 
 #include <cuda_runtime.h>
+#include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #define RMM_WRAP_CHECK_CUDA(call)                                         \
@@ -63,11 +65,25 @@ typedef enum
 }
 RMM_MODE ;
 
+// get id of currently selected device
+int get_current_device();
+
 // determine if RMM has been initialized
 bool rmm_wrap_is_initialized (void) ;
 
 // create an RMM resource
 int rmm_wrap_initialize
+(
+    uint32_t device_id,
+    RMM_MODE mode,
+    size_t init_pool_size,
+    size_t max_pool_size,
+    size_t stream_pool_size
+) ;
+
+// initialize rmm_wrap_contexts for each device in CUDA_VISIBLE_DEVICES
+// (or single device_id 0 if not specified)
+int rmm_wrap_initialize_all_same
 (
     RMM_MODE mode,
     size_t init_pool_size,
@@ -75,37 +91,31 @@ int rmm_wrap_initialize
     size_t stream_pool_size
 ) ;
 
-int rmm_wrap_initialize_all_same(
-    RMM_MODE mode,
-    std::size_t init_pool_size,
-    std::size_t max_pool_size,
-    std::size_t stream_pool_size,
-) ;
-
 // destroy an RMM resource
 void rmm_wrap_finalize (void) ;
 
 // example usage:
-    //  rmm_wrap_initialize (rmm_wrap_managed, INT32_MAX, INT64_MAX) ;
+    //  rmm_wrap_initialize_all_same (rmm_wrap_managed, INT32_MAX, INT64_MAX, 5) ;
     //  GxB_init (GrB_NONBLOCKING, rmm_wrap_malloc, rmm_wrap_calloc,
     //      rmm_wrap_realloc, rmm_wrap_free) ;
     //  use GraphBLAS ...
     //  GrB_finalize ( ) ;
     //  rmm_wrap_finalize ( ) ;
 
-// The two PMR-based allocate/deallocate signatures (C-style):
+// The two PMR-based allocate/deallocate signatures (C-style) (based on current device_id):
 void *rmm_wrap_allocate (size_t *size) ;
 void  rmm_wrap_deallocate (void *p, size_t size) ;
 
-// The four malloc/calloc/realloc/free signatures:
+// The four malloc/calloc/realloc/free signatures (based on current device_id):
 void *rmm_wrap_malloc (size_t size) ;
 void *rmm_wrap_calloc (size_t n, size_t size) ;
 void *rmm_wrap_realloc (void *p, size_t newsize) ;
 void  rmm_wrap_free (void *p) ;
 
-cudaStream_t get_next_stream_from_pool();
-cudaStream_t get_stream_from_pool(size_t stream_id);
-cudaStream_t get_main_stream();
+// Get streams from context (based on current device_id):
+void* rmm_wrap_get_next_stream_from_pool(void);
+void* rmm_wrap_get_stream_from_pool(size_t stream_id);
+void* rmm_wrap_get_main_stream(void);
 
 #ifdef __cplusplus
 }

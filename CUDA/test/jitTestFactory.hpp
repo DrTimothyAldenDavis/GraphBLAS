@@ -20,7 +20,7 @@ extern "C" {
     #include "GraphBLAS.h"
 }
 
-#include "../jitFactory.hpp"
+#include "../GB_cuda_common_jitFactory.hpp"
 #include "dataFactory.hpp"
 
 ////Operations for test results on CPU

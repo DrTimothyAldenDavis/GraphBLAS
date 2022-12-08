@@ -166,7 +166,7 @@ set ( CUDA_TEST_FORMATS sparse dense sparse_dense reduce )
 
 # FIXME
 set(CUDA_TEST_CPP_FILES "")
-if ( FALSE )
+#if ( FALSE )
     foreach(var ${CUDA_TEST_SUITES})
         foreach(semiring ${CUDA_TEST_SEMIRINGS})
             foreach(kernel ${CUDA_TEST_KERNELS})
@@ -178,8 +178,8 @@ if ( FALSE )
                             OUTPUT
                             ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_${format}_test_instances.hpp
                             ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_${format}_cuda_tests.cpp
-                            DEPENDS
-                            jitFactory.hpp
+#                            DEPENDS
+#                            jitFactory.hpp
                             COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/test/testGen_cmake.py "\"${CMAKE_CURRENT_SOURCE_DIR}\"" "\"${var}\"" "\"${CUDA_TEST_MONOIDS}\""
                                 "\"${CUDA_TEST_BINOPS}\"" "\"${semiring}\"" "\"${CUDA_TEST_DATATYPES}\""
                                 "\"${kernel}\""
@@ -190,7 +190,7 @@ if ( FALSE )
             endforeach()
         endforeach()
     endforeach()
-endif ( )
+#endif ( )
 
 include(FetchContent)
 FetchContent_Declare(
