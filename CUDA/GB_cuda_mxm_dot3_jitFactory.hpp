@@ -56,6 +56,7 @@ template<int threads_per_block, int chunk_size> class dense_phase1launchFactory 
 // This is a much simpler kernel as a result, it only does the i,j lookup 
 // and stores the values in Mi and Ci. 
 
+
 template<int threads_per_block=32, int chunk_size = 128>
 class dense_phase1launchFactory 
 {
@@ -198,7 +199,7 @@ public:
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "templates/)" << kernel_name << R"(.cuh")" << std::endl;
 
-    // FIXME
+      // FIXME
     std::cout << "=========== RAW JIT INPUT(2):\n" ;
     std::cout << string_to_be_jitted.str() ;
 

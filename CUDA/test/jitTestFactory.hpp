@@ -7,20 +7,21 @@
 #include <random>
 #include <algorithm>
 #include <iostream>
-#include "GB_cuda_reduce_factory.hpp"
 #include "GpuTimer.h"
 #include "GB_cuda_buckets.h"
-#include "../../rmm_wrap/rmm_wrap.h"
 #include <gtest/gtest.h>
 #include "test_data.hpp"
+#include "../rmm_wrap/rmm_wrap.hpp"
 #include "problem_spec.hpp"
 
 extern "C" {
     #include "GB.h"
-    #include "GraphBLAS.h"
 }
 
-#include "../GB_cuda_common_jitFactory.hpp"
+#include "GB_cuda_common_jitFactory.hpp"
+#include "GB_cuda_mxm_dot3_jitFactory.hpp"
+#include "GB_cuda_reduce_jitFactory.hpp"
+#include "GB_cuda_reduce_factory.hpp"
 #include "dataFactory.hpp"
 
 ////Operations for test results on CPU
@@ -77,13 +78,7 @@ template <typename T_C, typename T_M, typename T_A,typename T_B>
 bool test_AxB_phase1_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
 {
 
-    int gpuID;
-    cudaGetDevice( &gpuID);
-
-    std::cout<< "found device "<<gpuID<<std::endl;
-
-    cudaStream_t strm;
-    CHECK_CUDA(cudaStreamCreate(&strm));
+    cudaStream_t stream = (cudaStream_t)rmm_wrap_get_main_stream();
 
     /********************
      * Launch kernel
@@ -106,9 +101,9 @@ bool test_AxB_phase1_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
     kernTimer.Start();
     p1lF.jitGridBlockLaunch(Nanobuckets, Blockbucket,
                             problem_spec.getC(), problem_spec.getM(),
-                            problem_spec.getA(), problem_spec.getB(), strm);
+                            problem_spec.getA(), problem_spec.getB(), stream);
 
-    CHECK_CUDA(cudaStreamSynchronize(strm));
+    CHECK_CUDA(cudaStreamSynchronize(stream));
     kernTimer.Stop();
     std::cout<<"returned from phase1 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 //
@@ -125,10 +120,7 @@ bool test_AxB_phase1_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
 
     std::cout << "end phase1 test ------------" << std::endl;
 
-    CHECK_CUDA(cudaStreamDestroy(strm));
     fflush(stdout);
-
-    
     return true;
 }
 
@@ -137,17 +129,14 @@ bool test_AxB_phase1_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
 template <typename T_C, typename T_M, typename T_A,typename T_B>
 bool test_AxB_dense_phase1_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
 {
-    cudaStream_t strm;
-    CHECK_CUDA(cudaStreamCreate(&strm));
+    cudaStream_t stream = (cudaStream_t)rmm_wrap_get_main_stream();
 
     /********************
      * Launch kernel
      */
     GB_cuda_mxm_factory mysemiringfactory = problem_spec.get_mxm_factory();
     dense_phase1launchFactory p1lF(mysemiringfactory);
-    p1lF.jitGridBlockLaunch(problem_spec.getC(), problem_spec.getM(), problem_spec.getA(), problem_spec.getB(), strm);
-
-    CHECK_CUDA(cudaStreamSynchronize(strm));
+    p1lF.jitGridBlockLaunch(problem_spec.getC(), problem_spec.getM(), problem_spec.getA(), problem_spec.getB(), stream);
     return true;
 }
 
@@ -159,12 +148,7 @@ bool test_AxB_dense_phase1_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem
 template <typename T_C, typename T_M, typename T_A, typename T_B>
 bool test_AxB_phase2_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
 {
-
-    int gpuID;
-    cudaGetDevice( &gpuID);
-
-    cudaStream_t strm;
-    CHECK_CUDA(cudaStreamCreate(&strm));
+    cudaStream_t stream = (cudaStream_t)rmm_wrap_get_main_stream();
 
     auto mymxm = problem_spec.get_mxm_factory();
     phase1launchFactory p1lF(mymxm);
@@ -194,18 +178,18 @@ bool test_AxB_phase2_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
     kernTimer.Start();
     p1lF.jitGridBlockLaunch(nanobuckets, blockbucket,
                             problem_spec.getC(), problem_spec.getM(),
-                            problem_spec.getA(), problem_spec.getB(), strm);
+                            problem_spec.getA(), problem_spec.getB(), stream);
 
 
-    CHECK_CUDA(cudaStreamSynchronize(strm));
+    CHECK_CUDA(cudaStreamSynchronize(stream));
     kernTimer.Stop();
 
     std::cout << " phase1 internal phase2 "<< kernTimer.Elapsed() <<"ms Done." << std::endl;
 
     //    // launch phase2 (just with p2ntasks as the # of tasks)
     kernTimer.Start();
-    p2lF.jitGridBlockLaunch(blockbucket, offset, problem_spec.getM(),strm);
-    CHECK_CUDA(cudaStreamSynchronize(strm));
+    p2lF.jitGridBlockLaunch(blockbucket, offset, problem_spec.getM(), stream);
+    CHECK_CUDA(cudaStreamSynchronize(stream));
     kernTimer.Stop();
     std::cout << " phase2 kern "<< kernTimer.Elapsed() <<"ms Done." << std::endl;
 
@@ -222,8 +206,8 @@ bool test_AxB_phase2_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
     kernTimer.Start();
     p2elF.jitGridBlockLaunch( nanobuckets, blockbucket,
                               bucketp, bucket, offset, problem_spec.getC(),
-                              problem_spec.getM(),strm);
-    CHECK_CUDA(cudaStreamSynchronize(strm));
+                              problem_spec.getM(),stream);
+    CHECK_CUDA(cudaStreamSynchronize(stream));
     kernTimer.Stop();
     std::cout<<"returned from phase2end kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 //
@@ -239,8 +223,6 @@ bool test_AxB_phase2_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec)
     rmm_wrap_free(bucketp);
     rmm_wrap_free(bucket);
     rmm_wrap_free(offset);
-
-    CHECK_CUDA(cudaStreamDestroy(strm));
 
     return true;
 }

@@ -12739,15 +12739,16 @@ typedef enum
 
 void rmm_wrap_finalize (void) ;
 
-int rmm_wrap_initialize
+int rmm_wrap_initialize_all_same
 (
     RMM_MODE mode,
     size_t init_pool_size,
-    size_t max_pool_size
+    size_t max_pool_size,
+    size_t stream_pool_size
 ) ;
 
 // example usage:
-    //  rmm_wrap_initialize (rmm_wrap_managed, INT32_MAX, INT64_MAX) ;
+    //  rmm_wrap_initialize (rmm_wrap_managed, INT32_MAX, INT64_MAX, 1) ;
     //  GxB_init (GxB_NONBLOCKING_GPU, rmm_wrap_malloc, rmm_wrap_calloc,
     //      rmm_wrap_realloc, rmm_wrap_free) ;
     //  use GraphBLAS ... with the GPU
@@ -12763,6 +12764,11 @@ void *rmm_wrap_malloc (size_t size) ;
 void *rmm_wrap_calloc (size_t n, size_t size) ;
 void *rmm_wrap_realloc (void *p, size_t newsize) ;
 void  rmm_wrap_free (void *p) ;
+
+// Get streams from context (based on current device_id):
+void* rmm_wrap_get_next_stream_from_pool(void);
+void* rmm_wrap_get_stream_from_pool(size_t stream_id);
+void* rmm_wrap_get_main_stream(void);
 
 #ifdef __cplusplus
 }
