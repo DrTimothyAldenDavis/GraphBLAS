@@ -17,7 +17,6 @@
 #define GB_COMPILER_GCC     0
 #define GB_COMPILER_MSC     0
 #define GB_COMPILER_XLC     0
-#define GB_COMPILER_MINGW   0
 
 //------------------------------------------------------------------------------
 // determine which compiler is in use
@@ -111,14 +110,16 @@
 
 #endif
 
-// MinGW is not a compiler. But a variable with this name is used
-// in different places.
-#if defined ( __MINGW32__ )
-    // MinGW (32-bit or 64-bit)
-    #undef  GB_COMPILER_MINGW
-    #define GB_COMPILER_MINGW   1
-#endif
+//------------------------------------------------------------------------------
+// MINGW system, for Windows
+//------------------------------------------------------------------------------
 
+#if defined ( __MINGW32__ )
+    // MinGW (32-bit or 64-bit): using gcc, clang, or other compilers.
+    #define GB_MINGW   1
+#else
+    #define GB_MINGW   0
+#endif
 
 //------------------------------------------------------------------------------
 // Workaround for compiler bug in Microsoft Visual Studio 2019
