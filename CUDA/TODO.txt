@@ -38,8 +38,6 @@ when to use the GPU?  which GPU?
 
 rmm_init
 
-latest LAGraph v1.0.1 (easy)
-
 --------------------------------------------------------------------------------
 future:
 
