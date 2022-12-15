@@ -240,6 +240,7 @@ target_link_libraries(graphblascuda_test
         PUBLIC
         graphblas
         graphblascuda
+        rmm_wrap
         CUDA::cudart_static
         CUDA::nvrtc
         ${ADDITIONAL_DEPS}
@@ -248,6 +249,7 @@ target_link_libraries(graphblascuda_test
 
 target_include_directories(graphblascuda_test
         PUBLIC
+        rmm_wrap
         ${ADDITIONAL_INCLUDES}
         ${CUDAToolkit_INCLUDE_DIRS}
         ${GRAPHBLAS_CUDA_INCLUDES})
