@@ -35,7 +35,7 @@ include_directories(${SPDLOG_INCLUDE_DIR})
 
 IF(NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY}/rmm)
 execute_process(
-		COMMAND git clone "https://github.com/rapidsai/rmm.git" --branch branch-22.10 --recursive rmm
+		COMMAND git clone "https://github.com/rapidsai/rmm.git" --branch branch-21.10 --recursive rmm
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
 endif()
 
