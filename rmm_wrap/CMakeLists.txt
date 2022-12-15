@@ -26,7 +26,7 @@ endif()
 
 IF(NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY}/spdlog)
 execute_process(
-		COMMAND git clone "https://github.com/gabime/spdlog.git" spdlog
+		COMMAND git clone "https://github.com/gabime/spdlog.git" --branch v1.10.0 --recursive spdlog
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
 endif()
 

@@ -63,24 +63,24 @@ set ( GRAPHBLAS_CUDA_INCLUDES
         ../CUDA )
 
 message ( STATUS "GraphBLAS CUDA includes: ${GRAPHBLAS_CUDA_INCLUDES}" )
-
-#-------------------------------------------------------------------------------
-# add folder for cuco and download it if necessary
-#-------------------------------------------------------------------------------
-
-set ( EXTERNAL_INCLUDES_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
-
-IF ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY} )
-    file ( MAKE_DIRECTORY ${EXTERNAL_INCLUDES_DIRECTORY} )
-endif ( )
-
-IF ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY}/cuco )
-    execute_process (
-            COMMAND git clone "https://github.com/NVIDIA/cuCollections.git" --branch main --recursive cuco
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
-endif ( )
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/external_includes/cuco/include)
+#
+##-------------------------------------------------------------------------------
+## add folder for cuco and download it if necessary
+##-------------------------------------------------------------------------------
+#
+#set ( EXTERNAL_INCLUDES_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
+#
+#IF ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY} )
+#    file ( MAKE_DIRECTORY ${EXTERNAL_INCLUDES_DIRECTORY} )
+#endif ( )
+#
+#IF ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY}/cuco )
+#    execute_process (
+#            COMMAND git clone "https://github.com/NVIDIA/cuCollections.git" --branch main --recursive cuco
+#            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
+#endif ( )
+#
+#include_directories(${CMAKE_CURRENT_BINARY_DIR}/external_includes/cuco/include)
 
 #-------------------------------------------------------------------------------
 # graphblascuda properties
