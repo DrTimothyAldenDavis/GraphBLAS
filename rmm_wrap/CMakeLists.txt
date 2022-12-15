@@ -39,7 +39,9 @@ execute_process(
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
 endif()
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/external_includes/rmm/include)
+
+set(RMM_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/external_includes/rmm/include)
+include_directories(${RMM_INCLUDE_DIR})
 
 add_library(rmm_wrap rmm_wrap.cpp rmm_wrap.hpp rmm_wrap.h)
 
@@ -54,7 +56,10 @@ add_executable(rmm_wrap_test rmm_wrap_test.c rmm_wrap.cpp rmm_wrap.hpp rmm_wrap.
 
 set(RMM_WRAP_LIBS ${EXTRA_LIBS} ${CUDA_LIBRARIES})
 set(RMM_WRAP_INCLUDES ${PROJECT_BINARY_DIR}
-		${CUDA_INCLUDE_DIRS} ${CONDA_PREFIX}/include ${PROJECT_SOURCE_DIR}/include)
+		${RMM_INCLUDE_DIR}
+		${CUDA_INCLUDE_DIRS}
+		${CONDA_PREFIX}/include
+		${PROJECT_SOURCE_DIR}/include)
 
 target_link_libraries(rmm_wrap PUBLIC ${RMM_WRAP_LIBS})
 target_include_directories(rmm_wrap PUBLIC "${RMM_WRAP_INCLUDES}")

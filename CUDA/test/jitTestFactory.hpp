@@ -500,8 +500,7 @@ bool test_AxB_dot3_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_s
 
     GpuTimer kernTimer;
 
-    cudaStream_t strm;
-    CHECK_CUDA(cudaStreamCreate(&strm));
+    cudaStream_t strm = (cudaStream_t)rmm_wrap_get_main_stream();
 
     bool result = false;
 
@@ -648,7 +647,6 @@ bool test_AxB_dot3_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_s
 
 
     GRB_TRY(GrB_Matrix_free(&C_expected));
-    CHECK_CUDA(cudaStreamDestroy(strm));
 
     std::cout << "phase 3 dense test complete ======================" << std::endl;
     return result;
