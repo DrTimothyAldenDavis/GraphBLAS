@@ -283,9 +283,9 @@ int rmm_wrap_initialize             // returns -1 on error, 0 on success
     return (0) ;
 }
 
-//--------------------------------------------------------------------------------
-// rmm_wrap_initialize_all: initialize the global rmm_wrap_context for all devices
-//--------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// rmm_wrap_initialize_all: initialize global rmm_wrap_context for all devices
+//------------------------------------------------------------------------------
 
 int rmm_wrap_initialize_all_same
 (

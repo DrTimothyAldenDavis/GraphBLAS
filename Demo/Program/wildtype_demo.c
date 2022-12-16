@@ -211,9 +211,7 @@ int main (void)
     #if 1
     GrB_init (GrB_NONBLOCKING) ;
     #else
-    rmm_wrap_initialize (rmm_wrap_managed, 256 * 1000000L, 256 * 1000000000L) ;
-    GxB_init (GxB_NONBLOCKING_GPU, rmm_wrap_malloc,
-        rmm_wrap_calloc, rmm_wrap_realloc, rmm_wrap_free) ;
+    GxB_init (GxB_NONBLOCKING_GPU, NULL, NULL, NULL, NULL, NULL) ;
     GxB_set (GxB_GPU_CONTROL, GxB_GPU_ALWAYS) ;
     #endif
 

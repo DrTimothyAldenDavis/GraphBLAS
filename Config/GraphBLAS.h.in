@@ -389,16 +389,6 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     void   (* user_free_function    ) (void *)
 ) ;
 
-// The following four GxB functions provide the user application access to the
-// same functions passed to GxB_init.  They have the same signatures as
-// malloc/calloc/realloc/free.  If the calloc and realloc functions passed to
-// GxB_init are NULL, GraphBLAS itself will work but GxB_calloc and GxB_realloc
-// will always return NULL.
-void * GxB_malloc (size_t size) ;
-void * GxB_calloc (size_t n, size_t size) ;
-void * GxB_realloc (void *p, size_t size) ;
-void   GxB_free (void *p) ;
-
 GB_PUBLIC
 GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
 
@@ -4456,6 +4446,15 @@ typedef enum            // for global options or matrix options
 
     GxB_GLOBAL_GPU_CONTROL = GxB_GPU_CONTROL,
     GxB_GLOBAL_GPU_CHUNK   = GxB_GPU_CHUNK,
+
+    //------------------------------------------------------------
+    // memory functions (GxB_Global_Option_get only):
+    //------------------------------------------------------------
+
+    GxB_MALLOC_FUNCTION = 105,
+    GxB_CALLOC_FUNCTION = 106,
+    GxB_REALLOC_FUNCTION = 107,
+    GxB_FREE_FUNCTION = 108,
 
 } GxB_Option_Field ;
 
@@ -12716,64 +12715,6 @@ GB_PUBLIC void       GxB_Iterator_get_UDT    (GxB_Iterator iterator,
         ((iterator)->iso ? 0 : ((iterator)->type_size * (iterator)->p)),    \
         (iterator)->type_size)                                              \
 )
-
-//------------------------------------------------------------------------------
-// Rapids Memory Manager wrappers for SuiteSparse:GraphBLAS
-//------------------------------------------------------------------------------
-
-#ifndef RMM_WRAP_H
-#define RMM_WRAP_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-// TODO describe the modes
-typedef enum
-{
-    rmm_wrap_host = 0,
-    rmm_wrap_host_pinned = 1,
-    rmm_wrap_device = 2,
-    rmm_wrap_managed = 3
-} RMM_MODE ;
-
-void rmm_wrap_finalize (void) ;
-
-int rmm_wrap_initialize_all_same
-(
-    RMM_MODE mode,
-    size_t init_pool_size,
-    size_t max_pool_size,
-    size_t stream_pool_size
-) ;
-
-// example usage:
-    //  rmm_wrap_initialize (rmm_wrap_managed, INT32_MAX, INT64_MAX, 1) ;
-    //  GxB_init (GxB_NONBLOCKING_GPU, rmm_wrap_malloc, rmm_wrap_calloc,
-    //      rmm_wrap_realloc, rmm_wrap_free) ;
-    //  use GraphBLAS ... with the GPU
-    //  GrB_finalize ( ) ;
-    //  rmm_wrap_finalize ( ) ;
-
-// The two PMR-based allocate/deallocate signatures (C-style):
-void *rmm_wrap_allocate (size_t *size) ;
-void  rmm_wrap_deallocate (void *p, size_t size) ;
-
-// The four malloc/calloc/realloc/free signatures:
-void *rmm_wrap_malloc (size_t size) ;
-void *rmm_wrap_calloc (size_t n, size_t size) ;
-void *rmm_wrap_realloc (void *p, size_t newsize) ;
-void  rmm_wrap_free (void *p) ;
-
-// Get streams from context (based on current device_id):
-void* rmm_wrap_get_next_stream_from_pool(void);
-void* rmm_wrap_get_stream_from_pool(size_t stream_id);
-void* rmm_wrap_get_main_stream(void);
-
-#ifdef __cplusplus
-}
-#endif
-#endif
 
 #endif
 

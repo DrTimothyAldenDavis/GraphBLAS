@@ -6,38 +6,10 @@
 
 //------------------------------------------------------------------------------
 
-// example usage in GraphBLAS:
-
-/*
-    GrB_init (mode) ;       // ANSI C11 malloc/calloc/realloc/free, no PMR
-    GxB_init (mode, mymalloc, mycalloc, myrealloc, myfree) ;
-
-    GxB_init (mode, mymalloc, NULL, NULL, myfree) ;
-
-    GxB_init (mode, mxMalloc, NULL, NULL, mxFree) ;
-    GxB_init (mode, pymalloc, pycalloc, pyrealloc, pyfree) ;
-    GxB_init (mode, jl_malloc, jl_calloc, jl_realloc, jl_free) ;
-    GxB_init (mode, RedisModule_malloc, RedisModule_calloc,
-        RedisModule_realloc, RedisModule_realloc) ;
-
-    // using the RMM functions:
-    rmm_wrap_initialize (rmm_wrap_managed, 256 * 1000000L, 256 * 1000000000L) ;
-    GxB_init (GxB_NONBLOCKING_GPU, rmm_wrap_malloc, rmm_wrap_calloc,
-        rmm_wrap_realloc, rmm_wrap_free) ;
-    // ... use GraphBLAS on the GPU
-    rmm_wrap_finalize ( ) ;
-*/
-
-//------------------------------------------------------------------------------
-
 #ifndef RMM_WRAP_H
 #define RMM_WRAP_H
 
 #include <cuda_runtime.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
 
 #define RMM_WRAP_CHECK_CUDA(call)                                         \
   do {                                                                    \
@@ -50,10 +22,15 @@
     }                                                                     \
   } while (0)
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+
 
 // TODO describe the modes
 typedef enum
@@ -66,6 +43,7 @@ typedef enum
 RMM_MODE ;
 
 // get id of currently selected device
+// FIXME: wrong name.  call it rmm_wrap_get_current_device
 int get_current_device();
 
 // determine if RMM has been initialized
@@ -93,14 +71,6 @@ int rmm_wrap_initialize_all_same
 
 // destroy an RMM resource
 void rmm_wrap_finalize (void) ;
-
-// example usage:
-    //  rmm_wrap_initialize_all_same (rmm_wrap_managed, INT32_MAX, INT64_MAX, 5) ;
-    //  GxB_init (GrB_NONBLOCKING, rmm_wrap_malloc, rmm_wrap_calloc,
-    //      rmm_wrap_realloc, rmm_wrap_free) ;
-    //  use GraphBLAS ...
-    //  GrB_finalize ( ) ;
-    //  rmm_wrap_finalize ( ) ;
 
 // The two PMR-based allocate/deallocate signatures (C-style) (based on current device_id):
 void *rmm_wrap_allocate (size_t *size) ;

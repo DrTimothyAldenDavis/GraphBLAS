@@ -30,8 +30,10 @@
 // The realloc function pointer is optional and can be NULL.  If realloc is
 // NULL, it is not used, and malloc/memcpy/free are used instead.
 
-// The calloc function pointer is also optional and can be NULL.  Calloc is
-// never used by GraphBLAS, except for the GxB_calloc wrapper function.
+// The calloc function pointer is also optional and can be NULL.
+
+// If the mode is GxB_BLOCKING_GPU or GxB_NONBLOCKING_GPU, the 4 function
+// pointers are ignored, and rmm_wrap_malloc/.../rmm_wrap_free are used instead.
 
 #include "GB.h"
 #include "GB_init.h"
@@ -75,6 +77,34 @@ GrB_Info GB_init            // start up GraphBLAS
         // invalid mode
         return (GrB_INVALID_VALUE) ;
     }
+
+    #if defined ( GBCUDA )
+    if (mode == GxB_NONBLOCKING_GPU || mode == GxB_BLOCKING_GPU)
+    {
+        // ignore the memory management function pointers and use rmm_wrap_*
+        malloc_function  = rmm_wrap_malloc ;
+        calloc_function  = rmm_wrap_calloc ;
+        realloc_function = rmm_wrap_realloc ;
+        free_function    = rmm_wrap_free ;
+    }
+
+    if (!rmm_wrap_is_initialized ())
+    {
+        // FIXME: move this to GB_cuda_init?  It's here for now because code
+        // between here and the call to GB_cuda_init might need to allocate
+        // memory.
+        // initialize RMM
+        rmm_wrap_initialize_all_same (rmm_wrap_managed,
+            // FIXME ask the GPU(s) for good default values.  This might be
+            // found by GB_cuda_init.  Perhaps GB_cuda_init needs to be split
+            // into 2 methods: one to query the sizes(s) of the GPU(s) then
+            // call rmm_wrap_initialize_all_same, and the other for the rest
+            // of the work.  Alternatively, move GB_cuda_init here (if so,
+            // ensure that it doesn't depend on any other initializations
+            // below).
+            256 * 1000000L, 256 * 100000000L, 1) ;
+    }
+    #endif
 
     if (malloc_function == NULL || free_function == NULL)
     { 

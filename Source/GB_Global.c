@@ -789,6 +789,11 @@ void GB_Global_malloc_function_set (void * (* malloc_function) (size_t))
     GB_Global.malloc_function = malloc_function ;
 }
 
+void * GB_Global_malloc_function_get (void)
+{ 
+    return ((void *) GB_Global.malloc_function) ;
+}
+
 void * GB_Global_malloc_function (size_t size)
 { 
     void *p = NULL ;
@@ -807,12 +812,6 @@ void * GB_Global_malloc_function (size_t size)
     return (p) ;
 }
 
-// user-callable wrapper for calling the malloc_function given to GxB_init
-void * GxB_malloc (size_t size)
-{ 
-    return (GB_Global.malloc_function (size)) ;
-}
-
 //------------------------------------------------------------------------------
 // calloc_function
 //------------------------------------------------------------------------------
@@ -822,11 +821,9 @@ void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
     GB_Global.calloc_function = calloc_function ;
 }
 
-// user-callable wrapper for calling the calloc_function given to GxB_init
-void * GxB_calloc (size_t n, size_t size)
+void * GB_Global_calloc_function_get (void)
 { 
-    return (GB_Global.calloc_function == NULL ? NULL :
-            GB_Global.calloc_function (n, size)) ;
+    return ((void *) GB_Global.calloc_function) ;
 }
 
 //------------------------------------------------------------------------------
@@ -839,6 +836,11 @@ void GB_Global_realloc_function_set
 )
 { 
     GB_Global.realloc_function = realloc_function ;
+}
+
+void * GB_Global_realloc_function_get (void)
+{ 
+    return ((void *) GB_Global.realloc_function) ;
 }
 
 bool GB_Global_have_realloc_function (void)
@@ -868,13 +870,6 @@ void * GB_Global_realloc_function (void *p, size_t size)
     return (pnew) ;
 }
 
-// user-callable wrapper for calling the realloc_function given to GxB_init
-void * GxB_realloc (void *p, size_t size)
-{ 
-    return (GB_Global.realloc_function == NULL ? NULL :
-            GB_Global.realloc_function (p, size)) ;
-}
-
 //------------------------------------------------------------------------------
 // free_function
 //------------------------------------------------------------------------------
@@ -882,6 +877,11 @@ void * GxB_realloc (void *p, size_t size)
 void GB_Global_free_function_set (void (* free_function) (void *))
 { 
     GB_Global.free_function = free_function ;
+}
+
+void * GB_Global_free_function_get (void)
+{ 
+    return ((void *) GB_Global.free_function) ;
 }
 
 void GB_Global_free_function (void *p)
@@ -898,12 +898,6 @@ void GB_Global_free_function (void *p)
         }
     }
     GB_Global_memtable_remove (p) ;
-}
-
-// user-callable wrapper for calling the free_function given to GxB_init
-void GxB_free (void *p)
-{ 
-    GB_Global.free_function (p) ;
 }
 
 //------------------------------------------------------------------------------
