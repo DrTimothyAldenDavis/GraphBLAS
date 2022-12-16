@@ -89,9 +89,13 @@ public:
       GBURBLE ("\n(launch reduce factory) \n") ;
 
       GrB_Scalar temp_scalar;
+      // FIXME: need error check here:
       GrB_Scalar_new(&temp_scalar, op->op->ztype);
 
-      cuda::jit::scalar_set_element(temp_scalar, 0);
+      cuda::jit::scalar_set_element(temp_scalar, 0); // FIXME
+      // does not work for user-defined types
+
+      // FIXME: need error check here:
       GrB_Scalar_wait(temp_scalar, GrB_MATERIALIZE);
 
       jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
@@ -133,7 +137,10 @@ public:
 
       memcpy(output, temp_scalar->x, op->op->ztype->size);
 
+      // FIXME: cannot use rmm_wrap_free on a GrB_Scalar (leak here)
       rmm_wrap_free(temp_scalar);
+
+      // FIXME:
       return true;
   }
 };

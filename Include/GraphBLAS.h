@@ -231,7 +231,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Dec 1, 2022"
+#define GxB_IMPLEMENTATION_DATE "Dec 9, 2022"
 #define GxB_IMPLEMENTATION_MAJOR 7
 #define GxB_IMPLEMENTATION_MINOR 4
 #define GxB_IMPLEMENTATION_SUB   0
@@ -359,6 +359,7 @@ GrB_Info ;
 
 // The extension GxB_init does the work of GrB_init, but it also defines the
 // memory management functions that SuiteSparse:GraphBLAS will use internally.
+// Currently, only the malloc and free functions are required.
 
 typedef enum
 {
@@ -4445,6 +4446,15 @@ typedef enum            // for global options or matrix options
 
     GxB_GLOBAL_GPU_CONTROL = GxB_GPU_CONTROL,
     GxB_GLOBAL_GPU_CHUNK   = GxB_GPU_CHUNK,
+
+    //------------------------------------------------------------
+    // memory functions (GxB_Global_Option_get only):
+    //------------------------------------------------------------
+
+    GxB_MALLOC_FUNCTION = 105,
+    GxB_CALLOC_FUNCTION = 106,
+    GxB_REALLOC_FUNCTION = 107,
+    GxB_FREE_FUNCTION = 108,
 
 } GxB_Option_Field ;
 
@@ -12705,58 +12715,6 @@ GB_PUBLIC void       GxB_Iterator_get_UDT    (GxB_Iterator iterator,
         ((iterator)->iso ? 0 : ((iterator)->type_size * (iterator)->p)),    \
         (iterator)->type_size)                                              \
 )
-
-//------------------------------------------------------------------------------
-// Rapids Memory Manager wrappers for SuiteSparse:GraphBLAS
-//------------------------------------------------------------------------------
-
-#ifndef RMM_WRAP_H
-#define RMM_WRAP_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-// TODO describe the modes
-typedef enum
-{
-    rmm_wrap_host = 0,
-    rmm_wrap_host_pinned = 1,
-    rmm_wrap_device = 2,
-    rmm_wrap_managed = 3
-} RMM_MODE ;
-
-void rmm_wrap_finalize (void) ;
-
-int rmm_wrap_initialize
-(
-    RMM_MODE mode,
-    size_t init_pool_size,
-    size_t max_pool_size
-) ;
-
-// example usage:
-    //  rmm_wrap_initialize (rmm_wrap_managed, INT32_MAX, INT64_MAX) ;
-    //  GxB_init (GxB_NONBLOCKING_GPU, rmm_wrap_malloc, rmm_wrap_calloc,
-    //      rmm_wrap_realloc, rmm_wrap_free) ;
-    //  use GraphBLAS ... with the GPU
-    //  GrB_finalize ( ) ;
-    //  rmm_wrap_finalize ( ) ;
-
-// The two PMR-based allocate/deallocate signatures (C-style):
-void *rmm_wrap_allocate (size_t *size) ;
-void  rmm_wrap_deallocate (void *p, size_t size) ;
-
-// The four malloc/calloc/realloc/free signatures:
-void *rmm_wrap_malloc (size_t size) ;
-void *rmm_wrap_calloc (size_t n, size_t size) ;
-void *rmm_wrap_realloc (void *p, size_t newsize) ;
-void  rmm_wrap_free (void *p) ;
-
-#ifdef __cplusplus
-}
-#endif
-#endif
 
 #endif
 

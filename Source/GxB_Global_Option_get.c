@@ -397,6 +397,54 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
+        //----------------------------------------------------------------------
+        // memory functions
+        //----------------------------------------------------------------------
+
+        case GxB_MALLOC_FUNCTION :
+
+            {
+                va_start (ap, field) ;
+                void ** malloc_function = va_arg (ap, void **) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (malloc_function) ;
+                (*malloc_function) = GB_Global_malloc_function_get ( ) ;
+            }
+            break ;
+
+        case GxB_CALLOC_FUNCTION :
+
+            {
+                va_start (ap, field) ;
+                void ** calloc_function = va_arg (ap, void **) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (calloc_function) ;
+                (*calloc_function) = GB_Global_calloc_function_get ( ) ;
+            }
+            break ;
+
+        case GxB_REALLOC_FUNCTION :
+
+            {
+                va_start (ap, field) ;
+                void ** realloc_function = va_arg (ap, void **) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (realloc_function) ;
+                (*realloc_function) = GB_Global_realloc_function_get ( ) ;
+            }
+            break ;
+
+        case GxB_FREE_FUNCTION :
+
+            {
+                va_start (ap, field) ;
+                void ** free_function = va_arg (ap, void **) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (free_function) ;
+                (*free_function) = GB_Global_free_function_get ( ) ;
+            }
+            break ;
+
         default : 
 
             return (GrB_INVALID_VALUE) ;

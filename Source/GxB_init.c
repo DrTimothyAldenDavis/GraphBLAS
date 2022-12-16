@@ -49,6 +49,7 @@
 //      GxB_init (mode, my_malloc, NULL, NULL, my_free) ;
 
 #include "GB.h"
+#include "GB_init.h"
 
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 (
@@ -56,7 +57,7 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 
     // pointers to memory management functions
     void * (* user_malloc_function  ) (size_t),         // required
-    void * (* user_calloc_function  ) (size_t, size_t), // no longer used
+    void * (* user_calloc_function  ) (size_t, size_t), // optional, can be NULL
     void * (* user_realloc_function ) (void *, size_t), // optional, can be NULL
     void   (* user_free_function    ) (void *)          // required
 )
@@ -67,20 +68,25 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     //--------------------------------------------------------------------------
 
     GB_CONTEXT ("GxB_init (mode, malloc, calloc, realloc, free)") ;
-    if (user_malloc_function == NULL || user_free_function == NULL)
-    { 
-        // only malloc and free are required.  calloc and/or realloc may be
-        // NULL
-        return (GrB_NULL_POINTER) ;
-    }
 
     //--------------------------------------------------------------------------
     // initialize GraphBLAS
     //--------------------------------------------------------------------------
 
+#if defined ( GBCUDA )
+    if (mode == GxB_BLOCKING_GPU || mode == GxB_NONBLOCKING_GPU)
+    {
+        return (GB_init (mode,              // blocking or non-blocking mode
+            // RMM C memory management functions
+            rmm_wrap_malloc, rmm_wrap_calloc, rmm_wrap_realloc, rmm_wrap_free,
+            Context)) ;
+    }
+#endif
+
     return (GB_init
         (mode,                          // blocking or non-blocking mode
         user_malloc_function,           // user-defined malloc, required
+        user_calloc_function,           // user-defined malloc, may be NULL
         user_realloc_function,          // user-defined realloc, may be NULL
         user_free_function,             // user-defined free, required
         Context)) ;

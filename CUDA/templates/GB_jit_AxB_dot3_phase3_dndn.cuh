@@ -182,7 +182,7 @@ __global__ void AxB_dot3_phase3_dndn
             #if GB_A_IS_FULL && GB_B_IS_FULL
             {
                 cij_exists = true ;
-                for ( k = threadIdx.x ; k < nnzA ; k += s)
+                for (int64_t k = threadIdx.x ; k < nnzA ; k += s)
                 { 
                     // cij += A(k,i) * B(k,j)
                     GB_GETA (aki, Ax, pA+k, ) ;           // aki = A(k,i)
@@ -263,7 +263,7 @@ __global__ void AxB_dot3_phase3_dndn
         }
         //__syncthreads ( ) ;
 
-        if( tid ==0 && zc > 0)
+        if( threadIdx.x ==0 && zc > 0)
         {
     //      printf("warp %d zombie count = %d, nzombies = %d\n", blockIdx.x, zc, C->nzombies);
             atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)zc);

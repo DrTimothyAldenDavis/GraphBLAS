@@ -43,6 +43,10 @@
 // internal #include files
 //------------------------------------------------------------------------------
 
+#if defined ( GBCUDA )
+#include "rmm_wrap.h"
+#endif
+
 #include "GB_prefix.h"
 #include "GB_bytes.h"
 #include "GB_defaults.h"
@@ -71,7 +75,6 @@
 #include "GB_Pending_n.h"
 #include "GB_nvals.h"
 #include "GB_aliased.h"
-#include "GB_init.h"
 #include "GB_new.h"
 #include "GB_clear.h"
 #include "GB_resize.h"

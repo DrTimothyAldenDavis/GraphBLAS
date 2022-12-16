@@ -56,6 +56,7 @@ template<int threads_per_block, int chunk_size> class dense_phase1launchFactory 
 // This is a much simpler kernel as a result, it only does the i,j lookup 
 // and stores the values in Mi and Ci. 
 
+
 template<int threads_per_block=32, int chunk_size = 128>
 class dense_phase1launchFactory 
 {
@@ -108,6 +109,7 @@ public:
 //  R"(#include "GB_cuda_kernel.h")" << std::endl <<
     R"(#undef  GxB_STATIC_INLINE_VOID)" << std::endl <<
     R"(#define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
+    R"(#include <stdint.h>)" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "templates/)" << kernel_name << R"(.cuh")" << std::endl;
 
@@ -195,6 +197,7 @@ public:
 //  R"(#include "GB_cuda_kernel.h")" << std::endl <<
     R"(#undef  GxB_STATIC_INLINE_VOID)" << std::endl <<
     R"(#define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
+    R"(#include <stdint.h>)" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "templates/)" << kernel_name << R"(.cuh")" << std::endl;
 
@@ -522,6 +525,7 @@ public:
 //  R"(#include "GB_cuda_kernel.h")" << std::endl <<
     R"(#undef  GxB_STATIC_INLINE_VOID)" << std::endl <<
     R"(#define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
+    R"(#include <stdint.h>)" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
@@ -645,6 +649,7 @@ public:
 //  R"(#include "GB_cuda_kernel.h")" << std::endl <<
     R"(#undef  GxB_STATIC_INLINE_VOID)" << std::endl <<
     R"(#define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
+    R"(#include <stdint.h>)" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 

@@ -63,24 +63,24 @@ set ( GRAPHBLAS_CUDA_INCLUDES
         ../CUDA )
 
 message ( STATUS "GraphBLAS CUDA includes: ${GRAPHBLAS_CUDA_INCLUDES}" )
-
-#-------------------------------------------------------------------------------
-# add folder for cuco and download it if necessary
-#-------------------------------------------------------------------------------
-
-set ( EXTERNAL_INCLUDES_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
-
-IF ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY} )
-    file ( MAKE_DIRECTORY ${EXTERNAL_INCLUDES_DIRECTORY} )
-endif ( )
-
-IF ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY}/cuco )
-    execute_process (
-            COMMAND git clone "https://github.com/NVIDIA/cuCollections.git" --branch main --recursive cuco
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
-endif ( )
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/external_includes/cuco/include)
+#
+##-------------------------------------------------------------------------------
+## add folder for cuco and download it if necessary
+##-------------------------------------------------------------------------------
+#
+#set ( EXTERNAL_INCLUDES_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
+#
+#IF ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY} )
+#    file ( MAKE_DIRECTORY ${EXTERNAL_INCLUDES_DIRECTORY} )
+#endif ( )
+#
+#IF ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY}/cuco )
+#    execute_process (
+#            COMMAND git clone "https://github.com/NVIDIA/cuCollections.git" --branch main --recursive cuco
+#            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
+#endif ( )
+#
+#include_directories(${CMAKE_CURRENT_BINARY_DIR}/external_includes/cuco/include)
 
 #-------------------------------------------------------------------------------
 # graphblascuda properties
@@ -166,7 +166,7 @@ set ( CUDA_TEST_FORMATS sparse dense sparse_dense reduce )
 
 # FIXME
 set(CUDA_TEST_CPP_FILES "")
-if ( FALSE )
+#if ( FALSE )
     foreach(var ${CUDA_TEST_SUITES})
         foreach(semiring ${CUDA_TEST_SEMIRINGS})
             foreach(kernel ${CUDA_TEST_KERNELS})
@@ -178,8 +178,8 @@ if ( FALSE )
                             OUTPUT
                             ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_${format}_test_instances.hpp
                             ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_${format}_cuda_tests.cpp
-                            DEPENDS
-                            jitFactory.hpp
+#                            DEPENDS
+#                            jitFactory.hpp
                             COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/test/testGen_cmake.py "\"${CMAKE_CURRENT_SOURCE_DIR}\"" "\"${var}\"" "\"${CUDA_TEST_MONOIDS}\""
                                 "\"${CUDA_TEST_BINOPS}\"" "\"${semiring}\"" "\"${CUDA_TEST_DATATYPES}\""
                                 "\"${kernel}\""
@@ -190,7 +190,7 @@ if ( FALSE )
             endforeach()
         endforeach()
     endforeach()
-endif ( )
+#endif ( )
 
 include(FetchContent)
 FetchContent_Declare(
@@ -240,6 +240,7 @@ target_link_libraries(graphblascuda_test
         PUBLIC
         graphblas
         graphblascuda
+        rmm_wrap
         CUDA::cudart_static
         CUDA::nvrtc
         ${ADDITIONAL_DEPS}
@@ -248,6 +249,7 @@ target_link_libraries(graphblascuda_test
 
 target_include_directories(graphblascuda_test
         PUBLIC
+        rmm_wrap
         ${ADDITIONAL_INCLUDES}
         ${CUDAToolkit_INCLUDE_DIRS}
         ${GRAPHBLAS_CUDA_INCLUDES})

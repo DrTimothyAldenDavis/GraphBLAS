@@ -9,6 +9,7 @@
 
 #include "GB_cuda_buckets.h"
 #include "GB_cuda_kernel.h"
+#include <stdint.h>
 #include <cooperative_groups.h>
 #include <cub/block/block_scan.cuh>
 

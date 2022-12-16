@@ -52,13 +52,14 @@ typedef struct
     void (* abort_function ) (void) ;
 
     //--------------------------------------------------------------------------
-    // malloc/realloc/free: memory management functions
+    // malloc/calloc/realloc/free: memory management functions
     //--------------------------------------------------------------------------
 
-    // All threads must use the same malloc/realloc/free functions.
+    // All threads must use the same malloc/calloc/realloc/free functions.
     // They default to the ANSI C11 functions, but can be defined by GxB_init.
 
     void * (* malloc_function  ) (size_t)         ;     // required
+    void * (* calloc_function  ) (size_t, size_t) ;     // may be NULL
     void * (* realloc_function ) (void *, size_t) ;     // may be NULL
     void   (* free_function    ) (void *)         ;     // required
     bool malloc_is_thread_safe ;   // default is true
@@ -788,6 +789,11 @@ void GB_Global_malloc_function_set (void * (* malloc_function) (size_t))
     GB_Global.malloc_function = malloc_function ;
 }
 
+void * GB_Global_malloc_function_get (void)
+{ 
+    return ((void *) GB_Global.malloc_function) ;
+}
+
 void * GB_Global_malloc_function (size_t size)
 { 
     void *p = NULL ;
@@ -807,6 +813,20 @@ void * GB_Global_malloc_function (size_t size)
 }
 
 //------------------------------------------------------------------------------
+// calloc_function
+//------------------------------------------------------------------------------
+
+void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
+{ 
+    GB_Global.calloc_function = calloc_function ;
+}
+
+void * GB_Global_calloc_function_get (void)
+{ 
+    return ((void *) GB_Global.calloc_function) ;
+}
+
+//------------------------------------------------------------------------------
 // realloc_function
 //------------------------------------------------------------------------------
 
@@ -816,6 +836,11 @@ void GB_Global_realloc_function_set
 )
 { 
     GB_Global.realloc_function = realloc_function ;
+}
+
+void * GB_Global_realloc_function_get (void)
+{ 
+    return ((void *) GB_Global.realloc_function) ;
 }
 
 bool GB_Global_have_realloc_function (void)
@@ -852,6 +877,11 @@ void * GB_Global_realloc_function (void *p, size_t size)
 void GB_Global_free_function_set (void (* free_function) (void *))
 { 
     GB_Global.free_function = free_function ;
+}
+
+void * GB_Global_free_function_get (void)
+{ 
+    return ((void *) GB_Global.free_function) ;
 }
 
 void GB_Global_free_function (void *p)

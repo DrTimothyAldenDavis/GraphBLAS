@@ -11,6 +11,7 @@
 // GrB_finalize must be called as the last GraphBLAS operation.
 
 #include "GB.h"
+#include "GB_init.h"
 
 GrB_Info GrB_init           // start up GraphBLAS
 (
@@ -30,9 +31,8 @@ GrB_Info GrB_init           // start up GraphBLAS
 
     // default:  use the ANSI C11 malloc memory manager, which is thread-safe 
 
-    return (GB_init
-        (mode,                          // blocking or non-blocking mode
-        malloc, realloc, free,          // ANSI C memory management functions
+    return (GB_init (mode,              // blocking or non-blocking mode
+        malloc, calloc, realloc, free,  // ANSI C memory management functions
         Context)) ;
 }
 

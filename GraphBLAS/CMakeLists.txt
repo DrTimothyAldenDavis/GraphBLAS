@@ -17,7 +17,7 @@ cmake_minimum_required ( VERSION 3.19 )
 
 # date version must match ../CMakeLists.txt:
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Dec 1, 2022" )
+set ( GraphBLAS_DATE "Dec 9, 2022" )
 set ( GraphBLAS_VERSION_MAJOR 7 )
 set ( GraphBLAS_VERSION_MINOR 4 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -139,11 +139,11 @@ if ( CMAKE_CUDA_DEV )
     # for CUDA development only; not for production use
     include_directories ( ../Source/Template ../Source ../Include rename
         ../Source/Shared ../Source/SharedTemplate
-        ../Source/Generated1 ../lz4 ../zstd ../zstd/zstd_subset ../rmm_wrap )
+        ../Source/Generated1 ../lz4 ../zstd ../zstd/zstd_subset )
 else ( )
     include_directories ( ../Source/Template ../Source ../Include rename
         ../Source/Shared ../Source/SharedTemplate
-        ../Source/Generated1 ../lz4 ../zstd ../zstd/zstd_subset ../rmm_wrap
+        ../Source/Generated1 ../lz4 ../zstd ../zstd/zstd_subset
         ../Source/Generated2 )
 endif ( )
 
@@ -245,6 +245,11 @@ else ( )
 endif ( )
 
 target_link_libraries ( graphblas_matlab PUBLIC ${M_LIB} )
+
+include ( SuiteSparseAtomic )
+if ( LIBATOMIC_REQUIRED )
+    target_link_libraries ( graphblas_matlab PUBLIC atomic )
+endif ( )
 
 #-------------------------------------------------------------------------------
 # add library dependencies

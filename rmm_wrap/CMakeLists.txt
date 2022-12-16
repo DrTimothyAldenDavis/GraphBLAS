@@ -16,7 +16,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
-
 find_package(CUDA REQUIRED)
 
 set(EXTERNAL_INCLUDES_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
@@ -27,11 +26,12 @@ endif()
 
 IF(NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY}/spdlog)
 execute_process(
-		COMMAND git clone "https://github.com/gabime/spdlog.git" spdlog
+		COMMAND git clone "https://github.com/gabime/spdlog.git" --branch v1.10.0 --recursive spdlog
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
 endif()
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/external_includes/spdlog/include)
+set(SPDLOG_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/external_includes/spdlog/include)
+include_directories(${SPDLOG_INCLUDE_DIR})
 
 IF(NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY}/rmm)
 execute_process(
@@ -39,7 +39,8 @@ execute_process(
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
 endif()
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/external_includes/rmm/include)
+set(RMM_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/external_includes/rmm/include)
+include_directories(${RMM_INCLUDE_DIR})
 
 add_library(rmm_wrap rmm_wrap.cpp rmm_wrap.hpp rmm_wrap.h)
 
@@ -49,18 +50,22 @@ set_target_properties (rmm_wrap PROPERTIES
 		C_STANDARD_REQUIRED 11
 		PUBLIC_HEADER "rmm_wrap.h" )
 
-
-add_executable(rmm_wrap_test rmm_wrap_test.c rmm_wrap.cpp rmm_wrap.hpp rmm_wrap.h)
+# FIXME: fails for some reason ... ?
+# add_executable(rmm_wrap_test rmm_wrap_test.c rmm_wrap.cpp rmm_wrap.hpp rmm_wrap.h)
 
 set(RMM_WRAP_LIBS ${EXTRA_LIBS} ${CUDA_LIBRARIES})
 set(RMM_WRAP_INCLUDES ${PROJECT_BINARY_DIR}
-		${CUDA_INCLUDE_DIRS} ${CONDA_PREFIX}/include ${PROJECT_SOURCE_DIR}/include)
+		${SPDLOG_INCLUDE_DIR}
+		${RMM_INCLUDE_DIR}
+		${CUDA_INCLUDE_DIRS}
+		${CONDA_PREFIX}/include
+		${PROJECT_SOURCE_DIR}/include)
 
 target_link_libraries(rmm_wrap PUBLIC ${RMM_WRAP_LIBS})
 target_include_directories(rmm_wrap PUBLIC "${RMM_WRAP_INCLUDES}")
 
-target_link_libraries(rmm_wrap_test PUBLIC ${RMM_WRAP_LIBS})
-target_include_directories(rmm_wrap_test PUBLIC "${RMM_WRAP_INCLUDES}")
+# target_link_libraries(rmm_wrap_test PUBLIC ${RMM_WRAP_LIBS})
+# target_include_directories(rmm_wrap_test PUBLIC "${RMM_WRAP_INCLUDES}")
 
 #-------------------------------------------------------------------------------
 # installation location
