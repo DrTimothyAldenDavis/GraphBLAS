@@ -50,8 +50,7 @@ set_target_properties (rmm_wrap PROPERTIES
 		C_STANDARD_REQUIRED 11
 		PUBLIC_HEADER "rmm_wrap.h" )
 
-# FIXME: fails for some reason ... ?
-# add_executable(rmm_wrap_test rmm_wrap_test.c rmm_wrap.cpp rmm_wrap.hpp rmm_wrap.h)
+add_executable(rmm_wrap_test rmm_wrap_test.c rmm_wrap.cpp rmm_wrap.hpp rmm_wrap.h)
 
 set(RMM_WRAP_LIBS ${EXTRA_LIBS} ${CUDA_LIBRARIES})
 set(RMM_WRAP_INCLUDES ${PROJECT_BINARY_DIR}
@@ -64,8 +63,8 @@ set(RMM_WRAP_INCLUDES ${PROJECT_BINARY_DIR}
 target_link_libraries(rmm_wrap PUBLIC ${RMM_WRAP_LIBS})
 target_include_directories(rmm_wrap PUBLIC "${RMM_WRAP_INCLUDES}")
 
-# target_link_libraries(rmm_wrap_test PUBLIC ${RMM_WRAP_LIBS})
-# target_include_directories(rmm_wrap_test PUBLIC "${RMM_WRAP_INCLUDES}")
+target_link_libraries(rmm_wrap_test PUBLIC ${RMM_WRAP_LIBS})
+target_include_directories(rmm_wrap_test PUBLIC "${RMM_WRAP_INCLUDES}")
 
 #-------------------------------------------------------------------------------
 # installation location

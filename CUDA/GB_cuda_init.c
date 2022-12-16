@@ -16,6 +16,8 @@
 
 GrB_Info GB_cuda_init (void)
 {
+
+    // get the GPU properties
     GB_Global_gpu_control_set (GxB_DEFAULT) ;
     if (!GB_Global_gpu_count_set (true)) return (GrB_PANIC) ;
     int gpu_count = GB_Global_gpu_count_get ( ) ;
@@ -26,13 +28,34 @@ GrB_Info GB_cuda_init (void)
         {
             return (GrB_PANIC) ;
         }
+    }
+
+    // initialize RMM if necessary
+    if (!rmm_wrap_is_initialized ())
+    {
+        rmm_wrap_initialize_all_same (rmm_wrap_managed,
+            // FIXME ask the GPU(s) for good default values.  This might be
+            // found by GB_cuda_init.  Perhaps GB_cuda_init needs to be split
+            // into 2 methods: one to query the sizes(s) of the GPU(s) then
+            // call rmm_wrap_initialize_all_same, and the other for the rest
+            // of the work.  Alternatively, move GB_cuda_init here (if so,
+            // ensure that it doesn't depend on any other initializations
+            // below).
+            256 * 1000000L, 256 * 100000000L, 1) ;
+    }
+
+    // warm up the GPUs
+    for (int device = 0 ; device < 1 ; device++) // TODO for GPU: gpu_count
+    {
         if (!GB_cuda_warmup (device))
         {
             return (GrB_PANIC) ;
         }
     }
+
     // make GPU 0 the default device
     GB_cuda_set_device( 0 );
+
     // also check for jit cache, pre-load library of common kernels ...
     return (GrB_SUCCESS) ;
 }

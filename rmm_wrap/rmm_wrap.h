@@ -11,6 +11,7 @@
 
 #include <cuda_runtime.h>
 
+// FIXME: consider another way to report the error (not std::cout)
 #define RMM_WRAP_CHECK_CUDA(call)                                         \
   do {                                                                    \
     cudaError_t err = call;                                               \

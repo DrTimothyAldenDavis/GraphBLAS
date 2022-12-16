@@ -220,6 +220,7 @@ int rmm_wrap_initialize             // returns -1 on error, 0 on success
 
 //    // create the RMM wrap handle and save it as a global pointer.
     rmm_wrap_context [device_id] = new RMM_Wrap_Handle() ;
+    // FIXME: check for error?
 
     //  std::cout<< " init called with mode "<<mode<<" init_size "
     // <<init_pool_size<<" max_size "<<max_pool_size<<"\n";

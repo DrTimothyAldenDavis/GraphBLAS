@@ -60,6 +60,7 @@ GrB_Info GB_init            // start up GraphBLAS
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info = GrB_SUCCESS ;
     #ifdef GBCUDA_DEV
     printf ("\n==== GBCUDA_DEV enabled: for CUDA development only! ====\n") ;
     #endif
@@ -78,6 +79,10 @@ GrB_Info GB_init            // start up GraphBLAS
         return (GrB_INVALID_VALUE) ;
     }
 
+    //--------------------------------------------------------------------------
+    // establish malloc/calloc/realloc/free
+    //--------------------------------------------------------------------------
+
     #if defined ( GBCUDA )
     if (mode == GxB_NONBLOCKING_GPU || mode == GxB_BLOCKING_GPU)
     {
@@ -87,23 +92,6 @@ GrB_Info GB_init            // start up GraphBLAS
         realloc_function = rmm_wrap_realloc ;
         free_function    = rmm_wrap_free ;
     }
-
-    if (!rmm_wrap_is_initialized ())
-    {
-        // FIXME: move this to GB_cuda_init?  It's here for now because code
-        // between here and the call to GB_cuda_init might need to allocate
-        // memory.
-        // initialize RMM
-        rmm_wrap_initialize_all_same (rmm_wrap_managed,
-            // FIXME ask the GPU(s) for good default values.  This might be
-            // found by GB_cuda_init.  Perhaps GB_cuda_init needs to be split
-            // into 2 methods: one to query the sizes(s) of the GPU(s) then
-            // call rmm_wrap_initialize_all_same, and the other for the rest
-            // of the work.  Alternatively, move GB_cuda_init here (if so,
-            // ensure that it doesn't depend on any other initializations
-            // below).
-            256 * 1000000L, 256 * 100000000L, 1) ;
-    }
     #endif
 
     if (malloc_function == NULL || free_function == NULL)
@@ -112,16 +100,6 @@ GrB_Info GB_init            // start up GraphBLAS
         // NULL
         return (GrB_NULL_POINTER) ;
     }
-
-    //--------------------------------------------------------------------------
-    // query hardware features for future use
-    //--------------------------------------------------------------------------
-
-    GB_Global_cpu_features_query ( ) ;
-
-    //--------------------------------------------------------------------------
-    // establish malloc/calloc/realloc/free
-    //--------------------------------------------------------------------------
 
     // GrB_init passes in the ANSI C11 malloc/calloc/realloc/free.
 
@@ -133,6 +111,36 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_malloc_is_thread_safe_set (true) ; // malloc must be thread-safe
     GB_Global_memtable_clear ( ) ;
     GB_Global_free_pool_init (true) ;
+
+    GB_Global_malloc_tracking_set (false) ;
+    GB_Global_nmalloc_clear ( ) ;
+    GB_Global_malloc_debug_set (false) ;
+    GB_Global_malloc_debug_count_set (0) ;
+
+    //--------------------------------------------------------------------------
+    // initialize the GPUs, if present
+    //--------------------------------------------------------------------------
+
+    #if defined ( GBCUDA )
+    if (mode == GxB_BLOCKING_GPU || mode == GxB_NONBLOCKING_GPU)
+    {
+        // initialize the GPUs
+        info = GB_cuda_init ( ) ;
+    }
+    else
+    #endif
+    { 
+        // CUDA not available at compile-time, or not requested at run time
+        GB_Global_gpu_control_set (GxB_GPU_NEVER) ;
+        GB_Global_gpu_count_set (0) ;
+        GB_Global_gpu_chunk_set (GxB_DEFAULT) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // query hardware features for future use
+    //--------------------------------------------------------------------------
+
+    GB_Global_cpu_features_query ( ) ;
 
     //--------------------------------------------------------------------------
     // max number of threads
@@ -166,15 +174,6 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_is_csc_set (false) ;
 
     //--------------------------------------------------------------------------
-    // initialize malloc tracking (testing and debugging only)
-    //--------------------------------------------------------------------------
-
-    GB_Global_malloc_tracking_set (false) ;
-    GB_Global_nmalloc_clear ( ) ;
-    GB_Global_malloc_debug_set (false) ;
-    GB_Global_malloc_debug_count_set (0) ;
-
-    //--------------------------------------------------------------------------
     // diagnostic output
     //--------------------------------------------------------------------------
 
@@ -187,26 +186,6 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     GB_Global_timing_clear_all ( ) ;
-
-    //--------------------------------------------------------------------------
-    // CUDA initializations
-    //--------------------------------------------------------------------------
-
-    GrB_Info info = GrB_SUCCESS ;
-    #if defined ( GBCUDA )
-    if (mode == GxB_BLOCKING_GPU || mode == GxB_NONBLOCKING_GPU)
-    {
-        // initialize the GPUs
-        info = GB_cuda_init ( ) ;
-    }
-    else
-    #endif
-    { 
-        // CUDA not available at compile-time, or not requested at run time
-        GB_Global_gpu_control_set (GxB_GPU_NEVER) ;
-        GB_Global_gpu_count_set (0) ;
-        GB_Global_gpu_chunk_set (GxB_DEFAULT) ;
-    }
 
     //--------------------------------------------------------------------------
     // return result
