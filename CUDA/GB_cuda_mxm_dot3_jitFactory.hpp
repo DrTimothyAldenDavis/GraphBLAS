@@ -112,8 +112,8 @@ public:
     R"(#include "templates/)" << kernel_name << R"(.cuh")" << std::endl;
 
     // FIXME
-    std::cout << "=========== RAW JIT INPUT:\n" ;
-    std::cout << string_to_be_jitted.str() ;
+//  std::cout << "=========== RAW JIT INPUT:\n" ;
+//  std::cout << string_to_be_jitted.str() ;
 
     bool result = false;
 
@@ -199,8 +199,8 @@ public:
     R"(#include "templates/)" << kernel_name << R"(.cuh")" << std::endl;
 
     // FIXME
-    std::cout << "=========== RAW JIT INPUT(2):\n" ;
-    std::cout << string_to_be_jitted.str() ;
+//  std::cout << "=========== RAW JIT INPUT(2):\n" ;
+//  std::cout << string_to_be_jitted.str() ;
 
     bool result = false;
 
@@ -409,8 +409,8 @@ public:
     R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
     // FIXME
-    std::cout << "=========== RAW JIT INPUT(3):\n" ;
-    std::cout << string_to_be_jitted.str() ;
+//  std::cout << "=========== RAW JIT INPUT(3):\n" ;
+//  std::cout << string_to_be_jitted.str() ;
 
     dim3 grid(gridsz);
     dim3 block(blocksz);
@@ -526,8 +526,8 @@ public:
     R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
     // FIXME
-    std::cout << "=========== RAW JIT INPUT(4):\n" ;
-    std::cout << string_to_be_jitted.str() ;
+//  std::cout << "=========== RAW JIT INPUT(4):\n" ;
+//  std::cout << string_to_be_jitted.str() ;
 
     dim3 grid(gridsz);
     dim3 block(blocksz);
@@ -649,8 +649,8 @@ public:
     R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
     // FIXME
-    std::cout << "=========== RAW JIT INPUT(5):\n" ;
-    std::cout << string_to_be_jitted.str() ;
+//  std::cout << "=========== RAW JIT INPUT(5):\n" ;
+//  std::cout << string_to_be_jitted.str() ;
 
     dim3 grid(gridsz);
     dim3 block(blocksz);
