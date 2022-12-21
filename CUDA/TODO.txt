@@ -20,7 +20,7 @@ when to use the GPU?  which GPU?
     #pragma omp for ...
     for (k = 0 ; k < 4 ; k++)
     {
-        GxB_set (do it on cuda device k)
+        GxB_set (do it on cuda device k)    // global
         GxB_set (descriptor, do it on cuda device k)
         GxB_set (matrix, do it on device k)
         GrB_mxm ( on gpu k via descriptor)
@@ -28,11 +28,12 @@ when to use the GPU?  which GPU?
         GxB_set (C, do it with 4 threads)
         GrB_build (C, ...)
 
+        // not possible
         GxB_set (C, do it with 8 cpus)
-        GrB_dup (C, A)
+        GrB_dup (&C, A)
 
-        GxB_set (C, do it with GPU 3)
-        GrB_dup (C, A)
+        GxB_set (A, do it with GPU 3)
+        GrB_dup (&C, A)
 
     }
 
