@@ -578,11 +578,43 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Desc_set_INT32     // set a parameter in a descriptor
+(
+    GrB_Descriptor desc,        // descriptor to modify
+    GrB_Desc_Field field,       // parameter to change
+    int32_t value               // value to change it to
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Desc_set_FP64      // set a parameter in a descriptor
+(
+    GrB_Descriptor desc,        // descriptor to modify
+    GrB_Desc_Field field,       // parameter to change
+    double value                // value to change it to
+) ;
+
+GB_PUBLIC
 GrB_Info GxB_Desc_get           // get a parameter from a descriptor
 (
     GrB_Descriptor desc,        // descriptor to query; NULL means defaults
     GrB_Desc_Field field,       // parameter to query
     ...                         // value of the parameter
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Desc_get_INT32     // get a parameter from a descriptor
+(
+    GrB_Descriptor desc,        // descriptor to query; NULL is ok
+    GrB_Desc_Field field,       // parameter to query
+    int32_t *value              // return value of the descriptor
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Desc_get_FP64      // get a parameter from a descriptor
+(
+    GrB_Descriptor desc,        // descriptor to query; NULL is ok
+    GrB_Desc_Field field,       // parameter to query
+    double *value               // return value of the descriptor
 ) ;
 
 GB_PUBLIC
@@ -4531,11 +4563,43 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Matrix_Option_set_INT32    // set an option in a matrix
+(
+    GrB_Matrix A,                   // matrix to modify
+    GxB_Option_Field field,         // option to change
+    int32_t value                   // value to change it to
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_Option_set_FP64     // set an option in a matrix
+(
+    GrB_Matrix A,                   // matrix to modify
+    GxB_Option_Field field,         // option to change
+    double value                    // value to change it to
+) ;
+
+GB_PUBLIC
 GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
 (
     GrB_Matrix A,                   // matrix to query
     GxB_Option_Field field,         // option to query
     ...                             // return value of the matrix option
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_Option_get_INT32    // gets the current option of a matrix
+(
+    GrB_Matrix A,                   // matrix to query
+    GxB_Option_Field field,         // option to query
+    int32_t *value                  // return value of the matrix option
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_Option_get_FP64     // gets the current option of a matrix
+(
+    GrB_Matrix A,                   // matrix to query
+    GxB_Option_Field field,         // option to query
+    double *value                   // return value of the matrix option
 ) ;
 
 GB_PUBLIC
@@ -4547,11 +4611,43 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Vector_Option_set_INT32    // set an option in a vector
+(
+    GrB_Vector v,                   // vector to modify
+    GxB_Option_Field field,         // option to change
+    int32_t value                   // value to change it to
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_Option_set_FP64    // set an option in a vector
+(
+    GrB_Vector v,                   // vector to modify
+    GxB_Option_Field field,         // option to change
+    double value                    // value to change it to
+) ;
+
+GB_PUBLIC
 GrB_Info GxB_Vector_Option_get      // gets the current option of a vector
 (
     GrB_Vector A,                   // vector to query
     GxB_Option_Field field,         // option to query
     ...                             // return value of the vector option
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_Option_get_INT32    // gets the current option of a vector
+(
+    GrB_Vector v,                   // vector to query
+    GxB_Option_Field field,         // option to query
+    int32_t *value                  // return value of the vector option
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_Option_get_FP64      // gets the current option of a vector
+(
+    GrB_Vector v,                   // vector to query
+    GxB_Option_Field field,         // option to query
+    double *value                   // return value of the vector option
 ) ;
 
 // GxB_Global_Option_set controls the global defaults used when a new matrix is

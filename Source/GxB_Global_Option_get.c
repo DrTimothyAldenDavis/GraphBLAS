@@ -20,7 +20,7 @@
 #include "GB.h"
 
 //------------------------------------------------------------------------------
-// GxB_Global_Option_get_INT32: get global values (int32_t scalars or arrays)
+// GxB_Global_Option_get_INT32: get global options (int32_t scalars or arrays)
 //------------------------------------------------------------------------------
 
 GrB_Info GxB_Global_Option_get_INT32    // gets the current global option
@@ -115,7 +115,7 @@ GrB_Info GxB_Global_Option_get_INT32    // gets the current global option
 }
 
 //------------------------------------------------------------------------------
-// GxB_Global_Option_get_FP64: get global values (double scalars or arrays)
+// GxB_Global_Option_get_FP64: get global options (double scalars or arrays)
 //------------------------------------------------------------------------------
 
 GrB_Info GxB_Global_Option_get_FP64     // gets the current global option
@@ -172,7 +172,7 @@ GrB_Info GxB_Global_Option_get_FP64     // gets the current global option
 }
 
 //------------------------------------------------------------------------------
-// GxB_Global_Option_get_INT64: get global values (int64_t scalars or arrays)
+// GxB_Global_Option_get_INT64: get global options (int64_t scalars or arrays)
 //------------------------------------------------------------------------------
 
 GrB_Info GxB_Global_Option_get_INT64    // gets the current global option
@@ -214,7 +214,7 @@ GrB_Info GxB_Global_Option_get_INT64    // gets the current global option
 }
 
 //------------------------------------------------------------------------------
-// GxB_Global_Option_get_CHAR: get global values (const char strings)
+// GxB_Global_Option_get_CHAR: get global options (const char strings)
 //------------------------------------------------------------------------------
 
 GrB_Info GxB_Global_Option_get_CHAR     // gets the current global option
@@ -303,7 +303,7 @@ GrB_Info GxB_Global_Option_get_CHAR     // gets the current global option
 }
 
 //------------------------------------------------------------------------------
-// GxB_Global_Option_get_FUNCTION: get global values (function pointers)
+// GxB_Global_Option_get_FUNCTION: get global options (function pointers)
 //------------------------------------------------------------------------------
 
 GrB_Info GxB_Global_Option_get_FUNCTION // gets the current global option

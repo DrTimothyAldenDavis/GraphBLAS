@@ -207,6 +207,7 @@ void mexFunction
 
     GrB_Descriptor Duh ;
     GrB_Desc_Value val ;
+    int v2 ;
 
     GrB_Descriptor_new (&Duh) ;
     GB_Descriptor_check (Duh, "\n---------------------------------- Duh:",
@@ -221,6 +222,12 @@ void mexFunction
         GxB_COMPLETE, stdout) ;
     GxB_Desc_get (Duh, GxB_SORT, &val) ; printf ("got sort %d\n", val) ; CHECK (val == true) ;
 
+    GxB_Desc_set (Duh, GxB_SORT, false) ;
+    GxB_Desc_set_INT32 (Duh, GxB_SORT, true) ;
+    GB_Descriptor_check (Duh, "\n------------------------------- Duh set sort:",
+        GxB_COMPLETE, stdout) ;
+    GxB_Desc_get_INT32 (Duh, GxB_SORT, &v2) ; printf ("got sort %d\n", v2) ; CHECK (v2 == true) ;
+
     GxB_Desc_set (Duh, GrB_INP0, GrB_TRAN) ;
     GB_Descriptor_check (Duh, "\n------------------------------- Duh set:",
         GxB_COMPLETE, stdout) ;
@@ -228,6 +235,15 @@ void mexFunction
     GxB_Desc_get (Duh, GrB_MASK, &val) ; printf ("got mask %d\n", val) ; CHECK (val == GxB_DEFAULT) ;
     GxB_Desc_get (Duh, GrB_INP0, &val) ; printf ("got inp0 %d\n", val) ; CHECK (val == GrB_TRAN) ;
     GxB_Desc_get (Duh, GrB_INP1, &val) ; printf ("got inp1 %d\n", val) ; CHECK (val == GxB_DEFAULT) ;
+
+    GxB_Desc_set (Duh, GrB_INP0, GxB_DEFAULT) ;
+    GxB_Desc_set_INT32 (Duh, GrB_INP0, GrB_TRAN) ;
+    GB_Descriptor_check (Duh, "\n------------------------------- Duh set:",
+        GxB_COMPLETE, stdout) ;
+    GxB_Desc_get_INT32 (Duh, GrB_OUTP, &v2) ; printf ("got outp %d\n", v2) ; CHECK (v2 == GxB_DEFAULT) ;
+    GxB_Desc_get_INT32 (Duh, GrB_MASK, &v2) ; printf ("got mask %d\n", v2) ; CHECK (v2 == GxB_DEFAULT) ;
+    GxB_Desc_get_INT32 (Duh, GrB_INP0, &v2) ; printf ("got inp0 %d\n", v2) ; CHECK (v2 == GrB_TRAN) ;
+    GxB_Desc_get_INT32 (Duh, GrB_INP1, &v2) ; printf ("got inp1 %d\n", v2) ; CHECK (v2 == GxB_DEFAULT) ;
 
     GxB_Desc_set (Duh, GrB_MASK, GrB_COMP) ;
     GB_Descriptor_check (Duh, "\n-----Duh set mask",
@@ -237,6 +253,15 @@ void mexFunction
     GxB_Desc_get (Duh, GrB_INP0, &val) ; printf ("got inp0 %d\n", val) ; CHECK (val == GrB_TRAN) ;
     GxB_Desc_get (Duh, GrB_INP1, &val) ; printf ("got inp1 %d\n", val) ; CHECK (val == GxB_DEFAULT) ;
 
+    GxB_Desc_set (Duh, GrB_MASK, GxB_DEFAULT) ;
+    GxB_Desc_set_INT32 (Duh, GrB_MASK, GrB_COMP) ;
+    GB_Descriptor_check (Duh, "\n-----Duh set mask",
+        GxB_COMPLETE, stdout) ;
+    GxB_Desc_get_INT32 (Duh, GrB_OUTP, &v2) ; printf ("got outp %d\n", v2) ; CHECK (v2 == GxB_DEFAULT) ;
+    GxB_Desc_get_INT32 (Duh, GrB_MASK, &v2) ; printf ("got mask %d\n", v2) ; CHECK (v2 == GrB_COMP) ;
+    GxB_Desc_get_INT32 (Duh, GrB_INP0, &v2) ; printf ("got inp0 %d\n", v2) ; CHECK (v2 == GrB_TRAN) ;
+    GxB_Desc_get_INT32 (Duh, GrB_INP1, &v2) ; printf ("got inp1 %d\n", v2) ; CHECK (v2 == GxB_DEFAULT) ;
+
     GxB_Desc_set (Duh, GrB_OUTP, GrB_REPLACE) ;
     GB_Descriptor_check (Duh, "\n-----Duh set out",
         GxB_COMPLETE, stdout) ;
@@ -244,6 +269,15 @@ void mexFunction
     GxB_Desc_get (Duh, GrB_MASK, &val) ; printf ("got mask %d\n", val) ; CHECK (val == GrB_COMP) ;
     GxB_Desc_get (Duh, GrB_INP0, &val) ; printf ("got inp0 %d\n", val) ; CHECK (val == GrB_TRAN) ;
     GxB_Desc_get (Duh, GrB_INP1, &val) ; printf ("got inp1 %d\n", val) ; CHECK (val == GxB_DEFAULT) ;
+
+    GxB_Desc_set (Duh, GrB_OUTP, GxB_DEFAULT) ;
+    GxB_Desc_set_INT32 (Duh, GrB_OUTP, GrB_REPLACE) ;
+    GB_Descriptor_check (Duh, "\n-----Duh set out",
+        GxB_COMPLETE, stdout) ;
+    GxB_Desc_get_INT32 (Duh, GrB_OUTP, &v2) ; printf ("got outp %d\n", v2) ; CHECK (v2 == GrB_REPLACE) ;
+    GxB_Desc_get_INT32 (Duh, GrB_MASK, &v2) ; printf ("got mask %d\n", v2) ; CHECK (v2 == GrB_COMP) ;
+    GxB_Desc_get_INT32 (Duh, GrB_INP0, &v2) ; printf ("got inp0 %d\n", v2) ; CHECK (v2 == GrB_TRAN) ;
+    GxB_Desc_get_INT32 (Duh, GrB_INP1, &v2) ; printf ("got inp1 %d\n", v2) ; CHECK (v2 == GxB_DEFAULT) ;
 
     GrB_Descriptor_set (Duh, GrB_MASK, GrB_STRUCTURE) ;
     GB_Descriptor_check (Duh, "\n-----Duh set mask structural",
@@ -254,12 +288,31 @@ void mexFunction
     GxB_Desc_get (Duh, GrB_INP1, &val) ; printf ("got inp1 %d\n", val) ; CHECK (val == GxB_DEFAULT) ;
 
     GrB_Descriptor_set (Duh, GrB_MASK, GxB_DEFAULT) ;
+    GxB_Desc_set_INT32 (Duh, GrB_MASK, GrB_STRUCTURE) ;
+    GxB_Desc_set_INT32 (Duh, GrB_MASK, GrB_COMP) ;
+    GB_Descriptor_check (Duh, "\n-----Duh set mask structural",
+        GxB_COMPLETE, stdout) ;
+    GxB_Desc_get_INT32 (Duh, GrB_OUTP, &v2) ; printf ("got outp %d\n", v2) ; CHECK (v2 == GrB_REPLACE) ;
+    GxB_Desc_get_INT32 (Duh, GrB_MASK, &v2) ; printf ("got mask %d\n", v2) ; CHECK (v2 == GrB_COMP + GrB_STRUCTURE) ;
+    GxB_Desc_get_INT32 (Duh, GrB_INP0, &v2) ; printf ("got inp0 %d\n", v2) ; CHECK (v2 == GrB_TRAN) ;
+    GxB_Desc_get_INT32 (Duh, GrB_INP1, &v2) ; printf ("got inp1 %d\n", v2) ; CHECK (v2 == GxB_DEFAULT) ;
+
+    GrB_Descriptor_set (Duh, GrB_MASK, GxB_DEFAULT) ;
     GB_Descriptor_check (Duh, "\n-----Duh set mask back",
         GxB_COMPLETE, stdout) ;
     GxB_Desc_get (Duh, GrB_OUTP, &val) ; printf ("got outp %d\n", val) ; CHECK (val == GrB_REPLACE) ;
     GxB_Desc_get (Duh, GrB_MASK, &val) ; printf ("got mask %d\n", val) ; CHECK (val == GxB_DEFAULT) ;
     GxB_Desc_get (Duh, GrB_INP0, &val) ; printf ("got inp0 %d\n", val) ; CHECK (val == GrB_TRAN) ;
     GxB_Desc_get (Duh, GrB_INP1, &val) ; printf ("got inp1 %d\n", val) ; CHECK (val == GxB_DEFAULT) ;
+
+    GrB_Descriptor_set (Duh, GrB_MASK, GrB_STRUCTURE) ;
+    GxB_Desc_set_INT32 (Duh, GrB_MASK, GxB_DEFAULT) ;
+    GB_Descriptor_check (Duh, "\n-----Duh set mask back",
+        GxB_COMPLETE, stdout) ;
+    GxB_Desc_get_INT32 (Duh, GrB_OUTP, &v2) ; printf ("got outp %d\n", v2) ; CHECK (v2 == GrB_REPLACE) ;
+    GxB_Desc_get_INT32 (Duh, GrB_MASK, &v2) ; printf ("got mask %d\n", v2) ; CHECK (v2 == GxB_DEFAULT) ;
+    GxB_Desc_get_INT32 (Duh, GrB_INP0, &v2) ; printf ("got inp0 %d\n", v2) ; CHECK (v2 == GrB_TRAN) ;
+    GxB_Desc_get_INT32 (Duh, GrB_INP1, &v2) ; printf ("got inp1 %d\n", v2) ; CHECK (v2 == GxB_DEFAULT) ;
 
     info = GxB_Desc_set (Duh, GrB_INP1, GrB_REPLACE) ;
     OK (GrB_Descriptor_wait_(Duh, GrB_MATERIALIZE)) ;
@@ -271,6 +324,18 @@ void mexFunction
     GxB_Desc_get (Duh, GrB_MASK, &val) ; printf ("got mask %d\n", val) ; CHECK (val == GxB_DEFAULT) ;
     GxB_Desc_get (Duh, GrB_INP0, &val) ; printf ("got inp0 %d\n", val) ; CHECK (val == GrB_TRAN) ;
     GxB_Desc_get (Duh, GrB_INP1, &val) ; printf ("got inp1 %d\n", val) ; CHECK (val == GxB_DEFAULT) ;
+
+    info = GxB_Desc_set (Duh, GrB_INP1, GxB_DEFAULT) ;
+    info = GxB_Desc_set_INT32 (Duh, GrB_INP1, GrB_REPLACE) ;
+    OK (GrB_Descriptor_wait_(Duh, GrB_MATERIALIZE)) ;
+    GrB_Descriptor_error_(&err, Duh) ;
+    printf ("%s\n", err) ;
+    GB_Descriptor_check (Duh, "\n-----Duh set in1",
+        GxB_COMPLETE, stdout) ;
+    GxB_Desc_get_INT32 (Duh, GrB_OUTP, &v2) ; printf ("got outp %d\n", v2) ; CHECK (v2 == GrB_REPLACE) ;
+    GxB_Desc_get_INT32 (Duh, GrB_MASK, &v2) ; printf ("got mask %d\n", v2) ; CHECK (v2 == GxB_DEFAULT) ;
+    GxB_Desc_get_INT32 (Duh, GrB_INP0, &v2) ; printf ("got inp0 %d\n", v2) ; CHECK (v2 == GrB_TRAN) ;
+    GxB_Desc_get_INT32 (Duh, GrB_INP1, &v2) ; printf ("got inp1 %d\n", v2) ; CHECK (v2 == GxB_DEFAULT) ;
 
     GrB_Descriptor_free_(&Duh) ;
 
@@ -644,6 +709,12 @@ void mexFunction
     OK (GxB_Descriptor_fprint_(desc, GxB_COMPLETE, NULL)) ;
     CHECK (chunk == 12345) ;
     CHECK (nthreads == 42) ;
+
+    chunk = -1 ;
+    nthreads = 0 ;
+    OK (GxB_Desc_get_FP64 (desc, GxB_CHUNK, &chunk)) ;
+    OK (GxB_Desc_get_INT32 (desc, GxB_NTHREADS, &nthreads)) ;
+
     GrB_Descriptor_free_(&desc) ;
 
     //--------------------------------------------------------------------------
@@ -883,29 +954,58 @@ void mexFunction
     // GxB_get
     //--------------------------------------------------------------------------
 
-    int sparsity ;
+    int sparsity = 88 ;
     OK (GxB_Matrix_Option_get_(A, GxB_SPARSITY_CONTROL, &sparsity)) ;
     CHECK (sparsity == GxB_AUTO_SPARSITY) ;
+
+    sparsity = 88 ;
+    OK (GxB_Matrix_Option_get_INT32 (A, GxB_SPARSITY_CONTROL, &sparsity)) ;
+    CHECK (sparsity == GxB_AUTO_SPARSITY) ;
+
+    sparsity = 88 ;
     OK (GxB_Vector_Option_get_(victor, GxB_SPARSITY_CONTROL, &sparsity)) ;
     CHECK (sparsity == GxB_AUTO_SPARSITY) ;
+
+    sparsity = 88 ;
+    OK (GxB_Vector_Option_get_INT32 (victor, GxB_SPARSITY_CONTROL, &sparsity)) ;
+    CHECK (sparsity == GxB_AUTO_SPARSITY) ;
+
+    sparsity = 88 ;
     OK (GxB_Vector_Option_get_(victor, GxB_SPARSITY_STATUS, &sparsity)) ;
     CHECK (sparsity == GxB_SPARSE) ;
+
+    sparsity = 88 ;
+    OK (GxB_Vector_Option_get_INT32 (victor, GxB_SPARSITY_STATUS, &sparsity)) ;
+    CHECK (sparsity == GxB_SPARSE) ;
+
     GxB_Format_Value fmt ;
     OK (GxB_Vector_Option_get_(victor, GxB_FORMAT, &fmt)) ;
     CHECK (fmt == GxB_BY_COL) ;
+
+    int f2 = 44 ;
+    OK (GxB_Vector_Option_get_INT32 (victor, GxB_FORMAT, &f2)) ;
+    CHECK (f2 == GxB_BY_COL) ;
+
     bool is_hyper ;
     OK (GxB_Vector_Option_get_(victor, GxB_IS_HYPER, &is_hyper)) ;
     CHECK (!is_hyper) ;
+
     expected = GrB_INVALID_VALUE ;
     ERR (GxB_Vector_Option_get_(victor, -999, &is_hyper)) ;
+    ERR (GxB_Vector_Option_get_INT32 (victor, -999, &f2)) ;
 
     //--------------------------------------------------------------------------
     // GxB_set
     //--------------------------------------------------------------------------
 
     ERR (GxB_Vector_Option_set_(victor, -999, &is_hyper)) ;
+
     OK (GxB_Vector_Option_set_(victor, GxB_SPARSITY_CONTROL, 9999)) ;
     OK (GxB_Vector_Option_get_(victor, GxB_SPARSITY_CONTROL, &sparsity)) ;
+    CHECK (sparsity == GxB_AUTO_SPARSITY) ;
+
+    OK (GxB_Vector_Option_set_INT32 (victor, GxB_SPARSITY_CONTROL, 9999)) ;
+    OK (GxB_Vector_Option_get_INT32 (victor, GxB_SPARSITY_CONTROL, &sparsity)) ;
     CHECK (sparsity == GxB_AUTO_SPARSITY) ;
 
     //--------------------------------------------------------------------------
