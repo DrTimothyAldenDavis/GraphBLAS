@@ -221,10 +221,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Dec 9, 2022"
+#define GxB_IMPLEMENTATION_DATE "Dec 31, 2022"
 #define GxB_IMPLEMENTATION_MAJOR 7
-#define GxB_IMPLEMENTATION_MINOR 3
-#define GxB_IMPLEMENTATION_SUB   3
+#define GxB_IMPLEMENTATION_MINOR 4
+#define GxB_IMPLEMENTATION_SUB   0
 #define GxB_SPEC_DATE "Nov 15, 2021"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 0
@@ -4577,10 +4577,80 @@ GrB_Info GxB_Global_Option_set      // set a global default option
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Global_Option_set_INT32      // set a global default option
+(
+    GxB_Option_Field field,         // option to change
+    int32_t value                   // value to change it to
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Global_Option_set_FP64      // set a global default option
+(
+    GxB_Option_Field field,         // option to change
+    double value                    // value to change it to
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Global_Option_set_FP64_ARRAY      // set a global default option
+(
+    GxB_Option_Field field,         // option to change
+    double *value                   // value to change it to
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Global_Option_set_INT64_ARRAY      // set a global default option
+(
+    GxB_Option_Field field,         // option to change
+    int64_t *value                  // value to change it to
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Global_Option_set_FUNCTION      // set a global default option
+(
+    GxB_Option_Field field,         // option to change
+    void *value                     // value to change it to
+) ;
+
+GB_PUBLIC
 GrB_Info GxB_Global_Option_get      // gets the current global default option
 (
     GxB_Option_Field field,         // option to query
     ...                             // return value of the global option
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Global_Option_get_INT32    // gets the current global option
+(
+    GxB_Option_Field field,         // option to query
+    int32_t *value                  // return value of the global option
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Global_Option_get_FP64     // gets the current global option
+(
+    GxB_Option_Field field,         // option to query
+    double *value                   // return value of the global option
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Global_Option_get_INT64        // gets the current global option
+(
+    GxB_Option_Field field,         // option to query
+    int64_t *value                  // return value of the global option
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Global_Option_get_CHAR         // gets the current global option
+(
+    GxB_Option_Field field,         // option to query
+    char **value                    // return value of the global option
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Global_Option_get_FUNCTION // gets the current global option
+(
+    GxB_Option_Field field,         // option to query
+    void **value                    // return value of the global option
 ) ;
 
 //------------------------------------------------------------------------------

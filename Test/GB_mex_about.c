@@ -312,12 +312,22 @@ void mexFunction
     CHECK (strcmp (about, GxB_SPEC_ABOUT) == 0) ;
     printf ("About the spec:\n%s\n", about) ;
 
+    char *str ;
+    OK (GxB_Global_Option_get_CHAR (GxB_API_ABOUT, &str)) ;
+    CHECK (strcmp (str, GxB_SPEC_ABOUT) == 0) ;
+
     OK (GxB_Global_Option_get_(GxB_API_DATE, &date)) ;
     CHECK (strcmp (date, GxB_SPEC_DATE) == 0) ;
     printf ("date: %s\n", date) ;
 
+    OK (GxB_Global_Option_get_CHAR (GxB_API_DATE, &str)) ;
+    CHECK (strcmp (str, GxB_SPEC_DATE) == 0) ;
+
     OK (GxB_Global_Option_get_(GxB_API_URL, &url)) ;
     printf ("URL: %s\n", url) ;
+
+    OK (GxB_Global_Option_get_CHAR (GxB_API_URL, &str)) ;
+    CHECK (strcmp (str, url) == 0) ;
 
     OK (GxB_Global_Option_get_(GxB_API_VERSION, all_version)) ;
     CHECK (all_version [0] == GxB_SPEC_MAJOR) ;
@@ -325,6 +335,12 @@ void mexFunction
     CHECK (all_version [2] == GxB_SPEC_SUB) ;
     printf ("Spec Version (%d.%d.%d)\n",
         all_version [0], all_version [1], all_version [2]) ;
+
+    int32_t all_version2 [3] = { -1, -1, -2 } ;
+    OK (GxB_Global_Option_get_INT32 (GxB_API_VERSION, all_version2)) ;
+    CHECK (all_version2 [0] == GxB_SPEC_MAJOR) ;
+    CHECK (all_version2 [1] == GxB_SPEC_MINOR) ;
+    CHECK (all_version2 [2] == GxB_SPEC_SUB) ;
 
     //--------------------------------------------------------------------------
     // about the library
@@ -337,17 +353,29 @@ void mexFunction
     CHECK (strcmp (name, GxB_IMPLEMENTATION_NAME) == 0) ;
     printf ("name: %s\n", name) ;
 
+    OK (GxB_Global_Option_get_CHAR (GxB_LIBRARY_NAME, &str)) ;
+    CHECK (strcmp (str, GxB_IMPLEMENTATION_NAME) == 0) ;
+
     OK (GxB_Global_Option_get_(GxB_LIBRARY_DATE, &date)) ;
     if (date != NULL) printf ("date: %s\n", date) ;
     CHECK (strcmp (date, GxB_IMPLEMENTATION_DATE) == 0) ;
+
+    OK (GxB_Global_Option_get_CHAR (GxB_LIBRARY_DATE, &str)) ;
+    CHECK (strcmp (str, GxB_IMPLEMENTATION_DATE) == 0) ;
 
     OK (GxB_Global_Option_get_(GxB_LIBRARY_ABOUT, &about)) ;
     CHECK (strcmp (about, GxB_IMPLEMENTATION_ABOUT) == 0) ;
     printf ("about:\n%s\n", about) ;
 
+    OK (GxB_Global_Option_get_CHAR (GxB_LIBRARY_ABOUT, &str)) ;
+    CHECK (strcmp (str, GxB_IMPLEMENTATION_ABOUT) == 0) ;
+
     OK (GxB_Global_Option_get_(GxB_LIBRARY_LICENSE, &license)) ;
     CHECK (strcmp (license, GxB_IMPLEMENTATION_LICENSE) == 0) ;
     printf ("license:\n%s\n", license) ;
+
+    OK (GxB_Global_Option_get_CHAR (GxB_LIBRARY_LICENSE, &str)) ;
+    CHECK (strcmp (str, GxB_IMPLEMENTATION_LICENSE) == 0) ;
 
     OK (GxB_Global_Option_get_(GxB_LIBRARY_VERSION, all_version)) ;
     CHECK (all_version [0] == GxB_IMPLEMENTATION_MAJOR) ;
@@ -357,18 +385,36 @@ void mexFunction
         all_version [0], all_version [1], all_version [2]) ;
     printf ("Implementation: ("GBu")\n", GxB_IMPLEMENTATION) ;
 
+    OK (GxB_Global_Option_get_INT32 (GxB_LIBRARY_VERSION, all_version2)) ;
+    CHECK (all_version2 [0] == GxB_IMPLEMENTATION_MAJOR) ;
+    CHECK (all_version2 [1] == GxB_IMPLEMENTATION_MINOR) ;
+    CHECK (all_version2 [2] == GxB_IMPLEMENTATION_SUB) ;
+
     OK (GxB_Global_Option_get_(GxB_LIBRARY_COMPILE_DATE, &compile_date)) ;
     printf ("compile date: %s\n", compile_date) ;
+
+    OK (GxB_Global_Option_get_CHAR (GxB_LIBRARY_COMPILE_DATE, &str)) ;
+    CHECK (strcmp (str, compile_date) == 0) ;
 
     OK (GxB_Global_Option_get_(GxB_LIBRARY_COMPILE_TIME, &compile_time)) ;
     printf ("compile time: %s\n", compile_time) ;
 
-    bool have_openmp ;
+    OK (GxB_Global_Option_get_CHAR (GxB_LIBRARY_COMPILE_TIME, &str)) ;
+    CHECK (strcmp (str, compile_time) == 0) ;
+
+    bool have_openmp = false  ;
     OK (GxB_Global_Option_get_(GxB_LIBRARY_OPENMP, &have_openmp)) ;
     printf ("with OpenMP: %d\n", have_openmp) ;
 
+    int32_t have_openmp2 = 33 ;
+    OK (GxB_Global_Option_get_INT32 (GxB_LIBRARY_OPENMP, &have_openmp2)) ;
+    CHECK ((have_openmp ? 1 : 0) == have_openmp2) ;
+
     OK (GxB_Global_Option_get_(GxB_LIBRARY_URL, &url)) ;
     printf ("URL: %s\n", url) ;
+
+    OK (GxB_Global_Option_get_CHAR (GxB_LIBRARY_URL, &str)) ;
+    CHECK (strcmp (str, url) == 0) ;
 
     #if GxB_SPEC_VERSION >= GxB_VERSION(1,0,0)
     printf ("The spec is >= version 1.0.0\n") ;
@@ -401,13 +447,29 @@ void mexFunction
     OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_CONTROL, &gpu_control)) ;
     printf ("gpu control: %d\n", gpu_control) ;
 
+    int32_t gpu_control2 = -88 ;
+    OK (GxB_Global_Option_get_INT32 (GxB_GLOBAL_GPU_CONTROL, &gpu_control2)) ;
+    CHECK ((int) gpu_control == gpu_control2) ;
+
+    GB_Global_gpu_control_set (12) ;
     OK (GxB_Global_Option_set_(GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
     OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_CONTROL, &gpu_control)) ;
     CHECK (gpu_control == GxB_GPU_NEVER) ;
 
+    GB_Global_gpu_control_set (13) ;
+    OK (GxB_Global_Option_set_INT32 (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
+    OK (GxB_Global_Option_get_INT32 (GxB_GLOBAL_GPU_CONTROL, &gpu_control2)) ;
+    CHECK (gpu_control2 == (int32_t) GxB_GPU_NEVER) ;
+
+    OK (GxB_Global_Option_get_INT32 (GxB_GLOBAL_GPU_CONTROL, &gpu_control2)) ;
+    CHECK (gpu_control2 == (int) GxB_GPU_NEVER) ;
+
     OK (GxB_Global_Option_set_(GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
     OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_CONTROL, &gpu_control)) ;
     CHECK (gpu_control == (gpu_count > 0) ? GxB_GPU_ALWAYS : GxB_GPU_NEVER) ;
+
+    OK (GxB_Global_Option_get_INT32 (GxB_GLOBAL_GPU_CONTROL, &gpu_control2)) ;
+    CHECK (gpu_control2 == (gpu_count > 0) ? GxB_GPU_ALWAYS : GxB_GPU_NEVER) ;
 
     OK (GxB_Global_Option_set_(GxB_GLOBAL_GPU_CONTROL, GxB_DEFAULT)) ;
     OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_CONTROL, &gpu_control)) ;
@@ -417,10 +479,22 @@ void mexFunction
     OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_CHUNK, &gpu_chunk)) ;
     printf ("gpu chunk: %g\n", gpu_chunk) ;
 
+    double gpu_chunk2 = -1 ;
+    OK (GxB_Global_Option_get_FP64 (GxB_GLOBAL_GPU_CHUNK, &gpu_chunk2)) ;
+    CHECK (gpu_chunk == gpu_chunk2) ;
+
     double gpu_chunk_42 = 42e6 ;
     OK (GxB_Global_Option_set_(GxB_GLOBAL_GPU_CHUNK, gpu_chunk_42)) ;
     OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_CHUNK, &gpu_chunk)) ;
     CHECK (gpu_chunk == 42e6) ;
+
+    OK (GxB_Global_Option_get_FP64 (GxB_GLOBAL_GPU_CHUNK, &gpu_chunk2)) ;
+    CHECK (gpu_chunk2 == 42e6) ;
+
+    double gpu_chunk_43 = 43e6 ;
+    OK (GxB_Global_Option_set_FP64 (GxB_GLOBAL_GPU_CHUNK, gpu_chunk_43)) ;
+    OK (GxB_Global_Option_get_FP64 (GxB_GLOBAL_GPU_CHUNK, &gpu_chunk)) ;
+    CHECK (gpu_chunk == 43e6) ;
 
     //--------------------------------------------------------------------------
     // types
@@ -494,28 +568,45 @@ void mexFunction
     // global get/set
     //--------------------------------------------------------------------------
 
-    double h, bswitch [GxB_NBITMAP_SWITCH] ;
+    double h = 1, h2 = 3, bswitch [GxB_NBITMAP_SWITCH] ;
+    double bswitch2 [GxB_NBITMAP_SWITCH] ;
     GxB_Format_Value ff ;
+    int32_t ff2 ;
     GxB_Global_Option_get_(GxB_HYPER_SWITCH, &h) ;
+    GxB_Global_Option_get_FP64 (GxB_HYPER_SWITCH, &h2) ;
+    CHECK (h == h2) ;
+
     GxB_Global_Option_get_(GxB_BITMAP_SWITCH, bswitch) ;
+    GxB_Global_Option_get_FP64 (GxB_BITMAP_SWITCH, bswitch2) ;
     GxB_Global_Option_get_(GxB_FORMAT, &ff) ;
+    GxB_Global_Option_get_INT32 (GxB_FORMAT, &ff2) ;
     printf ("hyper_switch %g csc %d\n", h, (ff == GxB_BY_COL)) ;
+    CHECK ((int32_t) ff == ff2) ;
     for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
     {
         printf ("bitmap_switch [%d]: %g\n", k, bswitch [k]) ;
+        CHECK (bswitch [k] == bswitch2 [k]) ;
     }
 
-    GrB_Mode mode ;
+    GrB_Mode mode = GrB_BLOCKING ;
     GxB_Global_Option_get_(GxB_MODE, &mode) ;
     printf ("mode: %d\n", mode) ;
 
-    int nthreads ;
-    GxB_Global_Option_get_(GxB_NTHREADS, &nthreads) ;
-    printf ("# threads: %d\n", nthreads) ;
+    int32_t mode2 = 55 ;
+    GxB_Global_Option_get_INT32 (GxB_MODE, &mode2) ;
+    CHECK ((int32_t) mode == mode2) ;
 
-    double chunk ;
+    int nthreads = 1, nthreads2 = 2 ;
+    GxB_Global_Option_get_(GxB_NTHREADS, &nthreads) ;
+    GxB_Global_Option_get_INT32 (GxB_NTHREADS, &nthreads2) ;
+    printf ("# threads: %d\n", nthreads) ;
+    CHECK (nthreads == nthreads2) ;
+
+    double chunk = 45, chunk2 = 99 ;
     GxB_Global_Option_get_(GxB_CHUNK, &chunk) ;
+    GxB_Global_Option_get_FP64 (GxB_CHUNK, &chunk2) ;
     printf ("chunk: %g\n", chunk) ;
+    CHECK (chunk == chunk2) ;
 
     //--------------------------------------------------------------------------
     // check A and B aliased
@@ -888,10 +979,26 @@ void mexFunction
     OK (GxB_Global_Option_set (GxB_PRINT_1BASED, true)) ;
     OK (GxB_Global_Option_get (GxB_PRINT_1BASED, &onebased)) ;
     CHECK (onebased) ;
+
+    int32_t onebased2 ;
+    OK (GxB_Global_Option_get_INT32 (GxB_PRINT_1BASED, &onebased2)) ;
+    CHECK (onebased2) ;
+
+    OK (GxB_Global_Option_set_INT32 (GxB_PRINT_1BASED, false)) ;
+    OK (GxB_Global_Option_get_INT32 (GxB_PRINT_1BASED, &onebased2)) ;
+    CHECK (!onebased2) ;
+
     OK (GxB_Matrix_fprint_(C, GxB_COMPLETE_VERBOSE, NULL)) ;
-    OK (GxB_Global_Option_set (GxB_PRINT_1BASED, false)) ;
+    OK (GxB_Global_Option_set (GxB_PRINT_1BASED, true)) ;
     OK (GxB_Global_Option_get (GxB_PRINT_1BASED, &onebased)) ;
-    CHECK (!onebased) ;
+    CHECK (onebased) ;
+
+    OK (GxB_Global_Option_get_INT32 (GxB_PRINT_1BASED, &onebased2)) ;
+    CHECK (onebased2) ;
+
+    OK (GxB_Global_Option_set_INT32 (GxB_PRINT_1BASED, true)) ;
+    OK (GxB_Global_Option_get_INT32 (GxB_PRINT_1BASED, &onebased2)) ;
+    CHECK (onebased2) ;
 
     expected = GrB_NULL_POINTER ;
     ERR1 (C, GxB_Matrix_select_(C, NULL, NULL, selectop, A, NULL, NULL)) ;
@@ -1071,6 +1178,10 @@ void mexFunction
     bool burble ;
     OK (GxB_Global_Option_get_(GxB_BURBLE, &burble)) ;
     printf ("burble: %d\n", burble) ;
+
+    int32_t burble2 = 33 ;
+    OK (GxB_Global_Option_get_INT32 (GxB_BURBLE, &burble2)) ;
+    CHECK ((int32_t) burble == burble2) ;
 
     //--------------------------------------------------------------------------
     // select ops

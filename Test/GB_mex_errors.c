@@ -4408,6 +4408,8 @@ void mexFunction
     bool A_is_hyper ;
     OK (GxB_Matrix_Option_get_(A, GxB_IS_HYPER, &A_is_hyper)) ; // historical
     CHECK (!A_is_hyper) ;
+    int32_t A_is_hyperw ;
+    OK (GxB_Matrix_Option_get_(A, GxB_IS_HYPER, &A_is_hyper)) ; // historical
 
     OK (GxB_Matrix_Option_set_(A, GxB_HYPER_SWITCH, GxB_ALWAYS_HYPER)) ;
     OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE)) ;
@@ -4455,11 +4457,34 @@ void mexFunction
         CHECK (fabs (bswitch [k] - bswitch2 [k]) < 1e-5) ;
     }
 
+    OK (GxB_Global_Option_set_FP64_ARRAY (GxB_BITMAP_SWITCH, NULL)) ;
+    OK (GxB_Global_Option_set_FP64_ARRAY (GxB_BITMAP_SWITCH, bswitch)) ;
+    OK (GxB_Global_Option_get_(GxB_BITMAP_SWITCH, bswitch2)) ;
+    for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+    {
+        CHECK (fabs (bswitch [k] - bswitch2 [k]) < 1e-5) ;
+    }
+
+    double bswitch3 [GxB_NBITMAP_SWITCH] ;
+    OK (GxB_Global_Option_get_FP64 (GxB_BITMAP_SWITCH, bswitch3)) ;
+    for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+    {
+        CHECK (bswitch2 [k] == bswitch3 [k]) ;
+    }
+
     OK (GxB_Global_Option_set_(GxB_BITMAP_SWITCH, NULL)) ;
     OK (GxB_Global_Option_get_(GxB_BITMAP_SWITCH, bswitch)) ;
     for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
     {
         printf ("default bswitch [%d] = %g\n", k, bswitch [k]) ;
+    }
+
+    OK (GxB_Global_Option_set_FP64_ARRAY (GxB_BITMAP_SWITCH, NULL)) ;
+    OK (GxB_Global_Option_get_ (GxB_BITMAP_SWITCH, bswitch2)) ;
+    OK (GxB_Global_Option_get_FP64 (GxB_BITMAP_SWITCH, bswitch3)) ;
+    for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
+    {
+        CHECK (bswitch2 [k] == bswitch3 [k]) ;
     }
 
     OK (GxB_Matrix_Option_set_(A, GxB_FORMAT, GxB_BY_COL)) ;
@@ -4483,15 +4508,42 @@ void mexFunction
     format = 99 ;
     OK (GxB_Global_Option_get_(GxB_FORMAT, &format)) ;
     CHECK (format == 0) ;
+    int32_t format2 = 999 ;
+    OK (GxB_Global_Option_get_INT32 (GxB_FORMAT, &format2)) ;
+    CHECK (format2 == 0) ;
+
+    OK (GxB_Global_Option_set_INT32 (GxB_FORMAT, GxB_BY_COL)) ;
+    OK (GxB_Global_Option_get_INT32 (GxB_FORMAT, &format2)) ;
+    CHECK (format2 == 1) ;
+
+    OK (GxB_Global_Option_set_INT32 (GxB_FORMAT, GxB_BY_ROW)) ;
+    OK (GxB_Global_Option_get_INT32 (GxB_FORMAT, &format2)) ;
+    CHECK (format2 == 0) ;
 
     OK (GxB_Global_Option_set_(GxB_HYPER_SWITCH, 77.33f)) ;
     OK (GxB_Global_Option_get_(GxB_HYPER_SWITCH, &hratio)) ;
     printf ("%g\n", hratio) ;
     CHECK (hratio == 77.33f) ;
+    hratio2 = 88 ;
+    OK (GxB_Global_Option_get_FP64 (GxB_HYPER_SWITCH, &hratio2)) ;
+    CHECK (hratio == hratio2) ;
+
+    OK (GxB_Global_Option_set_FP64 (GxB_HYPER_SWITCH, 88.22f)) ;
+    OK (GxB_Global_Option_get_FP64 (GxB_HYPER_SWITCH, &hratio)) ;
+    CHECK (hratio == 88.22f) ;
 
     OK (GxB_Global_Option_set_(GxB_HYPER_SWITCH, GxB_HYPER_DEFAULT)) ;
     OK (GxB_Global_Option_get_(GxB_HYPER_SWITCH, &hratio)) ;
     CHECK (hratio == GxB_HYPER_DEFAULT) ;
+
+    OK (GxB_Global_Option_set_(GxB_HYPER_SWITCH, 12.34f)) ;
+    OK (GxB_Global_Option_set_FP64 (GxB_HYPER_SWITCH, GxB_HYPER_DEFAULT)) ;
+    OK (GxB_Global_Option_get_FP64 (GxB_HYPER_SWITCH, &hratio)) ;
+    CHECK (hratio == GxB_HYPER_DEFAULT) ;
+
+    hratio2 = 22 ;
+    OK (GxB_Global_Option_get_FP64 (GxB_HYPER_SWITCH, &hratio2)) ;
+    CHECK (hratio == hratio2) ;
 
     expected = GrB_NULL_POINTER ;
     GrB_Matrix O_NULL = NULL ;
@@ -4499,6 +4551,7 @@ void mexFunction
 
     expected = GrB_NULL_POINTER ;
     ERR (GxB_Global_Option_get_(GxB_FORMAT, NULL)) ;
+    ERR (GxB_Global_Option_get_INT32 (GxB_FORMAT, NULL)) ;
 
     expected = GrB_NULL_POINTER ;
     ERR (GxB_Matrix_Option_get_(A, GxB_FORMAT, NULL)) ;
@@ -4517,9 +4570,31 @@ void mexFunction
     expected = GrB_NULL_POINTER ;
     ERR (GxB_Global_Option_get_(GxB_HYPER_SWITCH, NULL)) ;
     ERR (GxB_Global_Option_get_(GxB_BITMAP_SWITCH, NULL)) ;
+    ERR (GxB_Global_Option_get_FP64 (GxB_HYPER_SWITCH, NULL)) ;
+    ERR (GxB_Global_Option_get_FP64 (GxB_BITMAP_SWITCH, NULL)) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GxB_Global_Option_get_(-1, NULL)) ;
+
+    int32_t ignore2 = 999 ;
+    ERR (GxB_Global_Option_get_INT32 (-1, &ignore2)) ;
+    CHECK (ignore2 == 999) ;
+
+    int64_t ignore3 = 999 ;
+    ERR (GxB_Global_Option_get_INT64 (-1, &ignore3)) ;
+    CHECK (ignore3 == 999) ;
+
+    double ignore4 = 999 ;
+    ERR (GxB_Global_Option_get_FP64 (-1, &ignore4)) ;
+    CHECK (ignore4 == 999) ;
+
+    void *ignore5 = NULL ;
+    ERR (GxB_Global_Option_get_FUNCTION (-1, &ignore5)) ;
+    CHECK (ignore5 == NULL) ;
+
+    char *ignore6 = NULL ;
+    ERR (GxB_Global_Option_get_CHAR (-1, &ignore6)) ;
+    CHECK (ignore6 == NULL) ;
 
     ERR (GxB_Matrix_Option_get_(A, 999, NULL)) ;
     GrB_Matrix_error_(&err, A) ;
@@ -4530,9 +4605,11 @@ void mexFunction
     printf ("error expected:%s\n", err) ;
 
     ERR (GxB_Global_Option_set_(999, GxB_BY_ROW)) ;
+    ERR (GxB_Global_Option_set_INT32 (999, GxB_BY_ROW)) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GxB_Global_Option_set_(GxB_FORMAT, 9999)) ;
+    ERR (GxB_Global_Option_set_INT32 (GxB_FORMAT, 9999)) ;
 
     ERR1 (A, GxB_Matrix_Option_set_(A, 999, GxB_BY_ROW)) ;
     GrB_Matrix_error_(&err, A) ;
@@ -5188,6 +5265,14 @@ void mexFunction
     OK (GxB_Global_Option_set_(GxB_NTHREADS, 42)) ;
     OK (GxB_Global_Option_get_(GxB_NTHREADS, &nthreads)) ;
     CHECK (nthreads == 42) ;
+
+    OK (GxB_Global_Option_set_INT32 (GxB_NTHREADS, 44)) ;
+    OK (GxB_Global_Option_get_INT32 (GxB_NTHREADS, &nthreads)) ;
+    CHECK (nthreads == 44) ;
+
+    int32_t nthreads2 = 11 ;
+    OK (GxB_Global_Option_get_(GxB_NTHREADS, &nthreads2)) ;
+    CHECK (nthreads == nthreads2) ;
 
     OK (GxB_Desc_set (desc, GxB_NTHREADS, 43)) ;
     OK (GxB_Desc_get (desc, GxB_NTHREADS, &nthreads)) ;
