@@ -71,8 +71,6 @@ GrB_Info GB_init            // start up GraphBLAS
         return (GrB_INVALID_VALUE) ;
     }
 
-    GB_Global_GrB_init_called_set (true) ;
-
     if (mode < GrB_NONBLOCKING || mode > GxB_BLOCKING_GPU)
     { 
         // invalid mode
@@ -100,6 +98,8 @@ GrB_Info GB_init            // start up GraphBLAS
         // NULL
         return (GrB_NULL_POINTER) ;
     }
+
+    GB_Global_GrB_init_called_set (true) ;
 
     // GrB_init passes in the ANSI C11 malloc/calloc/realloc/free.
 
