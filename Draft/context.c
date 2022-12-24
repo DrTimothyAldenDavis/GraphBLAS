@@ -1,10 +1,12 @@
 
     // establish the default global context (default GPUs: find them).  Either:
-    LAGr_Init (GxB_NONBLOCKING,
+    LAGr_Init (GxB_NONBLOCKING_GPU,
         NULL, NULL, NULL, NULL,     // not needed: using Rapids malloc wrappers in GrB
         NULL) ;
     // and/or:
     GrB_init (GxB_NONBLOCKING_GPU) ;
+    GxB_init (GxB_NONBLOCKING_GPU, NULL, NULL, NULL, NULL) ;
+
 
     //------------------------------------------------------------------------------
     // creating a context:
@@ -19,12 +21,24 @@
     GxB_Context_new (&context) ;
     // also copied to GxB_Context_threadprivate
     GxB_Context_make_me_private (context) ;
-    GxB_Context_threadprivate = context ;
+    // does: GxB_Context_threadprivate = context ;
+
+    GxB_Context_get_my_private (&context) ;
+    // does: context = GxB_Context_threadprivate = context ;
 
     GxB_Context_set (context, NTHREADS, 4) ;
     GxB_Context_set (context, GPU, always) ;
     GxB_Context_set (context, WHICHGPUS, [2 3]) ;
     GxB_Context_clear (context) ;       // set defaults
+
+    GxB_set (desc1, context1) ;
+    GxB_set (desc2, context1) ;
+    GxB_set (desc3, context1) ;
+    GxB_set (desc4, context1) ;
+    GxB_set (desc5, context1) ;
+
+    GxB_set (desc1, GxB_CONTEXT, context1) ;
+    GxB_set (desc2, GxB_CONTEXT, context2) ;
 
     GxB_Context_make_me_private (context) ;
     GrB_mxm (... , NULL) ;              // use the threadprivate context
@@ -33,10 +47,7 @@
     GxB_Context_free (&context) ;
 
     GrB_mxm (C, M, accum, semiring, A, B, desc) ;
-    GrB_mxm (C, M, accum, semiring, A, B, f(desc,context)) ;
-
-    NO:
-    new_desc = GrB_func (desc, context) ;   // new_desc->kind = auto_destruct
+    // GrB_mxm (C, M, accum, semiring, A, B, f(desc,context)) ;
 
     GrB_set (A, GxB_CONTEXT, context) ;
 
@@ -55,8 +66,12 @@
         GrB_mxm (... , NULL) ;              // use the context
         GrB_mxm (... , desc) ;              // can use the context or descriptor
 
-        GrB_set (A, GxB_CONTEXT, context) ;
-        GrB_Matrix_dup (&C, A) ;            // no descriptor
+        // in MPI: move a matrix to another context
+        GrB_set (A, GxB_CONTEXT, context1) ;
+        // in MPI: move A to context2
+        GrB_set (A, GxB_CONTEXT, context2) ;
+
+        GrB_Matrix_dup (&C, A) ;            // no descriptor, use context of A
 
         GrB_set (C, GxB_CONTEXT, context) ;
         GrB_Matrix_build (C, ...) ;         // no descriptor
@@ -66,6 +81,8 @@
         C[k] = A[k]*B[k] on the kth gpu
 
         GrB_mxm (C [k], ... A [k], B [k], ..., desc)
+
+        GrB_mxm (C, M, accum, semiring, A, B, desc)
 
         GxB_Context_free (&context) ;
     }
@@ -82,7 +99,13 @@ precedence: from low to high:
     (3) if GrB_Descriptor exists and is not GxB_DEFAULT
             get it there instead
 
-    (4) if the matrix has a context, use it
+    (4) if the C matrix has a context, use it
+        but dup, sort uses A
+
+        each GrB* method:  precedence
+            mxm: use A, B, M, then C
+            dup: use C
+            sort: use input A, output P, output C
 
 //------------------------------------------------------------------------------
 
