@@ -92,7 +92,16 @@ for k1 = 1:length(types)
 
             if (ispc && test_contains (op.opname, 'asin') && test_contains (op.optype, 'complex'))
                 % casin and casinf are broken on Windows
-                fprintf (' (skipped)') ;
+                fprintf ('#') ;
+                continue ;
+            end
+
+            if (ismac && test_contains (op.opname, 'log') ...
+                && test_contains (op.optype, 'complex') ...
+                && (test_contains (atype, 'int') || isequal (atype, 'logical')))
+                % complex log2 on the mac has a slight O(eps) roundoff that
+                % results in a different result when typecasted to integer
+                fprintf ('#') ;
                 continue ;
             end
 

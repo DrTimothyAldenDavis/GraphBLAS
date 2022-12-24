@@ -45,7 +45,7 @@
 // B type:     double
 // B pattern?  0
 
-// BinaryOp:   cij = GxB_CMPLX (aij, bij)
+// BinaryOp:   cij = GB_cmplx (aij, bij)
 
 #define GB_ATYPE \
     double
@@ -90,17 +90,17 @@
 
 // cij = Ax [pA]
 #define GB_COPY_A_TO_C(cij,Ax,pA,A_iso) \
-    cij = GxB_CMPLX (GBX (Ax, pA, A_iso), 0)
+    cij = GB_cmplx (GBX (Ax, pA, A_iso), 0)
 
 // cij = Bx [pB]
 #define GB_COPY_B_TO_C(cij,Bx,pB,B_iso) \
-    cij = GxB_CMPLX (GBX (Bx, pB, B_iso), 0)
+    cij = GB_cmplx (GBX (Bx, pB, B_iso), 0)
 
 #define GB_CX(p) Cx [p]
 
 // binary operator
 #define GB_BINOP(z,x,y,i,j) \
-    z = GxB_CMPLX (x, y) ;
+    z = GB_cmplx (x, y) ;
 
 // true if the binop must be flipped
 #define GB_BINOP_FLIP \
@@ -472,7 +472,7 @@ GrB_Info GB (_bind1st__cmplx_fp64)
     {
         if (!GBB (Bb, p)) continue ;
         double bij = GBX (Bx, p, false) ;
-        Cx [p] = GxB_CMPLX (x, bij) ;
+        Cx [p] = GB_cmplx (x, bij) ;
     }
     return (GrB_SUCCESS) ;
     #endif
@@ -508,7 +508,7 @@ GrB_Info GB (_bind2nd__cmplx_fp64)
     {
         if (!GBB (Ab, p)) continue ;
         double aij = GBX (Ax, p, false) ;
-        Cx [p] = GxB_CMPLX (aij, y) ;
+        Cx [p] = GB_cmplx (aij, y) ;
     }
     return (GrB_SUCCESS) ;
     #endif
@@ -527,7 +527,7 @@ GrB_Info GB (_bind2nd__cmplx_fp64)
 #define GB_CAST_OP(pC,pA)                       \
 {                                               \
     double aij = GBX (Ax, pA, false) ;               \
-    Cx [pC] = GxB_CMPLX (x, aij) ;        \
+    Cx [pC] = GB_cmplx (x, aij) ;        \
 }
 
 GrB_Info GB (_bind1st_tran__cmplx_fp64)
@@ -571,7 +571,7 @@ GrB_Info GB (_bind1st_tran__cmplx_fp64)
 #define GB_CAST_OP(pC,pA)                       \
 {                                               \
     double aij = GBX (Ax, pA, false) ;               \
-    Cx [pC] = GxB_CMPLX (aij, y) ;        \
+    Cx [pC] = GB_cmplx (aij, y) ;        \
 }
 
 GrB_Info GB (_bind2nd_tran__cmplx_fp64)

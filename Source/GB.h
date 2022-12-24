@@ -57,6 +57,7 @@
 #include "GB_assert.h"
 #include "GB_opaque.h"
 #include "GB_static_header.h"
+#include "GB_cmplx.h"
 #include "GB_casting.h"
 #include "GB_math.h"
 #include "GB_bitwise.h"

@@ -21,7 +21,7 @@ if (isempty (identity))
     return
 end
 
-if (nargin < 4)
+if (nargin < 4 || isempty (tol))
     if (isfloat (identity))
         tol = 64*eps (class (identity)) ;   % not GB_spec_type.
     else

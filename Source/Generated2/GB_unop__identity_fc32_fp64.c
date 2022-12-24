@@ -23,7 +23,7 @@
 
 // C type:   GxB_FC32_t
 // A type:   double
-// cast:     GxB_FC32_t cij = GxB_CMPLXF ((float) (aij), 0)
+// cast:     GxB_FC32_t cij = GB_cmplxf ((float) (aij), 0)
 // unaryop:  cij = aij
 
 #define GB_ATYPE \
@@ -44,7 +44,7 @@
 
 // casting
 #define GB_CAST(z, aij) \
-    GxB_FC32_t z = GxB_CMPLXF ((float) (aij), 0) ;
+    GxB_FC32_t z = GB_cmplxf ((float) (aij), 0) ;
 
 // cij = op (aij)
 #define GB_CAST_OP(pC,pA)           \
@@ -52,7 +52,7 @@
     /* aij = Ax [pA] */             \
     double aij = Ax [pA] ;   \
     /* Cx [pC] = op (cast (aij)) */ \
-    GxB_FC32_t z = GxB_CMPLXF ((float) (aij), 0) ;               \
+    GxB_FC32_t z = GB_cmplxf ((float) (aij), 0) ;               \
     Cx [pC] = z ;        \
 }
 
@@ -84,7 +84,7 @@ GrB_Info GB (_unop_apply__identity_fc32_fp64)
         for (p = 0 ; p < anz ; p++)
         {
             double aij = Ax [p] ;
-            GxB_FC32_t z = GxB_CMPLXF ((float) (aij), 0) ;
+            GxB_FC32_t z = GB_cmplxf ((float) (aij), 0) ;
             Cx [p] = z ;
         }
     }
@@ -96,7 +96,7 @@ GrB_Info GB (_unop_apply__identity_fc32_fp64)
         {
             if (!Ab [p]) continue ;
             double aij = Ax [p] ;
-            GxB_FC32_t z = GxB_CMPLXF ((float) (aij), 0) ;
+            GxB_FC32_t z = GB_cmplxf ((float) (aij), 0) ;
             Cx [p] = z ;
         }
     }

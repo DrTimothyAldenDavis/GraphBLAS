@@ -23,7 +23,7 @@
 
 // C type:   GxB_FC32_t
 // A type:   GxB_FC64_t
-// cast:     GxB_FC32_t cij = GxB_CMPLXF ((float) creal (aij), (float) cimag (aij))
+// cast:     GxB_FC32_t cij = GB_cmplxf ((float) creal (aij), (float) cimag (aij))
 // unaryop:  cij = aij
 
 #define GB_ATYPE \
@@ -44,7 +44,7 @@
 
 // casting
 #define GB_CAST(z, aij) \
-    GxB_FC32_t z = GxB_CMPLXF ((float) creal (aij), (float) cimag (aij)) ;
+    GxB_FC32_t z = GB_cmplxf ((float) creal (aij), (float) cimag (aij)) ;
 
 // cij = op (aij)
 #define GB_CAST_OP(pC,pA)           \
@@ -52,7 +52,7 @@
     /* aij = Ax [pA] */             \
     GxB_FC64_t aij = Ax [pA] ;   \
     /* Cx [pC] = op (cast (aij)) */ \
-    GxB_FC32_t z = GxB_CMPLXF ((float) creal (aij), (float) cimag (aij)) ;               \
+    GxB_FC32_t z = GB_cmplxf ((float) creal (aij), (float) cimag (aij)) ;               \
     Cx [pC] = z ;        \
 }
 
@@ -84,7 +84,7 @@ GrB_Info GB (_unop_apply__identity_fc32_fc64)
         for (p = 0 ; p < anz ; p++)
         {
             GxB_FC64_t aij = Ax [p] ;
-            GxB_FC32_t z = GxB_CMPLXF ((float) creal (aij), (float) cimag (aij)) ;
+            GxB_FC32_t z = GB_cmplxf ((float) creal (aij), (float) cimag (aij)) ;
             Cx [p] = z ;
         }
     }
@@ -96,7 +96,7 @@ GrB_Info GB (_unop_apply__identity_fc32_fc64)
         {
             if (!Ab [p]) continue ;
             GxB_FC64_t aij = Ax [p] ;
-            GxB_FC32_t z = GxB_CMPLXF ((float) creal (aij), (float) cimag (aij)) ;
+            GxB_FC32_t z = GB_cmplxf ((float) creal (aij), (float) cimag (aij)) ;
             Cx [p] = z ;
         }
     }

@@ -182,9 +182,9 @@ fprintf (f, 'define(`GB_ctype_ignore_overflow'', `%d'')\n', ztype_ignore_overflo
 % simple typecast from 1 (or 2) real scalars to any other type
 switch (ztype)
     case { 'GxB_FC32_t' }
-        fprintf (f, 'define(`GB_ctype_cast'', `GxB_CMPLXF (((float) $1), ((float) $2))'')\n') ;
+        fprintf (f, 'define(`GB_ctype_cast'', `GB_cmplxf (((float) $1), ((float) $2))'')\n') ;
     case { 'GxB_FC64_t' }
-        fprintf (f, 'define(`GB_ctype_cast'', `GxB_CMPLX (((double) $1), ((double) $2))'')\n') ;
+        fprintf (f, 'define(`GB_ctype_cast'', `GB_cmplx (((double) $1), ((double) $2))'')\n') ;
     case { 'iso' }
         fprintf (f, 'define(`GB_ctype_cast'', `'')\n') ;
     otherwise
@@ -194,9 +194,9 @@ end
 % simple typecast from 1 (or 2) real scalars to any other type
 switch (xytype)
     case { 'GxB_FC32_t' }
-        fprintf (f, 'define(`GB_atype_cast'', `GxB_CMPLXF (((float) $1), ((float) $2))'')\n') ;
+        fprintf (f, 'define(`GB_atype_cast'', `GB_cmplxf (((float) $1), ((float) $2))'')\n') ;
     case { 'GxB_FC64_t' }
-        fprintf (f, 'define(`GB_atype_cast'', `GxB_CMPLX (((double) $1), ((double) $2))'')\n') ;
+        fprintf (f, 'define(`GB_atype_cast'', `GB_cmplx (((double) $1), ((double) $2))'')\n') ;
     case { 'any type' }
         fprintf (f, 'define(`GB_atype_cast'', `'')\n') ;
     otherwise

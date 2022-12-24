@@ -140,23 +140,23 @@
 
 #define GB_GUARD_GB_FC32_ISEQ_DEFINED
 #define GB_FC32_ISEQ_DEFN                                                   \
-       "GB_FC32_iseq(x,y) GxB_CMPLXF ((float)  GB_FC32_eq (x,y), 0)"
-#define GB_FC32_iseq(x,y) GxB_CMPLXF ((float)  GB_FC32_eq (x,y), 0)
+       "GB_FC32_iseq(x,y) GB_cmplxf ((float)  GB_FC32_eq (x,y), 0)"
+#define GB_FC32_iseq(x,y) GB_cmplxf ((float)  GB_FC32_eq (x,y), 0)
 
 #define GB_GUARD_GB_FC64_ISEQ_DEFINED
 #define GB_FC64_ISEQ_DEFN                                                   \
-       "GB_FC64_iseq(x,y) GxB_CMPLX  ((double) GB_FC64_eq (x,y), 0)"
-#define GB_FC64_iseq(x,y) GxB_CMPLX  ((double) GB_FC64_eq (x,y), 0)
+       "GB_FC64_iseq(x,y) GB_cmplx  ((double) GB_FC64_eq (x,y), 0)"
+#define GB_FC64_iseq(x,y) GB_cmplx  ((double) GB_FC64_eq (x,y), 0)
 
 #define GB_GUARD_GB_FC32_ISNE_DEFINED
 #define GB_FC32_ISNE_DEFN                                                   \
-       "GB_FC32_isne(x,y) GxB_CMPLXF ((float)  GB_FC32_ne (x,y), 0)"
-#define GB_FC32_isne(x,y) GxB_CMPLXF ((float)  GB_FC32_ne (x,y), 0)
+       "GB_FC32_isne(x,y) GB_cmplxf ((float)  GB_FC32_ne (x,y), 0)"
+#define GB_FC32_isne(x,y) GB_cmplxf ((float)  GB_FC32_ne (x,y), 0)
 
 #define GB_GUARD_GB_FC64_ISNE_DEFINED
 #define GB_FC64_ISNE_DEFN                                                   \
-       "GB_FC64_isne(x,y) GxB_CMPLX  ((double) GB_FC64_ne (x,y), 0)"
-#define GB_FC64_isne(x,y) GxB_CMPLX  ((double) GB_FC64_ne (x,y), 0)
+       "GB_FC64_isne(x,y) GB_cmplx  ((double) GB_FC64_ne (x,y), 0)"
+#define GB_FC64_isne(x,y) GB_cmplx  ((double) GB_FC64_ne (x,y), 0)
 
 #define GB_GUARD_GB_FC32_EQ0_DEFINED
 #define GB_FC32_EQ0_DEFN                                                    \
@@ -497,10 +497,11 @@
 // complex division
 //------------------------------------------------------------------------------
 
-#if GB_COMPILER_MSC
+#if GB_COMPILER_MSC || defined ( __APPLE__ )
 
-    // complex division for MS Visual Studio, which does not support complex
-    // operations.  Three cases are from ACM Algo 116, R. L. Smith, 1962.
+    // complex division for MS Visual Studio (which does not support complex
+    // operations) and Apple Silicon (which is inaccurate, at least in gcc).
+    // Three cases below are from ACM Algo 116, R. L. Smith, 1962.
 
     inline
     GxB_FC64_t GB_FC64_div (GxB_FC64_t x, GxB_FC64_t y)
@@ -514,33 +515,33 @@
         if (yi_class == FP_ZERO)
         {
             // (zr,zi) = (xr,xi) / (yr,0)
-            return (GxB_CMPLX (xr / yr, cimag (x) / yr)) ;
+            return (GB_cmplx (xr / yr, cimag (x) / yr)) ;
         }
         else if (yr_class == FP_ZERO)
         {
             // (zr,zi) = (xr,xi) / (0,yi) = (xi,-xr) / (yi,0)
-            return (GxB_CMPLX (xi / yi, -xr / yi)) ;
+            return (GB_cmplx (xi / yi, -xr / yi)) ;
         }
         else if (yi_class == FP_INFINITE && yr_class == FP_INFINITE)
         {
             // Using Smith's method for a very special case
             double r = (signbit (yr) == signbit (yi)) ? (1) : (-1) ;
             double d = yr + r * yi ;
-            return (GxB_CMPLX ((xr + xi * r) / d, (xi - xr * r) / d)) ;
+            return (GB_cmplx ((xr + xi * r) / d, (xi - xr * r) / d)) ;
         }
         else if (fabs (yr) >= fabs (yi))
         {
             // Smith's method (1st case)
             double r = yi / yr ;
             double d = yr + r * yi ;
-            return (GxB_CMPLX ((xr + xi * r) / d, (xi - xr * r) / d)) ;
+            return (GB_cmplx ((xr + xi * r) / d, (xi - xr * r) / d)) ;
         }
         else
         {
             // Smith's method (2nd case)
             double r = yr / yi ;
             double d = r * yr + yi ;
-            return (GxB_CMPLX ((xr * r + xi) / d, (xi * r - xr) / d)) ;
+            return (GB_cmplx ((xr * r + xi) / d, (xi * r - xr) / d)) ;
         }
     }
 
@@ -555,29 +556,29 @@
    "    int yi_class = fpclassify (yi) ;                                \n" \
    "    if (yi_class == FP_ZERO)                                        \n" \
    "    {                                                               \n" \
-   "        return (GxB_CMPLX (xr / yr, xi / yr)) ;                     \n" \
+   "        return (GB_cmplx (xr / yr, xi / yr)) ;                      \n" \
    "    }                                                               \n" \
    "    else if (yr_class == FP_ZERO)                                   \n" \
    "    {                                                               \n" \
-   "        return (GxB_CMPLX (xi / yi, -xr / yi)) ;                    \n" \
+   "        return (GB_cmplx (xi / yi, -xr / yi)) ;                     \n" \
    "    }                                                               \n" \
    "    else if (yi_class == FP_INFINITE && yr_class == FP_INFINITE)    \n" \
    "    {                                                               \n" \
    "        double r = (signbit (yr) == signbit (yi)) ? (1) : (-1) ;    \n" \
    "        double d = yr + r * yi ;                                    \n" \
-   "        return (GxB_CMPLX ((xr + xi * r) / d, (xi - xr * r) / d)) ; \n" \
+   "        return (GB_cmplx ((xr + xi * r) / d, (xi - xr * r) / d)) ;  \n" \
    "    }                                                               \n" \
    "    else if (fabs (yr) >= fabs (yi))                                \n" \
    "    {                                                               \n" \
    "        double r = yi / yr ;                                        \n" \
    "        double d = yr + r * yi ;                                    \n" \
-   "        return (GxB_CMPLX ((xr + xi * r) / d, (xi - xr * r) / d)) ; \n" \
+   "        return (GB_cmplx ((xr + xi * r) / d, (xi - xr * r) / d)) ;  \n" \
    "    }                                                               \n" \
    "    else                                                            \n" \
    "    {                                                               \n" \
    "        double r = yr / yi ;                                        \n" \
    "        double d = r * yr + yi ;                                    \n" \
-   "        return (GxB_CMPLX ((xr * r + xi) / d, (xi * r - xr) / d)) ; \n" \
+   "        return (GB_cmplx ((xr * r + xi) / d, (xi * r - xr) / d)) ;  \n" \
    "    }                                                               \n" \
    "}"
 
@@ -590,8 +591,8 @@
         double xi = (double) cimagf (x) ;
         double yr = (double) crealf (y) ;
         double yi = (double) cimagf (y) ;
-        GxB_FC64_t zz = GB_FC64_div (GxB_CMPLX (xr, xi), GxB_CMPLX (yr, yi)) ;
-        return (GxB_CMPLXF ((float) creal (zz), (float) cimag (zz))) ;
+        GxB_FC64_t zz = GB_FC64_div (GB_cmplx (xr, xi), GB_cmplx (yr, yi)) ;
+        return (GB_cmplxf ((float) creal (zz), (float) cimag (zz))) ;
     }
 
    #define GB_FC32_DIV_DEFN                                                 \
@@ -602,8 +603,8 @@
    "    double yr = (double) crealf (y) ;                               \n" \
    "    double yi = (double) cimagf (y) ;                               \n" \
    "    GxB_FC64_t zz ;                                                 \n" \
-   "    zz = GB_FC64_div (GxB_CMPLX (xr, xi), GxB_CMPLX (yr, yi)) ;     \n" \
-   "    return (GxB_CMPLXF ((float) creal (zz), (float) cimag (zz))) ;  \n" \
+   "    zz = GB_FC64_div (GB_cmplx (xr, xi), GB_cmplx (yr, yi)) ;       \n" \
+   "    return (GB_cmplxf ((float) creal (zz), (float) cimag (zz))) ;   \n" \
    "}"
 
 #else
@@ -735,14 +736,14 @@
                 yr_class == FP_INFINITE || yr == truncf (yr))
             {
                 // z is real if x >= 0, or if y is an integer, NaN, or Inf
-                return (GxB_CMPLXF (GB_powf (xr, yr), 0)) ;
+                return (GB_cmplxf (GB_powf (xr, yr), 0)) ;
             }
         }
         if (xr_class == FP_NAN || xi_class == FP_NAN ||
             yr_class == FP_NAN || yi_class == FP_NAN)
         {
             // z is (nan,nan) if any part of x or y are nan
-            return (GxB_CMPLXF (NAN, NAN)) ;
+            return (GB_cmplxf (NAN, NAN)) ;
         }
         if (yr_class == FP_ZERO && yi_class == FP_ZERO)
         {
@@ -767,13 +768,13 @@
    "        if (xr >= 0 || yr_class == FP_NAN ||                        \n" \
    "            yr_class == FP_INFINITE || yr == truncf (yr))           \n" \
    "        {                                                           \n" \
-   "            return (GxB_CMPLXF (GB_powf (xr, yr), 0)) ;             \n" \
+   "            return (GB_cmplxf (GB_powf (xr, yr), 0)) ;              \n" \
    "        }                                                           \n" \
    "    }                                                               \n" \
    "    if (xr_class == FP_NAN || xi_class == FP_NAN ||                 \n" \
    "        yr_class == FP_NAN || yi_class == FP_NAN)                   \n" \
    "    {                                                               \n" \
-   "        return (GxB_CMPLXF (NAN, NAN)) ;                            \n" \
+   "        return (GB_cmplxf (NAN, NAN)) ;                             \n" \
    "    }                                                               \n" \
    "    if (yr_class == FP_ZERO && yi_class == FP_ZERO)                 \n" \
    "    {                                                               \n" \
@@ -798,14 +799,14 @@
                 yr_class == FP_INFINITE || yr == trunc (yr))
             {
                 // z is real if x >= 0, or if y is an integer, NaN, or Inf
-                return (GxB_CMPLX (GB_pow (xr, yr), 0)) ;
+                return (GB_cmplx (GB_pow (xr, yr), 0)) ;
             }
         }
         if (xr_class == FP_NAN || xi_class == FP_NAN ||
             yr_class == FP_NAN || yi_class == FP_NAN)
         {
             // z is (nan,nan) if any part of x or y are nan
-            return (GxB_CMPLX (NAN, NAN)) ;
+            return (GB_cmplx (NAN, NAN)) ;
         }
         if (yr_class == FP_ZERO && yi_class == FP_ZERO)
         {
@@ -830,13 +831,13 @@
    "        if (xr >= 0 || yr_class == FP_NAN ||                        \n" \
    "            yr_class == FP_INFINITE || yr == trunc (yr))            \n" \
    "        {                                                           \n" \
-   "            return (GxB_CMPLX (GB_pow (xr, yr), 0)) ;               \n" \
+   "            return (GB_cmplx (GB_pow (xr, yr), 0)) ;                \n" \
    "        }                                                           \n" \
    "    }                                                               \n" \
    "    if (xr_class == FP_NAN || xi_class == FP_NAN ||                 \n" \
    "        yr_class == FP_NAN || yi_class == FP_NAN)                   \n" \
    "    {                                                               \n" \
-   "        return (GxB_CMPLX (NAN, NAN)) ;                             \n" \
+   "        return (GB_cmplx (NAN, NAN)) ;                              \n" \
    "    }                                                               \n" \
    "    if (yr_class == FP_ZERO && yi_class == FP_ZERO)                 \n" \
    "    {                                                               \n" \
@@ -1003,14 +1004,14 @@ inline GxB_FC32_t GB_csignumf (GxB_FC32_t x)
 {
     if (crealf (x) == 0 && cimagf (x) == 0) return (GxB_CMPLXF (0,0)) ;
     float y = cabsf (x) ;
-    return (GxB_CMPLXF (crealf (x) / y, cimagf (x) / y)) ;
+    return (GB_cmplxf (crealf (x) / y, cimagf (x) / y)) ;
 }
 
 inline GxB_FC64_t GB_csignum (GxB_FC64_t x)
 {
     if (creal (x) == 0 && cimag (x) == 0) return (GxB_CMPLX (0,0)) ;
     double y = cabs (x) ;
-    return (GxB_CMPLX (creal (x) / y, cimag (x) / y)) ;
+    return (GB_cmplx (creal (x) / y, cimag (x) / y)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1028,7 +1029,7 @@ inline GxB_FC64_t GB_csignum (GxB_FC64_t x)
 
 inline GxB_FC32_t GB_cceilf (GxB_FC32_t x)
 {
-    return (GxB_CMPLXF (ceilf (crealf (x)), ceilf (cimagf (x)))) ;
+    return (GB_cmplxf (ceilf (crealf (x)), ceilf (cimagf (x)))) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1037,7 +1038,7 @@ inline GxB_FC32_t GB_cceilf (GxB_FC32_t x)
 
 inline GxB_FC64_t GB_cceil (GxB_FC64_t x)
 {
-    return (GxB_CMPLX (ceil (creal (x)), ceil (cimag (x)))) ;
+    return (GB_cmplx (ceil (creal (x)), ceil (cimag (x)))) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1046,7 +1047,7 @@ inline GxB_FC64_t GB_cceil (GxB_FC64_t x)
 
 inline GxB_FC32_t GB_cfloorf (GxB_FC32_t x)
 {
-    return (GxB_CMPLXF (floorf (crealf (x)), floorf (cimagf (x)))) ;
+    return (GB_cmplxf (floorf (crealf (x)), floorf (cimagf (x)))) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1055,7 +1056,7 @@ inline GxB_FC32_t GB_cfloorf (GxB_FC32_t x)
 
 inline GxB_FC64_t GB_cfloor (GxB_FC64_t x)
 {
-    return (GxB_CMPLX (floor (creal (x)), floor (cimag (x)))) ;
+    return (GB_cmplx (floor (creal (x)), floor (cimag (x)))) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1064,7 +1065,7 @@ inline GxB_FC64_t GB_cfloor (GxB_FC64_t x)
 
 inline GxB_FC32_t GB_croundf (GxB_FC32_t x)
 {
-    return (GxB_CMPLXF (roundf (crealf (x)), roundf (cimagf (x)))) ;
+    return (GB_cmplxf (roundf (crealf (x)), roundf (cimagf (x)))) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1073,7 +1074,7 @@ inline GxB_FC32_t GB_croundf (GxB_FC32_t x)
 
 inline GxB_FC64_t GB_cround (GxB_FC64_t x)
 {
-    return (GxB_CMPLX (round (creal (x)), round (cimag (x)))) ;
+    return (GB_cmplx (round (creal (x)), round (cimag (x)))) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1082,7 +1083,7 @@ inline GxB_FC64_t GB_cround (GxB_FC64_t x)
 
 inline GxB_FC32_t GB_ctruncf (GxB_FC32_t x)
 {
-    return (GxB_CMPLXF (truncf (crealf (x)), truncf (cimagf (x)))) ;
+    return (GB_cmplxf (truncf (crealf (x)), truncf (cimagf (x)))) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1091,7 +1092,7 @@ inline GxB_FC32_t GB_ctruncf (GxB_FC32_t x)
 
 inline GxB_FC64_t GB_ctrunc (GxB_FC64_t x)
 {
-    return (GxB_CMPLX (trunc (creal (x)), trunc (cimag (x)))) ;
+    return (GB_cmplx (trunc (creal (x)), trunc (cimag (x)))) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1103,7 +1104,7 @@ inline GxB_FC32_t GB_cexp2f (GxB_FC32_t x)
     if (fpclassify (cimagf (x)) == FP_ZERO)
     {
         // x is real, use exp2f
-        return (GxB_CMPLXF (exp2f (crealf (x)), 0)) ;
+        return (GB_cmplxf (exp2f (crealf (x)), 0)) ;
     }
     return (GB_cpowf (GxB_CMPLXF (2,0), x)) ;     // z = 2^x
 }
@@ -1117,7 +1118,7 @@ inline GxB_FC64_t GB_cexp2 (GxB_FC64_t x)
     if (fpclassify (cimag (x)) == FP_ZERO)
     {
         // x is real, use exp2
-        return (GxB_CMPLX (exp2 (creal (x)), 0)) ;
+        return (GB_cmplx (exp2 (creal (x)), 0)) ;
     }
     return (GB_cpow (GxB_CMPLX (2,0), x)) ;      // z = 2^x
 }
@@ -1131,7 +1132,7 @@ inline GxB_FC64_t GB_cexpm1 (GxB_FC64_t x)
     // FUTURE: GB_cexpm1 is not accurate
     // z = cexp (x) - 1
     GxB_FC64_t z = cexp (x) ;
-    return (GxB_CMPLX (creal (z) - 1, cimag (z))) ;
+    return (GB_cmplx (creal (z) - 1, cimag (z))) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1141,9 +1142,9 @@ inline GxB_FC64_t GB_cexpm1 (GxB_FC64_t x)
 inline GxB_FC32_t GB_cexpm1f (GxB_FC32_t x)
 {
     // typecast to double and use GB_cexpm1
-    GxB_FC64_t z = GxB_CMPLX ((double) crealf (x), (double) cimagf (x)) ;
+    GxB_FC64_t z = GB_cmplx ((double) crealf (x), (double) cimagf (x)) ;
     z = GB_cexpm1 (z) ;
-    return (GxB_CMPLXF ((float) creal (z), (float) cimag (z))) ;
+    return (GB_cmplxf ((float) creal (z), (float) cimag (z))) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1154,7 +1155,7 @@ inline GxB_FC64_t GB_clog1p (GxB_FC64_t x)
 {
     // FUTURE: GB_clog1p is not accurate
     // z = clog (1+x)
-    return (clog (GxB_CMPLX (creal (x) + 1, cimag (x)))) ;
+    return (clog (GB_cmplx (creal (x) + 1, cimag (x)))) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1164,9 +1165,9 @@ inline GxB_FC64_t GB_clog1p (GxB_FC64_t x)
 inline GxB_FC32_t GB_clog1pf (GxB_FC32_t x)
 {
     // typecast to double and use GB_clog1p
-    GxB_FC64_t z = GxB_CMPLX ((double) crealf (x), (double) cimagf (x)) ;
+    GxB_FC64_t z = GB_cmplx ((double) crealf (x), (double) cimagf (x)) ;
     z = GB_clog1p (z) ;
-    return (GxB_CMPLXF ((float) creal (z), (float) cimag (z))) ;
+    return (GB_cmplxf ((float) creal (z), (float) cimag (z))) ;
 }
 
 //------------------------------------------------------------------------------

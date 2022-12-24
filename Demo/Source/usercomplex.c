@@ -491,13 +491,15 @@ GrB_Semiring Complex_plus_times = NULL ;
 
  void complex_complex (GxB_FC64_t *z, const double *x, const double *y)
  {
-    (*z) = GxB_CMPLX (*x,*y) ;
+    ((double *) z) [0] = (*x) ;
+    ((double *) z) [1] = (*y) ;
  }
 
 #define COMPLEX_COMPLEX                                                       \
 "void complex_complex (GxB_FC64_t *z, const double *x, const double *y)   \n" \
 "{                                                                        \n" \
-"   (*z) = GxB_CMPLX (*x,*y) ;                                            \n" \
+"   ((double *) z) [0] = (*x) ;                                           \n" \
+"   ((double *) z) [1] = (*y) ;                                           \n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -561,13 +563,15 @@ GrB_Semiring Complex_plus_times = NULL ;
 
  void complex_abs (GxB_FC64_t *z, const GxB_FC64_t *x)
  {
-    (*z) = GxB_CMPLX (cabs (*x), 0) ;
+    ((double *) z) [0] = cabs (*x) ;
+    ((double *) z) [1] = 0 ;
  }
 
 #define COMPLEX_ABS                                                           \
 "void complex_abs (GxB_FC64_t *z, const GxB_FC64_t *x)                    \n" \
 "{                                                                        \n" \
-"   (*z) = GxB_CMPLX (cabs (*x), 0) ;                                     \n" \
+"   ((double *) z) [0] = cabs (*x) ;                                      \n" \
+"   ((double *) z) [1] = 0 ;                                              \n" \
 "}"
 
  void complex_not (GxB_FC64_t *z, const GxB_FC64_t *x)
@@ -637,24 +641,28 @@ GrB_Semiring Complex_plus_times = NULL ;
 
  void complex_complex_real (GxB_FC64_t *z, const double *x)
  {
-    (*z) = GxB_CMPLX (*x, 0) ;
+    ((double *) z) [0] = (*x) ;
+    ((double *) z) [1] = 0 ;
  }
 
 #define COMPLEX_COMPLEX_REAL                                                  \
 "void complex_complex_real (GxB_FC64_t *z, const double *x)               \n" \
 "{                                                                        \n" \
-"   (*z) = GxB_CMPLX (*x, 0) ;                                            \n" \
+"   ((double *) z) [0] = (*x) ;                                           \n" \
+"   ((double *) z) [1] = 0 ;                                              \n" \
 "}"
 
  void complex_complex_imag (GxB_FC64_t *z, const double *x)
  {
-    (*z) = GxB_CMPLX (0, *x) ;
+    ((double *) z) [0] = 0 ;
+    ((double *) z) [1] = (*x) ;
  }
 
 #define COMPLEX_COMPLEX_IMAG                                                  \
 "void complex_complex_imag (GxB_FC64_t *z, const double *x)               \n" \
 "{                                                                        \n" \
-"   (*z) = GxB_CMPLX (0, *x) ;                                            \n" \
+"   ((double *) z) [0] = 0 ;                                              \n" \
+"   ((double *) z) [1] = (*x) ;                                           \n" \
 "}"
 
 //------------------------------------------------------------------------------

@@ -42,6 +42,7 @@ for k1 = 1:length (types)
     fprintf ('%s ', type) ;
 
     A.class = type ;
+    id = test_cast (0, type) ;
 
     for k3 = 1:3
 
@@ -133,7 +134,7 @@ for k1 = 1:length (types)
         for k2 = 1:length(binops)
             binop = binops {k2}  ;
 
-            tol = 0 ;
+            tol = [ ] ;
             switch (binop)
                 case { 'pow', 'atan2', 'hypot', 'remainder' }
                     A.matrix = Amat2 ;
@@ -169,7 +170,7 @@ for k1 = 1:length (types)
 
             C0 = GB_spec_assign (C, [ ], accum, A, [ ], [ ], [ ], false) ;
             C1 = GB_mex_assign  (C, [ ], accum, A, [ ], [ ], [ ]) ;
-            GB_spec_compare (C0, C1, 0, tol) ;
+            GB_spec_compare (C0, C1, id, tol) ;
 
             %---------------------------------------
             % C += B where B is sparse
@@ -177,7 +178,7 @@ for k1 = 1:length (types)
 
             C0 = GB_spec_assign (C, [ ], accum, B, [ ], [ ], [ ], false) ;
             C1 = GB_mex_assign  (C, [ ], accum, B, [ ], [ ], [ ]) ;
-            GB_spec_compare (C0, C1, 0, tol) ;
+            GB_spec_compare (C0, C1, id, tol) ;
 
             %---------------------------------------
             % C += x
@@ -185,7 +186,7 @@ for k1 = 1:length (types)
 
             C0 = GB_spec_assign (C, [ ], accum, X, [ ], [ ], [ ], true) ;
             C1 = GB_mex_assign  (C, [ ], accum, X, [ ], [ ], [ ]) ;
-            GB_spec_compare (C0, C1, 0, tol) ;
+            GB_spec_compare (C0, C1, id, tol) ;
 
             %---------------------------------------
             % C<replace> += x
@@ -193,7 +194,7 @@ for k1 = 1:length (types)
 
             C0 = GB_spec_assign (C, [ ], accum, X, [ ], [ ], drep, true) ;
             C1 = GB_mex_subassign  (C, [ ], accum, X, [ ], [ ], drep) ;
-            GB_spec_compare (C0, C1, 0, tol) ;
+            GB_spec_compare (C0, C1, id, tol) ;
 
         end
     end

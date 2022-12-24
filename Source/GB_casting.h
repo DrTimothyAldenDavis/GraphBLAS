@@ -498,7 +498,7 @@ GB_CAST_FUNCTION (double    , GxB_FC64_t)
 //------------------------------------------------------------------------------
 
 #undef  GB_CAST
-#define GB_CAST(ztype,x) GxB_CMPLXF ((float) x, (float) 0)
+#define GB_CAST(ztype,x) GB_cmplxf ((float) x, (float) 0)
 GB_CAST_FUNCTION (GxB_FC32_t, bool      )
 GB_CAST_FUNCTION (GxB_FC32_t, int8_t    )
 GB_CAST_FUNCTION (GxB_FC32_t, int16_t   )
@@ -514,7 +514,7 @@ GB_CAST_FUNCTION (GxB_FC32_t, double    )
 #define GB_CAST(ztype,x) x
 GB_CAST_FUNCTION (GxB_FC32_t, GxB_FC32_t)
 #undef  GB_CAST
-#define GB_CAST(ztype,x) GxB_CMPLXF ((float) creal (x), (float) cimag (x))
+#define GB_CAST(ztype,x) GB_cmplxf ((float) creal (x), (float) cimag (x))
 GB_CAST_FUNCTION (GxB_FC32_t, GxB_FC64_t)
 
 //------------------------------------------------------------------------------
@@ -522,7 +522,7 @@ GB_CAST_FUNCTION (GxB_FC32_t, GxB_FC64_t)
 //------------------------------------------------------------------------------
 
 #undef  GB_CAST
-#define GB_CAST(ztype,x) GxB_CMPLX ((double) x, (double) 0)
+#define GB_CAST(ztype,x) GB_cmplx ((double) x, (double) 0)
 GB_CAST_FUNCTION (GxB_FC64_t, bool      )
 GB_CAST_FUNCTION (GxB_FC64_t, int8_t    )
 GB_CAST_FUNCTION (GxB_FC64_t, int16_t   )
@@ -535,7 +535,7 @@ GB_CAST_FUNCTION (GxB_FC64_t, uint64_t  )
 GB_CAST_FUNCTION (GxB_FC64_t, float     )
 GB_CAST_FUNCTION (GxB_FC64_t, double    )
 #undef  GB_CAST
-#define GB_CAST(ztype,x) GxB_CMPLX ((double) crealf (x), (double) cimagf (x))
+#define GB_CAST(ztype,x) GB_cmplx ((double) crealf (x), (double) cimagf (x))
 GB_CAST_FUNCTION (GxB_FC64_t, GxB_FC32_t)
 #undef  GB_CAST
 #define GB_CAST(ztype,x) x

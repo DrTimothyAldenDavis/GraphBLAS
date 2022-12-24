@@ -116,11 +116,11 @@
 
 // cast from a real scalar (or 2, if C is complex) to the type of C
 #define GB_CTYPE_CAST(x,y) \
-    GxB_CMPLX (((double) x), ((double) y))
+    GB_cmplx (((double) x), ((double) y))
 
 // cast from a real scalar (or 2, if A is complex) to the type of A
 #define GB_ATYPE_CAST(x,y) \
-    GxB_CMPLX (((double) x), ((double) y))
+    GB_cmplx (((double) x), ((double) y))
 
 // multiply-add
 #define GB_MULTADD(z, x, y, i, k, j) \
