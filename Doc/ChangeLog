@@ -1,3 +1,7 @@
+Version 7.4.1, Dec FIXME, 2022
+
+    * global free pool: reduced parallel contention
+
 Version 7.4.0, Dec 23, 2022
 
     * added non-va_arg methods: va_arg-based GxB_get/set methods are ANSI C11
