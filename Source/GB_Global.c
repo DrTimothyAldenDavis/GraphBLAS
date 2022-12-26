@@ -645,6 +645,7 @@ void GB_Global_memtable_add (void *p, size_t size)
         GB_ATOMIC_UPDATE
         GB_Global.nmalloc++ ;
     }
+
     #ifdef GB_DEBUG
     bool fail = false ;
     #ifdef GB_MEMDUMP
@@ -680,6 +681,7 @@ void GB_Global_memtable_add (void *p, size_t size)
     GB_Global_memtable_dump ( ) ;
     #endif
     #endif
+
 }
 
 // get the size of a malloc'd block
@@ -687,6 +689,7 @@ GB_PUBLIC
 size_t GB_Global_memtable_size (void *p)
 {
     size_t size = 0 ;
+
     #ifdef GB_DEBUG
     if (p == NULL) return (0) ;
     bool found = false ;
@@ -710,6 +713,7 @@ size_t GB_Global_memtable_size (void *p)
         ASSERT (0) ;
     }
     #endif
+
     return (size) ;
 }
 
@@ -718,6 +722,7 @@ GB_PUBLIC
 bool GB_Global_memtable_find (void *p)
 {
     bool found = false ;
+
     #ifdef GB_DEBUG
     if (p == NULL) return (false) ;
     #pragma omp critical(GB_memtable)
@@ -733,6 +738,7 @@ bool GB_Global_memtable_find (void *p)
         }
     }
     #endif
+
     return (found) ;
 }
 
@@ -746,6 +752,7 @@ void GB_Global_memtable_remove (void *p)
         GB_ATOMIC_UPDATE
         GB_Global.nmalloc-- ;
     }
+
     #ifdef GB_DEBUG
     bool found = false ;
     #ifdef GB_MEMDUMP
@@ -777,6 +784,7 @@ void GB_Global_memtable_remove (void *p)
     GB_Global_memtable_dump ( ) ;
     #endif
     #endif
+
 }
 
 //------------------------------------------------------------------------------
