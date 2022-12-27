@@ -55,7 +55,7 @@ typedef struct
     // malloc/calloc/realloc/free: memory management functions
     //--------------------------------------------------------------------------
 
-    // All threads must use the same malloc/calloc/realloc/free functions.
+    // All threads must use the same malloc/realloc/free functions.
     // They default to the ANSI C11 functions, but can be defined by GxB_init.
 
     void * (* malloc_function  ) (size_t)         ;     // required
@@ -646,6 +646,7 @@ void GB_Global_memtable_add (void *p, size_t size)
         GB_ATOMIC_UPDATE
         GB_Global.nmalloc++ ;
     }
+
     #ifdef GB_DEBUG
     bool fail = false ;
     #ifdef GB_MEMDUMP
@@ -681,6 +682,7 @@ void GB_Global_memtable_add (void *p, size_t size)
     GB_Global_memtable_dump ( ) ;
     #endif
     #endif
+
 }
 
 // get the size of a malloc'd block
@@ -688,6 +690,7 @@ GB_PUBLIC
 size_t GB_Global_memtable_size (void *p)
 {
     size_t size = 0 ;
+
     #ifdef GB_DEBUG
     if (p == NULL) return (0) ;
     bool found = false ;
@@ -711,6 +714,7 @@ size_t GB_Global_memtable_size (void *p)
         ASSERT (0) ;
     }
     #endif
+
     return (size) ;
 }
 
@@ -719,6 +723,7 @@ GB_PUBLIC
 bool GB_Global_memtable_find (void *p)
 {
     bool found = false ;
+
     #ifdef GB_DEBUG
     if (p == NULL) return (false) ;
     #pragma omp critical(GB_memtable)
@@ -734,6 +739,7 @@ bool GB_Global_memtable_find (void *p)
         }
     }
     #endif
+
     return (found) ;
 }
 
@@ -747,6 +753,7 @@ void GB_Global_memtable_remove (void *p)
         GB_ATOMIC_UPDATE
         GB_Global.nmalloc-- ;
     }
+
     #ifdef GB_DEBUG
     bool found = false ;
     #ifdef GB_MEMDUMP
@@ -778,6 +785,7 @@ void GB_Global_memtable_remove (void *p)
     GB_Global_memtable_dump ( ) ;
     #endif
     #endif
+
 }
 
 //------------------------------------------------------------------------------
@@ -1257,32 +1265,41 @@ GB_PUBLIC
 void GB_Global_free_pool_init (bool clear)
 { 
     #ifdef _OPENMP
-        #pragma omp critical(GB_free_pool)
+        if (clear)
         {
-            if (clear)
+            // clear the free pool
+            #pragma omp critical(GB_free_pool)
             {
-                // clear the free pool
                 for (int k = 0 ; k < 64 ; k++)
                 {
                     GB_Global.free_pool [k] = NULL ;
                     GB_Global.free_pool_nblocks [k] = 0 ;
                 }
             }
-            // set the default free_pool_limit
-            for (int k = 0 ; k < 64 ; k++)
-            {
-                GB_Global.free_pool_limit [k] = 0 ;
-            }
-            int64_t n = 16384 ;
-            for (int k = 3 ; k <= 8 ; k++)
-            {
-                GB_Global.free_pool_limit [k] = n ;
-            }
-            for (int k = 9 ; k <= 19 ; k++)
-            {
-                n = n/2 ;
-                GB_Global.free_pool_limit [k] = n ;
-            }
+            #pragma omp flush
+        }
+        // set the default free_pool_limit
+        for (int k = 0 ; k < 3 ; k++)
+        {
+            GB_ATOMIC_WRITE
+            GB_Global.free_pool_limit [k] = 0 ;
+        }
+        int64_t n = 16384 ;
+        for (int k = 3 ; k <= 8 ; k++)
+        {
+            GB_ATOMIC_WRITE
+            GB_Global.free_pool_limit [k] = n ;
+        }
+        for (int k = 9 ; k <= 19 ; k++)
+        {
+            n = n/2 ;
+            GB_ATOMIC_WRITE
+            GB_Global.free_pool_limit [k] = n ;
+        }
+        for (int k = 20 ; k < 64 ; k++)
+        {
+            GB_ATOMIC_WRITE
+            GB_Global.free_pool_limit [k] = 0 ;
         }
     #else
         // OpenMP not available: disable the free pool
@@ -1347,17 +1364,21 @@ bool GB_Global_free_pool_put (void *p, int k)
         GB_Global_free_pool_check (p, k, "put") ;
         #endif
         bool returned_to_pool = false ;
-        #pragma omp critical(GB_free_pool)
+        int64_t limit ;
+        GB_ATOMIC_READ
+        limit = GB_Global.free_pool_limit [k] ;
+        if (limit > 0)
         {
-            returned_to_pool =
-                (GB_Global.free_pool_nblocks [k] <
-                 GB_Global.free_pool_limit [k]) ;
-            if (returned_to_pool)
+            #pragma omp critical(GB_free_pool)
             {
-                // add the block to the head of the free_pool list
-                GB_Global.free_pool_nblocks [k]++ ;
-                GB_NEXT (p) = GB_Global.free_pool [k] ;
-                GB_Global.free_pool [k] = p ;
+                returned_to_pool = (GB_Global.free_pool_nblocks [k] < limit) ;
+                if (returned_to_pool)
+                {
+                    // add the block to the head of the free_pool list
+                    GB_Global.free_pool_nblocks [k]++ ;
+                    GB_NEXT (p) = GB_Global.free_pool [k] ;
+                    GB_Global.free_pool [k] = p ;
+                }
             }
         }
         return (returned_to_pool) ;
@@ -1378,7 +1399,9 @@ void GB_Global_free_pool_dump (int pr)
         for (int k = 0 ; k < 64 && !fail ; k++)
         {
             int64_t nblocks = GB_Global.free_pool_nblocks [k] ;
-            int64_t limit   = GB_Global.free_pool_limit [k] ;
+            int64_t limit ;
+            GB_ATOMIC_READ
+            limit = GB_Global.free_pool_limit [k] ;
             if (nblocks != 0 && pr > 0)
             {
                 printf ("pool %2d: " GBd " blocks, " GBd " limit\n",
@@ -1413,38 +1436,29 @@ void GB_Global_free_pool_dump (int pr)
 GB_PUBLIC
 int64_t GB_Global_free_pool_limit_get (int k)
 { 
-    #ifdef _OPENMP
-        int64_t nblocks = 0 ;
-        if (k >= 3 && k < 64)
-        {
-            #pragma omp critical(GB_free_pool)
-            {
-                nblocks = GB_Global.free_pool_limit [k] ;
-            }
-        }
-        return (nblocks) ;
-    #else
-        return (0) ;
-    #endif
+    int64_t limit ;
+    if (k < 3) return (0) ;
+    GB_ATOMIC_READ
+    limit = GB_Global.free_pool_limit [k] ;
+    return (limit) ;
 }
 
 // free_pool_limit_set: set the limit on the # of blocks in the kth pool
 GB_PUBLIC
-void GB_Global_free_pool_limit_set (int k, int64_t nblocks)
+void GB_Global_free_pool_limit_set (int64_t *limit)
 { 
-    if (k >= 3 && k < 64)
-    {
-        #ifdef _OPENMP
-            #pragma omp critical(GB_free_pool)
-            {
-                GB_Global.free_pool_limit [k] = nblocks ;
-            }
-        #else
-            {
-                GB_Global.free_pool_limit [k] = 0 ;
-            }
-        #endif
-    }
+    #ifdef _OPENMP
+        for (int k = 3 ; k < 64 ; k++)
+        {
+            GB_ATOMIC_WRITE
+            GB_Global.free_pool_limit [k] = limit [k] ;
+        }
+    #else
+        for (int k = 0 ; k < 64 ; k++)
+        {
+            GB_Global.free_pool_limit [k] = 0 ;
+        }
+    #endif
 }
 
 // free_pool_nblocks_total:  total # of blocks in free_pool (for debug only)
