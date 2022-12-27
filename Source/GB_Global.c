@@ -1251,24 +1251,24 @@ void GB_Global_free_pool_init (bool clear)
         // set the default free_pool_limit
         for (int k = 0 ; k < 3 ; k++)
         {
-            #define GB_ATOMIC_WRITE
+            GB_ATOMIC_WRITE
             GB_Global.free_pool_limit [k] = 0 ;
         }
         int64_t n = 16384 ;
         for (int k = 3 ; k <= 8 ; k++)
         {
-            #define GB_ATOMIC_WRITE
+            GB_ATOMIC_WRITE
             GB_Global.free_pool_limit [k] = n ;
         }
         for (int k = 9 ; k <= 19 ; k++)
         {
             n = n/2 ;
-            #define GB_ATOMIC_WRITE
+            GB_ATOMIC_WRITE
             GB_Global.free_pool_limit [k] = n ;
         }
         for (int k = 20 ; k < 64 ; k++)
         {
-            #define GB_ATOMIC_WRITE
+            GB_ATOMIC_WRITE
             GB_Global.free_pool_limit [k] = 0 ;
         }
     #else
@@ -1335,7 +1335,7 @@ bool GB_Global_free_pool_put (void *p, int k)
         #endif
         bool returned_to_pool = false ;
         int64_t limit ;
-        #define GB_ATOMIC_READ
+        GB_ATOMIC_READ
         limit = GB_Global.free_pool_limit [k] ;
         if (limit > 0)
         {
@@ -1370,7 +1370,7 @@ void GB_Global_free_pool_dump (int pr)
         {
             int64_t nblocks = GB_Global.free_pool_nblocks [k] ;
             int64_t limit ;
-            #define GB_ATOMIC_READ
+            GB_ATOMIC_READ
             limit = GB_Global.free_pool_limit [k] ;
             if (nblocks != 0 && pr > 0)
             {
@@ -1408,7 +1408,7 @@ int64_t GB_Global_free_pool_limit_get (int k)
 { 
     int64_t limit ;
     if (k < 3) return (0) ;
-    #define GB_ATOMIC_READ
+    GB_ATOMIC_READ
     limit = GB_Global.free_pool_limit [k] ;
     return (limit) ;
 }
@@ -1420,7 +1420,7 @@ void GB_Global_free_pool_limit_set (int64_t *limit)
     #ifdef _OPENMP
         for (int k = 3 ; k < 64 ; k++)
         {
-            #define GB_ATOMIC_WRITE
+            GB_ATOMIC_WRITE
             GB_Global.free_pool_limit [k] = limit [k] ;
         }
     #else
