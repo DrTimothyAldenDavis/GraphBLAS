@@ -1358,7 +1358,8 @@ void *GB_Global_free_pool_get (int k)
 // free_pool_put: put a block in the free_pool, unless it is full
 GB_PUBLIC
 bool GB_Global_free_pool_put (void *p, int k)
-{ 
+{
+#if 0
     #ifdef _OPENMP
         #ifdef GB_DEBUG
         GB_Global_free_pool_check (p, k, "put") ;
@@ -1385,6 +1386,9 @@ bool GB_Global_free_pool_put (void *p, int k)
     #else
         return (false) ;
     #endif
+#else
+return (false) ;
+#endif
 }
 
 // free_pool_dump: check the validity of the free_pool

@@ -262,7 +262,6 @@ logstat ('test19',t) ;  % GxB_subassign, many pending operators
 %----------------------------------------
 
 logstat ('test11' ,t) ; % exhaustive test of GrB_extractTuples
-logstat ('test160',t) ; % test A*B, parallel
 logstat ('test215',t) ; % test C<M>=A'*B (dot2, ANY_PAIR semiring)
 logstat ('test193',t) ; % test GxB_Matrix_diag
 logstat ('test195',t) ; % test all variants of saxpy3 (changes slice_balanced)

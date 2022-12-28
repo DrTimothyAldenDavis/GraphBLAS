@@ -47,8 +47,11 @@ void mexFunction
     ERR (GxB_Global_Option_set_FUNCTION (-1, NULL)) ;
     ERR (GxB_Desc_get_FP64 (NULL, -1, &chunk)) ;
 
+    #define FREE_ALL ;
+    #define GET_DEEP_COPY ;
+    #define FREE_DEEP_COPY ;
     int value = -1 ;
-    OK (GrB_Descriptor_new (&desc)) ;
+    METHOD (GrB_Descriptor_new (&desc)) ;
     OK (GxB_Desc_get_INT32 (desc, GxB_IMPORT, &value)) ;
     CHECK (value == GxB_DEFAULT) ;
     OK (GxB_Desc_set_INT32 (desc, GxB_IMPORT, GxB_SECURE_IMPORT)) ;
@@ -105,6 +108,25 @@ void mexFunction
     OK (GrB_Descriptor_free (&desc)) ;
     OK (GrB_Matrix_free (&A)) ;
     OK (GrB_Vector_free (&v)) ;
+
+    void *f1 = NULL ;
+    OK (GxB_Global_Option_get (GxB_MALLOC_FUNCTION, &f1)) ;
+    CHECK (f1 == (void *) mxMalloc) ;
+    OK (GxB_Global_Option_get (GxB_CALLOC_FUNCTION, &f1)) ;
+    CHECK (f1 == (void *) mxCalloc) ;
+    OK (GxB_Global_Option_get (GxB_REALLOC_FUNCTION, &f1)) ;
+    CHECK (f1 == (void *) mxRealloc) ;
+    OK (GxB_Global_Option_get (GxB_FREE_FUNCTION, &f1)) ;
+    CHECK (f1 == (void *) mxFree) ;
+
+    OK (GxB_Global_Option_get_FUNCTION (GxB_MALLOC_FUNCTION, &f1)) ;
+    CHECK (f1 == (void *) mxMalloc) ;
+    OK (GxB_Global_Option_get_FUNCTION (GxB_CALLOC_FUNCTION, &f1)) ;
+    CHECK (f1 == (void *) mxCalloc) ;
+    OK (GxB_Global_Option_get_FUNCTION (GxB_REALLOC_FUNCTION, &f1)) ;
+    CHECK (f1 == (void *) mxRealloc) ;
+    OK (GxB_Global_Option_get_FUNCTION (GxB_FREE_FUNCTION, &f1)) ;
+    CHECK (f1 == (void *) mxFree) ;
 
     //--------------------------------------------------------------------------
     // wrapup
