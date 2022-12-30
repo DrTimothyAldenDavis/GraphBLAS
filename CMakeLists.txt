@@ -13,11 +13,11 @@
 
 cmake_minimum_required ( VERSION 3.19 )
 
-# version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Dec 29, 2022" )
-set ( GraphBLAS_VERSION_MAJOR 7 )
-set ( GraphBLAS_VERSION_MINOR 4 )
-set ( GraphBLAS_VERSION_SUB   1 )
+set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+    ${CMAKE_SOURCE_DIR}/cmake_modules
+    ${CMAKE_SOURCE_DIR}/../SuiteSparse_config/cmake_modules )
+
+include ( GraphBLAS_version )
 
 # GraphBLAS C API Specification version, at graphblas.org
 set ( GraphBLAS_API_DATE "Nov 15, 2021" )
@@ -36,10 +36,6 @@ message ( STATUS "GraphBLAS C API: v"
 #-------------------------------------------------------------------------------
 # SuiteSparse policies
 #-------------------------------------------------------------------------------
-
-set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
-    ${CMAKE_SOURCE_DIR}/cmake_modules
-    ${CMAKE_SOURCE_DIR}/../SuiteSparse_config/cmake_modules )
 
 # CUDA is under development for now, and not deployed in production:
 # option ( ENABLE_CUDA "Enable CUDA acceleration" off )
@@ -159,11 +155,21 @@ endif ( )
 # Configure Include/GraphBLAS.h and documentation with version number
 #-------------------------------------------------------------------------------
 
-configure_file ( "Config/GraphBLAS.h.in" "${PROJECT_SOURCE_DIR}/Include/GraphBLAS.h" )
-configure_file ( "Config/GraphBLAS_version.tex.in" "${PROJECT_SOURCE_DIR}/Doc/GraphBLAS_version.tex" )
+configure_file ( "Config/GraphBLAS.h.in"
+    "${PROJECT_SOURCE_DIR}/Include/GraphBLAS.h"
+    NEWLINE_STYLE LF )
+configure_file ( "Config/GraphBLAS_version.tex.in"
+    "${PROJECT_SOURCE_DIR}/Doc/GraphBLAS_version.tex"
+    NEWLINE_STYLE LF )
 configure_file ( "Config/GraphBLAS_API_version.tex.in"
-    "${PROJECT_SOURCE_DIR}/Doc/GraphBLAS_API_version.tex" )
-configure_file ( "Config/README.md.in" "${PROJECT_SOURCE_DIR}/README.md" )
+    "${PROJECT_SOURCE_DIR}/Doc/GraphBLAS_API_version.tex"
+    NEWLINE_STYLE LF )
+configure_file ( "Config/README.md.in"
+    "${PROJECT_SOURCE_DIR}/README.md"
+    NEWLINE_STYLE LF )
+configure_file ( "Config/alternative_Makefile.in"
+    "${PROJECT_SOURCE_DIR}/alternative/Makefile"
+    NEWLINE_STYLE LF )
 
 #-------------------------------------------------------------------------------
 # include directories for both graphblas and graphblasdemo libraries

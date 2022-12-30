@@ -83,19 +83,31 @@
 // compiler variations
 //==============================================================================
 
-// Exporting/importing symbols for Microsoft Visual Studio
+// GB_PUBLIC: an empty token, merely for tagging user-callable functions here.
+#define GB_PUBLIC
 
+// GB_GLOBAL: for declaring global variables visible to the user application.
+// These are not used for functions, just global variables like the predefined
+// operators (GrB_PLUS_FP32), types, monoids, semirings, and descriptors.
 #if ( _MSC_VER && !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )
-#ifdef GB_LIBRARY
-// compiling SuiteSparse:GraphBLAS itself, exporting symbols to user apps
-#define GB_PUBLIC extern __declspec ( dllexport )
+    #if defined ( GB_DLL_EXPORT )
+        // Compiling SuiteSparse:GraphBLAS as a Windows DLL, exporting symbols
+        // to user apps.
+        #define GB_GLOBAL extern __declspec ( dllexport )
+    #elif defined ( GB_STATIC )
+        // Compiling the user application on Windows, importing symbols from
+        // a static GraphBLAS library on Windows. The user application must do:
+        //      #define GB_STATIC
+        //      #include "GraphBLAS.h"
+        #define GB_GLOBAL extern
+    #else
+        // Compiling the user application on Windows, importing symbols from
+        // the SuiteSparse:GraphBLAS DLL.  This is the default.
+        #define GB_GLOBAL extern __declspec ( dllimport )
+    #endif
 #else
-// compiling the user application, importing symbols from SuiteSparse:GraphBLAS
-#define GB_PUBLIC extern __declspec ( dllimport )
-#endif
-#else
-// for other compilers
-#define GB_PUBLIC extern
+    // for other compilers
+    #define GB_GLOBAL extern
 #endif
 
 // GraphBLAS requires an ANSI C11 compiler for its polymorphic functions (using
@@ -221,7 +233,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Dec 29, 2022"
+#define GxB_IMPLEMENTATION_DATE "Jan 1, 2023"
 #define GxB_IMPLEMENTATION_MAJOR 7
 #define GxB_IMPLEMENTATION_MINOR 4
 #define GxB_IMPLEMENTATION_SUB   1
@@ -625,8 +637,8 @@ GrB_Info GrB_Descriptor_free    // free a descriptor
 
 // Predefined descriptors and their values:
 
-GB_PUBLIC
-GrB_Descriptor     // OUTP         MASK           MASK       INP0      INP1
+GB_GLOBAL GrB_Descriptor     
+                   // OUTP         MASK           MASK       INP0      INP1
                    //              structural     complement
                    // ===========  ============== ========== ========  ========
 
@@ -688,7 +700,7 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
 typedef struct GB_Type_opaque *GrB_Type ;
 
 // GraphBLAS predefined types and their counterparts in pure C:
-GB_PUBLIC GrB_Type
+GB_GLOBAL GrB_Type
     GrB_BOOL   ,        // in C: bool
     GrB_INT8   ,        // in C: int8_t
     GrB_INT16  ,        // in C: int16_t
@@ -859,7 +871,7 @@ typedef struct GB_UnaryOp_opaque *GrB_UnaryOp ;
 // built-in unary operators, z = f(x)
 //------------------------------------------------------------------------------
 
-GB_PUBLIC GrB_UnaryOp
+GB_GLOBAL GrB_UnaryOp
     // For these functions z=f(x), z and x have the same type.
     // The suffix in the name is the type of x and z.
     // z = x             z = -x             z = 1/x             z = ! (x != 0)
@@ -903,7 +915,7 @@ GB_PUBLIC GrB_UnaryOp
     GrB_LNOT ;
 
 // GxB_ABS is now in the v1.3 spec, the following names are historical:
-GB_PUBLIC GrB_UnaryOp
+GB_GLOBAL GrB_UnaryOp
 
     // z = abs(x)
     GxB_ABS_BOOL,
@@ -925,7 +937,7 @@ GB_PUBLIC GrB_UnaryOp
 // The following floating-point unary operators and their ANSI C11 equivalents,
 // are only defined for floating-point (real and complex) types.
 
-GB_PUBLIC GrB_UnaryOp
+GB_GLOBAL GrB_UnaryOp
 
     //--------------------------------------------------------------------------
     // z = f(x) where z and x have the same type (all 4 floating-point types)
@@ -1128,7 +1140,7 @@ typedef struct GB_BinaryOp_opaque *GrB_BinaryOp ;
 // built-in binary operators, z = f(x,y), where x,y,z all have the same type
 //------------------------------------------------------------------------------
 
-GB_PUBLIC GrB_BinaryOp
+GB_GLOBAL GrB_BinaryOp
 
     // operators for all 13 types (including complex):
 
@@ -1305,7 +1317,7 @@ GB_PUBLIC GrB_BinaryOp
     // The GxB_BSHIFT_* operators compute the arithmetic shift, and produce the
     // same results as the bitshift.m function, for all possible inputs.
 
-GB_PUBLIC GrB_BinaryOp
+GB_GLOBAL GrB_BinaryOp
 
     // z = bitshift(x,y)
     GxB_BSHIFT_INT8,
@@ -1321,7 +1333,7 @@ GB_PUBLIC GrB_BinaryOp
 // z=f(x,y) where z is BOOL and the type of x,y is given by the suffix
 //------------------------------------------------------------------------------
 
-GB_PUBLIC GrB_BinaryOp
+GB_GLOBAL GrB_BinaryOp
 
     // Six comparators z=f(x,y) return their result as boolean, but
     // where x and y have the same type.  The suffix in their names refers to
@@ -1363,7 +1375,7 @@ GB_PUBLIC GrB_BinaryOp
 // z=f(x,y) where z is complex and the type of x,y is given by the suffix
 //------------------------------------------------------------------------------
 
-GB_PUBLIC GrB_BinaryOp
+GB_GLOBAL GrB_BinaryOp
 
     // z = cmplx (x,y)
     GxB_CMPLX_FP32,
@@ -1403,7 +1415,7 @@ GB_PUBLIC GrB_BinaryOp
 // are identical.  If C(i,j) += t is computed where t = A(i,k)*B(k,j), then
 // t = k in both cases.  Likewise, FIRSTJ1 and SECONDI1 are identical.
 
-GB_PUBLIC GrB_BinaryOp
+GB_GLOBAL GrB_BinaryOp
 
     GxB_FIRSTI_INT32,   GxB_FIRSTI_INT64,    // z = first_i(A(i,j),y) == i
     GxB_FIRSTI1_INT32,  GxB_FIRSTI1_INT64,   // z = first_i1(A(i,j),y) == i+1
@@ -1414,7 +1426,7 @@ GB_PUBLIC GrB_BinaryOp
     GxB_SECONDJ_INT32,  GxB_SECONDJ_INT64,   // z = second_j(x,B(i,j)) == j
     GxB_SECONDJ1_INT32, GxB_SECONDJ1_INT64 ; // z = second_j1(x,B(i,j)) == j+1
 
-GB_PUBLIC GrB_UnaryOp
+GB_GLOBAL GrB_UnaryOp
 
     GxB_POSITIONI_INT32,  GxB_POSITIONI_INT64,  // z=position_i(A(i,j)) == i
     GxB_POSITIONI1_INT32, GxB_POSITIONI1_INT64, // z=position_i1(A(i,j)) == i+1
@@ -1431,7 +1443,7 @@ GB_PUBLIC GrB_UnaryOp
 // GxB_IGNORE_DUP is a special case.  It is not an operator, but an indication
 // that any duplicates are to be ignored.
 
-GB_PUBLIC GrB_BinaryOp GxB_IGNORE_DUP ;
+GB_GLOBAL GrB_BinaryOp GxB_IGNORE_DUP ;
 
 //==============================================================================
 // About boolean and bitwise binary operators
@@ -1652,7 +1664,7 @@ typedef struct GB_SelectOp_opaque *GxB_SelectOp ;
 // GxB_select (C, Mask, accum, op, A, Thunk, desc) always returns a matrix C of
 // the same size as A (or A' if GrB_TRAN is in the descriptor).
 
-GB_PUBLIC GxB_SelectOp
+GB_GLOBAL GxB_SelectOp
 
     GxB_TRIL,       // C=tril(A,thunk):   returns true if ((j-i) <= thunk)
     GxB_TRIU,       // C=triu(A,thunk):   returns true if ((j-i) >= thunk)
@@ -1842,7 +1854,7 @@ GrB_Info GrB_IndexUnaryOp_free  // free a user-created IndexUnaryOp
 // of type int64_t.  The scalar y has the type corresponding to the suffix
 // of the name of the operator.
 
-GB_PUBLIC GrB_IndexUnaryOp
+GB_GLOBAL GrB_IndexUnaryOp
 
     //--------------------------------------------------------------------------
     // Result has the integer type INT32 or INT64, the same as the suffix
@@ -4472,14 +4484,14 @@ typedef enum
 }
 GxB_Format_Value ;
 
-// The default format is by row.  These constants are defined as GB_PUBLIC
+// The default format is by row.  These constants are defined as GB_GLOBAL
 // const, so that if SuiteSparse:GraphBLAS is recompiled with a different
 // default format, and the application is relinked but not recompiled, it will
 // acquire the new default values.
-GB_PUBLIC const GxB_Format_Value GxB_FORMAT_DEFAULT ;
+GB_GLOBAL const GxB_Format_Value GxB_FORMAT_DEFAULT ;
 
 // the default hyper_switch parameter
-GB_PUBLIC const double GxB_HYPER_DEFAULT ;
+GB_GLOBAL const double GxB_HYPER_DEFAULT ;
 
 // GxB_SPARSITY_CONTROL can be any sum or bitwise OR of these 4 values:
 #define GxB_HYPERSPARSE 1   // store matrix in hypersparse form
@@ -4552,7 +4564,7 @@ GB_PUBLIC const double GxB_HYPER_DEFAULT ;
 //      a matrix always stays hypersparse, or always stays non-hypersparse,
 //      respectively.
 
-GB_PUBLIC const double GxB_ALWAYS_HYPER, GxB_NEVER_HYPER ;
+GB_GLOBAL const double GxB_ALWAYS_HYPER, GxB_NEVER_HYPER ;
 
 GB_PUBLIC
 GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
@@ -5386,7 +5398,7 @@ GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
 // To extract all rows of a matrix or vector, as in A (:,J), use I=GrB_ALL as
 // the input argument.  For all columns of a matrix, use J=GrB_ALL.
 
-GB_PUBLIC const uint64_t *GrB_ALL ;
+GB_GLOBAL const uint64_t *GrB_ALL ;
 
 // To extract a range of rows and columns, I and J can be a list of 2 or 3
 // indices that defines a range (begin:end) or a strided range (begin:inc:end).
@@ -8799,7 +8811,7 @@ GrB_Info GrB_Matrix_kronecker_Semiring  // C<M> = accum (C, kron(A,B))
 // GrB_Monoid: built-in monoids
 //==============================================================================
 
-GB_PUBLIC GrB_Monoid
+GB_GLOBAL GrB_Monoid
 
     //--------------------------------------------------------------------------
     // 10 MIN monoids: (not for complex types)
@@ -9076,7 +9088,7 @@ GB_PUBLIC GrB_Monoid
 // identical, as are FIRSTJ1 and SECONDI1.  These semirings still appear as
 // predefined, for convenience.
 
-GB_PUBLIC GrB_Semiring
+GB_GLOBAL GrB_Semiring
 
 //------------------------------------------------------------------------------
 // 1000 non-Boolean semirings where all types are the same, given by suffix _T
@@ -9569,7 +9581,7 @@ GB_PUBLIC GrB_Semiring
 // GxB_* semirings corresponding to the equivalent GrB_* semiring are
 // historical.
 
-GB_PUBLIC GrB_Semiring
+GB_GLOBAL GrB_Semiring
 
     //--------------------------------------------------------------------------
     // 20 semirings with PLUS monoids
