@@ -15,13 +15,10 @@
 
 cmake_minimum_required ( VERSION 3.19 )
 
-# date version must match ../CMakeLists.txt:
+set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+    ${CMAKE_SOURCE_DIR}/../cmake_modules )
 
-# version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Jan 1, 2023" )
-set ( GraphBLAS_VERSION_MAJOR 7 )
-set ( GraphBLAS_VERSION_MINOR 5 )
-set ( GraphBLAS_VERSION_SUB   0 )
+include ( GraphBLAS_version )
 
 message ( STATUS "Building SuiteSparse:GraphBLAS version: v"
     ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
@@ -36,13 +33,6 @@ set ( GraphBLAS_API_VERSION_SUB   0 )
 #-------------------------------------------------------------------------------
 # SuiteSparse policies
 #-------------------------------------------------------------------------------
-
-set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
-    ${CMAKE_SOURCE_DIR}/cmake_modules
-    ${CMAKE_SOURCE_DIR}/../cmake_modules
-    ${CMAKE_SOURCE_DIR}/../../SuiteSparse_config/cmake_modules
-    ${CMAKE_SOURCE_DIR}/../../SuiteSparse/SuiteSparse_config/cmake_modules
-    )
 
 set ( SUITESPARSE_SECOND_LEVEL true )
 include ( SuiteSparsePolicy )
@@ -127,8 +117,8 @@ else ( )
     message ( STATUS "CMAKE C Flags release:     " ${CMAKE_C_FLAGS_RELEASE} )
 endif ( )
 
-message ( STATUS "CMAKE compiler ID:         " ${CMAKE_C_COMPILER_ID} )
-message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
+message ( STATUS "C compiler:                 ${CMAKE_C_COMPILER} ")
+message ( STATUS "CMAKE have OpenMP:          ${OPENMP_FOUND}" )
 
 #-------------------------------------------------------------------------------
 # include directories
@@ -194,7 +184,7 @@ elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 3.3 )
         message ( FATAL_ERROR "clang version must be at least 3.3" )
     endif ( )
-elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC" )
+elseif ( WIN32 )
     # options for MicroSoft Visual Studio
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /O2 -wd\"4244\" -wd\"4146\" -wd\"4018\" -wd\"4996\" -wd\"4047\" -wd\"4554\"")
 endif ( )

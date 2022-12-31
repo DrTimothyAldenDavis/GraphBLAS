@@ -18,9 +18,9 @@
 
 default: library
 
-VER1 = 7
-VER2 = 5
-VER3 = 0
+VER1 = @GraphBLAS_VERSION_MAJOR@
+VER2 = @GraphBLAS_VERSION_MINOR@
+VER3 = @GraphBLAS_VERSION_SUB@
 
 # pick your compiler:
   CC = gcc
