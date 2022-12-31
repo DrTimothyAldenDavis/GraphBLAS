@@ -297,6 +297,11 @@ if ( SUITESPARSE_CUDA )
     add_dependencies ( graphblas rmm_wrap )
 endif ( )
 
+if ( WIN32 )
+    # Compiling the graphblas dll on Windows: export the dll symbols
+    target_compile_definitions ( graphblas PRIVATE GB_DLL_EXPORT )
+endif ( )
+
 #-------------------------------------------------------------------------------
 # static graphblas library properties
 #-------------------------------------------------------------------------------
