@@ -229,13 +229,10 @@ endif ( )
 # select the math library (not required for Microsoft Visual Studio)
 #-------------------------------------------------------------------------------
 
-if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC" )
-    set ( M_LIB "" )
-else ( )
-    set ( M_LIB "m" )
+# libm:
+if ( NOT WIN32 )
+    target_link_libraries ( graphblas_matlab PUBLIC m )
 endif ( )
-
-target_link_libraries ( graphblas_matlab PUBLIC ${M_LIB} )
 
 include ( SuiteSparseAtomic )
 if ( LIBATOMIC_REQUIRED )
