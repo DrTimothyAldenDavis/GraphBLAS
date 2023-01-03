@@ -61,6 +61,8 @@ in your CMakeLists.txt file.  See also SuiteSparse/Example/CMakeLists.txt:
 # installation (SuiteSparse:GraphBLAS). As other installations become available
 # changes to this will likely be required.
 
+#-------------------------------------------------------------------------------
+
 # "Include" for SuiteSparse:GraphBLAS
 find_path ( GRAPHBLAS_INCLUDE_DIR
   NAMES GraphBLAS.h
@@ -84,16 +86,15 @@ find_library ( GRAPHBLAS_LIBRARY
   )
 
 if ( MSVC )
-    set ( STATIC_SUFFIX .lib )
     set ( STATIC_NAME graphblas_static )
 else ( )
-    set ( STATIC_SUFFIX .a )
     set ( STATIC_NAME graphblas )
+    set ( save ${CMAKE_FIND_LIBRARY_SUFFIXES} )
+    set ( CMAKE_FIND_LIBRARY_SUFFIXES
+        ${CMAKE_STATIC_LIBRARY_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES} )
 endif ( )
 
 # static SuiteSparse:GraphBLAS library
-set ( save ${CMAKE_FIND_LIBRARY_SUFFIXES} )
-set ( CMAKE_FIND_LIBRARY_SUFFIXES ${STATIC_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES} )
 find_library ( GRAPHBLAS_STATIC
   NAMES ${STATIC_NAME}
   HINTS ${GRAPHBLAS_ROOT}
@@ -103,7 +104,11 @@ find_library ( GRAPHBLAS_STATIC
   HINTS ${CMAKE_SOURCE_DIR}/../SuiteSparse/GraphBLAS
   PATH_SUFFIXES lib build alternative
   )
-set ( CMAKE_FIND_LIBRARY_SUFFIXES ${save} )
+
+if ( NOT MSVC )
+    # restore the CMAKE_FIND_LIBRARY_SUFFIXES variable
+    set ( CMAKE_FIND_LIBRARY_SUFFIXES ${save} )
+endif ( )
 
 # get version of the library from the dynamic library name
 get_filename_component ( GRAPHBLAS_LIBRARY  ${GRAPHBLAS_LIBRARY} REALPATH )
@@ -138,7 +143,7 @@ include ( FindPackageHandleStandardArgs )
 
 find_package_handle_standard_args(
   GraphBLAS
-  REQUIRED_VARS GRAPHBLAS_LIBRARIES GRAPHBLAS_INCLUDE_DIR
+  REQUIRED_VARS GRAPHBLAS_LIBRARY GRAPHBLAS_INCLUDE_DIR
   VERSION_VAR GRAPHBLAS_VERSION
   )
 
