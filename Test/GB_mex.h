@@ -312,8 +312,8 @@ GrB_Scalar GB_mx_get_Scalar
 
 #define METHOD_START(OP) \
     printf ("\n================================================================================\n") ; \
-    printf ("method: [%s] start: "GBd" "GBd"\n", #OP, \
-        GB_Global_nmalloc_get ( ), GB_Global_free_pool_nblocks_total ( )) ; \
+    printf ("method: [%s] start: "GBd" \n", #OP, \
+        GB_Global_nmalloc_get ( )) ; \
     printf ("================================================================================\n") ;
 
 #define METHOD_TRY \
@@ -354,7 +354,6 @@ GrB_Scalar GB_mx_get_Scalar
     {                                                                       \
         /* brutal malloc debug */                                           \
         int nmalloc_start = (int) GB_Global_nmalloc_get ( ) ;               \
-        int nfree_pool_start = (int) GB_Global_free_pool_nblocks_total ( ) ;\
         for (int tries = 0 ; ; tries++)                                     \
         {                                                                   \
             /* give GraphBLAS the ability to do a # of mallocs, */          \
@@ -383,21 +382,15 @@ GrB_Scalar GB_mx_get_Scalar
                 FREE_DEEP_COPY ;                                            \
                 GET_DEEP_COPY ;                                             \
                 int nmalloc_end = (int) GB_Global_nmalloc_get ( ) ;         \
-                int nfree_pool_end =                                        \
-                    (int) GB_Global_free_pool_nblocks_total ( ) ;           \
                 int nleak = nmalloc_end - nmalloc_start ;                   \
-                int nfree_delta = nfree_pool_end - nfree_pool_start ;       \
-                if (nleak > nfree_delta)                                    \
+                if (nleak > 0)                                              \
                 {                                                           \
                     /* memory leak */                                       \
                     printf ("Leak! tries %d : nleak %d\n"                   \
                         "nmalloc_end:        %d\n"                          \
                         "nmalloc_start:      %d\n"                          \
-                        "nfree_pool start:   %d\n"                          \
-                        "nfree_pool end:     %d\n"                          \
                         "method [%s]\n",                                    \
                         tries, nleak, nmalloc_end, nmalloc_start,           \
-                        nfree_pool_start, nfree_pool_end,                   \
                         GB_STR (GRAPHBLAS_OPERATION)) ;                     \
                     mexWarnMsgIdAndTxt ("GB:leak", "memory leak") ;         \
                     FREE_ALL ;                                              \

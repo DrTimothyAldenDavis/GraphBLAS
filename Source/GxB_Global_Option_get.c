@@ -198,9 +198,10 @@ GrB_Info GxB_Global_Option_get_INT64    // gets the current global option
 
         case GxB_MEMORY_POOL : 
 
+            // no longer used: return all zeros
             for (int k = 0 ; k < 64 ; k++)
             { 
-                value [k] = GB_Global_free_pool_limit_get (k) ;
+                value [k] = 0 ;
             }
             break ;
 
@@ -486,14 +487,15 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
         case GxB_MEMORY_POOL : 
 
+            // no longer used: return all zeros
             {
                 va_start (ap, field) ;
-                int64_t *free_pool_limit = va_arg (ap, int64_t *) ;
+                int64_t *value = va_arg (ap, int64_t *) ;
                 va_end (ap) ;
-                GB_RETURN_IF_NULL (free_pool_limit) ;
+                GB_RETURN_IF_NULL (value) ;
                 for (int k = 0 ; k < 64 ; k++)
                 { 
-                    free_pool_limit [k] = GB_Global_free_pool_limit_get (k) ;
+                    value [k] = 0 ;
                 }
             }
             break ;

@@ -92,8 +92,6 @@ int main (int argc, char **argv)
     printf ("openmp demo, nthreads %d (v%d.%d.%d, %s)\n",
         nthreads, ver [0], ver [1], ver [2], date) ;
 
-    int64_t free_pool_limit [64] ;
-    memset (free_pool_limit, 0, 64 * sizeof (int64_t)) ;
     OK (GxB_Global_Option_set (GxB_NTHREADS, 1)) ;
     double t1 = 0 ;
 
@@ -101,20 +99,8 @@ int main (int argc, char **argv)
     {
         printf ("nthreads %2d: ", nth) ;
 
-        for (int trial = 0 ; trial <= 1 ; trial++)
+        for (int trial = 0 ; trial <= 0 ; trial++)
         {
-            if (trial == 0)
-            {
-                // no pool
-                OK (GxB_Global_Option_set (GxB_MEMORY_POOL,
-                    free_pool_limit)) ;
-            }
-            else
-            {
-                // default pool
-                OK (GxB_Global_Option_set (GxB_MEMORY_POOL, NULL)) ;
-            }
-
             #ifdef _OPENMP
             double t = omp_get_wtime ( ) ;
             #endif

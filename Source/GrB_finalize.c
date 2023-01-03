@@ -16,8 +16,6 @@
 
 GrB_Info GrB_finalize ( )
 { 
-    // free all memory pools
-    GB_free_pool_finalize ( ) ;
     return (GrB_SUCCESS) ;
 }
 

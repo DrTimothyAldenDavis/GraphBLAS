@@ -8348,7 +8348,6 @@ field                       & value         & description \\
 \verb'GxB_BURBLE'           & \verb'int'    & diagnostic output \\
 \verb'GxB_PRINTF'           & see below     & diagnostic output \\
 \verb'GxB_FLUSH'            & see below     & diagnostic output \\
-\verb'GxB_MEMORY_POOL'      & \verb'int64_t [64]' & memory pool control \\
 \verb'GxB_PRINT_1BASED'     & \verb'int'    & for printing matrices/vectors \\
 \hline
 \end{tabular}
@@ -8429,7 +8428,6 @@ field                       & value         & description \\
 \verb'GxB_BURBLE'           & \verb'int'    & diagnostic output \\
 \verb'GxB_PRINTF'           & see below     & diagnostic output \\
 \verb'GxB_FLUSH'            & see below     & diagnostic output \\
-\verb'GxB_MEMORY_POOL'      & \verb'int64_t [64]' & memory pool control \\
 \verb'GxB_PRINT_1BASED'     & \verb'int'    & for printing matrices/vectors \\
 \verb'GxB_MODE'                 & \verb'int'    & blocking/non-blocking \\
 \verb'GxB_LIBRARY_NAME'         & \verb'char *' & name of library \\
@@ -8827,7 +8825,6 @@ typedef enum
     GxB_BURBLE = 99,                    // diagnositic output
     GxB_PRINTF = 101,               // printf function for diagnostic output
     GxB_FLUSH = 102,                // flush function for diagnostic output
-    GxB_MEMORY_POOL = 103,  // memory pool control
     GxB_PRINT_1BASED = 104, // print matrices as 0-based or 1-based
 
     // for matrix/vector get only:
@@ -9054,7 +9051,6 @@ The \verb'field' parameter can be
 \verb'GxB_BURBLE',
 \verb'GxB_PRINTF',
 \verb'GxB_FLUSH',
-\verb'GxB_MEMORY_POOL',
 or
 \verb'GxB_PRINT_1BASED'.
 
@@ -9072,14 +9068,6 @@ No existing matrices are changed.
     GxB_set (GxB_BURBLE, true) ;
     GxB_set (GxB_PRINTF, mexPrintf) ;
 \end{verbatim} }
-
-The memory pool parameter sets an upper bound on the number of freed blocks of
-memory that SuiteSparse:GraphBLAS keeps in its internal memory pool for future
-allocations.   \verb'free_pool_limit'  is an \verb'int64_t' array of size 64,
-and \verb'free_pool_limit [k]' is the upper bound on the number of blocks
-of size $2^k$ that are kept in the pool.  Passing in a \verb'NULL' pointer
-sets the defaults.  Passing in an array of size 64 whose entries are all zero
-disables the memory pool entirely.
 
 %===============================================================================
 \subsection{{\sf GxB\_Matrix\_Option\_set:} set a matrix option}
@@ -9183,7 +9171,6 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
         \verb'GxB_BURBLE'       & burble setting \\
         \verb'GxB_PRINTF'       & printf function \\
         \verb'GxB_FLUSH'        & flush function \\
-        \verb'GxB_MEMORY_POOL'  & memory pool control \\
         \verb'GxB_PRINT_1BASED' & for printing matrices/vectors \\
         \hline
         \verb'GxB_LIBRARY_NAME'         & the string
@@ -9251,11 +9238,6 @@ For example:
     double chunk ;
     GxB_get (GxB_CHUNK, &chunk) ;
     printf ("chunk size: %g\n", chunk) ;
-
-    int64_t free_pool_limit [64] ;
-    GxB_get (GxB_MEMORY_POOL, free_pool_limit) ;
-    for (int k = 0 ; k < 64 ; k++)
-        printf ("pool %d: limit %ld\n", free_pool_limit [k]) ;
 
     char *name ;
     int ver [3] ;
@@ -9372,10 +9354,6 @@ To set/get the global options:
     GxB_get (GxB_PRINTF, void **printf_function) ;
     GxB_set (GxB_FLUSH, void *flush_function) ;
     GxB_get (GxB_FLUSH, void **flush_function) ;
-    int64_t free_pool_limit [64] ;
-    GxB_set (GxB_MEMORY_POOL, free_pool_limit) ;
-    GxB_set (GxB_MEMORY_POOL, NULL) ;     // set defaults
-    GxB_get (GxB_MEMORY_POOL, free_pool_limit) ;
     GxB_set (GxB_PRINT_1BASED, bool onebased) ;
     GxB_get (GxB_PRINT_1BASED, bool *onebased) ; \end{verbatim} }
 

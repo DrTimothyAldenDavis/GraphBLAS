@@ -110,7 +110,6 @@ GrB_Info GB_init            // start up GraphBLAS
 
     GB_Global_malloc_is_thread_safe_set (true) ; // malloc must be thread-safe
     GB_Global_memtable_clear ( ) ;
-    GB_Global_free_pool_init (true) ;
 
     GB_Global_malloc_tracking_set (false) ;
     GB_Global_nmalloc_clear ( ) ;

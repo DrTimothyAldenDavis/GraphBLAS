@@ -3580,7 +3580,6 @@
 #define GB_ctrunc GM_ctrunc
 #define GB_ctruncf GM_ctruncf
 #define GB_cumsum GM_cumsum
-#define GB_dealloc_memory GM_dealloc_memory
 #define GB_debugify_ewise GM_debugify_ewise
 #define GB_debugify_mxm GM_debugify_mxm
 #define GB_debugify_reduce GM_debugify_reduce
@@ -3630,7 +3629,6 @@
 #define GB_FC64_div GM_FC64_div
 #define GB_flip_binop GM_flip_binop
 #define GB_free_memory GM_free_memory
-#define GB_free_pool_finalize GM_free_pool_finalize
 #define GB_frexpe GM_frexpe
 #define GB_frexpef GM_frexpef
 #define GB_frexpx GM_frexpx
@@ -3685,13 +3683,6 @@
 #define GB_Global_free_function GM_Global_free_function
 #define GB_Global_free_function_get GM_Global_free_function_get
 #define GB_Global_free_function_set GM_Global_free_function_set
-#define GB_Global_free_pool_dump GM_Global_free_pool_dump
-#define GB_Global_free_pool_get GM_Global_free_pool_get
-#define GB_Global_free_pool_init GM_Global_free_pool_init
-#define GB_Global_free_pool_limit_get GM_Global_free_pool_limit_get
-#define GB_Global_free_pool_limit_set GM_Global_free_pool_limit_set
-#define GB_Global_free_pool_nblocks_total GM_Global_free_pool_nblocks_total
-#define GB_Global_free_pool_put GM_Global_free_pool_put
 #define GB_Global_get_wtime GM_Global_get_wtime
 #define GB_Global_gpu_chunk_get GM_Global_gpu_chunk_get
 #define GB_Global_gpu_chunk_set GM_Global_gpu_chunk_set

@@ -203,15 +203,7 @@ GrB_Info GxB_Global_Option_set_INT64_ARRAY      // set a global default option
 
         case GxB_MEMORY_POOL : 
 
-            if (value == NULL)
-            { 
-                // set all limits to their default
-                GB_Global_free_pool_init (false) ;
-            }
-            else
-            {
-                GB_Global_free_pool_limit_set (value) ;
-            }
+            // nothing to do: no longer used
             break ;
 
         default : 
@@ -372,20 +364,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
 
         case GxB_MEMORY_POOL : 
 
-            {
-                va_start (ap, field) ;
-                int64_t *free_pool_limit = va_arg (ap, int64_t *) ;
-                va_end (ap) ;
-                if (free_pool_limit == NULL)
-                { 
-                    // set all limits to their default
-                    GB_Global_free_pool_init (false) ;
-                }
-                else
-                {
-                    GB_Global_free_pool_limit_set (free_pool_limit) ;
-                }
-            }
+            // nothing to do: no longer used
             break ;
 
         //----------------------------------------------------------------------

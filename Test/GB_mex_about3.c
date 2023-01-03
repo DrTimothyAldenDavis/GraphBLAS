@@ -118,67 +118,58 @@ void mexFunction
     OK (GxB_Global_Option_set (GxB_FLUSH, NULL)) ;
 
     //--------------------------------------------------------------------------
-    // test GxB_set/get for free_pool_limit
+    // test GxB_set/get for options no longer used
     //--------------------------------------------------------------------------
 
-    int64_t free_pool_limit [64], free_pool_limit2 [64] ;
-    int64_t free_pool_defaults [64] ;
+    int64_t limit [64], limit2 [64] ;
+    int64_t defaults [64] ;
     for (int k = 0 ; k < 64 ; k++)
     {
-        free_pool_limit [k] = k+1 ;
-        free_pool_limit2 [k] = 3*k + 4 ;
+        limit [k] = k+1 ;
+        limit2 [k] = 3*k + 4 ;
     }
 
     OK (GxB_Global_Option_set (GxB_MEMORY_POOL, NULL)) ;
-    OK (GxB_Global_Option_get (GxB_MEMORY_POOL, free_pool_defaults)) ;
-    OK (GxB_Global_Option_get_INT64 (GxB_MEMORY_POOL, free_pool_limit2)) ;
+    OK (GxB_Global_Option_get (GxB_MEMORY_POOL, defaults)) ;
+    OK (GxB_Global_Option_get_INT64 (GxB_MEMORY_POOL, limit2)) ;
     printf ("\ndefault memory pool limits:\n") ;
     for (int k = 0 ; k < 64 ; k++)
     {
-        if (free_pool_defaults [k] > 0)
-        {
-            printf ("pool %2d: limit %ld\n", k, free_pool_defaults [k]) ;
-        }
-        CHECK (free_pool_defaults [k] == free_pool_limit2 [k]) ;
+        CHECK (defaults [k] == 0) ;
     }
 
     for (int k = 0 ; k < 64 ; k++)
     {
-        free_pool_limit [k] = k ;
+        limit [k] = k ;
     }
-    OK (GxB_Global_Option_set (GxB_MEMORY_POOL, free_pool_limit)) ;
-    OK (GxB_Global_Option_get (GxB_MEMORY_POOL, free_pool_limit)) ;
-    OK (GxB_Global_Option_get_INT64 (GxB_MEMORY_POOL, free_pool_limit2)) ;
-    for (int k = 0 ; k < 3 ; k++)
+    OK (GxB_Global_Option_set (GxB_MEMORY_POOL, limit)) ;
+    OK (GxB_Global_Option_get (GxB_MEMORY_POOL, limit)) ;
+    OK (GxB_Global_Option_get_INT64 (GxB_MEMORY_POOL, limit2)) ;
+    for (int k = 0 ; k < 64 ; k++)
     {
-        CHECK (free_pool_limit [k] == 0) ;
-        CHECK (free_pool_limit2 [k] == 0) ;
-    }
-    for (int k = 3 ; k < 64 ; k++)
-    {
-        CHECK (free_pool_limit [k] == k) ;
-        CHECK (free_pool_limit2 [k] == k) ;
+        CHECK (limit [k] == 0) ;
+        CHECK (limit2 [k] == 0) ;
     }
     for (int k = 0 ; k < 64 ; k++)
     {
-        free_pool_limit [k] = 0 ;
-        free_pool_limit2 [k] = 0 ;
+        limit [k] = 0 ;
+        limit2 [k] = 0 ;
     }
 
-    OK (GxB_Global_Option_set (GxB_MEMORY_POOL, free_pool_limit)) ;
-    OK (GxB_Global_Option_get (GxB_MEMORY_POOL, free_pool_limit)) ;
-    OK (GxB_Global_Option_get_INT64 (GxB_MEMORY_POOL, free_pool_limit2)) ;
+    OK (GxB_Global_Option_set (GxB_MEMORY_POOL, limit)) ;
+    OK (GxB_Global_Option_get (GxB_MEMORY_POOL, limit)) ;
+    OK (GxB_Global_Option_get_INT64 (GxB_MEMORY_POOL, limit2)) ;
     for (int k = 0 ; k < 64 ; k++)
     {
-        CHECK (free_pool_limit [k] == 0) ;
-        CHECK (free_pool_limit2 [k] == 0) ;
+        CHECK (limit [k] == 0) ;
+        CHECK (limit2 [k] == 0) ;
     }
 
     OK (GxB_Global_Option_set_INT64_ARRAY (GxB_MEMORY_POOL, NULL)) ;
-    OK (GxB_Global_Option_get_INT64 (GxB_MEMORY_POOL, free_pool_limit2)) ;
+    OK (GxB_Global_Option_get_INT64 (GxB_MEMORY_POOL, limit2)) ;
     for (int k = 0 ; k < 64 ; k++)
     {
-        CHECK (free_pool_defaults [k] == free_pool_limit2 [k]) ;
+        CHECK (defaults [k] == 0) ;
     }
 
     //--------------------------------------------------------------------------

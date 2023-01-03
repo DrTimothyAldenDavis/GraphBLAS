@@ -42,12 +42,6 @@ void gb_usage       // check usage and make sure GrB.init has been called
         OK (GxB_Global_Option_set (GxB_PRINTF, mexPrintf)) ;
         OK (GxB_Global_Option_set (GxB_FLUSH, gb_flush)) ;
 
-        // disable the memory pool
-        int64_t free_pool_limit [64] =
-            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 } ;
-        OK (GxB_Global_Option_set (GxB_MEMORY_POOL, free_pool_limit)) ;
-
         // built-in matrices are stored by column
         OK (GxB_Global_Option_set (GxB_FORMAT, GxB_BY_COL)) ;
 

@@ -24,34 +24,14 @@ static inline void *GB_malloc_helper
 {
     void *p = NULL ;
 
-    // determine the next higher power of 2
+    // make sure the block is at least 8 bytes in size
     (*size) = GB_IMAX (*size, 8) ;
 
-#if 0
-    // if available, get the block from the pool
-    int k = GB_CEIL_LOG2 (*size) ;
-    if (GB_Global_free_pool_limit_get (k) > 0)
-    {
-        // round up the size to the nearest power of two
-        (*size) = ((size_t) 1) << k ;
-        p = GB_Global_free_pool_get (k) ;
-        #ifdef GB_MEMDUMP
-        if (p != NULL) printf ("malloc from pool: %p %ld\n", p, *size) ;
-        #endif
-    }
+    p = GB_Global_malloc_function (*size) ;
 
-    if (p == NULL)
-#endif
-    {
-        // no block in the free_pool, so allocate it
-        p = GB_Global_malloc_function (*size) ;
-
-        #ifdef GB_MEMDUMP
-        printf ("hard malloc %p %ld\n", p, *size) ;
-        #endif
-    }
     #ifdef GB_MEMDUMP
-    GB_Global_free_pool_dump (2) ; GB_Global_memtable_dump ( ) ;
+    printf ("hard malloc %p %ld\n", p, *size) ;
+    GB_Global_memtable_dump ( ) ;
     #endif
 
     return (p) ;

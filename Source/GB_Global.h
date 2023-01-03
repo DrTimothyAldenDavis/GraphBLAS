@@ -120,14 +120,6 @@ size_t   GB_Global_memtable_size (void *p) ;
 void     GB_Global_memtable_remove (void *p) ;
 bool     GB_Global_memtable_find (void *p) ;
 
-void     GB_Global_free_pool_init (bool clear) ;
-void    *GB_Global_free_pool_get (int k) ;
-bool     GB_Global_free_pool_put (void *p, int k) ;
-void     GB_Global_free_pool_dump (int pr) ;
-int64_t  GB_Global_free_pool_limit_get (int k) ;
-void     GB_Global_free_pool_limit_set (int64_t *limit) ;
-int64_t  GB_Global_free_pool_nblocks_total (void) ;
-
 typedef int (* GB_flush_function_t) (void) ;
 typedef int (* GB_printf_function_t) (const char *restrict format, ...) ;
 

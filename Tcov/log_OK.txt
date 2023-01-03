@@ -1,4 +1,4 @@
-The one line untested is free_pool_put, an ununsed function.
+The one line untested is an ununsed function, now deleted.
 ---------------------------------------------- [malloc] [cover]
 27-Dec 20:52:44 test247         0.1 sec   217: 20306 of 20523   1.1%  1607.47/s
 27-Dec 20:52:53 test246         9.1 sec   155: 20151 of 20523   1.8%    17.07/s

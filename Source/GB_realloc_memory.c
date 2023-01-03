@@ -112,19 +112,12 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
 
     void *pnew = NULL ;
     size_t newsize_allocated = GB_IMAX (newsize, 8) ;
-//  int k = GB_CEIL_LOG2 (newsize_allocated) ;
-    if (!GB_Global_have_realloc_function ( ) /* ||
-        (GB_Global_free_pool_limit_get (k) > 0) */)
+    if (!GB_Global_have_realloc_function ( ))
     {
 
         //----------------------------------------------------------------------
-        // use malloc/memcpy/free
+        // no realloc function: use malloc/memcpy/free
         //----------------------------------------------------------------------
-
-        // Either no realloc function is provided, or the new block will fit in
-        // the free_pool and so must be rounded up to a power of 2.  This is
-        // done by GB_malloc_memory, which allocates a new block or gets it
-        // from the free_pool if one exists of that size.
 
         // allocate the new space
         pnew = GB_malloc_memory (nitems_new, size_of_item, &newsize_allocated) ;
@@ -134,8 +127,8 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
             // copy from the old to new with a parallel memcpy
             GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
             GB_memcpy (pnew, p, GB_IMIN (oldsize, newsize), nthreads_max) ;
-            // free the old block (either hard free, or return to free_pool)
-            GB_dealloc_memory (&p, oldsize_allocated) ;
+            // free the old block
+            GB_free_memory (&p, oldsize_allocated) ;
         }
     }
     else
@@ -144,9 +137,6 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         //----------------------------------------------------------------------
         // use realloc
         //----------------------------------------------------------------------
-
-        // The realloc function has been provided, and the block is larger
-        // than what can be accomodated by the free_pool.
 
         bool pretend_to_fail = false ;
         if (GB_Global_malloc_tracking_get ( ) && GB_Global_malloc_debug_get ( ))
@@ -161,7 +151,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
             #endif
             pnew = GB_Global_realloc_function (p, newsize_allocated) ;
             #ifdef GB_MEMDUMP
-            GB_Global_free_pool_dump (2) ; GB_Global_memtable_dump ( ) ;
+            GB_Global_memtable_dump ( ) ;
             #endif
         }
     }

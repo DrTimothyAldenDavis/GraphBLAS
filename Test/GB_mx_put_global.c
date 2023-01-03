@@ -35,12 +35,6 @@ void GB_mx_put_global
 
     GrB_finalize ( ) ;
 
-    // disable the memory pool, in case a @GrB method is called next
-    int64_t free_pool_limit [64] =
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 } ;
-    GxB_Global_Option_set (GxB_MEMORY_POOL, free_pool_limit) ;
-
     //--------------------------------------------------------------------------
     // check nmemtable and nmalloc
     //--------------------------------------------------------------------------
@@ -49,17 +43,6 @@ void GB_mx_put_global
     if (nmemtable != 0)
     {
         printf ("in GB_mx_put_global: GraphBLAS nmemtable %d!\n", nmemtable) ;
-        GB_Global_free_pool_dump (2) ;
-        GB_Global_memtable_dump ( ) ;
-        mexErrMsgTxt ("memory leak in test!") ;
-    }
-
-    int64_t nblocks = GB_Global_free_pool_nblocks_total ( ) ;
-    if (nblocks != 0)
-    {
-        printf ("in GB_mx_put_global: GraphBLAS nblocks "GBd" in free_pool!\n",
-            nblocks) ;
-        GB_Global_free_pool_dump (2) ;
         GB_Global_memtable_dump ( ) ;
         mexErrMsgTxt ("memory leak in test!") ;
     }
@@ -68,7 +51,6 @@ void GB_mx_put_global
     if (nmalloc != 0)
     {
         printf ("in GB_mx_put_global: GraphBLAS nmalloc "GBd"!\n", nmalloc) ;
-        GB_Global_free_pool_dump (2) ;
         GB_Global_memtable_dump ( ) ;
         mexErrMsgTxt ("memory leak in test!") ;
     }

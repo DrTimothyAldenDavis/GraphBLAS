@@ -154,7 +154,7 @@ static inline void *GB_werk_pop     // free the top block of werkspace memory
     else
     { 
         // werkspace was allocated from malloc
-        GB_dealloc_memory (&p, *size_allocated) ;
+        GB_free_memory (&p, *size_allocated) ;
     }
     return (NULL) ;                 // return NULL to indicate p was freed
 }

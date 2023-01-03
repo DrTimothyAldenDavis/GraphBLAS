@@ -53,23 +53,13 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     GB_Context Context
 ) ;
 
-void GB_free_memory         // free memory, bypassing the free_pool
+void GB_free_memory         // free memory
 (
     // input/output
     void **p,               // pointer to allocated block of memory to free
     // input
     size_t size_allocated   // # of bytes actually allocated
 ) ;
-
-void GB_dealloc_memory      // free memory, return to free_pool or free it
-(
-    // input/output
-    void **p,               // pointer to allocated block of memory to free
-    // input
-    size_t size_allocated   // # of bytes actually allocated
-) ;
-
-void GB_free_pool_finalize (void) ;
 
 void *GB_xalloc_memory      // return the newly-allocated space
 (
@@ -113,10 +103,10 @@ void GB_memset                  // parallel memset
     { \
         if (p != NULL && (*(p)) != NULL) \
         { \
-            printf ("dealloc (%s, line %d): %p size %lu\n", \
+            printf ("free (%s, line %d): %p size %lu\n", \
                 __FILE__, __LINE__, (*p), s) ; \
         } \
-        GB_dealloc_memory ((void **) p, s) ; \
+        GB_free_memory ((void **) p, s) ; \
     }
 
     #define GB_CALLOC(n,type,s) \
@@ -143,7 +133,7 @@ void GB_memset                  // parallel memset
 #else
 
     #define GB_FREE(p,s) \
-        GB_dealloc_memory ((void **) p, s)
+        GB_free_memory ((void **) p, s)
 
     #define GB_CALLOC(n,type,s) \
         (type *) GB_calloc_memory (n, sizeof (type), s, Context)
