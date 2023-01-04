@@ -22,7 +22,7 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     const GrB_Matrix A,
     const GrB_Matrix B,
     const GrB_BinaryOp op,          // only GB_BINOP_SUBSET operators supported
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 #ifndef GBCUDA_DEV
@@ -82,7 +82,7 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     //--------------------------------------------------------------------------
 
     int64_t cnz = GB_nnz (C) ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (3 * cnz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------

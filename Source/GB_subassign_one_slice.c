@@ -62,7 +62,7 @@ GrB_Info GB_subassign_one_slice
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,             // matrix to slice
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -90,7 +90,7 @@ GrB_Info GB_subassign_one_slice
     // determine # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // get M and C

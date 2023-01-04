@@ -26,7 +26,7 @@ GrB_Info GB_bitmap_expand_to_hyper
     int64_t cvdim_final,
     GrB_Matrix A,
     GrB_Matrix B,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -78,7 +78,7 @@ GrB_Info GB_bitmap_expand_to_hyper
     // construct the hyperlist of C, if B is hypersparse
     //----------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (cvdim, chunk, nthreads_max) ;
     if (B_is_hyper)
     { 

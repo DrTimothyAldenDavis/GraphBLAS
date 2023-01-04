@@ -14,7 +14,7 @@ GrB_Info GB_matvec_type            // get the type of a matrix
 (
     GrB_Type *type,         // returns the type of the matrix
     const GrB_Matrix A,     // matrix to query
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_matvec_type_name  // return the name of the type of a matrix
@@ -22,7 +22,7 @@ GrB_Info GB_matvec_type_name  // return the name of the type of a matrix
     char *type_name,        // name of the type (char array of size at least
                             // GxB_MAX_NAME_LEN, owned by the user application).
     const GrB_Matrix A,     // matrix to query
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 size_t GB_code_size             // return the size of a type, given its code

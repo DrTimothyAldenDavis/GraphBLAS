@@ -98,7 +98,7 @@ GrB_Info GB_subassign_08n
     const bool Mask_struct,
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -168,7 +168,7 @@ GrB_Info GB_subassign_08n
         &TaskList, &TaskList_size, &ntasks, &nthreads,
         &Znvec, &Zh_shallow, &Z_to_A, &Z_to_A_size, &Z_to_M, &Z_to_M_size,
         C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
-        A, M, Context)) ;
+        A, M, Werk)) ;
     GB_ALLOCATE_NPENDING_WERK ;
 
     //--------------------------------------------------------------------------

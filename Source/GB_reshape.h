@@ -20,7 +20,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
     bool by_col,            // true if reshape by column, false if by row
     int64_t nrows_new,      // number of rows of C
     int64_t ncols_new,      // number of columns of C
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

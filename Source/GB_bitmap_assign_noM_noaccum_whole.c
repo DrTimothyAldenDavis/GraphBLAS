@@ -59,7 +59,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -113,7 +113,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
                 //--------------------------------------------------------------
 
                 // copy or typecast the values
-                GB_cast_matrix (C, A, Context) ;
+                GB_cast_matrix (C, A, Werk) ;
 
                 if (GB_IS_BITMAP (A))
                 { 
@@ -142,7 +142,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
                         (sparsity_control & GxB_HYPERSPARSE)))
                 { 
                     // C becomes sparse or hypersparse, the same as A
-                    GB_OK (GB_subassign_24 (C, A, Context)) ;
+                    GB_OK (GB_subassign_24 (C, A, Werk)) ;
                 }
                 else
                 { 

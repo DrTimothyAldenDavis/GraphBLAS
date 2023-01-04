@@ -43,10 +43,10 @@ GrB_Info GxB_Matrix_unpack_BitmapC  // unpack a bitmap matrix, by col
     { 
         // A = A', done in-place, to put A in by-col format
         GBURBLE ("(transpose) ") ;
-        GB_OK (GB_transpose_in_place (A, true, Context)) ;
+        GB_OK (GB_transpose_in_place (A, true, Werk)) ;
     }
 
-    GB_OK (GB_convert_any_to_bitmap (A, Context)) ;
+    GB_OK (GB_convert_any_to_bitmap (A, Werk)) ;
 
     //--------------------------------------------------------------------------
     // unpack the matrix
@@ -71,7 +71,7 @@ GrB_Info GxB_Matrix_unpack_BitmapC  // unpack a bitmap matrix, by col
         Ax,   Ax_size,  // Ax
         nvals, NULL, NULL,                  // nvals for bitmap
         &sparsity, &is_csc,                 // bitmap by col
-        iso, Context) ;
+        iso, Werk) ;
 
     if (info == GrB_SUCCESS)
     {

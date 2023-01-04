@@ -20,7 +20,7 @@ GrB_Info GB_BinaryOp_compatible     // check for domain mismatch
     const GrB_Type atype,           // A must be compatible with op->xtype
     const GrB_Type btype,           // B must be compatible with op->ytype
     const GB_Type_code bcode,       // B may not have a type, just a code
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 

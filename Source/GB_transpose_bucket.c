@@ -68,7 +68,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         bool binop_bind1st,         // if true, binop(x,A) else binop(A,y)
     const int nworkspaces,      // # of workspaces to use
     const int nthreads,         // # of threads to use
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -107,7 +107,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     //--------------------------------------------------------------------------
 
     // # of threads to use in the O(vlen) loops below
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nth = GB_nthreads (vlen, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
@@ -123,7 +123,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     bool C_iso = (C_code_iso != GB_NON_ISO) ;
     GB_OK (GB_new_bix (&C, // sparse, existing header
         ctype, A->vdim, vlen, GB_Ap_malloc, C_is_csc,
-        GxB_SPARSE, true, A->hyper_switch, vlen, anz, true, C_iso, Context)) ;
+        GxB_SPARSE, true, A->hyper_switch, vlen, anz, true, C_iso, Werk)) ;
 
     int64_t *restrict Cp = C->p ;
     C->nvals = anz ;
@@ -231,7 +231,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         C->jumbled = true ; // atomic transpose leaves C jumbled
 
         // cumulative sum of the workspace, and copy back into C->p
-        GB_cumsum (workspace, vlen, &(C->nvec_nonempty), nth, Context) ;
+        GB_cumsum (workspace, vlen, &(C->nvec_nonempty), nth, Werk) ;
         GB_memcpy (Cp, workspace, (vlen+ 1) * sizeof (int64_t), nth) ;
 
     }
@@ -295,7 +295,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         Cp [vlen] = 0 ;
 
         // compute the vector pointers for C
-        GB_cumsum (Cp, vlen, &(C->nvec_nonempty), nth, Context) ;
+        GB_cumsum (Cp, vlen, &(C->nvec_nonempty), nth, Werk) ;
 
         // add Cp back to all Workspaces
         #pragma omp parallel for num_threads(nth) schedule(static)

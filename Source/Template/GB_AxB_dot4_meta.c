@@ -85,7 +85,7 @@
     { 
         // allocate but do not initialize C->x unless A or B are hypersparse
         GrB_Info info = GB_convert_any_to_non_iso (C, A_is_hyper || B_is_hyper,
-            Context) ;
+            Werk) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory

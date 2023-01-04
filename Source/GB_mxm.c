@@ -37,7 +37,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     const GrB_Desc_Value AxB_method,// for auto vs user selection of methods
     const int do_sort,              // if nonzero, try to return C unjumbled
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -69,20 +69,20 @@ GrB_Info GB_mxm                     // C<M> = A*B
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Type T_type = semiring->add->op->ztype ;
     GB_OK (GB_compatible (C->type, C, M_input, Mask_struct, accum, T_type,
-        Context)) ;
+        Werk)) ;
 
     // T=A*B via semiring: A and B must be compatible with semiring->multiply
     if (flipxy)
     { 
         // z=fmult(b,a), for entries a from A, and b from B
         GB_OK (GB_BinaryOp_compatible (semiring->multiply,
-                NULL, B->type, A->type, GB_ignore_code, Context)) ;
+                NULL, B->type, A->type, GB_ignore_code, Werk)) ;
     }
     else
     { 
         // z=fmult(a,b), for entries a from A, and b from B
         GB_OK (GB_BinaryOp_compatible (semiring->multiply,
-                NULL, A->type, B->type, GB_ignore_code, Context)) ;
+                NULL, A->type, B->type, GB_ignore_code, Werk)) ;
     }
 
     // check the dimensions
@@ -150,7 +150,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GB_OK (GB_AxB_meta (T, C, C_replace, C->is_csc, MT, &M_transposed, M,
         Mask_comp, Mask_struct, accum, A, B, semiring, A_transpose,
         B_transpose, flipxy, &mask_applied, &done_in_place, AxB_method,
-        do_sort, Context)) ;
+        do_sort, Werk)) ;
 
 // for (int k = 0 ; k < 40 ; k++)
 // {
@@ -162,7 +162,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     { 
         // C has been computed in-place; no more work to do
         GB_FREE_ALL ;
-        GB_OK (GB_conform (C, Context)) ;
+        GB_OK (GB_conform (C, Werk)) ;
         ASSERT_MATRIX_OK (C, "C from GB_mxm (in-place)", GB0) ;
 
         #ifdef GB_TIMING
@@ -206,15 +206,15 @@ GrB_Info GB_mxm                     // C<M> = A*B
             // are ignored.  But valgrind complains about it, so they are
             // killed now.  Also see the discussion in GB_transplant.
             GBURBLE ("(wait, so zombies are not typecasted) ") ;
-            GB_OK (GB_wait (T, "T", Context)) ;
+            GB_OK (GB_wait (T, "T", Werk)) ;
         }
-        GB_OK (GB_transplant_conform (C, C->type, &T, Context)) ;
+        GB_OK (GB_transplant_conform (C, C->type, &T, Werk)) ;
         // C may be returned with zombies and jumbled, but no pending tuples
         ASSERT_MATRIX_OK (C, "C from GB_mxm (transplanted)", GB0) ;
         ASSERT (GB_ZOMBIES_OK (C)) ;
         ASSERT (GB_JUMBLED_OK (C)) ;
         ASSERT (!GB_PENDING (C)) ;
-        info = GB_block (C, Context) ;
+        info = GB_block (C, Werk) ;
 
     }
     else
@@ -222,7 +222,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
         // C<M> = accum (C,T)
         // GB_accum_mask also conforms C to its desired hypersparsity.
         info = GB_accum_mask (C, M, (M_transposed) ? MT : NULL, accum, &T,
-            C_replace, Mask_comp, Mask_struct, Context) ;
+            C_replace, Mask_comp, Mask_struct, Werk) ;
         GB_Matrix_free (&MT) ;
         #ifdef GB_DEBUG
         if (info == GrB_SUCCESS)

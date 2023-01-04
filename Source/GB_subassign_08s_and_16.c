@@ -41,7 +41,7 @@ GrB_Info GB_subassign_08s_and_16
     const bool Mask_comp,           // if true, !M, else use M
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -59,7 +59,7 @@ GrB_Info GB_subassign_08s_and_16
 
     GB_EMPTY_TASKLIST ;
     GB_CLEAR_STATIC_HEADER (S, &S_header) ;
-    GB_OK (GB_subassign_symbolic (S, C, I, ni, J, nj, true, Context)) ;
+    GB_OK (GB_subassign_symbolic (S, C, I, ni, J, nj, true, Werk)) ;
 
     //--------------------------------------------------------------------------
     // get inputs

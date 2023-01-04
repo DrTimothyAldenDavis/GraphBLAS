@@ -46,7 +46,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     bool A_is_pattern,              // true if values of A are not used
     const GrB_Matrix B_in,          // input matrix
     bool B_is_pattern,              // true if values of B are not used
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -81,9 +81,9 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         GBURBLE ("A:") ;
         // set A2->iso = A->iso     OK: no need for burble
         GB_CLEAR_STATIC_HEADER (A2, &A2_header) ;
-        GB_OK (GB_dup_worker (&A2, A->iso, A, true, NULL, Context)) ;
+        GB_OK (GB_dup_worker (&A2, A->iso, A, true, NULL, Werk)) ;
         ASSERT_MATRIX_OK (A2, "dup A2 for kron (A,B)", GB0) ;
-        GB_OK (GB_convert_bitmap_to_sparse (A2, Context)) ;
+        GB_OK (GB_convert_bitmap_to_sparse (A2, Werk)) ;
         ASSERT_MATRIX_OK (A2, "to sparse, A2 for kron (A,B)", GB0) ;
         A = A2 ;
     }
@@ -94,9 +94,9 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         GBURBLE ("B:") ;
         // set B2->iso = B->iso     OK: no need for burble
         GB_CLEAR_STATIC_HEADER (B2, &B2_header) ;
-        GB_OK (GB_dup_worker (&B2, B->iso, B, true, NULL, Context)) ;
+        GB_OK (GB_dup_worker (&B2, B->iso, B, true, NULL, Werk)) ;
         ASSERT_MATRIX_OK (B2, "dup B2 for kron (A,B)", GB0) ;
-        GB_OK (GB_convert_bitmap_to_sparse (B2, Context)) ;
+        GB_OK (GB_convert_bitmap_to_sparse (B2, Werk)) ;
         ASSERT_MATRIX_OK (B2, "to sparse, B2 for kron (A,B)", GB0) ;
         B = B2 ;
     }
@@ -132,7 +132,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     double work = ((double) anz) * ((double) bnz)
                 + (((double) anvec) * ((double) bnvec)) ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
@@ -175,7 +175,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // full, sparse, or hyper; existing header
         ctype, (int64_t) cvlen, (int64_t) cvdim, GB_Ap_malloc, C_is_csc,
-        sparsity, true, B->hyper_switch, cnvec, cnzmax, true, C_iso, Context)) ;
+        sparsity, true, B->hyper_switch, cnvec, cnzmax, true, C_iso, Werk)) ;
 
     //--------------------------------------------------------------------------
     // get C and the operator
@@ -240,7 +240,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
             }
         }
 
-        GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads, Context) ;
+        GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads, Werk) ;
         C->nvals = Cp [cnvec] ;
         if (C_is_hyper) C->nvec = cnvec ;
     }
@@ -400,7 +400,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // remove empty vectors from C, if hypersparse
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_hypermatrix_prune (C, Context)) ;
+    GB_OK (GB_hypermatrix_prune (C, Werk)) ;
 
     //--------------------------------------------------------------------------
     // return result

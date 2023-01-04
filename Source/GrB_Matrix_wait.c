@@ -36,8 +36,8 @@ GrB_Info GrB_Matrix_wait    // finish all work on a matrix
     {
         GrB_Info info ;
         GB_BURBLE_START ("GrB_Matrix_wait") ;
-        GB_OK (GB_wait (A, "matrix", Context)) ;
-        GB_OK (GB_hyper_hash_build (A, Context)) ;
+        GB_OK (GB_wait (A, "matrix", Werk)) ;
+        GB_OK (GB_hyper_hash_build (A, Werk)) ;
         GB_BURBLE_END ;
     }
 

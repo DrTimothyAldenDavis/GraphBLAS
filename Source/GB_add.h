@@ -26,7 +26,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     const GrB_Scalar alpha, // alpha and beta ignored for eWiseAdd,
     const GrB_Scalar beta,  // nonempty scalars for GxB_eWiseUnion
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
@@ -45,7 +45,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     const GrB_Matrix M,         // optional mask, may be NULL; not complemented
     const GrB_Matrix A,         // first input matrix
     const GrB_Matrix B,         // second input matrix
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
@@ -71,7 +71,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,
     const GrB_Matrix B,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
@@ -106,7 +106,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const bool is_eWiseUnion,   // if true, eWiseUnion, else eWiseAdd
     const GrB_Scalar alpha, // alpha and beta ignored for eWiseAdd,
     const GrB_Scalar beta,  // nonempty scalars for GxB_eWiseUnion
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 int GB_add_sparsity         // return the sparsity structure for C

@@ -12,7 +12,7 @@
 GrB_Info GB_unjumble        // unjumble a matrix
 (
     GrB_Matrix A,           // matrix to unjumble
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -26,7 +26,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
 
     if (A->nvec_nonempty < 0)
     { 
-        A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
+        A->nvec_nonempty = GB_nvec_nonempty (A, Werk) ;
     }
 
     if (!A->jumbled)
@@ -54,7 +54,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
     ntasks = GB_IMIN (ntasks, anvec) ;

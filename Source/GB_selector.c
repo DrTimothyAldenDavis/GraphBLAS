@@ -48,7 +48,7 @@ GrB_Info GB_selector
     GrB_Matrix A,               // input matrix
     int64_t ithunk,             // (int64_t) Thunk, if Thunk is NULL
     const GrB_Scalar Thunk,     // optional input for select operator
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -205,7 +205,7 @@ GrB_Info GB_selector
 
         // apply the select operator to the iso scalar S
         GB_OK (GB_bitmap_selector (C, false, opcode, op, false,
-            (GrB_Matrix) S, ithunk, athunk, ythunk, Context)) ;
+            (GrB_Matrix) S, ithunk, athunk, ythunk, Werk)) ;
         ASSERT_MATRIX_OK (C, "C from iso scalar test", GB0) ;
         bool C_empty = (GB_nnz (C) == 0) ;
         GB_phybix_free (C) ;
@@ -217,13 +217,13 @@ GrB_Info GB_selector
             return (GB_new (&C, // existing header
                 A->type, avlen, avdim, GB_Ap_calloc, true,
                 GxB_SPARSE + GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ),
-                1, Context)) ;
+                1, Werk)) ;
         }
         else
         { 
             // C is a shallow copy of A with all the same entries as A
             // set C->iso = A->iso  OK
-            return (GB_shallow_copy (C, true, A, Context)) ;
+            return (GB_shallow_copy (C, true, A, Werk)) ;
         }
     }
 
@@ -302,7 +302,7 @@ GrB_Info GB_selector
         GB_BURBLE_MATRIX (A, "(bitmap select) ") ;
         ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
         return (GB_bitmap_selector (C, C_iso, opcode, op,                  
-            flipij, A, ithunk, athunk, ythunk, Context)) ;
+            flipij, A, ithunk, athunk, ythunk, Werk)) ;
     }
 
     //==========================================================================
@@ -313,7 +313,7 @@ GrB_Info GB_selector
     // determine the max number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // get A: sparse, hypersparse, or full
@@ -414,14 +414,14 @@ GrB_Info GB_selector
         if (cnz == anz)
         { 
             // C is the same as A: return it a pure shallow copy
-            return (GB_shallow_copy (C, true, A, Context)) ;
+            return (GB_shallow_copy (C, true, A, Werk)) ;
         }
         else if (cnz == 0)
         { 
             // return C as empty
             return (GB_new (&C, // auto (sparse or hyper), existing header
                 A->type, avlen, avdim, GB_Ap_calloc, true,
-                GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ), 1, Context)) ;
+                GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ), 1, Werk)) ;
         }
 
         //----------------------------------------------------------------------
@@ -431,7 +431,7 @@ GrB_Info GB_selector
         int sparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
         GB_OK (GB_new_bix (&C, // sparse or hyper (from A), existing header
             A->type, avlen, avdim, GB_Ap_malloc, true, sparsity, false,
-            A->hyper_switch, cnvec, cnz, true, A_iso, Context)) ;
+            A->hyper_switch, cnvec, cnz, true, A_iso, Werk)) ;
 
         ASSERT (info == GrB_SUCCESS) ;
         int nth2 = GB_nthreads (cnvec, chunk, nth) ;
@@ -585,7 +585,7 @@ GrB_Info GB_selector
         C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled
         C->iso = C_iso ;            // OK: burble already done above
         C->nvals = Cp [cnvec] ;
-        C->nvec_nonempty = GB_nvec_nonempty (C, Context) ;
+        C->nvec_nonempty = GB_nvec_nonempty (C, Werk) ;
         ASSERT_MATRIX_OK (C, "C output for GB_selector (column select)", GB0) ;
         return (GrB_SUCCESS) ;
     }
@@ -688,7 +688,7 @@ GrB_Info GB_selector
 
     int64_t C_nvec_nonempty ;
     GB_ek_slice_merge2 (&C_nvec_nonempty, Cp_kfirst, Cp, anvec,
-        Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Context) ;
+        Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Werk) ;
 
     //--------------------------------------------------------------------------
     // allocate new space for the compacted Ci and Cx
@@ -802,7 +802,7 @@ GrB_Info GB_selector
         ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
         info = GB_new (&C, // sparse or hyper (from A), existing header
             A->type, avlen, avdim, GB_Ap_null, true,
-            sparsity, A->hyper_switch, anvec, Context) ;
+            sparsity, A->hyper_switch, anvec, Werk) ;
         ASSERT (info == GrB_SUCCESS) ;
 
         if (A->h != NULL)

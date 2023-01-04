@@ -20,7 +20,7 @@ GrB_Info GB_split_full              // split a full matrix
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
     const GrB_Matrix A,             // input matrix
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -41,7 +41,7 @@ GrB_Info GB_split_full              // split a full matrix
     size_t asize = atype->size ;
     const bool A_iso = A->iso ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     int64_t nouter = csc ? n : m ;
     int64_t ninner = csc ? m : n ;
@@ -79,7 +79,7 @@ GrB_Info GB_split_full              // split a full matrix
             // set C->iso = A_iso       OK
             GB_OK (GB_new_bix (&C, // new header
                 atype, cvlen, cvdim, GB_Ap_null, csc, GxB_FULL, false,
-                hyper_switch, 0, cnz, true, A_iso, Context)) ;
+                hyper_switch, 0, cnz, true, A_iso, Werk)) ;
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;
             int C_nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
@@ -169,7 +169,7 @@ GrB_Info GB_split_full              // split a full matrix
 
             C->magic = GB_MAGIC ;
             ASSERT_MATRIX_OK (C, "C for GB_split", GB0) ;
-            GB_OK (GB_conform (C, Context)) ;
+            GB_OK (GB_conform (C, Werk)) ;
             if (csc)
             { 
                 GB_TILE (Tiles, inner, outer) = C ;

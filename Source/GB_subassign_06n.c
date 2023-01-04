@@ -44,7 +44,7 @@ GrB_Info GB_subassign_06n
     const GrB_Matrix M,
     const bool Mask_struct,
     const GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -85,7 +85,7 @@ GrB_Info GB_subassign_06n
     const bool A_is_hyper = (Ah != NULL) ;
     GrB_BinaryOp accum = NULL ;
 
-    GB_OK (GB_hyper_hash_build (A, Context)) ;
+    GB_OK (GB_hyper_hash_build (A, Werk)) ;
     const int64_t *restrict A_Yp = (A_is_hyper) ? A->Y->p : NULL ;
     const int64_t *restrict A_Yi = (A_is_hyper) ? A->Y->i : NULL ;
     const int64_t *restrict A_Yx = (A_is_hyper) ? A->Y->x : NULL ;

@@ -24,7 +24,7 @@ static inline GrB_Info GB_sel   // w<M> = accum (w, select(w,k))
     const GrB_Vector u,             // first input:  vector u
     const GrB_Scalar Thunk,         // optional input for select operator
     const GrB_Descriptor desc,      // descriptor for w and M
-    GB_Context Context
+    GB_Werk Werk
 )
 { 
 
@@ -56,7 +56,7 @@ static inline GrB_Info GB_sel   // w<M> = accum (w, select(w,k))
         (GrB_Matrix) u,             // first input: u
         Thunk,                      // optional input for select operator
         false,                      // vector u is never transposed
-        Context) ;
+        Werk) ;
 
     GB_BURBLE_END ;
     return (info) ;
@@ -81,7 +81,7 @@ GrB_Info GB_EVAL3 (prefix, _Vector_select_, T)                              \
     GB_WHERE (w, GB_STR(prefix) "_Vector_select_" GB_STR(T)                 \
         " (w, M, accum, op, u, thunk, desc)") ;                             \
     GB_SCALAR_WRAP (Thunk, thunk, GB_EVAL3 (prefix, _, T)) ;                \
-    return (GB_sel (w, M, accum, op, u, Thunk, desc, Context)) ;            \
+    return (GB_sel (w, M, accum, op, u, Thunk, desc, Werk)) ;            \
 }
 
 GB_SEL (GrB, bool      , BOOL  )
@@ -115,7 +115,7 @@ GrB_Info GrB_Vector_select_UDT
 { 
     GB_WHERE (w, "GrB_Vector_select_UDT (w, M, accum, op, u, thunk, desc)") ;
     GB_SCALAR_WRAP_UDT (Thunk, thunk, (op == NULL) ? NULL : op->ytype) ;
-    return (GB_sel (w, M, accum, op, u, Thunk, desc, Context)) ;
+    return (GB_sel (w, M, accum, op, u, Thunk, desc, Werk)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -134,6 +134,6 @@ GrB_Info GrB_Vector_select_Scalar
 )
 { 
     GB_WHERE (w, "GrB_Vector_select_Scalar (w, M, accum, op, u, thunk, desc)") ;
-    return (GB_sel (w, M, accum, op, u, Thunk, desc, Context)) ;
+    return (GB_sel (w, M, accum, op, u, Thunk, desc, Werk)) ;
 }
 

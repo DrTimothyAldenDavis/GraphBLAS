@@ -26,7 +26,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
     const GrB_Index n,
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -50,13 +50,13 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
         // set C->iso = C_iso   OK
         GB_phybix_free (C) ;
         GB_OK (GB_bix_alloc (C, GB_nnz_full (C), GxB_FULL, false, true, C_iso,
-            Context)) ;
+            Werk)) ;
         C->plen = -1 ;
         C->nvec = cvdim ;
         C->nvec_nonempty = (cvlen > 0) ? cvdim : 0 ;
     }
     ASSERT (GB_IS_FULL (C)) ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     int64_t nouter = csc ? n : m ;
     int64_t ninner = csc ? m : n ;
@@ -89,7 +89,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
             { 
                 // T = (ctype) A', not in-place
                 GB_CLEAR_STATIC_HEADER (T, &T_header) ;
-                GB_OK (GB_transpose_cast (T, ctype, csc, A, false, Context)) ;
+                GB_OK (GB_transpose_cast (T, ctype, csc, A, false, Werk)) ;
                 A = T ;
                 GB_MATRIX_WAIT (A) ;
             }

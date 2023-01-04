@@ -54,7 +54,7 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     { 
         // A = A', done in-place, to put A in by-row format
         GBURBLE ("(transpose) ") ;
-        GB_OK (GB_transpose_in_place (*A, false, Context)) ;
+        GB_OK (GB_transpose_in_place (*A, false, Werk)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -76,7 +76,7 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     // ensure the matrix is hypersparse
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_convert_any_to_hyper (*A, Context)) ;
+    GB_OK (GB_convert_any_to_hyper (*A, Werk)) ;
 
     //--------------------------------------------------------------------------
     // export the matrix
@@ -99,7 +99,7 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
         Ax,   Ax_size,  // Ax
         NULL, jumbled, nvec,                // jumbled or not
         &sparsity, &is_csc,                 // hypersparse by row
-        iso, Context) ;
+        iso, Werk) ;
 
     if (info == GrB_SUCCESS)
     {

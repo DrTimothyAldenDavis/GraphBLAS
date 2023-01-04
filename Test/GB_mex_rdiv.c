@@ -39,7 +39,7 @@ int64_t bncols = 0 ;
 GrB_Desc_Value AxB_method = GxB_DEFAULT ;
 struct GB_Matrix_opaque MT_header, C_header ;
 
-GrB_Info axb (GB_Context Context, bool cprint) ;
+GrB_Info axb (GB_Werk Werk, bool cprint) ;
 
 GrB_Semiring My_plus_rdiv = NULL ;
 GrB_BinaryOp My_rdiv = NULL ;
@@ -59,7 +59,7 @@ GrB_BinaryOp My_rdiv = NULL ;
 
 //------------------------------------------------------------------------------
 
-GrB_Info axb (GB_Context Context, bool cprint)
+GrB_Info axb (GB_Werk Werk, bool cprint)
 {
     // create the rdiv operator
 //  info = GrB_BinaryOp_new (&My_rdiv,
@@ -99,7 +99,7 @@ GrB_Info axb (GB_Context Context, bool cprint)
         &ignore2,   // done_in_place
         AxB_method,
         true,       // do the sort
-        Context) ;
+        Werk) ;
 
     if (C != NULL)
     {
@@ -135,7 +135,7 @@ void mexFunction
     My_rdiv = NULL ;
     My_plus_rdiv = NULL ;
 
-    GB_CONTEXT (USAGE) ;
+    GB_WERK (USAGE) ;
 
     // check inputs
     if (nargout > 1 || nargin < 2 || nargin > 4)
@@ -191,7 +191,7 @@ void mexFunction
         mexErrMsgTxt ("invalid dimensions") ;
     }
 
-    METHOD (axb (Context, cprint)) ;
+    METHOD (axb (Werk, cprint)) ;
 
     // return C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C AxB result", false) ;

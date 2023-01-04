@@ -20,7 +20,7 @@ void GB_assign_zombie1
 (
     GrB_Matrix C,
     const int64_t j,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -62,7 +62,7 @@ void GB_assign_zombie1
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (cjnz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------

@@ -80,7 +80,7 @@ void GB_cast_matrix         // copy or typecast the values from A into C
 (
     GrB_Matrix C,
     GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

@@ -27,6 +27,6 @@ GrB_Info GrB_Vector_clear   // clear a vector of all entries;
     // clear the vector
     //--------------------------------------------------------------------------
 
-    return (GB_clear ((GrB_Matrix) v, Context)) ;
+    return (GB_clear ((GrB_Matrix) v, Werk)) ;
 }
 

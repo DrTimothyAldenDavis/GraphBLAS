@@ -130,7 +130,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     bool *mask_applied,             // if true, then mask was applied
     GrB_Desc_Value AxB_method,      // Default, Gustavson, or Hash
     const int do_sort,              // if nonzero, try to sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -176,7 +176,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // determine the # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // define workspace
@@ -191,8 +191,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // construct the hyper hashes for M and A
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_hyper_hash_build (M, Context)) ;    // does nothing if M is NULL
-    GB_OK (GB_hyper_hash_build (A, Context)) ;
+    GB_OK (GB_hyper_hash_build (M, Werk)) ;    // does nothing if M is NULL
+    GB_OK (GB_hyper_hash_build (A, Werk)) ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -242,7 +242,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     info = GB_new (&C, // sparse or hyper, existing header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        C_sparsity, B->hyper_switch, cnvec, Context) ;
+        C_sparsity, B->hyper_switch, cnvec, Werk) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -292,7 +292,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         GBURBLE ("(single-threaded Gustavson) ") ;
         info = GB_AxB_saxpy3_slice_quick (C, A, B,
             &SaxpyTasks, &SaxpyTasks_size, &ntasks, &nfine, &nthreads,
-            Context) ;
+            Werk) ;
     }
     else
     { 
@@ -302,7 +302,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         info = GB_AxB_saxpy3_slice_balanced (C, M, Mask_comp, A, B, AxB_method,
             builtin_semiring,
             &SaxpyTasks, &SaxpyTasks_size, &apply_mask, &M_in_place,
-            &ntasks, &nfine, &nthreads, Context) ;
+            &ntasks, &nfine, &nthreads, Werk) ;
     }
 
     #ifdef GB_TIMING
@@ -632,7 +632,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         GBURBLE ("(iso sparse saxpy) ") ;
         info = GB (_Asaxpy3B__any_pair_iso) (C, M, Mask_comp, Mask_struct,
             M_in_place, A, B, SaxpyTasks, ntasks, nfine,
-            nthreads, do_sort, Context) ;
+            nthreads, do_sort, Werk) ;
         if (info == GrB_SUCCESS)
         { 
             memcpy (C->x, cscalar, csize) ;
@@ -663,7 +663,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                 info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp,       \
                     Mask_struct, M_in_place, A, B,                          \
                     SaxpyTasks, ntasks, nfine, nthreads,                    \
-                    do_sort, Context) ;                                     \
+                    do_sort, Werk) ;                                     \
                 done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
@@ -689,7 +689,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                 M_in_place, A, A_is_pattern, B, B_is_pattern, semiring,
                 flipxy, GB_SAXPY_METHOD_3,
                 SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                Context) ;
+                Werk) ;
         }
     }
 
@@ -712,7 +712,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     C->magic = GB_MAGIC ;
     GB_FREE_WORKSPACE ;
-    GB_OK (GB_hypermatrix_prune (C, Context)) ;
+    GB_OK (GB_hypermatrix_prune (C, Werk)) ;
     ASSERT_MATRIX_OK (C, "saxpy3: output", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;

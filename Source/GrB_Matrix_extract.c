@@ -52,7 +52,7 @@ GrB_Info GrB_Matrix_extract     // C<M> = accum (C, A(I,J))
         A,      A_transpose,        // A and its descriptor
         I, ni,                      // row indices
         J, nj,                      // column indices
-        Context) ;
+        Werk) ;
 
     GB_BURBLE_END ;
     return (info) ;

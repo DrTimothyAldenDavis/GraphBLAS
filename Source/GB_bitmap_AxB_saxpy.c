@@ -35,7 +35,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
     const GrB_Matrix B,             // input matrix B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -81,7 +81,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // existing header
         ctype, A->vlen, B->vdim, GB_Ap_null, true, GxB_BITMAP, true,
-        GB_HYPER_SWITCH_DEFAULT, -1, cnzmax, true, C_iso, Context)) ;
+        GB_HYPER_SWITCH_DEFAULT, -1, cnzmax, true, C_iso, Werk)) ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
@@ -108,7 +108,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
         GBURBLE ("(iso bitmap saxpy) ") ;
         memcpy (C->x, cscalar, ctype->size) ;
         info = GB (_AsaxbitB__any_pair_iso) (C, M, Mask_comp, Mask_struct, A,
-            B, Context) ;
+            B, Werk) ;
 
     }
     else
@@ -133,7 +133,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
             #define GB_AxB_WORKER(add,mult,xname)                       \
             {                                                           \
                 info = GB_AsaxbitB (add,mult,xname) (C, M, Mask_comp,   \
-                    Mask_struct, A, B, Context) ;                       \
+                    Mask_struct, A, B, Werk) ;                       \
                 done = (info != GrB_NO_VALUE) ;                         \
             }                                                           \
             break ;
@@ -163,7 +163,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
                 true, A, A_is_pattern, B, B_is_pattern, semiring,
                 flipxy, GB_SAXPY_METHOD_BITMAP,
                 NULL, 0, 0, 0, 0,
-                Context) ;
+                Werk) ;
         }
     }
 

@@ -23,7 +23,7 @@ GrB_Info GB_bitmap_selector
     const int64_t ithunk,       // (int64_t) Thunk, if Thunk is NULL
     const GB_void *restrict athunk,     // (A->type) Thunk
     const GB_void *restrict ythunk,     // (op->utype) Thunk
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -53,14 +53,14 @@ GrB_Info GB_bitmap_selector
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // always bitmap, existing header
         A->type, A->vlen, A->vdim, GB_Ap_calloc, true,
-        GxB_BITMAP, false, A->hyper_switch, -1, anz, true, C_iso, Context)) ;
+        GxB_BITMAP, false, A->hyper_switch, -1, anz, true, C_iso, Werk)) ;
     int64_t cnvals ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------

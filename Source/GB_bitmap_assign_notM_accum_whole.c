@@ -42,7 +42,7 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -74,7 +74,7 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
     // Cb [pC] += 2 for each entry M(i,j) in the mask
     GB_bitmap_M_scatter_whole (C,
         M, Mask_struct, GB_BITMAP_M_SCATTER_PLUS_2,
-        M_ek_slicing, M_ntasks, M_nthreads, Context) ;
+        M_ek_slicing, M_ntasks, M_nthreads, Werk) ;
     // the bitmap of C now contains:
     //  Cb (i,j) = 0:   cij not present, mij zero
     //  Cb (i,j) = 1:   cij present, mij zero
@@ -312,7 +312,7 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
                 // Cb [pC] -= 2 for each entry M(i,j) in the mask
                 GB_bitmap_M_scatter_whole (C,
                     M, Mask_struct, GB_BITMAP_M_SCATTER_MINUS_2,
-                    M_ek_slicing, M_ntasks, M_nthreads, Context) ;
+                    M_ek_slicing, M_ntasks, M_nthreads, Werk) ;
             }
         }
     }

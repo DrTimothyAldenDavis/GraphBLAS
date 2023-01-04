@@ -47,7 +47,7 @@ GrB_Info GxB_Matrix_split           // split a matrix into 2D array of matrices
     // Tiles = split (A)
     //--------------------------------------------------------------------------
 
-    info = GB_split (Tiles, m, n, Tile_nrows, Tile_ncols, A, Context) ;
+    info = GB_split (Tiles, m, n, Tile_nrows, Tile_ncols, A, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

@@ -29,6 +29,6 @@ GrB_Info GxB_Matrix_type    // get the type of a matrix
     // get the type
     //--------------------------------------------------------------------------
 
-    return (GB_matvec_type (type, A, Context)) ;
+    return (GB_matvec_type (type, A, Werk)) ;
 }
 

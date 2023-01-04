@@ -25,7 +25,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
     const GrB_Matrix A,             // input matrix
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -49,7 +49,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 //  int64_t avdim = A->vdim ;
     size_t asize = atype->size ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     int64_t nouter = csc ? n : m ;
     int64_t ninner = csc ? m : n ;
@@ -138,7 +138,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             C = NULL ;
             GB_OK (GB_new (&C, // new header
                 atype, cvlen, cvdim, GB_Ap_malloc, csc, A_sparsity,
-                hyper_switch, cnvec, Context)) ;
+                hyper_switch, cnvec, Werk)) ;
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;
             C->nvec = cnvec ;
@@ -199,7 +199,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                 }
             }
 
-            GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nth, Context) ;
+            GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nth, Werk) ;
             int64_t cnz = Cp [cnvec] ;
 
             //------------------------------------------------------------------
@@ -208,7 +208,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
             // set C->iso = A_iso       OK
             GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, A_iso,
-                Context)) ;
+                Werk)) ;
             int64_t *restrict Ci = C->i ;
             C->nvals = cnz ;
             C->magic = GB_MAGIC ;       // for GB_nnz_held(C), to slice C
@@ -326,8 +326,8 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             //------------------------------------------------------------------
 
             ASSERT_MATRIX_OK (C, "C for GB_split", GB0) ;
-            GB_OK (GB_hypermatrix_prune (C, Context)) ;
-            GB_OK (GB_conform (C, Context)) ;
+            GB_OK (GB_hypermatrix_prune (C, Werk)) ;
+            GB_OK (GB_conform (C, Werk)) ;
             if (csc)
             { 
                 GB_TILE (Tiles, inner, outer) = C ;

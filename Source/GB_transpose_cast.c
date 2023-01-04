@@ -21,7 +21,7 @@ GrB_Info GB_transpose_cast      // C= (ctype) A' or one (A'), not in-place
     const bool C_is_csc,        // desired CSR/CSC format of C
     const GrB_Matrix A,         // input matrix; C != A
     const bool iso_one,         // if true, C = one (A'), as iso
-    GB_Context Context
+    GB_Werk Werk
 )
 { 
     ASSERT (C != A && !GB_aliased (C, A)) ;
@@ -32,6 +32,6 @@ GrB_Info GB_transpose_cast      // C= (ctype) A' or one (A'), not in-place
     // C = (ctype) A' if op is NULL, or C = (ctype) one (A')
     return (GB_transpose (C, ctype, C_is_csc, A,
         op, NULL, false, false,     // iso ONE operator or NULL
-        Context)) ;
+        Werk)) ;
 }
 

@@ -116,7 +116,7 @@
                 {
                     // x86_64 with AVX512f
                     GB_AxB_saxpy5_unrolled_avx512f (C, A, B,
-                        ntasks, nthreads, B_slice, Context) ;
+                        ntasks, nthreads, B_slice, Werk) ;
                     return (GrB_SUCCESS) ;
                 }
                 #endif
@@ -127,13 +127,13 @@
                 {
                     // x86_64 with AVX2
                     GB_AxB_saxpy5_unrolled_avx2 (C, A, B,
-                        ntasks, nthreads, B_slice, Context) ;
+                        ntasks, nthreads, B_slice, Werk) ;
                     return (GrB_SUCCESS) ;
                 }
                 #endif
                 // any architecture and any built-in semiring
                 GB_AxB_saxpy5_unrolled_vanilla (C, A, B,
-                    ntasks, nthreads, B_slice, Context) ;
+                    ntasks, nthreads, B_slice, Werk) ;
             }
         }
     }

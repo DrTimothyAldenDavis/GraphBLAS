@@ -32,7 +32,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     bool *done_in_place,            // if true, C was computed in-place 
     const GrB_Desc_Value AxB_method,
     const int do_sort,              // if nonzero, try to sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input A matrix
     const GrB_Matrix B,             // input B matrix
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     const GrB_Semiring semiring,    // semiring that defines C=A*B and accum
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *done_in_place,            // if true, saxpy4 has computed the result
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 void GB_AxB_saxpy4_tasks
@@ -80,7 +80,7 @@ void GB_AxB_saxpy4_tasks
     int64_t bnz,                    // # of entries held in B
     int64_t bvdim,                  // # of vectors of B (bitmap or full)
     int64_t cvlen,                  // # of vectors of C (bitmap or full)
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     const GrB_Semiring semiring,    // semiring that defines C=A*B and accum
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *done_in_place,            // if true, saxpy5 has computed the result
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------

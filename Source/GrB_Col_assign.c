@@ -63,7 +63,7 @@ GrB_Info GrB_Col_assign             // C<M>(Rows,col) = accum (C(Rows,col),u)
         Cols, 1,                        // a single column index
         false, NULL, GB_ignore_code,    // no scalar expansion
         GB_COL_ASSIGN,
-        Context) ;
+        Werk) ;
 
     GB_BURBLE_END ;
     return (info) ;

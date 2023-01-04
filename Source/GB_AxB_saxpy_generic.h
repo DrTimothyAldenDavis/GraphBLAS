@@ -30,7 +30,7 @@ GrB_Info GB_AxB_saxpy_generic
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ GrB_Info GB_AxB_saxpy3_generic_firsti64
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_saxpy3_generic_firstj64 
@@ -72,7 +72,7 @@ GrB_Info GB_AxB_saxpy3_generic_firstj64
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_saxpy3_generic_secondj64 
@@ -92,7 +92,7 @@ GrB_Info GB_AxB_saxpy3_generic_secondj64
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_saxpy3_generic_firsti32 
@@ -112,7 +112,7 @@ GrB_Info GB_AxB_saxpy3_generic_firsti32
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_saxpy3_generic_firstj32 
@@ -132,7 +132,7 @@ GrB_Info GB_AxB_saxpy3_generic_firstj32
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_saxpy3_generic_secondj32 
@@ -152,7 +152,7 @@ GrB_Info GB_AxB_saxpy3_generic_secondj32
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_saxpy3_generic_first 
@@ -172,7 +172,7 @@ GrB_Info GB_AxB_saxpy3_generic_first
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_saxpy3_generic_second 
@@ -192,7 +192,7 @@ GrB_Info GB_AxB_saxpy3_generic_second
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_saxpy3_generic_flipped 
@@ -212,7 +212,7 @@ GrB_Info GB_AxB_saxpy3_generic_flipped
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_saxpy3_generic_unflipped 
@@ -232,7 +232,7 @@ GrB_Info GB_AxB_saxpy3_generic_unflipped
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_AxB_saxpy_generic_firsti64 
@@ -252,7 +252,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_firsti64
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_AxB_saxpy_generic_firstj64 
@@ -272,7 +272,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_firstj64
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_AxB_saxpy_generic_secondj64 
@@ -292,7 +292,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_secondj64
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_AxB_saxpy_generic_firsti32 
@@ -312,7 +312,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_firsti32
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_AxB_saxpy_generic_firstj32 
@@ -332,7 +332,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_firstj32
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_AxB_saxpy_generic_secondj32 
@@ -352,7 +352,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_secondj32
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_AxB_saxpy_generic_first 
@@ -372,7 +372,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_first
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_AxB_saxpy_generic_second 
@@ -392,7 +392,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_second
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_AxB_saxpy_generic_flipped 
@@ -412,7 +412,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_flipped
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_AxB_saxpy_generic_unflipped 
@@ -432,7 +432,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_unflipped
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

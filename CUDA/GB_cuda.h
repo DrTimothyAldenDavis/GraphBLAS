@@ -46,7 +46,7 @@ extern "C"
 //------------------------------------------------------------------------------
 
 // Usage:  Must be used in a GB* function that returns GrB_Info, and has a
-// GB_Context Context parameter.
+// GB_Werk Werk parameter.
 //
 //  #define GB_FREE_ALL { some macro to free all temporaries }
 //  GrB_Info info ;

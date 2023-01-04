@@ -43,7 +43,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
     const bool create_struct        // if true, then return a struct
 )
 {
-    GB_CONTEXT ("GB_mx_object_to_mxArray") ;
+    GB_WERK ("GB_mx_object_to_mxArray") ;
 
     // get the inputs
     mxArray *A, *Astruct, *X = NULL ;

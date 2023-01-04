@@ -11,10 +11,139 @@
 #define GB_WERK_H
 
 //------------------------------------------------------------------------------
-// GB_werk_push/pop: manage werkspace in the Context->Werk stack
+// GB_context: error logging, thread control, and Werk space
 //------------------------------------------------------------------------------
 
-// Context->Werk is a small fixed-size array that is allocated on the stack
+// Error messages are logged in Werk->logger_handle, on the stack which is
+// handle to the input/output matrix/vector (typically C).  If the user-defined
+// data types, operators, etc have really long names, the error messages are
+// safely truncated (via snprintf).  This is intentional, but gcc with
+// -Wformat-truncation will print a warning (see pragmas above).  Ignore the
+// warning.
+
+// Threading control is described in GB_nthreads.h.
+
+// GB_WERK_SIZE is the size of a small fixed-sized array in the Werk, used
+// for small werkspace allocations (typically O(# of threads or # tasks)).
+// GB_WERK_SIZE must be a multiple of 8.  The Werk->Stack array is placed first
+// in the GB_Werk struct, to ensure proper alignment.
+
+#define GB_WERK_SIZE 16384
+
+typedef struct
+{
+    GB_void Stack [GB_WERK_SIZE] ;  // werkspace stack
+    const char *where ;             // GraphBLAS function where error occurred
+    char **logger_handle ;          // error report
+    size_t *logger_size_handle ;
+    int pwerk ;                     // top of Werk stack, initially zero
+
+    // copied from the GxB_Context (threadprivate, or global)
+    int nthreads_max ;              // max # of threads to use
+    double chunk ;                  // chunk size for small problems
+}
+GB_Werk_struct ;
+
+typedef GB_Werk_struct *GB_Werk ;
+
+// GB_WHERE keeps track of the currently running user-callable function.
+// User-callable functions in this implementation are written so that they do
+// not call other unrelated user-callable functions (except for GrB_*free).
+// Related user-callable functions can call each other since they all report
+// the same type-generic name.  Internal functions can be called by many
+// different user-callable functions, directly or indirectly.  It would not be
+// helpful to report the name of an internal function that flagged an error
+// condition.  Thus, each time a user-callable function is entered, it logs the
+// name of the function with the GB_WHERE macro.
+
+#define GB_WERK(where_string)                                       \
+    /* construct the Werk */                                        \
+    GB_Werk_struct Werk_struct ;                                    \
+    GB_Werk Werk = &Werk_struct ;                                   \
+    /* set Werk->where so GrB_error can report it if needed */      \
+    Werk->where = where_string ;                                    \
+    /* get the default max # of threads and default chunk size */   \
+    Werk->nthreads_max = GB_Global_nthreads_max_get ( ) ;           \
+    Werk->chunk = GB_Global_chunk_get ( ) ;                         \
+    /* get the pointer to where any error will be logged */         \
+    Werk->logger_handle = NULL ;                                    \
+    Werk->logger_size_handle = NULL ;                               \
+    /* initialize the Werk stack */                                 \
+    Werk->pwerk = 0 ;
+
+// C is a matrix, vector, scalar, or descriptor
+#define GB_WHERE(C,where_string)                                    \
+    if (!GB_Global_GrB_init_called_get ( ))                         \
+    {                                                               \
+        return (GrB_PANIC) ; /* GrB_init not called */              \
+    }                                                               \
+    GB_WERK (where_string)                                          \
+    if (C != NULL)                                                  \
+    {                                                               \
+        /* free any prior error logged in the object */             \
+        GB_FREE (&(C->logger), C->logger_size) ;                    \
+        Werk->logger_handle = &(C->logger) ;                        \
+        Werk->logger_size_handle = &(C->logger_size) ;              \
+    }
+
+// create the Werk, with no error logging
+#define GB_WHERE1(where_string)                                     \
+    if (!GB_Global_GrB_init_called_get ( ))                         \
+    {                                                               \
+        return (GrB_PANIC) ; /* GrB_init not called */              \
+    }                                                               \
+    GB_WERK (where_string)
+
+//------------------------------------------------------------------------------
+// error logging
+//------------------------------------------------------------------------------
+
+// The GB_ERROR macro logs an error in the logger error string.
+//
+//  if (i >= nrows)
+//  {
+//      GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS,
+//          "Row index %d out of bounds; must be < %d", i, nrows) ;
+//  }
+//
+// The user can then do:
+//
+//  const char *error ;
+//  GrB_error (&error, A) ;
+//  printf ("%s", error) ;
+
+const char *GB_status_code (GrB_Info info) ;
+
+// maximum size of the error logger string
+#define GB_LOGGER_LEN 384
+
+// log an error in the error logger string and return the error
+#define GB_ERROR(info,format,...)                                           \
+{                                                                           \
+    if (Werk != NULL)                                                    \
+    {                                                                       \
+        char **logger_handle = Werk->logger_handle ;                     \
+        if (logger_handle != NULL)                                          \
+        {                                                                   \
+            size_t *logger_size_handle = Werk->logger_size_handle ;      \
+            (*logger_handle) = GB_CALLOC (GB_LOGGER_LEN+1, char,            \
+                logger_size_handle) ;                                       \
+            if ((*logger_handle) != NULL)                                   \
+            {                                                               \
+                snprintf ((*logger_handle), GB_LOGGER_LEN,                  \
+                    "GraphBLAS error: %s\nfunction: %s\n" format,           \
+                    GB_status_code (info), Werk->where, __VA_ARGS__) ;   \
+            }                                                               \
+        }                                                                   \
+    }                                                                       \
+    return (info) ;                                                         \
+}
+
+//------------------------------------------------------------------------------
+// GB_werk_push/pop: manage werkspace in the Werk stack
+//------------------------------------------------------------------------------
+
+// Werk->Stack is a small fixed-size array that is allocated on the stack
 // of any user-callable GraphBLAS function.  It is used for small werkspace
 // allocations.
 
@@ -36,7 +165,7 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
     // input
     size_t nitems,                  // # of items to allocate
     size_t size_of_item,            // size of each item
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -52,7 +181,7 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
     //--------------------------------------------------------------------------
 
     size_t size ;
-    if (Context == NULL || nitems > GB_WERK_SIZE || size_of_item > GB_WERK_SIZE
+    if (Werk == NULL || nitems > GB_WERK_SIZE || size_of_item > GB_WERK_SIZE
         #ifdef GBCOVER
         // Werk stack can be disabled for test coverage
         || (GB_Global_hack_get (1) != 0)
@@ -67,7 +196,7 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
         // try to allocate from the Werk stack
         size = GB_ROUND8 (nitems * size_of_item) ;
         ASSERT (size % 8 == 0) ;        // size is rounded up to a multiple of 8
-        size_t freespace = GB_WERK_SIZE - Context->pwerk ;
+        size_t freespace = GB_WERK_SIZE - Werk->pwerk ;
         ASSERT (freespace % 8 == 0) ;   // thus freespace is also multiple of 8
         (*on_stack) = (size <= freespace) ;
     }
@@ -79,8 +208,8 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
     if (*on_stack)
     { 
         // allocate the werkspace from the Werk stack
-        GB_void *p = Context->Werk + Context->pwerk ;
-        Context->pwerk += (int) size ;
+        GB_void *p = Werk->Stack + Werk->pwerk ;
+        Werk->pwerk += (int) size ;
         (*size_allocated) = size ;
         return ((void *) p) ;
     }
@@ -92,25 +221,25 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
 }
 
 //------------------------------------------------------------------------------
-// GB_WERK helper macros
+// Werk helper macros
 //------------------------------------------------------------------------------
 
 // declare a werkspace X of a given type
-#define GB_WERK_DECLARE(X,type)                     \
-    type *restrict X = NULL ;                    \
-    bool X ## _on_stack = false ;                   \
+#define GB_WERK_DECLARE(X,type)                             \
+    type *restrict X = NULL ;                               \
+    bool X ## _on_stack = false ;                           \
     size_t X ## _nitems = 0, X ## _size_allocated = 0 ;
 
 // push werkspace X
 #define GB_WERK_PUSH(X,nitems,type)                                         \
     X ## _nitems = (nitems) ;                                               \
     X = (type *) GB_werk_push (&(X ## _size_allocated), &(X ## _on_stack),  \
-        X ## _nitems, sizeof (type), Context) ; 
+        X ## _nitems, sizeof (type), Werk) ; 
 
 // pop werkspace X
 #define GB_WERK_POP(X,type)                                                 \
     X = (type *) GB_werk_pop (X, &(X ## _size_allocated), X ## _on_stack,   \
-        X ## _nitems, sizeof (type), Context) ; 
+        X ## _nitems, sizeof (type), Werk) ; 
 
 //------------------------------------------------------------------------------
 // GB_werk_pop:  free werkspace from the Werk stack
@@ -131,7 +260,7 @@ static inline void *GB_werk_pop     // free the top block of werkspace memory
     bool on_stack,                  // true if werkspace is from Werk stack
     size_t nitems,                  // # of items to allocate
     size_t size_of_item,            // size of each item
-    GB_Context Context
+    GB_Werk Werk
 )
 {
     ASSERT (size_allocated != NULL) ;
@@ -144,11 +273,11 @@ static inline void *GB_werk_pop     // free the top block of werkspace memory
     { 
         // werkspace was allocated from the Werk stack
         ASSERT ((*size_allocated) == GB_ROUND8 (nitems * size_of_item)) ;
-        ASSERT (Context != NULL) ;
+        ASSERT (Werk != NULL) ;
         ASSERT ((*size_allocated) % 8 == 0) ;
         ASSERT (((GB_void *) p) + (*size_allocated) ==
-                Context->Werk + Context->pwerk) ;
-        Context->pwerk = ((GB_void *) p) - Context->Werk ;
+                Werk->Stack + Werk->pwerk) ;
+        Werk->pwerk = ((GB_void *) p) - Werk->Stack ;
         (*size_allocated) = 0 ;
     }
     else
@@ -158,6 +287,47 @@ static inline void *GB_werk_pop     // free the top block of werkspace memory
     }
     return (NULL) ;                 // return NULL to indicate p was freed
 }
+
+//------------------------------------------------------------------------------
+// Determine # of threads to use via global setting and descriptor
+//------------------------------------------------------------------------------
+
+// The GB_Werk Werk struct contains the number of threads to use in the
+// operation.  It is normally determined from the user's descriptor, with a
+// default of nthreads_max = GxB_DEFAULT (that is, zero).  The default rule is
+// to let GraphBLAS determine the number of threads automatically by selecting
+// a number of threads between 1 and nthreads_max.  GrB_init initializes
+// nthreads_max to omp_get_max_threads.  Both the global value and the value in
+// a descriptor can set/queried by GxB_set / GxB_get.
+
+// Some GrB_Matrix and GrB_Vector methods do not take a descriptor, however
+// (GrB_*_dup, _build, _exportTuples, _clear, _nvals, _wait, and GxB_*_resize).
+// For those methods the default rule is always used (nthreads_max =
+// GxB_DEFAULT), which then relies on the global nthreads_max.
+
+//------------------------------------------------------------------------------
+// GB_GET_NTHREADS_MAX:  determine max # of threads for OpenMP parallelism.
+//------------------------------------------------------------------------------
+
+//      GB_GET_NTHREADS_MAX obtains the max # of threads to use and the chunk
+//      size from the Werk.  If Werk is NULL then a single thread *must*
+//      be used.  If Werk->nthreads_max is <= GxB_DEFAULT, then select
+//      automatically: between 1 and nthreads_max, depending on the problem
+//      size.  Below is the default rule.  Any function can use its own rule
+//      instead, based on Werk, chunk, nthreads_max, and the problem size.
+//      No rule can exceed nthreads_max.
+
+#define GB_GET_NTHREADS_MAX(nthreads_max,chunk,Werk)                        \
+    int nthreads_max = (Werk == NULL) ? 1 : Werk->nthreads_max ;            \
+    if (nthreads_max <= GxB_DEFAULT)                                        \
+    {                                                                       \
+        nthreads_max = GB_Global_nthreads_max_get ( ) ;                     \
+    }                                                                       \
+    double chunk = (Werk == NULL) ? GxB_DEFAULT : Werk->chunk ;             \
+    if (chunk <= GxB_DEFAULT)                                               \
+    {                                                                       \
+        chunk = GB_Global_chunk_get ( ) ;                                   \
+    }
 
 #endif
 

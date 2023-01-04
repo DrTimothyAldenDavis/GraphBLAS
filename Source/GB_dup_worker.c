@@ -26,7 +26,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
                             // iso, only the first entry is copied, regardless
                             // of C_iso on input
     const GrB_Type ctype,   // type of C, if numeric is false
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -45,7 +45,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // get A
@@ -79,7 +79,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     GB_OK (GB_new_bix (Chandle, // can be new or existing header
         numeric ? atype : ctype, A->vlen, A->vdim, GB_Ap_malloc, A->is_csc,
         GB_sparsity (A), false, A->hyper_switch, A->plen, anz, true, C_iso,
-        Context)) ;
+        Werk)) ;
     C = (*Chandle) ;
 
     //--------------------------------------------------------------------------

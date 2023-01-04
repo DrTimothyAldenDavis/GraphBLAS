@@ -22,7 +22,7 @@ GrB_Info GB_build               // build matrix
     const GrB_Type xtype,       // type of X array
     const bool is_matrix,       // true if C is a matrix, false if GrB_Vector
     const bool X_iso,           // if true the C is iso and X has size 1 entry
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_builder                 // build a matrix from tuples
@@ -54,7 +54,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                                     // keep the most recent duplicate.
     const GrB_Type stype,           // the type of S_work or S_input
     bool do_burble,                 // if true, then burble is allowed
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

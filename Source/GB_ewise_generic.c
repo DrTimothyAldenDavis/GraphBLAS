@@ -55,7 +55,7 @@ void GB_ewise_generic       // generic ewise
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,
     const GrB_Matrix B,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 

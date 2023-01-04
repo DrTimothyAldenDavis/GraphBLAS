@@ -51,7 +51,7 @@ GrB_Info GxB_Vector_select          // w<M> = accum (w, select(u,k))
         (GrB_Matrix) u,                     // first input: u
         Thunk,                              // optional input for select op
         false,                              // u, not transposed
-        Context) ;
+        Werk) ;
 
     GB_BURBLE_END ;
     return (info) ;

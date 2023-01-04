@@ -16,7 +16,7 @@
 bool GB_iso_check               // return true if A is iso, false otherwise
 (
     const GrB_Matrix A,         // matrix to reduce
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -63,7 +63,7 @@ bool GB_iso_check               // return true if A is iso, false otherwise
     //--------------------------------------------------------------------------
 
     int nthreads = 0, ntasks = 0 ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
     ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
     ntasks = GB_IMIN (ntasks, anz) ;

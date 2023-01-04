@@ -40,7 +40,7 @@ GrB_Info GB_subassign_11
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -57,7 +57,7 @@ GrB_Info GB_subassign_11
 
     GB_EMPTY_TASKLIST ;
     GB_CLEAR_STATIC_HEADER (S, &S_header) ;
-    GB_OK (GB_subassign_symbolic (S, C, I, ni, J, nj, true, Context)) ;
+    GB_OK (GB_subassign_symbolic (S, C, I, ni, J, nj, true, Werk)) ;
 
     //--------------------------------------------------------------------------
     // get inputs

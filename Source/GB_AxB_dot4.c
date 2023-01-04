@@ -50,7 +50,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     const GrB_Semiring semiring,    // semiring that defines C+=A*B and accum
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *done_in_place,            // if true, dot4 has computed the result
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -146,7 +146,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
 
     int64_t anz = GB_nnz_held (A) ;
     int64_t bnz = GB_nnz_held (B) ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
@@ -221,7 +221,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     #define GB_AxB_WORKER(add,mult,xname)                           \
     {                                                               \
         info = GB_Adot4B (add,mult,xname) (C, A, A_slice, naslice,  \
-            B, B_slice, nbslice, nthreads, Context) ;               \
+            B, B_slice, nbslice, nthreads, Werk) ;               \
     }                                                               \
     break ;
 

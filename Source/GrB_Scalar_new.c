@@ -36,7 +36,7 @@ GrB_Info GrB_Scalar_new     // create a new GrB_Scalar with no entries
 
     info = GB_new ((GrB_Matrix *) s, // new user header
         type, 1, 1, GB_Ap_calloc, true, GxB_SPARSE,
-        GB_Global_hyper_switch_get ( ), 1, Context) ;
+        GB_Global_hyper_switch_get ( ), 1, Werk) ;
     ASSERT (GB_IMPLIES (info == GrB_SUCCESS, GB_SCALAR_OK (*s))) ;
     return (info) ;
 }

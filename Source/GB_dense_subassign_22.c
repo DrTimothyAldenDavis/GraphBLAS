@@ -26,7 +26,7 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
     const void *scalar,             // input scalar
     const GrB_Type btype,           // type of the input scalar
     const GrB_BinaryOp accum,       // operator to apply
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -69,7 +69,7 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
 
     int64_t cnz = GB_nnz (C) ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------

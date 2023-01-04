@@ -68,7 +68,7 @@ GrB_Info GxB_Matrix_Option_set_INT32    // set an option in a matrix
             { 
                 // A = A', done in-place, and change to the new format.
                 GB_BURBLE_N (GB_nnz (A), "(transpose) ") ;
-                GB_OK (GB_transpose_in_place (A, new_csc, Context)) ;
+                GB_OK (GB_transpose_in_place (A, new_csc, Werk)) ;
                 ASSERT (A->is_csc == new_csc) ;
                 ASSERT (GB_JUMBLED_OK (A)) ;
             }
@@ -84,7 +84,7 @@ GrB_Info GxB_Matrix_Option_set_INT32    // set an option in a matrix
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A set before conform", GB0) ;
-    GB_OK (GB_conform (A, Context)) ;
+    GB_OK (GB_conform (A, Werk)) ;
     GB_BURBLE_END ;
     ASSERT_MATRIX_OK (A, "A set after conform", GB0) ;
     return (GrB_SUCCESS) ;
@@ -139,7 +139,7 @@ GrB_Info GxB_Matrix_Option_set_FP64     // set an option in a matrix
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A set before conform", GB0) ;
-    GB_OK (GB_conform (A, Context)) ;
+    GB_OK (GB_conform (A, Werk)) ;
     GB_BURBLE_END ;
     ASSERT_MATRIX_OK (A, "A set after conform", GB0) ;
     return (GrB_SUCCESS) ;
@@ -225,7 +225,7 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                 { 
                     // A = A', done in-place, and change to the new format.
                     GB_BURBLE_N (GB_nnz (A), "(transpose) ") ;
-                    GB_OK (GB_transpose_in_place (A, new_csc, Context)) ;
+                    GB_OK (GB_transpose_in_place (A, new_csc, Werk)) ;
                     ASSERT (A->is_csc == new_csc) ;
                     ASSERT (GB_JUMBLED_OK (A)) ;
                 }
@@ -242,7 +242,7 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A set before conform", GB0) ;
-    GB_OK (GB_conform (A, Context)) ;
+    GB_OK (GB_conform (A, Werk)) ;
     GB_BURBLE_END ;
     ASSERT_MATRIX_OK (A, "A set after conform", GB0) ;
     return (GrB_SUCCESS) ;

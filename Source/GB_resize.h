@@ -15,7 +15,7 @@ GrB_Info GB_resize              // change the size of a matrix
     GrB_Matrix A,               // matrix to modify
     const GrB_Index nrows_new,  // new number of rows in matrix
     const GrB_Index ncols_new,  // new number of columns in matrix
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

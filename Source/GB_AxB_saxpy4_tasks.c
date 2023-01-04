@@ -25,7 +25,7 @@ void GB_AxB_saxpy4_tasks
     int64_t bnz,                    // # of entries held in B
     int64_t bvdim,                  // # of vectors of B (bitmap or full)
     int64_t cvlen,                  // # of vectors of C (bitmap or full)
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -33,7 +33,7 @@ void GB_AxB_saxpy4_tasks
     // determine the work to do
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     double work = ((double) anz) * (double) bvdim ;
     int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
     int nfine_tasks_per_vector = 0, ntasks ;

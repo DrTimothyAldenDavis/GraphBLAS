@@ -71,7 +71,7 @@ GrB_Matrix Y = NULL ;
 GrB_Index *Cp = NULL, *Ch = NULL, *Ci = NULL ;
 void *Cx = NULL ;
 int8_t *Cb = NULL ;
-GB_Context Context = NULL ;
+GB_Werk Werk = NULL ;
 GrB_Index nvec = 0, nvals = 0 ;
 
 GrB_Index Cp_size = 0 ;

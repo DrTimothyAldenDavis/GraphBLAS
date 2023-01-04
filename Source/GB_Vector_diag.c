@@ -26,7 +26,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     GrB_Matrix V,                   // output vector (as an n-by-1 matrix)
     const GrB_Matrix A,             // input matrix
     int64_t k,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -111,9 +111,9 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
         A,                      // input matrix
         k,                      // ithunk = k
         NULL,                   // no GrB_Scalar Thunk
-        Context)) ;
+        Werk)) ;
 
-    GB_OK (GB_convert_any_to_hyper (T, Context)) ;
+    GB_OK (GB_convert_any_to_hyper (T, Werk)) ;
     GB_MATRIX_WAIT (T) ;
     ASSERT_MATRIX_OK (T, "T = diag (A,k)", GB0) ;
 
@@ -127,7 +127,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
 
     GB_OK (GB_new (&V, // existing header
         vtype, n, 1, GB_Ap_malloc, true, GxB_SPARSE,
-        GxB_NEVER_HYPER, 1, Context)) ;
+        GxB_NEVER_HYPER, 1, Werk)) ;
 
     V->sparsity_control = sparsity_control ;
     V->bitmap_switch = bitmap_switch ;
@@ -179,7 +179,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        GB_cast_matrix (V, T, Context) ;
+        GB_cast_matrix (V, T, Werk) ;
     }
 
     //--------------------------------------------------------------------------
@@ -196,7 +196,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
 
     GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (V, "V before conform for GB_Vector_diag", GB0) ;
-    GB_OK (GB_conform (V, Context)) ;
+    GB_OK (GB_conform (V, Werk)) ;
     ASSERT_MATRIX_OK (V, "V output for GB_Vector_diag", GB0) ;
     return (GrB_SUCCESS) ;
 }

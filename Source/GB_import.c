@@ -55,7 +55,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
     bool fast_import,   // if true: trust the data, if false: check it
 
     bool add_to_memtable,   // if true: add to debug memtable
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -208,7 +208,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
     // also create A->p if this is a sparse GrB_Vector
     GrB_Info info = GB_new (A, // any sparsity, new or existing user header
         type, vlen, vdim, is_sparse_vector ? GB_Ap_calloc : GB_Ap_null,
-        is_csc, sparsity, GB_Global_hyper_switch_get ( ), nvec, Context) ;
+        is_csc, sparsity, GB_Global_hyper_switch_get ( ), nvec, Werk) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

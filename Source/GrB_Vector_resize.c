@@ -28,7 +28,7 @@ GrB_Info GrB_Vector_resize      // change the size of a vector
     // resize the vector
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_resize ((GrB_Matrix) w, nrows_new, 1, Context) ;
+    GrB_Info info = GB_resize ((GrB_Matrix) w, nrows_new, 1, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

@@ -42,7 +42,7 @@
     // determine max # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // get C, M, A, and B
@@ -117,7 +117,7 @@
             GB_bitmap_M_scatter (C,
                 NULL, 0, GB_ALL, NULL, NULL, 0, GB_ALL, NULL,
                 M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_PLUS_2,
-                M_ek_slicing, M_ntasks, M_nthreads, Context) ;
+                M_ek_slicing, M_ntasks, M_nthreads, Werk) ;
             // the bitmap of C now contains:
             //  Cb (i,j) = 0:   cij not present, mij zero
             //  Cb (i,j) = 1:   cij present, mij zero
@@ -175,7 +175,7 @@
         int nthreads, ntasks, nfine_tasks_per_vector ;
         bool use_coarse_tasks, use_atomics ;
         GB_AxB_saxpy4_tasks (&ntasks, &nthreads, &nfine_tasks_per_vector,
-            &use_coarse_tasks, &use_atomics, anz, bnz, bvdim, cvlen, Context) ;
+            &use_coarse_tasks, &use_atomics, anz, bnz, bvdim, cvlen, Werk) ;
         if (!use_coarse_tasks)
         {
             // slice the matrix A for each team of fine tasks
@@ -383,7 +383,7 @@
         GB_bitmap_M_scatter (C,
             NULL, 0, GB_ALL, NULL, NULL, 0, GB_ALL, NULL,
             M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_MINUS_2,
-            M_ek_slicing, M_ntasks, M_nthreads, Context) ;
+            M_ek_slicing, M_ntasks, M_nthreads, Werk) ;
     }
 
     //--------------------------------------------------------------------------

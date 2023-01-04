@@ -90,7 +90,7 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     const GrB_Matrix A,     // input A matrix (bitmap/full)
     const GrB_Matrix B,     // input B matrix (bitmap/full)
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -135,7 +135,7 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     int64_t cnz = GB_nnz_full (A) ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int C_nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
 
     // slice the M matrix for Method6
@@ -175,7 +175,7 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // bitmap, existing header
         ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        GxB_BITMAP, true, A->hyper_switch, -1, cnz, true, C_iso, Context)) ;
+        GxB_BITMAP, true, A->hyper_switch, -1, cnz, true, C_iso, Werk)) ;
 
     C->magic = GB_MAGIC ;
     GB_Type_code ccode = ctype->code ;
@@ -235,7 +235,7 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             {                                                               \
                 info = GB_AemultB_bitmap(mult,xname) (C, ewise_method,      \
                     M, Mask_struct, Mask_comp, A, B, M_ek_slicing,          \
-                    M_ntasks, M_nthreads, C_nthreads, Context) ;            \
+                    M_ntasks, M_nthreads, C_nthreads, Werk) ;            \
                 done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
@@ -266,7 +266,7 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         GB_ewise_generic (C, op, NULL, 0, C_nthreads,
             NULL, NULL, NULL, GxB_BITMAP, ewise_method, NULL,
             M_ek_slicing, M_ntasks, M_nthreads, NULL, 0, 0, NULL, 0, 0,
-            M, Mask_struct, Mask_comp, A, B, Context) ;
+            M, Mask_struct, Mask_comp, A, B, Werk) ;
     }
 
     //--------------------------------------------------------------------------

@@ -51,7 +51,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
     const int assign_kind,      // row assign, col assign, assign, or subassign
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -81,7 +81,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
     // Cb [pC] += 2 for each entry M(i,j) in the mask
     GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
         M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_PLUS_2,
-        M_ek_slicing, M_ntasks, M_nthreads, Context) ;
+        M_ek_slicing, M_ntasks, M_nthreads, Werk) ;
 
     // Cb (i,j) = 0:   cij not present, mij zero: can be modified
     // Cb (i,j) = 1:   cij present, mij zero: can be modified,
@@ -215,7 +215,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
             // Cb [pC] %= 2 for each entry M(i,j) in the mask
             GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
                 M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_MOD_2,
-                M_ek_slicing, M_ntasks, M_nthreads, Context) ;
+                M_ek_slicing, M_ntasks, M_nthreads, Werk) ;
         }
     }
 

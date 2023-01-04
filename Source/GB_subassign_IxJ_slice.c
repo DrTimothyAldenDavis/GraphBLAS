@@ -71,7 +71,7 @@ GrB_Info GB_subassign_IxJ_slice
     const int64_t nJ,
 //  const int Jkind,
 //  const int64_t Jcolon [3],
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -95,7 +95,7 @@ GrB_Info GB_subassign_IxJ_slice
     // determine # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // allocate the initial TaskList

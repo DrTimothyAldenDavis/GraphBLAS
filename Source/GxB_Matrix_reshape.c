@@ -58,7 +58,7 @@ GrB_Info GxB_Matrix_reshape     // reshape a GrB_Matrix in place
     // reshape the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_reshape (NULL, C, by_col, nrows_new, ncols_new, Context) ;
+    info = GB_reshape (NULL, C, by_col, nrows_new, ncols_new, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

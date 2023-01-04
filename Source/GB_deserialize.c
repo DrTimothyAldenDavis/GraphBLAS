@@ -26,7 +26,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     GrB_Type type_expected,         // type expected (NULL for any built-in)
     const GB_void *blob,            // serialized matrix 
     size_t blob_size,               // size of the blob
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -141,7 +141,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     // allocate the matrix with info from the header
     GB_OK (GB_new (&C,  // new header (C is NULL on input)
         ctype, vlen, vdim, GB_Ap_null, is_csc,
-        sparsity, hyper_switch, nvec, Context)) ;
+        sparsity, hyper_switch, nvec, Werk)) ;
 
     C->nvec = nvec ;
     C->nvec_nonempty = nvec_nonempty ;
@@ -165,15 +165,15 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
             // decompress Cp, Ch, and Ci
             GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->p), &(C->p_size),
                 Cp_len, blob, blob_size, Cp_Sblocks, Cp_nblocks, Cp_method,
-                &s, Context)) ;
+                &s, Werk)) ;
 
             GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->h), &(C->h_size),
                 Ch_len, blob, blob_size, Ch_Sblocks, Ch_nblocks, Ch_method,
-                &s, Context)) ;
+                &s, Werk)) ;
 
             GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->i), &(C->i_size),
                 Ci_len, blob, blob_size, Ci_Sblocks, Ci_nblocks, Ci_method,
-                &s, Context)) ;
+                &s, Werk)) ;
             break ;
 
         case GxB_SPARSE : 
@@ -181,11 +181,11 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
             // decompress Cp and Ci
             GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->p), &(C->p_size),
                 Cp_len, blob, blob_size, Cp_Sblocks, Cp_nblocks, Cp_method,
-                &s, Context)) ;
+                &s, Werk)) ;
 
             GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->i), &(C->i_size),
                 Ci_len, blob, blob_size, Ci_Sblocks, Ci_nblocks, Ci_method,
-                &s, Context)) ;
+                &s, Werk)) ;
             break ;
 
         case GxB_BITMAP : 
@@ -193,7 +193,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
             // decompress Cb
             GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->b), &(C->b_size),
                 Cb_len, blob, blob_size, Cb_Sblocks, Cb_nblocks, Cb_method,
-                &s, Context)) ;
+                &s, Werk)) ;
             break ;
 
         case GxB_FULL : 
@@ -203,7 +203,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 
     // decompress Cx
     GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->x), &(C->x_size), Cx_len,
-        blob, blob_size, Cx_Sblocks, Cx_nblocks, Cx_method, &s, Context)) ;
+        blob, blob_size, Cx_Sblocks, Cx_nblocks, Cx_method, &s, Werk)) ;
 
     if (C->p != NULL)
     { 

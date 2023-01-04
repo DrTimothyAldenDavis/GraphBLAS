@@ -20,6 +20,6 @@ GrB_Info GrB_Matrix_new     // create a new matrix with no entries
 )
 {
     GB_WHERE1 ("GrB_Matrix_new (&A, type, nrows, ncols)") ;
-    return (GB_Matrix_new (A, type, nrows, ncols, Context)) ;
+    return (GB_Matrix_new (A, type, nrows, ncols, Werk)) ;
 }
 

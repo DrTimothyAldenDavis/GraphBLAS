@@ -86,7 +86,7 @@
     size_t rsize = R->type->size ;
     // when R is bitmap or full:
     const int64_t rnz = GB_nnz_held (R) ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     #endif
 
     //--------------------------------------------------------------------------

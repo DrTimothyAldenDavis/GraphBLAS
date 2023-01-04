@@ -30,6 +30,6 @@ GrB_Info GrB_Matrix_clear   // clear a matrix of all entries;
     // clear the matrix
     //--------------------------------------------------------------------------
 
-    return (GB_clear (A, Context)) ;
+    return (GB_clear (A, Werk)) ;
 }
 

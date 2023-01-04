@@ -16,7 +16,7 @@
 GrB_Info GB_hypermatrix_prune
 (
     GrB_Matrix A,               // matrix to prune
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -42,7 +42,7 @@ GrB_Info GB_hypermatrix_prune
     if (A->nvec_nonempty < 0)
     { 
         // A->nvec_nonempty is needed to prune the hyperlist
-        A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
+        A->nvec_nonempty = GB_nvec_nonempty (A, Werk) ;
     }
 
     //--------------------------------------------------------------------------
@@ -59,7 +59,7 @@ GrB_Info GB_hypermatrix_prune
         ASSERT (anz == A->p [A->nvec]) ;
         GrB_Info info = GB_hyper_prune (&Ap_new, &Ap_new_size,
             &Ah_new, &Ah_new_size, &nvec_new, &plen_new,
-            A->p, A->h, A->nvec, Context) ;
+            A->p, A->h, A->nvec, Werk) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory

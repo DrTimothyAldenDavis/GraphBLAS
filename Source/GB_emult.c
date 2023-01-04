@@ -60,7 +60,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B,     // input B matrix
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -137,7 +137,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
             return (GB_add (C, ctype, C_is_csc, M, Mask_struct,
                 Mask_comp, mask_applied, A, B, false, NULL, NULL,
-                op, Context)) ;
+                op, Werk)) ;
 
         case GB_EMULT_METHOD2 :  // A sparse/hyper, B bitmap/full
 
@@ -173,7 +173,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
             return (GB_emult_02 (C, ctype, C_is_csc,
                 (apply_mask) ? M : NULL, Mask_struct, Mask_comp,
-                A, B, op, false, Context)) ;
+                A, B, op, false, Werk)) ;
 
         case GB_EMULT_METHOD3 :  // A bitmap/full, B sparse/hyper
 
@@ -208,7 +208,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
             return (GB_emult_02 (C, ctype, C_is_csc,
                 (apply_mask) ? M : NULL, Mask_struct, Mask_comp,
-                B, A, op, true, Context)) ;
+                B, A, op, true, Werk)) ;
 
         case GB_EMULT_METHOD8 : 
 
@@ -285,7 +285,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
             return (GB_bitmap_emult (C, ewise_method, ctype, C_is_csc,
                 M, Mask_struct, Mask_comp, mask_applied, A, B,
-                op, Context)) ;
+                op, Werk)) ;
 
         case GB_EMULT_METHOD4 : 
 
@@ -298,7 +298,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      sparse  sparse      full            full    (GB_add or 4)
 
             return (GB_emult_04 (C, ctype, C_is_csc, M, Mask_struct,
-                mask_applied, A, B, op, Context)) ;
+                mask_applied, A, B, op, Werk)) ;
 
         case GB_EMULT_METHOD9 : break ; // punt
 
@@ -365,7 +365,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // input/output to phase0:
         &C_sparsity,
         // original input:
-        (apply_mask) ? M : NULL, A, B, Context)) ;
+        (apply_mask) ? M : NULL, A, B, Werk)) ;
 
     // C is still sparse or hypersparse, not bitmap or full
     ASSERT (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE) ;
@@ -381,7 +381,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // computed by phase0:
         Cnvec, Ch, C_to_M, C_to_A, C_to_B, false,
         // original input:
-        (apply_mask) ? M : NULL, A, B, Context)) ;
+        (apply_mask) ? M : NULL, A, B, Werk)) ;
 
     // count the number of entries in each vector of C
     GB_OK (GB_emult_phase1 (
@@ -392,7 +392,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // from phase0:
         Cnvec, Ch, C_to_M, C_to_A, C_to_B,
         // original input:
-        (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Context)) ;
+        (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Werk)) ;
 
     //--------------------------------------------------------------------------
     // phase2: compute the entries (indices and values) in each vector of C
@@ -413,7 +413,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // from GB_emult_sparsity:
         ewise_method,
         // original input:
-        (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Context)) ;
+        (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Werk)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

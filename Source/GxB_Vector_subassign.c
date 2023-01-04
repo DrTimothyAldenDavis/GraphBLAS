@@ -58,7 +58,7 @@ GrB_Info GxB_Vector_subassign       // w(Rows)<M> = accum (w(Rows),u)
         Rows, nRows,                    // row indices
         GrB_ALL, 1,                     // all column indices
         false, NULL, GB_ignore_code,    // no scalar expansion
-        Context) ;
+        Werk) ;
 
     GB_BURBLE_END ;
     return (info) ;

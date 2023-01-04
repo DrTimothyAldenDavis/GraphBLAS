@@ -25,7 +25,7 @@ GrB_Info GB_reduce_to_scalar_cuda
     GB_void *s,
     const GrB_Monoid reduce,
     const GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 

@@ -30,7 +30,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     const bool scalar_expansion,    // if true, expand scalar to A
     const void *scalar,             // scalar to be expanded
     const GB_Type_code scalar_code, // type code of scalar to expand
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_subassign_scalar        // C(Rows,Cols)<M> += x
@@ -45,7 +45,7 @@ GrB_Info GB_subassign_scalar        // C(Rows,Cols)<M> += x
     const GrB_Index *Cols,          // column indices
     const GrB_Index nCols,          // number of column indices
     const GrB_Descriptor desc,      // descriptor for C(Rows,Cols) and M
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 int GB_subassigner_method           // return method to use in GB_subassigner
@@ -93,7 +93,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     const bool scalar_expansion,    // if true, expand scalar to A
     const void *scalar,             // scalar to be expanded
     const GrB_Type atype,           // type code of scalar to expand
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_assign_prep
@@ -155,7 +155,7 @@ GrB_Info GB_assign_prep
     const bool scalar_expansion,    // if true, expand scalar to A
     const void *scalar,             // scalar to be expanded
     const GB_Type_code scode,       // type code of scalar to expand
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------

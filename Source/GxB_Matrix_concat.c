@@ -40,7 +40,7 @@ GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
     // C = concatenate (Tiles)
     //--------------------------------------------------------------------------
 
-    info = GB_concat (C, Tiles, m, n, Context) ;
+    info = GB_concat (C, Tiles, m, n, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

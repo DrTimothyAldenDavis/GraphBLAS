@@ -19,7 +19,7 @@
 #define GB_FREE_ALL                                                     \
 {                                                                       \
     GB_FREE (&Sblocks, Sblocks_size) ;                                  \
-    GB_serialize_free_blocks (&Blocks, Blocks_size, nblocks, Context) ; \
+    GB_serialize_free_blocks (&Blocks, Blocks_size, nblocks, Werk) ; \
 }
 
 GrB_Info GB_serialize_array
@@ -40,7 +40,7 @@ GrB_Info GB_serialize_array
     int32_t method,                     // compression method requested
     int32_t algo,                       // compression algorithm
     int32_t level,                      // compression level
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -120,7 +120,7 @@ GrB_Info GB_serialize_array
     // determine # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (len, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
@@ -270,7 +270,7 @@ GrB_Info GB_serialize_array
     // compute cumulative sum of the compressed blocks
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Sblocks, nblocks, NULL, 1, Context) ;
+    GB_cumsum (Sblocks, nblocks, NULL, 1, Werk) ;
 
     //--------------------------------------------------------------------------
     // free workspace return result

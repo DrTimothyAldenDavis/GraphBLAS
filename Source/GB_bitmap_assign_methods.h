@@ -34,7 +34,7 @@
 #define GB_GET_C_BITMAP                                                     \
     GrB_Info info ;                                                         \
     /* also get the max # of threads to use */                              \
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;                    \
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;                    \
     ASSERT_MATRIX_OK (C, "C for bitmap assign", GB0) ;                      \
     ASSERT (GB_IS_BITMAP (C)) ;                                             \
     int8_t  *Cb = C->b ;                                                    \
@@ -212,7 +212,7 @@ GrB_Info GB_bitmap_assign_fullM_accum
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
     const int assign_kind,      // row assign, col assign, assign, or subassign
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_assign_fullM_accum_whole
@@ -228,7 +228,7 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_assign_fullM_noaccum
@@ -253,7 +253,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
     const int assign_kind,      // row assign, col assign, assign, or subassign
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_assign_fullM_noaccum_whole
@@ -269,7 +269,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum_whole
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_assign_M_accum
@@ -294,7 +294,7 @@ GrB_Info GB_bitmap_assign_M_accum
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
     const int assign_kind,      // row assign, col assign, assign, or subassign
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_assign_M_accum_whole
@@ -310,7 +310,7 @@ GrB_Info GB_bitmap_assign_M_accum_whole
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_assign_M_noaccum
@@ -335,7 +335,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
     const int assign_kind,      // row assign, col assign, assign, or subassign
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_assign_M_noaccum_whole
@@ -351,7 +351,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_assign_noM_accum
@@ -376,7 +376,7 @@ GrB_Info GB_bitmap_assign_noM_accum
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
     const int assign_kind,      // row assign, col assign, assign, or subassign
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_assign_noM_accum_whole
@@ -392,7 +392,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_assign_noM_noaccum
@@ -417,7 +417,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
     const int assign_kind,      // row assign, col assign, assign, or subassign
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_assign_noM_noaccum_whole
@@ -433,7 +433,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_assign_notM_accum
@@ -458,7 +458,7 @@ GrB_Info GB_bitmap_assign_notM_accum
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
     const int assign_kind,      // row assign, col assign, assign, or subassign
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_assign_notM_accum_whole
@@ -474,7 +474,7 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_assign_notM_noaccum
@@ -499,7 +499,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
     const int assign_kind,      // row assign, col assign, assign, or subassign
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_assign_notM_noaccum_whole
@@ -515,7 +515,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #define GB_BITMAP_M_SCATTER_PLUS_2  0
@@ -543,7 +543,7 @@ void GB_bitmap_M_scatter        // scatter M into the C bitmap
     const int64_t *M_ek_slicing,    // size M_ntasks+1
     const int M_ntasks,
     const int M_nthreads,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
@@ -557,7 +557,7 @@ void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
     const int64_t *M_ek_slicing,    // size M_ntasks+1
     const int M_ntasks,
     const int M_nthreads,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 void GB_bitmap_assign_to_full   // set all C->b to 1, or free it and make C full

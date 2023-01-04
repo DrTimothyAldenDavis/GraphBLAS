@@ -100,7 +100,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     const GrB_Matrix B,     // input B matrix (bitmap/full)
     GrB_BinaryOp op,        // op to perform C = op (A,B)
     bool flipxy,            // if true use fmult(y,x) else fmult(x,y)
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -227,7 +227,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
 
     GB_OK (GB_new (&C, // sparse or hyper (same as A), existing header
         ctype, vlen, vdim, GB_Ap_calloc, C_is_csc,
-        C_sparsity, A->hyper_switch, nvec, Context)) ;
+        C_sparsity, A->hyper_switch, nvec, Werk)) ;
     int64_t *restrict Cp = C->p ;
 
     //--------------------------------------------------------------------------
@@ -235,7 +235,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     //--------------------------------------------------------------------------
 
     int A_nthreads, A_ntasks ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     GB_SLICE_MATRIX (A, 8, chunk) ;
 
     //--------------------------------------------------------------------------
@@ -372,7 +372,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
 
         GB_ek_slice_merge1 (Cp, Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
         GB_ek_slice_merge2 (&(C->nvec_nonempty), Cp_kfirst, Cp, nvec,
-            Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Context) ;
+            Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Werk) ;
     }
 
     //--------------------------------------------------------------------------
@@ -381,7 +381,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
 
     int64_t cnz = (C_has_pattern_of_A) ? anz : Cp [nvec] ;
     // set C->iso = C_iso   OK
-    GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, C_iso, Context)) ;
+    GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, C_iso, Werk)) ;
 
     //--------------------------------------------------------------------------
     // copy pattern into C
@@ -513,14 +513,14 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
         GB_ewise_generic (C, op, NULL, 0, 0,
             NULL, NULL, NULL, C_sparsity, ewise_method, Cp_kfirst,
             NULL, 0, 0, A_ek_slicing, A_ntasks, A_nthreads, NULL, 0, 0,
-            M, Mask_struct, Mask_comp, A, B, Context) ;
+            M, Mask_struct, Mask_comp, A, B, Werk) ;
     }
 
     //--------------------------------------------------------------------------
     // remove empty vectors from C, if hypersparse
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_hypermatrix_prune (C, Context)) ;
+    GB_OK (GB_hypermatrix_prune (C, Werk)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

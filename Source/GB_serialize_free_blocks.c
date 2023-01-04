@@ -17,7 +17,7 @@ void GB_serialize_free_blocks
     GB_blocks **Blocks_handle,      // array of size nblocks
     size_t Blocks_size,             // size of Blocks
     int32_t nblocks,                // # of blocks, or zero if no blocks
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 

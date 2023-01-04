@@ -18,7 +18,7 @@ GrB_Info GB_hyper_realloc
 (
     GrB_Matrix A,               // matrix with hyperlist to reallocate
     int64_t plen_new,           // new size of A->p and A->h
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -46,8 +46,8 @@ GrB_Info GB_hyper_realloc
 
         // change the size of A->h and A->p
         bool ok1 = true, ok2 = true ;
-        GB_REALLOC (A->p, plen_new+1, int64_t, &(A->p_size), &ok1, Context) ;
-        GB_REALLOC (A->h, plen_new,   int64_t, &(A->h_size), &ok2, Context) ;
+        GB_REALLOC (A->p, plen_new+1, int64_t, &(A->p_size), &ok1, Werk) ;
+        GB_REALLOC (A->h, plen_new,   int64_t, &(A->h_size), &ok2, Werk) ;
         bool ok = ok1 && ok2 ;
 
         // always succeeds if the space shrinks

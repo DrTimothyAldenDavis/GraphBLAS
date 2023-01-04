@@ -205,7 +205,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     int *ntasks,                    // # of tasks created (coarse and fine)
     int *nfine,                     // # of fine tasks created
     int *nthreads,                  // # of threads to use
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -240,7 +240,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     // determine the # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     bool bitmap_or_full = (GB_IS_FULL (A) || GB_IS_BITMAP (A)
                         || GB_IS_FULL (B) || GB_IS_BITMAP (B)) ;
     if (builtin_semiring && bitmap_or_full)
@@ -302,7 +302,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     int64_t Mwork = 0 ;
     int64_t *restrict Bflops = C->p ;    // use C->p as workspace for Bflops
     GB_OK (GB_AxB_saxpy3_flopcount (&Mwork, Bflops, M, Mask_comp, A, B,
-        Context)) ;
+        Werk)) ;
     double total_flops = (double) Bflops [bnvec] ;
     double axbflops = total_flops - Mwork ;
     GBURBLE ("axbwork %g ", axbflops) ;
@@ -700,7 +700,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
                         }
 
                         // cumulative sum of flops to compute A*B(:,j)
-                        GB_cumsum (Fine_fl, bjnz, NULL, nth, Context) ;
+                        GB_cumsum (Fine_fl, bjnz, NULL, nth, Werk) ;
 
                         // slice B(:,j) into fine tasks
                         int team_size = ceil (jflops / target_fine_size) ;

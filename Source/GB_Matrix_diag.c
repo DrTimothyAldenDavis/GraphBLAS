@@ -26,7 +26,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     GrB_Matrix C,           // output matrix
     const GrB_Matrix V_in,  // input vector (as an n-by-1 matrix)
     int64_t k,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -69,8 +69,8 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
         // make a deep copy of V_in and convert to CSC
         // set T->iso = V_in->iso   OK
         GB_CLEAR_STATIC_HEADER (T, &T_header) ;
-        GB_OK (GB_dup_worker (&T, V_in->iso, V_in, true, NULL, Context)) ;
-        GB_OK (GB_convert_bitmap_to_sparse (T, Context)) ;
+        GB_OK (GB_dup_worker (&T, V_in->iso, V_in, true, NULL, Werk)) ;
+        GB_OK (GB_convert_bitmap_to_sparse (T, Werk)) ;
         V = T ;
     }
     else
@@ -99,7 +99,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // existing header
         ctype, n, n, GB_Ap_malloc, csc, C_sparsity, false,
-        C->hyper_switch, vnz, vnz, true, C_iso, Context)) ;
+        C->hyper_switch, vnz, vnz, true, C_iso, Werk)) ;
     C->sparsity_control = sparsity_control ;
     C->bitmap_switch = bitmap_switch ;
 
@@ -131,7 +131,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     // get the contents of C and determine # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (vnz, chunk, nthreads_max) ;
     int64_t *restrict Cp = C->p ;
     int64_t *restrict Ch = C->h ;
@@ -149,7 +149,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
         //----------------------------------------------------------------------
 
         // C->x = (ctype) V->x
-        GB_cast_matrix (C, V, Context) ;
+        GB_cast_matrix (C, V, Werk) ;
 
         // construct Cp and Ci
         int64_t p ;
@@ -169,7 +169,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
         //----------------------------------------------------------------------
 
         // C->x = (ctype) V->x
-        GB_cast_matrix (C, V, Context) ;
+        GB_cast_matrix (C, V, Werk) ;
 
         // construct Cp, Ch, and Ci
         int64_t p ;
@@ -190,7 +190,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
         //----------------------------------------------------------------------
 
         // C->x = (ctype) V->x
-        GB_cast_matrix (C, V, Context) ;
+        GB_cast_matrix (C, V, Werk) ;
 
         int64_t *restrict Vi = V->i ;
 
@@ -221,7 +221,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
 
     GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (C, "C before conform for GB_Matrix_diag", GB0) ;
-    GB_OK (GB_conform (C, Context)) ;
+    GB_OK (GB_conform (C, Werk)) ;
     ASSERT_MATRIX_OK (C, "C output for GB_Matrix_diag", GB0) ;
     return (GrB_SUCCESS) ;
 }

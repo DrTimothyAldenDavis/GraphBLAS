@@ -23,7 +23,7 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     int *ntasks,                    // # of tasks created (coarse and fine)
     int *nfine,                     // # of fine tasks created
     int *nthreads,                  // # of threads to use
-    GB_Context Context
+    GB_Werk Werk
 )
 { 
 

@@ -17,7 +17,7 @@ GrB_Info GB_convert_any_to_iso // convert non-iso matrix to iso
 (
     GrB_Matrix A,           // input/output matrix
     GB_void *scalar,        // scalar value, of size A->type->size, or NULL
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 

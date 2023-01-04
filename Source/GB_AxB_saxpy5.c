@@ -55,7 +55,7 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     const GrB_Semiring semiring,    // semiring that defines C=A*B and accum
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *done_in_place,            // if true, saxpy5 has computed the result
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -126,7 +126,7 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     // ensure C is non-iso
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_convert_any_to_non_iso (C, true, Context)) ;
+    GB_OK (GB_convert_any_to_non_iso (C, true, Werk)) ;
 
     //--------------------------------------------------------------------------
     // determine the # of threads to use and the parallel tasks
@@ -135,7 +135,7 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     int64_t anz = GB_nnz_held (A) ;
     int64_t bnz = GB_nnz_held (B) ;
     int64_t bnvec = B->nvec ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : 4 * nthreads ;
     ntasks = GB_IMIN (ntasks, bnvec) ;
@@ -158,7 +158,7 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     #define GB_AxB_WORKER(add,mult,xname)                               \
     {                                                                   \
         info = GB_Asaxpy5B (add,mult,xname) (C, A,                      \
-            B, ntasks, nthreads, B_slice, Context) ;                    \
+            B, ntasks, nthreads, B_slice, Werk) ;                    \
     }                                                                   \
     break ;
 

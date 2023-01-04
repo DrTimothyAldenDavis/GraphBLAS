@@ -66,7 +66,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -161,7 +161,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         M_sparsity, false, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork 
-        true, C_iso, Context) ;
+        true, C_iso, Werk) ;
 
     if (info != GrB_SUCCESS)
     { 

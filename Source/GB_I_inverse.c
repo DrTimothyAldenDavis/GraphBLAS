@@ -30,7 +30,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     int64_t *restrict *p_Inext, // next pointers for buckets, size nI
     size_t *p_Inext_size,
     int64_t *p_ndupl,           // number of duplicate entries in I
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 

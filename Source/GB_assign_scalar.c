@@ -33,7 +33,7 @@ GrB_Info GB_assign_scalar           // C<M>(Rows,Cols) += x
     const GrB_Index *Cols,          // column indices
     const GrB_Index nCols,          // number of column indices
     const GrB_Descriptor desc,      // descriptor for C and M
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -61,7 +61,7 @@ GrB_Info GB_assign_scalar           // C<M>(Rows,Cols) += x
     { 
         // C(i,j) = scalar or C(i,j) += scalar
         return (GB_setElement (C, accum, scalar, Rows [0], Cols [0],
-            scalar_code, Context)) ;
+            scalar_code, Werk)) ;
     }
     else
     { 
@@ -77,7 +77,7 @@ GrB_Info GB_assign_scalar           // C<M>(Rows,Cols) += x
             scalar,                     // scalar to assign, expands to become A
             scalar_code,                // type code of scalar to expand
             GB_ASSIGN,
-            Context)) ;
+            Werk)) ;
     }
 }
 

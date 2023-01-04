@@ -69,7 +69,7 @@ void mexFunction
 
     bool malloc_debug = GB_mx_get_global (true) ;
 
-    // GB_CONTEXT (USAGE) ;
+    // GB_WERK (USAGE) ;
 
     printf ("in %s:\n", __FILE__) ;
 

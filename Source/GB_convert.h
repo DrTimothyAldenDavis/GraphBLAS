@@ -66,13 +66,13 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
 (
     GrB_Matrix A,           // matrix to convert from hypersparse to sparse
     bool do_burble,         // if true, then burble is allowed
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
 (
     GrB_Matrix A,           // matrix to convert to hypersparse
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 bool GB_convert_hyper_to_sparse_test    // test for hypersparse to sparse
@@ -108,25 +108,25 @@ bool GB_convert_sparse_to_bitmap_test    // test for hyper/sparse to bitmap
 GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
 (
     GrB_Matrix A,               // matrix to convert from full to sparse
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_convert_full_to_bitmap      // convert matrix from full to bitmap
 (
     GrB_Matrix A,               // matrix to convert from full to bitmap
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
 (
     GrB_Matrix A,               // matrix to convert from sparse to bitmap
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
 (
     GrB_Matrix A,               // matrix to convert from bitmap to sparse
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
@@ -139,13 +139,13 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
     int64_t *anvec_nonempty,        // # of non-empty vectors
     // inputs: not modified
     const GrB_Matrix A,             // matrix to extract; not modified
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_convert_any_to_bitmap   // convert to bitmap
 (
     GrB_Matrix A,           // matrix to convert to bitmap
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 void GB_convert_any_to_full     // convert any matrix to full
@@ -156,19 +156,19 @@ void GB_convert_any_to_full     // convert any matrix to full
 GrB_Info GB_convert_any_to_hyper // convert to hypersparse
 (
     GrB_Matrix A,           // matrix to convert to hypersparse
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_convert_any_to_sparse // convert to sparse
 (
     GrB_Matrix A,           // matrix to convert to sparse
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
 (
     GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 /* ensure C is sparse or hypersparse */
@@ -177,12 +177,12 @@ GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
     if (GB_IS_BITMAP (C))                                   \
     {                                                       \
         /* convert C from bitmap to sparse */               \
-        GB_OK (GB_convert_bitmap_to_sparse (C, Context)) ;  \
+        GB_OK (GB_convert_bitmap_to_sparse (C, Werk)) ;  \
     }                                                       \
     else if (GB_IS_FULL (C))                                \
     {                                                       \
         /* convert C from full to sparse */                 \
-        GB_OK (GB_convert_full_to_sparse (C, Context)) ;    \
+        GB_OK (GB_convert_full_to_sparse (C, Werk)) ;    \
     }                                                       \
 }
 
@@ -259,7 +259,7 @@ static inline bool GB_as_if_full
 GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
 (
     GrB_Matrix A,       // matrix to conform
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 static inline const char *GB_sparsity_char (int sparsity)

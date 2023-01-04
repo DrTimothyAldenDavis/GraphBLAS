@@ -47,7 +47,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     const GrB_Semiring semiring,    // semiring that defines C=A*B and accum
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *done_in_place,            // if true, saxpy4 has computed the result
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -121,7 +121,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     // ensure C is non-iso
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_convert_any_to_non_iso (C, true, Context)) ;
+    GB_OK (GB_convert_any_to_non_iso (C, true, Werk)) ;
 
     //--------------------------------------------------------------------------
     // determine the # of threads to use and the parallel tasks
@@ -131,7 +131,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     bool use_coarse_tasks, use_atomics ;
     GB_AxB_saxpy4_tasks (&ntasks, &nthreads, &nfine_tasks_per_vector,
         &use_coarse_tasks, &use_atomics, GB_nnz (A), GB_nnz_held (B),
-        B->vdim, C->vlen, Context) ;
+        B->vdim, C->vlen, Werk) ;
     if (!use_coarse_tasks)
     {
         // slice the matrix A for each team of fine tasks
@@ -156,7 +156,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     {                                                                   \
         info = GB_Asaxpy4B (add,mult,xname) (C, A,                      \
             B, ntasks, nthreads, nfine_tasks_per_vector,                \
-            use_coarse_tasks, use_atomics, A_slice, Context) ;          \
+            use_coarse_tasks, use_atomics, A_slice, Werk) ;          \
     }                                                                   \
     break ;
 

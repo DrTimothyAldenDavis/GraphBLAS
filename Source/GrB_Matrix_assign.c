@@ -58,7 +58,7 @@ GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
         Cols, nCols,                    // column indices
         false, NULL, GB_ignore_code,    // no scalar expansion
         GB_ASSIGN,
-        Context) ;
+        Werk) ;
 
     GB_BURBLE_END ;
     return (info) ;

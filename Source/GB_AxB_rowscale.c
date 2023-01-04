@@ -24,7 +24,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=D*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -44,7 +44,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     ASSERT (!GB_PENDING (B)) ;
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric D*B", GB0) ;
     ASSERT (D->vdim == B->vlen) ;
-    ASSERT (GB_is_diagonal (D, Context)) ;
+    ASSERT (GB_is_diagonal (D, Werk)) ;
 
     ASSERT (!GB_IS_BITMAP (D)) ;        // bitmap or full: not needed
     ASSERT (!GB_IS_BITMAP (B)) ;
@@ -86,7 +86,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
     // allocate C->x but do not initialize it
     // set C->iso = C_iso   OK
-    GB_OK (GB_dup_worker (&C, C_iso, B, false, ztype, Context)) ;
+    GB_OK (GB_dup_worker (&C, C_iso, B, false, ztype, Werk)) ;
     GB_void *restrict Cx = (GB_void *) C->x ;
 
     //--------------------------------------------------------------------------
@@ -139,7 +139,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         }
         GB_OK (GB_apply_op (Cx, C->type, GB_NON_ISO,
             (GB_Operator) op,   // positional op
-            NULL, false, false, B, Context)) ;
+            NULL, false, false, B, Werk)) ;
         ASSERT_MATRIX_OK (C, "rowscale positional: C = D*B output", GB0) ;
 
     }
@@ -197,7 +197,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         // determine the number of threads to use
         //----------------------------------------------------------------------
 
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
         int nthreads = GB_nthreads (GB_nnz_held (B) + B->nvec, chunk,
             nthreads_max) ;
 

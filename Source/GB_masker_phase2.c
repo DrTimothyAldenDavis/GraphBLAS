@@ -68,7 +68,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix C,
     const GrB_Matrix Z,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -143,7 +143,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     // set R->iso = R_iso   OK
     GrB_Info info = GB_new_bix (&R, // any sparsity, existing header
         C->type, C->vlen, C->vdim, GB_Ap_null, R_is_csc,
-        R_sparsity, true, C->hyper_switch, Rnvec, rnz, true, R_iso, Context) ;
+        R_sparsity, true, C->hyper_switch, Rnvec, rnz, true, R_iso, Werk) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free R_to_M, R_to_C, R_to_Z
@@ -205,7 +205,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     // prune empty vectors from Rh
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_hypermatrix_prune (R, Context)) ;
+    GB_OK (GB_hypermatrix_prune (R, Werk)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

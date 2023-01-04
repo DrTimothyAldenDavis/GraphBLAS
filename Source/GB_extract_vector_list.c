@@ -26,7 +26,7 @@ GrB_Info GB_extract_vector_list     // extract vector list from a matrix
     int64_t *restrict J,         // size nnz(A) or more
     // input:
     const GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -52,7 +52,7 @@ GrB_Info GB_extract_vector_list     // extract vector list from a matrix
     // determine the max number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task

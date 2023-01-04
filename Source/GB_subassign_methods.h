@@ -78,7 +78,7 @@
     const bool is_matrix = (cvdim > 1) ;
 
 #define GB_GET_C_HYPER_HASH                                                 \
-    GB_OK (GB_hyper_hash_build (C, Context)) ;                              \
+    GB_OK (GB_hyper_hash_build (C, Werk)) ;                              \
     const int64_t *restrict C_Yp = (C_is_hyper) ? C->Y->p : NULL ;          \
     const int64_t *restrict C_Yi = (C_is_hyper) ? C->Y->i : NULL ;          \
     const int64_t *restrict C_Yx = (C_is_hyper) ? C->Y->x : NULL ;          \
@@ -104,7 +104,7 @@
     const bool M_is_bitmap = GB_IS_BITMAP (M)
 
 #define GB_GET_MASK_HYPER_HASH                                              \
-    GB_OK (GB_hyper_hash_build (M, Context)) ;                              \
+    GB_OK (GB_hyper_hash_build (M, Werk)) ;                              \
     const int64_t *restrict M_Yp = (M_is_hyper) ? M->Y->p : NULL ;          \
     const int64_t *restrict M_Yi = (M_is_hyper) ? M->Y->i : NULL ;          \
     const int64_t *restrict M_Yx = (M_is_hyper) ? M->Y->x : NULL ;          \
@@ -1031,7 +1031,7 @@ GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting the pattern not values
     const GrB_Index *J,         // index list for S = C(I,J), or GrB_ALL, etc.
     const int64_t nj,           // length of J, or special
     const bool S_must_not_be_jumbled,   // if true, S cannot be jumbled
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1052,7 +1052,7 @@ GrB_Info GB_subassign_zombie
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1075,7 +1075,7 @@ GrB_Info GB_subassign_01
     const int64_t Jcolon [3],
     const void *scalar,
     const GrB_Type atype,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1097,7 +1097,7 @@ GrB_Info GB_subassign_02
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1121,7 +1121,7 @@ GrB_Info GB_subassign_03
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1144,7 +1144,7 @@ GrB_Info GB_subassign_04
     const int64_t Jcolon [3],
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1167,7 +1167,7 @@ GrB_Info GB_subassign_05
     const bool Mask_struct,
     const void *scalar,
     const GrB_Type atype,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1181,7 +1181,7 @@ GrB_Info GB_subassign_05e
     const GrB_Matrix M,
     const void *scalar,
     const GrB_Type atype,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1203,7 +1203,7 @@ GrB_Info GB_subassign_06n
     const GrB_Matrix M,
     const bool Mask_struct,
     const GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1228,7 +1228,7 @@ GrB_Info GB_subassign_06s_and_14
     const bool Mask_struct,         // if true, use the only structure of M
     const bool Mask_comp,           // if true, !M, else use M
     const GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1252,7 +1252,7 @@ GrB_Info GB_subassign_07
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1275,7 +1275,7 @@ GrB_Info GB_subassign_08n
     const bool Mask_struct,
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1300,7 +1300,7 @@ GrB_Info GB_subassign_09
     const bool Mask_struct,
     const void *scalar,
     const GrB_Type atype,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1325,7 +1325,7 @@ GrB_Info GB_subassign_10_and_18
     const bool Mask_struct,         // if true, use the only structure of M
     const bool Mask_comp,           // if true, !M, else use M
     const GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1351,7 +1351,7 @@ GrB_Info GB_subassign_11
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1377,7 +1377,7 @@ GrB_Info GB_subassign_12_and_20
     const bool Mask_comp,           // if true, !M, else use M
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1402,7 +1402,7 @@ GrB_Info GB_subassign_13
     const bool Mask_struct,
     const void *scalar,
     const GrB_Type atype,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1428,7 +1428,7 @@ GrB_Info GB_subassign_15
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1455,7 +1455,7 @@ GrB_Info GB_subassign_08s_and_16
     const bool Mask_comp,           // if true, !M, else use M
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1480,7 +1480,7 @@ GrB_Info GB_subassign_17
     const bool Mask_struct,
     const void *scalar,
     const GrB_Type atype,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1506,7 +1506,7 @@ GrB_Info GB_subassign_19
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1534,7 +1534,7 @@ GrB_Info GB_subassign_19
     GB_OK (GB_subassign_one_slice (                                         \
         &TaskList, &TaskList_size, &ntasks, &nthreads,                      \
         C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,                      \
-        M, Context)) ;                                                      \
+        M, Werk)) ;                                                      \
     GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------
@@ -1556,11 +1556,11 @@ GrB_Info GB_subassign_19
     GB_OK (GB_add_phase0 (                                                  \
         &Znvec, &Zh, &Zh_size, NULL, NULL, &Z_to_X, &Z_to_X_size,           \
         &Z_to_S, &Z_to_S_size, NULL, &Z_sparsity,                           \
-        NULL, X, S, Context)) ;                                             \
+        NULL, X, S, Werk)) ;                                             \
     GB_OK (GB_ewise_slice (                                                 \
         &TaskList, &TaskList_size, &ntasks, &nthreads,                      \
         Znvec, Zh, NULL, Z_to_X, Z_to_S, false,                             \
-        NULL, X, S, Context)) ;                                             \
+        NULL, X, S, Werk)) ;                                             \
     GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------
@@ -1574,7 +1574,7 @@ GrB_Info GB_subassign_19
     GB_OK (GB_subassign_IxJ_slice (                                         \
         &TaskList, &TaskList_size, &ntasks, &nthreads,                      \
         /* I, */ nI, /* Ikind, Icolon, J, */ nJ, /* Jkind, Jcolon, */       \
-        Context)) ;                                                         \
+        Werk)) ;                                                         \
     GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------
@@ -1601,7 +1601,7 @@ GrB_Info GB_subassign_one_slice
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix A,             // matrix to slice (M or A)
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1633,7 +1633,7 @@ GrB_Info GB_subassign_08n_slice
     const int64_t Jcolon [3],
     const GrB_Matrix A,             // matrix to slice
     const GrB_Matrix M,             // matrix to slice
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1855,7 +1855,7 @@ GrB_Info GB_subassign_08n_slice
     }                                                                       \
     /* ensure that C->Pending is large enough to handle nnew more tuples */ \
     if (!GB_Pending_ensure (&(C->Pending), C_iso, atype, accum, is_matrix,  \
-        nnew, Context))                                                     \
+        nnew, Werk))                                                     \
     {                                                                       \
         GB_FREE_ALL ;                                                       \
         return (GrB_OUT_OF_MEMORY) ;                                        \

@@ -13,20 +13,20 @@
 int64_t GB_nvec_nonempty        // return # of non-empty vectors
 (
     const GrB_Matrix A,         // input matrix to examine
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_hyper_realloc
 (
     GrB_Matrix A,               // matrix with hyperlist to reallocate
     int64_t plen_new,           // new size of A->p and A->h
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_conform_hyper       // conform a matrix to sparse/hypersparse
 (
     GrB_Matrix A,               // matrix to conform
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_hyper_prune
@@ -40,19 +40,19 @@ GrB_Info GB_hyper_prune
     const int64_t *Ap_old,          // size nvec_old+1
     const int64_t *Ah_old,          // size nvec_old
     const int64_t nvec_old,         // original number of vectors
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_hypermatrix_prune
 (
     GrB_Matrix A,               // matrix to prune
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_hyper_hash_build    // construct A->Y if not already constructed
 (
     GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #include "GB_hyper_hash_lookup.h"

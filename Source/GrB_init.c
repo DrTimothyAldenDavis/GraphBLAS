@@ -23,7 +23,7 @@ GrB_Info GrB_init           // start up GraphBLAS
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CONTEXT ("GrB_init (mode)") ;
+    GB_WERK ("GrB_init (mode)") ;
 
     //--------------------------------------------------------------------------
     // initialize GraphBLAS
@@ -33,6 +33,6 @@ GrB_Info GrB_init           // start up GraphBLAS
 
     return (GB_init (mode,              // blocking or non-blocking mode
         malloc, calloc, realloc, free,  // ANSI C memory management functions
-        Context)) ;
+        Werk)) ;
 }
 

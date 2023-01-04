@@ -46,7 +46,7 @@ bool done_in_place = false ;
 double C_scalar = 0 ;
 struct GB_Matrix_opaque MT_header, T_header ;
 
-GrB_Info axb (GB_Context Context) ;
+GrB_Info axb (GB_Werk Werk) ;
 
 GrB_Semiring My_plus_rdiv2 = NULL ;
 GrB_BinaryOp My_rdiv2 = NULL ;
@@ -66,7 +66,7 @@ GrB_BinaryOp My_rdiv2 = NULL ;
 
 //------------------------------------------------------------------------------
 
-GrB_Info axb (GB_Context Context)
+GrB_Info axb (GB_Werk Werk)
 {
     // create the rdiv2 operator
 //  info = GrB_BinaryOp_new (&My_rdiv2,
@@ -132,7 +132,7 @@ GrB_Info axb (GB_Context Context)
         &done_in_place,
         AxB_method,
         true,       // do the sort
-        Context) ;
+        Werk) ;
 
     if (info == GrB_SUCCESS)
     {
@@ -184,7 +184,7 @@ void mexFunction
     My_rdiv2 = NULL ;
     My_plus_rdiv2 = NULL ;
 
-    GB_CONTEXT (USAGE) ;
+    GB_WERK (USAGE) ;
 
     // check inputs
     if (nargout > 2 || nargin < 2 || nargin > 7)
@@ -261,7 +261,7 @@ void mexFunction
     // B must be completed
     GrB_Matrix_wait (B, GrB_MATERIALIZE) ;
 
-    METHOD (axb (Context)) ;
+    METHOD (axb (Werk)) ;
 
     // return C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C AxB result", false) ;

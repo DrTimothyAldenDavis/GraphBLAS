@@ -51,7 +51,7 @@ GrB_Info GxB_Matrix_unpack_FullC  // unpack a full matrix, by column
     { 
         // A = A', done in-place, to put A in by-col format
         GBURBLE ("(transpose) ") ;
-        GB_OK (GB_transpose_in_place (A, true, Context)) ;
+        GB_OK (GB_transpose_in_place (A, true, Werk)) ;
         GB_MATRIX_WAIT (A) ;
     }
 
@@ -80,7 +80,7 @@ GrB_Info GxB_Matrix_unpack_FullC  // unpack a full matrix, by column
         Ax,   Ax_size,  // Ax
         NULL, NULL, NULL,
         &sparsity, &is_csc,                 // full by col
-        iso, Context) ;
+        iso, Werk) ;
 
     if (info == GrB_SUCCESS)
     {

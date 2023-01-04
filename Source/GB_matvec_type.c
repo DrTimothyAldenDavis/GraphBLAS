@@ -13,7 +13,7 @@ GrB_Info GB_matvec_type            // get the type of a matrix
 (
     GrB_Type *type,         // returns the type of the matrix
     const GrB_Matrix A,     // matrix to query
-    GB_Context Context
+    GB_Werk Werk
 )
 { 
 

@@ -19,7 +19,7 @@
 GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
 (
     GrB_Matrix A,               // matrix to convert from bitmap to sparse
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -91,7 +91,7 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
 
     // the values are not converted if A is iso
     GB_OK (GB_convert_bitmap_worker (Ap, Ai, NULL, (A_iso) ? NULL : Ax,
-        &anvec_nonempty, A, Context)) ;
+        &anvec_nonempty, A, Werk)) ;
 
     //--------------------------------------------------------------------------
     // free prior content of A and transplant the new content

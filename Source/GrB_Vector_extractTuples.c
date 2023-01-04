@@ -36,7 +36,7 @@ GrB_Info GB_EVAL3 (prefix, _Vector_extractTuples_, T)                         \
     GB_RETURN_IF_NULL (p_nvals) ;                                             \
     ASSERT (GB_VECTOR_OK (v)) ;                                               \
     GrB_Info info = GB_extractTuples (I, NULL, X, p_nvals, GB_ ## T ## _code, \
-        (GrB_Matrix) v, Context) ;                                            \
+        (GrB_Matrix) v, Werk) ;                                            \
     GB_BURBLE_END ;                                                           \
     GB_PRAGMA (omp flush)                                                     \
     return (info) ;                                                           \

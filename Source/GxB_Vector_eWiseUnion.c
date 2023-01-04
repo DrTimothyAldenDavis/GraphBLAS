@@ -44,7 +44,7 @@
         (GrB_Matrix) v, false,      /* v, never transposed         */       \
         true,                       /* eWiseAdd                    */       \
         true, alpha, beta,          /* eWiseUnion                  */       \
-        Context)
+        Werk)
 
 //------------------------------------------------------------------------------
 // GxB_Vector_eWiseUnion: vector addition

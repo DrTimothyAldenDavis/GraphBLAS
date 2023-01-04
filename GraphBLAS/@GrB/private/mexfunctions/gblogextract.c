@@ -96,7 +96,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage (nargin == 2 && nargout <= 1, USAGE) ;
-    GB_CONTEXT ("gblogextract") ;
+    GB_WERK ("gblogextract") ;
 
     //--------------------------------------------------------------------------
     // get A
@@ -186,7 +186,7 @@ void mexFunction
     struct GB_Matrix_opaque K_header ;
     GrB_Matrix K = GB_clear_static_header (&K_header) ;
 
-    OK (GB_shallow_copy (K, GxB_BY_COL, M, Context)) ;
+    OK (GB_shallow_copy (K, GxB_BY_COL, M, Werk)) ;
     OK (GxB_Matrix_Option_get (K, GxB_SPARSITY_STATUS, &sparsity)) ;
     CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 10") ;
 

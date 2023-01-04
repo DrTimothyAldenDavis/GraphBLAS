@@ -72,7 +72,7 @@
 //  desc->nthreads_max          max # number of threads to use (auto if <= 0)
 //  desc->chunk                 chunk size for threadds
 
-//      These are copied from the GrB_Descriptor into the Context.
+//      These are copied from the GrB_Descriptor into the Werk.
 
 #include "GB.h"
 
@@ -86,7 +86,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     bool *In1_transpose,        // if true transpose second input
     GrB_Desc_Value *AxB_method, // method for C=A*B
     int *do_sort,               // if nonzero, sort in GrB_mxm
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -96,7 +96,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
 
     // desc may be null, but if not NULL it must be initialized
     GB_RETURN_IF_FAULTY (desc) ;
-    ASSERT (Context != NULL) ;  // Context is always present
+    ASSERT (Werk != NULL) ;  // Werk is always present
 
     //--------------------------------------------------------------------------
     // get the contents of the descriptor
@@ -175,10 +175,11 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
         *do_sort = do_sort_desc ;
     }
 
-    // The number of threads is copied from the descriptor into the Context, so
+    // FIXME: ignore nthreads and chunk in descriptor
+    // The number of threads is copied from the descriptor into the Werk, so
     // it is available to any internal function that needs it.
-    Context->nthreads_max = nthreads_desc ;
-    Context->chunk = chunk_desc ;
+    Werk->nthreads_max = nthreads_desc ;
+    Werk->chunk = chunk_desc ;
 
     return (GrB_SUCCESS) ;
 }

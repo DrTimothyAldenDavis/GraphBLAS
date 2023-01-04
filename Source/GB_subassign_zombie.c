@@ -40,7 +40,7 @@ GrB_Info GB_subassign_zombie
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -58,7 +58,7 @@ GrB_Info GB_subassign_zombie
     struct GB_Matrix_opaque S_header ;
     GrB_Matrix S = NULL ;
     GB_CLEAR_STATIC_HEADER (S, &S_header) ;
-    GB_OK (GB_subassign_symbolic (S, C, I, ni, J, nj, false, Context)) ;
+    GB_OK (GB_subassign_symbolic (S, C, I, ni, J, nj, false, Werk)) ;
     ASSERT (GB_JUMBLED_OK (S)) ;        // S can be returned as jumbled
     // the S->Y hyper_hash is not needed
 
@@ -84,7 +84,7 @@ GrB_Info GB_subassign_zombie
 
     int64_t snz = GB_nnz (S) ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (snz, chunk, nthreads_max) ;
 
     int64_t nzombies = C->nzombies ;

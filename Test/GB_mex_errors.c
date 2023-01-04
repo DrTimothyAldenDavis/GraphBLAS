@@ -193,7 +193,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CONTEXT (USAGE) ;
+    GB_WERK (USAGE) ;
     if (nargout > 0 || nargin > 0)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
@@ -970,7 +970,7 @@ void mexFunction
     GrB_Vector zz ;
     OK (GrB_Vector_dup (&zz, v)) ;
     OK (GB_Vector_check (zz, "zz ok vector", G3, NULL)) ;
-    GB_convert_any_to_hyper ((GrB_Matrix) zz, Context) ;
+    GB_convert_any_to_hyper ((GrB_Matrix) zz, Werk) ;
     ERR (GB_Vector_check (zz, "zz mangled: vectors cannot be hyper", G3, ff)) ;
     OK (GrB_Vector_free_(&zz)) ;
 
@@ -2152,7 +2152,7 @@ void mexFunction
     GrB_Matrix HugeMatrix = GB_clear_static_header (&HugeMatrix_header) ;
 
     OK (GB_AxB_dot2 (HugeMatrix, false, NULL, NULL, false, false,
-        false, HugeRow, HugeRow, GxB_PLUS_TIMES_FP64, false, Context)) ;
+        false, HugeRow, HugeRow, GxB_PLUS_TIMES_FP64, false, Werk)) ;
 
     GxB_Matrix_fprint (HugeMatrix, "HugeMatrix", G3, ff) ;
     GrB_Matrix_free_(&HugeMatrix) ;
@@ -3811,7 +3811,7 @@ void mexFunction
 
     printf ("\n-------------- GB_entry_check:\n") ;
 
-    Context->where = "GB_entry_check (type, x, pr, f)" ;
+    Werk->where = "GB_entry_check (type, x, pr, f)" ;
 
     expected = GrB_NULL_POINTER ;
 
@@ -3831,7 +3831,7 @@ void mexFunction
 
     printf ("\n-------------- GB_Type_check:\n") ;
 
-    Context->where = "GB_Type_check" ;
+    Werk->where = "GB_Type_check" ;
 
     info = GB_Type_check (NULL, "null type", G1, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
@@ -3846,7 +3846,7 @@ void mexFunction
     #undef GrM_Type_new
     OK (GRB (Type_new) (&T, sizeof (int))) ;
 
-    Context->where = "GB_Type_check" ;
+    Werk->where = "GB_Type_check" ;
     OK (GB_Type_check (T, "T ok (via function)", G3, ff)) ;
 
     T->magic = GB_FREED ;
@@ -3880,7 +3880,7 @@ void mexFunction
 
     printf ("\n-------------- GB_UnaryOp_check:\n") ;
 
-    Context->where = "GB_UnaryOp_check" ;
+    Werk->where = "GB_UnaryOp_check" ;
 
     info = GB_UnaryOp_check (NULL, "null unary op", G3, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
@@ -3893,7 +3893,7 @@ void mexFunction
     CHECK (op1b != NULL) ;
     OK (GrB_UnaryOp_wait_(op1b, GrB_MATERIALIZE)) ;
 
-    Context->where = "GB_UnaryOp_check" ;
+    Werk->where = "GB_UnaryOp_check" ;
     OK (GB_UnaryOp_check (op1b, "op1b ok (via function)", G3, ff)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
@@ -3928,7 +3928,7 @@ void mexFunction
 
     printf ("\n-------------- GB_BinaryOp_check:\n") ;
 
-    Context->where = "GB_BinaryOp_check" ;
+    Werk->where = "GB_BinaryOp_check" ;
 
     info = GB_BinaryOp_check (NULL, "null unary op", G3, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
@@ -3940,7 +3940,7 @@ void mexFunction
     OK (GRB (BinaryOp_new) (&op2b, (GxB_binary_function) f2, GrB_INT32, GrB_UINT8, GrB_INT16)) ;
     CHECK (op2b != NULL) ;
 
-    Context->where = "GB_BinaryOp_check" ;
+    Werk->where = "GB_BinaryOp_check" ;
     OK (GB_BinaryOp_check (op2b, "op2b ok (via function)", G3, ff)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
@@ -3979,7 +3979,7 @@ void mexFunction
 
     printf ("\n-------------- GB_SelectOp_check:\n") ;
 
-    Context->where = "GB_SelectOp_check" ;
+    Werk->where = "GB_SelectOp_check" ;
 
     info = GB_SelectOp_check (NULL, "null selectop", G3, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
@@ -3991,7 +3991,7 @@ void mexFunction
     OK (GXB (SelectOp_new) (&selectop, (GxB_select_function) fselect, GrB_FP64, GrB_FP64)) ;
     CHECK (selectop != NULL) ;
 
-    Context->where = "GB_SelectOp_check" ;
+    Werk->where = "GB_SelectOp_check" ;
     OK (GB_SelectOp_check (selectop, "user selectop ok (via function)", G3,
         ff)) ;
 
@@ -4025,7 +4025,7 @@ void mexFunction
 
     printf ("\n-------------- GB_Monoid_check:\n") ;
 
-    Context->where = "GB_Monoid_check" ;
+    Werk->where = "GB_Monoid_check" ;
 
     info = GB_Monoid_check (NULL, "null monoid", G3, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
@@ -4034,7 +4034,7 @@ void mexFunction
     OK (GrB_Monoid_new_INT32 (&monoidb, GrB_TIMES_INT32, (int) 1)) ;
     CHECK (monoidb != NULL) ;
 
-    Context->where = "GB_Monoid_check" ;
+    Werk->where = "GB_Monoid_check" ;
     OK (GB_Monoid_check (monoidb, "monoidb ok", G3, ff)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
@@ -4064,7 +4064,7 @@ void mexFunction
 
     printf ("\n-------------- GB_Semiring_check:\n") ;
 
-    Context->where = "GB_Semiring_check" ;
+    Werk->where = "GB_Semiring_check" ;
 
     info = GB_Semiring_check (NULL, "null semiring", G3, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
@@ -4073,7 +4073,7 @@ void mexFunction
     OK (GrB_Semiring_new (&semiring2, GxB_MAX_FP32_MONOID, GrB_TIMES_FP32)) ;
     CHECK (semiring2 != NULL) ;
 
-    Context->where = "GB_Semiring_check" ;
+    Werk->where = "GB_Semiring_check" ;
     OK (GB_Semiring_check (semiring2, "semiring2 ok", G3, ff)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
@@ -4104,7 +4104,7 @@ void mexFunction
 
     printf ("\n-------------- GB_Descriptor_check:\n") ;
 
-    Context->where = "GB_Descriptor_check" ;
+    Werk->where = "GB_Descriptor_check" ;
 
     info = GB_Descriptor_check (NULL, "null descriptor", G3, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
@@ -4113,7 +4113,7 @@ void mexFunction
     OK (GrB_Descriptor_new (&descb)) ;
     CHECK (descb != NULL) ;
 
-    Context->where = "GB_Descriptor_check" ;
+    Werk->where = "GB_Descriptor_check" ;
     OK (GB_Descriptor_check (descb, "descb ok", G3, ff)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
@@ -4140,7 +4140,7 @@ void mexFunction
     OK (GrB_Vector_free_(&v)) ;
     CHECK (v == NULL) ;
 
-    Context->where = "GB_Vector_check" ;
+    Werk->where = "GB_Vector_check" ;
 
     info = GB_Vector_check (NULL, "null vector", G3, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
@@ -4150,7 +4150,7 @@ void mexFunction
     CHECK (v != NULL) ;
     CHECK (v->h == NULL) ;
 
-    Context->where = "GB_Vector_check" ;
+    Werk->where = "GB_Vector_check" ;
     OK (GB_Vector_check (v, "v ok", G3, ff)) ;
 
     OK (GrB_Vector_setElement_INT32 (v, 990, 0)) ;
@@ -4213,7 +4213,7 @@ void mexFunction
     OK (GrB_Matrix_free_(&A)) ;
     CHECK (A == NULL) ;
 
-    Context->where = "GB_Matrix_check" ;
+    Werk->where = "GB_Matrix_check" ;
 
     info = GB_Matrix_check (NULL, "null matrix", G3, ff) ;
     CHECK (info == GrB_NULL_POINTER) ;
@@ -4222,7 +4222,7 @@ void mexFunction
     OK (GrB_Matrix_new (&A, GrB_FP64, 10, 4)) ;
     CHECK (A != NULL) ;
 
-    Context->where = "GB_Matrix_check" ;
+    Werk->where = "GB_Matrix_check" ;
     OK (GB_Matrix_check (A, "A ok", G3, ff)) ;
     CHECK (A->h != NULL) ;
 
@@ -4304,7 +4304,7 @@ void mexFunction
     OK (GrB_Matrix_wait_(A, GrB_MATERIALIZE)) ;
     CHECK (nvals == 3) ;
 
-    Context->where = "GB_Matrix_check" ;
+    Werk->where = "GB_Matrix_check" ;
 
     psave = A->i ;
     A->i = NULL ;
@@ -4355,7 +4355,7 @@ void mexFunction
     OK (GB_Matrix_check (A, "valid pending [pi 7.1]", G3, NULL)) ;
     printf ("\n===================================================\n") ;
 
-    Context->where = "GB_Matrix_check" ;
+    Werk->where = "GB_Matrix_check" ;
 
     AP = A->Pending ;
     CHECK (AP != NULL) ;
@@ -4387,7 +4387,7 @@ void mexFunction
     OK (GB_Matrix_check (A, "valid pending [pi 7.1 11.4]", G3, NULL)) ;
     printf ("\n=========================================================\n") ;
 
-    Context->where = "GB_Matrix_check" ;
+    Werk->where = "GB_Matrix_check" ;
 
     AP = A->Pending ;
     CHECK (AP != NULL) ;
@@ -4416,7 +4416,7 @@ void mexFunction
     OK (GrB_Matrix_nvals (&nvals, A)) ;
     OK (GrB_Matrix_wait_(A, GrB_MATERIALIZE)) ;
 
-    Context->where = "GB_Matrix_check" ;
+    Werk->where = "GB_Matrix_check" ;
     printf ("\n====================================== valid [pi 7.1 11.4]\n") ;
     OK (GB_Matrix_check (A, "valid [pi 7 11.4]", G3, NULL)) ;
     printf ("\n=========================================================\n") ;
@@ -4813,7 +4813,7 @@ void mexFunction
     OK (GrB_Matrix_assign_BOOL (Eleven, NULL, NULL, (bool) true, I, 1, GrB_ALL, 0, NULL)) ;
     OK (GB_Matrix_check (Eleven, "Eleven", G2, NULL)) ;
 
-    if (!GB_IS_FULL (Eleven)) GB_wait (Eleven, "Eleven", Context) ;
+    if (!GB_IS_FULL (Eleven)) GB_wait (Eleven, "Eleven", Werk) ;
 
     for (int pr = -4 ; pr <= 3 ; pr++)
     {
@@ -4822,7 +4822,7 @@ void mexFunction
         OK (GxB_Matrix_fprint (Eleven, "Eleven", pr, ff)) ;
     }
 
-    OK (GB_convert_hyper_to_sparse (Eleven, true, Context)) ;
+    OK (GB_convert_hyper_to_sparse (Eleven, true, Werk)) ;
     int64_t nothing = 42 ;
     printf ("\nEleven invalid hypersparse:\n") ;
     GB_free_memory ((void **) &(Eleven->h), Eleven->h_size) ;
@@ -4863,7 +4863,7 @@ void mexFunction
     CHECK (AP != NULL) ;
     CHECK (AP->n == 1 && A->nzombies == 0) ;
     GB_Global_mode_set (GrB_BLOCKING) ;
-    OK (GB_block (A, Context)) ;
+    OK (GB_block (A, Werk)) ;
     OK (GB_Matrix_check (A, "A with no pending", G3, NULL)) ;
     AP = A->Pending ;
     CHECK (AP == NULL) ;
@@ -4885,7 +4885,7 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    Context->where = "GB *_check" ;
+    Werk->where = "GB *_check" ;
 
     ERR (GB_Type_check (Tcrud, "", G0, NULL)) ;
     ERR (GB_UnaryOp_check (op1crud, "", G0, NULL)) ;
@@ -4948,9 +4948,9 @@ void mexFunction
     expected = GrB_INVALID_OBJECT ;
     dcrud->out = 999 ;
     x_bool = false ;
-    Context->where = "GB_Descriptor_get" ;
+    Werk->where = "GB_Descriptor_get" ;
     ERR (GB_Descriptor_get (dcrud, &x_bool, NULL, NULL, NULL, NULL, NULL, NULL,
-        Context)) ; 
+        Werk)) ; 
     CHECK (x_bool == false) ;
     dcrud->out = GxB_DEFAULT ;
 
@@ -4999,7 +4999,7 @@ void mexFunction
         ((size_t) UINT32_MAX)/2) ;
     CHECK (ok) ;
     CHECK (s == (((size_t) UINT32_MAX)/2) * (((size_t) UINT32_MAX)/2)) ; 
-    Context->where = "GrB_error" ;
+    Werk->where = "GrB_error" ;
 
     n = 1 ;
     ok = GB_int64_multiply (&n, INT64_MAX, 0) ;
@@ -5040,23 +5040,23 @@ void mexFunction
 #if 0
     OK (GxB_Matrix_fprint (A, "A for bix_alloc", G3, NULL)) ;
     CHECK (A != NULL) ;
-    Context->where = "GB_bix_alloc" ;
+    Werk->where = "GB_bix_alloc" ;
     info = GB_bix_alloc (A, GB_NMAX+1, GxB_SPARSE, true, true, false,
-        Context) ;
+        Werk) ;
     CHECK (info == GrB_OUT_OF_MEMORY) ;
     OK (GrB_Matrix_free_(&A)) ;
     OK (GrB_Matrix_new (&A, GrB_BOOL, 11, 11)) ;
 #endif
 
-    Context->where = "GB_ix_realloc" ;
+    Werk->where = "GB_ix_realloc" ;
 
     CHECK (A != NULL) ;
     OK (GxB_Matrix_fprint (A, "A for ix_realloc", G3, NULL)) ;
-    info = GB_ix_realloc (A, GB_NMAX+1, Context) ;
+    info = GB_ix_realloc (A, GB_NMAX+1, Werk) ;
     CHECK (info == GrB_OUT_OF_MEMORY) ;
 
     OK (GB_Matrix_check (A, "A pattern 1", G3, NULL)) ;
-    OK (GB_ix_realloc (A, 20, Context)) ;
+    OK (GB_ix_realloc (A, 20, Werk)) ;
     CHECK (info == GrB_SUCCESS) ;
     OK (GB_Matrix_check (A, "A pattern 2", G3, NULL)) ;
 
@@ -5069,11 +5069,11 @@ void mexFunction
     CHECK (B == NULL) ;
     OK (GrB_Matrix_new (&C, GrB_FP32, 1, 1)) ;
     OK (GB_Matrix_check (A, "A for shallow op", G3, NULL)) ;
-    Context->where = "GB_shallow_op" ;
+    Werk->where = "GB_shallow_op" ;
 
     struct GB_Matrix_opaque Q_header ;
     GrB_Matrix Q = GB_clear_static_header (&Q_header) ;
-    OK (GB_shallow_op (Q, true, (GB_Operator) GrB_AINV_FP32, NULL, NULL, false, C, Context)) ;
+    OK (GB_shallow_op (Q, true, (GB_Operator) GrB_AINV_FP32, NULL, NULL, false, C, Werk)) ;
     OK (GB_Matrix_check (Q, "Q empty, float", G3, NULL)) ;
     GrB_Matrix_free_(&Q) ;
 
@@ -5295,32 +5295,32 @@ void mexFunction
         OK (GxB_Matrix_subassign (B, Amask, NULL, A, GrB_ALL, n, GrB_ALL, n, NULL)) ;
         OK (GxB_Matrix_subassign (A, Amask, NULL, A, GrB_ALL, n, GrB_ALL, n, NULL)) ;
 
-        GB_wait (A, "A", Context) ;
-        GB_wait (B, "B", Context) ;
+        GB_wait (A, "A", Werk) ;
+        GB_wait (B, "B", Werk) ;
         CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_Matrix_free_(&B) ;
 
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GxB_Matrix_subassign (B, Amask, NULL, A, ilist, n, jlist, n, NULL));
         OK (GxB_Matrix_subassign (A, Amask, NULL, A, ilist, n, jlist, n, NULL));
-        GB_wait (A, "A", Context) ;
-        GB_wait (B, "B", Context) ;
+        GB_wait (A, "A", Werk) ;
+        GB_wait (B, "B", Werk) ;
         CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_Matrix_free_(&B) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GxB_Vector_subassign (v, umask, NULL, u, GrB_ALL, n, NULL)) ;
         OK (GxB_Vector_subassign (u, umask, NULL, u, GrB_ALL, n, NULL)) ;
-        GB_wait ((GrB_Matrix) u, "u", Context) ;
-        GB_wait ((GrB_Matrix) v, "v", Context) ;
+        GB_wait ((GrB_Matrix) u, "u", Werk) ;
+        GB_wait ((GrB_Matrix) v, "v", Werk) ;
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_Vector_free_(&v) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GxB_Vector_subassign (v, umask, NULL, u, ilist, n, NULL)) ;
         OK (GxB_Vector_subassign (u, umask, NULL, u, ilist, n, NULL)) ;
-        GB_wait ((GrB_Matrix) v, "v", Context) ;
-        GB_wait ((GrB_Matrix) u, "u", Context) ;
+        GB_wait ((GrB_Matrix) v, "v", Werk) ;
+        GB_wait ((GrB_Matrix) u, "u", Werk) ;
 
         OK (GxB_Vector_fprint_(v, G3, NULL)) ;
         OK (GxB_Vector_fprint_(u, G3, NULL)) ;
@@ -5340,8 +5340,8 @@ void mexFunction
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GrB_Matrix_assign_(B, Amask, NULL, A, ilist, n, jlist, n, NULL)) ;
         OK (GrB_Matrix_assign_(A, Amask, NULL, A, ilist, n, jlist, n, NULL)) ;
-        if (!GB_IS_FULL (B)) GB_wait (B, "B", Context) ;
-        if (!GB_IS_FULL (A)) GB_wait (A, "A", Context) ;
+        if (!GB_IS_FULL (B)) GB_wait (B, "B", Werk) ;
+        if (!GB_IS_FULL (A)) GB_wait (A, "A", Werk) ;
         CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_Matrix_free_(&B) ;
 
@@ -5354,8 +5354,8 @@ void mexFunction
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_Vector_assign_(v, umask, NULL, u, ilist, n, NULL)) ;
         OK (GrB_Vector_assign_(u, umask, NULL, u, ilist, n, NULL)) ;
-        if (!GB_IS_FULL (v)) GB_wait ((GrB_Matrix) v, "v", Context) ;
-        if (!GB_IS_FULL (u)) GB_wait ((GrB_Matrix) u, "u", Context) ;
+        if (!GB_IS_FULL (v)) GB_wait ((GrB_Matrix) v, "v", Werk) ;
+        if (!GB_IS_FULL (u)) GB_wait ((GrB_Matrix) u, "u", Werk) ;
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_Vector_free_(&v) ;
 

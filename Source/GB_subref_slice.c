@@ -70,7 +70,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     const int64_t avlen,            // A->vlen
     const int64_t anz,              // nnz (A)
     const GrB_Index *I,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -108,7 +108,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     // determine # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // allocate the initial TaskList
@@ -199,7 +199,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     // replace Cwork with its cumulative sum
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cwork, Cnvec, NULL, nthreads_for_Cwork, Context) ;
+    GB_cumsum (Cwork, Cnvec, NULL, nthreads_for_Cwork, Werk) ;
     double cwork = (double) Cwork [Cnvec] ;
 
     //--------------------------------------------------------------------------
@@ -220,7 +220,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     if (need_I_inverse)
     { 
         GB_OK (GB_I_inverse (I, nI, avlen, &Mark, &Mark_size,
-            &Inext, &Inext_size, &ndupl, Context)) ;
+            &Inext, &Inext_size, &ndupl, Werk)) ;
         ASSERT (Mark != NULL) ;
         ASSERT (Inext != NULL) ;
     }

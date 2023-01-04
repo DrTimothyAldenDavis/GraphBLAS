@@ -57,7 +57,7 @@ GrB_Info GxB_Matrix_subassign       // C(Rows,Cols)<M> += A or A'
         Rows, nRows,                    // row indices
         Cols, nCols,                    // column indices
         false, NULL, GB_ignore_code,    // no scalar expansion
-        Context) ;
+        Werk) ;
 
     GB_BURBLE_END ;
     return (info) ;

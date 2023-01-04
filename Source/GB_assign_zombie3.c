@@ -34,7 +34,7 @@ void GB_assign_zombie3
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -95,7 +95,7 @@ void GB_assign_zombie3
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (zjnz, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
 

@@ -33,7 +33,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     GrB_Matrix C,           // output matrix C, with a static header
     const bool C_is_csc,    // desired CSR/CSC format of C
     const GrB_Matrix A,     // input matrix
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -57,7 +57,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     GrB_Info info ;
     info = GB_new (&C, // sparse or hyper, existing header
         A->type, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        GB_sparsity (A), A->hyper_switch, 0, Context) ;
+        GB_sparsity (A), A->hyper_switch, 0, Werk) ;
     ASSERT (info == GrB_SUCCESS) ;
 
     //--------------------------------------------------------------------------

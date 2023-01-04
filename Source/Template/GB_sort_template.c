@@ -649,7 +649,7 @@ static void GB_SORT (vector)    // sort the pair of arrays A_0, A_1
 #undef  GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE                       \
 {                                               \
-    GB_WERK_POP (Werk, int64_t) ;               \
+    GB_WERK_POP (SortTasks, int64_t) ;          \
     GB_FREE_WORK (&C_skipped, C_skipped_size) ; \
     GB_FREE_WORK (&W_0, W_0_size) ;             \
     GB_FREE_WORK (&W, W_size) ;                 \
@@ -661,7 +661,7 @@ static GrB_Info GB_SORT (matrix)
     #if GB_SORT_UDT
     GrB_BinaryOp op,            // comparator for user-defined types only
     #endif
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -699,7 +699,7 @@ static GrB_Info GB_SORT (matrix)
     int64_t *restrict W   = NULL ; size_t W_size   = 0 ;
     int64_t *restrict C_skipped = NULL ;
     size_t C_skipped_size = 0 ;
-    GB_WERK_DECLARE (Werk, int64_t) ;
+    GB_WERK_DECLARE (SortTasks, int64_t) ;
 
     #if GB_SORT_UDT
     // get typesize, and function pointers for operators and typecasting
@@ -716,21 +716,21 @@ static GrB_Info GB_SORT (matrix)
 
     // slice the C matrix into tasks for phase 1
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
     ntasks = GB_IMIN (ntasks, cnvec) ;
     ntasks = GB_IMAX (ntasks, 1) ;
 
-    GB_WERK_PUSH (Werk, 3*ntasks + 2, int64_t) ;
-    if (Werk == NULL)
+    GB_WERK_PUSH (SortTasks, 3*ntasks + 2, int64_t) ;
+    if (SortTasks == NULL)
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
-    int64_t *restrict C_max   = Werk ;                  // size ntasks
-    int64_t *restrict C_skip  = Werk + ntasks ;         // size ntasks+1
-    int64_t *restrict C_slice = Werk + 2*ntasks + 1;    // size ntasks+1
+    int64_t *restrict C_max   = SortTasks ;                  // size ntasks
+    int64_t *restrict C_skip  = SortTasks + ntasks ;         // size ntasks+1
+    int64_t *restrict C_slice = SortTasks + 2*ntasks + 1;    // size ntasks+1
 
     GB_pslice (C_slice, Cp, cnvec, ntasks, false) ;
 
@@ -791,7 +791,7 @@ static GrB_Info GB_SORT (matrix)
     // construct a list of vectors that must still be sorted
     //--------------------------------------------------------------------------
 
-    GB_cumsum (C_skip, ntasks, NULL, 1, Context) ;
+    GB_cumsum (C_skip, ntasks, NULL, 1, Werk) ;
     int64_t total_skipped = C_skip [ntasks] ;
 
     C_skipped = GB_MALLOC_WORK (total_skipped, int64_t, &C_skipped_size) ;

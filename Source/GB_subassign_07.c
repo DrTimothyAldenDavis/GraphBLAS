@@ -38,7 +38,7 @@ GrB_Info GB_subassign_07
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 

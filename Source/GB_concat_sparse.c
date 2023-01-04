@@ -39,7 +39,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     const GrB_Index n,
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -70,13 +70,13 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // existing header
         ctype, cvlen, cvdim, GB_Ap_malloc, csc, GxB_SPARSE, false,
-        hyper_switch, cvdim, cnz, true, C_iso, Context)) ;
+        hyper_switch, cvdim, cnz, true, C_iso, Werk)) ;
     C->bitmap_switch = bitmap_switch ;
     C->sparsity_control = sparsity_control ;
     int64_t *restrict Cp = C->p ;
     int64_t *restrict Ci = C->i ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     if (C_iso)
     { 
@@ -120,7 +120,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 // T = (ctype) A', not in-place, using a dynamic header
                 GB_OK (GB_new (&T, // auto sparsity, new header
                     A->type, A->vdim, A->vlen, GB_Ap_null, csc,
-                    GxB_AUTO_SPARSITY, -1, 1, Context)) ;
+                    GxB_AUTO_SPARSITY, -1, 1, Werk)) ;
                 // save T in array S
                 if (csc)
                 { 
@@ -130,7 +130,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 { 
                     GB_TILE (S, outer, inner) = T ;
                 }
-                GB_OK (GB_transpose_cast (T, ctype, csc, A, false, Context)) ;
+                GB_OK (GB_transpose_cast (T, ctype, csc, A, false, Werk)) ;
                 A = T ;
                 GB_MATRIX_WAIT (A) ;
                 ASSERT_MATRIX_OK (A, "T=A' for concat sparse", GB0) ;
@@ -148,7 +148,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 {
                     // copy A into T
                     // set T->iso = A->iso  OK: no burble needed
-                    GB_OK (GB_dup_worker (&T, A->iso, A, true, NULL, Context)) ;
+                    GB_OK (GB_dup_worker (&T, A->iso, A, true, NULL, Werk)) ;
                     // save T in array S
                     if (csc)
                     { 
@@ -161,7 +161,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                     ASSERT_MATRIX_OK (T, "T=dup(A) for concat sparse", GB0) ;
                 }
                 // convert T from bitmap to sparse
-                GB_OK (GB_convert_bitmap_to_sparse (T, Context)) ;
+                GB_OK (GB_convert_bitmap_to_sparse (T, Werk)) ;
                 ASSERT_MATRIX_OK (T, "T bitmap to sparse, concat sparse", GB0) ;
                 A = T ;
             }
@@ -226,7 +226,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
         Cp [k] = s ;
     }
 
-    GB_cumsum (Cp, cvdim, &(C->nvec_nonempty), nthreads_max, Context) ;
+    GB_cumsum (Cp, cvdim, &(C->nvec_nonempty), nthreads_max, Werk) ;
     ASSERT (cnz == Cp [cvdim]) ;
     C->nvals = cnz ;
 

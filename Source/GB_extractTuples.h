@@ -16,7 +16,7 @@ GrB_Info GB_extract_vector_list     // extract vector list from a matrix
     int64_t *restrict J,         // size nnz(A) or more
     // input:
     const GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_extractTuples       // extract all tuples from a matrix
@@ -27,7 +27,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     GrB_Index *p_nvals,         // I,J,X size on input; # tuples on output
     const GB_Type_code xcode,   // type of array X
     const GrB_Matrix A,         // matrix to extract tuples from
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

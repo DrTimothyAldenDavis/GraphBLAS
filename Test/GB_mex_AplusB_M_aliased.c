@@ -38,7 +38,7 @@ void mexFunction
     GrB_Matrix B = NULL ;
     GrB_BinaryOp op = NULL ;
 
-    GB_CONTEXT (USAGE) ;
+    GB_WERK (USAGE) ;
 
     // check inputs
     if (nargout > 1 || nargin != 3)
@@ -71,7 +71,7 @@ void mexFunction
     // C<B> = A+B using the op.  M == B alias
     bool ignore ;
     METHOD (GB_add (C, A->type, true, B, false, false, &ignore, A, B,
-        false, NULL, NULL, op, Context)) ;
+        false, NULL, NULL, op, Werk)) ;
 
     // return C as a plain sparse matrix
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C<B>=A+B result", false) ;

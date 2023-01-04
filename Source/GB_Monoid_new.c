@@ -29,7 +29,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     const void *identity,       // identity value, if any
     const void *terminal,       // terminal value, if any (may be NULL)
     GB_Type_code idcode,        // identity and terminal type code
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 

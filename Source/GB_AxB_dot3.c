@@ -42,7 +42,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -172,7 +172,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         C_sparsity, true, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork in GB_AxB_dot3_slice
-        true, C_iso, Context)) ;
+        true, C_iso, Werk)) ;
 
     int64_t *restrict Cp = C->p ;
     int64_t *restrict Ch = C->h ;
@@ -182,7 +182,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // determine the # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // copy Mp and Mh into C
@@ -207,7 +207,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
     GB_OK (GB_AxB_dot3_one_slice (&TaskList, &TaskList_size, &ntasks, &nthreads,
-        M, Context)) ;
+        M, Werk)) ;
 
     //--------------------------------------------------------------------------
     // phase1: estimate the work to compute each entry in C
@@ -242,7 +242,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     GB_FREE_WORK (&TaskList, TaskList_size) ;
     GB_OK (GB_AxB_dot3_slice (&TaskList, &TaskList_size, &ntasks, &nthreads,
-        C, Context)) ;
+        C, Werk)) ;
 
     GBURBLE ("nthreads %d ntasks %d ", nthreads, ntasks) ;
 

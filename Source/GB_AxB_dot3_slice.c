@@ -50,7 +50,7 @@ GrB_Info GB_AxB_dot3_slice
     int *p_nthreads,                // # of threads to use
     // input:
     const GrB_Matrix C,             // matrix to slice
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -79,7 +79,7 @@ GrB_Info GB_AxB_dot3_slice
     // determine # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // get C
@@ -98,7 +98,7 @@ GrB_Info GB_AxB_dot3_slice
     // FUTURE:: handle possible int64_t overflow
 
     int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
-    GB_cumsum (Cwork, cnz, NULL, nthreads, Context) ;
+    GB_cumsum (Cwork, cnz, NULL, nthreads, Werk) ;
     double total_work = (double) Cwork [cnz] ;
 
     //--------------------------------------------------------------------------

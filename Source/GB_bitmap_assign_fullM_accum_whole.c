@@ -45,7 +45,7 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 

@@ -29,7 +29,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
     int64_t *anvec_nonempty,        // # of non-empty vectors
     // inputs: not modified
     const GrB_Matrix A,             // matrix to extract; not modified
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -51,7 +51,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
 
     const int8_t *restrict Ab = A->b ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (avlen*avdim, chunk, nthreads_max) ;
     bool by_vector = (nthreads <= avdim) ;
 
@@ -140,7 +140,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
     //--------------------------------------------------------------------------
 
     int nth = GB_nthreads (avdim, chunk, nthreads_max) ;
-    GB_cumsum (Ap, avdim, anvec_nonempty, nth, Context) ;
+    GB_cumsum (Ap, avdim, anvec_nonempty, nth, Werk) ;
     ASSERT (Ap [avdim] == A->nvals) ;
 
     //--------------------------------------------------------------------------

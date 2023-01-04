@@ -35,7 +35,7 @@ GrB_Info GrB_Scalar_wait    // finish all work on a scalar
     {
         GrB_Info info ;
         GB_BURBLE_START ("GrB_Scalar_wait") ;
-        GB_OK (GB_wait ((GrB_Matrix) s, "scalar", Context)) ;
+        GB_OK (GB_wait ((GrB_Matrix) s, "scalar", Werk)) ;
         GB_BURBLE_END ;
     }
 

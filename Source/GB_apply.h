@@ -24,7 +24,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     const GrB_Matrix A,             // first or 2nd input:  matrix A
     bool A_transpose,               // A matrix descriptor
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 // Cx and A->x may be aliased in GB_apply_op
@@ -39,7 +39,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         bool binop_bind1st,         // if true, C=binop(s,A), else C=binop(A,s)
         bool flipij,                // if true, flip i,j for user idxunop
     const GrB_Matrix A,             // input matrix
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_shallow_op      // create shallow matrix and apply operator
@@ -51,7 +51,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         bool binop_bind1st,         // if true, binop(x,A) else binop(A,y)
         bool flipij,                // if true, flip i,j for user idxunop
     const GrB_Matrix A,     // input matrix to typecast
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

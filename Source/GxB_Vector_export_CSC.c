@@ -61,7 +61,7 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     // ensure the vector is sparse
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_convert_any_to_sparse ((GrB_Matrix) *v, Context)) ;
+    GB_OK (GB_convert_any_to_sparse ((GrB_Matrix) *v, Werk)) ;
 
     //--------------------------------------------------------------------------
     // export the vector
@@ -85,7 +85,7 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
         vx,   vx_size,  // Ax
         nvals, jumbled, NULL,               // jumbled or not
         &sparsity, &is_csc,                 // sparse by col
-        iso, Context) ;
+        iso, Werk) ;
 
     if (info == GrB_SUCCESS)
     { 

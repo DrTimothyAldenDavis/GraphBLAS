@@ -29,7 +29,7 @@ GrB_Info GrB_Matrix_resize      // change the size of a matrix
     // resize the matrix
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_resize (C, nrows_new, ncols_new, Context) ;
+    GrB_Info info = GB_resize (C, nrows_new, ncols_new, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

@@ -62,7 +62,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     const bool Mask_struct, // if true, use the only structure of M
     const GrB_Matrix C,     // input C matrix
     const GrB_Matrix Z,     // input Z matrix
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -129,7 +129,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
         &R_to_C, &R_to_C_size,
         &R_to_Z, &R_to_Z_size, NULL, &R_sparsity,
         // original input:
-        M, C, Z, Context) ;
+        M, C, Z, Werk) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -163,7 +163,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
             // computed by phase0:
             Rnvec, Rh, R_to_M, R_to_C, R_to_Z, false,
             // original input:
-            M, C, Z, Context) ;
+            M, C, Z, Werk) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory; free everything allocated by GB_add_phase0
@@ -183,7 +183,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
             // from phase0:
             Rnvec, Rh, R_to_M, R_to_C, R_to_Z,
             // original input:
-            M, Mask_comp, Mask_struct, C, Z, Context) ;
+            M, Mask_comp, Mask_struct, C, Z, Werk) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory; free everything allocated by GB_add_phase0
@@ -203,7 +203,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
         // R is bitmap or full: only determine how many threads to use
         //----------------------------------------------------------------------
 
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
         R_nthreads = GB_nthreads (M->vlen * M->vdim, chunk, nthreads_max) ;
     }
 
@@ -224,7 +224,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
         // from phase0:
         Rnvec, &Rh, Rh_size, R_to_M, R_to_C, R_to_Z, R_sparsity,
         // original input:
-        M, Mask_comp, Mask_struct, C, Z, Context) ;
+        M, Mask_comp, Mask_struct, C, Z, Werk) ;
 
     // if successful, Rh and Rp must not be freed; they are now R->h and R->p
 

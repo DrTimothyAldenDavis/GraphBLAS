@@ -36,7 +36,7 @@
 // operator is applied.  If false, then fmult(aik,bkj) is computed.  If true,
 // then the operands are swapped, and fmult(bkj,aij) is done instead.
 
-// Context: the GB_Context containing the # of threads to use, a string of the
+// Werk: the GB_Werk containing the # of threads to use, a string of the
 // user-callable function that is calling this function (GrB_mxm, GrB_mxv, or
 // GxB_vxm) and detailed error reports.
 
@@ -58,7 +58,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, mask was applied
     bool *done_in_place,            // if true, C_in was computed in-place
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -114,7 +114,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
             // set C->iso = true    OK
             info = GB_new_bix (&C, // existing header
                 ztype, A->vdim, B->vdim, GB_Ap_null, true, GxB_FULL, false,
-                GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true, Context) ;
+                GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true, Werk) ;
             if (info == GrB_SUCCESS)
             { 
                 C->magic = GB_MAGIC ;
@@ -143,7 +143,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 
         (*mask_applied) = false ;    // no mask to apply
         info = GB_AxB_dot4 (C_in, A, B, semiring, flipxy, done_in_place,
-            Context) ;
+            Werk) ;
         if (info != GrB_NO_VALUE)
         { 
             // return if dot4 has handled this case, otherwise fall through
@@ -163,7 +163,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         if (C_in != NULL) return (GrB_SUCCESS) ;
         return (GB_new (&C, // auto sparsity, existing header
             ztype, A->vdim, B->vdim, GB_Ap_calloc, true, GxB_AUTO_SPARSITY,
-            GB_Global_hyper_switch_get ( ), 1, Context)) ;
+            GB_Global_hyper_switch_get ( ), 1, Werk)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -181,8 +181,8 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         GrB_Info info ;
 
         // construct the hyper hashes for A and B
-        GB_OK (GB_hyper_hash_build (A, Context)) ;
-        GB_OK (GB_hyper_hash_build (B, Context)) ;
+        GB_OK (GB_hyper_hash_build (A, Werk)) ;
+        GB_OK (GB_hyper_hash_build (B, Werk)) ;
 
         GBURBLE ("(%s%s%s%s = %s'*%s) ",
             GB_sparsity_char_matrix (M),    // C has the same sparsity as M
@@ -200,17 +200,17 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         #if defined ( GBCUDA )
         if (!C_iso &&   // fixme for CUDA, remove and create C iso on output
             GB_AxB_dot3_cuda_branch (M, Mask_struct, A, B, semiring,
-            flipxy, Context))
+            flipxy, Werk))
         {
             info = (GB_AxB_dot3_cuda (C, M, Mask_struct, A, B, semiring,
-                flipxy, Context)) ;
+                flipxy, Werk)) ;
         }
         else
         #endif
         { 
             // use the CPU
             info = (GB_AxB_dot3 (C, C_iso, cscalar, M, Mask_struct, A, B,
-                semiring, flipxy, Context)) ;
+                semiring, flipxy, Werk)) ;
         }
         return (info) ;
     }
@@ -223,6 +223,6 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     (*mask_applied) = (M != NULL) ; // mask applied if present
     (*done_in_place) = false ;      // TODO: allow dot2 to work in-place
     return (GB_AxB_dot2 (C, C_iso, cscalar, M, Mask_comp, Mask_struct,
-        false, A, B, semiring, flipxy, Context)) ;
+        false, A, B, semiring, flipxy, Werk)) ;
 }
 

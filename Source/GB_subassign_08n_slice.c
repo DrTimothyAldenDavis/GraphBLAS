@@ -57,7 +57,7 @@ GrB_Info GB_subassign_08n_slice
     const int64_t Jcolon [3],
     const GrB_Matrix A,             // matrix to slice
     const GrB_Matrix M,             // matrix to slice
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -131,7 +131,7 @@ GrB_Info GB_subassign_08n_slice
     int Z_sparsity = GxB_SPARSE ;
     GB_OK (GB_emult_phase0 (&Znvec, &Zh_shallow, &Zh_size, NULL, NULL,
         &Z_to_A, &Z_to_A_size, &Z_to_M, &Z_to_M_size, &Z_sparsity, NULL, A, M,
-        Context)) ;
+        Werk)) ;
 
     // Z is still sparse or hypersparse, not bitmap or full
     ASSERT (Z_sparsity == GxB_SPARSE || Z_sparsity == GxB_HYPERSPARSE) ;
@@ -139,7 +139,7 @@ GrB_Info GB_subassign_08n_slice
     GB_OK (GB_ewise_slice (
         &TaskList, &TaskList_size, &ntasks, &nthreads,
         Znvec, Zh_shallow, NULL, Z_to_A, Z_to_M, false,
-        NULL, A, M, Context)) ;
+        NULL, A, M, Werk)) ;
 
     //--------------------------------------------------------------------------
     // slice C(:,jC) for each fine task

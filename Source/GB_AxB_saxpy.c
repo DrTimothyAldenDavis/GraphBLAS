@@ -29,7 +29,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     bool *done_in_place,            // if true, C was computed in-place 
     const GrB_Desc_Value AxB_method,
     const int do_sort,              // if nonzero, try to sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 // double tt1 = omp_get_wtime ( ) ;
@@ -66,7 +66,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 
     int C_sparsity, saxpy_method ;
     GB_AxB_saxpy_sparsity (&C_sparsity, &saxpy_method,
-        M, Mask_comp, A, B, Context) ;
+        M, Mask_comp, A, B, Werk) ;
 
     //--------------------------------------------------------------------------
     // determine if C is iso
@@ -117,7 +117,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             #endif
 
             info = GB_AxB_saxpy4 (C_in, A, B, semiring, flipxy, done_in_place,
-                Context) ;
+                Werk) ;
             if (info != GrB_NO_VALUE)
             { 
                 // return if saxpy4 has handled this case, otherwise fall
@@ -141,7 +141,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             #endif
 
             info = GB_AxB_saxpy5 (C_in, A, B, semiring, flipxy, done_in_place,
-                Context) ;
+                Werk) ;
             if (info != GrB_NO_VALUE)
             { 
                 // return if saxpy5 has handled this case, otherwise fall
@@ -191,7 +191,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         // set C->iso = true    OK
         info = GB_new_bix (&C, // existing header
             ztype, A->vlen, B->vdim, GB_Ap_null, true, GxB_FULL, false,
-            GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true, Context) ;
+            GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true, Werk) ;
         if (info == GrB_SUCCESS)
         { 
             C->magic = GB_MAGIC ;
@@ -222,7 +222,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         ASSERT (C_sparsity == GxB_HYPERSPARSE || C_sparsity == GxB_SPARSE) ;
         info = GB_AxB_saxpy3 (C, C_iso, cscalar, C_sparsity, M, Mask_comp,
             Mask_struct, A, B, semiring, flipxy, mask_applied, AxB_method,
-            do_sort, Context) ;
+            do_sort, Werk) ;
 
         if (info == GrB_NO_VALUE)
         { 
@@ -236,7 +236,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             ASSERT (M != NULL) ;
             info = GB_AxB_saxpy (C, NULL, NULL, false, false, NULL, A, B,
                 semiring, flipxy, mask_applied, done_in_place, AxB_method,
-                do_sort, Context) ;
+                do_sort, Werk) ;
         }
 
     }
@@ -256,7 +256,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             // sparse or hypersparse, using the dot2 method with A not
             // explicitly transposed.
             info = GB_AxB_dot2 (C, C_iso, cscalar, M, Mask_comp, Mask_struct,
-                true, A, B, semiring, flipxy, Context) ;
+                true, A, B, semiring, flipxy, Werk) ;
         }
         else
         { 
@@ -268,7 +268,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 
             // C<#M> = A*B via bitmap saxpy method
             info = GB_bitmap_AxB_saxpy (C, C_iso, cscalar, M,
-                Mask_comp, Mask_struct, A, B, semiring, flipxy, Context) ;
+                Mask_comp, Mask_struct, A, B, semiring, flipxy, Werk) ;
         }
 
         // the mask is always applied if present

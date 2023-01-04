@@ -26,7 +26,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     const GrB_Monoid monoid,        // reduce monoid for T=reduce(A)
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Descriptor desc,      // descriptor for C, M, and A
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -63,7 +63,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Type ztype = monoid->op->ztype ;
-    GB_OK (GB_compatible (C->type, C, M, Mask_struct, accum, ztype, Context)) ;
+    GB_OK (GB_compatible (C->type, C, M, Mask_struct, accum, ztype, Werk)) ;
 
     // T = reduce (T,A) must be compatible
     if (!GB_Type_compatible (A->type, ztype))
@@ -111,7 +111,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     int64_t m = A_transpose ? GB_NROWS (A) : GB_NCOLS (A) ;
     GB_CLEAR_STATIC_HEADER (B, &B_header) ;
     info = GB_new (&B, // full, existing header
-        ztype, m, 1, GB_Ap_null, true, GxB_FULL, GB_NEVER_HYPER, 1, Context) ;
+        ztype, m, 1, GB_Ap_null, true, GxB_FULL, GB_NEVER_HYPER, 1, Werk) ;
     ASSERT (info == GrB_SUCCESS) ;
     B->magic = GB_MAGIC ;
     B->iso = true ;             // OK: B is a temporary matrix; no burble
@@ -157,7 +157,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     info = GB_mxm (C, C_replace, M, Mask_comp, Mask_struct, accum,
         semiring, A, A_transpose, B, false, false, GxB_DEFAULT, do_sort,
-        Context) ;
+        Werk) ;
     GB_FREE_ALL ;
     return (info) ;
 }

@@ -53,7 +53,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
     bool fast_import,   // if true: trust the data, if false: check it
 
     bool add_to_memtable,   // if true: add to debug memtable
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_export      // export/unpack a matrix in any format
@@ -92,7 +92,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     bool *is_csc,       // if true then matrix is by-column, else by-row
     bool *iso,          // if true then A is iso and only one entry is returned
                         // in Ax, regardless of nvals(A).
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

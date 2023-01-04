@@ -32,7 +32,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     const GrB_Matrix A,             // first or 2nd input:  matrix A
     bool A_transpose,               // A matrix descriptor
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -169,7 +169,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Info info ;
-    GB_OK (GB_compatible (C->type, C, M, Mask_struct, accum, T_type, Context)) ;
+    GB_OK (GB_compatible (C->type, C, M, Mask_struct, accum, T_type, Werk)) ;
 
     // check the dimensions
     int64_t tnrows = (A_transpose) ? GB_NCOLS (A) : GB_NROWS (A) ;
@@ -267,7 +267,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         GBURBLE ("(transpose-op) ") ;
         GB_CLEAR_STATIC_HEADER (T, &T_header) ;
         info = GB_transpose (T, T_type, T_is_csc, A, op, scalar,
-            binop_bind1st, flipij, Context) ;
+            binop_bind1st, flipij, Werk) ;
         ASSERT (GB_JUMBLED_OK (T)) ;
         // A positional op is applied to C after the transpose is computed,
         // using the T_is_csc format.  The ijflip is handled above.
@@ -289,19 +289,19 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
                 // expand C to non-iso; initialize C->x unless the op
                 // is positional
                 info = GB_convert_any_to_non_iso (C, !op_is_positional,
-                    Context) ;
+                    Werk) ;
             }
             if (info == GrB_SUCCESS)
             { 
                 // C->x = op (C->x) in place
                 info = GB_apply_op ((GB_void *) C->x, C->type, C_code_iso,
-                    op, scalar, binop_bind1st, flipij, C, Context) ;
+                    op, scalar, binop_bind1st, flipij, C, Werk) ;
             }
             if (info == GrB_SUCCESS && C_code_iso != GB_NON_ISO)
             { 
                 // compact the iso values of C
                 C->iso = true ; // OK
-                info = GB_convert_any_to_iso (C, NULL, Context) ;
+                info = GB_convert_any_to_iso (C, NULL, Werk) ;
             }
         }
         return (info) ;
@@ -312,7 +312,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         GBURBLE ("(shallow-op) ") ;
         GB_CLEAR_STATIC_HEADER (T, &T_header) ;
         info = GB_shallow_op (T, T_is_csc, op, scalar, binop_bind1st, flipij,
-            A, Context) ;
+            A, Werk) ;
     }
 
     if (info != GrB_SUCCESS)
@@ -328,6 +328,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     //--------------------------------------------------------------------------
 
     return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
-        Mask_struct, Context)) ;
+        Mask_struct, Werk)) ;
 }
 

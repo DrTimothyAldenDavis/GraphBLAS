@@ -37,7 +37,7 @@ GrB_Info GB_deserialize_from_blob
     int32_t method,             // compression method used for each block
     // input/output:
     size_t *s_handle,           // where to read from the blob
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -76,7 +76,7 @@ GrB_Info GB_deserialize_from_blob
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // decompress the blocks from the blob

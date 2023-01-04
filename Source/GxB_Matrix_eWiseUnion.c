@@ -49,7 +49,7 @@
         B,              B_tran,     /* B matrix and its descriptor */       \
         true,                       /* eWiseAdd                    */       \
         true, alpha, beta,          /* eWiseUnion                  */       \
-        Context) ;
+        Werk) ;
 
 //------------------------------------------------------------------------------
 // GxB_Matrix_eWiseUnion: matrix addition

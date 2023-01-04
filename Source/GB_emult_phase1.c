@@ -43,7 +43,7 @@ GrB_Info GB_emult_phase1                 // count nnz in each C(:,j)
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,
     const GrB_Matrix B,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -103,7 +103,7 @@ GrB_Info GB_emult_phase1                 // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     GB_task_cumsum (Cp, Cnvec, Cnvec_nonempty, TaskList, C_ntasks, C_nthreads,
-        Context) ;
+        Werk) ;
 
     //--------------------------------------------------------------------------
     // return the result

@@ -35,7 +35,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     const GrB_Matrix D,             // diagonal input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*D
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -55,7 +55,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     ASSERT (!GB_PENDING (D)) ;
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A*D", GB0) ;
     ASSERT (A->vdim == D->vlen) ;
-    ASSERT (GB_is_diagonal (D, Context)) ;
+    ASSERT (GB_is_diagonal (D, Werk)) ;
 
     ASSERT (!GB_IS_BITMAP (A)) ;        // TODO: ok for now
     ASSERT (!GB_IS_BITMAP (D)) ;
@@ -98,7 +98,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
     // allocate C->x but do not initialize it
     // set C->iso = C_iso   OK
-    GB_OK (GB_dup_worker (&C, C_iso, A, false, ztype, Context)) ;
+    GB_OK (GB_dup_worker (&C, C_iso, A, false, ztype, Werk)) ;
     GB_void *restrict Cx = (GB_void *) C->x ;
 
     //--------------------------------------------------------------------------
@@ -151,7 +151,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         }
         GB_OK (GB_apply_op (Cx, C->type, GB_NON_ISO,
             (GB_Operator) op,   // positional op
-            NULL, false, false, A, Context)) ;
+            NULL, false, false, A, Werk)) ;
         ASSERT_MATRIX_OK (C, "colscale positional: C = A*D output", GB0) ;
 
     }
@@ -209,7 +209,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         // determine the number of threads to use
         //----------------------------------------------------------------------
 
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
         //----------------------------------------------------------------------
         // slice the entries for each task

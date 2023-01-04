@@ -115,7 +115,7 @@ bool GB_reduce_to_scalar_cuda_branch
 (
     const GrB_Monoid reduce,        // monoid to do the reduction
     const GrB_Matrix A,             // input matrix
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_reduce_to_scalar_cuda
@@ -123,7 +123,7 @@ GrB_Info GB_reduce_to_scalar_cuda
     GB_void *s,
     const GrB_Monoid reduce,
     const GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
@@ -135,7 +135,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 
@@ -147,7 +147,7 @@ bool GB_AxB_dot3_cuda_branch
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_Context Context
+    GB_Werk Werk
 );
 
 #endif

@@ -278,7 +278,7 @@ GrB_Info GB (_AaddB__ge_fp64)
     const GB_task_struct *restrict TaskList,
     const int C_ntasks,
     const int C_nthreads,
-    GB_Context Context
+    GB_Werk Werk
 )
 { 
     #if GB_DISABLE
@@ -322,7 +322,7 @@ GrB_Info GB (_AemultB__ge_fp64)
     const GB_task_struct *restrict TaskList,
     const int C_ntasks,
     const int C_nthreads,
-    GB_Context Context
+    GB_Werk Werk
 )
 { 
     #if GB_DISABLE
@@ -431,7 +431,7 @@ GrB_Info GB (_AemultB_bitmap__ge_fp64)
     const GrB_Matrix B,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
-    GB_Context Context
+    GB_Werk Werk
 )
 { 
     #if GB_DISABLE

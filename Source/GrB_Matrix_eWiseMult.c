@@ -33,7 +33,7 @@
         B,              B_tran,     /* B matrix and its descriptor */       \
         false,                      /* eWiseMult                   */       \
         false, NULL, NULL,          /* not eWiseUnion              */       \
-        Context) ;
+        Werk) ;
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_eWiseMult_BinaryOp: matrix element-wise multiplication

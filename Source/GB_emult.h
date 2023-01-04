@@ -35,7 +35,7 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B,     // input B matrix
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 int GB_emult_sparsity       // return the sparsity structure for C
@@ -66,7 +66,7 @@ GrB_Info GB_emult_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     const GrB_Matrix M,         // optional mask, may be NULL
     const GrB_Matrix A,
     const GrB_Matrix B,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_emult_phase1                 // count nnz in each C(:,j)
@@ -91,7 +91,7 @@ GrB_Info GB_emult_phase1                 // count nnz in each C(:,j)
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,
     const GrB_Matrix B,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_emult_phase2             // C=A.*B or C<M>=A.*B
@@ -124,7 +124,7 @@ GrB_Info GB_emult_phase2             // C=A.*B or C<M>=A.*B
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,
     const GrB_Matrix B,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
@@ -139,7 +139,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     const GrB_Matrix B,     // input B matrix (bitmap/full)
     GrB_BinaryOp op,        // op to perform C = op (A,B)
     bool flipxy,            // if true use fmult(y,x) else fmult(x,y)
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
@@ -153,7 +153,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     const GrB_Matrix A,     // input A matrix (bitmap/full)
     const GrB_Matrix B,     // input B matrix (bitmap/full)
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
@@ -169,7 +169,7 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     const GrB_Matrix A,     // input A matrix (bitmap/full)
     const GrB_Matrix B,     // input B matrix (bitmap/full)
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 bool GB_iso_emult           // c = op(a,b), return true if C is iso

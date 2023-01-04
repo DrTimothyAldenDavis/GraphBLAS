@@ -27,7 +27,7 @@ GrB_Info GrB_Scalar_clear   // clear a GrB_Scalar of its entry
     // clear the GrB_Scalar
     //--------------------------------------------------------------------------
 
-    return (GB_clear ((GrB_Matrix) s, Context)) ;
+    return (GB_clear ((GrB_Matrix) s, Werk)) ;
 }
 
 //------------------------------------------------------------------------------

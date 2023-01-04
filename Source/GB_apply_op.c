@@ -42,7 +42,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         bool binop_bind1st,         // if true, C=binop(s,A), else C=binop(A,s)
         bool flipij,                // if true, flip i,j for user idxunop
     const GrB_Matrix A,             // input matrix
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -73,7 +73,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     // determine the maximum number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // get the operator

@@ -28,7 +28,7 @@ GrB_Info GB_split                   // split a matrix
     const GrB_Index *Tile_nrows,    // array of size m
     const GrB_Index *Tile_ncols,    // array of size n
     const GrB_Matrix A,             // input matrix
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -112,19 +112,19 @@ GrB_Info GB_split                   // split a matrix
     { 
         // A is full
         GBURBLE ("(full split) ") ;
-        GB_OK (GB_split_full (Tiles, m, n, Tile_rows, Tile_cols, A, Context)) ;
+        GB_OK (GB_split_full (Tiles, m, n, Tile_rows, Tile_cols, A, Werk)) ;
     }
     else if (GB_IS_BITMAP (A))
     { 
         // A is bitmap
         GBURBLE ("(bitmap split) ") ;
-        GB_OK (GB_split_bitmap (Tiles, m, n, Tile_rows, Tile_cols, A, Context));
+        GB_OK (GB_split_bitmap (Tiles, m, n, Tile_rows, Tile_cols, A, Werk));
     }
     else
     { 
         // A is sparse/hypersparse, each Tile has the same sparsity as A
         GBURBLE ("(sparse/hyper split) ") ;
-        GB_OK (GB_split_sparse (Tiles, m, n, Tile_rows, Tile_cols, A, Context));
+        GB_OK (GB_split_sparse (Tiles, m, n, Tile_rows, Tile_cols, A, Werk));
     }
 
     //--------------------------------------------------------------------------

@@ -27,7 +27,7 @@
 GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
 (
     GrB_Matrix A,               // matrix to convert from sparse to bitmap
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -52,7 +52,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     // determine the maximum number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // determine if the conversion can be done in-place

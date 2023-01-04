@@ -42,7 +42,7 @@ GrB_Info GB_assign_zombie5
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -95,7 +95,7 @@ GrB_Info GB_assign_zombie5
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task

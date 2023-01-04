@@ -64,7 +64,7 @@ GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
         (GrB_Matrix) u,     false,      // u as matrix; never transposed
         I, ni,                          // row indices I and length ni
         GrB_ALL, 1,                     // all columns
-        Context) ;
+        Werk) ;
 
     GB_BURBLE_END ;
     return (info) ;

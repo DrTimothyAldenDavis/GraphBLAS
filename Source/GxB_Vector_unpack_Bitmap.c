@@ -45,7 +45,7 @@ GrB_Info GxB_Vector_unpack_Bitmap   // unpack a bitmap vector
     //--------------------------------------------------------------------------
 
     ASSERT (v->is_csc) ;
-    GB_OK (GB_convert_any_to_bitmap ((GrB_Matrix) v, Context)) ;
+    GB_OK (GB_convert_any_to_bitmap ((GrB_Matrix) v, Werk)) ;
 
     //--------------------------------------------------------------------------
     // unpack the vector
@@ -70,7 +70,7 @@ GrB_Info GxB_Vector_unpack_Bitmap   // unpack a bitmap vector
         vx,   vx_size,  // Ax
         nvals, NULL, NULL,                  // nvals for bitmap
         &sparsity, &is_csc,                 // bitmap by col
-        iso, Context) ;
+        iso, Werk) ;
 
     if (info == GrB_SUCCESS)
     {

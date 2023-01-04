@@ -129,7 +129,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     const GrB_Matrix M,         // optional mask, may be NULL; not complemented
     const GrB_Matrix A,         // first input matrix
     const GrB_Matrix B,         // second input matrix
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -201,7 +201,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = 1 ;      // nthreads depends on Cnvec, computed below
 
     //--------------------------------------------------------------------------
@@ -273,8 +273,8 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         {
 
             // create the A->Y and B->Y hyper_hashes
-            GB_OK (GB_hyper_hash_build (A, Context)) ;
-            GB_OK (GB_hyper_hash_build (B, Context)) ;
+            GB_OK (GB_hyper_hash_build (A, Werk)) ;
+            GB_OK (GB_hyper_hash_build (B, Werk)) ;
 
             const int64_t *restrict A_Yp = (A_is_hyper) ? A->Y->p : NULL ;
             const int64_t *restrict A_Yi = (A_is_hyper) ? A->Y->i : NULL ;
@@ -672,7 +672,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             // C is hypersparse
 
             // create the M->Y hyper_hash
-            GB_OK (GB_hyper_hash_build (M, Context)) ;
+            GB_OK (GB_hyper_hash_build (M, Werk)) ;
 
             const int64_t *restrict M_Yp = M->Y->p ;
             const int64_t *restrict M_Yi = M->Y->i ;

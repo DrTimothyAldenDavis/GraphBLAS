@@ -44,7 +44,7 @@ GrB_Info GB_dense_subassign_06d
     // input:
     const GrB_Matrix A,
     bool Mask_struct,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -83,7 +83,7 @@ GrB_Info GB_dense_subassign_06d
     // Parallel: slice A into equal-sized chunks
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task

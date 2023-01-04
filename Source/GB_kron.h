@@ -24,7 +24,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     bool A_transpose,               // if true, use A' instead of A
     const GrB_Matrix B,             // input matrix
     bool B_transpose,               // if true, use B' instead of B
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_kroner                  // C = kron (A,B)
@@ -36,7 +36,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     bool A_is_pattern,              // true if values of A are not used
     const GrB_Matrix B,             // input matrix
     bool B_is_pattern,              // true if values of B are not used
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

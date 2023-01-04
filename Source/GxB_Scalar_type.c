@@ -29,6 +29,6 @@ GrB_Info GxB_Scalar_type    // get the type of a GrB_Scalar
     // get the type
     //--------------------------------------------------------------------------
 
-    return (GB_matvec_type (type, (GrB_Matrix) s, Context)) ;
+    return (GB_matvec_type (type, (GrB_Matrix) s, Werk)) ;
 }
 

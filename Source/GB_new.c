@@ -45,7 +45,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     const float hyper_switch,   // A->hyper_switch
     const int64_t plen,         // size of A->p and A->h, if A hypersparse.
                                 // Ignored if A is not hypersparse.
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 

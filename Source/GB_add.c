@@ -65,7 +65,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     const GrB_Scalar alpha, // alpha and beta ignored for eWiseAdd,
     const GrB_Scalar beta,  // nonempty scalars for GxB_eWiseUnion
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -128,7 +128,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         // input/output to phase0:
         &C_sparsity,
         // original input:
-        (apply_mask) ? M : NULL, A, B, Context) ;
+        (apply_mask) ? M : NULL, A, B, Werk) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -159,7 +159,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
             // computed by phase0:
             Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
             // original input:
-            (apply_mask) ? M : NULL, A, B, Context) ;
+            (apply_mask) ? M : NULL, A, B, Werk) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory; free everything allocated by GB_add_phase0
@@ -179,7 +179,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
             // from phase0:
             Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
             // original input:
-            (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Context) ;
+            (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Werk) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory; free everything allocated by GB_add_phase0
@@ -199,7 +199,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         // C is bitmap or full: only determine how many threads to use
         //----------------------------------------------------------------------
 
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
         C_nthreads = GB_nthreads (A->vlen * A->vdim, chunk, nthreads_max) ;
     }
 
@@ -221,7 +221,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         Cnvec, &Ch, Ch_size, C_to_M, C_to_A, C_to_B, Ch_is_Mh, C_sparsity,
         // original input:
         (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B,
-        is_eWiseUnion, alpha, beta, Context) ;
+        is_eWiseUnion, alpha, beta, Werk) ;
 
     // Ch and Cp must not be freed; they are now C->h and C->p.
     // If the method failed, Cp and Ch have already been freed.

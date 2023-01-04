@@ -61,7 +61,7 @@ GrB_Info GxB_Row_subassign          // C(row,Cols)<M'> += u'
         Rows, 1,                        // a single row index
         Cols, nCols,                    // column indices
         false, NULL, GB_ignore_code,    // no scalar expansion
-        Context) ;
+        Werk) ;
 
     GB_BURBLE_END ;
     return (info) ;

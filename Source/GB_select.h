@@ -24,7 +24,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     const GrB_Matrix A,             // input matrix
     const GrB_Scalar Thunk_in,      // optional input for select operator
     const bool A_transpose,         // A matrix descriptor
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_selector
@@ -36,7 +36,7 @@ GrB_Info GB_selector
     GrB_Matrix A,               // input matrix
     int64_t ithunk,             // (int64_t) Thunk, if Thunk is NULL
     const GrB_Scalar Thunk,     // optional input for select operator
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_selector
@@ -50,7 +50,7 @@ GrB_Info GB_bitmap_selector
     const int64_t ithunk,       // (int64_t) Thunk, if Thunk is NULL
     const GB_void *restrict athunk,     // (A->type) Thunk
     const GB_void *restrict ythunk,     // (op->utype) Thunk
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------

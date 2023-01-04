@@ -37,7 +37,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     GrB_Matrix C,                   // input/output matrix
     const GrB_Matrix B,             // input matrix
     const GrB_BinaryOp accum,       // operator to apply
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -89,7 +89,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task

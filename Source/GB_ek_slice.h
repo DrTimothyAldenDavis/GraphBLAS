@@ -124,7 +124,7 @@ void GB_ek_slice_merge2     // merge final results for matrix C
     const int64_t *ek_slicing,                  // size 3*ntasks+1
     const int ntasks,                   // # of tasks used to construct C
     const int nthreads,                 // # of threads to use
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------

@@ -39,7 +39,7 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     const GrB_Matrix A,
     const GrB_Index *I,         // index list for C = A(I,J), or GrB_ALL, etc.
     const bool symbolic,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -90,7 +90,7 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     GB_task_cumsum (Cp, Cnvec, Cnvec_nonempty, TaskList, ntasks, nthreads,
-        Context) ;
+        Werk) ;
 
     //--------------------------------------------------------------------------
     // return the result

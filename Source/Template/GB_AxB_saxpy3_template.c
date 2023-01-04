@@ -26,7 +26,7 @@
     // get the chunk size
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // get M, A, B, and C
@@ -329,7 +329,7 @@
     // phase3/phase4: count nnz(C(:,j)) for fine tasks, cumsum of Cp
     //==========================================================================
 
-    GB_AxB_saxpy3_cumsum (C, SaxpyTasks, nfine, chunk, nthreads, Context) ;
+    GB_AxB_saxpy3_cumsum (C, SaxpyTasks, nfine, chunk, nthreads, Werk) ;
 
     #ifdef GB_TIMING
     ttt = omp_get_wtime ( ) - ttt ;
@@ -346,7 +346,7 @@
     int64_t cnz = Cp [cnvec] ;
     // set C->iso = GB_IS_ANY_PAIR_SEMIRING     OK
     GrB_Info info = GB_bix_alloc (C, cnz, GxB_SPARSE, false, true,
-        GB_IS_ANY_PAIR_SEMIRING, Context) ;
+        GB_IS_ANY_PAIR_SEMIRING, Werk) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

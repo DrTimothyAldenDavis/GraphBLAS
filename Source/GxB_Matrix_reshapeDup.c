@@ -45,7 +45,7 @@ GrB_Info GxB_Matrix_reshapeDup // reshape a GrB_Matrix into another GrB_Matrix
     // reshape the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_reshape (C, A, by_col, nrows_new, ncols_new, Context) ;
+    info = GB_reshape (C, A, by_col, nrows_new, ncols_new, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

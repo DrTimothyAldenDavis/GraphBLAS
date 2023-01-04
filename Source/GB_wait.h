@@ -13,20 +13,20 @@
 GrB_Info GB_block   // apply all pending computations if blocking mode enabled
 (
     GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_wait                // finish all pending computations
 (
     GrB_Matrix A,               // matrix with pending computations
     const char *name,           // name of the matrix
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_unjumble        // unjumble a matrix
 (
     GrB_Matrix A,           // matrix to unjumble
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 // true if a matrix has pending tuples
@@ -63,7 +63,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     if (condition)                                                      \
     {                                                                   \
         GrB_Info info ;                                                 \
-        GB_OK (GB_wait ((GrB_Matrix) A, name, Context)) ;               \
+        GB_OK (GB_wait ((GrB_Matrix) A, name, Werk)) ;               \
     }                                                                   \
 }
 

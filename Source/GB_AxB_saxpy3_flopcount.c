@@ -84,7 +84,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
     const bool Mask_comp,       // if true, mask is complemented
     const GrB_Matrix A,
     const GrB_Matrix B,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -117,7 +117,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
     int64_t bnvec = B->nvec ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     // clear Bflops
     GB_memset (Bflops, 0, (bnvec+1) * sizeof (int64_t), nthreads_max) ;
@@ -470,7 +470,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
     // Bflops = cumsum ([0 Bflops]) ;
     ASSERT (Bflops [bnvec] == 0) ;
-    GB_cumsum (Bflops, bnvec, NULL, B_nthreads, Context) ;
+    GB_cumsum (Bflops, bnvec, NULL, B_nthreads, Werk) ;
     // Bflops [bnvec] is now the total flop count, including the time to
     // compute A*B and to handle the mask.  total_Mwork is part of this total
     // flop count, but is also returned separtely.

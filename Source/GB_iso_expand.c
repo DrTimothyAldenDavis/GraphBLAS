@@ -16,7 +16,7 @@ void GB_iso_expand          // expand an iso scalar into an entire array
     int64_t n,              // # of entries in X
     void *restrict scalar,  // scalar to expand into X
     size_t size,            // size of the scalar and each entry of X
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -24,7 +24,7 @@ void GB_iso_expand          // expand an iso scalar into an entire array
     // determine how many threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // copy the scalar into X

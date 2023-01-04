@@ -28,6 +28,6 @@ GrB_Info GxB_Scalar_type_name      // return the name of the type of a scalar
     // get the type_name
     //--------------------------------------------------------------------------
 
-    return (GB_matvec_type_name (type_name, (GrB_Matrix) s, Context)) ;
+    return (GB_matvec_type_name (type_name, (GrB_Matrix) s, Werk)) ;
 }
 

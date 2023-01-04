@@ -30,7 +30,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     const GrB_Matrix A,             // input matrix
     const GrB_Scalar Thunk,         // optional input for select operator
     const bool A_transpose,         // A matrix descriptor
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -56,7 +56,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Info info ;
-    GB_OK (GB_compatible (C->type, C, M, Mask_struct, accum, A->type, Context));
+    GB_OK (GB_compatible (C->type, C, M, Mask_struct, accum, A->type, Werk));
 
     GB_Type_code acode = A->type->code ;
     GB_Type_code xcode = (op->xtype == NULL) ? GB_ignore_code : op->xtype->code;
@@ -683,7 +683,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     { 
         // selectop is always true, so T = A
         // set T->iso = A->iso  OK
-        GB_OK (GB_shallow_copy (T, A_csc, A, Context)) ;
+        GB_OK (GB_shallow_copy (T, A_csc, A, Werk)) ;
     }
     else if (is_empty)
     { 
@@ -691,7 +691,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         GB_OK (GB_new (&T, // auto (sparse or hyper), existing header
             A->type, A->vlen, A->vdim, GB_Ap_calloc, A_csc,
             GxB_SPARSE + GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ),
-            1, Context)) ;
+            1, Werk)) ;
     }
     else
     { 
@@ -712,7 +712,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
             A,          // input matrix
             ithunk,     // thunk typecasted to int64_t
             Thunk2,     // NULL, or the GrB_Scalar Thunk
-            Context)) ;
+            Werk)) ;
     }
 
     T->is_csc = A_csc ;
@@ -724,6 +724,6 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     //--------------------------------------------------------------------------
 
     return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
-        Mask_struct, Context)) ;
+        Mask_struct, Werk)) ;
 }
 

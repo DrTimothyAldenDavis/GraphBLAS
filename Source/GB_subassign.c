@@ -50,7 +50,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     const bool scalar_expansion,    // if true, expand scalar to A
     const void *scalar,             // scalar to be expanded
     const GB_Type_code scalar_code, // type code of scalar to expand
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -87,7 +87,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         &atype, C_in, &C_replace, &assign_kind,
         M_in, Mask_comp, Mask_struct, M_transpose, accum,
         A_in, A_transpose, Rows, nRows_in, Cols, nCols_in,
-        scalar_expansion, scalar, scalar_code, Context)) ;
+        scalar_expansion, scalar, scalar_code, Werk)) ;
 
     // GxB_Row_subassign, GxB_Col_subassign, GxB_Matrix_subassign and
     // GxB_Vector_subassign all use GB_SUBASSIGN.
@@ -108,7 +108,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     GB_OK (GB_subassigner (C, subassign_method, C_replace,
         M, Mask_comp, Mask_struct, accum, A,
         I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
-        scalar_expansion, scalar, atype, Context)) ;
+        scalar_expansion, scalar, atype, Werk)) ;
 
     //--------------------------------------------------------------------------
     // transplant C back into C_in
@@ -120,16 +120,16 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         // pending tuples can be transplanted from C2 into C_in, and if C2 is
         // jumbled, C_in becomes jumbled too.
         ASSERT (C2->static_header || GBNSTATIC) ;
-        GB_OK (GB_transplant (C_in, C_in->type, &C2, Context)) ;
+        GB_OK (GB_transplant (C_in, C_in->type, &C2, Werk)) ;
     }
 
     //--------------------------------------------------------------------------
     // free workspace, finalize C, and return result
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_conform (C_in, Context)) ;
+    GB_OK (GB_conform (C_in, Werk)) ;
     ASSERT_MATRIX_OK (C_in, "Final C for subassign", GB0) ;
     GB_FREE_ALL ;
-    return (GB_block (C_in, Context)) ;
+    return (GB_block (C_in, Werk)) ;
 }
 

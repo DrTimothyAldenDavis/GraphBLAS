@@ -30,7 +30,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     const GrB_Desc_Value AxB_method,// for auto vs user selection of methods
     const int do_sort,              // if nonzero, try to return C unjumbled
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_dot                 // dot product (multiple methods)
@@ -47,7 +47,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, mask was applied
     bool *done_in_place,            // if true, C_in_place was computed in-place
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
@@ -72,7 +72,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     bool *done_in_place,            // if true, C was computed in-place
     GrB_Desc_Value AxB_method,      // for auto vs user selection of methods
     const int do_sort,              // if nonzero, try to return C unjumbled
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
@@ -82,7 +82,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=D*A
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
@@ -92,7 +92,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     const GrB_Matrix D,             // diagonal input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*D
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 
@@ -126,13 +126,13 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     const GrB_Matrix B_in,          // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 bool GB_is_diagonal             // true if A is diagonal
 (
     const GrB_Matrix A,         // input matrix to examine
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
@@ -146,7 +146,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_dot3_slice
@@ -158,7 +158,7 @@ GrB_Info GB_AxB_dot3_slice
     int *p_nthreads,                // # of threads to use
     // input:
     const GrB_Matrix C,             // matrix to slice
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_dot3_one_slice
@@ -170,7 +170,7 @@ GrB_Info GB_AxB_dot3_one_slice
     int *p_nthreads,                // # of threads to use
     // input:
     const GrB_Matrix M,             // matrix to slice
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
@@ -181,7 +181,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     const GrB_Semiring semiring,    // semiring that defines C+=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *done_in_place,            // if true, dot4 has computed the result
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_bitmap_expand_to_hyper
@@ -193,7 +193,7 @@ GrB_Info GB_bitmap_expand_to_hyper
     int64_t cvdim_final,
     GrB_Matrix A,
     GrB_Matrix B,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -247,7 +247,7 @@ bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
 (
     const GrB_Matrix A,
     const GrB_Matrix B,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -288,7 +288,7 @@ void GB_AxB_meta_adotb_control
     bool allow_scale,
     bool B_is_diagonal,
     GrB_Desc_Value AxB_method,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 // return value of axb_method from GB_AxB_meta_adotb_control

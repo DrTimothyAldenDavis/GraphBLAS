@@ -37,7 +37,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         bool binop_bind1st,         // if true, binop(x,A) else binop(A,y)
         bool flipij,                // if true, flip i,j for user idxunop
     const GrB_Matrix A,     // input matrix to typecast
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -94,7 +94,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     GrB_Info info ;
     info = GB_new (&C, // any sparsity, existing header
         ztype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        GB_sparsity (A), A->hyper_switch, 0, Context) ;
+        GB_sparsity (A), A->hyper_switch, 0, Werk) ;
     ASSERT (info == GrB_SUCCESS) ;
 
     //--------------------------------------------------------------------------
@@ -192,7 +192,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     }
 
     GB_OK (GB_apply_op ((GB_void *) C->x, C->type, C_code_iso, op,
-        scalar, binop_bind1st, flipij, A, Context)) ;
+        scalar, binop_bind1st, flipij, A, Werk)) ;
 
     //--------------------------------------------------------------------------
     // return the result

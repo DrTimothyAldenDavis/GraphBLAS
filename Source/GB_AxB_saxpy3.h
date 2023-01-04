@@ -31,7 +31,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     bool *mask_applied,             // if true, then mask was applied
     GrB_Desc_Value AxB_method,      // Default, Gustavson, or Hash
     const int do_sort,              // if nonzero, try to sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
     const bool Mask_comp,       // if true, mask is complemented
     const GrB_Matrix A,
     const GrB_Matrix B,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ void GB_AxB_saxpy3_cumsum
     int nfine,                  // number of fine tasks
     double chunk,               // chunk size
     int nthreads,               // number of threads
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     int *ntasks,                    // # of tasks created (coarse and fine)
     int *nfine,                     // # of fine tasks created
     int *nthreads,                  // # of threads to use
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -144,7 +144,7 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     int *ntasks,                    // # of tasks created (coarse and fine)
     int *nfine,                     // # of fine tasks created
     int *nthreads,                  // # of threads to use
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------

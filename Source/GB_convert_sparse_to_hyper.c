@@ -24,7 +24,7 @@
 GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
 (
     GrB_Matrix A,           // matrix to convert to hypersparse
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -51,7 +51,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
 
         int64_t n = A->vdim ;
         GB_BURBLE_N (n, "(sparse to hyper) ") ;
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
         int nthreads = GB_nthreads (n, chunk, nthreads_max) ;
         int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
         ntasks = GB_IMIN (ntasks, n) ;

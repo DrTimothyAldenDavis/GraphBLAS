@@ -20,7 +20,7 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
     const GrB_Matrix A,             // input matrix
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -43,7 +43,7 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
     const bool A_iso = A->iso ;
 //  int64_t anz = GB_nnz (A) ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     int64_t nouter = csc ? n : m ;
     int64_t ninner = csc ? m : n ;
@@ -81,7 +81,7 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
             // set C->iso = A_iso       OK
             GB_OK (GB_new_bix (&C, // new header
                 atype, cvlen, cvdim, GB_Ap_null, csc, GxB_BITMAP, false,
-                hyper_switch, 0, cnzmax, true, A_iso, Context)) ;
+                hyper_switch, 0, cnzmax, true, A_iso, Werk)) ;
             int8_t *restrict Cb = C->b ;
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;
@@ -177,7 +177,7 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
             C->magic = GB_MAGIC ;
             C->nvals = cnz ;
             ASSERT_MATRIX_OK (C, "C for GB_split", GB0) ;
-            GB_OK (GB_conform (C, Context)) ;
+            GB_OK (GB_conform (C, Werk)) ;
             if (csc)
             { 
                 GB_TILE (Tiles, inner, outer) = C ;

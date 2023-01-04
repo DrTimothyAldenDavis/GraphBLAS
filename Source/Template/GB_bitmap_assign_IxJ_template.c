@@ -25,7 +25,7 @@
     GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
     GB_OK (GB_subassign_IxJ_slice (&TaskList, &TaskList_size, &ntasks,
         &nthreads, /* I, */ nI, /* Ikind, Icolon, J, */ nJ,
-        /* Jkind, Jcolon, */ Context)) ;
+        /* Jkind, Jcolon, */ Werk)) ;
 
     //--------------------------------------------------------------------------
     // iterate over all IxJ

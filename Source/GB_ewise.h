@@ -29,7 +29,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     const bool is_eWiseUnion,       // if true, eWiseUnion, else eWiseAdd
     const GrB_Scalar alpha,         // alpha and beta ignored for eWiseAdd,
     const GrB_Scalar beta,          // nonempty scalars for GxB_eWiseUnion
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 void GB_ewise_generic       // generic ewise
@@ -61,7 +61,7 @@ void GB_ewise_generic       // generic ewise
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,
     const GrB_Matrix B,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

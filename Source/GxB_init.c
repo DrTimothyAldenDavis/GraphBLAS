@@ -67,7 +67,7 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CONTEXT ("GxB_init (mode, malloc, calloc, realloc, free)") ;
+    GB_WERK ("GxB_init (mode, malloc, calloc, realloc, free)") ;
 
     //--------------------------------------------------------------------------
     // initialize GraphBLAS
@@ -79,7 +79,7 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
         return (GB_init (mode,              // blocking or non-blocking mode
             // RMM C memory management functions
             rmm_wrap_malloc, rmm_wrap_calloc, rmm_wrap_realloc, rmm_wrap_free,
-            Context)) ;
+            Werk)) ;
     }
 #endif
 
@@ -89,6 +89,6 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
         user_calloc_function,           // user-defined malloc, may be NULL
         user_realloc_function,          // user-defined realloc, may be NULL
         user_free_function,             // user-defined free, required
-        Context)) ;
+        Werk)) ;
 }
 

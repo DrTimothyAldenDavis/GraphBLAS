@@ -49,7 +49,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
         GrB_Info info ;
         GB_WHERE1 (GB_WHERE_STRING) ;
         GB_BURBLE_START ("GrB_Matrix_extractElement") ;
-        GB_OK (GB_wait (A, "A", Context)) ;
+        GB_OK (GB_wait (A, "A", Werk)) ;
         GB_BURBLE_END ;
     }
 

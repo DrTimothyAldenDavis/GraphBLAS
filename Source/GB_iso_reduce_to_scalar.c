@@ -14,7 +14,7 @@ void GB_iso_reduce_to_scalar        // s = reduce (A) where A is iso
     GB_void *restrict s,    // output scalar of type reduce->op->ztype
     GrB_Monoid reduce,      // monoid to use for the reduction
     GrB_Matrix A,           // matrix to reduce
-    GB_Context Context
+    GB_Werk Werk
 )
 { 
 

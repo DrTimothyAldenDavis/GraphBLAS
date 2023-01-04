@@ -67,7 +67,7 @@ GrB_Info GB_emult_phase2             // C=A.*B or C<M>=A.*B
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,
     const GrB_Matrix B,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -142,7 +142,7 @@ GrB_Info GB_emult_phase2             // C=A.*B or C<M>=A.*B
     // set C->iso = C_iso   OK
     GrB_Info info = GB_new_bix (&C, // any sparsity, existing header
         ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso, Context) ;
+        C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso, Werk) ;
     if (info != GrB_SUCCESS)
     {
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
@@ -229,7 +229,7 @@ GrB_Info GB_emult_phase2             // C=A.*B or C<M>=A.*B
                 info = GB_AemultB(mult,xname) (C, C_sparsity,               \
                     ewise_method, M, Mask_struct, Mask_comp,                \
                     A, B, C_to_M, C_to_A, C_to_B,                           \
-                    TaskList, C_ntasks, C_nthreads, Context) ;              \
+                    TaskList, C_ntasks, C_nthreads, Werk) ;              \
                 done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
@@ -260,14 +260,14 @@ GrB_Info GB_emult_phase2             // C=A.*B or C<M>=A.*B
         GB_ewise_generic (C, op, TaskList, C_ntasks, C_nthreads,
             C_to_M, C_to_A, C_to_B, C_sparsity, ewise_method, NULL,
             NULL, 0, 0, NULL, 0, 0, NULL, 0, 0,
-            M, Mask_struct, Mask_comp, A, B, Context) ;
+            M, Mask_struct, Mask_comp, A, B, Werk) ;
     }
 
     //--------------------------------------------------------------------------
     // construct the final C->h
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_hypermatrix_prune (C, Context)) ;
+    GB_OK (GB_hypermatrix_prune (C, Werk)) ;
 
     //--------------------------------------------------------------------------
     // return result

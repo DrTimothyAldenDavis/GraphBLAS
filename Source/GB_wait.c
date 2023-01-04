@@ -60,7 +60,7 @@ GrB_Info GB_wait                // finish all pending computations
 (
     GrB_Matrix A,               // matrix with pending computations
     const char *name,           // name of the matrix
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -112,7 +112,7 @@ GrB_Info GB_wait                // finish all pending computations
     // determine the max # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // check if only A->nvec_nonempty is needed
@@ -123,7 +123,7 @@ GrB_Info GB_wait                // finish all pending computations
         // A->Y is not modified.  If not NULL, it remains valid
         if (A->nvec_nonempty < 0)
         {
-            A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
+            A->nvec_nonempty = GB_nvec_nonempty (A, Werk) ;
         }
         return (GrB_SUCCESS) ;
     }
@@ -139,7 +139,7 @@ GrB_Info GB_wait                // finish all pending computations
         // jumbled, then it stays sparse or hypersparse.  A->Y is not modified
         // nor accessed, and remains NULL if it is NULL on input.  If it is
         // present, it remains valid.
-        GB_OK (GB_unjumble (A, Context)) ;
+        GB_OK (GB_unjumble (A, Werk)) ;
         ASSERT (GB_IMPLIES (info == GrB_SUCCESS, A->nvec_nonempty >= 0)) ;
         return (info) ;
     }
@@ -192,7 +192,7 @@ GrB_Info GB_wait                // finish all pending computations
                                     // NULL if A is iso
             stype,                  // type of Pending->x
             true,                   // burble is allowed
-            Context
+            Werk
         ) ;
 
         //----------------------------------------------------------------------
@@ -263,7 +263,7 @@ GrB_Info GB_wait                // finish all pending computations
             A,                          // input/output matrix
             0,                          // ithunk is unused
             NULL,                       // no GrB_Scalar Thunk
-            Context)) ;
+            Werk)) ;
         ASSERT (A->nzombies == (anz_orig - GB_nnz (A))) ;
         A->nzombies = 0 ;
     }
@@ -279,7 +279,7 @@ GrB_Info GB_wait                // finish all pending computations
     // unjumble the matrix
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_unjumble (A, Context)) ;
+    GB_OK (GB_unjumble (A, Werk)) ;
 
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;
@@ -292,7 +292,7 @@ GrB_Info GB_wait                // finish all pending computations
     if (npending == 0)
     { 
         // conform A to its desired sparsity structure and return result
-        info = GB_conform (A, Context) ;
+        info = GB_conform (A, Werk) ;
         ASSERT (GB_IMPLIES (info == GrB_SUCCESS, A->nvec_nonempty >= 0)) ;
         #pragma omp flush
         return (info) ;
@@ -307,7 +307,7 @@ GrB_Info GB_wait                // finish all pending computations
     { 
         // A has no entries so just transplant T into A, then free T and
         // conform A to its desired hypersparsity.
-        info = GB_transplant_conform (A, A->type, &T, Context) ;
+        info = GB_transplant_conform (A, A->type, &T, Werk) ;
         ASSERT (GB_IMPLIES (info == GrB_SUCCESS, A->nvec_nonempty >= 0)) ;
         #pragma omp flush
         return (info) ;
@@ -385,7 +385,7 @@ GrB_Info GB_wait                // finish all pending computations
         if (anz_new > GB_nnz_max (A))
         { 
             // double the size if not enough space
-            GB_OK (GB_ix_realloc (A, 2 * anz_new, Context)) ;
+            GB_OK (GB_ix_realloc (A, 2 * anz_new, Werk)) ;
             Ai = A->i ;
             Ax = (GB_void *) A->x ;
         }
@@ -405,7 +405,7 @@ GrB_Info GB_wait                // finish all pending computations
             GB_CLEAR_STATIC_HEADER (A1, &A1_header) ;
             GB_OK (GB_new (&A1, // hyper, existing header
                 A->type, A->vlen, A->vdim, GB_Ap_malloc, A->is_csc,
-                GxB_HYPERSPARSE, GB_ALWAYS_HYPER, anvec - kA, Context)) ;
+                GxB_HYPERSPARSE, GB_ALWAYS_HYPER, anvec - kA, Werk)) ;
 
             // the A1->i and A1->x content are shallow copies of A(:,kA:end).
             // They are not allocated pointers, but point to space inside
@@ -453,7 +453,7 @@ GrB_Info GB_wait                // finish all pending computations
     
             GB_CLEAR_STATIC_HEADER (S, &S_header) ;
             GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A1, T,
-                false, NULL, NULL, NULL, Context)) ;
+                false, NULL, NULL, NULL, Werk)) ;
 
             ASSERT_MATRIX_OK (S, "S = A1+T", GB0) ;
 
@@ -507,7 +507,7 @@ GrB_Info GB_wait                // finish all pending computations
             int64_t j = Th [k] ;
             ASSERT (j >= tjfirst) ;
             anz += (Tp [k+1] - Tp [k]) ;
-            GB_OK (GB_jappend (A, j, &jlast, anz, &anz_last, Context)) ;
+            GB_OK (GB_jappend (A, j, &jlast, anz, &anz_last, Werk)) ;
         }
 
         GB_jwrapup (A, jlast, anz) ;
@@ -524,7 +524,7 @@ GrB_Info GB_wait                // finish all pending computations
         GB_Matrix_free (&T) ;
 
         // conform A to its desired sparsity structure
-        GB_OK (GB_conform (A, Context)) ;
+        GB_OK (GB_conform (A, Werk)) ;
         ASSERT (A->nvec_nonempty >= 0) ;
 
     }
@@ -550,7 +550,7 @@ GrB_Info GB_wait                // finish all pending computations
 
         GB_CLEAR_STATIC_HEADER (S, &S_header) ;
         GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T,
-            false, NULL, NULL, NULL, Context)) ;
+            false, NULL, NULL, NULL, Werk)) ;
         GB_Matrix_free (&T) ;
         ASSERT_MATRIX_OK (S, "S after GB_wait:add", GB0) ;
 
@@ -612,7 +612,7 @@ GrB_Info GB_wait                // finish all pending computations
         }
 
         // transplant S into A
-        GB_OK (GB_transplant_conform (A, A->type, &S, Context)) ;
+        GB_OK (GB_transplant_conform (A, A->type, &S, Werk)) ;
         ASSERT (A->nvec_nonempty >= 0) ;
 
         if (Y != NULL && GB_IS_HYPERSPARSE (A) && A->Y == NULL)

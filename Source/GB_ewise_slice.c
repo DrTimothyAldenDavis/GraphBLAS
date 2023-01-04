@@ -53,7 +53,7 @@ GrB_Info GB_ewise_slice
     const GrB_Matrix M,             // mask matrix to slice (optional)
     const GrB_Matrix A,             // matrix to slice
     const GrB_Matrix B,             // matrix to slice
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -94,7 +94,7 @@ GrB_Info GB_ewise_slice
     // determine # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
 
     //--------------------------------------------------------------------------
     // allocate the initial TaskList
@@ -260,7 +260,7 @@ GrB_Info GB_ewise_slice
     // replace Cwork with its cumulative sum
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cwork, Cnvec, NULL, nthreads_for_Cwork, Context) ;
+    GB_cumsum (Cwork, Cnvec, NULL, nthreads_for_Cwork, Werk) ;
     double cwork = (double) Cwork [Cnvec] ;
 
     //--------------------------------------------------------------------------

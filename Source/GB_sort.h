@@ -234,7 +234,7 @@ GrB_Info GB_sort
     GrB_BinaryOp op,            // comparator for the sort
     GrB_Matrix A,               // matrix to sort
     const bool A_transpose,     // false: sort each row, true: sort each column
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

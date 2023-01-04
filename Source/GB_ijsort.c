@@ -33,7 +33,7 @@ GrB_Info GB_ijsort
     size_t *I2_size_handle,
     GrB_Index *restrict *p_I2k,  // output array of size ni2
     size_t *I2k_size_handle,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -62,7 +62,7 @@ GrB_Info GB_ijsort
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (ni, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------

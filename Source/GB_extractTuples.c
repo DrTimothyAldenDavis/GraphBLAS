@@ -34,7 +34,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     GrB_Index *p_nvals,         // I,J,X size on input; # tuples on output
     const GB_Type_code xcode,   // type of array X
     const GrB_Matrix A,         // matrix to extract tuples from
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -83,7 +83,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     // determine the number of threads to use
     //-------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (anz + A->nvec, chunk, nthreads_max) ;
 
     //-------------------------------------------------------------------------
@@ -139,7 +139,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         // into its result, X or X_bitmap
 
         GB_OK (GB_convert_bitmap_worker (Ap, (int64_t *) I, (int64_t *) J,
-            (GB_void *) (need_typecast ? X_bitmap : X), NULL, A, Context)) ;
+            (GB_void *) (need_typecast ? X_bitmap : X), NULL, A, Werk)) ;
 
         //----------------------------------------------------------------------
         // typecast X if needed
@@ -191,7 +191,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
         if (J != NULL)
         {
-            GB_OK (GB_extract_vector_list ((int64_t *) J, A, Context)) ;
+            GB_OK (GB_extract_vector_list ((int64_t *) J, A, Werk)) ;
         }
 
         //----------------------------------------------------------------------
@@ -206,7 +206,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
                 size_t xsize = GB_code_size (xcode, asize) ;
                 GB_void scalar [GB_VLA(xsize)] ;
                 GB_cast_scalar (scalar, xcode, A->x, acode, asize) ;
-                GB_iso_expand (X, anz, scalar, xsize, Context) ;
+                GB_iso_expand (X, anz, scalar, xsize, Werk) ;
             }
             else if (xcode == acode)
             { 

@@ -13,7 +13,7 @@
 GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
 (
     GrB_Matrix A,           // matrix to clear
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

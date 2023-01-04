@@ -72,7 +72,7 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
         vx,   vx_size,  // Ax
         NULL, NULL, NULL,
         &sparsity, &is_csc,                 // full by col
-        iso, Context) ;
+        iso, Werk) ;
 
     if (info == GrB_SUCCESS)
     {

@@ -24,7 +24,7 @@ bool GB_AxB_dot3_cuda_branch
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_Context Context
+    GB_Werk Werk
 )
 {
     // very rough estimate of the work to do

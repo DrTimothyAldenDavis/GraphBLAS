@@ -27,7 +27,7 @@ GrB_Info GB (_Adot4B)
     const GrB_Matrix A, int64_t *restrict A_slice, int naslice,
     const GrB_Matrix B, int64_t *restrict B_slice, int nbslice,
     const int nthreads,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 #endif
 
@@ -40,7 +40,7 @@ GrB_Info GB (_Asaxpy3B)
     const GrB_Matrix B,
     GB_saxpy3task_struct *restrict SaxpyTasks,
     const int ntasks, const int nfine, const int nthreads, const int do_sort,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_Asaxpy3B_noM)
@@ -51,7 +51,7 @@ GrB_Info GB (_Asaxpy3B_noM)
     GB_saxpy3task_struct *restrict SaxpyTasks,
     const int ntasks, const int nfine, const int nthreads,
     const int do_sort,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_Asaxpy3B_M)
@@ -63,7 +63,7 @@ GrB_Info GB (_Asaxpy3B_M)
     GB_saxpy3task_struct *restrict SaxpyTasks,
     const int ntasks, const int nfine, const int nthreads,
     const int do_sort,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_Asaxpy3B_notM)
@@ -75,7 +75,7 @@ GrB_Info GB (_Asaxpy3B_notM)
     GB_saxpy3task_struct *restrict SaxpyTasks,
     const int ntasks, const int nfine, const int nthreads,
     const int do_sort,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_AsaxbitB)
@@ -84,7 +84,7 @@ GrB_Info GB (_AsaxbitB)
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 if_saxpy4_enabled
@@ -99,7 +99,7 @@ GrB_Info GB (_Asaxpy4B)
     const bool use_coarse_tasks,
     const bool use_atomics,
     const int64_t *A_slice,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 #endif
 
@@ -112,7 +112,7 @@ GrB_Info GB (_Asaxpy5B)
     const int ntasks,
     const int nthreads,
     const int64_t *B_slice,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 #endif
 

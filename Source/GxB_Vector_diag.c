@@ -34,7 +34,7 @@ GrB_Info GxB_Vector_diag    // extract a diagonal from a matrix, as a vector
     // v = diag (A,k)
     //--------------------------------------------------------------------------
 
-    info = GB_Vector_diag ((GrB_Matrix) v, A, k, Context) ;
+    info = GB_Vector_diag ((GrB_Matrix) v, A, k, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

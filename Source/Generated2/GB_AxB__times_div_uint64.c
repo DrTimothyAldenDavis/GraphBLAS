@@ -350,7 +350,7 @@ GrB_Info GB (_Adot3B__times_div_uint64)
         const GrB_Matrix A, int64_t *restrict A_slice, int naslice,
         const GrB_Matrix B, int64_t *restrict B_slice, int nbslice,
         const int nthreads,
-        GB_Context Context
+        GB_Werk Werk
     )
     { 
         #if GB_DISABLE
@@ -375,7 +375,7 @@ GrB_Info GB (_AsaxbitB__times_div_uint64)
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    GB_Context Context
+    GB_Werk Werk
 )
 { 
     #if GB_DISABLE
@@ -403,7 +403,7 @@ GrB_Info GB (_AsaxbitB__times_div_uint64)
         const bool use_coarse_tasks,
         const bool use_atomics,
         const int64_t *A_slice,
-        GB_Context Context
+        GB_Werk Werk
     )
     { 
         #if GB_DISABLE
@@ -451,7 +451,7 @@ GrB_Info GB (_AsaxbitB__times_div_uint64)
                 const int ntasks,
                 const int nthreads,
                 const int64_t *B_slice,
-                GB_Context Context
+                GB_Werk Werk
             )
             {
                 #include "GB_AxB_saxpy5_unrolled.c"
@@ -489,7 +489,7 @@ GrB_Info GB (_AsaxbitB__times_div_uint64)
                 const int ntasks,
                 const int nthreads,
                 const int64_t *B_slice,
-                GB_Context Context
+                GB_Werk Werk
             )
             {
                 #include "GB_AxB_saxpy5_unrolled.c"
@@ -517,7 +517,7 @@ GrB_Info GB (_AsaxbitB__times_div_uint64)
             const int ntasks,
             const int nthreads,
             const int64_t *B_slice,
-            GB_Context Context
+            GB_Werk Werk
         )
         {
             #include "GB_AxB_saxpy5_unrolled.c"
@@ -533,7 +533,7 @@ GrB_Info GB (_AsaxbitB__times_div_uint64)
         const int ntasks,
         const int nthreads,
         const int64_t *B_slice,
-        GB_Context Context
+        GB_Werk Werk
     )
     { 
         #if GB_DISABLE
@@ -559,7 +559,7 @@ GrB_Info GB (_Asaxpy3B__times_div_uint64)
     const GrB_Matrix B,
     GB_saxpy3task_struct *restrict SaxpyTasks,
     const int ntasks, const int nfine, const int nthreads, const int do_sort,
-    GB_Context Context
+    GB_Werk Werk
 )
 { 
     #if GB_DISABLE
@@ -570,21 +570,21 @@ GrB_Info GB (_Asaxpy3B__times_div_uint64)
     {
         // C = A*B, no mask
         return (GB (_Asaxpy3B_noM__times_div_uint64) (C, A, B,
-            SaxpyTasks, ntasks, nfine, nthreads, do_sort, Context)) ;
+            SaxpyTasks, ntasks, nfine, nthreads, do_sort, Werk)) ;
     }
     else if (!Mask_comp)
     {
         // C<M> = A*B
         return (GB (_Asaxpy3B_M__times_div_uint64) (C,
             M, Mask_struct, M_in_place, A, B,
-            SaxpyTasks, ntasks, nfine, nthreads, do_sort, Context)) ;
+            SaxpyTasks, ntasks, nfine, nthreads, do_sort, Werk)) ;
     }
     else
     {
         // C<!M> = A*B
         return (GB (_Asaxpy3B_notM__times_div_uint64) (C,
             M, Mask_struct, M_in_place, A, B,
-            SaxpyTasks, ntasks, nfine, nthreads, do_sort, Context)) ;
+            SaxpyTasks, ntasks, nfine, nthreads, do_sort, Werk)) ;
     }
     #endif
 }
@@ -605,7 +605,7 @@ GrB_Info GB (_Asaxpy3B__times_div_uint64)
         GB_saxpy3task_struct *restrict SaxpyTasks,
         const int ntasks, const int nfine, const int nthreads,
         const int do_sort,
-        GB_Context Context
+        GB_Werk Werk
     )
     {
         if (GB_IS_SPARSE (A) && GB_IS_SPARSE (B))
@@ -653,7 +653,7 @@ GrB_Info GB (_Asaxpy3B__times_div_uint64)
         GB_saxpy3task_struct *restrict SaxpyTasks,
         const int ntasks, const int nfine, const int nthreads,
         const int do_sort,
-        GB_Context Context
+        GB_Werk Werk
     )
     {
         if (GB_IS_SPARSE (A) && GB_IS_SPARSE (B))
@@ -703,7 +703,7 @@ GrB_Info GB (_Asaxpy3B__times_div_uint64)
         GB_saxpy3task_struct *restrict SaxpyTasks,
         const int ntasks, const int nfine, const int nthreads,
         const int do_sort,
-        GB_Context Context
+        GB_Werk Werk
     )
     {
         if (GB_IS_SPARSE (A) && GB_IS_SPARSE (B))

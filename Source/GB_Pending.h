@@ -29,7 +29,7 @@ bool GB_Pending_realloc     // reallocate a list of pending tuples
 (
     GB_Pending *PHandle,    // Pending tuple list to reallocate
     int64_t nnew,           // # of new tuples to accomodate
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 void GB_Pending_free        // free a list of pending tuples
@@ -51,7 +51,7 @@ static inline bool GB_Pending_ensure
     GrB_BinaryOp op,        // operator for assembling pending tuples
     bool is_matrix,         // true if Pending->j must be allocated
     int64_t nnew,           // # of pending tuples to add
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -71,7 +71,7 @@ static inline bool GB_Pending_ensure
     }
     else
     {
-        return (GB_Pending_realloc (PHandle, nnew, Context)) ;
+        return (GB_Pending_realloc (PHandle, nnew, Werk)) ;
     }
 }
 
@@ -89,7 +89,7 @@ static inline bool GB_Pending_add   // add a tuple to the list
     const int64_t i,        // index into vector
     const int64_t j,        // vector index
     const bool is_matrix,   // allocate Pending->j, if list is created
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -103,7 +103,7 @@ static inline bool GB_Pending_add   // add a tuple to the list
     // allocate the Pending tuples, or ensure existing list is large enough
     //--------------------------------------------------------------------------
 
-    if (!GB_Pending_ensure (PHandle, iso, type, op, is_matrix, 1, Context))
+    if (!GB_Pending_ensure (PHandle, iso, type, op, is_matrix, 1, Werk))
     {
         return (false) ;
     }

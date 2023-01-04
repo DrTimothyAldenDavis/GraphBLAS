@@ -98,7 +98,7 @@ GrB_Info GB_ewise_slice
     const GrB_Matrix M,             // mask matrix to slice (optional)
     const GrB_Matrix A,             // matrix to slice
     const GrB_Matrix B,             // matrix to slice
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 void GB_slice_vector
@@ -130,7 +130,7 @@ void GB_task_cumsum
     GB_task_struct *restrict TaskList,  // array of structs
     const int ntasks,                   // # of tasks
     const int nthreads,                 // # of threads
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------

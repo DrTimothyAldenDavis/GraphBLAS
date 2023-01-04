@@ -21,7 +21,7 @@ GrB_Info GB_split                   // split a matrix
     const GrB_Index *Tile_nrows,    // array of size m
     const GrB_Index *Tile_ncols,    // array of size n
     const GrB_Matrix A,             // input matrix
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_split_bitmap            // split a bitmap matrix
@@ -32,7 +32,7 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
     const GrB_Matrix A,             // input matrix
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_split_full              // split a full matrix
@@ -43,7 +43,7 @@ GrB_Info GB_split_full              // split a full matrix
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
     const GrB_Matrix A,             // input matrix
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_split_sparse            // split a sparse matrix
@@ -54,7 +54,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
     const GrB_Matrix A,             // input matrix
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

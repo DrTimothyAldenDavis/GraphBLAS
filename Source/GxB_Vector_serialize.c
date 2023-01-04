@@ -66,7 +66,7 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
     (*blob_handle) = NULL ;
     size_t blob_size = 0 ;
     info = GB_serialize ((GB_void **) blob_handle, &blob_size, (GrB_Matrix) u,
-        method, Context) ;
+        method, Werk) ;
     (*blob_size_handle) = (GrB_Index) blob_size ;
     GB_BURBLE_END ;
     #pragma omp flush

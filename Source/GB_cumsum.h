@@ -16,7 +16,7 @@ void GB_cumsum                      // cumulative sum of an array
     const int64_t n,
     int64_t *restrict kresult,   // return k, if needed by the caller
     int nthreads,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

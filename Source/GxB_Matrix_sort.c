@@ -38,7 +38,7 @@ GrB_Info GxB_Matrix_sort
     // sort the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_sort (C, P, op, A, A_transpose, Context) ;
+    info = GB_sort (C, P, op, A, A_transpose, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

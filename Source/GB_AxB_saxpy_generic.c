@@ -56,7 +56,7 @@ GrB_Info GB_AxB_saxpy_generic
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -102,7 +102,7 @@ GrB_Info GB_AxB_saxpy_generic
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                              Context) ;
+                              Werk) ;
                         }
                         else
                         { 
@@ -111,7 +111,7 @@ GrB_Info GB_AxB_saxpy_generic
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               NULL, 0, 0, 0, 0,
-                              Context) ;
+                              Werk) ;
                         }
                     }
                     break ;
@@ -128,7 +128,7 @@ GrB_Info GB_AxB_saxpy_generic
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                              Context) ;
+                              Werk) ;
                         }
                         else
                         { 
@@ -137,7 +137,7 @@ GrB_Info GB_AxB_saxpy_generic
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               NULL, 0, 0, 0, 0,
-                              Context) ;
+                              Werk) ;
                         }
                     }
                     break ;
@@ -152,7 +152,7 @@ GrB_Info GB_AxB_saxpy_generic
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                              Context) ;
+                              Werk) ;
                         }
                         else
                         { 
@@ -161,7 +161,7 @@ GrB_Info GB_AxB_saxpy_generic
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               NULL, 0, 0, 0, 0,
-                              Context) ;
+                              Werk) ;
                         }
                     }
                     break ;
@@ -182,7 +182,7 @@ GrB_Info GB_AxB_saxpy_generic
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                              Context) ;
+                              Werk) ;
                         }
                         else
                         { 
@@ -191,7 +191,7 @@ GrB_Info GB_AxB_saxpy_generic
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               NULL, 0, 0, 0, 0,
-                              Context) ;
+                              Werk) ;
                         }
                     }
                     break ;
@@ -208,7 +208,7 @@ GrB_Info GB_AxB_saxpy_generic
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                              Context) ;
+                              Werk) ;
                         }
                         else
                         { 
@@ -217,7 +217,7 @@ GrB_Info GB_AxB_saxpy_generic
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               NULL, 0, 0, 0, 0,
-                              Context) ;
+                              Werk) ;
                         }
                     }
                     break ;
@@ -232,7 +232,7 @@ GrB_Info GB_AxB_saxpy_generic
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                              Context) ;
+                              Werk) ;
                         }
                         else
                         { 
@@ -241,7 +241,7 @@ GrB_Info GB_AxB_saxpy_generic
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               NULL, 0, 0, 0, 0,
-                              Context) ;
+                              Werk) ;
                         }
                     }
                     break ;
@@ -273,7 +273,7 @@ GrB_Info GB_AxB_saxpy_generic
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
                       SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                      Context) ;
+                      Werk) ;
             }
             else
             { 
@@ -282,7 +282,7 @@ GrB_Info GB_AxB_saxpy_generic
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
                       NULL, 0, 0, 0, 0,
-                      Context) ;
+                      Werk) ;
             }
         }
         else if (opcode == GB_SECOND_binop_code)
@@ -299,7 +299,7 @@ GrB_Info GB_AxB_saxpy_generic
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
                       SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                      Context) ;
+                      Werk) ;
             }
             else
             { 
@@ -308,7 +308,7 @@ GrB_Info GB_AxB_saxpy_generic
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
                       NULL, 0, 0, 0, 0,
-                      Context) ;
+                      Werk) ;
             }
         }
         else if (flipxy)
@@ -321,7 +321,7 @@ GrB_Info GB_AxB_saxpy_generic
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
                       SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                      Context) ;
+                      Werk) ;
             }
             else
             { 
@@ -330,7 +330,7 @@ GrB_Info GB_AxB_saxpy_generic
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
                       NULL, 0, 0, 0, 0,
-                      Context) ;
+                      Werk) ;
             }
         }
         else
@@ -343,7 +343,7 @@ GrB_Info GB_AxB_saxpy_generic
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
                       SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                      Context) ;
+                      Werk) ;
             }
             else
             { 
@@ -352,7 +352,7 @@ GrB_Info GB_AxB_saxpy_generic
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
                       NULL, 0, 0, 0, 0,
-                      Context) ;
+                      Werk) ;
             }
         }
     }

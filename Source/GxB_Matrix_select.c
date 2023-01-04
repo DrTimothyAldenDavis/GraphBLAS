@@ -53,7 +53,7 @@ GrB_Info GxB_Matrix_select  // C<M> = accum (C, select(A,k)) or select(A',k)
         A,                          // first input: A
         Thunk,                      // optional input for select operator
         A_transpose,                // descriptor for A
-        Context) ;
+        Werk) ;
 
     GB_BURBLE_END ;
     return (info) ;

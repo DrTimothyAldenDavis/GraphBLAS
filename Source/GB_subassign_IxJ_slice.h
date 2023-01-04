@@ -33,7 +33,7 @@ GrB_Info GB_subassign_IxJ_slice
     const int64_t nJ,
 //  const int Jkind,
 //  const int64_t Jcolon [3],
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

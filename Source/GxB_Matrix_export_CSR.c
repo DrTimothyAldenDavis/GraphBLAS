@@ -52,7 +52,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     { 
         // A = A', done in-place, to put A in by-row format
         GBURBLE ("(transpose) ") ;
-        GB_OK (GB_transpose_in_place (*A, false, Context)) ;
+        GB_OK (GB_transpose_in_place (*A, false, Werk)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -74,7 +74,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     // ensure the matrix is sparse
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_convert_any_to_sparse (*A, Context)) ;
+    GB_OK (GB_convert_any_to_sparse (*A, Werk)) ;
 
     //--------------------------------------------------------------------------
     // export the matrix
@@ -97,7 +97,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
         Ax,   Ax_size,  // Ax
         NULL, jumbled, NULL,                // jumbled or not
         &sparsity, &is_csc,                 // sparse by row
-        iso, Context) ;
+        iso, Werk) ;
 
     if (info == GrB_SUCCESS)
     {

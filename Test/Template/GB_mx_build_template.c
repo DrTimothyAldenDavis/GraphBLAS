@@ -112,7 +112,7 @@ GrB_Info builder
     GrB_BinaryOp dup,
     bool C_is_csc,
     GrB_Type xtype,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -134,7 +134,7 @@ GrB_Info builder
     GrB_BinaryOp dup,
     bool C_is_csc,
     GrB_Type xtype,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -150,14 +150,14 @@ GrB_Info builder
         // create a hypersparse CSC matrix
         info = GB_new (Chandle, // sparse/hyper, new header
             ctype, nrows, ncols, GB_Ap_calloc,
-            true, sparsity, GxB_HYPER_DEFAULT, 1, Context) ;
+            true, sparsity, GxB_HYPER_DEFAULT, 1, Werk) ;
     }
     else
     {
         // create a hypersparse CSR matrix
         info = GB_new (Chandle, // sparse/hyper, new header
             ctype, ncols, nrows, GB_Ap_calloc,
-            false, sparsity, GxB_HYPER_DEFAULT, 1, Context) ;
+            false, sparsity, GxB_HYPER_DEFAULT, 1, Werk) ;
     }
     #else
     info = GrB_Vector_new (Chandle, ctype, nrows) ;
@@ -274,7 +274,7 @@ void mexFunction
     GrB_Vector C = NULL ;
     #endif
 
-    GB_CONTEXT (USAGE) ;
+    GB_WERK (USAGE) ;
 
     // check inputs
     if (nargout > 1 || nargin < MIN_NARGIN || nargin > MAX_NARGIN)
@@ -416,7 +416,7 @@ void mexFunction
     #endif
 
     METHOD (builder (&C, ctype, nrows, ncols, I, J, X, scalar_build, ni, dup,
-        C_is_csc, xtype, Context)) ;
+        C_is_csc, xtype, Werk)) ;
 
     ASSERT_MATRIX_OK (C, "C built", GB0) ;
 

@@ -76,7 +76,7 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
         vx,   vx_size,  // Ax
         NULL, NULL, NULL,
         &sparsity, &is_csc,                 // full by col
-        iso, Context) ;
+        iso, Werk) ;
 
     if (info == GrB_SUCCESS)
     {

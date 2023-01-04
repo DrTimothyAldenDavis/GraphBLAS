@@ -63,7 +63,7 @@ GrB_Info GrB_Row_assign             // C<M'>(row,Cols) += u'
         Cols, nCols,                    // column indices
         false, NULL, GB_ignore_code,    // no scalar expansion
         GB_ROW_ASSIGN,
-        Context) ;
+        Werk) ;
 
     GB_BURBLE_END ;
     return (info) ;

@@ -43,7 +43,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     const GrB_BinaryOp accum,   // for c = accum(c,s)
     const GrB_Monoid reduce,    // monoid to do the reduction
     const GrB_Matrix A,         // matrix to reduce
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -65,7 +65,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
     // check domains and dimensions for c = accum (c,s)
     GrB_Type ztype = reduce->op->ztype ;
-    GB_OK (GB_compatible (ctype, NULL, NULL, false, accum, ztype, Context)) ;
+    GB_OK (GB_compatible (ctype, NULL, NULL, false, accum, ztype, Werk)) ;
 
     // s = reduce (s,A) must be compatible
     if (!GB_Type_compatible (A->type, ztype))
@@ -106,14 +106,14 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     //--------------------------------------------------------------------------
 
     #if defined ( GBCUDA )
-    if (GB_reduce_to_scalar_cuda_branch (reduce, A, Context))
+    if (GB_reduce_to_scalar_cuda_branch (reduce, A, Werk))
     {
 
         //----------------------------------------------------------------------
         // use the GPU(s)
         //----------------------------------------------------------------------
 
-        GB_OK (GB_reduce_to_scalar_cuda (s, reduce, A, Context)) ;
+        GB_OK (GB_reduce_to_scalar_cuda (s, reduce, A, Werk)) ;
 
     }
     else
@@ -125,7 +125,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         //----------------------------------------------------------------------
 
         int nthreads = 0, ntasks = 0 ;
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
         nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
         ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
         ntasks = GB_IMIN (ntasks, anz) ;
@@ -169,7 +169,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
             //------------------------------------------------------------------
 
             // this takes at most O(log(nvals(A))) time, for any monoid
-            GB_iso_reduce_to_scalar (s, reduce, A, Context) ;
+            GB_iso_reduce_to_scalar (s, reduce, A, Werk) ;
 
         }
         else if (A->type == ztype)

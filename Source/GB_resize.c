@@ -25,7 +25,7 @@ GrB_Info GB_resize              // change the size of a matrix
     GrB_Matrix A,               // matrix to modify
     const GrB_Index nrows_new,  // new number of rows in matrix
     const GrB_Index ncols_new,  // new number of columns in matrix
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -116,7 +116,7 @@ GrB_Info GB_resize              // change the size of a matrix
             { 
                 // reallocate A->x in-place; no data movement needed
                 GB_REALLOC (A->x, nzmax_new*asize, GB_void, &(A->x_size), &ok,
-                    Context) ;
+                    Werk) ;
             }
             else
             { 
@@ -157,7 +157,7 @@ GrB_Info GB_resize              // change the size of a matrix
             // determine number of threads to use
             //------------------------------------------------------------------
 
-            GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+            GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
             int nthreads = GB_nthreads (anz_new, chunk, nthreads_max) ;
 
             //------------------------------------------------------------------
@@ -241,7 +241,7 @@ GrB_Info GB_resize              // change the size of a matrix
         //----------------------------------------------------------------------
 
         // convert to hypersparse
-        GB_OK (GB_convert_any_to_hyper (A, Context)) ;
+        GB_OK (GB_convert_any_to_hyper (A, Werk)) ;
         ASSERT (GB_IS_HYPERSPARSE (A)) ;
 
         // A->Y will be invalidated, so free it
@@ -255,7 +255,7 @@ GrB_Info GB_resize              // change the size of a matrix
         if (vdim_new < A->plen)
         { 
             // reduce the size of A->p and A->h; this cannot fail
-            info = GB_hyper_realloc (A, vdim_new, Context) ;
+            info = GB_hyper_realloc (A, vdim_new, Werk) ;
             ASSERT (info == GrB_SUCCESS) ;
             Ap = A->p ;
             Ah = A->h ;
@@ -292,7 +292,7 @@ GrB_Info GB_resize              // change the size of a matrix
                 A,                      // input/output matrix
                 vlen_new-1,             // ithunk
                 NULL,                   // no Thunk GrB_Scalar
-                Context)) ;
+                Werk)) ;
         }
 
         //----------------------------------------------------------------------
@@ -306,7 +306,7 @@ GrB_Info GB_resize              // change the size of a matrix
         // conform the matrix to its desired sparsity structure
         //----------------------------------------------------------------------
 
-        info = GB_conform (A, Context) ;
+        info = GB_conform (A, Werk) ;
         ASSERT (GB_IMPLIES (info == GrB_SUCCESS, A->nvec_nonempty >= 0)) ;
         return (info) ;
     }

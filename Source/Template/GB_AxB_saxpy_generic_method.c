@@ -83,7 +83,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     int nfine,
     int nthreads,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 

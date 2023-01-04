@@ -30,7 +30,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     GrB_Matrix C,               // output matrix to overwrite with A
     const GrB_Type ctype,       // new type of C
     GrB_Matrix *Ahandle,        // input matrix to copy from and free
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -69,7 +69,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     int64_t anvals = A->nvals ;
     int64_t anz = GB_nnz_held (A) ;
     int64_t anvec = A->nvec ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
@@ -115,7 +115,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         if (A->Y_shallow || GB_is_shallow (A->Y))
         {
             // A->Y is shallow, so create a deep copy for C
-            GB_OK (GB_dup (&(C->Y), A->Y, Context)) ;
+            GB_OK (GB_dup (&(C->Y), A->Y, Werk)) ;
         }
         else
         {
@@ -191,7 +191,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         if (A->x_shallow)
         { 
             // A is shallow so make a deep copy; no typecast needed
-            GB_cast_matrix (C, A, Context) ;
+            GB_cast_matrix (C, A, Werk) ;
             A->x = NULL ;
         }
         else
@@ -204,7 +204,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     else
     {
         // types differ, must typecast from A to C.
-        GB_cast_matrix (C, A, Context) ;
+        GB_cast_matrix (C, A, Werk) ;
         if (!A->x_shallow)
         { 
             GB_FREE (&(A->x), A->x_size) ;

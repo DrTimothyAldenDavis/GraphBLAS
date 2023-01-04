@@ -69,7 +69,7 @@ GrB_Info GrB_vxm                    // w'<M> = accum (w', u'*A)
         (GrB_Matrix) u,     false,          // u is never transposed
         true,                               // fmult(y,x), flipxy = true
         AxB_method, do_sort,                // algorithm selector
-        Context) ;
+        Werk) ;
 
     GB_BURBLE_END ;
     return (info) ;

@@ -33,7 +33,7 @@ GrB_Info GB_bitmap_assign
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
     const int assign_kind,      // row assign, col assign, assign, or subassign
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

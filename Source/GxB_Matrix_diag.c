@@ -54,7 +54,7 @@ GrB_Info GxB_Matrix_diag        // build a diagonal matrix from a vector
     // C = diag (v,k)
     //--------------------------------------------------------------------------
 
-    info = GB_Matrix_diag (C, (GrB_Matrix) v, k, Context) ;
+    info = GB_Matrix_diag (C, (GrB_Matrix) v, k, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

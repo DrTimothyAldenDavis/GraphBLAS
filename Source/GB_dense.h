@@ -22,7 +22,7 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     const GrB_Matrix A,
     const GrB_Matrix B,
     const GrB_BinaryOp op,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B, where A and B are dense
     const GrB_Matrix A,
     const GrB_Matrix B,
     const GrB_BinaryOp op,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
     GrB_Matrix C,                   // input/output matrix
     const GrB_Matrix A,             // input matrix
     const GrB_BinaryOp accum,       // operator to apply
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ GrB_Info GB_dense_subassign_22      // C += x where C is dense and x is a scalar
     const void *scalar,             // input scalar
     const GrB_Type atype,           // type of the input scalar
     const GrB_BinaryOp accum,       // operator to apply
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ GrB_Info GB_dense_subassign_05d
     const bool Mask_struct,
     const void *scalar,
     const GrB_Type atype,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ GrB_Info GB_dense_subassign_06d
     // input:
     const GrB_Matrix A,
     const bool Mask_struct,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
 (
     GrB_Matrix C,           // output matrix to modify
     const GrB_Matrix A,     // input matrix to copy
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ GrB_Info GB_dense_subassign_25
     // input:
     const GrB_Matrix M,
     const GrB_Matrix A,
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

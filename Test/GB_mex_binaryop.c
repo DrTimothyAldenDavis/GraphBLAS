@@ -21,7 +21,7 @@ void mexFunction
 {
 
     // check inputs
-    GB_CONTEXT (USAGE) ;
+    GB_WERK (USAGE) ;
     if (nargin != 1)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;

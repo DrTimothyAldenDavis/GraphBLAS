@@ -45,7 +45,7 @@ GrB_Info GxB_Matrix_unpack_CSC  // unpack a CSC matrix
     { 
         // A = A', done in-place, to put A in by-col format
         GBURBLE ("(transpose) ") ;
-        GB_OK (GB_transpose_in_place (A, true, Context)) ;
+        GB_OK (GB_transpose_in_place (A, true, Werk)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -67,7 +67,7 @@ GrB_Info GxB_Matrix_unpack_CSC  // unpack a CSC matrix
     // ensure the matrix is sparse
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_convert_any_to_sparse (A, Context)) ;
+    GB_OK (GB_convert_any_to_sparse (A, Werk)) ;
 
     //--------------------------------------------------------------------------
     // unpack the matrix
@@ -92,7 +92,7 @@ GrB_Info GxB_Matrix_unpack_CSC  // unpack a CSC matrix
         Ax,   Ax_size,  // Ax
         NULL, jumbled, NULL,                // jumbled or not
         &sparsity, &is_csc,                 // sparse by col
-        iso, Context) ;
+        iso, Werk) ;
 
     if (info == GrB_SUCCESS)
     {

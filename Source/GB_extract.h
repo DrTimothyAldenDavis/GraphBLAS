@@ -25,7 +25,7 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     const GrB_Index nRows_in,       // number of row indices
     const GrB_Index *Cols,          // column indices
     const GrB_Index nCols_in,       // number of column indices
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 #endif

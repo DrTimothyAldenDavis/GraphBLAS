@@ -20,7 +20,7 @@ GrB_Info GB_init            // start up GraphBLAS
     void * (* realloc_function ) (void *, size_t),  // optional, can be NULL
     void   (* free_function    ) (void *),          // required
 
-    GB_Context Context      // from GrB_init or GxB_init
+    GB_Werk Werk      // from GrB_init or GxB_init
 ) ;
 
 #endif

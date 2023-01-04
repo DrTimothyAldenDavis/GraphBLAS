@@ -96,7 +96,7 @@ int M_sparsity_control ;
 bool have_sparsity_control = false ;
 bool use_GrB_Scalar = false ;
 
-GrB_Info assign (GB_Context Context) ;
+GrB_Info assign (GB_Werk Werk) ;
 
 GrB_Info many_subassign
 (
@@ -110,7 +110,7 @@ GrB_Info many_subassign
     int fscalar,
     GrB_Type ctype,
     const mxArray *pargin [ ],
-    GB_Context Context
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ GrB_Info many_subassign
     }                                   \
 }
 
-GrB_Info assign (GB_Context Context)
+GrB_Info assign (GB_Werk Werk)
 {
     bool at = (desc != NULL && desc->in0 == GrB_TRAN) ;
     GrB_Info info ;
@@ -360,7 +360,7 @@ GrB_Info many_subassign
     int fscalar,
     GrB_Type ctype,
     const mxArray *pargin [ ],
-    GB_Context Context
+    GB_Werk Werk
 )
 {
     GrB_Info info = GrB_SUCCESS ;
@@ -465,7 +465,7 @@ GrB_Info many_subassign
         // C(I,J)<M> = A
         //----------------------------------------------------------------------
 
-        info = assign (Context) ;
+        info = assign (Werk) ;
 
         GrB_Matrix_free_(&A) ;
         GrB_Matrix_free_(&M) ;
@@ -525,7 +525,7 @@ void mexFunction
     op = NULL ;
     reduce = NULL ;
 
-    GB_CONTEXT (USAGE) ;
+    GB_WERK (USAGE) ;
     if (!((nargout == 1 && (nargin == 2 || nargin == 3 ||
             nargin == 6 || nargin == 7)) ||
           ((nargout == 2 || nargout == 3) && nargin == 8)))
@@ -591,7 +591,7 @@ void mexFunction
         if (fA < 0 || fI < 0 || fJ < 0) mexErrMsgTxt ("A,I,J required") ;
 
         METHOD (many_subassign (nwork, fA, fI, fJ, faccum, fM, fdesc,
-            fscalar, C->type, pargin, Context)) ;
+            fscalar, C->type, pargin, Werk)) ;
 
     }
     else
@@ -703,7 +703,7 @@ void mexFunction
         }
 
         // C(I,J)<M> = A
-        METHOD (assign (Context)) ;
+        METHOD (assign (Werk)) ;
 
         // apply the reduce monoid
         if (nargin == 8 && (nargout == 2 || nargout == 3))

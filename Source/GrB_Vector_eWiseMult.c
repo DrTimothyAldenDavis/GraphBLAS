@@ -37,7 +37,7 @@
         (GrB_Matrix) v, false,      /* v, never transposed         */       \
         false,                      /* eWiseMult                   */       \
         false, NULL, NULL,          /* not eWiseUnion              */       \
-        Context) ;
+        Werk) ;
 
 //------------------------------------------------------------------------------
 // GrB_Vector_eWiseMult_BinaryOp: vector element-wise multiplication

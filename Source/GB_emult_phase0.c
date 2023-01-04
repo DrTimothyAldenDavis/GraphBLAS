@@ -61,7 +61,7 @@ GrB_Info GB_emult_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     const GrB_Matrix M,         // optional mask, may be NULL
     const GrB_Matrix A,
     const GrB_Matrix B,
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -400,7 +400,7 @@ GrB_Info GB_emult_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (Cnvec, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
@@ -420,7 +420,7 @@ GrB_Info GB_emult_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         }
 
         // create the M->Y hyper_hash
-        GB_OK (GB_hyper_hash_build (M, Context)) ;
+        GB_OK (GB_hyper_hash_build (M, Werk)) ;
 
         const int64_t *restrict Mp = M->p ;
         const int64_t *restrict M_Yp = M->Y->p ;
@@ -458,7 +458,7 @@ GrB_Info GB_emult_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         }
 
         // create the A->Y hyper_hash
-        GB_OK (GB_hyper_hash_build (A, Context)) ;
+        GB_OK (GB_hyper_hash_build (A, Werk)) ;
 
         const int64_t *restrict Ap = A->p ;
         const int64_t *restrict A_Yp = A->Y->p ;
@@ -496,7 +496,7 @@ GrB_Info GB_emult_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         }
 
         // create the B->Y hyper_hash
-        GB_OK (GB_hyper_hash_build (B, Context)) ;
+        GB_OK (GB_hyper_hash_build (B, Werk)) ;
 
         const int64_t *restrict Bp = B->p ;
         const int64_t *restrict B_Yp = B->Y->p ;

@@ -18,7 +18,7 @@ void *GB_xalloc_memory      // return the newly-allocated space
     size_t type_size,       // size of each entry
     // output
     size_t *size,           // resulting size
-    GB_Context Context
+    GB_Werk Werk
 )
 {
     void *p ;

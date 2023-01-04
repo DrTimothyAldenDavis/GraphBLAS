@@ -12,7 +12,7 @@
 GrB_Info GB_convert_full_to_bitmap      // convert matrix from full to bitmap
 (
     GrB_Matrix A,               // matrix to convert from full to bitmap
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -46,7 +46,7 @@ GrB_Info GB_convert_full_to_bitmap      // convert matrix from full to bitmap
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------

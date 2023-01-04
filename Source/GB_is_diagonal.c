@@ -16,7 +16,7 @@
 bool GB_is_diagonal             // true if A is diagonal
 (
     const GrB_Matrix A,         // input matrix to examine
-    GB_Context Context
+    GB_Werk Werk
 )
 {
 
@@ -74,7 +74,7 @@ bool GB_is_diagonal             // true if A is diagonal
 
     // Break the work into lots of tasks so the early-exit can be exploited.
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
     int nthreads = GB_nthreads (n, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : (256 * nthreads) ;
     ntasks = GB_IMIN (ntasks, n) ;
