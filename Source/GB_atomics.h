@@ -433,7 +433,9 @@
     // compare/exchange for gcc, icc, and clang on x86 and Power8/9
     //--------------------------------------------------------------------------
 
+    #ifndef __cplusplus
     #include <stdatomic.h>
+    #endif
 
 #if 0
 

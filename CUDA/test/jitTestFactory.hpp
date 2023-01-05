@@ -253,7 +253,7 @@ void make_grb_matrix(GrB_Matrix mat, int64_t n_rows, int64_t n_cols,
     }
 
     GRB_TRY (GrB_Matrix_wait (mat, GrB_MATERIALIZE)) ;
-    GRB_TRY (GB_convert_any_to_non_iso (mat, true, NULL)) ;
+    GRB_TRY (GB_convert_any_to_non_iso (mat, true)) ;
     GRB_TRY (GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL, gxb_sparsity_control)) ;
     GRB_TRY (GxB_Matrix_Option_set(mat, GxB_FORMAT, gxb_format));
 
