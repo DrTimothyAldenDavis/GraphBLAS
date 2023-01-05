@@ -74,15 +74,15 @@ find_path ( GRAPHBLAS_INCLUDE_DIR
   PATH_SUFFIXES include Include
   )
 
-# dynamic SuiteSparse:GraphBLAS library
+# dynamic SuiteSparse:GraphBLAS library (or static if no dynamic library was built)
 find_library ( GRAPHBLAS_LIBRARY
-  NAMES graphblas
+  NAMES graphblas graphblas_static
   HINTS ${GRAPHBLAS_ROOT}
   HINTS ENV GRAPHBLAS_ROOT
   HINTS ${CMAKE_SOURCE_DIR}/..
   HINTS ${CMAKE_SOURCE_DIR}/../GraphBLAS
   HINTS ${CMAKE_SOURCE_DIR}/../SuiteSparse/GraphBLAS
-  PATH_SUFFIXES lib build alternative
+  PATH_SUFFIXES lib build build/Release build/Debug alternative
   )
 
 if ( MSVC )
@@ -102,7 +102,7 @@ find_library ( GRAPHBLAS_STATIC
   HINTS ${CMAKE_SOURCE_DIR}/..
   HINTS ${CMAKE_SOURCE_DIR}/../GraphBLAS
   HINTS ${CMAKE_SOURCE_DIR}/../SuiteSparse/GraphBLAS
-  PATH_SUFFIXES lib build alternative
+  PATH_SUFFIXES lib build build/Release build/Debug alternative
   )
 
 if ( NOT MSVC )
