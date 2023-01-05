@@ -44,6 +44,7 @@ GrB_Info GxB_Context_new            // create a new Context
     Context->header_size = header_size ;
     Context->nthreads_max = GB_Context_nthreads_max_get (NULL) ;
     Context->chunk = GB_Context_chunk_get (NULL) ;
+//  Context->gpu_id = GB_Context_gpu_id_get (NULL) ;
     return (GrB_SUCCESS) ;
 }
 

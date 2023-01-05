@@ -469,10 +469,12 @@ struct GB_Context_opaque    // content of GxB_Context
     int64_t magic ;         // for detecting uninitialized objects
     size_t header_size ;    // size of the malloc'd block for this struct, or 0
     // ---------------------//
+    // OpenMP thread(s):
     double chunk ;          // chunk size for # of threads for small problems
     int nthreads_max ;      // max # threads to use in this call to GraphBLAS
-    // FIXME: add CUDA context too:
-    // which GPU(s) to use, GPU chunk factor, perhaps a stream pool?
+    // GPU:
+    int gpu_id ;            // if negative: use the CPU only; do not use a GPU
+                            // if >= 0: then use GPU gpu_id
 } ;
 
 //------------------------------------------------------------------------------

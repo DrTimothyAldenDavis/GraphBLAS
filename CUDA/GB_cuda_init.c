@@ -53,8 +53,10 @@ GrB_Info GB_cuda_init (void)
         }
     }
 
+    // FIXME: set CONTEXT_WORLD to GPU 0
     // make GPU 0 the default device
-    GB_cuda_set_device( 0 );
+    GB_cuda_set_device (0) ;
+//  GB_Context_gpu_id_set (0) ;
 
     // also check for jit cache, pre-load library of common kernels ...
     return (GrB_SUCCESS) ;

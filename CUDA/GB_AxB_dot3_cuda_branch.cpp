@@ -37,6 +37,8 @@ bool GB_AxB_dot3_cuda_branch
     // The code generation process currently does not support user-defined
     // types and operators, but this needs to be handled.
 
+    // FIXME: add hack(2) to force the GPU
+
     int ngpus_to_use = GB_ngpus_to_use (work) ;
     GBURBLE (" work:%g GPUs:%d ", work, ngpus_to_use) ;
     if (ngpus_to_use > 0)
