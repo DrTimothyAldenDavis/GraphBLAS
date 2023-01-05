@@ -25,8 +25,7 @@ void GB_AxB_meta_adotb_control
     bool can_do_in_place,
     bool allow_scale,
     bool B_is_diagonal,
-    GrB_Desc_Value AxB_method,
-    GB_Werk Werk
+    GrB_Desc_Value AxB_method
 )
 {
 
@@ -53,7 +52,7 @@ void GB_AxB_meta_adotb_control
     }
     else if (allow_scale && M == NULL
         && !GB_IS_BITMAP (B)     // TODO: D*B rowscale with B bitmap
-        && GB_is_diagonal (A, Werk))
+        && GB_is_diagonal (A))
     { 
         // C = D*B, row scale
         (*axb_method) = GB_USE_ROWSCALE ;
@@ -81,7 +80,7 @@ void GB_AxB_meta_adotb_control
             // C<M>=A'*B uses the masked dot product method (dot3)
             (*axb_method) = GB_USE_DOT ;
         }
-        else if (GB_AxB_dot2_control (A, B, Werk))
+        else if (GB_AxB_dot2_control (A, B))
         { 
             // C=A'*B or C<!M>=A'B* can efficiently use the dot2 method
             (*axb_method) = GB_USE_DOT ;

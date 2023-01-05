@@ -48,8 +48,7 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
     const GrB_Matrix M,             // optional mask for C, unused if NULL
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input A matrix
-    const GrB_Matrix B,             // input B matrix
-    GB_Werk Werk
+    const GrB_Matrix B              // input B matrix
 ) ;
 
 //------------------------------------------------------------------------------
@@ -79,8 +78,7 @@ void GB_AxB_saxpy4_tasks
     int64_t anz,                    // # of entries in A (sparse or hyper)
     int64_t bnz,                    // # of entries held in B
     int64_t bvdim,                  // # of vectors of B (bitmap or full)
-    int64_t cvlen,                  // # of vectors of C (bitmap or full)
-    GB_Werk Werk
+    int64_t cvlen                   // # of vectors of C (bitmap or full)
 ) ;
 
 //------------------------------------------------------------------------------

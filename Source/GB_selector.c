@@ -217,7 +217,7 @@ GrB_Info GB_selector
             return (GB_new (&C, // existing header
                 A->type, avlen, avdim, GB_Ap_calloc, true,
                 GxB_SPARSE + GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ),
-                1, Werk)) ;
+                1)) ;
         }
         else
         { 
@@ -313,7 +313,8 @@ GrB_Info GB_selector
     // determine the max number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // get A: sparse, hypersparse, or full
@@ -421,7 +422,7 @@ GrB_Info GB_selector
             // return C as empty
             return (GB_new (&C, // auto (sparse or hyper), existing header
                 A->type, avlen, avdim, GB_Ap_calloc, true,
-                GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ), 1, Werk)) ;
+                GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ), 1)) ;
         }
 
         //----------------------------------------------------------------------
@@ -431,7 +432,7 @@ GrB_Info GB_selector
         int sparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
         GB_OK (GB_new_bix (&C, // sparse or hyper (from A), existing header
             A->type, avlen, avdim, GB_Ap_malloc, true, sparsity, false,
-            A->hyper_switch, cnvec, cnz, true, A_iso, Werk)) ;
+            A->hyper_switch, cnvec, cnz, true, A_iso)) ;
 
         ASSERT (info == GrB_SUCCESS) ;
         int nth2 = GB_nthreads (cnvec, chunk, nth) ;
@@ -585,7 +586,7 @@ GrB_Info GB_selector
         C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled
         C->iso = C_iso ;            // OK: burble already done above
         C->nvals = Cp [cnvec] ;
-        C->nvec_nonempty = GB_nvec_nonempty (C, Werk) ;
+        C->nvec_nonempty = GB_nvec_nonempty (C) ;
         ASSERT_MATRIX_OK (C, "C output for GB_selector (column select)", GB0) ;
         return (GrB_SUCCESS) ;
     }
@@ -802,7 +803,7 @@ GrB_Info GB_selector
         ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
         info = GB_new (&C, // sparse or hyper (from A), existing header
             A->type, avlen, avdim, GB_Ap_null, true,
-            sparsity, A->hyper_switch, anvec, Werk) ;
+            sparsity, A->hyper_switch, anvec) ;
         ASSERT (info == GrB_SUCCESS) ;
 
         if (A->h != NULL)

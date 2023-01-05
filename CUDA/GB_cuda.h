@@ -45,28 +45,25 @@ extern "C"
 // GB_CUDA_CATCH: catch error from a try { ... } region
 //------------------------------------------------------------------------------
 
-// Usage:  Must be used in a GB* function that returns GrB_Info, and has a
-// GB_Werk Werk parameter.
-//
 //  #define GB_FREE_ALL { some macro to free all temporaries }
 //  GrB_Info info ;
-//  try { ... do stuff that can through an exception }
+//  try { ... do stuff that can throw an exception }
 //  GB_CUDA_CATCH (info) ;
 
-#define GB_CUDA_CATCH(info)                                                    \
-    catch (std::exception& e)                                                  \
-    {                                                                          \
-        printf ("CUDA error: %s\n", e.what ( )) ;                              \
-        info = GrB_PANIC ;                                                     \
-        /* out_of_memory : info = GrB_OUT_OF_MEMORY ; */                       \
-        /* nulltpr:  info = ... ; */                                           \
-        /* no gpus here: info = GrB_PANIC ; */                                 \
-    }                                                                          \
-    if (info != GrB_SUCCESS)                                                   \
-    {                                                                          \
-        /* CUDA failed */                                                      \
-        GB_FREE_ALL ;                                                          \
-        return (GB_ERROR (info, (GB_LOG, "CUDA died\n"))) ;                    \
+#define GB_CUDA_CATCH(info)                                     \
+    catch (std::exception& e)                                   \
+    {                                                           \
+        printf ("CUDA error: %s\n", e.what ( )) ;               \
+        info = GrB_PANIC ;                                      \
+        /* out_of_memory : info = GrB_OUT_OF_MEMORY ; */        \
+        /* nulltpr:  info = ... ; */                            \
+        /* no gpus here: info = GrB_PANIC ; */                  \
+    }                                                           \
+    if (info != GrB_SUCCESS)                                    \
+    {                                                           \
+        /* CUDA failed */                                       \
+        GB_FREE_ALL ;                                           \
+        return (info) ;                                         \
     }
 
 // NBUCKETS buckets: computed by up to NBUCKETS-1 kernel launches (zombies need

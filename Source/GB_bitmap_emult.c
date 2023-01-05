@@ -135,7 +135,8 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     int64_t cnz = GB_nnz_full (A) ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int C_nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
 
     // slice the M matrix for Method6
@@ -175,7 +176,7 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // bitmap, existing header
         ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        GxB_BITMAP, true, A->hyper_switch, -1, cnz, true, C_iso, Werk)) ;
+        GxB_BITMAP, true, A->hyper_switch, -1, cnz, true, C_iso)) ;
 
     C->magic = GB_MAGIC ;
     GB_Type_code ccode = ctype->code ;

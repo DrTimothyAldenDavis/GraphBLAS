@@ -82,7 +82,8 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     //--------------------------------------------------------------------------
 
     int64_t cnz = GB_nnz (C) ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (3 * cnz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------

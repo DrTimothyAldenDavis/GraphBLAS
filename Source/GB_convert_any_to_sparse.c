@@ -34,12 +34,12 @@ GrB_Info GB_convert_any_to_sparse // convert to sparse
     if (GB_IS_HYPERSPARSE (A))
     { 
         // convert from hypersparse to sparse
-        GB_OK (GB_convert_hyper_to_sparse (A, true, Werk)) ;
+        GB_OK (GB_convert_hyper_to_sparse (A, true)) ;
     }
     else if (GB_IS_FULL (A))
     { 
         // convert from full to sparse
-        GB_OK (GB_convert_full_to_sparse (A, Werk)) ;
+        GB_OK (GB_convert_full_to_sparse (A)) ;
     }
     else if (GB_IS_BITMAP (A))
     { 

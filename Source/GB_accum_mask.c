@@ -367,7 +367,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
             info = GB_new (&Z, // sparse or hyper, existing header
                 C->type, C->vlen, C->vdim, GB_Ap_null, C->is_csc,
-                GB_sparsity (T), T->hyper_switch, T->plen, Werk) ;
+                GB_sparsity (T), T->hyper_switch, T->plen) ;
             GB_OK (info) ;
 
             // Transplant T into Z, typecasting if needed, and free T.  This

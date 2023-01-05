@@ -19,8 +19,7 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
     GrB_Matrix *A,              // handle of matrix to create
     GrB_Type type,              // type of matrix to create
     GrB_Index nrows,            // matrix dimension is nrows-by-ncols
-    GrB_Index ncols,
-    GB_Werk Werk
+    GrB_Index ncols
 )
 {
 
@@ -73,6 +72,6 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
 
     return (GB_new (A, // auto sparsity, new header
         type, vlen, vdim, GB_Ap_calloc, A_is_csc, GxB_AUTO_SPARSITY,
-        GB_Global_hyper_switch_get ( ), 1, Werk)) ;
+        GB_Global_hyper_switch_get ( ), 1)) ;
 }
 

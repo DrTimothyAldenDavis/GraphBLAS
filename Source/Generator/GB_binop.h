@@ -86,8 +86,7 @@ GrB_Info GB (_AemultB)
     const int64_t *restrict C_to_B,
     const GB_task_struct *restrict TaskList,
     const int C_ntasks,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 GrB_Info GB (_AemultB_02)
 (

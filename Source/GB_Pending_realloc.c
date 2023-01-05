@@ -49,18 +49,16 @@ bool GB_Pending_realloc     // reallocate a list of pending tuples
         bool ok2 = true ;
         bool ok3 = true ;
 
-        GB_REALLOC (Pending->i, newsize, int64_t, &(Pending->i_size), &ok1,
-            Werk) ;
+        GB_REALLOC (Pending->i, newsize, int64_t, &(Pending->i_size), &ok1) ;
         if (Pending->j != NULL)
         { 
-            GB_REALLOC (Pending->j, newsize, int64_t, &(Pending->j_size), &ok2,
-                Werk) ;
+            GB_REALLOC (Pending->j, newsize, int64_t, &(Pending->j_size), &ok2);
         }
         size_t s = Pending->size ;
         if (Pending->x != NULL)
         { 
             GB_REALLOC (Pending->x, newsize*s, GB_void, &(Pending->x_size),
-                &ok3, Werk) ;
+                &ok3) ;
         }
         if (!ok1 || !ok2 || !ok3)
         { 

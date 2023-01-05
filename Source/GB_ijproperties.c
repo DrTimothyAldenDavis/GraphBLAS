@@ -182,7 +182,8 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         // determine the number of threads to use
         //----------------------------------------------------------------------
 
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
         int nthreads = GB_nthreads (ni, chunk, nthreads_max) ;
         int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
         ntasks = GB_IMIN (ntasks, ni) ;

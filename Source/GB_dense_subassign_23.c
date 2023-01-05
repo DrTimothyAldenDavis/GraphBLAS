@@ -89,7 +89,8 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task

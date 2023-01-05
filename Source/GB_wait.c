@@ -54,7 +54,6 @@
 #include "GB_Pending.h"
 #include "GB_build.h"
 #include "GB_jappend.h"
-#include "GB_atomics.h"
 
 GrB_Info GB_wait                // finish all pending computations
 (
@@ -112,7 +111,8 @@ GrB_Info GB_wait                // finish all pending computations
     // determine the max # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // check if only A->nvec_nonempty is needed
@@ -123,7 +123,7 @@ GrB_Info GB_wait                // finish all pending computations
         // A->Y is not modified.  If not NULL, it remains valid
         if (A->nvec_nonempty < 0)
         {
-            A->nvec_nonempty = GB_nvec_nonempty (A, Werk) ;
+            A->nvec_nonempty = GB_nvec_nonempty (A) ;
         }
         return (GrB_SUCCESS) ;
     }
@@ -385,7 +385,7 @@ GrB_Info GB_wait                // finish all pending computations
         if (anz_new > GB_nnz_max (A))
         { 
             // double the size if not enough space
-            GB_OK (GB_ix_realloc (A, 2 * anz_new, Werk)) ;
+            GB_OK (GB_ix_realloc (A, 2 * anz_new)) ;
             Ai = A->i ;
             Ax = (GB_void *) A->x ;
         }
@@ -405,7 +405,7 @@ GrB_Info GB_wait                // finish all pending computations
             GB_CLEAR_STATIC_HEADER (A1, &A1_header) ;
             GB_OK (GB_new (&A1, // hyper, existing header
                 A->type, A->vlen, A->vdim, GB_Ap_malloc, A->is_csc,
-                GxB_HYPERSPARSE, GB_ALWAYS_HYPER, anvec - kA, Werk)) ;
+                GxB_HYPERSPARSE, GB_ALWAYS_HYPER, anvec - kA)) ;
 
             // the A1->i and A1->x content are shallow copies of A(:,kA:end).
             // They are not allocated pointers, but point to space inside

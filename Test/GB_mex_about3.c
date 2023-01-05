@@ -461,7 +461,7 @@ void mexFunction
     OK (GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
     OK (GrB_Matrix_assign_UDT (C, NULL, NULL, (void *) &my4x64_scalar,
         GrB_ALL, 10, GrB_ALL, 10, NULL)) ;
-    OK (GB_ix_realloc (C, 32, NULL)) ;
+    OK (GB_ix_realloc (C, 32)) ;
     OK (GxB_Matrix_fprint (C, "C stuff sparse non-iso", GxB_COMPLETE, NULL)) ;
 
     // test wait on jumbled matrix (non-iso)
@@ -672,13 +672,13 @@ void mexFunction
     // GB_iso_check
     //--------------------------------------------------------------------------
 
-    CHECK (!GB_iso_check (NULL, NULL)) ;
+    CHECK (!GB_iso_check (NULL)) ;
     OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
     OK (GrB_Matrix_assign_FP32 (C, NULL, NULL, 1, GrB_ALL, 4, GrB_ALL, 4,
         NULL)) ;
     OK (GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
     OK (GrB_Matrix_wait_(C, GrB_MATERIALIZE)) ;
-    CHECK (GB_iso_check (C, NULL)) ;
+    CHECK (GB_iso_check (C)) ;
     GrB_Matrix_free_(&C) ;
 
     OK (GrB_Matrix_new (&C, My4x64, 10, 10)) ;
@@ -689,15 +689,15 @@ void mexFunction
     my4x64_scalar.stuff [3] = 4 ;
     OK (GrB_Matrix_setElement_UDT (C, &my4x64_scalar, 3, 2)) ;
     OK (GrB_Matrix_setElement_UDT (C, &my4x64_scalar, 0, 0)) ;
-    CHECK (!GB_iso_check (C, NULL)) ;
+    CHECK (!GB_iso_check (C)) ;
     OK (GrB_Matrix_wait_(C, GrB_MATERIALIZE)) ;
-    CHECK (GB_iso_check (C, NULL)) ;
+    CHECK (GB_iso_check (C)) ;
 
     my4x64_scalar.stuff [0] = 4 ;
     OK (GrB_Matrix_setElement_UDT (C, &my4x64_scalar, 4, 4)) ;
-    CHECK (!GB_iso_check (C, NULL)) ;
+    CHECK (!GB_iso_check (C)) ;
     OK (GrB_Matrix_wait_(C, GrB_MATERIALIZE)) ;
-    CHECK (!GB_iso_check (C, NULL)) ;
+    CHECK (!GB_iso_check (C)) ;
     GrB_Matrix_free_(&C) ;
 
     //--------------------------------------------------------------------------

@@ -23,11 +23,11 @@
     GB_FREE (&Ab_Sblocks, Ab_Sblocks_size) ;    \
     GB_FREE (&Ai_Sblocks, Ai_Sblocks_size) ;    \
     GB_FREE (&Ax_Sblocks, Ax_Sblocks_size) ;    \
-    GB_serialize_free_blocks (&Ap_Blocks, Ap_Blocks_size, Ap_nblocks, Werk);\
-    GB_serialize_free_blocks (&Ah_Blocks, Ah_Blocks_size, Ah_nblocks, Werk);\
-    GB_serialize_free_blocks (&Ab_Blocks, Ab_Blocks_size, Ab_nblocks, Werk);\
-    GB_serialize_free_blocks (&Ai_Blocks, Ai_Blocks_size, Ai_nblocks, Werk);\
-    GB_serialize_free_blocks (&Ax_Blocks, Ax_Blocks_size, Ax_nblocks, Werk);\
+    GB_serialize_free_blocks (&Ap_Blocks, Ap_Blocks_size, Ap_nblocks) ; \
+    GB_serialize_free_blocks (&Ah_Blocks, Ah_Blocks_size, Ah_nblocks) ; \
+    GB_serialize_free_blocks (&Ab_Blocks, Ab_Blocks_size, Ab_nblocks) ; \
+    GB_serialize_free_blocks (&Ai_Blocks, Ai_Blocks_size, Ai_nblocks) ; \
+    GB_serialize_free_blocks (&Ax_Blocks, Ax_Blocks_size, Ax_nblocks) ; \
 }
 
 #define GB_FREE_ALL                             \
@@ -120,7 +120,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // determine maximum # of threads
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
 
     //--------------------------------------------------------------------------
     // parse the method

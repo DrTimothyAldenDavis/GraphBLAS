@@ -27,8 +27,7 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
     const GrB_Matrix M,             // optional mask for C, unused if NULL
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input A matrix
-    const GrB_Matrix B,             // input B matrix
-    GB_Werk Werk
+    const GrB_Matrix B              // input B matrix
 )
 {
 
@@ -39,7 +38,7 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
     if (B->nvec_nonempty < 0)
     { 
         // B->nvec_nonempty is used to select the method
-        B->nvec_nonempty = GB_nvec_nonempty (B, Werk) ;
+        B->nvec_nonempty = GB_nvec_nonempty (B) ;
     }
     double bnvec = B->nvec_nonempty ;
 

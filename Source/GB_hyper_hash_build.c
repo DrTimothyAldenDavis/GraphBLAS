@@ -67,7 +67,7 @@ GrB_Info GB_hyper_hash_build    // construct A->Y if not already constructed
 
     GB_OK (GB_new (&(A->Y), // new dynamic header, do not allocate any content
         GrB_UINT64, yvlen, yvdim, GB_Ap_null, true, GxB_SPARSE,
-        -1, 0, Werk)) ;
+        -1, 0)) ;
     GrB_Matrix Y = A->Y ;
 
     //--------------------------------------------------------------------------
@@ -84,7 +84,8 @@ GrB_Info GB_hyper_hash_build    // construct A->Y if not already constructed
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
 
     int64_t k ;
@@ -144,7 +145,7 @@ GrB_Info GB_hyper_hash_build    // construct A->Y if not already constructed
     // conformed to its required sparsity format: always sparse.  No burble;
     // (already burbled above).
 
-    GB_OK (GB_convert_hyper_to_sparse (Y, false, Werk)) ;
+    GB_OK (GB_convert_hyper_to_sparse (Y, false)) ;
     ASSERT (anvec == GB_nnz (Y)) ;
     ASSERT (GB_IS_SPARSE (Y)) ;         // Y is now sparse and will remain so
 

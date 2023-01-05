@@ -25,8 +25,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     const bool numeric,     // if true, duplicate the numeric values; if A is
                             // iso, only the first entry is copied, regardless
                             // of C_iso on input
-    const GrB_Type ctype,   // type of C, if numeric is false
-    GB_Werk Werk
+    const GrB_Type ctype    // type of C, if numeric is false
 ) ;
 
 #endif

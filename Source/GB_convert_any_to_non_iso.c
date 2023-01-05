@@ -12,8 +12,7 @@
 GrB_Info GB_convert_any_to_non_iso // convert iso matrix to non-iso
 (
     GrB_Matrix A,           // input/output matrix
-    bool initialize,        // if true, copy the iso value to all of A->x
-    GB_Werk Werk
+    bool initialize         // if true, copy the iso value to all of A->x
 )
 {
 
@@ -71,7 +70,7 @@ GrB_Info GB_convert_any_to_non_iso // convert iso matrix to non-iso
 
     if (initialize)
     { 
-        GB_iso_expand (A->x, anz, scalar, asize, Werk) ;
+        GB_iso_expand (A->x, anz, scalar, asize) ;
     }
 
     //--------------------------------------------------------------------------

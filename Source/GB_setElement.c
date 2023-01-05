@@ -153,7 +153,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             { 
                 GB_OK (GB_wait (C, "C (setElement:to non-iso)", Werk)) ;
             }
-            GB_OK (GB_convert_any_to_non_iso (C, true, Werk)) ;
+            GB_OK (GB_convert_any_to_non_iso (C, true)) ;
         }
 
     }
@@ -170,11 +170,11 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             // s = (ctype) scalar
             GB_void s [GB_VLA(csize)] ;
             GB_cast_scalar (s, ccode, scalar, scalar_code, csize) ;
-            GB_OK (GB_convert_any_to_iso (C, s, Werk)) ;
+            GB_OK (GB_convert_any_to_iso (C, s)) ;
         }
         else
         { 
-            GB_OK (GB_convert_any_to_iso (C, (GB_void *) scalar, Werk)) ;
+            GB_OK (GB_convert_any_to_iso (C, (GB_void *) scalar)) ;
         }
     }
 

@@ -229,7 +229,8 @@ GrB_Info GB_sort
     struct GB_Matrix_opaque T_header ;
     GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     bool C_is_NULL = (C == NULL) ;
     if (C_is_NULL && P == NULL)
@@ -291,7 +292,7 @@ GrB_Info GB_sort
             if (!sort_in_place)
             { 
                 // A = C
-                GB_OK (GB_dup_worker (&C, A_iso, A, true, atype, Werk)) ;
+                GB_OK (GB_dup_worker (&C, A_iso, A, true, atype)) ;
             }
         }
         else
@@ -318,7 +319,7 @@ GrB_Info GB_sort
             if (!sort_in_place)
             { 
                 // A = C
-                GB_OK (GB_dup_worker (&C, A_iso, A, true, atype, Werk)) ;
+                GB_OK (GB_dup_worker (&C, A_iso, A, true, atype)) ;
             }
         }
         else

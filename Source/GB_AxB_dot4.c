@@ -146,7 +146,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
 
     int64_t anz = GB_nnz_held (A) ;
     int64_t bnz = GB_nnz_held (B) ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------

@@ -12,8 +12,7 @@
 
 int64_t GB_nvec_nonempty        // return # of non-empty vectors
 (
-    const GrB_Matrix A,         // input matrix to examine
-    GB_Werk Werk
+    const GrB_Matrix A          // input matrix to examine
 ) ;
 
 GrB_Info GB_hyper_realloc

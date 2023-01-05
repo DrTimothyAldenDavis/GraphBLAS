@@ -117,11 +117,6 @@ GrB_Info GxB_Desc_set_INT32     // set a parameter in a descriptor
             desc->in1 = (GrB_Desc_Value) value ;
             break ;
 
-        case GxB_DESCRIPTOR_NTHREADS :      // same as GxB_NTHREADS
-
-            desc->nthreads_max = value ;
-            break ;
-
         case GxB_AxB_METHOD : 
 
             if (! (value == GxB_DEFAULT  || value == GxB_AxB_GUSTAVSON
@@ -177,41 +172,9 @@ GrB_Info GxB_Desc_set_FP64      // set a parameter in a descriptor
     double value                // value to change it to
 )
 {
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    if (desc != NULL && desc->header_size == 0)
-    { 
-        // built-in descriptors may not be modified
-        return (GrB_INVALID_VALUE) ;
-    }
-
-    GB_WHERE (desc, "GxB_Desc_set_FP64 (desc, field, value)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (desc) ;
-    ASSERT_DESCRIPTOR_OK (desc, "desc to set", GB0) ;
-
-    //--------------------------------------------------------------------------
-    // set the parameter
-    //--------------------------------------------------------------------------
-
-    switch (field)
-    {
-
-        case GxB_DESCRIPTOR_CHUNK :         // same as GxB_CHUNK
-
-            desc->chunk = value ;
-            break ;
-
-        default : 
-
-            return (GrB_INVALID_VALUE) ;
-    }
-
-    return (GrB_SUCCESS) ;
+    // no longer any settings for this method
+    return (GrB_INVALID_VALUE) ;
 }
-
 
 //------------------------------------------------------------------------------
 // GxB_Desc_set: based on va_arg
@@ -326,24 +289,6 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
                         value, (int) GxB_DEFAULT, (int) GrB_TRAN) ;
                 }
                 desc->in1 = (GrB_Desc_Value) value ;
-            }
-            break ;
-
-        case GxB_DESCRIPTOR_NTHREADS :      // same as GxB_NTHREADS
-
-            {
-                va_start (ap, field) ;
-                desc->nthreads_max = va_arg (ap, int) ;
-                va_end (ap) ;
-            }
-            break ;
-
-        case GxB_DESCRIPTOR_CHUNK :         // same as GxB_CHUNK
-
-            {
-                va_start (ap, field) ;
-                desc->chunk = va_arg (ap, double) ;
-                va_end (ap) ;
             }
             break ;
 

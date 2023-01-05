@@ -45,8 +45,7 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     const int64_t nzmax,        // number of nonzeros the matrix must hold;
                                 // ignored if A is iso and full
     const bool numeric,         // if true, allocate A->x, else A->x is NULL
-    const bool A_iso,           // if true, allocate A as iso
-    GB_Werk Werk
+    const bool A_iso            // if true, allocate A as iso
 )
 {
 
@@ -62,7 +61,7 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
 
     bool preexisting_header = (*Ahandle != NULL) ;
     GrB_Info info = GB_new (Ahandle, type, vlen, vdim,
-        Ap_option, is_csc, sparsity, hyper_switch, plen, Werk) ;
+        Ap_option, is_csc, sparsity, hyper_switch, plen) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory.
@@ -78,8 +77,7 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     //--------------------------------------------------------------------------
 
     // set A->iso = A_iso   OK: burble in the caller
-    info = GB_bix_alloc (A, nzmax, sparsity, bitmap_calloc, numeric, A_iso,
-        Werk) ;
+    info = GB_bix_alloc (A, nzmax, sparsity, bitmap_calloc, numeric, A_iso) ;
     if (info != GrB_SUCCESS)
     {
         // out of memory

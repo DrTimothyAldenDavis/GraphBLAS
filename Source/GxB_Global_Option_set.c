@@ -54,9 +54,7 @@ GrB_Info GxB_Global_Option_set_INT32      // set a global default option
 
         case GxB_GLOBAL_NTHREADS :      // same as GxB_NTHREADS
 
-            // if < 1, then treat it as if nthreads_max = 1
-            value = GB_IMAX (1, value) ;
-            GB_Global_nthreads_max_set (value) ;
+            GB_Context_nthreads_max_set (NULL, value) ;
             break ;
 
         case GxB_BURBLE : 
@@ -113,7 +111,7 @@ GrB_Info GxB_Global_Option_set_FP64      // set a global default option
 
         case GxB_GLOBAL_CHUNK :         // same as GxB_CHUNK
 
-            GB_Global_chunk_set (value) ;
+            GB_Context_chunk_set (NULL, value) ;
             break ;
 
         case GxB_GLOBAL_GPU_CHUNK :         // same as GxB_GPU_CHUNK
@@ -342,9 +340,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 va_start (ap, field) ;
                 int nthreads_max_new = va_arg (ap, int) ;
                 va_end (ap) ;
-                // if < 1, then treat it as if nthreads_max = 1
-                nthreads_max_new = GB_IMAX (1, nthreads_max_new) ;
-                GB_Global_nthreads_max_set (nthreads_max_new) ;
+                GB_Context_nthreads_max_set (NULL, nthreads_max_new) ;
             }
             break ;
 
@@ -354,7 +350,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 va_start (ap, field) ;
                 double chunk = va_arg (ap, double) ;
                 va_end (ap) ;
-                GB_Global_chunk_set (chunk) ;
+                GB_Context_chunk_set (NULL, chunk) ;
             }
             break ;
 

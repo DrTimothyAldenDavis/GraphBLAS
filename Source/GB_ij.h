@@ -50,8 +50,7 @@ GrB_Info GB_ijsort
                         // contains the sorted indices with duplicates removed.
     size_t *I2_size_handle,
     GrB_Index *restrict *p_I2k,  // output array of size ni2
-    size_t *I2k_size_handle,
-    GB_Werk Werk
+    size_t *I2k_size_handle
 ) ;
 
 // given k, return the kth item i = I [k] in the list

@@ -55,7 +55,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     ASSERT (!GB_PENDING (D)) ;
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A*D", GB0) ;
     ASSERT (A->vdim == D->vlen) ;
-    ASSERT (GB_is_diagonal (D, Werk)) ;
+    ASSERT (GB_is_diagonal (D)) ;
 
     ASSERT (!GB_IS_BITMAP (A)) ;        // TODO: ok for now
     ASSERT (!GB_IS_BITMAP (D)) ;
@@ -98,7 +98,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
     // allocate C->x but do not initialize it
     // set C->iso = C_iso   OK
-    GB_OK (GB_dup_worker (&C, C_iso, A, false, ztype, Werk)) ;
+    GB_OK (GB_dup_worker (&C, C_iso, A, false, ztype)) ;
     GB_void *restrict Cx = (GB_void *) C->x ;
 
     //--------------------------------------------------------------------------
@@ -209,7 +209,8 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         // determine the number of threads to use
         //----------------------------------------------------------------------
 
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
 
         //----------------------------------------------------------------------
         // slice the entries for each task

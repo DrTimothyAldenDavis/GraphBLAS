@@ -15,8 +15,7 @@
 bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
 (
     const GrB_Matrix A,
-    const GrB_Matrix B,
-    GB_Werk Werk
+    const GrB_Matrix B
 )
 {
 
@@ -44,12 +43,12 @@ bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
     if (A->nvec_nonempty < 0)
     { 
         // A->nvec_nonempty is used to select the method 
-        A->nvec_nonempty = GB_nvec_nonempty (A, Werk) ;
+        A->nvec_nonempty = GB_nvec_nonempty (A) ;
     }
     if (B->nvec_nonempty < 0)
     { 
         // B->nvec_nonempty is used to select the method 
-        B->nvec_nonempty = GB_nvec_nonempty (B, Werk) ;
+        B->nvec_nonempty = GB_nvec_nonempty (B) ;
     }
 
     double anvec = A->nvec_nonempty ;

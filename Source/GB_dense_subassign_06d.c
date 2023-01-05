@@ -83,7 +83,8 @@ GrB_Info GB_dense_subassign_06d
     // Parallel: slice A into equal-sized chunks
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task

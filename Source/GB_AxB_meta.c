@@ -310,12 +310,12 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         // refinement, possibly selecting swap_rule as false instead:
 
         // see what the swap_rule == true would do for C=B'*A
-        A_in_is_diagonal = GB_is_diagonal (A_in, Werk) ;
+        A_in_is_diagonal = GB_is_diagonal (A_in) ;
 
         int tentative_axb_method ;
         GB_AxB_meta_adotb_control (&tentative_axb_method, C_in, M_in,
             Mask_comp, B_in, A_in, accum, semiring_in, flipxy, can_do_in_place,
-            allow_scale, A_in_is_diagonal, AxB_method, Werk) ;
+            allow_scale, A_in_is_diagonal, AxB_method) ;
 
         if (tentative_axb_method == GB_USE_SAXPY)
         { 
@@ -380,12 +380,12 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         // refinement, possibly selecting swap_rule as true instead:
 
         // see what method C=A'*B would use if swap_rule is false
-        B_in_is_diagonal = GB_is_diagonal (B_in, Werk) ;
+        B_in_is_diagonal = GB_is_diagonal (B_in) ;
 
         int tentative_axb_method ;
         GB_AxB_meta_adotb_control (&tentative_axb_method, C_in, M_in,
             Mask_comp, A_in, B_in, accum, semiring_in, flipxy, can_do_in_place,
-            allow_scale, B_in_is_diagonal, AxB_method, Werk) ;
+            allow_scale, B_in_is_diagonal, AxB_method) ;
 
         if (tentative_axb_method == GB_USE_SAXPY)
         { 
@@ -573,7 +573,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
         if (B_is_diagonal == -1)
         {
-            B_is_diagonal = GB_is_diagonal (B, Werk) ;
+            B_is_diagonal = GB_is_diagonal (B) ;
         }
 
         // explicitly transpose B
@@ -595,7 +595,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
         GB_AxB_meta_adotb_control (&axb_method, C_in, M,
             Mask_comp, A, B, accum, semiring, flipxy, can_do_in_place,
-            allow_scale, B_is_diagonal, AxB_method, Werk) ;
+            allow_scale, B_is_diagonal, AxB_method) ;
 
         //----------------------------------------------------------------------
         // AT = A'
@@ -663,16 +663,14 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
         if (allow_scale && M == NULL
             && !GB_IS_BITMAP (A)     // todo: A*D colscale with A bitmap
-            && ((B_is_diagonal == -1) ?
-                GB_is_diagonal (B, Werk) : B_is_diagonal))
+            && ((B_is_diagonal == -1) ? GB_is_diagonal (B) : B_is_diagonal))
         { 
             // C = A*D, column scale
             axb_method = GB_USE_COLSCALE ;
         }
         else if (allow_scale && M == NULL
             && !GB_IS_BITMAP (B)     // todo: D*B' rowscale with B bitmap
-            && ((A_is_diagonal == -1) ?
-                GB_is_diagonal (A, Werk) : A_is_diagonal))
+            && ((A_is_diagonal == -1) ? GB_is_diagonal (A) : A_is_diagonal))
         { 
             // C = D*B', row scale
             axb_method = GB_USE_ROWSCALE ;
@@ -752,16 +750,14 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
         if (allow_scale && M == NULL
             && !GB_IS_BITMAP (A)     // todo: A*D colscale with A bitmap
-            && ((B_is_diagonal == -1) ?
-                GB_is_diagonal (B, Werk) : B_is_diagonal))
+            && ((B_is_diagonal == -1) ? GB_is_diagonal (B) : B_is_diagonal))
         { 
             // C = A*D, column scale
             axb_method = GB_USE_COLSCALE ;
         }
         else if (allow_scale && M == NULL
             && !GB_IS_BITMAP (B)     // todo: D*B rowscale with B bitmap
-            && ((A_is_diagonal == -1) ?
-                GB_is_diagonal (A, Werk) : A_is_diagonal))
+            && ((A_is_diagonal == -1) ? GB_is_diagonal (A) : A_is_diagonal))
         { 
             // C = D*B, row scale
             axb_method = GB_USE_ROWSCALE ;
@@ -788,7 +784,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 // dot product instead.
                 int ignore, saxpy_method ;
                 GB_AxB_saxpy_sparsity (&ignore, &saxpy_method, M, Mask_comp,
-                    A, B, Werk) ;
+                    A, B) ;
                 if (saxpy_method == GB_SAXPY_METHOD_BITMAP)
                 { 
                     // bitmap = hyper * (bitmap or full) is very efficient

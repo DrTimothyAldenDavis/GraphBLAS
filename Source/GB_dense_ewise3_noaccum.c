@@ -25,8 +25,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     const bool C_as_if_full,        // true if C is as-if-full on input
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const GrB_BinaryOp op,          // must not be a positional op
-    GB_Werk Werk
+    const GrB_BinaryOp op           // must not be a positional op
 )
 {
 #ifndef GBCUDA_DEV
@@ -77,7 +76,8 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     //--------------------------------------------------------------------------
 
     int64_t anz = GB_nnz (A) ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (2 * anz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
@@ -95,7 +95,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
         // set C->iso = false   OK
         GB_OK (GB_new_bix (&C,  // existing header
             C->type, C->vlen, C->vdim, GB_Ap_null, C->is_csc, GxB_FULL, false,
-            C->hyper_switch, -1, GB_nnz_full (C), true, false, Werk)) ;
+            C->hyper_switch, -1, GB_nnz_full (C), true, false)) ;
         C->magic = GB_MAGIC ;
     }
     else if (!GB_IS_FULL (C))

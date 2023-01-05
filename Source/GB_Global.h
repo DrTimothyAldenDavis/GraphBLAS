@@ -27,13 +27,8 @@ int      GB_Global_sort_get (void) ;
 void     GB_Global_GrB_init_called_set (bool GrB_init_called) ;
 bool     GB_Global_GrB_init_called_get (void) ;
 
-void     GB_Global_nthreads_max_set (int nthreads_max) ;
-int      GB_Global_nthreads_max_get (void) ;
-
-int      GB_Global_omp_get_max_threads (void) ;
-
-void     GB_Global_chunk_set (double chunk) ;
-double   GB_Global_chunk_get (void) ;
+// FIXME: move this elsewhere:
+int GB_Global_omp_get_max_threads (void) ;
 
 void     GB_Global_hyper_switch_set (float hyper_switch) ;
 float    GB_Global_hyper_switch_get (void) ;
@@ -92,6 +87,7 @@ bool     GB_Global_print_one_based_get (void) ;
 void     GB_Global_print_mem_shallow_set (bool mem_shallow) ;
 bool     GB_Global_print_mem_shallow_get (void) ;
 
+// FIXME: move these settings to the GxB_Context:
 void     GB_Global_gpu_control_set (GrB_Desc_Value value) ;
 GrB_Desc_Value GB_Global_gpu_control_get (void);
 void     GB_Global_gpu_chunk_set (double gpu_chunk) ;

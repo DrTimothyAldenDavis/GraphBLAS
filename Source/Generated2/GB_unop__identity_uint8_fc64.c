@@ -13,7 +13,6 @@
 #include "GB.h"
 #ifndef GBCUDA_DEV
 #include "GB_control.h"
-#include "GB_atomics.h"
 #include "GB_unop__include.h"
 
 // C=unop(A) is defined by the following types and operators:

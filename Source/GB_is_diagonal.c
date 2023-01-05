@@ -11,12 +11,10 @@
 // present.  All pending tuples are ignored.  Zombies are treated as entries.
 
 #include "GB_mxm.h"
-#include "GB_atomics.h"
 
 bool GB_is_diagonal             // true if A is diagonal
 (
-    const GrB_Matrix A,         // input matrix to examine
-    GB_Werk Werk
+    const GrB_Matrix A          // input matrix to examine
 )
 {
 
@@ -74,7 +72,8 @@ bool GB_is_diagonal             // true if A is diagonal
 
     // Break the work into lots of tasks so the early-exit can be exploited.
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (n, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : (256 * nthreads) ;
     ntasks = GB_IMIN (ntasks, n) ;

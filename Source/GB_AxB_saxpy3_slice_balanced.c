@@ -240,7 +240,8 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     // determine the # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     bool bitmap_or_full = (GB_IS_FULL (A) || GB_IS_BITMAP (A)
                         || GB_IS_FULL (B) || GB_IS_BITMAP (B)) ;
     if (builtin_semiring && bitmap_or_full)

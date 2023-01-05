@@ -216,7 +216,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         work = 10 * (anz + bnz) ;
     }
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
 
     #define GB_NTASKS_PER_THREAD 32
@@ -312,7 +313,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
             // C = A*B or A'*B, where A is full and B sparse
             if (B->nvec_nonempty < 0)
             { 
-                B->nvec_nonempty = GB_nvec_nonempty (B, Werk) ;
+                B->nvec_nonempty = GB_nvec_nonempty (B) ;
             }
             // C is full if all vectors of B are present
             C_sparsity = (B->nvec_nonempty == B->vdim) ?
@@ -324,7 +325,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
             if (A->nvec_nonempty < 0)
             { 
                 // A->nvec_nonempty is used to select the method 
-                A->nvec_nonempty = GB_nvec_nonempty (A, Werk) ;
+                A->nvec_nonempty = GB_nvec_nonempty (A) ;
             }
             // C is full if all vectors of A are present
             C_sparsity = (A->nvec_nonempty == A->vdim) ?
@@ -356,8 +357,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     // set C->iso = C_iso
     GB_OK (GB_new_bix (&C, // bitmap/full, existing header
         ctype, cvlen, cvdim, GB_Ap_malloc, true, C_sparsity,
-        M_is_sparse_or_hyper, B->hyper_switch, cnvec, cnz, true, C_iso,
-        Werk)) ;
+        M_is_sparse_or_hyper, B->hyper_switch, cnvec, cnz, true, C_iso)) ;
 
     #ifdef GB_DEBUGIFY_DEFN
     GB_debugify_mxm (C_iso, C_sparsity, ctype, M,

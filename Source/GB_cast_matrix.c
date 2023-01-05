@@ -23,8 +23,7 @@
 void GB_cast_matrix         // copy or typecast the values from A into C
 (
     GrB_Matrix C,
-    GrB_Matrix A,
-    GB_Werk Werk
+    GrB_Matrix A
 )
 {
 
@@ -33,7 +32,8 @@ void GB_cast_matrix         // copy or typecast the values from A into C
     //--------------------------------------------------------------------------
 
     const int64_t anz = GB_nnz_held (A) ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
     ASSERT (A->iso == C->iso) ;
     if (anz == 0)

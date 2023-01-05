@@ -26,7 +26,8 @@
     // get the chunk size
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // get M, A, B, and C
@@ -346,7 +347,7 @@
     int64_t cnz = Cp [cnvec] ;
     // set C->iso = GB_IS_ANY_PAIR_SEMIRING     OK
     GrB_Info info = GB_bix_alloc (C, cnz, GxB_SPARSE, false, true,
-        GB_IS_ANY_PAIR_SEMIRING, Werk) ;
+        GB_IS_ANY_PAIR_SEMIRING) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

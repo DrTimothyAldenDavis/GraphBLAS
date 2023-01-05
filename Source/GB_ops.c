@@ -70,12 +70,11 @@ GB_TYPEDEF (GxB, FC64  , GxB_FC64_t, "GxB_FC64_t" ) ;
     {                                                                   \
         GB_MAGIC, 0,            /* initialized */                       \
         "", 0,                  /* logger */                            \
-        (double) GxB_DEFAULT,   /* chunk */                             \
         (GrB_Desc_Value) (out),                                         \
         (GrB_Desc_Value) (mask),                                        \
         (GrB_Desc_Value) (in0),                                         \
         (GrB_Desc_Value) (in1),                                         \
-        o, o,                   /* default: axb, #threads */            \
+        o,                      /* default: axb */                      \
         0,                      /* default compression */               \
         0,                      /* no sort */                           \
         0                       /* import */                            \
@@ -975,4 +974,17 @@ GrB_Semiring GRB (GB_EVAL5 (add, _, mult, _SEMIRING_, xtype)) =     \
     GRB_SEMIRING (MAX, MIN, UINT64)
     GRB_SEMIRING (MAX, MIN, FP32)
     GRB_SEMIRING (MAX, MIN, FP64)
+
+//------------------------------------------------------------------------------
+// GxB_CONTEXT_WORLD
+//------------------------------------------------------------------------------
+
+struct GB_Context_opaque GB_OPAQUE (CONTEXT_WORLD) =
+{
+    GB_MAGIC, 0,
+    (double) GB_CHUNK_DEFAULT,
+    1
+} ;
+
+GxB_Context GxB_CONTEXT_WORLD = & GB_OPAQUE (CONTEXT_WORLD) ;
 

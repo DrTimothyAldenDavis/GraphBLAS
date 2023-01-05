@@ -21,7 +21,6 @@
 
 #include "GB_AxB_saxpy3.h"
 #include "GB_AxB_saxpy3_template.h"
-#include "GB_atomics.h"
 #include "GB_unused.h"
 
 #define GB_META16

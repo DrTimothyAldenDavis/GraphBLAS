@@ -44,7 +44,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     ASSERT (!GB_PENDING (B)) ;
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric D*B", GB0) ;
     ASSERT (D->vdim == B->vlen) ;
-    ASSERT (GB_is_diagonal (D, Werk)) ;
+    ASSERT (GB_is_diagonal (D)) ;
 
     ASSERT (!GB_IS_BITMAP (D)) ;        // bitmap or full: not needed
     ASSERT (!GB_IS_BITMAP (B)) ;
@@ -86,7 +86,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
     // allocate C->x but do not initialize it
     // set C->iso = C_iso   OK
-    GB_OK (GB_dup_worker (&C, C_iso, B, false, ztype, Werk)) ;
+    GB_OK (GB_dup_worker (&C, C_iso, B, false, ztype)) ;
     GB_void *restrict Cx = (GB_void *) C->x ;
 
     //--------------------------------------------------------------------------
@@ -197,7 +197,8 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         // determine the number of threads to use
         //----------------------------------------------------------------------
 
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
         int nthreads = GB_nthreads (GB_nnz_held (B) + B->nvec, chunk,
             nthreads_max) ;
 

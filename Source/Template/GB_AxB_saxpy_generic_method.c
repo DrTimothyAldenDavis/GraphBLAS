@@ -60,7 +60,6 @@
 #include "GB_ek_slice.h"
 #include "GB_binop.h"
 #include "GB_sort.h"
-#include "GB_atomics.h"
 #include "GB_ek_slice_search.c"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_AxB_saxpy_generic.h"

@@ -324,12 +324,12 @@ GrB_Info GB_build               // build matrix
     // has no zombies or pending tuples, so GB_iso_check does need to handle
     // those cases.  T->x [0] is the new iso value of T.
 
-    if (!X_iso && GB_iso_check (T, Werk))
+    if (!X_iso && GB_iso_check (T))
     { 
         // All entries in T are the same; convert T to iso
         GBURBLE ("(post iso) ") ;
         T->iso = true ;
-        GB_OK (GB_convert_any_to_iso (T, NULL, Werk)) ;
+        GB_OK (GB_convert_any_to_iso (T, NULL)) ;
     }
 
     //--------------------------------------------------------------------------

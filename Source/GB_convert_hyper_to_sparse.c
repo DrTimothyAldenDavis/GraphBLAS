@@ -24,8 +24,7 @@
 GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
 (
     GrB_Matrix A,           // matrix to convert to non-hypersparse
-    bool do_burble,         // if true, then burble is allowed
-    GB_Werk Werk
+    bool do_burble          // if true, then burble is allowed
 )
 {
 
@@ -92,7 +91,8 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         // determine the number of threads to use
         //----------------------------------------------------------------------
 
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
         int nthreads = GB_nthreads (n, chunk, nthreads_max) ;
         int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
         ntasks = GB_IMIN (ntasks, n) ;

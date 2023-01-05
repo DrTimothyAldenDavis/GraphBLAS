@@ -4191,11 +4191,7 @@ typedef enum            // for global options or matrix options
     //------------------------------------------------------------
 
     GxB_GLOBAL_NTHREADS = GxB_NTHREADS,  // max number of threads to use
-                        // If <= GxB_DEFAULT, then GraphBLAS selects the number
-                        // of threads automatically.
-
     GxB_GLOBAL_CHUNK = GxB_CHUNK,       // chunk size for small problems.
-                        // If <= GxB_DEFAULT, then the default is used.
 
     GxB_BURBLE = 99,    // diagnostic output (bool *)
     GxB_PRINTF = 101,   // printf function diagnostic output
@@ -4496,9 +4492,94 @@ GrB_Info GxB_Global_Option_get_FUNCTION // gets the current global option
     void **value                    // return value of the global option
 ) ;
 
-//------------------------------------------------------------------------------
+//==============================================================================
+// GxB_Context: for managing computational resources
+//==============================================================================
+
+typedef struct GB_Context_opaque *GxB_Context ;
+
+// GxB_CONTEXT_WORLD is the default Context for all user threads.
+GB_GLOBAL GxB_Context GxB_CONTEXT_WORLD ;
+
+typedef enum
+{
+    GxB_CONTEXT_NTHREADS = GxB_NTHREADS,     // max number of threads to use.
+                    // If <= 0, then one thread is used.
+
+    GxB_CONTEXT_CHUNK = GxB_CHUNK,   // chunk size for small problems.
+                    // If < 1, then the default is used.
+
+    // GPU control (DRAFT: in progress, do not use)
+    GxB_CONTEXT_GPU_CONTROL = GxB_GPU_CONTROL,
+    GxB_CONTEXT_GPU_CHUNK   = GxB_GPU_CHUNK,
+}
+GxB_Context_Field ;
+
+GrB_Info GxB_Context_new            // create a new Context
+(
+    GxB_Context *Context            // handle of Context to create
+) ;
+
+GrB_Info GxB_Context_free           // free a Context
+(
+    GxB_Context *Context            // handle of Context to free
+) ;
+
+GrB_Info GxB_Context_set_INT32      // set a parameter in a Context
+(
+    GxB_Context Context,            // Context to modify
+    GxB_Context_Field field,        // parameter to change
+    int32_t value                   // value to change it to
+) ;
+
+GrB_Info GxB_Context_set_FP64       // set a parameter in a Context
+(
+    GxB_Context Context,            // Context to modify
+    GxB_Context_Field field,        // parameter to change
+    double value                    // value to change it to
+) ;
+
+GrB_Info GxB_Context_set            // set a parameter in a Context
+(
+    GxB_Context Context,            // Context to modify
+    GxB_Context_Field field,        // parameter to change
+    ...                             // value to change it to
+) ;
+
+GrB_Info GxB_Context_get_INT32      // get a parameter of a Context
+(
+    GxB_Context Context,            // Context to query
+    GxB_Context_Field field,        // parameter to query
+    int32_t *value                  // return value from the Context
+) ;
+
+GrB_Info GxB_Context_get_FP64       // get a parameter in a Context
+(
+    GxB_Context Context,            // Context to query
+    GxB_Context_Field field,        // parameter to query
+    double *value                   // return value from the Context
+) ;
+
+GrB_Info GxB_Context_get            // get a parameter in a Context
+(
+    GxB_Context Context,            // Context to query
+    GxB_Context_Field field,        // parameter to query
+    ...                             // return value of the descriptor
+) ;
+
+GrB_Info GxB_Context_engage         // engage a Context
+(
+    GxB_Context Context             // Context to engage
+) ;
+
+GrB_Info GxB_Context_disengage      // disengage a Context
+(
+    GxB_Context Context             // Context to disengage
+) ;
+
+//==============================================================================
 // GxB_set and GxB_get
-//------------------------------------------------------------------------------
+//==============================================================================
 
 // The simplest way to set/get a value of a GrB_Descriptor is with
 // the generic GxB_set and GxB_get functions:
@@ -4541,6 +4622,23 @@ GrB_Info GxB_Global_Option_get_FUNCTION // gets the current global option
 //
 //      GxB_set (GxB_FLUSH, void *flush_function) ;
 //      GxB_get (GxB_FLUSH, void **flush_function) ;
+
+// To set/get the GxB_CONTEXT_WORLD options:  These have the same effect as
+// the global set/get for NTHREADS and CHUNK, listed above.
+//
+//      GxB_set (GxB_CONTEXT_WORLD, GxB_NTHREADS, nthreads_max) ;
+//      GxB_get (GxB_CONTEXT_WORLD, GxB_NTHREADS, int *nthreads_max) ;
+//
+//      GxB_set (GxB_CONTEXT_WORLD, GxB_CHUNK, double chunk) ;
+//      GxB_get (GxB_CONTEXT_WORLD, GxB_CHUNK, double *chunk) ;
+
+// To set/get a Context option:
+//
+//      GxB_set (GxB_Context Context, GxB_NTHREADS, nthreads_max) ;
+//      GxB_get (GxB_Context Context, GxB_NTHREADS, int *nthreads_max) ;
+//
+//      GxB_set (GxB_Context Context, GxB_CHUNK, double chunk) ;
+//      GxB_get (GxB_Context Context, GxB_CHUNK, double *chunk) ;
 
 // To get global options that can be queried but not modified:
 //
@@ -4632,7 +4730,8 @@ GrB_Info GxB_Global_Option_get_FUNCTION // gets the current global option
             GxB_Option_Field : GxB_Global_Option_set ,          \
             GrB_Vector       : GxB_Vector_Option_set ,          \
             GrB_Matrix       : GxB_Matrix_Option_set ,          \
-            GrB_Descriptor   : GxB_Desc_set                     \
+            GrB_Descriptor   : GxB_Desc_set          ,          \
+            GxB_Context      : GxB_Context_set                  \
     )                                                           \
     (arg1, __VA_ARGS__)
 
@@ -4644,7 +4743,8 @@ GrB_Info GxB_Global_Option_get_FUNCTION // gets the current global option
             GxB_Option_Field : GxB_Global_Option_get ,          \
             GrB_Vector       : GxB_Vector_Option_get ,          \
             GrB_Matrix       : GxB_Matrix_Option_get ,          \
-            GrB_Descriptor   : GxB_Desc_get                     \
+            GrB_Descriptor   : GxB_Desc_get          ,          \
+            GxB_Context      : GxB_Context_get                  \
     )                                                           \
     (arg1, __VA_ARGS__)
 #endif

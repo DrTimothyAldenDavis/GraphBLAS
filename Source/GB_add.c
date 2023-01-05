@@ -199,7 +199,8 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         // C is bitmap or full: only determine how many threads to use
         //----------------------------------------------------------------------
 
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
         C_nthreads = GB_nthreads (A->vlen * A->vdim, chunk, nthreads_max) ;
     }
 

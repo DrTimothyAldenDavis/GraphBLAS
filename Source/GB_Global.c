@@ -13,7 +13,7 @@
 // or non-blocking), for pointers to malloc/realloc/free functions,
 // global matrix options, and other settings.
 
-#include "GB_atomics.h"
+#include "GB.h"
 
 //------------------------------------------------------------------------------
 // Global storage: for all threads in a user application that uses GraphBLAS
@@ -29,13 +29,6 @@ typedef struct
     GrB_Mode mode ;             // GrB_NONBLOCKING, GrB_BLOCKING
                                 // GxB_NONBLOCKING_GPU, or GxB_BLOCKING_GPU
     bool GrB_init_called ;      // true if GrB_init already called
-
-    //--------------------------------------------------------------------------
-    // threading control
-    //--------------------------------------------------------------------------
-
-    int nthreads_max ;          // max number of threads to use
-    double chunk ;              // chunk size for determining # threads to use
 
     //--------------------------------------------------------------------------
     // hypersparsity and CSR/CSC format control
@@ -132,7 +125,7 @@ typedef struct
     bool cpu_features_avx512f ;     // x86_64 with AVX512f
 
     //--------------------------------------------------------------------------
-    // CUDA (DRAFT: in progress)
+    // CUDA (DRAFT: in progress): FIXME: move to GxB_Context
     //--------------------------------------------------------------------------
 
     int gpu_count ;                 // # of GPUs in the system
@@ -152,10 +145,6 @@ static GB_Global_struct GB_Global =
 
     // initialization flag
     .GrB_init_called = false,   // GrB_init has not yet been called
-
-    // max number of threads and chunk size
-    .nthreads_max = 1,
-    .chunk = GB_CHUNK_DEFAULT,
 
     // min dimension                density
     #define GB_BITSWITCH_1          ((float) 0.04)
@@ -334,41 +323,12 @@ bool GB_Global_cpu_features_avx512f (void)
 }
 
 //------------------------------------------------------------------------------
-// nthreads_max
-//------------------------------------------------------------------------------
-
-void GB_Global_nthreads_max_set (int nthreads_max)
-{ 
-    GB_Global.nthreads_max = GB_IMAX (nthreads_max, 1) ;
-}
-
-int GB_Global_nthreads_max_get (void)
-{ 
-    return (GB_Global.nthreads_max) ;
-}
-
-//------------------------------------------------------------------------------
-// OpenMP max_threads
+// OpenMP max_threads: FIXME: move to GxB_Context?
 //------------------------------------------------------------------------------
 
 int GB_Global_omp_get_max_threads (void)
 { 
     return (GB_OPENMP_MAX_THREADS) ;
-}
-
-//------------------------------------------------------------------------------
-// chunk
-//------------------------------------------------------------------------------
-
-void GB_Global_chunk_set (double chunk)
-{ 
-    if (chunk <= GxB_DEFAULT) chunk = GB_CHUNK_DEFAULT ;
-    GB_Global.chunk = fmax (chunk, 1) ;
-}
-
-double GB_Global_chunk_get (void)
-{ 
-    return (GB_Global.chunk) ;
 }
 
 //------------------------------------------------------------------------------
@@ -917,7 +877,7 @@ bool GB_Global_print_mem_shallow_get (void)
 }
 
 //------------------------------------------------------------------------------
-// CUDA (DRAFT: in progress)
+// CUDA (DRAFT: in progress)   FIXME: move these settings to the GxB_Context
 //------------------------------------------------------------------------------
 
 void GB_Global_gpu_control_set (GrB_Desc_Value gpu_control)

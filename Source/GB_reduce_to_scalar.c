@@ -24,7 +24,6 @@
 
 #include "GB_reduce.h"
 #include "GB_binop.h"
-#include "GB_atomics.h"
 #include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_red__include.h"
@@ -106,14 +105,14 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     //--------------------------------------------------------------------------
 
     #if defined ( GBCUDA )
-    if (GB_reduce_to_scalar_cuda_branch (reduce, A, Werk))
+    if (GB_reduce_to_scalar_cuda_branch (reduce, A))
     {
 
         //----------------------------------------------------------------------
         // use the GPU(s)
         //----------------------------------------------------------------------
 
-        GB_OK (GB_reduce_to_scalar_cuda (s, reduce, A, Werk)) ;
+        GB_OK (GB_reduce_to_scalar_cuda (s, reduce, A)) ;
 
     }
     else
@@ -124,10 +123,10 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         // use OpenMP on the CPU threads
         //----------------------------------------------------------------------
 
-        int nthreads = 0, ntasks = 0 ;
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
-        nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
-        ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
+        int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
+        int ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
         ntasks = GB_IMIN (ntasks, anz) ;
         ntasks = GB_IMAX (ntasks, 1) ;
 

@@ -100,7 +100,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // bitmap or full, existing header
         ctype, nI, nJ, GB_Ap_null, C_is_csc,
-        sparsity, true, A->hyper_switch, -1, cnzmax, true, C_iso, Werk)) ;
+        sparsity, true, A->hyper_switch, -1, cnzmax, true, C_iso)) ;
 
     //--------------------------------------------------------------------------
     // get C

@@ -63,7 +63,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     if (condition)                                                      \
     {                                                                   \
         GrB_Info info ;                                                 \
-        GB_OK (GB_wait ((GrB_Matrix) A, name, Werk)) ;               \
+        GB_OK (GB_wait ((GrB_Matrix) A, name, Werk)) ;                  \
     }                                                                   \
 }
 

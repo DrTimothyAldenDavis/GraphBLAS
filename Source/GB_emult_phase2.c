@@ -142,7 +142,7 @@ GrB_Info GB_emult_phase2             // C=A.*B or C<M>=A.*B
     // set C->iso = C_iso   OK
     GrB_Info info = GB_new_bix (&C, // any sparsity, existing header
         ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso, Werk) ;
+        C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso) ;
     if (info != GrB_SUCCESS)
     {
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
@@ -229,7 +229,7 @@ GrB_Info GB_emult_phase2             // C=A.*B or C<M>=A.*B
                 info = GB_AemultB(mult,xname) (C, C_sparsity,               \
                     ewise_method, M, Mask_struct, Mask_comp,                \
                     A, B, C_to_M, C_to_A, C_to_B,                           \
-                    TaskList, C_ntasks, C_nthreads, Werk) ;              \
+                    TaskList, C_ntasks, C_nthreads) ;                       \
                 done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;

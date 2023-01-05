@@ -113,7 +113,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
                 //--------------------------------------------------------------
 
                 // copy or typecast the values
-                GB_cast_matrix (C, A, Werk) ;
+                GB_cast_matrix (C, A) ;
 
                 if (GB_IS_BITMAP (A))
                 { 

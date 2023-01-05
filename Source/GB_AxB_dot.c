@@ -36,9 +36,9 @@
 // operator is applied.  If false, then fmult(aik,bkj) is computed.  If true,
 // then the operands are swapped, and fmult(bkj,aij) is done instead.
 
-// Werk: the GB_Werk containing the # of threads to use, a string of the
-// user-callable function that is calling this function (GrB_mxm, GrB_mxv, or
-// GxB_vxm) and detailed error reports.
+// Werk: the GB_Werk containing a string of the user-callable function that is
+// calling this function (GrB_mxm, GrB_mxv, or GxB_vxm) and detailed error
+// reports.
 
 #include "GB_mxm.h"
 #include "GB_stringify.h"
@@ -114,7 +114,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
             // set C->iso = true    OK
             info = GB_new_bix (&C, // existing header
                 ztype, A->vdim, B->vdim, GB_Ap_null, true, GxB_FULL, false,
-                GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true, Werk) ;
+                GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true) ;
             if (info == GrB_SUCCESS)
             { 
                 C->magic = GB_MAGIC ;
@@ -163,7 +163,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         if (C_in != NULL) return (GrB_SUCCESS) ;
         return (GB_new (&C, // auto sparsity, existing header
             ztype, A->vdim, B->vdim, GB_Ap_calloc, true, GxB_AUTO_SPARSITY,
-            GB_Global_hyper_switch_get ( ), 1, Werk)) ;
+            GB_Global_hyper_switch_get ( ), 1)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -199,11 +199,10 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 
         #if defined ( GBCUDA )
         if (!C_iso &&   // fixme for CUDA, remove and create C iso on output
-            GB_AxB_dot3_cuda_branch (M, Mask_struct, A, B, semiring,
-            flipxy, Werk))
+            GB_AxB_dot3_cuda_branch (M, Mask_struct, A, B, semiring, flipxy))
         {
             info = (GB_AxB_dot3_cuda (C, M, Mask_struct, A, B, semiring,
-                flipxy, Werk)) ;
+                flipxy)) ;
         }
         else
         #endif

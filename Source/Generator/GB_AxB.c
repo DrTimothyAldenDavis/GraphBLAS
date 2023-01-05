@@ -17,7 +17,6 @@ ifndef_GBCUDA_DEV
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_sort.h"
-#include "GB_atomics.h"
 #include "GB_AxB_saxpy.h"
 if_not_any_pair_semiring
 #include "GB_AxB__include2.h"

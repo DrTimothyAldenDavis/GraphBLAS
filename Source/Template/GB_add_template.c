@@ -110,7 +110,8 @@
 
     // when C is bitmap or full:
     const int64_t cnz = GB_nnz_held (C) ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     #endif
 
     //--------------------------------------------------------------------------

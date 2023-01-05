@@ -46,7 +46,7 @@ GrB_Info GxB_Global_Option_get_INT32    // gets the current global option
 
         case GxB_GLOBAL_NTHREADS :      // same as GxB_NTHREADS
 
-            (*value) = (int32_t) GB_Global_nthreads_max_get ( ) ;
+            (*value) = (int32_t) GB_Context_nthreads_max_get (NULL) ;
             break ;
 
         case GxB_API_VERSION : 
@@ -154,7 +154,7 @@ GrB_Info GxB_Global_Option_get_FP64     // gets the current global option
 
         case GxB_GLOBAL_CHUNK :         // same as GxB_CHUNK
 
-            (*value) = GB_Global_chunk_get ( ) ;
+            (*value) = GB_Context_chunk_get (NULL) ;
             break ;
 
         case GxB_GLOBAL_GPU_CHUNK :         // same as GxB_GPU_CHUNK
@@ -462,7 +462,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 int *nthreads_max = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (nthreads_max) ;
-                (*nthreads_max) = GB_Global_nthreads_max_get ( ) ;
+                (*nthreads_max) = GB_Context_nthreads_max_get (NULL) ; 
             }
             break ;
 
@@ -477,7 +477,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 double *chunk = va_arg (ap, double *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (chunk) ;
-                (*chunk) = GB_Global_chunk_get ( ) ;
+                (*chunk) = GB_Context_chunk_get (NULL) ;
             }
             break ;
 

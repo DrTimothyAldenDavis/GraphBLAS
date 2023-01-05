@@ -126,7 +126,7 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     // ensure C is non-iso
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_convert_any_to_non_iso (C, true, Werk)) ;
+    GB_OK (GB_convert_any_to_non_iso (C, true)) ;
 
     //--------------------------------------------------------------------------
     // determine the # of threads to use and the parallel tasks
@@ -135,7 +135,8 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     int64_t anz = GB_nnz_held (A) ;
     int64_t bnz = GB_nnz_held (B) ;
     int64_t bnvec = B->nvec ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : 4 * nthreads ;
     ntasks = GB_IMIN (ntasks, bnvec) ;

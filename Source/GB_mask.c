@@ -270,7 +270,7 @@ GrB_Info GB_mask                // C<M> = Z
                 GB_OK (GB_new_bix (&C0, // sparse or hyper, existing header
                     C_result->type, vlen, vdim, GB_Ap_calloc, R_is_csc,
                     GxB_HYPERSPARSE, true, C_result->hyper_switch, 0, 0,
-                    true, false, Werk)) ;
+                    true, false)) ;
                 C = C0 ;
                 ASSERT (C->static_header || GBNSTATIC) ;
             }

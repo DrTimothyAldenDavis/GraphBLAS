@@ -17,7 +17,6 @@
 #include "GB_control.h"
 #include "GB_ek_slice.h"
 #include "GB_dense.h"
-#include "GB_atomics.h"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_binop__include.h"
 
@@ -321,8 +320,7 @@ GrB_Info GB (_AemultB__rminus_fp32)
     const int64_t *restrict C_to_B,
     const GB_task_struct *restrict TaskList,
     const int C_ntasks,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 )
 { 
     #if GB_DISABLE

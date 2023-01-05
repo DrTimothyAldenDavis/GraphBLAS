@@ -140,7 +140,7 @@ static GrB_Info GB_export_worker  // export a matrix
         else
         { 
             // T = A
-            GB_OK (GB_dup_worker (&T, A->iso, A, true, A->type, Werk)) ;
+            GB_OK (GB_dup_worker (&T, A->iso, A, true, A->type)) ;
         }
 
         switch (format)
@@ -163,7 +163,7 @@ static GrB_Info GB_export_worker  // export a matrix
     // export the contents of the matrix
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
 
     GrB_Index nvals = GB_nnz (A) ;
     int64_t plen = A->vdim+1 ; 
@@ -195,7 +195,7 @@ static GrB_Info GB_export_worker  // export a matrix
             { 
                 // expand the iso A->x into the non-iso array Ax
                 ASSERT (nvals > 0) ;
-                GB_iso_expand (Ax, nvals, A->x, A->type->size, Werk) ;
+                GB_iso_expand (Ax, nvals, A->x, A->type->size) ;
             }
             else
             { 

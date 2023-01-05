@@ -14,8 +14,7 @@
 
 int64_t GB_nvec_nonempty        // return # of non-empty vectors
 (
-    const GrB_Matrix A,         // input matrix to examine
-    GB_Werk Werk
+    const GrB_Matrix A          // input matrix to examine
 )
 {
 
@@ -49,7 +48,8 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
     //--------------------------------------------------------------------------
 
     int64_t anvec = A->nvec ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------

@@ -131,8 +131,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
 bool GB_is_diagonal             // true if A is diagonal
 (
-    const GrB_Matrix A,         // input matrix to examine
-    GB_Werk Werk
+    const GrB_Matrix A          // input matrix to examine
 ) ;
 
 GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
@@ -246,8 +245,7 @@ static inline bool GB_AxB_dot3_control
 bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
 (
     const GrB_Matrix A,
-    const GrB_Matrix B,
-    GB_Werk Werk
+    const GrB_Matrix B
 ) ;
 
 //------------------------------------------------------------------------------
@@ -287,8 +285,7 @@ void GB_AxB_meta_adotb_control
     bool can_do_in_place,
     bool allow_scale,
     bool B_is_diagonal,
-    GrB_Desc_Value AxB_method,
-    GB_Werk Werk
+    GrB_Desc_Value AxB_method
 ) ;
 
 // return value of axb_method from GB_AxB_meta_adotb_control

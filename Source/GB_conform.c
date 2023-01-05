@@ -138,7 +138,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
     bool as_if_full = GB_as_if_full (A) ;
     if (A->nvec_nonempty < 0)
     { 
-        A->nvec_nonempty = GB_nvec_nonempty (A, Werk) ;
+        A->nvec_nonempty = GB_nvec_nonempty (A) ;
     }
 
     //--------------------------------------------------------------------------

@@ -17,8 +17,8 @@
 //------------------------------------------------------------------------------
 
 #define GB_NTHREADS(work)                                       \
-    int nthreads_max = GB_Global_nthreads_max_get ( ) ;         \
-    double chunk = GB_Global_chunk_get ( ) ;                    \
+    int nthreads_max = GB_Context_nthreads_max ( ) ;            \
+    double chunk = GB_Context_chunk ( ) ;                       \
     int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
 
 //------------------------------------------------------------------------------

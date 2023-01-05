@@ -41,7 +41,8 @@ GrB_Info GB_split_full              // split a full matrix
     size_t asize = atype->size ;
     const bool A_iso = A->iso ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     int64_t nouter = csc ? n : m ;
     int64_t ninner = csc ? m : n ;
@@ -79,7 +80,7 @@ GrB_Info GB_split_full              // split a full matrix
             // set C->iso = A_iso       OK
             GB_OK (GB_new_bix (&C, // new header
                 atype, cvlen, cvdim, GB_Ap_null, csc, GxB_FULL, false,
-                hyper_switch, 0, cnz, true, A_iso, Werk)) ;
+                hyper_switch, 0, cnz, true, A_iso)) ;
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;
             int C_nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;

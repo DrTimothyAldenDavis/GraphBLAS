@@ -84,7 +84,8 @@ GrB_Info GB_subassign_zombie
 
     int64_t snz = GB_nnz (S) ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (snz, chunk, nthreads_max) ;
 
     int64_t nzombies = C->nzombies ;

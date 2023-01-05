@@ -23,13 +23,28 @@ void GB_memoryUsage         // count # allocated blocks and their sizes
     bool count_hyper_hash   // if true, include A->Y
 ) ;
 
+void *GB_malloc_memory      // pointer to allocated block of memory
+(
+    size_t nitems,          // number of items to allocate
+    size_t size_of_item,    // sizeof each item
+    // output
+    size_t *size_allocated  // # of bytes actually allocated
+) ;
+
+void GB_free_memory         // free memory
+(
+    // input/output
+    void **p,               // pointer to allocated block of memory to free
+    // input
+    size_t size_allocated   // # of bytes actually allocated
+) ;
+
 void *GB_calloc_memory      // pointer to allocated block of memory
 (
     size_t nitems,          // number of items to allocate
     size_t size_of_item,    // sizeof each item
     // output
-    size_t *size_allocated, // # of bytes actually allocated
-    GB_Werk Werk
+    size_t *size_allocated  // # of bytes actually allocated
 ) ;
 
 void *GB_realloc_memory     // pointer to reallocated block of memory, or
@@ -41,8 +56,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     void *p,                // old object to reallocate
     // output
     size_t *size_allocated, // # of bytes actually allocated
-    bool *ok,               // true if successful, false otherwise
-    GB_Werk Werk
+    bool *ok                // true if successful, false otherwise
 ) ;
 
 void *GB_xalloc_memory      // return the newly-allocated space
@@ -53,8 +67,7 @@ void *GB_xalloc_memory      // return the newly-allocated space
     int64_t n,              // # of entries to allocate if non iso
     size_t type_size,       // size of each entry
     // output
-    size_t *size,           // resulting size
-    GB_Werk Werk
+    size_t *size            // resulting size
 ) ;
 
 //------------------------------------------------------------------------------
@@ -94,7 +107,7 @@ void GB_memset                  // parallel memset
     }
 
     #define GB_CALLOC(n,type,s)                                     \
-        (type *) GB_calloc_memory (n, sizeof (type), s, Werk) ;     \
+        (type *) GB_calloc_memory (n, sizeof (type), s) ;           \
         ; printf ("calloc  (%s, line %d): size %lu\n",              \
             __FILE__, __LINE__, *(s)) ;
 
@@ -103,14 +116,14 @@ void GB_memset                  // parallel memset
         ; printf ("malloc  (%s, line %d): size %lu\n",              \
             __FILE__, __LINE__, *(s)) ;
 
-    #define GB_REALLOC(p,nnew,type,s,ok,Werk)                       \
+    #define GB_REALLOC(p,nnew,type,s,ok)                            \
         p = (type *) GB_realloc_memory (nnew, sizeof (type),        \
-            (void *) p, s, ok, Werk) ;                              \
+            (void *) p, s, ok) ;                                    \
         ; printf ("realloc (%s, line %d): size %lu\n",              \
             __FILE__, __LINE__, *(s)) ;
 
     #define GB_XALLOC(use_calloc,iso,n,type_size,s)                 \
-        GB_xalloc_memory (use_calloc, iso, n, type_size, s, Werk) ; \
+        GB_xalloc_memory (use_calloc, iso, n, type_size, s) ;       \
         ; printf ("xalloc (%s, line %d): size %lu\n",               \
             __FILE__, __LINE__, *(s)) ;
 
@@ -120,17 +133,17 @@ void GB_memset                  // parallel memset
         GB_free_memory ((void **) p, s)
 
     #define GB_CALLOC(n,type,s)                                     \
-        (type *) GB_calloc_memory (n, sizeof (type), s, Werk)
+        (type *) GB_calloc_memory (n, sizeof (type), s)         
 
     #define GB_MALLOC(n,type,s)                                     \
         (type *) GB_malloc_memory (n, sizeof (type), s)
 
-    #define GB_REALLOC(p,nnew,type,s,ok,Werk)                       \
+    #define GB_REALLOC(p,nnew,type,s,ok)                            \
         p = (type *) GB_realloc_memory (nnew, sizeof (type),        \
-            (void *) p, s, ok, Werk)
+            (void *) p, s, ok)
 
     #define GB_XALLOC(use_calloc,iso,n,type_size,s)                 \
-        GB_xalloc_memory (use_calloc, iso, n, type_size, s, Werk)
+        GB_xalloc_memory (use_calloc, iso, n, type_size, s)
 
 #endif
 
@@ -145,8 +158,7 @@ void GB_memset                  // parallel memset
 
 #define GB_CALLOC_WORK(n,type,s) GB_CALLOC(n,type,s)
 #define GB_MALLOC_WORK(n,type,s) GB_MALLOC(n,type,s)
-#define GB_REALLOC_WORK(p,nnew,type,s,ok,Werk) \
-             GB_REALLOC(p,nnew,type,s,ok,Werk) 
+#define GB_REALLOC_WORK(p,nnew,type,s,ok) GB_REALLOC(p,nnew,type,s,ok) 
 #define GB_FREE_WORK(p,s) GB_FREE(p,s)
 
 #endif

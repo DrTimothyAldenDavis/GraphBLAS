@@ -66,11 +66,6 @@ function descriptorinfo (d)
 %           sparse or bitmap, use d.format = 'sparse/bitmap'.  To return
 %           C as hypersparse in row-oriented format, use 'hyper by row'.
 %
-% These descriptor values are scalars:
-%
-%   d.nthreads  max # of threads to use; default is omp_get_max_threads.
-%   d.chunk     controls # of threads to use for small problems.
-%
 % GrB.descriptorinfo (d) lists the contents of a GraphBLAS descriptor and
 % checks if its contents are valid.  Also refer to the
 % SuiteSparse:GraphBLAS User Guide for more details.

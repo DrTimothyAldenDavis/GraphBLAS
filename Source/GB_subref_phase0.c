@@ -335,7 +335,8 @@ GrB_Info GB_subref_phase0
     //--------------------------------------------------------------------------
 
     #define NTASKS_PER_THREAD 8
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = 1, ntasks = 1 ;
     int ntasks_max = nthreads_max * NTASKS_PER_THREAD ;
 

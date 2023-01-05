@@ -31,8 +31,7 @@ void GB_assign_zombie4
     const GrB_Index *J,
     const int64_t nJ,
     const int Jkind,
-    const int64_t Jcolon [3],
-    GB_Werk Werk
+    const int64_t Jcolon [3]
 )
 {
 
@@ -84,7 +83,8 @@ void GB_assign_zombie4
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (Cnvec, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
 

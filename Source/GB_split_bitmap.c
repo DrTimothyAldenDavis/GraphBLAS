@@ -43,7 +43,8 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
     const bool A_iso = A->iso ;
 //  int64_t anz = GB_nnz (A) ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     int64_t nouter = csc ? n : m ;
     int64_t ninner = csc ? m : n ;
@@ -81,7 +82,7 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
             // set C->iso = A_iso       OK
             GB_OK (GB_new_bix (&C, // new header
                 atype, cvlen, cvdim, GB_Ap_null, csc, GxB_BITMAP, false,
-                hyper_switch, 0, cnzmax, true, A_iso, Werk)) ;
+                hyper_switch, 0, cnzmax, true, A_iso)) ;
             int8_t *restrict Cb = C->b ;
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;

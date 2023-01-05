@@ -14,15 +14,13 @@
 void GB_assign_zombie1
 (
     GrB_Matrix C,
-    const int64_t j,
-    GB_Werk Werk
+    const int64_t j
 ) ;
 
 void GB_assign_zombie2
 (
     GrB_Matrix C,
-    const int64_t i,
-    GB_Werk Werk
+    const int64_t i
 ) ;
 
 void GB_assign_zombie3
@@ -35,8 +33,7 @@ void GB_assign_zombie3
     const GrB_Index *I,
     const int64_t nI,
     const int Ikind,
-    const int64_t Icolon [3],
-    GB_Werk Werk
+    const int64_t Icolon [3]
 ) ;
 
 void GB_assign_zombie4
@@ -49,8 +46,7 @@ void GB_assign_zombie4
     const GrB_Index *J,
     const int64_t nJ,
     const int Jkind,
-    const int64_t Jcolon [3],
-    GB_Werk Werk
+    const int64_t Jcolon [3]
 ) ;
 
 GrB_Info GB_assign_zombie5

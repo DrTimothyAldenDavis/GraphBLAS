@@ -51,7 +51,8 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
 
     const int8_t *restrict Ab = A->b ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (avlen*avdim, chunk, nthreads_max) ;
     bool by_vector = (nthreads <= avdim) ;
 

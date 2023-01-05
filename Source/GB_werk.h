@@ -11,7 +11,7 @@
 #define GB_WERK_H
 
 //------------------------------------------------------------------------------
-// GB_context: error logging, thread control, and Werk space
+// GB_Werk: error logging and Werk space
 //------------------------------------------------------------------------------
 
 // Error messages are logged in Werk->logger_handle, on the stack which is
@@ -20,8 +20,6 @@
 // safely truncated (via snprintf).  This is intentional, but gcc with
 // -Wformat-truncation will print a warning (see pragmas above).  Ignore the
 // warning.
-
-// Threading control is described in GB_nthreads.h.
 
 // GB_WERK_SIZE is the size of a small fixed-sized array in the Werk, used
 // for small werkspace allocations (typically O(# of threads or # tasks)).
@@ -37,10 +35,6 @@ typedef struct
     char **logger_handle ;          // error report
     size_t *logger_size_handle ;
     int pwerk ;                     // top of Werk stack, initially zero
-
-    // copied from the GxB_Context (threadprivate, or global)
-    int nthreads_max ;              // max # of threads to use
-    double chunk ;                  // chunk size for small problems
 }
 GB_Werk_struct ;
 
@@ -62,9 +56,6 @@ typedef GB_Werk_struct *GB_Werk ;
     GB_Werk Werk = &Werk_struct ;                                   \
     /* set Werk->where so GrB_error can report it if needed */      \
     Werk->where = where_string ;                                    \
-    /* get the default max # of threads and default chunk size */   \
-    Werk->nthreads_max = GB_Global_nthreads_max_get ( ) ;           \
-    Werk->chunk = GB_Global_chunk_get ( ) ;                         \
     /* get the pointer to where any error will be logged */         \
     Werk->logger_handle = NULL ;                                    \
     Werk->logger_size_handle = NULL ;                               \
@@ -287,47 +278,6 @@ static inline void *GB_werk_pop     // free the top block of werkspace memory
     }
     return (NULL) ;                 // return NULL to indicate p was freed
 }
-
-//------------------------------------------------------------------------------
-// Determine # of threads to use via global setting and descriptor
-//------------------------------------------------------------------------------
-
-// The GB_Werk Werk struct contains the number of threads to use in the
-// operation.  It is normally determined from the user's descriptor, with a
-// default of nthreads_max = GxB_DEFAULT (that is, zero).  The default rule is
-// to let GraphBLAS determine the number of threads automatically by selecting
-// a number of threads between 1 and nthreads_max.  GrB_init initializes
-// nthreads_max to omp_get_max_threads.  Both the global value and the value in
-// a descriptor can set/queried by GxB_set / GxB_get.
-
-// Some GrB_Matrix and GrB_Vector methods do not take a descriptor, however
-// (GrB_*_dup, _build, _exportTuples, _clear, _nvals, _wait, and GxB_*_resize).
-// For those methods the default rule is always used (nthreads_max =
-// GxB_DEFAULT), which then relies on the global nthreads_max.
-
-//------------------------------------------------------------------------------
-// GB_GET_NTHREADS_MAX:  determine max # of threads for OpenMP parallelism.
-//------------------------------------------------------------------------------
-
-//      GB_GET_NTHREADS_MAX obtains the max # of threads to use and the chunk
-//      size from the Werk.  If Werk is NULL then a single thread *must*
-//      be used.  If Werk->nthreads_max is <= GxB_DEFAULT, then select
-//      automatically: between 1 and nthreads_max, depending on the problem
-//      size.  Below is the default rule.  Any function can use its own rule
-//      instead, based on Werk, chunk, nthreads_max, and the problem size.
-//      No rule can exceed nthreads_max.
-
-#define GB_GET_NTHREADS_MAX(nthreads_max,chunk,Werk)                        \
-    int nthreads_max = (Werk == NULL) ? 1 : Werk->nthreads_max ;            \
-    if (nthreads_max <= GxB_DEFAULT)                                        \
-    {                                                                       \
-        nthreads_max = GB_Global_nthreads_max_get ( ) ;                     \
-    }                                                                       \
-    double chunk = (Werk == NULL) ? GxB_DEFAULT : Werk->chunk ;             \
-    if (chunk <= GxB_DEFAULT)                                               \
-    {                                                                       \
-        chunk = GB_Global_chunk_get ( ) ;                                   \
-    }
 
 #endif
 

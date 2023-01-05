@@ -114,7 +114,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             // T = A'
             GB_OK (GB_new (&T,  // new header
                 type, A->vdim, A->vlen, GB_Ap_null, by_col, GxB_AUTO_SPARSITY,
-                GB_Global_hyper_switch_get ( ), 0, Werk)) ;
+                GB_Global_hyper_switch_get ( ), 0)) ;
             GB_OK (GB_transpose_cast (T, type, by_col, A, false, Werk)) ;
             // now T can be reshaped in-place to construct C
             in_place = true ;
@@ -191,7 +191,8 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         int64_t tvlen = T->vlen ;
         bool T_jumbled = T->jumbled ;
 
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
         int T_nthreads, T_ntasks ;
         GB_SLICE_MATRIX (T, 1, chunk) ;
 
@@ -229,8 +230,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             // create the output matrix (just the header; no content)
             GB_OK (GB_new (&C, // new header
                 type, vlen_new, vdim_new, GB_Ap_null, T_is_csc,
-                GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 0,
-                Werk)) ;
+                GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 0)) ;
             // allocate new space for the future C->i
             I_work = GB_MALLOC (nvals, int64_t, &I_work_size) ;
             if (I_work == NULL)

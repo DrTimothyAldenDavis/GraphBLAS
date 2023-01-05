@@ -70,7 +70,8 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     int64_t nouter = csc ? n : m ;
     int64_t ninner = csc ? m : n ;

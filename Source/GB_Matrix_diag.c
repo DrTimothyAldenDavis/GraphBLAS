@@ -69,7 +69,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
         // make a deep copy of V_in and convert to CSC
         // set T->iso = V_in->iso   OK
         GB_CLEAR_STATIC_HEADER (T, &T_header) ;
-        GB_OK (GB_dup_worker (&T, V_in->iso, V_in, true, NULL, Werk)) ;
+        GB_OK (GB_dup_worker (&T, V_in->iso, V_in, true, NULL)) ;
         GB_OK (GB_convert_bitmap_to_sparse (T, Werk)) ;
         V = T ;
     }
@@ -99,7 +99,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // existing header
         ctype, n, n, GB_Ap_malloc, csc, C_sparsity, false,
-        C->hyper_switch, vnz, vnz, true, C_iso, Werk)) ;
+        C->hyper_switch, vnz, vnz, true, C_iso)) ;
     C->sparsity_control = sparsity_control ;
     C->bitmap_switch = bitmap_switch ;
 
@@ -131,7 +131,8 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     // get the contents of C and determine # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (vnz, chunk, nthreads_max) ;
     int64_t *restrict Cp = C->p ;
     int64_t *restrict Ch = C->h ;
@@ -149,7 +150,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
         //----------------------------------------------------------------------
 
         // C->x = (ctype) V->x
-        GB_cast_matrix (C, V, Werk) ;
+        GB_cast_matrix (C, V) ;
 
         // construct Cp and Ci
         int64_t p ;
@@ -169,7 +170,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
         //----------------------------------------------------------------------
 
         // C->x = (ctype) V->x
-        GB_cast_matrix (C, V, Werk) ;
+        GB_cast_matrix (C, V) ;
 
         // construct Cp, Ch, and Ci
         int64_t p ;
@@ -190,7 +191,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
         //----------------------------------------------------------------------
 
         // C->x = (ctype) V->x
-        GB_cast_matrix (C, V, Werk) ;
+        GB_cast_matrix (C, V) ;
 
         int64_t *restrict Vi = V->i ;
 

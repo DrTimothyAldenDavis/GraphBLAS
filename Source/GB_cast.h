@@ -79,8 +79,7 @@ void GB_cast_array              // typecast an array
 void GB_cast_matrix         // copy or typecast the values from A into C
 (
     GrB_Matrix C,
-    GrB_Matrix A,
-    GB_Werk Werk
+    GrB_Matrix A
 ) ;
 
 #endif

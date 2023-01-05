@@ -115,8 +115,7 @@ GrB_Info GB_resize              // change the size of a matrix
             if (in_place)
             { 
                 // reallocate A->x in-place; no data movement needed
-                GB_REALLOC (A->x, nzmax_new*asize, GB_void, &(A->x_size), &ok,
-                    Werk) ;
+                GB_REALLOC (A->x, nzmax_new*asize, GB_void, &(A->x_size), &ok) ;
             }
             else
             { 
@@ -157,7 +156,8 @@ GrB_Info GB_resize              // change the size of a matrix
             // determine number of threads to use
             //------------------------------------------------------------------
 
-            GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+            int nthreads_max = GB_Context_nthreads_max ( ) ;
+            double chunk = GB_Context_chunk ( ) ;
             int nthreads = GB_nthreads (anz_new, chunk, nthreads_max) ;
 
             //------------------------------------------------------------------

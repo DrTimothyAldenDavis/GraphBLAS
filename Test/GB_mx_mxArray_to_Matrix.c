@@ -64,8 +64,6 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // check for empty matrix
     //--------------------------------------------------------------------------
 
-    GB_WERK ("mxArray_to_Matrix") ;
-
     GrB_Matrix A = NULL ;
 
     if (A_builtin == NULL)
@@ -255,7 +253,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // create the GraphBLAS matrix
         info = GB_new (&A, // sparse or full, new header
             atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
-            GB_Ap_calloc, is_csc, sparsity, GxB_HYPER_DEFAULT, 0, Werk) ;
+            GB_Ap_calloc, is_csc, sparsity, GxB_HYPER_DEFAULT, 0) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;
@@ -264,7 +262,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         }
 
         // A is a deep copy and can be modified by GraphBLAS
-        info = GB_bix_alloc (A, anz, sparsity, false, true, false, Werk) ;
+        info = GB_bix_alloc (A, anz, sparsity, false, true, false) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;
@@ -290,7 +288,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // [ create the GraphBLAS matrix, do not allocate A->p
         info = GB_new (&A, // sparse or full, new header
             atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
-            GB_Ap_null, is_csc, sparsity, GxB_HYPER_DEFAULT, 0, Werk) ;
+            GB_Ap_null, is_csc, sparsity, GxB_HYPER_DEFAULT, 0) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;
@@ -492,7 +490,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         {
             bool burble = GB_Global_burble_get ( ) ;
             if (burble) printf (" [ GB_mx_mxArray_to_Matrix ") ;
-            GB_convert_hyper_to_sparse (A, true, Werk) ;
+            GB_convert_hyper_to_sparse (A, true) ;
             if (burble) printf ("]\n") ;
         }
         ASSERT (!A->is_csc) ;

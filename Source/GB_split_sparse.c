@@ -49,7 +49,8 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 //  int64_t avdim = A->vdim ;
     size_t asize = atype->size ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     int64_t nouter = csc ? n : m ;
     int64_t ninner = csc ? m : n ;
@@ -138,7 +139,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             C = NULL ;
             GB_OK (GB_new (&C, // new header
                 atype, cvlen, cvdim, GB_Ap_malloc, csc, A_sparsity,
-                hyper_switch, cnvec, Werk)) ;
+                hyper_switch, cnvec)) ;
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;
             C->nvec = cnvec ;
@@ -207,8 +208,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             //------------------------------------------------------------------
 
             // set C->iso = A_iso       OK
-            GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, A_iso,
-                Werk)) ;
+            GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, A_iso)) ;
             int64_t *restrict Ci = C->i ;
             C->nvals = cnz ;
             C->magic = GB_MAGIC ;       // for GB_nnz_held(C), to slice C

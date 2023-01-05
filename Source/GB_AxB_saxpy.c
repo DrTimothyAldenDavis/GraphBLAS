@@ -66,7 +66,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 
     int C_sparsity, saxpy_method ;
     GB_AxB_saxpy_sparsity (&C_sparsity, &saxpy_method,
-        M, Mask_comp, A, B, Werk) ;
+        M, Mask_comp, A, B) ;
 
     //--------------------------------------------------------------------------
     // determine if C is iso
@@ -191,7 +191,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         // set C->iso = true    OK
         info = GB_new_bix (&C, // existing header
             ztype, A->vlen, B->vdim, GB_Ap_null, true, GxB_FULL, false,
-            GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true, Werk) ;
+            GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true) ;
         if (info == GrB_SUCCESS)
         { 
             C->magic = GB_MAGIC ;

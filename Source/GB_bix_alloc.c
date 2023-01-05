@@ -24,8 +24,7 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
     const int sparsity,     // sparse (=hyper/auto) / bitmap / full
     const bool bitmap_calloc,   // if true, calloc A->b, otherwise use malloc
     const bool numeric,     // if true, allocate A->x, otherwise A->x is NULL
-    const bool A_iso,       // if true, allocate A as iso
-    GB_Werk Werk
+    const bool A_iso        // if true, allocate A as iso
 )
 {
 

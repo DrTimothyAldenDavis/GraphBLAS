@@ -111,7 +111,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     int64_t m = A_transpose ? GB_NROWS (A) : GB_NCOLS (A) ;
     GB_CLEAR_STATIC_HEADER (B, &B_header) ;
     info = GB_new (&B, // full, existing header
-        ztype, m, 1, GB_Ap_null, true, GxB_FULL, GB_NEVER_HYPER, 1, Werk) ;
+        ztype, m, 1, GB_Ap_null, true, GxB_FULL, GB_NEVER_HYPER, 1) ;
     ASSERT (info == GrB_SUCCESS) ;
     B->magic = GB_MAGIC ;
     B->iso = true ;             // OK: B is a temporary matrix; no burble

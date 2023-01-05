@@ -10,14 +10,12 @@
 #ifndef GB_TRANSPOSE_H
 #define GB_TRANSPOSE_H
 #include "GB.h"
-#include "GB_atomics.h"
 
 bool GB_transpose_method        // if true: use GB_builder, false: use bucket
 (
     const GrB_Matrix A,         // matrix to transpose
     int *nworkspaces_bucket,    // # of slices of A for the bucket method
-    int *nthreads_bucket,       // # of threads to use for the bucket method
-    GB_Werk Werk
+    int *nthreads_bucket        // # of threads to use for the bucket method
 ) ;
 
 GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')

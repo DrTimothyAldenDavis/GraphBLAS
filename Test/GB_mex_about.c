@@ -69,8 +69,6 @@ void mexFunction
 
     bool malloc_debug = GB_mx_get_global (true) ;
 
-    // GB_WERK (USAGE) ;
-
     printf ("in %s:\n", __FILE__) ;
 
     printf ("sizeof (struct GB_Type_opaque) %d\n",
@@ -699,6 +697,7 @@ void mexFunction
     // check descripter set/get for nthreads and chunk
     //--------------------------------------------------------------------------
 
+#if 0
     GrB_Descriptor desc ;
     OK (GrB_Descriptor_new (&desc)) ;
     OK (GxB_Desc_set (desc, GxB_NTHREADS, 42)) ;
@@ -716,6 +715,7 @@ void mexFunction
     OK (GxB_Desc_get_INT32 (desc, GxB_NTHREADS, &nthreads)) ;
 
     GrB_Descriptor_free_(&desc) ;
+#endif
 
     //--------------------------------------------------------------------------
     // make a shallow copy of an empty matrix
@@ -739,10 +739,10 @@ void mexFunction
     CHECK (p != NULL) ;
     GB_FREE (&p, nbytes) ;
     CHECK (p == NULL) ;
-    p = GB_calloc_memory (4, sizeof (int64_t), &nbytes, NULL) ;
+    p = GB_calloc_memory (4, sizeof (int64_t), &nbytes) ;
     CHECK (p != NULL) ;
     bool ok = true ;
-    p = GB_realloc_memory (6, sizeof (int64_t), p, &nbytes, &ok, NULL) ;
+    p = GB_realloc_memory (6, sizeof (int64_t), p, &nbytes, &ok) ;
     CHECK (p != NULL) ;
     CHECK (ok) ;
     GB_FREE (&p, nbytes) ;

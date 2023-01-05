@@ -227,7 +227,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
 
     GB_OK (GB_new (&C, // sparse or hyper (same as A), existing header
         ctype, vlen, vdim, GB_Ap_calloc, C_is_csc,
-        C_sparsity, A->hyper_switch, nvec, Werk)) ;
+        C_sparsity, A->hyper_switch, nvec)) ;
     int64_t *restrict Cp = C->p ;
 
     //--------------------------------------------------------------------------
@@ -235,7 +235,8 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     //--------------------------------------------------------------------------
 
     int A_nthreads, A_ntasks ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     GB_SLICE_MATRIX (A, 8, chunk) ;
 
     //--------------------------------------------------------------------------
@@ -381,7 +382,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
 
     int64_t cnz = (C_has_pattern_of_A) ? anz : Cp [nvec] ;
     // set C->iso = C_iso   OK
-    GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, C_iso, Werk)) ;
+    GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, C_iso)) ;
 
     //--------------------------------------------------------------------------
     // copy pattern into C

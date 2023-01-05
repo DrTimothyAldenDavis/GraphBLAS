@@ -58,9 +58,9 @@ void mexFunction
     OK (GxB_Desc_get_INT32 (desc, GxB_IMPORT, &value)) ;
     CHECK (value == GxB_SECURE_IMPORT) ;
 
-    OK (GxB_Desc_set_FP64 (desc, GxB_DESCRIPTOR_CHUNK, 1e6)) ;
-    OK (GxB_Desc_get_FP64 (desc, GxB_DESCRIPTOR_CHUNK, &chunk)) ;
-    CHECK (chunk = 1e6) ;
+//  OK (GxB_Desc_set_FP64 (desc, GxB_DESCRIPTOR_CHUNK, 1e6)) ;
+//  OK (GxB_Desc_get_FP64 (desc, GxB_DESCRIPTOR_CHUNK, &chunk)) ;
+//  CHECK (chunk = 1e6) ;
 
     OK (GxB_Global_Option_set_FP64 (GxB_GLOBAL_CHUNK, 2e6)) ;
     OK (GxB_Global_Option_get_FP64 (GxB_GLOBAL_CHUNK, &chunk)) ;
@@ -86,6 +86,7 @@ void mexFunction
     OK (GxB_Matrix_Option_get (A, GxB_BITMAP_SWITCH, &bswitch2)) ;
     CHECK (bswitch1 == bswitch2) ;
 
+#if 0
     for (int k = 0 ; k < 64 ; k++)
     {
         pool1 [k] = (k < 3) ? 0 : k ;
@@ -96,6 +97,7 @@ void mexFunction
     {
         CHECK (pool1 [k] == pool2 [k]) ;
     }
+#endif
 
     ERR (GxB_Matrix_Option_set_FP64 (A, -1, 0)) ;
 

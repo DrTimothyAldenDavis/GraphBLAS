@@ -69,7 +69,8 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
 
     int64_t cnz = GB_nnz (C) ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------

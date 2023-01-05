@@ -661,6 +661,7 @@ catch expected_error
 end
 assert (ok) ;
 
+%{
 clear d
 d.nthreads = 'something' ;
 try
@@ -674,7 +675,9 @@ catch expected_error
     end
 end
 assert (ok) ;
+%}
 
+%{
 clear d
 d.chunk = 'something' ;
 try
@@ -688,6 +691,7 @@ catch expected_error
     end
 end
 assert (ok) ;
+%}
 
 try
     E = GrB.incidence (ones (4,3)) ;

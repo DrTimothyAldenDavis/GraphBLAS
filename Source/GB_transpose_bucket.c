@@ -107,7 +107,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     //--------------------------------------------------------------------------
 
     // # of threads to use in the O(vlen) loops below
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nth = GB_nthreads (vlen, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
@@ -123,7 +124,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     bool C_iso = (C_code_iso != GB_NON_ISO) ;
     GB_OK (GB_new_bix (&C, // sparse, existing header
         ctype, A->vdim, vlen, GB_Ap_malloc, C_is_csc,
-        GxB_SPARSE, true, A->hyper_switch, vlen, anz, true, C_iso, Werk)) ;
+        GxB_SPARSE, true, A->hyper_switch, vlen, anz, true, C_iso)) ;
 
     int64_t *restrict Cp = C->p ;
     C->nvals = anz ;

@@ -81,7 +81,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         GBURBLE ("A:") ;
         // set A2->iso = A->iso     OK: no need for burble
         GB_CLEAR_STATIC_HEADER (A2, &A2_header) ;
-        GB_OK (GB_dup_worker (&A2, A->iso, A, true, NULL, Werk)) ;
+        GB_OK (GB_dup_worker (&A2, A->iso, A, true, NULL)) ;
         ASSERT_MATRIX_OK (A2, "dup A2 for kron (A,B)", GB0) ;
         GB_OK (GB_convert_bitmap_to_sparse (A2, Werk)) ;
         ASSERT_MATRIX_OK (A2, "to sparse, A2 for kron (A,B)", GB0) ;
@@ -94,7 +94,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         GBURBLE ("B:") ;
         // set B2->iso = B->iso     OK: no need for burble
         GB_CLEAR_STATIC_HEADER (B2, &B2_header) ;
-        GB_OK (GB_dup_worker (&B2, B->iso, B, true, NULL, Werk)) ;
+        GB_OK (GB_dup_worker (&B2, B->iso, B, true, NULL)) ;
         ASSERT_MATRIX_OK (B2, "dup B2 for kron (A,B)", GB0) ;
         GB_OK (GB_convert_bitmap_to_sparse (B2, Werk)) ;
         ASSERT_MATRIX_OK (B2, "to sparse, B2 for kron (A,B)", GB0) ;
@@ -132,7 +132,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     double work = ((double) anz) * ((double) bnz)
                 + (((double) anvec) * ((double) bnvec)) ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
@@ -175,7 +176,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // full, sparse, or hyper; existing header
         ctype, (int64_t) cvlen, (int64_t) cvdim, GB_Ap_malloc, C_is_csc,
-        sparsity, true, B->hyper_switch, cnvec, cnzmax, true, C_iso, Werk)) ;
+        sparsity, true, B->hyper_switch, cnvec, cnzmax, true, C_iso)) ;
 
     //--------------------------------------------------------------------------
     // get C and the operator

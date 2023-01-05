@@ -343,26 +343,26 @@ int rmm_wrap_initialize_all_same
     return 0;
 }
 
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // rmm_wrap_get_next_stream_from_pool: return the next available stream from the pool
 // Output is cudaStream_t
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void* rmm_wrap_get_next_stream_from_pool(void) {
     return rmm_wrap_context[get_current_device()]->stream_pool->get_stream();
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // rmm_wrap_get_stream_from_pool: return specific stream from the pool
 // Output is cudaStream_t
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void* rmm_wrap_get_stream_from_pool(std::size_t stream_id) {
     return rmm_wrap_context[get_current_device()]->stream_pool->get_stream(stream_id);
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // rmm_wrap_get_main_stream: return the main cuda stream
 // Output is cudaStream_t
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void* rmm_wrap_get_main_stream(void) {
     return rmm_wrap_context[get_current_device()]->main_stream;
 }

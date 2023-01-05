@@ -17,23 +17,22 @@ void *GB_xalloc_memory      // return the newly-allocated space
     int64_t n,              // # of entries to allocate if non iso
     size_t type_size,       // size of each entry
     // output
-    size_t *size,           // resulting size
-    GB_Werk Werk
+    size_t *size            // resulting size
 )
 {
     void *p ;
     if (iso)
     { 
         // always calloc the iso entry
-        p = GB_CALLOC (type_size, GB_void, size) ;  // x:OK
+        p = GB_CALLOC (type_size, GB_void, size) ;
     }
     else if (use_calloc)
     { 
-        p = GB_CALLOC (n * type_size, GB_void, size) ; // x:OK
+        p = GB_CALLOC (n * type_size, GB_void, size) ;
     }
     else
     { 
-        p = GB_MALLOC (n * type_size, GB_void, size) ; // x:OK
+        p = GB_MALLOC (n * type_size, GB_void, size) ;
     }
     return (p) ;
 }

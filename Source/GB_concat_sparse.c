@@ -70,13 +70,14 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // existing header
         ctype, cvlen, cvdim, GB_Ap_malloc, csc, GxB_SPARSE, false,
-        hyper_switch, cvdim, cnz, true, C_iso, Werk)) ;
+        hyper_switch, cvdim, cnz, true, C_iso)) ;
     C->bitmap_switch = bitmap_switch ;
     C->sparsity_control = sparsity_control ;
     int64_t *restrict Cp = C->p ;
     int64_t *restrict Ci = C->i ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     if (C_iso)
     { 
@@ -120,7 +121,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 // T = (ctype) A', not in-place, using a dynamic header
                 GB_OK (GB_new (&T, // auto sparsity, new header
                     A->type, A->vdim, A->vlen, GB_Ap_null, csc,
-                    GxB_AUTO_SPARSITY, -1, 1, Werk)) ;
+                    GxB_AUTO_SPARSITY, -1, 1)) ;
                 // save T in array S
                 if (csc)
                 { 
@@ -148,7 +149,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 {
                     // copy A into T
                     // set T->iso = A->iso  OK: no burble needed
-                    GB_OK (GB_dup_worker (&T, A->iso, A, true, NULL, Werk)) ;
+                    GB_OK (GB_dup_worker (&T, A->iso, A, true, NULL)) ;
                     // save T in array S
                     if (csc)
                     { 

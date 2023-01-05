@@ -18,10 +18,8 @@
 static inline void *GB_calloc_helper
 (
     // input/output:
-    size_t *size,           // on input: # of bytes requested
+    size_t *size            // on input: # of bytes requested
                             // on output: # of bytes actually allocated
-    // input:
-    GB_Werk Werk
 )
 {
     void *p = NULL ;
@@ -39,7 +37,7 @@ static inline void *GB_calloc_helper
     if (p != NULL)
     { 
         // clear the block of memory with a parallel memset
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
         GB_memset (p, 0, (*size), nthreads_max) ;
     }
 
@@ -55,8 +53,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
     size_t nitems,          // number of items to allocate
     size_t size_of_item,    // sizeof each item
     // output
-    size_t *size_allocated, // # of bytes actually allocated
-    GB_Werk Werk
+    size_t *size_allocated  // # of bytes actually allocated
 )
 {
 
@@ -109,7 +106,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
         }
         else
         { 
-            p = GB_calloc_helper (&size, Werk) ;
+            p = GB_calloc_helper (&size) ;
         }
 
     }
@@ -120,7 +117,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
         // normal use, in production
         //----------------------------------------------------------------------
 
-        p = GB_calloc_helper (&size, Werk) ;
+        p = GB_calloc_helper (&size) ;
     }
 
     //--------------------------------------------------------------------------

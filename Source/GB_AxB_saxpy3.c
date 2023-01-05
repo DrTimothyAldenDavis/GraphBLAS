@@ -176,7 +176,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // determine the # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // define workspace
@@ -242,7 +243,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     info = GB_new (&C, // sparse or hyper, existing header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        C_sparsity, B->hyper_switch, cnvec, Werk) ;
+        C_sparsity, B->hyper_switch, cnvec) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

@@ -400,7 +400,8 @@ GrB_Info GB_emult_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (Cnvec, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------

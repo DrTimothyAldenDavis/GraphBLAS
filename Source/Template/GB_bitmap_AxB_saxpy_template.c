@@ -42,7 +42,8 @@
     // determine max # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // get C, M, A, and B
@@ -175,7 +176,7 @@
         int nthreads, ntasks, nfine_tasks_per_vector ;
         bool use_coarse_tasks, use_atomics ;
         GB_AxB_saxpy4_tasks (&ntasks, &nthreads, &nfine_tasks_per_vector,
-            &use_coarse_tasks, &use_atomics, anz, bnz, bvdim, cvlen, Werk) ;
+            &use_coarse_tasks, &use_atomics, anz, bnz, bvdim, cvlen) ;
         if (!use_coarse_tasks)
         {
             // slice the matrix A for each team of fine tasks

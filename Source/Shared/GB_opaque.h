@@ -387,6 +387,7 @@ struct GB_Type_opaque       // content of GrB_Type
 {
     int64_t magic ;         // for detecting uninitialized objects
     size_t header_size ;    // size of the malloc'd block for this struct, or 0
+    // ---------------------//
     size_t size ;           // size of the type
     GB_Type_code code ;     // the type code
     char name [GxB_MAX_NAME_LEN] ;       // name of the type
@@ -427,6 +428,7 @@ struct GB_Monoid_opaque     // content of GrB_Monoid
 {
     int64_t magic ;         // for detecting uninitialized objects
     size_t header_size ;    // size of the malloc'd block for this struct, or 0
+    // ---------------------//
     GrB_BinaryOp op ;       // binary operator of the monoid
     void *identity ;        // identity of the monoid; type is op->ztype
     void *terminal ;        // early-exit (NULL if no value); type is op->ztype
@@ -438,6 +440,7 @@ struct GB_Semiring_opaque   // content of GrB_Semiring
 {
     int64_t magic ;         // for detecting uninitialized objects
     size_t header_size ;    // size of the malloc'd block for this struct, or 0
+    // ---------------------//
     GrB_Monoid add ;        // add operator of the semiring
     GrB_BinaryOp multiply ; // multiply operator of the semiring
 } ;
@@ -447,19 +450,29 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     // first 4 items exactly match GrB_Matrix, GrB_Vector, GrB_Scalar structs:
     int64_t magic ;         // for detecting uninitialized objects
     size_t header_size ;    // size of the malloc'd block for this struct, or 0
+    // ---------------------//
     char *logger ;          // error logger string
     size_t logger_size ;    // size of the malloc'd block for logger, or 0
     // specific to the descriptor struct:
-    double chunk ;          // chunk size for # of threads for small problems
     GrB_Desc_Value out ;    // output descriptor
     GrB_Desc_Value mask ;   // mask descriptor
     GrB_Desc_Value in0 ;    // first input descriptor (A for C=A*B, for example)
     GrB_Desc_Value in1 ;    // second input descriptor (B for C=A*B)
     GrB_Desc_Value axb ;    // for selecting the method for C=A*B
-    int nthreads_max ;      // max # threads to use in this call to GraphBLAS
     int compression ;       // compression method for GxB_Matrix_serialize
     bool do_sort ;          // if nonzero, do the sort in GrB_mxm
     int import ;            // if zero (default), trust input data
+} ;
+
+struct GB_Context_opaque    // content of GxB_Context
+{
+    int64_t magic ;         // for detecting uninitialized objects
+    size_t header_size ;    // size of the malloc'd block for this struct, or 0
+    // ---------------------//
+    double chunk ;          // chunk size for # of threads for small problems
+    int nthreads_max ;      // max # threads to use in this call to GraphBLAS
+    // FIXME: add CUDA context too:
+    // which GPU(s) to use, GPU chunk factor, perhaps a stream pool?
 } ;
 
 //------------------------------------------------------------------------------

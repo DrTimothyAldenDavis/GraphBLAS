@@ -834,7 +834,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // when its computation is postponed or not needed.  If not -1, however,
     // the value must be correct.
 
-    int64_t actual_nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
+    int64_t actual_nvec_nonempty = GB_nvec_nonempty (A) ;
 
     if (! ((A->nvec_nonempty == actual_nvec_nonempty) ||
            (A->nvec_nonempty == -1)))

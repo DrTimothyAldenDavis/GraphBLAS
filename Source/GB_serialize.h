@@ -37,8 +37,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     // input:
     GrB_Type type_expected,         // type expected (NULL for any built-in)
     const GB_void *blob,            // serialized matrix 
-    size_t blob_size,               // size of the blob
-    GB_Werk Werk
+    size_t blob_size                // size of the blob
 ) ;
 
 typedef struct
@@ -73,8 +72,7 @@ void GB_serialize_free_blocks
 (
     GB_blocks **Blocks_handle,      // array of size nblocks
     size_t Blocks_size,             // size of Blocks
-    int32_t nblocks,                // # of blocks, or zero if no blocks
-    GB_Werk Werk
+    int32_t nblocks                 // # of blocks, or zero if no blocks
 ) ;
 
 void GB_serialize_to_blob
@@ -102,8 +100,7 @@ GrB_Info GB_deserialize_from_blob
     int32_t nblocks,            // # of compressed blocks for this array
     int32_t method_used,        // compression method used for each block
     // input/output:
-    size_t *s_handle,           // where to read from the blob
-    GB_Werk Werk
+    size_t *s_handle            // where to read from the blob
 ) ;
 
 #define GB_BLOB_HEADER_SIZE \

@@ -43,7 +43,7 @@ GrB_Info GB_convert_any_to_bitmap   // convert to bitmap
     else if (GB_IS_FULL (A))
     { 
         // convert from full to bitmap
-        GB_OK (GB_convert_full_to_bitmap (A, Werk)) ;
+        GB_OK (GB_convert_full_to_bitmap (A)) ;
     }
     else if (GB_IS_BITMAP (A))
     { 

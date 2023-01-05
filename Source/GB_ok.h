@@ -83,8 +83,7 @@
 // GB_GET_DESCRIPTOR*: get the contents of a descriptor
 //------------------------------------------------------------------------------
 
-// check the descriptor and extract its contents; also copies
-// nthreads_max and chunk from the descriptor to the Werk
+// check the descriptor and extract its contents
 #define GB_GET_DESCRIPTOR(info,desc,dout,dmc,dms,d0,d1,dalgo,dsort)          \
     GrB_Info info ;                                                          \
     bool dout, dmc, dms, d0, d1 ;                                            \
@@ -92,7 +91,7 @@
     GrB_Desc_Value dalgo ;                                                   \
     /* if desc is NULL then defaults are used.  This is OK */                \
     info = GB_Descriptor_get (desc, &dout, &dmc, &dms, &d0, &d1, &dalgo,     \
-        &dsort, Werk) ;                                                   \
+        &dsort) ;                                                            \
     if (info != GrB_SUCCESS)                                                 \
     {                                                                        \
         /* desc not NULL, but uninitialized or an invalid object */          \

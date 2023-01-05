@@ -203,7 +203,8 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
         // R is bitmap or full: only determine how many threads to use
         //----------------------------------------------------------------------
 
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
         R_nthreads = GB_nthreads (M->vlen * M->vdim, chunk, nthreads_max) ;
     }
 

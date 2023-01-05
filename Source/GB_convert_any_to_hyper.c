@@ -39,7 +39,7 @@ GrB_Info GB_convert_any_to_hyper // convert to hypersparse
     else if (GB_IS_FULL (A))
     { 
         // convert from full to hypersparse
-        GB_OK (GB_convert_full_to_sparse (A, Werk)) ;
+        GB_OK (GB_convert_full_to_sparse (A)) ;
         GB_OK (GB_convert_sparse_to_hyper (A, Werk)) ;
     }
     else if (GB_IS_BITMAP (A))

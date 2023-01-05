@@ -80,7 +80,7 @@ GrB_Info GB_subassign_05e
     bool C_is_csc = C->is_csc ;
     GB_phybix_free (C) ;
     // set C->iso = true    OK
-    GB_OK (GB_dup_worker (&C, true, M, false, C->type, Werk)) ;
+    GB_OK (GB_dup_worker (&C, true, M, false, C->type)) ;
     C->is_csc = C_is_csc ;
     GB_cast_scalar (C->x, C->type->code, scalar, atype->code, atype->size) ;
 

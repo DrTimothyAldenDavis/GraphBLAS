@@ -11,12 +11,11 @@
 // to iso if currently non-iso.  Returns false if A is bitmap, has any zombies,
 // or has or pending tuples, since these are more costly to check.
 
-#include "GB_atomics.h"
+#include "GB.h"
 
 bool GB_iso_check               // return true if A is iso, false otherwise
 (
-    const GrB_Matrix A,         // matrix to reduce
-    GB_Werk Werk
+    const GrB_Matrix A          // matrix to reduce
 )
 {
 
@@ -63,7 +62,8 @@ bool GB_iso_check               // return true if A is iso, false otherwise
     //--------------------------------------------------------------------------
 
     int nthreads = 0, ntasks = 0 ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
     ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
     ntasks = GB_IMIN (ntasks, anz) ;

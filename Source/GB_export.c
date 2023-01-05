@@ -147,7 +147,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
         { 
             GBURBLE ("(iso to non-iso export) ") ;
         }
-        GB_OK (GB_convert_any_to_non_iso (*A, true, Werk)) ;
+        GB_OK (GB_convert_any_to_non_iso (*A, true)) ;
         ASSERT (!((*A)->iso)) ;
     }
     else

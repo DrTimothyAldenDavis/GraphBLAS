@@ -117,7 +117,8 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
     int64_t bnvec = B->nvec ;
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     // clear Bflops
     GB_memset (Bflops, 0, (bnvec+1) * sizeof (int64_t), nthreads_max) ;

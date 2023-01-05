@@ -49,14 +49,14 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
     { 
         // set C->iso = C_iso   OK
         GB_phybix_free (C) ;
-        GB_OK (GB_bix_alloc (C, GB_nnz_full (C), GxB_FULL, false, true, C_iso,
-            Werk)) ;
+        GB_OK (GB_bix_alloc (C, GB_nnz_full (C), GxB_FULL, false, true, C_iso));
         C->plen = -1 ;
         C->nvec = cvdim ;
         C->nvec_nonempty = (cvlen > 0) ? cvdim : 0 ;
     }
     ASSERT (GB_IS_FULL (C)) ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     int64_t nouter = csc ? n : m ;
     int64_t ninner = csc ? m : n ;

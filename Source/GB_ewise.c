@@ -347,8 +347,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
             // C_replace is ignored
             GBURBLE ("dense C=A+B ") ;
-            info = GB_dense_ewise3_noaccum (C, C_as_if_full, A1, B1, op,
-                Werk) ;
+            info = GB_dense_ewise3_noaccum (C, C_as_if_full, A1, B1, op) ;
             GB_FREE_ALL ;
             if (info == GrB_SUCCESS)
             {

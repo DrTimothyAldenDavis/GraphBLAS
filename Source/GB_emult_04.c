@@ -131,14 +131,15 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
 
     GB_OK (GB_new (&C, // sparse or hyper (same as M), existing header
         ctype, vlen, vdim, GB_Ap_calloc, C_is_csc,
-        C_sparsity, M->hyper_switch, nvec, Werk)) ;
+        C_sparsity, M->hyper_switch, nvec)) ;
     int64_t *restrict Cp = C->p ;
 
     //--------------------------------------------------------------------------
     // slice the mask matrix M
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int M_ntasks, M_nthreads ;
     GB_SLICE_MATRIX (M, 8, chunk) ;
 
@@ -224,7 +225,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
 
     int64_t cnz = Cp [nvec] ;
     // set C->iso = C_iso   OK
-    GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, C_iso, Werk)) ;
+    GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, C_iso)) ;
 
     //--------------------------------------------------------------------------
     // copy pattern into C

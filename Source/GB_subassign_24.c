@@ -73,12 +73,6 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
     ASSERT (!GB_PENDING (A)) ;
 
     //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
-
-    //--------------------------------------------------------------------------
     // C = A
     //--------------------------------------------------------------------------
 
@@ -119,7 +113,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         GB_phybix_free (C) ;
         // copy the pattern, not the values
         // set C->iso = C_iso   OK
-        GB_OK (GB_dup_worker (&C, C_iso, A, false, C->type, Werk)) ;
+        GB_OK (GB_dup_worker (&C, C_iso, A, false, C->type)) ;
         C->is_csc = C_is_csc ;      // do not change the CSR/CSC format of C
         // GB_assign_prep has assigned the C->x iso value, but this has just
         // been cleared, so it needs to be reassigned below by GB_cast_matrix.
@@ -134,7 +128,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         GBURBLE ("(typecast) ") ;
     }
 
-    GB_cast_matrix (C, A, Werk) ;
+    GB_cast_matrix (C, A) ;
 
     //--------------------------------------------------------------------------
     // restore the sparsity control of C

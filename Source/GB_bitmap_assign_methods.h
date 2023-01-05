@@ -34,7 +34,8 @@
 #define GB_GET_C_BITMAP                                                     \
     GrB_Info info ;                                                         \
     /* also get the max # of threads to use */                              \
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;                    \
+    int nthreads_max = GB_Context_nthreads_max ( ) ;                        \
+    double chunk = GB_Context_chunk ( ) ;                                   \
     ASSERT_MATRIX_OK (C, "C for bitmap assign", GB0) ;                      \
     ASSERT (GB_IS_BITMAP (C)) ;                                             \
     int8_t  *Cb = C->b ;                                                    \

@@ -396,10 +396,10 @@ void mexFunction
     bool ok = false ;
     int *p = GB_malloc_memory (4, sizeof (int), &nbytes) ;
     CHECK (p != NULL) ;
-    p = GB_realloc_memory (1024*1024, sizeof (int), p, &nbytes, &ok, NULL) ;
+    p = GB_realloc_memory (1024*1024, sizeof (int), p, &nbytes, &ok) ;
     CHECK (p != NULL) ;
     CHECK (ok) ;
-    p = GB_realloc_memory (4, GB_NMAX + 1, p, &nbytes, &ok, NULL) ;
+    p = GB_realloc_memory (4, GB_NMAX + 1, p, &nbytes, &ok) ;
     CHECK (!ok) ;
     GB_free_memory ((void **) &p, nbytes) ;
 

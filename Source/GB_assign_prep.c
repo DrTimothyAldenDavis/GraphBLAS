@@ -498,7 +498,7 @@ GrB_Info GB_assign_prep
                         GB_MATRIX_WAIT_IF_JUMBLED (C) ;
                         GB_ENSURE_SPARSE (C) ;
                         GBURBLE ("C(i,:)=zombie ") ;
-                        GB_assign_zombie2 (C, I [0], Werk) ;
+                        GB_assign_zombie2 (C, I [0]) ;
                     }
                 }
                 break ;
@@ -532,7 +532,7 @@ GrB_Info GB_assign_prep
                         GB_ENSURE_SPARSE (C) ;
                         GBURBLE ("C(:,j)=zombie ") ;
                         GB_OK (GB_hyper_hash_build (C, Werk)) ;
-                        GB_assign_zombie1 (C, J [0], Werk) ;
+                        GB_assign_zombie1 (C, J [0]) ;
                     }
                 }
                 break ;
@@ -805,7 +805,7 @@ GrB_Info GB_assign_prep
         { 
             // I2 = sort I and remove duplicates
             ASSERT (Ikind == GB_LIST) ;
-            GB_OK (GB_ijsort (I, &ni, &I2, &I2_size, &I2k, &I2k_size, Werk));
+            GB_OK (GB_ijsort (I, &ni, &I2, &I2_size, &I2k, &I2k_size));
             // Recheck the length and properties of the new I2.  This may
             // convert I2 to GB_ALL or GB_RANGE, after I2 has been sorted.
             GB_ijlength (I2, ni, C->vlen, &nI, &Ikind, Icolon) ;
@@ -819,7 +819,7 @@ GrB_Info GB_assign_prep
         { 
             // J2 = sort J and remove duplicates
             ASSERT (Jkind == GB_LIST) ;
-            GB_OK (GB_ijsort (J, &nj, &J2, &J2_size, &J2k, &J2k_size, Werk));
+            GB_OK (GB_ijsort (J, &nj, &J2, &J2_size, &J2k, &J2k_size));
             // Recheck the length and properties of the new J2.  This may
             // convert J2 to GB_ALL or GB_RANGE, after J2 has been sorted.
             GB_ijlength (J2, nj, C->vdim, &nJ, &Jkind, Jcolon) ;
@@ -990,7 +990,7 @@ GrB_Info GB_assign_prep
             int sparsity = (C->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
             GB_OK (GB_new (&C2, // sparse or hyper, existing header
                 ctype, C->vlen, C->vdim, GB_Ap_calloc, C_is_csc,
-                sparsity, C->hyper_switch, 1, Werk)) ;
+                sparsity, C->hyper_switch, 1)) ;
             GBURBLE ("(C alias cleared; C_replace early) ") ;
             (*C_replace) = false ;
         }
@@ -1005,7 +1005,7 @@ GrB_Info GB_assign_prep
             ASSERT (!GB_PENDING (C)) ;
             // C2 = duplicate of C, which must be freed when done
             // set C2->iso = C->iso OK
-            GB_OK (GB_dup_worker (&C2, C->iso, C, true, NULL, Werk)) ;
+            GB_OK (GB_dup_worker (&C2, C->iso, C, true, NULL)) ;
         }
         // C2 must be transplanted back into C when done
         C = C2 ;
@@ -1228,14 +1228,14 @@ GrB_Info GB_assign_prep
         // C is iso on input, but non-iso on output; expand the iso value
         // into all of C->x
         // set C->iso = false    OK
-        GB_OK (GB_convert_any_to_non_iso (C, true, Werk)) ;
+        GB_OK (GB_convert_any_to_non_iso (C, true)) ;
     }
     else if (!C->iso && C_iso_out)
     { 
         // C is non-iso on input, but iso on output
         // copy the cout scalar into C->x
         // set C->iso = true    OK
-        GB_OK (GB_convert_any_to_iso (C, cout, Werk)) ;
+        GB_OK (GB_convert_any_to_iso (C, cout)) ;
     }
     else if (C->iso && C_iso_out)
     { 

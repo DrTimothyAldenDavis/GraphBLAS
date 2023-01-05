@@ -160,7 +160,8 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     // determine the # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // copy the user input arrays
@@ -268,7 +269,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
                 // allocate the header for A
                 GB_OK (GB_new (A, // new header
                     type, vlen, vdim, GB_Ap_null, is_csc, GxB_AUTO_SPARSITY,
-                    GB_Global_hyper_switch_get ( ), 0, Werk)) ;
+                    GB_Global_hyper_switch_get ( ), 0)) ;
 
                 // build A from the input triplets
                 GB_OK (GB_builder (
@@ -307,12 +308,12 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     // determine if A is iso
     //--------------------------------------------------------------------------
 
-    if (GB_iso_check (*A, Werk))
+    if (GB_iso_check (*A))
     { 
         // All entries in A are the same; convert A to iso
         GBURBLE ("(post iso) ") ;
         (*A)->iso = true ;
-        GB_OK (GB_convert_any_to_iso (*A, NULL, Werk)) ;
+        GB_OK (GB_convert_any_to_iso (*A, NULL)) ;
     }
 
     //--------------------------------------------------------------------------

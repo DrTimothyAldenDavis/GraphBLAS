@@ -94,7 +94,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     GrB_Info info ;
     info = GB_new (&C, // any sparsity, existing header
         ztype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        GB_sparsity (A), A->hyper_switch, 0, Werk) ;
+        GB_sparsity (A), A->hyper_switch, 0) ;
     ASSERT (info == GrB_SUCCESS) ;
 
     //--------------------------------------------------------------------------

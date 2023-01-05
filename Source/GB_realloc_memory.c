@@ -23,7 +23,7 @@
 // Usage:
 
 //      p = GB_realloc_memory (nitems_new, size_of_item, p,
-//              &size_allocated, &ok, Werk)
+//              &size_allocated, &ok)
 //      if (ok)
 //      {
 //          p points to a block of at least nitems_new*size_of_item bytes and
@@ -49,8 +49,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     void *p,                // old object to reallocate
     size_t *size_allocated, // # of bytes actually allocated
     // output
-    bool *ok,               // true if successful, false otherwise
-    GB_Werk Werk
+    bool *ok                // true if successful, false otherwise
 )
 {
 
@@ -125,7 +124,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         if (pnew != NULL)
         { 
             // copy from the old to new with a parallel memcpy
-            GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+            int nthreads_max = GB_Context_nthreads_max ( ) ;
             GB_memcpy (pnew, p, GB_IMIN (oldsize, newsize), nthreads_max) ;
             // free the old block
             GB_free_memory (&p, oldsize_allocated) ;

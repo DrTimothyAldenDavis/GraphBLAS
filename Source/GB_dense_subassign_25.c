@@ -90,7 +90,8 @@ GrB_Info GB_dense_subassign_25
     // Parallel: slice M into equal-sized chunks
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task
@@ -111,7 +112,7 @@ GrB_Info GB_dense_subassign_25
     bool C_is_csc = C->is_csc ;
     GB_phybix_free (C) ;
     // set C->iso = C_iso   OK
-    GB_OK (GB_dup_worker (&C, C_iso, M, false, C->type, Werk)) ;
+    GB_OK (GB_dup_worker (&C, C_iso, M, false, C->type)) ;
     C->is_csc = C_is_csc ;
 
     //--------------------------------------------------------------------------

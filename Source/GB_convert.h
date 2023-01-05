@@ -65,8 +65,7 @@ static inline int GB_sparsity (GrB_Matrix A)
 GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
 (
     GrB_Matrix A,           // matrix to convert from hypersparse to sparse
-    bool do_burble,         // if true, then burble is allowed
-    GB_Werk Werk
+    bool do_burble          // if true, then burble is allowed
 ) ;
 
 GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
@@ -107,14 +106,12 @@ bool GB_convert_sparse_to_bitmap_test    // test for hyper/sparse to bitmap
 
 GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
 (
-    GrB_Matrix A,               // matrix to convert from full to sparse
-    GB_Werk Werk
+    GrB_Matrix A                // matrix to convert from full to sparse
 ) ;
 
 GrB_Info GB_convert_full_to_bitmap      // convert matrix from full to bitmap
 (
-    GrB_Matrix A,               // matrix to convert from full to bitmap
-    GB_Werk Werk
+    GrB_Matrix A                // matrix to convert from full to bitmap
 ) ;
 
 GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
@@ -177,12 +174,12 @@ GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
     if (GB_IS_BITMAP (C))                                   \
     {                                                       \
         /* convert C from bitmap to sparse */               \
-        GB_OK (GB_convert_bitmap_to_sparse (C, Werk)) ;  \
+        GB_OK (GB_convert_bitmap_to_sparse (C, Werk)) ;     \
     }                                                       \
     else if (GB_IS_FULL (C))                                \
     {                                                       \
         /* convert C from full to sparse */                 \
-        GB_OK (GB_convert_full_to_sparse (C, Werk)) ;    \
+        GB_OK (GB_convert_full_to_sparse (C)) ;             \
     }                                                       \
 }
 

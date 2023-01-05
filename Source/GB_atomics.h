@@ -16,7 +16,6 @@
 
 #ifndef GB_ATOMICS_H
 #define GB_ATOMICS_H
-#include "GB.h"
 
 //------------------------------------------------------------------------------
 // atomic updates

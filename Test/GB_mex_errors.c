@@ -1799,8 +1799,8 @@ void mexFunction
     ERRD (dnull, GxB_Desc_set_INT32 (dnull, 0, 0)) ;
     ERR (GxB_Desc_get_INT32 (dnull, 0, NULL)) ;
 
-    ERRD (dnull, GxB_Desc_set_FP64 (dnull, 0, 0)) ;
-    ERR (GxB_Desc_get_FP64 (dnull, 0, NULL)) ;
+//  ERRD (dnull, GxB_Desc_set_FP64 (dnull, 0, 0)) ;
+//  ERR (GxB_Desc_get_FP64 (dnull, 0, NULL)) ;
 
     ERRD (dnull, GrB_Descriptor_set (dnull, 0, 0)) ;
     ERR (GxB_Descriptor_get (NULL, dnull, 0)) ;
@@ -1815,8 +1815,8 @@ void mexFunction
     ERR (GxB_Desc_get_INT32 (dcrud, 0, &dval2)) ;
 
     double dval3 ;
-    ERRD (dcrud, GxB_Desc_set_FP64 (dcrud, 0, 0)) ;
-    ERR (GxB_Desc_get_FP64 (dcrud, 0, &dval3)) ;
+//  ERRD (dcrud, GxB_Desc_set_FP64 (dcrud, 0, 0)) ;
+//  ERR (GxB_Desc_get_FP64 (dcrud, 0, &dval3)) ;
 
     ERRD (dcrud, GrB_Descriptor_set (dcrud, 0, 0)) ;
     ERR (GxB_Descriptor_get (&dval, dcrud, 0)) ;
@@ -4512,7 +4512,7 @@ void mexFunction
     CHECK (GB_IS_HYPERSPARSE (A)) ;
     if (A->nvec_nonempty < 0)
     { 
-        A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
+        A->nvec_nonempty = GB_nvec_nonempty (A) ;
     }
 
     // now make invalid.  GB_Matrix_check requires it to be -1, or correct value
@@ -4822,7 +4822,7 @@ void mexFunction
         OK (GxB_Matrix_fprint (Eleven, "Eleven", pr, ff)) ;
     }
 
-    OK (GB_convert_hyper_to_sparse (Eleven, true, Werk)) ;
+    OK (GB_convert_hyper_to_sparse (Eleven, true)) ;
     int64_t nothing = 42 ;
     printf ("\nEleven invalid hypersparse:\n") ;
     GB_free_memory ((void **) &(Eleven->h), Eleven->h_size) ;
@@ -4949,8 +4949,8 @@ void mexFunction
     dcrud->out = 999 ;
     x_bool = false ;
     Werk->where = "GB_Descriptor_get" ;
-    ERR (GB_Descriptor_get (dcrud, &x_bool, NULL, NULL, NULL, NULL, NULL, NULL,
-        Werk)) ; 
+    ERR (GB_Descriptor_get (dcrud, &x_bool, NULL, NULL, NULL, NULL, NULL,
+        NULL)) ; 
     CHECK (x_bool == false) ;
     dcrud->out = GxB_DEFAULT ;
 
@@ -4965,12 +4965,12 @@ void mexFunction
     CHECK (nbytes == 0) ;
 
     pp = (GB_void *) &x ;
-    pp = GB_calloc_memory (UINT64_MAX, 1, &nbytes, NULL) ;
+    pp = GB_calloc_memory (UINT64_MAX, 1, &nbytes) ;
     CHECK (pp == NULL) ;
     CHECK (nbytes == 0) ;
 
     ok = true ;
-    pp = GB_realloc_memory (UINT64_MAX, 1, NULL, &nbytes, &ok, NULL) ;
+    pp = GB_realloc_memory (UINT64_MAX, 1, NULL, &nbytes, &ok) ;
     CHECK (!ok) ;
     CHECK (nbytes == 0) ;
 
@@ -5052,11 +5052,11 @@ void mexFunction
 
     CHECK (A != NULL) ;
     OK (GxB_Matrix_fprint (A, "A for ix_realloc", G3, NULL)) ;
-    info = GB_ix_realloc (A, GB_NMAX+1, Werk) ;
+    info = GB_ix_realloc (A, GB_NMAX+1) ;
     CHECK (info == GrB_OUT_OF_MEMORY) ;
 
     OK (GB_Matrix_check (A, "A pattern 1", G3, NULL)) ;
-    OK (GB_ix_realloc (A, 20, Werk)) ;
+    OK (GB_ix_realloc (A, 20)) ;
     CHECK (info == GrB_SUCCESS) ;
     OK (GB_Matrix_check (A, "A pattern 2", G3, NULL)) ;
 
@@ -5435,21 +5435,21 @@ void mexFunction
     OK (GxB_Global_Option_get_(GxB_NTHREADS, &nthreads2)) ;
     CHECK (nthreads == nthreads2) ;
 
-    OK (GxB_Desc_set (desc, GxB_NTHREADS, 43)) ;
-    OK (GxB_Desc_get (desc, GxB_NTHREADS, &nthreads)) ;
-    CHECK (nthreads == 43) ;
+//  OK (GxB_Desc_set (desc, GxB_NTHREADS, 43)) ;
+//  OK (GxB_Desc_get (desc, GxB_NTHREADS, &nthreads)) ;
+//  CHECK (nthreads == 43) ;
 
-    OK (GxB_Desc_set (desc, GxB_DESCRIPTOR_NTHREADS, 44)) ;
-    OK (GxB_Desc_get (desc, GxB_DESCRIPTOR_NTHREADS, &nthreads)) ;
-    CHECK (nthreads == 44) ;
+//  OK (GxB_Desc_set (desc, GxB_DESCRIPTOR_NTHREADS, 44)) ;
+//  OK (GxB_Desc_get (desc, GxB_DESCRIPTOR_NTHREADS, &nthreads)) ;
+//  CHECK (nthreads == 44) ;
 
-    OK (GxB_Desc_set_INT32 (desc, GxB_NTHREADS, 40)) ;
-    OK (GxB_Desc_get_INT32 (desc, GxB_NTHREADS, &nthreads)) ;
-    CHECK (nthreads == 40) ;
+//  OK (GxB_Desc_set_INT32 (desc, GxB_NTHREADS, 40)) ;
+//  OK (GxB_Desc_get_INT32 (desc, GxB_NTHREADS, &nthreads)) ;
+//  CHECK (nthreads == 40) ;
 
-    OK (GxB_Desc_set_INT32 (desc, GxB_DESCRIPTOR_NTHREADS, 41)) ;
-    OK (GxB_Desc_get_INT32 (desc, GxB_DESCRIPTOR_NTHREADS, &nthreads)) ;
-    CHECK (nthreads == 41) ;
+//  OK (GxB_Desc_set_INT32 (desc, GxB_DESCRIPTOR_NTHREADS, 41)) ;
+//  OK (GxB_Desc_get_INT32 (desc, GxB_DESCRIPTOR_NTHREADS, &nthreads)) ;
+//  CHECK (nthreads == 41) ;
 
     //--------------------------------------------------------------------------
     // import/export

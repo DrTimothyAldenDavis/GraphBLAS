@@ -186,7 +186,7 @@ void mexFunction
     struct GB_Matrix_opaque K_header ;
     GrB_Matrix K = GB_clear_static_header (&K_header) ;
 
-    OK (GB_shallow_copy (K, GxB_BY_COL, M, Werk)) ;
+    OK (GB_shallow_copy (K, GxB_BY_COL, M, NULL)) ;
     OK (GxB_Matrix_Option_get (K, GxB_SPARSITY_STATUS, &sparsity)) ;
     CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 10") ;
 

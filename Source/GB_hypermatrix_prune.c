@@ -42,7 +42,7 @@ GrB_Info GB_hypermatrix_prune
     if (A->nvec_nonempty < 0)
     { 
         // A->nvec_nonempty is needed to prune the hyperlist
-        A->nvec_nonempty = GB_nvec_nonempty (A, Werk) ;
+        A->nvec_nonempty = GB_nvec_nonempty (A) ;
     }
 
     //--------------------------------------------------------------------------

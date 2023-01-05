@@ -127,7 +127,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
 
     GB_OK (GB_new (&V, // existing header
         vtype, n, 1, GB_Ap_malloc, true, GxB_SPARSE,
-        GxB_NEVER_HYPER, 1, Werk)) ;
+        GxB_NEVER_HYPER, 1)) ;
 
     V->sparsity_control = sparsity_control ;
     V->bitmap_switch = bitmap_switch ;
@@ -179,7 +179,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        GB_cast_matrix (V, T, Werk) ;
+        GB_cast_matrix (V, T) ;
     }
 
     //--------------------------------------------------------------------------

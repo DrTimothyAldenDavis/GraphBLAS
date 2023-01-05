@@ -35,8 +35,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B, where A and B are dense
     const bool C_is_dense,          // true if C is dense
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const GrB_BinaryOp op,
-    GB_Werk Werk
+    const GrB_BinaryOp op
 ) ;
 
 //------------------------------------------------------------------------------

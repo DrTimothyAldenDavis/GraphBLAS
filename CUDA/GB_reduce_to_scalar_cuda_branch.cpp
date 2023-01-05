@@ -5,8 +5,7 @@
 bool GB_reduce_to_scalar_cuda_branch 
 (
     const GrB_Monoid reduce,        // monoid to do the reduction
-    const GrB_Matrix A,             // input matrix
-    GB_Werk Werk
+    const GrB_Matrix A              // input matrix
 )
 {
 

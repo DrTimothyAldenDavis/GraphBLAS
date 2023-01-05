@@ -211,7 +211,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (nvals, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
@@ -804,7 +805,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // either a static or dynamic header.
     info = GB_new (&T, // always hyper, existing header
         ttype, vlen, vdim, GB_Ap_malloc, is_csc,
-        GxB_HYPERSPARSE, GB_ALWAYS_HYPER, tnvec, Werk) ;
+        GxB_HYPERSPARSE, GB_ALWAYS_HYPER, tnvec) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -956,7 +957,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         { 
             // this cannot fail since the size is shrinking.
             bool ok ;
-            GB_REALLOC (I_work, tnz, int64_t, I_work_size_handle, &ok, Werk);
+            GB_REALLOC (I_work, tnz, int64_t, I_work_size_handle, &ok) ;
             ASSERT (ok) ;
         }
         // transplant I_work into T->i
@@ -1144,8 +1145,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         { 
             // shrink the size of T->x
             bool ok = true ;
-            GB_REALLOC (T->x, tx_size_required, GB_void, &(T->x_size), &ok,
-                Werk) ;
+            GB_REALLOC (T->x, tx_size_required, GB_void, &(T->x_size), &ok) ;
         }
 
     }

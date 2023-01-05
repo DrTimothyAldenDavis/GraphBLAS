@@ -35,12 +35,12 @@ GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
     if (sparsity_control & GxB_BITMAP)
     { 
         // C can become bitmap
-        return (GB_convert_full_to_bitmap (A, Werk)) ;
+        return (GB_convert_full_to_bitmap (A)) ;
     }
     else if (sparsity_control & GxB_SPARSE)
     { 
         // C can become sparse
-        return (GB_convert_full_to_sparse (A, Werk)) ;
+        return (GB_convert_full_to_sparse (A)) ;
     }
     else if (sparsity_control & GxB_HYPERSPARSE)
     { 
@@ -50,7 +50,7 @@ GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
     else
     { 
         // none of the above conditions hold so make A bitmap
-        return (GB_convert_full_to_bitmap (A, Werk)) ;
+        return (GB_convert_full_to_bitmap (A)) ;
     }
 }
 

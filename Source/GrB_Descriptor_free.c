@@ -20,7 +20,7 @@ GrB_Info GrB_Descriptor_free            // free a descriptor
 
     if (descriptor != NULL)
     {
-        // only free a dynamically-allocated operator
+        // only free a dynamically-allocated descriptor
         GrB_Descriptor desc = *descriptor ;
         if (desc != NULL)
         {

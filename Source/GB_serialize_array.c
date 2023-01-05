@@ -16,10 +16,10 @@
 #include "GB_lz4.h"
 #include "GB_zstd.h"
 
-#define GB_FREE_ALL                                                     \
-{                                                                       \
-    GB_FREE (&Sblocks, Sblocks_size) ;                                  \
-    GB_serialize_free_blocks (&Blocks, Blocks_size, nblocks, Werk) ; \
+#define GB_FREE_ALL                                             \
+{                                                               \
+    GB_FREE (&Sblocks, Sblocks_size) ;                          \
+    GB_serialize_free_blocks (&Blocks, Blocks_size, nblocks) ;  \
 }
 
 GrB_Info GB_serialize_array
@@ -120,7 +120,8 @@ GrB_Info GB_serialize_array
     // determine # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Werk) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (len, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
