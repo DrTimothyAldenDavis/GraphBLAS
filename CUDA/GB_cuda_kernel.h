@@ -107,6 +107,9 @@
 #include <stddef.h>
 #include <string.h>
 
+#undef  GB_GLOBAL
+#define GB_GLOBAL extern
+
 // GB_STR: convert the content of x into a string "x"
 #define GB_XSTR(x) GB_STR(x)
 #define GB_STR(x) #x

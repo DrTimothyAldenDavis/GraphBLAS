@@ -15,27 +15,7 @@ ANY monoid in mxm
 
 full test suite
 
-when to use the GPU?  which GPU?
-
-    #pragma omp for ...
-    for (k = 0 ; k < 4 ; k++)
-    {
-        GxB_set (do it on cuda device k)    // global
-        GxB_set (descriptor, do it on cuda device k)
-        GxB_set (matrix, do it on device k)
-        GrB_mxm ( on gpu k via descriptor)
-
-        GxB_set (C, do it with 4 threads)
-        GrB_build (C, ...)
-
-        // not possible
-        GxB_set (C, do it with 8 cpus)
-        GrB_dup (&C, A)
-
-        GxB_set (A, do it with GPU 3)
-        GrB_dup (&C, A)
-
-    }
+when to use the GPU?  which GPU?  See the new GxB_Context object
 
 rmm_init
 
@@ -45,8 +25,8 @@ future:
 cuda: needs source directory
     (1) environment var set.  If so, use it.
     (3) not found so no cuda jit
-    
-    all of GrB_mxm?
+
+all of GrB_mxm?
 
 (1) DOT
         dot2:       C<#> = A'*B     C is bitmap or full
