@@ -35,7 +35,7 @@ set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fPIC " )
 add_compile_definitions ( GBNCPUFEAT )
 
 # silence warning in local_cub:
-add_compile_definitions ( __CDPRT_SUPPRESS_SYNC_DEPRECATION_WARNING )
+# add_compile_definitions ( __CDPRT_SUPPRESS_SYNC_DEPRECATION_WARNING )
 
 message ( STATUS "C++ flags for CUDA: ${CMAKE_CXX_FLAGS}" )
 

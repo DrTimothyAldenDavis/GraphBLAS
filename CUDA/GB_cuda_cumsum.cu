@@ -19,7 +19,7 @@
 // On output, count [n] is the total sum.
 
 #include "GB_cuda.h"
-#include <local_cub/device/device_scan.cuh>
+// #include <local_cub/device/device_scan.cuh>
 
 GrB_Info GB_cuda_cumsum             // compute the cumulative sum of an array
 (

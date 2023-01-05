@@ -5,6 +5,7 @@ Version 7.5.0, (FIXME: DATE)
     * Demo/wildtype_demo: change to double so that CPU and GPU versions compute
         the same result.
     * GxB_STATIC_INLINE_VOID: for user-defined functions
+    * GxB_get: can return malloc/calloc/realloc/free 
 
 Version 7.4.1, Jan 1, 2023
 

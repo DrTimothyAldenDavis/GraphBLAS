@@ -55,9 +55,9 @@ const std::vector<std::string> compiler_flags{
             "-I../../Include",
             "-I../../Source",
             "-I../../Source/Template",
-            "-Ilocal_cub/block",
+//          "-Ilocal_cub/block",
             "-Itemplates",
-            "-I/usr/local/cuda/include"
+            "-I/usr/local/cuda/include" // FIXME: remove this?
 };
 
 
