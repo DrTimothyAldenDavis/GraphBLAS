@@ -38,8 +38,14 @@
 
 #elif defined ( HAVE_KEYWORD__DECLSPEC_THREAD )
 
-    // Windows: any compiler should support __declspec
+    // Windows: __declspec (thread)
     __declspec ( thread ) GxB_Context GB_CONTEXT_THREAD = NULL ;
+
+#elif defined ( HAVE_KEYWORD__THREAD_LOCAL )
+
+    // ANSI C11 threads
+    #include <threads.h>
+    _Thread_local GxB_Context GB_CONTEXT_THREAD = NULL ;
 
 #else
 
