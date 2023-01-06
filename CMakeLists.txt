@@ -38,8 +38,8 @@ message ( STATUS "GraphBLAS C API: v"
 
 # CUDA is under development for now, and not deployed in production:
 # option ( ENABLE_CUDA "Enable CUDA acceleration" off )
-# set ( ENABLE_CUDA false )
 # FIXME
+# set ( ENABLE_CUDA false )
   set ( ENABLE_CUDA true )
 
 # GraphBLAS takes a long time to build, so do not build the static library
@@ -420,6 +420,14 @@ else ( )
     "application (perhaps through a pthreads construct).  Compiling GraphBLAS "
     "without OpenMP is not recommended for installation in a package manager "
     "(Linux, conda-forge, spack, brew, vcpkg, etc). " )
+    # check if the compiler supports the __thread and/or __declspec(thread)
+    # keywords
+    include ( SuiteSparse__thread )
+    if ( NOT HAVE_KEYWORD__DECLSPEC_THREAD AND NOT HAVE_KEYWORD__THREAD )
+        message  ( WARNING "The C compiler supports neither the __thread "
+        "nor the __declspec(thread) keyword for thread-local-storage; "
+        "GxB_Context_engage will return GrB_NOT_IMPLEMENTED." )
+    endif ( )
 endif ( )
 
 if ( SUITESPARSE_CUDA )

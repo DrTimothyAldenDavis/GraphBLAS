@@ -19,22 +19,36 @@
 // only visible within this file.  It is not directly accessible by any user
 // application.  It is not even visible to other functions inside SuiteSparse:
 // GraphBLAS.  If the user thread has not engaged any Context, then
-// GB_CONTEXT_THREAD is NULL.
+// GB_CONTEXT_THREAD is NULL.  If the compiler does not support
+// thread-local-stoage, then GB_CONTEXT_THREAD is always NULL and cannot be
+// modified; in this case, GxB_Context_engage can return GrB_NOT_IMPLEMENTED.
 
 #include "GB.h"
 
 #if defined ( _OPENMP )
+
     // OpenMP on any platform: this is preferred if OpenMP is available
     GxB_Context GB_CONTEXT_THREAD = NULL ;
     #pragma omp threadprivate (GB_CONTEXT_THREAD)
-#elif (defined (_WIN64) || defined (_WIN32))
-    // Windows: any compiler should support __declspec
-    __declspec (thread) GxB_Context GB_CONTEXT_THREAD = NULL ;
-#else
-    // assume the compiler supports the __thread keyword
-    // FIXME: use cmake to see if the __thread keyword is not available,
-    // if not, use pthreads
+
+#elif defined ( HAVE_KEYWORD__THREAD )
+
+    // gcc and many other compilers support the __thread keyword
     __thread GxB_Context GB_CONTEXT_THREAD = NULL ;
+
+#elif defined ( HAVE_KEYWORD__DECLSPEC_THREAD )
+
+    // Windows: any compiler should support __declspec
+    __declspec ( thread ) GxB_Context GB_CONTEXT_THREAD = NULL ;
+
+#else
+
+    // GraphBLAS will not be thread-safe when using a GxB_Context other than
+    // GxB_CONTEXT_WORLD, so GxB_Context_engage returns GrB_NOT_IMPLEMENTED
+    // if passed a Context other than GxB_CONTEXT_WORLD or NULL.
+    #define NO_THREAD_LOCAL_STORAGE
+    #define GB_CONTEXT_THREAD NULL
+
 #endif
 
 //------------------------------------------------------------------------------
@@ -43,8 +57,18 @@
 
 GrB_Info GB_Context_engage (GxB_Context Context)
 { 
-    GB_CONTEXT_THREAD = (Context == GxB_CONTEXT_WORLD) ? NULL : Context ;
+    if (Context == GxB_CONTEXT_WORLD)
+    { 
+        // GxB_Context_engage (GxB_CONTEXT_WORLD) is the same as engaging
+        // NULL as the user thread context.
+        Context = NULL ;
+    }
+    #if defined ( NO_THREAD_LOCAL_STORAGE )
+    return ((Context == NULL) ? GrB_SUCCESS : GrB_NOT_IMPLEMENTED) ;
+    #else
+    GB_CONTEXT_THREAD = Context ;
     return (GrB_SUCCESS) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -53,22 +77,28 @@ GrB_Info GB_Context_engage (GxB_Context Context)
 
 GrB_Info GB_Context_disengage (GxB_Context Context)
 {
-    if (Context == NULL || Context == GB_CONTEXT_THREAD ||
-        Context == GxB_CONTEXT_WORLD)
-    { 
-        // If no Context provided on input: simply disengage whatever the
-        // current Context is for this user thread.  If a non-NULL context is
-        // provided, it must match the Context that is currently engaged to
-        // this user thread.
-        GB_CONTEXT_THREAD = NULL ;
+    #if defined ( NO_THREAD_LOCAL_STORAGE )
+        // nothing to do
         return (GrB_SUCCESS) ;
-    }
-    else
-    { 
-        // A non-NULL Context was provided on input, but it doesn't match the
-        // currently engaged Context.
-        return (GrB_INVALID_VALUE) ;
-    }
+    #else
+        if (Context == NULL || Context == GB_CONTEXT_THREAD ||
+            GB_CONTEXT_THREAD == NULL || Context == GxB_CONTEXT_WORLD)
+        { 
+            // If no Context provided on input: simply disengage whatever the
+            // current Context is for this user thread.  If a non-NULL context
+            // is provided and the current GB_CONTEXT_THREAD is not NULL, it
+            // must match the Context that is currently engaged to this user
+            // thread to be disengaged.
+            GB_CONTEXT_THREAD = NULL ;
+            return (GrB_SUCCESS) ;
+        }
+        else
+        { 
+            // A non-NULL Context was provided on input, but it doesn't match
+            // the currently engaged Context.  This is an error.
+            return (GrB_INVALID_VALUE) ;
+        }
+    #endif
 }
 
 //------------------------------------------------------------------------------
