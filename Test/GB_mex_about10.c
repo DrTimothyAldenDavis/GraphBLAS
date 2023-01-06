@@ -40,7 +40,6 @@ void mexFunction
     double chunk = 0 ;
     expected = GrB_INVALID_VALUE ;
     ERR (GxB_Desc_set_INT32 (GrB_DESC_ST0, GrB_OUTP, GrB_REPLACE)) ;
-    ERR (GxB_Desc_set_FP64 (GrB_DESC_ST0, GxB_DESCRIPTOR_CHUNK, 1e6)) ;
     ERR (GxB_Global_Option_set_FP64 (-1, 0)) ;
     ERR (GxB_Global_Option_set_FP64_ARRAY (-1, NULL)) ;
     ERR (GxB_Global_Option_set_INT64_ARRAY (-1, NULL)) ;
@@ -57,10 +56,6 @@ void mexFunction
     OK (GxB_Desc_set_INT32 (desc, GxB_IMPORT, GxB_SECURE_IMPORT)) ;
     OK (GxB_Desc_get_INT32 (desc, GxB_IMPORT, &value)) ;
     CHECK (value == GxB_SECURE_IMPORT) ;
-
-//  OK (GxB_Desc_set_FP64 (desc, GxB_DESCRIPTOR_CHUNK, 1e6)) ;
-//  OK (GxB_Desc_get_FP64 (desc, GxB_DESCRIPTOR_CHUNK, &chunk)) ;
-//  CHECK (chunk = 1e6) ;
 
     OK (GxB_Global_Option_set_FP64 (GxB_GLOBAL_CHUNK, 2e6)) ;
     OK (GxB_Global_Option_get_FP64 (GxB_GLOBAL_CHUNK, &chunk)) ;

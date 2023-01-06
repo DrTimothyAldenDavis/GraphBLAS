@@ -49,6 +49,11 @@ GrB_Info GxB_Global_Option_get_INT32    // gets the current global option
             (*value) = (int32_t) GB_Context_nthreads_max_get (NULL) ;
             break ;
 
+        case GxB_GLOBAL_GPU_ID :            // same as GxB_GPU_ID
+
+            (*value) = (int32_t) GB_Context_gpu_id_get (NULL) ; 
+            break ;
+
         case GxB_API_VERSION : 
 
             value [0] = GxB_SPEC_MAJOR ; 
@@ -79,11 +84,6 @@ GrB_Info GxB_Global_Option_get_INT32    // gets the current global option
 
             (*value) = (int32_t) (GB_Global_is_csc_get ( )) ?
                     GxB_BY_COL : GxB_BY_ROW ;
-            break ;
-
-        case GxB_GLOBAL_GPU_CONTROL :       // same as GxB_GPU_CONTROL
-
-            (*value) = (int32_t) GB_Global_gpu_control_get ( ) ;
             break ;
 
         case GxB_BURBLE : 
@@ -155,11 +155,6 @@ GrB_Info GxB_Global_Option_get_FP64     // gets the current global option
         case GxB_GLOBAL_CHUNK :         // same as GxB_CHUNK
 
             (*value) = GB_Context_chunk_get (NULL) ;
-            break ;
-
-        case GxB_GLOBAL_GPU_CHUNK :         // same as GxB_GPU_CHUNK
-
-            (*value) = GB_Global_gpu_chunk_get ( ) ;
             break ;
 
         default : 
@@ -452,10 +447,10 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         //----------------------------------------------------------------------
-        // default number of threads
+        // GxB_CONTEXT_WORLD
         //----------------------------------------------------------------------
 
-        case GxB_GLOBAL_NTHREADS :      // same as GxB_NTHREADS
+        case GxB_GLOBAL_NTHREADS :          // same as GxB_NTHREADS
 
             {
                 va_start (ap, field) ;
@@ -466,11 +461,18 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
-        //----------------------------------------------------------------------
-        // default chunk size
-        //----------------------------------------------------------------------
+        case GxB_GLOBAL_GPU_ID :            // same as GxB_GPU_ID
 
-        case GxB_GLOBAL_CHUNK :         // same as GxB_CHUNK
+            {
+                va_start (ap, field) ;
+                int *value = va_arg (ap, int *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (value) ;
+                (*value) = GB_Context_gpu_id_get (NULL) ; 
+            }
+            break ;
+
+        case GxB_GLOBAL_CHUNK :             // same as GxB_CHUNK
 
             {
                 va_start (ap, field) ;
@@ -732,32 +734,6 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (onebased) ;
                 (*onebased) = GB_Global_print_one_based_get ( ) ;
-            }
-            break ;
-
-        //----------------------------------------------------------------------
-        // CUDA (DRAFT: in progress, do not use)
-        //----------------------------------------------------------------------
-
-        case GxB_GLOBAL_GPU_CONTROL :       // same as GxB_GPU_CONTROL
-
-            {
-                va_start (ap, field) ;
-                GrB_Desc_Value *gpu_control = va_arg (ap, GrB_Desc_Value *) ;
-                va_end (ap) ;
-                GB_RETURN_IF_NULL (gpu_control) ;
-                (*gpu_control) = GB_Global_gpu_control_get ( ) ;
-            }
-            break ;
-
-        case GxB_GLOBAL_GPU_CHUNK :         // same as GxB_GPU_CHUNK
-
-            {
-                va_start (ap, field) ;
-                double *gpu_chunk = va_arg (ap, double *) ;
-                va_end (ap) ;
-                GB_RETURN_IF_NULL (gpu_chunk) ;
-                (*gpu_chunk) = GB_Global_gpu_chunk_get ( ) ;
             }
             break ;
 

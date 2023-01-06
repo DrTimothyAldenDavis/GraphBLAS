@@ -24,12 +24,17 @@
 #include "GB.h"
 
 #if defined ( _OPENMP )
+    // OpenMP on any platform: this is preferred if OpenMP is available
     GxB_Context GB_CONTEXT_THREAD = NULL ;
     #pragma omp threadprivate (GB_CONTEXT_THREAD)
+#elif (defined (_WIN64) || defined (_WIN32))
+    // Windows: any compiler should support __declspec
+    __declspec (thread) GxB_Context GB_CONTEXT_THREAD = NULL ;
 #else
-    // FIXME: use __declspec(thread) for Windows, __thread for gcc and clang.
-    // Otherwise, use Posix pthreads.
-    #error "FIXME"
+    // assume the compiler supports the __thread keyword
+    // FIXME: use cmake to see if the __thread keyword is not available,
+    // if not, use pthreads
+    __thread GxB_Context GB_CONTEXT_THREAD = NULL ;
 #endif
 
 //------------------------------------------------------------------------------
@@ -67,9 +72,10 @@ GrB_Info GB_Context_disengage (GxB_Context Context)
 }
 
 //------------------------------------------------------------------------------
-// GB_Context_nthreads_max_get: get max # of threads from a Context
+// Context->nthreads_max: # of OpenMP threads to use
 //------------------------------------------------------------------------------
 
+//  GB_Context_nthreads_max_get: get max # of threads from a Context
 int GB_Context_nthreads_max_get (GxB_Context Context)
 {
     int nthreads_max ;
@@ -85,19 +91,13 @@ int GB_Context_nthreads_max_get (GxB_Context Context)
     return (nthreads_max) ;
 }
 
-//------------------------------------------------------------------------------
-// GB_Context_nthreads_max: get max # of threads from the current Context
-//------------------------------------------------------------------------------
-
+//  GB_Context_nthreads_max: get max # of threads from the current Context
 int GB_Context_nthreads_max (void)
 { 
     return (GB_Context_nthreads_max_get (GB_CONTEXT_THREAD)) ;
 }
 
-//------------------------------------------------------------------------------
-// GB_Context_nthreads_max_set: set max # of threads in a Context
-//------------------------------------------------------------------------------
-
+//   GB_Context_nthreads_max_set: set max # of threads in a Context
 void GB_Context_nthreads_max_set
 (
     GxB_Context Context,
@@ -117,9 +117,10 @@ void GB_Context_nthreads_max_set
 }
 
 //------------------------------------------------------------------------------
-// GB_Context_chunk_get: get chunk from a Context
+// Context->chunk: controls # of threads used for small problems
 //------------------------------------------------------------------------------
 
+//     GB_Context_chunk_get: get chunk from a Context
 double GB_Context_chunk_get (GxB_Context Context)
 {
     double chunk ;
@@ -135,19 +136,13 @@ double GB_Context_chunk_get (GxB_Context Context)
     return (chunk) ;
 }
 
-//------------------------------------------------------------------------------
-// GB_Context_chunk: get chunk from the Context of this user thread
-//------------------------------------------------------------------------------
-
+//     GB_Context_chunk: get chunk from the Context of this user thread
 double GB_Context_chunk (void)
 { 
     return (GB_Context_chunk_get (GB_CONTEXT_THREAD)) ;
 }
 
-//------------------------------------------------------------------------------
-// GB_Context_chunk_set: set max # of threads in a Context
-//------------------------------------------------------------------------------
-
+//   GB_Context_chunk_set: set max # of threads in a Context
 void GB_Context_chunk_set
 (
     GxB_Context Context,
@@ -163,6 +158,51 @@ void GB_Context_chunk_set
     else
     { 
         Context->chunk = chunk ;
+    }
+}
+
+//------------------------------------------------------------------------------
+// Context->gpu_id: which GPU to use
+//------------------------------------------------------------------------------
+
+//  GB_Context_gpu_id_get: get max # of threads from a Context
+int GB_Context_gpu_id_get (GxB_Context Context)
+{
+    int gpu_id ;
+    if (Context == NULL || Context == GxB_CONTEXT_WORLD)
+    { 
+        GB_ATOMIC_READ
+        gpu_id = GxB_CONTEXT_WORLD->gpu_id ;
+    }
+    else
+    { 
+        gpu_id = Context->gpu_id ;
+    }
+    return (gpu_id) ;
+}
+
+//  GB_Context_gpu_id: get gpu_id from the current Context
+int GB_Context_gpu_id (void)
+{ 
+    return (GB_Context_gpu_id_get (GB_CONTEXT_THREAD)) ;
+}
+
+//   GB_Context_gpu_id_set: set gpu_id in a Context
+void GB_Context_gpu_id_set
+(
+    GxB_Context Context,
+    int gpu_id
+)
+{
+    // if gpu_id < 0 or >= # of GPUs in the system: do not use any GPU
+    if (Context == NULL || Context == GxB_CONTEXT_WORLD)
+    { 
+        GB_ATOMIC_WRITE
+        GxB_CONTEXT_WORLD->gpu_id = gpu_id ;
+    }
+    else
+    { 
+        Context->gpu_id = gpu_id ;
     }
 }
 

@@ -38,6 +38,7 @@ GrB_Info GxB_Context_free           // free a Context
             { 
                 Context->magic = GB_FREED ;  // to help detect dangling pointers
                 Context->header_size = 0 ;
+                printf ("free %p\n", Context) ;
                 GB_FREE (Context, header_size) ;
             }
         }

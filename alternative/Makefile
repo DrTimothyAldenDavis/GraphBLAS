@@ -18,8 +18,8 @@
 
 default: library
 
-VER1 = 7
-VER2 = 5
+VER1 = 8
+VER2 = 0
 VER3 = 0
 
 # pick your compiler:

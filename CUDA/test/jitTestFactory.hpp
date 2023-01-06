@@ -382,7 +382,8 @@ bool test_AxB_dot3_sparse_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_
             GRB_TRY (GrB_Matrix_new (&C_expected, type, N, N)) ;
 
             // ensure the GPU is not used
-            GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
+            GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_ID, -1)) ;
+            GB_Global_hack_set (2, 2) ; // hack(2) = 2: never use the GPU
 
             // Use GrB_DESC_S for structural because dot3 mask will never be complemented
             // The order of B and A is swapped to account for CSR vs CSC assumption
@@ -476,8 +477,8 @@ bool test_AxB_dot3_sparse_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_
             }
 
             // re-enable the GPU
-            GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
-         
+            GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_ID, 0)) ;
+            GB_Global_hack_set (2, 1) ; // hack(2) = 1: always use the GPU
 
     rmm_wrap_free(nanobuckets);
     rmm_wrap_free(blockbucket);
@@ -549,7 +550,8 @@ bool test_AxB_dot3_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_s
     GRB_TRY (GrB_Matrix_new (&C_expected, type, N, N)) ;
 
     // ensure the GPU is not used
-    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
+    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_ID, -1)) ;
+    GB_Global_hack_set (2, 2) ; // hack(2) = 2: never use the GPU
 
     // Use GrB_DESC_S for structural because dot3 mask will never be complemented
     // The order of B and A is swapped to account for CSR vs CSC assumption
@@ -643,7 +645,8 @@ bool test_AxB_dot3_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_s
     }
 
     // re-enable the GPU
-    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
+    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_ID, 0)) ;
+    GB_Global_hack_set (2, 1) ; // hack(2) = 1: always use the GPU
 
 
     GRB_TRY(GrB_Matrix_free(&C_expected));
@@ -713,7 +716,8 @@ bool test_AxB_dot3_sparse_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &pr
     GRB_TRY (GrB_Matrix_new (&C_expected, type, N, N)) ;
 
     // ensure the GPU is not used
-    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
+    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_ID, -1)) ;
+    GB_Global_hack_set (2, 2) ; // hack(2) = 2: never use the GPU
 
     // Use GrB_DESC_S for structural because dot3 mask will never be complemented
     // The order of B and A is swapped to account for CSR vs CSC assumption
@@ -807,7 +811,8 @@ bool test_AxB_dot3_sparse_dense_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &pr
     }
 
     // re-enable the GPU
-    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
+    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_ID, 0)) ;
+    GB_Global_hack_set (2, 1) ; // hack(2) = 1: always use the GPU
 
 
     GRB_TRY(GrB_Matrix_free(&C_expected));
@@ -845,12 +850,14 @@ bool test_reduce_factory(mxm_problem_spec<T_C, T_M, T_A, T_B> &problem_spec) {
     T_C actual;
     GB_cuda_reduce(myreducefactory, A, &actual, monoid );
 
-    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
+    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_ID, -1)) ;
+    GB_Global_hack_set (2, 2) ; // hack(2) = 2: never use the GPU
 
     T_C expected;
     GRB_TRY(cuda::jit::matrix_reduce(&expected, A, monoid));
 
-    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
+    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_ID, 0)) ;
+    GB_Global_hack_set (2, 1) ; // hack(2) = 1: always use the GPU
 
     double tol = 0;
     GrB_BinaryOp op = NULL;

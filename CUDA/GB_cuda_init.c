@@ -18,7 +18,6 @@ GrB_Info GB_cuda_init (void)
 {
 
     // get the GPU properties
-    GB_Global_gpu_control_set (GxB_DEFAULT) ;
     if (!GB_Global_gpu_count_set (true)) return (GrB_PANIC) ;
     int gpu_count = GB_Global_gpu_count_get ( ) ;
     for (int device = 0 ; device < 1 ; device++) // TODO for GPU: gpu_count
@@ -53,10 +52,9 @@ GrB_Info GB_cuda_init (void)
         }
     }
 
-    // FIXME: set CONTEXT_WORLD to GPU 0
-    // make GPU 0 the default device
-    GB_cuda_set_device (0) ;
-//  GB_Context_gpu_id_set (0) ;
+    GB_cuda_set_device (0) ;            // make GPU 0 the default device
+    GB_Context_gpu_id_set (NULL, 0) ;   // set GxB_CONTEXT_WORLD->gpu_id to 0
+    GB_Global_hack_set (2, 0) ;         // gpu_hack default
 
     // also check for jit cache, pre-load library of common kernels ...
     return (GrB_SUCCESS) ;

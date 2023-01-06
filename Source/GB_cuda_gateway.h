@@ -57,17 +57,22 @@ static inline int GB_ngpus_to_use
 )
 {
 
-    // get the current GxB_GPU_CONTROL setting
-    GrB_Desc_Value gpu_control = GB_Global_gpu_control_get ( ) ;
+    // gpu_hack: for testing only
+    //  2: never use GPU
+    //  1: always use GPU
+    //  0: default
+    int gpu_hack = GB_Global_hack_get (2) ;
 
+    // get # of GPUs avaiable
     int gpu_count = GB_Global_gpu_count_get ( ) ;
-    if (gpu_control == GxB_GPU_NEVER || gpu_count == 0)
+
+    if (gpu_hack == 2 || gpu_count == 0)
     {
         // never use the GPU(s)
         printf ("(GPU: disabled, gpu_count: %d) ", gpu_count) ;
         return (0) ;
     }
-    else if (gpu_control == GxB_GPU_ALWAYS)
+    else if (gpu_hack == 1)
     {
         // always use all available GPU(s)
         // fixme for CUDA: allow 1 to gpu_count to be requested
@@ -76,8 +81,8 @@ static inline int GB_ngpus_to_use
     }
     else
     {
-        // use no more than max_gpus_to_use
-        double gpu_chunk = GB_Global_gpu_chunk_get ( ) ;
+        // default: use no more than max_gpus_to_use
+        double gpu_chunk = 2e6 ;
         double max_gpus_to_use = floor (work / gpu_chunk) ;
         printf ("(work %g gpu_chunk: %g max gpus to use: %g) ",
             work, gpu_chunk, max_gpus_to_use) ;

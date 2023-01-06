@@ -117,25 +117,6 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_malloc_debug_count_set (0) ;
 
     //--------------------------------------------------------------------------
-    // initialize the GPUs, if present
-    //--------------------------------------------------------------------------
-
-    #if defined ( GBCUDA )
-    if (mode == GxB_BLOCKING_GPU || mode == GxB_NONBLOCKING_GPU)
-    {
-        // initialize the GPUs
-        info = GB_cuda_init ( ) ;
-    }
-    else
-    #endif
-    { 
-        // CUDA not available at compile-time, or not requested at run time
-        GB_Global_gpu_control_set (GxB_GPU_NEVER) ;
-        GB_Global_gpu_count_set (0) ;
-        GB_Global_gpu_chunk_set (GxB_DEFAULT) ;
-    }
-
-    //--------------------------------------------------------------------------
     // query hardware features for future use
     //--------------------------------------------------------------------------
 
@@ -152,7 +133,8 @@ GrB_Info GB_init            // start up GraphBLAS
     // any threading library; this has no effect on GraphBLAS.
 
     GB_Context_nthreads_max_set (NULL, GB_Global_omp_get_max_threads ( )) ;
-    GB_Context_chunk_set (NULL, GB_CHUNK_DEFAULT) ;
+    GB_Context_chunk_set        (NULL, GB_CHUNK_DEFAULT) ;
+    GB_Context_gpu_id_set       (NULL, -1) ;
 
     //--------------------------------------------------------------------------
     // initialize the blocking/nonblocking mode
@@ -160,6 +142,23 @@ GrB_Info GB_init            // start up GraphBLAS
 
     // set the mode: blocking or nonblocking
     GB_Global_mode_set (mode) ;
+
+    //--------------------------------------------------------------------------
+    // initialize the GPUs, if present
+    //--------------------------------------------------------------------------
+
+    #if defined ( GBCUDA )
+    if (mode == GxB_BLOCKING_GPU || mode == GxB_NONBLOCKING_GPU)
+    {
+        // initialize the GPUs
+        info = GB_cuda_init ( ) ;
+    }
+    else
+    #endif
+    { 
+        // CUDA not available at compile-time, or not requested at run time
+        GB_Global_gpu_count_set (0) ;
+    }
 
     //--------------------------------------------------------------------------
     // set the global default format

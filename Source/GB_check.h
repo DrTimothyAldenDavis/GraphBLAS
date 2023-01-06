@@ -106,6 +106,14 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     FILE *f                     // file for output
 ) ;
 
+GrB_Info GB_Context_check       // check a GraphBLAS Context
+(
+    const GxB_Context Context,  // GraphBLAS Context to print and check
+    const char *name,           // name of the Context, optional
+    int pr,                     // print level
+    FILE *f                     // file for output
+) ;
+
 GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 (
     const GrB_Matrix A,     // GraphBLAS matrix to print and check

@@ -60,7 +60,7 @@ int main (int argc, char **argv)
     #endif
     fprintf (stderr, "\n") ;
 
-    OK (GxB_print (A, GxB_SUMMARY)) ;
+    OK (GxB_Matrix_fprint (A, "A", GxB_SUMMARY, stdout)) ;
 
     FREE_ALL ;
 

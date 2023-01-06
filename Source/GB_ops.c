@@ -981,9 +981,12 @@ GrB_Semiring GRB (GB_EVAL5 (add, _, mult, _SEMIRING_, xtype)) =     \
 
 struct GB_Context_opaque GB_OPAQUE (CONTEXT_WORLD) =
 {
-    GB_MAGIC, 0,
-    (double) GB_CHUNK_DEFAULT,
-    1
+    GB_MAGIC,                       // magic: initialized
+    0,                              // header_size: statically allocated
+    // revised by GrB_init:
+    (double) GB_CHUNK_DEFAULT,      // chunk
+    1,                              // nthreads_max
+    -1,                             // gpu_id
 } ;
 
 GxB_Context GxB_CONTEXT_WORLD = & GB_OPAQUE (CONTEXT_WORLD) ;

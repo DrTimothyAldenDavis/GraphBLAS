@@ -52,9 +52,14 @@ GrB_Info GxB_Global_Option_set_INT32      // set a global default option
             GB_Global_is_csc_set (value != (int) GxB_BY_ROW) ; 
             break ;
 
-        case GxB_GLOBAL_NTHREADS :      // same as GxB_NTHREADS
+        case GxB_GLOBAL_NTHREADS :          // same as GxB_NTHREADS
 
             GB_Context_nthreads_max_set (NULL, value) ;
+            break ;
+
+        case GxB_GLOBAL_GPU_ID :            // same as GxB_GPU_ID
+
+            GB_Context_gpu_id_set (NULL, value) ;
             break ;
 
         case GxB_BURBLE : 
@@ -65,11 +70,6 @@ GrB_Info GxB_Global_Option_set_INT32      // set a global default option
         case GxB_PRINT_1BASED : 
 
             GB_Global_print_one_based_set ((bool) value) ;
-            break ;
-
-        case GxB_GLOBAL_GPU_CONTROL :       // same as GxB_GPU_CONTROL
-
-            GB_Global_gpu_control_set ((GrB_Desc_Value) value) ;
             break ;
 
         default : 
@@ -109,14 +109,9 @@ GrB_Info GxB_Global_Option_set_FP64      // set a global default option
             GB_Global_hyper_switch_set ((float) value) ;
             break ;
 
-        case GxB_GLOBAL_CHUNK :         // same as GxB_CHUNK
+        case GxB_GLOBAL_CHUNK :             // same as GxB_CHUNK
 
             GB_Context_chunk_set (NULL, value) ;
-            break ;
-
-        case GxB_GLOBAL_GPU_CHUNK :         // same as GxB_GPU_CHUNK
-
-            GB_Global_gpu_chunk_set (value) ;
             break ;
 
         default : 
@@ -331,26 +326,36 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             break ;
 
         //----------------------------------------------------------------------
-        // OpenMP control
+        // GxB_CONTEXT_WORLD
         //----------------------------------------------------------------------
 
-        case GxB_GLOBAL_NTHREADS :      // same as GxB_NTHREADS
+        case GxB_GLOBAL_NTHREADS :          // same as GxB_NTHREADS
 
             {
                 va_start (ap, field) ;
-                int nthreads_max_new = va_arg (ap, int) ;
+                int value = va_arg (ap, int) ;
                 va_end (ap) ;
-                GB_Context_nthreads_max_set (NULL, nthreads_max_new) ;
+                GB_Context_nthreads_max_set (NULL, value) ;
             }
             break ;
 
-        case GxB_GLOBAL_CHUNK :         // same as GxB_CHUNK
+        case GxB_GLOBAL_GPU_ID :            // same as GxB_GPU_ID
 
             {
                 va_start (ap, field) ;
-                double chunk = va_arg (ap, double) ;
+                int value = va_arg (ap, int) ;
                 va_end (ap) ;
-                GB_Context_chunk_set (NULL, chunk) ;
+                GB_Context_gpu_id_set (NULL, value) ;
+            }
+            break ;
+
+        case GxB_GLOBAL_CHUNK :             // same as GxB_CHUNK
+
+            {
+                va_start (ap, field) ;
+                double value = va_arg (ap, double) ;
+                va_end (ap) ;
+                GB_Context_chunk_set (NULL, value) ;
             }
             break ;
 
@@ -404,30 +409,6 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 int onebased = va_arg (ap, int) ;
                 va_end (ap) ;
                 GB_Global_print_one_based_set ((bool) onebased) ;
-            }
-            break ;
-
-        //----------------------------------------------------------------------
-        // CUDA (DRAFT: in progress, do not use)
-        //----------------------------------------------------------------------
-
-        case GxB_GLOBAL_GPU_CONTROL :       // same as GxB_GPU_CONTROL
-
-            {
-                va_start (ap, field) ;
-                GrB_Desc_Value gpu_control = (GrB_Desc_Value) va_arg (ap, int) ;
-                va_end (ap) ;
-                GB_Global_gpu_control_set (gpu_control) ;
-            }
-            break ;
-
-        case GxB_GLOBAL_GPU_CHUNK :         // same as GxB_GPU_CHUNK
-
-            {
-                va_start (ap, field) ;
-                double gpu_chunk = va_arg (ap, double) ;
-                va_end (ap) ;
-                GB_Global_gpu_chunk_set (gpu_chunk) ;
             }
             break ;
 

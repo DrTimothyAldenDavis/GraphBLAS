@@ -155,6 +155,8 @@ typedef void (*GxB_index_unary_function)
     const void *y       // input scalar y
 ) ;
 
+#define GxB_GLOBAL_GPU_ID 26
+
 typedef enum
 {
     // for all GrB_Descriptor fields:
@@ -170,10 +172,6 @@ typedef enum
 
     // for GrB_INP0 and GrB_INP1 only:
     GrB_TRAN = 3,       // use the transpose of the input
-
-    // for GxB_GPU_CONTROL only (DRAFT: in progress, do not use)
-    GxB_GPU_ALWAYS  = 2001,
-    GxB_GPU_NEVER   = 2002,
 
     // for GxB_AxB_METHOD only:
     GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method

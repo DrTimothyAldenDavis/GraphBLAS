@@ -18,7 +18,6 @@
 //  copyright statement above applies to all of SuiteSparse:GraphBLAS, not
 //  this file.
 
-#define GB_LIBRARY
 #include "simple_rand.h"
 
 // simple_rand is not thread-safe

@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 
     std::cout << "Done initializing graphblas and rmm" << std::endl;
 
-    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
+    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_ID, 0)) ;
 
     size_t buff_size = (1ULL<<13)+152;
     void *p = (void *)rmm_wrap_allocate( &buff_size );

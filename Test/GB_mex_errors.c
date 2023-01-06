@@ -5435,22 +5435,6 @@ void mexFunction
     OK (GxB_Global_Option_get_(GxB_NTHREADS, &nthreads2)) ;
     CHECK (nthreads == nthreads2) ;
 
-//  OK (GxB_Desc_set (desc, GxB_NTHREADS, 43)) ;
-//  OK (GxB_Desc_get (desc, GxB_NTHREADS, &nthreads)) ;
-//  CHECK (nthreads == 43) ;
-
-//  OK (GxB_Desc_set (desc, GxB_DESCRIPTOR_NTHREADS, 44)) ;
-//  OK (GxB_Desc_get (desc, GxB_DESCRIPTOR_NTHREADS, &nthreads)) ;
-//  CHECK (nthreads == 44) ;
-
-//  OK (GxB_Desc_set_INT32 (desc, GxB_NTHREADS, 40)) ;
-//  OK (GxB_Desc_get_INT32 (desc, GxB_NTHREADS, &nthreads)) ;
-//  CHECK (nthreads == 40) ;
-
-//  OK (GxB_Desc_set_INT32 (desc, GxB_DESCRIPTOR_NTHREADS, 41)) ;
-//  OK (GxB_Desc_get_INT32 (desc, GxB_DESCRIPTOR_NTHREADS, &nthreads)) ;
-//  CHECK (nthreads == 41) ;
-
     //--------------------------------------------------------------------------
     // import/export
     //--------------------------------------------------------------------------

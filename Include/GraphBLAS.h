@@ -2,7 +2,7 @@
 // GraphBLAS.h: definitions for the GraphBLAS package
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -241,8 +241,8 @@
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
 #define GxB_IMPLEMENTATION_DATE "Jan XX, 2023"
-#define GxB_IMPLEMENTATION_MAJOR 7
-#define GxB_IMPLEMENTATION_MINOR 5
+#define GxB_IMPLEMENTATION_MAJOR 8
+#define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
 #define GxB_SPEC_DATE "Nov 15, 2021"
 #define GxB_SPEC_MAJOR 2
@@ -260,12 +260,12 @@
 
 // The 'about' string the describes this particular implementation of GraphBLAS:
 #define GxB_IMPLEMENTATION_ABOUT \
-"SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved." \
+"SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved." \
 "\nhttp://suitesparse.com  Dept of Computer Sci. & Eng, Texas A&M University.\n"
 
 // The GraphBLAS license for this particular implementation of GraphBLAS:
 #define GxB_IMPLEMENTATION_LICENSE \
-"SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved." \
+"SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved." \
 "\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may\n"\
 "not use SuiteSparse:GraphBLAS except in compliance with the License.  You\n"  \
 "may obtain a copy of the License at\n\n"                                      \
@@ -500,8 +500,7 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
 #define GxB_CHUNK 7
 
 // GPU control (DRAFT: in progress, do not use)
-#define GxB_GPU_CONTROL 21
-#define GxB_GPU_CHUNK   22
+#define GxB_GPU_ID 26
 
 typedef enum
 {
@@ -509,18 +508,6 @@ typedef enum
     GrB_MASK = 1,   // descriptor for the mask input of a method
     GrB_INP0 = 2,   // descriptor for the first input of a method
     GrB_INP1 = 3,   // descriptor for the second input of a method
-
-    GxB_DESCRIPTOR_NTHREADS = GxB_NTHREADS,     // max number of threads to use.
-                    // If <= GxB_DEFAULT, then GraphBLAS selects the number
-                    // of threads automatically.
-
-    GxB_DESCRIPTOR_CHUNK = GxB_CHUNK,   // chunk size for small problems.
-                    // If <= GxB_DEFAULT, then the default is used.
-
-    // GPU control (DRAFT: in progress, do not use)
-    GxB_DESCRIPTOR_GPU_CONTROL = GxB_GPU_CONTROL,
-    GxB_DESCRIPTOR_GPU_CHUNK   = GxB_GPU_CHUNK,
-
     GxB_AxB_METHOD = 1000,  // descriptor for selecting C=A*B algorithm
     GxB_SORT = 35,          // control sort in GrB_mxm
     GxB_COMPRESSION = 36,   // select compression for serialize
@@ -542,10 +529,6 @@ typedef enum
 
     // for GrB_INP0 and GrB_INP1 only:
     GrB_TRAN = 3,       // use the transpose of the input
-
-    // for GxB_GPU_CONTROL only (DRAFT: in progress, do not use)
-    GxB_GPU_ALWAYS  = 2001,
-    GxB_GPU_NEVER   = 2002,
 
     // for GxB_AxB_METHOD only:
     GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
@@ -4191,7 +4174,8 @@ typedef enum            // for global options or matrix options
     //------------------------------------------------------------
 
     GxB_GLOBAL_NTHREADS = GxB_NTHREADS,  // max number of threads to use
-    GxB_GLOBAL_CHUNK = GxB_CHUNK,       // chunk size for small problems.
+    GxB_GLOBAL_CHUNK = GxB_CHUNK,        // chunk size for small problems.
+    GxB_GLOBAL_GPU_ID = GxB_GPU_ID,      // which GPU to use (DRAFT)
 
     GxB_BURBLE = 99,    // diagnostic output (bool *)
     GxB_PRINTF = 101,   // printf function diagnostic output
@@ -4211,13 +4195,6 @@ typedef enum            // for global options or matrix options
     //------------------------------------------------------------
 
     GxB_SPARSITY_CONTROL = 32,      // sparsity control: 0 to 15; see below
-
-    //------------------------------------------------------------
-    // GPU and options (DRAFT: do not use)
-    //------------------------------------------------------------
-
-    GxB_GLOBAL_GPU_CONTROL = GxB_GPU_CONTROL,
-    GxB_GLOBAL_GPU_CHUNK   = GxB_GPU_CHUNK,
 
     //------------------------------------------------------------
     // memory functions (GxB_Global_Option_get only):
@@ -4510,8 +4487,7 @@ typedef enum
                     // If < 1, then the default is used.
 
     // GPU control (DRAFT: in progress, do not use)
-    GxB_CONTEXT_GPU_CONTROL = GxB_GPU_CONTROL,
-    GxB_CONTEXT_GPU_CHUNK   = GxB_GPU_CHUNK,
+    GxB_CONTEXT_GPU_ID      = GxB_GPU_ID,
 }
 GxB_Context_Field ;
 
@@ -9455,6 +9431,14 @@ GrB_Info GxB_Scalar_fprint          // print and check a GrB_Scalar
     FILE *f                         // file for output
 ) ;
 
+GrB_Info GxB_Context_fprint         // print and check a GxB_Context
+(
+    GxB_Context Context,            // object to print and check
+    const char *name,               // name of the object
+    GxB_Print_Level pr,             // print level
+    FILE *f                         // file for output
+) ;
+
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_fprint(object,pr,f)                                 \
     _Generic                                                    \
@@ -9470,7 +9454,8 @@ GrB_Info GxB_Scalar_fprint          // print and check a GrB_Scalar
                   GrB_Scalar       : GxB_Scalar_fprint       ,  \
                   GrB_Vector       : GxB_Vector_fprint       ,  \
                   GrB_Matrix       : GxB_Matrix_fprint       ,  \
-                  GrB_Descriptor   : GxB_Descriptor_fprint      \
+                  GrB_Descriptor   : GxB_Descriptor_fprint   ,  \
+                  GxB_Context      : GxB_Context_fprint         \
     )                                                           \
     (object, GB_STR(object), pr, f)
 

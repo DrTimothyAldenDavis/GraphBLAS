@@ -21,4 +21,8 @@ double GB_Context_chunk (void) ;
 double GB_Context_chunk_get (GxB_Context Context) ;
 void   GB_Context_chunk_set (GxB_Context Context, double chunk) ;
 
+int    GB_Context_gpu_id (void) ;
+int    GB_Context_gpu_id_get (GxB_Context Context) ;
+void   GB_Context_gpu_id_set (GxB_Context Context, int gpu_id) ;
+
 #endif

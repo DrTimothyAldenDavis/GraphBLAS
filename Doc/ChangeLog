@@ -1,4 +1,4 @@
-Version 7.5.0, (FIXME: DATE)
+Version 8.0.0, (FIXME: DATE)
 
     * math kernels: revised for CUDA JIT.  More accurate complex
         floating-point for Mac OS on Apple Silicon.
@@ -6,6 +6,13 @@ Version 7.5.0, (FIXME: DATE)
         the same result.
     * GxB_STATIC_INLINE_VOID: for user-defined functions
     * GxB_get: can return malloc/calloc/realloc/free 
+    * GrB_Descriptor: removed ability to control # of OpenMP threads from the
+        descriptor (a rarely used feature).  Replaced with the GxB_Context
+        object.  This change requires a major SO version increase, since
+        it removes a user-visible feature from SuiteSparse:GraphBLAS (the
+        enum values for the descriptor settings).
+    * GxB_Context: an object for controlling computational resources:
+        # of OpenMP threads, the chunk factor, and (draft) GPU id.
 
 Version 7.4.1, Jan 1, 2023
 

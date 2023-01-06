@@ -125,12 +125,10 @@ typedef struct
     bool cpu_features_avx512f ;     // x86_64 with AVX512f
 
     //--------------------------------------------------------------------------
-    // CUDA (DRAFT: in progress): FIXME: move to GxB_Context
+    // CUDA (DRAFT: in progress):
     //--------------------------------------------------------------------------
 
     int gpu_count ;                 // # of GPUs in the system
-    GrB_Desc_Value gpu_control ;    // always, never, or default
-    double gpu_chunk ;              // min problem size for using a GPU
     // properties of each GPU:
     GB_cuda_device gpu_properties [GB_CUDA_MAX_GPUS] ;
 
@@ -186,7 +184,7 @@ static GB_Global_struct GB_Global =
     .malloc_debug_count = 0,     // counter for testing memory handling
 
     // for testing and development only
-    .hack = {0, 0},
+    .hack = {0, 0, 0},
 
     // diagnostics
     .burble = false,
@@ -207,8 +205,6 @@ static GB_Global_struct GB_Global =
 
     // CUDA environment (DRAFT: in progress)
     .gpu_count = 0,                     // # of GPUs in the system
-    .gpu_control = GxB_DEFAULT,         // always, never, or default
-    .gpu_chunk = GB_GPU_CHUNK_DEFAULT,  // min problem size for using a GPU
 
 } ;
 
@@ -877,50 +873,8 @@ bool GB_Global_print_mem_shallow_get (void)
 }
 
 //------------------------------------------------------------------------------
-// CUDA (DRAFT: in progress)   FIXME: move these settings to the GxB_Context
+// CUDA (DRAFT: in progress)
 //------------------------------------------------------------------------------
-
-void GB_Global_gpu_control_set (GrB_Desc_Value gpu_control)
-{ 
-    // set the GPU control to always, never, or default
-    if (GB_Global.gpu_count > 0)
-    {
-        // one or more GPUs are available: set gpu_control to
-        // always, never, or default.
-        if (gpu_control == GxB_GPU_ALWAYS || gpu_control == GxB_GPU_NEVER)
-        {
-            GB_Global.gpu_control = gpu_control ;
-        }
-        else
-        {
-            GB_Global.gpu_control = GxB_DEFAULT ;
-        }
-    }
-    else
-    {
-        // no GPUs available: never use a GPU
-        GB_Global.gpu_control = GxB_GPU_NEVER ;
-    }
-}
-
-GrB_Desc_Value GB_Global_gpu_control_get (void)
-{ 
-    // get the GPU control parameter
-    return (GB_Global.gpu_control) ;
-}
-
-void GB_Global_gpu_chunk_set (double gpu_chunk)
-{ 
-    // set the GPU chunk factor
-    if (gpu_chunk < 1) gpu_chunk = GB_GPU_CHUNK_DEFAULT ;
-    GB_Global.gpu_chunk = gpu_chunk ;
-}
-
-double GB_Global_gpu_chunk_get (void)
-{ 
-    // get the GPU chunk factor
-    return (GB_Global.gpu_chunk) ;
-}
 
 bool GB_Global_gpu_count_set (bool enable_cuda)
 { 

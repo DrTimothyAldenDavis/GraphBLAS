@@ -87,11 +87,6 @@ bool     GB_Global_print_one_based_get (void) ;
 void     GB_Global_print_mem_shallow_set (bool mem_shallow) ;
 bool     GB_Global_print_mem_shallow_get (void) ;
 
-// FIXME: move these settings to the GxB_Context:
-void     GB_Global_gpu_control_set (GrB_Desc_Value value) ;
-GrB_Desc_Value GB_Global_gpu_control_get (void);
-void     GB_Global_gpu_chunk_set (double gpu_chunk) ;
-double   GB_Global_gpu_chunk_get (void) ;
 bool     GB_Global_gpu_count_set (bool enable_cuda) ;
 int      GB_Global_gpu_count_get (void) ;
 size_t   GB_Global_gpu_memorysize_get (int device) ;

@@ -506,58 +506,33 @@ void mexFunction
     int gpu_count = GB_Global_gpu_count_get ( ) ;
     printf ("gpu count: %d\n", gpu_count) ;
 
-    GrB_Desc_Value gpu_control = -99 ;
-    OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_CONTROL, &gpu_control)) ;
-    printf ("gpu control: %d\n", gpu_control) ;
+    int gpu_id = -99 ;
+    OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_ID, &gpu_id)) ;
+    printf ("gpu control: %d\n", gpu_id) ;
 
-    int32_t gpu_control2 = -88 ;
-    OK (GxB_Global_Option_get_INT32 (GxB_GLOBAL_GPU_CONTROL, &gpu_control2)) ;
-    CHECK ((int) gpu_control == gpu_control2) ;
+    int32_t gpu_id2 = -88 ;
+    OK (GxB_Global_Option_get_INT32 (GxB_GLOBAL_GPU_ID, &gpu_id2)) ;
+    CHECK ((int) gpu_id == gpu_id2) ;
 
-    GB_Global_gpu_control_set (12) ;
-    OK (GxB_Global_Option_set_(GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
-    OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_CONTROL, &gpu_control)) ;
-    CHECK (gpu_control == GxB_GPU_NEVER) ;
+    GB_Global_gpu_id_set (12) ;
+    OK (GxB_Global_Option_set_(GxB_GLOBAL_GPU_ID, -1)) ;
+    OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_ID, &gpu_id)) ;
+    CHECK (gpu_id == -1) ;
 
-    GB_Global_gpu_control_set (13) ;
-    OK (GxB_Global_Option_set_INT32 (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
-    OK (GxB_Global_Option_get_INT32 (GxB_GLOBAL_GPU_CONTROL, &gpu_control2)) ;
-    CHECK (gpu_control2 == (int32_t) GxB_GPU_NEVER) ;
+    GB_Global_gpu_id_set (13) ;
+    OK (GxB_Global_Option_set_INT32 (GxB_GLOBAL_GPU_ID, -1)) ;
+    OK (GxB_Global_Option_get_INT32 (GxB_GLOBAL_GPU_ID, &gpu_id2)) ;
+    CHECK (gpu_id2 == (int32_t) -1) ;
 
-    OK (GxB_Global_Option_get_INT32 (GxB_GLOBAL_GPU_CONTROL, &gpu_control2)) ;
-    CHECK (gpu_control2 == (int) GxB_GPU_NEVER) ;
+    OK (GxB_Global_Option_get_INT32 (GxB_GLOBAL_GPU_ID, &gpu_id2)) ;
+    CHECK (gpu_id2 == (int) -1) ;
 
-    OK (GxB_Global_Option_set_(GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
-    OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_CONTROL, &gpu_control)) ;
-    CHECK (gpu_control == (gpu_count > 0) ? GxB_GPU_ALWAYS : GxB_GPU_NEVER) ;
+    OK (GxB_Global_Option_set_(GxB_GLOBAL_GPU_ID, 1)) ;
+    OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_ID, &gpu_id)) ;
+    CHECK (gpu_id == 1) ;
 
-    OK (GxB_Global_Option_get_INT32 (GxB_GLOBAL_GPU_CONTROL, &gpu_control2)) ;
-    CHECK (gpu_control2 == (gpu_count > 0) ? GxB_GPU_ALWAYS : GxB_GPU_NEVER) ;
-
-    OK (GxB_Global_Option_set_(GxB_GLOBAL_GPU_CONTROL, GxB_DEFAULT)) ;
-    OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_CONTROL, &gpu_control)) ;
-    CHECK (gpu_control == (gpu_count > 0) ? GxB_DEFAULT : GxB_GPU_NEVER) ;
-
-    double gpu_chunk = -1 ;
-    OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_CHUNK, &gpu_chunk)) ;
-    printf ("gpu chunk: %g\n", gpu_chunk) ;
-
-    double gpu_chunk2 = -1 ;
-    OK (GxB_Global_Option_get_FP64 (GxB_GLOBAL_GPU_CHUNK, &gpu_chunk2)) ;
-    CHECK (gpu_chunk == gpu_chunk2) ;
-
-    double gpu_chunk_42 = 42e6 ;
-    OK (GxB_Global_Option_set_(GxB_GLOBAL_GPU_CHUNK, gpu_chunk_42)) ;
-    OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_CHUNK, &gpu_chunk)) ;
-    CHECK (gpu_chunk == 42e6) ;
-
-    OK (GxB_Global_Option_get_FP64 (GxB_GLOBAL_GPU_CHUNK, &gpu_chunk2)) ;
-    CHECK (gpu_chunk2 == 42e6) ;
-
-    double gpu_chunk_43 = 43e6 ;
-    OK (GxB_Global_Option_set_FP64 (GxB_GLOBAL_GPU_CHUNK, gpu_chunk_43)) ;
-    OK (GxB_Global_Option_get_FP64 (GxB_GLOBAL_GPU_CHUNK, &gpu_chunk)) ;
-    CHECK (gpu_chunk == 43e6) ;
+    OK (GxB_Global_Option_get_INT32 (GxB_GLOBAL_GPU_ID, &gpu_id2)) ;
+    CHECK (gpu_id2 == 1) ;
 
     //--------------------------------------------------------------------------
     // types
