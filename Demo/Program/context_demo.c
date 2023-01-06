@@ -77,7 +77,7 @@ int main (void)
     // create random matrices parallel
     //--------------------------------------------------------------------------
 
-    int nmats = MIN (4*nthreads, 256) ;
+    int nmats = MIN (2*nthreads, 256) ;
 
     for (int nmat = 1 ; nmat <= nmats ; nmat = 2*nmat)
     {
