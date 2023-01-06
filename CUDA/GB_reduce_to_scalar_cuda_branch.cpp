@@ -29,6 +29,8 @@ bool GB_reduce_to_scalar_cuda_branch
         && !A->iso
     )
     {
+        // FIXME: gpu_id = GB_Context_gpu_id_get ( ) ;
+        // cudaSetDevice (gpu_id) ;
         return true;
     }
     else

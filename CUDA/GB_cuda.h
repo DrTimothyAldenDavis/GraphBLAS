@@ -22,6 +22,7 @@ extern "C"
 // Finally, include the CUDA definitions
 #include "cuda_runtime.h"
 #include "cuda.h"
+// #include "cub.cuh"
 #include "jitify.hpp"
 #include "GB_cuda_mxm_factory.hpp"
 

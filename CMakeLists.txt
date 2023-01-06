@@ -38,8 +38,9 @@ message ( STATUS "GraphBLAS C API: v"
 
 # CUDA is under development for now, and not deployed in production:
 # option ( ENABLE_CUDA "Enable CUDA acceleration" off )
-  set ( ENABLE_CUDA false )
-# set ( ENABLE_CUDA true )
+# set ( ENABLE_CUDA false )
+# FIXME
+  set ( ENABLE_CUDA true )
 
 # GraphBLAS takes a long time to build, so do not build the static library
 # by default
@@ -83,8 +84,10 @@ if ( SUITESPARSE_CUDA )
     set ( GB_CUDA graphblascuda  ${CUDA_LIBRARIES} )
     set ( GB_RMM rmm_wrap ${CUDA_LIBRARIES} )
     add_subdirectory ( rmm_wrap )
-    include_directories ( "rmm_wrap" ${CUDA_INCLUDE_DIRS} )
-    link_directories ( "CUDA" "${CUDA_LIBRARIES}" "/usr/local/cuda/lib64/stubs" "rmm_wrap" "/usr/local/cuda/lib64" )
+    include_directories ( "rmm_wrap" ${CUDA_INCLUDE_DIRS}
+        "/usr/local/cuda/include/cub" )
+    link_directories ( "CUDA" "${CUDA_LIBRARIES}"
+        "/usr/local/cuda/lib64/stubs" "rmm_wrap" "/usr/local/cuda/lib64" )
 else ( )
     # without CUDA and RMM
     set ( CMAKE_RMM_FLAG " " )

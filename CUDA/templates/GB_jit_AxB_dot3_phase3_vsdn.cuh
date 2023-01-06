@@ -26,6 +26,7 @@
 #define tile_sz 32
 
 //#include "local_cub/block/block_reduce.cuh"
+#include <cub/block/block_reduce.cuh>
 
 
 using namespace cooperative_groups;
