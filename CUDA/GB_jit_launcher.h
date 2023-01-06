@@ -44,7 +44,7 @@
 namespace jit {
 
 const std::vector<std::string> compiler_flags{
-    "-std=c++11",
+    "-std=c++17",
             "--use_fast_math",
             "-remove-unused-globals",
             "-w",

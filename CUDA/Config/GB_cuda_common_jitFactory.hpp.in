@@ -42,7 +42,7 @@ extern "C"
 constexpr unsigned int SMEM = 0;
 
 static const std::vector<std::string> compiler_flags{
-   "-std=c++14",
+   "-std=c++17",
    //"-G",
    "-remove-unused-globals",
    "-w",
