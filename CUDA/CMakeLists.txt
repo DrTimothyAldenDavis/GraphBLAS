@@ -166,7 +166,7 @@ set ( CUDA_TEST_FORMATS sparse dense sparse_dense reduce )
 
 # FIXME
 set(CUDA_TEST_CPP_FILES "")
-#if ( FALSE )
+if ( FALSE )
     foreach(var ${CUDA_TEST_SUITES})
         foreach(semiring ${CUDA_TEST_SEMIRINGS})
             foreach(kernel ${CUDA_TEST_KERNELS})
@@ -190,7 +190,7 @@ set(CUDA_TEST_CPP_FILES "")
             endforeach()
         endforeach()
     endforeach()
-#endif ( )
+endif ( )
 
 include(FetchContent)
 FetchContent_Declare(
