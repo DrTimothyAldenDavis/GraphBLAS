@@ -61,7 +61,7 @@ int main (void)
     //--------------------------------------------------------------------------
 
     GrB_Index n = 100000 ;
-    GrB_Index nvals = 10000000 ;
+    GrB_Index nvals = 20000000 ;
     simple_rand_seed (1) ;
     GrB_Index *I = malloc (nvals * sizeof (GrB_Index)) ;
     GrB_Index *J = malloc (nvals * sizeof (GrB_Index)) ;
@@ -115,9 +115,6 @@ int main (void)
                         OK (GrB_Matrix_build (A, I, J, X, nvals,
                             GrB_PLUS_FP64)) ;
                         // OK (GxB_print (A, 2)) ;
-
-                        // A = A'
-                        OK (GrB_transpose (A, NULL, NULL, A, NULL)) ;
 
                         // free the matrix just built
                         OK (GrB_Matrix_free (&A)) ;
