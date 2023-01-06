@@ -29,10 +29,8 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_build_, T) /* build a matrix from tuples */\
         " (C, I, J, X, nvals, dup)") ;                                        \
     GB_BURBLE_START ("GrB_Matrix_build_" GB_STR(T)) ;                         \
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;  /* check now so C->type can be done */ \
-    int nth = GB_Context_nthreads_max ( ) ; \
-    printf ("nthreads %d\n", nth) ; \
     GrB_Info info = GB_build (C, I, J, X, nvals, dup,                         \
-        xtype, true, false, Werk) ;                                        \
+        xtype, true, false, Werk) ;                                           \
     GB_BURBLE_END ;                                                           \
     return (info) ;                                                           \
 }

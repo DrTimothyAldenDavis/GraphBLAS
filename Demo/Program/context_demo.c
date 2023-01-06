@@ -21,7 +21,6 @@
 #include <assert.h>
 #define OK(method)                              \
 {                                               \
-    printf ("at %d\n", __LINE__) ;              \
     if (method != GrB_SUCCESS)                  \
     {                                           \
         printf ("abort at %d\n", __LINE__) ;    \
@@ -35,12 +34,12 @@ int main (void)
 
     // start GraphBLAS
     OK (GrB_init (GrB_NONBLOCKING)) ;
-    OK (GxB_print (GxB_CONTEXT_WORLD, 3)) ;
 
     int nthreads_max = 0 ;
     OK (GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads_max)) ;
     nthreads_max = MIN (nthreads_max, 256) ;
     printf ("context demo: nthreads_max %d\n", nthreads_max) ;
+    OK (GxB_print (GxB_CONTEXT_WORLD, 3)) ;
 
     // use only a power of 2 number of threads
     int nthreads = 1 ;
@@ -50,7 +49,7 @@ int main (void)
         nthreads = 2 * nthreads ;
     }
 
-    printf ("nthreads to use: %d\n", nthreads) ;
+    printf ("\nnthreads to use: %d\n", nthreads) ;
     OK (GxB_Global_Option_set (GxB_GLOBAL_NTHREADS, nthreads)) ;
 
     #ifdef _OPENMP
@@ -62,7 +61,7 @@ int main (void)
     //--------------------------------------------------------------------------
 
     GrB_Index n = 100000 ;
-    GrB_Index nvals = 1000000 ;
+    GrB_Index nvals = 10000000 ;
     simple_rand_seed (1) ;
     GrB_Index *I = malloc (nvals * sizeof (GrB_Index)) ;
     GrB_Index *J = malloc (nvals * sizeof (GrB_Index)) ;
@@ -80,58 +79,67 @@ int main (void)
 
     int nmats = MIN (4*nthreads, 256) ;
 
-    for (int nmat = 1 ; nmat < nmats ; nmat = 2*nmat)
+    for (int nmat = 1 ; nmat <= nmats ; nmat = 2*nmat)
     {
+        printf ("\nnmat %d\n", nmat) ;
+        double t1 = 0 ;
+
         // create nmat matrices, each in parallel with varying # of threads
         for (int nthreads2 = 1 ; nthreads2 <= nthreads ; nthreads2 *= 2)
         {
+            int nouter = 1 ;            // # of user threads in outer loop
+            int ninner = nthreads2 ;    // # of threads each user thread can use
+
             printf ("\n") ;
-            int nouter = nthreads2 ; // # of user threads in outer loop
-            int ninner = 1 ;        // # of threads each user thread can use
 
-            while (nouter >= 1)
+            while (ninner >= 1)
             {
-
-                double t = TIMER ;
-
-//              #pragma omp parallel for num_threads (nouter) \
-//                  schedule (dynamic, 1)
-                for (int k = 0 ; k < nmat ; k++)
+                if (nouter <= nmat)
                 {
-                    // each user thread constructs its own context
-                    GxB_Context Context = NULL ;
-                    OK (GxB_Context_new (&Context)) ;
-                    printf ("Context %p\n", Context) ;
-                    OK (GxB_Context_set (Context, GxB_NTHREADS, ninner)) ;
-                    OK (GxB_Context_engage (Context)) ;
-                    if (k == 0) OK (GxB_print (Context, 3)) ;
 
-                    // kth user thread builds the kth matrix with ninner threads
-                    GrB_Matrix A = NULL ;
-                    OK (GrB_Matrix_new (&A, GrB_FP64, n, n)) ;
-                    OK (GrB_Matrix_build (A, I, J, X, nvals, GrB_PLUS_FP64)) ;
-                    OK (GxB_print (A, 2)) ;
+                    double t = TIMER ;
 
-                    // free the matrix just built
-                    OK (GrB_Matrix_free (&A)) ;
+                    #pragma omp parallel for num_threads (nouter) \
+                        schedule (dynamic, 1)
+                    for (int k = 0 ; k < nmat ; k++)
+                    {
+                        // each user thread constructs its own context
+                        GxB_Context Context = NULL ;
+                        OK (GxB_Context_new (&Context)) ;
+                        OK (GxB_Context_set (Context, GxB_NTHREADS, ninner)) ;
+                        OK (GxB_Context_engage (Context)) ;
 
-                    // each user thread frees its own context
-                    OK (GxB_Context_disengage (Context)) ;
-                    OK (GxB_Context_free (&Context)) ;
-                    printf ("here\n") ;
+                        // kth user thread builds kth matrix with ninner threads
+                        GrB_Matrix A = NULL ;
+                        OK (GrB_Matrix_new (&A, GrB_FP64, n, n)) ;
+                        OK (GrB_Matrix_build (A, I, J, X, nvals,
+                            GrB_PLUS_FP64)) ;
+                        // OK (GxB_print (A, 2)) ;
+
+                        // A = A'
+                        OK (GrB_transpose (A, NULL, NULL, A, NULL)) ;
+
+                        // free the matrix just built
+                        OK (GrB_Matrix_free (&A)) ;
+
+                        // each user thread frees its own context
+                        OK (GxB_Context_disengage (Context)) ;
+                        OK (GxB_Context_free (&Context)) ;
+                    }
+
+                    t = TIMER - t ;
+                    if (nouter == 1 && ninner == 1) t1 = t ;
+
+                    printf ("   threads (%4d,%4d): %4d "
+                        "time: %8.4f sec speedup: %8.3f\n",
+                        nouter, ninner, nouter * ninner, t, t1/t) ;
                 }
-
-                t = TIMER - t ;
-
-                printf ("nmat: %4d threads (%4d,%4d): %4d time: %8.4f sec\n",
-                    nmat, nouter, ninner, nouter * ninner, t) ;
-                nouter = nouter / 2 ;
-                ninner = ninner * 2 ;
+                nouter = nouter * 2 ;
+                ninner = ninner / 2 ;
             }
         }
     }
 
-    printf ("bye\n") ;
     free (I) ;
     free (J) ;
     free (X) ;

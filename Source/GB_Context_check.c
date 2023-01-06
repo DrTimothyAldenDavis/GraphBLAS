@@ -45,7 +45,7 @@ GrB_Info GB_Context_check       // check a GraphBLAS Context
     GBPR0 ("    Context.chunk:    %g\n", chunk) ;
 
     int gpu_id = GB_Context_gpu_id_get (Context) ;
-    GBPR0 ("    Context.gpu_id:   %d\n", gpu_id) ;
+    if (gpu_id >= 0) GBPR0 ("    Context.gpu_id:   %d\n", gpu_id) ;
 
     return (GrB_SUCCESS) ;
 }
