@@ -18,19 +18,18 @@
 #define TIMER 0
 #endif
 
-#include <assert.h>
-#define OK(method)                              \
-{                                               \
-    if (method != GrB_SUCCESS)                  \
-    {                                           \
-        printf ("abort at %d\n", __LINE__) ;    \
-        abort ( ) ;                             \
-    }                                           \
+#define OK(method)                                                      \
+{                                                                       \
+    GrB_Info info = (method) ;                                          \
+    if (info != GrB_SUCCESS)                                            \
+    {                                                                   \
+        printf ("abort at line: %d, info: %d\n", __LINE__, info) ;      \
+        abort ( ) ;                                                     \
+    }                                                                   \
 }
 
 int main (void)
 {
-    assert (0) ;
 
     // start GraphBLAS
     OK (GrB_init (GrB_NONBLOCKING)) ;

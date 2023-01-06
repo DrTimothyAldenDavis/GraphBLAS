@@ -27,7 +27,7 @@
 
 #if defined ( _OPENMP )
 
-    // OpenMP on any platform: this is preferred if OpenMP is available
+    // OpenMP threadprivate is preferred
     GxB_Context GB_CONTEXT_THREAD = NULL ;
     #pragma omp threadprivate (GB_CONTEXT_THREAD)
 
