@@ -110,7 +110,7 @@ template<> __device__ __inline__ void GB_atomic_write<double>(double* ptr, doubl
 template<> __device__ __inline__ void GB_atomic_add<int8_t>(int8_t* ptr, int val)
 template<> __device__ __inline__ void GB_atomic_add<uint8_t>(uint8_t* ptr, int val)
 template<> __device__ __inline__ void GB_atomic_add<int16_t>(int16_t* ptr, int val)
-template<> __device__ __inline__ void GB_atomic_add<int16_t>(int16_t* ptr, int val)
+template<> __device__ __inline__ void GB_atomic_add<uint16_t>(uint16_t* ptr, int val)
 #endif
 
 template<> __device__ __inline__ void GB_atomic_add<int32_t>(int32_t* ptr, int32_t val)
