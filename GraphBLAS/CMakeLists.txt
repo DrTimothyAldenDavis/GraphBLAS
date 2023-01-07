@@ -249,6 +249,9 @@ if ( USE_OPENMP )
     target_link_libraries ( graphblas_matlab PUBLIC ${OpenMP_C_LIBRARIES} )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} " )
     include_directories ( ${OpenMP_C_INCLUDE_DIRS} )
+else ( )
+    # check for __thread, __declspec(thread), and _Thread_local keywords
+    include ( SuiteSparse__thread )
 endif ( )
 
 #-------------------------------------------------------------------------------

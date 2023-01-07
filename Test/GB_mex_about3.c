@@ -474,7 +474,7 @@ void mexFunction
     OK (GxB_Matrix_fprint (C, "C stuff wait", GxB_COMPLETE, NULL)) ;
 
     // converting a non-iso matrix to non-iso does nothing
-    OK (GB_convert_any_to_non_iso (C, true, NULL)) ;
+    OK (GB_convert_any_to_non_iso (C, true)) ;
     OK (GxB_Matrix_fprint (C, "C stuff non iso", GxB_COMPLETE, NULL)) ;
     GrB_Matrix_free_(&C) ;
 

@@ -112,7 +112,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
     bool C_iso = C->iso ;
     if (C_iso)
     {
-        GB_convert_any_to_non_iso (C, true, NULL) ;
+        GB_convert_any_to_non_iso (C, true) ;
         ASSERT_MATRIX_OK (C, "TO mxArray, non-iso non-hyper CSC", GB0) ;
     }
 
