@@ -283,8 +283,8 @@ codegen_binop_template ('ldexp',        ...
 codegen_binop_template ('cmplx',        ...
     [ ],                                ... % bool
     [ ],                                ... % int, uint
-    'GB_cmplxf (xarg, yarg)',           ... % float  (z is GxB_FC32_t)
-    'GB_cmplx (xarg, yarg)',            ... % double (z is GxB_FC64_t)
+    'GB_CMPLX32 (xarg, yarg)',          ... % float  (z is GxB_FC32_t)
+    'GB_CMPLX64 (xarg, yarg)',          ... % double (z is GxB_FC64_t)
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
 

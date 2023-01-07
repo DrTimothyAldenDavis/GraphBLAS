@@ -89,7 +89,7 @@ void f2 (int32_t *z, const uint8_t *x, const int16_t *y)
 void f3 (GxB_FC64_t *z, const GxB_FC64_t *x, const double *y) ;
 void f3 (GxB_FC64_t *z, const GxB_FC64_t *x, const double *y)
 {
-    (*z) = GB_FC64_add ((*x), GB_cmplx (0,(*y))) ;
+    (*z) = GB_FC64_add ((*x), GB_CMPLX64 (0,(*y))) ;
 }
 
 bool fselect (GrB_Index i, GrB_Index j, const double *x, const double *k) ;

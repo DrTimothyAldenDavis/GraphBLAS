@@ -41,10 +41,10 @@
             cij = (GB_CTYPE) (t & GB_CTYPE_BITS) ;
             #elif GB_IS_PLUS_FC32_MONOID
             // PLUS monoid for float complex
-            cij = GB_cmplxf (crealf (cij) + (float) ainz, 0) ;
+            cij = GB_CMPLX32 (crealf (cij) + (float) ainz, 0) ;
             #elif GB_IS_PLUS_FC64_MONOID
             // PLUS monoid for double complex
-            cij = GB_cmplx (creal (cij) + (double) ainz, 0) ;
+            cij = GB_CMPLX64 (creal (cij) + (double) ainz, 0) ;
             #else
             // PLUS monoid for float, double, or 64-bit integers 
             cij += (GB_CTYPE) ainz ;

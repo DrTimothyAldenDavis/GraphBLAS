@@ -177,9 +177,9 @@ if (isequal (xtype, 'GxB_FC32_t') && isequal (ztype, 'bool'))
 elseif (isequal (xtype, 'GxB_FC64_t') && isequal (ztype, 'bool'))
     fprintf (f, 'define(`GB_copy_a_to_c'', `$1 = (creal (GBX ($2, $3, $4)) != 0) || (cimag (GBX ($2, $3, $4)) != 0)'')\n') ;
 elseif (isequal (xtype, 'float') && isequal (ztype, 'GxB_FC32_t'))
-    fprintf (f, 'define(`GB_copy_a_to_c'', `$1 = GB_cmplxf (GBX ($2, $3, $4), 0)'')\n') ;
+    fprintf (f, 'define(`GB_copy_a_to_c'', `$1 = GB_CMPLX32 (GBX ($2, $3, $4), 0)'')\n') ;
 elseif (isequal (xtype, 'double') && isequal (ztype, 'GxB_FC64_t'))
-    fprintf (f, 'define(`GB_copy_a_to_c'', `$1 = GB_cmplx (GBX ($2, $3, $4), 0)'')\n') ;
+    fprintf (f, 'define(`GB_copy_a_to_c'', `$1 = GB_CMPLX64 (GBX ($2, $3, $4), 0)'')\n') ;
 else
     fprintf (f, 'define(`GB_copy_a_to_c'', `$1 = GBX ($2, $3, $4)'')\n') ;
 end
@@ -190,9 +190,9 @@ if (isequal (ytype, 'GxB_FC32_t') && isequal (ztype, 'bool'))
 elseif (isequal (ytype, 'GxB_FC64_t') && isequal (ztype, 'bool'))
     fprintf (f, 'define(`GB_copy_b_to_c'', `$1 = (creal (GBX ($2, $3, $4)) != 0) || (cimag (GBX ($2, $3, $4)) != 0)'')\n') ;
 elseif (isequal (ytype, 'float') && isequal (ztype, 'GxB_FC32_t'))
-    fprintf (f, 'define(`GB_copy_b_to_c'', `$1 = GB_cmplxf (GBX ($2, $3, $4), 0)'')\n') ;
+    fprintf (f, 'define(`GB_copy_b_to_c'', `$1 = GB_CMPLX32 (GBX ($2, $3, $4), 0)'')\n') ;
 elseif (isequal (ytype, 'double') && isequal (ztype, 'GxB_FC64_t'))
-    fprintf (f, 'define(`GB_copy_b_to_c'', `$1 = GB_cmplx (GBX ($2, $3, $4), 0)'')\n') ;
+    fprintf (f, 'define(`GB_copy_b_to_c'', `$1 = GB_CMPLX64 (GBX ($2, $3, $4), 0)'')\n') ;
 else
     fprintf (f, 'define(`GB_copy_b_to_c'', `$1 = GBX ($2, $3, $4)'')\n') ;
 end

@@ -10,10 +10,8 @@
 #include "GB.h"
 
 // complex constructors
-#if !(defined ( __cplusplus ) || GB_COMPILER_MSC || defined (CMPLX))
-extern GxB_FC32_t GB_cmplxf (float  xreal, float  ximag) ;
-extern GxB_FC64_t GB_cmplx  (double xreal, double ximag) ;
-#endif
+extern GxB_FC32_t GB_complexf (float  xreal, float  ximag) ;
+extern GxB_FC64_t GB_complex  (double xreal, double ximag) ;
 
 // integer division
 extern int8_t   GB_idiv_int8   (int8_t   x, int8_t   y) ;
