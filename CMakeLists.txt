@@ -400,13 +400,13 @@ endif ( )
 #-------------------------------------------------------------------------------
 
 if ( OPENMP_FOUND )
-    message ( STATUS "CMAKE OpenMP libraries:    " ${OpenMP_C_LIBRARIES} )
-    message ( STATUS "CMAKE OpenMP include:      " ${OpenMP_C_INCLUDE_DIRS} )
+    message ( STATUS "CMAKE OpenMP libraries:    ${OpenMP_C_LIBRARIES}" )
+    message ( STATUS "CMAKE OpenMP include:      ${OpenMP_C_INCLUDE_DIRS}" )
     target_link_libraries ( graphblas PUBLIC ${OpenMP_C_LIBRARIES} )
     if ( NOT NSTATIC )
         target_link_libraries ( graphblas_static PUBLIC ${OpenMP_C_LIBRARIES} )
     endif ( )
-    message ( STATUS "CMAKE OpenMP C flags:      " ${OpenMP_C_FLAGS} )
+    message ( STATUS "CMAKE OpenMP C flags:      ${OpenMP_C_FLAGS}" )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} " )
     include_directories ( ${OpenMP_C_INCLUDE_DIRS} )
 else ( )
@@ -420,8 +420,7 @@ else ( )
     "application (perhaps through a pthreads construct).  Compiling GraphBLAS "
     "without OpenMP is not recommended for installation in a package manager "
     "(Linux, conda-forge, spack, brew, vcpkg, etc). " )
-    # check if the compiler supports the __thread and/or __declspec(thread)
-    # keywords
+    # check for __thread, __declspec(thread), and _Thread_local keywords
     include ( SuiteSparse__thread )
     if ( NOT HAVE_KEYWORD__DECLSPEC_THREAD AND NOT HAVE_KEYWORD__THREAD )
         message  ( WARNING "The C compiler supports neither the __thread "
@@ -441,7 +440,7 @@ endif ( )
 # print final C flags
 #-------------------------------------------------------------------------------
 
-message ( STATUS "CMAKE C flags: " ${CMAKE_C_FLAGS} )
+message ( STATUS "CMAKE C flags: ${CMAKE_C_FLAGS} " )
 
 #-------------------------------------------------------------------------------
 # Demo library and programs
