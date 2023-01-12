@@ -77,7 +77,8 @@ template<> __device__ __inline__ void GB_atomic_write<uint32_t>(uint32_t* ptr, u
 template<> __device__ __inline__ void GB_atomic_write<int64_t>(int64_t* ptr, int64_t val)
 {
     // note the val is punned, it cannot be typecasted
-    atomicExch ((unsigned long long int *) ptr, *((unsigned long long int *) val)) ;
+    void *p = &val ;
+    atomicExch ((unsigned long long int *) ptr, *((unsigned long long int *) p)) ;
 }
 
 template<> __device__ __inline__ void GB_atomic_write<uint64_t>(uint64_t* ptr, uint64_t val)
@@ -95,8 +96,7 @@ template<> __device__ __inline__ void GB_atomic_write<double>(double* ptr, doubl
 {
     // note the val is punned, it cannot be typecasted
     void *p = &val ;
-    atomicExch ((unsigned long long int *) ptr,
-        *((unsigned long long int *) p)) ;
+    atomicExch ((unsigned long long int *) ptr, *((unsigned long long int *) p)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -128,7 +128,8 @@ template<> __device__ __inline__ void GB_atomic_add<uint32_t>(uint32_t* ptr, uin
 template<> __device__ __inline__ void GB_atomic_add<int64_t>(int64_t* ptr, int64_t val)
 {
     // note that val is punned, it cannot be typecasted
-    atomicAdd((unsigned long long*)ptr, *((unsigned long long *)val)) ;
+    void *p = &val ;
+    atomicAdd((unsigned long long*)ptr, *((unsigned long long *) p)) ;
 }
 
 template<> __device__ __inline__ void GB_atomic_add<uint64_t>(uint64_t* ptr, uint64_t val)
@@ -171,7 +172,7 @@ template<> __device__ __inline__ void GB_atomic_add<double complex>(double compl
 // types: int and uint [8,16,32,64], float, double.
 // no complex types.
 
-// Is this possible?  There are not cuda atomic times functions.
+// Is this possible?  There are no cuda atomic times functions.
 // Maybe all need to be done with a lock.
 
 //------------------------------------------------------------------------------

@@ -62,7 +62,7 @@ template<typename T1, typename T2, typename T3> class spdotFactory ;
 class reduceFactory
 {
   std::string base_name = "GB_jit";
-  std::string kernel_name = "reduceNonZombiesWarp";
+  std::string kernel_name = "reduce";
 
   int threads_per_block = 320 ;
   int work_per_thread = 256;
@@ -74,11 +74,11 @@ public:
 
   reduceFactory(GB_cuda_reduce_factory &myreducefactory) : reduce_factory_(myreducefactory) {}
 
-  int get_threads_per_block() {
+  int GB_get_threads_per_block() {
     return threads_per_block;
   }
 
-  int get_number_of_blocks(unsigned int N) {
+  int GB_get_number_of_blocks(unsigned int N) {
       return (N + work_per_thread*threads_per_block - 1)/(work_per_thread*threads_per_block);
   }
 
@@ -110,16 +110,16 @@ public:
       R"(#include ")" << jit::get_user_home_cache_dir() << "/" << reduce_factory_.filename << R"(")" << std::endl <<
       R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
-      bool is_sparse = GB_IS_SPARSE(A);
-      int64_t N = is_sparse ? GB_nnz(A) : GB_NCOLS(A) * GB_NROWS(A);
+//    bool is_sparse = GB_IS_SPARSE(A);
+//    int64_t N = is_sparse ? GB_nnz(A) : GB_NCOLS(A) * GB_NROWS(A);
 
-      int blocksz = get_threads_per_block();
-      int gridsz = get_number_of_blocks(N);
+        int64_t anz = GB_nnz_held (A) ;
+
+      int blocksz = GB_get_threads_per_block();
+      int gridsz = GB_get_number_of_blocks(anz);
       dim3 grid(gridsz);
       dim3 block(blocksz);
 
-      // FIXME: call GB_stringify_reduce to create GB_ADD and related
-      // macros, in an include file: GB_reduce_123412341234.h
       GBURBLE ("(cuda reduce launch %d threads in %d blocks)", blocksz, gridsz ) ;
 
       jit::launcher(hashable_name + "_" + rcode,
@@ -127,21 +127,18 @@ public:
                     header_names,
                     compiler_flags,
                     file_callback)
-               .set_kernel_inst(  kernel_name , { A->type->name, op->op->ztype->name, rcode, "true" })
+               .set_kernel_inst(  kernel_name , { A->type->name, op->op->ztype->name })
                .configure(grid, block, SMEM, stream)
-               // FIXME: GB_ADD is hardcoded into kernel for now
-               .launch( A, temp_scalar, N, is_sparse);
+               .launch( A, temp_scalar, anz);
 
       // Need to synchronize before copying result to host
       CHECK_CUDA( cudaStreamSynchronize(stream) );
 
       memcpy(output, temp_scalar->x, op->op->ztype->size);
 
-      // FIXME: cannot use rmm_wrap_free on a GrB_Scalar (leak here)
-      rmm_wrap_free(temp_scalar);
+      GrB_Scalar_free (&temp_scalar) ;
 
-      // FIXME:
-      return true;
+      return true; // FIXME: return error condition if necessary
   }
 };
 

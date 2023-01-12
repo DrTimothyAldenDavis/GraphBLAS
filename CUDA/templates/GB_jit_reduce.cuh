@@ -1,11 +1,10 @@
 //------------------------------------------------------------------------------
-// template/GB_jit_reduceNonZombiesWarp.cu
+// template/GB_jit_reduce.cu
 //------------------------------------------------------------------------------
 
-// The GB_jit_reduceNonZombiesWarp CUDA kernel reduces a GrB_Matrix A 
-// of any type T_A, to a scalar of type T_Z.  Each threadblock
-// (blockIdx.x) reduces its portion of Ax to a single scalar, and then
-// atomics are used across the threadblocks.
+// The GB_jit_reduce CUDA kernel reduces a GrB_Matrix A of any type T_A, to a
+// scalar of type T_Z.  Each threadblock (blockIdx.x) reduces its portion of Ax
+// to a single scalar, and then atomics are used across the threadblocks.
 
 // Both the grid and block are 1D, so blockDim.x is the # threads in a
 // threadblock, and the # of threadblocks is grid.x
@@ -32,15 +31,17 @@ using namespace cooperative_groups;
 // GB_warp_Reduce: reduce all entries in a warp to a single scalar
 //------------------------------------------------------------------------------
 
-// FIXME: assumes 32 threads in a warp.  Is that safe?
-// FIXME: why rcode?  It is not needed here (it is uint64_t not int)
+// GB_warp_Reduce assumes WARPSIZE is 32 threads.
 
-template< typename T_Z, int tile_sz, int rcode>
+template<typename T_Z>
 __inline__ __device__ 
-T_Z GB_warp_Reduce( thread_block_tile<tile_sz> g, T_Z val)
+T_Z GB_warp_Reduce( thread_block_tile<WARPSIZE> g, T_Z val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[k] to sum[lane+k]
+
+    // FIXME: doesn't work unless sizeof(T_Z) <= 64 bits
+
     T_Z fold = g.shfl_down( val, 16);
     GB_ADD( val, val, fold );
     fold = g.shfl_down( val, 8);
@@ -58,24 +59,17 @@ T_Z GB_warp_Reduce( thread_block_tile<tile_sz> g, T_Z val)
 // GB_block_Reduce: reduce across all warps into a single scalar
 //------------------------------------------------------------------------------
 
-// FIXME: warpSize parameter ignored?  Only works for warp of 32?
-
-template<typename T_Z, int warpSize, int rcode>
+template<typename T_Z>
 __inline__ __device__
 T_Z GB_block_Reduce(thread_block g, T_Z val)
 {
-    static __shared__ T_Z shared[warpSize]; // Shared mem for 32 partial sums
-    int lane = threadIdx.x & 31 ; // % warpSize;
-    int wid  = threadIdx.x >> 5 ; // / warpSize;
-    thread_block_tile<warpSize> tile = tiled_partition<warpSize>( g );
-
-    // FIXME: Figure out how to use graphblas-specific INFINITY macro
-    #ifndef INFINITY
-    #define INFINITY std::numeric_limits<double>::max()
-    #endif
+    static __shared__ T_Z shared[WARPSIZE];
+    int lane = threadIdx.x & (WARPSIZE-1) ;
+    int wid  = threadIdx.x >> LOG2_WARPSIZE ;
+    thread_block_tile<WARPSIZE> tile = tiled_partition<WARPSIZE>( g );
 
     // Each warp performs partial reduction
-    val = GB_warp_Reduce<T_Z, warpSize, rcode>( tile, val);
+    val = GB_warp_Reduce<T_Z>( tile, val);
 
     // Wait for all partial reductions
     if (lane==0)
@@ -85,49 +79,29 @@ T_Z GB_block_Reduce(thread_block g, T_Z val)
     this_thread_block().sync();     // Wait for all partial reductions
     GB_DECLARE_MONOID_IDENTITY (identity) ;
 
-    val = (threadIdx.x < (blockDim.x / warpSize) ) ? shared[lane] : identity ;
+    val = (threadIdx.x < (blockDim.x >> LOG2_WARPSIZE) ) ? shared[lane] : identity ;
 
     // Final reduce within first warp
-    val = GB_warp_Reduce<T_Z, warpSize, rcode>( tile, val);
+    val = GB_warp_Reduce<T_Z>( tile, val);
     return val;
 }
 
 //------------------------------------------------------------------------------
-// reduceNonZombiesWarp: reduce all entries in a matrix to a single scalar
+// GB_jit_reduce: reduce all entries in a matrix to a single scalar
 //------------------------------------------------------------------------------
 
-// FIXME: do not use a GrB_Scalar result, since it must be an array of size
-// grid.x (# threadblocks, or gridDim.x?)
-
-// FIXME: handle bitmap case
-
-template< typename T_A, typename T_Z, int rcode, bool atomic_reduce = true>
-__global__ void reduceNonZombiesWarp    // FIXME: rename
+template< typename T_A, typename T_Z>
+__global__ void GB_jit_reduce
 (
-    GrB_Matrix A,
-    GrB_Scalar R,   // array of size grid.x if atomic_reduce==false and
-                    // size 1 if atomic_reduce==true ???
-    int64_t N,      // number of entries for sparse, size of x array for
-                    // full/bitmap.  FIXME: do not use N, looks like a #define
-                    // FIXME: do not pass in N
-    bool is_sparse  // FIXME: remove this
+    GrB_Matrix A,   // matrix to reduce
+    GrB_Scalar R,   // scalar result
+    int64_t anz     // # of entries in A: anz = GB_nnz_held (A)
 )
 {
 
     //--------------------------------------------------------------------------
     // initializations
     //--------------------------------------------------------------------------
-
-    #if GB_A_IS_SPARSE || GB_A_IS_HYPERSPARSE
-    int64_t anz = A->nvals ;              // may include zombies
-    #else
-    int64_t anz = A->vlen * A->vdim ;
-    #endif
-
-    // FIXME: move this to GB_cuda_kernel.h
-    #ifndef INFINITY
-    #define INFINITY std::numeric_limits<T_Z>::max()
-    #endif
 
     const T_A *__restrict__ Ax = (T_A *) A->x ;
 
@@ -218,10 +192,7 @@ __global__ void reduceNonZombiesWarp    // FIXME: rename
     // phase 2: each threadblock reduces all threads into a scalar
     //--------------------------------------------------------------------------
 
-    // this assumes blockDim is a multiple of 32
-    // FIXME: 32 is hard coded.  Is that safe?
-
-    sum = GB_block_Reduce< T_A, 32, rcode >( this_thread_block(), sum) ;
+    sum = GB_block_Reduce< T_Z >( this_thread_block(), sum) ;
     this_thread_block().sync(); 
 
     //--------------------------------------------------------------------------
@@ -243,7 +214,7 @@ __global__ void reduceNonZombiesWarp    // FIXME: rename
     {
 #if 0
         // NEW:
-        #if GB_CUDA_HAS_ATOMC
+        #if GB_CUDA_HAS_ATOMIC
             // lock free atomic operation
             GB_CUDA_ATOMIC <T_Z> (g_odata, sum) ;
         #else
