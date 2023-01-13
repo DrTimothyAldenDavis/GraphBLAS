@@ -3748,7 +3748,6 @@
 #define GB_Global_mode_set GM_Global_mode_set
 #define GB_Global_nmalloc_clear GM_Global_nmalloc_clear
 #define GB_Global_nmalloc_get GM_Global_nmalloc_get
-#define GB_Global_omp_get_max_threads GM_Global_omp_get_max_threads
 #define GB_Global_printf_get GM_Global_printf_get
 #define GB_Global_printf_set GM_Global_printf_set
 #define GB_Global_print_mem_shallow_get GM_Global_print_mem_shallow_get
@@ -3887,8 +3886,8 @@
 #define GB_LZ4_compress_fast_extState GM_LZ4_compress_fast_extState
 #define GB_LZ4_compress_fast_extState_fastReset GM_LZ4_compress_fast_extState_fastReset
 #define GB_LZ4_compress_forceExtDict GM_LZ4_compress_forceExtDict
-#define GB_LZ4_compress_HC GM_LZ4_compress_HC
 #define GB_LZ4_compressHC GM_LZ4_compressHC
+#define GB_LZ4_compress_HC GM_LZ4_compress_HC
 #define GB_LZ4_compressHC2 GM_LZ4_compressHC2
 #define GB_LZ4_compressHC2_continue GM_LZ4_compressHC2_continue
 #define GB_LZ4_compressHC2_limitedOutput GM_LZ4_compressHC2_limitedOutput
@@ -4006,6 +4005,8 @@
 #define GB_nnz_max GM_nnz_max
 #define GB_nvals GM_nvals
 #define GB_nvec_nonempty GM_nvec_nonempty
+#define GB_omp_get_max_threads GM_omp_get_max_threads
+#define GB_omp_get_wtime GM_omp_get_wtime
 #define GB_Operator_check GM_Operator_check
 #define GB_Op_free GM_Op_free
 #define GB_op_is_second GM_op_is_second

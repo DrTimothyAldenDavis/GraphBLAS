@@ -132,7 +132,7 @@ GrB_Info GB_init            // start up GraphBLAS
     // parallel, from multiple user threads.  The user threads can use
     // any threading library; this has no effect on GraphBLAS.
 
-    GB_Context_nthreads_max_set (NULL, GB_Global_omp_get_max_threads ( )) ;
+    GB_Context_nthreads_max_set (NULL, GB_omp_get_max_threads ( )) ;
     GB_Context_chunk_set        (NULL, GB_CHUNK_DEFAULT) ;
     GB_Context_gpu_id_set       (NULL, -1) ;
 

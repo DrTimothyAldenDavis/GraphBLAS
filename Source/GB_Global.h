@@ -27,9 +27,6 @@ int      GB_Global_sort_get (void) ;
 void     GB_Global_GrB_init_called_set (bool GrB_init_called) ;
 bool     GB_Global_GrB_init_called_get (void) ;
 
-// FIXME: move this elsewhere:
-int GB_Global_omp_get_max_threads (void) ;
-
 void     GB_Global_hyper_switch_set (float hyper_switch) ;
 float    GB_Global_hyper_switch_get (void) ;
 

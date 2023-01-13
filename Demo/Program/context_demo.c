@@ -113,7 +113,6 @@ int main (void)
                         OK (GrB_Matrix_new (&A, GrB_FP64, n, n)) ;
                         OK (GrB_Matrix_build (A, I, J, X, nvals,
                             GrB_PLUS_FP64)) ;
-                        // OK (GxB_print (A, 2)) ;
 
                         // free the matrix just built
                         OK (GrB_Matrix_free (&A)) ;

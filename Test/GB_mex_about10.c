@@ -24,12 +24,12 @@ void mexFunction
     GrB_Info info, expected ;
     GrB_Matrix A = NULL ;
     GrB_Vector v = NULL ;
-    int64_t pool1 [64], pool2 [64] ;
 
     //--------------------------------------------------------------------------
     // startup GraphBLAS
     //--------------------------------------------------------------------------
 
+    double t = GB_omp_get_wtime ( ) ;
     GrB_Descriptor desc = NULL ;
     bool malloc_debug = GB_mx_get_global (true) ;
 
@@ -81,19 +81,6 @@ void mexFunction
     OK (GxB_Matrix_Option_get (A, GxB_BITMAP_SWITCH, &bswitch2)) ;
     CHECK (bswitch1 == bswitch2) ;
 
-#if 0
-    for (int k = 0 ; k < 64 ; k++)
-    {
-        pool1 [k] = (k < 3) ? 0 : k ;
-    }
-    OK (GxB_Global_Option_set_INT64_ARRAY (GxB_MEMORY_POOL, pool1)) ;
-    OK (GxB_Global_Option_get_INT64 (GxB_MEMORY_POOL, pool2)) ;
-    for (int k = 0 ; k < 64 ; k++)
-    {
-        CHECK (pool1 [k] == pool2 [k]) ;
-    }
-#endif
-
     ERR (GxB_Matrix_Option_set_FP64 (A, -1, 0)) ;
 
     OK (GrB_Vector_new (&v, GrB_FP64, 10)) ;
@@ -129,6 +116,9 @@ void mexFunction
     // wrapup
     //--------------------------------------------------------------------------
 
+    int nthreads_max = GB_omp_get_max_threads ( ) ;
+    t = GB_omp_get_wtime ( ) - t ;
+    printf ("test time %g sec, max threads %d\n", t, nthreads_max) ;
     GB_mx_put_global (true) ;
     printf ("\nGB_mex_about10: all tests passed\n\n") ;
 }

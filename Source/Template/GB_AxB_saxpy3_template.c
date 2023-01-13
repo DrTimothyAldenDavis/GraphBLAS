@@ -19,7 +19,7 @@
 {
 
     #ifdef GB_TIMING
-    double ttt = omp_get_wtime ( ) ;
+    double ttt = GB_omp_get_wtime ( ) ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -321,9 +321,9 @@
     }
 
     #ifdef GB_TIMING
-    ttt = omp_get_wtime ( ) - ttt ;
+    ttt = GB_omp_get_wtime ( ) - ttt ;
     GB_Global_timing_add (9, ttt) ;
-    ttt = omp_get_wtime ( ) ;
+    ttt = GB_omp_get_wtime ( ) ;
     #endif
 
     //==========================================================================
@@ -333,9 +333,9 @@
     GB_AxB_saxpy3_cumsum (C, SaxpyTasks, nfine, chunk, nthreads, Werk) ;
 
     #ifdef GB_TIMING
-    ttt = omp_get_wtime ( ) - ttt ;
+    ttt = GB_omp_get_wtime ( ) - ttt ;
     GB_Global_timing_add (10, ttt) ;
-    ttt = omp_get_wtime ( ) ;
+    ttt = GB_omp_get_wtime ( ) ;
     #endif
 
     //==========================================================================
@@ -363,9 +363,9 @@
     ASSERT (C->i_size == GB_Global_memtable_size (C->i)) ;
 
     #ifdef GB_TIMING
-    ttt = omp_get_wtime ( ) - ttt ;
+    ttt = GB_omp_get_wtime ( ) - ttt ;
     GB_Global_timing_add (11, ttt) ;
-    ttt = omp_get_wtime ( ) ;
+    ttt = GB_omp_get_wtime ( ) ;
     #endif
 
     bool C_jumbled = false ;
@@ -613,7 +613,7 @@
     C->jumbled = C_jumbled ;    // C is jumbled if any task left it jumbled
 
     #ifdef GB_TIMING
-    ttt = omp_get_wtime ( ) - ttt ;
+    ttt = GB_omp_get_wtime ( ) - ttt ;
     GB_Global_timing_add (12, ttt) ;
     #endif
 

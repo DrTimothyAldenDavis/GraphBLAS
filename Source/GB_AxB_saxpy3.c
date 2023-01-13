@@ -135,7 +135,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 {
 
     #ifdef GB_TIMING
-    double ttt = omp_get_wtime ( ) ;
+    double ttt = GB_omp_get_wtime ( ) ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -270,9 +270,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     }
 
     #ifdef GB_TIMING
-    ttt = omp_get_wtime ( ) - ttt ;
+    ttt = GB_omp_get_wtime ( ) - ttt ;
     GB_Global_timing_add (3, ttt) ;
-    ttt = omp_get_wtime ( ) ;
+    ttt = GB_omp_get_wtime ( ) ;
     #endif
 
     //==========================================================================
@@ -307,9 +307,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     }
 
     #ifdef GB_TIMING
-    ttt = omp_get_wtime ( ) - ttt ;
+    ttt = GB_omp_get_wtime ( ) - ttt ;
     GB_Global_timing_add (4, ttt) ;
-    ttt = omp_get_wtime ( ) ;
+    ttt = GB_omp_get_wtime ( ) ;
     #endif
 
     if (info == GrB_NO_VALUE)
@@ -603,9 +603,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // Figure out a faster method.
 
     #ifdef GB_TIMING
-    ttt = omp_get_wtime ( ) - ttt ;
+    ttt = GB_omp_get_wtime ( ) - ttt ;
     GB_Global_timing_add (5, ttt) ;
-    ttt = omp_get_wtime ( ) ;
+    ttt = GB_omp_get_wtime ( ) ;
     #endif
 
     GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, M_in_place,
@@ -614,9 +614,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 // the above phase takes 1.6 seconds for 64 trials of the web graph.
 
     #ifdef GB_TIMING
-    ttt = omp_get_wtime ( ) - ttt ;
+    ttt = GB_omp_get_wtime ( ) - ttt ;
     GB_Global_timing_add (6, ttt) ;
-    ttt = omp_get_wtime ( ) ;
+    ttt = GB_omp_get_wtime ( ) ;
     #endif
 
     //==========================================================================
@@ -706,9 +706,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //--------------------------------------------------------------------------
 
     #ifdef GB_TIMING
-    ttt = omp_get_wtime ( ) - ttt ;
+    ttt = GB_omp_get_wtime ( ) - ttt ;
     GB_Global_timing_add (7, ttt) ;
-    ttt = omp_get_wtime ( ) ;
+    ttt = GB_omp_get_wtime ( ) ;
     #endif
 
     C->magic = GB_MAGIC ;
@@ -720,7 +720,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     (*mask_applied) = apply_mask ;
 
     #ifdef GB_TIMING
-    ttt = omp_get_wtime ( ) - ttt ;
+    ttt = GB_omp_get_wtime ( ) - ttt ;
     GB_Global_timing_add (8, ttt) ;
     #endif
 

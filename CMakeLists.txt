@@ -423,6 +423,7 @@ else ( )
     # check for __thread, __declspec(thread), and _Thread_local keywords
     include ( SuiteSparse__thread )
     if ( NOT HAVE_KEYWORD__DECLSPEC_THREAD AND NOT HAVE_KEYWORD__THREAD )
+        # FIXME: add _Thread_local
         message  ( WARNING "The C compiler supports neither the __thread "
         "nor the __declspec(thread) keyword for thread-local-storage; "
         "GxB_Context_engage will return GrB_NOT_IMPLEMENTED." )

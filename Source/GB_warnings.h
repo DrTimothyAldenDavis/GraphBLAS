@@ -56,9 +56,7 @@
     #endif
 
     // enable these warnings as errors
-// FIXME
-    #pragma GCC diagnostic ignored "-Wswitch-default"
-//  #pragma GCC diagnostic error "-Wswitch-default"
+    #pragma GCC diagnostic error "-Wswitch-default"
     #if !defined ( __cplusplus )
     #pragma GCC diagnostic error "-Wmissing-prototypes"
     #endif

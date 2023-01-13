@@ -42,7 +42,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
 {
 
     #ifdef GB_TIMING
-    double ttt = omp_get_wtime ( ) ;
+    double ttt = GB_omp_get_wtime ( ) ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -166,7 +166,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
         ASSERT_MATRIX_OK (C, "C from GB_mxm (in-place)", GB0) ;
 
         #ifdef GB_TIMING
-        ttt = omp_get_wtime ( ) - ttt ;
+        ttt = GB_omp_get_wtime ( ) - ttt ;
         GB_Global_timing_add (0, ttt) ;
         #endif
 
@@ -237,7 +237,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     }
 
     #ifdef GB_TIMING
-    ttt = omp_get_wtime ( ) - ttt ;
+    ttt = GB_omp_get_wtime ( ) - ttt ;
     GB_Global_timing_add (0, ttt) ;
     #endif
 
