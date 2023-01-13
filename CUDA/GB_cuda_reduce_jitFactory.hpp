@@ -127,7 +127,7 @@ public:
                     header_names,
                     compiler_flags,
                     file_callback)
-               .set_kernel_inst(  kernel_name , { A->type->name, op->op->ztype->name })
+               .set_kernel_inst(  hashable_name , { A->type->name, op->op->ztype->name })
                .configure(grid, block, SMEM, stream)
                .launch( A, temp_scalar, anz);
 
