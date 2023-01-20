@@ -497,10 +497,14 @@
 // complex division
 //------------------------------------------------------------------------------
 
-#if GB_COMPILER_MSC || defined ( __APPLE__ )
+#if 1
 
-    // complex division for MS Visual Studio (which does not support complex
-    // operations) and Apple Silicon (which is inaccurate, at least in gcc).
+    // complex division is problematic.  It is not supported at all on MS
+    // Visual Studio.  With other compilers, complex division exists but it has
+    // different NaN and Inf behavior as compared with MATLAB, which causes the
+    // tests to fail.  As a result, the built-in complex division is not used,
+    // even if the compiler supports it.
+
     // Three cases below are from ACM Algo 116, R. L. Smith, 1962.
 
     inline
@@ -609,6 +613,10 @@
 
 #else
 
+    // built-in complex division:  this works (except for MS Visual Studio) but
+    // it gives unpredictable results, particularly when considering Inf and
+    // NaN behavior.
+
     inline
     GxB_FC64_t GB_FC64_div (GxB_FC64_t x, GxB_FC64_t y)
     {
@@ -635,7 +643,7 @@
 
 #endif
 
-#define GB_GUARD_GB_FC64_DIV_DEFINED
+#define GB_GUARD_GB_FC32_DIV_DEFINED
 #define GB_GUARD_GB_FC64_DIV_DEFINED
 
 //------------------------------------------------------------------------------
