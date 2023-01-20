@@ -32,27 +32,11 @@ static void get_descriptor
 
         if (MATCH (fieldname, "nthreads"))
         { 
-
-#if 0
-            // nthreads must be a numeric scalar
-            CHECK_ERROR (!gb_mxarray_is_scalar (value),
-                "d.nthreads must be a scalar") ;
-            int nthreads_max = (int) mxGetScalar (value) ;
-            OK (GxB_Desc_set (desc, GxB_NTHREADS, nthreads_max)) ;
-#endif
-
+            // ignored
         }
         else if (MATCH (fieldname, "chunk"))
         { 
-
-#if 0
-            // chunk must be a numeric scalar
-            CHECK_ERROR (!gb_mxarray_is_scalar (value),
-                "d.chunk must be a scalar") ;
-            double chunk = mxGetScalar (value) ;
-            OK (GxB_Desc_set (desc, GxB_CHUNK, chunk)) ;
-#endif
-
+            // ignored
         }
         else
         {
@@ -161,8 +145,6 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
     get_descriptor (desc, desc_builtin, "in1"     , GrB_INP1) ;
     get_descriptor (desc, desc_builtin, "mask"    , GrB_MASK) ;
     get_descriptor (desc, desc_builtin, "axb"     , GxB_AxB_METHOD) ;
-//  get_descriptor (desc, desc_builtin, "nthreads", GxB_NTHREADS) ;
-//  get_descriptor (desc, desc_builtin, "chunk"   , GxB_CHUNK) ;
 
     //--------------------------------------------------------------------------
     // get the desired kind of output

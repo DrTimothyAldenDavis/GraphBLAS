@@ -361,7 +361,6 @@ GrB_Info ;
 
 // The extension GxB_init does the work of GrB_init, but it also defines the
 // memory management functions that SuiteSparse:GraphBLAS will use internally.
-// Currently, only the malloc and free functions are required.
 
 typedef enum
 {
@@ -428,17 +427,6 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
 //      GrB_Descriptor.
 //
 // GrB_INP1: the same as GrB_INP0 but for the second input
-//
-// GxB_NTHREADS: the maximum number of threads to use in the current method.
-//      If <= GxB_DEFAULT (which is zero), then the number of threads is
-//      determined automatically.  This is the default value.
-//
-// GxB_CHUNK: an integer parameter that determines the number of threads to use
-//      for a small problem.  If w is the work to be performed, and chunk is
-//      the value of this parameter, then the # of threads is limited to floor
-//      (w/chunk).  The default chunk is currently 64K, but this may change in
-//      the future.  If chunk is set to <= GxB_DEFAULT (that is, zero), the
-//      default is used.
 //
 // GxB_AxB_METHOD: this is a hint to SuiteSparse:GraphBLAS on which algorithm
 //      it should use to compute C=A*B, in GrB_mxm, GrB_mxv, and GrB_vxm.
@@ -4558,8 +4546,7 @@ GrB_Info GxB_Context_disengage      // disengage a Context
 
 // GxB_set and GxB_get are generic methods that and set or query the options in
 // a GrB_Matrix, a GrB_Descriptor, or in the global options.  They can be used
-// with the following syntax.  Note that GxB_NTHREADS can be used for both the
-// global nthreads_max, and for the # of threads in the descriptor.
+// with the following syntax.
 
 // To set/get the global options:
 //
@@ -4674,12 +4661,6 @@ GrB_Info GxB_Context_disengage      // disengage a Context
 //      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_SAXPY) ;
 //      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_DOT) ;
 //      GxB_get (GrB_Descriptor d, GrB_AxB_METHOD, GrB_Desc_Value *v) ;
-//
-//      GxB_set (GrB_Descriptor d, GxB_NTHREADS, nthreads) ;
-//      GxB_get (GrB_Descriptor d, GxB_NTHREADS, int *nthreads) ;
-//
-//      GxB_set (GrB_Descriptor d, GxB_CHUNK, double chunk) ;
-//      GxB_get (GrB_Descriptor d, GxB_CHUNK, double *chunk) ;
 //
 //      GxB_set (GrB_Descriptor d, GxB_SORT, int sort) ;
 //      GxB_get (GrB_Descriptor d, GxB_SORT, int *sort) ;

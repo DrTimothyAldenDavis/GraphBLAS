@@ -111,19 +111,19 @@ const char *GB_status_code (GrB_Info info) ;
 // log an error in the error logger string and return the error
 #define GB_ERROR(info,format,...)                                           \
 {                                                                           \
-    if (Werk != NULL)                                                    \
+    if (Werk != NULL)                                                       \
     {                                                                       \
-        char **logger_handle = Werk->logger_handle ;                     \
+        char **logger_handle = Werk->logger_handle ;                        \
         if (logger_handle != NULL)                                          \
         {                                                                   \
-            size_t *logger_size_handle = Werk->logger_size_handle ;      \
+            size_t *logger_size_handle = Werk->logger_size_handle ;         \
             (*logger_handle) = GB_CALLOC (GB_LOGGER_LEN+1, char,            \
                 logger_size_handle) ;                                       \
             if ((*logger_handle) != NULL)                                   \
             {                                                               \
                 snprintf ((*logger_handle), GB_LOGGER_LEN,                  \
                     "GraphBLAS error: %s\nfunction: %s\n" format,           \
-                    GB_status_code (info), Werk->where, __VA_ARGS__) ;   \
+                    GB_status_code (info), Werk->where, __VA_ARGS__) ;      \
             }                                                               \
         }                                                                   \
     }                                                                       \

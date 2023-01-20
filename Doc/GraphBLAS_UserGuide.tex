@@ -5163,7 +5163,7 @@ GrB_Info GxB_Matrix_reshape     // reshape a GrB_Matrix in place
     bool by_col,                // true if reshape by column, false if by row
     GrB_Index nrows_new,        // new number of rows of C
     GrB_Index ncols_new,        // new number of columns of C
-    const GrB_Descriptor desc   // to control # of threads used
+    const GrB_Descriptor desc
 ) ;
 \end{verbatim} } \end{mdframed}
 
@@ -5217,7 +5217,7 @@ GrB_Info GxB_Matrix_reshapeDup // reshape a GrB_Matrix into another GrB_Matrix
     bool by_col,                // true if reshape by column, false if by row
     GrB_Index nrows_new,        // number of rows of C
     GrB_Index ncols_new,        // number of columns of C
-    const GrB_Descriptor desc   // to control # of threads used
+    const GrB_Descriptor desc
 ) ;
 \end{verbatim} } \end{mdframed}
 
@@ -5601,7 +5601,6 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
     // input:
     GrB_Vector u,                   // vector to serialize
     const GrB_Descriptor desc       // descriptor to select compression method
-                                    // and to control # of threads used
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -5656,7 +5655,7 @@ GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
     GrB_Type type,      // type of the vector w.  See GxB_Matrix_deserialize.
     const void *blob,       // the blob
     GrB_Index blob_size,    // size of the blob
-    const GrB_Descriptor desc       // to control # of threads used
+    const GrB_Descriptor desc
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -5673,9 +5672,6 @@ The blob is allocated with the \verb'malloc' function passed to
 to initialize GraphBLAS.  The blob must be freed by the matching \verb'free'
 method, either the \verb'free' function passed to \verb'GxB_init' or
 the ANSI C11 \verb'free' if \verb'GrB_init' was used.
-
-% Identical to \verb'GrB_Vector_deserialize', except that the descriptor
-% appears as the last parameter to control the number of threads used.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_serializeSize:}  return size of serialized matrix}
@@ -5748,7 +5744,6 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     // input:
     GrB_Matrix A,                   // matrix to serialize
     const GrB_Descriptor desc       // descriptor to select compression method
-                                    // and to control # of threads used
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -5817,13 +5812,12 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
                         // type of C.
     const void *blob,       // the blob
     GrB_Index blob_size,    // size of the blob
-    const GrB_Descriptor desc       // to control # of threads used
+    const GrB_Descriptor desc
 ) ;
 \end{verbatim}
 } \end{mdframed}
 
-Identical to \verb'GrB_Matrix_deserialize', except that the descriptor
-appears as the last parameter to control the number of threads used.
+Identical to \verb'GrB_Matrix_deserialize'.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -7524,8 +7518,8 @@ GrB_Info GxB_sort
 } \end{mdframed}
 
 \verb'GxB_Vector_sort' is identical to sorting the single column of an
-\verb'n'-by-1 matrix.  The descriptor is ignored, except to control the number
-of threads to use.  Refer to Section \ref{matrix_sort} for details.
+\verb'n'-by-1 matrix.
+Refer to Section \ref{matrix_sort} for details.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_sort:} sort the rows/columns of a matrix}
@@ -8543,9 +8537,7 @@ have been modified from its default, and this modified value will be used.
 
 For example, suppose \verb'omp_get_max_threads' reports 8 threads.  If \newline
 \verb'GxB_set (GxB_NTHREADS, 4)' is used, then the global setting is four
-threads, not eight.  If a descriptor is used but its \verb'GxB_NTHREADS' is not
-set, or set to \verb'GxB_DEFAULT', then any operation that uses this descriptor
-will use 4 threads.
+threads, not eight.
 
 GraphBLAS may be compiled without OpenMP, by setting \verb'-DNOPENMP=1'.
 The library will be thread-safe, with one exception.  \verb'GrB_wait' is
@@ -12806,10 +12798,7 @@ it is freed, but with just one access method at a time.
 Once it is created, the \verb'iterator' must be attached to a matrix or
 vector.  This process also selects the method by which the \verb'iterator'
 will be used for a matrix.  Each of the four \verb'GxB_*Iterator_attach'
-methods returns a \verb'GrB_Info' result.  The descriptor \verb'desc' in the
-examples below is used only to control the number of threads used for the
-internal call to \verb'GrB_wait', if the matrix \verb'A' or vector \verb'v' has
-pending operations.
+methods returns a \verb'GrB_Info' result. 
 
     \begin{enumerate}
     \item {\em row iterator}: 
@@ -15489,6 +15478,10 @@ GraphBLAS folder.
 
     \begin{itemize}
     \item minor change to build system: for SuiteSparse v7.0.0.
+    \item deprecation notice:  in GraphBLAS v8.0.0, the ability to set the
+        number of threads, and chunk size, in the descriptor will be removed.
+        It still appears in v7.x, but will be replaced by a Context object
+        in v8.0.0.
     \end{itemize}
 
 \item Version 7.4.1 (Dec 29, 2022)
