@@ -18,10 +18,29 @@ void GB_macrofy_binop
     bool flipxy,                // if true: op is f(y,x), multipicative only
     bool is_monoid,             // if true: additive operator for monoid
     int ecode,
-    GrB_BinaryOp op             // may be NULL (for GB_wait)
+    GrB_BinaryOp op             // may be NULL (for GB_wait, or C iso)
 )
 {
-    if (ecode == 0)
+
+
+    if (op == NULL)
+    {
+
+        //----------------------------------------------------------------------
+        // GB_wait, or C is iso: no operator
+        //----------------------------------------------------------------------
+
+        if (is_monoid)
+        {
+            fprintf (fp, "#define %s(z,x,y)\n", macro_name) ;
+        }
+        else
+        {
+            fprintf (fp, "#define %s(z,x,y,i,k,j)\n", macro_name) ;
+        }
+
+    }
+    else if (ecode == 0)
     {
 
         //----------------------------------------------------------------------

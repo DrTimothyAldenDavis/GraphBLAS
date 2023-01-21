@@ -42,9 +42,9 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
     // multiplier (5 hex digits)
     int mult_ecode  = GB_RSHIFT (scode, 36, 8) ;
-    int zcode       = GB_RSHIFT (scode, 32, 4) ;
-    int xcode       = GB_RSHIFT (scode, 28, 4) ;
-    int ycode       = GB_RSHIFT (scode, 24, 4) ;
+    int zcode       = GB_RSHIFT (scode, 32, 4) ;    // if 0: C is iso
+    int xcode       = GB_RSHIFT (scode, 28, 4) ;    // if 0: ignored
+    int ycode       = GB_RSHIFT (scode, 24, 4) ;    // if 0: ignored
 
     // mask (one hex digit)
     int mask_ecode  = GB_RSHIFT (scode, 20, 4) ;
@@ -71,40 +71,41 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     GB_macrofy_copyright (fp) ;
     fprintf (fp, "// semiring: (%s, %s%s, %s)\n\n",
         addop->name, mult->name, flipxy ? " (flipped)" : "",
-        mult->xtype->name) ;
+        (zcode == 0) ? "iso" : mult->xtype->name) ;
 
     //--------------------------------------------------------------------------
     // construct the typedefs
     //--------------------------------------------------------------------------
 
-    GB_macrofy_types (fp, ctype, atype, btype,
-        mult->xtype, mult->ytype, mult->ztype) ;
+    GrB_Type xtype = (xcode == 0) ? NULL : mult->xtype ;
+    GrB_Type ytype = (ycode == 0) ? NULL : mult->ytype ;
+    GrB_Type ztype = (zcode == 0) ? NULL : mult->ztype ;
+
+    GB_macrofy_types (fp, ctype, atype, btype, xtype, ytype, ztype) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for the type names
     //--------------------------------------------------------------------------
 
     fprintf (fp, "// semiring types:\n") ;
-    fprintf (fp, "#define GB_X_TYPENAME %s\n", mult->xtype->name) ;
-    fprintf (fp, "#define GB_Y_TYPENAME %s\n", mult->ytype->name) ;
-    fprintf (fp, "#define GB_Z_TYPENAME %s\n", mult->ztype->name) ;
+    fprintf (fp, "#define GB_X_TYPENAME %s\n", (xcode == 0) ? "GB_void" : xtype->name) ;
+    fprintf (fp, "#define GB_Y_TYPENAME %s\n", (ycode == 0) ? "GB_void" : ytype->name) ;
+    fprintf (fp, "#define GB_Z_TYPENAME %s\n", (zcode == 0) ? "GB_void" : ztype->name) ;
 
     //--------------------------------------------------------------------------
     // construct the monoid macros
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// additive monoid:\n") ;
-    GB_macrofy_monoid (fp, add_ecode, id_ecode, term_ecode, add) ;
+    GB_macrofy_monoid (fp, add_ecode, id_ecode, term_ecode, (zcode == 0) ? NULL : add) ;
 
     //--------------------------------------------------------------------------
     // construct macros for the multiply
     //--------------------------------------------------------------------------
 
-    // do not print the user-defined multiplicative function if it is identical
-    // to the user-defined additive function.
     fprintf (fp, "\n// multiplicative operator%s:\n",
         flipxy ? " (flipped)" : "") ;
-    GB_macrofy_binop (fp, "GB_MULT", flipxy, false, mult_ecode, mult) ;
+    GB_macrofy_binop (fp, "GB_MULT", flipxy, false, mult_ecode, (zcode == 0) ? NULL : mult) ;
 
     //--------------------------------------------------------------------------
     // special cases
@@ -122,7 +123,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
         is_plus_pair_real) ;
 
     // can ignore overflow in ztype when accumulating the result via the monoid
-    bool ztype_ignore_overflow = (
+    bool ztype_ignore_overflow = (zcode == 0 ||
         zcode == GB_INT64_code || zcode == GB_UINT64_code ||
         zcode == GB_FP32_code  || zcode == GB_FP64_code ||
         zcode == GB_FC32_code  || zcode == GB_FC64_code) ;
@@ -148,7 +149,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
         fprintf (fp, "#define GB_C_ISO 0\n") ;
     }
     GB_macrofy_sparsity (fp, "C", csparsity) ;
-    fprintf (fp, "#define GB_C_TYPENAME %s\n\n", ctype->name) ;
+    fprintf (fp, "#define GB_C_TYPENAME %s\n\n", C_iso ? "GB_void" : ctype->name) ;
 
     //--------------------------------------------------------------------------
     // construct the macros to access the mask (if any), and its name

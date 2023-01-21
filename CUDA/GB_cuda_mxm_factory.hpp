@@ -75,6 +75,14 @@ class GB_cuda_mxm_factory: public jit::File_Desc {
         GrB_Matrix B
     )
     {
+
+        if (C_iso)
+        {
+            // the kernel does not access any values of C, A, or B
+            semiring = GxB_ANY_PAIR_BOOL ;
+            flipxy = false ;
+        }
+
 //       std::cout<<" calling stringify semiring: " << std::endl;
 //     GxB_Semiring_fprint (semiring, "stringfiy the smiering", GxB_COMPLETE, stdout) ;
 //       std::cout<<" Mask_struct: " << Mask_struct << std::endl;

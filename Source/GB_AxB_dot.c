@@ -137,7 +137,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         // output), but C_in might be iso on input.
 
         #ifdef GB_DEBUGIFY_DEFN
-        GB_debugify_mxm (C_iso, GxB_FULL, ztype, M, Mask_struct,
+        GB_debugify_mxm (false, GxB_FULL, ztype, M, Mask_struct,
             Mask_comp, semiring, flipxy, A, B) ;
         #endif
 

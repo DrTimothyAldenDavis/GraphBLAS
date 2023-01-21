@@ -38,6 +38,9 @@ void GB_debugify_reduce     // enumerate and macrofy a GrB_reduce problem
     FILE *fp = fopen (filename, "w") ;
 
     // FIXME: pass this to GB_macrofy_reduce
+    fprintf (fp,
+        "//--------------------------------------"
+        "----------------------------------------\n") ;
     fprintf (fp, "// GB_reduce_%s.h\n", reduce_name) ;
 
     GB_macrofy_reduce (fp, rcode, monoid, A->type) ;
