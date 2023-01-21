@@ -270,13 +270,27 @@ template<> __device__ __inline__ void GB_atomic_max<uint64_t>(uint64_t* ptr, uin
 
 __device__ __inline__ void GB_cuda_lock (int32_t *lock)
 {
-    while (atomicExch ((int *) lock, (int) 1) != 0) ;
+    int old;
+    do {
+        old = atomicCAS(lock, 0, 1);
+
+        // Note: uses integer comparison to avoid hang in case of NaN (since NaN != NaN)
+    } while (old == 1);
+//    while (atomicExch ((int *) lock, (int) 1) != 0) ;
 }
 
 __device__ __inline__ void GB_cuda_unlock (int32_t *lock) 
 {
-    lock = 0 ;
+    int old;
+    do {
+        old = atomicCAS(lock, 1, 0);
+        // Note: uses integer comparison to avoid hang in case of NaN (since NaN != NaN)
+    } while (old == 0);
+
+    //(*lock) = 0 ;
     // or this ?  It might be safer:
-    // GB_atomic_write <int32_t> (lock, 0) ;
+//     GB_atomic_write <int32_t> (lock, 0) ;
+//    atomicAdd<int32_t>(lock, -1);
+//    while (atomicExch ((int *) lock, (int) 0) != 1) ;
 }
 

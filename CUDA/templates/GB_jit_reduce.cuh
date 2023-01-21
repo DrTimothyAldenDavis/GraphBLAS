@@ -93,9 +93,10 @@ T_Z GB_block_Reduce(thread_block g, T_Z val)
 template< typename T_A, typename T_Z>
 __global__ void GB_jit_reduce
 (
-    GrB_Matrix A,   // matrix to reduce
-    GrB_Scalar R,   // scalar result
-    int64_t anz     // # of entries in A: anz = GB_nnz_held (A)
+    GrB_Matrix A,    // matrix to reduce
+    GrB_Scalar R,    // scalar result
+    int64_t anz,     // # of entries in A: anz = GB_nnz_held (A)
+    int32_t *mutex   // lock for atomics that need it
 )
 {
 
@@ -205,7 +206,8 @@ __global__ void GB_jit_reduce
 #if 0
     // FIXME: is this OK?
     #if !GB_CUDA_HAS_ATOMC
-    int32_t __global__ lock = 0 ;
+
+//    int32_t __global__ lock = 0 ;
     #endif
 #endif
 
@@ -219,15 +221,18 @@ __global__ void GB_jit_reduce
             GB_CUDA_ATOMIC <T_Z> (g_odata, sum) ;
         #else
             // the monoid does not have an atomic variant; use a lock
-            GB_cuda_lock (&lock) ;
+            GB_cuda_lock (mutex) ;
             GB_ADD (g_odata, g_odata, sum) ;
-            GB_cuda_unlock (&lock) ;
+            GB_cuda_unlock (mutex) ;
         #endif
 #endif
 
         // OLD:
         // all threadblocks reduce their result via an atomic
-        GB_atomic_add<T_Z>(g_odata, sum);
+//        GB_atomic_add<T_Z>(g_odata, sum);
+        GB_cuda_lock (mutex) ;
+        GB_ADD (*g_odata, *g_odata, sum) ;
+        GB_cuda_unlock (mutex) ;
     }
 }
 

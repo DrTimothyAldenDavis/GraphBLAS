@@ -115,6 +115,11 @@ public:
 
         int64_t anz = GB_nnz_held (A) ;
 
+      // TODO: Use RMM!
+      int32_t *lock;
+      CU_OK(cudaMalloc((void**)&lock, sizeof(int32_t)));
+      CU_OK(cudaMemsetAsync(lock, 0, sizeof(int32_t), stream));
+
       int blocksz = GB_get_threads_per_block();
       int gridsz = GB_get_number_of_blocks(anz);
       dim3 grid(gridsz);
@@ -129,13 +134,14 @@ public:
                     file_callback)
                .set_kernel_inst(  hashable_name , { A->type->name, op->op->ztype->name })
                .configure(grid, block, SMEM, stream)
-               .launch( A, temp_scalar, anz);
+               .launch( A, temp_scalar, anz, lock);
 
       // Need to synchronize before copying result to host
       CHECK_CUDA( cudaStreamSynchronize(stream) );
 
       memcpy(output, temp_scalar->x, op->op->ztype->size);
 
+      CU_OK(cudaFree(lock));
       GrB_Scalar_free (&temp_scalar) ;
 
       return true; // FIXME: return error condition if necessary
