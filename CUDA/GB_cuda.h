@@ -121,5 +121,11 @@ GrB_Info GB_cuda_matrix_advise
 ) ;
 #endif
 
+void GB_cuda_upscale_identity
+(
+    GB_void *identity_upscaled,     // output: at least sizeof (int32_t)
+    GrB_Monoid monoid               // input: monoid to upscale
+) ;
+
 #endif
 

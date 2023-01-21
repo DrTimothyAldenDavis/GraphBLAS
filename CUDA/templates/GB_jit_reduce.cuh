@@ -93,9 +93,9 @@ T_Z GB_block_Reduce(thread_block g, T_Z val)
 template< typename T_A, typename T_Z>
 __global__ void GB_jit_reduce
 (
-    GrB_Matrix A,    // matrix to reduce
-    GrB_Scalar R,    // scalar result
-    int64_t anz,     // # of entries in A: anz = GB_nnz_held (A)
+    GrB_Matrix A,   // matrix to reduce
+    void *zcalar_result,    // scalar result, at least sizeof(int32_t)
+    int64_t anz,    // # of entries in A: anz = GB_nnz_held (A)
     int32_t *mutex   // lock for atomics that need it
 )
 {
@@ -197,8 +197,37 @@ __global__ void GB_jit_reduce
     this_thread_block().sync(); 
 
     //--------------------------------------------------------------------------
-    // phase 3: reduce across threadblocks, or punt to the CPU
+    // phase 3: reduce across threadblocks
     //--------------------------------------------------------------------------
+
+    if (threadIdx.x == 0)
+    {
+        #if GB_HAS_CUDA_ATOMIC
+
+            // cast the result to the CUDA atomic type, and reduce
+            // atomically to the global zscalar_result
+            GB_CUDA_ATOMIC_TYPE *zscalar =
+                (GB_CUDA_ATOMIC_TYPE *) zscalar_result ;
+            GB_CUDA_ATOMIC_TYPE zsum = (GB_CUDA_ATOMIC_TYPE) sum ;
+            GB_CUDA_ATOMIC <GB_CUDA_ATOMIC_TYPE> (zscalar, zsum) ;
+
+        #else
+
+            // FIXME:  use another kind of reduction.  Write the kth
+            // threadblock result to Result [k], and use another kernel launch?
+            // The Result array should be padded for 8-bit and 16-bit types,
+            // even for user-defined types, so that each threadblock writes a
+            // single word.  Limit the # of threadblocks to some upperbound,
+            // say 64K.
+
+            GB_cuda_lock (mutex) ;
+            GB_ADD (*((T_Z *) zscalar_result), *((T_Z *) zscalar_result), sum) ;
+            GB_cuda_unlock (mutex) ;
+
+        #endif
+    }
+
+#if 0
 
     // scalar result
     T_Z *g_odata = (T_Z *) R->x ;
@@ -206,8 +235,7 @@ __global__ void GB_jit_reduce
 #if 0
     // FIXME: is this OK?
     #if !GB_CUDA_HAS_ATOMC
-
-//    int32_t __global__ lock = 0 ;
+    int32_t __global__ lock = 0 ;
     #endif
 #endif
 
@@ -221,18 +249,20 @@ __global__ void GB_jit_reduce
             GB_CUDA_ATOMIC <T_Z> (g_odata, sum) ;
         #else
             // the monoid does not have an atomic variant; use a lock
-            GB_cuda_lock (mutex) ;
+            GB_cuda_lock (&lock) ;
             GB_ADD (g_odata, g_odata, sum) ;
-            GB_cuda_unlock (mutex) ;
+            GB_cuda_unlock (&lock) ;
         #endif
 #endif
 
         // OLD:
         // all threadblocks reduce their result via an atomic
-//        GB_atomic_add<T_Z>(g_odata, sum);
+//      GB_atomic_add<T_Z>(g_odata, sum);
         GB_cuda_lock (mutex) ;
         GB_ADD (*g_odata, *g_odata, sum) ;
         GB_cuda_unlock (mutex) ;
     }
+#endif
+
 }
 

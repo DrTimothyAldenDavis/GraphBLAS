@@ -1,11 +1,9 @@
-
 //------------------------------------------------------------------------------
 // GB_reduce_to_scalar_cuda.cu: reduce on the GPU with semiring 
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
-// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
@@ -22,31 +20,31 @@ extern "C"
 
 GrB_Info GB_reduce_to_scalar_cuda
 (
-    GB_void *s,
+    // output:
+    GB_void *s,                 // note: statically allocated on CPU stack
+    // input:
     const GrB_Monoid reduce,
     const GrB_Matrix A
 )
 {
 
-    cudaStream_t stream;
-    CHECK_CUDA(cudaStreamCreate(&stream));
+    // FIXME: use the stream pool
+    cudaStream_t stream ;
+    CHECK_CUDA (cudaStreamCreate (&stream)) ;
 
     //----------------------------------------------------------------------
-    // reduce C to a scalar, just for testing:
+    // reduce C to a scalar
     //----------------------------------------------------------------------
 
-    GBURBLE ("(get nnz) ") ;
-    int64_t nz = GB_nnz(A);
-    GBURBLE ("(got nnz) ") ;
+    // FIXME: check error conditions (out of memory, etc)
+    GB_cuda_reduce_factory myreducefactory ;
+    myreducefactory.reduce_factory (reduce, A) ;
 
-    GB_cuda_reduce_factory myreducefactory;
-    myreducefactory.reduce_factory(reduce, A);
+    GB_cuda_reduce (myreducefactory, A, s, reduce, stream) ;
 
-    GB_cuda_reduce( myreducefactory, A, s, reduce, stream);
-    GBURBLE ("(did reduce) ") ;
+    CHECK_CUDA (cudaStreamSynchronize (stream)) ;
+    CHECK_CUDA (cudaStreamDestroy (stream)) ;
 
-    CHECK_CUDA(cudaStreamSynchronize(stream));
-    CHECK_CUDA(cudaStreamDestroy(stream));
-    return GrB_SUCCESS ;
+    return (GrB_SUCCESS) ;
 }
 

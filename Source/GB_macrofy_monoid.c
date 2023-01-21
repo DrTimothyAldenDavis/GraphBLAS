@@ -99,17 +99,24 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // create macros for the atomic CUDA operator, if available
     //--------------------------------------------------------------------------
 
+    // FIXME: LXOR could use atomic_add, and take the least significant bit.
+
     char *a = NULL ;
 
     switch (add_ecode)
     {
 
-        // first, any, second: atomic write
+        // FIRST, ANY, SECOND: atomic write
         case   1 :
         case   2 :
 
             switch (zcode)
             {
+                case GB_BOOL_code    :
+                case GB_INT8_code    :
+                case GB_UINT8_code   :
+                case GB_INT16_code   :
+                case GB_UINT16_code  :
                 case GB_INT32_code   :
                 case GB_UINT32_code  :
                 case GB_INT64_code   :
@@ -120,11 +127,17 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             }
             break ;
 
-        // min (integer only)
+        // MIN (integer only), and logical AND (via upscale to uint32_t)
         case   5 :
+        case  18 :
 
             switch (zcode)
             {
+                case GB_BOOL_code    :
+                case GB_INT8_code    :
+                case GB_UINT8_code   :
+                case GB_INT16_code   :
+                case GB_UINT16_code  :
                 case GB_INT32_code   :
                 case GB_UINT32_code  :
                 case GB_INT64_code   :
@@ -133,11 +146,17 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             }
             break ;
 
-        // max (integer only)
+        // MAX (integer only), and logical LOR (via upscale to uint32_t)
         case   8 :
+        case  17 :
 
             switch (zcode)
             {
+                case GB_BOOL_code    :
+                case GB_INT8_code    :
+                case GB_UINT8_code   :
+                case GB_INT16_code   :
+                case GB_UINT16_code  :
                 case GB_INT32_code   :
                 case GB_UINT32_code  :
                 case GB_INT64_code   :
@@ -146,13 +165,17 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             }
             break ;
 
-        // plus:  all types except 8-bit and 16-bit integers
+        // PLUS:  all types
         case   9 :
         case  10 :
         case  11 :
 
             switch (zcode)
             {
+                case GB_INT8_code    :
+                case GB_UINT8_code   :
+                case GB_INT16_code   :
+                case GB_UINT16_code  :
                 case GB_INT32_code   :
                 case GB_UINT32_code  :
                 case GB_INT64_code   :
@@ -179,6 +202,32 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         // CUDA atomic available: write, min, max, or add
         fprintf (fp, "#define GB_HAS_CUDA_ATOMIC 1\n") ;
         fprintf (fp, "#define GB_CUDA_ATOMIC %s\n", a) ;
+
+        char *t = "" ;
+        switch (zcode)
+        {
+            case GB_INT8_code    :
+            case GB_INT16_code   :
+            case GB_INT32_code   : t = "int32_t"    ; break ;
+
+            case GB_BOOL_code    :
+            case GB_UINT8_code   :
+            case GB_UINT16_code  :
+            case GB_UINT32_code  : t = "uint32_t"   ; break ;
+
+            case GB_INT64_code   : t = "int64_t"    ; break ;
+
+            case GB_UINT64_code  : t = "uint64_t"   ; break ;
+
+            case GB_FC32_code    :
+            case GB_FP32_code    : t = "float"      ; break ;
+
+            case GB_FC64_code    :
+            case GB_FP64_code    : t = "double"     ; break ;
+            default :;
+        }
+
+        fprintf (fp, "#define GB_CUDA_ATOMIC_TYPE %s\n", t) ;
     }
 }
 
