@@ -20,19 +20,27 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     GrB_Monoid monoid   // monoid to macrofy
 )
 {
-    const char *ztype_name = monoid->op->ztype->name ;
+
+    GrB_BinaryOp op = (monoid == NULL) ? NULL : monoid->op ;
+    const char *ztype_name = (monoid == NULL) ? "void" : op->ztype->name ;
+    int zcode = (monoid == NULL) ? 0 : op->ztype->code ;
 
     //--------------------------------------------------------------------------
     // create macros for the additive operator
     //--------------------------------------------------------------------------
 
-    GB_macrofy_binop (fp, "GB_ADD", false, true, add_ecode, monoid->op) ;
+    GB_macrofy_binop (fp, "GB_ADD", false, true, add_ecode, op) ;
 
     //--------------------------------------------------------------------------
     // create macros for the identity value
     //--------------------------------------------------------------------------
 
-    if (id_ecode <= 28)
+    if (monoid == NULL)
+    {
+        // no values computed
+        fprintf (fp, "#define GB_DECLARE_MONOID_IDENTITY(z)\n") ;
+    }
+    else if (id_ecode <= 28)
     {
         // built-in monoid: a simple assignment
         const char *id_value = GB_charify_identity_or_terminal (id_ecode) ;
@@ -43,26 +51,26 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     {
         // user-defined monoid:  all we have are the bytes
         GB_macrofy_bytes (fp, "MONOID_IDENTITY", ztype_name,
-            (uint8_t *) (monoid->identity), monoid->op->ztype->size) ;
+            (uint8_t *) (monoid->identity), op->ztype->size) ;
     }
 
     //--------------------------------------------------------------------------
     // create macros for the terminal value and terminal conditions
     //--------------------------------------------------------------------------
 
-    if (monoid->terminal == NULL)
-    {
-        // monoid is not terminal (either built-in or user-defined)
-        fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL(z)\n") ;
-        fprintf (fp, "#define GB_TERMINAL_CONDITION(cij,z) (false)\n") ;
-        fprintf (fp, "#define GB_IF_TERMINAL_BREAK(cij,z)\n") ;
-    }
-    else if (term_ecode == 18)
+    if (term_ecode == 18)
     {
         // ANY monoid is terminal but with no specific terminal value
         fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL(z)\n") ;
         fprintf (fp, "#define GB_TERMINAL_CONDITION(cij,z) (true)\n") ;
         fprintf (fp, "#define GB_IF_TERMINAL_BREAK(cij,z) break\n") ;
+    }
+    else if (monoid == NULL || monoid->terminal == NULL)
+    {
+        // monoid is not terminal (either built-in or user-defined)
+        fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL(z)\n") ;
+        fprintf (fp, "#define GB_TERMINAL_CONDITION(cij,z) (false)\n") ;
+        fprintf (fp, "#define GB_IF_TERMINAL_BREAK(cij,z)\n") ;
     }
     else if (term_ecode <= 28)
     {
@@ -78,13 +86,99 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     {
         // user-defined terminal monoid
         GB_macrofy_bytes (fp, "MONOID_TERMINAL", ztype_name,
-            monoid->terminal, monoid->op->ztype->size) ;
+            monoid->terminal, op->ztype->size) ;
         fprintf (fp, "#define GB_TERMINAL_CONDITION(cij,z)"
             " (memcmp (&(cij), &(z), %d) == 0)\n",
-            (int) monoid->op->ztype->size) ;
+            (int) op->ztype->size) ;
         fprintf (fp, "#define GB_IF_TERMINAL_BREAK(cij,z) "
             " if (memcmp (&(cij), &(z), %d) == 0) break\n",
-            (int) monoid->op->ztype->size) ;
+            (int) op->ztype->size) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // create macros for the atomic CUDA operator, if available
+    //--------------------------------------------------------------------------
+
+    char *a = NULL ;
+
+    switch (add_ecode)
+    {
+
+        // first, any, second: atomic write
+        case   1 :
+        case   2 :
+
+            switch (zcode)
+            {
+                case GB_INT32_code   :
+                case GB_UINT32_code  :
+                case GB_INT64_code   :
+                case GB_UINT64_code  :
+                case GB_FP32_code    :
+                case GB_FP64_code    : a = "GB_atomic_write" ;
+                default              : break ;
+            }
+            break ;
+
+        // min (integer only)
+        case   5 :
+
+            switch (zcode)
+            {
+                case GB_INT32_code   :
+                case GB_UINT32_code  :
+                case GB_INT64_code   :
+                case GB_UINT64_code  : a = "GB_atomic_min" ;
+                default              : break ;
+            }
+            break ;
+
+        // max (integer only)
+        case   8 :
+
+            switch (zcode)
+            {
+                case GB_INT32_code   :
+                case GB_UINT32_code  :
+                case GB_INT64_code   :
+                case GB_UINT64_code  : a = "GB_atomic_max" ;
+                default              : break ;
+            }
+            break ;
+
+        // plus:  all types except 8-bit and 16-bit integers
+        case   9 :
+        case  10 :
+        case  11 :
+
+            switch (zcode)
+            {
+                case GB_INT32_code   :
+                case GB_UINT32_code  :
+                case GB_INT64_code   :
+                case GB_UINT64_code  :
+                case GB_FP32_code    :
+                case GB_FP64_code    :
+                case GB_FC32_code    :
+                case GB_FC64_code    : a = "GB_atomic_add" ;
+                default              : break ;
+            }
+            break ;
+
+        // all other monoids
+        default: break ;
+    }
+
+    if (a == NULL)
+    {
+        // no CUDA atomic available
+        fprintf (fp, "#define GB_HAS_CUDA_ATOMIC 0\n") ;
+    }
+    else
+    {
+        // CUDA atomic available: write, min, max, or add
+        fprintf (fp, "#define GB_HAS_CUDA_ATOMIC 1\n") ;
+        fprintf (fp, "#define GB_CUDA_ATOMIC %s\n", a) ;
     }
 }
 

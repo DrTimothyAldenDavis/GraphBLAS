@@ -26,7 +26,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     uint64_t *scode,        // unique encoding of the entire semiring
     // input:
     // C matrix:
-    bool C_iso,             // if true, semiring is ignored
+    bool C_iso,             // if true, semiring must be ANY_PAIR_BOOL
     int C_sparsity,         // sparse, hyper, bitmap, or full
     GrB_Type ctype,         // C=((ctype) T) is the final typecast
     // M matrix:
@@ -48,8 +48,8 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
 
     if (C_iso)
     {
-        semiring = GxB_ANY_PAIR_BOOL ;
-        flipxy = false ;
+        ASSERT (semiring == GxB_ANY_PAIR_BOOL) ;
+        ASSERT (flipxy == false) ;
     }
 
     //--------------------------------------------------------------------------
@@ -100,7 +100,11 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // ISGE becomes GE
     // ISLE becomes LE
 
-    if (zcode == GB_BOOL_code)
+    if (C_iso)
+    {
+        zcode = 0 ;
+    }
+    else if (zcode == GB_BOOL_code)
     {
         // rename the monoid
         add_opcode = GB_boolean_rename (add_opcode) ;
@@ -122,8 +126,10 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     bool op_is_second = (mult_opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (mult_opcode == GB_PAIR_binop_code) ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (mult_opcode) ;
-    bool A_is_pattern = op_is_second || op_is_pair || op_is_positional ;
-    bool B_is_pattern = op_is_first  || op_is_pair || op_is_positional ;
+    if (op_is_second || op_is_pair || op_is_positional) xcode = 0 ;
+    if (op_is_first  || op_is_pair || op_is_positional) ycode = 0  ;
+    bool A_is_pattern = (xcode == 0) ;
+    bool B_is_pattern = (ycode == 0) ;
 
     //--------------------------------------------------------------------------
     // enumify the multiplier
@@ -147,8 +153,8 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     int bcode = B_is_pattern ? 0 : btype->code ;   // 0 to 14
     int ccode = C_iso ? 0 : ctype->code ;          // 0 to 14
 
-    int A_iso_code = A->iso ? 1 : 0 ;
-    int B_iso_code = B->iso ? 1 : 0 ;
+    int A_iso_code = (A_is_pattern || A->iso) ? 1 : 0 ;
+    int B_iso_code = (B_is_pattern || B->iso) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
     // enumify the mask

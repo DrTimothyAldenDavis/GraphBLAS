@@ -38,14 +38,15 @@ void GB_debugify_ewise
     GB_enumify_ewise (&scode, C_iso, C_sparsity, ctype,
         M, Mask_struct, Mask_comp, binaryop, flipxy, A, B) ;
 
+    // FIXME: use naming convention from GB_debugify_mxm
     // namify the ewise problem
     char ewise_name [256 + 8*GxB_MAX_NAME_LEN] ;
     GB_namify_problem (ewise_name, scode,
         (binaryop == NULL) ? "none" : binaryop->name,
         NULL,
-        (binaryop == NULL) ? NULL : binaryop->xtype->name,
-        (binaryop == NULL) ? NULL : binaryop->ytype->name,
-        (binaryop == NULL) ? NULL : binaryop->ztype->name,
+        (binaryop == NULL) ? "void" : binaryop->xtype->name,
+        (binaryop == NULL) ? "void" : binaryop->ytype->name,
+        (binaryop == NULL) ? "void" : binaryop->ztype->name,
         atype->name,
         btype->name,
         ctype->name) ;
@@ -56,6 +57,9 @@ void GB_debugify_ewise
     FILE *fp = fopen (filename, "w") ;
 
     // FIXME: pass this to GB_macrofy_ewise
+    fprintf (fp,
+        "//--------------------------------------"
+        "----------------------------------------\n") ;
     fprintf (fp, "// GB_ewise_%s.h\n", ewise_name) ;
 
     // macrofy the ewise problem

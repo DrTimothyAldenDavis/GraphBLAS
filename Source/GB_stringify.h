@@ -180,7 +180,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     int add_ecode,      // binary op as an enum
     int id_ecode,       // identity value as an enum
     int term_ecode,     // terminal value as an enum (< 30 is terminal)
-    GrB_Monoid monoid   // monoid to macrofy
+    GrB_Monoid monoid   // monoid to macrofy (NULL if not used)
 ) ;
 
 //------------------------------------------------------------------------------

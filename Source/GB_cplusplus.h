@@ -60,8 +60,6 @@
 
 #if defined ( __cplusplus ) || defined ( __NVCC__ )
 
-    using namespace std ;
-
     #define GB_GUARD_crealf_DEFINED
     #define GB_GUARD_creal_DEFINED
     #define GB_GUARD_cimagf_DEFINED

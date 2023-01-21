@@ -18,10 +18,29 @@ void GB_macrofy_binop
     bool flipxy,                // if true: op is f(y,x), multipicative only
     bool is_monoid,             // if true: additive operator for monoid
     int ecode,
-    GrB_BinaryOp op             // may be NULL (for GB_wait)
+    GrB_BinaryOp op             // may be NULL (for GB_wait, or C iso)
 )
 {
-    if (ecode == 0)
+
+
+    if (op == NULL)
+    {
+
+        //----------------------------------------------------------------------
+        // GB_wait, or C is iso: no operator
+        //----------------------------------------------------------------------
+
+        if (is_monoid)
+        {
+            fprintf (fp, "#define %s(z,x,y)\n", macro_name) ;
+        }
+        else
+        {
+            fprintf (fp, "#define %s(z,x,y,i,k,j)\n", macro_name) ;
+        }
+
+    }
+    else if (ecode == 0)
     {
 
         //----------------------------------------------------------------------
@@ -262,20 +281,16 @@ void GB_macrofy_binop
 
             // div (complex floating-point)
             case  57 : f = "z = GB_FC32_div (x,y)" ;
-                #if GB_COMPILER_MSC
                 GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
                 GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
                 GB_macrofy_defn (fp, 0, "GB_FC64_DIV", GB_FC64_DIV_DEFN) ;
                 GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
                 GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                #endif
                 GB_macrofy_defn (fp, 0, "GB_FC32_DIV", GB_FC32_DIV_DEFN) ;
                 break ;
             case  58 : f = "z = GB_FC64_div (x,y)" ;
-                #if GB_COMPILER_MSC
                 GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
                 GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                #endif
                 GB_macrofy_defn (fp, 0, "GB_FC64_DIV", GB_FC64_DIV_DEFN) ;
                 break ;
 
@@ -310,20 +325,16 @@ void GB_macrofy_binop
 
             // rdiv (complex floating-point)
             case  68 : f = "z = GB_FC32_div (y,x)" ;
-                #if GB_COMPILER_MSC
                 GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
                 GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
                 GB_macrofy_defn (fp, 0, "GB_FC64_DIV", GB_FC64_DIV_DEFN) ;
                 GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
                 GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                #endif
                 GB_macrofy_defn (fp, 0, "GB_FC32_DIV", GB_FC32_DIV_DEFN) ;
                 break ;
             case  69 : f = "z = GB_FC64_div (y,x)" ;
-                #if GB_COMPILER_MSC
                 GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
                 GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                #endif
                 GB_macrofy_defn (fp, 0, "GB_FC64_DIV", GB_FC64_DIV_DEFN) ;
                 break ;
 

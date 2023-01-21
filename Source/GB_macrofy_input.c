@@ -21,7 +21,7 @@ void GB_macrofy_input
     GrB_Type xtype,         // type of aij
     GrB_Type atype,         // type of the input matrix
     int asparsity,          // sparsity format of the input matrix
-    int acode,              // type code of the input (0 if iso)
+    int acode,              // type code of the input (0 if pattern)
     int A_iso_code          // 1 if A is iso
 )
 {
@@ -35,7 +35,7 @@ void GB_macrofy_input
     fprintf (fp, "#define GB_%s_IS_PATTERN %d\n", Aname, A_is_pattern) ;
     fprintf (fp, "#define GB_%s_ISO %d\n", Aname, A_iso_code) ;
     GB_macrofy_sparsity (fp, Aname, asparsity) ;
-    fprintf (fp, "#define GB_%s_TYPENAME %s\n", Aname, atype->name) ;
+    fprintf (fp, "#define GB_%s_TYPENAME %s\n", Aname, A_is_pattern ? "GB_void" : atype->name) ;
 
     //--------------------------------------------------------------------------
     // construct the macros to declare scalars and get values from the matrix
@@ -51,6 +51,7 @@ void GB_macrofy_input
         fprintf (fp, "#define GB_DECLARE%s(%s)\n", Aname, aname) ;
         fprintf (fp, "#define GB_DECLARE%s_MOD(modifier,%s)\n", Aname, aname) ;
         fprintf (fp, "#define GB_GET%s(%s,%sx,p,iso)\n", Aname, aname, Aname) ;
+
     }
     else
     {

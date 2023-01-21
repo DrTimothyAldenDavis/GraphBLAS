@@ -155,7 +155,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     int M_sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
     int C_sparsity = M_sparsity ;
-    bool C_iso = false ;
+    bool C_iso = false ;    // FIXME: pass in C_iso and cscalar
     info = GB_new_bix (&C, // sparse or hyper (from M), existing header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         M_sparsity, false, M->hyper_switch, cnvec,
@@ -188,8 +188,11 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     }
     CU_OK (cudaMemAdvise (C->i, (cnz+1) * sizeof ( int64_t),
         cudaMemAdviseSetPreferredLocation, device)) ;
-    CU_OK (cudaMemAdvise (C->x, (C_iso ? 1: (cnz+1)) * C->type->size ,
-        cudaMemAdviseSetPreferredLocation, device)) ;
+    if (!C_iso)
+    {
+        CU_OK (cudaMemAdvise (C->x, (cnz+1) * C->type->size ,
+            cudaMemAdviseSetPreferredLocation, device)) ;
+    }
 
     // prefetch M (if M hypersparse: using M->h not M->Y)
     GB_OK (GB_cuda_matrix_prefetch (M,

@@ -34,21 +34,36 @@ void GB_debugify_mxm
     GrB_Type atype = A->type ;
     GrB_Type btype = B->type ;
 
+    if (C_iso)
+    {
+        // the kernel does not access any values of C, A, or B
+        semiring = GxB_ANY_PAIR_BOOL ;
+        flipxy = false ;
+    }
+
     // enumify the mxm problem
     GB_enumify_mxm (&scode, C_iso, C_sparsity, ctype,
         M, Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
+
+    int zcode       = GB_RSHIFT (scode, 32, 4) ;    // if 0: C is iso
+    int xcode       = GB_RSHIFT (scode, 28, 4) ;    // if 0: ignored
+    int ycode       = GB_RSHIFT (scode, 24, 4) ;    // if 0: ignored
+
+    int ccode       = GB_RSHIFT (scode, 16, 4) ;   // if 0: C is iso
+    int acode       = GB_RSHIFT (scode, 12, 4) ;   // if 0: A is pattern
+    int bcode       = GB_RSHIFT (scode,  8, 4) ;   // if 0: B is pattern
 
     // namify the mxm problem
     char mxm_name [256 + 8*GxB_MAX_NAME_LEN] ;
     GB_namify_problem (mxm_name, scode,
         semiring->add->op->name,
         semiring->multiply->name,
-        semiring->multiply->xtype->name,
-        semiring->multiply->ytype->name,
-        semiring->multiply->ztype->name,
-        atype->name,
-        btype->name,
-        ctype->name) ;
+        (xcode == 0) ? "void" : semiring->multiply->xtype->name,
+        (ycode == 0) ? "void" : semiring->multiply->ytype->name,
+        (zcode == 0) ? "void" : semiring->multiply->ztype->name,
+        (acode == 0) ? "void" : atype->name,
+        (bcode == 0) ? "void" : btype->name,
+        (ccode == 0) ? "void" : ctype->name) ;
 
     // construct the filename and create the file
     char filename [512 + 8*GxB_MAX_NAME_LEN] ;
@@ -56,6 +71,9 @@ void GB_debugify_mxm
     FILE *fp = fopen (filename, "w") ;
 
     // FIXME: pass this to GB_macrofy_mxm
+    fprintf (fp,
+        "//--------------------------------------"
+        "----------------------------------------\n") ;
     fprintf (fp, "// GB_mxm_%s.h\n", mxm_name) ;
 
     // macrofy the mxm problem

@@ -23,8 +23,8 @@ void GB_macrofy_defn
     {
         if (kind == 2)
         {
-            // built-in macro only need for CUDA
-            fprintf (fp, "#if defined ( __NVCC__)\n") ;
+            // built-in macro only need for C++ or CUDA
+            fprintf (fp, "#if defined ( __cplusplus ) || defined ( __NVCC__ )\n") ;
         }
 
         // construct the guard to prevent duplicate definitions
@@ -48,7 +48,7 @@ void GB_macrofy_defn
 
         if (kind == 2)
         {
-            // end the NVCC guard
+            // end the C++/NVCC guard
             fprintf (fp, "#endif\n") ;
         }
     }

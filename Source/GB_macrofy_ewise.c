@@ -87,10 +87,6 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
             binaryop->xtype, binaryop->ytype, binaryop->ztype) ;
     }
 
-    //--------------------------------------------------------------------------
-    // construct the macros for the type names
-    //--------------------------------------------------------------------------
-
     fprintf (fp, "// binary operator types:\n") ;
     if (binaryop == NULL)
     {
@@ -129,7 +125,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         fprintf (fp, "#define GB_C_ISO 0\n") ;
     }
     GB_macrofy_sparsity (fp, "C", csparsity) ;
-    fprintf (fp, "#define GB_C_TYPENAME %s\n\n", ctype->name) ;
+    fprintf (fp, "#define GB_C_TYPENAME %s\n\n", C_iso ? "GB_void" : ctype->name) ;
 
     //--------------------------------------------------------------------------
     // construct the macros to access the mask (if any), and its name
