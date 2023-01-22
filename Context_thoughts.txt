@@ -1,0 +1,112 @@
+My proposed GxB_Context object can currently be "engaged" and "disengaged" by a
+user thread, which defines the Context used by all calls to GrB* from that user
+thread.  If a user thread has no Context, it uses GxB_CONTEXT_WORLD (akin to
+MPI_COMM_WORLD).  It can also extend to each of the 3 ways a Context could be
+used as described in the GrAPL paper on the topic.
+
+The paper suggests 3 options for the Context / Communicator.  I prefer the
+2nd option: placing each object in a Context.
+
+Some thoughts about adding a Context to objects in GraphBLAS.  Major issues:
+
+(1) the GrB_Matrix and GrB_Vector need a Context, and I think all constructors
+    should take a Context as input (including GrB_Matrix_dup).
+
+(2) What about non-opaque user-visible arrays?  Like I,J,X for build, extract,
+    assign?  Or Ap,Ai,Ax for import/export?  Or the blob for
+    serialize/deserialize?  Where and how are they distributed?  We can't
+    attach a Context to them.  Do we need some kind of non-opaque dense array
+    struct in C, with a GrB_Type, GrB_Context, and pointer to data?
+
+(3) my proposed GxB_Context object is consistent with all 3 approaches.
+
+    (a) one Context per job: there would just be a single global GxB_Context
+        object.  This approach is not a good idea but it would work.
+
+    (b) each object in a Context:  works fine.   I would have, say:
+
+        GrB_Matrix_new (&A, ... Context)        creates A in a Context
+        GrB_Matrix_engage (A, ..., Context)     moves A to the Context
+        GrB_Matrix_diengage (A, ..., Context)   moves A to the GxB_CONTEXT_WORLD
+        ...
+
+    (c) each descriptor can have a context.  Works fine.
+
+        GrB_Descriptor_engage (desc, Context)
+        GrB_Descriptor_disengage (desc, Context)
+
+This GxB_Context object can work just fine in all 3 cases, simultaneously.
+
+Some Details:
+
+Page 2 of the GraPL paper: "Object creation through duplication, however,
+reuses the communicator so those methods would not change."
+
+    I disagree.  GrB_Matrix_dup (&C, A) should be able to make a copy of
+    A in one context, into a matrix C in another context (copy and
+    redistribute).  Otherwise, C is created in the same context as A, and then
+    redistributing to another context is costly.
+
+    I think every matrix/vector/(scalar?) constructor should be able to be
+    given a context.
+
+Objects in GraphBLAS that likely do not need a Context:
+
+    GrB_Descriptor
+    GrB_Type
+    GrB_UnaryOp
+    GrB_BinaryOp
+    GrB_IndexUnaryOp
+    GrB_Monoid
+    GrB_Semiring
+
+What about the GrB_Scalar?  Does it need a Context?
+
+Matrix/vector/scalar constructors: these need a Context input parameter
+
+    These methods could create their results in the Global context, and then
+    a new context could be immediately assigned to them ("engage" I call it,
+    since "assign" already has a meaning in GraphBLAS, as GrB_assign).
+    GrB_Matrix_new (&A, ...)
+    GrB_Vector_new (&v, ...)
+    GrB_Scalar_new (&s, ...)
+
+    These should take a Context input parameter:
+    GrB_Matrix_dup (&C, A)
+    GrB_Vector_dup (&v, w)
+    GrB_Scalar_dup (&s, t)
+
+    this is a mistake in my opinion:
+    GrB_Matrix_diag (&C, v, k)      <<< v2.0 C API, but C needs a Context
+    GrB_Matrix_diag (C, v, k)       <<< should be this (not a constructor)
+
+    my method, splits a matrix A into a 2D array of Tiles (each its own
+    newly constructed GrB_Matrix):
+    GxB_Matrix_split (Tiles, ..., A, ...)
+
+Matrix/vector constructors that also have large user input/output arrays:
+    how are Ap, Ai, Ax, etc distributed?  Where is A built, in what Context?
+
+    GrB_Matrix_import (&A, ... Ap, Ai, Ax, ...)
+    GrB_Vector_import (&A, ... vi, vx, ...)         <<< doesn't exist. why??
+
+Not constructors but require large C input/output arrays:
+    how are I, J, X distributed for build/extract/assign?
+    where is Ap, Ai, and Ax?  where is the user blob?
+
+    GrB_Matrix_build (A, I, J, X, ...)
+    GrB_Vector_build (v, I, X, ...)
+    GrB_Matrix_extractTuples (I, J, X, ..., A)
+    GrB_Vector_extractTuples (I, X, ..., v)
+
+    GrB_Matrix_assign_* (C, ... I, J, ...)
+    GrB_Vector_assign_* (C, ... I, ...)
+
+    GrB_Matrix_extract_* (C, ... I, J, ...)
+    GrB_Vector_extract_* (C, ... I, ...)
+
+    GrB_Matrix_export (Ap, Ai, Ax, ..., A)
+
+    GrB_Matrix_serialize (blob, ... A)
+
+
