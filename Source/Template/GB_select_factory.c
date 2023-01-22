@@ -103,7 +103,7 @@ switch (opcode)
         #endif
 
     case GB_VALUEEQ_idxunop_code : // C = value_select (A,k)
-    case GB_VALUENE_idxunop_code :
+    case GB_VALUENE_idxunop_code : 
     case GB_VALUEGT_idxunop_code : 
     case GB_VALUEGE_idxunop_code : 
     case GB_VALUELT_idxunop_code : 

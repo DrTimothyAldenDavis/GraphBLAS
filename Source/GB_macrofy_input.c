@@ -17,7 +17,9 @@ void GB_macrofy_input
     FILE *fp,
     // input:
     const char *aname,      // name of the scalar aij = ...
+    const char *Amacro,     // name of the macro is GB_GET*(Amacro)
     const char *Aname,      // name of the input matrix
+    bool do_matrix_macros,  // if true, do the matrix macros
     GrB_Type xtype,         // type of aij
     GrB_Type atype,         // type of the input matrix
     int asparsity,          // sparsity format of the input matrix
@@ -31,11 +33,15 @@ void GB_macrofy_input
     //--------------------------------------------------------------------------
 
     int A_is_pattern = (acode == 0) ? 1 : 0 ;
-    fprintf (fp, "\n// %s matrix:\n", Aname) ;
-    fprintf (fp, "#define GB_%s_IS_PATTERN %d\n", Aname, A_is_pattern) ;
-    fprintf (fp, "#define GB_%s_ISO %d\n", Aname, A_iso_code) ;
-    GB_macrofy_sparsity (fp, Aname, asparsity) ;
-    fprintf (fp, "#define GB_%s_TYPENAME %s\n", Aname, A_is_pattern ? "GB_void" : atype->name) ;
+    if (do_matrix_macros)
+    {
+        fprintf (fp, "\n// %s matrix:\n", Aname) ;
+        fprintf (fp, "#define GB_%s_IS_PATTERN %d\n", Aname, A_is_pattern) ;
+        fprintf (fp, "#define GB_%s_ISO %d\n", Aname, A_iso_code) ;
+        GB_macrofy_sparsity (fp, Aname, asparsity) ;
+        fprintf (fp, "#define GB_%s_TYPENAME %s\n", Aname,
+            A_is_pattern ? "GB_void" : atype->name) ;
+    }
 
     //--------------------------------------------------------------------------
     // construct the macros to declare scalars and get values from the matrix
@@ -48,9 +54,9 @@ void GB_macrofy_input
         // no need to access the values of A
         //----------------------------------------------------------------------
 
-        fprintf (fp, "#define GB_DECLARE%s(%s)\n", Aname, aname) ;
-        fprintf (fp, "#define GB_DECLARE%s_MOD(modifier,%s)\n", Aname, aname) ;
-        fprintf (fp, "#define GB_GET%s(%s,%sx,p,iso)\n", Aname, aname, Aname) ;
+        fprintf (fp, "#define GB_DECLARE%s(%s)\n", Amacro, aname) ;
+        fprintf (fp, "#define GB_DECLARE%s_MOD(modifier,%s)\n", Amacro, aname) ;
+        fprintf (fp, "#define GB_GET%s(%s,%sx,p,iso)\n", Amacro, aname, Aname) ;
 
     }
     else
@@ -80,12 +86,22 @@ void GB_macrofy_input
 
         //      __shared__ float w [32] ;
 
-        fprintf (fp, "#define GB_DECLARE%s(%s) %s %s\n",
-            Aname, aname, xtype->name, aname) ;
+        if (xtype == NULL)
+        {
+            // no need to typecast to xtype
+            fprintf (fp, "#define GB_DECLARE%s(%s)\n", Amacro, aname) ;
+            fprintf (fp, "#define GB_DECLARE%s_MOD(modifier,%s)\n",
+                Amacro, aname) ;
+        }
+        else
+        {
+            fprintf (fp, "#define GB_DECLARE%s(%s) %s %s\n",
+                Amacro, aname, xtype->name, aname) ;
 
-        // declare a scalar or work array, prefixed with a modifier
-        fprintf (fp, "#define GB_DECLARE%s_MOD(modifier,%s) modifier %s %s\n",
-            Aname, aname, xtype->name, aname) ;
+            // declare a scalar or work array, prefixed with a modifier
+            fprintf (fp, "#define GB_DECLARE%s_MOD(modifier,%s) modifier %s %s\n",
+                Amacro, aname, xtype->name, aname) ;
+        }
 
         //----------------------------------------------------------------------
         // construct the GB_GETA or GB_GETB macro
@@ -113,10 +129,9 @@ void GB_macrofy_input
 
         #define SLEN 256
         char macro_name [SLEN+1], xargs [SLEN+1], xexpr [SLEN+1] ;
-        snprintf (macro_name, SLEN, "GB_GET%s", Aname) ;
+        snprintf (macro_name, SLEN, "GB_GET%s", Amacro) ;
         snprintf (xargs, SLEN, "%sx,p,iso", Aname) ;
         snprintf (xexpr, SLEN, A_iso_code ? "%sx [0]" : "%sx [p]", Aname) ;
         GB_macrofy_cast (fp, macro_name, aname, xargs, xexpr, xtype, atype) ;
     }
 }
-

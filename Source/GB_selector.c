@@ -21,6 +21,7 @@
 #include "GB_sel__include.h"
 #include "GB_scalar.h"
 #include "GB_transpose.h"
+#include "GB_stringify.h"
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \
@@ -292,6 +293,17 @@ GrB_Info GB_selector
     { 
         GB_BURBLE_MATRIX (A, "(iso select) ") ;
     }
+
+    //--------------------------------------------------------------------------
+    // debugify the select kernel
+    //--------------------------------------------------------------------------
+
+    // The CUDA select kernel would be called here.
+
+    #ifdef GB_DEBUGIFY_DEFN
+    GB_debugify_select (C_iso, opcode, op, flipij, A, ithunk, Thunk,
+        in_place_A) ;
+    #endif
 
     //==========================================================================
     // bitmap/full case

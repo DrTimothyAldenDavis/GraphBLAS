@@ -141,11 +141,11 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // if flipxy false:  A is typecasted to x, and B is typecasted to y.
     // if flipxy true:   A is typecasted to y, and B is typecasted to x.
 
-    GB_macrofy_input (fp, "a", "A", (binaryop == NULL) ? ctype :
+    GB_macrofy_input (fp, "a", "A", "A", true, (binaryop == NULL) ? ctype :
         (flipxy ? binaryop->ytype : binaryop->xtype),
         atype, asparsity, acode, A_iso_code) ;
 
-    GB_macrofy_input (fp, "b", "B", (binaryop == NULL) ? ctype :
+    GB_macrofy_input (fp, "b", "B", "B", true, (binaryop == NULL) ? ctype :
         (flipxy ? binaryop->xtype : binaryop->ytype),
         btype, bsparsity, bcode, B_iso_code) ;
 

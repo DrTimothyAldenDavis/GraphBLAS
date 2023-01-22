@@ -32,7 +32,7 @@
 
 // The name of the macro is given by macro_name.
 // The name of the variable z is given by zarg.
-// The inputs x,... are given by xargs (which may containt a comma).
+// The inputs x,... are given by xargs (which may contain a comma).
 // xexpr is an expression using the xargs that produce a value of type xtype.
 // z has type ztype.
 
@@ -51,6 +51,13 @@ void GB_macrofy_cast
     const GrB_Type xtype        // the type of the x input
 )
 {
+
+    if (ztype == NULL || xtype == NULL)
+    {
+        // empty macro if xtype or ztype are NULL (value not needed)
+        fprintf (fp, "#define %s(%s,%s)\n", macro_name, zarg, xargs) ;
+        return ;
+    }
 
     const GB_Type_code zcode = ztype->code ;
     const GB_Type_code xcode = xtype->code ;

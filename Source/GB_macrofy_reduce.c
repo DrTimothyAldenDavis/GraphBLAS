@@ -76,8 +76,7 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     // monoid operator.  No JIT kernel is ever required to reduce an iso matrix
     // to a scalar, even for user-defined types and monoids.
 
-    GB_macrofy_input (fp, "a", "A", monoid->op->ztype,
+    GB_macrofy_input (fp, "a", "A", "A", true, monoid->op->ztype,
         atype, asparsity, acode, false) ;
-
 }
 
