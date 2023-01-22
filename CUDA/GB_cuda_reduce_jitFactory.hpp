@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+// GraphBLAS/CUDA/GB_cuda_reduce_jitFactory.hpp: kernel for reduction to scalar
+//------------------------------------------------------------------------------
+
 // SPDX-License-Identifier: Apache-2.0
 /*
  * Copyright (c) 2017-2019, NVIDIA CORPORATION. All rights reserved.
@@ -27,11 +31,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
-  Extended example for building on-the-fly kernels with C interface.
-  Simple examples demonstrating different ways to load source code
-    and call kernels.
- */
+//------------------------------------------------------------------------------
+
+// Constructs an instance of the template/GB_jit_reduce.cuh kernel to reduce
+// a GrB_Matrix to a scalar.  GB_reduce_to_scalar_cuda first
 
 #ifndef GB_REDUCE_JITFACTORY_H
 #define GB_REDUCE_JITFACTORY_H
@@ -49,10 +52,10 @@
  * Kernel factory says "Here's the actual instance I want you to build with the given parameters"
  */
 
-//bool GB_cuda_reduce(int64_t *index, void *in_data, void *output, unsigned int N, GrB_Monoid op);
-
-//Kernel jitifiers
+// Kernel jitifiers
 class reduceFactory ;
+
+// FIXME: what is spdotFactory?
 template<typename T1, typename T2, typename T3> class spdotFactory ;
 
 //------------------------------------------------------------------------------
@@ -61,57 +64,80 @@ template<typename T1, typename T2, typename T3> class spdotFactory ;
 
 class reduceFactory
 {
+
+    //--------------------------------------------------------------------------
+    // class properties
+    //--------------------------------------------------------------------------
+
     std::string base_name = "GB_jit";
     std::string kernel_name = "reduce";
 
     int threads_per_block = 320 ;
     int work_per_thread = 256;
-    int number_of_sms = GB_Global_gpu_sm_get (0);
+//  int number_of_sms = GB_Global_gpu_sm_get (0) ;
 
-    GB_cuda_reduce_factory &reduce_factory_;
+    GB_cuda_reduce_factory &reduce_factory_ ;
 
     public:
+
+    //--------------------------------------------------------------------------
+    // class constructor
+    //--------------------------------------------------------------------------
 
     reduceFactory (GB_cuda_reduce_factory &myreducefactory) :
         reduce_factory_(myreducefactory) {}
 
-    int GB_get_threads_per_block()
+    //--------------------------------------------------------------------------
+    // GB_get_threads_per_block: determine # of threads in a threadBlock
+    //--------------------------------------------------------------------------
+
+    int GB_get_threads_per_block ( )
     {
-        return threads_per_block;
+        return threads_per_block ;
     }
 
-    int GB_get_number_of_blocks(unsigned int N)
+    //--------------------------------------------------------------------------
+    // GB_get_number_of_blocks: determine # of threadBlocks to use
+    //--------------------------------------------------------------------------
+
+    int GB_get_number_of_blocks
+    (
+        unsigned int64_t anvals     // # of entries in input matrix
+    )
     {
         // FIXME: this is a lot of blocks.  Use a smaller number (cap at, say,
         // 64K), to simplify the non-atomic reductions
-        return (N + work_per_thread*threads_per_block - 1) /
+        return (anvals + work_per_thread*threads_per_block - 1) /
                (work_per_thread*threads_per_block) ;
     }
 
-    // Note: this does assume the erased types are compatible w/ the monoid's
-    // ztype (FIXME: what is this?)
+    //--------------------------------------------------------------------------
+    // jitGridBlockLaunch:  construct and launch the GB_jit_reduce kernel
+    //--------------------------------------------------------------------------
 
-    bool jitGridBlockLaunch
+    // Note: this does assume the erased types are compatible w/ the monoid's
+    // ztype (FIXME: what does this comment mean?)
+
+    bool jitGridBlockLaunch     // FIXME: return GrB_Info
     (
-        GrB_Matrix A,               // matrix to reduce to a scalar
-        void *output,               // output scalar (static on the CPU)
-        GrB_Monoid monoid,          // monoid to use for the reducution
-        cudaStream_t stream = 0     // stream to use
+        GrB_Matrix A,           // matrix to reduce to a scalar
+        void *output,           // output scalar (static on CPU), of size zsize
+        GrB_Monoid monoid,      // monoid to use for the reducution
+        cudaStream_t stream = 0 // stream to use, default stream 0
     )
     {
         GBURBLE ("\n(launch reduce factory) \n") ;
 
-        // allocate and initialize zscalar_result
+        // allocate and initialize zscalar
         size_t zsize = monoid->op->ztype->size ;
         size_t zscalar_size = GB_IMAX (zsize, sizeof (int32_t)) ;
-        GB_void identity_upscaled [zscalar_size] ;
-        GB_cuda_upscale_identity (identity_upscaled, monoid) ;
-
-        // FIXME: use unified shared memory functions, and the stream
-        void *zscalar_result = NULL ;
-        CHECK_CUDA (cudaMalloc (&zscalar_result, zscalar_size)) ;
-        CHECK_CUDA (cudaMemcpy (zscalar_result, identity_upscaled,
-            zscalar_size, cudaMemcpyHostToDevice)) ;
+        void *zscalar = rmm_wrap_malloc (zscalar_size) ;
+        if (zscalar == NULL)
+        {
+            // out of memory
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+        GB_cuda_upscale_identity (zscalar, monoid) ;
 
         jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
         filecache.getFile (reduce_factory_) ;
@@ -126,58 +152,75 @@ class reduceFactory
         << reduce_factory_.filename << R"(")" << std::endl <<
         R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
-        //    bool is_sparse = GB_IS_SPARSE(A);
-        //    int64_t N = is_sparse ? GB_nnz(A) : GB_NCOLS(A) * GB_NROWS(A);
-
-        int64_t anz = GB_nnz_held (A) ;
+        int64_t anvals = GB_nnz_held (A) ;
 
         // TODO: Use RMM!
-        int32_t *lock;
-        CU_OK(cudaMalloc((void**)&lock, sizeof(int32_t)));
-        CU_OK(cudaMemsetAsync(lock, 0, sizeof(int32_t), stream));
+        int32_t *lock ;
+//      CU_OK(cudaMalloc((void**)&lock, sizeof(int32_t)));
+//      CU_OK(cudaMemsetAsync(lock, 0, sizeof(int32_t), stream));
+        // FIXED (but not tested): using RMM
+        lock = (int32_t *) rmm_wrap_calloc (1, sizeof (int32_t)) ;
+        if (lock == NULL)
+        {
+            // out of memory
+            rmm_wrap_free (zscalar) ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
 
-        int blocksz = GB_get_threads_per_block();
-        int gridsz = GB_get_number_of_blocks(anz);
-        dim3 grid(gridsz);
-        dim3 block(blocksz);
+        // determine kernel launch geometry
+        int blocksz = GB_get_threads_per_block ( ) ;
+        int gridsz = GB_get_number_of_blocks (anvals) ;
+        dim3 grid (gridsz) ;
+        dim3 block (blocksz) ;
 
         GBURBLE ("(cuda reduce launch %d threads in %d blocks)",
             blocksz, gridsz ) ;
 
+        // construct and launch the kernel
+        // FIXME: use GB_namify_problem to get the full name
+        // FIXME: where does it go if it fails?  try/catch?
         jit::launcher(hashable_name + "_" + rcode,
                 string_to_be_jitted.str(),
                 header_names,
                 compiler_flags,
-                file_callback)
+                file_callback)  // FIXME: where is file_callback defined?
            .set_kernel_inst(  hashable_name ,
                 { A->type->name, monoid->op->ztype->name })
            .configure(grid, block, SMEM, stream)
-           .launch( A, zscalar_result, anz, lock);
+           .launch( A, zscalar, anvals, lock);
 
-        // Need to synchronize before copying result to host
-        CHECK_CUDA( cudaStreamSynchronize(stream) );
+        // synchronize before copying result to host
+        CHECK_CUDA (cudaStreamSynchronize (stream)) ;
 
-        // FIXME: use unified shared memory here instead
-        // memcpy (output, zscalar_result, zsize) ;
-        CHECK_CUDA (cudaMemcpy (output, zscalar_result,
-            zsize, cudaMemcpyDeviceToHost)) ;
+        // FIXME: sometimes we use CHECK_CUDA, sometimes CU_OK.  Need to
+        // be consistent.  Also, if this method fails, lock and zscalar
+        // must be freed: we can do this in the CU_OK or CHECK_CUDA macros.
+        // Or in a try/catch?
 
-        CU_OK(cudaFree(lock));
-        CHECK_CUDA (cudaFree (zscalar_result)) ;
+        // output = zscalar (but only the first zsize bytes of it)
+        memcpy (output, zscalar, zsize) ;
+
+        // free workspace and return result
+//      CU_OK(cudaFree(lock));
+//      CHECK_CUDA (cudaFree (zscalar)) ;
+        rmm_wrap_free (lock) ;
+        rmm_wrap_free (zscalar) ;
 
         return (GrB_SUCCESS) ;
     }
 } ;
 
 //------------------------------------------------------------------------------
+// GB_cuda_reduce
+//------------------------------------------------------------------------------
 
-inline bool GB_cuda_reduce
+inline bool GB_cuda_reduce      // FIXME: return GrB_Info, not bool
 (
-    GB_cuda_reduce_factory &myreducefactory,
-    GrB_Matrix A,
-    void *output,               // statically allocated on the CPU
-    GrB_Monoid monoid,
-    cudaStream_t stream = 0
+    GB_cuda_reduce_factory &myreducefactory,    // reduction JIT factory
+    GrB_Matrix A,               // matrix to reduce
+    void *output,               // result of size monoid->op->ztype->size
+    GrB_Monoid monoid,          // monoid for the reduction
+    cudaStream_t stream = 0     // stream to use
 )
 {
     reduceFactory rf(myreducefactory);

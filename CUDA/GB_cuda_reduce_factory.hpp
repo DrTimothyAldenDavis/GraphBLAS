@@ -1,8 +1,14 @@
+//------------------------------------------------------------------------------
+// GraphBLAS/CUDA/GB_cuda_reduce_factory
+//------------------------------------------------------------------------------
+
 // Class to manage both stringify functions from mxm, ops and monoids to char buffers
 // Also provides a iostream callback to deliver the buffer to jitify as if read from a file
 
 // (c) Nvidia Corp. 2020 All rights reserved
 // SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
 
 // Implementations of string callbacks
 #pragma once
@@ -13,17 +19,18 @@
 
 extern "C"
 {
-#include "GB.h"
-#include "GB_stringify.h"
+    #include "GB.h"
+    #include "GB_stringify.h"
 }
 
 // FIXME: delegate problem generation to data factory
 class GB_cuda_reduce_factory: public jit::File_Desc {
 
 public:
-    uint64_t rcode;
-    GrB_Monoid reduce ;
-    GrB_Type atype ;
+
+    uint64_t rcode ;        // unique encoding from GB_enumify_reduce
+    GrB_Monoid monoid ;     // monoid to perform the reduction
+    GrB_Type atype ;        // matrix data type
 
     // file ptr
     FILE *fp;
@@ -38,35 +45,39 @@ public:
         fclose( fp );
     }
 
+    //--------------------------------------------------------------------------
+    // reduce_factory: encode the reduction problem into a scalar rcode
+    //--------------------------------------------------------------------------
 
-    void reduce_factory(GrB_Monoid reduce, GrB_Matrix A)
+    void reduce_factory (GrB_Monoid monoid, GrB_Matrix A)
     {
-        uint64_t rcode;
-        GB_enumify_reduce (
+        uint64_t rcode ;
+
+        GB_enumify_reduce
+        (
                 // output:
                 &rcode,         // unique encoding of entire monoid
                 // input:
-                reduce,
-                A
+                monoid,         // monoid to use for the reduction
+                A               // matrix to reduce
         ) ;
 
-        this->rcode = rcode;
-        this->reduce = reduce ;
+        this->rcode = rcode ;
+        this->monoid = monoid ;
         this->atype = A->type ;
 
         // FIXME: use GB_namify_problem
-        std::stringstream ss;
-        ss << "GB_reduce_" << this->rcode << ".h";
+        std::stringstream ss ;
+        ss << "GB_reduce_" << this->rcode << ".h ";
 
-        std::string new_filename = ss.str();
-        filename.resize(new_filename.size());
-        strcpy(filename.data(), new_filename.data());
+        std::string new_filename = ss.str() ;
+        filename.resize(new_filename.size()) ;
+        strcpy(filename.data(), new_filename.data()) ;
     }
 
-//------------------------------------------------------------------------------
-// Macrofy takes a code and creates the corresponding string macros for
-// operators, datatypes, sparsity formats and produces a character buffer.
-//------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // macrofy: construct a header file from the rcode and data types
+    //--------------------------------------------------------------------------
 
     void macrofy ( ) override
     {
@@ -75,11 +86,10 @@ public:
                 fp,
                 // input:
                 this->rcode,
-                this->reduce,
+                this->monoid,
                 this->atype
         ) ;
     }
-
 
 }; // GB_cuda_reduce_factory
 

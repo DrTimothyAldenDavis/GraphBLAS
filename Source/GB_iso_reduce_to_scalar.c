@@ -11,12 +11,11 @@
 
 void GB_iso_reduce_to_scalar        // s = reduce (A) where A is iso
 (
-    GB_void *restrict s,    // output scalar of type reduce->op->ztype
-    GrB_Monoid reduce,      // monoid to use for the reduction
-    GrB_Matrix A,           // matrix to reduce
-    GB_Werk Werk
+    GB_void *restrict s,            // output scalar of type reduce->op->ztype
+    GrB_Monoid monoid,              // monoid to use for the reduction
+    GrB_Matrix A                    // matrix to reduce
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -24,7 +23,7 @@ void GB_iso_reduce_to_scalar        // s = reduce (A) where A is iso
 
     ASSERT (A->iso) ;
     ASSERT_MATRIX_OK (A, "A for iso_reduce_to_scalar", GB0) ;
-    ASSERT_MONOID_OK (reduce, "monoid for iso_reduce_to_scalar", GB0) ;
+    ASSERT_MONOID_OK (monoid, "monoid for iso_reduce_to_scalar", GB0) ;
     ASSERT (s != NULL) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
@@ -39,8 +38,8 @@ void GB_iso_reduce_to_scalar        // s = reduce (A) where A is iso
     ASSERT (n > 0) ;
 
     // get the monoid
-    GxB_binary_function freduce = reduce->op->binop_function ;
-    GrB_Type ztype = reduce->op->ztype ;
+    GxB_binary_function freduce = monoid->op->binop_function ;
+    GrB_Type ztype = monoid->op->ztype ;
     size_t zsize = ztype->size ;
     GB_Type_code zcode = ztype->code ;
 

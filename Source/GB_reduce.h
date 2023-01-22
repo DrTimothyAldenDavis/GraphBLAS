@@ -16,7 +16,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     void *c,                    // result scalar
     const GrB_Type ctype,       // the type of scalar, c
     const GrB_BinaryOp accum,   // for c = accum(c,s)
-    const GrB_Monoid reduce,    // monoid to do the reduction
+    const GrB_Monoid monoid,    // monoid to do the reduction
     const GrB_Matrix A,         // matrix to reduce
     GB_Werk Werk
 ) ;
@@ -34,10 +34,9 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
 void GB_iso_reduce_to_scalar        // s = reduce (A) where A is iso
 (
-    GB_void *restrict s,    // output scalar of type reduce->op->ztype
-    GrB_Monoid reduce,      // monoid to use for the reduction
-    GrB_Matrix A,           // matrix to reduce
-    GB_Werk Werk
+    GB_void *restrict s,            // output scalar of type reduce->op->ztype
+    GrB_Monoid monoid,              // monoid to use for the reduction
+    GrB_Matrix A                    // matrix to reduce
 ) ;
 
 void GB_iso_reduce_worker

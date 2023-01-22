@@ -23,9 +23,9 @@
 
 extern "C"
 {
-#include "GB.h"
-#include "GraphBLAS.h"
-#include "GB_stringify.h"
+    #include "GB.h"
+    #include "GraphBLAS.h"
+    #include "GB_stringify.h"
 }
 
 #include <iostream>
@@ -39,8 +39,10 @@ extern "C"
 #include "../rmm_wrap/rmm_wrap.h"
 #include "GB_iceil.h"
 
-constexpr unsigned int SMEM = 0;
+// FIXME: what is SMEM and why is it all caps?
+constexpr unsigned int SMEM = 0 ;
 
+// FIXME: rename GB_jit_compiler_flags or something
 static const std::vector<std::string> compiler_flags{
    "-std=c++17",
    //"-G",
@@ -64,8 +66,10 @@ static const std::vector<std::string> compiler_flags{
    // FIXME: add SUITESPARSE_CUDA_ARCHITECTURES here, via config
 };
 
+// FIXME: rename GB_cuda_jit_header_names or something
 static const std::vector<std::string> header_names ={};
 
+// FIXME: rename GB_something
 inline std::istream* (*file_callback)(std::string, std::iostream&);
 
 #endif

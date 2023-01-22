@@ -94,9 +94,9 @@ template< typename T_A, typename T_Z>
 __global__ void GB_jit_reduce
 (
     GrB_Matrix A,   // matrix to reduce
-    void *zcalar_result,    // scalar result, at least sizeof(int32_t)
+    void *zscalar,  // scalar result, at least sizeof(int32_t)
     int64_t anz,    // # of entries in A: anz = GB_nnz_held (A)
-    int32_t *mutex   // lock for atomics that need it
+    int32_t *mutex  // lock for atomics that need it
 )
 {
 
@@ -205,9 +205,9 @@ __global__ void GB_jit_reduce
         #if GB_HAS_CUDA_ATOMIC
 
             // cast the result to the CUDA atomic type, and reduce
-            // atomically to the global zscalar_result
+            // atomically to the global zscalar
             GB_CUDA_ATOMIC_TYPE *zscalar =
-                (GB_CUDA_ATOMIC_TYPE *) zscalar_result ;
+                (GB_CUDA_ATOMIC_TYPE *) zscalar ;
             GB_CUDA_ATOMIC_TYPE zsum = (GB_CUDA_ATOMIC_TYPE) sum ;
             GB_CUDA_ATOMIC <GB_CUDA_ATOMIC_TYPE> (zscalar, zsum) ;
 
@@ -221,7 +221,7 @@ __global__ void GB_jit_reduce
             // say 64K.
 
             GB_cuda_lock (mutex) ;
-            GB_ADD (*((T_Z *) zscalar_result), *((T_Z *) zscalar_result), sum) ;
+            GB_ADD (*((T_Z *) zscalar), *((T_Z *) zscalar), sum) ;
             GB_cuda_unlock (mutex) ;
 
         #endif

@@ -32,14 +32,15 @@ GrB_Info GB_reduce_to_scalar_cuda
     cudaStream_t stream ;
     CHECK_CUDA (cudaStreamCreate (&stream)) ;
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // reduce C to a scalar
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     // FIXME: check error conditions (out of memory, etc)
     GB_cuda_reduce_factory myreducefactory ;
     myreducefactory.reduce_factory (reduce, A) ;
 
+    // FIXME: get GrB_Info result from GB_cuda_reduce
     GB_cuda_reduce (myreducefactory, A, s, reduce, stream) ;
 
     CHECK_CUDA (cudaStreamSynchronize (stream)) ;
