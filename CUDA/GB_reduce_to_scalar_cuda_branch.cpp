@@ -1,21 +1,30 @@
+//------------------------------------------------------------------------------
+// GB_reduce_to_scalar_cuda_branch: when to use GPU for scalar reduction
+//------------------------------------------------------------------------------
 
-// Decide branch direction for GPU use for the dot-product MxM
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
+// Decide branch direction for GPU use for the reduction to scalar
+
 #include "GB_cuda.h"
 
-bool GB_reduce_to_scalar_cuda_branch 
+bool GB_reduce_to_scalar_cuda_branch    // return true to use the GPU
 (
-    const GrB_Monoid reduce,        // monoid to do the reduction
+    const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A              // input matrix
 )
 {
 
     // work to do
-    double work = GB_nnz (A) ;
+    double work = GB_nnz_held (A) ;
 
     int ngpus_to_use = GB_ngpus_to_use (work) ;
     GBURBLE (" work:%g gpus:%d ", work, ngpus_to_use) ;
 
-    GB_Opcode opcode = reduce->op->opcode ;
+    GB_Opcode opcode = monoid->op->opcode ;
 
     if (ngpus_to_use > 0
         // do it on the CPU if the monoid operator is user-defined:

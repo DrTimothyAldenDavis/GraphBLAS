@@ -116,16 +116,16 @@ bool GB_cuda_get_device_properties
     GB_cuda_device *prop
 ) ;
 
-bool GB_reduce_to_scalar_cuda_branch 
+bool GB_reduce_to_scalar_cuda_branch    // return true to use the GPU
 (
-    const GrB_Monoid reduce,        // monoid to do the reduction
+    const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A              // input matrix
 ) ;
 
 GrB_Info GB_reduce_to_scalar_cuda
 (
     GB_void *s,
-    const GrB_Monoid reduce,
+    const GrB_Monoid monoid,
     const GrB_Matrix A
 ) ;
 
@@ -139,7 +139,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy               // if true, do z=fmult(b,a) vs fmult(a,b)
 ) ;
-
 
 bool GB_AxB_dot3_cuda_branch
 (
