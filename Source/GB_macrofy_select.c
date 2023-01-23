@@ -57,10 +57,10 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
 
     GB_macrofy_copyright (fp) ;
     fprintf (fp, "// select: (%s", opname) ;
-    if (xtype != NULL) fprintf (fp, ", %s", xname) ;
-    if (ytype != NULL) fprintf (fp, ", %s", yname) ;
-    if (ztype != NULL) fprintf (fp, ", %s", zname) ;
-    fprintf (fp, ")\n\n") ;
+    if (xtype != NULL) fprintf (fp, ", xtype: %s", xname) ;
+    if (ytype != NULL) fprintf (fp, ", ytype: %s", yname) ;
+    if (ztype != NULL) fprintf (fp, ", ztype: %s", zname) ;
+    fprintf (fp, ", atype: %s)\n\n", atype->name) ;
 
     //--------------------------------------------------------------------------
     // construct the typedefs
