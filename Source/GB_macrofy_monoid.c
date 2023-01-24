@@ -109,9 +109,9 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     switch (add_ecode)
     {
 
-        // FIRST, ANY, SECOND: atomic write
-        case   1 :
-        case   2 :
+        // FIRST, ANY, SECOND: atomic write (not complex)
+        case  1 :
+        case  2 :
 
             switch (zcode)
             {
@@ -131,10 +131,9 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             break ;
 
         // MIN (real only), and logical AND (via upscale to uint32_t)
-        case   3 :
-        case   4 :
-        case   5 :
-        case  18 :
+        case  3 :
+        case  4 :
+        case  5 :
 
             switch (zcode)
             {
@@ -153,11 +152,10 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             }
             break ;
 
-        // MAX (real only), and logical LOR (via upscale to uint32_t)
-        case   6 :
-        case   7 :
-        case   8 :
-        case  17 :
+        // MAX (real only)
+        case  6 :
+        case  7 :
+        case  8 :
 
             switch (zcode)
             {
@@ -176,10 +174,17 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             }
             break ;
 
+            switch (zcode)
+            {
+                case GB_BOOL_code    :a = "GB_atomic_bor" ;
+                default              : break ;
+            }
+            break ;
+
         // PLUS:  all types
-        case   9 :
-        case  10 :
-        case  11 :
+        case  9 :
+        case 10 :
+        case 11 :
 
             switch (zcode)
             {
@@ -218,11 +223,14 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             }
             break ;
 
-        // BOR: z = (x | y), bitwise or
+        // BOR: z = (x | y), bitwise or,
+        // logical LOR (via upscale to uint32_t and BOR)
+        case 17 :
         case 19 :
 
             switch (zcode)
             {
+                case GB_BOOL_code    :
                 case GB_UINT8_code   :
                 case GB_UINT16_code  :
                 case GB_UINT32_code  :
@@ -232,10 +240,13 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             break ;
 
         // BAND: z = (x & y), bitwise and
+        // logical LAND (via upscale to uint32_t and BAND)
+        case 18 :
         case 20 :
 
             switch (zcode)
             {
+                case GB_BOOL_code    :
                 case GB_UINT8_code   :
                 case GB_UINT16_code  :
                 case GB_UINT32_code  :
