@@ -155,12 +155,12 @@ class reduceFactory
         int64_t anvals = GB_nnz_held (A) ;
 
         // TODO: Use RMM!
-        int32_t *lock ;
-//      CU_OK(cudaMalloc((void**)&lock, sizeof(int32_t)));
-//      CU_OK(cudaMemsetAsync(lock, 0, sizeof(int32_t), stream));
+        uint32_t *mutex ;
+//      CU_OK(cudaMalloc((void**)&mutex, sizeof(int32_t)));
+//      CU_OK(cudaMemsetAsync(mutex, 0, sizeof(int32_t), stream));
         // FIXED (but not tested): using RMM
-        lock = (int32_t *) rmm_wrap_calloc (1, sizeof (int32_t)) ;
-        if (lock == NULL)
+        mutex = (uint32_t *) rmm_wrap_calloc (1, sizeof (uint32_t)) ;
+        if (mutex == NULL)
         {
             // out of memory
             rmm_wrap_free (zscalar) ;
@@ -187,13 +187,13 @@ class reduceFactory
            .set_kernel_inst(  hashable_name ,
                 { A->type->name, monoid->op->ztype->name })
            .configure(grid, block, SMEM, stream)
-           .launch( A, zscalar, anvals, lock);
+           .launch (A, zscalar, anvals, mutex) ;
 
         // synchronize before copying result to host
         CHECK_CUDA (cudaStreamSynchronize (stream)) ;
 
         // FIXME: sometimes we use CHECK_CUDA, sometimes CU_OK.  Need to
-        // be consistent.  Also, if this method fails, lock and zscalar
+        // be consistent.  Also, if this method fails, mutex and zscalar
         // must be freed: we can do this in the CU_OK or CHECK_CUDA macros.
         // Or in a try/catch?
 
@@ -201,9 +201,9 @@ class reduceFactory
         memcpy (output, zscalar, zsize) ;
 
         // free workspace and return result
-//      CU_OK(cudaFree(lock));
+//      CU_OK(cudaFree(mutex));
 //      CHECK_CUDA (cudaFree (zscalar)) ;
-        rmm_wrap_free (lock) ;
+        rmm_wrap_free (mutex) ;
         rmm_wrap_free (zscalar) ;
 
         return (GrB_SUCCESS) ;

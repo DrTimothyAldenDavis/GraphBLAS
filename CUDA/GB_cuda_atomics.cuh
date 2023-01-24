@@ -46,21 +46,15 @@ __device__ void GB_atomic_min(T* ptr, T val);
 template <typename T>
 __device__ void GB_atomic_max(T* ptr, T val);
 
-__device__ __inline__ void GB_cuda_lock (int32_t *lock) ;
+__device__ __inline__ void GB_cuda_lock (int32_t *mutex) ;
 
-__device__ __inline__ void GB_cuda_unlock (int32_t *lock) ;
+__device__ __inline__ void GB_cuda_unlock (int32_t *mutex) ;
 
 //------------------------------------------------------------------------------
 // GB_atomic_write
 //------------------------------------------------------------------------------
 
-// atomic write (8 bits, 16, 32, 64)
-
-#if 0
-// write these:
-template<> __device__ __inline__ void GB_atomic_write<int8_t>(int8_t* ptr, int val)
-template<> __device__ __inline__ void GB_atomic_write<int16_t>(int16_t* ptr, int val)
-#endif
+// atomic write (32 and 64 bits)
 
 template<> __device__ __inline__ void GB_atomic_write<int32_t>(int32_t* ptr, int32_t val)
 {
@@ -103,15 +97,7 @@ template<> __device__ __inline__ void GB_atomic_write<double>(double* ptr, doubl
 // GB_atomic_add for built-in types
 //------------------------------------------------------------------------------
 
-// types: int and uint [8,16,32,64], float, double, complex, complex double
-
-#if 0
-// write these:
-template<> __device__ __inline__ void GB_atomic_add<int8_t>(int8_t* ptr, int val)
-template<> __device__ __inline__ void GB_atomic_add<uint8_t>(uint8_t* ptr, int val)
-template<> __device__ __inline__ void GB_atomic_add<int16_t>(int16_t* ptr, int val)
-template<> __device__ __inline__ void GB_atomic_add<uint16_t>(uint16_t* ptr, int val)
-#endif
+// types: int and uint [32,64], float, double, complex, complex double
 
 template<> __device__ __inline__ void GB_atomic_add<int32_t>(int32_t* ptr, int32_t val)
 {
@@ -150,45 +136,131 @@ template<> __device__ __inline__ void GB_atomic_add<double>(double* ptr, double 
     atomicAdd(ptr, val);
 }
 
-#if 0
-// write these:
 template<> __device__ __inline__ void GB_atomic_add<float complex>(float complex* ptr, float  complexval)
 {
-    atomicAdd (ptr.real, val.real) ;
-    atomicAdd (ptr.imag, val.imag) ;
+    // native CUDA method on each float
+    float *p = (float *) ptr ;
+    atomicAdd (p  , crealf (val)) ;
+    atomicAdd (p+1, cimagf (val)) ;
 }
 
 template<> __device__ __inline__ void GB_atomic_add<double complex>(double complex* ptr, double complex val)
 {
-    atomicAdd (ptr.real, val.real) ;
-    atomicAdd (ptr.imag, val.imag) ;
+    // native CUDA method on each double
+    double *p = (double *) ptr ;
+    atomicAdd (p  , creal (val)) ;
+    atomicAdd (p+1, cimag (val)) ;
 }
-#endif
 
 //------------------------------------------------------------------------------
-// GB_atomic_times for built-in types ?
+// GB_atomic_times for built-in types
 //------------------------------------------------------------------------------
 
-// types: int and uint [8,16,32,64], float, double.
-// no complex types.
+// types: int and uint [32,64], float, double
+// no complex.
 
-// Is this possible?  There are no cuda atomic times functions.
-// Maybe all need to be done with a lock.
+template<> __device__ __inline__ void GB_atomic_times<int32_t>(int32_t* ptr, int32_t val)
+{
+    unsigned int *p = (unsigned int *) ptr ;
+    unsigned int old = *p ;
+    unsigned int v = (unsigned int) val ;
+    unsigned int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed, assumed * v) ;
+    }
+    while (assumed != old) ;
+}
+
+template<> __device__ __inline__ void GB_atomic_times<uint32_t>(uint32_t* ptr, uint32_t val)
+{
+    unsigned int *p = (unsigned int *) ptr ;
+    unsigned int old = *p ;
+    unsigned int v = (unsigned int) val ;
+    unsigned int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed, assumed * v) ;
+    }
+    while (assumed != old) ;
+}
+
+template<> __device__ __inline__ void GB_atomic_times<int64_t>(int64_t* ptr, int64_t val)
+{
+    unsigned long long int *p = (unsigned long long int *) ptr ;
+    unsigned long long int old = *p ;
+    unsigned long long int v = (unsigned long long int) val ;
+    unsigned long long int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed, assumed * v) ;
+    }
+    while (assumed != old) ;
+}
+
+template<> __device__ __inline__ void GB_atomic_times<uint64_t>(uint64_t* ptr, uint64_t val)
+{
+    unsigned long long int *p = (unsigned long long int *) ptr ;
+    unsigned long long int old = *p ;
+    unsigned long long int v = (unsigned long long int) val ;
+    unsigned long long int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed, assumed * v) ;
+    }
+    while (assumed != old) ;
+}
+
+template<> __device__ __inline__ void GB_atomic_times<float>(float* ptr, float val)
+{
+    unsigned int *p = (unsigned int *) ptr ;
+    unsigned int old = *p ;
+    unsigned int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed,
+            __float_as_int (__int_as_float (assumed) * val)) ;
+    }
+    while (assumed != old) ;
+}
+
+template<> __device__ __inline__ void GB_atomic_times<double>(double* ptr, double val)
+{
+    unsigned long long int *p = (unsigned long long int *) ptr ;
+    unsigned long long int old = *p ;
+    unsigned long long int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed,
+            __double_as_longlong (__longlong_as_double (assumed) * val)) ;
+    }
+    while (assumed != old) ;
+}
 
 //------------------------------------------------------------------------------
 // GB_atomic_min
 //------------------------------------------------------------------------------
 
-// types: int and uint [8,16,32,64]
-// no complex types, no float or double (use locks for those)
-
-#if 0
-// write these?  or use locks if they are too difficult
-template<> __device__ __inline__ void GB_atomic_min<int8_t>(int8_t* ptr, int8_t val)
-template<> __device__ __inline__ void GB_atomic_min<uint8_t>(uint8_t* ptr, uint8_t val)
-template<> __device__ __inline__ void GB_atomic_min<int16_t>(int16_t* ptr, int16_t val)
-template<> __device__ __inline__ void GB_atomic_min<uint16_t>(uint16_t* ptr, uint16_t val)
-#endif
+// types: int and uint [32,64], float, and double
+// no complex types
 
 template<> __device__ __inline__ void GB_atomic_min<int32_t>(int32_t* ptr, int32_t val)
 {
@@ -210,20 +282,44 @@ template<> __device__ __inline__ void GB_atomic_min<uint64_t>(uint64_t* ptr, uin
     atomicMin ((unsigned long long int*)ptr, (unsigned long long int) val) ;
 }
 
+template<> __device__ __inline__ void GB_atomic_min<float>(float* ptr, float val)
+{
+    unsigned int *p = (unsigned int *) ptr ;
+    unsigned int old = *p ;
+    unsigned int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed,
+            __float_as_int (fminf (__int_as_float (assumed), val))) ;
+    }
+    while (assumed != old) ;
+}
+
+template<> __device__ __inline__ void GB_atomic_min<double>(double* ptr, double val)
+{
+    unsigned long long int *p = (unsigned long long int *) ptr ;
+    unsigned long long int old = *p ;
+    unsigned long long int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed,
+            __double_as_longlong (fmin (__longlong_as_double (assumed), val))) ;
+    }
+    while (assumed != old) ;
+}
+
 //------------------------------------------------------------------------------
 // GB_atomic_max
 //------------------------------------------------------------------------------
 
-// types: int and uint [8,16,32,64]
-// no complex types, no float or double (use locks for those)
-
-#if 0
-// write these?  or use locks if they are too difficult
-template<> __device__ __inline__ void GB_atomic_max<int8_t>(int8_t* ptr, int8_t val)
-template<> __device__ __inline__ void GB_atomic_max<uint8_t>(uint8_t* ptr, uint8_t val)
-template<> __device__ __inline__ void GB_atomic_max<int16_t>(int16_t* ptr, int16_t val)
-template<> __device__ __inline__ void GB_atomic_max<uint16_t>(uint16_t* ptr, uint16_t val)
-#endif
+// types: int and uint [32,64], float, and double
+// no complex types
 
 template<> __device__ __inline__ void GB_atomic_max<int32_t>(int32_t* ptr, int32_t val)
 {
@@ -245,52 +341,193 @@ template<> __device__ __inline__ void GB_atomic_max<uint64_t>(uint64_t* ptr, uin
     atomicMax ((unsigned long long int*)ptr, (unsigned long long int) val) ;
 }
 
-//------------------------------------------------------------------------------
-// GB_atomic_lor, land, lxor, lxnor
-//------------------------------------------------------------------------------
+template<> __device__ __inline__ void GB_atomic_max<float>(float* ptr, float val)
+{
+    unsigned int *p = (unsigned int *) ptr ;
+    unsigned int old = *p ;
+    unsigned int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed,
+            __float_as_int (fmaxf (__int_as_float (assumed), val))) ;
+    }
+    while (assumed != old) ;
+}
 
-// bool:  or, and, xor, xnor (8-bit bool)
-
-// how??  CUDA supports only 32-bit and 64-bit bitwise or, and, xor
+template<> __device__ __inline__ void GB_atomic_max<double>(double* ptr, double val)
+{
+    unsigned long long int *p = (unsigned long long int *) ptr ;
+    unsigned long long int old = *p ;
+    unsigned long long int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed,
+            __double_as_longlong (fmax (__longlong_as_double (assumed), val))) ;
+    }
+    while (assumed != old) ;
+}
 
 //------------------------------------------------------------------------------
 // GB_atomic_bor, band, bxor, bxnor
 //------------------------------------------------------------------------------
 
-// bitwise:     on uint [8,16,32,64]
-//      bor
-//      band
-//      bxor
-//      bxnor       use lock for this?
+// bitwise: on uint [32,64]
 
-
-//------------------------------------------------------------------------------
-// GB_cuda_lock/unlock: set/clear a lock for a critical section
-//------------------------------------------------------------------------------
-
-__device__ __inline__ void GB_cuda_lock (int32_t *lock)
+template<> __device__ __inline__ void GB_atomic_bor<uint32_t>(uint32_t* ptr, uint32_t val)
 {
-    int old;
-    do {
-        old = atomicCAS(lock, 0, 1);
-
-        // Note: uses integer comparison to avoid hang in case of NaN (since NaN != NaN)
-    } while (old == 1);
-//    while (atomicExch ((int *) lock, (int) 1) != 0) ;
+    unsigned int *p = (unsigned int *) ptr ;
+    unsigned int old = *p ;
+    unsigned int v = (unsigned int) val ;
+    unsigned int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed, assumed | v) ;
+    }
+    while (assumed != old) ;
 }
 
-__device__ __inline__ void GB_cuda_unlock (int32_t *lock) 
+template<> __device__ __inline__ void GB_atomic_bor<uint64_t>(uint64_t* ptr, uint64_t val)
 {
-    int old;
-    do {
-        old = atomicCAS(lock, 1, 0);
-        // Note: uses integer comparison to avoid hang in case of NaN (since NaN != NaN)
-    } while (old == 0);
+    unsigned long long int *p = (unsigned long long int *) ptr ;
+    unsigned long long int old = *p ;
+    unsigned long long int v = (unsigned long long int) val ;
+    unsigned long long int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed, assumed | v) ;
+    }
+    while (assumed != old) ;
+}
 
-    //(*lock) = 0 ;
-    // or this ?  It might be safer:
-//     GB_atomic_write <int32_t> (lock, 0) ;
-//    atomicAdd<int32_t>(lock, -1);
-//    while (atomicExch ((int *) lock, (int) 0) != 1) ;
+template<> __device__ __inline__ void GB_atomic_band<uint32_t>(uint32_t* ptr, uint32_t val)
+{
+    unsigned int *p = (unsigned int *) ptr ;
+    unsigned int old = *p ;
+    unsigned int v = (unsigned int) val ;
+    unsigned int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed, assumed & v) ;
+    }
+    while (assumed != old) ;
+}
+
+template<> __device__ __inline__ void GB_atomic_band<uint64_t>(uint64_t* ptr, uint64_t val)
+{
+    unsigned long long int *p = (unsigned long long int *) ptr ;
+    unsigned long long int old = *p ;
+    unsigned long long int v = (unsigned long long int) val ;
+    unsigned long long int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed, assumed & v) ;
+    }
+    while (assumed != old) ;
+}
+
+template<> __device__ __inline__ void GB_atomic_bxor<uint32_t>(uint32_t* ptr, uint32_t val)
+{
+    unsigned int *p = (unsigned int *) ptr ;
+    unsigned int old = *p ;
+    unsigned int v = (unsigned int) val ;
+    unsigned int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed, assumed ^ v) ;
+    }
+    while (assumed != old) ;
+}
+
+template<> __device__ __inline__ void GB_atomic_bxor<uint64_t>(uint64_t* ptr, uint64_t val)
+{
+    unsigned long long int *p = (unsigned long long int *) ptr ;
+    unsigned long long int old = *p ;
+    unsigned long long int v = (unsigned long long int) val ;
+    unsigned long long int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed, assumed ^ v) ;
+    }
+    while (assumed != old) ;
+}
+
+template<> __device__ __inline__ void GB_atomic_bxnor<uint32_t>(uint32_t* ptr, uint32_t val)
+{
+    unsigned int *p = (unsigned int *) ptr ;
+    unsigned int old = *p ;
+    unsigned int v = (unsigned int) val ;
+    unsigned int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed, ~(assumed ^ v)) ;
+    }
+    while (assumed != old) ;
+}
+
+template<> __device__ __inline__ void GB_atomic_bxnor<uint64_t>(uint64_t* ptr, uint64_t val)
+{
+    unsigned long long int *p = (unsigned long long int *) ptr ;
+    unsigned long long int old = *p ;
+    unsigned long long int v = (unsigned long long int) val ;
+    unsigned long long int assumed ;
+    do
+    {
+        // read the old value
+        assumed = old ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed, ~(assumed ^ v)) ;
+    }
+    while (assumed != old) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_cuda_lock/unlock: set/clear a mutex for a critical section
+//------------------------------------------------------------------------------
+
+__device__ __inline__ void GB_cuda_lock (uint32_t *mutex)
+{
+    int old ;
+    do
+    {
+        old = atomicCAS (mutex, 0, 1) ;
+    }
+    while (old == 1) ;
+}
+
+__device__ __inline__ void GB_cuda_unlock (uint32_t *mutex)
+{
+    int old ;
+    do
+    {
+        old = atomicCAS (mutex, 1, 0) ;
+    }
+    while (old == 0) ;
 }
 

@@ -99,7 +99,10 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // create macros for the atomic CUDA operator, if available
     //--------------------------------------------------------------------------
 
-    // FIXME: LXOR could use atomic_add, and take the least significant bit.
+    // All built-in monoids are handled, except for the complex cases of ANY
+    // and TIMES.  Those need to be done the same way user-defined monoids are
+    // computed.  The complex PLUS monoid can be done as independent atomic add
+    // operations on the real and imaginary parts.
 
     char *a = NULL ;
 
@@ -127,7 +130,9 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             }
             break ;
 
-        // MIN (integer only), and logical AND (via upscale to uint32_t)
+        // MIN (real only), and logical AND (via upscale to uint32_t)
+        case   3 :
+        case   4 :
         case   5 :
         case  18 :
 
@@ -141,12 +146,16 @@ void GB_macrofy_monoid  // construct the macros for a monoid
                 case GB_INT32_code   :
                 case GB_UINT32_code  :
                 case GB_INT64_code   :
-                case GB_UINT64_code  : a = "GB_atomic_min" ;
+                case GB_UINT64_code  : 
+                case GB_FP32_code    :
+                case GB_FP64_code    : a = "GB_atomic_min" ;
                 default              : break ;
             }
             break ;
 
-        // MAX (integer only), and logical LOR (via upscale to uint32_t)
+        // MAX (real only), and logical LOR (via upscale to uint32_t)
+        case   6 :
+        case   7 :
         case   8 :
         case  17 :
 
@@ -160,7 +169,9 @@ void GB_macrofy_monoid  // construct the macros for a monoid
                 case GB_INT32_code   :
                 case GB_UINT32_code  :
                 case GB_INT64_code   :
-                case GB_UINT64_code  : a = "GB_atomic_max" ;
+                case GB_UINT64_code  : 
+                case GB_FP32_code    :
+                case GB_FP64_code    : a = "GB_atomic_max" ;
                 default              : break ;
             }
             break ;
@@ -184,6 +195,81 @@ void GB_macrofy_monoid  // construct the macros for a monoid
                 case GB_FP64_code    :
                 case GB_FC32_code    :
                 case GB_FC64_code    : a = "GB_atomic_add" ;
+                default              : break ;
+            }
+            break ;
+
+        // TIMES: all real types (not complex)
+        case 14 : 
+
+            switch (zcode)
+            {
+                case GB_INT8_code    :
+                case GB_UINT8_code   :
+                case GB_INT16_code   :
+                case GB_UINT16_code  :
+                case GB_INT32_code   :
+                case GB_UINT32_code  :
+                case GB_INT64_code   :
+                case GB_UINT64_code  :
+                case GB_FP32_code    :
+                case GB_FP64_code    : a = "GB_atomic_times" ;
+                default              : break ;
+            }
+            break ;
+
+        // BOR: z = (x | y), bitwise or
+        case 19 :
+
+            switch (zcode)
+            {
+                case GB_UINT8_code   :
+                case GB_UINT16_code  :
+                case GB_UINT32_code  :
+                case GB_UINT64_code  : a = "GB_atomic_bor" ;
+                default              : break ;
+            }
+            break ;
+
+        // BAND: z = (x & y), bitwise and
+        case 20 :
+
+            switch (zcode)
+            {
+                case GB_UINT8_code   :
+                case GB_UINT16_code  :
+                case GB_UINT32_code  :
+                case GB_UINT64_code  : a = "GB_atomic_band" ;
+                default              : break ;
+            }
+            break ;
+
+        // BXOR: z = (x ^ y), bitwise xor, and boolean LXOR
+        case 16 :
+        case 21 :
+
+            switch (zcode)
+            {
+                case GB_BOOL_code    : 
+                case GB_UINT8_code   :
+                case GB_UINT16_code  :
+                case GB_UINT32_code  :
+                case GB_UINT64_code  : a = "GB_atomic_bxor" ;
+                default              : break ;
+            }
+            break ;
+
+        // BXNOR: z = ~(x ^ y), bitwise xnor, and boolean LXNOR
+        case 15 :
+        case 22 :
+
+            switch (zcode)
+            {
+                case GB_BOOL_code    : 
+                case GB_UINT8_code   :
+                case GB_UINT16_code  :
+                case GB_UINT32_code  :
+                case GB_UINT64_code  : a = "GB_atomic_bxnor" ;
                 default              : break ;
             }
             break ;
@@ -216,14 +302,11 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             case GB_UINT32_code  : t = "uint32_t"   ; break ;
 
             case GB_INT64_code   : t = "int64_t"    ; break ;
-
             case GB_UINT64_code  : t = "uint64_t"   ; break ;
-
-            case GB_FC32_code    :
             case GB_FP32_code    : t = "float"      ; break ;
-
-            case GB_FC64_code    :
             case GB_FP64_code    : t = "double"     ; break ;
+            case GB_FC32_code    : t = "float complex"  ; break ;
+            case GB_FC64_code    : t = "double complex" ; break ;
             default :;
         }
 

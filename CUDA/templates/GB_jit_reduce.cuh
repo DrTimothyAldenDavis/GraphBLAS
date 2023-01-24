@@ -96,7 +96,7 @@ __global__ void GB_jit_reduce
     GrB_Matrix A,   // matrix to reduce
     void *zscalar,  // scalar result, at least sizeof(int32_t)
     int64_t anz,    // # of entries in A: anz = GB_nnz_held (A)
-    int32_t *mutex  // lock for atomics that need it
+    uint32_t *mutex // for monoids that need it
 )
 {
 
@@ -226,43 +226,5 @@ __global__ void GB_jit_reduce
 
         #endif
     }
-
-#if 0
-
-    // scalar result
-    T_Z *g_odata = (T_Z *) R->x ;
-
-#if 0
-    // FIXME: is this OK?
-    #if !GB_CUDA_HAS_ATOMC
-    int32_t __global__ lock = 0 ;
-    #endif
-#endif
-
-    // write result for this block to global mem
-    if (threadIdx.x == 0)
-    {
-#if 0
-        // NEW:
-        #if GB_CUDA_HAS_ATOMIC
-            // lock free atomic operation
-            GB_CUDA_ATOMIC <T_Z> (g_odata, sum) ;
-        #else
-            // the monoid does not have an atomic variant; use a lock
-            GB_cuda_lock (&lock) ;
-            GB_ADD (g_odata, g_odata, sum) ;
-            GB_cuda_unlock (&lock) ;
-        #endif
-#endif
-
-        // OLD:
-        // all threadblocks reduce their result via an atomic
-//      GB_atomic_add<T_Z>(g_odata, sum);
-        GB_cuda_lock (mutex) ;
-        GB_ADD (*g_odata, *g_odata, sum) ;
-        GB_cuda_unlock (mutex) ;
-    }
-#endif
-
 }
 
