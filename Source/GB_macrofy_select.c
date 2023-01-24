@@ -159,12 +159,12 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
 
                 case GB_UDT_code      : 
                     fprintf (fp,
-                        "#ifndef GB_GAURD_UDT_NE0_%d_DEFINED\n"
-                        "#define GB_GAURD_UDT_NE0_%d_DEFINED\n"
+                        "#ifndef GB_GUARD_UDT_NE0_%d_DEFINED\n"
+                        "#define GB_GUARD_UDT_NE0_%d_DEFINED\n"
                         "GB_STATIC_INLINE bool GB_udt_ne0_%d ",
                         asize, asize, asize) ;
                     if (asize_multiple_of_uint32)
-                    {
+                    { 
                         fprintf (fp,
                         "(uint32_t *aij)\n"
                         "{\n"
@@ -180,7 +180,7 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                         asize32, asize) ;
                     }
                     else
-                    {
+                    { 
                         fprintf (fp,
                         "(uint8_t *aij)\n"
                         "{\n"
@@ -232,12 +232,12 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
 
                 case GB_UDT_code      : 
                     fprintf (fp,
-                        "#ifndef GB_GAURD_UDT_EQ0_%d_DEFINED\n"
-                        "#define GB_GAURD_UDT_EQ0_%d_DEFINED\n"
+                        "#ifndef GB_GUARD_UDT_EQ0_%d_DEFINED\n"
+                        "#define GB_GUARD_UDT_EQ0_%d_DEFINED\n"
                         "GB_STATIC_INLINE bool GB_udt_eq0_%d ",
                         asize, asize, asize) ;
                     if (asize_multiple_of_uint32)
-                    {
+                    { 
                         fprintf (fp,
                         "(uint32_t *aij)\n"
                         "{\n"
@@ -253,7 +253,7 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                         asize32, asize) ;
                     }
                     else
-                    {
+                    { 
                         fprintf (fp,
                         "(uint8_t *aij)\n"
                         "{\n"
@@ -309,12 +309,12 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
 
                 case GB_UDT_code      : 
                     fprintf (fp,
-                        "#ifndef GB_GAURD_UDT_NE_%d_DEFINED\n"
-                        "#define GB_GAURD_UDT_NE_%d_DEFINED\n"
+                        "#ifndef GB_GUARD_UDT_NE_%d_DEFINED\n"
+                        "#define GB_GUARD_UDT_NE_%d_DEFINED\n"
                         "GB_STATIC_INLINE bool GB_udt_ne_%d ",
                         asize, asize, asize) ;
                     if (asize_multiple_of_uint32)
-                    {
+                    { 
                         fprintf (fp,
                         "(uint32_t *aij, uint32_t *yy)\n"
                         "{\n"
@@ -331,7 +331,7 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                         asize32, asize) ;
                     }
                     else
-                    {
+                    { 
                         fprintf (fp,
                         "(uint8_t *aij, uint8_t *yy)\n"
                         "{\n"
@@ -343,7 +343,7 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                         "    return (ne) ;\n"
                         "}\n"
                         "#define KEEP(keep,x,i,j,y) "
-                        "keep = GB_udt_ne_%d ",
+                        "keep = GB_udt_ne_%d "
                         "((uint8_t *) &(x), (uint8_t *) &(y))\n",
                         asize, asize) ;
                     }
@@ -382,12 +382,12 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
 
                 case GB_UDT_code      : 
                     fprintf (fp,
-                        "#ifndef GB_GAURD_UDT_EQ_%d_DEFINED\n"
-                        "#define GB_GAURD_UDT_EQ_%d_DEFINED\n"
+                        "#ifndef GB_GUARD_UDT_EQ_%d_DEFINED\n"
+                        "#define GB_GUARD_UDT_EQ_%d_DEFINED\n"
                         "GB_STATIC_INLINE bool GB_udt_eq_%d ",
                         asize, asize, asize) ;
                     if (asize_multiple_of_uint32)
-                    {
+                    { 
                         fprintf (fp,
                         "(uint32_t *aij, uint32_t *yy)\n"
                         "{\n"
@@ -404,7 +404,7 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                         asize32, asize) ;
                     }
                     else
-                    {
+                    { 
                         fprintf (fp,
                         "(uint8_t *aij, uint8_t *yy)\n"
                         "{\n"
@@ -416,7 +416,7 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                         "    return (eq) ;\n"
                         "}\n"
                         "#define KEEP(keep,x,i,j,y) "
-                        "keep = GB_udt_eq_%d ",
+                        "keep = GB_udt_eq_%d "
                         "((uint8_t *) &(x), (uint8_t *) &(y))\n",
                         asize, asize) ;
                     }
@@ -501,7 +501,7 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
         // depends on A and Thunk (type and values); user-defined operators
         case GB_USER_idxunop_code     : 
             if (ztype == GrB_BOOL)
-            {
+            { 
                 // no need to typecast result of the user-defined operator
                 fprintf (fp,
                 "#define KEEP(keep,x,i,j,y) "
@@ -509,7 +509,7 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                 opname, i_user, j_user) ;
             }
             else
-            {
+            { 
                 // need to typecast result to bool
                 GB_macrofy_cast (fp, "CAST_Z_TO_KEEP", "keep", "z", "z",
                     GrB_BOOL, ztype) ;
@@ -535,7 +535,7 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
     }
 
     if (keep != NULL)
-    {
+    { 
         fprintf (fp, "#define KEEP(keep,x,i,j,y) keep = (%s) ;\n", keep) ;
     }
 
@@ -545,12 +545,12 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
 
     fprintf (fp, "\n// C matrix:\n") ;
     if (C_iso_code)
-    {
+    { 
         fprintf (fp, "#define GB_PUTC(blob)\n") ;
         fprintf (fp, "#define GB_C_ISO 1\n") ;
     }
     else
-    {
+    { 
         fprintf (fp, "#define GB_PUTC(blob) blob\n") ;
         fprintf (fp, "#define GB_C_ISO 0\n") ;
     }
