@@ -60,7 +60,12 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
     if (xtype != NULL) fprintf (fp, ", xtype: %s", xname) ;
     if (ytype != NULL) fprintf (fp, ", ytype: %s", yname) ;
     if (ztype != NULL) fprintf (fp, ", ztype: %s", zname) ;
-    fprintf (fp, ", atype: %s)\n\n", atype->name) ;
+    size_t asize = atype->size ;
+    fprintf (fp, ", atype: %s, size: %d bytes)\n\n", atype->name, (int) asize) ;
+
+    // true if asize is a multiply of sizeof (uint32_t)
+    bool asize_multiple_of_uint32 = ((asize % sizeof (uint32_t)) == 0) ;
+    int asize32 = asize / sizeof (uint32_t) ;
 
     //--------------------------------------------------------------------------
     // construct the typedefs
@@ -151,9 +156,44 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     keep = "GB_FC64_ne0 (x)" ;
                     GB_macrofy_defn (fp, 1, "GB_FC64_NE0", GB_FC64_NE0_DEFN) ;
                     break ;
+
                 case GB_UDT_code      : 
-                    keep = "FIXME: keep if udt type x is nonzero" ;
+                    fprintf (fp,
+                        "#ifndef GB_GAURD_UDT_NE0_%d_DEFINED\n"
+                        "#define GB_GAURD_UDT_NE0_%d_DEFINED\n"
+                        "GB_STATIC_INLINE bool GB_udt_ne0_%d ",
+                        asize, asize, asize) ;
+                    if (asize_multiple_of_uint32)
+                        fprintf (fp,
+                        "(uint32_t *aij)\n"
+                        "{\n"
+                        "    for (int k = 0 ; k < %d ; i++)\n"
+                        "    {\n"
+                        "        if (aij [k] != 0) return (true) ;\n"
+                        "    }\n"
+                        "    return (false) ;\n"
+                        "}\n"
+                        "#define KEEP(keep,x,i,j,y) "
+                        "keep = GB_udt_ne0_%d ((uint32_t *) &(x))\n",
+                        asize32, asize) ;
+                    }
+                    else
+                    {
+                        fprintf (fp,
+                        "(uint8_t *aij)\n"
+                        "{\n"
+                        "    for (int k = 0 ; k < %d ; i++)\n"
+                        "    {\n"
+                        "        if (aij [k] != 0) return (true) ;\n"
+                        "    }\n"
+                        "    return (false) ;\n"
+                        "}\n"
+                        "#define KEEP(keep,x,i,j,y) "
+                        "keep = GB_udt_ne0_%d ((uint8_t *) &(x))\n",
+                        asize, asize) ;
+                    }
                     break ;
+
                 default: ;
             }
             break ;
@@ -186,9 +226,44 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     keep = "GB_FC64_eq0 (x)" ;
                     GB_macrofy_defn (fp, 1, "GB_FC64_EQ0", GB_FC64_EQ0_DEFN) ;
                     break ;
+
                 case GB_UDT_code      : 
-                    keep = "FIXME: keep if udt type x is all zero" ;
+                    fprintf (fp,
+                        "#ifndef GB_GAURD_UDT_EQ0_%d_DEFINED\n"
+                        "#define GB_GAURD_UDT_EQ0_%d_DEFINED\n"
+                        "GB_STATIC_INLINE bool GB_udt_eq0_%d ",
+                        asize, asize, asize) ;
+                    if (asize_multiple_of_uint32)
+                        fprintf (fp,
+                        "(uint32_t *aij)\n"
+                        "{\n"
+                        "    for (int k = 0 ; k < %d ; i++)\n"
+                        "    {\n"
+                        "        if (aij [k] != 0) return (false) ;\n"
+                        "    }\n"
+                        "    return (true) ;\n"
+                        "}\n"
+                        "#define KEEP(keep,x,i,j,y) "
+                        "keep = GB_udt_eq0_%d ((uint32_t *) &(x))\n",
+                        asize32, asize) ;
+                    }
+                    else
+                    {
+                        fprintf (fp,
+                        "(uint8_t *aij)\n"
+                        "{\n"
+                        "    for (int k = 0 ; k < %d ; i++)\n"
+                        "    {\n"
+                        "        if (aij [k] != 0) return (false) ;\n"
+                        "    }\n"
+                        "    return (true) ;\n"
+                        "}\n"
+                        "#define KEEP(keep,x,i,j,y) "
+                        "keep = GB_udt_eq0_%d ((uint8_t *) &(x))\n",
+                        asize, asize) ;
+                    }
                     break ;
+
                 default: ;
             }
             break ;
@@ -225,9 +300,46 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     keep = "GB_FC64_ne (x)" ;
                     GB_macrofy_defn (fp, 1, "GB_FC64_NE", GB_FC64_NE_DEFN) ;
                     break ;
+
                 case GB_UDT_code      : 
-                    keep = "FIXME: keep if udt types x and y are not equal" ;
+                    fprintf (fp,
+                        "#ifndef GB_GAURD_UDT_NE_%d_DEFINED\n"
+                        "#define GB_GAURD_UDT_NE_%d_DEFINED\n"
+                        "GB_STATIC_INLINE bool GB_udt_ne_%d ",
+                        asize, asize, asize) ;
+                    if (asize_multiple_of_uint32)
+                        fprintf (fp,
+                        "(uint32_t *aij, uint32_t *yy)\n"
+                        "{\n"
+                        "    for (int k = 0 ; k < %d ; i++)\n"
+                        "    {\n"
+                        "        if (aij [k] != yy [k]) return (true) ;\n"
+                        "    }\n"
+                        "    return (false) ;\n"
+                        "}\n"
+                        "#define KEEP(keep,x,i,j,y) "
+                        "keep = GB_udt_ne_%d "
+                        "((uint32_t *) &(x), (uint32_t *) &(y))\n",
+                        asize32, asize) ;
+                    }
+                    else
+                    {
+                        fprintf (fp,
+                        "(uint8_t *aij, uint8_t *yy)\n"
+                        "{\n"
+                        "    for (int k = 0 ; k < %d ; i++)\n"
+                        "    {\n"
+                        "        if (aij [k] != 0) return (true) ;\n"
+                        "    }\n"
+                        "    return (false) ;\n"
+                        "}\n"
+                        "#define KEEP(keep,x,i,j,y) "
+                        "keep = GB_udt_ne_%d ",
+                        "((uint8_t *) &(x), (uint8_t *) &(y))\n",
+                        asize, asize) ;
+                    }
                     break ;
+
                 default: ;
             }
             break ;
@@ -258,9 +370,46 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     keep = "GB_FC64_eq (x)" ;
                     GB_macrofy_defn (fp, 1, "GB_FC64_EQ", GB_FC64_EQ_DEFN) ;
                     break ;
+
                 case GB_UDT_code      : 
-                    keep = "FIXME: keep if udt types x and y are equal" ;
+                    fprintf (fp,
+                        "#ifndef GB_GAURD_UDT_EQ_%d_DEFINED\n"
+                        "#define GB_GAURD_UDT_EQ_%d_DEFINED\n"
+                        "GB_STATIC_INLINE bool GB_udt_eq_%d ",
+                        asize, asize, asize) ;
+                    if (asize_multiple_of_uint32)
+                        fprintf (fp,
+                        "(uint32_t *aij, uint32_t *yy)\n"
+                        "{\n"
+                        "    for (int k = 0 ; k < %d ; i++)\n"
+                        "    {\n"
+                        "        if (aij [k] != yy [k]) return (false) ;\n"
+                        "    }\n"
+                        "    return (true) ;\n"
+                        "}\n"
+                        "#define KEEP(keep,x,i,j,y) "
+                        "keep = GB_udt_eq_%d "
+                        "((uint32_t *) &(x), (uint32_t *) &(y))\n",
+                        asize32, asize) ;
+                    }
+                    else
+                    {
+                        fprintf (fp,
+                        "(uint8_t *aij, uint8_t *yy)\n"
+                        "{\n"
+                        "    for (int k = 0 ; k < %d ; i++)\n"
+                        "    {\n"
+                        "        if (aij [k] != 0) return (false) ;\n"
+                        "    }\n"
+                        "    return (true) ;\n"
+                        "}\n"
+                        "#define KEEP(keep,x,i,j,y) "
+                        "keep = GB_udt_eq_%d ",
+                        "((uint8_t *) &(x), (uint8_t *) &(y))\n",
+                        asize, asize) ;
+                    }
                     break ;
+
                 default: ;
             }
             break ;

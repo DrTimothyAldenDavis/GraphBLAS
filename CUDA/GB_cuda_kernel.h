@@ -41,6 +41,10 @@
 #undef  GxB_STATIC_INLINE_VOID
 #define GxB_STATIC_INLINE_VOID static __device__ __inline__ void
 
+// for internal static inline functions
+#undef  GB_STATIC_INLINE
+#define GB_STATIC_INLINE static __device__ __inline__
+
 //------------------------------------------------------------------------------
 // operators
 //------------------------------------------------------------------------------
