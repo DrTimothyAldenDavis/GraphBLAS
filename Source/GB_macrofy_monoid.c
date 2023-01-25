@@ -99,17 +99,16 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // create macros for the atomic CUDA operator, if available
     //--------------------------------------------------------------------------
 
-    // All built-in monoids are handled, except for the complex cases of ANY
-    // and TIMES.  Those need to be done the same way user-defined monoids are
-    // computed.  The complex PLUS monoid can be done as independent atomic add
-    // operations on the real and imaginary parts.
+    // All built-in monoids are handled, except for the double complex cases of
+    // ANY and TIMES.  Those need to be done the same way user-defined monoids
+    // are computed.
 
     char *a = NULL ;
 
     switch (add_ecode)
     {
 
-        // FIRST, ANY, SECOND: atomic write (not complex)
+        // FIRST, ANY, SECOND: atomic write (not double complex)
         case  1 :
         case  2 :
 
@@ -125,19 +124,19 @@ void GB_macrofy_monoid  // construct the macros for a monoid
                 case GB_INT64_code   :
                 case GB_UINT64_code  :
                 case GB_FP32_code    :
-                case GB_FP64_code    : a = "GB_atomic_write" ;
+                case GB_FP64_code    : 
+                case GB_FC32_code    : a = "GB_atomic_write" ;
                 default              : break ;
             }
             break ;
 
-        // MIN (real only), and logical AND (via upscale to uint32_t)
+        // MIN (real only)
         case  3 :
         case  4 :
         case  5 :
 
             switch (zcode)
             {
-                case GB_BOOL_code    :
                 case GB_INT8_code    :
                 case GB_UINT8_code   :
                 case GB_INT16_code   :
@@ -159,7 +158,6 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 
             switch (zcode)
             {
-                case GB_BOOL_code    :
                 case GB_INT8_code    :
                 case GB_UINT8_code   :
                 case GB_INT16_code   :
@@ -204,7 +202,8 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             }
             break ;
 
-        // TIMES: all real types (not complex)
+        // TIMES: all real types, and float complex (but not double complex)
+        case 12 : 
         case 14 : 
 
             switch (zcode)
@@ -218,7 +217,8 @@ void GB_macrofy_monoid  // construct the macros for a monoid
                 case GB_INT64_code   :
                 case GB_UINT64_code  :
                 case GB_FP32_code    :
-                case GB_FP64_code    : a = "GB_atomic_times" ;
+                case GB_FP64_code    : 
+                case GB_FC32_code    : a = "GB_atomic_times" ;
                 default              : break ;
             }
             break ;
@@ -296,23 +296,22 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     }
     else
     {
-        // CUDA atomic available: write, min, max, or add
+        // CUDA atomic available: write, min, max, add, or times
         fprintf (fp, "#define GB_HAS_CUDA_ATOMIC 1\n") ;
         fprintf (fp, "#define GB_CUDA_ATOMIC %s\n", a) ;
 
+        // upscale 8-bit types to 16-bits, all others use their native types
         char *t = "" ;
         switch (zcode)
         {
             case GB_INT8_code    :
-            case GB_INT16_code   :
+            case GB_INT16_code   : t = "int16_t"    ; break ;
             case GB_INT32_code   : t = "int32_t"    ; break ;
-
+            case GB_INT64_code   : t = "int64_t"    ; break ;
             case GB_BOOL_code    :
             case GB_UINT8_code   :
-            case GB_UINT16_code  :
+            case GB_UINT16_code  : t = "uint16_t"   ; break ;
             case GB_UINT32_code  : t = "uint32_t"   ; break ;
-
-            case GB_INT64_code   : t = "int64_t"    ; break ;
             case GB_UINT64_code  : t = "uint64_t"   ; break ;
             case GB_FP32_code    : t = "float"      ; break ;
             case GB_FP64_code    : t = "double"     ; break ;
