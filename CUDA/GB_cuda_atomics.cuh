@@ -28,9 +28,41 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-/**
- * Specializations for different atomic operations on different types
- */
+//------------------------------------------------------------------------------
+// Specializations for different atomic operations on different types
+//------------------------------------------------------------------------------
+//
+// No 1-byte methods are available (bool, uint8_t, int8_t), because CUDA does
+// not support atomicCAS for a single byte.  Instead, to compute a single byte
+// atomically, GraphBLAS must operate on a larger temporary type (typically
+// uint32_t, but it could also use a 16-bit type), and when all results are
+// computed and the kernel launch is done, the final value is copied to the
+// single byte result on the host.
+//
+// The double complex type is supported only by GB_atomic_add.
+//
+// GB_atomic_write, GB_atomic_times:
+//
+//      int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t,
+//      float, double, and float complex (not double complex).
+//
+// GB_atomic_min, GB_atomic_max:
+//
+//      int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t,
+//      float, and double (not float complex or double complex).
+//
+// GB_atomic_add:
+//
+//      int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t,
+//      float, double, float complex, and double complex.
+// 
+// GB_atomic_bor, GB_atomic_band, GB_atomic_bxor, GB_atomic_bxnor :
+//
+//      uint16_t, uint32_t, uint64_t
+//
+// GB_atomic_lock, GB_atomic_unlock:
+//
+//      uint32_t only
 
 #pragma once
 
@@ -44,8 +76,8 @@ template <typename T> __device__ void GB_atomic_band (T* ptr, T val) ;
 template <typename T> __device__ void GB_atomic_bxor (T* ptr, T val) ;
 template <typename T> __device__ void GB_atomic_bnxor (T* ptr, T val) ;
 
-__device__ __inline__ void GB_cuda_lock   (int32_t *mutex) ;
-__device__ __inline__ void GB_cuda_unlock (int32_t *mutex) ;
+__device__ __inline__ void GB_cuda_lock   (uint32_t *mutex) ;
+__device__ __inline__ void GB_cuda_unlock (uint32_t *mutex) ;
 
 // reinterpret a value as another type, but with no typecasting
 #define pun(type,x) (*(type *) (&(x)))
@@ -210,7 +242,7 @@ template<> __device__ __inline__ void GB_atomic_add<double>(double* ptr, double 
     atomicAdd (ptr, val) ;
 }
 
-template<> __device__ __inline__ void GB_atomic_add<float complex>(float complex* ptr, float  complexval)
+template<> __device__ __inline__ void GB_atomic_add<float complex>(float complex* ptr, float complex val)
 {
     // native CUDA method on each float, real and imaginary parts
     float *p = (float *) ptr ;
@@ -268,9 +300,9 @@ template<> __device__ __inline__ void GB_atomic_times<uint16_t>(uint16_t* ptr, u
 
 template<> __device__ __inline__ void GB_atomic_times<int32_t>(int32_t* ptr, int32_t val)
 {
-    unsigned int *p = (unsigned int *) ptr ;
-    unsigned int assumed ;
-    unsigned int old = *p ;
+    int *p = (int *) ptr ;
+    int assumed ;
+    int old = *p ;
     do
     {
         // assume the old value
@@ -278,7 +310,7 @@ template<> __device__ __inline__ void GB_atomic_times<int32_t>(int32_t* ptr, int
         // compute the new value
         int32_t new_value = pun (int32_t, assumed) * val ;
         // modify it atomically:
-        old = atomicCAS (p, assumed, pun (unsigned int, new_value)) ;
+        old = atomicCAS (p, assumed, pun (int, new_value)) ;
     }
     while (assumed != old) ;
 }
@@ -530,25 +562,25 @@ template<> __device__ __inline__ void GB_atomic_max<uint16_t>(uint16_t* ptr, uin
 template<> __device__ __inline__ void GB_atomic_max<int32_t>(int32_t* ptr, int32_t val)
 {
     // native CUDA method
-    atomicMin ((int *) ptr, (int) val) ;
+    atomicMax ((int *) ptr, (int) val) ;
 }
 
 template<> __device__ __inline__ void GB_atomic_max<uint32_t>(uint32_t* ptr, uint32_t val)
 {
     // native CUDA method
-    atomicMin ((unsigned int *) ptr, (unsigned int) val) ;
+    atomicMax ((unsigned int *) ptr, (unsigned int) val) ;
 }
 
 template<> __device__ __inline__ void GB_atomic_max<int64_t>(int64_t* ptr, int64_t val)
 {
     // native CUDA method
-    atomicMin ((long long int *) ptr, (long long int) val) ;
+    atomicMax ((long long int *) ptr, (long long int) val) ;
 }
 
 template<> __device__ __inline__ void GB_atomic_max<uint64_t>(uint64_t* ptr, uint64_t val)
 {
     // native CUDA method
-    atomicMin ((unsigned long long int *)ptr, (unsigned long long int) val) ;
+    atomicMax ((unsigned long long int *)ptr, (unsigned long long int) val) ;
 }
 
 template<> __device__ __inline__ void GB_atomic_max<float>(float* ptr, float val)
