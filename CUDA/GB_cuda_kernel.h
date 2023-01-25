@@ -10,6 +10,9 @@
 // a subset of GraphBLAS.h and GB.h, plus other definitions.
 
 #pragma once
+
+#define GB_CUDA_KERNEL
+
 #undef  ASSERT
 #define ASSERT(x)
 
@@ -112,11 +115,7 @@
 
 #undef restrict
 #undef GB_restrict
-#if defined ( GB_CUDA_KERNEL ) || defined ( __NVCC__ )
-    #define GB_restrict __restrict__
-#else
-    #define GB_restrict
-#endif
+#define GB_restrict __restrict__
 #define restrict GB_restrict
 
 #include <stdint.h>
@@ -198,7 +197,6 @@ typedef enum
 }
 GrB_Desc_Value ;
 
-#include "GB_opaque.h"
 #endif
 
 //------------------------------------------------------------------------------
@@ -221,6 +219,8 @@ GrB_Desc_Value ;
 
 #include "GB_nnz.h"
 #include "GB_partition.h"
+#include "GB_pun.h"
+#include "GB_opaque.h"
 
 // version for the GPU, with fewer branches
 #define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                             \

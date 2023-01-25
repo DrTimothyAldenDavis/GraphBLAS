@@ -21,7 +21,6 @@
 //******************************************************************************
 
 #pragma once
-#define GB_CUDA_KERNEL
 #include <limits>
 #include <cstdint>
 #include <cmath>

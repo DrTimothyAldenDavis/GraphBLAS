@@ -379,16 +379,6 @@
 // Type punning is used to extend these signed integer types to unsigned
 // integers of the same number of bytes, and to float and double.
 
-//------------------------------------------------------------------------------
-// GB_PUN: type punning
-//------------------------------------------------------------------------------
-
-// With type punning, a value is treated as a different type, but with no
-// typecasting.  The address of the variable is first typecasted to a (type *)
-// pointer, and then the pointer is dereferenced.
-
-#define GB_PUN(type,value) (*((type *) (&(value))))
-
 #if GB_COMPILER_MSC
 
     //--------------------------------------------------------------------------

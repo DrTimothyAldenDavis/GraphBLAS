@@ -11,7 +11,6 @@
 
 #pragma once
 
-#define GB_CUDA_KERNEL
 #include <limits>
 #include <stdint.h>
 #include "GB_cuda_kernel.h"

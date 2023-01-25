@@ -24,6 +24,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     GrB_BinaryOp op = (monoid == NULL) ? NULL : monoid->op ;
     const char *ztype_name = (monoid == NULL) ? "void" : op->ztype->name ;
     int zcode = (monoid == NULL) ? 0 : op->ztype->code ;
+    size_t zsize = (monoid == NULL) ? 0 : op->ztype->size ;
 
     //--------------------------------------------------------------------------
     // create macros for the additive operator
@@ -51,7 +52,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     {
         // user-defined monoid:  all we have are the bytes
         GB_macrofy_bytes (fp, "MONOID_IDENTITY", ztype_name,
-            (uint8_t *) (monoid->identity), op->ztype->size) ;
+            (uint8_t *) (monoid->identity), zsize) ;
     }
 
     //--------------------------------------------------------------------------
@@ -85,14 +86,12 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     else
     {
         // user-defined terminal monoid
-        GB_macrofy_bytes (fp, "MONOID_TERMINAL", ztype_name,
-            monoid->terminal, op->ztype->size) ;
+        GB_macrofy_bytes (fp, "MONOID_TERMINAL", ztype_name, monoid->terminal,
+            zsize) ;
         fprintf (fp, "#define GB_TERMINAL_CONDITION(cij,z)"
-            " (memcmp (&(cij), &(z), %d) == 0)\n",
-            (int) op->ztype->size) ;
+            " (memcmp (&(cij), &(z), %d) == 0)\n", (int) zsize) ;
         fprintf (fp, "#define GB_IF_TERMINAL_BREAK(cij,z) "
-            " if (memcmp (&(cij), &(z), %d) == 0) break\n",
-            (int) op->ztype->size) ;
+            " if (memcmp (&(cij), &(z), %d) == 0) break\n", (int) zsize) ;
     }
 
     //--------------------------------------------------------------------------
@@ -104,10 +103,22 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // are computed.
 
     char *a = NULL ;
-    fprintf (fp, "// add_ecode: %d, zcode: %d\n", add_ecode, zcode) ;
+    fprintf (fp, "// add_ecode: %d, zcode: %d, zsize: %d\n", add_ecode, zcode,
+        (int) zsize) ;
+    bool user_monoid_atomically = false ;
 
     switch (add_ecode)
     {
+
+        // user defined monoid: can apply GB_ADD via atomicCAS if the ztype has 
+        // 16, 32, or 64 bits
+        case  0 :
+
+            user_monoid_atomically =
+                (zsize == sizeof (uint16_t) || 
+                 zsize == sizeof (uint32_t) ||
+                 zsize == sizeof (uint64_t))  ;
+            break ;
 
         // FIRST, ANY, SECOND: atomic write (not double complex)
         case  1 :
@@ -127,7 +138,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
                 case GB_UINT64_code  :
                 case GB_FP32_code    :
                 case GB_FP64_code    : 
-                case GB_FC32_code    : a = "GB_atomic_write" ;
+                case GB_FC32_code    : a = "GB_cuda_atomic_write" ;
                 default              : break ;
             }
             break ;
@@ -148,7 +159,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
                 case GB_INT64_code   :
                 case GB_UINT64_code  : 
                 case GB_FP32_code    :
-                case GB_FP64_code    : a = "GB_atomic_min" ;
+                case GB_FP64_code    : a = "GB_cuda_atomic_min" ;
                 default              : break ;
             }
             break ;
@@ -169,14 +180,14 @@ void GB_macrofy_monoid  // construct the macros for a monoid
                 case GB_INT64_code   :
                 case GB_UINT64_code  : 
                 case GB_FP32_code    :
-                case GB_FP64_code    : a = "GB_atomic_max" ;
+                case GB_FP64_code    : a = "GB_cuda_atomic_max" ;
                 default              : break ;
             }
             break ;
 
             switch (zcode)
             {
-                case GB_BOOL_code    :a = "GB_atomic_bor" ;
+                case GB_BOOL_code    :a = "GB_cuda_atomic_bor" ;
                 default              : break ;
             }
             break ;
@@ -199,7 +210,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
                 case GB_FP32_code    :
                 case GB_FP64_code    :
                 case GB_FC32_code    :
-                case GB_FC64_code    : a = "GB_atomic_add" ;
+                case GB_FC64_code    : a = "GB_cuda_atomic_add" ;
                 default              : break ;
             }
             break ;
@@ -220,7 +231,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
                 case GB_UINT64_code  :
                 case GB_FP32_code    :
                 case GB_FP64_code    : 
-                case GB_FC32_code    : a = "GB_atomic_times" ;
+                case GB_FC32_code    : a = "GB_cuda_atomic_times" ;
                 default              : break ;
             }
             break ;
@@ -236,7 +247,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
                 case GB_UINT8_code   :
                 case GB_UINT16_code  :
                 case GB_UINT32_code  :
-                case GB_UINT64_code  : a = "GB_atomic_bor" ;
+                case GB_UINT64_code  : a = "GB_cuda_atomic_bor" ;
                 default              : break ;
             }
             break ;
@@ -252,7 +263,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
                 case GB_UINT8_code   :
                 case GB_UINT16_code  :
                 case GB_UINT32_code  :
-                case GB_UINT64_code  : a = "GB_atomic_band" ;
+                case GB_UINT64_code  : a = "GB_cuda_atomic_band" ;
                 default              : break ;
             }
             break ;
@@ -267,7 +278,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
                 case GB_UINT8_code   :
                 case GB_UINT16_code  :
                 case GB_UINT32_code  :
-                case GB_UINT64_code  : a = "GB_atomic_bxor" ;
+                case GB_UINT64_code  : a = "GB_cuda_atomic_bxor" ;
                 default              : break ;
             }
             break ;
@@ -282,7 +293,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
                 case GB_UINT8_code   :
                 case GB_UINT16_code  :
                 case GB_UINT32_code  :
-                case GB_UINT64_code  : a = "GB_atomic_bxnor" ;
+                case GB_UINT64_code  : a = "GB_cuda_atomic_bxnor" ;
                 default              : break ;
             }
             break ;
@@ -291,14 +302,76 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         default: break ;
     }
 
-    if (a == NULL)
+    if (user_monoid_atomically)
     {
+
+        //----------------------------------------------------------------------
+        // user-defined monoid with a type of 16, 32, or 64 bits
+        //----------------------------------------------------------------------
+
+        char *cuda_type = NULL ;
+        if (zsize == sizeof (uint16_t))
+        {
+            cuda_type = "unsigned short int" ;
+        }
+        else if (zsize == sizeof (uint32_t))
+        {
+            cuda_type = "unsigned int" ;
+        }
+        else // if (zsize == sizeof (uint64_t))
+        {
+            cuda_type = "unsigned long long int" ;
+        }
+        fprintf (fp,
+            "#define GB_HAS_CUDA_ATOMIC 1\n"
+            "#define GB_CUDA_ATOMIC GB_cuda_atomic_user\n"
+            "#define GB_CUDA_ATOMIC_TYPE %s\n"
+            "#ifdef GB_CUDA_KERNEL\n"
+            "static __device__ __inline__ "
+            "void GB_cuda_atomic_user (%s *ptr, %s val)\n"
+            "{                                                              \n"
+            "    %s *p = (%s *) ptr ;                                       \n"
+            "    %s assumed ;                                               \n"
+            "    %s old = *p ;                                              \n"
+            "    do                                                         \n"
+            "    {                                                          \n"
+            "        // assume the old value                                \n"
+            "        assumed = old ;                                        \n"
+            "        // compute the new value                               \n"
+            "        %s prior_value = GB_PUN (%s, assumed) ;                \n"
+            "        %s new_value = GB_ADD (prior_value, val) ;             \n"
+            "        // modify it atomically:                               \n"
+            "        old = atomicCAS (p, assumed, GB_PUN (%s, new_value)) ; \n"
+            "    }                                                          \n"
+            "    while (assumed != old) ;                                   \n"
+            "}                                                              \n"
+            "#endif\n",
+            ztype_name,                 // GB_CUDA_ATOMIC_TYPE
+            ztype_name, ztype_name,     // parameters to GB_cuda_atomic_user
+            cuda_type, cuda_type,       // typecast the pointer ptr to cuda_type
+            cuda_type, cuda_type,       // cuda_type assumed, old
+            ztype_name, ztype_name,     // pun for prior value
+            ztype_name,                 // type of new value
+            cuda_type) ;                // pun back to cuda_type for atomicCAS
+
+    }
+    else if (a == NULL)
+    {
+
+        //----------------------------------------------------------------------
         // no CUDA atomic available
+        //----------------------------------------------------------------------
+
+        // either built-in (GxB_ANY_FC64_MONOID or GxB_TIMES_FC64_MONOID),
+        // or user-defined where the type is not 16, 32, or 64 bits in size
+
         fprintf (fp, "#define GB_HAS_CUDA_ATOMIC 0\n") ;
+
     }
     else
     {
-        // CUDA atomic available
+
+        // CUDA atomic available for a built-in monoid
         fprintf (fp, "#define GB_HAS_CUDA_ATOMIC 1\n") ;
         fprintf (fp, "#define GB_CUDA_ATOMIC %s\n", a) ;
 
@@ -322,7 +395,6 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             case GB_FC64_code    : t = "double complex" ; break ;
             default :;
         }
-
         fprintf (fp, "#define GB_CUDA_ATOMIC_TYPE %s\n", t) ;
     }
 }

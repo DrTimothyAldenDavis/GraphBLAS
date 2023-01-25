@@ -56,6 +56,7 @@
 #include "GB_defaults.h"
 #include "GB_index.h"
 #include "GB_cplusplus.h"
+#include "GB_pun.h"
 #include "GB_atomics.h"
 #include "GB_Global.h"
 #include "GB_printf.h"

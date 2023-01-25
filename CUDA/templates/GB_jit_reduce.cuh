@@ -17,7 +17,6 @@
 
 // If the reduction is done on the GPU, A will never be iso-valued.
 
-#define GB_CUDA_KERNEL
 #include <limits>
 #include <type_traits>
 #include "GB_cuda_kernel.h"
