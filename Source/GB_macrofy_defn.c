@@ -52,5 +52,12 @@ void GB_macrofy_defn
             fprintf (fp, "#endif\n") ;
         }
     }
+    else
+    {
+        // name or defn not provided
+        fprintf (fp, "// operator: ") ;
+        if (name != NULL) fprintf (fp, "(%s)", name) ;
+        fprintf (fp, " definition not provided\n") ;
+    }
 }
 

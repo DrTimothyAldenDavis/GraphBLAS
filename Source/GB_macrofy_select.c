@@ -166,32 +166,32 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     if (asize_multiple_of_uint32)
                     { 
                         fprintf (fp,
-                        "(uint32_t *aij)\n"
-                        "{\n"
-                        "    bool ne0 = false ;\n"
-                        "    for (int k = 0 ; k < %d ; i++)\n"
-                        "    {\n"
-                        "        ne0 = ne0 || (aij [k] != 0) ;\n"
-                        "    }\n"
-                        "    return (ne0) ;\n"
-                        "}\n"
-                        "#define KEEP(keep,x,i,j,y) "
+                        "(uint32_t *aij)                        \n"
+                        "{                                      \n"
+                        "    bool ne0 = false ;                 \n"
+                        "    for (int k = 0 ; k < %d ; i++)     \n"
+                        "    {                                  \n"
+                        "        ne0 = ne0 || (aij [k] != 0) ;  \n"
+                        "    }                                  \n"
+                        "    return (ne0) ;                     \n"
+                        "}                                      \n"
+                        "#define GB_KEEP(keep,x,i,j,y) "
                         "keep = GB_udt_ne0_%d ((uint32_t *) &(x))\n",
                         asize32, asize) ;
                     }
                     else
                     { 
                         fprintf (fp,
-                        "(uint8_t *aij)\n"
-                        "{\n"
-                        "    bool ne0 = false ;\n"
-                        "    for (int k = 0 ; k < %d ; i++)\n"
-                        "    {\n"
-                        "        ne0 = ne0 || (aij [k] != 0) ;\n"
-                        "    }\n"
-                        "    return (ne0) ;\n"
-                        "}\n"
-                        "#define KEEP(keep,x,i,j,y) "
+                        "(uint8_t *aij)                         \n"
+                        "{                                      \n"
+                        "    bool ne0 = false ;                 \n"
+                        "    for (int k = 0 ; k < %d ; i++)     \n"
+                        "    {                                  \n"
+                        "        ne0 = ne0 || (aij [k] != 0) ;  \n"
+                        "    }                                  \n"
+                        "    return (ne0) ;                     \n"
+                        "}                                      \n"
+                        "#define GB_KEEP(keep,x,i,j,y) "
                         "keep = GB_udt_ne0_%d ((uint8_t *) &(x))\n",
                         asize, asize) ;
                     }
@@ -239,32 +239,32 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     if (asize_multiple_of_uint32)
                     { 
                         fprintf (fp,
-                        "(uint32_t *aij)\n"
-                        "{\n"
-                        "    bool eq0 = true ;\n"
-                        "    for (int k = 0 ; k < %d ; i++)\n"
-                        "    {\n"
-                        "        eq0 = eq0 && (aij [k] == 0) ;\n"
-                        "    }\n"
-                        "    return (eq0) ;\n"
-                        "}\n"
-                        "#define KEEP(keep,x,i,j,y) "
+                        "(uint32_t *aij)                        \n"
+                        "{                                      \n"
+                        "    bool eq0 = true ;                  \n"
+                        "    for (int k = 0 ; k < %d ; i++)     \n"
+                        "    {                                  \n"
+                        "        eq0 = eq0 && (aij [k] == 0) ;  \n"
+                        "    }                                  \n"
+                        "    return (eq0) ;                     \n"
+                        "}                                      \n"
+                        "#define GB_KEEP(keep,x,i,j,y) "
                         "keep = GB_udt_eq0_%d ((uint32_t *) &(x))\n",
                         asize32, asize) ;
                     }
                     else
                     { 
                         fprintf (fp,
-                        "(uint8_t *aij)\n"
-                        "{\n"
-                        "    bool eq0 = true ;\n"
-                        "    for (int k = 0 ; k < %d ; i++)\n"
-                        "    {\n"
-                        "        eq0 = eq0 && (aij [k] == 0) ;\n"
-                        "    }\n"
-                        "    return (eq0) ;\n"
-                        "}\n"
-                        "#define KEEP(keep,x,i,j,y) "
+                        "(uint8_t *aij)                         \n"
+                        "{                                      \n"
+                        "    bool eq0 = true ;                  \n"
+                        "    for (int k = 0 ; k < %d ; i++)     \n"
+                        "    {                                  \n"
+                        "        eq0 = eq0 && (aij [k] == 0) ;  \n"
+                        "    }                                  \n"
+                        "    return (eq0) ;                     \n"
+                        "}                                      \n"
+                        "#define GB_KEEP(keep,x,i,j,y) "
                         "keep = GB_udt_eq0_%d ((uint8_t *) &(x))\n",
                         asize, asize) ;
                     }
@@ -316,16 +316,16 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     if (asize_multiple_of_uint32)
                     { 
                         fprintf (fp,
-                        "(uint32_t *aij, uint32_t *yy)\n"
-                        "{\n"
-                        "    bool ne = false ;\n"
-                        "    for (int k = 0 ; k < %d ; i++)\n"
-                        "    {\n"
-                        "        ne = ne || (aij [k] != yy [k]) ;\n"
-                        "    }\n"
-                        "    return (ne) ;\n"
-                        "}\n"
-                        "#define KEEP(keep,x,i,j,y) "
+                        "(uint32_t *aij, uint32_t *yy)              \n"
+                        "{                                          \n"
+                        "    bool ne = false ;                      \n"
+                        "    for (int k = 0 ; k < %d ; i++)         \n"
+                        "    {                                      \n"
+                        "        ne = ne || (aij [k] != yy [k]) ;   \n"
+                        "    }                                      \n"
+                        "    return (ne) ;                          \n"
+                        "}                                          \n"
+                        "#define GB_KEEP(keep,x,i,j,y) "
                         "keep = GB_udt_ne_%d "
                         "((uint32_t *) &(x), (uint32_t *) &(y))\n",
                         asize32, asize) ;
@@ -333,16 +333,16 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     else
                     { 
                         fprintf (fp,
-                        "(uint8_t *aij, uint8_t *yy)\n"
-                        "{\n"
-                        "    bool ne = false ;\n"
-                        "    for (int k = 0 ; k < %d ; i++)\n"
-                        "    {\n"
-                        "        ne = ne || (aij [k] != yy [k]) ;\n"
-                        "    }\n"
-                        "    return (ne) ;\n"
-                        "}\n"
-                        "#define KEEP(keep,x,i,j,y) "
+                        "(uint8_t *aij, uint8_t *yy)                \n"
+                        "{                                          \n"
+                        "    bool ne = false ;                      \n"
+                        "    for (int k = 0 ; k < %d ; i++)         \n"
+                        "    {                                      \n"
+                        "        ne = ne || (aij [k] != yy [k]) ;   \n"
+                        "    }                                      \n"
+                        "    return (ne) ;                          \n"
+                        "}                                          \n"
+                        "#define GB_KEEP(keep,x,i,j,y) "
                         "keep = GB_udt_ne_%d "
                         "((uint8_t *) &(x), (uint8_t *) &(y))\n",
                         asize, asize) ;
@@ -389,16 +389,16 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     if (asize_multiple_of_uint32)
                     { 
                         fprintf (fp,
-                        "(uint32_t *aij, uint32_t *yy)\n"
-                        "{\n"
-                        "    bool eq = true ;\n"
-                        "    for (int k = 0 ; k < %d ; i++)\n"
-                        "    {\n"
-                        "        eq = eq && (aij [k] == yy [k]) ;\n"
-                        "    }\n"
-                        "    return (eq) ;\n"
-                        "}\n"
-                        "#define KEEP(keep,x,i,j,y) "
+                        "(uint32_t *aij, uint32_t *yy)              \n"
+                        "{                                          \n"
+                        "    bool eq = true ;                       \n"
+                        "    for (int k = 0 ; k < %d ; i++)         \n"
+                        "    {                                      \n"
+                        "        eq = eq && (aij [k] == yy [k]) ;   \n"
+                        "    }                                      \n"
+                        "    return (eq) ;                          \n"
+                        "}                                          \n"
+                        "#define GB_KEEP(keep,x,i,j,y) "
                         "keep = GB_udt_eq_%d "
                         "((uint32_t *) &(x), (uint32_t *) &(y))\n",
                         asize32, asize) ;
@@ -406,16 +406,16 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     else
                     { 
                         fprintf (fp,
-                        "(uint8_t *aij, uint8_t *yy)\n"
-                        "{\n"
-                        "    bool eq = true ;\n"
-                        "    for (int k = 0 ; k < %d ; i++)\n"
-                        "    {\n"
-                        "        eq = eq && (aij [k] == yy [k]) ;\n"
-                        "    }\n"
-                        "    return (eq) ;\n"
-                        "}\n"
-                        "#define KEEP(keep,x,i,j,y) "
+                        "(uint8_t *aij, uint8_t *yy)                \n"
+                        "{                                          \n"
+                        "    bool eq = true ;                       \n"
+                        "    for (int k = 0 ; k < %d ; i++)         \n"
+                        "    {                                      \n"
+                        "        eq = eq && (aij [k] == yy [k]) ;   \n"
+                        "    }                                      \n"
+                        "    return (eq) ;                          \n"
+                        "}                                          \n"
+                        "#define GB_KEEP(keep,x,i,j,y) "
                         "keep = GB_udt_eq_%d "
                         "((uint8_t *) &(x), (uint8_t *) &(y))\n",
                         asize, asize) ;
@@ -504,7 +504,7 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
             { 
                 // no need to typecast result of the user-defined operator
                 fprintf (fp,
-                "#define KEEP(keep,x,i,j,y) "
+                "#define GB_KEEP(keep,x,i,j,y) "
                 "%s (&(keep), &(x), %s, %s, &(y)) ;\n",
                 opname, i_user, j_user) ;
             }
@@ -514,8 +514,8 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                 GB_macrofy_cast (fp, "CAST_Z_TO_KEEP", "keep", "z", "z",
                     GrB_BOOL, ztype) ;
                 fprintf (fp,
-                    "#define KEEP(keep,x,i,j,y) { %s zkeep ; "
-                    "%s (&(zkeep), &(x), %s, %s, &(y)) ;"
+                    "#define GB_KEEP(keep,x,i,j,y) { %s zkeep ; "
+                    "%s (&(zkeep), &(x), %s, %s, &(y)) ; "
                     "CAST_Z_TO_KEEP (keep, zkeep) ; }\n",
                     ztype->name, opname, i_user, j_user) ;
             }
@@ -525,7 +525,7 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
         case GB_USER_selop_code       : 
 
             fprintf (fp,
-                "#define KEEP(keep,x,i,j,y) "
+                "#define GB_KEEP(keep,x,i,j,y) "
                 "keep = %s (%s, %s, &(x), &(y)) ;\n",
                 opname, i_user, j_user) ;
             GB_macrofy_defn (fp, 0, op->name, op->defn) ;
@@ -536,7 +536,7 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
 
     if (keep != NULL)
     { 
-        fprintf (fp, "#define KEEP(keep,x,i,j,y) keep = (%s) ;\n", keep) ;
+        fprintf (fp, "#define GB_KEEP(keep,x,i,j,y) keep = (%s) ;\n", keep) ;
     }
 
     //--------------------------------------------------------------------------

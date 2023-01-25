@@ -56,7 +56,7 @@ void GB_enumify_select
     // construct the select code
     //--------------------------------------------------------------------------
 
-    // The entire opcode is encoded, but on a subset are needed (currently
+    // The entire opcode is encoded, but only a subset are needed (currently
     // 24 unique versions), to simplify the determination of types later on.
 
     // total select_code bits: 30

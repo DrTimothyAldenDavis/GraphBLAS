@@ -69,9 +69,9 @@ char *GB_namify_select          // determine the select op name
 
         // depends on A and Thunk (type and values); user-defined operators
         case GB_USER_idxunop_code     : 
-            return ((op->name == NULL) ? "useridx" : op->name) ;
+            return ((op == NULL || op->name == NULL) ? "useridx" : op->name) ;
         case GB_USER_selop_code       : 
-            return ((op->name == NULL) ? "usersel" : op->name) ;
+            return ((op == NULL || op->name == NULL) ? "usersel" : op->name) ;
 
         default: return (NULL) ;
     }

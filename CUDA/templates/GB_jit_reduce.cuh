@@ -33,7 +33,7 @@ using namespace cooperative_groups;
 // GB_warp_Reduce assumes WARPSIZE is 32 threads.
 
 template<typename T_Z>
-__inline__ __device__ 
+__inline__ __device__
 T_Z GB_warp_Reduce( thread_block_tile<WARPSIZE> g, T_Z val)
 {
     // Each iteration halves the number of active threads
@@ -41,17 +41,17 @@ T_Z GB_warp_Reduce( thread_block_tile<WARPSIZE> g, T_Z val)
 
     // FIXME: doesn't work unless sizeof(T_Z) <= 64 bits
 
-    T_Z fold = g.shfl_down( val, 16);
-    GB_ADD( val, val, fold );
-    fold = g.shfl_down( val, 8);
-    GB_ADD( val, val, fold );
-    fold = g.shfl_down( val, 4);
-    GB_ADD( val, val, fold );
-    fold = g.shfl_down( val, 2);
-    GB_ADD( val, val, fold );
-    fold = g.shfl_down( val, 1);
-    GB_ADD( val, val, fold );
-    return val; // note: only thread 0 will return full sum
+    T_Z fold = g.shfl_down ( val, 16) ;
+    GB_ADD ( val, val, fold ) ;
+    fold = g.shfl_down ( val, 8) ;
+    GB_ADD ( val, val, fold ) ;
+    fold = g.shfl_down ( val, 4) ;
+    GB_ADD ( val, val, fold ) ;
+    fold = g.shfl_down ( val, 2) ;
+    GB_ADD ( val, val, fold ) ;
+    fold = g.shfl_down ( val, 1) ;
+    GB_ADD ( val, val, fold ) ;
+    return (val) ; // note: only thread 0 will return full sum
 }
 
 //------------------------------------------------------------------------------
@@ -62,27 +62,27 @@ template<typename T_Z>
 __inline__ __device__
 T_Z GB_block_Reduce(thread_block g, T_Z val)
 {
-    static __shared__ T_Z shared[WARPSIZE];
+    static __shared__ T_Z shared [WARPSIZE] ;
     int lane = threadIdx.x & (WARPSIZE-1) ;
     int wid  = threadIdx.x >> LOG2_WARPSIZE ;
-    thread_block_tile<WARPSIZE> tile = tiled_partition<WARPSIZE>( g );
+    thread_block_tile<WARPSIZE> tile = tiled_partition<WARPSIZE>( g ) ;
 
     // Each warp performs partial reduction
-    val = GB_warp_Reduce<T_Z>( tile, val);
+    val = GB_warp_Reduce<T_Z>( tile, val) ;
 
     // Wait for all partial reductions
-    if (lane==0)
-    { 
-        shared[wid] = val; // Write reduced value to shared memory
+    if (lane == 0)
+    {
+        shared [wid] = val ; // Write reduced value to shared memory
     }
-    this_thread_block().sync();     // Wait for all partial reductions
+    this_thread_block().sync() ;     // Wait for all partial reductions
     GB_DECLARE_MONOID_IDENTITY (identity) ;
 
-    val = (threadIdx.x < (blockDim.x >> LOG2_WARPSIZE) ) ? shared[lane] : identity ;
+    val = (threadIdx.x < (blockDim.x >> LOG2_WARPSIZE)) ? shared [lane] : identity ;
 
     // Final reduce within first warp
-    val = GB_warp_Reduce<T_Z>( tile, val);
-    return val;
+    val = GB_warp_Reduce<T_Z>( tile, val) ;
+    return (val) ;
 }
 
 //------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ template< typename T_A, typename T_Z>
 __global__ void GB_jit_reduce
 (
     GrB_Matrix A,   // matrix to reduce
-    void *zscalar,  // scalar result, at least sizeof(int32_t)
+    void *zscalar,  // scalar result, at least sizeof (uint16_t)
     int64_t anz,    // # of entries in A: anz = GB_nnz_held (A)
     uint32_t *mutex // for monoids that need it
 )
@@ -107,6 +107,10 @@ __global__ void GB_jit_reduce
 
     // each thread reduces its result into sum, of type T_Z
     GB_DECLARE_MONOID_IDENTITY (sum) ;  // FIXME: rename this scalar
+
+    // On input, zscalar is already initialized to the monoid identity value.
+    // If T_Z has size of 1 byte, zscalar has been upscaled to 2 bytes.
+    // FIXME: does this need to be 4 bytes?
 
     //--------------------------------------------------------------------------
     // phase 1: each thread reduces a part of the matrix to its own scalar
@@ -132,7 +136,7 @@ __global__ void GB_jit_reduce
                 if (Ai [p] < 0) continue ;      // skip zombies
                 T_Z aij ;
                 GB_GETA (aij, Ax, p, false) ;   // aij = (T_Z) Ax [p]
-                GB_ADD( sum, sum, aij );
+                GB_ADD ( sum, sum, aij ) ;
             }
         }
         else
@@ -144,7 +148,7 @@ __global__ void GB_jit_reduce
             {
                 T_Z aij ;
                 GB_GETA (aij, Ax, p, false) ;   // aij = (T_Z) Ax [p]
-                GB_ADD( sum, sum, aij );
+                GB_ADD ( sum, sum, aij ) ;
             }
         }
 
@@ -162,7 +166,7 @@ __global__ void GB_jit_reduce
         {
             T_Z aij ;
             GB_GETA (aij, Ax, p, false) ;       // aij = (T_Z) Ax [p]
-            GB_ADD( sum, sum, aij );
+            GB_ADD ( sum, sum, aij ) ;
         }
 
     }
@@ -181,19 +185,19 @@ __global__ void GB_jit_reduce
             if (Ab [p] == 0) continue ;     // skip if entry not in bitmap
             T_Z aij ;
             GB_GETA (aij, Ax, p, false) ;   // aij = (T_Z) Ax [p]
-            GB_ADD( sum, sum, aij );
+            GB_ADD ( sum, sum, aij ) ;
         }
     }
     #endif
 
-    this_thread_block().sync(); 
+    this_thread_block().sync() ;
 
     //--------------------------------------------------------------------------
     // phase 2: each threadblock reduces all threads into a scalar
     //--------------------------------------------------------------------------
 
     sum = GB_block_Reduce< T_Z >( this_thread_block(), sum) ;
-    this_thread_block().sync(); 
+    this_thread_block().sync() ;
 
     //--------------------------------------------------------------------------
     // phase 3: reduce across threadblocks
@@ -205,22 +209,22 @@ __global__ void GB_jit_reduce
 
             // cast the result to the CUDA atomic type, and reduce
             // atomically to the global zscalar
-            GB_CUDA_ATOMIC_TYPE *zscalar =
-                (GB_CUDA_ATOMIC_TYPE *) zscalar ;
+            GB_CUDA_ATOMIC_TYPE *z = (GB_CUDA_ATOMIC_TYPE *) zscalar ;
             GB_CUDA_ATOMIC_TYPE zsum = (GB_CUDA_ATOMIC_TYPE) sum ;
-            GB_CUDA_ATOMIC <GB_CUDA_ATOMIC_TYPE> (zscalar, zsum) ;
+            GB_CUDA_ATOMIC <GB_CUDA_ATOMIC_TYPE> (z, zsum) ;
 
         #else
 
             // FIXME:  use another kind of reduction.  Write the kth
             // threadblock result to Result [k], and use another kernel launch?
-            // The Result array should be padded for 8-bit and 16-bit types,
-            // even for user-defined types, so that each threadblock writes a
-            // single word.  Limit the # of threadblocks to some upperbound,
-            // say 64K.
+            // The Result array should be padded for 8-bit and maybe 16-bit
+            // types, even for user-defined types, so that each threadblock
+            // writes at least one single word.  Limit the # of threadblocks to
+            // some upperbound, say 64K.
 
+            T_Z *z = (T_Z *) zscalar ;
             GB_cuda_lock (mutex) ;
-            GB_ADD (*((T_Z *) zscalar), *((T_Z *) zscalar), sum) ;
+            GB_ADD (z, z, sum) ;
             GB_cuda_unlock (mutex) ;
 
         #endif
