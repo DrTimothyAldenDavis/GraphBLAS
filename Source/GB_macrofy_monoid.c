@@ -126,7 +126,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 
             switch (zcode)
             {
-                case GB_ignore_code  :      // any_pair semiring, C is iso
+                case GB_ignore_code  : // any_pair semiring, C is iso
                 case GB_BOOL_code    :
                 case GB_INT8_code    :
                 case GB_UINT8_code   :
@@ -339,7 +339,8 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             "        assumed = old ;                                        \n"
             "        // compute the new value                               \n"
             "        %s prior_value = GB_PUN (%s, assumed) ;                \n"
-            "        %s new_value = GB_ADD (prior_value, val) ;             \n"
+            "        %s new_value ;                                         \n"
+            "        GB_ADD (new_value, prior_value, val) ;                 \n"
             "        // modify it atomically:                               \n"
             "        old = atomicCAS (p, assumed, GB_PUN (%s, new_value)) ; \n"
             "    }                                                          \n"
@@ -379,11 +380,12 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         char *t = "" ;
         switch (zcode)
         {
+            case GB_ignore_code  : t = "int32_t /* unused; C is iso */" ;
+                                   break ;
             case GB_INT8_code    : 
             case GB_INT16_code   : t = "int16_t"    ; break ;
             case GB_INT32_code   : t = "int32_t"    ; break ;
             case GB_INT64_code   : t = "int64_t"    ; break ;
-            case GB_ignore_code  : 
             case GB_BOOL_code    : 
             case GB_UINT8_code   : 
             case GB_UINT16_code  : t = "uint16_t"   ; break ;
