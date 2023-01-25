@@ -104,6 +104,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // are computed.
 
     char *a = NULL ;
+    fprintf (fp, "// add_ecode: %d, zcode: %d\n", add_ecode, zcode) ;
 
     switch (add_ecode)
     {
@@ -114,6 +115,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 
             switch (zcode)
             {
+                case GB_ignore_code  :      // any_pair semiring, C is iso
                 case GB_BOOL_code    :
                 case GB_INT8_code    :
                 case GB_UINT8_code   :
@@ -296,7 +298,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     }
     else
     {
-        // CUDA atomic available: write, min, max, add, or times
+        // CUDA atomic available
         fprintf (fp, "#define GB_HAS_CUDA_ATOMIC 1\n") ;
         fprintf (fp, "#define GB_CUDA_ATOMIC %s\n", a) ;
 
@@ -304,12 +306,13 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         char *t = "" ;
         switch (zcode)
         {
-            case GB_INT8_code    :
+            case GB_INT8_code    : 
             case GB_INT16_code   : t = "int16_t"    ; break ;
             case GB_INT32_code   : t = "int32_t"    ; break ;
             case GB_INT64_code   : t = "int64_t"    ; break ;
-            case GB_BOOL_code    :
-            case GB_UINT8_code   :
+            case GB_ignore_code  : 
+            case GB_BOOL_code    : 
+            case GB_UINT8_code   : 
             case GB_UINT16_code  : t = "uint16_t"   ; break ;
             case GB_UINT32_code  : t = "uint32_t"   ; break ;
             case GB_UINT64_code  : t = "uint64_t"   ; break ;
