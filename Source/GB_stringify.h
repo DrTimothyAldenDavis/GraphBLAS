@@ -353,10 +353,10 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
 ) ;
 
 //------------------------------------------------------------------------------
-// typedefs
+// typedefs, type name and size
 //------------------------------------------------------------------------------
 
-void GB_macrofy_types
+void GB_macrofy_typedefs
 (
     FILE *fp,
     // input:
@@ -374,6 +374,20 @@ void GB_macrofy_types
     const char *ytype_defn,
     const char *ztype_defn
 #endif
+) ;
+
+void GB_macrofy_type
+(
+    FILE *fp,
+    // input:
+    const char *what,       // typically X, Y, Z, A, B, or C
+    const char *name,       // name of the type
+    size_t size             // size of the type
+) ;
+
+size_t GB_padify_typesize   // pad the size of a type
+(
+    size_t size
 ) ;
 
 //------------------------------------------------------------------------------

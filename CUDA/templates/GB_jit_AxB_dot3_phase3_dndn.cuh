@@ -55,45 +55,28 @@
 
 using namespace cooperative_groups;
 
-template< typename T, int warp_sz>
-__inline__ __device__ T warp_ReduceSum(thread_block_tile<warp_sz> g, T val)
+//------------------------------------------------------------------------------
+// warp_ReduceSum
+//------------------------------------------------------------------------------
+
+template< typename T_Z, int warp_sz>
+__inline__ __device__ T_Z warp_ReduceSum(thread_block_tile<warp_sz> g, T_Z val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
+    // FIXME: only works if sizeof(T_Z) <= 32 bytes
+    // FIXME: the ANY monoid needs the cij_exists for each thread
     for (int i = g.size() / 2; i > 0; i /= 2)
     {
-        T next = g.shfl_down( val, i) ;
+        T_Z next = g.shfl_down( val, i) ;
         GB_ADD( val, val, next ); 
     }
     return val; // note: only thread 0 will return full sum
 }
 
-template<typename T, int warpSize >
-__inline__ __device__
-T block_ReduceSum(thread_block g, T val, T Ident)
-{
-  static __shared__ T shared[warpSize]; // Shared mem for 32 partial sums
-  int lane = threadIdx.x % warpSize;
-  int wid = threadIdx.x / warpSize;
-  thread_block_tile<warpSize> tile = tiled_partition<warpSize>(g);
-
-  // Each warp performs partial reduction
-  val = warp_ReduceSum< T, warpSize>(tile, val);    
-
-  if (lane==0) shared[wid] = val; // Write reduced value to shared memory
-
-  //tile.sync();                    // Wait for all partial reductions
-
-  if (wid > 0 ) return val;
-
-  //read from shared memory only if that warp existed
-  val = (threadIdx.x < blockDim.x / warpSize) ? shared[lane] :  Ident  ;
-
-  if (wid==0) val = warp_ReduceSum< T, warpSize>(tile,val); //Final reduce within first warp
-
-  return val;
-}
-
+//------------------------------------------------------------------------------
+// AxB_dot3_phase3_dndn
+//------------------------------------------------------------------------------
 
 template<
     typename T_C, typename T_A, typename T_B,
@@ -149,8 +132,7 @@ __global__ void AxB_dot3_phase3_dndn
         int64_t i = Mi[pair_id];
         int64_t kk = Ci[pair_id] >> 4;      // FIXME: can remove ">> 4"
         bool cij_exists = false ;
-//      T_Z cij = GB_IDENTITY ;
-        GB_DECLARE_MONOID_IDENTITY (cij) ;
+        GB_DECLARE_MONOID_IDENTITY (cij) ;  // cij = identity
 
         // skip if C(i,j) is a prezombie
         if (kk >= 0)
@@ -243,6 +225,7 @@ __global__ void AxB_dot3_phase3_dndn
         tile.sync();
 
         #if !GB_C_ISO
+        // FIXME: the ANY monoid needs the cij_exists for each thread
         cij = warp_ReduceSum<T_Z, 32> ( tile, cij);
         #endif
 
@@ -265,9 +248,8 @@ __global__ void AxB_dot3_phase3_dndn
 
         if( threadIdx.x ==0 && zc > 0)
         {
-    //      printf("warp %d zombie count = %d, nzombies = %d\n", blockIdx.x, zc, C->nzombies);
+            // FIXME: use GB_atomic_add <int64_t>
             atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)zc);
-    //      printf(" Czombie = %lld\n",C->nzombies);
         }
 
     }

@@ -39,8 +39,9 @@ void GB_macrofy_input
         fprintf (fp, "#define GB_%s_IS_PATTERN %d\n", Aname, A_is_pattern) ;
         fprintf (fp, "#define GB_%s_ISO %d\n", Aname, A_iso_code) ;
         GB_macrofy_sparsity (fp, Aname, asparsity) ;
-        fprintf (fp, "#define GB_%s_TYPENAME %s\n", Aname,
-            A_is_pattern ? "GB_void" : atype->name) ;
+        GB_macrofy_type (fp, Aname,
+            A_is_pattern ? "GB_void" : atype->name,
+            A_is_pattern ? 0 : atype->size) ;
     }
 
     //--------------------------------------------------------------------------
@@ -90,7 +91,7 @@ void GB_macrofy_input
         {
             // no need to typecast to xtype
             fprintf (fp, "#define GB_DECLARE%s(%s)\n", Amacro, aname) ;
-            fprintf (fp, "#define GB_DECLARE%s_MOD(modifier,%s)\n",
+            fprintf (fp, "#define GB_DECLARE%s_MOD(mod,%s)\n",
                 Amacro, aname) ;
         }
         else
@@ -98,8 +99,9 @@ void GB_macrofy_input
             fprintf (fp, "#define GB_DECLARE%s(%s) %s %s\n",
                 Amacro, aname, xtype->name, aname) ;
 
-            // declare a scalar or work array, prefixed with a modifier
-            fprintf (fp, "#define GB_DECLARE%s_MOD(modifier,%s) modifier %s %s\n",
+            // declare a scalar or work array, prefixed with a mod
+            fprintf (fp, "#define GB_DECLARE%s_MOD(modifier,%s) "
+                "modifier %s %s\n",
                 Amacro, aname, xtype->name, aname) ;
         }
 

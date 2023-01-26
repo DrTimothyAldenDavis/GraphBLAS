@@ -79,11 +79,11 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     if (binaryop == NULL)
     { 
         // GB_wait: all types must be the same
-        GB_macrofy_types (fp, ctype, NULL, NULL, NULL, NULL, NULL) ;
+        GB_macrofy_typedefs (fp, ctype, NULL, NULL, NULL, NULL, NULL) ;
     }
     else
     { 
-        GB_macrofy_types (fp, ctype, atype, btype,
+        GB_macrofy_typedefs (fp, ctype, atype, btype,
             binaryop->xtype, binaryop->ytype, binaryop->ztype) ;
     }
 
@@ -91,15 +91,15 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     if (binaryop == NULL)
     {
         // GB_wait: implicit SECOND operator
-        fprintf (fp, "#define GB_X_TYPENAME %s\n", ctype->name) ;
-        fprintf (fp, "#define GB_Y_TYPENAME %s\n", ctype->name) ;
-        fprintf (fp, "#define GB_Z_TYPENAME %s\n", ctype->name) ;
+        GB_macrofy_type (fp, "X", ctype->name, ctype->size) ;
+        GB_macrofy_type (fp, "Y", ctype->name, ctype->size) ;
+        GB_macrofy_type (fp, "Z", ctype->name, ctype->size) ;
     }
     else
     {
-        fprintf (fp, "#define GB_X_TYPENAME %s\n", binaryop->xtype->name) ;
-        fprintf (fp, "#define GB_Y_TYPENAME %s\n", binaryop->ytype->name) ;
-        fprintf (fp, "#define GB_Z_TYPENAME %s\n", binaryop->ztype->name) ;
+        GB_macrofy_type (fp, "X", binaryop->xtype->name, binaryop->xtype->size);
+        GB_macrofy_type (fp, "Y", binaryop->ytype->name, binaryop->ytype->size);
+        GB_macrofy_type (fp, "Z", binaryop->ztype->name, binaryop->ztype->size);
     }
 
     //--------------------------------------------------------------------------
@@ -125,7 +125,10 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         fprintf (fp, "#define GB_C_ISO 0\n") ;
     }
     GB_macrofy_sparsity (fp, "C", csparsity) ;
-    fprintf (fp, "#define GB_C_TYPENAME %s\n\n", C_iso ? "GB_void" : ctype->name) ;
+    GB_macrofy_type (fp, "C",
+        C_iso ? "GB_void" : ctype->name,
+        C_iso ? 0 : ctype->size) ;
+    fprintf (fp, "\n") ;
 
     //--------------------------------------------------------------------------
     // construct the macros to access the mask (if any), and its name

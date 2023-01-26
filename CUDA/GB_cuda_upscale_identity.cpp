@@ -28,8 +28,12 @@ void GB_cuda_upscale_identity
     //--------------------------------------------------------------------------
 
     GrB_BinaryOp op = GB_boolean_rename_op (monoid->op) ;
-    size_t zsize = op->ztype->size ;
 
+    // FIXME: write a helper function to compute:
+    // zsize = size of type, then rounded up to at least 2 bytes (4?)
+    // and also ensure it's a multiple of 4 bytes if >= 4 bytes
+
+    size_t zsize = op->ztype->size ;
     memset (identity_upscaled, 0, GB_IMAX (zsize, sizeof (uint16_t))) ;
     mempcy (identity_upscaled, monoid->identity, zsize) ;
 

@@ -32,10 +32,13 @@
 
 using namespace cooperative_groups;
 
-// FIXME: move this out into its own *.cuh
-template< typename T, int tile_sz>
+//------------------------------------------------------------------------------
+// GB_warp_ReduceSumPlus_int64
+//------------------------------------------------------------------------------
+
+template< int tile_sz>
 __inline__ __device__ 
-T GB_warp_ReduceSumPlus( thread_block_tile<tile_sz> g, T val)
+int64_t GB_warp_ReduceSumPlus_int64( thread_block_tile<tile_sz> g, int64_t val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
@@ -53,18 +56,22 @@ T GB_warp_ReduceSumPlus( thread_block_tile<tile_sz> g, T val)
     return val; // note: only thread 0 will return full sum
 }
 
-template<typename T, int warpSize>
+//------------------------------------------------------------------------------
+// GB_block_ReduceSum_int64
+//------------------------------------------------------------------------------
+
+template<int warpSize>
 __inline__ __device__
-T GB_block_ReduceSum(thread_block g, T val)
+int64_t GB_block_ReduceSum_int64(thread_block g, int64_t val)
 {
-  static __shared__ T shared[warpSize]; // Shared mem for 32 partial sums
+  static __shared__ int64_t shared[warpSize]; // Shared mem for 32 partial sums
 
   int lane = threadIdx.x & 31 ; // % warpSize;
   int wid  = threadIdx.x >> 5 ; // / warpSize;
   thread_block_tile<warpSize> tile = tiled_partition<warpSize>( g );
 
   // Each warp performs partial reduction
-  val = GB_warp_ReduceSumPlus<T, warpSize>( tile, val);    
+  val = GB_warp_ReduceSumPlus_int64<warpSize>( tile, val);    
 
   // Wait for all partial reductions
   if (lane==0) shared[wid]=val; // Write reduced value to shared memory
@@ -75,11 +82,14 @@ T GB_block_ReduceSum(thread_block g, T val)
   //read from shared memory only if that warp existed
   val = (threadIdx.x <  (blockDim.x / warpSize ) ) ? shared[lane] : 0;
 
-  if (wid==0) val = GB_warp_ReduceSumPlus<T, warpSize>( tile, val); //Final reduce within first warp
+  // Final reduce within first warp
+  if (wid==0) val = GB_warp_ReduceSumPlus_int64<warpSize>( tile, val);
 
   return val;
 }
 
+//------------------------------------------------------------------------------
+// AxB_dot3_phase3_vsvs
 //------------------------------------------------------------------------------
 
 template<
@@ -195,8 +205,7 @@ __global__ void AxB_dot3_phase3_vsvs
         GB_DECLAREA (aki) ;
         GB_DECLAREB (bkj) ;
         #if !GB_C_ISO
-//      T_Z cij = GB_IDENTITY ;
-        GB_DECLARE_MONOID_IDENTITY (cij) ;
+        GB_DECLARE_MONOID_IDENTITY (cij) ;  // cij = identity
         #endif
 
         bool cij_exists = false;
@@ -235,11 +244,12 @@ __global__ void AxB_dot3_phase3_vsvs
     // FIXME: use this in spdn and vsdn:
     this_thread_block().sync(); 
 
-    my_nzombies = GB_block_ReduceSum<int64_t , 32>( this_thread_block(), my_nzombies);
+    my_nzombies = GB_block_ReduceSum_int64<32>( this_thread_block(), my_nzombies);
     this_thread_block().sync(); 
 
     if( threadIdx.x == 0 && my_nzombies > 0)
     {
+        // FIXME: use GB_atomic_add <int64_t> instead
         atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)my_nzombies);
     }
 }

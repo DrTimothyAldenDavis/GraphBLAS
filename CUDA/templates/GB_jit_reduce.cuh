@@ -39,7 +39,7 @@ T_Z GB_warp_Reduce( thread_block_tile<WARPSIZE> g, T_Z val)
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[k] to sum[lane+k]
 
-    // FIXME: doesn't work unless sizeof(T_Z) <= 64 bits
+    // FIXME: doesn't work unless sizeof(T_Z) <= 32 bytes
 
     T_Z fold = g.shfl_down ( val, 16) ;
     GB_ADD ( val, val, fold ) ;
@@ -134,7 +134,7 @@ __global__ void GB_jit_reduce
                 p += blockDim.x * gridDim.x)
             {
                 if (Ai [p] < 0) continue ;      // skip zombies
-                T_Z aij ;
+                GB_DECLAREA (aij) ;
                 GB_GETA (aij, Ax, p, false) ;   // aij = (T_Z) Ax [p]
                 GB_ADD ( sum, sum, aij ) ;
             }
@@ -146,7 +146,7 @@ __global__ void GB_jit_reduce
                 p < anz ;
                 p += blockDim.x * gridDim.x)
             {
-                T_Z aij ;
+                GB_DECLAREA (aij) ;
                 GB_GETA (aij, Ax, p, false) ;   // aij = (T_Z) Ax [p]
                 GB_ADD ( sum, sum, aij ) ;
             }
@@ -164,7 +164,7 @@ __global__ void GB_jit_reduce
             p < anz ;
             p += blockDim.x * gridDim.x)
         {
-            T_Z aij ;
+            GB_DECLAREA (aij) ;
             GB_GETA (aij, Ax, p, false) ;       // aij = (T_Z) Ax [p]
             GB_ADD ( sum, sum, aij ) ;
         }
@@ -183,7 +183,7 @@ __global__ void GB_jit_reduce
             p += blockDim.x * gridDim.x)
         {
             if (Ab [p] == 0) continue ;     // skip if entry not in bitmap
-            T_Z aij ;
+            GB_DECLAREA (aij) ;
             GB_GETA (aij, Ax, p, false) ;   // aij = (T_Z) Ax [p]
             GB_ADD ( sum, sum, aij ) ;
         }

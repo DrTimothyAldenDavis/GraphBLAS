@@ -64,9 +64,9 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     // construct the semiring name
     //--------------------------------------------------------------------------
 
-    GrB_Monoid add = semiring->add ;
+    GrB_Monoid monoid = semiring->add ;
     GrB_BinaryOp mult = semiring->multiply ;
-    GrB_BinaryOp addop = add->op ;
+    GrB_BinaryOp addop = monoid->op ;
 
     GB_macrofy_copyright (fp) ;
     fprintf (fp, "// semiring: (%s, %s%s, %s)\n\n",
@@ -81,31 +81,42 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     GrB_Type ytype = (ycode == 0) ? NULL : mult->ytype ;
     GrB_Type ztype = (zcode == 0) ? NULL : mult->ztype ;
 
-    GB_macrofy_types (fp, ctype, atype, btype, xtype, ytype, ztype) ;
+    GB_macrofy_typedefs (fp, ctype, atype, btype, xtype, ytype, ztype) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for the type names
     //--------------------------------------------------------------------------
 
     fprintf (fp, "// semiring types:\n") ;
-    fprintf (fp, "#define GB_X_TYPENAME %s\n", (xcode == 0) ? "GB_void" : xtype->name) ;
-    fprintf (fp, "#define GB_Y_TYPENAME %s\n", (ycode == 0) ? "GB_void" : ytype->name) ;
-    fprintf (fp, "#define GB_Z_TYPENAME %s\n", (zcode == 0) ? "GB_void" : ztype->name) ;
+
+    GB_macrofy_type (fp, "X", 
+        (xcode == 0) ? "GB_void" : xtype->name,
+        (xcode == 0) ? 0 : xtype->size) ;
+
+    GB_macrofy_type (fp, "Y", 
+        (ycode == 0) ? "GB_void" : ytype->name,
+        (ycode == 0) ? 0 : ytype->size) ;
+
+    GB_macrofy_type (fp, "Z", 
+        (zcode == 0) ? "GB_void" : ztype->name,
+        (zcode == 0) ? 0 : ztype->size) ;
 
     //--------------------------------------------------------------------------
     // construct the monoid macros
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// additive monoid:\n") ;
-    GB_macrofy_monoid (fp, add_ecode, id_ecode, term_ecode, (zcode == 0) ? NULL : add) ;
+    GB_macrofy_monoid (fp, add_ecode, id_ecode, term_ecode,
+        (zcode == 0) ? NULL : monoid) ;
 
     //--------------------------------------------------------------------------
-    // construct macros for the multiply
+    // construct macros for the multiply operator
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// multiplicative operator%s:\n",
         flipxy ? " (flipped)" : "") ;
-    GB_macrofy_binop (fp, "GB_MULT", flipxy, false, mult_ecode, (zcode == 0) ? NULL : mult) ;
+    GB_macrofy_binop (fp, "GB_MULT", flipxy, false, mult_ecode,
+        (zcode == 0) ? NULL : mult) ;
 
     //--------------------------------------------------------------------------
     // special cases
@@ -149,7 +160,10 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
         fprintf (fp, "#define GB_C_ISO 0\n") ;
     }
     GB_macrofy_sparsity (fp, "C", csparsity) ;
-    fprintf (fp, "#define GB_C_TYPENAME %s\n\n", C_iso ? "GB_void" : ctype->name) ;
+    GB_macrofy_type (fp, "C",
+        C_iso ? "GB_void" : ctype->name,
+        C_iso ? 0 : ctype->size) ;
+    fprintf (fp, "\n") ;
 
     //--------------------------------------------------------------------------
     // construct the macros to access the mask (if any), and its name

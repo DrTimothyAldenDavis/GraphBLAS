@@ -31,9 +31,13 @@
 
 using namespace cooperative_groups;
 
-// TODO: Put this in a shared location
-template< typename T, int warpSize >
-__device__ T reduce_sum(thread_block_tile<warpSize> g, T val)
+//------------------------------------------------------------------------------
+// reduce_sum_int64
+//------------------------------------------------------------------------------
+
+// for counting zombies only (always int64_t)
+template< int warpSize >
+__device__ int64_t reduce_sum_int64(thread_block_tile<warpSize> g, int64_t val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
@@ -44,6 +48,9 @@ __device__ T reduce_sum(thread_block_tile<warpSize> g, T val)
     return val; // note: only thread 0 will return full sum
 }
 
+//------------------------------------------------------------------------------
+// AxB_dot3_phase3_vsdn
+//------------------------------------------------------------------------------
 
 template<
     typename T_C, typename T_A, typename T_B,
@@ -175,8 +182,7 @@ __global__ void AxB_dot3_phase3_vsdn
         GB_DECLAREA (aki) ;
         GB_DECLAREB (bkj) ;
         #if !GB_C_ISO
-//      T_Z cij = GB_IDENTITY ;
-        GB_DECLARE_MONOID_IDENTITY (cij) ;
+        GB_DECLARE_MONOID_IDENTITY (cij) ;  // cij = identity
         #endif
         bool cij_exists = false ;
 
@@ -267,7 +273,7 @@ __global__ void AxB_dot3_phase3_vsdn
         if (cij_exists)
         {
             Ci [pair_id] = i ;
-            GB_PUTC ( Cx [pair_id] = (T_C) cij ) ;
+            GB_PUTC ( Cx [pair_id] = (T_C) cij ) ;  // FIXME: use GraphBLAS typecast rules
         }
         else
         {
@@ -278,7 +284,7 @@ __global__ void AxB_dot3_phase3_vsdn
         // FIXME: use the same method as vsvs for counting zombies
         // sum up the zombie count:
         thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( this_thread_block());
-        zc += reduce_sum<int,tile_sz>(tile, my_nzombies);
+        zc += reduce_sum_int64<tile_sz>(tile, my_nzombies);
     }
 
     if(threadIdx.x == 0 && zc > 0)

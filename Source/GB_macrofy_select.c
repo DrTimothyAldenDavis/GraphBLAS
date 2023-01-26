@@ -71,16 +71,16 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
     // construct the typedefs
     //--------------------------------------------------------------------------
 
-    GB_macrofy_types (fp, NULL, atype, NULL, xtype, ytype, ztype) ;
+    GB_macrofy_typedefs (fp, NULL, atype, NULL, xtype, ytype, ztype) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for the type names
     //--------------------------------------------------------------------------
 
     fprintf (fp, "// select types:\n") ;
-    fprintf (fp, "#define GB_X_TYPENAME %s\n", xname) ;
-    fprintf (fp, "#define GB_Y_TYPENAME %s\n", yname) ;
-    fprintf (fp, "#define GB_Z_TYPENAME %s\n", zname) ;
+    GB_macrofy_type (fp, "X", xname, (xtype == NULL) ? 0 : xtype->size) ;
+    GB_macrofy_type (fp, "Y", yname, (ytype == NULL) ? 0 : ytype->size) ;
+    GB_macrofy_type (fp, "Z", zname, (ztype == NULL) ? 0 : ztype->size) ;
 
     //--------------------------------------------------------------------------
     // construct the select macros

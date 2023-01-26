@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_macrofy_types: construct typedefs for up to 6 types
+// GB_macrofy_typedefs: construct typedefs for up to 6 types
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
@@ -10,7 +10,7 @@
 #include "GB.h"
 #include "GB_stringify.h"
 
-void GB_macrofy_types
+void GB_macrofy_typedefs
 (
     FILE *fp,
     // input:
