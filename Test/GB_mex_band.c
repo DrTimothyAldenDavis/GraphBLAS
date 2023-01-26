@@ -34,12 +34,10 @@
     }                                                   \
 }
 
-// FIXME: add defn
-typedef struct
-{
-    int64_t lo ;
-    int64_t hi ;
-} LoHi_type ; 
+ typedef struct { int64_t lo ; int64_t hi ; } LoHi_type ; 
+
+#define LOHI_DEFN                                       \
+"typedef struct { int64_t lo ; int64_t hi ; } LoHi_type ;"
 
 bool LoHi_band (GrB_Index i, GrB_Index j,
     /* x is unused: */ const void *x, const LoHi_type *thunk) ;
@@ -89,7 +87,9 @@ void mexFunction
 
     // create the Thunk
     LoHi_type bandwidth  ;
-    OK (GrB_Type_new (&Thunk_type, sizeof (LoHi_type))) ;
+//  OK (GrB_Type_new (&Thunk_type, sizeof (LoHi_type))) ;
+    OK (GxB_Type_new (&Thunk_type, sizeof (LoHi_type),
+        "LoHi_type", LOHI_DEFN)) ;
 
     // get lo and hi
     bandwidth.lo = (int64_t) mxGetScalar (pargin [1]) ;

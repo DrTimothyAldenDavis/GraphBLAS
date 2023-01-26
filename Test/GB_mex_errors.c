@@ -1062,7 +1062,9 @@ void mexFunction
     printf ("build udt:\n") ;
     OK (GrB_Vector_free_(&v)) ;
     GrB_Type user_type = NULL ;
-    OK (GrB_Type_new (&user_type, sizeof (user_int))) ;
+//  OK (GrB_Type_new (&user_type, sizeof (user_int))) ;
+    OK (GxB_Type_new (&user_type, sizeof (user_int), "user_int",
+        "typedef int16_t user_int ;")) ;
     OK (GrB_Vector_new (&v, user_type, 10)) ;
     info = GrB_Vector_build_UDT (v, I, (void *) X, 5, GrB_PLUS_FP64) ;
     GrB_Vector_error (&err, v) ;

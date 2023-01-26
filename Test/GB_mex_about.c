@@ -798,7 +798,9 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Type user_type = NULL ;
-    OK (GrB_Type_new (&user_type, sizeof (user_int))) ;
+//  OK (GrB_Type_new (&user_type, sizeof (user_int))) ;
+    OK (GxB_Type_new (&user_type, sizeof (user_int), "user_int",
+        "typedef int16_t user_int ;")) ;
     OK (GrB_Type_wait_(user_type, GrB_MATERIALIZE)) ;
     OK (GrB_Matrix_new (&A, user_type, 10, 10)) ;
     OK (GrB_Matrix_new (&B, GrB_INT16, 10, 10)) ;
@@ -1101,7 +1103,9 @@ void mexFunction
     printf ("Error expected: %d\n%s\n", info, err) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
-    OK (GrB_Type_new (&user_type, sizeof (user_int))) ;
+//  OK (GrB_Type_new (&user_type, sizeof (user_int))) ;
+    OK (GxB_Type_new (&user_type, sizeof (user_int), "user_int",
+        "typedef int16_t user_int ;")) ;
     user_type->magic = 0xDEAD ;
     ERR (GxB_Type_fprint_(user_type, GxB_COMPLETE, NULL)) ;
     expected = GrB_INVALID_OBJECT ;

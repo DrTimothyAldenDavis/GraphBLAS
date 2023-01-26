@@ -164,7 +164,7 @@ void upperbanded_idx_int64
     (*z) = (int64_t) (d >= 0 && d <= *thunk) ;
 }
 
-#define UPPERBANDED_IDX_64_DEFN                     \
+#define UPPERBANDED_IDX_INT64_DEFN                  \
 "void upperbanded_idx_int64                     \n" \
 "(                                              \n" \
 "    int64_t *z,                                \n" \
@@ -550,15 +550,22 @@ void mexFunction
     // FIXME: UpperBanded and UpperBanded_int64: definition not provided
     #undef GrB_IndexUnaryOp_new
     #undef GrM_IndexUnaryOp_new
-    OK (GRB (IndexUnaryOp_new) (&UpperBanded,
+//  OK (GRB (IndexUnaryOp_new) (&UpperBanded,
+//      (GxB_index_unary_function) upperbanded_idx,
+//      GrB_BOOL, GrB_INT64, GrB_INT64)) ;
+    OK (GxB_IndexUnaryOp_new (&UpperBanded,
         (GxB_index_unary_function) upperbanded_idx,
-        GrB_BOOL, GrB_INT64, GrB_INT64)) ;
+        GrB_BOOL, GrB_INT64, GrB_INT64,
+        "upperbanded_idx", UPPERBANDED_IDX_DEFN)) ;
     OK (GxB_IndexUnaryOp_fprint (UpperBanded, "upperbanded", 3, NULL)) ;
 
-    // FIXME: not defined here
-    OK (GRB (IndexUnaryOp_new) (&UpperBanded_int64, 
+//  OK (GRB (IndexUnaryOp_new) (&UpperBanded_int64, 
+//      (GxB_index_unary_function) upperbanded_idx_int64,
+//      GrB_INT64, GrB_INT64, GrB_INT64)) ;
+    OK (GxB_IndexUnaryOp_new (&UpperBanded_int64, 
         (GxB_index_unary_function) upperbanded_idx_int64,
-        GrB_INT64, GrB_INT64, GrB_INT64)) ;
+        GrB_INT64, GrB_INT64, GrB_INT64,
+        "upperbanded_idx_int64", UPPERBANDED_IDX_INT64_DEFN)) ;
     OK (GxB_IndexUnaryOp_fprint (UpperBanded_int64, "upperbanded64", 3, NULL)) ;
 
     for (int trial = 0 ; trial <= 15 ; trial++)
