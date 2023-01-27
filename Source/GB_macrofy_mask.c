@@ -13,15 +13,19 @@
 #include "GB.h"
 #include "GB_stringify.h"
 
-void GB_macrofy_mask       // return enum to define mask macros
+void GB_macrofy_mask
 (
-    // input
-    FILE *fp,                   // File to write macros, assumed open already
-    int mask_ecode              // enumified mask
+    FILE *fp,               // file to write macros, assumed open already
+    // input:
+    int mask_ecode,         // enumified mask
+    char *Mname,            // name of the mask
+    int msparsity           // sparsity of the mask
 )
 {
 
     const char *f ;
+
+    fprintf (fp, "\n// mask:\n") ;
 
     switch (mask_ecode)
     {
@@ -31,19 +35,17 @@ void GB_macrofy_mask       // return enum to define mask macros
         //----------------------------------------------------------------------
 
         case 0 :    // mask not complemented
-            f = "#define GB_MTYPE (no mask present)\n"
-                "#define MX(p)    (no mask present)\n"
+            fprintf (fp,
                 "#define GB_MASK_STRUCT 1\n"
                 "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 1" ;
+                "#define GB_NO_MASK 1\n") ;
             break ;
 
         case 1 :    // mask complemented
-            f = "#define GB_MTYPE (no mask present)\n"
-                "#define MX(p)    (no mask present)\n"
+            fprintf (fp,
                 "#define GB_MASK_STRUCT 1\n"
                 "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 1" ;
+                "#define GB_NO_MASK 1\n") ;
             break ;
 
         //----------------------------------------------------------------------
@@ -52,20 +54,24 @@ void GB_macrofy_mask       // return enum to define mask macros
 
         case 2 :
             // mask not complemented, type: structural
-            f = "#define GB_MTYPE void\n"
+            fprintf (fp,
+                "#define GB_M_TYPENAME GB_void  /* not used */\n"
+                "#define GB_M_TYPESIZE 1        /* not used */\n"
                 "#define MX(p) 1\n"
                 "#define GB_MASK_STRUCT 1\n"
                 "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0" ;
+                "#define GB_NO_MASK 0\n") ;
             break ;
 
         case 3 :
             // mask complemented, type: structural
-            f = "#define GB_MTYPE void\n"
+            fprintf (fp,
+                "#define GB_M_TYPENAME GB_void  /* not used */\n"
+                "#define GB_M_TYPESIZE 1        /* not used */\n"
                 "#define MX(p) 1\n"
                 "#define GB_MASK_STRUCT 1\n"
                 "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0" ;
+                "#define GB_NO_MASK 0\n") ;
             break ;
 
         //----------------------------------------------------------------------
@@ -74,20 +80,24 @@ void GB_macrofy_mask       // return enum to define mask macros
 
         case 4 :
             // mask not complemented, type: bool, int8, uint8
-            f = "#define GB_MTYPE uint8_t\n" 
+            fprintf (fp,
+                "#define GB_M_TYPENAME uint8_t\n"
+                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0" ;
+                "#define GB_NO_MASK 0\n", (int) sizeof (uint8_t)) ;
             break ;
 
         case 5 :
             // mask complemented, type: bool, int8, uint8
-            f = "#define GB_MTYPE uint8_t\n" 
+            fprintf (fp,
+                "#define GB_M_TYPENAME uint8_t\n"
+                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0" ;
+                "#define GB_NO_MASK 0\n", (int) sizeof (uint8_t)) ;
             break ;
 
         //----------------------------------------------------------------------
@@ -96,20 +106,24 @@ void GB_macrofy_mask       // return enum to define mask macros
 
         case 6 :
             // mask not complemented, type: int16, uint16
-            f = "#define GB_MTYPE uint16_t\n" 
+            fprintf (fp,
+                "#define GB_M_TYPENAME uint16_t\n"
+                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0" ;
+                "#define GB_NO_MASK 0\n", (int) sizeof (uint16_t)) ;
             break ;
 
         case 7 :
             // mask complemented, type: int16, uint16
-            f = "#define GB_MTYPE uint16_t\n" 
+            fprintf (fp,
+                "#define GB_M_TYPENAME uint16_t\n"
+                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0" ;
+                "#define GB_NO_MASK 0\n", (int) sizeof (uint16_t)) ;
             break ;
 
         //----------------------------------------------------------------------
@@ -118,20 +132,24 @@ void GB_macrofy_mask       // return enum to define mask macros
 
         case 8 :
             // mask not complemented, type: float, int32, uint32
-            f = "#define GB_MTYPE uint32_t\n" 
+            fprintf (fp,
+                "#define GB_M_TYPENAME uint32_t\n"
+                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0" ;
+                "#define GB_NO_MASK 0\n", (int) sizeof (uint32_t)) ;
             break ;
 
         case 9 :
             // mask complemented, type: float, int32, uint32
-            f = "#define GB_MTYPE uint32_t\n" 
+            fprintf (fp,
+                "#define GB_M_TYPENAME uint32_t\n"
+                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0" ;
+                "#define GB_NO_MASK 0\n", (int) sizeof (uint32_t)) ;
             break ;
 
         //----------------------------------------------------------------------
@@ -140,20 +158,24 @@ void GB_macrofy_mask       // return enum to define mask macros
 
         case 10 :
             // mask not complemented, type: double, float complex, int64, uint64
-            f = "#define GB_MTYPE uint64_t\n" 
+            fprintf (fp,
+                "#define GB_M_TYPENAME uint64_t\n"
+                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0" ;
+                "#define GB_NO_MASK 0\n", (int) sizeof (uint64_t)) ;
             break ;
 
         case 11 :
             // mask complemented, type: double, float complex, int64, uint64
-            f = "#define GB_MTYPE uint64_t\n" 
+            fprintf (fp,
+                "#define GB_M_TYPENAME uint64_t\n"
+                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0" ;
+                "#define GB_NO_MASK 0\n", (int) sizeof (uint64_t)) ;
             break ;
 
         //----------------------------------------------------------------------
@@ -162,20 +184,24 @@ void GB_macrofy_mask       // return enum to define mask macros
 
         case 12 :
             // mask not complemented, type: double complex
-            f = "#define GB_MTYPE uint64_t\n"
+            fprintf (fp,
+                "#define GB_M_TYPENAME uint64_t\n"
+                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [2*(p)] != 0 || Mx [2*(p)+1] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0" ;
+                "#define GB_NO_MASK 0\n", (int) sizeof (uint64_t)) ;
             break ;
 
         case 13 :
             // mask complemented, type: double complex
-            f = "#define GB_MTYPE uint64_t\n"
+            fprintf (fp,
+                "#define GB_M_TYPENAME uint64_t\n"
+                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [2*(p)] != 0 || Mx [2*(p)+1] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0" ;
+                "#define GB_NO_MASK 0\n", (int) sizeof (uint64_t)) ;
             break ;
 
         //----------------------------------------------------------------------
@@ -183,10 +209,13 @@ void GB_macrofy_mask       // return enum to define mask macros
         //----------------------------------------------------------------------
 
         default: ;
-            f = "#error undefined mask behavior" ;
+            fprintf (fp, "#error undefined mask behavior\n") ;
             break ;
     }
 
-    fprintf (fp, "// mask:\n%s\n", f) ;
+    if (mask_ecode >= 2)
+    {
+        GB_macrofy_sparsity (fp, Mname, msparsity) ;
+    }
 }
 

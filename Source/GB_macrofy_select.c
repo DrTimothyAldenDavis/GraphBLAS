@@ -26,6 +26,8 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
     // extract the select codes
     //--------------------------------------------------------------------------
 
+    // FIXME: add csparsity and ccode
+
     // flipij, inplace (2 bits)
     int flip_ij     = GB_RSHIFT (select_code, 29, 1) ;
     int inplace     = GB_RSHIFT (select_code, 28, 1) ;
@@ -511,7 +513,7 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
             else
             { 
                 // need to typecast result to bool
-                GB_macrofy_cast (fp, "CAST_Z_TO_KEEP", "keep", "z", "z",
+                GB_macrofy_cast_input (fp, "CAST_Z_TO_KEEP", "keep", "z", "z",
                     GrB_BOOL, ztype) ;
                 fprintf (fp,
                     "#define GB_KEEP(keep,x,i,j,y) { %s zkeep ; "
@@ -543,18 +545,10 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
     // macros for the C matrix
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "\n// C matrix:\n") ;
-    // FIXME: write GB_macrofy_output, use typecasting from Z to C
-    if (C_iso_code)
-    { 
-        fprintf (fp, "#define GB_PUTC(blob)\n") ;
-        fprintf (fp, "#define GB_C_ISO 1\n") ;
-    }
-    else
-    { 
-        fprintf (fp, "#define GB_PUTC(blob) blob\n") ;
-        fprintf (fp, "#define GB_C_ISO 0\n") ;
-    }
+    // FIXME: need csparsity (is it always the same as asparsity?)
+    // FIXME: this kernel could typecast from A to C
+
+    GB_macrofy_output (fp, "c", "C", "C", atype, atype, asparsity, C_iso_code) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for A

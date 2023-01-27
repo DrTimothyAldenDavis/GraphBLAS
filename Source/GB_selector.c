@@ -217,8 +217,7 @@ GrB_Info GB_selector
             // C is an empty matrix
             return (GB_new (&C, // existing header
                 A->type, avlen, avdim, GB_Ap_calloc, true,
-                GxB_SPARSE + GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ),
-                1)) ;
+                GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1)) ;
         }
         else
         { 
@@ -299,6 +298,11 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     // The CUDA select kernel would be called here.
+
+    // FIXME: pass in csparsity:  bitmap if use_bitmap_selector,
+    // or same as A otherwise
+
+    // pass in ctype = A->type
 
     #ifdef GB_DEBUGIFY_DEFN
     GB_debugify_select (C_iso, opcode, op, flipij, A, ithunk, Thunk,
@@ -434,16 +438,16 @@ GrB_Info GB_selector
             // return C as empty
             return (GB_new (&C, // auto (sparse or hyper), existing header
                 A->type, avlen, avdim, GB_Ap_calloc, true,
-                GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ), 1)) ;
+                GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1)) ;
         }
 
         //----------------------------------------------------------------------
         // allocate C
         //----------------------------------------------------------------------
 
-        int sparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+        int csparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
         GB_OK (GB_new_bix (&C, // sparse or hyper (from A), existing header
-            A->type, avlen, avdim, GB_Ap_malloc, true, sparsity, false,
+            A->type, avlen, avdim, GB_Ap_malloc, true, csparsity, false,
             A->hyper_switch, cnvec, cnz, true, A_iso)) ;
 
         ASSERT (info == GrB_SUCCESS) ;
@@ -811,11 +815,11 @@ GrB_Info GB_selector
         // create C and transplant Cp, Ch, Ci, Cx into C
         //----------------------------------------------------------------------
 
-        int sparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+        int csparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
         ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
         info = GB_new (&C, // sparse or hyper (from A), existing header
             A->type, avlen, avdim, GB_Ap_null, true,
-            sparsity, A->hyper_switch, anvec) ;
+            csparsity, A->hyper_switch, anvec) ;
         ASSERT (info == GrB_SUCCESS) ;
 
         if (A->h != NULL)

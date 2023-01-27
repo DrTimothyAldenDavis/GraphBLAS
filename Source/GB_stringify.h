@@ -198,11 +198,13 @@ void GB_enumify_mask       // return enum to define mask macros
     bool Mask_comp              // true if M complemented
 ) ;
 
-void GB_macrofy_mask       // return enum to define mask macros
+void GB_macrofy_mask
 (
-    // input
-    FILE *fp,                   // File to write macros, assumed open already
-    int mask_ecode              // enumified mask
+    FILE *fp,               // file to write macros, assumed open already
+    // input:
+    int mask_ecode,         // enumified mask
+    char *Mname,            // name of the mask
+    int msparsity           // sparsity of the mask
 ) ;
 
 //------------------------------------------------------------------------------
@@ -267,7 +269,17 @@ void GB_macrofy_defn
     const char *defn
 ) ;
 
-void GB_macrofy_cast
+const char *GB_macrofy_cast_expression  // return cast expression
+(
+    FILE *fp,
+    // input:
+    GrB_Type ztype,     // output type
+    GrB_Type xtype,     // input type
+    // output
+    int *nargs          // # of string arguments in output format
+) ;
+
+void GB_macrofy_cast_input
 (
     FILE *fp,
     // input:
@@ -277,6 +289,18 @@ void GB_macrofy_cast
     const char *xexpr,          // an expression based on xargs
     const GrB_Type ztype,       // the type of the z output
     const GrB_Type xtype        // the type of the x input
+) ;
+
+void GB_macrofy_cast_output
+(
+    FILE *fp,
+    // input:
+    const char *macro_name,     // name of the macro: #define macro(z,x...)
+    const char *zarg,           // name of the z argument of the macro
+    const char *xargs,          // one or more x arguments
+    const char *xexpr,          // an expression based on xargs
+    const GrB_Type ztype,       // the type of the z input
+    const GrB_Type xtype        // the type of the x output
 ) ;
 
 void GB_macrofy_input
@@ -292,6 +316,19 @@ void GB_macrofy_input
     int asparsity,          // sparsity format of the input matrix
     int acode,              // type code of the input (0 if pattern)
     int A_iso_code          // 1 if A is iso
+) ;
+
+void GB_macrofy_output
+(
+    FILE *fp,
+    // input:
+    const char *cname,      // name of the scalar ... = cij to write
+    const char *Cmacro,     // name of the macro is GB_PUT*(Cmacro)
+    const char *Cname,      // name of the output matrix
+    GrB_Type ctype,         // type of C
+    GrB_Type ztype,         // type of cij scalar to write to C
+    int csparsity,          // sparsity format of the output matrix
+    bool C_iso              // true if C is iso
 ) ;
 
 //------------------------------------------------------------------------------
@@ -339,9 +376,11 @@ void GB_enumify_terminal       // return enum of terminal value
 void GB_enumify_sparsity    // enumerate the sparsity structure of a matrix
 (
     // output:
-    int *ecode,             // enumerated sparsity structure
+    int *ecode,             // enumerated sparsity structure:
+                            // 0:hyper, 1:sparse, 2:bitmap, 3:full
     // input:
-    int A_sparsity          // GxB_SPARSE, GxB_HYPERSPARSE, GxB_BITMAP, GxB_FULL
+    int sparsity            // 0:no matrix, 1:GxB_HYPERSPARSE, 2:GxB_SPARSE,
+                            // 4:GxB_BITMAP, 8:GxB_FULL
 ) ;
 
 void GB_macrofy_sparsity    // construct macros for sparsity structure
@@ -349,7 +388,7 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
     // input:
     FILE *fp,
     const char *matrix_name,    // "C", "M", "A", or "B"
-    int ecode
+    int sparsity
 ) ;
 
 //------------------------------------------------------------------------------

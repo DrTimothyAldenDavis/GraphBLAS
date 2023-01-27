@@ -88,18 +88,21 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     }
 
     fprintf (fp, "// binary operator types:\n") ;
+    GrB_Type ztype ;
     if (binaryop == NULL)
     {
         // GB_wait: implicit SECOND operator
         GB_macrofy_type (fp, "X", ctype->name, ctype->size) ;
         GB_macrofy_type (fp, "Y", ctype->name, ctype->size) ;
         GB_macrofy_type (fp, "Z", ctype->name, ctype->size) ;
+        ztype = ctype ;
     }
     else
     {
         GB_macrofy_type (fp, "X", binaryop->xtype->name, binaryop->xtype->size);
         GB_macrofy_type (fp, "Y", binaryop->ytype->name, binaryop->ytype->size);
         GB_macrofy_type (fp, "Z", binaryop->ztype->name, binaryop->ztype->size);
+        ztype = binaryop->ztype ;
     }
 
     //--------------------------------------------------------------------------
@@ -113,30 +116,13 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // macros for the C matrix
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "\n// C matrix:\n") ;
-    // FIXME: write GB_macrofy_output, use typecasting from Z to C
-    if (C_iso)
-    {
-        fprintf (fp, "#define GB_PUTC(blob)\n") ;
-        fprintf (fp, "#define GB_C_ISO 1\n") ;
-    }
-    else
-    {
-        fprintf (fp, "#define GB_PUTC(blob) blob\n") ;
-        fprintf (fp, "#define GB_C_ISO 0\n") ;
-    }
-    GB_macrofy_sparsity (fp, "C", csparsity) ;
-    GB_macrofy_type (fp, "C",
-        C_iso ? "GB_void" : ctype->name,
-        C_iso ? 0 : ctype->size) ;
-    fprintf (fp, "\n") ;
+    GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, C_iso) ;
 
     //--------------------------------------------------------------------------
     // construct the macros to access the mask (if any), and its name
     //--------------------------------------------------------------------------
 
-    GB_macrofy_mask (fp, mask_ecode) ;
-    GB_macrofy_sparsity (fp, "M", msparsity) ;
+    GB_macrofy_mask (fp, mask_ecode, "M", msparsity) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for A and B

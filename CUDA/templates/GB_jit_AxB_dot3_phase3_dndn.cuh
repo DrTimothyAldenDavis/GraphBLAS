@@ -234,14 +234,14 @@ __global__ void AxB_dot3_phase3_dndn
         {
             if (cij_exists)
             {
-               //printf("tid: %d final sum after reduce = %d\n", threadIdx.x, sum);
-               GB_PUTC( Cx[pair_id]=(T_C)cij ) ;
-               Ci[pair_id]=i ;
+                GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (T_C) cij
+                Ci [pair_id] = i ;
             }
             else
             {
-               zc++;
-               Ci[pair_id]=GB_FLIP (i) ;
+                // cij is a zombie
+                zc++;
+                Ci [pair_id] = GB_FLIP (i) ;
             }
         }
         //__syncthreads ( ) ;

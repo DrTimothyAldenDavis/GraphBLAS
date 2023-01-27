@@ -231,13 +231,14 @@ __global__ void AxB_dot3_phase3_vsvs
         GB_CIJ_EXIST_POSTCHECK ;
         if (cij_exists)
         {
-            Ci[pair_id] = i ;
-            GB_PUTC ( Cx[pair_id] = (T_C)cij ) ;
+            GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (T_C) cij
+            Ci [pair_id] = i ;
         }
         else
         {
+            // cij is a zombie
             my_nzombies++;
-            Ci[pair_id] = GB_FLIP( i ) ;
+            Ci [pair_id] = GB_FLIP (i) ;
         }
     }
 

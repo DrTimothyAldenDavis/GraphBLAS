@@ -16,20 +16,21 @@ void GB_enumify_sparsity    // enumerate the sparsity structure of a matrix
     int *ecode,             // enumerated sparsity structure:
                             // 0:hyper, 1:sparse, 2:bitmap, 3:full
     // input:
-    int A_sparsity          // 0:no matrix, 1:GxB_HYPERSPARSE, 2:GxB_SPARSE,
+    int sparsity            // 0:no matrix, 1:GxB_HYPERSPARSE, 2:GxB_SPARSE,
                             // 4:GxB_BITMAP, 8:GxB_FULL
 )
 {
-    int e;
-    if (A_sparsity == GxB_HYPERSPARSE)
+
+    int e ;
+    if (sparsity == GxB_HYPERSPARSE)
     { 
         e = 0 ;
     }
-    else if (A_sparsity == GxB_BITMAP)
+    else if (sparsity == GxB_BITMAP)
     { 
         e = 2 ;
     }
-    else if (A_sparsity == GxB_FULL)
+    else if (sparsity == GxB_FULL)
     { 
         e = 3 ;
     }

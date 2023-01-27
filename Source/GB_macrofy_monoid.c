@@ -103,8 +103,6 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // are computed.
 
     char *a = NULL ;
-    fprintf (fp, "// add_ecode: %d, zcode: %d, zsize: %d\n", add_ecode, zcode,
-        (int) zsize) ;
     bool user_monoid_atomically = false ;
 
     switch (add_ecode)

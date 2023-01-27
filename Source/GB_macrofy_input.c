@@ -134,6 +134,6 @@ void GB_macrofy_input
         snprintf (macro_name, SLEN, "GB_GET%s", Amacro) ;
         snprintf (xargs, SLEN, "%sx,p,iso", Aname) ;
         snprintf (xexpr, SLEN, A_iso_code ? "%sx [0]" : "%sx [p]", Aname) ;
-        GB_macrofy_cast (fp, macro_name, aname, xargs, xexpr, xtype, atype) ;
+        GB_macrofy_cast_input (fp, macro_name, aname, xargs, xexpr, xtype, atype) ;
     }
 }

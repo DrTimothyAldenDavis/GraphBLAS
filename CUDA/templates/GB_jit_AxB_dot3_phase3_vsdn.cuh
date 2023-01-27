@@ -205,7 +205,7 @@ __global__ void AxB_dot3_phase3_vsdn
                     // cij += A(k,i) * B(k,j)
                     GB_GETA ( aki, Ax, pA+k, ) ;           // aki = A(k,i)
                     GB_GETB ( bkj, Bx, p, ) ;              // bkj = B(k,j)
-                    GB_MULTADD ( cij, aki, bkj, i, k, j) ;        // cij += aki * bkj
+                    GB_MULTADD ( cij, aki, bkj, i, k, j) ; // cij += aki * bkj
                     GB_DOT_TERMINAL (cij) ;     // break if cij == terminal
                 }
             }
@@ -244,7 +244,7 @@ __global__ void AxB_dot3_phase3_vsdn
                     // cij += A(k,i) * B(k,j)
                     GB_GETA ( aki, Ax, p, ) ;              // aki = A(i,k)
                     GB_GETB ( bkj, Bx, pB+k, ) ;           // bkj = B(j,k)
-                    GB_MULTADD ( cij, aki, bkj, i, k, j) ;         // cij += aik * bjk
+                    GB_MULTADD ( cij, aki, bkj, i, k, j) ; // cij += aik * bjk
                     GB_DOT_TERMINAL (cij) ;     // break if cij == terminal
                 }
             }
@@ -272,8 +272,8 @@ __global__ void AxB_dot3_phase3_vsdn
         GB_CIJ_EXIST_POSTCHECK
         if (cij_exists)
         {
+            GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (T_C) cij
             Ci [pair_id] = i ;
-            GB_PUTC ( Cx [pair_id] = (T_C) cij ) ;  // FIXME: use GraphBLAS typecast rules
         }
         else
         {
