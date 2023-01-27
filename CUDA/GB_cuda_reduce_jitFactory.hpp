@@ -43,13 +43,15 @@
 #include "GB_cuda_reduce_factory.hpp"
 
 /**
- * This file is responsible for picking all the parameters and what kernel variaiton we will use for a given instance
+ * This file is responsible for picking all the parameters and what kernel
+ * variaiton we will use for a given instance
  * - data types
  * - semiring types
  * - binary ops
  * - monoids
  *
- * Kernel factory says "Here's the actual instance I want you to build with the given parameters"
+ * Kernel factory says "Here's the actual instance I want you to build with the
+ * given parameters"
  */
 
 // Kernel jitifiers

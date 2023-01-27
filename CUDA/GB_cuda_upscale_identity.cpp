@@ -66,6 +66,8 @@ void GB_cuda_upscale_identity
             {
                 case GB_INT8_code   : SET (int16_t,  INT8_MAX) ;
                 case GB_UINT8_code  : SET (uint16_t, UINT8_MAX) ;
+//              case GB_INT16_code  : SET (int32_t,  INT16_MAX) ;
+//              case GB_UINT16_code : SET (uint32_t, UINT16_MAX) ;
                 default: ;
             }
             break ;

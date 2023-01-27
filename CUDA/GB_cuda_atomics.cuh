@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+// GraphBLAS/CUDA/GB_cuda_atomics: CUDA atomics for GraphBLAS
+//------------------------------------------------------------------------------
+
 /*
  * Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
  *
@@ -31,7 +35,7 @@
 //------------------------------------------------------------------------------
 // Specializations for different atomic operations on different types
 //------------------------------------------------------------------------------
-//
+
 // No 1-byte methods are available (bool, uint8_t, int8_t), because CUDA does
 // not support atomicCAS for a single byte.  Instead, to compute a single byte
 // atomically, GraphBLAS must operate on a larger temporary type (typically

@@ -183,13 +183,6 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             }
             break ;
 
-            switch (zcode)
-            {
-                case GB_BOOL_code    :a = "GB_cuda_atomic_bor" ;
-                default              : break ;
-            }
-            break ;
-
         // PLUS:  all types
         case  9 :
         case 10 :
