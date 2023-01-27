@@ -1,64 +1,82 @@
-// Class to manage both stringify functions from mxm, ops and monoids to char buffers
-// Also provides a iostream callback to deliver the buffer to jitify as if read from a file
+//------------------------------------------------------------------------------
+// GB_cuda_mxm_factory: construct code and header file for GrB_mxm jit kernel
+//------------------------------------------------------------------------------
 
-// (c) Nvidia Corp. 2020 All rights reserved 
+// Class to manage both stringify functions from mxm, ops and monoids to a
+// header file.
+
+// (c) Nvidia Corp. 2020 All rights reserved
 // SPDX-License-Identifier: Apache-2.0
 
 // Implementations of string callbacks
 #pragma once
 
+// FIXME do we need the iostrean any more?
 #include <iostream>
 #include <cstdint>
 #include "GB_jit_cache.h"
 
-extern "C" 
+extern "C"
 {
     #include "GB.h"
     #include "GB_binop.h"
     #include "GB_stringify.h"
 }
 
+// FIXME: do we need the file_callback method?
 // Define function pointer we will use later
 //std::istream* (*file_callback)(std::string, std::iostream&);
 
+//------------------------------------------------------------------------------
+// GB_cuda_mxm_factory
+//------------------------------------------------------------------------------
+
 // Define a factory class for building any mxm text definitions
 
-// FIXME: delegate problem generation to data factory
-class GB_cuda_mxm_factory: public jit::File_Desc {
+class GB_cuda_mxm_factory: public jit::File_Desc
+{
+
+    //--------------------------------------------------------------------------
+    // public members of the object
+    //--------------------------------------------------------------------------
 
     public:
-        uint64_t sr_code;
-        GrB_Semiring semiring ;
-        GrB_Type ctype, atype, btype ;
 
-        // file ptr
-        FILE *fp;
+        uint64_t sr_code ;          // unique 62-bit code for a GrB_mxm problem
+        GrB_Semiring semiring ;     // the semiring for GrB_mxm
+        GrB_Type ctype, atype, btype ;  // the types of C, A, and B
+        FILE *fp ;                  // file for GB_mxm_*.h header
 
-    void open( const char *path_and_file, const char *mode)
+    //--------------------------------------------------------------------------
+    // open/close: access the GB_mxm_*.h header file for a specific instance
+    //--------------------------------------------------------------------------
+
+    void open (const char *path_and_file, const char *mode)
     {
-//        std::cout<< "opening "<< path_and_file<<" for write"<< std::endl;
-        fp = fopen( path_and_file, mode);
+        fp = fopen (path_and_file, mode) ;
     }
 
     void close( )
     {
-        fclose( fp );
+        fclose (fp) ;
     }
 
     //--------------------------------------------------------------------------
-    // mxm_factory takes a set of inputs describing and operation (semiring,
-    // mask, datatypes, sparsity formats, etc) and produces a numerical unique
-    // value for those This allows rapid lookups to see if we have handled this
-    // case before, and avoids the need to generate and manage strings at this
-    // stage.
+    // mxm_factory: create unique code for a GrB_mxm problem
     //--------------------------------------------------------------------------
 
+    // mxm_factory takes a set of inputs describing and operation (semiring,
+    // mask, datatypes, sparsity formats, etc) and produces a numerical unique
+    // value for those. This allows rapid lookups to see if we have handled this
+    // case before, and avoids the need to generate and manage strings at this
+    // stage.
+
     // FIXME: pass in user's C_in matrix, in case C_in<M>+=A*B can be done
-    //        in-place 
+    //        in-place
     // FIXME: handle hypersparse case in dot3
 
     void mxm_factory
-    (  
+    (
         // C matrix:
         bool C_iso,             // true if C is iso-valued
         int C_sparsity,         // sparsity structure of C
@@ -83,10 +101,8 @@ class GB_cuda_mxm_factory: public jit::File_Desc {
             flipxy = false ;
         }
 
-//       std::cout<<" calling stringify semiring: " << std::endl;
-//     GxB_Semiring_fprint (semiring, "stringfiy the smiering", GxB_COMPLETE, stdout) ;
-//       std::cout<<" Mask_struct: " << Mask_struct << std::endl;
-       uint64_t scode; 
+       uint64_t scode ;
+
        GB_enumify_mxm (
 	    // output:
 	    &scode,         // unique encoding of the entire semiring
@@ -106,10 +122,7 @@ class GB_cuda_mxm_factory: public jit::File_Desc {
             B
        ) ;
 
-//       printf("scode=%lu\n", scode);
-//       std::cout << "done stringify mxm" << std::endl;
        this->sr_code = scode;
-
        this->semiring = semiring ;
        this->atype = A->type ;
        this->btype = B->type ;
@@ -123,20 +136,20 @@ class GB_cuda_mxm_factory: public jit::File_Desc {
        filename.resize(new_filename.size());
        strcpy(filename.data(), new_filename.data());
 
-//       std::cout<<" returned from  stringify mxm"<< std::endl;
     }
 
-//------------------------------------------------------------------------------
-// Macrofy takes a code and creates the corresponding string macros for 
-// operators, datatypes, sparsity formats and produces a character buffer. 
-//------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // macrofy: create macros from sr_code and data types
+    //--------------------------------------------------------------------------
+
+    // macrofy takes a code and creates the corresponding string macros for
+    // operators, datatypes, sparsity formats and writes its results to a file.
 
     void macrofy ( ) override
     {
-//       std::cout<<" calling macrofy mxm. sr_code="<< this->sr_code << std::endl;
        GB_macrofy_mxm (
 	    // output to file :
-	    fp, 
+	    fp,
 	    // input:
 	    this->sr_code,
 	    this->semiring,
@@ -144,10 +157,7 @@ class GB_cuda_mxm_factory: public jit::File_Desc {
 	    this->atype,
 	    this->btype
        ) ;
-//       std::cout<<" returned from  macrofy mxm"<< std::endl;
-
     }
 
-
-}; // GB_cuda_mxm_factory
+} ; // GB_cuda_mxm_factory
 

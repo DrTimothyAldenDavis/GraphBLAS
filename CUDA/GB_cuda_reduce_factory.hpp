@@ -23,7 +23,6 @@ extern "C"
     #include "GB_stringify.h"
 }
 
-// FIXME: delegate problem generation to data factory
 class GB_cuda_reduce_factory: public jit::File_Desc {
 
 public:
@@ -91,5 +90,5 @@ public:
         ) ;
     }
 
-}; // GB_cuda_reduce_factory
+} ; // GB_cuda_reduce_factory
 
