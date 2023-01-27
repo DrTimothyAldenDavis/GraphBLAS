@@ -35,7 +35,7 @@ void GB_cuda_upscale_identity
 
     size_t zsize = op->ztype->size ;
     memset (identity_upscaled, 0, GB_IMAX (zsize, sizeof (uint16_t))) ;
-    mempcy (identity_upscaled, monoid->identity, zsize) ;
+    memcpy (identity_upscaled, monoid->identity, zsize) ;
 
     if (zsize >= sizeof (uint16_t))
     {
