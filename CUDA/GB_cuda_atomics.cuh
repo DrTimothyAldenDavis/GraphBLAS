@@ -84,7 +84,7 @@ template <typename T> __device__ void GB_cuda_atomic_max (T* ptr, T val) ;
 template <typename T> __device__ void GB_cuda_atomic_bor (T* ptr, T val) ;
 template <typename T> __device__ void GB_cuda_atomic_band (T* ptr, T val) ;
 template <typename T> __device__ void GB_cuda_atomic_bxor (T* ptr, T val) ;
-template <typename T> __device__ void GB_cuda_atomic_bnxor (T* ptr, T val) ;
+template <typename T> __device__ void GB_cuda_atomic_bxnor (T* ptr, T val) ;
 
 __device__ __inline__ void GB_cuda_lock   (uint32_t *mutex) ;
 __device__ __inline__ void GB_cuda_unlock (uint32_t *mutex) ;
@@ -198,6 +198,7 @@ template<> __device__ __inline__ void GB_cuda_atomic_write<double>
     atomicExch (p, v) ;
 }
 
+#if 0
 template<> __device__ __inline__ void GB_cuda_atomic_write<float complex>
 (
     float complex *ptr,     // target to modify
@@ -208,6 +209,7 @@ template<> __device__ __inline__ void GB_cuda_atomic_write<float complex>
     unsigned long long int v = GB_PUN (unsigned long long int, val) ;
     atomicExch (p, v) ;
 }
+#endif
 
 //------------------------------------------------------------------------------
 // GB_cuda_atomic_add for built-in types
@@ -317,6 +319,7 @@ template<> __device__ __inline__ void GB_cuda_atomic_add<double>
     atomicAdd (ptr, val) ;
 }
 
+#if 0
 template<> __device__ __inline__ void GB_cuda_atomic_add<float complex>
 (
     float complex *ptr,     // target to modify
@@ -340,6 +343,7 @@ template<> __device__ __inline__ void GB_cuda_atomic_add<double complex>
     atomicAdd (p  , creal (val)) ;
     atomicAdd (p+1, cimag (val)) ;
 }
+#endif
 
 //------------------------------------------------------------------------------
 // GB_cuda_atomic_times for built-in types
@@ -513,6 +517,7 @@ template<> __device__ __inline__ void GB_cuda_atomic_times<double>
     while (assumed != old) ;
 }
 
+#if 0
 template<> __device__ __inline__ void GB_cuda_atomic_times<float complex>
 (
     float complex *ptr,     // target to modify
@@ -533,6 +538,7 @@ template<> __device__ __inline__ void GB_cuda_atomic_times<float complex>
     }
     while (assumed != old) ;
 }
+#endif
 
 //------------------------------------------------------------------------------
 // GB_cuda_atomic_min

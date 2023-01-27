@@ -34,7 +34,7 @@
 //------------------------------------------------------------------------------
 
 // Constructs an instance of the template/GB_jit_reduce.cuh kernel to reduce
-// a GrB_Matrix to a scalar.  GB_reduce_to_scalar_cuda first
+// a GrB_Matrix to a scalar.
 
 #ifndef GB_REDUCE_JITFACTORY_H
 #define GB_REDUCE_JITFACTORY_H
