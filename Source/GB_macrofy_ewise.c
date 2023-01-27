@@ -114,6 +114,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// C matrix:\n") ;
+    // FIXME: write GB_macrofy_output, use typecasting from Z to C
     if (C_iso)
     {
         fprintf (fp, "#define GB_PUTC(blob)\n") ;

@@ -544,6 +544,7 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// C matrix:\n") ;
+    // FIXME: write GB_macrofy_output, use typecasting from Z to C
     if (C_iso_code)
     { 
         fprintf (fp, "#define GB_PUTC(blob)\n") ;
