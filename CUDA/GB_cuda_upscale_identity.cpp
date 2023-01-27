@@ -53,7 +53,7 @@ void GB_cuda_upscale_identity
     #define SET(type,id)                                        \
     {                                                           \
         type id16 = (type) (id) ;                               \
-        memcpy (identity_upscaled, id16, sizeof (uint16_t)) ;   \
+        memcpy (identity_upscaled, &id16, sizeof (uint16_t)) ;  \
         return ;                                                \
     }
 

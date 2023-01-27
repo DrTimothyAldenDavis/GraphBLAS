@@ -134,7 +134,7 @@ class reduceFactory
         size_t zsize = monoid->op->ztype->size ;
         // FIXME write a helper function to compute zscalar_size
         size_t zscalar_size = GB_IMAX (zsize, sizeof (uint16_t)) ;
-        void *zscalar = rmm_wrap_malloc (zscalar_size) ;
+        GB_void *zscalar = rmm_wrap_malloc (zscalar_size) ;
         if (zscalar == NULL)
         {
             // out of memory
