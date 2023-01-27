@@ -104,7 +104,7 @@ class reduceFactory
 
     int GB_get_number_of_blocks
     (
-        unsigned int64_t anvals     // # of entries in input matrix
+        int64_t anvals     // # of entries in input matrix
     )
     {
         // FIXME: this is a lot of blocks.  Use a smaller number (cap at, say,
@@ -123,7 +123,7 @@ class reduceFactory
     bool jitGridBlockLaunch     // FIXME: return GrB_Info
     (
         GrB_Matrix A,           // matrix to reduce to a scalar
-        void *output,           // output scalar (static on CPU), of size zsize
+        GB_void *output,        // output scalar (static on CPU), of size zsize
         GrB_Monoid monoid,      // monoid to use for the reducution
         cudaStream_t stream = 0 // stream to use, default stream 0
     )
@@ -221,7 +221,7 @@ inline bool GB_cuda_reduce      // FIXME: return GrB_Info, not bool
 (
     GB_cuda_reduce_factory &myreducefactory,    // reduction JIT factory
     GrB_Matrix A,               // matrix to reduce
-    void *output,               // result of size monoid->op->ztype->size
+    GB_void *output,            // result of size monoid->op->ztype->size
     GrB_Monoid monoid,          // monoid for the reduction
     cudaStream_t stream = 0     // stream to use
 )
