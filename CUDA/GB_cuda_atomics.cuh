@@ -43,22 +43,22 @@
 // computed and the kernel launch is done, the final value is copied to the
 // single byte result on the host.
 //
-// The double complex type is supported only by GB_cuda_atomic_add.
+// The GxB_FC64_t type is supported only by GB_cuda_atomic_add.
 //
 // GB_cuda_atomic_write, GB_cuda_atomic_times:
 //
 //      int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t,
-//      float, double, and float complex (not double complex).
+//      float, double, and GxB_FC32_t (not GxB_FC64_t).
 //
 // GB_cuda_atomic_min, GB_cuda_atomic_max:
 //
 //      int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t,
-//      float, and double (not float complex or double complex).
+//      float, and double (not GxB_FC32_t or GxB_FC64_t).
 //
 // GB_cuda_atomic_add:
 //
 //      int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t,
-//      float, double, float complex, and double complex.
+//      float, double, GxB_FC32_t, and GxB_FC64_t.
 // 
 // GB_cuda_atomic_bor, GB_cuda_atomic_band,
 // GB_cuda_atomic_bxor, GB_cuda_atomic_bxnor :
@@ -94,7 +94,7 @@ __device__ __inline__ void GB_cuda_unlock (uint32_t *mutex) ;
 //------------------------------------------------------------------------------
 
 // atomic write (16, 32, and 64 bits)
-// no atomic write for double complex
+// no atomic write for GxB_FC64_t
 
 template<> __device__ __inline__ void GB_cuda_atomic_write<int16_t>
 (
@@ -199,10 +199,10 @@ template<> __device__ __inline__ void GB_cuda_atomic_write<double>
 }
 
 #if 0
-template<> __device__ __inline__ void GB_cuda_atomic_write<float complex>
+template<> __device__ __inline__ void GB_cuda_atomic_write<GxB_FC32_t>
 (
-    float complex *ptr,     // target to modify
-    float complex val       // value to modify the target with
+    GxB_FC32_t *ptr,     // target to modify
+    GxB_FC32_t val       // value to modify the target with
 )
 {
     unsigned long long int *p = (unsigned long long int *) ptr ;
@@ -215,7 +215,7 @@ template<> __device__ __inline__ void GB_cuda_atomic_write<float complex>
 // GB_cuda_atomic_add for built-in types
 //------------------------------------------------------------------------------
 
-// types: int and uint [16,32,64], float, double, float complex, complex double
+// types: int and uint [16,32,64], float, double, GxB_FC32_t, complex double
 
 template<> __device__ __inline__ void GB_cuda_atomic_add<int16_t>
 (
@@ -320,10 +320,10 @@ template<> __device__ __inline__ void GB_cuda_atomic_add<double>
 }
 
 #if 0
-template<> __device__ __inline__ void GB_cuda_atomic_add<float complex>
+template<> __device__ __inline__ void GB_cuda_atomic_add<GxB_FC32_t>
 (
-    float complex *ptr,     // target to modify
-    float complex val       // value to modify the target with
+    GxB_FC32_t *ptr,     // target to modify
+    GxB_FC32_t val       // value to modify the target with
 )
 {
     // native CUDA method on each float, real and imaginary parts
@@ -332,10 +332,10 @@ template<> __device__ __inline__ void GB_cuda_atomic_add<float complex>
     atomicAdd (p+1, cimagf (val)) ;
 }
 
-template<> __device__ __inline__ void GB_cuda_atomic_add<double complex>
+template<> __device__ __inline__ void GB_cuda_atomic_add<GxB_FC64_t>
 (
-    double complex *ptr,    // target to modify
-    double complex val      // value to modify the target with
+    GxB_FC64_t *ptr,    // target to modify
+    GxB_FC64_t val      // value to modify the target with
 )
 {
     // native CUDA method on each double, real and imaginary parts
@@ -349,8 +349,8 @@ template<> __device__ __inline__ void GB_cuda_atomic_add<double complex>
 // GB_cuda_atomic_times for built-in types
 //------------------------------------------------------------------------------
 
-// types: int and uint [16,32,64], float, double, float complex
-// no double complex.
+// types: int and uint [16,32,64], float, double, GxB_FC32_t
+// no GxB_FC64_t.
 
 template<> __device__ __inline__ void GB_cuda_atomic_times<int16_t>
 (
@@ -518,10 +518,10 @@ template<> __device__ __inline__ void GB_cuda_atomic_times<double>
 }
 
 #if 0
-template<> __device__ __inline__ void GB_cuda_atomic_times<float complex>
+template<> __device__ __inline__ void GB_cuda_atomic_times<GxB_FC32_t>
 (
-    float complex *ptr,     // target to modify
-    float complex val       // value to modify the target with
+    GxB_FC32_t *ptr,     // target to modify
+    GxB_FC32_t val       // value to modify the target with
 )
 {
     unsigned long long int *p = (unsigned long long int *) ptr ;
@@ -532,7 +532,7 @@ template<> __device__ __inline__ void GB_cuda_atomic_times<float complex>
         // assume the old value
         assumed = old ;
         // compute the new value
-        float complex new_value = GB_PUN (float complex, assumed) * val ;
+        GxB_FC32_t new_value = GB_PUN (GxB_FC32_t, assumed) * val ;
         // modify it atomically:
         old = atomicCAS (p, assumed, GB_PUN (unsigned long long int, new_value)) ;
     }

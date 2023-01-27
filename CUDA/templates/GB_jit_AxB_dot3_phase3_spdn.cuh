@@ -308,13 +308,12 @@ __global__ void AxB_dot3_phase3_spdn
     }
 
     //--------------------------------------------------------------------------
+    // sum up the global zombie count
+    //--------------------------------------------------------------------------
 
     if (threadIdx.x == 0 && zc > 0)
     {
-        // FIXME: use GB_atomic_add <int64_t>
-        atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)zc);
+        GB_atomic_add <int64_t>( &(C->nzombies), zc) ;
     }
-
-  //__syncthreads();
 }
 

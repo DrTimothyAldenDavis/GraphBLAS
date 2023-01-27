@@ -57,9 +57,6 @@
 // Kernel jitifiers
 class reduceFactory ;
 
-// FIXME: what is spdotFactory?
-template<typename T1, typename T2, typename T3> class spdotFactory ;
-
 //------------------------------------------------------------------------------
 // reduceFactory
 //------------------------------------------------------------------------------
@@ -130,10 +127,9 @@ class reduceFactory
     {
         GBURBLE ("\n(launch reduce factory) \n") ;
 
-        // allocate and initialize zscalar
+        // allocate and initialize zscalar (upscaling it to at least 32 bits)
         size_t zsize = monoid->op->ztype->size ;
-        // FIXME write a helper function to compute zscalar_size
-        size_t zscalar_size = GB_IMAX (zsize, sizeof (uint16_t)) ;
+        size_t zscalar_size = GB_IMAX (zsize, sizeof (uint32_t)) ;
         GB_void *zscalar = (GB_void *) rmm_wrap_malloc (zscalar_size) ;
         if (zscalar == NULL)
         {
@@ -157,11 +153,7 @@ class reduceFactory
 
         int64_t anvals = GB_nnz_held (A) ;
 
-        // TODO: Use RMM!
         uint32_t *mutex ;
-//      CU_OK(cudaMalloc((void**)&mutex, sizeof(int32_t)));
-//      CU_OK(cudaMemsetAsync(mutex, 0, sizeof(int32_t), stream));
-        // FIXED (but not tested): using RMM
         mutex = (uint32_t *) rmm_wrap_calloc (1, sizeof (uint32_t)) ;
         if (mutex == NULL)
         {
@@ -204,8 +196,6 @@ class reduceFactory
         memcpy (output, zscalar, zsize) ;
 
         // free workspace and return result
-//      CU_OK(cudaFree(mutex));
-//      CHECK_CUDA (cudaFree (zscalar)) ;
         rmm_wrap_free (mutex) ;
         rmm_wrap_free (zscalar) ;
 

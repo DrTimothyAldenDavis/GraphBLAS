@@ -129,6 +129,11 @@ GrB_Info GB_reduce_to_scalar_cuda
     const GrB_Matrix A
 ) ;
 
+bool GB_cuda_type_branch            // return true if the type is OK on GPU
+(
+    const GrB_Type type             // type to query
+) ;
+
 GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 (
     GrB_Matrix C,                   // output matrix, static header

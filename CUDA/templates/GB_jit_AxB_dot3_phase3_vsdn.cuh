@@ -291,6 +291,7 @@ __global__ void AxB_dot3_phase3_vsdn
     {
         // this threadblock accumulates its zombie count into the global
         // zombie count
-        atomicAdd(&(C->nzombies), zc);
+        GB_atomic_add <int64_t>( &(C->nzombies), zc) ;
     }
 }
+

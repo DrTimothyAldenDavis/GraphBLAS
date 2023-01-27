@@ -250,8 +250,7 @@ __global__ void AxB_dot3_phase3_vsvs
 
     if( threadIdx.x == 0 && my_nzombies > 0)
     {
-        // FIXME: use GB_atomic_add <int64_t> instead
-        atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)my_nzombies);
+        GB_atomic_add <int64_t>( &(C->nzombies), my_nzombies) ;
     }
 }
 

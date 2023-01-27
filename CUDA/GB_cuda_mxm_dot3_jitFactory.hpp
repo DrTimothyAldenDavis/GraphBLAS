@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+// GB_cuda_mxm_dot3_factory
+//------------------------------------------------------------------------------
+
 // SPDX-License-Identifier: Apache-2.0
 /*
  * Copyright (c) 2017-2019, NVIDIA CORPORATION. All rights reserved.
@@ -27,6 +31,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+//------------------------------------------------------------------------------
+
 #ifndef GB_MXM_DOT3_JITFACTORY_H
 #define GB_MXM_DOT3_JITFACTORY_H
 
@@ -48,6 +54,7 @@ template<int threads_per_block, int chunk_size> class phase1launchFactory ;
 template<int threads_per_block, int chunk_size> class dense_phase1launchFactory ;
 
 //AxB_dot3_phase3 kernel launchers
+
 //------------------------------------------------------------------------------
 // dot3: dense_phase1launchFactory 
 //------------------------------------------------------------------------------
