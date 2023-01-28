@@ -40,8 +40,8 @@
             // skip if the entry is a zombie or if not in the bitmap
             if (A_has_zombies && GB_IS_ZOMBIE (Ai [p])) continue ;
             if (!GBB (Ab, p)) continue ;
-            // z = op (z, (ztype) Ax [p])
-            GB_ADD_CAST_ARRAY_TO_SCALAR (z, Ax, p) ;
+            // z += (ztype) Ax [p]
+            GB_GETA_AND_UPDATE (z, Ax, p) ;
             // check for early exit
             GB_IF_TERMINAL_BREAK (z, zterminal) ;
         }
@@ -75,8 +75,8 @@
                     if (A_has_zombies && GB_IS_ZOMBIE (Ai [p])) continue ;
                     if (!GBB (Ab, p)) continue ;
                     found = true ;
-                    // t = op (t, (ztype) Ax [p]), with typecast
-                    GB_ADD_CAST_ARRAY_TO_SCALAR (t, Ax, p) ;
+                    // t += (ztype) Ax [p]
+                    GB_GETA_AND_UPDATE (t, Ax, p) ;
                     // check for early exit
                     #if GB_MONOID_IS_TERMINAL
                     if (GB_TERMINAL_CONDITION (t, zterminal))

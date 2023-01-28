@@ -37,7 +37,7 @@ __inline__ __device__
 T_Z GB_warp_Reduce( thread_block_tile<WARPSIZE> g, T_Z val)
 {
     // Each iteration halves the number of active threads
-    // Each thread adds its partial sum[k] to sum[lane+k]
+    // Each thread adds its partial val[k] to val[lane+k]
 
     // FIXME: doesn't work unless sizeof(T_Z) <= 32 bytes
 
@@ -51,7 +51,7 @@ T_Z GB_warp_Reduce( thread_block_tile<WARPSIZE> g, T_Z val)
     GB_ADD ( val, val, fold ) ;
     fold = g.shfl_down ( val, 1) ;
     GB_ADD ( val, val, fold ) ;
-    return (val) ; // note: only thread 0 will return full sum
+    return (val) ; // note: only thread 0 will return full val
 }
 
 //------------------------------------------------------------------------------
@@ -78,7 +78,8 @@ T_Z GB_block_Reduce(thread_block g, T_Z val)
     this_thread_block().sync() ;     // Wait for all partial reductions
     GB_DECLARE_MONOID_IDENTITY (identity) ;
 
-    val = (threadIdx.x < (blockDim.x >> LOG2_WARPSIZE)) ? shared [lane] : identity ;
+    val = (threadIdx.x < (blockDim.x >> LOG2_WARPSIZE)) ?
+        shared [lane] : identity ;
 
     // Final reduce within first warp
     val = GB_warp_Reduce<T_Z>( tile, val) ;
@@ -105,8 +106,8 @@ __global__ void GB_jit_reduce
 
     const T_A *__restrict__ Ax = (T_A *) A->x ;
 
-    // each thread reduces its result into sum, of type T_Z
-    GB_DECLARE_MONOID_IDENTITY (sum) ;  // FIXME: rename this scalar
+    // each thread reduces its result into zmine, of type T_Z
+    GB_DECLARE_MONOID_IDENTITY (zmine) ;
 
     // On input, zscalar is already initialized to the monoid identity value.
     // If T_Z has size less than 4 bytes, zscalar has been upscaled to 4 bytes.
@@ -132,10 +133,8 @@ __global__ void GB_jit_reduce
                 p < anz ;
                 p += blockDim.x * gridDim.x)
             {
-                if (Ai [p] < 0) continue ;      // skip zombies
-                GB_DECLAREA (aij) ;
-                GB_GETA (aij, Ax, p, false) ;   // aij = (T_Z) Ax [p]
-                GB_ADD ( sum, sum, aij ) ;
+                if (Ai [p] < 0) continue ;          // skip zombies
+                GB_GETA_AND_UPDATE (zmine, Ax, p) ; // zmine += (ztype) Ax [p]
             }
         }
         else
@@ -145,9 +144,7 @@ __global__ void GB_jit_reduce
                 p < anz ;
                 p += blockDim.x * gridDim.x)
             {
-                GB_DECLAREA (aij) ;
-                GB_GETA (aij, Ax, p, false) ;   // aij = (T_Z) Ax [p]
-                GB_ADD ( sum, sum, aij ) ;
+                GB_GETA_AND_UPDATE (zmine, Ax, p) ; // zmine += (ztype) Ax [p]
             }
         }
 
@@ -163,9 +160,7 @@ __global__ void GB_jit_reduce
             p < anz ;
             p += blockDim.x * gridDim.x)
         {
-            GB_DECLAREA (aij) ;
-            GB_GETA (aij, Ax, p, false) ;       // aij = (T_Z) Ax [p]
-            GB_ADD ( sum, sum, aij ) ;
+            GB_GETA_AND_UPDATE (zmine, Ax, p) ; // zmine += (ztype) Ax [p]
         }
 
     }
@@ -181,10 +176,8 @@ __global__ void GB_jit_reduce
             p < anz ;
             p += blockDim.x * gridDim.x)
         {
-            if (Ab [p] == 0) continue ;     // skip if entry not in bitmap
-            GB_DECLAREA (aij) ;
-            GB_GETA (aij, Ax, p, false) ;   // aij = (T_Z) Ax [p]
-            GB_ADD ( sum, sum, aij ) ;
+            if (Ab [p] == 0) continue ;         // skip if entry not in bitmap
+            GB_GETA_AND_UPDATE (zmine, Ax, p) ; // zmine += (ztype) Ax [p]
         }
     }
     #endif
@@ -195,7 +188,7 @@ __global__ void GB_jit_reduce
     // phase 2: each threadblock reduces all threads into a scalar
     //--------------------------------------------------------------------------
 
-    sum = GB_block_Reduce< T_Z >( this_thread_block(), sum) ;
+    zmine = GB_block_Reduce< T_Z >( this_thread_block(), zmine) ;
     this_thread_block().sync() ;
 
     //--------------------------------------------------------------------------
@@ -209,7 +202,7 @@ __global__ void GB_jit_reduce
             // cast the result to the CUDA atomic type, and reduce
             // atomically to the global zscalar
             GB_CUDA_ATOMIC_TYPE *z = (GB_CUDA_ATOMIC_TYPE *) zscalar ;
-            GB_CUDA_ATOMIC_TYPE zsum = (GB_CUDA_ATOMIC_TYPE) sum ;
+            GB_CUDA_ATOMIC_TYPE zsum = (GB_CUDA_ATOMIC_TYPE) zmine ;
             GB_CUDA_ATOMIC <GB_CUDA_ATOMIC_TYPE> (z, zsum) ;
 
         #else
@@ -223,7 +216,7 @@ __global__ void GB_jit_reduce
 
             T_Z *z = (T_Z *) zscalar ;
             GB_cuda_lock (mutex) ;
-            GB_ADD (z, z, sum) ;
+            GB_ADD (z, z, zmine) ;
             GB_cuda_unlock (mutex) ;
 
         #endif

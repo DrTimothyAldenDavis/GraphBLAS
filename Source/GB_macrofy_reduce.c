@@ -70,6 +70,25 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     fprintf (fp, "\n// reduction monoid:\n") ;
     GB_macrofy_monoid (fp, red_ecode, id_ecode, term_ecode, monoid) ;
 
+    fprintf (fp, "#define GB_GETA_AND_UPDATE(z,Ax,p) \\\n") ;
+    if (atype == monoid->op->ztype)
+    {
+        // z += Ax [p], with no typecasting.  A is never iso.
+        fprintf (fp, "    GB_UPDATE(z, Ax [p]) ;    // z += Ax [p]\n") ;
+    }
+    else
+    {
+        // aij = (ztype) Ax [p] ; z += aij
+        fprintf (fp, "\\\n"
+                     "{                             \\\n"
+                     "    /* z += (ztype) Ax [p] */ \\\n"
+                     "    GB_DECLAREA (aij) ;       \\\n"
+                     "    GB_GETA (aij, Ax, p, ) ;  \\\n"
+                     "    GB_UPDATE (z, aij) ;      \\\n"
+                     "}\n"
+                     ) ;
+    }
+
     //--------------------------------------------------------------------------
     // construct the macros for A
     //--------------------------------------------------------------------------

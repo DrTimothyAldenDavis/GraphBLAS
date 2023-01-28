@@ -45,8 +45,8 @@
                     int64_t tend   = tstart_slice [tid+1] ;
                     for (int64_t t = tstart ; t < tend ; t++)
                     { 
-                        // Tx [t] = (ttype) Sx [t] ; with typecast
-                        GB_CAST_ARRAY_TO_ARRAY (Tx, t, Sx, t) ;
+                        // Tx [t] = (ttype) Sx [t] ;
+                        GB_BLD_COPY (Tx, t, Sx, t) ;
                     }
                 }
 
@@ -62,8 +62,8 @@
                     int64_t tend   = tstart_slice [tid+1] ;
                     for (int64_t t = tstart ; t < tend ; t++)
                     { 
-                        // Tx [t] = (ttype) Sx [K_work [t]] ; with typecast
-                        GB_CAST_ARRAY_TO_ARRAY (Tx, t, Sx, K_work [t]) ;
+                        // Tx [t] = (ttype) Sx [K_work [t]] ;
+                        GB_BLD_COPY (Tx, t, Sx, K_work [t]) ;
                     }
                 }
             }
@@ -106,8 +106,8 @@
                 ASSERT (i >= 0) ;
                 #ifndef GB_ISO_BUILD
                 int64_t k = (K_work == NULL) ? t : K_work [t] ;
-                // Tx [my_tnz] = Sx [k] ; with typecast
-                GB_CAST_ARRAY_TO_ARRAY (Tx, my_tnz, Sx, k) ;
+                // Tx [my_tnz] = (ttype) Sx [k] ;
+                GB_BLD_COPY (Tx, my_tnz, Sx, k) ;
                 #endif
                 Ti [my_tnz] = i ;
 
@@ -119,8 +119,8 @@
                     // assemble the duplicate tuple
                     #ifndef GB_ISO_BUILD
                     int64_t k = (K_work == NULL) ? (t+1) : K_work [t+1] ;
-                    // Tx [my_tnz] += Sx [k] with typecast
-                    GB_ADD_CAST_ARRAY_TO_ARRAY (Tx, my_tnz, Sx, k) ;
+                    // Tx [my_tnz] += Sx [k], typecasting as needed
+                    GB_BLD_DUP (Tx, my_tnz, Sx, k) ;
                     #endif
                 }
                 my_tnz++ ;

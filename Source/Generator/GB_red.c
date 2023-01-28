@@ -22,7 +22,7 @@
 // A type:   GB_atype
 // Z type:   GB_ztype
 
-// Reduce:   GB_reduce_op(z, aij)
+// Reduce:   GB_update_op(z, aij)
 // Identity: GB_identity
 // Terminal: GB_if_terminal_break(z)
 
@@ -40,18 +40,22 @@
 // Array to array
 
     // W [k] += Ax [p], no typecast
+    // used in GB_reduce_panel where W == Panel
+    // Panel has ztype, Ax has atype.  In general would need to
+    // typecast with a temporary value, aij = (ztype) Ax [p]
+    // then W [k] += aij.
     #define GB_ADD_ARRAY_TO_ARRAY(W,k,Ax,p)         \
-        GB_reduce_op(W [k], Ax [p])  
+        GB_update_op(W [k], Ax [p])  
 
 // Array to scalar
 
-    // s += (ztype) Ax [p], with typecast
-    #define GB_ADD_CAST_ARRAY_TO_SCALAR(s,Ax,p)     \
-        GB_reduce_op(s, Ax [p])
+    // s += (ztype) Ax [p], no typecast here
+    #define GB_GETA_AND_UPDATE(s,Ax,p)     \
+        GB_update_op(s, Ax [p])
 
     // s += S [i], no typecast
     #define GB_ADD_ARRAY_TO_SCALAR(s,S,i)           \
-        GB_reduce_op(s, S [i])
+        GB_update_op(s, S [i])
 
 // Scalar to array
 

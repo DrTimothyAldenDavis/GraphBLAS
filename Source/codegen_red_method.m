@@ -26,12 +26,12 @@ fprintf (f, 'define(`GB_ztype'', `%s'')\n', atype) ;
 
 is_monoid = ~isempty (identity) ;
 if (is_monoid)
+    % monoid function name and identity value
     fprintf (f, 'define(`_red'',    `_red__%s'')\n',    name);
-    % identity and terminal values for the monoid
     fprintf (f, 'define(`GB_identity'', `%s'')\n', identity) ;
 else
-    fprintf (f, 'define(`_red'',    `_red__(none)'')\n') ;
     % first and second operators are not monoids
+    fprintf (f, 'define(`_red'',    `_red__(none)'')\n') ;
     fprintf (f, 'define(`GB_identity'', `(none)'')\n') ;
 end
 
@@ -64,7 +64,7 @@ end
 % create the operator
 func = strrep (func, 'zarg', '`$1''') ;
 func = strrep (func, 'yarg', '`$2''') ;
-fprintf (f, 'define(`GB_reduce_op'', `%s'')\n', func) ;
+fprintf (f, 'define(`GB_update_op'', `%s'')\n', func) ;
 
 % create the disable flag
 disable  = sprintf ('GxB_NO_%s', upper (opname)) ;
@@ -97,5 +97,5 @@ cmd = sprintf (...
 'cat control.m4 Generator/GB_bld.h | m4 | tail -n +16 >> Generated2/GB_bld__include.h') ;
 system (cmd) ;
 
-% delete ('control.m4') ;
+delete ('control.m4') ;
 

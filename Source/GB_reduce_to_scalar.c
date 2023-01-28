@@ -250,7 +250,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     if (GB_TERMINAL_CONDITION (z, zterminal)) break ;
 
                 // t += (ztype) Ax [p], but no typecasting needed
-                #define GB_ADD_CAST_ARRAY_TO_SCALAR(t,Ax,p)             \
+                #define GB_GETA_AND_UPDATE(t,Ax,p)             \
                     freduce (t, t, Ax +((p)*zsize))
 
                 #include "GB_reduce_to_scalar_template.c"
@@ -272,8 +272,8 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 cast_A_to_Z = GB_cast_factory (ztype->code, A->type->code) ;
 
             // t += (ztype) Ax [p], with typecast
-            #undef  GB_ADD_CAST_ARRAY_TO_SCALAR
-            #define GB_ADD_CAST_ARRAY_TO_SCALAR(t,Ax,p)             \
+            #undef  GB_GETA_AND_UPDATE
+            #define GB_GETA_AND_UPDATE(t,Ax,p)             \
                 GB_void awork [GB_VLA(zsize)] ;                     \
                 cast_A_to_Z (awork, Ax +((p)*asize), asize) ;       \
                 freduce (t, t, awork)

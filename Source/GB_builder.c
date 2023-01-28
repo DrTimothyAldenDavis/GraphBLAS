@@ -1014,7 +1014,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // With GB_build, there can be 1 to 2 different types.
     //      T->type is identical to the types of x,y,z for z=dup(x,y).
     //      dup is never NULL and all its three types are the same
-    //      The type of Sx (stype) can different but must be compatible
+    //      The type of Sx (stype) can be different but must be compatible
     //          with T->type
 
     // With GB_wait, there can be 1 to 5 different types:
@@ -1286,8 +1286,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 // this handles all user-defined types.
 
                 // Tx [p] = (ttype) Sx [k], but with no typecasting
-                #undef  GB_CAST_ARRAY_TO_ARRAY
-                #define GB_CAST_ARRAY_TO_ARRAY(Tx,p,Sx,k)               \
+                #undef  GB_BLD_COPY
+                #define GB_BLD_COPY(Tx,p,Sx,k)               \
                     memcpy (Tx +((p)*tsize), Sx +((k)*tsize), tsize) ;
 
                 if (op_2nd)
@@ -1298,9 +1298,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     //----------------------------------------------------------
 
                     // Tx [p] += (ttype) Sx [k], but 2nd op and no typecasting
-                    #undef  GB_ADD_CAST_ARRAY_TO_ARRAY
-                    #define GB_ADD_CAST_ARRAY_TO_ARRAY(Tx,p,Sx,k)       \
-                        GB_CAST_ARRAY_TO_ARRAY(Tx,p,Sx,k)
+                    #undef  GB_BLD_DUP
+                    #define GB_BLD_DUP(Tx,p,Sx,k)       \
+                        GB_BLD_COPY(Tx,p,Sx,k)
                     #include "GB_bld_template.c"
 
                 }
@@ -1312,8 +1312,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     //----------------------------------------------------------
 
                     // Tx [p] += (ttype) Sx [k], but with no typecasting
-                    #undef  GB_ADD_CAST_ARRAY_TO_ARRAY
-                    #define GB_ADD_CAST_ARRAY_TO_ARRAY(Tx,p,Sx,k)       \
+                    #undef  GB_BLD_DUP
+                    #define GB_BLD_DUP(Tx,p,Sx,k)       \
                         fdup (Tx +((p)*tsize), Tx +((p)*tsize), Sx+((k)*tsize));
                     #include "GB_bld_template.c"
                 }
@@ -1349,6 +1349,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             GB_cast_function cast_T_to_X = GB_cast_factory (xcode, tcode) ;
             GB_cast_function cast_Z_to_T = GB_cast_factory (tcode, zcode) ;
 
+            // all types must be built-in
             ASSERT (scode <= GB_FC64_code) ;
             ASSERT (tcode <= GB_FC64_code) ;
             ASSERT (xcode <= GB_FC64_code) ;
@@ -1356,8 +1357,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
             ASSERT (zcode <= GB_FC64_code) ;
 
             // Tx [p] = (ttype) Sx [k], with typecasting
-            #undef  GB_CAST_ARRAY_TO_ARRAY
-            #define GB_CAST_ARRAY_TO_ARRAY(Tx,p,Sx,k)                   \
+            #undef  GB_BLD_COPY
+            #define GB_BLD_COPY(Tx,p,Sx,k)                   \
                 cast_S_to_T (Tx +((p)*tsize), Sx +((k)*ssize), ssize) ;
 
             if (op_2nd)
@@ -1368,9 +1369,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 //--------------------------------------------------------------
 
                 // Tx [p] += (ttype) Sx [k], but 2nd op, with typecasting
-                #undef  GB_ADD_CAST_ARRAY_TO_ARRAY
-                #define GB_ADD_CAST_ARRAY_TO_ARRAY(Tx,p,Sx,k)           \
-                    GB_CAST_ARRAY_TO_ARRAY(Tx,p,Sx,k)
+                #undef  GB_BLD_DUP
+                #define GB_BLD_DUP(Tx,p,Sx,k)           \
+                    GB_BLD_COPY(Tx,p,Sx,k)
                 #include "GB_bld_template.c"
 
             }
@@ -1382,8 +1383,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 //--------------------------------------------------------------
 
                 // Tx [p] += Sx [k], with typecasting
-                #undef  GB_ADD_CAST_ARRAY_TO_ARRAY
-                #define GB_ADD_CAST_ARRAY_TO_ARRAY(Tx,p,Sx,k)               \
+                #undef  GB_BLD_DUP
+                #define GB_BLD_DUP(Tx,p,Sx,k)               \
                 {                                                           \
                     /* ywork = (ytype) Sx [k] */                            \
                     GB_void ywork [GB_VLA(ysize)] ;                         \

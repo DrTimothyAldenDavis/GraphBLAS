@@ -148,6 +148,8 @@ codegen_red_method ('eq'  , 'zarg = (zarg == yarg)', 'bool','true' , [ ]    ,8);
 fprintf ('\nany    ') ;
 codegen_red_method ('any' , 'zarg = (yarg)'        , 'bool','false') ;
 
+% FIXME: add bor, band, bxor, bxnor for uint [8,16,32,64]
+
 %-------------------------------------------------------------------------------
 % FIRST and SECOND (not monoids; used for GB_bld__first,second_type)
 %-------------------------------------------------------------------------------

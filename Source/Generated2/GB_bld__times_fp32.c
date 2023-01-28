@@ -46,13 +46,13 @@
 
 // Array to array
 
-    // W [k] = (ztype) S [i], with typecast
-    #define GB_CAST_ARRAY_TO_ARRAY(W,k,S,i)         \
-        W [k] = S [i]
+    // Tx [k] = Sx [i], no typecast here
+    #define GB_BLD_COPY(Tx,k,Sx,i)          \
+        Tx [k] = Sx [i]
 
-    // W [k] += (ztype) S [i], with typecast
-    #define GB_ADD_CAST_ARRAY_TO_ARRAY(W,k,S,i)     \
-        W [k] *= S [i]
+    // Tx [k] += Sx [i], no typecast here
+    #define GB_BLD_DUP(Tx,k,Sx,i)           \
+        Tx [k] *= Sx [i]
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \

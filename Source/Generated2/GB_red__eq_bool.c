@@ -42,13 +42,17 @@
 // Array to array
 
     // W [k] += Ax [p], no typecast
+    // used in GB_reduce_panel where W == Panel
+    // Panel has ztype, Ax has atype.  In general would need to
+    // typecast with a temporary value, aij = (ztype) Ax [p]
+    // then W [k] += aij.
     #define GB_ADD_ARRAY_TO_ARRAY(W,k,Ax,p)         \
         W [k] = (W [k] == Ax [p])  
 
 // Array to scalar
 
-    // s += (ztype) Ax [p], with typecast
-    #define GB_ADD_CAST_ARRAY_TO_SCALAR(s,Ax,p)     \
+    // s += (ztype) Ax [p], no typecast here
+    #define GB_GETA_AND_UPDATE(s,Ax,p)     \
         s = (s == Ax [p])
 
     // s += S [i], no typecast
