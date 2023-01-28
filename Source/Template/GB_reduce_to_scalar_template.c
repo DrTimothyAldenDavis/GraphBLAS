@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_reduce_to_scalar_template: s=reduce(A), reduce a matrix to a scalar
+// GB_reduce_to_scalar_template: z=reduce(A), reduce a matrix to a scalar
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -18,7 +18,7 @@
 
     const int8_t   *restrict Ab = A->b ;
     const int64_t  *restrict Ai = A->i ;
-    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const GB_A_TYPENAME *restrict Ax = (GB_A_TYPENAME *) A->x ;
     int64_t anz = GB_nnz_held (A) ;
     ASSERT (anz > 0) ;
     const bool A_has_zombies = (A->nzombies > 0) ;
@@ -40,12 +40,10 @@
             // skip if the entry is a zombie or if not in the bitmap
             if (A_has_zombies && GB_IS_ZOMBIE (Ai [p])) continue ;
             if (!GBB (Ab, p)) continue ;
-            // s = op (s, (ztype) Ax [p])
-            GB_ADD_CAST_ARRAY_TO_SCALAR (s, Ax, p) ;
+            // z = op (z, (ztype) Ax [p])
+            GB_ADD_CAST_ARRAY_TO_SCALAR (z, Ax, p) ;
             // check for early exit
-            #if GB_HAS_TERMINAL
-            if (GB_IS_TERMINAL (s)) break ;
-            #endif
+            GB_IF_TERMINAL_BREAK (z, zterminal) ;
         }
 
     }
@@ -65,7 +63,7 @@
             int64_t pstart, pend ;
             GB_PARTITION (pstart, pend, anz, tid, ntasks) ;
             // ztype t = identity
-            GB_SCALAR_IDENTITY (t) ;
+            GB_DECLARE_MONOID_IDENTITY (t) ;
             bool my_exit, found = false ;
             GB_ATOMIC_READ
             my_exit = early_exit ;
@@ -80,8 +78,8 @@
                     // t = op (t, (ztype) Ax [p]), with typecast
                     GB_ADD_CAST_ARRAY_TO_SCALAR (t, Ax, p) ;
                     // check for early exit
-                    #if GB_HAS_TERMINAL
-                    if (GB_IS_TERMINAL (t))
+                    #if GB_MONOID_IS_TERMINAL
+                    if (GB_TERMINAL_CONDITION (t, zterminal))
                     { 
                         // tell the other tasks to exit early
                         GB_ATOMIC_WRITE
@@ -104,8 +102,8 @@
         {
             if (F [tid])
             { 
-                // s = op (s, W [tid]), no typecast
-                GB_ADD_ARRAY_TO_SCALAR (s, W, tid) ;
+                // z = op (z, W [tid]), no typecast
+                GB_ADD_ARRAY_TO_SCALAR (z, W, tid) ;
             }
         }
     }

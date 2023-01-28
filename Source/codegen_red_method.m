@@ -3,7 +3,7 @@ function codegen_red_method (opname, func, atype, identity, terminal, panel)
 %
 % codegen_red_method (opname, func, atype, identity, terminal)
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 f = fopen ('control.m4', 'w') ;
@@ -14,44 +14,45 @@ name = sprintf ('%s_%s', opname, aname) ;
 is_any = isequal (opname, 'any') ;
 
 % function names
-fprintf (f, 'define(`_red_build'', `_red_build__%s'')\n', name) ;
+fprintf (f, 'define(`_bld'', `_bld__%s'')\n', name) ;
 
-% the type of A and C (no typecasting)
+% the type of A, S, T, X, Y, and Z (no typecasting)
 fprintf (f, 'define(`GB_atype'', `%s'')\n', atype) ;
-fprintf (f, 'define(`GB_ctype'', `%s'')\n', atype) ;
+fprintf (f, 'define(`GB_stype'', `%s'')\n', atype) ;
+fprintf (f, 'define(`GB_ttype'', `%s'')\n', atype) ;
+fprintf (f, 'define(`GB_xtype'', `%s'')\n', atype) ;
+fprintf (f, 'define(`GB_ytype'', `%s'')\n', atype) ;
+fprintf (f, 'define(`GB_ztype'', `%s'')\n', atype) ;
 
-if (~isempty (identity))
-    fprintf (f, 'define(`_red_scalar'',    `_red_scalar__%s'')\n',    name);
+is_monoid = ~isempty (identity) ;
+if (is_monoid)
+    fprintf (f, 'define(`_red'',    `_red__%s'')\n',    name);
     % identity and terminal values for the monoid
     fprintf (f, 'define(`GB_identity'', `%s'')\n', identity) ;
-    fprintf (f, 'define(`if_is_monoid'', `'')\n') ;
-    fprintf (f, 'define(`endif_is_monoid'', `'')\n') ;
 else
-    fprintf (f, 'define(`_red_scalar'',    `_red_scalar__(none)'')\n') ;
+    fprintf (f, 'define(`_red'',    `_red__(none)'')\n') ;
     % first and second operators are not monoids
     fprintf (f, 'define(`GB_identity'', `(none)'')\n') ;
-    fprintf (f, 'define(`if_is_monoid'', `#if 0'')\n') ;
-    fprintf (f, 'define(`endif_is_monoid'', `#endif'')\n') ;
 end
 
 if (is_any)
     fprintf (f, 'define(`GB_is_any_monoid'', `1'')\n') ;
-    fprintf (f, 'define(`GB_has_terminal'', `1'')\n') ;
+    fprintf (f, 'define(`GB_monoid_is_terminal'', `1'')\n') ;
     fprintf (f, 'define(`GB_terminal_value'', `(any value)'')\n') ;
-    fprintf (f, 'define(`GB_is_terminal'', `true'')\n') ;
-    fprintf (f, 'define(`GB_terminal'', `break ;'')\n') ;
+    fprintf (f, 'define(`GB_terminal_condition'', `true'')\n') ;
+    fprintf (f, 'define(`GB_if_terminal_break'', `break ;'')\n') ;
 elseif (~isempty (terminal))
     fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
-    fprintf (f, 'define(`GB_has_terminal'', `1'')\n') ;
+    fprintf (f, 'define(`GB_monoid_is_terminal'', `1'')\n') ;
     fprintf (f, 'define(`GB_terminal_value'', `%s'')\n', terminal) ;
-    fprintf (f, 'define(`GB_is_terminal'', `(s == %s)'')\n', terminal) ;
-    fprintf (f, 'define(`GB_terminal'', `if (s == %s) { break ; }'')\n', terminal) ;
+    fprintf (f, 'define(`GB_terminal_condition'', `(`$1'' == %s)'')\n', terminal) ;
+    fprintf (f, 'define(`GB_if_terminal_break'', `if (`$1'' == %s) { break ; }'')\n', terminal) ;
 else
     fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
-    fprintf (f, 'define(`GB_has_terminal'', `0'')\n') ;
+    fprintf (f, 'define(`GB_monoid_is_terminal'', `0'')\n') ;
     fprintf (f, 'define(`GB_terminal_value'', `(none)'')\n') ;
-    fprintf (f, 'define(`GB_is_terminal'', `(none)'')\n') ;
-    fprintf (f, 'define(`GB_terminal'', `;'')\n') ;
+    fprintf (f, 'define(`GB_terminal_condition'', `(false)'')\n') ;
+    fprintf (f, 'define(`GB_if_terminal_break'', `;'')\n') ;
 end
 
 if (is_any)
@@ -73,17 +74,28 @@ fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 
 fclose (f) ;
 
-% construct the *.c file
+if (is_monoid)
+    % construct the *.c file for the reduction to scalar
+    cmd = sprintf (...
+    'cat control.m4 Generator/GB_red.c | m4 | tail -n +16 > Generated2/GB_red__%s.c', ...
+    name) ;
+    fprintf ('.') ;
+    system (cmd) ;
+    % append to the *.h file
+    cmd = sprintf (...
+    'cat control.m4 Generator/GB_red.h | m4 | tail -n +16 >> Generated2/GB_red__include.h') ;
+    system (cmd) ;
+end
+
+% construct the build *.c and *.h files
 cmd = sprintf (...
-'cat control.m4 Generator/GB_red.c | m4 | tail -n +16 > Generated2/GB_red__%s.c', ...
+'cat control.m4 Generator/GB_bld.c | m4 | tail -n +16 > Generated2/GB_bld__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
-
-% append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_red.h | m4 | tail -n +16 >> Generated2/GB_red__include.h') ;
+'cat control.m4 Generator/GB_bld.h | m4 | tail -n +16 >> Generated2/GB_bld__include.h') ;
 system (cmd) ;
 
-delete ('control.m4') ;
+% delete ('control.m4') ;
 

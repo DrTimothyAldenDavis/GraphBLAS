@@ -106,7 +106,7 @@
             GB_MULT (cij, aki, bkj, i, k, j) ;                          \
         }                                                               \
         /* if (cij is terminal) break ; */                              \
-        GB_DOT_TERMINAL (cij) ;                                         \
+        GB_IF_TERMINAL_BREAK (cij, zterminal) ;                         \
     }
 
 #endif

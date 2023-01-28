@@ -35,11 +35,11 @@
     GB_WERK_POP (W, GB_void) ;      \
 }
 
-GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
+GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
 (
     void *c,                    // result scalar
     const GrB_Type ctype,       // the type of scalar, c
-    const GrB_BinaryOp accum,   // for c = accum(c,s)
+    const GrB_BinaryOp accum,   // for c = accum(c,z)
     const GrB_Monoid monoid,    // monoid to do the reduction
     const GrB_Matrix A,         // matrix to reduce
     GB_Werk Werk
@@ -62,11 +62,11 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for reduce_to_scalar", GB0) ;
     ASSERT_MATRIX_OK (A, "A for reduce_to_scalar", GB0) ;
 
-    // check domains and dimensions for c = accum (c,s)
+    // check domains and dimensions for c = accum (c,z)
     GrB_Type ztype = monoid->op->ztype ;
     GB_OK (GB_compatible (ctype, NULL, NULL, false, accum, ztype, Werk)) ;
 
-    // s = monoid (s,A) must be compatible
+    // z = monoid (z,A) must be compatible
     if (!GB_Type_compatible (A->type, ztype))
     { 
         return (GrB_DOMAIN_MISMATCH) ;
@@ -92,16 +92,16 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     int64_t anz = GB_nnz_held (A) ;
     ASSERT (anz >= A->nzombies) ;
 
-    // s = identity
-    GB_void s [GB_VLA(zsize)] ;
-    memcpy (s, monoid->identity, zsize) ;   // required, if nnz(A) is zero
+    // z = identity
+    GB_void z [GB_VLA(zsize)] ;
+    memcpy (z, monoid->identity, zsize) ;   // required, if nnz(A) is zero
 
     #ifdef GB_DEBUGIFY_DEFN
     GB_debugify_reduce (monoid, A) ;
     #endif
 
     //--------------------------------------------------------------------------
-    // s = reduce_to_scalar (A) on the GPU(s) or CPU
+    // z = reduce_to_scalar (A) on the GPU(s) or CPU
     //--------------------------------------------------------------------------
 
     #if defined ( GBCUDA )
@@ -112,7 +112,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         // use the GPU(s)
         //----------------------------------------------------------------------
 
-        GB_OK (GB_reduce_to_scalar_cuda (s, monoid, A)) ;
+        GB_OK (GB_reduce_to_scalar_cuda (z, monoid, A)) ;
 
     }
     else
@@ -144,11 +144,11 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         }
 
         //----------------------------------------------------------------------
-        // s = reduce_to_scalar (A)
+        // z = reduce_to_scalar (A)
         //----------------------------------------------------------------------
 
         // get terminal value, if any
-        GB_void *restrict terminal = (GB_void *) monoid->terminal ;
+        GB_void *restrict zterminal = (GB_void *) monoid->terminal ;
 
         if (anz == A->nzombies)
         { 
@@ -168,7 +168,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
             //------------------------------------------------------------------
 
             // this takes at most O(log(nvals(A))) time, for any monoid
-            GB_iso_reduce_to_scalar (s, monoid, A) ;
+            GB_iso_reduce_to_scalar (z, monoid, A) ;
 
         }
         else if (A->type == ztype)
@@ -187,11 +187,11 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
                 //--------------------------------------------------------------
 
                 #define GB_red(opname,aname) \
-                    GB (_red_scalar_ ## opname ## aname)
+                    GB (_red_ ## opname ## aname)
 
-                #define GB_RED_WORKER(opname,aname,atype)                   \
+                #define GB_RED_WORKER(opname,aname,ztype)                   \
                 {                                                           \
-                    info = GB_red (opname, aname) ((atype *) s, A, W, F,    \
+                    info = GB_red (opname, aname) ((ztype *) z, A, W, F,    \
                         ntasks, nthreads) ;                                 \
                     done = (info != GrB_NO_VALUE) ;                         \
                 }                                                           \
@@ -222,29 +222,32 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
                 // the switch factory didn't handle this case
                 GxB_binary_function freduce = monoid->op->binop_function ;
 
-                #define GB_ATYPE GB_void
+                #define GB_A_TYPENAME GB_void
 
                 // no panel used
                 #define GB_PANEL 1
                 #define GB_NO_PANEL_CASE
 
-                // ztype t = identity
-                #define GB_SCALAR_IDENTITY(t)                           \
-                    GB_void t [GB_VLA(zsize)] ;                         \
-                    memcpy (t, monoid->identity, zsize) ;
+                // ztype z = identity
+                #define GB_DECLARE_MONOID_IDENTITY(z)                   \
+                    GB_void z [GB_VLA(zsize)] ;                         \
+                    memcpy (z, monoid->identity, zsize) ;
 
                 // W [tid] = t, no typecast
                 #define GB_COPY_SCALAR_TO_ARRAY(W, tid, t)              \
                     memcpy (W +(tid*zsize), t, zsize)
 
-                // s += W [k], no typecast
-                #define GB_ADD_ARRAY_TO_SCALAR(s,W,k)                   \
-                    freduce (s, s, W +((k)*zsize))
+                // z += W [k], no typecast
+                #define GB_ADD_ARRAY_TO_SCALAR(z,W,k)                   \
+                    freduce (z, z, W +((k)*zsize))
 
                 // break if terminal value reached
-                #define GB_HAS_TERMINAL 1
-                #define GB_IS_TERMINAL(s) \
-                    (terminal != NULL && memcmp (s, terminal, zsize) == 0)
+                // FIXME: split into 2 kernels, terminal and non-terminal
+                #define GB_MONOID_IS_TERMINAL 1
+                #define GB_TERMINAL_CONDITION(z,zterminal)               \
+                    (zterminal != NULL && memcmp (z, zterminal, zsize) == 0)
+                #define GB_IF_TERMINAL_BREAK(z,zterminal)               \
+                    if (GB_TERMINAL_CONDITION (z, zterminal)) break ;
 
                 // t += (ztype) Ax [p], but no typecasting needed
                 #define GB_ADD_CAST_ARRAY_TO_SCALAR(t,Ax,p)             \
@@ -275,23 +278,25 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
                 cast_A_to_Z (awork, Ax +((p)*asize), asize) ;       \
                 freduce (t, t, awork)
 
+            // FIXME: split into 2 kernels, terminal and non-terminal
+
             #include "GB_reduce_to_scalar_template.c"
         }
     }
 
     //--------------------------------------------------------------------------
-    // c = s or c = accum (c,s)
+    // c = z or c = accum (c,z)
     //--------------------------------------------------------------------------
 
-    // This operation does not use GB_accum_mask, since c and s are
+    // This operation does not use GB_accum_mask, since c and z are
     // scalars, not matrices.  There is no scalar mask.
 
     if (accum == NULL)
     { 
-        // c = (ctype) s
+        // c = (ctype) z
         GB_cast_function
             cast_Z_to_C = GB_cast_factory (ctype->code, ztype->code) ;
-        cast_Z_to_C (c, s, ctype->size) ;
+        cast_Z_to_C (c, z, ctype->size) ;
     }
     else
     { 
@@ -310,8 +315,8 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         // xaccum = (accum->xtype) c
         cast_C_to_xaccum (xaccum, c, ctype->size) ;
 
-        // yaccum = (accum->ytype) s
-        cast_Z_to_yaccum (yaccum, s, zsize) ;
+        // yaccum = (accum->ytype) z
+        cast_Z_to_yaccum (yaccum, z, zsize) ;
 
         // zaccum = xaccum "+" yaccum
         faccum (zaccum, xaccum, yaccum) ;

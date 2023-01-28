@@ -352,11 +352,12 @@ const char *GB_charify_identity_or_terminal // return string encoding the value
 
 void GB_macrofy_bytes
 (
+    FILE *fp,               // file to write macros, assumed open already
     // input:
-    FILE *fp,           // File to write macros, assumed open already
-    const char *Name,         // all-upper-case name
-    const char *type_name,    // name of the type
-    const uint8_t *value,     // array of size nbytes
+    const char *Name,       // all-upper-case name
+    const char *variable,   // variable to declaer
+    const char *type_name,  // name of the type
+    const uint8_t *value,   // array of size nbytes
     size_t nbytes
 ) ;
 

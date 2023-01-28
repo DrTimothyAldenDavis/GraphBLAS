@@ -14,22 +14,23 @@
 
 void GB_macrofy_bytes
 (
+    FILE *fp,               // file to write macros, assumed open already
     // input:
-    FILE *fp,           // File to write macros, assumed open already
-    const char *Name,         // all-upper-case name
-    const char *type_name,    // name of the type
-    const uint8_t *value,     // array of size nbytes
+    const char *Name,       // all-upper-case name
+    const char *variable,   // variable to declaer
+    const char *type_name,  // name of the type
+    const uint8_t *value,   // array of size nbytes
     size_t nbytes
 )
 {
 
     fprintf (fp,
-        "#define GB_DECLARE_%s(z) %s z ; \\\n"
+        "#define GB_DECLARE_%s(%s) %s %s ; \\\n"
         "    {                                                       \\\n"
         "        const uint8_t bytes [%d] =                          \\\n"
         "        {                                                   \\\n"
         "            ",
-        Name, type_name, (int) nbytes) ;
+        Name, variable, type_name, variable, (int) nbytes) ;
     for (int k = 0 ; k < nbytes ; k++)
     {
         fprintf (fp, "0x%02x", (int) (value [k])) ;
@@ -43,8 +44,8 @@ void GB_macrofy_bytes
     fprintf (fp,
         "  \\\n"
         "        } ;                                                 \\\n"
-        "        memcpy (&z, bytes, %d) ;                            \\\n"
+        "        memcpy (&%s, bytes, %d) ;                           \\\n"
         "    }\n",
-        (int) nbytes) ;
+        variable, (int) nbytes) ;
 }
 

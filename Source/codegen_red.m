@@ -1,8 +1,8 @@
 function codegen_red
 %CODEGEN_RED create functions for all reduction operators
 %
-% This function creates all files of the form GB_red__*.c,
-% and the include file GB_red__include.h.
+% This function creates all files of the form GB_red__*.c, GB_bld__*.c
+% and the include files GB_red__include.h and GB_bld__include.h.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -17,6 +17,17 @@ fprintf (f, '\n') ;
 fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
 fprintf (f, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
 fprintf (f, '// This file has been automatically generated from Generator/GB_red.h') ;
+fprintf (f, '\n\n') ;
+fclose (f) ;
+
+f = fopen ('Generated2/GB_bld__include.h', 'w') ;
+fprintf (f, '//------------------------------------------------------------------------------\n') ;
+fprintf (f, '// GB_bld__include.h: definitions for GB_bld__*.c\n') ;
+fprintf (f, '//------------------------------------------------------------------------------\n') ;
+fprintf (f, '\n') ;
+fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
+fprintf (f, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
+fprintf (f, '// This file has been automatically generated from Generator/GB_bld.h') ;
 fprintf (f, '\n\n') ;
 fclose (f) ;
 
@@ -138,7 +149,7 @@ fprintf ('\nany    ') ;
 codegen_red_method ('any' , 'zarg = (yarg)'        , 'bool','false') ;
 
 %-------------------------------------------------------------------------------
-% FIRST and SECOND (not monoids; used for GB_red_build__first,second_type)
+% FIRST and SECOND (not monoids; used for GB_bld__first,second_type)
 %-------------------------------------------------------------------------------
 
 % FIRST: 13 ops:    name      op           type        identity terminal panel

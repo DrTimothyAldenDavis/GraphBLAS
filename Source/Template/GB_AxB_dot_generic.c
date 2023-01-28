@@ -103,8 +103,8 @@
         #define GB_PUTC(cij,p) Cx [p] = cij
 
         // break if cij reaches the terminal value
-        #define GB_DOT_TERMINAL(cij)                                    \
-            if (is_terminal && cij == cij_terminal)                     \
+        #define GB_IF_TERMINAL_BREAK(cij, zterminal)                    \
+            if (is_terminal && cij == zterminal)                        \
             {                                                           \
                 break ;                                                 \
             }
@@ -120,11 +120,11 @@
         if (mult->ztype == GrB_INT64)
         {
             #define GB_CTYPE int64_t
-            int64_t cij_terminal = 0 ;
+            int64_t zterminal = 0 ;
             bool is_terminal = (terminal != NULL) ;
             if (is_terminal)
             { 
-                memcpy (&cij_terminal, terminal, sizeof (int64_t)) ;
+                memcpy (&zterminal, terminal, sizeof (int64_t)) ;
             }
             switch (opcode)
             {
@@ -167,11 +167,11 @@
         {
             #undef  GB_CTYPE
             #define GB_CTYPE int32_t
-            int32_t cij_terminal = 0 ;
+            int32_t zterminal = 0 ;
             bool is_terminal = (terminal != NULL) ;
             if (is_terminal)
             { 
-                memcpy (&cij_terminal, terminal, sizeof (int32_t)) ;
+                memcpy (&zterminal, terminal, sizeof (int32_t)) ;
             }
             switch (opcode)
             {
@@ -248,8 +248,8 @@
         #define GB_PUTC(cij,p) memcpy (GB_CX (p), cij, csize)
 
         // break if cij reaches the terminal value
-        #undef  GB_DOT_TERMINAL
-        #define GB_DOT_TERMINAL(cij)                                    \
+        #undef  GB_IF_TERMINAL_BREAK
+        #define GB_IF_TERMINAL_BREAK(cij, zterminal)                    \
             if (terminal != NULL && memcmp (cij, terminal, csize) == 0) \
             {                                                           \
                 break ;                                                 \

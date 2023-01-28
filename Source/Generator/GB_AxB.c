@@ -53,7 +53,7 @@ if_not_any_pair_semiring
 //    OpenMP atomic? GB_has_omp_atomic
 //    identity:      GB_identity
 //    terminal?      GB_monoid_is_terminal
-//    terminal condition: GB_terminal
+//    terminal:      GB_if_terminal_break(z,zterminal)
 // MultAdd:  GB_multiply_add(z,x,y,i,k,j)
 
 #define GB_ATYPE \
@@ -141,9 +141,9 @@ if_not_any_pair_semiring
 #define GB_MONOID_IS_TERMINAL \
     GB_monoid_is_terminal
 
-// break if cij reaches the terminal value (dot product only)
-#define GB_DOT_TERMINAL(cij) \
-    GB_terminal
+// break if z reaches the terminal value (dot product only)
+#define GB_IF_TERMINAL_BREAK(z,zterminal) \
+    GB_if_terminal_break(z,zterminal)
 
 // simd pragma for dot-product loop vectorization
 #define GB_PRAGMA_SIMD_DOT(cij) \

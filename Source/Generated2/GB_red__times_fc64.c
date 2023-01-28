@@ -1,8 +1,10 @@
+
+
 //------------------------------------------------------------------------------
 // GB_red:  hard-coded functions for reductions
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -17,41 +19,27 @@
 
 // The reduction is defined by the following types and operators:
 
-// Assemble tuples:    GB (_red_build__times_fc64)
-// Reduce to scalar:   GB (_red_scalar__times_fc64)
+// Reduce to scalar:   GB (_red__times_fc64)
 
 // A type:   GxB_FC64_t
-// C type:   GxB_FC64_t
+// Z type:   GxB_FC64_t
 
-// Reduce:   s = GB_FC64_mul (s, aij)
+// Reduce:   z = GB_FC64_mul (z, aij)
 // Identity: GxB_CMPLX(1,0)
 // Terminal: ;
 
-#define GB_ATYPE \
+#define GB_A_TYPENAME \
     GxB_FC64_t
 
-#define GB_CTYPE \
+#define GB_Z_TYPENAME \
     GxB_FC64_t
-
-// monoid identity value
-
-    #define GB_IDENTITY \
-        GxB_CMPLX(1,0)
 
 // declare a scalar and set it equal to the monoid identity value
 
-    #define GB_SCALAR_IDENTITY(s)                   \
-        GxB_FC64_t s = GB_IDENTITY
+    #define GB_DECLARE_MONOID_IDENTITY(z)           \
+        GxB_FC64_t z = GxB_CMPLX(1,0)
 
 // Array to array
-
-    // W [k] = (ztype) S [i], with typecast
-    #define GB_CAST_ARRAY_TO_ARRAY(W,k,S,i)         \
-        W [k] = S [i]
-
-    // W [k] += (ztype) S [i], with typecast
-    #define GB_ADD_CAST_ARRAY_TO_ARRAY(W,k,S,i)     \
-        W [k] = GB_FC64_mul (W [k], S [i])
 
     // W [k] += Ax [p], no typecast
     #define GB_ADD_ARRAY_TO_ARRAY(W,k,Ax,p)         \
@@ -75,14 +63,14 @@
 
 // break the loop if terminal condition reached
 
-    #define GB_HAS_TERMINAL                         \
+    #define GB_MONOID_IS_TERMINAL                   \
         0
 
-    #define GB_IS_TERMINAL(s)                       \
-        (none)
+    #define GB_TERMINAL_CONDITION(z,zterminal)      \
+        (false)
 
-    #define GB_TERMINAL_VALUE                       \
-        (none)
+    #define GB_IF_TERMINAL_BREAK(z,zterminal)       \
+        ;
 
 // panel size for built-in operators
 
@@ -102,8 +90,7 @@
 // reduce to a non-iso matrix to scalar, for monoids only
 //------------------------------------------------------------------------------
 
-
-GrB_Info GB (_red_scalar__times_fc64)
+GrB_Info GB (_red__times_fc64)
 (
     GxB_FC64_t *result,
     const GrB_Matrix A,
@@ -116,7 +103,7 @@ GrB_Info GB (_red_scalar__times_fc64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GxB_FC64_t s = (*result) ;
+    GxB_FC64_t z = (*result) ;
     GxB_FC64_t *restrict W = (GxB_FC64_t *) W_space ;
     if (A->nzombies > 0 || GB_IS_BITMAP (A))
     {
@@ -126,34 +113,7 @@ GrB_Info GB (_red_scalar__times_fc64)
     {
         #include "GB_reduce_panel.c"
     }
-    (*result) = s ;
-    return (GrB_SUCCESS) ;
-    #endif
-}
-
-
-//------------------------------------------------------------------------------
-// build a non-iso matrix
-//------------------------------------------------------------------------------
-
-GrB_Info GB (_red_build__times_fc64)
-(
-    GxB_FC64_t *restrict Tx,
-    int64_t  *restrict Ti,
-    const GxB_FC64_t *restrict Sx,
-    int64_t nvals,
-    int64_t ndupl,
-    const int64_t *restrict I_work,
-    const int64_t *restrict K_work,
-    const int64_t *restrict tstart_slice,
-    const int64_t *restrict tnz_slice,
-    int nthreads
-)
-{ 
-    #if GB_DISABLE
-    return (GrB_NO_VALUE) ;
-    #else
-    #include "GB_reduce_build_template.c"
+    (*result) = z ;
     return (GrB_SUCCESS) ;
     #endif
 }

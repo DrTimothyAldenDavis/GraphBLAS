@@ -53,7 +53,7 @@
 //    OpenMP atomic? 1
 //    identity:      true
 //    terminal?      1
-//    terminal condition: if (cij == false) { break ; }
+//    terminal:      if (z == false) { break ; }
 // MultAdd:  z &= (x > y)
 
 #define GB_ATYPE \
@@ -141,9 +141,9 @@
 #define GB_MONOID_IS_TERMINAL \
     1
 
-// break if cij reaches the terminal value (dot product only)
-#define GB_DOT_TERMINAL(cij) \
-    if (cij == false) { break ; }
+// break if z reaches the terminal value (dot product only)
+#define GB_IF_TERMINAL_BREAK(z,zterminal) \
+    if (z == false) { break ; }
 
 // simd pragma for dot-product loop vectorization
 #define GB_PRAGMA_SIMD_DOT(cij) \

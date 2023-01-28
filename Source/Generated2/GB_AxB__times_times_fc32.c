@@ -53,7 +53,7 @@
 //    OpenMP atomic? 0
 //    identity:      GxB_CMPLXF(1,0)
 //    terminal?      0
-//    terminal condition: ;
+//    terminal:      ;
 // MultAdd:  { GxB_FC32_t x_op_y = GB_FC32_mul (x, y) ; z = GB_FC32_mul (z, x_op_y) ; }
 
 #define GB_ATYPE \
@@ -141,8 +141,8 @@
 #define GB_MONOID_IS_TERMINAL \
     0
 
-// break if cij reaches the terminal value (dot product only)
-#define GB_DOT_TERMINAL(cij) \
+// break if z reaches the terminal value (dot product only)
+#define GB_IF_TERMINAL_BREAK(z,zterminal) \
     ;
 
 // simd pragma for dot-product loop vectorization

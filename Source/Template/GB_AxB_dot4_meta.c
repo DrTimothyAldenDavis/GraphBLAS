@@ -22,12 +22,12 @@
 
 // cij += A(k,i) * B(k,j)
 #undef  GB_DOT
-#define GB_DOT(k,pA,pB)                                                 \
-{                                                                       \
-    GB_DOT_TERMINAL (cij) ;         /* break if cij == terminal */      \
-    GB_GETA (aki, Ax, pA, A_iso) ;          /* aki = A(k,i) */          \
-    GB_GETB (bkj, Bx, pB, B_iso) ;          /* bkj = B(k,j) */          \
-    GB_MULTADD (cij, aki, bkj, i, k, j) ;   /* cij += aki * bkj */      \
+#define GB_DOT(k,pA,pB)                                                     \
+{                                                                           \
+    GB_IF_TERMINAL_BREAK (cij, zterminal) ; /* break if cij == zterminal */ \
+    GB_GETA (aki, Ax, pA, A_iso) ;          /* aki = A(k,i) */              \
+    GB_GETB (bkj, Bx, pB, B_iso) ;          /* bkj = B(k,j) */              \
+    GB_MULTADD (cij, aki, bkj, i, k, j) ;   /* cij += aki * bkj */          \
 }
 
 { 

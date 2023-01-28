@@ -96,7 +96,8 @@
             GB_PRAGMA_SIMD_DOT (cij)
             for (int64_t k = 1 ; k < vlen ; k++)
             { 
-                GB_DOT_TERMINAL (cij) ;             // break if cij terminal
+                // break if cij terminal
+                GB_IF_TERMINAL_BREAK (cij, zterminal) ;
                 // cij += A(k,i) * B(k,j)
                 GB_GETA (aki, Ax, pA+k, A_iso) ;    // aki = A(k,i)
                 GB_GETB (bkj, Bx, pB+k, B_iso) ;    // bkj = B(k,j)
@@ -194,7 +195,8 @@
             GB_PRAGMA_SIMD_DOT (cij)
             for (int64_t p = pB+1 ; p < pB_end ; p++)
             { 
-                GB_DOT_TERMINAL (cij) ;             // break if cij terminal
+                // break if cij terminal
+                GB_IF_TERMINAL_BREAK (cij, zterminal) ;
                 int64_t k = Bi [p] ;
                 // cij += (A(k,i) or A(i,k)) * B(k,j)
                 GB_GETA (aki, Ax, GB_A_INDEX(k), A_iso) ; //aki=A(k,i) or A(i,k)
@@ -390,7 +392,8 @@
             GB_PRAGMA_SIMD_DOT (cij)
             for (int64_t p = pA+1 ; p < pA_end ; p++)
             { 
-                GB_DOT_TERMINAL (cij) ;             // break if cij terminal
+                // break if cij terminal
+                GB_IF_TERMINAL_BREAK (cij, zterminal) ;
                 int64_t k = Ai [p] ;
                 // cij += A(k,i) * B(k,j)
                 GB_GETA (aki, Ax, p   , A_iso) ;    // aki = A(k,i)

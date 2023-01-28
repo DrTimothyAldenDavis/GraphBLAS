@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_reduce_panel: s=reduce(A), reduce a matrix to a scalar
+// GB_reduce_panel: z=reduce(A), reduce a matrix to a scalar
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -18,7 +18,7 @@
     // get A
     //--------------------------------------------------------------------------
 
-    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const GB_A_TYPENAME *restrict Ax = (GB_A_TYPENAME *) A->x ;
     ASSERT (!A->iso) ;
     int64_t anz = GB_nnz (A) ;
     ASSERT (anz > 0) ;
@@ -27,7 +27,7 @@
 
     #if GB_IS_ANY_MONOID
     // the ANY monoid can take any entry, and terminate immediately
-    s = Ax [anz-1] ;
+    z = Ax [anz-1] ;
     #else
 
     //--------------------------------------------------------------------------
@@ -41,14 +41,14 @@
         // load the Panel with the first entries
         //----------------------------------------------------------------------
 
-        GB_ATYPE Panel [GB_PANEL] ;
+        GB_A_TYPENAME Panel [GB_PANEL] ;
         int64_t first_panel_size = GB_IMIN (GB_PANEL, anz) ;
         for (int64_t k = 0 ; k < first_panel_size ; k++)
         { 
             Panel [k] = Ax [k] ;
         }
 
-        #if GB_HAS_TERMINAL
+        #if GB_MONOID_IS_TERMINAL
         int panel_count = 0 ;
         #endif
 
@@ -75,7 +75,7 @@
                     // Panel [k] = op (Panel [k], Ax [p+k]) ;
                     GB_ADD_ARRAY_TO_ARRAY (Panel, k, Ax, p+k) ;
                 }
-                #if GB_HAS_TERMINAL
+                #if GB_MONOID_IS_TERMINAL
                 panel_count-- ;
                 if (panel_count <= 0)
                 {
@@ -84,7 +84,7 @@
                     int count = 0 ;
                     for (int64_t k = 0 ; k < GB_PANEL ; k++)
                     { 
-                        count += (Panel [k] == GB_TERMINAL_VALUE) ;
+                        count += GB_TERMINAL_CONDITION (Panel [k], zterminal) ;
                     }
                     if (count > 0)
                     { 
@@ -96,14 +96,14 @@
         }
 
         //----------------------------------------------------------------------
-        // s = reduce (Panel)
+        // z = reduce (Panel)
         //----------------------------------------------------------------------
 
-        s = Panel [0] ;
+        z = Panel [0] ;
         for (int64_t k = 1 ; k < first_panel_size ; k++)
         { 
-            // s = op (s, Panel [k]) ;
-            GB_ADD_ARRAY_TO_SCALAR (s, Panel, k) ;
+            // z = op (z, Panel [k]) ;
+            GB_ADD_ARRAY_TO_SCALAR (z, Panel, k) ;
         }
 
     }
@@ -116,7 +116,7 @@
 
         // If this flag gets set, all tasks can terminate early
 
-        #if GB_HAS_TERMINAL
+        #if GB_MONOID_IS_TERMINAL
         bool early_exit = false ;
         #endif
 
@@ -137,13 +137,13 @@
 
             int64_t pstart, pend ;
             GB_PARTITION (pstart, pend, anz, tid, ntasks) ;
-            GB_ATYPE t = Ax [pstart] ;
+            GB_A_TYPENAME t = Ax [pstart] ;
 
             //------------------------------------------------------------------
             // skip this task if the terminal value has already been reached
             //------------------------------------------------------------------
 
-            #if GB_HAS_TERMINAL
+            #if GB_MONOID_IS_TERMINAL
             // check if another task has called for an early exit
             bool my_exit ;
 
@@ -163,7 +163,7 @@
                 // load the Panel with the first entries
                 //--------------------------------------------------------------
 
-                GB_ATYPE Panel [GB_PANEL] ;
+                GB_A_TYPENAME Panel [GB_PANEL] ;
                 int64_t my_anz = pend - pstart ;
                 int64_t first_panel_size = GB_IMIN (GB_PANEL, my_anz) ;
                 for (int64_t k = 0 ; k < first_panel_size ; k++)
@@ -171,7 +171,7 @@
                     Panel [k] = Ax [pstart + k] ;
                 }
 
-                #if GB_HAS_TERMINAL
+                #if GB_MONOID_IS_TERMINAL
                 int panel_count = 0 ;
                 #endif
 
@@ -198,7 +198,7 @@
                             // Panel [k] = op (Panel [k], Ax [p+k]) ;
                             GB_ADD_ARRAY_TO_ARRAY (Panel, k, Ax, p+k) ;
                         }
-                        #if GB_HAS_TERMINAL
+                        #if GB_MONOID_IS_TERMINAL
                         panel_count-- ;
                         if (panel_count <= 0)
                         {
@@ -207,7 +207,7 @@
                             int count = 0 ;
                             for (int64_t k = 0 ; k < GB_PANEL ; k++)
                             { 
-                                count += (Panel [k] == GB_TERMINAL_VALUE) ;
+                                count += GB_TERMINAL_CONDITION (Panel [k], zterminal) ;
                             }
                             if (count > 0)
                             { 
@@ -229,8 +229,8 @@
                     GB_ADD_ARRAY_TO_SCALAR (t, Panel, k) ;
                 }
 
-                #if GB_HAS_TERMINAL
-                if (t == GB_TERMINAL_VALUE)
+                #if GB_MONOID_IS_TERMINAL
+                if (GB_TERMINAL_CONDITION (t, zterminal))
                 { 
                     // tell all other tasks to exit early
                     GB_ATOMIC_WRITE
@@ -250,11 +250,11 @@
         // sum up the results of each slice using a single thread
         //----------------------------------------------------------------------
 
-        s = W [0] ;
+        z = W [0] ;
         for (int tid = 1 ; tid < ntasks ; tid++)
         { 
-            // s = op (s, W [tid]), no typecast
-            GB_ADD_ARRAY_TO_SCALAR (s, W, tid) ;
+            // z = op (z, W [tid]), no typecast
+            GB_ADD_ARRAY_TO_SCALAR (z, W, tid) ;
         }
     }
     #endif
