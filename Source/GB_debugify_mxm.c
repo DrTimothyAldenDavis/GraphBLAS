@@ -55,7 +55,11 @@ void GB_debugify_mxm
 
     // namify the mxm problem
     char mxm_name [256 + 8*GxB_MAX_NAME_LEN] ;
-    GB_namify_problem (mxm_name, scode,
+    bool builtin = (semiring->header_size == 0) &&
+        (atype->header_size == 0) &&
+        (btype->header_size == 0) &&
+        (ctype->header_size == 0) ;
+    GB_namify_problem (mxm_name, scode, builtin,
         semiring->add->op->name,
         semiring->multiply->name,
         (xcode == 0) ? "void" : semiring->multiply->xtype->name,

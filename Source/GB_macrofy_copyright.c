@@ -22,8 +22,8 @@ void GB_macrofy_copyright
     fprintf (fp,
         "//--------------------------------------"
         "----------------------------------------\n"
-        "// SuiteSparse:GraphBLAS v%d.%d.%d, Timothy A. Davis, (c) 2017-%s,"
-        " All Rights Reserved.\n"
+        "// SuiteSparse:GraphBLAS v%d.%d.%d, Timothy A. Davis, (c) 2017-%s,\n"
+        "// All Rights Reserved.\n"
         "// SPDX-License-Identifier: Apache-2.0\n"
         "// The above copyright and license do not apply to any\n"
         "// user-defined types and operators defined below.\n"
