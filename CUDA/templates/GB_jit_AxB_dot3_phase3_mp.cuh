@@ -447,14 +447,12 @@ __global__ void AxB_dot3_phase3_mp
     }
 
     //--------------------------------------------------------------------------
+    // sum up the global zombie count
+    //--------------------------------------------------------------------------
 
     if( tid ==0 && zc > 0)
     {
-        // printf("warp %d zombie count = %d, nzombies = %d\n", blockIdx.x, zc, C->nzombies);
-        atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)zc);
-        // printf(" Czombie = %lld\n",C->nzombies);
+        GB_atomic_add <int64_t>( &(C->nzombies), zc) ;
     }
-
-  //__syncthreads();
 }
 

@@ -2,8 +2,12 @@
 // GraphBLAS/CUDA/GB_cuda_reduce_factory
 //------------------------------------------------------------------------------
 
-// Class to manage both stringify functions from mxm, ops and monoids to char buffers
-// Also provides a iostream callback to deliver the buffer to jitify as if read from a file
+// Class to manage both stringify functions from mxm, ops and monoids to a
+// header file.
+
+// FIXME: does it?
+// Also provides a iostream callback to deliver the buffer to jitify as
+// if read from a file
 
 // (c) Nvidia Corp. 2020 All rights reserved
 // SPDX-License-Identifier: Apache-2.0
@@ -13,6 +17,7 @@
 // Implementations of string callbacks
 #pragma once
 
+// FIXME: do we use iostream?
 #include <iostream>
 #include <cstdint>
 #include "GB_jit_cache.h"
@@ -23,26 +28,31 @@ extern "C"
     #include "GB_stringify.h"
 }
 
-// FIXME: delegate problem generation to data factory
+//------------------------------------------------------------------------------
+// GB_cuda_reduce_factory: construct code and header file for reduce jit kernel
+//------------------------------------------------------------------------------
+
 class GB_cuda_reduce_factory: public jit::File_Desc {
 
 public:
 
     uint64_t rcode ;        // unique encoding from GB_enumify_reduce
     GrB_Monoid monoid ;     // monoid to perform the reduction
-    GrB_Type atype ;        // matrix data type
+    GrB_Type atype ;        // input matrix data type
+    FILE *fp ;              // file pointer for GB_reduce_*.h header file
 
-    // file ptr
-    FILE *fp;
+    //--------------------------------------------------------------------------
+    // open/close: access the GB_reduce_*.h header file for a specific instance
+    //--------------------------------------------------------------------------
 
-    void open( const char *path_and_file, const char *mode)
+    void open (const char *path_and_file, const char *mode)
     {
-        fp = fopen( path_and_file, mode);
+        fp = fopen (path_and_file, mode) ;
     }
 
     void close( )
     {
-        fclose( fp );
+        fclose (fp) ;
     }
 
     //--------------------------------------------------------------------------
@@ -82,14 +92,14 @@ public:
     void macrofy ( ) override
     {
         GB_macrofy_reduce (
-                // output to file :
-                fp,
-                // input:
-                this->rcode,
-                this->monoid,
-                this->atype
+            // output to file :
+            fp,
+            // input:
+            this->rcode,
+            this->monoid,
+            this->atype
         ) ;
     }
 
-}; // GB_cuda_reduce_factory
+} ; // GB_cuda_reduce_factory
 

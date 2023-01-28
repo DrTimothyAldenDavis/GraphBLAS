@@ -217,10 +217,10 @@ GrB_Desc_Value ;
 #define GBI_UNFLIP(Ai,p,avlen)      \
     ((Ai == NULL) ? ((p) % (avlen)) : GB_UNFLIP (Ai [p]))
 
-#include "GB_nnz.h"
 #include "GB_partition.h"
 #include "GB_pun.h"
 #include "GB_opaque.h"
+#include "GB_nnz.h"
 
 // version for the GPU, with fewer branches
 #define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                             \

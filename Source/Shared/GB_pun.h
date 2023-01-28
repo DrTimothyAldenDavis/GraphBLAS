@@ -7,15 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-// With type punning, a value is treated as a different type, but with no
-// typecasting.  The address of the value is first typecasted to a (type *)
-// pointer, and then the pointer is dereferenced.  The value must not be an
-// expression.
+// With type punning, a lvalue is treated as a different type, but with no
+// typecasting.  The address of the lvalue is first typecasted to a (type *)
+// pointer, and then the pointer is dereferenced.  The lvalue must not be an
+// expression; it must be possible to take its address, as &lvalue.
 
 #ifndef GB_PUN_H
 #define GB_PUN_H
 
-#define GB_PUN(type,value) (*((type *) (&(value))))
+#define GB_PUN(type,lvalue) (*((type *) (&(lvalue))))
 
 #endif
 

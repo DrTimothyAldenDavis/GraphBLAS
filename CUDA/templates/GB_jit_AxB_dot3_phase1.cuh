@@ -20,7 +20,7 @@
 #include <cub/block/block_scan.cuh>
 #include <cooperative_groups.h>
 
-// FIXME: use #include "GB_is.h"
+// FIXME: use #include "GB_is.h" (for debug only)
 // true if A is bitmap
 #define GB_IS_BITMAP(A) ((A) != NULL && ((A)->b != NULL))
 

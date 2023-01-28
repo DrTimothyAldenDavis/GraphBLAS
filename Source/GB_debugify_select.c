@@ -39,9 +39,15 @@ void GB_debugify_select
     char *yname = (ytype == NULL) ? NULL : ytype->name ;
     char *zname = (ztype == NULL) ? NULL : ztype->name ;
 
+    bool builtin = (op == NULL || (op->header_size == 0)) &&
+        ((xtype == NULL) || xtype->header_size == 0) &&
+        ((ytype == NULL) || ytype->header_size == 0) &&
+        ((ztype == NULL) || ztype->header_size == 0) &&
+        (atype->header_size == 0) ;
+
     // namify the select problem
     char select_name [256 + 8*GxB_MAX_NAME_LEN] ;
-    GB_namify_problem (select_name, select_code,
+    GB_namify_problem (select_name, select_code, builtin,
         opname,
         NULL,
         xname,

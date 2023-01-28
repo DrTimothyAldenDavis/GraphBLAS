@@ -40,8 +40,13 @@ void GB_debugify_ewise
 
     // FIXME: use naming convention from GB_debugify_mxm
     // namify the ewise problem
+    bool builtin = ((binaryop == NULL) || binaryop->header_size == 0) &&
+        (atype->header_size == 0) &&
+        (btype->header_size == 0) &&
+        (ctype->header_size == 0) ;
+
     char ewise_name [256 + 8*GxB_MAX_NAME_LEN] ;
-    GB_namify_problem (ewise_name, scode,
+    GB_namify_problem (ewise_name, scode, builtin,
         (binaryop == NULL) ? "none" : binaryop->name,
         NULL,
         (binaryop == NULL) ? "void" : binaryop->xtype->name,

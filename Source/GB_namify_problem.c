@@ -16,6 +16,7 @@ void GB_namify_problem
     char *problem_name,     // of size at least 256 + 8*GxB_MAX_NAME_LEN
     // input:
     const uint64_t scode,
+    const bool builtin,     // true if all objects are builtin
     const char *opname1,    // each string has size at most GxB_MAX_NAME_LEN
     const char *opname2,
     const char *typename1,
@@ -27,15 +28,23 @@ void GB_namify_problem
 )
 {
 
-    sprintf (problem_name, "%016" PRIx64 "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
-        scode,
-        (opname1   == NULL) ? "" : "_", (opname1   == NULL) ? "" : opname1,
-        (opname2   == NULL) ? "" : "_", (opname2   == NULL) ? "" : opname2,
-        (typename1 == NULL) ? "" : "_", (typename1 == NULL) ? "" : typename1,
-        (typename2 == NULL) ? "" : "_", (typename2 == NULL) ? "" : typename2,
-        (typename3 == NULL) ? "" : "_", (typename3 == NULL) ? "" : typename3,
-        (typename4 == NULL) ? "" : "_", (typename4 == NULL) ? "" : typename4,
-        (typename5 == NULL) ? "" : "_", (typename5 == NULL) ? "" : typename5,
-        (typename6 == NULL) ? "" : "_", (typename6 == NULL) ? "" : typename6) ;
+    if (builtin)
+    {
+        // keep the names of built-in operators short
+        sprintf (problem_name, "%016" PRIx64, scode) ;
+    }
+    else
+    {
+        sprintf (problem_name, "%016" PRIx64 "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+            scode,
+            (opname1   == NULL) ? "" : "_", (opname1   == NULL) ? "" : opname1,
+            (opname2   == NULL) ? "" : "_", (opname2   == NULL) ? "" : opname2,
+            (typename1 == NULL) ? "" : "_", (typename1 == NULL) ? "" : typename1,
+            (typename2 == NULL) ? "" : "_", (typename2 == NULL) ? "" : typename2,
+            (typename3 == NULL) ? "" : "_", (typename3 == NULL) ? "" : typename3,
+            (typename4 == NULL) ? "" : "_", (typename4 == NULL) ? "" : typename4,
+            (typename5 == NULL) ? "" : "_", (typename5 == NULL) ? "" : typename5,
+            (typename6 == NULL) ? "" : "_", (typename6 == NULL) ? "" : typename6) ;
+    }
 }
 

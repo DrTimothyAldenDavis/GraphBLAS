@@ -2,7 +2,6 @@
 # GraphBLAS/CUDA/CMakeLists.txt:  cmake script for GraphBLAS/CUDA
 #-------------------------------------------------------------------------------
 
-# FIXME:
 # SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 
 # Some files in this folder are (c) NVIDIA or (c) Google.  Please refer

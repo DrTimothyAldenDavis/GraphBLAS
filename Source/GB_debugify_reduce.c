@@ -22,8 +22,11 @@ void GB_debugify_reduce     // enumerate and macrofy a GrB_reduce problem
 
     GB_enumify_reduce (&rcode, monoid, A) ;
 
+    bool builtin = (monoid->header_size == 0) &&
+        (A->type->header_size == 0) ;
+
     char reduce_name [256 + 2 * GxB_MAX_NAME_LEN] ;
-    GB_namify_problem (reduce_name, rcode,
+    GB_namify_problem (reduce_name, rcode, builtin,
         monoid->op->name,
         NULL,
         monoid->op->ztype->name,

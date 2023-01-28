@@ -34,7 +34,7 @@
 //------------------------------------------------------------------------------
 
 // Constructs an instance of the template/GB_jit_reduce.cuh kernel to reduce
-// a GrB_Matrix to a scalar.  GB_reduce_to_scalar_cuda first
+// a GrB_Matrix to a scalar.
 
 #ifndef GB_REDUCE_JITFACTORY_H
 #define GB_REDUCE_JITFACTORY_H
@@ -43,20 +43,19 @@
 #include "GB_cuda_reduce_factory.hpp"
 
 /**
- * This file is responsible for picking all the parameters and what kernel variaiton we will use for a given instance
+ * This file is responsible for picking all the parameters and what kernel
+ * variaiton we will use for a given instance
  * - data types
  * - semiring types
  * - binary ops
  * - monoids
  *
- * Kernel factory says "Here's the actual instance I want you to build with the given parameters"
+ * Kernel factory says "Here's the actual instance I want you to build with the
+ * given parameters"
  */
 
 // Kernel jitifiers
 class reduceFactory ;
-
-// FIXME: what is spdotFactory?
-template<typename T1, typename T2, typename T3> class spdotFactory ;
 
 //------------------------------------------------------------------------------
 // reduceFactory
@@ -102,7 +101,7 @@ class reduceFactory
 
     int GB_get_number_of_blocks
     (
-        unsigned int64_t anvals     // # of entries in input matrix
+        int64_t anvals     // # of entries in input matrix
     )
     {
         // FIXME: this is a lot of blocks.  Use a smaller number (cap at, say,
@@ -121,18 +120,17 @@ class reduceFactory
     bool jitGridBlockLaunch     // FIXME: return GrB_Info
     (
         GrB_Matrix A,           // matrix to reduce to a scalar
-        void *output,           // output scalar (static on CPU), of size zsize
+        GB_void *output,        // output scalar (static on CPU), of size zsize
         GrB_Monoid monoid,      // monoid to use for the reducution
         cudaStream_t stream = 0 // stream to use, default stream 0
     )
     {
         GBURBLE ("\n(launch reduce factory) \n") ;
 
-        // allocate and initialize zscalar
+        // allocate and initialize zscalar (upscaling it to at least 32 bits)
         size_t zsize = monoid->op->ztype->size ;
-        // FIXME write a helper function to compute zscalar_size
-        size_t zscalar_size = GB_IMAX (zsize, sizeof (uint16_t)) ;
-        void *zscalar = rmm_wrap_malloc (zscalar_size) ;
+        size_t zscalar_size = GB_IMAX (zsize, sizeof (uint32_t)) ;
+        GB_void *zscalar = (GB_void *) rmm_wrap_malloc (zscalar_size) ;
         if (zscalar == NULL)
         {
             // out of memory
@@ -155,11 +153,7 @@ class reduceFactory
 
         int64_t anvals = GB_nnz_held (A) ;
 
-        // TODO: Use RMM!
         uint32_t *mutex ;
-//      CU_OK(cudaMalloc((void**)&mutex, sizeof(int32_t)));
-//      CU_OK(cudaMemsetAsync(mutex, 0, sizeof(int32_t), stream));
-        // FIXED (but not tested): using RMM
         mutex = (uint32_t *) rmm_wrap_calloc (1, sizeof (uint32_t)) ;
         if (mutex == NULL)
         {
@@ -202,8 +196,6 @@ class reduceFactory
         memcpy (output, zscalar, zsize) ;
 
         // free workspace and return result
-//      CU_OK(cudaFree(mutex));
-//      CHECK_CUDA (cudaFree (zscalar)) ;
         rmm_wrap_free (mutex) ;
         rmm_wrap_free (zscalar) ;
 
@@ -219,7 +211,7 @@ inline bool GB_cuda_reduce      // FIXME: return GrB_Info, not bool
 (
     GB_cuda_reduce_factory &myreducefactory,    // reduction JIT factory
     GrB_Matrix A,               // matrix to reduce
-    void *output,               // result of size monoid->op->ztype->size
+    GB_void *output,            // result of size monoid->op->ztype->size
     GrB_Monoid monoid,          // monoid for the reduction
     cudaStream_t stream = 0     // stream to use
 )

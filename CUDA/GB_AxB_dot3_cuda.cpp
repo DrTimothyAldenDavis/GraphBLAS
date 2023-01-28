@@ -56,6 +56,9 @@ void print_array(void *arr, I size, const char *name) {
     GB_phybix_free (C) ;                                                \
 }
 
+//------------------------------------------------------------------------------
+// GB_AxB_dot3_cuda
+//------------------------------------------------------------------------------
 
 GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 (

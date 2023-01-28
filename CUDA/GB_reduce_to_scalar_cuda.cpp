@@ -9,7 +9,7 @@
 
 extern "C"
 {
-#include "GB_reduce.h"
+    #include "GB_reduce.h"
 }
 
 #include "GB_cuda.h"

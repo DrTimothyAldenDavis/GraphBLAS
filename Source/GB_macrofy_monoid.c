@@ -190,13 +190,6 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             }
             break ;
 
-            switch (zcode)
-            {
-                case GB_BOOL_code    :a = "GB_cuda_atomic_bor" ;
-                default              : break ;
-            }
-            break ;
-
         // PLUS:  all types
         case  9 :
         case 10 :
@@ -381,25 +374,26 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         fprintf (fp, "#define GB_HAS_CUDA_ATOMIC 1\n") ;
         fprintf (fp, "#define GB_CUDA_ATOMIC %s\n", a) ;
 
-        // upscale 8-bit types to 16-bits, all others use their native types
+        // upscale 8-bit and 16-bit types to 32-bits,
+        // all others use their native types
         char *t = "" ;
         switch (zcode)
         {
             case GB_ignore_code  : t = "int32_t /* unused; C is iso */" ;
                                    break ;
             case GB_INT8_code    : 
-            case GB_INT16_code   : t = "int16_t"    ; break ;
+            case GB_INT16_code   : 
             case GB_INT32_code   : t = "int32_t"    ; break ;
             case GB_INT64_code   : t = "int64_t"    ; break ;
             case GB_BOOL_code    : 
             case GB_UINT8_code   : 
-            case GB_UINT16_code  : t = "uint16_t"   ; break ;
+            case GB_UINT16_code  : 
             case GB_UINT32_code  : t = "uint32_t"   ; break ;
             case GB_UINT64_code  : t = "uint64_t"   ; break ;
             case GB_FP32_code    : t = "float"      ; break ;
             case GB_FP64_code    : t = "double"     ; break ;
-            case GB_FC32_code    : t = "float complex"  ; break ;
-            case GB_FC64_code    : t = "double complex" ; break ;
+            case GB_FC32_code    : t = "GxB_FC32_t" ; break ;
+            case GB_FC64_code    : t = "GxB_FC64_t" ; break ;
             default :;
         }
         fprintf (fp, "#define GB_CUDA_ATOMIC_TYPE %s\n", t) ;

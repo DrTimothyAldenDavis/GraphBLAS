@@ -109,8 +109,7 @@ __global__ void GB_jit_reduce
     GB_DECLARE_MONOID_IDENTITY (sum) ;  // FIXME: rename this scalar
 
     // On input, zscalar is already initialized to the monoid identity value.
-    // If T_Z has size of 1 byte, zscalar has been upscaled to 2 bytes.
-    // FIXME: does this need to be 4 bytes?
+    // If T_Z has size less than 4 bytes, zscalar has been upscaled to 4 bytes.
 
     //--------------------------------------------------------------------------
     // phase 1: each thread reduces a part of the matrix to its own scalar

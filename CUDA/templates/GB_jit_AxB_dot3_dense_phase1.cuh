@@ -18,6 +18,7 @@
 #include <cooperative_groups.h>
 
 using namespace cooperative_groups;
+
 //------------------------------------------------------------------------------
 // GB_jit_AxB_dot3_dense_phase1: lookup i,j pairs and store in Mi, Ci 
 //------------------------------------------------------------------------------
