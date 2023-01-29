@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_debugify_mxm: dump the definitions for mxm to /tmp/GB_mxm_*.h file
+// GB_debugify_mxm: dump definitions for mxm to /tmp/grb/GB_mxm_*.h file
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
@@ -55,7 +55,8 @@ void GB_debugify_mxm
 
     // namify the mxm problem
     char mxm_name [256 + 8*GxB_MAX_NAME_LEN] ;
-    bool builtin = (semiring->header_size == 0) &&
+    bool builtin = (semiring->add->builtin) &&
+        (semiring->multiply->header_size == 0) &&
         (atype->header_size == 0) &&
         (btype->header_size == 0) &&
         (ctype->header_size == 0) ;
@@ -71,7 +72,7 @@ void GB_debugify_mxm
 
     // construct the filename and create the file
     char filename [512 + 8*GxB_MAX_NAME_LEN] ;
-    sprintf (filename, "/tmp/GB_mxm_%s.h", mxm_name);
+    sprintf (filename, "/tmp/grb/GB_mxm_%s.h", mxm_name);
     FILE *fp = fopen (filename, "w") ;
 
     // FIXME: pass this to GB_macrofy_mxm

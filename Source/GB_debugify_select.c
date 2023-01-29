@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_debugify_select:  dump the definitions for select to /tmp/GB_select_*.h
+// GB_debugify_select:  dump definitions for select to /tmp/grb/GB_select_*.h
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -59,7 +59,7 @@ void GB_debugify_select
 
     // construct the filename and create the file
     char filename [512 + 8*GxB_MAX_NAME_LEN] ;
-    sprintf (filename, "/tmp/GB_select_%s.h", select_name);
+    sprintf (filename, "/tmp/grb/GB_select_%s.h", select_name);
     FILE *fp = fopen (filename, "w") ;
 
     // FIXME: pass this to GB_macrofy_select

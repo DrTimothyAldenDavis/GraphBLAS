@@ -105,6 +105,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     mon->terminal = NULL ;                  // defined below (if present)
     mon->identity_size = 0 ;
     mon->terminal_size = 0 ;
+    mon->builtin = false ;      // set true below if using a builtin binary op
 
     //--------------------------------------------------------------------------
     // allocation of identity and terminal values
@@ -140,8 +141,6 @@ GrB_Info GB_Monoid_new          // create a monoid
     // create a user-defined monoid based on a known built-in monoid
     //--------------------------------------------------------------------------
 
-    bool done = false ;
-
     // If the user requests the creation of a monoid based on a built-in
     // operator that corresponds to known built-in monoid, the identity and
     // terminal values provided by the user to GrB_Monoid_new are ignored,
@@ -161,7 +160,7 @@ GrB_Info GB_Monoid_new          // create a monoid
         ztype *terminal = (ztype *) mon->terminal ;                         \
         (*identity) = identity_value ;                                      \
         (*terminal) = terminal_value ;                                      \
-        done = true ;                                                       \
+        mon->builtin = true ;                                               \
     }                                                                       \
     break ;
 
@@ -172,7 +171,7 @@ GrB_Info GB_Monoid_new          // create a monoid
         GB_ALLOC_IDENTITY ;                                                 \
         ztype *identity = (ztype *) mon->identity ;                         \
         (*identity) = identity_value ;                                      \
-        done = true ;                                                       \
+        mon->builtin = true ;                                               \
     }                                                                       \
     break ;
 
@@ -192,9 +191,9 @@ GrB_Info GB_Monoid_new          // create a monoid
                 case GB_UINT16_code : GB_IT (uint16_t, UINT16_MAX, 0         )
                 case GB_UINT32_code : GB_IT (uint32_t, UINT32_MAX, 0         )
                 case GB_UINT64_code : GB_IT (uint64_t, UINT64_MAX, 0         )
-                case GB_FP32_code   : GB_IT (float   , INFINITY  , -INFINITY )
-                case GB_FP64_code   : GB_IT (double  , ((double)  INFINITY)  ,
-                                                       ((double) -INFINITY)  )
+                // floating-point min is not terminal:
+                case GB_FP32_code   : GB_IN (float   , INFINITY )
+                case GB_FP64_code   : GB_IN (double  , ((double) INFINITY))
                 default: ;
             }
             break ;
@@ -213,9 +212,9 @@ GrB_Info GB_Monoid_new          // create a monoid
                 case GB_UINT16_code : GB_IT (uint16_t, 0         , UINT16_MAX)
                 case GB_UINT32_code : GB_IT (uint32_t, 0         , UINT32_MAX)
                 case GB_UINT64_code : GB_IT (uint64_t, 0         , UINT64_MAX)
-                case GB_FP32_code   : GB_IT (float   , -INFINITY , INFINITY  )
-                case GB_FP64_code   : GB_IT (double  , ((double) -INFINITY)  ,
-                                                       ((double)  INFINITY)  )
+                // floating-point max is not terminal:
+                case GB_FP32_code   : GB_IN (float   , -INFINITY)
+                case GB_FP64_code   : GB_IN (double  , ((double) -INFINITY)) ;
                 default: ;
             }
             break ;
@@ -243,17 +242,18 @@ GrB_Info GB_Monoid_new          // create a monoid
 
         case GB_TIMES_binop_code : 
 
-            // TIMES monoid:  identity is 1, no terminal value
+            // TIMES monoid:  identity is 1, terminal is 0 for integers
             switch (zcode)
             {
-                case GB_INT8_code   : GB_IN (int8_t  , 1 )
-                case GB_INT16_code  : GB_IN (int16_t , 1 )
-                case GB_INT32_code  : GB_IN (int32_t , 1 )
-                case GB_INT64_code  : GB_IN (int64_t , 1 )
-                case GB_UINT8_code  : GB_IN (uint8_t , 1 )
-                case GB_UINT16_code : GB_IN (uint16_t, 1 )
-                case GB_UINT32_code : GB_IN (uint32_t, 1 )
-                case GB_UINT64_code : GB_IN (uint64_t, 1 )
+                case GB_INT8_code   : GB_IT (int8_t  , 1, 0)
+                case GB_INT16_code  : GB_IT (int16_t , 1, 0)
+                case GB_INT32_code  : GB_IT (int32_t , 1, 0)
+                case GB_INT64_code  : GB_IT (int64_t , 1, 0)
+                case GB_UINT8_code  : GB_IT (uint8_t , 1, 0)
+                case GB_UINT16_code : GB_IT (uint16_t, 1, 0)
+                case GB_UINT32_code : GB_IT (uint32_t, 1, 0)
+                case GB_UINT64_code : GB_IT (uint64_t, 1, 0)
+                // floating-point times is not terminal:
                 case GB_FP32_code   : GB_IN (float   , 1 )
                 case GB_FP64_code   : GB_IN (double  , 1 )
                 case GB_FC32_code   : GB_IN (GxB_FC32_t, GxB_CMPLXF(1,0) )
@@ -371,7 +371,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     // operator that is not a known monoid.  Use the identity and terminal
     // values provided on input.
 
-    if (!done)
+    if (!(mon->builtin))
     {
         // create the monoid identity value
         GB_ALLOC_IDENTITY ;

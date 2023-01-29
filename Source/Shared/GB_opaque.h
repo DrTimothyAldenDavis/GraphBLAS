@@ -434,6 +434,7 @@ struct GB_Monoid_opaque     // content of GrB_Monoid
     void *terminal ;        // early-exit (NULL if no value); type is op->ztype
     size_t identity_size ;  // size of the malloc'd block for identity, or 0
     size_t terminal_size ;  // size of the malloc'd block for terminal, or 0
+    bool builtin ;          // if true, binary op is builtin
 } ;
 
 struct GB_Semiring_opaque   // content of GrB_Semiring

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_debugify_ewise: dump the definitions for ewise to /tmp/GB_ewise_*.h file
+// GB_debugify_ewise: dump definitions for ewise to /tmp/grb/GB_ewise_*.h file
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
@@ -58,7 +58,7 @@ void GB_debugify_ewise
 
     // construct the filename and create the file
     char filename [512 + 8*GxB_MAX_NAME_LEN] ;
-    sprintf (filename, "/tmp/GB_ewise_%s.h", ewise_name);
+    sprintf (filename, "/tmp/grb/GB_ewise_%s.h", ewise_name);
     FILE *fp = fopen (filename, "w") ;
 
     // FIXME: pass this to GB_macrofy_ewise

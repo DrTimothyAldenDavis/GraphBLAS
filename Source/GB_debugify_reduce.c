@@ -22,8 +22,7 @@ void GB_debugify_reduce     // enumerate and macrofy a GrB_reduce problem
 
     GB_enumify_reduce (&rcode, monoid, A) ;
 
-    bool builtin = (monoid->header_size == 0) &&
-        (A->type->header_size == 0) ;
+    bool builtin = (monoid->builtin) && (A->type->header_size == 0) ;
 
     char reduce_name [256 + 2 * GxB_MAX_NAME_LEN] ;
     GB_namify_problem (reduce_name, rcode, builtin,
@@ -37,7 +36,7 @@ void GB_debugify_reduce     // enumerate and macrofy a GrB_reduce problem
         NULL) ;
 
     char filename [512 + 2 * GxB_MAX_NAME_LEN] ;
-    sprintf (filename, "/tmp/GB_reduce_%s.h", reduce_name) ;
+    sprintf (filename, "/tmp/grb/GB_reduce_%s.h", reduce_name) ;
     FILE *fp = fopen (filename, "w") ;
 
     // FIXME: pass this to GB_macrofy_reduce
