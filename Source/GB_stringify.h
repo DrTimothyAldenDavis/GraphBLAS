@@ -23,6 +23,7 @@ void GB_macrofy_copyright (FILE *fp) ;
 // uncomment this line to dump GB*.h files to /tmp, or compile with
 // -DGB_DEBUGIFY_DEFN=1
 // #undef  GB_DEBUGIFY_DEFN
+// FIXME: debugify is on
 #define GB_DEBUGIFY_DEFN 1
 
 //------------------------------------------------------------------------------
@@ -423,11 +424,6 @@ void GB_macrofy_type
     const char *what,       // typically X, Y, Z, A, B, or C
     const char *name,       // name of the type
     size_t size             // size of the type
-) ;
-
-size_t GB_padify_typesize   // pad the size of a type
-(
-    size_t size
 ) ;
 
 //------------------------------------------------------------------------------

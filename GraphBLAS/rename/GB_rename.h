@@ -3610,6 +3610,7 @@
 #define GB_debugify_ewise GM_debugify_ewise
 #define GB_debugify_mxm GM_debugify_mxm
 #define GB_debugify_reduce GM_debugify_reduce
+#define GB_debugify_select GM_debugify_select
 #define GB_dense_ewise3_accum GM_dense_ewise3_accum
 #define GB_dense_ewise3_noaccum GM_dense_ewise3_noaccum
 #define GB_dense_subassign_05d GM_dense_subassign_05d
@@ -3641,6 +3642,7 @@
 #define GB_enumify_monoid GM_enumify_monoid
 #define GB_enumify_mxm GM_enumify_mxm
 #define GB_enumify_reduce GM_enumify_reduce
+#define GB_enumify_select GM_enumify_select
 #define GB_enumify_sparsity GM_enumify_sparsity
 #define GB_enumify_terminal GM_enumify_terminal
 #define GB_ERR_getErrorString GM_ERR_getErrorString
@@ -3957,7 +3959,9 @@
 #define GB_LZ4_versionString GM_LZ4_versionString
 #define GB_macrofy_binop GM_macrofy_binop
 #define GB_macrofy_bytes GM_macrofy_bytes
-#define GB_macrofy_cast GM_macrofy_cast
+#define GB_macrofy_cast_expression GM_macrofy_cast_expression
+#define GB_macrofy_cast_input GM_macrofy_cast_input
+#define GB_macrofy_cast_output GM_macrofy_cast_output
 #define GB_macrofy_copyright GM_macrofy_copyright
 #define GB_macrofy_defn GM_macrofy_defn
 #define GB_macrofy_ewise GM_macrofy_ewise
@@ -3965,9 +3969,12 @@
 #define GB_macrofy_mask GM_macrofy_mask
 #define GB_macrofy_monoid GM_macrofy_monoid
 #define GB_macrofy_mxm GM_macrofy_mxm
+#define GB_macrofy_output GM_macrofy_output
 #define GB_macrofy_reduce GM_macrofy_reduce
+#define GB_macrofy_select GM_macrofy_select
 #define GB_macrofy_sparsity GM_macrofy_sparsity
-#define GB_macrofy_types GM_macrofy_types
+#define GB_macrofy_type GM_macrofy_type
+#define GB_macrofy_typedefs GM_macrofy_typedefs
 #define GB_make_shallow GM_make_shallow
 #define GB_malloc_memory GM_malloc_memory
 #define GB_mask GM_mask
@@ -3997,6 +4004,7 @@
 #define GB_msort_3_create_merge_tasks GM_msort_3_create_merge_tasks
 #define GB_mxm GM_mxm
 #define GB_namify_problem GM_namify_problem
+#define GB_namify_select GM_namify_select
 #define GB_new GM_new
 #define GB_new_bix GM_new_bix
 #define GB_nnz GM_nnz
@@ -4129,6 +4137,7 @@
 #define GB_Type_check GM_Type_check
 #define GB_Type_compatible GM_Type_compatible
 #define GB_Type_new GM_Type_new
+#define GB_typify_select GM_typify_select
 #define GB_UnaryOp_check GM_UnaryOp_check
 #define GB_UnaryOp_new GM_UnaryOp_new
 #define GB_unjumble GM_unjumble
