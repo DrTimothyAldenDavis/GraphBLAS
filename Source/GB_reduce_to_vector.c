@@ -127,14 +127,37 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     // create the FIRST_ZTYPE binary operator
     //--------------------------------------------------------------------------
 
-    // Note the function pointer is NULL; it is not needed by FIRST.  The
-    // function defn is also NULL.  In the JIT, the FIRST multiply operator is
-    // a simple assignment so there's no need for a function definition.
-
     struct GB_BinaryOp_opaque op_header ;
-    GrB_BinaryOp op = &op_header ;
-    info = GB_binop_new (op, NULL, ztype, ztype, ztype, "1st", NULL,
-        GB_FIRST_binop_code) ;
+    GrB_BinaryOp op ;
+
+    switch (ztype->code)
+    {
+        case GB_BOOL_code   : op = GrB_FIRST_BOOL   ; break ;
+        case GB_INT8_code   : op = GrB_FIRST_INT8   ; break ;
+        case GB_INT16_code  : op = GrB_FIRST_INT16  ; break ;
+        case GB_INT32_code  : op = GrB_FIRST_INT32  ; break ;
+        case GB_INT64_code  : op = GrB_FIRST_INT64  ; break ;
+        case GB_UINT8_code  : op = GrB_FIRST_UINT8  ; break ;
+        case GB_UINT16_code : op = GrB_FIRST_UINT16 ; break ;
+        case GB_UINT32_code : op = GrB_FIRST_UINT32 ; break ;
+        case GB_UINT64_code : op = GrB_FIRST_UINT64 ; break ;
+        case GB_FP32_code   : op = GrB_FIRST_FP32   ; break ;
+        case GB_FP64_code   : op = GrB_FIRST_FP64   ; break ;
+        case GB_FC32_code   : op = GxB_FIRST_FC32   ; break ;
+        case GB_FC64_code   : op = GxB_FIRST_FC64   ; break ;
+        default : 
+            // Create a FIRST_UDT binary operator.  The function pointer for
+            // the FIRST_UDT op is NULL; it is not needed by FIRST.  The
+            // function defn is also NULL.  In the JIT, the FIRST multiply
+            // operator is a simple assignment so there's no need for a
+            // function definition.  This binary op will not be treated as
+            // a builtin operator, however, since its data type is not builtin.
+            op = &op_header ;
+            op->header_size = 0 ;
+            info = GB_binop_new (op, NULL, ztype, ztype, ztype, "1st", NULL,
+                GB_FIRST_binop_code) ;
+            break ;
+    }
 
     // GB_binop_new cannot fail since it doesn't allocate the function defn.
     ASSERT (info == GrB_SUCCESS) ;
@@ -156,8 +179,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     //--------------------------------------------------------------------------
 
     info = GB_mxm (C, C_replace, M, Mask_comp, Mask_struct, accum,
-        semiring, A, A_transpose, B, false, false, GxB_DEFAULT, do_sort,
-        Werk) ;
+        semiring, A, A_transpose, B, false, false, GxB_DEFAULT, do_sort, Werk) ;
     GB_FREE_ALL ;
     return (info) ;
 }

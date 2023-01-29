@@ -47,7 +47,7 @@ void GB_debugify_select
 
     // namify the select problem
     char select_name [256 + 8*GxB_MAX_NAME_LEN] ;
-    GB_namify_problem (select_name, select_code, builtin,
+    GB_namify_problem (select_name, 8, select_code, builtin,
         opname,
         NULL,
         xname,
@@ -61,6 +61,7 @@ void GB_debugify_select
     char filename [512 + 8*GxB_MAX_NAME_LEN] ;
     sprintf (filename, "/tmp/grb/GB_select_%s.h", select_name);
     FILE *fp = fopen (filename, "w") ;
+    if (fp == NULL) return ;
 
     // FIXME: pass this to GB_macrofy_select
     fprintf (fp,

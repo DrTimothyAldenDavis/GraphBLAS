@@ -435,6 +435,7 @@ void GB_namify_problem
     // output:
     char *problem_name,     // of size at least 256 + 8*GxB_MAX_NAME_LEN
     // input:
+    const int scode_width,  // # of hexadecimal digits to print for scode
     const uint64_t scode,
     const bool builtin,     // true if all objects are builtin
     const char *opname1,    // each string has size at most GxB_MAX_NAME_LEN

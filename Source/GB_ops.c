@@ -557,7 +557,7 @@ const GxB_Format_Value GxB_FORMAT_DEFAULT = GxB_BY_ROW ;
         & GB_OPAQUE (op),                                                   \
         & GB_OPAQUE (GB_EVAL2 (identity_, op)),                             \
         NULL,                                                               \
-        0, 0                                                                \
+        0, 0, true,                                                         \
     } ;                                                                     \
     GrB_Monoid GXB (GB_EVAL2 (op, _MONOID)) =                               \
         & GB_OPAQUE (GB_EVAL2 (op, _MONOID)) ;
@@ -572,7 +572,7 @@ const GxB_Format_Value GxB_FORMAT_DEFAULT = GxB_BY_ROW ;
         & GB_OPAQUE (op),                                                   \
         & GB_OPAQUE (GB_EVAL2 (identity_, op)),                             \
         & GB_OPAQUE (GB_EVAL2 (terminal_, op)),                             \
-        0, 0                                                                \
+        0, 0, true,                                                         \
     } ;                                                                     \
     GrB_Monoid GXB (GB_EVAL2 (op, _MONOID)) =                               \
         & GB_OPAQUE (GB_EVAL2 (op, _MONOID)) ;

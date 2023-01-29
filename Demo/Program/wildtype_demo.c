@@ -38,7 +38,7 @@ wildtype ;                      // C version of wildtype
 #define WILDTYPE_DEFN           \
 "typedef struct "               \
 "{ "                            \
-   "double stuff [4][4] ; "      \
+   "double stuff [4][4] ; "     \
    "char whatstuff [64] ; "     \
 "} "                            \
 "wildtype ;"
@@ -128,17 +128,8 @@ void wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)
 // The newlines (\n) in the defintion below are optional.  They just make
 // GxB_print output readable.
 
-// The use of GxB_STATIC_INLINE_VOID is optional.  The string "void" could be
-// used instead.  The macro is defined as "static inline void" if the
-// user-defined operator is compiled on the CPU JIT.  It becomes
-// "static __device__ __inline__ void" when compiled for the CUDA JIT.
-
-// FIXME: in the CUDA JIT: #include GB_cuda_kernel.h before #include
-// of GB_mxm_0000000*.h
-
 #define WILDTYPE_ADD_DEFN                                                   \
-"GxB_STATIC_INLINE_VOID                                                 \n" \
-"wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)       \n" \
+"void wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)  \n" \
 "{                                                                      \n" \
 "   for (int i = 0 ; i < 4 ; i++)                                       \n" \
 "   {                                                                   \n" \
@@ -176,8 +167,7 @@ void wildtype_mult (wildtype *z, const wildtype *x, const wildtype *y)
 }
 
 #define WILDTYPE_MULT_DEFN                                                  \
-"GxB_STATIC_INLINE_VOID                                                 \n" \
-"wildtype_mult (wildtype *z, const wildtype *x, const wildtype *y)      \n" \
+"void wildtype_mult (wildtype *z, const wildtype *x, const wildtype *y) \n" \
 "{                                                                      \n" \
 "   for (int i = 0 ; i < 4 ; i++)                                       \n" \
 "   {                                                                   \n" \

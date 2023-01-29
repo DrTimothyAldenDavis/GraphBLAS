@@ -67,6 +67,8 @@ template<int threads_per_block, int chunk_size> class dense_phase1launchFactory 
 template<int threads_per_block=32, int chunk_size = 128>
 class dense_phase1launchFactory 
 {
+  // FIXME: this is the full name.  Why?  See below for partial name.
+  // Need to be consistent in naming schemes.
   std::string kernel_name = "GB_jit_AxB_dot3_dense_phase1";
 
   GB_cuda_mxm_factory &mxm_factory_;
@@ -112,17 +114,11 @@ public:
 
     std::stringstream string_to_be_jitted ;
 
+    // FIXME: why does "templates/" appear here but not elsewhere?
     string_to_be_jitted << kernel_name << std::endl <<
-//  R"(#include "GB_cuda_kernel.h")" << std::endl <<
-    R"(#undef  GxB_STATIC_INLINE_VOID)" << std::endl <<
-    R"(#define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
-    R"(#include <stdint.h>)" << std::endl <<
+    R"(#include "GB_cuda_kernel.h")" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "templates/)" << kernel_name << R"(.cuh")" << std::endl;
-
-    // FIXME
-//  std::cout << "=========== RAW JIT INPUT:\n" ;
-//  std::cout << string_to_be_jitted.str() ;
 
     bool result = false;
 
@@ -200,17 +196,12 @@ public:
         (mask_no_type) ? "bool" : M->type->name, sr_code_str };
 
     std::stringstream string_to_be_jitted ;
+
+    // FIXME: why does "templates/" appear here but not elsewhere?
     string_to_be_jitted << kernel_name << std::endl <<
-//  R"(#include "GB_cuda_kernel.h")" << std::endl <<
-    R"(#undef  GxB_STATIC_INLINE_VOID)" << std::endl <<
-    R"(#define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
-    R"(#include <stdint.h>)" << std::endl <<
+    R"(#include "GB_cuda_kernel.h")" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "templates/)" << kernel_name << R"(.cuh")" << std::endl;
-
-    // FIXME
-//  std::cout << "=========== RAW JIT INPUT(2):\n" ;
-//  std::cout << string_to_be_jitted.str() ;
 
     bool result = false;
 
@@ -241,6 +232,7 @@ class phase2launchFactory
 {
 
   std::string base_name = "GB_jit";
+  // FIXME: this is the partial name.  Why?  See above.
   std::string kernel_name = "AxB_phase2";
 
 public:
@@ -274,8 +266,8 @@ public:
 
       std::string hashable_name = base_name + "_" + kernel_name;
       std::stringstream string_to_be_jitted ;
-      string_to_be_jitted <<
-      hashable_name << std::endl << R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
+      string_to_be_jitted << hashable_name << std::endl <<
+        R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
       const int64_t mnz = GB_nnz (M) ;
       jit::launcher( hashable_name,
@@ -333,8 +325,8 @@ public:
 
       std::string hashable_name = base_name + "_" + kernel_name;
       std::stringstream string_to_be_jitted ;
-      string_to_be_jitted <<
-      hashable_name << std::endl << R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
+      string_to_be_jitted << hashable_name << std::endl <<
+        R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
       jit::launcher( hashable_name,
                      string_to_be_jitted.str(),
@@ -412,15 +404,9 @@ public:
     filecache.getFile (mxm_factory_) ;
 
     string_to_be_jitted << hashable_name << std::endl <<
-//  R"(#include "GB_cuda_kernel.h")" << std::endl <<
-    R"(#undef  GxB_STATIC_INLINE_VOID)" << std::endl <<
-    R"(#define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
+    R"(#include "GB_cuda_kernel.h")" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
-
-    // FIXME
-//  std::cout << "=========== RAW JIT INPUT(3):\n" ;
-//  std::cout << string_to_be_jitted.str() ;
 
     dim3 grid(gridsz);
     dim3 block(blocksz);
@@ -529,16 +515,9 @@ public:
     filecache.getFile (mxm_factory_) ;
 
     string_to_be_jitted << hashable_name << std::endl <<
-//  R"(#include "GB_cuda_kernel.h")" << std::endl <<
-    R"(#undef  GxB_STATIC_INLINE_VOID)" << std::endl <<
-    R"(#define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
-    R"(#include <stdint.h>)" << std::endl <<
+    R"(#include "GB_cuda_kernel.h")" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
-
-    // FIXME
-//  std::cout << "=========== RAW JIT INPUT(4):\n" ;
-//  std::cout << string_to_be_jitted.str() ;
 
     dim3 grid(gridsz);
     dim3 block(blocksz);
@@ -652,17 +631,11 @@ public:
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (mxm_factory_) ;
 
+    // FIXME: why is "hashable_name" used sometimes, and sometimes "kernel_name"?
     string_to_be_jitted << hashable_name << std::endl <<
-//  R"(#include "GB_cuda_kernel.h")" << std::endl <<
-    R"(#undef  GxB_STATIC_INLINE_VOID)" << std::endl <<
-    R"(#define GxB_STATIC_INLINE_VOID static __device__ __inline__ void)" << std::endl <<
-    R"(#include <stdint.h>)" << std::endl <<
+    R"(#include "GB_cuda_kernel.h")" << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
-
-    // FIXME
-//  std::cout << "=========== RAW JIT INPUT(5):\n" ;
-//  std::cout << string_to_be_jitted.str() ;
 
     dim3 grid(gridsz);
     dim3 block(blocksz);

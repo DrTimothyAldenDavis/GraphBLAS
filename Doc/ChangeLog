@@ -4,7 +4,6 @@ Version 8.0.0, (FIXME: DATE)
         floating-point for Mac OS on Apple Silicon.
     * Demo/wildtype_demo: change to double so that CPU and GPU versions compute
         the same result.
-    * GxB_STATIC_INLINE_VOID: for user-defined functions
     * GxB_get: can return malloc/calloc/realloc/free 
     * GrB_Descriptor: removed ability to control # of OpenMP threads from the
         descriptor (a rarely used feature).  Replaced with the GxB_Context

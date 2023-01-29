@@ -15,6 +15,7 @@ void GB_namify_problem
     // output:
     char *problem_name,     // of size at least 256 + 8*GxB_MAX_NAME_LEN
     // input:
+    const int scode_width,  // # of hexadecimal digits to print for scode
     const uint64_t scode,
     const bool builtin,     // true if all objects are builtin
     const char *opname1,    // each string has size at most GxB_MAX_NAME_LEN
@@ -31,12 +32,12 @@ void GB_namify_problem
     if (builtin)
     {
         // keep the names of built-in operators short
-        sprintf (problem_name, "%016" PRIx64, scode) ;
+        sprintf (problem_name, "%0*" PRIx64, scode_width, scode) ;
     }
     else
     {
-        sprintf (problem_name, "%016" PRIx64 "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
-            scode,
+        sprintf (problem_name, "_%0*" PRIx64 "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+            scode_width, scode,
             (opname1   == NULL) ? "" : "_", (opname1   == NULL) ? "" : opname1,
             (opname2   == NULL) ? "" : "_", (opname2   == NULL) ? "" : opname2,
             (typename1 == NULL) ? "" : "_", (typename1 == NULL) ? "" : typename1,

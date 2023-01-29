@@ -33,17 +33,6 @@
 #define INFINITY (std::numeric_limits<double>::max())
 #endif
 
-//------------------------------------------------------------------------------
-// for user-defined operations
-//------------------------------------------------------------------------------
-
-// Use this instead of "static inline void" when declaring the string for a
-// user-defined operator to use in the CUDA JIT.  On the CPU, it becomes
-// "static inline void", for the CPU JIT.
-
-#undef  GxB_STATIC_INLINE_VOID
-#define GxB_STATIC_INLINE_VOID static __device__ __inline__ void
-
 // for internal static inline functions
 #undef  GB_STATIC_INLINE
 #define GB_STATIC_INLINE static __device__ __inline__
@@ -66,7 +55,7 @@
 
     #define GB_MULTADD( c, a, b, i, k, j )                              \
     {                                                                   \
-        T_Z x_op_y ;                                                    \
+        T_Z x_op_y ;     /* FIXME: use GB_Z_TYPENAME */                 \
         GB_MULT ( x_op_y, a, b, i, k, j ) ; /* x_op_y = a*b */          \
         GB_ADD ( c, c, x_op_y ) ;           /* c += x_op_y  */          \
     }

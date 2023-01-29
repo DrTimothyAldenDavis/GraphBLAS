@@ -60,7 +60,7 @@ void GB_debugify_mxm
         (atype->header_size == 0) &&
         (btype->header_size == 0) &&
         (ctype->header_size == 0) ;
-    GB_namify_problem (mxm_name, scode, builtin,
+    GB_namify_problem (mxm_name, 16, scode, builtin,
         semiring->add->op->name,
         semiring->multiply->name,
         (xcode == 0) ? "void" : semiring->multiply->xtype->name,
@@ -74,6 +74,7 @@ void GB_debugify_mxm
     char filename [512 + 8*GxB_MAX_NAME_LEN] ;
     sprintf (filename, "/tmp/grb/GB_mxm_%s.h", mxm_name);
     FILE *fp = fopen (filename, "w") ;
+    if (fp == NULL) return ;
 
     // FIXME: pass this to GB_macrofy_mxm
     fprintf (fp,

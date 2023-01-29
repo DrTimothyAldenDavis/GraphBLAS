@@ -147,6 +147,7 @@ class reduceFactory
         std::stringstream string_to_be_jitted ;
         string_to_be_jitted <<
         hashable_name << std::endl <<
+        R"(#include "GB_cuda_kernel.h")" << std::endl <<
         R"(#include ")" << jit::get_user_home_cache_dir() << "/"
         << reduce_factory_.filename << R"(")" << std::endl <<
         R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
