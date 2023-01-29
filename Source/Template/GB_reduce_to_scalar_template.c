@@ -10,6 +10,16 @@
 // Reduce a matrix to a scalar, with typecasting and generic operators.
 // No panel is used.
 
+// z += S [i], no typecast
+#ifndef GB_ADD_ARRAY_TO_SCALAR
+#define GB_ADD_ARRAY_TO_SCALAR(z,S,i) GB_UPDATE (z, S [i])
+#endif
+
+// W [k] = s, no typecast
+#ifndef GB_COPY_SCALAR_TO_ARRAY
+#define GB_COPY_SCALAR_TO_ARRAY(W,k,s) W [k] = s
+#endif
+
 {
 
     //--------------------------------------------------------------------------
@@ -42,8 +52,10 @@
             if (!GBB (Ab, p)) continue ;
             // z += (ztype) Ax [p]
             GB_GETA_AND_UPDATE (z, Ax, p) ;
+            #if GB_MONOID_IS_TERMINAL
             // check for early exit
             GB_IF_TERMINAL_BREAK (z, zterminal) ;
+            #endif
         }
 
     }
@@ -77,8 +89,8 @@
                     found = true ;
                     // t += (ztype) Ax [p]
                     GB_GETA_AND_UPDATE (t, Ax, p) ;
-                    // check for early exit
                     #if GB_MONOID_IS_TERMINAL
+                    // check for early exit
                     if (GB_TERMINAL_CONDITION (t, zterminal))
                     { 
                         // tell the other tasks to exit early
@@ -102,7 +114,7 @@
         {
             if (F [tid])
             { 
-                // z = op (z, W [tid]), no typecast
+                // z += W [tid], no typecast
                 GB_ADD_ARRAY_TO_SCALAR (z, W, tid) ;
             }
         }

@@ -241,19 +241,30 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 #define GB_ADD_ARRAY_TO_SCALAR(z,W,k)                   \
                     freduce (z, z, W +((k)*zsize))
 
-                // break if terminal value reached
-                // FIXME: split into 2 kernels, terminal and non-terminal
-                #define GB_MONOID_IS_TERMINAL 1
-                #define GB_TERMINAL_CONDITION(z,zterminal)               \
-                    (zterminal != NULL && memcmp (z, zterminal, zsize) == 0)
+                // t += (ztype) Ax [p], but no typecasting needed
+                #define GB_GETA_AND_UPDATE(t,Ax,p)                      \
+                    freduce (t, t, Ax +((p)*zsize))
+
+                // terminal condition (not used if the monoid is not terminal)
+                #define GB_TERMINAL_CONDITION(z,zterminal)              \
+                    (memcmp (z, zterminal, zsize) == 0)
                 #define GB_IF_TERMINAL_BREAK(z,zterminal)               \
                     if (GB_TERMINAL_CONDITION (z, zterminal)) break ;
 
-                // t += (ztype) Ax [p], but no typecasting needed
-                #define GB_GETA_AND_UPDATE(t,Ax,p)             \
-                    freduce (t, t, Ax +((p)*zsize))
+                if (zterminal == NULL)
+                {
+                    // monoid is not terminal
+                    #define GB_MONOID_IS_TERMINAL 0
+                    #include "GB_reduce_to_scalar_template.c"
+                }
+                else
+                {
+                    // break if terminal value reached
+                    #undef  GB_MONOID_IS_TERMINAL
+                    #define GB_MONOID_IS_TERMINAL 1
+                    #include "GB_reduce_to_scalar_template.c"
+                }
 
-                #include "GB_reduce_to_scalar_template.c"
             }
 
         }
@@ -278,9 +289,20 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 cast_A_to_Z (awork, Ax +((p)*asize), asize) ;       \
                 freduce (t, t, awork)
 
-            // FIXME: split into 2 kernels, terminal and non-terminal
-
-            #include "GB_reduce_to_scalar_template.c"
+            if (zterminal == NULL)
+            {
+                // monoid is not terminal
+                #undef  GB_MONOID_IS_TERMINAL
+                #define GB_MONOID_IS_TERMINAL 0
+                #include "GB_reduce_to_scalar_template.c"
+            }
+            else
+            {
+                // break if terminal value reached
+                #undef  GB_MONOID_IS_TERMINAL
+                #define GB_MONOID_IS_TERMINAL 1
+                #include "GB_reduce_to_scalar_template.c"
+            }
         }
     }
 

@@ -8,10 +8,16 @@
 //------------------------------------------------------------------------------
 
 // Reduce a matrix to a scalar using a panel-based method for built-in
-// operators.  No typecasting is performed.  A must be sparse, hypersparse, or
-// full (it cannot be bitmap).  A cannot have any zombies.  If A has zombies or
-// is bitmap, GB_reduce_to_scalar_template is used instead.  User defined types
-// (with memcpy) are not supported.
+// operators.  A must be sparse, hypersparse, or full (it cannot be bitmap).  A
+// cannot have any zombies.  If A has zombies or is bitmap,
+// GB_reduce_to_scalar_template is used instead.
+
+// User defined types (via memcpy) are not supported.
+
+// default panel size
+#ifndef GB_PANEL
+#define GB_PANEL 16
+#endif
 
 {
 
@@ -45,8 +51,6 @@
         GB_Z_TYPENAME Panel [GB_PANEL] ;
         int64_t first_panel_size = GB_IMIN (GB_PANEL, anz) ;
         for (int64_t k = 0 ; k < first_panel_size ; k++)
-        { 
-            Panel [k] = Ax [k] ;
         }
 
         #if GB_MONOID_IS_TERMINAL
@@ -64,8 +68,8 @@
                 // last partial panel
                 for (int64_t k = 0 ; k < anz-p ; k++)
                 { 
-                    // Panel [k] += Ax [p+k]
-                    GB_ADD_ARRAY_TO_ARRAY (Panel, k, Ax, p+k) ;
+                    // Panel [k] += (ztype) Ax [p+k]
+                    GB_UPDATE (Panel [k], Ax, p+k) ;
                 }
             }
             else
@@ -73,8 +77,8 @@
                 // whole panel
                 for (int64_t k = 0 ; k < GB_PANEL ; k++)
                 { 
-                    // Panel [k] += Ax [p+k]
-                    GB_ADD_ARRAY_TO_ARRAY (Panel, k, Ax, p+k) ;
+                    // Panel [k] += (ztype) Ax [p+k]
+                    GB_UPDATE (Panel [k], Ax, p+k) ;
                 }
                 #if GB_MONOID_IS_TERMINAL
                 panel_count-- ;
@@ -104,7 +108,7 @@
         for (int64_t k = 1 ; k < first_panel_size ; k++)
         { 
             // z += Panel [k]
-            GB_ADD_ARRAY_TO_SCALAR (z, Panel, k) ;
+            GB_UPDATE (z, Panel [k]) ;
         }
 
     }
@@ -187,8 +191,8 @@
                         // last partial panel
                         for (int64_t k = 0 ; k < pend-p ; k++)
                         { 
-                            // Panel [k] += Ax [p+k]
-                            GB_ADD_ARRAY_TO_ARRAY (Panel, k, Ax, p+k) ;
+                            // Panel [k] += (ztype) Ax [p+k]
+                            GB_UPDATE (Panel [k], Ax, p+k) ;
                         }
                     }
                     else
@@ -196,8 +200,8 @@
                         // whole panel
                         for (int64_t k = 0 ; k < GB_PANEL ; k++)
                         { 
-                            // Panel [k] += Ax [p+k]
-                            GB_ADD_ARRAY_TO_ARRAY (Panel, k, Ax, p+k) ;
+                            // Panel [k] += (ztype) Ax [p+k]
+                            GB_UPDATE (Panel [k], Ax, p+k) ;
                         }
                         #if GB_MONOID_IS_TERMINAL
                         panel_count-- ;
@@ -228,7 +232,7 @@
                 for (int64_t k = 1 ; k < first_panel_size ; k++)
                 { 
                     // t += Panel [k]
-                    GB_ADD_ARRAY_TO_SCALAR (t, Panel, k) ;
+                    GB_UPDATE (t, Panel [k]) ;
                 }
 
                 #if GB_MONOID_IS_TERMINAL
@@ -256,7 +260,7 @@
         for (int tid = 1 ; tid < ntasks ; tid++)
         { 
             // z += W [tid]
-            GB_ADD_ARRAY_TO_SCALAR (z, W, tid) ;
+            GB_UPDATE (z, W [tid]) ;
         }
     }
     #endif

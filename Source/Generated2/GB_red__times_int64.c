@@ -39,27 +39,15 @@
     #define GB_DECLARE_MONOID_IDENTITY(z)           \
         int64_t z = 1
 
-// Array to array
+// reduction operator:
 
-    // W [k] += Ax [p], no typecast
-    #define GB_ADD_ARRAY_TO_ARRAY(W,k,Ax,p)         \
-        W [k] *= Ax [p]  
+    // z += y, no typecast
+    #define GB_UPDATE(z,y) \
+        z *= y
 
-// Array to scalar
-
-    // s += (ztype) Ax [p], no typecast here
+    // s += (ztype) Ax [p], no typecast here however
     #define GB_GETA_AND_UPDATE(s,Ax,p)              \
-        s *= Ax [p]
-
-    // s += S [i], no typecast
-    #define GB_ADD_ARRAY_TO_SCALAR(s,S,i)           \
-        s *= S [i]
-
-// Scalar to array
-
-    // W [k] = s, no typecast
-    #define GB_COPY_SCALAR_TO_ARRAY(W,k,s)          \
-        W [k] = s
+        GB_UPDATE (s, Ax [p])
 
 // break the loop if terminal condition reached
 
