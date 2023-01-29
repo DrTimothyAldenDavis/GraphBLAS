@@ -43,10 +43,12 @@ A_is_pattern = (isempty (strfind (op, 'xarg'))) ;
 % to get an entry from A
 if (A_is_pattern)
     % A(i,j) is not needed
+    fprintf (f, 'define(`GB_declarea'', `;'')\n') ;
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
 else
     % A is not iso, so GBX (Ax, p, A->iso) is not needed
-    fprintf (f, 'define(`GB_geta'', `%s $1 = $2 [$3]'')\n', xtype) ;
+    fprintf (f, 'define(`GB_declarea'', `%s $1'')\n', xtype) ;
+    fprintf (f, 'define(`GB_geta'', `$1 = $2 [$3]'')\n') ;
 end
 
 % type-specific iminv

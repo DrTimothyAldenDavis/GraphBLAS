@@ -154,20 +154,24 @@ end
 % to get an entry from A
 if (isequal (binop, 'second') || isequal (binop, 'pair'))
     % the value of A is ignored
+    fprintf (f, 'define(`GB_declarea'', `;'')\n') ;
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
     fprintf (f, 'define(`GB_a_is_pattern'', `1'')\n') ;
 else
-    fprintf (f, 'define(`GB_geta'', `%s $1 = GBX ($2, $3, $4)'')\n', xtype) ;
+    fprintf (f, 'define(`GB_declarea'', `%s $1'')\n', xtype) ;
+    fprintf (f, 'define(`GB_geta'', `$1 = GBX ($2, $3, $4)'')\n') ;
     fprintf (f, 'define(`GB_a_is_pattern'', `0'')\n') ;
 end
 
 % to get an entry from B
 if (isequal (binop, 'first') || isequal (binop, 'pair'))
     % the value of B is ignored
+    fprintf (f, 'define(`GB_declareb'', `;'')\n') ;
     fprintf (f, 'define(`GB_getb'', `;'')\n') ;
     fprintf (f, 'define(`GB_b_is_pattern'', `1'')\n') ;
 else
-    fprintf (f, 'define(`GB_getb'', `%s $1 = GBX ($2, $3, $4)'')\n', ytype) ;
+    fprintf (f, 'define(`GB_declareb'', `%s $1'')\n', ytype) ;
+    fprintf (f, 'define(`GB_getb'', `$1 = GBX ($2, $3, $4)'')\n') ;
     fprintf (f, 'define(`GB_b_is_pattern'', `0'')\n') ;
 end
 

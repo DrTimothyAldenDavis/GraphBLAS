@@ -9,6 +9,8 @@
 
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__min_int8)
 (
@@ -19,6 +21,8 @@ GrB_Info GB (_red__min_int8)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -33,6 +37,8 @@ GrB_Info GB (_red__min_int16)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__min_int32)
 (
@@ -43,6 +49,8 @@ GrB_Info GB (_red__min_int32)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -57,6 +65,8 @@ GrB_Info GB (_red__min_int64)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__min_uint8)
 (
@@ -67,6 +77,8 @@ GrB_Info GB (_red__min_uint8)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -81,6 +93,8 @@ GrB_Info GB (_red__min_uint16)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__min_uint32)
 (
@@ -91,6 +105,8 @@ GrB_Info GB (_red__min_uint32)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -105,6 +121,8 @@ GrB_Info GB (_red__min_uint64)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__min_fp32)
 (
@@ -115,6 +133,8 @@ GrB_Info GB (_red__min_fp32)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -129,6 +149,8 @@ GrB_Info GB (_red__min_fp64)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__max_int8)
 (
@@ -139,6 +161,8 @@ GrB_Info GB (_red__max_int8)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -153,6 +177,8 @@ GrB_Info GB (_red__max_int16)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__max_int32)
 (
@@ -163,6 +189,8 @@ GrB_Info GB (_red__max_int32)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -177,6 +205,8 @@ GrB_Info GB (_red__max_int64)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__max_uint8)
 (
@@ -187,6 +217,8 @@ GrB_Info GB (_red__max_uint8)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -201,6 +233,8 @@ GrB_Info GB (_red__max_uint16)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__max_uint32)
 (
@@ -211,6 +245,8 @@ GrB_Info GB (_red__max_uint32)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -225,6 +261,8 @@ GrB_Info GB (_red__max_uint64)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__max_fp32)
 (
@@ -235,6 +273,8 @@ GrB_Info GB (_red__max_fp32)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -249,6 +289,8 @@ GrB_Info GB (_red__max_fp64)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__any_bool)
 (
@@ -259,6 +301,8 @@ GrB_Info GB (_red__any_bool)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -273,6 +317,8 @@ GrB_Info GB (_red__any_int8)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__any_int16)
 (
@@ -283,6 +329,8 @@ GrB_Info GB (_red__any_int16)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -297,6 +345,8 @@ GrB_Info GB (_red__any_int32)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__any_int64)
 (
@@ -307,6 +357,8 @@ GrB_Info GB (_red__any_int64)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -321,6 +373,8 @@ GrB_Info GB (_red__any_uint8)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__any_uint16)
 (
@@ -331,6 +385,8 @@ GrB_Info GB (_red__any_uint16)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -345,6 +401,8 @@ GrB_Info GB (_red__any_uint32)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__any_uint64)
 (
@@ -355,6 +413,8 @@ GrB_Info GB (_red__any_uint64)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -369,6 +429,8 @@ GrB_Info GB (_red__any_fp32)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__any_fp64)
 (
@@ -379,6 +441,8 @@ GrB_Info GB (_red__any_fp64)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -393,6 +457,8 @@ GrB_Info GB (_red__any_fc32)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__any_fc64)
 (
@@ -403,6 +469,8 @@ GrB_Info GB (_red__any_fc64)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -417,6 +485,8 @@ GrB_Info GB (_red__plus_int8)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__plus_int16)
 (
@@ -427,6 +497,8 @@ GrB_Info GB (_red__plus_int16)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -441,6 +513,8 @@ GrB_Info GB (_red__plus_int32)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__plus_int64)
 (
@@ -451,6 +525,8 @@ GrB_Info GB (_red__plus_int64)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -465,6 +541,8 @@ GrB_Info GB (_red__plus_uint8)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__plus_uint16)
 (
@@ -475,6 +553,8 @@ GrB_Info GB (_red__plus_uint16)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -489,6 +569,8 @@ GrB_Info GB (_red__plus_uint32)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__plus_uint64)
 (
@@ -499,6 +581,8 @@ GrB_Info GB (_red__plus_uint64)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -513,6 +597,8 @@ GrB_Info GB (_red__plus_fp32)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__plus_fp64)
 (
@@ -523,6 +609,8 @@ GrB_Info GB (_red__plus_fp64)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -537,6 +625,8 @@ GrB_Info GB (_red__plus_fc32)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__plus_fc64)
 (
@@ -547,6 +637,8 @@ GrB_Info GB (_red__plus_fc64)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -561,6 +653,8 @@ GrB_Info GB (_red__times_int8)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__times_int16)
 (
@@ -571,6 +665,8 @@ GrB_Info GB (_red__times_int16)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -585,6 +681,8 @@ GrB_Info GB (_red__times_int32)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__times_int64)
 (
@@ -595,6 +693,8 @@ GrB_Info GB (_red__times_int64)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -609,6 +709,8 @@ GrB_Info GB (_red__times_uint8)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__times_uint16)
 (
@@ -619,6 +721,8 @@ GrB_Info GB (_red__times_uint16)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -633,6 +737,8 @@ GrB_Info GB (_red__times_uint32)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__times_uint64)
 (
@@ -643,6 +749,8 @@ GrB_Info GB (_red__times_uint64)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -657,6 +765,8 @@ GrB_Info GB (_red__times_fp32)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__times_fp64)
 (
@@ -667,6 +777,8 @@ GrB_Info GB (_red__times_fp64)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -681,6 +793,8 @@ GrB_Info GB (_red__times_fc32)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__times_fc64)
 (
@@ -691,6 +805,8 @@ GrB_Info GB (_red__times_fc64)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -705,6 +821,8 @@ GrB_Info GB (_red__lor_bool)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__land_bool)
 (
@@ -715,6 +833,8 @@ GrB_Info GB (_red__land_bool)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0
@@ -729,6 +849,8 @@ GrB_Info GB (_red__lxor_bool)
 ) ;
 
 
+
+
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_red__eq_bool)
 (
@@ -739,6 +861,8 @@ GrB_Info GB (_red__eq_bool)
     int ntasks,
     int nthreads
 ) ;
+
+
 
 
 // SPDX-License-Identifier: Apache-2.0

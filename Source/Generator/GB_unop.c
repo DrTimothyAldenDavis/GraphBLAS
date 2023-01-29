@@ -31,6 +31,10 @@
 #define GB_CTYPE \
     GB_ctype
 
+// declare aij as atype
+#define GB_DECLAREA(aij) \
+    GB_declarea(aij)
+
 // aij = Ax [pA]
 #define GB_GETA(aij,Ax,pA,A_iso) \
     GB_geta(aij,Ax,pA,false)
@@ -49,6 +53,7 @@
 #define GB_CAST_OP(pC,pA)           \
 {                                   \
     /* aij = Ax [pA] */             \
+    GB_declarea(aij) ;              \
     GB_geta(aij, Ax, pA, false) ;   \
     /* Cx [pC] = op (cast (aij)) */ \
     GB_cast(z, aij) ;               \
@@ -82,6 +87,7 @@ GrB_Info GB (_unop_apply)
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < anz ; p++)
         {
+            GB_declarea(aij) ;
             GB_geta(aij, Ax, p, false) ;
             GB_cast(z, aij) ;
             GB_unaryop(Cx [p], z) ;
@@ -94,6 +100,7 @@ GrB_Info GB (_unop_apply)
         for (p = 0 ; p < anz ; p++)
         {
             if (!Ab [p]) continue ;
+            GB_declarea(aij) ;
             GB_geta(aij, Ax, p, false) ;
             GB_cast(z, aij) ;
             GB_unaryop(Cx [p], z) ;

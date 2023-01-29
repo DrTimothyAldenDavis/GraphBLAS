@@ -77,10 +77,12 @@
             // C(:,j) = A(:,j)*D(j,j)
             //------------------------------------------------------------------
 
+            GB_DECLAREB (djj) ;
             GB_GETB (djj, Dx, j, D_iso) ;           // djj = D (j,j)
             GB_PRAGMA_SIMD_VECTORIZE
             for (int64_t p = pA_start ; p < pA_end ; p++)
             { 
+                GB_DECLAREA (aij) ;
                 GB_GETA (aij, Ax, p, A_iso) ;           // aij = A(i,j)
                 GB_BINOP (GB_CX (p), aij, djj, 0, 0) ;  // C(i,j) = aij * djj
             }

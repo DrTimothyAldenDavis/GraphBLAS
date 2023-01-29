@@ -1,4 +1,6 @@
 
+
+
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -67,6 +69,10 @@
 #define GB_CTYPE_IS_BTYPE \
     1
 
+// declare aij as atype
+#define GB_DECLAREA(aij) \
+    ;
+
 // aij = Ax [pA]
 #define GB_GETA(aij,Ax,pA,A_iso)  \
     ;
@@ -75,9 +81,13 @@
 #define GB_A_IS_PATTERN \
     1 \
 
+// declare bij as btype
+#define GB_DECLAREB(bij)  \
+    GxB_FC32_t bij
+
 // bij = Bx [pB]
 #define GB_GETB(bij,Bx,pB,B_iso)  \
-    GxB_FC32_t bij = GBX (Bx, pB, B_iso)
+    bij = GBX (Bx, pB, B_iso)
 
 // true if values of B are not used
 #define GB_B_IS_PATTERN \
@@ -469,7 +479,8 @@ GrB_Info GB ((none))
     for (p = 0 ; p < bnz ; p++)
     {
         if (!GBB (Bb, p)) continue ;
-        GxB_FC32_t bij = GBX (Bx, p, false) ;
+        GxB_FC32_t bij ;
+        bij = GBX (Bx, p, false) ;
         Cx [p] = bij ;
     }
     return (GrB_SUCCESS) ;
@@ -506,6 +517,7 @@ GrB_Info GB ((none))
     {
         if (!GBB (Ab, p)) continue ;
         ; ;
+        ; ;
         Cx [p] = y ;
     }
     return (GrB_SUCCESS) ;
@@ -524,7 +536,8 @@ GrB_Info GB ((none))
 #undef  GB_CAST_OP
 #define GB_CAST_OP(pC,pA)                       \
 {                                               \
-    GxB_FC32_t aij = GBX (Ax, pA, false) ;               \
+    GxB_FC32_t aij ;                          \
+    aij = GBX (Ax, pA, false) ;               \
     Cx [pC] = aij ;        \
 }
 
@@ -568,6 +581,7 @@ GrB_Info GB ((none))
 #undef  GB_CAST_OP
 #define GB_CAST_OP(pC,pA)                       \
 {                                               \
+    ; ;                          \
     ; ;               \
     Cx [pC] = y ;        \
 }

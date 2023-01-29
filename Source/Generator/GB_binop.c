@@ -66,6 +66,10 @@
 #define GB_CTYPE_IS_BTYPE \
     GB_ctype_is_btype
 
+// declare aij as atype
+#define GB_DECLAREA(aij) \
+    GB_declarea(aij)
+
 // aij = Ax [pA]
 #define GB_GETA(aij,Ax,pA,A_iso)  \
     GB_geta(aij,Ax,pA,A_iso)
@@ -73,6 +77,10 @@
 // true if values of A are not used
 #define GB_A_IS_PATTERN \
     GB_a_is_pattern \
+
+// declare bij as btype
+#define GB_DECLAREB(bij)  \
+    GB_declareb(bij)
 
 // bij = Bx [pB]
 #define GB_GETB(bij,Bx,pB,B_iso)  \
@@ -468,6 +476,7 @@ GrB_Info GB (_bind1st)
     for (p = 0 ; p < bnz ; p++)
     {
         if (!GBB (Bb, p)) continue ;
+        GB_declareb(bij) ;
         GB_getb(bij, Bx, p, false) ;
         GB_binaryop(Cx [p], x, bij, 0, 0) ;
     }
@@ -504,6 +513,7 @@ GrB_Info GB (_bind2nd)
     for (p = 0 ; p < anz ; p++)
     {
         if (!GBB (Ab, p)) continue ;
+        GB_declarea(aij) ;
         GB_geta(aij, Ax, p, false) ;
         GB_binaryop(Cx [p], aij, y, 0, 0) ;
     }
@@ -523,6 +533,7 @@ if_binop_bind_is_enabled
 #undef  GB_CAST_OP
 #define GB_CAST_OP(pC,pA)                       \
 {                                               \
+    GB_declareb(aij) ;                          \
     GB_getb(aij, Ax, pA, false) ;               \
     GB_binaryop(Cx [pC], x, aij, 0, 0) ;        \
 }
@@ -567,6 +578,7 @@ if_binop_bind_is_enabled
 #undef  GB_CAST_OP
 #define GB_CAST_OP(pC,pA)                       \
 {                                               \
+    GB_declarea(aij) ;                          \
     GB_geta(aij, Ax, pA, false) ;               \
     GB_binaryop(Cx [pC], aij, y, 0, 0) ;        \
 }

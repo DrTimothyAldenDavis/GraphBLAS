@@ -96,7 +96,7 @@ void GB_ewise_generic       // generic ewise
 //  const bool flipxy = (ewise_method < 0) ;        TODO
     const bool flipxy = (ewise_method == GB_EMULT_METHOD3) ;
 
-    const GxB_binary_function fop = op->binop_function ; // NULL if op positional
+    const GxB_binary_function fop = op->binop_function ; // NULL if positional
     const size_t csize = ctype->size ;
     const size_t asize = A->type->size ;
     const size_t bsize = B->type->size ;
@@ -115,18 +115,24 @@ void GB_ewise_generic       // generic ewise
 
     const GB_cast_function cast_Z_to_C =
         GB_cast_factory (ccode, op->ztype->code) ;
+    
+    // declare aij as xtype
+    #define GB_DECLAREA(aij)                                            \
+        GB_void aij [GB_VLA(xsize)] ;
 
     // aij = (xtype) A(i,j), located in Ax [pA]
     #define GB_GETA(aij,Ax,pA,A_iso)                                    \
-        GB_void aij [GB_VLA(xsize)] ;                                   \
         if (cast_A_to_X != NULL)                                        \
         {                                                               \
             cast_A_to_X (aij, Ax +((A_iso) ? 0:(pA)*asize), asize) ;    \
         }
 
+    // declare bij as ytype
+    #define GB_DECLAREB(bij)                                            \
+        GB_void bij [GB_VLA(ysize)] ;
+
     // bij = (ytype) B(i,j), located in Bx [pB]
     #define GB_GETB(bij,Bx,pB,B_iso)                                    \
-        GB_void bij [GB_VLA(ysize)] ;                                   \
         if (cast_B_to_Y != NULL)                                        \
         {                                                               \
             cast_B_to_Y (bij, Bx +((B_iso) ? 0:(pB)*bsize), bsize) ;    \

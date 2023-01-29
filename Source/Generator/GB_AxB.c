@@ -82,6 +82,10 @@ if_not_any_pair_semiring
 #define GB_CTYPE_IGNORE_OVERFLOW \
     GB_ctype_ignore_overflow
 
+// declare aik as atype
+#define GB_DECLAREA(aik) \
+    GB_declarea(aik)
+
 // aik = Ax [pA]
 #define GB_GETA(aik,Ax,pA,A_iso) \
     GB_geta(aik,Ax,pA,A_iso)
@@ -89,6 +93,10 @@ if_not_any_pair_semiring
 // true if values of A are not used
 #define GB_A_IS_PATTERN \
     GB_a_is_pattern \
+
+// declare bkj as btype
+#define GB_DECLAREB(bkj) \
+    GB_declareb(bkj)
 
 // bkj = Bx [pB]
 #define GB_GETB(bkj,Bx,pB,B_iso) \

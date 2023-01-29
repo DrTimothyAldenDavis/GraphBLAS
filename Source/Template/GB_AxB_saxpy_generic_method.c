@@ -190,10 +190,12 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
 
         // aik = A(i,k), located in Ax [A_iso ? 0:pA], value not used
         #define GB_A_IS_PATTERN 1
+        #define GB_DECLAREA(aik) ;
         #define GB_GETA(aik,Ax,pA,A_iso) ;
 
         // bkj = B(k,j), located in Bx [B_iso ? 0:pB], value not used
         #define GB_B_IS_PATTERN 1
+        #define GB_DECLAREB(bkj) ;
         #define GB_GETB(bkj,Bx,pB,B_iso) ;
 
         // Gx [pG] = A(i,k), located in Ax [A_iso ? 0:pA], value not used
@@ -320,9 +322,11 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
         // aik = A(i,k), located in Ax [A_iso ? 0:pA]
         #undef  GB_A_IS_PATTERN
         #define GB_A_IS_PATTERN 0
+        #undef  GB_DECLAREA
+        #define GB_DECLAREA(aik)                                            \
+            GB_void aik [GB_VLA(aik_size)] ;
         #undef  GB_GETA
         #define GB_GETA(aik,Ax,pA,A_iso)                                    \
-            GB_void aik [GB_VLA(aik_size)] ;                                \
             if (!A_is_pattern)                                              \
             {                                                               \
                 cast_A (aik, Ax +((A_iso) ? 0:((pA)*asize)), asize) ;       \
@@ -331,9 +335,11 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
         // bkj = B(k,j), located in Bx [B_iso ? 0:pB]
         #undef  GB_B_IS_PATTERN
         #define GB_B_IS_PATTERN 0
+        #undef  GB_DECLAREB
+        #define GB_DECLAREB(bkj)                                            \
+            GB_void bkj [GB_VLA(bkj_size)] ;
         #undef  GB_GETB
         #define GB_GETB(bkj,Bx,pB,B_iso)                                    \
-            GB_void bkj [GB_VLA(bkj_size)] ;                                \
             if (!B_is_pattern)                                              \
             {                                                               \
                 cast_B (bkj, Bx +((B_iso) ? 0:((pB)*bsize)), bsize) ;       \

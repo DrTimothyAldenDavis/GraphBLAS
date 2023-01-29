@@ -257,6 +257,10 @@
                             const int8_t gb3 = Gb [k + 3*bvlen] ;
                             if (!(gb0 || gb1 || gb2 || gb3)) continue ;
                             #endif
+                            GB_DECLAREB (gk0) ;
+                            GB_DECLAREB (gk1) ;
+                            GB_DECLAREB (gk2) ;
+                            GB_DECLAREB (gk3) ;
                             GB_GETB (gk0, Gx, k          , B_iso) ;
                             GB_GETB (gk1, Gx, k +   bvlen, B_iso) ;
                             GB_GETB (gk2, Gx, k + 2*bvlen, B_iso) ;
@@ -267,6 +271,7 @@
                             { 
                                 const int64_t i = Ai [pA] ;
                                 const int64_t pH = i * 4 ;
+                                GB_DECLAREA (aik) ;
                                 GB_GETA (aik, Ax, pA, A_iso) ;
                                 GB_HX_COMPUTE (gk0, gb0, 0) ;
                                 GB_HX_COMPUTE (gk1, gb1, 1) ;
@@ -289,6 +294,9 @@
                             const int8_t gb2 = Gb [k + 2*bvlen] ;
                             if (!(gb0 || gb1 || gb2)) continue ;
                             #endif
+                            GB_DECLAREB (gk0) ;
+                            GB_DECLAREB (gk1) ;
+                            GB_DECLAREB (gk2) ;
                             GB_GETB (gk0, Gx, k          , B_iso) ;
                             GB_GETB (gk1, Gx, k +   bvlen, B_iso) ;
                             GB_GETB (gk2, Gx, k + 2*bvlen, B_iso) ;
@@ -298,6 +306,7 @@
                             { 
                                 const int64_t i = Ai [pA] ;
                                 const int64_t pH = i * 3 ;
+                                GB_DECLAREA (aik) ;
                                 GB_GETA (aik, Ax, pA, A_iso) ;
                                 GB_HX_COMPUTE (gk0, gb0, 0) ;
                                 GB_HX_COMPUTE (gk1, gb1, 1) ;
@@ -319,6 +328,8 @@
                             if (!(gb0 || gb1)) continue ;
                             #endif
                             // H += A(:,k)*B(k,j1:j2-1)
+                            GB_DECLAREB (gk0) ;
+                            GB_DECLAREB (gk1) ;
                             GB_GETB (gk0, Gx, k          , B_iso) ;
                             GB_GETB (gk1, Gx, k +   bvlen, B_iso) ;
                             const int64_t pA_end = Ap [kA+1] ;
@@ -326,6 +337,7 @@
                             { 
                                 const int64_t i = Ai [pA] ;
                                 const int64_t pH = i * 2 ;
+                                GB_DECLAREA (aik) ;
                                 GB_GETA (aik, Ax, pA, A_iso) ;
                                 GB_HX_COMPUTE (gk0, gb0, 0) ;
                                 GB_HX_COMPUTE (gk1, gb1, 1) ;
@@ -345,12 +357,14 @@
                             if (!gb0) continue ;
                             #endif
                             // H += A(:,k)*B(k,j1:j2-1)
+                            GB_DECLAREB (gk0) ;
                             GB_GETB (gk0, Gx, k, B_iso) ;
                             const int64_t pA_end = Ap [kA+1] ;
                             for (int64_t pA = Ap [kA] ; pA < pA_end ; pA++)
                             { 
                                 const int64_t i = Ai [pA] ;
                                 const int64_t pH = i ;
+                                GB_DECLAREA (aik) ;
                                 GB_GETA (aik, Ax, pA, A_iso) ;
                                 GB_HX_COMPUTE (gk0, 1, 0) ;
                             }

@@ -89,7 +89,9 @@
                         // C (i,j) = A (i,j) .* B (i,j)
                         Ci [pC] = i ;
                         #ifndef GB_ISO_EMULT
+                        GB_DECLAREA (aij) ;
                         GB_GETA (aij, Ax, pA, A_iso) ;     
+                        GB_DECLAREB (bij) ;
                         GB_GETB (bij, Bx, pB, B_iso) ;
                         #if GB_FLIPPED
                         GB_BINOP (GB_CX (pC), bij, aij, i, j) ;
@@ -130,7 +132,9 @@
                         int64_t pB = pB_start + i ;
                         // Ci [pA] = i ; already defined
                         #ifndef GB_ISO_EMULT
+                        GB_DECLAREA (aij) ;
                         GB_GETA (aij, Ax, pA, A_iso) ;
+                        GB_DECLAREB (bij) ;
                         GB_GETB (bij, Bx, pB, B_iso) ;
                         #if GB_FLIPPED
                         GB_BINOP (GB_CX (pA), bij, aij, i, j) ;
@@ -179,7 +183,9 @@
                     // C (i,j) = A (i,j) .* B (i,j)
                     Ci [pC] = i ;
                     #ifndef GB_ISO_EMULT
+                    GB_DECLAREA (aij) ;
                     GB_GETA (aij, Ax, pA, A_iso) ;     
+                    GB_DECLAREB (bij) ;
                     GB_GETB (bij, Bx, pB, B_iso) ;
                     #if GB_FLIPPED
                     GB_BINOP (GB_CX (pC), bij, aij, i, j) ;

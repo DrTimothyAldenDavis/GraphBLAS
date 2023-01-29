@@ -90,7 +90,9 @@
         #else
         {
             // cij = A(0,i) * B(0,j)
+            GB_DECLAREA (aki) ;
             GB_GETA (aki, Ax, pA, A_iso) ;      // aki = A(0,i)
+            GB_DECLAREB (bkj) ;
             GB_GETB (bkj, Bx, pB, B_iso) ;      // bkj = B(0,j)
             GB_MULT (cij, aki, bkj, i, 0, j) ;  // cij = aki * bkj
             GB_PRAGMA_SIMD_DOT (cij)
@@ -189,7 +191,9 @@
         {
             int64_t k = Bi [pB] ;               // first row index of B(:,j)
             // cij = (A(k,i) or A(i,k)) * B(k,j)
+            GB_DECLAREA (aki) ;
             GB_GETA (aki, Ax, GB_A_INDEX(k), A_iso) ; // aki = A(k,i) or A(i,k)
+            GB_DECLAREB (bkj) ;
             GB_GETB (bkj, Bx, pB  , B_iso) ;    // bkj = B(k,j)
             GB_MULT (cij, aki, bkj, i, k, j) ;  // cij = aki * bkj
             GB_PRAGMA_SIMD_DOT (cij)
@@ -386,7 +390,9 @@
         {
             int64_t k = Ai [pA] ;               // first row index of A(:,i)
             // cij = A(k,i) * B(k,j)
+            GB_DECLAREA (aki) ;
             GB_GETA (aki, Ax, pA  , A_iso) ;    // aki = A(k,i)
+            GB_DECLAREB (bkj) ;
             GB_GETB (bkj, Bx, pB+k, B_iso) ;    // bkj = B(k,j)
             GB_MULT (cij, aki, bkj, i, k, j) ;  // cij = aki * bkj
             GB_PRAGMA_SIMD_DOT (cij)

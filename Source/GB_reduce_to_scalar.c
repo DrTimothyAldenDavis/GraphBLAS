@@ -284,7 +284,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
 
             // t += (ztype) Ax [p], with typecast
             #undef  GB_GETA_AND_UPDATE
-            #define GB_GETA_AND_UPDATE(t,Ax,p)             \
+            #define GB_GETA_AND_UPDATE(t,Ax,p)                      \
                 GB_void awork [GB_VLA(zsize)] ;                     \
                 cast_A_to_Z (awork, Ax +((p)*asize), asize) ;       \
                 freduce (t, t, awork)

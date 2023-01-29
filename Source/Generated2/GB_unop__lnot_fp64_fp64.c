@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 // GB_unop:  hard-coded functions for each built-in unary operator
 //------------------------------------------------------------------------------
@@ -31,9 +32,13 @@
 #define GB_CTYPE \
     double
 
+// declare aij as atype
+#define GB_DECLAREA(aij) \
+    double aij
+
 // aij = Ax [pA]
 #define GB_GETA(aij,Ax,pA,A_iso) \
-    double aij = Ax [pA]
+    aij = Ax [pA]
 
 #define GB_CX(p) Cx [p]
 
@@ -49,7 +54,8 @@
 #define GB_CAST_OP(pC,pA)           \
 {                                   \
     /* aij = Ax [pA] */             \
-    double aij = Ax [pA] ;   \
+    double aij ;              \
+    aij = Ax [pA] ;   \
     /* Cx [pC] = op (cast (aij)) */ \
     double z = aij ;               \
     Cx [pC] = !(z != 0) ;        \
@@ -82,7 +88,8 @@ GrB_Info GB (_unop_apply__lnot_fp64_fp64)
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < anz ; p++)
         {
-            double aij = Ax [p] ;
+            double aij ;
+            aij = Ax [p] ;
             double z = aij ;
             Cx [p] = !(z != 0) ;
         }
@@ -94,7 +101,8 @@ GrB_Info GB (_unop_apply__lnot_fp64_fp64)
         for (p = 0 ; p < anz ; p++)
         {
             if (!Ab [p]) continue ;
-            double aij = Ax [p] ;
+            double aij ;
+            aij = Ax [p] ;
             double z = aij ;
             Cx [p] = !(z != 0) ;
         }

@@ -58,7 +58,9 @@
         // for the dot3 method: C is sparse or hyper
         #define GB_DOT(k,pA,pB)                                         \
         {                                                               \
+            GB_DECLAREA (aki) ;                                         \
             GB_GETA (aki, Ax, pA, A_iso) ;  /* aki = A(k,i) or A(i,k) */\
+            GB_DECLAREB (bkj) ;                                         \
             GB_GETB (bkj, Bx, pB, B_iso) ;  /* bkj = B(k,j) */          \
             /* cij = (A' or A)(i,k) * B(k,j), and add to the pattern */ \
             cij_exists = true ;                                         \
@@ -71,7 +73,9 @@
         // for the dot2 method: C is bitmap
         #define GB_DOT(k,pA,pB)                                         \
         {                                                               \
+            GB_DECLAREA (aki) ;                                         \
             GB_GETA (aki, Ax, pA, A_iso) ;  /* aki = A(k,i) or A(i,k) */\
+            GB_DECLAREB (bkj) ;                                         \
             GB_GETB (bkj, Bx, pB, B_iso) ;  /* bkj = B(k,j) */          \
             /* cij = (A' or A)(i,k) * B(k,j), and add to the pattern */ \
             GB_MULT (cij, aki, bkj, i, k, j) ;                          \
@@ -92,7 +96,9 @@
 
     #define GB_DOT(k,pA,pB)                                             \
     {                                                                   \
+        GB_DECLAREA (aki) ;                                             \
         GB_GETA (aki, Ax, pA, A_iso) ;  /* aki = A(k,i) or A(i,k) */    \
+        GB_DECLAREB (bkj) ;                                             \
         GB_GETB (bkj, Bx, pB, B_iso) ;  /* bkj = B(k,j) */              \
         if (cij_exists)                                                 \
         {                                                               \

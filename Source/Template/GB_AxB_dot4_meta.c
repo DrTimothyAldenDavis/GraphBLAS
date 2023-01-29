@@ -25,7 +25,9 @@
 #define GB_DOT(k,pA,pB)                                                     \
 {                                                                           \
     GB_IF_TERMINAL_BREAK (cij, zterminal) ; /* break if cij == zterminal */ \
+    GB_DECLAREA (aki) ;                                                     \
     GB_GETA (aki, Ax, pA, A_iso) ;          /* aki = A(k,i) */              \
+    GB_DECLAREB (bkj) ;                                                     \
     GB_GETB (bkj, Bx, pB, B_iso) ;          /* bkj = B(k,j) */              \
     GB_MULTADD (cij, aki, bkj, i, k, j) ;   /* cij += aki * bkj */          \
 }

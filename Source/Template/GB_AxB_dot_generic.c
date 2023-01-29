@@ -87,10 +87,12 @@
 
         // aki = A(i,k), located in Ax [A_iso?0:(pA)], but value not used
         #define GB_A_IS_PATTERN 1
+        #define GB_DECLAREA(aki) ;
         #define GB_GETA(aki,Ax,pA,A_iso) ;
 
         // bkj = B(k,j), located in Bx [B_iso?0:pB], but value not used
         #define GB_B_IS_PATTERN 1
+        #define GB_DECLAREB(bkj) ;
         #define GB_GETB(bkj,Bx,pB,B_iso) ;
 
         // define cij for each task
@@ -222,17 +224,21 @@
         // aki = A(i,k), located in Ax [A_iso?0:(pA)]
         #undef  GB_A_IS_PATTERN
         #define GB_A_IS_PATTERN 0
+        #undef  GB_DECLAREA
+        #define GB_DECLAREA(aki)                                        \
+            GB_void aki [GB_VLA(aki_size)] ;
         #undef  GB_GETA
         #define GB_GETA(aki,Ax,pA,A_iso)                                \
-            GB_void aki [GB_VLA(aki_size)] ;                            \
             if (!A_is_pattern) cast_A (aki, Ax +((A_iso) ? 0:(pA)*asize), asize)
 
         // bkj = B(k,j), located in Bx [B_iso?0:pB]
         #undef  GB_B_IS_PATTERN
         #define GB_B_IS_PATTERN 0
+        #undef  GB_DECLAREB
+        #define GB_DECLAREB(bkj)                                        \
+            GB_void bkj [GB_VLA(bkj_size)] ;
         #undef  GB_GETB
         #define GB_GETB(bkj,Bx,pB,B_iso)                                \
-            GB_void bkj [GB_VLA(bkj_size)] ;                            \
             if (!B_is_pattern) cast_B (bkj, Bx +((B_iso) ? 0:(pB)*bsize), bsize)
 
         // define cij for each task

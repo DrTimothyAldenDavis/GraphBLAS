@@ -35,6 +35,10 @@ else
     fprintf (f, 'define(`GB_identity'', `(none)'')\n') ;
 end
 
+% A is never iso, so GBX is not needed
+fprintf (f, 'define(`GB_declarea'', `%s $1'')\n', atype) ;
+fprintf (f, 'define(`GB_geta'', `$1 = $2 [$3]'')\n') ;
+
 if (is_any)
     fprintf (f, 'define(`GB_is_any_monoid'', `1'')\n') ;
     fprintf (f, 'define(`GB_monoid_is_terminal'', `1'')\n') ;

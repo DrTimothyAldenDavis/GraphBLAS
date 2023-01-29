@@ -1,3 +1,5 @@
+
+
 //------------------------------------------------------------------------------
 // GB_AxB__any_second_bool.c: matrix multiply for a single semiring
 //------------------------------------------------------------------------------
@@ -82,6 +84,10 @@
 #define GB_CTYPE_IGNORE_OVERFLOW \
     0
 
+// declare aik as atype
+#define GB_DECLAREA(aik) \
+    ;
+
 // aik = Ax [pA]
 #define GB_GETA(aik,Ax,pA,A_iso) \
     ;
@@ -90,9 +96,13 @@
 #define GB_A_IS_PATTERN \
     1 \
 
+// declare bkj as btype
+#define GB_DECLAREB(bkj) \
+    bool bkj
+
 // bkj = Bx [pB]
 #define GB_GETB(bkj,Bx,pB,B_iso) \
-    bool bkj = GBX (Bx, pB, B_iso)
+    bkj = GBX (Bx, pB, B_iso)
 
 // true if values of B are not used
 #define GB_B_IS_PATTERN \

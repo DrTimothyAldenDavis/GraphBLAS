@@ -184,8 +184,9 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
 
         // bij = B(i,j), located in Bx [pB].  Note that GB_GETB is used,
         // since B appears as the 2nd input to z = fadd (x,y)
+        #define GB_DECLAREB(bij)                                            \
+            GB_void bij [GB_VLA(ysize)] ;
         #define GB_GETB(bij,Bx,pB,B_iso)                                    \
-            GB_void bij [GB_VLA(ysize)] ;                                   \
             cast_B_to_Y (bij, Bx +(B_iso ? 0:(pB)*bsize), bsize)
 
         // address of Cx [p]

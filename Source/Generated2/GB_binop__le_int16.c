@@ -1,4 +1,6 @@
 
+
+
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -67,17 +69,25 @@
 #define GB_CTYPE_IS_BTYPE \
     0
 
+// declare aij as atype
+#define GB_DECLAREA(aij) \
+    int16_t aij
+
 // aij = Ax [pA]
 #define GB_GETA(aij,Ax,pA,A_iso)  \
-    int16_t aij = GBX (Ax, pA, A_iso)
+    aij = GBX (Ax, pA, A_iso)
 
 // true if values of A are not used
 #define GB_A_IS_PATTERN \
     0 \
 
+// declare bij as btype
+#define GB_DECLAREB(bij)  \
+    int16_t bij
+
 // bij = Bx [pB]
 #define GB_GETB(bij,Bx,pB,B_iso)  \
-    int16_t bij = GBX (Bx, pB, B_iso)
+    bij = GBX (Bx, pB, B_iso)
 
 // true if values of B are not used
 #define GB_B_IS_PATTERN \
@@ -469,7 +479,8 @@ GrB_Info GB (_bind1st__le_int16)
     for (p = 0 ; p < bnz ; p++)
     {
         if (!GBB (Bb, p)) continue ;
-        int16_t bij = GBX (Bx, p, false) ;
+        int16_t bij ;
+        bij = GBX (Bx, p, false) ;
         Cx [p] = (x <= bij) ;
     }
     return (GrB_SUCCESS) ;
@@ -505,7 +516,8 @@ GrB_Info GB (_bind2nd__le_int16)
     for (p = 0 ; p < anz ; p++)
     {
         if (!GBB (Ab, p)) continue ;
-        int16_t aij = GBX (Ax, p, false) ;
+        int16_t aij ;
+        aij = GBX (Ax, p, false) ;
         Cx [p] = (aij <= y) ;
     }
     return (GrB_SUCCESS) ;
@@ -524,7 +536,8 @@ GrB_Info GB (_bind2nd__le_int16)
 #undef  GB_CAST_OP
 #define GB_CAST_OP(pC,pA)                       \
 {                                               \
-    int16_t aij = GBX (Ax, pA, false) ;               \
+    int16_t aij ;                          \
+    aij = GBX (Ax, pA, false) ;               \
     Cx [pC] = (x <= aij) ;        \
 }
 
@@ -568,7 +581,8 @@ GrB_Info GB (_bind1st_tran__le_int16)
 #undef  GB_CAST_OP
 #define GB_CAST_OP(pC,pA)                       \
 {                                               \
-    int16_t aij = GBX (Ax, pA, false) ;               \
+    int16_t aij ;                          \
+    aij = GBX (Ax, pA, false) ;               \
     Cx [pC] = (aij <= y) ;        \
 }
 

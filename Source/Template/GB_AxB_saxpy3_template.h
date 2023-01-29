@@ -188,6 +188,7 @@ break ;
 #else
 
     #define GB_GET_B_kj \
+        GB_DECLAREB (bkj) ;                                 \
         GB_GETB (bkj, Bx, pB, B_iso)       /* bkj = Bx [pB] */
 
 #endif
@@ -241,6 +242,7 @@ break ;
 
     // typical semiring
     #define GB_MULT_A_ik_B_kj                                       \
+        GB_DECLAREA (aik) ;                                         \
         GB_GETA (aik, Ax, pA, A_iso) ;  /* aik = Ax [pA] ;  */      \
         GB_CIJ_DECLARE (t) ;            /* ctype t ;        */      \
         GB_MULT (t, aik, bkj, i, k, j)  /* t = aik * bkj ;  */

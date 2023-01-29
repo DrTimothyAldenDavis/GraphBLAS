@@ -433,16 +433,19 @@ fprintf (f, 'define(`GB_microsoft_has_omp_atomic'', `%d'')\n', omp_microsoft_ato
 % to get an entry from A
 if (is_any_pair)
     fprintf (f, 'define(`GB_a_is_pattern'', `1'')\n') ;
+    fprintf (f, 'define(`GB_declarea'', `;'')\n') ;
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
     fprintf (f, 'define(`GB_loada'', `;'')\n') ;
 elseif (is_second || is_pair || is_positional)
     % value of A is ignored for the SECOND and PAIR operators
     fprintf (f, 'define(`GB_a_is_pattern'', `1'')\n') ;
+    fprintf (f, 'define(`GB_declarea'', `;'')\n') ;
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
     fprintf (f, 'define(`GB_loada'', `$1 [$2] = GBX ($3, $4, $5)'')\n') ;
 else
     fprintf (f, 'define(`GB_a_is_pattern'', `0'')\n') ;
-    fprintf (f, 'define(`GB_geta'', `%s $1 = GBX ($2, $3, $4)'')\n', xytype) ;
+    fprintf (f, 'define(`GB_declarea'', `%s $1'')\n', xytype) ;
+    fprintf (f, 'define(`GB_geta'', `$1 = GBX ($2, $3, $4)'')\n') ;
     fprintf (f, 'define(`GB_loada'', `$1 [$2] = GBX ($3, $4, $5)'')\n') ;
 end
 
@@ -450,11 +453,13 @@ end
 if (is_first || is_pair || is_positional)
     % value of B is ignored for the FIRST and PAIR operators
     fprintf (f, 'define(`GB_b_is_pattern'', `1'')\n') ;
+    fprintf (f, 'define(`GB_declareb'', `;'')\n') ;
     fprintf (f, 'define(`GB_getb'', `;'')\n') ;
     fprintf (f, 'define(`GB_loadb'', `;'')\n') ;
 else
     fprintf (f, 'define(`GB_b_is_pattern'', `0'')\n') ;
-    fprintf (f, 'define(`GB_getb'', `%s $1 = GBX ($2, $3, $4)'')\n', xytype) ;
+    fprintf (f, 'define(`GB_declareb'', `%s $1'')\n', xytype) ;
+    fprintf (f, 'define(`GB_getb'', `$1 = GBX ($2, $3, $4)'')\n') ;
     fprintf (f, 'define(`GB_loadb'', `$1 [$2] = GBX ($3, $4, $5)'')\n') ;
 end
 

@@ -134,8 +134,12 @@
             #define GB_LOAD_A(aij, Ax,pA,A_iso)
             #define GB_LOAD_B(bij, Bx,pB,B_iso)
         #else
-            #define GB_LOAD_A(aij, Ax,pA,A_iso) GB_GETA(aij, Ax,pA,A_iso)
-            #define GB_LOAD_B(bij, Bx,pB,B_iso) GB_GETB(bij, Bx,pB,B_iso)
+            #define GB_LOAD_A(aij, Ax,pA,A_iso) \
+                GB_DECLAREA (aij) ;             \
+                GB_GETA (aij, Ax,pA,A_iso)
+            #define GB_LOAD_B(bij, Bx,pB,B_iso) \
+                GB_DECLAREB (bij) ;             \
+                GB_GETB (bij, Bx,pB,B_iso)
         #endif
 
         #ifndef GB_ISO_ADD

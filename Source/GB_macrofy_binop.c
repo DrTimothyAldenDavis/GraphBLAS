@@ -23,7 +23,6 @@ void GB_macrofy_binop
 )
 {
 
-
     if (op == NULL)
     {
 

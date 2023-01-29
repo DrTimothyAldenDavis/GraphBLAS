@@ -1,4 +1,6 @@
 
+
+
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -67,17 +69,25 @@
 #define GB_CTYPE_IS_BTYPE \
     1
 
+// declare aij as atype
+#define GB_DECLAREA(aij) \
+    float aij
+
 // aij = Ax [pA]
 #define GB_GETA(aij,Ax,pA,A_iso)  \
-    float aij = GBX (Ax, pA, A_iso)
+    aij = GBX (Ax, pA, A_iso)
 
 // true if values of A are not used
 #define GB_A_IS_PATTERN \
     0 \
 
+// declare bij as btype
+#define GB_DECLAREB(bij)  \
+    float bij
+
 // bij = Bx [pB]
 #define GB_GETB(bij,Bx,pB,B_iso)  \
-    float bij = GBX (Bx, pB, B_iso)
+    bij = GBX (Bx, pB, B_iso)
 
 // true if values of B are not used
 #define GB_B_IS_PATTERN \
@@ -469,7 +479,8 @@ GrB_Info GB (_bind1st__lor_fp32)
     for (p = 0 ; p < bnz ; p++)
     {
         if (!GBB (Bb, p)) continue ;
-        float bij = GBX (Bx, p, false) ;
+        float bij ;
+        bij = GBX (Bx, p, false) ;
         Cx [p] = ((x != 0) || (bij != 0)) ;
     }
     return (GrB_SUCCESS) ;
@@ -505,7 +516,8 @@ GrB_Info GB (_bind2nd__lor_fp32)
     for (p = 0 ; p < anz ; p++)
     {
         if (!GBB (Ab, p)) continue ;
-        float aij = GBX (Ax, p, false) ;
+        float aij ;
+        aij = GBX (Ax, p, false) ;
         Cx [p] = ((aij != 0) || (y != 0)) ;
     }
     return (GrB_SUCCESS) ;
@@ -524,7 +536,8 @@ GrB_Info GB (_bind2nd__lor_fp32)
 #undef  GB_CAST_OP
 #define GB_CAST_OP(pC,pA)                       \
 {                                               \
-    float aij = GBX (Ax, pA, false) ;               \
+    float aij ;                          \
+    aij = GBX (Ax, pA, false) ;               \
     Cx [pC] = ((x != 0) || (aij != 0)) ;        \
 }
 
@@ -568,7 +581,8 @@ GrB_Info GB (_bind1st_tran__lor_fp32)
 #undef  GB_CAST_OP
 #define GB_CAST_OP(pC,pA)                       \
 {                                               \
-    float aij = GBX (Ax, pA, false) ;               \
+    float aij ;                          \
+    aij = GBX (Ax, pA, false) ;               \
     Cx [pC] = ((aij != 0) || (y != 0)) ;        \
 }
 

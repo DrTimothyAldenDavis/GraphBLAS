@@ -397,19 +397,27 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         #define GB_COPY_B_TO_C(cij,Bx,pB,B_iso)                             \
             cast_B_to_C (cij, Bx +((B_iso) ? 0: (pB)*bsize), bsize) ;
 
+        // declare aij as xtype
+        #undef  GB_DECLAREA
+        #define GB_DECLAREA(aij)                                            \
+            GB_void aij [GB_VLA(xsize)] ;
+
         // aij = (xtype) A(i,j), located in Ax [pA]
         #undef  GB_GETA
         #define GB_GETA(aij,Ax,pA,A_iso)                                    \
-            GB_void aij [GB_VLA(xsize)] ;                                   \
             if (cast_A_to_X != NULL)                                        \
             {                                                               \
                 cast_A_to_X (aij, Ax +((A_iso) ? 0:(pA)*asize), asize) ;    \
             }
 
+        // declare bij as ytype
+        #undef  GB_DECLAREB
+        #define GB_DECLAREB(bij)                                            \
+            GB_void bij [GB_VLA(ysize)] ;
+
         // bij = (ytype) B(i,j), located in Bx [pB]
         #undef  GB_GETB
         #define GB_GETB(bij,Bx,pB,B_iso)                                    \
-            GB_void bij [GB_VLA(ysize)] ;                                   \
             if (cast_B_to_Y != NULL)                                        \
             {                                                               \
                 cast_B_to_Y (bij, Bx +((B_iso) ? 0:(pB)*bsize), bsize) ;    \

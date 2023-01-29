@@ -53,6 +53,7 @@
             { 
                 // get B(k,j)
                 const int64_t k = Bi [pB] ;
+                GB_DECLAREB (bkj) ;
                 GB_GETB (bkj, Bx, pB, B_iso) ;
                 // get A(:,k)
                 const int64_t pA = k * m ;

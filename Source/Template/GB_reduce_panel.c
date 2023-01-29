@@ -10,7 +10,7 @@
 // Reduce a matrix to a scalar using a panel-based method for built-in
 // operators or jitified kernels.  A must be sparse, hypersparse, or full (it
 // cannot be bitmap).  A cannot have any zombies.  If A has zombies or is
-// bitmap, GB_reduce_to_scalar_template is used instead.
+// bitmap, GB_reduce_to_scalar_template is used instead.  A is not iso.
 
 // A generic method via memcpy is not supported.
 
@@ -34,7 +34,8 @@
 
     #if GB_IS_ANY_MONOID
     // the ANY monoid can take any entry, and terminate immediately
-    z = Ax [anz-1] ;
+    // z = (ztype) Ax [anz-1]
+    GB_GETA (z, Ax, anz-1, false) ;
     #else
 
     //--------------------------------------------------------------------------
@@ -52,7 +53,8 @@
         int64_t first_panel_size = GB_IMIN (GB_PANEL, anz) ;
         for (int64_t k = 0 ; k < first_panel_size ; k++)
         { 
-            Panel [k] = Ax [k] ;
+            // Panel [k] = (ztype) Ax [k] ;
+            GB_GETA (Panel [k], Ax, k, false) ;
         }
 
         #if GB_MONOID_IS_TERMINAL
@@ -144,7 +146,9 @@
 
             int64_t pstart, pend ;
             GB_PARTITION (pstart, pend, anz, tid, ntasks) ;
-            GB_Z_TYPENAME t = Ax [pstart] ;
+            GB_Z_TYPENAME t ;
+            // t = (ztype) Ax [pstart]
+            GB_GETA (t, Ax, pstart, false) ;
 
             //------------------------------------------------------------------
             // skip this task if the terminal value has already been reached
@@ -175,7 +179,8 @@
                 int64_t first_panel_size = GB_IMIN (GB_PANEL, my_anz) ;
                 for (int64_t k = 0 ; k < first_panel_size ; k++)
                 { 
-                    Panel [k] = Ax [pstart + k] ;
+                    // Panel [k] = (ztype) Ax [pstart + k] ;
+                    GB_GETA (Panel [k], Ax, pstart + k, false) ;
                 }
 
                 #if GB_MONOID_IS_TERMINAL

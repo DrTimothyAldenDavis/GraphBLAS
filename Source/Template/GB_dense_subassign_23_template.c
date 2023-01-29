@@ -35,6 +35,7 @@
         for (p = 0 ; p < cnz ; p++)
         { 
             if (!Bb [p]) continue ;
+            GB_DECLAREB (bij) ;
             GB_GETB (bij, Bx, p, B_iso) ;                 // bij = B(i,j)
             GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;  // C(i,j) += bij
         }
@@ -52,6 +53,7 @@
         #pragma omp parallel for num_threads(B_nthreads) schedule(static)
         for (p = 0 ; p < cnz ; p++)
         { 
+            GB_DECLAREB (bij) ;
             GB_GETB (bij, Bx, p, B_iso) ;                 // bij = B(i,j)
             GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;  // C(i,j) += bij
         }
@@ -125,6 +127,7 @@
                     { 
                         int64_t i = pB - pB_start ;
                         int64_t p = pC + i ;
+                        GB_DECLAREB (bij) ;
                         GB_GETB (bij, Bx, pB, B_iso) ;          // bij = B(i,j)
                         // C(i,j) += bij
                         GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
@@ -143,6 +146,7 @@
                     { 
                         int64_t i = Bi [pB] ;
                         int64_t p = pC + i ;
+                        GB_DECLAREB (bij) ;
                         GB_GETB (bij, Bx, pB, B_iso) ;          // bij = B(i,j)
                         // C(i,j) += bij
                         GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;

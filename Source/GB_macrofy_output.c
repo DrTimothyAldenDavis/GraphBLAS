@@ -49,59 +49,11 @@ void GB_macrofy_output
         // no need to access the values of C
         //----------------------------------------------------------------------
 
-#if 0
-        fprintf (fp, "#define GB_DECLARE%s(%s)\n", Cmacro, cname) ;
-        fprintf (fp, "#define GB_DECLARE%s_MOD(modifier,%s)\n", Cmacro, cname) ;
-#endif
         fprintf (fp, "#define GB_PUT%s(%s,%sx,p)\n", Cmacro, cname, Cname) ;
 
     }
     else
     {
-
-        //----------------------------------------------------------------------
-        // construct the scalar/workspace declaration macros
-        //----------------------------------------------------------------------
-
-        // Declare a scalar or work array.  For example, suppose C has type
-        // double, and the cij output of the operator has type float.  To
-        // declare a simple scalar or work array:
-
-        //      GB_DECLAREC (cij) ;
-        //      GB_DECLAREC (w [32]) ;
-
-        // becomes:
-
-        //      float cij ;
-        //      float w [32] ;
-
-        // To add a modifier:
-
-        //      GB_DECLAREC_MOD (__shared__, w [32]) ;
-
-        // becomes
-
-        //      __shared__ float w [32] ;
-
-#if 0
-        if (ctype == NULL)
-        {
-            // no need to typecast to ctype
-            fprintf (fp, "#define GB_DECLARE%s(%s)\n", Cmacro, cname) ;
-            fprintf (fp, "#define GB_DECLARE%s_MOD(mod,%s)\n",
-                Cmacro, cname) ;
-        }
-        else
-        {
-            fprintf (fp, "#define GB_DECLARE%s(%s) %s %s\n",
-                Cmacro, cname, ctype->name, cname) ;
-
-            // declare a scalar or work array, prefixed with a mod
-            fprintf (fp, "#define GB_DECLARE%s_MOD(modifier,%s) "
-                "modifier %s %s\n",
-                Cmacro, cname, ctype->name, cname) ;
-        }
-#endif
 
         //----------------------------------------------------------------------
         // construct the GB_PUTC macro
@@ -127,7 +79,8 @@ void GB_macrofy_output
         snprintf (macro_name, SLEN, "GB_PUT%s", Cmacro) ;
         snprintf (xargs, SLEN, "%sx,p", Cname) ;
         snprintf (xexpr, SLEN, "%sx [p]", Cname) ;
-        GB_macrofy_cast_output (fp, macro_name, cname, xargs, xexpr, ztype, ctype) ;
+        GB_macrofy_cast_output (fp, macro_name, cname, xargs, xexpr, ztype,
+            ctype) ;
     }
 }
 

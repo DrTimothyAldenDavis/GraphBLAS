@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 // GB_unop:  hard-coded functions for each built-in unary operator
 //------------------------------------------------------------------------------
@@ -31,9 +32,13 @@
 #define GB_CTYPE \
     int16_t
 
+// declare aij as atype
+#define GB_DECLAREA(aij) \
+    int16_t aij
+
 // aij = Ax [pA]
 #define GB_GETA(aij,Ax,pA,A_iso) \
-    int16_t aij = Ax [pA]
+    aij = Ax [pA]
 
 #define GB_CX(p) Cx [p]
 
@@ -49,7 +54,8 @@
 #define GB_CAST_OP(pC,pA)           \
 {                                   \
     /* aij = Ax [pA] */             \
-    int16_t aij = Ax [pA] ;   \
+    int16_t aij ;              \
+    aij = Ax [pA] ;   \
     /* Cx [pC] = op (cast (aij)) */ \
     int16_t z = aij ;               \
     Cx [pC] = GB_idiv_int16 (1, z) ;        \
@@ -82,7 +88,8 @@ GrB_Info GB (_unop_apply__minv_int16_int16)
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < anz ; p++)
         {
-            int16_t aij = Ax [p] ;
+            int16_t aij ;
+            aij = Ax [p] ;
             int16_t z = aij ;
             Cx [p] = GB_idiv_int16 (1, z) ;
         }
@@ -94,7 +101,8 @@ GrB_Info GB (_unop_apply__minv_int16_int16)
         for (p = 0 ; p < anz ; p++)
         {
             if (!Ab [p]) continue ;
-            int16_t aij = Ax [p] ;
+            int16_t aij ;
+            aij = Ax [p] ;
             int16_t z = aij ;
             Cx [p] = GB_idiv_int16 (1, z) ;
         }

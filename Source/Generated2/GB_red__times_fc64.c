@@ -1,5 +1,7 @@
 
 
+
+
 //------------------------------------------------------------------------------
 // GB_red:  hard-coded functions for reductions
 //------------------------------------------------------------------------------
@@ -40,6 +42,14 @@
         GxB_FC64_t z = GxB_CMPLX(1,0)
 
 // reduction operator:
+
+    // declare aij as ztype (= atype since no typecasting is done here)
+    #define GB_DECLAREA(aij)  \
+        GxB_FC64_t aij
+
+    // aij = Ax [pA]
+    #define GB_GETA(aij,Ax,pA,A_iso)  \
+        aij = Ax [pA]
 
     // z += y, no typecast
     #define GB_UPDATE(z,y) \

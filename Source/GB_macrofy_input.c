@@ -56,7 +56,6 @@ void GB_macrofy_input
         //----------------------------------------------------------------------
 
         fprintf (fp, "#define GB_DECLARE%s(%s)\n", Amacro, aname) ;
-        fprintf (fp, "#define GB_DECLARE%s_MOD(modifier,%s)\n", Amacro, aname) ;
         fprintf (fp, "#define GB_GET%s(%s,%sx,p,iso)\n", Amacro, aname, Aname) ;
 
     }
@@ -79,29 +78,14 @@ void GB_macrofy_input
         //      float aij ;
         //      float w [32] ;
 
-        // To add a modifier:
-
-        //      GB_DECLAREA_MOD (__shared__, w [32]) ;
-
-        // becomes
-
-        //      __shared__ float w [32] ;
-
         if (xtype == NULL)
         {
-            // no need to typecast to xtype
+            // no values for this matrix; no need to typecast to xtype
             fprintf (fp, "#define GB_DECLARE%s(%s)\n", Amacro, aname) ;
-            fprintf (fp, "#define GB_DECLARE%s_MOD(mod,%s)\n",
-                Amacro, aname) ;
         }
         else
         {
             fprintf (fp, "#define GB_DECLARE%s(%s) %s %s\n",
-                Amacro, aname, xtype->name, aname) ;
-
-            // declare a scalar or work array, prefixed with a mod
-            fprintf (fp, "#define GB_DECLARE%s_MOD(modifier,%s) "
-                "modifier %s %s\n",
                 Amacro, aname, xtype->name, aname) ;
         }
 
@@ -134,6 +118,7 @@ void GB_macrofy_input
         snprintf (macro_name, SLEN, "GB_GET%s", Amacro) ;
         snprintf (xargs, SLEN, "%sx,p,iso", Aname) ;
         snprintf (xexpr, SLEN, A_iso_code ? "%sx [0]" : "%sx [p]", Aname) ;
-        GB_macrofy_cast_input (fp, macro_name, aname, xargs, xexpr, xtype, atype) ;
+        GB_macrofy_cast_input (fp, macro_name, aname, xargs, xexpr, xtype,
+            atype) ;
     }
 }

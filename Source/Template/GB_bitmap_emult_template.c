@@ -73,7 +73,9 @@
                 { 
                     // C (i,j) = A (i,j) + B (i,j)
                     #ifndef GB_ISO_EMULT
+                    GB_DECLAREA (aij) ;
                     GB_GETA (aij, Ax, p, A_iso) ;
+                    GB_DECLAREB (bij) ;
                     GB_GETB (bij, Bx, p, B_iso) ;
                     GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
                     #endif
@@ -136,7 +138,9 @@
                     { 
                         // C (i,j) = A (i,j) + B (i,j)
                         #ifndef GB_ISO_EMULT
+                        GB_DECLAREA (aij) ;
                         GB_GETA (aij, Ax, p, A_iso) ;
+                        GB_DECLAREB (bij) ;
                         GB_GETB (bij, Bx, p, B_iso) ;
                         GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
                         #endif
@@ -217,7 +221,9 @@
                     { 
                         // C (i,j) = A (i,j) + B (i,j)
                         #ifndef GB_ISO_EMULT
+                        GB_DECLAREA (aij) ;
                         GB_GETA (aij, Ax, p, A_iso) ;
+                        GB_DECLAREB (bij) ;
                         GB_GETB (bij, Bx, p, B_iso) ;
                         GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
                         #endif

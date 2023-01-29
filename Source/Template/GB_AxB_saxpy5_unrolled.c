@@ -105,6 +105,7 @@
                 { 
                     // bkj = B(k,j)
                     const int64_t k = Bi [pB] ;
+                    GB_DECLAREB (bkj) ;
                     GB_GETB (bkj, Bx, pB, B_iso) ;
                     // get A(i,k)
                     const GB_ATYPE *restrict ax = Axi + (k * m) ;
@@ -189,6 +190,7 @@
                         { 
                             // bkj = B(k,j)
                             const int64_t k = Bi [pB] ;
+                            GB_DECLAREB (bkj) ;
                             GB_GETB (bkj, Bx, pB, B_iso) ;
                             // get A(m-15,k)
                             const GB_ATYPE *restrict ax = Axm + (k * m) ;
@@ -267,6 +269,7 @@
                         { 
                             // bkj = B(k,j)
                             const int64_t k = Bi [pB] ;
+                            GB_DECLAREB (bkj) ;
                             GB_GETB (bkj, Bx, pB, B_iso) ;
                             // get A(m-14,k)
                             const GB_ATYPE *restrict ax = Axm + (k * m) ;
@@ -342,6 +345,7 @@
                         { 
                             // bkj = B(k,j)
                             const int64_t k = Bi [pB] ;
+                            GB_DECLAREB (bkj) ;
                             GB_GETB (bkj, Bx, pB, B_iso) ;
                             // get A(m-13,k)
                             const GB_ATYPE *restrict ax = Axm + (k * m) ;
@@ -413,6 +417,7 @@
                         { 
                             // bkj = B(k,j)
                             const int64_t k = Bi [pB] ;
+                            GB_DECLAREB (bkj) ;
                             GB_GETB (bkj, Bx, pB, B_iso) ;
                             // get A(m-12,k)
                             const GB_ATYPE *restrict ax = Axm + (k * m) ;
@@ -480,6 +485,7 @@
                         { 
                             // bkj = B(k,j)
                             const int64_t k = Bi [pB] ;
+                            GB_DECLAREB (bkj) ;
                             GB_GETB (bkj, Bx, pB, B_iso) ;
                             // get A(m-11,k)
                             const GB_ATYPE *restrict ax = Axm + (k * m) ;
@@ -549,6 +555,7 @@
                         { 
                             // bkj = B(k,j)
                             const int64_t k = Bi [pB] ;
+                            GB_DECLAREB (bkj) ;
                             GB_GETB (bkj, Bx, pB, B_iso) ;
                             // get A(m-10,k)
                             const GB_ATYPE *restrict ax = Axm + (k * m) ;
@@ -612,6 +619,7 @@
                         { 
                             // bkj = B(k,j)
                             const int64_t k = Bi [pB] ;
+                            GB_DECLAREB (bkj) ;
                             GB_GETB (bkj, Bx, pB, B_iso) ;
                             // get A(m-9,k)
                             const GB_ATYPE *restrict ax = Axm + (k * m) ;
@@ -673,6 +681,7 @@
                         { 
                             // bkj = B(k,j)
                             const int64_t k = Bi [pB] ;
+                            GB_DECLAREB (bkj) ;
                             GB_GETB (bkj, Bx, pB, B_iso) ;
                             // get A(m-8,k)
                             const GB_ATYPE *restrict ax = Axm + (k * m) ;
@@ -726,6 +735,7 @@
                         { 
                             // bkj = B(k,j)
                             const int64_t k = Bi [pB] ;
+                            GB_DECLAREB (bkj) ;
                             GB_GETB (bkj, Bx, pB, B_iso) ;
                             // get A(m-7,k)
                             const GB_ATYPE *restrict ax = Axm + (k * m) ;
@@ -775,6 +785,7 @@
                         { 
                             // bkj = B(k,j)
                             const int64_t k = Bi [pB] ;
+                            GB_DECLAREB (bkj) ;
                             GB_GETB (bkj, Bx, pB, B_iso) ;
                             // get A(m-6,k)
                             const GB_ATYPE *restrict ax = Axm + (k * m) ;
@@ -821,6 +832,7 @@
                         { 
                             // bkj = B(k,j)
                             const int64_t k = Bi [pB] ;
+                            GB_DECLAREB (bkj) ;
                             GB_GETB (bkj, Bx, pB, B_iso) ;
                             // get A(m-5,k)
                             const GB_ATYPE *restrict ax = Axm + (k * m) ;
@@ -865,6 +877,7 @@
                         { 
                             // bkj = B(k,j)
                             const int64_t k = Bi [pB] ;
+                            GB_DECLAREB (bkj) ;
                             GB_GETB (bkj, Bx, pB, B_iso) ;
                             // get A(m-4,k)
                             const GB_ATYPE *restrict ax = Axm + (k * m) ;
@@ -907,6 +920,7 @@
                         { 
                             // bkj = B(k,j)
                             const int64_t k = Bi [pB] ;
+                            GB_DECLAREB (bkj) ;
                             GB_GETB (bkj, Bx, pB, B_iso) ;
                             // get A(m-3,k)
                             const GB_ATYPE *restrict ax = Axm + (k * m) ;
@@ -949,6 +963,7 @@
                         { 
                             // bkj = B(k,j)
                             const int64_t k = Bi [pB] ;
+                            GB_DECLAREB (bkj) ;
                             GB_GETB (bkj, Bx, pB, B_iso) ;
                             // get A(m-2,k)
                             const GB_ATYPE *restrict ax = Axm + (k * m) ;
@@ -984,6 +999,7 @@
                         { 
                             // bkj = B(k,j)
                             const int64_t k = Bi [pB] ;
+                            GB_DECLAREB (bkj) ;
                             GB_GETB (bkj, Bx, pB, B_iso) ;
                             // get A(m-1,k)
                             const GB_ATYPE *restrict ax = Axm + (k * m) ;

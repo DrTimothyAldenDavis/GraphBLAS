@@ -477,6 +477,7 @@
                             { 
                                 // aki = A(k,i)
                                 const int64_t k = Ai [p] ;
+                                GB_DECLAREA (aki) ;
                                 GB_GETA (aki, Ax, p, A_iso) ;
                                 // cx [0] += A(k,i)*G(k,0)
                                 GB_MULTADD (cx [0], aki, G [k], i, k, j1) ;
@@ -533,6 +534,7 @@
                             { 
                                 // aki = A(k,i)
                                 const int64_t k = Ai [p] ;
+                                GB_DECLAREA (aki) ;
                                 GB_GETA (aki, Ax, p, A_iso) ;
                                 const int64_t k2 = k << 1 ;
                                 // cx [0:1] += A(k,i)*G(k,0:1)
@@ -594,6 +596,7 @@
                             { 
                                 // aki = A(k,i)
                                 const int64_t k = Ai [p] ;
+                                GB_DECLAREA (aki) ;
                                 GB_GETA (aki, Ax, p, A_iso) ;
                                 const int64_t k3 = k * 3 ;
                                 // cx [0:2] += A(k,i)*G(k,0:2)
@@ -659,6 +662,7 @@
                             { 
                                 // aki = A(k,i)
                                 const int64_t k = Ai [p] ;
+                                GB_DECLAREA (aki) ;
                                 GB_GETA (aki, Ax, p, A_iso) ;
                                 const int64_t k4 = k << 2 ;
                                 // cx [0:3] += A(k,i)*G(k,0:3)

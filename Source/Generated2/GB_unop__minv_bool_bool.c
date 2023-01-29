@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 // GB_unop:  hard-coded functions for each built-in unary operator
 //------------------------------------------------------------------------------
@@ -31,6 +32,10 @@
 #define GB_CTYPE \
     bool
 
+// declare aij as atype
+#define GB_DECLAREA(aij) \
+    ;
+
 // aij = Ax [pA]
 #define GB_GETA(aij,Ax,pA,A_iso) \
     ;
@@ -49,6 +54,7 @@
 #define GB_CAST_OP(pC,pA)           \
 {                                   \
     /* aij = Ax [pA] */             \
+    ; ;              \
     ; ;   \
     /* Cx [pC] = op (cast (aij)) */ \
     ; ;               \
@@ -84,6 +90,7 @@ GrB_Info GB (_unop_apply__minv_bool_bool)
         {
             ; ;
             ; ;
+            ; ;
             Cx [p] = true ;
         }
     }
@@ -94,6 +101,7 @@ GrB_Info GB (_unop_apply__minv_bool_bool)
         for (p = 0 ; p < anz ; p++)
         {
             if (!Ab [p]) continue ;
+            ; ;
             ; ;
             ; ;
             Cx [p] = true ;

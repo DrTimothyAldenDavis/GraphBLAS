@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 // GB_unop:  hard-coded functions for each built-in unary operator
 //------------------------------------------------------------------------------
@@ -31,9 +32,13 @@
 #define GB_CTYPE \
     uint64_t
 
+// declare aij as atype
+#define GB_DECLAREA(aij) \
+    GxB_FC32_t aij
+
 // aij = Ax [pA]
 #define GB_GETA(aij,Ax,pA,A_iso) \
-    GxB_FC32_t aij = Ax [pA]
+    aij = Ax [pA]
 
 #define GB_CX(p) Cx [p]
 
@@ -49,7 +54,8 @@
 #define GB_CAST_OP(pC,pA)           \
 {                                   \
     /* aij = Ax [pA] */             \
-    GxB_FC32_t aij = Ax [pA] ;   \
+    GxB_FC32_t aij ;              \
+    aij = Ax [pA] ;   \
     /* Cx [pC] = op (cast (aij)) */ \
     uint64_t z = GB_cast_to_uint64_t ((double) crealf (aij)) ;               \
     Cx [pC] = z ;        \
@@ -82,7 +88,8 @@ GrB_Info GB (_unop_apply__identity_uint64_fc32)
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < anz ; p++)
         {
-            GxB_FC32_t aij = Ax [p] ;
+            GxB_FC32_t aij ;
+            aij = Ax [p] ;
             uint64_t z = GB_cast_to_uint64_t ((double) crealf (aij)) ;
             Cx [p] = z ;
         }
@@ -94,7 +101,8 @@ GrB_Info GB (_unop_apply__identity_uint64_fc32)
         for (p = 0 ; p < anz ; p++)
         {
             if (!Ab [p]) continue ;
-            GxB_FC32_t aij = Ax [p] ;
+            GxB_FC32_t aij ;
+            aij = Ax [p] ;
             uint64_t z = GB_cast_to_uint64_t ((double) crealf (aij)) ;
             Cx [p] = z ;
         }

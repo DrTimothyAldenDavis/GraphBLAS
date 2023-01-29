@@ -62,6 +62,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     if (term_ecode == 18)
     {
         // ANY monoid is terminal but with no specific terminal value
+        fprintf (fp, "#define GB_IS_ANY_MONOID 1\n") ;
         fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
         fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL(zterminal)\n") ;
         fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) (true)\n") ;
@@ -70,6 +71,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     else if (monoid == NULL || monoid->terminal == NULL)
     {
         // monoid is not terminal (either built-in or user-defined)
+        fprintf (fp, "#define GB_IS_ANY_MONOID 0\n") ;
         fprintf (fp, "#define GB_MONOID_IS_TERMINAL 0\n") ;
         fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL(zterminal)\n") ;
         fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) (false)\n") ;
@@ -78,6 +80,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     else if (term_ecode <= 28)
     {
         // built-in terminal monoid: terminal value is a simple assignment
+        fprintf (fp, "#define GB_IS_ANY_MONOID 0\n") ;
         fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
         const char *term_value = GB_charify_identity_or_terminal (term_ecode) ;
         fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL(zterminal) "
@@ -91,6 +94,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     else
     {
         // user-defined terminal monoid
+        fprintf (fp, "#define GB_IS_ANY_MONOID 0\n") ;
         fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
         GB_macrofy_bytes (fp, "MONOID_TERMINAL", "zterminal",
             ztype_name, monoid->terminal, zsize) ;
