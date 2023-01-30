@@ -14,6 +14,14 @@
 // if C is full: C += A*B is computed with the accumulator identical to
 // the monoid
 
+#ifndef GB_BSIZE
+#define GB_BSIZE sizeof (GB_BTYPE)
+#endif
+
+#ifndef GB_CSIZE
+#define GB_CSIZE sizeof (GB_CTYPE)
+#endif
+
 {
 
     if (use_coarse_tasks)

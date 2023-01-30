@@ -475,7 +475,7 @@ break ;
                 GB_ATOMIC_READ                                      \
                 xold = (*px) ;                                      \
                 /* xnew = xold + t */                               \
-                xnew = GB_ADD_FUNCTION (xold, t) ;                  \
+                GB_ADD (xnew, xold, t) ;                            \
             }                                                       \
             while (!GB_ATOMIC_COMPARE_EXCHANGE (px, xold, xnew)) ;  \
         }

@@ -55,7 +55,8 @@ fclose (f) ;
 % MIN: 10 monoids:  name      op   type        identity      terminal   panel
 % (all but bool and complex)
 fprintf ('\nmin    ') ;
-op = 'if (yarg < zarg) { zarg = yarg ; }' ;
+op {1} = 'if (yarg < zarg) { zarg = yarg ; }' ;
+op {2} = 'zarg = GB_IMIN (xarg, yarg)' ;
 codegen_red_method ('min',    op, 'int8_t'  , 'INT8_MAX'  , 'INT8_MIN'  , 16) ;
 codegen_red_method ('min',    op, 'int16_t' , 'INT16_MAX' , 'INT16_MIN' , 16) ;
 codegen_red_method ('min',    op, 'int32_t' , 'INT32_MAX' , 'INT32_MIN' , 16) ;
@@ -64,13 +65,16 @@ codegen_red_method ('min',    op, 'uint8_t' , 'UINT8_MAX' , '0'         , 16) ;
 codegen_red_method ('min',    op, 'uint16_t', 'UINT16_MAX', '0'         , 16) ;
 codegen_red_method ('min',    op, 'uint32_t', 'UINT32_MAX', '0'         , 16) ;
 codegen_red_method ('min',    op, 'uint64_t', 'UINT64_MAX', '0'         , 16) ;
-op = 'if ((yarg < zarg) || (zarg != zarg)) { zarg = yarg ; }' ;
+op {1} = 'if ((yarg < zarg) || (zarg != zarg)) { zarg = yarg ; }' ;
+op {2} = 'zarg = fminf (xarg, yarg)' ;
 codegen_red_method ('min',    op, 'float'   , 'INFINITY' , [ ] , 16) ;
+op {2} = 'zarg = fmin (xarg, yarg)' ;
 codegen_red_method ('min',    op, 'double'  , '((double) INFINITY)', [ ], 16) ;
 
 % MAX: 10 monoids (all but bool and complex)
 fprintf ('\nmax    ') ;
-op = 'if (yarg > zarg) { zarg = yarg ; }' ;
+op {1} = 'if (yarg > zarg) { zarg = yarg ; }' ;
+op {2} = 'zarg = GB_IMAX (xarg, yarg)' ;
 codegen_red_method ('max',    op, 'int8_t'  , 'INT8_MIN'  , 'INT8_MAX'  , 16) ;
 codegen_red_method ('max',    op, 'int16_t' , 'INT16_MIN' , 'INT16_MAX' , 16) ;
 codegen_red_method ('max',    op, 'int32_t' , 'INT32_MIN' , 'INT32_MAX' , 16) ;
@@ -79,13 +83,16 @@ codegen_red_method ('max',    op, 'uint8_t' , '0'         , 'UINT8_MAX' , 16) ;
 codegen_red_method ('max',    op, 'uint16_t', '0'         , 'UINT16_MAX', 16) ;
 codegen_red_method ('max',    op, 'uint32_t', '0'         , 'UINT32_MAX', 16) ;
 codegen_red_method ('max',    op, 'uint64_t', '0'         , 'UINT64_MAX', 16) ;
-op = 'if ((yarg > zarg) || (zarg != zarg)) { zarg = yarg ; }' ;
+op {1} = 'if ((yarg > zarg) || (zarg != zarg)) { zarg = yarg ; }' ;
+op {2} = 'zarg = fmaxf (xarg, yarg)' ;
 codegen_red_method ('max',    op, 'float'   , '(-INFINITY)' , [ ] , 16) ;
+op {2} = 'zarg = fmax (xarg, yarg)' ;
 codegen_red_method ('max',    op, 'double'  , '((double) -INFINITY)', [ ], 16) ;
 
 % ANY: 13 monoids (including bool and complex)
 fprintf ('\nany    ') ;
-op = 'zarg = yarg' ;
+op {1} = 'zarg = yarg' ;
+op {2} = 'zarg = yarg' ;
 codegen_red_method ('any' ,   op, 'bool'      , '0') ;
 codegen_red_method ('any',    op, 'int8_t'    , '0') ;
 codegen_red_method ('any',    op, 'int16_t'   , '0') ;
@@ -102,7 +109,8 @@ codegen_red_method ('any',    op, 'GxB_FC64_t', 'GxB_CMPLX(0,0)') ;
 
 % PLUS: 12 monoids (all but bool)
 fprintf ('\nplus   ') ;
-op = 'zarg += yarg' ;
+op {1} = 'zarg += yarg' ;
+op {2} = 'zarg = xarg + yarg' ;
 codegen_red_method ('plus',   op, 'int8_t'    , '0'              , [ ], 64) ;
 codegen_red_method ('plus',   op, 'int16_t'   , '0'              , [ ], 64) ;
 codegen_red_method ('plus',   op, 'int32_t'   , '0'              , [ ], 64) ;
@@ -113,14 +121,17 @@ codegen_red_method ('plus',   op, 'uint32_t'  , '0'              , [ ], 64) ;
 codegen_red_method ('plus',   op, 'uint64_t'  , '0'              , [ ], 32) ;
 codegen_red_method ('plus',   op, 'float'     , '0'              , [ ], 64) ;
 codegen_red_method ('plus',   op, 'double'    , '0'              , [ ], 32) ;
-op = 'zarg = GB_FC32_add (zarg, yarg)' ;
+op {1} = 'zarg = GB_FC32_add (zarg, yarg)' ;
+op {2} = 'zarg = GB_FC32_add (xarg, yarg)' ;
 codegen_red_method ('plus',   op, 'GxB_FC32_t', 'GxB_CMPLXF(0,0)', [ ], 32) ;
-op = 'zarg = GB_FC64_add (zarg, yarg)' ;
+op {1} = 'zarg = GB_FC64_add (zarg, yarg)' ;
+op {2} = 'zarg = GB_FC64_add (xarg, yarg)' ;
 codegen_red_method ('plus',   op, 'GxB_FC64_t', 'GxB_CMPLX(0,0)' , [ ], 16) ;
 
 % TIMES: 12 monoids (all but bool)
 fprintf ('\ntimes  ') ;
-op = 'zarg *= yarg' ;
+op {1} = 'zarg *= yarg' ;
+op {2} = 'zarg = xarg * yarg' ;
 codegen_red_method ('times',  op, 'int8_t'    , '1'              , '0', 64) ;
 codegen_red_method ('times',  op, 'int16_t'   , '1'              , '0', 64) ;
 codegen_red_method ('times',  op, 'int32_t'   , '1'              , '0', 64) ;
@@ -131,22 +142,34 @@ codegen_red_method ('times',  op, 'uint32_t'  , '1'              , '0', 64) ;
 codegen_red_method ('times',  op, 'uint64_t'  , '1'              , '0', 16) ;
 codegen_red_method ('times',  op, 'float'     , '1'              , [ ], 64) ;
 codegen_red_method ('times',  op, 'double'    , '1'              , [ ], 32) ;
-op = 'zarg = GB_FC32_mul (zarg, yarg)' ;
+op {1} = 'zarg = GB_FC32_mul (zarg, yarg)' ;
+op {2} = 'zarg = GB_FC32_mul (xarg, yarg)' ;
 codegen_red_method ('times',  op, 'GxB_FC32_t', 'GxB_CMPLXF(1,0)', [ ], 32) ;
-op = 'zarg = GB_FC64_mul (zarg, yarg)' ;
+op {1} = 'zarg = GB_FC64_mul (zarg, yarg)' ;
+op {2} = 'zarg = GB_FC64_mul (xarg, yarg)' ;
 codegen_red_method ('times',  op, 'GxB_FC64_t', 'GxB_CMPLX(1,0)' , [ ], 16) ;
 
 % 4 boolean monoids
 fprintf ('\nlor    ') ;
-codegen_red_method ('lor' , 'zarg = (zarg || yarg)', 'bool','false', 'true' ,8);
+op {1} = 'zarg = (zarg || yarg)' ;
+op {2} = 'zarg = (xarg || yarg)' ;
+codegen_red_method ('lor'  ,  op, 'bool','false', 'true' ,8);
 fprintf ('\nland   ') ;
-codegen_red_method ('land', 'zarg = (zarg && yarg)', 'bool','true' , 'false',8);
+op {1} = 'zarg = (zarg && yarg)' ;
+op {2} = 'zarg = (xarg && yarg)' ;
+codegen_red_method ('land' ,  op, 'bool','true' , 'false',8);
 fprintf ('\nlxor   ') ;
-codegen_red_method ('lxor', 'zarg = (zarg != yarg)', 'bool','false', [ ]    ,8);
+op {1} = 'zarg = (zarg != yarg)' ;
+op {2} = 'zarg = (xarg != yarg)' ;
+codegen_red_method ('lxor' ,  op, 'bool','false', [ ]    ,8);
 fprintf ('\neq     ') ;
-codegen_red_method ('eq'  , 'zarg = (zarg == yarg)', 'bool','true' , [ ]    ,8);
+op {1} = 'zarg = (zarg == yarg)' ;
+op {2} = 'zarg = (xarg == yarg)' ;
+codegen_red_method ('eq'   ,  op, 'bool','true' , [ ]    ,8);
 fprintf ('\nany    ') ;
-codegen_red_method ('any' , 'zarg = (yarg)'        , 'bool','false') ;
+op {1} = 'zarg = yarg' ;
+op {2} = 'zarg = yarg' ;
+codegen_red_method ('any'  ,  op, 'bool','false') ;
 
 % FIXME: add bor, band, bxor, bxnor for uint [8,16,32,64]
 
@@ -156,35 +179,39 @@ codegen_red_method ('any' , 'zarg = (yarg)'        , 'bool','false') ;
 
 % FIRST: 13 ops:    name      op           type        identity terminal panel
 fprintf ('\nfirst  ') ;
-codegen_red_method ('first',  ';'          , 'bool'      , [ ]  , [ ],   1  ) ;
-codegen_red_method ('first',  ';'          , 'int8_t'    , [ ]  , [ ],   1  ) ;
-codegen_red_method ('first',  ';'          , 'int16_t'   , [ ]  , [ ],   1  ) ;
-codegen_red_method ('first',  ';'          , 'int32_t'   , [ ]  , [ ],   1  ) ;
-codegen_red_method ('first',  ';'          , 'int64_t'   , [ ]  , [ ],   1  ) ;
-codegen_red_method ('first',  ';'          , 'uint8_t'   , [ ]  , [ ],   1  ) ;
-codegen_red_method ('first',  ';'          , 'uint16_t'  , [ ]  , [ ],   1  ) ;
-codegen_red_method ('first',  ';'          , 'uint32_t'  , [ ]  , [ ],   1  ) ;
-codegen_red_method ('first',  ';'          , 'uint64_t'  , [ ]  , [ ],   1  ) ;
-codegen_red_method ('first',  ';'          , 'float'     , [ ]  , [ ],   1  ) ;
-codegen_red_method ('first',  ';'          , 'double'    , [ ]  , [ ],   1  ) ;
-codegen_red_method ('first',  ';'          , 'GxB_FC32_t', [ ]  , [ ],   1  ) ;
-codegen_red_method ('first',  ';'          , 'GxB_FC64_t', [ ]  , [ ],   1  ) ;
+op {1} = '' ;
+op {2} = 'zarg = xarg' ;
+codegen_red_method ('first',  op,  'bool'      , [ ]  , [ ],   1  ) ;
+codegen_red_method ('first',  op,  'int8_t'    , [ ]  , [ ],   1  ) ;
+codegen_red_method ('first',  op,  'int16_t'   , [ ]  , [ ],   1  ) ;
+codegen_red_method ('first',  op,  'int32_t'   , [ ]  , [ ],   1  ) ;
+codegen_red_method ('first',  op,  'int64_t'   , [ ]  , [ ],   1  ) ;
+codegen_red_method ('first',  op,  'uint8_t'   , [ ]  , [ ],   1  ) ;
+codegen_red_method ('first',  op,  'uint16_t'  , [ ]  , [ ],   1  ) ;
+codegen_red_method ('first',  op,  'uint32_t'  , [ ]  , [ ],   1  ) ;
+codegen_red_method ('first',  op,  'uint64_t'  , [ ]  , [ ],   1  ) ;
+codegen_red_method ('first',  op,  'float'     , [ ]  , [ ],   1  ) ;
+codegen_red_method ('first',  op,  'double'    , [ ]  , [ ],   1  ) ;
+codegen_red_method ('first',  op,  'GxB_FC32_t', [ ]  , [ ],   1  ) ;
+codegen_red_method ('first',  op,  'GxB_FC64_t', [ ]  , [ ],   1  ) ;
 
 % SECOND: 13 ops    name      op           type        identity terminal panel
 fprintf ('\nsecond ') ;
-codegen_red_method ('second', 'zarg = yarg', 'bool'      , [ ]  , [ ],   1  ) ;
-codegen_red_method ('second', 'zarg = yarg', 'int8_t'    , [ ]  , [ ],   1  ) ;
-codegen_red_method ('second', 'zarg = yarg', 'int16_t'   , [ ]  , [ ],   1  ) ;
-codegen_red_method ('second', 'zarg = yarg', 'int32_t'   , [ ]  , [ ],   1  ) ;
-codegen_red_method ('second', 'zarg = yarg', 'int64_t'   , [ ]  , [ ],   1  ) ;
-codegen_red_method ('second', 'zarg = yarg', 'uint8_t'   , [ ]  , [ ],   1  ) ;
-codegen_red_method ('second', 'zarg = yarg', 'uint16_t'  , [ ]  , [ ],   1  ) ;
-codegen_red_method ('second', 'zarg = yarg', 'uint32_t'  , [ ]  , [ ],   1  ) ;
-codegen_red_method ('second', 'zarg = yarg', 'uint64_t'  , [ ]  , [ ],   1  ) ;
-codegen_red_method ('second', 'zarg = yarg', 'float'     , [ ]  , [ ],   1  ) ;
-codegen_red_method ('second', 'zarg = yarg', 'double'    , [ ]  , [ ],   1  ) ;
-codegen_red_method ('second', 'zarg = yarg', 'GxB_FC32_t', [ ]  , [ ],   1  ) ;
-codegen_red_method ('second', 'zarg = yarg', 'GxB_FC64_t', [ ]  , [ ],   1  ) ;
+op {1} = 'zarg = yarg' ;
+op {2} = 'zarg = yarg' ;
+codegen_red_method ('second', op,  'bool'      , [ ]  , [ ],   1  ) ;
+codegen_red_method ('second', op, 'int8_t'    , [ ]  , [ ],   1  ) ;
+codegen_red_method ('second', op, 'int16_t'   , [ ]  , [ ],   1  ) ;
+codegen_red_method ('second', op, 'int32_t'   , [ ]  , [ ],   1  ) ;
+codegen_red_method ('second', op, 'int64_t'   , [ ]  , [ ],   1  ) ;
+codegen_red_method ('second', op, 'uint8_t'   , [ ]  , [ ],   1  ) ;
+codegen_red_method ('second', op, 'uint16_t'  , [ ]  , [ ],   1  ) ;
+codegen_red_method ('second', op, 'uint32_t'  , [ ]  , [ ],   1  ) ;
+codegen_red_method ('second', op, 'uint64_t'  , [ ]  , [ ],   1  ) ;
+codegen_red_method ('second', op, 'float'     , [ ]  , [ ],   1  ) ;
+codegen_red_method ('second', op, 'double'    , [ ]  , [ ],   1  ) ;
+codegen_red_method ('second', op, 'GxB_FC32_t', [ ]  , [ ],   1  ) ;
+codegen_red_method ('second', op, 'GxB_FC64_t', [ ]  , [ ],   1  ) ;
 
 fprintf ('\n') ;
 

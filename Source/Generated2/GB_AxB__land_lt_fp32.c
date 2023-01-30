@@ -1,5 +1,3 @@
-
-
 //------------------------------------------------------------------------------
 // GB_AxB__land_lt_fp32.c: matrix multiply for a single semiring
 //------------------------------------------------------------------------------
@@ -186,9 +184,9 @@
 #define GB_CIJ_UPDATE(p,t) \
     Cx [p] &= t
 
-// x + y
-#define GB_ADD_FUNCTION(x,y) \
-    x & y
+// z = x + y
+#define GB_ADD(z,x,y) \
+    z = x && y
 
 // bit pattern for bool, 8-bit, 16-bit, and 32-bit integers
 #define GB_CTYPE_BITS \

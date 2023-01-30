@@ -1,7 +1,3 @@
-
-
-
-
 //------------------------------------------------------------------------------
 // GB_bld:  hard-coded functions for builder methods
 //------------------------------------------------------------------------------
@@ -29,7 +25,7 @@
 // Y type:   GxB_FC32_t
 // Z type:   GxB_FC32_t
 
-// dup:      ;
+// dup:      
 
 #define GB_S_TYPENAME \
     GxB_FC32_t
@@ -54,7 +50,7 @@
 
     // Tx [k] += Sx [i], no typecast here
     #define GB_BLD_DUP(Tx,k,Sx,i)           \
-        ;
+        
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \

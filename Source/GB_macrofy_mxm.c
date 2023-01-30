@@ -88,18 +88,9 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     //--------------------------------------------------------------------------
 
     fprintf (fp, "// semiring types:\n") ;
-
-    GB_macrofy_type (fp, "X", 
-        (xcode == 0) ? "GB_void" : xtype->name,
-        (xcode == 0) ? 0 : xtype->size) ;
-
-    GB_macrofy_type (fp, "Y", 
-        (ycode == 0) ? "GB_void" : ytype->name,
-        (ycode == 0) ? 0 : ytype->size) ;
-
-    GB_macrofy_type (fp, "Z", 
-        (zcode == 0) ? "GB_void" : ztype->name,
-        (zcode == 0) ? 0 : ztype->size) ;
+    GB_macrofy_type (fp, "X", (xcode == 0) ? "GB_void" : xtype->name) ;
+    GB_macrofy_type (fp, "Y", (ycode == 0) ? "GB_void" : ytype->name) ;
+    GB_macrofy_type (fp, "Z", (zcode == 0) ? "GB_void" : ztype->name) ;
 
     //--------------------------------------------------------------------------
     // construct the monoid macros

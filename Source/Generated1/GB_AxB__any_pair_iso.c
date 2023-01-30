@@ -1,5 +1,3 @@
-
-
 //------------------------------------------------------------------------------
 // GB_AxB__any_pair_iso.c: matrix multiply for a single semiring
 //------------------------------------------------------------------------------
@@ -186,8 +184,8 @@
 #define GB_CIJ_UPDATE(p,t) \
     ;
 
-// x + y
-#define GB_ADD_FUNCTION(x,y) \
+// z = x + y
+#define GB_ADD(z,x,y) \
     
 
 // bit pattern for bool, 8-bit, 16-bit, and 32-bit integers

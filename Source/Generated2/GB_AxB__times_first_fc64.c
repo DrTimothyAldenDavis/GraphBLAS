@@ -1,5 +1,3 @@
-
-
 //------------------------------------------------------------------------------
 // GB_AxB__times_first_fc64.c: matrix multiply for a single semiring
 //------------------------------------------------------------------------------
@@ -186,9 +184,9 @@
 #define GB_CIJ_UPDATE(p,t) \
     Cx [p] = GB_FC64_mul (Cx [p], t)
 
-// x + y
-#define GB_ADD_FUNCTION(x,y) \
-    GB_FC64_mul (x, y)
+// z = x + y
+#define GB_ADD(z,x,y) \
+    z = GB_FC64_mul (x, y)
 
 // bit pattern for bool, 8-bit, 16-bit, and 32-bit integers
 #define GB_CTYPE_BITS \

@@ -10,8 +10,8 @@ function codegen_axb_compare_template (multop, bmult, mult)
 fprintf ('\n%-7s', multop) ;
 
 % lor monoid
-add = 'w |= t' ;        % TODO: should this be w ||= t ?
-addfunc = 'w | t' ;     % TODO: should this be w || t ?
+add = 'w |= t' ;
+addfunc = 'zarg = xarg || yarg' ;
 codegen_axb_method ('lor', multop, add, addfunc, bmult, 'bool', 'bool'    , 'false', 'true', 1, 0) ;
 codegen_axb_method ('lor', multop, add, addfunc,  mult, 'bool', 'int8_t'  , 'false', 'true', 1, 0) ;
 codegen_axb_method ('lor', multop, add, addfunc,  mult, 'bool', 'uint8_t' , 'false', 'true', 1, 0) ;
@@ -26,7 +26,7 @@ codegen_axb_method ('lor', multop, add, addfunc,  mult, 'bool', 'double'  , 'fal
 
 % any monoid
 add = 'w = t' ;
-addfunc = 't' ;
+addfunc = 'zarg = yarg' ;
 codegen_axb_method ('any', multop, add, addfunc, bmult, 'bool', 'bool'    , 'false', '(any value)', 0, 0) ;
 codegen_axb_method ('any', multop, add, addfunc,  mult, 'bool', 'int8_t'  , 'false', '(any value)', 0, 0) ;
 codegen_axb_method ('any', multop, add, addfunc,  mult, 'bool', 'uint8_t' , 'false', '(any value)', 0, 0) ;
@@ -40,8 +40,8 @@ codegen_axb_method ('any', multop, add, addfunc,  mult, 'bool', 'float'   , 'fal
 codegen_axb_method ('any', multop, add, addfunc,  mult, 'bool', 'double'  , 'false', '(any value)', 0, 0) ;
 
 % land monoid
-add = 'w &= t' ;        % TODO: should this be w &&= t ?
-addfunc = 'w & t' ;     % TODO: should this be w && t ?
+add = 'w &= t' ;
+addfunc = 'zarg = xarg && yarg' ;
 codegen_axb_method ('land', multop, add, addfunc, bmult, 'bool', 'bool'    , 'true', 'false', 1, 0) ;
 codegen_axb_method ('land', multop, add, addfunc,  mult, 'bool', 'int8_t'  , 'true', 'false', 1, 0) ;
 codegen_axb_method ('land', multop, add, addfunc,  mult, 'bool', 'uint8_t' , 'true', 'false', 1, 0) ;
@@ -56,7 +56,7 @@ codegen_axb_method ('land', multop, add, addfunc,  mult, 'bool', 'double'  , 'tr
 
 % lxor monoid
 add = 'w ^= t' ;
-addfunc = 'w ^ t' ;
+addfunc = 'zarg = (xarg != yarg)' ;
 codegen_axb_method ('lxor', multop, add, addfunc, bmult, 'bool', 'bool'    , 'false', [ ], 1, 0) ;
 codegen_axb_method ('lxor', multop, add, addfunc,  mult, 'bool', 'int8_t'  , 'false', [ ], 1, 0) ;
 codegen_axb_method ('lxor', multop, add, addfunc,  mult, 'bool', 'uint8_t' , 'false', [ ], 1, 0) ;
@@ -71,7 +71,7 @@ codegen_axb_method ('lxor', multop, add, addfunc,  mult, 'bool', 'double'  , 'fa
 
 % eq (lxnor) monoid.  Cannot be done with OpenMP atomic update
 add = 'w = (w == t)' ;
-addfunc = 'w == t' ;
+addfunc = 'zarg = (xarg == yarg)' ;
 codegen_axb_method ('eq', multop, add, addfunc, bmult, 'bool', 'bool'    , 'true', [ ], 0, 0) ;
 codegen_axb_method ('eq', multop, add, addfunc,  mult, 'bool', 'int8_t'  , 'true', [ ], 0, 0) ;
 codegen_axb_method ('eq', multop, add, addfunc,  mult, 'bool', 'uint8_t' , 'true', [ ], 0, 0) ;

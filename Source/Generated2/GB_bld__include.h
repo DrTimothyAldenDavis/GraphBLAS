@@ -7,10 +7,6 @@
 
 // This file has been automatically generated from Generator/GB_bld.h
 
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__min_int8)
 (
@@ -25,10 +21,6 @@ GrB_Info GB (_bld__min_int8)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__min_int16)
 (
@@ -43,10 +35,6 @@ GrB_Info GB (_bld__min_int16)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__min_int32)
 (
@@ -61,10 +49,6 @@ GrB_Info GB (_bld__min_int32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__min_int64)
 (
@@ -79,10 +63,6 @@ GrB_Info GB (_bld__min_int64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__min_uint8)
 (
@@ -97,10 +77,6 @@ GrB_Info GB (_bld__min_uint8)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__min_uint16)
 (
@@ -115,10 +91,6 @@ GrB_Info GB (_bld__min_uint16)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__min_uint32)
 (
@@ -133,10 +105,6 @@ GrB_Info GB (_bld__min_uint32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__min_uint64)
 (
@@ -151,10 +119,6 @@ GrB_Info GB (_bld__min_uint64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__min_fp32)
 (
@@ -169,10 +133,6 @@ GrB_Info GB (_bld__min_fp32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__min_fp64)
 (
@@ -187,10 +147,6 @@ GrB_Info GB (_bld__min_fp64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__max_int8)
 (
@@ -205,10 +161,6 @@ GrB_Info GB (_bld__max_int8)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__max_int16)
 (
@@ -223,10 +175,6 @@ GrB_Info GB (_bld__max_int16)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__max_int32)
 (
@@ -241,10 +189,6 @@ GrB_Info GB (_bld__max_int32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__max_int64)
 (
@@ -259,10 +203,6 @@ GrB_Info GB (_bld__max_int64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__max_uint8)
 (
@@ -277,10 +217,6 @@ GrB_Info GB (_bld__max_uint8)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__max_uint16)
 (
@@ -295,10 +231,6 @@ GrB_Info GB (_bld__max_uint16)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__max_uint32)
 (
@@ -313,10 +245,6 @@ GrB_Info GB (_bld__max_uint32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__max_uint64)
 (
@@ -331,10 +259,6 @@ GrB_Info GB (_bld__max_uint64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__max_fp32)
 (
@@ -349,10 +273,6 @@ GrB_Info GB (_bld__max_fp32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__max_fp64)
 (
@@ -367,10 +287,6 @@ GrB_Info GB (_bld__max_fp64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__any_bool)
 (
@@ -385,10 +301,6 @@ GrB_Info GB (_bld__any_bool)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__any_int8)
 (
@@ -403,10 +315,6 @@ GrB_Info GB (_bld__any_int8)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__any_int16)
 (
@@ -421,10 +329,6 @@ GrB_Info GB (_bld__any_int16)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__any_int32)
 (
@@ -439,10 +343,6 @@ GrB_Info GB (_bld__any_int32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__any_int64)
 (
@@ -457,10 +357,6 @@ GrB_Info GB (_bld__any_int64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__any_uint8)
 (
@@ -475,10 +371,6 @@ GrB_Info GB (_bld__any_uint8)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__any_uint16)
 (
@@ -493,10 +385,6 @@ GrB_Info GB (_bld__any_uint16)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__any_uint32)
 (
@@ -511,10 +399,6 @@ GrB_Info GB (_bld__any_uint32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__any_uint64)
 (
@@ -529,10 +413,6 @@ GrB_Info GB (_bld__any_uint64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__any_fp32)
 (
@@ -547,10 +427,6 @@ GrB_Info GB (_bld__any_fp32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__any_fp64)
 (
@@ -565,10 +441,6 @@ GrB_Info GB (_bld__any_fp64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__any_fc32)
 (
@@ -583,10 +455,6 @@ GrB_Info GB (_bld__any_fc32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__any_fc64)
 (
@@ -601,10 +469,6 @@ GrB_Info GB (_bld__any_fc64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__plus_int8)
 (
@@ -619,10 +483,6 @@ GrB_Info GB (_bld__plus_int8)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__plus_int16)
 (
@@ -637,10 +497,6 @@ GrB_Info GB (_bld__plus_int16)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__plus_int32)
 (
@@ -655,10 +511,6 @@ GrB_Info GB (_bld__plus_int32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__plus_int64)
 (
@@ -673,10 +525,6 @@ GrB_Info GB (_bld__plus_int64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__plus_uint8)
 (
@@ -691,10 +539,6 @@ GrB_Info GB (_bld__plus_uint8)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__plus_uint16)
 (
@@ -709,10 +553,6 @@ GrB_Info GB (_bld__plus_uint16)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__plus_uint32)
 (
@@ -727,10 +567,6 @@ GrB_Info GB (_bld__plus_uint32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__plus_uint64)
 (
@@ -745,10 +581,6 @@ GrB_Info GB (_bld__plus_uint64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__plus_fp32)
 (
@@ -763,10 +595,6 @@ GrB_Info GB (_bld__plus_fp32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__plus_fp64)
 (
@@ -781,10 +609,6 @@ GrB_Info GB (_bld__plus_fp64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__plus_fc32)
 (
@@ -799,10 +623,6 @@ GrB_Info GB (_bld__plus_fc32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__plus_fc64)
 (
@@ -817,10 +637,6 @@ GrB_Info GB (_bld__plus_fc64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__times_int8)
 (
@@ -835,10 +651,6 @@ GrB_Info GB (_bld__times_int8)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__times_int16)
 (
@@ -853,10 +665,6 @@ GrB_Info GB (_bld__times_int16)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__times_int32)
 (
@@ -871,10 +679,6 @@ GrB_Info GB (_bld__times_int32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__times_int64)
 (
@@ -889,10 +693,6 @@ GrB_Info GB (_bld__times_int64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__times_uint8)
 (
@@ -907,10 +707,6 @@ GrB_Info GB (_bld__times_uint8)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__times_uint16)
 (
@@ -925,10 +721,6 @@ GrB_Info GB (_bld__times_uint16)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__times_uint32)
 (
@@ -943,10 +735,6 @@ GrB_Info GB (_bld__times_uint32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__times_uint64)
 (
@@ -961,10 +749,6 @@ GrB_Info GB (_bld__times_uint64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__times_fp32)
 (
@@ -979,10 +763,6 @@ GrB_Info GB (_bld__times_fp32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__times_fp64)
 (
@@ -997,10 +777,6 @@ GrB_Info GB (_bld__times_fp64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__times_fc32)
 (
@@ -1015,10 +791,6 @@ GrB_Info GB (_bld__times_fc32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__times_fc64)
 (
@@ -1033,10 +805,6 @@ GrB_Info GB (_bld__times_fc64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__lor_bool)
 (
@@ -1051,10 +819,6 @@ GrB_Info GB (_bld__lor_bool)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__land_bool)
 (
@@ -1069,10 +833,6 @@ GrB_Info GB (_bld__land_bool)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__lxor_bool)
 (
@@ -1087,10 +847,6 @@ GrB_Info GB (_bld__lxor_bool)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__eq_bool)
 (
@@ -1105,10 +861,6 @@ GrB_Info GB (_bld__eq_bool)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__any_bool)
 (
@@ -1123,10 +875,6 @@ GrB_Info GB (_bld__any_bool)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__first_bool)
 (
@@ -1141,10 +889,6 @@ GrB_Info GB (_bld__first_bool)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__first_int8)
 (
@@ -1159,10 +903,6 @@ GrB_Info GB (_bld__first_int8)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__first_int16)
 (
@@ -1177,10 +917,6 @@ GrB_Info GB (_bld__first_int16)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__first_int32)
 (
@@ -1195,10 +931,6 @@ GrB_Info GB (_bld__first_int32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__first_int64)
 (
@@ -1213,10 +945,6 @@ GrB_Info GB (_bld__first_int64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__first_uint8)
 (
@@ -1231,10 +959,6 @@ GrB_Info GB (_bld__first_uint8)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__first_uint16)
 (
@@ -1249,10 +973,6 @@ GrB_Info GB (_bld__first_uint16)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__first_uint32)
 (
@@ -1267,10 +987,6 @@ GrB_Info GB (_bld__first_uint32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__first_uint64)
 (
@@ -1285,10 +1001,6 @@ GrB_Info GB (_bld__first_uint64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__first_fp32)
 (
@@ -1303,10 +1015,6 @@ GrB_Info GB (_bld__first_fp32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__first_fp64)
 (
@@ -1321,10 +1029,6 @@ GrB_Info GB (_bld__first_fp64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__first_fc32)
 (
@@ -1339,10 +1043,6 @@ GrB_Info GB (_bld__first_fc32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__first_fc64)
 (
@@ -1357,10 +1057,6 @@ GrB_Info GB (_bld__first_fc64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__second_bool)
 (
@@ -1375,10 +1071,6 @@ GrB_Info GB (_bld__second_bool)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__second_int8)
 (
@@ -1393,10 +1085,6 @@ GrB_Info GB (_bld__second_int8)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__second_int16)
 (
@@ -1411,10 +1099,6 @@ GrB_Info GB (_bld__second_int16)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__second_int32)
 (
@@ -1429,10 +1113,6 @@ GrB_Info GB (_bld__second_int32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__second_int64)
 (
@@ -1447,10 +1127,6 @@ GrB_Info GB (_bld__second_int64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__second_uint8)
 (
@@ -1465,10 +1141,6 @@ GrB_Info GB (_bld__second_uint8)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__second_uint16)
 (
@@ -1483,10 +1155,6 @@ GrB_Info GB (_bld__second_uint16)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__second_uint32)
 (
@@ -1501,10 +1169,6 @@ GrB_Info GB (_bld__second_uint32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__second_uint64)
 (
@@ -1519,10 +1183,6 @@ GrB_Info GB (_bld__second_uint64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__second_fp32)
 (
@@ -1537,10 +1197,6 @@ GrB_Info GB (_bld__second_fp32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__second_fp64)
 (
@@ -1555,10 +1211,6 @@ GrB_Info GB (_bld__second_fp64)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__second_fc32)
 (
@@ -1573,10 +1225,6 @@ GrB_Info GB (_bld__second_fc32)
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
-
-
-
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_bld__second_fc64)
 (

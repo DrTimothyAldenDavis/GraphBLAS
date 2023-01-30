@@ -183,7 +183,7 @@ bits =  { '0xFF', '0xFFFF', '0xFFFFFFFF', '0xFFFFFFFFFFFFFFFFL' } ;
 for i = 1:4
     addop = ops {i} ;
     fprintf ('\n%-7s', addop) ;
-    addfunc = strrep (strrep (funcs {i}, 'xarg', 'w'), 'yarg', 't') ;
+    addfunc = ['zarg = ' funcs{i}] ;
     add = adds {i} ;
     identity = ids {i} ;
     term = terms {i} ;
@@ -221,7 +221,7 @@ funcs = { 'i', '(i+1)', 'k', '(k+1)', 'j', '(j+1)' } ;
 % them early when used with positional operators. Only the ANY monoid is still terminal.
 addops   = { 'min',                'max',                'any',   'plus',   'times'  } ;
 adds     = { 'w = GB_IMIN (w, t)', 'w = GB_IMAX (w, t)', 'w = t', 'w += t', 'w *= t' } ;
-addfuncs = {     'GB_IMIN (w, t)',     'GB_IMAX (w, t)',     't', 'w + t' , 'w * t'  } ;
+addfuncs = {'GB_IMIN (xarg, yarg)','GB_IMAX (xarg, yarg)','yarg', 'xarg + yarg' , 'xarg * yarg'  } ;
 ids      = { 'INT64_MAX',          'INT64_MIN',          '0',     '0',      '1'      } ;
 terms    = { [ ],                  [ ],                  '0',     [ ],      [ ]      } ;
 atomx    = {  0                  ,  0 ,                   0,       1,        1,      } ;
@@ -232,7 +232,7 @@ for j = 1:6
     fprintf ('\n%-9s', multop) ;
     for i = 1:5
         addop = addops {i} ;
-        addfunc = strrep (strrep (addfuncs {i}, 'xarg', 'w'), 'yarg', 't') ;
+        addfunc = ['zarg = ' addfuncs{i}] ;
         add = adds {i} ;
         identity = ids {i} ;
         term = terms {i} ;

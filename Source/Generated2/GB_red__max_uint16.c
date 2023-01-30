@@ -1,7 +1,3 @@
-
-
-
-
 //------------------------------------------------------------------------------
 // GB_red:  hard-coded functions for reductions
 //------------------------------------------------------------------------------
@@ -26,7 +22,8 @@
 // A type:   uint16_t
 // Z type:   uint16_t
 
-// Reduce:   if (aij > z) { z = aij ; }
+// Update:   if (y > z) { z = y ; }
+// Add func: z = GB_IMAX (x, y)
 // Identity: 0
 // Terminal: if (z == UINT16_MAX) { break ; }
 
@@ -51,9 +48,13 @@
     #define GB_GETA(aij,Ax,pA,A_iso)  \
         aij = Ax [pA]
 
-    // z += y, no typecast
+    // z += y, update
     #define GB_UPDATE(z,y) \
         if (y > z) { z = y ; }
+
+    // z = x+y, additive function
+    #define GB_ADD(z,x,y) \
+        z = GB_IMAX (x, y)
 
     // s += (ztype) Ax [p], no typecast here however
     #define GB_GETA_AND_UPDATE(s,Ax,p)              \

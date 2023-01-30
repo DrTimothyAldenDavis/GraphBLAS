@@ -1,7 +1,3 @@
-
-
-
-
 //------------------------------------------------------------------------------
 // GB_red:  hard-coded functions for reductions
 //------------------------------------------------------------------------------
@@ -26,7 +22,8 @@
 // A type:   uint8_t
 // Z type:   uint8_t
 
-// Reduce:   z = aij
+// Update:   z = y
+// Add func: z = y
 // Identity: 0
 // Terminal: break ;
 
@@ -51,8 +48,12 @@
     #define GB_GETA(aij,Ax,pA,A_iso)  \
         aij = Ax [pA]
 
-    // z += y, no typecast
+    // z += y, update
     #define GB_UPDATE(z,y) \
+        z = y
+
+    // z = x+y, additive function
+    #define GB_ADD(z,x,y) \
         z = y
 
     // s += (ztype) Ax [p], no typecast here however

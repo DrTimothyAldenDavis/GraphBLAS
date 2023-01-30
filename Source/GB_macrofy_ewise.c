@@ -92,16 +92,16 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     if (binaryop == NULL)
     {
         // GB_wait: implicit SECOND operator
-        GB_macrofy_type (fp, "X", ctype->name, ctype->size) ;
-        GB_macrofy_type (fp, "Y", ctype->name, ctype->size) ;
-        GB_macrofy_type (fp, "Z", ctype->name, ctype->size) ;
+        GB_macrofy_type (fp, "X", ctype->name) ;
+        GB_macrofy_type (fp, "Y", ctype->name) ;
+        GB_macrofy_type (fp, "Z", ctype->name) ;
         ztype = ctype ;
     }
     else
     {
-        GB_macrofy_type (fp, "X", binaryop->xtype->name, binaryop->xtype->size);
-        GB_macrofy_type (fp, "Y", binaryop->ytype->name, binaryop->ytype->size);
-        GB_macrofy_type (fp, "Z", binaryop->ztype->name, binaryop->ztype->size);
+        GB_macrofy_type (fp, "X", binaryop->xtype->name) ;
+        GB_macrofy_type (fp, "Y", binaryop->ytype->name) ;
+        GB_macrofy_type (fp, "Z", binaryop->ztype->name) ;
         ztype = binaryop->ztype ;
     }
 

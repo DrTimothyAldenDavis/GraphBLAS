@@ -22,7 +22,8 @@
 // A type:   GB_atype
 // Z type:   GB_ztype
 
-// Reduce:   GB_update_op(z, aij)
+// Update:   GB_update_op(z,y)
+// Add func: GB_add_op(z,x,y)
 // Identity: GB_identity
 // Terminal: GB_if_terminal_break(z)
 
@@ -47,9 +48,13 @@
     #define GB_GETA(aij,Ax,pA,A_iso)  \
         GB_geta(aij,Ax,pA,false)
 
-    // z += y, no typecast
+    // z += y, update
     #define GB_UPDATE(z,y) \
         GB_update_op(z, y)
+
+    // z = x+y, additive function
+    #define GB_ADD(z,x,y) \
+        GB_add_op(z, x, y)
 
     // s += (ztype) Ax [p], no typecast here however
     #define GB_GETA_AND_UPDATE(s,Ax,p)              \

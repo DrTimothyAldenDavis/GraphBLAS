@@ -1,7 +1,3 @@
-
-
-
-
 //------------------------------------------------------------------------------
 // GB_red:  hard-coded functions for reductions
 //------------------------------------------------------------------------------
@@ -26,7 +22,8 @@
 // A type:   GxB_FC64_t
 // Z type:   GxB_FC64_t
 
-// Reduce:   z = GB_FC64_add (z, aij)
+// Update:   z = GB_FC64_add (z, y)
+// Add func: z = GB_FC64_add (x, y)
 // Identity: GxB_CMPLX(0,0)
 // Terminal: ;
 
@@ -51,9 +48,13 @@
     #define GB_GETA(aij,Ax,pA,A_iso)  \
         aij = Ax [pA]
 
-    // z += y, no typecast
+    // z += y, update
     #define GB_UPDATE(z,y) \
         z = GB_FC64_add (z, y)
+
+    // z = x+y, additive function
+    #define GB_ADD(z,x,y) \
+        z = GB_FC64_add (x, y)
 
     // s += (ztype) Ax [p], no typecast here however
     #define GB_GETA_AND_UPDATE(s,Ax,p)              \

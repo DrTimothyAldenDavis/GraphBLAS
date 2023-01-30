@@ -1,5 +1,3 @@
-
-
 //------------------------------------------------------------------------------
 // GB_AxB__min_minus_fp64.c: matrix multiply for a single semiring
 //------------------------------------------------------------------------------
@@ -186,9 +184,9 @@
 #define GB_CIJ_UPDATE(p,t) \
     if (!isnan (t) && !islessequal (Cx [p], t)) { Cx [p] = t ; }
 
-// x + y
-#define GB_ADD_FUNCTION(x,y) \
-    fmin (x, y)
+// z = x + y
+#define GB_ADD(z,x,y) \
+    z = fmin (x, y)
 
 // bit pattern for bool, 8-bit, 16-bit, and 32-bit integers
 #define GB_CTYPE_BITS \

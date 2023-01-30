@@ -56,7 +56,6 @@ void GB_macrofy_mask
             // mask not complemented, type: structural
             fprintf (fp,
                 "#define GB_M_TYPENAME GB_void  /* not used */\n"
-                "#define GB_M_TYPESIZE 1        /* not used */\n"
                 "#define MX(p) 1\n"
                 "#define GB_MASK_STRUCT 1\n"
                 "#define GB_MASK_COMP 0\n"
@@ -67,7 +66,6 @@ void GB_macrofy_mask
             // mask complemented, type: structural
             fprintf (fp,
                 "#define GB_M_TYPENAME GB_void  /* not used */\n"
-                "#define GB_M_TYPESIZE 1        /* not used */\n"
                 "#define MX(p) 1\n"
                 "#define GB_MASK_STRUCT 1\n"
                 "#define GB_MASK_COMP 1\n"
@@ -82,7 +80,6 @@ void GB_macrofy_mask
             // mask not complemented, type: bool, int8, uint8
             fprintf (fp,
                 "#define GB_M_TYPENAME uint8_t\n"
-                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 0\n"
@@ -93,7 +90,6 @@ void GB_macrofy_mask
             // mask complemented, type: bool, int8, uint8
             fprintf (fp,
                 "#define GB_M_TYPENAME uint8_t\n"
-                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 1\n"
@@ -108,7 +104,6 @@ void GB_macrofy_mask
             // mask not complemented, type: int16, uint16
             fprintf (fp,
                 "#define GB_M_TYPENAME uint16_t\n"
-                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 0\n"
@@ -119,7 +114,6 @@ void GB_macrofy_mask
             // mask complemented, type: int16, uint16
             fprintf (fp,
                 "#define GB_M_TYPENAME uint16_t\n"
-                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 1\n"
@@ -134,7 +128,6 @@ void GB_macrofy_mask
             // mask not complemented, type: float, int32, uint32
             fprintf (fp,
                 "#define GB_M_TYPENAME uint32_t\n"
-                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 0\n"
@@ -145,7 +138,6 @@ void GB_macrofy_mask
             // mask complemented, type: float, int32, uint32
             fprintf (fp,
                 "#define GB_M_TYPENAME uint32_t\n"
-                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 1\n"
@@ -160,7 +152,6 @@ void GB_macrofy_mask
             // mask not complemented, type: double, float complex, int64, uint64
             fprintf (fp,
                 "#define GB_M_TYPENAME uint64_t\n"
-                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 0\n"
@@ -171,7 +162,6 @@ void GB_macrofy_mask
             // mask complemented, type: double, float complex, int64, uint64
             fprintf (fp,
                 "#define GB_M_TYPENAME uint64_t\n"
-                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 1\n"
@@ -186,7 +176,6 @@ void GB_macrofy_mask
             // mask not complemented, type: double complex
             fprintf (fp,
                 "#define GB_M_TYPENAME uint64_t\n"
-                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [2*(p)] != 0 || Mx [2*(p)+1] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 0\n"
@@ -197,7 +186,6 @@ void GB_macrofy_mask
             // mask complemented, type: double complex
             fprintf (fp,
                 "#define GB_M_TYPENAME uint64_t\n"
-                "#define GB_M_TYPESIZE %d\n"
                 "#define MX(p) (Mx [2*(p)] != 0 || Mx [2*(p)+1] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 1\n"

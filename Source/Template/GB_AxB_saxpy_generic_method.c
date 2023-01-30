@@ -157,7 +157,6 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
 
     #define GB_ATYPE GB_void
     #define GB_BTYPE GB_void
-    #define GB_ASIZE asize
     #define GB_BSIZE bsize
 
     // no vectorization

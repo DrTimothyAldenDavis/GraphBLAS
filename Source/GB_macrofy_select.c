@@ -80,9 +80,9 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
     //--------------------------------------------------------------------------
 
     fprintf (fp, "// select types:\n") ;
-    GB_macrofy_type (fp, "X", xname, (xtype == NULL) ? 0 : xtype->size) ;
-    GB_macrofy_type (fp, "Y", yname, (ytype == NULL) ? 0 : ytype->size) ;
-    GB_macrofy_type (fp, "Z", zname, (ztype == NULL) ? 0 : ztype->size) ;
+    GB_macrofy_type (fp, "X", xname) ;
+    GB_macrofy_type (fp, "Y", yname) ;
+    GB_macrofy_type (fp, "Z", zname) ;
 
     //--------------------------------------------------------------------------
     // construct the select macros

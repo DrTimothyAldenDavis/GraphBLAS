@@ -65,15 +65,6 @@ if_not_any_pair_semiring
 #define GB_CTYPE \
     GB_ctype
 
-#define GB_ASIZE \
-    GB_asize
-
-#define GB_BSIZE \
-    GB_bsize 
-
-#define GB_CSIZE \
-    GB_csize
-
 // # of bits in the type of C, for AVX2 and AVX512F
 #define GB_CNBITS \
     GB_cnbits
@@ -184,9 +175,9 @@ if_not_any_pair_semiring
 #define GB_CIJ_UPDATE(p,t) \
     GB_add_update(Cx [p], t)
 
-// x + y
-#define GB_ADD_FUNCTION(x,y) \
-    GB_add_function(x, y)
+// z = x + y
+#define GB_ADD(z,x,y) \
+    GB_add_op(z,x,y)
 
 // bit pattern for bool, 8-bit, 16-bit, and 32-bit integers
 #define GB_CTYPE_BITS \

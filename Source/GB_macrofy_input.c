@@ -39,9 +39,7 @@ void GB_macrofy_input
         fprintf (fp, "#define GB_%s_IS_PATTERN %d\n", Aname, A_is_pattern) ;
         fprintf (fp, "#define GB_%s_ISO %d\n", Aname, A_iso_code) ;
         GB_macrofy_sparsity (fp, Aname, asparsity) ;
-        GB_macrofy_type (fp, Aname,
-            A_is_pattern ? "GB_void" : atype->name,
-            A_is_pattern ? 0 : atype->size) ;
+        GB_macrofy_type (fp, Aname, A_is_pattern ? "GB_void" : atype->name) ;
     }
 
     //--------------------------------------------------------------------------

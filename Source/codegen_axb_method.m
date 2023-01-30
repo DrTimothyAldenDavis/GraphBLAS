@@ -539,11 +539,12 @@ end
 
 % create the add function, of the form w + t
 if (is_any_pair)
-    fprintf (f, 'define(`GB_add_function'', `'')\n') ;
+    fprintf (f, 'define(`GB_add_op'', `'')\n') ;
 else
-    add2 = strrep (addfunc,  'w', '`$1''') ;
-    add2 = strrep (add2,     't', '`$2''') ;
-    fprintf (f, 'define(`GB_add_function'', `%s'')\n', add2) ;
+    add2 = strrep (addfunc,  'zarg', '`$1''') ;
+    add2 = strrep (add2,     'xarg', '`$2''') ;
+    add2 = strrep (add2,     'yarg', '`$3''') ;
+    fprintf (f, 'define(`GB_add_op'', `%s'')\n', add2) ;
 end
 
 % create the multiply-add statement, of the form:
@@ -650,7 +651,7 @@ end
 
 fclose (f) ;
 
-nprune = 76 ;
+nprune = 78 ;
 
 if (is_any_pair)
     % the ANY_PAIR_ISO semiring goes in Generated1
