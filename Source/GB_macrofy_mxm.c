@@ -156,11 +156,11 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
     GB_macrofy_input (fp, "a", "A", "A", true,
         flipxy ? mult->ytype : mult->xtype,
-        atype, asparsity, acode, A_iso_code) ;
+        atype, asparsity, acode, A_iso_code, -1) ;
 
     GB_macrofy_input (fp, "b", "B", "B", true,
         flipxy ? mult->xtype : mult->ytype,
-        btype, bsparsity, bcode, B_iso_code) ;
+        btype, bsparsity, bcode, B_iso_code, -1) ;
 
 }
 

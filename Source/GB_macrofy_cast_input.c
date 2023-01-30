@@ -69,17 +69,16 @@ void GB_macrofy_cast_input
     }
     else
     {
-        #define SLEN 1024
-        char s [SLEN+1] ;
+        fprintf (fp, "#define %s(%s,%s) ", macro_name, zarg, xargs) ;
         if (nargs == 3)
         {
-            snprintf (s, SLEN, f, zarg, xexpr, xexpr) ;
+            fprintf (fp, f, zarg, xexpr, xexpr) ;
         }
         else
         {
-            snprintf (s, SLEN, f, zarg, xexpr) ;
+            fprintf (fp, f, zarg, xexpr) ;
         }
-        fprintf (fp, "#define %s(%s,%s) %s\n", macro_name, zarg, xargs, s) ;
+        fprintf (fp, "\n") ;
     }
 }
 

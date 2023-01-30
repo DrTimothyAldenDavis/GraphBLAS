@@ -18,7 +18,7 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     uint64_t *rcode,        // unique encoding of the entire problem
     // input:
     GrB_Monoid reduce,      // the monoid to enumify
-    GrB_Matrix A
+    GrB_Matrix A            // input matrix to reduce
 )
 {
 
@@ -70,29 +70,33 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     //--------------------------------------------------------------------------
 
     int acode = atype->code ;   // 0 to 14
-    int A_sparsity = GB_sparsity (A) ;
     int asparsity ;
-    GB_enumify_sparsity (&asparsity, A_sparsity) ;
+    GB_enumify_sparsity (&asparsity, GB_sparsity (A)) ;
+    int azombies = (A->nzombies > 0) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
     // construct the reduction rcode
     //--------------------------------------------------------------------------
 
-    // total rcode bits: 25
+    // total rcode bits: 27
 
     (*rcode) =
                                                // range        bits
-                // monoid
-                GB_LSHIFT (red_ecode  , 20) |  // 0 to 22      5
-                GB_LSHIFT (id_ecode   , 15) |  // 0 to 31      5
-                GB_LSHIFT (term_ecode , 10) |  // 0 to 31      5
+                // monoid: 15 bits (4 hex digits)
+                GB_LSHIFT (red_ecode  , 22) |  // 0 to 22      5
+                GB_LSHIFT (id_ecode   , 17) |  // 0 to 31      5
+                GB_LSHIFT (term_ecode , 12) |  // 0 to 31      5
 
-                // type of the monoid
-                GB_LSHIFT (zcode      ,  6) |  // 0 to 14      4
+                // type of the monoid: 1 hex digit
+                GB_LSHIFT (zcode      ,  8) |  // 0 to 14      4
 
-                // type of A
-                GB_LSHIFT (acode      ,  2) |  // 0 to 14      4
+                // type of A: 1 hex digit
+                GB_LSHIFT (acode      ,  4) |  // 0 to 14      4
 
+                // sparsity structure and zombies: 1 hex digit
+                // unused bit            3                     1
+                // zombies
+                GB_LSHIFT (azombies   ,  2) |  // 0 to 1       1
                 // sparsity structure of A
                 GB_LSHIFT (asparsity  ,  0) ;  // 0 to 3       2
 }

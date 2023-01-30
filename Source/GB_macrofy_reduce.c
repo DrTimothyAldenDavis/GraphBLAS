@@ -25,16 +25,19 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     //--------------------------------------------------------------------------
 
     // monoid
-    int red_ecode   = GB_RSHIFT (rcode, 20, 5) ;
-    int id_ecode    = GB_RSHIFT (rcode, 15, 5) ;
-    int term_ecode  = GB_RSHIFT (rcode, 10, 5) ;
+    int red_ecode   = GB_RSHIFT (rcode, 22, 5) ;
+    int id_ecode    = GB_RSHIFT (rcode, 17, 5) ;
+    int term_ecode  = GB_RSHIFT (rcode, 12, 5) ;
     bool is_term    = (term_ecode < 30) ;
 
     // type of the monoid
-    int zcode       = GB_RSHIFT (rcode, 6, 4) ;
+    int zcode       = GB_RSHIFT (rcode, 8, 4) ;
 
     // type of A
-    int acode       = GB_RSHIFT (rcode, 2, 4) ;
+    int acode       = GB_RSHIFT (rcode, 4, 4) ;
+
+    // zombies
+    int azombies    = GB_RSHIFT (rcode, 2, 1) ;
 
     // format of A
     int asparsity   = GB_RSHIFT (rcode, 0, 2) ;
@@ -97,6 +100,6 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     // to a scalar, even for user-defined types and monoids.
 
     GB_macrofy_input (fp, "a", "A", "A", true, monoid->op->ztype,
-        atype, asparsity, acode, false) ;
+        atype, asparsity, acode, false, azombies) ;
 }
 

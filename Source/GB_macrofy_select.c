@@ -557,11 +557,11 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
     // GB_GETA macro to get aij = A(i,j)
     // aij is not typecasted
     GB_macrofy_input (fp, "a", "A", "A", true, atype,
-        atype, asparsity, acode, A_iso_code) ;
+        atype, asparsity, acode, A_iso_code, -1) ;
 
     // GB_GETX macro to get x = (xtype) A(i,j)
     // x is a value A(i,j) typecasted to the op->xtype of the select operator
     GB_macrofy_input (fp, "x", "X", "A", false, xtype,
-        atype, asparsity, acode, A_iso_code) ;
+        atype, asparsity, acode, A_iso_code, -1) ;
 }
 

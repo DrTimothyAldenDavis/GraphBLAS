@@ -83,7 +83,7 @@ void GB_macrofy_mask
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0\n", (int) sizeof (uint8_t)) ;
+                "#define GB_NO_MASK 0\n") ;
             break ;
 
         case 5 :
@@ -93,7 +93,7 @@ void GB_macrofy_mask
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0\n", (int) sizeof (uint8_t)) ;
+                "#define GB_NO_MASK 0\n") ;
             break ;
 
         //----------------------------------------------------------------------
@@ -107,7 +107,7 @@ void GB_macrofy_mask
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0\n", (int) sizeof (uint16_t)) ;
+                "#define GB_NO_MASK 0\n") ;
             break ;
 
         case 7 :
@@ -117,7 +117,7 @@ void GB_macrofy_mask
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0\n", (int) sizeof (uint16_t)) ;
+                "#define GB_NO_MASK 0\n") ;
             break ;
 
         //----------------------------------------------------------------------
@@ -131,7 +131,7 @@ void GB_macrofy_mask
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0\n", (int) sizeof (uint32_t)) ;
+                "#define GB_NO_MASK 0\n") ;
             break ;
 
         case 9 :
@@ -141,7 +141,7 @@ void GB_macrofy_mask
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0\n", (int) sizeof (uint32_t)) ;
+                "#define GB_NO_MASK 0\n") ;
             break ;
 
         //----------------------------------------------------------------------
@@ -155,7 +155,7 @@ void GB_macrofy_mask
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0\n", (int) sizeof (uint64_t)) ;
+                "#define GB_NO_MASK 0\n") ;
             break ;
 
         case 11 :
@@ -165,7 +165,7 @@ void GB_macrofy_mask
                 "#define MX(p) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0\n", (int) sizeof (uint64_t)) ;
+                "#define GB_NO_MASK 0\n") ;
             break ;
 
         //----------------------------------------------------------------------
@@ -179,7 +179,7 @@ void GB_macrofy_mask
                 "#define MX(p) (Mx [2*(p)] != 0 || Mx [2*(p)+1] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0\n", (int) sizeof (uint64_t)) ;
+                "#define GB_NO_MASK 0\n") ;
             break ;
 
         case 13 :
@@ -189,7 +189,7 @@ void GB_macrofy_mask
                 "#define MX(p) (Mx [2*(p)] != 0 || Mx [2*(p)+1] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
                 "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0\n", (int) sizeof (uint64_t)) ;
+                "#define GB_NO_MASK 0\n") ;
             break ;
 
         //----------------------------------------------------------------------

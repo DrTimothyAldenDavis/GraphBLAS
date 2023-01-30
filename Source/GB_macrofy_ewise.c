@@ -133,11 +133,11 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 
     GB_macrofy_input (fp, "a", "A", "A", true, (binaryop == NULL) ? ctype :
         (flipxy ? binaryop->ytype : binaryop->xtype),
-        atype, asparsity, acode, A_iso_code) ;
+        atype, asparsity, acode, A_iso_code, -1) ;
 
     GB_macrofy_input (fp, "b", "B", "B", true, (binaryop == NULL) ? ctype :
         (flipxy ? binaryop->xtype : binaryop->ytype),
-        btype, bsparsity, bcode, B_iso_code) ;
+        btype, bsparsity, bcode, B_iso_code, -1) ;
 
 }
 

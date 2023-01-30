@@ -24,7 +24,9 @@ void GB_macrofy_input
     GrB_Type atype,         // type of the input matrix
     int asparsity,          // sparsity format of the input matrix
     int acode,              // type code of the input (0 if pattern)
-    int A_iso_code          // 1 if A is iso
+    int A_iso_code,         // 1 if A is iso
+    int azombies            // 1 if A has zombies, 0 if A has no zombies;
+                            // -1 if the macro should not be created.
 )
 {
 
@@ -38,6 +40,13 @@ void GB_macrofy_input
         fprintf (fp, "\n// %s matrix:\n", Aname) ;
         fprintf (fp, "#define GB_%s_IS_PATTERN %d\n", Aname, A_is_pattern) ;
         fprintf (fp, "#define GB_%s_ISO %d\n", Aname, A_iso_code) ;
+        if (azombies >= 0)
+        {
+            // if negative, do not create the macro at all.  Typically this
+            // means A has no zombies.  For GrB_wait, using GB_select to
+            // delete zombies, it means A always has zombies.
+            fprintf (fp, "#define GB_A_HAS_ZOMBIES %d\n", azombies) ;
+        }
         GB_macrofy_sparsity (fp, Aname, asparsity) ;
         GB_macrofy_type (fp, Aname, A_is_pattern ? "GB_void" : atype->name) ;
     }
