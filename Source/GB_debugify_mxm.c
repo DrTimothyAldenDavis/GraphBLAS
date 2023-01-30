@@ -44,16 +44,15 @@ void GB_debugify_mxm
     // enumify the mxm problem
     GB_enumify_mxm (&scode, C_iso, C_sparsity, ctype,
         M, Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
-
     int zcode       = GB_RSHIFT (scode, 32, 4) ;    // if 0: C is iso
     int xcode       = GB_RSHIFT (scode, 28, 4) ;    // if 0: ignored
     int ycode       = GB_RSHIFT (scode, 24, 4) ;    // if 0: ignored
-
-    int ccode       = GB_RSHIFT (scode, 16, 4) ;   // if 0: C is iso
-    int acode       = GB_RSHIFT (scode, 12, 4) ;   // if 0: A is pattern
-    int bcode       = GB_RSHIFT (scode,  8, 4) ;   // if 0: B is pattern
+    int ccode       = GB_RSHIFT (scode, 16, 4) ;    // if 0: C is iso
+    int acode       = GB_RSHIFT (scode, 12, 4) ;    // if 0: A is pattern
+    int bcode       = GB_RSHIFT (scode,  8, 4) ;    // if 0: B is pattern
 
     // namify the mxm problem
+    char *base_name = "mxm_" ;
     char mxm_name [256 + 8*GxB_MAX_NAME_LEN] ;
     bool builtin = (semiring->add->builtin) &&
         (semiring->multiply->header_size == 0) &&
@@ -72,15 +71,15 @@ void GB_debugify_mxm
 
     // construct the filename and create the file
     char filename [512 + 8*GxB_MAX_NAME_LEN] ;
-    sprintf (filename, "/tmp/grb/GB_mxm_%s.h", mxm_name);
+    sprintf (filename, "/tmp/grb/GB_jit_%s%s.h", base_name, mxm_name) ;
     FILE *fp = fopen (filename, "w") ;
     if (fp == NULL) return ;
 
-    // FIXME: pass this to GB_macrofy_mxm
+    // FIXME: pass this to GB_macrofy_mxm so it can create this:
     fprintf (fp,
         "//--------------------------------------"
         "----------------------------------------\n") ;
-    fprintf (fp, "// GB_mxm_%s.h\n", mxm_name) ;
+    fprintf (fp, "// GB_jit_%s%s.h\n", base_name, mxm_name) ;
 
     // macrofy the mxm problem
     GB_macrofy_mxm (fp, scode, semiring, ctype, atype, btype) ;

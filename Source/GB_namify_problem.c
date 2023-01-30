@@ -36,16 +36,17 @@ void GB_namify_problem
     }
     else
     {
+        // at least one type or operator is user-defined
         sprintf (problem_name, "_%0*" PRIx64 "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
-            scode_width, scode,
-            (opname1   == NULL) ? "" : "_", (opname1   == NULL) ? "" : opname1,
-            (opname2   == NULL) ? "" : "_", (opname2   == NULL) ? "" : opname2,
-            (typename1 == NULL) ? "" : "_", (typename1 == NULL) ? "" : typename1,
-            (typename2 == NULL) ? "" : "_", (typename2 == NULL) ? "" : typename2,
-            (typename3 == NULL) ? "" : "_", (typename3 == NULL) ? "" : typename3,
-            (typename4 == NULL) ? "" : "_", (typename4 == NULL) ? "" : typename4,
-            (typename5 == NULL) ? "" : "_", (typename5 == NULL) ? "" : typename5,
-            (typename6 == NULL) ? "" : "_", (typename6 == NULL) ? "" : typename6) ;
+        scode_width, scode,
+        (opname1   == NULL) ? "" : "_", (opname1   == NULL) ? "" : opname1,
+        (opname2   == NULL) ? "" : "_", (opname2   == NULL) ? "" : opname2,
+        (typename1 == NULL) ? "" : "_", (typename1 == NULL) ? "" : typename1,
+        (typename2 == NULL) ? "" : "_", (typename2 == NULL) ? "" : typename2,
+        (typename3 == NULL) ? "" : "_", (typename3 == NULL) ? "" : typename3,
+        (typename4 == NULL) ? "" : "_", (typename4 == NULL) ? "" : typename4,
+        (typename5 == NULL) ? "" : "_", (typename5 == NULL) ? "" : typename5,
+        (typename6 == NULL) ? "" : "_", (typename6 == NULL) ? "" : typename6) ;
     }
 }
 

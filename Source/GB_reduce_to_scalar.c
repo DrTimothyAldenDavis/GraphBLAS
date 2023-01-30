@@ -97,6 +97,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
     memcpy (z, monoid->identity, zsize) ;   // required, if nnz(A) is zero
 
     #ifdef GB_DEBUGIFY_DEFN
+    // FIXME: this will move below
     GB_debugify_reduce (monoid, A) ;
     #endif
 
@@ -123,6 +124,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         // use OpenMP on the CPU threads
         //----------------------------------------------------------------------
 
+        bool done = false ;
         int nthreads_max = GB_Context_nthreads_max ( ) ;
         double chunk = GB_Context_chunk ( ) ;
         int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
@@ -157,7 +159,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
             // no live entries in A; nothing to do
             //------------------------------------------------------------------
 
-            ;
+            done = true ;
 
         }
         else if (A->iso)
@@ -169,6 +171,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
 
             // this takes at most O(log(nvals(A))) time, for any monoid
             GB_iso_reduce_to_scalar (z, monoid, A) ;
+            done = true ;
 
         }
         else if (A->type == ztype)
@@ -177,8 +180,6 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
             //------------------------------------------------------------------
             // reduce to scalar via built-in operator
             //------------------------------------------------------------------
-
-            bool done = false ;
 
             #ifndef GBCUDA_DEV
 
@@ -209,13 +210,121 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 #include "GB_red_factory.c"
 
             #endif
+        }
+
+        //----------------------------------------------------------------------
+        // use JIT or generic worker
+        //----------------------------------------------------------------------
+
+        #ifdef GB_DEBUGIFY_DEFN
+        if (!done)
+        {
+
 
             //------------------------------------------------------------------
-            // generic worker: sum up the entries, no typecasting
+            // JIT worker
             //------------------------------------------------------------------
 
-            if (!done)
+            // enumify the reduce problem
+            uint64_t rcode ;
+            GB_enumify_reduce (&rcode, monoid, A) ;
+
+            // namify the reduce problem (see GB_debugify_reduce)
+            // ... get reduce_name
+
+            // look up the full JIT kernel name, of the form (for example):
+            // GB_jit_reduce_2c1fbb2
+
+            uint64_t hash = 0 ;
+            // hash = XXH3_64bits (kernel_name, kernel_name_len) ;
+
+            // find the kernel in the global hash table
+
+            // GB_jit_kernel
+            void *jit_kernel = NULL :
+            // this must be very fast:
+            // jit_kernel = jit_lookup (hash, kernel_name) ;
+
+            if (jit_kernel == NULL)
+            {
+                // first time this kernel has been seen since GrB_init
+
+                // look for the kernel_name.so in the user's
+                // .SuiteSparse/GraphBLAS folder (already compiled)
+                found = false ;
+
+                if (!found)
+                {
+                    // construct a new jit kernel for this instance
+                    char filename [512] ;
+                    sprintf (filename, "/tmp/GB_jit_reduce_2c1fbb2.c") ;
+                        // , base_name, reduce_name) ;  see above
+                    FILE *fp = fopen (filename, "w") ;
+                    fprintf (fp,
+                        "// GB_jit_reduce_2c1fbb2.c\n"
+                        "#include \"GB_jit_kernel_reduce.h\"\n"
+                        "#define GB_JIT_KERNEL GB_jit_reduce_2c1fbb2\n"
+                        "#include \"GB_jit_reduce_2c1fbb2.h\"\n"
+                        "#include \"GB_jit_kernel_reduce.c\"\n") ;
+                    fclose (fp) ;
+
+                    // compile GB_jit_reduce_2c1fbb2.c to create
+                    // .SuiteSparse/GraphBLAS/libGB_jit_reduce_2c1fbb2.so
+
+                    // system (
+                    //  "gcc ... flags ... etc" // create *.o file
+                    //  "gcc ... flags ... etc" // create *.so file
+                    //      ) ;
+
+                }
+
+                // load the kernel *.so and add it to the hash table
+
+                void *jit_kernel_handle = NULL ;
+                // jit_kernel_handle = dlopen (
+                //  ".SuiteSparse/GraphBLAS/libGB_jit_reduce_2c1fbb2.so",
+                //  RTLD_LAZY) ;
+
+                void *jit_kernel_function = NULL ;
+                // jit_kernel_function = dlsym (jit_kernel_handle,
+                //         "GB_jit_reduce_2c1fbb2.c") ;
+
+                // create entry for hash table
+                //
+                //      jit_kernel->hash = hash ;
+                //      jit_kernel->code = rcode ;
+                //      jit_kernel->handle = jit_kernel_handle ;
+                //      jit_kernel->function = jit_kernel_function ;
+                //      jit_kernel->name = "GB_jit_reduce_2c1fbb2.c" ;
+
+                // add jit_kernel to the global hash table
+            }
+
+            // call the kernel
+            // typedef GrB_Info (*GxB_reduce_function)
+            GxB_reduce_function f = (
+
+
+            // set true if JIT successful
+            done = false ;
+
+        }
+        #endif
+
+        if (!done)
+        {
+
+            //------------------------------------------------------------------
+            // generic worker
+            //------------------------------------------------------------------
+
+            if (A->type == ztype)
             { 
+
+                //--------------------------------------------------------------
+                // generic worker: sum up the entries, no typecasting
+                //--------------------------------------------------------------
+
                 GB_BURBLE_MATRIX (A, "(generic reduce to scalar: %s) ",
                     monoid->op->name) ;
 
@@ -266,42 +375,41 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 }
 
             }
-
-        }
-        else
-        { 
-
-            //------------------------------------------------------------------
-            // generic worker: sum up the entries, with typecasting
-            //------------------------------------------------------------------
-
-            GB_BURBLE_MATRIX (A, "(generic reduce to scalar, with typecast:"
-                " %s) ", monoid->op->name) ;
-
-            GxB_binary_function freduce = monoid->op->binop_function ;
-            GB_cast_function
-                cast_A_to_Z = GB_cast_factory (ztype->code, A->type->code) ;
-
-            // t += (ztype) Ax [p], with typecast
-            #undef  GB_GETA_AND_UPDATE
-            #define GB_GETA_AND_UPDATE(t,Ax,p)                      \
-                GB_void awork [GB_VLA(zsize)] ;                     \
-                cast_A_to_Z (awork, Ax +((p)*asize), asize) ;       \
-                freduce (t, t, awork)
-
-            if (zterminal == NULL)
-            {
-                // monoid is not terminal
-                #undef  GB_MONOID_IS_TERMINAL
-                #define GB_MONOID_IS_TERMINAL 0
-                #include "GB_reduce_to_scalar_template.c"
-            }
             else
-            {
-                // break if terminal value reached
-                #undef  GB_MONOID_IS_TERMINAL
-                #define GB_MONOID_IS_TERMINAL 1
-                #include "GB_reduce_to_scalar_template.c"
+            { 
+
+                //--------------------------------------------------------------
+                // generic worker: sum up the entries, with typecasting
+                //--------------------------------------------------------------
+
+                GB_BURBLE_MATRIX (A, "(generic reduce to scalar, with typecast:"
+                    " %s) ", monoid->op->name) ;
+
+                GxB_binary_function freduce = monoid->op->binop_function ;
+                GB_cast_function
+                    cast_A_to_Z = GB_cast_factory (ztype->code, A->type->code) ;
+
+                // t += (ztype) Ax [p], with typecast
+                #undef  GB_GETA_AND_UPDATE
+                #define GB_GETA_AND_UPDATE(t,Ax,p)                      \
+                    GB_void awork [GB_VLA(zsize)] ;                     \
+                    cast_A_to_Z (awork, Ax +((p)*asize), asize) ;       \
+                    freduce (t, t, awork)
+
+                if (zterminal == NULL)
+                {
+                    // monoid is not terminal
+                    #undef  GB_MONOID_IS_TERMINAL
+                    #define GB_MONOID_IS_TERMINAL 0
+                    #include "GB_reduce_to_scalar_template.c"
+                }
+                else
+                {
+                    // break if terminal value reached
+                    #undef  GB_MONOID_IS_TERMINAL
+                    #define GB_MONOID_IS_TERMINAL 1
+                    #include "GB_reduce_to_scalar_template.c"
+                }
             }
         }
     }
