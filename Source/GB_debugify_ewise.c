@@ -39,13 +39,12 @@ void GB_debugify_ewise
         M, Mask_struct, Mask_comp, binaryop, flipxy, A, B) ;
 
     // namify the ewise problem
-    char *base_name = "ewise_" ;
     bool builtin = ((binaryop == NULL) || binaryop->header_size == 0) &&
         (atype->header_size == 0) &&
         (btype->header_size == 0) &&
         (ctype->header_size == 0) ;
     char ewise_name [256 + 8*GxB_MAX_NAME_LEN] ;
-    GB_namify_problem (ewise_name, 12, scode, builtin,
+    GB_namify_problem (ewise_name, "GB_jit_ewise_", 12, scode, builtin,
         (binaryop == NULL) ? "none" : binaryop->name,
         NULL,
         (binaryop == NULL) ? "void" : binaryop->xtype->name,
@@ -57,7 +56,7 @@ void GB_debugify_ewise
 
     // construct the filename and create the file
     char filename [512 + 8*GxB_MAX_NAME_LEN] ;
-    sprintf (filename, "/tmp/grb/GB_jit_%s%s.h", base_name, ewise_name) ;
+    sprintf (filename, "/tmp/grb/%s.h", ewise_name) ;
     FILE *fp = fopen (filename, "w") ;
     if (fp == NULL) return ;
 
@@ -65,7 +64,7 @@ void GB_debugify_ewise
     fprintf (fp,
         "//--------------------------------------"
         "----------------------------------------\n") ;
-    fprintf (fp, "// GB_jit_%s%s.h\n", base_name, ewise_name) ;
+    fprintf (fp, "// %s.h\n", ewise_name) ;
 
     // macrofy the ewise problem
     GB_macrofy_ewise (fp, scode, binaryop, ctype, atype, btype) ;

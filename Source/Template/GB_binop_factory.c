@@ -15,9 +15,6 @@
 // int8), the types of x and y are the same.
 
 {
-    //--------------------------------------------------------------------------
-    // launch the switch factory
-    //--------------------------------------------------------------------------
 
     // this switch factory does not handle positional operators
     ASSERT (!GB_OPCODE_IS_POSITIONAL (opcode)) ;

@@ -52,14 +52,13 @@ void GB_debugify_mxm
     int bcode       = GB_RSHIFT (scode,  8, 4) ;    // if 0: B is pattern
 
     // namify the mxm problem
-    char *base_name = "mxm_" ;
     char mxm_name [256 + 8*GxB_MAX_NAME_LEN] ;
     bool builtin = (semiring->add->builtin) &&
         (semiring->multiply->header_size == 0) &&
         (atype->header_size == 0) &&
         (btype->header_size == 0) &&
         (ctype->header_size == 0) ;
-    GB_namify_problem (mxm_name, 16, scode, builtin,
+    GB_namify_problem (mxm_name, "GB_jit_mxm_", 16, scode, builtin,
         semiring->add->op->name,
         semiring->multiply->name,
         (xcode == 0) ? "void" : semiring->multiply->xtype->name,
@@ -71,7 +70,7 @@ void GB_debugify_mxm
 
     // construct the filename and create the file
     char filename [512 + 8*GxB_MAX_NAME_LEN] ;
-    sprintf (filename, "/tmp/grb/GB_jit_%s%s.h", base_name, mxm_name) ;
+    sprintf (filename, "/tmp/grb/%s.h", mxm_name) ;
     FILE *fp = fopen (filename, "w") ;
     if (fp == NULL) return ;
 
@@ -79,7 +78,7 @@ void GB_debugify_mxm
     fprintf (fp,
         "//--------------------------------------"
         "----------------------------------------\n") ;
-    fprintf (fp, "// GB_jit_%s%s.h\n", base_name, mxm_name) ;
+    fprintf (fp, "// %s.h\n", mxm_name) ;
 
     // macrofy the mxm problem
     GB_macrofy_mxm (fp, scode, semiring, ctype, atype, btype) ;

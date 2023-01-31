@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_reduce.c:  JIT kernel for reduction to scalar
+// GB_jit_kernel_reduce.c: JIT kernel for reduction to scalar
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2023, All Rights Reserved.
@@ -89,6 +89,8 @@ GrB_Info GB_JIT_KERNEL
     int nthreads
 )
 { 
+    printf ("\n=================== HI THERE, reducing:\n") ;
+    GxB_print (A, 3) ;
     GB_Z_TYPENAME z = (*result) ;
     GB_Z_TYPENAME *restrict W = (GB_Z_TYPENAME *) W_space ;
     #if GB_A_HAS_ZOMBIES || GB_A_IS_BITMAP

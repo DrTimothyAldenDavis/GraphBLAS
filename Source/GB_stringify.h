@@ -46,10 +46,23 @@ void GB_macrofy_copyright (FILE *fp) ;
 void GB_enumify_reduce      // enumerate a GrB_reduce problem
 (
     // output:
-    uint64_t *rcode,        // unique encoding of the entire problem
+    uint64_t *rcode,        // unique encoding of the entire problem, but where
+                            // all user-defined monoids and types are given a
+                            // single enum
     // input:
     GrB_Monoid reduce,      // the monoid to enumify
     GrB_Matrix A
+) ;
+
+void GB_enumify2_reduce     // enumerate a GrB_reduce problem
+(
+    // output:
+    uint64_t *rcodes,       // unique encoding of the entire problem,
+                            // including a fully unique encoding of user-
+                            // defined monoids and data types (size 6)
+    // input:
+    GrB_Monoid reduce,      // the monoid to enumify
+    GrB_Matrix A            // input matrix to reduce
 ) ;
 
 void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
@@ -436,6 +449,7 @@ void GB_namify_problem
     // output:
     char *problem_name,     // of size at least 256 + 8*GxB_MAX_NAME_LEN
     // input:
+    char *base_name,
     const int scode_width,  // # of hexadecimal digits to print for scode
     const uint64_t scode,
     const bool builtin,     // true if all objects are builtin

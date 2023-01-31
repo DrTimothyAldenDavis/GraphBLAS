@@ -29,6 +29,12 @@
 #include "GB_red__include.h"
 #endif
 
+#include "GB_jitifyer.h"
+#include <dlfcn.h>
+
+typedef GrB_Info (*GB_reduce_function)
+    (void *result, const GrB_Matrix, void *, bool *, int, int) ;
+
 #define GB_FREE_ALL                 \
 {                                   \
     GB_WERK_POP (F, bool) ;         \
@@ -220,93 +226,198 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         if (!done)
         {
 
-
             //------------------------------------------------------------------
             // JIT worker
             //------------------------------------------------------------------
 
-            // enumify the reduce problem
-            uint64_t rcode ;
-            GB_enumify_reduce (&rcode, monoid, A) ;
+            // enumify the reduce problem, including all objects and types
+            uint64_t rcodes [6] ;
+            GB_enumify2_reduce (rcodes, monoid, A) ;
 
-            // namify the reduce problem (see GB_debugify_reduce)
-            // ... get reduce_name
-
-            // look up the full JIT kernel name, of the form (for example):
-            // GB_jit_reduce_2c1fbb2
-
-            uint64_t hash = 0 ;
-            // hash = XXH3_64bits (kernel_name, kernel_name_len) ;
-
+            //------------------------------------------------------------------
             // find the kernel in the global hash table
+            //------------------------------------------------------------------
 
-            // GB_jit_kernel
-            void *jit_kernel = NULL :
-            // this must be very fast:
-            // jit_kernel = jit_lookup (hash, kernel_name) ;
+            uint64_t hash = GB_jitifyer_hash (rcodes) ;
+            void *jit_kernel = GB_jitifyer_lookup (hash, rcodes) ;
+
+            //------------------------------------------------------------------
+            // load it and compile it if not found
+            //------------------------------------------------------------------
 
             if (jit_kernel == NULL)
-            {
+            { 
+
+                //--------------------------------------------------------------
                 // first time this kernel has been seen since GrB_init
+                //--------------------------------------------------------------
 
-                // look for the kernel_name.so in the user's
-                // .SuiteSparse/GraphBLAS folder (already compiled)
-                found = false ;
+                // namify the reduce problem
+                char *base_name = "reduce_" ;
+                bool builtin = (monoid->builtin) &&
+                    (A->type->header_size == 0) ;
+                char reduce_name [256 + 3 * GxB_MAX_NAME_LEN] ;
+                uint64_t rcode = rcodes [1] ;
+                GB_namify_problem (reduce_name, "GB_jit_reduce_", 7, rcode,
+                    builtin,
+                    monoid->op->name,
+                    NULL,
+                    monoid->op->ztype->name,
+                    A->type->name,
+                    NULL,
+                    NULL,
+                    NULL,
+                    NULL) ;
 
-                if (!found)
+                //==============================================================
+                // FIXME: make this a helper function for all kernels
+
+                // FIXME: create this at GrB_init time, or by GxB_set
+                char lib_folder [2048] ;
+                snprintf (lib_folder, 2047,
+                    "/home/faculty/d/davis/.SuiteSparse/GraphBLAS/v%d.%d.%d",
+                    GxB_IMPLEMENTATION_MAJOR,
+                    GxB_IMPLEMENTATION_MINOR,
+                    GxB_IMPLEMENTATION_SUB) ;
+
+                // try to load the libkernelname.so from the user's
+                // .SuiteSparse/GraphBLAS folder (if already compiled)
+                char lib_filename [2048] ;
+                snprintf (lib_filename, 2048, "%s/lib%s.so",
+                    lib_folder, reduce_name) ;
+                void *jit_kernel_library = dlopen (lib_filename, RTLD_LAZY) ;
+
+                if (jit_kernel_library == NULL)
                 {
+
+                    //----------------------------------------------------------
                     // construct a new jit kernel for this instance
-                    char filename [512] ;
-                    sprintf (filename, "/tmp/GB_jit_reduce_2c1fbb2.c") ;
-                        // , base_name, reduce_name) ;  see above
-                    FILE *fp = fopen (filename, "w") ;
+                    //----------------------------------------------------------
+
+                    char source_filename [2048] ;
+                    snprintf (source_filename, 2048, "%s/%s.c",
+                        lib_folder, reduce_name) ;
+                    printf ("source file: %s\n", source_filename) ;
+                    FILE *fp = fopen (source_filename, "w") ;
+                    if (fp == NULL)
+                    {
+                        // FIXME
+                        printf ("failed to write to *.c file!\n") ;
+                        fflush (stdout) ;
+                        abort ( ) ;
+                        return (GrB_PANIC) ;
+                    }
                     fprintf (fp,
-                        "// GB_jit_reduce_2c1fbb2.c\n"
+                        "//--------------------------------------"
+                        "----------------------------------------\n") ;
+                    fprintf (fp, "// %s.h\n"
                         "#include \"GB_jit_kernel_reduce.h\"\n"
-                        "#define GB_JIT_KERNEL GB_jit_reduce_2c1fbb2\n"
-                        "#include \"GB_jit_reduce_2c1fbb2.h\"\n"
+                        "#define GB_JIT_KERNEL %s\n",
+                        reduce_name, reduce_name) ;
+                    GB_macrofy_reduce (fp, rcode, monoid, A->type) ;
+                    fprintf (fp,
+                        "\n// reduction kernel\n"
                         "#include \"GB_jit_kernel_reduce.c\"\n") ;
                     fclose (fp) ;
 
-                    // compile GB_jit_reduce_2c1fbb2.c to create
-                    // .SuiteSparse/GraphBLAS/libGB_jit_reduce_2c1fbb2.so
+                    //----------------------------------------------------------
+                    // compile the *.c file to create the lib*.so file
+                    //----------------------------------------------------------
 
-                    // system (
-                    //  "gcc ... flags ... etc" // create *.o file
-                    //  "gcc ... flags ... etc" // create *.so file
-                    //      ) ;
+                    // FIXME: create this at GrB_init time
+                    char root_folder [256] ;
+                    snprintf (root_folder, 256, "%s",
+                    "/home/faculty/d/davis/cuda/GraphBLAS") ;
 
+                    // FIXME: create this at GrB_init time
+                    char include_files [4096] ;
+                    snprintf (include_files, 4096,
+                        "-I%s "
+                        "-I%s/Include "
+                        "-I%s/Source "
+                        "-I%s/Source/Shared "
+                        "-I%s/Source/SharedTemplate "
+                        "-I%s/Source/Template "
+                        "-I%s/Source/JitKernels "
+                        "-I%s/cpu_features "
+                        "-I%s/cpu_features/include",
+                        lib_folder,
+                        root_folder,
+                        root_folder,
+                        root_folder,
+
+                        root_folder,
+                        root_folder,
+                        root_folder,
+
+                        root_folder,
+                        root_folder) ;
+
+                    char command [4096] ;
+
+                    snprintf (command, 4096,
+                    "gcc -fPIC -O3 -std=c11 -fexcess-precision=fast "
+                    "-fcx-limited-range -fno-math-errno -fwrapv -DNDEBUG "
+                    "-fopenmp %s -o"
+                    "%s/%s.o -c %s/%s.c ;" 
+                    "gcc -fPIC -O3 -std=c11 -fexcess-precision=fast "
+                    "-fcx-limited-range -fno-math-errno -fwrapv -DNDEBUG "
+                    "-fopenmp "
+                    " -shared -Wl,-soname,lib%s.so -o %s/lib%s.so"
+                    " %s/%s.o -lm",
+                    include_files,
+                    lib_folder, reduce_name,    // *.o file, first gcc command
+                    lib_folder, reduce_name,    // *.c file, first gcc command
+                    reduce_name,                // soname
+                    lib_folder, reduce_name,    // lib*.so output file
+                    lib_folder, reduce_name) ;  // *.o file for 2nd gcc
+
+                    printf ("%s\n", command) ;
+
+                    int result = system (command) ;
+                    printf ("result: %d\n", result) ;
+                    printf ("lib_file: %s\n", lib_filename) ;
+                
+                    // load in the lib*.so file
+                    jit_kernel_library = dlopen (lib_filename, RTLD_LAZY) ;
+                    if (jit_kernel_library == NULL)
+                    {
+                        // FIXME
+                        printf ("failed to load lib*.so file!\n") ;
+                        fflush (stdout) ;
+                        abort ( ) ;
+                        return (GrB_PANIC) ;
+                    }
                 }
 
-                // load the kernel *.so and add it to the hash table
+                // get the jit_kernel_function pointer
+                printf ("here we are\n") ;
+                jit_kernel = dlsym (jit_kernel_library, reduce_name) ;
+                printf ("got jit_kernel %p\n", jit_kernel) ;
 
-                void *jit_kernel_handle = NULL ;
-                // jit_kernel_handle = dlopen (
-                //  ".SuiteSparse/GraphBLAS/libGB_jit_reduce_2c1fbb2.so",
-                //  RTLD_LAZY) ;
-
-                void *jit_kernel_function = NULL ;
-                // jit_kernel_function = dlsym (jit_kernel_handle,
-                //         "GB_jit_reduce_2c1fbb2.c") ;
-
-                // create entry for hash table
-                //
-                //      jit_kernel->hash = hash ;
-                //      jit_kernel->code = rcode ;
-                //      jit_kernel->handle = jit_kernel_handle ;
-                //      jit_kernel->function = jit_kernel_function ;
-                //      jit_kernel->name = "GB_jit_reduce_2c1fbb2.c" ;
-
-                // add jit_kernel to the global hash table
+                // insert the new kernel into the hash table
+                if (!GB_jitifyer_insert (hash, rcodes, jit_kernel_library,
+                    jit_kernel))
+                {
+                    // FIXME
+                    printf ("failed to add to hash table!\n") ;
+                    fflush (stdout) ;
+                    abort ( ) ;
+                    return (GrB_PANIC) ;
+                }
+                //==============================================================
+            }
+            else
+            {
+                printf ("found in hash: %p\n", jit_kernel) ;
             }
 
             // call the kernel
-            // typedef GrB_Info (*GxB_reduce_function)
-            GxB_reduce_function f = (
-
+            GB_reduce_function redfunc = (GB_reduce_function) jit_kernel ;
+            info = redfunc (z, A, W, F, ntasks, nthreads) ;
 
             // set true if JIT successful
-            done = false ;
+            done = (info == GrB_SUCCESS) ;
 
         }
         #endif

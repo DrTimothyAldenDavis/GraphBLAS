@@ -40,14 +40,13 @@ void GB_debugify_select
     char *zname = (ztype == NULL) ? NULL : ztype->name ;
 
     // namify the select problem
-    char *base_name = "select_" ;
     bool builtin = (op == NULL || (op->header_size == 0)) &&
         ((xtype == NULL) || xtype->header_size == 0) &&
         ((ytype == NULL) || ytype->header_size == 0) &&
         ((ztype == NULL) || ztype->header_size == 0) &&
         (atype->header_size == 0) ;
     char select_name [256 + 8*GxB_MAX_NAME_LEN] ;
-    GB_namify_problem (select_name, 8, select_code, builtin,
+    GB_namify_problem (select_name, "GB_jit_select_", 8, select_code, builtin,
         opname,
         NULL,
         xname,
@@ -59,7 +58,7 @@ void GB_debugify_select
 
     // construct the filename and create the file
     char filename [512 + 8*GxB_MAX_NAME_LEN] ;
-    sprintf (filename, "/tmp/grb/GB_jit_%s%s.h", base_name, select_name) ;
+    sprintf (filename, "/tmp/grb/%s.h", select_name) ;
     FILE *fp = fopen (filename, "w") ;
     if (fp == NULL) return ;
 
@@ -67,7 +66,7 @@ void GB_debugify_select
     fprintf (fp,
         "//--------------------------------------"
         "----------------------------------------\n") ;
-    fprintf (fp, "// GB_jit_%s%s.h\n", base_name, select_name) ;
+    fprintf (fp, "// %s.h\n", select_name) ;
 
     // macrofy the select problem
     GB_macrofy_select (fp, select_code, opcode, op, atype) ;

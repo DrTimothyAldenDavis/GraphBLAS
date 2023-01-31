@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// User-defined types are not handled.
-
 #include "GB.h"
 #include "GB_stringify.h"
 
@@ -17,8 +15,8 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     // output:
     uint64_t *rcode,        // unique encoding of the entire problem
     // input:
-    GrB_Monoid reduce,      // the monoid to enumify
-    GrB_Matrix A            // input matrix to reduce
+    GrB_Monoid monoid,      // the monoid to enumify
+    GrB_Matrix A            // input matrix to monoid
 )
 {
 
@@ -26,7 +24,7 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     // get the monoid and type of A
     //--------------------------------------------------------------------------
 
-    GrB_BinaryOp reduceop = reduce->op ;
+    GrB_BinaryOp reduceop = monoid->op ;
     GrB_Type atype = A->type ;
     GrB_Type ztype = reduceop->ztype ;
     GB_Opcode reduce_opcode  = reduceop->opcode ;
