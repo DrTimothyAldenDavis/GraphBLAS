@@ -47,7 +47,7 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
         return (NULL) ;
     }
 
-    bool builtin = (bool) (encoding->primary.suffix_len == 0) ;
+    bool builtin = (bool) (encoding->suffix_len == 0) ;
 
     // look up the entry in the hash table
     for (int64_t k = hash & GB_jit_table_bits ; ; k++)
@@ -61,8 +61,8 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
             return (NULL) ;
         }
         else if (e->hash == hash &&
-            (memcmp (e->encoding, encoding, sizeof (GB_jit_encoding)) == 0) &&
-            (builtin || (strcmp (e->suffix, suffix) == 0)))
+            (memcmp (&(e->encoding), encoding, sizeof (GB_jit_encoding)) == 0)
+            && (builtin || (strcmp (e->suffix, suffix) == 0)))
         {
             // found the right entry: return the corresponding dl_function
             return (e->dl_function) ;
@@ -89,7 +89,7 @@ bool GB_jitifyer_insert
     // FIXME: need to place this entire function in a critical section
 
     //  printf ("insert hash %016" PRIx64 " code %016" PRIx64 "\n", hash,
-    //      encoding->primary.code) ;
+    //      encoding->code) ;
 
     //--------------------------------------------------------------------------
     // ensure the hash table is large enough
@@ -159,7 +159,7 @@ bool GB_jitifyer_insert
     // insert the jit entry in the hash table
     //--------------------------------------------------------------------------
 
-    uint32_t suffix_len = encoding->primary.suffix_len ;
+    uint32_t suffix_len = encoding->suffix_len ;
     bool builtin = (bool) (suffix_len == 0) ;
 
     for (int64_t k = hash & GB_jit_table_bits ; ; k++)
@@ -175,7 +175,7 @@ bool GB_jitifyer_insert
             if (!builtin)
             {
                 size_t siz ;
-                e->suffix = GB_MALLOC (suffix_len+1, sizeof (char), &siz) ;
+                e->suffix = GB_MALLOC (suffix_len+1, char, &siz) ;
                 if (e->suffix == NULL)
                 {
                     return (false) ;
@@ -207,7 +207,7 @@ uint64_t GB_jitifyer_encoding_hash
     GB_jit_encoding *encoding
 )
 {
-    return (XXH3_64bits ((const void *) encoding, sizeof (GB_jit_encoding)) ;
+    return (XXH3_64bits ((const void *) encoding, sizeof (GB_jit_encoding))) ;
 }
 
 uint64_t GB_jitifyer_suffix_hash

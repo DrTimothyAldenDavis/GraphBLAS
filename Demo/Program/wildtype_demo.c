@@ -400,7 +400,12 @@ int main (void)
     // reduce C to a scalar using the WildAdder monoid
     wildtype sum ;
     GrB_Matrix_reduce_UDT (&sum, NULL, WildAdder, C, NULL) ;
-    wildtype_print (&sum, "sum") ;
+    wildtype_print (&sum, "sum (first time)") ;
+
+    // again, to test the JIT lookup
+    memset (&sum, 0, sizeof (wildtype)) ;
+    GrB_Matrix_reduce_UDT (&sum, NULL, WildAdder, C, NULL) ;
+    wildtype_print (&sum, "sum (again)") ;
 
     // set C to column-oriented format
     GxB_Matrix_Option_set (C, GxB_FORMAT, GxB_BY_COL) ;

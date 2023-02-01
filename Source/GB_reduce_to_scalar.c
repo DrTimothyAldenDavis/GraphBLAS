@@ -233,16 +233,14 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
             // enumify the reduce problem, including all objects and types
             GB_jit_encoding encoding ;
             char suffix [8 + 2*GxB_MAX_NAME_LEN] ;
-            int suffix_len ;
-            uint64_t hash = GB_encodify_reduce (&encoding, suffix, &suffix_len,
-                monoid, A) ;
+            uint64_t hash = GB_encodify_reduce (&encoding, suffix, monoid, A) ;
             printf ("hash: %016" PRIx64 "\n", hash) ;
 
             //------------------------------------------------------------------
             // find the kernel in the global hash table
             //------------------------------------------------------------------
 
-            void *dl_function = GB_jitifyer_lookup (hash, &encoding) ;
+            void *dl_function = GB_jitifyer_lookup (hash, &encoding, suffix) ;
 
             //------------------------------------------------------------------
             // load it and compile it if not found
@@ -256,15 +254,16 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 //--------------------------------------------------------------
 
                 // namify the reduce problem
-                bool builtin = encoding.primary.builtin ;
-                char reduce_name [256 + 3 * GxB_MAX_NAME_LEN] ;
-                uint64_t rcode = encoding.primary.code ;
+                #define RLEN (256 + 3 * GxB_MAX_NAME_LEN)
+                char reduce_name [RLEN] ;
+                uint64_t rcode = encoding.code ;
 
-                snprintf (reduce_name, "GB_jit_reduce_%0* " PRIx64 "%s",
+                snprintf (reduce_name, RLEN-1, "GB_jit_reduce_%0*" PRIx64 "%s",
                     7, rcode, suffix) ;
                 printf ("name: [%s]\n", reduce_name) ;
 
                 /*
+                bool builtin = encoding.primary.builtin ;
                 GB_namify_problem (reduce_name, "GB_jit_reduce_", 7, rcode,
                     builtin,
                     monoid->op->name,
@@ -408,7 +407,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 }
 
                 // insert the new kernel into the hash table
-                if (!GB_jitifyer_insert (hash, &encoding, dl_handle,
+                if (!GB_jitifyer_insert (hash, &encoding, suffix, dl_handle,
                     dl_function))
                 {
                     // FIXME

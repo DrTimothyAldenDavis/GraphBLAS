@@ -23,11 +23,11 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
 {
 
     //--------------------------------------------------------------------------
-    // primary rcode
+    // primary encoding
     //--------------------------------------------------------------------------
 
-    bool builtin = GB_enumify_reduce (&encoding->primary.code, monoid, A) ;
-    encoding->primary.kcode = 0 ;  // FIXME: GB_JIT_REDUCE_KERNEL
+    bool builtin = GB_enumify_reduce (&encoding->code, monoid, A) ;
+    encoding->kcode = 0 ;  // FIXME: GB_JIT_REDUCE_KERNEL
 
     uint64_t hash = GB_jitifyer_encoding_hash (encoding) ;
 
@@ -38,7 +38,7 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
     if (builtin)
     {
         // no suffix needed
-        encoding->primary.suffix_len = 0 ;
+        encoding->suffix_len = 0 ;
         (*suffix) = '\0' ;
     }
     else
@@ -65,9 +65,9 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
         (*p) = '\0' ;
 
         uint32_t len = (uint32_t) (p - suffix) ;
-        encoding->primary.suffix_len = len ;
+        encoding->suffix_len = len ;
 
-        printf ("suffix (%d): %s\n" len, suffix) ;
+        printf ("suffix (%d): %s\n", len, suffix) ;
         if (len != strlen (suffix)) abort ( ) ; // FIXME: make ASSERT
 
         // augment the hash with the suffix
