@@ -10,7 +10,9 @@
 #include "GB.h"
 #include "GB_stringify.h"
 
-void GB_enumify_reduce      // enumerate a GrB_reduce problem
+// Returns true if all types and operators are built-in.
+
+bool GB_enumify_reduce      // enumerate a GrB_reduce problem
 (
     // output:
     uint64_t *rcode,        // unique encoding of the entire problem
@@ -73,6 +75,12 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     int azombies = (A->nzombies > 0) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
+    // enumify the builtin property
+    //--------------------------------------------------------------------------
+
+    bool builtin = (red_ecode > 0) && (acode != GB_UDT_code) ;
+
+    //--------------------------------------------------------------------------
     // construct the reduction rcode
     //--------------------------------------------------------------------------
 
@@ -97,5 +105,7 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
                 GB_LSHIFT (azombies   ,  2) |  // 0 to 1       1
                 // sparsity structure of A
                 GB_LSHIFT (asparsity  ,  0) ;  // 0 to 3       2
+
+    return (builtin) ;
 }
 

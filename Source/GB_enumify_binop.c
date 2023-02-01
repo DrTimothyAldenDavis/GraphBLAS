@@ -38,7 +38,7 @@ void GB_enumify_binop
             e = 0 ; break ;
 
         //----------------------------------------------------------------------
-        // built-in ops that can be used in a monoid:
+        // built-in ops that can be used in a monoid or for GrB_build methods:
         //----------------------------------------------------------------------
 
         case GB_FIRST_binop_code :  // z = x, can be used as the ANY monoid
@@ -46,6 +46,7 @@ void GB_enumify_binop
             e = 1 ; break ;
 
         case GB_ANY_binop_code :    // z = y (same as SECOND)
+        case GB_SECOND_binop_code : // z = y (same as ANY, but not a monoid)
 
             e = 2 ; break ;
 
@@ -168,10 +169,6 @@ void GB_enumify_binop
         //----------------------------------------------------------------------
         // built-in ops that cannot be used in a monoid:
         //----------------------------------------------------------------------
-
-        case GB_SECOND_binop_code : // z = y (same as ANY, but not a monoid)
-
-            e = 2 ; break ;
 
         case GB_ISEQ_binop_code :   // z = (x == y), but not a monoid
 

@@ -13,9 +13,11 @@
 #include "GB_stringify.h"
 
 // accum is not present.  Kernels that use it would require accum to be
-// the same as the monoid binary operator.
+// the same as the monoid binary operator (but this may change in the future).
 
-void GB_enumify_ewise         // enumerate a GrB_eWise problem
+// Returns true if the problem uses only built-in types and operators.
+
+bool GB_enumify_ewise       // enumerate a GrB_eWise problem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
@@ -157,6 +159,34 @@ void GB_enumify_ewise         // enumerate a GrB_eWise problem
     GB_enumify_sparsity (&bsparsity, B_sparsity) ;
 
     //--------------------------------------------------------------------------
+    // enumify the builtin property
+    //--------------------------------------------------------------------------
+
+    // builtin is true if all operators and types are built-in, even if
+    // typecasting is required.  This value is true for any typecasting and
+    // also for some built-in operators applied to matrices of user-defined
+    // type.  The acode, bcode, and ccode can be 0 in those cases.
+
+    // If zcode, xcode, or ycode are user-defined, then the binary op must
+    // also be user-defined, so zcode, xcode, and ycode need not be tested.
+
+    // When builtin is true, the JIT hash function needs only to consider
+    // the scode, not the name(s) of the user-defined type(s) and/or operator.
+
+    // If binop_ecode is zero, it denotes a user-defined operator, but there
+    // are a few cases where builtin opcodes can be used on user-defined types.
+    // In particular, GB_FIRST_binop_code can be used if A is user-defined,
+    // where it becomes a memcpy.  Thus, acode, bcode, and ccode must all be
+    // checked as well.
+
+    // FIXME: should builtin be part of the scode?
+
+    bool builtin = ((binop_ecode > 0) &&
+        (acode != GB_UDT_code) &&
+        (bcode != GB_UDT_code) &&
+        (ccode != GB_UDT_code)) ;
+
+    //--------------------------------------------------------------------------
     // construct the ewise scode
     //--------------------------------------------------------------------------
 
@@ -192,5 +222,7 @@ void GB_enumify_ewise         // enumerate a GrB_eWise problem
                 GB_LSHIFT (msparsity  ,  4) |  // 0 to 3       2
                 GB_LSHIFT (asparsity  ,  2) |  // 0 to 3       2
                 GB_LSHIFT (bsparsity  ,  0) ;  // 0 to 3       2
+
+    return (builtin) ;
 }
 

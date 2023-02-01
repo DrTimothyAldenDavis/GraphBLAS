@@ -28,8 +28,8 @@ void GB_debugify_select
     GrB_Type atype = A->type ;
 
     // enumify the select problem
-    GB_enumify_select (&select_code, C_iso, opcode, op, flipij, A,
-        in_place_A) ;
+    bool builtin = GB_enumify_select (&select_code, C_iso, opcode, op,
+        flipij, A, in_place_A) ;
 
     // get the operator name and type names
     GrB_Type xtype, ytype, ztype ;
@@ -40,11 +40,7 @@ void GB_debugify_select
     char *zname = (ztype == NULL) ? NULL : ztype->name ;
 
     // namify the select problem
-    bool builtin = (op == NULL || (op->header_size == 0)) &&
-        ((xtype == NULL) || xtype->header_size == 0) &&
-        ((ytype == NULL) || ytype->header_size == 0) &&
-        ((ztype == NULL) || ztype->header_size == 0) &&
-        (atype->header_size == 0) ;
+
     char select_name [256 + 8*GxB_MAX_NAME_LEN] ;
     GB_namify_problem (select_name, "GB_jit_select_", 8, select_code, builtin,
         opname,

@@ -31,6 +31,7 @@ void GB_macrofy_copyright (FILE *fp) ;
 //------------------------------------------------------------------------------
 
 #include "GB_binop.h"
+#include "GB_jitifyer.h"
 
 //------------------------------------------------------------------------------
 // left and right shift
@@ -43,7 +44,7 @@ void GB_macrofy_copyright (FILE *fp) ;
 // GrB_reduce
 //------------------------------------------------------------------------------
 
-void GB_enumify_reduce      // enumerate a GrB_reduce problem
+bool GB_enumify_reduce      // enumerate a GrB_reduce problem
 (
     // output:
     uint64_t *rcode,        // unique encoding of the entire problem, but where
@@ -54,14 +55,14 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     GrB_Matrix A
 ) ;
 
-void GB_enumify2_reduce     // enumerate a GrB_reduce problem
+uint64_t GB_encodify_reduce // encode a GrB_reduce problem
 (
     // output:
-    uint64_t *rcodes,       // unique encoding of the entire problem,
-                            // including a fully unique encoding of user-
-                            // defined monoids and data types (size 6)
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char *suffix,               // suffix for user-defined naming
     // input:
-    GrB_Monoid reduce,      // the monoid to enumify
+    GrB_Monoid monoid,      // the monoid to enumify
     GrB_Matrix A            // input matrix to reduce
 ) ;
 
@@ -80,7 +81,7 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
 
 // FUTURE: add accumulator for eWise operations?
 
-void GB_enumify_ewise         // enumerate a GrB_eWise problem
+bool GB_enumify_ewise       // enumerate a GrB_eWise problem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
@@ -117,7 +118,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 // GrB_mxm
 //------------------------------------------------------------------------------
 
-void GB_enumify_mxm         // enumerate a GrB_mxm problem
+bool GB_enumify_mxm         // enumerate a GrB_mxm problem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire semiring
@@ -154,7 +155,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 // GrB_select
 //------------------------------------------------------------------------------
 
-void GB_enumify_select
+bool GB_enumify_select
 (
     // output:
     uint64_t *select_code,      // unique encoding of the selector

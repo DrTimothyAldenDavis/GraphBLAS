@@ -42,7 +42,7 @@ void GB_debugify_mxm
     }
 
     // enumify the mxm problem
-    GB_enumify_mxm (&scode, C_iso, C_sparsity, ctype,
+    bool builtin = GB_enumify_mxm (&scode, C_iso, C_sparsity, ctype,
         M, Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
     int zcode       = GB_RSHIFT (scode, 32, 4) ;    // if 0: C is iso
     int xcode       = GB_RSHIFT (scode, 28, 4) ;    // if 0: ignored
@@ -53,11 +53,7 @@ void GB_debugify_mxm
 
     // namify the mxm problem
     char mxm_name [256 + 8*GxB_MAX_NAME_LEN] ;
-    bool builtin = (semiring->add->builtin) &&
-        (semiring->multiply->header_size == 0) &&
-        (atype->header_size == 0) &&
-        (btype->header_size == 0) &&
-        (ctype->header_size == 0) ;
+
     GB_namify_problem (mxm_name, "GB_jit_mxm_", 16, scode, builtin,
         semiring->add->op->name,
         semiring->multiply->name,

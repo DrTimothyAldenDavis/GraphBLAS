@@ -34,30 +34,31 @@
 // built-in types
 //------------------------------------------------------------------------------
 
-#define GB_TYPEDEF(prefix,type,ctype,name)                  \
+#define GB_TYPEDEF(prefix,type,ctype,name,name_len)         \
     struct GB_Type_opaque GB_OPAQUE (type) =                \
     {                                                       \
         GB_MAGIC, 0,                                        \
         sizeof (ctype),                                     \
         GB_ ## type ## _code,                               \
+        name_len,                                           \
         name,                                               \
         NULL                                                \
     } ;                                                     \
     GrB_Type prefix ## _ ## type = & GB_OPAQUE (type)
 
-GB_TYPEDEF (GrB, BOOL  , bool      , "bool"       ) ;
-GB_TYPEDEF (GrB, INT8  , int8_t    , "int8_t"     ) ;
-GB_TYPEDEF (GrB, INT16 , int16_t   , "int16_t"    ) ;
-GB_TYPEDEF (GrB, INT32 , int32_t   , "int32_t"    ) ;
-GB_TYPEDEF (GrB, INT64 , int64_t   , "int64_t"    ) ;
-GB_TYPEDEF (GrB, UINT8 , uint8_t   , "uint8_t"    ) ;
-GB_TYPEDEF (GrB, UINT16, uint16_t  , "uint16_t"   ) ;
-GB_TYPEDEF (GrB, UINT32, uint32_t  , "uint32_t"   ) ;
-GB_TYPEDEF (GrB, UINT64, uint64_t  , "uint64_t"   ) ;
-GB_TYPEDEF (GrB, FP32  , float     , "float"      ) ;
-GB_TYPEDEF (GrB, FP64  , double    , "double"     ) ;
-GB_TYPEDEF (GxB, FC32  , GxB_FC32_t, "GxB_FC32_t" ) ;
-GB_TYPEDEF (GxB, FC64  , GxB_FC64_t, "GxB_FC64_t" ) ;
+GB_TYPEDEF (GrB, BOOL  , bool      , "bool"       , 4) ;
+GB_TYPEDEF (GrB, INT8  , int8_t    , "int8_t"     , 6) ;
+GB_TYPEDEF (GrB, INT16 , int16_t   , "int16_t"    , 7) ;
+GB_TYPEDEF (GrB, INT32 , int32_t   , "int32_t"    , 7) ;
+GB_TYPEDEF (GrB, INT64 , int64_t   , "int64_t"    , 7) ;
+GB_TYPEDEF (GrB, UINT8 , uint8_t   , "uint8_t"    , 7) ;
+GB_TYPEDEF (GrB, UINT16, uint16_t  , "uint16_t"   , 8) ;
+GB_TYPEDEF (GrB, UINT32, uint32_t  , "uint32_t"   , 8) ;
+GB_TYPEDEF (GrB, UINT64, uint64_t  , "uint64_t"   , 8) ;
+GB_TYPEDEF (GrB, FP32  , float     , "float"      , 5) ;
+GB_TYPEDEF (GrB, FP64  , double    , "double"     , 6) ;
+GB_TYPEDEF (GxB, FC32  , GxB_FC32_t, "GxB_FC32_t" , 10) ;
+GB_TYPEDEF (GxB, FC64  , GxB_FC64_t, "GxB_FC64_t" , 10) ;
 
 //------------------------------------------------------------------------------
 // built-in descriptors

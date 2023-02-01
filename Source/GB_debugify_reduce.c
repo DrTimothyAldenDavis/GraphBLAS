@@ -21,10 +21,9 @@ void GB_debugify_reduce     // enumerate and macrofy a GrB_reduce problem
     uint64_t rcode ;        // unique encoding of the entire problem
 
     // enumify the reduce problem
-    GB_enumify_reduce (&rcode, monoid, A) ;
+    bool builtin = GB_enumify_reduce (&rcode, monoid, A) ;
 
     // namify the reduce problem
-    bool builtin = (monoid->builtin) && (A->type->header_size == 0) ;
     char reduce_name [256 + 2 * GxB_MAX_NAME_LEN] ;
     GB_namify_problem (reduce_name, "GB_jit_reduce_", 7, rcode, builtin,
         monoid->op->name,
@@ -38,7 +37,7 @@ void GB_debugify_reduce     // enumerate and macrofy a GrB_reduce problem
 
     // construct the filename and create the file
     char filename [512 + 2 * GxB_MAX_NAME_LEN] ;
-    sprintf (filename, "/tmp/grb/s.h", reduce_name) ;
+    sprintf (filename, "/tmp/grb/%s.h", reduce_name) ;
     FILE *fp = fopen (filename, "w") ;
     if (fp == NULL) return ;
 

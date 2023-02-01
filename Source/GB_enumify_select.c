@@ -10,7 +10,7 @@
 #include "GB.h"
 #include "GB_stringify.h"
 
-void GB_enumify_select
+bool GB_enumify_select
 (
     // output:
     uint64_t *select_code,      // unique encoding of the selector
@@ -53,6 +53,21 @@ void GB_enumify_select
     int flip_ij = (flipij) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
+    // enumify the builtin property
+    //--------------------------------------------------------------------------
+
+    // Many built-in operators work on user-defined types, so the x,y,z and
+    // acodes must all be checked.
+
+    bool builtin =
+        (opcode != GB_USER_idxunop_code) &&
+        (opcode != GB_USER_selop_code) &&
+        (xcode != GB_UDT_code) &&
+        (ycode != GB_UDT_code) &&
+        (zcode != GB_UDT_code) &&
+        (acode != GB_UDT_code) ;
+
+    //--------------------------------------------------------------------------
     // construct the select code
     //--------------------------------------------------------------------------
 
@@ -81,5 +96,6 @@ void GB_enumify_select
                 GB_LSHIFT (A_iso_code ,  2) |  // 0 or 1       1
                 GB_LSHIFT (asparsity  ,  0) ;  // 0 to 3       2
 
+    return (builtin) ;
 }
 

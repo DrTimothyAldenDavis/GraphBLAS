@@ -24,7 +24,7 @@
     GxB_binary_function      binop_function ;
     GxB_select_function      selop_function ;
 
-    char name [GxB_MAX_NAME_LEN] ;       // name of the unary operator
+    char name [GxB_MAX_NAME_LEN] ;      // name of the operator
     GB_Opcode opcode ;      // operator opcode
     char *defn ;            // function definition
     size_t defn_size ;      // size of the definition

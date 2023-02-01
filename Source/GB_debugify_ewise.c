@@ -35,14 +35,10 @@ void GB_debugify_ewise
     GrB_Type btype = B->type ;
 
     // enumify the ewise problem
-    GB_enumify_ewise (&scode, C_iso, C_sparsity, ctype,
+    bool builtin = GB_enumify_ewise (&scode, C_iso, C_sparsity, ctype,
         M, Mask_struct, Mask_comp, binaryop, flipxy, A, B) ;
 
     // namify the ewise problem
-    bool builtin = ((binaryop == NULL) || binaryop->header_size == 0) &&
-        (atype->header_size == 0) &&
-        (btype->header_size == 0) &&
-        (ctype->header_size == 0) ;
     char ewise_name [256 + 8*GxB_MAX_NAME_LEN] ;
     GB_namify_problem (ewise_name, "GB_jit_ewise_", 12, scode, builtin,
         (binaryop == NULL) ? "none" : binaryop->name,

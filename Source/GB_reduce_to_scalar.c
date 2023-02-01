@@ -231,21 +231,24 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
             //------------------------------------------------------------------
 
             // enumify the reduce problem, including all objects and types
-            uint64_t rcodes [6] ;
-            GB_enumify2_reduce (rcodes, monoid, A) ;
+            GB_jit_encoding encoding ;
+            char suffix [8 + 2*GxB_MAX_NAME_LEN] ;
+            int suffix_len ;
+            uint64_t hash = GB_encodify_reduce (&encoding, suffix, &suffix_len,
+                monoid, A) ;
+            printf ("hash: %016" PRIx64 "\n", hash) ;
 
             //------------------------------------------------------------------
             // find the kernel in the global hash table
             //------------------------------------------------------------------
 
-            uint64_t hash = GB_jitifyer_hash (rcodes) ;
-            void *jit_kernel = GB_jitifyer_lookup (hash, rcodes) ;
+            void *dl_function = GB_jitifyer_lookup (hash, &encoding) ;
 
             //------------------------------------------------------------------
             // load it and compile it if not found
             //------------------------------------------------------------------
 
-            if (jit_kernel == NULL)
+            if (dl_function == NULL)
             { 
 
                 //--------------------------------------------------------------
@@ -253,11 +256,15 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 //--------------------------------------------------------------
 
                 // namify the reduce problem
-                char *base_name = "reduce_" ;
-                bool builtin = (monoid->builtin) &&
-                    (A->type->header_size == 0) ;
+                bool builtin = encoding.primary.builtin ;
                 char reduce_name [256 + 3 * GxB_MAX_NAME_LEN] ;
-                uint64_t rcode = rcodes [1] ;
+                uint64_t rcode = encoding.primary.code ;
+
+                snprintf (reduce_name, "GB_jit_reduce_%0* " PRIx64 "%s",
+                    7, rcode, suffix) ;
+                printf ("name: [%s]\n", reduce_name) ;
+
+                /*
                 GB_namify_problem (reduce_name, "GB_jit_reduce_", 7, rcode,
                     builtin,
                     monoid->op->name,
@@ -268,6 +275,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     NULL,
                     NULL,
                     NULL) ;
+                */
 
                 //==============================================================
                 // FIXME: make this a helper function for all kernels
@@ -285,9 +293,9 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 char lib_filename [2048] ;
                 snprintf (lib_filename, 2048, "%s/lib%s.so",
                     lib_folder, reduce_name) ;
-                void *jit_kernel_library = dlopen (lib_filename, RTLD_LAZY) ;
+                void *dl_handle = dlopen (lib_filename, RTLD_LAZY) ;
 
-                if (jit_kernel_library == NULL)
+                if (dl_handle == NULL)
                 {
 
                     //----------------------------------------------------------
@@ -345,11 +353,9 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                         root_folder,
                         root_folder,
                         root_folder,
-
                         root_folder,
                         root_folder,
                         root_folder,
-
                         root_folder,
                         root_folder) ;
 
@@ -379,8 +385,8 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     printf ("lib_file: %s\n", lib_filename) ;
                 
                     // load in the lib*.so file
-                    jit_kernel_library = dlopen (lib_filename, RTLD_LAZY) ;
-                    if (jit_kernel_library == NULL)
+                    dl_handle = dlopen (lib_filename, RTLD_LAZY) ;
+                    if (dl_handle == NULL)
                     {
                         // FIXME
                         printf ("failed to load lib*.so file!\n") ;
@@ -391,13 +397,19 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 }
 
                 // get the jit_kernel_function pointer
-                printf ("here we are\n") ;
-                jit_kernel = dlsym (jit_kernel_library, reduce_name) ;
-                printf ("got jit_kernel %p\n", jit_kernel) ;
+                dl_function = dlsym (dl_handle, reduce_name) ;
+                if (dl_function == NULL)
+                {
+                    // FIXME
+                    printf ("failed to load dl_function!\n") ;
+                    fflush (stdout) ;
+                    abort ( ) ;
+                    return (GrB_PANIC) ;
+                }
 
                 // insert the new kernel into the hash table
-                if (!GB_jitifyer_insert (hash, rcodes, jit_kernel_library,
-                    jit_kernel))
+                if (!GB_jitifyer_insert (hash, &encoding, dl_handle,
+                    dl_function))
                 {
                     // FIXME
                     printf ("failed to add to hash table!\n") ;
@@ -405,15 +417,16 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     abort ( ) ;
                     return (GrB_PANIC) ;
                 }
+
                 //==============================================================
             }
             else
             {
-                printf ("found in hash: %p\n", jit_kernel) ;
+                printf ("found in hash: %p\n", dl_function) ;
             }
 
             // call the kernel
-            GB_reduce_function redfunc = (GB_reduce_function) jit_kernel ;
+            GB_reduce_function redfunc = (GB_reduce_function) dl_function ;
             info = redfunc (z, A, W, F, ntasks, nthreads) ;
 
             // set true if JIT successful
