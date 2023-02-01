@@ -14,7 +14,7 @@
 // GB_jitifyer_entry: an entry in the jitifyer hash table
 //------------------------------------------------------------------------------
 
-struct GB_jit_encoding_struct   // 2*8 = 16 bytes
+struct GB_jit_encoding_struct
 {
     uint64_t code ;         // from GB_enumify_*
     uint32_t kcode ;        // which kernel
@@ -23,7 +23,7 @@ struct GB_jit_encoding_struct   // 2*8 = 16 bytes
 
 typedef struct GB_jit_encoding_struct GB_jit_encoding ;
 
-struct GB_jit_entry_struct      // 6*8 = 48 bytes
+struct GB_jit_entry_struct
 {
     uint64_t hash ;             // hash code for the problem
     GB_jit_encoding encoding ;  // encoding of the problem, except for suffix
@@ -40,8 +40,6 @@ typedef struct GB_jit_entry_struct GB_jit_entry ;
 // GB_jitifyer methods for GraphBLAS
 //------------------------------------------------------------------------------
 
-bool GB_jitifyer_expand (void) ;
-
 void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
 (
     // input:
@@ -50,14 +48,14 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
     char *suffix
 ) ;
 
-bool GB_jitifyer_insert
+bool GB_jitifyer_insert         // return true if successful, false if failure
 (
     // input:
-    uint64_t hash,          // hash of the problem
+    uint64_t hash,              // hash for the problem
     GB_jit_encoding *encoding,  // primary encoding
-    char *suffix,           // suffix for user-defined types/operators
-    void *dl_handle,
-    void *dl_function
+    char *suffix,               // suffix for user-defined types/operators
+    void *dl_handle,            // library handle from dlopen
+    void *dl_function           // function handle from dlsym
 ) ;
 
 uint64_t GB_jitifyer_encoding_hash
@@ -71,6 +69,7 @@ uint64_t GB_jitifyer_suffix_hash
     uint32_t suffix_len // length of the string, not including terminating '\0'
 ) ;
 
+void GB_jitifyer_finalize (void) ;
 
 #endif
 

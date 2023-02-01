@@ -234,7 +234,8 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
             GB_jit_encoding encoding ;
             char suffix [8 + 2*GxB_MAX_NAME_LEN] ;
             uint64_t hash = GB_encodify_reduce (&encoding, suffix, monoid, A) ;
-            printf ("hash: %016" PRIx64 "\n", hash) ;
+//          printf ("hash: %016" PRIx64 "\n", hash) ;
+//          printf ("suffix: [%s]\n", suffix) ;
 
             //------------------------------------------------------------------
             // find the kernel in the global hash table
@@ -260,7 +261,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
 
                 snprintf (reduce_name, RLEN-1, "GB_jit_reduce_%0*" PRIx64 "%s",
                     7, rcode, suffix) ;
-                printf ("name: [%s]\n", reduce_name) ;
+//              printf ("name: [%s]\n", reduce_name) ;
 
                 /*
                 bool builtin = encoding.primary.builtin ;
@@ -304,7 +305,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     char source_filename [2048] ;
                     snprintf (source_filename, 2048, "%s/%s.c",
                         lib_folder, reduce_name) ;
-                    printf ("source file: %s\n", source_filename) ;
+//                  printf ("source file: %s\n", source_filename) ;
                     FILE *fp = fopen (source_filename, "w") ;
                     if (fp == NULL)
                     {
@@ -377,11 +378,11 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     lib_folder, reduce_name,    // lib*.so output file
                     lib_folder, reduce_name) ;  // *.o file for 2nd gcc
 
-                    printf ("%s\n", command) ;
+//                  printf ("%s\n", command) ;
 
                     int result = system (command) ;
-                    printf ("result: %d\n", result) ;
-                    printf ("lib_file: %s\n", lib_filename) ;
+//                  printf ("result: %d\n", result) ;
+//                  printf ("lib_file: %s\n", lib_filename) ;
                 
                     // load in the lib*.so file
                     dl_handle = dlopen (lib_filename, RTLD_LAZY) ;
@@ -421,7 +422,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
             }
             else
             {
-                printf ("found in hash: %p\n", dl_function) ;
+//              printf ("found in hash: %p\n", dl_function) ;
             }
 
             // call the kernel

@@ -129,6 +129,8 @@ GrB_Info GxB_Type_new
     // ensure t->name is null-terminated
     t->name [GxB_MAX_NAME_LEN-1] = '\0' ;
 
+    t->name_len = (int) strlen (t->name) ;
+
     //--------------------------------------------------------------------------
     // get the typedef, if present
     //--------------------------------------------------------------------------

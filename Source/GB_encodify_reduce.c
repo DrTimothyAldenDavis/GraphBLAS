@@ -28,8 +28,9 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
 
     bool builtin = GB_enumify_reduce (&encoding->code, monoid, A) ;
     encoding->kcode = 0 ;  // FIXME: GB_JIT_REDUCE_KERNEL
-
+    encoding->suffix_len = 0 ;
     uint64_t hash = GB_jitifyer_encoding_hash (encoding) ;
+//  printf ("first hash: %016" PRIx64 "\n", hash) ;
 
     //--------------------------------------------------------------------------
     // monoid and matrix type
@@ -38,7 +39,6 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
     if (builtin)
     {
         // no suffix needed
-        encoding->suffix_len = 0 ;
         (*suffix) = '\0' ;
     }
     else
@@ -58,6 +58,7 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
         (*p++) = '_' ;
         (*p++) = '_' ;
         size_t len2 = A->type->name_len ;
+        if (len2 != strlen (A->type->name)) abort ( ) ; // FIXME: make ASSERT
         memcpy (p, A->type->name, len2) ;
         p += len2 ;
 
@@ -67,11 +68,11 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
         uint32_t len = (uint32_t) (p - suffix) ;
         encoding->suffix_len = len ;
 
-        printf ("suffix (%d): %s\n", len, suffix) ;
         if (len != strlen (suffix)) abort ( ) ; // FIXME: make ASSERT
 
         // augment the hash with the suffix
         hash = hash ^ GB_jitifyer_suffix_hash (suffix, len) ;
+        // printf ("second hash: %016" PRIx64 "\n", hash) ;
     }
 
     // return the hash of the problem encoding
