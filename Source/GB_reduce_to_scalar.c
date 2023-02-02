@@ -420,11 +420,8 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                             (GB_Operator) monoid->op, NULL,
                             A->type, NULL, NULL, NULL, NULL, NULL) ;
                     }
-                    if (!monoid->builtin)
-                    {
-                        // the monoid is not builtin
-                        GB_macrofy_query_monoid (fp, reduce_name, monoid) ;
-                    }
+                    // create query_monoid if the monoid is not builtin
+                    GB_macrofy_query_monoid (fp, reduce_name, monoid) ;
                     fclose (fp) ;
 
                     //----------------------------------------------------------
