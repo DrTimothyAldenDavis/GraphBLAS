@@ -250,7 +250,6 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 void GB_macrofy_query_monoid
 (
     FILE *fp,
-    const char *kernel_name,
     GrB_Monoid monoid
 ) ;
 
@@ -458,7 +457,6 @@ void GB_macrofy_type
 void GB_macrofy_query_defn
 (
     FILE *fp,
-    const char *kernel_name,
     GB_Operator op0,    // monoid op, select op, unary op, etc
     GB_Operator op1,    // binaryop for a semring
     GrB_Type type0,

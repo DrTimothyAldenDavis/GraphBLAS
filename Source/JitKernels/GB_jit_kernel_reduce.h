@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // This file is #include'd into all JIT reduce kernels.  It is not specialized
-// for any particular specialization. 
+// for any particular reduce kernel. 
 
-#include "GB.h"
+#include "GB_jit_kernel.h"
 

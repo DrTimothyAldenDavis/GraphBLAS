@@ -86,7 +86,7 @@ bool GB_enumify_reduce      // enumerate a GrB_reduce problem
 
     // total rcode bits: 27
 
-    (*rcode) =
+    (*rcode) = 
                                                // range        bits
                 // monoid: 15 bits (4 hex digits)
                 GB_LSHIFT (red_ecode  , 22) |  // 0 to 22      5

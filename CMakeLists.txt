@@ -39,8 +39,8 @@ message ( STATUS "GraphBLAS C API: v"
 # CUDA is under development for now, and not deployed in production:
 # option ( ENABLE_CUDA "Enable CUDA acceleration" off )
 # FIXME
-# set ( ENABLE_CUDA false )
-  set ( ENABLE_CUDA true )
+  set ( ENABLE_CUDA false )
+# set ( ENABLE_CUDA true )
 
 # GraphBLAS takes a long time to build, so do not build the static library
 # by default
@@ -54,7 +54,7 @@ include ( SuiteSparsePolicy )
 
 if ( SUITESPARSE_CUDA )
     # for CUDA development only; not for production use
-    set ( CMAKE_CUDA_DEV on )
+    set ( CMAKE_CUDA_DEV off )
     project ( graphblas
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES CUDA C )

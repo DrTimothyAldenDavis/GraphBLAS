@@ -13,7 +13,6 @@
 void GB_macrofy_query_defn
 (
     FILE *fp,
-    const char *kernel_name,
     GB_Operator op0,    // monoid op, select op, unary op, etc
     GB_Operator op1,    // binaryop for a semring
     GrB_Type type0,
@@ -31,11 +30,9 @@ void GB_macrofy_query_defn
 
     fprintf (fp, 
         "\n// to query the kernel for its op and type definitions:\n"
-        "const char *%s__query_defn (int k) ;\n"
-        "const char *%s__query_defn (int k)\n"
+        "const char *GB_jit_query_defn (int k)\n"
         "{\n"
-        "    const char **defn [8] ;\n",
-        kernel_name, kernel_name) ;
+        "    const char **defn [8] ;\n") ;
 
     // create the definition string for op0
     if (op0 == NULL || op0->defn == NULL)

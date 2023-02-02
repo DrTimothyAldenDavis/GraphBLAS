@@ -69,7 +69,7 @@
 // appear in GraphBLAS/Source/Template.  They are used by both the pre-compiled
 // kernels in GraphBLAS/Source/Generated*, and by the JIT kernel here.
 
-GrB_Info GB_JIT_KERNEL
+GrB_Info GB_jit_kernel
 (
     GB_Z_TYPENAME *result,
     const GrB_Matrix A,
@@ -79,7 +79,7 @@ GrB_Info GB_JIT_KERNEL
     int nthreads
 ) ;
 
-GrB_Info GB_JIT_KERNEL
+GrB_Info GB_jit_kernel
 (
     GB_Z_TYPENAME *result,
     const GrB_Matrix A,
@@ -89,11 +89,9 @@ GrB_Info GB_JIT_KERNEL
     int nthreads
 )
 { 
-    printf ("\n=================== HI THERE, reducing:\n") ;
-    GxB_print (A, 3) ;
     GB_Z_TYPENAME z = (*result) ;
     GB_Z_TYPENAME *restrict W = (GB_Z_TYPENAME *) W_space ;
-    #if GB_A_HAS_ZOMBIES || GB_A_IS_BITMAP
+    #if GB_A_HAS_ZOMBIES || GB_A_IS_BITMAP || (GB_PANEL == 1)
     {
         #include "GB_reduce_to_scalar_template.c"
     }

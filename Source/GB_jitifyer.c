@@ -48,10 +48,11 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
         return (NULL) ;
     }
 
-    bool builtin = (bool) (encoding->suffix_len == 0) ;
+    uint32_t suffix_len = encoding->suffix_len ;
+    bool builtin = (bool) (suffix_len == 0) ;
 
 #if 0
-    // dump
+    // dump the hash table
     for (int64_t k = 0 ; k < GB_jit_table_size ; k++)
     {
         GB_jit_entry *e = &(GB_jit_table [k]) ;
@@ -63,7 +64,7 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
             printf ("   code %016" PRIx64 "\n", e->encoding.code) ;
             printf ("   kcode: %d\n", e->encoding.kcode) ;
             printf ("   suffix [%s]\n", (s == NULL) ? "" : s) ;
-            printf ("   len %d \n", e->encoding.suffix_len) ;
+            printf ("   suffix_len %d \n", e->encoding.suffix_len) ;
             printf ("   handle %p\n", e->dl_handle) ;
             printf ("   func %p\n", e->dl_function) ;
         } 
@@ -83,8 +84,10 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
             return (NULL) ;
         }
         else if (e->hash == hash &&
-            (memcmp (&(e->encoding), encoding, sizeof (GB_jit_encoding)) == 0)
-            && (builtin || (strcmp (e->suffix, suffix) == 0)))
+            e->encoding.code == encoding->code &&
+            e->encoding.kcode == encoding->kcode &&
+            e->encoding.suffix_len == suffix_len &&
+            (builtin || (memcmp (e->suffix, suffix, suffix_len) == 0)))
         {
             // found the right entry: return the corresponding dl_function
             return (e->dl_function) ;
@@ -264,14 +267,7 @@ uint64_t GB_jitifyer_encoding_hash
     GB_jit_encoding *encoding
 )
 {
-    uint64_t hash = 0 ;
-//  printf ("encoding %p\n", encoding) ;
-//  printf ("encoding code %lu\n", encoding->code) ;
-//  printf ("encoding kcode %d\n", encoding->kcode) ;
-//  printf ("encoding suffix len %d\n", encoding->suffix_len) ;
-    hash = (XXH3_64bits ((const void *) encoding, sizeof (GB_jit_encoding))) ;
-//  printf ("hash from xxhash: %016" PRIx64 "\n", hash) ;
-    return (hash) ;
+    return (XXH3_64bits ((const void *) encoding, sizeof (GB_jit_encoding))) ;
 }
 
 uint64_t GB_jitifyer_suffix_hash
@@ -280,9 +276,6 @@ uint64_t GB_jitifyer_suffix_hash
     uint32_t suffix_len // length of the string, not including terminating '\0'
 )
 {
-    uint64_t hash = 0 ;
-    hash = (XXH3_64bits ((const void *) suffix, (size_t) suffix_len)) ;
-//  printf ("hash from xxhash, suffix: %016" PRIx64 "\n", hash) ;
-    return (hash) ;
+    return (XXH3_64bits ((const void *) suffix, (size_t) suffix_len)) ;
 }
 

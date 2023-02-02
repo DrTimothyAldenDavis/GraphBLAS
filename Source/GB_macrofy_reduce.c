@@ -100,5 +100,25 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
 
     GB_macrofy_input (fp, "a", "A", "A", true, monoid->op->ztype,
         atype, asparsity, acode, false, azombies) ;
+
+    //--------------------------------------------------------------------------
+    // reduction method
+    //--------------------------------------------------------------------------
+
+    fprintf (fp, "\n// panel size for reduction:\n") ;
+    int zsize = (int) monoid->op->ztype->size ;
+    if (zsize == 1)
+    {
+        fprintf (fp, "#define GB_PANEL 8\n") ;
+    }
+    else if (zsize < 16)
+    {
+        fprintf (fp, "#define GB_PANEL 16\n") ;
+    }
+    else
+    {
+        fprintf (fp, "#define GB_PANEL 1\n") ;
+    }
+
 }
 

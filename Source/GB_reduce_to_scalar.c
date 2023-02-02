@@ -230,11 +230,11 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
             // enumify the reduce problem, including all objects and types
             //------------------------------------------------------------------
 
+            GBURBLE ("(jit) ") ;
+
             GB_jit_encoding encoding ;
             char suffix [8 + 2*GxB_MAX_NAME_LEN] ;
             uint64_t hash = GB_encodify_reduce (&encoding, suffix, monoid, A) ;
-//          printf ("hash: %016" PRIx64 "\n", hash) ;
-//          printf ("suffix: [%s]\n", suffix) ;
 
             //------------------------------------------------------------------
             // find the kernel in the global hash table
@@ -260,21 +260,6 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
 
                 snprintf (reduce_name, RLEN-1, "GB_jit_reduce_%0*" PRIx64 "%s",
                     7, rcode, suffix) ;
-//              printf ("name: [%s]\n", reduce_name) ;
-
-                /*
-                bool builtin = encoding.primary.builtin ;
-                GB_namify_problem (reduce_name, "GB_jit_reduce_", 7, rcode,
-                    builtin,
-                    monoid->op->name,
-                    NULL,
-                    monoid->op->ztype->name,
-                    A->type->name,
-                    NULL,
-                    NULL,
-                    NULL,
-                    NULL) ;
-                */
 
                 //==============================================================
                 // FIXME: make this a helper function for all kernels
@@ -290,8 +275,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 // try to load the libkernelname.so from the user's
                 // .SuiteSparse/GraphBLAS folder (if already compiled)
                 char lib_filename [2048] ;
-                snprintf (lib_filename, 2048, "%s/lib%s.so",
-                    lib_folder, reduce_name) ;
+                snprintf (lib_filename, 2048, "%s/lib%s.so", lib_folder, reduce_name) ;
                 void *dl_handle = dlopen (lib_filename, RTLD_LAZY) ;
 
                 bool need_to_compile = (dl_handle == NULL) ;
@@ -299,11 +283,8 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
 
                 if (!need_to_compile && !builtin)
                 {
-                    // already compiled, but make sure the defn are OK
-                    #define QLEN RLEN+32
-                    char query_name [QLEN] ;
-                    snprintf (query_name, QLEN, "%s__query_defn", reduce_name) ;
-                    void *dl_query = dlsym (dl_handle, query_name) ;
+                    // not loaded but already compiled; make sure the defn are OK
+                    void *dl_query = dlsym (dl_handle, "GB_jit_query_defn") ;
                     if (dl_query == NULL)
                     {
                         // the library is invalid; recompile it
@@ -316,7 +297,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                         // FIXME: make this a GB_jitifyer_helper function
                         // compare the monoid definition
                         const char *opdef = query_defn (0) ;
-                        if (opdef != NULL) printf ("opdef: \n%s\n", opdef) ;
+                        // if (opdef != NULL) printf ("opdef: \n%s\n", opdef) ;
                         if ((monoid->op->defn != NULL) != (opdef != NULL))
                         {
                             // one is not NULL but the other is NULL
@@ -325,7 +306,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                         else if (monoid->op->defn != NULL)
                         {
                             // ensure the user-defined monoid hasn't changed
-                            printf ("monoid def: \n%s\n", monoid->op->defn) ;
+                            // printf ("monoid def: \n%s\n", monoid->op->defn) ;
                             need_to_compile = (strcmp (opdef, monoid->op->defn) != 0) ;
                         }
 
@@ -334,7 +315,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                         if (!need_to_compile)
                         {
                             const char *tdef = query_defn (2) ;
-                            if (tdef != NULL) printf ("tdef: \n%s\n", tdef) ;
+                            // if (tdef != NULL) printf ("tdef: \n%s\n", tdef) ;
                             if ((A->type->defn != NULL) != (tdef != NULL))
                             {
                                 // one is not NULL but the other is NULL
@@ -343,7 +324,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                             else if (A->type->defn != NULL)
                             {
                                 // ensure the user-defined type hasn't changed
-                                printf ("A type def: \n%s\n", A->type->defn) ;
+                                // printf ("A type def: \n%s\n", A->type->defn) ;
                                 need_to_compile = (strcmp (tdef, A->type->defn) != 0) ;
                             }
                         }
@@ -352,8 +333,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                         // compare the identity and terminal
                         if (!need_to_compile)
                         {
-                            snprintf (query_name, QLEN, "%s__query_monoid", reduce_name) ;
-                            dl_query = dlsym (dl_handle, query_name) ;
+                            dl_query = dlsym (dl_handle, "GB_jit_query_monoid") ;
                             if (dl_query == NULL)
                             {
                                 // the library is invalid; recompile it
@@ -387,11 +367,9 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     // construct a new jit kernel for this instance
                     //----------------------------------------------------------
 
-                    printf ("compiling the kernel\n") ;
+                    GBURBLE ("(compiling) \n") ;
                     char source_filename [2048] ;
-                    snprintf (source_filename, 2048, "%s/%s.c",
-                        lib_folder, reduce_name) ;
-//                  printf ("source file: %s\n", source_filename) ;
+                    snprintf (source_filename, 2048, "%s/%s.c", lib_folder, reduce_name) ;
                     FILE *fp = fopen (source_filename, "w") ;
                     if (fp == NULL)
                     {
@@ -405,9 +383,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                         "//--------------------------------------"
                         "----------------------------------------\n") ;
                     fprintf (fp, "// %s.h\n"
-                        "#include \"GB_jit_kernel_reduce.h\"\n"
-                        "#define GB_JIT_KERNEL %s\n",
-                        reduce_name, reduce_name) ;
+                        "#include \"GB_jit_kernel_reduce.h\"\n", reduce_name) ;
                     GB_macrofy_reduce (fp, rcode, monoid, A->type) ;
                     fprintf (fp,
                         "\n// reduction kernel\n"
@@ -416,12 +392,12 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     if (!builtin)
                     {
                         // either the monoid or A->type is not builtin, or both
-                        GB_macrofy_query_defn (fp, reduce_name,
+                        GB_macrofy_query_defn (fp,
                             (GB_Operator) monoid->op, NULL,
                             A->type, NULL, NULL, NULL, NULL, NULL) ;
                     }
                     // create query_monoid if the monoid is not builtin
-                    GB_macrofy_query_monoid (fp, reduce_name, monoid) ;
+                    GB_macrofy_query_monoid (fp, monoid) ;
                     fclose (fp) ;
 
                     //----------------------------------------------------------
@@ -474,11 +450,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     lib_folder, reduce_name,    // lib*.so output file
                     lib_folder, reduce_name) ;  // *.o file for 2nd gcc
 
-//                  printf ("%s\n", command) ;
-
                     int result = system (command) ;
-//                  printf ("result: %d\n", result) ;
-//                  printf ("lib_file: %s\n", lib_filename) ;
                 
                     // load in the lib*.so file
                     dl_handle = dlopen (lib_filename, RTLD_LAZY) ;
@@ -493,7 +465,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 }
 
                 // get the jit_kernel_function pointer
-                dl_function = dlsym (dl_handle, reduce_name) ;
+                dl_function = dlsym (dl_handle, "GB_jit_kernel") ;
                 if (dl_function == NULL)
                 {
                     // FIXME
@@ -516,10 +488,6 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
 
                 //==============================================================
             }
-            else
-            {
-//              printf ("found in hash: %p\n", dl_function) ;
-            }
 
             // call the kernel
             GB_reduce_function redfunc = (GB_reduce_function) dl_function ;
@@ -537,6 +505,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
 
         if (!done)
         {
+            // double t0 = omp_get_wtime ( ) ;
 
             //------------------------------------------------------------------
             // generic worker
@@ -635,6 +604,9 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     #include "GB_reduce_to_scalar_template.c"
                 }
             }
+
+            // t0 = omp_get_wtime ( ) - t0 ;
+            // printf ("generic time: %g sec\n", t0) ;
         }
     }
 
