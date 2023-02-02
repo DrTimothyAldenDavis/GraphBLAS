@@ -219,7 +219,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         }
 
         //----------------------------------------------------------------------
-        // use JIT or generic worker
+        // use JIT worker
         //----------------------------------------------------------------------
 
         #ifdef GB_DEBUGIFY_DEFN
@@ -227,10 +227,9 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         {
 
             //------------------------------------------------------------------
-            // JIT worker
+            // enumify the reduce problem, including all objects and types
             //------------------------------------------------------------------
 
-            // enumify the reduce problem, including all objects and types
             GB_jit_encoding encoding ;
             char suffix [8 + 2*GxB_MAX_NAME_LEN] ;
             uint64_t hash = GB_encodify_reduce (&encoding, suffix, monoid, A) ;
@@ -255,7 +254,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 //--------------------------------------------------------------
 
                 // namify the reduce problem
-                #define RLEN (256 + 3 * GxB_MAX_NAME_LEN)
+                #define RLEN (256 + 2 * GxB_MAX_NAME_LEN)
                 char reduce_name [RLEN] ;
                 uint64_t rcode = encoding.code ;
 
@@ -295,13 +294,100 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     lib_folder, reduce_name) ;
                 void *dl_handle = dlopen (lib_filename, RTLD_LAZY) ;
 
-                if (dl_handle == NULL)
+                bool need_to_compile = (dl_handle == NULL) ;
+                bool builtin = (encoding.suffix_len == 0) ;
+
+                if (!need_to_compile && !builtin)
+                {
+                    // already compiled, but make sure the defn are OK
+                    #define QLEN RLEN+32
+                    char query_name [QLEN] ;
+                    snprintf (query_name, QLEN, "%s__query_defn", reduce_name) ;
+                    void *dl_query = dlsym (dl_handle, query_name) ;
+                    if (dl_query == NULL)
+                    {
+                        // the library is invalid; recompile it
+                        need_to_compile = true ;
+                    }
+                    else
+                    {
+                        GB_jit_query_defn_function query_defn = (GB_jit_query_defn_function) dl_query ;
+
+                        // FIXME: make this a GB_jitifyer_helper function
+                        // compare the monoid definition
+                        const char *opdef = query_defn (0) ;
+                        if (opdef != NULL) printf ("opdef: \n%s\n", opdef) ;
+                        if ((monoid->op->defn != NULL) != (opdef != NULL))
+                        {
+                            // one is not NULL but the other is NULL
+                            need_to_compile = true ;
+                        }
+                        else if (monoid->op->defn != NULL)
+                        {
+                            // ensure the user-defined monoid hasn't changed
+                            printf ("monoid def: \n%s\n", monoid->op->defn) ;
+                            need_to_compile = (strcmp (opdef, monoid->op->defn) != 0) ;
+                        }
+
+                        // FIXME: make this a GB_jitifyer_helper function
+                        // compare the type definition
+                        if (!need_to_compile)
+                        {
+                            const char *tdef = query_defn (2) ;
+                            if (tdef != NULL) printf ("tdef: \n%s\n", tdef) ;
+                            if ((A->type->defn != NULL) != (tdef != NULL))
+                            {
+                                // one is not NULL but the other is NULL
+                                need_to_compile = true ;
+                            }
+                            else if (A->type->defn != NULL)
+                            {
+                                // ensure the user-defined type hasn't changed
+                                printf ("A type def: \n%s\n", A->type->defn) ;
+                                need_to_compile = (strcmp (tdef, A->type->defn) != 0) ;
+                            }
+                        }
+
+                        // FIXME: make this a GB_jitifyer_helper function
+                        // compare the identity and terminal
+                        if (!need_to_compile)
+                        {
+                            snprintf (query_name, QLEN, "%s__query_monoid", reduce_name) ;
+                            dl_query = dlsym (dl_handle, query_name) ;
+                            if (dl_query == NULL)
+                            {
+                                // the library is invalid; recompile it
+                                need_to_compile = true ;
+                            }
+                            else
+                            {
+                                // check the identity and terminal values
+                                GB_jit_query_monoid_function query_monoid = (GB_jit_query_monoid_function) dl_query ;
+                                size_t tsize = (monoid->terminal == NULL) ? 0 : zsize ;
+                                if (!query_monoid (monoid->identity, monoid->terminal, zsize, tsize))
+                                {
+                                    // wrong sizes or value(s); need to recompile
+                                    need_to_compile = true ;
+                                }
+                            }
+                        }
+                    }
+
+                    if (need_to_compile)
+                    {
+                        // library is loaded but needs to change, so close it
+                        dlclose (dl_handle) ;
+                    }
+                }
+
+                if (need_to_compile)
                 {
 
                     //----------------------------------------------------------
                     // construct a new jit kernel for this instance
                     //----------------------------------------------------------
 
+                    printf ("compiling the kernel\n") ;
                     char source_filename [2048] ;
                     snprintf (source_filename, 2048, "%s/%s.c",
                         lib_folder, reduce_name) ;
@@ -326,6 +412,19 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     fprintf (fp,
                         "\n// reduction kernel\n"
                         "#include \"GB_jit_kernel_reduce.c\"\n") ;
+
+                    if (!builtin)
+                    {
+                        // either the monoid or A->type is not builtin, or both
+                        GB_macrofy_query_defn (fp, reduce_name,
+                            (GB_Operator) monoid->op, NULL,
+                            A->type, NULL, NULL, NULL, NULL, NULL) ;
+                    }
+                    if (!monoid->builtin)
+                    {
+                        // the monoid is not builtin
+                        GB_macrofy_query_monoid (fp, reduce_name, monoid) ;
+                    }
                     fclose (fp) ;
 
                     //----------------------------------------------------------
@@ -434,6 +533,10 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
 
         }
         #endif
+
+        //----------------------------------------------------------------------
+        // use generic worker
+        //----------------------------------------------------------------------
 
         if (!done)
         {

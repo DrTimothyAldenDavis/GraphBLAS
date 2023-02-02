@@ -247,6 +247,13 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     GrB_Monoid monoid   // monoid to macrofy (NULL if not used)
 ) ;
 
+void GB_macrofy_query_monoid
+(
+    FILE *fp,
+    const char *kernel_name,
+    GrB_Monoid monoid
+) ;
+
 //------------------------------------------------------------------------------
 // binary operators
 //------------------------------------------------------------------------------
@@ -280,6 +287,13 @@ void GB_macrofy_defn
 (
     FILE *fp,
     int kind,
+    const char *name,
+    const char *defn
+) ;
+
+void GB_macrofy_string
+(
+    FILE *fp,
     const char *name,
     const char *defn
 ) ;
@@ -439,6 +453,20 @@ void GB_macrofy_type
     // input:
     const char *what,       // typically X, Y, Z, A, B, or C
     const char *name        // name of the type
+) ;
+
+void GB_macrofy_query_defn
+(
+    FILE *fp,
+    const char *kernel_name,
+    GB_Operator op0,    // monoid op, select op, unary op, etc
+    GB_Operator op1,    // binaryop for a semring
+    GrB_Type type0,
+    GrB_Type type1,
+    GrB_Type type2,
+    GrB_Type type3,
+    GrB_Type type4,
+    GrB_Type type5
 ) ;
 
 //------------------------------------------------------------------------------

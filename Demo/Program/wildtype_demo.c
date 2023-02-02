@@ -125,7 +125,7 @@ void wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)
     while ((*pdst++ = *psrc++)) ;
 }
 
-// The newlines (\n) in the defintion below are optional.  They just make
+// The newlines (\n) in the definition below are optional.  They just make
 // GxB_print output readable.
 
 #define WILDTYPE_ADD_DEFN                                                   \

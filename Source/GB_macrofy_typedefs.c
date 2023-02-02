@@ -29,7 +29,7 @@ void GB_macrofy_typedefs
 
     // If the user-defined types and operators wish to use the GraphBLAS
     // typedefs GxB_FC32_t and GxB_FC64_t, they can add the string
-    // "#include <GxB_complex.h>\n" to their strng definition.  See
+    // "#include <GxB_complex.h>\n" to their string definition.  See
     // Demo/Source/usercomplex.c.
 
     if (ctype == GxB_FC32 || ctype == GxB_FC64 ||
@@ -54,15 +54,24 @@ void GB_macrofy_typedefs
     defn [4] = (ytype == NULL) ? NULL : ytype->defn ;
     defn [5] = (ztype == NULL) ? NULL : ztype->defn ;
 
+    const char *name [6] ;
+    name [0] = (ctype == NULL) ? NULL : ctype->name ;
+    name [1] = (atype == NULL) ? NULL : atype->name ;
+    name [2] = (btype == NULL) ? NULL : btype->name ;
+    name [3] = (xtype == NULL) ? NULL : xtype->name ;
+    name [4] = (ytype == NULL) ? NULL : ytype->name ;
+    name [5] = (ztype == NULL) ? NULL : ztype->name ;
+
     for (int k = 0 ; k <= 5 ; k++)
     {
-        if (defn [k] != NULL)
+        if (defn [k] != NULL && name [k] != NULL)
         {
             // only print this typedef it is unique
             bool is_unique = true ;
             for (int j = 0 ; j < k && is_unique ; j++)
             {
-                if (defn [j] != NULL && strcmp (defn [j], defn [k]) == 0)
+                if (defn [j] != NULL && name [j] != NULL &&
+                    strcmp (name [j], name [k]) == 0)
                 {
                     is_unique = false ;
                 }
@@ -70,7 +79,12 @@ void GB_macrofy_typedefs
             if (is_unique)
             {
                 // the typedef is unique: include it in the .h file
-                fprintf (fp, "%s\n\n", defn [k]) ;
+                fprintf (fp, "%s\n", defn [k]) ;
+
+                // also include its definition as a string
+                GB_macrofy_string (fp, name [k], defn [k]) ;
+
+                fprintf (fp, "\n") ;
             }
         }
     }

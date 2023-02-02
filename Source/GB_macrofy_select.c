@@ -521,7 +521,7 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     "CAST_Z_TO_KEEP (keep, zkeep) ; }\n",
                     ztype->name, opname, i_user, j_user) ;
             }
-            GB_macrofy_defn (fp, 0, op->name, op->defn) ;
+            GB_macrofy_defn (fp, 3, op->name, op->defn) ;
             break ;
 
         case GB_USER_selop_code       : 
@@ -530,7 +530,7 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                 "#define GB_KEEP(keep,x,i,j,y) "
                 "keep = %s (%s, %s, &(x), &(y)) ;\n",
                 opname, i_user, j_user) ;
-            GB_macrofy_defn (fp, 0, op->name, op->defn) ;
+            GB_macrofy_defn (fp, 3, op->name, op->defn) ;
             break ;
 
         default: ;

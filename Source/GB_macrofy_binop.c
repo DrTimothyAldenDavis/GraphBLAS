@@ -48,7 +48,7 @@ void GB_macrofy_binop
         // user-defined operator
         //----------------------------------------------------------------------
 
-        GB_macrofy_defn (fp, 0, op->name, op->defn) ;
+        GB_macrofy_defn (fp, 3, op->name, op->defn) ;
 
         if (is_monoid_or_build)
         {

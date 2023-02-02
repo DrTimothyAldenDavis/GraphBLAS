@@ -71,5 +71,17 @@ uint64_t GB_jitifyer_suffix_hash
 
 void GB_jitifyer_finalize (void) ;
 
+// to query a library for its type and operator definitions
+typedef const char *(*GB_jit_query_defn_function) (int k) ;
+
+// to query a library for its type and operator definitions
+typedef bool (*GB_jit_query_monoid_function)
+(
+    void *id,
+    void *term,
+    size_t id_size,
+    size_t term_size
+) ;
+
 #endif
 
