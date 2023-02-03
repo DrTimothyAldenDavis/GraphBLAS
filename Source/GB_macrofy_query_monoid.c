@@ -17,7 +17,7 @@ void GB_macrofy_query_monoid
 )
 {
 
-    if (!monoid->builtin)
+    if (monoid->hash != 0)
     {
         // only create the query_monoid method if the monoid is not builtin
         bool has_terminal = (monoid->terminal != NULL) ;

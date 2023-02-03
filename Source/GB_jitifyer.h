@@ -60,15 +60,15 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
     void *dl_function           // function handle from dlsym
 ) ;
 
-uint64_t GB_jitifyer_encoding_hash
+uint64_t GB_jitifyer_hash_encoding
 (
     GB_jit_encoding *encoding
 ) ;
 
-uint64_t GB_jitifyer_suffix_hash
+uint64_t GB_jitifyer_hash
 (
-    char *suffix,       // string with operator name and types
-    uint32_t suffix_len // length of the string, not including terminating '\0'
+    const void *bytes,      // any string of bytes
+    size_t nbytes           // # of bytes to hash
 ) ;
 
 void GB_jitifyer_finalize (void) ;

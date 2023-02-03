@@ -21,6 +21,7 @@
 #include "GB.h"
 #include "GB_binop.h"
 #include "GB_Monoid_new.h"
+#include "GB_jitifyer.h"
 
 GrB_Info GB_Monoid_new          // create a monoid
 (
@@ -105,7 +106,8 @@ GrB_Info GB_Monoid_new          // create a monoid
     mon->terminal = NULL ;                  // defined below (if present)
     mon->identity_size = 0 ;
     mon->terminal_size = 0 ;
-    mon->builtin = false ;      // set true below if using a builtin binary op
+    bool builtin = false ;  // set true below if using a builtin binary op
+    mon->hash = 0 ;         // builtin monoids have a hash value of 0
 
     //--------------------------------------------------------------------------
     // allocation of identity and terminal values
@@ -160,7 +162,7 @@ GrB_Info GB_Monoid_new          // create a monoid
         ztype *terminal = (ztype *) mon->terminal ;                         \
         (*identity) = identity_value ;                                      \
         (*terminal) = terminal_value ;                                      \
-        mon->builtin = true ;                                               \
+        builtin = true ;                                                    \
     }                                                                       \
     break ;
 
@@ -171,7 +173,7 @@ GrB_Info GB_Monoid_new          // create a monoid
         GB_ALLOC_IDENTITY ;                                                 \
         ztype *identity = (ztype *) mon->identity ;                         \
         (*identity) = identity_value ;                                      \
-        mon->builtin = true ;                                               \
+        builtin = true ;                                                    \
     }                                                                       \
     break ;
 
@@ -371,17 +373,24 @@ GrB_Info GB_Monoid_new          // create a monoid
     // operator that is not a known monoid.  Use the identity and terminal
     // values provided on input.
 
-    if (!(mon->builtin))
+    if (!builtin)
     {
         // create the monoid identity value
         GB_ALLOC_IDENTITY ;
         memcpy (mon->identity, identity, zsize) ;
+        uint64_t hashes [3] ;
+        hashes [0] = mon->op->hash ;
+        hashes [1] = GB_jitifyer_hash (identity, zsize) ;
+        hashes [2] = 0 ;
         if (terminal != NULL)
         { 
             // create the monoid terminal value
             GB_ALLOC_TERMINAL ;
             memcpy (mon->terminal, terminal, zsize) ;
+            hashes [2] = GB_jitifyer_hash (terminal, zsize) ;
         }
+        // create the monoid hash: based on binary op hash, id, and terminal
+        mon->hash = GB_jitifyer_hash (hashes, 3*sizeof (uint64_t)) ;
     }
 
     ASSERT_MONOID_OK (mon, "new monoid", GB0) ;

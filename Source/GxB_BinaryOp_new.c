@@ -76,6 +76,8 @@ GrB_Info GxB_BinaryOp_new
 // and earlier.  The GrB_BinaryOp_new macro in v5.2.x and later calls
 // GxB_BinaryOp_new instead.
 
+// FIXME: remove this for v8.0.0
+
 GrB_Info GB_BinaryOp_new
 (
     GrB_BinaryOp *binaryop,         // handle for the new binary operator

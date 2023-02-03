@@ -39,7 +39,7 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
     {
         GBPR0 ("(built-in)") ;
     }
-    else if (monoid->builtin)
+    else if (monoid->hash == 0)
     {
         GBPR0 ("(user-defined but identical to built-in)") ;
     }

@@ -75,8 +75,8 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     // get the index_unary op name and defn
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_op_name_and_defn ((*op)->name, &((*op)->defn),
-        &((*op)->defn_size), idxop_name, idxop_defn,
+    GrB_Info info = GB_op_name_and_defn ((*op)->name, &((*op)->hash),
+        &((*op)->defn), &((*op)->defn_size), idxop_name, idxop_defn,
         "GxB_index_unary_function", 24) ;
     if (info != GrB_SUCCESS)
     { 

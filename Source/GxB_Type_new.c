@@ -31,6 +31,7 @@
 // required for the JIT.
 
 #include "GB.h"
+#include "GB_jitifyer.h"
 
 GrB_Info GxB_Type_new
 (
@@ -129,7 +130,9 @@ GrB_Info GxB_Type_new
     // ensure t->name is null-terminated
     t->name [GxB_MAX_NAME_LEN-1] = '\0' ;
 
-    t->name_len = (int) strlen (t->name) ;
+    // hash the type name
+    size_t name_len = strlen (t->name) ;
+    t->hash = GB_jitifyer_hash (t->name, name_len) ;
 
     //--------------------------------------------------------------------------
     // get the typedef, if present
@@ -138,10 +141,10 @@ GrB_Info GxB_Type_new
     if (type_defn != NULL)
     { 
         // determine the string length of the typedef
-        size_t len = strlen (type_defn) ;
+        size_t defn_len = strlen (type_defn) ;
 
         // allocate space for the typedef
-        t->defn = GB_MALLOC (len+1, char, &(t->defn_size)) ;
+        t->defn = GB_MALLOC (defn_len+1, char, &(t->defn_size)) ;
         if (t->defn == NULL)
         { 
             // out of memory
@@ -150,7 +153,7 @@ GrB_Info GxB_Type_new
         }
 
         // copy the typedef into the new type
-        memcpy (t->defn, type_defn, len+1) ;
+        memcpy (t->defn, type_defn, defn_len+1) ;
     }
 
     //--------------------------------------------------------------------------

@@ -70,6 +70,7 @@ GrB_Info GB_SelectOp_new            // create a new user-defined select operator
     memset (op->name, 0, GxB_MAX_NAME_LEN) ;
     snprintf (op->name, GxB_MAX_NAME_LEN-1, "user_selectop") ;
     op->defn = NULL ;           // unused: no JIT acceleration for these ops
+    op->hash = 1 ;              // unused, except to mark it as user-defined
 
     //--------------------------------------------------------------------------
     // return result

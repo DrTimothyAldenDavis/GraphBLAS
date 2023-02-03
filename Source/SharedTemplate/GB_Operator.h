@@ -27,5 +27,7 @@
     char name [GxB_MAX_NAME_LEN] ;      // name of the operator
     GB_Opcode opcode ;      // operator opcode
     char *defn ;            // function definition
-    size_t defn_size ;      // size of the definition
+    size_t defn_size ;      // allocated size of the definition
+
+    uint64_t hash ;         // if 0, operator uses only builtin ops and types
 

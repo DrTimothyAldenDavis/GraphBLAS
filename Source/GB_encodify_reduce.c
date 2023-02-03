@@ -28,12 +28,18 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
 
     bool builtin = GB_enumify_reduce (&encoding->code, monoid, A) ;
     encoding->kcode = 0 ;  // FIXME: GB_JIT_REDUCE_KERNEL
-    encoding->suffix_len = 0 ;
-    uint64_t hash = GB_jitifyer_encoding_hash (encoding) ;
+    encoding->suffix_len = 0 ;  // FIXME: use monoid->op->name_len
+    uint64_t hash = GB_jitifyer_hash_encoding (encoding) ;
+    hash = hash ^ monoid->hash ;
+
+    // FIXME keep track of the strlen of user-defined operator names,
+    // so suffix_len can be set above without creating the suffix itself.
 
     //--------------------------------------------------------------------------
     // monoid and matrix type
     //--------------------------------------------------------------------------
+
+    // FIXME: move this to GB_namify_reduce.
 
     if (builtin)
     {
@@ -46,27 +52,14 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
         char *p = suffix ;
 
         // append the opname if the monoid is not builtin
-        if (!monoid->builtin)
+        if (monoid->hash != 0)
         {
             // __opname
             (*p++) = '_' ;
             (*p++) = '_' ;
-            // FIXME keep track of the strlen of operator names
             size_t len1 = strlen (monoid->op->name) ;
             memcpy (p, monoid->op->name, len1) ;
             p += len1 ;
-        }
-
-        // append the type of A if it is not builtin
-        if (A->type->code == GB_UDT_code)
-        {
-            // __atypename
-            (*p++) = '_' ;
-            (*p++) = '_' ;
-            size_t len2 = A->type->name_len ;
-            ASSERT (len2 == strlen (A->type->name)) ;
-            memcpy (p, A->type->name, len2) ;
-            p += len2 ;
         }
 
         // terminate the suffix
@@ -75,9 +68,6 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
         uint32_t len = (uint32_t) (p - suffix) ;
         encoding->suffix_len = len ;
         ASSERT (len == strlen (suffix)) ;
-
-        // augment the hash with the suffix
-        hash = hash ^ GB_jitifyer_suffix_hash (suffix, len) ;
     }
 
     // return the hash of the problem encoding

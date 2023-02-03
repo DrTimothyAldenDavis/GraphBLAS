@@ -390,10 +390,10 @@ struct GB_Type_opaque       // content of GrB_Type
     // ---------------------//
     size_t size ;           // size of the type
     GB_Type_code code ;     // the type code
-    int name_len ;          // length of the type name string
     char name [GxB_MAX_NAME_LEN] ;       // name of the type
     char *defn ;            // type definition
-    size_t defn_size ;      // size of the definition
+    size_t defn_size ;      // allocated size of the definition
+    uint64_t hash ;         // if 0, type is builtin
 } ;
 
 struct GB_UnaryOp_opaque    // content of GrB_UnaryOp
@@ -433,9 +433,9 @@ struct GB_Monoid_opaque     // content of GrB_Monoid
     GrB_BinaryOp op ;       // binary operator of the monoid
     void *identity ;        // identity of the monoid; type is op->ztype
     void *terminal ;        // early-exit (NULL if no value); type is op->ztype
-    size_t identity_size ;  // size of the malloc'd block for identity, or 0
-    size_t terminal_size ;  // size of the malloc'd block for terminal, or 0
-    bool builtin ;          // if true, binary op is builtin
+    size_t identity_size ;  // allocated size of identity, or 0
+    size_t terminal_size ;  // allocated size of terminal, or 0
+    uint64_t hash ;         // if 0, monoid uses only builtin ops and types
 } ;
 
 struct GB_Semiring_opaque   // content of GrB_Semiring
@@ -445,6 +445,7 @@ struct GB_Semiring_opaque   // content of GrB_Semiring
     // ---------------------//
     GrB_Monoid add ;        // add operator of the semiring
     GrB_BinaryOp multiply ; // multiply operator of the semiring
+    uint64_t hash ;         // if 0, semiring uses only builtin ops and types
 } ;
 
 struct GB_Descriptor_opaque // content of GrB_Descriptor

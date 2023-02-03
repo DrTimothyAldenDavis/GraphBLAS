@@ -58,7 +58,8 @@ GrB_Info GB_binop_new
     // get the binary op name and defn
     //--------------------------------------------------------------------------
 
-    return (GB_op_name_and_defn (op->name, &(op->defn), &(op->defn_size),
+    return (GB_op_name_and_defn (op->name, &(op->hash),
+        &(op->defn), &(op->defn_size),
         binop_name, binop_defn, "GxB_binary_function", 19)) ;
 }
 

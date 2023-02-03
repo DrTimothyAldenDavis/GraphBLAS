@@ -25,6 +25,7 @@ GrB_Info GB_op_name_and_defn
 (
     // output
     char *operator_name,        // op->name of the GrB operator struct
+    uint64_t *operator_hash,    // op->hash of the GrB operator struct
     char **operator_defn,       // op->defn of the GrB operator struct
     size_t *operator_defn_size, // op->defn_size of the GrB operator struct
     // input

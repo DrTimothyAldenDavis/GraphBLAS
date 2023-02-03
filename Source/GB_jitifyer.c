@@ -391,7 +391,7 @@ int GB_jitifyer_compile
 #define XXH_NO_STREAM
 #include "xxhash.h"
 
-uint64_t GB_jitifyer_encoding_hash
+uint64_t GB_jitifyer_hash_encoding
 (
     GB_jit_encoding *encoding
 )
@@ -399,12 +399,13 @@ uint64_t GB_jitifyer_encoding_hash
     return (XXH3_64bits ((const void *) encoding, sizeof (GB_jit_encoding))) ;
 }
 
-uint64_t GB_jitifyer_suffix_hash
+uint64_t GB_jitifyer_hash
 (
-    char *suffix,       // string with operator name and types
-    uint32_t suffix_len // length of the string, not including terminating '\0'
+    const void *bytes,      // any string of bytes
+    size_t nbytes           // # of bytes to hash
 )
 {
-    return (XXH3_64bits ((const void *) suffix, (size_t) suffix_len)) ;
+    if (bytes == NULL || nbytes == 0) return (0) ;
+    return (XXH3_64bits (bytes, nbytes)) ;
 }
 

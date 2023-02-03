@@ -9,11 +9,13 @@
 
 #include "GB.h"
 #include <ctype.h>
+#include "GB_jitifyer.h"
 
 GrB_Info GB_op_name_and_defn
 (
     // output
     char *operator_name,        // op->name of the GrB operator struct
+    uint64_t *operator_hash,    // op->hash of the GrB operator struct
     char **operator_defn,       // op->defn of the GrB operator struct
     size_t *operator_defn_size, // op->defn_size of the GrB operator struct
     // input
@@ -73,6 +75,9 @@ GrB_Info GB_op_name_and_defn
     // ensure operator_name is null-terminated
     operator_name [GxB_MAX_NAME_LEN-1] = '\0' ;
 
+    size_t name_len = strlen (operator_name) ;
+    (*operator_hash) = GB_jitifyer_hash (operator_name, name_len) ;
+
     //--------------------------------------------------------------------------
     // get the definition of the operator, if present
     //--------------------------------------------------------------------------
@@ -82,10 +87,10 @@ GrB_Info GB_op_name_and_defn
     if (input_defn != NULL)
     { 
         // determine the string length of the definition
-        size_t len = strlen (input_defn) ;
+        size_t defn_len = strlen (input_defn) ;
 
         // allocate space for the definition
-        defn = GB_MALLOC (len+1, char, &defn_size) ;
+        defn = GB_MALLOC (defn_len+1, char, &defn_size) ;
         if (defn == NULL)
         { 
             // out of memory
@@ -93,7 +98,7 @@ GrB_Info GB_op_name_and_defn
         }
 
         // copy the defintion into the new operator
-        memcpy (defn, input_defn, len+1) ;
+        memcpy (defn, input_defn, defn_len+1) ;
     }
 
     //--------------------------------------------------------------------------
