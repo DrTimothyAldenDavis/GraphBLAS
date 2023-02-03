@@ -2,7 +2,7 @@
 // GB_macrofy_query_monoid: construct query_monoid function for a kernel
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -19,6 +19,7 @@ void GB_macrofy_query_monoid
 
     if (!monoid->builtin)
     {
+        // only create the query_monoid method if the monoid is not builtin
         bool has_terminal = (monoid->terminal != NULL) ;
         int zsize = (int) monoid->op->ztype->size ;
         int tsize = (has_terminal) ? zsize : 0 ;

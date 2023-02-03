@@ -10,6 +10,8 @@
 #ifndef GB_JITIFYER_H
 #define GB_JITIFYER_H
 
+#include <dlfcn.h>
+
 //------------------------------------------------------------------------------
 // GB_jitifyer_entry: an entry in the jitifyer hash table
 //------------------------------------------------------------------------------
@@ -72,15 +74,34 @@ uint64_t GB_jitifyer_suffix_hash
 void GB_jitifyer_finalize (void) ;
 
 // to query a library for its type and operator definitions
-typedef const char *(*GB_jit_query_defn_function) (int k) ;
+typedef const char *(*GB_jit_query_defn_func) (int k) ;
 
 // to query a library for its type and operator definitions
-typedef bool (*GB_jit_query_monoid_function)
+typedef bool (*GB_jit_query_monoid_func)
 (
     void *id,
     void *term,
     size_t id_size,
     size_t term_size
+) ;
+
+bool GB_jitifyer_match_defn     // return true if definitions match
+(
+    // input:
+    void *dl_query,             // query_defn function pointer
+    int k,                      // compare current_defn with query_defn (k)
+    const char *current_defn    // current definition (or NULL if not present)
+) ;
+
+bool GB_jitifyer_match_idterm   // return true if monoid id and term match
+(
+    void *dl_handle,            // dl_handle for the jit kernel library
+    GrB_Monoid monoid           // current monoid to compare
+) ;
+
+int GB_jitifyer_compile         // return result of system() call
+(
+    const char *kernel_name     // kernel to compile
 ) ;
 
 #endif

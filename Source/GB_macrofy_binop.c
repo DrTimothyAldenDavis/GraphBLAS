@@ -2,13 +2,14 @@
 // GB_macrofy_binop: construct the macro and defn for a binary operator
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 #include "GB.h"
 #include "GB_stringify.h"
+#include <ctype.h>
 
 void GB_macrofy_binop
 (
@@ -32,8 +33,8 @@ void GB_macrofy_binop
 
         if (is_monoid_or_build)
         {
-            fprintf (fp, "#define %s(z,x,y)\n", macro_name) ;
             fprintf (fp, "#define GB_UPDATE(z,y)\n") ;
+            fprintf (fp, "#define %s(z,x,y)\n", macro_name) ;
         }
         else
         {
@@ -48,27 +49,47 @@ void GB_macrofy_binop
         // user-defined operator
         //----------------------------------------------------------------------
 
-        GB_macrofy_defn (fp, 3, op->name, op->defn) ;
+        bool is_macro = GB_macrofy_defn (fp, 3, op->name, op->defn) ;
+        if (is_macro)
+        {
+            fprintf (fp, "// binary operator %s defined as a macro:\n",
+                op->name) ;
+        }
 
         if (is_monoid_or_build)
         {
-            // additive/build operator: no i,k,j parameters
-            fprintf (fp, "#define %s(z,x,y) %s (&(z), &(x), &(y))\n",
-                macro_name, op->name) ;
-            fprintf (fp, "#define GB_UPDATE(z,y) GB_ADD(z,z,y)\n") ;
+            // additive/build operator: no i,k,j parameters, never flipped
+            fprintf (fp, "#define %s(z,x,y) ", macro_name) ;
         }
         else if (flipxy)
         {
             // flipped multiplicative or ewise operator
             // note: no positional operands for user-defined ops (yet)
-            fprintf (fp, "#define %s(z,y,x,j,k,i) %s (&(z), &(x), &(y))\n",
-                macro_name, op->name) ;
+            fprintf (fp, "#define %s(z,y,x,j,k,i) ", macro_name) ;
         }
         else
         {
             // unflipped multiplicative or ewise operator
-            fprintf (fp, "#define %s(z,x,y,i,k,j) %s (&(z), &(x), &(y))\n",
-                macro_name, op->name) ;
+            fprintf (fp, "#define %s(z,x,y,i,k,j) ", macro_name) ;
+        }
+
+        if (is_macro)
+        {
+            for (char *p = op->name ; (*p) != '\0' ; p++)
+            {
+                int c = (*p) ;
+                fputc (toupper (c), fp) ;
+            }
+            fprintf (fp, " (z, x, y)\n") ;
+        }
+        else
+        {
+            fprintf (fp, " %s (&(z), &(x), &(y))\n", op->name) ;
+        }
+
+        if (is_monoid_or_build)
+        {
+            fprintf (fp, "#define GB_UPDATE(z,y) GB_ADD(z,z,y)\n") ;
         }
 
     }

@@ -2,7 +2,7 @@
 // GB_macrofy_defn: construct defn for an operator
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -10,17 +10,18 @@
 #include "GB.h"
 #include "GB_stringify.h"
 
-void GB_macrofy_defn
+bool GB_macrofy_defn    // return true if user-defined operator is a macro
 (
     FILE *fp,
     int kind,           // 0: built-in function
                         // 1: built-in macro
                         // 2: built-in macro needed for CUDA only
-                        // 3: user-defined function
+                        // 3: user-defined function or macro
     const char *name,
     const char *defn
 )
 {
+    bool is_macro = false ;
 
     if (name != NULL && defn != NULL)
     {
@@ -36,10 +37,25 @@ void GB_macrofy_defn
             "#ifndef GB_GUARD_%s_DEFINED\n"
             "#define GB_GUARD_%s_DEFINED\n", name, name) ;
 
-        if (kind == 0 || kind == 3)
+        if (kind == 0)
         {
-            // built-in operator defined by a function,
+            // built-in operator defined by a function
             fprintf (fp, "GB_STATIC_INLINE\n%s\n", defn) ;
+        }
+        else if (kind == 3)
+        {
+            // built-in operator defined by a function or macro
+            if (defn [0] == '#')
+            {
+                // user-defined operator defined as macro
+                is_macro = true ;
+                fprintf (fp, "%s\n", defn) ;
+            }
+            else
+            {
+                // user-defined operator defined as function
+                fprintf (fp, "GB_STATIC_INLINE\n%s\n", defn) ;
+            }
         }
         else // kind is 1 or 2
         {
@@ -70,5 +86,7 @@ void GB_macrofy_defn
         if (name != NULL) fprintf (fp, "(%s)", name) ;
         fprintf (fp, " definition not provided\n") ;
     }
+
+    return (is_macro) ;
 }
 

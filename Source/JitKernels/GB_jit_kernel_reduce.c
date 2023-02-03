@@ -7,31 +7,25 @@
 
 //------------------------------------------------------------------------------
 
-// The GB_jitifyer first constructs a header file with macro definitions
-// specific to the problem instance, such as one of the following:
-//
-//      GB_jit_reduce__03feee0_complex_plus_mycomplex_mycomplex.h
-//      GB_jit_reduce_2c1fbb2.h         <---- name of the constructed *.h file
-//                                            (see example below)
-//
-// The first instance handles a user-defined type and/or operator, while the
-// 2nd instance uses only built-in types and operators.  The file is #include'd
-// into a second short file constructed by the GB_jitifyer_*:
-//
-//      // GB_jit_reduce_2c1fbb2.c:         // name of the constructed *.c file
-//      #include "GB_jit_reduce.h"          // for all JIT reduce kernels
-//      #define GB_JIT_KERNEL GB_jit_reduce_2c1fbb2
-//      #include "GB_jit_reduce_2c1fbb2.h"  // example below
-//      #include "GB_jit_reduce.c"          // this file
-//
-// GB_jit_reduce_2c1fbb2.h contains the following definitions for reduction of
-// a non-iso bitmap matrix to a scalar, using the (plus, double) monoid:
+// The GB_jitifyer constructs a *.c file with macro definitions specific to the
+// problem instance, such as the excerts for the GB_jit_reduce_2c1fbb2 kernel,
+// below, which a kernel that computes the scalar reduce of a double matrix in
+// bitmap form, using the GrB_PLUS_FP64_MONOID.  The code 2c1fbb2 is computed
+// by GB_enumify_reduce.  The macros are followed by an #include with this
+// file, to define the kernel routine itself.  The kernel is always called
+// GB_jit_kernel, regardless of what it computes.
 
 #if comments
-  
+
+        // example file: GB_jit_reduce_2c1fbb2.c
+
+        #include "GB_jit_kernel_reduce.h"   // for all JIT reduce kernels
+
+        // monoid: (plus, double)
+
         // monoid type:
         #define GB_Z_TYPENAME double
-  
+
         // reduction monoid:
         #define GB_ADD(z,x,y) z = (x) + (y)
         #define GB_UPDATE(z,y) z += (y)
@@ -43,7 +37,7 @@
         #define GB_IF_TERMINAL_BREAK(z,zterminal)
         #define GB_GETA_AND_UPDATE(z,Ax,p) \
             GB_UPDATE(z, Ax [p]) ;    // z += Ax [p]
-  
+ 
         // A matrix:
         #define GB_A_IS_PATTERN 0
         #define GB_A_ISO 0
@@ -56,8 +50,11 @@
         #define GB_DECLAREA(a) double a
         #define GB_GETA(a,Ax,p,iso) a = (Ax [p])
 
-        // not defined in GB_jit_reduce_2c1fbb2.h (see GB_reduce_panel.h):
-        // #define GB_PANEL
+        // panel size for reduction:
+        #define GB_PANEL 16
+
+        // reduction kernel
+        #include "GB_jit_kernel_reduce.c"
 
 #endif
 
@@ -73,7 +70,7 @@ GrB_Info GB_jit_kernel
 (
     GB_Z_TYPENAME *result,
     const GrB_Matrix A,
-    GB_void *restrict W_space,
+    GB_Z_TYPENAME *restrict W,
     bool *restrict F,
     int ntasks,
     int nthreads
@@ -83,14 +80,13 @@ GrB_Info GB_jit_kernel
 (
     GB_Z_TYPENAME *result,
     const GrB_Matrix A,
-    GB_void *restrict W_space,
+    GB_Z_TYPENAME *restrict W,
     bool *restrict F,
     int ntasks,
     int nthreads
 )
 { 
     GB_Z_TYPENAME z = (*result) ;
-    GB_Z_TYPENAME *restrict W = (GB_Z_TYPENAME *) W_space ;
     #if GB_A_HAS_ZOMBIES || GB_A_IS_BITMAP || (GB_PANEL == 1)
     {
         #include "GB_reduce_to_scalar_template.c"

@@ -126,8 +126,27 @@ void wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)
 }
 
 // The newlines (\n) in the definition below are optional.  They just make
-// GxB_print output readable.
+// GxB_print output readable.  This example defines wildtype_add as either a
+// macro or as a function.
 
+#if 1
+// wildtype_add defined as a macro
+#define WILDTYPE_ADD_DEFN                                                   \
+"#define WILDTYPE_ADD(z,x,y)                                          \\\n" \
+"{                                                                    \\\n" \
+"   for (int i = 0 ; i < 4 ; i++)                                     \\\n" \
+"   {                                                                 \\\n" \
+"       for (int j = 0 ; j < 4 ; j++)                                 \\\n" \
+"       {                                                             \\\n" \
+"           (z).stuff [i][j] = (x).stuff [i][j] + (y).stuff [i][j] ;  \\\n" \
+"       }                                                             \\\n" \
+"   }                                                                 \\\n" \
+"   const char *psrc = \"this was added\" ;                           \\\n" \
+"   char *pdst = (z).whatstuff ;                                      \\\n" \
+"   while ((*pdst++ = *psrc++)) ;                                     \\\n" \
+"}"
+#else
+// wildtype_add defined as a function
 #define WILDTYPE_ADD_DEFN                                                   \
 "void wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)  \n" \
 "{                                                                      \n" \
@@ -142,6 +161,7 @@ void wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)
 "   char *pdst = z->whatstuff ;                                         \n" \
 "   while ((*pdst++ = *psrc++)) ;                                       \n" \
 "}"
+#endif
 
 //------------------------------------------------------------------------------
 // multiply two wildtypes "scalars"
@@ -394,7 +414,6 @@ int main (void)
 
     GxB_set (GxB_BURBLE, true) ;
     GrB_mxm (C, M, NULL, InTheWild, C, C, GrB_DESC_RST1) ;
-    GxB_set (GxB_BURBLE, false) ;
     wildtype_print_matrix (C, "output C") ;
 
     // reduce C to a scalar using the WildAdder monoid
@@ -406,6 +425,7 @@ int main (void)
     memset (&sum, 0, sizeof (wildtype)) ;
     GrB_Matrix_reduce_UDT (&sum, NULL, WildAdder, C, NULL) ;
     wildtype_print (&sum, "sum (again)") ;
+    GxB_set (GxB_BURBLE, false) ;
 
     // set C to column-oriented format
     GxB_Matrix_Option_set (C, GxB_FORMAT, GxB_BY_COL) ;
@@ -437,6 +457,31 @@ int main (void)
         GrB_Matrix_error (&s, C) ;
         printf ("\nThis is supposed to fail, as a demo of GrB_error:\n%s\n", s);
     }
+
+    // try a large problem
+    GrB_Matrix_free (&C) ;
+    int64_t n = 100000 ;
+    int64_t nz = 10000000 ;
+    GrB_Matrix_new (&C, WildType, n, n) ;
+    for (int64_t k = 0 ; k < nz ; k++)
+    {
+        int64_t i = rand ( ) % n ;
+        int64_t j = rand ( ) % n ;
+        GrB_Matrix_setElement_UDT (C, &scalar1, i, j) ;
+    }
+    GrB_Matrix_setElement_UDT (C, &scalar2, 0, 0) ;
+    GrB_Matrix_wait (C, GrB_MATERIALIZE) ;
+    GxB_Matrix_fprint (C, "C (large problem)", GxB_SUMMARY, NULL) ;
+    // reduce C to a scalar using the WildAdder monoid
+    memset (&sum, 0, sizeof (wildtype)) ;
+    GxB_set (GxB_BURBLE, true) ;
+    GrB_Matrix_reduce_UDT (&sum, NULL, WildAdder, C, NULL) ;
+    wildtype_print (&sum, "sum (large problem, first time)") ;
+    // again, to test the JIT lookup
+    memset (&sum, 0, sizeof (wildtype)) ;
+    GrB_Matrix_reduce_UDT (&sum, NULL, WildAdder, C, NULL) ;
+    wildtype_print (&sum, "sum (large problem, again)") ;
+    GxB_set (GxB_BURBLE, false) ;
 
     // free everyting
     GrB_Matrix_free (&C) ;

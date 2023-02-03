@@ -2,7 +2,7 @@
 // GB_stringify.h: prototype definitions construction of *.h definitions
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -282,10 +282,13 @@ void GB_macrofy_binop
 // operator definitions and typecasting
 //------------------------------------------------------------------------------
 
-void GB_macrofy_defn
+bool GB_macrofy_defn    // return true if user-defined operator is a macro
 (
     FILE *fp,
-    int kind,
+    int kind,           // 0: built-in function
+                        // 1: built-in macro
+                        // 2: built-in macro needed for CUDA only
+                        // 3: user-defined function or macro
     const char *name,
     const char *defn
 ) ;

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// This file is #include'd into all JIT kernels.
+// This file is #include'd into all JIT kernels on the CPU.
 
 #include "GB.h"
 

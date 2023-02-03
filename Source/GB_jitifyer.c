@@ -2,7 +2,7 @@
 // GB_jitifyer.c: CPU jitifyer
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -249,6 +249,135 @@ void GB_jitifyer_finalize (void)
     GB_jit_table_bits = 0 ;
     GB_jit_table_allocated = 0 ;
     GB_jit_table_populated = 0 ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_match_defn: check if library and current definitions match
+//------------------------------------------------------------------------------
+
+bool GB_jitifyer_match_defn     // return true if definitions match
+(
+    // input:
+    void *dl_query,             // query_defn function pointer
+    int k,                      // compare current_defn with query_defn (k)
+    const char *current_defn    // current definition (or NULL if not present)
+)
+{
+    if (dl_query == NULL)
+    {
+        // library is missing the query_defn method
+        return (false) ;
+    }
+    GB_jit_query_defn_func query_defn = (GB_jit_query_defn_func) dl_query ;
+    const char *library_defn = query_defn (k) ;
+    if ((current_defn != NULL) != (library_defn != NULL))
+    {
+        // one is not NULL but the other is NULL
+        return (false) ;
+    }
+    else if (current_defn != NULL)
+    {
+        // both definitions are present
+        // ensure the defintion hasn't changed
+        return (strcmp (library_defn, current_defn) == 0) ;
+    }
+    else
+    {
+        // both definitions are NULL, so they match
+        return (true) ;
+    }
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_match_idterm: check if monoid identity and terminal values match
+//------------------------------------------------------------------------------
+
+bool GB_jitifyer_match_idterm   // return true if monoid id and term match
+(
+    void *dl_handle,            // dl_handle for the jit kernel library
+    GrB_Monoid monoid           // current monoid to compare
+)
+{
+    // compare the identity and terminal
+    void *dl_query = dlsym (dl_handle, "GB_jit_query_monoid") ;
+    if (dl_query == NULL)
+    {
+        // the library is invalid; need recompile it
+        return (false) ;
+    }
+    // check the identity and terminal values
+    GB_jit_query_monoid_func query_monoid = (GB_jit_query_monoid_func) dl_query;
+    size_t zsize = monoid->op->ztype->size ;
+    size_t tsize = (monoid->terminal == NULL) ? 0 : zsize ;
+    return (query_monoid (monoid->identity, monoid->terminal, zsize, tsize)) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_compile: compile a kernel
+//------------------------------------------------------------------------------
+
+int GB_jitifyer_compile
+(
+    const char *kernel_name
+)
+{
+    // FIXME: create this at GrB_init time
+    char root_folder [256] ;
+    snprintf (root_folder, 256, "%s",
+    "/home/faculty/d/davis/cuda/GraphBLAS") ;
+
+    // FIXME: create this at GrB_init time, or by GxB_set
+    char lib_folder [2048] ;
+    snprintf (lib_folder, 2047,
+        "/home/faculty/d/davis/.SuiteSparse/GraphBLAS/v%d.%d.%d",
+        GxB_IMPLEMENTATION_MAJOR,
+        GxB_IMPLEMENTATION_MINOR,
+        GxB_IMPLEMENTATION_SUB) ;
+
+    // FIXME: create this at GrB_init time
+    char include_files [4096] ;
+    snprintf (include_files, 4096,
+        "-I%s "
+        "-I%s/Include "
+        "-I%s/Source "
+        "-I%s/Source/Shared "
+        "-I%s/Source/SharedTemplate "
+        "-I%s/Source/Template "
+        "-I%s/Source/JitKernels "
+        "-I%s/cpu_features "
+        "-I%s/cpu_features/include",
+        lib_folder,
+        root_folder,
+        root_folder,
+        root_folder,
+        root_folder,
+        root_folder,
+        root_folder,
+        root_folder,
+        root_folder) ;
+
+    char command [4096] ;
+
+    // FIXME: allow user to set compiler and flags
+    snprintf (command, 4096,
+    "gcc -fPIC -O3 -std=c11 -fexcess-precision=fast "
+    "-fcx-limited-range -fno-math-errno -fwrapv -DNDEBUG "
+    "-fopenmp %s -o"
+    "%s/%s.o -c %s/%s.c ;" 
+    "gcc -fPIC -O3 -std=c11 -fexcess-precision=fast "
+    "-fcx-limited-range -fno-math-errno -fwrapv -DNDEBUG "
+    "-fopenmp "
+    " -shared -Wl,-soname,lib%s.so -o %s/lib%s.so"
+    " %s/%s.o -lm",
+    include_files,
+    lib_folder, kernel_name,    // *.o file, first gcc command
+    lib_folder, kernel_name,    // *.c file, first gcc command
+    kernel_name,                // soname
+    lib_folder, kernel_name,    // lib*.so output file
+    lib_folder, kernel_name) ;  // *.o file for 2nd gcc
+
+    // compile the library and return result
+    return (system (command)) ;
 }
 
 //------------------------------------------------------------------------------
