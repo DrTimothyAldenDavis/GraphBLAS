@@ -70,6 +70,14 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         return (GrB_INVALID_OBJECT) ;
     }
 
+    int32_t name_len = op->name_len ;
+    int32_t actual_len = strlen (op->name) ;
+    if (opcode == GB_USER_binop_code && name_len != actual_len)
+    {
+        GBPR0 ("    BinaryOp has an invalid name_len\n") ;
+        return (GrB_INVALID_OBJECT) ;
+    }
+
     GrB_Info info = GB_Type_check (op->ztype, "ztype", pr, f) ;
     if (info != GrB_SUCCESS)
     { 

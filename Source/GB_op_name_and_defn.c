@@ -1,11 +1,14 @@
 //------------------------------------------------------------------------------
-// GB_op_name_and_defn: get the name and defn of a unary, binary, or selectop
+// GB_op_name_and_defn: construct name and defn of a user-defined op
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// This method constructs the name and defn of a user-defined op (unary,
+// binary, or indexunary).  It also constructs the op->hash for the jit.
 
 #include "GB.h"
 #include <ctype.h>
@@ -15,14 +18,15 @@ GrB_Info GB_op_name_and_defn
 (
     // output
     char *operator_name,        // op->name of the GrB operator struct
-    uint64_t *operator_hash,    // op->hash of the GrB operator struct
-    char **operator_defn,       // op->defn of the GrB operator struct
-    size_t *operator_defn_size, // op->defn_size of the GrB operator struct
+    int32_t *operator_name_len, // op->name_len
+    uint64_t *operator_hash,    // op->hash
+    char **operator_defn,       // op->defn
+    size_t *operator_defn_size, // op->defn_size
     // input
     const char *input_name,     // user-provided name, may be NULL
     const char *input_defn,     // user-provided name, may be NULL
     const char *typecast_name,  // typecast name for function pointer
-    size_t typecast_name_len    // length of typecast_name
+    size_t typecast_len         // length of typecast_name
 )
 {
 
@@ -54,7 +58,7 @@ GrB_Info GB_op_name_and_defn
         if (p != NULL)
         { 
             // skip past the typecast, the left parenthesis, and any whitespace
-            p += typecast_name_len ;
+            p += typecast_len ;
             while (isspace (*p)) p++ ;
             if (*p == ')') p++ ;
             while (isspace (*p)) p++ ;
@@ -72,11 +76,13 @@ GrB_Info GB_op_name_and_defn
         // no operator_name, so give it a generic name
         snprintf (operator_name, GxB_MAX_NAME_LEN-1, "user_op") ;
     }
+
     // ensure operator_name is null-terminated
     operator_name [GxB_MAX_NAME_LEN-1] = '\0' ;
 
-    size_t name_len = strlen (operator_name) ;
-    (*operator_hash) = GB_jitifyer_hash (operator_name, name_len) ;
+    // get the operator name length and hash the name
+    (*operator_name_len)= strlen (operator_name) ;
+    (*operator_hash) = GB_jitifyer_hash (operator_name, (*operator_name_len)) ;
 
     //--------------------------------------------------------------------------
     // get the definition of the operator, if present

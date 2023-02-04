@@ -130,9 +130,9 @@ GrB_Info GxB_Type_new
     // ensure t->name is null-terminated
     t->name [GxB_MAX_NAME_LEN-1] = '\0' ;
 
-    // hash the type name
-    size_t name_len = strlen (t->name) ;
-    t->hash = GB_jitifyer_hash (t->name, name_len) ;
+    // get the type name length and hash the name
+    t->name_len= strlen (t->name) ;
+    t->hash = GB_jitifyer_hash (t->name, t->name_len) ;
 
     //--------------------------------------------------------------------------
     // get the typedef, if present

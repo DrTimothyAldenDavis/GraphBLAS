@@ -44,15 +44,13 @@ void GB_macrofy_copyright (FILE *fp) ;
 // GrB_reduce
 //------------------------------------------------------------------------------
 
-bool GB_enumify_reduce      // enumerate a GrB_reduce problem
+void GB_enumify_reduce      // enumerate a GrB_reduce problem
 (
     // output:
-    uint64_t *rcode,        // unique encoding of the entire problem, but where
-                            // all user-defined monoids and types are given a
-                            // single enum
+    uint64_t *rcode,        // unique encoding of the entire problem
     // input:
-    GrB_Monoid reduce,      // the monoid to enumify
-    GrB_Matrix A
+    GrB_Monoid monoid,      // the monoid to enumify
+    GrB_Matrix A            // input matrix to monoid
 ) ;
 
 uint64_t GB_encodify_reduce // encode a GrB_reduce problem
@@ -60,7 +58,7 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
     // output:
     GB_jit_encoding *encoding,  // unique encoding of the entire problem,
                                 // except for the suffix
-    char *suffix,               // suffix for user-defined naming
+    char *suffix,               // suffix for user-defined kernel
     // input:
     GrB_Monoid monoid,      // the monoid to enumify
     GrB_Matrix A            // input matrix to reduce
@@ -473,6 +471,16 @@ void GB_macrofy_query_defn
 //------------------------------------------------------------------------------
 // GB_namify_problem: name a problem
 //------------------------------------------------------------------------------
+
+void GB_namify_suffix
+(
+    // output:
+    char *suffix,
+    // input:
+    bool builtin,
+    const char *op1_name, int32_t op1_name_len,
+    const char *op2_name, int32_t op2_name_len
+) ;
 
 void GB_namify_problem
 (

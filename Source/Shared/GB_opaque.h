@@ -390,7 +390,8 @@ struct GB_Type_opaque       // content of GrB_Type
     // ---------------------//
     size_t size ;           // size of the type
     GB_Type_code code ;     // the type code
-    char name [GxB_MAX_NAME_LEN] ;       // name of the type
+    int32_t name_len ;      // length of user-defined name; 0 for builtin
+    char name [GxB_MAX_NAME_LEN] ;  // name of the type
     char *defn ;            // type definition
     size_t defn_size ;      // allocated size of the definition
     uint64_t hash ;         // if 0, type is builtin

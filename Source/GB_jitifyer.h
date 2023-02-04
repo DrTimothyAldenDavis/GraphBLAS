@@ -13,6 +13,16 @@
 #include <dlfcn.h>
 
 //------------------------------------------------------------------------------
+// list of jitifyed kernels
+//------------------------------------------------------------------------------
+
+#define GB_JIT_KERNEL_REDUCE 1
+#define GB_JIT_KERNEL_MXM_DOT3 2
+#define GB_JIT_KERNEL_MXM_SAX3 3
+// ... etc FIXME: list them all here
+// or make this an enum
+
+//------------------------------------------------------------------------------
 // GB_jitifyer_entry: an entry in the jitifyer hash table
 //------------------------------------------------------------------------------
 

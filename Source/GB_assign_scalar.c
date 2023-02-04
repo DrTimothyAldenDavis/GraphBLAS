@@ -13,7 +13,7 @@
 
 // This function does the work for GrB_Matrix_assign_TYPE and
 // GrB_Vector_assign_[type], where [type] is one of the 11 types, or the
-// type-generic macro suffix, "_UDT".
+// type-generic "_UDT".
 
 // Compare with GB_subassign_scalar, which uses M and C_replace differently
 

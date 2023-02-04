@@ -67,8 +67,10 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     // get the unary op name and defn
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_op_name_and_defn (op->name, &(op->hash),
-        &(op->defn), &(op->defn_size),
+    GrB_Info info = GB_op_name_and_defn (
+        // output:
+        op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_size),
+        // input:
         unop_name, unop_defn, "GxB_unary_function", 18) ;
     if (info != GrB_SUCCESS)
     { 

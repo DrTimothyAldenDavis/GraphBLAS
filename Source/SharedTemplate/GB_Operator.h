@@ -25,6 +25,7 @@
     GxB_select_function      selop_function ;
 
     char name [GxB_MAX_NAME_LEN] ;      // name of the operator
+    int32_t name_len ;      // length of user-defined name; 0 for builtin
     GB_Opcode opcode ;      // operator opcode
     char *defn ;            // function definition
     size_t defn_size ;      // allocated size of the definition

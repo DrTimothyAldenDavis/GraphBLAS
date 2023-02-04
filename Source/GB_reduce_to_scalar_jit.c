@@ -31,9 +31,9 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
     // enumify the reduce problem and look it up in the jit hash
     //------------------------------------------------------------------
 
-    GBURBLE ("(jit) ") ;
+    GBURBLE ("(jit) \n") ;
     GB_jit_encoding encoding ;
-    char suffix [8 + 2*GxB_MAX_NAME_LEN] ;
+    char suffix [8 + GxB_MAX_NAME_LEN] ;
     uint64_t hash = GB_encodify_reduce (&encoding, suffix, monoid, A) ;
     void *dl_function = GB_jitifyer_lookup (hash, &encoding, suffix) ;
 
@@ -49,7 +49,7 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
         //--------------------------------------------------------------
 
         // namify the reduce problem
-        #define RLEN (256 + 2 * GxB_MAX_NAME_LEN)
+        #define RLEN (256 + GxB_MAX_NAME_LEN)
         char reduce_name [RLEN] ;
         uint64_t rcode = encoding.code ;
         snprintf (reduce_name, RLEN-1, "GB_jit_reduce_%0*" PRIx64 "%s",
@@ -62,15 +62,27 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
         // FIXME: create this at GrB_init time, or by GxB_set
         char lib_folder [2048] ;
         snprintf (lib_folder, 2047,
-            "/home/faculty/d/davis/.SuiteSparse/GraphBLAS/v%d.%d.%d",
+            "/home/faculty/d/davis/.SuiteSparse/GraphBLAS/v%d.%d.%d"
+            #ifdef GBRENAME
+            "_matlab"
+            #endif
+            ,
             GxB_IMPLEMENTATION_MAJOR,
             GxB_IMPLEMENTATION_MINOR,
             GxB_IMPLEMENTATION_SUB) ;
         // try to load the libkernelname.so from the user's
         // .SuiteSparse/GraphBLAS folder (if already compiled)
         snprintf (lib_filename, 2048, "%s/lib%s.so", lib_folder, reduce_name) ;
+
+        char command [4096] ;
+        sprintf (command, "ldd %s\n", lib_filename) ;
+        int res = system (command) ;
+        printf ("result: %d\n", res) ;
+        sprintf (command, "readelf -d %s\n", lib_filename) ;
+        res = system (command) ;
+        printf ("result: %d\n", res) ;
+
         void *dl_handle = dlopen (lib_filename, RTLD_LAZY) ;
-        //==============================================================
 
         bool need_to_compile = (dl_handle == NULL) ;
         bool builtin = (encoding.suffix_len == 0) ;
@@ -104,7 +116,8 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
 
             GBURBLE ("(compiling) ") ;
             char source_filename [2048] ;
-            snprintf (source_filename, 2048, "%s/%s.c", lib_folder, reduce_name) ;
+            snprintf (source_filename, 2048, "%s/%s.c",
+                lib_folder, reduce_name) ;
             FILE *fp = fopen (source_filename, "w") ;
             if (fp == NULL)
             {
@@ -174,6 +187,7 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
     //------------------------------------------------------------------
 
     GB_reduce_function redfunc = (GB_reduce_function) dl_function ;
-    return (redfunc (z, A, W, F, ntasks, nthreads)) ;
+    GrB_Info info = redfunc (z, A, W, F, ntasks, nthreads) ;
+    return (info) ;
 }
 

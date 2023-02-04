@@ -57,6 +57,14 @@ GrB_Info GB_IndexUnaryOp_check  // check a GraphBLAS index_unary operator
         return (GrB_INVALID_OBJECT) ;
     }
 
+    int32_t name_len = op->name_len ;
+    int32_t actual_len = strlen (op->name) ;
+    if (opcode == GB_USER_idxunop_code && name_len != actual_len)
+    {
+        GBPR0 ("    IndexUnaryOp has an invalid name_len\n") ;
+        return (GrB_INVALID_OBJECT) ;
+    }
+
     GrB_Info info ;
 
     info = GB_Type_check (op->ztype, "ztype", pr, f) ;

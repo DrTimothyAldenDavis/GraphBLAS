@@ -13,7 +13,7 @@
 
 // This function does the work for GxB_Matrix_subassign_TYPE and
 // GxB_Vector_subassign_[type], where [type] is one of the 11 types, or the
-// type-generic macro suffix, "_UDT".
+// type-generic "_UDT".
 
 // Compare with GB_assign_scalar, which uses M and C_replace differently
 

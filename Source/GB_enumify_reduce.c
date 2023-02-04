@@ -12,7 +12,7 @@
 
 // Returns true if all types and operators are built-in.
 
-bool GB_enumify_reduce      // enumerate a GrB_reduce problem
+void GB_enumify_reduce      // enumerate a GrB_reduce problem
 (
     // output:
     uint64_t *rcode,        // unique encoding of the entire problem
@@ -75,12 +75,6 @@ bool GB_enumify_reduce      // enumerate a GrB_reduce problem
     int azombies = (A->nzombies > 0) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
-    // enumify the builtin property
-    //--------------------------------------------------------------------------
-
-    bool builtin = (red_ecode > 0) && (acode != GB_UDT_code) ;
-
-    //--------------------------------------------------------------------------
     // construct the reduction rcode
     //--------------------------------------------------------------------------
 
@@ -106,6 +100,5 @@ bool GB_enumify_reduce      // enumerate a GrB_reduce problem
                 // sparsity structure of A
                 GB_LSHIFT (asparsity  ,  0) ;  // 0 to 3       2
 
-    return (builtin) ;
 }
 

@@ -25,6 +25,7 @@ GrB_Info GB_op_name_and_defn
 (
     // output
     char *operator_name,        // op->name of the GrB operator struct
+    int32_t *operator_name_len, // op->name_len
     uint64_t *operator_hash,    // op->hash of the GrB operator struct
     char **operator_defn,       // op->defn of the GrB operator struct
     size_t *operator_defn_size, // op->defn_size of the GrB operator struct
@@ -32,7 +33,7 @@ GrB_Info GB_op_name_and_defn
     const char *input_name,     // user-provided name, may be NULL
     const char *input_defn,     // user-provided name, may be NULL
     const char *typecast_name,  // typecast name for function pointer
-    size_t typecast_name_len    // length of typecast_name
+    size_t typecast_len         // length of typecast_name
 ) ;
 
 GrB_UnaryOp GB_unop_one (GB_Type_code xcode) ;

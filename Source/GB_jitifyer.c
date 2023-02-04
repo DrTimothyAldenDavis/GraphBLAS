@@ -51,8 +51,9 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
     uint32_t suffix_len = encoding->suffix_len ;
     bool builtin = (bool) (suffix_len == 0) ;
 
-#if 0
+#if 1
     // dump the hash table
+    printf ("\nlookup GB_jit_table at %p\n", GB_jit_table) ;
     for (int64_t k = 0 ; k < GB_jit_table_size ; k++)
     {
         GB_jit_entry *e = &(GB_jit_table [k]) ;
@@ -113,6 +114,8 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 
     // FIXME: need to place this entire function in a critical section
 
+    printf ("insert GB_jit_table at %p\n", GB_jit_table) ;
+
     //--------------------------------------------------------------------------
     // ensure the hash table is large enough
     //--------------------------------------------------------------------------
@@ -133,6 +136,8 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         }
         GB_jit_table_size = GB_JITIFIER_INITIAL_SIZE ;
         GB_jit_table_bits = GB_JITIFIER_INITIAL_SIZE - 1 ; 
+
+        printf ("now GB_jit_table at %p\n", GB_jit_table) ;
 
     }
     else if (GB_jit_table_populated >= GB_jit_table_size / 4)
@@ -190,6 +195,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         if (e->dl_handle == NULL)
         {
             // found an empty slot
+            printf ("hash table [%ld] insert\n", k) ;
             e->suffix = NULL ;
             e->suffix_size = 0 ;
             if (!builtin)
@@ -202,7 +208,9 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
                     // out of memory
                     return (false) ;
                 }
+                printf ("   suffix %p\n", e->suffix) ;
                 strncpy (e->suffix, suffix, suffix_len+1) ;
+                printf ("       [%s]\n", e->suffix) ;
                 e->suffix_size = siz ;
             }
             e->hash = hash ;
@@ -229,6 +237,8 @@ void GB_jitifyer_finalize (void)
         return ;
     }
 
+    printf ("GB_jit_table at %p\n", GB_jit_table) ;
+
     // clear all entries in the table
     for (int64_t k = 0 ; k < GB_jit_table_size ; k++)
     {
@@ -236,13 +246,19 @@ void GB_jitifyer_finalize (void)
         if (e->dl_handle != NULL)
         {
             // found an entry; free the suffix if present
-            GB_FREE (&(e->suffix), e->suffix_size) ;
+            printf ("free hash table [%ld]: %p\n", k, e->dl_handle) ;
+            if (e->suffix != NULL)
+            {
+                printf ("    free the suffix: %p\n", e->suffix) ;
+                GB_FREE (&(e->suffix), e->suffix_size) ;
+            }
             // unload the dl library
             dlclose (e->dl_handle) ;
         }
     }
 
     // free the table
+    printf ("free the table %p\n", GB_jit_table) ;
     GB_FREE (&GB_jit_table, GB_jit_table_allocated) ;
     GB_jit_table_allocated = 0 ;
     GB_jit_table_size = 0 ;
@@ -321,6 +337,8 @@ int GB_jitifyer_compile
     const char *kernel_name
 )
 {
+    printf ("compiling %s\n", kernel_name) ;
+
     // FIXME: create this at GrB_init time
     char root_folder [256] ;
     snprintf (root_folder, 256, "%s",
@@ -329,7 +347,11 @@ int GB_jitifyer_compile
     // FIXME: create this at GrB_init time, or by GxB_set
     char lib_folder [2048] ;
     snprintf (lib_folder, 2047,
-        "/home/faculty/d/davis/.SuiteSparse/GraphBLAS/v%d.%d.%d",
+            "/home/faculty/d/davis/.SuiteSparse/GraphBLAS/v%d.%d.%d"
+            #ifdef GBRENAME
+            "_matlab"
+            #endif
+            ,
         GxB_IMPLEMENTATION_MAJOR,
         GxB_IMPLEMENTATION_MINOR,
         GxB_IMPLEMENTATION_SUB) ;
@@ -345,7 +367,11 @@ int GB_jitifyer_compile
         "-I%s/Source/Template "
         "-I%s/Source/JitKernels "
         "-I%s/cpu_features "
-        "-I%s/cpu_features/include",
+        "-I%s/cpu_features/include "
+        #ifdef GBRENAME
+        "-I%s/GraphBLAS/rename "
+        #endif
+        ,
         lib_folder,
         root_folder,
         root_folder,
@@ -354,30 +380,49 @@ int GB_jitifyer_compile
         root_folder,
         root_folder,
         root_folder,
-        root_folder) ;
+        root_folder
+        #ifdef GBRENAME
+        , root_folder
+        #endif
+        ) ;
 
     char command [4096] ;
 
     // FIXME: allow user to set compiler and flags
     snprintf (command, 4096,
     "gcc -fPIC -O3 -std=c11 -fexcess-precision=fast "
+    #ifdef GBRENAME
+    " -DGBRENAME=1 "
+    #endif
     "-fcx-limited-range -fno-math-errno -fwrapv -DNDEBUG "
-    "-fopenmp %s -o"
-    "%s/%s.o -c %s/%s.c ;" 
+    "-fopenmp %s -o "
+    " %s/%s.o -c %s/%s.c ;" 
     "gcc -fPIC -O3 -std=c11 -fexcess-precision=fast "
     "-fcx-limited-range -fno-math-errno -fwrapv -DNDEBUG "
     "-fopenmp "
     " -shared -Wl,-soname,lib%s.so -o %s/lib%s.so"
-    " %s/%s.o -lm",
+    " %s/%s.o "
+    " %s%s/build/libgraphblas%s.so -lm "
+    ,
     include_files,
     lib_folder, kernel_name,    // *.o file, first gcc command
     lib_folder, kernel_name,    // *.c file, first gcc command
     kernel_name,                // soname
     lib_folder, kernel_name,    // lib*.so output file
-    lib_folder, kernel_name) ;  // *.o file for 2nd gcc
+    lib_folder, kernel_name,    // *.o file for 2nd gcc
+    root_folder,
+    #ifdef GBRENAME
+    "/GraphBLAS", "_matlab"
+    #else
+    "", ""
+    #endif
+    ) ;
+
+    printf ("command: %s\n", command) ;
 
     // compile the library and return result
-    return (system (command)) ;
+    int result = system (command) ;
+    return (result) ;
 }
 
 //------------------------------------------------------------------------------

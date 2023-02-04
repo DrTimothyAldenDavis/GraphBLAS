@@ -21,7 +21,8 @@ void GB_debugify_reduce     // enumerate and macrofy a GrB_reduce problem
     uint64_t rcode ;        // unique encoding of the entire problem
 
     // enumify the reduce problem
-    bool builtin = GB_enumify_reduce (&rcode, monoid, A) ;
+    GB_enumify_reduce (&rcode, monoid, A) ;
+    bool builtin = (monoid->hash == 0) ;
 
     // namify the reduce problem
     char reduce_name [256 + 2 * GxB_MAX_NAME_LEN] ;

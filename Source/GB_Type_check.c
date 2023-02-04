@@ -70,6 +70,14 @@ GrB_Info GB_Type_check      // check a GraphBLAS Type
         return (GrB_INVALID_OBJECT) ;
     }
 
+    int32_t name_len = type->name_len ;
+    int32_t actual_len = strlen (type->name) ;
+    if (type->code == GB_UDT_code && name_len != actual_len)
+    {
+        GBPR0 ("    Type has an invalid name_len\n") ;
+        return (GrB_INVALID_OBJECT) ;
+    }
+
     if (type->defn != NULL)
     { 
         GBPR0 ("    %s\n", type->defn) ;

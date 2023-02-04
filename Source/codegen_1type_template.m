@@ -9,7 +9,7 @@ function codegen_1type_template (xtype)
 f = fopen ('control.m4', 'w') ;
 
 [fname, unsigned, bits] = codegen_type (xtype) ;
-fprintf ('%-11s:  suffix: %-7s  unsigned: %d bits: %d\n', xtype, fname, unsigned, bits) ;
+fprintf ('%-11s:  fname: %-7s  unsigned: %d bits: %d\n', xtype, fname, unsigned, bits) ;
 
 % function names
 fprintf (f, 'define(`_Cdense_05d'', `_Cdense_05d__%s'')\n', fname) ;
