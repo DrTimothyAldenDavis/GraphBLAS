@@ -58,7 +58,7 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
     // output:
     GB_jit_encoding *encoding,  // unique encoding of the entire problem,
                                 // except for the suffix
-    char *suffix,               // suffix for user-defined kernel
+    char **suffix,              // suffix for user-defined kernel
     // input:
     GrB_Monoid monoid,      // the monoid to enumify
     GrB_Matrix A            // input matrix to reduce

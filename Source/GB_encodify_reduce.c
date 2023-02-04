@@ -15,7 +15,7 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
     // output:
     GB_jit_encoding *encoding,  // unique encoding of the entire problem,
                                 // except for the suffix
-    char *suffix,               // suffix for user-defined kernel
+    char **suffix,              // suffix for user-defined kernel
     // input:
     GrB_Monoid monoid,      // the monoid to enumify
     GrB_Matrix A            // input matrix to reduce
@@ -31,12 +31,12 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
     encoding->kcode = GB_JIT_KERNEL_REDUCE ;
 
     //--------------------------------------------------------------------------
-    // construct the suffix and find its length
+    // determine the suffix and its length
     //--------------------------------------------------------------------------
 
     int32_t name_len = monoid->op->name_len ;
-    encoding->suffix_len = (builtin) ? 0 : (name_len + 2) ;
-    GB_namify_suffix (suffix, builtin, monoid->op->name, name_len, NULL, 0) ;
+    encoding->suffix_len = (builtin) ? 0 : name_len ;
+    (*suffix) = (builtin) ? NULL : monoid->op->name ;
 
     //--------------------------------------------------------------------------
     // compute the hash of the entire problem

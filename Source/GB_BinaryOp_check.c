@@ -50,11 +50,11 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     }
     if (opcode == GB_USER_binop_code)
     { 
-        GBPR0 ("(user-defined) ") ;
+        GBPR0 ("(user-defined): ") ;
     }
     else
     { 
-        GBPR0 ("(built-in) ") ;
+        GBPR0 ("(built-in): ") ;
     }
     GBPR0 ("z=%s(x,y)\n", op->name) ;
 

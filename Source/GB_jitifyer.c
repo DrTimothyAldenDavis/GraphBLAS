@@ -197,8 +197,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
             if (!builtin)
             {
                 // allocate the suffix if the kernel is not builtin
-                size_t siz ;
-                e->suffix = GB_MALLOC (suffix_len+1, char, &siz) ;
+                e->suffix = GB_MALLOC (suffix_len+1, char, &(e->suffix_size)) ;
                 if (e->suffix == NULL)
                 {
                     // out of memory
@@ -207,7 +206,6 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
                 // printf ("   suffix %p\n", e->suffix) ;
                 strncpy (e->suffix, suffix, suffix_len+1) ;
                 // printf ("       [%s]\n", e->suffix) ;
-                e->suffix_size = siz ;
             }
             e->hash = hash ;
             memcpy (&(e->encoding), encoding, sizeof (GB_jit_encoding)) ;

@@ -33,9 +33,11 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
 
     GBURBLE ("(jit) \n") ;
     GB_jit_encoding encoding ;
-    char suffix [8 + GxB_MAX_NAME_LEN] ;
-    uint64_t hash = GB_encodify_reduce (&encoding, suffix, monoid, A) ;
+    char *suffix ;
+//  double t0 = omp_get_wtime ( ) ;
+    uint64_t hash = GB_encodify_reduce (&encoding, &suffix, monoid, A) ;
     void *dl_function = GB_jitifyer_lookup (hash, &encoding, suffix) ;
+//  t0 = omp_get_wtime ( ) - t0 ; printf ("t0 %g usec\n", t0/1e-6) ;
 
     //------------------------------------------------------------------
     // load it and compile it if not found
@@ -52,8 +54,16 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
         #define RLEN (256 + GxB_MAX_NAME_LEN)
         char reduce_name [RLEN] ;
         uint64_t rcode = encoding.code ;
-        snprintf (reduce_name, RLEN-1, "GB_jit_reduce_%0*" PRIx64 "%s",
-            7, rcode, suffix) ;
+        if (suffix == NULL)
+        {
+            snprintf (reduce_name, RLEN-1, "GB_jit_reduce_%0*" PRIx64,
+                7, rcode) ;
+        }
+        else
+        {
+            snprintf (reduce_name, RLEN-1, "GB_jit_reduce_%0*" PRIx64
+                "__%s", 7, rcode, suffix) ;
+        }
 
         char lib_filename [2048] ;
 
@@ -177,8 +187,8 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
         }
 
         // insert the new kernel into the hash table
-        if (!GB_jitifyer_insert (hash, &encoding, suffix, dl_handle,
-            dl_function))
+        if (!GB_jitifyer_insert (hash, &encoding, suffix,
+            dl_handle, dl_function))
         {
             // unable to add kernel to hash table: punt to generic
             printf ("failed to add to hash table!\n") ;

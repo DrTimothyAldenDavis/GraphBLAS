@@ -43,11 +43,11 @@ GrB_Info GB_IndexUnaryOp_check  // check a GraphBLAS index_unary operator
     }
     if (opcode == GB_USER_idxunop_code)
     { 
-        GBPR0 ("(user-defined) ") ;
+        GBPR0 ("(user-defined): ") ;
     }
     else
     { 
-        GBPR0 ("(built-in) ") ;
+        GBPR0 ("(built-in): ") ;
     }
     GBPR0 ("z=%s(x,i,j,y)\n", op->name) ;
 

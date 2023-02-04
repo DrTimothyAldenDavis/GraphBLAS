@@ -446,6 +446,9 @@ struct GB_Semiring_opaque   // content of GrB_Semiring
     // ---------------------//
     GrB_Monoid add ;        // add operator of the semiring
     GrB_BinaryOp multiply ; // multiply operator of the semiring
+    char *name ;            // name of the type; NULL for builtin
+    int32_t name_len ;      // length of user-defined name; 0 for builtin
+    size_t name_size ;      // allocated size of the name
     uint64_t hash ;         // if 0, semiring uses only builtin ops and types
 } ;
 

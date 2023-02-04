@@ -43,11 +43,11 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
     }
     if (opcode == GB_USER_selop_code)
     { 
-        GBPR0 ("(user-defined) ") ;
+        GBPR0 ("(user-defined): ") ;
     }
     else
     { 
-        GBPR0 ("(built-in) ") ;
+        GBPR0 ("(built-in): ") ;
     }
     GBPR0 ("C=%s(A,k)\n", op->name) ;
 

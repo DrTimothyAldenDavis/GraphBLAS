@@ -81,7 +81,7 @@ GrB_Info GB_op_name_and_defn
     operator_name [GxB_MAX_NAME_LEN-1] = '\0' ;
 
     // get the operator name length and hash the name
-    (*operator_name_len)= strlen (operator_name) ;
+    (*operator_name_len) = strlen (operator_name) ;
     (*operator_hash) = GB_jitifyer_hash (operator_name, (*operator_name_len)) ;
 
     //--------------------------------------------------------------------------

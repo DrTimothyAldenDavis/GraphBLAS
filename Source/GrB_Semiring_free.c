@@ -21,6 +21,9 @@ GrB_Info GrB_Semiring_free          // free a user-created semiring
         GrB_Semiring s = *semiring ;
         if (s != NULL)
         {
+            // free the semiring name
+            GB_FREE (&(s->name), s->name_size) ;
+            // free the semiring header
             size_t header_size = s->header_size ;
             if (header_size > 0)
             { 
