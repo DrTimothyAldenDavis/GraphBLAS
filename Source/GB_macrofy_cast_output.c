@@ -50,20 +50,16 @@ void GB_macrofy_cast_output
     }
     else
     {
-        #define SLEN 1024
-        char s [SLEN+1] ;
+        fprintf (fp, "#define %s(%s,%s) ", macro_name, zarg, xargs) ;
+
         if (nargs == 3)
         {
-            snprintf (s, SLEN, f, xexpr, zarg, zarg) ;
+            fprintf (fp, f, xexpr, zarg, zarg) ;
         }
         else
         {
-            snprintf (s, SLEN, f, xexpr, zarg) ;
+            fprintf (fp, f, xexpr, zarg) ;
         }
-        fprintf (fp, "#define %s(%s,%s) %s\n", macro_name, zarg, xargs, s) ;
-        // FIXME: use fprintf (fp, f, xexpr, zarg, zarg) ; or
-        // fprintf (fp, f, xexpr, zarg) ;
-        // instead of char s.
     }
 }
 

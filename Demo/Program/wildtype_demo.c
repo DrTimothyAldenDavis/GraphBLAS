@@ -110,7 +110,7 @@ void wildtype_print_matrix (GrB_Matrix A, char *name)
 
 // strcpy is not available for use in a GPU kernel, so a while loop is used.
 
-void wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)
+void wildadd (wildtype *z, const wildtype *x, const wildtype *y)
 {
     for (int i = 0 ; i < 4 ; i++)
     {
@@ -126,13 +126,13 @@ void wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)
 }
 
 // The newlines (\n) in the definition below are optional.  They just make
-// GxB_print output readable.  This example defines wildtype_add as either a
+// GxB_print output readable.  This example defines wildadd as either a
 // macro or as a function.
 
 #if 1
-// wildtype_add defined as a macro
-#define WILDTYPE_ADD_DEFN                                                   \
-"#define WILDTYPE_ADD(z,x,y)                                          \\\n" \
+// wildadd defined as a macro
+#define WILDADD_DEFN                                                        \
+"#define WILDADD(z,x,y)                                               \\\n" \
 "{                                                                    \\\n" \
 "   for (int i = 0 ; i < 4 ; i++)                                     \\\n" \
 "   {                                                                 \\\n" \
@@ -146,9 +146,9 @@ void wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)
 "   while ((*pdst++ = *psrc++)) ;                                     \\\n" \
 "}"
 #else
-// wildtype_add defined as a function
-#define WILDTYPE_ADD_DEFN                                                   \
-"void wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)  \n" \
+// wildadd defined as a function
+#define WILDADD_DEFN                                                        \
+"void wildadd (wildtype *z, const wildtype *x, const wildtype *y)       \n" \
 "{                                                                      \n" \
 "   for (int i = 0 ; i < 4 ; i++)                                       \n" \
 "   {                                                                   \n" \
@@ -167,7 +167,7 @@ void wildtype_add (wildtype *z, const wildtype *x, const wildtype *y)
 // multiply two wildtypes "scalars"
 //------------------------------------------------------------------------------
 
-void wildtype_mult (wildtype *z, const wildtype *x, const wildtype *y)
+void wildmult (wildtype *z, const wildtype *x, const wildtype *y)
 {
     for (int i = 0 ; i < 4 ; i++)
     {
@@ -186,8 +186,8 @@ void wildtype_mult (wildtype *z, const wildtype *x, const wildtype *y)
     while ((*pdst++ = *psrc++)) ;
 }
 
-#define WILDTYPE_MULT_DEFN                                                  \
-"void wildtype_mult (wildtype *z, const wildtype *x, const wildtype *y) \n" \
+#define WILDMULT_DEFN                                                       \
+"void wildmult (wildtype *z, const wildtype *x, const wildtype *y)      \n" \
 "{                                                                      \n" \
 "   for (int i = 0 ; i < 4 ; i++)                                       \n" \
 "   {                                                                   \n" \
@@ -333,15 +333,15 @@ int main (void)
     // create the WildAdd operator
     GrB_BinaryOp WildAdd ;
     GxB_BinaryOp_new (&WildAdd, 
-        (GxB_binary_function) wildtype_add, WildType, WildType, WildType,
-        "wildtype_add", WILDTYPE_ADD_DEFN) ;
+        (GxB_binary_function) wildadd, WildType, WildType, WildType,
+        "wildadd", WILDADD_DEFN) ;
     GxB_print (WildAdd, 3) ;
 
     // create the WildMult operator
     GrB_BinaryOp WildMult ;
     GxB_BinaryOp_new (&WildMult, 
-        (GxB_binary_function) wildtype_mult, WildType, WildType, WildType,
-        "wildtype_mult", WILDTYPE_MULT_DEFN) ;
+        (GxB_binary_function) wildmult, WildType, WildType, WildType,
+        "wildmult", WILDMULT_DEFN) ;
     GxB_print (WildMult, 3) ;
 
     // create a matrix B with B (7,2) = scalar2

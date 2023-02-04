@@ -23,3 +23,9 @@ bool GB_jit_query_monoid
     size_t term_size   // input: expected terminal size
 ) ;
 
+// return the version of SuiteSparse:GraphBLAS that created the kernel
+void GB_jit_query_version
+(
+    int *version
+) ;
+

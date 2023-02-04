@@ -95,6 +95,12 @@ typedef bool (*GB_jit_query_monoid_func)
     size_t term_size
 ) ;
 
+// to query a library for its version
+typedef void (*GB_jit_query_version_func)
+(
+    int *version
+) ;
+
 bool GB_jitifyer_match_defn     // return true if definitions match
 (
     // input:
@@ -107,6 +113,11 @@ bool GB_jitifyer_match_idterm   // return true if monoid id and term match
 (
     void *dl_handle,            // dl_handle for the jit kernel library
     GrB_Monoid monoid           // current monoid to compare
+) ;
+
+bool GB_jitifyer_match_version
+(
+    void *dl_handle             // dl_handle for the jit kernel library
 ) ;
 
 int GB_jitifyer_compile         // return result of system() call

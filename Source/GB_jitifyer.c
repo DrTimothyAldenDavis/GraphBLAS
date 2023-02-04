@@ -51,7 +51,7 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
     uint32_t suffix_len = encoding->suffix_len ;
     bool builtin = (bool) (suffix_len == 0) ;
 
-#if 1
+#if 0
     // dump the hash table
     printf ("\nlookup GB_jit_table at %p\n", GB_jit_table) ;
     for (int64_t k = 0 ; k < GB_jit_table_size ; k++)
@@ -114,8 +114,6 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 
     // FIXME: need to place this entire function in a critical section
 
-    printf ("insert GB_jit_table at %p\n", GB_jit_table) ;
-
     //--------------------------------------------------------------------------
     // ensure the hash table is large enough
     //--------------------------------------------------------------------------
@@ -136,8 +134,6 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         }
         GB_jit_table_size = GB_JITIFIER_INITIAL_SIZE ;
         GB_jit_table_bits = GB_JITIFIER_INITIAL_SIZE - 1 ; 
-
-        printf ("now GB_jit_table at %p\n", GB_jit_table) ;
 
     }
     else if (GB_jit_table_populated >= GB_jit_table_size / 4)
@@ -195,7 +191,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         if (e->dl_handle == NULL)
         {
             // found an empty slot
-            printf ("hash table [%ld] insert\n", k) ;
+            // printf ("hash table [%ld] insert\n", k) ;
             e->suffix = NULL ;
             e->suffix_size = 0 ;
             if (!builtin)
@@ -208,9 +204,9 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
                     // out of memory
                     return (false) ;
                 }
-                printf ("   suffix %p\n", e->suffix) ;
+                // printf ("   suffix %p\n", e->suffix) ;
                 strncpy (e->suffix, suffix, suffix_len+1) ;
-                printf ("       [%s]\n", e->suffix) ;
+                // printf ("       [%s]\n", e->suffix) ;
                 e->suffix_size = siz ;
             }
             e->hash = hash ;
@@ -237,7 +233,7 @@ void GB_jitifyer_finalize (void)
         return ;
     }
 
-    printf ("GB_jit_table at %p\n", GB_jit_table) ;
+    // printf ("GB_jit_table at %p\n", GB_jit_table) ;
 
     // clear all entries in the table
     for (int64_t k = 0 ; k < GB_jit_table_size ; k++)
@@ -246,10 +242,10 @@ void GB_jitifyer_finalize (void)
         if (e->dl_handle != NULL)
         {
             // found an entry; free the suffix if present
-            printf ("free hash table [%ld]: %p\n", k, e->dl_handle) ;
+            // printf ("free hash table [%ld]: %p\n", k, e->dl_handle) ;
             if (e->suffix != NULL)
             {
-                printf ("    free the suffix: %p\n", e->suffix) ;
+                // printf ("    free the suffix: %p\n", e->suffix) ;
                 GB_FREE (&(e->suffix), e->suffix_size) ;
             }
             // unload the dl library
@@ -258,7 +254,7 @@ void GB_jitifyer_finalize (void)
     }
 
     // free the table
-    printf ("free the table %p\n", GB_jit_table) ;
+    // printf ("free the table %p\n", GB_jit_table) ;
     GB_FREE (&GB_jit_table, GB_jit_table_allocated) ;
     GB_jit_table_allocated = 0 ;
     GB_jit_table_size = 0 ;
@@ -326,6 +322,33 @@ bool GB_jitifyer_match_idterm   // return true if monoid id and term match
     size_t zsize = monoid->op->ztype->size ;
     size_t tsize = (monoid->terminal == NULL) ? 0 : zsize ;
     return (query_monoid (monoid->identity, monoid->terminal, zsize, tsize)) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_match_version: check the version of a kernel
+//------------------------------------------------------------------------------
+
+bool GB_jitifyer_match_version
+(
+    void *dl_handle             // dl_handle for the jit kernel library
+)
+{
+    // compare the version
+    void *dl_query = dlsym (dl_handle, "GB_jit_query_version") ;
+    if (dl_query == NULL)
+    {
+        // the library is invalid; need recompile it
+        return (false) ;
+    }
+    // check the version
+    int version [3] ;
+    GB_jit_query_version_func query_version =
+        (GB_jit_query_version_func) dl_query ;
+    query_version (version) ;
+    // return true if the version matches
+    return ((version [0] == GxB_IMPLEMENTATION_MAJOR) &&
+            (version [1] == GxB_IMPLEMENTATION_MINOR) &&
+            (version [2] == GxB_IMPLEMENTATION_SUB)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -436,12 +459,19 @@ int GB_jitifyer_compile
 #define XXH_NO_STREAM
 #include "xxhash.h"
 
+// A hash value of zero is unique, and is used for all builtin operators and
+// types to indicate that its hash value is not required.  So in the nearly
+// impossible case that XXH3_64bits returns a hash value that happens to be
+// zero, it is reset to GB_MAGIC instead.
+
 uint64_t GB_jitifyer_hash_encoding
 (
     GB_jit_encoding *encoding
 )
 {
-    return (XXH3_64bits ((const void *) encoding, sizeof (GB_jit_encoding))) ;
+    uint64_t hash ;
+    hash = XXH3_64bits ((const void *) encoding, sizeof (GB_jit_encoding)) ;
+    return ((hash == 0) ? GB_MAGIC : hash) ;
 }
 
 uint64_t GB_jitifyer_hash
@@ -451,6 +481,8 @@ uint64_t GB_jitifyer_hash
 )
 {
     if (bytes == NULL || nbytes == 0) return (0) ;
-    return (XXH3_64bits (bytes, nbytes)) ;
+    uint64_t hash ;
+    hash = XXH3_64bits (bytes, nbytes) ;
+    return ((hash == 0) ? GB_MAGIC : hash) ;
 }
 

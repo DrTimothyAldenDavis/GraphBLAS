@@ -1,0 +1,97 @@
+//------------------------------------------------------------------------------
+// GraphBLAS_JIT_configuration.h: default configurations CPU and CUDA JIT
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
+#ifndef GRAPHBLAS_JIT_CONFIGURATION_H
+#define GRAPHBLAS_JIT_CONFIGURATION_H
+
+#ifndef NJIT
+
+//------------------------------------------------------------------------------
+// GRAPHBLAS_SOURCE_PATH: where to find the SuiteSparse:GraphBLAS source code
+//------------------------------------------------------------------------------
+
+// GRAPHBLAS_SOURCE_PATH:  The CPU and CUDA jitifyers require access to the
+// entire SuiteSparse:GraphBLAS source code.  The default source directory is
+// #define'd below, which is used if environment variable of the same name is
+// not set when GrB_init is called.  The environment variable, if set when
+// GrB_init is called, takes precedence over this variable.  The source
+// directory can also be changed after calling GrB_init via (for example):
+//
+//      GxB_set (GxB_SOURCE_PATH, "/home/me/GraphBLAS") ;
+//
+// The specified directory must be the top-level folder for
+// SuiteSparse:GraphBLAS.  Inside that folder the following files directories
+// should appear:
+//
+//      CMakeLists.txt  primary cmake script for GraphBLAS
+//      Config          contains GraphBLAS_JIT_configuration.h.in 
+//      JIT_Config      contains GraphBLAS_JIT_configuration.h
+//      Include         contains GraphBLAS.h
+//      Source          contains the SuiteSparse:GraphBLAS source files
+//      CUDA            contains the CUDA kernels for the CUDA JIT
+//      rmm_wrap        C-callable wrappers for Rapids Memory Management
+//                      (for the CUDA kernels)
+//      ...             and so on.
+//
+// As well as the source files for package dependencies:
+//
+//      cpu_features    Google's cpu_features package
+//      lz4             compression method by Yann Colet
+//      zstd            compression method by Yann Colet
+//      xxHash          hash method by Yann Colet
+//      ...             and so on.
+//
+// The default setting is the CMAKE_SOURCE_DIR from cmake.  This file is
+// configured by cmake from the input file:
+//
+//      CMAKE_SOURCE_DIR/Config/GraphBLAS_JIT_configuration.h.in
+//
+// to create the ouput file:
+//
+//      CMAKE_SOURCE_DIR/JIT_Config/GraphBLAS_JIT_configuration.h
+//
+// This may also be defined with -DGRAPHBLAS_SOURCE_PATH=/home/me/GraphBLAS
+// (or with quotes, as -DGRAPHBLAS_SOURCE_PATH="/home/me/GraphBLAS") as an
+// option to cmake, when building GraphBLAS.
+
+#ifndef GRAPHBLAS_SOURCE_PATH
+#define GRAPHBLAS_SOURCE_PATH "@GRAPHBLAS_SOURCE_PATH@"
+#endif
+
+//------------------------------------------------------------------------------
+// GRAPHBLAS_CACHE_PATH: where the JIT kernels will be created and compiled
+//------------------------------------------------------------------------------
+
+// GRAPHBLAS_CACHE_PATH:  This is the default folder where JIT kernels are
+// created and compiled.  The default is ~/.SuiteSparse/GraphBLAS, where "~" is
+// the user's home directory, obtained by getenv ("HOME") at run time.  Within
+// this folder, cmake creates a folder of the form "v8.0.0", if GraphBLAS
+// v8.0.0 is being used.  Upgrading to a new version of GraphBLAS will thus
+// automatically transition the use of GraphBLAS-based applications to the new
+// version.
+//
+// This directory may be changed at compile-time via (for example):
+// -DGRAPHBLAS_CACHE_PATH="/home/me/mycache".
+//
+// A leading tilde is replaced by getenv ("HOME").  If no tilde appears in the
+// string, getenv is not called.  The cache directory may be changed
+//
+// If cmake cannot determine the home directory, creates a JIT folder inside
+// the cmake build folder.
+
+#ifndef GRAPHBLAS_CACHE_PATH
+#define GRAPHBLAS_CACHE_PATH "@GRAPHBLAS_CACHE_PATH@"
+#endif
+
+#else
+
+// JIT disabled
+
+#endif
+#endif

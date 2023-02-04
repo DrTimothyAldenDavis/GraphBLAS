@@ -179,8 +179,6 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     // where it becomes a memcpy.  Thus, acode, bcode, and ccode must all be
     // checked as well.
 
-    // FIXME: should builtin be part of the scode?
-
     bool builtin = ((binop_ecode > 0) &&
         (acode != GB_UDT_code) &&
         (bcode != GB_UDT_code) &&

@@ -12190,5 +12190,106 @@ void       GxB_Iterator_get_UDT    (GxB_Iterator iterator,
         (iterator)->type_size)                                              \
 )
 
+//==============================================================================
+// default configurations CPU and CUDA JIT
+//==============================================================================
+
+#ifndef NJIT
+
+//------------------------------------------------------------------------------
+// GRAPHBLAS_SOURCE_PATH: where to find the SuiteSparse:GraphBLAS source code
+//------------------------------------------------------------------------------
+
+// GRAPHBLAS_SOURCE_PATH:  The CPU and CUDA jitifyers require access to the
+// entire SuiteSparse:GraphBLAS source code.  The default source directory is
+// #define'd below, which is used if environment variable of the same name is
+// not set when GrB_init is called.  The environment variable, if set when
+// GrB_init is called, takes precedence over this variable.
+//
+// The specified directory must be the top-level folder for
+// SuiteSparse:GraphBLAS.  Inside that folder the following files directories
+// should appear:
+//
+//      CMakeLists.txt  primary cmake script for GraphBLAS
+//      Config          contains GraphBLAS.h.in (source for this file)
+//      Include         contains GraphBLAS.h (configured version of this file)
+//      Source          contains the SuiteSparse:GraphBLAS source files
+//      CUDA            contains the CUDA kernels for the CUDA JIT
+//      ...             and so on.
+//
+//
+// GRAPHBLAS_SOURCE_PATH is defined below by the first rule that holds,
+// in the following order:
+//
+//      (1) Using a -DGRAPHBLAS_SOURCE_PATH=... option for cmake
+//          (-DGRAPHBLAS_SOURCE_PATH=/home/me/GraphBLAS for example).
+//      (2) The GRAPHBLAS_SOURCE_PATH environment variable.
+//      (3) The CMAKE_SOURCE_DIR variable from cmake.  This is the typical
+//          case, since rules (1) and (2) require an opt-in before GraphBLAS
+//          is compiled.
+//
+// The #define'd variable below defines the path when GraphBLAS starts.
+// The source path can then be changed at run time after calling GrB_init
+// via (for example):
+//
+//      GxB_set (GxB_SOURCE_PATH, "/home/me/otherplace/GraphBLAS") ;
+
+#ifndef GRAPHBLAS_SOURCE_PATH
+#define GRAPHBLAS_SOURCE_PATH "@GRAPHBLAS_SOURCE_PATH@"
+#endif
+
+//------------------------------------------------------------------------------
+// GRAPHBLAS_CACHE_PATH: where the JIT kernels will be created and compiled
+//------------------------------------------------------------------------------
+
+// GRAPHBLAS_CACHE_PATH:  This is the default folder where JIT kernels are
+// created and compiled.  It is defined by the first rule that holds, in the
+// following order:
+//
+//      (1) Using a -DGRAPHBLAS_CACHE_PATH=... option for cmake
+//          (-DGRAPHBLAS_CACHE_PATH=/home/me/myjit for example).
+//      (2) The GRAPHBLAS_CACHE_PATH environment variable.
+//      (3) If getenv("HOME") works when used at run time, then
+//          ~/.SuiteSparse/GraphBLAS/v@GraphBLAS_VERSION_MAJOR@.@GraphBLAS_VERSION_MINOR@.@GraphBLAS_VERSION_SUB@ is used.  This is the typical case
+//          since rules (1) and (2) require an opt-in to set those options
+//          before GraphBLAS is compiled, and since getenv("HOME") typically
+//          works.  It is an ANSI C11 function, and "HOME" is typically
+//          supported by the OS.
+//      (4) If the HOME environment variable is set when cmake builds
+//          GraphBLAS, then HOME/.SuiteSparse/GraphBLAS/v@GraphBLAS_VERSION_MAJOR@.@GraphBLAS_VERSION_MINOR@.@GraphBLAS_VERSION_SUB@
+//          is used, where HOME is the value of that variable as found by cmake.
+//      (5) The CMAKE_BUILD_DIR/jit folder, created by cmake inside the cmake
+//          build folder.
+//
+// For any of the 5 cases above, a leading tilde is replaced by getenv ("HOME")
+// at run time, if the compiler and OS support it.  If no tilde appears in the
+// string, getenv is not called.
+//
+// Using these rules, upgrading to a new version of GraphBLAS will typically
+// cause a new folder to be used (the old one can be deleted).
+// SuiteSparse:GraphBLAS checks the version of each kernel as it is loaded,
+// however, and will regenerate and recompile any kernels from prior versions
+// when they are loaded.  It is thus safe to use a folder that is not specific
+// to a particular version.
+//
+// It safe to delete the contents of the cache folder when GraphBLAS is not
+// running, since GraphBLAS will generate and compile new kernels when it needs
+// them.
+//
+// The #define'd variable below defines the path when GraphBLAS starts.  The
+// cache directory may be changed at run time after calling GrB_init via (for
+// example):
+//
+//      GxB_set (GxB_CACHE_PATH, "/home/me/otherplace/myjitkernels") ;
+
+#ifndef GRAPHBLAS_CACHE_PATH
+#define GRAPHBLAS_CACHE_PATH "@GRAPHBLAS_CACHE_PATH@"
+#endif
+
+#else
+
+// JIT disabled
+
+#endif
 #endif
 

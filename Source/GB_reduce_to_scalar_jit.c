@@ -74,13 +74,13 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
         // .SuiteSparse/GraphBLAS folder (if already compiled)
         snprintf (lib_filename, 2048, "%s/lib%s.so", lib_folder, reduce_name) ;
 
-        char command [4096] ;
-        sprintf (command, "ldd %s\n", lib_filename) ;
-        int res = system (command) ;
-        printf ("result: %d\n", res) ;
-        sprintf (command, "readelf -d %s\n", lib_filename) ;
-        res = system (command) ;
-        printf ("result: %d\n", res) ;
+//      char command [4096] ;
+//      sprintf (command, "ldd %s\n", lib_filename) ;
+//      int res = system (command) ;
+//      printf ("result: %d\n", res) ;
+//      sprintf (command, "readelf -d %s\n", lib_filename) ;
+//      res = system (command) ;
+//      printf ("result: %d\n", res) ;
 
         void *dl_handle = dlopen (lib_filename, RTLD_LAZY) ;
 
@@ -93,6 +93,7 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
             void *dl_query = dlsym (dl_handle, "GB_jit_query_defn") ;
             // compare the monoid and A->type definitions
             need_to_compile =
+                !GB_jitifyer_match_version (dl_handle) ||
                 !GB_jitifyer_match_defn (dl_query, 0, monoid->op->defn) ||
                 !GB_jitifyer_match_defn (dl_query, 2, A->type->defn) ||
                 !GB_jitifyer_match_idterm (dl_handle, monoid) ;
@@ -135,6 +136,9 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
                 "\n// reduction kernel\n"
                 "#include \"GB_jit_kernel_reduce.c\"\n") ;
 
+            // create query_version function
+            GB_macrofy_query_version (fp) ;
+
             if (!builtin)
             {
                 // either the monoid or A->type is not builtin, or both;
@@ -143,6 +147,7 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
                     (GB_Operator) monoid->op, NULL,
                     A->type, NULL, NULL, NULL, NULL, NULL) ;
             }
+
             // create query_monoid function if the monoid is not builtin
             GB_macrofy_query_monoid (fp, monoid) ;
             fclose (fp) ;

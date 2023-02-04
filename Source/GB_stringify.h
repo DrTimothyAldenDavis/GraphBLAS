@@ -468,6 +468,11 @@ void GB_macrofy_query_defn
     GrB_Type type5
 ) ;
 
+void GB_macrofy_query_version
+(
+    FILE *fp
+) ;
+
 //------------------------------------------------------------------------------
 // GB_namify_problem: name a problem
 //------------------------------------------------------------------------------
