@@ -109,27 +109,25 @@
             else
             { 
                 // A is full, non-iso-valued, B is sparse/hyper
-                #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION          \
-                    && GB_COMPILER_SUPPORTS_AVX512F             \
-                    && GB_V4_512
-                if (GB_Global_cpu_features_avx512f ( ))
-                {
-                    // x86_64 with AVX512f
-                    GB_AxB_saxpy5_unrolled_avx512f (C, A, B,
-                        ntasks, nthreads, B_slice, Werk) ;
-                    return (GrB_SUCCESS) ;
-                }
-                #endif
-                #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION          \
-                    && GB_COMPILER_SUPPORTS_AVX2                \
-                    && GB_V4_256
-                if (GB_Global_cpu_features_avx2 ( ))
-                {
-                    // x86_64 with AVX2
-                    GB_AxB_saxpy5_unrolled_avx2 (C, A, B,
-                        ntasks, nthreads, B_slice, Werk) ;
-                    return (GrB_SUCCESS) ;
-                }
+                #if defined ( GB_SEMIRING_HAS_AVX_IMPLEMENTATION )
+                    #if GB_COMPILER_SUPPORTS_AVX512F && GB_V4_512
+                    if (GB_Global_cpu_features_avx512f ( ))
+                    {
+                        // x86_64 with AVX512f
+                        GB_AxB_saxpy5_unrolled_avx512f (C, A, B,
+                            ntasks, nthreads, B_slice, Werk) ;
+                        return (GrB_SUCCESS) ;
+                    }
+                    #endif
+                    #if GB_COMPILER_SUPPORTS_AVX2 && GB_V4_256
+                    if (GB_Global_cpu_features_avx2 ( ))
+                    {
+                        // x86_64 with AVX2
+                        GB_AxB_saxpy5_unrolled_avx2 (C, A, B,
+                            ntasks, nthreads, B_slice, Werk) ;
+                        return (GrB_SUCCESS) ;
+                    }
+                    #endif
                 #endif
                 // any architecture and any built-in semiring
                 GB_AxB_saxpy5_unrolled_vanilla (C, A, B,
@@ -142,4 +140,5 @@
 
 #undef GB_A_IS_BITMAP
 #undef GB_B_IS_HYPER
+#undef GB_SEMIRING_HAS_AVX_IMPLEMENTATION
 

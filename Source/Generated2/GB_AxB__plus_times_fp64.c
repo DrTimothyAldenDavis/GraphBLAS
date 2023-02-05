@@ -71,10 +71,6 @@
 #define GB_C_ISO \
     0
 
-// # of bits in the type of C, for AVX2 and AVX512F (saxpy5 method only)
-#define GB_C_NBITS \
-    GB_cn_bits
-
 // true for int64, uint64, float, double, float complex, and double complex 
 #define GB_ZTYPE_IGNORE_OVERFLOW \
     1
@@ -149,10 +145,6 @@
 // 1 for the PLUS_PAIR_(real) semirings, not for the complex case
 #define GB_IS_PLUS_PAIR_REAL_SEMIRING \
     0
-
-// 1 if the semiring is accelerated with AVX2 or AVX512f
-#define GB_SEMIRING_HAS_AVX_IMPLEMENTATION \
-    1
 
 // declare the cij scalar (initialize cij to zero for PLUS_PAIR)
 #define GB_CIJ_DECLARE(cij) \
@@ -413,12 +405,17 @@ GrB_Info GB (_AsaxbitB__plus_times_fp64)
     #if GB_DISABLE
     #elif ( !GB_A_IS_PATTERN )
 
+        
         //----------------------------------------------------------------------
         // saxpy5 method with vectors of length 8 for double, 16 for single
         //----------------------------------------------------------------------
 
         // AVX512F: vector registers are 512 bits, or 64 bytes, which can hold
         // 16 floats or 8 doubles.
+
+        // # of bits in the type of C, for AVX2 and AVX512F (saxpy5 method only)
+        #define GB_C_NBITS \
+            GB_cn_bits
 
         #define GB_V16_512 (16 * GB_C_NBITS <= 512)
         #define GB_V8_512  ( 8 * GB_C_NBITS <= 512)
@@ -428,8 +425,7 @@ GrB_Info GB (_AsaxbitB__plus_times_fp64)
         #define GB_V8  GB_V8_512
         #define GB_V4  GB_V4_512
 
-        #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION && GB_COMPILER_SUPPORTS_AVX512F \
-            && GB_V4_512
+        #if GB_COMPILER_SUPPORTS_AVX512F && GB_V4_512
 
             GB_TARGET_AVX512F static inline void GB_AxB_saxpy5_unrolled_avx512f
             (
@@ -442,6 +438,7 @@ GrB_Info GB (_AsaxbitB__plus_times_fp64)
                 GB_Werk Werk
             )
             {
+                #define GB_SEMIRING_HAS_AVX_IMPLEMENTATION 1
                 #include "GB_AxB_saxpy5_unrolled.c"
             }
 
@@ -466,8 +463,7 @@ GrB_Info GB (_AsaxbitB__plus_times_fp64)
         #define GB_V8  GB_V8_256
         #define GB_V4  GB_V4_256
 
-        #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION && GB_COMPILER_SUPPORTS_AVX2 \
-            && GB_V4_256
+        #if GB_COMPILER_SUPPORTS_AVX2 && GB_V4_256
 
             GB_TARGET_AVX2 static inline void GB_AxB_saxpy5_unrolled_avx2
             (
@@ -480,10 +476,12 @@ GrB_Info GB (_AsaxbitB__plus_times_fp64)
                 GB_Werk Werk
             )
             {
+                #define GB_SEMIRING_HAS_AVX_IMPLEMENTATION 1
                 #include "GB_AxB_saxpy5_unrolled.c"
             }
 
         #endif
+        
 
         //----------------------------------------------------------------------
         // saxpy5 method unrolled, with no vectors

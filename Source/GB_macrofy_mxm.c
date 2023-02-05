@@ -138,8 +138,6 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
     bool C_iso = (ccode == 0) ;
     GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, C_iso) ;
-    fprintf (fp, "#define GB_C_NBITS %d\n",
-        (int) (C_iso ? 0 : (8 * ctype->size))) ;
 
     //--------------------------------------------------------------------------
     // construct the macros to access the mask (if any), and its name

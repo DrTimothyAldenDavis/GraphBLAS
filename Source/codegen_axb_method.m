@@ -227,11 +227,13 @@ else
 end
 
 if (is_plus_times_fp)
-    % plus_times_fp32 and plus_times_fp64 are accelerated with AVX2 or AVX512f instructions.
-    % More semirings will be accelerated in the future.
-    fprintf (f, 'm4_define(`GB_semiring_has_avx_implementation'', `1'')\n') ;
+    % enable the avx-based methods.  only two semirings (plus_times_fp32 and
+    % plus_times_fp64) are accelerated with AVX2 or AVX512f instructions.  More
+    % semirings will be accelerated in the future.
+    fprintf (f, 'm4_define(`if_semiring_has_avx'', `0'')\n') ;
 else
-    fprintf (f, 'm4_define(`GB_semiring_has_avx_implementation'', `0'')\n') ;
+    % disable the avx-based methods
+    fprintf (f, 'm4_define(`if_semiring_has_avx'', `-1'')\n') ;
 end
 
 if (is_pair)

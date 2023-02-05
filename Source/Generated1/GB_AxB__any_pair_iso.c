@@ -71,10 +71,6 @@
 #define GB_C_ISO \
     1
 
-// # of bits in the type of C, for AVX2 and AVX512F (saxpy5 method only)
-#define GB_C_NBITS \
-    GB_cn_bits
-
 // true for int64, uint64, float, double, float complex, and double complex 
 #define GB_ZTYPE_IGNORE_OVERFLOW \
     1
@@ -148,10 +144,6 @@
 
 // 1 for the PLUS_PAIR_(real) semirings, not for the complex case
 #define GB_IS_PLUS_PAIR_REAL_SEMIRING \
-    0
-
-// 1 if the semiring is accelerated with AVX2 or AVX512f
-#define GB_SEMIRING_HAS_AVX_IMPLEMENTATION \
     0
 
 // declare the cij scalar (initialize cij to zero for PLUS_PAIR)
