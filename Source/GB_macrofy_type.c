@@ -21,11 +21,11 @@ void GB_macrofy_type
 
     if (strcmp (name, "GB_void") == 0)
     {
-        fprintf (fp, "#define GB_%s_TYPENAME GB_void  /* not used */\n", what) ;
+        fprintf (fp, "#define GB_%s_TYPE GB_void  /* not used */\n", what) ;
     }
     else
     {
-        fprintf (fp, "#define GB_%s_TYPENAME %s\n", what, name) ;
+        fprintf (fp, "#define GB_%s_TYPE %s\n", what, name) ;
     }
 }
 

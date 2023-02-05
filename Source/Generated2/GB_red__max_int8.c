@@ -27,10 +27,10 @@
 // Identity: INT8_MIN
 // Terminal: if (z == INT8_MAX) { break ; }
 
-#define GB_A_TYPENAME \
+#define GB_A_TYPE \
     int8_t
 
-#define GB_Z_TYPENAME \
+#define GB_Z_TYPE \
     int8_t
 
 // declare a scalar and set it equal to the monoid identity value

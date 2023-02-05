@@ -68,12 +68,12 @@
     #endif
 
     #if !GB_A_IS_PATTERN
-    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     #endif
     #if !GB_B_IS_PATTERN
-    const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
+    const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
     #endif
-          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+          GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
 
     int ntasks = naslice * nbslice ;
 
@@ -82,7 +82,7 @@
     //--------------------------------------------------------------------------
 
     const bool C_in_iso = C->iso ;
-    const GB_CTYPE cinput = (C_in_iso) ? Cx [0] : GB_IDENTITY ;
+    const GB_C_TYPE cinput = (C_in_iso) ? Cx [0] : GB_IDENTITY ;
     if (C_in_iso)
     { 
         // allocate but do not initialize C->x unless A or B are hypersparse
@@ -93,7 +93,7 @@
             return (GrB_OUT_OF_MEMORY) ;
         }
         ASSERT (!C->iso) ;
-        Cx = (GB_CTYPE *) C->x ;
+        Cx = (GB_C_TYPE *) C->x ;
     }
 
     //--------------------------------------------------------------------------

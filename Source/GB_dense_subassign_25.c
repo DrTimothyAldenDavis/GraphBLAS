@@ -206,8 +206,8 @@ GrB_Info GB_dense_subassign_25
             #define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso) \
                 cast_A_to_C (Cx+((pC)*csize), Ax+(A_iso?0:(pA)*asize), asize)
 
-            #define GB_CTYPE GB_void
-            #define GB_ATYPE GB_void
+            #define GB_C_TYPE GB_void
+            #define GB_A_TYPE GB_void
 
             // no vectorization
             #define GB_PRAGMA_SIMD_VECTORIZE ;

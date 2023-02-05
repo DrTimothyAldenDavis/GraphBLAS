@@ -24,7 +24,7 @@
     const size_t msize = M->type->size ;
     const size_t mvlen = M->vlen ;
 
-    GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     const int64_t cvlen = C->vlen ;
 
     const int64_t *restrict kfirst_Mslice = M_ek_slicing ;

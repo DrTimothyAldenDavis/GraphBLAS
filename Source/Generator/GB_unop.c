@@ -25,10 +25,10 @@
 // cast:     GB_cast(cij,aij)
 // unaryop:  GB_unaryop(cij,aij)
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     GB_atype
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     GB_ctype
 
 // declare aij as atype

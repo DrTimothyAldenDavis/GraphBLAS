@@ -169,7 +169,7 @@ GrB_Info GB_dense_subassign_05d
         #define GB_COPY_SCALAR_TO_C(p,x) \
             memcpy (Cx + ((p)*csize), x, csize)
 
-        #define GB_CTYPE GB_void
+        #define GB_C_TYPE GB_void
 
         // no vectorization
         #define GB_PRAGMA_SIMD_VECTORIZE ;

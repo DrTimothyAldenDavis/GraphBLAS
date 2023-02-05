@@ -13,7 +13,7 @@
     // get C
     //--------------------------------------------------------------------------
 
-    GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     const int64_t cnz = GB_nnz (C) ;
     ASSERT (!C->iso) ;
 

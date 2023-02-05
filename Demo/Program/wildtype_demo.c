@@ -427,6 +427,11 @@ int main (void)
     wildtype_print (&sum, "sum (again)") ;
     GxB_set (GxB_BURBLE, false) ;
 
+//  for (int k = 0 ; k < 100 ; k++)
+//  {
+//      GrB_Matrix_reduce_UDT (&sum, NULL, WildAdder, C, NULL) ;
+//  }
+
     // set C to column-oriented format
     GxB_Matrix_Option_set (C, GxB_FORMAT, GxB_BY_COL) ;
     printf ("\nC is now stored by column, but it looks just the same to the\n"

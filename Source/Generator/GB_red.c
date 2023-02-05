@@ -27,10 +27,10 @@
 // Identity: GB_identity
 // Terminal: GB_if_terminal_break(z)
 
-#define GB_A_TYPENAME \
+#define GB_A_TYPE \
     GB_atype
 
-#define GB_Z_TYPENAME \
+#define GB_Z_TYPE \
     GB_ztype
 
 // declare a scalar and set it equal to the monoid identity value

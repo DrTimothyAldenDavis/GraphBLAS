@@ -31,10 +31,10 @@
     const int64_t  *restrict Ap = A->p ;
     const int64_t  *restrict Ah = A->h ;
     #if !GB_A_IS_PATTERN
-    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     #endif
     #if !GB_B_IS_PATTERN
-    const GB_BTYPE *restrict Dx = (GB_BTYPE *) D->x ;
+    const GB_B_TYPE *restrict Dx = (GB_B_TYPE *) D->x ;
     #endif
     const int64_t avlen = A->vlen ;
     const bool A_iso = A->iso ;

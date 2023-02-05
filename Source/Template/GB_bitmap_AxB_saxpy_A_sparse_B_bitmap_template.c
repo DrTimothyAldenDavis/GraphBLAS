@@ -15,11 +15,11 @@
 // the monoid
 
 #ifndef GB_BSIZE
-#define GB_BSIZE sizeof (GB_BTYPE)
+#define GB_BSIZE sizeof (GB_B_TYPE)
 #endif
 
 #ifndef GB_CSIZE
-#define GB_CSIZE sizeof (GB_CTYPE)
+#define GB_CSIZE sizeof (GB_C_TYPE)
 #endif
 
 {
@@ -72,7 +72,11 @@
 
         //----------------------------------------------------------------------
 
-        int64_t cvlenx = (GB_IS_ANY_PAIR_SEMIRING ? 0 : cvlen) * GB_CSIZE ;
+        #if GB_IS_ANY_PAIR_SEMIRING
+        int64_t cvlenx = 0 ;
+        #else
+        int64_t cvlenx = cvlen * GB_CSIZE ;
+        #endif
         #if GB_C_IS_BITMAP
         Wf  = GB_MALLOC_WORK (hwork * cvlen, int8_t, &Wf_size) ;
         #endif
@@ -118,7 +122,7 @@
             int8_t *restrict Hf = Wf + (H_slice [tid] * cvlen) ;
             #endif
             #if ( !GB_IS_ANY_PAIR_SEMIRING )
-            GB_CTYPE *restrict Hx = (GB_CTYPE *) (Wcx + H_slice [tid] * cvlenx);
+            GB_C_TYPE *restrict Hx = (GB_C_TYPE *) (Wcx + H_slice [tid] * cvlenx);
             #endif
 
             //------------------------------------------------------------------
@@ -149,7 +153,7 @@
 
                 int8_t *restrict Gb = (int8_t *) (Bb + (j1 * bvlen)) ;
                 #if ( !GB_IS_ANY_PAIR_SEMIRING )
-                GB_BTYPE *restrict Gx = (GB_BTYPE *)
+                GB_B_TYPE *restrict Gx = (GB_B_TYPE *)
                      (((GB_void *) (B->x)) +
                        (B_iso ? 0 : ((j1 * bvlen) * GB_BSIZE))) ;
                 #endif
@@ -158,7 +162,7 @@
                 // clear the panel H to compute C(:,j1:j2-1)
                 //--------------------------------------------------------------
 
-                #if ( !GB_C_IS_BITMAP )
+                #if ( !GB_C_IS_BITMAP && !GB_IS_ANY_PAIR_SEMIRING )
                 if (np == 1)
                 { 
                     // Make H an alias to C(:,j1)
@@ -522,7 +526,7 @@
 
             // for Hx Gustavason workspace: use C(:,j) in-place:
             #if ( !GB_IS_ANY_PAIR_SEMIRING )
-            GB_CTYPE *restrict Hx = (GB_CTYPE *)
+            GB_C_TYPE *restrict Hx = (GB_C_TYPE *)
                 (((GB_void *) Cx) + (pC_start * GB_CSIZE)) ;
             #endif
             #if GB_IS_PLUS_FC32_MONOID || GB_IS_ANY_FC32_MONOID
@@ -741,7 +745,11 @@
         //----------------------------------------------------------------------
 
         size_t workspace = cvlen * ntasks ;
-        size_t cxsize = (GB_IS_ANY_PAIR_SEMIRING) ? 0 : GB_CSIZE ;
+        #if ( GB_IS_ANY_PAIR_SEMIRING )
+        size_t cxsize = 0 ;
+        #else
+        size_t cxsize = GB_CSIZE ;
+        #endif
         #if GB_C_IS_BITMAP
         Wf  = GB_MALLOC_WORK (workspace, int8_t, &Wf_size) ;
         #endif
@@ -787,7 +795,7 @@
             int8_t *restrict Hf = Wf + pW_start ;
             #endif
             #if ( !GB_IS_ANY_PAIR_SEMIRING )
-            GB_CTYPE *restrict Hx = (GB_CTYPE *) (Wcx + (pW_start * cxsize)) ;
+            GB_C_TYPE *restrict Hx = (GB_C_TYPE *) (Wcx + (pW_start * cxsize)) ;
             #endif
             #if GB_IS_PLUS_FC32_MONOID
             float  *restrict Hx_real = (float *) Hx ;
@@ -938,7 +946,7 @@
 
             // Hx = (typecasted) Wcx workspace, use Wf as-is
             #if ( !GB_IS_ANY_PAIR_SEMIRING )
-            GB_CTYPE *restrict Hx = ((GB_CTYPE *) Wcx) ;
+            GB_C_TYPE *restrict Hx = ((GB_C_TYPE *) Wcx) ;
             #endif
             #if GB_IS_PLUS_FC32_MONOID
             float  *restrict Hx_real = (float *) Hx ;

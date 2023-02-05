@@ -171,28 +171,28 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
                         Axnew [pnew] = Axold [p] ;
 
                     case GB_1BYTE : // uint8, int8, bool, or 1-byte user
-                        #define GB_ATYPE uint8_t
+                        #define GB_A_TYPE uint8_t
                         #include "GB_convert_sparse_to_bitmap_template.c"
                         break ;
 
                     case GB_2BYTE : // uint16, int16, or 2-byte user-defined
-                        #define GB_ATYPE uint16_t
+                        #define GB_A_TYPE uint16_t
                         #include "GB_convert_sparse_to_bitmap_template.c"
                         break ;
 
                     case GB_4BYTE : // uint32, int32, float, or 4-byte user
-                        #define GB_ATYPE uint32_t
+                        #define GB_A_TYPE uint32_t
                         #include "GB_convert_sparse_to_bitmap_template.c"
                         break ;
 
                     case GB_8BYTE : // uint64, int64, double, float complex,
                              // or 8-byte user defined
-                        #define GB_ATYPE uint64_t
+                        #define GB_A_TYPE uint64_t
                         #include "GB_convert_sparse_to_bitmap_template.c"
                         break ;
 
                     case GB_16BYTE : // double complex or 16-byte user-defined
-                        #define GB_ATYPE GB_blob16
+                        #define GB_A_TYPE GB_blob16
                         #include "GB_convert_sparse_to_bitmap_template.c"
                         break ;
 
@@ -204,7 +204,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
             if (!done)
             { 
                 // with user-defined types of other sizes
-                #define GB_ATYPE GB_void
+                #define GB_A_TYPE GB_void
                 #undef  GB_COPY
                 #define GB_COPY(Axnew,pnew,Axold,p)                         \
                     memcpy (Axnew +(pnew)*asize, Axold +(p)*asize, asize)

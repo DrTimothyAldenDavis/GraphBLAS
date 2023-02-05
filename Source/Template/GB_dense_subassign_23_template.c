@@ -16,9 +16,9 @@
     //--------------------------------------------------------------------------
 
     ASSERT (!C->iso) ;
-    const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
+    const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
     const bool B_iso = B->iso ;
-    GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     ASSERT (GB_is_dense (C)) ;
     const int64_t cnz = GB_nnz_held (C) ;
 

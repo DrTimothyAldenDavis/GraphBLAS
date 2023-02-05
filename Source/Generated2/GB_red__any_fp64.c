@@ -27,10 +27,10 @@
 // Identity: 0
 // Terminal: break ;
 
-#define GB_A_TYPENAME \
+#define GB_A_TYPE \
     double
 
-#define GB_Z_TYPENAME \
+#define GB_Z_TYPE \
     double
 
 // declare a scalar and set it equal to the monoid identity value

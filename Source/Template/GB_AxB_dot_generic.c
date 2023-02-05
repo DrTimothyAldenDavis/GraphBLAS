@@ -61,8 +61,8 @@
     // C = A'*B via dot products, function pointers, and typecasting
     //--------------------------------------------------------------------------
 
-    #define GB_ATYPE GB_void
-    #define GB_BTYPE GB_void
+    #define GB_A_TYPE GB_void
+    #define GB_B_TYPE GB_void
     #define GB_PHASE_2_OF_2
 
     // no vectorization
@@ -96,10 +96,7 @@
         #define GB_GETB(bkj,Bx,pB,B_iso) ;
 
         // define cij for each task
-        #define GB_CIJ_DECLARE(cij) GB_CTYPE cij
-
-        // address of Cx [p]
-        #define GB_CX(p) (&Cx [p])
+        #define GB_CIJ_DECLARE(cij) GB_C_TYPE cij
 
         // Cx [p] = cij
         #define GB_PUTC(cij,p) Cx [p] = cij
@@ -113,7 +110,7 @@
 
         // C(i,j) += (A')(i,k) * B(k,j)
         #define GB_MULTADD(cij, aki, bkj, i, k, j)                      \
-            GB_CTYPE zwork ;                                            \
+            GB_C_TYPE zwork ;                                            \
             GB_MULT (zwork, aki, bkj, i, k, j) ;                        \
             fadd (&cij, &cij, &zwork)
 
@@ -121,7 +118,7 @@
 
         if (mult->ztype == GrB_INT64)
         {
-            #define GB_CTYPE int64_t
+            #define GB_C_TYPE int64_t
             int64_t zterminal = 0 ;
             bool is_terminal = (terminal != NULL) ;
             if (is_terminal)
@@ -167,8 +164,8 @@
         }
         else
         {
-            #undef  GB_CTYPE
-            #define GB_CTYPE int32_t
+            #undef  GB_C_TYPE
+            #define GB_C_TYPE int32_t
             int32_t zterminal = 0 ;
             bool is_terminal = (terminal != NULL) ;
             if (is_terminal)
@@ -245,13 +242,9 @@
         #undef  GB_CIJ_DECLARE
         #define GB_CIJ_DECLARE(cij) GB_void cij [GB_VLA(csize)]
 
-        // address of Cx [p]
-        #undef  GB_CX
-        #define GB_CX(p) Cx +((p)*csize)
-
         // Cx [p] = cij
         #undef  GB_PUTC
-        #define GB_PUTC(cij,p) memcpy (GB_CX (p), cij, csize)
+        #define GB_PUTC(cij,p) memcpy (Cx +((p)*csize), cij, csize)
 
         // break if cij reaches the terminal value
         #undef  GB_IF_TERMINAL_BREAK
@@ -268,8 +261,8 @@
             GB_MULT (zwork, aki, bkj, i, k, j) ;                        \
             fadd (cij, cij, zwork)
 
-        #undef  GB_CTYPE
-        #define GB_CTYPE GB_void
+        #undef  GB_C_TYPE
+        #define GB_C_TYPE GB_void
 
         if (opcode == GB_FIRST_binop_code)
         { 

@@ -328,9 +328,9 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
             // address of Cx [p]
             #define GB_CX(p) Cx +((p)*csize)
 
-            #define GB_ATYPE GB_void
-            #define GB_BTYPE GB_void
-            #define GB_CTYPE GB_void
+            #define GB_A_TYPE GB_void
+            #define GB_B_TYPE GB_void
+            #define GB_C_TYPE GB_void
 
             // no vectorization
             #define GB_PRAGMA_SIMD_VECTORIZE ;

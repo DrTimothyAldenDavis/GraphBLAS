@@ -26,10 +26,10 @@
 // cast:     double cij = (aij)
 // unaryop:  cij = isnan (aij)
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     double
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     bool
 
 // declare aij as atype

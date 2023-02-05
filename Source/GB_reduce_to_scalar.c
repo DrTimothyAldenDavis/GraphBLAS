@@ -216,7 +216,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         // use JIT worker
         //----------------------------------------------------------------------
 
-        #ifdef GB_DEBUGIFY_DEFN
+        #if 0 // #ifdef GB_DEBUGIFY_DEFN
         if (!done)
         {
             info = GB_reduce_to_scalar_jit (z, monoid, A, W, F,
@@ -249,7 +249,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 // the switch factory didn't handle this case
                 GxB_binary_function freduce = monoid->op->binop_function ;
 
-                #define GB_A_TYPENAME GB_void
+                #define GB_A_TYPE GB_void
 
                 // no panel used
                 #define GB_PANEL 1

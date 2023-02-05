@@ -26,10 +26,10 @@
 // cast:     int8_t cij = GB_cast_to_int8_t (creal (aij))
 // unaryop:  cij = aij
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     GxB_FC64_t
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     int8_t
 
 // declare aij as atype

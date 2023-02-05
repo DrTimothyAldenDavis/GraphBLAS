@@ -55,7 +55,7 @@
 
     #define GB_MULTADD( c, a, b, i, k, j )                              \
     {                                                                   \
-        T_Z x_op_y ;     /* FIXME: use GB_Z_TYPENAME */                 \
+        GB_Z_TYPE x_op_y ;                                              \
         GB_MULT ( x_op_y, a, b, i, k, j ) ; /* x_op_y = a*b */          \
         GB_ADD ( c, c, x_op_y ) ;           /* c += x_op_y  */          \
     }

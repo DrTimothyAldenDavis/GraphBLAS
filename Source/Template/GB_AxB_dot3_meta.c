@@ -93,13 +93,13 @@
     const int64_t B_hash_bits = (B_is_hyper) ? (B_Y->vdim - 1) : 0 ;
 
     #if !GB_A_IS_PATTERN
-    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     #endif
     #if !GB_B_IS_PATTERN
-    const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
+    const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
     #endif
     #if !GB_IS_ANY_PAIR_SEMIRING
-          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+          GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
 
     const int64_t vlen = A->vlen ;

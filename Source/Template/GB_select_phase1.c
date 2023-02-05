@@ -44,7 +44,7 @@
     // get A
     //--------------------------------------------------------------------------
 
-    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     size_t  asize = A->type->size ;
     int64_t avdim = A->vdim ;
     ASSERT (GB_JUMBLED_OK (A)) ;

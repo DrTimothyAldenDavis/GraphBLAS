@@ -28,7 +28,7 @@
 
     const int8_t   *restrict Ab = A->b ;
     const int64_t  *restrict Ai = A->i ;
-    const GB_A_TYPENAME *restrict Ax = (GB_A_TYPENAME *) A->x ;
+    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     int64_t anz = GB_nnz_held (A) ;
     ASSERT (anz > 0) ;
     const bool A_has_zombies = (A->nzombies > 0) ;

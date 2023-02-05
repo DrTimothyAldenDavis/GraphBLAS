@@ -22,33 +22,33 @@ name = sprintf ('%s_%s_%s', unop, zname, xname) ;
 is_identity = isequal (unop, 'identity') ;
 no_typecast = isequal (ztype, xtype) ;
 if (is_identity && no_typecast)
-    fprintf (f, 'define(`_unop_apply'', `_unop_apply__(none)'')\n') ;
-    fprintf (f, 'define(`if_unop_apply_enabled'', `#if 0'')\n') ;
-    fprintf (f, 'define(`endif_unop_apply_enabled'', `#endif'')\n') ;
+    fprintf (f, 'm4_define(`_unop_apply'', `_unop_apply__(none)'')\n') ;
+    fprintf (f, 'm4_define(`if_unop_apply_enabled'', `#if 0'')\n') ;
+    fprintf (f, 'm4_define(`endif_unop_apply_enabled'', `#endif'')\n') ;
 else
-    fprintf (f, 'define(`_unop_apply'', `_unop_apply__%s'')\n', name) ;
-    fprintf (f, 'define(`if_unop_apply_enabled'', `'')\n') ;
-    fprintf (f, 'define(`endif_unop_apply_enabled'', `'')\n') ;
+    fprintf (f, 'm4_define(`_unop_apply'', `_unop_apply__%s'')\n', name) ;
+    fprintf (f, 'm4_define(`if_unop_apply_enabled'', `'')\n') ;
+    fprintf (f, 'm4_define(`endif_unop_apply_enabled'', `'')\n') ;
 end
 
 % function names
-fprintf (f, 'define(`_unop_tran'', `_unop_tran__%s'')\n', name) ;
+fprintf (f, 'm4_define(`_unop_tran'', `_unop_tran__%s'')\n', name) ;
 
 % type of C and A
-fprintf (f, 'define(`GB_ctype'', `%s'')\n', ztype) ;
-fprintf (f, 'define(`GB_atype'', `%s'')\n', xtype) ;
+fprintf (f, 'm4_define(`GB_ctype'', `%s'')\n', ztype) ;
+fprintf (f, 'm4_define(`GB_atype'', `%s'')\n', xtype) ;
 
 A_is_pattern = (isempty (strfind (op, 'xarg'))) ;
 
 % to get an entry from A
 if (A_is_pattern)
     % A(i,j) is not needed
-    fprintf (f, 'define(`GB_declarea'', `;'')\n') ;
-    fprintf (f, 'define(`GB_geta'', `;'')\n') ;
+    fprintf (f, 'm4_define(`GB_declarea'', `;'')\n') ;
+    fprintf (f, 'm4_define(`GB_geta'', `;'')\n') ;
 else
     % A is not iso, so GBX (Ax, p, A->iso) is not needed
-    fprintf (f, 'define(`GB_declarea'', `%s $1'')\n', xtype) ;
-    fprintf (f, 'define(`GB_geta'', `$1 = $2 [$3]'')\n') ;
+    fprintf (f, 'm4_define(`GB_declarea'', `%s $1'')\n', xtype) ;
+    fprintf (f, 'm4_define(`GB_geta'', `$1 = $2 [$3]'')\n') ;
 end
 
 % type-specific iminv
@@ -62,16 +62,16 @@ end
 
 % create the unary operator
 op = strrep (op, 'xarg', '`$2''') ;
-fprintf (f, 'define(`GB_unaryop'', `$1 = %s'')\n', op) ;
+fprintf (f, 'm4_define(`GB_unaryop'', `$1 = %s'')\n', op) ;
 
 % create the cast operator
 if (A_is_pattern)
     % cast (A(i,j)) is not needed
-    fprintf (f, 'define(`GB_cast'', `;'')\n') ;
+    fprintf (f, 'm4_define(`GB_cast'', `;'')\n') ;
 else
     fcast = strrep (fcast, 'zarg', '`$1''') ;
     fcast = strrep (fcast, 'xarg', '`$2''') ;
-    fprintf (f, 'define(`GB_cast'', `%s'')\n', fcast) ;
+    fprintf (f, 'm4_define(`GB_cast'', `%s'')\n', fcast) ;
 end
 
 % create the disable flag
@@ -80,7 +80,7 @@ disable = [disable (sprintf (' || GxB_NO_%s', upper (zname)))] ;
 if (~isequal (zname, xname))
     disable = [disable (sprintf (' || GxB_NO_%s', upper (xname)))] ;
 end
-fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
+fprintf (f, 'm4_define(`GB_disable'', `(%s)'')\n', disable) ;
 fclose (f) ;
 
 % construct the *.c file

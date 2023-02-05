@@ -25,7 +25,7 @@
     // plus_pair_real semiring
     //--------------------------------------------------------------------------
 
-    #if GB_CTYPE_IGNORE_OVERFLOW
+    #if GB_ZTYPE_IGNORE_OVERFLOW
 
         // PLUS_PAIR for 64-bit integers, float, and double (not complex):
         // To check if C(i,j) exists, test (cij != 0) when done.  The

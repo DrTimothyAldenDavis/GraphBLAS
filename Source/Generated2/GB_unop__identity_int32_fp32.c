@@ -26,10 +26,10 @@
 // cast:     int32_t cij = GB_cast_to_int32_t ((double) (aij))
 // unaryop:  cij = aij
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     float
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     int32_t
 
 // declare aij as atype

@@ -29,7 +29,7 @@
 // kind
 #define GB_ROWLE_SELECTOR
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     GB_void
 
 // test value of Ax [p]

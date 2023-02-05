@@ -26,10 +26,10 @@
 // cast:     double cij = (double) creal (aij)
 // unaryop:  cij = aij
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     GxB_FC64_t
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     double
 
 // declare aij as atype

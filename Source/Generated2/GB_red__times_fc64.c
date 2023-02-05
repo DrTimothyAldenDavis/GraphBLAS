@@ -27,10 +27,10 @@
 // Identity: GxB_CMPLX(1,0)
 // Terminal: ;
 
-#define GB_A_TYPENAME \
+#define GB_A_TYPE \
     GxB_FC64_t
 
-#define GB_Z_TYPENAME \
+#define GB_Z_TYPE \
     GxB_FC64_t
 
 // declare a scalar and set it equal to the monoid identity value

@@ -15,8 +15,8 @@
     // get C and the tile A
     //--------------------------------------------------------------------------
 
-    const GB_CTYPE *restrict Ax = (GB_CTYPE *) A->x ;
-    GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    const GB_C_TYPE *restrict Ax = (GB_C_TYPE *) A->x ;
+    GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     ASSERT (!A->iso) ;
 
     int64_t pC ;
@@ -35,5 +35,5 @@
     done = true ;
 }
 
-#undef GB_CTYPE
+#undef GB_C_TYPE
 

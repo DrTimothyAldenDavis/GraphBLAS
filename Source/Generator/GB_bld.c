@@ -27,19 +27,19 @@
 
 // dup:      GB_update_op(s, aij)
 
-#define GB_S_TYPENAME \
+#define GB_S_TYPE \
     GB_stype
 
-#define GB_T_TYPENAME \
+#define GB_T_TYPE \
     GB_ttype
 
-#define GB_X_TYPENAME \
+#define GB_X_TYPE \
     GB_xtype
 
-#define GB_Y_TYPENAME \
+#define GB_Y_TYPE \
     GB_ytype
 
-#define GB_Z_TYPENAME \
+#define GB_Z_TYPE \
     GB_ztype
 
 // Array to array

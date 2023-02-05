@@ -16,9 +16,9 @@
     //--------------------------------------------------------------------------
 
     // any matrix may be aliased to any other (C==A, C==B, and/or A==B)
-    GB_ATYPE *Ax = (GB_ATYPE *) A->x ;
-    GB_BTYPE *Bx = (GB_BTYPE *) B->x ;
-    GB_CTYPE *Cx = (GB_CTYPE *) C->x ;
+    GB_A_TYPE *Ax = (GB_A_TYPE *) A->x ;
+    GB_B_TYPE *Bx = (GB_B_TYPE *) B->x ;
+    GB_C_TYPE *Cx = (GB_C_TYPE *) C->x ;
     const int64_t cnz = GB_nnz (C) ;
     ASSERT (!C->iso) ;
     ASSERT (!A->iso) ;

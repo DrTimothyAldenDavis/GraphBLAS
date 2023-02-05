@@ -26,10 +26,10 @@
 // cast:     float cij = aij
 // unaryop:  cij = (1.0F)/aij
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     float
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     float
 
 // declare aij as atype

@@ -25,12 +25,12 @@
     const int64_t *restrict Bi = B->i ;
     const bool B_iso = B->iso ;
     #if !GB_A_IS_PATTERN
-    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     #endif
     #if !GB_B_IS_PATTERN
-    const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
+    const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
     #endif
-          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+          GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
 
     //--------------------------------------------------------------------------
     // C += A*B where A is bitmap/full, and either iso-valued or pattern-only
@@ -42,7 +42,7 @@
     {
         #if !GB_A_IS_PATTERN
         // get the iso value of A
-        const GB_ATYPE ax = Ax [0] ;
+        const GB_A_TYPE ax = Ax [0] ;
         #endif
         // get the task descriptor
         const int64_t jB_start = B_slice [tid] ;
@@ -69,7 +69,7 @@
                     #define s (i + GB_OFFSET)
                 #else
                     // s = ax * bkj, not dependent on i
-                    GB_CTYPE s ;
+                    GB_C_TYPE s ;
                     GB_MULT (s, ax, GBX (Bx, pB, B_iso), ignore, k, j) ;
                 #endif
                 // C(:,j) += s

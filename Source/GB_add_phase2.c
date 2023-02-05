@@ -431,9 +431,9 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         #undef  GB_PRAGMA_SIMD_VECTORIZE
         #define GB_PRAGMA_SIMD_VECTORIZE ;
 
-        #define GB_ATYPE GB_void
-        #define GB_BTYPE GB_void
-        #define GB_CTYPE GB_void
+        #define GB_A_TYPE GB_void
+        #define GB_B_TYPE GB_void
+        #define GB_C_TYPE GB_void
 
         if (op_is_positional)
         {

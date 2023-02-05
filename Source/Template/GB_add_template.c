@@ -94,9 +94,9 @@
     #ifdef GB_ISO_ADD
     ASSERT (C->iso) ;
     #else
-    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
-    const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
-          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
+    const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
+          GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     ASSERT (!C->iso) ;
     #endif
 

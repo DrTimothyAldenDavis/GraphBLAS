@@ -38,13 +38,13 @@
     ASSERT (!C->iso) ;
     ASSERT (!(A_iso && B_iso)) ;    // one of A or B can be iso, but not both
     #if GB_FLIPPED
-    const GB_BTYPE *restrict Ax = (GB_BTYPE *) A->x ;
-    const GB_ATYPE *restrict Bx = (GB_ATYPE *) B->x ;
+    const GB_B_TYPE *restrict Ax = (GB_B_TYPE *) A->x ;
+    const GB_A_TYPE *restrict Bx = (GB_A_TYPE *) B->x ;
     #else
-    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
-    const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
+    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
+    const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
     #endif
-          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+          GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
 
     const int64_t  *restrict Cp = C->p ;

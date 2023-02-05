@@ -26,10 +26,10 @@
 // cast:     GxB_FC32_t cij = aij
 // unaryop:  cij = catanhf (aij)
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     GxB_FC32_t
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     GxB_FC32_t
 
 // declare aij as atype

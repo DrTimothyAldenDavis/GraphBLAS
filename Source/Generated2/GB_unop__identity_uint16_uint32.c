@@ -26,10 +26,10 @@
 // cast:     uint16_t cij = (uint16_t) aij
 // unaryop:  cij = aij
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     uint32_t
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     uint16_t
 
 // declare aij as atype

@@ -29,7 +29,7 @@
 // kind
 #define GB_ENTRY_SELECTOR
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     GxB_FC64_t
 
 // test value of Ax [p]

@@ -13,7 +13,7 @@
     // get A
     //--------------------------------------------------------------------------
 
-    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
 
     //--------------------------------------------------------------------------
     // check all entries to see if they are equal to the first entry
@@ -30,8 +30,8 @@
         my_iso = iso ;
         if (my_iso)
         {
-            // GB_ATYPE a = Ax [0] ;
-            GB_GET_FIRST_VALUE (GB_ATYPE, a, Ax) ;
+            // GB_A_TYPE a = Ax [0] ;
+            GB_GET_FIRST_VALUE (GB_A_TYPE, a, Ax) ;
             for (int64_t p = pstart ; my_iso && p < pend ; p++)
             { 
                 // my_iso = my_iso && (a == Ax [p])
@@ -48,5 +48,5 @@
     done = true ;
 }
 
-#undef GB_ATYPE
+#undef GB_A_TYPE
 

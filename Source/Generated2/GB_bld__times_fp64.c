@@ -27,19 +27,19 @@
 
 // dup:      s *= aij
 
-#define GB_S_TYPENAME \
+#define GB_S_TYPE \
     double
 
-#define GB_T_TYPENAME \
+#define GB_T_TYPE \
     double
 
-#define GB_X_TYPENAME \
+#define GB_X_TYPE \
     double
 
-#define GB_Y_TYPENAME \
+#define GB_Y_TYPE \
     double
 
-#define GB_Z_TYPENAME \
+#define GB_Z_TYPE \
     double
 
 // Array to array

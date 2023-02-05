@@ -29,11 +29,11 @@
     //--------------------------------------------------------------------------
 
     #if !GB_A_IS_PATTERN
-    const GB_ATYPE *restrict Dx = (GB_ATYPE *) D->x ;
+    const GB_A_TYPE *restrict Dx = (GB_A_TYPE *) D->x ;
     #endif
     const bool D_iso = D->iso ;
     #if !GB_B_IS_PATTERN
-    const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
+    const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
     #endif
     const bool B_iso = B->iso ;
     const int64_t *restrict Bi = B->i ;

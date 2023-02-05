@@ -24,7 +24,7 @@
         // monoid: (plus, double)
 
         // monoid type:
-        #define GB_Z_TYPENAME double
+        #define GB_Z_TYPE double
 
         // reduction monoid:
         #define GB_ADD(z,x,y) z = (x) + (y)
@@ -46,7 +46,7 @@
         #define GB_A_IS_SPARSE 0
         #define GB_A_IS_BITMAP 1
         #define GB_A_IS_FULL   0
-        #define GB_A_TYPENAME double
+        #define GB_A_TYPE double
         #define GB_DECLAREA(a) double a
         #define GB_GETA(a,Ax,p,iso) a = (Ax [p])
 
@@ -68,9 +68,9 @@
 
 GrB_Info GB_jit_kernel
 (
-    GB_Z_TYPENAME *result,
+    GB_Z_TYPE *result,
     const GrB_Matrix A,
-    GB_Z_TYPENAME *restrict W,
+    GB_Z_TYPE *restrict W,
     bool *restrict F,
     int ntasks,
     int nthreads
@@ -78,15 +78,15 @@ GrB_Info GB_jit_kernel
 
 GrB_Info GB_jit_kernel
 (
-    GB_Z_TYPENAME *result,
+    GB_Z_TYPE *result,
     const GrB_Matrix A,
-    GB_Z_TYPENAME *restrict W,
+    GB_Z_TYPE *restrict W,
     bool *restrict F,
     int ntasks,
     int nthreads
 )
 { 
-    GB_Z_TYPENAME z = (*result) ;
+    GB_Z_TYPE z = (*result) ;
     #if GB_A_HAS_ZOMBIES || GB_A_IS_BITMAP || (GB_PANEL == 1)
     {
         #include "GB_reduce_to_scalar_template.c"

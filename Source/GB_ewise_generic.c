@@ -141,9 +141,9 @@ void GB_ewise_generic       // generic ewise
     // address of Cx [p]
     #define GB_CX(p) Cx +((p)*csize)
 
-    #define GB_ATYPE GB_void
-    #define GB_BTYPE GB_void
-    #define GB_CTYPE GB_void
+    #define GB_A_TYPE GB_void
+    #define GB_B_TYPE GB_void
+    #define GB_C_TYPE GB_void
 
     #define GB_PHASE_2_OF_2
 

@@ -56,30 +56,26 @@
 //    terminal:      break ;
 // MultAdd:  z = (x >= y)
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     int64_t
 
-#define GB_BTYPE \
+#define GB_B_TYPE \
     int64_t
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     bool
 
-#define GB_ASIZE \
-    sizeof (int64_t)
+#define GB_A_ISO A_iso
+#define GB_B_ISO B_iso
+#define GB_C_ISO \
+    0
 
-#define GB_BSIZE \
-    sizeof (int64_t) 
-
-#define GB_CSIZE \
-    sizeof (bool)
-
-// # of bits in the type of C, for AVX2 and AVX512F
-#define GB_CNBITS \
-    8
+// # of bits in the type of C, for AVX2 and AVX512F (saxpy5 method only)
+#define GB_C_NBITS \
+    GB_cn_bits
 
 // true for int64, uint64, float, double, float complex, and double complex 
-#define GB_CTYPE_IGNORE_OVERFLOW \
+#define GB_ZTYPE_IGNORE_OVERFLOW \
     0
 
 // declare aik as atype
@@ -105,17 +101,6 @@
 // true if values of B are not used
 #define GB_B_IS_PATTERN \
     0 \
-
-// Gx [pG] = Ax [pA]
-#define GB_LOADA(Gx,pG,Ax,pA,A_iso) \
-    Gx [pG] = GBX (Ax, pA, A_iso)
-
-// Gx [pG] = Bx [pB]
-#define GB_LOADB(Gx,pG,Bx,pB,B_iso) \
-    Gx [pG] = GBX (Bx, pB, B_iso)
-
-#define GB_CX(p) \
-    Cx [p]
 
 // multiply operator
 #define GB_MULT(z, x, y, i, k, j) \
@@ -439,9 +424,9 @@ GrB_Info GB (_AsaxbitB__any_ge_int64)
         // AVX512F: vector registers are 512 bits, or 64 bytes, which can hold
         // 16 floats or 8 doubles.
 
-        #define GB_V16_512 (16 * GB_CNBITS <= 512)
-        #define GB_V8_512  ( 8 * GB_CNBITS <= 512)
-        #define GB_V4_512  ( 4 * GB_CNBITS <= 512)
+        #define GB_V16_512 (16 * GB_C_NBITS <= 512)
+        #define GB_V8_512  ( 8 * GB_C_NBITS <= 512)
+        #define GB_V4_512  ( 4 * GB_C_NBITS <= 512)
 
         #define GB_V16 GB_V16_512
         #define GB_V8  GB_V8_512
@@ -473,9 +458,9 @@ GrB_Info GB (_AsaxbitB__any_ge_int64)
         // AVX2: vector registers are 256 bits, or 32 bytes, which can hold
         // 8 floats or 4 doubles.
 
-        #define GB_V16_256 (16 * GB_CNBITS <= 256)
-        #define GB_V8_256  ( 8 * GB_CNBITS <= 256)
-        #define GB_V4_256  ( 4 * GB_CNBITS <= 256)
+        #define GB_V16_256 (16 * GB_C_NBITS <= 256)
+        #define GB_V8_256  ( 8 * GB_C_NBITS <= 256)
+        #define GB_V4_256  ( 4 * GB_C_NBITS <= 256)
 
         #undef  GB_V16
         #undef  GB_V8

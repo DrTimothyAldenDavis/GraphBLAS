@@ -26,10 +26,10 @@
 // cast:     int64_t cij = aij
 // unaryop:  cij = ~(aij)
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     int64_t
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     int64_t
 
 // declare aij as atype

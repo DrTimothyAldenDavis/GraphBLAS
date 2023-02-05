@@ -27,19 +27,19 @@
 
 // dup:      
 
-#define GB_S_TYPENAME \
+#define GB_S_TYPE \
     GxB_FC64_t
 
-#define GB_T_TYPENAME \
+#define GB_T_TYPE \
     GxB_FC64_t
 
-#define GB_X_TYPENAME \
+#define GB_X_TYPE \
     GxB_FC64_t
 
-#define GB_Y_TYPENAME \
+#define GB_Y_TYPE \
     GxB_FC64_t
 
-#define GB_Z_TYPENAME \
+#define GB_Z_TYPE \
     GxB_FC64_t
 
 // Array to array

@@ -129,8 +129,6 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
         zcode == GB_INT64_code || zcode == GB_UINT64_code ||
         zcode == GB_FP32_code  || zcode == GB_FP64_code ||
         zcode == GB_FC32_code  || zcode == GB_FC64_code) ;
-
-    // note "CTYPE" is in the name in the CPU kernels (fix them to use ZTYPE)
     fprintf (fp, "#define GB_ZTYPE_IGNORE_OVERFLOW %d\n",
         ztype_ignore_overflow) ;
 
@@ -140,6 +138,8 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
     bool C_iso = (ccode == 0) ;
     GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, C_iso) ;
+    fprintf (fp, "#define GB_C_NBITS %d\n",
+        (int) (C_iso ? 0 : (8 * ctype->size))) ;
 
     //--------------------------------------------------------------------------
     // construct the macros to access the mask (if any), and its name

@@ -26,10 +26,10 @@
 // cast:     GxB_FC64_t cij = GB_CMPLX64 ((double) crealf (aij), (double) cimagf (aij))
 // unaryop:  cij = aij
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     GxB_FC32_t
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     GxB_FC64_t
 
 // declare aij as atype

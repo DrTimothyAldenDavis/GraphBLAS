@@ -14,8 +14,8 @@
     //--------------------------------------------------------------------------
 
     #ifndef GB_ISO_SPLIT
-    const GB_CTYPE *restrict Ax = (GB_CTYPE *) A->x ;
-          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    const GB_C_TYPE *restrict Ax = (GB_C_TYPE *) A->x ;
+          GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -52,6 +52,6 @@
     done = true ;
 }
 
-#undef GB_CTYPE
+#undef GB_C_TYPE
 #undef GB_ISO_SPLIT
 

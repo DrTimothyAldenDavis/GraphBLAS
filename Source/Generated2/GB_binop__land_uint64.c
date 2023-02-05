@@ -48,13 +48,13 @@
 
 // BinaryOp:   cij = ((aij != 0) && (bij != 0))
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     uint64_t
 
-#define GB_BTYPE \
+#define GB_B_TYPE \
     uint64_t
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     uint64_t
 
 // true if the types of A and B are identical
@@ -552,10 +552,10 @@ GrB_Info GB (_bind1st_tran__land_uint64)
     int nthreads
 )
 { 
-    // GB_unop_transpose.c uses GB_ATYPE, but A is
+    // GB_unop_transpose.c uses GB_A_TYPE, but A is
     // the 2nd input to binary operator z=f(x,y).
-    #undef  GB_ATYPE
-    #define GB_ATYPE \
+    #undef  GB_A_TYPE
+    #define GB_A_TYPE \
     uint64_t
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
@@ -564,8 +564,8 @@ GrB_Info GB (_bind1st_tran__land_uint64)
     #include "GB_unop_transpose.c"
     return (GrB_SUCCESS) ;
     #endif
-    #undef  GB_ATYPE
-    #define GB_ATYPE \
+    #undef  GB_A_TYPE
+    #define GB_A_TYPE \
     uint64_t
 }
 

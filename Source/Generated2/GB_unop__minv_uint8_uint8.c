@@ -26,10 +26,10 @@
 // cast:     uint8_t cij = aij
 // unaryop:  cij = GB_idiv_uint8 (1, aij)
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     uint8_t
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     uint8_t
 
 // declare aij as atype

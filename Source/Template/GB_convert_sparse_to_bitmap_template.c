@@ -9,9 +9,9 @@
 
 {
 
-    #if defined ( GB_ATYPE )
-    const GB_ATYPE *restrict Axold = (GB_ATYPE *) A->x ;
-          GB_ATYPE *restrict Axnew = (GB_ATYPE *) Ax_new ;
+    #if defined ( GB_A_TYPE )
+    const GB_A_TYPE *restrict Axold = (GB_A_TYPE *) A->x ;
+          GB_A_TYPE *restrict Axnew = (GB_A_TYPE *) Ax_new ;
     #endif
 
     int tid ;
@@ -74,5 +74,5 @@
     done = true ;
 }
 
-#undef GB_ATYPE
+#undef GB_A_TYPE
 

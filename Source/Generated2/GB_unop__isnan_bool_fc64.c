@@ -26,10 +26,10 @@
 // cast:     GxB_FC64_t cij = (aij)
 // unaryop:  cij = GB_cisnan (aij)
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     GxB_FC64_t
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     bool
 
 // declare aij as atype

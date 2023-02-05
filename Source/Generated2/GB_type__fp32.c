@@ -25,11 +25,11 @@
 
 // C type:   float
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     float
 
 // C must have the same type as A or the scalar x
-#define GB_ATYPE GB_CTYPE
+#define GB_A_TYPE GB_C_TYPE
 
 #define GB_CX(p) Cx [p]
 

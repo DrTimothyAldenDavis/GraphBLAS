@@ -27,19 +27,19 @@
 
 // dup:      if ((aij < s) || (s != s)) { s = aij ; }
 
-#define GB_S_TYPENAME \
+#define GB_S_TYPE \
     float
 
-#define GB_T_TYPENAME \
+#define GB_T_TYPE \
     float
 
-#define GB_X_TYPENAME \
+#define GB_X_TYPE \
     float
 
-#define GB_Y_TYPENAME \
+#define GB_Y_TYPE \
     float
 
-#define GB_Z_TYPENAME \
+#define GB_Z_TYPE \
     float
 
 // Array to array

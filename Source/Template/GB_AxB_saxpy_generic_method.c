@@ -137,8 +137,8 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     // C = A*B via saxpy3 or bitmap method, function pointers, and typecasting
     //--------------------------------------------------------------------------
 
-    // memcpy (&(Cx [pC]), &(Hx [i]), len*csize)
-    #define GB_CIJ_MEMCPY(pC,i,len) memcpy (GB_CX (pC), GB_HX (i), (len)*csize)
+    // memcpy (&(Cx [p]), &(Hx [i]), len*csize)
+    #define GB_CIJ_MEMCPY(p,i,len) memcpy (Cx +((p)*csize), GB_HX (i), (len)*csize)
 
     // atomic update not available for function pointers
     #define GB_HAS_ATOMIC 0
@@ -155,8 +155,8 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     #define GB_IS_ANY_PAIR_SEMIRING 0
     #define GB_IS_PAIR_MULTIPLIER 0
 
-    #define GB_ATYPE GB_void
-    #define GB_BTYPE GB_void
+    #define GB_A_TYPE GB_void
+    #define GB_B_TYPE GB_void
     #define GB_BSIZE bsize
 
     // no vectorization
@@ -197,17 +197,8 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
         #define GB_DECLAREB(bkj) ;
         #define GB_GETB(bkj,Bx,pB,B_iso) ;
 
-        // Gx [pG] = A(i,k), located in Ax [A_iso ? 0:pA], value not used
-        #define GB_LOADA(Gx,pG,Ax,pA,A_iso) ;
-
-        // Gx [pG] = B(k,j), located in Bx [B_iso ? 0:pB], value not used
-        #define GB_LOADB(Gx,pG,Bx,pB,B_iso) ;
-
         // define t for each task
-        #define GB_CIJ_DECLARE(t) GB_CTYPE t
-
-        // address of Cx [p]
-        #define GB_CX(p) (&Cx [p])
+        #define GB_CIJ_DECLARE(t) GB_C_TYPE t
 
         // Cx [p] = t
         #define GB_CIJ_WRITE(p,t) Cx [p] = t
@@ -222,10 +213,10 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
         #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
 
         // Cx [p] += Hx [i]
-        #define GB_CIJ_GATHER_UPDATE(p,i) fadd (GB_CX (p), GB_CX (p), GB_HX (i))
+        #define GB_CIJ_GATHER_UPDATE(p,i) fadd ((&Cx [p]), (&Cx [p]), GB_HX (i))
 
         // Cx [p] += t
-        #define GB_CIJ_UPDATE(p,t) fadd (GB_CX (p), GB_CX (p), &t)
+        #define GB_CIJ_UPDATE(p,t) fadd ((&Cx [p]), (&Cx [p]), &t)
 
         // Hx [i] += t
         #define GB_HX_UPDATE(i,t) fadd (GB_HX (i), GB_HX (i), &t)
@@ -236,8 +227,8 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
 
         #if OP_IS_INT64
         {
-            #undef  GB_CTYPE
-            #define GB_CTYPE int64_t
+            #undef  GB_C_TYPE
+            #define GB_C_TYPE int64_t
             #undef  GB_CSIZE
             #define GB_CSIZE (sizeof (int64_t))
             ASSERT (C->type == GrB_INT64) ;
@@ -272,8 +263,8 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
         }
         #else
         {
-            #undef  GB_CTYPE
-            #define GB_CTYPE int32_t
+            #undef  GB_C_TYPE
+            #define GB_C_TYPE int32_t
             #undef  GB_CSIZE
             #define GB_CSIZE (sizeof (int32_t))
             ASSERT (C->type == GrB_INT32) ;
@@ -344,27 +335,13 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
                 cast_B (bkj, Bx +((B_iso) ? 0:((pB)*bsize)), bsize) ;       \
             }
 
-        // Gx [pG] = A(i,k), located in Ax [A_iso ? 0:pA], no typecasting
-        #undef  GB_LOADA
-        #define GB_LOADA(Gx,pG,Ax,pA,A_iso)                                 \
-            memcpy (Gx + ((pG)*asize), Ax +((A_iso) ? 0:((pA)*asize)), asize)
-
-        // Gx [pG] = B(k,j), located in Bx [B_iso ? 0:pB], no typecasting
-        #undef  GB_LOADB
-        #define GB_LOADB(Gx,pG,Bx,pB,B_iso)                                 \
-            memcpy (Gx + ((pG)*bsize), Bx +((B_iso) ? 0:((pB)*bsize)), bsize)
-
         // define t for each task
         #undef  GB_CIJ_DECLARE
         #define GB_CIJ_DECLARE(t) GB_void t [GB_VLA(csize)]
 
-        // address of Cx [p]
-        #undef  GB_CX
-        #define GB_CX(p) (Cx +((p)*csize))
-
         // Cx [p] = t
         #undef  GB_CIJ_WRITE
-        #define GB_CIJ_WRITE(p,t) memcpy (GB_CX (p), t, csize)
+        #define GB_CIJ_WRITE(p,t) memcpy (Cx +((p)*csize), t, csize)
 
         // address of Hx [i]
         #undef  GB_HX
@@ -376,22 +353,22 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
 
         // Cx [p] = Hx [i]
         #undef  GB_CIJ_GATHER
-        #define GB_CIJ_GATHER(p,i) memcpy (GB_CX (p), GB_HX(i), csize)
+        #define GB_CIJ_GATHER(p,i) memcpy (Cx +((p)*csize), GB_HX(i), csize)
 
         // Cx [p] += Hx [i]
         #undef  GB_CIJ_GATHER_UPDATE
-        #define GB_CIJ_GATHER_UPDATE(p,i) fadd (GB_CX (p), GB_CX (p), GB_HX (i))
+        #define GB_CIJ_GATHER_UPDATE(p,i) fadd (Cx +((p)*csize), Cx +((p)*csize), GB_HX (i))
 
         // Cx [p] += t
         #undef  GB_CIJ_UPDATE
-        #define GB_CIJ_UPDATE(p,t) fadd (GB_CX (p), GB_CX (p), t)
+        #define GB_CIJ_UPDATE(p,t) fadd (Cx +((p)*csize), Cx +((p)*csize), t)
 
         // Hx [i] += t
         #undef  GB_HX_UPDATE
         #define GB_HX_UPDATE(i,t) fadd (GB_HX (i), GB_HX (i), t)
 
-        #undef  GB_CTYPE
-        #define GB_CTYPE GB_void
+        #undef  GB_C_TYPE
+        #define GB_C_TYPE GB_void
 
         #undef  GB_CSIZE
         #define GB_CSIZE csize

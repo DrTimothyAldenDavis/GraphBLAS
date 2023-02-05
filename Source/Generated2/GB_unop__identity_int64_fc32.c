@@ -26,10 +26,10 @@
 // cast:     int64_t cij = GB_cast_to_int64_t ((double) crealf (aij))
 // unaryop:  cij = aij
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     GxB_FC32_t
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     int64_t
 
 // declare aij as atype

@@ -171,8 +171,8 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
             fop (Cx +((pC)*zsize), xwork) ;                             \
         }
 
-        #define GB_ATYPE GB_void
-        #define GB_CTYPE GB_void
+        #define GB_A_TYPE GB_void
+        #define GB_C_TYPE GB_void
         #include "GB_unop_transpose.c"
 
     }

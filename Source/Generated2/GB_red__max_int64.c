@@ -27,10 +27,10 @@
 // Identity: INT64_MIN
 // Terminal: if (z == INT64_MAX) { break ; }
 
-#define GB_A_TYPENAME \
+#define GB_A_TYPE \
     int64_t
 
-#define GB_Z_TYPENAME \
+#define GB_Z_TYPE \
     int64_t
 
 // declare a scalar and set it equal to the monoid identity value

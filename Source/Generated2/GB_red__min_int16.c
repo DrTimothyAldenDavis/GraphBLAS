@@ -27,10 +27,10 @@
 // Identity: INT16_MAX
 // Terminal: if (z == INT16_MIN) { break ; }
 
-#define GB_A_TYPENAME \
+#define GB_A_TYPE \
     int16_t
 
-#define GB_Z_TYPENAME \
+#define GB_Z_TYPE \
     int16_t
 
 // declare a scalar and set it equal to the monoid identity value

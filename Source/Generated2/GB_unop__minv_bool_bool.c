@@ -26,10 +26,10 @@
 // cast:     ;
 // unaryop:  cij = true
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     bool
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     bool
 
 // declare aij as atype

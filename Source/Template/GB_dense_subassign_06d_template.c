@@ -41,8 +41,8 @@
     ASSERT (A_iso || (GB_nnz (A) == 1 && !A_is_bitmap)) ;
     ASSERT (Mask_struct) ;
     #else
-    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
-          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
+          GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
 
     //--------------------------------------------------------------------------

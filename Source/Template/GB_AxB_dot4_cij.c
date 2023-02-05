@@ -16,7 +16,7 @@
     //--------------------------------------------------------------------------
 
     const int64_t pC = i + pC_start ;   // C(i,j) is at Cx [pC]
-    GB_CTYPE GB_GET4C (cij, pC) ;       // cij = Cx [pC]
+    GB_C_TYPE GB_GET4C (cij, pC) ;       // cij = Cx [pC]
 
     //--------------------------------------------------------------------------
     // C(i,j) += A (:,i)*B(:,j): a single dot product
@@ -38,7 +38,7 @@
             // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
             // for bool, 8-bit, 16-bit, or 32-bit integer
             uint64_t t = ((uint64_t) cij) + ainz ;
-            cij = (GB_CTYPE) (t & GB_CTYPE_BITS) ;
+            cij = (GB_C_TYPE) (t & GB_CTYPE_BITS) ;
             #elif GB_IS_PLUS_FC32_MONOID
             // PLUS monoid for float complex
             cij = GB_CMPLX32 (crealf (cij) + (float) ainz, 0) ;
@@ -47,7 +47,7 @@
             cij = GB_CMPLX64 (creal (cij) + (double) ainz, 0) ;
             #else
             // PLUS monoid for float, double, or 64-bit integers 
-            cij += (GB_CTYPE) ainz ;
+            cij += (GB_C_TYPE) ainz ;
             #endif
         }
         #elif GB_IS_MIN_FIRSTJ_SEMIRING

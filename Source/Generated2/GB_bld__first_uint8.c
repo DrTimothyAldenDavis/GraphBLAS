@@ -27,19 +27,19 @@
 
 // dup:      
 
-#define GB_S_TYPENAME \
+#define GB_S_TYPE \
     uint8_t
 
-#define GB_T_TYPENAME \
+#define GB_T_TYPE \
     uint8_t
 
-#define GB_X_TYPENAME \
+#define GB_X_TYPE \
     uint8_t
 
-#define GB_Y_TYPENAME \
+#define GB_Y_TYPE \
     uint8_t
 
-#define GB_Z_TYPENAME \
+#define GB_Z_TYPE \
     uint8_t
 
 // Array to array

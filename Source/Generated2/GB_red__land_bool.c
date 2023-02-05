@@ -27,10 +27,10 @@
 // Identity: true
 // Terminal: if (z == false) { break ; }
 
-#define GB_A_TYPENAME \
+#define GB_A_TYPE \
     bool
 
-#define GB_Z_TYPENAME \
+#define GB_Z_TYPE \
     bool
 
 // declare a scalar and set it equal to the monoid identity value

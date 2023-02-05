@@ -106,10 +106,10 @@
     #endif
 
     #if !GB_A_IS_PATTERN
-    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     #endif
     #if !GB_B_IS_PATTERN
-    const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
+    const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
     #endif
 
     //==========================================================================
@@ -139,7 +139,7 @@
         GB_GET_T_FOR_SECONDJ ;
 
         #if !GB_IS_ANY_PAIR_SEMIRING
-        GB_CTYPE *restrict Hx = (GB_CTYPE *) SaxpyTasks [taskid].Hx ;
+        GB_C_TYPE *restrict Hx = (GB_C_TYPE *) SaxpyTasks [taskid].Hx ;
         #endif
 
         #if GB_IS_PLUS_FC32_MONOID
@@ -357,7 +357,7 @@
 
     int64_t  *restrict Ci = C->i ;
     #if ( !GB_IS_ANY_PAIR_SEMIRING )
-    GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
 
     ASSERT (C->i_size == GB_Global_memtable_size (C->i)) ;
@@ -379,7 +379,7 @@
         //----------------------------------------------------------------------
 
         #if !GB_IS_ANY_PAIR_SEMIRING
-        GB_CTYPE *restrict Hx = (GB_CTYPE *) SaxpyTasks [taskid].Hx ;
+        GB_C_TYPE *restrict Hx = (GB_C_TYPE *) SaxpyTasks [taskid].Hx ;
         #endif
         int64_t hash_size = SaxpyTasks [taskid].hsize ;
         bool use_Gustavson = (hash_size == cvlen) ;

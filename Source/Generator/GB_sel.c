@@ -29,7 +29,7 @@
 // kind
 GB_kind
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     GB_atype
 
 // test value of Ax [p]

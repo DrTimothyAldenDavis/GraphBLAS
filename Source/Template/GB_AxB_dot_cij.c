@@ -71,7 +71,7 @@
             #elif (GB_CTYPE_BITS > 0)
             // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
             // for bool, 8-bit, 16-bit, or 32-bit integer
-            cij = (GB_CTYPE) (((uint64_t) vlen) & GB_CTYPE_BITS) ;
+            cij = (GB_C_TYPE) (((uint64_t) vlen) & GB_CTYPE_BITS) ;
             #else
             // PLUS monoid for float, double, or 64-bit integers 
             cij = GB_CTYPE_CAST (vlen, 0) ;
@@ -171,7 +171,7 @@
             #elif (GB_CTYPE_BITS > 0)
             // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
             // for bool, 8-bit, 16-bit, or 32-bit integer
-            cij = (GB_CTYPE) (((uint64_t) bjnz) & GB_CTYPE_BITS) ;
+            cij = (GB_C_TYPE) (((uint64_t) bjnz) & GB_CTYPE_BITS) ;
             #else
             // PLUS monoid for float, double, or 64-bit integers 
             cij = GB_CTYPE_CAST (bjnz, 0) ;
@@ -370,7 +370,7 @@
             #elif (GB_CTYPE_BITS > 0)
             // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
             // for bool, 8-bit, 16-bit, or 32-bit integer
-            cij = (GB_CTYPE) (((uint64_t) ainz) & GB_CTYPE_BITS) ;
+            cij = (GB_C_TYPE) (((uint64_t) ainz) & GB_CTYPE_BITS) ;
             #else
             // PLUS monoid for float, double, or 64-bit integers 
             cij = GB_CTYPE_CAST (ainz, 0) ;

@@ -26,10 +26,10 @@
 // cast:     bool cij = (crealf (aij) != 0) || (cimagf (aij) != 0)
 // unaryop:  cij = aij
 
-#define GB_ATYPE \
+#define GB_A_TYPE \
     GxB_FC32_t
 
-#define GB_CTYPE \
+#define GB_C_TYPE \
     bool
 
 // declare aij as atype

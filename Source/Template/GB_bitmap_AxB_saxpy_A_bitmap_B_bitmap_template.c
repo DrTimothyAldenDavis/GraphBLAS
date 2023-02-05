@@ -88,7 +88,7 @@
         // declare local storage for this task
         //----------------------------------------------------------------------
 
-//      GB_ATYPE Ax_cache [GB_TILE_SIZE * GB_KTILE_SIZE] ;
+//      GB_A_TYPE Ax_cache [GB_TILE_SIZE * GB_KTILE_SIZE] ;
 //      int8_t Ab_cache [GB_TILE_SIZE * GB_KTILE_SIZE] ;
         bool Ab_any_in_row [GB_TILE_SIZE] ;
 

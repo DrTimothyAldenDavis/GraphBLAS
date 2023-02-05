@@ -25,7 +25,7 @@
     // get A
     //--------------------------------------------------------------------------
 
-    const GB_A_TYPENAME *restrict Ax = (GB_A_TYPENAME *) A->x ;
+    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     ASSERT (!A->iso) ;
     int64_t anz = GB_nnz (A) ;
     ASSERT (anz > 0) ;
@@ -49,7 +49,7 @@
         // load the Panel with the first entries
         //----------------------------------------------------------------------
 
-        GB_Z_TYPENAME Panel [GB_PANEL] ;
+        GB_Z_TYPE Panel [GB_PANEL] ;
         int64_t first_panel_size = GB_IMIN (GB_PANEL, anz) ;
         for (int64_t k = 0 ; k < first_panel_size ; k++)
         { 
@@ -146,7 +146,7 @@
 
             int64_t pstart, pend ;
             GB_PARTITION (pstart, pend, anz, tid, ntasks) ;
-            GB_Z_TYPENAME t ;
+            GB_Z_TYPE t ;
             // t = (ztype) Ax [pstart]
             GB_GETA (t, Ax, pstart, false) ;
 
@@ -174,7 +174,7 @@
                 // load the Panel with the first entries
                 //--------------------------------------------------------------
 
-                GB_Z_TYPENAME Panel [GB_PANEL] ;
+                GB_Z_TYPE Panel [GB_PANEL] ;
                 int64_t my_anz = pend - pstart ;
                 int64_t first_panel_size = GB_IMIN (GB_PANEL, my_anz) ;
                 for (int64_t k = 0 ; k < first_panel_size ; k++)
