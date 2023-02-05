@@ -8,7 +8,8 @@
 //------------------------------------------------------------------------------
 
 // This method constructs the name and defn of a user-defined op (unary,
-// binary, or indexunary).  It also constructs the op->hash for the jit.
+// binary, or indexunary).  It also constructs the op->hash for the jit,
+// which is never zero for this metho.
 
 #include "GB.h"
 #include <ctype.h>

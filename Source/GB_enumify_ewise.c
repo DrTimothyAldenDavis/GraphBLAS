@@ -16,6 +16,15 @@
 // the same as the monoid binary operator (but this may change in the future).
 
 // Returns true if the problem uses only built-in types and operators.
+// For ewise methods, it's not sufficient to use this test:
+//
+//      builtin = (binaryop->hash == 0)
+//
+// because binaryop can be NULL for GrB_wait.  In that case, the types
+// of A, B, and C must be checked as well.  GB_reduce_to_vector creates a
+// non-NULL binary op, FIRST_UDT, using the FIRST binary opcode but with
+// user-defined x, y, and ztypes.  This operator will be determined to be
+// non-built-in, because it will have a nonzero hash.
 
 bool GB_enumify_ewise       // enumerate a GrB_eWise problem
 (
@@ -52,14 +61,15 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     //--------------------------------------------------------------------------
 
     GB_Opcode binaryop_opcode ;
-    GrB_Type xtype, ytype, ztype ;
+    GB_Type_code xcode, ycode, zcode ;
+
     if (C_iso)
     {
         // values of C are not computed by the kernel
         binaryop_opcode = GB_PAIR_binop_code ;
-        xtype = GrB_BOOL ;
-        ytype = GrB_BOOL ;
-        ztype = GrB_BOOL ;
+        xcode = 0 ;
+        ycode = 0 ;
+        zcode = 0 ;
     }
     else if (binaryop == NULL)
     {
@@ -67,22 +77,18 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
         binaryop_opcode = GB_NOP_code ;
         ASSERT (atype == btype) ;
         ASSERT (ctype == btype) ;
-        xtype = atype ;
-        ytype = atype ;
-        ztype = atype ;
+        xcode = atype->code ;
+        ycode = atype->code ;
+        zcode = atype->code ;
     }
     else
     {
         // normal case
         binaryop_opcode = binaryop->opcode ;
-        xtype = binaryop->xtype ;
-        ytype = binaryop->ytype ;
-        ztype = binaryop->ztype ;
+        xcode = binaryop->xtype->code ;
+        ycode = binaryop->ytype->code ;
+        zcode = binaryop->ztype->code ;
     }
-
-    GB_Type_code xcode = xtype->code ;
-    GB_Type_code ycode = ytype->code ;
-    GB_Type_code zcode = ztype->code ;
 
     //--------------------------------------------------------------------------
     // rename redundant boolean operators
@@ -115,8 +121,8 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool op_is_first  = (binaryop_opcode == GB_FIRST_binop_code ) ;
     bool op_is_second = (binaryop_opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (binaryop_opcode == GB_PAIR_binop_code) ;
-    bool A_is_pattern = op_is_second || op_is_pair ;
-    bool B_is_pattern = op_is_first  || op_is_pair ;
+    bool A_is_pattern = op_is_second || op_is_pair || C_iso ;
+    bool B_is_pattern = op_is_first  || op_is_pair || C_iso ;
 
     //--------------------------------------------------------------------------
     // enumify the binary operator

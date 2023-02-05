@@ -20,9 +20,7 @@
 // accum is not present.  Kernels that use it would require accum to be
 // the same as the monoid binary operator.
 
-// Returns true if all types and operators are built-in.
-
-bool GB_enumify_mxm         // enumerate a GrB_mxm problem
+void GB_enumify_mxm         // enumerate a GrB_mxm problem
 (
     // output:              // future: may need to become 2 x uint64
     uint64_t *scode,        // unique encoding of the entire semiring
@@ -128,8 +126,16 @@ bool GB_enumify_mxm         // enumerate a GrB_mxm problem
     bool op_is_second = (mult_opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (mult_opcode == GB_PAIR_binop_code) ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (mult_opcode) ;
-    if (op_is_second || op_is_pair || op_is_positional) xcode = 0 ;
-    if (op_is_first  || op_is_pair || op_is_positional) ycode = 0  ;
+    if (op_is_second || op_is_pair || op_is_positional || C_iso)
+    {
+        // x is not used
+        xcode = 0 ;
+    }
+    if (op_is_first  || op_is_pair || op_is_positional || C_iso)
+    {
+        // y is not used
+        ycode = 0  ;
+    }
     bool A_is_pattern = (xcode == 0) ;
     bool B_is_pattern = (ycode == 0) ;
 
@@ -181,15 +187,6 @@ bool GB_enumify_mxm         // enumerate a GrB_mxm problem
     GB_enumify_sparsity (&bsparsity, B_sparsity) ;
 
     //--------------------------------------------------------------------------
-    // enumify the builtin property
-    //--------------------------------------------------------------------------
-
-    bool builtin = (mult_ecode > 0) && (add_ecode > 0) &&
-        (acode != GB_UDT_code) &&
-        (bcode != GB_UDT_code) &&
-        (ccode != GB_UDT_code) ;
-
-    //--------------------------------------------------------------------------
     // construct the semiring scode
     //--------------------------------------------------------------------------
 
@@ -229,6 +226,5 @@ bool GB_enumify_mxm         // enumerate a GrB_mxm problem
                 GB_LSHIFT (asparsity  ,  2) |  // 0 to 3       2
                 GB_LSHIFT (bsparsity  ,  0) ;  // 0 to 3       2
 
-    return (builtin) ;
 }
 

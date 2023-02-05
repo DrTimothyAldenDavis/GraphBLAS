@@ -116,13 +116,13 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 // GrB_mxm
 //------------------------------------------------------------------------------
 
-bool GB_enumify_mxm         // enumerate a GrB_mxm problem
+void GB_enumify_mxm         // enumerate a GrB_mxm problem
 (
-    // output:
+    // output:              // future: may need to become 2 x uint64
     uint64_t *scode,        // unique encoding of the entire semiring
     // input:
     // C matrix:
-    bool C_iso,             // if true, semiring is ignored
+    bool C_iso,             // if true, semiring must be ANY_PAIR_BOOL
     int C_sparsity,         // sparse, hyper, bitmap, or full
     GrB_Type ctype,         // C=((ctype) T) is the final typecast
     // M matrix:
@@ -241,8 +241,10 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // inputs:
     int add_ecode,      // binary op as an enum
     int id_ecode,       // identity value as an enum
-    int term_ecode,     // terminal value as an enum (< 30 is terminal)
-    GrB_Monoid monoid   // monoid to macrofy (NULL if not used)
+    int term_ecode,     // terminal value as an enum (<= 28 is terminal)
+    GrB_Monoid monoid,  // monoid to macrofy
+    // output:
+    const char **u_expression
 ) ;
 
 void GB_macrofy_query_monoid
@@ -273,7 +275,10 @@ void GB_macrofy_binop
     bool flipxy,                // if true: op is f(y,x), multipicative only
     bool is_monoid,             // if true: additive operator for monoid
     int ecode,
-    GrB_BinaryOp op
+    GrB_BinaryOp op,
+    // output:
+    const char **f_handle,
+    const char **u_handle
 ) ;
 
 //------------------------------------------------------------------------------

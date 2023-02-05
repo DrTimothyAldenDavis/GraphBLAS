@@ -51,7 +51,6 @@ void GB_macrofy_cast_output
     else
     {
         fprintf (fp, "#define %s(%s,%s) ", macro_name, zarg, xargs) ;
-
         if (nargs == 3)
         {
             fprintf (fp, f, xexpr, zarg, zarg) ;
@@ -60,6 +59,7 @@ void GB_macrofy_cast_output
         {
             fprintf (fp, f, xexpr, zarg) ;
         }
+        fprintf (fp, "\n") ;
     }
 }
 

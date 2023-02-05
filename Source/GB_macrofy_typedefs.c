@@ -95,8 +95,10 @@ void GB_macrofy_typedefs
 
     #define COMMENT(type,what)                                               \
         if (type != NULL && type->defn == NULL && type->code == GB_UDT_code) \
+        {                                                                    \
             fprintf (fp, "// %stype (%s) definition not provided\n",         \
-                what, type->name == NULL ? "" : type->name) ;
+                what, type->name == NULL ? "" : type->name) ;                \
+        }
     COMMENT (ctype, "c") ;
     COMMENT (atype, "a") ;
     COMMENT (btype, "b") ;

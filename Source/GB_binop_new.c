@@ -50,7 +50,7 @@ GrB_Info GB_binop_new
     op->ytype = ytype ;
     op->unop_function = NULL ;
     op->idxunop_function = NULL ;
-    op->binop_function = function ;       // may be NULL
+    op->binop_function = function ;       // NULL for GB_reduce_to_vector
     op->selop_function = NULL ;
     op->opcode = opcode ;
 

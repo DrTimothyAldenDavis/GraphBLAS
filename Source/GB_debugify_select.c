@@ -45,9 +45,9 @@ void GB_debugify_select
     GB_namify_problem (select_name, "GB_jit_select_", 8, select_code, builtin,
         opname,
         NULL,
+        zname,
         xname,
         yname,
-        zname,
         atype->name,
         NULL,
         NULL) ;

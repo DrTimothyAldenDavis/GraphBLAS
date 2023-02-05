@@ -43,12 +43,12 @@ void GB_debugify_ewise
     GB_namify_problem (ewise_name, "GB_jit_ewise_", 12, scode, builtin,
         (binaryop == NULL) ? "none" : binaryop->name,
         NULL,
+        (binaryop == NULL) ? "void" : binaryop->ztype->name,
         (binaryop == NULL) ? "void" : binaryop->xtype->name,
         (binaryop == NULL) ? "void" : binaryop->ytype->name,
-        (binaryop == NULL) ? "void" : binaryop->ztype->name,
+        ctype->name,
         atype->name,
-        btype->name,
-        ctype->name) ;
+        btype->name) ;
 
     // construct the filename and create the file
     char filename [512 + 8*GxB_MAX_NAME_LEN] ;

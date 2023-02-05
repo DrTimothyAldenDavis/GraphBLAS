@@ -17,7 +17,9 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     int add_ecode,      // binary op as an enum
     int id_ecode,       // identity value as an enum
     int term_ecode,     // terminal value as an enum (<= 28 is terminal)
-    GrB_Monoid monoid   // monoid to macrofy
+    GrB_Monoid monoid,  // monoid to macrofy
+    // output:
+    const char **u_expression
 )
 {
 
@@ -30,7 +32,8 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // create macros for the additive operator
     //--------------------------------------------------------------------------
 
-    GB_macrofy_binop (fp, "GB_ADD", false, true, add_ecode, op) ;
+    GB_macrofy_binop (fp, "GB_ADD", false, true, add_ecode, op,
+        NULL, u_expression) ;
 
     //--------------------------------------------------------------------------
     // create macros for the identity value
@@ -135,7 +138,6 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 
             switch (zcode)
             {
-                case GB_ignore_code  : // any_pair semiring, C is iso
                 case GB_BOOL_code    :
                 case GB_INT8_code    :
                 case GB_UINT8_code   :
@@ -304,7 +306,17 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         default: break ;
     }
 
-    if (user_monoid_atomically)
+    if (monoid == NULL || zcode == 0)
+    {
+
+        //----------------------------------------------------------------------
+        // C is iso: no values computed so no need for any CUDA atomics
+        //----------------------------------------------------------------------
+
+        fprintf (fp, "#define GB_HAS_CUDA_ATOMIC 0 /* unused; C is iso */\n") ;
+
+    }
+    else if (user_monoid_atomically)
     {
 
         //----------------------------------------------------------------------
@@ -383,8 +395,6 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         char *t = "" ;
         switch (zcode)
         {
-            case GB_ignore_code  : t = "int32_t /* unused; C is iso */" ;
-                                   break ;
             case GB_INT8_code    : 
             case GB_INT16_code   : 
             case GB_INT32_code   : t = "int32_t"    ; break ;

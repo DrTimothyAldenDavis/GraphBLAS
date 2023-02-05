@@ -10,7 +10,11 @@
 // C<M> = accum (C,reduce(A)) where C is n-by-1.  Reduces a matrix A or A'
 // to a vector.
 
-#define GB_FREE_ALL GB_Matrix_free (&B) ;
+#define GB_FREE_ALL                     \
+{                                       \
+    GB_Matrix_free (&B) ;               \
+    GrB_Semiring_free (&semiring) ;     \
+}
 
 #include "GB_reduce.h"
 #include "GB_binop.h"
@@ -36,6 +40,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     struct GB_Matrix_opaque B_header ;
     GrB_Matrix B = NULL ;
+    struct GB_Semiring_opaque semiring_header ;
+    GrB_Semiring semiring = NULL ;
 
     // C may be aliased with M and/or A
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
@@ -150,12 +156,26 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             // the FIRST_UDT op is NULL; it is not needed by FIRST.  The
             // function defn is also NULL.  In the JIT, the FIRST multiply
             // operator is a simple assignment so there's no need for a
-            // function definition.  This binary op will not be treated as
-            // a builtin operator, however, since its data type is not builtin.
+            // function definition.  This binary op will not be treated as a
+            // builtin operator, however, since its data type is not builtin.
+            // Its hash, op->hash, will be nonzero.  The name of FIRST_UDT is
+            // just "1st", which is not itself unique, but it will only be used
+            // in combination with the monoid, which must be user-defined.  No
+            // typecasting is allowed between user-defined types, so the
+            // user-defined monoid must be specific this particular
+            // user-defined type and this "reduce_1st" will be a unique name
+            // for the constructed semiring (if "reduce" is the name of the
+            // monoid).  In addition, it is not possible for the user to create
+            // a jitfyable operator with the name "1st", because of the leading
+            // "1" character in its name.  So "reduce_1st" must be unique.
             op = &op_header ;
             op->header_size = 0 ;
-            info = GB_binop_new (op, NULL, ztype, ztype, ztype, "1st", NULL,
-                GB_FIRST_binop_code) ;
+            info = GB_binop_new (op,
+                NULL,   // op->binop_function is NULL for FIRST_UDT
+                ztype, ztype, ztype,    // ztype is user-defined
+                "1st",                  // a simple name for FIRST_UDT
+                NULL,   // no op->defn for the FIRST_UDT operator
+                GB_FIRST_binop_code) ;  // using a built-in opcode
             break ;
     }
 
@@ -167,11 +187,18 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     // create the REDUCE_FIRST_ZTYPE semiring
     //--------------------------------------------------------------------------
 
-    struct GB_Semiring_opaque semiring_header ;
-    GrB_Semiring semiring = &semiring_header ;
+    semiring = &semiring_header ;
     semiring->header_size = 0 ;
     info = GB_Semiring_new (semiring, monoid, op) ;
-    ASSERT (info == GrB_SUCCESS) ;
+    if (info != GrB_SUCCESS)
+    {
+        // out of memory
+        // GB_Semiring_new allocates semiring->name if it uses the FIRST_UDT
+        // operator created above, so it can run out of memory in that case.
+        GB_FREE_ALL ;
+        return (info) ;
+    }
+
     ASSERT_SEMIRING_OK (semiring, "semiring for reduce-to-vector", GB0) ;
 
     //--------------------------------------------------------------------------

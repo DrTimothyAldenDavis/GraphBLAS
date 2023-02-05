@@ -48,20 +48,39 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         GBPR0 ("    BinaryOp has an invalid opcode\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
-    if (opcode == GB_USER_binop_code)
+
+    GrB_Info info = GB_Type_check (op->ztype, "ztype", pr, f) ;
+    if (info != GrB_SUCCESS)
     { 
-        GBPR0 ("(user-defined): ") ;
+        GBPR0 ("    BinaryOp has an invalid ztype\n") ;
+        return (GrB_INVALID_OBJECT) ;
     }
-    else
-    { 
-        GBPR0 ("(built-in): ") ;
-    }
-    GBPR0 ("z=%s(x,y)\n", op->name) ;
 
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
     bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
     bool op_is_second = (opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
+
+    if (opcode == GB_USER_binop_code)
+    { 
+        // user-defined binary operator
+        GBPR0 ("(user-defined): z=%s(x,y)\n", op->name) ;
+    }
+    else if (opcode == GB_FIRST_binop_code && op->ztype->code == GB_UDT_code)
+    { 
+        // FIRST_UDT binary operator created by GB_reduce_to_vector
+        GBPR0 ("(generated): z=%s(x,y)\n", op->name) ;
+    }
+    else if (op_is_positional)
+    { 
+        // built-in positional binary operator
+        GBPR0 ("(built-in positional): z=%s(x,y,i,k,j)\n", op->name) ;
+    }
+    else
+    {
+        // built-in
+        GBPR0 ("(built-in): z=%s(x,y)\n", op->name) ;
+    }
 
     if (!(op_is_positional || op_is_first || op_is_second)
        && op->binop_function == NULL)
@@ -75,13 +94,6 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     if (opcode == GB_USER_binop_code && name_len != actual_len)
     {
         GBPR0 ("    BinaryOp has an invalid name_len\n") ;
-        return (GrB_INVALID_OBJECT) ;
-    }
-
-    GrB_Info info = GB_Type_check (op->ztype, "ztype", pr, f) ;
-    if (info != GrB_SUCCESS)
-    { 
-        GBPR0 ("    BinaryOp has an invalid ztype\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
 

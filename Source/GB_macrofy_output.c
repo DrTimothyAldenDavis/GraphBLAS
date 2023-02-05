@@ -20,8 +20,8 @@ void GB_macrofy_output
     const char *cname,      // name of the scalar ... = cij to write
     const char *Cmacro,     // name of the macro is GB_PUT*(Cmacro)
     const char *Cname,      // name of the output matrix
-    GrB_Type ctype,         // type of C
-    GrB_Type ztype,         // type of cij scalar to write to C
+    GrB_Type ctype,         // type of C, ignored if C is iso
+    GrB_Type ztype,         // type of cij scalar to cast to ctype write to C
     int csparsity,          // sparsity format of the output matrix
     bool C_iso              // true if C is iso
 )
@@ -34,7 +34,6 @@ void GB_macrofy_output
     fprintf (fp, "\n// %s matrix:\n", Cname) ;
     fprintf (fp, "#define GB_%s_ISO %d\n", Cname, C_iso ? 1 : 0) ;
     GB_macrofy_sparsity (fp, Cname, csparsity) ;
-    GB_macrofy_type (fp, Cname, C_iso ? "GB_void" : ctype->name) ;
 
     //--------------------------------------------------------------------------
     // construct the macros to declare scalars and put values into the matrix
@@ -47,6 +46,7 @@ void GB_macrofy_output
         // no need to access the values of C
         //----------------------------------------------------------------------
 
+        GB_macrofy_type (fp, Cname, "GB_void") ;
         fprintf (fp, "#define GB_PUT%s(%s,%sx,p)\n", Cmacro, cname, Cname) ;
 
     }
@@ -71,6 +71,8 @@ void GB_macrofy_output
         //      Cx [p] = (double) aij ;
 
         // or, if C is iso: nothing happens; the macro is empty.
+
+        GB_macrofy_type (fp, Cname, ctype->name) ;
 
         #define SLEN 256
         char macro_name [SLEN+1], xargs [SLEN+1], xexpr [SLEN+1] ;

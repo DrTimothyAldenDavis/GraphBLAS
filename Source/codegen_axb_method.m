@@ -194,18 +194,6 @@ switch (ztype)
         fprintf (f, 'm4_define(`GB_ctype_cast'', `((GB_ctype) $1)'')\n') ;
 end
 
-% simple typecast from 1 (or 2) real scalars to any other type
-switch (xytype)
-    case { 'GxB_FC32_t' }
-        fprintf (f, 'm4_define(`GB_atype_cast'', `GB_CMPLX32 (((float) $1), ((float) $2))'')\n') ;
-    case { 'GxB_FC64_t' }
-        fprintf (f, 'm4_define(`GB_atype_cast'', `GB_CMPLX64 (((double) $1), ((double) $2))'')\n') ;
-    case { 'any type' }
-        fprintf (f, 'm4_define(`GB_atype_cast'', `'')\n') ;
-    otherwise
-        fprintf (f, 'm4_define(`GB_atype_cast'', `((GB_atype) $1)'')\n') ;
-end
-
 % identity and terminal values for the monoid
 fprintf (f, 'm4_define(`GB_identity'', `%s'')\n', identity) ;
 
@@ -561,7 +549,7 @@ elseif (~is_imin_or_imax && ...
     % float and double do not get promoted.
     % bool is OK since promotion of the result (0 or 1) to int is safe.
     % first and second are OK since no promotion occurs.
-    % is* operators are OK too.
+    % positional operators are OK too.
     multadd = strrep (add, 't',  mult) ;
     multadd = strrep (multadd, 'w', '`$1''') ;
     multadd = strrep (multadd, 'xarg', '`$2''') ;

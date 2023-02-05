@@ -456,9 +456,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     struct GB_Semiring_opaque semiring_struct ;
     GrB_Semiring semiring = &semiring_struct ;
-    semiring->magic = GB_MAGIC ;
+    memcpy (semiring, semiring_in, sizeof (struct GB_Semiring_opaque)) ;
     semiring->header_size = 0 ;
-    semiring->add = semiring_in->add ;
     semiring->multiply = GB_flip_binop (semiring_in->multiply, false, &flipxy) ;
 
     opcode = semiring->multiply->opcode  ;

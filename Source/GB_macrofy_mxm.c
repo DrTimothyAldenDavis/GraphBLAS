@@ -69,9 +69,21 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     GrB_BinaryOp addop = monoid->op ;
 
     GB_macrofy_copyright (fp) ;
-    fprintf (fp, "// semiring: (%s, %s%s, %s)\n\n",
-        addop->name, mult->name, flipxy ? " (flipped)" : "",
-        (zcode == 0) ? "iso" : mult->xtype->name) ;
+
+    bool C_iso = (ccode == 0) ;
+
+    if (C_iso)
+    {
+        // C is iso; no operators are used
+        fprintf (fp, "// semiring: symbolic only (C is iso)\n\n") ;
+    }
+    else
+    {
+        // general case
+        fprintf (fp, "// semiring: (%s, %s%s, %s)\n\n",
+            addop->name, mult->name, flipxy ? " (flipped)" : "",
+            mult->xtype->name) ;
+    }
 
     //--------------------------------------------------------------------------
     // construct the typedefs
@@ -81,7 +93,14 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     GrB_Type ytype = (ycode == 0) ? NULL : mult->ytype ;
     GrB_Type ztype = (zcode == 0) ? NULL : mult->ztype ;
 
-    GB_macrofy_typedefs (fp, ctype, atype, btype, xtype, ytype, ztype) ;
+    if (!C_iso)
+    {
+        GB_macrofy_typedefs (fp,
+            (ccode == 0) ? NULL : ctype,
+            (acode == 0) ? NULL : atype,
+            (bcode == 0) ? NULL : btype,
+            xtype, ytype, ztype) ;
+    }
 
     //--------------------------------------------------------------------------
     // construct the macros for the type names
@@ -97,8 +116,9 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// additive monoid:\n") ;
+    const char *u_expr ;
     GB_macrofy_monoid (fp, add_ecode, id_ecode, term_ecode,
-        (zcode == 0) ? NULL : monoid) ;
+        (C_iso) ? NULL : monoid, &u_expr) ;
 
     //--------------------------------------------------------------------------
     // construct macros for the multiply operator
@@ -106,8 +126,96 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
     fprintf (fp, "\n// multiplicative operator%s:\n",
         flipxy ? " (flipped)" : "") ;
+    const char *f_expr ;
     GB_macrofy_binop (fp, "GB_MULT", flipxy, false, mult_ecode,
-        (zcode == 0) ? NULL : mult) ;
+        (C_iso) ? NULL : mult, &f_expr, NULL) ;
+
+    //--------------------------------------------------------------------------
+    // multiply-add operator
+    //--------------------------------------------------------------------------
+
+    fprintf (fp, "\n// multiply-add operator:\n") ;
+    GB_Opcode mult_opcode = mult->opcode ;
+    bool is_bool   = (zcode == GB_BOOL_code) ;
+    bool is_float  = (zcode == GB_FP32_code) ;
+    bool is_double = (zcode == GB_FP64_code) ;
+    bool is_first  = (mult_opcode == GB_FIRST_binop_code) ;
+    bool is_second = (mult_opcode == GB_SECOND_binop_code) ;
+    bool is_pair   = (mult_opcode == GB_PAIR_binop_code) ;
+    bool is_positional = GB_IS_BINARYOP_CODE_POSITIONAL (mult_opcode) ;
+
+    if (C_iso)
+    {
+
+        //----------------------------------------------------------------------
+        // ANY_PAIR_BOOL semiring: nothing to do
+        //----------------------------------------------------------------------
+
+        fprintf (fp, "#define GB_MULTADD(z,x,y,i,k,j)\n") ;
+
+    }
+    else if (u_expr != NULL && f_expr != NULL &&
+        (is_float || is_double || is_bool || is_first || is_second || is_pair
+            || is_positional))
+    {
+
+        //----------------------------------------------------------------------
+        // create a fused multiply-add operator
+        //----------------------------------------------------------------------
+
+        // Fusing operators can only be done if it avoids ANSI C integer
+        // promotion rules.
+
+        // float and double do not get promoted.
+        // bool is OK since promotion of the result (0 or 1) to int is safe.
+        // first and second are OK since no promotion occurs.
+        // positional operators are OK too.
+
+        if (flipxy)
+        {
+            fprintf (fp, "#define GB_MULTADD(z,y,x,j,k,i) ") ;
+        }
+        else
+        {
+            fprintf (fp, "#define GB_MULTADD(z,x,y,i,k,j) ") ;
+        }
+        for (const char *p = u_expr ; (*p) != '\0' ; p++)
+        {
+            // all update operators have a single 'y'
+            if ((*p) == 'y')
+            {
+                // inject the multiply operator; all have the form "z = ..."
+                fprintf (fp, "%s", f_expr + 4) ;
+            }
+            else
+            {
+                // otherwise, print the update operator character
+                fprintf (fp, "%c", (*p)) ;
+            }
+        }
+        fprintf (fp, "\n") ;
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // use a temporary variable for multiply-add
+        //----------------------------------------------------------------------
+
+        // All user-defined operators use this method. Built-in operators on
+        // integers must use a temporary variable to avoid ANSI C integer
+        // promotion.  Complex operators may use macros, so they use
+        // temporaries as well.
+
+        fprintf (fp,
+            "#define GB_MULTADD(z,x,y,i,k,j)    \\\n"
+            "{                                  \\\n"
+            "   GB_ZTYPE x_op_y ;               \\\n"
+            "   GB_MULT (x_op_y, x,y,i,k,j) ;   \\\n"
+            "   GB_UPDATE (z, x_op_y) ;         \\\n"
+            "}\n") ;
+    }
 
     //--------------------------------------------------------------------------
     // special cases
@@ -120,7 +228,6 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
         (add_ecode == 11 // plus monoid
         && mult_ecode == 133 // pair multiplicative operator
         && !(zcode == GB_FC32_code || zcode == GB_FC64_code)) ; // real
-
     fprintf (fp, "#define GB_IS_PLUS_PAIR_REAL_SEMIRING %d\n",
         is_plus_pair_real) ;
 
@@ -136,7 +243,6 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     // macros for the C matrix
     //--------------------------------------------------------------------------
 
-    bool C_iso = (ccode == 0) ;
     GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, C_iso) ;
 
     //--------------------------------------------------------------------------
