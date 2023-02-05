@@ -301,40 +301,45 @@ if (ztype_is_real)
     if (is_any)
         % disable the ANY monoid for saxpy4
         fprintf (f, 'm4_define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', '(none)') ;
-        fprintf (f, 'm4_define(`if_saxpy4_enabled'', `#if 0'')\n') ;
+        fprintf (f, 'm4_define(`if_saxpy4_enabled'', `-1'')\n') ;
     else
+        % enable saxpy4
         fprintf (f, 'm4_define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', name) ;
-        fprintf (f, 'm4_define(`if_saxpy4_enabled'', `#if 1'')\n') ;
+        fprintf (f, 'm4_define(`if_saxpy4_enabled'', `0'')\n') ;
     end
 else
     % complex monoids are not atomic, except for 'plus'
     if (isequal (addop, 'plus'))
+        % enable saxpy4
         fprintf (f, 'm4_define(`GB_has_atomic'', `1'')\n') ;
         fprintf (f, 'm4_define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', name) ;
-        fprintf (f, 'm4_define(`if_saxpy4_enabled'', `#if 1'')\n') ;
+        fprintf (f, 'm4_define(`if_saxpy4_enabled'', `0'')\n') ;
     else
+        % disable saxpy4
         fprintf (f, 'm4_define(`GB_has_atomic'', `0'')\n') ;
         fprintf (f, 'm4_define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', '(none)') ;
-        fprintf (f, 'm4_define(`if_saxpy4_enabled'', `#if 0'')\n') ;
+        fprintf (f, 'm4_define(`if_saxpy4_enabled'', `-1'')\n') ;
     end
 end
 
 if (is_any)
     % dot4 is disabled for the ANY monoid
     fprintf (f, 'm4_define(`_Adot4B'', `_Adot4B__%s'')\n', '(none)') ;
-    fprintf (f, 'm4_define(`if_dot4_enabled'', `#if 0'')\n') ;
+    fprintf (f, 'm4_define(`if_dot4_enabled'', `-1'')\n') ;
 else
+    % enable dot4
     fprintf (f, 'm4_define(`_Adot4B'', `_Adot4B__%s'')\n', name) ;
-    fprintf (f, 'm4_define(`if_dot4_enabled'', `#if 1'')\n') ;
+    fprintf (f, 'm4_define(`if_dot4_enabled'', `0'')\n') ;
 end
 
 if (is_any)
     % saxpy5 is disabled for the ANY monoid
     fprintf (f, 'm4_define(`_Asaxpy5B'', `_Asaxpy5B__%s'')\n', '(none)') ;
-    fprintf (f, 'm4_define(`if_saxpy5_enabled'', `#if 0'')\n') ;
+    fprintf (f, 'm4_define(`if_saxpy5_enabled'', `-1'')\n') ;
 else
+    % enable saxpy5
     fprintf (f, 'm4_define(`_Asaxpy5B'', `_Asaxpy5B__%s'')\n', name) ;
-    fprintf (f, 'm4_define(`if_saxpy5_enabled'', `#if 1'')\n') ;
+    fprintf (f, 'm4_define(`if_saxpy5_enabled'', `0'')\n') ;
 end
 
 % firsti or firsti1 multiply operator
@@ -626,8 +631,6 @@ end
 if (is_any_pair)
     % never disable the any_pair_iso semiring
     fprintf (f, 'm4_define(`GB_disable'', `0'')\n') ;
-    fprintf (f, 'm4_define(`if_disabled'', `#if 0'')\n') ;
-    fprintf (f, 'm4_define(`if_not_disabled'', `#if 1'')\n') ;
 else
     disable  = sprintf ('GxB_NO_%s', upper (addop)) ;
     if (~isequal (addop, multop))
@@ -641,8 +644,6 @@ else
     disable = [disable (sprintf (' || GxB_NO_%s_%s_%s', ...
         upper (addop), upper (multop), upper (fname))) ] ;
     fprintf (f, 'm4_define(`GB_disable'', `(%s)'')\n', disable) ;
-    fprintf (f, 'm4_define(`if_disabled'', `#if GB_DISABLE'')\n') ;
-    fprintf (f, 'm4_define(`if_not_disabled'', `#if ( !GB_DISABLE )'')\n') ;
 end
 
 fprintf (f, 'm4_divert(0)\n') ;

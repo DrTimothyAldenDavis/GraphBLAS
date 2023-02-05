@@ -41,11 +41,10 @@
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
     /* assignment skipped, C is iso with all entries equal to thunk */
 
+
 //------------------------------------------------------------------------------
 // GB_sel_phase1
 //------------------------------------------------------------------------------
-
-
 
 void GB (_sel_phase1__eq_thunk_int32)
 (
@@ -74,8 +73,6 @@ void GB (_sel_phase1__eq_thunk_int32)
 // GB_sel_phase2
 //------------------------------------------------------------------------------
 
-
-
 void GB (_sel_phase2__eq_thunk_int32)
 (
     int64_t *restrict Ci,
@@ -103,8 +100,6 @@ void GB (_sel_phase2__eq_thunk_int32)
 //------------------------------------------------------------------------------
 // GB_sel_bitmap
 //------------------------------------------------------------------------------
-
-
 
 void GB (_sel_bitmap__eq_thunk_int32)
 (

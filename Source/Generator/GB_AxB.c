@@ -299,7 +299,7 @@ GrB_Info GB (_Adot2B)
     int nthreads, int naslice, int nbslice
 )
 { 
-    if_disabled
+    #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
     #include "GB_AxB_dot2_meta.c"
@@ -322,7 +322,7 @@ GrB_Info GB (_Adot3B)
     const int nthreads
 )
 { 
-    if_disabled
+    #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
     #include "GB_AxB_dot3_meta.c"
@@ -330,11 +330,10 @@ GrB_Info GB (_Adot3B)
     #endif
 }
 
+m4_divert(if_dot4_enabled)
 //------------------------------------------------------------------------------
-// GB_Adot4B:  C+=A'*B: dense dot product (not used for ANY_PAIR_ISO)
+// GB_Adot4B:  C+=A'*B: dense dot product
 //------------------------------------------------------------------------------
-
-if_dot4_enabled
 
     GrB_Info GB (_Adot4B)
     (
@@ -345,15 +344,14 @@ if_dot4_enabled
         GB_Werk Werk
     )
     { 
-        if_disabled
+        #if GB_DISABLE
         return (GrB_NO_VALUE) ;
         #else
         #include "GB_AxB_dot4_meta.c"
         return (GrB_SUCCESS) ;
         #endif
     }
-
-#endif
+m4_divert(0)
 
 //------------------------------------------------------------------------------
 // GB_AsaxbitB: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method, C is bitmap/full
@@ -370,7 +368,7 @@ GrB_Info GB (_AsaxbitB)
     GB_Werk Werk
 )
 { 
-    if_disabled
+    #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
     #include "GB_bitmap_AxB_saxpy_template.c"
@@ -378,11 +376,10 @@ GrB_Info GB (_AsaxbitB)
     #endif
 }
 
+m4_divert(if_saxpy4_enabled)
 //------------------------------------------------------------------------------
 // GB_Asaxpy4B: C += A*B when C is full
 //------------------------------------------------------------------------------
-
-if_saxpy4_enabled
 
     GrB_Info GB (_Asaxpy4B)
     (
@@ -398,23 +395,21 @@ if_saxpy4_enabled
         GB_Werk Werk
     )
     { 
-        if_disabled
+        #if GB_DISABLE
         return (GrB_NO_VALUE) ;
         #else
         #include "GB_AxB_saxpy4_template.c"
         return (GrB_SUCCESS) ;
         #endif
     }
+m4_divert(0)
 
-#endif
-
+m4_divert(if_saxpy5_enabled)
 //------------------------------------------------------------------------------
 // GB_Asaxpy5B: C += A*B when C is full, A is bitmap/full, B is sparse/hyper
 //------------------------------------------------------------------------------
 
-if_saxpy5_enabled
-
-    if_disabled
+    #if GB_DISABLE
     #elif ( !GB_A_IS_PATTERN )
 
         //----------------------------------------------------------------------
@@ -528,15 +523,14 @@ if_saxpy5_enabled
         GB_Werk Werk
     )
     { 
-        if_disabled
+        #if GB_DISABLE
         return (GrB_NO_VALUE) ;
         #else
         #include "GB_AxB_saxpy5_meta.c"
         return (GrB_SUCCESS) ;
         #endif
     }
-
-#endif
+m4_divert(0)
 
 //------------------------------------------------------------------------------
 // GB_Asaxpy3B: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method (Gustavson + Hash)
@@ -554,7 +548,7 @@ GrB_Info GB (_Asaxpy3B)
     GB_Werk Werk
 )
 { 
-    if_disabled
+    #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
     ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;
@@ -585,7 +579,7 @@ GrB_Info GB (_Asaxpy3B)
 // GB_Asaxpy3B_M: C<M>=A*B: saxpy method (Gustavson + Hash)
 //------------------------------------------------------------------------------
 
-if_not_disabled
+#if ( !GB_DISABLE )
 
     GrB_Info GB (_Asaxpy3B_M)
     (
@@ -635,7 +629,7 @@ if_not_disabled
 //GB_Asaxpy3B_noM: C=A*B: saxpy method (Gustavson + Hash)
 //------------------------------------------------------------------------------
 
-if_not_disabled
+#if ( !GB_DISABLE )
 
     GrB_Info GB (_Asaxpy3B_noM)
     (
@@ -683,7 +677,7 @@ if_not_disabled
 //GB_Asaxpy3B_notM: C<!M>=A*B: saxpy method (Gustavson + Hash)
 //------------------------------------------------------------------------------
 
-if_not_disabled
+#if ( !GB_DISABLE )
 
     GrB_Info GB (_Asaxpy3B_notM)
     (

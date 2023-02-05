@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-if_phase1
+m4_divert(if_phase1)
 void GB (_sel_phase1)
 (
     int64_t *restrict Zp,
@@ -14,9 +14,9 @@ void GB (_sel_phase1)
     const GB_Operator op,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-endif_phase1
+m4_divert(0)
 
-if_phase2
+m4_divert(if_phase2)
 void GB (_sel_phase2)
 (
     int64_t *restrict Ci,
@@ -32,9 +32,9 @@ void GB (_sel_phase2)
     const GB_Operator op,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-endif_phase2
+m4_divert(0)
 
-if_bitmap
+m4_divert(if_bitmap)
 void GB (_sel_bitmap)
 (
     int8_t *Cb,
@@ -48,4 +48,4 @@ void GB (_sel_bitmap)
     const GB_Operator op,
     const int nthreads
 ) ;
-endif_bitmap
+m4_divert(0)

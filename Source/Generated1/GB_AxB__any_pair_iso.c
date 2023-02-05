@@ -300,7 +300,7 @@ GrB_Info GB (_Adot2B__any_pair_iso)
     int nthreads, int naslice, int nbslice
 )
 { 
-    #if 0
+    #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
     #include "GB_AxB_dot2_meta.c"
@@ -323,7 +323,7 @@ GrB_Info GB (_Adot3B__any_pair_iso)
     const int nthreads
 )
 { 
-    #if 0
+    #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
     #include "GB_AxB_dot3_meta.c"
@@ -331,30 +331,7 @@ GrB_Info GB (_Adot3B__any_pair_iso)
     #endif
 }
 
-//------------------------------------------------------------------------------
-// GB_Adot4B:  C+=A'*B: dense dot product (not used for ANY_PAIR_ISO)
-//------------------------------------------------------------------------------
 
-#if 0
-
-    GrB_Info GB (_Adot4B__(none))
-    (
-        GrB_Matrix C,
-        const GrB_Matrix A, int64_t *restrict A_slice, int naslice,
-        const GrB_Matrix B, int64_t *restrict B_slice, int nbslice,
-        const int nthreads,
-        GB_Werk Werk
-    )
-    { 
-        #if 0
-        return (GrB_NO_VALUE) ;
-        #else
-        #include "GB_AxB_dot4_meta.c"
-        return (GrB_SUCCESS) ;
-        #endif
-    }
-
-#endif
 
 //------------------------------------------------------------------------------
 // GB_AsaxbitB: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method, C is bitmap/full
@@ -371,7 +348,7 @@ GrB_Info GB (_AsaxbitB__any_pair_iso)
     GB_Werk Werk
 )
 { 
-    #if 0
+    #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
     #include "GB_bitmap_AxB_saxpy_template.c"
@@ -379,165 +356,9 @@ GrB_Info GB (_AsaxbitB__any_pair_iso)
     #endif
 }
 
-//------------------------------------------------------------------------------
-// GB_Asaxpy4B: C += A*B when C is full
-//------------------------------------------------------------------------------
 
-#if 0
 
-    GrB_Info GB (_Asaxpy4B__(none))
-    (
-        GrB_Matrix C,
-        const GrB_Matrix A,
-        const GrB_Matrix B,
-        const int ntasks,
-        const int nthreads,
-        const int nfine_tasks_per_vector,
-        const bool use_coarse_tasks,
-        const bool use_atomics,
-        const int64_t *A_slice,
-        GB_Werk Werk
-    )
-    { 
-        #if 0
-        return (GrB_NO_VALUE) ;
-        #else
-        #include "GB_AxB_saxpy4_template.c"
-        return (GrB_SUCCESS) ;
-        #endif
-    }
 
-#endif
-
-//------------------------------------------------------------------------------
-// GB_Asaxpy5B: C += A*B when C is full, A is bitmap/full, B is sparse/hyper
-//------------------------------------------------------------------------------
-
-#if 0
-
-    #if 0
-    #elif ( !GB_A_IS_PATTERN )
-
-        //----------------------------------------------------------------------
-        // saxpy5 method with vectors of length 8 for double, 16 for single
-        //----------------------------------------------------------------------
-
-        // AVX512F: vector registers are 512 bits, or 64 bytes, which can hold
-        // 16 floats or 8 doubles.
-
-        #define GB_V16_512 (16 * GB_C_NBITS <= 512)
-        #define GB_V8_512  ( 8 * GB_C_NBITS <= 512)
-        #define GB_V4_512  ( 4 * GB_C_NBITS <= 512)
-
-        #define GB_V16 GB_V16_512
-        #define GB_V8  GB_V8_512
-        #define GB_V4  GB_V4_512
-
-        #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION && GB_COMPILER_SUPPORTS_AVX512F \
-            && GB_V4_512
-
-            GB_TARGET_AVX512F static inline void GB_AxB_saxpy5_unrolled_avx512f
-            (
-                GrB_Matrix C,
-                const GrB_Matrix A,
-                const GrB_Matrix B,
-                const int ntasks,
-                const int nthreads,
-                const int64_t *B_slice,
-                GB_Werk Werk
-            )
-            {
-                #include "GB_AxB_saxpy5_unrolled.c"
-            }
-
-        #endif
-
-        //----------------------------------------------------------------------
-        // saxpy5 method with vectors of length 4 for double, 8 for single
-        //----------------------------------------------------------------------
-
-        // AVX2: vector registers are 256 bits, or 32 bytes, which can hold
-        // 8 floats or 4 doubles.
-
-        #define GB_V16_256 (16 * GB_C_NBITS <= 256)
-        #define GB_V8_256  ( 8 * GB_C_NBITS <= 256)
-        #define GB_V4_256  ( 4 * GB_C_NBITS <= 256)
-
-        #undef  GB_V16
-        #undef  GB_V8
-        #undef  GB_V4
-
-        #define GB_V16 GB_V16_256
-        #define GB_V8  GB_V8_256
-        #define GB_V4  GB_V4_256
-
-        #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION && GB_COMPILER_SUPPORTS_AVX2 \
-            && GB_V4_256
-
-            GB_TARGET_AVX2 static inline void GB_AxB_saxpy5_unrolled_avx2
-            (
-                GrB_Matrix C,
-                const GrB_Matrix A,
-                const GrB_Matrix B,
-                const int ntasks,
-                const int nthreads,
-                const int64_t *B_slice,
-                GB_Werk Werk
-            )
-            {
-                #include "GB_AxB_saxpy5_unrolled.c"
-            }
-
-        #endif
-
-        //----------------------------------------------------------------------
-        // saxpy5 method unrolled, with no vectors
-        //----------------------------------------------------------------------
-
-        #undef  GB_V16
-        #undef  GB_V8
-        #undef  GB_V4
-
-        #define GB_V16 0
-        #define GB_V8  0
-        #define GB_V4  0
-
-        static inline void GB_AxB_saxpy5_unrolled_vanilla
-        (
-            GrB_Matrix C,
-            const GrB_Matrix A,
-            const GrB_Matrix B,
-            const int ntasks,
-            const int nthreads,
-            const int64_t *B_slice,
-            GB_Werk Werk
-        )
-        {
-            #include "GB_AxB_saxpy5_unrolled.c"
-        }
-
-    #endif
-
-    GrB_Info GB (_Asaxpy5B__(none))
-    (
-        GrB_Matrix C,
-        const GrB_Matrix A,
-        const GrB_Matrix B,
-        const int ntasks,
-        const int nthreads,
-        const int64_t *B_slice,
-        GB_Werk Werk
-    )
-    { 
-        #if 0
-        return (GrB_NO_VALUE) ;
-        #else
-        #include "GB_AxB_saxpy5_meta.c"
-        return (GrB_SUCCESS) ;
-        #endif
-    }
-
-#endif
 
 //------------------------------------------------------------------------------
 // GB_Asaxpy3B: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method (Gustavson + Hash)
@@ -555,7 +376,7 @@ GrB_Info GB (_Asaxpy3B__any_pair_iso)
     GB_Werk Werk
 )
 { 
-    #if 0
+    #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
     ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;
@@ -586,7 +407,7 @@ GrB_Info GB (_Asaxpy3B__any_pair_iso)
 // GB_Asaxpy3B_M: C<M>=A*B: saxpy method (Gustavson + Hash)
 //------------------------------------------------------------------------------
 
-#if 1
+#if ( !GB_DISABLE )
 
     GrB_Info GB (_Asaxpy3B_M__any_pair_iso)
     (
@@ -636,7 +457,7 @@ GrB_Info GB (_Asaxpy3B__any_pair_iso)
 //GB_Asaxpy3B_noM: C=A*B: saxpy method (Gustavson + Hash)
 //------------------------------------------------------------------------------
 
-#if 1
+#if ( !GB_DISABLE )
 
     GrB_Info GB (_Asaxpy3B_noM__any_pair_iso)
     (
@@ -684,7 +505,7 @@ GrB_Info GB (_Asaxpy3B__any_pair_iso)
 //GB_Asaxpy3B_notM: C<!M>=A*B: saxpy method (Gustavson + Hash)
 //------------------------------------------------------------------------------
 
-#if 1
+#if ( !GB_DISABLE )
 
     GrB_Info GB (_Asaxpy3B_notM__any_pair_iso)
     (

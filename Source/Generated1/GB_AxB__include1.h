@@ -30,16 +30,7 @@ GrB_Info GB (_Adot3B__any_pair_iso)
     const int nthreads
 ) ;
 
-#if 0
-GrB_Info GB (_Adot4B__(none))
-(
-    GrB_Matrix C,
-    const GrB_Matrix A, int64_t *restrict A_slice, int naslice,
-    const GrB_Matrix B, int64_t *restrict B_slice, int nbslice,
-    const int nthreads,
-    GB_Werk Werk
-) ;
-#endif
+
 
 GrB_Info GB (_Asaxpy3B__any_pair_iso)
 (
@@ -97,32 +88,7 @@ GrB_Info GB (_AsaxbitB__any_pair_iso)
     GB_Werk Werk
 ) ;
 
-#if 0
-GrB_Info GB (_Asaxpy4B__(none))
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int ntasks,
-    const int nthreads,
-    const int nfine_tasks_per_vector,
-    const bool use_coarse_tasks,
-    const bool use_atomics,
-    const int64_t *A_slice,
-    GB_Werk Werk
-) ;
-#endif
 
-#if 0
-GrB_Info GB (_Asaxpy5B__(none))
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int ntasks,
-    const int nthreads,
-    const int64_t *B_slice,
-    GB_Werk Werk
-) ;
-#endif
+
+
 

@@ -20,7 +20,7 @@ GrB_Info GB (_Adot3B)
     const int nthreads
 ) ;
 
-if_dot4_enabled
+m4_divert(if_dot4_enabled)
 GrB_Info GB (_Adot4B)
 (
     GrB_Matrix C,
@@ -29,7 +29,7 @@ GrB_Info GB (_Adot4B)
     const int nthreads,
     GB_Werk Werk
 ) ;
-#endif
+m4_divert(0)
 
 GrB_Info GB (_Asaxpy3B)
 (
@@ -87,7 +87,7 @@ GrB_Info GB (_AsaxbitB)
     GB_Werk Werk
 ) ;
 
-if_saxpy4_enabled
+m4_divert(if_saxpy4_enabled)
 GrB_Info GB (_Asaxpy4B)
 (
     GrB_Matrix C,
@@ -101,9 +101,9 @@ GrB_Info GB (_Asaxpy4B)
     const int64_t *A_slice,
     GB_Werk Werk
 ) ;
-#endif
+m4_divert(0)
 
-if_saxpy5_enabled
+m4_divert(if_saxpy5_enabled)
 GrB_Info GB (_Asaxpy5B)
 (
     GrB_Matrix C,
@@ -114,5 +114,5 @@ GrB_Info GB (_Asaxpy5B)
     const int64_t *B_slice,
     GB_Werk Werk
 ) ;
-#endif
+m4_divert(0)
 

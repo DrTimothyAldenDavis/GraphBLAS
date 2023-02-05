@@ -331,11 +331,10 @@ GrB_Info GB (_Adot3B__times_firsti_int64)
     #endif
 }
 
-//------------------------------------------------------------------------------
-// GB_Adot4B:  C+=A'*B: dense dot product (not used for ANY_PAIR_ISO)
-//------------------------------------------------------------------------------
 
-#if 1
+//------------------------------------------------------------------------------
+// GB_Adot4B:  C+=A'*B: dense dot product
+//------------------------------------------------------------------------------
 
     GrB_Info GB (_Adot4B__times_firsti_int64)
     (
@@ -354,7 +353,6 @@ GrB_Info GB (_Adot3B__times_firsti_int64)
         #endif
     }
 
-#endif
 
 //------------------------------------------------------------------------------
 // GB_AsaxbitB: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method, C is bitmap/full
@@ -379,11 +377,10 @@ GrB_Info GB (_AsaxbitB__times_firsti_int64)
     #endif
 }
 
+
 //------------------------------------------------------------------------------
 // GB_Asaxpy4B: C += A*B when C is full
 //------------------------------------------------------------------------------
-
-#if 1
 
     GrB_Info GB (_Asaxpy4B__times_firsti_int64)
     (
@@ -407,13 +404,11 @@ GrB_Info GB (_AsaxbitB__times_firsti_int64)
         #endif
     }
 
-#endif
+
 
 //------------------------------------------------------------------------------
 // GB_Asaxpy5B: C += A*B when C is full, A is bitmap/full, B is sparse/hyper
 //------------------------------------------------------------------------------
-
-#if 1
 
     #if GB_DISABLE
     #elif ( !GB_A_IS_PATTERN )
@@ -537,7 +532,6 @@ GrB_Info GB (_AsaxbitB__times_firsti_int64)
         #endif
     }
 
-#endif
 
 //------------------------------------------------------------------------------
 // GB_Asaxpy3B: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method (Gustavson + Hash)

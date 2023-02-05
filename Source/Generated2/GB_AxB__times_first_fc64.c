@@ -331,11 +331,10 @@ GrB_Info GB (_Adot3B__times_first_fc64)
     #endif
 }
 
-//------------------------------------------------------------------------------
-// GB_Adot4B:  C+=A'*B: dense dot product (not used for ANY_PAIR_ISO)
-//------------------------------------------------------------------------------
 
-#if 1
+//------------------------------------------------------------------------------
+// GB_Adot4B:  C+=A'*B: dense dot product
+//------------------------------------------------------------------------------
 
     GrB_Info GB (_Adot4B__times_first_fc64)
     (
@@ -354,7 +353,6 @@ GrB_Info GB (_Adot3B__times_first_fc64)
         #endif
     }
 
-#endif
 
 //------------------------------------------------------------------------------
 // GB_AsaxbitB: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method, C is bitmap/full
@@ -379,41 +377,12 @@ GrB_Info GB (_AsaxbitB__times_first_fc64)
     #endif
 }
 
-//------------------------------------------------------------------------------
-// GB_Asaxpy4B: C += A*B when C is full
-//------------------------------------------------------------------------------
 
-#if 0
 
-    GrB_Info GB (_Asaxpy4B__(none))
-    (
-        GrB_Matrix C,
-        const GrB_Matrix A,
-        const GrB_Matrix B,
-        const int ntasks,
-        const int nthreads,
-        const int nfine_tasks_per_vector,
-        const bool use_coarse_tasks,
-        const bool use_atomics,
-        const int64_t *A_slice,
-        GB_Werk Werk
-    )
-    { 
-        #if GB_DISABLE
-        return (GrB_NO_VALUE) ;
-        #else
-        #include "GB_AxB_saxpy4_template.c"
-        return (GrB_SUCCESS) ;
-        #endif
-    }
-
-#endif
 
 //------------------------------------------------------------------------------
 // GB_Asaxpy5B: C += A*B when C is full, A is bitmap/full, B is sparse/hyper
 //------------------------------------------------------------------------------
-
-#if 1
 
     #if GB_DISABLE
     #elif ( !GB_A_IS_PATTERN )
@@ -537,7 +506,6 @@ GrB_Info GB (_AsaxbitB__times_first_fc64)
         #endif
     }
 
-#endif
 
 //------------------------------------------------------------------------------
 // GB_Asaxpy3B: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method (Gustavson + Hash)

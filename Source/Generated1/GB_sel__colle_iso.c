@@ -41,70 +41,14 @@
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
     /* assignment skipped, C and A are iso */
 
-//------------------------------------------------------------------------------
-// GB_sel_phase1
-//------------------------------------------------------------------------------
 
-#if 0
 
-void GB (_sel_phase1__(none))
-(
-    int64_t *restrict Zp,
-    int64_t *restrict Cp,
-    int64_t *restrict Wfirst,
-    int64_t *restrict Wlast,
-    const GrB_Matrix A,
-    const bool flipij,
-    const int64_t ithunk,
-    const GB_void *restrict athunk,
-    const GB_void *restrict ythunk,
-    const GB_Operator op,
-    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
-)
-{ 
-    
-    
-    
-    #include "GB_select_phase1.c"
-}
 
-#endif
 
-//------------------------------------------------------------------------------
-// GB_sel_phase2
-//------------------------------------------------------------------------------
-
-#if 0
-
-void GB (_sel_phase2__(none))
-(
-    int64_t *restrict Ci,
-    GB_void *restrict Cx,
-    const int64_t *restrict Zp,
-    const int64_t *restrict Cp,
-    const int64_t *restrict Cp_kfirst,
-    const GrB_Matrix A,
-    const bool flipij,
-    const int64_t ithunk,
-    const GB_void *restrict athunk,
-    const GB_void *restrict ythunk,
-    const GB_Operator op,
-    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
-)
-{ 
-    
-    
-    
-    #include "GB_select_phase2.c"
-}
-
-#endif
 
 //------------------------------------------------------------------------------
 // GB_sel_bitmap
 //------------------------------------------------------------------------------
-
-
 
 void GB (_sel_bitmap__colle_iso)
 (

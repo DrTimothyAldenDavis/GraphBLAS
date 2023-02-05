@@ -40,11 +40,10 @@ GB_kind
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
     GB_select_entry
 
+m4_divert(if_phase1)
 //------------------------------------------------------------------------------
 // GB_sel_phase1
 //------------------------------------------------------------------------------
-
-if_phase1
 
 void GB (_sel_phase1)
 (
@@ -66,14 +65,12 @@ void GB (_sel_phase1)
     GB_setup
     #include "GB_select_phase1.c"
 }
+m4_divert(0)
 
-endif_phase1
-
+m4_divert(if_phase2)
 //------------------------------------------------------------------------------
 // GB_sel_phase2
 //------------------------------------------------------------------------------
-
-if_phase2
 
 void GB (_sel_phase2)
 (
@@ -96,14 +93,12 @@ void GB (_sel_phase2)
     GB_setup
     #include "GB_select_phase2.c"
 }
+m4_divert(0)
 
-endif_phase2
-
+m4_divert(if_bitmap)
 //------------------------------------------------------------------------------
 // GB_sel_bitmap
 //------------------------------------------------------------------------------
-
-if_bitmap
 
 void GB (_sel_bitmap)
 (
@@ -124,5 +119,5 @@ void GB (_sel_bitmap)
     GB_setup
     #include "GB_bitmap_select_template.c"
 }
+m4_divert(0)
 
-endif_bitmap

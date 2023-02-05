@@ -64,12 +64,10 @@ fprintf (f, 'm4_define(`GB_get_zxtypes'', `%s'')\n', zxtype) ;
 if isequal (opname, 'nonzombie')
     % no bitmap selectors for nonzombie selectors
     fprintf (f, 'm4_define(`_sel_bitmap'', `_sel_bitmap__(none)'')\n') ;
-    fprintf (f, 'm4_define(`if_bitmap'', `#if 0'')\n') ;
-    fprintf (f, 'm4_define(`endif_bitmap'', `#endif'')\n') ;
+    fprintf (f, 'm4_define(`if_bitmap'', `-1'')\n') ;
 else
     fprintf (f, 'm4_define(`_sel_bitmap'', `_sel_bitmap__%s'')\n', name) ;
-    fprintf (f, 'm4_define(`if_bitmap'', `'')\n') ;
-    fprintf (f, 'm4_define(`endif_bitmap'', `'')\n') ;
+    fprintf (f, 'm4_define(`if_bitmap'', `0'')\n') ;
 end
 
 % the type of A (no typecasting)
@@ -102,21 +100,21 @@ end
 
 % enable phase1
 if (enable_phase1)
+    % enable phase1
     % nonzombie: phase1 uses a single worker: GB_sel_phase1__nonzombie_iso
-    fprintf (f, 'm4_define(`if_phase1'', `'')\n') ;
-    fprintf (f, 'm4_define(`endif_phase1'', `'')\n') ;
+    fprintf (f, 'm4_define(`if_phase1'', `0'')\n') ;
 else
-    fprintf (f, 'm4_define(`if_phase1'', `#if 0'')\n') ;
-    fprintf (f, 'm4_define(`endif_phase1'', `#endif'')\n') ;
+    % disable phase1
+    fprintf (f, 'm4_define(`if_phase1'', `-1'')\n') ;
 end
 
 % enable phase2
 if (enable_phase2)
-    fprintf (f, 'm4_define(`if_phase2'', `'')\n') ;
-    fprintf (f, 'm4_define(`endif_phase2'', `'')\n') ;
+    % enable phase2
+    fprintf (f, 'm4_define(`if_phase2'', `0'')\n') ;
 else
-    fprintf (f, 'm4_define(`if_phase2'', `#if 0'')\n') ;
-    fprintf (f, 'm4_define(`endif_phase2'', `#endif'')\n') ;
+    % disable phase2
+    fprintf (f, 'm4_define(`if_phase2'', `-1'')\n') ;
 end
 
 % for phase2: copy the numerical value of the entry

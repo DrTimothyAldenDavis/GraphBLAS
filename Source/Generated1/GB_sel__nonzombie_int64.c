@@ -41,40 +41,12 @@
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
     Cx [pC] = Ax [pA]
 
-//------------------------------------------------------------------------------
-// GB_sel_phase1
-//------------------------------------------------------------------------------
 
-#if 0
 
-void GB (_sel_phase1__(none))
-(
-    int64_t *restrict Zp,
-    int64_t *restrict Cp,
-    int64_t *restrict Wfirst,
-    int64_t *restrict Wlast,
-    const GrB_Matrix A,
-    const bool flipij,
-    const int64_t ithunk,
-    const int64_t *restrict athunk,
-    const GB_void *restrict ythunk,
-    const GB_Operator op,
-    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
-)
-{ 
-    
-    
-    
-    #include "GB_select_phase1.c"
-}
-
-#endif
 
 //------------------------------------------------------------------------------
 // GB_sel_phase2
 //------------------------------------------------------------------------------
-
-
 
 void GB (_sel_phase2__nonzombie_int64)
 (
@@ -100,30 +72,4 @@ void GB (_sel_phase2__nonzombie_int64)
 
 
 
-//------------------------------------------------------------------------------
-// GB_sel_bitmap
-//------------------------------------------------------------------------------
 
-#if 0
-
-void GB (_sel_bitmap__(none))
-(
-    int8_t *Cb,
-    int64_t *restrict Cx,
-    int64_t *cnvals_handle,
-    GrB_Matrix A,
-    const bool flipij,
-    const int64_t ithunk,
-    const int64_t *restrict athunk,
-    const GB_void *restrict ythunk,
-    const GB_Operator op,
-    const int nthreads
-)
-{ 
-    
-    
-    
-    #include "GB_bitmap_select_template.c"
-}
-
-#endif
