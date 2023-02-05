@@ -10,16 +10,16 @@ function codegen_sel
 fprintf ('\nselection operators:\n') ;
 addpath ('../Test') ;
 
-f = fopen ('Generated1/GB_sel__include.h', 'w') ;
-fprintf (f, '//------------------------------------------------------------------------------\n') ;
-fprintf (f, '// GB_sel__include.h: definitions for GB_sel__*.c\n') ;
-fprintf (f, '//------------------------------------------------------------------------------\n') ;
-fprintf (f, '\n') ;
-fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
-fprintf (f, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
-fprintf (f, '// This file has been automatically generated from Generator/GB_sel.h') ;
-fprintf (f, '\n\n') ;
-fclose (f) ;
+fh = fopen ('Generated1/GB_sel__include.h', 'w') ;
+fprintf (fh, '//------------------------------------------------------------------------------\n') ;
+fprintf (fh, '// GB_sel__include.h: definitions for GB_sel__*.c\n') ;
+fprintf (fh, '//------------------------------------------------------------------------------\n') ;
+fprintf (fh, '\n') ;
+fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
+fprintf (fh, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
+fprintf (fh, '// This file has been automatically generated from Generator/GB_sel.h') ;
+fprintf (fh, '\n\n') ;
+fclose (fh) ;
 
 %===============================================================================
 % select ops where A is either iso or non-iso

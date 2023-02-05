@@ -12,6 +12,7 @@ function codegen_unop_method (unop, op, fcast, ztype, xtype)
 % SPDX-License-Identifier: Apache-2.0
 
 f = fopen ('control.m4', 'w') ;
+fprintf (f, 'm4_divert(-1)\n') ;
 
 [zname, zunsigned, zbits] = codegen_type (ztype) ;
 [xname, xunsigned, xbits] = codegen_type (xtype) ;
@@ -22,13 +23,12 @@ name = sprintf ('%s_%s_%s', unop, zname, xname) ;
 is_identity = isequal (unop, 'identity') ;
 no_typecast = isequal (ztype, xtype) ;
 if (is_identity && no_typecast)
+    % disable the _unop_apply method
     fprintf (f, 'm4_define(`_unop_apply'', `_unop_apply__(none)'')\n') ;
-    fprintf (f, 'm4_define(`if_unop_apply_enabled'', `#if 0'')\n') ;
-    fprintf (f, 'm4_define(`endif_unop_apply_enabled'', `#endif'')\n') ;
+    fprintf (f, 'm4_define(`if_unop_apply_enabled'', `-1'')\n') ;
 else
     fprintf (f, 'm4_define(`_unop_apply'', `_unop_apply__%s'')\n', name) ;
-    fprintf (f, 'm4_define(`if_unop_apply_enabled'', `'')\n') ;
-    fprintf (f, 'm4_define(`endif_unop_apply_enabled'', `'')\n') ;
+    fprintf (f, 'm4_define(`if_unop_apply_enabled'', `0'')\n') ;
 end
 
 % function names
@@ -81,19 +81,16 @@ if (~isequal (zname, xname))
     disable = [disable (sprintf (' || GxB_NO_%s', upper (xname)))] ;
 end
 fprintf (f, 'm4_define(`GB_disable'', `(%s)'')\n', disable) ;
+fprintf (f, 'm4_divert(0)\n') ;
 fclose (f) ;
 
 % construct the *.c file
-cmd = sprintf (...
-'cat control.m4 Generator/GB_unop.c | m4 | tail -n +11 > Generated2/GB_unop__%s.c', ...
-name) ;
+cmd = sprintf ('cat control.m4 Generator/GB_unop.c | m4 -P > Generated2/GB_unop__%s.c', name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
-cmd = sprintf (...
-'cat control.m4 Generator/GB_unop.h | m4 | tail -n +11 >> Generated2/GB_unop__include.h') ;
-system (cmd) ;
+system ('cat control.m4 Generator/GB_unop.h | m4 -P >> Generated2/GB_unop__include.h') ;
 
 delete ('control.m4') ;
 

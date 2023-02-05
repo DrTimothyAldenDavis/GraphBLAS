@@ -9,16 +9,16 @@ function codegen_binop
 
 fprintf ('\nbinary operators:\n') ;
 
-f = fopen ('Generated2/GB_binop__include.h', 'w') ;
-fprintf (f, '//------------------------------------------------------------------------------\n') ;
-fprintf (f, '// GB_binop__include.h: definitions for GB_binop__*.c\n') ;
-fprintf (f, '//------------------------------------------------------------------------------\n') ;
-fprintf (f, '\n') ;
-fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
-fprintf (f, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
-fprintf (f, '// This file has been automatically generated from Generator/GB_binop.h') ;
-fprintf (f, '\n\n') ;
-fclose (f) ;
+fh = fopen ('Generated2/GB_binop__include.h', 'w') ;
+fprintf (fh, '//------------------------------------------------------------------------------\n') ;
+fprintf (fh, '// GB_binop__include.h: definitions for GB_binop__*.c\n') ;
+fprintf (fh, '//------------------------------------------------------------------------------\n') ;
+fprintf (fh, '\n') ;
+fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
+fprintf (fh, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
+fprintf (fh, '// This file has been automatically generated from Generator/GB_binop.h') ;
+fprintf (fh, '\n\n') ;
+fclose (fh) ;
 
 % The ANY operator is not used as a binary operator in the generated functions.
 % It can be used as the binary op in eWiseAdd, eWiseMult, etc, but has been

@@ -9,27 +9,27 @@ function codegen_red
 
 fprintf ('\nreduction operators:\n') ;
 
-f = fopen ('Generated2/GB_red__include.h', 'w') ;
-fprintf (f, '//------------------------------------------------------------------------------\n') ;
-fprintf (f, '// GB_red__include.h: definitions for GB_red__*.c\n') ;
-fprintf (f, '//------------------------------------------------------------------------------\n') ;
-fprintf (f, '\n') ;
-fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
-fprintf (f, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
-fprintf (f, '// This file has been automatically generated from Generator/GB_red.h') ;
-fprintf (f, '\n\n') ;
-fclose (f) ;
+fh = fopen ('Generated2/GB_red__include.h', 'w') ;
+fprintf (fh, '//------------------------------------------------------------------------------\n') ;
+fprintf (fh, '// GB_red__include.h: definitions for GB_red__*.c\n') ;
+fprintf (fh, '//------------------------------------------------------------------------------\n') ;
+fprintf (fh, '\n') ;
+fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
+fprintf (fh, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
+fprintf (fh, '// This file has been automatically generated from Generator/GB_red.h') ;
+fprintf (fh, '\n\n') ;
+fclose (fh) ;
 
-f = fopen ('Generated2/GB_bld__include.h', 'w') ;
-fprintf (f, '//------------------------------------------------------------------------------\n') ;
-fprintf (f, '// GB_bld__include.h: definitions for GB_bld__*.c\n') ;
-fprintf (f, '//------------------------------------------------------------------------------\n') ;
-fprintf (f, '\n') ;
-fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
-fprintf (f, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
-fprintf (f, '// This file has been automatically generated from Generator/GB_bld.h') ;
-fprintf (f, '\n\n') ;
-fclose (f) ;
+fh = fopen ('Generated2/GB_bld__include.h', 'w') ;
+fprintf (fh, '//------------------------------------------------------------------------------\n') ;
+fprintf (fh, '// GB_bld__include.h: definitions for GB_bld__*.c\n') ;
+fprintf (fh, '//------------------------------------------------------------------------------\n') ;
+fprintf (fh, '\n') ;
+fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
+fprintf (fh, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
+fprintf (fh, '// This file has been automatically generated from Generator/GB_bld.h') ;
+fprintf (fh, '\n\n') ;
+fclose (fh) ;
 
 %-------------------------------------------------------------------------------
 % the monoid: MIN, MAX, PLUS, TIMES, ANY, OR, AND, XOR, EQ

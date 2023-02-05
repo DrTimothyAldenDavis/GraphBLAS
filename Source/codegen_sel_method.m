@@ -18,6 +18,7 @@ is_nonzombie_selector = isequal (opname, 'nonzombie') ;
 is_idxunop_selector = codegen_contains (opname, 'idxunop') ;
 
 f = fopen ('control.m4', 'w') ;
+fprintf (f, 'm4_divert(-1)\n') ;
 
 [aname, ~, ~] = codegen_type (atype) ;
 if (iso)
@@ -137,19 +138,16 @@ else
     fprintf (f, 'm4_define(`GB_select_entry'', `Cx [pC] = Ax [pA]'')\n') ;
 end
 
+fprintf (f, 'm4_divert(0)\n') ;
 fclose (f) ;
 
 % construct the *.c file
-cmd = sprintf (...
-'cat control.m4 Generator/GB_sel.c | m4 | tail -n +18 > Generated1/GB_sel__%s.c', ...
-name) ;
+cmd = sprintf ('cat control.m4 Generator/GB_sel.c | m4 -P > Generated1/GB_sel__%s.c', name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
-cmd = sprintf (...
-'cat control.m4 Generator/GB_sel.h | m4 | tail -n +18 >> Generated1/GB_sel__include.h') ;
-system (cmd) ;
+system ('cat control.m4 Generator/GB_sel.h | m4 -P >> Generated1/GB_sel__include.h') ;
 
 delete ('control.m4') ;
 

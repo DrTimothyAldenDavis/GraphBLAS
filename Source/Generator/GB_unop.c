@@ -64,11 +64,11 @@
 #define GB_DISABLE \
     GB_disable
 
+m4_divert(if_unop_apply_enabled)
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
 
-if_unop_apply_enabled
 GrB_Info GB (_unop_apply)
 (
     GB_ctype *Cx,               // Cx and Ax may be aliased
@@ -109,7 +109,7 @@ GrB_Info GB (_unop_apply)
     return (GrB_SUCCESS) ;
     #endif
 }
-endif_unop_apply_enabled
+m4_divert(0)
 
 //------------------------------------------------------------------------------
 // C = op (cast (A')): transpose, typecast, and apply a unary operator

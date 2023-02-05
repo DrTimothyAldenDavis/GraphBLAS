@@ -65,10 +65,10 @@
 #define GB_DISABLE \
     (GxB_NO_IDENTITY || GxB_NO_FC32 || GxB_NO_UINT8)
 
+
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
-
 
 GrB_Info GB (_unop_apply__identity_fc32_uint8)
 (

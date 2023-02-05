@@ -9,16 +9,16 @@ function codegen_unop
 
 fprintf ('\nunary operators:\n') ;
 
-f = fopen ('Generated2/GB_unop__include.h', 'w') ;
-fprintf (f, '//------------------------------------------------------------------------------\n') ;
-fprintf (f, '// GB_unop__include.h: definitions for GB_unop__*.c\n') ;
-fprintf (f, '//------------------------------------------------------------------------------\n') ;
-fprintf (f, '\n') ;
-fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
-fprintf (f, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
-fprintf (f, '// This file has been automatically generated from Generator/GB_unop.h') ;
-fprintf (f, '\n\n') ;
-fclose (f) ;
+fh = fopen ('Generated2/GB_unop__include.h', 'w') ;
+fprintf (fh, '//------------------------------------------------------------------------------\n') ;
+fprintf (fh, '// GB_unop__include.h: definitions for GB_unop__*.c\n') ;
+fprintf (fh, '//------------------------------------------------------------------------------\n') ;
+fprintf (fh, '\n') ;
+fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
+fprintf (fh, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
+fprintf (fh, '// This file has been automatically generated from Generator/GB_unop.h') ;
+fprintf (fh, '\n\n') ;
+fclose (fh) ;
 
 codegen_unop_template ('identity', ...
     'xarg',                     ... % bool

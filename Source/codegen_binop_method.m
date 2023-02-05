@@ -7,6 +7,7 @@ function codegen_binop_method (binop, op, xtype)
 % SPDX-License-Identifier: Apache-2.0
 
 f = fopen ('control.m4', 'w') ;
+fprintf (f, 'm4_divert(-1)\n') ;
 
 % no code is generated for the ANY operator (SECOND is used in its place)
 assert (~isequal (binop, 'any')) ;
@@ -240,21 +241,16 @@ fprintf (f, 'm4_define(`GB_disable'', `(%s)'')\n', disable) ;
 % fprintf (ff, '// #define GxB_NO_%s_%s\n',  upper (binop), upper (fname)) ;
 % fclose (ff) ;
 
+fprintf (f, 'm4_divert(0)\n') ;
 fclose (f) ;
 
-trim = 42 ;
-
 % construct the *.c file
-cmd = sprintf (...
-'cat control.m4 Generator/GB_binop.c | m4 | tail -n +%d > Generated2/GB_binop__%s.c', ...
-trim, name) ;
+cmd = sprintf ('cat control.m4 Generator/GB_binop.c | m4 -P > Generated2/GB_binop__%s.c', name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
-cmd = sprintf (...
-'cat control.m4 Generator/GB_binop.h | m4 | tail -n +%d >> Generated2/GB_binop__include.h', trim) ;
-system (cmd) ;
+system ('cat control.m4 Generator/GB_binop.h | m4 -P >> Generated2/GB_binop__include.h') ;
 
 delete ('control.m4') ;
 

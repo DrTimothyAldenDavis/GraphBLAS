@@ -7,6 +7,7 @@ function codegen_1type_template (xtype)
 % SPDX-License-Identifier: Apache-2.0
 
 f = fopen ('control.m4', 'w') ;
+fprintf (f, 'm4_divert(-1)\n') ;
 
 [fname, unsigned, bits] = codegen_type (xtype) ;
 fprintf ('%-11s:  fname: %-7s  unsigned: %d bits: %d\n', xtype, fname, unsigned, bits) ;
@@ -29,18 +30,15 @@ end
 % create the disable flag
 disable = sprintf ('GxB_NO_%s', upper (fname)) ;
 fprintf (f, 'm4_define(`GB_disable'', `(%s)'')\n', disable) ;
+fprintf (f, 'm4_divert(0)\n') ;
 fclose (f) ;
 
 % construct the *.c file
-cmd = sprintf (...
-'cat control.m4 Generator/GB_type.c | m4 | tail -n +7 > Generated2/GB_type__%s.c', ...
-fname) ;
+cmd = sprintf ('cat control.m4 Generator/GB_type.c | m4 -P > Generated2/GB_type__%s.c', fname) ;
 system (cmd) ;
 
 % append to the *.h file
-cmd = sprintf (...
-'cat control.m4 Generator/GB_type.h | m4 | tail -n +7 >> Generated2/GB_type__include.h') ;
-system (cmd) ;
+system ('cat control.m4 Generator/GB_type.h | m4 -P >> Generated2/GB_type__include.h') ;
 
 delete ('control.m4') ;
 

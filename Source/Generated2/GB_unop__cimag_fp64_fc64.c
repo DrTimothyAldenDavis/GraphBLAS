@@ -65,10 +65,10 @@
 #define GB_DISABLE \
     (GxB_NO_CIMAG || GxB_NO_FP64 || GxB_NO_FC64)
 
+
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
-
 
 GrB_Info GB (_unop_apply__cimag_fp64_fc64)
 (

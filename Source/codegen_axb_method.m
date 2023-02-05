@@ -13,6 +13,7 @@ if (nargin >= 5 && isempty (mult))
 end
 
 f = fopen ('control.m4', 'w') ;
+fprintf (f, 'm4_divert(-1)\n') ;
 
 is_first  = false ;
 is_second = false ;
@@ -644,9 +645,8 @@ else
     fprintf (f, 'm4_define(`if_not_disabled'', `#if ( !GB_DISABLE )'')\n') ;
 end
 
+fprintf (f, 'm4_divert(0)\n') ;
 fclose (f) ;
-
-nprune = 76 ;
 
 if (is_any_pair)
     % the ANY_PAIR_ISO semiring goes in Generated1
@@ -657,13 +657,13 @@ else
 end
 
 % construct the *.c file for the semiring
-cmd = sprintf ('cat control.m4 Generator/GB_AxB.c | m4 | tail -n +%d > Generated%d/GB_AxB__%s.c', nprune, k, name) ;
+cmd = sprintf ('cat control.m4 Generator/GB_AxB.c | m4 -P > Generated%d/GB_AxB__%s.c', k, name) ;
 system (cmd) ;
 
 fprintf ('.') ;
 
 % append to the *.h file
-cmd = sprintf ('cat control.m4 Generator/GB_AxB.h | m4 | tail -n +%d >> Generated%d/GB_AxB__include%d.h', nprune, k, k) ;
+cmd = sprintf ('cat control.m4 Generator/GB_AxB.h | m4 -P >> Generated%d/GB_AxB__include%d.h', k, k) ;
 system (cmd) ;
 
 delete ('control.m4') ;

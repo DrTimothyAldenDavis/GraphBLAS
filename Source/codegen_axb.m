@@ -16,16 +16,16 @@ fprintf ('\nsemirings:\n') ;
 
 for k = 1:2
     filename = sprintf ('Generated%d/GB_AxB__include%d.h', k, k) ;
-    f = fopen (filename, 'w') ;
-    fprintf (f, '//------------------------------------------------------------------------------\n') ;
-    fprintf (f, '// GB_AxB__include%d.h: definitions for Generated%d/GB_AxB__*.c\n', k, k) ;
-    fprintf (f, '//------------------------------------------------------------------------------\n') ;
-    fprintf (f, '\n') ;
-    fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
-    fprintf (f, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
-    fprintf (f, '// This file has been automatically generated from Generator/GB_AxB.h') ;
-    fprintf (f, '\n\n') ;
-    fclose (f) ;
+    fh = fopen (filename, 'w') ;
+    fprintf (fh, '//------------------------------------------------------------------------------\n') ;
+    fprintf (fh, '// GB_AxB__include%d.h: definitions for Generated%d/GB_AxB__*.c\n', k, k) ;
+    fprintf (fh, '//------------------------------------------------------------------------------\n') ;
+    fprintf (fh, '\n') ;
+    fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
+    fprintf (fh, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
+    fprintf (fh, '// This file has been automatically generated from Generator/GB_AxB.h') ;
+    fprintf (fh, '\n\n') ;
+    fclose (fh) ;
 end
 
 % codegen_axb_template (multop, bmult, imult, fmult, dmult, fcmult, dcmult)

@@ -65,10 +65,10 @@
 #define GB_DISABLE \
     (GxB_NO_AINV || GxB_NO_UINT32)
 
+
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
-
 
 GrB_Info GB (_unop_apply__ainv_uint32_uint32)
 (

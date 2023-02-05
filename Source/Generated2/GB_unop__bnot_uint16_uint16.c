@@ -65,10 +65,10 @@
 #define GB_DISABLE \
     (GxB_NO_BNOT || GxB_NO_UINT16)
 
+
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
-
 
 GrB_Info GB (_unop_apply__bnot_uint16_uint16)
 (

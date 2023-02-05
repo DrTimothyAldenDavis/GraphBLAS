@@ -9,16 +9,7 @@
 
 
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-GrB_Info GB (_unop_apply__(none))
-(
-    bool *Cx,
-    const bool *Ax,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
+
 
 GrB_Info GB (_unop_tran__identity_bool_bool)
 (
@@ -331,16 +322,7 @@ GrB_Info GB (_unop_tran__identity_int8_bool)
 
 
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-GrB_Info GB (_unop_apply__(none))
-(
-    int8_t *Cx,
-    const int8_t *Ax,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
+
 
 GrB_Info GB (_unop_tran__identity_int8_int8)
 (
@@ -653,16 +635,7 @@ GrB_Info GB (_unop_tran__identity_int16_int8)
 
 
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-GrB_Info GB (_unop_apply__(none))
-(
-    int16_t *Cx,
-    const int16_t *Ax,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
+
 
 GrB_Info GB (_unop_tran__identity_int16_int16)
 (
@@ -975,16 +948,7 @@ GrB_Info GB (_unop_tran__identity_int32_int16)
 
 
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-GrB_Info GB (_unop_apply__(none))
-(
-    int32_t *Cx,
-    const int32_t *Ax,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
+
 
 GrB_Info GB (_unop_tran__identity_int32_int32)
 (
@@ -1297,16 +1261,7 @@ GrB_Info GB (_unop_tran__identity_int64_int32)
 
 
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-GrB_Info GB (_unop_apply__(none))
-(
-    int64_t *Cx,
-    const int64_t *Ax,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
+
 
 GrB_Info GB (_unop_tran__identity_int64_int64)
 (
@@ -1619,16 +1574,7 @@ GrB_Info GB (_unop_tran__identity_uint8_int64)
 
 
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-GrB_Info GB (_unop_apply__(none))
-(
-    uint8_t *Cx,
-    const uint8_t *Ax,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
+
 
 GrB_Info GB (_unop_tran__identity_uint8_uint8)
 (
@@ -1941,16 +1887,7 @@ GrB_Info GB (_unop_tran__identity_uint16_uint8)
 
 
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-GrB_Info GB (_unop_apply__(none))
-(
-    uint16_t *Cx,
-    const uint16_t *Ax,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
+
 
 GrB_Info GB (_unop_tran__identity_uint16_uint16)
 (
@@ -2263,16 +2200,7 @@ GrB_Info GB (_unop_tran__identity_uint32_uint16)
 
 
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-GrB_Info GB (_unop_apply__(none))
-(
-    uint32_t *Cx,
-    const uint32_t *Ax,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
+
 
 GrB_Info GB (_unop_tran__identity_uint32_uint32)
 (
@@ -2585,16 +2513,7 @@ GrB_Info GB (_unop_tran__identity_uint64_uint32)
 
 
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-GrB_Info GB (_unop_apply__(none))
-(
-    uint64_t *Cx,
-    const uint64_t *Ax,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
+
 
 GrB_Info GB (_unop_tran__identity_uint64_uint64)
 (
@@ -2907,16 +2826,7 @@ GrB_Info GB (_unop_tran__identity_fp32_uint64)
 
 
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-GrB_Info GB (_unop_apply__(none))
-(
-    float *Cx,
-    const float *Ax,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
+
 
 GrB_Info GB (_unop_tran__identity_fp32_fp32)
 (
@@ -3229,16 +3139,7 @@ GrB_Info GB (_unop_tran__identity_fp64_fp32)
 
 
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-GrB_Info GB (_unop_apply__(none))
-(
-    double *Cx,
-    const double *Ax,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
+
 
 GrB_Info GB (_unop_tran__identity_fp64_fp64)
 (
@@ -3551,16 +3452,7 @@ GrB_Info GB (_unop_tran__identity_fc32_fp64)
 
 
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-GrB_Info GB (_unop_apply__(none))
-(
-    GxB_FC32_t *Cx,
-    const GxB_FC32_t *Ax,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
+
 
 GrB_Info GB (_unop_tran__identity_fc32_fc32)
 (
@@ -3873,16 +3765,7 @@ GrB_Info GB (_unop_tran__identity_fc64_fc32)
 
 
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-GrB_Info GB (_unop_apply__(none))
-(
-    GxB_FC64_t *Cx,
-    const GxB_FC64_t *Ax,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
+
 
 GrB_Info GB (_unop_tran__identity_fc64_fc64)
 (

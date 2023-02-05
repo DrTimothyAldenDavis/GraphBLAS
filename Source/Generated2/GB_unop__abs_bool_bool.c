@@ -65,10 +65,10 @@
 #define GB_DISABLE \
     (GxB_NO_ABS || GxB_NO_BOOL)
 
+
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
-
 
 GrB_Info GB (_unop_apply__abs_bool_bool)
 (

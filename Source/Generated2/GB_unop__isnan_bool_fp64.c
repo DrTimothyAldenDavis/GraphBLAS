@@ -65,10 +65,10 @@
 #define GB_DISABLE \
     (GxB_NO_ISNAN || GxB_NO_BOOL || GxB_NO_FP64)
 
+
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
-
 
 GrB_Info GB (_unop_apply__isnan_bool_fp64)
 (

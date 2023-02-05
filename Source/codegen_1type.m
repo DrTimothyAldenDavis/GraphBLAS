@@ -9,16 +9,16 @@ function codegen_1type
 
 fprintf ('\ntypes:\n') ;
 
-f = fopen ('Generated2/GB_type__include.h', 'w') ;
-fprintf (f, '//------------------------------------------------------------------------------\n') ;
-fprintf (f, '// GB_type__include.h: definitions for GB_type__*.c\n') ;
-fprintf (f, '//------------------------------------------------------------------------------\n') ;
-fprintf (f, '\n') ;
-fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
-fprintf (f, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
-fprintf (f, '// This file has been automatically generated from Generator/GB_type.h') ;
-fprintf (f, '\n\n') ;
-fclose (f) ;
+fh = fopen ('Generated2/GB_type__include.h', 'w') ;
+fprintf (fh, '//------------------------------------------------------------------------------\n') ;
+fprintf (fh, '// GB_type__include.h: definitions for GB_type__*.c\n') ;
+fprintf (fh, '//------------------------------------------------------------------------------\n') ;
+fprintf (fh, '\n') ;
+fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
+fprintf (fh, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
+fprintf (fh, '// This file has been automatically generated from Generator/GB_type.h') ;
+fprintf (fh, '\n\n') ;
+fclose (fh) ;
 
 codegen_1type_template ('bool') ;
 codegen_1type_template ('int8_t') ;

@@ -7,6 +7,7 @@ function codegen_red_method (opname, op, atype, identity, terminal, panel)
 % SPDX-License-Identifier: Apache-2.0
 
 f = fopen ('control.m4', 'w') ;
+fprintf (f, 'm4_divert(-1)\n') ;
 
 [aname, unsigned, bits] = codegen_type (atype) ;
 
@@ -84,30 +85,23 @@ disable = [disable (sprintf (' || GxB_NO_%s', upper (aname)))] ;
 disable = [disable (sprintf (' || GxB_NO_%s_%s', upper (opname), upper (aname)))] ;
 fprintf (f, 'm4_define(`GB_disable'', `(%s)'')\n', disable) ;
 
+fprintf (f, 'm4_divert(0)\n') ;
 fclose (f) ;
 
 if (is_monoid)
     % construct the *.c file for the reduction to scalar
-    cmd = sprintf (...
-    'cat control.m4 Generator/GB_red.c | m4 | tail -n +21 > Generated2/GB_red__%s.c', ...
-    name) ;
+    cmd = sprintf ('cat control.m4 Generator/GB_red.c | m4 -P > Generated2/GB_red__%s.c', name) ;
     fprintf ('.') ;
     system (cmd) ;
     % append to the *.h file
-    cmd = sprintf (...
-    'cat control.m4 Generator/GB_red.h | m4 | tail -n +21 >> Generated2/GB_red__include.h') ;
-    system (cmd) ;
+    system ('cat control.m4 Generator/GB_red.h | m4 -P >> Generated2/GB_red__include.h') ;
 end
 
 % construct the build *.c and *.h files
-cmd = sprintf (...
-'cat control.m4 Generator/GB_bld.c | m4 | tail -n +21 > Generated2/GB_bld__%s.c', ...
-name) ;
+cmd = sprintf ('cat control.m4 Generator/GB_bld.c | m4 -P > Generated2/GB_bld__%s.c', name) ;
 fprintf ('.') ;
 system (cmd) ;
-cmd = sprintf (...
-'cat control.m4 Generator/GB_bld.h | m4 | tail -n +21 >> Generated2/GB_bld__include.h') ;
-system (cmd) ;
+system ('cat control.m4 Generator/GB_bld.h | m4 -P >> Generated2/GB_bld__include.h') ;
 
 delete ('control.m4') ;
 
