@@ -12235,7 +12235,7 @@ void       GxB_Iterator_get_UDT    (GxB_Iterator iterator,
 //      GxB_set (GxB_SOURCE_PATH, "/home/me/otherplace/GraphBLAS") ;
 
 #ifndef GRAPHBLAS_SOURCE_PATH
-#define GRAPHBLAS_SOURCE_PATH "/home/davis/master/GraphBLAS"
+#define GRAPHBLAS_SOURCE_PATH "/opt/SuiteSparse/GraphBLAS"
 #endif
 
 //------------------------------------------------------------------------------
