@@ -66,7 +66,7 @@ void GB_debugify_mxm
     }
 
     // construct the filename and create the file
-    char filename [512 + 2*GxB_MAX_NAME_LEN] ;
+    char filename [1024 + 2*GxB_MAX_NAME_LEN] ;
     sprintf (filename, "/tmp/grb/%s.h", mxm_name) ;
     FILE *fp = fopen (filename, "w") ;
     if (fp == NULL) return ;
