@@ -108,7 +108,6 @@ if_not_any_pair_semiring
 #define GB_CTYPE_CAST(x,y) \
     GB_ctype_cast(x,y)
 
-// FIXME: GB_MULTADD not in macrofy
 // multiply-add
 #define GB_MULTADD(z, x, y, i, k, j) \
     GB_multiply_add(z, x, y, i, k, j)

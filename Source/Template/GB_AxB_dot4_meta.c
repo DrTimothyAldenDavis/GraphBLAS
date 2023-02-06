@@ -11,6 +11,9 @@
 // semiring matches the accum operator, and the type of C matches the ztype of
 // accum.  That is, no typecasting can be done with C.
 
+// This method is not used for the generic case with memcpy's and function
+// pointers.  It is only used for pre-generated and JIT kernels.
+
 // The matrix C is the user input matrix.  C is not iso on output, but might
 // iso on input, in which case the input iso scalar is cinput, and C->x has
 // been expanded to non-iso.  If A and/or B are hypersparse, the iso value of C
@@ -82,6 +85,8 @@
     //--------------------------------------------------------------------------
 
     const bool C_in_iso = C->iso ;
+    // FIXME: use this instead:
+    // GB_DECLARE_MONOID_IDENTITY (zidentity) ;
     const GB_C_TYPE cinput = (C_in_iso) ? Cx [0] : GB_IDENTITY ;
     if (C_in_iso)
     { 

@@ -110,7 +110,7 @@
 
         // C(i,j) += (A')(i,k) * B(k,j)
         #define GB_MULTADD(cij, aki, bkj, i, k, j)                      \
-            GB_C_TYPE zwork ;                                            \
+            GB_C_TYPE zwork ;                                           \
             GB_MULT (zwork, aki, bkj, i, k, j) ;                        \
             fadd (&cij, &cij, &zwork)
 
