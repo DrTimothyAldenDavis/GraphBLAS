@@ -117,6 +117,10 @@ if_not_any_pair_semiring
 #define GB_IDENTITY \
     GB_identity
 
+// declare and initialize z = identity value of the monoid
+#define GB_DECLARE_MONOID_IDENTITY(z) \
+    GB_ctype z = GB_identity ;
+
 // FIXME: GB_HAS_IDENTITY_BYTE not in macrofy (add it)
 // 1 if the identity value can be assigned via memset, with all bytes the same
 #define GB_HAS_IDENTITY_BYTE \
@@ -158,6 +162,7 @@ if_not_any_pair_semiring
     GB_putc
 
 // FIXME: GB_CIJ_WRITE(p,t) why do I need this?  typecast?
+// change to use GB_PUTC instead
 // Cx [p] = t
 #define GB_CIJ_WRITE(p,t) \
     GB_cij_write

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_AxB_saxpy_A_sparse_B_bitmap: C<#M>+=A*B, C bitmap, M any format
+// GB_bitmap_AxB_saxpy_A_sparse_B_bitmap: C<#M>+=A*B, C bitmap/full, M anything
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -12,7 +12,19 @@
 // if C is bitmap: no accumulator is used
 
 // if C is full: C += A*B is computed with the accumulator identical to
-// the monoid
+// the monoid.
+
+// This template is used by two methods:
+//
+//      Template/GB_AxB_saxpy4_template:  C is always full, and this template
+//          is not used for the generic case, nor for the ANY_PAIR case.  It is
+//          only used for the pre generated kernels, and for the JIT.  As a
+//          result, whereever !GB_C_IS_BITMAP appears, regular assignments can
+//          be used instead of macros.
+//
+//      Template/GB_bitmap_AxB_saxpy_template:  C is always bitmap, and this
+//          template is used for all cases: generic, pre-generated (including
+//          the ANY_PAIR monoid), and the JIT.
 
 #ifndef GB_BSIZE
 #define GB_BSIZE sizeof (GB_B_TYPE)
@@ -122,7 +134,8 @@
             int8_t *restrict Hf = Wf + (H_slice [tid] * cvlen) ;
             #endif
             #if ( !GB_IS_ANY_PAIR_SEMIRING )
-            GB_C_TYPE *restrict Hx = (GB_C_TYPE *) (Wcx + H_slice [tid] * cvlenx);
+            GB_C_TYPE *restrict Hx = (GB_C_TYPE *)
+                (Wcx + H_slice [tid] * cvlenx) ;
             #endif
 
             //------------------------------------------------------------------
@@ -163,6 +176,8 @@
                 //--------------------------------------------------------------
 
                 #if ( !GB_C_IS_BITMAP && !GB_IS_ANY_PAIR_SEMIRING )
+                // This case is not used by GB_bitmap_AxB_saxpy_template.c,
+                // so it does not require a generic variant.
                 if (np == 1)
                 { 
                     // Make H an alias to C(:,j1)
@@ -179,7 +194,7 @@
                     #else
                         for (int64_t i = 0 ; i < nc ; i++)
                         { 
-                            Hx [i] = GB_IDENTITY ;
+                            Hx [i] = GB_IDENTITY ;  // FIXME2
                         }
                     #endif
                 }
@@ -815,13 +830,13 @@
             }
             #else
             { 
-                // set Hx to identity
+                // Hx = identity
                 #if GB_HAS_IDENTITY_BYTE
                     memset (Hx, GB_IDENTITY_BYTE, cvlen * GB_CSIZE) ;
                 #else
                     for (int64_t i = 0 ; i < cvlen ; i++)
                     { 
-                        Hx [i] = GB_IDENTITY ;
+                        Hx [i] = GB_IDENTITY ;  // FIXME2
                     }
                 #endif
             }

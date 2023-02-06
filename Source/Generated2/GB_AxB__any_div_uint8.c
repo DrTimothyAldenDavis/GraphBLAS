@@ -103,26 +103,31 @@
 #define GB_MULT(z, x, y, i, k, j) \
     z = GB_idiv_uint8 (x, y)
 
+// FIXME: GB_CTYPE_CAST not in macrofy (for PLUS_PAIR, and t=1 for PAIR operator)
 // cast from a real scalar (or 2, if C is complex) to the type of C
+// Should be to ztype
 #define GB_CTYPE_CAST(x,y) \
-    ((uint8_t) x)
-
-// cast from a real scalar (or 2, if A is complex) to the type of A
-#define GB_ATYPE_CAST(x,y) \
     ((uint8_t) x)
 
 // multiply-add
 #define GB_MULTADD(z, x, y, i, k, j) \
     { uint8_t x_op_y = GB_idiv_uint8 (x, y) ; z = x_op_y ; }
 
+// FIXME: GB_IDENTITY only appears in a few templates; replace it
 // monoid identity value
 #define GB_IDENTITY \
     0
 
+// declare and initialize z = identity value of the monoid
+#define GB_DECLARE_MONOID_IDENTITY(z) \
+    uint8_t z = 0 ;
+
+// FIXME: GB_HAS_IDENTITY_BYTE not in macrofy (add it)
 // 1 if the identity value can be assigned via memset, with all bytes the same
 #define GB_HAS_IDENTITY_BYTE \
     0
 
+// FIXME: GB_IDENTITY_BYTE not in macrofy (add it)
 // identity byte, for memset
 #define GB_IDENTITY_BYTE \
     (none)
@@ -135,10 +140,12 @@
 #define GB_IF_TERMINAL_BREAK(z,zterminal) \
     break ;
 
+// FIXME: GB_PRAGMA_SIMD_DOT not in macrofy, do I need it?
 // simd pragma for dot-product loop vectorization
 #define GB_PRAGMA_SIMD_DOT(cij) \
     ;
 
+// FIXME: GB_PRAGMA_SIMD_VECTORIZE: move this (generic methods disable it)
 // simd pragma for other loop vectorization
 #define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
 
@@ -146,6 +153,7 @@
 #define GB_IS_PLUS_PAIR_REAL_SEMIRING \
     0
 
+// FIXME: GB_CIJ_DECLARE(cij) do I need this?  Use GB_DECLARE_MONOID_IDENTITY(cij) instead?
 // declare the cij scalar (initialize cij to zero for PLUS_PAIR)
 #define GB_CIJ_DECLARE(cij) \
     uint8_t cij
@@ -154,10 +162,13 @@
 #define GB_PUTC(cij,p) \
     Cx [p] = cij
 
+// FIXME: GB_CIJ_WRITE(p,t) why do I need this?  typecast?
+// change to use GB_PUTC instead
 // Cx [p] = t
 #define GB_CIJ_WRITE(p,t) \
     Cx [p] = t
 
+// FIXME: GB_CIJ_UPDATE(p,t) why do I need this?  Use GB_UPDATE instead?
 // C(i,j) += t
 #define GB_CIJ_UPDATE(p,t) \
     Cx [p] = t
@@ -166,6 +177,7 @@
 #define GB_ADD(z,x,y) \
     z = y
 
+// FIXME: GB_CTYPE_BITS for PLUS_PAIR semirings only, 0 otherwise
 // bit pattern for bool, 8-bit, 16-bit, and 32-bit integers
 #define GB_CTYPE_BITS \
     0xffL
@@ -174,14 +186,17 @@
 #define GB_IS_ANY_MONOID \
     1
 
+// FIXME: GB_IS_EQ_MONOID
 // 1 if monoid update is EQ
 #define GB_IS_EQ_MONOID \
     0
 
+// FIXME: GB_HAS_ATOMIC
 // 1 if monoid update can be done atomically, 0 otherwise
 #define GB_HAS_ATOMIC \
     1
 
+// FIXME: GB_HAS_OMP_ATOMIC (general and MSVC)
 // 1 if monoid update can be done with an OpenMP atomic update, 0 otherwise
 #if GB_COMPILER_MSC
     /* MS Visual Studio only has OpenMP 2.0, with fewer atomics */
@@ -192,82 +207,102 @@
         0
 #endif
 
+// FIXME: GB_IS_ANY_PAIR_SEMIRING
 // 1 for the ANY_PAIR_ISO semiring
 #define GB_IS_ANY_PAIR_SEMIRING \
     0
 
+// FIXME: GB_IS_PAIR_MULTIPLIER
 // 1 if PAIR is the multiply operator 
 #define GB_IS_PAIR_MULTIPLIER \
     0
 
+// FIXME: GB_IS_PLUS_FC32_MONOID
 // 1 if monoid is PLUS_FC32
 #define GB_IS_PLUS_FC32_MONOID \
     0
 
+// FIXME: GB_IS_PLUS_FC64_MONOID
 // 1 if monoid is PLUS_FC64
 #define GB_IS_PLUS_FC64_MONOID \
     0
 
+// FIXME: GB_IS_ANY_FC32_MONOID
 // 1 if monoid is ANY_FC32
 #define GB_IS_ANY_FC32_MONOID \
     0
 
+// FIXME: GB_IS_ANY_FC64_MONOID
 // 1 if monoid is ANY_FC64
 #define GB_IS_ANY_FC64_MONOID \
     0
 
+// FIXME: GB_IS_IMIN_MONOID 
 // 1 if monoid is MIN for signed or unsigned integers
 #define GB_IS_IMIN_MONOID \
     0
 
+// FIXME: GB_IS_IMAX_MONOID 
 // 1 if monoid is MAX for signed or unsigned integers
 #define GB_IS_IMAX_MONOID \
     0
 
+// FIXME: GB_IS_FMIN_MONOID 
 // 1 if monoid is MIN for float or double
 #define GB_IS_FMIN_MONOID \
     0
 
+// FIXME: GB_IS_FMAX_MONOID 
 // 1 if monoid is MAX for float or double
 #define GB_IS_FMAX_MONOID \
     0
 
+// FIXME: GB_IS_FMIN_MONOID 
 // 1 for the FIRSTI or FIRSTI1 multiply operator
 #define GB_IS_FIRSTI_MULTIPLIER \
     0
 
+// FIXME: GB_IS_FIRSTJ_MONOID  or FIRSTJ1
 // 1 for the FIRSTJ or FIRSTJ1 multiply operator
 #define GB_IS_FIRSTJ_MULTIPLIER \
     0
 
+// FIXME: GB_IS_SECONDJ_MONOID  or SECONDJ1
 // 1 for the SECONDJ or SECONDJ1 multiply operator
 #define GB_IS_SECONDJ_MULTIPLIER \
     0
 
+// FIXME: GB_OFFSET for FIRST[IJ]1 and SECOND[IJ]1
 // 1 for the FIRSTI1, FIRSTJ1, SECONDI1, or SECONDJ1 multiply operators
 #define GB_OFFSET \
     0
 
+// FIXME: GB_ATOMIC_COMPARE_EXCHANGE
 // atomic compare-exchange
 #define GB_ATOMIC_COMPARE_EXCHANGE(target, expected, desired) \
     GB_ATOMIC_COMPARE_EXCHANGE_8 (target, expected, desired)
 
+// FIXME: GB_HX_WRITE
 // Hx [i] = t
 #define GB_HX_WRITE(i,t) \
     Hx [i] = t
 
+// FIXME: GB_CIJ_GATHER
 // Cx [p] = Hx [i]
 #define GB_CIJ_GATHER(p,i) \
     Cx [p] = Hx [i]
 
+// FIXME: GB_CIJ_GATHER_UPDATE(p,i)
 // Cx [p] += Hx [i]
 #define GB_CIJ_GATHER_UPDATE(p,i) \
     Cx [p] = Hx [i]
 
+// FIXME: GB_HX_UPDATE(i,t)
 // Hx [i] += t
 #define GB_HX_UPDATE(i,t) \
     Hx [i] = t
 
+// FIXME: GB_CIJ_MEMCPY(p,i,len)
 // memcpy (&(Cx [p]), &(Hx [i]), len)
 #define GB_CIJ_MEMCPY(p,i,len) \
     memcpy (Cx +(p), Hx +(i), (len) * sizeof(uint8_t));

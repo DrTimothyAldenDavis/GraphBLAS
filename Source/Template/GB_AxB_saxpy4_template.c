@@ -7,7 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// This method is only used for built-in semirings with no typecasting.
+// This method is only used for built-in semirings with no typecasting in
+// pre-generated kernels, or JIT kernels.  It is not used for generic methods.
+
 // The accumulator matches the semiring monoid.
 // The ANY monoid and non-atomic monoids are not supported.
 
