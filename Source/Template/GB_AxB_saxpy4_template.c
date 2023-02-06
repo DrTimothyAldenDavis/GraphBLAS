@@ -58,6 +58,11 @@
     ASSERT (C->vdim == B->vdim) ;
     ASSERT (A->vdim == B->vlen) ;
 
+    #if ( !GB_HAS_IDENTITY_BYTE )
+    // declare the monoid identity value
+    const GB_DECLARE_MONOID_IDENTITY (zidentity) ;
+    #endif
+
     const int8_t *restrict Bb = B->b ;
     const bool B_iso = B->iso ;
     const int64_t bvlen = B->vlen ;

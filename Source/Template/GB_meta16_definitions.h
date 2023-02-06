@@ -218,6 +218,8 @@
 //------------------------------------------------------------------------------
 
 // This method is not used for the saxpy3 generic method.
+// It is only used by the GB_AxB_saxpy3_coarseGus_*_phase5.c methods
+// for pre-generated, any_pair (see the case below), and JIT kernels.
 
 #undef GB_COMPUTE_DENSE_C_j
 

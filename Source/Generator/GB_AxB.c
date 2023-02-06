@@ -381,14 +381,14 @@ m4_divert(if_dot4_enabled)
 m4_divert(0)
 
 //------------------------------------------------------------------------------
-// GB_AsaxbitB: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method, C is bitmap/full
+// GB_AsaxbitB: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method, C is bitmap only
 //------------------------------------------------------------------------------
 
 #include "GB_AxB_saxpy3_template.h"
 
 GrB_Info GB (_AsaxbitB)
 (
-    GrB_Matrix C,   // bitmap or full
+    GrB_Matrix C,   // bitmap only
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix B,

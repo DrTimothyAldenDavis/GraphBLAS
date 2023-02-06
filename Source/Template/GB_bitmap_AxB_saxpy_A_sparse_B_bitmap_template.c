@@ -18,13 +18,17 @@
 //
 //      Template/GB_AxB_saxpy4_template:  C is always full, and this template
 //          is not used for the generic case, nor for the ANY_PAIR case.  It is
-//          only used for the pre generated kernels, and for the JIT.  As a
-//          result, whereever !GB_C_IS_BITMAP appears, regular assignments can
-//          be used instead of macros.
+//          only used for the pre-generated kernels, and for the JIT.
 //
 //      Template/GB_bitmap_AxB_saxpy_template:  C is always bitmap, and this
 //          template is used for all cases: generic, pre-generated (including
 //          the ANY_PAIR monoid), and the JIT.
+
+// FIXME: it would be better to split this into 2 templates:
+// the current name can be used for the C bitmap case, and
+// use the name GB_AxB_saxpy4_A_sparse_B_bitmap when C is full in saxpy4.
+// The two methods could share some templates, such as the "switch (np)"
+// below.
 
 #ifndef GB_BSIZE
 #define GB_BSIZE sizeof (GB_B_TYPE)
@@ -176,25 +180,29 @@
                 //--------------------------------------------------------------
 
                 #if ( !GB_C_IS_BITMAP && !GB_IS_ANY_PAIR_SEMIRING )
-                // This case is not used by GB_bitmap_AxB_saxpy_template.c,
-                // so it does not require a generic variant.
+                // C is full.
+                // Not used by Template/GB_bitmap_AxB_saxpy_template.c, only
+                // Template/GB_AxB_saxpy4_template:  C is always full, and this
+                // template so it does not require a generic variant.
                 if (np == 1)
                 { 
                     // Make H an alias to C(:,j1)
                     int64_t j = j1 ;
                     int64_t pC_start = j * cvlen ;    // get pointer to C(:,j)
+                    // Hx is GB_C_TYPE, not GB_void, so pointer arithmetic on
+                    // it is by units of size sizeof (GB_C_TYPE), not bytes.
                     Hx = Cx + pC_start ;
                 }
                 else
                 { 
-                    // Hx = identity
+                    // C is full: set Hx = identity
                     int64_t nc = np * cvlen ;
                     #if GB_HAS_IDENTITY_BYTE
                         memset (Hx, GB_IDENTITY_BYTE, nc * GB_CSIZE) ;
                     #else
                         for (int64_t i = 0 ; i < nc ; i++)
                         { 
-                            Hx [i] = GB_IDENTITY ;  // FIXME2
+                            GB_HX_WRITE (i, zidentity) ; // Hx(i) = identity
                         }
                     #endif
                 }
@@ -232,6 +240,7 @@
 
                 #undef GB_HX_COMPUTE
                 #if GB_C_IS_BITMAP
+                    // C is bitmap
                     #define GB_HX_COMPUTE(gkj,gb,jj)                        \
                     {                                                       \
                         /* H (i,jj) += A(i,k) * B(k,j) */                   \
@@ -254,6 +263,7 @@
                         }                                                   \
                     }
                 #else
+                    // C is full
                     #define GB_HX_COMPUTE(gkj,gb,jj)                        \
                     {                                                       \
                         /* H (i,jj) += A(i,k) * B(k,j) */                   \
@@ -267,6 +277,8 @@
                     }
                 #endif
 
+                // handles both C bitmap and C full, using macros defined above
+                // FIXME: make this a template when this method is split.
                 switch (np)
                 {
 
@@ -410,6 +422,7 @@
                 //--------------------------------------------------------------
 
                 #if ( !GB_C_IS_BITMAP )
+                // C is full
                 if (np == 1)
                 { 
                     // Hx is already aliased to Cx; no more work to do
@@ -661,7 +674,7 @@
                     { 
 
                         //------------------------------------------------------
-                        // M is not present, or bitmap/full
+                        // M is not present, or bitmap/full; C is bitmap
                         //------------------------------------------------------
 
                         // finite-state machine in Cb [pC]:
@@ -826,17 +839,18 @@
 
             #if GB_C_IS_BITMAP
             { 
+                // C is bitmap: clear Hf
                 memset (Hf, 0, cvlen) ;
             }
             #else
             { 
-                // Hx = identity
+                // C is full: set Hx = identity
                 #if GB_HAS_IDENTITY_BYTE
                     memset (Hx, GB_IDENTITY_BYTE, cvlen * GB_CSIZE) ;
                 #else
                     for (int64_t i = 0 ; i < cvlen ; i++)
                     { 
-                        Hx [i] = GB_IDENTITY ;  // FIXME2
+                        GB_HX_WRITE (i, zidentity) ; // Hx(i) = identity
                     }
                 #endif
             }

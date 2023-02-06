@@ -24,7 +24,7 @@
 //          via GB_AxB_saxpy3_template.c.  SaxpyTasks holds the (fine/coarse x
 //          Gustavson/Hash) tasks constructed by GB_AxB_saxpy3_slice*.
 
-// bitmap_saxpy: general purpose method, where C is bitmap or full, via
+// bitmap_saxpy: general purpose method, where C is bitmap, via
 //          GB_bitmap_AxB_saxpy_template.c.  The method constructs its own
 //          tasks in workspace defined and freed in that template.
 

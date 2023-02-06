@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// C is bitmap/full
+// C is bitmap only.
 // multiply op is unflipped, and not positional, FIRST, or SECOND
 
 #define GB_AXB_SAXPY_GENERIC_METHOD GB_bitmap_AxB_saxpy_generic_unflipped 

@@ -487,6 +487,12 @@
                 // phase5: coarse Gustavson task
                 //--------------------------------------------------------------
 
+                #if !defined ( GB_GENERIC ) && !GB_IS_ANY_PAIR_SEMIRING
+                // declare the monoid identity value, for GB_COMPUTE_DENSE_C_j,
+                // needed only for the 3 kinds of coarseGus_*_phase5 below.
+                const GB_DECLARE_MONOID_IDENTITY (zidentity) ;
+                #endif
+
                 #if ( GB_NO_MASK )
                 {
                     // phase5: coarse Gustavson task, C=A*B

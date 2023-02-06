@@ -7,13 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// GB_AxB_saxpy_generic_method computes C=A*B, C<M>=A*B, or C<!M>=A*B.
-// with arbitrary types and operators.  C can have any sparsity pattern:
-// hyper, sparse, bitmap, or full.  For all cases, the four matrices C, M
-// (if present), A, and B have the same format (by-row or by-column), or they
-// represent implicitly transposed matrices with the same effect.  This method
-// does not handle the dot-product methods, which compute C=A'*B if A and B
-// are held by column, or equivalently A*B' if both are held by row.
+// GB_AxB_saxpy_generic_method computes C=A*B, C<M>=A*B, or C<!M>=A*B.  with
+// arbitrary types and operators.  C can be hyper, sparse, bitmap, but not
+// full.  For all cases, the four matrices C, M (if present), A, and B have the
+// same format (by-row or by-column), or they represent implicitly transposed
+// matrices with the same effect.  This method does not handle the dot-product
+// methods, which compute C=A'*B if A and B are held by column, or equivalently
+// A*B' if both are held by row.
 
 // This method uses GB_AxB_saxpy_generic_template.c to implement two
 // meta-methods, each of which can contain further specialized methods (such as
@@ -23,11 +23,11 @@
 //          via GB_AxB_saxpy3_template.c.  SaxpyTasks holds the (fine/coarse x
 //          Gustavson/Hash) tasks constructed by GB_AxB_saxpy3_slice*.
 
-// bitmap_saxpy: general purpose method, where C is bitmap or full, via
+// bitmap_saxpy: general purpose method, where C is bitmap, via
 //          GB_bitmap_AxB_saxpy_template.c.  The method constructs its own
 //          tasks in workspace defined and freed in that template.
 
-// C is not iso.
+// C is not iso, nor is it full.
 
 // This template is used to construct the following methods, all of which
 // are called by GB_AxB_saxpy_generic:
@@ -66,7 +66,7 @@
 
 GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
 (
-    GrB_Matrix C,                   // any sparsity
+    GrB_Matrix C,                   // any sparsity except full
     const GrB_Matrix M,
     bool Mask_comp,
     const bool Mask_struct,
@@ -92,7 +92,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
 
     GrB_BinaryOp mult = semiring->multiply ;
     GrB_Monoid add = semiring->add ;
-    GB_void *identity = (GB_void *) add->identity ;
+//  GB_void *identity = (GB_void *) add->identity ;
     ASSERT (mult->ztype == add->op->ztype) ;
     ASSERT (mult->ztype == C->type) ;
 

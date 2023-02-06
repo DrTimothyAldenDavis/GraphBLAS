@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// C is bitmap/full
+// C is bitmap only.
 // multiply op is GxB_FIRSTJ_INT64, GxB_FIRSTJ1_INT64,
 // GxB_SECONDI_INT64, or GxB_SECONDI1_INT64
 

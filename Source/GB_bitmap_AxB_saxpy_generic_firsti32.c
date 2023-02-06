@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// C is bitmap/full
+// C is bitmap only.
 // multiply op is GxB_FIRSTI_INT32 or GxB_FIRSTI1_INT32
 
 #define GB_AXB_SAXPY_GENERIC_METHOD GB_bitmap_AxB_saxpy_generic_firsti32 

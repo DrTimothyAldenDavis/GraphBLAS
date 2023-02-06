@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// All 4 matrices have any format: hypersparse, sparse, bitmap, or full.
+// A and B matrices have any format: hypersparse, sparse, bitmap, or full.
+// C can be sparse, hypersparse, or bitmap, but not full.
 
 {
     #if C_IS_SPARSE_OR_HYPERSPARSE            
@@ -38,7 +39,7 @@
     }
     #else
     {
-        // C is bitmap or full
+        // C is bitmap
         #include "GB_bitmap_AxB_saxpy_template.c"
     }
     #endif
