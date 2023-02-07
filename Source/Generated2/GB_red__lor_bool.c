@@ -25,7 +25,6 @@
 // Update:   z = (z || y)
 // Add func: z = (x || y)
 // Identity: false
-// Terminal: #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == true) { break ; }
 
 #define GB_A_TYPE \
     bool

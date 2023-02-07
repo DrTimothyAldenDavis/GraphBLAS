@@ -31,7 +31,7 @@
     #define GB_TERMINAL_CONDITION(z,zterminal) 1
     #endif
     #ifndef GB_IF_TERMINAL_BREAK
-    #define GB_IF_TERMINAL_BREAK break
+    #define GB_IF_TERMINAL_BREAK(z,zterminal) break
     #endif
 
 #else
@@ -44,7 +44,7 @@
     #define GB_TERMINAL_CONDITION(z,zterminal) 0
     #endif
     #ifndef GB_IF_TERMINAL_BREAK
-    #define GB_IF_TERMINAL_BREAK
+    #define GB_IF_TERMINAL_BREAK(z,zterminal)
     #endif
 
 #endif

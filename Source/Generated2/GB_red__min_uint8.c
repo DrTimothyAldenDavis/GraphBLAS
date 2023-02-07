@@ -25,7 +25,6 @@
 // Update:   if (y < z) { z = y ; }
 // Add func: z = GB_IMIN (x, y)
 // Identity: UINT8_MAX
-// Terminal: #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == 0) { break ; }
 
 #define GB_A_TYPE \
     uint8_t

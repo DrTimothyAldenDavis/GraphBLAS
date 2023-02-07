@@ -25,7 +25,6 @@
 // Update:   z = GB_FC64_add (z, y)
 // Add func: z = GB_FC64_add (x, y)
 // Identity: GxB_CMPLX(0,0)
-// Terminal: 
 
 #define GB_A_TYPE \
     GxB_FC64_t

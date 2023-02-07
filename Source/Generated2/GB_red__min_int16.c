@@ -25,7 +25,6 @@
 // Update:   if (y < z) { z = y ; }
 // Add func: z = GB_IMIN (x, y)
 // Identity: INT16_MAX
-// Terminal: #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == INT16_MIN) { break ; }
 
 #define GB_A_TYPE \
     int16_t

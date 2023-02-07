@@ -25,7 +25,6 @@
 // Update:   if ((y > z) || (z != z)) { z = y ; }
 // Add func: z = fmaxf (x, y)
 // Identity: (-INFINITY)
-// Terminal: 
 
 #define GB_A_TYPE \
     float

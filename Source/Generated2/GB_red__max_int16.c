@@ -25,7 +25,6 @@
 // Update:   if (y > z) { z = y ; }
 // Add func: z = GB_IMAX (x, y)
 // Identity: INT16_MIN
-// Terminal: #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == INT16_MAX) { break ; }
 
 #define GB_A_TYPE \
     int16_t

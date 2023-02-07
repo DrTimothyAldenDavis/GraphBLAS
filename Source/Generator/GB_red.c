@@ -25,7 +25,6 @@
 // Update:   GB_update_op(z,y)
 // Add func: GB_add_op(z,x,y)
 // Identity: GB_identity
-// Terminal: GB_if_terminal_break(z)
 
 #define GB_A_TYPE \
     GB_atype

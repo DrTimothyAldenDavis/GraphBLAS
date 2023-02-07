@@ -25,7 +25,6 @@
 // Update:   z = y
 // Add func: z = y
 // Identity: GxB_CMPLX(0,0)
-// Terminal: #define GB_IF_TERMINAL_BREAK(z,zterminal) break 
 
 #define GB_A_TYPE \
     GxB_FC64_t

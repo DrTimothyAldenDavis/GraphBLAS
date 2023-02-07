@@ -25,7 +25,6 @@
 // Update:   if ((y < z) || (z != z)) { z = y ; }
 // Add func: z = fmin (x, y)
 // Identity: ((double) INFINITY)
-// Terminal: 
 
 #define GB_A_TYPE \
     double

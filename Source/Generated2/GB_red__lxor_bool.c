@@ -25,7 +25,6 @@
 // Update:   z = (z != y)
 // Add func: z = (x != y)
 // Identity: false
-// Terminal: 
 
 #define GB_A_TYPE \
     bool

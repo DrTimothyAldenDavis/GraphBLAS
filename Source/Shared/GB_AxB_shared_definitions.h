@@ -192,5 +192,5 @@
 // monoid definitions
 //------------------------------------------------------------------------------
 
-#include "GB_shared_monoid_definitions.h"
+#include "GB_monoid_shared_definitions.h"
 

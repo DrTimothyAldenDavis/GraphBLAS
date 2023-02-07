@@ -25,7 +25,6 @@
 // Update:   z = (z && y)
 // Add func: z = (x && y)
 // Identity: true
-// Terminal: #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == false) { break ; }
 
 #define GB_A_TYPE \
     bool

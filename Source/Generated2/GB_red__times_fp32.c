@@ -25,7 +25,6 @@
 // Update:   z *= y
 // Add func: z = x * y
 // Identity: 1
-// Terminal: 
 
 #define GB_A_TYPE \
     float

@@ -25,7 +25,6 @@
 // Update:   z *= y
 // Add func: z = x * y
 // Identity: 1
-// Terminal: #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == 0) { break ; }
 
 #define GB_A_TYPE \
     int32_t
