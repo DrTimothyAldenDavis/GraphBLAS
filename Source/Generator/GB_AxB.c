@@ -348,7 +348,7 @@ m4_divert(if_saxpy5_enabled)
     #if GB_DISABLE
     #elif ( !GB_A_IS_PATTERN )
 
-        m4_divert(if_semiring_has_avx)
+m4_divert(if_semiring_has_avx)
         //----------------------------------------------------------------------
         // saxpy5 method with vectors of length 8 for double, 16 for single
         //----------------------------------------------------------------------
@@ -424,7 +424,7 @@ m4_divert(if_saxpy5_enabled)
             }
 
         #endif
-        m4_divert(if_saxpy5_enabled)
+m4_divert(if_saxpy5_enabled)
 
         //----------------------------------------------------------------------
         // saxpy5 method unrolled, with no vectors
