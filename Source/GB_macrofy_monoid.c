@@ -69,7 +69,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
         fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL"
             "(modifier,zterminal)\n") ;
-        fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) (true)\n") ;
+        fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) 1\n") ;
         fprintf (fp, "#define GB_IF_TERMINAL_BREAK(z,zterminal) break\n") ;
     }
     else if (monoid == NULL || monoid->terminal == NULL)
@@ -79,7 +79,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         fprintf (fp, "#define GB_MONOID_IS_TERMINAL 0\n") ;
         fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL"
             "(modifier,zterminal)\n") ;
-        fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) (false)\n") ;
+        fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) 0\n") ;
         fprintf (fp, "#define GB_IF_TERMINAL_BREAK(z,zterminal)\n") ;
     }
     else if (term_ecode <= 28)

@@ -20,11 +20,6 @@
 #define GB_IS_PLUS_PAIR_REAL_SEMIRING 0
 #endif
 
-// true if monoid is ANY (update can skipped entirely)
-#ifndef GB_IS_ANY_MONOID
-#define GB_IS_ANY_MONOID 0
-#endif
-
 // true if monoid update is EQ
 #ifndef GB_IS_EQ_MONOID
 #define GB_IS_EQ_MONOID 0
@@ -192,4 +187,10 @@
     #endif
 
 #endif
+
+//------------------------------------------------------------------------------
+// monoid definitions
+//------------------------------------------------------------------------------
+
+#include "GB_shared_monoid_definitions.h"
 

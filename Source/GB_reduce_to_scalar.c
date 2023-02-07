@@ -272,16 +272,15 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 #define GB_GETA_AND_UPDATE(t,Ax,p)                      \
                     freduce (t, t, Ax +((p)*zsize))
 
-                // terminal condition (not used if the monoid is not terminal)
-                #define GB_TERMINAL_CONDITION(z,zterminal)              \
-                    (memcmp (z, zterminal, zsize) == 0)
-                #define GB_IF_TERMINAL_BREAK(z,zterminal)               \
-                    if (GB_TERMINAL_CONDITION (z, zterminal)) break ;
+                // terminal value (already defined above)
+                #define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal)
 
                 if (zterminal == NULL)
                 {
                     // monoid is not terminal
                     #define GB_MONOID_IS_TERMINAL 0
+                    #define GB_TERMINAL_CONDITION(z,zterminal) 0
+                    #define GB_IF_TERMINAL_BREAK(z,zterminal)
                     #include "GB_reduce_to_scalar_template.c"
                 }
                 else
@@ -289,6 +288,10 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     // break if terminal value reached
                     #undef  GB_MONOID_IS_TERMINAL
                     #define GB_MONOID_IS_TERMINAL 1
+                    #undef  GB_TERMINAL_CONDITION
+                    #define GB_TERMINAL_CONDITION(z,zterminal) (memcmp (z, zterminal, zsize) == 0)
+                    #undef  GB_IF_TERMINAL_BREAK
+                    #define GB_IF_TERMINAL_BREAK(z,zterminal) if (GB_TERMINAL_CONDITION (z, zterminal)) break
                     #include "GB_reduce_to_scalar_template.c"
                 }
 
@@ -319,6 +322,10 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     // monoid is not terminal
                     #undef  GB_MONOID_IS_TERMINAL
                     #define GB_MONOID_IS_TERMINAL 0
+                    #undef  GB_TERMINAL_CONDITION
+                    #define GB_TERMINAL_CONDITION(z,zterminal) 0
+                    #undef  GB_IF_TERMINAL_BREAK
+                    #define GB_IF_TERMINAL_BREAK
                     #include "GB_reduce_to_scalar_template.c"
                 }
                 else
@@ -326,6 +333,10 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     // break if terminal value reached
                     #undef  GB_MONOID_IS_TERMINAL
                     #define GB_MONOID_IS_TERMINAL 1
+                    #undef  GB_TERMINAL_CONDITION
+                    #define GB_TERMINAL_CONDITION(z,zterminal) (memcmp (z, zterminal, zsize) == 0)
+                    #undef  GB_IF_TERMINAL_BREAK
+                    #define GB_IF_TERMINAL_BREAK(z,zterminal) if (GB_TERMINAL_CONDITION (z, zterminal)) break
                     #include "GB_reduce_to_scalar_template.c"
                 }
             }

@@ -51,12 +51,9 @@ if_not_any_pair_semiring
 //    atomic?        GB_has_atomic
 //    OpenMP atomic? GB_has_omp_atomic
 //    identity:      GB_identity
-//    terminal?      GB_monoid_is_terminal
-//    terminal:      GB_if_terminal_break(z,zterminal)
 // MultAdd:  GB_multiply_add(z,x,y,i,k,j)
 
 GB_is_plus_pair_real_semiring
-GB_is_any_monoid
 GB_is_eq_monoid
 GB_is_any_pair_semiring
 GB_is_pair_multiplier
@@ -107,23 +104,12 @@ GB_offset
 #endif
 #endif
 
-// true if the monoid has a terminal value
-#define GB_MONOID_IS_TERMINAL \
-    GB_monoid_is_terminal
-
-// break if z reaches the terminal value (dot product only)
-#define GB_IF_TERMINAL_BREAK(z,zterminal) \
-    GB_if_terminal_break(z,zterminal)
-
-// declare and initialize z = terminal value of the monoid
-#ifndef GB_DECLARE_MONOID_TERMINAL
-#if GB_IS_ANY_PAIR_SEMIRING || GB_C_ISO || !GB_MONOID_IS_TERMINAL
-#define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal)
-#else
-#define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal) \
-    modifier GB_ctype zterminal = GB_terminal
-#endif
-#endif
+// monoid terminal condition, if any:
+GB_is_any_monoid
+GB_monoid_is_terminal
+GB_terminal_condition
+GB_if_terminal_break
+GB_declare_monoid_terminal
 
 // multiply operator: z = x*y
 #define GB_MULT(z, x, y, i, k, j) \

@@ -37,7 +37,7 @@
     size_t aki_size = flipxy ? ysize : xsize ;
     size_t bkj_size = flipxy ? xsize : ysize ;
 
-    GB_void *restrict terminal = (GB_void *) add->terminal ;
+    bool is_terminal = (add->terminal != NULL) ;
 
     GB_cast_function cast_A, cast_B ;
     if (flipxy)
@@ -120,10 +120,9 @@
         {
             #define GB_C_TYPE int64_t
             int64_t zterminal = 0 ;
-            bool is_terminal = (terminal != NULL) ;
             if (is_terminal)
             { 
-                memcpy (&zterminal, terminal, sizeof (int64_t)) ;
+                memcpy (&zterminal, add->terminal, sizeof (int64_t)) ;
             }
             switch (opcode)
             {
@@ -167,10 +166,9 @@
             #undef  GB_C_TYPE
             #define GB_C_TYPE int32_t
             int32_t zterminal = 0 ;
-            bool is_terminal = (terminal != NULL) ;
             if (is_terminal)
             { 
-                memcpy (&zterminal, terminal, sizeof (int32_t)) ;
+                memcpy (&zterminal, add->terminal, sizeof (int32_t)) ;
             }
             switch (opcode)
             {
@@ -247,9 +245,10 @@
         #define GB_PUTC(cij,p) memcpy (Cx +((p)*csize), cij, csize)
 
         // break if cij reaches the terminal value
+        GB_void *restrict zterminal = (GB_void *) add->terminal ;
         #undef  GB_IF_TERMINAL_BREAK
         #define GB_IF_TERMINAL_BREAK(cij, zterminal)                    \
-            if (terminal != NULL && memcmp (cij, terminal, csize) == 0) \
+            if (is_terminal && memcmp (cij, zterminal, csize) == 0)     \
             {                                                           \
                 break ;                                                 \
             }

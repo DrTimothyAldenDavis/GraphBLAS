@@ -60,7 +60,7 @@
         GB_ADD ( c, c, x_op_y ) ;           /* c += x_op_y  */          \
     }
 
-    #define GB_DOT_TERMINAL( c ) GB_IF_TERMINAL_BREAK ( c, z )
+    #define GB_DOT_TERMINAL( c ) GB_IF_TERMINAL_BREAK ( c, zterminal )
 
     #if GB_IS_PLUS_PAIR_REAL_SEMIRING
 

@@ -60,30 +60,23 @@
     #define GB_GETA_AND_UPDATE(s,Ax,p)              \
         GB_UPDATE (s, Ax [p])
 
-// break the loop if terminal condition reached
-
-    #define GB_MONOID_IS_TERMINAL                   \
-        GB_monoid_is_terminal
-
-    #define GB_TERMINAL_CONDITION(z,zterminal)      \
-        GB_terminal_condition(z)
-
-    #define GB_IF_TERMINAL_BREAK(z,zterminal)       \
-        GB_if_terminal_break(z)
+// monoid terminal condition, if any:
+GB_is_any_monoid
+GB_monoid_is_terminal
+GB_terminal_condition
+GB_if_terminal_break
+GB_declare_monoid_terminal
 
 // panel size for built-in operators
 
     #define GB_PANEL                                \
         GB_panel
 
-// special case for the ANY monoid
-
-    #define GB_IS_ANY_MONOID                        \
-        GB_is_any_monoid
-
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     GB_disable
+
+#include "GB_monoid_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // reduce to a non-iso matrix to scalar, for monoids only

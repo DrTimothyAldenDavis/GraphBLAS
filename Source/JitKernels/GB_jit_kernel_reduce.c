@@ -33,7 +33,7 @@
         #define GB_IS_ANY_MONOID 0
         #define GB_MONOID_IS_TERMINAL 0
         #define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal)
-        #define GB_TERMINAL_CONDITION(z,zterminal) (false)
+        #define GB_TERMINAL_CONDITION(z,zterminal) 0
         #define GB_IF_TERMINAL_BREAK(z,zterminal)
         #define GB_GETA_AND_UPDATE(z,Ax,p) \
             GB_UPDATE(z, Ax [p]) ;    // z += Ax [p]
