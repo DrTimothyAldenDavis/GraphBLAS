@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -311,8 +310,6 @@ GrB_Info GB (_AaddB__bxnor_int64)
 // eWiseMult: C=A.*B, C<M>=A.*B, or C<M!>=A.*B where C is sparse/hyper
 //------------------------------------------------------------------------------
 
-
-
 GrB_Info GB (_AemultB__bxnor_int64)
 (
     GrB_Matrix C,
@@ -339,13 +336,9 @@ GrB_Info GB (_AemultB__bxnor_int64)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // eWiseMult: C<#> = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_AemultB_02__bxnor_int64)
 (
@@ -391,13 +384,9 @@ GrB_Info GB (_AemultB_02__bxnor_int64)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_AemultB_04__bxnor_int64)
 (
@@ -418,13 +407,9 @@ GrB_Info GB (_AemultB_04__bxnor_int64)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // eWiseMult: C=A.*B, C<M>=A.*B, C<!M>=A.*B where C is bitmap
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_AemultB_bitmap__bxnor_int64)
 (
@@ -448,13 +433,9 @@ GrB_Info GB (_AemultB_bitmap__bxnor_int64)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // Cx = op (x,Bx):  apply a binary operator to a matrix with scalar bind1st
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_bind1st__bxnor_int64)
 (
@@ -485,13 +466,9 @@ GrB_Info GB (_bind1st__bxnor_int64)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // Cx = op (Ax,y):  apply a binary operator to a matrix with scalar bind2nd
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_bind2nd__bxnor_int64)
 (
@@ -522,13 +499,9 @@ GrB_Info GB (_bind2nd__bxnor_int64)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // C = op (x, A'): transpose and apply a binary operator
 //------------------------------------------------------------------------------
-
-
 
 // cij = op (x, aij), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
@@ -567,13 +540,9 @@ GrB_Info GB (_bind1st_tran__bxnor_int64)
     int64_t
 }
 
-
-
 //------------------------------------------------------------------------------
 // C = op (A', y): transpose and apply a binary operator
 //------------------------------------------------------------------------------
-
-
 
 // cij = op (aij, y), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
@@ -603,8 +572,6 @@ GrB_Info GB (_bind2nd_tran__bxnor_int64)
     return (GrB_SUCCESS) ;
     #endif
 }
-
-
 
 #endif
 

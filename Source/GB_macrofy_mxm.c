@@ -266,5 +266,10 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
         flipxy ? mult->xtype : mult->ytype,
         btype, bsparsity, bcode, B_iso_code, -1) ;
 
+    //--------------------------------------------------------------------------
+    // include shared definitions
+    //--------------------------------------------------------------------------
+
+    fprintf (fp, "\n#include \"GB_AxB_shared_definitions.h\"\n\n") ;
 }
 

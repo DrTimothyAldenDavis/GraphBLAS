@@ -34,11 +34,11 @@ fprintf (f, 'm4_divert(0)\n') ;
 fclose (f) ;
 
 % construct the *.c file
-cmd = sprintf ('cat control.m4 Generator/GB_type.c | m4 -P > Generated2/GB_type__%s.c', fname) ;
+cmd = sprintf ('cat control.m4 Generator/GB_type.c | m4 -P | awk -f codegen_blank.awk > Generated2/GB_type__%s.c', fname) ;
 system (cmd) ;
 
 % append to the *.h file
-system ('cat control.m4 Generator/GB_type.h | m4 -P >> Generated2/GB_type__include.h') ;
+system ('cat control.m4 Generator/GB_type.h | m4 -P | awk -f codegen_blank.awk >> Generated2/GB_type__include.h') ;
 
 delete ('control.m4') ;
 

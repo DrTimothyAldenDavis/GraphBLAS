@@ -198,19 +198,24 @@ end
 fprintf (f, 'm4_define(`GB_identity'', `%s'')\n', identity) ;
 
 if (is_any_pair)
-    fprintf (f, 'm4_define(`GB_is_any_pair_semiring'', `1'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_any_pair_semiring'', `%s'')\n', ...
+        '#define GB_IS_ANY_PAIR_SEMIRING 1') ;
 else
-    fprintf (f, 'm4_define(`GB_is_any_pair_semiring'', `0'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_any_pair_semiring'', `'')\n') ;
+end
+
+if (is_plus_pair_real)
+    fprintf (f, 'm4_define(`GB_is_plus_pair_real_semiring'', `%s'')\n', ...
+        '#define GB_IS_PLUS_PAIR_REAL_SEMIRING 1') ;
+else
+    fprintf (f, 'm4_define(`GB_is_plus_pair_real_semiring'', `'')\n') ;
 end
 
 if (is_any_pair)
-    fprintf (f, 'm4_define(`GB_is_plus_pair_real_semiring'', `0'')\n') ;
     fprintf (f, 'm4_define(`GB_cij_declare'', `'')\n') ;
 elseif (is_plus_pair_real)
-    fprintf (f, 'm4_define(`GB_is_plus_pair_real_semiring'', `1'')\n') ;
     fprintf (f, 'm4_define(`GB_cij_declare'', `%s cij = 0'')\n', ztype) ;
 else
-    fprintf (f, 'm4_define(`GB_is_plus_pair_real_semiring'', `0'')\n') ;
     fprintf (f, 'm4_define(`GB_cij_declare'', `%s cij'')\n', ztype) ;
 end
 
@@ -225,32 +230,38 @@ else
 end
 
 if (is_pair)
-    fprintf (f, 'm4_define(`GB_is_pair_multiplier'', `1'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_pair_multiplier'', `%s'')\n', ...
+        '#define GB_IS_PAIR_MULTIPLIER 1') ;
 else
-    fprintf (f, 'm4_define(`GB_is_pair_multiplier'', `0'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_pair_multiplier'', `'')\n') ;
 end
 
 if (is_eq)
-    fprintf (f, 'm4_define(`GB_is_eq_monoid'', `1'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_eq_monoid'', `%s'')\n', ...
+        '#define GB_IS_EQ_MONOID 1') ;
 else
-    fprintf (f, 'm4_define(`GB_is_eq_monoid'', `0'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_eq_monoid'', `'')\n') ;
+end
+
+if (is_any)
+    fprintf (f, 'm4_define(`GB_is_any_monoid'', `%s'')\n', ...
+        '#define GB_IS_ANY_MONOID 1') ;
+else
+    fprintf (f, 'm4_define(`GB_is_any_monoid'', `'')\n') ;
 end
 
 if (is_any)
     % the ANY monoid terminates on the first entry seen
-    fprintf (f, 'm4_define(`GB_is_any_monoid'', `1'')\n') ;
     fprintf (f, 'm4_define(`GB_if_terminal_break'', `break ;'')\n') ;
     fprintf (f, 'm4_define(`GB_dot_simd_vectorize'', `;'')\n') ;
     fprintf (f, 'm4_define(`GB_monoid_is_terminal'', `1'')\n') ;
 elseif (~isempty (terminal))
     % terminal monoids terminate when cij equals the terminal value
-    fprintf (f, 'm4_define(`GB_is_any_monoid'', `0'')\n') ;
     fprintf (f, 'm4_define(`GB_if_terminal_break'', `if (`$1'' == %s) { break ; }'')\n', terminal) ;
     fprintf (f, 'm4_define(`GB_dot_simd_vectorize'', `;'')\n') ;
     fprintf (f, 'm4_define(`GB_monoid_is_terminal'', `1'')\n') ;
 else
     % non-terminal monoids
-    fprintf (f, 'm4_define(`GB_is_any_monoid'', `0'')\n') ;
     fprintf (f, 'm4_define(`GB_if_terminal_break'', `;'')\n') ;
     fprintf (f, 'm4_define(`GB_monoid_is_terminal'', `0'')\n') ;
     op = '' ;
@@ -334,92 +345,125 @@ end
 
 % firsti or firsti1 multiply operator
 if (codegen_contains (multop, 'firsti'))
-    fprintf (f, 'm4_define(`GB_is_firsti_multiplier'', `1'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_firsti_multiplier'', `%s'')\n', ...
+        '#define GB_IS_FIRSTI_MULTIPLIER 1 /* or FIRSTI1 */') ;
 else
-    fprintf (f, 'm4_define(`GB_is_firsti_multiplier'', `0'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_firsti_multiplier'', `'')\n') ;
 end
 
 % firstj or firstj1 multiply operator
 if (codegen_contains (multop, 'firstj'))
-    fprintf (f, 'm4_define(`GB_is_firstj_multiplier'', `1'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_firstj_multiplier'', `%s'')\n', ...
+        '#define GB_IS_FIRSTJ_MULTIPLIER 1 /* or FIRSTJ1 */') ;
 else
-    fprintf (f, 'm4_define(`GB_is_firstj_multiplier'', `0'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_firstj_multiplier'', `'')\n') ;
 end
 
 % secondj or secondj1 multiply operator
 if (codegen_contains (multop, 'secondj'))
-    fprintf (f, 'm4_define(`GB_is_secondj_multiplier'', `1'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_secondj_multiplier'', `%s'')\n', ...) ;
+        '#define GB_IS_SECONDJ_MULTIPLIER 1 /* SECONDJ1 */') ;
 else
-    fprintf (f, 'm4_define(`GB_is_secondj_multiplier'', `0'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_secondj_multiplier'', `'')\n') ;
 end
 
 % offset for (first,second)*i1 or (first,second)*j1 multiply operator
 if (codegen_contains (multop, 'i1') || codegen_contains (multop, 'j1'))
-    fprintf (f, 'm4_define(`GB_offset'', `1'')\n') ;
+    fprintf (f, 'm4_define(`GB_offset'', `%s%s'')\n', ...
+      '#define GB_OFFSET 1', ...
+      ' /* offset for FIRSTI1, SECONDI1, FIRSTJ1, SECONDJ1 */') ;
 else
-    fprintf (f, 'm4_define(`GB_offset'', `0'')\n') ;
+    fprintf (f, 'm4_define(`GB_offset'', `'')\n') ;
 end
 
 % plus_fc32 monoid:
 if (isequal (addop, 'plus') && isequal (ztype, 'GxB_FC32_t'))
-    fprintf (f, 'm4_define(`GB_is_plus_fc32_monoid'', `1'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_plus_fc32_monoid'', `%s'')\n', ...
+        '#define GB_IS_PLUS_FC32_MONOID 1') ;
 else
-    fprintf (f, 'm4_define(`GB_is_plus_fc32_monoid'', `0'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_plus_fc32_monoid'', `'')\n') ;
 end
 
 % plus_fc64 monoid:
 if (isequal (addop, 'plus') && isequal (ztype, 'GxB_FC64_t'))
-    fprintf (f, 'm4_define(`GB_is_plus_fc64_monoid'', `1'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_plus_fc64_monoid'', `%s'')\n', ...
+        '#define GB_IS_PLUS_FC64_MONOID 1') ;
 else
-    fprintf (f, 'm4_define(`GB_is_plus_fc64_monoid'', `0'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_plus_fc64_monoid'', `'')\n') ;
 end
 
 % any_fc32 monoid:
 if (isequal (addop, 'any') && isequal (ztype, 'GxB_FC32_t'))
-    fprintf (f, 'm4_define(`GB_is_any_fc32_monoid'', `1'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_any_fc32_monoid'', `%s'')\n', ...
+        '#define GB_IS_ANY_FC32_MONOID 1') ;
 else
-    fprintf (f, 'm4_define(`GB_is_any_fc32_monoid'', `0'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_any_fc32_monoid'', `'')\n') ;
 end
 
 % any_fc64 monoid:
 if (isequal (addop, 'any') && isequal (ztype, 'GxB_FC64_t'))
-    fprintf (f, 'm4_define(`GB_is_any_fc64_monoid'', `1'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_any_fc64_monoid'', `%s'')\n', ...
+        '#define GB_IS_ANY_FC64_MONOID 1') ;
 else
-    fprintf (f, 'm4_define(`GB_is_any_fc64_monoid'', `0'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_any_fc64_monoid'', `'')\n') ;
 end
 
 % min monoids:
+is_imin = false ;
+is_fmin = false ;
 if (is_min)
     if (codegen_contains (ztype, 'int'))
         % min monoid for signed or unsigned integers
-        fprintf (f, 'm4_define(`GB_is_imin_monoid'', `1'')\n') ;
-        fprintf (f, 'm4_define(`GB_is_fmin_monoid'', `0'')\n') ;
+        is_imin = true ;
     else
         % min monoid for float or double
-        fprintf (f, 'm4_define(`GB_is_imin_monoid'', `0'')\n') ;
-        fprintf (f, 'm4_define(`GB_is_fmin_monoid'', `1'')\n') ;
+        is_fmin = true ;
     end
 else
     % not a min monoid
-    fprintf (f, 'm4_define(`GB_is_imin_monoid'', `0'')\n') ;
-    fprintf (f, 'm4_define(`GB_is_fmin_monoid'', `0'')\n') ;
+end
+
+if (is_imin)
+    fprintf (f, 'm4_define(`GB_is_imin_monoid'', `%s'')\n', ...
+        '#define GB_IS_IMIN_MONOID 1') ;
+else
+    fprintf (f, 'm4_define(`GB_is_imin_monoid'', `'')\n') ;
+end
+
+if (is_fmin)
+    fprintf (f, 'm4_define(`GB_is_fmin_monoid'', `%s'')\n', ...
+        '#define GB_IS_FMIN_MONOID 1') ;
+else
+    fprintf (f, 'm4_define(`GB_is_fmin_monoid'', `'')\n') ;
 end
 
 % max monoids:
+is_imax = false ;
+is_fmax = false ;
 if (is_max)
     if (codegen_contains (ztype, 'int'))
         % max monoid for signed or unsigned integers
-        fprintf (f, 'm4_define(`GB_is_imax_monoid'', `1'')\n') ;
-        fprintf (f, 'm4_define(`GB_is_fmax_monoid'', `0'')\n') ;
+        is_imax = true ;
     else
         % max monoid for float or double
-        fprintf (f, 'm4_define(`GB_is_imax_monoid'', `0'')\n') ;
-        fprintf (f, 'm4_define(`GB_is_fmax_monoid'', `1'')\n') ;
+        is_fmax = true ;
     end
 else
     % not a max monoid
-    fprintf (f, 'm4_define(`GB_is_imax_monoid'', `0'')\n') ;
-    fprintf (f, 'm4_define(`GB_is_fmax_monoid'', `0'')\n') ;
+end
+
+if (is_imax)
+    fprintf (f, 'm4_define(`GB_is_imax_monoid'', `%s'')\n', ...
+        '#define GB_IS_IMAX_MONOID 1') ;
+else
+    fprintf (f, 'm4_define(`GB_is_imax_monoid'', `'')\n') ;
+end
+
+if (is_fmax)
+    fprintf (f, 'm4_define(`GB_is_fmax_monoid'', `%s'')\n', ...
+        '#define GB_IS_FMAX_MONOID 1') ;
+else
+    fprintf (f, 'm4_define(`GB_is_fmax_monoid'', `'')\n') ;
 end
 
 % only PLUS, TIMES, LOR, LAND, and LXOR can be done with OpenMP atomics
@@ -648,13 +692,13 @@ else
 end
 
 % construct the *.c file for the semiring
-cmd = sprintf ('cat control.m4 Generator/GB_AxB.c | m4 -P > Generated%d/GB_AxB__%s.c', k, name) ;
+cmd = sprintf ('cat control.m4 Generator/GB_AxB.c | m4 -P | awk -f codegen_blank.awk > Generated%d/GB_AxB__%s.c', k, name) ;
 system (cmd) ;
 
 fprintf ('.') ;
 
 % append to the *.h file
-cmd = sprintf ('cat control.m4 Generator/GB_AxB.h | m4 -P >> Generated%d/GB_AxB__include%d.h', k, k) ;
+cmd = sprintf ('cat control.m4 Generator/GB_AxB.h | m4 -P | awk -f codegen_blank.awk >> Generated%d/GB_AxB__include%d.h', k, k) ;
 system (cmd) ;
 
 delete ('control.m4') ;

@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -216,8 +215,6 @@ GrB_Info GB (_Cdense_accumb__second_int8)
 // C = A*D, column scale with diagonal D matrix
 //------------------------------------------------------------------------------
 
-
-
 GrB_Info GB (_AxD__second_int8)
 (
     GrB_Matrix C,
@@ -235,13 +232,9 @@ GrB_Info GB (_AxD__second_int8)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // C = D*B, row scale with diagonal D matrix
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_DxB__second_int8)
 (
@@ -259,8 +252,6 @@ GrB_Info GB (_DxB__second_int8)
     return (GrB_SUCCESS) ;
     #endif
 }
-
-
 
 //------------------------------------------------------------------------------
 // eWiseAdd: C=A+B, C<M>=A+B, C<!M>=A+B
@@ -311,8 +302,6 @@ GrB_Info GB (_AaddB__second_int8)
 // eWiseMult: C=A.*B, C<M>=A.*B, or C<M!>=A.*B where C is sparse/hyper
 //------------------------------------------------------------------------------
 
-
-
 GrB_Info GB (_AemultB__second_int8)
 (
     GrB_Matrix C,
@@ -339,13 +328,9 @@ GrB_Info GB (_AemultB__second_int8)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // eWiseMult: C<#> = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_AemultB_02__second_int8)
 (
@@ -391,13 +376,9 @@ GrB_Info GB (_AemultB_02__second_int8)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_AemultB_04__second_int8)
 (
@@ -418,13 +399,9 @@ GrB_Info GB (_AemultB_04__second_int8)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // eWiseMult: C=A.*B, C<M>=A.*B, C<!M>=A.*B where C is bitmap
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_AemultB_bitmap__second_int8)
 (
@@ -447,8 +424,6 @@ GrB_Info GB (_AemultB_bitmap__second_int8)
     return (GrB_SUCCESS) ;
     #endif
 }
-
-
 
 //------------------------------------------------------------------------------
 // Cx = op (x,Bx):  apply a binary operator to a matrix with scalar bind1st

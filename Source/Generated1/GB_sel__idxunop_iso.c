@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // GB_sel:  hard-coded functions for selection operators
 //------------------------------------------------------------------------------
@@ -41,7 +40,6 @@
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
     /* assignment skipped, C and A are iso */
 
-
 //------------------------------------------------------------------------------
 // GB_sel_phase1
 //------------------------------------------------------------------------------
@@ -66,8 +64,6 @@ void GB (_sel_phase1__idxunop_iso)
     GxB_index_unary_function idxunop_func = op->idxunop_function ; GB_void x [GB_VLA(xsize)] ; GB_cast_scalar (x, xcode, A->x, acode, A->type->size) ; 
     #include "GB_select_phase1.c"
 }
-
-
 
 //------------------------------------------------------------------------------
 // GB_sel_phase2
@@ -95,8 +91,6 @@ void GB (_sel_phase2__idxunop_iso)
     #include "GB_select_phase2.c"
 }
 
-
-
 //------------------------------------------------------------------------------
 // GB_sel_bitmap
 //------------------------------------------------------------------------------
@@ -120,5 +114,4 @@ void GB (_sel_bitmap__idxunop_iso)
     GxB_index_unary_function idxunop_func = op->idxunop_function ; GB_void x [GB_VLA(xsize)] ; GB_cast_scalar (x, xcode, A->x, acode, A->type->size) ; 
     #include "GB_bitmap_select_template.c"
 }
-
 

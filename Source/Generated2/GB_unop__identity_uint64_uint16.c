@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // GB_unop:  hard-coded functions for each built-in unary operator
 //------------------------------------------------------------------------------
@@ -65,7 +64,6 @@
 #define GB_DISABLE \
     (GxB_NO_IDENTITY || GxB_NO_UINT64 || GxB_NO_UINT16)
 
-
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
@@ -110,7 +108,6 @@ GrB_Info GB (_unop_apply__identity_uint64_uint16)
     return (GrB_SUCCESS) ;
     #endif
 }
-
 
 //------------------------------------------------------------------------------
 // C = op (cast (A')): transpose, typecast, and apply a unary operator

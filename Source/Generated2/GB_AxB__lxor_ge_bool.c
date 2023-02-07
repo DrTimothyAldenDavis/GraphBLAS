@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // GB_AxB__lxor_ge_bool.c: matrix multiply for a single semiring
 //------------------------------------------------------------------------------
@@ -49,13 +48,14 @@
 
 // Multiply: z = (x >= y)
 // Add:      cij ^= t
-//    'any' monoid?  0
 //    atomic?        1
 //    OpenMP atomic? 1
 //    identity:      false
 //    terminal?      0
 //    terminal:      ;
 // MultAdd:  z ^= (x >= y)
+
+// types and operators:
 
 #define GB_A_TYPE \
     bool
@@ -70,6 +70,34 @@
 #define GB_B_ISO B_iso
 #define GB_C_ISO \
     0
+
+// z = x + y
+#define GB_ADD(z,x,y) \
+    z = (x != y)
+
+// z += t 
+#define GB_UPDATE(z,t) \
+    z ^= t
+
+// declare and initialize z = identity value of the monoid
+#define GB_DECLARE_MONOID_IDENTITY(z) \
+    bool z = false ;
+
+// true if the monoid has a terminal value
+#define GB_MONOID_IS_TERMINAL \
+    0
+
+// break if z reaches the terminal value (dot product only)
+#define GB_IF_TERMINAL_BREAK(z,zterminal) \
+    ;
+
+// multiply operator: z = x*y
+#define GB_MULT(z, x, y, i, k, j) \
+    z = (x >= y)
+
+// multiply-add: z += x*y
+#define GB_MULTADD(z, x, y, i, k, j) \
+    z ^= (x >= y)
 
 // true for int64, uint64, float, double, float complex, and double complex 
 #define GB_ZTYPE_IGNORE_OVERFLOW \
@@ -99,9 +127,9 @@
 #define GB_B_IS_PATTERN \
     0 \
 
-// multiply operator
-#define GB_MULT(z, x, y, i, k, j) \
-    z = (x >= y)
+// Cx [pC] = cij
+#define GB_PUTC(cij,p) \
+    Cx [p] = cij
 
 // FIXME: GB_CTYPE_CAST not in macrofy (for PLUS_PAIR, and t=1 for PAIR operator)
 // cast from a real scalar (or 2, if C is complex) to the type of C
@@ -109,18 +137,10 @@
 #define GB_CTYPE_CAST(x,y) \
     ((bool) x)
 
-// multiply-add
-#define GB_MULTADD(z, x, y, i, k, j) \
-    z ^= (x >= y)
-
 // FIXME: GB_IDENTITY only appears in a few templates; replace it
 // monoid identity value
 #define GB_IDENTITY \
     false
-
-// declare and initialize z = identity value of the monoid
-#define GB_DECLARE_MONOID_IDENTITY(z) \
-    bool z = false ;
 
 // FIXME: GB_HAS_IDENTITY_BYTE not in macrofy (add it)
 // 1 if the identity value can be assigned via memset, with all bytes the same
@@ -132,14 +152,6 @@
 #define GB_IDENTITY_BYTE \
     0
 
-// true if the monoid has a terminal value
-#define GB_MONOID_IS_TERMINAL \
-    0
-
-// break if z reaches the terminal value (dot product only)
-#define GB_IF_TERMINAL_BREAK(z,zterminal) \
-    ;
-
 // FIXME: GB_PRAGMA_SIMD_DOT not in macrofy, do I need it?
 // simd pragma for dot-product loop vectorization
 #define GB_PRAGMA_SIMD_DOT(cij) \
@@ -149,47 +161,15 @@
 // simd pragma for other loop vectorization
 #define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
 
-// 1 for the PLUS_PAIR_(real) semirings, not for the complex case
-#define GB_IS_PLUS_PAIR_REAL_SEMIRING \
-    0
-
-// FIXME: GB_CIJ_DECLARE(cij) do I need this?  Use GB_DECLARE_MONOID_IDENTITY(cij) instead?
+// FIXME: GB_CIJ_DECLARE(cij): Use GB_DECLARE_MONOID_IDENTITY(cij) instead?
 // declare the cij scalar (initialize cij to zero for PLUS_PAIR)
 #define GB_CIJ_DECLARE(cij) \
     bool cij
-
-// Cx [pC] = cij
-#define GB_PUTC(cij,p) \
-    Cx [p] = cij
-
-// FIXME: GB_CIJ_WRITE(p,t) why do I need this?  typecast?
-// change to use GB_PUTC instead
-// Cx [p] = t
-#define GB_CIJ_WRITE(p,t) \
-    Cx [p] = t
-
-// FIXME: GB_CIJ_UPDATE(p,t) why do I need this?  Use GB_UPDATE instead?
-// C(i,j) += t
-#define GB_CIJ_UPDATE(p,t) \
-    Cx [p] ^= t
-
-// z = x + y
-#define GB_ADD(z,x,y) \
-    z = (x != y)
 
 // FIXME: GB_CTYPE_BITS for PLUS_PAIR semirings only, 0 otherwise
 // bit pattern for bool, 8-bit, 16-bit, and 32-bit integers
 #define GB_CTYPE_BITS \
     0x1L
-
-// 1 if monoid update can skipped entirely (the ANY monoid)
-#define GB_IS_ANY_MONOID \
-    0
-
-// FIXME: GB_IS_EQ_MONOID
-// 1 if monoid update is EQ
-#define GB_IS_EQ_MONOID \
-    0
 
 // FIXME: GB_HAS_ATOMIC
 // 1 if monoid update can be done atomically, 0 otherwise
@@ -207,109 +187,17 @@
         1
 #endif
 
-// FIXME: GB_IS_ANY_PAIR_SEMIRING
-// 1 for the ANY_PAIR_ISO semiring
-#define GB_IS_ANY_PAIR_SEMIRING \
-    0
-
-// FIXME: GB_IS_PAIR_MULTIPLIER
-// 1 if PAIR is the multiply operator 
-#define GB_IS_PAIR_MULTIPLIER \
-    0
-
-// FIXME: GB_IS_PLUS_FC32_MONOID
-// 1 if monoid is PLUS_FC32
-#define GB_IS_PLUS_FC32_MONOID \
-    0
-
-// FIXME: GB_IS_PLUS_FC64_MONOID
-// 1 if monoid is PLUS_FC64
-#define GB_IS_PLUS_FC64_MONOID \
-    0
-
-// FIXME: GB_IS_ANY_FC32_MONOID
-// 1 if monoid is ANY_FC32
-#define GB_IS_ANY_FC32_MONOID \
-    0
-
-// FIXME: GB_IS_ANY_FC64_MONOID
-// 1 if monoid is ANY_FC64
-#define GB_IS_ANY_FC64_MONOID \
-    0
-
-// FIXME: GB_IS_IMIN_MONOID 
-// 1 if monoid is MIN for signed or unsigned integers
-#define GB_IS_IMIN_MONOID \
-    0
-
-// FIXME: GB_IS_IMAX_MONOID 
-// 1 if monoid is MAX for signed or unsigned integers
-#define GB_IS_IMAX_MONOID \
-    0
-
-// FIXME: GB_IS_FMIN_MONOID 
-// 1 if monoid is MIN for float or double
-#define GB_IS_FMIN_MONOID \
-    0
-
-// FIXME: GB_IS_FMAX_MONOID 
-// 1 if monoid is MAX for float or double
-#define GB_IS_FMAX_MONOID \
-    0
-
-// FIXME: GB_IS_FMIN_MONOID 
-// 1 for the FIRSTI or FIRSTI1 multiply operator
-#define GB_IS_FIRSTI_MULTIPLIER \
-    0
-
-// FIXME: GB_IS_FIRSTJ_MONOID  or FIRSTJ1
-// 1 for the FIRSTJ or FIRSTJ1 multiply operator
-#define GB_IS_FIRSTJ_MULTIPLIER \
-    0
-
-// FIXME: GB_IS_SECONDJ_MONOID  or SECONDJ1
-// 1 for the SECONDJ or SECONDJ1 multiply operator
-#define GB_IS_SECONDJ_MULTIPLIER \
-    0
-
-// FIXME: GB_OFFSET for FIRST[IJ]1 and SECOND[IJ]1
-// 1 for the FIRSTI1, FIRSTJ1, SECONDI1, or SECONDJ1 multiply operators
-#define GB_OFFSET \
-    0
-
 // FIXME: GB_ATOMIC_COMPARE_EXCHANGE
 // atomic compare-exchange
 #define GB_ATOMIC_COMPARE_EXCHANGE(target, expected, desired) \
     GB_ATOMIC_COMPARE_EXCHANGE_8 (target, expected, desired)
 
-// FIXME: GB_HX_WRITE
-// Hx [i] = t
-#define GB_HX_WRITE(i,t) \
-    Hx [i] = t
-
-// FIXME: GB_CIJ_GATHER
-// Cx [p] = Hx [i]
-#define GB_CIJ_GATHER(p,i) \
-    Cx [p] = Hx [i]
-
-// FIXME: GB_CIJ_GATHER_UPDATE(p,i)
-// Cx [p] += Hx [i]
-#define GB_CIJ_GATHER_UPDATE(p,i) \
-    Cx [p] ^= Hx [i]
-
-// FIXME: GB_HX_UPDATE(i,t)
-// Hx [i] += t
-#define GB_HX_UPDATE(i,t) \
-    Hx [i] ^= t
-
-// FIXME: GB_CIJ_MEMCPY(p,i,len)
-// memcpy (&(Cx [p]), &(Hx [i]), len)
-#define GB_CIJ_MEMCPY(p,i,len) \
-    memcpy (Cx +(p), Hx +(i), (len) * sizeof(bool));
-
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_LXOR || GxB_NO_GE || GxB_NO_BOOL || GxB_NO_LXOR_BOOL || GxB_NO_GE_BOOL || GxB_NO_LXOR_GE_BOOL)
+
+// finalize anything not yet defined
+#include "GB_AxB_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // GB_Adot2B: C=A'*B, C<M>=A'*B, or C<!M>=A'*B: dot product method, C is bitmap
@@ -358,7 +246,6 @@ GrB_Info GB (_Adot3B__lxor_ge_bool)
     #endif
 }
 
-
 //------------------------------------------------------------------------------
 // GB_Adot4B:  C+=A'*B: dense dot product
 //------------------------------------------------------------------------------
@@ -380,16 +267,15 @@ GrB_Info GB (_Adot3B__lxor_ge_bool)
         #endif
     }
 
-
 //------------------------------------------------------------------------------
-// GB_AsaxbitB: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method, C is bitmap/full
+// GB_AsaxbitB: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method, C is bitmap only
 //------------------------------------------------------------------------------
 
 #include "GB_AxB_saxpy3_template.h"
 
 GrB_Info GB (_AsaxbitB__lxor_ge_bool)
 (
-    GrB_Matrix C,   // bitmap or full
+    GrB_Matrix C,   // bitmap only
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix B,
@@ -403,7 +289,6 @@ GrB_Info GB (_AsaxbitB__lxor_ge_bool)
     return (GrB_SUCCESS) ;
     #endif
 }
-
 
 //------------------------------------------------------------------------------
 // GB_Asaxpy4B: C += A*B when C is full
@@ -430,8 +315,6 @@ GrB_Info GB (_AsaxbitB__lxor_ge_bool)
         return (GrB_SUCCESS) ;
         #endif
     }
-
-
 
 //------------------------------------------------------------------------------
 // GB_Asaxpy5B: C += A*B when C is full, A is bitmap/full, B is sparse/hyper
@@ -488,7 +371,6 @@ GrB_Info GB (_AsaxbitB__lxor_ge_bool)
         return (GrB_SUCCESS) ;
         #endif
     }
-
 
 //------------------------------------------------------------------------------
 // GB_Asaxpy3B: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method (Gustavson + Hash)

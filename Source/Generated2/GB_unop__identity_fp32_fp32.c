@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // GB_unop:  hard-coded functions for each built-in unary operator
 //------------------------------------------------------------------------------
@@ -64,8 +63,6 @@
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_IDENTITY || GxB_NO_FP32)
-
-
 
 //------------------------------------------------------------------------------
 // C = op (cast (A')): transpose, typecast, and apply a unary operator

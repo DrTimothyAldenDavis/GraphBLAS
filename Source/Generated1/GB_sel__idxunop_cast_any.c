@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // GB_sel:  hard-coded functions for selection operators
 //------------------------------------------------------------------------------
@@ -41,7 +40,6 @@
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
     memcpy (Cx +((pC)*asize), Ax +((pA)*asize), asize)
 
-
 //------------------------------------------------------------------------------
 // GB_sel_phase1
 //------------------------------------------------------------------------------
@@ -66,8 +64,6 @@ void GB (_sel_phase1__idxunop_cast_any)
     GxB_index_unary_function idxunop_func = op->idxunop_function ; GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ; GB_cast_function cast_Z_to_bool = GB_cast_factory (GB_BOOL_code, zcode) ; 
     #include "GB_select_phase1.c"
 }
-
-
 
 //------------------------------------------------------------------------------
 // GB_sel_phase2
@@ -95,8 +91,6 @@ void GB (_sel_phase2__idxunop_cast_any)
     #include "GB_select_phase2.c"
 }
 
-
-
 //------------------------------------------------------------------------------
 // GB_sel_bitmap
 //------------------------------------------------------------------------------
@@ -120,5 +114,4 @@ void GB (_sel_bitmap__idxunop_cast_any)
     GxB_index_unary_function idxunop_func = op->idxunop_function ; GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ; GB_cast_function cast_Z_to_bool = GB_cast_factory (GB_BOOL_code, zcode) ; 
     #include "GB_bitmap_select_template.c"
 }
-
 

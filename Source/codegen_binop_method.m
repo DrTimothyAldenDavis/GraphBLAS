@@ -245,12 +245,12 @@ fprintf (f, 'm4_divert(0)\n') ;
 fclose (f) ;
 
 % construct the *.c file
-cmd = sprintf ('cat control.m4 Generator/GB_binop.c | m4 -P > Generated2/GB_binop__%s.c', name) ;
+cmd = sprintf ('cat control.m4 Generator/GB_binop.c | m4 -P | awk -f codegen_blank.awk > Generated2/GB_binop__%s.c', name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
-system ('cat control.m4 Generator/GB_binop.h | m4 -P >> Generated2/GB_binop__include.h') ;
+system ('cat control.m4 Generator/GB_binop.h | m4 -P | awk -f codegen_blank.awk >> Generated2/GB_binop__include.h') ;
 
 delete ('control.m4') ;
 

@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -131,8 +130,6 @@
 // C += A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-
-
 // The op must be MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, or RDIV.
 
 void GB (_Cdense_ewise3_accum__plus_uint32)
@@ -145,8 +142,6 @@ void GB (_Cdense_ewise3_accum__plus_uint32)
 { 
     #include "GB_dense_ewise3_accum_template.c"
 }
-
-
 
 //------------------------------------------------------------------------------
 // C = A+B, all 3 matrices dense
@@ -216,8 +211,6 @@ GrB_Info GB (_Cdense_accumb__plus_uint32)
 // C = A*D, column scale with diagonal D matrix
 //------------------------------------------------------------------------------
 
-
-
 GrB_Info GB (_AxD__plus_uint32)
 (
     GrB_Matrix C,
@@ -235,13 +228,9 @@ GrB_Info GB (_AxD__plus_uint32)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // C = D*B, row scale with diagonal D matrix
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_DxB__plus_uint32)
 (
@@ -259,8 +248,6 @@ GrB_Info GB (_DxB__plus_uint32)
     return (GrB_SUCCESS) ;
     #endif
 }
-
-
 
 //------------------------------------------------------------------------------
 // eWiseAdd: C=A+B, C<M>=A+B, C<!M>=A+B
@@ -311,8 +298,6 @@ GrB_Info GB (_AaddB__plus_uint32)
 // eWiseMult: C=A.*B, C<M>=A.*B, or C<M!>=A.*B where C is sparse/hyper
 //------------------------------------------------------------------------------
 
-
-
 GrB_Info GB (_AemultB__plus_uint32)
 (
     GrB_Matrix C,
@@ -339,13 +324,9 @@ GrB_Info GB (_AemultB__plus_uint32)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // eWiseMult: C<#> = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_AemultB_02__plus_uint32)
 (
@@ -391,13 +372,9 @@ GrB_Info GB (_AemultB_02__plus_uint32)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_AemultB_04__plus_uint32)
 (
@@ -418,13 +395,9 @@ GrB_Info GB (_AemultB_04__plus_uint32)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // eWiseMult: C=A.*B, C<M>=A.*B, C<!M>=A.*B where C is bitmap
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_AemultB_bitmap__plus_uint32)
 (
@@ -448,13 +421,9 @@ GrB_Info GB (_AemultB_bitmap__plus_uint32)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // Cx = op (x,Bx):  apply a binary operator to a matrix with scalar bind1st
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_bind1st__plus_uint32)
 (
@@ -485,13 +454,9 @@ GrB_Info GB (_bind1st__plus_uint32)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // Cx = op (Ax,y):  apply a binary operator to a matrix with scalar bind2nd
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_bind2nd__plus_uint32)
 (
@@ -522,13 +487,9 @@ GrB_Info GB (_bind2nd__plus_uint32)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // C = op (x, A'): transpose and apply a binary operator
 //------------------------------------------------------------------------------
-
-
 
 // cij = op (x, aij), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
@@ -567,13 +528,9 @@ GrB_Info GB (_bind1st_tran__plus_uint32)
     uint32_t
 }
 
-
-
 //------------------------------------------------------------------------------
 // C = op (A', y): transpose and apply a binary operator
 //------------------------------------------------------------------------------
-
-
 
 // cij = op (aij, y), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
@@ -603,8 +560,6 @@ GrB_Info GB (_bind2nd_tran__plus_uint32)
     return (GrB_SUCCESS) ;
     #endif
 }
-
-
 
 #endif
 

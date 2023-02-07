@@ -7,7 +7,6 @@
 
 // This file has been automatically generated from Generator/GB_type.h
 
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_Cdense_05d__bool)
 (
@@ -33,7 +32,6 @@ GrB_Info GB (_Cdense_25__bool)
     const GrB_Matrix A,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_Cdense_05d__int8)
@@ -61,7 +59,6 @@ GrB_Info GB (_Cdense_25__int8)
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
 
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_Cdense_05d__int16)
 (
@@ -87,7 +84,6 @@ GrB_Info GB (_Cdense_25__int16)
     const GrB_Matrix A,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_Cdense_05d__int32)
@@ -115,7 +111,6 @@ GrB_Info GB (_Cdense_25__int32)
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
 
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_Cdense_05d__int64)
 (
@@ -141,7 +136,6 @@ GrB_Info GB (_Cdense_25__int64)
     const GrB_Matrix A,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_Cdense_05d__uint8)
@@ -169,7 +163,6 @@ GrB_Info GB (_Cdense_25__uint8)
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
 
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_Cdense_05d__uint16)
 (
@@ -195,7 +188,6 @@ GrB_Info GB (_Cdense_25__uint16)
     const GrB_Matrix A,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_Cdense_05d__uint32)
@@ -223,7 +215,6 @@ GrB_Info GB (_Cdense_25__uint32)
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
 
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_Cdense_05d__uint64)
 (
@@ -249,7 +240,6 @@ GrB_Info GB (_Cdense_25__uint64)
     const GrB_Matrix A,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_Cdense_05d__fp32)
@@ -277,7 +267,6 @@ GrB_Info GB (_Cdense_25__fp32)
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
 
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_Cdense_05d__fp64)
 (
@@ -304,7 +293,6 @@ GrB_Info GB (_Cdense_25__fp64)
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
 
-
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_Cdense_05d__fc32)
 (
@@ -330,7 +318,6 @@ GrB_Info GB (_Cdense_25__fc32)
     const GrB_Matrix A,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 
 // SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_Cdense_05d__fc64)

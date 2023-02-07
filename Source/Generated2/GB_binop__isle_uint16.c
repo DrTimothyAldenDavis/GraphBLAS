@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -216,8 +215,6 @@ GrB_Info GB (_Cdense_accumb__isle_uint16)
 // C = A*D, column scale with diagonal D matrix
 //------------------------------------------------------------------------------
 
-
-
 GrB_Info GB (_AxD__isle_uint16)
 (
     GrB_Matrix C,
@@ -235,13 +232,9 @@ GrB_Info GB (_AxD__isle_uint16)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // C = D*B, row scale with diagonal D matrix
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_DxB__isle_uint16)
 (
@@ -259,8 +252,6 @@ GrB_Info GB (_DxB__isle_uint16)
     return (GrB_SUCCESS) ;
     #endif
 }
-
-
 
 //------------------------------------------------------------------------------
 // eWiseAdd: C=A+B, C<M>=A+B, C<!M>=A+B
@@ -311,8 +302,6 @@ GrB_Info GB (_AaddB__isle_uint16)
 // eWiseMult: C=A.*B, C<M>=A.*B, or C<M!>=A.*B where C is sparse/hyper
 //------------------------------------------------------------------------------
 
-
-
 GrB_Info GB (_AemultB__isle_uint16)
 (
     GrB_Matrix C,
@@ -339,13 +328,9 @@ GrB_Info GB (_AemultB__isle_uint16)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // eWiseMult: C<#> = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_AemultB_02__isle_uint16)
 (
@@ -391,13 +376,9 @@ GrB_Info GB (_AemultB_02__isle_uint16)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_AemultB_04__isle_uint16)
 (
@@ -418,13 +399,9 @@ GrB_Info GB (_AemultB_04__isle_uint16)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // eWiseMult: C=A.*B, C<M>=A.*B, C<!M>=A.*B where C is bitmap
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_AemultB_bitmap__isle_uint16)
 (
@@ -448,13 +425,9 @@ GrB_Info GB (_AemultB_bitmap__isle_uint16)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // Cx = op (x,Bx):  apply a binary operator to a matrix with scalar bind1st
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_bind1st__isle_uint16)
 (
@@ -485,13 +458,9 @@ GrB_Info GB (_bind1st__isle_uint16)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // Cx = op (Ax,y):  apply a binary operator to a matrix with scalar bind2nd
 //------------------------------------------------------------------------------
-
-
 
 GrB_Info GB (_bind2nd__isle_uint16)
 (
@@ -522,13 +491,9 @@ GrB_Info GB (_bind2nd__isle_uint16)
     #endif
 }
 
-
-
 //------------------------------------------------------------------------------
 // C = op (x, A'): transpose and apply a binary operator
 //------------------------------------------------------------------------------
-
-
 
 // cij = op (x, aij), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
@@ -567,13 +532,9 @@ GrB_Info GB (_bind1st_tran__isle_uint16)
     uint16_t
 }
 
-
-
 //------------------------------------------------------------------------------
 // C = op (A', y): transpose and apply a binary operator
 //------------------------------------------------------------------------------
-
-
 
 // cij = op (aij, y), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
@@ -603,8 +564,6 @@ GrB_Info GB (_bind2nd_tran__isle_uint16)
     return (GrB_SUCCESS) ;
     #endif
 }
-
-
 
 #endif
 

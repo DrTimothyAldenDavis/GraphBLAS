@@ -20,24 +20,24 @@
 #define GB_IS_PLUS_PAIR_REAL_SEMIRING 0
 #endif
 
-// true for the symbolic ANY_PAIR semiring
-#ifndef GB_IS_ANY_PAIR_SEMIRING
-#define GB_IS_ANY_PAIR_SEMIRING 0
-#endif
-
 // true if monoid is ANY (update can skipped entirely)
 #ifndef GB_IS_ANY_MONOID
 #define GB_IS_ANY_MONOID 0
 #endif
 
-// true if the multiply operator is PAIR
-#ifndef GB_IS_PAIR_MULTIPLIER
-#define GB_IS_PAIR_MULTIPLIER 0
-#endif
-
 // true if monoid update is EQ
 #ifndef GB_IS_EQ_MONOID
 #define GB_IS_EQ_MONOID 0
+#endif
+
+// true for the symbolic ANY_PAIR semiring
+#ifndef GB_IS_ANY_PAIR_SEMIRING
+#define GB_IS_ANY_PAIR_SEMIRING 0
+#endif
+
+// true if the multiply operator is PAIR
+#ifndef GB_IS_PAIR_MULTIPLIER
+#define GB_IS_PAIR_MULTIPLIER 0
 #endif
 
 // true if monoid is PLUS_FC32
@@ -95,6 +95,11 @@
 #define GB_IS_SECONDJ_MULTIPLIER 0
 #endif
 
+// 1 for the FIRSTI1, FIRSTJ1, SECONDI1, or SECONDJ1 multiply operators
+#ifndef GB_OFFSET
+#define GB_OFFSET 0
+#endif
+
 //------------------------------------------------------------------------------
 // numerical operations and assignments
 //------------------------------------------------------------------------------
@@ -105,6 +110,11 @@
     // ANY_PAIR semiring: no values are accessed
     //--------------------------------------------------------------------------
 
+    // Cx [p] = t
+    #ifndef GB_CIJ_WRITE
+    #define GB_CIJ_WRITE(p,t)
+    #endif
+
     // Hx [i] = t
     #ifndef GB_HX_WRITE
     #define GB_HX_WRITE(i,t)
@@ -113,6 +123,11 @@
     // Cx [p] = Hx [i]
     #ifndef GB_CIJ_GATHER
     #define GB_CIJ_GATHER(p,i)
+    #endif
+
+    // C(i,j) += t
+    #ifndef GB_CIJ_UPDATE
+    #define GB_CIJ_UPDATE(p,t)
     #endif
 
     // Cx [p] += Hx [i]
@@ -130,11 +145,6 @@
     #define GB_CIJ_MEMCPY(p,i,len)
     #endif
 
-    // true if overflow can be ignored when replacing+z+..+z with n*z
-    #ifndef GB_ZTYPE_IGNORE_OVERFLOW
-    #define GB_ZTYPE_IGNORE_OVERFLOW 1
-    #endif
-
 #else
 
     //--------------------------------------------------------------------------
@@ -144,6 +154,11 @@
     // These definitions require explicit types to be used, not GB_void.
     // Generic methods using GB_void for all types, memcpy, and function
     // pointers for all computations must #define these macros first.
+
+    // Cx [p] = t
+    #ifndef GB_CIJ_WRITE
+    #define GB_CIJ_WRITE(p,t) Cx [p] = t
+    #endif
 
     // Hx [i] = t
     #ifndef GB_HX_WRITE
@@ -155,9 +170,9 @@
     #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
     #endif
 
-    // Cx [p] += Hx [i]
-    #ifndef GB_CIJ_GATHER_UPDATE
-    #define GB_CIJ_GATHER_UPDATE(p,i) GB_UPDATE (Cx [p], Hx [i])
+    // C(i,j) += t
+    #ifndef GB_CIJ_UPDATE
+    #define GB_CIJ_UPDATE(p,t) GB_UPDATE (Cx [p], t)
     #endif
 
     // Hx [i] += t
@@ -165,14 +180,15 @@
     #define GB_HX_UPDATE(i,t) GB_UPDATE (Hx [i], t)
     #endif
 
-    // Cx [p:p+len-1] = Hx [i:i+len-1]
-    #ifndef GB_CIJ_MEMCPY
-    #define GB_CIJ_MEMCPY(p,i,len) memcpy (&(Cx [p]), &(Hx [i]), len)
+    // Cx [p] += Hx [i]
+    #ifndef GB_CIJ_GATHER_UPDATE
+    #define GB_CIJ_GATHER_UPDATE(p,i) GB_UPDATE (Cx [p], Hx [i])
     #endif
 
-    // true if overflow can be ignored when replacing+z+..+z with n*z
-    #ifndef GB_ZTYPE_IGNORE_OVERFLOW
-    #define GB_ZTYPE_IGNORE_OVERFLOW 0
+    // Cx [p:p+len-1] = Hx [i:i+len-1]
+    #ifndef GB_CIJ_MEMCPY
+    #define GB_CIJ_MEMCPY(p,i,len) \
+        memcpy (Cx +(p), Hx +(i), (len) * sizeof (GB_C_TYPE))
     #endif
 
 #endif
