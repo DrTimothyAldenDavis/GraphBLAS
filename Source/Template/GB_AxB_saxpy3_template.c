@@ -490,7 +490,8 @@
                 #if !defined ( GB_GENERIC ) && !GB_IS_ANY_PAIR_SEMIRING
                 // declare the monoid identity value, for GB_COMPUTE_DENSE_C_j,
                 // needed only for the 3 kinds of coarseGus_*_phase5 below.
-                const GB_DECLARE_MONOID_IDENTITY (zidentity) ;
+                // Not used for generic case, nor for (any,pair) semiring.
+                GB_DECLARE_MONOID_IDENTITY (const, zidentity) ;
                 #endif
 
                 #if ( GB_NO_MASK )

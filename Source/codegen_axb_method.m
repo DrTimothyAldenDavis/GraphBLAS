@@ -196,6 +196,7 @@ end
 
 % identity and terminal values for the monoid
 fprintf (f, 'm4_define(`GB_identity'', `%s'')\n', identity) ;
+fprintf (f, 'm4_define(`GB_terminal'', `%s'')\n', terminal) ;
 
 if (is_any_pair)
     fprintf (f, 'm4_define(`GB_is_any_pair_semiring'', `%s'')\n', ...

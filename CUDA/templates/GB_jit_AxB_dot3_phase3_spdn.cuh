@@ -166,9 +166,7 @@ __global__ void AxB_dot3_phase3_spdn
 
         GB_DECLAREA (aki) ;
         GB_DECLAREB (bkj) ;
-        #if !GB_C_ISO
-        GB_DECLARE_MONOID_IDENTITY (cij) ;  // cij = identity
-        #endif
+        GB_DECLARE_MONOID_IDENTITY (,cij) ; // cij = identity
 
         int cij_exists = 0 ;       // FIXME: make a bool
 

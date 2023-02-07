@@ -98,8 +98,14 @@ GB_offset
     GB_add_update(z, t)
 
 // declare and initialize z = identity value of the monoid
-#define GB_DECLARE_MONOID_IDENTITY(z) \
-    GB_ctype z = GB_identity ;
+#ifndef GB_DECLARE_MONOID_IDENTITY
+#if GB_IS_ANY_PAIR_SEMIRING || GB_C_ISO
+#define GB_DECLARE_MONOID_IDENTITY(modifier,z)
+#else
+#define GB_DECLARE_MONOID_IDENTITY(modifier,z) \
+    modifier GB_ctype z = GB_identity
+#endif
+#endif
 
 // true if the monoid has a terminal value
 #define GB_MONOID_IS_TERMINAL \
@@ -108,6 +114,16 @@ GB_offset
 // break if z reaches the terminal value (dot product only)
 #define GB_IF_TERMINAL_BREAK(z,zterminal) \
     GB_if_terminal_break(z,zterminal)
+
+// declare and initialize z = terminal value of the monoid
+#ifndef GB_DECLARE_MONOID_TERMINAL
+#if GB_IS_ANY_PAIR_SEMIRING || GB_C_ISO || !GB_MONOID_IS_TERMINAL
+#define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal)
+#else
+#define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal) \
+    modifier GB_ctype zterminal = GB_terminal
+#endif
+#endif
 
 // multiply operator: z = x*y
 #define GB_MULT(z, x, y, i, k, j) \

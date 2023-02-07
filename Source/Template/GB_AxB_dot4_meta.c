@@ -85,7 +85,7 @@
     //--------------------------------------------------------------------------
 
     const bool C_in_iso = C->iso ;
-    const GB_DECLARE_MONOID_IDENTITY (zidentity) ;
+    const GB_DECLARE_MONOID_IDENTITY (const, zidentity) ;
     const GB_C_TYPE cinput = (C_in_iso) ? Cx [0] : zidentity ;
     if (C_in_iso)
     { 

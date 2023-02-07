@@ -42,13 +42,13 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     if (monoid == NULL)
     {
         // no values computed
-        fprintf (fp, "#define GB_DECLARE_MONOID_IDENTITY(z)\n") ;
+        fprintf (fp, "#define GB_DECLARE_MONOID_IDENTITY(modifier,z)\n") ;
     }
     else if (id_ecode <= 28)
     {
         // built-in monoid: a simple assignment
         const char *id_value = GB_charify_identity_or_terminal (id_ecode) ;
-        fprintf (fp, "#define GB_DECLARE_MONOID_IDENTITY(z) "
+        fprintf (fp, "#define GB_DECLARE_MONOID_IDENTITY(modifier,z) "
             "%s z = (%s) (%s) ;\n", ztype_name, ztype_name, id_value) ;
     }
     else
@@ -67,7 +67,8 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         // ANY monoid is terminal but with no specific terminal value
         fprintf (fp, "#define GB_IS_ANY_MONOID 1\n") ;
         fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
-        fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL(zterminal)\n") ;
+        fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL"
+            "(modifier,zterminal)\n") ;
         fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) (true)\n") ;
         fprintf (fp, "#define GB_IF_TERMINAL_BREAK(z,zterminal) break\n") ;
     }
@@ -76,7 +77,8 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         // monoid is not terminal (either built-in or user-defined)
         fprintf (fp, "#define GB_IS_ANY_MONOID 0\n") ;
         fprintf (fp, "#define GB_MONOID_IS_TERMINAL 0\n") ;
-        fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL(zterminal)\n") ;
+        fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL"
+            "(modifier,zterminal)\n") ;
         fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) (false)\n") ;
         fprintf (fp, "#define GB_IF_TERMINAL_BREAK(z,zterminal)\n") ;
     }
@@ -86,8 +88,8 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         fprintf (fp, "#define GB_IS_ANY_MONOID 0\n") ;
         fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
         const char *term_value = GB_charify_identity_or_terminal (term_ecode) ;
-        fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL(zterminal) "
-            "%s zterminal = (%s) (%s) ;\n",
+        fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal) "
+            "modifier %s zterminal = (%s) (%s) ;\n",
             ztype_name, ztype_name, term_value) ;
         fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) "
             "((z) == ((%s) (%s)))\n", ztype_name, term_value) ;

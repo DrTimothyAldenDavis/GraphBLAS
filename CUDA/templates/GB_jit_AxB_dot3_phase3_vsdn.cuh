@@ -181,9 +181,7 @@ __global__ void AxB_dot3_phase3_vsdn
 
         GB_DECLAREA (aki) ;
         GB_DECLAREB (bkj) ;
-        #if !GB_C_ISO
-        GB_DECLARE_MONOID_IDENTITY (cij) ;  // cij = identity
-        #endif
+        GB_DECLARE_MONOID_IDENTITY (,cij) ; // cij = identity
         bool cij_exists = false ;
 
         int64_t my_nzombies = 0;

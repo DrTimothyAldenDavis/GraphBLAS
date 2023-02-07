@@ -35,8 +35,8 @@
 
 // declare a scalar and set it equal to the monoid identity value
 
-    #define GB_DECLARE_MONOID_IDENTITY(z)           \
-        GB_ztype z = GB_identity
+    #define GB_DECLARE_MONOID_IDENTITY(modifier,z) \
+        modifier GB_ztype z = GB_identity
 
 // reduction operator:
 

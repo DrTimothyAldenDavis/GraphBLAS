@@ -75,7 +75,7 @@
             int64_t pstart, pend ;
             GB_PARTITION (pstart, pend, anz, tid, ntasks) ;
             // ztype t = identity
-            GB_DECLARE_MONOID_IDENTITY (t) ;
+            GB_DECLARE_MONOID_IDENTITY (,t) ;
             bool my_exit, found = false ;
             GB_ATOMIC_READ
             my_exit = early_exit ;

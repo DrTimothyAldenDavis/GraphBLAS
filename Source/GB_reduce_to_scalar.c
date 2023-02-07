@@ -256,7 +256,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 #define GB_NO_PANEL_CASE
 
                 // ztype z = identity
-                #define GB_DECLARE_MONOID_IDENTITY(z)                   \
+                #define GB_DECLARE_MONOID_IDENTITY(modifier,z)          \
                     GB_void z [GB_VLA(zsize)] ;                         \
                     memcpy (z, monoid->identity, zsize) ;
 

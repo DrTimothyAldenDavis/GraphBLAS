@@ -76,7 +76,7 @@ T_Z GB_block_Reduce(thread_block g, T_Z val)
         shared [wid] = val ; // Write reduced value to shared memory
     }
     this_thread_block().sync() ;     // Wait for all partial reductions
-    GB_DECLARE_MONOID_IDENTITY (identity) ;
+    GB_DECLARE_MONOID_IDENTITY (const, identity) ;
 
     val = (threadIdx.x < (blockDim.x >> LOG2_WARPSIZE)) ?
         shared [lane] : identity ;
@@ -107,7 +107,7 @@ __global__ void GB_jit_reduce
     const T_A *__restrict__ Ax = (T_A *) A->x ;
 
     // each thread reduces its result into zmine, of type T_Z
-    GB_DECLARE_MONOID_IDENTITY (zmine) ;
+    GB_DECLARE_MONOID_IDENTITY (,zmine) ;
 
     // On input, zscalar is already initialized to the monoid identity value.
     // If T_Z has size less than 4 bytes, zscalar has been upscaled to 4 bytes.

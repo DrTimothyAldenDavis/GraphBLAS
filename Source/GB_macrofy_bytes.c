@@ -24,8 +24,11 @@ void GB_macrofy_bytes
 )
 {
 
+    // FIXME: figure out a way to get rid of memcpy
+
     fprintf (fp,
-        "#define GB_DECLARE_%s(%s) %s %s ; \\\n"
+        "#define GB_DECLARE_%s(modifier,%s) \\\n"
+        "    modifier %s %s ;               \\\n"
         "    {                                                       \\\n"
         "        const uint8_t bytes [%d] =                          \\\n"
         "        {                                                   \\\n"
