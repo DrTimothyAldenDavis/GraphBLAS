@@ -67,6 +67,10 @@ void multgauss (gauss *z, const gauss *x, const gauss *y)
 // printgauss: print a Gauss matrix
 //------------------------------------------------------------------------------
 
+// This is a very slow way to print a large matrix, so using this approach is
+// not recommended for large matrices.  However, it looks nice for this demo
+// since the matrix is small.
+
 void printgauss (GrB_Matrix A)
 {
     // print the matrix
