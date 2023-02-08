@@ -43,7 +43,8 @@
 
 #if GB_C_ISO
 
-    #define GB_MULTADD( c, a ,b, i, k, j)
+//  GB_MULTADD now defined in header
+//  #define GB_MULTADD( c, a ,b, i, k, j)
     #define GB_DOT_TERMINAL( c ) break
     #define GB_DOT_MERGE(pA,pB)                                         \
     {                                                                   \
@@ -53,12 +54,13 @@
 
 #else
 
-    #define GB_MULTADD( c, a, b, i, k, j )                              \
-    {                                                                   \
-        GB_Z_TYPE x_op_y ;                                              \
-        GB_MULT ( x_op_y, a, b, i, k, j ) ; /* x_op_y = a*b */          \
-        GB_ADD ( c, c, x_op_y ) ;           /* c += x_op_y  */          \
-    }
+//  GB_MULTADD now defined in header
+//  #define GB_MULTADD( c, a, b, i, k, j )                              \
+//  {                                                                   \
+//      GB_Z_TYPE x_op_y ;                                              \
+//      GB_MULT ( x_op_y, a, b, i, k, j ) ; /* x_op_y = a*b */          \
+//      GB_ADD ( c, c, x_op_y ) ;           /* c += x_op_y  */          \
+//  }
 
     #define GB_DOT_TERMINAL( c ) GB_IF_TERMINAL_BREAK ( c, zterminal )
 

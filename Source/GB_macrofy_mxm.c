@@ -303,6 +303,14 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     {
         case GB_PAIR_binop_code :
             fprintf (fp, "#define GB_IS_PAIR_MULTIPLIER 1\n") ;
+            if (zcode == GB_FC32_code)
+            {
+                fprintf (fp, "#define GB_PAIR_ONE GB_CMPLX32 (1,0)\n") ;
+            }
+            else if (zcode == GB_FC64_code)
+            {
+                fprintf (fp, "#define GB_PAIR_ONE GB_CMPLX64 (1,0)\n") ;
+            }
             break ;
 
         case GB_FIRSTI1_binop_code :

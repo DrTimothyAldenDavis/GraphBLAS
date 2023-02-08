@@ -143,7 +143,6 @@
                         // (PLUS monoid for double complex)_PAIR semiring
                         cij = GB_CMPLX64 (creal (cij) + (double) vlen, 0) ;
                     }
-
                     #elif GB_IS_MIN_FIRSTJ_SEMIRING
                     {
                         // MIN_FIRSTJ semiring: take the first entry
@@ -828,7 +827,6 @@
                         // (PLUS monoid for double complex)_PAIR semiring
                         cij = GB_CMPLX64 (creal (cij) + (double) bjnz, 0) ;
                     }
-
                     #elif GB_IS_MIN_FIRSTJ_SEMIRING
                     {
                         // MIN_FIRSTJ semiring: take the first entry in B(:,j)

@@ -230,7 +230,7 @@ break ;
     // PAIR multiplier: t is always 1; no numeric work to do to compute t.
     // The LXOR_PAIR and PLUS_PAIR semirings need the value t = 1 to use in
     // their monoid operator, however.
-    #define t (GB_CTYPE_CAST (1, 0))
+    #define t GB_PAIR_ONE
     #define GB_MULT_A_ik_B_kj
 
 #elif ( GB_IS_FIRSTJ_MULTIPLIER || GB_IS_SECONDJ_MULTIPLIER )

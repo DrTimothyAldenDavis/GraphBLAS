@@ -104,9 +104,9 @@
     // ANY_PAIR semiring: no values are accessed
     //--------------------------------------------------------------------------
 
-    // declare a scalar of ctype
-    #ifndef GB_DECLAREC
-    #define GB_DECLAREC(c)
+    // declare a scalar of ztype
+    #ifndef GB_CIJ_DECLARE
+    #define GB_CIJ_DECLARE(cij)
     #endif
 
     // Cx [p] = t
@@ -144,6 +144,11 @@
     #define GB_CIJ_MEMCPY(p,i,len)
     #endif
 
+    // rest of the PAIR operator
+    #ifndef GB_PAIR_ONE
+    #define GB_PAIR_ONE 1
+    #endif
+
 #else
 
     //--------------------------------------------------------------------------
@@ -154,9 +159,9 @@
     // Generic methods using GB_void for all types, memcpy, and function
     // pointers for all computations must #define these macros first.
 
-    // declare a scalar of ctype
-    #ifndef GB_DECLAREC
-    #define GB_DECLAREC(c) GB_C_TYPE c
+    // declare a scalar of ztype
+    #ifndef GB_CIJ_DECLARE
+    #define GB_CIJ_DECLARE(cij) GB_Z_TYPE cij
     #endif
 
     // Cx [p] = t
@@ -193,6 +198,11 @@
     #ifndef GB_CIJ_MEMCPY
     #define GB_CIJ_MEMCPY(p,i,len) \
         memcpy (Cx +(p), Hx +(i), (len) * sizeof (GB_C_TYPE))
+    #endif
+
+    // rest of the PAIR operator
+    #ifndef GB_PAIR_ONE
+    #define GB_PAIR_ONE ((GB_Z_TYPE) 1)
     #endif
 
 #endif

@@ -86,6 +86,7 @@ GB_is_plus_fc64_monoid
 
 // special case multipliers:
 GB_is_pair_multiplier
+GB_pair_one
 GB_offset
 GB_is_firsti_multiplier
 GB_is_firstj_multiplier
@@ -124,17 +125,10 @@ GB_declare_monoid_terminal
 #define GB_PUTC(cij,p) \
     GB_putc
 
-// FIXME: GB_CTYPE_CAST not in macrofy (for PLUS_PAIR, and t=1 for PAIR operator)
-// cast from a real scalar (or 2, if C is complex) to the type of C
-// Should be to ztype
-#define GB_CTYPE_CAST(x,y) \
-    GB_ctype_cast(x,y)
-
 // FIXME: GB_IDENTITY only appears in a few templates; replace it
 // monoid identity value
 #define GB_IDENTITY \
     GB_identity
-
 
 // FIXME: GB_PRAGMA_SIMD_DOT not in macrofy, do I need it?
 // simd pragma for dot-product loop vectorization
@@ -144,11 +138,6 @@ GB_declare_monoid_terminal
 // FIXME: GB_PRAGMA_SIMD_VECTORIZE: move this (generic methods disable it)
 // simd pragma for other loop vectorization
 #define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
-
-// FIXME: GB_CIJ_DECLARE(cij): Use GB_DECLARE_MONOID_IDENTITY(cij) instead?
-// declare the cij scalar (initialize cij to zero for PLUS_PAIR)
-#define GB_CIJ_DECLARE(cij) \
-    GB_cij_declare
 
 // FIXME: GB_HAS_ATOMIC
 // 1 if monoid update can be done atomically, 0 otherwise

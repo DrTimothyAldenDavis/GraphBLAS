@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// The GB_AxB_dot_cij.c method is used only by Template/GB_AxB_dot2_template.c
+// and Template/GB_AxB_dot3_template.c.  That method declares the cij scalar,
+// and initializes it to zero for the PLUS_PAIR_REAL semiring.
+
 // GB_DOT: cij += (A(k,i) or A(i,k)) * B(k,j), then break if terminal
 // Ai [pA] and Bi [pB] are both equal to the index k.
 // pA points to A(k,i) for most GxB_AxB_dot* methods, except for C=A*B in
@@ -24,6 +28,9 @@
     //--------------------------------------------------------------------------
     // plus_pair_real semiring
     //--------------------------------------------------------------------------
+
+    // this method requires that cij = 0 be initialized when it is declared.
+    // See Template/GB_AxB_dot2_template.c and Template/GB_AxB_dot3_template.c
 
     #if GB_ZTYPE_IGNORE_OVERFLOW
 

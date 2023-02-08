@@ -72,6 +72,7 @@
 
 // special case multipliers:
 #define GB_IS_PAIR_MULTIPLIER 1
+#define GB_PAIR_ONE GB_CMPLX32 (1,0)
 
 // z = identity, and ztype overflow condition (if any):
 #define GB_DECLARE_MONOID_IDENTITY(modifier,z) modifier GxB_FC32_t z = GxB_CMPLXF(0,0)
@@ -101,12 +102,6 @@
 #define GB_PUTC(cij,p) \
     Cx [p] = cij
 
-// FIXME: GB_CTYPE_CAST not in macrofy (for PLUS_PAIR, and t=1 for PAIR operator)
-// cast from a real scalar (or 2, if C is complex) to the type of C
-// Should be to ztype
-#define GB_CTYPE_CAST(x,y) \
-    GB_CMPLX32 (((float) x), ((float) y))
-
 // FIXME: GB_IDENTITY only appears in a few templates; replace it
 // monoid identity value
 #define GB_IDENTITY \
@@ -120,11 +115,6 @@
 // FIXME: GB_PRAGMA_SIMD_VECTORIZE: move this (generic methods disable it)
 // simd pragma for other loop vectorization
 #define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
-
-// FIXME: GB_CIJ_DECLARE(cij): Use GB_DECLARE_MONOID_IDENTITY(cij) instead?
-// declare the cij scalar (initialize cij to zero for PLUS_PAIR)
-#define GB_CIJ_DECLARE(cij) \
-    GxB_FC32_t cij
 
 // FIXME: GB_HAS_ATOMIC
 // 1 if monoid update can be done atomically, 0 otherwise

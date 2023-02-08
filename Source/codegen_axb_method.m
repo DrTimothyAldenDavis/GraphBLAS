@@ -197,18 +197,6 @@ else
     fprintf (f, 'm4_define(`GB_ztype_ignore_overflow'', `'')\n') ;
 end
 
-% simple typecast from 1 (or 2) real scalars to any other type
-switch (ztype)
-    case { 'GxB_FC32_t' }
-        fprintf (f, 'm4_define(`GB_ctype_cast'', `GB_CMPLX32 (((float) $1), ((float) $2))'')\n') ;
-    case { 'GxB_FC64_t' }
-        fprintf (f, 'm4_define(`GB_ctype_cast'', `GB_CMPLX64 (((double) $1), ((double) $2))'')\n') ;
-    case { 'iso' }
-        fprintf (f, 'm4_define(`GB_ctype_cast'', `'')\n') ;
-    otherwise
-        fprintf (f, 'm4_define(`GB_ctype_cast'', `((GB_C_TYPE) $1)'')\n') ;
-end
-
 % identity value for the monoid
 fprintf (f, 'm4_define(`GB_identity'', `%s'')\n', identity) ;
 if (is_any_pair)
@@ -225,14 +213,6 @@ else
     fprintf (f, 'm4_define(`GB_is_any_pair_semiring'', `'')\n') ;
 end
 
-if (is_any_pair)
-    fprintf (f, 'm4_define(`GB_cij_declare'', `'')\n') ;
-elseif (is_plus_pair_real)
-    fprintf (f, 'm4_define(`GB_cij_declare'', `%s cij = 0'')\n', ztype) ;
-else
-    fprintf (f, 'm4_define(`GB_cij_declare'', `%s cij'')\n', ztype) ;
-end
-
 if (is_plus_times_fp)
     % enable the avx-based methods.  only two semirings (plus_times_fp32 and
     % plus_times_fp64) are accelerated with AVX2 or AVX512f instructions.  More
@@ -243,12 +223,21 @@ else
     fprintf (f, 'm4_define(`if_semiring_has_avx'', `-1'')\n') ;
 end
 
+one = '' ;
 if (is_pair)
     fprintf (f, 'm4_define(`GB_is_pair_multiplier'', `%s'')\n', ...
         '#define GB_IS_PAIR_MULTIPLIER 1') ;
+    switch (ztype)
+        case { 'GxB_FC32_t' }
+            one = '#define GB_PAIR_ONE GB_CMPLX32 (1,0)' ;
+        case { 'GxB_FC64_t' }
+            one = '#define GB_PAIR_ONE GB_CMPLX64 (1,0)' ;
+        otherwise
+    end
 else
     fprintf (f, 'm4_define(`GB_is_pair_multiplier'', `'')\n') ;
 end
+fprintf (f, 'm4_define(`GB_pair_one'', `%s'')\n', one) ;
 
 %-------------------------------------------------------------------------------
 % very special cases for semirings
