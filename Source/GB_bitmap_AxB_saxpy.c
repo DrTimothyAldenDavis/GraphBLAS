@@ -154,7 +154,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
         #endif
 
         //----------------------------------------------------------------------
-        // generic method
+        // generic method for the C bitmap case
         //----------------------------------------------------------------------
 
         if (!done)

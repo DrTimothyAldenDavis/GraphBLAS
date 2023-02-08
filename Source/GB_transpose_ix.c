@@ -104,7 +104,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
             // launch the switch factory
             //------------------------------------------------------------------
 
-            #include "GB_2type_factory.c"
+            #include "GB_twotype_factory.c"
 
         #endif
 

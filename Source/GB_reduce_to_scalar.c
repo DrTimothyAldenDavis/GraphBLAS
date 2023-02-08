@@ -229,7 +229,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         #endif
 
         //----------------------------------------------------------------------
-        // use generic worker
+        // use generic worker if not done
         //----------------------------------------------------------------------
 
         if (!done)
@@ -238,6 +238,8 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
             //------------------------------------------------------------------
             // generic worker
             //------------------------------------------------------------------
+
+            #define GB_GENERIC
 
             if (A->type == ztype)
             { 

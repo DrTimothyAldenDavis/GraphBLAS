@@ -73,7 +73,7 @@ void GB_cast_array              // typecast an array
         //----------------------------------------------------------------------
 
         #define GB_EXCLUDE_SAME_TYPES
-        #include "GB_2type_factory.c"
+        #include "GB_twotype_factory.c"
 
     #endif
 

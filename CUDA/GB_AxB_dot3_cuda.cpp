@@ -89,9 +89,9 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     ASSERT (A != NULL && !(A->static_header)) ;
     ASSERT (B != NULL && !(B->static_header)) ;
 
-    ASSERT_MATRIX_OK (M, "M for dot3 cuda A'*B", GB2) ;
-    ASSERT_MATRIX_OK (A, "A for dot3 cuda A'*B", GB2) ;
-    ASSERT_MATRIX_OK (B, "B for dot3 cuda A'*B", GB2) ;
+    ASSERT_MATRIX_OK (M, "M for dot3 cuda A'*B", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for dot3 cuda A'*B", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for dot3 cuda A'*B", GB0) ;
 
     ASSERT (!GB_PENDING (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
@@ -105,7 +105,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (!GB_JUMBLED (B)) ;
 
-    ASSERT_SEMIRING_OK (semiring, "semiring for dot3 numeric A'*B", GB2) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for dot3 numeric A'*B", GB0) ;
 
     ASSERT (A->vlen == B->vlen) ;
     GBURBLE ("(GPU dot3) ") ;

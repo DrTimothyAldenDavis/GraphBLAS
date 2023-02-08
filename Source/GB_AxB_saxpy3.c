@@ -681,7 +681,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         #endif
 
         //----------------------------------------------------------------------
-        // generic saxpy3 method
+        // generic saxpy3 method for the case when C is sparse or hypersparse
         //----------------------------------------------------------------------
 
         if (!done)

@@ -33,9 +33,14 @@ GrB_Info GB_AxB_saxpy_generic
     GB_Werk Werk
 ) ;
 
+// The methods below have the identical signature since are all constructed
+// from Template/GB_saxpy_generic_method.c.
+
+//------------------------------------------------------------------------------
+// GB_AxB_saxpy3_generic_*: C is sparse or hypersparse
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AxB_saxpy3_generic_firsti64 
+GrB_Info GB_AxB_saxpy3_generic_firsti64
 (
     GrB_Matrix C,                   // C is sparse or hypersparse
     const GrB_Matrix M,
@@ -47,7 +52,7 @@ GrB_Info GB_AxB_saxpy3_generic_firsti64
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks,
     int ntasks,
     int nfine,
     int nthreads,
@@ -55,7 +60,7 @@ GrB_Info GB_AxB_saxpy3_generic_firsti64
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_AxB_saxpy3_generic_firstj64 
+GrB_Info GB_AxB_saxpy3_generic_firstj64
 (
     GrB_Matrix C,                   // C is sparse or hypersparse
     const GrB_Matrix M,
@@ -67,7 +72,7 @@ GrB_Info GB_AxB_saxpy3_generic_firstj64
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks,
     int ntasks,
     int nfine,
     int nthreads,
@@ -75,7 +80,7 @@ GrB_Info GB_AxB_saxpy3_generic_firstj64
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_AxB_saxpy3_generic_secondj64 
+GrB_Info GB_AxB_saxpy3_generic_secondj64
 (
     GrB_Matrix C,                   // C is sparse or hypersparse
     const GrB_Matrix M,
@@ -87,7 +92,7 @@ GrB_Info GB_AxB_saxpy3_generic_secondj64
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks,
     int ntasks,
     int nfine,
     int nthreads,
@@ -95,7 +100,7 @@ GrB_Info GB_AxB_saxpy3_generic_secondj64
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_AxB_saxpy3_generic_firsti32 
+GrB_Info GB_AxB_saxpy3_generic_firsti32
 (
     GrB_Matrix C,                   // C is sparse or hypersparse
     const GrB_Matrix M,
@@ -107,7 +112,7 @@ GrB_Info GB_AxB_saxpy3_generic_firsti32
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks,
     int ntasks,
     int nfine,
     int nthreads,
@@ -115,7 +120,7 @@ GrB_Info GB_AxB_saxpy3_generic_firsti32
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_AxB_saxpy3_generic_firstj32 
+GrB_Info GB_AxB_saxpy3_generic_firstj32
 (
     GrB_Matrix C,                   // C is sparse or hypersparse
     const GrB_Matrix M,
@@ -127,7 +132,7 @@ GrB_Info GB_AxB_saxpy3_generic_firstj32
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks,
     int ntasks,
     int nfine,
     int nthreads,
@@ -135,7 +140,7 @@ GrB_Info GB_AxB_saxpy3_generic_firstj32
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_AxB_saxpy3_generic_secondj32 
+GrB_Info GB_AxB_saxpy3_generic_secondj32
 (
     GrB_Matrix C,                   // C is sparse or hypersparse
     const GrB_Matrix M,
@@ -147,7 +152,7 @@ GrB_Info GB_AxB_saxpy3_generic_secondj32
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks,
     int ntasks,
     int nfine,
     int nthreads,
@@ -155,7 +160,7 @@ GrB_Info GB_AxB_saxpy3_generic_secondj32
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_AxB_saxpy3_generic_first 
+GrB_Info GB_AxB_saxpy3_generic_first
 (
     GrB_Matrix C,                   // C is sparse or hypersparse
     const GrB_Matrix M,
@@ -167,7 +172,7 @@ GrB_Info GB_AxB_saxpy3_generic_first
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks,
     int ntasks,
     int nfine,
     int nthreads,
@@ -175,7 +180,7 @@ GrB_Info GB_AxB_saxpy3_generic_first
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_AxB_saxpy3_generic_second 
+GrB_Info GB_AxB_saxpy3_generic_second
 (
     GrB_Matrix C,                   // C is sparse or hypersparse
     const GrB_Matrix M,
@@ -187,7 +192,7 @@ GrB_Info GB_AxB_saxpy3_generic_second
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks,
     int ntasks,
     int nfine,
     int nthreads,
@@ -195,7 +200,27 @@ GrB_Info GB_AxB_saxpy3_generic_second
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_AxB_saxpy3_generic_flipped 
+GrB_Info GB_AxB_saxpy3_generic_flipped
+(
+    GrB_Matrix C,                   // C is sparse or hypersparse
+    const GrB_Matrix M,
+    bool Mask_comp,
+    const bool Mask_struct,
+    const bool M_in_place,
+    const GrB_Matrix A,
+    bool A_is_pattern,
+    const GrB_Matrix B,
+    bool B_is_pattern,
+    const GrB_Semiring semiring,    // semiring that defines C=A*B (flipped)
+    GB_saxpy3task_struct *restrict SaxpyTasks,
+    int ntasks,
+    int nfine,
+    int nthreads,
+    const int do_sort,              // if true, sort in saxpy3
+    GB_Werk Werk
+) ;
+
+GrB_Info GB_AxB_saxpy3_generic_unflipped
 (
     GrB_Matrix C,                   // C is sparse or hypersparse
     const GrB_Matrix M,
@@ -207,7 +232,7 @@ GrB_Info GB_AxB_saxpy3_generic_flipped
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks,
     int ntasks,
     int nfine,
     int nthreads,
@@ -215,9 +240,13 @@ GrB_Info GB_AxB_saxpy3_generic_flipped
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_AxB_saxpy3_generic_unflipped 
+//------------------------------------------------------------------------------
+// GB_bitmap_AxB_saxpy_generic_*: C is bitmap (never full)
+//------------------------------------------------------------------------------
+
+GrB_Info GB_bitmap_AxB_saxpy_generic_firsti64
 (
-    GrB_Matrix C,                   // C is sparse or hypersparse
+    GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
     bool Mask_comp,
     const bool Mask_struct,
@@ -227,7 +256,7 @@ GrB_Info GB_AxB_saxpy3_generic_unflipped
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL
     int ntasks,
     int nfine,
     int nthreads,
@@ -235,9 +264,9 @@ GrB_Info GB_AxB_saxpy3_generic_unflipped
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_firsti64 
+GrB_Info GB_bitmap_AxB_saxpy_generic_firstj64
 (
-    GrB_Matrix C,                   // C is bitmap or full
+    GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
     bool Mask_comp,
     const bool Mask_struct,
@@ -247,7 +276,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_firsti64
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL
     int ntasks,
     int nfine,
     int nthreads,
@@ -255,9 +284,9 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_firsti64
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_firstj64 
+GrB_Info GB_bitmap_AxB_saxpy_generic_secondj64
 (
-    GrB_Matrix C,                   // C is bitmap or full
+    GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
     bool Mask_comp,
     const bool Mask_struct,
@@ -267,7 +296,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_firstj64
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL
     int ntasks,
     int nfine,
     int nthreads,
@@ -275,9 +304,9 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_firstj64
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_secondj64 
+GrB_Info GB_bitmap_AxB_saxpy_generic_firsti32
 (
-    GrB_Matrix C,                   // C is bitmap or full
+    GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
     bool Mask_comp,
     const bool Mask_struct,
@@ -287,7 +316,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_secondj64
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL
     int ntasks,
     int nfine,
     int nthreads,
@@ -295,9 +324,9 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_secondj64
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_firsti32 
+GrB_Info GB_bitmap_AxB_saxpy_generic_firstj32
 (
-    GrB_Matrix C,                   // C is bitmap or full
+    GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
     bool Mask_comp,
     const bool Mask_struct,
@@ -307,7 +336,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_firsti32
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL
     int ntasks,
     int nfine,
     int nthreads,
@@ -315,9 +344,9 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_firsti32
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_firstj32 
+GrB_Info GB_bitmap_AxB_saxpy_generic_secondj32
 (
-    GrB_Matrix C,                   // C is bitmap or full
+    GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
     bool Mask_comp,
     const bool Mask_struct,
@@ -327,7 +356,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_firstj32
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL
     int ntasks,
     int nfine,
     int nthreads,
@@ -335,9 +364,9 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_firstj32
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_secondj32 
+GrB_Info GB_bitmap_AxB_saxpy_generic_first
 (
-    GrB_Matrix C,                   // C is bitmap or full
+    GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
     bool Mask_comp,
     const bool Mask_struct,
@@ -347,7 +376,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_secondj32
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL
     int ntasks,
     int nfine,
     int nthreads,
@@ -355,9 +384,9 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_secondj32
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_first 
+GrB_Info GB_bitmap_AxB_saxpy_generic_second
 (
-    GrB_Matrix C,                   // C is bitmap or full
+    GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
     bool Mask_comp,
     const bool Mask_struct,
@@ -367,7 +396,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_first
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL
     int ntasks,
     int nfine,
     int nthreads,
@@ -375,9 +404,29 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_first
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_second 
+GrB_Info GB_bitmap_AxB_saxpy_generic_flipped
 (
-    GrB_Matrix C,                   // C is bitmap or full
+    GrB_Matrix C,                   // C is bitmap
+    const GrB_Matrix M,
+    bool Mask_comp,
+    const bool Mask_struct,
+    const bool M_in_place,
+    const GrB_Matrix A,
+    bool A_is_pattern,
+    const GrB_Matrix B,
+    bool B_is_pattern,
+    const GrB_Semiring semiring,    // semiring that defines C=A*B (flipped)
+    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL
+    int ntasks,
+    int nfine,
+    int nthreads,
+    const int do_sort,              // if true, sort in saxpy3
+    GB_Werk Werk
+) ;
+
+GrB_Info GB_bitmap_AxB_saxpy_generic_unflipped
+(
+    GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
     bool Mask_comp,
     const bool Mask_struct,
@@ -387,47 +436,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_second
     const GrB_Matrix B,
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
-    int ntasks,
-    int nfine,
-    int nthreads,
-    const int do_sort,              // if true, sort in saxpy3
-    GB_Werk Werk
-) ;
-
-GrB_Info GB_bitmap_AxB_saxpy_generic_flipped 
-(
-    GrB_Matrix C,                   // C is bitmap or full
-    const GrB_Matrix M,
-    bool Mask_comp,
-    const bool Mask_struct,
-    const bool M_in_place,
-    const GrB_Matrix A,
-    bool A_is_pattern,
-    const GrB_Matrix B,
-    bool B_is_pattern,
-    const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
-    int ntasks,
-    int nfine,
-    int nthreads,
-    const int do_sort,              // if true, sort in saxpy3
-    GB_Werk Werk
-) ;
-
-GrB_Info GB_bitmap_AxB_saxpy_generic_unflipped 
-(
-    GrB_Matrix C,                   // C is bitmap or full
-    const GrB_Matrix M,
-    bool Mask_comp,
-    const bool Mask_struct,
-    const bool M_in_place,
-    const GrB_Matrix A,
-    bool A_is_pattern,
-    const GrB_Matrix B,
-    bool B_is_pattern,
-    const GrB_Semiring semiring,    // semiring that defines C=A*B
-    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL
     int ntasks,
     int nfine,
     int nthreads,

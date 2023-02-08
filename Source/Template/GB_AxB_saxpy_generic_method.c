@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // GB_AxB_saxpy_generic_method computes C=A*B, C<M>=A*B, or C<!M>=A*B.  with
-// arbitrary types and operators.  C can be hyper, sparse, bitmap, but not
+// arbitrary types and operators.  C can be hyper, sparse, or bitmap, but not
 // full.  For all cases, the four matrices C, M (if present), A, and B have the
 // same format (by-row or by-column), or they represent implicitly transposed
 // matrices with the same effect.  This method does not handle the dot-product
@@ -63,6 +63,8 @@
 #include "GB_ek_slice_search.c"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_AxB_saxpy_generic.h"
+
+#define GB_GENERIC
 
 GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
 (
@@ -143,6 +145,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     // user-defined monoid update cannot be done with an OpenMP atomic
     #define GB_HAS_OMP_ATOMIC 0
 
+    // FIXME: can remove these
     // no special cases (C is not iso)
     #define GB_IS_ANY_MONOID 0
     #define GB_IS_ANY_FC32_MONOID 0
@@ -152,15 +155,16 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     #define GB_IS_ANY_PAIR_SEMIRING 0
     #define GB_IS_PAIR_MULTIPLIER 0
 
+    // FIXME: add GB_A2TYPE, GB_B2TYPE, GB_Z_TYPE, GB_C_TYPE
     #define GB_A_TYPE GB_void
     #define GB_B_TYPE GB_void
+    // FIXME: rename to GB_B_SIZE.  This is before typecast to GB_B2TYPE
     #define GB_BSIZE bsize
 
     // no vectorization
     #define GB_PRAGMA_SIMD_VECTORIZE ;
 
-    // The monoid identity byte value is not used in saxpy3
-    #define GB_GENERIC
+    // monoid identity byte
     #define GB_HAS_IDENTITY_BYTE 0
     #define GB_IDENTITY_BYTE (none)
 
@@ -234,6 +238,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
         {
             #undef  GB_C_TYPE
             #define GB_C_TYPE int64_t
+            // FIXME: rename GB_Z_SIZE?
             #undef  GB_CSIZE
             #define GB_CSIZE (sizeof (int64_t))
             ASSERT (C->type == GrB_INT64) ;
