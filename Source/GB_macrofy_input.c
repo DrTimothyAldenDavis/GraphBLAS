@@ -20,7 +20,7 @@ void GB_macrofy_input
     const char *Amacro,     // name of the macro is GB_GET*(Amacro)
     const char *Aname,      // name of the input matrix
     bool do_matrix_macros,  // if true, do the matrix macros
-    GrB_Type xtype,         // type of aij
+    GrB_Type a2type,        // type of aij
     GrB_Type atype,         // type of the input matrix
     int asparsity,          // sparsity format of the input matrix
     int acode,              // type code of the input (0 if pattern)
@@ -74,8 +74,8 @@ void GB_macrofy_input
         //----------------------------------------------------------------------
 
         // Declare a scalar or work array.  For example, suppose A has type
-        // double, and the x input to the operator has type float.  To declare
-        // a simple scalar or work array:
+        // double, and the x input to an unflipped operator has type float.  To
+        // declare a simple scalar or work array:
 
         //      GB_DECLAREA (aij) ;
         //      GB_DECLAREA (w [32]) ;
@@ -85,30 +85,30 @@ void GB_macrofy_input
         //      float aij ;
         //      float w [32] ;
 
-        if (xtype == NULL)
+        if (a2type == NULL)
         {
-            // no values for this matrix; no need to typecast to xtype
+            // no values for this matrix; no need to typecast to a2type
             fprintf (fp, "#define GB_DECLARE%s(%s)\n", Amacro, aname) ;
         }
         else
         {
             fprintf (fp, "#define GB_DECLARE%s(%s) %s %s\n",
-                Amacro, aname, xtype->name, aname) ;
+                Amacro, aname, a2type->name, aname) ;
         }
 
         //----------------------------------------------------------------------
         // construct the GB_GETA or GB_GETB macro
         //----------------------------------------------------------------------
 
-        // #define GB_GETA(a,Ax,p,iso) a = (xtype) Ax [iso ? 0 : p]
+        // #define GB_GETA(a,Ax,p,iso) a = (a2type) Ax [iso ? 0 : p]
         // to load a value from the A matrix, and typecast it to the scalar a
-        // of type xtype.  Note that the iso status is baked into the macro,
+        // of type a2type.  Note that the iso status is baked into the macro,
         // since the kernel will be jitified for that particular iso status.
         // If two cases are identical except for the iso status of an input
         // matrix, two different kernels will be constructed and compiled.
 
-        // For example, to load the scalar aij (of type float, in the example
-        // above, from the matrix A of type double:
+        // For example, to load the scalar aij (with a2type float, in the
+        // example above), from the matrix A of type double:
 
         //      GB_GETA (aij,Ax,p,iso) ;
 
@@ -125,7 +125,7 @@ void GB_macrofy_input
         snprintf (macro_name, SLEN, "GB_GET%s", Amacro) ;
         snprintf (xargs, SLEN, "%sx,p,iso", Aname) ;
         snprintf (xexpr, SLEN, A_iso_code ? "%sx [0]" : "%sx [p]", Aname) ;
-        GB_macrofy_cast_input (fp, macro_name, aname, xargs, xexpr, xtype,
+        GB_macrofy_cast_input (fp, macro_name, aname, xargs, xexpr, a2type,
             atype) ;
     }
 }

@@ -8,12 +8,13 @@
 //------------------------------------------------------------------------------
 
 // GB_AxB_saxpy_generic computes C=A*B, C<M>=A*B, or C<!M>=A*B in parallel,
-// with arbitrary types and operators.  C can have any sparsity pattern:
-// hyper, sparse, bitmap, or full.  For all cases, the four matrices C, M
-// (if present), A, and B have the same format (by-row or by-column), or they
-// represent implicitly transposed matrices with the same effect.  This method
-// does not handle the dot-product methods, which compute C=A'*B if A and B
-// are held by column, or equivalently A*B' if both are held by row.
+// with arbitrary types and operators, via memcpy and function pointers.  C can
+// have any sparsity pattern: hyper, sparse, bitmap, or full.  For all cases,
+// the four matrices C, M (if present), A, and B have the same format (by-row
+// or by-column), or they represent implicitly transposed matrices with the
+// same effect.  This method does not handle the dot-product methods, which
+// compute C=A'*B if A and B are held by column, or equivalently A*B' if both
+// are held by row.
 
 // This method uses GB_AxB_saxpy3_generic_* and GB_bitmap_AxB_saxpy_generic_*
 // to implement two meta-methods, each of which can contain further specialized

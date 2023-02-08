@@ -23,9 +23,9 @@
 
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_Matrix_free (&M2) ;                  \
-    GB_Matrix_free (&A2) ;                  \
-    GB_Matrix_free (&B2) ;                  \
+    GB_Matrix_free (&Mwork) ;               \
+    GB_Matrix_free (&Awork) ;               \
+    GB_Matrix_free (&Bwork) ;               \
     GB_WERK_POP (M_ek_slicing, int64_t) ;   \
     GB_WERK_POP (B_slice, int64_t) ;        \
     GB_WERK_POP (A_slice, int64_t) ;        \
@@ -81,8 +81,10 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
 
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
 
-    struct GB_Matrix_opaque A2_header, B2_header, M2_header ;
-    GrB_Matrix M = NULL, M2 = NULL, A2 = NULL, B2 = NULL, A = NULL, B = NULL ;
+    struct GB_Matrix_opaque Awork_header, Bwork_header, Mwork_header ;
+    GrB_Matrix M = NULL, Mwork = NULL ;
+    GrB_Matrix A = NULL, Awork = NULL ;
+    GrB_Matrix B = NULL, Bwork = NULL ;
     GB_WERK_DECLARE (A_slice, int64_t) ;
     GB_WERK_DECLARE (B_slice, int64_t) ;
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
@@ -121,8 +123,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     if (A_is_hyper)
     { 
         // A = hypershallow version of A_in
-        GB_CLEAR_STATIC_HEADER (A2, &A2_header) ;
-        A = GB_hyper_shallow (A2, A_in) ;
+        GB_CLEAR_STATIC_HEADER (Awork, &Awork_header) ;
+        A = GB_hyper_shallow (Awork, A_in) ;
     }
     else
     { 
@@ -133,8 +135,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     if (B_is_hyper)
     { 
         // B = hypershallow version of B_in
-        GB_CLEAR_STATIC_HEADER (B2, &B2_header) ;
-        B = GB_hyper_shallow (B2, B_in) ;
+        GB_CLEAR_STATIC_HEADER (Bwork, &Bwork_header) ;
+        B = GB_hyper_shallow (Bwork, B_in) ;
     }
     else
     { 
@@ -165,13 +167,13 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
 
     if (A_or_B_hyper && M_in != NULL)
     { 
-        // M2 = M_in (Ah, Bh), where M2 has a static header
-        // if Mask_struct then M2 is extracted as iso
-        GB_CLEAR_STATIC_HEADER (M2, &M2_header) ;
-        GB_OK (GB_subref (M2, Mask_struct, M_in->is_csc, M_in,
+        // Mwork = M_in (Ah, Bh), where Mwork has a static header
+        // if Mask_struct then Mwork is extracted as iso
+        GB_CLEAR_STATIC_HEADER (Mwork, &Mwork_header) ;
+        GB_OK (GB_subref (Mwork, Mask_struct, M_in->is_csc, M_in,
             (A_is_hyper) ? Ah : GrB_ALL, cvlen,
             (B_is_hyper) ? Bh : GrB_ALL, cvdim, false, Werk)) ;
-        M = M2 ;
+        M = Mwork ;
         ASSERT_MATRIX_OK_OR_NULL (M, "M submask dot A'*B", GB0) ;
     }
     else

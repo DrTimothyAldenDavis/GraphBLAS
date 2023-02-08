@@ -7,8 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// This template serves the dot2 and dot3 methods, but not dot4.  The
-// #including file defines GB_DOT2_GENERIC or GB_DOT3_GENERIC.
+// This template serves the dot2 and dot3 methods, but not dot4, since dot4 is
+// not implemented for generic kernels.  The #including file defines
+// GB_DOT2_GENERIC or GB_DOT3_GENERIC.
+
+#define GB_GENERIC
 
 {
 

@@ -26,9 +26,9 @@
 
 #define GB_FREE_ALL                 \
 {                                   \
-    GB_Matrix_free (&C2) ;          \
-    GB_Matrix_free (&M2) ;          \
-    GB_Matrix_free (&A2) ;          \
+    GB_Matrix_free (&Cwork) ;       \
+    GB_Matrix_free (&Mwork) ;       \
+    GB_Matrix_free (&Awork) ;       \
     GB_Matrix_free (&SubMask) ;     \
     GB_FREE_WORK (&I2, I2_size) ;   \
     GB_FREE_WORK (&J2, J2_size) ;   \
@@ -68,16 +68,16 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GrB_Matrix C = NULL ;           // C_in or C2
-    GrB_Matrix M = NULL ;           // M_in or M2
-    GrB_Matrix A = NULL ;           // A_in or A2
+    GrB_Matrix C = NULL ;           // C_in or Cwork
+    GrB_Matrix M = NULL ;           // M_in or Mwork
+    GrB_Matrix A = NULL ;           // A_in or Awork
     GrB_Index *I = NULL ;           // Rows, Cols, or I2
     GrB_Index *J = NULL ;           // Rows, Cols, or J2
 
     // temporary matrices and arrays
-    GrB_Matrix C2 = NULL, M2 = NULL, A2 = NULL, SubMask = NULL ;
-    struct GB_Matrix_opaque C2_header, M2_header, A2_header, MT_header,
-        AT_header, SubMask_header ;
+    GrB_Matrix Cwork = NULL, Mwork = NULL, Awork = NULL, SubMask = NULL ;
+    struct GB_Matrix_opaque Cwork_header, Mwork_header, Awork_header,
+        MT_header, AT_header, SubMask_header ;
     GrB_Index *I2 = NULL ; size_t I2_size = 0 ;
     GrB_Index *J2 = NULL ; size_t J2_size = 0 ;
 
@@ -87,8 +87,9 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     ASSERT_MATRIX_OK (C_in, "C_in for assign", GB0) ;
     int subassign_method ;
 
-    GB_OK (GB_assign_prep (&C, &M, &A, &subassign_method, &C2, &M2, &A2,
-        &C2_header, &M2_header, &A2_header, &MT_header, &AT_header,
+    GB_OK (GB_assign_prep (&C, &M, &A, &subassign_method,
+        &Cwork, &Mwork, &Awork,
+        &Cwork_header, &Mwork_header, &Awork_header, &MT_header, &AT_header,
         &I, &I2, &I2_size, &ni, &nI, &Ikind, Icolon,
         &J, &J2, &J2_size, &nj, &nJ, &Jkind, Jcolon,
         &atype, C_in, &C_replace, &assign_kind,
@@ -365,15 +366,15 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     }
 
     //--------------------------------------------------------------------------
-    // transplant C2 back into C_in
+    // transplant Cwork back into C_in
     //--------------------------------------------------------------------------
 
-    if (C == C2)
+    if (C == Cwork)
     { 
-        // Transplant the content of C2 into C_in and free C2.  Zombies and
-        // pending tuples can be transplanted from C2 into C_in, and if C2 is
-        // jumbled, C_in becomes jumbled too.
-        GB_OK (GB_transplant (C_in, C_in->type, &C2, Werk)) ;
+        // Transplant the content of Cwork into C_in and free Cwork.  Zombies
+        // and pending tuples can be transplanted from Cwork into C_in, and if
+        // Cwork is jumbled, C_in becomes jumbled too.
+        GB_OK (GB_transplant (C_in, C_in->type, &Cwork, Werk)) ;
     }
 
     //--------------------------------------------------------------------------

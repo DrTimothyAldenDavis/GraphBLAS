@@ -53,10 +53,9 @@ if_not_any_pair_semiring
 //    identity:      GB_identity
 // MultAdd:  GB_multiply_add(z,x,y,i,k,j)
 
+// special case semirings:
 GB_is_any_pair_semiring
-
 GB_is_plus_pair_real_semiring
-
 GB_is_eq_pair_semiring
 GB_is_xor_pair_semiring
 GB_is_plus_8_pair_semiring
@@ -66,6 +65,7 @@ GB_is_plus_big_pair_semiring
 GB_is_plus_fc32_pair_semiring
 GB_is_plus_fc64_pair_semiring
 
+// special case monoids:
 GB_is_any_fc32_monoid
 GB_is_any_fc64_monoid
 GB_is_imin_monoid
@@ -75,6 +75,7 @@ GB_is_fmax_monoid
 GB_is_plus_fc32_monoid
 GB_is_plus_fc64_monoid
 
+// special case multipliers:
 GB_is_pair_multiplier
 GB_offset
 GB_is_firsti_multiplier
@@ -126,7 +127,7 @@ GB_declare_monoid_terminal
     GB_multiply_add(z, x, y, i, k, j)
 
 
-// declare aik as atype
+// declare aik as a2type
 #define GB_DECLAREA(aik) \
     GB_declarea(aik)
 
@@ -138,7 +139,7 @@ GB_declare_monoid_terminal
 #define GB_A_IS_PATTERN \
     GB_a_is_pattern \
 
-// declare bkj as btype
+// declare bkj as b2type
 #define GB_DECLAREB(bkj) \
     GB_declareb(bkj)
 

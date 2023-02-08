@@ -19,10 +19,10 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                 \
 {                                   \
-    GB_Matrix_free (&C2) ;          \
-    GB_Matrix_free (&A2) ;          \
+    GB_Matrix_free (&Cwork) ;          \
+    GB_Matrix_free (&Awork) ;          \
     GB_Matrix_free (&AT) ;          \
-    GB_Matrix_free (&M2) ;          \
+    GB_Matrix_free (&Mwork) ;          \
     GB_Matrix_free (&MT) ;          \
     GB_FREE_WORK (&I2, I2_size) ;   \
     GB_FREE_WORK (&J2, J2_size) ;   \
@@ -36,20 +36,20 @@
 GrB_Info GB_assign_prep
 (
     // output:
-    GrB_Matrix *Chandle,            // C_in, or C2 if C is aliased to M or A
-    GrB_Matrix *Mhandle,            // M_in, or a modified version M2
-    GrB_Matrix *Ahandle,            // A_in, or a modified version A2
+    GrB_Matrix *Chandle,            // C_in, or Cwork if C is aliased to M or A
+    GrB_Matrix *Mhandle,            // M_in, or a modified version Mwork
+    GrB_Matrix *Ahandle,            // A_in, or a modified version Awork
     int *subassign_method,          // subassign method to use
 
     // modified versions of the matrices C, M, and A:
-    GrB_Matrix *C2_handle,          // NULL, or a copy of C
-    GrB_Matrix *M2_handle,          // NULL, or a temporary matrix
-    GrB_Matrix *A2_handle,          // NULL, or a temporary matrix
+    GrB_Matrix *Cwork_handle,          // NULL, or a copy of C
+    GrB_Matrix *Mwork_handle,          // NULL, or a temporary matrix
+    GrB_Matrix *Awork_handle,          // NULL, or a temporary matrix
 
-    // static headers for C2, M2, A2, MT and AT
-    GrB_Matrix C2_header_handle,
-    GrB_Matrix M2_header_handle,
-    GrB_Matrix A2_header_handle,
+    // static headers for Cwork, Mwork, Awork, MT and AT
+    GrB_Matrix Cwork_header_handle,
+    GrB_Matrix Mwork_header_handle,
+    GrB_Matrix Awork_header_handle,
     GrB_Matrix MT_header_handle,
     GrB_Matrix AT_header_handle,
 
@@ -115,9 +115,9 @@ GrB_Info GB_assign_prep
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_assign_prep", GB0) ;
     ASSERT (scode <= GB_UDT_code) ;
 
-    GrB_Matrix C2 = NULL ;
-    GrB_Matrix M2 = NULL ;
-    GrB_Matrix A2 = NULL ;
+    GrB_Matrix Cwork = NULL ;
+    GrB_Matrix Mwork = NULL ;
+    GrB_Matrix Awork = NULL ;
     GrB_Matrix MT = NULL ;
     GrB_Matrix AT = NULL ;
 
@@ -131,9 +131,9 @@ GrB_Info GB_assign_prep
     (*Mhandle) = NULL ;
     (*Ahandle) = NULL ;
 
-    (*C2_handle) = NULL ;
-    (*A2_handle) = NULL ;
-    (*M2_handle) = NULL ;
+    (*Cwork_handle) = NULL ;
+    (*Awork_handle) = NULL ;
+    (*Mwork_handle) = NULL ;
 
     (*I_handle) = NULL ; 
     (*I2_handle) = NULL ;
@@ -829,41 +829,41 @@ GrB_Info GB_assign_prep
             J = J2 ;
         }
 
-        // inverse index lists to create the A2 and M2 submatrices:
+        // inverse index lists to create the Awork and Mwork submatrices:
         const GrB_Index *Iinv = I_unsorted_or_has_dupl ? I2k : GrB_ALL ;
         const GrB_Index *Jinv = J_unsorted_or_has_dupl ? J2k : GrB_ALL ;
 
         if (!scalar_expansion)
         { 
-            // A2 = A (Iinv, Jinv)
-            GB_CLEAR_STATIC_HEADER (A2, A2_header_handle) ;
-            GB_OK (GB_subref (A2, false,  // TODO::: make A if accum is PAIR
+            // Awork = A (Iinv, Jinv)
+            GB_CLEAR_STATIC_HEADER (Awork, Awork_header_handle) ;
+            GB_OK (GB_subref (Awork, false,  // TODO::: make A if accum is PAIR
                 A->is_csc, A, Iinv, ni, Jinv, nj, false, Werk)) ;
             // GB_subref can return a jumbled result
-            ASSERT (GB_JUMBLED_OK (A2)) ;
+            ASSERT (GB_JUMBLED_OK (Awork)) ;
             if (A == AT)
             { 
                 GB_Matrix_free (&AT) ;
                 AT = NULL ;
             }
-            A = A2 ;
+            A = Awork ;
         }
 
         if (M != NULL && (*assign_kind) == GB_SUBASSIGN)
         { 
-            // M2 = M (Iinv, Jinv)
-            // if Mask_struct then M2 is extracted as iso
-            GB_CLEAR_STATIC_HEADER (M2, M2_header_handle) ;
-            GB_OK (GB_subref (M2, Mask_struct,
+            // Mwork = M (Iinv, Jinv)
+            // if Mask_struct then Mwork is extracted as iso
+            GB_CLEAR_STATIC_HEADER (Mwork, Mwork_header_handle) ;
+            GB_OK (GB_subref (Mwork, Mask_struct,
                 M->is_csc, M, Iinv, ni, Jinv, nj, false, Werk)) ;
             // GB_subref can return a jumbled result
-            ASSERT (GB_JUMBLED_OK (M2)) ;
+            ASSERT (GB_JUMBLED_OK (Mwork)) ;
             if (M == MT)
             {
                 GB_Matrix_free (&MT) ;
                 MT = NULL ;
             }
-            M = M2 ;
+            M = Mwork ;
         }
 
         GB_FREE_WORK (&I2k, I2k_size) ;
@@ -983,12 +983,12 @@ GrB_Info GB_assign_prep
     else if (C_aliased)
     {
         // C is aliased with M or A: make a copy of C to assign into
-        GB_CLEAR_STATIC_HEADER (C2, C2_header_handle) ;
+        GB_CLEAR_STATIC_HEADER (Cwork, Cwork_header_handle) ;
         if (C_replace_may_be_done_early)
         { 
-            // Instead of duplicating C, create a new empty matrix C2.
+            // Instead of duplicating C, create a new empty matrix Cwork.
             int sparsity = (C->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
-            GB_OK (GB_new (&C2, // sparse or hyper, existing header
+            GB_OK (GB_new (&Cwork, // sparse or hyper, existing header
                 ctype, C->vlen, C->vdim, GB_Ap_calloc, C_is_csc,
                 sparsity, C->hyper_switch, 1)) ;
             GBURBLE ("(C alias cleared; C_replace early) ") ;
@@ -1003,12 +1003,12 @@ GrB_Info GB_assign_prep
             ASSERT (!GB_ZOMBIES (C)) ;
             ASSERT (GB_JUMBLED_OK (C)) ;
             ASSERT (!GB_PENDING (C)) ;
-            // C2 = duplicate of C, which must be freed when done
-            // set C2->iso = C->iso OK
-            GB_OK (GB_dup_worker (&C2, C->iso, C, true, NULL)) ;
+            // Cwork = duplicate of C, which must be freed when done
+            // set Cwork->iso = C->iso OK
+            GB_OK (GB_dup_worker (&Cwork, C->iso, C, true, NULL)) ;
         }
-        // C2 must be transplanted back into C when done
-        C = C2 ;
+        // Cwork must be transplanted back into C when done
+        C = Cwork ;
         ASSERT (C->static_header || GBNSTATIC) ;
     }
     else
@@ -1248,13 +1248,13 @@ GrB_Info GB_assign_prep
     // return results
     //--------------------------------------------------------------------------
 
-    (*Chandle) = C ;            // C is C_in or C2
-    (*Mhandle) = M ;            // M is M_in or M2
-    (*Ahandle) = A ;            // A is A_in or A2
+    (*Chandle) = C ;            // C is C_in or Cwork
+    (*Mhandle) = M ;            // M is M_in or Mwork
+    (*Ahandle) = A ;            // A is A_in or Awork
 
-    (*C2_handle) = C2 ;
-    (*M2_handle) = (MT != NULL) ? MT : M2 ;
-    (*A2_handle) = (AT != NULL) ? AT : A2 ;
+    (*Cwork_handle) = Cwork ;
+    (*Mwork_handle) = (MT != NULL) ? MT : Mwork ;
+    (*Awork_handle) = (AT != NULL) ? AT : Awork ;
 
     (*atype_handle) = atype ;
 

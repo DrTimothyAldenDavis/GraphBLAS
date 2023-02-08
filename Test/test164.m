@@ -1,5 +1,5 @@
 function test164
-%TEST164 test GB_AxB_dot5
+%TEST164 test dot method
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

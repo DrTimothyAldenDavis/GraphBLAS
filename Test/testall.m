@@ -440,7 +440,7 @@ logstat ('test158',t) ;    %  10  % test colscale and rowscale
 
 logstat ('test161',t) ;    %      % test A*B*E
 logstat ('test163',t) ;    %   .6 % test C<!M>=A'*B where C and M are sparse
-logstat ('test164',t) ;    %    0 % test dot5 method
+logstat ('test164',t) ;    %    0 % test dot method
 logstat ('test166',t) ;    %   .1 % test GxB_select with a dense matrix
 logstat ('test167',t) ;    %   .2 % test C<M>=A*B with very sparse M, different types
 logstat ('test168',t) ;           % test C=A+B with C and B full, A bitmap

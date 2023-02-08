@@ -99,20 +99,20 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 GrB_Info GB_assign_prep
 (
     // output:
-    GrB_Matrix *Chandle,            // C_in, or C2 if C is aliased to M or A
-    GrB_Matrix *Mhandle,            // M_in, or a modified version M2
-    GrB_Matrix *Ahandle,            // A_in, or a modified version A2
+    GrB_Matrix *Chandle,            // C_in, or Cwork if C is aliased to M or A
+    GrB_Matrix *Mhandle,            // M_in, or a modified version Mwork
+    GrB_Matrix *Ahandle,            // A_in, or a modified version Awork
     int *subassign_method,          // subassign method to use
 
     // modified versions of the matrices C, M, and A:
-    GrB_Matrix *C2_handle,          // NULL, or a copy of C
-    GrB_Matrix *M2_handle,          // NULL, or a temporary matrix
-    GrB_Matrix *A2_handle,          // NULL, or a temporary matrix
+    GrB_Matrix *Cwork_handle,          // NULL, or a copy of C
+    GrB_Matrix *Mwork_handle,          // NULL, or a temporary matrix
+    GrB_Matrix *Awork_handle,          // NULL, or a temporary matrix
 
-    // static headers for C2, M2, A2, MT and AT
-    GrB_Matrix C2_header_handle,
-    GrB_Matrix M2_header_handle,
-    GrB_Matrix A2_header_handle,
+    // static headers for Cwork, Mwork, Awork, MT and AT
+    GrB_Matrix Cwork_header_handle,
+    GrB_Matrix Mwork_header_handle,
+    GrB_Matrix Awork_header_handle,
     GrB_Matrix MT_header_handle,
     GrB_Matrix AT_header_handle,
 

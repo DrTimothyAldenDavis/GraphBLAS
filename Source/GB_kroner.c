@@ -22,10 +22,10 @@
 // FUTURE: each vector C(:,k) takes O(nnz(C(:,k))) work, but this is not
 // accounted for in the parallel load-balancing.
 
-#define GB_FREE_WORKSPACE   \
-{                           \
-    GB_Matrix_free (&A2) ;  \
-    GB_Matrix_free (&B2) ;  \
+#define GB_FREE_WORKSPACE       \
+{                               \
+    GB_Matrix_free (&Awork) ;   \
+    GB_Matrix_free (&Bwork) ;   \
 }
 
 #define GB_FREE_ALL         \
@@ -57,8 +57,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     GrB_Info info ;
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
 
-    struct GB_Matrix_opaque A2_header, B2_header ;
-    GrB_Matrix A2 = NULL, B2 = NULL ;
+    struct GB_Matrix_opaque Awork_header, Bwork_header ;
+    GrB_Matrix Awork = NULL, Bwork = NULL ;
 
     ASSERT_MATRIX_OK (A_in, "A_in for kron (A,B)", GB0) ;
     ASSERT_MATRIX_OK (B_in, "B_in for kron (A,B)", GB0) ;
@@ -79,26 +79,26 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (A))
     { 
         GBURBLE ("A:") ;
-        // set A2->iso = A->iso     OK: no need for burble
-        GB_CLEAR_STATIC_HEADER (A2, &A2_header) ;
-        GB_OK (GB_dup_worker (&A2, A->iso, A, true, NULL)) ;
-        ASSERT_MATRIX_OK (A2, "dup A2 for kron (A,B)", GB0) ;
-        GB_OK (GB_convert_bitmap_to_sparse (A2, Werk)) ;
-        ASSERT_MATRIX_OK (A2, "to sparse, A2 for kron (A,B)", GB0) ;
-        A = A2 ;
+        // set Awork->iso = A->iso     OK: no need for burble
+        GB_CLEAR_STATIC_HEADER (Awork, &Awork_header) ;
+        GB_OK (GB_dup_worker (&Awork, A->iso, A, true, NULL)) ;
+        ASSERT_MATRIX_OK (Awork, "dup Awork for kron (A,B)", GB0) ;
+        GB_OK (GB_convert_bitmap_to_sparse (Awork, Werk)) ;
+        ASSERT_MATRIX_OK (Awork, "to sparse, Awork for kron (A,B)", GB0) ;
+        A = Awork ;
     }
 
     GrB_Matrix B = B_in ;
     if (GB_IS_BITMAP (B))
     { 
         GBURBLE ("B:") ;
-        // set B2->iso = B->iso     OK: no need for burble
-        GB_CLEAR_STATIC_HEADER (B2, &B2_header) ;
-        GB_OK (GB_dup_worker (&B2, B->iso, B, true, NULL)) ;
-        ASSERT_MATRIX_OK (B2, "dup B2 for kron (A,B)", GB0) ;
-        GB_OK (GB_convert_bitmap_to_sparse (B2, Werk)) ;
-        ASSERT_MATRIX_OK (B2, "to sparse, B2 for kron (A,B)", GB0) ;
-        B = B2 ;
+        // set Bwork->iso = B->iso     OK: no need for burble
+        GB_CLEAR_STATIC_HEADER (Bwork, &Bwork_header) ;
+        GB_OK (GB_dup_worker (&Bwork, B->iso, B, true, NULL)) ;
+        ASSERT_MATRIX_OK (Bwork, "dup Bwork for kron (A,B)", GB0) ;
+        GB_OK (GB_convert_bitmap_to_sparse (Bwork, Werk)) ;
+        ASSERT_MATRIX_OK (Bwork, "to sparse, Bwork for kron (A,B)", GB0) ;
+        B = Bwork ;
     }
 
     //--------------------------------------------------------------------------
