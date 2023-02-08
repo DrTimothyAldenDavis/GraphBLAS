@@ -34,7 +34,7 @@ is_any = isequal (addop, 'any') ;
 is_max = isequal (addop, 'max') ;
 is_min = isequal (addop, 'min') ;
 is_eq  = isequal (addop, 'eq') ;
-is_xor = isequal (addop, 'eq') ;
+is_xor = isequal (addop, 'xor') ;
 is_plus = isequal (addop, 'plus') ;
 is_any_pair = is_any && is_pair ;
 
@@ -160,10 +160,22 @@ fprintf (f, 'm4_define(`_Asaxpy3B_notM'', `_Asaxpy3B_notM__%s'')\n', name) ;
 fprintf (f, 'm4_define(`_AsaxbitB'', `_AsaxbitB__%s'')\n', name) ;
 fprintf (f, 'm4_define(`GB_AxB'', `GB_AxB__%s'')\n', name) ;
 
-% type of C, A, and B
-fprintf (f, 'm4_define(`GB_ctype'', `%s'')\n', ztype) ;
-fprintf (f, 'm4_define(`GB_atype'', `%s'')\n', xytype) ;
-fprintf (f, 'm4_define(`GB_btype'', `%s'')\n', xytype) ;
+% type of A, A2, B, B2, Z, and C
+if (is_any_pair)
+    fprintf (f, 'm4_define(`GB_atype'',  `#define GB_A_TYPE none'')\n') ;
+    fprintf (f, 'm4_define(`GB_a2type'', `#define GB_A2TYPE none'')\n') ;
+    fprintf (f, 'm4_define(`GB_btype'',  `#define GB_B_TYPE none'')\n') ;
+    fprintf (f, 'm4_define(`GB_b2type'', `#define GB_B2TYPE none'')\n') ;
+    fprintf (f, 'm4_define(`GB_ztype'',  `#define GB_Z_TYPE none'')\n') ;
+    fprintf (f, 'm4_define(`GB_ctype'',  `#define GB_C_TYPE none'')\n') ;
+else
+    fprintf (f, 'm4_define(`GB_atype'',  `#define GB_A_TYPE %s'')\n', xytype) ;
+    fprintf (f, 'm4_define(`GB_a2type'', `#define GB_A2TYPE %s'')\n', xytype) ;
+    fprintf (f, 'm4_define(`GB_btype'',  `#define GB_B_TYPE %s'')\n', xytype) ;
+    fprintf (f, 'm4_define(`GB_b2type'', `#define GB_B2TYPE %s'')\n', xytype) ;
+    fprintf (f, 'm4_define(`GB_ztype'',  `#define GB_Z_TYPE %s'')\n', ztype) ;
+    fprintf (f, 'm4_define(`GB_ctype'',  `#define GB_C_TYPE %s'')\n', ztype) ;
+end
 
 if (is_any_pair)
     fprintf (f, 'm4_define(`GB_csize'', `0'')\n', ztype) ;
@@ -194,7 +206,7 @@ switch (ztype)
     case { 'iso' }
         fprintf (f, 'm4_define(`GB_ctype_cast'', `'')\n') ;
     otherwise
-        fprintf (f, 'm4_define(`GB_ctype_cast'', `((GB_ctype) $1)'')\n') ;
+        fprintf (f, 'm4_define(`GB_ctype_cast'', `((GB_C_TYPE) $1)'')\n') ;
 end
 
 % identity value for the monoid
@@ -251,6 +263,7 @@ end
 
 if (is_eq && is_pair)
     % eq_pair_bool
+    % FIXME: delete this case
     fprintf (f, 'm4_define(`GB_is_eq_pair_semiring'', `%s'')\n', ...
         '#define GB_IS_EQ_PAIR_SEMIRING 1') ;
 else
@@ -303,6 +316,7 @@ end
 
 if (is_plus && is_pair && isequal (ztype, 'GxB_FC32_t'))
     % plus_pair_fc32
+    % FIXME: this is overkill -- remove it
     fprintf (f, 'm4_define(`GB_is_plus_fc32_pair_semiring'', `%s'')\n', ...
         '#define GB_IS_PLUS_FC32_PAIR_SEMIRING 1') ;
 else
@@ -311,6 +325,7 @@ end
 
 if (is_plus && is_pair && isequal (ztype, 'GxB_FC64_t'))
     % plus_pair_fc64
+    % FIXME: this is overkill -- remove it
     fprintf (f, 'm4_define(`GB_is_plus_fc64_pair_semiring'', `%s'')\n', ...
         '#define GB_IS_PLUS_FC64_PAIR_SEMIRING 1') ;
 else
@@ -574,16 +589,16 @@ fprintf (f, 'm4_define(`GB_microsoft_has_omp_atomic'', `%d'')\n', omp_microsoft_
 
 % to get an entry from A
 if (is_any_pair)
-    fprintf (f, 'm4_define(`GB_a_is_pattern'', `1'')\n') ;
+    fprintf (f, 'm4_define(`GB_a_is_pattern'', `#define GB_A_IS_PATTERN 1'')\n') ;
     fprintf (f, 'm4_define(`GB_declarea'', `;'')\n') ;
     fprintf (f, 'm4_define(`GB_geta'', `;'')\n') ;
 elseif (is_second || is_pair || is_positional)
     % value of A is ignored for the SECOND and PAIR operators
-    fprintf (f, 'm4_define(`GB_a_is_pattern'', `1'')\n') ;
+    fprintf (f, 'm4_define(`GB_a_is_pattern'', `#define GB_A_IS_PATTERN 1'')\n') ;
     fprintf (f, 'm4_define(`GB_declarea'', `;'')\n') ;
     fprintf (f, 'm4_define(`GB_geta'', `;'')\n') ;
 else
-    fprintf (f, 'm4_define(`GB_a_is_pattern'', `0'')\n') ;
+    fprintf (f, 'm4_define(`GB_a_is_pattern'', `#define GB_A_IS_PATTERN 0'')\n') ;
     fprintf (f, 'm4_define(`GB_declarea'', `%s $1'')\n', xytype) ;
     fprintf (f, 'm4_define(`GB_geta'', `$1 = GBX ($2, $3, $4)'')\n') ;
 end
@@ -591,11 +606,11 @@ end
 % to get an entry from B
 if (is_first || is_pair || is_positional)
     % value of B is ignored for the FIRST and PAIR operators
-    fprintf (f, 'm4_define(`GB_b_is_pattern'', `1'')\n') ;
+    fprintf (f, 'm4_define(`GB_b_is_pattern'', `#define GB_B_IS_PATTERN 1'')\n') ;
     fprintf (f, 'm4_define(`GB_declareb'', `;'')\n') ;
     fprintf (f, 'm4_define(`GB_getb'', `;'')\n') ;
 else
-    fprintf (f, 'm4_define(`GB_b_is_pattern'', `0'')\n') ;
+    fprintf (f, 'm4_define(`GB_b_is_pattern'', `#define GB_B_IS_PATTERN 0'')\n') ;
     fprintf (f, 'm4_define(`GB_declareb'', `%s $1'')\n', xytype) ;
     fprintf (f, 'm4_define(`GB_getb'', `$1 = GBX ($2, $3, $4)'')\n') ;
 end
@@ -620,45 +635,48 @@ end
 
 % create the multiply operator (assignment)
 if (is_any_pair)
-    fprintf (f, 'm4_define(`GB_multiply'', `'')\n') ;
+    mult2_defn = sprintf ('#define GB_MULT(z,x,y,i,k,j)    ') ;
+    % fprintf (f, 'm4_define(`GB_multiply'', `'')\n') ;
 else
-    mult2 = strrep (mult,  'xarg', '`$2''') ;
-    mult2 = strrep (mult2, 'yarg', '`$3''') ;
-    fprintf (f, 'm4_define(`GB_multiply'', `$1 = %s'')\n', mult2) ;
+    mult2 = strrep (mult,  'xarg', 'x') ;
+    mult2 = strrep (mult2, 'yarg', 'y') ;
+    mult2_defn = sprintf ('#define GB_MULT(z,x,y,i,k,j)    z = %s', mult2) ;
+    % fprintf (f, 'm4_define(`GB_multiply'', `$1 = %s'')\n', mult2) ;
 end
+fprintf (f, 'm4_define(`GB_multiply'', `%s'')\n', mult2_defn) ;
 
 % create the add update, of the form w += t
 if (is_any_pair)
-    add2 = ';' ;
+    add2 = '' ;
 elseif (is_min)
     if (is_integer)
         % min monoid for signed or unsigned integers
-        add2 = 'if ($1 > $2) { $1 = $2 ; }' ;
+        add2 = 'if (z > t) { z = t ; }' ;
     else
         % min monoid for float or double, with omitnan property
         if (t_is_nonnan)
-            add2 = 'if (!islessequal ($1, $2)) { $1 = $2 ; }' ;
+            add2 = 'if (!islessequal (z, t)) { z = t ; }' ;
         else
-            add2 = 'if (!isnan ($2) && !islessequal ($1, $2)) { $1 = $2 ; }' ;
+            add2 = 'if (!isnan (t) && !islessequal (z, t)) { z = t ; }' ;
         end
     end
 elseif (is_max)
     if (is_integer)
         % max monoid for signed or unsigned integers
-        add2 = 'if ($1 < $2) { $1 = $2 ; }' ;
+        add2 = 'if (z < t) { z = t ; }' ;
     else
         % max monoid for float or double, with omitnan property
         if (t_is_nonnan)
-            add2 = 'if (!isgreaterequal ($1, $2)) { $1 = $2 ; }' ;
+            add2 = 'if (!isgreaterequal (z, t)) { z = t ; }' ;
         else
-            add2 = 'if (!isnan ($2) && !isgreaterequal ($1, $2)) { $1 = $2 ; }';
+            add2 = 'if (!isnan (t) && !isgreaterequal (z, t)) { z = t ; }';
         end
     end
 else
     % use the add function as given
-    add2 = strrep (add,  'w', '`$1''') ;
-    add2 = strrep (add2, 't', '`$2''') ;
+    add2 = strrep (add,  'w', 'z') ;
 end
+add2 = sprintf ('#define GB_UPDATE(z,t)          %s', add2) ;
 fprintf (f, 'm4_define(`GB_add_update'', `%s'')\n', add2) ;
 
 if (is_any_pair)
@@ -674,19 +692,25 @@ end
 
 % create the add function, of the form w + t
 if (is_any_pair)
-    fprintf (f, 'm4_define(`GB_add_op'', `'')\n') ;
+    add2 = '' ;
+    % fprintf (f, 'm4_define(`GB_add_op'', `'')\n') ;
 else
-    add2 = strrep (addfunc,  'zarg', '`$1''') ;
-    add2 = strrep (add2,     'xarg', '`$2''') ;
-    add2 = strrep (add2,     'yarg', '`$3''') ;
-    fprintf (f, 'm4_define(`GB_add_op'', `%s'')\n', add2) ;
+    add2 = strrep (addfunc,  'zarg', 'z') ;
+    add2 = strrep (add2,     'xarg', 'x') ;
+    add2 = strrep (add2,     'yarg', 'y') ;
+    % add2 = strrep (addfunc,  'zarg', '`$1''') ;
+    % add2 = strrep (add2,     'xarg', '`$2''') ;
+    % add2 = strrep (add2,     'yarg', '`$3''') ;
 end
+add2 = sprintf ('#define GB_ADD(z,x,y)           %s', add2) ;
+fprintf (f, 'm4_define(`GB_add_op'', `%s'')\n', add2) ;
 
 % create the multiply-add statement, of the form:
 %   z += x*y ;
 is_imin_or_imax = (is_min || is_max) && is_integer ;
 if (is_any_pair)
-    fprintf (f, 'm4_define(`GB_multiply_add'', `'')\n') ;
+    multadd = '' ;
+    % fprintf (f, 'm4_define(`GB_multiply_add'', `'')\n') ;
 elseif (~is_imin_or_imax && ...
     (isequal (ztype, 'float') || isequal (ztype, 'double') || ...
      isequal (ztype, 'bool') || is_first || is_second || is_pair || is_positional))
@@ -695,17 +719,19 @@ elseif (~is_imin_or_imax && ...
     % first and second are OK since no promotion occurs.
     % positional operators are OK too.
     multadd = strrep (add, 't',  mult) ;
-    multadd = strrep (multadd, 'w', '`$1''') ;
-    multadd = strrep (multadd, 'xarg', '`$2''') ;
-    multadd = strrep (multadd, 'yarg', '`$3''') ;
-    fprintf (f, 'm4_define(`GB_multiply_add'', `%s'')\n', multadd) ;
+    multadd = strrep (multadd, 'w', 'z') ;
+    multadd = strrep (multadd, 'xarg', 'x') ;
+    multadd = strrep (multadd, 'yarg', 'y') ;
+    % fprintf (f, 'm4_define(`GB_multiply_add'', `%s'')\n', multadd) ;
 else
     % use explicit typecasting to avoid ANSI C integer promotion.
-    add2 = strrep (add,  'w', '`$1''') ;
+    add2 = strrep (add,  'w', 'z') ;
     add2 = strrep (add2, 't', 'x_op_y') ;
-    fprintf (f, 'm4_define(`GB_multiply_add'', `{ %s x_op_y = %s ; %s ; }'')\n', ...
-        ztype, mult2, add2) ;
+    multadd = sprintf ('{ %s x_op_y = %s ; %s ; }', ztype, mult2, add2) ;
+    % fprintf (f, 'm4_define(`GB_multiply_add'', `{ %s x_op_y = %s ; %s ; }'')\n', ztype, mult2, add2) ;
 end
+multadd = sprintf ('#define GB_MULTADD(z,x,y,i,k,j) %s', multadd) ;
+fprintf (f, 'm4_define(`GB_multiply_add'', `%s'')\n', multadd) ;
 
 % determine the identity byte
 idbyte = '' ;
@@ -767,7 +793,7 @@ if (isempty (idbyte))
 else
     fprintf (f, 'm4_define(`GB_has_identity_byte'', `%s'')\n', ...
         '#define GB_HAS_IDENTITY_BYTE 1') ;
-    sbyte = sprintf ('#define GB_IDENTITY_BYTE %s\n', idbyte) ;
+    sbyte = sprintf ('#define GB_IDENTITY_BYTE %s', idbyte) ;
     fprintf (f, 'm4_define(`GB_identity_byte'', `%s'')\n', sbyte) ;
 end
 

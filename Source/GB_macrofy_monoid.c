@@ -136,59 +136,45 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // special cases
     //--------------------------------------------------------------------------
 
-    if (opcode == GB_EQ_binop_code)
-    {
-        // EQ monoid
-        fprintf (fp, "#define GB_IS_EQ_MONOID 1\n") ;
-    }
+    bool is_integer = (zcode >= GB_INT8_code || zcode <= GB_UINT64_code) ;
+    bool is_float = (zcode == GB_FP32_code || zcode == GB_FP64_code) ;
 
     if (opcode == GB_PLUS_binop_code && zcode == GB_FC32_code)
     {
         // PLUS_FC32 monoid
         fprintf (fp, "#define GB_IS_PLUS_FC32_MONOID 1\n") ;
     }
-
-    if (opcode == GB_PLUS_binop_code && zcode == GB_FC64_code)
+    else if (opcode == GB_PLUS_binop_code && zcode == GB_FC64_code)
     {
         // PLUS_FC64 monoid
         fprintf (fp, "#define GB_IS_PLUS_FC64_MONOID 1\n") ;
     }
-
-    if (opcode == GB_ANY_binop_code && zcode == GB_FC32_code)
+    else if (opcode == GB_ANY_binop_code && zcode == GB_FC32_code)
     {
         // ANY_FC32 monoid
         fprintf (fp, "#define GB_IS_ANY_FC32_MONOID 1\n") ;
     }
-
-    if (opcode == GB_ANY_binop_code && zcode == GB_FC64_code)
+    else if (opcode == GB_ANY_binop_code && zcode == GB_FC64_code)
     {
         // ANY_FC64 monoid
         fprintf (fp, "#define GB_IS_ANY_FC64_MONOID 1\n") ;
     }
-
-    bool is_integer = (zcode >= GB_INT8_code || zcode <= GB_UINT64_code) ;
-
-    if (opcode == GB_MIN_binop_code && is_integer)
+    else if (opcode == GB_MIN_binop_code && is_integer)
     {
         // IMIN monoid (min with any integer type)
         fprintf (fp, "#define GB_IS_IMIN_MONOID 1\n") ;
     }
-
-    if (opcode == GB_MAX_binop_code && is_integer)
+    else if (opcode == GB_MAX_binop_code && is_integer)
     {
         // IMAX monoid (max with any integer typ)
         fprintf (fp, "#define GB_IS_IMAX_MONOID 1\n") ;
     }
-
-    bool is_float = (zcode == GB_FP32_code || zcode == GB_FP64_code) ;
-
-    if (opcode == GB_MIN_binop_code && is_float)
+    else if (opcode == GB_MIN_binop_code && is_float)
     {
         // FMIN monoid (min with a real floating-point type)
         fprintf (fp, "#define GB_IS_FMIN_MONOID 1\n") ;
     }
-
-    if (opcode == GB_MAX_binop_code && is_float)
+    else if (opcode == GB_MAX_binop_code && is_float)
     {
         // FMAX monoid (max with a real floating-point type)
         fprintf (fp, "#define GB_IS_FMAX_MONOID 1\n") ;

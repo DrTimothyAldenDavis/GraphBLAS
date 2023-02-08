@@ -40,44 +40,36 @@
 // A*B (saxpy4):       GB (_Asaxpy4B__(none))
 // A*B (saxpy5):       GB (_Asaxpy5B__(none))
 
-// C type:     int32_t
-// A type:     int32_t
-// A pattern?  1
-// B type:     int32_t
-// B pattern?  1
+// semiring operators:
+#define GB_MULTADD(z,x,y,i,k,j) z = (i+1)
+#define GB_MULT(z,x,y,i,k,j)    z = (i+1)
+#define GB_ADD(z,x,y)           z = y
+#define GB_UPDATE(z,t)          z = t
+// identity: 0
 
-// Multiply: z = (i+1)
-// Add:      cij = t
-//    atomic?        1
-//    OpenMP atomic? 0
-//    identity:      0
-// MultAdd:  z = (i+1)
+// types: C, A, B matrix types; A and B cast to A2 and B2; Z is the monoid type
+#define GB_A_TYPE int32_t
+#define GB_A2TYPE int32_t
+#define GB_B_TYPE int32_t
+#define GB_B2TYPE int32_t
+#define GB_Z_TYPE int32_t
+#define GB_C_TYPE int32_t
 
-#define GB_OFFSET 1 /* offset for FIRSTI1, SECONDI1, FIRSTJ1, SECONDJ1 */
-#define GB_IS_FIRSTI_MULTIPLIER 1 /* or FIRSTI1 */
-
-// types and operators:
-
-#define GB_A_TYPE \
-    int32_t
-
-#define GB_B_TYPE \
-    int32_t
-
-#define GB_C_TYPE \
-    int32_t
-
+// iso and pattern cases:
 #define GB_A_ISO A_iso
 #define GB_B_ISO B_iso
 #define GB_C_ISO 0
+#define GB_A_IS_PATTERN 1
+#define GB_B_IS_PATTERN 1
 
-// z = x + y
-#define GB_ADD(z,x,y) \
-    z = y
+// special case semirings:
 
-// z += t 
-#define GB_UPDATE(z,t) \
-    z = t
+// special case monoids:
+
+// special case multipliers:
+
+#define GB_OFFSET 1 /* offset for FIRSTI1, SECONDI1, FIRSTJ1, SECONDJ1 */
+#define GB_IS_FIRSTI_MULTIPLIER 1 /* or FIRSTI1 */
 
 // z = identity, and ztype overflow condition (if any):
 #define GB_DECLARE_MONOID_IDENTITY(modifier,z) modifier int32_t z = 0
@@ -88,15 +80,7 @@
 #define GB_TERMINAL_CONDITION(z,zterminal) 1
 #define GB_IF_TERMINAL_BREAK(z,zterminal) break 
 
-// multiply operator: z = x*y
-#define GB_MULT(z, x, y, i, k, j) \
-    z = (i+1)
-
-// multiply-add: z += x*y
-#define GB_MULTADD(z, x, y, i, k, j) \
-    z = (i+1)
-
-// declare aik as atype
+// declare aik as a2type
 #define GB_DECLAREA(aik) \
     ;
 
@@ -104,21 +88,13 @@
 #define GB_GETA(aik,Ax,pA,A_iso) \
     ;
 
-// true if values of A are not used
-#define GB_A_IS_PATTERN \
-    1 \
-
-// declare bkj as btype
+// declare bkj as b2type
 #define GB_DECLAREB(bkj) \
     ;
 
 // bkj = Bx [pB]
 #define GB_GETB(bkj,Bx,pB,B_iso) \
     ;
-
-// true if values of B are not used
-#define GB_B_IS_PATTERN \
-    1 \
 
 // Cx [pC] = cij
 #define GB_PUTC(cij,p) \
@@ -128,7 +104,7 @@
 // cast from a real scalar (or 2, if C is complex) to the type of C
 // Should be to ztype
 #define GB_CTYPE_CAST(x,y) \
-    ((int32_t) x)
+    ((GB_C_TYPE) x)
 
 // FIXME: GB_IDENTITY only appears in a few templates; replace it
 // monoid identity value

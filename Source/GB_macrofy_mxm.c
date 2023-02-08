@@ -135,14 +135,13 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// multiply-add operator:\n") ;
-    GB_Opcode mult_opcode = mult->opcode ;
     bool is_bool   = (zcode == GB_BOOL_code) ;
     bool is_float  = (zcode == GB_FP32_code) ;
     bool is_double = (zcode == GB_FP64_code) ;
-    bool is_first  = (mult_opcode == GB_FIRST_binop_code) ;
-    bool is_second = (mult_opcode == GB_SECOND_binop_code) ;
-    bool is_pair   = (mult_opcode == GB_PAIR_binop_code) ;
-    bool is_positional = GB_IS_BINARYOP_CODE_POSITIONAL (mult_opcode) ;
+    bool is_first  = (mult->opcode == GB_FIRST_binop_code) ;
+    bool is_second = (mult->opcode == GB_SECOND_binop_code) ;
+    bool is_pair   = (mult->opcode == GB_PAIR_binop_code) ;
+    bool is_positional = GB_IS_BINARYOP_CODE_POSITIONAL (mult->opcode) ;
 
     if (C_iso)
     {
@@ -218,39 +217,87 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     }
 
     //--------------------------------------------------------------------------
-    // special cases
+    // special case semirings
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// special cases:\n") ;
 
-
-    bool is_real = !(zcode == GB_FC32_code || zcode == GB_FC64_code) ;
-    bool is_plus_monoid = (addop->opcode == GB_PLUS_binop_code) ;
-    bool is_eq_monoid = (addop->opcode == GB_EQ_binop_code) ;
-
     if (mult->opcode == GB_PAIR_binop_code)
     {
-        // ANY_PAIR of any type; output C is iso, and mxm kernel only uses
-        // ANY_PAIR_ISO semiring (aka ANY_PAIR_BOOL)
-        if (C_iso)
-        {
-            // C is iso in this case
-            fprintf (fp, "#define GB_IS_ANY_PAIR_SEMIRING 1\n") ;
-        }
 
-        // semiring is plus_pair_real
-        if (is_plus_monoid && is_real)
+        //----------------------------------------------------------------------
+        // ANY_PAIR, PLUS_PAIR, and related semirings
+        //----------------------------------------------------------------------
+
+        bool is_plus = (addop->opcode == GB_PLUS_binop_code) ;
+        if (is_plus && (zcode >= GB_INT8_code && zcode <= GB_FP64_code))
         {
+            // PLUS_PAIR_REAL semiring
             fprintf (fp, "#define GB_IS_PLUS_PAIR_REAL_SEMIRING 1\n") ;
         }
-
-        // semiring is eq_pair_bool
-        if (is_eq_monoid)
+        else if (C_iso)
         {
-            fprintf (fp, "#define GB_IS_EQ_PAIR_REAL_SEMIRING 1\n") ;
+            // ANY_PAIR_* (C is iso in this case, type is BOOL)
+            fprintf (fp, "#define GB_IS_ANY_PAIR_SEMIRING 1\n") ;
+        }
+        else if (addop->opcode == GB_EQ_binop_code)
+        {
+            // semiring is eq_pair_bool
+            // FIXME: delete this
+            fprintf (fp, "#define GB_IS_EQ_PAIR_SEMIRING 1\n") ;
+        }
+        else if (addop->opcode == GB_LXOR_binop_code)
+        {
+            // semiring is lxor_pair_bool
+            // FIXME: rename _LXOR_PAIR_
+            fprintf (fp, "#define GB_IS_XOR_PAIR_SEMIRING 1\n") ;
+        }
+        else if (is_plus && (zcode == GB_INT8_code || zcode == GB_UINT8_code))
+        {
+            // semiring is plus_pair_(int8 or uint8)
+            fprintf (fp, "#define GB_IS_PLUS_8_PAIR_SEMIRING 1\n") ;
+        }
+        else if (is_plus && (zcode == GB_INT16_code || zcode == GB_UINT16_code))
+        {
+            // semiring is plus_pair_(int16 or uint16)
+            fprintf (fp, "#define GB_IS_PLUS_16_PAIR_SEMIRING 1\n") ;
+        }
+        else if (is_plus && (zcode == GB_INT32_code || zcode == GB_UINT32_code))
+        {
+            // semiring is plus_pair_(int32 or uint32)
+            fprintf (fp, "#define GB_IS_PLUS_32_PAIR_SEMIRING 1\n") ;
+        }
+        else if (is_plus && (zcode == GB_INT64_code || zcode == GB_UINT64_code
+                          || zcode == GB_FP32_code  || zcode == GB_FP64_code))
+        {
+            // semiring is plus_pair_(int16,uint16,float, or double)
+            fprintf (fp, "#define GB_IS_PLUS_BIG_PAIR_SEMIRING 1\n") ;
         }
 
     }
+    else if (mult->opcode == GB_FIRSTJ_binop_code
+          || mult->opcode == GB_FIRSTJ1_binop_code)
+    {
+
+        //----------------------------------------------------------------------
+        // MIN_FIRSTJ and MAX_FIRSTJ
+        //----------------------------------------------------------------------
+
+        if (addop->opcode == GB_MIN_binop_code)
+        {
+            // semiring is min_firstj or min_firstj1
+            fprintf (fp, "#define GB_IS_MIN_FIRSTJ_SEMIRING 1\n") ;
+        }
+        else if (addop->opcode == GB_MAX_binop_code)
+        {
+            // semiring is max_firstj or max_firstj1
+            fprintf (fp, "#define GB_IS_MAX_FIRSTJ_SEMIRING 1\n") ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // special case multiply ops
+    //--------------------------------------------------------------------------
 
     switch (mult->opcode)
     {

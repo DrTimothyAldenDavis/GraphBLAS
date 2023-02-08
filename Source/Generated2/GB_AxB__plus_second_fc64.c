@@ -40,62 +40,45 @@
 // A*B (saxpy4):       GB (_Asaxpy4B__plus_second_fc64)
 // A*B (saxpy5):       GB (_Asaxpy5B__plus_second_fc64)
 
-// C type:     GxB_FC64_t
-// A type:     GxB_FC64_t
-// A pattern?  1
-// B type:     GxB_FC64_t
-// B pattern?  0
+// semiring operators:
+#define GB_MULTADD(z,x,y,i,k,j) z = GB_FC64_add (z, y)
+#define GB_MULT(z,x,y,i,k,j)    z = y
+#define GB_ADD(z,x,y)           z = GB_FC64_add (x, y)
+#define GB_UPDATE(z,t)          z = GB_FC64_add (z, t)
+// identity: GxB_CMPLX(0,0)
 
-// Multiply: z = y
-// Add:      cij = GB_FC64_add (cij, t)
-//    atomic?        1
-//    OpenMP atomic? 1
-//    identity:      GxB_CMPLX(0,0)
-// MultAdd:  z = GB_FC64_add (z, y)
+// types: C, A, B matrix types; A and B cast to A2 and B2; Z is the monoid type
+#define GB_A_TYPE GxB_FC64_t
+#define GB_A2TYPE GxB_FC64_t
+#define GB_B_TYPE GxB_FC64_t
+#define GB_B2TYPE GxB_FC64_t
+#define GB_Z_TYPE GxB_FC64_t
+#define GB_C_TYPE GxB_FC64_t
 
-#define GB_IS_PLUS_FC64_MONOID 1
-
-// types and operators:
-
-#define GB_A_TYPE \
-    GxB_FC64_t
-
-#define GB_B_TYPE \
-    GxB_FC64_t
-
-#define GB_C_TYPE \
-    GxB_FC64_t
-
+// iso and pattern cases:
 #define GB_A_ISO A_iso
 #define GB_B_ISO B_iso
 #define GB_C_ISO 0
+#define GB_A_IS_PATTERN 1
+#define GB_B_IS_PATTERN 0
 
-// z = x + y
-#define GB_ADD(z,x,y) \
-    z = GB_FC64_add (x, y)
+// special case semirings:
 
-// z += t 
-#define GB_UPDATE(z,t) \
-    z = GB_FC64_add (z, t)
+// special case monoids:
+
+#define GB_IS_PLUS_FC64_MONOID 1
+
+// special case multipliers:
 
 // z = identity, and ztype overflow condition (if any):
 #define GB_DECLARE_MONOID_IDENTITY(modifier,z) modifier GxB_FC64_t z = GxB_CMPLX(0,0)
 #define GB_HAS_IDENTITY_BYTE 1
 #define GB_IDENTITY_BYTE 0
-
 #define GB_ZTYPE_IGNORE_OVERFLOW 1
 
 // monoid terminal condition, if any:
 
-// multiply operator: z = x*y
-#define GB_MULT(z, x, y, i, k, j) \
-    z = y
-
-// multiply-add: z += x*y
-#define GB_MULTADD(z, x, y, i, k, j) \
-    z = GB_FC64_add (z, y)
-
-// declare aik as atype
+// declare aik as a2type
 #define GB_DECLAREA(aik) \
     ;
 
@@ -103,21 +86,13 @@
 #define GB_GETA(aik,Ax,pA,A_iso) \
     ;
 
-// true if values of A are not used
-#define GB_A_IS_PATTERN \
-    1 \
-
-// declare bkj as btype
+// declare bkj as b2type
 #define GB_DECLAREB(bkj) \
     GxB_FC64_t bkj
 
 // bkj = Bx [pB]
 #define GB_GETB(bkj,Bx,pB,B_iso) \
     bkj = GBX (Bx, pB, B_iso)
-
-// true if values of B are not used
-#define GB_B_IS_PATTERN \
-    0 \
 
 // Cx [pC] = cij
 #define GB_PUTC(cij,p) \

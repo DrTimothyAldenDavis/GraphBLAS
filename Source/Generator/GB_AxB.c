@@ -40,18 +40,27 @@ if_not_any_pair_semiring
 // A*B (saxpy4):       GB (_Asaxpy4B)
 // A*B (saxpy5):       GB (_Asaxpy5B)
 
-// C type:     GB_ctype
-// A type:     GB_atype
-// A pattern?  GB_a_is_pattern
-// B type:     GB_btype
-// B pattern?  GB_b_is_pattern
+// semiring operators:
+GB_multiply_add
+GB_multiply
+GB_add_op
+GB_add_update
+// identity: GB_identity
 
-// Multiply: GB_multiply(z,x,y,i,k,j)
-// Add:      GB_add_update(cij, t)
-//    atomic?        GB_has_atomic
-//    OpenMP atomic? GB_has_omp_atomic
-//    identity:      GB_identity
-// MultAdd:  GB_multiply_add(z,x,y,i,k,j)
+// types: C, A, B matrix types; A and B cast to A2 and B2; Z is the monoid type
+GB_atype
+GB_a2type
+GB_btype
+GB_b2type
+GB_ztype
+GB_ctype
+
+// iso and pattern cases:
+#define GB_A_ISO A_iso
+#define GB_B_ISO B_iso
+GB_c_iso
+GB_a_is_pattern
+GB_b_is_pattern
 
 // special case semirings:
 GB_is_any_pair_semiring
@@ -82,29 +91,6 @@ GB_is_firsti_multiplier
 GB_is_firstj_multiplier
 GB_is_secondj_multiplier
 
-// types and operators:
-
-#define GB_A_TYPE \
-    GB_atype
-
-#define GB_B_TYPE \
-    GB_btype
-
-#define GB_C_TYPE \
-    GB_ctype
-
-#define GB_A_ISO A_iso
-#define GB_B_ISO B_iso
-GB_c_iso
-
-// z = x + y
-#define GB_ADD(z,x,y) \
-    GB_add_op(z,x,y)
-
-// z += t 
-#define GB_UPDATE(z,t) \
-    GB_add_update(z, t)
-
 // z = identity, and ztype overflow condition (if any):
 GB_declare_monoid_identity
 GB_has_identity_byte
@@ -118,15 +104,6 @@ GB_terminal_condition
 GB_if_terminal_break
 GB_declare_monoid_terminal
 
-// multiply operator: z = x*y
-#define GB_MULT(z, x, y, i, k, j) \
-    GB_multiply(z, x, y, i, k, j)
-
-// multiply-add: z += x*y
-#define GB_MULTADD(z, x, y, i, k, j) \
-    GB_multiply_add(z, x, y, i, k, j)
-
-
 // declare aik as a2type
 #define GB_DECLAREA(aik) \
     GB_declarea(aik)
@@ -135,10 +112,6 @@ GB_declare_monoid_terminal
 #define GB_GETA(aik,Ax,pA,A_iso) \
     GB_geta(aik,Ax,pA,A_iso)
 
-// true if values of A are not used
-#define GB_A_IS_PATTERN \
-    GB_a_is_pattern \
-
 // declare bkj as b2type
 #define GB_DECLAREB(bkj) \
     GB_declareb(bkj)
@@ -146,10 +119,6 @@ GB_declare_monoid_terminal
 // bkj = Bx [pB]
 #define GB_GETB(bkj,Bx,pB,B_iso) \
     GB_getb(bkj,Bx,pB,B_iso)
-
-// true if values of B are not used
-#define GB_B_IS_PATTERN \
-    GB_b_is_pattern \
 
 // Cx [pC] = cij
 #define GB_PUTC(cij,p) \

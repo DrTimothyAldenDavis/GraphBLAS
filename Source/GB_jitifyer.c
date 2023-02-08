@@ -247,7 +247,9 @@ void GB_jitifyer_finalize (void)
                 GB_FREE (&(e->suffix), e->suffix_size) ;
             }
             // unload the dl library
+            #ifndef GBRENAME
             dlclose (e->dl_handle) ;
+            #endif
         }
     }
 
@@ -308,6 +310,9 @@ bool GB_jitifyer_match_idterm   // return true if monoid id and term match
     GrB_Monoid monoid           // current monoid to compare
 )
 {
+#ifdef GBRENAME
+    return (false) ;
+#else
     // compare the identity and terminal
     void *dl_query = dlsym (dl_handle, "GB_jit_query_monoid") ;
     if (dl_query == NULL)
@@ -320,6 +325,7 @@ bool GB_jitifyer_match_idterm   // return true if monoid id and term match
     size_t zsize = monoid->op->ztype->size ;
     size_t tsize = (monoid->terminal == NULL) ? 0 : zsize ;
     return (query_monoid (monoid->identity, monoid->terminal, zsize, tsize)) ;
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -331,6 +337,9 @@ bool GB_jitifyer_match_version
     void *dl_handle             // dl_handle for the jit kernel library
 )
 {
+#ifdef GBRENAME
+    return (false) ;
+#else
     // compare the version
     void *dl_query = dlsym (dl_handle, "GB_jit_query_version") ;
     if (dl_query == NULL)
@@ -347,6 +356,7 @@ bool GB_jitifyer_match_version
     return ((version [0] == GxB_IMPLEMENTATION_MAJOR) &&
             (version [1] == GxB_IMPLEMENTATION_MINOR) &&
             (version [2] == GxB_IMPLEMENTATION_SUB)) ;
+#endif
 }
 
 //------------------------------------------------------------------------------

@@ -40,43 +40,35 @@
 // A*B (saxpy4):       GB (_Asaxpy4B__min_plus_int8)
 // A*B (saxpy5):       GB (_Asaxpy5B__min_plus_int8)
 
-// C type:     int8_t
-// A type:     int8_t
-// A pattern?  0
-// B type:     int8_t
-// B pattern?  0
+// semiring operators:
+#define GB_MULTADD(z,x,y,i,k,j) { int8_t x_op_y = (x + y) ; z = GB_IMIN (z, x_op_y) ; }
+#define GB_MULT(z,x,y,i,k,j)    z = (x + y)
+#define GB_ADD(z,x,y)           z = GB_IMIN (x, y)
+#define GB_UPDATE(z,t)          if (z > t) { z = t ; }
+// identity: INT8_MAX
 
-// Multiply: z = (x + y)
-// Add:      if (cij > t) { cij = t ; }
-//    atomic?        1
-//    OpenMP atomic? 0
-//    identity:      INT8_MAX
-// MultAdd:  { int8_t x_op_y = (x + y) ; z = GB_IMIN (z, x_op_y) ; }
+// types: C, A, B matrix types; A and B cast to A2 and B2; Z is the monoid type
+#define GB_A_TYPE int8_t
+#define GB_A2TYPE int8_t
+#define GB_B_TYPE int8_t
+#define GB_B2TYPE int8_t
+#define GB_Z_TYPE int8_t
+#define GB_C_TYPE int8_t
 
-#define GB_IS_IMIN_MONOID 1
-
-// types and operators:
-
-#define GB_A_TYPE \
-    int8_t
-
-#define GB_B_TYPE \
-    int8_t
-
-#define GB_C_TYPE \
-    int8_t
-
+// iso and pattern cases:
 #define GB_A_ISO A_iso
 #define GB_B_ISO B_iso
 #define GB_C_ISO 0
+#define GB_A_IS_PATTERN 0
+#define GB_B_IS_PATTERN 0
 
-// z = x + y
-#define GB_ADD(z,x,y) \
-    z = GB_IMIN (x, y)
+// special case semirings:
 
-// z += t 
-#define GB_UPDATE(z,t) \
-    if (z > t) { z = t ; }
+// special case monoids:
+
+#define GB_IS_IMIN_MONOID 1
+
+// special case multipliers:
 
 // z = identity, and ztype overflow condition (if any):
 #define GB_DECLARE_MONOID_IDENTITY(modifier,z) modifier int8_t z = INT8_MAX
@@ -90,15 +82,7 @@
 #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == INT8_MIN) { break ; }
 #define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal) modifier int8_t zterminal = INT8_MIN
 
-// multiply operator: z = x*y
-#define GB_MULT(z, x, y, i, k, j) \
-    z = (x + y)
-
-// multiply-add: z += x*y
-#define GB_MULTADD(z, x, y, i, k, j) \
-    { int8_t x_op_y = (x + y) ; z = GB_IMIN (z, x_op_y) ; }
-
-// declare aik as atype
+// declare aik as a2type
 #define GB_DECLAREA(aik) \
     int8_t aik
 
@@ -106,21 +90,13 @@
 #define GB_GETA(aik,Ax,pA,A_iso) \
     aik = GBX (Ax, pA, A_iso)
 
-// true if values of A are not used
-#define GB_A_IS_PATTERN \
-    0 \
-
-// declare bkj as btype
+// declare bkj as b2type
 #define GB_DECLAREB(bkj) \
     int8_t bkj
 
 // bkj = Bx [pB]
 #define GB_GETB(bkj,Bx,pB,B_iso) \
     bkj = GBX (Bx, pB, B_iso)
-
-// true if values of B are not used
-#define GB_B_IS_PATTERN \
-    0 \
 
 // Cx [pC] = cij
 #define GB_PUTC(cij,p) \
@@ -130,7 +106,7 @@
 // cast from a real scalar (or 2, if C is complex) to the type of C
 // Should be to ztype
 #define GB_CTYPE_CAST(x,y) \
-    ((int8_t) x)
+    ((GB_C_TYPE) x)
 
 // FIXME: GB_IDENTITY only appears in a few templates; replace it
 // monoid identity value
