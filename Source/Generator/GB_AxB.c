@@ -53,22 +53,33 @@ if_not_any_pair_semiring
 //    identity:      GB_identity
 // MultAdd:  GB_multiply_add(z,x,y,i,k,j)
 
-GB_is_plus_pair_real_semiring
-GB_is_eq_monoid
 GB_is_any_pair_semiring
-GB_is_pair_multiplier
-GB_is_plus_fc32_monoid
-GB_is_plus_fc64_monoid
+
+GB_is_plus_pair_real_semiring
+
+GB_is_eq_pair_semiring
+GB_is_xor_pair_semiring
+GB_is_plus_8_pair_semiring
+GB_is_plus_16_pair_semiring
+GB_is_plus_32_pair_semiring
+GB_is_plus_big_pair_semiring
+GB_is_plus_fc32_pair_semiring
+GB_is_plus_fc64_pair_semiring
+
 GB_is_any_fc32_monoid
 GB_is_any_fc64_monoid
 GB_is_imin_monoid
 GB_is_imax_monoid
 GB_is_fmin_monoid
 GB_is_fmax_monoid
+GB_is_plus_fc32_monoid
+GB_is_plus_fc64_monoid
+
+GB_is_pair_multiplier
+GB_offset
 GB_is_firsti_multiplier
 GB_is_firstj_multiplier
 GB_is_secondj_multiplier
-GB_offset
 
 // types and operators:
 
@@ -83,8 +94,7 @@ GB_offset
 
 #define GB_A_ISO A_iso
 #define GB_B_ISO B_iso
-#define GB_C_ISO \
-    GB_c_iso
+GB_c_iso
 
 // z = x + y
 #define GB_ADD(z,x,y) \
@@ -94,15 +104,11 @@ GB_offset
 #define GB_UPDATE(z,t) \
     GB_add_update(z, t)
 
-// declare and initialize z = identity value of the monoid
-#ifndef GB_DECLARE_MONOID_IDENTITY
-#if GB_IS_ANY_PAIR_SEMIRING || GB_C_ISO
-#define GB_DECLARE_MONOID_IDENTITY(modifier,z)
-#else
-#define GB_DECLARE_MONOID_IDENTITY(modifier,z) \
-    modifier GB_ctype z = GB_identity
-#endif
-#endif
+// z = identity, and ztype overflow condition (if any):
+GB_declare_monoid_identity
+GB_has_identity_byte
+GB_identity_byte
+GB_ztype_ignore_overflow
 
 // monoid terminal condition, if any:
 GB_is_any_monoid
@@ -119,9 +125,6 @@ GB_declare_monoid_terminal
 #define GB_MULTADD(z, x, y, i, k, j) \
     GB_multiply_add(z, x, y, i, k, j)
 
-// true for int64, uint64, float, double, float complex, and double complex 
-#define GB_ZTYPE_IGNORE_OVERFLOW \
-    GB_ztype_ignore_overflow
 
 // declare aik as atype
 #define GB_DECLAREA(aik) \
@@ -162,15 +165,6 @@ GB_declare_monoid_terminal
 #define GB_IDENTITY \
     GB_identity
 
-// FIXME: GB_HAS_IDENTITY_BYTE not in macrofy (add it)
-// 1 if the identity value can be assigned via memset, with all bytes the same
-#define GB_HAS_IDENTITY_BYTE \
-    GB_has_identity_byte
-
-// FIXME: GB_IDENTITY_BYTE not in macrofy (add it)
-// identity byte, for memset
-#define GB_IDENTITY_BYTE \
-    GB_identity_byte
 
 // FIXME: GB_PRAGMA_SIMD_DOT not in macrofy, do I need it?
 // simd pragma for dot-product loop vectorization
@@ -185,11 +179,6 @@ GB_declare_monoid_terminal
 // declare the cij scalar (initialize cij to zero for PLUS_PAIR)
 #define GB_CIJ_DECLARE(cij) \
     GB_cij_declare
-
-// FIXME: GB_CTYPE_BITS for PLUS_PAIR semirings only, 0 otherwise
-// bit pattern for bool, 8-bit, 16-bit, and 32-bit integers
-#define GB_CTYPE_BITS \
-    GB_ctype_bits
 
 // FIXME: GB_HAS_ATOMIC
 // 1 if monoid update can be done atomically, 0 otherwise

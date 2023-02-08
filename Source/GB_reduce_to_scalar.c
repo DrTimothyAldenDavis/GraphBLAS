@@ -216,13 +216,16 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         // use JIT worker
         //----------------------------------------------------------------------
 
-        #if 0 // ifdef GB_DEBUGIFY_DEFN
+        #ifdef GB_DEBUGIFY_DEFN
+        #ifndef GBRENAME
+        // FIXME: not yet working in MATLAB (mxMalloc issues)
         if (!done)
         {
             info = GB_reduce_to_scalar_jit (z, monoid, A, W, F,
                 ntasks, nthreads) ;
             done = (info == GrB_SUCCESS) ;
         }
+        #endif
         #endif
 
         //----------------------------------------------------------------------

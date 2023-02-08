@@ -47,7 +47,8 @@ end
 
 make_all = (isequal (what, 'all')) ;
 
-flags = '-O -R2018a -DGBNCPUFEAT' ;
+% flags = '-O -R2018a -DGBNCPUFEAT' ;
+flags = '-g -R2018a -DGBNCPUFEAT' ; % FIXME TODO
 
 % use -R2018a for the new interleaved complex API
 if (have_octave)

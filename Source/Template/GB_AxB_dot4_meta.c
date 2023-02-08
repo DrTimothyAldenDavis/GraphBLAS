@@ -23,6 +23,8 @@
 
 #define GB_DOT4
 
+#include "GB_AxB_shared_definitions.h"
+
 // cij += A(k,i) * B(k,j)
 #undef  GB_DOT
 #define GB_DOT(k,pA,pB)                                                     \

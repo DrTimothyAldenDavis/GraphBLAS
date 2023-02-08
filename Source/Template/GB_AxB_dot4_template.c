@@ -99,27 +99,51 @@
                     // both A and B are full
                     //----------------------------------------------------------
 
-                    #if GB_IS_PAIR_MULTIPLIER
+                    #if GB_IS_EQ_PAIR_SEMIRING
                     { 
-                        #if GB_IS_EQ_MONOID
-                        // EQ_PAIR semiring
+                        // (boolean EQ (LXNOR) monoid)_PAIR semiring
                         cij = (cij == 1) ;
-                        #elif (GB_CTYPE_BITS > 0)
-                        // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
-                        // for bool, 8-bit, 16-bit, or 32-bit integer
-                        uint64_t t = ((uint64_t) cij) + vlen ;
-                        cij = (GB_C_TYPE) (t & GB_CTYPE_BITS) ;
-                        #elif GB_IS_PLUS_FC32_MONOID
-                        // PLUS monoid for float complex
-                        cij = GB_CMPLX32 (crealf (cij) + (float) vlen, 0) ;
-                        #elif GB_IS_PLUS_FC64_MONOID
-                        // PLUS monoid for double complex
-                        cij = GB_CMPLX64 (creal (cij) + (double) vlen, 0) ;
-                        #else
-                        // PLUS monoid for float, double, or 64-bit integers 
-                        cij += (GB_C_TYPE) vlen ;
-                        #endif
                     }
+                    #elif GB_IS_XOR_PAIR_SEMIRING
+                    { 
+                        // (boolean XOR monoid)_PAIR semiring
+                        uint64_t t = ((uint64_t) cij) + vlen ;
+                        cij = (GB_C_TYPE) (t & 0x1L) ;
+                    }
+                    #elif GB_IS_PLUS_8_PAIR_SEMIRING
+                    { 
+                        // (PLUS int8, uint8 monoids)_PAIR semirings
+                        uint64_t t = ((uint64_t) cij) + vlen ;
+                        cij = (GB_C_TYPE) (t & 0xFFL) ;
+                    }
+                    #elif GB_IS_PLUS_16_PAIR_SEMIRING
+                    { 
+                        // (PLUS int16, uint16 monoids)_PAIR semirings
+                        uint64_t t = ((uint64_t) cij) + vlen ;
+                        cij = (GB_C_TYPE) (t & 0xFFFFL) ;
+                    }
+                    #elif GB_IS_PLUS_32_PAIR_SEMIRING
+                    { 
+                        // (PLUS int32, uint32 monoids)_PAIR semirings
+                        uint64_t t = ((uint64_t) cij) + vlen ;
+                        cij = (GB_C_TYPE) (t & 0xFFFFFFFFL) ;
+                    }
+                    #elif GB_IS_PLUS_BIG_PAIR_SEMIRING
+                    { 
+                        // (PLUS int64, uint64, float, or double)_PAIR semirings
+                        cij += (GB_C_TYPE) vlen ;
+                    }
+                    #elif GB_IS_PLUS_FC32_PAIR_SEMIRING
+                    { 
+                        // (PLUS monoid for float complex)_PAIR semiring
+                        cij = GB_CMPLX32 (crealf (cij) + (float) vlen, 0) ;
+                    }
+                    #elif GB_IS_PLUS_FC64_PAIR_SEMIRING
+                    { 
+                        // (PLUS monoid for double complex)_PAIR semiring
+                        cij = GB_CMPLX64 (creal (cij) + (double) vlen, 0) ;
+                    }
+
                     #elif GB_IS_MIN_FIRSTJ_SEMIRING
                     {
                         // MIN_FIRSTJ semiring: take the first entry
@@ -302,7 +326,7 @@
     // C += A'*B when A is sparse/hyper and B is bitmap/full
     //--------------------------------------------------------------------------
 
-    // special cases: these methods are very fast, but cannot do not need
+    // special cases: these methods are very fast, but cannot or do not need
     // to be unrolled.
     #undef  GB_SPECIAL_CASE_OR_TERMINAL
     #define GB_SPECIAL_CASE_OR_TERMINAL \
@@ -760,27 +784,51 @@
                     // A is full and B is sparse/hyper
                     //----------------------------------------------------------
 
-                    #if GB_IS_PAIR_MULTIPLIER
+                    #if GB_IS_EQ_PAIR_SEMIRING
                     { 
-                        #if GB_IS_EQ_MONOID
-                        // EQ_PAIR semiring
+                        // (boolean EQ (LXNOR) monoid)_PAIR semiring
                         cij = (cij == 1) ;
-                        #elif (GB_CTYPE_BITS > 0)
-                        // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
-                        // for bool, 8-bit, 16-bit, or 32-bit integer
-                        uint64_t t = ((uint64_t) cij) + bjnz ;
-                        cij = (GB_C_TYPE) (t & GB_CTYPE_BITS) ;
-                        #elif GB_IS_PLUS_FC32_MONOID
-                        // PLUS monoid for float complex
-                        cij = GB_CMPLX32 (crealf (cij) + (float) bjnz, 0) ;
-                        #elif GB_IS_PLUS_FC64_MONOID
-                        // PLUS monoid for double complex
-                        cij = GB_CMPLX64 (creal (cij) + (double) bjnz, 0) ;
-                        #else
-                        // PLUS monoid for float, double, or 64-bit integers
-                        cij += (GB_C_TYPE) bjnz ;
-                        #endif
                     }
+                    #elif GB_IS_XOR_PAIR_SEMIRING
+                    { 
+                        // (boolean XOR monoid)_PAIR semiring
+                        uint64_t t = ((uint64_t) cij) + bjnz ;
+                        cij = (GB_C_TYPE) (t & 0x1L) ;
+                    }
+                    #elif GB_IS_PLUS_8_PAIR_SEMIRING
+                    { 
+                        // (PLUS int8, uint8 monoids)_PAIR semirings
+                        uint64_t t = ((uint64_t) cij) + bjnz ;
+                        cij = (GB_C_TYPE) (t & 0xFFL) ;
+                    }
+                    #elif GB_IS_PLUS_16_PAIR_SEMIRING
+                    { 
+                        // (PLUS int16, uint16 monoids)_PAIR semirings
+                        uint64_t t = ((uint64_t) cij) + bjnz ;
+                        cij = (GB_C_TYPE) (t & 0xFFFFL) ;
+                    }
+                    #elif GB_IS_PLUS_32_PAIR_SEMIRING
+                    { 
+                        // (PLUS int32, uint32 monoids)_PAIR semirings
+                        uint64_t t = ((uint64_t) cij) + bjnz ;
+                        cij = (GB_C_TYPE) (t & 0xFFFFFFFFL) ;
+                    }
+                    #elif GB_IS_PLUS_BIG_PAIR_SEMIRING
+                    { 
+                        // (PLUS int64, uint64, float, or double)_PAIR semirings
+                        cij += (GB_C_TYPE) bjnz ;
+                    }
+                    #elif GB_IS_PLUS_FC32_PAIR_SEMIRING
+                    { 
+                        // (PLUS monoid for float complex)_PAIR semiring
+                        cij = GB_CMPLX32 (crealf (cij) + (float) bjnz, 0) ;
+                    }
+                    #elif GB_IS_PLUS_FC64_PAIR_SEMIRING
+                    { 
+                        // (PLUS monoid for double complex)_PAIR semiring
+                        cij = GB_CMPLX64 (creal (cij) + (double) bjnz, 0) ;
+                    }
+
                     #elif GB_IS_MIN_FIRSTJ_SEMIRING
                     {
                         // MIN_FIRSTJ semiring: take the first entry in B(:,j)

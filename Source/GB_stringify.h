@@ -380,10 +380,14 @@ void GB_enumify_identity       // return enum of identity value
     GB_Type_code zcode      // type code used in the opcode we want
 ) ;
 
-const char *GB_charify_identity_or_terminal // return string encoding the value
+const char *GB_charify_id // return string encoding the value
 (
     // input:
-    int ecode                   // enumerated identity/terminal value
+    int ecode,          // enumerated identity/terminal value
+    size_t zsize,       // size of value
+    // output:          // (optional: either may be NULL)
+    bool *has_byte,     // true if value is a single repeated byte
+    uint8_t *byte       // repeated byte
 ) ;
 
 void GB_macrofy_bytes
@@ -394,7 +398,8 @@ void GB_macrofy_bytes
     const char *variable,   // variable to declaer
     const char *type_name,  // name of the type
     const uint8_t *value,   // array of size nbytes
-    size_t nbytes
+    size_t nbytes,
+    bool is_identity        // true for the identity value
 ) ;
 
 void GB_enumify_terminal       // return enum of terminal value

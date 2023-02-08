@@ -34,7 +34,9 @@ is_any = isequal (addop, 'any') ;
 is_max = isequal (addop, 'max') ;
 is_min = isequal (addop, 'min') ;
 is_eq  = isequal (addop, 'eq') ;
-is_any_pair = is_any && isequal (multop, 'pair') ;
+is_xor = isequal (addop, 'eq') ;
+is_plus = isequal (addop, 'plus') ;
+is_any_pair = is_any && is_pair ;
 
 if (is_any_pair)
     % the any_pair_iso semiring does not access any numerical values
@@ -56,72 +58,68 @@ else
     fprintf (f, 'm4_define(`if_not_any_pair_semiring'', `#if 1'')\n') ;
 end
 
+is_integer = codegen_contains (ztype, 'int') ;
+
+ztype_is_bool = isequal (ztype, 'bool') ;
 ztype_is_real = ~codegen_contains (ztype, 'FC') ;
 ztype_is_fp = isequal (ztype, 'float') || isequal (ztype, 'double') ;
 is_any_complex = is_any && ~ztype_is_real ;
-is_plus_pair_real  = isequal (addop, 'plus') && isequal (multop, 'pair' ) && ztype_is_real ;
-is_plus_times_fp = isequal (addop, 'plus') && isequal (multop, 'times') && ztype_is_fp ;
+is_plus_pair_real = is_plus && is_pair && (is_integer || ztype_is_fp) ;
+is_plus_times_fp = is_plus && isequal (multop, 'times') && ztype_is_fp ;
 
-t_is_simple = isequal (multop, 'pair') || codegen_contains (multop, 'first') || codegen_contains (multop, 'second') ;
+t_is_simple = is_pair || codegen_contains (multop, 'first') || codegen_contains (multop, 'second') ;
 t_is_nonnan = isequal (multop (1:2), 'is') || (multop (1) == 'l') ;
 
 switch (ztype)
+
     case { 'iso' }
         ztype_is_float = false ;
         ztype_ignore_overflow = true ;
         nbits = 0 ;
-        bits = '0' ;
+
     case { 'bool' }
         ztype_is_float = false ;
         ztype_ignore_overflow = false ;
         nbits = 8 ;
-        bits = '0x1L' ;
+
     case { 'int8_t', 'uint8_t' }
         ztype_is_float = false ;
         ztype_ignore_overflow = false ;
         nbits = 8 ;
-        bits = '0xffL' ;
-        xbits = '0xFF' ;
+
     case { 'int16_t', 'uint16_t' }
         ztype_is_float = false ;
         ztype_ignore_overflow = false ;
         nbits = 16 ;
-        bits = '0xffffL' ;
-        xbits = '0xFFFF' ;
+
     case { 'int32_t', 'uint32_t' }
         ztype_is_float = false ;
         ztype_ignore_overflow = false ;
         nbits = 32 ;
-        bits = '0xffffffffL' ;
-        xbits = '0xFFFFFFFF' ;
+
     case { 'int64_t', 'uint64_t' }
         ztype_is_float = false ;
         ztype_ignore_overflow = true ;
         nbits = 64 ;
-        bits = '0' ;
-        xbits = '0xFFFFFFFFFFFFFFFFL' ;
+
     case { 'float' }
         ztype_is_float = true ;
         ztype_ignore_overflow = true ;
         nbits = 32 ;
-        bits = '0' ;
+
     case { 'double', 'GxB_FC32_t' }
         ztype_is_float = true ;
         ztype_ignore_overflow = true ;
         nbits = 64 ;
-        bits = '0' ;
+
     case { 'GxB_FC64_t' }
         ztype_is_float = true ;
         ztype_ignore_overflow = true ;
         nbits = 128 ;
-        bits = '0' ;
+
     otherwise
         error ('unknown type') ;
 end
-
-% bits: special cases for the PAIR multiplier
-fprintf (f, 'm4_define(`GB_ctype_bits'', `%s'')\n', bits) ;
-fprintf (f, 'm4_define(`GB_c_nbits'', `%d'')\n', nbits) ;
 
 % nbits: # of bits in the type, needed for the atomic compare-exchange:
 if (nbits == 0)
@@ -171,16 +169,21 @@ if (is_any_pair)
     fprintf (f, 'm4_define(`GB_csize'', `0'')\n', ztype) ;
     fprintf (f, 'm4_define(`GB_asize'', `0'')\n', xytype) ;
     fprintf (f, 'm4_define(`GB_bsize'', `0'')\n', xytype) ;
-    fprintf (f, 'm4_define(`GB_c_iso'', `1'')\n') ;
+    fprintf (f, 'm4_define(`GB_c_iso'', `#define GB_C_ISO 1'')\n') ;
 else
     fprintf (f, 'm4_define(`GB_csize'', `sizeof (%s)'')\n', ztype) ;
     fprintf (f, 'm4_define(`GB_asize'', `sizeof (%s)'')\n', xytype) ;
     fprintf (f, 'm4_define(`GB_bsize'', `sizeof (%s)'')\n', xytype) ;
-    fprintf (f, 'm4_define(`GB_c_iso'', `0'')\n') ;
+    fprintf (f, 'm4_define(`GB_c_iso'', `#define GB_C_ISO 0'')\n') ;
 end
 
 % flag if ztype can ignore overflow in some computations
-fprintf (f, 'm4_define(`GB_ztype_ignore_overflow'', `%d'')\n', ztype_ignore_overflow) ;
+if (ztype_ignore_overflow)
+    fprintf (f, 'm4_define(`GB_ztype_ignore_overflow'', `%s'')\n', ...
+        '#define GB_ZTYPE_IGNORE_OVERFLOW 1') ;
+else
+    fprintf (f, 'm4_define(`GB_ztype_ignore_overflow'', `'')\n') ;
+end
 
 % simple typecast from 1 (or 2) real scalars to any other type
 switch (ztype)
@@ -196,19 +199,18 @@ end
 
 % identity value for the monoid
 fprintf (f, 'm4_define(`GB_identity'', `%s'')\n', identity) ;
+if (is_any_pair)
+    define_id = '#define GB_DECLARE_MONOID_IDENTITY(modifier,z)' ;
+else
+    define_id = sprintf ('#define GB_DECLARE_MONOID_IDENTITY(modifier,z) modifier %s z = %s', ztype, identity) ;
+end
+fprintf (f, 'm4_define(`GB_declare_monoid_identity'', `%s'')\n', define_id) ;
 
 if (is_any_pair)
     fprintf (f, 'm4_define(`GB_is_any_pair_semiring'', `%s'')\n', ...
         '#define GB_IS_ANY_PAIR_SEMIRING 1') ;
 else
     fprintf (f, 'm4_define(`GB_is_any_pair_semiring'', `'')\n') ;
-end
-
-if (is_plus_pair_real)
-    fprintf (f, 'm4_define(`GB_is_plus_pair_real_semiring'', `%s'')\n', ...
-        '#define GB_IS_PLUS_PAIR_REAL_SEMIRING 1') ;
-else
-    fprintf (f, 'm4_define(`GB_is_plus_pair_real_semiring'', `'')\n') ;
 end
 
 if (is_any_pair)
@@ -236,12 +238,86 @@ else
     fprintf (f, 'm4_define(`GB_is_pair_multiplier'', `'')\n') ;
 end
 
-if (is_eq)
-    fprintf (f, 'm4_define(`GB_is_eq_monoid'', `%s'')\n', ...
-        '#define GB_IS_EQ_MONOID 1') ;
+%-------------------------------------------------------------------------------
+% very special cases for semirings
+%-------------------------------------------------------------------------------
+
+if (is_plus_pair_real)
+    fprintf (f, 'm4_define(`GB_is_plus_pair_real_semiring'', `%s'')\n', ...
+        '#define GB_IS_PLUS_PAIR_REAL_SEMIRING 1') ;
 else
-    fprintf (f, 'm4_define(`GB_is_eq_monoid'', `'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_plus_pair_real_semiring'', `'')\n') ;
 end
+
+if (is_eq && is_pair)
+    % eq_pair_bool
+    fprintf (f, 'm4_define(`GB_is_eq_pair_semiring'', `%s'')\n', ...
+        '#define GB_IS_EQ_PAIR_SEMIRING 1') ;
+else
+    fprintf (f, 'm4_define(`GB_is_eq_pair_semiring'', `'')\n') ;
+end
+
+if (is_xor && is_pair)
+    % xor_pair_bool
+    fprintf (f, 'm4_define(`GB_is_xor_pair_semiring'', `%s'')\n', ...
+        '#define GB_IS_XOR_PAIR_SEMIRING 1') ;
+else
+    fprintf (f, 'm4_define(`GB_is_xor_pair_semiring'', `'')\n') ;
+end
+
+if (is_plus && nbits == 8 && is_pair)
+    % plus_pair_(int8, uint8)
+    fprintf (f, 'm4_define(`GB_is_plus_8_pair_semiring'', `%s'')\n', ...
+        '#define GB_IS_PLUS_8_PAIR_SEMIRING 1') ;
+else
+    fprintf (f, 'm4_define(`GB_is_plus_8_pair_semiring'', `'')\n') ;
+end
+
+if (is_plus && nbits == 16 && is_pair)
+    % plus_pair_(int16, uint16)
+    fprintf (f, 'm4_define(`GB_is_plus_16_pair_semiring'', `%s'')\n', ...
+        '#define GB_IS_PLUS_16_PAIR_SEMIRING 1') ;
+else
+    fprintf (f, 'm4_define(`GB_is_plus_16_pair_semiring'', `'')\n') ;
+end
+
+if (is_plus && nbits == 32 && is_integer && is_pair)
+    % plus_pair_(int32, uint32)
+    fprintf (f, 'm4_define(`GB_is_plus_32_pair_semiring'', `%s'')\n', ...
+        '#define GB_IS_PLUS_32_PAIR_SEMIRING 1') ;
+else
+    fprintf (f, 'm4_define(`GB_is_plus_32_pair_semiring'', `'')\n') ;
+end
+
+if (is_plus && is_pair && ...
+    (isequal (ztype, 'int64_t') || ...
+     isequal (ztype, 'uint64_t') || ...
+     isequal (ztype, 'float') || ...
+     isequal (ztype, 'double')))
+    % plus_pair_(int64, uint64, float, double)
+    fprintf (f, 'm4_define(`GB_is_plus_big_pair_semiring'', `%s'')\n', ...
+        '#define GB_IS_PLUS_BIG_PAIR_SEMIRING 1') ;
+else
+    fprintf (f, 'm4_define(`GB_is_plus_big_pair_semiring'', `'')\n') ;
+end
+
+if (is_plus && is_pair && isequal (ztype, 'GxB_FC32_t'))
+    % plus_pair_fc32
+    fprintf (f, 'm4_define(`GB_is_plus_fc32_pair_semiring'', `%s'')\n', ...
+        '#define GB_IS_PLUS_FC32_PAIR_SEMIRING 1') ;
+else
+    fprintf (f, 'm4_define(`GB_is_plus_fc32_pair_semiring'', `'')\n') ;
+end
+
+if (is_plus && is_pair && isequal (ztype, 'GxB_FC64_t'))
+    % plus_pair_fc64
+    fprintf (f, 'm4_define(`GB_is_plus_fc64_pair_semiring'', `%s'')\n', ...
+        '#define GB_IS_PLUS_FC64_PAIR_SEMIRING 1') ;
+else
+    fprintf (f, 'm4_define(`GB_is_plus_fc64_pair_semiring'', `'')\n') ;
+end
+
+%-------------------------------------------------------------------------------
 
 if (is_any)
     fprintf (f, 'm4_define(`GB_is_any_monoid'', `%s'')\n', ...
@@ -249,6 +325,7 @@ if (is_any)
 else
     fprintf (f, 'm4_define(`GB_is_any_monoid'', `'')\n') ;
 end
+
 
 % terminal value for the monoid
 if (isempty (terminal))
@@ -333,7 +410,7 @@ if (ztype_is_real)
     end
 else
     % complex monoids are not atomic, except for 'plus'
-    if (isequal (addop, 'plus'))
+    if (is_plus)
         % enable saxpy4
         fprintf (f, 'm4_define(`GB_has_atomic'', `1'')\n') ;
         fprintf (f, 'm4_define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', name) ;
@@ -400,7 +477,7 @@ else
 end
 
 % plus_fc32 monoid:
-if (isequal (addop, 'plus') && isequal (ztype, 'GxB_FC32_t'))
+if (is_plus && isequal (ztype, 'GxB_FC32_t'))
     fprintf (f, 'm4_define(`GB_is_plus_fc32_monoid'', `%s'')\n', ...
         '#define GB_IS_PLUS_FC32_MONOID 1') ;
 else
@@ -408,7 +485,7 @@ else
 end
 
 % plus_fc64 monoid:
-if (isequal (addop, 'plus') && isequal (ztype, 'GxB_FC64_t'))
+if (is_plus && isequal (ztype, 'GxB_FC64_t'))
     fprintf (f, 'm4_define(`GB_is_plus_fc64_monoid'', `%s'')\n', ...
         '#define GB_IS_PLUS_FC64_MONOID 1') ;
 else
@@ -435,7 +512,7 @@ end
 is_imin = false ;
 is_fmin = false ;
 if (is_min)
-    if (codegen_contains (ztype, 'int'))
+    if (is_integer)
         % min monoid for signed or unsigned integers
         is_imin = true ;
     else
@@ -464,7 +541,7 @@ end
 is_imax = false ;
 is_fmax = false ;
 if (is_max)
-    if (codegen_contains (ztype, 'int'))
+    if (is_integer)
         % max monoid for signed or unsigned integers
         is_imax = true ;
     else
@@ -554,7 +631,7 @@ end
 if (is_any_pair)
     add2 = ';' ;
 elseif (is_min)
-    if (codegen_contains (ztype, 'int'))
+    if (is_integer)
         % min monoid for signed or unsigned integers
         add2 = 'if ($1 > $2) { $1 = $2 ; }' ;
     else
@@ -566,7 +643,7 @@ elseif (is_min)
         end
     end
 elseif (is_max)
-    if (codegen_contains (ztype, 'int'))
+    if (is_integer)
         % max monoid for signed or unsigned integers
         add2 = 'if ($1 < $2) { $1 = $2 ; }' ;
     else
@@ -607,7 +684,7 @@ end
 
 % create the multiply-add statement, of the form:
 %   z += x*y ;
-is_imin_or_imax = (isequal (addop, 'min') || isequal (addop, 'max')) && codegen_contains (ztype, 'int') ;
+is_imin_or_imax = (is_min || is_max) && is_integer ;
 if (is_any_pair)
     fprintf (f, 'm4_define(`GB_multiply_add'', `'')\n') ;
 elseif (~is_imin_or_imax && ...
@@ -650,13 +727,17 @@ switch (addop)
     case { 'min' }
         if (codegen_contains (ztype, 'uint'))
             idbyte = '0xFF' ;
+        elseif (isequal (ztype, 'int8_t'))
+            idbyte = '0x7F' ;
         end
     case { 'max' }
         if (codegen_contains (ztype, 'uint'))
             idbyte = '0' ;
+        elseif (isequal (ztype, 'int8_t'))
+            idbyte = '0x80' ;
         end
 
-    % plus monoid: special cases for some multipliers
+    % plus monoid:
     case { 'plus' }
         idbyte = '0' ;
 
@@ -669,19 +750,25 @@ switch (addop)
         idbyte = '0' ;
 
     case { 'eq' }
-        idbyte = '1' ;
+        if (nbits == 8)
+            idbyte = '1' ;
+        end
     case { 'times' }
-        idbyte = '' ;
+        if (nbits == 8)
+            idbyte = '1' ;
+        end
     case {'bxnor' }
         idbyte = '0xFF' ;
 end
 
 if (isempty (idbyte))
-    fprintf (f, 'm4_define(`GB_has_identity_byte'', `0'')\n') ;
-    fprintf (f, 'm4_define(`GB_identity_byte'', `(none)'')\n') ;
+    fprintf (f, 'm4_define(`GB_has_identity_byte'', `'')\n') ;
+    fprintf (f, 'm4_define(`GB_identity_byte'', `'')\n') ;
 else
-    fprintf (f, 'm4_define(`GB_has_identity_byte'', `1'')\n') ;
-    fprintf (f, 'm4_define(`GB_identity_byte'', `%s'')\n', idbyte) ;
+    fprintf (f, 'm4_define(`GB_has_identity_byte'', `%s'')\n', ...
+        '#define GB_HAS_IDENTITY_BYTE 1') ;
+    sbyte = sprintf ('#define GB_IDENTITY_BYTE %s\n', idbyte) ;
+    fprintf (f, 'm4_define(`GB_identity_byte'', `%s'')\n', sbyte) ;
 end
 
 % create the disable flag

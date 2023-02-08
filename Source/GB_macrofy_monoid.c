@@ -17,7 +17,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     int add_ecode,      // binary op as an enum
     int id_ecode,       // identity value as an enum
     int term_ecode,     // terminal value as an enum (<= 28 is terminal)
-    GrB_Monoid monoid,  // monoid to macrofy
+    GrB_Monoid monoid,  // monoid to macrofy; null if C is iso for GrB_mxm
     // output:
     const char **u_expression
 )
@@ -27,6 +27,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     const char *ztype_name = (monoid == NULL) ? "void" : op->ztype->name ;
     int zcode = (monoid == NULL) ? 0 : op->ztype->code ;
     size_t zsize = (monoid == NULL) ? 0 : op->ztype->size ;
+    GB_Opcode opcode = (monoid == NULL) ? 0 : op->opcode ;
 
     //--------------------------------------------------------------------------
     // create macros for the additive operator
@@ -39,55 +40,75 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // create macros for the identity value
     //--------------------------------------------------------------------------
 
+    bool has_byte ;
+    uint8_t byte ;
     if (monoid == NULL)
     {
-        // no values computed
+        // no values computed (C is iso)
         fprintf (fp, "#define GB_DECLARE_MONOID_IDENTITY(modifier,z)\n") ;
     }
     else if (id_ecode <= 28)
     {
         // built-in monoid: a simple assignment
-        const char *id_value = GB_charify_identity_or_terminal (id_ecode) ;
-        fprintf (fp, "#define GB_DECLARE_MONOID_IDENTITY(modifier,z) "
-            "%s z = (%s) (%s) ;\n", ztype_name, ztype_name, id_value) ;
+        const char *id_val = GB_charify_id (id_ecode, zsize, &has_byte, &byte) ;
+        fprintf (fp, "#define GB_DECLARE_MONOID_IDENTITY(modifier,z) modifier");
+        if (zcode == GB_FC32_code)
+        {
+            fprintf (fp, " %s z = GxB_CMPLXF (%s,0) ;\n", ztype_name, id_val) ;
+        }
+        else if (zcode == GB_FC64_code)
+        {
+            fprintf (fp, " %s z = GxB_CMPLX (%s,0) ;\n", ztype_name, id_val) ;
+        }
+        else
+        {
+            fprintf (fp, " %s z = %s ;\n", ztype_name, id_val) ;
+        }
+        if (has_byte)
+        {
+            fprintf (fp, "#define GB_HAS_IDENTITY_BYTE 1\n") ;
+            fprintf (fp, "#define GB_IDENTITY_BYTE 0x%02x\n", (int) byte) ;
+        }
     }
     else
     {
         // user-defined monoid:  all we have are the bytes
         GB_macrofy_bytes (fp, "MONOID_IDENTITY", "zidentity",
-            ztype_name, (uint8_t *) (monoid->identity), zsize) ;
+            ztype_name, (uint8_t *) (monoid->identity), zsize, true) ;
     }
 
     //--------------------------------------------------------------------------
     // create macros for the terminal value and terminal conditions
     //--------------------------------------------------------------------------
 
-    if (term_ecode == 18)
+    bool is_any_monoid = (term_ecode == 18) ;
+    if (is_any_monoid)
     {
         // ANY monoid is terminal but with no specific terminal value
         fprintf (fp, "#define GB_IS_ANY_MONOID 1\n") ;
-        fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
-        fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL"
-            "(modifier,zterminal)\n") ;
-        fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) 1\n") ;
-        fprintf (fp, "#define GB_IF_TERMINAL_BREAK(z,zterminal) break\n") ;
+//      set by GB_monoid_shared_definitions.h:
+//      fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL" "(modifier,zterminal)\n") ;
+//      fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
+//      fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) 1\n") ;
+//      fprintf (fp, "#define GB_IF_TERMINAL_BREAK(z,zterminal) break\n") ;
     }
     else if (monoid == NULL || monoid->terminal == NULL)
     {
         // monoid is not terminal (either built-in or user-defined)
-        fprintf (fp, "#define GB_IS_ANY_MONOID 0\n") ;
-        fprintf (fp, "#define GB_MONOID_IS_TERMINAL 0\n") ;
-        fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL"
-            "(modifier,zterminal)\n") ;
-        fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) 0\n") ;
-        fprintf (fp, "#define GB_IF_TERMINAL_BREAK(z,zterminal)\n") ;
+//      set by GB_monoid_shared_definitions.h:
+//      fprintf (fp, "#define GB_IS_ANY_MONOID 0\n") ;
+//      fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal)\n") ;
+//      fprintf (fp, "#define GB_MONOID_IS_TERMINAL 0\n") ;
+//      fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) 0\n") ;
+//      fprintf (fp, "#define GB_IF_TERMINAL_BREAK(z,zterminal)\n") ;
     }
     else if (term_ecode <= 28)
     {
         // built-in terminal monoid: terminal value is a simple assignment
-        fprintf (fp, "#define GB_IS_ANY_MONOID 0\n") ;
+//      set by GB_monoid_shared_definitions.h:
+//      fprintf (fp, "#define GB_IS_ANY_MONOID 0\n") ;
         fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
-        const char *term_value = GB_charify_identity_or_terminal (term_ecode) ;
+        const char *term_value = GB_charify_id (term_ecode, zsize, NULL, NULL) ;
         fprintf (fp, "#define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal) "
             "modifier %s zterminal = (%s) (%s) ;\n",
             ztype_name, ztype_name, term_value) ;
@@ -99,15 +120,91 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     else
     {
         // user-defined terminal monoid
-        fprintf (fp, "#define GB_IS_ANY_MONOID 0\n") ;
+//      set by GB_monoid_shared_definitions.h:
+//      fprintf (fp, "#define GB_IS_ANY_MONOID 0\n") ;
         fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
         GB_macrofy_bytes (fp, "MONOID_TERMINAL", "zterminal",
-            ztype_name, monoid->terminal, zsize) ;
+            ztype_name, monoid->terminal, zsize, false) ;
         fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) "
             " (memcmp (&(z), &(zterminal), %d) == 0)\n", (int) zsize) ;
         fprintf (fp, "#define GB_IF_TERMINAL_BREAK(z,zterminal) "
             " if (memcmp (&(z), &(zterminal), %d) == 0) break\n",
             (int) zsize) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // special cases
+    //--------------------------------------------------------------------------
+
+    if (opcode == GB_EQ_binop_code)
+    {
+        // EQ monoid
+        fprintf (fp, "#define GB_IS_EQ_MONOID 1\n") ;
+    }
+
+    if (opcode == GB_PLUS_binop_code && zcode == GB_FC32_code)
+    {
+        // PLUS_FC32 monoid
+        fprintf (fp, "#define GB_IS_PLUS_FC32_MONOID 1\n") ;
+    }
+
+    if (opcode == GB_PLUS_binop_code && zcode == GB_FC64_code)
+    {
+        // PLUS_FC64 monoid
+        fprintf (fp, "#define GB_IS_PLUS_FC64_MONOID 1\n") ;
+    }
+
+    if (opcode == GB_ANY_binop_code && zcode == GB_FC32_code)
+    {
+        // ANY_FC32 monoid
+        fprintf (fp, "#define GB_IS_ANY_FC32_MONOID 1\n") ;
+    }
+
+    if (opcode == GB_ANY_binop_code && zcode == GB_FC64_code)
+    {
+        // ANY_FC64 monoid
+        fprintf (fp, "#define GB_IS_ANY_FC64_MONOID 1\n") ;
+    }
+
+    bool is_integer = (zcode >= GB_INT8_code || zcode <= GB_UINT64_code) ;
+
+    if (opcode == GB_MIN_binop_code && is_integer)
+    {
+        // IMIN monoid (min with any integer type)
+        fprintf (fp, "#define GB_IS_IMIN_MONOID 1\n") ;
+    }
+
+    if (opcode == GB_MAX_binop_code && is_integer)
+    {
+        // IMAX monoid (max with any integer typ)
+        fprintf (fp, "#define GB_IS_IMAX_MONOID 1\n") ;
+    }
+
+    bool is_float = (zcode == GB_FP32_code || zcode == GB_FP64_code) ;
+
+    if (opcode == GB_MIN_binop_code && is_float)
+    {
+        // FMIN monoid (min with a real floating-point type)
+        fprintf (fp, "#define GB_IS_FMIN_MONOID 1\n") ;
+    }
+
+    if (opcode == GB_MAX_binop_code && is_float)
+    {
+        // FMAX monoid (max with a real floating-point type)
+        fprintf (fp, "#define GB_IS_FMAX_MONOID 1\n") ;
+    }
+
+    // can ignore overflow in ztype when accumulating the result via the monoid
+    // zcode == 0: only when C is iso
+    bool ztype_ignore_overflow = (zcode == 0 ||
+        zcode == GB_INT64_code || zcode == GB_UINT64_code ||
+        zcode == GB_FP32_code  || zcode == GB_FP64_code ||
+        zcode == GB_FC32_code  || zcode == GB_FC64_code) ;
+    if (ztype_ignore_overflow && !is_any_monoid)
+    {
+        // if the monoid is ANY, this is set to 1 by
+        // GB_monoid_shared_definitions.h, so skip it here
+        fprintf (fp, "#define GB_ZTYPE_IGNORE_OVERFLOW 1\n") ;
     }
 
     //--------------------------------------------------------------------------

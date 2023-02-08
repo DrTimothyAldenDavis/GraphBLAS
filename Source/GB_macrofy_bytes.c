@@ -20,7 +20,8 @@ void GB_macrofy_bytes
     const char *variable,   // variable to declaer
     const char *type_name,  // name of the type
     const uint8_t *value,   // array of size nbytes
-    size_t nbytes
+    size_t nbytes,
+    bool is_identity        // true for the identity value
 )
 {
 
@@ -34,9 +35,12 @@ void GB_macrofy_bytes
         "        {                                                   \\\n"
         "            ",
         Name, variable, type_name, variable, (int) nbytes) ;
+
+    bool same = (nbytes > 0) ;
     for (int k = 0 ; k < nbytes ; k++)
     {
         fprintf (fp, "0x%02x", (int) (value [k])) ;
+        same = same && (value [0] == value [k]) ;
         if (k < nbytes-1)
         {
             fprintf (fp, ", ") ;
@@ -50,5 +54,12 @@ void GB_macrofy_bytes
         "        memcpy (&%s, bytes, %d) ;                           \\\n"
         "    }\n",
         variable, (int) nbytes) ;
+
+    if (same && is_identity)
+    {
+        // all the bytes of the identity value are the same
+        fprintf (fp, "#define GB_HAS_IDENTITY_BYTE 1\n") ;
+        fprintf (fp, "#define GB_IDENTITY_BYTE 0x%02x\n", (int) value [0]) ;
+    }
 }
 

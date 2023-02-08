@@ -664,7 +664,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                 info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp,       \
                     Mask_struct, M_in_place, A, B,                          \
                     SaxpyTasks, ntasks, nfine, nthreads,                    \
-                    do_sort, Werk) ;                                     \
+                    do_sort, Werk) ;                                        \
                 done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;

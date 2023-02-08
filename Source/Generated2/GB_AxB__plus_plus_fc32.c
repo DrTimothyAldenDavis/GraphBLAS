@@ -68,8 +68,7 @@
 
 #define GB_A_ISO A_iso
 #define GB_B_ISO B_iso
-#define GB_C_ISO \
-    0
+#define GB_C_ISO 0
 
 // z = x + y
 #define GB_ADD(z,x,y) \
@@ -79,15 +78,12 @@
 #define GB_UPDATE(z,t) \
     z = GB_FC32_add (z, t)
 
-// declare and initialize z = identity value of the monoid
-#ifndef GB_DECLARE_MONOID_IDENTITY
-#if GB_IS_ANY_PAIR_SEMIRING || GB_C_ISO
-#define GB_DECLARE_MONOID_IDENTITY(modifier,z)
-#else
-#define GB_DECLARE_MONOID_IDENTITY(modifier,z) \
-    modifier GxB_FC32_t z = GxB_CMPLXF(0,0)
-#endif
-#endif
+// z = identity, and ztype overflow condition (if any):
+#define GB_DECLARE_MONOID_IDENTITY(modifier,z) modifier GxB_FC32_t z = GxB_CMPLXF(0,0)
+#define GB_HAS_IDENTITY_BYTE 1
+#define GB_IDENTITY_BYTE 0
+
+#define GB_ZTYPE_IGNORE_OVERFLOW 1
 
 // monoid terminal condition, if any:
 
@@ -98,10 +94,6 @@
 // multiply-add: z += x*y
 #define GB_MULTADD(z, x, y, i, k, j) \
     { GxB_FC32_t x_op_y = GB_FC32_add (x, y) ; z = GB_FC32_add (z, x_op_y) ; }
-
-// true for int64, uint64, float, double, float complex, and double complex 
-#define GB_ZTYPE_IGNORE_OVERFLOW \
-    1
 
 // declare aik as atype
 #define GB_DECLAREA(aik) \
@@ -142,16 +134,6 @@
 #define GB_IDENTITY \
     GxB_CMPLXF(0,0)
 
-// FIXME: GB_HAS_IDENTITY_BYTE not in macrofy (add it)
-// 1 if the identity value can be assigned via memset, with all bytes the same
-#define GB_HAS_IDENTITY_BYTE \
-    1
-
-// FIXME: GB_IDENTITY_BYTE not in macrofy (add it)
-// identity byte, for memset
-#define GB_IDENTITY_BYTE \
-    0
-
 // FIXME: GB_PRAGMA_SIMD_DOT not in macrofy, do I need it?
 // simd pragma for dot-product loop vectorization
 #define GB_PRAGMA_SIMD_DOT(cij) \
@@ -165,11 +147,6 @@
 // declare the cij scalar (initialize cij to zero for PLUS_PAIR)
 #define GB_CIJ_DECLARE(cij) \
     GxB_FC32_t cij
-
-// FIXME: GB_CTYPE_BITS for PLUS_PAIR semirings only, 0 otherwise
-// bit pattern for bool, 8-bit, 16-bit, and 32-bit integers
-#define GB_CTYPE_BITS \
-    0
 
 // FIXME: GB_HAS_ATOMIC
 // 1 if monoid update can be done atomically, 0 otherwise
@@ -322,8 +299,6 @@ GrB_Info GB (_AsaxbitB__plus_plus_fc32)
 
     #if GB_DISABLE
     #elif ( !GB_A_IS_PATTERN )
-
-        
 
         //----------------------------------------------------------------------
         // saxpy5 method unrolled, with no vectors

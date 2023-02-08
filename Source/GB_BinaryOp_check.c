@@ -49,7 +49,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         return (GrB_INVALID_OBJECT) ;
     }
 
-    GrB_Info info = GB_Type_check (op->ztype, "ztype", pr, f) ;
+    GrB_Info info = GB_Type_check (op->ztype, "ztype", GxB_SILENT, f) ;
     if (info != GrB_SUCCESS)
     { 
         GBPR0 ("    BinaryOp has an invalid ztype\n") ;
@@ -97,6 +97,8 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         return (GrB_INVALID_OBJECT) ;
     }
 
+    info = GB_Type_check (op->ztype, "ztype", pr, f) ;
+    ASSERT (info == GrB_SUCCESS) ;
     if (!op_is_positional && !op_is_pair)
     {
         if (!op_is_second)

@@ -223,21 +223,63 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
     fprintf (fp, "\n// special cases:\n") ;
 
-    // semiring is plus_pair_real
-    bool is_plus_pair_real =
-        (add_ecode == 11 // plus monoid
-        && mult_ecode == 133 // pair multiplicative operator
-        && !(zcode == GB_FC32_code || zcode == GB_FC64_code)) ; // real
-    fprintf (fp, "#define GB_IS_PLUS_PAIR_REAL_SEMIRING %d\n",
-        is_plus_pair_real) ;
 
-    // can ignore overflow in ztype when accumulating the result via the monoid
-    bool ztype_ignore_overflow = (zcode == 0 ||
-        zcode == GB_INT64_code || zcode == GB_UINT64_code ||
-        zcode == GB_FP32_code  || zcode == GB_FP64_code ||
-        zcode == GB_FC32_code  || zcode == GB_FC64_code) ;
-    fprintf (fp, "#define GB_ZTYPE_IGNORE_OVERFLOW %d\n",
-        ztype_ignore_overflow) ;
+    bool is_real = !(zcode == GB_FC32_code || zcode == GB_FC64_code) ;
+    bool is_plus_monoid = (addop->opcode == GB_PLUS_binop_code) ;
+    bool is_eq_monoid = (addop->opcode == GB_EQ_binop_code) ;
+
+    if (mult->opcode == GB_PAIR_binop_code)
+    {
+        // ANY_PAIR of any type; output C is iso, and mxm kernel only uses
+        // ANY_PAIR_ISO semiring (aka ANY_PAIR_BOOL)
+        if (C_iso)
+        {
+            // C is iso in this case
+            fprintf (fp, "#define GB_IS_ANY_PAIR_SEMIRING 1\n") ;
+        }
+
+        // semiring is plus_pair_real
+        if (is_plus_monoid && is_real)
+        {
+            fprintf (fp, "#define GB_IS_PLUS_PAIR_REAL_SEMIRING 1\n") ;
+        }
+
+        // semiring is eq_pair_bool
+        if (is_eq_monoid)
+        {
+            fprintf (fp, "#define GB_IS_EQ_PAIR_REAL_SEMIRING 1\n") ;
+        }
+
+    }
+
+    switch (mult->opcode)
+    {
+        case GB_PAIR_binop_code :
+            fprintf (fp, "#define GB_IS_PAIR_MULTIPLIER 1\n") ;
+            break ;
+
+        case GB_FIRSTI1_binop_code :
+            fprintf (fp, "#define GB_OFFSET 1\n") ;
+        case GB_FIRSTI_binop_code :
+            fprintf (fp, "#define GB_IS_FIRSTI_MULTIPLIER 1\n") ;
+            break ;
+
+        case GB_FIRSTJ1_binop_code :
+        case GB_SECONDI1_binop_code :
+            fprintf (fp, "#define GB_OFFSET 1\n") ;
+        case GB_FIRSTJ_binop_code :
+        case GB_SECONDI_binop_code :
+            fprintf (fp, "#define GB_IS_FIRSTJ_MULTIPLIER 1\n") ;
+            break ;
+
+        case GB_SECONDJ1_binop_code :
+            fprintf (fp, "\n#define GB_OFFSET 1\n") ;
+        case GB_SECONDJ_binop_code :
+            fprintf (fp, "#define GB_IS_SECONDJ_MULTIPLIER 1\n") ;
+            break ;
+
+        default: ; 
+    }
 
     //--------------------------------------------------------------------------
     // macros for the C matrix

@@ -38,7 +38,7 @@
 
     #else
 
-        // PLUS_PAIR semiring for small integers
+        // PLUS_PAIR semiring for small integers (not bool)
         #define GB_DOT(k,pA,pB)                                         \
         {                                                               \
             cij_exists = true ;                                         \

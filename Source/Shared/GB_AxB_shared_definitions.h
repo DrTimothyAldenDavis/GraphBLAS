@@ -12,87 +12,86 @@
 // file.
 
 //------------------------------------------------------------------------------
-// GB_IS_* default cases for unique monoids, multiply operators, and semirings
+// special semirings
 //------------------------------------------------------------------------------
 
-// true for PLUS_PAIR semirings (except for the complex case)
-#ifndef GB_IS_PLUS_PAIR_REAL_SEMIRING
-#define GB_IS_PLUS_PAIR_REAL_SEMIRING 0
-#endif
-
-// true if monoid update is EQ
-#ifndef GB_IS_EQ_MONOID
-#define GB_IS_EQ_MONOID 0
-#endif
-
-// true for the symbolic ANY_PAIR semiring
+// 1 for the symbolic ANY_PAIR semiring
 #ifndef GB_IS_ANY_PAIR_SEMIRING
 #define GB_IS_ANY_PAIR_SEMIRING 0
 #endif
 
-// true if the multiply operator is PAIR
+// 1 for PLUS_PAIR semirings (integer, float, and double; not bool or complex)
+#ifndef GB_IS_PLUS_PAIR_REAL_SEMIRING
+#define GB_IS_PLUS_PAIR_REAL_SEMIRING 0
+#endif
+
+// 1 for EQ_PAIR_BOOL
+#ifndef GB_IS_EQ_PAIR_SEMIRING
+#define GB_IS_EQ_PAIR_SEMIRING 0
+#endif
+
+// 1 for XOR_PAIR_BOOL
+#ifndef GB_IS_XOR_PAIR_SEMIRING
+#define GB_IS_XOR_PAIR_SEMIRING 0
+#endif
+
+// 1 for PLUS_PAIR_INT8 and PLUS_PAIR_UINT8
+#ifndef GB_IS_PLUS_8_PAIR_SEMIRING
+#define GB_IS_PLUS_8_PAIR_SEMIRING 0
+#endif
+
+// 1 for PLUS_PAIR_INT16 and PLUS_PAIR_UINT16
+#ifndef GB_IS_PLUS_16_PAIR_SEMIRING
+#define GB_IS_PLUS_16_PAIR_SEMIRING 0
+#endif
+
+// 1 for PLUS_PAIR_INT32 and PLUS_PAIR_UINT32
+#ifndef GB_IS_PLUS_32_PAIR_SEMIRING
+#define GB_IS_PLUS_32_PAIR_SEMIRING 0
+#endif
+
+// 1 for PLUS_PAIR_(INT64, UINT64, FP32, and FP64)
+#ifndef GB_IS_PLUS_BIG_PAIR_SEMIRING
+#define GB_IS_PLUS_BIG_PAIR_SEMIRING 0
+#endif
+
+// 1 for PLUS_PAIR_FC32
+#ifndef GB_IS_PLUS_FC32_PAIR_SEMIRING
+#define GB_IS_PLUS_FC32_PAIR_SEMIRING 0
+#endif
+
+// 1 for PLUS_PAIR_FC64
+#ifndef GB_IS_PLUS_FC64_PAIR_SEMIRING
+#define GB_IS_PLUS_FC64_PAIR_SEMIRING 0
+#endif
+
+//------------------------------------------------------------------------------
+// special multiply operators
+//------------------------------------------------------------------------------
+
+// 1 if the multiply operator is PAIR
 #ifndef GB_IS_PAIR_MULTIPLIER
 #define GB_IS_PAIR_MULTIPLIER 0
-#endif
-
-// true if monoid is PLUS_FC32
-#ifndef GB_IS_PLUS_FC32_MONOID
-#define GB_IS_PLUS_FC32_MONOID 0
-#endif
-
-// true if monoid is PLUS_FC64
-#ifndef GB_IS_PLUS_FC64_MONOID
-#define GB_IS_PLUS_FC64_MONOID 0
-#endif
-
-// true if monoid is ANY_FC32
-#ifndef GB_IS_ANY_FC32_MONOID
-#define GB_IS_ANY_FC32_MONOID 0
-#endif
-
-// true if monoid is ANY_FC64
-#ifndef GB_IS_ANY_FC64_MONOID
-#define GB_IS_ANY_FC64_MONOID 0
-#endif
-
-// true if monoid is MIN for signed or unsigned integers
-#ifndef GB_IS_IMIN_MONOID
-#define GB_IS_IMIN_MONOID 0
-#endif
-
-// true if monoid is MAX for signed or unsigned integers
-#ifndef GB_IS_IMAX_MONOID
-#define GB_IS_IMAX_MONOID 0
-#endif
-
-// true if monoid is MIN for float or double
-#ifndef GB_IS_FMIN_MONOID
-#define GB_IS_FMIN_MONOID 0
-#endif
-
-// true if monoid is MAX for float or double
-#ifndef GB_IS_FMAX_MONOID
-#define GB_IS_FMAX_MONOID 0
-#endif
-
-// true for the FIRSTI or FIRSTI1 multiply operator
-#ifndef GB_IS_FIRSTI_MULTIPLIER
-#define GB_IS_FIRSTI_MULTIPLIER 0
-#endif
-
-// true for the FIRSTJ or FIRSTJ1 multiply operator
-#ifndef GB_IS_FIRSTJ_MULTIPLIER
-#define GB_IS_FIRSTJ_MULTIPLIER 0
-#endif
-
-// true for the SECONDJ or SECONDJ1 multiply operator
-#ifndef GB_IS_SECONDJ_MULTIPLIER
-#define GB_IS_SECONDJ_MULTIPLIER 0
 #endif
 
 // 1 for the FIRSTI1, FIRSTJ1, SECONDI1, or SECONDJ1 multiply operators
 #ifndef GB_OFFSET
 #define GB_OFFSET 0
+#endif
+
+// 1 for the FIRSTI or FIRSTI1 multiply operator
+#ifndef GB_IS_FIRSTI_MULTIPLIER
+#define GB_IS_FIRSTI_MULTIPLIER 0
+#endif
+
+// 1 for the FIRSTJ, FIRSTJ1, SECONDI, or SECONDI1 multiply operator
+#ifndef GB_IS_FIRSTJ_MULTIPLIER
+#define GB_IS_FIRSTJ_MULTIPLIER 0
+#endif
+
+// 1 for the SECONDJ or SECONDJ1 multiply operator
+#ifndef GB_IS_SECONDJ_MULTIPLIER
+#define GB_IS_SECONDJ_MULTIPLIER 0
 #endif
 
 //------------------------------------------------------------------------------
@@ -104,6 +103,11 @@
     //--------------------------------------------------------------------------
     // ANY_PAIR semiring: no values are accessed
     //--------------------------------------------------------------------------
+
+    // declare a scalar of ctype
+    #ifndef GB_DECLAREC
+    #define GB_DECLAREC(c)
+    #endif
 
     // Cx [p] = t
     #ifndef GB_CIJ_WRITE
@@ -149,6 +153,11 @@
     // These definitions require explicit types to be used, not GB_void.
     // Generic methods using GB_void for all types, memcpy, and function
     // pointers for all computations must #define these macros first.
+
+    // declare a scalar of ctype
+    #ifndef GB_DECLAREC
+    #define GB_DECLAREC(c) GB_C_TYPE c
+    #endif
 
     // Cx [p] = t
     #ifndef GB_CIJ_WRITE
