@@ -11,6 +11,9 @@
 // not implemented for generic kernels.  The #including file defines
 // GB_DOT2_GENERIC or GB_DOT3_GENERIC.
 
+// This file does not use GB_DECLARE_TERMINAL_CONST (zterminal).  Instead, it
+// defines zterminal itself.
+
 #define GB_GENERIC
 #include "GB_AxB_shared_definitions.h"
 
@@ -127,6 +130,7 @@
         if (mult->ztype == GrB_INT64)
         {
             #define GB_C_TYPE int64_t
+            // instead of GB_DECLARE_TERMINAL_CONST (zterminal):
             int64_t zterminal = 0 ;
             if (is_terminal)
             { 
@@ -173,6 +177,7 @@
         {
             #undef  GB_C_TYPE
             #define GB_C_TYPE int32_t
+            // instead of GB_DECLARE_TERMINAL_CONST (zterminal):
             int32_t zterminal = 0 ;
             if (is_terminal)
             { 
@@ -252,8 +257,10 @@
         #undef  GB_PUTC
         #define GB_PUTC(cij,p) memcpy (Cx +((p)*csize), cij, csize)
 
-        // break if cij reaches the terminal value
+        // instead of GB_DECLARE_TERMINAL_CONST (zterminal):
         GB_void *restrict zterminal = (GB_void *) add->terminal ;
+
+        // break if cij reaches the terminal value
         #undef  GB_IF_TERMINAL_BREAK
         #define GB_IF_TERMINAL_BREAK(z,zterminal)                       \
             if (is_terminal && memcmp (z, zterminal, csize) == 0)       \

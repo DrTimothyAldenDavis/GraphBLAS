@@ -30,6 +30,9 @@
 // found, so these optimizations can be used only if A(:,i) and/or B(:,j) are
 // entirely populated.
 
+// The #include'ing file must use GB_DECLARE_TERMINAL_CONST (zterminal),
+// or define zterminal another way (see Template/GB_AxB_dot_generic.c).
+
 #ifndef GB_AXB_SHARED_DEFINITIONS_H
 #error "undefined"
 #endif

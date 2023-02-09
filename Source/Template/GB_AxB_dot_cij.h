@@ -16,6 +16,9 @@
 // pA points to A(k,i) for most GxB_AxB_dot* methods, except for C=A*B in
 // GB_AxB_dot2, with A_not_transposed where it points to A(i,k).
 
+// The #include'ing file must use GB_DECLARE_TERMINAL_CONST (zterminal),
+// or define zterminal another way (see Template/GB_AxB_dot_generic.c).
+
 // use the boolean flag cij_exists to set/check if C(i,j) exists
 #undef  GB_CIJ_CHECK
 #define GB_CIJ_CHECK true

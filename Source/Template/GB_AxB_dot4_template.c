@@ -17,6 +17,8 @@
 // been expanded to non-iso, and initialized if A and/or B are hypersparse.
 // A and/or B can be iso.
 
+// The #include'ing file must use GB_DECLARE_TERMINAL_CONST (zterminal) ;
+
 #ifndef GB_AXB_SHARED_DEFINITIONS_H
 #error "undefined"
 #endif

@@ -171,7 +171,6 @@ GrB_Info GB (_Adot2B)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_DECLARE_TERMINAL_CONST (zterminal) ;
     #include "GB_AxB_dot2_meta.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -195,7 +194,6 @@ GrB_Info GB (_Adot3B)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_DECLARE_TERMINAL_CONST (zterminal) ;
     #include "GB_AxB_dot3_meta.c"
     return (GrB_SUCCESS) ;
     #endif

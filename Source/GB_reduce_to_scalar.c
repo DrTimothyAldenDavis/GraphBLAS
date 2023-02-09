@@ -28,6 +28,7 @@
 #ifndef GBCUDA_DEV
 #include "GB_red__include.h"
 #endif
+#include "GB_monoid_shared_definitions.h"
 
 #define GB_FREE_ALL                 \
 {                                   \
@@ -253,6 +254,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 const GB_void *z = monoid->identity ;
 
             // const zterminal = terminal_value
+            #undef  GB_DECLARE_TERMINAL_CONST
             #define GB_DECLARE_TERMINAL_CONST(zterminal)            \
                 const GB_void *zterminal = monoid->terminal ;
 
@@ -289,8 +291,11 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 if (zterminal == NULL)
                 {
                     // monoid is not terminal
+                    #undef  GB_MONOID_IS_TERMINAL
                     #define GB_MONOID_IS_TERMINAL 0
+                    #undef  GB_TERMINAL_CONDITION
                     #define GB_TERMINAL_CONDITION(z,zterminal) 0
+                    #undef  GB_IF_TERMINAL_BREAK
                     #define GB_IF_TERMINAL_BREAK(z,zterminal)
                     #include "GB_reduce_to_scalar_template.c"
                 }

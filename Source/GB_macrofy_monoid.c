@@ -89,6 +89,19 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // create macros for the terminal value and terminal conditions
     //--------------------------------------------------------------------------
 
+    // GB_TERMINAL_CONDITION(z,zterminal) should return true if the value of z
+    // has reached its terminal value (zterminal), or false otherwise.  If the
+    // monoid is not terminal, then the macro should always return false.  The
+    // ANY monoid should always return true.
+
+    // GB_IF_TERMINAL_BREAK(z,zterminal) is a macro containing a full
+    // statement.  If the monoid is never terminal, it becomes the empty
+    // statement.  Otherwise, it checks the terminal condition and does a
+    // "break" if true.
+
+    // GB_DECLARE_TERMINAL_CONST(zterminal) declares the zterminal variable as
+    // const.  It is empty if the monoid is not terminal.
+
     bool is_any_monoid = (term_ecode == 18) ;
     if (is_any_monoid)
     {
