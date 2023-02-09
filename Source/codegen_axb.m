@@ -38,13 +38,13 @@ codegen_axb_template ('pair',           ...
     'GxB_CMPLXF(1,0)',                  ... % GxB_FC32_t
     'GxB_CMPLX(1,0)') ;                 ... % GxB_FC64_t
 
-codegen_axb_template ('times',        ...
+codegen_axb_template ('times',          ...
     [ ],                                ... % bool
-    '(xarg * yarg)',                    ... % int, uint
-    '(xarg * yarg)',                    ... % float
-    '(xarg * yarg)',                    ... % double
-    'GB_FC32_mul (xarg, yarg)',         ... % GxB_FC32_t
-    'GB_FC64_mul (xarg, yarg)') ;       ... % GxB_FC64_t
+    '(xarg*yarg)',                      ... % int, uint
+    '(xarg*yarg)',                      ... % float
+    '(xarg*yarg)',                      ... % double
+    'GB_FC32_mul (xarg,yarg)',          ... % GxB_FC32_t
+    'GB_FC64_mul (xarg,yarg)') ;        ... % GxB_FC64_t
 
 codegen_axb_template ('first',          ...
     'xarg',                             ... % bool
@@ -64,59 +64,59 @@ codegen_axb_template ('second',         ...
 
 codegen_axb_template ('min',            ...
     [ ],                                ... % bool
-    'GB_IMIN (xarg, yarg)',             ... % int, uint
-    'fminf (xarg, yarg)',               ... % float
-    'fmin (xarg, yarg)',                ... % double
+    'GB_IMIN (xarg,yarg)',              ... % int, uint
+    'fminf (xarg,yarg)',                ... % float
+    'fmin (xarg,yarg)',                 ... % double
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
 
 codegen_axb_template ('max',            ...
     [ ],                                ... % bool
-    'GB_IMAX (xarg, yarg)',             ... % int, uint
-    'fmaxf (xarg, yarg)',               ... % float
-    'fmax (xarg, yarg)',                ... % double
+    'GB_IMAX (xarg,yarg)',              ... % int, uint
+    'fmaxf (xarg,yarg)',                ... % float
+    'fmax (xarg,yarg)',                 ... % double
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
 
 codegen_axb_template ('plus',           ...
     [ ],                                ... % bool
-    '(xarg + yarg)',                    ... % int, uint
-    '(xarg + yarg)',                    ... % float
-    '(xarg + yarg)',                    ... % double
-    'GB_FC32_add (xarg, yarg)',         ... % GxB_FC32_t
-    'GB_FC64_add (xarg, yarg)') ;       ... % GxB_FC64_t
+    '(xarg+yarg)',                      ... % int, uint
+    '(xarg+yarg)',                      ... % float
+    '(xarg+yarg)',                      ... % double
+    'GB_FC32_add (xarg,yarg)',          ... % GxB_FC32_t
+    'GB_FC64_add (xarg,yarg)') ;        ... % GxB_FC64_t
 
 codegen_axb_template ('minus',          ...
     [ ],                                ... % bool
-    '(xarg - yarg)',                    ... % int, uint
-    '(xarg - yarg)',                    ... % float
-    '(xarg - yarg)',                    ... % double
-    'GB_FC32_minus (xarg, yarg)',       ... % GxB_FC32_t
-    'GB_FC64_minus (xarg, yarg)') ;     ... % GxB_FC64_t
+    '(xarg-yarg)',                      ... % int, uint
+    '(xarg-yarg)',                      ... % float
+    '(xarg-yarg)',                      ... % double
+    'GB_FC32_minus (xarg,yarg)',        ... % GxB_FC32_t
+    'GB_FC64_minus (xarg,yarg)') ;      ... % GxB_FC64_t
 
 codegen_axb_template ('rminus',         ...
     [ ],                                ... % bool
-    '(yarg - xarg)',                    ... % int, uint
-    '(yarg - xarg)',                    ... % float
-    '(yarg - xarg)',                    ... % double
-    'GB_FC32_minus (yarg, xarg)',       ... % GxB_FC32_t
-    'GB_FC64_minus (yarg, xarg)') ;     ... % GxB_FC64_t
+    '(yarg-xarg)',                      ... % int, uint
+    '(yarg-xarg)',                      ... % float
+    '(yarg-xarg)',                      ... % double
+    'GB_FC32_minus (yarg,xarg)',        ... % GxB_FC32_t
+    'GB_FC64_minus (yarg,xarg)') ;      ... % GxB_FC64_t
 
-codegen_axb_template ('div',          ...
+codegen_axb_template ('div',            ...
     [ ],                                ... % bool
-    'GB_idiv (xarg, yarg)',             ... % int, uint
-    '(xarg / yarg)',                    ... % float
-    '(xarg / yarg)',                    ... % double
-    'GB_FC32_div (xarg, yarg)',         ... % GxB_FC32_t
-    'GB_FC64_div (xarg, yarg)') ;       ... % GxB_FC64_t
+    'GB_idiv (xarg,yarg)',              ... % int, uint
+    '(xarg/yarg)',                      ... % float
+    '(xarg/yarg)',                      ... % double
+    'GB_FC32_div (xarg,yarg)',          ... % GxB_FC32_t
+    'GB_FC64_div (xarg,yarg)') ;        ... % GxB_FC64_t
 
-codegen_axb_template ('rdiv',         ...
+codegen_axb_template ('rdiv',           ...
     [ ],                                ... % bool
     'GB_idiv (yarg, xarg)',             ... % int, uint
-    '(yarg / xarg)',                    ... % float
-    '(yarg / xarg)',                    ... % double
-    'GB_FC32_div (yarg, xarg)',         ... % GxB_FC32_t
-    'GB_FC64_div (yarg, xarg)') ;       ... % GxB_FC64_t
+    '(yarg/xarg)',                      ... % float
+    '(yarg/xarg)',                      ... % double
+    'GB_FC32_div (yarg,xarg)',          ... % GxB_FC32_t
+    'GB_FC64_div (yarg,xarg)') ;        ... % GxB_FC64_t
 
 codegen_axb_compare_template ('eq',     ...
     '(xarg == yarg)',                   ... % bool
@@ -142,7 +142,7 @@ codegen_axb_compare_template ('le',           ...
     '(xarg <= yarg)',                   ... % bool
     '(xarg <= yarg)') ;                 ... % int, uint, float, double
 
-codegen_axb_template ('lor',          ...
+codegen_axb_template ('lor',            ...
     '(xarg || yarg)',                   ... % bool
     '((xarg != 0) || (yarg != 0))',     ... % int, uint
     '((xarg != 0) || (yarg != 0))',     ... % float
@@ -151,7 +151,7 @@ codegen_axb_template ('lor',          ...
     [ ],                                ... % GxB_FC64_t
     true) ;     % no min,max,times,any monoids for LOR multiplier op
 
-codegen_axb_template ('land',         ...
+codegen_axb_template ('land',           ...
     '(xarg && yarg)',                   ... % bool
     '((xarg != 0) && (yarg != 0))',     ... % int, uint
     '((xarg != 0) && (yarg != 0))',     ... % float
@@ -160,7 +160,7 @@ codegen_axb_template ('land',         ...
     [ ],                                ... % GxB_FC64_t
     true) ;     % no min,max,times,any monoids for LAND multiplier op
 
-codegen_axb_template ('lxor',         ...
+codegen_axb_template ('lxor',           ...
     '(xarg != yarg)',                   ... % bool
     '((xarg != 0) != (yarg != 0))',     ... % int, uint
     '((xarg != 0) != (yarg != 0))',     ... % float
@@ -172,7 +172,7 @@ codegen_axb_template ('lxor',         ...
 % bitwise semirings
 ops   = { 'bor', 'band', 'bxor', 'bxnor' } ;
 funcs = { '(xarg | yarg)', '(xarg & yarg)', '(xarg ^ yarg)', '~(xarg ^ yarg)' };
-adds  = { 'w |= t'       , 'w &= t'       , 'w ^= t'       , 'w = ~(w ^ t)'   };
+updates  = { 'warg |= targ'       , 'warg &= targ'       , 'warg ^= targ'       , 'warg = ~(warg ^ targ)'   };
 ids   = {  0             , 1              , 0              , 1                };
 terms = {  1             , 0              , [ ]            , [ ]              };
 atomx = {  1             , 1              , 1              , 0                };
@@ -184,7 +184,7 @@ for i = 1:4
     addop = ops {i} ;
     fprintf ('\n%-7s', addop) ;
     addfunc = ['zarg = ' funcs{i}] ;
-    add = adds {i} ;
+    update = updates {i} ;
     identity = ids {i} ;
     term = terms {i} ;
     at = atomx {i} ;
@@ -207,7 +207,7 @@ for i = 1:4
             else
                 id = '0' ;
             end
-            codegen_axb_method (addop, multop, add, addfunc, mult, type, ...
+            codegen_axb_method (addop, multop, update, addfunc, mult, type, ...
                 type, id, tm, at, 0) ;
         end
     end
@@ -215,12 +215,12 @@ end
 
 % positional semirings
 mults = { 'firsti', 'firsti1', 'firstj', 'firstj1', 'secondj', 'secondj1' } ;
-funcs = { 'i', '(i+1)', 'k', '(k+1)', 'j', '(j+1)' } ;
+multfuncs = { 'i', '(i+1)', 'k', '(k+1)', 'j', '(j+1)' } ;
 
 % min, max, and times are normally terminal monoids, but there is no reason to terminate
 % them early when used with positional operators. Only the ANY monoid is still terminal.
 addops   = { 'min',                'max',                'any',   'plus',   'times'  } ;
-adds     = { 'w = GB_IMIN (w, t)', 'w = GB_IMAX (w, t)', 'w = t', 'w += t', 'w *= t' } ;
+updates  = { 'warg = GB_IMIN (warg, targ)', 'warg = GB_IMAX (warg, targ)', 'warg = targ', 'warg += targ', 'warg *= targ' } ;
 addfuncs = {'GB_IMIN (xarg, yarg)','GB_IMAX (xarg, yarg)','yarg', 'xarg + yarg' , 'xarg * yarg'  } ;
 ids      = { 'INT64_MAX',          'INT64_MIN',          '0',     '0',      '1'      } ;
 terms    = { [ ],                  [ ],                  '0',     [ ],      [ ]      } ;
@@ -228,12 +228,12 @@ atomx    = {  0                  ,  0 ,                   0,       1,        1, 
 
 for j = 1:6
     multop = mults {j} ;
-    mult = funcs {j} ;
+    mult = multfuncs {j} ;
     fprintf ('\n%-9s', multop) ;
     for i = 1:5
         addop = addops {i} ;
         addfunc = ['zarg = ' addfuncs{i}] ;
-        add = adds {i} ;
+        update = updates {i} ;
         identity = ids {i} ;
         term = terms {i} ;
         at = atomx {i} ;
@@ -241,11 +241,11 @@ for j = 1:6
         tm = terms {i} ;
         at = atomx {i} ;
         fprintf ('.') ;
-        codegen_axb_method (addop, multop, add, addfunc, mult, 'int64_t', ...
+        codegen_axb_method (addop, multop, update, addfunc, mult, 'int64_t', ...
             'int64_t', id, tm, at, 0) ;
         id = strrep (id, '64', '32')  ;
         fprintf ('.') ;
-        codegen_axb_method (addop, multop, add, addfunc, mult, 'int32_t', ...
+        codegen_axb_method (addop, multop, update, addfunc, mult, 'int32_t', ...
             'int32_t', id, tm, at, 0) ;
     end
 end

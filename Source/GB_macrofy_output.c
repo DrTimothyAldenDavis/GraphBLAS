@@ -46,7 +46,7 @@ void GB_macrofy_output
         // no need to access the values of C
         //----------------------------------------------------------------------
 
-        GB_macrofy_type (fp, Cname, "GB_void") ;
+        GB_macrofy_type (fp, Cname, "_", "GB_void") ;
         fprintf (fp, "#define GB_PUT%s(%s,%sx,p)\n", Cmacro, cname, Cname) ;
 
     }
@@ -72,7 +72,7 @@ void GB_macrofy_output
 
         // or, if C is iso: nothing happens; the macro is empty.
 
-        GB_macrofy_type (fp, Cname, ctype->name) ;
+        GB_macrofy_type (fp, Cname, "_", ctype->name) ;
 
         #define SLEN 256
         char macro_name [SLEN+1], xargs [SLEN+1], xexpr [SLEN+1] ;

@@ -103,20 +103,12 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     }
 
     //--------------------------------------------------------------------------
-    // construct the macros for the type names
-    //--------------------------------------------------------------------------
-
-    fprintf (fp, "// semiring types:\n") ;
-    GB_macrofy_type (fp, "X", (xcode == 0) ? "GB_void" : xtype->name) ;
-    GB_macrofy_type (fp, "Y", (ycode == 0) ? "GB_void" : ytype->name) ;
-    GB_macrofy_type (fp, "Z", (zcode == 0) ? "GB_void" : ztype->name) ;
-
-    //--------------------------------------------------------------------------
     // construct the monoid macros
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// additive monoid:\n") ;
     const char *u_expr ;
+    GB_macrofy_type (fp, "Z", "_", (zcode == 0) ? "GB_void" : ztype->name) ;
     GB_macrofy_monoid (fp, add_ecode, id_ecode, term_ecode,
         (C_iso) ? NULL : monoid, &u_expr) ;
 
@@ -170,6 +162,8 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
         // first and second are OK since no promotion occurs.
         // positional operators are OK too.
 
+        // Since GB_MULT is not used, the fused GB_MULTADD must handle flipxy.
+
         if (flipxy)
         {
             fprintf (fp, "#define GB_MULTADD(z,y,x,j,k,i) ") ;
@@ -205,7 +199,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
         // All user-defined operators use this method. Built-in operators on
         // integers must use a temporary variable to avoid ANSI C integer
         // promotion.  Complex operators may use macros, so they use
-        // temporaries as well.
+        // temporaries as well.  GB_MULT handles flipxy.
 
         fprintf (fp,
             "#define GB_MULTADD(z,x,y,i,k,j)    \\\n"

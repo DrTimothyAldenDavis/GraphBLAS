@@ -147,9 +147,9 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     }
 
     fprintf (fp, "// binary operator types:\n") ;
-    GB_macrofy_type (fp, "Z", ztype_name) ;
-    GB_macrofy_type (fp, "X", xtype_name) ;
-    GB_macrofy_type (fp, "Y", ytype_name) ;
+    GB_macrofy_type (fp, "Z", "_", ztype_name) ;
+    GB_macrofy_type (fp, "X", "_", xtype_name) ;
+    GB_macrofy_type (fp, "Y", "_", ytype_name) ;
 
     //--------------------------------------------------------------------------
     // construct macros for the multiply

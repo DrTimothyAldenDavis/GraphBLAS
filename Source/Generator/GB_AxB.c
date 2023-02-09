@@ -47,13 +47,14 @@ GB_add_op
 GB_add_update
 // identity: GB_identity
 
-// types: C, A, B matrix types; A and B cast to A2 and B2; Z is the monoid type
+// C, A, B matrix types; A and B cast to A2 and B2 as inputs to multiply op
 GB_atype
 GB_a2type
 GB_btype
 GB_b2type
-GB_ztype
 GB_ctype
+// monoid type, and type of output of multiply op
+GB_ztype
 
 // iso and pattern cases:
 #define GB_A_ISO A_iso
@@ -75,6 +76,7 @@ GB_is_plus_fc32_pair_semiring
 GB_is_plus_fc64_pair_semiring
 
 // special case monoids:
+GB_is_any_monoid
 GB_is_any_fc32_monoid
 GB_is_any_fc64_monoid
 GB_is_imin_monoid
@@ -99,7 +101,6 @@ GB_identity_byte
 GB_ztype_ignore_overflow
 
 // monoid terminal condition, if any:
-GB_is_any_monoid
 GB_monoid_is_terminal
 GB_terminal_condition
 GB_if_terminal_break

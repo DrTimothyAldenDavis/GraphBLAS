@@ -41,19 +41,20 @@
 // A*B (saxpy5):       GB (_Asaxpy5B__min_second_int8)
 
 // semiring operators:
-#define GB_MULTADD(z,x,y,i,k,j) { int8_t x_op_y = y ; z = GB_IMIN (z, x_op_y) ; }
-#define GB_MULT(z,x,y,i,k,j)    z = y
-#define GB_ADD(z,x,y)           z = GB_IMIN (x, y)
+#define GB_MULTADD(z,a,b,i,k,j) { int8_t x_op_y = b ; z = GB_IMIN (z, x_op_y) ; }
+#define GB_MULT(z,a,b,i,k,j)    z = b
+#define GB_ADD(z,zin,t)         z = GB_IMIN (zin, t)
 #define GB_UPDATE(z,t)          if (z > t) { z = t ; }
 // identity: INT8_MAX
 
-// types: C, A, B matrix types; A and B cast to A2 and B2; Z is the monoid type
+// C, A, B matrix types; A and B cast to A2 and B2 as inputs to multiply op
 #define GB_A_TYPE int8_t
 #define GB_A2TYPE int8_t
 #define GB_B_TYPE int8_t
 #define GB_B2TYPE int8_t
-#define GB_Z_TYPE int8_t
 #define GB_C_TYPE int8_t
+// monoid type, and type of output of multiply op
+#define GB_Z_TYPE int8_t
 
 // iso and pattern cases:
 #define GB_A_ISO A_iso

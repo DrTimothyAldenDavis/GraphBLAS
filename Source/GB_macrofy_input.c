@@ -20,7 +20,7 @@ void GB_macrofy_input
     const char *Amacro,     // name of the macro is GB_GET*(Amacro)
     const char *Aname,      // name of the input matrix
     bool do_matrix_macros,  // if true, do the matrix macros
-    GrB_Type a2type,        // type of aij
+    GrB_Type a2type,        // type of aij after casting to x or y of f(x,y)
     GrB_Type atype,         // type of the input matrix
     int asparsity,          // sparsity format of the input matrix
     int acode,              // type code of the input (0 if pattern)
@@ -48,7 +48,24 @@ void GB_macrofy_input
             fprintf (fp, "#define GB_A_HAS_ZOMBIES %d\n", azombies) ;
         }
         GB_macrofy_sparsity (fp, Aname, asparsity) ;
-        GB_macrofy_type (fp, Aname, A_is_pattern ? "GB_void" : atype->name) ;
+        if (A_is_pattern)
+        { 
+            // values of A are not accessed
+            GB_macrofy_type (fp, Aname, "_", "GB_void") ;
+        }
+        else
+        { 
+            GB_macrofy_type (fp, Aname, "_", atype->name) ;
+        }
+        if (a2type == NULL)
+        {
+            // input to operator is not used
+            GB_macrofy_type (fp, Aname, "2", "GB_void") ;
+        }
+        else
+        {
+            GB_macrofy_type (fp, Aname, "2", a2type->name) ;
+        }
     }
 
     //--------------------------------------------------------------------------

@@ -1,8 +1,8 @@
-function codegen_axb_method (addop, multop, add, addfunc, mult, ztype, ...
+function codegen_axb_method (addop, multop, update, addfunc, mult, ztype, ...
     xytype, identity, terminal, omp_atomic, omp_microsoft_atomic)
 %CODEGEN_AXB_METHOD create a function to compute C=A*B over a semiring
 %
-% codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, ...
+% codegen_axb_method (addop, multop, update, addfunc, mult, ztype, xytype, ...
 %   identity, terminal, omp_atomic, omp_microsoft_atomic)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -40,7 +40,7 @@ is_any_pair = is_any && is_pair ;
 
 if (is_any_pair)
     % the any_pair_iso semiring does not access any numerical values
-    add = ' ' ;
+    update = ' ' ;
     addfunc = ' ' ;
     mult = ' ' ;
     ztype = 'iso' ;
@@ -160,19 +160,25 @@ fprintf (f, 'm4_define(`_Asaxpy3B_notM'', `_Asaxpy3B_notM__%s'')\n', name) ;
 fprintf (f, 'm4_define(`_AsaxbitB'', `_AsaxbitB__%s'')\n', name) ;
 fprintf (f, 'm4_define(`GB_AxB'', `GB_AxB__%s'')\n', name) ;
 
-% type of A, A2, B, B2, Z, and C
+% type of A, A2, B, B2, X, Y, Z, and C.  Pre-generated kernels have simple
+% types: no typecasting, xtype and ytype are the same, and match the A and B
+% types.  For the JIT, these types can differ.
 if (is_any_pair)
-    fprintf (f, 'm4_define(`GB_atype'',  `#define GB_A_TYPE none'')\n') ;
-    fprintf (f, 'm4_define(`GB_a2type'', `#define GB_A2TYPE none'')\n') ;
-    fprintf (f, 'm4_define(`GB_btype'',  `#define GB_B_TYPE none'')\n') ;
-    fprintf (f, 'm4_define(`GB_b2type'', `#define GB_B2TYPE none'')\n') ;
-    fprintf (f, 'm4_define(`GB_ztype'',  `#define GB_Z_TYPE none'')\n') ;
-    fprintf (f, 'm4_define(`GB_ctype'',  `#define GB_C_TYPE none'')\n') ;
+    fprintf (f, 'm4_define(`GB_atype'',  `#define GB_A_TYPE GB_void'')\n') ;
+    fprintf (f, 'm4_define(`GB_a2type'', `#define GB_A2TYPE GB_void'')\n') ;
+    fprintf (f, 'm4_define(`GB_btype'',  `#define GB_B_TYPE GB_void'')\n') ;
+    fprintf (f, 'm4_define(`GB_b2type'', `#define GB_B2TYPE GB_void'')\n') ;
+    fprintf (f, 'm4_define(`GB_xtype'',  `#define GB_X_TYPE GB_void'')\n') ;
+    fprintf (f, 'm4_define(`GB_ytype'',  `#define GB_Y_TYPE GB_void'')\n') ;
+    fprintf (f, 'm4_define(`GB_ztype'',  `#define GB_Z_TYPE GB_void'')\n') ;
+    fprintf (f, 'm4_define(`GB_ctype'',  `#define GB_C_TYPE GB_void'')\n') ;
 else
     fprintf (f, 'm4_define(`GB_atype'',  `#define GB_A_TYPE %s'')\n', xytype) ;
     fprintf (f, 'm4_define(`GB_a2type'', `#define GB_A2TYPE %s'')\n', xytype) ;
     fprintf (f, 'm4_define(`GB_btype'',  `#define GB_B_TYPE %s'')\n', xytype) ;
     fprintf (f, 'm4_define(`GB_b2type'', `#define GB_B2TYPE %s'')\n', xytype) ;
+    fprintf (f, 'm4_define(`GB_xtype'',  `#define GB_X_TYPE %s'')\n', xytype) ;
+    fprintf (f, 'm4_define(`GB_ytype'',  `#define GB_Y_TYPE %s'')\n', xytype) ;
     fprintf (f, 'm4_define(`GB_ztype'',  `#define GB_Z_TYPE %s'')\n', ztype) ;
     fprintf (f, 'm4_define(`GB_ctype'',  `#define GB_C_TYPE %s'')\n', ztype) ;
 end
@@ -572,7 +578,7 @@ end
 
 % only PLUS, TIMES, LOR, LAND, and LXOR can be done with OpenMP atomics
 % in gcc and icc.  However, only PLUS and TIMES work with OpenMP atomics
-% in Microsoft Visual Studio; the LOR, LAND, and LXOR atomics don't compile.
+% in Microsoft Visual Studio; the LOR, LAND, and LXOR atomics do not compile.
 fprintf (f, 'm4_define(`GB_has_omp_atomic'', `%d'')\n', omp_atomic) ;
 fprintf (f, 'm4_define(`GB_microsoft_has_omp_atomic'', `%d'')\n', omp_microsoft_atomic) ;
 
@@ -607,10 +613,8 @@ end
 % access the values of C
 if (is_any_pair)
     fprintf (f, 'm4_define(`GB_putc'', `'')\n') ;
-    fprintf (f, 'm4_define(`GB_cij_write'', `'')\n') ;
 else
     fprintf (f, 'm4_define(`GB_putc'', `Cx [p] = cij'')\n') ;
-    fprintf (f, 'm4_define(`GB_cij_write'', `Cx [p] = t'')\n') ;
 end
 
 % type-specific idiv
@@ -624,78 +628,61 @@ end
 
 % create the multiply operator (assignment)
 if (is_any_pair)
-    mult2_defn = sprintf ('#define GB_MULT(z,x,y,i,k,j)    ') ;
-    % fprintf (f, 'm4_define(`GB_multiply'', `'')\n') ;
+    mult2_defn = sprintf ('#define GB_MULT(z,a,b,i,k,j)    ') ;
 else
-    mult2 = strrep (mult,  'xarg', 'x') ;
-    mult2 = strrep (mult2, 'yarg', 'y') ;
-    mult2_defn = sprintf ('#define GB_MULT(z,x,y,i,k,j)    z = %s', mult2) ;
-    % fprintf (f, 'm4_define(`GB_multiply'', `$1 = %s'')\n', mult2) ;
+    mult2 = strrep (mult,  'xarg', 'a') ;
+    mult2 = strrep (mult2, 'yarg', 'b') ;
+    mult2_defn = sprintf ('#define GB_MULT(z,a,b,i,k,j)    z = %s', mult2) ;
 end
 fprintf (f, 'm4_define(`GB_multiply'', `%s'')\n', mult2_defn) ;
 
-% create the add update, of the form w += t
+% create the add_update, of the form z += t
 if (is_any_pair)
-    add2 = '' ;
+    gb_update = '' ;
 elseif (is_min)
     if (is_integer)
         % min monoid for signed or unsigned integers
-        add2 = 'if (z > t) { z = t ; }' ;
+        gb_update = 'if (z > t) { z = t ; }' ;
     else
         % min monoid for float or double, with omitnan property
         if (t_is_nonnan)
-            add2 = 'if (!islessequal (z, t)) { z = t ; }' ;
+            gb_update = 'if (!islessequal (z, t)) { z = t ; }' ;
         else
-            add2 = 'if (!isnan (t) && !islessequal (z, t)) { z = t ; }' ;
+            gb_update = 'if (!isnan (t) && !islessequal (z, t)) { z = t ; }' ;
         end
     end
 elseif (is_max)
     if (is_integer)
         % max monoid for signed or unsigned integers
-        add2 = 'if (z < t) { z = t ; }' ;
+        gb_update = 'if (z < t) { z = t ; }' ;
     else
         % max monoid for float or double, with omitnan property
         if (t_is_nonnan)
-            add2 = 'if (!isgreaterequal (z, t)) { z = t ; }' ;
+            gb_update = 'if (!isgreaterequal (z, t)) { z = t ; }' ;
         else
-            add2 = 'if (!isnan (t) && !isgreaterequal (z, t)) { z = t ; }';
+            gb_update = 'if (!isnan (t) && !isgreaterequal (z, t)) { z = t ; }';
         end
     end
 else
-    % use the add function as given
-    add2 = strrep (add,  'w', 'z') ;
+    % use the update function as given but convert warg and targ
+    gb_update = strrep (update,    'warg', 'z') ;
+    gb_update = strrep (gb_update, 'targ', 't') ;
 end
-add2 = sprintf ('#define GB_UPDATE(z,t)          %s', add2) ;
-fprintf (f, 'm4_define(`GB_add_update'', `%s'')\n', add2) ;
+gb_update = sprintf ('#define GB_UPDATE(z,t)          %s', gb_update) ;
+fprintf (f, 'm4_define(`GB_add_update'', `%s'')\n', gb_update) ;
 
+% create the GB_ADD function for the monoid
 if (is_any_pair)
-    fprintf (f, 'm4_define(`GB_hx_write'', `;'')\n') ;
-    fprintf (f, 'm4_define(`GB_cij_gather'', `;'')\n') ;
-    fprintf (f, 'm4_define(`GB_cij_memcpy'', `;'')\n') ;
+    gb_add_op = '' ;
 else
-    fprintf (f, 'm4_define(`GB_hx_write'', `Hx [i] = t'')\n') ;
-    fprintf (f, 'm4_define(`GB_cij_gather'', `Cx [p] = Hx [i]'')\n') ;
-    fprintf (f, 'm4_define(`GB_cij_memcpy'', `memcpy (Cx +(p), Hx +(i), (len) * sizeof(%s));'')\n', ztype) ;
-        
+    gb_add_op = strrep (addfunc,   'zarg', 'z') ;
+    gb_add_op = strrep (gb_add_op, 'xarg', 'zin') ;
+    gb_add_op = strrep (gb_add_op, 'yarg', 't') ;
 end
+gb_add_op = sprintf ('#define GB_ADD(z,zin,t)         %s', gb_add_op) ;
+fprintf (f, 'm4_define(`GB_add_op'', `%s'')\n', gb_add_op) ;
 
-% create the add function, of the form w + t
-if (is_any_pair)
-    add2 = '' ;
-    % fprintf (f, 'm4_define(`GB_add_op'', `'')\n') ;
-else
-    add2 = strrep (addfunc,  'zarg', 'z') ;
-    add2 = strrep (add2,     'xarg', 'x') ;
-    add2 = strrep (add2,     'yarg', 'y') ;
-    % add2 = strrep (addfunc,  'zarg', '`$1''') ;
-    % add2 = strrep (add2,     'xarg', '`$2''') ;
-    % add2 = strrep (add2,     'yarg', '`$3''') ;
-end
-add2 = sprintf ('#define GB_ADD(z,x,y)           %s', add2) ;
-fprintf (f, 'm4_define(`GB_add_op'', `%s'')\n', add2) ;
-
-% create the multiply-add statement, of the form:
-%   z += x*y ;
+% create the fused multiply-add statement, of the form: z += x*y ;
 is_imin_or_imax = (is_min || is_max) && is_integer ;
 if (is_any_pair)
     multadd = '' ;
@@ -707,19 +694,18 @@ elseif (~is_imin_or_imax && ...
     % bool is OK since promotion of the result (0 or 1) to int is safe.
     % first and second are OK since no promotion occurs.
     % positional operators are OK too.
-    multadd = strrep (add, 't',  mult) ;
-    multadd = strrep (multadd, 'w', 'z') ;
-    multadd = strrep (multadd, 'xarg', 'x') ;
-    multadd = strrep (multadd, 'yarg', 'y') ;
+    multadd = strrep (update, 'targ',  mult) ;
+    multadd = strrep (multadd, 'warg', 'z') ;
+    multadd = strrep (multadd, 'xarg', 'a') ;
+    multadd = strrep (multadd, 'yarg', 'b') ;
     % fprintf (f, 'm4_define(`GB_multiply_add'', `%s'')\n', multadd) ;
 else
     % use explicit typecasting to avoid ANSI C integer promotion.
-    add2 = strrep (add,  'w', 'z') ;
-    add2 = strrep (add2, 't', 'x_op_y') ;
-    multadd = sprintf ('{ %s x_op_y = %s ; %s ; }', ztype, mult2, add2) ;
-    % fprintf (f, 'm4_define(`GB_multiply_add'', `{ %s x_op_y = %s ; %s ; }'')\n', ztype, mult2, add2) ;
+    update2 = strrep (update,  'warg', 'z') ;
+    update2 = strrep (update2, 'targ', 'x_op_y') ;
+    multadd = sprintf ('{ %s x_op_y = %s ; %s ; }', ztype, mult2, update2) ;
 end
-multadd = sprintf ('#define GB_MULTADD(z,x,y,i,k,j) %s', multadd) ;
+multadd = sprintf ('#define GB_MULTADD(z,a,b,i,k,j) %s', multadd) ;
 fprintf (f, 'm4_define(`GB_multiply_add'', `%s'')\n', multadd) ;
 
 % determine the identity byte

@@ -57,18 +57,11 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     GB_macrofy_typedefs (fp, NULL, atype, NULL, NULL, NULL, monoid->op->ztype) ;
 
     //--------------------------------------------------------------------------
-    // construct the macros for the type names
-    //--------------------------------------------------------------------------
-
-    fprintf (fp, "// monoid type:\n") ;
-
-    GB_macrofy_type (fp, "Z", monoid->op->ztype->name) ;
-
-    //--------------------------------------------------------------------------
     // construct the monoid macros
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// reduction monoid:\n") ;
+    GB_macrofy_type (fp, "Z", "_", monoid->op->ztype->name) ;
     GB_macrofy_monoid (fp, red_ecode, id_ecode, term_ecode, monoid, NULL) ;
 
     fprintf (fp, "#define GB_GETA_AND_UPDATE(z,Ax,p) \\\n") ;
