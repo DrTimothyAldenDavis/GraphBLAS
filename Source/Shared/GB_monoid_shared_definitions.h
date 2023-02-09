@@ -11,6 +11,9 @@
 // if the special cases have not been #define'd prior to #include'ing this
 // file.
 
+#ifndef GB_MONOID_SHARED_DEFINITIONS_H
+#define GB_MONOID_SHARED_DEFINITIONS_H
+
 //------------------------------------------------------------------------------
 // special monoids
 //------------------------------------------------------------------------------
@@ -113,5 +116,6 @@
     #define GB_ZTYPE_IGNORE_OVERFLOW 0
     #endif
 
+#endif
 #endif
 

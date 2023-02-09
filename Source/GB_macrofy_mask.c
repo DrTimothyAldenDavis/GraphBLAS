@@ -55,17 +55,22 @@ void GB_macrofy_mask
         case 2 :
             // mask not complemented, type: structural
             fprintf (fp,
-                "#define GB_M_TYPE GB_void  /* not used */\n"
+                "#define GB_M_TYPE void  /* not used */\n"
                 "#define MX(p) 1\n"
                 "#define GB_MASK_STRUCT 1\n"
                 "#define GB_MASK_COMP 0\n"
                 "#define GB_NO_MASK 0\n") ;
+            if (msparsity == 2)
+            {
+                // Mask is present, sparse, not complemented, and structural
+                fprintf (fp, "#define MASK_SPARSE_AND_STRUCTURAL\n") ;
+            }
             break ;
 
         case 3 :
             // mask complemented, type: structural
             fprintf (fp,
-                "#define GB_M_TYPE GB_void  /* not used */\n"
+                "#define GB_M_TYPE void  /* not used */\n"
                 "#define MX(p) 1\n"
                 "#define GB_MASK_STRUCT 1\n"
                 "#define GB_MASK_COMP 1\n"

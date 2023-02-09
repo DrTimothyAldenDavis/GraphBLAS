@@ -65,6 +65,7 @@
 #include "GB_AxB_saxpy_generic.h"
 
 #define GB_GENERIC
+#include "GB_AxB_shared_definitions.h"
 
 GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
 (
@@ -145,19 +146,10 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     // user-defined monoid update cannot be done with an OpenMP atomic
     #define GB_HAS_OMP_ATOMIC 0
 
-    // FIXME: can remove these
-    // no special cases (C is not iso)
-    #define GB_IS_ANY_MONOID 0
-    #define GB_IS_ANY_FC32_MONOID 0
-    #define GB_IS_ANY_FC64_MONOID 0
-    #define GB_IS_PLUS_FC32_MONOID 0
-    #define GB_IS_PLUS_FC64_MONOID 0
-    #define GB_IS_ANY_PAIR_SEMIRING 0
-    #define GB_IS_PAIR_MULTIPLIER 0
-
     // FIXME: add GB_A2TYPE, GB_B2TYPE, GB_Z_TYPE, GB_C_TYPE
     #define GB_A_TYPE GB_void
     #define GB_B_TYPE GB_void
+
     // FIXME: rename to GB_B_SIZE.  This is before typecast to GB_B2TYPE
     #define GB_BSIZE bsize
 
@@ -190,44 +182,51 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
 
         // aik = A(i,k), located in Ax [A_iso ? 0:pA], value not used
         #define GB_A_IS_PATTERN 1
-        #define GB_DECLAREA(aik) ;
-        #define GB_GETA(aik,Ax,pA,A_iso) ;
+        #define GB_DECLAREA(aik)
+        #define GB_GETA(aik,Ax,pA,A_iso)
 
         // bkj = B(k,j), located in Bx [B_iso ? 0:pB], value not used
         #define GB_B_IS_PATTERN 1
-        #define GB_DECLAREB(bkj) ;
-        #define GB_GETB(bkj,Bx,pB,B_iso) ;
+        #define GB_DECLAREB(bkj)
+        #define GB_GETB(bkj,Bx,pB,B_iso)
 
         // define t for each task
+        #undef  GB_CIJ_DECLARE
         #define GB_CIJ_DECLARE(t) GB_C_TYPE t
 
         // address of Cx [p]
         #define GB_CX(p) (&Cx [p])
 
         // Cx [p] = t
+        #undef  GB_CIJ_WRITE
         #define GB_CIJ_WRITE(p,t) Cx [p] = t
 
         // address of Hx [i]
         #define GB_HX(i) (&Hx [i])
 
         // Hx [i] = t
+        #undef  GB_HX_WRITE
         #define GB_HX_WRITE(i,t) Hx [i] = t
 
         // Cx [p] = Hx [i]
+        #undef  GB_CIJ_GATHER
         #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
 
         // Cx [p:p+len=-1] = Hx [i:i+len-1]
         // via memcpy (&(Cx [p]), &(Hx [i]), len*csize)
-        #define GB_CIJ_MEMCPY(p,i,len) \
-            memcpy (GB_CX (p), GB_HX (i), (len)*csize)
+        #undef  GB_CIJ_MEMCPY
+        #define GB_CIJ_MEMCPY(p,i,len) memcpy (GB_CX (p), GB_HX (i), (len)*csize)
 
         // Cx [p] += Hx [i]
+        #undef  GB_CIJ_GATHER_UPDATE
         #define GB_CIJ_GATHER_UPDATE(p,i) fadd (GB_CX (p), GB_CX (p), GB_HX (i))
 
         // Cx [p] += t
+        #undef  GB_CIJ_UPDATE
         #define GB_CIJ_UPDATE(p,t) fadd (GB_CX (p), GB_CX (p), &t)
 
         // Hx [i] += t
+        #undef  GB_HX_UPDATE
         #define GB_HX_UPDATE(i,t) fadd (GB_HX (i), GB_HX (i), &t)
 
         // the original multiplier op may have been flipped, but the offset
@@ -372,8 +371,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
         // Cx [p:p+len=-1] = Hx [i:i+len-1]
         // via memcpy (&(Cx [p]), &(Hx [i]), len*csize)
         #undef  GB_CIJ_MEMCPY
-        #define GB_CIJ_MEMCPY(p,i,len) \
-            memcpy (GB_CX (p), GB_HX (i), (len)*csize)
+        #define GB_CIJ_MEMCPY(p,i,len) memcpy (GB_CX (p), GB_HX (i), (len)*csize)
 
         // Cx [p] += Hx [i]
         #undef  GB_CIJ_GATHER_UPDATE

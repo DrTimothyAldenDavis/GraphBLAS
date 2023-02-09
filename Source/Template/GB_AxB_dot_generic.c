@@ -12,6 +12,7 @@
 // GB_DOT2_GENERIC or GB_DOT3_GENERIC.
 
 #define GB_GENERIC
+#include "GB_AxB_shared_definitions.h"
 
 {
 
@@ -66,18 +67,14 @@
 
     #define GB_A_TYPE GB_void
     #define GB_B_TYPE GB_void
+    #define GB_A2TYPE GB_void
+    #define GB_B2TYPE GB_void
+
     #define GB_PHASE_2_OF_2
 
     // no vectorization
     #define GB_PRAGMA_SIMD_VECTORIZE ;
     #define GB_PRAGMA_SIMD_DOT(cij) ;
-
-    // no special semirings or operators
-    #define GB_IS_PAIR_MULTIPLIER 0
-    #define GB_IS_ANY_PAIR_SEMIRING 0
-    #define GB_IS_IMIN_MONOID 0
-    #define GB_IS_IMAX_MONOID 0
-    #define GB_IS_FIRSTJ_MULTIPLIER 0
 
     if (op_is_positional)
     { 
@@ -90,26 +87,34 @@
 
         // aki = A(i,k), located in Ax [A_iso?0:(pA)], but value not used
         #define GB_A_IS_PATTERN 1
-        #define GB_DECLAREA(aki) ;
-        #define GB_GETA(aki,Ax,pA,A_iso) ;
+        #define GB_DECLAREA(aki)
+        #define GB_GETA(aki,Ax,pA,A_iso)
 
         // bkj = B(k,j), located in Bx [B_iso?0:pB], but value not used
         #define GB_B_IS_PATTERN 1
-        #define GB_DECLAREB(bkj) ;
-        #define GB_GETB(bkj,Bx,pB,B_iso) ;
+        #define GB_DECLAREB(bkj)
+        #define GB_GETB(bkj,Bx,pB,B_iso)
 
         // define cij for each task
+        #undef  GB_CIJ_DECLARE
         #define GB_CIJ_DECLARE(cij) GB_C_TYPE cij
 
         // Cx [p] = cij
         #define GB_PUTC(cij,p) Cx [p] = cij
 
-        // break if cij reaches the terminal value
-        #define GB_IF_TERMINAL_BREAK(cij, zterminal)                    \
-            if (is_terminal && cij == zterminal)                        \
+        // break if cij reaches the terminal value.  The terminal condition
+        // 'is_terminal' is checked even if the monoid is not terminal.
+        #undef  GB_MONOID_IS_TERMINAL
+        #define GB_MONOID_IS_TERMINAL 1
+        #undef  GB_IF_TERMINAL_BREAK
+        #define GB_IF_TERMINAL_BREAK(z,zterminal)                       \
+            if (is_terminal && z == zterminal)                          \
             {                                                           \
                 break ;                                                 \
             }
+        #undef  GB_TERMINAL_CONDITION
+        #define GB_TERMINAL_CONDITION(z,zterminal)                      \
+            (is_terminal && z == zterminal)
 
         // C(i,j) += (A')(i,k) * B(k,j)
         #define GB_MULTADD(cij, aki, bkj, i, k, j)                      \
@@ -250,11 +255,14 @@
         // break if cij reaches the terminal value
         GB_void *restrict zterminal = (GB_void *) add->terminal ;
         #undef  GB_IF_TERMINAL_BREAK
-        #define GB_IF_TERMINAL_BREAK(cij, zterminal)                    \
-            if (is_terminal && memcmp (cij, zterminal, csize) == 0)     \
+        #define GB_IF_TERMINAL_BREAK(z,zterminal)                       \
+            if (is_terminal && memcmp (z, zterminal, csize) == 0)       \
             {                                                           \
                 break ;                                                 \
             }
+        #undef  GB_TERMINAL_CONDITION
+        #define GB_TERMINAL_CONDITION(z,zterminal)                      \
+            (is_terminal && memcmp (z, zterminal, csize) == 0)
 
         // C(i,j) += (A')(i,k) * B(k,j)
         #undef  GB_MULTADD

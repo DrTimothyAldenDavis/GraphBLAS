@@ -17,11 +17,9 @@
 // been expanded to non-iso, and initialized if A and/or B are hypersparse.
 // A and/or B can be iso.
 
-// MIN_FIRSTJ or MIN_FIRSTJ1 semirings:
-#define GB_IS_MIN_FIRSTJ_SEMIRING (GB_IS_IMIN_MONOID && GB_IS_FIRSTJ_MULTIPLIER)
-// MAX_FIRSTJ or MAX_FIRSTJ1 semirings:
-#define GB_IS_MAX_FIRSTJ_SEMIRING (GB_IS_IMAX_MONOID && GB_IS_FIRSTJ_MULTIPLIER)
-// GB_OFFSET is 1 for the MIN/MAX_FIRSTJ1 semirings, and 0 otherwise.
+#ifndef GB_AXB_SHARED_DEFINITIONS_H
+#error "undefined"
+#endif
 
 #if GB_IS_ANY_MONOID
 #error "dot4 is not used for the ANY monoid"

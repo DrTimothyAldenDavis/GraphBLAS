@@ -129,6 +129,10 @@
 
                 int64_t pC = pC_start + i ;     // C is bitmap
 
+// FIXME: add GB_ANY_SPECIALIZED to the JIT
+// FIXME: add GB_MASK_IS_PRESENT to the JIT
+// FIXME: handle GB_A_NOT_TRANSPOSED in the JIT (treat as different kernel)
+
                 #if defined ( GB_ANY_SPECIALIZED )
                 // M is bitmap and structural; Mask_comp true
                 Cb [pC] = 0 ;

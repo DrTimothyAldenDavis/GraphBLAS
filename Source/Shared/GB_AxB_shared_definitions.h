@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_shared_defintions.h: common macros for A*B kernels
+// GB_AxB_shared_definitions.h: common macros for A*B kernels
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -10,6 +10,9 @@
 // GB_AxB_shared_defintions.h provides default definitions for all semirings,
 // if the special cases have not been #define'd prior to #include'ing this
 // file.
+
+#ifndef GB_AXB_SHARED_DEFINITIONS_H
+#define GB_AXB_SHARED_DEFINITIONS_H
 
 //------------------------------------------------------------------------------
 // special semirings
@@ -213,3 +216,4 @@
 
 #include "GB_monoid_shared_definitions.h"
 
+#endif

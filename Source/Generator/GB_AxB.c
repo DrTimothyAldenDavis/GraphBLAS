@@ -2,7 +2,7 @@
 // GB_AxB.c: matrix multiply for a single semiring
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -47,21 +47,29 @@ GB_add_op
 GB_add_update
 // identity: GB_identity
 
-// C, A, B matrix types; A and B cast to A2 and B2 as inputs to multiply op
+// A matrix, typecast to A2 for multiplier input
+#define GB_A_ISO A_iso
+GB_a_is_pattern
 GB_atype
 GB_a2type
+GB_declarea
+GB_geta
+
+// B matrix, typecast to B2 for multiplier input
+#define GB_B_ISO B_iso
+GB_b_is_pattern
 GB_btype
 GB_b2type
-GB_ctype
-// monoid type, and type of output of multiply op
-GB_ztype
+GB_declareb
+GB_getb
 
-// iso and pattern cases:
-#define GB_A_ISO A_iso
-#define GB_B_ISO B_iso
+// C matrix
 GB_c_iso
-GB_a_is_pattern
-GB_b_is_pattern
+GB_ctype
+GB_putc
+
+// monoid type, and type of output of multiplier
+GB_ztype
 
 // special case semirings:
 GB_is_any_pair_semiring
@@ -105,31 +113,6 @@ GB_monoid_is_terminal
 GB_terminal_condition
 GB_if_terminal_break
 GB_declare_monoid_terminal
-
-// declare aik as a2type
-#define GB_DECLAREA(aik) \
-    GB_declarea(aik)
-
-// aik = Ax [pA]
-#define GB_GETA(aik,Ax,pA,A_iso) \
-    GB_geta(aik,Ax,pA,A_iso)
-
-// declare bkj as b2type
-#define GB_DECLAREB(bkj) \
-    GB_declareb(bkj)
-
-// bkj = Bx [pB]
-#define GB_GETB(bkj,Bx,pB,B_iso) \
-    GB_getb(bkj,Bx,pB,B_iso)
-
-// Cx [pC] = cij
-#define GB_PUTC(cij,p) \
-    GB_putc
-
-// FIXME: GB_IDENTITY only appears in a few templates; replace it
-// monoid identity value
-#define GB_IDENTITY \
-    GB_identity
 
 // FIXME: GB_PRAGMA_SIMD_DOT not in macrofy, do I need it?
 // simd pragma for dot-product loop vectorization

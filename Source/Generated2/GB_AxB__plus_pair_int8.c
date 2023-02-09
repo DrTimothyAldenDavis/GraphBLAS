@@ -2,7 +2,7 @@
 // GB_AxB__plus_pair_int8.c: matrix multiply for a single semiring
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -47,21 +47,29 @@
 #define GB_UPDATE(z,t)          z += t
 // identity: 0
 
-// C, A, B matrix types; A and B cast to A2 and B2 as inputs to multiply op
-#define GB_A_TYPE int8_t
-#define GB_A2TYPE int8_t
-#define GB_B_TYPE int8_t
-#define GB_B2TYPE int8_t
-#define GB_C_TYPE int8_t
-// monoid type, and type of output of multiply op
-#define GB_Z_TYPE int8_t
-
-// iso and pattern cases:
+// A matrix, typecast to A2 for multiplier input
 #define GB_A_ISO A_iso
-#define GB_B_ISO B_iso
-#define GB_C_ISO 0
 #define GB_A_IS_PATTERN 1
+#define GB_A_TYPE void
+#define GB_A2TYPE void
+#define GB_DECLAREA(aik)
+#define GB_GETA(aik,Ax,pA,A_iso)
+
+// B matrix, typecast to B2 for multiplier input
+#define GB_B_ISO B_iso
 #define GB_B_IS_PATTERN 1
+#define GB_B_TYPE void
+#define GB_B2TYPE void
+#define GB_DECLAREB(bkj)
+#define GB_GETB(bkj,Bx,pB,B_iso)
+
+// C matrix
+#define GB_C_ISO 0
+#define GB_C_TYPE int8_t
+#define GB_PUTC(cij,p) Cx [p] = cij
+
+// monoid type, and type of output of multiplier
+#define GB_Z_TYPE int8_t
 
 // special case semirings:
 
@@ -80,31 +88,6 @@
 #define GB_IDENTITY_BYTE 0
 
 // monoid terminal condition, if any:
-
-// declare aik as a2type
-#define GB_DECLAREA(aik) \
-    ;
-
-// aik = Ax [pA]
-#define GB_GETA(aik,Ax,pA,A_iso) \
-    ;
-
-// declare bkj as b2type
-#define GB_DECLAREB(bkj) \
-    ;
-
-// bkj = Bx [pB]
-#define GB_GETB(bkj,Bx,pB,B_iso) \
-    ;
-
-// Cx [pC] = cij
-#define GB_PUTC(cij,p) \
-    Cx [p] = cij
-
-// FIXME: GB_IDENTITY only appears in a few templates; replace it
-// monoid identity value
-#define GB_IDENTITY \
-    0
 
 // FIXME: GB_PRAGMA_SIMD_DOT not in macrofy, do I need it?
 // simd pragma for dot-product loop vectorization

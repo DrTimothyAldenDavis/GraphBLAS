@@ -10,7 +10,6 @@
 #define GB_DOT2
 
 #include "GB_unused.h"
-#include "GB_AxB_shared_definitions.h"
 #include "GB_AxB_dot_cij.h"
 
 {

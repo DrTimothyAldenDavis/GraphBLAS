@@ -30,18 +30,16 @@
 // found, so these optimizations can be used only if A(:,i) and/or B(:,j) are
 // entirely populated.
 
+#ifndef GB_AXB_SHARED_DEFINITIONS_H
+#error "undefined"
+#endif
+
 #undef GB_A_INDEX
 #ifdef GB_A_NOT_TRANSPOSED
 #define GB_A_INDEX(k) (pA+(k)*vlen)
 #else
 #define GB_A_INDEX(k) (pA+(k))
 #endif
-
-// MIN_FIRSTJ or MIN_FIRSTJ1 semirings:
-#define GB_IS_MIN_FIRSTJ_SEMIRING (GB_IS_IMIN_MONOID && GB_IS_FIRSTJ_MULTIPLIER)
-// MAX_FIRSTJ or MAX_FIRSTJ1 semirings:
-#define GB_IS_MAX_FIRSTJ_SEMIRING (GB_IS_IMAX_MONOID && GB_IS_FIRSTJ_MULTIPLIER)
-// GB_OFFSET is 1 for the MIN/MAX_FIRSTJ1 semirings, and 0 otherwise.
 
 //------------------------------------------------------------------------------
 // C(i,j) = A(:,i)'*B(:,j): a single dot product

@@ -215,7 +215,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     // The work to compute C(i,j) is held in Cwork [p], if C(i,j) appears in
-    // as the pth entry in C.
+    // as the pth entry in C.  This phase is purely symbolic and does not
+    // depend on the data types or semiring.
 
     #define GB_DOT3
     #define GB_DOT3_PHASE1

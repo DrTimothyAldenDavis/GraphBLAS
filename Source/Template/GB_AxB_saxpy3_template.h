@@ -380,7 +380,7 @@ break ;
     // for built-in MIN/MAX monoids only, on built-in types
     #define GB_MINMAX(i,t,done)                                     \
     {                                                               \
-        GB_C_TYPE xold, xnew, *px = Hx + (i) ;                       \
+        GB_C_TYPE xold, xnew, *px = Hx + (i) ;                      \
         do                                                          \
         {                                                           \
             /* xold = Hx [i] via atomic read */                     \
@@ -468,7 +468,7 @@ break ;
         // complex).
         #define GB_ATOMIC_UPDATE_HX(i,t)                            \
         {                                                           \
-            GB_C_TYPE xold, xnew, *px = Hx + (i) ;                   \
+            GB_C_TYPE xold, xnew, *px = Hx + (i) ;                  \
             do                                                      \
             {                                                       \
                 /* xold = Hx [i] via atomic read */                 \

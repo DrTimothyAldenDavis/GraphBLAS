@@ -239,7 +239,7 @@
         for (int64_t i = 0 ; i < cvlen ; i++)                       \
         {                                                           \
             Ci [pC + i] = i ;                                       \
-            GB_CIJ_WRITE (pC + i, GB_IDENTITY) ; /* C(i,j)=0 FIXME2 */     \
+            GB_CIJ_WRITE (pC + i, zidentity) ;  /* C(i,j)=0 */      \
         }                                                           \
         for ( ; pB < pB_end ; pB++)     /* scan B(:,j) */           \
         {                                                           \

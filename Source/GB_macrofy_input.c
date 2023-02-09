@@ -18,7 +18,7 @@ void GB_macrofy_input
     // input:
     const char *aname,      // name of the scalar aij = ...
     const char *Amacro,     // name of the macro is GB_GET*(Amacro)
-    const char *Aname,      // name of the input matrix
+    const char *Aname,      // name of the input matrix (typically A or B)
     bool do_matrix_macros,  // if true, do the matrix macros
     GrB_Type a2type,        // type of aij after casting to x or y of f(x,y)
     GrB_Type atype,         // type of the input matrix
@@ -34,7 +34,8 @@ void GB_macrofy_input
     // construct the matrix status macros: pattern, iso, typename
     //--------------------------------------------------------------------------
 
-    int A_is_pattern = (acode == 0) ? 1 : 0 ;
+    int A_is_pattern = ((acode == 0) ? 1 : 0) ||
+        (atype == NULL) || (a2type == NULL) ;
     if (do_matrix_macros)
     {
         fprintf (fp, "\n// %s matrix:\n", Aname) ;
@@ -51,19 +52,12 @@ void GB_macrofy_input
         if (A_is_pattern)
         { 
             // values of A are not accessed
-            GB_macrofy_type (fp, Aname, "_", "GB_void") ;
+            GB_macrofy_type (fp, Aname, "_", "void") ;
+            GB_macrofy_type (fp, Aname, "2", "void") ;
         }
         else
         { 
             GB_macrofy_type (fp, Aname, "_", atype->name) ;
-        }
-        if (a2type == NULL)
-        {
-            // input to operator is not used
-            GB_macrofy_type (fp, Aname, "2", "GB_void") ;
-        }
-        else
-        {
             GB_macrofy_type (fp, Aname, "2", a2type->name) ;
         }
     }
@@ -102,19 +96,11 @@ void GB_macrofy_input
         //      float aij ;
         //      float w [32] ;
 
-        if (a2type == NULL)
-        {
-            // no values for this matrix; no need to typecast to a2type
-            fprintf (fp, "#define GB_DECLARE%s(%s)\n", Amacro, aname) ;
-        }
-        else
-        {
-            fprintf (fp, "#define GB_DECLARE%s(%s) %s %s\n",
-                Amacro, aname, a2type->name, aname) ;
-        }
+        fprintf (fp, "#define GB_DECLARE%s(%s) %s %s\n",
+            Amacro, aname, a2type->name, aname) ;
 
         //----------------------------------------------------------------------
-        // construct the GB_GETA or GB_GETB macro
+        // construct the GB_GETA macro
         //----------------------------------------------------------------------
 
         // #define GB_GETA(a,Ax,p,iso) a = (a2type) Ax [iso ? 0 : p]

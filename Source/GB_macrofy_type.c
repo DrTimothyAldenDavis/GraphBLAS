@@ -20,9 +20,9 @@ void GB_macrofy_type
 )
 {
 
-    if (strcmp (name, "GB_void") == 0)
+    if ((strcmp (name, "GB_void") == 0) || (strcmp (name, "void") == 0))
     {
-        fprintf (fp, "#define GB_%s%sTYPE GB_void /* unused */\n", what, what2);
+        fprintf (fp, "#define GB_%s%sTYPE void /* unused */\n", what, what2) ;
     }
     else
     {

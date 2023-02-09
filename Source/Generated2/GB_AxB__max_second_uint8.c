@@ -2,7 +2,7 @@
 // GB_AxB__max_second_uint8.c: matrix multiply for a single semiring
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -47,21 +47,29 @@
 #define GB_UPDATE(z,t)          if (z < t) { z = t ; }
 // identity: 0
 
-// C, A, B matrix types; A and B cast to A2 and B2 as inputs to multiply op
-#define GB_A_TYPE uint8_t
-#define GB_A2TYPE uint8_t
+// A matrix, typecast to A2 for multiplier input
+#define GB_A_ISO A_iso
+#define GB_A_IS_PATTERN 1
+#define GB_A_TYPE void
+#define GB_A2TYPE void
+#define GB_DECLAREA(aik)
+#define GB_GETA(aik,Ax,pA,A_iso)
+
+// B matrix, typecast to B2 for multiplier input
+#define GB_B_ISO B_iso
+#define GB_B_IS_PATTERN 0
 #define GB_B_TYPE uint8_t
 #define GB_B2TYPE uint8_t
-#define GB_C_TYPE uint8_t
-// monoid type, and type of output of multiply op
-#define GB_Z_TYPE uint8_t
+#define GB_DECLAREB(bkj) uint8_t bkj
+#define GB_GETB(bkj,Bx,pB,B_iso) bkj = Bx [(B_iso) ? 0 : (pB)]
 
-// iso and pattern cases:
-#define GB_A_ISO A_iso
-#define GB_B_ISO B_iso
+// C matrix
 #define GB_C_ISO 0
-#define GB_A_IS_PATTERN 1
-#define GB_B_IS_PATTERN 0
+#define GB_C_TYPE uint8_t
+#define GB_PUTC(cij,p) Cx [p] = cij
+
+// monoid type, and type of output of multiplier
+#define GB_Z_TYPE uint8_t
 
 // special case semirings:
 
@@ -77,36 +85,10 @@
 #define GB_IDENTITY_BYTE 0
 
 // monoid terminal condition, if any:
-
 #define GB_MONOID_IS_TERMINAL 1
 #define GB_TERMINAL_CONDITION(z,zterminal) (z == UINT8_MAX)
 #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == UINT8_MAX) { break ; }
 #define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal) modifier uint8_t zterminal = UINT8_MAX
-
-// declare aik as a2type
-#define GB_DECLAREA(aik) \
-    ;
-
-// aik = Ax [pA]
-#define GB_GETA(aik,Ax,pA,A_iso) \
-    ;
-
-// declare bkj as b2type
-#define GB_DECLAREB(bkj) \
-    uint8_t bkj
-
-// bkj = Bx [pB]
-#define GB_GETB(bkj,Bx,pB,B_iso) \
-    bkj = GBX (Bx, pB, B_iso)
-
-// Cx [pC] = cij
-#define GB_PUTC(cij,p) \
-    Cx [p] = cij
-
-// FIXME: GB_IDENTITY only appears in a few templates; replace it
-// monoid identity value
-#define GB_IDENTITY \
-    0
 
 // FIXME: GB_PRAGMA_SIMD_DOT not in macrofy, do I need it?
 // simd pragma for dot-product loop vectorization

@@ -164,34 +164,12 @@ fprintf (f, 'm4_define(`GB_AxB'', `GB_AxB__%s'')\n', name) ;
 % types: no typecasting, xtype and ytype are the same, and match the A and B
 % types.  For the JIT, these types can differ.
 if (is_any_pair)
-    fprintf (f, 'm4_define(`GB_atype'',  `#define GB_A_TYPE GB_void'')\n') ;
-    fprintf (f, 'm4_define(`GB_a2type'', `#define GB_A2TYPE GB_void'')\n') ;
-    fprintf (f, 'm4_define(`GB_btype'',  `#define GB_B_TYPE GB_void'')\n') ;
-    fprintf (f, 'm4_define(`GB_b2type'', `#define GB_B2TYPE GB_void'')\n') ;
-    fprintf (f, 'm4_define(`GB_xtype'',  `#define GB_X_TYPE GB_void'')\n') ;
-    fprintf (f, 'm4_define(`GB_ytype'',  `#define GB_Y_TYPE GB_void'')\n') ;
-    fprintf (f, 'm4_define(`GB_ztype'',  `#define GB_Z_TYPE GB_void'')\n') ;
-    fprintf (f, 'm4_define(`GB_ctype'',  `#define GB_C_TYPE GB_void'')\n') ;
-else
-    fprintf (f, 'm4_define(`GB_atype'',  `#define GB_A_TYPE %s'')\n', xytype) ;
-    fprintf (f, 'm4_define(`GB_a2type'', `#define GB_A2TYPE %s'')\n', xytype) ;
-    fprintf (f, 'm4_define(`GB_btype'',  `#define GB_B_TYPE %s'')\n', xytype) ;
-    fprintf (f, 'm4_define(`GB_b2type'', `#define GB_B2TYPE %s'')\n', xytype) ;
-    fprintf (f, 'm4_define(`GB_xtype'',  `#define GB_X_TYPE %s'')\n', xytype) ;
-    fprintf (f, 'm4_define(`GB_ytype'',  `#define GB_Y_TYPE %s'')\n', xytype) ;
-    fprintf (f, 'm4_define(`GB_ztype'',  `#define GB_Z_TYPE %s'')\n', ztype) ;
-    fprintf (f, 'm4_define(`GB_ctype'',  `#define GB_C_TYPE %s'')\n', ztype) ;
-end
-
-if (is_any_pair)
-    fprintf (f, 'm4_define(`GB_csize'', `0'')\n', ztype) ;
-    fprintf (f, 'm4_define(`GB_asize'', `0'')\n', xytype) ;
-    fprintf (f, 'm4_define(`GB_bsize'', `0'')\n', xytype) ;
+    fprintf (f, 'm4_define(`GB_ztype'', `#define GB_Z_TYPE void'')\n') ;
+    fprintf (f, 'm4_define(`GB_ctype'', `#define GB_C_TYPE void'')\n') ;
     fprintf (f, 'm4_define(`GB_c_iso'', `#define GB_C_ISO 1'')\n') ;
 else
-    fprintf (f, 'm4_define(`GB_csize'', `sizeof (%s)'')\n', ztype) ;
-    fprintf (f, 'm4_define(`GB_asize'', `sizeof (%s)'')\n', xytype) ;
-    fprintf (f, 'm4_define(`GB_bsize'', `sizeof (%s)'')\n', xytype) ;
+    fprintf (f, 'm4_define(`GB_ztype'', `#define GB_Z_TYPE %s'')\n', ztype) ;
+    fprintf (f, 'm4_define(`GB_ctype'', `#define GB_C_TYPE %s'')\n', ztype) ;
     fprintf (f, 'm4_define(`GB_c_iso'', `#define GB_C_ISO 0'')\n') ;
 end
 
@@ -583,38 +561,46 @@ fprintf (f, 'm4_define(`GB_has_omp_atomic'', `%d'')\n', omp_atomic) ;
 fprintf (f, 'm4_define(`GB_microsoft_has_omp_atomic'', `%d'')\n', omp_microsoft_atomic) ;
 
 % to get an entry from A
-if (is_any_pair)
+if (is_second || is_pair || is_positional)
+    % value of A is ignored for the SECOND, PAIR, and positional operators
+    fprintf (f, 'm4_define(`GB_atype'',  `#define GB_A_TYPE void'')\n') ;
+    fprintf (f, 'm4_define(`GB_a2type'', `#define GB_A2TYPE void'')\n') ;
     fprintf (f, 'm4_define(`GB_a_is_pattern'', `#define GB_A_IS_PATTERN 1'')\n') ;
-    fprintf (f, 'm4_define(`GB_declarea'', `;'')\n') ;
-    fprintf (f, 'm4_define(`GB_geta'', `;'')\n') ;
-elseif (is_second || is_pair || is_positional)
-    % value of A is ignored for the SECOND and PAIR operators
-    fprintf (f, 'm4_define(`GB_a_is_pattern'', `#define GB_A_IS_PATTERN 1'')\n') ;
-    fprintf (f, 'm4_define(`GB_declarea'', `;'')\n') ;
-    fprintf (f, 'm4_define(`GB_geta'', `;'')\n') ;
+    gb_geta = '' ;
+    gb_declarea = '' ;
 else
+    fprintf (f, 'm4_define(`GB_atype'',  `#define GB_A_TYPE %s'')\n', xytype) ;
+    fprintf (f, 'm4_define(`GB_a2type'', `#define GB_A2TYPE %s'')\n', xytype) ;
     fprintf (f, 'm4_define(`GB_a_is_pattern'', `#define GB_A_IS_PATTERN 0'')\n') ;
-    fprintf (f, 'm4_define(`GB_declarea'', `%s $1'')\n', xytype) ;
-    fprintf (f, 'm4_define(`GB_geta'', `$1 = GBX ($2, $3, $4)'')\n') ;
+    gb_geta = ' aik = Ax [(A_iso) ? 0 : (pA)]' ;
+    gb_declarea = sprintf (' %s aik', xytype) ;
 end
+fprintf (f, 'm4_define(`GB_geta'', `#define GB_GETA(aik,Ax,pA,A_iso)%s'')\n', gb_geta) ;
+fprintf (f, 'm4_define(`GB_declarea'', `#define GB_DECLAREA(aik)%s'')\n', gb_declarea) ;
 
 % to get an entry from B
 if (is_first || is_pair || is_positional)
-    % value of B is ignored for the FIRST and PAIR operators
+    % value of B is ignored for the FIRST, PAIR, and positional operators
+    fprintf (f, 'm4_define(`GB_btype'',  `#define GB_B_TYPE void'')\n') ;
+    fprintf (f, 'm4_define(`GB_b2type'', `#define GB_B2TYPE void'')\n') ;
     fprintf (f, 'm4_define(`GB_b_is_pattern'', `#define GB_B_IS_PATTERN 1'')\n') ;
-    fprintf (f, 'm4_define(`GB_declareb'', `;'')\n') ;
-    fprintf (f, 'm4_define(`GB_getb'', `;'')\n') ;
+    gb_getb = '' ;
+    gb_declareb = '' ;
 else
+    fprintf (f, 'm4_define(`GB_btype'',  `#define GB_B_TYPE %s'')\n', xytype) ;
+    fprintf (f, 'm4_define(`GB_b2type'', `#define GB_B2TYPE %s'')\n', xytype) ;
     fprintf (f, 'm4_define(`GB_b_is_pattern'', `#define GB_B_IS_PATTERN 0'')\n') ;
-    fprintf (f, 'm4_define(`GB_declareb'', `%s $1'')\n', xytype) ;
-    fprintf (f, 'm4_define(`GB_getb'', `$1 = GBX ($2, $3, $4)'')\n') ;
+    gb_getb = ' bkj = Bx [(B_iso) ? 0 : (pB)]' ;
+    gb_declareb = sprintf (' %s bkj', xytype) ;
 end
+fprintf (f, 'm4_define(`GB_getb'', `#define GB_GETB(bkj,Bx,pB,B_iso)%s'')\n', gb_getb) ;
+fprintf (f, 'm4_define(`GB_declareb'', `#define GB_DECLAREB(bkj)%s'')\n', gb_declareb) ;
 
 % access the values of C
 if (is_any_pair)
-    fprintf (f, 'm4_define(`GB_putc'', `'')\n') ;
+    fprintf (f, 'm4_define(`GB_putc'', `#define GB_PUTC(cij,p)'')\n') ;
 else
-    fprintf (f, 'm4_define(`GB_putc'', `Cx [p] = cij'')\n') ;
+    fprintf (f, 'm4_define(`GB_putc'', `#define GB_PUTC(cij,p) Cx [p] = cij'')\n') ;
 end
 
 % type-specific idiv

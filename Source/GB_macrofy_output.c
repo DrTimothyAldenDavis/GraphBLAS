@@ -46,7 +46,7 @@ void GB_macrofy_output
         // no need to access the values of C
         //----------------------------------------------------------------------
 
-        GB_macrofy_type (fp, Cname, "_", "GB_void") ;
+        GB_macrofy_type (fp, Cname, "_", "void") ;
         fprintf (fp, "#define GB_PUT%s(%s,%sx,p)\n", Cmacro, cname, Cname) ;
 
     }

@@ -11,7 +11,6 @@
 #define GB_DOT3_PHASE2
 
 #include "GB_unused.h"
-#include "GB_AxB_shared_definitions.h"
 #include "GB_AxB_dot_cij.h"
 
 // GB_DOT_ALWAYS_SAVE_CIJ: C(i,j) = cij
@@ -50,7 +49,7 @@
     // get M, A, B, and C
     //--------------------------------------------------------------------------
 
-    // C and M have the same sparsity patter (both are sparse or hyper),
+    // C and M have the same sparsity pattern (both are sparse or hyper),
     // except entries of C may become zombies.  M is not complemented.
 
     int64_t nzombies = 0 ;
@@ -66,20 +65,38 @@
     const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
     const int64_t bnvec = B->nvec ;
+
+    #if GB_JIT_KERNEL
+    // B matrix properties fixed in the jit kernel
+    #define B_is_hyper  GB_B_IS_HYPER
+    #define B_is_bitmap GB_B_IS_BITMAP
+    #define B_is_sparse GB_B_IS_SPARSE
+    #define B_iso       GB_B_ISO
+    #else
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
     const bool B_iso = B->iso ;
+    #endif
 
     const int64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
     const int8_t  *restrict Ab = A->b ;
     const int64_t *restrict Ai = A->i ;
     const int64_t anvec = A->nvec ;
+
+    #if GB_JIT_KERNEL
+    // A matrix properties fixed in the jit kernel
+    #define A_is_hyper  GB_A_IS_HYPER
+    #define A_is_bitmap GB_A_IS_BITMAP
+    #define A_is_sparse GB_A_IS_SPARSE
+    #define A_iso       GB_A_ISO
+    #else
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_iso = A->iso ;
+    #endif
 
     const GrB_Matrix A_Y = A->Y ;
     const int64_t *restrict A_Yp = (A_is_hyper) ? A_Y->p : NULL ;
@@ -106,8 +123,6 @@
     const int64_t vlen = A->vlen ;
     ASSERT (A->vlen == B->vlen) ;
 
-    const bool M_is_sparse = GB_IS_SPARSE (M) ;
-    ASSERT (M_is_sparse || GB_IS_HYPERSPARSE (M)) ;
     const int64_t *restrict Mi = M->i ;
     const size_t mvlen = M->vlen ;
 
@@ -124,28 +139,44 @@
     // The other 12 cases of the mask, and the one no-mask case, are handled
     // by dot2.
 
-    if (M_is_sparse && Mask_struct && A_is_sparse && B_is_sparse)
-    { 
-        // special case: M is sparse and structural, and A and B are sparse
-        #define GB_MASK_SPARSE_AND_STRUCTURAL
-        #define GB_A_IS_SPARSE 1
-        #define GB_A_IS_HYPER  0
-        #define GB_A_IS_BITMAP 0
-        #define GB_A_IS_FULL   0
-        #define GB_B_IS_SPARSE 1
-        #define GB_B_IS_HYPER  0
-        #define GB_B_IS_BITMAP 0
-        #define GB_B_IS_FULL   0
+    #if GB_JIT_KERNEL
+    {
+        #define GB_META16
+        #if !GB_MASK_STRUCT
+        const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (M->x) ;
+        #endif
+        #include "GB_meta16_definitions.h"
         #include "GB_AxB_dot3_template.c"
-        #undef GB_MASK_SPARSE_AND_STRUCTURAL
     }
-    else
-    { 
-        // general case
-        const GB_void *restrict Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
-        const size_t msize = M->type->size ;
-        #include "GB_meta16_factory.c"
+    #else
+    {
+        const bool M_is_sparse = GB_IS_SPARSE (M) ;
+        ASSERT (M_is_sparse || GB_IS_HYPERSPARSE (M)) ;
+        if (M_is_sparse && Mask_struct && A_is_sparse && B_is_sparse)
+        { 
+            // special case: M is sparse and structural, and A and B are sparse
+            #define GB_MASK_SPARSE_AND_STRUCTURAL
+            #define GB_A_IS_SPARSE 1
+            #define GB_A_IS_HYPER  0
+            #define GB_A_IS_BITMAP 0
+            #define GB_A_IS_FULL   0
+            #define GB_B_IS_SPARSE 1
+            #define GB_B_IS_HYPER  0
+            #define GB_B_IS_BITMAP 0
+            #define GB_B_IS_FULL   0
+            #include "GB_AxB_dot3_template.c"
+            #undef GB_MASK_SPARSE_AND_STRUCTURAL
+        }
+        else
+        { 
+            // general case
+            const GB_void *restrict
+                Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
+            const size_t msize = M->type->size ;
+            #include "GB_meta16_factory.c"
+        }
     }
+    #endif
 
     C->nzombies = nzombies ;
 }

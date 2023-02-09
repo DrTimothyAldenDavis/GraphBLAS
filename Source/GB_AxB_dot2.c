@@ -15,6 +15,8 @@
 // bitmap or full, and the dot product method accesses A with a different
 // stride than when computing C=A'*B.
 
+// FIXME: treat A_not_transposed as invoking a different JIT kernel
+
 // TODO:  this is slower than it could be if A and B are both bitmap/full, when
 // A->vlen is large.  This is because the inner loop is a simple full/bitmap
 // dot product, across the entire input vectors.  No tiling is used, so cache
