@@ -19,43 +19,28 @@
 
 // Reduce to scalar:   GB (_red)
 
-// A type:   GB_atype
-// Z type:   GB_ztype
-
-// Update:   GB_update_op(z,y)
-// Add func: GB_add_op(z,x,y)
-
 #define GB_A_TYPE \
     GB_atype
 
 #define GB_Z_TYPE \
     GB_ztype
 
+// reduction operator and type:
+GB_update_op
+GB_add_op
+// s += (ztype) Ax [p], no typecast here however
+#define GB_GETA_AND_UPDATE(s,Ax,p) GB_UPDATE (s, Ax [p])
+
 // declare a scalar and set it equal to the monoid identity value
 GB_declare_identity
 GB_declare_const_identity
 
-// reduction operator:
+// A matrix (no typecasting to Z type here)
+GB_declarea
+GB_geta
 
-    // declare aij as ztype (= atype since no typecasting is done here)
-    #define GB_DECLAREA(aij)  \
-        GB_declarea(aij)
-
-    // aij = Ax [pA]
-    #define GB_GETA(aij,Ax,pA,A_iso)  \
-        GB_geta(aij,Ax,pA,false)
-
-    // z += y, update
-    #define GB_UPDATE(z,y) \
-        GB_update_op(z, y)
-
-    // z = x+y, additive function
-    #define GB_ADD(z,x,y) \
-        GB_add_op(z, x, y)
-
-    // s += (ztype) Ax [p], no typecast here however
-    #define GB_GETA_AND_UPDATE(s,Ax,p)              \
-        GB_UPDATE (s, Ax [p])
+// A type:   GB_atype
+// Z type:   GB_ztype
 
 // monoid terminal condition, if any:
 GB_is_any_monoid
@@ -64,10 +49,8 @@ GB_terminal_condition
 GB_if_terminal_break
 GB_declare_const_terminal
 
-// panel size for built-in operators
-
-    #define GB_PANEL                                \
-        GB_panel
+// panel size
+GB_panel
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
@@ -81,7 +64,7 @@ GB_declare_const_terminal
 
 GrB_Info GB (_red)
 (
-    GB_ztype *result,
+    GB_Z_TYPE *result,
     const GrB_Matrix A,
     GB_void *restrict W_space,
     bool *restrict F,
@@ -92,8 +75,8 @@ GrB_Info GB (_red)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_ztype z = (*result) ;
-    GB_ztype *restrict W = (GB_ztype *) W_space ;
+    GB_Z_TYPE z = (*result) ;
+    GB_Z_TYPE *restrict W = (GB_Z_TYPE *) W_space ;
     if (A->nzombies > 0 || GB_IS_BITMAP (A))
     {
         #include "GB_reduce_to_scalar_template.c"

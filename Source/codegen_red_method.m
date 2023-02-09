@@ -46,8 +46,8 @@ if (is_monoid)
 end
 
 % A is never iso, so GBX is not needed
-fprintf (f, 'm4_define(`GB_declarea'', `%s $1'')\n', atype) ;
-fprintf (f, 'm4_define(`GB_geta'', `$1 = $2 [$3]'')\n') ;
+fprintf (f, 'm4_define(`GB_declarea'', `#define GB_DECLAREA(aij) %s aij'')\n', atype) ;
+fprintf (f, 'm4_define(`GB_geta'', `#define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [pA]'')\n') ;
 
 tvalue = '' ;
 tbreak = '' ;
@@ -95,23 +95,24 @@ else
 end
 
 if (is_any)
-    fprintf (f, 'm4_define(`GB_panel'', `(no panel)'')\n') ;
+    % no panel for the ANY monoid
+    fprintf (f, 'm4_define(`GB_panel'', `'')\n') ;
 else
-    fprintf (f, 'm4_define(`GB_panel'', `%d'')\n', panel) ;
+    fprintf (f, 'm4_define(`GB_panel'', `#define GB_PANEL %d'')\n', panel) ;
 end
 
 % create the update operator
 update_op = op {1} ;
-update_op = strrep (update_op, 'zarg', '`$1''') ;
-update_op = strrep (update_op, 'yarg', '`$2''') ;
-fprintf (f, 'm4_define(`GB_update_op'', `%s'')\n', update_op) ;
+update_op = strrep (update_op, 'zarg', '`z''') ;
+update_op = strrep (update_op, 'yarg', '`a''') ;
+fprintf (f, 'm4_define(`GB_update_op'', `#define GB_UPDATE(z,a) %s'')\n', update_op) ;
 
 % create the function operator
 add_op = op {2} ;
-add_op = strrep (add_op, 'zarg', '`$1''') ;
-add_op = strrep (add_op, 'xarg', '`$2''') ;
-add_op = strrep (add_op, 'yarg', '`$3''') ;
-fprintf (f, 'm4_define(`GB_add_op'', `%s'')\n', add_op) ;
+add_op = strrep (add_op, 'zarg', '`z''') ;
+add_op = strrep (add_op, 'xarg', '`zin''') ;
+add_op = strrep (add_op, 'yarg', '`a''') ;
+fprintf (f, 'm4_define(`GB_add_op'', `#define GB_ADD(z,zin,a) %s'')\n', add_op) ;
 
 % create the disable flag
 disable  = sprintf ('GxB_NO_%s', upper (opname)) ;
