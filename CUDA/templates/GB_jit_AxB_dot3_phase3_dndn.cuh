@@ -132,7 +132,7 @@ __global__ void AxB_dot3_phase3_dndn
         int64_t i = Mi[pair_id];
         int64_t kk = Ci[pair_id] >> 4;      // FIXME: can remove ">> 4"
         bool cij_exists = false ;
-        GB_DECLARE_MONOID_IDENTITY (,cij) ; // cij = identity
+        GB_DECLARE_IDENTITY (cij) ;         // GB_Z_TYPE cij = identity
 
         // skip if C(i,j) is a prezombie
         if (kk >= 0)
@@ -215,9 +215,9 @@ __global__ void AxB_dot3_phase3_dndn
             #endif
         }
 
-        //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
         // reduce per-thread sums to a single scalar
-        //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
 
         // Do vote here for control.
         thread_block_tile<32> tile = tiled_partition<32>( this_thread_block() );

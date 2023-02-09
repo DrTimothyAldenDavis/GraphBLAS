@@ -78,7 +78,8 @@
 // special case multipliers:
 
 // z = identity, and ztype overflow condition (if any):
-#define GB_DECLARE_MONOID_IDENTITY(modifier,z) modifier GxB_FC32_t z = GxB_CMPLXF(1,0)
+#define GB_DECLARE_IDENTITY(z) GxB_FC32_t z = GxB_CMPLXF(1,0)
+#define GB_DECLARE_IDENTITY_CONST(z) const GxB_FC32_t z = GxB_CMPLXF(1,0)
 
 #define GB_ZTYPE_IGNORE_OVERFLOW 1
 

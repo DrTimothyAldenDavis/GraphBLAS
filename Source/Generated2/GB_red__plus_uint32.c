@@ -24,7 +24,6 @@
 
 // Update:   z += y
 // Add func: z = x + y
-// Identity: 0
 
 #define GB_A_TYPE \
     uint32_t
@@ -33,9 +32,8 @@
     uint32_t
 
 // declare a scalar and set it equal to the monoid identity value
-
-    #define GB_DECLARE_MONOID_IDENTITY(modifier,z) \
-        modifier uint32_t z = 0
+#define GB_DECLARE_IDENTITY(z) uint32_t z = 0
+#define GB_DECLARE_IDENTITY_CONST(z) const uint32_t z = 0
 
 // reduction operator:
 

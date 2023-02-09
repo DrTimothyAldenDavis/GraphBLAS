@@ -241,6 +241,35 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
 
             #define GB_GENERIC
 
+            GxB_binary_function freduce = monoid->op->binop_function ;
+
+            // ztype z = identity
+            #define GB_DECLARE_IDENTITY(z)                          \
+                GB_void z [GB_VLA(zsize)] ;                         \
+                memcpy (z, monoid->identity, zsize) ;
+
+            // const zidentity = identity
+            #define GB_DECLARE_IDENTITY_CONST(z)                    \
+                const GB_void *z = monoid->identity ;
+
+            // const zterminal = terminal_value
+            #define GB_DECLARE_TERMINAL_CONST(zterminal)            \
+                const GB_void *zterminal = monoid->terminal ;
+
+            #define GB_A_TYPE GB_void
+
+            // no panel used
+            #define GB_PANEL 1
+            #define GB_NO_PANEL_CASE
+
+            // W [k] = t, no typecast
+            #define GB_COPY_SCALAR_TO_ARRAY(W, k, t)                \
+                memcpy (W +(k*zsize), t, zsize)
+
+            // z += W [k], no typecast
+            #define GB_ADD_ARRAY_TO_SCALAR(z,W,k)                   \
+                freduce (z, z, W +((k)*zsize))
+
             if (A->type == ztype)
             { 
 
@@ -252,33 +281,10 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     monoid->op->name) ;
 
                 // the switch factory didn't handle this case
-                GxB_binary_function freduce = monoid->op->binop_function ;
-
-                #define GB_A_TYPE GB_void
-
-                // no panel used
-                #define GB_PANEL 1
-                #define GB_NO_PANEL_CASE
-
-                // ztype z = identity
-                #define GB_DECLARE_MONOID_IDENTITY(modifier,z)          \
-                    GB_void z [GB_VLA(zsize)] ;                         \
-                    memcpy (z, monoid->identity, zsize) ;
-
-                // W [tid] = t, no typecast
-                #define GB_COPY_SCALAR_TO_ARRAY(W, tid, t)              \
-                    memcpy (W +(tid*zsize), t, zsize)
-
-                // z += W [k], no typecast
-                #define GB_ADD_ARRAY_TO_SCALAR(z,W,k)                   \
-                    freduce (z, z, W +((k)*zsize))
 
                 // t += (ztype) Ax [p], but no typecasting needed
                 #define GB_GETA_AND_UPDATE(t,Ax,p)                      \
                     freduce (t, t, Ax +((p)*zsize))
-
-                // terminal value (already defined above)
-                #define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal)
 
                 if (zterminal == NULL)
                 {
@@ -294,9 +300,9 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     #undef  GB_MONOID_IS_TERMINAL
                     #define GB_MONOID_IS_TERMINAL 1
                     #undef  GB_TERMINAL_CONDITION
-                    #define GB_TERMINAL_CONDITION(z,zterminal) (memcmp (z, zterminal, zsize) == 0)
+                    #define GB_TERMINAL_CONDITION(z,zterminal)  (memcmp (z, zterminal, zsize) == 0)
                     #undef  GB_IF_TERMINAL_BREAK
-                    #define GB_IF_TERMINAL_BREAK(z,zterminal) if (GB_TERMINAL_CONDITION (z, zterminal)) break
+                    #define GB_IF_TERMINAL_BREAK(z,zterminal)   if (GB_TERMINAL_CONDITION (z, zterminal)) break
                     #include "GB_reduce_to_scalar_template.c"
                 }
 
@@ -311,7 +317,6 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 GB_BURBLE_MATRIX (A, "(generic reduce to scalar, with typecast:"
                     " %s) ", monoid->op->name) ;
 
-                GxB_binary_function freduce = monoid->op->binop_function ;
                 GB_cast_function
                     cast_A_to_Z = GB_cast_factory (ztype->code, A->type->code) ;
 
@@ -339,9 +344,9 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     #undef  GB_MONOID_IS_TERMINAL
                     #define GB_MONOID_IS_TERMINAL 1
                     #undef  GB_TERMINAL_CONDITION
-                    #define GB_TERMINAL_CONDITION(z,zterminal) (memcmp (z, zterminal, zsize) == 0)
+                    #define GB_TERMINAL_CONDITION(z,zterminal)  (memcmp (z, zterminal, zsize) == 0)
                     #undef  GB_IF_TERMINAL_BREAK
-                    #define GB_IF_TERMINAL_BREAK(z,zterminal) if (GB_TERMINAL_CONDITION (z, zterminal)) break
+                    #define GB_IF_TERMINAL_BREAK(z,zterminal)   if (GB_TERMINAL_CONDITION (z, zterminal)) break
                     #include "GB_reduce_to_scalar_template.c"
                 }
             }

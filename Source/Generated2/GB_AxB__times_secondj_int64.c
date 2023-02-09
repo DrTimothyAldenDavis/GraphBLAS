@@ -80,7 +80,8 @@
 #define GB_IS_SECONDJ_MULTIPLIER 1 /* SECONDJ1 */
 
 // z = identity, and ztype overflow condition (if any):
-#define GB_DECLARE_MONOID_IDENTITY(modifier,z) modifier int64_t z = 1
+#define GB_DECLARE_IDENTITY(z) int64_t z = 1
+#define GB_DECLARE_IDENTITY_CONST(z) const int64_t z = 1
 
 #define GB_ZTYPE_IGNORE_OVERFLOW 1
 

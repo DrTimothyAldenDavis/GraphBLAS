@@ -31,6 +31,7 @@
     ASSERT (anz > 0) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (A->nzombies == 0) ;
+    GB_DECLARE_TERMINAL_CONST (zterminal) ;
 
     #if GB_IS_ANY_MONOID
     // the ANY monoid can take any entry, and terminate immediately

@@ -184,11 +184,14 @@ end
 % identity value for the monoid
 fprintf (f, 'm4_define(`GB_identity'', `%s'')\n', identity) ;
 if (is_any_pair)
-    define_id = '#define GB_DECLARE_MONOID_IDENTITY(modifier,z)' ;
+    define_id = '' ;
+    define_const_id = '' ;
 else
-    define_id = sprintf ('#define GB_DECLARE_MONOID_IDENTITY(modifier,z) modifier %s z = %s', ztype, identity) ;
+    define_id = sprintf (' %s z = %s', ztype, identity) ;
+    define_const_id = sprintf (' const %s z = %s', ztype, identity) ;
 end
-fprintf (f, 'm4_define(`GB_declare_monoid_identity'', `%s'')\n', define_id) ;
+fprintf (f, 'm4_define(`GB_declare_identity'', `#define GB_DECLARE_IDENTITY(z)%s'')\n', define_id) ;
+fprintf (f, 'm4_define(`GB_declare_const_identity'', `#define GB_DECLARE_IDENTITY_CONST(z)%s'')\n', define_const_id) ;
 
 if (is_any_pair)
     fprintf (f, 'm4_define(`GB_is_any_pair_semiring'', `%s'')\n', ...
@@ -322,26 +325,24 @@ else
     fprintf (f, 'm4_define(`GB_terminal'', `%s'')\n', terminal) ;
 end
 
+tcondition = '' ;
+tbreak = '' ;
+tvalue = '' ;
+
 if (is_any)
     % the ANY monoid terminates on the first entry seen
-    tbreak = sprintf ('#define GB_IF_TERMINAL_BREAK(z,zterminal) break ') ;
-    tcondition = sprintf ('#define GB_TERMINAL_CONDITION(z,zterminal) 1') ;
     is_terminal = 1 ;
-    tvalue = '' ;
     fprintf (f, 'm4_define(`GB_dot_simd_vectorize'', `;'')\n') ;
 elseif (~isempty (terminal))
     % terminal monoids terminate when cij equals the terminal value
     is_terminal = 1 ;
-    tcondition = sprintf ('#define GB_TERMINAL_CONDITION(z,zterminal) (z == %s)', terminal) ;
-    tbreak = sprintf ('#define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == %s) { break ; }', terminal) ;
-    tvalue = sprintf ('#define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal) modifier %s zterminal = %s', ztype, terminal) ;
+    tcondition = sprintf (' (z == %s)', terminal) ;
+    tbreak = sprintf (' if (z == %s) { break ; }', terminal) ;
+    tvalue = sprintf (' const %s zterminal = %s', ztype, terminal) ;
     fprintf (f, 'm4_define(`GB_dot_simd_vectorize'', `;'')\n') ;
 else
     % non-terminal monoids
     is_terminal = 0 ;
-    tcondition = '' ;
-    tbreak = '' ;
-    tvalue = '' ;
     op = '' ;
     if (ztype_is_real)
         switch (addop)
@@ -379,9 +380,18 @@ if (is_terminal)
 else
     fprintf (f, 'm4_define(`GB_monoid_is_terminal'', `'')\n') ;
 end
-fprintf (f, 'm4_define(`GB_terminal_condition'', `%s'')\n', tcondition) ;
-fprintf (f, 'm4_define(`GB_if_terminal_break'', `%s'')\n', tbreak) ;
-fprintf (f, 'm4_define(`GB_declare_monoid_terminal'', `%s'')\n', tvalue) ;
+
+if (~isempty (tcondition))
+    % monoid is terminal
+    fprintf (f, 'm4_define(`GB_terminal_condition'', `#define GB_TERMINAL_CONDITION(z,zterminal)%s'')\n', tcondition) ;
+    fprintf (f, 'm4_define(`GB_if_terminal_break'', `#define GB_IF_TERMINAL_BREAK(z,zterminal)%s'')\n', tbreak) ;
+    fprintf (f, 'm4_define(`GB_declare_const_terminal'', `#define GB_DECLARE_TERMINAL_CONST(zterminal)%s'')\n', tvalue) ;
+else
+    % will be defined by GB_monoid_shared_definitions.h
+    fprintf (f, 'm4_define(`GB_terminal_condition'', `'')\n') ;
+    fprintf (f, 'm4_define(`GB_if_terminal_break'', `'')\n') ;
+    fprintf (f, 'm4_define(`GB_declare_const_terminal'', `'')\n') ;
+end
 
 if (ztype_is_real)
     % The ANY monoid is atomic on any architecture.

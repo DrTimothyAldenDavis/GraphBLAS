@@ -78,7 +78,8 @@
 // special case multipliers:
 
 // z = identity, and ztype overflow condition (if any):
-#define GB_DECLARE_MONOID_IDENTITY(modifier,z) modifier uint16_t z = 0xFFFF
+#define GB_DECLARE_IDENTITY(z) uint16_t z = 0xFFFF
+#define GB_DECLARE_IDENTITY_CONST(z) const uint16_t z = 0xFFFF
 #define GB_HAS_IDENTITY_BYTE 1
 #define GB_IDENTITY_BYTE 0xFF
 

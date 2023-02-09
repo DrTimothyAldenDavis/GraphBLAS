@@ -24,7 +24,6 @@
 
 // Update:   if ((y > z) || (z != z)) { z = y ; }
 // Add func: z = fmaxf (x, y)
-// Identity: (-INFINITY)
 
 #define GB_A_TYPE \
     float
@@ -33,9 +32,8 @@
     float
 
 // declare a scalar and set it equal to the monoid identity value
-
-    #define GB_DECLARE_MONOID_IDENTITY(modifier,z) \
-        modifier float z = (-INFINITY)
+#define GB_DECLARE_IDENTITY(z) float z = (-INFINITY)
+#define GB_DECLARE_IDENTITY_CONST(z) const float z = (-INFINITY)
 
 // reduction operator:
 

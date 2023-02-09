@@ -24,7 +24,6 @@
 
 // Update:   z = y
 // Add func: z = y
-// Identity: 0
 
 #define GB_A_TYPE \
     int64_t
@@ -33,9 +32,8 @@
     int64_t
 
 // declare a scalar and set it equal to the monoid identity value
-
-    #define GB_DECLARE_MONOID_IDENTITY(modifier,z) \
-        modifier int64_t z = 0
+#define GB_DECLARE_IDENTITY(z) int64_t z = 0
+#define GB_DECLARE_IDENTITY_CONST(z) const int64_t z = 0
 
 // reduction operator:
 
@@ -62,8 +60,6 @@
 // monoid terminal condition, if any:
 #define GB_IS_ANY_MONOID 1
 #define GB_MONOID_IS_TERMINAL 1
-#define GB_TERMINAL_CONDITION(z,zterminal) 1
-#define GB_IF_TERMINAL_BREAK(z,zterminal) break 
 
 // panel size for built-in operators
 

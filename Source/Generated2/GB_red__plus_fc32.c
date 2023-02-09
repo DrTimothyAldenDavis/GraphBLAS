@@ -24,7 +24,6 @@
 
 // Update:   z = GB_FC32_add (z, y)
 // Add func: z = GB_FC32_add (x, y)
-// Identity: GxB_CMPLXF(0,0)
 
 #define GB_A_TYPE \
     GxB_FC32_t
@@ -33,9 +32,8 @@
     GxB_FC32_t
 
 // declare a scalar and set it equal to the monoid identity value
-
-    #define GB_DECLARE_MONOID_IDENTITY(modifier,z) \
-        modifier GxB_FC32_t z = GxB_CMPLXF(0,0)
+#define GB_DECLARE_IDENTITY(z) GxB_FC32_t z = GxB_CMPLXF(0,0)
+#define GB_DECLARE_IDENTITY_CONST(z) const GxB_FC32_t z = GxB_CMPLXF(0,0)
 
 // reduction operator:
 

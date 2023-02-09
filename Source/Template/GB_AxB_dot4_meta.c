@@ -70,6 +70,8 @@
     #error "dot4 not supported for ANY monoids"
     #endif
 
+    GB_DECLARE_TERMINAL_CONST (zterminal) ;
+
     #if !GB_A_IS_PATTERN
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     #endif
@@ -85,7 +87,7 @@
     //--------------------------------------------------------------------------
 
     const bool C_in_iso = C->iso ;
-    const GB_DECLARE_MONOID_IDENTITY (const, zidentity) ;
+    GB_DECLARE_IDENTITY_CONST (zidentity) ;
     const GB_C_TYPE cinput = (C_in_iso) ? Cx [0] : zidentity ;
     if (C_in_iso)
     { 

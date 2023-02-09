@@ -24,7 +24,6 @@
 
 // Update:   z *= y
 // Add func: z = x * y
-// Identity: 1
 
 #define GB_A_TYPE \
     int16_t
@@ -33,9 +32,8 @@
     int16_t
 
 // declare a scalar and set it equal to the monoid identity value
-
-    #define GB_DECLARE_MONOID_IDENTITY(modifier,z) \
-        modifier int16_t z = 1
+#define GB_DECLARE_IDENTITY(z) int16_t z = 1
+#define GB_DECLARE_IDENTITY_CONST(z) const int16_t z = 1
 
 // reduction operator:
 
@@ -64,7 +62,7 @@
 #define GB_MONOID_IS_TERMINAL 1
 #define GB_TERMINAL_CONDITION(z,zterminal) (z == 0)
 #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == 0) { break ; }
-#define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal) modifier int16_t zterminal = 0
+#define GB_DECLARE_TERMINAL_CONST(zterminal) const int16_t zterminal = 0
 
 // panel size for built-in operators
 

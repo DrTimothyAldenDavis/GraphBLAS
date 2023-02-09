@@ -82,7 +82,8 @@
 #define GB_IS_FIRSTI_MULTIPLIER 1 /* or FIRSTI1 */
 
 // z = identity, and ztype overflow condition (if any):
-#define GB_DECLARE_MONOID_IDENTITY(modifier,z) modifier int64_t z = INT64_MIN
+#define GB_DECLARE_IDENTITY(z) int64_t z = INT64_MIN
+#define GB_DECLARE_IDENTITY_CONST(z) const int64_t z = INT64_MIN
 
 #define GB_ZTYPE_IGNORE_OVERFLOW 1
 

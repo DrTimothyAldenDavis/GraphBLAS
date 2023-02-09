@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: const is a problem for user-defined-types (memcpy in decl)
-
 #include "GB.h"
 #include "GB_stringify.h"
 
@@ -36,13 +34,13 @@ void GB_macrofy_query_monoid
             ")\n"
             "{\n"
             "    if (id_size != %d || term_size != %d) return (false) ;\n"
-            "    GB_DECLARE_MONOID_IDENTITY (/*const*/, zidentity) ;\n"
+            "    GB_DECLARE_IDENTITY_CONST (zidentity) ;\n"
             "    if (memcmp (id, &zidentity, %d) != 0) return (false) ;\n",
             zsize, tsize, zsize) ;
         if (has_terminal)
         {
             fprintf (fp,
-            "    GB_DECLARE_MONOID_TERMINAL (/*const*/, zterminal) ;\n"
+            "    GB_DECLARE_TERMINAL_CONST (zterminal) ;\n"
             "    if (memcmp (term, &zterminal, %d) != 0) return (false) ;\n",
             tsize) ;
         }

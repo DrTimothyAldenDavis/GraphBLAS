@@ -68,8 +68,8 @@
 //------------------------------------------------------------------------------
 
 // by default, monoid has no terminal value
-#ifndef GB_DECLARE_MONOID_TERMINAL
-#define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal)
+#ifndef GB_DECLARE_TERMINAL_CONST
+#define GB_DECLARE_TERMINAL_CONST(zterminal)
 #endif
 
 // by default, identity value is not a single repeated byte

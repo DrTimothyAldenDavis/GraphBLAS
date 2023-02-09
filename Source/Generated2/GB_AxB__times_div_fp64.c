@@ -78,7 +78,8 @@
 // special case multipliers:
 
 // z = identity, and ztype overflow condition (if any):
-#define GB_DECLARE_MONOID_IDENTITY(modifier,z) modifier double z = 1
+#define GB_DECLARE_IDENTITY(z) double z = 1
+#define GB_DECLARE_IDENTITY_CONST(z) const double z = 1
 
 #define GB_ZTYPE_IGNORE_OVERFLOW 1
 

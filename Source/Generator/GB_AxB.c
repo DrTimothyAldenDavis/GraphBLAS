@@ -103,7 +103,8 @@ GB_is_firstj_multiplier
 GB_is_secondj_multiplier
 
 // z = identity, and ztype overflow condition (if any):
-GB_declare_monoid_identity
+GB_declare_identity
+GB_declare_const_identity
 GB_has_identity_byte
 GB_identity_byte
 GB_ztype_ignore_overflow
@@ -112,7 +113,7 @@ GB_ztype_ignore_overflow
 GB_monoid_is_terminal
 GB_terminal_condition
 GB_if_terminal_break
-GB_declare_monoid_terminal
+GB_declare_const_terminal
 
 // FIXME: GB_PRAGMA_SIMD_DOT not in macrofy, do I need it?
 // simd pragma for dot-product loop vectorization
@@ -170,6 +171,7 @@ GrB_Info GB (_Adot2B)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    GB_DECLARE_TERMINAL_CONST (zterminal) ;
     #include "GB_AxB_dot2_meta.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -193,6 +195,7 @@ GrB_Info GB (_Adot3B)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    GB_DECLARE_TERMINAL_CONST (zterminal) ;
     #include "GB_AxB_dot3_meta.c"
     return (GrB_SUCCESS) ;
     #endif

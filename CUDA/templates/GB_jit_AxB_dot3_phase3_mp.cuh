@@ -174,7 +174,7 @@ __global__ void AxB_dot3_phase3_mp
 
         GB_DECLAREA (aki) ;
         GB_DECLAREB (bkj) ;
-        GB_DECLARE_MONOID_IDENTITY (,cij) ; // cij = identity
+        GB_DECLARE_IDENTITY (cij) ;         // GB_Z_TYPE cij = identity
 
         int cij_exists = 0 ;       // FIXME: make a bool
 

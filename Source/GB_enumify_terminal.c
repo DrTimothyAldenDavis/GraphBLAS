@@ -7,10 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// The GB_TERMINAL_CONDITION(z,zterminal) should return true if the value of z
-// has reached its terminal value (zterminal), or false otherwise.  If the
-// monoid is not terminal, then the macro should always return false.  The ANY
-// monoid should always return true.
+// GB_TERMINAL_CONDITION(z,zterminal) should return true if the value of z has
+// reached its terminal value (zterminal), or false otherwise.  If the monoid
+// is not terminal, then the macro should always return false.  The ANY monoid
+// should always return true.
 
 // The terminal_statement_macro is a macro containing a full statement.  If the
 // monoid is never terminal, it becomes the empty statement.  Otherwise,

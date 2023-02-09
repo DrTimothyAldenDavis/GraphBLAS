@@ -24,7 +24,6 @@
 
 // Update:   z += y
 // Add func: z = x + y
-// Identity: 0
 
 #define GB_A_TYPE \
     double
@@ -33,9 +32,8 @@
     double
 
 // declare a scalar and set it equal to the monoid identity value
-
-    #define GB_DECLARE_MONOID_IDENTITY(modifier,z) \
-        modifier double z = 0
+#define GB_DECLARE_IDENTITY(z) double z = 0
+#define GB_DECLARE_IDENTITY_CONST(z) const double z = 0
 
 // reduction operator:
 

@@ -33,6 +33,7 @@
     ASSERT (anz > 0) ;
     const bool A_has_zombies = (A->nzombies > 0) ;
     ASSERT (!A->iso) ;
+    GB_DECLARE_TERMINAL_CONST (zterminal) ;
 
     //--------------------------------------------------------------------------
     // reduce A to a scalar
@@ -75,7 +76,7 @@
             int64_t pstart, pend ;
             GB_PARTITION (pstart, pend, anz, tid, ntasks) ;
             // ztype t = identity
-            GB_DECLARE_MONOID_IDENTITY (,t) ;
+            GB_DECLARE_IDENTITY (t) ;
             bool my_exit, found = false ;
             GB_ATOMIC_READ
             my_exit = early_exit ;

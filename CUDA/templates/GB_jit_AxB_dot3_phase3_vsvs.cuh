@@ -204,7 +204,7 @@ __global__ void AxB_dot3_phase3_vsvs
 
         GB_DECLAREA (aki) ;
         GB_DECLAREB (bkj) ;
-        GB_DECLARE_MONOID_IDENTITY (,cij) ; // cij = identity
+        GB_DECLARE_IDENTITY (cij) ;         // GB_Z_TYPE cij = identity
 
         bool cij_exists = false;
 

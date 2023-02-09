@@ -78,7 +78,8 @@
 // special case multipliers:
 
 // z = identity, and ztype overflow condition (if any):
-#define GB_DECLARE_MONOID_IDENTITY(modifier,z) modifier bool z = false
+#define GB_DECLARE_IDENTITY(z) bool z = false
+#define GB_DECLARE_IDENTITY_CONST(z) const bool z = false
 #define GB_HAS_IDENTITY_BYTE 1
 #define GB_IDENTITY_BYTE 0
 
@@ -86,7 +87,7 @@
 #define GB_MONOID_IS_TERMINAL 1
 #define GB_TERMINAL_CONDITION(z,zterminal) (z == true)
 #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == true) { break ; }
-#define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal) modifier bool zterminal = true
+#define GB_DECLARE_TERMINAL_CONST(zterminal) const bool zterminal = true
 
 // FIXME: GB_PRAGMA_SIMD_DOT not in macrofy, do I need it?
 // simd pragma for dot-product loop vectorization

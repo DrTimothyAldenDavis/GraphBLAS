@@ -24,7 +24,6 @@
 
 // Update:   if (y > z) { z = y ; }
 // Add func: z = GB_IMAX (x, y)
-// Identity: INT8_MIN
 
 #define GB_A_TYPE \
     int8_t
@@ -33,9 +32,8 @@
     int8_t
 
 // declare a scalar and set it equal to the monoid identity value
-
-    #define GB_DECLARE_MONOID_IDENTITY(modifier,z) \
-        modifier int8_t z = INT8_MIN
+#define GB_DECLARE_IDENTITY(z) int8_t z = INT8_MIN
+#define GB_DECLARE_IDENTITY_CONST(z) const int8_t z = INT8_MIN
 
 // reduction operator:
 
@@ -64,7 +62,7 @@
 #define GB_MONOID_IS_TERMINAL 1
 #define GB_TERMINAL_CONDITION(z,zterminal) (z == INT8_MAX)
 #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == INT8_MAX) { break ; }
-#define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal) modifier int8_t zterminal = INT8_MAX
+#define GB_DECLARE_TERMINAL_CONST(zterminal) const int8_t zterminal = INT8_MAX
 
 // panel size for built-in operators
 

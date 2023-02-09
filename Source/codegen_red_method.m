@@ -29,7 +29,7 @@ fprintf (f, 'm4_define(`GB_ztype'', `%s'')\n', atype) ;
 is_monoid = ~isempty (identity) ;
 if (is_monoid)
     % monoid function name and identity value
-    fprintf (f, 'm4_define(`_red'',    `_red__%s'')\n',    name);
+    fprintf (f, 'm4_define(`_red'',    `_red__%s'')\n', name) ;
     fprintf (f, 'm4_define(`GB_identity'', `%s'')\n', identity) ;
 else
     % first and second operators are not monoids
@@ -37,29 +37,35 @@ else
     fprintf (f, 'm4_define(`GB_identity'', `(none)'')\n') ;
 end
 
+% identity value for the monoid
+if (is_monoid)
+    define_id = sprintf (' %s z = %s', ztype, identity) ;
+    define_const_id = sprintf (' const %s z = %s', ztype, identity) ;
+    fprintf (f, 'm4_define(`GB_declare_identity'', `#define GB_DECLARE_IDENTITY(z)%s'')\n', define_id) ;
+    fprintf (f, 'm4_define(`GB_declare_const_identity'', `#define GB_DECLARE_IDENTITY_CONST(z)%s'')\n', define_const_id) ;
+end
+
 % A is never iso, so GBX is not needed
 fprintf (f, 'm4_define(`GB_declarea'', `%s $1'')\n', atype) ;
 fprintf (f, 'm4_define(`GB_geta'', `$1 = $2 [$3]'')\n') ;
+
+tvalue = '' ;
+tbreak = '' ;
+tcondition = '' ;
 
 if (is_any)
     % ANY monoid is terminal
     terminal = ' ' ;
     is_terminal = 1 ;
-    tvalue = '' ;
-    tbreak = sprintf ('#define GB_IF_TERMINAL_BREAK(z,zterminal) break ') ;
-    tcondition = sprintf ('#define GB_TERMINAL_CONDITION(z,zterminal) 1') ;
 elseif (~isempty (terminal))
     % monoid is terminal
     is_terminal = 1 ;
-    tbreak = sprintf ('#define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == %s) { break ; }', terminal) ;
-    tvalue = sprintf ('#define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal) modifier %s zterminal = %s', ztype, terminal) ;
-    tcondition = sprintf ('#define GB_TERMINAL_CONDITION(z,zterminal) (z == %s)', terminal) ;
+    tbreak = sprintf (' if (z == %s) { break ; }', terminal) ;
+    tvalue = sprintf (' const %s zterminal = %s', ztype, terminal) ;
+    tcondition = sprintf (' (z == %s)', terminal) ;
 else
     % monoid is not terminal
     is_terminal = 0 ;
-    tvalue = '' ;
-    tbreak = '' ;
-    tcondition = '' ;
 end
 
 if (is_any)
@@ -75,9 +81,18 @@ if (is_terminal)
 else
     fprintf (f, 'm4_define(`GB_monoid_is_terminal'', `'')\n') ;
 end
-fprintf (f, 'm4_define(`GB_terminal_condition'', `%s'')\n', tcondition) ;
-fprintf (f, 'm4_define(`GB_if_terminal_break'', `%s'')\n', tbreak) ;
-fprintf (f, 'm4_define(`GB_declare_monoid_terminal'', `%s'')\n', tvalue) ;
+
+if (~isempty (tcondition))
+    % monoid is terminal
+    fprintf (f, 'm4_define(`GB_terminal_condition'', `#define GB_TERMINAL_CONDITION(z,zterminal)%s'')\n', tcondition) ;
+    fprintf (f, 'm4_define(`GB_if_terminal_break'', `#define GB_IF_TERMINAL_BREAK(z,zterminal)%s'')\n', tbreak) ;
+    fprintf (f, 'm4_define(`GB_declare_const_terminal'', `#define GB_DECLARE_TERMINAL_CONST(zterminal)%s'')\n', tvalue) ;
+else
+    % will be defined by GB_monoid_shared_definitions.h
+    fprintf (f, 'm4_define(`GB_terminal_condition'', `'')\n') ;
+    fprintf (f, 'm4_define(`GB_if_terminal_break'', `'')\n') ;
+    fprintf (f, 'm4_define(`GB_declare_const_terminal'', `'')\n') ;
+end
 
 if (is_any)
     fprintf (f, 'm4_define(`GB_panel'', `(no panel)'')\n') ;

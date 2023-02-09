@@ -83,7 +83,8 @@
 #define GB_IS_PAIR_MULTIPLIER 1
 
 // z = identity, and ztype overflow condition (if any):
-#define GB_DECLARE_MONOID_IDENTITY(modifier,z) modifier uint32_t z = 0
+#define GB_DECLARE_IDENTITY(z) uint32_t z = 0
+#define GB_DECLARE_IDENTITY_CONST(z) const uint32_t z = 0
 #define GB_HAS_IDENTITY_BYTE 1
 #define GB_IDENTITY_BYTE 0
 

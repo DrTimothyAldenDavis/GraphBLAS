@@ -24,7 +24,6 @@
 
 // Update:   GB_update_op(z,y)
 // Add func: GB_add_op(z,x,y)
-// Identity: GB_identity
 
 #define GB_A_TYPE \
     GB_atype
@@ -33,9 +32,8 @@
     GB_ztype
 
 // declare a scalar and set it equal to the monoid identity value
-
-    #define GB_DECLARE_MONOID_IDENTITY(modifier,z) \
-        modifier GB_ztype z = GB_identity
+GB_declare_identity
+GB_declare_const_identity
 
 // reduction operator:
 
@@ -64,7 +62,7 @@ GB_is_any_monoid
 GB_monoid_is_terminal
 GB_terminal_condition
 GB_if_terminal_break
-GB_declare_monoid_terminal
+GB_declare_const_terminal
 
 // panel size for built-in operators
 

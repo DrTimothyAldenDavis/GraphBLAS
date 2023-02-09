@@ -60,7 +60,7 @@
 
     #if ( !GB_HAS_IDENTITY_BYTE )
     // declare the monoid identity value
-    const GB_DECLARE_MONOID_IDENTITY (const, zidentity) ;
+    const GB_DECLARE_IDENTITY_CONST (zidentity) ;
     #endif
 
     const int8_t *restrict Bb = B->b ;

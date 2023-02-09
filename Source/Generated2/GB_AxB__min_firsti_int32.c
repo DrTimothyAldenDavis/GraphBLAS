@@ -82,7 +82,8 @@
 #define GB_IS_FIRSTI_MULTIPLIER 1 /* or FIRSTI1 */
 
 // z = identity, and ztype overflow condition (if any):
-#define GB_DECLARE_MONOID_IDENTITY(modifier,z) modifier int32_t z = INT32_MAX
+#define GB_DECLARE_IDENTITY(z) int32_t z = INT32_MAX
+#define GB_DECLARE_IDENTITY_CONST(z) const int32_t z = INT32_MAX
 
 // monoid terminal condition, if any:
 

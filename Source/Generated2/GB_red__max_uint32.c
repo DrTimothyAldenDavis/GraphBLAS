@@ -24,7 +24,6 @@
 
 // Update:   if (y > z) { z = y ; }
 // Add func: z = GB_IMAX (x, y)
-// Identity: 0
 
 #define GB_A_TYPE \
     uint32_t
@@ -33,9 +32,8 @@
     uint32_t
 
 // declare a scalar and set it equal to the monoid identity value
-
-    #define GB_DECLARE_MONOID_IDENTITY(modifier,z) \
-        modifier uint32_t z = 0
+#define GB_DECLARE_IDENTITY(z) uint32_t z = 0
+#define GB_DECLARE_IDENTITY_CONST(z) const uint32_t z = 0
 
 // reduction operator:
 
@@ -64,7 +62,7 @@
 #define GB_MONOID_IS_TERMINAL 1
 #define GB_TERMINAL_CONDITION(z,zterminal) (z == UINT32_MAX)
 #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == UINT32_MAX) { break ; }
-#define GB_DECLARE_MONOID_TERMINAL(modifier,zterminal) modifier uint32_t zterminal = UINT32_MAX
+#define GB_DECLARE_TERMINAL_CONST(zterminal) const uint32_t zterminal = UINT32_MAX
 
 // panel size for built-in operators
 

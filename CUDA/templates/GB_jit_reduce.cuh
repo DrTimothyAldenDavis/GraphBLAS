@@ -24,6 +24,10 @@
 #include <cstdint>
 #include <cooperative_groups.h>
 
+#if GB_C_ISO
+#error "kernel undefined for C iso"
+#endif
+
 using namespace cooperative_groups;
 
 //------------------------------------------------------------------------------
@@ -75,11 +79,12 @@ T_Z GB_block_Reduce(thread_block g, T_Z val)
     {
         shared [wid] = val ; // Write reduced value to shared memory
     }
-    this_thread_block().sync() ;     // Wait for all partial reductions
-    GB_DECLARE_MONOID_IDENTITY (const, identity) ;
+    this_thread_block().sync() ;        // Wait for all partial reductions
+
+    GB_DECLARE_IDENTITY_CONST (zid) ;   // const GB_Z_TYPE zid = identity ;
 
     val = (threadIdx.x < (blockDim.x >> LOG2_WARPSIZE)) ?
-        shared [lane] : identity ;
+        shared [lane] : zid ;
 
     // Final reduce within first warp
     val = GB_warp_Reduce<T_Z>( tile, val) ;
@@ -107,7 +112,7 @@ __global__ void GB_jit_reduce
     const T_A *__restrict__ Ax = (T_A *) A->x ;
 
     // each thread reduces its result into zmine, of type T_Z
-    GB_DECLARE_MONOID_IDENTITY (,zmine) ;
+    GB_DECLARE_IDENTITY (zmine) ; // GB_Z_TYPE zmine = identity ;
 
     // On input, zscalar is already initialized to the monoid identity value.
     // If T_Z has size less than 4 bytes, zscalar has been upscaled to 4 bytes.
