@@ -250,7 +250,7 @@ fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
-system ('cat control.m4 Generator/GB_binop.h | m4 -P | awk -f codegen_blank.awk >> Generated2/GB_binop__include.h') ;
+system ('cat control.m4 Generator/GB_binop.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> Generated2/GB_binop__include.h') ;
 
 delete ('control.m4') ;
 

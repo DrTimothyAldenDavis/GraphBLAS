@@ -7,7 +7,6 @@
 
 // This file has been automatically generated from Generator/GB_AxB.h
 
-// SPDX-License-Identifier: Apache-2.0
 GrB_Info GB (_Adot2B__any_pair_iso)
 (
     GrB_Matrix C,

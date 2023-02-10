@@ -154,8 +154,9 @@
         ASSERT (M_is_sparse || GB_IS_HYPERSPARSE (M)) ;
         if (M_is_sparse && Mask_struct && A_is_sparse && B_is_sparse)
         { 
-            // special case: M is sparse and structural, and A and B are sparse
-            #define GB_MASK_SPARSE_AND_STRUCTURAL
+            // special case: M is present, sparse, structural, and not
+            // complemented, and A and B are sparse
+            #define GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED
             #define GB_A_IS_SPARSE 1
             #define GB_A_IS_HYPER  0
             #define GB_A_IS_BITMAP 0
@@ -165,7 +166,7 @@
             #define GB_B_IS_BITMAP 0
             #define GB_B_IS_FULL   0
             #include "GB_AxB_dot3_template.c"
-            #undef GB_MASK_SPARSE_AND_STRUCTURAL
+            #undef  GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED
         }
         else
         { 

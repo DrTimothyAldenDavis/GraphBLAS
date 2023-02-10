@@ -2,12 +2,12 @@
 // GB_AxB_dot3_template: C<M>=A'*B via dot products, where C is sparse/hyper
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// C and M are both sparse or hyper, and C->h is a copy of M->h.
+// C and M are both sparse or both hyper, and C->h is a copy of M->h.
 // M is present, and not complemented.  It may be valued or structural.
 
 {
@@ -39,8 +39,8 @@
             // get C(:,k) and M(:k)
             //------------------------------------------------------------------
 
-            #if defined ( GB_MASK_SPARSE_AND_STRUCTURAL )
-            // M and C are sparse
+            #if defined ( GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED )
+            // M and C are both sparse
             const int64_t j = k ;
             #else
             // M and C are either both sparse or both hypersparse
@@ -125,7 +125,7 @@
                 int64_t i = Mi [pC] ;
                 #if GB_JIT_KERNEL
                 if (MX (pC))
-                #elif !defined ( GB_MASK_SPARSE_AND_STRUCTURAL )
+                #elif !defined ( GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED )
                 // if M is structural, no need to check its values
                 if (GB_mcast (Mx, pC, msize))
                 #endif

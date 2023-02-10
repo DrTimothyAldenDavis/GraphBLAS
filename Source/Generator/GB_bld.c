@@ -15,42 +15,20 @@
 #include "GB_control.h" 
 #include "GB_bld__include.h"
 
-// The reduction is defined by the following types and operators:
-
 // Assemble tuples:    GB (_bld)
 
-// S type:   GB_stype
-// T type:   GB_ttype
-// X type:   GB_xtype
-// Y type:   GB_ytype
-// Z type:   GB_ztype
+// dup operator: Tx [k] += Sx [i], no typecast here
+GB_bld_dup
+#define GB_BLD_COPY(Tx,k,Sx,i) Tx [k] = Sx [i]
 
-// dup:      GB_update_op(s, aij)
+// array types for S and T
+GB_stype
+GB_ttype
 
-#define GB_S_TYPE \
-    GB_stype
-
-#define GB_T_TYPE \
-    GB_ttype
-
-#define GB_X_TYPE \
-    GB_xtype
-
-#define GB_Y_TYPE \
-    GB_ytype
-
-#define GB_Z_TYPE \
-    GB_ztype
-
-// Array to array
-
-    // Tx [k] = Sx [i], no typecast here
-    #define GB_BLD_COPY(Tx,k,Sx,i)          \
-        Tx [k] = Sx [i]
-
-    // Tx [k] += Sx [i], no typecast here
-    #define GB_BLD_DUP(Tx,k,Sx,i)           \
-        GB_update_op(Tx [k], Sx [i])
+// operator types: z = dup (x,y)
+GB_ztype
+GB_xtype
+GB_ytype
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
@@ -62,9 +40,9 @@
 
 GrB_Info GB (_bld)
 (
-    GB_ttype *restrict Tx,
+    GB_T_TYPE *restrict Tx,
     int64_t  *restrict Ti,
-    const GB_stype *restrict Sx,
+    const GB_S_TYPE *restrict Sx,
     int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict I_work,

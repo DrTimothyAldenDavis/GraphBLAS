@@ -9,6 +9,7 @@
 
 // This file is #include'd into all JIT kernels on the CPU.
 
+#define GB_JIT_KERNEL
 #include "GB.h"
 
 // to query the kernel for its op and type definitions:

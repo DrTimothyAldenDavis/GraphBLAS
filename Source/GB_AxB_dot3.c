@@ -223,10 +223,10 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     if (M_is_sparse && Mask_struct)
     {
-        // special case: M is sparse and structural
-        #define GB_MASK_SPARSE_AND_STRUCTURAL
+        // special case: M is present, sparse, structural, and not complemented
+        #define GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED
         #include "GB_meta16_factory.c"
-        #undef GB_MASK_SPARSE_AND_STRUCTURAL
+        #undef  GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED
         // TODO: skip phase1 if A and B are both bitmap/full.
     }
     else

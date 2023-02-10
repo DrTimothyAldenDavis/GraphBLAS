@@ -19,12 +19,16 @@ fprintf (f, 'm4_define(`_bld'', `_bld__%s'')\n', name) ;
 
 % the type of A, S, T, X, Y, and Z (no typecasting)
 ztype = atype ;
-fprintf (f, 'm4_define(`GB_atype'', `%s'')\n', atype) ;
-fprintf (f, 'm4_define(`GB_stype'', `%s'')\n', atype) ;
-fprintf (f, 'm4_define(`GB_ttype'', `%s'')\n', atype) ;
-fprintf (f, 'm4_define(`GB_xtype'', `%s'')\n', atype) ;
-fprintf (f, 'm4_define(`GB_ytype'', `%s'')\n', atype) ;
-fprintf (f, 'm4_define(`GB_ztype'', `%s'')\n', atype) ;
+fprintf (f, 'm4_define(`GB_atype'', `#define GB_A_TYPE %s'')\n', atype) ;
+fprintf (f, 'm4_define(`GB_stype'', `#define GB_S_TYPE %s'')\n', atype) ;
+fprintf (f, 'm4_define(`GB_ttype'', `#define GB_T_TYPE %s'')\n', atype) ;
+fprintf (f, 'm4_define(`GB_xtype'', `#define GB_X_TYPE %s'')\n', atype) ;
+fprintf (f, 'm4_define(`GB_ytype'', `#define GB_Y_TYPE %s'')\n', atype) ;
+fprintf (f, 'm4_define(`GB_ztype'', `#define GB_Z_TYPE %s'')\n', atype) ;
+
+fprintf (f, 'm4_define(`GB_atype_parameter'', `%s'')\n', atype) ;
+fprintf (f, 'm4_define(`GB_stype_parameter'', `%s'')\n', atype) ;
+fprintf (f, 'm4_define(`GB_ttype_parameter'', `%s'')\n', atype) ;
 
 is_monoid = ~isempty (identity) ;
 if (is_monoid)
@@ -103,15 +107,27 @@ end
 
 % create the update operator
 update_op = op {1} ;
-update_op = strrep (update_op, 'zarg', '`z''') ;
-update_op = strrep (update_op, 'yarg', '`a''') ;
-fprintf (f, 'm4_define(`GB_update_op'', `#define GB_UPDATE(z,a) %s'')\n', update_op) ;
+update_op = strrep (update_op, 'zarg', 'z') ;
+update_op = strrep (update_op, 'yarg', 'a') ;
+fprintf (f, 'm4_define(`GB_update_op'', `#define GB_UPDATE(z,a)  %s'')\n', update_op) ;
+
+% create the geta_and_update macro
+geta_and_update = op {1} ;
+geta_and_update = strrep (geta_and_update, 'zarg', 'z') ;
+geta_and_update = strrep (geta_and_update, 'yarg', 'Ax [p]') ;
+fprintf (f, 'm4_define(`GB_geta_and_update'', `#define GB_GETA_AND_UPDATE(z,Ax,p) %s'')\n', geta_and_update) ;
+
+% create the dup operator
+dup_op = op {1} ;
+dup_op = strrep (dup_op, 'zarg', 'Tx [k]') ;
+dup_op = strrep (dup_op, 'yarg', 'Sx [i]') ;
+fprintf (f, 'm4_define(`GB_bld_dup'', `#define GB_BLD_DUP(Tx,k,Sx,i)  %s'')\n', dup_op) ;
 
 % create the function operator
 add_op = op {2} ;
-add_op = strrep (add_op, 'zarg', '`z''') ;
-add_op = strrep (add_op, 'xarg', '`zin''') ;
-add_op = strrep (add_op, 'yarg', '`a''') ;
+add_op = strrep (add_op, 'zarg', 'z') ;
+add_op = strrep (add_op, 'xarg', 'zin') ;
+add_op = strrep (add_op, 'yarg', 'a') ;
 fprintf (f, 'm4_define(`GB_add_op'', `#define GB_ADD(z,zin,a) %s'')\n', add_op) ;
 
 % create the disable flag
@@ -129,14 +145,14 @@ if (is_monoid)
     fprintf ('.') ;
     system (cmd) ;
     % append to the *.h file
-    system ('cat control.m4 Generator/GB_red.h | m4 -P | awk -f codegen_blank.awk >> Generated2/GB_red__include.h') ;
+    system ('cat control.m4 Generator/GB_red.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> Generated2/GB_red__include.h') ;
 end
 
 % construct the build *.c and *.h files
 cmd = sprintf ('cat control.m4 Generator/GB_bld.c | m4 -P | awk -f codegen_blank.awk > Generated2/GB_bld__%s.c', name) ;
 fprintf ('.') ;
 system (cmd) ;
-system ('cat control.m4 Generator/GB_bld.h | m4 -P | awk -f codegen_blank.awk >> Generated2/GB_bld__include.h') ;
+system ('cat control.m4 Generator/GB_bld.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> Generated2/GB_bld__include.h') ;
 
 delete ('control.m4') ;
 

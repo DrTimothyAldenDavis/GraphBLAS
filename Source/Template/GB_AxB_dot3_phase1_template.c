@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// Purely symbolic phase1 for the dot3 method of GrB_mxm.  This does not
+// access any values, except for the mask.
+
 {
     int taskid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
@@ -37,7 +40,7 @@
             // get j, the kth vector of C and M
             //------------------------------------------------------------------
 
-            #if defined ( GB_MASK_SPARSE_AND_STRUCTURAL )
+            #if defined ( GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED )
             // M and C are sparse
             const int64_t j = k ;
             #else
@@ -94,7 +97,7 @@
                 for ( ; pM < pM_end ; pM++)
                 {
                     int64_t work = 1 ;
-                    #if !defined ( GB_MASK_SPARSE_AND_STRUCTURAL )
+                    #if !defined ( GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED )
                     // if M is structural, no need to check its values
                     if (GB_mcast (Mx, pM, msize))
                     #endif

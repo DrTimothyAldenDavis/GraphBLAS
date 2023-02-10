@@ -15,56 +15,30 @@
 #include "GB_control.h" 
 #include "GB_red__include.h"
 
-// The reduction is defined by the following types and operators:
+// Reduce to scalar:  GB (_red__any_int16)
 
-// Reduce to scalar:   GB (_red__any_int16)
-
-// A type:   int16_t
-// Z type:   int16_t
-
-// Update:   z = y
-// Add func: z = y
-
-#define GB_A_TYPE \
-    int16_t
-
-#define GB_Z_TYPE \
-    int16_t
+// reduction operator and type:
+#define GB_UPDATE(z,a)  z = a
+#define GB_ADD(z,zin,a) z = a
+#define GB_GETA_AND_UPDATE(z,Ax,p) z = Ax [p]
 
 // declare a scalar and set it equal to the monoid identity value
 #define GB_DECLARE_IDENTITY(z) int16_t z = 0
 #define GB_DECLARE_IDENTITY_CONST(z) const int16_t z = 0
 
-// reduction operator:
+// A matrix (no typecasting to Z type here)
+#define GB_A_TYPE int16_t
+#define GB_DECLAREA(aij) int16_t aij
+#define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [pA]
 
-    // declare aij as ztype (= atype since no typecasting is done here)
-    #define GB_DECLAREA(aij)  \
-        int16_t aij
-
-    // aij = Ax [pA]
-    #define GB_GETA(aij,Ax,pA,A_iso)  \
-        aij = Ax [pA]
-
-    // z += y, update
-    #define GB_UPDATE(z,y) \
-        z = y
-
-    // z = x+y, additive function
-    #define GB_ADD(z,x,y) \
-        z = y
-
-    // s += (ztype) Ax [p], no typecast here however
-    #define GB_GETA_AND_UPDATE(s,Ax,p)              \
-        GB_UPDATE (s, Ax [p])
+// monoid type:
+#define GB_Z_TYPE int16_t
 
 // monoid terminal condition, if any:
 #define GB_IS_ANY_MONOID 1
 #define GB_MONOID_IS_TERMINAL 1
 
-// panel size for built-in operators
-
-    #define GB_PANEL                                \
-        (no panel)
+// panel size
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
@@ -78,7 +52,7 @@
 
 GrB_Info GB (_red__any_int16)
 (
-    int16_t *result,
+    GB_Z_TYPE *result,
     const GrB_Matrix A,
     GB_void *restrict W_space,
     bool *restrict F,
@@ -89,8 +63,8 @@ GrB_Info GB (_red__any_int16)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    int16_t z = (*result) ;
-    int16_t *restrict W = (int16_t *) W_space ;
+    GB_Z_TYPE z = (*result) ;
+    GB_Z_TYPE *restrict W = (GB_Z_TYPE *) W_space ;
     if (A->nzombies > 0 || GB_IS_BITMAP (A))
     {
         #include "GB_reduce_to_scalar_template.c"

@@ -1,3 +1,4 @@
+
 // SPDX-License-Identifier: Apache-2.0
 m4_divert(if_phase1)
 void GB (_sel_phase1)
@@ -49,3 +50,4 @@ void GB (_sel_bitmap)
     const int nthreads
 ) ;
 m4_divert(0)
+

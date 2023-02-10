@@ -805,7 +805,7 @@ system (cmd) ;
 fprintf ('.') ;
 
 % append to the *.h file
-cmd = sprintf ('cat control.m4 Generator/GB_AxB.h | m4 -P | awk -f codegen_blank.awk >> Generated%d/GB_AxB__include%d.h', k, k) ;
+cmd = sprintf ('cat control.m4 Generator/GB_AxB.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> Generated%d/GB_AxB__include%d.h', k, k) ;
 system (cmd) ;
 
 delete ('control.m4') ;

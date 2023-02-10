@@ -15,32 +15,24 @@
 #include "GB_control.h" 
 #include "GB_red__include.h"
 
-// The reduction is defined by the following types and operators:
-
-// Reduce to scalar:   GB (_red)
-
-#define GB_A_TYPE \
-    GB_atype
-
-#define GB_Z_TYPE \
-    GB_ztype
+// Reduce to scalar:  GB (_red)
 
 // reduction operator and type:
 GB_update_op
 GB_add_op
-// s += (ztype) Ax [p], no typecast here however
-#define GB_GETA_AND_UPDATE(s,Ax,p) GB_UPDATE (s, Ax [p])
+GB_geta_and_update
 
 // declare a scalar and set it equal to the monoid identity value
 GB_declare_identity
 GB_declare_const_identity
 
 // A matrix (no typecasting to Z type here)
+GB_atype
 GB_declarea
 GB_geta
 
-// A type:   GB_atype
-// Z type:   GB_ztype
+// monoid type:
+GB_ztype
 
 // monoid terminal condition, if any:
 GB_is_any_monoid

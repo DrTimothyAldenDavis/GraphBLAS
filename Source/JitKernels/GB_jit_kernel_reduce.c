@@ -18,6 +18,7 @@
 #if comments
 
         // example file: GB_jit_reduce_2c1fbb2.c
+        // FIXME: reload this example
 
         #include "GB_jit_kernel_reduce.h"   // for all JIT reduce kernels
 
