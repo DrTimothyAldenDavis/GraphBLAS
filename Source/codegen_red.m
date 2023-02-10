@@ -42,12 +42,6 @@ fclose (fh) ;
 % is not NaN but yarg is NaN, then yarg is ignored.  If zarg is NaN, the
 % condition becomes true and zarg is replaced with yarg.
 
-% The panel size is selected so that the Panel array in GB_reduce_panel.c is
-% always 128 bytes in size (16 doubles = 16*8 = 128 bytes, 32 floats, etc).
-% This is 1024 bits, which can be computed with two 512-bit Intel vector
-% instructions.  Reducing the panel to 64 bytes (512 bits), or increasing
-% the panel size, is slightly slower.
-
 % Panel sizes are optimal for gcc 8.3, on a MacBook.  They are probably fine
 % for other architectures and compilers, too, but they haven't been tuned
 % except for gcc 8.3 on a Mac.

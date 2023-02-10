@@ -17,40 +17,42 @@
 
 #if comments
 
-        // example file: GB_jit_reduce_2c1fbb2.c
-        // FIXME: reload this example
+    // example file: GB_jit_reduce_2c1fbb2.c
 
-        #include "GB_jit_kernel_reduce.h"   // for all JIT reduce kernels
+    // monoid: (plus, double)
 
-        // monoid: (plus, double)
+    // reduction monoid:
+    #define GB_Z_TYPE double
+    #define GB_ADD(z,x,y) z = (x) + (y)
+    #define GB_UPDATE(z,y) z += (y)
+    #define GB_DECLARE_IDENTITY(z) double z = 0 ;
+    #define GB_DECLARE_IDENTITY_CONST(z) const double z = 0 ;
+    #define GB_HAS_IDENTITY_BYTE 1
+    #define GB_IDENTITY_BYTE 0x00
+    #define GB_ZTYPE_IGNORE_OVERFLOW 1
+    #define GB_HAS_CUDA_ATOMIC 1
+    #define GB_CUDA_ATOMIC GB_cuda_atomic_add
+    #define GB_CUDA_ATOMIC_TYPE double
+    #define GB_GETA_AND_UPDATE(z,Ax,p) GB_UPDATE(z, Ax [p]) ;
 
-        // reduction monoid:
-        #define GB_Z_TYPE double
-        #define GB_ADD(z,x,y) z = (x) + (y)
-        #define GB_UPDATE(z,y) z += (y)
-        #define GB_DECLARE_IDENTITY(z) double z = (double) (0) ;
-        #define GB_DECLARE_IDENTITY_CONST(z) const double z = (double) (0) ;
-        #define GB_IS_ANY_MONOID 0
-        #define GB_MONOID_IS_TERMINAL 0
-        #define GB_GETA_AND_UPDATE(z,Ax,p) z += Ax [p]
+    // A matrix:
+    #define GB_A_IS_PATTERN 0
+    #define GB_A_ISO 0
+    #define GB_A_HAS_ZOMBIES 0
+    #define GB_A_IS_HYPER  0
+    #define GB_A_IS_SPARSE 0
+    #define GB_A_IS_BITMAP 1
+    #define GB_A_IS_FULL   0
+    #define GB_A_TYPE double
+    #define GB_A2TYPE double
+    #define GB_DECLAREA(a) double a
+    #define GB_GETA(a,Ax,p,iso) a = (Ax [p])
 
-        // A matrix:
-        #define GB_A_IS_PATTERN 0
-        #define GB_A_ISO 0
-        #define GB_A_HAS_ZOMBIES 0
-        #define GB_A_IS_HYPER  0
-        #define GB_A_IS_SPARSE 0
-        #define GB_A_IS_BITMAP 1
-        #define GB_A_IS_FULL   0
-        #define GB_A_TYPE double
-        #define GB_DECLAREA(a) double a
-        #define GB_GETA(a,Ax,p,iso) a = (Ax [p])
+    // panel size for reduction:
+    #define GB_PANEL 32
 
-        // panel size for reduction:
-        #define GB_PANEL 16
-
-        // reduction kernel
-        #include "GB_jit_kernel_reduce.c"
+    // reduction kernel
+    #include "GB_jit_kernel_reduce.c"
 
 #endif
 

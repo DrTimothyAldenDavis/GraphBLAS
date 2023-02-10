@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// When the macro is used, sizeof (ztype) must be the same as nbytes
+// When the macro is used, sizeof (ztype) must be the same as nbytes.
 
 #include "GB.h"
 #include "GB_stringify.h"

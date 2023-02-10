@@ -39,7 +39,7 @@ void GB_macrofy_typedefs
         ytype == GxB_FC32 || ytype == GxB_FC64 ||
         ztype == GxB_FC32 || ztype == GxB_FC64)
     {
-        fprintf (fp, "#include <GxB_complex.h>\n") ;
+        fprintf (fp, "\n#include <GxB_complex.h>\n") ;
     }
 
     //--------------------------------------------------------------------------

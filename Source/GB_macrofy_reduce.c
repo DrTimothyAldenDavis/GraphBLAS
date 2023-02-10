@@ -47,7 +47,7 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     //--------------------------------------------------------------------------
 
     GB_macrofy_copyright (fp) ;
-    fprintf (fp, "// monoid: (%s, %s)\n\n",
+    fprintf (fp, "// monoid: (%s, %s)\n",
         monoid->op->name, monoid->op->ztype->name) ;
 
     //--------------------------------------------------------------------------
@@ -64,16 +64,17 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     GB_macrofy_type (fp, "Z", "_", monoid->op->ztype->name) ;
     GB_macrofy_monoid (fp, red_ecode, id_ecode, term_ecode, monoid, NULL) ;
 
-    fprintf (fp, "#define GB_GETA_AND_UPDATE(z,Ax,p) \\\n") ;
+    fprintf (fp, "#define GB_GETA_AND_UPDATE(z,Ax,p)") ;
     if (atype == monoid->op->ztype)
     {
         // z += Ax [p], with no typecasting.  A is never iso.
-        fprintf (fp, "    GB_UPDATE(z, Ax [p]) ;    // z += Ax [p]\n") ;
+        fprintf (fp, " GB_UPDATE (z, Ax [p])\n") ;
     }
     else
     {
         // aij = (ztype) Ax [p] ; z += aij ; with typecasting.  A is never iso.
-        fprintf (fp, "{                             \\\n"
+        fprintf (fp, " \\\\n"
+                     "{                             \\\n"
                      "    /* z += (ztype) Ax [p] */ \\\n"
                      "    GB_DECLAREA (aij) ;       \\\n"
                      "    GB_GETA (aij, Ax, p, ) ;  \\\n"
@@ -100,18 +101,79 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
 
     fprintf (fp, "\n// panel size for reduction:\n") ;
     int zsize = (int) monoid->op->ztype->size ;
-    if (zsize == 1)
+    int panel = 1 ;
+
+    GB_Opcode opcode = monoid->op->opcode ;
+
+    if (opcode == GB_ANY_binop_code)
     {
-        fprintf (fp, "#define GB_PANEL 8\n") ;
+        // ANY monoid: do not use panel reduction method
+        panel = 1 ;
     }
-    else if (zsize < 16)
+    else if (zcode == GB_BOOL_code)
     {
-        fprintf (fp, "#define GB_PANEL 16\n") ;
+        // all boolean monoids, including user-defined
+        panel = 8 ;
     }
     else
     {
-        fprintf (fp, "#define GB_PANEL 1\n") ;
+
+        switch (monoid->op->opcode)
+        {
+
+            // min and max
+            case GB_MIN_binop_code : 
+            case GB_MAX_binop_code : 
+                panel = 16 ;
+                break ;
+
+            // plus, times, and all bitwise monoids
+            case GB_PLUS_binop_code  : 
+            case GB_TIMES_binop_code : 
+            case GB_BOR_binop_code   : 
+            case GB_BAND_binop_code  : 
+            case GB_BXOR_binop_code  : 
+            case GB_BXNOR_binop_code : 
+                switch (zcode)
+                {
+                    // integer:
+                    case GB_INT8_code    : 
+                    case GB_UINT8_code   : 
+                    case GB_INT16_code   : 
+                    case GB_UINT16_code  : 
+                    case GB_INT32_code   : 
+                    case GB_UINT32_code  : panel = 64 ; break ;
+                    case GB_INT64_code   : 
+                    case GB_UINT64_code  : panel = 32 ; break ;
+
+                    // floating point:
+                    case GB_FP32_code    : panel = 64 ; break ;
+                    case GB_FP64_code    : panel = 32 ; break ;
+                    case GB_FC32_code    : panel = 32 ; break ;
+                    case GB_FC64_code    : panel = 16 ; break ;
+                    default:;
+                }
+                break ;
+
+            default : 
+
+                // all other monoids, including user-defined monoids
+                if (zsize <= 16)
+                {
+                    panel = 16 ;
+                }
+                else if (zsize <= 32)
+                {
+                    panel = 8 ;
+                }
+                else
+                {
+                    // type is large; do not use panel reduction method
+                    panel = 1 ;
+                }
+        }
     }
 
+    fprintf (fp, "#define GB_PANEL %d\n", panel) ;
 }
 

@@ -56,20 +56,20 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         char id [SLEN] ;
         if (zcode == GB_FC32_code)
         {
-            snprintf (id, SLEN, " %s z = GxB_CMPLXF (%s,0) ;\n",
+            snprintf (id, SLEN, "%s z = GxB_CMPLXF (%s,0)",
                 ztype_name, id_val) ;
         }
         else if (zcode == GB_FC64_code)
         {
-            snprintf (id, SLEN, " %s z = GxB_CMPLX (%s,0) ;\n",
+            snprintf (id, SLEN, "%s z = GxB_CMPLX (%s,0)",
                 ztype_name, id_val) ;
         }
         else
         {
-            snprintf (id, SLEN, " %s z = %s ;\n", ztype_name, id_val) ;
+            snprintf (id, SLEN, "%s z = %s", ztype_name, id_val) ;
         }
         fprintf (fp, "#define GB_DECLARE_IDENTITY(z) %s\n", id) ;
-        fprintf (fp, "#define GB_DECLARE_IDENTITY_CONST(z) %s\n", id) ;
+        fprintf (fp, "#define GB_DECLARE_IDENTITY_CONST(z) const %s\n", id) ;
         if (has_byte)
         {
             fprintf (fp, "#define GB_HAS_IDENTITY_BYTE 1\n") ;
@@ -121,15 +121,15 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             "const %s zterminal = ", ztype_name) ;
         if (zcode == GB_FC32_code)
         {
-            fprintf (fp, "GxB_CMPLXF (%s,0) ;\n", term_value) ;
+            fprintf (fp, "GxB_CMPLXF (%s,0)\n", term_value) ;
         }
         else if (zcode == GB_FC64_code)
         {
-            fprintf (fp, "GxB_CMPLX (%s,0) ;\n", term_value) ;
+            fprintf (fp, "GxB_CMPLX (%s,0)\n", term_value) ;
         }
         else
         {
-            fprintf (fp, "%s ;\n", term_value) ;
+            fprintf (fp, "%s\n", term_value) ;
         }
         fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) "
             "((z) == %s)\n", term_value) ;
