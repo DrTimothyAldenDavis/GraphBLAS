@@ -322,7 +322,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
         // pattern of C = set union of pattern of A and B
         #define GB_ISO_ADD
-        #define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
         #include "GB_add_template.c"
         done = true ;
 
@@ -348,7 +347,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                     M, Mask_struct, Mask_comp,                              \
                     A, B, is_eWiseUnion, alpha_scalar, beta_scalar,         \
                     Ch_is_Mh, C_to_M, C_to_A, C_to_B,                       \
-                    TaskList, C_ntasks, C_nthreads, Werk) ;              \
+                    TaskList, C_ntasks, C_nthreads, Werk) ;                 \
                 done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
@@ -384,6 +383,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     if (!done)
     {
+
+        #include "GB_generic.h"
         GB_BURBLE_MATRIX (C, "(generic add: %s) ",
             (op == NULL) ? "2nd" : op->name) ;
 
@@ -426,14 +427,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         // address of Cx [p]
         #undef  GB_CX
         #define GB_CX(p) Cx +((p)*csize)
-
-        // loops cannot be vectorized
-        #undef  GB_PRAGMA_SIMD_VECTORIZE
-        #define GB_PRAGMA_SIMD_VECTORIZE ;
-
-        #define GB_A_TYPE GB_void
-        #define GB_B_TYPE GB_void
-        #define GB_C_TYPE GB_void
 
         if (op_is_positional)
         {

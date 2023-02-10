@@ -127,7 +127,7 @@
             GB_DECLAREB (bkj) ;
             GB_GETB (bkj, Bx, pB, B_iso) ;      // bkj = B(0,j)
             GB_MULT (cij, aki, bkj, i, 0, j) ;  // cij = aki * bkj
-            GB_PRAGMA_SIMD_DOT (cij)
+            GB_PRAGMA_SIMD_REDUCTION_MONOID (cij)
             for (int64_t k = 1 ; k < vlen ; k++)
             { 
                 // break if cij terminal
@@ -259,7 +259,7 @@
             GB_DECLAREB (bkj) ;
             GB_GETB (bkj, Bx, pB  , B_iso) ;    // bkj = B(k,j)
             GB_MULT (cij, aki, bkj, i, k, j) ;  // cij = aki * bkj
-            GB_PRAGMA_SIMD_DOT (cij)
+            GB_PRAGMA_SIMD_REDUCTION_MONOID (cij)
             for (int64_t p = pB+1 ; p < pB_end ; p++)
             { 
                 // break if cij terminal
@@ -489,7 +489,7 @@
             GB_DECLAREB (bkj) ;
             GB_GETB (bkj, Bx, pB+k, B_iso) ;    // bkj = B(k,j)
             GB_MULT (cij, aki, bkj, i, k, j) ;  // cij = aki * bkj
-            GB_PRAGMA_SIMD_DOT (cij)
+            GB_PRAGMA_SIMD_REDUCTION_MONOID (cij)
             for (int64_t p = pA+1 ; p < pA_end ; p++)
             { 
                 // break if cij terminal

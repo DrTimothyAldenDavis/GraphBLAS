@@ -187,6 +187,7 @@ GrB_Info GB_dense_subassign_06d
             // get operators, functions, workspace, contents of A and C
             //------------------------------------------------------------------
 
+            #include "GB_generic.h"
             GB_BURBLE_MATRIX (A, "(generic C(:,:)<Z>=Z assign) ") ;
 
             const size_t csize = C->type->size ;
@@ -201,14 +202,6 @@ GrB_Info GB_dense_subassign_06d
 
             #define GB_AX_MASK(Ax,pA,asize) \
                 GB_mcast (Ax, pA, asize)
-
-            #define GB_C_TYPE GB_void
-            #define GB_A_TYPE GB_void
-
-            // no vectorization
-            #define GB_PRAGMA_SIMD_VECTORIZE ;
-            #undef  GB_PRAGMA_SIMD_REDUCTION
-            #define GB_PRAGMA_SIMD_REDUCTION(op,s) ;
 
             #include "GB_dense_subassign_06d_template.c"
         }

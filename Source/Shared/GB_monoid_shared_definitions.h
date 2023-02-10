@@ -64,6 +64,22 @@
 #endif
 
 //------------------------------------------------------------------------------
+// monoid simd reduction
+//------------------------------------------------------------------------------
+
+// This macro expands into one of the following, or is empty:
+
+//      #pragma omp simd reduction(+:z)
+//      #pragma omp simd reduction(*:z)
+//      #pragma omp simd reduction(^:z)
+//      ...
+
+// by default, no simd vectorization reduction #pragma
+#ifndef GB_PRAGMA_SIMD_REDUCTION_MONOID
+#define GB_PRAGMA_SIMD_REDUCTION_MONOID(z)
+#endif
+
+//------------------------------------------------------------------------------
 // monoid identity & terminal value and conditions, and handling ztype overflow
 //------------------------------------------------------------------------------
 

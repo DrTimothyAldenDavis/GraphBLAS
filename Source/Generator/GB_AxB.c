@@ -83,7 +83,8 @@ GB_is_plus_big_pair_semiring
 GB_is_plus_fc32_pair_semiring
 GB_is_plus_fc64_pair_semiring
 
-// special case monoids:
+// special case monoids and simd reduction #pragma:
+GB_pragma_simd_reduction_monoid
 GB_is_any_monoid
 GB_is_any_fc32_monoid
 GB_is_any_fc64_monoid
@@ -114,15 +115,6 @@ GB_monoid_is_terminal
 GB_terminal_condition
 GB_if_terminal_break
 GB_declare_const_terminal
-
-// FIXME: GB_PRAGMA_SIMD_DOT not in macrofy, do I need it?
-// simd pragma for dot-product loop vectorization
-#define GB_PRAGMA_SIMD_DOT(cij) \
-    GB_dot_simd_vectorize(cij)
-
-// FIXME: GB_PRAGMA_SIMD_VECTORIZE: move this (generic methods disable it)
-// simd pragma for other loop vectorization
-#define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
 
 // FIXME: GB_HAS_ATOMIC
 // 1 if monoid update can be done atomically, 0 otherwise

@@ -161,6 +161,7 @@ GrB_Info GB_dense_subassign_05d
         // get operators, functions, workspace, contents of A and C
         //----------------------------------------------------------------------
 
+        #include "GB_generic.h"
         GB_BURBLE_MATRIX (M, "(generic C(:,:)<M>=x assign) ") ;
 
         const size_t csize = C->type->size ;
@@ -168,11 +169,6 @@ GrB_Info GB_dense_subassign_05d
         // Cx [p] = scalar
         #define GB_COPY_SCALAR_TO_C(p,x) \
             memcpy (Cx + ((p)*csize), x, csize)
-
-        #define GB_C_TYPE GB_void
-
-        // no vectorization
-        #define GB_PRAGMA_SIMD_VECTORIZE ;
 
         #include "GB_dense_subassign_05d_template.c"
     }

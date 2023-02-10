@@ -93,7 +93,7 @@
         }
         #else
         {
-            GB_PRAGMA_SIMD_DOT (cij)
+            GB_PRAGMA_SIMD_REDUCTION_MONOID (cij)
             for (int64_t p = pA ; p < pA_end ; p++)
             { 
                 int64_t k = Ai [p] ;
@@ -138,7 +138,7 @@
         }
         #else
         {
-            GB_PRAGMA_SIMD_DOT (cij)
+            GB_PRAGMA_SIMD_REDUCTION_MONOID (cij)
             for (int64_t p = pA ; p < pA_end ; p++)
             {
                 int64_t k = Ai [p] ;

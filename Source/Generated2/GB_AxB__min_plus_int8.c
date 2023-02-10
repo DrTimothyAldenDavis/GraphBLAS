@@ -73,7 +73,7 @@
 
 // special case semirings:
 
-// special case monoids:
+// special case monoids and simd reduction #pragma:
 
 #define GB_IS_IMIN_MONOID 1
 
@@ -90,15 +90,6 @@
 #define GB_TERMINAL_CONDITION(z,zterminal) (z == INT8_MIN)
 #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == INT8_MIN) { break ; }
 #define GB_DECLARE_TERMINAL_CONST(zterminal) const int8_t zterminal = INT8_MIN
-
-// FIXME: GB_PRAGMA_SIMD_DOT not in macrofy, do I need it?
-// simd pragma for dot-product loop vectorization
-#define GB_PRAGMA_SIMD_DOT(cij) \
-    ;
-
-// FIXME: GB_PRAGMA_SIMD_VECTORIZE: move this (generic methods disable it)
-// simd pragma for other loop vectorization
-#define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
 
 // FIXME: GB_HAS_ATOMIC
 // 1 if monoid update can be done atomically, 0 otherwise

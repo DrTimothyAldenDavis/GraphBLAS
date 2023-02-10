@@ -119,9 +119,6 @@
 // do the numerical phases of GB_add and GB_emult
 #define GB_PHASE_2_OF_2
 
-// hard-coded loops can be vectorized
-#define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
-
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_BSHIFT || GxB_NO_UINT32 || GxB_NO_BSHIFT_UINT32)

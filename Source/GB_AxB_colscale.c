@@ -265,6 +265,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
             // get operators, functions, workspace, contents of A, D, and C
             //------------------------------------------------------------------
 
+            #include "GB_generic.h"
             GB_BURBLE_MATRIX (C, "(generic C=A*D colscale) ") ;
 
             GxB_binary_function fmult = mult->binop_function ;
@@ -327,13 +328,6 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
             // address of Cx [p]
             #define GB_CX(p) Cx +((p)*csize)
-
-            #define GB_A_TYPE GB_void
-            #define GB_B_TYPE GB_void
-            #define GB_C_TYPE GB_void
-
-            // no vectorization
-            #define GB_PRAGMA_SIMD_VECTORIZE ;
 
             if (flipxy)
             { 

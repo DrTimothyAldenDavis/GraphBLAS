@@ -163,7 +163,7 @@
                     }
                     #else
                     {
-                        GB_PRAGMA_SIMD_DOT (cij)
+                        GB_PRAGMA_SIMD_REDUCTION_MONOID (cij)
                         for (int64_t k = 0 ; k < vlen ; k++)
                         { 
                             GB_DOT (k, pA+k, pB+k) ;    // cij += A(k,i)*B(k,j)
@@ -205,7 +205,7 @@
                     }
                     #else
                     {
-                        GB_PRAGMA_SIMD_DOT (cij)
+                        GB_PRAGMA_SIMD_REDUCTION_MONOID (cij)
                         for (int64_t k = 0 ; k < vlen ; k++)
                         {
                             if (Bb [pB+k])
@@ -250,7 +250,7 @@
                     }
                     #else
                     {
-                        GB_PRAGMA_SIMD_DOT (cij)
+                        GB_PRAGMA_SIMD_REDUCTION_MONOID (cij)
                         for (int64_t k = 0 ; k < vlen ; k++)
                         {
                             if (Ab [pA+k])
@@ -295,7 +295,7 @@
                     }
                     #else
                     {
-                        GB_PRAGMA_SIMD_DOT (cij)
+                        GB_PRAGMA_SIMD_REDUCTION_MONOID (cij)
                         for (int64_t k = 0 ; k < vlen ; k++)
                         {
                             if (Ab [pA+k] && Bb [pB+k])
@@ -847,7 +847,7 @@
                     }
                     #else
                     {
-                        GB_PRAGMA_SIMD_DOT (cij)
+                        GB_PRAGMA_SIMD_REDUCTION_MONOID (cij)
                         for (int64_t p = pB ; p < pB_end ; p++)
                         { 
                             int64_t k = Bi [p] ;
@@ -892,7 +892,7 @@
                     }
                     #else
                     {
-                        GB_PRAGMA_SIMD_DOT (cij)
+                        GB_PRAGMA_SIMD_REDUCTION_MONOID (cij)
                         for (int64_t p = pB ; p < pB_end ; p++)
                         {
                             int64_t k = Bi [p] ;

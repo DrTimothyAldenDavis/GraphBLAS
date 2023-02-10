@@ -77,7 +77,8 @@
 
 #define GB_IS_PLUS_BIG_PAIR_SEMIRING 1
 
-// special case monoids:
+// special case monoids and simd reduction #pragma:
+#define GB_PRAGMA_SIMD_REDUCTION_MONOID(cij) GB_PRAGMA_SIMD_REDUCTION (+,cij)
 
 // special case multipliers:
 #define GB_IS_PAIR_MULTIPLIER 1
@@ -90,15 +91,6 @@
 #define GB_ZTYPE_IGNORE_OVERFLOW 1
 
 // monoid terminal condition, if any:
-
-// FIXME: GB_PRAGMA_SIMD_DOT not in macrofy, do I need it?
-// simd pragma for dot-product loop vectorization
-#define GB_PRAGMA_SIMD_DOT(cij) \
-    GB_PRAGMA_SIMD_REDUCTION (+,cij)
-
-// FIXME: GB_PRAGMA_SIMD_VECTORIZE: move this (generic methods disable it)
-// simd pragma for other loop vectorization
-#define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
 
 // FIXME: GB_HAS_ATOMIC
 // 1 if monoid update can be done atomically, 0 otherwise

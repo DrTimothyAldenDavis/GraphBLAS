@@ -127,6 +127,8 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
 
     if (!done)
     { 
+
+        #include "GB_generic.h"
         GB_BURBLE_MATRIX (C, "(generic C(:,:)+=x assign) ") ;
 
         //----------------------------------------------------------------------
@@ -145,11 +147,6 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
 
         // address of Cx [p]
         #define GB_CX(p) Cx +((p)*csize)
-
-        #define GB_C_TYPE GB_void
-
-        // no vectorization
-        #define GB_PRAGMA_SIMD_VECTORIZE ;
 
         #include "GB_dense_subassign_22_template.c"
     }

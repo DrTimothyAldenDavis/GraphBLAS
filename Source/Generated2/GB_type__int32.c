@@ -43,9 +43,6 @@
 #define GB_AX_MASK(Ax,pA,asize) \
     (Ax [pA] != 0)
 
-// hard-coded loops can be vectorized
-#define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
-
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_INT32)

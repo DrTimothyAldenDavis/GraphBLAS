@@ -329,21 +329,19 @@ tcondition = '' ;
 tbreak = '' ;
 tvalue = '' ;
 
+op = '' ;
 if (is_any)
     % the ANY monoid terminates on the first entry seen
     is_terminal = 1 ;
-    fprintf (f, 'm4_define(`GB_dot_simd_vectorize'', `;'')\n') ;
 elseif (~isempty (terminal))
     % terminal monoids terminate when cij equals the terminal value
     is_terminal = 1 ;
     tcondition = sprintf (' (z == %s)', terminal) ;
     tbreak = sprintf (' if (z == %s) { break ; }', terminal) ;
     tvalue = sprintf (' const %s zterminal = %s', ztype, terminal) ;
-    fprintf (f, 'm4_define(`GB_dot_simd_vectorize'', `;'')\n') ;
 else
     % non-terminal monoids
     is_terminal = 0 ;
-    op = '' ;
     if (ztype_is_real)
         switch (addop)
             case { 'plus' }
@@ -366,12 +364,13 @@ else
                 op = '' ;
         end
     end
-    if (isempty (op))
-        fprintf (f, 'm4_define(`GB_dot_simd_vectorize'', `;'')\n') ;
-    else
-        pragma = sprintf ('GB_PRAGMA_SIMD_REDUCTION (%s,$1)', op) ;
-        fprintf (f, 'm4_define(`GB_dot_simd_vectorize'', `%s'')\n', pragma) ;
-    end
+end
+
+if (isempty (op))
+    fprintf (f, 'm4_define(`GB_pragma_simd_reduction_monoid'', `'')\n') ;
+else
+    pragma = sprintf ('GB_PRAGMA_SIMD_REDUCTION (%s,cij)', op) ;
+    fprintf (f, 'm4_define(`GB_pragma_simd_reduction_monoid'', `#define GB_PRAGMA_SIMD_REDUCTION_MONOID(cij) %s'')\n', pragma) ;
 end
 
 if (is_terminal)

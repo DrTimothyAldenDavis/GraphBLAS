@@ -64,8 +64,8 @@
 #include "GB_bitmap_assign_methods.h"
 #include "GB_AxB_saxpy_generic.h"
 
-#define GB_GENERIC
 #include "GB_AxB_shared_definitions.h"
+#include "GB_generic.h"
 
 GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
 (
@@ -146,19 +146,8 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     // user-defined monoid update cannot be done with an OpenMP atomic
     #define GB_HAS_OMP_ATOMIC 0
 
-    // FIXME: add GB_A2TYPE, GB_B2TYPE, GB_Z_TYPE, GB_C_TYPE
-    #define GB_A_TYPE GB_void
-    #define GB_B_TYPE GB_void
-
     // FIXME: rename to GB_B_SIZE.  This is before typecast to GB_B2TYPE
     #define GB_BSIZE bsize
-
-    // no vectorization
-    #define GB_PRAGMA_SIMD_VECTORIZE ;
-
-    // monoid identity byte
-    #define GB_HAS_IDENTITY_BYTE 0
-    #define GB_IDENTITY_BYTE (none)
 
     // definitions for GB_AxB_saxpy_generic_template.c
     #include "GB_AxB_saxpy3_template.h"
@@ -169,6 +158,8 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
         //----------------------------------------------------------------------
         // generic semirings with positional mulitiply operators
         //----------------------------------------------------------------------
+
+        // C and Z type become int32_t or int64_t
 
         GB_BURBLE_MATRIX (C, "(generic positional C=A*B) ") ;
 
@@ -237,6 +228,8 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
         {
             #undef  GB_C_TYPE
             #define GB_C_TYPE int64_t
+            #undef  GB_Z_TYPE
+            #define GB_Z_TYPE int64_t
             // FIXME: rename GB_Z_SIZE?
             #undef  GB_CSIZE
             #define GB_CSIZE (sizeof (int64_t))
@@ -274,6 +267,8 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
         {
             #undef  GB_C_TYPE
             #define GB_C_TYPE int32_t
+            #undef  GB_Z_TYPE
+            #define GB_Z_TYPE int32_t
             #undef  GB_CSIZE
             #define GB_CSIZE (sizeof (int32_t))
             ASSERT (C->type == GrB_INT32) ;
@@ -385,8 +380,12 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
         #undef  GB_HX_UPDATE
         #define GB_HX_UPDATE(i,t) fadd (GB_HX (i), GB_HX (i), t)
 
+        // generic types for C and Z
         #undef  GB_C_TYPE
         #define GB_C_TYPE GB_void
+
+        #undef  GB_Z_TYPE
+        #define GB_Z_TYPE GB_void
 
         #undef  GB_CSIZE
         #define GB_CSIZE csize

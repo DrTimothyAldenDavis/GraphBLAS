@@ -196,6 +196,7 @@ GrB_Info GB_dense_subassign_25
             // get operators, functions, workspace, contents of A and C
             //------------------------------------------------------------------
 
+            #include "GB_generic.h"
             GB_BURBLE_MATRIX (A, "(generic C(:,:)<M,struct>=A assign, "
                 "method 25) ") ;
 
@@ -205,12 +206,6 @@ GrB_Info GB_dense_subassign_25
             // Cx [pC] = (ctype) Ax [pA]
             #define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso) \
                 cast_A_to_C (Cx+((pC)*csize), Ax+(A_iso?0:(pA)*asize), asize)
-
-            #define GB_C_TYPE GB_void
-            #define GB_A_TYPE GB_void
-
-            // no vectorization
-            #define GB_PRAGMA_SIMD_VECTORIZE ;
 
             #include "GB_dense_subassign_25_template.c"
         }

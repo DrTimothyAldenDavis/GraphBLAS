@@ -14,8 +14,8 @@
 // This file does not use GB_DECLARE_TERMINAL_CONST (zterminal).  Instead, it
 // defines zterminal itself.
 
-#define GB_GENERIC
 #include "GB_AxB_shared_definitions.h"
+#include "GB_generic.h"
 
 {
 
@@ -68,16 +68,7 @@
     // C = A'*B via dot products, function pointers, and typecasting
     //--------------------------------------------------------------------------
 
-    #define GB_A_TYPE GB_void
-    #define GB_B_TYPE GB_void
-    #define GB_A2TYPE GB_void
-    #define GB_B2TYPE GB_void
-
     #define GB_PHASE_2_OF_2
-
-    // no vectorization
-    #define GB_PRAGMA_SIMD_VECTORIZE ;
-    #define GB_PRAGMA_SIMD_DOT(cij) ;
 
     if (op_is_positional)
     { 
@@ -85,6 +76,8 @@
         //----------------------------------------------------------------------
         // generic semirings with positional multiply operators
         //----------------------------------------------------------------------
+
+        // C and Z types become int32_t or int64_t
 
         ASSERT (!flipxy) ;
 
@@ -129,7 +122,10 @@
 
         if (mult->ztype == GrB_INT64)
         {
+            #undef  GB_C_TYPE
             #define GB_C_TYPE int64_t
+            #undef  GB_Z_TYPE
+            #define GB_Z_TYPE int64_t
             // instead of GB_DECLARE_TERMINAL_CONST (zterminal):
             int64_t zterminal = 0 ;
             if (is_terminal)
@@ -177,6 +173,8 @@
         {
             #undef  GB_C_TYPE
             #define GB_C_TYPE int32_t
+            #undef  GB_Z_TYPE
+            #define GB_Z_TYPE int32_t
             // instead of GB_DECLARE_TERMINAL_CONST (zterminal):
             int32_t zterminal = 0 ;
             if (is_terminal)
@@ -278,8 +276,12 @@
             GB_MULT (zwork, aki, bkj, i, k, j) ;                        \
             fadd (cij, cij, zwork)
 
+        // generic types for C and Z
         #undef  GB_C_TYPE
         #define GB_C_TYPE GB_void
+
+        #undef  GB_Z_TYPE
+        #define GB_Z_TYPE GB_void
 
         if (opcode == GB_FIRST_binop_code)
         { 

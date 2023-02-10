@@ -165,6 +165,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
         // get operators, functions, workspace, contents of B and C
         //----------------------------------------------------------------------
 
+        #include "GB_generic.h"
         GB_BURBLE_MATRIX (B, "(generic C+=B) ") ;
 
         GxB_binary_function fadd = accum->binop_function ;
@@ -191,12 +192,6 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
 
         // address of Cx [p]
         #define GB_CX(p) Cx +((p)*csize)
-
-        #define GB_B_TYPE GB_void
-        #define GB_C_TYPE GB_void
-
-        // no vectorization
-        #define GB_PRAGMA_SIMD_VECTORIZE ;
 
         #define GB_BINOP(z,x,y,i,j) fadd (z,x,y)
         #include "GB_dense_subassign_23_template.c"

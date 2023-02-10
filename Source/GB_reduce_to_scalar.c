@@ -240,7 +240,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
             // generic worker
             //------------------------------------------------------------------
 
-            #define GB_GENERIC
+            #include "GB_generic.h"
 
             GxB_binary_function freduce = monoid->op->binop_function ;
 

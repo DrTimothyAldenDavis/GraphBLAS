@@ -43,9 +43,6 @@
 #define GB_AX_MASK(Ax,pA,asize) \
     GB_mcast ((GB_void *) Ax, pA, sizeof (GxB_FC64_t))
 
-// hard-coded loops can be vectorized
-#define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
-
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_FC64)

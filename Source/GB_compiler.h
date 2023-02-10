@@ -170,6 +170,10 @@
 
 #endif
 
+// by default, enable the #pragma omp simd statements.  This can be #undef'd
+// later, for methods that must disable it (see GB_generic.h).
+#define GB_PRAGMA_SIMD_VECTORIZE GB_PRAGMA_SIMD
+
 //------------------------------------------------------------------------------
 // variable-length arrays
 //------------------------------------------------------------------------------

@@ -26,6 +26,8 @@
     GB_phybix_free (C) ;        \
 }
 
+#include "GB_generic.h"
+
 void GB_ewise_generic       // generic ewise
 (
     // input/output:
@@ -141,16 +143,9 @@ void GB_ewise_generic       // generic ewise
     // address of Cx [p]
     #define GB_CX(p) Cx +((p)*csize)
 
-    #define GB_A_TYPE GB_void
-    #define GB_B_TYPE GB_void
-    #define GB_C_TYPE GB_void
-
     #define GB_PHASE_2_OF_2
 
-    // loops cannot be vectorized
-    #define GB_PRAGMA_SIMD_VECTORIZE ;
-
-    // flipxy is handled in the definition of GB_BINOP, not in the tempate
+    // flipxy is handled in the definition of GB_BINOP, not in the template
     #define GB_FLIPPED 0
 
     //--------------------------------------------------------------------------
