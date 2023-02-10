@@ -22,7 +22,8 @@ void GB_macrofy_type
 
     if ((strcmp (name, "GB_void") == 0) || (strcmp (name, "void") == 0))
     {
-        fprintf (fp, "#define GB_%s%sTYPE void /* unused */\n", what, what2) ;
+        // values of the matrix are not used
+        fprintf (fp, "#define GB_%s%sTYPE void\n", what, what2) ;
     }
     else
     {

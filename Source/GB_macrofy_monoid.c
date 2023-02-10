@@ -18,6 +18,10 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     int id_ecode,       // identity value as an enum
     int term_ecode,     // terminal value as an enum (<= 28 is terminal)
     GrB_Monoid monoid,  // monoid to macrofy; null if C is iso for GrB_mxm
+    bool disable_terminal_condition,    // if true, the monoid is assumed
+                        // to be non-terminal.  For the (times, firstj, int64)
+                        // semiring, times is normally a terminal monoid, but
+                        // it's not worth exploiting in GrB_mxm.
     // output:
     const char **u_expression
 )
@@ -111,9 +115,12 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         fprintf (fp, "#define GB_IS_ANY_MONOID 1\n") ;
         monoid_is_terminal = true ;
     }
-    else if (monoid == NULL || monoid->terminal == NULL)
+    else if (monoid == NULL || monoid->terminal == NULL
+        || disable_terminal_condition)
     {
-        // monoid is not terminal (either built-in or user-defined)
+        // monoid is not terminal (either built-in or user-defined), or
+        // its terminal condition is ignored (for (times, firstj, int64),
+        // for example).
         monoid_is_terminal = false ;
     }
     else if (term_ecode <= 28)
@@ -159,7 +166,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // determine the OpenMP #pragma omp reduction(op:z) for this monoid
     //--------------------------------------------------------------------------
 
-    // If not #defined', the default in GB_monoid_shared_definitions.h is no
+    // If not #define'd, the default in GB_monoid_shared_definitions.h is no
     // #pragma.  The pragma is empty if the monoid is terminal, since the simd
     // reduction does not work with a 'break' in the loop.
 
@@ -173,7 +180,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             // #pragma omp simd reduction(+:z)
             op = "+" ;
         }
-        else if (opcode == GB_LXOR_binop_code)
+        else if (opcode == GB_LXOR_binop_code || opcode == GB_BXOR_binop_code)
         {
             // #pragma omp simd reduction(^:z)
             op = "^" ;
@@ -185,7 +192,12 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         }
         if (op != NULL)
         {
-            // the monoid has a "#pragma omp simd reduction(op:z)" statement.
+            // The monoid has a "#pragma omp simd reduction(op:z)" statement.
+            // There are other OpenMP reductions that could be exploited, but
+            // many are for terminal monoids (logical and bitwise AND, OR).
+            // The min/max reductions are not exploited because they are
+            // terminal monoids for integers.  For floating-point, the NaN
+            // handling may differ, so they are not exploited here either.
             fprintf (fp, "#define GB_PRAGMA_SIMD_REDUCTION_MONOID(z) "
                 "GB_PRAGMA_SIMD_REDUCTION (%s,z)\n", op) ;
         }

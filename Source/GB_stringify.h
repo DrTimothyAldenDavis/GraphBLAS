@@ -242,7 +242,11 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     int add_ecode,      // binary op as an enum
     int id_ecode,       // identity value as an enum
     int term_ecode,     // terminal value as an enum (<= 28 is terminal)
-    GrB_Monoid monoid,  // monoid to macrofy
+    GrB_Monoid monoid,  // monoid to macrofy; null if C is iso for GrB_mxm
+    bool disable_terminal_condition,    // if true, the monoid is assumed
+                        // to be non-terminal.  For the (times, firstj, int64)
+                        // semiring, times is normally a terminal monoid, but
+                        // it's not worth exploiting in GrB_mxm.
     // output:
     const char **u_expression
 ) ;
