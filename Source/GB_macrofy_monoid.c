@@ -102,19 +102,24 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // GB_DECLARE_TERMINAL_CONST(zterminal) declares the zterminal variable as
     // const.  It is empty if the monoid is not terminal.
 
+    bool monoid_is_terminal = false ;
+
     bool is_any_monoid = (term_ecode == 18) ;
     if (is_any_monoid)
     {
         // ANY monoid is terminal but with no specific terminal value
         fprintf (fp, "#define GB_IS_ANY_MONOID 1\n") ;
+        monoid_is_terminal = true ;
     }
     else if (monoid == NULL || monoid->terminal == NULL)
     {
         // monoid is not terminal (either built-in or user-defined)
+        monoid_is_terminal = false ;
     }
     else if (term_ecode <= 28)
     {
         // built-in terminal monoid: terminal value is a simple assignment
+        monoid_is_terminal = true ;
         fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
         const char *term_value = GB_charify_id (term_ecode, zsize, NULL, NULL) ;
         fprintf (fp, "#define GB_DECLARE_TERMINAL_CONST(zterminal) "
@@ -139,6 +144,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     else
     {
         // user-defined terminal monoid
+        monoid_is_terminal = true ;
         fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
         GB_macrofy_bytes (fp, "TERMINAL_CONST", "zterminal",
             ztype_name, monoid->terminal, zsize, false) ;
@@ -150,11 +156,47 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     }
 
     //--------------------------------------------------------------------------
+    // determine the OpenMP #pragma omp reduction(op:z) for this monoid
+    //--------------------------------------------------------------------------
+
+    // If not #defined', the default in GB_monoid_shared_definitions.h is no
+    // #pragma.  The pragma is empty if the monoid is terminal, since the simd
+    // reduction does not work with a 'break' in the loop.
+
+    bool is_complex = (zcode == GB_FC32_code || zcode == GB_FC64_code) ;
+
+    if (!monoid_is_terminal && !is_complex)
+    {
+        char *op = NULL ;
+        if (opcode == GB_PLUS_binop_code)
+        {
+            // #pragma omp simd reduction(+:z)
+            op = "+" ;
+        }
+        else if (opcode == GB_LXOR_binop_code)
+        {
+            // #pragma omp simd reduction(^:z)
+            op = "^" ;
+        }
+        else if (opcode == GB_TIMES_binop_code)
+        {
+            // #pragma omp simd reduction(^:z)
+            op = "*" ;
+        }
+        if (op != NULL)
+        {
+            // the monoid has a "#pragma omp simd reduction(op:z)" statement.
+            fprintf (fp, "#define GB_PRAGMA_SIMD_REDUCTION_MONOID(z) "
+                "GB_PRAGMA_SIMD_REDUCTION (%s,z)\n", op) ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
     // special cases
     //--------------------------------------------------------------------------
 
     bool is_integer = (zcode >= GB_INT8_code || zcode <= GB_UINT64_code) ;
-    bool is_float = (zcode == GB_FP32_code || zcode == GB_FP64_code) ;
+    bool is_fp_real = (zcode == GB_FP32_code || zcode == GB_FP64_code) ;
 
     if (opcode == GB_PLUS_binop_code && zcode == GB_FC32_code)
     {
@@ -186,12 +228,12 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         // IMAX monoid (max with any integer typ)
         fprintf (fp, "#define GB_IS_IMAX_MONOID 1\n") ;
     }
-    else if (opcode == GB_MIN_binop_code && is_float)
+    else if (opcode == GB_MIN_binop_code && is_fp_real)
     {
         // FMIN monoid (min with a real floating-point type)
         fprintf (fp, "#define GB_IS_FMIN_MONOID 1\n") ;
     }
-    else if (opcode == GB_MAX_binop_code && is_float)
+    else if (opcode == GB_MAX_binop_code && is_fp_real)
     {
         // FMAX monoid (max with a real floating-point type)
         fprintf (fp, "#define GB_IS_FMAX_MONOID 1\n") ;

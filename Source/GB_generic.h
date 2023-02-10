@@ -21,7 +21,7 @@
 #undef  GB_PRAGMA_SIMD_VECTORIZE
 #define GB_PRAGMA_SIMD_VECTORIZE
 
-// add data types are GB_void
+// all data types are GB_void
 #undef  GB_A_TYPE
 #define GB_A_TYPE GB_void
 
