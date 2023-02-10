@@ -99,7 +99,7 @@ template< typename T_A, typename T_Z>
 __global__ void GB_jit_reduce
 (
     GrB_Matrix A,   // matrix to reduce
-    void *zscalar,  // scalar result, at least sizeof (uint16_t)
+    void *zscalar,  // scalar result, at least sizeof (uint32_t)
     int64_t anz,    // # of entries in A: anz = GB_nnz_held (A)
     uint32_t *mutex // for monoids that need it
 )
@@ -128,9 +128,7 @@ __global__ void GB_jit_reduce
         // A is sparse or hypersparse
         //----------------------------------------------------------------------
 
-        // FUTURE: the check for zombies could be decided at compile-time
-
-        if (A->nzombies > 0)
+        #if GB_A_HAS_ZOMBIES
         {
             // check for zombies during the reduction
             const int64_t *__restrict__ Ai = A->i ;
@@ -142,7 +140,7 @@ __global__ void GB_jit_reduce
                 GB_GETA_AND_UPDATE (zmine, Ax, p) ; // zmine += (ztype) Ax [p]
             }
         }
-        else
+        #else
         {
             // no zombies present
             for (int64_t p = blockIdx.x * blockDim.x + threadIdx.x ;
@@ -152,6 +150,7 @@ __global__ void GB_jit_reduce
                 GB_GETA_AND_UPDATE (zmine, Ax, p) ; // zmine += (ztype) Ax [p]
             }
         }
+        #endif
 
     }
     #elif GB_A_IS_FULL
@@ -222,6 +221,7 @@ __global__ void GB_jit_reduce
             T_Z *z = (T_Z *) zscalar ;
             GB_cuda_lock (mutex) ;
             GB_ADD (z, z, zmine) ;
+            // flush to global
             GB_cuda_unlock (mutex) ;
 
         #endif

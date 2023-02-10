@@ -82,7 +82,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         GB_macrofy_bytes (fp, "IDENTITY", "z",
             ztype_name, (uint8_t *) (monoid->identity), zsize, true) ;
         fprintf (fp, "#define GB_DECLARE_IDENTITY_CONST(z) "
-            "GB_DECLARE_IDENTIY(z)\n") ;
+            "GB_DECLARE_IDENTITY(z)\n") ;
     }
 
     //--------------------------------------------------------------------------
