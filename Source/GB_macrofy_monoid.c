@@ -265,6 +265,36 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     }
 
     //--------------------------------------------------------------------------
+    // create macro for atomic compare/exchange on the CPU
+    //--------------------------------------------------------------------------
+
+    if (zcode == 0)
+    {
+        // C is iso (any_pair symbolic semiring)
+        fprintf (fp, "#define GB_Z_ATOMIC_BITS 0\n") ;
+    }
+    else if (zsize == sizeof (uint8_t))
+    {
+        // int8_t, uint8_t, and 8-bit user-defined types
+        fprintf (fp, "#define GB_Z_ATOMIC_BITS 8\n") ;
+    }
+    else if (zsize == sizeof (uint16_t))
+    {
+        // int16_t, uint16_t, and 16-bit user-defined types
+        fprintf (fp, "#define GB_Z_ATOMIC_BITS 16\n") ;
+    }
+    else if (zsize == sizeof (uint32_t))
+    {
+        // int32_t, uint32_t, float, and 32-bit user-defined types
+        fprintf (fp, "#define GB_Z_ATOMIC_BITS 32\n") ;
+    }
+    else if (zsize == sizeof (uint64_t))
+    {
+        // int64_t, uint64_t, double, float complex, and 64-bit user types
+        fprintf (fp, "#define GB_Z_ATOMIC_BITS 64\n") ;
+    }
+
+    //--------------------------------------------------------------------------
     // create macros for the atomic CUDA operator, if available
     //--------------------------------------------------------------------------
 
