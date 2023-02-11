@@ -75,12 +75,12 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     if (C_iso)
     {
         // C is iso; no operators are used
-        fprintf (fp, "// semiring: symbolic only (C is iso)\n\n") ;
+        fprintf (fp, "// semiring: symbolic only (C is iso)\n") ;
     }
     else
     {
         // general case
-        fprintf (fp, "// semiring: (%s, %s%s, %s)\n\n",
+        fprintf (fp, "// semiring: (%s, %s%s, %s)\n",
             addop->name, mult->name, flipxy ? " (flipped)" : "",
             mult->xtype->name) ;
     }
@@ -231,6 +231,32 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
         {
             // PLUS_PAIR_REAL semiring
             fprintf (fp, "#define GB_IS_PLUS_PAIR_REAL_SEMIRING 1\n") ;
+
+            switch (zcode)
+            {
+                case GB_INT8_code    : 
+                case GB_UINT8_code   : 
+                    fprintf (fp, "#define GB_IS_PLUS_8_PAIR_SEMIRING 1\n") ;
+                    break ;
+
+                case GB_INT16_code   : 
+                case GB_UINT16_code  : 
+                    fprintf (fp, "#define GB_IS_PLUS_16_PAIR_SEMIRING 1\n") ;
+                    break ;
+
+                case GB_INT32_code   : 
+                case GB_UINT32_code  : 
+                    fprintf (fp, "#define GB_IS_PLUS_32_PAIR_SEMIRING 1\n") ;
+                    break ;
+
+                case GB_INT64_code   : 
+                case GB_UINT64_code  : 
+                case GB_FP32_code    : 
+                case GB_FP64_code    : 
+                    fprintf (fp, "#define GB_IS_PLUS_BIG_PAIR_SEMIRING 1\n") ;
+                    break ;
+                default:;
+            }
         }
         else if (C_iso)
         {
@@ -248,27 +274,6 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
             // semiring is lxor_pair_bool
             // FIXME: rename _LXOR_PAIR_
             fprintf (fp, "#define GB_IS_XOR_PAIR_SEMIRING 1\n") ;
-        }
-        else if (is_plus && (zcode == GB_INT8_code || zcode == GB_UINT8_code))
-        {
-            // semiring is plus_pair_(int8 or uint8)
-            fprintf (fp, "#define GB_IS_PLUS_8_PAIR_SEMIRING 1\n") ;
-        }
-        else if (is_plus && (zcode == GB_INT16_code || zcode == GB_UINT16_code))
-        {
-            // semiring is plus_pair_(int16 or uint16)
-            fprintf (fp, "#define GB_IS_PLUS_16_PAIR_SEMIRING 1\n") ;
-        }
-        else if (is_plus && (zcode == GB_INT32_code || zcode == GB_UINT32_code))
-        {
-            // semiring is plus_pair_(int32 or uint32)
-            fprintf (fp, "#define GB_IS_PLUS_32_PAIR_SEMIRING 1\n") ;
-        }
-        else if (is_plus && (zcode == GB_INT64_code || zcode == GB_UINT64_code
-                          || zcode == GB_FP32_code  || zcode == GB_FP64_code))
-        {
-            // semiring is plus_pair_(int16,uint16,float, or double)
-            fprintf (fp, "#define GB_IS_PLUS_BIG_PAIR_SEMIRING 1\n") ;
         }
 
     }

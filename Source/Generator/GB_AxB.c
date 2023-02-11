@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// If this file is in the Generated1/ or Generated2/ folder, do not edit it
-// (it is auto-generated from Generator/*).
-
 #include "GB_dev.h"
 
 // FIXME: use "#ifdef GBCUDA_DEV, and #endif // GBCUDA_DEV, and grep -v:
