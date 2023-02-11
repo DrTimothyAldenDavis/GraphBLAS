@@ -8,23 +8,11 @@
 //------------------------------------------------------------------------------
 
 #include "GB_dev.h"
-
-// FIXME: use "#ifdef GBCUDA_DEV, and #endif // GBCUDA_DEV, and grep -v:
-#if 1
-
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_sort.h"
 #include "GB_AxB_saxpy.h"
-
-// FIXME: use "GB_axb_include_h" macro here: [----
-#if 0
-#include "GB_AxB__include2.h"
-#else
 #include "GB_AxB__include1.h"
-#endif
-// ----]
-
 #include "GB_unused.h"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_ek_slice_search.c"
@@ -370,6 +358,5 @@ GrB_Info GB (_Asaxpy3B__any_pair_iso)
         return (GrB_SUCCESS) ;
     }
 
-#endif
 #endif
 

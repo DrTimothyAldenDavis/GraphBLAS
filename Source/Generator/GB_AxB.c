@@ -8,26 +8,15 @@
 //------------------------------------------------------------------------------
 
 #include "GB_dev.h"
-
-// FIXME: use "#ifdef GBCUDA_DEV, and #endif // GBCUDA_DEV, and grep -v:
-ifndef_GBCUDA_DEV
-
+#ifndef GBCUDA_DEV
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_sort.h"
 #include "GB_AxB_saxpy.h"
-
-// FIXME: use "GB_axb_include_h" macro here: [----
-if_not_any_pair_semiring
-#include "GB_AxB__include2.h"
-#else
-#include "GB_AxB__include1.h"
-#endif
-// ----]
-
 #include "GB_unused.h"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_ek_slice_search.c"
+GB_axb__include_h
 
 // This C=A*B semiring is defined by the following types and operators:
 
@@ -485,7 +474,7 @@ GrB_Info GB (_Asaxpy3B)
 #endif
 
 //------------------------------------------------------------------------------
-//GB_Asaxpy3B_noM: C=A*B: saxpy method (Gustavson + Hash)
+// GB_Asaxpy3B_noM: C=A*B: saxpy method (Gustavson + Hash)
 //------------------------------------------------------------------------------
 
 #if ( !GB_DISABLE )
@@ -533,7 +522,7 @@ GrB_Info GB (_Asaxpy3B)
 #endif
 
 //------------------------------------------------------------------------------
-//GB_Asaxpy3B_notM: C<!M>=A*B: saxpy method (Gustavson + Hash)
+// GB_Asaxpy3B_notM: C<!M>=A*B: saxpy method (Gustavson + Hash)
 //------------------------------------------------------------------------------
 
 #if ( !GB_DISABLE )
@@ -581,5 +570,5 @@ GrB_Info GB (_Asaxpy3B)
     }
 
 #endif
-#endif
+#endif  // GBCUDA_DEV
 

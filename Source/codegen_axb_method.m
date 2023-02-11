@@ -50,12 +50,14 @@ if (is_any_pair)
     omp_atomic = 1 ;
     omp_microsoft_atomic = 0 ;
     % the any_pair_iso semiring is never disabled by GBCUDA_DEV
-    fprintf (f, 'm4_define(`ifndef_GBCUDA_DEV'', `#if 1'')\n') ;
-    fprintf (f, 'm4_define(`if_not_any_pair_semiring'', `#if 0'')\n') ;
+%   fprintf (f, 'm4_define(`ifndef_GBCUDA_DEV'', `#if 1'')\n') ;
+%   fprintf (f, 'm4_define(`if_not_any_pair_semiring'', `#if 0'')\n') ;
+    fprintf (f, 'm4_define(`GB_axb__include_h'', `#include "GB_AxB__include1.h"'')\n') ;
 else
     % all other semirings are disabled by GBCUDA_DEV
-    fprintf (f, 'm4_define(`ifndef_GBCUDA_DEV'', `#ifndef GBCUDA_DEV'')\n') ;
-    fprintf (f, 'm4_define(`if_not_any_pair_semiring'', `#if 1'')\n') ;
+%   fprintf (f, 'm4_define(`ifndef_GBCUDA_DEV'', `#ifndef GBCUDA_DEV'')\n') ;
+%   fprintf (f, 'm4_define(`if_not_any_pair_semiring'', `#if 1'')\n') ;
+    fprintf (f, 'm4_define(`GB_axb__include_h'', `#include "GB_AxB__include2.h"'')\n') ;
 end
 
 is_integer = codegen_contains (ztype, 'int') ;
@@ -791,13 +793,16 @@ fclose (f) ;
 if (is_any_pair)
     % the ANY_PAIR_ISO semiring goes in Generated1
     k = 1 ;
+    % remove '#ifndef GBCUDA_DEV' and '#endif // GBCUDA_DEV' statements
+    grep_gbcuda_dev = ' | grep -v GBCUDA_DEV' ;
 else
     % all other semirings go in Generated2
     k = 2 ;
+    grep_gbcuda_dev = ' ' ;
 end
 
 % construct the *.c file for the semiring
-cmd = sprintf ('cat control.m4 Generator/GB_AxB.c | m4 -P | awk -f codegen_blank.awk > Generated%d/GB_AxB__%s.c', k, name) ;
+cmd = sprintf ('cat control.m4 Generator/GB_AxB.c %s | m4 -P | awk -f codegen_blank.awk > Generated%d/GB_AxB__%s.c', grep_gbcuda_dev, k, name) ;
 system (cmd) ;
 
 fprintf ('.') ;
