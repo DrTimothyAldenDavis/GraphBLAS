@@ -568,5 +568,11 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         }
         fprintf (fp, "#define GB_CUDA_ATOMIC_TYPE %s\n", t) ;
     }
+
+    //--------------------------------------------------------------------------
+    // include shared definitions
+    //--------------------------------------------------------------------------
+
+    fprintf (fp, "\n#include \"GB_monoid_shared_definitions.h\"\n\n") ;
 }
 

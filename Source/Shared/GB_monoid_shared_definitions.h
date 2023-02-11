@@ -11,6 +11,8 @@
 // if the special cases have not been #define'd prior to #include'ing this
 // file.
 
+#include "GB_kernel_shared_definitions.h"
+
 #ifndef GB_MONOID_SHARED_DEFINITIONS_H
 #define GB_MONOID_SHARED_DEFINITIONS_H
 

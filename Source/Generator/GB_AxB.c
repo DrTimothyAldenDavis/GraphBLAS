@@ -70,9 +70,6 @@ GB_c_iso
 GB_ctype
 GB_putc
 
-// monoid type, and type of output of multiplier
-GB_ztype
-
 // special case semirings:
 GB_is_any_pair_semiring
 GB_is_plus_pair_real_semiring
@@ -85,7 +82,14 @@ GB_is_plus_big_pair_semiring
 GB_is_plus_fc32_pair_semiring
 GB_is_plus_fc64_pair_semiring
 
-// special case monoids and simd reduction #pragma:
+// monoid properties:
+GB_ztype
+GB_declare_identity
+GB_declare_const_identity
+GB_has_identity_byte
+GB_identity_byte
+GB_z_atomic_bits
+GB_ztype_ignore_overflow
 GB_pragma_simd_reduction_monoid
 GB_is_any_monoid
 GB_is_any_fc32_monoid
@@ -96,6 +100,10 @@ GB_is_fmin_monoid
 GB_is_fmax_monoid
 GB_is_plus_fc32_monoid
 GB_is_plus_fc64_monoid
+GB_monoid_is_terminal
+GB_terminal_condition
+GB_if_terminal_break
+GB_declare_const_terminal
 
 // special case multipliers:
 GB_is_pair_multiplier
@@ -105,20 +113,7 @@ GB_is_firsti_multiplier
 GB_is_firstj_multiplier
 GB_is_secondj_multiplier
 
-// z = identity, and ztype overflow condition (if any):
-GB_declare_identity
-GB_declare_const_identity
-GB_has_identity_byte
-GB_identity_byte
-GB_ztype_ignore_overflow
-
-// monoid terminal condition, if any:
-GB_monoid_is_terminal
-GB_terminal_condition
-GB_if_terminal_break
-GB_declare_const_terminal
-
-// FIXME: GB_HAS_ATOMIC
+// FIXME: GB_HAS_ATOMIC; move to monoid section above
 // 1 if monoid update can be done atomically, 0 otherwise
 #define GB_HAS_ATOMIC \
     GB_has_atomic
@@ -133,11 +128,6 @@ GB_declare_const_terminal
     #define GB_HAS_OMP_ATOMIC \
         GB_has_omp_atomic
 #endif
-
-// FIXME: GB_ATOMIC_COMPARE_EXCHANGE
-// atomic compare-exchange
-#define GB_ATOMIC_COMPARE_EXCHANGE(target, expected, desired) \
-    GB_atomic_compare_exchange
 
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \

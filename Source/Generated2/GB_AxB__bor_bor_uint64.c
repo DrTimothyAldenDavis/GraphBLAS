@@ -7,22 +7,24 @@
 
 //------------------------------------------------------------------------------
 
-// If this file is in the Generated1/ or Generated2/ folder, do not edit it
-// (it is auto-generated from Generator/*).
-
 #include "GB_dev.h"
 
+// FIXME: use "#ifdef GBCUDA_DEV, and #endif // GBCUDA_DEV, and grep -v:
 #ifndef GBCUDA_DEV
 
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_sort.h"
 #include "GB_AxB_saxpy.h"
+
+// FIXME: use "GB_axb_include_h" macro here: [----
 #if 1
 #include "GB_AxB__include2.h"
 #else
 #include "GB_AxB__include1.h"
 #endif
+// ----]
+
 #include "GB_unused.h"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_ek_slice_search.c"
@@ -68,29 +70,25 @@
 #define GB_C_TYPE uint64_t
 #define GB_PUTC(cij,p) Cx [p] = cij
 
-// monoid type, and type of output of multiplier
-#define GB_Z_TYPE uint64_t
-
 // special case semirings:
 
-// special case monoids and simd reduction #pragma:
-
-// special case multipliers:
-
-// z = identity, and ztype overflow condition (if any):
+// monoid properties:
+#define GB_Z_TYPE uint64_t
 #define GB_DECLARE_IDENTITY(z) uint64_t z = 0
 #define GB_DECLARE_IDENTITY_CONST(z) const uint64_t z = 0
 #define GB_HAS_IDENTITY_BYTE 1
 #define GB_IDENTITY_BYTE 0
+#define GB_Z_ATOMIC_BITS 64
 #define GB_ZTYPE_IGNORE_OVERFLOW 1
 
-// monoid terminal condition, if any:
 #define GB_MONOID_IS_TERMINAL 1
 #define GB_TERMINAL_CONDITION(z,zterminal) (z == 0xFFFFFFFFFFFFFFFFL)
 #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == 0xFFFFFFFFFFFFFFFFL) { break ; }
 #define GB_DECLARE_TERMINAL_CONST(zterminal) const uint64_t zterminal = 0xFFFFFFFFFFFFFFFFL
 
-// FIXME: GB_HAS_ATOMIC
+// special case multipliers:
+
+// FIXME: GB_HAS_ATOMIC; move to monoid section above
 // 1 if monoid update can be done atomically, 0 otherwise
 #define GB_HAS_ATOMIC \
     1
@@ -105,11 +103,6 @@
     #define GB_HAS_OMP_ATOMIC \
         1
 #endif
-
-// FIXME: GB_ATOMIC_COMPARE_EXCHANGE
-// atomic compare-exchange
-#define GB_ATOMIC_COMPARE_EXCHANGE(target, expected, desired) \
-    GB_ATOMIC_COMPARE_EXCHANGE_64 (target, expected, desired)
 
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \

@@ -75,58 +75,57 @@ switch (ztype)
     case { 'iso' }
         ztype_is_float = false ;
         ztype_ignore_overflow = true ;
-        nbits = 0 ;
+        ztype_nbits = 0 ;
 
     case { 'bool' }
         ztype_is_float = false ;
         ztype_ignore_overflow = false ;
-        nbits = 8 ;
+        ztype_nbits = 8 ;
 
     case { 'int8_t', 'uint8_t' }
         ztype_is_float = false ;
         ztype_ignore_overflow = false ;
-        nbits = 8 ;
+        ztype_nbits = 8 ;
 
     case { 'int16_t', 'uint16_t' }
         ztype_is_float = false ;
         ztype_ignore_overflow = false ;
-        nbits = 16 ;
+        ztype_nbits = 16 ;
 
     case { 'int32_t', 'uint32_t' }
         ztype_is_float = false ;
         ztype_ignore_overflow = false ;
-        nbits = 32 ;
+        ztype_nbits = 32 ;
 
     case { 'int64_t', 'uint64_t' }
         ztype_is_float = false ;
         ztype_ignore_overflow = true ;
-        nbits = 64 ;
+        ztype_nbits = 64 ;
 
     case { 'float' }
         ztype_is_float = true ;
         ztype_ignore_overflow = true ;
-        nbits = 32 ;
+        ztype_nbits = 32 ;
 
     case { 'double', 'GxB_FC32_t' }
         ztype_is_float = true ;
         ztype_ignore_overflow = true ;
-        nbits = 64 ;
+        ztype_nbits = 64 ;
 
     case { 'GxB_FC64_t' }
         ztype_is_float = true ;
         ztype_ignore_overflow = true ;
-        nbits = 128 ;
+        ztype_nbits = 128 ;
 
     otherwise
         error ('unknown type') ;
 end
 
-% nbits: # of bits in the type, needed for the atomic compare-exchange:
-if (nbits == 0)
-    % iso semiring: no atomic compare-exchanged needed
-    fprintf (f, 'm4_define(`GB_atomic_compare_exchange'', `;'')\n') ;
+if (ztype_nbits < 128)
+    fprintf (f, 'm4_define(`GB_z_atomic_bits'', `#define GB_Z_ATOMIC_BITS %d'')\n', ztype_nbits) ;
 else
-    fprintf (f, 'm4_define(`GB_atomic_compare_exchange'', `GB_ATOMIC_COMPARE_EXCHANGE_%d (target, expected, desired)'')\n', nbits) ;
+    % no atomics for this data type
+    fprintf (f, 'm4_define(`GB_z_atomic_bits'', `'')\n') ;
 end
 
 if (is_pair)
@@ -254,7 +253,7 @@ else
     fprintf (f, 'm4_define(`GB_is_xor_pair_semiring'', `'')\n') ;
 end
 
-if (is_plus && nbits == 8 && is_pair)
+if (is_plus && ztype_nbits == 8 && is_pair)
     % plus_pair_(int8, uint8)
     fprintf (f, 'm4_define(`GB_is_plus_8_pair_semiring'', `%s'')\n', ...
         '#define GB_IS_PLUS_8_PAIR_SEMIRING 1') ;
@@ -262,7 +261,7 @@ else
     fprintf (f, 'm4_define(`GB_is_plus_8_pair_semiring'', `'')\n') ;
 end
 
-if (is_plus && nbits == 16 && is_pair)
+if (is_plus && ztype_nbits == 16 && is_pair)
     % plus_pair_(int16, uint16)
     fprintf (f, 'm4_define(`GB_is_plus_16_pair_semiring'', `%s'')\n', ...
         '#define GB_IS_PLUS_16_PAIR_SEMIRING 1') ;
@@ -270,7 +269,7 @@ else
     fprintf (f, 'm4_define(`GB_is_plus_16_pair_semiring'', `'')\n') ;
 end
 
-if (is_plus && nbits == 32 && is_integer && is_pair)
+if (is_plus && ztype_nbits == 32 && is_integer && is_pair)
     % plus_pair_(int32, uint32)
     fprintf (f, 'm4_define(`GB_is_plus_32_pair_semiring'', `%s'')\n', ...
         '#define GB_IS_PLUS_32_PAIR_SEMIRING 1') ;
@@ -746,11 +745,11 @@ switch (addop)
         idbyte = '0' ;
 
     case { 'eq' }
-        if (nbits == 8)
+        if (ztype_nbits == 8)
             idbyte = '1' ;
         end
     case { 'times' }
-        if (nbits == 8)
+        if (ztype_nbits == 8)
             idbyte = '1' ;
         end
     case {'bxnor' }
