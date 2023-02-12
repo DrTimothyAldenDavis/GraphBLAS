@@ -18,19 +18,6 @@
 #include "GB_ek_slice_search.c"
 GB_axb__include_h
 
-// This C=A*B semiring is defined by the following types and operators:
-
-// A'*B (dot2):        GB (_Adot2B)
-// A'*B (dot3):        GB (_Adot3B)
-// C+=A'*B (dot4):     GB (_Adot4B)
-// A*B (saxpy bitmap): GB (_AsaxbitB)
-// A*B (saxpy3):       GB (_Asaxpy3B)
-//     no mask:        GB (_Asaxpy3B_noM)
-//     mask M:         GB (_Asaxpy3B_M)
-//     mask !M:        GB (_Asaxpy3B_notM)
-// A*B (saxpy4):       GB (_Asaxpy4B)
-// A*B (saxpy5):       GB (_Asaxpy5B)
-
 // semiring operators:
 GB_multiply_add
 GB_multiply

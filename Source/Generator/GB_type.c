@@ -7,23 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// If this file is in the Generated2/ folder, do not edit it
-// (it is auto-generated from Generator/*).
-
-#include "GB.h"
 #ifndef GBCUDA_DEV
+#include "GB.h"
 #include "GB_control.h"
 #include "GB_ek_slice.h"
 #include "GB_type__include.h"
-
-// The operation is defined by the following types and operators:
-
-// functions:
-// C<M>=x (C is as-is-full):     GB (_Cdense_05d)
-// C<A>=A (C is dense):          GB (_Cdense_06d)
-// C<M>=A (C is empty, A dense): GB (_Cdense_25)
-
-// C type:   GB_ctype
 
 #define GB_C_TYPE \
     GB_ctype
