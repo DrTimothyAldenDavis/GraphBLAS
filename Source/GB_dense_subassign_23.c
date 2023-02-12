@@ -9,7 +9,7 @@
 
 // C and B must have the same vector dimension and vector length.
 // FUTURE::: the transposed case, C+=B' could easily be done.
-// The parallelism used is identical to GB_AxB_colscale.
+// The parallelism used is identical to GB_colscale.
 
 // The type of C must match the type of x and z for the accum function, since
 // C(i,j) = accum (C(i,j), B(i,j)) is handled.  The generic case here can

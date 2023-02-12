@@ -106,10 +106,10 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             // typecasting, A is sparse or hypersparse, and B is bitmap or
             // as-if-full.  Only built-in semirings are supported, but not all:
             // (1) the ANY monoid is not supported since it would be unusual to
-            // use ANY as the accum, and (2) only monoids that can be done
-            // atomically without a critical section are supported.  The method
-            // is not used if A*B is iso; C may be iso on input but it is
-            // non-iso on output.
+            // use ANY as the accum, and (2) only monoid updates that can be
+            // done atomically without a critical section are supported.  The
+            // method is not used if A*B is iso; C may be iso on input but it
+            // is non-iso on output.
 
             #ifdef GB_DEBUGIFY_DEFN
             GB_debugify_mxm (false, GB_sparsity (C_in), ztype, M,

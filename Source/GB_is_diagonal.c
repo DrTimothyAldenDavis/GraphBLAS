@@ -50,7 +50,7 @@ bool GB_is_diagonal             // true if A is diagonal
     if (GB_IS_FULL (A))
     { 
         // A is full, and is diagonal only if 1-by-1, but always return
-        // false so that GB_AxB_rowscale and GB_AxB_colscale are not used
+        // false so that GB_rowscale and GB_colscale are not used
         // by GB_reduce_to_vector.
         return (false) ;
     }

@@ -75,26 +75,27 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
+GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
 (
     GrB_Matrix C,                   // output matrix, static header
     const GrB_Matrix D,             // diagonal input matrix
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=D*A
+                                    // the monoid is not used
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
+GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
 (
     GrB_Matrix C,                   // output matrix, static header
     const GrB_Matrix A,             // input matrix
     const GrB_Matrix D,             // diagonal input matrix
-    const GrB_Semiring semiring,    // semiring that defines C=A*D
+    const GrB_Semiring semiring,    // semiring that defines C=A*D;
+                                    // the monoid is not used
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     GB_Werk Werk
 ) ;
-
 
 bool GB_AxB_semiring_builtin        // true if semiring is builtin
 (

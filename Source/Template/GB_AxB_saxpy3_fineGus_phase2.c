@@ -31,16 +31,18 @@
             GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
             int8_t f ;
 
-            #if GB_IS_ANY_MONOID
+            #if GB_IS_ANY_MONOID && GB_Z_HAS_ATOMIC_WRITE
 
                 //--------------------------------------------------------------
-                // C(i,j) += t ; with the ANY monoid
+                // C(i,j) += t ; ANY monoids with atomic write
                 //--------------------------------------------------------------
+            
+                // the double complex ANY monoid cannot use this method
 
                 GB_ATOMIC_READ
                 f = Hf [i] ;            // grab the entry
                 if (f == 2) continue ;  // check if already updated
-                GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
+                GB_Z_ATOMIC_WRITE_HX (i, t) ;   // Hx [i] = t
 
             #else
 
@@ -48,7 +50,7 @@
                 // C(i,j) += t ; with all other monoids
                 //--------------------------------------------------------------
 
-                #if GB_HAS_ATOMIC
+                #if GB_Z_HAS_ATOMIC_UPDATE
 
                     // if C(i,j) is already present (f==2), and the monoid can
                     // be done atomically, then do the atomic update.  No need
@@ -57,7 +59,7 @@
                     f = Hf [i] ;        // grab the entry
                     if (f == 2)         // if true, update C(i,j)
                     {
-                        GB_ATOMIC_UPDATE_HX (i, t) ; // Hx [i] += t
+                        GB_Z_ATOMIC_UPDATE_HX (i, t) ;  // Hx [i] += t
                         continue ;      // C(i,j) has been updated
                     }
 
@@ -72,12 +74,12 @@
                 if (f == 0)
                 { 
                     // C(i,j) is a new entry
-                    GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
+                    GB_Z_ATOMIC_WRITE_HX (i, t) ;   // Hx [i] = t
                 }
                 else // f == 2
                 { 
                     // C(i,j) already appears in C(:,j)
-                    GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
+                    GB_Z_ATOMIC_UPDATE_HX (i, t) ;  // Hx [i] += t
                 }
 
             #endif

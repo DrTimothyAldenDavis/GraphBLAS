@@ -632,8 +632,7 @@
 #ifndef GB_BINOP_IS_SEMIRING_MULTIPLIER
 
         // pow, atan2, hypot, ... are not used as multiplicative operators in
-        // any semiring, so they are not called by GB_AxB_rowscale or
-        // GB_AxB_colscale.
+        // any semiring, so they are not called by GB_rowscale or GB_colscale.
 
         //----------------------------------------------------------------------
         case GB_POW_binop_code    :    // z = x ^ y

@@ -607,7 +607,7 @@
                         //------------------------------------------------------
 
                         GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
-                        GB_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
+                        GB_Z_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
 
                     }
                     #elif GB_MASK_IS_SPARSE_OR_HYPER
@@ -625,7 +625,7 @@
                         // 7:   cij is locked
 
                         int8_t cb ;
-                        #if GB_HAS_ATOMIC
+                        #if GB_IS_ANY_MONOID || GB_Z_HAS_ATOMIC_UPDATE
                         { 
                             // if C(i,j) is already present and can be modified
                             // (cb==keep), and the monoid can be done
@@ -637,7 +637,7 @@
                             { 
                                 #if !GB_IS_ANY_MONOID
                                 GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
-                                GB_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
+                                GB_Z_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
                                 #endif
                                 continue ;          // C(i,j) has been updated
                             }
@@ -654,7 +654,7 @@
                         { 
                             // C(i,j) is a new entry
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
-                            GB_ATOMIC_WRITE_HX (i, t) ;     // C(i,j) = t
+                            GB_Z_ATOMIC_WRITE_HX (i, t) ;     // C(i,j) = t
                             task_cnvals++ ;
                             cb = keep ;                     // keep the entry
                         }
@@ -663,7 +663,7 @@
                             // C(i,j) is already present
                             #if !GB_IS_ANY_MONOID
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
-                            GB_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
+                            GB_Z_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
                             #endif
                         }
                         GB_ATOMIC_WRITE
@@ -697,7 +697,7 @@
                         //------------------------------------------------------
 
                         int8_t cb ;
-                        #if GB_HAS_ATOMIC
+                        #if GB_IS_ANY_MONOID || GB_Z_HAS_ATOMIC_UPDATE
                         { 
                             // if C(i,j) is already present (cb==1), and the
                             // monoid can be done atomically, then do the
@@ -708,7 +708,7 @@
                             { 
                                 #if !GB_IS_ANY_MONOID
                                 GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
-                                GB_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
+                                GB_Z_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
                                 #endif
                                 continue ;          // C(i,j) has been updated
                             }
@@ -725,7 +725,7 @@
                         { 
                             // C(i,j) is a new entry
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
-                            GB_ATOMIC_WRITE_HX (i, t) ;     // C(i,j) = t
+                            GB_Z_ATOMIC_WRITE_HX (i, t) ;     // C(i,j) = t
                             task_cnvals++ ;
                         }
                         else // cb == 1
@@ -733,7 +733,7 @@
                             // C(i,j) is already present
                             #if !GB_IS_ANY_MONOID
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
-                            GB_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
+                            GB_Z_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
                             #endif
                         }
                         GB_ATOMIC_WRITE

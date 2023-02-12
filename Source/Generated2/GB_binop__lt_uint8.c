@@ -224,7 +224,7 @@ GrB_Info GB (_AxD__lt_uint8)
     return (GrB_NO_VALUE) ;
     #else
     bool *restrict Cx = (bool *) C->x ;
-    #include "GB_AxB_colscale_template.c"
+    #include "GB_colscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -245,7 +245,7 @@ GrB_Info GB (_DxB__lt_uint8)
     return (GrB_NO_VALUE) ;
     #else
     bool *restrict Cx = (bool *) C->x ;
-    #include "GB_AxB_rowscale_template.c"
+    #include "GB_rowscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

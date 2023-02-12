@@ -114,10 +114,10 @@
                     int64_t hf ;
                     GB_ATOMIC_READ
                     hf = Hf [hash] ;        // grab the entry
-                    #if GB_HAS_ATOMIC
+                    #if GB_Z_HAS_ATOMIC_UPDATE
                     if (hf == i_unlocked)  // if true, update C(i,j)
                     { 
-                        GB_ATOMIC_UPDATE_HX (hash, t) ;// Hx [.]+=t
+                        GB_Z_ATOMIC_UPDATE_HX (hash, t) ;   // Hx [hash] += t
                         break ;         // C(i,j) has been updated
                     }
                     #endif
@@ -136,7 +136,7 @@
                         { 
                             // C(i,j) is a new entry in C(:,j)
                             // Hx [hash] = t
-                            GB_ATOMIC_WRITE_HX (hash, t) ;
+                            GB_Z_ATOMIC_WRITE_HX (hash, t) ;
                             GB_ATOMIC_WRITE
                             Hf [hash] = i_unlocked ; // unlock entry
                             break ;
@@ -144,8 +144,7 @@
                         if (hf == i_unlocked) // f == 2
                         { 
                             // C(i,j) already appears in C(:,j)
-                            // Hx [hash] += t
-                            GB_ATOMIC_UPDATE_HX (hash, t) ;
+                            GB_Z_ATOMIC_UPDATE_HX (hash, t) ;  // Hx [hash] += t
                             GB_ATOMIC_WRITE
                             Hf [hash] = i_unlocked ; // unlock entry
                             break ;

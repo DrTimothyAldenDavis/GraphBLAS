@@ -226,7 +226,7 @@ GrB_Info GB ((none))
     return (GrB_NO_VALUE) ;
     #else
     uint64_t *restrict Cx = (uint64_t *) C->x ;
-    #include "GB_AxB_colscale_template.c"
+    #include "GB_colscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -251,7 +251,7 @@ GrB_Info GB ((none))
     return (GrB_NO_VALUE) ;
     #else
     uint64_t *restrict Cx = (uint64_t *) C->x ;
-    #include "GB_AxB_rowscale_template.c"
+    #include "GB_rowscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

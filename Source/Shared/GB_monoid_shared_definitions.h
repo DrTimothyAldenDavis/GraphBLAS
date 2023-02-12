@@ -82,6 +82,21 @@
 #endif
 
 //------------------------------------------------------------------------------
+// monoid atomic updates
+//------------------------------------------------------------------------------
+
+// if not specified, the monoid cannot be done via a single atomic operation.
+// The update must instead be done inside a critical section.
+
+#ifndef GB_Z_HAS_ATOMIC_UPDATE
+#define GB_Z_HAS_ATOMIC_UPDATE 0
+#endif
+
+#ifndef GB_Z_HAS_OMP_ATOMIC_UPDATE
+#define GB_Z_HAS_OMP_ATOMIC_UPDATE 0
+#endif
+
+//------------------------------------------------------------------------------
 // monoid identity & terminal value and conditions, and handling ztype overflow
 //------------------------------------------------------------------------------
 

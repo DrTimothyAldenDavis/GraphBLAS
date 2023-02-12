@@ -115,7 +115,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     if (semiring_in->multiply->binop_function == NULL &&
         (op_is_first || op_is_second))
     { 
-        // GB_AxB_rowscale and GB_AxB_colscale do not handle the implicit FIRST
+        // GB_rowscale and GB_colscale do not handle the implicit FIRST
         // operator for GB_reduce_to_vector.  They do handle any other
         // positional operator (FIRSTI, FIRSTJ, SECONDI, SECONDJ, etc).
         allow_scale = false ;
@@ -622,15 +622,13 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             case GB_USE_ROWSCALE : 
                 // C = D*B using rowscale
                 GBURBLE ("C%s=A'*B, rowscale ", M_str) ;
-                GB_OK (GB_AxB_rowscale (C, A, B, semiring, flipxy,
-                    Werk)) ;
+                GB_OK (GB_rowscale (C, A, B, semiring, flipxy, Werk)) ;
                 break ;
 
             case GB_USE_COLSCALE : 
                 // C = A'*D using colscale
                 GBURBLE ("C%s=A'*B, colscale (transposed %s) ", M_str, A_str) ;
-                GB_OK (GB_AxB_colscale (C, AT, B, semiring, flipxy,
-                    Werk)) ;
+                GB_OK (GB_colscale (C, AT, B, semiring, flipxy, Werk)) ;
                 break ;
 
             case GB_USE_DOT : 
@@ -706,15 +704,13 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             case GB_USE_COLSCALE : 
                 // C = A*D
                 GBURBLE ("C%s=A*B', colscale ", M_str) ;
-                GB_OK (GB_AxB_colscale (C, A, B, semiring, flipxy,
-                    Werk)) ;
+                GB_OK (GB_colscale (C, A, B, semiring, flipxy, Werk)) ;
                 break ;
 
             case GB_USE_ROWSCALE : 
                 // C = D*B'
                 GBURBLE ("C%s=A*B', rowscale (transposed %s) ", M_str, B_str) ;
-                GB_OK (GB_AxB_rowscale (C, A, BT, semiring, flipxy,
-                    Werk)) ;
+                GB_OK (GB_rowscale (C, A, BT, semiring, flipxy, Werk)) ;
                 break ;
 
             case GB_USE_DOT : 
@@ -813,13 +809,13 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             case GB_USE_COLSCALE : 
                 // C = A*D, column scale
                 GBURBLE ("C%s=A*B, colscale ", M_str) ;
-                GB_OK (GB_AxB_colscale (C, A, B, semiring, flipxy, Werk)) ;
+                GB_OK (GB_colscale (C, A, B, semiring, flipxy, Werk)) ;
                 break ;
 
             case GB_USE_ROWSCALE : 
                 // C = D*B, row scale
                 GBURBLE ("C%s=A*B, rowscale ", M_str) ;
-                GB_OK (GB_AxB_rowscale (C, A, B, semiring, flipxy, Werk)) ;
+                GB_OK (GB_rowscale (C, A, B, semiring, flipxy, Werk)) ;
                 break ;
 
             case GB_USE_DOT : 

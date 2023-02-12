@@ -29,8 +29,8 @@
 #undef  GB_C_IS_BITMAP
 #define GB_C_IS_BITMAP 0
 
-#if !GB_HAS_ATOMIC
-#error "saxpy4 not defined for non-atomic monoids"
+#if !GB_Z_HAS_ATOMIC_UPDATE
+#error "saxpy4 only defined monoids with an atomic update"
 #endif
 
 #if GB_IS_ANY_MONOID

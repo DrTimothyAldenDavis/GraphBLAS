@@ -1,9 +1,7 @@
-function codegen_axb_method (addop, multop, update, addfunc, mult, ztype, ...
-    xytype, identity, terminal, omp_atomic, omp_microsoft_atomic)
+function codegen_axb_method (addop, multop, update, addfunc, mult, ztype, xytype, identity, terminal)
 %CODEGEN_AXB_METHOD create a function to compute C=A*B over a semiring
 %
-% codegen_axb_method (addop, multop, update, addfunc, mult, ztype, xytype, ...
-%   identity, terminal, omp_atomic, omp_microsoft_atomic)
+% codegen_axb_method (addop, multop, update, addfunc, mult, ztype, xytype, identity, terminal)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -47,8 +45,6 @@ if (is_any_pair)
     xytype = 'any type' ;
     identity = '(any value)' ;
     terminal = '(any value)' ;
-    omp_atomic = 1 ;
-    omp_microsoft_atomic = 0 ;
     % the any_pair_iso semiring is never disabled by GBCUDA_DEV
 %   fprintf (f, 'm4_define(`ifndef_GBCUDA_DEV'', `#if 1'')\n') ;
 %   fprintf (f, 'm4_define(`if_not_any_pair_semiring'', `#if 0'')\n') ;
@@ -71,6 +67,8 @@ is_plus_times_fp = is_plus && isequal (multop, 'times') && ztype_is_fp ;
 
 t_is_simple = is_pair || codegen_contains (multop, 'first') || codegen_contains (multop, 'second') ;
 t_is_nonnan = isequal (multop (1:2), 'is') || (multop (1) == 'l') ;
+
+ztype_atomic = '' ;
 
 switch (ztype)
 
@@ -109,10 +107,16 @@ switch (ztype)
         ztype_ignore_overflow = true ;
         ztype_nbits = 32 ;
 
-    case { 'double', 'GxB_FC32_t' }
+    case { 'double' }
         ztype_is_float = true ;
         ztype_ignore_overflow = true ;
         ztype_nbits = 64 ;
+
+    case { 'GxB_FC32_t' }
+        ztype_is_float = true ;
+        ztype_ignore_overflow = true ;
+        ztype_nbits = 64 ;
+        ztype_atomic = 'uint64_t' ;
 
     case { 'GxB_FC64_t' }
         ztype_is_float = true ;
@@ -123,11 +127,87 @@ switch (ztype)
         error ('unknown type') ;
 end
 
-if (ztype_nbits < 128)
+% atomic write and compare/exchange
+has_atomic_write = false ;
+if (ztype_nbits <= 64)
+    % atomic write and compare/exchange can only be done on 64 bits or less
+    has_atomic_write = true ;
     fprintf (f, 'm4_define(`GB_z_atomic_bits'', `#define GB_Z_ATOMIC_BITS %d'')\n', ztype_nbits) ;
 else
     % no atomics for this data type
     fprintf (f, 'm4_define(`GB_z_atomic_bits'', `'')\n') ;
+end
+
+% atomic ztype for pun
+if (isempty (ztype_atomic))
+    % no need for atomic pun
+    fprintf (f, 'm4_define(`GB_z_atomic_type'', `'')\n') ;
+else
+    % use the pun for this ztype
+    fprintf (f, 'm4_define(`GB_z_atomic_type'', `#define GB_Z_ATOMIC_TYPE %s'')\n', ztype_atomic) ;
+end
+
+% atomic update
+has_atomic_update = false ;
+omp_atomic_version = 0 ;
+
+if (isequal (addop, 'any'))
+
+    % ANY monoid update is be done atomically via atomic write
+    has_atomic_update = has_atomic_write ; 
+    omp_atomic_version = 2 ;
+
+elseif (isequal (addop, 'land') || ...
+        isequal (addop, 'lor')  || ...
+        isequal (addop, 'lxor') || ...
+        isequal (addop, 'band') || ...
+        isequal (addop, 'bor')  || ...
+        isequal (addop, 'bxor'))
+
+    % atomic update but #pramga omp update requires OpenMP 4.0 or later
+    has_atomic_update = true ;
+    omp_atomic_version = 4 ;
+
+elseif (isequal (addop, 'bxnor') || ...
+        isequal (addop, 'lxnor') || ...
+        isequal (addop, 'eq')    || ...
+        isequal (addop, 'min')   || ...
+        isequal (addop, 'max'))
+
+    % atomic update but no #pramga omp update
+    has_atomic_update = true ;
+
+elseif (isequal (addop, 'plus'))
+
+    % PLUS monoid can be done atomically for types, even double complex
+    has_atomic_update = true ;
+    omp_atomic_version = 2 ;
+
+elseif (isequal (addop, 'times'))
+
+    % TIMES monoid can be done atomically for real types
+    has_atomic_update = ztype_is_real ;
+    omp_atomic_version = 2 ;
+
+else
+
+    addop
+    error ('undefined monoid') ;
+
+end
+
+if (has_atomic_update)
+    fprintf (f, 'm4_define(`GB_z_has_atomic_update'', `#define GB_Z_HAS_ATOMIC_UPDATE 1'')\n') ;
+    if (omp_atomic_version == 4)
+        fprintf (f, 'm4_define(`GB_z_has_omp_atomic_update'', `#define GB_Z_HAS_OMP_ATOMIC_UPDATE (!GB_COMPILER_MSC)'')\n') ;
+    elseif (omp_atomic_version == 2)
+        fprintf (f, 'm4_define(`GB_z_has_omp_atomic_update'', `#define GB_Z_HAS_OMP_ATOMIC_UPDATE 1'')\n') ;
+    else
+        fprintf (f, 'm4_define(`GB_z_has_omp_atomic_update'', `'')\n') ;
+    end
+else
+    fprintf (f, 'm4_define(`GB_z_has_atomic_update'', `'')\n') ;
+    fprintf (f, 'm4_define(`GB_z_has_omp_atomic_update'', `'')\n') ;
 end
 
 if (is_pair)
@@ -396,7 +476,6 @@ end
 if (ztype_is_real)
     % The ANY monoid is atomic on any architecture.
     % MIN, MAX, EQ, XNOR are implemented with atomic compare/exchange.
-    fprintf (f, 'm4_define(`GB_has_atomic'', `1'')\n') ;
     if (is_any)
         % disable the ANY monoid for saxpy4
         fprintf (f, 'm4_define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', '(none)') ;
@@ -410,12 +489,10 @@ else
     % complex monoids are not atomic, except for 'plus'
     if (is_plus)
         % enable saxpy4
-        fprintf (f, 'm4_define(`GB_has_atomic'', `1'')\n') ;
         fprintf (f, 'm4_define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', name) ;
         fprintf (f, 'm4_define(`if_saxpy4_enabled'', `0'')\n') ;
     else
         % disable saxpy4
-        fprintf (f, 'm4_define(`GB_has_atomic'', `0'')\n') ;
         fprintf (f, 'm4_define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', '(none)') ;
         fprintf (f, 'm4_define(`if_saxpy4_enabled'', `-1'')\n') ;
     end
@@ -459,7 +536,7 @@ end
 
 % secondj or secondj1 multiply operator
 if (codegen_contains (multop, 'secondj'))
-    fprintf (f, 'm4_define(`GB_is_secondj_multiplier'', `%s'')\n', ...) ;
+    fprintf (f, 'm4_define(`GB_is_secondj_multiplier'', `%s'')\n', ...
         '#define GB_IS_SECONDJ_MULTIPLIER 1 /* SECONDJ1 */') ;
 else
     fprintf (f, 'm4_define(`GB_is_secondj_multiplier'', `'')\n') ;
@@ -563,12 +640,6 @@ if (is_fmax)
 else
     fprintf (f, 'm4_define(`GB_is_fmax_monoid'', `'')\n') ;
 end
-
-% only PLUS, TIMES, LOR, LAND, and LXOR can be done with OpenMP atomics
-% in gcc and icc.  However, only PLUS and TIMES work with OpenMP atomics
-% in Microsoft Visual Studio; the LOR, LAND, and LXOR atomics do not compile.
-fprintf (f, 'm4_define(`GB_has_omp_atomic'', `%d'')\n', omp_atomic) ;
-fprintf (f, 'm4_define(`GB_microsoft_has_omp_atomic'', `%d'')\n', omp_microsoft_atomic) ;
 
 % to get an entry from A
 if (is_second || is_pair || is_positional)

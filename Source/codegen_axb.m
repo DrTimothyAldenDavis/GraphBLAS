@@ -175,7 +175,6 @@ funcs = { '(xarg | yarg)', '(xarg & yarg)', '(xarg ^ yarg)', '~(xarg ^ yarg)' };
 updates  = { 'warg |= targ'       , 'warg &= targ'       , 'warg ^= targ'       , 'warg = ~(warg ^ targ)'   };
 ids   = {  0             , 1              , 0              , 1                };
 terms = {  1             , 0              , [ ]            , [ ]              };
-atomx = {  1             , 1              , 1              , 0                };
 
 nbits = [8 16 32 64] ;
 bits =  { '0xFF', '0xFFFF', '0xFFFFFFFF', '0xFFFFFFFFFFFFFFFFL' } ;
@@ -187,8 +186,6 @@ for i = 1:4
     update = updates {i} ;
     identity = ids {i} ;
     term = terms {i} ;
-    at = atomx {i} ;
-
     for j = 1:4
         multop = ops {j} ;
         mult = funcs {j} ;
@@ -207,8 +204,7 @@ for i = 1:4
             else
                 id = '0' ;
             end
-            codegen_axb_method (addop, multop, update, addfunc, mult, type, ...
-                type, id, tm, at, 0) ;
+            codegen_axb_method (addop, multop, update, addfunc, mult, type, type, id, tm) ;
         end
     end
 end
@@ -224,7 +220,6 @@ updates  = { 'warg = GB_IMIN (warg, targ)', 'warg = GB_IMAX (warg, targ)', 'warg
 addfuncs = {'GB_IMIN (xarg, yarg)','GB_IMAX (xarg, yarg)','yarg', 'xarg + yarg' , 'xarg * yarg'  } ;
 ids      = { 'INT64_MAX',          'INT64_MIN',          '0',     '0',      '1'      } ;
 terms    = { [ ],                  [ ],                  '0',     [ ],      [ ]      } ;
-atomx    = {  0                  ,  0 ,                   0,       1,        1,      } ;
 
 for j = 1:6
     multop = mults {j} ;
@@ -236,17 +231,13 @@ for j = 1:6
         update = updates {i} ;
         identity = ids {i} ;
         term = terms {i} ;
-        at = atomx {i} ;
         id = ids {i} ;
         tm = terms {i} ;
-        at = atomx {i} ;
         fprintf ('.') ;
-        codegen_axb_method (addop, multop, update, addfunc, mult, 'int64_t', ...
-            'int64_t', id, tm, at, 0) ;
+        codegen_axb_method (addop, multop, update, addfunc, mult, 'int64_t', 'int64_t', id, tm) ;
         id = strrep (id, '64', '32')  ;
         fprintf ('.') ;
-        codegen_axb_method (addop, multop, update, addfunc, mult, 'int32_t', ...
-            'int32_t', id, tm, at, 0) ;
+        codegen_axb_method (addop, multop, update, addfunc, mult, 'int32_t', 'int32_t', id, tm) ;
     end
 end
 

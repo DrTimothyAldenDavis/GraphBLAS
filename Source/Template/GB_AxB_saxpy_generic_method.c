@@ -140,12 +140,6 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     // C = A*B via saxpy3 or bitmap method, function pointers, and typecasting
     //--------------------------------------------------------------------------
 
-    // atomic update not available for function pointers
-    #define GB_HAS_ATOMIC 0
-
-    // user-defined monoid update cannot be done with an OpenMP atomic
-    #define GB_HAS_OMP_ATOMIC 0
-
     // FIXME: rename to GB_B_SIZE.  This is before typecast to GB_B2TYPE
     #define GB_BSIZE bsize
 

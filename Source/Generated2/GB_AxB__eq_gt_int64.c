@@ -7,16 +7,16 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_dev.h"
 #ifndef GBCUDA_DEV
+#include "GB_dev.h"
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_sort.h"
 #include "GB_AxB_saxpy.h"
-#include "GB_AxB__include2.h"
 #include "GB_unused.h"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_ek_slice_search.c"
+#include "GB_AxB__include2.h"
 
 // This C=A*B semiring is defined by the following types and operators:
 
@@ -69,23 +69,9 @@
 #define GB_IDENTITY_BYTE 1
 #define GB_Z_ATOMIC_BITS 8
 
+#define GB_Z_HAS_ATOMIC_UPDATE 1
+
 // special case multipliers:
-
-// FIXME: GB_HAS_ATOMIC; move to monoid section above
-// 1 if monoid update can be done atomically, 0 otherwise
-#define GB_HAS_ATOMIC \
-    1
-
-// FIXME: GB_HAS_OMP_ATOMIC (general and MSVC)
-// 1 if monoid update can be done with an OpenMP atomic update, 0 otherwise
-#if GB_COMPILER_MSC
-    /* MS Visual Studio only has OpenMP 2.0, with fewer atomics */
-    #define GB_HAS_OMP_ATOMIC \
-        0
-#else
-    #define GB_HAS_OMP_ATOMIC \
-        0
-#endif
 
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \
@@ -359,7 +345,7 @@ GrB_Info GB (_Asaxpy3B__eq_gt_int64)
 #endif
 
 //------------------------------------------------------------------------------
-//GB_Asaxpy3B_noM: C=A*B: saxpy method (Gustavson + Hash)
+// GB_Asaxpy3B_noM: C=A*B: saxpy method (Gustavson + Hash)
 //------------------------------------------------------------------------------
 
 #if ( !GB_DISABLE )
@@ -407,7 +393,7 @@ GrB_Info GB (_Asaxpy3B__eq_gt_int64)
 #endif
 
 //------------------------------------------------------------------------------
-//GB_Asaxpy3B_notM: C<!M>=A*B: saxpy method (Gustavson + Hash)
+// GB_Asaxpy3B_notM: C<!M>=A*B: saxpy method (Gustavson + Hash)
 //------------------------------------------------------------------------------
 
 #if ( !GB_DISABLE )

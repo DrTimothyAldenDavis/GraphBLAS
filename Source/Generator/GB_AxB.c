@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_dev.h"
 #ifndef GBCUDA_DEV
+#include "GB_dev.h"
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_sort.h"
@@ -78,6 +78,9 @@ GB_declare_const_identity
 GB_has_identity_byte
 GB_identity_byte
 GB_z_atomic_bits
+GB_z_atomic_type
+GB_z_has_atomic_update
+GB_z_has_omp_atomic_update
 GB_ztype_ignore_overflow
 GB_pragma_simd_reduction_monoid
 GB_is_any_monoid
@@ -101,22 +104,6 @@ GB_offset
 GB_is_firsti_multiplier
 GB_is_firstj_multiplier
 GB_is_secondj_multiplier
-
-// FIXME: GB_HAS_ATOMIC; move to monoid section above
-// 1 if monoid update can be done atomically, 0 otherwise
-#define GB_HAS_ATOMIC \
-    GB_has_atomic
-
-// FIXME: GB_HAS_OMP_ATOMIC (general and MSVC)
-// 1 if monoid update can be done with an OpenMP atomic update, 0 otherwise
-#if GB_COMPILER_MSC
-    /* MS Visual Studio only has OpenMP 2.0, with fewer atomics */
-    #define GB_HAS_OMP_ATOMIC \
-        GB_microsoft_has_omp_atomic
-#else
-    #define GB_HAS_OMP_ATOMIC \
-        GB_has_omp_atomic
-#endif
 
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \

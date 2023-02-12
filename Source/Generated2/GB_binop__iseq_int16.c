@@ -224,7 +224,7 @@ GrB_Info GB (_AxD__iseq_int16)
     return (GrB_NO_VALUE) ;
     #else
     int16_t *restrict Cx = (int16_t *) C->x ;
-    #include "GB_AxB_colscale_template.c"
+    #include "GB_colscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -245,7 +245,7 @@ GrB_Info GB (_DxB__iseq_int16)
     return (GrB_NO_VALUE) ;
     #else
     int16_t *restrict Cx = (int16_t *) C->x ;
-    #include "GB_AxB_rowscale_template.c"
+    #include "GB_rowscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

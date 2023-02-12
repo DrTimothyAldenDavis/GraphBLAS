@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_colscale_template: C=A*D where D is a square diagonal matrix
+// GB_colscale_template: C=A*D where D is a square diagonal matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.

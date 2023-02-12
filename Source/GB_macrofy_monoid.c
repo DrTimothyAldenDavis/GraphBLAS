@@ -265,9 +265,12 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     }
 
     //--------------------------------------------------------------------------
-    // create macro for atomic compare/exchange on the CPU
+    // create macros for atomics on the CPU
     //--------------------------------------------------------------------------
 
+    // atomic write
+    bool has_atomic_write = false ;
+    char *ztype_atomic = NULL ;
     if (zcode == 0)
     {
         // C is iso (any_pair symbolic semiring)
@@ -276,22 +279,94 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     else if (zsize == sizeof (uint8_t))
     {
         // int8_t, uint8_t, and 8-bit user-defined types
+        ztype_atomic = "uint8_t" ;
+        has_atomic_write = true ;
         fprintf (fp, "#define GB_Z_ATOMIC_BITS 8\n") ;
     }
     else if (zsize == sizeof (uint16_t))
     {
         // int16_t, uint16_t, and 16-bit user-defined types
+        ztype_atomic = "uint16_t" ;
+        has_atomic_write = true ;
         fprintf (fp, "#define GB_Z_ATOMIC_BITS 16\n") ;
     }
     else if (zsize == sizeof (uint32_t))
     {
         // int32_t, uint32_t, float, and 32-bit user-defined types
+        ztype_atomic = "uint32_t" ;
+        has_atomic_write = true ;
         fprintf (fp, "#define GB_Z_ATOMIC_BITS 32\n") ;
     }
     else if (zsize == sizeof (uint64_t))
     {
         // int64_t, uint64_t, double, float complex, and 64-bit user types
+        ztype_atomic = "uint64_t" ;
+        has_atomic_write = true ;
         fprintf (fp, "#define GB_Z_ATOMIC_BITS 64\n") ;
+    }
+
+    // atomic write for the ztype
+    if (has_atomic_write)
+    {
+        fprintf (fp, "#define GB_Z_HAS_ATOMIC_WRITE 1\n") ;
+        if (zcode == GB_FC32_code || zcode == GB_UDT_code)
+        {
+            // user-defined types of size 1, 2, 4, or 8 bytes can be written
+            // atomically, but must use a pun with ztype_atomic.  float complex
+            // should also ztype_atomic.
+            fprintf (fp, "#define GB_Z_ATOMIC_TYPE %s\n", ztype_atomic) ;
+        }
+    }
+
+    // OpenMP atomic update support
+    bool is_real = (zcode >= GB_BOOL_code && zcode <= GB_FP64_code) ;
+    bool has_atomic_update = false ;
+    int omp_atomic_version = 2 ;
+
+    switch (opcode)
+    {
+
+        case GB_ANY_binop_code   :
+            // the ANY monoid is a special case.  It is done with an atomic
+            // write, or no update at all.  The atomic write can be done for
+            // float complex (64 bits) but not double complex (128 bits).
+            // The atomic update is identical: just an atomic write.
+            has_atomic_update = has_atomic_write ;
+            break ;
+
+        case GB_BOR_binop_code   :
+        case GB_BAND_binop_code  :
+        case GB_BXOR_binop_code  :
+        case GB_LOR_binop_code   :
+        case GB_LAND_binop_code  :
+        case GB_LXOR_binop_code  :
+            // OpenMP 4.0 atomic, not on MS Visual Studio
+            has_atomic_update = true ;
+            omp_atomic_version = 4 ;
+            break ;
+
+        case GB_BXNOR_binop_code :
+        case GB_MIN_binop_code   :
+        case GB_MAX_binop_code   :
+        case GB_EQ_binop_code    : // LXNOR
+            // these monoids can be done via atomic compare/exchange
+            has_atomic_update = true ;
+            break ;
+
+        case GB_PLUS_binop_code  :
+            // even complex can be done atomically
+            has_atomic_update = true ;
+            break ;
+
+        case GB_TIMES_binop_code :
+            // real monoids can be done atomically, not complex
+            has_atomic_update = is_real ;
+            break ;
+
+        default :
+            // all other monoids, including user-defined, cannot be done
+            // atomically.  Instead, they must be done in a critical section.
+            has_atomic_update = false ;
     }
 
     //--------------------------------------------------------------------------

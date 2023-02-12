@@ -360,7 +360,7 @@ break ;
 #endif
 
 //------------------------------------------------------------------------------
-// GB_ATOMIC_UPDATE_HX:  Hx [i] += t
+// GB_Z_ATOMIC_UPDATE_HX:  Hx [i] += t
 //------------------------------------------------------------------------------
 
 #if GB_IS_ANY_MONOID
@@ -369,9 +369,9 @@ break ;
     // The update Hx [i] += t can be skipped entirely, for the ANY monoid.
     //--------------------------------------------------------------------------
 
-    #define GB_ATOMIC_UPDATE_HX(i,t)
+    #define GB_Z_ATOMIC_UPDATE_HX(i,t)
 
-#elif GB_HAS_ATOMIC
+#elif GB_Z_HAS_ATOMIC_UPDATE
 
     //--------------------------------------------------------------------------
     // Hx [i] += t via atomic update
@@ -380,104 +380,108 @@ break ;
     // for built-in MIN/MAX monoids only, on built-in types
     #define GB_MINMAX(i,t,done)                                     \
     {                                                               \
-        GB_C_TYPE xold, xnew, *px = Hx + (i) ;                      \
+        GB_Z_TYPE zold, znew, *pz = Hx + (i) ;                      \
         do                                                          \
         {                                                           \
-            /* xold = Hx [i] via atomic read */                     \
+            /* zold = Hx [i] via atomic read */                     \
             GB_ATOMIC_READ                                          \
-            xold = (*px) ;                                          \
-            /* done if xold <= t for MIN, or xold >= t for MAX, */  \
-            /* but not done if xold is NaN */                       \
+            zold = (*pz) ;                                          \
+            /* done if zold <= t for MIN, or zold >= t for MAX, */  \
+            /* but not done if zold is NaN */                       \
             if (done) break ;                                       \
-            xnew = t ;  /* t should be assigned; it is not NaN */   \
+            znew = t ;  /* t should be assigned; it is not NaN */   \
         }                                                           \
-        while (!GB_ATOMIC_COMPARE_EXCHANGE (px, xold, xnew)) ;      \
+        while (!GB_Z_ATOMIC_COMPARE_EXCHANGE (pz, zold, znew)) ;    \
     }
 
     #if GB_IS_IMIN_MONOID
 
         // built-in MIN monoids for signed and unsigned integers
-        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
-            GB_MINMAX (i, t, xold <= t)
+        #define GB_Z_ATOMIC_UPDATE_HX(i,t) GB_MINMAX (i, t, zold <= t)
 
     #elif GB_IS_IMAX_MONOID
 
         // built-in MAX monoids for signed and unsigned integers
-        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
-            GB_MINMAX (i, t, xold >= t)
+        #define GB_Z_ATOMIC_UPDATE_HX(i,t) GB_MINMAX (i, t, zold >= t)
 
     #elif GB_IS_FMIN_MONOID
 
         // built-in MIN monoids for float and double, with omitnan behavior.
         // The update is skipped entirely if t is NaN.  Otherwise, if t is not
-        // NaN, xold is checked.  If xold is NaN, islessequal (xold, t) is
+        // NaN, zold is checked.  If zold is NaN, islessequal (zold, t) is
         // always false, so the non-NaN t must be always be assigned to Hx [i].
-        // If both terms are not NaN, then islessequal (xold,t) is just
-        // xold <= t.  If that is true, there is no work to do and
-        // the loop breaks.  Otherwise, t is smaller than xold and so it must
+        // If both terms are not NaN, then islessequal (zold,t) is just
+        // zold <= t.  If that is true, there is no work to do and
+        // the loop breaks.  Otherwise, t is smaller than zold and so it must
         // be assigned to Hx [i].
-        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
+        #define GB_Z_ATOMIC_UPDATE_HX(i,t)                          \
         {                                                           \
             if (!isnan (t))                                         \
             {                                                       \
-                GB_MINMAX (i, t, islessequal (xold, t)) ;           \
+                GB_MINMAX (i, t, islessequal (zold, t)) ;           \
             }                                                       \
         }
 
     #elif GB_IS_FMAX_MONOID
 
         // built-in MAX monoids for float and double, with omitnan behavior.
-        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
+        #define GB_Z_ATOMIC_UPDATE_HX(i,t)                          \
         {                                                           \
             if (!isnan (t))                                         \
             {                                                       \
-                GB_MINMAX (i, t, isgreaterequal (xold, t)) ;        \
+                GB_MINMAX (i, t, isgreaterequal (zold, t)) ;        \
             }                                                       \
         }
 
     #elif GB_IS_PLUS_FC32_MONOID
 
         // built-in PLUS_FC32 monoid can be done as two independent atomics
-        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
+        #define GB_Z_ATOMIC_UPDATE_HX(i,t)                          \
+        {                                                           \
             GB_ATOMIC_UPDATE                                        \
             Hx_real [2*(i)] += crealf (t) ;                         \
             GB_ATOMIC_UPDATE                                        \
-            Hx_imag [2*(i)] += cimagf (t) ;
+            Hx_imag [2*(i)] += cimagf (t) ;                         \
+        }
 
     #elif GB_IS_PLUS_FC64_MONOID
 
         // built-in PLUS_FC64 monoid can be done as two independent atomics
-        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
+        #define GB_Z_ATOMIC_UPDATE_HX(i,t)                          \
+        {                                                           \
             GB_ATOMIC_UPDATE                                        \
             Hx_real [2*(i)] += creal (t) ;                          \
             GB_ATOMIC_UPDATE                                        \
-            Hx_imag [2*(i)] += cimag (t) ;
+            Hx_imag [2*(i)] += cimag (t) ;                          \
+        }
 
-    #elif GB_HAS_OMP_ATOMIC
+    #elif GB_Z_HAS_OMP_ATOMIC_UPDATE
 
         // built-in PLUS and TIMES for integers and real, and boolean LOR,
         // LAND, LXOR monoids can be implemented with an OpenMP pragma.
-        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
+        #define GB_Z_ATOMIC_UPDATE_HX(i,t)                          \
+        {                                                           \
             GB_ATOMIC_UPDATE                                        \
-            GB_HX_UPDATE (i, t)
+            GB_HX_UPDATE (i, t) ;                                   \
+        }
 
     #else
 
         // all other atomic monoids (EQ, XNOR) on boolean, signed and unsigned
-        // integers, float, and double (not used for single and double
+        // integers, float, double, and float complex (not used for double
         // complex).
-        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
-        {                                                           \
-            GB_C_TYPE xold, xnew, *px = Hx + (i) ;                  \
-            do                                                      \
-            {                                                       \
-                /* xold = Hx [i] via atomic read */                 \
-                GB_ATOMIC_READ                                      \
-                xold = (*px) ;                                      \
-                /* xnew = xold + t */                               \
-                GB_ADD (xnew, xold, t) ;                            \
-            }                                                       \
-            while (!GB_ATOMIC_COMPARE_EXCHANGE (px, xold, xnew)) ;  \
+        #define GB_Z_ATOMIC_UPDATE_HX(i,t)                              \
+        {                                                               \
+            GB_Z_TYPE zold, znew, *pz = Hx + (i) ;                      \
+            do                                                          \
+            {                                                           \
+                /* zold = Hx [i] via atomic read */                     \
+                GB_ATOMIC_READ                                          \
+                zold = (*pz) ;                                          \
+                /* znew = zold + t */                                   \
+                GB_ADD (znew, zold, t) ;                                \
+            }                                                           \
+            while (!GB_Z_ATOMIC_COMPARE_EXCHANGE (pz, zold, znew)) ;    \
         }
 
     #endif
@@ -488,11 +492,15 @@ break ;
     // Hx [i] += t can only be done inside the critical section
     //--------------------------------------------------------------------------
 
-    // all user-defined monoids go here, and all complex monoids (except PLUS)
-    #define GB_ATOMIC_UPDATE_HX(i,t)    \
+    // all user-defined monoids go here, and all complex monoids (except PLUS).
+    // This macro is not actually atomic itself, but must be placed inside a
+    // critical section.
+    #define GB_Z_ATOMIC_UPDATE_HX(i,t)  \
+    {                                   \
         GB_OMP_FLUSH                    \
         GB_HX_UPDATE (i, t) ;           \
-        GB_OMP_FLUSH
+        GB_OMP_FLUSH                    \
+    }
 
 #endif
 
@@ -501,49 +509,19 @@ break ;
      GB_IS_FMIN_MONOID || GB_IS_FMAX_MONOID)
 
 //------------------------------------------------------------------------------
-// GB_ATOMIC_WRITE_HX:  Hx [i] = t
+// GB_Z_ATOMIC_WRITE_HX:  Hx [i] = t via atomics or critical section
 //------------------------------------------------------------------------------
 
-#if GB_IS_ANY_PAIR_SEMIRING
-
-    //--------------------------------------------------------------------------
-    // ANY_PAIR: result is purely symbolic; no numeric work to do
-    //--------------------------------------------------------------------------
-
-    #define GB_ATOMIC_WRITE_HX(i,t)
-
-#elif GB_HAS_ATOMIC
+#if GB_Z_HAS_ATOMIC_WRITE
 
     //--------------------------------------------------------------------------
     // Hx [i] = t via atomic write
     //--------------------------------------------------------------------------
 
-    #if GB_IS_PLUS_FC32_MONOID
-
-        // built-in PLUS_FC32 monoid
-        #define GB_ATOMIC_WRITE_HX(i,t)         \
-            GB_ATOMIC_WRITE                     \
-            Hx_real [2*(i)] = crealf (t) ;      \
-            GB_ATOMIC_WRITE                     \
-            Hx_imag [2*(i)] = cimagf (t) ;
-
-    #elif GB_IS_PLUS_FC64_MONOID
-
-        // built-in PLUS_FC64 monoid
-        #define GB_ATOMIC_WRITE_HX(i,t)         \
-            GB_ATOMIC_WRITE                     \
-            Hx_real [2*(i)] = creal (t) ;       \
-            GB_ATOMIC_WRITE                     \
-            Hx_imag [2*(i)] = cimag (t) ;
-
-    #else
-
-        // all other atomic monoids
-        #define GB_ATOMIC_WRITE_HX(i,t)         \
-            GB_ATOMIC_WRITE                     \
-            GB_HX_WRITE (i, t)
-
-    #endif
+    // The GB_Z_TYPE has an atomic write, with GB_Z_ATOMIIC_BITS defined.
+    // The generic methods do not use this option.  For the ANY_PAIR semiring,
+    // GB_Z_ATOMIC_BITS is zero and this macro becomes empty.
+    #define GB_Z_ATOMIC_WRITE_HX(i,t) GB_Z_ATOMIC_WRITE (Hx [i], t)
 
 #else
 
@@ -551,10 +529,14 @@ break ;
     // Hx [i] = t via critical section
     //--------------------------------------------------------------------------
 
-    #define GB_ATOMIC_WRITE_HX(i,t)             \
-        GB_OMP_FLUSH                            \
-        GB_HX_WRITE (i, t) ;                    \
-        GB_OMP_FLUSH
+    // This macro is not actually atomic itself, but must be placed inside a
+    // critical section.  GB_HX_WRITE is a memcpy for generic methods.
+    #define GB_Z_ATOMIC_WRITE_HX(i,t)       \
+    {                                       \
+        GB_OMP_FLUSH                        \
+        GB_HX_WRITE (i, t) ;                \
+        GB_OMP_FLUSH                        \
+    }
 
 #endif
 

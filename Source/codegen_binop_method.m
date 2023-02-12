@@ -36,7 +36,7 @@ switch (binop)
         fprintf (f, 'm4_define(`endif_is_binop_subset'', `#endif'')\n') ;
 end
 
-% subset of operators for GB_AxB_rowscale and GB_AxB_colscale
+% subset of operators for GB_rowscale and GB_colscale
 switch (binop)
     case { 'min', 'max', 'plus', 'minus', 'rminus', 'times', 'div', 'rdiv', ...
         'first', 'second', 'isgt', 'islt', 'isge', 'isle', ...
