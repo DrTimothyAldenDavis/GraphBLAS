@@ -261,7 +261,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     {
         // if the monoid is ANY, this is set to 1 by
         // GB_monoid_shared_definitions.h, so skip it here
-        fprintf (fp, "#define GB_ZTYPE_IGNORE_OVERFLOW 1\n") ;
+        fprintf (fp, "#define GB_Z_IGNORE_OVERFLOW 1\n") ;
     }
 
     //--------------------------------------------------------------------------
@@ -574,7 +574,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         // C is iso: no values computed so no need for any CUDA atomics
         //----------------------------------------------------------------------
 
-        fprintf (fp, "#define GB_HAS_CUDA_ATOMIC 0 /* unused; C is iso */\n") ;
+        ;
 
     }
     else if (user_monoid_atomically)
@@ -597,35 +597,9 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         {
             cuda_type = "unsigned long long int" ;
         }
-        fprintf (fp,
-            "#define GB_HAS_CUDA_ATOMIC 1\n"
-            "#define GB_CUDA_ATOMIC GB_cuda_atomic_user\n"
-            "#define GB_CUDA_ATOMIC_TYPE %s\n"
-            "#ifdef GB_CUDA_KERNEL\n"
-            "static __device__ __inline__\n"
-            "void GB_cuda_atomic_user (%s *pz, %s t)\n"
-            "{\n"
-            "    %s *p = (%s *) pz ;\n"
-            "    %s assumed ;\n"
-            "    %s old = *p ;\n"
-            "    do\n"
-            "    {\n"
-            "        assumed = old ;\n"
-            "        %s zin = GB_PUN (%s, assumed) ;\n"
-            "        %s z ;\n"
-            "        GB_ADD (z, zin, t) ;\n"
-            "        old = atomicCAS (p, assumed, GB_PUN (%s, z)) ;\n"
-            "    }\n"
-            "    while (assumed != old) ;\n"
-            "}\n"
-            "#endif\n",
-            ztype_name,                 // GB_CUDA_ATOMIC_TYPE
-            ztype_name, ztype_name,     // parameters to GB_cuda_atomic_user
-            cuda_type, cuda_type,       // typecast the pointer pz to cuda_type
-            cuda_type, cuda_type,       // cuda_type assumed, old
-            ztype_name, ztype_name,     // pun for prior value, zin
-            ztype_name,                 // type of new value, z
-            cuda_type) ;                // pun back to cuda_type for atomicCAS
+
+        fprintf (fp, "#define GB_Z_HAS_CUDA_ATOMIC_USER 1\n") ;
+        fprintf (fp, "#define GB_Z_CUDA_ATOMIC_TYPE %s\n", cuda_type) ;
 
     }
     else if (a == NULL)
@@ -638,15 +612,18 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         // either built-in (GxB_ANY_FC64_MONOID or GxB_TIMES_FC64_MONOID),
         // or user-defined where the type is not 16, 32, or 64 bits in size
 
-        fprintf (fp, "#define GB_HAS_CUDA_ATOMIC 0\n") ;
+        ;
 
     }
     else
     {
 
+        //----------------------------------------------------------------------
         // CUDA atomic available for a built-in monoid
-        fprintf (fp, "#define GB_HAS_CUDA_ATOMIC 1\n") ;
-        fprintf (fp, "#define GB_CUDA_ATOMIC %s\n", a) ;
+        //----------------------------------------------------------------------
+
+        fprintf (fp, "#define GB_Z_HAS_CUDA_ATOMIC_BUILTIN 1\n") ;
+        fprintf (fp, "#define GB_Z_CUDA_ATOMIC %s\n", a) ;
 
         // upscale 8-bit and 16-bit types to 32-bits,
         // all others use their native types
@@ -668,7 +645,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             case GB_FC64_code    : t = "GxB_FC64_t" ; break ;
             default :;
         }
-        fprintf (fp, "#define GB_CUDA_ATOMIC_TYPE %s\n", t) ;
+        fprintf (fp, "#define GB_Z_CUDA_ATOMIC_TYPE %s\n", t) ;
     }
 
     //--------------------------------------------------------------------------

@@ -207,7 +207,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
         fprintf (fp,
             "#define GB_MULTADD(z,x,y,i,k,j)    \\\n"
             "{                                  \\\n"
-            "   GB_ZTYPE x_op_y ;               \\\n"
+            "   GB_Z_TYPE x_op_y ;              \\\n"
             "   GB_MULT (x_op_y, x,y,i,k,j) ;   \\\n"
             "   GB_UPDATE (z, x_op_y) ;         \\\n"
             "}\n") ;

@@ -7,35 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-// If this file is in the Generated2/ folder, do not edit it
-// (it is auto-generated from Generator/*).
-
-#include "GB.h"
 #ifndef GBCUDA_DEV
+#include "GB.h"
 #include "GB_emult.h"
 #include "GB_control.h"
 #include "GB_ek_slice.h"
 #include "GB_dense.h"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_binop__include.h"
-
-// C=binop(A,B) is defined by the following types and operators:
-
-// A+B function (eWiseAdd):         GB (_AaddB__ne_int64)
-// A.*B function (eWiseMult):       GB (_AemultB__ne_int64)
-// A.*B function (eWiseMult):       GB (_AemultB_02__ne_int64)
-// A.*B function (eWiseMult):       GB (_AemultB_04__ne_int64)
-// A.*B function (eWiseMult):       GB (_AemultB_bitmap__ne_int64)
-// A*D function (colscale):         GB (_AxD__ne_int64)
-// D*A function (rowscale):         GB (_DxB__ne_int64)
-// C+=B function (dense accum):     GB (_Cdense_accumB__ne_int64)
-// C+=b function (dense accum):     GB (_Cdense_accumb__ne_int64)
-// C+=A+B function (dense ewise3):  GB ((none))
-// C=A+B function (dense ewise3):   GB (_Cdense_ewise3_noaccum__ne_int64)
-// C=scalar+B                       GB (_bind1st__ne_int64)
-// C=scalar+B'                      GB (_bind1st_tran__ne_int64)
-// C=A+scalar                       GB (_bind2nd__ne_int64)
-// C=A'+scalar                      GB (_bind2nd_tran__ne_int64)
 
 // C type:     bool
 // A type:     int64_t

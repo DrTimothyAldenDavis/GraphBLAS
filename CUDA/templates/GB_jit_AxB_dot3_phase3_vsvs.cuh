@@ -212,7 +212,7 @@ __global__ void AxB_dot3_phase3_vsvs
         {
             int64_t ia = Ai [pA] ;
             int64_t ib = Bi [pB] ;
-            #if GB_IS_PLUS_PAIR_REAL_SEMIRING && GB_ZTYPE_IGNORE_OVERFLOW
+            #if GB_IS_PLUS_PAIR_REAL_SEMIRING && GB_Z_IGNORE_OVERFLOW
                 cij += (ia == ib) ;
             #else
                 if (ia == ib)

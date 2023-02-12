@@ -53,7 +53,7 @@
 #define GB_DECLARE_IDENTITY(z) GxB_FC64_t z = GxB_CMPLX(1,0)
 #define GB_DECLARE_IDENTITY_CONST(z) const GxB_FC64_t z = GxB_CMPLX(1,0)
 
-#define GB_ZTYPE_IGNORE_OVERFLOW 1
+#define GB_Z_IGNORE_OVERFLOW 1
 
 // special case multipliers:
 

@@ -58,7 +58,7 @@
 
 #define GB_Z_HAS_ATOMIC_UPDATE 1
 #define GB_Z_HAS_OMP_ATOMIC_UPDATE 1
-#define GB_ZTYPE_IGNORE_OVERFLOW 1
+#define GB_Z_IGNORE_OVERFLOW 1
 #define GB_PRAGMA_SIMD_REDUCTION_MONOID(cij) GB_PRAGMA_SIMD_REDUCTION (+,cij)
 
 // special case multipliers:

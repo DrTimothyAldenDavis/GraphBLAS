@@ -67,7 +67,7 @@
     #if GB_IS_PLUS_PAIR_REAL_SEMIRING
 
         // cij += A(k,i) * B(k,j), for merge operation (plus_pair_real semiring)
-        #if GB_ZTYPE_IGNORE_OVERFLOW
+        #if GB_Z_IGNORE_OVERFLOW
             // plus_pair for int64, uint64, float, or double
             #define GB_DOT_MERGE(pA,pB) cij++ ;
             #define GB_CIJ_EXIST_POSTCHECK cij_exists = (cij != 0) ;

@@ -35,7 +35,7 @@
     // this method requires that cij = 0 be initialized when it is declared.
     // See Template/GB_AxB_dot2_template.c and Template/GB_AxB_dot3_template.c
 
-    #if GB_ZTYPE_IGNORE_OVERFLOW
+    #if GB_Z_IGNORE_OVERFLOW
 
         // PLUS_PAIR for 64-bit integers, float, and double (not complex):
         // To check if C(i,j) exists, test (cij != 0) when done.  The

@@ -96,6 +96,39 @@
 #define GB_Z_HAS_OMP_ATOMIC_UPDATE 0
 #endif
 
+#ifndef GB_Z_HAS_CUDA_ATOMIC_BUILTIN
+#define GB_Z_HAS_CUDA_ATOMIC_BUILTIN 0
+#endif
+
+#ifndef GB_Z_HAS_CUDA_ATOMIC_USER
+#define GB_Z_HAS_CUDA_ATOMIC_USER 0
+#endif
+
+#ifdef GB_CUDA_KERNEL
+#if GB_Z_HAS_CUDA_ATOMIC_USER
+static __device__ __inline__
+void GB_cuda_atomic_user (void *pz, GB_Z_TYPE t)
+{
+    GB_Z_CUDA_ATOMIC_TYPE *p = (GB_Z_CUDA_ATOMIC_TYPE *) pz ;
+    GB_Z_CUDA_ATOMIC_TYPE assumed ;
+    GB_Z_CUDA_ATOMIC_TYPE old = *p ;
+    do
+    {
+        // assume the old value
+        assumed = old ;
+        // apply the pun to get the old value in GB_Z_TYPE
+        GB_Z_TYPE zin = GB_PUN (GB_Z_TYPE, assumed) ;
+        // compute the new value
+        GB_Z_TYPE z ;
+        GB_ADD (z, zin, t) ;
+        // modify it atomically:
+        old = atomicCAS (p, assumed, GB_PUN (GB_Z_CUDA_ATOMIC_TYPE, z)) ;
+    }
+    while (assumed != old) ;
+}
+#endif
+#endif
+
 //------------------------------------------------------------------------------
 // monoid identity & terminal value and conditions, and handling ztype overflow
 //------------------------------------------------------------------------------
@@ -127,8 +160,8 @@
     #endif
 
     // ignore overflow since no numerical values computed
-    #ifndef GB_ZTYPE_IGNORE_OVERFLOW
-    #define GB_ZTYPE_IGNORE_OVERFLOW 1
+    #ifndef GB_Z_IGNORE_OVERFLOW
+    #define GB_Z_IGNORE_OVERFLOW 1
     #endif
 
 #else
@@ -145,8 +178,8 @@
     #endif
 
     // default, do not ignore overflow when replacing z+z+...+z with n*z.
-    #ifndef GB_ZTYPE_IGNORE_OVERFLOW
-    #define GB_ZTYPE_IGNORE_OVERFLOW 0
+    #ifndef GB_Z_IGNORE_OVERFLOW
+    #define GB_Z_IGNORE_OVERFLOW 0
     #endif
 
 #endif

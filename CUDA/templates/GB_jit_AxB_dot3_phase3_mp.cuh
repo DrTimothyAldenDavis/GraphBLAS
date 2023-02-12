@@ -327,7 +327,7 @@ __global__ void AxB_dot3_phase3_mp
             {
                 int64_t Aind = Ai_s[pA] ;
                 int64_t Bind = Bj_s[pB] ;
-                #if GB_IS_PLUS_PAIR_REAL_SEMIRING && GB_ZTYPE_IGNORE_OVERFLOW
+                #if GB_IS_PLUS_PAIR_REAL_SEMIRING && GB_Z_IGNORE_OVERFLOW
                     cij += (Aind == Bind) ;
                 #else
                     if (Aind == Bind)

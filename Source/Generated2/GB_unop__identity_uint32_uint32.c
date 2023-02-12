@@ -7,18 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// If this file is in the Generated2/ folder, do not edit it
-// (it is auto-generated from Generator/*).
-
-#include "GB.h"
 #ifndef GBCUDA_DEV
+#include "GB.h"
 #include "GB_control.h"
 #include "GB_unop__include.h"
-
-// C=unop(A) is defined by the following types and operators:
-
-// op(A)  function:  GB (_unop_apply__(none))
-// op(A') function:  GB (_unop_tran__identity_uint32_uint32)
 
 // C type:   uint32_t
 // A type:   uint32_t

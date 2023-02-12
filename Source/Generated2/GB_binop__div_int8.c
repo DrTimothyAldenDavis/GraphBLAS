@@ -7,35 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-// If this file is in the Generated2/ folder, do not edit it
-// (it is auto-generated from Generator/*).
-
-#include "GB.h"
 #ifndef GBCUDA_DEV
+#include "GB.h"
 #include "GB_emult.h"
 #include "GB_control.h"
 #include "GB_ek_slice.h"
 #include "GB_dense.h"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_binop__include.h"
-
-// C=binop(A,B) is defined by the following types and operators:
-
-// A+B function (eWiseAdd):         GB (_AaddB__div_int8)
-// A.*B function (eWiseMult):       GB (_AemultB__div_int8)
-// A.*B function (eWiseMult):       GB (_AemultB_02__div_int8)
-// A.*B function (eWiseMult):       GB (_AemultB_04__div_int8)
-// A.*B function (eWiseMult):       GB (_AemultB_bitmap__div_int8)
-// A*D function (colscale):         GB (_AxD__div_int8)
-// D*A function (rowscale):         GB (_DxB__div_int8)
-// C+=B function (dense accum):     GB (_Cdense_accumB__div_int8)
-// C+=b function (dense accum):     GB (_Cdense_accumb__div_int8)
-// C+=A+B function (dense ewise3):  GB (_Cdense_ewise3_accum__div_int8)
-// C=A+B function (dense ewise3):   GB (_Cdense_ewise3_noaccum__div_int8)
-// C=scalar+B                       GB (_bind1st__div_int8)
-// C=scalar+B'                      GB (_bind1st_tran__div_int8)
-// C=A+scalar                       GB (_bind2nd__div_int8)
-// C=A'+scalar                      GB (_bind2nd_tran__div_int8)
 
 // C type:     int8_t
 // A type:     int8_t

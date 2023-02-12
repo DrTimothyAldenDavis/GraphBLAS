@@ -7,19 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// If this file is in the Generated1/ folder, do not edit it
-// (it is auto-generated from Generator/*).
-
 #include "GB_select.h"
 #include "GB_ek_slice.h"
 #include "GB_sel__include.h"
-
-// The selection is defined by the following types and operators:
-
-// functions:
-// phase1: GB (_sel_phase1__rowle_iso)
-// phase2: GB (_sel_phase2__rowle_iso)
-// bitmap: GB (_sel_bitmap__rowle_iso)
 
 // A type: GB_void
 

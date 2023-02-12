@@ -555,7 +555,7 @@ GB_CAST_FUNCTION (GxB_FC64_t, GxB_FC64_t)
 
 static inline bool GB_mcast         // return the value of M(i,j)
 (
-    const GB_void *restrict Mx,  // mask values
+    const GB_void *restrict Mx,     // mask values
     const int64_t pM,               // extract boolean value of Mx [pM]
     const size_t msize              // size of each data type
 )

@@ -257,7 +257,7 @@ end
 % flag if ztype can ignore overflow in some computations
 if (ztype_ignore_overflow)
     fprintf (f, 'm4_define(`GB_ztype_ignore_overflow'', `%s'')\n', ...
-        '#define GB_ZTYPE_IGNORE_OVERFLOW 1') ;
+        '#define GB_Z_IGNORE_OVERFLOW 1') ;
 else
     fprintf (f, 'm4_define(`GB_ztype_ignore_overflow'', `'')\n') ;
 end

@@ -7,34 +7,25 @@
 
 //------------------------------------------------------------------------------
 
-// If this file is in the Generated2/ folder, do not edit it
-// (it is auto-generated from Generator/*).
-
-#include "GB.h"
 #ifndef GBCUDA_DEV
+#include "GB.h"
 #include "GB_control.h" 
 #include "GB_red__include.h"
-
-// Reduce to scalar:  GB (_red__any_int32)
 
 // reduction operator and type:
 #define GB_UPDATE(z,a)  z = a
 #define GB_ADD(z,zin,a) z = a
 #define GB_GETA_AND_UPDATE(z,Ax,p) z = Ax [p]
 
-// declare a scalar and set it equal to the monoid identity value
-#define GB_DECLARE_IDENTITY(z) int32_t z = 0
-#define GB_DECLARE_IDENTITY_CONST(z) const int32_t z = 0
-
 // A matrix (no typecasting to Z type here)
 #define GB_A_TYPE int32_t
 #define GB_DECLAREA(aij) int32_t aij
 #define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [pA]
 
-// monoid type:
+// monoid properties:
 #define GB_Z_TYPE int32_t
-
-// monoid terminal condition, if any:
+#define GB_DECLARE_IDENTITY(z) int32_t z = 0
+#define GB_DECLARE_IDENTITY_CONST(z) const int32_t z = 0
 #define GB_IS_ANY_MONOID 1
 #define GB_MONOID_IS_TERMINAL 1
 

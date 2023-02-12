@@ -7,15 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// If this file is in the Generated2/ folder, do not edit it
-// (it is auto-generated from Generator/*).
-
-#include "GB.h"
 #ifndef GBCUDA_DEV
+#include "GB.h"
 #include "GB_control.h" 
 #include "GB_bld__include.h"
-
-// Assemble tuples:    GB (_bld__second_bool)
 
 // dup operator: Tx [k] += Sx [i], no typecast here
 #define GB_BLD_DUP(Tx,k,Sx,i)  Tx [k] = Sx [i]

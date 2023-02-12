@@ -201,13 +201,18 @@ __global__ void GB_jit_reduce
 
     if (threadIdx.x == 0)
     {
-        #if GB_HAS_CUDA_ATOMIC
+        #if GB_Z_HAS_CUDA_ATOMIC_USER
+
+            // user-defined monoid can be done automically
+            GB_cuda_atomic_user (zscalar, zmine) ;
+
+        #elif GB_Z_HAS_CUDA_ATOMIC_BUILTIN
 
             // cast the result to the CUDA atomic type, and reduce
             // atomically to the global zscalar
-            GB_CUDA_ATOMIC_TYPE *z = (GB_CUDA_ATOMIC_TYPE *) zscalar ;
-            GB_CUDA_ATOMIC_TYPE zsum = (GB_CUDA_ATOMIC_TYPE) zmine ;
-            GB_CUDA_ATOMIC <GB_CUDA_ATOMIC_TYPE> (z, zsum) ;
+            GB_Z_CUDA_ATOMIC_TYPE *z = (GB_Z_CUDA_ATOMIC_TYPE *) zscalar ;
+            GB_Z_CUDA_ATOMIC_TYPE zsum = (GB_Z_CUDA_ATOMIC_TYPE) zmine ;
+            GB_Z_CUDA_ATOMIC <GB_Z_CUDA_ATOMIC_TYPE> (z, zsum) ;
 
         #else
 
@@ -218,7 +223,7 @@ __global__ void GB_jit_reduce
             // writes at least one single word.  Limit the # of threadblocks to
             // some upperbound, say 64K.
 
-            T_Z *z = (T_Z *) zscalar ;
+            GB_Z_TYPE *z = (GB_Z_TYPE *) zscalar ;
             GB_cuda_lock (mutex) ;
             GB_ADD (z, z, zmine) ;
             // flush to global

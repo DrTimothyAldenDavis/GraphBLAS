@@ -29,10 +29,10 @@
     #define GB_DECLARE_IDENTITY_CONST(z) const double z = 0 ;
     #define GB_HAS_IDENTITY_BYTE 1
     #define GB_IDENTITY_BYTE 0x00
-    #define GB_ZTYPE_IGNORE_OVERFLOW 1
-    #define GB_HAS_CUDA_ATOMIC 1
-    #define GB_CUDA_ATOMIC GB_cuda_atomic_add
-    #define GB_CUDA_ATOMIC_TYPE double
+    #define GB_Z_IGNORE_OVERFLOW 1
+    #define GB_Z_HAS_CUDA_ATOMIC_BUILTIN 1
+    #define GB_Z_CUDA_ATOMIC GB_cuda_atomic_add
+    #define GB_Z_CUDA_ATOMIC_TYPE double
     #define GB_GETA_AND_UPDATE(z,Ax,p) GB_UPDATE(z, Ax [p]) ;
 
     // A matrix:

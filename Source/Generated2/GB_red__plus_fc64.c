@@ -7,34 +7,25 @@
 
 //------------------------------------------------------------------------------
 
-// If this file is in the Generated2/ folder, do not edit it
-// (it is auto-generated from Generator/*).
-
-#include "GB.h"
 #ifndef GBCUDA_DEV
+#include "GB.h"
 #include "GB_control.h" 
 #include "GB_red__include.h"
-
-// Reduce to scalar:  GB (_red__plus_fc64)
 
 // reduction operator and type:
 #define GB_UPDATE(z,a)  z = GB_FC64_add (z, a)
 #define GB_ADD(z,zin,a) z = GB_FC64_add (zin, a)
 #define GB_GETA_AND_UPDATE(z,Ax,p) z = GB_FC64_add (z, Ax [p])
 
-// declare a scalar and set it equal to the monoid identity value
-#define GB_DECLARE_IDENTITY(z) GxB_FC64_t z = GxB_CMPLX(0,0)
-#define GB_DECLARE_IDENTITY_CONST(z) const GxB_FC64_t z = GxB_CMPLX(0,0)
-
 // A matrix (no typecasting to Z type here)
 #define GB_A_TYPE GxB_FC64_t
 #define GB_DECLAREA(aij) GxB_FC64_t aij
 #define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [pA]
 
-// monoid type:
+// monoid properties:
 #define GB_Z_TYPE GxB_FC64_t
-
-// monoid terminal condition, if any:
+#define GB_DECLARE_IDENTITY(z) GxB_FC64_t z = GxB_CMPLX(0,0)
+#define GB_DECLARE_IDENTITY_CONST(z) const GxB_FC64_t z = GxB_CMPLX(0,0)
 
 // panel size
 #define GB_PANEL 16
