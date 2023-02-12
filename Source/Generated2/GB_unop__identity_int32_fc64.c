@@ -56,6 +56,8 @@
 #define GB_DISABLE \
     (GxB_NO_IDENTITY || GxB_NO_INT32 || GxB_NO_FC64)
 
+#include "GB_kernel_shared_definitions.h"
+
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------

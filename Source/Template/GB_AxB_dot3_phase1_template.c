@@ -99,7 +99,7 @@
                     int64_t work = 1 ;
                     #if !defined ( GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED )
                     // if M is structural, no need to check its values
-                    if (GB_mcast (Mx, pM, msize))
+                    if (GB_MCAST (Mx, pM, msize))
                     #endif
                     { 
                         const int64_t i = Mi [pM] ;

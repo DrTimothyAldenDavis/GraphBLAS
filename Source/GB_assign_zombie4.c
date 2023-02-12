@@ -20,6 +20,7 @@
 
 #include "GB_assign.h"
 #include "GB_assign_zombie.h"
+#include "GB_mask_shared_definitions.h"
 
 void GB_assign_zombie4
 (
@@ -67,7 +68,7 @@ void GB_assign_zombie4
     const int64_t *restrict Mp = M->p ;
     const int64_t *restrict Mh = M->h ;
     const int8_t  *restrict Mb = M->b ;
-    const GB_void *restrict Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
+    const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
     const int64_t Mnvec = M->nvec ;
     ASSERT (M->vlen == 1) ;
@@ -143,7 +144,7 @@ void GB_assign_zombie4
                     { 
                         // M is bitmap/full
                         int64_t pM = j ;
-                        mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
+                        mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                     }
                     else
                     {
@@ -166,7 +167,7 @@ void GB_assign_zombie4
                         if (pM < pM_end)
                         { 
                             // found it
-                            mij = GB_mcast (Mx, pM, msize) ;
+                            mij = GB_MCAST (Mx, pM, msize) ;
                         }
                     }
 

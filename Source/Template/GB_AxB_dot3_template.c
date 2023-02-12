@@ -123,11 +123,9 @@
 
                 // get the value of M(i,j)
                 int64_t i = Mi [pC] ;
-                #if GB_JIT_KERNEL
-                if (MX (pC))
-                #elif !defined ( GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED )
+                #if !defined ( GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED )
                 // if M is structural, no need to check its values
-                if (GB_mcast (Mx, pC, msize))
+                if (GB_MCAST (Mx, pC, msize))
                 #endif
                 { 
 

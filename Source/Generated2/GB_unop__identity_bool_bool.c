@@ -56,6 +56,8 @@
 #define GB_DISABLE \
     (GxB_NO_IDENTITY || GxB_NO_BOOL)
 
+#include "GB_kernel_shared_definitions.h"
+
 //------------------------------------------------------------------------------
 // C = op (cast (A')): transpose, typecast, and apply a unary operator
 //------------------------------------------------------------------------------

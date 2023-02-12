@@ -75,6 +75,7 @@
 #ifndef GBCUDA_DEV
 #include "GB_binop__include.h"
 #endif
+#include "GB_mask_shared_definitions.h"
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \
@@ -193,8 +194,8 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     //--------------------------------------------------------------------------
 
     const int8_t  *restrict Mb = (M == NULL) ? NULL : M->b ;
-    const GB_void *restrict Mx = (M == NULL || Mask_struct) ? NULL :
-        (const GB_void *) M->x ;
+    const GB_M_TYPE *restrict Mx = (M == NULL || Mask_struct) ? NULL :
+        (const GB_M_TYPE *) M->x ;
     const size_t msize = (M == NULL) ? 0 : M->type->size ;
 
     const int64_t *restrict Ap = A->p ;
@@ -347,7 +348,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
                     { 
                         int64_t i = Ai [pA] ;
                         int64_t pB = pB_start + i ;
-                        bool mij = GBB (Mb, pB) && GB_mcast (Mx, pB, msize) ;
+                        bool mij = GBB (Mb, pB) && GB_MCAST (Mx, pB, msize) ;
                         mij = mij ^ Mask_comp ;
                         cjnz += (mij && GBB (Bb, pB)) ;
                     }

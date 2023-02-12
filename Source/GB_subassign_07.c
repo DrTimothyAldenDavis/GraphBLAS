@@ -138,7 +138,7 @@ GrB_Info GB_subassign_07
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
+                    bool mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                     if (mij)
                     { 
                         int64_t iA = GBI (Mi, pM, Mvlen) ;
@@ -166,7 +166,7 @@ GrB_Info GB_subassign_07
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
+                    bool mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                     if (mij)
                     {
                         int64_t iA = GBI (Mi, pM, Mvlen) ;
@@ -253,7 +253,7 @@ GrB_Info GB_subassign_07
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
+                    bool mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                     if (mij)
                     {
                         int64_t iA = GBI (Mi, pM, Mvlen) ;

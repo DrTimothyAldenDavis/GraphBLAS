@@ -29,11 +29,13 @@
 
 // test the mask condition with Ax [pA]
 #define GB_AX_MASK(Ax,pA,asize) \
-    GB_mcast ((GB_void *) Ax, pA, sizeof (GxB_FC32_t))
+    GB_MCAST (Ax, pA, sizeof (GxB_FC32_t))
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_FC32)
+
+#include "GB_kernel_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // C<M>=x, when C is dense

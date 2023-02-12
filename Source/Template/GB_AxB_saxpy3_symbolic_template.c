@@ -25,6 +25,7 @@
 
 #define GB_META16
 #include "GB_meta16_definitions.h"
+#include "GB_mask_shared_definitions.h"
 
 void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
 (
@@ -86,7 +87,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
     const int64_t *restrict Mh = M->h ;
     const int8_t  *restrict Mb = M->b ;
     const int64_t *restrict Mi = M->i ;
-    const GB_void *restrict Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
+    const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
     size_t  msize = M->type->size ;
     int64_t mnvec = M->nvec ;
     int64_t mvlen = M->vlen ;

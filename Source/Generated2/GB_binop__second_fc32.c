@@ -102,6 +102,8 @@
 #define GB_DISABLE \
     (GxB_NO_SECOND || GxB_NO_FC32 || GxB_NO_SECOND_FC32 || GB_COMPILER_MSC_2019_OR_NEWER)
 
+#include "GB_kernel_shared_definitions.h"
+
 //------------------------------------------------------------------------------
 // C += A+B, all 3 matrices dense
 //------------------------------------------------------------------------------

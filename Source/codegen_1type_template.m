@@ -22,7 +22,7 @@ fprintf (f, 'm4_define(`GB_ctype'', `%s'')\n', xtype) ;
 % mask macro
 if (isequal (xtype, 'GxB_FC32_t') || isequal (xtype, 'GxB_FC64_t'))
     asize = sprintf ('sizeof (%s)', xtype) ;
-    fprintf (f, 'm4_define(`GB_ax_mask'', `GB_mcast ((GB_void *) $1, $2, %s)'')\n', asize) ;
+    fprintf (f, 'm4_define(`GB_ax_mask'', `GB_MCAST ($1, $2, %s)'')\n', asize) ;
 else
     fprintf (f, 'm4_define(`GB_ax_mask'', `($1 [$2] != 0)'')\n') ;
 end

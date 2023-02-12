@@ -40,3 +40,5 @@
 #undef  GB_C_TYPE
 #define GB_C_TYPE GB_void
 
+#include "GB_mask_shared_definitions.h"
+

@@ -85,7 +85,7 @@
     const int64_t *restrict Mh = NULL ;
     const int8_t  *restrict Mb = NULL ;
     const int64_t *restrict Mi = NULL ;
-    const GB_void *restrict Mx = NULL ;
+    const GB_M_TYPE *restrict Mx = NULL ;
     size_t msize = 0 ;
     int64_t mnvec = 0 ;
     int64_t mvlen = 0 ;
@@ -104,7 +104,7 @@
         Mh = M->h ;
         Mb = M->b ;
         Mi = M->i ;
-        Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
+        Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
         msize = M->type->size ;
         mnvec = M->nvec ;
         mvlen = M->vlen ;

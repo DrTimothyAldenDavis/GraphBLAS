@@ -30,6 +30,8 @@
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
     memcpy (Cx +((pC)*asize), Ax +((pA)*asize), asize)
 
+#include "GB_kernel_shared_definitions.h"
+
 //------------------------------------------------------------------------------
 // GB_sel_bitmap
 //------------------------------------------------------------------------------

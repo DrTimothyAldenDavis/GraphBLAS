@@ -29,6 +29,8 @@
 #define GB_DISABLE \
     (GxB_NO_TIMES || GxB_NO_FP64 || GxB_NO_TIMES_FP64)
 
+#include "GB_kernel_shared_definitions.h"
+
 //------------------------------------------------------------------------------
 // build a non-iso matrix
 //------------------------------------------------------------------------------

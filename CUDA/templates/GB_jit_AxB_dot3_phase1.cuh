@@ -85,7 +85,7 @@ __global__ void GB_jit_AxB_dot3_phase1
     const int64_t *__restrict__ Mp = M->p ;
     const int64_t *__restrict__ Mi = M->i ;
     #if !GB_MASK_STRUCT
-    const T_M *__restrict__ Mx = (T_M*) M->x ; // not accessed if M structural
+    const GB_M_TYPE *__restrict__ Mx = (GB_M_TYPE *) M->x ;
     #endif
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
@@ -235,7 +235,7 @@ __global__ void GB_jit_AxB_dot3_phase1
             #else
             int64_t j = k ;
             #endif
-            if ( MX ( pM ) )
+            if ( GB_MCAST ( Mx, pM, ) )
             {
 
                 //--------------------------------------------------------------

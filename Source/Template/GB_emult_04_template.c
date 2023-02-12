@@ -34,7 +34,7 @@
     const int64_t *restrict Mp = M->p ;
     const int64_t *restrict Mh = M->h ;
     const int64_t *restrict Mi = M->i ;
-    const GB_void *restrict Mx = (GB_void *) ((Mask_struct) ? NULL : M->x) ;
+    const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) ((Mask_struct) ? NULL : M->x) ;
     const int64_t vlen = M->vlen ;
     const size_t  msize = M->type->size ;
 
@@ -65,7 +65,7 @@
             for ( ; pM < pM_end ; pM++)
             {
                 int64_t i = Mi [pM] ;
-                if (GB_mcast (Mx, pM, msize) &&
+                if (GB_MCAST (Mx, pM, msize) &&
                     (GBB (Ab, pstart + i)
                     &&  // TODO: for GB_add, use || instead
                     GBB (Bb, pstart + i)))

@@ -256,7 +256,7 @@
             // C<#M>=A'*B or C<#!M>=A*B
             //------------------------------------------------------------------
 
-            const GB_void *restrict Mx = (GB_void *)
+            const GB_M_TYPE *restrict Mx = (GB_M_TYPE *)
                 (Mask_struct ? NULL : (M->x)) ;
             const size_t msize = M->type->size ;
 

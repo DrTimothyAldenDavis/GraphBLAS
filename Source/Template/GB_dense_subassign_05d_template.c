@@ -20,7 +20,7 @@
     const int8_t  *restrict Mb = M->b ;
     const int64_t *restrict Mh = M->h ;
     const int64_t *restrict Mi = M->i ;
-    const GB_void *restrict Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
+    const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
     const size_t mvlen = M->vlen ;
 
@@ -81,7 +81,7 @@
                 GB_PRAGMA_SIMD_VECTORIZE
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
-                    if (GBB (Mb, pM) && GB_mcast (Mx, pM, msize))
+                    if (GBB (Mb, pM) && GB_MCAST (Mx, pM, msize))
                     { 
                         int64_t p = pC + GBI (Mi, pM, mvlen) ;
                         GB_COPY_SCALAR_TO_C (p, cwork) ;    // Cx [p] = scalar

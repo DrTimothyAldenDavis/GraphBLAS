@@ -29,6 +29,8 @@
 #define GB_DISABLE \
     (GxB_NO_ANY || GxB_NO_BOOL || GxB_NO_ANY_BOOL)
 
+#include "GB_kernel_shared_definitions.h"
+
 //------------------------------------------------------------------------------
 // build a non-iso matrix
 //------------------------------------------------------------------------------

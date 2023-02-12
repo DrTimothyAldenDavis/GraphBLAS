@@ -142,12 +142,12 @@
                 if (M_is_bitmap)
                 { 
                     // M is bitmap
-                    mij = Mb [pC] && GB_mcast (Mx, pC, msize) ;
+                    mij = Mb [pC] && GB_MCAST (Mx, pC, msize) ;
                 }
                 else if (M_is_full)
                 { 
                     // M is full
-                    mij = GB_mcast (Mx, pC, msize) ;
+                    mij = GB_MCAST (Mx, pC, msize) ;
                 }
                 else // M is sparse or hyper
                 { 

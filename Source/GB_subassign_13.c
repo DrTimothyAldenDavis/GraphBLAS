@@ -153,7 +153,7 @@ GrB_Info GB_subassign_13
                 if (i == iM)
                 { 
                     // mij = (bool) M [pM]
-                    mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
+                    mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                     GB_NEXT (M) ;
                 }
                 else
@@ -270,7 +270,7 @@ GrB_Info GB_subassign_13
                 if (i == iM)
                 { 
                     // mij = (bool) M [pM]
-                    mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
+                    mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                     GB_NEXT (M) ;
                 }
                 else

@@ -196,12 +196,12 @@
         ASSERT (GB_IS_BITMAP (M) || GB_IS_FULL (M)) ;
 
         const int8_t  *restrict Mb = M->b ;
-        const GB_void *restrict Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
+        const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
         size_t msize = M->type->size ;
 
         #undef  GB_GET_MIJ     
         #define GB_GET_MIJ(p)                                           \
-            bool mij = GBB (Mb, p) && GB_mcast (Mx, p, msize) ;         \
+            bool mij = GBB (Mb, p) && GB_MCAST (Mx, p, msize) ;         \
             if (Mask_comp) mij = !mij ; /* TODO: use ^ */
 
         int tid ;

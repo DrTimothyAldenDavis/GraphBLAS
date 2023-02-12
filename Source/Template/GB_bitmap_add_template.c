@@ -343,7 +343,7 @@
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
                     // mark C(i,j) if M(i,j) is true
-                    bool mij = GB_mcast (Mx, pM, msize) ;
+                    bool mij = GB_MCAST (Mx, pM, msize) ;
                     if (mij)
                     { 
                         int64_t i = Mi [pM] ;
@@ -676,7 +676,7 @@
                     for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                     {
                         // mark C(i,j) if M(i,j) is true
-                        bool mij = GB_mcast (Mx, pM, msize) ;
+                        bool mij = GB_MCAST (Mx, pM, msize) ;
                         if (mij)
                         { 
                             int64_t i = Mi [pM] ;
@@ -752,7 +752,7 @@
 
         #undef  GB_GET_MIJ     
         #define GB_GET_MIJ(p)                                           \
-            bool mij = GBB (Mb, p) && GB_mcast (Mx, p, msize) ;         \
+            bool mij = GBB (Mb, p) && GB_MCAST (Mx, p, msize) ;         \
             if (Mask_comp) mij = !mij ;
 
         if ((A_is_bitmap || A_is_full) && (B_is_bitmap || B_is_full))

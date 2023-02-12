@@ -53,7 +53,7 @@
     const int64_t *restrict Mh = NULL ;
     const int8_t  *restrict Mb = NULL ;
     const int64_t *restrict Mi = NULL ;
-    const GB_void *restrict Mx = NULL ;
+    const GB_M_TYPE *restrict Mx = NULL ;
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_sparse = GB_IS_SPARSE (M) ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
@@ -67,7 +67,7 @@
         Mh = M->h ;
         Mb = M->b ;
         Mi = M->i ;
-        Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
+        Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
         msize = M->type->size ;
     }
 

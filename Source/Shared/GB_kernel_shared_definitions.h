@@ -10,6 +10,8 @@
 // This header is #include'd just before using any templates for any method:
 // pre-generated kernel, CPU or GPU JIT, or generic.
 
+#include "GB_mask_shared_definitions.h"
+
 #ifndef GB_KERNEL_SHARED_DEFINITIONS_H
 #define GB_KERNEL_SHARED_DEFINITIONS_H
 

@@ -102,6 +102,8 @@
 #define GB_DISABLE \
     (GxB_NO_RMINUS || GxB_NO_FP32 || GxB_NO_RMINUS_FP32)
 
+#include "GB_kernel_shared_definitions.h"
+
 //------------------------------------------------------------------------------
 // C += A+B, all 3 matrices dense
 //------------------------------------------------------------------------------

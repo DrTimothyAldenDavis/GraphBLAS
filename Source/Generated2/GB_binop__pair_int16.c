@@ -102,6 +102,8 @@
 #define GB_DISABLE \
     (GxB_NO_PAIR || GxB_NO_INT16 || GxB_NO_PAIR_INT16)
 
+#include "GB_kernel_shared_definitions.h"
+
 //------------------------------------------------------------------------------
 // C += A+B, all 3 matrices dense
 //------------------------------------------------------------------------------

@@ -833,7 +833,7 @@
                         int64_t pM = p + pM_start ;
                         int64_t pC = p + pC_start ;
                         int64_t i = Mi [pM] ;
-                        ASSERT (GB_mcast (Mx, pM, msize)) ;
+                        ASSERT (GB_MCAST (Mx, pM, msize)) ;
                         ASSERT (GBI (Ai, pA_offset + i, vlen) == i) ;
                         ASSERT (GBI (Bi, pM, vlen) == i) ;
                         #ifndef GB_ISO_ADD
@@ -857,7 +857,7 @@
                         int64_t pM = p + pM_start ;
                         int64_t pC = p + pC_start ;
                         int64_t i = Mi [pM] ;
-                        ASSERT (GB_mcast (Mx, pM, msize)) ;
+                        ASSERT (GB_MCAST (Mx, pM, msize)) ;
                         ASSERT (GBI (Ai, pM, vlen) == i) ;
                         ASSERT (GBI (Bi, pB_offset + i, vlen) == i) ;
                         #ifndef GB_ISO_ADD
@@ -940,7 +940,7 @@
                     //----------------------------------------------------------
 
                     int64_t i = Mi [pM] ;
-                    bool mij = GB_mcast (Mx, pM, msize) ;
+                    bool mij = GB_MCAST (Mx, pM, msize) ;
                     if (!mij) continue ;
 
                     //----------------------------------------------------------
@@ -1098,7 +1098,7 @@
                 #undef  GB_GET_MIJ
                 #define GB_GET_MIJ(i)                                     \
                     int64_t pM = pM_start + i ;                           \
-                    bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ; \
+                    bool mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ; \
                     if (Mask_comp) mij = !mij ;
 
                 // A and B are sparse or hypersparse, not bitmap or full,

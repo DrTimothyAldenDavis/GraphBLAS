@@ -125,6 +125,7 @@
 
     const int64_t *restrict Mi = M->i ;
     const size_t mvlen = M->vlen ;
+    const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
 
     //--------------------------------------------------------------------------
     // C<M> = A'*B via dot products, where C and M are both sparse/hyper
@@ -142,9 +143,6 @@
     #if GB_JIT_KERNEL
     {
         #define GB_META16
-        #if !GB_MASK_STRUCT
-        const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (M->x) ;
-        #endif
         #include "GB_meta16_definitions.h"
         #include "GB_AxB_dot3_template.c"
     }
@@ -171,8 +169,6 @@
         else
         { 
             // general case
-            const GB_void *restrict
-                Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
             const size_t msize = M->type->size ;
             #include "GB_meta16_factory.c"
         }

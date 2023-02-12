@@ -219,7 +219,7 @@ break ;
 
 #define GB_GET_M_ij(pM)                             \
     /* get M(i,j), at Mi [pM] and Mx [pM] */        \
-    bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize)
+    bool mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize)
 
 //------------------------------------------------------------------------------
 // GB_MULT_A_ik_B_kj: declare t and compute t = A(i,k) * B(k,j)

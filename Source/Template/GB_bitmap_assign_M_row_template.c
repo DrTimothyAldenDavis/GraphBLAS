@@ -55,7 +55,7 @@
 
             if (pM < pM_end)
             {
-                bool mij = GB_mcast (Mx, pM, msize) ;
+                bool mij = GB_MCAST (Mx, pM, msize) ;
                 if (mij)
                 { 
                     int64_t jC = jM ;

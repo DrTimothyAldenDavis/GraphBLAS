@@ -16,6 +16,7 @@
 #include "GB_Pending.h"
 #include "GB_subassign_IxJ_slice.h"
 #include "GB_unused.h"
+#include "GB_mask_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // free workspace
@@ -78,7 +79,7 @@
     const bool is_matrix = (cvdim > 1) ;
 
 #define GB_GET_C_HYPER_HASH                                                 \
-    GB_OK (GB_hyper_hash_build (C, Werk)) ;                              \
+    GB_OK (GB_hyper_hash_build (C, Werk)) ;                                 \
     const int64_t *restrict C_Yp = (C_is_hyper) ? C->Y->p : NULL ;          \
     const int64_t *restrict C_Yi = (C_is_hyper) ? C->Y->i : NULL ;          \
     const int64_t *restrict C_Yx = (C_is_hyper) ? C->Y->x : NULL ;          \
@@ -96,7 +97,7 @@
     const int64_t *Mh = M->h ;                                              \
     const int8_t  *Mb = M->b ;                                              \
     const int64_t *Mi = M->i ;                                              \
-    const GB_void *Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;         \
+    const GB_M_TYPE *Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;     \
     const size_t msize = M->type->size ;                                    \
     const size_t Mvlen = M->vlen ;                                          \
     const int64_t Mnvec = M->nvec ;                                         \
@@ -104,7 +105,7 @@
     const bool M_is_bitmap = GB_IS_BITMAP (M)
 
 #define GB_GET_MASK_HYPER_HASH                                              \
-    GB_OK (GB_hyper_hash_build (M, Werk)) ;                              \
+    GB_OK (GB_hyper_hash_build (M, Werk)) ;                                 \
     const int64_t *restrict M_Yp = (M_is_hyper) ? M->Y->p : NULL ;          \
     const int64_t *restrict M_Yi = (M_is_hyper) ? M->Y->i : NULL ;          \
     const int64_t *restrict M_Yx = (M_is_hyper) ? M->Y->x : NULL ;          \
@@ -1803,13 +1804,13 @@ GrB_Info GB_subassign_08n_slice
     {                                                                       \
         /* M(:,j) is bitmap, no need for binary search */                   \
         int64_t pM = pM_start + i ;                                         \
-        mij = Mb [pM] && GB_mcast (Mx, pM, msize) ;                         \
+        mij = Mb [pM] && GB_MCAST (Mx, pM, msize) ;                         \
     }                                                                       \
     else if (mjdense)                                                       \
     {                                                                       \
         /* M(:,j) is dense, no need for binary search */                    \
         int64_t pM = pM_start + i ;                                         \
-        mij = GB_mcast (Mx, pM, msize) ;                                    \
+        mij = GB_MCAST (Mx, pM, msize) ;                                    \
     }                                                                       \
     else                                                                    \
     {                                                                       \
@@ -1820,7 +1821,7 @@ GrB_Info GB_subassign_08n_slice
         GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;                       \
         if (found)                                                          \
         {                                                                   \
-            mij = GB_mcast (Mx, pM, msize) ;                                \
+            mij = GB_MCAST (Mx, pM, msize) ;                                \
         }                                                                   \
         else                                                                \
         {                                                                   \

@@ -156,7 +156,7 @@
         //----------------------------------------------------------------------
 
         const int8_t  *restrict Mb = M->b ;
-        const GB_void *restrict Mx = (Mask_struct) ? NULL : ((GB_void *) M->x) ;
+        const GB_M_TYPE *restrict Mx = (Mask_struct) ? NULL : ((GB_M_TYPE *) M->x) ;
         const size_t msize = M->type->size ;
 
         int tid ;
@@ -177,7 +177,7 @@
                     int64_t i = Ai [pA] ;
                     int64_t pB = pB_start + i ;
                     if (!GBB (Bb, pB)) continue ;
-                    bool mij = GBB (Mb, pB) && GB_mcast (Mx, pB, msize) ;
+                    bool mij = GBB (Mb, pB) && GB_MCAST (Mx, pB, msize) ;
                     mij = mij ^ Mask_comp ;
                     if (!mij) continue ;
                     // C (i,j) = A (i,j) .* B (i,j)

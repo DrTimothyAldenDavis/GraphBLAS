@@ -30,6 +30,8 @@ GB_kind
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
     GB_select_entry
 
+#include "GB_kernel_shared_definitions.h"
+
 m4_divert(if_phase1)
 //------------------------------------------------------------------------------
 // GB_sel_phase1

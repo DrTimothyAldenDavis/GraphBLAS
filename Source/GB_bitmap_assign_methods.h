@@ -15,6 +15,7 @@
 #include "GB_ij.h"
 #include "GB_subassign_IxJ_slice.h"
 #include "GB_unused.h"
+#include "GB_mask_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // burble
@@ -66,7 +67,7 @@
     const int8_t  *Mb = M->b ;                                              \
     const int64_t *Mh = M->h ;                                              \
     const int64_t *Mi = M->i ;                                              \
-    const GB_void *Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;         \
+    const GB_M_TYPE *Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;     \
     const size_t msize = M->type->size ;                                    \
     const size_t mvlen = M->vlen ;
 

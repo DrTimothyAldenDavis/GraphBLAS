@@ -132,7 +132,7 @@
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
                     // mark R(i,j) if M(i,j) is true
-                    bool mij = GB_mcast (Mx, pM, msize) ;
+                    bool mij = GB_MCAST (Mx, pM, msize) ;
                     if (mij)
                     { 
                         int64_t i = Mi [pM] ;
@@ -258,7 +258,7 @@
             reduction(+:rnvals)
         for (p = 0 ; p < rnz ; p++)
         {
-            bool mij = GBB (Mb, p) && GB_mcast (Mx, p, msize) ;
+            bool mij = GBB (Mb, p) && GB_MCAST (Mx, p, msize) ;
             if (Mask_comp) mij = !mij ;
             if (mij)
             {

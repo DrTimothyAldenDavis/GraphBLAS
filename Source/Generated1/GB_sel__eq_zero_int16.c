@@ -30,6 +30,8 @@
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
     /* assignment skipped, C is iso with all entries zero */
 
+#include "GB_kernel_shared_definitions.h"
+
 //------------------------------------------------------------------------------
 // GB_sel_phase1
 //------------------------------------------------------------------------------

@@ -52,7 +52,7 @@
 
             for (int64_t pM = pM_start ; pM < pM_end ; pM++)
             {
-                bool mij = GB_mcast (Mx, pM, msize) ;
+                bool mij = GB_MCAST (Mx, pM, msize) ;
                 if (mij)
                 { 
                     int64_t iC = Mi [pM] ;

@@ -195,7 +195,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         anzmax = anz ;
     }
 
-    GB_void *Mx = mxGetData (Amatrix) ;
+    GB_void *MatlabX = mxGetData (Amatrix) ;
     if (anz == 0)
     {
         // an empty matrix cannot be iso
@@ -219,7 +219,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             }
             if (mxGetNumberOfElements (values) >= anz)
             {
-                Mx = mxGetData (values) ;
+                MatlabX = mxGetData (values) ;
                 atype_in = GB_mx_Type (values) ;
                 atype_in_code = atype_in->code ;
                 anzmax = mxGetNumberOfElements (values) ;
@@ -342,7 +342,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // the built-in matrix and GraphBLAS matrix have the same type;
         // (logical, double, or double complex), and a deep copy is not
         // requested.  Just make a shallow copy.
-        A->x = Mx ;
+        A->x = MatlabX ;
         A->x_size = anzmax * atype_out->size ;
     }
     else
@@ -376,11 +376,11 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
         if (code1 == code2)
         {
-            memcpy (A->x, Mx, anz * asize) ;
+            memcpy (A->x, MatlabX, anz * asize) ;
         }
         else
         {
-            GB_cast_array (A->x, code1, Mx, code2, NULL, anz, 1) ;
+            GB_cast_array (A->x, code1, MatlabX, code2, NULL, anz, 1) ;
         }
     }
 

@@ -179,7 +179,7 @@ GrB_Info GB_subassign_06n
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    if (GB_mcast (Mx, pM, msize))
+                    if (GB_MCAST (Mx, pM, msize))
                     { 
                         int64_t iA = GBI (Mi, pM, Mvlen) ;
                         GB_iC_DENSE_LOOKUP ;
@@ -210,7 +210,7 @@ GrB_Info GB_subassign_06n
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    if (GB_mcast (Mx, pM, msize))
+                    if (GB_MCAST (Mx, pM, msize))
                     {
                         int64_t iA = GBI (Mi, pM, Mvlen) ;
                         GB_iC_DENSE_LOOKUP ;
@@ -253,7 +253,7 @@ GrB_Info GB_subassign_06n
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    if (GB_mcast (Mx, pM, msize))
+                    if (GB_MCAST (Mx, pM, msize))
                     {
                         int64_t iA = GBI (Mi, pM, Mvlen) ;
 
@@ -296,7 +296,7 @@ GrB_Info GB_subassign_06n
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    if (GB_mcast (Mx, pM, msize))
+                    if (GB_MCAST (Mx, pM, msize))
                     {
                         int64_t iA = GBI (Mi, pM, Mvlen) ;
 
@@ -408,7 +408,7 @@ GrB_Info GB_subassign_06n
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    if (GB_mcast (Mx, pM, msize))
+                    if (GB_MCAST (Mx, pM, msize))
                     {
                         int64_t iA = GBI (Mi, pM, Mvlen) ;
 

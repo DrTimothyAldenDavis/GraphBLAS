@@ -236,7 +236,7 @@ GrB_Info GB_subassign_08n
 
                 for ( ; pM < pM_end ; pM++)
                 {
-                    if (GB_mcast (Mx, pM, msize))
+                    if (GB_MCAST (Mx, pM, msize))
                     { 
                         int64_t iA = GBI (Mi, pM, Mvlen) ;
                         // find iA in A(:,j)
@@ -293,7 +293,7 @@ GrB_Info GB_subassign_08n
                     else
                     { 
                         // both A(i,j) and M(i,j) exist
-                        if (GB_mcast (Mx, pM, msize)) GB_PHASE1_ACTION ;
+                        if (GB_MCAST (Mx, pM, msize)) GB_PHASE1_ACTION ;
                         GB_NEXT (A) ;
                         GB_NEXT (M) ;
                     }
@@ -372,7 +372,7 @@ GrB_Info GB_subassign_08n
 
                 for ( ; pM < pM_end ; pM++)
                 {
-                    if (GB_mcast (Mx, pM, msize))
+                    if (GB_MCAST (Mx, pM, msize))
                     { 
                         int64_t iA = GBI (Mi, pM, Mvlen) ;
                         // find iA in A(:,j)
@@ -429,7 +429,7 @@ GrB_Info GB_subassign_08n
                     else
                     { 
                         // both A(i,j) and M(i,j) exist
-                        if (GB_mcast (Mx, pM, msize)) GB_PHASE2_ACTION ;
+                        if (GB_MCAST (Mx, pM, msize)) GB_PHASE2_ACTION ;
                         GB_NEXT (A) ;
                         GB_NEXT (M) ;
                     }

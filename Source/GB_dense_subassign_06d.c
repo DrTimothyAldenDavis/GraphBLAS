@@ -200,8 +200,7 @@ GrB_Info GB_dense_subassign_06d
                 cast_A_to_C (Cx + ((p)*csize), \
                     Ax + (A_iso ? 0:(pA)*asize), asize)
 
-            #define GB_AX_MASK(Ax,pA,asize) \
-                GB_mcast (Ax, pA, asize)
+            #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, asize)
 
             #include "GB_dense_subassign_06d_template.c"
         }

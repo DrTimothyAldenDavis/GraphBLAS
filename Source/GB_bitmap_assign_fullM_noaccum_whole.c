@@ -74,7 +74,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum_whole
     //--------------------------------------------------------------------------
 
     #define GB_GET_MIJ(mij,pM)                                  \
-        bool mij = (GBB (Mb, pM) && GB_mcast (Mx, pM, msize)) ^ Mask_comp ;
+        bool mij = (GBB (Mb, pM) && GB_MCAST (Mx, pM, msize)) ^ Mask_comp ;
 
     //--------------------------------------------------------------------------
     // assignment phase

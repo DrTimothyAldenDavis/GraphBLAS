@@ -35,17 +35,23 @@ void GB_macrofy_mask
         case 0 :    // mask not complemented
             fprintf (fp,
                 "\n// no mask:\n"
-                "#define GB_NO_MASK 1\n"
-                "#define GB_MASK_COMP 0\n"
-                "#define GB_MASK_STRUCT 1\n") ;
+                "#define GB_M_TYPE void\n"
+                "#define GB_MCAST(Mx,p,msize) 1\n"
+                "#define GB_MASK_STRUCT 1\n"
+                "#define GB_MASK_COMP   0\n"
+                "#define GB_NO_MASK     1\n"
+                ) ;
             break ;
 
         case 1 :    // mask complemented
             fprintf (fp,
                 "\n// no mask (complemented):\n"
-                "#define GB_NO_MASK 1\n"
-                "#define GB_MASK_COMP 1\n"
-                "#define GB_MASK_STRUCT 1\n") ;
+                "#define GB_M_TYPE void\n"
+                "#define GB_MCAST(Mx,p,msize) 1\n"
+                "#define GB_MASK_STRUCT 1\n"
+                "#define GB_MASK_COMP   1\n"
+                "#define GB_NO_MASK     1\n"
+                ) ;
             break ;
 
         //----------------------------------------------------------------------
@@ -57,10 +63,11 @@ void GB_macrofy_mask
             fprintf (fp,
                 "\n// structural mask:\n"
                 "#define GB_M_TYPE void\n"
-                "#define MX(p) 1\n"
+                "#define GB_MCAST(Mx,p,msize) 1\n"
                 "#define GB_MASK_STRUCT 1\n"
-                "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0\n") ;
+                "#define GB_MASK_COMP   0\n"
+                "#define GB_NO_MASK     0\n"
+                ) ;
             if (msparsity == 1)
             {
                 // Mask is present, sparse, not complemented, and structural
@@ -74,10 +81,11 @@ void GB_macrofy_mask
             fprintf (fp,
                 "\n// structural mask (complemented):\n"
                 "#define GB_M_TYPE void\n"
-                "#define MX(p) 1\n"
+                "#define GB_MCAST(Mx,p,msize) 1\n"
                 "#define GB_MASK_STRUCT 1\n"
-                "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0\n") ;
+                "#define GB_MASK_COMP   1\n"
+                "#define GB_NO_MASK     0\n"
+                ) ;
             break ;
 
         //----------------------------------------------------------------------
@@ -89,10 +97,11 @@ void GB_macrofy_mask
             fprintf (fp,
                 "\n// valued mask:\n"
                 "#define GB_M_TYPE uint8_t\n"
-                "#define MX(p) (Mx [p] != 0)\n"
+                "#define GB_MCAST(Mx,p,msize) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
-                "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0\n") ;
+                "#define GB_MASK_COMP   0\n"
+                "#define GB_NO_MASK     0\n"
+                ) ;
             break ;
 
         case 5 :
@@ -100,10 +109,10 @@ void GB_macrofy_mask
             fprintf (fp,
                 "\n// valued mask (complemented):\n"
                 "#define GB_M_TYPE uint8_t\n"
-                "#define MX(p) (Mx [p] != 0)\n"
+                "#define GB_MCAST(Mx,p,msize) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
-                "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0\n") ;
+                "#define GB_MASK_COMP   1\n"
+                "#define GB_NO_MASK     0\n") ;
             break ;
 
         //----------------------------------------------------------------------
@@ -115,10 +124,10 @@ void GB_macrofy_mask
             fprintf (fp,
                 "\n// valued mask:\n"
                 "#define GB_M_TYPE uint16_t\n"
-                "#define MX(p) (Mx [p] != 0)\n"
+                "#define GB_MCAST(Mx,p,msize) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
-                "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0\n") ;
+                "#define GB_MASK_COMP   0\n"
+                "#define GB_NO_MASK     0\n") ;
             break ;
 
         case 7 :
@@ -126,10 +135,10 @@ void GB_macrofy_mask
             fprintf (fp,
                 "\n// valued mask (complemented):\n"
                 "#define GB_M_TYPE uint16_t\n"
-                "#define MX(p) (Mx [p] != 0)\n"
+                "#define GB_MCAST(Mx,p,msize) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
-                "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0\n") ;
+                "#define GB_MASK_COMP   1\n"
+                "#define GB_NO_MASK     0\n") ;
             break ;
 
         //----------------------------------------------------------------------
@@ -141,10 +150,10 @@ void GB_macrofy_mask
             fprintf (fp,
                 "\n// valued mask:\n"
                 "#define GB_M_TYPE uint32_t\n"
-                "#define MX(p) (Mx [p] != 0)\n"
+                "#define GB_MCAST(Mx,p,msize) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
-                "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0\n") ;
+                "#define GB_MASK_COMP   0\n"
+                "#define GB_NO_MASK     0\n") ;
             break ;
 
         case 9 :
@@ -152,10 +161,10 @@ void GB_macrofy_mask
             fprintf (fp,
                 "\n// valued mask (complemented):\n"
                 "#define GB_M_TYPE uint32_t\n"
-                "#define MX(p) (Mx [p] != 0)\n"
+                "#define GB_MCAST(Mx,p,msize) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
-                "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0\n") ;
+                "#define GB_MASK_COMP   1\n"
+                "#define GB_NO_MASK     0\n") ;
             break ;
 
         //----------------------------------------------------------------------
@@ -167,10 +176,10 @@ void GB_macrofy_mask
             fprintf (fp,
                 "\n// valued mask:\n"
                 "#define GB_M_TYPE uint64_t\n"
-                "#define MX(p) (Mx [p] != 0)\n"
+                "#define GB_MCAST(Mx,p,msize) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
-                "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0\n") ;
+                "#define GB_MASK_COMP   0\n"
+                "#define GB_NO_MASK     0\n") ;
             break ;
 
         case 11 :
@@ -178,10 +187,10 @@ void GB_macrofy_mask
             fprintf (fp,
                 "\n// valued mask (complemented):\n"
                 "#define GB_M_TYPE uint64_t\n"
-                "#define MX(p) (Mx [p] != 0)\n"
+                "#define GB_MCAST(Mx,p,msize) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
-                "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0\n") ;
+                "#define GB_MASK_COMP   1\n"
+                "#define GB_NO_MASK     0\n") ;
             break ;
 
         //----------------------------------------------------------------------
@@ -193,10 +202,10 @@ void GB_macrofy_mask
             fprintf (fp,
                 "\n// valued mask:\n"
                 "#define GB_M_TYPE uint64_t\n"
-                "#define MX(p) (Mx [2*(p)] != 0 || Mx [2*(p)+1] != 0)\n"
+                "#define GB_MCAST(Mx,p,msize) (Mx [2*(p)] != 0 || Mx [2*(p)+1] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
-                "#define GB_MASK_COMP 0\n"
-                "#define GB_NO_MASK 0\n") ;
+                "#define GB_MASK_COMP   0\n"
+                "#define GB_NO_MASK     0\n") ;
             break ;
 
         case 13 :
@@ -204,10 +213,10 @@ void GB_macrofy_mask
             fprintf (fp,
                 "\n// valued mask (complemented):\n"
                 "#define GB_M_TYPE uint64_t\n"
-                "#define MX(p) (Mx [2*(p)] != 0 || Mx [2*(p)+1] != 0)\n"
+                "#define GB_MCAST(Mx,p,msize) (Mx [2*(p)] != 0 || Mx [2*(p)+1] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
-                "#define GB_MASK_COMP 1\n"
-                "#define GB_NO_MASK 0\n") ;
+                "#define GB_MASK_COMP   1\n"
+                "#define GB_NO_MASK     0\n") ;
             break ;
 
         //----------------------------------------------------------------------

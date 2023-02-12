@@ -79,7 +79,7 @@ GrB_Info GB_assign_zombie5
     const int64_t *restrict Mh = M->h ;
     const int8_t  *restrict Mb = M->b ;
     const int64_t *restrict Mi = M->i ;
-    const GB_void *restrict Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
+    const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
     const int64_t Mnvec = M->nvec ;
     const int64_t Mvlen = M->vlen ;

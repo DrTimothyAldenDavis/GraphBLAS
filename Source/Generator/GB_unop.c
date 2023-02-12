@@ -56,6 +56,8 @@
 #define GB_DISABLE \
     GB_disable
 
+#include "GB_kernel_shared_definitions.h"
+
 m4_divert(if_unop_apply_enabled)
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator

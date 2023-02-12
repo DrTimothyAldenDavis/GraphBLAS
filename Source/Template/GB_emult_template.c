@@ -433,7 +433,7 @@
                     //----------------------------------------------------------
 
                     int64_t i = GBI (Mi, pM, vlen) ;
-                    bool mij = GB_mcast (Mx, pM, msize) ;
+                    bool mij = GB_MCAST (Mx, pM, msize) ;
                     if (!mij) continue ;
 
                     //----------------------------------------------------------
@@ -524,7 +524,7 @@
                 #undef  GB_GET_MIJ
                 #define GB_GET_MIJ(i)                                     \
                     int64_t pM = pM_start + i ;                           \
-                    bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ; \
+                    bool mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ; \
                     if (Mask_comp) mij = !mij ;
 
                 // both A and B are sparse/hyper
