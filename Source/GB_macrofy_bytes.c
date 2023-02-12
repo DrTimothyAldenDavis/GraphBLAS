@@ -25,33 +25,48 @@ void GB_macrofy_bytes
 )
 {
 
-    fprintf (fp,
-        "#define GB_DECLARE_%s(%s) \\\n"
-        "    %s %s ;               \\\n"
-        "    {                                                       \\\n"
-        "        const uint8_t bytes [%d] =                          \\\n"
-        "        {                                                   \\\n"
-        "            ",
-        Name, variable, type_name, variable, (int) nbytes) ;
-
     bool same = (nbytes > 0) ;
     for (int k = 0 ; k < nbytes ; k++)
     {
-        fprintf (fp, "0x%02x", (int) (value [k])) ;
         same = same && (value [0] == value [k]) ;
-        if (k < nbytes-1)
-        {
-            fprintf (fp, ", ") ;
-            if (k > 0 && k % 8 == 7) fprintf (fp, "\\\n            ") ;
-        }
     }
-    // finalize the array and use memcpy to initialize the scalar
-    fprintf (fp,
-        "  \\\n"
-        "        } ;                                                 \\\n"
-        "        memcpy (&%s, bytes, %d) ;                           \\\n"
-        "    }\n",
-        variable, (int) nbytes) ;
+
+    if (same)
+    {
+        // all bytes are the same; use memset
+        fprintf (fp,
+            "#define GB_DECLARE_%s(%s) %s %s ; "
+            "memset (&z, 0x%02x, %d)\n",
+            Name, variable, type_name, variable,
+            value [0], (int) nbytes) ;
+    }
+    else
+    {
+        // not all bytes are the same; use memcpy
+        fprintf (fp,
+            "#define GB_DECLARE_%s(%s) %s %s ; \\\n"
+            "{ \\\n"
+            "    const uint8_t bytes [%d] = \\\n"
+            "    { \\\n"
+            "        ",
+            Name, variable, type_name, variable, (int) nbytes) ;
+        for (int k = 0 ; k < nbytes ; k++)
+        {
+            fprintf (fp, "0x%02x", (int) (value [k])) ;
+            if (k < nbytes-1)
+            {
+                fprintf (fp, ", ") ;
+                if (k > 0 && k % 8 == 7) fprintf (fp, "\\\n        ") ;
+            }
+        }
+        // finalize the array and use memcpy to initialize the scalar
+        fprintf (fp,
+            "  \\\n"
+            "    } ; \\\n"
+            "    memcpy (&%s, bytes, %d) ; \\\n"
+            "}\n",
+            variable, (int) nbytes) ;
+    }
 
     if (same && is_identity)
     {

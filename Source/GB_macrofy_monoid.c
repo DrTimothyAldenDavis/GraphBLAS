@@ -383,12 +383,12 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     switch (add_ecode)
     {
 
-        // user defined monoid: can apply GB_ADD via atomicCAS if the ztype has 
+        // user defined monoid: can apply GB_ADD via atomicCAS if the ztype has
         // 16, 32, or 64 bits
         case  0 :
 
             user_monoid_atomically =
-                (zsize == sizeof (uint16_t) || 
+                (zsize == sizeof (uint16_t) ||
                  zsize == sizeof (uint32_t) ||
                  zsize == sizeof (uint64_t))  ;
             break ;
@@ -399,16 +399,16 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 
             switch (zcode)
             {
-                case GB_BOOL_code    :
-                case GB_INT8_code    :
-                case GB_UINT8_code   :
-                case GB_INT16_code   :
-                case GB_UINT16_code  :
-                case GB_INT32_code   :
-                case GB_UINT32_code  :
-                case GB_INT64_code   :
-                case GB_UINT64_code  :
-                case GB_FP32_code    :
+                case GB_BOOL_code    : 
+                case GB_INT8_code    : 
+                case GB_UINT8_code   : 
+                case GB_INT16_code   : 
+                case GB_UINT16_code  : 
+                case GB_INT32_code   : 
+                case GB_UINT32_code  : 
+                case GB_INT64_code   : 
+                case GB_UINT64_code  : 
+                case GB_FP32_code    : 
                 case GB_FP64_code    : 
                 case GB_FC32_code    : a = "GB_cuda_atomic_write" ;
                 default              : break ;
@@ -422,15 +422,15 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 
             switch (zcode)
             {
-                case GB_INT8_code    :
-                case GB_UINT8_code   :
-                case GB_INT16_code   :
-                case GB_UINT16_code  :
-                case GB_INT32_code   :
-                case GB_UINT32_code  :
-                case GB_INT64_code   :
+                case GB_INT8_code    : 
+                case GB_UINT8_code   : 
+                case GB_INT16_code   : 
+                case GB_UINT16_code  : 
+                case GB_INT32_code   : 
+                case GB_UINT32_code  : 
+                case GB_INT64_code   : 
                 case GB_UINT64_code  : 
-                case GB_FP32_code    :
+                case GB_FP32_code    : 
                 case GB_FP64_code    : a = "GB_cuda_atomic_min" ;
                 default              : break ;
             }
@@ -443,15 +443,15 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 
             switch (zcode)
             {
-                case GB_INT8_code    :
-                case GB_UINT8_code   :
-                case GB_INT16_code   :
-                case GB_UINT16_code  :
-                case GB_INT32_code   :
-                case GB_UINT32_code  :
-                case GB_INT64_code   :
+                case GB_INT8_code    : 
+                case GB_UINT8_code   : 
+                case GB_INT16_code   : 
+                case GB_UINT16_code  : 
+                case GB_INT32_code   : 
+                case GB_UINT32_code  : 
+                case GB_INT64_code   : 
                 case GB_UINT64_code  : 
-                case GB_FP32_code    :
+                case GB_FP32_code    : 
                 case GB_FP64_code    : a = "GB_cuda_atomic_max" ;
                 default              : break ;
             }
@@ -464,17 +464,17 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 
             switch (zcode)
             {
-                case GB_INT8_code    :
-                case GB_UINT8_code   :
-                case GB_INT16_code   :
-                case GB_UINT16_code  :
-                case GB_INT32_code   :
-                case GB_UINT32_code  :
-                case GB_INT64_code   :
-                case GB_UINT64_code  :
-                case GB_FP32_code    :
-                case GB_FP64_code    :
-                case GB_FC32_code    :
+                case GB_INT8_code    : 
+                case GB_UINT8_code   : 
+                case GB_INT16_code   : 
+                case GB_UINT16_code  : 
+                case GB_INT32_code   : 
+                case GB_UINT32_code  : 
+                case GB_INT64_code   : 
+                case GB_UINT64_code  : 
+                case GB_FP32_code    : 
+                case GB_FP64_code    : 
+                case GB_FC32_code    : 
                 case GB_FC64_code    : a = "GB_cuda_atomic_add" ;
                 default              : break ;
             }
@@ -486,15 +486,15 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 
             switch (zcode)
             {
-                case GB_INT8_code    :
-                case GB_UINT8_code   :
-                case GB_INT16_code   :
-                case GB_UINT16_code  :
-                case GB_INT32_code   :
-                case GB_UINT32_code  :
-                case GB_INT64_code   :
-                case GB_UINT64_code  :
-                case GB_FP32_code    :
+                case GB_INT8_code    : 
+                case GB_UINT8_code   : 
+                case GB_INT16_code   : 
+                case GB_UINT16_code  : 
+                case GB_INT32_code   : 
+                case GB_UINT32_code  : 
+                case GB_INT64_code   : 
+                case GB_UINT64_code  : 
+                case GB_FP32_code    : 
                 case GB_FP64_code    : 
                 case GB_FC32_code    : a = "GB_cuda_atomic_times" ;
                 default              : break ;
@@ -508,10 +508,10 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 
             switch (zcode)
             {
-                case GB_BOOL_code    :
-                case GB_UINT8_code   :
-                case GB_UINT16_code  :
-                case GB_UINT32_code  :
+                case GB_BOOL_code    : 
+                case GB_UINT8_code   : 
+                case GB_UINT16_code  : 
+                case GB_UINT32_code  : 
                 case GB_UINT64_code  : a = "GB_cuda_atomic_bor" ;
                 default              : break ;
             }
@@ -524,10 +524,10 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 
             switch (zcode)
             {
-                case GB_BOOL_code    :
-                case GB_UINT8_code   :
-                case GB_UINT16_code  :
-                case GB_UINT32_code  :
+                case GB_BOOL_code    : 
+                case GB_UINT8_code   : 
+                case GB_UINT16_code  : 
+                case GB_UINT32_code  : 
                 case GB_UINT64_code  : a = "GB_cuda_atomic_band" ;
                 default              : break ;
             }
@@ -540,9 +540,9 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             switch (zcode)
             {
                 case GB_BOOL_code    : 
-                case GB_UINT8_code   :
-                case GB_UINT16_code  :
-                case GB_UINT32_code  :
+                case GB_UINT8_code   : 
+                case GB_UINT16_code  : 
+                case GB_UINT32_code  : 
                 case GB_UINT64_code  : a = "GB_cuda_atomic_bxor" ;
                 default              : break ;
             }
@@ -555,9 +555,9 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             switch (zcode)
             {
                 case GB_BOOL_code    : 
-                case GB_UINT8_code   :
-                case GB_UINT16_code  :
-                case GB_UINT32_code  :
+                case GB_UINT8_code   : 
+                case GB_UINT16_code  : 
+                case GB_UINT32_code  : 
                 case GB_UINT64_code  : a = "GB_cuda_atomic_bxnor" ;
                 default              : break ;
             }
@@ -602,32 +602,29 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             "#define GB_CUDA_ATOMIC GB_cuda_atomic_user\n"
             "#define GB_CUDA_ATOMIC_TYPE %s\n"
             "#ifdef GB_CUDA_KERNEL\n"
-            "static __device__ __inline__ "
-            "void GB_cuda_atomic_user (%s *ptr, %s val)\n"
-            "{                                                              \n"
-            "    %s *p = (%s *) ptr ;                                       \n"
-            "    %s assumed ;                                               \n"
-            "    %s old = *p ;                                              \n"
-            "    do                                                         \n"
-            "    {                                                          \n"
-            "        // assume the old value                                \n"
-            "        assumed = old ;                                        \n"
-            "        // compute the new value                               \n"
-            "        %s prior_value = GB_PUN (%s, assumed) ;                \n"
-            "        %s new_value ;                                         \n"
-            "        GB_ADD (new_value, prior_value, val) ;                 \n"
-            "        // modify it atomically:                               \n"
-            "        old = atomicCAS (p, assumed, GB_PUN (%s, new_value)) ; \n"
-            "    }                                                          \n"
-            "    while (assumed != old) ;                                   \n"
-            "}                                                              \n"
+            "static __device__ __inline__\n"
+            "void GB_cuda_atomic_user (%s *pz, %s t)\n"
+            "{\n"
+            "    %s *p = (%s *) pz ;\n"
+            "    %s assumed ;\n"
+            "    %s old = *p ;\n"
+            "    do\n"
+            "    {\n"
+            "        assumed = old ;\n"
+            "        %s zin = GB_PUN (%s, assumed) ;\n"
+            "        %s z ;\n"
+            "        GB_ADD (z, zin, t) ;\n"
+            "        old = atomicCAS (p, assumed, GB_PUN (%s, z)) ;\n"
+            "    }\n"
+            "    while (assumed != old) ;\n"
+            "}\n"
             "#endif\n",
             ztype_name,                 // GB_CUDA_ATOMIC_TYPE
             ztype_name, ztype_name,     // parameters to GB_cuda_atomic_user
-            cuda_type, cuda_type,       // typecast the pointer ptr to cuda_type
+            cuda_type, cuda_type,       // typecast the pointer pz to cuda_type
             cuda_type, cuda_type,       // cuda_type assumed, old
-            ztype_name, ztype_name,     // pun for prior value
-            ztype_name,                 // type of new value
+            ztype_name, ztype_name,     // pun for prior value, zin
+            ztype_name,                 // type of new value, z
             cuda_type) ;                // pun back to cuda_type for atomicCAS
 
     }
