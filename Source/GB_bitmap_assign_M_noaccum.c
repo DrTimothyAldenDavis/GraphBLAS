@@ -23,6 +23,7 @@
 // kind:        assign, row assign, col assign, or subassign
 
 #include "GB_bitmap_assign_methods.h"
+#include "GB_mask_shared_definitions.h"
 
 #define GB_FREE_ALL                         \
 {                                           \

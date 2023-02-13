@@ -7,14 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_dev.h"
 #include "GB.h"
 #include "GB_control.h"
-#include "GB_sort.h"
-#include "GB_AxB_saxpy.h"
-#include "GB_unused.h"
-#include "GB_bitmap_assign_methods.h"
-#include "GB_ek_slice_search.c"
+#include "GB_AxB_kernels.h"
 #include "GB_AxB__include1.h"
 
 // semiring operators:
@@ -43,7 +38,7 @@
 // C matrix
 #define GB_C_ISO 1
 #define GB_C_TYPE void
-#define GB_PUTC(cij,p)
+#define GB_PUTC(cij,Cx,p)
 
 // special case semirings:
 #define GB_IS_ANY_PAIR_SEMIRING 1

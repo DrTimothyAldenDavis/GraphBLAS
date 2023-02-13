@@ -679,9 +679,9 @@ fprintf (f, 'm4_define(`GB_declareb'', `#define GB_DECLAREB(bkj)%s'')\n', gb_dec
 
 % access the values of C
 if (is_any_pair)
-    fprintf (f, 'm4_define(`GB_putc'', `#define GB_PUTC(cij,p)'')\n') ;
+    fprintf (f, 'm4_define(`GB_putc'', `#define GB_PUTC(cij,Cx,p)'')\n') ;
 else
-    fprintf (f, 'm4_define(`GB_putc'', `#define GB_PUTC(cij,p) Cx [p] = cij'')\n') ;
+    fprintf (f, 'm4_define(`GB_putc'', `#define GB_PUTC(cij,Cx,p) Cx [p] = cij'')\n') ;
 end
 
 % type-specific idiv

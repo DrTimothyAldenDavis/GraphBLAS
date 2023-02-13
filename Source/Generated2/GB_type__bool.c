@@ -36,6 +36,7 @@
     (GxB_NO_BOOL)
 
 #include "GB_kernel_shared_definitions.h"
+#include "GB_mask_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // C<M>=x, when C is dense

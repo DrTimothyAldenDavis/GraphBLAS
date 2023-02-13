@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_bitmap_assign_methods.h"
+#include "GB_mask_shared_definitions.h"
 
 void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
 (

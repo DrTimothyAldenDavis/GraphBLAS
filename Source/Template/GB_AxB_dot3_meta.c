@@ -7,6 +7,11 @@
 
 //------------------------------------------------------------------------------
 
+// This template is #include'd in 3 ways to construct:
+//  * a generic method: Template/GB_AxB_dot_generic.c)
+//  * a pre-generated method: Generated2/GB_AxB_*, the Adot3B method
+//  * a JIT kernel: JitKernels/GB_jit_kernel_AxB_dot3.c
+
 #define GB_DOT3
 #define GB_DOT3_PHASE2
 
@@ -19,7 +24,8 @@
     #define GB_DOT_ALWAYS_SAVE_CIJ      \
     {                                   \
         cij_exists = true ;             \
-        GB_PUTC (cij, pC) ;             \
+        /* Cx [pC] = cij */             \
+        GB_PUTC (cij, Cx, pC) ;         \
         Ci [pC] = i ;                   \
     }
 
@@ -27,20 +33,22 @@
 
     #define GB_DOT_ALWAYS_SAVE_CIJ      \
     {                                   \
-        GB_PUTC (cij, pC) ;             \
+        /* Cx [pC] = cij */             \
+        GB_PUTC (cij, Cx, pC) ;         \
         Ci [pC] = i ;                   \
     }
 
 #endif
 
 // GB_DOT_SAVE_CIJ: C(i,j) = cij, if it exists
-#define GB_DOT_SAVE_CIJ             \
-{                                   \
-    if (GB_CIJ_EXISTS)              \
-    {                               \
-        GB_PUTC (cij, pC) ;         \
-        Ci [pC] = i ;               \
-    }                               \
+#define GB_DOT_SAVE_CIJ                 \
+{                                       \
+    if (GB_CIJ_EXISTS)                  \
+    {                                   \
+        /* Cx [pC] = cij */             \
+        GB_PUTC (cij, Cx, pC) ;         \
+        Ci [pC] = i ;                   \
+    }                                   \
 }
 
 {
@@ -66,7 +74,7 @@
     const int64_t *restrict Bi = B->i ;
     const int64_t bnvec = B->nvec ;
 
-    #if GB_JIT_KERNEL
+    #if defined ( GB_JIT_KERNEL )
     // B matrix properties fixed in the jit kernel
     #define B_is_hyper  GB_B_IS_HYPER
     #define B_is_bitmap GB_B_IS_BITMAP
@@ -85,7 +93,7 @@
     const int64_t *restrict Ai = A->i ;
     const int64_t anvec = A->nvec ;
 
-    #if GB_JIT_KERNEL
+    #if defined ( GB_JIT_KERNEL )
     // A matrix properties fixed in the jit kernel
     #define A_is_hyper  GB_A_IS_HYPER
     #define A_is_bitmap GB_A_IS_BITMAP
@@ -123,6 +131,10 @@
     const int64_t vlen = A->vlen ;
     ASSERT (A->vlen == B->vlen) ;
 
+    #if defined ( GB_JIT_KERNEL )
+    #define Mask_struct GB_MASK_STRUCT
+    #endif
+
     const int64_t *restrict Mi = M->i ;
     const size_t mvlen = M->vlen ;
     const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
@@ -140,7 +152,7 @@
     // The other 12 cases of the mask, and the one no-mask case, are handled
     // by dot2.
 
-    #if GB_JIT_KERNEL
+    #if defined ( GB_JIT_KERNEL )
     {
         #define GB_META16
         #include "GB_meta16_definitions.h"

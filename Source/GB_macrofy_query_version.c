@@ -17,19 +17,8 @@ void GB_macrofy_query_version
 {
 
     fprintf (fp,
-        "\n// This kernel was created by SuiteSparse:GraphBLAS v%d.%d.%d;\n"
-        "void GB_jit_query_version\n"
-        "(\n"
-        "    int *version   /* array of size 3 */\n"
-        ")\n"
-        "{\n"
-        "    version [0] = %d ;\n"
-        "    version [1] = %d ;\n"
-        "    version [2] = %d ;\n"
-        "}\n",
-        GxB_IMPLEMENTATION_MAJOR,
-        GxB_IMPLEMENTATION_MINOR,
-        GxB_IMPLEMENTATION_SUB,
+        "void GB_jit_query_version (int *v) "
+        "{ v [0] = %d ; v [1] = %d ; v [2] = %d ; }\n",
         GxB_IMPLEMENTATION_MAJOR,
         GxB_IMPLEMENTATION_MINOR,
         GxB_IMPLEMENTATION_SUB) ;

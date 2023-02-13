@@ -8,14 +8,9 @@
 //------------------------------------------------------------------------------
 
 #ifndef GBCUDA_DEV
-#include "GB_dev.h"
 #include "GB.h"
 #include "GB_control.h"
-#include "GB_sort.h"
-#include "GB_AxB_saxpy.h"
-#include "GB_unused.h"
-#include "GB_bitmap_assign_methods.h"
-#include "GB_ek_slice_search.c"
+#include "GB_AxB_kernels.h"
 GB_axb__include_h
 
 // semiring operators:

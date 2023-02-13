@@ -149,6 +149,19 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_AxB_dot3_jit        // C<M>=A'B, dot3, via the JIT
+(
+    GrB_Matrix C,               // never iso for this kernel
+    const GrB_Matrix M, const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const GrB_Semiring semiring,
+    const bool flipxy,
+    const GB_task_struct *restrict TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
 GrB_Info GB_AxB_dot3_slice
 (
     // output:

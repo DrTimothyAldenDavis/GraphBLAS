@@ -2,7 +2,7 @@
 // GB_jit_kernel.h:  JIT kernel #include for all kernels
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -11,6 +11,9 @@
 
 #define GB_JIT_KERNEL
 #include "GB.h"
+
+#undef GB_M_TYPE
+#undef GB_MCAST
 
 // to query the kernel for its op and type definitions:
 const char *GB_jit_query_defn (int k) ;

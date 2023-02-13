@@ -14,4 +14,5 @@ sum(A, 'all')
 A = A^2
 sum (A, 'all')
 
-
+D = eye (4) ;
+C = D .* (A*A.')

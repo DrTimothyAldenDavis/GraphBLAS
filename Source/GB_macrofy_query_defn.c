@@ -17,10 +17,7 @@ void GB_macrofy_query_defn
     GB_Operator op1,    // binaryop for a semring
     GrB_Type type0,
     GrB_Type type1,
-    GrB_Type type2,
-    GrB_Type type3,
-    GrB_Type type4,
-    GrB_Type type5
+    GrB_Type type2
 )
 {
 
@@ -32,7 +29,7 @@ void GB_macrofy_query_defn
         "\n// to query the kernel for its op and type definitions:\n"
         "const char *GB_jit_query_defn (int k)\n"
         "{\n"
-        "    const char **defn [8] ;\n") ;
+        "    const char **defn [5] ;\n") ;
 
     // create the definition string for op0
     if (op0 == NULL || op0->defn == NULL)
@@ -63,15 +60,12 @@ void GB_macrofy_query_defn
         fprintf (fp, "    defn [1] = GB_%s_USER_DEFN ;\n", op1->name) ;
     }
 
-    // create the definition string for the 6 types
-    GrB_Type types [6] ;
+    // create the definition string for the 3 types
+    GrB_Type types [3] ;
     types [0] = type0 ;
     types [1] = type1 ;
     types [2] = type2 ;
-    types [3] = type3 ;
-    types [4] = type4 ;
-    types [5] = type5 ;
-    for (int k = 0 ; k <= 5 ; k++)
+    for (int k = 0 ; k <= 2 ; k++)
     {
         GrB_Type type = types [k] ;
         if (type == NULL || type->defn == NULL)

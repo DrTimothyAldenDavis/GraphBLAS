@@ -8,14 +8,9 @@
 //------------------------------------------------------------------------------
 
 #ifndef GBCUDA_DEV
-#include "GB_dev.h"
 #include "GB.h"
 #include "GB_control.h"
-#include "GB_sort.h"
-#include "GB_AxB_saxpy.h"
-#include "GB_unused.h"
-#include "GB_bitmap_assign_methods.h"
-#include "GB_ek_slice_search.c"
+#include "GB_AxB_kernels.h"
 #include "GB_AxB__include2.h"
 
 // semiring operators:
@@ -44,7 +39,7 @@
 // C matrix
 #define GB_C_ISO 0
 #define GB_C_TYPE int16_t
-#define GB_PUTC(cij,p) Cx [p] = cij
+#define GB_PUTC(cij,Cx,p) Cx [p] = cij
 
 // special case semirings:
 

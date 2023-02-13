@@ -214,7 +214,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         }
 
         //----------------------------------------------------------------------
-        // use JIT worker
+        // use the JIT
         //----------------------------------------------------------------------
 
         #ifdef GB_DEBUGIFY_DEFN

@@ -142,11 +142,13 @@ int main (void)
 
     // create a 4-by-4 Gauss matrix, each entry A(i,j) = (i+1,2-j),
     // except A(0,0) is missing
-    GrB_Matrix A ;
+    GrB_Matrix A, D ;
     GrB_Matrix_new (&A, Gauss, 4, 4) ;
+    GrB_Matrix_new (&D, GrB_BOOL, 4, 4) ;
     gauss a ;
     for (int i = 0 ; i < 4 ; i++)
     {
+        GrB_Matrix_setElement (D, 1, i, i) ;
         for (int j = 0 ; j < 4 ; j++)
         {
             if (i == 0 && j == 0) continue ;
@@ -171,8 +173,20 @@ int main (void)
     GrB_Matrix_reduce_UDT (&a, NULL, AddMonoid, A, NULL) ;
     printf ("\nsum (A^2) = (%d,%d)\n", a.real, a.imag) ;
 
+    // C<D> = A*A' where A and D are sparse
+    GrB_Matrix C ;
+    GrB_Matrix_new (&C, Gauss, 4, 4) ;
+    printgauss (C) ;
+    GxB_set (A, GxB_SPARSITY_CONTROL, GxB_SPARSE) ;
+    GxB_set (D, GxB_SPARSITY_CONTROL, GxB_SPARSE) ;
+    GrB_mxm (C, D, NULL, GaussSemiring, A, A, GrB_DESC_T1) ;
+    printf ("\n=============== diag(AA') matrix:\n") ;
+    printgauss (C) ;
+
     // free everything and finalize GraphBLAS
     GrB_free (&A) ;
+    GrB_free (&D) ;
+    GrB_free (&C) ;
     GrB_free (&Gauss) ;
     GrB_free (&AddGauss) ;
     GrB_free (&AddMonoid) ;

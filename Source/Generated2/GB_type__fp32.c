@@ -36,6 +36,7 @@
     (GxB_NO_FP32)
 
 #include "GB_kernel_shared_definitions.h"
+#include "GB_mask_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // C<M>=x, when C is dense

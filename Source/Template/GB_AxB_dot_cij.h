@@ -90,7 +90,7 @@
             /* cij = (A' or A)(i,k) * B(k,j), and add to the pattern */ \
             GB_MULT (cij, aki, bkj, i, k, j) ;                          \
             int64_t pC = pC_start + i ;                                 \
-            GB_PUTC (cij, pC) ;                                         \
+            GB_PUTC (cij, Cx, pC) ;         /* Cx [pC] = cij */         \
             Cb [pC] = 1 ;                                               \
             task_cnvals++ ;                                             \
             break ;                                                     \

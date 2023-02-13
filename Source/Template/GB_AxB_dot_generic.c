@@ -96,7 +96,7 @@
         #define GB_CIJ_DECLARE(cij) GB_C_TYPE cij
 
         // Cx [p] = cij
-        #define GB_PUTC(cij,p) Cx [p] = cij
+        #define GB_PUTC(cij,Cx,p) Cx [p] = cij
 
         // break if cij reaches the terminal value.  The terminal condition
         // 'is_terminal' is checked even if the monoid is not terminal.
@@ -253,7 +253,7 @@
 
         // Cx [p] = cij
         #undef  GB_PUTC
-        #define GB_PUTC(cij,p) memcpy (Cx +((p)*csize), cij, csize)
+        #define GB_PUTC(cij,Cx,p) memcpy (Cx +((p)*csize), cij, csize)
 
         // instead of GB_DECLARE_TERMINAL_CONST (zterminal):
         GB_void *restrict zterminal = (GB_void *) add->terminal ;

@@ -9,7 +9,7 @@
 
 // GB_mask_shared_defintions.h provides default definitions for all masks,
 // if the special cases have not been #define'd prior to #include'ing this
-// file.
+// file.  This file is not used for the JIT kernels.
 
 #ifndef GB_MASK_SHARED_DEFINITIONS_H
 #define GB_MASK_SHARED_DEFINITIONS_H

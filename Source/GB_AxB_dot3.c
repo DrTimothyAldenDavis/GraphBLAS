@@ -14,6 +14,7 @@
 
 #include "GB_mxm.h"
 #include "GB_binop.h"
+#include "GB_stringify.h"
 #include "GB_AxB__include1.h"
 #ifndef GBCUDA_DEV
 #include "GB_AxB__include2.h"
@@ -304,6 +305,22 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
                 #include "GB_AxB_factory.c"
             }
 
+        #endif
+
+        //----------------------------------------------------------------------
+        // C<M> = A'*B, via the JIT
+        //----------------------------------------------------------------------
+
+        #ifdef GB_DEBUGIFY_DEFN
+        #ifndef GBRENAME
+        // FIXME: not yet working in MATLAB (mxMalloc issues)
+        if (!done)
+        {
+            info = GB_AxB_dot3_jit (C, M, Mask_struct, A, B, semiring, flipxy,
+                TaskList, ntasks, nthreads) ;
+            done = (info == GrB_SUCCESS) ;
+        }
+        #endif
         #endif
 
         //----------------------------------------------------------------------

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_reduce_kernel.h:  JIT kernel #include for reduction to scalar
+// GB_jit_kernel_reduce.h:  JIT kernel #include for reduction to scalar
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2023, All Rights Reserved.

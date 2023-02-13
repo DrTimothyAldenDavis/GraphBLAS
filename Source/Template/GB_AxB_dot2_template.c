@@ -20,12 +20,14 @@
 #if GB_C_IS_FULL
     #define GB_DOT_ALWAYS_SAVE_CIJ      \
     {                                   \
-        GB_PUTC (cij, pC) ;             \
+        /* Cx [pC] = cij */             \
+        GB_PUTC (cij, Cx, pC) ;         \
     }
 #else
     #define GB_DOT_ALWAYS_SAVE_CIJ      \
     {                                   \
-        GB_PUTC (cij, pC) ;             \
+        /* Cx [pC] = cij */             \
+        GB_PUTC (cij, Cx, pC) ;         \
         Cb [pC] = 1 ;                   \
         task_cnvals++ ;                 \
     }

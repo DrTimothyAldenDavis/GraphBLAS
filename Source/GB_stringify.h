@@ -44,15 +44,6 @@ void GB_macrofy_copyright (FILE *fp) ;
 // GrB_reduce
 //------------------------------------------------------------------------------
 
-void GB_enumify_reduce      // enumerate a GrB_reduce problem
-(
-    // output:
-    uint64_t *rcode,        // unique encoding of the entire problem
-    // input:
-    GrB_Monoid monoid,      // the monoid to enumify
-    GrB_Matrix A            // input matrix to monoid
-) ;
-
 uint64_t GB_encodify_reduce // encode a GrB_reduce problem
 (
     // output:
@@ -62,6 +53,15 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
     // input:
     GrB_Monoid monoid,      // the monoid to enumify
     GrB_Matrix A            // input matrix to reduce
+) ;
+
+void GB_enumify_reduce      // enumerate a GrB_reduce problem
+(
+    // output:
+    uint64_t *rcode,        // unique encoding of the entire problem
+    // input:
+    GrB_Monoid monoid,      // the monoid to enumify
+    GrB_Matrix A            // input matrix to monoid
 ) ;
 
 void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
@@ -115,6 +115,22 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 //------------------------------------------------------------------------------
 // GrB_mxm
 //------------------------------------------------------------------------------
+
+uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
+(
+    // output:
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char **suffix,              // suffix for user-defined kernel
+    // input:
+    int kcode,
+    GrB_Matrix C,
+    const GrB_Matrix M, const bool Mask_struct, const bool Mask_comp,
+    const GrB_Semiring semiring,
+    const bool flipxy,
+    const GrB_Matrix A,
+    const GrB_Matrix B
+) ;
 
 void GB_enumify_mxm         // enumerate a GrB_mxm problem
 (
@@ -477,10 +493,7 @@ void GB_macrofy_query_defn
     GB_Operator op1,    // binaryop for a semring
     GrB_Type type0,
     GrB_Type type1,
-    GrB_Type type2,
-    GrB_Type type3,
-    GrB_Type type4,
-    GrB_Type type5
+    GrB_Type type2
 ) ;
 
 void GB_macrofy_query_version
