@@ -133,7 +133,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
             #define GB_AxB_WORKER(add,mult,xname)                       \
             {                                                           \
                 info = GB_AsaxbitB (add,mult,xname) (C, M, Mask_comp,   \
-                    Mask_struct, A, B, Werk) ;                       \
+                    Mask_struct, A, B, Werk) ;                          \
                 done = (info != GrB_NO_VALUE) ;                         \
             }                                                           \
             break ;

@@ -12,8 +12,15 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_reduce_function)
-    (void *, const GrB_Matrix, void *, bool *, int, int) ;
+typedef GrB_Info (*GB_jit_dl_function)
+(
+    void *,
+    const GrB_Matrix,
+    void *,
+    bool *,
+    int,
+    int
+) ;
 
 GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
 (
@@ -209,8 +216,8 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
     // call the jit kernel and return result
     //------------------------------------------------------------------
 
-    GB_reduce_function redfunc = (GB_reduce_function) dl_function ;
-    GrB_Info info = redfunc (z, A, W, F, ntasks, nthreads) ;
+    GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
+    GrB_Info info = GB_jit_kernel (z, A, W, F, ntasks, nthreads) ;
     return (info) ;
 #endif
 }

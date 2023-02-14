@@ -11,7 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_AxB_dot3_function)
+typedef GrB_Info (*GB_jit_dl_function)
 (   
     GrB_Matrix,
     const GrB_Matrix,
@@ -224,8 +224,8 @@ GrB_Info GB_AxB_dot3_jit        // C<M>=A'B, dot3, via the JIT
     // call the jit kernel and return result
     //------------------------------------------------------------------
 
-    GB_AxB_dot3_function dot3func = (GB_AxB_dot3_function) dl_function ;
-    GrB_Info info = dot3func (C, M, A, B, TaskList, ntasks, nthreads) ;
+    GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
+    GrB_Info info = GB_jit_kernel (C, M, A, B, TaskList, ntasks, nthreads) ;
     return (info) ;
 #endif
 }
