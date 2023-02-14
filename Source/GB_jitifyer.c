@@ -290,7 +290,7 @@ bool GB_jitifyer_match_defn     // return true if definitions match
     else if (current_defn != NULL)
     {
         // both definitions are present
-        // ensure the defintion hasn't changed
+        // ensure the definition hasn't changed
         return (strcmp (library_defn, current_defn) == 0) ;
     }
     else

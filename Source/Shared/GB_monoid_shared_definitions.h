@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// GB_monoid_shared_defintions.h provides default definitions for all monoids,
+// GB_monoid_shared_definitions.h provides default definitions for all monoids,
 // if the special cases have not been #define'd prior to #include'ing this
 // file.
 

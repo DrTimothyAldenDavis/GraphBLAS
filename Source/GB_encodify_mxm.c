@@ -17,9 +17,11 @@ uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
                                 // except for the suffix
     char **suffix,              // suffix for user-defined kernel
     // input:
-    int kcode,
+    int kcode,                  // kernel to encode (dot3, saxpy3, etc)
     GrB_Matrix C,
-    const GrB_Matrix M, const bool Mask_struct, const bool Mask_comp,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
     const GrB_Semiring semiring,
     const bool flipxy,
     const GrB_Matrix A,
@@ -33,7 +35,6 @@ uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
 
     GB_enumify_mxm (&encoding->code, C->iso, GB_sparsity (C), C->type,
         M, Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
-
     bool builtin = (semiring->hash == 0) ;
     encoding->kcode = kcode ;
 

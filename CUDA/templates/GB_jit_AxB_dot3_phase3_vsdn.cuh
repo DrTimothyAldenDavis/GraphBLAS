@@ -13,21 +13,17 @@
 //******************************************************************************
 
 #pragma once
-
 #include <limits>
 #include <cstdint>
 #include <stdio.h>
 #include "GB_cuda_kernel.h"
 #include "GB_hash.h"
 #include "GB_hyper_hash_lookup.h"
-
 #include <cooperative_groups.h>
-
 #define tile_sz 32
-
 //#include "local_cub/block/block_reduce.cuh"
 #include <cub/block/block_reduce.cuh>
-
+#include "GB_AxB_shared_definitions.h"
 
 using namespace cooperative_groups;
 

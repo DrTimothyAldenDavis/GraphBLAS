@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// These defintions are not visible to the user.  They are used only inside
+// These definitions are not visible to the user.  They are used only inside
 // GraphBLAS itself.  Note that the GB_Global struct does not appear here.
 // It is accessible only by the functions in GB_Global.c.
 

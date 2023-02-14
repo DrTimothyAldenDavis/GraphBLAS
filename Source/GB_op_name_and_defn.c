@@ -46,6 +46,8 @@ GrB_Info GB_op_name_and_defn
     // get the name of the operator
     //--------------------------------------------------------------------------
 
+    // FIXME: this can get a mangled name; see the BF methods in LAGraph
+
     memset (operator_name, 0, GxB_MAX_NAME_LEN) ;
     if (input_name != NULL)
     {
@@ -104,7 +106,7 @@ GrB_Info GB_op_name_and_defn
             return (GrB_OUT_OF_MEMORY) ;
         }
 
-        // copy the defintion into the new operator
+        // copy the definition into the new operator
         memcpy (defn, input_defn, defn_len+1) ;
     }
 

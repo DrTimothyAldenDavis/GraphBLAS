@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_generic.h: defintions for all generic methods
+// GB_generic.h: definitions for all generic methods
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -39,6 +39,4 @@
 
 #undef  GB_C_TYPE
 #define GB_C_TYPE GB_void
-
-#include "GB_mask_shared_definitions.h"
 

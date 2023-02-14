@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// GB_AxB_shared_defintions.h provides default definitions for all semirings,
+// GB_AxB_shared_definitions.h provides default definitions for all semirings,
 // if the special cases have not been #define'd prior to #include'ing this
 // file.  This file is shared by generic, pre-generated, and both CPU and CUDA
 // JIT kernels.

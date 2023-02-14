@@ -207,7 +207,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // special cases
     //--------------------------------------------------------------------------
 
-    bool is_integer = (zcode >= GB_INT8_code || zcode <= GB_UINT64_code) ;
+    bool is_integer = (zcode >= GB_INT8_code && zcode <= GB_UINT64_code) ;
     bool is_fp_real = (zcode == GB_FP32_code || zcode == GB_FP64_code) ;
 
     if (opcode == GB_PLUS_binop_code && zcode == GB_FC32_code)
@@ -647,11 +647,5 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         }
         fprintf (fp, "#define GB_Z_CUDA_ATOMIC_TYPE %s\n", t) ;
     }
-
-    //--------------------------------------------------------------------------
-    // include shared definitions
-    //--------------------------------------------------------------------------
-
-    fprintf (fp, "\n#include \"GB_monoid_shared_definitions.h\"\n\n") ;
 }
 

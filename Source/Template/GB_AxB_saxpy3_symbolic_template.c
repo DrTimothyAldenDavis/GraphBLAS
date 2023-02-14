@@ -25,7 +25,6 @@
 
 #define GB_META16
 #include "GB_meta16_definitions.h"
-#include "GB_mask_shared_definitions.h"
 
 void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
 (

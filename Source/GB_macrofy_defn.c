@@ -85,6 +85,7 @@ bool GB_macrofy_defn    // return true if user-defined operator is a macro
         fprintf (fp, "// operator: ") ;
         if (name != NULL) fprintf (fp, "(%s)", name) ;
         fprintf (fp, " definition not provided\n") ;
+        // FIXME: refuse to jitify in this case
     }
 
     return (is_macro) ;

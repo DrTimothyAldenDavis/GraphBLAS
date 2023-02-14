@@ -110,7 +110,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     // multiply operators
     bool is_positional = GB_IS_BINARYOP_CODE_POSITIONAL (mult->opcode) ;
 
-    fprintf (fp, "\n// additive monoid:\n") ;
+    fprintf (fp, "\n// monoid:\n") ;
     const char *u_expr ;
     GB_macrofy_type (fp, "Z", "_", (zcode == 0) ? "GB_void" : ztype->name) ;
     GB_macrofy_monoid (fp, add_ecode, id_ecode, term_ecode,
@@ -364,11 +364,5 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     GB_macrofy_input (fp, "b", "B", "B", true,
         flipxy ? mult->xtype : mult->ytype,
         btype, bsparsity, bcode, B_iso_code, -1) ;
-
-    //--------------------------------------------------------------------------
-    // include shared definitions
-    //--------------------------------------------------------------------------
-
-    fprintf (fp, "\n#include \"GB_AxB_shared_definitions.h\"\n\n") ;
 }
 

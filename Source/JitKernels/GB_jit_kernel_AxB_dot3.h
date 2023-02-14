@@ -10,5 +10,3 @@
 #include "GB_jit_kernel.h"
 #include "GB_AxB_kernels.h"
 
-#undef GB_M_TYPE
-#undef GB_MCAST

@@ -75,7 +75,6 @@
 #ifndef GBCUDA_DEV
 #include "GB_binop__include.h"
 #endif
-#include "GB_mask_shared_definitions.h"
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \

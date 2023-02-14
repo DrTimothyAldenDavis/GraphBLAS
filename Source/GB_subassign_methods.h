@@ -16,7 +16,6 @@
 #include "GB_Pending.h"
 #include "GB_subassign_IxJ_slice.h"
 #include "GB_unused.h"
-#include "GB_mask_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // free workspace

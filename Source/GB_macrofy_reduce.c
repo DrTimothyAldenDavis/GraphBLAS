@@ -47,7 +47,7 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     //--------------------------------------------------------------------------
 
     GB_macrofy_copyright (fp) ;
-    fprintf (fp, "// monoid: (%s, %s)\n",
+    fprintf (fp, "// reduce: (%s, %s)\n",
         monoid->op->name, monoid->op->ztype->name) ;
 
     //--------------------------------------------------------------------------
@@ -60,7 +60,7 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     // construct the monoid macros
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "\n// reduction monoid:\n") ;
+    fprintf (fp, "\n// monoid:\n") ;
     GB_macrofy_type (fp, "Z", "_", monoid->op->ztype->name) ;
     GB_macrofy_monoid (fp, red_ecode, id_ecode, term_ecode, monoid, false,
         NULL) ;

@@ -39,6 +39,7 @@
 #include "GB_cuda_kernel.h"
 #include "GB_hash.h"
 #include "GB_hyper_hash_lookup.h"
+#include "GB_AxB_shared_definitions.h"
 
 // Using tile size fixed at compile time, we don't need shared memory
 #define tile_sz 32 

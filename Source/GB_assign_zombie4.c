@@ -20,7 +20,6 @@
 
 #include "GB_assign.h"
 #include "GB_assign_zombie.h"
-#include "GB_mask_shared_definitions.h"
 
 void GB_assign_zombie4
 (

@@ -155,7 +155,7 @@ void GB_macrofy_binop
 
             // max (integer)
             case   8 : 
-                f = "z = (((x) < (y)) ? (x) : (y))" ;
+                f = "z = (((x) > (y)) ? (x) : (y))" ;
                 break ;
 
             // plus (complex)
@@ -492,7 +492,7 @@ void GB_macrofy_binop
                 f = "z = ((x) < (y))" ;
                 break ;
 
-            // ge, isget
+            // ge, isge
             case  73 : 
                 f = "z = ((x) >= (y))" ;
                 break ;

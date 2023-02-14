@@ -20,7 +20,6 @@
 #include "GB_AxB__include2.h"
 #endif
 #include "GB_unused.h"
-#include "GB_mask_shared_definitions.h"
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \

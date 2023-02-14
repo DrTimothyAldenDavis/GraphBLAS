@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense.h: defintions for dense matrix operations 
+// GB_dense.h: definitions for dense matrix operations
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.

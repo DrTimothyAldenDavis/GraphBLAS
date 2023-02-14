@@ -21,7 +21,6 @@
 
 #include "GB_mask.h"
 #include "GB_unused.h"
-#include "GB_mask_shared_definitions.h"
 
 GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
 (
