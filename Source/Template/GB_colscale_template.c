@@ -68,7 +68,7 @@
             // find the part of A(:,k) and C(:,k) to be operated on by this task
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Ah, k) ;
+            int64_t j = GBH_A (Ah, k) ;
             int64_t pA_start, pA_end ;
             GB_get_pA (&pA_start, &pA_end, tid, k,
                 kfirst, klast, pstart_Aslice, Ap, avlen) ;

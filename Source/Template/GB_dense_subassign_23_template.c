@@ -99,13 +99,13 @@
                 // find the part of B(:,k) and C(:,k) for this task
                 //--------------------------------------------------------------
 
-                int64_t j = GBH (Bh, k) ;
+                int64_t j = GBH_B (Bh, k) ;
                 int64_t my_pB_start, my_pB_end ;
                 GB_get_pA (&my_pB_start, &my_pB_end, taskid, k,
                     kfirst, klast, pstart_Bslice, Bp, bvlen) ;
 
-                int64_t pB_start = GBP (Bp, k, bvlen) ;
-                int64_t pB_end   = GBP (Bp, k+1, bvlen) ;
+                int64_t pB_start = GBP_B (Bp, k, bvlen) ;
+                int64_t pB_end   = GBP_B (Bp, k+1, bvlen) ;
                 bool bjdense = ((pB_end - pB_start) == cvlen) ;
 
                 // pC points to the start of C(:,j) if C is dense

@@ -57,7 +57,7 @@
         int64_t klast  = klast_Mslice  [tid] ;
         for (int64_t k = kfirst ; k <= klast ; k++)
         {
-            int64_t j = GBH (Mh, k) ;
+            int64_t j = GBH_M (Mh, k) ;
             int64_t pstart = j * vlen ;
             int64_t pM, pM_end, pC ;
             GB_get_pA_and_pC (&pM, &pM_end, &pC, tid, k, kfirst, klast,
@@ -66,9 +66,9 @@
             {
                 int64_t i = Mi [pM] ;
                 if (GB_MCAST (Mx, pM, msize) &&
-                    (GBB (Ab, pstart + i)
+                    (GBB_A (Ab, pstart + i)
                     &&  // TODO: for GB_add, use || instead
-                    GBB (Bb, pstart + i)))
+                    GBB_B (Bb, pstart + i)))
                 { 
                     int64_t p = pstart + i ;
                     // C (i,j) = A (i,j) .* B (i,j)

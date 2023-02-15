@@ -34,7 +34,7 @@
             // test the existence and value of A(i,j) 
             GB_TEST_VALUE_OF_ENTRY (keep, pA) ;
         #endif
-        int8_t cb = GBB (Ab, pA) &&
+        int8_t cb = GBB_A (Ab, pA) &&
         #if defined ( GB_ENTRY_SELECTOR )
             keep ;
         #elif defined ( GB_TRIL_SELECTOR )

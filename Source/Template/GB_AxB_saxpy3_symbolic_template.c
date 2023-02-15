@@ -209,7 +209,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                     {
                         GB_GET_M_ij (pM) ;              // get M(i,j)
                         if (!mij) continue ;            // skip if M(i,j)=0
-                        int64_t i = GBI (Mi, pM, mvlen) ;
+                        int64_t i = GBI_M (Mi, pM, mvlen) ;
                         int64_t i_mine = ((i+1) << 2) + 1 ;  // ((i+1),1)
                         for (GB_HASH (i))
                         { 
@@ -479,7 +479,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
                     GB_GET_M_ij (pM) ;               // get M(i,j)
-                    int64_t i = GBI (Mi, pM, mvlen) ;
+                    int64_t i = GBI_M (Mi, pM, mvlen) ;
                     ASSERT (Hf [i] == mij) ;
                 }
                 for (int64_t i = 0 ; i < cvlen ; i++)
@@ -501,7 +501,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                 {
                     GB_GET_M_ij (pM) ;              // get M(i,j)
                     if (!mij) continue ;            // skip if M(i,j)=0
-                    int64_t i = GBI (Mi, pM, mvlen) ;
+                    int64_t i = GBI_M (Mi, pM, mvlen) ;
                     int64_t i_mine = ((i+1) << 2) + 1 ;  // ((i+1),1)
                     int64_t probe = 0 ;
                     for (GB_HASH (i))

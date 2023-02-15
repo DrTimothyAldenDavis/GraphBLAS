@@ -39,7 +39,7 @@
             //------------------------------------------------------------------
 
             ASSERT (k == 0) ;
-            ASSERT (GBH (Mh, k) == 0) ;
+            ASSERT (GBH_M (Mh, k) == 0) ;
             int64_t pM_start, pM_end ;
             GB_get_pA (&pM_start, &pM_end, tid, k, kfirst,
                 klast, pstart_Mslice, Mp, mvlen) ;

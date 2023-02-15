@@ -15,6 +15,37 @@
 #undef GB_M_TYPE
 #undef GB_MCAST
 
+// these macros are redefined by the JIT kernels to specialize them for each
+// specific matrix format.
+
+// accessing the C matrix
+#undef GBP_C
+#undef GBH_C
+#undef GBI_C
+#undef GBB_C
+#undef GBX_C
+
+// accessing the A matrix
+#undef GBP_A
+#undef GBH_A
+#undef GBI_A
+#undef GBB_A
+#undef GBX_A
+
+// accessing the B matrix
+#undef GBP_B
+#undef GBH_B
+#undef GBI_B
+#undef GBB_B
+#undef GBX_B
+
+// accessing the M matrix
+#undef GBP_M
+#undef GBH_M
+#undef GBI_M
+#undef GBB_M
+#undef GBX_M
+
 // to query the kernel for its op and type definitions:
 const char *GB_jit_query_defn (int k) ;
 

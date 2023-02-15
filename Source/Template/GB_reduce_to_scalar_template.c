@@ -50,7 +50,7 @@
         { 
             // skip if the entry is a zombie or if not in the bitmap
             if (A_has_zombies && GB_IS_ZOMBIE (Ai [p])) continue ;
-            if (!GBB (Ab, p)) continue ;
+            if (!GBB_A (Ab, p)) continue ;
             // z += (ztype) Ax [p]
             GB_GETA_AND_UPDATE (z, Ax, p) ;
             #if GB_MONOID_IS_TERMINAL
@@ -86,7 +86,7 @@
                 { 
                     // skip if the entry is a zombie or if not in the bitmap
                     if (A_has_zombies && GB_IS_ZOMBIE (Ai [p])) continue ;
-                    if (!GBB (Ab, p)) continue ;
+                    if (!GBB_A (Ab, p)) continue ;
                     found = true ;
                     // t += (ztype) Ax [p]
                     GB_GETA_AND_UPDATE (t, Ax, p) ;

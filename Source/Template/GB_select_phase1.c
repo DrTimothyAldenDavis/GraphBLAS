@@ -76,7 +76,7 @@
             // find the part of A(:,k) to be reduced by this thread
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Ah, k) ;
+            int64_t j = GBH_A (Ah, k) ;
             int64_t pA, pA_end ;
             GB_get_pA (&pA, &pA_end, tid, k,
                 kfirst, klast, pstart_Aslice, Ap, avlen) ;
@@ -135,8 +135,8 @@
         // get A(:,k)
         //----------------------------------------------------------------------
 
-        int64_t pA_start = GBP (Ap, k, avlen) ;
-        int64_t pA_end   = GBP (Ap, k+1, avlen) ;
+        int64_t pA_start = GBP_A (Ap, k, avlen) ;
+        int64_t pA_end   = GBP_A (Ap, k+1, avlen) ;
         int64_t p = pA_start ;
         int64_t cjnz = 0 ;
         int64_t ajnz = pA_end - pA_start ;
@@ -149,8 +149,8 @@
             // search for the entry A(i,k)
             //------------------------------------------------------------------
 
-            int64_t ifirst = GBI (Ai, pA_start, avlen) ;
-            int64_t ilast  = GBI (Ai, pA_end-1, avlen) ;
+            int64_t ifirst = GBI_A (Ai, pA_start, avlen) ;
+            int64_t ilast  = GBI_A (Ai, pA_end-1, avlen) ;
 
             #if defined ( GB_ROWINDEX_SELECTOR )
             int64_t i = -ithunk ;
@@ -158,7 +158,7 @@
             int64_t i = ithunk ;
             #else
             // TRIL, TRIU, DIAG, OFFDIAG
-            int64_t j = GBH (Ah, k) ;
+            int64_t j = GBH_A (Ah, k) ;
             int64_t i = j-ithunk ;
             #endif
 
@@ -177,7 +177,7 @@
                 // A(:,k) is dense
                 found = true ;
                 p += i ;
-                ASSERT (GBI (Ai, p, avlen) == i) ;
+                ASSERT (GBI_A (Ai, p, avlen) == i) ;
             }
             else
             { 
@@ -270,7 +270,7 @@
         if (kfirst <= klast)
         {
             int64_t pA_start = pstart_Aslice [tid] ;
-            int64_t pA_end   = GBP (Ap, kfirst+1, avlen) ;
+            int64_t pA_end   = GBP_A (Ap, kfirst+1, avlen) ;
             pA_end = GB_IMIN (pA_end, pstart_Aslice [tid+1]) ;
             if (pA_start < pA_end)
             { 
@@ -311,7 +311,7 @@
 
         if (kfirst < klast)
         {
-            int64_t pA_start = GBP (Ap, klast, avlen) ;
+            int64_t pA_start = GBP_A (Ap, klast, avlen) ;
             int64_t pA_end   = pstart_Aslice [tid+1] ;
             if (pA_start < pA_end)
             { 

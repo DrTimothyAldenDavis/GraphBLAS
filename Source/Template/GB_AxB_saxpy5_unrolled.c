@@ -74,7 +74,7 @@
         for (int64_t jB = jB_start ; jB < jB_end ; jB++)
         {
             // get B(:,j) and C(:,j)
-            const int64_t j = GBH (Bh, jB) ;
+            const int64_t j = GBH_B (Bh, jB) ;
             GB_C_TYPE *restrict Cxj = Cx + (j * m) ;
             const int64_t pB_start = Bp [jB] ;
             const int64_t pB_end   = Bp [jB+1] ;

@@ -25,6 +25,11 @@ void GB_macrofy_mask
 
     const char *f ;
 
+    if (mask_ecode >= 2)
+    {
+        GB_macrofy_sparsity (fp, Mname, msparsity) ;
+    }
+
     switch (mask_ecode)
     {
 
@@ -33,25 +38,23 @@ void GB_macrofy_mask
         //----------------------------------------------------------------------
 
         case 0 :    // mask not complemented
-            fprintf (fp,
-                "\n// no mask:\n"
+            fprintf (fp, "\n// %s matrix: none\n"
                 "#define GB_M_TYPE void\n"
                 "#define GB_MCAST(Mx,p,msize) 1\n"
                 "#define GB_MASK_STRUCT 1\n"
                 "#define GB_MASK_COMP   0\n"
-                "#define GB_NO_MASK     1\n"
-                ) ;
+                "#define GB_NO_MASK     1\n",
+                Mname) ;
             break ;
 
         case 1 :    // mask complemented
-            fprintf (fp,
-                "\n// no mask (complemented):\n"
+            fprintf (fp, "\n// %s matrix: none (complemented):\n"
                 "#define GB_M_TYPE void\n"
                 "#define GB_MCAST(Mx,p,msize) 1\n"
                 "#define GB_MASK_STRUCT 1\n"
                 "#define GB_MASK_COMP   1\n"
-                "#define GB_NO_MASK     1\n"
-                ) ;
+                "#define GB_NO_MASK     1\n",
+                Mname) ;
             break ;
 
         //----------------------------------------------------------------------
@@ -60,8 +63,7 @@ void GB_macrofy_mask
 
         case 2 :
             // mask not complemented, type: structural
-            fprintf (fp,
-                "\n// structural mask:\n"
+            fprintf (fp, "// structural mask:\n"
                 "#define GB_M_TYPE void\n"
                 "#define GB_MCAST(Mx,p,msize) 1\n"
                 "#define GB_MASK_STRUCT 1\n"
@@ -79,7 +81,7 @@ void GB_macrofy_mask
         case 3 :
             // mask complemented, type: structural
             fprintf (fp,
-                "\n// structural mask (complemented):\n"
+                "// structural mask (complemented):\n"
                 "#define GB_M_TYPE void\n"
                 "#define GB_MCAST(Mx,p,msize) 1\n"
                 "#define GB_MASK_STRUCT 1\n"
@@ -95,7 +97,7 @@ void GB_macrofy_mask
         case 4 :
             // mask not complemented, type: bool, int8, uint8
             fprintf (fp,
-                "\n// valued mask:\n"
+                "// valued mask (1 byte):\n"
                 "#define GB_M_TYPE uint8_t\n"
                 "#define GB_MCAST(Mx,p,msize) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
@@ -107,7 +109,7 @@ void GB_macrofy_mask
         case 5 :
             // mask complemented, type: bool, int8, uint8
             fprintf (fp,
-                "\n// valued mask (complemented):\n"
+                "// valued mask (1 byte, complemented):\n"
                 "#define GB_M_TYPE uint8_t\n"
                 "#define GB_MCAST(Mx,p,msize) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
@@ -122,7 +124,7 @@ void GB_macrofy_mask
         case 6 :
             // mask not complemented, type: int16, uint16
             fprintf (fp,
-                "\n// valued mask:\n"
+                "// valued mask (2 bytes):\n"
                 "#define GB_M_TYPE uint16_t\n"
                 "#define GB_MCAST(Mx,p,msize) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
@@ -133,7 +135,7 @@ void GB_macrofy_mask
         case 7 :
             // mask complemented, type: int16, uint16
             fprintf (fp,
-                "\n// valued mask (complemented):\n"
+                "// valued mask (2 bytes, complemented):\n"
                 "#define GB_M_TYPE uint16_t\n"
                 "#define GB_MCAST(Mx,p,msize) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
@@ -148,7 +150,7 @@ void GB_macrofy_mask
         case 8 :
             // mask not complemented, type: float, int32, uint32
             fprintf (fp,
-                "\n// valued mask:\n"
+                "// valued mask (4 bytes):\n"
                 "#define GB_M_TYPE uint32_t\n"
                 "#define GB_MCAST(Mx,p,msize) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
@@ -159,7 +161,7 @@ void GB_macrofy_mask
         case 9 :
             // mask complemented, type: float, int32, uint32
             fprintf (fp,
-                "\n// valued mask (complemented):\n"
+                "// valued mask (4 bytes, complemented):\n"
                 "#define GB_M_TYPE uint32_t\n"
                 "#define GB_MCAST(Mx,p,msize) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
@@ -174,7 +176,7 @@ void GB_macrofy_mask
         case 10 :
             // mask not complemented, type: double, float complex, int64, uint64
             fprintf (fp,
-                "\n// valued mask:\n"
+                "// valued mask (8 bytes):\n"
                 "#define GB_M_TYPE uint64_t\n"
                 "#define GB_MCAST(Mx,p,msize) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
@@ -185,7 +187,7 @@ void GB_macrofy_mask
         case 11 :
             // mask complemented, type: double, float complex, int64, uint64
             fprintf (fp,
-                "\n// valued mask (complemented):\n"
+                "// valued mask (8 bytes, complemented):\n"
                 "#define GB_M_TYPE uint64_t\n"
                 "#define GB_MCAST(Mx,p,msize) (Mx [p] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
@@ -200,7 +202,7 @@ void GB_macrofy_mask
         case 12 :
             // mask not complemented, type: double complex
             fprintf (fp,
-                "\n// valued mask:\n"
+                "// valued mask (16 bytes):\n"
                 "#define GB_M_TYPE uint64_t\n"
                 "#define GB_MCAST(Mx,p,msize) (Mx [2*(p)] != 0 || Mx [2*(p)+1] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
@@ -211,7 +213,7 @@ void GB_macrofy_mask
         case 13 :
             // mask complemented, type: double complex
             fprintf (fp,
-                "\n// valued mask (complemented):\n"
+                "// valued mask (16 bytes, complemented):\n"
                 "#define GB_M_TYPE uint64_t\n"
                 "#define GB_MCAST(Mx,p,msize) (Mx [2*(p)] != 0 || Mx [2*(p)+1] != 0)\n"
                 "#define GB_MASK_STRUCT 0\n"
@@ -228,9 +230,5 @@ void GB_macrofy_mask
             break ;
     }
 
-    if (mask_ecode >= 2)
-    {
-        GB_macrofy_sparsity (fp, Mname, msparsity) ;
-    }
 }
 

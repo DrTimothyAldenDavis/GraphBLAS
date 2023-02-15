@@ -20,7 +20,7 @@
     for (p = 0 ; p < anz ; p++)
     { 
         // Cx [p] = op (A (i,j))
-        int64_t i = GBI (Ai, p, avlen) ;
+        int64_t i = GBI_A (Ai, p, avlen) ;
         GB_APPLY (p) ;
     }
 }

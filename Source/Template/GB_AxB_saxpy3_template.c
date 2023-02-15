@@ -134,7 +134,7 @@
         bool use_Gustavson = (hash_size == cvlen) ;
         int64_t pB     = SaxpyTasks [taskid].start ;
         int64_t pB_end = SaxpyTasks [taskid].end + 1 ;
-        int64_t j = GBH (Bh, kk) ;
+        int64_t j = GBH_B (Bh, kk) ;
 
         GB_GET_T_FOR_SECONDJ ;
 

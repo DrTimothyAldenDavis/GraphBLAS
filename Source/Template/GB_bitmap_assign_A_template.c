@@ -48,7 +48,7 @@
             // find the part of A(:,k) for this task
             //------------------------------------------------------------------
 
-            int64_t jA = GBH (Ah, k) ;
+            int64_t jA = GBH_A (Ah, k) ;
             int64_t pA_start, pA_end ;
             GB_get_pA (&pA_start, &pA_end, tid, k, kfirst,
                 klast, pstart_Aslice, Ap, nI) ;
@@ -62,8 +62,8 @@
 
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             { 
-                if (!GBB (Ab, pA)) continue ;
-                int64_t iA = GBI (Ai, pA, nI) ;
+                if (!GBB_A (Ab, pA)) continue ;
+                int64_t iA = GBI_A (Ai, pA, nI) ;
                 int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
                 int64_t pC = iC + pC0 ;
                 // operate on C(iC,jC) at pC, and A(iA,jA) at pA.  The mask

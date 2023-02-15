@@ -30,7 +30,7 @@
         int64_t klast  = klast_Cslice  [tid] ;
         for (int64_t k = kfirst ; k <= klast ; k++)
         {
-            // int64_t jA = GBH (Ah, k+akstart) ; not needed 
+            // int64_t jA = GBH_A (Ah, k+akstart) ; not needed 
             int64_t pC_start, pC_end ;
             GB_get_pA (&pC_start, &pC_end, tid, k,
                 kfirst, klast, pstart_Cslice, Cp, cvlen) ;

@@ -76,7 +76,7 @@
                 int64_t klast  = klast_Aslice  [tid] ;
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
-                    int64_t j = GBH (Ah, k) ;
+                    int64_t j = GBH_A (Ah, k) ;
                     int64_t pB_start = j * vlen ;
                     int64_t pA, pA_end, pC ;
                     GB_get_pA_and_pC (&pA, &pA_end, &pC, tid, k, kfirst, klast,
@@ -120,7 +120,7 @@
                 int64_t klast  = klast_Aslice  [tid] ;
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
-                    int64_t j = GBH (Ah, k) ;
+                    int64_t j = GBH_A (Ah, k) ;
                     int64_t pB_start = j * vlen ;
                     int64_t pA, pA_end ;
                     GB_get_pA (&pA, &pA_end, tid, k, kfirst, klast,
@@ -167,7 +167,7 @@
             int64_t klast  = klast_Aslice  [tid] ;
             for (int64_t k = kfirst ; k <= klast ; k++)
             {
-                int64_t j = GBH (Ah, k) ;
+                int64_t j = GBH_A (Ah, k) ;
                 int64_t pB_start = j * vlen ;
                 int64_t pA, pA_end, pC ;
                 GB_get_pA_and_pC (&pA, &pA_end, &pC, tid, k, kfirst, klast,
@@ -176,8 +176,8 @@
                 { 
                     int64_t i = Ai [pA] ;
                     int64_t pB = pB_start + i ;
-                    if (!GBB (Bb, pB)) continue ;
-                    bool mij = GBB (Mb, pB) && GB_MCAST (Mx, pB, msize) ;
+                    if (!GBB_B (Bb, pB)) continue ;
+                    bool mij = GBB_M (Mb, pB) && GB_MCAST (Mx, pB, msize) ;
                     mij = mij ^ Mask_comp ;
                     if (!mij) continue ;
                     // C (i,j) = A (i,j) .* B (i,j)

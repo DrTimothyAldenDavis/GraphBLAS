@@ -44,7 +44,7 @@
             const int64_t j = k ;
             #else
             // M and C are either both sparse or both hypersparse
-            const int64_t j = GBH (Ch, k) ;
+            const int64_t j = GBH_C (Ch, k) ;
             #endif
 
             int64_t pC_start = Cp [k] ;

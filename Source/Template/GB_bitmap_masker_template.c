@@ -66,7 +66,7 @@
         for (int64_t k = kfirst ; k <= klast ; k++)
         {
             // find the part of C(:,k) for this task
-            int64_t j = GBH (Ch, k) ;
+            int64_t j = GBH_C (Ch, k) ;
             int64_t pC_start, pC_end ;
             GB_get_pA (&pC_start, &pC_end, taskid, k, kfirst,
                 klast, pstart_Cslice, Cp, vlen) ;
@@ -123,7 +123,7 @@
             for (int64_t k = kfirst ; k <= klast ; k++)
             {
                 // find the part of M(:,k) for this task
-                int64_t j = GBH (Mh, k) ;
+                int64_t j = GBH_M (Mh, k) ;
                 int64_t pM_start, pM_end ;
                 GB_get_pA (&pM_start, &pM_end, taskid, k, kfirst,
                     klast, pstart_Mslice, Mp, vlen) ;
@@ -258,7 +258,7 @@
             reduction(+:rnvals)
         for (p = 0 ; p < rnz ; p++)
         {
-            bool mij = GBB (Mb, p) && GB_MCAST (Mx, p, msize) ;
+            bool mij = GBB_M (Mb, p) && GB_MCAST (Mx, p, msize) ;
             if (Mask_comp) mij = !mij ;
             if (mij)
             {

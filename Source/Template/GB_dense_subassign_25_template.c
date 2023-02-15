@@ -79,7 +79,7 @@
                 // find the part of M(:,k) to be operated on by this task
                 //--------------------------------------------------------------
 
-                int64_t j = GBH (Mh, k) ;
+                int64_t j = GBH_M (Mh, k) ;
                 int64_t pM_start, pM_end ;
                 GB_get_pA (&pM_start, &pM_end, tid, k,
                     kfirst, klast, pstart_Mslice, Mp, mvlen) ;
@@ -145,7 +145,7 @@
                     // find the part of M(:,k) to be operated on by this task
                     //----------------------------------------------------------
 
-                    int64_t j = GBH (Mh, k) ;
+                    int64_t j = GBH_M (Mh, k) ;
                     int64_t pM_start, pM_end ;
                     GB_get_pA (&pM_start, &pM_end, tid, k,
                         kfirst, klast, pstart_Mslice, Mp, mvlen) ;
@@ -161,7 +161,7 @@
                     for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                     { 
                         // C(i,j) = A(i,j)
-                        int64_t p = pA + GBI (Mi, pM, mvlen) ;
+                        int64_t p = pA + GBI_M (Mi, pM, mvlen) ;
                         GB_COPY_A_TO_C (Cx, pM, Ax, p, A_iso) ;
                     }
                 }

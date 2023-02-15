@@ -550,5 +550,31 @@ static inline GrB_Matrix GB_clear_static_header // clear a static header
 #define GBB(Ab,p)       ((Ab == NULL) ? 1 : Ab [p])
 #define GBX(Ax,p,A_iso) (Ax [(A_iso) ? 0 : (p)])
 
+// these macros are redefined by the JIT kernels:
+
+// accessing the C matrix
+#define GBP_C(Cp,k,vlen) GBP (Cp,k,vlen)
+#define GBH_C(Ch,k)      GBH (Ch,k)
+#define GBI_C(Ci,p,vlen) GBI (Ci,p,vlen)
+#define GBB_C(Cb,p)      GBB (Cb,p)
+
+// accessing the M matrix
+#define GBP_M(Mp,k,vlen) GBP (Mp,k,vlen)
+#define GBH_M(Mh,k)      GBH (Mh,k)
+#define GBI_M(Mi,p,vlen) GBI (Mi,p,vlen)
+#define GBB_M(Mb,p)      GBB (Mb,p)
+
+// accessing the A matrix
+#define GBP_A(Ap,k,vlen) GBP (Ap,k,vlen)
+#define GBH_A(Ah,k)      GBH (Ah,k)
+#define GBI_A(Ai,p,vlen) GBI (Ai,p,vlen)
+#define GBB_A(Ab,p)      GBB (Ab,p)
+
+// accessing the B matrix
+#define GBP_B(Bp,k,vlen) GBP (Bp,k,vlen)
+#define GBH_B(Bh,k)      GBH (Bh,k)
+#define GBI_B(Bi,p,vlen) GBI (Bi,p,vlen)
+#define GBB_B(Bb,p)      GBB (Bb,p)
+
 #endif
 

@@ -25,14 +25,14 @@
     {                                                                       \
         /* M is hypersparse: find M(:,j) in the M->Y hyper_hash */          \
         GB_hyper_hash_lookup (Mp, M_Yp, M_Yi, M_Yx, M_hash_bits,            \
-            GBH (Bh, kk), &pM_start, &pM_end) ;                             \
+            GBH_B (Bh, kk), &pM_start, &pM_end) ;                             \
     }                                                                       \
     else                                                                    \
     {                                                                       \
         /* A is sparse, bitmap, or full */                                  \
-        int64_t j = GBH (Bh, kk) ;                                          \
-        pM_start = GBP (Mp, j  , mvlen) ;                                   \
-        pM_end   = GBP (Mp, j+1, mvlen) ;                                   \
+        int64_t j = GBH_B (Bh, kk) ;                                          \
+        pM_start = GBP_M (Mp, j  , mvlen) ;                                   \
+        pM_end   = GBP_M (Mp, j+1, mvlen) ;                                   \
     }                                                                       \
     const int64_t mjnz = pM_end - pM_start
 
@@ -56,7 +56,7 @@
         for (int64_t pM = pMstart ; pM < pMend ; pM++)                  \
         {                                                               \
             /* if (M (i,j) == 1) mark Hf [i] */                         \
-            if (Mb [pM] && Mxx [pM]) Hf [GBI (Mi, pM, mvlen)] = mark ;  \
+            if (Mb [pM] && Mxx [pM]) Hf [GBI_M (Mi, pM, mvlen)] = mark ;  \
         }                                                               \
     }                                                                   \
     else                                                                \
@@ -65,7 +65,7 @@
         for (int64_t pM = pMstart ; pM < pMend ; pM++)                  \
         {                                                               \
             /* if (M (i,j) == 1) mark Hf [i] */                         \
-            if (Mxx [pM]) Hf [GBI (Mi, pM, mvlen)] = mark ;             \
+            if (Mxx [pM]) Hf [GBI_M (Mi, pM, mvlen)] = mark ;             \
         }                                                               \
     }                                                                   \
 }                                                                       \
@@ -85,7 +85,7 @@ break ;
             for (int64_t pM = pMstart ; pM < pMend ; pM++)                  \
             {                                                               \
                 /* if (M (i,j) is present) mark Hf [i] */                   \
-                if (Mb [pM]) Hf [GBI (Mi, pM, mvlen)] = mark ;              \
+                if (Mb [pM]) Hf [GBI_M (Mi, pM, mvlen)] = mark ;              \
             }                                                               \
         }                                                                   \
         else                                                                \
@@ -94,7 +94,7 @@ break ;
             for (int64_t pM = pMstart ; pM < pMend ; pM++)                  \
             {                                                               \
                 /* mark Hf [i] */                                           \
-                Hf [GBI (Mi, pM, mvlen)] = mark ;                           \
+                Hf [GBI_M (Mi, pM, mvlen)] = mark ;                           \
             }                                                               \
         }                                                                   \
     }                                                                       \
@@ -114,11 +114,11 @@ break ;
                 for (int64_t pM = pMstart ; pM < pMend ; pM++)              \
                 {                                                           \
                     /* if (M (i,j) == 1) mark Hf [i] */                     \
-                    if (!GBB (Mb, pM)) continue ;                           \
+                    if (!GBB_M (Mb, pM)) continue ;                           \
                     if (Mxx [2*pM] || Mxx [2*pM+1])                         \
                     {                                                       \
                         /* Hf [i] = M(i,j) */                               \
-                        Hf [GBI (Mi, pM, mvlen)] = mark ;                   \
+                        Hf [GBI_M (Mi, pM, mvlen)] = mark ;                   \
                     }                                                       \
                 }                                                           \
             }                                                               \
@@ -135,7 +135,7 @@ break ;
     {                                                       \
         GB_GET_M_ij (pM) ;      /* get M(i,j) */            \
         if (!mij) continue ;    /* skip if M(i,j)=0 */      \
-        const int64_t i = GBI (Mi, pM, mvlen) ;             \
+        const int64_t i = GBI_M (Mi, pM, mvlen) ;             \
         for (GB_HASH (i))       /* find i in hash */        \
         {                                                   \
             if (Hf [hash] < mark)                           \
@@ -164,7 +164,7 @@ break ;
 //------------------------------------------------------------------------------
 
 // prepare to iterate over the vector B(:,j), the (kk)th vector in B, where 
-// j == GBH (Bh, kk).  This macro works regardless of the sparsity of A and B.
+// j == GBH_B (Bh, kk).  This macro works regardless of the sparsity of A and B.
 #define GB_GET_B_j_FOR_ALL_FORMATS(A_is_hyper,B_is_sparse,B_is_hyper)       \
     const int64_t j = (B_is_hyper) ? Bh [kk] : kk ;                         \
     GB_GET_T_FOR_SECONDJ ;  /* t = j for SECONDJ, or j+1 for SECONDJ1 */    \
@@ -208,8 +208,8 @@ break ;
     else                                                                    \
     {                                                                       \
         /* A is sparse, bitmap, or full */                                  \
-        pA_start = GBP (Ap, k  , avlen) ;                                   \
-        pA_end   = GBP (Ap, k+1, avlen) ;                                   \
+        pA_start = GBP_A (Ap, k  , avlen) ;                                   \
+        pA_end   = GBP_A (Ap, k+1, avlen) ;                                   \
     }                                                                       \
     const int64_t aknz = pA_end - pA_start
 
@@ -219,7 +219,7 @@ break ;
 
 #define GB_GET_M_ij(pM)                             \
     /* get M(i,j), at Mi [pM] and Mx [pM] */        \
-    bool mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize)
+    bool mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize)
 
 //------------------------------------------------------------------------------
 // GB_MULT_A_ik_B_kj: declare t and compute t = A(i,k) * B(k,j)

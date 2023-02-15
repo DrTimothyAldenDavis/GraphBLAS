@@ -69,7 +69,7 @@
             GB_PARTITION (pstart, pend, cnz, tid, C_nthreads) ;
             for (int64_t p = pstart ; p < pend ; p++)
             {
-                if (GBB (Ab, p) && GBB (Bb,p))
+                if (GBB_A (Ab, p) && GBB_B (Bb,p))
                 { 
                     // C (i,j) = A (i,j) + B (i,j)
                     #ifndef GB_ISO_EMULT
@@ -134,7 +134,7 @@
                 if (Cb [p] == 0)
                 {
                     // M(i,j) is zero, so C(i,j) can be computed
-                    if (GBB (Ab, p) && GBB (Bb, p))
+                    if (GBB_A (Ab, p) && GBB_B (Bb, p))
                     { 
                         // C (i,j) = A (i,j) + B (i,j)
                         #ifndef GB_ISO_EMULT
@@ -201,7 +201,7 @@
 
         #undef  GB_GET_MIJ     
         #define GB_GET_MIJ(p)                                           \
-            bool mij = GBB (Mb, p) && GB_MCAST (Mx, p, msize) ;         \
+            bool mij = GBB_M (Mb, p) && GB_MCAST (Mx, p, msize) ;         \
             if (Mask_comp) mij = !mij ; /* TODO: use ^ */
 
         int tid ;
@@ -217,7 +217,7 @@
                 if (mij)
                 {
                     // M(i,j) is true, so C(i,j) can be computed
-                    if (GBB (Ab, p) && GBB (Bb, p))
+                    if (GBB_A (Ab, p) && GBB_B (Bb, p))
                     { 
                         // C (i,j) = A (i,j) + B (i,j)
                         #ifndef GB_ISO_EMULT

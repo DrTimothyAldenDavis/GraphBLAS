@@ -66,7 +66,7 @@
 
             #if defined ( GB_ENTRY_SELECTOR )
 
-                int64_t j = GBH (Ah, k) ;
+                int64_t j = GBH_A (Ah, k) ;
                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                 {
                     // A is never full; that case is now handled by the
@@ -127,7 +127,7 @@
                 if (pA_start <= p && p < pA_end)
                 { 
                     ASSERT (pC >= Cp [k] && pC + 1 <= Cp [k+1]) ;
-                    Ci [pC] = GBI (Ai, p, avlen) ;
+                    Ci [pC] = GBI_A (Ai, p, avlen) ;
                     #if !GB_ISO_SELECT
                     memcpy (Cx +pC*asize, Ax +p*asize, asize) ;
                     #endif

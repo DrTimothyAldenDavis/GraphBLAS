@@ -38,9 +38,9 @@ void GB_macrofy_input
         (atype == NULL) || (a2type == NULL) ;
     if (do_matrix_macros)
     {
-        fprintf (fp, "\n// %s matrix:\n", Aname) ;
-        fprintf (fp, "#define GB_%s_IS_PATTERN %d\n", Aname, A_is_pattern) ;
+        GB_macrofy_sparsity (fp, Aname, asparsity) ;
         fprintf (fp, "#define GB_%s_ISO %d\n", Aname, A_iso_code) ;
+        fprintf (fp, "#define GB_%s_IS_PATTERN %d\n", Aname, A_is_pattern) ;
         if (azombies >= 0)
         {
             // if negative, do not create the macro at all.  Typically this
@@ -48,7 +48,6 @@ void GB_macrofy_input
             // delete zombies, it means A always has zombies.
             fprintf (fp, "#define GB_A_HAS_ZOMBIES %d\n", azombies) ;
         }
-        GB_macrofy_sparsity (fp, Aname, asparsity) ;
         if (A_is_pattern)
         { 
             // values of A are not accessed

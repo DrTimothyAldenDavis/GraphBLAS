@@ -55,7 +55,7 @@
             // find the part of M(:,k) to be operated on by this task
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Mh, k) ;
+            int64_t j = GBH_M (Mh, k) ;
             int64_t pM_start, pM_end ;
             GB_get_pA (&pM_start, &pM_end, taskid, k,
                 kfirst, klast, pstart_Mslice, Mp, mvlen) ;
@@ -72,7 +72,7 @@
                 GB_PRAGMA_SIMD_VECTORIZE
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 { 
-                    int64_t p = pC + GBI (Mi, pM, mvlen) ;
+                    int64_t p = pC + GBI_M (Mi, pM, mvlen) ;
                     GB_COPY_SCALAR_TO_C (p, cwork) ;        // Cx [p] = scalar
                 }
             }
@@ -81,9 +81,9 @@
                 GB_PRAGMA_SIMD_VECTORIZE
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
-                    if (GBB (Mb, pM) && GB_MCAST (Mx, pM, msize))
+                    if (GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize))
                     { 
-                        int64_t p = pC + GBI (Mi, pM, mvlen) ;
+                        int64_t p = pC + GBI_M (Mi, pM, mvlen) ;
                         GB_COPY_SCALAR_TO_C (p, cwork) ;    // Cx [p] = scalar
                     }
                 }

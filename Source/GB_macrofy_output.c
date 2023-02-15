@@ -31,9 +31,8 @@ void GB_macrofy_output
     // construct the matrix status macros: iso, type name, type size
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "\n// %s matrix:\n", Cname) ;
-    fprintf (fp, "#define GB_%s_ISO %d\n", Cname, C_iso ? 1 : 0) ;
     GB_macrofy_sparsity (fp, Cname, csparsity) ;
+    fprintf (fp, "#define GB_%s_ISO %d\n", Cname, C_iso ? 1 : 0) ;
 
     //--------------------------------------------------------------------------
     // construct the macros to declare scalars and put values into the matrix

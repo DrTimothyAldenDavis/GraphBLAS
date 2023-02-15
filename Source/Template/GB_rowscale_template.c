@@ -56,7 +56,7 @@
         GB_PRAGMA_SIMD_VECTORIZE
         for (int64_t p = pstart ; p < pend ; p++)
         { 
-            int64_t i = GBI (Bi, p, bvlen) ;        // get row index of B(i,j)
+            int64_t i = GBI_B (Bi, p, bvlen) ;        // get row index of B(i,j)
             GB_DECLAREA (dii) ;
             GB_GETA (dii, Dx, i, D_iso) ;           // dii = D(i,i)
             GB_DECLAREB (bij) ;

@@ -23,7 +23,7 @@
 #else
 
     // iso and non-iso numeric methods will not see any zombies
-    #define GB_Ai(p) GBI (Ai, p, avlen)
+    #define GB_Ai(p) GBI_A (Ai, p, avlen)
 
 #endif
 

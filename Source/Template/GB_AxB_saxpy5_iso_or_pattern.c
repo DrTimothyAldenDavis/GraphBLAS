@@ -51,7 +51,7 @@
         for (int64_t jB = jB_start ; jB < jB_end ; jB++)
         {
             // get B(:,j) and C(:,j)
-            const int64_t j = GBH (Bh, jB) ;
+            const int64_t j = GBH_B (Bh, jB) ;
             const int64_t pC = j * m ;
             const int64_t pB_start = Bp [jB] ;
             const int64_t pB_end   = Bp [jB+1] ;
@@ -70,6 +70,7 @@
                 #else
                     // s = ax * bkj, not dependent on i
                     GB_C_TYPE s ;
+                    // FIXME: use GB_GETB (Bx, pB, B_iso) here:
                     GB_MULT (s, ax, GBX (Bx, pB, B_iso), ignore, k, j) ;
                 #endif
                 // C(:,j) += s

@@ -84,7 +84,7 @@
                 int64_t klast  = klast_Aslice  [tid] ;
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
-                    int64_t j = GBH (Ah, k) ;
+                    int64_t j = GBH_A (Ah, k) ;
                     int64_t jC = cvstart + j ;
                     int64_t pC_start = cistart + jC * cvlen ;
                     int64_t pA_start, pA_end ;

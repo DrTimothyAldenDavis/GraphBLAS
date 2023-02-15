@@ -287,8 +287,8 @@
                 int64_t kM = (R_to_M == NULL) ? j : R_to_M [k] ;
                 if (kM >= 0)
                 { 
-                    pM     = GBP (Mp, kM, vlen) ;
-                    pM_end = GBP (Mp, kM+1, vlen) ;
+                    pM     = GBP_M (Mp, kM, vlen) ;
+                    pM_end = GBP_M (Mp, kM+1, vlen) ;
                 }
             }
 
@@ -298,7 +298,7 @@
             // get the first index in M(:,j) for this vector
             int64_t iM_first = -1 ;
             int64_t pM_first = pM ;
-            if (mjnz > 0) iM_first = GBI (Mi, pM_first, vlen) ;
+            if (mjnz > 0) iM_first = GBI_M (Mi, pM_first, vlen) ;
 
             //------------------------------------------------------------------
             // R(:,j) = masker (C (:,j), M (:,j), Z (:,j))
@@ -520,11 +520,11 @@
                 {
                     int64_t i = p + iC_first ;
                     Ri [pR + p] = i ;
-                    int64_t iM = (pM < pM_end) ? GBI (Mi, pM, vlen) : INT64_MAX;
+                    int64_t iM = (pM < pM_end) ? GBI_M (Mi, pM, vlen) : INT64_MAX;
                     bool mij = false ;
                     if (i == iM)
                     { 
-                        mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+                        mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                         pM++ ;
                     }
                     if (Mask_comp) mij = !mij ;
@@ -607,8 +607,8 @@
                         // let pM = pM_first + delta
                         // then delta = i - iM_first
                         pM = pM_first + (i - iM_first) ;
-                        ASSERT (i == GBI (Mi, pM, vlen)) ;
-                        mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+                        ASSERT (i == GBI_M (Mi, pM, vlen)) ;
+                        mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                         // increment pM for the wrapup phase below
                         pM++ ;
 
@@ -704,8 +704,8 @@
                                 int64_t i = Zi [pZ] ;
                                 // mask is dense, lookup M(i,j)
                                 pM = pM_first + (i - iM_first) ;
-                                ASSERT (i == GBI (Mi, pM, vlen)) ;
-                                bool mij = GBB (Mb, pM) &&
+                                ASSERT (i == GBI_M (Mi, pM, vlen)) ;
+                                bool mij = GBB_M (Mb, pM) &&
                                            GB_MCAST (Mx, pM, msize) ;
                                 if (mij) GB_COPY_Z ;
                             }
@@ -807,8 +807,8 @@
                                 int64_t i = Zi [pZ] ;
                                 // mask is dense, lookup M(i,j)
                                 pM = pM_first + (i - iM_first) ;
-                                ASSERT (i == GBI (Mi, pM, vlen)) ;
-                                bool mij = GBB (Mb, pM) &&
+                                ASSERT (i == GBI_M (Mi, pM, vlen)) ;
+                                bool mij = GBB_M (Mb, pM) &&
                                            GB_MCAST (Mx, pM, msize) ;
                                 if (!mij) GB_COPY_Z ;   // mask is complemented
                             }
@@ -861,8 +861,8 @@
                                 int64_t i = Ci [pC] ;
                                 // mask is dense, lookup M(i,j)
                                 pM = pM_first + (i - iM_first) ;
-                                ASSERT (i == GBI (Mi, pM, vlen)) ;
-                                bool mij = GBB (Mb, pM) &&
+                                ASSERT (i == GBI_M (Mi, pM, vlen)) ;
+                                bool mij = GBB_M (Mb, pM) &&
                                            GB_MCAST (Mx, pM, msize) ;
                                 if (mij) GB_COPY_C ;
                             }
@@ -961,8 +961,8 @@
                                 int64_t i = Ci [pC] ;
                                 // mask is dense, lookup M(i,j)
                                 pM = pM_first + (i - iM_first) ;
-                                ASSERT (i == GBI (Mi, pM, vlen)) ;
-                                bool mij = GBB (Mb, pM) &&
+                                ASSERT (i == GBI_M (Mi, pM, vlen)) ;
+                                bool mij = GBB_M (Mb, pM) &&
                                            GB_MCAST (Mx, pM, msize) ;
                                 if (!mij) GB_COPY_C ;
                             }

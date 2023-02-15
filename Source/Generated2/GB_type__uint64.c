@@ -25,7 +25,7 @@
 #define GB_COPY_SCALAR_TO_C(p,x) Cx [p] = x
 
 // Cx [p] = Ax [pA]
-#define GB_COPY_A_TO_C(Cx,p,Ax,pA,A_iso) Cx [p] = GBX (Ax, pA, A_iso)
+#define GB_COPY_A_TO_C(Cx,p,Ax,pA,A_iso) Cx [p] = GBX (Ax, pA, A_iso)   // FIXME: use GB_GETA
 
 // test the mask condition with Ax [pA]
 #define GB_AX_MASK(Ax,pA,asize) \

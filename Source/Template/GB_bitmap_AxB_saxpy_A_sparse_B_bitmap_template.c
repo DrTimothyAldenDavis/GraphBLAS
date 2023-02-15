@@ -287,7 +287,7 @@
                         for (int64_t kA = 0 ; kA < anvec ; kA++)
                         {
                             // get A(:,k)
-                            const int64_t k = GBH (Ah, kA) ;
+                            const int64_t k = GBH_A (Ah, kA) ;
                             // get B(k,j1:j2-1)
                             #if GB_B_IS_BITMAP
                             const int8_t gb0 = Gb [k          ] ;
@@ -325,7 +325,7 @@
                         for (int64_t kA = 0 ; kA < anvec ; kA++)
                         {
                             // get A(:,k)
-                            const int64_t k = GBH (Ah, kA) ;
+                            const int64_t k = GBH_A (Ah, kA) ;
                             // get B(k,j1:j2-1)
                             #if GB_B_IS_BITMAP
                             const int8_t gb0 = Gb [k          ] ;
@@ -359,7 +359,7 @@
                         for (int64_t kA = 0 ; kA < anvec ; kA++)
                         {
                             // get A(:,k)
-                            const int64_t k = GBH (Ah, kA) ;
+                            const int64_t k = GBH_A (Ah, kA) ;
                             // get B(k,j1:j2-1)
                             #if GB_B_IS_BITMAP
                             const int8_t gb0 = Gb [k          ] ;
@@ -389,7 +389,7 @@
                         for (int64_t kA = 0 ; kA < anvec ; kA++)
                         {
                             // get A(:,k)
-                            const int64_t k = GBH (Ah, kA) ;
+                            const int64_t k = GBH_A (Ah, kA) ;
                             // get B(k,j1:j2-1) where j1 == j2-1
                             #if GB_B_IS_BITMAP
                             const int8_t gb0 = Gb [k] ;
@@ -576,10 +576,10 @@
                 // C<#M>(:,j) += A(:,k) * B(k,j)
                 //--------------------------------------------------------------
 
-                int64_t k = GBH (Ah, kk) ;      // k in range k1:k2
+                int64_t k = GBH_A (Ah, kk) ;      // k in range k1:k2
                 int64_t pB = pB_start + k ;     // get pointer to B(k,j)
                 #if GB_B_IS_BITMAP
-                if (!GBB (Bb, pB)) continue ;   
+                if (!GBB_B (Bb, pB)) continue ;   
                 #endif
                 int64_t pA = Ap [kk] ;
                 int64_t pA_end = Ap [kk+1] ;
@@ -867,10 +867,10 @@
                 // W<#M>(:,tid) += A(:,k) * B(k,j)
                 //--------------------------------------------------------------
 
-                int64_t k = GBH (Ah, kk) ;      // k in range k1:k2
+                int64_t k = GBH_A (Ah, kk) ;      // k in range k1:k2
                 int64_t pB = pB_start + k ;     // get pointer to B(k,j)
                 #if GB_B_IS_BITMAP
-                if (!GBB (Bb, pB)) continue ;   
+                if (!GBB_B (Bb, pB)) continue ;   
                 #endif
                 int64_t pA = Ap [kk] ;
                 int64_t pA_end = Ap [kk+1] ;

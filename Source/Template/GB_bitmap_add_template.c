@@ -154,7 +154,7 @@
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // find the part of B(:,k) for this task
-                    int64_t j = GBH (Bh, k) ;
+                    int64_t j = GBH_B (Bh, k) ;
                     int64_t pB_start, pB_end ;
                     GB_get_pA (&pB_start, &pB_end, taskid, k, kfirst,
                         klast, pstart_Bslice, Bp, vlen) ;
@@ -248,7 +248,7 @@
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // find the part of A(:,k) for this task
-                    int64_t j = GBH (Ah, k) ;
+                    int64_t j = GBH_A (Ah, k) ;
                     int64_t pA_start, pA_end ;
                     GB_get_pA (&pA_start, &pA_end, taskid, k, kfirst,
                         klast, pstart_Aslice, Ap, vlen) ;
@@ -334,7 +334,7 @@
             for (int64_t k = kfirst ; k <= klast ; k++)
             {
                 // find the part of M(:,k) for this task
-                int64_t j = GBH (Mh, k) ;
+                int64_t j = GBH_M (Mh, k) ;
                 int64_t pM_start, pM_end ;
                 GB_get_pA (&pM_start, &pM_end, taskid, k, kfirst,
                     klast, pstart_Mslice, Mp, vlen) ;
@@ -384,8 +384,8 @@
                     if (c == 0)
                     {
                         // M(i,j) is zero, so C(i,j) can be computed
-                        int8_t a = GBB (Ab, p) ;
-                        int8_t b = GBB (Bb, p) ;
+                        int8_t a = GBB_A (Ab, p) ;
+                        int8_t b = GBB_B (Bb, p) ;
                         #ifdef GB_ISO_ADD
                         c = a || b ;
                         #else
@@ -464,7 +464,7 @@
                 {
                     if (Cb [p] == 0)
                     { 
-                        int8_t a = GBB (Ab, p) ;
+                        int8_t a = GBB_A (Ab, p) ;
                         #ifndef GB_ISO_ADD
                         if (a)
                         {
@@ -502,7 +502,7 @@
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // find the part of B(:,k) for this task
-                    int64_t j = GBH (Bh, k) ;
+                    int64_t j = GBH_B (Bh, k) ;
                     int64_t pB_start, pB_end ;
                     GB_get_pA (&pB_start, &pB_end, taskid, k, kfirst,
                         klast, pstart_Bslice, Bp, vlen) ;
@@ -565,7 +565,7 @@
                 {
                     if (Cb [p] == 0)
                     { 
-                        int8_t b = GBB (Bb, p) ;
+                        int8_t b = GBB_B (Bb, p) ;
                         #ifndef GB_ISO_ADD
                         if (b)
                         {
@@ -603,7 +603,7 @@
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // find the part of A(:,k) for this task
-                    int64_t j = GBH (Ah, k) ;
+                    int64_t j = GBH_A (Ah, k) ;
                     int64_t pA_start, pA_end ;
                     GB_get_pA (&pA_start, &pA_end, taskid, k, kfirst,
                         klast, pstart_Aslice, Ap, vlen) ;
@@ -667,7 +667,7 @@
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // find the part of M(:,k) for this task
-                    int64_t j = GBH (Mh, k) ;
+                    int64_t j = GBH_M (Mh, k) ;
                     int64_t pM_start, pM_end ;
                     GB_get_pA (&pM_start, &pM_end, taskid, k, kfirst,
                         klast, pstart_Mslice, Mp, vlen) ;
@@ -752,7 +752,7 @@
 
         #undef  GB_GET_MIJ     
         #define GB_GET_MIJ(p)                                           \
-            bool mij = GBB (Mb, p) && GB_MCAST (Mx, p, msize) ;         \
+            bool mij = GBB_M (Mb, p) && GB_MCAST (Mx, p, msize) ;         \
             if (Mask_comp) mij = !mij ;
 
         if ((A_is_bitmap || A_is_full) && (B_is_bitmap || B_is_full))
@@ -775,8 +775,8 @@
                     if (mij)
                     {
                         // M(i,j) is true, so C(i,j) can be computed
-                        int8_t a = GBB (Ab, p) ;
-                        int8_t b = GBB (Bb, p) ;
+                        int8_t a = GBB_A (Ab, p) ;
+                        int8_t b = GBB_B (Bb, p) ;
                         #ifdef GB_ISO_ADD
                         int8_t c = a || b ;
                         #else
@@ -856,7 +856,7 @@
                     GB_GET_MIJ (p) ;
                     if (mij)
                     { 
-                        int8_t a = GBB (Ab, p) ;
+                        int8_t a = GBB_A (Ab, p) ;
                         #ifndef GB_ISO_ADD
                         if (a)
                         {
@@ -898,7 +898,7 @@
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // find the part of B(:,k) for this task
-                    int64_t j = GBH (Bh, k) ;
+                    int64_t j = GBH_B (Bh, k) ;
                     int64_t pB_start, pB_end ;
                     GB_get_pA (&pB_start, &pB_end, taskid, k, kfirst,
                         klast, pstart_Bslice, Bp, vlen) ;
@@ -967,7 +967,7 @@
                     GB_GET_MIJ (p) ;
                     if (mij)
                     { 
-                        int8_t b = GBB (Bb, p) ;
+                        int8_t b = GBB_B (Bb, p) ;
                         #ifndef GB_ISO_ADD
                         if (b)
                         {
@@ -1009,7 +1009,7 @@
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // find the part of A(:,k) for this task
-                    int64_t j = GBH (Ah, k) ;
+                    int64_t j = GBH_A (Ah, k) ;
                     int64_t pA_start, pA_end ;
                     GB_get_pA (&pA_start, &pA_end, taskid, k, kfirst,
                         klast, pstart_Aslice, Ap, vlen) ;

@@ -91,8 +91,8 @@
 
     // for any format of B
     #define GB_GET_B_kj_INDEX                   \
-        if (!GBB (Bb, pB)) continue ;           \
-        const int64_t k = GBI (Bi, pB, bvlen)
+        if (!GBB_B (Bb, pB)) continue ;           \
+        const int64_t k = GBI_B (Bi, pB, bvlen)
 
 #endif
 
@@ -167,8 +167,8 @@
 
     // for any format of A
     #define GB_GET_A_ik_INDEX                   \
-        if (!GBB (Ab, pA)) continue ;           \
-        const int64_t i = GBI (Ai, pA, avlen)
+        if (!GBB_A (Ab, pA)) continue ;           \
+        const int64_t i = GBI_A (Ai, pA, avlen)
 
 #endif
 

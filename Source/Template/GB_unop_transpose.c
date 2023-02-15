@@ -132,7 +132,7 @@
             for (int64_t k = 0 ; k < anvec ; k++)
             {
                 // iterate over the entries in A(:,j)
-                int64_t j = GBH (Ah, k) ;
+                int64_t j = GBH_A (Ah, k) ;
                 int64_t pA_start = Ap [k] ;
                 int64_t pA_end = Ap [k+1] ;
                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
@@ -164,7 +164,7 @@
                 for (int64_t k = A_slice [tid] ; k < A_slice [tid+1] ; k++)
                 {
                     // iterate over the entries in A(:,j)
-                    int64_t j = GBH (Ah, k) ;
+                    int64_t j = GBH_A (Ah, k) ;
                     int64_t pA_start = Ap [k] ;
                     int64_t pA_end = Ap [k+1] ;
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)
@@ -199,7 +199,7 @@
                 for (int64_t k = A_slice [tid] ; k < A_slice [tid+1] ; k++)
                 {
                     // iterate over the entries in A(:,j)
-                    int64_t j = GBH (Ah, k) ;
+                    int64_t j = GBH_A (Ah, k) ;
                     int64_t pA_start = Ap [k] ;
                     int64_t pA_end = Ap [k+1] ;
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)

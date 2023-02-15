@@ -84,7 +84,7 @@
             // get j, the kth vector of C
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Ch, k) ;
+            int64_t j = GBH_C (Ch, k) ;
 
             #if defined ( GB_PHASE_1_OF_2 )
             int64_t cjnz = 0 ;
@@ -126,8 +126,8 @@
                             ((C_to_A == NULL) ? j : C_to_A [k]) ;
                 if (kA >= 0)
                 { 
-                    pA     = GBP (Ap, kA, vlen) ;
-                    pA_end = GBP (Ap, kA+1, vlen) ;
+                    pA     = GBP_A (Ap, kA, vlen) ;
+                    pA_end = GBP_A (Ap, kA+1, vlen) ;
                 }
             }
 
@@ -139,13 +139,13 @@
             int64_t iA_first = -1 ;
             if (ajnz > 0)
             { 
-                iA_first = GBI (Ai, pA, vlen) ;
+                iA_first = GBI_A (Ai, pA, vlen) ;
             }
             #if defined ( GB_PHASE_1_OF_2 ) || defined ( GB_DEBUG )
             int64_t iA_last = -1 ;
             if (ajnz > 0)
             { 
-                iA_last  = GBI (Ai, pA_end-1, vlen) ;
+                iA_last  = GBI_A (Ai, pA_end-1, vlen) ;
             }
             #endif
 
@@ -168,8 +168,8 @@
                             ((C_to_B == NULL) ? j : C_to_B [k]) ;
                 if (kB >= 0)
                 { 
-                    pB     = GBP (Bp, kB, vlen) ;
-                    pB_end = GBP (Bp, kB+1, vlen) ;
+                    pB     = GBP_B (Bp, kB, vlen) ;
+                    pB_end = GBP_B (Bp, kB+1, vlen) ;
                 }
             }
 
@@ -181,13 +181,13 @@
             int64_t iB_first = -1 ;
             if (bjnz > 0)
             { 
-                iB_first = GBI (Bi, pB, vlen) ;
+                iB_first = GBI_B (Bi, pB, vlen) ;
             }
             #if defined ( GB_PHASE_1_OF_2 ) || defined ( GB_DEBUG )
             int64_t iB_last = -1 ;
             if (bjnz > 0)
             { 
-                iB_last  = GBI (Bi, pB_end-1, vlen) ;
+                iB_last  = GBI_B (Bi, pB_end-1, vlen) ;
             }
             #endif
 
@@ -220,8 +220,8 @@
                     }
                     if (kM >= 0)
                     { 
-                        pM     = GBP (Mp, kM, vlen) ;
-                        pM_end = GBP (Mp, kM+1, vlen) ;
+                        pM     = GBP_M (Mp, kM, vlen) ;
+                        pM_end = GBP_M (Mp, kM+1, vlen) ;
                     }
                 }
             }
@@ -432,7 +432,7 @@
                     // get M(i,j) for A(i,j) .* B (i,j)
                     //----------------------------------------------------------
 
-                    int64_t i = GBI (Mi, pM, vlen) ;
+                    int64_t i = GBI_M (Mi, pM, vlen) ;
                     bool mij = GB_MCAST (Mx, pM, msize) ;
                     if (!mij) continue ;
 
@@ -445,7 +445,7 @@
                     { 
                         // A(:,j) is dense, bitmap, or full; use quick lookup
                         pA = pA_start + i - iA_first ;
-                        afound = GBB (Ab, pA) ;
+                        afound = GBB_A (Ab, pA) ;
                     }
                     else
                     { 
@@ -454,7 +454,7 @@
                         GB_BINARY_SEARCH (i, Ai, pA, apright, afound) ;
                     }
                     if (!afound) continue ;
-                    ASSERT (GBI (Ai, pA, vlen) == i) ;
+                    ASSERT (GBI_A (Ai, pA, vlen) == i) ;
 
                     //----------------------------------------------------------
                     // get B(i,j)
@@ -465,7 +465,7 @@
                     { 
                         // B(:,j) is dense; use direct lookup for B(i,j)
                         pB = pB_start + i - iB_first ;
-                        bfound = GBB (Bb, pB) ;
+                        bfound = GBB_B (Bb, pB) ;
                     }
                     else
                     { 
@@ -474,7 +474,7 @@
                         GB_BINARY_SEARCH (i, Bi, pB, bpright, bfound) ;
                     }
                     if (!bfound) continue ;
-                    ASSERT (GBI (Bi, pB, vlen) == i) ;
+                    ASSERT (GBI_B (Bi, pB, vlen) == i) ;
 
                     //----------------------------------------------------------
                     // C(i,j) = A(i,j) .* B(i,j)
@@ -524,7 +524,7 @@
                 #undef  GB_GET_MIJ
                 #define GB_GET_MIJ(i)                                     \
                     int64_t pM = pM_start + i ;                           \
-                    bool mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ; \
+                    bool mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ; \
                     if (Mask_comp) mij = !mij ;
 
                 // both A and B are sparse/hyper
