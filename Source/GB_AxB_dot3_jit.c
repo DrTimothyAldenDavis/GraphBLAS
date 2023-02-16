@@ -214,9 +214,8 @@ GrB_Info GB_AxB_dot3_jit        // C<M>=A'B, dot3, via the JIT
             dl_handle, dl_function))
         {
             // unable to add kernel to hash table: punt to generic
-            printf ("failed to add to hash table!\n") ;
             dlclose (dl_handle) ; 
-            return (GrB_PANIC) ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
     }
 

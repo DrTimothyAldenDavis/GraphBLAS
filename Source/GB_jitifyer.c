@@ -114,6 +114,8 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 
     // FIXME: need to place this entire function in a critical section
 
+    // FIXME return GrB_Info
+
     //--------------------------------------------------------------------------
     // ensure the hash table is large enough
     //--------------------------------------------------------------------------

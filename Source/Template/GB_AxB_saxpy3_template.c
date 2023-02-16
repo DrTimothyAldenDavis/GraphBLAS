@@ -34,6 +34,7 @@
     //--------------------------------------------------------------------------
 
     int64_t *restrict Cp = C->p ;
+    ASSERT (Cp != NULL) ;
     // const int64_t *restrict Ch = C->h ;
     const int64_t cvlen = C->vlen ;
     const int64_t cnvec = C->nvec ;
@@ -372,6 +373,8 @@
     if (info != GrB_SUCCESS)
     { 
         // out of memory
+        // note the C->p and C->h are not freed if GB_bix_alloc fails
+        ASSERT (C->p != NULL) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
     C->nvals = cnz ;

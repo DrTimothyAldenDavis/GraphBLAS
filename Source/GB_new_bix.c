@@ -81,6 +81,8 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     if (info != GrB_SUCCESS)
     {
         // out of memory
+        // free all content of A
+        GB_phybix_free (A) ;
         if (!preexisting_header)
         { 
             // free the header *Ahandle itself unless it existed on input

@@ -155,8 +155,6 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
 
         // C and Z type become int32_t or int64_t
 
-        GB_BURBLE_MATRIX (C, "(generic positional C=A*B) ") ;
-
         // C always has type int64_t or int32_t.  The monoid must be used via
         // its function pointer.  The positional multiply operator must be
         // hard-coded since it has no function pointer.  The numerical values
@@ -304,8 +302,6 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
         //----------------------------------------------------------------------
         // generic semirings with standard multiply operators
         //----------------------------------------------------------------------
-
-        GB_BURBLE_MATRIX (C, "(generic C=A*B) ") ;
 
         // aik = A(i,k), located in Ax [A_iso ? 0:pA]
         #undef  GB_A_IS_PATTERN

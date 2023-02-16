@@ -33,6 +33,7 @@ void GB_AxB_saxpy3_cumsum
     int64_t *restrict Cp = C->p ;
     const int64_t cvlen = C->vlen ;
     const int64_t cnvec = C->nvec ;
+    ASSERT (Cp != NULL) ;
 
     //==========================================================================
     // phase3: count nnz(C(:,j)) for fine tasks

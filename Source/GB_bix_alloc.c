@@ -7,12 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// Does not modify A->p or A->h (unless an error occurs).  Frees A->b, A->x,
+// Does not modify A->p or A->h.  Frees A->b, A->x,
 // and A->i and reallocates them to the requested size.  Frees any pending
 // tuples and deletes all entries (including zombies, if any).  If numeric is
 // false, then A->x is freed but not reallocated.
 
-// If this method fails, all content of A is freed (including A->p and A->h).
+// If this method fails, A->b, A->i, and A->x are NULL,
+// but A->p and A->h are not modified.
 
 #include "GB.h"
 
@@ -78,7 +79,7 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
     if (!ok)
     { 
         // out of memory
-        GB_phybix_free (A) ;
+        GB_bix_free (A) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
