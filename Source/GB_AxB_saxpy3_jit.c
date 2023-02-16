@@ -60,6 +60,11 @@ GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
     uint64_t hash = GB_encodify_mxm (&encoding, &suffix,
         GB_JIT_KERNEL_MXM_SAXPY3,
         C, M, Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
+    if (hash == UINT64_MAX)
+    {
+        // cannot JIT this semiring
+        return (GrB_NO_VALUE) ;
+    }
     void *dl_function = GB_jitifyer_lookup (hash, &encoding, suffix) ;
 
     //------------------------------------------------------------------

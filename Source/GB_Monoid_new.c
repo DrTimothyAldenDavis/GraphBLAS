@@ -380,17 +380,19 @@ GrB_Info GB_Monoid_new          // create a monoid
         memcpy (mon->identity, identity, zsize) ;
         uint64_t hashes [3] ;
         hashes [0] = mon->op->hash ;
-        hashes [1] = GB_jitifyer_hash (identity, zsize) ;
+        hashes [1] = GB_jitifyer_hash (identity, zsize, true) ;
         hashes [2] = 0 ;
         if (terminal != NULL)
         { 
             // create the monoid terminal value
             GB_ALLOC_TERMINAL ;
             memcpy (mon->terminal, terminal, zsize) ;
-            hashes [2] = GB_jitifyer_hash (terminal, zsize) ;
+            hashes [2] = GB_jitifyer_hash (terminal, zsize, true) ;
         }
-        // create the monoid hash: based on binary op hash, id, and terminal
-        mon->hash = GB_jitifyer_hash (hashes, 3*sizeof (uint64_t)) ;
+        // create the monoid hash: based on binary op hash, id, and terminal.
+        // the monoid is JIT'able only if the op is JIT'able
+        mon->hash = GB_jitifyer_hash (hashes, 3*sizeof (uint64_t),
+            mon->op->hash != UINT64_MAX) ;
     }
 
     ASSERT_MONOID_OK (mon, "new monoid", GB0) ;

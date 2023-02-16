@@ -131,8 +131,10 @@ GrB_Info GxB_Type_new
     t->name [GxB_MAX_NAME_LEN-1] = '\0' ;
 
     // get the type name length and hash the name
-    t->name_len= strlen (t->name) ;
-    t->hash = GB_jitifyer_hash (t->name, t->name_len) ;
+    t->name_len = strlen (t->name) ;
+    // type can be JIT'd only if it has a name and defn
+    t->hash = GB_jitifyer_hash (t->name, t->name_len,
+        (type_name != NULL && type_defn != NULL)) ;
 
     //--------------------------------------------------------------------------
     // get the typedef, if present

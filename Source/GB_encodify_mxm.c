@@ -30,6 +30,18 @@ uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
 {
 
     //--------------------------------------------------------------------------
+    // check if the semiring is JIT'able
+    //--------------------------------------------------------------------------
+
+    if (semiring->hash == UINT64_MAX)
+    {
+        // cannot JIT this semiring
+        memset (encoding, 0, sizeof (GB_jit_encoding)) ;
+        (*suffix) = NULL ;
+        return (UINT64_MAX) ;
+    }
+
+    //--------------------------------------------------------------------------
     // primary encoding of the problem
     //--------------------------------------------------------------------------
 
@@ -52,6 +64,6 @@ uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
 
     uint64_t hash = GB_jitifyer_hash_encoding (encoding) ;
     hash = hash ^ semiring->hash ;
-    return (hash) ;
+    return ((hash == 0 || hash == UINT64_MAX) ? GB_MAGIC : hash) ;
 }
 

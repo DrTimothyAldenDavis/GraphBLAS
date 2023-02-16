@@ -25,7 +25,8 @@ typedef GrB_Info (*GB_jit_dl_function)
 GrB_Info GB_AxB_dot3_jit        // C<M>=A'B, dot3, via the JIT
 (
     GrB_Matrix C,               // never iso for this kernel
-    const GrB_Matrix M, const bool Mask_struct,
+    const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const GrB_Semiring semiring,
@@ -50,6 +51,11 @@ GrB_Info GB_AxB_dot3_jit        // C<M>=A'B, dot3, via the JIT
     uint64_t hash = GB_encodify_mxm (&encoding, &suffix,
         GB_JIT_KERNEL_MXM_DOT3,
         C, M, Mask_struct, false, semiring, flipxy, A, B) ;
+    if (hash == UINT64_MAX)
+    {
+        // cannot JIT this semiring
+        return (GrB_NO_VALUE) ;
+    }
     void *dl_function = GB_jitifyer_lookup (hash, &encoding, suffix) ;
 
     //------------------------------------------------------------------

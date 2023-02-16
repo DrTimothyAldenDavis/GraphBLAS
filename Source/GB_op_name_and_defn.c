@@ -9,7 +9,7 @@
 
 // This method constructs the name and defn of a user-defined op (unary,
 // binary, or indexunary).  It also constructs the op->hash for the jit,
-// which is never zero for this metho.
+// which is never zero for this method.
 
 #include "GB.h"
 #include <ctype.h>
@@ -18,16 +18,18 @@
 GrB_Info GB_op_name_and_defn
 (
     // output
-    char *operator_name,        // op->name of the GrB operator struct
-    int32_t *operator_name_len, // op->name_len
-    uint64_t *operator_hash,    // op->hash
-    char **operator_defn,       // op->defn
-    size_t *operator_defn_size, // op->defn_size
+    char *op_name,              // op->name of the GrB operator struct
+    int32_t *op_name_len,       // op->name_len
+    uint64_t *op_hash,          // op->hash
+    char **op_defn,             // op->defn
+    size_t *op_defn_size,       // op->defn_size
     // input
     const char *input_name,     // user-provided name, may be NULL
     const char *input_defn,     // user-provided name, may be NULL
     const char *typecast_name,  // typecast name for function pointer
-    size_t typecast_len         // length of typecast_name
+    size_t typecast_len,        // length of typecast_name
+    bool user_op,               // if true, a user-defined op
+    bool jitable                // if false, the op cannot be JIT'd
 )
 {
 
@@ -35,12 +37,12 @@ GrB_Info GB_op_name_and_defn
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (operator_name != NULL) ;
-    ASSERT (operator_defn != NULL) ;
+    ASSERT (op_name != NULL) ;
+    ASSERT (op_defn != NULL) ;
     ASSERT (typecast_name != NULL) ;
-    ASSERT (operator_defn_size != NULL) ;
-    (*operator_defn) = NULL ;
-    (*operator_defn_size) = 0 ;
+    ASSERT (op_defn_size != NULL) ;
+    (*op_defn) = NULL ;
+    (*op_defn_size) = 0 ;
 
     //--------------------------------------------------------------------------
     // get the name of the operator
@@ -48,7 +50,7 @@ GrB_Info GB_op_name_and_defn
 
     // FIXME: this can get a mangled name; see the BF methods in LAGraph
 
-    memset (operator_name, 0, GxB_MAX_NAME_LEN) ;
+    memset (op_name, 0, GxB_MAX_NAME_LEN) ;
     if (input_name != NULL)
     {
         // copy the input_name into the working name
@@ -66,26 +68,30 @@ GrB_Info GB_op_name_and_defn
             if (*p == ')') p++ ;
             while (isspace (*p)) p++ ;
             // p now contains the final name, copy it to the output name
-            strncpy (operator_name, p, GxB_MAX_NAME_LEN-1) ;
+            strncpy (op_name, p, GxB_MAX_NAME_LEN-1) ;
         }
         else
         { 
-            // no typcast appears; copy the entire operator_name as-is
-            memcpy (operator_name, working, GxB_MAX_NAME_LEN) ;
+            // no typcast appears; copy the entire op_name as-is
+            memcpy (op_name, working, GxB_MAX_NAME_LEN) ;
         }
     }
     else
     { 
-        // no operator_name, so give it a generic name
-        snprintf (operator_name, GxB_MAX_NAME_LEN-1, "user_op") ;
+        // no op_name, so give it a generic name
+        snprintf (op_name, GxB_MAX_NAME_LEN-1, "user_op") ;
     }
 
-    // ensure operator_name is null-terminated
-    operator_name [GxB_MAX_NAME_LEN-1] = '\0' ;
+    // ensure op_name is null-terminated
+    op_name [GxB_MAX_NAME_LEN-1] = '\0' ;
 
     // get the operator name length and hash the name
-    (*operator_name_len) = strlen (operator_name) ;
-    (*operator_hash) = GB_jitifyer_hash (operator_name, (*operator_name_len)) ;
+    (*op_name_len) = strlen (op_name) ;
+
+    // a user-defined op can only be JIT'd if it has a name and defn.
+    // a new builtin op (created by GB_reduce_to_vector) can always be JIT'd.
+    (*op_hash) = GB_jitifyer_hash (op_name, (*op_name_len),
+        jitable && (!user_op || (input_name != NULL && input_defn != NULL))) ;
 
     //--------------------------------------------------------------------------
     // get the definition of the operator, if present
@@ -114,8 +120,8 @@ GrB_Info GB_op_name_and_defn
     // return result
     //--------------------------------------------------------------------------
 
-    (*operator_defn) = defn ;
-    (*operator_defn_size) = defn_size ;
+    (*op_defn) = defn ;
+    (*op_defn_size) = defn_size ;
     return (GrB_SUCCESS) ;
 }
 

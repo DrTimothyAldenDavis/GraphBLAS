@@ -23,6 +23,18 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
 {
 
     //--------------------------------------------------------------------------
+    // check if the monoid is JIT'able
+    //--------------------------------------------------------------------------
+
+    if (monoid->hash == UINT64_MAX)
+    {
+        // cannot JIT this monoid
+        memset (encoding, 0, sizeof (GB_jit_encoding)) ;
+        (*suffix) = NULL ;
+        return (UINT64_MAX) ;
+    }
+
+    //--------------------------------------------------------------------------
     // primary encoding of the problem
     //--------------------------------------------------------------------------
 
@@ -44,6 +56,6 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
 
     uint64_t hash = GB_jitifyer_hash_encoding (encoding) ;
     hash = hash ^ monoid->hash ;
-    return (hash) ;
+    return ((hash == 0 || hash == UINT64_MAX) ? GB_MAGIC : hash) ;
 }
 

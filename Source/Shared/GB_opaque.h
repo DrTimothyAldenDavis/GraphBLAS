@@ -394,7 +394,8 @@ struct GB_Type_opaque       // content of GrB_Type
     char name [GxB_MAX_NAME_LEN] ;  // name of the type
     char *defn ;            // type definition
     size_t defn_size ;      // allocated size of the definition
-    uint64_t hash ;         // if 0, type is builtin
+    uint64_t hash ;         // if 0, type is builtin.
+                            // if UINT64_MAX, the type cannot be JIT'd.
 } ;
 
 struct GB_UnaryOp_opaque    // content of GrB_UnaryOp
@@ -436,7 +437,8 @@ struct GB_Monoid_opaque     // content of GrB_Monoid
     void *terminal ;        // early-exit (NULL if no value); type is op->ztype
     size_t identity_size ;  // allocated size of identity, or 0
     size_t terminal_size ;  // allocated size of terminal, or 0
-    uint64_t hash ;         // if 0, monoid uses only builtin ops and types
+    uint64_t hash ;         // if 0, monoid uses only builtin ops and types.
+                            // if UINT64_MAX, the monoid cannot be JIT'd.
 } ;
 
 struct GB_Semiring_opaque   // content of GrB_Semiring

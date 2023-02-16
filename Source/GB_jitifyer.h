@@ -55,7 +55,7 @@ typedef struct GB_jit_entry_struct GB_jit_entry ;
 void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
 (
     // input:
-    uint64_t hash,          // hash = GB_jitifyer_hash (codes) ;
+    uint64_t hash,          // hash = GB_jitifyer_hash_encoding (encoding) ;
     GB_jit_encoding *encoding,
     char *suffix
 ) ;
@@ -78,7 +78,8 @@ uint64_t GB_jitifyer_hash_encoding
 uint64_t GB_jitifyer_hash
 (
     const void *bytes,      // any string of bytes
-    size_t nbytes           // # of bytes to hash
+    size_t nbytes,          // # of bytes to hash
+    bool jitable            // true if the object can be JIT'd
 ) ;
 
 void GB_jitifyer_finalize (void) ;

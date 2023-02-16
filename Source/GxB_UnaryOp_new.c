@@ -67,11 +67,16 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     // get the unary op name and defn
     //--------------------------------------------------------------------------
 
+    // the unary op is JIT'able only if all its types are jitable
+    bool jitable =
+        (ztype->hash != UINT64_MAX) &&
+        (xtype->hash != UINT64_MAX) ;
+
     GrB_Info info = GB_op_name_and_defn (
         // output:
         op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_size),
         // input:
-        unop_name, unop_defn, "GxB_unary_function", 18) ;
+        unop_name, unop_defn, "GxB_unary_function", 18, true, jitable) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

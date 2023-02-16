@@ -58,10 +58,17 @@ GrB_Info GB_binop_new
     // get the binary op name and defn
     //--------------------------------------------------------------------------
 
+    // the binary op is JIT'able only if all its types are jitable
+    bool jitable =
+        (ztype->hash != UINT64_MAX) &&
+        (xtype->hash != UINT64_MAX) &&
+        (ytype->hash != UINT64_MAX) ;
+
     return (GB_op_name_and_defn (
         // output:
         op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_size),
         // input:
-        binop_name, binop_defn, "GxB_binary_function", 19)) ;
+        binop_name, binop_defn, "GxB_binary_function", 19,
+        opcode == GB_USER_binop_code, jitable)) ;
 }
 

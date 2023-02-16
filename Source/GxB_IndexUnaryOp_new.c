@@ -75,12 +75,18 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     // get the index_unary op name and defn
     //--------------------------------------------------------------------------
 
+    // the index_unary op is JIT'able only if all its types are jitable
+    bool jitable =
+        (ztype->hash != UINT64_MAX) &&
+        (xtype->hash != UINT64_MAX) &&
+        (ytype->hash != UINT64_MAX) ;
+
     GrB_Info info = GB_op_name_and_defn (
         // output:
         (*op)->name, &((*op)->name_len), &((*op)->hash),
         &((*op)->defn), &((*op)->defn_size),
         // input:
-        idxop_name, idxop_defn, "GxB_index_unary_function", 24) ;
+        idxop_name, idxop_defn, "GxB_index_unary_function", 24, true, jitable) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

@@ -46,6 +46,11 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_reduce (&encoding, &suffix, monoid, A) ;
+    if (hash == UINT64_MAX)
+    {
+        // cannot JIT this monoid
+        return (GrB_NO_VALUE) ;
+    }
     void *dl_function = GB_jitifyer_lookup (hash, &encoding, suffix) ;
 
     //------------------------------------------------------------------

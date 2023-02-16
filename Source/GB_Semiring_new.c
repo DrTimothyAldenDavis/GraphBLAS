@@ -46,7 +46,7 @@ GrB_Info GB_Semiring_new            // create a semiring
     semiring->add = add ;
     semiring->multiply = multiply ;
     semiring->name = NULL ;
-    if (semiring->add->hash == 0 && semiring->multiply->hash == 0)
+    if (add->hash == 0 && multiply->hash == 0)
     {
         // semiring consists of builtin types and operators only;
         // no need for the semiring name or hash
@@ -72,8 +72,10 @@ GrB_Info GB_Semiring_new            // create a semiring
         memcpy (p, semiring->multiply->name, mult_len) ;
         p += mult_len ;
         (*p) = '\0' ;
-        // construct the semiring hash from the newly created name
-        semiring->hash = GB_jitifyer_hash (semiring->name, semiring->name_len) ;
+        // construct the semiring hash from the newly created name.
+        // the semiring is JIT'able only if its 2 operators are JIT'able.
+        semiring->hash = GB_jitifyer_hash (semiring->name, semiring->name_len,
+            add->hash != UINT64_MAX && multiply->hash != UINT64_MAX) ;
     }
     ASSERT_SEMIRING_OK (semiring, "new semiring", GB0) ;
     return (GrB_SUCCESS) ;

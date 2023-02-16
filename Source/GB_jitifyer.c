@@ -34,9 +34,9 @@ static int64_t  GB_jit_table_populated = 0 ;
 void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
 (
     // input:
-    uint64_t hash,          // hash = GB_jitifyer_hash_* (encoding) ;
+    uint64_t hash,          // hash = GB_jitifyer_hash_encoding (encoding) ;
     GB_jit_encoding *encoding,
-    char *suffix            // ignored if builtin
+    char *suffix
 )
 {
 
@@ -470,9 +470,13 @@ int GB_jitifyer_compile
 #include "xxhash.h"
 
 // A hash value of zero is unique, and is used for all builtin operators and
-// types to indicate that its hash value is not required.  So in the nearly
-// impossible case that XXH3_64bits returns a hash value that happens to be
-// zero, it is reset to GB_MAGIC instead.
+// types to indicate that its hash value is not required.
+
+// A hash value of UINT64_MAX is also special: it denotes an object that cannot
+// be JIT'd.
+
+// So in the nearly impossible case that XXH3_64bits returns a hash value that
+// happens to be zero or UINT64_MAX, it is reset to GB_MAGIC instead.
 
 uint64_t GB_jitifyer_hash_encoding
 (
@@ -481,18 +485,20 @@ uint64_t GB_jitifyer_hash_encoding
 {
     uint64_t hash ;
     hash = XXH3_64bits ((const void *) encoding, sizeof (GB_jit_encoding)) ;
-    return ((hash == 0) ? GB_MAGIC : hash) ;
+    return ((hash == 0 || hash == UINT64_MAX) ? GB_MAGIC : hash) ;
 }
 
 uint64_t GB_jitifyer_hash
 (
     const void *bytes,      // any string of bytes
-    size_t nbytes           // # of bytes to hash
+    size_t nbytes,          // # of bytes to hash
+    bool jitable            // true if the object can be JIT'd
 )
 {
     if (bytes == NULL || nbytes == 0) return (0) ;
+    if (!jitable) return (UINT64_MAX) ;
     uint64_t hash ;
     hash = XXH3_64bits (bytes, nbytes) ;
-    return ((hash == 0) ? GB_MAGIC : hash) ;
+    return ((hash == 0 || hash == UINT64_MAX) ? GB_MAGIC : hash) ;
 }
 
