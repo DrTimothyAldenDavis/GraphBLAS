@@ -42,12 +42,20 @@
     const int64_t *restrict Bh = B->h ;
     const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
-    const bool B_iso = B->iso ;
     const int64_t bvlen = B->vlen ;
+    #ifdef GB_JIT_KERNEL
+    #define B_iso       GB_B_ISO
+    #define B_is_sparse GB_B_IS_SPARSE
+    #define B_is_hyper  GB_B_IS_HYPER
+    #define B_is_bitmap GB_B_IS_BITMAP
+    #define B_is_sparse_or_hyper (GB_B_IS_SPARSE || GB_B_IS_HYPER)
+    #else
+    const bool B_iso = B->iso ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse_or_hyper = B_is_sparse || B_is_hyper ;
+    #endif
 
     const int64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
@@ -55,10 +63,17 @@
     const int64_t *restrict Ai = A->i ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
+    #ifdef GB_JIT_KERNEL
+    #define A_iso       GB_A_ISO
+    #define A_is_sparse GB_A_IS_SPARSE
+    #define A_is_hyper  GB_A_IS_HYPER
+    #define A_is_bitmap GB_A_IS_BITMAP
+    #else
+    const bool A_iso = A->iso ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    const bool A_iso = A->iso ;
+    #endif
     const bool A_jumbled = A->jumbled ;
     const bool A_ok_for_binary_search = 
         ((A_is_sparse || A_is_hyper) && !A_jumbled) ;
@@ -82,8 +97,13 @@
     const int8_t  *restrict Mb = M->b ;
     const int64_t *restrict Mi = M->i ;
     const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
+    #ifdef GB_JIT_KERNEL
+    #define M_is_hyper  GB_M_IS_HYPER
+    #define M_is_bitmap GB_M_IS_BITMAP
+    #else
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
+    #endif
     const bool M_jumbled = GB_JUMBLED (M) ;
     size_t msize = M->type->size ;
     int64_t mnvec = M->nvec ;
@@ -345,6 +365,7 @@
     // C is iso for the ANY_PAIR semiring, and non-iso otherwise
     // allocate Ci and Cx
     int64_t cnz = Cp [cnvec] ;
+
     // set C->iso = GB_IS_ANY_PAIR_SEMIRING     OK
     GrB_Info info = GB_bix_alloc (C, cnz, GxB_SPARSE, false, true,
         GB_IS_ANY_PAIR_SEMIRING) ;

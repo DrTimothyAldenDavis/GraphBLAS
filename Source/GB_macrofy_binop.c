@@ -27,7 +27,7 @@ void GB_macrofy_binop
 )
 {
 
-    const char *f = NULL, *u = NULL ;
+    const char *f = NULL, *u = NULL, *g = NULL ;
 
     if (op == NULL)
     {
@@ -114,48 +114,56 @@ void GB_macrofy_binop
 
             // first
             case   1 : 
-                f = "z = (x)" ;
-                u = "" ;                    // first update: nothing to do
+                f = "z = x" ;
+                u = "" ;
                 break ;
 
             // any, second
             case   2 : 
-                f = "z = (y)" ;
-                u = "z = (y)" ;             // second update
+                f = "z = y" ;
+                u = "z = y" ;
                 break ;
 
             // min (float)
             case   3 : 
                 f = "z = fminf (x,y)" ;
-                u = "z = fminf (z, (y))" ;  // min float update
+                g = "z = fminf (z,y)" ;
+                u = "if (!isnan (y) && !islessequal (z,y)) { z = y ; }" ;
                 break ;
 
             // min (double)
             case   4 : 
                 f = "z = fmin (x,y)" ;
-                u = "z = fmin (z, (y))" ;   // min double update
+                g = "z = fmin (z,y)" ;
+                u = "if (!isnan (y) && !islessequal (z,y)) { z = y ; }" ;
                 break ;
 
             // min (integer)
             case   5 : 
                 f = "z = (((x) < (y)) ? (x) : (y))" ;
+                g = "z = (((z) < (y)) ? (z) : (y))" ;
+                u = "if ((z) > (y)) { z = y ; }" ;
                 break ;
 
             // max (float)
             case   6 : 
                 f = "z = fmaxf (x,y)" ;
-                u = "z = fmaxf (z, (y))" ;  // max float update
+                g = "z = fmaxf (z,y)" ;
+                u = "if (!isnan (y) && !isgreaterequal (z,y)) { z = y ; }" ;
                 break ;
 
             // max (double)
             case   7 : 
                 f = "z = fmax (x,y)" ;
-                u = "z = fmax (z, (y))" ;   // max double update
+                g = "z = fmax (z,y)" ;
+                u = "if (!isnan (y) && !isgreaterequal (z,y)) { z = y ; }" ;
                 break ;
 
             // max (integer)
             case   8 : 
                 f = "z = (((x) > (y)) ? (x) : (y))" ;
+                g = "z = (((z) > (y)) ? (z) : (y))" ;
+                u = "if ((z) < (y)) { z = y ; }" ;
                 break ;
 
             // plus (complex)
@@ -180,7 +188,7 @@ void GB_macrofy_binop
             // plus (real)
             case  11 : 
                 f = "z = (x) + (y)" ;
-                u = "z += (y)" ;            // plus real update
+                u = "z += y" ;              // plus real update
                 break ;
 
             // times (complex)
@@ -196,7 +204,7 @@ void GB_macrofy_binop
             // times (real)
             case  14 : 
                 f = "z = (x) * (y)" ;
-                u = "z *= (y)" ;            // times real update
+                u = "z *= y" ;              // times real update
                 break ;
 
             // eq, iseq, lxnor
@@ -226,19 +234,19 @@ void GB_macrofy_binop
             // bor
             case  19 : 
                 f = "z = ((x) | (y))" ;
-                u = "z |= (y)" ;            // bor update
+                u = "z |= y" ;              // bor update
                 break ;
 
             // band
             case  20 : 
                 f = "z = ((x) & (y))" ;
-                u = "z &= (y)" ;            // band update
+                u = "z &= y" ;              // band update
                 break ;
 
             // bxor
             case  21 : 
                 f = "z = ((x) ^ (y))" ;
-                u = "z ^= (y)" ;            // bxor update
+                u = "z ^= y" ;              // bxor update
                 break ;
 
             // bxnor
@@ -836,7 +844,7 @@ void GB_macrofy_binop
 
             case 140 : 
             default  : 
-                f = "z = (y)" ;
+                f = "z = y" ;
                 break ;
         }
 
@@ -848,7 +856,17 @@ void GB_macrofy_binop
         {
             // additive operator: no i,k,j parameters
             fprintf (fp, "#define %s(z,x,y) %s\n", macro_name, f) ;
-            if (u != NULL)
+            if (g != NULL)
+            {
+                // create an update expression of the form z += y,
+                // but it differs for the CPU and CUDA JIT kernels
+                fprintf (fp, "#ifdef  GB_CUDA_KERNEL\n"
+                             "#define GB_UPDATE(z,y) %s\n"
+                             "#else\n"
+                             "#define GB_UPDATE(z,y) %s\n"
+                             "#endif\n", g, u) ;
+            }
+            else if (u != NULL)
             {
                 // create an update expression of the form z += y
                 fprintf (fp, "#define GB_UPDATE(z,y) %s\n", u) ;

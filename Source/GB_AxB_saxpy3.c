@@ -88,6 +88,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
+#include "GB_stringify.h"
 #include "GB_AxB_saxpy_generic.h"
 #include "GB_control.h"
 #include "GB_AxB__include1.h"
@@ -663,8 +664,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             {                                                               \
                 info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp,       \
                     Mask_struct, M_in_place, A, B,                          \
-                    SaxpyTasks, ntasks, nfine, nthreads,                    \
-                    do_sort, Werk) ;                                        \
+                    SaxpyTasks, ntasks, nfine, nthreads, do_sort, Werk) ;   \
                 done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
@@ -681,6 +681,25 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         #endif
 
         //----------------------------------------------------------------------
+        // JIT saxpy3 kernel for the case when C is sparse or hypersparse
+        //----------------------------------------------------------------------
+
+#if 1
+        #ifdef GB_DEBUGIFY_DEFN
+        #ifndef GBRENAME
+        // FIXME: not yet working in MATLAB (mxMalloc issues)
+        if (!done)
+        {
+            info = GB_AxB_saxpy3_jit (C, M, Mask_comp, Mask_struct,
+                M_in_place, A, B, semiring, flipxy,
+                SaxpyTasks, ntasks, nfine, nthreads, do_sort, Werk) ;
+            done = (info == GrB_SUCCESS) ;
+        }
+        #endif
+        #endif
+#endif
+
+        //----------------------------------------------------------------------
         // generic saxpy3 method for the case when C is sparse or hypersparse
         //----------------------------------------------------------------------
 
@@ -689,8 +708,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             info = GB_AxB_saxpy_generic (C, M, Mask_comp, Mask_struct,
                 M_in_place, A, A_is_pattern, B, B_is_pattern, semiring,
                 flipxy, GB_SAXPY_METHOD_3,
-                SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                Werk) ;
+                SaxpyTasks, ntasks, nfine, nthreads, do_sort, Werk) ;
         }
     }
 

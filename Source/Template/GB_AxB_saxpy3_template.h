@@ -25,14 +25,14 @@
     {                                                                       \
         /* M is hypersparse: find M(:,j) in the M->Y hyper_hash */          \
         GB_hyper_hash_lookup (Mp, M_Yp, M_Yi, M_Yx, M_hash_bits,            \
-            GBH_B (Bh, kk), &pM_start, &pM_end) ;                             \
+            GBH_B (Bh, kk), &pM_start, &pM_end) ;                           \
     }                                                                       \
     else                                                                    \
     {                                                                       \
         /* A is sparse, bitmap, or full */                                  \
-        int64_t j = GBH_B (Bh, kk) ;                                          \
-        pM_start = GBP_M (Mp, j  , mvlen) ;                                   \
-        pM_end   = GBP_M (Mp, j+1, mvlen) ;                                   \
+        int64_t j = GBH_B (Bh, kk) ;                                        \
+        pM_start = GBP_M (Mp, j  , mvlen) ;                                 \
+        pM_end   = GBP_M (Mp, j+1, mvlen) ;                                 \
     }                                                                       \
     const int64_t mjnz = pM_end - pM_start
 
@@ -40,52 +40,26 @@
 // GB_GET_M_j_RANGE
 //------------------------------------------------------------------------------
 
-#define GB_GET_M_j_RANGE(gamma)                                 \
+#define GB_GET_M_j_RANGE(gamma) \
     const int64_t mjnz_much = mjnz * gamma
 
 //------------------------------------------------------------------------------
 // GB_SCATTER_Mj_t: scatter M(:,j) of the given type into Gus. workspace
 //------------------------------------------------------------------------------
 
-#define GB_SCATTER_Mj_t(mask_t,pMstart,pMend,mark)                      \
-{                                                                       \
-    const mask_t *restrict Mxx = (mask_t *) Mx ;                        \
-    if (M_is_bitmap)                                                    \
-    {                                                                   \
-        /* M is bitmap */                                               \
-        for (int64_t pM = pMstart ; pM < pMend ; pM++)                  \
-        {                                                               \
-            /* if (M (i,j) == 1) mark Hf [i] */                         \
-            if (Mb [pM] && Mxx [pM]) Hf [GBI_M (Mi, pM, mvlen)] = mark ;  \
-        }                                                               \
-    }                                                                   \
-    else                                                                \
-    {                                                                   \
-        /* M is hyper, sparse, or full */                               \
-        for (int64_t pM = pMstart ; pM < pMend ; pM++)                  \
-        {                                                               \
-            /* if (M (i,j) == 1) mark Hf [i] */                         \
-            if (Mxx [pM]) Hf [GBI_M (Mi, pM, mvlen)] = mark ;             \
-        }                                                               \
-    }                                                                   \
-}                                                                       \
-break ;
+#ifndef GB_JIT_KERNEL
 
-//------------------------------------------------------------------------------
-// GB_SCATTER_M_j:  scatter M(:,j) into the Gustavson workpace
-//------------------------------------------------------------------------------
-
-#define GB_SCATTER_M_j(pMstart,pMend,mark)                                  \
-    if (Mx == NULL)                                                         \
+    // for generic pre-generated kernels only; not needed for JIT kernels
+    #define GB_SCATTER_Mj_t(mask_t,pMstart,pMend,mark)                      \
     {                                                                       \
-        /* M is structural, not valued */                                   \
+        const mask_t *restrict Mxx = (mask_t *) Mx ;                        \
         if (M_is_bitmap)                                                    \
         {                                                                   \
             /* M is bitmap */                                               \
             for (int64_t pM = pMstart ; pM < pMend ; pM++)                  \
             {                                                               \
-                /* if (M (i,j) is present) mark Hf [i] */                   \
-                if (Mb [pM]) Hf [GBI_M (Mi, pM, mvlen)] = mark ;              \
+                /* if (M (i,j) == 1) mark Hf [i] */                         \
+                if (Mb [pM] && Mxx [pM]) Hf [GBI_M (Mi, pM, mvlen)] = mark ;\
             }                                                               \
         }                                                                   \
         else                                                                \
@@ -93,37 +67,90 @@ break ;
             /* M is hyper, sparse, or full */                               \
             for (int64_t pM = pMstart ; pM < pMend ; pM++)                  \
             {                                                               \
-                /* mark Hf [i] */                                           \
-                Hf [GBI_M (Mi, pM, mvlen)] = mark ;                           \
+                /* if (M (i,j) == 1) mark Hf [i] */                         \
+                if (Mxx [pM]) Hf [GBI_M (Mi, pM, mvlen)] = mark ;           \
             }                                                               \
         }                                                                   \
     }                                                                       \
-    else                                                                    \
-    {                                                                       \
-        /* mask is valued, not structural */                                \
-        switch (msize)                                                      \
+    break ;
+
+#endif
+
+//------------------------------------------------------------------------------
+// GB_SCATTER_M_j:  scatter M(:,j) into the Gustavson workpace
+//------------------------------------------------------------------------------
+
+#ifdef GB_JIT_KERNEL
+
+    // for JIT kernels
+    #define GB_SCATTER_M_j(pMstart,pMend,mark)                              \
+        for (int64_t pM = pMstart ; pM < pMend ; pM++)                      \
         {                                                                   \
-            default:                                                        \
-            case GB_1BYTE: GB_SCATTER_Mj_t (uint8_t , pMstart, pMend, mark) ; \
-            case GB_2BYTE: GB_SCATTER_Mj_t (uint16_t, pMstart, pMend, mark) ; \
-            case GB_4BYTE: GB_SCATTER_Mj_t (uint32_t, pMstart, pMend, mark) ; \
-            case GB_8BYTE: GB_SCATTER_Mj_t (uint64_t, pMstart, pMend, mark) ; \
-            case GB_16BYTE:                                                 \
+            /* if (M (i,j) is present) mark Hf [i] */                       \
+            if (GBB_M (Mb,pM) && GB_MCAST (Mx,p,))                          \
             {                                                               \
-                const uint64_t *restrict Mxx = (uint64_t *) Mx ;            \
+                Hf [GBI_M (Mi, pM, mvlen)] = mark ;                         \
+            }                                                               \
+        }
+
+#else
+
+    // for generic pre-generated kernels
+    #define GB_SCATTER_M_j(pMstart,pMend,mark)                              \
+        if (Mx == NULL)                                                     \
+        {                                                                   \
+            /* M is structural, not valued */                               \
+            if (M_is_bitmap)                                                \
+            {                                                               \
+                /* M is bitmap */                                           \
                 for (int64_t pM = pMstart ; pM < pMend ; pM++)              \
                 {                                                           \
-                    /* if (M (i,j) == 1) mark Hf [i] */                     \
-                    if (!GBB_M (Mb, pM)) continue ;                           \
-                    if (Mxx [2*pM] || Mxx [2*pM+1])                         \
-                    {                                                       \
-                        /* Hf [i] = M(i,j) */                               \
-                        Hf [GBI_M (Mi, pM, mvlen)] = mark ;                   \
-                    }                                                       \
+                    /* if (M (i,j) is present) mark Hf [i] */               \
+                    if (Mb [pM]) Hf [GBI_M (Mi, pM, mvlen)] = mark ;        \
+                }                                                           \
+            }                                                               \
+            else                                                            \
+            {                                                               \
+                /* M is hyper, sparse, or full */                           \
+                for (int64_t pM = pMstart ; pM < pMend ; pM++)              \
+                {                                                           \
+                    /* mark Hf [i] */                                       \
+                    Hf [GBI_M (Mi, pM, mvlen)] = mark ;                     \
                 }                                                           \
             }                                                               \
         }                                                                   \
-    }
+        else                                                                \
+        {                                                                   \
+            /* mask is valued, not structural */                            \
+            switch (msize)                                                  \
+            {                                                               \
+                default:                                                    \
+                case GB_1BYTE:                                              \
+                    GB_SCATTER_Mj_t (uint8_t , pMstart, pMend, mark) ;      \
+                case GB_2BYTE:                                              \
+                    GB_SCATTER_Mj_t (uint16_t, pMstart, pMend, mark) ;      \
+                case GB_4BYTE:                                              \
+                    GB_SCATTER_Mj_t (uint32_t, pMstart, pMend, mark) ;      \
+                case GB_8BYTE:                                              \
+                    GB_SCATTER_Mj_t (uint64_t, pMstart, pMend, mark) ;      \
+                case GB_16BYTE:                                             \
+                {                                                           \
+                    const uint64_t *restrict Mxx = (uint64_t *) Mx ;        \
+                    for (int64_t pM = pMstart ; pM < pMend ; pM++)          \
+                    {                                                       \
+                        /* if (M (i,j) == 1) mark Hf [i] */                 \
+                        if (!GBB_M (Mb, pM)) continue ;                     \
+                        if (Mxx [2*pM] || Mxx [2*pM+1])                     \
+                        {                                                   \
+                            /* Hf [i] = M(i,j) */                           \
+                            Hf [GBI_M (Mi, pM, mvlen)] = mark ;             \
+                        }                                                   \
+                    }                                                       \
+                }                                                           \
+            }                                                               \
+        }
+
+#endif
 
 //------------------------------------------------------------------------------
 // GB_HASH_M_j: scatter M(:,j) for a coarse hash task
@@ -135,7 +162,7 @@ break ;
     {                                                       \
         GB_GET_M_ij (pM) ;      /* get M(i,j) */            \
         if (!mij) continue ;    /* skip if M(i,j)=0 */      \
-        const int64_t i = GBI_M (Mi, pM, mvlen) ;             \
+        const int64_t i = GBI_M (Mi, pM, mvlen) ;           \
         for (GB_HASH (i))       /* find i in hash */        \
         {                                                   \
             if (Hf [hash] < mark)                           \
@@ -208,8 +235,8 @@ break ;
     else                                                                    \
     {                                                                       \
         /* A is sparse, bitmap, or full */                                  \
-        pA_start = GBP_A (Ap, k  , avlen) ;                                   \
-        pA_end   = GBP_A (Ap, k+1, avlen) ;                                   \
+        pA_start = GBP_A (Ap, k  , avlen) ;                                 \
+        pA_end   = GBP_A (Ap, k+1, avlen) ;                                 \
     }                                                                       \
     const int64_t aknz = pA_end - pA_start
 
@@ -566,7 +593,14 @@ break ;
 // define macros for any sparsity of A and B
 //------------------------------------------------------------------------------
 
+#ifdef GB_JIT_KERNEL
+// JIT kernels keep their specializations for the sparsity of A and B
+#define GB_META16
+#else
+// generic and pre-generated: define macros for any sparsity of A and B
 #undef GB_META16
+#endif
+
 #include "GB_meta16_definitions.h"
 
 #endif

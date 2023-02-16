@@ -74,7 +74,7 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     else
     {
         // aij = (ztype) Ax [p] ; z += aij ; with typecasting.  A is never iso.
-        fprintf (fp, " \\\\n"
+        fprintf (fp, " \\\n"
                      "{                             \\\n"
                      "    /* z += (ztype) Ax [p] */ \\\n"
                      "    GB_DECLAREA (aij) ;       \\\n"

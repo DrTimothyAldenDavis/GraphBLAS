@@ -55,7 +55,7 @@ include ( SuiteSparse_getenv )
 
 if ( SUITESPARSE_CUDA )
     # for CUDA development only; not for production use
-    set ( CMAKE_CUDA_DEV off )
+    set ( CMAKE_CUDA_DEV on )
     project ( graphblas
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES CUDA C )
@@ -381,6 +381,14 @@ if ( NOT WIN32 )
     target_link_libraries ( graphblas PUBLIC m )
     if ( NOT NSTATIC )
         target_link_libraries ( graphblas_static PUBLIC m )
+    endif ( )
+endif ( )
+
+# libdl
+if ( NOT WIN32 )
+    target_link_libraries ( graphblas PUBLIC dl )
+    if ( NOT NSTATIC )
+        target_link_libraries ( graphblas_static PUBLIC dl )
     endif ( )
 endif ( )
 

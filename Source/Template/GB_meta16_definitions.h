@@ -69,20 +69,20 @@
     #if ( GB_B_IS_HYPER || GB_B_IS_SPARSE )
 
         // B is hyper or sparse
-        #define GB_GET_B_kj_INDEX               \
+        #define GB_GET_B_kj_INDEX                   \
             const int64_t k = Bi [pB]
 
     #elif ( GB_B_IS_BITMAP )
 
         // B is bitmap
-        #define GB_GET_B_kj_INDEX               \
-            if (!Bb [pB]) continue ;            \
+        #define GB_GET_B_kj_INDEX                   \
+            if (!Bb [pB]) continue ;                \
             const int64_t k = pB % bvlen
 
     #else
 
         // B is full
-        #define GB_GET_B_kj_INDEX               \
+        #define GB_GET_B_kj_INDEX                   \
             const int64_t k = pB % bvlen
 
     #endif
@@ -90,8 +90,8 @@
 #else
 
     // for any format of B
-    #define GB_GET_B_kj_INDEX                   \
-        if (!GBB_B (Bb, pB)) continue ;           \
+    #define GB_GET_B_kj_INDEX                       \
+        if (!GBB_B (Bb, pB)) continue ;             \
         const int64_t k = GBI_B (Bi, pB, bvlen)
 
 #endif
@@ -145,20 +145,20 @@
     #if ( GB_A_IS_HYPER || GB_A_IS_SPARSE )
 
         // A is hyper or sparse
-        #define GB_GET_A_ik_INDEX               \
+        #define GB_GET_A_ik_INDEX                   \
             const int64_t i = Ai [pA]
 
     #elif ( GB_A_IS_BITMAP )
 
         // A is bitmap
-        #define GB_GET_A_ik_INDEX               \
-            if (!Ab [pA]) continue ;            \
+        #define GB_GET_A_ik_INDEX                   \
+            if (!Ab [pA]) continue ;                \
             const int64_t i = pA % avlen
 
     #else
 
         // A is full
-        #define GB_GET_A_ik_INDEX               \
+        #define GB_GET_A_ik_INDEX                   \
             const int64_t i = pA % avlen
 
     #endif
@@ -166,8 +166,8 @@
 #else
 
     // for any format of A
-    #define GB_GET_A_ik_INDEX                   \
-        if (!GBB_A (Ab, pA)) continue ;           \
+    #define GB_GET_A_ik_INDEX                       \
+        if (!GBB_A (Ab, pA)) continue ;             \
         const int64_t i = GBI_A (Ai, pA, avlen)
 
 #endif
