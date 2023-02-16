@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_AxB_saxpy_A_sparse_B_bitmap: C<#M>+=A*B, C bitmap, M anything
+// GB_AxB_saxpy4_A_sparse_B_bitmap_template: C<#M>+=A*B, C bitmap/full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -7,12 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// C is bitmap. A is hyper/sparse, B is bitmap/full.
+// C is full. A is hyper/sparse, B is bitmap/full.
 
-// no accumulator is used
+// C += A*B is computed with the accumulator identical to the monoid.
 
-// This template is used by Template/GB_bitmap_AxB_saxpy_template, for all
-// cases: generic, pre-generated (including the ANY_PAIR monoid), and the JIT.
+// This template is used by Template/GB_AxB_saxpy4_template.  It is not used
+// for the generic case, nor for the ANY_PAIR case.  It is only used for the
+// pre-generated kernels, and for the JIT.
 
 #ifndef GB_BSIZE
 #define GB_BSIZE sizeof (GB_B_TYPE)
@@ -60,7 +61,8 @@
             int64_t jtask = jend - jstart ;
             int64_t jpanel = GB_IMIN (jtask, GB_PANEL_SIZE) ;
             H_slice [tid] = hwork ;
-            // bitmap case always needs Hx workspace
+            // full case needs Hx workspace only if jpanel > 1
+            if (jpanel > 1)
             { 
                 hwork += jpanel ;
             }
@@ -73,9 +75,8 @@
         #else
         int64_t cvlenx = cvlen * GB_CSIZE ;
         #endif
-        Wf  = GB_MALLOC_WORK (hwork * cvlen, int8_t, &Wf_size) ;
         Wcx = GB_MALLOC_WORK (hwork * cvlenx, GB_void, &Wcx_size) ;
-        if (Wf == NULL || Wcx == NULL)
+        if (Wcx == NULL)
         { 
             // out of memory
             GB_FREE_ALL ;
@@ -86,8 +87,7 @@
         // C<#M> += A*B
         //----------------------------------------------------------------------
 
-        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-            reduction(+:cnvals)
+        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
         for (tid = 0 ; tid < ntasks ; tid++)
         {
 
@@ -99,24 +99,16 @@
             GB_PARTITION (jstart, jend, bvdim, tid, ntasks) ;
             int64_t jtask = jend - jstart ;
             int64_t jpanel = GB_IMIN (jtask, GB_PANEL_SIZE) ;
-            int64_t task_cnvals = 0 ;
 
             //------------------------------------------------------------------
             // get the workspace for this task
             //------------------------------------------------------------------
 
             // Hf and Hx workspace to compute the panel of C
-            int8_t *restrict Hf = Wf + (H_slice [tid] * cvlen) ;
             #if ( !GB_IS_ANY_PAIR_SEMIRING )
             GB_C_TYPE *restrict Hx = (GB_C_TYPE *)
                 (Wcx + H_slice [tid] * cvlenx) ;
             #endif
-
-            //------------------------------------------------------------------
-            // clear the panel
-            //------------------------------------------------------------------
-
-            memset (Hf, 0, jpanel * cvlen) ;
 
             //------------------------------------------------------------------
             // C<#M>(:,jstart:jend-1) += A * B(:,jstart:jend-1) by panel
@@ -146,6 +138,31 @@
                 //--------------------------------------------------------------
                 // clear the panel H to compute C(:,j1:j2-1)
                 //--------------------------------------------------------------
+
+                #if ( !GB_IS_ANY_PAIR_SEMIRING )
+                if (np == 1)
+                { 
+                    // Make H an alias to C(:,j1)
+                    int64_t j = j1 ;
+                    int64_t pC_start = j * cvlen ;    // get pointer to C(:,j)
+                    // Hx is GB_C_TYPE, not GB_void, so pointer arithmetic on
+                    // it is by units of size sizeof (GB_C_TYPE), not bytes.
+                    Hx = Cx + pC_start ;
+                }
+                else
+                { 
+                    // C is full: set Hx = identity
+                    int64_t nc = np * cvlen ;
+                    #if GB_HAS_IDENTITY_BYTE
+                        memset (Hx, GB_IDENTITY_BYTE, nc * GB_CSIZE) ;
+                    #else
+                        for (int64_t i = 0 ; i < nc ; i++)
+                        { 
+                            GB_HX_WRITE (i, zidentity) ; // Hx(i) = identity
+                        }
+                    #endif
+                }
+                #endif
 
                 #if GB_IS_PLUS_FC32_MONOID
                 float  *restrict Hx_real = (float *) Hx ;
@@ -179,7 +196,6 @@
 
                 #undef GB_HX_COMPUTE
 
-                    // C is bitmap
                     #define GB_HX_COMPUTE(gkj,gb,jj)                        \
                     {                                                       \
                         /* H (i,jj) += A(i,k) * B(k,j) */                   \
@@ -187,18 +203,8 @@
                         {                                                   \
                             /* t = A(i,k) * B (k,j) */                      \
                             GB_MULT_A_ik_G_kj (gkj, jj) ;                   \
-                            if (Hf [pH+jj] == 0)                            \
-                            {                                               \
-                                /* H(i,jj) is a new entry */                \
-                                GB_HX_WRITE (pH+jj, t) ; /* Hx(i,jj)=t */   \
-                                Hf [pH+jj] = 1 ;                            \
-                            }                                               \
-                            else                                            \
-                            {                                               \
-                                /* H(i,jj) is already present */            \
-                                /* Hx(i,jj)+=t */                           \
-                                GB_HX_UPDATE (pH+jj, t) ;                   \
-                            }                                               \
+                            /* Hx(i,jj)+=t */                               \
+                            GB_HX_UPDATE (pH+jj, t) ;                       \
                         }                                                   \
                     }
 
@@ -346,6 +352,12 @@
                 // C<#M>(:,j1:j2-1) = H
                 //--------------------------------------------------------------
 
+                if (np == 1)
+                { 
+                    // Hx is already aliased to Cx; no more work to do
+                    continue ;
+                }
+
                 for (int64_t jj = 0 ; jj < np ; jj++)
                 {
 
@@ -360,9 +372,6 @@
                     {
                         int64_t pC = pC_start + i ;     // pointer to C(i,j)
                         int64_t pH = i * np + jj ;      // pointer to H(i,jj)
-                        if (!Hf [pH]) continue ;
-                        Hf [pH] = 0 ;                   // clear the panel
-                        int8_t cb = Cb [pC] ;
 
                         //------------------------------------------------------
                         // check M(i,j)
@@ -388,28 +397,13 @@
                         // C(i,j) += H(i,jj)
                         //------------------------------------------------------
 
-                        if (cb == 0)
                         { 
                             // C(i,j) = H(i,jj)
-                            GB_CIJ_GATHER (pC, pH) ;
-                            Cb [pC] = keep ;
-                            task_cnvals++ ;
-                        }
-                        else
-                        {
-                            // Currently, the matrix C is a newly allocated
-                            // matrix, not the C_in input matrix to GrB_mxm.
-                            // As a result, this condition is not used.  It
-                            // will be in the future when this method is
-                            // modified to modify C in-place.
-                            ASSERT (GB_DEAD_CODE) ;
-                            // C(i,j) += H(i,jj)
                             GB_CIJ_GATHER_UPDATE (pC, pH) ;
                         }
                     }
                 }
             }
-            cnvals += task_cnvals ;
         }
 
         #undef GB_PANEL_SIZE
@@ -429,8 +423,7 @@
         }
 
         int tid ;
-        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-            reduction(+:cnvals)
+        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
         for (tid = 0 ; tid < ntasks ; tid++)
         {
 
@@ -449,7 +442,6 @@
             int64_t pB_start = j * bvlen ;      // pointer to B(:,j)
             int64_t pC_start = j * cvlen ;      // pointer to C(:,j)
             GB_GET_T_FOR_SECONDJ ;              // t = j or j+1 for SECONDJ*
-            int64_t task_cnvals = 0 ;
 
             // for Hx Gustavason workspace: use C(:,j) in-place:
             #if ( !GB_IS_ANY_PAIR_SEMIRING )
@@ -498,141 +490,18 @@
                     // C<#M>(i,j) += A(i,k) * B(k,j)
                     //----------------------------------------------------------
 
-                    #if GB_MASK_IS_SPARSE_OR_HYPER
                     { 
 
                         //------------------------------------------------------
-                        // M is sparse, and scattered into the C bitmap
+                        // C is full: the monoid is always atomic
                         //------------------------------------------------------
 
-                        // finite-state machine in Cb [pC]:
-                        // 0:   cij not present, mij zero
-                        // 1:   cij present, mij zero (keep==1 for !M)
-                        // 2:   cij not present, mij one
-                        // 3:   cij present, mij one (keep==3 for M)
-                        // 7:   cij is locked
-
-                        int8_t cb ;
-                        #if GB_IS_ANY_MONOID || GB_Z_HAS_ATOMIC_UPDATE
-                        { 
-                            // if C(i,j) is already present and can be modified
-                            // (cb==keep), and the monoid can be done
-                            // atomically, then do the atomic update.  No need
-                            // to modify Cb [pC].
-                            GB_ATOMIC_READ
-                            cb = Cb [pC] ;          // grab the entry
-                            if (cb == keep)
-                            { 
-                                #if !GB_IS_ANY_MONOID
-                                GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
-                                GB_Z_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
-                                #endif
-                                continue ;          // C(i,j) has been updated
-                            }
-                        }
-                        #endif
-
-                        do  // lock the entry
-                        { 
-                            // do this atomically:
-                            // { cb = Cb [pC] ;  Cb [pC] = 7 ; }
-                            GB_ATOMIC_CAPTURE_INT8 (cb, Cb [pC], 7) ;
-                        } while (cb == 7) ; // lock owner gets 0, 1, 2, or 3
-                        if (cb == keep-1)
-                        { 
-                            // C(i,j) is a new entry
-                            GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
-                            GB_Z_ATOMIC_WRITE_HX (i, t) ;     // C(i,j) = t
-                            task_cnvals++ ;
-                            cb = keep ;                     // keep the entry
-                        }
-                        else if (cb == keep)
-                        { 
-                            // C(i,j) is already present
-                            #if !GB_IS_ANY_MONOID
-                            GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
-                            GB_Z_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
-                            #endif
-                        }
-                        GB_ATOMIC_WRITE
-                        Cb [pC] = cb ;                  // unlock the entry
+                        GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
+                        GB_Z_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
 
                     }
-                    #else
-                    { 
-
-                        //------------------------------------------------------
-                        // M is not present, or bitmap/full; C is bitmap
-                        //------------------------------------------------------
-
-                        // finite-state machine in Cb [pC]:
-                        // 0:   cij not present; can be written
-                        // 1:   cij present; can be updated
-                        // 7:   cij is locked
-
-                        #if GB_MASK_IS_BITMAP_OR_FULL
-                        { 
-                            // M is bitmap or full, and not in C bitmap.
-                            // Do not modify C(i,j) if not permitted by the mask
-                            GB_GET_M_ij (pC) ;
-                            mij = mij ^ Mask_comp ;
-                            if (!mij) continue ;
-                        }
-                        #endif
-
-                        //------------------------------------------------------
-                        // C(i,j) += A(i,j) * B(k,j)
-                        //------------------------------------------------------
-
-                        int8_t cb ;
-                        #if GB_IS_ANY_MONOID || GB_Z_HAS_ATOMIC_UPDATE
-                        { 
-                            // if C(i,j) is already present (cb==1), and the
-                            // monoid can be done atomically, then do the
-                            // atomic update.  No need to modify Cb [pC].
-                            GB_ATOMIC_READ
-                            cb = Cb [pC] ;          // grab the entry
-                            if (cb == 1)
-                            { 
-                                #if !GB_IS_ANY_MONOID
-                                GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
-                                GB_Z_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
-                                #endif
-                                continue ;          // C(i,j) has been updated
-                            }
-                        }
-                        #endif
-
-                        do  // lock the entry
-                        { 
-                            // do this atomically:
-                            // { cb = Cb [pC] ;  Cb [pC] = 7 ; }
-                            GB_ATOMIC_CAPTURE_INT8 (cb, Cb [pC], 7) ;
-                        } while (cb == 7) ; // lock owner gets 0 or 1
-                        if (cb == 0)
-                        { 
-                            // C(i,j) is a new entry
-                            GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
-                            GB_Z_ATOMIC_WRITE_HX (i, t) ;     // C(i,j) = t
-                            task_cnvals++ ;
-                        }
-                        else // cb == 1
-                        { 
-                            // C(i,j) is already present
-                            #if !GB_IS_ANY_MONOID
-                            GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
-                            GB_Z_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
-                            #endif
-                        }
-                        GB_ATOMIC_WRITE
-                        Cb [pC] = 1 ;               // unlock the entry
-
-                    }
-                    #endif
-
                 }
             }
-            cnvals += task_cnvals ;
         }
 
     }
@@ -664,9 +533,8 @@
         #else
         size_t cxsize = GB_CSIZE ;
         #endif
-        Wf  = GB_MALLOC_WORK (workspace, int8_t, &Wf_size) ;
         Wcx = GB_MALLOC_WORK (workspace * cxsize, GB_void, &Wcx_size) ;
-        if (Wf == NULL || Wcx == NULL)
+        if (Wcx == NULL)
         { 
             // out of memory
             GB_FREE_ALL ;
@@ -698,10 +566,7 @@
             int64_t pC_start = j * cvlen ;      // pointer to C(:,j), for bitmap
             int64_t pW_start = tid * cvlen ;    // pointer to W(:,tid)
             GB_GET_T_FOR_SECONDJ ;              // t = j or j+1 for SECONDJ*
-            int64_t task_cnvals = 0 ;
 
-            // for Hf and Hx Gustavason workspace: use W(:,tid):
-            int8_t *restrict Hf = Wf + pW_start ;
             #if ( !GB_IS_ANY_PAIR_SEMIRING )
             GB_C_TYPE *restrict Hx = (GB_C_TYPE *) (Wcx + (pW_start * cxsize)) ;
             #endif
@@ -718,8 +583,15 @@
             //------------------------------------------------------------------
 
             { 
-                // C is bitmap: clear Hf
-                memset (Hf, 0, cvlen) ;
+                // C is full: set Hx = identity
+                #if GB_HAS_IDENTITY_BYTE
+                    memset (Hx, GB_IDENTITY_BYTE, cvlen * GB_CSIZE) ;
+                #else
+                    for (int64_t i = 0 ; i < cvlen ; i++)
+                    { 
+                        GB_HX_WRITE (i, zidentity) ; // Hx(i) = identity
+                    }
+                #endif
             }
 
             //------------------------------------------------------------------
@@ -784,13 +656,6 @@
                     #else
                     {
                         GB_MULT_A_ik_B_kj ;         // t = A(i,k)*B(k,j)
-                        if (Hf [i] == 0)
-                        { 
-                            // W(i) is a new entry
-                            GB_HX_WRITE (i, t) ;    // Hx(i) = t
-                            Hf [i] = 1 ;
-                        }
-                        else
                         { 
                             // W(i) is already present
                             GB_HX_UPDATE (i, t) ;   // Hx(i) += t
@@ -805,8 +670,7 @@
         // second phase: C<#M> += reduce (W)
         //----------------------------------------------------------------------
 
-        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-            reduction(+:cnvals)
+        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
         for (tid = 0 ; tid < ntasks ; tid++)
         {
 
@@ -829,7 +693,6 @@
             int64_t pC_start = j * cvlen ;          // pointer to C(:,j)
             int64_t wstart = j * nfine_tasks_per_vector ;
             int64_t wend = (j + 1) * nfine_tasks_per_vector ;
-            int64_t task_cnvals = 0 ;
 
             // Hx = (typecasted) Wcx workspace, use Wf as-is
             #if ( !GB_IS_ANY_PAIR_SEMIRING )
@@ -864,9 +727,7 @@
                     //----------------------------------------------------------
 
                     int64_t pW = pW_start + i ;     // pointer to W(i,w)
-                    if (Wf [pW] == 0) continue ;    // skip if not present
                     int64_t pC = pC_start + i ;     // pointer to C(i,j)
-                    int8_t cb = Cb [pC] ;           // bitmap status of C(i,j)
 
                     //----------------------------------------------------------
                     // M(i,j) already checked, but adjust Cb if M is sparse
@@ -883,21 +744,12 @@
                     // C(i,j) += W (i,w)
                     //----------------------------------------------------------
 
-                    if (cb == 0)
-                    { 
-                        // C(i,j) = W(i,w)
-                        GB_CIJ_GATHER (pC, pW) ;
-                        Cb [pC] = keep ;
-                        task_cnvals++ ;
-                    }
-                    else
                     { 
                         // C(i,j) += W(i,w)
                         GB_CIJ_GATHER_UPDATE (pC, pW) ;
                     }
                 }
             }
-            cnvals += task_cnvals ;
         }
     }
 }

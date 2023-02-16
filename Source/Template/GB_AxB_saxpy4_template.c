@@ -14,8 +14,8 @@
 // The ANY monoid and non-atomic monoids are not supported.
 
 // C is as-if-full.
-// B is bitmap or full.
 // A is sparse or hypersparse.
+// B is bitmap or full.
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \
@@ -25,9 +25,6 @@
     GB_WERK_POP (H_slice, int64_t) ;        \
     GB_WERK_POP (B_slice, int64_t) ;        \
 }
-
-#undef  GB_C_IS_BITMAP
-#define GB_C_IS_BITMAP 0
 
 #if !GB_Z_HAS_ATOMIC_UPDATE
 #error "saxpy4 only defined monoids with an atomic update"
@@ -99,14 +96,14 @@
         // A is sparse/hyper, B is bitmap, no mask
         #undef  GB_B_IS_BITMAP
         #define GB_B_IS_BITMAP 1
-        #include "GB_bitmap_AxB_saxpy_A_sparse_B_bitmap_template.c"
+        #include "GB_AxB_saxpy4_A_sparse_B_bitmap_template.c"
     }
     else
     { 
         // A is sparse/hyper, B is full, no mask
         #undef  GB_B_IS_BITMAP
         #define GB_B_IS_BITMAP 0
-        #include "GB_bitmap_AxB_saxpy_A_sparse_B_bitmap_template.c"
+        #include "GB_AxB_saxpy4_A_sparse_B_bitmap_template.c"
     }
     #undef GB_MASK_IS_SPARSE_OR_HYPER
     #undef GB_MASK_IS_BITMAP_OR_FULL
@@ -121,5 +118,4 @@
 }
 
 #undef GB_FREE_ALL
-#undef GB_C_IS_BITMAP
 

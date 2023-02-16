@@ -11,6 +11,10 @@
 // or C=A*B, and this template is used when C is bitmap.  C can be modified
 // in-place if the accum operator is the same as the monoid.
 
+// C is bitmap.
+// A is sparse, hypersparse, bitmap, or full.
+// B is bitmap or full.
+
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \
 {                                           \
@@ -21,9 +25,6 @@
     GB_WERK_POP (B_slice, int64_t) ;        \
     GB_WERK_POP (M_ek_slicing, int64_t) ;   \
 }
-
-#undef  GB_C_IS_BITMAP
-#define GB_C_IS_BITMAP 1
 
 {
 
@@ -395,5 +396,4 @@
 }
 
 #undef GB_FREE_ALL
-#undef GB_C_IS_BITMAP
 
