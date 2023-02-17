@@ -21,21 +21,6 @@
 #include <cooperative_groups.h>
 #include "GB_AxB_shared_definitions.h"
 
-// FIXME: use #include "GB_is.h" (for debug only)
-// true if A is bitmap
-#define GB_IS_BITMAP(A) ((A) != NULL && ((A)->b != NULL))
-
-// true if A is full (but not bitmap)
-#define GB_IS_FULL(A) \
-    ((A) != NULL && (A)->h == NULL && (A)->p == NULL && (A)->i == NULL \
-        && (A)->b == NULL)
-
-// true if A is hypersparse
-#define GB_IS_HYPERSPARSE(A) ((A) != NULL && ((A)->h != NULL))
-
-// true if A is sparse (but not hypersparse)
-#define GB_IS_SPARSE(A) ((A) != NULL && ((A)->h == NULL) && (A)->p != NULL)
-
 using namespace cooperative_groups;
 
 //------------------------------------------------------------------------------
@@ -92,21 +77,13 @@ __global__ void GB_jit_AxB_dot3_phase1
     const int64_t mvlen = M->vlen ;
     const int64_t mnz = GB_nnz(M) ;
     const bool M_is_hyper = M->h != NULL ;
-    ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
+    ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
 
     const int64_t *__restrict__ Ah = A->h ;
     const int64_t *__restrict__ Ap = A->p ;
     const int64_t *__restrict__ Ai = A->i ;
     const int64_t avlen = A->vlen ;
     const int64_t anz = GB_nnz(A) ;
-
-//  printf ("\non the GPU: A is %d %d %d %d\n",
-//  GB_IS_SPARSE (A), GB_IS_HYPERSPARSE (A),
-//  GB_IS_BITMAP (A), GB_IS_FULL (A)) ;
-
-//  printf ("\non the GPU: B is %d %d %d %d\n",
-//  GB_IS_SPARSE (B), GB_IS_HYPERSPARSE (B),
-//  GB_IS_BITMAP (B), GB_IS_FULL (B)) ;
 
     const int64_t *__restrict__ Bh = B->h ;
     const int64_t *__restrict__ Bp = B->p ;
@@ -153,7 +130,6 @@ __global__ void GB_jit_AxB_dot3_phase1
     }
 
     __shared__ int64_t ks [chunk_size] ;
-
 
     //--------------------------------------------------------------------------
     // assign all entries of C to the buckets
@@ -231,11 +207,7 @@ __global__ void GB_jit_AxB_dot3_phase1
             GB_bucket_code bucket = GB_BUCKET_ZOMBIE ;
             int64_t k = ks [pM - pfirst] ;  // get the k value of Mi,Mx [pM].
             int64_t i = Mi [ pM ] ;
-            #if GB_M_IS_HYPER
-            int64_t j = Mh [k] ;        // Note that Ch and Mh are the same
-            #else
-            int64_t j = k ;
-            #endif
+            int64_t j = GBH_M (Mh, k) ;     // note that Ch and Mh are the same
             if ( GB_MCAST ( Mx, pM, ) )
             {
 

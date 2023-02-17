@@ -177,11 +177,7 @@ __global__ void AxB_dot3_phase3_vsvs
         int64_t k = Ci [pair_id]>>4 ;
 
         // j = k or j = Mh [k] if C and M are hypersparse
-        #if GB_M_IS_HYPER
-        int64_t j = Mh [k] ;
-        #else
-        int64_t j = k ;
-        #endif
+        int64_t j = GBH_M (Mh, k) ;
 
         // find A(:,i):  A is always sparse or hypersparse
         int64_t pA, pA_end ;

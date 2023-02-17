@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-// AxB_dot3_phase3_dndn.cu:
+// GB_jit_AxB_dot3_phase3_dndn.cuh:
 //------------------------------------------------------------------------------
 
-// This CUDA kernel produces the semi-ring product of two
+// This CUDA kernel produces the semiring product of two
 // dense matrices of types T_A and T_B and common index space size n, to a  
 // output matrix of type T_C. The matrices are dense, with uniform
 // non-zeros and sparsity patterns. 
@@ -139,11 +139,7 @@ __global__ void AxB_dot3_phase3_dndn
         {
 
             // j = kk or j = Mh [kk] if C and M are hypersparse
-            #if GB_M_IS_HYPER
-            int64_t j = Mh [kk] ;
-            #else
-            int64_t j = kk ;
-            #endif
+            int64_t j = GBH_M (Mh, kk) ;
 
             int64_t pA     = (A->vlen)*i;
             int64_t pA_end = pA +(A->vlen);

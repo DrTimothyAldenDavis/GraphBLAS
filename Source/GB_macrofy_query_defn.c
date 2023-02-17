@@ -83,6 +83,7 @@ void GB_macrofy_query_defn
                 {
                     is_unique = false ;
                     fprintf (fp, "    defn [%d] = defn [%d] ;\n", k+2, j+2) ;
+                    break ;
                 }
             }
             if (is_unique)
