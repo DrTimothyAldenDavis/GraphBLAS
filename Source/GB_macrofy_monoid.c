@@ -305,23 +305,20 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         fprintf (fp, "#define GB_Z_ATOMIC_BITS 64\n") ;
     }
 
-    // atomic write for the ztype
-    if (has_atomic_write)
-    {
-        fprintf (fp, "#define GB_Z_HAS_ATOMIC_WRITE 1\n") ;
-        if (zcode == GB_FC32_code || zcode == GB_UDT_code)
-        {
-            // user-defined types of size 1, 2, 4, or 8 bytes can be written
-            // atomically, but must use a pun with ztype_atomic.  float complex
-            // should also ztype_atomic.
-            fprintf (fp, "#define GB_Z_ATOMIC_TYPE %s\n", ztype_atomic) ;
-        }
+    // atomic write for the ztype:  if GB_Z_ATOMIC_BITS is defined, then
+    // GB_Z_HAS_ATOMIC_WRITE is #defined as 1 by GB_kernel_shared_definitions.h
+    if (has_atomic_write && (zcode == GB_FC32_code || zcode == GB_UDT_code))
+    { 
+        // user-defined types of size 1, 2, 4, or 8 bytes can be written
+        // atomically, but must use a pun with ztype_atomic.  float complex
+        // should also ztype_atomic.
+        fprintf (fp, "#define GB_Z_ATOMIC_TYPE %s\n", ztype_atomic) ;
     }
 
     // OpenMP atomic update support
     bool is_real = (zcode >= GB_BOOL_code && zcode <= GB_FP64_code) ;
     bool has_atomic_update = false ;
-    int omp_atomic_version = 2 ;
+    int omp_atomic_version = 0 ;
 
     switch (opcode)
     {
@@ -332,41 +329,65 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             // float complex (64 bits) but not double complex (128 bits).
             // The atomic update is identical: just an atomic write.
             has_atomic_update = has_atomic_write ;
+            omp_atomic_version = 2 ;
             break ;
 
-        case GB_BOR_binop_code   :
-        case GB_BAND_binop_code  :
-        case GB_BXOR_binop_code  :
-        case GB_LOR_binop_code   :
         case GB_LAND_binop_code  :
+        case GB_LOR_binop_code   :
         case GB_LXOR_binop_code  :
+        case GB_BAND_binop_code  :
+        case GB_BOR_binop_code   :
+        case GB_BXOR_binop_code  :
             // OpenMP 4.0 atomic, not on MS Visual Studio
             has_atomic_update = true ;
             omp_atomic_version = 4 ;
             break ;
 
         case GB_BXNOR_binop_code :
+        case GB_EQ_binop_code    : // LXNOR
         case GB_MIN_binop_code   :
         case GB_MAX_binop_code   :
-        case GB_EQ_binop_code    : // LXNOR
-            // these monoids can be done via atomic compare/exchange
+            // these monoids can be done via atomic compare/exchange,
+            // but not with an omp pragma
             has_atomic_update = true ;
             break ;
 
         case GB_PLUS_binop_code  :
             // even complex can be done atomically
             has_atomic_update = true ;
+            omp_atomic_version = 2 ;
             break ;
 
         case GB_TIMES_binop_code :
-            // real monoids can be done atomically, not complex
-            has_atomic_update = is_real ;
+            // real monoids can be done atomically, not double complex
+            has_atomic_update = is_real || (zcode == GB_FC32_code) ;
+            // only the real case has an omp pragma
+            omp_atomic_version = is_real ? 2 : 0 ;
             break ;
 
         default :
-            // all other monoids, including user-defined, cannot be done
-            // atomically.  Instead, they must be done in a critical section.
-            has_atomic_update = false ;
+            // all other monoids, including user-defined, can be done atomically
+            // via compare-and-swap, if z has size 1, 2, 4, or 8 bytes.
+            // Otherwise, they must be done in a critical section.
+            has_atomic_update = has_atomic_write ;
+            omp_atomic_version = 0 ;
+    }
+
+    if (has_atomic_update)
+    { 
+        // the monoid can be done atomically
+        fprintf (fp, "#define GB_Z_HAS_ATOMIC_UPDATE 1\n") ;
+        if (omp_atomic_version == 4)
+        {
+            // OpenMP 4.0 has an omp pragram but not OpenMP 2.0. 
+            fprintf (fp, "#define GB_Z_HAS_OMP_ATOMIC_UPDATE "
+                "(!GB_COMPILER_MSC)\n") ;
+        }
+        else if (omp_atomic_version == 2)
+        {
+            // this update has an omp pragm 
+            fprintf (fp, "#define GB_Z_HAS_OMP_ATOMIC_UPDATE 1\n") ;
+        }
     }
 
     //--------------------------------------------------------------------------

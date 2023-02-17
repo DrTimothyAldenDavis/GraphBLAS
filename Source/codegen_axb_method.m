@@ -176,6 +176,7 @@ elseif (isequal (addop, 'bxnor') || ...
 
     % atomic update but no #pramga omp update
     has_atomic_update = true ;
+    omp_atomic_version = 0 ;
 
 elseif (isequal (addop, 'plus'))
 
@@ -185,9 +186,16 @@ elseif (isequal (addop, 'plus'))
 
 elseif (isequal (addop, 'times'))
 
-    % TIMES monoid can be done atomically for real types
-    has_atomic_update = ztype_is_real ;
-    omp_atomic_version = 2 ;
+    % TIMES monoid can be done atomically for real types and single complex
+    if (ztype_is_real)
+        % real types have an omp pragma
+        has_atomic_update = true ;
+        omp_atomic_version = 2 ;
+    elseif (isequal (ztype, 'GxB_FC32_t'))
+        % single complex can be done as compare-and-swap
+        has_atomic_update = true ;
+        omp_atomic_version = 0 ;
+    end
 
 else
 

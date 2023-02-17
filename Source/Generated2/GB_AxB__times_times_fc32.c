@@ -50,6 +50,7 @@
 
 #define GB_Z_ATOMIC_BITS 64
 #define GB_Z_ATOMIC_TYPE uint64_t
+#define GB_Z_HAS_ATOMIC_UPDATE 1
 
 #define GB_Z_IGNORE_OVERFLOW 1
 

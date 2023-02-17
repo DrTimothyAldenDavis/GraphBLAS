@@ -495,8 +495,8 @@
     #else
 
         // all other atomic monoids (EQ, XNOR) on boolean, signed and unsigned
-        // integers, float, double, and float complex (not used for double
-        // complex).
+        // integers, float, double, and float complex (not double complex).
+        // user-defined monoids can use this if zsize is 1, 2, 4, or 8.
         #define GB_Z_ATOMIC_UPDATE_HX(i,t)                              \
         {                                                               \
             GB_Z_TYPE zold, znew, *pz = Hx + (i) ;                      \
@@ -519,9 +519,9 @@
     // Hx [i] += t can only be done inside the critical section
     //--------------------------------------------------------------------------
 
-    // all user-defined monoids go here, and all complex monoids (except PLUS).
-    // This macro is not actually atomic itself, but must be placed inside a
-    // critical section.
+    // all user-defined monoids go here, and all double complex monoids (except
+    // PLUS).  This macro is not actually atomic itself, but must be placed
+    // inside a critical section.
     #define GB_Z_ATOMIC_UPDATE_HX(i,t)  \
     {                                   \
         GB_OMP_FLUSH                    \
