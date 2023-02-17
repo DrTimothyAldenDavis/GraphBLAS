@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GBCUDA_DEV
 #include "GB.h"
 #include "GB_emult.h"
 #include "GB_control.h"
@@ -582,6 +581,4 @@ GrB_Info GB (_bind2nd_tran)
 }
 
 endif_binop_bind_is_enabled
-
-#endif
 

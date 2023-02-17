@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GBCUDA_DEV
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_AxB_kernels.h"
@@ -427,5 +426,4 @@ GrB_Info GB (_Asaxpy3B__plus_rdiv_fc32)
     }
 
 #endif
-#endif  // GBCUDA_DEV
 

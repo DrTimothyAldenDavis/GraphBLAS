@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GBCUDA_DEV
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_unop__include.h"
@@ -124,6 +123,4 @@ GrB_Info GB (_unop_tran__sqrt_fp32_fp32)
     return (GrB_SUCCESS) ;
     #endif
 }
-
-#endif
 

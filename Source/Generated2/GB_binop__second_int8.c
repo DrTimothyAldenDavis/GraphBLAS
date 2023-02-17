@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GBCUDA_DEV
 #include "GB.h"
 #include "GB_emult.h"
 #include "GB_control.h"
@@ -556,8 +555,6 @@ GrB_Info GB ((none))
     return (GrB_SUCCESS) ;
     #endif
 }
-
-#endif
 
 #endif
 

@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GBCUDA_DEV
 #include "GB.h"
 #include "GB_emult.h"
 #include "GB_control.h"
@@ -550,6 +549,4 @@ GrB_Info GB (_bind2nd_tran__bclr_int32)
     return (GrB_SUCCESS) ;
     #endif
 }
-
-#endif
 

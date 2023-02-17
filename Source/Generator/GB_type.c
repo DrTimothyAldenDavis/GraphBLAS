@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GBCUDA_DEV
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_ek_slice.h"
@@ -100,6 +99,4 @@ GrB_Info GB (_Cdense_25)
     return (GrB_SUCCESS) ;
     #endif
 }
-
-#endif
 

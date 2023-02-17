@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GBCUDA_DEV
 #include "GB.h"
 #include "GB_control.h" 
 #include "GB_bld__include.h"
@@ -56,6 +55,4 @@ GrB_Info GB (_bld__times_int32)
     return (GrB_SUCCESS) ;
     #endif
 }
-
-#endif
 

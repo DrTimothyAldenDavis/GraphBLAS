@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GBCUDA_DEV
 #include "GB.h"
 #include "GB_control.h" 
 #include "GB_red__include.h"
@@ -72,6 +71,4 @@ GrB_Info GB (_red__min_uint32)
     return (GrB_SUCCESS) ;
     #endif
 }
-
-#endif
 

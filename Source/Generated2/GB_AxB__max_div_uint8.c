@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GBCUDA_DEV
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_AxB_kernels.h"
@@ -430,5 +429,4 @@ GrB_Info GB (_Asaxpy3B__max_div_uint8)
     }
 
 #endif
-#endif  // GBCUDA_DEV
 
