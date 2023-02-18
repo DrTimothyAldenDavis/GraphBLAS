@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot2_template:  C=A'B, C<!M>=A'*B, or C<M>=A'*B via dot products
+// GB_AxB_dot2_template:  C<#M>=A'*B, or C<#M>=A*B via dot products
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -12,8 +12,10 @@
 // sparse matrices, and C is converted from bitmap to sparse/hypersparse when
 // done.
 
-// If A_NOT_TRANSPOSED is #defined, the C=A*B or C<#M>=A*B is computed.
+// If A_NOT_TRANSPOSED is #defined, then C=A*B or C<#M>=A*B is computed.
 // In this case A is bitmap or full, and B is sparse.
+
+// C is bitmap or full.
 
 // GB_DOT_ALWAYS_SAVE_CIJ: C(i,j) = cij
 #undef GB_DOT_ALWAYS_SAVE_CIJ
@@ -47,6 +49,10 @@
             GB_DOT_ALWAYS_SAVE_CIJ ;    \
         }                               \
     }
+#endif
+
+#ifndef GB_NO_MASK
+#error "mask undefined"
 #endif
 
 #if ( !GB_A_IS_HYPER && !GB_B_IS_HYPER )
@@ -126,20 +132,30 @@
             {
 
                 //--------------------------------------------------------------
-                // get C(i,j), M(i,j), and clear the C(i,j) bitmap
+                // get C(i,j), M(i,j), and clear the C(i,j) bitmap if C bitmap
                 //--------------------------------------------------------------
 
-                int64_t pC = pC_start + i ;     // C is bitmap
+                int64_t pC = pC_start + i ;     // get C(i,j) position
 
-// FIXME: add GB_ANY_SPECIALIZED to the JIT
-// FIXME: add GB_MASK_IS_PRESENT to the JIT
-// FIXME: handle GB_A_NOT_TRANSPOSED in the JIT (treat as different kernel)
+                #if GB_C_IS_FULL
 
-                #if defined ( GB_ANY_SPECIALIZED )
-                // M is bitmap and structural; Mask_comp true
-                Cb [pC] = 0 ;
+                // C is full; nothing to do.  No mask is present
+                ASSERT (GB_NO_MASK) ;
+
+                #elif defined ( GB_ANY_SPECIALIZED )
+
+                // the JIT kernel does not need to exploit this as a special
+                // case, since Mask_comp, M_is_bitmap, etc, are all
+                // compile-time constants.
+
+                // special case: M is bitmap and structural; Mask_comp true
+                Cb [pC] = 0 ;       // C is bitmap
                 if (!Mb [pC])
-                #elif defined ( GB_MASK_IS_PRESENT )
+
+                #elif ( !GB_NO_MASK )
+
+                // C is bitmap
+                // M is present: arbitrary sparsity and valued/structural
                 bool mij ;
                 if (M_is_bitmap)
                 { 
@@ -158,11 +174,12 @@
                 }
                 Cb [pC] = 0 ;
                 if (mij ^ Mask_comp)
-                #elif GB_C_IS_FULL
-                // C is full; nothing to do
+
                 #else
-                // M is not present
+
+                // C is bitmap; M is not present
                 Cb [pC] = 0 ;
+
                 #endif
                 { 
 

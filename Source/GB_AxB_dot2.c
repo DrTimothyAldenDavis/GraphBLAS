@@ -11,11 +11,9 @@
 // hyper if A or B are hypersparse.  The C<M>=A'*B dot product when C is sparse
 // is computed by GB_AxB_dot3.  This method handles the case when C is bitmap.
 
-// If A_not_transposed is true, then C=A*B is computed for GB_AxB_saxpy.  A is
-// bitmap or full, and the dot product method accesses A with a different
-// stride than when computing C=A'*B.
-
-// FIXME: treat A_not_transposed as invoking a different JIT kernel
+// If A_not_transposed is true, then C<#>=A*B is computed for GB_AxB_saxpy.  A
+// is bitmap or full, and the dot product method accesses A with a different
+// stride than when computing C<#M>=A'*B.
 
 // TODO:  this is slower than it could be if A and B are both bitmap/full, when
 // A->vlen is large.  This is because the inner loop is a simple full/bitmap
@@ -91,10 +89,12 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     GB_WERK_DECLARE (B_slice, int64_t) ;
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
 
+    // FIXME: use GB_as_if_full in GB_enumify_* for inputs M, A, and B
+
     // GB_AxB_saxpy punts to this dot2 method for for C=A*B, and in this case,
     // A is bitmap or full, and B is hypersparse or sparse
-    bool A_is_full = GB_as_if_full (A_in) ;
-    bool B_is_full = GB_as_if_full (B_in) ;
+    bool A_is_full = GB_IS_FULL (A_in) ; // GB_as_if_full (A_in) ;
+    bool B_is_full = GB_IS_FULL (B_in) ; // GB_as_if_full (B_in) ;
     bool A_bitmap_or_full = (GB_IS_BITMAP (A_in) || A_is_full) ;
     bool B_bitmap_or_full = (GB_IS_BITMAP (B_in) || B_is_full) ;
     ASSERT (GB_IMPLIES (A_not_transposed,
@@ -302,7 +302,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
     GrB_Type ctype = add->op->ztype ;
 
-    // determine the sparsity of C
+    // determine the sparsity of C.  If M is present, C is always bitmap.
+    // otherwise, C can be bitmap or full
     int C_sparsity = GxB_BITMAP ;
     if (M == NULL)
     {
@@ -456,6 +457,34 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
             }
             ASSERT (info == GrB_SUCCESS || info == GrB_NO_VALUE) ;
 
+        #endif
+
+        //----------------------------------------------------------------------
+        // via the JIT
+        //----------------------------------------------------------------------
+
+        #ifdef GB_DEBUGIFY_DEFN
+        #ifndef GBRENAME
+        // FIXME: not yet working in MATLAB (mxMalloc issues)
+        if (!done)
+        {
+            if (A_not_transposed)
+            {
+                // C<#M> = A*B, C is bitmap/full
+                info = GB_AxB_dot2n_jit (C, M, Mask_comp, Mask_struct,
+                    A, A_slice, B, B_slice, semiring, flipxy,
+                    nthreads, naslice, nbslice) ;
+            }
+            else
+            {
+                // C<#M> = A'*B, C is bitmap
+                info = GB_AxB_dot2_jit (C, M, Mask_comp, Mask_struct,
+                    A, A_slice, B, B_slice, semiring, flipxy,
+                    nthreads, naslice, nbslice) ;
+            }
+            done = (info == GrB_SUCCESS) ;
+        }
+        #endif
         #endif
 
         //----------------------------------------------------------------------

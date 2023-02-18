@@ -36,7 +36,7 @@ int GB_sparsity_control     // revised sparsity_control
     int64_t vdim            // A->vdim, or -1 to ignore this condition
 ) ;
 
-// GB_sparsity: determine the current sparsity_control status of a matrix
+// GB_sparsity: determine the current sparsity format of a matrix
 static inline int GB_sparsity (GrB_Matrix A)
 {
     if (A == NULL)

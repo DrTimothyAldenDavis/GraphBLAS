@@ -130,6 +130,36 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_AxB_dot2_jit        // C<M>=A'*B, dot2 method, via the JIT
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_comp,
+    const bool Mask_struct,
+    const GrB_Matrix A, int64_t *restrict A_slice,
+    const GrB_Matrix B, int64_t *restrict B_slice,
+    const GrB_Semiring semiring,
+    const bool flipxy,
+    const int nthreads,
+    const int naslice,
+    const int nbslice
+) ;
+
+GrB_Info GB_AxB_dot2n_jit        // C<M>=A*B, dot2n method, via the JIT
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_comp,
+    const bool Mask_struct,
+    const GrB_Matrix A, int64_t *restrict A_slice,
+    const GrB_Matrix B, int64_t *restrict B_slice,
+    const GrB_Semiring semiring,
+    const bool flipxy,
+    const int nthreads,
+    const int naslice,
+    const int nbslice
+) ;
+
 bool GB_is_diagonal             // true if A is diagonal
 (
     const GrB_Matrix A          // input matrix to examine
