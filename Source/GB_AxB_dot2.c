@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot2: compute C<#M>=A'*B, C is bitmap, or C<#M>=A*B (C bitmap/full)
+// GB_AxB_dot2: compute C<#M>=A'*B or C<#M>=A*B, where C is bitmap/full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -7,9 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// This method always constructs C as bitmap; it then converts C to sparse or
-// hyper if A or B are hypersparse.  The C<M>=A'*B dot product when C is sparse
-// is computed by GB_AxB_dot3.  This method handles the case when C is bitmap.
+// This method always constructs C as bitmap or full; it then converts C to
+// sparse or hyper if A or B are hypersparse.  The C<M>=A'*B dot product when C
+// is sparse is computed by GB_AxB_dot3.  This method handles the case when C
+// is bitmap or full.
 
 // If A_not_transposed is true, then C<#>=A*B is computed for GB_AxB_saxpy.  A
 // is bitmap or full, and the dot product method accesses A with a different
