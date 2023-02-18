@@ -39,7 +39,7 @@ GrB_Info GB_AxB_dot2n_jit        // C<M>=A'*B, dot2n method, via the JIT
 {
 
 #ifdef GBRENAME
-    return (GrB_NOT_IMPLEMENTED) ;
+    return (GrB_NO_VALUE) ;
 #else
 
     //------------------------------------------------------------------
@@ -50,8 +50,8 @@ GrB_Info GB_AxB_dot2n_jit        // C<M>=A'*B, dot2n method, via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_mxm (&encoding, &suffix,
-        GB_JIT_KERNEL_MXM_DOT2N,
-        C, M, Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
+        GB_JIT_KERNEL_MXM_DOT2N, C->iso, GB_sparsity (C), C->type,
+        M, Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
     if (hash == UINT64_MAX)
     {
         // cannot JIT this semiring

@@ -227,6 +227,17 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_AxB_dot4_jit            // C+=A'*B, dot4 method, via the JIT
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, int64_t *restrict A_slice, int naslice,
+    const GrB_Matrix B, int64_t *restrict B_slice, int nbslice,
+    const GrB_Semiring semiring,
+    const bool flipxy,
+    const int nthreads,
+    GB_Werk Werk
+) ;
+
 GrB_Info GB_bitmap_expand_to_hyper
 (
     // input/output:

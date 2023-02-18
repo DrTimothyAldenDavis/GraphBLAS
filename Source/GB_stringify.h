@@ -124,7 +124,12 @@ uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
     char **suffix,              // suffix for user-defined kernel
     // input:
     int kcode,                  // kernel to encode (dot3, saxpy3, etc)
-    GrB_Matrix C,
+
+//  GrB_Matrix C,
+    const bool C_iso,
+    int C_sparsity,
+    const GrB_Type ctype,
+
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,

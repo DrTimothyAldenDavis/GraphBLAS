@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot4_cij.c: C(i,j) = A(:,i)'*B(:,j) for dot4 method
+// GB_AxB_dot4_cij.c: C(i,j) += A(:,i)'*B(:,j) for dot4 method
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -15,8 +15,11 @@
     // get C(i,j)
     //--------------------------------------------------------------------------
 
+    // FIXME: allow for the use of any accum:  set cij = identity, and then
+    // use the accume when done (instead of GB_PUTC)
+
     const int64_t pC = i + pC_start ;   // C(i,j) is at Cx [pC]
-    GB_C_TYPE GB_GET4C (cij, pC) ;       // cij = Cx [pC]
+    GB_C_TYPE GB_GET4C (cij, pC) ;      // cij = Cx [pC]
 
     //--------------------------------------------------------------------------
     // C(i,j) += A (:,i)*B(:,j): a single dot product
@@ -158,6 +161,8 @@
     // save C(i,j)
     //--------------------------------------------------------------------------
 
+    // FIXME: add the accum here for the JIT kernel (arbitrary accum
+    // and typecasting
     Cx [pC] = cij ;
 }
 

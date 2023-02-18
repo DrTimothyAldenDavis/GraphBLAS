@@ -35,7 +35,7 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
 {
 
 #ifdef GBRENAME
-    return (GrB_NOT_IMPLEMENTED) ;
+    return (GrB_NO_VALUE) ;
 #else
 
     //------------------------------------------------------------------

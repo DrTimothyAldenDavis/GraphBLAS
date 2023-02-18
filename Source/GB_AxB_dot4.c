@@ -22,6 +22,7 @@
 #include "GB_mxm.h"
 #include "GB_binop.h"
 #include "GB_unused.h"
+#include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_AxB__include2.h"
 #endif
@@ -53,15 +54,6 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     GB_Werk Werk
 )
 {
-
-    //--------------------------------------------------------------------------
-    // dot4 is disabled if GraphBLAS is compiled as compact
-    //--------------------------------------------------------------------------
-
-    #ifdef GBCUDA_DEV
-    GBURBLE ("(always punt) ") ;
-    return (GrB_NO_VALUE) ;
-    #else
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -132,6 +124,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     if (!builtin_semiring || (add_binop_code == GB_ANY_binop_code))
     { 
         // The semiring must be built-in, and cannot use the ANY monoid.
+        // FIXME: do not punt if the JIT can be used
+        GBURBLE ("(punt: not builtin) ") ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -213,30 +207,51 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     GB_pslice (B_slice, B->p, bnvec, nbslice, false) ;
 
     //--------------------------------------------------------------------------
-    // define the worker for the switch factory
+    // via pre-generated kernel
     //--------------------------------------------------------------------------
 
     info = GrB_NO_VALUE ;
+    #ifndef GBCUDA_DEV
 
-    #define GB_Adot4B(add,mult,xname) GB (_Adot4B_ ## add ## mult ## xname)
-    #define GB_AxB_WORKER(add,mult,xname)                           \
-    {                                                               \
-        info = GB_Adot4B (add,mult,xname) (C, A, A_slice, naslice,  \
-            B, B_slice, nbslice, nthreads, Werk) ;               \
-    }                                                               \
-    break ;
+        //----------------------------------------------------------------------
+        // define the worker for the switch factory
+        //----------------------------------------------------------------------
+
+        #define GB_Adot4B(add,mult,xname) GB (_Adot4B_ ## add ## mult ## xname)
+        #define GB_AxB_WORKER(add,mult,xname)                           \
+        {                                                               \
+            info = GB_Adot4B (add,mult,xname) (C, A, A_slice, naslice,  \
+                B, B_slice, nbslice, nthreads, Werk) ;                  \
+        }                                                               \
+        break ;
+
+        //----------------------------------------------------------------------
+        // launch the switch factory
+        //----------------------------------------------------------------------
+
+        // disabled the ANY monoid
+        #define GB_NO_ANY_MONOID
+        #include "GB_AxB_factory.c"
+
+    #endif
 
     //--------------------------------------------------------------------------
-    // launch the switch factory
+    // via the JIT
     //--------------------------------------------------------------------------
 
-    // disabled the ANY monoid
-    #define GB_NO_ANY_MONOID
-    #include "GB_AxB_factory.c"
-
-    //--------------------------------------------------------------------------
-    // FIXME: handle the jit here
-    //--------------------------------------------------------------------------
+    #ifdef GB_DEBUGIFY_DEFN
+    #ifndef GBRENAME
+    // FIXME: not yet working in MATLAB (mxMalloc issues)
+    if (info == GrB_NO_VALUE)
+    {
+        // C+= A*B, C is full
+        info = GB_AxB_dot4_jit (C,
+            A, A_slice, naslice,
+            B, B_slice, nbslice,
+            semiring, flipxy, nthreads, Werk) ;
+    }
+    #endif
+    #endif
 
     //--------------------------------------------------------------------------
     // free workspace and return result
@@ -254,6 +269,5 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         (*done_in_place) = true ;
     }
     return (info) ;
-    #endif
 }
 

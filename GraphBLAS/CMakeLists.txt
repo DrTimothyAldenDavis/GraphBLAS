@@ -130,11 +130,11 @@ if ( CMAKE_CUDA_DEV )
     # for CUDA development only; not for production use
     include_directories ( ../Source/Template ../Source ../Include rename
         ../Source/Shared ../Source/SharedTemplate
-        ../Source/Generated1 ../lz4 ../zstd ../zstd/zstd_subset )
+        ../Source/Generated1 ../lz4 ../zstd ../zstd/zstd_subset ../xxHash )
 else ( )
     include_directories ( ../Source/Template ../Source ../Include rename
         ../Source/Shared ../Source/SharedTemplate
-        ../Source/Generated1 ../lz4 ../zstd ../zstd/zstd_subset
+        ../Source/Generated1 ../lz4 ../zstd ../zstd/zstd_subset ../xxHash
         ../Source/Generated2 )
 endif ( )
 

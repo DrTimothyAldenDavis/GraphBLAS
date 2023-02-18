@@ -21,6 +21,7 @@
 #define GB_JIT_KERNEL_MXM_SAXPY3 3
 #define GB_JIT_KERNEL_MXM_DOT2 4
 #define GB_JIT_KERNEL_MXM_DOT2N 5
+#define GB_JIT_KERNEL_MXM_DOT4 6
 // ... etc FIXME: list them all here
 // or make this an enum
 

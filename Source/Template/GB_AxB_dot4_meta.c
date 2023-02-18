@@ -47,24 +47,40 @@
     const int8_t   *restrict Bb = B->b ;
     const int64_t  *restrict Bh = B->h ;
     const int64_t  *restrict Bi = B->i ;
-    const bool B_iso = B->iso ;
     const int64_t vlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
-    const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
+
+    #ifdef GB_JIT_KERNEL
+    #define B_is_hyper     GB_B_IS_HYPER
+    #define B_is_bitmap    GB_B_IS_BITMAP
+    #define B_is_sparse    GB_B_IS_SPARSE
+    #define B_iso          GB_B_ISO
+    #else
+    const bool B_is_hyper  = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
+    const bool B_iso       = B->iso ;
+    #endif
 
     const int64_t  *restrict Ap = A->p ;
     const int8_t   *restrict Ab = A->b ;
     const int64_t  *restrict Ah = A->h ;
     const int64_t  *restrict Ai = A->i ;
-    const bool A_iso = A->iso ;
     const int64_t avdim = A->vdim ;
     ASSERT (A->vlen == B->vlen) ;
     ASSERT (A->vdim == C->vlen) ;
+
+    #ifdef GB_JIT_KERNEL
+    #define A_is_hyper     GB_A_IS_HYPER
+    #define A_is_bitmap    GB_A_IS_BITMAP
+    #define A_is_sparse    GB_A_IS_SPARSE
+    #define A_iso          GB_A_ISO
+    #else
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
+    const bool A_iso = A->iso ;
+    #endif
 
     #if GB_IS_ANY_MONOID
     #error "dot4 not supported for ANY monoids"
@@ -86,6 +102,7 @@
     // if C is iso on input: get the iso scalar and convert C to non-iso
     //--------------------------------------------------------------------------
 
+    // FIXME: add this to the JIT kernel code
     const bool C_in_iso = C->iso ;
     GB_DECLARE_IDENTITY_CONST (zidentity) ;
     const GB_C_TYPE cinput = (C_in_iso) ? Cx [0] : zidentity ;
@@ -106,7 +123,13 @@
     // C += A'*B
     //--------------------------------------------------------------------------
 
+    #ifdef GB_JIT_KERNEL
+    #define  GB_META16
+    #include "GB_meta16_definitions.h"
+    #include "GB_AxB_dot4_template.c"
+    #else
     #include "GB_meta16_factory.c"
+    #endif
 }
 
 #undef GB_DOT

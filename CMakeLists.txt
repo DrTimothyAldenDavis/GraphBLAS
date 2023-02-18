@@ -60,7 +60,14 @@ if ( SUITESPARSE_CUDA )
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES CUDA C )
 else ( )
-    set ( CMAKE_CUDA_DEV off )
+# FIXME:!! CUDA DEV is on!!
+    message ( WARNING "CUDA DEV IS ON --- DO NOT USE IN PRODUCTION!!!" )
+    message ( WARNING "CUDA DEV IS ON --- DO NOT USE IN PRODUCTION!!!" )
+    message ( WARNING "CUDA DEV IS ON --- DO NOT USE IN PRODUCTION!!!" )
+    message ( WARNING "CUDA DEV IS ON --- DO NOT USE IN PRODUCTION!!!" )
+    message ( WARNING "CUDA DEV IS ON --- DO NOT USE IN PRODUCTION!!!" )
+    set ( CMAKE_CUDA_DEV on )
+#   set ( CMAKE_CUDA_DEV off )
     project ( graphblas
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES C )
@@ -182,11 +189,11 @@ configure_file ( "CUDA/Config/GB_cuda_common_jitFactory.hpp.in"
 if ( CMAKE_CUDA_DEV )
     # for CUDA development only; not for production use
     include_directories ( Source/Template Source Include Source/Generated1
-        Source/Shared Source/SharedTemplate
+        Source/Shared Source/SharedTemplate xxHash
         lz4 zstd zstd/zstd_subset Demo/Include rmm_wrap )
 else ( )
     include_directories ( Source/Template Source Include Source/Generated1
-        Source/Shared Source/SharedTemplate
+        Source/Shared Source/SharedTemplate xxHash
         lz4 zstd zstd/zstd_subset Source/Generated2 Demo/Include rmm_wrap )
 endif ( )
 

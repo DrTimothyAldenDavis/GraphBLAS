@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy3_jit: C<M>=A*B saxpy3 method, via the JIT
+// GB_AxB_dot4_jit: C<M>=A'*B dot4 method, via the JIT
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -14,34 +14,20 @@
 typedef GrB_Info (*GB_jit_dl_function)
 (
     GrB_Matrix,
-    const GrB_Matrix,
-    const bool,
-    const GrB_Matrix,
-    const GrB_Matrix,
-    GB_saxpy3task_struct *restrict,
-    const int,
-    const int,
-    const int,
+    const GrB_Matrix, int64_t *restrict, int,
+    const GrB_Matrix, int64_t *restrict, int,
     const int,
     GB_Werk
 ) ;
 
-GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
+GrB_Info GB_AxB_dot4_jit            // C+=A'*B, dot4 method, via the JIT
 (
     GrB_Matrix C,
-    const GrB_Matrix M,
-    const bool Mask_comp,
-    const bool Mask_struct,
-    const bool M_in_place,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
+    const GrB_Matrix A, int64_t *restrict A_slice, int naslice,
+    const GrB_Matrix B, int64_t *restrict B_slice, int nbslice,
     const GrB_Semiring semiring,
     const bool flipxy,
-    GB_saxpy3task_struct *restrict SaxpyTasks,
-    const int ntasks,
-    const int nfine,
     const int nthreads,
-    const int do_sort,          // if nonzero, try to sort in saxpy3
     GB_Werk Werk
 )
 {
@@ -58,8 +44,8 @@ GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_mxm (&encoding, &suffix,
-        GB_JIT_KERNEL_MXM_SAXPY3, C->iso, GB_sparsity (C), C->type,
-        M, Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
+        GB_JIT_KERNEL_MXM_DOT4, false, GB_sparsity (C), C->type,
+        NULL, true, false, semiring, flipxy, A, B) ;
     if (hash == UINT64_MAX)
     {
         // cannot JIT this semiring
@@ -85,12 +71,12 @@ GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
         if (suffix == NULL)
         {
             snprintf (kernel_name, KLEN-1,
-                "GB_jit_AxB_saxpy3_%0*" PRIx64, 16, scode) ;
+                "GB_jit_AxB_dot4_%0*" PRIx64, 16, scode) ;
         }
         else
         {
             snprintf (kernel_name, KLEN-1,
-                "GB_jit_AxB_saxpy3_%0*" PRIx64 "__%s", 16, scode, suffix) ;
+                "GB_jit_AxB_dot4_%0*" PRIx64 "__%s", 16, scode, suffix) ;
         }
 
         char lib_filename [2048] ;
@@ -180,8 +166,8 @@ GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
 
             GB_macrofy_mxm (fp, scode, semiring, C->type, A->type, B->type) ;
             fprintf (fp,
-                "\n// AxB saxpy3 kernel\n"
-                "#include \"GB_jit_kernel_AxB_saxpy3.c\"\n") ;
+                "\n// AxB dot4 kernel\n"
+                "#include \"GB_jit_kernel_AxB_dot4.c\"\n") ;
 
             if (!builtin)
             {
@@ -240,8 +226,10 @@ GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
     //------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    GrB_Info info = GB_jit_kernel (C, M, M_in_place, A, B,
-        SaxpyTasks, ntasks, nfine, nthreads, do_sort, Werk) ;
+    GrB_Info info = GB_jit_kernel (C,
+        A, A_slice, naslice,
+        B, B_slice, nbslice,
+        nthreads, Werk) ;
     return (info) ;
 #endif
 }
