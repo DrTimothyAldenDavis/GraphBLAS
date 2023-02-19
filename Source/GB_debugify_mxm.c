@@ -13,7 +13,8 @@
 void GB_debugify_mxm
 (
     // C matrix:
-    bool C_iso,             // if true, operator is ignored
+    bool C_iso,             // C output iso status: if true, operator is ignored
+    bool C_in_iso,          // C input iso status
     int C_sparsity,         // sparse, hyper, bitmap, or full
     GrB_Type ctype,         // C=((ctype) T) is the final typecast
     // M matrix:
@@ -42,7 +43,7 @@ void GB_debugify_mxm
     }
 
     // enumify the mxm problem
-    GB_enumify_mxm (&scode, C_iso, C_sparsity, ctype,
+    GB_enumify_mxm (&scode, C_iso, C_in_iso, C_sparsity, ctype,
         M, Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
     bool builtin = (semiring->hash == 0) ;
 

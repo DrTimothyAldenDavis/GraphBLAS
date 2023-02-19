@@ -548,7 +548,8 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
     // FIXME: need csparsity (is it always the same as asparsity?)
     // FIXME: this kernel could typecast from A to C
 
-    GB_macrofy_output (fp, "c", "C", "C", atype, atype, asparsity, C_iso_code) ;
+    GB_macrofy_output (fp, "c", "C", "C", atype, atype, asparsity, C_iso_code,
+        false) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for A

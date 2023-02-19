@@ -16,12 +16,16 @@
 // list of jitifyed kernels
 //------------------------------------------------------------------------------
 
-#define GB_JIT_KERNEL_REDUCE 1
-#define GB_JIT_KERNEL_MXM_DOT3 2
-#define GB_JIT_KERNEL_MXM_SAXPY3 3
-#define GB_JIT_KERNEL_MXM_DOT2 4
-#define GB_JIT_KERNEL_MXM_DOT2N 5
-#define GB_JIT_KERNEL_MXM_DOT4 6
+#define GB_JIT_KERNEL_REDUCE        1
+#define GB_JIT_KERNEL_MXM_DOT3      2
+#define GB_JIT_KERNEL_MXM_SAXPY3    3
+#define GB_JIT_KERNEL_MXM_DOT2      4
+#define GB_JIT_KERNEL_MXM_DOT2N     5
+#define GB_JIT_KERNEL_MXM_DOT4      6
+#define GB_JIT_KERNEL_MXM_SAXBIT    7
+#define GB_JIT_KERNEL_MXM_SAXPY4    8
+#define GB_JIT_KERNEL_MXM_SAXPY5    9
+
 // ... etc FIXME: list them all here
 // or make this an enum
 

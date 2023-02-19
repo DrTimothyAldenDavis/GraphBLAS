@@ -112,7 +112,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             // is non-iso on output.
 
             #ifdef GB_DEBUGIFY_DEFN
-            GB_debugify_mxm (false, GB_sparsity (C_in), ztype, M,
+            GB_debugify_mxm (false, C_in->iso, GB_sparsity (C_in), ztype, M,
                 Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
             #endif
 
@@ -136,7 +136,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             // own atomics (TIMES for complex) are supported.
 
             #ifdef GB_DEBUGIFY_DEFN
-            GB_debugify_mxm (false, GB_sparsity (C_in), ztype, M,
+            GB_debugify_mxm (false, C_in->iso, GB_sparsity (C_in), ztype, M,
                 Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
             #endif
 
@@ -215,7 +215,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         // or hypersparse.
 
         #ifdef GB_DEBUGIFY_DEFN
-        GB_debugify_mxm (C_iso, C_sparsity, ztype, M,
+        GB_debugify_mxm (C_iso, false, C_sparsity, ztype, M,
             Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
         #endif
 
@@ -262,7 +262,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         { 
 
             #ifdef GB_DEBUGIFY_DEFN
-            GB_debugify_mxm (C_iso, GxB_BITMAP, ztype, M,
+            GB_debugify_mxm (C_iso, false, GxB_BITMAP, ztype, M,
                 Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
             #endif
 

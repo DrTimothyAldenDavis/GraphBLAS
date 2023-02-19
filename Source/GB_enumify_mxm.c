@@ -26,7 +26,8 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     uint64_t *scode,        // unique encoding of the entire semiring
     // input:
     // C matrix:
-    bool C_iso,             // if true, semiring must be ANY_PAIR_BOOL
+    bool C_iso,             // C output iso: if true, semiring is ANY_PAIR_BOOL
+    bool C_in_iso,          // C input iso status
     int C_sparsity,         // sparse, hyper, bitmap, or full
     GrB_Type ctype,         // C=((ctype) T) is the final typecast
     // M matrix:
@@ -163,6 +164,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
 
     int A_iso_code = (A_is_pattern || A->iso) ? 1 : 0 ;
     int B_iso_code = (B_is_pattern || B->iso) ? 1 : 0 ;
+    int C_in_iso_cd = (C_in_iso) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
     // enumify the mask
@@ -190,7 +192,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // construct the semiring scode
     //--------------------------------------------------------------------------
 
-    // total scode bits: 62 (2 unused bits)
+    // total scode bits: 63 (1 unused bit)
 
     (*scode) =
                                                // range        bits
@@ -200,8 +202,8 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
                 GB_LSHIFT (id_ecode   , 53) |  // 0 to 31      5
                 GB_LSHIFT (term_ecode , 48) |  // 0 to 31      5
 
-                // A and B iso properties, flipxy (1 hex digit)
-//              GB_LSHIFT (0          , 47) |  // unused       1
+                // C in, A, B iso properties, flipxy (1 hex digit)
+                GB_LSHIFT (C_in_iso_cd, 47) |  // 0 or 1       1
                 GB_LSHIFT (A_iso_code , 46) |  // 0 or 1       1
                 GB_LSHIFT (B_iso_code , 45) |  // 0 or 1       1
                 GB_LSHIFT (flipxy     , 44) |  // 0 to 1       1

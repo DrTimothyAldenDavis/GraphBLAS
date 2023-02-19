@@ -163,7 +163,8 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // macros for the C matrix
     //--------------------------------------------------------------------------
 
-    GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, C_iso) ;
+    GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, C_iso,
+        false) ;
 
     //--------------------------------------------------------------------------
     // construct the macros to access the mask (if any), and its name

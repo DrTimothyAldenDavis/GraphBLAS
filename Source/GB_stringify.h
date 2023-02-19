@@ -124,12 +124,10 @@ uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
     char **suffix,              // suffix for user-defined kernel
     // input:
     int kcode,                  // kernel to encode (dot3, saxpy3, etc)
-
-//  GrB_Matrix C,
     const bool C_iso,
+    const bool C_in_iso,
     int C_sparsity,
     const GrB_Type ctype,
-
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -145,7 +143,8 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     uint64_t *scode,        // unique encoding of the entire semiring
     // input:
     // C matrix:
-    bool C_iso,             // if true, semiring must be ANY_PAIR_BOOL
+    bool C_iso,             // C output iso: if true, semiring is ANY_PAIR_BOOL
+    bool C_in_iso,          // C input iso status
     int C_sparsity,         // sparse, hyper, bitmap, or full
     GrB_Type ctype,         // C=((ctype) T) is the final typecast
     // M matrix:
@@ -388,10 +387,11 @@ void GB_macrofy_output
     const char *cname,      // name of the scalar ... = cij to write
     const char *Cmacro,     // name of the macro is GB_PUT*(Cmacro)
     const char *Cname,      // name of the output matrix
-    GrB_Type ctype,         // type of C
-    GrB_Type ztype,         // type of cij scalar to write to C
+    GrB_Type ctype,         // type of C, ignored if C is iso
+    GrB_Type ztype,         // type of cij scalar to cast to ctype write to C
     int csparsity,          // sparsity format of the output matrix
-    bool C_iso              // true if C is iso
+    bool C_iso,             // true if C is iso on output
+    bool C_in_iso           // true if C is iso on input
 ) ;
 
 //------------------------------------------------------------------------------
@@ -548,7 +548,8 @@ void GB_namify_problem
 void GB_debugify_mxm
 (
     // C matrix:
-    bool C_iso,             // if true, operator is ignored
+    bool C_iso,             // C output iso status: if true, operator is ignored
+    bool C_in_iso,          // C input iso status
     int C_sparsity,         // sparse, hyper, bitmap, or full
     GrB_Type ctype,         // C=((ctype) T) is the final typecast
     // M matrix:

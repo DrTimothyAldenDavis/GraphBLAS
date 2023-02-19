@@ -34,8 +34,8 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     int term_ecode  = GB_RSHIFT (scode, 48, 5) ;
     bool is_term    = (term_ecode < 30) ;
 
-    // A and B iso-valued and flipxy (one hex digit)
-//  int unused      = GB_RSHIFT (scode, 47, 1) ;
+    // C in, A, B iso-valued and flipxy (one hex digit)
+    bool C_in_iso   = GB_RSHIFT (scode, 47, 1) ;
     int A_iso_code  = GB_RSHIFT (scode, 46, 1) ;
     int B_iso_code  = GB_RSHIFT (scode, 45, 1) ;
     bool flipxy     = GB_RSHIFT (scode, 44, 1) ;
@@ -342,7 +342,8 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     // macros for the C matrix
     //--------------------------------------------------------------------------
 
-    GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, C_iso) ;
+    GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, C_iso,
+        C_in_iso) ;
 
     //--------------------------------------------------------------------------
     // construct the macros to access the mask (if any), and its name

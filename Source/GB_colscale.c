@@ -89,9 +89,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     bool C_iso = GB_iso_AxB (cscalar, A, D, A->vdim, semiring, flipxy, true) ;
 
     #ifdef GB_DEBUGIFY_DEFN
-//  FIXME: this should probably use the ewise debugify
-//  GB_debugify_mxm (C_iso, GB_sparsity (A), ztype, NULL, false, false,
-//      semiring, flipxy, A, D) ;
+//  GB_debugify_ewise ( ... ) ;
     #endif
 
     //--------------------------------------------------------------------------

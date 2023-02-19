@@ -102,8 +102,13 @@
     // if C is iso on input: get the iso scalar and convert C to non-iso
     //--------------------------------------------------------------------------
 
-    // FIXME: add this to the JIT kernel code
+    #ifdef GB_JIT_KERNEL
+    #define C_in_iso GB_C_IN_ISO
+    ASSERT (C_in_iso == C->iso) ;
+    #else
     const bool C_in_iso = C->iso ;
+    #endif
+
     GB_DECLARE_IDENTITY_CONST (zidentity) ;
     const GB_C_TYPE cinput = (C_in_iso) ? Cx [0] : zidentity ;
     if (C_in_iso)

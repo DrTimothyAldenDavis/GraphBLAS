@@ -23,7 +23,8 @@ void GB_macrofy_output
     GrB_Type ctype,         // type of C, ignored if C is iso
     GrB_Type ztype,         // type of cij scalar to cast to ctype write to C
     int csparsity,          // sparsity format of the output matrix
-    bool C_iso              // true if C is iso
+    bool C_iso,             // true if C is iso on output
+    bool C_in_iso           // true if C is iso on input
 )
 {
 
@@ -33,6 +34,7 @@ void GB_macrofy_output
 
     GB_macrofy_sparsity (fp, Cname, csparsity) ;
     fprintf (fp, "#define GB_%s_ISO %d\n", Cname, C_iso ? 1 : 0) ;
+    fprintf (fp, "#define GB_%s_IN_ISO %d\n", Cname, C_in_iso ? 1 : 0) ;
 
     //--------------------------------------------------------------------------
     // construct the macros to declare scalars and put values into the matrix

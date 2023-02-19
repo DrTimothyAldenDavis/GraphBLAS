@@ -77,9 +77,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     bool C_iso = GB_iso_AxB (cscalar, D, B, D->vdim, semiring, flipxy, true) ;
 
     #ifdef GB_DEBUGIFY_DEFN
-//  FIXME: this should probably use the ewise debugify
-//  GB_debugify_mxm (C_iso, GB_sparsity (B), ztype, NULL, false, false,
-//      semiring, flipxy, D, B) ;
+//  GB_debugify_ewise ( ... ) ;
     #endif
 
     //--------------------------------------------------------------------------

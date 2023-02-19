@@ -50,7 +50,8 @@ GrB_Info GB_AxB_dot2_jit        // C<M>=A'*B, dot2 method, via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_mxm (&encoding, &suffix,
-        GB_JIT_KERNEL_MXM_DOT2, C->iso, GB_sparsity (C), C->type,
+        GB_JIT_KERNEL_MXM_DOT2,
+        C->iso, false, GB_sparsity (C), C->type,
         M, Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
     if (hash == UINT64_MAX)
     {
