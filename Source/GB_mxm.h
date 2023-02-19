@@ -269,9 +269,13 @@ static inline bool GB_AxB_dot4_control
     const GrB_Semiring semiring
 )
 {
-    return (!C_out_iso && C_in != NULL && GB_as_if_full (C_in)
-        && (M == NULL) && (!Mask_comp) && (accum != NULL)
-        && (accum == semiring->add->op) && (C_in->type == accum->ztype)) ;
+    return (!C_out_iso                  // C must not be iso on output
+        && GB_as_if_full (C_in)         // C must be present and as-if-full
+        && (M == NULL) && (!Mask_comp)  // no mask, and must not be complemented
+        && (accum != NULL)              // accum must be present
+        // FIXME: the JIT kernel can be extended to these cases:
+        && (accum == semiring->add->op)     // accum must match the monoid
+        && (C_in->type == accum->ztype)) ;  // ctype must match ztype
 }
 
 //------------------------------------------------------------------------------

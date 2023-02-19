@@ -98,7 +98,6 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
     memcpy (z, monoid->identity, zsize) ;   // required, if nnz(A) is zero
 
     #ifdef GB_DEBUGIFY_DEFN
-    // FIXME: this will move below
     GB_debugify_reduce (monoid, A) ;
     #endif
 
@@ -217,16 +216,13 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         // use the JIT
         //----------------------------------------------------------------------
 
-        #ifdef GB_DEBUGIFY_DEFN
-        #ifndef GBRENAME
-        // FIXME: not yet working in MATLAB (mxMalloc issues)
+        #if GB_JIT_ENABLED
         if (!done)
         {
             info = GB_reduce_to_scalar_jit (z, monoid, A, W, F,
                 ntasks, nthreads) ;
             done = (info == GrB_SUCCESS) ;
         }
-        #endif
         #endif
 
         //----------------------------------------------------------------------

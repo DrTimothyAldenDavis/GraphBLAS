@@ -464,9 +464,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         // via the JIT
         //----------------------------------------------------------------------
 
-        #ifdef GB_DEBUGIFY_DEFN
-        #ifndef GBRENAME
-        // FIXME: not yet working in MATLAB (mxMalloc issues)
+        #if GB_JIT_ENABLED
         if (!done)
         {
             if (A_not_transposed)
@@ -485,7 +483,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
             }
             done = (info == GrB_SUCCESS) ;
         }
-        #endif
         #endif
 
         //----------------------------------------------------------------------

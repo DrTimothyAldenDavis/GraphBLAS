@@ -15,7 +15,7 @@
 // The accum operator is the same as monoid operator semiring->add->op, and the
 // type of C (C->type) matches the accum->ztype so no typecasting is needed.
 
-// The ANY monoid is not supported, since its use as accum would be unusual.
+// The ANY monoid is a special case: C is not modified at all.
 
 //------------------------------------------------------------------------------
 
@@ -121,13 +121,22 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         B_is_pattern, semiring, flipxy, &mult_binop_code, &add_binop_code,
         &xcode, &ycode, &zcode) ;
 
-    if (!builtin_semiring || (add_binop_code == GB_ANY_binop_code))
+    if (add_binop_code == GB_ANY_binop_code)
+    {
+        // no work to do
+        // FIXME: when the JIT is extended to handle typecasting, and
+        // accum != monoid->op, then this case must be modified.
+        return (GrB_SUCCESS) ;
+    }
+
+    #if !GB_JIT_ENABLED
+    if (!builtin_semiring)
     { 
-        // The semiring must be built-in, and cannot use the ANY monoid.
-        // FIXME: do not punt if the JIT can be used
+        // The semiring must be built-in for pre-generated kernels
         GBURBLE ("(punt: not builtin) ") ;
         return (GrB_NO_VALUE) ;
     }
+    #endif
 
     GBURBLE ("(dot4: %s += %s'*%s) ",
         GB_sparsity_char_matrix (C),
@@ -239,18 +248,13 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     // via the JIT
     //--------------------------------------------------------------------------
 
-    #ifdef GB_DEBUGIFY_DEFN
-    #ifndef GBRENAME
-    // FIXME: not yet working in MATLAB (mxMalloc issues)
+    #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
-    {
+    { 
         // C+= A*B, C is full
-        info = GB_AxB_dot4_jit (C,
-            A, A_slice, naslice,
-            B, B_slice, nbslice,
+        info = GB_AxB_dot4_jit (C, A, A_slice, naslice, B, B_slice, nbslice,
             semiring, flipxy, nthreads, Werk) ;
     }
-    #endif
     #endif
 
     //--------------------------------------------------------------------------

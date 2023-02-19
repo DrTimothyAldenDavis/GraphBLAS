@@ -684,10 +684,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // JIT saxpy3 kernel for the case when C is sparse or hypersparse
         //----------------------------------------------------------------------
 
-#if 1
-        #ifdef GB_DEBUGIFY_DEFN
-        #ifndef GBRENAME
-        // FIXME: not yet working in MATLAB (mxMalloc issues)
+        #if GB_JIT_ENABLED
         if (!done)
         {
             info = GB_AxB_saxpy3_jit (C, M, Mask_comp, Mask_struct,
@@ -696,8 +693,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             done = (info == GrB_SUCCESS) ;
         }
         #endif
-        #endif
-#endif
 
         //----------------------------------------------------------------------
         // generic saxpy3 method for the case when C is sparse or hypersparse

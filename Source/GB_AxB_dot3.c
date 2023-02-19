@@ -310,16 +310,13 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         // C<M> = A'*B, via the JIT
         //----------------------------------------------------------------------
 
-        #ifdef GB_DEBUGIFY_DEFN
-        #ifndef GBRENAME
-        // FIXME: not yet working in MATLAB (mxMalloc issues)
+        #if GB_JIT_ENABLED
         if (!done)
         {
             info = GB_AxB_dot3_jit (C, M, Mask_struct, A, B, semiring, flipxy,
                 TaskList, ntasks, nthreads) ;
             done = (info == GrB_SUCCESS) ;
         }
-        #endif
         #endif
 
         //----------------------------------------------------------------------

@@ -183,6 +183,19 @@ int main (void)
     printf ("\n=============== diag(AA') matrix:\n") ;
     printgauss (C) ;
 
+    // C = (1,2) then C += A*A' where C is full
+    gauss ciso ;
+    ciso.real = 1 ;
+    ciso.imag = -2 ;
+    GrB_Matrix_assign_UDT (C, NULL, NULL, &ciso, GrB_ALL, 4, GrB_ALL, 4, NULL) ;
+    GxB_print (C, 3) ;
+    printgauss (C) ;
+    GxB_print (A, 3) ;
+    printgauss (A) ;
+    GrB_mxm (C, NULL, AddGauss, GaussSemiring, A, A, GrB_DESC_T1) ;
+    GxB_print (C, 3) ;
+    printgauss (C) ;
+
     // free everything and finalize GraphBLAS
     GrB_free (&A) ;
     GrB_free (&D) ;

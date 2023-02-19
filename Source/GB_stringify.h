@@ -11,12 +11,6 @@
 #define GB_STRINGIFY_H
 
 //------------------------------------------------------------------------------
-// print copyright and license
-//------------------------------------------------------------------------------
-
-void GB_macrofy_copyright (FILE *fp) ;
-
-//------------------------------------------------------------------------------
 // dump definitions (for debugging and test coverage only)
 //------------------------------------------------------------------------------
 
@@ -25,6 +19,25 @@ void GB_macrofy_copyright (FILE *fp) ;
 // #undef  GB_DEBUGIFY_DEFN
 // FIXME: debugify is on
 #define GB_DEBUGIFY_DEFN 1
+
+//------------------------------------------------------------------------------
+// determine if the JIT is enabled at compile-time
+//------------------------------------------------------------------------------
+
+// FIXME: allow cmake to control this option.  Remove GB_DEBUGIFY_DEFN.
+// Fix GBRENAME case and get the JIT working in MATLAB.
+
+#if defined ( GB_DEBUGIFY_DEFN ) && !defined ( GBRENAME )
+#define GB_JIT_ENABLED 1
+#else
+#define GB_JIT_ENABLED 0
+#endif
+
+//------------------------------------------------------------------------------
+// print copyright and license
+//------------------------------------------------------------------------------
+
+void GB_macrofy_copyright (FILE *fp) ;
 
 //------------------------------------------------------------------------------
 // for GB_boolean_rename and related methods

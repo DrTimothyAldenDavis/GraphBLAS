@@ -16,3 +16,6 @@ sum (A, 'all')
 
 D = eye (4) ;
 C = D .* (A*A.')
+
+C = ones (4,4) * (1 - 2i) ;
+C = C + A*A.'

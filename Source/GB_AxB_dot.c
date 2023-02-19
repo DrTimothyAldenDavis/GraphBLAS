@@ -142,8 +142,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         #endif
 
         (*mask_applied) = false ;    // no mask to apply
-        info = GB_AxB_dot4 (C_in, A, B, semiring, flipxy, done_in_place,
-            Werk) ;
+        info = GB_AxB_dot4 (C_in, A, B, semiring, flipxy, done_in_place, Werk) ;
         if (info != GrB_NO_VALUE)
         { 
             // return if dot4 has handled this case, otherwise fall through
