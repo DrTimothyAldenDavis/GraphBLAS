@@ -90,7 +90,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
 //      case GrB_DENSE_ROW_FORMAT :
 //      case GrB_DENSE_COL_FORMAT :
 //
-//          ok = GB_int64_multiply (&nvals, (int64_t) nrows, (int64_t) ncols) ;
+//          ok = GB_uint64_multiply (&nvals, nrows, ncols) ;
 //          if (!ok || Ax_len < nvals)
 //          {
 //              // Ap, Ai, and Ax must all have the same size

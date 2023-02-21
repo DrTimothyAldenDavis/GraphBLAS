@@ -14,7 +14,6 @@
 #define GB_64 (8 * sizeof (unsigned long long))
 
 // floor and ceiling of the log2 of an integer.
-
 #if GB_COMPILER_MSC
 // Microsoft Visual Studio does not have the __builtin_clzll
 #define GB_CLZLL(k)   not defined, using log2 instead

@@ -77,7 +77,7 @@ void f1 (double *z, const uint32_t *x) ;
 void f2 (int32_t *z, const uint8_t *x, const int16_t *y) ;
 
 void f1 (double *z, const uint32_t *x)
-{ 
+{
     (*z) = (*x) + 1 ;
 }
 
@@ -2524,7 +2524,7 @@ void mexFunction
     //--------------------------------------------------------------------------
     // subassign
     //--------------------------------------------------------------------------
-    
+
     printf ("GxB_subassign -----------------------------------------------\n") ;
     expected = GrB_NULL_POINTER ;
 
@@ -2926,7 +2926,7 @@ void mexFunction
     //--------------------------------------------------------------------------
     // assign
     //--------------------------------------------------------------------------
-    
+
     printf ("GrB_assign---------------------------------------------------\n") ;
     expected = GrB_NULL_POINTER ;
 
@@ -3250,7 +3250,7 @@ void mexFunction
     ERR1 (v,  GrB_Vector_assign_UDT_(v, v0, NULL,(void *) &c, I, 0, d0)) ;
 
     expected = (Complex == GxB_FC64) ? GrB_DIMENSION_MISMATCH : GrB_DOMAIN_MISMATCH ;
-    
+
     ERR1 (A,  GrB_Matrix_assign_FP64_(A, Z , NULL, x, I, 0, J, 0, d0)) ;
 
     expected = GrB_DOMAIN_MISMATCH ;
@@ -4513,7 +4513,7 @@ void mexFunction
     // make sure A->nvec_nonempty is valid
     CHECK (GB_IS_HYPERSPARSE (A)) ;
     if (A->nvec_nonempty < 0)
-    { 
+    {
         A->nvec_nonempty = GB_nvec_nonempty (A) ;
     }
 
@@ -4952,7 +4952,7 @@ void mexFunction
     x_bool = false ;
     Werk->where = "GB_Descriptor_get" ;
     ERR (GB_Descriptor_get (dcrud, &x_bool, NULL, NULL, NULL, NULL, NULL,
-        NULL)) ; 
+        NULL)) ;
     CHECK (x_bool == false) ;
     dcrud->out = GxB_DEFAULT ;
 
@@ -4997,10 +4997,10 @@ void mexFunction
     CHECK (!ok) ;
 
     ok = GB_size_t_multiply (&s,
-        ((size_t) UINT32_MAX)/2,
-        ((size_t) UINT32_MAX)/2) ;
+        ((size_t) UINT32_MAX)/4,
+        ((size_t) UINT32_MAX)/4) ;
     CHECK (ok) ;
-    CHECK (s == (((size_t) UINT32_MAX)/2) * (((size_t) UINT32_MAX)/2)) ; 
+    CHECK (s == (((size_t) UINT32_MAX)/4) * (((size_t) UINT32_MAX)/4)) ;
     Werk->where = "GrB_error" ;
 
     n = 1 ;

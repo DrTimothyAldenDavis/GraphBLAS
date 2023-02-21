@@ -126,7 +126,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         // no work to do
         // FIXME: when the JIT is extended to handle typecasting, and
         // accum != monoid->op, then this case must be modified.
-        return (GrB_SUCCESS) ;
+        return (GrB_NO_VALUE) ;
     }
 
     #if !GB_JIT_ENABLED

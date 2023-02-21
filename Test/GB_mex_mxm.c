@@ -130,7 +130,7 @@ void mexFunction
         int C_sparsity = GB_sparsity (C) ;
         GrB_Type ctype = C->type ;
 
-        GB_debugify_mxm (C_iso, C_sparsity, ctype, M,
+        GB_debugify_mxm (false, C_iso, C_sparsity, ctype, M,
             Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
     }
 
