@@ -62,7 +62,7 @@ void GB_AxB_saxpy4_tasks
         // all tasks are coarse
         //----------------------------------------------------------------------
 
-        // Each coarse task does 1 or more whole vectors of B
+        // Each coarse task does 1 or more whole vectors of B and C
         ntasks = GB_IMIN (bvdim, 2 * nthreads) ;
         nthreads = GB_IMIN (ntasks, nthreads) ;
         use_coarse_tasks = true ;
@@ -76,9 +76,9 @@ void GB_AxB_saxpy4_tasks
         // use fine tasks
         //----------------------------------------------------------------------
 
-        // Each task does a slice of a single vector of B, and each vector of B
-        // is handled by the same # of fine tasks.  Determine if atomics are
-        // to be used or not.
+        // Each task does a slice of a single vector of B and C, and each
+        // vector of B and C are handled by the same # of fine tasks.
+        // Determine if atomics are to be used or not.
 
         use_coarse_tasks = false ;
         double cnz = ((double) cvlen) * ((double) bvdim) ;

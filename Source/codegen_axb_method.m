@@ -482,29 +482,14 @@ else
     fprintf (f, 'm4_define(`GB_declare_const_terminal'', `'')\n') ;
 end
 
-if (ztype_is_real)
-    % The ANY monoid is atomic on any architecture.
-    % MIN, MAX, EQ, XNOR are implemented with atomic compare/exchange.
-    if (is_any)
-        % disable the ANY monoid for saxpy4
-        fprintf (f, 'm4_define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', '(none)') ;
-        fprintf (f, 'm4_define(`if_saxpy4_enabled'', `-1'')\n') ;
-    else
-        % enable saxpy4
-        fprintf (f, 'm4_define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', name) ;
-        fprintf (f, 'm4_define(`if_saxpy4_enabled'', `0'')\n') ;
-    end
+if (is_any)
+    % disable the ANY monoid for saxpy4
+    fprintf (f, 'm4_define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', '(none)') ;
+    fprintf (f, 'm4_define(`if_saxpy4_enabled'', `-1'')\n') ;
 else
-    % complex monoids are not atomic, except for 'plus'
-    if (is_plus)
-        % enable saxpy4
-        fprintf (f, 'm4_define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', name) ;
-        fprintf (f, 'm4_define(`if_saxpy4_enabled'', `0'')\n') ;
-    else
-        % disable saxpy4
-        fprintf (f, 'm4_define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', '(none)') ;
-        fprintf (f, 'm4_define(`if_saxpy4_enabled'', `-1'')\n') ;
-    end
+    % enable saxpy4
+    fprintf (f, 'm4_define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', name) ;
+    fprintf (f, 'm4_define(`if_saxpy4_enabled'', `0'')\n') ;
 end
 
 if (is_any)

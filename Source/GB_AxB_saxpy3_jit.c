@@ -180,9 +180,7 @@ GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
             // }
 
             GB_macrofy_mxm (fp, scode, semiring, C->type, A->type, B->type) ;
-            fprintf (fp,
-                "\n// AxB saxpy3 kernel\n"
-                "#include \"GB_jit_kernel_AxB_saxpy3.c\"\n") ;
+            fprintf (fp, "\n#include \"GB_jit_kernel_AxB_saxpy3.c\"\n") ;
 
             if (!builtin)
             {

@@ -172,7 +172,9 @@ GrB_Info GB (_AsaxbitB__times_rminus_uint32)
         const bool use_coarse_tasks,
         const bool use_atomics,
         const int64_t *A_slice,
-        GB_Werk Werk
+        const int64_t *H_slice,
+        GB_void *restrict Wcx,
+        int8_t *restrict Wf
     )
     { 
         #if GB_DISABLE

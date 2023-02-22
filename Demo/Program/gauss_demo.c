@@ -196,8 +196,19 @@ int main (void)
     GxB_print (C, 3) ;
     printgauss (C) ;
 
+    // C += B*A where B is full and A is sparse
+    GrB_Matrix B ;
+    GrB_Matrix_new (&B, Gauss, 4, 4) ;
+    GrB_Matrix_assign_UDT (B, NULL, NULL, &ciso, GrB_ALL, 4, GrB_ALL, 4, NULL) ;
+    printf ("here:\n") ;
+    GrB_Info info = GrB_mxm (C, NULL, AddGauss, GaussSemiring, B, A, NULL) ;
+    printf ("info: %d\n", info) ;
+    GxB_print (C, 3) ;
+    printgauss (C) ;
+
     // free everything and finalize GraphBLAS
     GrB_free (&A) ;
+    GrB_free (&B) ;
     GrB_free (&D) ;
     GrB_free (&C) ;
     GrB_free (&Gauss) ;

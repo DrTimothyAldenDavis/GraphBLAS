@@ -60,14 +60,9 @@ if ( SUITESPARSE_CUDA )
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES CUDA C )
 else ( )
-# FIXME:!! CUDA DEV is on!!
-    message ( WARNING "CUDA DEV IS ON --- DO NOT USE IN PRODUCTION!!!" )
-    message ( WARNING "CUDA DEV IS ON --- DO NOT USE IN PRODUCTION!!!" )
-    message ( WARNING "CUDA DEV IS ON --- DO NOT USE IN PRODUCTION!!!" )
-    message ( WARNING "CUDA DEV IS ON --- DO NOT USE IN PRODUCTION!!!" )
-    message ( WARNING "CUDA DEV IS ON --- DO NOT USE IN PRODUCTION!!!" )
-    set ( CMAKE_CUDA_DEV on )
+# FIXME!!!
 #   set ( CMAKE_CUDA_DEV off )
+    set ( CMAKE_CUDA_DEV on )
     project ( graphblas
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES C )

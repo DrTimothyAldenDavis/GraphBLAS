@@ -115,7 +115,9 @@ GrB_Info GB_mxm                     // C<M> = A*B
     }
 
     // quick return if a NULL mask is complemented
+    printf ("check quick mask\n") ;
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp, Mask_struct) ;
+    printf ("did check quick mask\n") ;
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (B) ;
 
@@ -147,6 +149,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     bool mask_applied = false ;
     bool done_in_place = false ;
     bool M_transposed = false ;
+    printf ("do AxB meta\n") ;
     GB_OK (GB_AxB_meta (T, C, C_replace, C->is_csc, MT, &M_transposed, M,
         Mask_comp, Mask_struct, accum, A, B, semiring, A_transpose,
         B_transpose, flipxy, &mask_applied, &done_in_place, AxB_method,

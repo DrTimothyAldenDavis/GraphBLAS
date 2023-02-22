@@ -172,9 +172,7 @@ GrB_Info GB_AxB_dot2n_jit        // C<M>=A'*B, dot2n method, via the JIT
             // }
 
             GB_macrofy_mxm (fp, scode, semiring, C->type, A->type, B->type) ;
-            fprintf (fp,
-                "\n// AxB dot2n kernel\n"
-                "#include \"GB_jit_kernel_AxB_dot2n.c\"\n") ;
+            fprintf (fp, "\n#include \"GB_jit_kernel_AxB_dot2n.c\"\n") ;
 
             if (!builtin)
             {

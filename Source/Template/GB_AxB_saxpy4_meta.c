@@ -18,33 +18,11 @@
 // A is sparse or hypersparse.
 // B is bitmap or full.
 
-#undef  GB_FREE_ALL
-#define GB_FREE_ALL                         \
-{                                           \
-    GB_FREE_WORK (&Wf, Wf_size) ;           \
-    GB_FREE_WORK (&Wcx, Wcx_size) ;         \
-    GB_WERK_POP (H_slice, int64_t) ;        \
-    GB_WERK_POP (B_slice, int64_t) ;        \
-}
-
-#if !GB_Z_HAS_ATOMIC_UPDATE
-#error "saxpy4 only defined monoids with an atomic update"
-#endif
-
 #if GB_IS_ANY_MONOID
 #error "saxpy4 not defined for the ANY monoid"
 #endif
 
 {
-
-    //--------------------------------------------------------------------------
-    // declare workspace
-    //--------------------------------------------------------------------------
-
-    int8_t  *restrict Wf  = NULL ; size_t Wf_size = 0 ;
-    GB_void *restrict Wcx = NULL ; size_t Wcx_size = 0 ;
-    GB_WERK_DECLARE (H_slice, int64_t) ;
-    GB_WERK_DECLARE (B_slice, int64_t) ;
 
     //--------------------------------------------------------------------------
     // get C, M, A, and B
@@ -58,7 +36,7 @@
 
     #if ( !GB_HAS_IDENTITY_BYTE )
     // declare the monoid identity value
-    const GB_DECLARE_IDENTITY_CONST (zidentity) ;
+    GB_DECLARE_IDENTITY_CONST (zidentity) ;
     #endif
 
     const int8_t *restrict Bb = B->b ;
@@ -104,13 +82,5 @@
         #include "GB_AxB_saxpy4_template.c"
     }
     #undef GB_B_IS_BITMAP
-
-    //--------------------------------------------------------------------------
-    // free workspace
-    //--------------------------------------------------------------------------
-
-    GB_FREE_ALL ;
 }
-
-#undef GB_FREE_ALL
 

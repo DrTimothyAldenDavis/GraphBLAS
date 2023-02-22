@@ -97,8 +97,7 @@ if (xcode != GB_BOOL_code)
                 case GB_UINT64_code : GB_AxB_WORKER (_times, GB_MNAME, _uint64)
                 case GB_FP32_code   : GB_AxB_WORKER (_times, GB_MNAME, _fp32  )
                 case GB_FP64_code   : GB_AxB_WORKER (_times, GB_MNAME, _fp64  )
-                #if defined ( GB_COMPLEX ) && !defined (GB_NO_NONATOMIC_MONOID)
-                // the TIMES monoid is non-atomic for complex types
+                #if defined ( GB_COMPLEX )
                 case GB_FC32_code   : GB_AxB_WORKER (_times, GB_MNAME, _fc32  )
                 case GB_FC64_code   : GB_AxB_WORKER (_times, GB_MNAME, _fc64  )
                 #endif
@@ -122,7 +121,7 @@ if (xcode != GB_BOOL_code)
                 case GB_UINT64_code : GB_AxB_WORKER (_any, GB_MNAME, _uint64)
                 case GB_FP32_code   : GB_AxB_WORKER (_any, GB_MNAME, _fp32  )
                 case GB_FP64_code   : GB_AxB_WORKER (_any, GB_MNAME, _fp64  )
-                #if defined ( GB_COMPLEX ) && !defined (GB_NO_NONATOMIC_MONOID)
+                #if defined ( GB_COMPLEX )
                 // the ANY monoid is non-atomic for complex types
                 case GB_FC32_code   : GB_AxB_WORKER (_any, GB_MNAME, _fc32  )
                 case GB_FC64_code   : GB_AxB_WORKER (_any, GB_MNAME, _fc64  )

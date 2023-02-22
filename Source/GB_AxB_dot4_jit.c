@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot4_jit: C<M>=A'*B dot4 method, via the JIT
+// GB_AxB_dot4_jit: C+=A'*B dot4 method, via the JIT
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -166,9 +166,7 @@ GrB_Info GB_AxB_dot4_jit            // C+=A'*B, dot4 method, via the JIT
             // }
 
             GB_macrofy_mxm (fp, scode, semiring, C->type, A->type, B->type) ;
-            fprintf (fp,
-                "\n// AxB dot4 kernel\n"
-                "#include \"GB_jit_kernel_AxB_dot4.c\"\n") ;
+            fprintf (fp, "\n#include \"GB_jit_kernel_AxB_dot4.c\"\n") ;
 
             if (!builtin)
             {

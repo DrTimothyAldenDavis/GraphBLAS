@@ -55,6 +55,9 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
 // saxpy4: C+=A*B where A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
 
+// number of columns in the workspace for each task in saxpy4
+#define GB_SAXPY4_PANEL_SIZE 4
+
 GrB_Info GB_AxB_saxpy4              // C += A*B
 (
     GrB_Matrix C,                   // users input/output matrix
@@ -79,6 +82,24 @@ void GB_AxB_saxpy4_tasks
     int64_t bnz,                    // # of entries held in B
     int64_t bvdim,                  // # of vectors of B (bitmap or full)
     int64_t cvlen                   // # of vectors of C (bitmap or full)
+) ;
+
+GrB_Info GB_AxB_saxpy4_jit          // C+=A*B, saxpy4 method, via the JIT
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const GrB_Semiring semiring,
+    const bool flipxy,
+    const int ntasks,
+    const int nthreads,
+    const int nfine_tasks_per_vector,
+    const bool use_coarse_tasks,
+    const bool use_atomics,
+    const int64_t *A_slice,
+    const int64_t *H_slice,
+    GB_void *restrict Wcx,
+    int8_t *restrict Wf
 ) ;
 
 //------------------------------------------------------------------------------

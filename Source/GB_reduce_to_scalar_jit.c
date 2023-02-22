@@ -161,9 +161,7 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
             // }
 
             GB_macrofy_reduce (fp, scode, monoid, A->type) ;
-            fprintf (fp,
-                "\n// reduction kernel\n"
-                "#include \"GB_jit_kernel_reduce.c\"\n") ;
+            fprintf (fp, "\n#include \"GB_jit_kernel_reduce.c\"\n") ;
 
             if (!builtin)
             {

@@ -31,13 +31,10 @@
         // C<#M> = A*B using coarse tasks
         //----------------------------------------------------------------------
 
+// FIXME: move to the caller[ 
+
         // number of columns in the workspace for each task
         #define GB_PANEL_SIZE 4
-
-        if (B_iso)
-        { 
-            // No special cases needed.  GB_GETB handles the B iso case.
-        }
 
         //----------------------------------------------------------------------
         // allocate workspace for each task
@@ -81,6 +78,8 @@
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
+
+//=====================]
 
         //----------------------------------------------------------------------
         // C<#M> = A*B
@@ -420,12 +419,6 @@
         // C<#M> = A*B using fine tasks and atomics
         //----------------------------------------------------------------------
 
-        if (B_iso)
-        { 
-            // No special cases needed.  GB_GET_B_kj (bkj = B(k,j))
-            // handles the B iso case.
-        }
-
         int tid ;
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
             reduction(+:cnvals)
@@ -646,15 +639,11 @@
         // is defined by the fine_tid of the task.  The workspaces are then
         // summed into C in the second phase.
 
-        if (B_iso)
-        { 
-            // No special cases needed.  GB_GET_B_kj (bkj = B(k,j))
-            // handles the B iso case.
-        }
-
         //----------------------------------------------------------------------
         // allocate workspace
         //----------------------------------------------------------------------
+
+// FIXME: allocate workspace in the caller, not here:
 
         size_t workspace = cvlen * ntasks ;
         #if ( GB_IS_ANY_PAIR_SEMIRING )

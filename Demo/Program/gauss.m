@@ -1,4 +1,5 @@
 
+format short g
 A = zeros (4,4) ;
 
 for i = 0:3
@@ -19,3 +20,6 @@ C = D .* (A*A.')
 
 C = ones (4,4) * (1 - 2i) ;
 C = C + A*A.'
+
+B = ones (4,4) * (1 - 2i) ;
+C = C + B*A

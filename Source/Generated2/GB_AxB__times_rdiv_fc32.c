@@ -154,6 +154,34 @@ GrB_Info GB (_AsaxbitB__times_rdiv_fc32)
 }
 
 //------------------------------------------------------------------------------
+// GB_Asaxpy4B: C += A*B when C is full
+//------------------------------------------------------------------------------
+
+    GrB_Info GB (_Asaxpy4B__times_rdiv_fc32)
+    (
+        GrB_Matrix C,
+        const GrB_Matrix A,
+        const GrB_Matrix B,
+        const int ntasks,
+        const int nthreads,
+        const int nfine_tasks_per_vector,
+        const bool use_coarse_tasks,
+        const bool use_atomics,
+        const int64_t *A_slice,
+        const int64_t *H_slice,
+        GB_void *restrict Wcx,
+        int8_t *restrict Wf
+    )
+    { 
+        #if GB_DISABLE
+        return (GrB_NO_VALUE) ;
+        #else
+        #include "GB_AxB_saxpy4_meta.c"
+        return (GrB_SUCCESS) ;
+        #endif
+    }
+
+//------------------------------------------------------------------------------
 // GB_Asaxpy5B: C += A*B when C is full, A is bitmap/full, B is sparse/hyper
 //------------------------------------------------------------------------------
 
