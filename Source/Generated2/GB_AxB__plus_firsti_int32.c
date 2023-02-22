@@ -178,7 +178,7 @@ GrB_Info GB (_AsaxbitB__plus_firsti_int32)
         #if GB_DISABLE
         return (GrB_NO_VALUE) ;
         #else
-        #include "GB_AxB_saxpy4_template.c"
+        #include "GB_AxB_saxpy4_meta.c"
         return (GrB_SUCCESS) ;
         #endif
     }

@@ -220,16 +220,6 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         // PLUS_FC64 monoid
         fprintf (fp, "#define GB_IS_PLUS_FC64_MONOID 1\n") ;
     }
-    else if (opcode == GB_ANY_binop_code && zcode == GB_FC32_code)
-    {
-        // ANY_FC32 monoid
-        fprintf (fp, "#define GB_IS_ANY_FC32_MONOID 1\n") ;
-    }
-    else if (opcode == GB_ANY_binop_code && zcode == GB_FC64_code)
-    {
-        // ANY_FC64 monoid
-        fprintf (fp, "#define GB_IS_ANY_FC64_MONOID 1\n") ;
-    }
     else if (opcode == GB_MIN_binop_code && is_integer)
     {
         // IMIN monoid (min with any integer type)
@@ -329,7 +319,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             // float complex (64 bits) but not double complex (128 bits).
             // The atomic update is identical: just an atomic write.
             has_atomic_update = has_atomic_write ;
-            omp_atomic_version = 2 ;
+            omp_atomic_version = is_real ? 2 : 0 ;
             break ;
 
         case GB_LAND_binop_code  :

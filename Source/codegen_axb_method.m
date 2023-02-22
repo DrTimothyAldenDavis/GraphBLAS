@@ -147,9 +147,16 @@ omp_atomic_version = 0 ;
 
 if (isequal (addop, 'any'))
 
-    % ANY monoid update is be done atomically via atomic write
+    % ANY monoid update can be done atomically via atomic write
     has_atomic_update = has_atomic_write ; 
-    omp_atomic_version = 2 ;
+    if (ztype_is_real)
+        omp_atomic_version = 2 ;
+    else
+        % complex ANY monoid update; could be done with a single atomic write
+        % for fc32 using an uint64_t pun, but this is not needed for the
+        % pre-generated kernels.
+        omp_atomic_version = 0 ;
+    end
 
 elseif (isequal (addop, 'land') || ...
         isequal (addop, 'lor')  || ...
@@ -567,22 +574,6 @@ if (is_plus && isequal (ztype, 'GxB_FC64_t'))
         '#define GB_IS_PLUS_FC64_MONOID 1') ;
 else
     fprintf (f, 'm4_define(`GB_is_plus_fc64_monoid'', `'')\n') ;
-end
-
-% any_fc32 monoid:
-if (isequal (addop, 'any') && isequal (ztype, 'GxB_FC32_t'))
-    fprintf (f, 'm4_define(`GB_is_any_fc32_monoid'', `%s'')\n', ...
-        '#define GB_IS_ANY_FC32_MONOID 1') ;
-else
-    fprintf (f, 'm4_define(`GB_is_any_fc32_monoid'', `'')\n') ;
-end
-
-% any_fc64 monoid:
-if (isequal (addop, 'any') && isequal (ztype, 'GxB_FC64_t'))
-    fprintf (f, 'm4_define(`GB_is_any_fc64_monoid'', `%s'')\n', ...
-        '#define GB_IS_ANY_FC64_MONOID 1') ;
-else
-    fprintf (f, 'm4_define(`GB_is_any_fc64_monoid'', `'')\n') ;
 end
 
 % min monoids:

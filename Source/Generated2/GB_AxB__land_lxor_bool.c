@@ -179,7 +179,7 @@ GrB_Info GB (_AsaxbitB__land_lxor_bool)
         #if GB_DISABLE
         return (GrB_NO_VALUE) ;
         #else
-        #include "GB_AxB_saxpy4_template.c"
+        #include "GB_AxB_saxpy4_meta.c"
         return (GrB_SUCCESS) ;
         #endif
     }

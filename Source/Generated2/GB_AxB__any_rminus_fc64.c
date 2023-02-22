@@ -51,8 +51,6 @@
 
 #define GB_IS_ANY_MONOID 1
 
-#define GB_IS_ANY_FC64_MONOID 1
-
 #define GB_MONOID_IS_TERMINAL 1
 
 // special case multipliers:

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_AxB_saxpy_A_sparse_B_bitmap: C<#M>+=A*B, C bitmap, M anything
+// GB_bitmap_AxB_saxpy_A_sparse_B_bitmap: C<#M>=A*B, C bitmap, M anything
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -14,12 +14,12 @@
 // This template is used by Template/GB_bitmap_AxB_saxpy_template, for all
 // cases: generic, pre-generated (including the ANY_PAIR monoid), and the JIT.
 
-#ifndef GB_BSIZE
-#define GB_BSIZE sizeof (GB_B_TYPE)
+#ifndef GB_B_SIZE
+#define GB_B_SIZE sizeof (GB_B_TYPE)
 #endif
 
-#ifndef GB_CSIZE
-#define GB_CSIZE sizeof (GB_C_TYPE)
+#ifndef GB_C_SIZE
+#define GB_C_SIZE sizeof (GB_C_TYPE)
 #endif
 
 {
@@ -28,7 +28,7 @@
     {
 
         //----------------------------------------------------------------------
-        // C<#M> += A*B using coarse tasks
+        // C<#M> = A*B using coarse tasks
         //----------------------------------------------------------------------
 
         // number of columns in the workspace for each task
@@ -71,7 +71,7 @@
         #if GB_IS_ANY_PAIR_SEMIRING
         int64_t cvlenx = 0 ;
         #else
-        int64_t cvlenx = cvlen * GB_CSIZE ;
+        int64_t cvlenx = cvlen * GB_C_SIZE ;
         #endif
         Wf  = GB_MALLOC_WORK (hwork * cvlen, int8_t, &Wf_size) ;
         Wcx = GB_MALLOC_WORK (hwork * cvlenx, GB_void, &Wcx_size) ;
@@ -83,7 +83,7 @@
         }
 
         //----------------------------------------------------------------------
-        // C<#M> += A*B
+        // C<#M> = A*B
         //----------------------------------------------------------------------
 
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
@@ -119,7 +119,7 @@
             memset (Hf, 0, jpanel * cvlen) ;
 
             //------------------------------------------------------------------
-            // C<#M>(:,jstart:jend-1) += A * B(:,jstart:jend-1) by panel
+            // C<#M>(:,jstart:jend-1) = A * B(:,jstart:jend-1) by panel
             //------------------------------------------------------------------
 
             for (int64_t j1 = jstart ; j1 < jend ; j1 += jpanel)
@@ -140,7 +140,7 @@
                 #if ( !GB_IS_ANY_PAIR_SEMIRING )
                 GB_B_TYPE *restrict Gx = (GB_B_TYPE *)
                      (((GB_void *) (B->x)) +
-                       (B_iso ? 0 : ((j1 * bvlen) * GB_BSIZE))) ;
+                       (B_iso ? 0 : ((j1 * bvlen) * GB_B_SIZE))) ;
                 #endif
 
                 //--------------------------------------------------------------
@@ -156,7 +156,7 @@
                 #endif
 
                 //--------------------------------------------------------------
-                // H += A*G for one panel
+                // H = A*G for one panel
                 //--------------------------------------------------------------
 
                 #undef GB_B_kj_PRESENT
@@ -177,30 +177,28 @@
                         GB_MULT (t, aik, gkj, i, k, j1 + jj)
                 #endif
 
-                #undef GB_HX_COMPUTE
-
-                    // C is bitmap
-                    #define GB_HX_COMPUTE(gkj,gb,jj)                        \
-                    {                                                       \
-                        /* H (i,jj) += A(i,k) * B(k,j) */                   \
-                        if (GB_B_kj_PRESENT (gb))                           \
-                        {                                                   \
-                            /* t = A(i,k) * B (k,j) */                      \
-                            GB_MULT_A_ik_G_kj (gkj, jj) ;                   \
-                            if (Hf [pH+jj] == 0)                            \
-                            {                                               \
-                                /* H(i,jj) is a new entry */                \
-                                GB_HX_WRITE (pH+jj, t) ; /* Hx(i,jj)=t */   \
-                                Hf [pH+jj] = 1 ;                            \
-                            }                                               \
-                            else                                            \
-                            {                                               \
-                                /* H(i,jj) is already present */            \
-                                /* Hx(i,jj)+=t */                           \
-                                GB_HX_UPDATE (pH+jj, t) ;                   \
-                            }                                               \
-                        }                                                   \
-                    }
+                #undef  GB_HX_COMPUTE
+                #define GB_HX_COMPUTE(gkj,gb,jj)                        \
+                {                                                       \
+                    /* H (i,jj) += A(i,k) * B(k,j) */                   \
+                    if (GB_B_kj_PRESENT (gb))                           \
+                    {                                                   \
+                        /* t = A(i,k) * B (k,j) */                      \
+                        GB_MULT_A_ik_G_kj (gkj, jj) ;                   \
+                        if (Hf [pH+jj] == 0)                            \
+                        {                                               \
+                            /* H(i,jj) is a new entry */                \
+                            GB_HX_WRITE (pH+jj, t) ; /* Hx(i,jj)=t */   \
+                            Hf [pH+jj] = 1 ;                            \
+                        }                                               \
+                        else                                            \
+                        {                                               \
+                            /* H(i,jj) is already present */            \
+                            /* Hx(i,jj)+=t */                           \
+                            GB_HX_UPDATE (pH+jj, t) ;                   \
+                        }                                               \
+                    }                                                   \
+                }
 
                 // handles both C bitmap and C full, using macros defined above
                 // FIXME: make this a template when this method is split.
@@ -419,7 +417,7 @@
     {
 
         //----------------------------------------------------------------------
-        // C<#M> += A*B using fine tasks and atomics
+        // C<#M> = A*B using fine tasks and atomics
         //----------------------------------------------------------------------
 
         if (B_iso)
@@ -454,18 +452,18 @@
             // for Hx Gustavason workspace: use C(:,j) in-place:
             #if ( !GB_IS_ANY_PAIR_SEMIRING )
             GB_C_TYPE *restrict Hx = (GB_C_TYPE *)
-                (((GB_void *) Cx) + (pC_start * GB_CSIZE)) ;
+                (((GB_void *) Cx) + (pC_start * GB_C_SIZE)) ;
             #endif
-            #if GB_IS_PLUS_FC32_MONOID || GB_IS_ANY_FC32_MONOID
+            #if GB_IS_PLUS_FC32_MONOID
             float  *restrict Hx_real = (float *) Hx ;
             float  *restrict Hx_imag = Hx_real + 1 ;
-            #elif GB_IS_PLUS_FC64_MONOID || GB_IS_ANY_FC64_MONOID
+            #elif GB_IS_PLUS_FC64_MONOID
             double *restrict Hx_real = (double *) Hx ;
             double *restrict Hx_imag = Hx_real + 1 ;
             #endif
 
             //------------------------------------------------------------------
-            // C<#M>(:,j) += A(:,k1:k2) * B(k1:k2,j)
+            // C<#M>(:,j) = A(:,k1:k2) * B(k1:k2,j)
             //------------------------------------------------------------------
 
             for (int64_t kk = kfirst ; kk < klast ; kk++)
@@ -640,7 +638,7 @@
     {
 
         //----------------------------------------------------------------------
-        // C<#M> += A*B using fine tasks and workspace, with no atomics
+        // C<#M> = A*B using fine tasks and workspace, with no atomics
         //----------------------------------------------------------------------
 
         // Each fine task is given size-cvlen workspace to compute its result
@@ -662,7 +660,7 @@
         #if ( GB_IS_ANY_PAIR_SEMIRING )
         size_t cxsize = 0 ;
         #else
-        size_t cxsize = GB_CSIZE ;
+        size_t cxsize = GB_C_SIZE ;
         #endif
         Wf  = GB_MALLOC_WORK (workspace, int8_t, &Wf_size) ;
         Wcx = GB_MALLOC_WORK (workspace * cxsize, GB_void, &Wcx_size) ;
@@ -717,10 +715,7 @@
             // clear the panel
             //------------------------------------------------------------------
 
-            { 
-                // C is bitmap: clear Hf
-                memset (Hf, 0, cvlen) ;
-            }
+            memset (Hf, 0, cvlen) ;
 
             //------------------------------------------------------------------
             // W<#M> = A(:,k1:k2) * B(k1:k2,j)

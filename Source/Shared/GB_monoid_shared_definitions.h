@@ -35,16 +35,6 @@
 #define GB_IS_PLUS_FC64_MONOID 0
 #endif
 
-// 1 if monoid is ANY_FC32
-#ifndef GB_IS_ANY_FC32_MONOID
-#define GB_IS_ANY_FC32_MONOID 0
-#endif
-
-// 1 if monoid is ANY_FC64
-#ifndef GB_IS_ANY_FC64_MONOID
-#define GB_IS_ANY_FC64_MONOID 0
-#endif
-
 // 1 if monoid is MIN for signed or unsigned integers
 #ifndef GB_IS_IMIN_MONOID
 #define GB_IS_IMIN_MONOID 0

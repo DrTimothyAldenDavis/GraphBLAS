@@ -140,8 +140,9 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     // C = A*B via saxpy3 or bitmap method, function pointers, and typecasting
     //--------------------------------------------------------------------------
 
-    // FIXME: rename to GB_B_SIZE.  This is before typecast to GB_B2TYPE
-    #define GB_BSIZE bsize
+    // This is before typecast to GB_B2TYPE, so it is the size of the
+    // entries in the B matrix, not as typecasted to GB_B2TYPE.
+    #define GB_B_SIZE bsize
 
     // definitions for GB_AxB_saxpy_generic_template.c
     #include "GB_AxB_saxpy3_template.h"
@@ -223,8 +224,8 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
             #undef  GB_Z_TYPE
             #define GB_Z_TYPE int64_t
             // FIXME: rename GB_Z_SIZE?
-            #undef  GB_CSIZE
-            #define GB_CSIZE (sizeof (int64_t))
+            #undef  GB_C_SIZE
+            #define GB_C_SIZE (sizeof (int64_t))
             ASSERT (C->type == GrB_INT64) ;
             ASSERT (csize == sizeof (int64_t)) ;
             #if OP_IS_FIRSTI
@@ -261,8 +262,8 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
             #define GB_C_TYPE int32_t
             #undef  GB_Z_TYPE
             #define GB_Z_TYPE int32_t
-            #undef  GB_CSIZE
-            #define GB_CSIZE (sizeof (int32_t))
+            #undef  GB_C_SIZE
+            #define GB_C_SIZE (sizeof (int32_t))
             ASSERT (C->type == GrB_INT32) ;
             ASSERT (csize == sizeof (int32_t)) ;
             #if OP_IS_FIRSTI
@@ -377,8 +378,8 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
         #undef  GB_Z_TYPE
         #define GB_Z_TYPE GB_void
 
-        #undef  GB_CSIZE
-        #define GB_CSIZE csize
+        #undef  GB_C_SIZE
+        #define GB_C_SIZE csize
 
         #if OP_IS_FIRST
         { 

@@ -65,8 +65,6 @@ GB_z_has_omp_atomic_update
 GB_ztype_ignore_overflow
 GB_pragma_simd_reduction_monoid
 GB_is_any_monoid
-GB_is_any_fc32_monoid
-GB_is_any_fc64_monoid
 GB_is_imin_monoid
 GB_is_imax_monoid
 GB_is_fmin_monoid
@@ -208,7 +206,7 @@ m4_divert(if_saxpy4_enabled)
         #if GB_DISABLE
         return (GrB_NO_VALUE) ;
         #else
-        #include "GB_AxB_saxpy4_template.c"
+        #include "GB_AxB_saxpy4_meta.c"
         return (GrB_SUCCESS) ;
         #endif
     }
