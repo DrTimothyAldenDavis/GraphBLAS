@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_AxB_saxpy_A_sparse_B_bitmap: C<#M>=A*B, C bitmap, M anything
+// GB_AxB_saxbit_A_sparse_B_bitmap: C<#M>=A*B, C bitmap, M anything
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -11,8 +11,9 @@
 
 // no accumulator is used
 
-// This template is used by Template/GB_bitmap_AxB_saxpy_template, for all
-// cases: generic, pre-generated (including the ANY_PAIR monoid), and the JIT.
+// This template is used by Template/GB_AxB_saxbit_template, for all cases:
+// generic kernels, factor kernels (including the ANY_PAIR monoid), and JIT
+// kernels.
 
 #ifndef GB_B_SIZE
 #define GB_B_SIZE sizeof (GB_B_TYPE)

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy5_bitmap.c: C+=A*B when C is full, A is bitmap, B is sparse/hyper
+// GB_AxB_saxpy5_A_bitmap.c: C+=A*B when C is full, A bitmap, B sparse/hyper
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -10,6 +10,10 @@
 // C is as-if-full.
 // A is bitmap, and not iso-valued and not pattern-only
 // B is sparse or hypersparse.
+
+#ifdef GB_GENERIC
+#error "saxpy5 generic kernel undefined"
+#endif
 
 {
 
@@ -22,7 +26,11 @@
     const int64_t *restrict Bp = B->p ;
     const int64_t *restrict Bh = B->h ;
     const int64_t *restrict Bi = B->i ;
+    #ifdef GB_JIT_KERNEL
+    #define B_iso GB_B_ISO
+    #else
     const bool B_iso = B->iso ;
+    #endif
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     #if !GB_B_IS_PATTERN
     const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;

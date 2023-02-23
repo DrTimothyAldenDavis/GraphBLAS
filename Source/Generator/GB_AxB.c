@@ -20,7 +20,6 @@ GB_add_update
 // identity: GB_identity
 
 // A matrix, typecast to A2 for multiplier input
-#define GB_A_ISO A_iso
 GB_a_is_pattern
 GB_atype
 GB_a2type
@@ -28,7 +27,6 @@ GB_declarea
 GB_geta
 
 // B matrix, typecast to B2 for multiplier input
-#define GB_B_ISO B_iso
 GB_b_is_pattern
 GB_btype
 GB_b2type
@@ -51,11 +49,13 @@ GB_is_plus_32_pair_semiring
 GB_is_plus_big_pair_semiring
 GB_is_plus_fc32_pair_semiring
 GB_is_plus_fc64_pair_semiring
+GB_semiring_has_avx
 
 // monoid properties:
 GB_ztype
 GB_declare_identity
 GB_declare_const_identity
+GB_z_nbits
 GB_has_identity_byte
 GB_identity_byte
 GB_z_atomic_bits
@@ -179,7 +179,7 @@ GrB_Info GB (_AsaxbitB)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_bitmap_AxB_saxpy_template.c"
+    #include "GB_AxB_saxbit_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -219,8 +219,7 @@ m4_divert(if_saxpy5_enabled)
 // GB_Asaxpy5B: C += A*B when C is full, A is bitmap/full, B is sparse/hyper
 //------------------------------------------------------------------------------
 
-    #if GB_DISABLE
-    #elif ( !GB_A_IS_PATTERN )
+    #if !GB_DISABLE && !GB_A_IS_PATTERN
 
 m4_divert(if_semiring_has_avx)
         //----------------------------------------------------------------------
@@ -230,13 +229,9 @@ m4_divert(if_semiring_has_avx)
         // AVX512F: vector registers are 512 bits, or 64 bytes, which can hold
         // 16 floats or 8 doubles.
 
-        // # of bits in the type of C, for AVX2 and AVX512F (saxpy5 method only)
-        #define GB_C_NBITS \
-            GB_cn_bits
-
-        #define GB_V16_512 (16 * GB_C_NBITS <= 512)
-        #define GB_V8_512  ( 8 * GB_C_NBITS <= 512)
-        #define GB_V4_512  ( 4 * GB_C_NBITS <= 512)
+        #define GB_V16_512 (16 * GB_Z_NBITS <= 512)
+        #define GB_V8_512  ( 8 * GB_Z_NBITS <= 512)
+        #define GB_V4_512  ( 4 * GB_Z_NBITS <= 512)
 
         #define GB_V16 GB_V16_512
         #define GB_V8  GB_V8_512
@@ -251,11 +246,9 @@ m4_divert(if_semiring_has_avx)
                 const GrB_Matrix B,
                 const int ntasks,
                 const int nthreads,
-                const int64_t *B_slice,
-                GB_Werk Werk
+                const int64_t *B_slice
             )
             {
-                #define GB_SEMIRING_HAS_AVX_IMPLEMENTATION 1
                 #include "GB_AxB_saxpy5_unrolled.c"
             }
 
@@ -268,9 +261,9 @@ m4_divert(if_semiring_has_avx)
         // AVX2: vector registers are 256 bits, or 32 bytes, which can hold
         // 8 floats or 4 doubles.
 
-        #define GB_V16_256 (16 * GB_C_NBITS <= 256)
-        #define GB_V8_256  ( 8 * GB_C_NBITS <= 256)
-        #define GB_V4_256  ( 4 * GB_C_NBITS <= 256)
+        #define GB_V16_256 (16 * GB_Z_NBITS <= 256)
+        #define GB_V8_256  ( 8 * GB_Z_NBITS <= 256)
+        #define GB_V4_256  ( 4 * GB_Z_NBITS <= 256)
 
         #undef  GB_V16
         #undef  GB_V8
@@ -289,11 +282,9 @@ m4_divert(if_semiring_has_avx)
                 const GrB_Matrix B,
                 const int ntasks,
                 const int nthreads,
-                const int64_t *B_slice,
-                GB_Werk Werk
+                const int64_t *B_slice
             )
             {
-                #define GB_SEMIRING_HAS_AVX_IMPLEMENTATION 1
                 #include "GB_AxB_saxpy5_unrolled.c"
             }
 
@@ -319,8 +310,7 @@ m4_divert(if_saxpy5_enabled)
             const GrB_Matrix B,
             const int ntasks,
             const int nthreads,
-            const int64_t *B_slice,
-            GB_Werk Werk
+            const int64_t *B_slice
         )
         {
             #include "GB_AxB_saxpy5_unrolled.c"
@@ -335,8 +325,7 @@ m4_divert(if_saxpy5_enabled)
         const GrB_Matrix B,
         const int ntasks,
         const int nthreads,
-        const int64_t *B_slice,
-        GB_Werk Werk
+        const int64_t *B_slice
     )
     { 
         #if GB_DISABLE

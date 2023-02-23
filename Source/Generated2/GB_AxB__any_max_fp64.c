@@ -20,7 +20,6 @@
 // identity: 0
 
 // A matrix, typecast to A2 for multiplier input
-#define GB_A_ISO A_iso
 #define GB_A_IS_PATTERN 0
 #define GB_A_TYPE double
 #define GB_A2TYPE double
@@ -28,7 +27,6 @@
 #define GB_GETA(aik,Ax,pA,A_iso) aik = Ax [(A_iso) ? 0 : (pA)]
 
 // B matrix, typecast to B2 for multiplier input
-#define GB_B_ISO B_iso
 #define GB_B_IS_PATTERN 0
 #define GB_B_TYPE double
 #define GB_B2TYPE double
@@ -46,6 +44,7 @@
 #define GB_Z_TYPE double
 #define GB_DECLARE_IDENTITY(z) double z = 0
 #define GB_DECLARE_IDENTITY_CONST(z) const double z = 0
+#define GB_Z_NBITS 64
 
 #define GB_Z_ATOMIC_BITS 64
 
@@ -131,7 +130,7 @@ GrB_Info GB (_AsaxbitB__any_max_fp64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_bitmap_AxB_saxpy_template.c"
+    #include "GB_AxB_saxbit_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

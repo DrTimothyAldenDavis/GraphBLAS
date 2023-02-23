@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_AxB_saxpy_generic_first.c: C=A*B, C bitmap/full, FIRST multiplier
+// GB_AxB_saxbit_generic_first.c: C=A*B, C bitmap/full, FIRST multiplier
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -10,7 +10,7 @@
 // C is bitmap only.
 // multiply op is GxB_FIRST_* for any type, including user-defined
 
-#define GB_AXB_SAXPY_GENERIC_METHOD GB_bitmap_AxB_saxpy_generic_first 
+#define GB_AXB_SAXPY_GENERIC_METHOD GB_AxB_saxbit_generic_first 
 #define C_IS_SPARSE_OR_HYPERSPARSE  0
 #define OP_IS_POSITIONAL            0
 #define FLIPXY                      0

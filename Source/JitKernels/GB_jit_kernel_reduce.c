@@ -19,30 +19,39 @@
 
     // example file: GB_jit_reduce_2c1fbb2.c
 
-    // monoid: (plus, double)
+    // reduce: (plus, double)
 
-    // reduction monoid:
+    // monoid:
     #define GB_Z_TYPE double
     #define GB_ADD(z,x,y) z = (x) + (y)
-    #define GB_UPDATE(z,y) z += (y)
-    #define GB_DECLARE_IDENTITY(z) double z = 0 ;
-    #define GB_DECLARE_IDENTITY_CONST(z) const double z = 0 ;
+    #define GB_UPDATE(z,y) z += y
+    #define GB_DECLARE_IDENTITY(z) double z = 0
+    #define GB_DECLARE_IDENTITY_CONST(z) const double z = 0
     #define GB_HAS_IDENTITY_BYTE 1
     #define GB_IDENTITY_BYTE 0x00
+    #define GB_PRAGMA_SIMD_REDUCTION_MONOID(z) GB_PRAGMA_SIMD_REDUCTION (+,z)
     #define GB_Z_IGNORE_OVERFLOW 1
+    #define GB_Z_NBITS 64
+    #define GB_Z_ATOMIC_BITS 64
+    #define GB_Z_HAS_ATOMIC_UPDATE 1
+    #define GB_Z_HAS_OMP_ATOMIC_UPDATE 1
     #define GB_Z_HAS_CUDA_ATOMIC_BUILTIN 1
     #define GB_Z_CUDA_ATOMIC GB_cuda_atomic_add
     #define GB_Z_CUDA_ATOMIC_TYPE double
-    #define GB_GETA_AND_UPDATE(z,Ax,p) GB_UPDATE(z, Ax [p]) ;
+    #define GB_GETA_AND_UPDATE(z,Ax,p) GB_UPDATE (z, Ax [p])
 
-    // A matrix:
-    #define GB_A_IS_PATTERN 0
-    #define GB_A_ISO 0
-    #define GB_A_HAS_ZOMBIES 0
+    // A matrix: bitmap
     #define GB_A_IS_HYPER  0
     #define GB_A_IS_SPARSE 0
     #define GB_A_IS_BITMAP 1
     #define GB_A_IS_FULL   0
+    #define GBP_A(Ap,k,vlen) ((k) * (vlen))
+    #define GBH_A(Ah,k)      (k)
+    #define GBI_A(Ai,p,vlen) ((p) % (vlen))
+    #define GBB_A(Ab,p)      Ab [p]
+    #define GB_A_ISO 0
+    #define GB_A_IS_PATTERN 0
+    #define GB_A_HAS_ZOMBIES 0
     #define GB_A_TYPE double
     #define GB_A2TYPE double
     #define GB_DECLAREA(a) double a
@@ -51,7 +60,6 @@
     // panel size for reduction:
     #define GB_PANEL 32
 
-    // reduction kernel
     #include "GB_jit_kernel_reduce.c"
 
 #endif

@@ -188,22 +188,25 @@ int main (void)
     ciso.real = 1 ;
     ciso.imag = -2 ;
     GrB_Matrix_assign_UDT (C, NULL, NULL, &ciso, GrB_ALL, 4, GrB_ALL, 4, NULL) ;
-    GxB_print (C, 3) ;
+//  GxB_print (C, 3) ;
     printgauss (C) ;
-    GxB_print (A, 3) ;
+//  GxB_print (A, 3) ;
     printgauss (A) ;
     GrB_mxm (C, NULL, AddGauss, GaussSemiring, A, A, GrB_DESC_T1) ;
-    GxB_print (C, 3) ;
+//  GxB_print (C, 3) ;
     printgauss (C) ;
 
     // C += B*A where B is full and A is sparse
     GrB_Matrix B ;
     GrB_Matrix_new (&B, Gauss, 4, 4) ;
     GrB_Matrix_assign_UDT (B, NULL, NULL, &ciso, GrB_ALL, 4, GrB_ALL, 4, NULL) ;
-    printf ("here:\n") ;
-    GrB_Info info = GrB_mxm (C, NULL, AddGauss, GaussSemiring, B, A, NULL) ;
-    printf ("info: %d\n", info) ;
-    GxB_print (C, 3) ;
+    GrB_mxm (C, NULL, AddGauss, GaussSemiring, B, A, NULL) ;
+//  GxB_print (C, 3) ;
+    printgauss (C) ;
+
+    // C += A*B where B is full and A is sparse
+    GrB_mxm (C, NULL, AddGauss, GaussSemiring, A, B, NULL) ;
+//  GxB_print (C, 3) ;
     printgauss (C) ;
 
     // free everything and finalize GraphBLAS

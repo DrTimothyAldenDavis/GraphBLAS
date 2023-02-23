@@ -42,7 +42,7 @@
     #else
     {
         // C is bitmap
-        #include "GB_bitmap_AxB_saxpy_template.c"
+        #include "GB_AxB_saxbit_template.c"
     }
     #endif
 }

@@ -114,8 +114,7 @@ GrB_Info GB (_Asaxpy5B)
     const GrB_Matrix B,
     const int ntasks,
     const int nthreads,
-    const int64_t *B_slice,
-    GB_Werk Werk
+    const int64_t *B_slice
 ) ;
 m4_divert(0)
 

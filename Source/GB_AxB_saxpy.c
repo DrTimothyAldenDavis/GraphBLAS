@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
-#include "GB_bitmap_AxB_saxpy.h"
+#include "GB_AxB_saxbit.h"
 #include "GB_stringify.h"
 
 // TODO: allow bitmap multiply to work in-place as well
@@ -104,12 +104,9 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             // GB_AxB_saxpy4 computes C += A*B where C is as-if-full, no mask
             // is present, accum is present and matches the monoid, no
             // typecasting, A is sparse or hypersparse, and B is bitmap or
-            // as-if-full.  Only built-in semirings are supported, but not all:
-            // (1) the ANY monoid is not supported since it would be unusual to
-            // use ANY as the accum, and (2) only monoid updates that can be
-            // done atomically without a critical section are supported.  The
-            // method is not used if A*B is iso; C may be iso on input but it
-            // is non-iso on output.
+            // as-if-full.  The ANY monoid is not supported since it would be
+            // unusual to use ANY as the accum.  C may be iso on input but the
+            // method is not used if C is iso on output.
 
             #ifdef GB_DEBUGIFY_DEFN
             GB_debugify_mxm (false, C_in->iso, GB_sparsity (C_in), ztype, M,
@@ -131,9 +128,6 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             // GB_AxB_saxpy5 computes C+=A*B where C is as-if-full, just like
             // GB_AxB_saxpy4, except that the sparsity format of A and B are
             // reversed.  A is bitmap or full, and B is sparse or hypersparse.
-            // Only built-in semirings are supported, except for the ANY
-            // monoid.  Unlike GB_AxB_saxpy4, built-in monoids without their
-            // own atomics (TIMES for complex) are supported.
 
             #ifdef GB_DEBUGIFY_DEFN
             GB_debugify_mxm (false, C_in->iso, GB_sparsity (C_in), ztype, M,
@@ -232,7 +226,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             // GB_AxB_saxpy_sparsity will be called again, and it might choose
             // the bitmap method instead.  If saxpy3 is still chosen, this
             // results in a different analysis in GB_AxB_saxpy3, with no mask
-            // present.  Otherwise, GB_bitmap_AxB_saxpy, below, is called.
+            // present.  Otherwise, GB_AxB_saxbit, below, is called.
             ASSERT (M != NULL) ;
             info = GB_AxB_saxpy (C, NULL, NULL, false, false, NULL, A, B,
                 semiring, flipxy, mask_applied, done_in_place, AxB_method,
@@ -267,7 +261,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             #endif
 
             // C<#M> = A*B via bitmap saxpy method
-            info = GB_bitmap_AxB_saxpy (C, C_iso, cscalar, M,
+            info = GB_AxB_saxbit (C, C_iso, cscalar, M,
                 Mask_comp, Mask_struct, A, B, semiring, flipxy, Werk) ;
         }
 

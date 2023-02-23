@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B; C bitmap or full
+// GB_AxB_saxbit: compute C=A*B, C<M>=A*B, or C<!M>=A*B; C bitmap or full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -7,11 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GB_AXB_BITMAP_SAXPY_H
-#define GB_AXB_BITMAP_SAXPY_H
+#ifndef GB_AXB_SAXBIT_H
+#define GB_AXB_SAXBIT_H
 #include "GB_mxm.h"
 
-GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
+GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
 (
     GrB_Matrix C,                   // output matrix, static header
     const bool C_iso,               // true if C is iso

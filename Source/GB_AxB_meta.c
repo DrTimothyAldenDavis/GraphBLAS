@@ -635,8 +635,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 // C<M>=A'*B via dot, or C_in<M>+=A'*B if in-place
                 GBURBLE ("C%s=A'*B, %sdot_product ", M_str,
                     (M != NULL && !Mask_comp) ? "masked_" : "") ;
-                GB_OK (GB_AxB_dot (C, (can_do_in_place) ? C_in : NULL,
-                    M, Mask_comp, Mask_struct, accum, A, B, semiring, flipxy,
+                GB_OK (GB_AxB_dot (C, can_do_in_place ? C_in : NULL, M,
+                    Mask_comp, Mask_struct, accum, A, B, semiring, flipxy,
                     mask_applied, done_in_place, Werk)) ;
                 break ;
 
@@ -645,8 +645,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 GBURBLE ("C%s=A'*B, saxpy (transposed %s) ", M_str, A_str) ;
                 GB_OK (GB_AxB_saxpy (C, can_do_in_place ? C_in : NULL, M,
                     Mask_comp, Mask_struct, accum, AT, B, semiring, flipxy,
-                    mask_applied, done_in_place, AxB_method, do_sort,
-                    Werk)) ;
+                    mask_applied, done_in_place, AxB_method, do_sort, Werk)) ;
                 break ;
         }
 
@@ -720,8 +719,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 GB_CLEAR_STATIC_HEADER (AT, &AT_header) ;
                 GB_OK (GB_transpose_cast (AT, atype_cast, true, A, A_is_pattern,
                     Werk)) ;
-                GB_OK (GB_AxB_dot (C, (can_do_in_place) ? C_in : NULL,
-                    M, Mask_comp, Mask_struct, accum, AT, BT, semiring, flipxy,
+                GB_OK (GB_AxB_dot (C, can_do_in_place ? C_in : NULL, M,
+                    Mask_comp, Mask_struct, accum, AT, BT, semiring, flipxy,
                     mask_applied, done_in_place, Werk)) ;
                 break ;
 
@@ -730,8 +729,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 GBURBLE ("C%s=A*B', saxpy (transposed %s) ", M_str, B_str) ;
                 GB_OK (GB_AxB_saxpy (C, can_do_in_place ? C_in : NULL, M,
                     Mask_comp, Mask_struct, accum, A, BT, semiring, flipxy,
-                    mask_applied, done_in_place, AxB_method, do_sort,
-                    Werk)) ;
+                    mask_applied, done_in_place, AxB_method, do_sort, Werk)) ;
                 break ;
         }
 
@@ -783,7 +781,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 if (saxpy_method == GB_SAXPY_METHOD_BITMAP)
                 { 
                     // bitmap = hyper * (bitmap or full) is very efficient
-                    // to do via GB_bitmap_AxB_saxpy.
+                    // to do via GB_AxB_saxbit.
                     axb_method = GB_USE_SAXPY ;
                 }
                 else
@@ -825,8 +823,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 GB_CLEAR_STATIC_HEADER (AT, &AT_header) ;
                 GB_OK (GB_transpose_cast (AT, atype_cast, true, A, A_is_pattern,
                     Werk)) ;
-                GB_OK (GB_AxB_dot (C, (can_do_in_place) ? C_in : NULL,
-                    M, Mask_comp, Mask_struct, accum, AT, B, semiring, flipxy,
+                GB_OK (GB_AxB_dot (C, can_do_in_place ? C_in : NULL, M,
+                    Mask_comp, Mask_struct, accum, AT, B, semiring, flipxy,
                     mask_applied, done_in_place, Werk)) ;
                 break ;
 
@@ -835,8 +833,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 GBURBLE ("C%s=A*B, saxpy ", M_str) ;
                 GB_OK (GB_AxB_saxpy (C, can_do_in_place ? C_in : NULL, M,
                     Mask_comp, Mask_struct, accum, A, B, semiring, flipxy,
-                    mask_applied, done_in_place, AxB_method, do_sort,
-                    Werk)) ;
+                    mask_applied, done_in_place, AxB_method, do_sort, Werk)) ;
                 break ;
         }
     }

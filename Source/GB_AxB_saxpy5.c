@@ -28,6 +28,7 @@
 
 #include "GB_mxm.h"
 #include "GB_control.h"
+#include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_AxB__include2.h"
 #endif
@@ -37,10 +38,10 @@
     GB_WERK_POP (B_slice, int64_t) ;    \
 }
 
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE_WORKSPACE ;         \
-    GB_phybix_free (C) ;        \
+#define GB_FREE_ALL                     \
+{                                       \
+    GB_FREE_WORKSPACE ;                 \
+    GB_phybix_free (C) ;                \
 }
 
 //------------------------------------------------------------------------------
@@ -58,14 +59,6 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     GB_Werk Werk
 )
 {
-
-    //--------------------------------------------------------------------------
-    // saxpy5 is disabled if GraphBLAS is compiled as compact
-    //--------------------------------------------------------------------------
-
-    #ifdef GBCUDA_DEV
-    return (GrB_NO_VALUE) ;
-    #else
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -100,7 +93,6 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     //--------------------------------------------------------------------------
 
     GrB_BinaryOp mult = semiring->multiply ;
-//  GrB_Monoid add = semiring->add ;
     ASSERT (mult->ztype == semiring->add->op->ztype) ;
     bool A_is_pattern, B_is_pattern ;
     GB_binop_pattern (&A_is_pattern, &B_is_pattern, flipxy, mult->opcode) ;
@@ -111,9 +103,15 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
         B_is_pattern, semiring, flipxy, &mult_binop_code, &add_binop_code,
         &xcode, &ycode, &zcode) ;
 
-    if (!builtin_semiring || (add_binop_code == GB_ANY_binop_code))
+    if (add_binop_code == GB_ANY_binop_code
+        #if !GB_JIT_ENABLED
+        || !builtin_semiring
+        #endif
+        )
     { 
-        // The semiring must be built-in, and cannot use the ANY monoid.
+        // The semiring cannot use the ANY monoid.
+        // The semiring must be builtin, or use the JIT (no generic method).
+        GBURBLE ("(punt) ") ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -150,26 +148,49 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     GB_pslice (B_slice, B->p, bnvec, ntasks, false) ;
 
     //--------------------------------------------------------------------------
-    // define the worker for the switch factory
+    // factory kernel
     //--------------------------------------------------------------------------
 
     info = GrB_NO_VALUE ;
 
-    #define GB_Asaxpy5B(add,mult,xname) GB (_Asaxpy5B_ ## add ## mult ## xname)
-    #define GB_AxB_WORKER(add,mult,xname)                               \
-    {                                                                   \
-        info = GB_Asaxpy5B (add,mult,xname) (C, A,                      \
-            B, ntasks, nthreads, B_slice, Werk) ;                    \
-    }                                                                   \
-    break ;
+    #ifndef GBCUDA_DEV
+    {
+
+        //----------------------------------------------------------------------
+        // define the worker for the switch factory
+        //----------------------------------------------------------------------
+
+        #define GB_Asaxpy5B(add,mult,xname) \
+            GB (_Asaxpy5B_ ## add ## mult ## xname)
+        #define GB_AxB_WORKER(add,mult,xname)                               \
+        {                                                                   \
+            info = GB_Asaxpy5B (add,mult,xname) (C, A, B,                   \
+                ntasks, nthreads, B_slice) ;                                \
+        }                                                                   \
+        break ;
+
+        //----------------------------------------------------------------------
+        // launch the switch factory
+        //----------------------------------------------------------------------
+
+        // disable the ANY monoid
+        #define GB_NO_ANY_MONOID
+        #include "GB_AxB_factory.c"
+    
+    }
+    #endif
 
     //--------------------------------------------------------------------------
-    // launch the switch factory
+    // JIT kernel
     //--------------------------------------------------------------------------
 
-    // disable the ANY monoid
-    #define GB_NO_ANY_MONOID
-    #include "GB_AxB_factory.c"
+    #if GB_JIT_ENABLED
+    if (info == GrB_NO_VALUE)
+    { 
+        info = GB_AxB_saxpy5_jit (C, A, B, semiring, flipxy,
+            ntasks, nthreads, B_slice) ;
+    }
+    #endif
 
     //--------------------------------------------------------------------------
     // free workspace and return result
@@ -187,6 +208,5 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
         (*done_in_place) = true ;
     }
     return (info) ;
-    #endif
 }
 

@@ -241,10 +241,10 @@ GrB_Info GB_AxB_saxpy3_generic_unflipped
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_bitmap_AxB_saxpy_generic_*: C is bitmap (never full)
+// GB_AxB_saxbit_generic_*: C is bitmap (never full)
 //------------------------------------------------------------------------------
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_firsti64
+GrB_Info GB_AxB_saxbit_generic_firsti64
 (
     GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
@@ -264,7 +264,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_firsti64
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_firstj64
+GrB_Info GB_AxB_saxbit_generic_firstj64
 (
     GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
@@ -284,7 +284,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_firstj64
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_secondj64
+GrB_Info GB_AxB_saxbit_generic_secondj64
 (
     GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
@@ -304,7 +304,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_secondj64
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_firsti32
+GrB_Info GB_AxB_saxbit_generic_firsti32
 (
     GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
@@ -324,7 +324,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_firsti32
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_firstj32
+GrB_Info GB_AxB_saxbit_generic_firstj32
 (
     GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
@@ -344,7 +344,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_firstj32
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_secondj32
+GrB_Info GB_AxB_saxbit_generic_secondj32
 (
     GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
@@ -364,7 +364,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_secondj32
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_first
+GrB_Info GB_AxB_saxbit_generic_first
 (
     GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
@@ -384,7 +384,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_first
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_second
+GrB_Info GB_AxB_saxbit_generic_second
 (
     GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
@@ -404,7 +404,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_second
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_flipped
+GrB_Info GB_AxB_saxbit_generic_flipped
 (
     GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,
@@ -424,7 +424,7 @@ GrB_Info GB_bitmap_AxB_saxpy_generic_flipped
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_AxB_saxpy_generic_unflipped
+GrB_Info GB_AxB_saxbit_generic_unflipped
 (
     GrB_Matrix C,                   // C is bitmap
     const GrB_Matrix M,

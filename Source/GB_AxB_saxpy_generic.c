@@ -15,7 +15,7 @@
 // method does not handle the dot-product methods, which compute C=A'*B if A
 // and B are held by column, or equivalently A*B' if both are held by row.
 
-// This method uses GB_AxB_saxpy3_generic_* and GB_bitmap_AxB_saxpy_generic_*
+// This method uses GB_AxB_saxpy3_generic_* and GB_AxB_saxbit_generic_*
 // to implement two meta-methods, each of which can contain further specialized
 // methods (such as the fine/ coarse x Gustavson/Hash, mask/no-mask methods in
 // saxpy3):
@@ -24,8 +24,8 @@
 //          via GB_AxB_saxpy3_template.c.  SaxpyTasks holds the (fine/coarse x
 //          Gustavson/Hash) tasks constructed by GB_AxB_saxpy3_slice*.
 
-// bitmap_saxpy: general purpose method, where C is bitmap, via
-//          GB_bitmap_AxB_saxpy_template.c.  The method constructs its own
+// saxbit: general purpose method, where C is bitmap, via
+//          GB_AxB_saxbit_template.c.  The method constructs its own
 //          tasks in workspace defined and freed in that template.
 
 // C is not iso, and it is never full.
@@ -107,7 +107,7 @@ GrB_Info GB_AxB_saxpy_generic
                         else
                         { 
                             // C is bitmap
-                            info = GB_bitmap_AxB_saxpy_generic_firsti64 
+                            info = GB_AxB_saxbit_generic_firsti64 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               NULL, 0, 0, 0, 0,
@@ -133,7 +133,7 @@ GrB_Info GB_AxB_saxpy_generic
                         else
                         { 
                             // C is bitmap
-                            info = GB_bitmap_AxB_saxpy_generic_firstj64 
+                            info = GB_AxB_saxbit_generic_firstj64 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               NULL, 0, 0, 0, 0,
@@ -157,7 +157,7 @@ GrB_Info GB_AxB_saxpy_generic
                         else
                         { 
                             // C is bitmap
-                            info = GB_bitmap_AxB_saxpy_generic_secondj64 
+                            info = GB_AxB_saxbit_generic_secondj64 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               NULL, 0, 0, 0, 0,
@@ -187,7 +187,7 @@ GrB_Info GB_AxB_saxpy_generic
                         else
                         { 
                             // C is bitmap
-                            info = GB_bitmap_AxB_saxpy_generic_firsti32 
+                            info = GB_AxB_saxbit_generic_firsti32 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               NULL, 0, 0, 0, 0,
@@ -213,7 +213,7 @@ GrB_Info GB_AxB_saxpy_generic
                         else
                         { 
                             // C is bitmap
-                            info = GB_bitmap_AxB_saxpy_generic_firstj32 
+                            info = GB_AxB_saxbit_generic_firstj32 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               NULL, 0, 0, 0, 0,
@@ -237,7 +237,7 @@ GrB_Info GB_AxB_saxpy_generic
                         else
                         { 
                             // C is bitmap
-                            info = GB_bitmap_AxB_saxpy_generic_secondj32 
+                            info = GB_AxB_saxbit_generic_secondj32 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
                               NULL, 0, 0, 0, 0,
@@ -278,7 +278,7 @@ GrB_Info GB_AxB_saxpy_generic
             else
             { 
                 // C is bitmap
-                info = GB_bitmap_AxB_saxpy_generic_first 
+                info = GB_AxB_saxbit_generic_first 
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
                       NULL, 0, 0, 0, 0,
@@ -304,7 +304,7 @@ GrB_Info GB_AxB_saxpy_generic
             else
             { 
                 // C is bitmap
-                info = GB_bitmap_AxB_saxpy_generic_second 
+                info = GB_AxB_saxbit_generic_second 
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
                       NULL, 0, 0, 0, 0,
@@ -326,7 +326,7 @@ GrB_Info GB_AxB_saxpy_generic
             else
             { 
                 // C is bitmap, mult is flipped
-                info = GB_bitmap_AxB_saxpy_generic_flipped 
+                info = GB_AxB_saxbit_generic_flipped 
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
                       NULL, 0, 0, 0, 0,
@@ -348,7 +348,7 @@ GrB_Info GB_AxB_saxpy_generic
             else
             { 
                 // C is bitmap, mult is unflipped
-                info = GB_bitmap_AxB_saxpy_generic_unflipped 
+                info = GB_AxB_saxbit_generic_unflipped 
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
                       NULL, 0, 0, 0, 0,

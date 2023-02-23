@@ -117,6 +117,18 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_AxB_saxpy5_jit          // C+=A*B, saxpy5 method, via the JIT
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const GrB_Semiring semiring,
+    const bool flipxy,
+    const int ntasks,
+    const int nthreads,
+    const int64_t *B_slice
+) ;
+
 //------------------------------------------------------------------------------
 // saxpy methods
 //------------------------------------------------------------------------------

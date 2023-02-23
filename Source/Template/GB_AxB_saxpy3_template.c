@@ -45,7 +45,7 @@
     const int64_t *restrict Bi = B->i ;
     const int64_t bvlen = B->vlen ;
     #ifdef GB_JIT_KERNEL
-    #define B_iso       GB_B_ISO
+    #define B_iso GB_B_ISO
     #define B_is_sparse GB_B_IS_SPARSE
     #define B_is_hyper  GB_B_IS_HYPER
     #define B_is_bitmap GB_B_IS_BITMAP
@@ -65,7 +65,7 @@
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     #ifdef GB_JIT_KERNEL
-    #define A_iso       GB_A_ISO
+    #define A_iso GB_A_ISO
     #define A_is_sparse GB_A_IS_SPARSE
     #define A_is_hyper  GB_A_IS_HYPER
     #define A_is_bitmap GB_A_IS_BITMAP

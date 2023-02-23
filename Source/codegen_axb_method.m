@@ -121,6 +121,8 @@ switch (ztype)
         error ('unknown type') ;
 end
 
+fprintf (f, 'm4_define(`GB_z_nbits'', `#define GB_Z_NBITS %d'')\n', ztype_nbits) ;
+
 % atomic write and compare/exchange
 has_atomic_write = false ;
 if (ztype_nbits <= 64)
@@ -295,9 +297,11 @@ if (is_plus_times_fp)
     % plus_times_fp64) are accelerated with AVX2 or AVX512f instructions.  More
     % semirings will be accelerated in the future.
     fprintf (f, 'm4_define(`if_semiring_has_avx'', `0'')\n') ;
+    fprintf (f, 'm4_define(`GB_semiring_has_avx'', `#define GB_SEMIRING_HAS_AVX_IMPLEMENTATION 1'')\n') ;
 else
     % disable the avx-based methods
     fprintf (f, 'm4_define(`if_semiring_has_avx'', `-1'')\n') ;
+    fprintf (f, 'm4_define(`GB_semiring_has_avx'', `'')\n') ;
 end
 
 one = '' ;

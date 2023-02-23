@@ -23,8 +23,8 @@
 //          via GB_AxB_saxpy3_template.c.  SaxpyTasks holds the (fine/coarse x
 //          Gustavson/Hash) tasks constructed by GB_AxB_saxpy3_slice*.
 
-// bitmap_saxpy: general purpose method, where C is bitmap, via
-//          GB_bitmap_AxB_saxpy_template.c.  The method constructs its own
+// saxbit: general purpose method, where C is bitmap, via
+//          GB_AxB_saxbit_template.c.  The method constructs its own
 //          tasks in workspace defined and freed in that template.
 
 // C is not iso, nor is it full.
@@ -43,16 +43,16 @@
 //      GB_AxB_saxpy3_generic_flipped
 //      GB_AxB_saxpy3_generic_unflipped
 
-//      GB_bitmap_AxB_saxpy_generic_firsti64
-//      GB_bitmap_AxB_saxpy_generic_firstj64
-//      GB_bitmap_AxB_saxpy_generic_secondj64
-//      GB_bitmap_AxB_saxpy_generic_firsti32
-//      GB_bitmap_AxB_saxpy_generic_firstj32
-//      GB_bitmap_AxB_saxpy_generic_secondj32
-//      GB_bitmap_AxB_saxpy_generic_first
-//      GB_bitmap_AxB_saxpy_generic_second
-//      GB_bitmap_AxB_saxpy_generic_flipped
-//      GB_bitmap_AxB_saxpy_generic_unflipped
+//      GB_AxB_saxbit_generic_firsti64
+//      GB_AxB_saxbit_generic_firstj64
+//      GB_AxB_saxbit_generic_secondj64
+//      GB_AxB_saxbit_generic_firsti32
+//      GB_AxB_saxbit_generic_firstj32
+//      GB_AxB_saxbit_generic_secondj32
+//      GB_AxB_saxbit_generic_first
+//      GB_AxB_saxbit_generic_second
+//      GB_AxB_saxbit_generic_flipped
+//      GB_AxB_saxbit_generic_unflipped
 
 //------------------------------------------------------------------------------
 

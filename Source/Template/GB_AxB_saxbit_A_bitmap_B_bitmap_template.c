@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_AxB_saxpy_A_bitmap_B_bitmap: C<#M>+=A*B, C bitmap, M any format
+// GB_AxB_saxbit_A_bitmap_B_bitmap: C<#M>+=A*B, C bitmap, M any format
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.

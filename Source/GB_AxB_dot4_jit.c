@@ -44,7 +44,7 @@ GrB_Info GB_AxB_dot4_jit            // C+=A'*B, dot4 method, via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_mxm (&encoding, &suffix,
-        GB_JIT_KERNEL_MXM_DOT4,
+        GB_JIT_KERNEL_AXB_DOT4,
         false, C->iso, GB_sparsity (C), C->type,
         NULL, true, false, semiring, flipxy, A, B) ;
     if (hash == UINT64_MAX)

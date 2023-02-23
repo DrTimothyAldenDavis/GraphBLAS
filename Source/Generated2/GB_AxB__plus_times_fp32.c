@@ -20,7 +20,6 @@
 // identity: 0
 
 // A matrix, typecast to A2 for multiplier input
-#define GB_A_ISO A_iso
 #define GB_A_IS_PATTERN 0
 #define GB_A_TYPE float
 #define GB_A2TYPE float
@@ -28,7 +27,6 @@
 #define GB_GETA(aik,Ax,pA,A_iso) aik = Ax [(A_iso) ? 0 : (pA)]
 
 // B matrix, typecast to B2 for multiplier input
-#define GB_B_ISO B_iso
 #define GB_B_IS_PATTERN 0
 #define GB_B_TYPE float
 #define GB_B2TYPE float
@@ -42,10 +40,13 @@
 
 // special case semirings:
 
+#define GB_SEMIRING_HAS_AVX_IMPLEMENTATION 1
+
 // monoid properties:
 #define GB_Z_TYPE float
 #define GB_DECLARE_IDENTITY(z) float z = 0
 #define GB_DECLARE_IDENTITY_CONST(z) const float z = 0
+#define GB_Z_NBITS 32
 #define GB_HAS_IDENTITY_BYTE 1
 #define GB_IDENTITY_BYTE 0
 #define GB_Z_ATOMIC_BITS 32
@@ -150,7 +151,7 @@ GrB_Info GB (_AsaxbitB__plus_times_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_bitmap_AxB_saxpy_template.c"
+    #include "GB_AxB_saxbit_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -187,8 +188,7 @@ GrB_Info GB (_AsaxbitB__plus_times_fp32)
 // GB_Asaxpy5B: C += A*B when C is full, A is bitmap/full, B is sparse/hyper
 //------------------------------------------------------------------------------
 
-    #if GB_DISABLE
-    #elif ( !GB_A_IS_PATTERN )
+    #if !GB_DISABLE && !GB_A_IS_PATTERN
 
         //----------------------------------------------------------------------
         // saxpy5 method with vectors of length 8 for double, 16 for single
@@ -197,13 +197,9 @@ GrB_Info GB (_AsaxbitB__plus_times_fp32)
         // AVX512F: vector registers are 512 bits, or 64 bytes, which can hold
         // 16 floats or 8 doubles.
 
-        // # of bits in the type of C, for AVX2 and AVX512F (saxpy5 method only)
-        #define GB_C_NBITS \
-            GB_cn_bits
-
-        #define GB_V16_512 (16 * GB_C_NBITS <= 512)
-        #define GB_V8_512  ( 8 * GB_C_NBITS <= 512)
-        #define GB_V4_512  ( 4 * GB_C_NBITS <= 512)
+        #define GB_V16_512 (16 * GB_Z_NBITS <= 512)
+        #define GB_V8_512  ( 8 * GB_Z_NBITS <= 512)
+        #define GB_V4_512  ( 4 * GB_Z_NBITS <= 512)
 
         #define GB_V16 GB_V16_512
         #define GB_V8  GB_V8_512
@@ -218,11 +214,9 @@ GrB_Info GB (_AsaxbitB__plus_times_fp32)
                 const GrB_Matrix B,
                 const int ntasks,
                 const int nthreads,
-                const int64_t *B_slice,
-                GB_Werk Werk
+                const int64_t *B_slice
             )
             {
-                #define GB_SEMIRING_HAS_AVX_IMPLEMENTATION 1
                 #include "GB_AxB_saxpy5_unrolled.c"
             }
 
@@ -235,9 +229,9 @@ GrB_Info GB (_AsaxbitB__plus_times_fp32)
         // AVX2: vector registers are 256 bits, or 32 bytes, which can hold
         // 8 floats or 4 doubles.
 
-        #define GB_V16_256 (16 * GB_C_NBITS <= 256)
-        #define GB_V8_256  ( 8 * GB_C_NBITS <= 256)
-        #define GB_V4_256  ( 4 * GB_C_NBITS <= 256)
+        #define GB_V16_256 (16 * GB_Z_NBITS <= 256)
+        #define GB_V8_256  ( 8 * GB_Z_NBITS <= 256)
+        #define GB_V4_256  ( 4 * GB_Z_NBITS <= 256)
 
         #undef  GB_V16
         #undef  GB_V8
@@ -256,11 +250,9 @@ GrB_Info GB (_AsaxbitB__plus_times_fp32)
                 const GrB_Matrix B,
                 const int ntasks,
                 const int nthreads,
-                const int64_t *B_slice,
-                GB_Werk Werk
+                const int64_t *B_slice
             )
             {
-                #define GB_SEMIRING_HAS_AVX_IMPLEMENTATION 1
                 #include "GB_AxB_saxpy5_unrolled.c"
             }
 
@@ -285,8 +277,7 @@ GrB_Info GB (_AsaxbitB__plus_times_fp32)
             const GrB_Matrix B,
             const int ntasks,
             const int nthreads,
-            const int64_t *B_slice,
-            GB_Werk Werk
+            const int64_t *B_slice
         )
         {
             #include "GB_AxB_saxpy5_unrolled.c"
@@ -301,8 +292,7 @@ GrB_Info GB (_AsaxbitB__plus_times_fp32)
         const GrB_Matrix B,
         const int ntasks,
         const int nthreads,
-        const int64_t *B_slice,
-        GB_Werk Werk
+        const int64_t *B_slice
     )
     { 
         #if GB_DISABLE

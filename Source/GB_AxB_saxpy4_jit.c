@@ -60,7 +60,7 @@ GrB_Info GB_AxB_saxpy4_jit          // C+=A*B, saxpy4 method, via the JIT
     ASSERT (!C->iso) ;
     ASSERT (GB_as_if_full (C)) ;
     uint64_t hash = GB_encodify_mxm (&encoding, &suffix,
-        GB_JIT_KERNEL_MXM_SAXPY4,
+        GB_JIT_KERNEL_AXB_SAXPY4,
         false, false, GxB_FULL, C->type,
         NULL, true, false, semiring, flipxy, A, B) ;
     if (hash == UINT64_MAX)

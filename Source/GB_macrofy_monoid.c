@@ -258,6 +258,8 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // create macros for atomics on the CPU
     //--------------------------------------------------------------------------
 
+    fprintf (fp, "#define GB_Z_NBITS %d\n", 8 * (int) zsize) ;
+
     // atomic write
     bool has_atomic_write = false ;
     char *ztype_atomic = NULL ;

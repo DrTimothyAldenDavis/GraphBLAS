@@ -295,6 +295,19 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
             // semiring is max_firstj or max_firstj1
             fprintf (fp, "#define GB_IS_MAX_FIRSTJ_SEMIRING 1\n") ;
         }
+
+    }
+    else if (addop->opcode == GB_PLUS_binop_code &&
+              mult->opcode == GB_TIMES_binop_code &&
+            (zcode == GB_FP32_code || zcode == GB_FP64_code))
+    {
+
+        //----------------------------------------------------------------------
+        // semiring is PLUS_TIMES_FP32 or PLUS_TIMES_FP64
+        //----------------------------------------------------------------------
+
+        // FIXME: try this on other semirings...
+        fprintf (fp, "#define GB_SEMIRING_HAS_AVX_IMPLEMENTATION 1\n") ;
     }
 
     //--------------------------------------------------------------------------

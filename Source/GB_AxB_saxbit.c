@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B; C bitmap
+// GB_AxB_saxbit: compute C=A*B, C<M>=A*B, or C<!M>=A*B; C bitmap
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_bitmap_AxB_saxpy.h"
+#include "GB_AxB_saxbit.h"
 #include "GB_AxB_saxpy_generic.h"
 #include "GB_AxB__include1.h"
 #ifndef GBCUDA_DEV
@@ -17,13 +17,13 @@
 #define GB_FREE_ALL GB_phybix_free (C) ;
 
 //------------------------------------------------------------------------------
-// GB_bitmap_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B
+// GB_AxB_saxbit: compute C=A*B, C<M>=A*B, or C<!M>=A*B
 //------------------------------------------------------------------------------
 
 // TODO: also pass in the user's C and the accum operator, and done_in_place,
 // like GB_AxB_dot4.
 
-GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
+GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
 (
     GrB_Matrix C,                   // output matrix, static header
     const bool C_iso,               // true if C is iso

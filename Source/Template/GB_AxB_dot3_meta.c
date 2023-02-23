@@ -79,7 +79,7 @@
     #define B_is_hyper  GB_B_IS_HYPER
     #define B_is_bitmap GB_B_IS_BITMAP
     #define B_is_sparse GB_B_IS_SPARSE
-    #define B_iso       GB_B_ISO
+    #define B_iso GB_B_ISO
     #else
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
@@ -98,7 +98,7 @@
     #define A_is_hyper  GB_A_IS_HYPER
     #define A_is_bitmap GB_A_IS_BITMAP
     #define A_is_sparse GB_A_IS_SPARSE
-    #define A_iso       GB_A_ISO
+    #define A_iso GB_A_ISO
     #else
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;

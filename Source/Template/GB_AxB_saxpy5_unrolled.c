@@ -9,7 +9,11 @@
 
 // C is as-if-full.
 // A is full and not iso-valued nor pattern-only
-// B is sparse or hypersparse.
+// B is sparse or hypersparse.  It may be iso and/or pattern.
+
+#ifdef GB_GENERIC
+#error "saxpy5 generic kernel undefined"
+#endif
 
 {
 
@@ -21,7 +25,11 @@
     const int64_t *restrict Bp = B->p ;
     const int64_t *restrict Bh = B->h ;
     const int64_t *restrict Bi = B->i ;
+    #if GB_JIT_KERNEL
+    #define B_iso GB_B_ISO
+    #else
     const bool B_iso = B->iso ;
+    #endif
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     #if !GB_B_IS_PATTERN
     const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;

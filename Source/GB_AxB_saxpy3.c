@@ -317,7 +317,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     { 
         // The mask is present but has been discarded; need to discard the
         // analysis so far and redo it without the mask.  This may result in
-        // GB_bitmap_AxB_saxpy being called instead of GB_AxB_saxpy3.
+        // GB_AxB_saxbit being called instead of GB_AxB_saxpy3.
         ASSERT (M != NULL && !apply_mask) ;
         GB_FREE_ALL ;
         return (GrB_NO_VALUE) ;

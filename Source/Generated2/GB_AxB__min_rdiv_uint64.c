@@ -20,7 +20,6 @@
 // identity: UINT64_MAX
 
 // A matrix, typecast to A2 for multiplier input
-#define GB_A_ISO A_iso
 #define GB_A_IS_PATTERN 0
 #define GB_A_TYPE uint64_t
 #define GB_A2TYPE uint64_t
@@ -28,7 +27,6 @@
 #define GB_GETA(aik,Ax,pA,A_iso) aik = Ax [(A_iso) ? 0 : (pA)]
 
 // B matrix, typecast to B2 for multiplier input
-#define GB_B_ISO B_iso
 #define GB_B_IS_PATTERN 0
 #define GB_B_TYPE uint64_t
 #define GB_B2TYPE uint64_t
@@ -46,6 +44,7 @@
 #define GB_Z_TYPE uint64_t
 #define GB_DECLARE_IDENTITY(z) uint64_t z = UINT64_MAX
 #define GB_DECLARE_IDENTITY_CONST(z) const uint64_t z = UINT64_MAX
+#define GB_Z_NBITS 64
 #define GB_HAS_IDENTITY_BYTE 1
 #define GB_IDENTITY_BYTE 0xFF
 #define GB_Z_ATOMIC_BITS 64
@@ -156,7 +155,7 @@ GrB_Info GB (_AsaxbitB__min_rdiv_uint64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_bitmap_AxB_saxpy_template.c"
+    #include "GB_AxB_saxbit_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -193,8 +192,7 @@ GrB_Info GB (_AsaxbitB__min_rdiv_uint64)
 // GB_Asaxpy5B: C += A*B when C is full, A is bitmap/full, B is sparse/hyper
 //------------------------------------------------------------------------------
 
-    #if GB_DISABLE
-    #elif ( !GB_A_IS_PATTERN )
+    #if !GB_DISABLE && !GB_A_IS_PATTERN
 
         //----------------------------------------------------------------------
         // saxpy5 method unrolled, with no vectors
@@ -215,8 +213,7 @@ GrB_Info GB (_AsaxbitB__min_rdiv_uint64)
             const GrB_Matrix B,
             const int ntasks,
             const int nthreads,
-            const int64_t *B_slice,
-            GB_Werk Werk
+            const int64_t *B_slice
         )
         {
             #include "GB_AxB_saxpy5_unrolled.c"
@@ -231,8 +228,7 @@ GrB_Info GB (_AsaxbitB__min_rdiv_uint64)
         const GrB_Matrix B,
         const int ntasks,
         const int nthreads,
-        const int64_t *B_slice,
-        GB_Werk Werk
+        const int64_t *B_slice
     )
     { 
         #if GB_DISABLE

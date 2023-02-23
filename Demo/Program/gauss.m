@@ -1,3 +1,4 @@
+% gauss.m: computes the same thing as gauss_demo.c
 
 format short g
 A = zeros (4,4) ;
@@ -23,3 +24,5 @@ C = C + A*A.'
 
 B = ones (4,4) * (1 - 2i) ;
 C = C + B*A
+
+C = C + A*B
