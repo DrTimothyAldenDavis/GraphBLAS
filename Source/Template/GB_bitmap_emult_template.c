@@ -116,7 +116,7 @@
         //----------------------------------------------------------------------
 
         GB_bitmap_M_scatter_whole (C, M, Mask_struct, GB_BITMAP_M_SCATTER_SET_2,
-            M_ek_slicing, M_ntasks, M_nthreads, Werk) ;
+            M_ek_slicing, M_ntasks, M_nthreads) ;
 
         // C(i,j) has been marked, in Cb, with the value 2 where M(i,j)=1.
         // These positions will not be computed in C(i,j).  C(i,j) can only

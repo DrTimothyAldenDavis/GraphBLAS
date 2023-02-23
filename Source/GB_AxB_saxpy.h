@@ -130,6 +130,28 @@ GrB_Info GB_AxB_saxpy5_jit          // C+=A*B, saxpy5 method, via the JIT
 ) ;
 
 //------------------------------------------------------------------------------
+// saxbit:
+//------------------------------------------------------------------------------
+
+// number of columns in the workspace for each saxbit task 
+#define GB_SAXBIT_PANEL_SIZE 4
+
+GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
+(
+    GrB_Matrix C,                   // output matrix, static header
+    const bool C_iso,               // true if C is iso
+    const GB_void *cscalar,         // iso value of C
+    const GrB_Matrix M,             // optional mask matrix
+    const bool Mask_comp,           // if true, use !M
+    const bool Mask_struct,         // if true, use the only structure of M
+    const GrB_Matrix A,             // input matrix A
+    const GrB_Matrix B,             // input matrix B
+    const GrB_Semiring semiring,    // semiring that defines C=A*B
+    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
+    GB_Werk Werk
+) ;
+
+//------------------------------------------------------------------------------
 // saxpy methods
 //------------------------------------------------------------------------------
 

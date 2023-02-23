@@ -19,8 +19,7 @@ void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
     const int operation,        // +=2, -=2, or %=2
     const int64_t *M_ek_slicing, // size 3*M_ntasks+1
     const int M_ntasks,
-    const int M_nthreads,
-    GB_Werk Werk
+    const int M_nthreads
 )
 {
 

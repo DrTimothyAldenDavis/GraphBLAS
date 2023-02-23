@@ -114,22 +114,22 @@ GrB_Info GB (_Adot3B__plus_rdiv_int64)
 // GB_Adot4B:  C+=A'*B: dense dot product
 //------------------------------------------------------------------------------
 
-    GrB_Info GB (_Adot4B__plus_rdiv_int64)
-    (
-        GrB_Matrix C,
-        const GrB_Matrix A, int64_t *restrict A_slice, int naslice,
-        const GrB_Matrix B, int64_t *restrict B_slice, int nbslice,
-        const int nthreads,
-        GB_Werk Werk
-    )
-    { 
-        #if GB_DISABLE
-        return (GrB_NO_VALUE) ;
-        #else
-        #include "GB_AxB_dot4_meta.c"
-        return (GrB_SUCCESS) ;
-        #endif
-    }
+GrB_Info GB (_Adot4B__plus_rdiv_int64)
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, int64_t *restrict A_slice, int naslice,
+    const GrB_Matrix B, int64_t *restrict B_slice, int nbslice,
+    const int nthreads,
+    GB_Werk Werk
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_AxB_dot4_meta.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
 
 //------------------------------------------------------------------------------
 // GB_AsaxbitB: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method, C is bitmap only
@@ -139,11 +139,24 @@ GrB_Info GB (_Adot3B__plus_rdiv_int64)
 
 GrB_Info GB (_AsaxbitB__plus_rdiv_int64)
 (
-    GrB_Matrix C,   // bitmap only
-    const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_comp,
+    const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    GB_Werk Werk
+    const int ntasks,
+    const int nthreads,
+    const int nfine_tasks_per_vector,
+    const bool use_coarse_tasks,
+    const bool use_atomics,
+    const int64_t *restrict M_ek_slicing,
+    const int M_nthreads,
+    const int M_ntasks,
+    const int64_t *restrict A_slice,
+    const int64_t *restrict H_slice,
+    GB_void *restrict Wcx,
+    int8_t *restrict Wf
 )
 { 
     #if GB_DISABLE
@@ -158,29 +171,29 @@ GrB_Info GB (_AsaxbitB__plus_rdiv_int64)
 // GB_Asaxpy4B: C += A*B when C is full
 //------------------------------------------------------------------------------
 
-    GrB_Info GB (_Asaxpy4B__plus_rdiv_int64)
-    (
-        GrB_Matrix C,
-        const GrB_Matrix A,
-        const GrB_Matrix B,
-        const int ntasks,
-        const int nthreads,
-        const int nfine_tasks_per_vector,
-        const bool use_coarse_tasks,
-        const bool use_atomics,
-        const int64_t *A_slice,
-        const int64_t *H_slice,
-        GB_void *restrict Wcx,
-        int8_t *restrict Wf
-    )
-    { 
-        #if GB_DISABLE
-        return (GrB_NO_VALUE) ;
-        #else
-        #include "GB_AxB_saxpy4_meta.c"
-        return (GrB_SUCCESS) ;
-        #endif
-    }
+GrB_Info GB (_Asaxpy4B__plus_rdiv_int64)
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int ntasks,
+    const int nthreads,
+    const int nfine_tasks_per_vector,
+    const bool use_coarse_tasks,
+    const bool use_atomics,
+    const int64_t *A_slice,
+    const int64_t *H_slice,
+    GB_void *restrict Wcx,
+    int8_t *restrict Wf
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_AxB_saxpy4_meta.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
 
 //------------------------------------------------------------------------------
 // GB_Asaxpy5B: C += A*B when C is full, A is bitmap/full, B is sparse/hyper

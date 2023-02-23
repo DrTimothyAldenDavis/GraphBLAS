@@ -15,6 +15,7 @@
 // A is sparse, hypersparse, bitmap, or full.
 // B is bitmap or full.
 
+#if 0
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \
 {                                           \
@@ -22,9 +23,9 @@
     GB_FREE_WORK (&Wcx, Wcx_size) ;         \
     GB_WERK_POP (H_slice, int64_t) ;        \
     GB_WERK_POP (A_slice, int64_t) ;        \
-    GB_WERK_POP (B_slice, int64_t) ;        \
     GB_WERK_POP (M_ek_slicing, int64_t) ;   \
 }
+#endif
 
 {
 
@@ -32,12 +33,13 @@
     // declare workspace
     //--------------------------------------------------------------------------
 
+#if 0
     int8_t  *restrict Wf  = NULL ; size_t Wf_size = 0 ;
     GB_void *restrict Wcx = NULL ; size_t Wcx_size = 0 ;
     GB_WERK_DECLARE (H_slice, int64_t) ;
     GB_WERK_DECLARE (A_slice, int64_t) ;
-    GB_WERK_DECLARE (B_slice, int64_t) ;
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
+#endif
 
     //--------------------------------------------------------------------------
     // determine max # of threads to use
@@ -95,8 +97,10 @@
     const bool M_is_sparse_or_hyper = M_is_hyper || M_is_sparse ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
     const bool M_is_full   = GB_IS_FULL (M) ;
-    int M_nthreads = 0 ;
-    int M_ntasks = 0 ;
+
+//  int M_nthreads = 0 ;
+//  int M_ntasks = 0 ;
+
     if (M != NULL)
     {
         ASSERT (C->vlen == M->vlen) ;
@@ -110,7 +114,7 @@
         mnvec = M->nvec ;
         mvlen = M->vlen ;
 
-        GB_SLICE_MATRIX (M, 8, chunk) ;
+//      GB_SLICE_MATRIX (M, 8, chunk) ;
 
         // if M is sparse or hypersparse, scatter it into the C bitmap
         if (M_is_sparse_or_hyper)
@@ -119,7 +123,7 @@
             GB_bitmap_M_scatter (C,
                 NULL, 0, GB_ALL, NULL, NULL, 0, GB_ALL, NULL,
                 M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_PLUS_2,
-                M_ek_slicing, M_ntasks, M_nthreads, Werk) ;
+                M_ek_slicing, M_ntasks, M_nthreads) ;
             // the bitmap of C now contains:
             //  Cb (i,j) = 0:   cij not present, mij zero
             //  Cb (i,j) = 1:   cij present, mij zero
@@ -172,6 +176,7 @@
         // bitmap           any             hyper       full 
         // bitmap           any             sparse      full
 
+#if 0
         // construct the tasks
         ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B)) ;
         int nthreads, ntasks, nfine_tasks_per_vector ;
@@ -186,10 +191,11 @@
             { 
                 // out of memory
                 GB_FREE_ALL ;
-                return (GrB_OUT_OF_MEMORY) ;
+//              return (GrB_OUT_OF_MEMORY) ;
             }
             GB_pslice (A_slice, Ap, anvec, nfine_tasks_per_vector, true) ;
         }
+#endif
 
         if (M == NULL)
         {
@@ -385,14 +391,14 @@
         GB_bitmap_M_scatter (C,
             NULL, 0, GB_ALL, NULL, NULL, 0, GB_ALL, NULL,
             M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_MINUS_2,
-            M_ek_slicing, M_ntasks, M_nthreads, Werk) ;
+            M_ek_slicing, M_ntasks, M_nthreads) ;
     }
 
     //--------------------------------------------------------------------------
     // free workspace
     //--------------------------------------------------------------------------
 
-    GB_FREE_ALL ;
+//  GB_FREE_ALL ;
 }
 
 #undef GB_FREE_ALL

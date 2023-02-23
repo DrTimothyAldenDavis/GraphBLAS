@@ -7,14 +7,30 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_AxB_saxbit.h"
+#define GB_FREE_WORKSPACE                   \
+{                                           \
+    GB_FREE_WORK (&Wf, Wf_size) ;           \
+    GB_FREE_WORK (&Wcx, Wcx_size) ;         \
+    GB_WERK_POP (H_slice, int64_t) ;        \
+    GB_WERK_POP (A_slice, int64_t) ;        \
+    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
+}
+
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_FREE_WORKSPACE ;                     \
+    GB_phybix_free (C) ;                    \
+}
+
+#include "GB_mxm.h"
+#include "GB_AxB_saxpy.h"
+#include "GB_binop.h"
+#include "GB_ek_slice.h"
 #include "GB_AxB_saxpy_generic.h"
 #include "GB_AxB__include1.h"
 #ifndef GBCUDA_DEV
 #include "GB_AxB__include2.h"
 #endif
-
-#define GB_FREE_ALL GB_phybix_free (C) ;
 
 //------------------------------------------------------------------------------
 // GB_AxB_saxbit: compute C=A*B, C<M>=A*B, or C<!M>=A*B
@@ -66,6 +82,28 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
     ASSERT (A->vdim == B->vlen) ;
 
     //--------------------------------------------------------------------------
+    // declare workspace
+    //--------------------------------------------------------------------------
+
+    int8_t  *restrict Wf  = NULL ; size_t Wf_size = 0 ;
+    GB_void *restrict Wcx = NULL ; size_t Wcx_size = 0 ;
+    GB_WERK_DECLARE (H_slice, int64_t) ;
+    GB_WERK_DECLARE (A_slice, int64_t) ;
+    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
+
+    int M_nthreads = 0 ;
+    int M_ntasks = 0 ;
+
+    int nthreads = 0 ;
+    int ntasks = 0 ;
+    int nfine_tasks_per_vector  = 0 ;
+    bool use_coarse_tasks = false ;
+    bool use_atomics = false ;
+
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
+    //--------------------------------------------------------------------------
     // construct C
     //--------------------------------------------------------------------------
 
@@ -89,10 +127,115 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
     //--------------------------------------------------------------------------
 
     GrB_BinaryOp mult = semiring->multiply ;
-//  GrB_Monoid add = semiring->add ;
     ASSERT (mult->ztype == semiring->add->op->ztype) ;
     bool A_is_pattern, B_is_pattern ;
     GB_binop_pattern (&A_is_pattern, &B_is_pattern, flipxy, mult->opcode) ;
+
+    //--------------------------------------------------------------------------
+    // slice the M matrix
+    //--------------------------------------------------------------------------
+
+    if (M != NULL)
+    {
+        GB_SLICE_MATRIX (M, 8, chunk) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // slice the A matrix (if sparse or hyper) and construct the tasks
+    //--------------------------------------------------------------------------
+
+    if (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))
+    {
+
+        //----------------------------------------------------------------------
+        // slice A if it is sparse or hypersparse
+        //----------------------------------------------------------------------
+
+        GB_AxB_saxpy4_tasks (&ntasks, &nthreads, &nfine_tasks_per_vector,
+            &use_coarse_tasks, &use_atomics, GB_nnz_held (A), GB_nnz_held (B),
+            B->vdim, C->vlen) ;
+        if (!use_coarse_tasks)
+        {
+            // slice the matrix A for each team of fine tasks
+            GB_WERK_PUSH (A_slice, nfine_tasks_per_vector + 1, int64_t) ;
+            if (A_slice == NULL)
+            { 
+                // out of memory
+                GB_FREE_ALL ;
+                return (GrB_OUT_OF_MEMORY) ;
+            }
+            GB_pslice (A_slice, A->p, A->nvec, nfine_tasks_per_vector, true) ;
+        }
+
+        //----------------------------------------------------------------------
+        // allocate workspace
+        //----------------------------------------------------------------------
+
+        size_t wspace = 0 ;
+
+        if (use_coarse_tasks)
+        {
+
+            //------------------------------------------------------------------
+            // C<#M> = A*B using coarse tasks where A is sparse/hyper
+            //------------------------------------------------------------------
+
+            GB_WERK_PUSH (H_slice, ntasks, int64_t) ;
+            if (H_slice == NULL)
+            { 
+                // out of memory
+                GB_FREE_ALL ;
+                return (GrB_OUT_OF_MEMORY) ;
+            }
+
+            int64_t hwork = 0 ;
+            for (int tid = 0 ; tid < ntasks ; tid++)
+            {
+                int64_t jstart, jend ;
+                GB_PARTITION (jstart, jend, B->vdim, tid, ntasks) ;
+                int64_t jtask = jend - jstart ;
+                int64_t jpanel = GB_IMIN (jtask, GB_SAXBIT_PANEL_SIZE) ;
+                H_slice [tid] = hwork ;
+                // bitmap case always needs Hx workspace
+                hwork += jpanel ;
+            }
+
+            wspace = hwork * C->vlen ;
+
+        }
+        else if (!use_atomics)
+        {
+
+            //------------------------------------------------------------------
+            // C<#M> = A*B using fine tasks and workspace, with no atomics
+            //------------------------------------------------------------------
+
+            // Each fine task is given size-(C->vlen) workspace to compute its
+            // result in the first phase, W(:,tid) = A(:,k1:k2) * B(k1:k2,j),
+            // where k1:k2 is defined by the fine_tid of the task.  The
+            // workspaces are then summed into C in the second phase.
+
+            wspace = (C->vlen) * ntasks ;
+        }
+
+        if (wspace > 0)
+        {
+
+            //------------------------------------------------------------------
+            // allocate Wf and Wcx workspaces
+            //------------------------------------------------------------------
+
+            size_t csize = (C_iso) ? 0 : C->type->size ;
+            Wf  = GB_MALLOC_WORK (wspace, int8_t, &Wf_size) ;
+            Wcx = GB_MALLOC_WORK (wspace * csize, GB_void, &Wcx_size) ;
+            if (Wf == NULL || Wcx == NULL)
+            { 
+                // out of memory
+                GB_FREE_ALL ;
+                return (GrB_OUT_OF_MEMORY) ;
+            }
+        }
+    }
 
     //--------------------------------------------------------------------------
     // C<#M>=A*B
@@ -107,8 +250,11 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
 
         GBURBLE ("(iso bitmap saxpy) ") ;
         memcpy (C->x, cscalar, ctype->size) ;
-        info = GB (_AsaxbitB__any_pair_iso) (C, M, Mask_comp, Mask_struct, A,
-            B, Werk) ;
+        info = GB (_AsaxbitB__any_pair_iso) (C, M, Mask_comp, Mask_struct,
+            A, B, ntasks, nthreads,
+            nfine_tasks_per_vector, use_coarse_tasks, use_atomics,
+            M_ek_slicing, M_nthreads, M_ntasks, A_slice, H_slice,
+            Wcx, Wf) ;
 
     }
     else
@@ -130,12 +276,15 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
             #define GB_AsaxbitB(add,mult,xname)  \
                 GB (_AsaxbitB_ ## add ## mult ## xname)
 
-            #define GB_AxB_WORKER(add,mult,xname)                       \
-            {                                                           \
-                info = GB_AsaxbitB (add,mult,xname) (C, M, Mask_comp,   \
-                    Mask_struct, A, B, Werk) ;                          \
-                done = (info != GrB_NO_VALUE) ;                         \
-            }                                                           \
+            #define GB_AxB_WORKER(add,mult,xname)                           \
+            {                                                               \
+                info = GB_AsaxbitB (add,mult,xname) (C, M, Mask_comp,       \
+                    Mask_struct, A, B, ntasks, nthreads,                    \
+                    nfine_tasks_per_vector, use_coarse_tasks, use_atomics,  \
+                    M_ek_slicing, M_nthreads, M_ntasks,                     \
+                    A_slice, H_slice, Wcx, Wf) ;                            \
+                done = (info != GrB_NO_VALUE) ;                             \
+            }                                                               \
             break ;
 
             //------------------------------------------------------------------
@@ -161,9 +310,11 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
         { 
             info = GB_AxB_saxpy_generic (C, M, Mask_comp, Mask_struct,
                 true, A, A_is_pattern, B, B_is_pattern, semiring,
-                flipxy, GB_SAXPY_METHOD_BITMAP,
-                NULL, 0, 0, 0, 0,
-                Werk) ;
+                flipxy, GB_SAXPY_METHOD_BITMAP, ntasks, nthreads,
+                /* unused: */ NULL, 0, 0, NULL,
+                nfine_tasks_per_vector, use_coarse_tasks, use_atomics,
+                M_ek_slicing, M_nthreads, M_ntasks,
+                A_slice, H_slice, Wcx, Wf) ;
         }
     }
 
@@ -175,9 +326,10 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
     }
 
     //--------------------------------------------------------------------------
-    // return result
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
+    GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (C, "C bitmap saxpy output", GB0) ;
     return (GrB_SUCCESS) ;
 }

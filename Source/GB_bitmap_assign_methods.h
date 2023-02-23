@@ -543,8 +543,7 @@ void GB_bitmap_M_scatter        // scatter M into the C bitmap
     const int operation,        // +=2, -=2, or %=2
     const int64_t *M_ek_slicing,    // size M_ntasks+1
     const int M_ntasks,
-    const int M_nthreads,
-    GB_Werk Werk
+    const int M_nthreads
 ) ;
 
 void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
@@ -557,8 +556,7 @@ void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
     const int operation,        // +=2, -=2, or %=2
     const int64_t *M_ek_slicing,    // size M_ntasks+1
     const int M_ntasks,
-    const int M_nthreads,
-    GB_Werk Werk
+    const int M_nthreads
 ) ;
 
 void GB_bitmap_assign_to_full   // set all C->b to 1, or free it and make C full

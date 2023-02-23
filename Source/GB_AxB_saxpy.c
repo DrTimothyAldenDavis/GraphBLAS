@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
-#include "GB_AxB_saxbit.h"
+#include "GB_AxB_saxpy.h"
 #include "GB_stringify.h"
 
 // TODO: allow bitmap multiply to work in-place as well

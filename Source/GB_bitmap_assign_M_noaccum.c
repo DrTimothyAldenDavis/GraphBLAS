@@ -85,7 +85,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
     // Cb [pC] += 2 for each entry M(i,j) in the mask
     GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
         M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_PLUS_2,
-        M_ek_slicing, M_ntasks, M_nthreads, Werk) ;
+        M_ek_slicing, M_ntasks, M_nthreads) ;
 
 
     //    Cb (i,j) = 0:  mij == 0, cij not present
@@ -182,7 +182,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
                 GB_bitmap_M_scatter (C,
                     I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
                     M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_MOD_2,
-                    M_ek_slicing, M_ntasks, M_nthreads, Werk) ;
+                    M_ek_slicing, M_ntasks, M_nthreads) ;
             }
         }
 
@@ -306,7 +306,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
                 GB_bitmap_M_scatter (C,
                     I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
                     M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_MOD_2,
-                    M_ek_slicing, M_ntasks, M_nthreads, Werk) ;
+                    M_ek_slicing, M_ntasks, M_nthreads) ;
             }
         }
     }

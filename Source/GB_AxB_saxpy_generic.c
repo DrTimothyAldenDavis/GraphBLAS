@@ -25,8 +25,7 @@
 //          Gustavson/Hash) tasks constructed by GB_AxB_saxpy3_slice*.
 
 // saxbit: general purpose method, where C is bitmap, via
-//          GB_AxB_saxbit_template.c.  The method constructs its own
-//          tasks in workspace defined and freed in that template.
+//          GB_AxB_saxbit_template.c.
 
 // C is not iso, and it is never full.
 
@@ -50,15 +49,26 @@ GrB_Info GB_AxB_saxpy_generic
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     const int saxpy_method,         // saxpy3 or bitmap method
+    const int ntasks,
+    const int nthreads,
     // for saxpy3 only:
     GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
-    int ntasks,
-    int nfine,
-    int nthreads,
+    const int nfine,
     const int do_sort,              // if true, sort in saxpy3
-    GB_Werk Werk
+    GB_Werk Werk,
+    // for saxbit only:
+    const int nfine_tasks_per_vector,
+    const bool use_coarse_tasks,
+    const bool use_atomics,
+    const int64_t *restrict M_ek_slicing,
+    const int M_nthreads,
+    const int M_ntasks,
+    const int64_t *restrict A_slice,
+    const int64_t *restrict H_slice,
+    GB_void *restrict Wcx,
+    int8_t *restrict Wf
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // get operators, functions, workspace, contents of A, B, and C
@@ -101,8 +111,8 @@ GrB_Info GB_AxB_saxpy_generic
                             info = GB_AxB_saxpy3_generic_firsti64 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
-                              SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                              Werk) ;
+                              ntasks, nthreads,
+                              SaxpyTasks, nfine, do_sort, Werk) ;
                         }
                         else
                         { 
@@ -110,8 +120,10 @@ GrB_Info GB_AxB_saxpy_generic
                             info = GB_AxB_saxbit_generic_firsti64 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
-                              NULL, 0, 0, 0, 0,
-                              Werk) ;
+                              ntasks, nthreads,
+                              nfine_tasks_per_vector, use_coarse_tasks,
+                              use_atomics, M_ek_slicing, M_nthreads, M_ntasks,
+                              A_slice, H_slice, Wcx, Wf) ;
                         }
                     }
                     break ;
@@ -127,8 +139,8 @@ GrB_Info GB_AxB_saxpy_generic
                             info = GB_AxB_saxpy3_generic_firstj64 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
-                              SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                              Werk) ;
+                              ntasks, nthreads,
+                              SaxpyTasks, nfine, do_sort, Werk) ;
                         }
                         else
                         { 
@@ -136,8 +148,10 @@ GrB_Info GB_AxB_saxpy_generic
                             info = GB_AxB_saxbit_generic_firstj64 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
-                              NULL, 0, 0, 0, 0,
-                              Werk) ;
+                              ntasks, nthreads,
+                              nfine_tasks_per_vector, use_coarse_tasks,
+                              use_atomics, M_ek_slicing, M_nthreads, M_ntasks,
+                              A_slice, H_slice, Wcx, Wf) ;
                         }
                     }
                     break ;
@@ -151,8 +165,8 @@ GrB_Info GB_AxB_saxpy_generic
                             info = GB_AxB_saxpy3_generic_secondj64 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
-                              SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                              Werk) ;
+                              ntasks, nthreads,
+                              SaxpyTasks, nfine, do_sort, Werk) ;
                         }
                         else
                         { 
@@ -160,8 +174,10 @@ GrB_Info GB_AxB_saxpy_generic
                             info = GB_AxB_saxbit_generic_secondj64 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
-                              NULL, 0, 0, 0, 0,
-                              Werk) ;
+                              ntasks, nthreads,
+                              nfine_tasks_per_vector, use_coarse_tasks,
+                              use_atomics, M_ek_slicing, M_nthreads, M_ntasks,
+                              A_slice, H_slice, Wcx, Wf) ;
                         }
                     }
                     break ;
@@ -181,8 +197,8 @@ GrB_Info GB_AxB_saxpy_generic
                             info = GB_AxB_saxpy3_generic_firsti32 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
-                              SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                              Werk) ;
+                              ntasks, nthreads,
+                              SaxpyTasks, nfine, do_sort, Werk) ;
                         }
                         else
                         { 
@@ -190,8 +206,10 @@ GrB_Info GB_AxB_saxpy_generic
                             info = GB_AxB_saxbit_generic_firsti32 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
-                              NULL, 0, 0, 0, 0,
-                              Werk) ;
+                              ntasks, nthreads,
+                              nfine_tasks_per_vector, use_coarse_tasks,
+                              use_atomics, M_ek_slicing, M_nthreads, M_ntasks,
+                              A_slice, H_slice, Wcx, Wf) ;
                         }
                     }
                     break ;
@@ -207,8 +225,8 @@ GrB_Info GB_AxB_saxpy_generic
                             info = GB_AxB_saxpy3_generic_firstj32 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
-                              SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                              Werk) ;
+                              ntasks, nthreads,
+                              SaxpyTasks, nfine, do_sort, Werk) ;
                         }
                         else
                         { 
@@ -216,8 +234,10 @@ GrB_Info GB_AxB_saxpy_generic
                             info = GB_AxB_saxbit_generic_firstj32 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
-                              NULL, 0, 0, 0, 0,
-                              Werk) ;
+                              ntasks, nthreads,
+                              nfine_tasks_per_vector, use_coarse_tasks,
+                              use_atomics, M_ek_slicing, M_nthreads, M_ntasks,
+                              A_slice, H_slice, Wcx, Wf) ;
                         }
                     }
                     break ;
@@ -231,8 +251,8 @@ GrB_Info GB_AxB_saxpy_generic
                             info = GB_AxB_saxpy3_generic_secondj32 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
-                              SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                              Werk) ;
+                              ntasks, nthreads,
+                              SaxpyTasks, nfine, do_sort, Werk) ;
                         }
                         else
                         { 
@@ -240,8 +260,10 @@ GrB_Info GB_AxB_saxpy_generic
                             info = GB_AxB_saxbit_generic_secondj32 
                              (C, M, Mask_comp, Mask_struct, M_in_place,
                               A, A_is_pattern, B, B_is_pattern, semiring,
-                              NULL, 0, 0, 0, 0,
-                              Werk) ;
+                              ntasks, nthreads,
+                              nfine_tasks_per_vector, use_coarse_tasks,
+                              use_atomics, M_ek_slicing, M_nthreads, M_ntasks,
+                              A_slice, H_slice, Wcx, Wf) ;
                         }
                     }
                     break ;
@@ -272,8 +294,8 @@ GrB_Info GB_AxB_saxpy_generic
                 info = GB_AxB_saxpy3_generic_first 
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
-                      SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                      Werk) ;
+                      ntasks, nthreads,
+                      SaxpyTasks, nfine, do_sort, Werk) ;
             }
             else
             { 
@@ -281,8 +303,10 @@ GrB_Info GB_AxB_saxpy_generic
                 info = GB_AxB_saxbit_generic_first 
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
-                      NULL, 0, 0, 0, 0,
-                      Werk) ;
+                      ntasks, nthreads,
+                      nfine_tasks_per_vector, use_coarse_tasks,
+                      use_atomics, M_ek_slicing, M_nthreads, M_ntasks,
+                      A_slice, H_slice, Wcx, Wf) ;
             }
         }
         else if (opcode == GB_SECOND_binop_code)
@@ -298,8 +322,8 @@ GrB_Info GB_AxB_saxpy_generic
                 info = GB_AxB_saxpy3_generic_second 
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
-                      SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                      Werk) ;
+                      ntasks, nthreads,
+                      SaxpyTasks, nfine, do_sort, Werk) ;
             }
             else
             { 
@@ -307,8 +331,10 @@ GrB_Info GB_AxB_saxpy_generic
                 info = GB_AxB_saxbit_generic_second 
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
-                      NULL, 0, 0, 0, 0,
-                      Werk) ;
+                      ntasks, nthreads,
+                      nfine_tasks_per_vector, use_coarse_tasks,
+                      use_atomics, M_ek_slicing, M_nthreads, M_ntasks,
+                      A_slice, H_slice, Wcx, Wf) ;
             }
         }
         else if (flipxy)
@@ -320,8 +346,8 @@ GrB_Info GB_AxB_saxpy_generic
                 info = GB_AxB_saxpy3_generic_flipped 
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
-                      SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                      Werk) ;
+                      ntasks, nthreads,
+                      SaxpyTasks, nfine, do_sort, Werk) ;
             }
             else
             { 
@@ -329,8 +355,10 @@ GrB_Info GB_AxB_saxpy_generic
                 info = GB_AxB_saxbit_generic_flipped 
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
-                      NULL, 0, 0, 0, 0,
-                      Werk) ;
+                      ntasks, nthreads,
+                      nfine_tasks_per_vector, use_coarse_tasks,
+                      use_atomics, M_ek_slicing, M_nthreads, M_ntasks,
+                      A_slice, H_slice, Wcx, Wf) ;
             }
         }
         else
@@ -342,8 +370,8 @@ GrB_Info GB_AxB_saxpy_generic
                 info = GB_AxB_saxpy3_generic_unflipped 
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
-                      SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-                      Werk) ;
+                      ntasks, nthreads,
+                      SaxpyTasks, nfine, do_sort, Werk) ;
             }
             else
             { 
@@ -351,8 +379,10 @@ GrB_Info GB_AxB_saxpy_generic
                 info = GB_AxB_saxbit_generic_unflipped 
                      (C, M, Mask_comp, Mask_struct, M_in_place,
                       A, A_is_pattern, B, B_is_pattern, semiring,
-                      NULL, 0, 0, 0, 0,
-                      Werk) ;
+                      ntasks, nthreads,
+                      nfine_tasks_per_vector, use_coarse_tasks,
+                      use_atomics, M_ek_slicing, M_nthreads, M_ntasks,
+                      A_slice, H_slice, Wcx, Wf) ;
             }
         }
     }

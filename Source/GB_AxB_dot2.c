@@ -388,7 +388,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         GB_bitmap_M_scatter (C,
             NULL, 0, GB_ALL, NULL, NULL, 0, GB_ALL, NULL,
             M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_PLUS_2,
-            M_ek_slicing, M_ntasks, M_nthreads, Werk) ;
+            M_ek_slicing, M_ntasks, M_nthreads) ;
         // the bitmap of C now contains:
         //  Cb (i,j) = 0:   cij not present, mij zero
         //  Cb (i,j) = 1:   cij present, mij zero           (not used yet)

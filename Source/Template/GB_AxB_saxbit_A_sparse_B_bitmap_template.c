@@ -12,7 +12,7 @@
 // no accumulator is used
 
 // This template is used by Template/GB_AxB_saxbit_template, for all cases:
-// generic kernels, factor kernels (including the ANY_PAIR monoid), and JIT
+// generic kernels, factory kernels (including the ANY_PAIR monoid), and JIT
 // kernels.
 
 #ifndef GB_B_SIZE
@@ -32,60 +32,7 @@
         // C<#M> = A*B using coarse tasks
         //----------------------------------------------------------------------
 
-// FIXME: move to the caller[ 
-
-        // number of columns in the workspace for each task
-        #define GB_PANEL_SIZE 4
-
-        //----------------------------------------------------------------------
-        // allocate workspace for each task
-        //----------------------------------------------------------------------
-
-        GB_WERK_PUSH (H_slice, ntasks, int64_t) ;
-        if (H_slice == NULL)
-        { 
-            // out of memory
-            GB_FREE_ALL ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-
-        int64_t hwork = 0 ;
         int tid ;
-        for (tid = 0 ; tid < ntasks ; tid++)
-        {
-            int64_t jstart, jend ;
-            GB_PARTITION (jstart, jend, bvdim, tid, ntasks) ;
-            int64_t jtask = jend - jstart ;
-            int64_t jpanel = GB_IMIN (jtask, GB_PANEL_SIZE) ;
-            H_slice [tid] = hwork ;
-            // bitmap case always needs Hx workspace
-            { 
-                hwork += jpanel ;
-            }
-        }
-
-        //----------------------------------------------------------------------
-
-        #if GB_IS_ANY_PAIR_SEMIRING
-        int64_t cvlenx = 0 ;
-        #else
-        int64_t cvlenx = cvlen * GB_C_SIZE ;
-        #endif
-        Wf  = GB_MALLOC_WORK (hwork * cvlen, int8_t, &Wf_size) ;
-        Wcx = GB_MALLOC_WORK (hwork * cvlenx, GB_void, &Wcx_size) ;
-        if (Wf == NULL || Wcx == NULL)
-        { 
-            // out of memory
-            GB_FREE_ALL ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-
-//=====================]
-
-        //----------------------------------------------------------------------
-        // C<#M> = A*B
-        //----------------------------------------------------------------------
-
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
             reduction(+:cnvals)
         for (tid = 0 ; tid < ntasks ; tid++)
@@ -98,7 +45,7 @@
             int64_t jstart, jend ;
             GB_PARTITION (jstart, jend, bvdim, tid, ntasks) ;
             int64_t jtask = jend - jstart ;
-            int64_t jpanel = GB_IMIN (jtask, GB_PANEL_SIZE) ;
+            int64_t jpanel = GB_IMIN (jtask, GB_SAXBIT_PANEL_SIZE) ;
             int64_t task_cnvals = 0 ;
 
             //------------------------------------------------------------------
@@ -109,7 +56,7 @@
             int8_t *restrict Hf = Wf + (H_slice [tid] * cvlen) ;
             #if ( !GB_IS_ANY_PAIR_SEMIRING )
             GB_C_TYPE *restrict Hx = (GB_C_TYPE *)
-                (Wcx + H_slice [tid] * cvlenx) ;
+                (Wcx + H_slice [tid] * cvlen * GB_C_SIZE) ;
             #endif
 
             //------------------------------------------------------------------
@@ -410,8 +357,6 @@
             cnvals += task_cnvals ;
         }
 
-        #undef GB_PANEL_SIZE
-
     }
     else if (use_atomics)
     {
@@ -641,27 +586,6 @@
         // summed into C in the second phase.
 
         //----------------------------------------------------------------------
-        // allocate workspace
-        //----------------------------------------------------------------------
-
-// FIXME: allocate workspace in the caller, not here:
-
-        size_t workspace = cvlen * ntasks ;
-        #if ( GB_IS_ANY_PAIR_SEMIRING )
-        size_t cxsize = 0 ;
-        #else
-        size_t cxsize = GB_C_SIZE ;
-        #endif
-        Wf  = GB_MALLOC_WORK (workspace, int8_t, &Wf_size) ;
-        Wcx = GB_MALLOC_WORK (workspace * cxsize, GB_void, &Wcx_size) ;
-        if (Wf == NULL || Wcx == NULL)
-        { 
-            // out of memory
-            GB_FREE_ALL ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-
-        //----------------------------------------------------------------------
         // first phase: W (:,tid) = A (:,k1:k2) * B (k2:k2,j) for each fine task
         //----------------------------------------------------------------------
 
@@ -691,7 +615,8 @@
             // for Hf and Hx Gustavason workspace: use W(:,tid):
             int8_t *restrict Hf = Wf + pW_start ;
             #if ( !GB_IS_ANY_PAIR_SEMIRING )
-            GB_C_TYPE *restrict Hx = (GB_C_TYPE *) (Wcx + (pW_start * cxsize)) ;
+            GB_C_TYPE *restrict Hx = (GB_C_TYPE *)
+                (Wcx + (pW_start * GB_C_SIZE)) ;
             #endif
             #if GB_IS_PLUS_FC32_MONOID
             float  *restrict Hx_real = (float *) Hx ;

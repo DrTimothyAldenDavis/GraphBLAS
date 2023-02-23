@@ -11,7 +11,7 @@
 
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
-#include "GB_AxB_saxbit.h"
+#include "GB_AxB_saxpy.h"
 
 #define USAGE "GB_mex_about"
 
