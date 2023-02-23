@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// C is bitmap. A is hyper/sparse, B is bitmap/full.
+// C is bitmap. A is hyper/sparse, B is bitmap/full.  M is anything. If M is
+// sparse or hypersparse, it has been scattered into the bitmap of C.
 
 // no accumulator is used
 
@@ -119,8 +120,8 @@
                     #define GB_MULT_A_ik_G_kj(gkj,jj)
                 #else
                     // t = A(i,k) * B (k,j)
-                    #define GB_MULT_A_ik_G_kj(gkj,jj)                       \
-                        GB_CIJ_DECLARE (t) ;                                \
+                    #define GB_MULT_A_ik_G_kj(gkj,jj)                   \
+                        GB_CIJ_DECLARE (t) ;                            \
                         GB_MULT (t, aik, gkj, i, k, j1 + jj)
                 #endif
 

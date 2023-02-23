@@ -7,9 +7,28 @@
 
 //------------------------------------------------------------------------------
 
-// C is bitmap, A and B are bitmap/full.  M has any format.
+// C is bitmap, A and B are bitmap/full.  M has any format.  If M is sparse
+// or hypersparse, it has been scattered into the bitmap of C.
 
 {
+
+    //--------------------------------------------------------------------------
+    // construct tasks
+    //--------------------------------------------------------------------------
+
+    #define GB_TILE_SIZE 64
+    #define GB_KTILE_SIZE 8
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+    double work = ((double) avlen) * ((double) bvlen) * ((double) bvdim) ;
+    int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
+    int64_t nI_tasks = (bvdim == 0) ? 1 : (1 + (bvdim-1) / GB_TILE_SIZE) ;
+    int64_t nJ_tasks = (avlen == 0) ? 1 : (1 + (avlen-1) / GB_TILE_SIZE) ;
+    int64_t ntasks = nI_tasks * nJ_tasks ;
+
+    //--------------------------------------------------------------------------
+    // C<#M>+=A*B, C bitmap, A and B both bitmap/full
+    //--------------------------------------------------------------------------
 
     int64_t tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
@@ -287,3 +306,5 @@
     }
 }
 
+#undef GB_TILE_SIZE
+#undef GB_KTILE_SIZE
