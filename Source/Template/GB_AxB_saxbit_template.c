@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_saxbit_template.c: C<#M>+=A*B when C is bitmap
+// GB_AxB_saxbit_template.c: C<#M>=A*B when C is bitmap
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -8,45 +8,16 @@
 //------------------------------------------------------------------------------
 
 // GB_AxB_saxpy_sparsity determines the sparsity structure for C<M or !M>=A*B
-// or C=A*B, and this template is used when C is bitmap.  C can be modified
-// in-place if the accum operator is the same as the monoid.
+// or C=A*B, and this template is used when C is bitmap.
+
+// FUTURE: C could be modified in-place if the accum operator is the same as
+// the monoid.
 
 // C is bitmap.
 // A is sparse, hypersparse, bitmap, or full.
 // B is bitmap or full.
 
-#if 0
-#undef  GB_FREE_ALL
-#define GB_FREE_ALL                         \
-{                                           \
-    GB_FREE_WORK (&Wf, Wf_size) ;           \
-    GB_FREE_WORK (&Wcx, Wcx_size) ;         \
-    GB_WERK_POP (H_slice, int64_t) ;        \
-    GB_WERK_POP (A_slice, int64_t) ;        \
-    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
-}
-#endif
-
 {
-
-    //--------------------------------------------------------------------------
-    // declare workspace
-    //--------------------------------------------------------------------------
-
-#if 0
-    int8_t  *restrict Wf  = NULL ; size_t Wf_size = 0 ;
-    GB_void *restrict Wcx = NULL ; size_t Wcx_size = 0 ;
-    GB_WERK_DECLARE (H_slice, int64_t) ;
-    GB_WERK_DECLARE (A_slice, int64_t) ;
-    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
-#endif
-
-    //--------------------------------------------------------------------------
-    // determine max # of threads to use
-    //--------------------------------------------------------------------------
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // get C, M, A, and B
@@ -98,9 +69,6 @@
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
     const bool M_is_full   = GB_IS_FULL (M) ;
 
-//  int M_nthreads = 0 ;
-//  int M_ntasks = 0 ;
-
     if (M != NULL)
     {
         ASSERT (C->vlen == M->vlen) ;
@@ -113,8 +81,6 @@
         msize = M->type->size ;
         mnvec = M->nvec ;
         mvlen = M->vlen ;
-
-//      GB_SLICE_MATRIX (M, 8, chunk) ;
 
         // if M is sparse or hypersparse, scatter it into the C bitmap
         if (M_is_sparse_or_hyper)
@@ -175,27 +141,6 @@
         // bitmap           any             sparse      bitmap
         // bitmap           any             hyper       full 
         // bitmap           any             sparse      full
-
-#if 0
-        // construct the tasks
-        ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B)) ;
-        int nthreads, ntasks, nfine_tasks_per_vector ;
-        bool use_coarse_tasks, use_atomics ;
-        GB_AxB_saxpy4_tasks (&ntasks, &nthreads, &nfine_tasks_per_vector,
-            &use_coarse_tasks, &use_atomics, anz, bnz, bvdim, cvlen) ;
-        if (!use_coarse_tasks)
-        {
-            // slice the matrix A for each team of fine tasks
-            GB_WERK_PUSH (A_slice, nfine_tasks_per_vector + 1, int64_t) ;
-            if (A_slice == NULL)
-            { 
-                // out of memory
-                GB_FREE_ALL ;
-//              return (GrB_OUT_OF_MEMORY) ;
-            }
-            GB_pslice (A_slice, Ap, anvec, nfine_tasks_per_vector, true) ;
-        }
-#endif
 
         if (M == NULL)
         {
@@ -324,6 +269,8 @@
         #define GB_TILE_SIZE 64
         #define GB_KTILE_SIZE 8
 
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
         double work = ((double) avlen) * ((double) bvlen) * ((double) bvdim) ;
         int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
         int64_t nI_tasks = (bvdim == 0) ? 1 : (1 + (bvdim-1) / GB_TILE_SIZE) ;
@@ -393,13 +340,5 @@
             M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_MINUS_2,
             M_ek_slicing, M_ntasks, M_nthreads) ;
     }
-
-    //--------------------------------------------------------------------------
-    // free workspace
-    //--------------------------------------------------------------------------
-
-//  GB_FREE_ALL ;
 }
-
-#undef GB_FREE_ALL
 
