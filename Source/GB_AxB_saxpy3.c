@@ -324,7 +324,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     }
     else if (info != GrB_SUCCESS)
     { 
-        // out of memory
+        // out of memory or other error
         GB_FREE_ALL ;
         return (info) ;
     }
@@ -645,11 +645,11 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     {
 
         //----------------------------------------------------------------------
-        // C is non-iso
+        // via the factory kernel
         //----------------------------------------------------------------------
 
+        info = GrB_NO_VALUE ;
         GBURBLE ("(sparse saxpy) ") ;
-        bool done = false ;
 
         #ifndef GBCUDA_DEV
 
@@ -665,7 +665,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                 info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp,       \
                     Mask_struct, M_in_place, A, B,                          \
                     SaxpyTasks, ntasks, nfine, nthreads, do_sort, Werk) ;   \
-                done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
 
@@ -685,12 +684,11 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        if (!done)
+        if (info == GrB_NO_VALUE)
         {
             info = GB_AxB_saxpy3_jit (C, M, Mask_comp, Mask_struct,
                 M_in_place, A, B, semiring, flipxy,
                 SaxpyTasks, ntasks, nfine, nthreads, do_sort, Werk) ;
-            done = (info == GrB_SUCCESS) ;
         }
         #endif
 
@@ -698,7 +696,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // generic saxpy3 method for the case when C is sparse or hypersparse
         //----------------------------------------------------------------------
 
-        if (!done)
+        if (info == GrB_NO_VALUE)
         { 
             info = GB_AxB_saxpy_generic (C, M, Mask_comp, Mask_struct,
                 M_in_place, A, A_is_pattern, B, B_is_pattern, semiring,
@@ -711,9 +709,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     if (info != GrB_SUCCESS)
     { 
-        // out of memory
+        // out of memory or other error
         GB_FREE_ALL ;
-        return (GrB_OUT_OF_MEMORY) ;
+        return (info) ;
     }
 
     //--------------------------------------------------------------------------

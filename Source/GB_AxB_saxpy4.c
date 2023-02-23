@@ -233,11 +233,10 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     }
 
     //--------------------------------------------------------------------------
-    // factory kernel
+    // via the factory kernel
     //--------------------------------------------------------------------------
 
     info = GrB_NO_VALUE ;
-
     #ifndef GBCUDA_DEV
 
         //----------------------------------------------------------------------
@@ -265,7 +264,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     #endif
 
     //--------------------------------------------------------------------------
-    // JIT kernel
+    // via the JIT kernel
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
@@ -286,13 +285,17 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     { 
         // saxpy4 doesn't handle this case; punt to saxpy3, bitmap saxpy, etc
         GBURBLE ("(punt) ") ;
-        return (info) ;
     }
-    else
+    else if (info == GrB_SUCCESS)
     { 
         ASSERT_MATRIX_OK (C, "saxpy4: output", GB0) ;
         (*done_in_place) = true ;
-        return (GrB_SUCCESS) ;
     }
+    else
+    {
+        // out of memory, or other error
+        GB_FREE_ALL ;
+    }
+    return (info) ;
 }
 

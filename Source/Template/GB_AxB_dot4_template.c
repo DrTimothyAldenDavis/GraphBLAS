@@ -447,6 +447,7 @@
         // C += A'*B: with workspace W for transposing B, one panel at a time
         //----------------------------------------------------------------------
 
+        // FIXME: allocate workspace in GB_AxB_dot4.c, not here.
         size_t W_size = 0 ;
         GB_B_TYPE *restrict W = NULL ;
         if (bvdim > 1)

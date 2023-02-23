@@ -13,20 +13,29 @@
 
 typedef GrB_Info (*GB_jit_dl_function)
 (
-    GrB_Matrix,
-    const GrB_Matrix, int64_t *restrict, int,
-    const GrB_Matrix, int64_t *restrict, int,
-    const int,
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *restrict A_slice,
+    const int64_t *restrict B_slice,
+    const int naslice,
+    const int nbslice,
+    const int nthreads,
     GB_Werk
 ) ;
 
 GrB_Info GB_AxB_dot4_jit            // C+=A'*B, dot4 method, via the JIT
 (
     GrB_Matrix C,
-    const GrB_Matrix A, int64_t *restrict A_slice, int naslice,
-    const GrB_Matrix B, int64_t *restrict B_slice, int nbslice,
+    const bool C_in_iso,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
     const GrB_Semiring semiring,
     const bool flipxy,
+    const int64_t *restrict A_slice,
+    const int64_t *restrict B_slice,
+    const int naslice,
+    const int nbslice,
     const int nthreads,
     GB_Werk Werk
 )
@@ -45,7 +54,7 @@ GrB_Info GB_AxB_dot4_jit            // C+=A'*B, dot4 method, via the JIT
     char *suffix ;
     uint64_t hash = GB_encodify_mxm (&encoding, &suffix,
         GB_JIT_KERNEL_AXB_DOT4,
-        false, C->iso, GB_sparsity (C), C->type,
+        false, C_in_iso, GxB_FULL, C->type,
         NULL, true, false, semiring, flipxy, A, B) ;
     if (hash == UINT64_MAX)
     {
@@ -225,10 +234,8 @@ GrB_Info GB_AxB_dot4_jit            // C+=A'*B, dot4 method, via the JIT
     //------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    GrB_Info info = GB_jit_kernel (C,
-        A, A_slice, naslice,
-        B, B_slice, nbslice,
-        nthreads, Werk) ;
+    GrB_Info info = GB_jit_kernel (C, A, B, A_slice, B_slice,
+        naslice, nbslice, nthreads, Werk) ;
     return (info) ;
 #endif
 }

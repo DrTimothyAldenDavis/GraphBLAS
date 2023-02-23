@@ -23,6 +23,7 @@
 }
 
 #include "GB_mxm.h"
+#include "GB_stringify.h"
 #include "GB_AxB_saxpy.h"
 #include "GB_binop.h"
 #include "GB_ek_slice.h"
@@ -261,11 +262,11 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
     {
 
         //----------------------------------------------------------------------
-        // C is non-iso
+        // via the factory kernel
         //----------------------------------------------------------------------
 
+        info = GrB_NO_VALUE ;
         GBURBLE ("(bitmap saxpy) ") ;
-        bool done = false ;
 
         #ifndef GBCUDA_DEV
 
@@ -283,7 +284,6 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
                     nfine_tasks_per_vector, use_coarse_tasks, use_atomics,  \
                     M_ek_slicing, M_nthreads, M_ntasks,                     \
                     A_slice, H_slice, Wcx, Wf) ;                            \
-                done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
 
@@ -303,10 +303,24 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
         #endif
 
         //----------------------------------------------------------------------
-        // generic method for the C bitmap case
+        // via the JIT kernel
         //----------------------------------------------------------------------
 
-        if (!done)
+        #if GB_JIT_ENABLED
+        if (info == GrB_NO_VALUE)
+        {
+            info = GB_AxB_saxbit_jit (C, M, Mask_comp, Mask_struct,
+                A, B, semiring, flipxy, ntasks, nthreads,
+                nfine_tasks_per_vector, use_coarse_tasks, use_atomics,
+                M_ek_slicing, M_nthreads, M_ntasks, A_slice, H_slice, Wcx, Wf) ;
+        }
+        #endif
+
+        //----------------------------------------------------------------------
+        // via the generic method for the C bitmap case
+        //----------------------------------------------------------------------
+
+        if (info == GrB_NO_VALUE)
         { 
             info = GB_AxB_saxpy_generic (C, M, Mask_comp, Mask_struct,
                 true, A, A_is_pattern, B, B_is_pattern, semiring,
@@ -322,7 +336,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
     { 
         // out of memory
         GB_FREE_ALL ;
-        return (GrB_OUT_OF_MEMORY) ;
+        return (info) ;
     }
 
     //--------------------------------------------------------------------------

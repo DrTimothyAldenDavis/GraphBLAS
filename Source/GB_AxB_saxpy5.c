@@ -148,11 +148,10 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     GB_pslice (B_slice, B->p, bnvec, ntasks, false) ;
 
     //--------------------------------------------------------------------------
-    // factory kernel
+    // via the factory kernel
     //--------------------------------------------------------------------------
 
     info = GrB_NO_VALUE ;
-
     #ifndef GBCUDA_DEV
     {
 
@@ -181,7 +180,7 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     #endif
 
     //--------------------------------------------------------------------------
-    // JIT kernel
+    // the JIT kernel
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
@@ -206,6 +205,11 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     { 
         ASSERT_MATRIX_OK (C, "saxpy5: output", GB0) ;
         (*done_in_place) = true ;
+    }
+    else
+    { 
+        // out of memory, or other error
+        GB_FREE_ALL ;
     }
     return (info) ;
 }

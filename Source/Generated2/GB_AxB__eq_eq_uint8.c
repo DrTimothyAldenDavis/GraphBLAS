@@ -114,8 +114,13 @@ GrB_Info GB (_Adot3B__eq_eq_uint8)
 GrB_Info GB (_Adot4B__eq_eq_uint8)
 (
     GrB_Matrix C,
-    const GrB_Matrix A, int64_t *restrict A_slice, int naslice,
-    const GrB_Matrix B, int64_t *restrict B_slice, int nbslice,
+    const bool C_in_iso,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *restrict A_slice,
+    const int64_t *restrict B_slice,
+    const int naslice,
+    const int nbslice,
     const int nthreads,
     GB_Werk Werk
 )

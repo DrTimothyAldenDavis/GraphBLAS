@@ -96,33 +96,14 @@
     #endif
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
 
-    int ntasks = naslice * nbslice ;
-
-    //--------------------------------------------------------------------------
-    // if C is iso on input: get the iso scalar and convert C to non-iso
-    //--------------------------------------------------------------------------
-
+    // get the Cx [0] iso input scalar, if C was iso in GB_AxB_dot4
     #ifdef GB_JIT_KERNEL
     #define C_in_iso GB_C_IN_ISO
-    ASSERT (C_in_iso == C->iso) ;
-    #else
-    const bool C_in_iso = C->iso ;
     #endif
-
     GB_DECLARE_IDENTITY_CONST (zidentity) ;
     const GB_C_TYPE cinput = (C_in_iso) ? Cx [0] : zidentity ;
-    if (C_in_iso)
-    { 
-        // allocate but do not initialize C->x unless A or B are hypersparse
-        GrB_Info info = GB_convert_any_to_non_iso (C, A_is_hyper || B_is_hyper);
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-        ASSERT (!C->iso) ;
-        Cx = (GB_C_TYPE *) C->x ;
-    }
+
+    int ntasks = naslice * nbslice ;
 
     //--------------------------------------------------------------------------
     // C += A'*B

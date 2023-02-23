@@ -14,18 +14,26 @@
 GrB_Info GB_jit_kernel
 (
     GrB_Matrix C,
-    const GrB_Matrix A, int64_t *restrict A_slice, int naslice,
-    const GrB_Matrix B, int64_t *restrict B_slice, int nbslice,
-    int nthreads, 
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *restrict A_slice,
+    const int64_t *restrict B_slice,
+    const int naslice,
+    const int nbslice,
+    const int nthreads,
     GB_Werk Werk
 ) ;
 
 GrB_Info GB_jit_kernel
 (
     GrB_Matrix C,
-    const GrB_Matrix A, int64_t *restrict A_slice, int naslice,
-    const GrB_Matrix B, int64_t *restrict B_slice, int nbslice,
-    int nthreads,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *restrict A_slice,
+    const int64_t *restrict B_slice,
+    const int naslice,
+    const int nbslice,
+    const int nthreads,
     GB_Werk Werk
 )
 { 

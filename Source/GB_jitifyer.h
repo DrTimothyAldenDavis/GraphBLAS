@@ -24,10 +24,10 @@
 #define GB_JIT_KERNEL_AXB_DOT2N     3
 #define GB_JIT_KERNEL_AXB_DOT3      4
 #define GB_JIT_KERNEL_AXB_DOT4      5
-#define GB_JIT_KERNEL_AXB_SAXPY3    6
-#define GB_JIT_KERNEL_AXB_SAXPY4    7
-#define GB_JIT_KERNEL_AXB_SAXPY5    8
-#define GB_JIT_KERNEL_AXB_SAXBIT    9
+#define GB_JIT_KERNEL_AXB_SAXBIT    6
+#define GB_JIT_KERNEL_AXB_SAXPY3    7
+#define GB_JIT_KERNEL_AXB_SAXPY4    8
+#define GB_JIT_KERNEL_AXB_SAXPY5    9
 
 // ... etc FIXME: list them all here
 // or make this an enum

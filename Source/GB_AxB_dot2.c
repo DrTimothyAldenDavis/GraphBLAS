@@ -22,7 +22,7 @@
 // performance is not as good as it could be.  For large problems, C=(A')*B is
 // faster with the saxpy3 method, as compared to this method with C=A'*B.
 
-#define GB_FREE_ALL                         \
+#define GB_FREE_WORKSPACE                   \
 {                                           \
     GB_Matrix_free (&Mwork) ;               \
     GB_Matrix_free (&Awork) ;               \
@@ -30,6 +30,12 @@
     GB_WERK_POP (M_ek_slicing, int64_t) ;   \
     GB_WERK_POP (B_slice, int64_t) ;        \
     GB_WERK_POP (A_slice, int64_t) ;        \
+}
+
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_FREE_WORKSPACE ;                     \
+    GB_phybix_free (C) ;                    \
 }
 
 #include "GB_mxm.h"
@@ -423,8 +429,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         // C is non-iso
         //----------------------------------------------------------------------
 
-        bool done = false ;
-
+        info = GrB_NO_VALUE ;
         #ifndef GBCUDA_DEV
 
             //------------------------------------------------------------------
@@ -439,7 +444,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
                 info = GB_Adot2B (add,mult,xname) (C, M, Mask_comp,         \
                     Mask_struct, A_not_transposed, A, A_slice,              \
                     B, B_slice, nthreads, naslice, nbslice) ;               \
-                done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
 
@@ -465,7 +469,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        if (!done)
+        if (info == GrB_NO_VALUE)
         {
             if (A_not_transposed)
             {
@@ -481,15 +485,14 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
                     A, A_slice, B, B_slice, semiring, flipxy,
                     nthreads, naslice, nbslice) ;
             }
-            done = (info == GrB_SUCCESS) ;
         }
         #endif
 
         //----------------------------------------------------------------------
-        // C = A'*B or A*B, using the dot product method, with typecasting
+        // via the generic kernel
         //----------------------------------------------------------------------
 
-        if (!done)
+        if (info == GrB_NO_VALUE)
         { 
             #define GB_DOT2_GENERIC
             GB_BURBLE_MATRIX (C, "(generic C%s=A%s*B, C %s) ",
@@ -497,14 +500,22 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
                 A_not_transposed ? "" : "'",
                 (C_sparsity == GxB_BITMAP) ? "bitmap" : "full") ;
             #include "GB_AxB_dot_generic.c"
+            info = GrB_SUCCESS ;
         }
+    }
+
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory, or other error
+        GB_FREE_ALL ;
+        return (info) ;
     }
 
     //--------------------------------------------------------------------------
     // free workspace
     //--------------------------------------------------------------------------
 
-    GB_FREE_ALL ;
+    GB_FREE_WORKSPACE ;
     C->magic = GB_MAGIC ;
     ASSERT_MATRIX_OK (C, "dot2: result C, before expand", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;

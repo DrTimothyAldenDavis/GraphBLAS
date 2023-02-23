@@ -261,19 +261,18 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         //----------------------------------------------------------------------
 
         memcpy (C->x, cscalar, ctype->size) ;
-        GB_OK (GB (_Adot3B__any_pair_iso) (C, M, Mask_struct, A, B,
-            TaskList, ntasks, nthreads)) ;
+        info = GB (_Adot3B__any_pair_iso) (C, M, Mask_struct, A, B,
+            TaskList, ntasks, nthreads) ;
 
     }
     else
     {
 
         //----------------------------------------------------------------------
-        // C is non-iso
+        // C<M> = A'*B via the factory kernel
         //----------------------------------------------------------------------
 
-        bool done = false ;
-
+        info = GrB_NO_VALUE ;
         #ifndef GBCUDA_DEV
 
             //------------------------------------------------------------------
@@ -287,7 +286,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
             {                                                               \
                 info = GB_Adot3B (add,mult,xname) (C, M, Mask_struct, A, B, \
                     TaskList, ntasks, nthreads) ;                           \
-                done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
 
@@ -311,24 +309,32 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        if (!done)
+        if (info == GrB_NO_VALUE)
         {
             info = GB_AxB_dot3_jit (C, M, Mask_struct, A, B, semiring, flipxy,
                 TaskList, ntasks, nthreads) ;
-            done = (info == GrB_SUCCESS) ;
         }
         #endif
 
         //----------------------------------------------------------------------
-        // C<M> = A'*B, via masked dot product method and typecasting
+        // C<M> = A'*B, via the generic kernel
         //----------------------------------------------------------------------
 
-        if (!done)
+        if (info == GrB_NO_VALUE)
         { 
             #define GB_DOT3_GENERIC
             GB_BURBLE_MATRIX (C, "(generic C<M>=A'*B) ") ;
             #include "GB_AxB_dot_generic.c"
+            info = GrB_SUCCESS ;
         }
+    }
+
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory, or other error
+        printf ("dot3 died %d\n", info) ;
+        GB_FREE_ALL ;
+        return (info) ;
     }
 
     //--------------------------------------------------------------------------

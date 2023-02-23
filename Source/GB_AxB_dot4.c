@@ -216,7 +216,21 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     GB_pslice (B_slice, B->p, bnvec, nbslice, false) ;
 
     //--------------------------------------------------------------------------
-    // via pre-generated kernel
+    // convert C to non-iso
+    //--------------------------------------------------------------------------
+
+    bool C_in_iso = C->iso ;
+    bool initialized = GB_IS_HYPERSPARSE (A) || GB_IS_HYPERSPARSE (B) ;
+    if (C_in_iso)
+    { 
+        // allocate but do not initialize C->x unless A or B are hypersparse.
+        // The initialization must be done if dot4 doesn't do the work;
+        // see GB_iso_expand below.
+        GB_OK (GB_convert_any_to_non_iso (C, initialized)) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // via factory kernel
     //--------------------------------------------------------------------------
 
     info = GrB_NO_VALUE ;
@@ -227,11 +241,11 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         //----------------------------------------------------------------------
 
         #define GB_Adot4B(add,mult,xname) GB (_Adot4B_ ## add ## mult ## xname)
-        #define GB_AxB_WORKER(add,mult,xname)                           \
-        {                                                               \
-            info = GB_Adot4B (add,mult,xname) (C, A, A_slice, naslice,  \
-                B, B_slice, nbslice, nthreads, Werk) ;                  \
-        }                                                               \
+        #define GB_AxB_WORKER(add,mult,xname)                               \
+        {                                                                   \
+            info = GB_Adot4B (add,mult,xname) (C, C_in_iso, A, B,           \
+                A_slice, B_slice, naslice, nbslice, nthreads, Werk) ;       \
+        }                                                                   \
         break ;
 
         //----------------------------------------------------------------------
@@ -252,8 +266,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     if (info == GrB_NO_VALUE)
     { 
         // C+= A*B, C is full
-        info = GB_AxB_dot4_jit (C, A, A_slice, naslice, B, B_slice, nbslice,
-            semiring, flipxy, nthreads, Werk) ;
+        info = GB_AxB_dot4_jit (C, C_in_iso, A, B, semiring, flipxy,
+            A_slice, B_slice, naslice, nbslice, nthreads, Werk) ;
     }
     #endif
 
@@ -265,12 +279,29 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     if (info == GrB_NO_VALUE)
     { 
         // dot4 doesn't handle this case; punt to dot2 or dot3
+        if (C_in_iso && !initialized)
+        { 
+            // C has been expanded to non-iso, but dot4 didn't do the work,
+            // and C has been left incompletely expanded to non-iso.
+            // Need to copy the iso value in Cx [0] to all of Cx.
+            size_t csize = C->type->size ;
+            GB_void cscalar [GB_VLA(csize)] ;
+            int64_t cnz = GB_nnz_held (C) ;
+            memcpy (cscalar, C->x, csize) ;
+            GB_iso_expand (C->x, cnz, cscalar, csize) ;
+        }
         GBURBLE ("(punt) ") ;
     }
     else if (info == GrB_SUCCESS)
     { 
         ASSERT_MATRIX_OK (C, "dot4: output", GB0) ;
         (*done_in_place) = true ;
+    }
+    else
+    { 
+        // out of memory, or other error
+        GB_FREE_ALL ;
+        printf ("panic! %d\n", info) ;
     }
     return (info) ;
 }

@@ -230,10 +230,15 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
 GrB_Info GB_AxB_dot4_jit            // C+=A'*B, dot4 method, via the JIT
 (
     GrB_Matrix C,
-    const GrB_Matrix A, int64_t *restrict A_slice, int naslice,
-    const GrB_Matrix B, int64_t *restrict B_slice, int nbslice,
+    const bool C_in_iso,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
     const GrB_Semiring semiring,
     const bool flipxy,
+    const int64_t *restrict A_slice,
+    const int64_t *restrict B_slice,
+    const int naslice,
+    const int nbslice,
     const int nthreads,
     GB_Werk Werk
 ) ;

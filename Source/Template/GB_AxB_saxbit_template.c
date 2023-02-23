@@ -87,16 +87,26 @@
     int64_t mvlen = 0 ;
 
     #ifdef GB_JIT_KERNEL
-    #define M_is_hyper  GB_M_IS_HYPER
-    #define M_is_sparse GB_M_IS_SPARSE
-    #define M_is_bitmap GB_M_IS_BITMAP
-    #define M_is_full   GB_M_IS_FULL
     #define Mask_comp   GB_MASK_COMP
     #define Mask_struct GB_MASK_STRUCT
     #define M_is_present (!GB_NO_MASK)
-    #define M_is_sparse_or_hyper        (GB_M_IS_SPARSE || GB_M_IS_HYPER)
-    #define GB_MASK_IS_SPARSE_OR_HYPER  (GB_M_IS_SPARSE || GB_M_IS_HYPER)
-    #define GB_MASK_IS_BITMAP_OR_FULL   (GB_M_IS_BITMAP || GB_M_IS_FULL)
+    #if GB_NO_MASK
+        #define M_is_hyper  0
+        #define M_is_sparse 0
+        #define M_is_bitmap 0
+        #define M_is_full   0
+        #define M_is_sparse_or_hyper        0
+        #define GB_MASK_IS_SPARSE_OR_HYPER  0
+        #define GB_MASK_IS_BITMAP_OR_FULL   0
+    #else
+        #define M_is_hyper  GB_M_IS_HYPER
+        #define M_is_sparse GB_M_IS_SPARSE
+        #define M_is_bitmap GB_M_IS_BITMAP
+        #define M_is_full   GB_M_IS_FULL
+        #define M_is_sparse_or_hyper        (GB_M_IS_SPARSE || GB_M_IS_HYPER)
+        #define GB_MASK_IS_SPARSE_OR_HYPER  (GB_M_IS_SPARSE || GB_M_IS_HYPER)
+        #define GB_MASK_IS_BITMAP_OR_FULL   (GB_M_IS_BITMAP || GB_M_IS_FULL)
+    #endif
     #else
     const bool M_is_hyper  = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_sparse = GB_IS_SPARSE (M) ;

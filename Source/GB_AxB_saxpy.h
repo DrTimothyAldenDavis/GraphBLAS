@@ -151,6 +151,30 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_AxB_saxbit_jit      // C<M>=A*B, saxbit, via the JIT
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_comp,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const GrB_Semiring semiring,
+    const bool flipxy,
+    const int ntasks,
+    const int nthreads,
+    const int nfine_tasks_per_vector,
+    const bool use_coarse_tasks,
+    const bool use_atomics,
+    const int64_t *restrict M_ek_slicing,
+    const int M_nthreads,
+    const int M_ntasks,
+    const int64_t *restrict A_slice,
+    const int64_t *restrict H_slice,
+    GB_void *restrict Wcx,
+    int8_t *restrict Wf
+) ;
+
 //------------------------------------------------------------------------------
 // saxpy methods
 //------------------------------------------------------------------------------
