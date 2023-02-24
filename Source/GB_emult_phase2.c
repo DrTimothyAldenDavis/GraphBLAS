@@ -128,7 +128,7 @@ GrB_Info GB_emult_phase2             // C=A.*B or C<M>=A.*B
     bool C_iso = GB_iso_emult (cscalar, ctype, A, B, op) ;
 
     #ifdef GB_DEBUGIFY_DEFN
-    GB_debugify_ewise (C_iso, C_sparsity, ctype, M,
+    GB_debugify_ewise (C_iso, false, C_sparsity, ctype, M,
         Mask_struct, Mask_comp, op, false, A, B) ;
     #endif
 
@@ -200,7 +200,7 @@ GrB_Info GB_emult_phase2             // C=A.*B or C<M>=A.*B
     { 
 
         //----------------------------------------------------------------------
-        // C is iso
+        // via the iso kernel
         //----------------------------------------------------------------------
 
         // Cx [0] = cscalar = op (A,B)
@@ -215,6 +215,10 @@ GrB_Info GB_emult_phase2             // C=A.*B or C<M>=A.*B
     }
     else
     {
+
+        //----------------------------------------------------------------------
+        // via the factory kernel
+        //----------------------------------------------------------------------
 
         #ifndef GBCUDA_DEV
 
@@ -251,7 +255,15 @@ GrB_Info GB_emult_phase2             // C=A.*B or C<M>=A.*B
     }
 
     //--------------------------------------------------------------------------
-    // generic worker
+    // via the JIT kernel
+    //--------------------------------------------------------------------------
+
+    #if GB_JIT_ENABLED
+    // JIT TODO: emult_phase2
+    #endif
+
+    //--------------------------------------------------------------------------
+    // via the generic kernel
     //--------------------------------------------------------------------------
 
     if (!done)

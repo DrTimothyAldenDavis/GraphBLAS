@@ -83,7 +83,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     { 
 
         //----------------------------------------------------------------------
-        // apply the operator to the iso value and transpose the pattern
+        // via the iso kernel
         //----------------------------------------------------------------------
 
         // if C is iso, only the pattern is transposed.  The numerical work
@@ -107,7 +107,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         ASSERT_UNARYOP_OK (op, "op for transpose", GB0) ;
 
         //----------------------------------------------------------------------
-        // transpose the matrix; apply the unary op to all values if non-iso
+        // via the factory kernel
         //----------------------------------------------------------------------
 
         #ifndef GBCUDA_DEV
@@ -142,7 +142,15 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         #endif
 
         //----------------------------------------------------------------------
-        // generic worker: transpose, typecast, and apply unary operator
+        // via the JIT kernel
+        //----------------------------------------------------------------------
+
+        #if GB_JIT_ENABLED
+        // JIT TODO: transpose_op with unop
+        #endif
+
+        //----------------------------------------------------------------------
+        // via the generic kernel
         //----------------------------------------------------------------------
 
         GB_BURBLE_MATRIX (A, "(generic transpose: %s) ", op->name) ;
@@ -230,7 +238,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ;
 
         //----------------------------------------------------------------------
-        // transpose the matrix; apply the binary op to all values if non-iso
+        // via the factory kernel
         //----------------------------------------------------------------------
 
         #ifndef GBCUDA_DEV
@@ -309,7 +317,15 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         #endif
 
         //----------------------------------------------------------------------
-        // generic worker: transpose, typecast and apply a binary operator
+        // via the JIT kernel
+        //----------------------------------------------------------------------
+
+        #if GB_JIT_ENABLED
+        // JIT TODO: transpose_op with binop
+        #endif
+
+        //----------------------------------------------------------------------
+        // via the generic kernel
         //----------------------------------------------------------------------
 
         GB_BURBLE_MATRIX (A, "(generic transpose: %s) ", op->name) ;

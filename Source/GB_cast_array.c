@@ -48,7 +48,7 @@ void GB_cast_array              // typecast an array
     ASSERT (code1 != GB_UDT_code) ;
 
     //--------------------------------------------------------------------------
-    // typecast the array
+    // via the factory kernel
     //--------------------------------------------------------------------------
 
     #ifndef GBCUDA_DEV
@@ -77,8 +77,10 @@ void GB_cast_array              // typecast an array
 
     #endif
 
+    // no JIT kernel needed
+
     //--------------------------------------------------------------------------
-    // generic worker: only used for GBCUDA_DEV case
+    // via the generic kernel (only used for GBCUDA_DEV case)
     //--------------------------------------------------------------------------
 
     int64_t csize = GB_code_size (code1, 0) ;

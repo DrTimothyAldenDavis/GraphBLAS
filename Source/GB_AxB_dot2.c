@@ -411,7 +411,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     { 
 
         //----------------------------------------------------------------------
-        // C is iso; compute the pattern of C<#>=A'*B with the any_pair semiring
+        // via the iso kernel
         //----------------------------------------------------------------------
 
         GBURBLE ("(iso dot2) ") ;
@@ -426,7 +426,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     {
 
         //----------------------------------------------------------------------
-        // C is non-iso
+        // via the factory kernel
         //----------------------------------------------------------------------
 
         info = GrB_NO_VALUE ;
@@ -465,7 +465,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         #endif
 
         //----------------------------------------------------------------------
-        // via the JIT
+        // via the JIT kernel
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED

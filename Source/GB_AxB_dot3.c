@@ -257,7 +257,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     { 
 
         //----------------------------------------------------------------------
-        // C is iso; compute the pattern of C<M>=A'*B with the any_pair semiring
+        // via the iso kernel
         //----------------------------------------------------------------------
 
         memcpy (C->x, cscalar, ctype->size) ;
@@ -269,7 +269,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     {
 
         //----------------------------------------------------------------------
-        // C<M> = A'*B via the factory kernel
+        // via the factory kernel
         //----------------------------------------------------------------------
 
         info = GrB_NO_VALUE ;
@@ -305,7 +305,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         #endif
 
         //----------------------------------------------------------------------
-        // C<M> = A'*B, via the JIT
+        // via the JIT kernel
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
@@ -317,7 +317,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         #endif
 
         //----------------------------------------------------------------------
-        // C<M> = A'*B, via the generic kernel
+        // via the generic kernel
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)

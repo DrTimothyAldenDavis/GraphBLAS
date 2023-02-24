@@ -85,7 +85,7 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
     cast_B_to_Y (bwork, scalar, btype->size) ;
 
     //--------------------------------------------------------------------------
-    // C += b, scalar accum into dense, with built-in binary operators
+    // via the factory kernel
     //--------------------------------------------------------------------------
 
     bool done = false ;
@@ -122,7 +122,15 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
     #endif
 
     //--------------------------------------------------------------------------
-    // C += b, scalar accum into dense, with typecasting or user-defined op
+    // via the JIT kernel
+    //--------------------------------------------------------------------------
+
+    #if GB_JIT_ENABLED
+    // JIT TODO: subassign 22
+    #endif
+
+    //--------------------------------------------------------------------------
+    // via the generic kernel
     //--------------------------------------------------------------------------
 
     if (!done)

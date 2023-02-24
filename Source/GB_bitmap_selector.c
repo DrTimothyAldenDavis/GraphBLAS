@@ -74,7 +74,7 @@ GrB_Info GB_bitmap_selector
     }
 
     //--------------------------------------------------------------------------
-    // launch the switch factory to select the entries
+    // via the factory kernel 
     //--------------------------------------------------------------------------
 
     #define GB_BITMAP_SELECTOR
@@ -88,6 +88,14 @@ GrB_Info GB_bitmap_selector
 
     const GB_Type_code typecode = (A->iso) ? GB_ignore_code : acode ;
     #include "GB_select_factory.c"
+
+    //--------------------------------------------------------------------------
+    // via the JIT kernel 
+    //--------------------------------------------------------------------------
+
+    #if GB_JIT_ENABLED
+    // JIT TODO: bitmap select
+    #endif
 
     //--------------------------------------------------------------------------
     // return result

@@ -246,7 +246,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
     { 
 
         //----------------------------------------------------------------------
-        // C is iso; compute the pattern of C<#>=A*B with the any_pair semiring
+        // via the iso kernel
         //----------------------------------------------------------------------
 
         GBURBLE ("(iso bitmap saxpy) ") ;
@@ -317,7 +317,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
         #endif
 
         //----------------------------------------------------------------------
-        // via the generic method for the C bitmap case
+        // via the generic kernel
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)

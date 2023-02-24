@@ -117,7 +117,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     }
 
     //--------------------------------------------------------------------------
-    // C += B, sparse accum into dense, with built-in binary operators
+    // via the factory kernel
     //--------------------------------------------------------------------------
 
     bool done = false ;
@@ -155,7 +155,15 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     #endif
 
     //--------------------------------------------------------------------------
-    // C += B, sparse accum into dense, with typecasting or user-defined op
+    // via the JIT kernel
+    //--------------------------------------------------------------------------
+
+    #if GB_JIT_ENABLED
+    // JIT TODO: subassign 23
+    #endif
+
+    //--------------------------------------------------------------------------
+    // via the generic kernel
     //--------------------------------------------------------------------------
 
     if (!done)

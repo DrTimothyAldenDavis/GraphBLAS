@@ -27,8 +27,8 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // extract the binaryop scode
     //--------------------------------------------------------------------------
 
-    // A and B iso-valued and flipxy (one hex digit)
-//  int unused      = GB_RSHIFT (scode, 47, 1) ;
+    // C in, A, and B iso-valued and flipxy (one hex digit)
+    bool C_in_iso   = GB_RSHIFT (scode, 47, 1) ;
     int A_iso_code  = GB_RSHIFT (scode, 46, 1) ;
     int B_iso_code  = GB_RSHIFT (scode, 45, 1) ;
     bool flipxy     = GB_RSHIFT (scode, 44, 1) ;
@@ -64,12 +64,6 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 
     GB_macrofy_copyright (fp) ;
 
-    // see GB_enumify_binop for the explanation of this test:
-    bool builtin = ((binop_ecode > 0) &&
-        (acode != GB_UDT_code) &&
-        (bcode != GB_UDT_code) &&
-        (ccode != GB_UDT_code)) ;
-
     if (C_iso)
     {
         // values of C are not computed by the kernel
@@ -90,10 +84,11 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         xtype = atype ;
         ytype = atype ;
         ztype = atype ;
-        if (builtin)
+        if (atype->hash == 0)
         {
             // GrB_wait for a built-in type
-            fprintf (fp, "// op: none (for GrB_wait), type: %s\n\n", xtype_name) ;
+            fprintf (fp, "// op: none (for GrB_wait), type: %s\n\n",
+                xtype_name) ;
         }
         else
         {
@@ -111,7 +106,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         xtype_name = xtype->name ;
         ytype_name = ytype->name ;
         ztype_name = ztype->name ;
-        if (builtin)
+        if (binaryop->hash == 0)
         {
             // builtin operator
             fprintf (fp, "// op: (%s%s, %s)\n\n",
@@ -143,7 +138,11 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     else
     { 
         // general case
-        GB_macrofy_typedefs (fp, ctype, atype, btype, xtype, ytype, ztype) ;
+        GB_macrofy_typedefs (fp,
+            (ccode == 0 ) ? NULL : ctype,
+            (acode == 0 || acode == 15) ? NULL : atype,
+            (bcode == 0 || bcode == 15) ? NULL : btype,
+            xtype, ytype, ztype) ;
     }
 
     fprintf (fp, "// binary operator types:\n") ;

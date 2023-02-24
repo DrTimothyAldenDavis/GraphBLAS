@@ -106,7 +106,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     {
 
         //----------------------------------------------------------------------
-        // built-in positional unary, index_unary, or binary operator
+        // via the positional kernel
         //----------------------------------------------------------------------
 
         bool is64 = (op->ztype == GrB_INT64) ;
@@ -316,7 +316,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     {
 
         //----------------------------------------------------------------------
-        // apply the unary or binary operator to the iso value
+        // via the iso kernel
         //----------------------------------------------------------------------
 
         // if C is iso, this function takes O(1) time
@@ -333,7 +333,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     {
 
         //----------------------------------------------------------------------
-        // apply the unary operator to all entries
+        // via the factory kernel
         //----------------------------------------------------------------------
 
         ASSERT_UNARYOP_OK (op, "unop for GB_apply_op", GB0) ;
@@ -373,7 +373,15 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         #endif
 
         //----------------------------------------------------------------------
-        // generic worker: typecast and apply a unary operator
+        // via the JIT kernel
+        //----------------------------------------------------------------------
+
+        #if GB_JIT_ENABLED
+        // JIT TODO: unop apply
+        #endif
+
+        //----------------------------------------------------------------------
+        // via the generic kernel
         //----------------------------------------------------------------------
 
         GB_BURBLE_N (anz, "(generic apply: %s) ", op->name) ;
@@ -451,6 +459,10 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         // determine number of threads to use
         int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
 
+        //----------------------------------------------------------------------
+        // via the factory kernel
+        //----------------------------------------------------------------------
+
         #ifndef GBCUDA_DEV
         if (binop_bind1st)
         {
@@ -524,7 +536,15 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         #endif
 
         //----------------------------------------------------------------------
-        // generic worker: typecast and apply a binary operator
+        // via the JIT kernel
+        //----------------------------------------------------------------------
+
+        #if GB_JIT_ENABLED
+        // JIT TODO: binop bind 1st/2nd apply
+        #endif
+
+        //----------------------------------------------------------------------
+        // via the generic kernel
         //----------------------------------------------------------------------
 
         GB_BURBLE_N (anz, "(generic apply: %s) ", op->name) ;
@@ -574,11 +594,25 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         // apply a user-defined index_unary op
         //----------------------------------------------------------------------
 
+        //----------------------------------------------------------------------
+        // via the JIT kernel
+        //----------------------------------------------------------------------
+
+        #if GB_JIT_ENABLED
+        // JIT TODO: user-defined IndexUnary op
+        #endif
+
+        //----------------------------------------------------------------------
+        // via the generic kernel
+        //----------------------------------------------------------------------
+
         // All valued GrB_IndexUnaryOps (GrB_VALUE*) have already been renamed
         // to their corresponding binary op (GrB_VALUEEQ_FP32 became
         // GrB_EQ_FP32, for example).  The only remaining index unary ops are
         // positional, and user-defined.  Positional ops have been handled
         // above, so only user-defined index unary ops are left.
+
+        GB_BURBLE_N (anz, "(generic apply: user-defined) ") ;
 
         // get A and C
         const int64_t *restrict Ah = A->h ;

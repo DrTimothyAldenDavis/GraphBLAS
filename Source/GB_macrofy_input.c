@@ -23,7 +23,8 @@ void GB_macrofy_input
     GrB_Type a2type,        // type of aij after casting to x or y of f(x,y)
     GrB_Type atype,         // type of the input matrix
     int asparsity,          // sparsity format of the input matrix
-    int acode,              // type code of the input (0 if pattern)
+    int acode,              // type code of the input (0 if pattern,
+                            // 15 if A is NULL)
     int A_iso_code,         // 1 if A is iso
     int azombies            // 1 if A has zombies, 0 if A has no zombies;
                             // -1 if the macro should not be created.
@@ -33,6 +34,12 @@ void GB_macrofy_input
     //--------------------------------------------------------------------------
     // construct the matrix status macros: pattern, iso, typename
     //--------------------------------------------------------------------------
+
+    if (acode == 15)
+    {
+        // quick return: no input matrix (for binary op with bind 1st or 2nd)
+        return ;
+    }
 
     int A_is_pattern = ((acode == 0) ? 1 : 0) ||
         (atype == NULL) || (a2type == NULL) ;

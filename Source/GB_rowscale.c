@@ -147,9 +147,10 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     { 
 
         //----------------------------------------------------------------------
-        // C is iso; pattern already computed above
+        // via the iso kernel
         //----------------------------------------------------------------------
 
+        // C is iso; pattern already computed above
         GBURBLE ("(iso rowscale) ") ;
         memcpy (Cx, cscalar, zsize) ;
 
@@ -202,6 +203,10 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         int nthreads = GB_nthreads (GB_nnz_held (B) + B->nvec, chunk,
             nthreads_max) ;
 
+        //----------------------------------------------------------------------
+        // via the factory kernel
+        //----------------------------------------------------------------------
+
         bool done = false ;
 
         #ifndef GBCUDA_DEV
@@ -235,6 +240,18 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
             }
 
         #endif
+
+        //----------------------------------------------------------------------
+        // via the JIT kernel
+        //----------------------------------------------------------------------
+
+        #if GB_JIT_ENABLED
+        // JIT TODO: rowscale
+        #endif
+
+        //----------------------------------------------------------------------
+        // via the generic kernel
+        //----------------------------------------------------------------------
 
         if (!done)
         {

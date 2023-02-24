@@ -92,13 +92,35 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
 
 // FUTURE: add accumulator for eWise operations?
 
+uint64_t GB_encodify_ewise      // encode an ewise problem
+(
+    // output:
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char **suffix,              // suffix for user-defined kernel
+    // input:
+    const int kcode,            // kernel to encode (add, emult, rowscale, ...)
+    const bool C_iso,
+    const bool C_in_iso,
+    const int C_sparsity,
+    const GrB_Type ctype,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_BinaryOp binaryop,
+    const bool flipxy,
+    const GrB_Matrix A,
+    const GrB_Matrix B
+) ;
+
 bool GB_enumify_ewise       // enumerate a GrB_eWise problem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
     // input:
     // C matrix:
-    bool C_iso,             // if true, operator is ignored
+    bool C_iso,             // if true, C is iso on output
+    bool C_in_iso,          // if true, C is iso on input
     int C_sparsity,         // sparse, hyper, bitmap, or full
     GrB_Type ctype,         // C=((ctype) T) is the final typecast
     // M matrix:
@@ -106,11 +128,11 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool Mask_struct,       // mask is structural
     bool Mask_comp,         // mask is complemented
     // operator:
-    GrB_BinaryOp binaryop,  // the binary operator to enumify
+    GrB_BinaryOp binaryop,  // the binary operator to enumify (can be NULL)
     bool flipxy,            // multiplier is: op(a,b) or op(b,a)
     // A and B:
-    GrB_Matrix A,
-    GrB_Matrix B
+    GrB_Matrix A,           // NULL for unary apply with binop, bind 1st
+    GrB_Matrix B            // NULL for unary apply with binop, bind 2nd
 ) ;
 
 void GB_macrofy_ewise           // construct all macros for GrB_eWise
@@ -129,6 +151,8 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 // GrB_mxm
 //------------------------------------------------------------------------------
 
+// FUTURE: add accumulator for mxm?
+
 uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
 (
     // output:
@@ -136,10 +160,10 @@ uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
                                 // except for the suffix
     char **suffix,              // suffix for user-defined kernel
     // input:
-    int kcode,                  // kernel to encode (dot3, saxpy3, etc)
+    const int kcode,            // kernel to encode (dot3, saxpy3, etc)
     const bool C_iso,
     const bool C_in_iso,
-    int C_sparsity,
+    const int C_sparsity,
     const GrB_Type ctype,
     const GrB_Matrix M,
     const bool Mask_struct,
@@ -581,6 +605,7 @@ void GB_debugify_ewise
 (
     // C matrix:
     bool C_iso,             // if true, operator is ignored
+    bool C_in_iso,          // if true, C is iso on input
     int C_sparsity,         // sparse, hyper, bitmap, or full
     GrB_Type ctype,         // C=((ctype) T) is the final typecast
     // M matrix:
@@ -588,7 +613,7 @@ void GB_debugify_ewise
     bool Mask_struct,
     bool Mask_comp,
     // operator:
-    GrB_BinaryOp binaryop,
+    GrB_BinaryOp binaryop,  // may be NULL (used by GB_wait)
     bool flipxy,
     // A and B matrices:
     GrB_Matrix A,

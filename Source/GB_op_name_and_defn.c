@@ -79,7 +79,7 @@ GrB_Info GB_op_name_and_defn
     else
     { 
         // no op_name, so give it a generic name
-        snprintf (op_name, GxB_MAX_NAME_LEN-1, "user_op") ;
+        snprintf (op_name, GxB_MAX_NAME_LEN-1, "unnamed_user_op") ;
     }
 
     // ensure op_name is null-terminated

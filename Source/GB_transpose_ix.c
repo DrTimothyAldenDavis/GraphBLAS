@@ -65,7 +65,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     { 
 
         //----------------------------------------------------------------------
-        // compute the iso value and transpose the pattern
+        // via the iso kernel
         //----------------------------------------------------------------------
 
         // A and C are iso: Cx [0] = (ctype) Ax [0]
@@ -80,7 +80,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     { 
 
         //----------------------------------------------------------------------
-        // transpose the values and pattern
+        // via the factory kernel
         //----------------------------------------------------------------------
 
         #ifndef GBCUDA_DEV
@@ -109,7 +109,15 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
         #endif
 
         //----------------------------------------------------------------------
-        // generic worker: transpose and typecast
+        // via the JIT kernel
+        //----------------------------------------------------------------------
+
+        #if GB_JIT_ENABLED
+        // JIT TODO: transpose_ix
+        #endif
+
+        //----------------------------------------------------------------------
+        // via the generic kernel
         //----------------------------------------------------------------------
 
         GB_BURBLE_MATRIX (A, "(generic transpose) ") ;

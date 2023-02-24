@@ -7,24 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-// Enumify an ewise operation: eWiseAdd, eWiseMult, and eWiseUnion.
+// Enumify an ewise operation: eWiseAdd, eWiseMult, eWiseUnion,
+// rowscale, colscale, apply with bind 1st and 2nd, transpose apply with
+// bind 1st and 2nd, etc.
 
 #include "GB.h"
 #include "GB_stringify.h"
 
 // accum is not present.  Kernels that use it would require accum to be
-// the same as the monoid binary operator (but this may change in the future).
-
-// Returns true if the problem uses only built-in types and operators.
-// For ewise methods, it's not sufficient to use this test:
-//
-//      builtin = (binaryop->hash == 0)
-//
-// because binaryop can be NULL for GrB_wait.  In that case, the types
-// of A, B, and C must be checked as well.  GB_reduce_to_vector creates a
-// non-NULL binary op, FIRST_UDT, using the FIRST binary opcode but with
-// user-defined x, y, and ztypes.  This operator will be determined to be
-// non-built-in, because it will have a nonzero hash.
+// the same as the binary operator (but this may change in the future).
 
 bool GB_enumify_ewise       // enumerate a GrB_eWise problem
 (
@@ -32,7 +23,8 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     uint64_t *scode,        // unique encoding of the entire operation
     // input:
     // C matrix:
-    bool C_iso,             // if true, C is iso and the operator is ignored
+    bool C_iso,             // if true, C is iso on output
+    bool C_in_iso,          // if true, C is iso on input
     int C_sparsity,         // sparse, hyper, bitmap, or full
     GrB_Type ctype,         // C=((ctype) T) is the final typecast
     // M matrix:
@@ -43,8 +35,8 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     GrB_BinaryOp binaryop,  // the binary operator to enumify (can be NULL)
     bool flipxy,            // multiplier is: op(a,b) or op(b,a)
     // A and B:
-    GrB_Matrix A,
-    GrB_Matrix B
+    GrB_Matrix A,           // NULL for unary apply with binop, bind 1st
+    GrB_Matrix B            // NULL for unary apply with binop, bind 2nd
 )
 {
 
@@ -52,8 +44,8 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     // get the types of A, B, and M
     //--------------------------------------------------------------------------
 
-    GrB_Type atype = A->type ;
-    GrB_Type btype = B->type ;
+    GrB_Type atype = (A == NULL) ? NULL : A->type ;
+    GrB_Type btype = (B == NULL) ? NULL : B->type ;
     GrB_Type mtype = (M == NULL) ? NULL : M->type ;
 
     //--------------------------------------------------------------------------
@@ -77,6 +69,7 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
         binaryop_opcode = GB_NOP_code ;
         ASSERT (atype == btype) ;
         ASSERT (ctype == btype) ;
+        ASSERT (atype != NULL) ;
         xcode = atype->code ;
         ycode = atype->code ;
         zcode = atype->code ;
@@ -121,26 +114,41 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool op_is_first  = (binaryop_opcode == GB_FIRST_binop_code ) ;
     bool op_is_second = (binaryop_opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (binaryop_opcode == GB_PAIR_binop_code) ;
-    bool A_is_pattern = op_is_second || op_is_pair || C_iso ;
-    bool B_is_pattern = op_is_first  || op_is_pair || C_iso ;
+    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (binaryop_opcode) ;
+    if (op_is_second || op_is_pair || op_is_positional || C_iso)
+    {
+        // x is not used
+        xcode = 0 ;
+    }
+    if (op_is_first || op_is_pair || op_is_positional || C_iso)
+    {
+        // y is not used
+        ycode = 0 ;
+    }
+    bool A_is_pattern = (xcode == 0) ;
+    bool B_is_pattern = (ycode == 0) ;
 
     //--------------------------------------------------------------------------
     // enumify the binary operator
     //--------------------------------------------------------------------------
 
     int binop_ecode ;
-    GB_enumify_binop (&binop_ecode, binaryop_opcode, xcode, true) ;
+    GB_enumify_binop (&binop_ecode, binaryop_opcode, xcode, false) ;
 
     //--------------------------------------------------------------------------
     // enumify the types
     //--------------------------------------------------------------------------
 
-    int acode = A_is_pattern ? 0 : atype->code ;   // 0 to 14
-    int bcode = B_is_pattern ? 0 : btype->code ;   // 0 to 14
+    // If A is NULL (for binop bind 2nd), acode is 15
+    // If B is NULL (for binop bind 1st), bcode is 15
+
+    int acode = (A == NULL) ? 15 : (A_is_pattern ? 0 : atype->code) ; // 0 to 15
+    int bcode = (B == NULL) ? 15 : (B_is_pattern ? 0 : btype->code) ; // 0 to 15
     int ccode = C_iso ? 0 : ctype->code ;          // 0 to 14
 
-    int A_iso_code = A->iso ? 1 : 0 ;
-    int B_iso_code = B->iso ? 1 : 0 ;
+    int A_iso_code = (A_is_pattern || A->iso) ? 1 : 0 ;
+    int B_iso_code = (B_is_pattern || B->iso) ? 1 : 0 ;
+    int C_in_iso_cd = (C_in_iso) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
     // enumify the mask
@@ -154,41 +162,15 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     // enumify the sparsity structures of C, M, A, and B
     //--------------------------------------------------------------------------
 
-    int M_sparsity = GB_sparsity (M) ;
-    int A_sparsity = GB_sparsity (A) ;
-    int B_sparsity = GB_sparsity (B) ;
+    int M_sparsity = (M == NULL) ? 0 : GB_sparsity (M) ;
+    int A_sparsity = (A == NULL) ? 0 : GB_sparsity (A) ;
+    int B_sparsity = (B == NULL) ? 0 : GB_sparsity (B) ;
 
     int csparsity, msparsity, asparsity, bsparsity ;
     GB_enumify_sparsity (&csparsity, C_sparsity) ;
     GB_enumify_sparsity (&msparsity, M_sparsity) ;
     GB_enumify_sparsity (&asparsity, A_sparsity) ;
     GB_enumify_sparsity (&bsparsity, B_sparsity) ;
-
-    //--------------------------------------------------------------------------
-    // enumify the builtin property
-    //--------------------------------------------------------------------------
-
-    // builtin is true if all operators and types are built-in, even if
-    // typecasting is required.  This value is true for any typecasting and
-    // also for some built-in operators applied to matrices of user-defined
-    // type.  The acode, bcode, and ccode can be 0 in those cases.
-
-    // If zcode, xcode, or ycode are user-defined, then the binary op must
-    // also be user-defined, so zcode, xcode, and ycode need not be tested.
-
-    // When builtin is true, the JIT hash function needs only to consider
-    // the scode, not the name(s) of the user-defined type(s) and/or operator.
-
-    // If binop_ecode is zero, it denotes a user-defined operator, but there
-    // are a few cases where builtin opcodes can be used on user-defined types.
-    // In particular, GB_FIRST_binop_code can be used if A is user-defined,
-    // where it becomes a memcpy.  Thus, acode, bcode, and ccode must all be
-    // checked as well.
-
-    bool builtin = ((binop_ecode > 0) &&
-        (acode != GB_UDT_code) &&
-        (bcode != GB_UDT_code) &&
-        (ccode != GB_UDT_code)) ;
 
     //--------------------------------------------------------------------------
     // construct the ewise scode
@@ -201,8 +183,8 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
                 // unused (4 hex digits)
 //              GB_LSHIFT (0,         , 48) |  // unused       16
 
-                // A and B iso properites, flipxy (1 hex digit)
-//              GB_LSHIFT (0          , 47) |  // unused       1
+                // C in, A and B iso properites, flipxy (1 hex digit)
+                GB_LSHIFT (C_in_iso_cd, 47) |  // 0 or 1       1
                 GB_LSHIFT (A_iso_code , 46) |  // 0 or 1       1
                 GB_LSHIFT (B_iso_code , 45) |  // 0 or 1       1
                 GB_LSHIFT (flipxy     , 44) |  // 0 or 1       1
@@ -218,8 +200,8 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
 
                 // types of C, A, and B (3 hex digits)
                 GB_LSHIFT (ccode      , 16) |  // 0 to 14      4
-                GB_LSHIFT (acode      , 12) |  // 0 to 14      4
-                GB_LSHIFT (bcode      ,  8) |  // 0 to 14      4
+                GB_LSHIFT (acode      , 12) |  // 0 to 15      4
+                GB_LSHIFT (bcode      ,  8) |  // 0 to 15      4
 
                 // sparsity structures of C, M, A, and B (2 hex digits)
                 GB_LSHIFT (csparsity  ,  6) |  // 0 to 3       2
@@ -227,6 +209,5 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
                 GB_LSHIFT (asparsity  ,  2) |  // 0 to 3       2
                 GB_LSHIFT (bsparsity  ,  0) ;  // 0 to 3       2
 
-    return (builtin) ;
 }
 

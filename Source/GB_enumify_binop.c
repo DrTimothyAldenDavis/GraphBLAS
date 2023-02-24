@@ -457,7 +457,7 @@ void GB_enumify_binop
 
         case GB_SECONDI1_binop_code :   // z = for_semiring ? (k+1) : (i+1)
 
-            e = for_semiring ? 138 : 139 ; break ;
+            e = for_semiring ? 138 : 137 ; break ;
 
         case GB_SECONDJ_binop_code :    // z = j
 

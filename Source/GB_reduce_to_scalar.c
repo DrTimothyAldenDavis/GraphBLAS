@@ -110,7 +110,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
     {
 
         //----------------------------------------------------------------------
-        // use the GPU(s)
+        // via the CUDA kernel
         //----------------------------------------------------------------------
 
         GB_OK (GB_reduce_to_scalar_cuda (z, monoid, A)) ;
@@ -166,7 +166,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         { 
 
             //------------------------------------------------------------------
-            // reduce an iso matrix to scalar
+            // via the iso kernel
             //------------------------------------------------------------------
 
             // this takes at most O(log(nvals(A))) time, for any monoid
@@ -178,7 +178,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         {
 
             //------------------------------------------------------------------
-            // reduce to scalar via built-in operator
+            // via the factory kernel
             //------------------------------------------------------------------
 
             #ifndef GBCUDA_DEV
@@ -213,7 +213,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         }
 
         //----------------------------------------------------------------------
-        // use the JIT
+        // via the JIT kernel
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
@@ -226,7 +226,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         #endif
 
         //----------------------------------------------------------------------
-        // use generic worker if not done
+        // via the generic kernel
         //----------------------------------------------------------------------
 
         if (!done)
@@ -301,9 +301,11 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     #undef  GB_MONOID_IS_TERMINAL
                     #define GB_MONOID_IS_TERMINAL 1
                     #undef  GB_TERMINAL_CONDITION
-                    #define GB_TERMINAL_CONDITION(z,zterminal)  (memcmp (z, zterminal, zsize) == 0)
+                    #define GB_TERMINAL_CONDITION(z,zterminal)  \
+                            (memcmp (z, zterminal, zsize) == 0)
                     #undef  GB_IF_TERMINAL_BREAK
-                    #define GB_IF_TERMINAL_BREAK(z,zterminal)   if (GB_TERMINAL_CONDITION (z, zterminal)) break
+                    #define GB_IF_TERMINAL_BREAK(z,zterminal)   \
+                            if (GB_TERMINAL_CONDITION (z, zterminal)) break
                     #include "GB_reduce_to_scalar_template.c"
                 }
 
@@ -345,9 +347,11 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     #undef  GB_MONOID_IS_TERMINAL
                     #define GB_MONOID_IS_TERMINAL 1
                     #undef  GB_TERMINAL_CONDITION
-                    #define GB_TERMINAL_CONDITION(z,zterminal)  (memcmp (z, zterminal, zsize) == 0)
+                    #define GB_TERMINAL_CONDITION(z,zterminal)  \
+                            (memcmp (z, zterminal, zsize) == 0)
                     #undef  GB_IF_TERMINAL_BREAK
-                    #define GB_IF_TERMINAL_BREAK(z,zterminal)   if (GB_TERMINAL_CONDITION (z, zterminal)) break
+                    #define GB_IF_TERMINAL_BREAK(z,zterminal)   \
+                            if (GB_TERMINAL_CONDITION (z, zterminal)) break
                     #include "GB_reduce_to_scalar_template.c"
                 }
             }

@@ -1222,9 +1222,10 @@ GrB_Info GB_builder                 // build a matrix from tuples
             { 
 
                 //--------------------------------------------------------------
-                // T and Sx are iso; set iso value and delete duplicates
+                // via the iso kernel
                 //--------------------------------------------------------------
 
+                // T and Sx are iso; set iso value and delete duplicates
                 memcpy (Tx, Sx, tsize) ;
                 #define GB_ISO_BUILD
                 #include "GB_bld_template.c"
@@ -1235,8 +1236,10 @@ GrB_Info GB_builder                 // build a matrix from tuples
             { 
 
                 //--------------------------------------------------------------
-                // T and Sx are not iso; call in the workers
+                // via the factory kernel
                 //--------------------------------------------------------------
+
+                // T and Sx are not iso; call in the workers
 
                 #ifndef GBCUDA_DEV
 
@@ -1268,7 +1271,15 @@ GrB_Info GB_builder                 // build a matrix from tuples
             }
 
             //------------------------------------------------------------------
-            // generic worker
+            // via the JIT kernel
+            //------------------------------------------------------------------
+
+            #if GB_JIT_ENABLED
+            // JIT TODO: builder, no typecast
+            #endif
+
+            //------------------------------------------------------------------
+            // via the generic kernel
             //------------------------------------------------------------------
 
             if (!done)
@@ -1325,6 +1336,18 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             //------------------------------------------------------------------
             // assemble the values Sx into T, typecasting as needed
+            //------------------------------------------------------------------
+
+            //------------------------------------------------------------------
+            // via the JIT kernel
+            //------------------------------------------------------------------
+
+            #if GB_JIT_ENABLED
+            // JIT TODO: builder, with typecast
+            #endif
+
+            //------------------------------------------------------------------
+            // via the generic kernel
             //------------------------------------------------------------------
 
             if (do_burble)

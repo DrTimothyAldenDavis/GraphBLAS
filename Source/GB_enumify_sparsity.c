@@ -22,8 +22,9 @@ void GB_enumify_sparsity    // enumerate the sparsity structure of a matrix
 {
 
     int e ;
-    if (sparsity == GxB_HYPERSPARSE)
+    if (sparsity == GxB_HYPERSPARSE || sparsity == 0)
     { 
+        // hypersparse, or no matrix
         e = 0 ;
     }
     else if (sparsity == GxB_BITMAP)
@@ -34,9 +35,8 @@ void GB_enumify_sparsity    // enumerate the sparsity structure of a matrix
     { 
         e = 3 ;
     }
-    else
+    else // sparse
     { 
-        // A is sparse, or there is no A (so pretend it is sparse)
         e = 1 ;
     }
     (*ecode) = e ;

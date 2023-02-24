@@ -159,7 +159,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     { 
 
         //----------------------------------------------------------------------
-        // C is iso; pattern already computed above
+        // via the iso kernel
         //----------------------------------------------------------------------
 
         GBURBLE ("(iso colscale) ") ;
@@ -170,7 +170,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     {
 
         //----------------------------------------------------------------------
-        // C is non iso
+        // C is non-iso
         //----------------------------------------------------------------------
 
         //----------------------------------------------------------------------
@@ -219,6 +219,10 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         int A_nthreads, A_ntasks ;
         GB_SLICE_MATRIX (A, 32, chunk) ;
 
+        //----------------------------------------------------------------------
+        // via the factory kernel
+        //----------------------------------------------------------------------
+
         bool done = false ;
 
         #ifndef GBCUDA_DEV
@@ -254,12 +258,20 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
 
         #endif
 
+        //----------------------------------------------------------------------
+        // via JIT kernel
+        //----------------------------------------------------------------------
+
+        #if GB_JIT_ENABLED
+        // JIT TODO: colscale
+        #endif
+
+        //----------------------------------------------------------------------
+        // via the generic kernel
+        //----------------------------------------------------------------------
+
         if (!done)
         {
-
-            //------------------------------------------------------------------
-            // C = A*D, column scale, with typecasting or user-defined operator
-            //------------------------------------------------------------------
 
             //------------------------------------------------------------------
             // get operators, functions, workspace, contents of A, D, and C

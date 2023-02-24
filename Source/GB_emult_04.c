@@ -121,7 +121,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     bool C_iso = GB_iso_emult (cscalar, ctype, A, B, op) ;
 
     #ifdef GB_DEBUGIFY_DEFN
-    GB_debugify_ewise (C_iso, C_sparsity, ctype, M,
+    GB_debugify_ewise (C_iso, false, C_sparsity, ctype, M,
         Mask_struct, false, op, false, A, B) ;
     #endif
 
@@ -279,7 +279,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     { 
 
         //----------------------------------------------------------------------
-        // C is iso
+        // via the iso kernel
         //----------------------------------------------------------------------
 
         // Cx [0] = cscalar = op (A,B)
@@ -295,7 +295,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     {
 
         //----------------------------------------------------------------------
-        // C is non-iso
+        // via the factory kernel
         //----------------------------------------------------------------------
 
         bool done = false ;
@@ -332,7 +332,15 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
         #endif
 
         //----------------------------------------------------------------------
-        // generic worker
+        // via the JIT kernel
+        //----------------------------------------------------------------------
+
+        #if GB_JIT_ENABLED
+        // JIT TODO: emult_04
+        #endif
+
+        //----------------------------------------------------------------------
+        // via the generic kernel
         //----------------------------------------------------------------------
 
         if (!done)

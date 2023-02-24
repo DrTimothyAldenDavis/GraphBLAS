@@ -628,7 +628,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     {
 
         //----------------------------------------------------------------------
-        // C is iso; compute the pattern of C<#>=A*B with the any_pair semiring
+        // via the iso kernel
         //----------------------------------------------------------------------
 
         GBURBLE ("(iso sparse saxpy) ") ;
@@ -680,7 +680,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         #endif
 
         //----------------------------------------------------------------------
-        // JIT saxpy3 kernel for the case when C is sparse or hypersparse
+        // via the JIT kernel
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
@@ -693,7 +693,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         #endif
 
         //----------------------------------------------------------------------
-        // generic saxpy3 method for the case when C is sparse or hypersparse
+        // via the generic kernel
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)

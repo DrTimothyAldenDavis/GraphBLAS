@@ -34,25 +34,13 @@ bool GB_binop_builtin               // true if binary operator is builtin
     const bool B_is_pattern,        // true if only the pattern of B is used
     const GrB_BinaryOp op,          // binary operator; may be NULL
     const bool flipxy,              // true if z=op(y,x), flipping x and y
-    // outputs, unused by caller if this function returns false
+    // outputs:
     GB_Opcode *opcode,              // opcode for the binary operator
     GB_Type_code *xcode,            // type code for x input
     GB_Type_code *ycode,            // type code for y input
     GB_Type_code *zcode             // type code for z output
 )
 {
-
-    //--------------------------------------------------------------------------
-    // handle the flipxy (for a semiring only)
-    //--------------------------------------------------------------------------
-
-    if (flipxy)
-    { 
-        // For a semiring, GB_AxB_meta has already handled flipxy for built-in
-        // semirings and operators that can be flipped.  If flipxy is still
-        // true, the binary operator is not part of a built-in semiring.
-        return (false) ;
-    }
 
     //--------------------------------------------------------------------------
     // check if the operator is builtin, with no typecasting
@@ -74,6 +62,18 @@ bool GB_binop_builtin               // true if binary operator is builtin
         op_xtype = op->xtype ;
         op_ytype = op->ytype ;
         op_ztype = op->ztype ;
+    }
+
+    (*xcode) = op_xtype->code ;
+    (*ycode) = op_ytype->code ;
+    (*zcode) = op_ztype->code ;
+
+    if (flipxy)
+    { 
+        // For a semiring, GB_AxB_meta has already handled flipxy for built-in
+        // semirings and operators that can be flipped.  If flipxy is still
+        // true, the binary operator is not part of a built-in semiring.
+        return (false) ;
     }
 
     ASSERT (GB_IS_BINARYOP_CODE (*opcode)) ;
@@ -110,10 +110,6 @@ bool GB_binop_builtin               // true if binary operator is builtin
     //--------------------------------------------------------------------------
     // rename redundant boolean operators
     //--------------------------------------------------------------------------
-
-    (*xcode) = op_xtype->code ;
-    (*ycode) = op_ytype->code ;
-    (*zcode) = op_ztype->code ;
 
     ASSERT ((*xcode) < GB_UDT_code) ;
     ASSERT ((*ycode) < GB_UDT_code) ;

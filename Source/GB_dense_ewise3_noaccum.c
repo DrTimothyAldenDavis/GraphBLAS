@@ -67,7 +67,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     ASSERT (op->ytype == B->type) ;
 
     #ifdef GB_DEBUGIFY_DEFN
-    GB_debugify_ewise (false, GxB_FULL, C->type, NULL,
+    GB_debugify_ewise (false, false, GxB_FULL, C->type, NULL,
         false, false, op, false, A, B) ;
     #endif
 
@@ -106,6 +106,10 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     ASSERT (GB_IS_FULL (C)) ;
 
     //--------------------------------------------------------------------------
+    // via the factory kernel
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
     // define the worker for the switch factory
     //--------------------------------------------------------------------------
 
@@ -132,8 +136,17 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     else
     {
         // this function is not called if the op cannot be applied
+        // FIXME: extend this method to handle the JIT
         ASSERT (GB_DEAD_CODE) ;
     }
+
+    //--------------------------------------------------------------------------
+    // via the JIT kernel
+    //--------------------------------------------------------------------------
+
+    #if GB_JIT_ENABLED
+    // JIT TODO: dense ewise3 no accum 
+    #endif
 
     //--------------------------------------------------------------------------
     // return result

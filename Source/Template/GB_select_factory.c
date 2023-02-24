@@ -109,6 +109,14 @@ switch (opcode)
     case GB_VALUELT_idxunop_code : 
     case GB_VALUELE_idxunop_code : 
 
+        //----------------------------------------------------------------------
+        // via the JIT kernel
+        //----------------------------------------------------------------------
+
+        #if GB_JIT_ENABLED
+        // JIT TODO: select with value idxunop, with typecasting
+        #endif
+
         // A is not iso, and typecasting is required, so use the
         // idxunop_function, just as if this were a user-defined operator.
         // Typecasting is costly; both the typecast and the idxunop function
@@ -123,6 +131,14 @@ switch (opcode)
         GB_SEL_WORKER (_idxunop_cast, _any, GB_void)
 
     case GB_USER_idxunop_code   : // C = user_idxunop (A,k)
+
+        //----------------------------------------------------------------------
+        // via the JIT kernel
+        //----------------------------------------------------------------------
+
+        #if GB_JIT_ENABLED
+        // JIT TODO: select with idxunop
+        #endif
 
         ASSERT (op != NULL) ;
         ASSERT (op->ztype != NULL) ;

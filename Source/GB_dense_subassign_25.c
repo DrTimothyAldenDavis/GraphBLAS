@@ -123,7 +123,7 @@ GrB_Info GB_dense_subassign_25
     { 
 
         //----------------------------------------------------------------------
-        // C is iso; assign the iso value and assign zombies if A is bitmap
+        // via the iso kernel
         //----------------------------------------------------------------------
 
         #define GB_ISO_ASSIGN
@@ -135,7 +135,7 @@ GrB_Info GB_dense_subassign_25
     {
 
         //----------------------------------------------------------------------
-        // C is non-iso; assign values and pattern from A, through the mask
+        // via the factory kernel
         //----------------------------------------------------------------------
 
         bool done = false ;
@@ -186,7 +186,15 @@ GrB_Info GB_dense_subassign_25
         #endif
 
         //----------------------------------------------------------------------
-        // C<M> = A for user-defined types, and typecasting
+        // via the JIT kernel
+        //----------------------------------------------------------------------
+
+        #if GB_JIT_ENABLED
+        // JIT TODO: subassign 25
+        #endif
+
+        //----------------------------------------------------------------------
+        // via the generic kernel
         //----------------------------------------------------------------------
 
         if (!done)

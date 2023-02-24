@@ -178,7 +178,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // enumify the sparsity structures of C, M, A, and B
     //--------------------------------------------------------------------------
 
-    int M_sparsity = GB_sparsity (M) ;
+    int M_sparsity = (M == NULL) ? 0 : GB_sparsity (M) ;
     int A_sparsity = GB_sparsity (A) ;
     int B_sparsity = GB_sparsity (B) ;
 
