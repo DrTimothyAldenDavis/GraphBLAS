@@ -155,7 +155,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// binary operator%s:\n", flipxy ? " (flipped)" : "") ;
-    GB_macrofy_binop (fp, "GB_BINOP", flipxy, false, binop_ecode,
+    GB_macrofy_binop (fp, "GB_BINOP", flipxy, false, true, binop_ecode,
         (C_iso) ? NULL : binaryop, NULL, NULL) ;
 
     //--------------------------------------------------------------------------

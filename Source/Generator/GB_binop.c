@@ -150,7 +150,6 @@ GrB_Info GB (_AxD)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #include "GB_colscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -171,7 +170,6 @@ GrB_Info GB (_DxB)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #include "GB_rowscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -294,14 +292,13 @@ GrB_Info GB (_AemultB_02)
             #define GB_FLIPPED 0
             #include "GB_emult_02_template.c"
         }
-    m4_divert(0)
     m4_divert(binop_commutative)
         // No need to handle the flip: the operator is either commutative, or
         // has been handled by changing z=div(y,x) to z=rdiv(x,y) for example.
         #undef  GB_FLIPPED
         #define GB_FLIPPED 0
         #include "GB_emult_02_template.c"
-    m4_divert(0)
+    m4_divert(if_binop_emult_is_enabled)
     return (GrB_SUCCESS) ;
     #endif
 }

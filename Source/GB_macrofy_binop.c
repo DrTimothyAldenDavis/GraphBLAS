@@ -19,6 +19,7 @@ void GB_macrofy_binop
     bool flipxy,                // if true: op is f(y,x), multipicative only
     bool is_monoid_or_build,    // if true: additive operator for monoid,
                                 // or binary op for GrB_Matrix_build
+    bool is_ewise,              // if true: binop for ewise methods
     int ecode,
     GrB_BinaryOp op,            // may be NULL (for GB_wait, or C iso)
     // output:
@@ -28,6 +29,7 @@ void GB_macrofy_binop
 {
 
     const char *f = NULL, *u = NULL, *g = NULL ;
+    const char *karg = is_ewise ? "" : ",k" ;
 
     if (op == NULL)
     {
@@ -43,7 +45,7 @@ void GB_macrofy_binop
         }
         else
         {
-            fprintf (fp, "#define %s(z,x,y,i,k,j)\n", macro_name) ;
+            fprintf (fp, "#define %s(z,x,y,i%s,j)\n", macro_name, karg) ;
         }
 
     }
@@ -70,12 +72,12 @@ void GB_macrofy_binop
         {
             // flipped multiplicative or ewise operator
             // note: no positional operands for user-defined ops (yet)
-            fprintf (fp, "#define %s(z,y,x,j,k,i) ", macro_name) ;
+            fprintf (fp, "#define %s(z,y,x,j%s,i) ", macro_name, karg) ;
         }
         else
         {
             // unflipped multiplicative or ewise operator
-            fprintf (fp, "#define %s(z,x,y,i,k,j) ", macro_name) ;
+            fprintf (fp, "#define %s(z,x,y,i%s,j) ", macro_name, karg) ;
         }
 
         if (is_macro)
@@ -880,12 +882,12 @@ void GB_macrofy_binop
         else if (flipxy)
         {
             // flipped multiplicative or ewise operator
-            fprintf (fp, "#define %s(z,y,x,j,k,i) %s\n", macro_name, f) ;
+            fprintf (fp, "#define %s(z,y,x,j%s,i) %s\n", macro_name, karg, f) ;
         }
         else
         {
             // unflipped multiplicative or ewise operator
-            fprintf (fp, "#define %s(z,x,y,i,k,j) %s\n", macro_name, f) ;
+            fprintf (fp, "#define %s(z,x,y,i%s,j) %s\n", macro_name, karg, f) ;
         }
     }
 

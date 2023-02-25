@@ -336,9 +336,11 @@ void GB_macrofy_binop
     // input:
     const char *macro_name,
     bool flipxy,                // if true: op is f(y,x), multipicative only
-    bool is_monoid,             // if true: additive operator for monoid
+    bool is_monoid_or_build,    // if true: additive operator for monoid,
+                                // or binary op for GrB_Matrix_build
+    bool is_ewise,              // if true: binop for ewise methods
     int ecode,
-    GrB_BinaryOp op,
+    GrB_BinaryOp op,            // may be NULL (for GB_wait, or C iso)
     // output:
     const char **f_handle,
     const char **u_handle

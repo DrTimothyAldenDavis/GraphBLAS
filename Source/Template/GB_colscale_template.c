@@ -36,9 +36,16 @@
     #if !GB_B_IS_PATTERN
     const GB_B_TYPE *restrict Dx = (GB_B_TYPE *) D->x ;
     #endif
+          GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     const int64_t avlen = A->vlen ;
+
+    #ifdef GB_JIT_KERNEL
+    #define A_iso GB_A_ISO
+    #define D_iso GB_B_ISO
+    #else
     const bool A_iso = A->iso ;
     const bool D_iso = D->iso ;
+    #endif
 
     const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
     const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
@@ -69,9 +76,11 @@
             //------------------------------------------------------------------
 
             int64_t j = GBH_A (Ah, k) ;
-            int64_t pA_start, pA_end ;
-            GB_get_pA (&pA_start, &pA_end, tid, k,
-                kfirst, klast, pstart_Aslice, Ap, avlen) ;
+//          int64_t pA_start, pA_end ;
+//          GB_get_pA (&pA_start, &pA_end, tid, k,
+//              kfirst, klast, pstart_Aslice, Ap, avlen) ;
+            GB_GET_PA (pA_start, pA_end, tid, k, kfirst, klast, pstart_Aslice,
+                GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
 
             //------------------------------------------------------------------
             // C(:,j) = A(:,j)*D(j,j)

@@ -31,10 +31,12 @@
     #if !GB_A_IS_PATTERN
     const GB_A_TYPE *restrict Dx = (GB_A_TYPE *) D->x ;
     #endif
-    const bool D_iso = D->iso ;
     #if !GB_B_IS_PATTERN
     const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
     #endif
+          GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
+
+    const bool D_iso = D->iso ;
     const bool B_iso = B->iso ;
     const int64_t *restrict Bi = B->i ;
     const int64_t bnz = GB_nnz (B) ;

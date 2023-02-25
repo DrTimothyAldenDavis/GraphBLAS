@@ -8,5 +8,5 @@
 //------------------------------------------------------------------------------
 
 #include "GB_jit_kernel.h"
-#include "GB_AxB_kernels.h"
+#include "GB_ewise_kernels.h"
 

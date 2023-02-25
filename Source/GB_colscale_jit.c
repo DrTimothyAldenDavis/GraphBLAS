@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
+#include "GB_ewise_kernels.h"
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 

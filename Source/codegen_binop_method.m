@@ -240,6 +240,7 @@ fprintf (f, 'm4_define(`GB_binaryop'', `#define GB_BINOP(z,x,y,i,j) z = %s'')\n'
 % handle non-commutative operators
 switch (binop)
     case { 'pair' }
+        % PAIR is commutative, but disabled for emult_02
         fprintf (f, 'm4_define(`binop_not_commutative'', `-1'')\n') ;
         fprintf (f, 'm4_define(`binop_commutative'',     `-1'')\n') ;
     case { 'pow', 'bget', 'bset', 'bclr', 'bshift', 'atan2', 'fmod', ...

@@ -99,7 +99,6 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     // allocate C->x but do not initialize it
     // set C->iso = C_iso   OK
     GB_OK (GB_dup_worker (&C, C_iso, A, false, ztype)) ;
-    GB_void *restrict Cx = (GB_void *) C->x ;
 
     //--------------------------------------------------------------------------
     // C = A*D, column scale, compute numerical values
@@ -149,7 +148,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
                 default:  ;
             }
         }
-        GB_OK (GB_apply_op (Cx, C->type, GB_NON_ISO,
+        GB_OK (GB_apply_op (C->x, C->type, GB_NON_ISO,
             (GB_Operator) op,   // positional op
             NULL, false, false, A, Werk)) ;
         ASSERT_MATRIX_OK (C, "colscale positional: C = A*D output", GB0) ;
@@ -163,7 +162,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         //----------------------------------------------------------------------
 
         GBURBLE ("(iso colscale) ") ;
-        memcpy (Cx, cscalar, zsize) ;
+        memcpy (C->x, cscalar, zsize) ;
 
     }
     else
@@ -260,16 +259,15 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         // via JIT kernel
         //----------------------------------------------------------------------
 
-#if 0
+printf ("here\n") ;
         #if GB_JIT_ENABLED
-        // JIT TODO: ewise: colscale
+printf ("here2\n") ;
         if (info == GrB_NO_VALUE)
         { 
             info = GB_colscale_jit (C, A, D, mult, flipxy,
                 A_ek_slicing, A_ntasks, A_nthreads) ;
         }
         #endif
-#endif
 
         //----------------------------------------------------------------------
         // via the generic kernel
@@ -345,6 +343,10 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
 
             // address of Cx [p]
             #define GB_CX(p) Cx +((p)*csize)
+
+            #define GB_C_TYPE GB_void
+
+            #include "GB_ewise_shared_definitions.h"
 
             if (flipxy)
             { 

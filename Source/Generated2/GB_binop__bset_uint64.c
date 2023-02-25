@@ -222,7 +222,6 @@ GrB_Info GB (_AemultB_02__bset_uint64)
             #include "GB_emult_02_template.c"
         }
     
-    
     return (GrB_SUCCESS) ;
     #endif
 }

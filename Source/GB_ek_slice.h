@@ -224,5 +224,30 @@ static inline void GB_get_pA
     }
 }
 
+// as a macro, where p0 and p1 are first obtained as above:
+//  p0 = GBP_A (Ap, k, avlen) ;
+//  p1 = GBP_A (Ap, k+1, avlen) ;
+#define GB_GET_PA(pA_start,pA_end,tid,k,kfirst,klast,pstart_slice,p0,p1)    \
+    int64_t pA_start, pA_end ;                                              \
+    if (k == kfirst)                                                        \
+    {                                                                       \
+        /* First vector for task tid; may only be partially owned. */       \
+        pA_start = pstart_slice [tid] ;                                     \
+        pA_end   = GB_IMIN (p1, pstart_slice [tid+1]) ;                     \
+    }                                                                       \
+    else if (k == klast)                                                    \
+    {                                                                       \
+        /* Last vector for task tid; may only be partially owned. */        \
+        pA_start = p0 ;                                                     \
+        pA_end   = pstart_slice [tid+1] ;                                   \
+    }                                                                       \
+    else                                                                    \
+    {                                                                       \
+        /* task tid entirely owns this vector A(:,k). */                    \
+        pA_start = p0 ;                                                     \
+        pA_end   = p1 ;                                                     \
+    }
+
+
 #endif
 

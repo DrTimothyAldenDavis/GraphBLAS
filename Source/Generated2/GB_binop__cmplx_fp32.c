@@ -216,7 +216,6 @@ GrB_Info GB (_AemultB_02__cmplx_fp32)
             #include "GB_emult_02_template.c"
         }
     
-    
     return (GrB_SUCCESS) ;
     #endif
 }

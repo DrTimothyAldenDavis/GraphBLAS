@@ -241,7 +241,6 @@ GrB_Info GB (_AemultB_02__eq_uint64)
     return (GrB_NO_VALUE) ;
     #else
     
-    
         // No need to handle the flip: the operator is either commutative, or
         // has been handled by changing z=div(y,x) to z=rdiv(x,y) for example.
         #undef  GB_FLIPPED
