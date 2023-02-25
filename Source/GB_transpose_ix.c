@@ -113,7 +113,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: transpose_ix
+        // JIT TODO: 2type: transpose_ix
         #endif
 
         //----------------------------------------------------------------------

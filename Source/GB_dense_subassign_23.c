@@ -159,7 +159,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: subassign 23
+    // JIT TODO: ewise: subassign 23
     #endif
 
     //--------------------------------------------------------------------------

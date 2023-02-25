@@ -127,7 +127,7 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: dense ewise3 accum
+    // JIT TODO: ewise: dense ewise3 accum
     #endif
 
     //--------------------------------------------------------------------------

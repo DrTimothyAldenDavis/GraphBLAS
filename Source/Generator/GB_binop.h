@@ -1,6 +1,6 @@
 
 // SPDX-License-Identifier: Apache-2.0
-if_is_binop_subset
+m4_divert(if_is_binop_subset)
 void GB (_Cdense_ewise3_accum)
 (
     GrB_Matrix C,
@@ -8,7 +8,7 @@ void GB (_Cdense_ewise3_accum)
     const GrB_Matrix B,
     const int nthreads
 ) ;
-endif_is_binop_subset
+m4_divert(0)
 
 void GB (_Cdense_ewise3_noaccum)
 (
@@ -22,7 +22,9 @@ GrB_Info GB (_Cdense_accumB)
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
+    const int64_t *B_ek_slicing,
+    const int B_ntasks,
+    const int B_nthreads
 ) ;
 
 GrB_Info GB (_Cdense_accumb)
@@ -32,14 +34,17 @@ GrB_Info GB (_Cdense_accumb)
     const int nthreads
 ) ;
 
-if_binop_is_semiring_multiplier
+m4_divert(if_binop_is_semiring_multiplier)
 GrB_Info GB (_AxD)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix D,
-    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
 ) ;
+
 GrB_Info GB (_DxB)
 (
     GrB_Matrix C,
@@ -47,7 +52,7 @@ GrB_Info GB (_DxB)
     const GrB_Matrix B,
     int nthreads
 ) ;
-endif_binop_is_semiring_multiplier
+m4_divert(0)
 
 GrB_Info GB (_AaddB)
 (
@@ -71,7 +76,7 @@ GrB_Info GB (_AaddB)
     GB_Werk Werk
 ) ;
 
-if_binop_emult_is_enabled
+m4_divert(if_binop_emult_is_enabled)
 GrB_Info GB (_AemultB)
 (
     GrB_Matrix C,
@@ -89,6 +94,7 @@ GrB_Info GB (_AemultB)
     const int C_ntasks,
     const int C_nthreads
 ) ;
+
 GrB_Info GB (_AemultB_02)
 (
     GrB_Matrix C,
@@ -99,8 +105,11 @@ GrB_Info GB (_AemultB_02)
     const GrB_Matrix B,
     const bool flipxy,
     const int64_t *restrict Cp_kfirst,
-    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
 ) ;
+
 GrB_Info GB (_AemultB_04)
 (
     GrB_Matrix C,
@@ -109,8 +118,11 @@ GrB_Info GB (_AemultB_04)
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *restrict Cp_kfirst,
-    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+    const int64_t *M_ek_slicing,
+    const int M_ntasks,
+    const int M_nthreads
 ) ;
+
 GrB_Info GB (_AemultB_bitmap)
 (
     GrB_Matrix C,
@@ -120,13 +132,15 @@ GrB_Info GB (_AemultB_bitmap)
     const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
+    const int64_t *M_ek_slicing,
+    const int M_ntasks,
+    const int M_nthreads,
     const int C_nthreads,
     GB_Werk Werk
 ) ;
-endif_binop_emult_is_enabled
+m4_divert(0)
 
-if_binop_bind_is_enabled
+m4_divert(if_binop_bind_is_enabled)
 GrB_Info GB (_bind1st)
 (
     GB_void *Cx_output,
@@ -136,6 +150,7 @@ GrB_Info GB (_bind1st)
     int64_t bnz,
     int nthreads
 ) ;
+
 GrB_Info GB (_bind1st_tran)
 (
     GrB_Matrix C,
@@ -146,6 +161,7 @@ GrB_Info GB (_bind1st_tran)
     int nworkspaces,
     int nthreads
 ) ;
+
 GrB_Info GB (_bind2nd)
 (
     GB_void *Cx_output,
@@ -155,6 +171,7 @@ GrB_Info GB (_bind2nd)
     int64_t anz,
     int nthreads
 ) ;
+
 GrB_Info GB (_bind2nd_tran)
 (
     GrB_Matrix C,
@@ -165,5 +182,5 @@ GrB_Info GB (_bind2nd_tran)
     int nworkspaces,
     int nthreads
 ) ;
-endif_binop_bind_is_enabled
+m4_divert(0)
 

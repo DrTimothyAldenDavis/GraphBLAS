@@ -336,7 +336,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: emult_04
+        // JIT TODO: ewise: emult_04
         #endif
 
         //----------------------------------------------------------------------

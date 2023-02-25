@@ -126,7 +126,7 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: subassign 22
+    // JIT TODO: ewise: subassign 22
     #endif
 
     //--------------------------------------------------------------------------

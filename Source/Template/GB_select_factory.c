@@ -114,7 +114,7 @@ switch (opcode)
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: select with value idxunop, with typecasting
+        // JIT TODO: idxunop: select with value idxunop, with typecasting
         #endif
 
         // A is not iso, and typecasting is required, so use the
@@ -137,7 +137,7 @@ switch (opcode)
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: select with idxunop
+        // JIT TODO: idxunop: select with idxunop
         #endif
 
         ASSERT (op != NULL) ;

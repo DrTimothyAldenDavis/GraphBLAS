@@ -200,8 +200,8 @@
         size_t msize = M->type->size ;
 
         #undef  GB_GET_MIJ     
-        #define GB_GET_MIJ(p)                                           \
-            bool mij = GBB_M (Mb, p) && GB_MCAST (Mx, p, msize) ;         \
+        #define GB_GET_MIJ(p)                                       \
+            bool mij = GBB_M (Mb, p) && GB_MCAST (Mx, p, msize) ;   \
             if (Mask_comp) mij = !mij ; /* TODO: use ^ */
 
         int tid ;

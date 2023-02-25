@@ -377,7 +377,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: unop apply
+        // JIT TODO: unop: unop apply
         #endif
 
         //----------------------------------------------------------------------
@@ -540,7 +540,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: binop bind 1st/2nd apply
+        // JIT TODO: ewise: binop bind 1st/2nd apply
         #endif
 
         //----------------------------------------------------------------------
@@ -599,7 +599,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: user-defined IndexUnary op
+        // JIT TODO: idxunop: user-defined IndexUnary op
         #endif
 
         //----------------------------------------------------------------------

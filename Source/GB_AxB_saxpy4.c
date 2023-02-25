@@ -101,7 +101,6 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
         B_is_pattern, semiring, flipxy, &mult_binop_code, &add_binop_code,
         &xcode, &ycode, &zcode) ;
 
-    printf ("add_binop_code %d\n", add_binop_code) ;
     if (add_binop_code == GB_ANY_binop_code
         #if !GB_JIT_ENABLED
         || !builtin_semiring

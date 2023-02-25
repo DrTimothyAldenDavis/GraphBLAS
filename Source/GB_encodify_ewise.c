@@ -59,7 +59,9 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     uint64_t hash ;
     if (binaryop == NULL)
     {
-        // GrB_wait uses a NULL binaryop; get hash and name from its data type
+        // GrB_wait uses a NULL binaryop; get hash and name from its data type.
+        // FIXME: have GrB_wait use GrB_SECOND_[TYPE] for builtin types, or
+        // create SECOND_UDT like the FIRST_UDT of GB_reduce_to_vector.
         ASSERT (A != NULL) ;
         hash = A->type->hash ;
         encoding->suffix_len = (hash == 0) ? 0 : A->type->name_len ;

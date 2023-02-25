@@ -259,7 +259,7 @@ GrB_Info GB_emult_phase2             // C=A.*B or C<M>=A.*B
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: emult_phase2
+    // JIT TODO: ewise: emult_phase2
     #endif
 
     //--------------------------------------------------------------------------

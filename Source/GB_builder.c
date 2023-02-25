@@ -1275,7 +1275,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             //------------------------------------------------------------------
 
             #if GB_JIT_ENABLED
-            // JIT TODO: builder, no typecast
+            // JIT TODO: bld: builder, no typecast
             #endif
 
             //------------------------------------------------------------------
@@ -1343,7 +1343,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             //------------------------------------------------------------------
 
             #if GB_JIT_ENABLED
-            // JIT TODO: builder, with typecast
+            // JIT TODO: bld: builder, with typecast
             #endif
 
             //------------------------------------------------------------------

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_macrofy_ewise: construct all macros for GrB_eWise* (Add, Mult, Union)
+// GB_macrofy_ewise: construct all macros for ewise methods
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.

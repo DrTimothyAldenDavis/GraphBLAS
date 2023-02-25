@@ -382,7 +382,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: add phase2
+    // JIT TODO: ewise: add phase2
     #endif
 
     //--------------------------------------------------------------------------
@@ -398,13 +398,13 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
         // C(i,j) = (ctype) A(i,j), located in Ax [pA]
         #undef  GB_COPY_A_TO_C 
-        #define GB_COPY_A_TO_C(cij,Ax,pA,A_iso)                             \
-            cast_A_to_C (cij, Ax +((A_iso) ? 0: (pA)*asize), asize) ;
+        #define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso)                             \
+            cast_A_to_C (Cx +((pC)*csize), Ax +((A_iso) ? 0: (pA)*asize), asize) ;
 
         // C(i,j) = (ctype) B(i,j), located in Bx [pB]
         #undef  GB_COPY_B_TO_C
-        #define GB_COPY_B_TO_C(cij,Bx,pB,B_iso)                             \
-            cast_B_to_C (cij, Bx +((B_iso) ? 0: (pB)*bsize), bsize) ;
+        #define GB_COPY_B_TO_C(Cx,pC,Bx,pB,B_iso)                             \
+            cast_B_to_C (Cx +((pC)*csize), Bx +((B_iso) ? 0: (pB)*bsize), bsize) ;
 
         // declare aij as xtype
         #undef  GB_DECLAREA

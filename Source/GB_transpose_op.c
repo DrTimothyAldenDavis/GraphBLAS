@@ -146,7 +146,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: transpose_op with unop
+        // JIT TODO: unop: transpose_op with unop
         #endif
 
         //----------------------------------------------------------------------
@@ -321,7 +321,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: transpose_op with binop
+        // JIT TODO: ewise: transpose_op with binop
         #endif
 
         //----------------------------------------------------------------------

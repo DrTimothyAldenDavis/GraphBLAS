@@ -94,7 +94,7 @@ GrB_Info GB_bitmap_selector
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: bitmap select
+    // JIT TODO: select: bitmap select
     #endif
 
     //--------------------------------------------------------------------------

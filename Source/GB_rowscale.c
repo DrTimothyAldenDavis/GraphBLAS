@@ -246,7 +246,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: rowscale
+        // JIT TODO: ewise: rowscale
         #endif
 
         //----------------------------------------------------------------------

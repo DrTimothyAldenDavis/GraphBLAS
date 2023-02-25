@@ -789,14 +789,6 @@ GrB_Info GxB_Type_new           // create a new named GraphBLAS type
     const char *type_defn       // typedef for the type (no max length)
 ) ;
 
-// GB_Type_new is historical: use GxB_Type_new instead
-GrB_Info GB_Type_new            // not user-callable
-(
-    GrB_Type *type,             // handle of user type to create
-    size_t sizeof_ctype,        // size of the user type
-    const char *type_name       // name of the type, as "sizeof (ctype)"
-) ;
-
 GrB_Info GxB_Type_name      // return the name of a GraphBLAS type
 (
     char *type_name,        // name of the type (char array of size at least
@@ -1042,16 +1034,6 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     GrB_Type xtype,                 // type of input x
     const char *unop_name,          // name of the user function
     const char *unop_defn           // definition of the user function
-) ;
-
-// GB_UnaryOp_new is historical: use GxB_UnaryOp_new instead
-GrB_Info GB_UnaryOp_new             // not user-callable
-(
-    GrB_UnaryOp *unaryop,           // handle for the new unary operator
-    GxB_unary_function function,    // pointer to the unary function
-    GrB_Type ztype,                 // type of output z
-    GrB_Type xtype,                 // type of input x
-    const char *unop_name           // name of the user function
 ) ;
 
 // GxB_UnaryOp_ztype is historical.  Use GxB_UnaryOp_ztype_name instead.
@@ -1515,17 +1497,6 @@ GrB_Info GxB_BinaryOp_new
     GrB_Type ytype,                 // type of input y
     const char *binop_name,         // name of the user function
     const char *binop_defn          // definition of the user function
-) ;
-
-// GB_BinaryOp_new is historical: use GxB_BinaryOp_new instead
-GrB_Info GB_BinaryOp_new            // not user-callable
-(
-    GrB_BinaryOp *binaryop,         // handle for the new binary operator
-    GxB_binary_function function,   // pointer to the binary function
-    GrB_Type ztype,                 // type of output z
-    GrB_Type xtype,                 // type of input x
-    GrB_Type ytype,                 // type of input y
-    const char *binop_name          // name of the user function
 ) ;
 
 // NOTE: GxB_BinaryOp_ztype is historical.  Use GxB_BinaryOp_ztype_name instead.

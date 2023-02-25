@@ -66,169 +66,169 @@ codegen_binop_template ('max',          ...
 
 codegen_binop_template ('plus',         ...
     [ ],                                ... % bool
-    '(xarg + yarg)',                    ... % int, uint
-    '(xarg + yarg)',                    ... % float
-    '(xarg + yarg)',                    ... % double
+    '(xarg) + (yarg)',                  ... % int, uint
+    '(xarg) + (yarg)',                  ... % float
+    '(xarg) + (yarg)',                  ... % double
     'GB_FC32_add (xarg, yarg)',         ... % GxB_FC32_t
     'GB_FC64_add (xarg, yarg)') ;       ... % GxB_FC64_t
 
 codegen_binop_template ('minus',        ...
     [ ],                                ... % bool
-    '(xarg - yarg)',                    ... % int, uint
-    '(xarg - yarg)',                    ... % float
-    '(xarg - yarg)',                    ... % double
+    '(xarg) - (yarg)',                  ... % int, uint
+    '(xarg) - (yarg)',                  ... % float
+    '(xarg) - (yarg)',                  ... % double
     'GB_FC32_minus (xarg, yarg)',       ... % GxB_FC32_t
     'GB_FC64_minus (xarg, yarg)') ;     ... % GxB_FC64_t
 
 codegen_binop_template ('rminus',       ...
     [ ],                                ... % bool
-    '(yarg - xarg)',                    ... % int, uint
-    '(yarg - xarg)',                    ... % float
-    '(yarg - xarg)',                    ... % double
+    '(yarg) - (xarg)',                  ... % int, uint
+    '(yarg) - (xarg)',                  ... % float
+    '(yarg) - (xarg)',                  ... % double
     'GB_FC32_minus (yarg, xarg)',       ... % GxB_FC32_t
     'GB_FC64_minus (yarg, xarg)') ;     ... % GxB_FC64_t
 
 codegen_binop_template ('times',        ...
     [ ],                                ... % bool
-    '(xarg * yarg)',                    ... % int, uint
-    '(xarg * yarg)',                    ... % float
-    '(xarg * yarg)',                    ... % double
+    '(xarg) * (yarg)',                  ... % int, uint
+    '(xarg) * (yarg)',                  ... % float
+    '(xarg) * (yarg)',                  ... % double
     'GB_FC32_mul (xarg, yarg)',         ... % GxB_FC32_t
     'GB_FC64_mul (xarg, yarg)') ;       ... % GxB_FC64_t
 
 codegen_binop_template ('div',          ...
     [ ],                                ... % bool
     'GB_idiv (xarg, yarg)',             ... % int, uint
-    '(xarg / yarg)',                    ... % float
-    '(xarg / yarg)',                    ... % double
+    '(xarg) / (yarg)',                  ... % float
+    '(xarg) / (yarg)',                  ... % double
     'GB_FC32_div (xarg, yarg)',         ... % GxB_FC32_t
     'GB_FC64_div (xarg, yarg)') ;       ... % GxB_FC64_t
 
 codegen_binop_template ('rdiv',         ...
     [ ],                                ... % bool
     'GB_idiv (yarg, xarg)',             ... % int, uint
-    '(yarg / xarg)',                    ... % float
-    '(yarg / xarg)',                    ... % double
+    '(yarg) / (xarg)',                  ... % float
+    '(yarg) / (xarg)',                  ... % double
     'GB_FC32_div (yarg, xarg)',         ... % GxB_FC32_t
     'GB_FC64_div (yarg, xarg)') ;       ... % GxB_FC64_t
 
 codegen_binop_template ('iseq',         ...
     [ ],                                ... % bool
-    '(xarg == yarg)',                   ... % int, uint
-    '(xarg == yarg)',                   ... % float
-    '(xarg == yarg)',                   ... % double
+    '((xarg) == (yarg))',               ... % int, uint
+    '((xarg) == (yarg))',               ... % float
+    '((xarg) == (yarg))',               ... % double
     'GB_FC32_iseq (xarg, yarg)',        ... % GxB_FC32_t
     'GB_FC64_iseq (xarg, yarg)') ;      ... % GxB_FC64_t
 
 codegen_binop_template ('isne',         ...
     [ ],                                ... % bool
-    '(xarg != yarg)',                   ... % int, uint
-    '(xarg != yarg)',                   ... % float
-    '(xarg != yarg)',                   ... % double
+    '((xarg) != (yarg))',               ... % int, uint
+    '((xarg) != (yarg))',               ... % float
+    '((xarg) != (yarg))',               ... % double
     'GB_FC32_isne (xarg, yarg)',        ... % GxB_FC32_t
     'GB_FC64_isne (xarg, yarg)') ;      ... % GxB_FC64_t
 
 codegen_binop_template ('isgt',         ...
     [ ],                                ... % bool
-    '(xarg > yarg)',                    ... % int, uint
-    '(xarg > yarg)',                    ... % float
-    '(xarg > yarg)',                    ... % double
+    '((xarg) > (yarg))',                ... % int, uint
+    '((xarg) > (yarg))',                ... % float
+    '((xarg) > (yarg))',                ... % double
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
 
 codegen_binop_template ('islt',         ...
     [ ],                                ... % bool
-    '(xarg < yarg)',                    ... % int, uint
-    '(xarg < yarg)',                    ... % float
-    '(xarg < yarg)',                    ... % double
+    '((xarg) < (yarg))',                ... % int, uint
+    '((xarg) < (yarg))',                ... % float
+    '((xarg) < (yarg))',                ... % double
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
 
 codegen_binop_template ('isge',         ...
     [ ],                                ... % bool
-    '(xarg >= yarg)',                   ... % int, uint
-    '(xarg >= yarg)',                   ... % float
-    '(xarg >= yarg)',                   ... % double
+    '((xarg) >= (yarg))',               ... % int, uint
+    '((xarg) >= (yarg))',               ... % float
+    '((xarg) >= (yarg))',               ... % double
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
 
 codegen_binop_template ('isle',         ...
     [ ],                                ... % bool
-    '(xarg <= yarg)',                   ... % int, uint
-    '(xarg <= yarg)',                   ... % float
-    '(xarg <= yarg)',                   ... % double
+    '((xarg) <= (yarg))',               ... % int, uint
+    '((xarg) <= (yarg))',               ... % float
+    '((xarg) <= (yarg))',               ... % double
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
 
 codegen_binop_template ('eq',           ...
-    '(xarg == yarg)',                   ... % bool
-    '(xarg == yarg)',                   ... % int, uint
-    '(xarg == yarg)',                   ... % float
-    '(xarg == yarg)',                   ... % double
+    '((xarg) == (yarg))',               ... % bool
+    '((xarg) == (yarg))',               ... % int, uint
+    '((xarg) == (yarg))',               ... % float
+    '((xarg) == (yarg))',               ... % double
     'GB_FC32_eq (xarg, yarg)',          ... % GxB_FC32_t
     'GB_FC64_eq (xarg, yarg)') ;        ... % GxB_FC64_t
 
 codegen_binop_template ('ne',           ...
     [ ],                                ... % bool
-    '(xarg != yarg)',                   ... % int, uint
-    '(xarg != yarg)',                   ... % float
-    '(xarg != yarg)',                   ... % double
+    '((xarg) != (yarg))',               ... % int, uint
+    '((xarg) != (yarg))',               ... % float
+    '((xarg) != (yarg))',               ... % double
     'GB_FC32_ne (xarg, yarg)',          ... % GxB_FC32_t
     'GB_FC64_ne (xarg, yarg)') ;        ... % GxB_FC64_t
 
 codegen_binop_template ('gt',           ...
-    '(xarg > yarg)',                    ... % bool
-    '(xarg > yarg)',                    ... % int, uint
-    '(xarg > yarg)',                    ... % float
-    '(xarg > yarg)',                    ... % double
+    '((xarg) > (yarg))',                ... % bool
+    '((xarg) > (yarg))',                ... % int, uint
+    '((xarg) > (yarg))',                ... % float
+    '((xarg) > (yarg))',                ... % double
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
 
 codegen_binop_template ('lt',           ...
-    '(xarg < yarg)',                    ... % bool
-    '(xarg < yarg)',                    ... % int, uint
-    '(xarg < yarg)',                    ... % float
-    '(xarg < yarg)',                    ... % double
+    '((xarg) < (yarg))',                ... % bool
+    '((xarg) < (yarg))',                ... % int, uint
+    '((xarg) < (yarg))',                ... % float
+    '((xarg) < (yarg))',                ... % double
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
 
 codegen_binop_template ('ge',           ...
-    '(xarg >= yarg)',                   ... % bool
-    '(xarg >= yarg)',                   ... % int, uint
-    '(xarg >= yarg)',                   ... % float
-    '(xarg >= yarg)',                   ... % double
+    '((xarg) >= (yarg))',               ... % bool
+    '((xarg) >= (yarg))',               ... % int, uint
+    '((xarg) >= (yarg))',               ... % float
+    '((xarg) >= (yarg))',               ... % double
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
 
 codegen_binop_template ('le',           ...
-    '(xarg <= yarg)',                   ... % bool
-    '(xarg <= yarg)',                   ... % int, uint
-    '(xarg <= yarg)',                   ... % float
-    '(xarg <= yarg)',                   ... % double
+    '((xarg) <= (yarg))',               ... % bool
+    '((xarg) <= (yarg))',               ... % int, uint
+    '((xarg) <= (yarg))',               ... % float
+    '((xarg) <= (yarg))',               ... % double
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
 
 codegen_binop_template ('lor',          ...
-    '(xarg || yarg)',                   ... % bool
-    '((xarg != 0) || (yarg != 0))',     ... % int, uint
-    '((xarg != 0) || (yarg != 0))',     ... % float
-    '((xarg != 0) || (yarg != 0))',     ... % double
+    '((xarg) || (yarg))',               ... % bool
+    '(((xarg) != 0) || ((yarg) != 0))', ... % int, uint
+    '(((xarg) != 0) || ((yarg) != 0))', ... % float
+    '(((xarg) != 0) || ((yarg) != 0))', ... % double
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
 
 codegen_binop_template ('land',         ...
-    '(xarg && yarg)',                   ... % bool
-    '((xarg != 0) && (yarg != 0))',     ... % int, uint
-    '((xarg != 0) && (yarg != 0))',     ... % float
-    '((xarg != 0) && (yarg != 0))',     ... % double
+    '((xarg) && (yarg))',               ... % bool
+    '(((xarg) != 0) && ((yarg) != 0))', ... % int, uint
+    '(((xarg) != 0) && ((yarg) != 0))', ... % float
+    '(((xarg) != 0) && ((yarg) != 0))', ... % double
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
 
 codegen_binop_template ('lxor',         ...
-    '(xarg != yarg)',                   ... % bool
-    '((xarg != 0) != (yarg != 0))',     ... % int, uint
-    '((xarg != 0) != (yarg != 0))',     ... % float
-    '((xarg != 0) != (yarg != 0))',     ... % double
+    '((xarg) != (yarg))',               ... % bool
+    '(((xarg) != 0) != ((yarg) != 0))', ... % int, uint
+    '(((xarg) != 0) != ((yarg) != 0))', ... % float
+    '(((xarg) != 0) != ((yarg) != 0))', ... % double
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
 
@@ -290,7 +290,7 @@ codegen_binop_template ('cmplx',        ...
 
 codegen_binop_template ('bor',          ...
     [ ],                                ... % bool
-    '(xarg) | (yarg)',                  ... % int, uint
+    '((xarg) | (yarg))',                ... % int, uint
     [ ],                                ... % float
     [ ],                                ... % double
     [ ],                                ... % GxB_FC32_t
@@ -298,7 +298,7 @@ codegen_binop_template ('bor',          ...
 
 codegen_binop_template ('band',         ...
     [ ],                                ... % bool
-    '(xarg) & (yarg)',                  ... % int, uint
+    '((xarg) & (yarg))',                ... % int, uint
     [ ],                                ... % float
     [ ],                                ... % double
     [ ],                                ... % GxB_FC32_t
@@ -306,7 +306,7 @@ codegen_binop_template ('band',         ...
 
 codegen_binop_template ('bxor',         ...
     [ ],                                ... % bool
-    '(xarg) ^ (yarg)',                  ... % int, uint
+    '((xarg) ^ (yarg))',                ... % int, uint
     [ ],                                ... % float
     [ ],                                ... % double
     [ ],                                ... % GxB_FC32_t

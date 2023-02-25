@@ -145,7 +145,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: dense ewise3 no accum 
+    // JIT TODO: ewise: dense ewise3 no accum 
     #endif
 
     //--------------------------------------------------------------------------

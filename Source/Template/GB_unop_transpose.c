@@ -17,7 +17,11 @@
     //--------------------------------------------------------------------------
 
     #ifndef GB_ISO_TRANSPOSE
+    #ifdef GB_BIND_1ST
+    const GB_B_TYPE *restrict Ax = (GB_B_TYPE *) A->x ;
+    #else
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
+    #endif
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
 

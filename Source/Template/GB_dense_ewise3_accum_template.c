@@ -42,7 +42,7 @@
         { 
             GB_DECLAREA (aij) ;
             GB_GETA (aij, Ax, p, false) ;           // aij = Ax [p]
-            GB_CTYPE_SCALAR (t) ;                   // declare scalar t
+            GB_C_TYPE t ;                           // declare scalar t
             GB_BINOP (t, aij, aij, 0, 0) ;          // t = aij + aij
             GB_BINOP (GB_CX (p), GB_CX (p), t, 0, 0) ; // Cx [p] = cij + t
         }
@@ -62,7 +62,7 @@
             GB_GETA (aij, Ax, p, false) ;           // aij = Ax [p]
             GB_DECLAREB (bij) ;
             GB_GETB (bij, Bx, p, false) ;           // bij = Bx [p]
-            GB_CTYPE_SCALAR (t) ;                   // declare scalar t
+            GB_C_TYPE t ;                           // declare scalar t
             GB_BINOP (t, aij, bij, 0, 0) ;          // t = aij + bij
             GB_BINOP (GB_CX (p), GB_CX (p), t, 0, 0) ; // Cx [p] = cij + t
         }

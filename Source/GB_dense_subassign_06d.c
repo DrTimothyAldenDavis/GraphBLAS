@@ -181,7 +181,7 @@ GrB_Info GB_dense_subassign_06d
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: subassign 06d
+        // JIT TODO: type: subassign 06d
         #endif
 
         //----------------------------------------------------------------------

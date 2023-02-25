@@ -29,6 +29,9 @@
 #define GB_JIT_KERNEL_AXB_SAXPY4    8
 #define GB_JIT_KERNEL_AXB_SAXPY5    9
 
+// ewise methods:
+#define GB_JIT_KERNEL_COLSCALE      10
+
 // ... etc FIXME: list them all here
 // or make this an enum
 

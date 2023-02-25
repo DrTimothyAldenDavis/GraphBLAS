@@ -223,8 +223,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         // via the factory kernel
         //----------------------------------------------------------------------
 
-        bool done = false ;
-
+        info = GrB_NO_VALUE ;
         #ifndef GBCUDA_DEV
 
             //------------------------------------------------------------------
@@ -237,7 +236,6 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
             {                                                               \
                 info = GB_AxD(mult,xname) (C, A, D,                         \
                     A_ek_slicing, A_ntasks, A_nthreads) ;                   \
-                done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
 
@@ -262,15 +260,22 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         // via JIT kernel
         //----------------------------------------------------------------------
 
+#if 0
         #if GB_JIT_ENABLED
-        // JIT TODO: colscale
+        // JIT TODO: ewise: colscale
+        if (info == GrB_NO_VALUE)
+        { 
+            info = GB_colscale_jit (C, A, D, mult, flipxy,
+                A_ek_slicing, A_ntasks, A_nthreads) ;
+        }
         #endif
+#endif
 
         //----------------------------------------------------------------------
         // via the generic kernel
         //----------------------------------------------------------------------
 
-        if (!done)
+        if (info == GrB_NO_VALUE)
         {
 
             //------------------------------------------------------------------

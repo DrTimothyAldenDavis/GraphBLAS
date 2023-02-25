@@ -8,91 +8,29 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_emult.h"
 #include "GB_control.h"
-#include "GB_ek_slice.h"
-#include "GB_dense.h"
-#include "GB_bitmap_assign_methods.h"
+#include "GB_ewise_kernels.h"
 #include "GB_binop__include.h"
 
-// C type:     int64_t
-// A type:     int64_t
-// A pattern?  0
-// B type:     int64_t
-// B pattern?  0
+// operator:
+#define GB_BINOP(z,x,y,i,j) z = GB_pow_int64 (x, y)
 
-// BinaryOp:   cij = GB_pow_int64 (aij, bij)
+// A matrix:
+#define GB_A_TYPE int64_t
+#define GB_A2TYPE int64_t
+#define GB_DECLAREA(aij) int64_t aij
+#define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [(A_iso) ? 0 : (pA)]
+#define GB_A_IS_PATTERN 0
 
-#define GB_A_TYPE \
-    int64_t
+// B matrix:
+#define GB_B_TYPE int64_t
+#define GB_B2TYPE int64_t
+#define GB_DECLAREB(bij) int64_t bij
+#define GB_GETB(bij,Bx,pB,B_iso) bij = Bx [(B_iso) ? 0 : (pB)]
+#define GB_B_IS_PATTERN 0
 
-#define GB_B_TYPE \
-    int64_t
-
-#define GB_C_TYPE \
-    int64_t
-
-// true if the types of A and B are identical
-#define GB_ATYPE_IS_BTYPE \
-    1
-
-// true if the types of C and A are identical
-#define GB_CTYPE_IS_ATYPE \
-    1
-
-// true if the types of C and B are identical
-#define GB_CTYPE_IS_BTYPE \
-    1
-
-// declare aij as atype
-#define GB_DECLAREA(aij) \
-    int64_t aij
-
-// aij = Ax [pA]
-#define GB_GETA(aij,Ax,pA,A_iso)  \
-    aij = GBX (Ax, pA, A_iso)
-
-// true if values of A are not used
-#define GB_A_IS_PATTERN \
-    0 \
-
-// declare bij as btype
-#define GB_DECLAREB(bij)  \
-    int64_t bij
-
-// bij = Bx [pB]
-#define GB_GETB(bij,Bx,pB,B_iso)  \
-    bij = GBX (Bx, pB, B_iso)
-
-// true if values of B are not used
-#define GB_B_IS_PATTERN \
-    0 \
-
-// declare scalar of the same type as C
-#define GB_CTYPE_SCALAR(t)  \
-    int64_t t
-
-// cij = Ax [pA]
-#define GB_COPY_A_TO_C(cij,Ax,pA,A_iso) \
-    cij = GBX (Ax, pA, A_iso)
-
-// cij = Bx [pB]
-#define GB_COPY_B_TO_C(cij,Bx,pB,B_iso) \
-    cij = GBX (Bx, pB, B_iso)
-
-#define GB_CX(p) Cx [p]
-
-// binary operator
-#define GB_BINOP(z,x,y,i,j) \
-    z = GB_pow_int64 (x, y) ;
-
-// true if the binop must be flipped
-#define GB_BINOP_FLIP \
-    1
-
-// op is second
-#define GB_OP_IS_SECOND \
-    0
+// C matrix:
+#define GB_C_TYPE int64_t
 
 // do the numerical phases of GB_add and GB_emult
 #define GB_PHASE_2_OF_2
@@ -101,28 +39,7 @@
 #define GB_DISABLE \
     (GxB_NO_POW || GxB_NO_INT64 || GxB_NO_POW_INT64)
 
-#include "GB_kernel_shared_definitions.h"
-
-//------------------------------------------------------------------------------
-// C += A+B, all 3 matrices dense
-//------------------------------------------------------------------------------
-
-#if 0
-
-// The op must be MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, or RDIV.
-
-void GB ((none))
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int nthreads
-)
-{ 
-    #include "GB_dense_ewise3_accum_template.c"
-}
-
-#endif
+#include "GB_ewise_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // C = A+B, all 3 matrices dense
@@ -147,7 +64,9 @@ GrB_Info GB (_Cdense_accumB__pow_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
+    const int64_t *B_ek_slicing,
+    const int B_ntasks,
+    const int B_nthreads
 )
 {
     #if GB_DISABLE
@@ -178,8 +97,8 @@ GrB_Info GB (_Cdense_accumb__pow_int64)
     #else
     
     { 
-        // get the scalar b for C += b, of type int64_t
-        int64_t bwork = (*((int64_t *) p_bwork)) ;
+        // get the scalar b for C += b, of type GB_B_TYPE
+        GB_B_TYPE bwork = (*((GB_B_TYPE *) p_bwork)) ;
         #include "GB_dense_subassign_22_template.c"
         return (GrB_SUCCESS) ;
     }
@@ -187,56 +106,6 @@ GrB_Info GB (_Cdense_accumb__pow_int64)
     return (GrB_SUCCESS) ;
     #endif
 }
-
-//------------------------------------------------------------------------------
-// C = A*D, column scale with diagonal D matrix
-//------------------------------------------------------------------------------
-
-#if 0
-
-GrB_Info GB ((none))
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix D,
-    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
-)
-{ 
-    #if GB_DISABLE
-    return (GrB_NO_VALUE) ;
-    #else
-    int64_t *restrict Cx = (int64_t *) C->x ;
-    #include "GB_colscale_template.c"
-    return (GrB_SUCCESS) ;
-    #endif
-}
-
-#endif
-
-//------------------------------------------------------------------------------
-// C = D*B, row scale with diagonal D matrix
-//------------------------------------------------------------------------------
-
-#if 0
-
-GrB_Info GB ((none))
-(
-    GrB_Matrix C,
-    const GrB_Matrix D,
-    const GrB_Matrix B,
-    int nthreads
-)
-{ 
-    #if GB_DISABLE
-    return (GrB_NO_VALUE) ;
-    #else
-    int64_t *restrict Cx = (int64_t *) C->x ;
-    #include "GB_rowscale_template.c"
-    return (GrB_SUCCESS) ;
-    #endif
-}
-
-#endif
 
 //------------------------------------------------------------------------------
 // eWiseAdd: C=A+B, C<M>=A+B, C<!M>=A+B
@@ -270,12 +139,12 @@ GrB_Info GB (_AaddB__pow_int64)
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
-    int64_t alpha_scalar ;
-    int64_t beta_scalar ;
+    GB_A_TYPE alpha_scalar ;
+    GB_B_TYPE beta_scalar ;
     if (is_eWiseUnion)
     {
-        alpha_scalar = (*((int64_t *) alpha_scalar_in)) ;
-        beta_scalar  = (*((int64_t *) beta_scalar_in )) ;
+        alpha_scalar = (*((GB_A_TYPE *) alpha_scalar_in)) ;
+        beta_scalar  = (*((GB_B_TYPE *) beta_scalar_in )) ;
     }
     #include "GB_add_template.c"
     GB_FREE_WORKSPACE ;
@@ -327,13 +196,15 @@ GrB_Info GB (_AemultB_02__pow_int64)
     const GrB_Matrix B,
     const bool flipxy,
     const int64_t *restrict Cp_kfirst,
-    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
 )
 { 
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #if GB_BINOP_FLIP
+    
         // The operator is not commutative, and does not have a flipped
         // variant.  For example z=atan2(y,x).
         if (flipxy)
@@ -350,13 +221,8 @@ GrB_Info GB (_AemultB_02__pow_int64)
             #define GB_FLIPPED 0
             #include "GB_emult_02_template.c"
         }
-    #else
-        // No need to handle the flip: the operator is either commutative, or
-        // has been handled by changing z=div(y,x) to z=rdiv(x,y) for example.
-        #undef  GB_FLIPPED
-        #define GB_FLIPPED 0
-        #include "GB_emult_02_template.c"
-    #endif
+    
+    
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -427,17 +293,17 @@ GrB_Info GB (_bind1st__pow_int64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    int64_t *Cx = (int64_t *) Cx_output ;
-    int64_t   x = (*((int64_t *) x_input)) ;
-    int64_t *Bx = (int64_t *) Bx_input ;
+    GB_C_TYPE *Cx = (GB_C_TYPE *) Cx_output ;
+    GB_A_TYPE   x = (*((GB_A_TYPE *) x_input)) ;
+    GB_B_TYPE *Bx = (GB_B_TYPE *) Bx_input ;
     int64_t p ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (p = 0 ; p < bnz ; p++)
     {
         if (!GBB (Bb, p)) continue ;
-        int64_t bij ;
-        bij = GBX (Bx, p, false) ;
-        Cx [p] = GB_pow_int64 (x, bij) ;
+        GB_DECLAREB (bij) ;
+        GB_GETB (bij, Bx, p, false) ;
+        GB_BINOP (Cx [p], x, bij, 0, 0) ;
     }
     return (GrB_SUCCESS) ;
     #endif
@@ -461,16 +327,16 @@ GrB_Info GB (_bind2nd__pow_int64)
     return (GrB_NO_VALUE) ;
     #else
     int64_t p ;
-    int64_t *Cx = (int64_t *) Cx_output ;
-    int64_t *Ax = (int64_t *) Ax_input ;
-    int64_t   y = (*((int64_t *) y_input)) ;
+    GB_C_TYPE *Cx = (GB_C_TYPE *) Cx_output ;
+    GB_A_TYPE *Ax = (GB_A_TYPE *) Ax_input ;
+    GB_B_TYPE   y = (*((GB_B_TYPE *) y_input)) ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (p = 0 ; p < anz ; p++)
     {
         if (!GBB (Ab, p)) continue ;
-        int64_t aij ;
-        aij = GBX (Ax, p, false) ;
-        Cx [p] = GB_pow_int64 (aij, y) ;
+        GB_DECLAREA (aij) ;
+        GB_GETA (aij, Ax, p, false) ;
+        GB_BINOP (Cx [p], aij, y, 0, 0) ;
     }
     return (GrB_SUCCESS) ;
     #endif
@@ -484,9 +350,9 @@ GrB_Info GB (_bind2nd__pow_int64)
 #undef  GB_CAST_OP
 #define GB_CAST_OP(pC,pA)                       \
 {                                               \
-    int64_t aij ;                          \
-    aij = GBX (Ax, pA, false) ;               \
-    Cx [pC] = GB_pow_int64 (x, aij) ;        \
+    GB_DECLAREB (aij) ;                         \
+    GB_GETB (aij, Ax, pA, false) ;              \
+    GB_BINOP (Cx [pC], x, aij, 0, 0) ;          \
 }
 
 GrB_Info GB (_bind1st_tran__pow_int64)
@@ -500,21 +366,15 @@ GrB_Info GB (_bind1st_tran__pow_int64)
     int nthreads
 )
 { 
-    // GB_unop_transpose.c uses GB_A_TYPE, but A is
-    // the 2nd input to binary operator z=f(x,y).
-    #undef  GB_A_TYPE
-    #define GB_A_TYPE \
-    int64_t
+    #define GB_BIND_1ST
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    int64_t x = (*((const int64_t *) x_input)) ;
+    GB_A_TYPE x = (*((const GB_A_TYPE *) x_input)) ;
     #include "GB_unop_transpose.c"
     return (GrB_SUCCESS) ;
     #endif
-    #undef  GB_A_TYPE
-    #define GB_A_TYPE \
-    int64_t
+    #undef GB_BIND_1ST
 }
 
 //------------------------------------------------------------------------------
@@ -525,9 +385,9 @@ GrB_Info GB (_bind1st_tran__pow_int64)
 #undef  GB_CAST_OP
 #define GB_CAST_OP(pC,pA)                       \
 {                                               \
-    int64_t aij ;                          \
-    aij = GBX (Ax, pA, false) ;               \
-    Cx [pC] = GB_pow_int64 (aij, y) ;        \
+    GB_DECLAREA (aij) ;                         \
+    GB_GETA (aij, Ax, pA, false) ;              \
+    GB_BINOP (Cx [pC], aij, y, 0, 0) ;          \
 }
 
 GrB_Info GB (_bind2nd_tran__pow_int64)
@@ -544,7 +404,7 @@ GrB_Info GB (_bind2nd_tran__pow_int64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    int64_t y = (*((const int64_t *) y_input)) ;
+    GB_B_TYPE y = (*((const GB_B_TYPE *) y_input)) ;
     #include "GB_unop_transpose.c"
     return (GrB_SUCCESS) ;
     #endif

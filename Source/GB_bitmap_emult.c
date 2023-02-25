@@ -266,7 +266,7 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: bitmap emult
+    // JIT TODO: ewise: bitmap emult
     #endif
 
     //--------------------------------------------------------------------------

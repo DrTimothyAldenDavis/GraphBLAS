@@ -97,6 +97,18 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GrB_Matrix D,
+    const GrB_BinaryOp multiply,
+    const bool flipxy,
+    const int64_t *restrict A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
+) ;
+
 bool GB_AxB_semiring_builtin        // true if semiring is builtin
 (
     // inputs:
