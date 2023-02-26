@@ -22,7 +22,9 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
     // input:
-    bool is_eWiseMult,      // true for eWiseMult, false otherwise
+    bool is_eWiseMult,      // if true, method is emult
+    bool is_eWiseUnion,     // if true, method is eWiseUnion
+    bool can_copy_to_C,     // if true C(i,j)=A(i,j) can bypass the op
     // C matrix:
     bool C_iso,             // if true, C is iso on output
     bool C_in_iso,          // if true, C is iso on input
@@ -137,12 +139,16 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     int binop_ecode ;
     GB_enumify_binop (&binop_ecode, binaryop_opcode, xcode, false) ;
 
+    int is_union  = (is_eWiseUnion) ? 1 : 0 ;
+    int is_emult  = (is_eWiseMult) ? 1 : 0 ;
+    int copy_to_C = (can_copy_to_C) ? 1 : 0 ;
+
     //--------------------------------------------------------------------------
     // enumify the types
     //--------------------------------------------------------------------------
 
-    // If A is NULL (for binop bind 2nd), acode is 15
-    // If B is NULL (for binop bind 1st), bcode is 15
+    // If A is NULL (for binop bind 1st), acode is 15
+    // If B is NULL (for binop bind 2nd), bcode is 15
 
     int acode = (A == NULL) ? 15 : (A_is_pattern ? 0 : atype->code) ; // 0 to 15
     int bcode = (B == NULL) ? 15 : (B_is_pattern ? 0 : btype->code) ; // 0 to 15
@@ -178,12 +184,14 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     // construct the ewise scode
     //--------------------------------------------------------------------------
 
-    // total scode bits: 47 (17 unused bits)
+    // total scode bits: 51
 
     (*scode) =
                                                // range        bits
-                // unused (4 hex digits)
-//              GB_LSHIFT (0,         , 48) |  // unused       16
+                // method (3 bits) (1 hex digit, 0 to 7)
+                GB_LSHIFT (is_emult   , 50) |  // 0 or 1       1
+                GB_LSHIFT (is_union   , 49) |  // 0 or 1       1
+                GB_LSHIFT (copy_to_C  , 48) |  // 0 or 1       1
 
                 // C in, A and B iso properites, flipxy (1 hex digit)
                 GB_LSHIFT (C_in_iso_cd, 47) |  // 0 or 1       1

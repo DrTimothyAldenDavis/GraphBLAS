@@ -48,7 +48,7 @@ GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_COLSCALE,
-        false, false, false, GB_sparsity (C), C->type,
+        false, false, false, false, false, GB_sparsity (C), C->type,
         NULL, false, false, multiply, flipxy, A, D) ;
     if (hash == UINT64_MAX)
     {
@@ -75,12 +75,12 @@ GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
         if (suffix == NULL)
         {
             snprintf (kernel_name, KLEN-1,
-                "GB_jit_colscale_%0*" PRIx64, 12, scode) ;
+                "GB_jit_colscale_%0*" PRIx64, 13, scode) ;
         }
         else
         {
             snprintf (kernel_name, KLEN-1,
-                "GB_jit_colscale_%0*" PRIx64 "__%s", 12, scode, suffix) ;
+                "GB_jit_colscale_%0*" PRIx64 "__%s", 13, scode, suffix) ;
         }
 
         char lib_filename [2048] ;

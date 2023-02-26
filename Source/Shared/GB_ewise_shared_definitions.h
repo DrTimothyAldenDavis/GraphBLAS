@@ -27,6 +27,16 @@
 #define GB_OP_IS_SECOND 0
 #endif
 
+// 1 if method is eWiseMult
+#ifndef GB_IS_EWISEMULT
+#define GB_IS_EWISEMULT 0
+#endif
+
+// 1 if method is eWiseUnion
+#ifndef GB_IS_EWISEUNION
+#define GB_IS_EWISEUNION 0
+#endif
+
 // copy A(i,j) to C(i,j)
 #ifndef GB_COPY_A_TO_C
 #define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = Ax [(A_iso) ? 0 : (pA)]

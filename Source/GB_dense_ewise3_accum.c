@@ -73,8 +73,8 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     // FUTURE::: handle IS*, LOR, LAND, LXOR operators
 
     #ifdef GB_DEBUGIFY_DEFN
-    GB_debugify_ewise (false, false, false, GxB_FULL, C->type, NULL,
-        false, false, op, false, A, B) ;
+    GB_debugify_ewise (false, false, false, false, false, GxB_FULL,
+        C->type, NULL, false, false, op, false, A, B) ;
     #endif
 
     //--------------------------------------------------------------------------

@@ -67,8 +67,8 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     ASSERT (op->ytype == B->type) ;
 
     #ifdef GB_DEBUGIFY_DEFN
-    GB_debugify_ewise (false, false, false, GxB_FULL, C->type, NULL,
-        false, false, op, false, A, B) ;
+    GB_debugify_ewise (false, false, false, false, false, GxB_FULL,
+        C->type, NULL, false, false, op, false, A, B) ;
     #endif
 
     //--------------------------------------------------------------------------

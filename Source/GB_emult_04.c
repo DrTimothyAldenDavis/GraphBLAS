@@ -121,7 +121,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     bool C_iso = GB_iso_emult (cscalar, ctype, A, B, op) ;
 
     #ifdef GB_DEBUGIFY_DEFN
-    GB_debugify_ewise (true, C_iso, false, C_sparsity, ctype, M,
+    GB_debugify_ewise (true, false, false, C_iso, false, C_sparsity, ctype, M,
         Mask_struct, false, op, false, A, B) ;
     #endif
 

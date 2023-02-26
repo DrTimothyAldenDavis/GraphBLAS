@@ -27,6 +27,9 @@
 // This is used by GB_wait only, for merging the pending tuple matrix T into A.
 // In this case, C is always sparse or hypersparse, not bitmap or full.
 
+// FIXME: debug is on
+#define GB_DEBUG
+
 #include "GB_add.h"
 #include "GB_binop.h"
 #include "GB_unused.h"
@@ -56,7 +59,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     GrB_Matrix C,           // output matrix, static header
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
-    const GrB_BinaryOp op,  // op to perform C = op (A,B), or NULL if no op
+    const GrB_BinaryOp op,  // op to perform C = op (A,B)
     const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
     // from phase1:
     int64_t **Cp_handle,    // vector pointers for C
@@ -93,7 +96,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
-    ASSERT_BINARYOP_OK_OR_NULL (op, "op for add phase2", GB0) ;
+    ASSERT_BINARYOP_OK (op, "op for add phase2", GB0) ;
     ASSERT_MATRIX_OK (A, "A for add phase2", GB0) ;
     ASSERT_MATRIX_OK (B, "B for add phase2", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for add phase2", GB0) ;
@@ -233,10 +236,11 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     GB_void cscalar [GB_VLA(csize)] ;
     bool C_iso = GB_iso_add (cscalar, ctype, A, alpha_scalar,
-        B, beta_scalar, op, is_eWiseUnion) ;
+        B, beta_scalar, op, A_and_B_are_disjoint, is_eWiseUnion) ;
 
     #ifdef GB_DEBUGIFY_DEFN
-    GB_debugify_ewise (false, C_iso, false, C_sparsity, ctype, M,
+    GB_debugify_ewise (false, is_eWiseUnion, !is_eWiseUnion,
+        C_iso, false, C_sparsity, ctype, M,
         Mask_struct, Mask_comp, op, false, A, B) ;
     #endif
 

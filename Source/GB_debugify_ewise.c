@@ -16,6 +16,8 @@ void GB_debugify_ewise
 (
     // method:
     bool is_eWiseMult,      // if true, method is emult
+    bool is_eWiseUnion,     // if true, method is eWiseUnion
+    bool can_copy_to_C,     // if true C(i,j)=A(i,j) can bypass the op
     // C matrix:
     bool C_iso,             // if true, operator is ignored
     bool C_in_iso,          // if true, C is iso on input
@@ -41,12 +43,14 @@ void GB_debugify_ewise
     GrB_Type btype = B->type ;
 
     // enumify the ewise problem
-    bool builtin = GB_enumify_ewise (&scode, is_eWiseMult, C_iso, C_in_iso,
-        C_sparsity, ctype, M, Mask_struct, Mask_comp, binaryop, flipxy, A, B) ;
+    bool builtin = GB_enumify_ewise (&scode,
+        is_eWiseMult, is_eWiseUnion, can_copy_to_C,
+        C_iso, C_in_iso, C_sparsity, ctype, M, Mask_struct, Mask_comp,
+        binaryop, flipxy, A, B) ;
 
     // namify the ewise problem
     char ewise_name [256 + 8*GxB_MAX_NAME_LEN] ;
-    GB_namify_problem (ewise_name, "GB_jit_ewise_", 12, scode, builtin,
+    GB_namify_problem (ewise_name, "GB_jit_ewise_", 13, scode, builtin,
         binaryop->name,
         NULL,
         binaryop->ztype->name,

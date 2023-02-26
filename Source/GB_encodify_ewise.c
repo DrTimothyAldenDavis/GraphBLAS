@@ -18,7 +18,9 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     char **suffix,              // suffix for user-defined kernel
     // input:
     const int kcode,            // kernel to encode (add, emult, rowscale, ...)
-    const bool is_eWiseMult,
+    const bool is_eWiseMult,    // if true, method is emult
+    const bool is_eWiseUnion,   // if true, method is eWiseUnio
+    const bool can_copy_to_C,   // if true C(i,j)=A(i,j) can bypass the op
     const bool C_iso,
     const bool C_in_iso,
     const int C_sparsity,
@@ -50,8 +52,9 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     //--------------------------------------------------------------------------
 
     encoding->kcode = kcode ;
-    GB_enumify_ewise (&encoding->code, is_eWiseMult, C_iso, C_in_iso,
-        C_sparsity, ctype, M, Mask_struct, Mask_comp, binaryop, flipxy, A, B) ;
+    GB_enumify_ewise (&encoding->code, is_eWiseMult, is_eWiseUnion,
+        can_copy_to_C, C_iso, C_in_iso, C_sparsity, ctype, M, Mask_struct,
+        Mask_comp, binaryop, flipxy, A, B) ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length

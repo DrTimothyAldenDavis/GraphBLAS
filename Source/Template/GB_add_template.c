@@ -150,7 +150,8 @@
             // eWiseUnion, using alpha and beta scalars
             //------------------------------------------------------------------
 
-            #define GB_EWISEUNION
+            #undef  GB_IS_EWISEUNION
+            #define GB_IS_EWISEUNION 1
             // if A(i,j) is not present: C(i,j) = alpha + B(i,j)
             // if B(i,j) is not present: C(i,j) = A(i,j) + beta
 
@@ -183,7 +184,8 @@
             // eWiseAdd:
             //------------------------------------------------------------------
 
-            #undef GB_EWISEUNION
+            #undef  GB_IS_EWISEUNION
+            #define GB_IS_EWISEUNION 0
             // if A(i,j) is not present: C(i,j) = B(i,j)
             // if B(i,j) is not present: C(i,j) = A(i,j)
 

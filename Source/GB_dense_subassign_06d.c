@@ -204,9 +204,8 @@ GrB_Info GB_dense_subassign_06d
             GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
             // Cx [p] = (ctype) Ax [pA]
-            #define GB_COPY_A_TO_C(Cx,p,Ax,pA,A_iso) \
-                cast_A_to_C (Cx + ((p)*csize), \
-                    Ax + (A_iso ? 0:(pA)*asize), asize)
+            #define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso) \
+            cast_A_to_C (Cx + ((pC)*csize), Ax + (A_iso ? 0:(pA)*asize), asize)
 
             #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, asize)
 

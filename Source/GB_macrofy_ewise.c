@@ -27,6 +27,11 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // extract the binaryop scode
     //--------------------------------------------------------------------------
 
+    // method (3 bits)
+    bool is_emult   = GB_RSHIFT (scode, 50, 1) ;
+    bool is_union   = GB_RSHIFT (scode, 49, 1) ;
+    bool copy_to_C  = GB_RSHIFT (scode, 48, 1) ;
+
     // C in, A, and B iso-valued and flipxy (one hex digit)
     bool C_in_iso   = GB_RSHIFT (scode, 47, 1) ;
     int A_iso_code  = GB_RSHIFT (scode, 46, 1) ;
@@ -106,8 +111,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 
     if (!C_iso)
     {
-        GB_macrofy_typedefs (fp,
-            (ccode == 0 ) ? NULL : ctype,
+        GB_macrofy_typedefs (fp, ctype,
             (acode == 0 || acode == 15) ? NULL : atype,
             (bcode == 0 || bcode == 15) ? NULL : btype,
             xtype, ytype, ztype) ;
@@ -119,12 +123,32 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     GB_macrofy_type (fp, "Y", "_", ytype_name) ;
 
     //--------------------------------------------------------------------------
-    // construct macros for the multiply
+    // construct macros for the binary operator
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// binary operator%s:\n", flipxy ? " (flipped)" : "") ;
     GB_macrofy_binop (fp, "GB_BINOP", flipxy, false, true, binop_ecode, C_iso,
         binaryop, NULL, NULL) ;
+
+    if (is_emult)
+    { 
+        fprintf (fp, "#define GB_IS_EWISEMULT 1\n") ;
+    }
+
+    if (is_union)
+    { 
+        fprintf (fp, "#define GB_IS_EWISEUNION 1\n") ;
+    }
+
+    GB_macrofy_cast_copy (fp, "C", "A",
+            (C_iso || !copy_to_C) ? NULL : ctype,
+            (acode == 0 || acode == 15) ? NULL : atype,
+            A_iso_code) ;
+
+    GB_macrofy_cast_copy (fp, "C", "B",
+            (C_iso || !copy_to_C) ? NULL : ctype,
+            (bcode == 0 || bcode == 15) ? NULL : btype,
+            B_iso_code) ;
 
     //--------------------------------------------------------------------------
     // macros for the C matrix

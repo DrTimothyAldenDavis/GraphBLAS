@@ -65,7 +65,7 @@
                     }
                     else if (Bb [p])
                     { 
-                        #ifdef GB_EWISEUNION
+                        #if GB_IS_EWISEUNION
                         { 
                             // C (i,j) = alpha + B(i,j)
                             GB_LOAD_B (bij, Bx, p, B_iso) ;
@@ -82,7 +82,7 @@
                     }
                     else if (Ab [p])
                     { 
-                        #ifdef GB_EWISEUNION
+                        #if GB_IS_EWISEUNION
                         { 
                             // C (i,j) = A(i,j) + beta
                             GB_LOAD_A (aij, Ax, p, A_iso) ;
@@ -123,7 +123,7 @@
                     int8_t a = Ab [p] ;
                     if (a)
                     { 
-                        #ifdef GB_EWISEUNION
+                        #if GB_IS_EWISEUNION
                         { 
                             // C (i,j) = A(i,j) + beta
                             GB_LOAD_A (aij, Ax, p, A_iso) ;
@@ -176,7 +176,7 @@
                         else
                         { 
                             #ifndef GB_ISO_ADD
-                            #ifdef GB_EWISEUNION
+                            #if GB_IS_EWISEUNION
                             { 
                                 // C (i,j) = alpha + B(i,j)
                                 GB_LOAD_B (bij, Bx, pB, B_iso) ;
@@ -216,7 +216,7 @@
                     int8_t b = Bb [p] ;
                     if (b)
                     {
-                        #ifdef GB_EWISEUNION
+                        #if GB_IS_EWISEUNION
                         { 
                             // C (i,j) = alpha + B(i,j)
                             GB_LOAD_B (bij, Bx, p, B_iso) ;
@@ -270,7 +270,7 @@
                         else
                         { 
                             #ifndef GB_ISO_ADD
-                            #ifdef GB_EWISEUNION
+                            #if GB_IS_EWISEUNION
                             { 
                                 // C (i,j) = A(i,j) + beta
                                 GB_LOAD_A (aij, Ax, pA, A_iso) ;
@@ -399,7 +399,7 @@
                         }
                         else if (b)
                         { 
-                            #ifdef GB_EWISEUNION
+                            #if GB_IS_EWISEUNION
                             { 
                                 // C (i,j) = alpha + B(i,j)
                                 GB_LOAD_B (bij, Bx, p, B_iso) ;
@@ -416,7 +416,7 @@
                         }
                         else if (a)
                         { 
-                            #ifdef GB_EWISEUNION
+                            #if GB_IS_EWISEUNION
                             { 
                                 // C (i,j) = A(i,j) + beta
                                 GB_LOAD_A (aij, Ax, p, A_iso) ;
@@ -468,7 +468,7 @@
                         #ifndef GB_ISO_ADD
                         if (a)
                         {
-                            #ifdef GB_EWISEUNION
+                            #if GB_IS_EWISEUNION
                             { 
                                 // C (i,j) = A(i,j) + beta
                                 GB_LOAD_A (aij, Ax, p, A_iso) ;
@@ -525,7 +525,7 @@
                         else if (c == 0)
                         { 
                             #ifndef GB_ISO_ADD
-                            #ifdef GB_EWISEUNION
+                            #if GB_IS_EWISEUNION
                             {
                                 // C (i,j) = alpha + B(i,j)
                                 GB_LOAD_B (bij, Bx, pB, B_iso) ;
@@ -569,7 +569,7 @@
                         #ifndef GB_ISO_ADD
                         if (b)
                         {
-                            #ifdef GB_EWISEUNION
+                            #if GB_IS_EWISEUNION
                             {
                                 // C (i,j) = alpha + B(i,j)
                                 GB_LOAD_B (bij, Bx, p, B_iso) ;
@@ -626,7 +626,7 @@
                         else if (c == 0)
                         { 
                             #ifndef GB_ISO_ADD
-                            #ifdef GB_EWISEUNION
+                            #if GB_IS_EWISEUNION
                             { 
                                 // C (i,j) = A(i,j) + beta
                                 GB_LOAD_A (aij, Ax, pA, A_iso) ;
@@ -791,7 +791,7 @@
                         }
                         else if (b)
                         { 
-                            #ifdef GB_EWISEUNION
+                            #if GB_IS_EWISEUNION
                             {
                                 // C (i,j) = alpha + B(i,j)
                                 GB_LOAD_B (bij, Bx, p, B_iso) ;
@@ -808,7 +808,7 @@
                         }
                         else if (a)
                         { 
-                            #ifdef GB_EWISEUNION
+                            #if GB_IS_EWISEUNION
                             { 
                                 // C (i,j) = A(i,j) + beta
                                 GB_LOAD_A (aij, Ax, p, A_iso) ;
@@ -860,7 +860,7 @@
                         #ifndef GB_ISO_ADD
                         if (a)
                         {
-                            #ifdef GB_EWISEUNION
+                            #if GB_IS_EWISEUNION
                             { 
                                 // C (i,j) = A(i,j) + beta
                                 GB_LOAD_A (aij, Ax, p, A_iso) ;
@@ -924,7 +924,7 @@
                             else
                             { 
                                 #ifndef GB_ISO_ADD
-                                #ifdef GB_EWISEUNION
+                                #if GB_IS_EWISEUNION
                                 {
                                     // C (i,j) = alpha + B(i,j)
                                     GB_LOAD_B (bij, Bx, pB, B_iso) ;
@@ -971,7 +971,7 @@
                         #ifndef GB_ISO_ADD
                         if (b)
                         {
-                            #ifdef GB_EWISEUNION
+                            #if GB_IS_EWISEUNION
                             {
                                 // C (i,j) = alpha + B(i,j)
                                 GB_LOAD_B (bij, Bx, p, B_iso) ;
@@ -1035,7 +1035,7 @@
                             else
                             { 
                                 #ifndef GB_ISO_ADD
-                                #ifdef GB_EWISEUNION
+                                #if GB_IS_EWISEUNION
                                 { 
                                     // C (i,j) = A(i,j) + beta
                                     GB_LOAD_A (aij, Ax, pA, A_iso) ;

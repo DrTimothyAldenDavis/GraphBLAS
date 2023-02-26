@@ -100,7 +100,9 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     char **suffix,              // suffix for user-defined kernel
     // input:
     const int kcode,            // kernel to encode (add, emult, rowscale, ...)
-    const bool is_eWiseMult,
+    const bool is_eWiseMult,    // if true, method is emult
+    const bool is_eWiseUnion,   // if true, method is eWiseUnion
+    const bool can_copy_to_C,   // if true C(i,j)=A(i,j) can bypass the op
     const bool C_iso,
     const bool C_in_iso,
     const int C_sparsity,
@@ -119,7 +121,9 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
     // input:
-    bool is_eWiseMult,      // true for eWiseMult, false otherwise
+    bool is_eWiseMult,      // if true, method is emult
+    bool is_eWiseUnion,     // if true, method is eWiseUnion
+    bool can_copy_to_C,     // if true C(i,j)=A(i,j) can bypass the op
     // C matrix:
     bool C_iso,             // if true, C is iso on output
     bool C_in_iso,          // if true, C is iso on input
@@ -130,7 +134,7 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool Mask_struct,       // mask is structural
     bool Mask_comp,         // mask is complemented
     // operator:
-    GrB_BinaryOp binaryop,  // the binary operator to enumify (can be NULL)
+    GrB_BinaryOp binaryop,  // the binary operator to enumify
     bool flipxy,            // multiplier is: op(a,b) or op(b,a)
     // A and B:
     GrB_Matrix A,           // NULL for unary apply with binop, bind 1st
@@ -406,6 +410,17 @@ void GB_macrofy_cast_output
     const GrB_Type xtype        // the type of the x output
 ) ;
 
+void GB_macrofy_cast_copy
+(
+    FILE *fp,
+    // input:
+    const char *cname,          // name of the C matrix (typically "C")
+    const char *aname,          // name of the A matrix (typically "A" or "B")
+    const GrB_Type ctype,       // the type of the C matrix
+    const GrB_Type atype,       // the type of the A matrix
+    const bool A_iso            // true if A is iso
+) ;
+
 void GB_macrofy_input
 (
     FILE *fp,
@@ -611,6 +626,8 @@ void GB_debugify_ewise
 (
     // method:
     bool is_eWiseMult,      // if true, method is emult
+    bool is_eWiseUnion,     // if true, method is eWiseUnion
+    bool can_copy_to_C,     // if true C(i,j)=A(i,j) can bypass the op
     // C matrix:
     bool C_iso,             // if true, operator is ignored
     bool C_in_iso,          // if true, C is iso on input
@@ -621,7 +638,7 @@ void GB_debugify_ewise
     bool Mask_struct,
     bool Mask_comp,
     // operator:
-    GrB_BinaryOp binaryop,  // may be NULL (used by GB_wait)
+    GrB_BinaryOp binaryop,
     bool flipxy,
     // A and B matrices:
     GrB_Matrix A,

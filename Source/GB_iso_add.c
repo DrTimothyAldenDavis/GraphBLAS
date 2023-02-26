@@ -11,6 +11,9 @@
 // results in an iso matrix C.  If true, the output scalar c is the iso value
 // for the matrix C.
 
+// FIXME: debug on
+#define GB_DEBUG
+
 #include "GB_add.h"
 #include "GB_emult.h"
 
@@ -24,7 +27,8 @@ bool GB_iso_add             // c = op(a,b), return true if C is iso
     const GB_void *restrict alpha_scalar,   // of type op->xtype
     GrB_Matrix B,           // input matrix
     const GB_void *restrict beta_scalar,    // of type op->ytype
-    GrB_BinaryOp op,        // binary operator, if present
+    GrB_BinaryOp op,        // binary operator
+    const bool A_and_B_are_disjoint,
     const bool is_eWiseUnion
 )
 {
@@ -36,7 +40,7 @@ bool GB_iso_add             // c = op(a,b), return true if C is iso
     ASSERT_MATRIX_OK (A, "A for GB_iso_add", GB0) ;
     ASSERT_MATRIX_OK (B, "B for GB_iso_add", GB0) ;
     ASSERT_TYPE_OK (ctype, "ctype for GB_iso_add", GB0) ;
-    ASSERT_BINARYOP_OK_OR_NULL (op, "op for GB_iso_add", GB0) ;
+    ASSERT_BINARYOP_OK (op, "op for GB_iso_add", GB0) ;
     ASSERT (c != NULL) ;
 
     //--------------------------------------------------------------------------
@@ -232,11 +236,11 @@ bool GB_iso_add             // c = op(a,b), return true if C is iso
         // compute the C iso value and compare with A and B
         //----------------------------------------------------------------------
 
-        if (op == NULL)
+        if (A_and_B_are_disjoint)
         { 
 
-            // For GB_wait, the pattern of A and B are known to be disjoint, so
-            // no operator is used, and op is NULL.  No typecasting is done.
+            // For GB_wait, the pattern of A and B are known to be disjoint.
+            // No typecasting is done in this case.
             ASSERT (ctype == A->type) ;
             memcpy (c, a, csize) ;
             return (true) ;

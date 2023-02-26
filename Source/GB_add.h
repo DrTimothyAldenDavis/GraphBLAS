@@ -80,7 +80,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     GrB_Matrix C,           // output matrix, static header
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
-    const GrB_BinaryOp op,  // op to perform C = op (A,B), or NULL if no op
+    const GrB_BinaryOp op,  // op to perform C = op (A,B)
     const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
     // from phase1:
     int64_t **Cp_handle,    // vector pointers for C
@@ -132,7 +132,8 @@ bool GB_iso_add             // c = op(a,b), return true if C is iso
     const GB_void *restrict alpha_scalar,   // of type op->xtype
     GrB_Matrix B,           // input matrix
     const GB_void *restrict beta_scalar,    // of type op->ytype
-    GrB_BinaryOp op,        // binary operator, if present
+    GrB_BinaryOp op,        // binary operator
+    const bool A_and_B_are_disjoint,
     const bool is_eWiseUnion
 ) ;
 
