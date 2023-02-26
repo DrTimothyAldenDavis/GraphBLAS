@@ -36,8 +36,14 @@
     #endif
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
 
+    #ifdef GB_JIT_KERNEL
+    #define D_iso GB_A_ISO
+    #define B_iso GB_B_ISO
+    #else
     const bool D_iso = D->iso ;
     const bool B_iso = B->iso ;
+    #endif
+
     const int64_t *restrict Bi = B->i ;
     const int64_t bnz = GB_nnz (B) ;
     const int64_t bvlen = B->vlen ;
@@ -58,7 +64,7 @@
         GB_PRAGMA_SIMD_VECTORIZE
         for (int64_t p = pstart ; p < pend ; p++)
         { 
-            int64_t i = GBI_B (Bi, p, bvlen) ;        // get row index of B(i,j)
+            int64_t i = GBI_B (Bi, p, bvlen) ;      // get row index of B(i,j)
             GB_DECLAREA (dii) ;
             GB_GETA (dii, Dx, i, D_iso) ;           // dii = D(i,i)
             GB_DECLAREB (bij) ;

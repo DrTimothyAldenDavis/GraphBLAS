@@ -88,10 +88,6 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     GB_void cscalar [GB_VLA(zsize)] ;
     bool C_iso = GB_iso_AxB (cscalar, A, D, A->vdim, semiring, flipxy, true) ;
 
-    #ifdef GB_DEBUGIFY_DEFN
-//  GB_debugify_ewise ( ... ) ;
-    #endif
-
     //--------------------------------------------------------------------------
     // copy the pattern of A into C
     //--------------------------------------------------------------------------
@@ -259,9 +255,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         // via JIT kernel
         //----------------------------------------------------------------------
 
-printf ("here\n") ;
         #if GB_JIT_ENABLED
-printf ("here2\n") ;
         if (info == GrB_NO_VALUE)
         { 
             info = GB_colscale_jit (C, A, D, mult, flipxy,

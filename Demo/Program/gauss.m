@@ -1,6 +1,7 @@
 % gauss.m: computes the same thing as gauss_demo.c
 
 format short g
+format compact
 A = zeros (4,4) ;
 
 for i = 0:3
@@ -18,6 +19,12 @@ sum (A, 'all')
 
 D = eye (4) ;
 C = D .* (A*A.')
+
+fprintf ('C=D*A\n') ;
+D = diag (diag (A)) ;
+C = D*A
+fprintf ('C=A*D\n') ;
+C = A*D
 
 C = ones (4,4) * (1 - 2i) ;
 C = C + A*A.'

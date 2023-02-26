@@ -76,10 +76,6 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     GB_void cscalar [GB_VLA(zsize)] ;
     bool C_iso = GB_iso_AxB (cscalar, D, B, D->vdim, semiring, flipxy, true) ;
 
-    #ifdef GB_DEBUGIFY_DEFN
-//  GB_debugify_ewise ( ... ) ;
-    #endif
-
     //--------------------------------------------------------------------------
     // copy the pattern of B into C
     //--------------------------------------------------------------------------
@@ -206,8 +202,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         // via the factory kernel
         //----------------------------------------------------------------------
 
-        bool done = false ;
-
+        info = GrB_NO_VALUE ;
         #ifndef GBCUDA_DEV
 
             //------------------------------------------------------------------
@@ -219,7 +214,6 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
             #define GB_BINOP_WORKER(mult,xname)                     \
             {                                                       \
                 info = GB_DxB(mult,xname) (C, D, B, nthreads) ;     \
-                done = (info != GrB_NO_VALUE) ;                     \
             }                                                       \
             break ;
 
@@ -245,14 +239,17 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: ewise: rowscale
+        if (info == GrB_NO_VALUE)
+        { 
+            info = GB_rowscale_jit (C, D, B, mult, flipxy, nthreads) ;
+        }
         #endif
 
         //----------------------------------------------------------------------
         // via the generic kernel
         //----------------------------------------------------------------------
 
-        if (!done)
+        if (info == GrB_NO_VALUE)
         {
 
             //------------------------------------------------------------------
@@ -326,6 +323,10 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
 
             // address of Cx [p]
             #define GB_CX(p) Cx +((p)*csize)
+
+            #define GB_C_TYPE GB_void
+
+            #include "GB_ewise_shared_definitions.h"
 
             if (flipxy)
             { 

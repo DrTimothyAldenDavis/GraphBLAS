@@ -86,6 +86,16 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
+(
+    GrB_Matrix C,
+    const GrB_Matrix D,
+    const GrB_Matrix B,
+    const GrB_BinaryOp multiply,
+    const bool flipxy,
+    const int nthreads
+) ;
+
 GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
 (
     GrB_Matrix C,                   // output matrix, static header

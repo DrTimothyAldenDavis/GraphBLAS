@@ -195,6 +195,20 @@ int main (void)
     printf ("\n=============== diag(AA') matrix:\n") ;
     printgauss (C) ;
 
+    // C = D*A
+    GrB_free (&D) ;
+    TRY (GrB_Matrix_new (&D, Gauss, 4, 4)) ;
+    TRY (GxB_set (A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+    TRY (GxB_set (D, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+    TRY (GrB_select (D, NULL, NULL, GrB_DIAG, A, 0, NULL)) ;
+    printgauss (D) ;
+    TRY (GrB_mxm (C, NULL, NULL, GaussSemiring, D, A, NULL)) ;
+    printgauss (C) ;
+
+    // C = A*D
+    TRY (GrB_mxm (C, NULL, NULL, GaussSemiring, A, D, NULL)) ;
+    printgauss (C) ;
+
     // C = (1,2) then C += A*A' where C is full
     gauss ciso ;
     ciso.real = 1 ;

@@ -173,7 +173,8 @@ void mexFunction
     CHECK (ecode == 2) ;
 
     FILE *fp = fopen ("/tmp/GB_tcov_gunk.h", "w") ;
-    GB_macrofy_binop (fp, "nothing", false, false, 199, NULL, NULL, NULL) ;
+    GB_macrofy_binop (fp, "nothing", false, false, false,
+        199, NULL, NULL, NULL) ;
     fclose (fp) ;
 
     //--------------------------------------------------------------------------

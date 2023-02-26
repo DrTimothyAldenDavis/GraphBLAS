@@ -31,6 +31,7 @@
 
 // ewise methods:
 #define GB_JIT_KERNEL_COLSCALE      10
+#define GB_JIT_KERNEL_ROWSCALE      11
 
 // ... etc FIXME: list them all here
 // or make this an enum
