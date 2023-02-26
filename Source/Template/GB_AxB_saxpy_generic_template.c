@@ -13,7 +13,7 @@
 #include "GB_AxB_shared_definitions.h"
 
 {
-    #if C_IS_SPARSE_OR_HYPERSPARSE            
+    #if GB_GENERIC_C_IS_SPARSE_OR_HYPERSPARSE            
     {
         // C is sparse or hypersparse
         ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;

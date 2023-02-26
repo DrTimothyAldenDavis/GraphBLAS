@@ -1033,7 +1033,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     GB_Type_code tcode = ttype->code ;
     const size_t tsize = ttype->size ;
-    bool op_2nd ;
+    bool op_is_2nd ;
 
     ASSERT_TYPE_OK (ttype, "ttype for build_factory", GB0) ;
 
@@ -1054,7 +1054,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         ytype = ttype ;
         ztype = ttype ;
         fdup = NULL ;
-        op_2nd = true ;
+        op_is_2nd = true ;
         ASSERT (GB_op_is_second (dup, ttype)) ;
 
     }
@@ -1083,7 +1083,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         ytype = dup->ytype ;
         ztype = dup->ztype ;
         fdup = dup->binop_function ;
-        op_2nd = GB_op_is_second (dup, ttype) ;
+        op_is_2nd = GB_op_is_second (dup, ttype) ;
     }
 
     //--------------------------------------------------------------------------
@@ -1301,7 +1301,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 #define GB_BLD_COPY(Tx,p,Sx,k)               \
                     memcpy (Tx +((p)*tsize), Sx +((k)*tsize), tsize) ;
 
-                if (op_2nd)
+                if (op_is_2nd)
                 { 
 
                     //----------------------------------------------------------
@@ -1384,7 +1384,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             #define GB_BLD_COPY(Tx,p,Sx,k)                   \
                 cast_S_to_T (Tx +((p)*tsize), Sx +((k)*ssize), ssize) ;
 
-            if (op_2nd)
+            if (op_is_2nd)
             { 
 
                 //--------------------------------------------------------------

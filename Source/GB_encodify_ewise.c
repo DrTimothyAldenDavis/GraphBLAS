@@ -18,6 +18,7 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     char **suffix,              // suffix for user-defined kernel
     // input:
     const int kcode,            // kernel to encode (add, emult, rowscale, ...)
+    const bool is_eWiseMult,
     const bool C_iso,
     const bool C_in_iso,
     const int C_sparsity,
@@ -48,32 +49,18 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     // primary encoding of the problem
     //--------------------------------------------------------------------------
 
-    GB_enumify_ewise (&encoding->code, C_iso, C_in_iso, C_sparsity, ctype,
-        M, Mask_struct, Mask_comp, binaryop, flipxy, A, B) ;
     encoding->kcode = kcode ;
+    GB_enumify_ewise (&encoding->code, is_eWiseMult, C_iso, C_in_iso,
+        C_sparsity, ctype, M, Mask_struct, Mask_comp, binaryop, flipxy, A, B) ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length
     //--------------------------------------------------------------------------
 
-    uint64_t hash ;
-    if (binaryop == NULL)
-    {
-        // GrB_wait uses a NULL binaryop; get hash and name from its data type.
-        // FIXME: have GrB_wait use GrB_SECOND_[TYPE] for builtin types, or
-        // create SECOND_UDT like the FIRST_UDT of GB_reduce_to_vector.
-        ASSERT (A != NULL) ;
-        hash = A->type->hash ;
-        encoding->suffix_len = (hash == 0) ? 0 : A->type->name_len ;
-        (*suffix) = (hash == 0) ? NULL : A->type->name ;
-    }
-    else
-    {
-        // typical case: get the hash and name from the binaryop
-        hash = binaryop->hash ;
-        encoding->suffix_len = (hash == 0) ? 0 : binaryop->name_len ;
-        (*suffix) = (hash == 0) ? NULL : binaryop->name ;
-    }
+    // if hash is zero, it denotes a builtion binary operator
+    uint64_t hash = binaryop->hash ;
+    encoding->suffix_len = (hash == 0) ? 0 : binaryop->name_len ;
+    (*suffix) = (hash == 0) ? NULL : binaryop->name ;
 
     //--------------------------------------------------------------------------
     // compute the hash of the entire problem

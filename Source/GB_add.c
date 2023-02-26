@@ -28,7 +28,7 @@
 
 // ctype is the type of matrix C.  The pattern of C is the union of A and B.
 
-// op may be NULL.  In this case, the intersection of A and B must be empty.
+// If A_and_B_are_disjoint is true, the intersection of A and B must be empty.
 // This is used by GB_wait only, for merging the pending tuple matrix T into A.
 // In this case, the result C is always sparse or hypersparse, not bitmap or
 // full.  Any duplicate pending tuples have already been summed in T, so the
@@ -65,6 +65,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     const GrB_Scalar alpha, // alpha and beta ignored for eWiseAdd,
     const GrB_Scalar beta,  // nonempty scalars for GxB_eWiseUnion
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    const bool A_and_B_are_disjoint,   // if true, A and B are disjoint
     GB_Werk Werk
 )
 {
@@ -82,7 +83,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     ASSERT_MATRIX_OK (A, "A for add", GB0) ;
     ASSERT_MATRIX_OK (B, "B for add", GB0) ;
-    ASSERT_BINARYOP_OK_OR_NULL (op, "op for add", GB0) ;
+    ASSERT_BINARYOP_OK (op, "op for add", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for add", GB0) ;
     ASSERT (A->vdim == B->vdim && A->vlen == B->vlen) ;
     ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim && A->vlen == M->vlen)) ;
@@ -173,7 +174,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         // count the number of entries in each vector of C
         info = GB_add_phase1 (
             // computed or used by phase1:
-            &Cp, &Cp_size, &Cnvec_nonempty, op == NULL,
+            &Cp, &Cp_size, &Cnvec_nonempty, A_and_B_are_disjoint,
             // from phase1a:
             TaskList, C_ntasks, C_nthreads,
             // from phase0:
@@ -213,7 +214,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     info = GB_add_phase2 (
         // computed or used by phase2:
-        C, ctype, C_is_csc, op,
+        C, ctype, C_is_csc, op, A_and_B_are_disjoint,
         // from phase1
         &Cp, Cp_size, Cnvec_nonempty,
         // from phase1a:

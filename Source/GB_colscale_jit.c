@@ -48,7 +48,7 @@ GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_COLSCALE,
-        false, false, GB_sparsity (C), C->type,
+        false, false, false, GB_sparsity (C), C->type,
         NULL, false, false, multiply, flipxy, A, D) ;
     if (hash == UINT64_MAX)
     {

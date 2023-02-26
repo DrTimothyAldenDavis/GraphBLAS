@@ -26,6 +26,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     const GrB_Scalar alpha, // alpha and beta ignored for eWiseAdd,
     const GrB_Scalar beta,  // nonempty scalars for GxB_eWiseUnion
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    const bool A_and_B_are_disjoint,   // if true, A and B are disjoint
     GB_Werk Werk
 ) ;
 
@@ -80,6 +81,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B), or NULL if no op
+    const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
     // from phase1:
     int64_t **Cp_handle,    // vector pointers for C
     size_t Cp_size,

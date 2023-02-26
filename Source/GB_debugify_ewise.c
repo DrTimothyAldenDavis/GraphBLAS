@@ -7,11 +7,15 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 #include "GB.h"
 #include "GB_stringify.h"
 
 void GB_debugify_ewise
 (
+    // method:
+    bool is_eWiseMult,      // if true, method is emult
     // C matrix:
     bool C_iso,             // if true, operator is ignored
     bool C_in_iso,          // if true, C is iso on input
@@ -22,7 +26,7 @@ void GB_debugify_ewise
     bool Mask_struct,
     bool Mask_comp,
     // operator:
-    GrB_BinaryOp binaryop,  // may be NULL (used by GB_wait)
+    GrB_BinaryOp binaryop,
     bool flipxy,
     // A and B matrices:
     GrB_Matrix A,
@@ -30,23 +34,24 @@ void GB_debugify_ewise
 )
 {
 
+    ASSERT (binaryop != NULL) ;
     uint64_t scode ;
 
     GrB_Type atype = A->type ;
     GrB_Type btype = B->type ;
 
     // enumify the ewise problem
-    bool builtin = GB_enumify_ewise (&scode, C_iso, C_in_iso, C_sparsity, ctype,
-        M, Mask_struct, Mask_comp, binaryop, flipxy, A, B) ;
+    bool builtin = GB_enumify_ewise (&scode, is_eWiseMult, C_iso, C_in_iso,
+        C_sparsity, ctype, M, Mask_struct, Mask_comp, binaryop, flipxy, A, B) ;
 
     // namify the ewise problem
     char ewise_name [256 + 8*GxB_MAX_NAME_LEN] ;
     GB_namify_problem (ewise_name, "GB_jit_ewise_", 12, scode, builtin,
-        (binaryop == NULL) ? "none" : binaryop->name,
+        binaryop->name,
         NULL,
-        (binaryop == NULL) ? "void" : binaryop->ztype->name,
-        (binaryop == NULL) ? "void" : binaryop->xtype->name,
-        (binaryop == NULL) ? "void" : binaryop->ytype->name,
+        binaryop->ztype->name,
+        binaryop->xtype->name,
+        binaryop->ytype->name,
         ctype->name,
         atype->name,
         btype->name) ;

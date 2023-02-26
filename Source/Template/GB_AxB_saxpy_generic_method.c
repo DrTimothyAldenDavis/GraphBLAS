@@ -81,7 +81,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     const int ntasks,
     const int nthreads,
 
-    #if C_IS_SPARSE_OR_HYPERSPARSE
+    #if GB_GENERIC_C_IS_SPARSE_OR_HYPERSPARSE
     // for saxpy3 only:
     GB_saxpy3task_struct *restrict SaxpyTasks,
     const int nfine,
@@ -125,13 +125,13 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
 
     // scalar workspace: because of typecasting, the x/y types need not
     // be the same as the size of the A and B types.
-    // FLIPXY false: aik = (xtype) A(i,k) and bkj = (ytype) B(k,j)
-    // FLIPXY true:  aik = (ytype) A(i,k) and bkj = (xtype) B(k,j)
-    size_t aik_size = FLIPXY ? ysize : xsize ;
-    size_t bkj_size = FLIPXY ? xsize : ysize ;
+    // GB_GENERIC_FLIPXY false: aik = (xtype) A(i,k) and bkj = (ytype) B(k,j)
+    // GB_GENERIC_FLIPXY true:  aik = (ytype) A(i,k) and bkj = (xtype) B(k,j)
+    size_t aik_size = GB_GENERIC_FLIPXY ? ysize : xsize ;
+    size_t bkj_size = GB_GENERIC_FLIPXY ? xsize : ysize ;
 
     GB_cast_function cast_A, cast_B ;
-    #if FLIPXY
+    #if GB_GENERIC_FLIPXY
     { 
         // A is typecasted to y, and B is typecasted to x
         cast_A = A_is_pattern ? NULL : 
@@ -160,7 +160,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     // definitions for GB_AxB_saxpy_generic_template.c
     #include "GB_AxB_saxpy3_template.h"
 
-    #if OP_IS_POSITIONAL
+    #if GB_GENERIC_OP_IS_POSITIONAL
     { 
 
         //----------------------------------------------------------------------
@@ -230,7 +230,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
         // is unchanged
         int64_t offset = GB_positional_offset (mult->opcode, NULL) ;
 
-        #if OP_IS_INT64
+        #if GB_GENERIC_OP_IS_INT64
         {
             #undef  GB_C_TYPE
             #define GB_C_TYPE int64_t
@@ -241,7 +241,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
             #define GB_C_SIZE (sizeof (int64_t))
             ASSERT (C->type == GrB_INT64) ;
             ASSERT (csize == sizeof (int64_t)) ;
-            #if OP_IS_FIRSTI
+            #if GB_GENERIC_OP_IS_FIRSTI
             { 
                 // GB_FIRSTI_binop_code   :   // z = first_i(A(i,k),y) == i
                 // GB_FIRSTI1_binop_code  :   // z = first_i1(A(i,k),y) == i+1
@@ -249,7 +249,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
                 #define GB_MULT(t, aik, bkj, i, k, j) t = i + offset
                 #include "GB_AxB_saxpy_generic_template.c"
             }
-            #elif OP_IS_FIRSTJ
+            #elif GB_GENERIC_OP_IS_FIRSTJ
             { 
                 // GB_FIRSTJ_binop_code   :   // z = first_j(A(i,k),y) == k
                 // GB_FIRSTJ1_binop_code  :   // z = first_j1(A(i,k),y) == k+1
@@ -279,7 +279,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
             #define GB_C_SIZE (sizeof (int32_t))
             ASSERT (C->type == GrB_INT32) ;
             ASSERT (csize == sizeof (int32_t)) ;
-            #if OP_IS_FIRSTI
+            #if GB_GENERIC_OP_IS_FIRSTI
             { 
                 // GB_FIRSTI_binop_code   :   // z = first_i(A(i,k),y) == i
                 // GB_FIRSTI1_binop_code  :   // z = first_i1(A(i,k),y) == i+1
@@ -287,7 +287,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
                 #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (i + offset)
                 #include "GB_AxB_saxpy_generic_template.c"
             }
-            #elif OP_IS_FIRSTJ
+            #elif GB_GENERIC_OP_IS_FIRSTJ
             { 
                 // GB_FIRSTJ_binop_code   :   // z = first_j(A(i,k),y) == k
                 // GB_FIRSTJ1_binop_code  :   // z = first_j1(A(i,k),y) == k+1
@@ -394,7 +394,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
         #undef  GB_C_SIZE
         #define GB_C_SIZE csize
 
-        #if OP_IS_FIRST
+        #if GB_GENERIC_OP_IS_FIRST
         { 
             // t = A(i,k)
             ASSERT (B_is_pattern) ;
@@ -402,7 +402,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
             #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, aik, csize)
             #include "GB_AxB_saxpy_generic_template.c"
         }
-        #elif OP_IS_SECOND
+        #elif GB_GENERIC_OP_IS_SECOND
         { 
             // t = B(i,k)
             ASSERT (A_is_pattern) ;
@@ -410,7 +410,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
             #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, bkj, csize)
             #include "GB_AxB_saxpy_generic_template.c"
         }
-        #elif FLIPXY
+        #elif GB_GENERIC_FLIPXY
         { 
             // t = B(k,j) * A(i,k)
             ASSERT (fmult != NULL) ;

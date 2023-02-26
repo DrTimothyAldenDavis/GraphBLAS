@@ -13,10 +13,6 @@
 
 // If so, determine the opcodes and type codes of the semiring.
 
-// If the op is NULL, then it is the implicit GrB_SECOND_[A_type] operator.
-// This is a built-in operator for built-in types.  This feature is only used
-// by GB_wait.
-
 // This function is not used by the CUDA jitified kernels, since they can
 // typecast the entries in the matrices A and B to the types of x and y of the
 // operator, as needed.
@@ -46,27 +42,11 @@ bool GB_binop_builtin               // true if binary operator is builtin
     // check if the operator is builtin, with no typecasting
     //--------------------------------------------------------------------------
 
-    GrB_Type op_xtype, op_ytype, op_ztype ;
-    if (op == NULL)
-    { 
-        // GB_wait: implicit GB_SECOND_[TYPE] operator
-        ASSERT (A_type == B_type) ;
-        (*opcode) = GB_SECOND_binop_code ;
-        op_xtype = A_type ;
-        op_ytype = A_type ;
-        op_ztype = A_type ;
-    }
-    else
-    { 
-        (*opcode) = op->opcode ;
-        op_xtype = op->xtype ;
-        op_ytype = op->ytype ;
-        op_ztype = op->ztype ;
-    }
-
-    (*xcode) = op_xtype->code ;
-    (*ycode) = op_ytype->code ;
-    (*zcode) = op_ztype->code ;
+    ASSERT (op != NULL) ;
+    (*opcode) = op->opcode ;
+    (*xcode) = op->xtype->code ;
+    (*ycode) = op->ytype->code ;
+    (*zcode) = op->ztype->code ;
 
     if (flipxy)
     { 
@@ -88,7 +68,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
     // check if A matches the input to the operator
     if (!A_is_pattern && !op_is_positional)
     {
-        if ((A_type != op_xtype) || (A_type->code >= GB_UDT_code))
+        if ((A_type != op->xtype) || (A_type->code >= GB_UDT_code))
         { 
             // A is a user-defined type, or its type does not match the input
             // to the operator
@@ -99,7 +79,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
     // check if B matches the input to the operator
     if (!B_is_pattern && !op_is_positional)
     {
-        if ((B_type != op_ytype) || (B_type->code >= GB_UDT_code))
+        if ((B_type != op->ytype) || (B_type->code >= GB_UDT_code))
         { 
             // B is a user-defined type, or its type does not match the input
             // to the operator

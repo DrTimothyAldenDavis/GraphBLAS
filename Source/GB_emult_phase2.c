@@ -128,7 +128,7 @@ GrB_Info GB_emult_phase2             // C=A.*B or C<M>=A.*B
     bool C_iso = GB_iso_emult (cscalar, ctype, A, B, op) ;
 
     #ifdef GB_DEBUGIFY_DEFN
-    GB_debugify_ewise (C_iso, false, C_sparsity, ctype, M,
+    GB_debugify_ewise (true, C_iso, false, C_sparsity, ctype, M,
         Mask_struct, Mask_comp, op, false, A, B) ;
     #endif
 

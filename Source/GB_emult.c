@@ -137,7 +137,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
             return (GB_add (C, ctype, C_is_csc, M, Mask_struct,
                 Mask_comp, mask_applied, A, B, false, NULL, NULL,
-                op, Werk)) ;
+                op, false, Werk)) ;
 
         case GB_EMULT_METHOD2 :  // A sparse/hyper, B bitmap/full
 

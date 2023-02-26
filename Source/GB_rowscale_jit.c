@@ -44,7 +44,7 @@ GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_ROWSCALE,
-        false, false, GB_sparsity (C), C->type,
+        false, false, false, GB_sparsity (C), C->type,
         NULL, false, false, multiply, flipxy, D, B) ;
     if (hash == UINT64_MAX)
     {

@@ -16,12 +16,13 @@ void GB_macrofy_binop
     FILE *fp,
     // input:
     const char *macro_name,
-    bool flipxy,                // if true: op is f(y,x), multipicative only
+    bool flipxy,                // if true: op is f(y,x)
     bool is_monoid_or_build,    // if true: additive operator for monoid,
                                 // or binary op for GrB_Matrix_build
     bool is_ewise,              // if true: binop for ewise methods
     int ecode,
-    GrB_BinaryOp op,            // may be NULL (for GB_wait, or C iso)
+    bool C_iso,                 // if true: C is iso
+    GrB_BinaryOp op,            // NULL if C is iso
     // output:
     const char **f_handle,
     const char **u_handle
@@ -31,11 +32,11 @@ void GB_macrofy_binop
     const char *f = NULL, *u = NULL, *g = NULL ;
     const char *karg = is_ewise ? "" : ",k" ;
 
-    if (op == NULL)
+    if (C_iso)
     {
 
         //----------------------------------------------------------------------
-        // GB_wait, or C is iso: no operator
+        // C is iso: no operator
         //----------------------------------------------------------------------
 
         if (is_monoid_or_build)
@@ -56,6 +57,7 @@ void GB_macrofy_binop
         // user-defined operator
         //----------------------------------------------------------------------
 
+        ASSERT (op != NULL) ;
         bool is_macro = GB_macrofy_defn (fp, 3, op->name, op->defn) ;
         if (is_macro)
         {
@@ -841,7 +843,7 @@ void GB_macrofy_binop
                 break ;
 
             //------------------------------------------------------------------
-            // no-op for GB_wait (an implicit 2nd operator)
+            // no-op: same as second operator
             //------------------------------------------------------------------
 
             case 140 : 

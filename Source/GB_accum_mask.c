@@ -399,7 +399,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             bool ignore ;
             GB_OK (GB_add (Z, C->type, C->is_csc, (apply_mask) ? M : NULL,
                 Mask_struct, Mask_comp, &ignore, C, T, false, NULL, NULL,
-                accum, Werk)) ;
+                accum, false, Werk)) ;
             GB_Matrix_free (Thandle) ;
         }
 

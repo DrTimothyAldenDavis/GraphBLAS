@@ -113,8 +113,8 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     fprintf (fp, "\n// monoid:\n") ;
     const char *u_expr ;
     GB_macrofy_type (fp, "Z", "_", (zcode == 0) ? "GB_void" : ztype->name) ;
-    GB_macrofy_monoid (fp, add_ecode, id_ecode, term_ecode,
-        (C_iso) ? NULL : monoid, is_positional, &u_expr) ;
+    GB_macrofy_monoid (fp, add_ecode, id_ecode, term_ecode, C_iso, monoid,
+        is_positional, &u_expr) ;
 
     //--------------------------------------------------------------------------
     // construct macros for the multiply operator
@@ -123,8 +123,8 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     fprintf (fp, "\n// multiplicative operator%s:\n",
         flipxy ? " (flipped)" : "") ;
     const char *f_expr ;
-    GB_macrofy_binop (fp, "GB_MULT", flipxy, false, false, mult_ecode,
-        (C_iso) ? NULL : mult, &f_expr, NULL) ;
+    GB_macrofy_binop (fp, "GB_MULT", flipxy, false, false, mult_ecode, C_iso,
+        mult, &f_expr, NULL) ;
 
     //--------------------------------------------------------------------------
     // multiply-add operator

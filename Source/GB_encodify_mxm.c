@@ -48,9 +48,9 @@ uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
     // primary encoding of the problem
     //--------------------------------------------------------------------------
 
+    encoding->kcode = kcode ;
     GB_enumify_mxm (&encoding->code, C_iso, C_in_iso, C_sparsity, ctype,
         M, Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
-    encoding->kcode = kcode ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length

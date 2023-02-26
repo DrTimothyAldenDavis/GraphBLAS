@@ -16,7 +16,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     FILE *fp,                   // target file to write, already open
     // input:
     uint64_t scode,
-    GrB_BinaryOp binaryop,      // binaryop to macrofy (NULL for GB_wait)
+    GrB_BinaryOp binaryop,      // binaryop to macrofy
     GrB_Type ctype,
     GrB_Type atype,
     GrB_Type btype
@@ -75,28 +75,6 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         ztype = NULL ;
         fprintf (fp, "// op: symbolic only (C is iso)\n\n") ;
     }
-    else if (binaryop == NULL)
-    {  
-        // GB_wait: A and B are disjoint and the operator is not applied
-        xtype_name = atype->name ;
-        ytype_name = atype->name ;
-        ztype_name = atype->name ;
-        xtype = atype ;
-        ytype = atype ;
-        ztype = atype ;
-        if (atype->hash == 0)
-        {
-            // GrB_wait for a built-in type
-            fprintf (fp, "// op: none (for GrB_wait), type: %s\n\n",
-                xtype_name) ;
-        }
-        else
-        {
-            // GrB_wait for a user-defined type
-            fprintf (fp, "// op: none (for GrB_wait), user type: %s\n\n",
-                xtype_name) ;
-        }
-    }
     else
     { 
         // general case
@@ -126,18 +104,8 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // construct the typedefs
     //--------------------------------------------------------------------------
 
-    if (C_iso)
+    if (!C_iso)
     {
-        // no types to handle for the symbolic case
-    }
-    else if (binaryop == NULL)
-    { 
-        // GB_wait: all types must be the same
-        GB_macrofy_typedefs (fp, atype, NULL, NULL, NULL, NULL, NULL) ;
-    }
-    else
-    { 
-        // general case
         GB_macrofy_typedefs (fp,
             (ccode == 0 ) ? NULL : ctype,
             (acode == 0 || acode == 15) ? NULL : atype,
@@ -155,8 +123,8 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// binary operator%s:\n", flipxy ? " (flipped)" : "") ;
-    GB_macrofy_binop (fp, "GB_BINOP", flipxy, false, true, binop_ecode,
-        (C_iso) ? NULL : binaryop, NULL, NULL) ;
+    GB_macrofy_binop (fp, "GB_BINOP", flipxy, false, true, binop_ecode, C_iso,
+        binaryop, NULL, NULL) ;
 
     //--------------------------------------------------------------------------
     // macros for the C matrix
@@ -179,13 +147,11 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // if flipxy true:   A is typecasted to y, and B is typecasted to x.
 
     GB_macrofy_input (fp, "a", "A", "A", true,
-        (binaryop == NULL) ? ctype :
-            (flipxy ? binaryop->ytype : binaryop->xtype),
+        flipxy ? binaryop->ytype : binaryop->xtype,
         atype, asparsity, acode, A_iso_code, -1) ;
 
     GB_macrofy_input (fp, "b", "B", "B", true,
-        (binaryop == NULL) ? ctype :
-            (flipxy ? binaryop->xtype : binaryop->ytype),
+        flipxy ? binaryop->xtype : binaryop->ytype,
         btype, bsparsity, bcode, B_iso_code, -1) ;
 
 }

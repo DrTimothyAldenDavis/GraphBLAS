@@ -51,7 +51,14 @@ GrB_Info GB_op_name_and_defn
     // FIXME: this can get a mangled name; see the BF methods in LAGraph
 
     memset (op_name, 0, GxB_MAX_NAME_LEN) ;
-    if (input_name != NULL)
+    if (!user_op)
+    { 
+        // FIRST_UDT operator created by GB_reduce_to_vector or
+        // SECOND_UDT operator created by GB_wait
+        ASSERT (input_name != NULL) ;
+        strncpy (op_name, input_name, GxB_MAX_NAME_LEN-1) ;
+    }
+    else if (input_name != NULL)
     {
         // copy the input_name into the working name
         char working [GxB_MAX_NAME_LEN] ;
@@ -78,8 +85,8 @@ GrB_Info GB_op_name_and_defn
     }
     else
     { 
-        // no op_name, so give it a generic name
-        snprintf (op_name, GxB_MAX_NAME_LEN-1, "unnamed_user_op") ;
+        // the user-defined op has no name, so give it a generic name
+        strncpy (op_name, "user_op", GxB_MAX_NAME_LEN-1) ;
     }
 
     // ensure op_name is null-terminated

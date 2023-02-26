@@ -22,6 +22,7 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
     // input:
+    bool is_eWiseMult,      // true for eWiseMult, false otherwise
     // C matrix:
     bool C_iso,             // if true, C is iso on output
     bool C_in_iso,          // if true, C is iso on input
@@ -32,7 +33,7 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool Mask_struct,       // mask is structural
     bool Mask_comp,         // mask is complemented
     // operator:
-    GrB_BinaryOp binaryop,  // the binary operator to enumify (can be NULL)
+    GrB_BinaryOp binaryop,  // the binary operator to enumify
     bool flipxy,            // multiplier is: op(a,b) or op(b,a)
     // A and B:
     GrB_Matrix A,           // NULL for unary apply with binop, bind 1st
@@ -54,6 +55,7 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
 
     GB_Opcode binaryop_opcode ;
     GB_Type_code xcode, ycode, zcode ;
+    ASSERT (op != NULL) ;
 
     if (C_iso)
     {
@@ -62,17 +64,6 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
         xcode = 0 ;
         ycode = 0 ;
         zcode = 0 ;
-    }
-    else if (binaryop == NULL)
-    {
-        // GB_wait: A and B are disjoint and the operator is not applied
-        binaryop_opcode = GB_NOP_code ;
-        ASSERT (atype == btype) ;
-        ASSERT (ctype == btype) ;
-        ASSERT (atype != NULL) ;
-        xcode = atype->code ;
-        ycode = atype->code ;
-        zcode = atype->code ;
     }
     else
     {
@@ -115,16 +106,27 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool op_is_second = (binaryop_opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (binaryop_opcode == GB_PAIR_binop_code) ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (binaryop_opcode) ;
-    if (op_is_second || op_is_pair || op_is_positional || C_iso)
+
+    if (op_is_positional || C_iso)
     {
-        // x is not used
+        // x and y are not used, and neither are the values of A or B
         xcode = 0 ;
-    }
-    if (op_is_first || op_is_pair || op_is_positional || C_iso)
-    {
-        // y is not used
         ycode = 0 ;
     }
+    else if (is_eWiseMult)
+    {
+        if (op_is_second || op_is_pair)
+        {
+            // x is not used, and neither are the values of A
+            xcode = 0 ;
+        }
+        if (op_is_first || op_is_pair)
+        {
+            // y is not used, and neither are the values of B
+            ycode = 0 ;
+        }
+    }
+
     bool A_is_pattern = (xcode == 0) ;
     bool B_is_pattern = (ycode == 0) ;
 

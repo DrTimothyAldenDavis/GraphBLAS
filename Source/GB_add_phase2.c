@@ -57,6 +57,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B), or NULL if no op
+    const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
     // from phase1:
     int64_t **Cp_handle,    // vector pointers for C
     size_t Cp_size,
@@ -120,58 +121,43 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     ASSERT (C_is_sparse_or_hyper == (Cp != NULL)) ;
     ASSERT (C_is_hyper == (Ch != NULL)) ;
 
-    GB_Opcode opcode = (op == NULL) ? GB_NOP_code : op->opcode ;
+    GB_Opcode opcode = op->opcode ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
     bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
     bool op_is_second = (opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
 
 #ifdef GB_DEBUG
-    if (op == NULL)
+    // assert that the op is compatible with A, B, and C
+    if (!(GB_as_if_full (A) && GB_as_if_full (B)))
     {
-        // GB_wait does no typecasting.  A and T have the same type when
-        // computing A=A+T, and no operator is used since A and T have disjoint
-        // nonzero patterns.  No mask is used.
-        ASSERT (ctype == A->type) ;
-        ASSERT (ctype == B->type) ;
-        ASSERT (M == NULL) ;
-        ASSERT (C_is_sparse_or_hyper) ;
+        // eWiseMult uses GB_add when A and B are both as-if-full,
+        // and in this case, the entries of A and B are never typecasted
+        // directly to C.
+        ASSERT (GB_Type_compatible (ctype, A->type)) ;
+        ASSERT (GB_Type_compatible (ctype, B->type)) ;
     }
-    else
-    {
-        // assert that the op is compatible with A, B, and C
-        if (!(GB_as_if_full (A) && GB_as_if_full (B)))
-        {
-            // eWiseMult uses GB_add when A and B are both as-if-full,
-            // and in this case, the entries of A and B are never typecasted
-            // directly to C.
-            ASSERT (GB_Type_compatible (ctype, A->type)) ;
-            ASSERT (GB_Type_compatible (ctype, B->type)) ;
-        }
-        ASSERT (GB_Type_compatible (ctype, op->ztype)) ;
-        ASSERT (GB_IMPLIES (!(op_is_second || op_is_pair || op_is_positional),
-                GB_Type_compatible (A->type, op->xtype))) ;
-        ASSERT (GB_IMPLIES (!(op_is_first  || op_is_pair || op_is_positional),
-                GB_Type_compatible (B->type, op->ytype))) ;
-    }
+    ASSERT (GB_Type_compatible (ctype, op->ztype)) ;
+    ASSERT (GB_IMPLIES (!(op_is_second || op_is_pair || op_is_positional),
+            GB_Type_compatible (A->type, op->xtype))) ;
+    ASSERT (GB_IMPLIES (!(op_is_first  || op_is_pair || op_is_positional),
+            GB_Type_compatible (B->type, op->ytype))) ;
 #endif
 
     //--------------------------------------------------------------------------
     // get the typecasting functions
     //--------------------------------------------------------------------------
 
-    GxB_binary_function fadd ;
     size_t asize, bsize, xsize, ysize, zsize ;
     GB_cast_function cast_A_to_C = NULL, cast_B_to_C = NULL ;
     GB_cast_function cast_A_to_X, cast_B_to_Y, cast_Z_to_C ;
     const size_t csize = ctype->size ;
     GB_Type_code ccode = ctype->code ;
 
-    if (op == NULL)
+    if (A_and_B_are_disjoint)
     { 
-        // GB_wait: implicit GB_SECOND_[type] operator with no typecasting
+        // GB_wait: GB_SECOND_[type] operator with no typecasting
         ASSERT (!is_eWiseUnion) ;
-        fadd = NULL ;               // the operator is not called
         asize = csize ;
         bsize = csize ;
         xsize = csize ;
@@ -186,7 +172,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     else
     {
         // normal case, with optional typecasting
-        fadd = op->binop_function ;       // NULL if op is positional
         asize = A->type->size ;
         bsize = B->type->size ;
 
@@ -251,7 +236,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         B, beta_scalar, op, is_eWiseUnion) ;
 
     #ifdef GB_DEBUGIFY_DEFN
-    GB_debugify_ewise (C_iso, false, C_sparsity, ctype, M,
+    GB_debugify_ewise (false, C_iso, false, C_sparsity, ctype, M,
         Mask_struct, Mask_comp, op, false, A, B) ;
     #endif
 
@@ -333,6 +318,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         // via the factory kernel
         //----------------------------------------------------------------------
 
+        info = GrB_NO_VALUE ;
         #ifndef GBCUDA_DEV
 
             //------------------------------------------------------------------
@@ -348,7 +334,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                     A, B, is_eWiseUnion, alpha_scalar, beta_scalar,         \
                     Ch_is_Mh, C_to_M, C_to_A, C_to_B,                       \
                     TaskList, C_ntasks, C_nthreads, Werk) ;                 \
-                done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
 
@@ -363,6 +348,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             { 
                 #include "GB_binop_factory.c"
             }
+
+            done = (info != GrB_NO_VALUE) ;
 
             // TODO: M, A, and B can be sliced before calling the worker, then
             // the worker can't run out of memory. Then pass in the ek_slice
@@ -393,18 +380,17 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     {
 
         #include "GB_generic.h"
-        GB_BURBLE_MATRIX (C, "(generic add: %s) ",
-            (op == NULL) ? "2nd" : op->name) ;
+        GB_BURBLE_MATRIX (C, "(generic add: %s) ", op->name) ;
 
         // C(i,j) = (ctype) A(i,j), located in Ax [pA]
         #undef  GB_COPY_A_TO_C 
         #define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso)                             \
-            cast_A_to_C (Cx +((pC)*csize), Ax +((A_iso) ? 0: (pA)*asize), asize) ;
+        cast_A_to_C (Cx +((pC)*csize), Ax +((A_iso) ? 0: (pA)*asize), asize) ;
 
         // C(i,j) = (ctype) B(i,j), located in Bx [pB]
         #undef  GB_COPY_B_TO_C
         #define GB_COPY_B_TO_C(Cx,pC,Bx,pB,B_iso)                             \
-            cast_B_to_C (Cx +((pC)*csize), Bx +((B_iso) ? 0: (pB)*bsize), bsize) ;
+        cast_B_to_C (Cx +((pC)*csize), Bx +((B_iso) ? 0: (pB)*bsize), bsize) ;
 
         // declare aij as xtype
         #undef  GB_DECLAREA
@@ -510,12 +496,14 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             //------------------------------------------------------------------
 
             #undef GB_POSITIONAL_OP
+            GxB_binary_function fadd = op->binop_function ;
 
             // C(i,j) = (ctype) (A(i,j) + B(i,j))
-            // not used if op is null since the intersection of A and B is empty
+            // not used if fadd is null since the intersection of A and B is
+            // empty
             #undef  GB_BINOP
             #define GB_BINOP(cij, aij, bij, i, j)   \
-                ASSERT (op != NULL) ;               \
+                ASSERT (fadd != NULL) ;             \
                 GB_void z [GB_VLA(zsize)] ;         \
                 fadd (z, aij, bij) ;                \
                 cast_Z_to_C (cij, z, csize) ;

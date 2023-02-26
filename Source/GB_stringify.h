@@ -100,6 +100,7 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     char **suffix,              // suffix for user-defined kernel
     // input:
     const int kcode,            // kernel to encode (add, emult, rowscale, ...)
+    const bool is_eWiseMult,
     const bool C_iso,
     const bool C_in_iso,
     const int C_sparsity,
@@ -118,6 +119,7 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
     // input:
+    bool is_eWiseMult,      // true for eWiseMult, false otherwise
     // C matrix:
     bool C_iso,             // if true, C is iso on output
     bool C_in_iso,          // if true, C is iso on input
@@ -301,7 +303,8 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     int add_ecode,      // binary op as an enum
     int id_ecode,       // identity value as an enum
     int term_ecode,     // terminal value as an enum (<= 28 is terminal)
-    GrB_Monoid monoid,  // monoid to macrofy; null if C is iso for GrB_mxm
+    bool C_iso,         // true if C is iso
+    GrB_Monoid monoid,  // monoid to macrofy
     bool disable_terminal_condition,    // if true, the monoid is assumed
                         // to be non-terminal.  For the (times, firstj, int64)
                         // semiring, times is normally a terminal monoid, but
@@ -335,12 +338,13 @@ void GB_macrofy_binop
     FILE *fp,
     // input:
     const char *macro_name,
-    bool flipxy,                // if true: op is f(y,x), multipicative only
+    bool flipxy,                // if true: op is f(y,x)
     bool is_monoid_or_build,    // if true: additive operator for monoid,
                                 // or binary op for GrB_Matrix_build
     bool is_ewise,              // if true: binop for ewise methods
     int ecode,
-    GrB_BinaryOp op,            // may be NULL (for GB_wait, or C iso)
+    bool C_iso,                 // if true: C is iso
+    GrB_BinaryOp op,            // NULL if C is iso
     // output:
     const char **f_handle,
     const char **u_handle
@@ -605,6 +609,8 @@ void GB_debugify_mxm
 
 void GB_debugify_ewise
 (
+    // method:
+    bool is_eWiseMult,      // if true, method is emult
     // C matrix:
     bool C_iso,             // if true, operator is ignored
     bool C_in_iso,          // if true, C is iso on input
