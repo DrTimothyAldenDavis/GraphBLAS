@@ -25,7 +25,7 @@
     const int64_t *restrict Bp = B->p ;
     const int64_t *restrict Bh = B->h ;
     const int64_t *restrict Bi = B->i ;
-    #if GB_JIT_KERNEL
+    #ifdef GB_JIT_KERNEL
     #define B_iso GB_B_ISO
     #else
     const bool B_iso = B->iso ;
