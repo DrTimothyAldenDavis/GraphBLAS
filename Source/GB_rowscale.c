@@ -302,7 +302,6 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
             //------------------------------------------------------------------
 
             // dii = D(i,i), located in Dx [i]
-            #define GB_A_IS_PATTERN 0
             #define GB_DECLAREA(dii)                                    \
                 GB_void dii [GB_VLA(dii_size)] ;
             #define GB_GETA(dii,Dx,i,D_iso)                             \
@@ -312,7 +311,6 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
                 }
 
             // bij = B(i,j), located in Bx [pB]
-            #define GB_B_IS_PATTERN 0
             #define GB_DECLAREB(bij)                                    \
                 GB_void bij [GB_VLA(bij_size)] ;
             #define GB_GETB(bij,Bx,pB,B_iso)                            \

@@ -41,13 +41,12 @@ void GB_macrofy_input
         return ;
     }
 
-    int A_is_pattern = ((acode == 0) ? 1 : 0) ||
-        (atype == NULL) || (a2type == NULL) ;
+    int A_is_pattern = ((acode == 0) ? 1 : 0) || (atype == NULL) ;
+
     if (do_matrix_macros)
     {
         GB_macrofy_sparsity (fp, Aname, asparsity) ;
         fprintf (fp, "#define GB_%s_ISO %d\n", Aname, A_iso_code) ;
-        fprintf (fp, "#define GB_%s_IS_PATTERN %d\n", Aname, A_is_pattern) ;
         if (azombies >= 0)
         {
             // if negative, do not create the macro at all.  Typically this
@@ -58,13 +57,12 @@ void GB_macrofy_input
         if (A_is_pattern)
         { 
             // values of A are not accessed
+            fprintf (fp, "#define GB_%s_IS_PATTERN 1\n", Aname) ;
             GB_macrofy_type (fp, Aname, "_", "void") ;
-            GB_macrofy_type (fp, Aname, "2", "void") ;
         }
         else
         { 
             GB_macrofy_type (fp, Aname, "_", atype->name) ;
-            GB_macrofy_type (fp, Aname, "2", a2type->name) ;
         }
     }
 
@@ -72,12 +70,18 @@ void GB_macrofy_input
     // construct the macros to declare scalars and get values from the matrix
     //--------------------------------------------------------------------------
 
-    if (A_is_pattern)
+    if (A_is_pattern || a2type == NULL)
     {
 
         //----------------------------------------------------------------------
         // no need to access the values of A
         //----------------------------------------------------------------------
+
+        if (do_matrix_macros)
+        {
+            // aij is not needed as input to the operator
+            GB_macrofy_type (fp, Aname, "2", "void") ;
+        }
 
         fprintf (fp, "#define GB_DECLARE%s(%s)\n", Amacro, aname) ;
         fprintf (fp, "#define GB_GET%s(%s,%sx,p,iso)\n", Amacro, aname, Aname) ;
@@ -101,6 +105,11 @@ void GB_macrofy_input
 
         //      float aij ;
         //      float w [32] ;
+
+        if (do_matrix_macros)
+        {
+            GB_macrofy_type (fp, Aname, "2", a2type->name) ;
+        }
 
         fprintf (fp, "#define GB_DECLARE%s(%s) %s %s\n",
             Amacro, aname, a2type->name, aname) ;

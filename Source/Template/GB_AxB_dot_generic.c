@@ -82,11 +82,13 @@
         ASSERT (!flipxy) ;
 
         // aki = A(i,k), located in Ax [A_iso?0:(pA)], but value not used
+        #undef  GB_A_IS_PATTERN
         #define GB_A_IS_PATTERN 1
         #define GB_DECLAREA(aki)
         #define GB_GETA(aki,Ax,pA,A_iso)
 
         // bkj = B(k,j), located in Bx [B_iso?0:pB], but value not used
+        #undef  GB_B_IS_PATTERN
         #define GB_B_IS_PATTERN 1
         #define GB_DECLAREB(bkj)
         #define GB_GETB(bkj,Bx,pB,B_iso)

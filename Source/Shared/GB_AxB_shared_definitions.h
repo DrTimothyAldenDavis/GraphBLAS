@@ -103,6 +103,16 @@
 #define GB_IS_SECONDJ_MULTIPLIER 0
 #endif
 
+// 1 if values of A not accessed
+#ifndef GB_A_IS_PATTERN
+#define GB_A_IS_PATTERN 0
+#endif
+
+// 1 if values of B not accessed
+#ifndef GB_B_IS_PATTERN
+#define GB_B_IS_PATTERN 0
+#endif
+
 //------------------------------------------------------------------------------
 // numerical operations and assignments
 //------------------------------------------------------------------------------

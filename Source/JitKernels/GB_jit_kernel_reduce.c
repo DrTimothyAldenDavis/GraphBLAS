@@ -50,7 +50,6 @@
     #define GBI_A(Ai,p,vlen) ((p) % (vlen))
     #define GBB_A(Ab,p)      Ab [p]
     #define GB_A_ISO 0
-    #define GB_A_IS_PATTERN 0
     #define GB_A_HAS_ZOMBIES 0
     #define GB_A_TYPE double
     #define GB_A2TYPE double

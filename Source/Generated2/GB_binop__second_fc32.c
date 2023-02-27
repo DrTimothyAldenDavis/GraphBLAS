@@ -18,17 +18,15 @@
 
 // A matrix:
 #define GB_A_TYPE GxB_FC32_t
-#define GB_A2TYPE GxB_FC32_t
+#define GB_A2TYPE void
 #define GB_DECLAREA(aij) GxB_FC32_t aij
 #define GB_GETA(aij,Ax,pA,A_iso)
-#define GB_A_IS_PATTERN 1
 
 // B matrix:
 #define GB_B_TYPE GxB_FC32_t
 #define GB_B2TYPE GxB_FC32_t
 #define GB_DECLAREB(bij) GxB_FC32_t bij
 #define GB_GETB(bij,Bx,pB,B_iso) bij = Bx [(B_iso) ? 0 : (pB)]
-#define GB_B_IS_PATTERN 0
 
 // C matrix:
 #define GB_C_TYPE GxB_FC32_t
@@ -125,7 +123,6 @@ GrB_Info GB (_AxD__second_fc32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #include "GB_colscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -146,7 +143,6 @@ GrB_Info GB (_DxB__second_fc32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #include "GB_rowscale_template.c"
     return (GrB_SUCCESS) ;
     #endif

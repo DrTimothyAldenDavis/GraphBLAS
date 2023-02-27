@@ -294,6 +294,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // using a built-in binary operator (except for positional operators)
     //--------------------------------------------------------------------------
 
+    #include "GB_ewise_shared_definitions.h"
     #define GB_PHASE_2_OF_2
 
     bool done = false ;

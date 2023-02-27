@@ -27,7 +27,7 @@
 #define GB_GETA(aik,Ax,pA,A_iso)
 
 // B matrix, typecast to B2 for multiplier input
-#define GB_B_IS_PATTERN 0
+
 #define GB_B_TYPE GxB_FC32_t
 #define GB_B2TYPE GxB_FC32_t
 #define GB_DECLAREB(bkj) GxB_FC32_t bkj

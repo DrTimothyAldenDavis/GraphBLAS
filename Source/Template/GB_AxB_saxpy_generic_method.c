@@ -178,11 +178,13 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
         ASSERT (B_is_pattern) ;
 
         // aik = A(i,k), located in Ax [A_iso ? 0:pA], value not used
+        #undef  GB_A_IS_PATTERN
         #define GB_A_IS_PATTERN 1
         #define GB_DECLAREA(aik)
         #define GB_GETA(aik,Ax,pA,A_iso)
 
         // bkj = B(k,j), located in Bx [B_iso ? 0:pB], value not used
+        #undef  GB_B_IS_PATTERN
         #define GB_B_IS_PATTERN 1
         #define GB_DECLAREB(bkj)
         #define GB_GETB(bkj,Bx,pB,B_iso)

@@ -109,28 +109,31 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool op_is_pair   = (binaryop_opcode == GB_PAIR_binop_code) ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (binaryop_opcode) ;
 
-    if (op_is_positional || C_iso)
+    if (op_is_positional || op_is_pair || C_iso)
     {
-        // x and y are not used, and neither are the values of A or B
+        // x and y are not used
         xcode = 0 ;
         ycode = 0 ;
     }
-    else if (is_eWiseMult)
+    else if (op_is_second)
     {
-        if (op_is_second || op_is_pair)
-        {
-            // x is not used, and neither are the values of A
-            xcode = 0 ;
-        }
-        if (op_is_first || op_is_pair)
-        {
-            // y is not used, and neither are the values of B
-            ycode = 0 ;
-        }
+        // x is not used
+        xcode = 0 ;
+    }
+    else if (op_is_first)
+    {
+        // y is not used
+        ycode = 0 ;
     }
 
-    bool A_is_pattern = (xcode == 0) ;
-    bool B_is_pattern = (ycode == 0) ;
+    bool A_is_pattern = false ;
+    bool B_is_pattern = false ;
+
+    if (is_eWiseMult || is_eWiseUnion)
+    {
+        A_is_pattern = (xcode == 0) ;   // A is not needed if x is not used
+        B_is_pattern = (ycode == 0) ;   // B is not needed if x is not used
+    }
 
     //--------------------------------------------------------------------------
     // enumify the binary operator
@@ -152,10 +155,11 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
 
     int acode = (A == NULL) ? 15 : (A_is_pattern ? 0 : atype->code) ; // 0 to 15
     int bcode = (B == NULL) ? 15 : (B_is_pattern ? 0 : btype->code) ; // 0 to 15
+
     int ccode = C_iso ? 0 : ctype->code ;          // 0 to 14
 
-    int A_iso_code = (A_is_pattern || A->iso) ? 1 : 0 ;
-    int B_iso_code = (B_is_pattern || B->iso) ? 1 : 0 ;
+    int A_iso_code = (A->iso) ? 1 : 0 ;
+    int B_iso_code = (B->iso) ? 1 : 0 ;
     int C_in_iso_cd = (C_in_iso) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------

@@ -316,7 +316,6 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
             //------------------------------------------------------------------
 
             // aij = A(i,j), located in Ax [pA]
-            #define GB_A_IS_PATTERN 0
             #define GB_DECLAREA(aij)                                    \
                 GB_void aij [GB_VLA(aij_size)] ;
             #define GB_GETA(aij,Ax,pA,A_iso)                            \
@@ -326,7 +325,6 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
                 }
 
             // dji = D(j,j), located in Dx [j]
-            #define GB_B_IS_PATTERN 0
             #define GB_DECLAREB(djj)                                    \
                 GB_void djj [GB_VLA(djj_size)] ;
             #define GB_GETB(djj,Dx,j,D_iso)                             \

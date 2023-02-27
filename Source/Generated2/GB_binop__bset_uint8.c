@@ -20,14 +20,12 @@
 #define GB_A2TYPE uint8_t
 #define GB_DECLAREA(aij) uint8_t aij
 #define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [(A_iso) ? 0 : (pA)]
-#define GB_A_IS_PATTERN 0
 
 // B matrix:
 #define GB_B_TYPE uint8_t
 #define GB_B2TYPE uint8_t
 #define GB_DECLAREB(bij) uint8_t bij
 #define GB_GETB(bij,Bx,pB,B_iso) bij = Bx [(B_iso) ? 0 : (pB)]
-#define GB_B_IS_PATTERN 0
 
 // C matrix:
 #define GB_C_TYPE uint8_t

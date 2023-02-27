@@ -17,17 +17,15 @@
 
 // A matrix:
 #define GB_A_TYPE float
-#define GB_A2TYPE float
+#define GB_A2TYPE void
 #define GB_DECLAREA(aij) float aij
 #define GB_GETA(aij,Ax,pA,A_iso)
-#define GB_A_IS_PATTERN 1
 
 // B matrix:
 #define GB_B_TYPE float
-#define GB_B2TYPE float
+#define GB_B2TYPE void
 #define GB_DECLAREB(bij) float bij
 #define GB_GETB(bij,Bx,pB,B_iso)
-#define GB_B_IS_PATTERN 1
 
 // C matrix:
 #define GB_C_TYPE float

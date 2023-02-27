@@ -167,15 +167,31 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // construct the macros for A and B
     //--------------------------------------------------------------------------
 
+    // These methods create macros for defining the types of A and B, as well
+    // as accessing the entries to provide inputs to the operator.  A and B
+    // maybe be valued but not used for the operator.  For example, eWiseAdd
+    // with the PAIR operator defines GB_DECLAREA, GB_GETA GB_DECLAREB, and
+    // GB_GETB as empty, because the values of A and B are not needed for the
+    // operator.  However, acode and bcode will not be 0, and GB_A_TYPE and
+    // GB_B_TYPE will be defined, because the entries from A and B can bypass
+    // the operator and be directly copied into C.
+
     // if flipxy false:  A is typecasted to x, and B is typecasted to y.
     // if flipxy true:   A is typecasted to y, and B is typecasted to x.
 
-    GB_macrofy_input (fp, "a", "A", "A", true,
-        flipxy ? binaryop->ytype : binaryop->xtype,
+    if (xcode == 0)
+    { 
+        xtype = NULL ;
+    }
+    if (ycode == 0)
+    { 
+        ytype = NULL ;
+    }
+
+    GB_macrofy_input (fp, "a", "A", "A", true, flipxy ? ytype : xtype,
         atype, asparsity, acode, A_iso_code, -1) ;
 
-    GB_macrofy_input (fp, "b", "B", "B", true,
-        flipxy ? binaryop->xtype : binaryop->ytype,
+    GB_macrofy_input (fp, "b", "B", "B", true, flipxy ? xtype : ytype,
         btype, bsparsity, bcode, B_iso_code, -1) ;
 
 }

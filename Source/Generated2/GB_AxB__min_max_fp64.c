@@ -20,14 +20,14 @@
 // identity: ((double) INFINITY)
 
 // A matrix, typecast to A2 for multiplier input
-#define GB_A_IS_PATTERN 0
+
 #define GB_A_TYPE double
 #define GB_A2TYPE double
 #define GB_DECLAREA(aik) double aik
 #define GB_GETA(aik,Ax,pA,A_iso) aik = Ax [(A_iso) ? 0 : (pA)]
 
 // B matrix, typecast to B2 for multiplier input
-#define GB_B_IS_PATTERN 0
+
 #define GB_B_TYPE double
 #define GB_B2TYPE double
 #define GB_DECLAREB(bkj) double bkj

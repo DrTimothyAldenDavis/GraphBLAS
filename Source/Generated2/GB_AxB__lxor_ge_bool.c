@@ -20,14 +20,14 @@
 // identity: false
 
 // A matrix, typecast to A2 for multiplier input
-#define GB_A_IS_PATTERN 0
+
 #define GB_A_TYPE bool
 #define GB_A2TYPE bool
 #define GB_DECLAREA(aik) bool aik
 #define GB_GETA(aik,Ax,pA,A_iso) aik = Ax [(A_iso) ? 0 : (pA)]
 
 // B matrix, typecast to B2 for multiplier input
-#define GB_B_IS_PATTERN 0
+
 #define GB_B_TYPE bool
 #define GB_B2TYPE bool
 #define GB_DECLAREB(bkj) bool bkj

@@ -28,12 +28,8 @@
     // get D and B
     //--------------------------------------------------------------------------
 
-    #if !GB_A_IS_PATTERN
     const GB_A_TYPE *restrict Dx = (GB_A_TYPE *) D->x ;
-    #endif
-    #if !GB_B_IS_PATTERN
     const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
-    #endif
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
 
     #ifdef GB_JIT_KERNEL

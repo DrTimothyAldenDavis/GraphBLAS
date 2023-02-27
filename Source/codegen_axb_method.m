@@ -634,7 +634,7 @@ if (is_second || is_pair || is_positional)
 else
     fprintf (f, 'm4_define(`GB_atype'',  `#define GB_A_TYPE %s'')\n', xytype) ;
     fprintf (f, 'm4_define(`GB_a2type'', `#define GB_A2TYPE %s'')\n', xytype) ;
-    fprintf (f, 'm4_define(`GB_a_is_pattern'', `#define GB_A_IS_PATTERN 0'')\n') ;
+    fprintf (f, 'm4_define(`GB_a_is_pattern'', `'')\n') ;
     gb_geta = ' aik = Ax [(A_iso) ? 0 : (pA)]' ;
     gb_declarea = sprintf (' %s aik', xytype) ;
 end
@@ -652,7 +652,7 @@ if (is_first || is_pair || is_positional)
 else
     fprintf (f, 'm4_define(`GB_btype'',  `#define GB_B_TYPE %s'')\n', xytype) ;
     fprintf (f, 'm4_define(`GB_b2type'', `#define GB_B2TYPE %s'')\n', xytype) ;
-    fprintf (f, 'm4_define(`GB_b_is_pattern'', `#define GB_B_IS_PATTERN 0'')\n') ;
+    fprintf (f, 'm4_define(`GB_b_is_pattern'', `'')\n') ;
     gb_getb = ' bkj = Bx [(B_iso) ? 0 : (pB)]' ;
     gb_declareb = sprintf (' %s bkj', xytype) ;
 end

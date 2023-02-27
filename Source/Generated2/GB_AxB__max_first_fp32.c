@@ -20,7 +20,7 @@
 // identity: (-INFINITY)
 
 // A matrix, typecast to A2 for multiplier input
-#define GB_A_IS_PATTERN 0
+
 #define GB_A_TYPE float
 #define GB_A2TYPE float
 #define GB_DECLAREA(aik) float aik

@@ -20,7 +20,7 @@
 // identity: INT8_MAX
 
 // A matrix, typecast to A2 for multiplier input
-#define GB_A_IS_PATTERN 0
+
 #define GB_A_TYPE int8_t
 #define GB_A2TYPE int8_t
 #define GB_DECLAREA(aik) int8_t aik

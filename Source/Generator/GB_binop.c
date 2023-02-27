@@ -21,14 +21,12 @@ GB_atype
 GB_a2type
 GB_declarea
 GB_geta
-GB_a_is_pattern
 
 // B matrix:
 GB_btype
 GB_b2type
 GB_declareb
 GB_getb
-GB_b_is_pattern
 
 // C matrix:
 GB_ctype

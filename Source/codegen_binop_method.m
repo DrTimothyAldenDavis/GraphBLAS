@@ -157,31 +157,29 @@ else
     fprintf (f, 'm4_define(`if_C_dense_update'', `-1'')\n') ;
 end
 
-% to get an entry from A
+% to get an entry from A as input to the operator
 fprintf (f, 'm4_define(`GB_atype'',  `#define GB_A_TYPE %s'')\n', xtype) ;
-fprintf (f, 'm4_define(`GB_a2type'', `#define GB_A2TYPE %s'')\n', xtype) ;
 if (isequal (binop, 'second') || isequal (binop, 'pair'))
     % value of A is ignored for the SECOND, PAIR, and positional operators
-    fprintf (f, 'm4_define(`GB_a_is_pattern'', `#define GB_A_IS_PATTERN 1'')\n') ;
     gb_geta = '' ;
+    fprintf (f, 'm4_define(`GB_a2type'', `#define GB_A2TYPE void'')\n') ;
 else
-    fprintf (f, 'm4_define(`GB_a_is_pattern'', `#define GB_A_IS_PATTERN 0'')\n') ;
     gb_geta = ' aij = Ax [(A_iso) ? 0 : (pA)]' ;
+    fprintf (f, 'm4_define(`GB_a2type'', `#define GB_A2TYPE %s'')\n', xtype) ;
 end
 gb_declarea = sprintf (' %s aij', xtype) ;
 fprintf (f, 'm4_define(`GB_geta'', `#define GB_GETA(aij,Ax,pA,A_iso)%s'')\n', gb_geta) ;
 fprintf (f, 'm4_define(`GB_declarea'', `#define GB_DECLAREA(aij)%s'')\n', gb_declarea) ;
 
-% to get an entry from B
+% to get an entry from B as input to the operator
 fprintf (f, 'm4_define(`GB_btype'',  `#define GB_B_TYPE %s'')\n', ytype) ;
-fprintf (f, 'm4_define(`GB_b2type'', `#define GB_B2TYPE %s'')\n', ytype) ;
 if (isequal (binop, 'first') || isequal (binop, 'pair'))
     % value of B is ignored for the FIRST, PAIR, and positional operators
-    fprintf (f, 'm4_define(`GB_b_is_pattern'', `#define GB_B_IS_PATTERN 1'')\n') ;
     gb_getb = '' ;
+    fprintf (f, 'm4_define(`GB_b2type'', `#define GB_B2TYPE void'')\n') ;
 else
-    fprintf (f, 'm4_define(`GB_b_is_pattern'', `#define GB_B_IS_PATTERN 0'')\n') ;
     gb_getb = ' bij = Bx [(B_iso) ? 0 : (pB)]' ;
+    fprintf (f, 'm4_define(`GB_b2type'', `#define GB_B2TYPE %s'')\n', ytype) ;
 end
 gb_declareb = sprintf (' %s bij', ytype) ;
 fprintf (f, 'm4_define(`GB_getb'', `#define GB_GETB(bij,Bx,pB,B_iso)%s'')\n', gb_getb) ;

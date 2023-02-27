@@ -20,7 +20,7 @@
 // identity: 1
 
 // A matrix, typecast to A2 for multiplier input
-#define GB_A_IS_PATTERN 0
+
 #define GB_A_TYPE int32_t
 #define GB_A2TYPE int32_t
 #define GB_DECLAREA(aik) int32_t aik

@@ -20,14 +20,12 @@
 #define GB_A2TYPE bool
 #define GB_DECLAREA(aij) bool aij
 #define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [(A_iso) ? 0 : (pA)]
-#define GB_A_IS_PATTERN 0
 
 // B matrix:
 #define GB_B_TYPE bool
-#define GB_B2TYPE bool
+#define GB_B2TYPE void
 #define GB_DECLAREB(bij) bool bij
 #define GB_GETB(bij,Bx,pB,B_iso)
-#define GB_B_IS_PATTERN 1
 
 // C matrix:
 #define GB_C_TYPE bool
@@ -113,7 +111,6 @@ GrB_Info GB (_AxD__first_bool)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #include "GB_colscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -134,7 +131,6 @@ GrB_Info GB (_DxB__first_bool)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #include "GB_rowscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
