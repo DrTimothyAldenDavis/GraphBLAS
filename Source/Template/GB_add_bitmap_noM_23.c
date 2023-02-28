@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_add_noM_23: C=A+B, C bitmap, A sparse/hyper, B bitmap
+// GB_add_bitmap_noM_23: C=A+B, C bitmap, A sparse/hyper, B bitmap
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -12,16 +12,15 @@
 
 {
 
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // Method23: C and B are bitmap; A is sparse or hypersparse
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     #ifdef GB_ISO_ADD
         GB_memcpy (Cb, Bb, cnz, C_nthreads) ;
     #else
         int64_t p ;
-        #pragma omp parallel for num_threads(C_nthreads) \
-            schedule(static)
+        #pragma omp parallel for num_threads(C_nthreads) schedule(static)
         for (p = 0 ; p < cnz ; p++)
         { 
             int8_t b = Bb [p] ;
@@ -49,8 +48,8 @@
 
     GB_SLICE_MATRIX (A, 8, chunk) ;
 
-    #pragma omp parallel for num_threads(A_nthreads) \
-        schedule(dynamic,1) reduction(+:cnvals)
+    #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1) \
+        reduction(+:cnvals)
     for (taskid = 0 ; taskid < A_ntasks ; taskid++)
     {
         int64_t kfirst = kfirst_Aslice [taskid] ;
@@ -60,9 +59,12 @@
         {
             // find the part of A(:,k) for this task
             int64_t j = GBH_A (Ah, k) ;
-            int64_t pA_start, pA_end ;
-            GB_get_pA (&pA_start, &pA_end, taskid, k, kfirst,
-                klast, pstart_Aslice, Ap, vlen) ;
+//          int64_t pA_start, pA_end ;
+//          GB_get_pA (&pA_start, &pA_end, taskid, k, kfirst,
+//              klast, pstart_Aslice, Ap, vlen) ;
+            GB_GET_PA (pA_start, pA_end, taskid, k, kfirst,
+                klast, pstart_Aslice,
+                GBP_A (Ap, k, vlen), GBP_A (Ap, k+1, vlen)) ;
             int64_t pC_start = j * vlen ;
             // traverse over A(:,j), the kth vector of A
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)

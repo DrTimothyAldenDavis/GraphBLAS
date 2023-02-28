@@ -1,9 +1,17 @@
+//------------------------------------------------------------------------------
+// GB_add_full_32:  C=A+B, C and A are full, B is sparse/hyper
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
 
 {
 
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // Method32: C and A are full; B is sparse or hypersparse
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     #pragma omp parallel for num_threads(C_nthreads) schedule(static)
     for (p = 0 ; p < cnz ; p++)
@@ -12,8 +20,7 @@
         { 
             // C (i,j) = A(i,j) + beta
             GB_LOAD_A (aij, Ax, p, A_iso) ;
-            GB_BINOP (GB_CX (p), aij, beta_scalar,
-                p % vlen, p / vlen) ;
+            GB_BINOP (GB_CX (p), aij, beta_scalar, p % vlen, p / vlen) ;
         }
         #else
         { 
@@ -34,9 +41,12 @@
         {
             // find the part of B(:,k) for this task
             int64_t j = GBH_B (Bh, k) ;
-            int64_t pB_start, pB_end ;
-            GB_get_pA (&pB_start, &pB_end, taskid, k, kfirst,
-                klast, pstart_Bslice, Bp, vlen) ;
+//          int64_t pB_start, pB_end ;
+//          GB_get_pA (&pB_start, &pB_end, taskid, k, kfirst,
+//              klast, pstart_Bslice, Bp, vlen) ;
+            GB_GET_PA (pB_start, pB_end, taskid, k, kfirst,
+                klast, pstart_Bslice,
+                GBP_B (Bp, k, vlen), GBP_B (Bp, k+1, vlen)) ;
             int64_t pC_start = j * vlen ;
             // traverse over B(:,j), the kth vector of B
             for (int64_t pB = pB_start ; pB < pB_end ; pB++)

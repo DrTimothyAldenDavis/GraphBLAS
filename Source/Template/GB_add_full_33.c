@@ -1,8 +1,17 @@
+//------------------------------------------------------------------------------
+// GB_add_full_33:  C=A+B; C and B are full, A is bitmap
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 {
 
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // Method33: C and B are full; A is bitmap
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     #pragma omp parallel for num_threads(C_nthreads) schedule(static)
     for (p = 0 ; p < cnz ; p++)
@@ -20,8 +29,7 @@
             { 
                 // C (i,j) = alpha + B(i,j)
                 GB_LOAD_B (bij, Bx, p, B_iso) ;
-                GB_BINOP (GB_CX (p), alpha_scalar,
-                    bij, p % vlen, p / vlen);
+                GB_BINOP (GB_CX (p), alpha_scalar, bij, p % vlen, p / vlen) ;
             }
             #else
             { 
@@ -31,6 +39,5 @@
             #endif
         }
     }
-
 }
 

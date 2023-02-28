@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_add_M_sparse: C<!M>=A+B, C bitmap, M sparse/hyper and comp.
+// GB_add_bitmap_M_sparse: C<!M>=A+B, C bitmap, M sparse/hyper and comp.
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -13,9 +13,9 @@
 
 { 
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // C is bitmap, M is sparse or hyper and complemented
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     //      ------------------------------------------
     //      C     <!M> =        A       +       B
@@ -29,17 +29,18 @@
     //      bitmap  sparse      full            bitmap
     //      bitmap  sparse      full            full  
 
-    // M is sparse and complemented.  If M is sparse and not
-    // complemented, then C is constructed as sparse, not bitmap.
+    // M is sparse and complemented.  If M is sparse and not complemented, then
+    // C is constructed as sparse, not bitmap.
+
     ASSERT (Mask_comp) ;
 
-    // C(i,j) = A(i,j) + B(i,j) can only be computed where M(i,j) is
-    // not present in the sparse pattern of M, and where it is present
-    // but equal to zero.
+    // C(i,j) = A(i,j) + B(i,j) can only be computed where M(i,j) is not
+    // present in the sparse pattern of M, and where it is present but equal to
+    // zero.
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // scatter M into the C bitmap
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     GB_SLICE_MATRIX (M, 8, chunk) ;
 
@@ -52,9 +53,12 @@
         {
             // find the part of M(:,k) for this task
             int64_t j = GBH_M (Mh, k) ;
-            int64_t pM_start, pM_end ;
-            GB_get_pA (&pM_start, &pM_end, taskid, k, kfirst,
-                klast, pstart_Mslice, Mp, vlen) ;
+//          int64_t pM_start, pM_end ;
+//          GB_get_pA (&pM_start, &pM_end, taskid, k, kfirst,
+//              klast, pstart_Mslice, Mp, vlen) ;
+            GB_GET_PA (pM_start, pM_end, taskid, k, kfirst,
+                klast, pstart_Mslice,
+                GBP_M (Mp, k, vlen), GBP_M (Mp, k+1, vlen)) ;
             int64_t pC_start = j * vlen ;
             // traverse over M(:,j), the kth vector of M
             for (int64_t pM = pM_start ; pM < pM_end ; pM++)
@@ -75,25 +79,25 @@
     // These positions will not be computed in C(i,j).  C(i,j) can only
     // be modified where Cb [p] is zero.
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // compute C<!M>=A+B using the mask scattered in C
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     #ifdef GB_JIT_KERNEL
 
         #if (GB_A_IS_BITMAP || GB_A_IS_FULL) && (GB_B_IS_BITMAP || GB_B_IS_FULL)
         {
-            #include "GB_bitmap_add_M_sparse_24.c"
+            #include "GB_add_bitmap_M_sparse_24.c"
             #define M_cleared true
         }
         #elif (GB_A_IS_BITMAP || GB_A_IS_FULL)
         {
-            #include "GB_bitmap_add_M_sparse_25.c"
+            #include "GB_add_bitmap_M_sparse_25.c"
             #define M_cleared false
         }
         #else
         {
-            #include "GB_bitmap_add_M_sparse_26.c"
+            #include "GB_add_bitmap_M_sparse_26.c"
             #define M_cleared false
         }
         #endif
@@ -103,23 +107,23 @@
         bool M_cleared = false ;
         if ((A_is_bitmap || A_is_full) && (B_is_bitmap || B_is_full))
         {
-            #include "GB_bitmap_add_M_sparse_24.c"
+            #include "GB_add_bitmap_M_sparse_24.c"
             M_cleared = true ;      // M has also been cleared from C
         }
         else if (A_is_bitmap || A_is_full)
         {
-            #include "GB_bitmap_add_M_sparse_25.c"
+            #include "GB_add_bitmap_M_sparse_25.c"
         }
         else
         {
-            #include "GB_bitmap_add_M_sparse_26.c"
+            #include "GB_add_bitmap_M_sparse_26.c"
         }
 
     #endif
 
-    //---------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // clear M from C
-    //---------------------------------------------------------------------
+    //-------------------------------------------------------------------------
 
     if (!M_cleared)
     {
@@ -137,9 +141,12 @@
             {
                 // find the part of M(:,k) for this task
                 int64_t j = GBH_M (Mh, k) ;
-                int64_t pM_start, pM_end ;
-                GB_get_pA (&pM_start, &pM_end, taskid, k, kfirst,
-                    klast, pstart_Mslice, Mp, vlen) ;
+//              int64_t pM_start, pM_end ;
+//              GB_get_pA (&pM_start, &pM_end, taskid, k, kfirst,
+//                  klast, pstart_Mslice, Mp, vlen) ;
+                GB_GET_PA (pM_start, pM_end, taskid, k, kfirst,
+                    klast, pstart_Mslice,
+                    GBP_M (Mp, k, vlen), GBP_M (Mp, k+1, vlen)) ;
                 int64_t pC_start = j * vlen ;
                 // traverse over M(:,j), the kth vector of M
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)

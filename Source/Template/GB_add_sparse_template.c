@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_sparse_add_template:  C=A+B, C<M>=A+B when C is sparse/hypersparse
+// GB_add_sparse_template:  C=A+B, C<M>=A+B when C is sparse/hypersparse
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -36,12 +36,12 @@
         //      sparse  bitmap      sparse          sparse
         //      sparse  full        sparse          sparse
 
-// If all four matrices are sparse/hypersparse, and C<!M>=A+B is being
-// computed, then M is passed in as NULL to GB_add_phase*.  GB_add_sparsity
-// returns apply_mask as false.  The methods below do not handle the case when
-// C is sparse, M is sparse, and !M is used.  All other uses of !M when M
-// is sparse result in a bitmap structure for C, and this is handled by
-// GB_bitmap_add_template.
+        // If all four matrices are sparse/hypersparse, and C<!M>=A+B is being
+        // computed, then M is passed in as NULL to GB_add_phase*.
+        // GB_add_sparsity returns apply_mask as false.  The methods below do
+        // not handle the case when C is sparse, M is sparse, and !M is used.
+        // All other uses of !M when M is sparse result in a bitmap structure
+        // for C, and this is handled by GB_add_bitmap_template.
 
         // For this case: the mask is done later, so C=A+B is computed here:
 
@@ -193,23 +193,15 @@
             {
                 #if GB_NO_MASK
                 {
-                    #include "GB_sparse_add_noM.c"
+                    #include "GB_add_sparse_noM.c"
                 }
                 #elif (GB_M_IS_SPARSE || GB_M_IS_HYPER)
                 {
-                    #include "GB_sparse_add_M_sparse_setup.c"
-                    if (sparse_mask_is_easy)
-                    {
-                        #include "GB_sparse_add_M_easy.c"
-                    }
-                    else
-                    {
-                        #include "GB_sparse_add_M_sparse.c"
-                    }
+                    #include "GB_add_sparse_M_sparse.c"
                 }
                 #else
                 {
-                    #include "GB_sparse_add_M_bitmap.c"
+                    #include "GB_add_sparse_M_bitmap.c"
                 }
                 #endif
             }
@@ -217,23 +209,15 @@
             {
                 if (M == NULL)
                 {
-                    #include "GB_sparse_add_noM.c"
+                    #include "GB_add_sparse_noM.c"
                 }
                 else if (M_is_sparse_or_hyper)
                 {
-                    #include "GB_sparse_add_M_sparse_setup.c"
-                    if (sparse_mask_is_easy)
-                    {
-                        #include "GB_sparse_add_M_easy.c"
-                    }
-                    else
-                    {
-                        #include "GB_sparse_add_M_sparse.c"
-                    }
+                    #include "GB_add_sparse_M_sparse.c"
                 }
                 else
                 {
-                    #include "GB_sparse_add_M_bitmap.c"
+                    #include "GB_add_sparse_M_bitmap.c"
                 }
             }
             #endif

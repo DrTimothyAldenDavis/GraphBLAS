@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_sparse_add_M_bitmap: C(:,j)<M>=A(:,j)+B(:,j), C sparse/hyper, M bitmap
+// GB_add_sparse_M_bitmap: C(:,j)<M>=A(:,j)+B(:,j), C sparse/hyper, M bitmap
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -28,11 +28,10 @@
     //      sparse  bitmap      sparse          sparse
     //      sparse  full        sparse          sparse
 
-    // This method is very efficient for any mask, and should
-    // always be used if M is bitmap or full, even if the mask must
-    // also be applied later in GB_mask or GB_accum_mask.
-    // Exploiting the mask here adds no extra search time, and it
-    // reduces the size of C on output.
+    // This method is very efficient for any mask, and should always be used if
+    // M is bitmap or full, even if the mask must also be applied later in
+    // GB_mask or GB_accum_mask.  Exploiting the mask here adds no extra search
+    // time, and it reduces the size of C on output.
 
     // GB_GET_MIJ: get M(i,j) where M is bitmap or full
     #undef  GB_GET_MIJ
@@ -41,9 +40,9 @@
         bool mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ; \
         if (Mask_comp) mij = !mij ;
 
-    // A and B are sparse or hypersparse, not bitmap or full,
-    // but individual vectors of A and B might have all entries
-    // present (adense and/or bdense).
+    // A and B are sparse or hypersparse, not bitmap or full, but individual
+    // vectors of A and B might have all entries present (adense and/or
+    // bdense).
     ASSERT (A_is_sparse || A_is_hyper) ;
     ASSERT (B_is_sparse || B_is_hyper) ;
 
@@ -52,9 +51,9 @@
     if (adense && bdense)
     {
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // Method15: A(:,j) and B(:,j) dense, M bitmap/full
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         ASSERT (ajnz == bjnz) ;
         ASSERT (iA_first == iB_first) ;
@@ -86,9 +85,9 @@
     else if (ajnz == 0)
     {
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // Method16: A(:,j) is empty, M bitmap/full
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         for ( ; pB < pB_end ; pB++)
         {
@@ -124,9 +123,9 @@
     else if (bjnz == 0)
     {
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // Method17: B(:,j) is empty, M bitmap/full
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         for ( ; pA < pA_end ; pA++)
         {
@@ -161,9 +160,9 @@
     else if (iA_last < iB_first)
     {
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // Method18:last A(:,j) before 1st B(:,j), M bitmap/full
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         for ( ; pA < pA_end ; pA++)
         {
@@ -227,9 +226,9 @@
     else if (iB_last < iA_first)
     {
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // Method19:last B(:,j) before 1st A(:,j), M bitmap/full
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         for ( ; pB < pB_end ; pB++)
         {
@@ -294,9 +293,9 @@
     else
     {
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // Method20: merge A(:,j) and B(:,j), M bitmap/full
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         while (pA < pA_end && pB < pB_end)
         {
@@ -384,9 +383,9 @@
             }
         }
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // A (:,j) or B (:,j) have entries left; not both
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         for ( ; pA < pA_end ; pA++)
         {

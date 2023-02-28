@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_full_add_template:  phase2 for C=A+B, C<M>=A+B, C<!M>=A+B, C is full
+// GB_add_full_template:  C=A+B; C is full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -34,7 +34,7 @@
         #if (GB_A_IS_FULL && GB_B_IS_FULL)
         {
             // C, A, and B are all full
-            #include "GB_full_add_30.c"
+            #include "GB_add_full_30.c"
         }
         #elif (GB_A_IS_FULL)
         {
@@ -42,12 +42,12 @@
             #if (GB_B_IS_BITMAP)
             {
                 // C and A are full; B is bitmap
-                #include "GB_full_add_31.c"
+                #include "GB_add_full_31.c"
             }
             #else
             {
                 // C and A are full; B is sparse or hypersparse
-                #include "GB_full_add_32.c"
+                #include "GB_add_full_32.c"
             }
             #endif
         }
@@ -57,12 +57,12 @@
             #if (GB_A_IS_BITMAP)
             {
                 // C and B are full; A is bitmap
-                #include "GB_full_add_33.c"
+                #include "GB_add_full_33.c"
             }
             #else
             {
                 // C and B are full; A is hypersparse or sparse
-                #include "GB_full_add_34.c"
+                #include "GB_add_full_34.c"
             }
             #endif
         }
@@ -73,7 +73,7 @@
         if (A_is_full && B_is_full)
         {
             // C, A, and B are all full
-            #include "GB_full_add_30.c"
+            #include "GB_add_full_30.c"
         }
         else if (A_is_full)
         {
@@ -81,12 +81,12 @@
             if (B_is_bitmap)
             {
                 // C and A are full; B is bitmap
-                #include "GB_full_add_31.c"
+                #include "GB_add_full_31.c"
             }
             else
             {
                 // C and A are full; B is sparse or hypersparse
-                #include "GB_full_add_32.c"
+                #include "GB_add_full_32.c"
             }
         }
         else
@@ -95,12 +95,12 @@
             if (A_is_bitmap)
             {
                 // C and B are full; A is bitmap
-                #include "GB_full_add_33.c"
+                #include "GB_add_full_33.c"
             }
             else
             {
                 // C and B are full; A is hypersparse or sparse
-                #include "GB_full_add_34.c"
+                #include "GB_add_full_34.c"
             }
         }
     }

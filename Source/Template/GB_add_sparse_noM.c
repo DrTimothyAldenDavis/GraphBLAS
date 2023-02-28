@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_sparse_add_noM: C(:,j)=A(:,j)+B(:,j), C sparse/hyper, no mask
+// GB_add_sparse_noM: C(:,j)=A(:,j)+B(:,j), C sparse/hyper, no mask
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -9,9 +9,9 @@
 
 {
 
-    //--------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // M is not present, or !M is sparse but not applied here
-    //--------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     //      ------------------------------------------
     //      C       =           A       +       B
@@ -23,14 +23,14 @@
     //      ------------------------------------------
     //      sparse  sparse      sparse          sparse  (mask later)
 
-    // If all four matrices are sparse or hypersparse, and
-    // Mask_comp is true, the mask M is passed in to this method as
-    // NULL.  C=A+B is computed with no mask, and !M is applied
-    // later.
+    // If all four matrices are sparse or hypersparse, and Mask_comp is true,
+    // the mask M is passed in to this method as NULL.  C=A+B is computed with
+    // no mask, and !M is applied later.
 
-    // A and B are both sparse or hypersparse, not bitmap or
-    // full, but individual vectors of A and B might have all
-    // entries present (adense and/or bdense).
+    // A and B are both sparse or hypersparse, not bitmap or full, but
+    // individual vectors of A and B might have all entries present (adense
+    // and/or bdense).
+
     ASSERT (A_is_sparse || A_is_hyper) ;
     ASSERT (B_is_sparse || B_is_hyper) ;
 
@@ -39,9 +39,9 @@
     if (A_and_B_are_disjoint)
     { 
 
-        // only used by GB_wait, which computes A+T where T is the
-        // matrix of pending tuples for A.  The pattern of pending
-        // tuples is always disjoint with the pattern of A.
+        // only used by GB_wait, which computes A+T where T is the matrix of
+        // pending tuples for A.  The pattern of pending tuples is always
+        // disjoint with the pattern of A.
 
         cjnz = ajnz + bjnz ;
 
@@ -53,9 +53,9 @@
     if (adense && bdense)
     {
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // Method01: A(:,j) and B(:,j) dense: thus C(:,j) dense
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         ASSERT (ajnz == bjnz) ;
         ASSERT (iA_first == iB_first) ;
@@ -84,9 +84,9 @@
     else if (adense)
     {
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // Method02: A(:,j) dense, B(:,j) sparse: C(:,j) dense
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         #if defined ( GB_PHASE_1_OF_2 )
         cjnz = ajnz ;
@@ -132,9 +132,9 @@
     else if (bdense)
     {
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // Method03: A(:,j) sparse, B(:,j) dense: C(:,j) dense
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         #if defined ( GB_PHASE_1_OF_2 )
         cjnz = bjnz ;
@@ -151,14 +151,11 @@
             { 
                 // C (i,j) = alpha + B(i,j)
                 GB_LOAD_B (bij, Bx, pB+p, B_iso) ;
-                // GB_COMPILER_MSC_2019 workaround: the following
-                // line of code triggers a bug in the MSC 19.2x
-                // compiler in Visual Studio 2019, only for the
-                // FIRST_FC32 and SECOND_FC32 operators.  As a
-                // workaround, this template is not used for
-                // those operators when compiling GraphBLAS with
-                // this compiler.  Note the bug may also appear
-                // in VS2022, but this has not yet been tested.
+                // GB_COMPILER_MSC_2019 workaround: the following line of code
+                // triggers a bug in the MSC 19.2x compiler in Visual Studio
+                // 2019, only for the FIRST_FC32 and SECOND_FC32 operators.  As
+                // a workaround, this template is not used for those operators
+                // when compiling GraphBLAS with this compiler.
                 GB_BINOP (GB_CX (pC+p), alpha_scalar, bij, i, j) ;
             }
             #else
@@ -188,9 +185,9 @@
     else if (ajnz == 0)
     {
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // Method04: A(:,j) is empty
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         #if defined ( GB_PHASE_1_OF_2 )
         cjnz = bjnz ;
@@ -205,8 +202,7 @@
             { 
                 // C (i,j) = alpha + B(i,j)
                 GB_LOAD_B (bij, Bx, pB+p, B_iso) ;
-                GB_BINOP (GB_CX (pC+p), alpha_scalar, bij,
-                    Bi [pB+p], j) ;
+                GB_BINOP (GB_CX (pC+p), alpha_scalar, bij, Bi [pB+p], j) ;
             }
             #else
             { 
@@ -222,9 +218,9 @@
     else if (bjnz == 0)
     {
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // Method05: B(:,j) is empty
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         #if defined ( GB_PHASE_1_OF_2 )
         cjnz = ajnz ;
@@ -239,8 +235,7 @@
             { 
                 // C (i,j) = A(i,j) + beta
                 GB_LOAD_A (aij, Ax, pA+p, A_iso) ;
-                GB_BINOP (GB_CX (pC+p), aij, beta_scalar,
-                    Ai [pA+p], j) ;
+                GB_BINOP (GB_CX (pC+p), aij, beta_scalar, Ai [pA+p], j) ;
             }
             #else
             { 
@@ -256,9 +251,9 @@
     else if (iA_last < iB_first)
     {
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // Method06: last A(:,j) comes before 1st B(:,j)
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         #if defined ( GB_PHASE_1_OF_2 )
         cjnz = ajnz + bjnz ;
@@ -273,8 +268,7 @@
             { 
                 // C (i,j) = A(i,j) + beta
                 GB_LOAD_A (aij, Ax, pA+p, A_iso) ;
-                GB_BINOP (GB_CX (pC+p), aij, beta_scalar,
-                    Ai [pA+p], j) ;
+                GB_BINOP (GB_CX (pC+p), aij, beta_scalar, Ai [pA+p], j) ;
             }
             #else
             { 
@@ -294,8 +288,7 @@
             { 
                 // C (i,j) = alpha + B(i,j)
                 GB_LOAD_B (bij, Bx, pB+p, B_iso) ;
-                GB_BINOP (GB_CX (pC+p), alpha_scalar, bij,
-                    Bi [pB+p], j) ;
+                GB_BINOP (GB_CX (pC+p), alpha_scalar, bij, Bi [pB+p], j) ;
             }
             #else
             { 
@@ -311,9 +304,9 @@
     else if (iB_last < iA_first)
     {
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // Method07: last B(:,j) comes before 1st A(:,j)
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         #if defined ( GB_PHASE_1_OF_2 )
         cjnz = ajnz + bjnz ;
@@ -328,8 +321,7 @@
             { 
                 // C (i,j) = alpha + B(i,j)
                 GB_LOAD_B (bij, Bx, pB+p, B_iso) ;
-                GB_BINOP (GB_CX (pC+p), alpha_scalar, bij,
-                    Bi [pB+p], j) ;
+                GB_BINOP (GB_CX (pC+p), alpha_scalar, bij, Bi [pB+p], j) ;
             }
             #else
             { 
@@ -349,8 +341,7 @@
             { 
                 // C (i,j) = A(i,j) + beta
                 GB_LOAD_A (aij, Ax, pA+p, A_iso) ;
-                GB_BINOP (GB_CX (pC+p), aij, beta_scalar,
-                    Ai [pA+p], j) ;
+                GB_BINOP (GB_CX (pC+p), aij, beta_scalar, Ai [pA+p], j) ;
             }
             #else
             { 
@@ -368,9 +359,9 @@
     else if (ajnz > 32 * bjnz)
     {
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // Method08: A(:,j) is much denser than B(:,j)
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         // cjnz = ajnz + bjnz - nnz in the intersection
 
@@ -389,9 +380,9 @@
     else if (bjnz > 32 * ajnz)
     {
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // Method09: B(:,j) is much denser than A(:,j)
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         // cjnz = ajnz + bjnz - nnz in the intersection
 
@@ -412,9 +403,9 @@
     else
     {
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // Method10: A(:,j) and B(:,j) about the same sparsity
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         while (pA < pA_end && pB < pB_end)
         {
@@ -450,8 +441,7 @@
                 { 
                     // C (iB,j) = alpha + B(iB,j)
                     GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                    GB_BINOP (GB_CX (pC), alpha_scalar, bij,
-                        iB, j) ;
+                    GB_BINOP (GB_CX (pC), alpha_scalar, bij, iB, j) ;
                 }
                 #else
                 { 
@@ -484,9 +474,9 @@
             #endif
         }
 
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
         // A (:,j) or B (:,j) have entries left; not both
-        //----------------------------------------------------------
+        //----------------------------------------------------------------------
 
         ajnz = (pA_end - pA) ;
         bjnz = (pB_end - pB) ;
@@ -502,8 +492,7 @@
             { 
                 // C (i,j) = A(i,j) + beta
                 GB_LOAD_A (aij, Ax, pA+p, A_iso) ;
-                GB_BINOP (GB_CX (pC+p), aij, beta_scalar,
-                    Ai [pA+p], j) ;
+                GB_BINOP (GB_CX (pC+p), aij, beta_scalar, Ai [pA+p], j) ;
             }
             #else
             { 
@@ -521,8 +510,7 @@
             { 
                 // C (i,j) = alpha + B(i,j)
                 GB_LOAD_B (bij, Bx, pB+p, B_iso) ;
-                GB_BINOP (GB_CX (pC+p), alpha_scalar, bij,
-                    Bi [pB+p], j) ;
+                GB_BINOP (GB_CX (pC+p), alpha_scalar, bij, Bi [pB+p], j) ;
             }
             #else
             { 

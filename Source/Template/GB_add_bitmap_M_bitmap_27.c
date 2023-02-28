@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_add_M_sparse_24: C<!M>=A+B, C bitmap, M sparse/hyper; A,B bit/full
+// GB_add_bitmap_M_bitmap_27: C<#M>=A+B, C bitmap; M, A, and B bitmap/full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -8,14 +8,14 @@
 //------------------------------------------------------------------------------
 
 // C is bitmap.
-// M is sparse/hyper and complemented.
+// M is bitmap or full, complemented or not, and either value or structural.
 // A and B are both bitmap/full.
 
 {
 
-    //------------------------------------------------------------------
-    // Method24(!M,sparse): C is bitmap, both A and B are bitmap or full
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // Method27: C is bitmap; M, A, and B are bitmap or full
+    //--------------------------------------------------------------------------
 
     int tid ;
     #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
@@ -26,15 +26,16 @@
         GB_PARTITION (pstart, pend, cnz, tid, C_nthreads) ;
         for (int64_t p = pstart ; p < pend ; p++)
         {
-            int8_t c = Cb [p] ;
-            if (c == 0)
+            GB_GET_MIJ (p) ;
+            if (mij)
             {
-                // M(i,j) is zero, so C(i,j) can be computed
+                // M(i,j) is true, so C(i,j) can be computed
                 int8_t a = GBB_A (Ab, p) ;
                 int8_t b = GBB_B (Bb, p) ;
                 #ifdef GB_ISO_ADD
-                c = a || b ;
+                int8_t c = a || b ;
                 #else
+                int8_t c = 0 ;
                 if (a && b)
                 { 
                     // C (i,j) = A (i,j) + B (i,j)
@@ -46,7 +47,7 @@
                 else if (b)
                 { 
                     #if GB_IS_EWISEUNION
-                    { 
+                    {
                         // C (i,j) = alpha + B(i,j)
                         GB_LOAD_B (bij, Bx, p, B_iso) ;
                         GB_BINOP (GB_CX (p), alpha_scalar, bij,
@@ -90,3 +91,4 @@
         cnvals += task_cnvals ;
     }
 }
+

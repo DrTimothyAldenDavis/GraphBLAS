@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_add_M_bitmap_28: C<#M>=A+B, C bitmap; M,A bitmap/full, B sp./hyper
+// GB_add_bitmap_M_bitmap_29: C<#M>=A+B, C bitmap; M,B bitmap/full, A sp./hyper
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -9,13 +9,13 @@
 
 // C is bitmap.
 // M is bitmap or full, complemented or not, and either value or structural.
-// A is bitmap/full, B is sparse/hyper.
+// B is bitmap/full, A is sparse/hyper.
 
 {
 
-    //------------------------------------------------------------------
-    // Method28: C bitmap; M and A bitmap or full; B sparse or hyper
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // Method29: C bitmap; M and B bitmap or full; A sparse or hyper
+    //--------------------------------------------------------------------------
 
     int tid ;
     #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
@@ -29,27 +29,27 @@
             GB_GET_MIJ (p) ;
             if (mij)
             { 
-                int8_t a = GBB_A (Ab, p) ;
+                int8_t b = GBB_B (Bb, p) ;
                 #ifndef GB_ISO_ADD
-                if (a)
+                if (b)
                 {
                     #if GB_IS_EWISEUNION
-                    { 
-                        // C (i,j) = A(i,j) + beta
-                        GB_LOAD_A (aij, Ax, p, A_iso) ;
-                        GB_BINOP (GB_CX (p), aij, beta_scalar,
+                    {
+                        // C (i,j) = alpha + B(i,j)
+                        GB_LOAD_B (bij, Bx, p, B_iso) ;
+                        GB_BINOP (GB_CX (p), alpha_scalar, bij,
                             p % vlen, p / vlen) ;
                     }
                     #else
                     { 
-                        // C (i,j) = A (i,j)
-                        GB_COPY_A_TO_C (Cx, p, Ax, p, A_iso) ;
+                        // C (i,j) = B (i,j)
+                        GB_COPY_B_TO_C (Cx, p, Bx, p, B_iso) ;
                     }
                     #endif
                 }
                 #endif
-                Cb [p] = a ;
-                task_cnvals += a ;
+                Cb [p] = b ;
+                task_cnvals += b ;
             }
             else
             { 
@@ -59,27 +59,30 @@
         cnvals += task_cnvals ;
     }
 
-    GB_SLICE_MATRIX (B, 8, chunk) ;
+    GB_SLICE_MATRIX (A, 8, chunk) ;
 
-    #pragma omp parallel for num_threads(B_nthreads) \
-        schedule(dynamic,1) reduction(+:cnvals)
-    for (taskid = 0 ; taskid < B_ntasks ; taskid++)
+    #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1) \
+        reduction(+:cnvals)
+    for (taskid = 0 ; taskid < A_ntasks ; taskid++)
     {
-        int64_t kfirst = kfirst_Bslice [taskid] ;
-        int64_t klast  = klast_Bslice  [taskid] ;
+        int64_t kfirst = kfirst_Aslice [taskid] ;
+        int64_t klast  = klast_Aslice  [taskid] ;
         int64_t task_cnvals = 0 ;
         for (int64_t k = kfirst ; k <= klast ; k++)
         {
-            // find the part of B(:,k) for this task
-            int64_t j = GBH_B (Bh, k) ;
-            int64_t pB_start, pB_end ;
-            GB_get_pA (&pB_start, &pB_end, taskid, k, kfirst,
-                klast, pstart_Bslice, Bp, vlen) ;
+            // find the part of A(:,k) for this task
+            int64_t j = GBH_A (Ah, k) ;
+//          int64_t pA_start, pA_end ;
+//          GB_get_pA (&pA_start, &pA_end, taskid, k, kfirst,
+//              klast, pstart_Aslice, Ap, vlen) ;
+            GB_GET_PA (pA_start, pA_end, taskid, k, kfirst,
+                klast, pstart_Aslice,
+                GBP_A (Ap, k, vlen), GBP_A (Ap, k+1, vlen)) ;
             int64_t pC_start = j * vlen ;
-            // traverse over B(:,j), the kth vector of B
-            for (int64_t pB = pB_start ; pB < pB_end ; pB++)
+            // traverse over A(:,j), the kth vector of A
+            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
-                int64_t i = Bi [pB] ;
+                int64_t i = Ai [pA] ;
                 int64_t p = pC_start + i ;
                 GB_GET_MIJ (p) ;
                 if (mij)
@@ -89,8 +92,8 @@
                     { 
                         // C (i,j) = A (i,j) + B (i,j)
                         #ifndef GB_ISO_ADD
-                        GB_LOAD_A (aij, Ax, p , A_iso) ;
-                        GB_LOAD_B (bij, Bx, pB, B_iso) ;
+                        GB_LOAD_A (aij, Ax, pA, A_iso) ;
+                        GB_LOAD_B (bij, Bx, p , B_iso) ;
                         GB_BINOP (GB_CX (p), aij, bij, i, j) ;
                         #endif
                     }
@@ -98,16 +101,15 @@
                     { 
                         #ifndef GB_ISO_ADD
                         #if GB_IS_EWISEUNION
-                        {
-                            // C (i,j) = alpha + B(i,j)
-                            GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                            GB_BINOP (GB_CX (p), alpha_scalar, bij,
-                                i, j) ;
+                        { 
+                            // C (i,j) = A(i,j) + beta
+                            GB_LOAD_A (aij, Ax, pA, A_iso) ;
+                            GB_BINOP (GB_CX (p), aij, beta_scalar, i, j) ;
                         }
                         #else
                         { 
-                            // C (i,j) = B (i,j)
-                            GB_COPY_B_TO_C (Cx, p, Bx, pB, B_iso) ;
+                            // C (i,j) = A (i,j)
+                            GB_COPY_A_TO_C (Cx, p, Ax, pA, A_iso) ;
                         }
                         #endif
                         #endif
@@ -119,5 +121,5 @@
         }
         cnvals += task_cnvals ;
     }
-
 }
+

@@ -151,7 +151,7 @@
         // phase1: symbolic phase
         // C is sparse or hypersparse (never bitmap or full)
         // Werk allocated: none
-        #include "GB_sparse_add_template.c"
+        #include "GB_add_sparse_template.c"
 
     #else
 
@@ -174,15 +174,15 @@
         {
             #if GB_C_IS_SPARSE || GB_C_IS_HYPER
             {
-                #include "GB_sparse_add_template.c"
+                #include "GB_add_sparse_template.c"
             }
             #elif GB_C_IS_BITMAP
             {
-                #include "GB_bitmap_add_template.c"
+                #include "GB_add_bitmap_template.c"
             }
             #else
             {
-                #include "GB_full_add_template.c"
+                #include "GB_add_full_template.c"
             }
             #endif
         }
@@ -205,20 +205,20 @@
                 { 
                     // C is sparse or hypersparse
                     // Werk allocated: none
-                    #include "GB_sparse_add_template.c"
+                    #include "GB_add_sparse_template.c"
                 }
                 else if (C_sparsity == GxB_BITMAP)
                 { 
                     // C is bitmap (phase2 only)
                     // Werk: slice M and A, M and B, just A, or just B, or none
-                    #include "GB_bitmap_add_template.c"
+                    #include "GB_add_bitmap_template.c"
                 }
                 else
                 { 
                     // C is full (phase2 only)
                     ASSERT (C_sparsity == GxB_FULL) ;
                     // Werk: slice just A, just B, or none
-                    #include "GB_full_add_template.c"
+                    #include "GB_add_full_template.c"
                 }
 
             }
@@ -239,20 +239,20 @@
                 { 
                     // C is sparse or hypersparse
                     // Werk allocated: none
-                    #include "GB_sparse_add_template.c"
+                    #include "GB_add_sparse_template.c"
                 }
                 else if (C_sparsity == GxB_BITMAP)
                 { 
                     // C is bitmap (phase2 only)
                     // Werk: slice M and A, M and B, just A, or just B, or none
-                    #include "GB_bitmap_add_template.c"
+                    #include "GB_add_bitmap_template.c"
                 }
                 else
                 { 
                     // C is full (phase2 only), and not iso
                     ASSERT (C_sparsity == GxB_FULL) ;
                     // Werk: slice just A, just B, or none
-                    #include "GB_full_add_template.c"
+                    #include "GB_add_full_template.c"
                 }
             }
         }

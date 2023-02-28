@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_add_M_bitmap: C<#M>=A+B, C bitmap, M bitmap/full
+// GB_add_bitmap_M_bitmap: C<#M>=A+B, C bitmap, M bitmap/full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -80,15 +80,15 @@
     {
         #if (GB_A_IS_BITMAP || GB_A_IS_FULL) && (GB_B_IS_BITMAP || GB_B_IS_FULL)
         {
-            #include "GB_bitmap_add_M_bitmap_27.c"
+            #include "GB_add_bitmap_M_bitmap_27.c"
         }
         #elif (GB_A_IS_BITMAP || GB_A_IS_FULL)
         {
-            #include "GB_bitmap_add_M_bitmap_28.c"
+            #include "GB_add_bitmap_M_bitmap_28.c"
         }
         #else
         {
-            #include "GB_bitmap_add_M_bitmap_29.c"
+            #include "GB_add_bitmap_M_bitmap_29.c"
         }
         #endif
     }
@@ -96,15 +96,15 @@
     {
         if ((A_is_bitmap || A_is_full) && (B_is_bitmap || B_is_full))
         {
-            #include "GB_bitmap_add_M_bitmap_27.c"
+            #include "GB_add_bitmap_M_bitmap_27.c"
         }
         else if (A_is_bitmap || A_is_full)
         {
-            #include "GB_bitmap_add_M_bitmap_28.c"
+            #include "GB_add_bitmap_M_bitmap_28.c"
         }
         else
         {
-            #include "GB_bitmap_add_M_bitmap_29.c"
+            #include "GB_add_bitmap_M_bitmap_29.c"
         }
     }
     #endif
