@@ -34,7 +34,7 @@
         }
         #else
         {
-            // M is bitmapw/full, complemented or not, and valued/structural.
+            // M is bitmap/full, complemented or not, and valued/structural.
             // A and B have any sparsity format but at least one is bitmap/full.
             #include "GB_add_bitmap_M_bitmap.c"
         }
@@ -58,7 +58,7 @@
         }
         else
         {
-            // M is bitmapw/full, complemented or not, and valued/structural.
+            // M is bitmap/full, complemented or not, and valued/structural.
             // A and B have any sparsity format but at least one is bitmap/full.
             #include "GB_add_bitmap_M_bitmap.c"
         }

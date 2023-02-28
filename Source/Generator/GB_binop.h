@@ -73,7 +73,15 @@ GrB_Info GB (_AaddB)
     const GB_task_struct *restrict TaskList,
     const int C_ntasks,
     const int C_nthreads,
-    GB_Werk Werk
+    const int64_t *restrict M_ek_slicing,
+    const int M_nthreads, 
+    const int M_ntasks, 
+    const int64_t *restrict A_ek_slicing,
+    const int A_nthreads,
+    const int A_ntasks,
+    const int64_t *restrict B_ek_slicing,
+    const int B_nthreads,
+    const int B_ntasks
 ) ;
 
 m4_divert(if_binop_emult_is_enabled)

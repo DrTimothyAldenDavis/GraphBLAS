@@ -24,21 +24,6 @@
 
 // phase2: computes C, using the counts computed by phase1.
 
-#undef  GB_FREE_WORKSPACE
-#define GB_FREE_WORKSPACE                   \
-{                                           \
-    GB_WERK_POP (B_ek_slicing, int64_t) ;   \
-    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
-    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
-}
-
-#undef  GB_FREE_ALL
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_FREE_WORKSPACE ;             \
-    GB_phybix_free (C) ;            \
-}
-
 {
 
     //--------------------------------------------------------------------------
@@ -52,7 +37,6 @@
     const int8_t  *restrict Ab = A->b ;
     const int64_t *restrict Ai = A->i ;
     const int64_t vlen = A->vlen ;
-    int A_nthreads, A_ntasks ;
 
     #ifdef GB_JIT_KERNEL
     #define A_is_hyper  GB_A_IS_HYPER
@@ -73,7 +57,6 @@
     const int64_t *restrict Bh = B->h ;
     const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
-    int B_nthreads, B_ntasks ;
 
     #ifdef GB_JIT_KERNEL
     #define B_is_hyper  GB_B_IS_HYPER
@@ -94,7 +77,6 @@
     const int8_t  *restrict Mb = NULL ;
     const int64_t *restrict Mi = NULL ;
     const GB_M_TYPE *restrict Mx = NULL ;
-    int M_nthreads, M_ntasks ;
     size_t msize = 0 ;
 
     #ifdef GB_JIT_KERNEL
@@ -135,11 +117,7 @@
     const int64_t  *restrict Ch = C->h ;
           int8_t   *restrict Cb = C->b ;
           int64_t  *restrict Ci = C->i ;
-
-    // when C is bitmap or full:
     const int64_t cnz = GB_nnz_held (C) ;
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -150,7 +128,6 @@
 
         // phase1: symbolic phase
         // C is sparse or hypersparse (never bitmap or full)
-        // Werk allocated: none
         #include "GB_add_sparse_template.c"
 
     #else
@@ -204,20 +181,17 @@
                 if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
                 { 
                     // C is sparse or hypersparse
-                    // Werk allocated: none
                     #include "GB_add_sparse_template.c"
                 }
                 else if (C_sparsity == GxB_BITMAP)
                 { 
                     // C is bitmap (phase2 only)
-                    // Werk: slice M and A, M and B, just A, or just B, or none
                     #include "GB_add_bitmap_template.c"
                 }
                 else
                 { 
                     // C is full (phase2 only)
                     ASSERT (C_sparsity == GxB_FULL) ;
-                    // Werk: slice just A, just B, or none
                     #include "GB_add_full_template.c"
                 }
 
@@ -238,20 +212,17 @@
                 if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
                 { 
                     // C is sparse or hypersparse
-                    // Werk allocated: none
                     #include "GB_add_sparse_template.c"
                 }
                 else if (C_sparsity == GxB_BITMAP)
                 { 
                     // C is bitmap (phase2 only)
-                    // Werk: slice M and A, M and B, just A, or just B, or none
                     #include "GB_add_bitmap_template.c"
                 }
                 else
                 { 
                     // C is full (phase2 only), and not iso
                     ASSERT (C_sparsity == GxB_FULL) ;
-                    // Werk: slice just A, just B, or none
                     #include "GB_add_full_template.c"
                 }
             }

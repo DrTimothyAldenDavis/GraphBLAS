@@ -42,7 +42,9 @@
     // scatter M into the C bitmap
     //--------------------------------------------------------------------------
 
-    GB_SLICE_MATRIX (M, 8, chunk) ;
+    const int64_t *kfirst_Mslice = M_ek_slicing ;
+    const int64_t *klast_Mslice  = M_ek_slicing + M_ntasks ;
+    const int64_t *pstart_Mslice = M_ek_slicing + M_ntasks*2 ;
 
     #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < M_ntasks ; taskid++)
@@ -87,16 +89,19 @@
 
         #if (GB_A_IS_BITMAP || GB_A_IS_FULL) && (GB_B_IS_BITMAP || GB_B_IS_FULL)
         {
+            // A and B are both bitmap/full
             #include "GB_add_bitmap_M_sparse_24.c"
             #define M_cleared true
         }
         #elif (GB_A_IS_BITMAP || GB_A_IS_FULL)
         {
+            // A is bitmap/full, B is sparse/hyper
             #include "GB_add_bitmap_M_sparse_25.c"
             #define M_cleared false
         }
         #else
         {
+            // A is sparse/hyper, B is bitmap/full
             #include "GB_add_bitmap_M_sparse_26.c"
             #define M_cleared false
         }
@@ -107,15 +112,18 @@
         bool M_cleared = false ;
         if ((A_is_bitmap || A_is_full) && (B_is_bitmap || B_is_full))
         {
+            // A and B are both bitmap/full
             #include "GB_add_bitmap_M_sparse_24.c"
             M_cleared = true ;      // M has also been cleared from C
         }
         else if (A_is_bitmap || A_is_full)
         {
+            // A is bitmap/full, B is sparse/hyper
             #include "GB_add_bitmap_M_sparse_25.c"
         }
         else
         {
+            // A is sparse/hyper, B is bitmap/full
             #include "GB_add_bitmap_M_sparse_26.c"
         }
 

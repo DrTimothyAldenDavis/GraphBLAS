@@ -159,15 +159,20 @@ GrB_Info GB (_AaddB__first_fp32)
     const GB_task_struct *restrict TaskList,
     const int C_ntasks,
     const int C_nthreads,
-    GB_Werk Werk
+    const int64_t *restrict M_ek_slicing,
+    const int M_nthreads, 
+    const int M_ntasks, 
+    const int64_t *restrict A_ek_slicing,
+    const int A_nthreads,
+    const int A_ntasks,
+    const int64_t *restrict B_ek_slicing,
+    const int B_nthreads,
+    const int B_ntasks
 )
 { 
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
-    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
-    GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
     GB_A_TYPE alpha_scalar ;
     GB_B_TYPE beta_scalar ;
     if (is_eWiseUnion)
@@ -176,7 +181,6 @@ GrB_Info GB (_AaddB__first_fp32)
         beta_scalar  = (*((GB_B_TYPE *) beta_scalar_in )) ;
     }
     #include "GB_add_template.c"
-    GB_FREE_WORKSPACE ;
     return (GrB_SUCCESS) ;
     #endif
 }

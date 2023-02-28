@@ -43,14 +43,17 @@
     {
         if (A_is_bitmap && B_is_bitmap)
         {
+            // A and B are both bitmap
             #include "GB_add_bitmap_noM_21.c"
         }
         else if (A_is_bitmap)
         {
+            // A is bitmap, B is sparse/hyper
             #include "GB_add_bitmap_noM_22.c"
         }
         else
         {
+            // A is sparse/hyper, B is bitmap
             #include "GB_add_bitmap_noM_23.c"
         }
     }

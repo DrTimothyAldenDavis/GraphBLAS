@@ -5,7 +5,7 @@ function gbtest30
 % SPDX-License-Identifier: Apache-2.0
 
 rng ('default') ;
-n = 1e9 %#ok<*NOPRT>
+n = 1e8 %#ok<*NOPRT>
 A = sparse (n, 1) ;
 
 k = n/2 - 1 ;

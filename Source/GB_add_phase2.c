@@ -291,6 +291,34 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
+    // slice M, A, and B if needed
+    //--------------------------------------------------------------------------
+
+    int M_nthreads = 0, M_ntasks = 0 ;
+    int A_nthreads = 0, A_ntasks = 0 ;
+    int B_nthreads = 0, B_ntasks = 0 ;
+
+    if (!C_is_sparse_or_hyper)
+    {
+        // if C is bitmap/full, then each matrix M, A, and B needs to be sliced
+        // if they are sparse/hyper
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
+        if (M != NULL && (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)))
+        {
+            GB_SLICE_MATRIX (M, 8, chunk) ;
+        }
+        if (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))
+        {
+            GB_SLICE_MATRIX (A, 8, chunk) ;
+        }
+        if (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B))
+        {
+            GB_SLICE_MATRIX (B, 8, chunk) ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
     // using a built-in binary operator (except for positional operators)
     //--------------------------------------------------------------------------
 
@@ -338,7 +366,10 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                     M, Mask_struct, Mask_comp,                              \
                     A, B, is_eWiseUnion, alpha_scalar, beta_scalar,         \
                     Ch_is_Mh, C_to_M, C_to_A, C_to_B,                       \
-                    TaskList, C_ntasks, C_nthreads, Werk) ;                 \
+                    TaskList, C_ntasks, C_nthreads,                         \
+                    M_ek_slicing, M_nthreads, M_ntasks,                     \
+                    A_ek_slicing, A_nthreads, A_ntasks,                     \
+                    B_ek_slicing, B_nthreads, B_ntasks) ;                   \
             }                                                               \
             break ;
 
@@ -355,16 +386,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             }
 
             done = (info != GrB_NO_VALUE) ;
-
-            // TODO: M, A, and B can be sliced before calling the worker, then
-            // the worker can't run out of memory. Then pass in the ek_slice
-            // arrays to the worker.
-            if (info == GrB_OUT_OF_MEMORY)
-            { 
-                // out of memory
-                GB_FREE_ALL ;
-                return (info) ;
-            }
 
         #endif
     }

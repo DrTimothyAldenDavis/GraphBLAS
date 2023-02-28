@@ -59,7 +59,9 @@
         cnvals += task_cnvals ;
     }
 
-    GB_SLICE_MATRIX (B, 8, chunk) ;
+    const int64_t *kfirst_Bslice = B_ek_slicing ;
+    const int64_t *klast_Bslice  = B_ek_slicing + B_ntasks ;
+    const int64_t *pstart_Bslice = B_ek_slicing + B_ntasks*2 ;
 
     #pragma omp parallel for num_threads(B_nthreads) schedule(dynamic,1) \
         reduction(+:cnvals)
