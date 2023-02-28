@@ -52,34 +52,65 @@
     const int8_t  *restrict Ab = A->b ;
     const int64_t *restrict Ai = A->i ;
     const int64_t vlen = A->vlen ;
+    int A_nthreads, A_ntasks ;
+
+    #ifdef GB_JIT_KERNEL
+    #define A_is_hyper  GB_A_IS_HYPER
+    #define A_is_sparse GB_A_IS_SPARSE
+    #define A_is_bitmap GB_A_IS_BITMAP
+    #define A_is_full   GB_A_IS_FULL
+    #define A_iso       GB_A_ISO
+    #else
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_full = GB_as_if_full (A) ;
-    int A_nthreads, A_ntasks ;
+    // unlike GB_emult, both A and B may be iso
+    const bool A_iso = A->iso ;
+    #endif
 
     const int64_t *restrict Bp = B->p ;
     const int64_t *restrict Bh = B->h ;
     const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
+    int B_nthreads, B_ntasks ;
+
+    #ifdef GB_JIT_KERNEL
+    #define B_is_hyper  GB_B_IS_HYPER
+    #define B_is_sparse GB_B_IS_SPARSE
+    #define B_is_bitmap GB_B_IS_BITMAP
+    #define B_is_full   GB_B_IS_FULL
+    #define B_iso       GB_B_ISO
+    #else
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_full = GB_as_if_full (B) ;
-    int B_nthreads, B_ntasks ;
+    const bool B_iso = B->iso ;
+    #endif
 
     const int64_t *restrict Mp = NULL ;
     const int64_t *restrict Mh = NULL ;
     const int8_t  *restrict Mb = NULL ;
     const int64_t *restrict Mi = NULL ;
     const GB_M_TYPE *restrict Mx = NULL ;
+    int M_nthreads, M_ntasks ;
+    size_t msize = 0 ;
+
+    #ifdef GB_JIT_KERNEL
+    #define M_is_hyper  GB_M_IS_HYPER
+    #define M_is_sparse GB_M_IS_SPARSE
+    #define M_is_bitmap GB_M_IS_BITMAP
+    #define M_is_full   GB_M_IS_FULL
+    #define M_is_sparse_or_hyper (GB_M_IS_SPARSE || GB_M_IS_HYPER)
+    #else
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_sparse = GB_IS_SPARSE (M) ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
     const bool M_is_full = GB_as_if_full (M) ;
     const bool M_is_sparse_or_hyper = M_is_sparse || M_is_hyper ;
-    int M_nthreads, M_ntasks ;
-    size_t msize = 0 ;
+    #endif
+
     if (M != NULL)
     { 
         Mp = M->p ;
@@ -100,9 +131,6 @@
     ASSERT (!C->iso) ;
     #endif
 
-    // unlike GB_emult, both A and B may be iso
-    const bool A_iso = A->iso ;
-    const bool B_iso = B->iso ;
     const int64_t  *restrict Cp = C->p ;
     const int64_t  *restrict Ch = C->h ;
           int8_t   *restrict Cb = C->b ;
@@ -142,73 +170,93 @@
                 GB_GETB (bij, Bx,pB,B_iso)
         #endif
 
-        #ifndef GB_ISO_ADD
-        if (is_eWiseUnion)
+        #ifdef GB_JIT_KERNEL
         {
-
-            //------------------------------------------------------------------
-            // eWiseUnion, using alpha and beta scalars
-            //------------------------------------------------------------------
-
-            #undef  GB_IS_EWISEUNION
-            #define GB_IS_EWISEUNION 1
-            // if A(i,j) is not present: C(i,j) = alpha + B(i,j)
-            // if B(i,j) is not present: C(i,j) = A(i,j) + beta
-
-            if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
-            { 
-                // C is sparse or hypersparse
-                // Werk allocated: none
+            #if GB_C_IS_SPARSE || GB_C_IS_HYPER
+            {
                 #include "GB_sparse_add_template.c"
             }
-            else if (C_sparsity == GxB_BITMAP)
-            { 
-                // C is bitmap (phase2 only)
-                // Werk: slice M and A, M and B, just A, or just B, or none
+            #elif GB_C_IS_BITMAP
+            {
                 #include "GB_bitmap_add_template.c"
             }
-            else
-            { 
-                // C is full (phase2 only)
-                ASSERT (C_sparsity == GxB_FULL) ;
-                // Werk: slice just A, just B, or none
+            #else
+            {
                 #include "GB_full_add_template.c"
             }
-
+            #endif
         }
-        else
+        #else
+        {
+            #ifndef GB_ISO_ADD
+            if (is_eWiseUnion)
+            {
+
+                //--------------------------------------------------------------
+                // eWiseUnion, using alpha and beta scalars
+                //--------------------------------------------------------------
+
+                #undef  GB_IS_EWISEUNION
+                #define GB_IS_EWISEUNION 1
+                // if A(i,j) is not present: C(i,j) = alpha + B(i,j)
+                // if B(i,j) is not present: C(i,j) = A(i,j) + beta
+
+                if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
+                { 
+                    // C is sparse or hypersparse
+                    // Werk allocated: none
+                    #include "GB_sparse_add_template.c"
+                }
+                else if (C_sparsity == GxB_BITMAP)
+                { 
+                    // C is bitmap (phase2 only)
+                    // Werk: slice M and A, M and B, just A, or just B, or none
+                    #include "GB_bitmap_add_template.c"
+                }
+                else
+                { 
+                    // C is full (phase2 only)
+                    ASSERT (C_sparsity == GxB_FULL) ;
+                    // Werk: slice just A, just B, or none
+                    #include "GB_full_add_template.c"
+                }
+
+            }
+            else
+            #endif
+            {
+
+                //--------------------------------------------------------------
+                // eWiseAdd:
+                //--------------------------------------------------------------
+
+                #undef  GB_IS_EWISEUNION
+                #define GB_IS_EWISEUNION 0
+                // if A(i,j) is not present: C(i,j) = B(i,j)
+                // if B(i,j) is not present: C(i,j) = A(i,j)
+
+                if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
+                { 
+                    // C is sparse or hypersparse
+                    // Werk allocated: none
+                    #include "GB_sparse_add_template.c"
+                }
+                else if (C_sparsity == GxB_BITMAP)
+                { 
+                    // C is bitmap (phase2 only)
+                    // Werk: slice M and A, M and B, just A, or just B, or none
+                    #include "GB_bitmap_add_template.c"
+                }
+                else
+                { 
+                    // C is full (phase2 only), and not iso
+                    ASSERT (C_sparsity == GxB_FULL) ;
+                    // Werk: slice just A, just B, or none
+                    #include "GB_full_add_template.c"
+                }
+            }
+        }
         #endif
-        {
-
-            //------------------------------------------------------------------
-            // eWiseAdd:
-            //------------------------------------------------------------------
-
-            #undef  GB_IS_EWISEUNION
-            #define GB_IS_EWISEUNION 0
-            // if A(i,j) is not present: C(i,j) = B(i,j)
-            // if B(i,j) is not present: C(i,j) = A(i,j)
-
-            if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
-            { 
-                // C is sparse or hypersparse
-                // Werk allocated: none
-                #include "GB_sparse_add_template.c"
-            }
-            else if (C_sparsity == GxB_BITMAP)
-            { 
-                // C is bitmap (phase2 only)
-                // Werk: slice M and A, M and B, just A, or just B, or none
-                #include "GB_bitmap_add_template.c"
-            }
-            else
-            { 
-                // C is full (phase2 only)
-                ASSERT (C_sparsity == GxB_FULL) ;
-                // Werk: slice just A, just B, or none
-                #include "GB_full_add_template.c"
-            }
-        }
 
     #endif
 }
