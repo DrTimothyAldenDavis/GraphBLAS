@@ -338,6 +338,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         GB_BURBLE_MATRIX (C, "(iso add) ") ;
         memcpy (C->x, cscalar, csize) ;
 
+        // FIXME: call it GB_add_iso ( ... )
+
         // pattern of C = set union of pattern of A and B
         #define GB_ISO_ADD
         #include "GB_add_template.c"

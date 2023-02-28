@@ -43,12 +43,8 @@
         {
             // find the part of B(:,k) for this task
             int64_t j = GBH_B (Bh, k) ;
-//          int64_t pB_start, pB_end ;
-//          GB_get_pA (&pB_start, &pB_end, taskid, k, kfirst,
-//              klast, pstart_Bslice, Bp, vlen) ;
-            GB_GET_PA (pB_start, pB_end, taskid, k, kfirst,
-                klast, pstart_Bslice,
-                GBP_B (Bp, k, vlen), GBP_B (Bp, k+1, vlen)) ;
+            GB_GET_PA (pB_start, pB_end, taskid, k, kfirst, klast,
+                pstart_Bslice, GBP_B (Bp, k, vlen), GBP_B (Bp, k+1, vlen)) ;
             int64_t pC_start = j * vlen ;
             // traverse over B(:,j), the kth vector of B
             for (int64_t pB = pB_start ; pB < pB_end ; pB++)

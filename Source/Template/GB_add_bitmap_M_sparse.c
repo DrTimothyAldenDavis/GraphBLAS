@@ -55,12 +55,8 @@
         {
             // find the part of M(:,k) for this task
             int64_t j = GBH_M (Mh, k) ;
-//          int64_t pM_start, pM_end ;
-//          GB_get_pA (&pM_start, &pM_end, taskid, k, kfirst,
-//              klast, pstart_Mslice, Mp, vlen) ;
-            GB_GET_PA (pM_start, pM_end, taskid, k, kfirst,
-                klast, pstart_Mslice,
-                GBP_M (Mp, k, vlen), GBP_M (Mp, k+1, vlen)) ;
+            GB_GET_PA (pM_start, pM_end, taskid, k, kfirst, klast,
+                pstart_Mslice, GBP_M (Mp, k, vlen), GBP_M (Mp, k+1, vlen)) ;
             int64_t pC_start = j * vlen ;
             // traverse over M(:,j), the kth vector of M
             for (int64_t pM = pM_start ; pM < pM_end ; pM++)
@@ -149,12 +145,8 @@
             {
                 // find the part of M(:,k) for this task
                 int64_t j = GBH_M (Mh, k) ;
-//              int64_t pM_start, pM_end ;
-//              GB_get_pA (&pM_start, &pM_end, taskid, k, kfirst,
-//                  klast, pstart_Mslice, Mp, vlen) ;
-                GB_GET_PA (pM_start, pM_end, taskid, k, kfirst,
-                    klast, pstart_Mslice,
-                    GBP_M (Mp, k, vlen), GBP_M (Mp, k+1, vlen)) ;
+                GB_GET_PA (pM_start, pM_end, taskid, k, kfirst, klast,
+                    pstart_Mslice, GBP_M (Mp, k, vlen), GBP_M (Mp, k+1, vlen)) ;
                 int64_t pC_start = j * vlen ;
                 // traverse over M(:,j), the kth vector of M
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)

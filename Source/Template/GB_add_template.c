@@ -104,6 +104,11 @@
     }
 
     #if defined ( GB_PHASE_2_OF_2 )
+
+    #ifdef GB_JIT_KERNEL
+    ASSERT (!C->iso) ;
+    #endif
+
     #ifdef GB_ISO_ADD
     ASSERT (C->iso) ;
     #else
