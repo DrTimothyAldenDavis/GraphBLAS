@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_ewise_generic: generic methods for eWiseMult and eWiseAdd
+// GB_emult_generic: generic methods for eWiseMult
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// GB_ewise_generic handles the generic case for ewise operations, when no
-// built-in worker in the switch factory can handle this case.  This occurs
-// for user-defined operators, when typecasting occurs, or for FIRST[IJ]* and
+// GB_emult_generic handles the generic case for eWiseMult, when no built-in
+// worker in the switch factory can handle this case.  This occurs for
+// user-defined operators, when typecasting occurs, or for FIRST[IJ]* and
 // SECOND[IJ]* positional operators.
 
 // C is not iso, but A and/or B might be.
@@ -28,7 +28,7 @@
 
 #include "GB_generic.h"
 
-void GB_ewise_generic       // generic ewise
+void GB_emult_generic       // generic emult
 (
     // input/output:
     GrB_Matrix C,           // output matrix, static header
@@ -43,7 +43,7 @@ void GB_ewise_generic       // generic ewise
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
     const int C_sparsity,
-    // from GB_emult_sparsity or GB_add_sparsity:
+    // from GB_emult_sparsity
     const int ewise_method,
     // from GB_emult_04 and GB_emult_02:
     const int64_t *restrict Cp_kfirst,
@@ -183,7 +183,7 @@ void GB_ewise_generic       // generic ewise
             }
             else if (C_sparsity == GxB_BITMAP)
             {
-                #include "GB_bitmap_emult_template.c"
+                #include "GB_emult_bitmap_template.c"
             }
             else
             {
@@ -207,7 +207,7 @@ void GB_ewise_generic       // generic ewise
             }
             else if (C_sparsity == GxB_BITMAP)
             {
-                #include "GB_bitmap_emult_template.c"
+                #include "GB_emult_bitmap_template.c"
             }
             else
             {
@@ -253,7 +253,7 @@ void GB_ewise_generic       // generic ewise
         }
         else if (C_sparsity == GxB_BITMAP)
         { 
-            #include "GB_bitmap_emult_template.c"
+            #include "GB_emult_bitmap_template.c"
         }
         else
         { 

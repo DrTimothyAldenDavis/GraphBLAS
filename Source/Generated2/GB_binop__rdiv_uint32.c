@@ -355,7 +355,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_uint32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_bitmap_emult_template.c"
+    #include "GB_emult_bitmap_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_emult_template: C = A.*B, C<M>=A.*B, and C<!M>=A.*B, C bitmap
+// GB_emult_bitmap_template: C = A.*B, C<M>=A.*B, and C<!M>=A.*B, C bitmap
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.

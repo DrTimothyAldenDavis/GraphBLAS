@@ -346,7 +346,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
         if (!done)
         { 
             GB_BURBLE_MATRIX (C, "(generic emult_04: %s) ", op->name) ;
-            GB_ewise_generic (C, op, NULL, 0, 0,
+            GB_emult_generic (C, op, NULL, 0, 0,
                 NULL, NULL, NULL, C_sparsity, GB_EMULT_METHOD4, Cp_kfirst,
                 M_ek_slicing, M_ntasks, M_nthreads, NULL, 0, 0, NULL, 0, 0,
                 M, Mask_struct, false, A, B, Werk) ;

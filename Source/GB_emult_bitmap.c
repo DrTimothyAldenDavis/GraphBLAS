@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_emult: C = A.*B, C<M>=A.*B, or C<!M>=A.*B when C is bitmap
+// GB_emult_bitmap: C = A.*B, C<M>=A.*B, or C<!M>=A.*B when C is bitmap
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -77,7 +77,7 @@
     GB_phybix_free (C) ;                    \
 }
 
-GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
+GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 (
     GrB_Matrix C,           // output matrix, static header
     const int ewise_method,
@@ -216,7 +216,7 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
         // pattern of C = set intersection of pattern of A and B
         #define GB_ISO_EMULT
-        #include "GB_bitmap_emult_template.c"
+        #include "GB_emult_bitmap_template.c"
         done = true ;
 
     }
@@ -276,7 +276,7 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     if (!done)
     { 
         GB_BURBLE_MATRIX (C, "(generic bitmap emult: %s) ", op->name) ;
-        GB_ewise_generic (C, op, NULL, 0, C_nthreads,
+        GB_emult_generic (C, op, NULL, 0, C_nthreads,
             NULL, NULL, NULL, GxB_BITMAP, ewise_method, NULL,
             M_ek_slicing, M_ntasks, M_nthreads, NULL, 0, 0, NULL, 0, 0,
             M, Mask_struct, Mask_comp, A, B, Werk) ;

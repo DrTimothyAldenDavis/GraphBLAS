@@ -523,7 +523,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     { 
         GB_BURBLE_MATRIX (C, "(generic emult_02: %s) ", op->name) ;
         int ewise_method = flipxy ? GB_EMULT_METHOD3 : GB_EMULT_METHOD2 ;
-        GB_ewise_generic (C, op, NULL, 0, 0,
+        GB_emult_generic (C, op, NULL, 0, 0,
             NULL, NULL, NULL, C_sparsity, ewise_method, Cp_kfirst,
             NULL, 0, 0, A_ek_slicing, A_ntasks, A_nthreads, NULL, 0, 0,
             M, Mask_struct, Mask_comp, A, B, Werk) ;

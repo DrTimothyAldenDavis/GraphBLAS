@@ -283,7 +283,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             // by method 4, which constructs C as sparse/hyper (the same
             // structure as M), not bitmap.
 
-            return (GB_bitmap_emult (C, ewise_method, ctype, C_is_csc,
+            return (GB_emult_bitmap (C, ewise_method, ctype, C_is_csc,
                 M, Mask_struct, Mask_comp, mask_applied, A, B,
                 op, Werk)) ;
 
