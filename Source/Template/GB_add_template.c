@@ -7,13 +7,22 @@
 
 //------------------------------------------------------------------------------
 
-// Computes C=A+B, C<M>=A+B, or C<!M>=A+B.
+// Computes C=A+B, C<M>=A+B, or C<!M>=A+B, for eWiseAdd or eWiseUnion.
 
 // phase1: does not compute C itself, but just counts the # of entries in each
 // vector of C.  Fine tasks compute the # of entries in their slice of a
 // single vector of C, and the results are cumsum'd.
 
 // phase2: computes C, using the counts computed by phase1.
+
+// for eWiseUnion:
+//      #define GB_IS_EWISEUNION 1
+//      if A(i,j) is not present: C(i,j) = alpha + B(i,j)
+//      if B(i,j) is not present: C(i,j) = A(i,j) + beta
+// for eWiseAdd:
+//      #define GB_IS_EWISEUNION 0
+//      if A(i,j) is not present: C(i,j) = B(i,j)
+//      if B(i,j) is not present: C(i,j) = A(i,j)
 
 {
 
@@ -177,66 +186,21 @@
         }
         #else
         {
-            #ifndef GB_ISO_ADD
-            if (is_eWiseUnion)
-            {
-
-                //--------------------------------------------------------------
-                // eWiseUnion, using alpha and beta scalars
-                //--------------------------------------------------------------
-
-                #undef  GB_IS_EWISEUNION
-                #define GB_IS_EWISEUNION 1
-                // if A(i,j) is not present: C(i,j) = alpha + B(i,j)
-                // if B(i,j) is not present: C(i,j) = A(i,j) + beta
-
-                if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
-                { 
-                    // C is sparse or hypersparse
-                    #include "GB_add_sparse_template.c"
-                }
-                else if (C_sparsity == GxB_BITMAP)
-                { 
-                    // C is bitmap (phase2 only)
-                    #include "GB_add_bitmap_template.c"
-                }
-                else
-                { 
-                    // C is full (phase2 only)
-                    ASSERT (C_sparsity == GxB_FULL) ;
-                    #include "GB_add_full_template.c"
-                }
-
+            if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
+            { 
+                // C is sparse or hypersparse
+                #include "GB_add_sparse_template.c"
+            }
+            else if (C_sparsity == GxB_BITMAP)
+            { 
+                // C is bitmap (phase2 only)
+                #include "GB_add_bitmap_template.c"
             }
             else
-            #endif
-            {
-
-                //--------------------------------------------------------------
-                // eWiseAdd:
-                //--------------------------------------------------------------
-
-                #undef  GB_IS_EWISEUNION
-                #define GB_IS_EWISEUNION 0
-                // if A(i,j) is not present: C(i,j) = B(i,j)
-                // if B(i,j) is not present: C(i,j) = A(i,j)
-
-                if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
-                { 
-                    // C is sparse or hypersparse
-                    #include "GB_add_sparse_template.c"
-                }
-                else if (C_sparsity == GxB_BITMAP)
-                { 
-                    // C is bitmap (phase2 only)
-                    #include "GB_add_bitmap_template.c"
-                }
-                else
-                { 
-                    // C is full (phase2 only), and not iso
-                    ASSERT (C_sparsity == GxB_FULL) ;
-                    #include "GB_add_full_template.c"
-                }
+            { 
+                // C is full (phase2 only), and not iso
+                ASSERT (C_sparsity == GxB_FULL) ;
+                #include "GB_add_full_template.c"
             }
         }
         #endif
@@ -247,4 +211,6 @@
 #undef GB_ISO_ADD
 #undef GB_LOAD_A
 #undef GB_LOAD_B
+#undef GB_IS_EWISEUNION
+
 

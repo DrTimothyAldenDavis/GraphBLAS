@@ -18,6 +18,7 @@ name = sprintf ('%s_%s', binop, fname) ;
 
 % function names
 fprintf (f, 'm4_define(`_AaddB'', `_AaddB__%s'')\n', name) ;
+fprintf (f, 'm4_define(`_AunionB'', `_AunionB__%s'')\n', name) ;
 fprintf (f, 'm4_define(`_Cdense_accumB'', `_Cdense_accumB__%s'')\n', name) ;
 fprintf (f, 'm4_define(`_Cdense_accumb'', `_Cdense_accumb__%s'')\n', name) ;
 fprintf (f, 'm4_define(`_Cdense_ewise3_noaccum'', `_Cdense_ewise3_noaccum__%s'')\n', name) ;

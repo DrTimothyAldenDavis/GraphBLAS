@@ -19,7 +19,7 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     // input:
     const int kcode,            // kernel to encode (add, emult, rowscale, ...)
     const bool is_eWiseMult,    // if true, method is emult
-    const bool is_eWiseUnion,   // if true, method is eWiseUnio
+    const bool is_eWiseUnion,   // if true, method is eWiseUnion
     const bool can_copy_to_C,   // if true C(i,j)=A(i,j) can bypass the op
     const bool C_iso,
     const bool C_in_iso,

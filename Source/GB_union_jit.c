@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_add_jit: C=A+B, C<#M>=A+B add method, via the JIT
+// GB_union_jit: C=A+B, C<#M>=A+B eWiseUnion method, via the JIT
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -18,6 +18,8 @@ typedef GrB_Info (*GB_jit_dl_function)
     const GrB_Matrix M,
     const GrB_Matrix A,
     const GrB_Matrix B,
+    const GB_void *alpha_scalar_in,
+    const GB_void *beta_scalar_in,
     const bool Ch_is_Mh,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
@@ -36,7 +38,7 @@ typedef GrB_Info (*GB_jit_dl_function)
     const int B_ntasks
 ) ;
 
-GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
+GrB_Info GB_union_jit      // C=A+B, C<#M>=A+B, eWiseUnion, via the JIT
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -46,6 +48,8 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
     const GrB_Type binaryop,
     const GrB_Matrix A,
     const GrB_Matrix B,
+    const GB_void *alpha_scalar_in,
+    const GB_void *beta_scalar_in,
     const bool Ch_is_Mh,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
@@ -77,7 +81,7 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
-        GB_JIT_KERNEL_ADD, false, false, true, false, false,
+        GB_JIT_KERNEL_UNION, false, true, false, false, false,
         C_sparsity, C->type, M, Mask_struct, Mask_comp, binaryop,
         false, A, B) ;
     if (hash == UINT64_MAX)
@@ -105,12 +109,12 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
         if (suffix == NULL)
         {
             snprintf (kernel_name, KLEN-1,
-                "GB_jit_add_%0*" PRIx64, 13, scode) ;
+                "GB_jit_union_%0*" PRIx64, 13, scode) ;
         }
         else
         {
             snprintf (kernel_name, KLEN-1,
-                "GB_jit_add_%0*" PRIx64 "__%s", 13, scode, suffix) ;
+                "GB_jit_union_%0*" PRIx64 "__%s", 13, scode, suffix) ;
         }
 
         char lib_filename [2048] ;
@@ -196,7 +200,7 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
             // }
 
             GB_macrofy_ewise (fp, scode, binaryop, C->type, A->type, B->type) ;
-            fprintf (fp, "\n#include \"GB_jit_kernel_add.c\"\n") ;
+            fprintf (fp, "\n#include \"GB_jit_kernel_union.c\"\n") ;
 
             if (!builtin)
             {
@@ -253,7 +257,7 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
     //------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    GrB_Info info = GB_jit_kernel (C, M, A, B,
+    GrB_Info info = GB_jit_kernel (C, M, A, B, alpha_scalar_in, beta_scalar_in,
         Ch_is_Mh, C_to_M, C_to_A, C_to_B, TaskList, C_ntasks, C_nthreads,
         M_ek_slicing, M_nthreads, M_ntasks, A_ek_slicing, A_nthreads, A_ntasks,
         B_ek_slicing, B_nthreads, B_ntasks) ;

@@ -131,16 +131,6 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     GB_macrofy_binop (fp, "GB_BINOP", flipxy, false, true, binop_ecode, C_iso,
         binaryop, NULL, NULL) ;
 
-    if (is_emult)
-    { 
-        fprintf (fp, "#define GB_IS_EWISEMULT 1\n") ;
-    }
-
-    if (is_union)
-    { 
-        fprintf (fp, "#define GB_IS_EWISEUNION 1\n") ;
-    }
-
     GB_macrofy_cast_copy (fp, "C", "A",
             (C_iso || !copy_to_C) ? NULL : ctype,
             (acode == 0 || acode == 15) ? NULL : atype,

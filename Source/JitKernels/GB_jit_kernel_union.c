@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_add.c: C=A+B, C<#M>=A+B, for eWiseAdd
+// GB_jit_kernel_union.c: C=A+B, C<#M>=A+B, for eWiseUnion
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -15,6 +15,8 @@ GrB_Info GB_jit_kernel
     const GrB_Matrix M,
     const GrB_Matrix A,
     const GrB_Matrix B,
+    const GB_void *alpha_scalar_in,
+    const GB_void *beta_scalar_in,
     const bool Ch_is_Mh,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
@@ -39,6 +41,8 @@ GrB_Info GB_jit_kernel
     const GrB_Matrix M,
     const GrB_Matrix A,
     const GrB_Matrix B,
+    const GB_void *alpha_scalar_in,
+    const GB_void *beta_scalar_in,
     const bool Ch_is_Mh,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
@@ -57,7 +61,9 @@ GrB_Info GB_jit_kernel
     const int B_ntasks
 )
 {
-    #define GB_IS_EWISEUNION 0
+    #define GB_IS_EWISEUNION 1
+    GB_A_TYPE alpha_scalar = (*((GB_A_TYPE *) alpha_scalar_in)) ;
+    GB_B_TYPE beta_scalar  = (*((GB_B_TYPE *) beta_scalar_in )) ;
     #include "GB_add_template.c"
     return (GrB_SUCCESS) ;
 }
