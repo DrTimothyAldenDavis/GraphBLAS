@@ -30,9 +30,6 @@
 // C matrix:
 #define GB_C_TYPE int32_t
 
-// do the numerical phases of GB_add and GB_emult
-#define GB_PHASE_2_OF_2
-
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_PAIR || GxB_NO_INT32 || GxB_NO_PAIR_INT32)

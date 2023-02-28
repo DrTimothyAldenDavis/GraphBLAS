@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_meta:  phase1 and phase2 for C=A.*B, C<M>=A.*B, C<!M>=A.*B
+// GB_emult_08_meta:  phase1 and phase2 for C=A.*B, C<M>=A.*B, C<!M>=A.*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -68,7 +68,11 @@
         msize = M->type->size ;
     }
 
-    #if defined ( GB_PHASE_2_OF_2 )
+    #ifndef GB_EMULT_08_PHASE
+    #define GB_EMULT_08_PHASE 2
+    #endif
+
+    #if ( GB_EMULT_08_PHASE == 2 )
     const bool A_iso = A->iso ;
     const bool B_iso = B->iso ;
     #ifdef GB_ISO_EMULT
@@ -89,16 +93,16 @@
     // C=A.*B, C<M>=A.*B, or C<!M>=A.*B: C is sparse or hypersparse
     //--------------------------------------------------------------------------
 
-    #if defined ( GB_PHASE_1_OF_2 )
+    #if ( GB_EMULT_08_PHASE == 1 )
 
         // phase1: symbolic phase
-        #include "GB_emult_template.c"
+        #include "GB_emult_08_template.c"
 
     #else
 
         // phase2: numerical phase
         ASSERT (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE) ;
-        #include "GB_emult_template.c"
+        #include "GB_emult_08_template.c"
 
     #endif
 }

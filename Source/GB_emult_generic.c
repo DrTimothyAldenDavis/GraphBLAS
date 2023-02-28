@@ -143,8 +143,6 @@ void GB_emult_generic       // generic emult
     // address of Cx [p]
     #define GB_CX(p) Cx +((p)*csize)
 
-    #define GB_PHASE_2_OF_2
-
     // flipxy is handled in the definition of GB_BINOP, not in the template
     #define GB_FLIPPED 0
 
@@ -187,7 +185,7 @@ void GB_emult_generic       // generic emult
             }
             else
             {
-                #include "GB_emult_meta.c"
+                #include "GB_emult_08_meta.c"
             }
         }
         else
@@ -211,7 +209,7 @@ void GB_emult_generic       // generic emult
             }
             else
             {
-                #include "GB_emult_meta.c"
+                #include "GB_emult_08_meta.c"
             }
         }
 
@@ -257,7 +255,7 @@ void GB_emult_generic       // generic emult
         }
         else
         { 
-            #include "GB_emult_meta.c"
+            #include "GB_emult_08_meta.c"
         }
     }
 

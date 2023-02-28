@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_template: C=A.*B, C<M or !M>=A.*B when C is sparse/hyper
+// GB_emult_08_template: C=A.*B, C<M or !M>=A.*B when C is sparse/hyper
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -86,7 +86,7 @@
 
             int64_t j = GBH_C (Ch, k) ;
 
-            #if defined ( GB_PHASE_1_OF_2 )
+            #if ( GB_EMULT_08_PHASE == 1 )
             int64_t cjnz = 0 ;
             #else
             int64_t pC, pC_end ;
@@ -141,7 +141,7 @@
             { 
                 iA_first = GBI_A (Ai, pA, vlen) ;
             }
-            #if defined ( GB_PHASE_1_OF_2 ) || defined ( GB_DEBUG )
+            #if ( GB_EMULT_08_PHASE == 1 ) || defined ( GB_DEBUG )
             int64_t iA_last = -1 ;
             if (ajnz > 0)
             { 
@@ -183,7 +183,7 @@
             { 
                 iB_first = GBI_B (Bi, pB, vlen) ;
             }
-            #if defined ( GB_PHASE_1_OF_2 ) || defined ( GB_DEBUG )
+            #if ( GB_EMULT_08_PHASE == 1 ) || defined ( GB_DEBUG )
             int64_t iB_last = -1 ;
             if (bjnz > 0)
             { 
@@ -230,7 +230,7 @@
             // C(:,j)<optional mask> = A (:,j) .* B (:,j) or subvector
             //------------------------------------------------------------------
 
-            #if defined ( GB_PHASE_1_OF_2 )
+            #if ( GB_EMULT_08_PHASE == 1 )
 
             if (ajnz == 0 || bjnz == 0)
             { 
@@ -292,7 +292,7 @@
                         if (found)
                         { 
                             // C (i,j) = A (i,j) .* B (i,j)
-                            #if defined ( GB_PHASE_1_OF_2 )
+                            #if ( GB_EMULT_08_PHASE == 1 )
                             cjnz++ ;
                             #else
                             ASSERT (pC < pC_end) ;
@@ -308,7 +308,7 @@
                             #endif
                         }
                     }
-                    #if defined ( GB_PHASE_2_OF_2 )
+                    #if ( GB_EMULT_08_PHASE == 2 )
                     ASSERT (pC == pC_end) ;
                     #endif
 
@@ -330,7 +330,7 @@
                         if (found)
                         { 
                             // C (i,j) = A (i,j) .* B (i,j)
-                            #if defined ( GB_PHASE_1_OF_2 )
+                            #if ( GB_EMULT_08_PHASE == 1 )
                             cjnz++ ;
                             #else
                             ASSERT (pC < pC_end) ;
@@ -346,7 +346,7 @@
                             #endif
                         }
                     }
-                    #if defined ( GB_PHASE_2_OF_2 )
+                    #if ( GB_EMULT_08_PHASE == 2 )
                     ASSERT (pC == pC_end) ;
                     #endif
 
@@ -378,7 +378,7 @@
                         { 
                             // both A(i,j) and B(i,j) exist
                             // C (i,j) = A (i,j) .* B (i,j)
-                            #if defined ( GB_PHASE_1_OF_2 )
+                            #if ( GB_EMULT_08_PHASE == 1 )
                             cjnz++ ;
                             #else
                             ASSERT (pC < pC_end) ;
@@ -397,7 +397,7 @@
                         }
                     }
 
-                    #if defined ( GB_PHASE_2_OF_2 )
+                    #if ( GB_EMULT_08_PHASE == 2 )
                     ASSERT (pC == pC_end) ;
                     #endif
                 }
@@ -420,7 +420,7 @@
                 //      sparse  sparse      full            sparse  (10 or 3)
 
                 // Methods 9 and 10 are not yet implemented; using Method 8
-                // (GB_emult_phase[123]) instead.
+                // (GB_emult_08_phase[012]) instead.
 
                 // ether A or B are sparse/hyper
                 ASSERT (A_is_sparse || A_is_hyper || B_is_sparse || B_is_hyper);
@@ -481,7 +481,7 @@
                     //----------------------------------------------------------
 
                     // C (i,j) = A (i,j) .* B (i,j)
-                    #if defined ( GB_PHASE_1_OF_2 )
+                    #if ( GB_EMULT_08_PHASE == 1 )
                     cjnz++ ;
                     #else
                     Ci [pC] = i ;
@@ -496,7 +496,7 @@
                     #endif
                 }
 
-                #if defined ( GB_PHASE_2_OF_2 )
+                #if ( GB_EMULT_08_PHASE == 2 )
                 ASSERT (pC == pC_end) ;
                 #endif
 
@@ -553,7 +553,7 @@
                             if (found)
                             { 
                                 // C (i,j) = A (i,j) .* B (i,j)
-                                #if defined ( GB_PHASE_1_OF_2 )
+                                #if ( GB_EMULT_08_PHASE == 1 )
                                 cjnz++ ;
                                 #else
                                 ASSERT (pC < pC_end) ;
@@ -571,7 +571,7 @@
                         }
                     }
 
-                    #if defined ( GB_PHASE_2_OF_2 )
+                    #if ( GB_EMULT_08_PHASE == 2 )
                     ASSERT (pC == pC_end) ;
                     #endif
 
@@ -597,7 +597,7 @@
                             if (found)
                             { 
                                 // C (i,j) = A (i,j) .* B (i,j)
-                                #if defined ( GB_PHASE_1_OF_2 )
+                                #if ( GB_EMULT_08_PHASE == 1 )
                                 cjnz++ ;
                                 #else
                                 ASSERT (pC < pC_end) ;
@@ -615,7 +615,7 @@
                         }
                     }
 
-                    #if defined ( GB_PHASE_2_OF_2 )
+                    #if ( GB_EMULT_08_PHASE == 2 )
                     ASSERT (pC == pC_end) ;
                     #endif
 
@@ -651,7 +651,7 @@
                             if (mij)
                             { 
                                 // C (i,j) = A (i,j) .* B (i,j)
-                                #if defined ( GB_PHASE_1_OF_2 )
+                                #if ( GB_EMULT_08_PHASE == 1 )
                                 cjnz++ ;
                                 #else
                                 ASSERT (pC < pC_end) ;
@@ -671,7 +671,7 @@
                         }
                     }
 
-                    #if defined ( GB_PHASE_2_OF_2 )
+                    #if ( GB_EMULT_08_PHASE == 2 )
                     ASSERT (pC == pC_end) ;
                     #endif
                 }
@@ -681,7 +681,7 @@
             // final count of nnz (C (:,j))
             //------------------------------------------------------------------
 
-            #if defined ( GB_PHASE_1_OF_2 )
+            #if ( GB_EMULT_08_PHASE == 1 )
             if (fine_task)
             { 
                 TaskList [taskid].pC = cjnz ;

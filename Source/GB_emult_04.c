@@ -273,8 +273,6 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     // using a built-in binary operator (except for positional operators)
     //--------------------------------------------------------------------------
 
-    #define GB_PHASE_2_OF_2
-
     if (C_iso)
     { 
 

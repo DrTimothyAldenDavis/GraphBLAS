@@ -68,8 +68,6 @@
     // C = A'*B via dot products, function pointers, and typecasting
     //--------------------------------------------------------------------------
 
-    #define GB_PHASE_2_OF_2
-
     if (op_is_positional)
     { 
 

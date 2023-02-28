@@ -31,9 +31,6 @@
 // C matrix:
 #define GB_C_TYPE bool
 
-// do the numerical phases of GB_add and GB_emult
-#define GB_PHASE_2_OF_2
-
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_SECOND || GxB_NO_BOOL || GxB_NO_SECOND_BOOL)
@@ -236,7 +233,7 @@ GrB_Info GB (_AunionB__second_bool)
 // eWiseMult: C=A.*B, C<M>=A.*B, or C<M!>=A.*B where C is sparse/hyper
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_AemultB__second_bool)
+GrB_Info GB (_AemultB_08__second_bool)
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -257,7 +254,7 @@ GrB_Info GB (_AemultB__second_bool)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_meta.c"
+    #include "GB_emult_08_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }

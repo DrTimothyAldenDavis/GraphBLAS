@@ -441,8 +441,6 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     // using a built-in binary operator (except for positional operators)
     //--------------------------------------------------------------------------
 
-    #define GB_PHASE_2_OF_2
-
     bool done = false ;
 
     if (C_iso)

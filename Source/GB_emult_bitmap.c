@@ -199,8 +199,6 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // using a built-in binary operator (except for positional operators)
     //--------------------------------------------------------------------------
 
-    #define GB_PHASE_2_OF_2
-
     bool done = false ;
 
     if (C_iso)

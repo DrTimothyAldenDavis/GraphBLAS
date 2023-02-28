@@ -86,14 +86,14 @@ end
 switch (binop)
     case { 'pair' }
         % disable emult for these operators
-        fprintf (f, 'm4_define(`_AemultB'', `(none)'')\n') ;
+        fprintf (f, 'm4_define(`_AemultB_08'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`_AemultB_02'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`_AemultB_04'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`_AemultB_bitmap'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`if_binop_emult_is_enabled'', `-1'')\n') ;
     otherwise
         % enable emult for these operators
-        fprintf (f, 'm4_define(`_AemultB'', `_AemultB__%s'')\n', name) ;
+        fprintf (f, 'm4_define(`_AemultB_08'', `_AemultB_08__%s'')\n', name) ;
         fprintf (f, 'm4_define(`_AemultB_02'', `_AemultB_02__%s'')\n', name) ;
         fprintf (f, 'm4_define(`_AemultB_04'', `_AemultB_04__%s'')\n', name) ;
         fprintf (f, 'm4_define(`_AemultB_bitmap'', `_AemultB_bitmap__%s'')\n', name) ;
