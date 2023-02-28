@@ -9,15 +9,6 @@
 
 // Computes C=A+B, C<M>=A+B, or C<!M>=A+B.
 
-// M can have any sparsity structure:
-
-//      If M is not present, bitmap, or full, then A and B are sparse or
-//      hypersparse.  They are not bitmap or full, since in those cases,
-//      C will not be sparse/hypersparse, and this method is not used.
-
-//      Otherwise, if M is present and sparse/hypersparse, then A and B can
-//      have any sparsity pattern (hyper, sparse, bitmap, or full).
-
 // phase1: does not compute C itself, but just counts the # of entries in each
 // vector of C.  Fine tasks compute the # of entries in their slice of a
 // single vector of C, and the results are cumsum'd.
