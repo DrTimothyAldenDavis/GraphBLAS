@@ -487,25 +487,13 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             // C(i,j) = positional_op (aij, bij)
             //------------------------------------------------------------------
 
-            bool positional_is_i = false ;
-            int64_t offset = GB_positional_offset (opcode, NULL) ;
             #define GB_POSITIONAL_OP
-            switch (opcode)
-            {
-                case GB_FIRSTI_binop_code    : // first_i(A(i,j),y) == i
-                case GB_FIRSTI1_binop_code   : // first_i1(A(i,j),y) == i+1
-                case GB_SECONDI_binop_code   : // second_i(x,A(i,j)) == i
-                case GB_SECONDI1_binop_code  : // second_i1(x,A(i,j)) == i+1
-                    positional_is_i = true ;
-                    break ;
-                case GB_FIRSTJ_binop_code    : // first_j(A(i,j),y) == j
-                case GB_FIRSTJ1_binop_code   : // first_j1(A(i,j),y) == j+1
-                case GB_SECONDJ_binop_code   : // second_j(x,A(i,j)) == j
-                case GB_SECONDJ1_binop_code  : // second_j1(x,A(i,j)) == j+1
-                    positional_is_i = false ;
-                default: ;
-            }
-
+            const bool positional_is_i = 
+                (opcode == GB_FIRSTI_binop_code)    ||
+                (opcode == GB_FIRSTI1_binop_code)   ||
+                (opcode == GB_SECONDI_binop_code)   ||
+                (opcode == GB_SECONDI1_binop_code) ;
+            const int64_t offset = GB_positional_offset (opcode, NULL) ;
             if (op->ztype == GrB_INT64)
             { 
                 #undef  GB_BINOP
