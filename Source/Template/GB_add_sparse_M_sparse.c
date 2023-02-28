@@ -78,7 +78,7 @@
 
         int64_t mjnz = pM_end - pM ;        // nnz (M (:,j))
 
-        #if defined ( GB_PHASE_1_OF_2 )
+        #if ( GB_ADD_PHASE == 1 )
 
         // M is structural, and sparse or hypersparse, so every entry in the
         // mask is guaranteed to appear in A+B.  The symbolic count is thus
@@ -278,7 +278,7 @@
             if (afound && bfound)
             { 
                 // C (i,j) = A (i,j) + B (i,j)
-                #if defined ( GB_PHASE_1_OF_2 )
+                #if ( GB_ADD_PHASE == 1 )
                 cjnz++ ;
                 #else
                 Ci [pC] = i ;
@@ -292,7 +292,7 @@
             }
             else if (afound)
             { 
-                #if defined ( GB_PHASE_1_OF_2 )
+                #if ( GB_ADD_PHASE == 1 )
                 cjnz++ ;
                 #else
                 Ci [pC] = i ;
@@ -315,7 +315,7 @@
             }
             else if (bfound)
             { 
-                #if defined ( GB_PHASE_1_OF_2 )
+                #if ( GB_ADD_PHASE == 1 )
                 cjnz++ ;
                 #else
                 Ci [pC] = i ;
@@ -338,7 +338,7 @@
             }
         }
 
-        #if defined ( GB_PHASE_2_OF_2 )
+        #if ( GB_ADD_PHASE == 2 )
         ASSERT (pC == pC_end) ;
         #endif
     }

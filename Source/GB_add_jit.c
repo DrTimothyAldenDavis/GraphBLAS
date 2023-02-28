@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_colscale_jit: C=A*D colscale method, via the JIT
+// GB_add_jit: C=A+B, C<#M>=A+B add method, via the JIT
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_mxm.h"
+#include "GB_add.h"
 #include "GB_ewise_kernels.h"
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
@@ -15,23 +15,58 @@
 typedef GrB_Info (*GB_jit_dl_function)
 (
     GrB_Matrix C,
+    const GrB_Matrix M,
     const GrB_Matrix A,
-    const GrB_Matrix D,
+    const GrB_Matrix B,
+    const GB_void *alpha_scalar_in,
+    const GB_void *beta_scalar_in,
+    const bool Ch_is_Mh,
+    const int64_t *restrict C_to_M,
+    const int64_t *restrict C_to_A,
+    const int64_t *restrict C_to_B,
+    const GB_task_struct *restrict TaskList,
+    const int C_ntasks,
+    const int C_nthreads,
+    const int64_t *restrict M_ek_slicing,
+    const int M_nthreads,
+    const int M_ntasks,
     const int64_t *restrict A_ek_slicing,
+    const int A_nthreads,
     const int A_ntasks,
-    const int A_nthreads
+    const int64_t *restrict B_ek_slicing,
+    const int B_nthreads,
+    const int B_ntasks
 ) ;
 
-GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
+GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
 (
     GrB_Matrix C,
+    const int C_sparsity,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Type binaryop,
     const GrB_Matrix A,
-    const GrB_Matrix D,
-    const GrB_BinaryOp binaryop,
-    const bool flipxy,
+    const GrB_Matrix B,
+    const bool is_eWiseUnion,
+    const GB_void *alpha_scalar_in,
+    const GB_void *beta_scalar_in,
+    const bool Ch_is_Mh,
+    const int64_t *restrict C_to_M,
+    const int64_t *restrict C_to_A,
+    const int64_t *restrict C_to_B,
+    const GB_task_struct *restrict TaskList,
+    const int C_ntasks,
+    const int C_nthreads,
+    const int64_t *restrict M_ek_slicing,
+    const int M_nthreads,
+    const int M_ntasks,
     const int64_t *restrict A_ek_slicing,
+    const int A_nthreads,
     const int A_ntasks,
-    const int A_nthreads
+    const int64_t *restrict B_ek_slicing,
+    const int B_nthreads,
+    const int B_ntasks
 )
 {
 
@@ -47,9 +82,9 @@ GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
-        GB_JIT_KERNEL_COLSCALE,
-        false, false, false, false, false, GB_sparsity (C), C->type,
-        NULL, false, false, binaryop, flipxy, A, D) ;
+        GB_JIT_KERNEL_ADD,
+        false, is_eWiseUnion, !is_eWiseUnion, false, false, C_sparsity,
+        C->type, M, Mask_struct, Mask_comp, binaryop, false, A, B) ;
     if (hash == UINT64_MAX)
     {
         // cannot JIT this binaryop
@@ -75,12 +110,12 @@ GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
         if (suffix == NULL)
         {
             snprintf (kernel_name, KLEN-1,
-                "GB_jit_colscale_%0*" PRIx64, 13, scode) ;
+                "GB_jit_add_%0*" PRIx64, 13, scode) ;
         }
         else
         {
             snprintf (kernel_name, KLEN-1,
-                "GB_jit_colscale_%0*" PRIx64 "__%s", 13, scode, suffix) ;
+                "GB_jit_add_%0*" PRIx64 "__%s", 13, scode, suffix) ;
         }
 
         char lib_filename [2048] ;
@@ -124,7 +159,7 @@ GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
                 !GB_jitifyer_match_defn (dl_query, 1, binaryop->defn) ||
                 !GB_jitifyer_match_defn (dl_query, 2, C->type->defn) ||
                 !GB_jitifyer_match_defn (dl_query, 3, A->type->defn) ||
-                !GB_jitifyer_match_defn (dl_query, 4, D->type->defn) ;
+                !GB_jitifyer_match_defn (dl_query, 4, B->type->defn) ;
             if (need_to_compile)
             {
                 // library is loaded but needs to change, so close it
@@ -165,8 +200,8 @@ GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
             GB_macrofy_query_version (fp) ;
             // }
 
-            GB_macrofy_ewise (fp, scode, binaryop, C->type, A->type, D->type) ;
-            fprintf (fp, "\n#include \"GB_jit_kernel_colscale.c\"\n") ;
+            GB_macrofy_ewise (fp, scode, binaryop, C->type, A->type, B->type) ;
+            fprintf (fp, "\n#include \"GB_jit_kernel_add.c\"\n") ;
 
             if (!builtin)
             {
@@ -174,7 +209,7 @@ GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
                 GB_macrofy_query_defn (fp,
                     NULL,
                     (GB_Operator) binaryop,
-                    C->type, A->type, D->type) ;
+                    C->type, A->type, B->type) ;
             }
 
             fclose (fp) ;
@@ -223,8 +258,10 @@ GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
     //------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    GrB_Info info = GB_jit_kernel (C, A, D,
-        A_ek_slicing, A_ntasks, A_nthreads) ;
+    GrB_Info info = GB_jit_kernel (C, M, A, B, alpha_scalar_in, beta_scalar_in,
+        Ch_is_Mh, C_to_M, C_to_A, C_to_B, TaskList, C_ntasks, C_nthreads,
+        M_ek_slicing, M_nthreads, M_ntasks, A_ek_slicing, A_nthreads, A_ntasks,
+        B_ek_slicing, B_nthreads, B_ntasks) ;
     return (info) ;
 #endif
 }

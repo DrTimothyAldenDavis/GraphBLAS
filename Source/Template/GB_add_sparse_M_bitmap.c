@@ -67,7 +67,7 @@
             if (mij)
             { 
                 // C (i,j) = A (i,j) + B (i,j)
-                #if defined ( GB_PHASE_1_OF_2 )
+                #if ( GB_ADD_PHASE == 1 )
                 cjnz++ ;
                 #else
                 Ci [pC] = i ;
@@ -96,7 +96,7 @@
             if (mij)
             { 
                 // C (i,j) = B (i,j), or alpha + B(i,j)
-                #if defined ( GB_PHASE_1_OF_2 )
+                #if ( GB_ADD_PHASE == 1 )
                 cjnz++ ;
                 #else
                 Ci [pC] = i ;
@@ -133,7 +133,7 @@
             GB_GET_MIJ (i) ;
             if (mij)
             { 
-                #if defined ( GB_PHASE_1_OF_2 )
+                #if ( GB_ADD_PHASE == 1 )
                 cjnz++ ;
                 #else
                 Ci [pC] = i ;
@@ -170,7 +170,7 @@
             GB_GET_MIJ (i) ;
             if (mij)
             { 
-                #if defined ( GB_PHASE_1_OF_2 )
+                #if ( GB_ADD_PHASE == 1 )
                 cjnz++ ;
                 #else
                 Ci [pC] = i ;
@@ -199,7 +199,7 @@
             GB_GET_MIJ (i) ;
             if (mij)
             { 
-                #if defined ( GB_PHASE_1_OF_2 )
+                #if ( GB_ADD_PHASE == 1 )
                 cjnz++ ;
                 #else
                 Ci [pC] = i ;
@@ -237,7 +237,7 @@
             if (mij)
             { 
                 // C (i,j) = B (i,j), or alpha + B(i,j)
-                #if defined ( GB_PHASE_1_OF_2 )
+                #if ( GB_ADD_PHASE == 1 )
                 cjnz++ ;
                 #else
                 Ci [pC] = i ;
@@ -266,7 +266,7 @@
             GB_GET_MIJ (i) ;
             if (mij)
             { 
-                #if defined ( GB_PHASE_1_OF_2 )
+                #if ( GB_ADD_PHASE == 1 )
                 cjnz++ ;
                 #else
                 Ci [pC] = i ;
@@ -306,7 +306,7 @@
                 GB_GET_MIJ (iA) ;
                 if (mij)
                 { 
-                    #if defined ( GB_PHASE_1_OF_2 )
+                    #if ( GB_ADD_PHASE == 1 )
                     cjnz++ ;
                     #else
                     Ci [pC] = iA ;
@@ -336,7 +336,7 @@
                 if (mij)
                 { 
                     // C (iB,j) = B (iB,j), or alpha + B(iB,j)
-                    #if defined ( GB_PHASE_1_OF_2 )
+                    #if ( GB_ADD_PHASE == 1 )
                     cjnz++ ;
                     #else
                     Ci [pC] = iB ;
@@ -366,7 +366,7 @@
                 if (mij)
                 { 
                     // C (i,j) = A (i,j) + B (i,j)
-                    #if defined ( GB_PHASE_1_OF_2 )
+                    #if ( GB_ADD_PHASE == 1 )
                     cjnz++ ;
                     #else
                     Ci [pC] = iB ;
@@ -393,7 +393,7 @@
             GB_GET_MIJ (iA) ;
             if (mij)
             { 
-                #if defined ( GB_PHASE_1_OF_2 )
+                #if ( GB_ADD_PHASE == 1 )
                 cjnz++ ;
                 #else
                 Ci [pC] = iA ;
@@ -423,7 +423,7 @@
             if (mij)
             { 
                 // C (iB,j) = B (iB,j), or alpha + B(iB,j)
-                #if defined ( GB_PHASE_1_OF_2 )
+                #if ( GB_ADD_PHASE == 1 )
                 cjnz++ ;
                 #else
                 Ci [pC] = iB ;

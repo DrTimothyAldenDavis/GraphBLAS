@@ -76,6 +76,8 @@
     #define M_is_bitmap GB_M_IS_BITMAP
     #define M_is_full   GB_M_IS_FULL
     #define M_is_sparse_or_hyper (GB_M_IS_SPARSE || GB_M_IS_HYPER)
+    #define Mask_comp   GB_MASK_COMP
+    #define Mask_struct GB_MASK_STRUCT
     #else
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_sparse = GB_IS_SPARSE (M) ;
@@ -94,33 +96,47 @@
         msize = M->type->size ;
     }
 
-    #if defined ( GB_PHASE_2_OF_2 )
+    //--------------------------------------------------------------------------
+    // phase 2 definitions
+    //--------------------------------------------------------------------------
 
-    #ifdef GB_JIT_KERNEL
-    ASSERT (!C->iso) ;
+    // phase 1 is used only by GB_add_phase1, and it does not depend on the
+    // data type or operator, so there is only one copy of that method.  phase
+    // 2 is used by GB_add_phase2, via the factory kernels, the JIT kernels,
+    // and the generic kernel.
+
+    #ifndef GB_ADD_PHASE
+    #define GB_ADD_PHASE 2
     #endif
 
-    #ifdef GB_ISO_ADD
-    ASSERT (C->iso) ;
-    #else
-    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
-    const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
-          GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
-    ASSERT (!C->iso) ;
-    #endif
+    #if ( GB_ADD_PHASE == 2 )
 
-    const int64_t  *restrict Cp = C->p ;
-    const int64_t  *restrict Ch = C->h ;
-          int8_t   *restrict Cb = C->b ;
-          int64_t  *restrict Ci = C->i ;
-    const int64_t cnz = GB_nnz_held (C) ;
+        #ifdef GB_JIT_KERNEL
+        ASSERT (!C->iso) ;
+        #endif
+
+        #ifdef GB_ISO_ADD
+        ASSERT (C->iso) ;
+        #else
+        const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
+        const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
+              GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
+        ASSERT (!C->iso) ;
+        #endif
+
+        const int64_t  *restrict Cp = C->p ;
+        const int64_t  *restrict Ch = C->h ;
+              int8_t   *restrict Cb = C->b ;
+              int64_t  *restrict Ci = C->i ;
+        const int64_t cnz = GB_nnz_held (C) ;
+
     #endif
 
     //--------------------------------------------------------------------------
     // C=A+B, C<M>=A+B, or C<!M>=A+B: 3 cases for the sparsity of C
     //--------------------------------------------------------------------------
 
-    #if defined ( GB_PHASE_1_OF_2 )
+    #if ( GB_ADD_PHASE == 1 )
 
         // phase1: symbolic phase
         // C is sparse or hypersparse (never bitmap or full)

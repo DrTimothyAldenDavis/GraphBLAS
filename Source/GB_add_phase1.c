@@ -90,7 +90,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     // count the entries in each vector of C
     //--------------------------------------------------------------------------
 
-    #define GB_PHASE_1_OF_2
+    #define GB_ADD_PHASE 1
     #include "GB_add_template.c"
 
     //--------------------------------------------------------------------------

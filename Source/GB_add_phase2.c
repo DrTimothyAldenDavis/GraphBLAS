@@ -27,9 +27,6 @@
 // This is used by GB_wait only, for merging the pending tuple matrix T into A.
 // In this case, C is always sparse or hypersparse, not bitmap or full.
 
-// FIXME: debug is on
-#define GB_DEBUG
-
 #include "GB_add.h"
 #include "GB_binop.h"
 #include "GB_unused.h"
@@ -323,9 +320,9 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     #include "GB_ewise_shared_definitions.h"
-    #define GB_PHASE_2_OF_2
+    #define GB_ADD_PHASE 2
 
-    bool done = false ;
+    info = GrB_NO_VALUE ;
 
     if (C_iso)
     { 
@@ -338,12 +335,10 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         GB_BURBLE_MATRIX (C, "(iso add) ") ;
         memcpy (C->x, cscalar, csize) ;
 
-        // FIXME: call it GB_add_iso ( ... )
-
         // pattern of C = set union of pattern of A and B
         #define GB_ISO_ADD
         #include "GB_add_template.c"
-        done = true ;
+        info = GrB_SUCCESS ;
 
     }
     else
@@ -353,7 +348,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         // via the factory kernel
         //----------------------------------------------------------------------
 
-        info = GrB_NO_VALUE ;
         #ifndef GBCUDA_DEV
 
             //------------------------------------------------------------------
@@ -386,9 +380,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             { 
                 #include "GB_binop_factory.c"
             }
-
-            done = (info != GrB_NO_VALUE) ;
-
         #endif
     }
 
@@ -397,14 +388,23 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: ewise: add phase2
+    if (info == GrB_NO_VALUE)
+    {
+        info = GB_add_jit (C, C_sparsity, M, Mask_struct, Mask_comp,
+            op, A, B, is_eWiseUnion, alpha_scalar, beta_scalar,
+            Ch_is_Mh, C_to_M, C_to_A, C_to_B, 
+            TaskList, C_ntasks, C_nthreads,
+            M_ek_slicing, M_nthreads, M_ntasks,
+            A_ek_slicing, A_nthreads, A_ntasks,
+            B_ek_slicing, B_nthreads, B_ntasks) ;
+    }
     #endif
 
     //--------------------------------------------------------------------------
     // via the generic kernel
     //--------------------------------------------------------------------------
 
-    if (!done)
+    if (info == GrB_NO_VALUE)
     {
 
         #include "GB_generic.h"
@@ -538,6 +538,14 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
             #include "GB_add_template.c"
         }
+        info = GrB_SUCCESS ;
+    }
+
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory, or other error
+        GB_FREE_ALL ;
+        return (info) ;
     }
 
     //--------------------------------------------------------------------------

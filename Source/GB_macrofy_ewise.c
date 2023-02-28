@@ -97,9 +97,10 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         }
         else
         {
-            // user-defined operator
+            // user-defined operator, or created by GB_wait
             fprintf (fp,
-                "// user op: %s%s, ztype: %s, xtype: %s, ytype: %s\n\n",
+                "// op: %s%s%s, ztype: %s, xtype: %s, ytype: %s\n\n",
+                (binaryop->opcode == GB_SECOND_binop_code) ? "2nd_" : "",
                 binaryop->name, flipxy ? " (flipped)" : "",
                 ztype_name, xtype_name, ytype_name) ;
         }

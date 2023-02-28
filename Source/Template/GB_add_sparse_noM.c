@@ -34,7 +34,7 @@
     ASSERT (A_is_sparse || A_is_hyper) ;
     ASSERT (B_is_sparse || B_is_hyper) ;
 
-    #if defined ( GB_PHASE_1_OF_2 )
+    #if ( GB_ADD_PHASE == 1 )
 
     if (A_and_B_are_disjoint)
     { 
@@ -60,7 +60,7 @@
         ASSERT (ajnz == bjnz) ;
         ASSERT (iA_first == iB_first) ;
         ASSERT (iA_last  == iB_last ) ;
-        #if defined ( GB_PHASE_1_OF_2 )
+        #if ( GB_ADD_PHASE == 1 )
         cjnz = ajnz ;
         #else
         ASSERT (cjnz == ajnz) ;
@@ -88,7 +88,7 @@
         // Method02: A(:,j) dense, B(:,j) sparse: C(:,j) dense
         //----------------------------------------------------------------------
 
-        #if defined ( GB_PHASE_1_OF_2 )
+        #if ( GB_ADD_PHASE == 1 )
         cjnz = ajnz ;
         #else
         ASSERT (cjnz == ajnz) ;
@@ -136,7 +136,7 @@
         // Method03: A(:,j) sparse, B(:,j) dense: C(:,j) dense
         //----------------------------------------------------------------------
 
-        #if defined ( GB_PHASE_1_OF_2 )
+        #if ( GB_ADD_PHASE == 1 )
         cjnz = bjnz ;
         #else
         ASSERT (cjnz == bjnz) ;
@@ -189,7 +189,7 @@
         // Method04: A(:,j) is empty
         //----------------------------------------------------------------------
 
-        #if defined ( GB_PHASE_1_OF_2 )
+        #if ( GB_ADD_PHASE == 1 )
         cjnz = bjnz ;
         #else
         ASSERT (cjnz == bjnz) ;
@@ -222,7 +222,7 @@
         // Method05: B(:,j) is empty
         //----------------------------------------------------------------------
 
-        #if defined ( GB_PHASE_1_OF_2 )
+        #if ( GB_ADD_PHASE == 1 )
         cjnz = ajnz ;
         #else
         ASSERT (cjnz == ajnz) ;
@@ -255,7 +255,7 @@
         // Method06: last A(:,j) comes before 1st B(:,j)
         //----------------------------------------------------------------------
 
-        #if defined ( GB_PHASE_1_OF_2 )
+        #if ( GB_ADD_PHASE == 1 )
         cjnz = ajnz + bjnz ;
         #else
         ASSERT (cjnz == ajnz + bjnz) ;
@@ -308,7 +308,7 @@
         // Method07: last B(:,j) comes before 1st A(:,j)
         //----------------------------------------------------------------------
 
-        #if defined ( GB_PHASE_1_OF_2 )
+        #if ( GB_ADD_PHASE == 1 )
         cjnz = ajnz + bjnz ;
         #else
         ASSERT (cjnz == ajnz + bjnz) ;
@@ -355,7 +355,7 @@
 
     }
 
-    #if defined ( GB_PHASE_1_OF_2 )
+    #if ( GB_ADD_PHASE == 1 )
     else if (ajnz > 32 * bjnz)
     {
 
@@ -413,7 +413,7 @@
             int64_t iB = Bi [pB] ;
             if (iA < iB)
             { 
-                #if defined ( GB_PHASE_2_OF_2 )
+                #if ( GB_ADD_PHASE == 2 )
                 Ci [pC] = iA ;
                 #ifndef GB_ISO_ADD
                 #if GB_IS_EWISEUNION
@@ -434,7 +434,7 @@
             }
             else if (iA > iB)
             { 
-                #if defined ( GB_PHASE_2_OF_2 )
+                #if ( GB_ADD_PHASE == 2 )
                 Ci [pC] = iB ;
                 #ifndef GB_ISO_ADD
                 #if GB_IS_EWISEUNION
@@ -456,7 +456,7 @@
             else
             { 
                 // C (i,j) = A (i,j) + B (i,j)
-                #if defined ( GB_PHASE_2_OF_2 )
+                #if ( GB_ADD_PHASE == 2 )
                 Ci [pC] = iB ;
                 #ifndef GB_ISO_ADD
                 GB_LOAD_A (aij, Ax, pA, A_iso) ;
@@ -467,7 +467,7 @@
                 pA++ ;
                 pB++ ;
             }
-            #if defined ( GB_PHASE_2_OF_2 )
+            #if ( GB_ADD_PHASE == 2 )
             pC++ ;
             #else
             cjnz++ ;
@@ -481,7 +481,7 @@
         ajnz = (pA_end - pA) ;
         bjnz = (pB_end - pB) ;
         ASSERT (ajnz == 0 || bjnz == 0) ;
-        #if defined ( GB_PHASE_1_OF_2 )
+        #if ( GB_ADD_PHASE == 1 )
         cjnz += ajnz + bjnz ;
         #else
         memcpy (Ci + pC, Ai + pA, ajnz * sizeof (int64_t)) ;

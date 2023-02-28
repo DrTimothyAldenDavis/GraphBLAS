@@ -111,6 +111,37 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
+(
+    GrB_Matrix C,
+    const int C_sparsity,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Type op,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool is_eWiseUnion,
+    const GB_void *alpha_scalar_in,
+    const GB_void *beta_scalar_in,
+    const bool Ch_is_Mh,
+    const int64_t *restrict C_to_M,
+    const int64_t *restrict C_to_A,
+    const int64_t *restrict C_to_B,
+    const GB_task_struct *restrict TaskList,
+    const int C_ntasks,
+    const int C_nthreads,
+    const int64_t *restrict M_ek_slicing,
+    const int M_nthreads,
+    const int M_ntasks,
+    const int64_t *restrict A_ek_slicing,
+    const int A_nthreads,
+    const int A_ntasks,
+    const int64_t *restrict B_ek_slicing,
+    const int B_nthreads,
+    const int B_ntasks
+) ;
+
 int GB_add_sparsity         // return the sparsity structure for C
 (
     // output:

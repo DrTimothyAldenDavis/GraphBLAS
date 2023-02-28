@@ -11,9 +11,6 @@
 // results in an iso matrix C.  If true, the output scalar c is the iso value
 // for the matrix C.
 
-// FIXME: debug on
-#define GB_DEBUG
-
 #include "GB_add.h"
 #include "GB_emult.h"
 

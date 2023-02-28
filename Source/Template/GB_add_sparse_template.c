@@ -94,7 +94,7 @@
 
             int64_t j = GBH_C (Ch, k) ;
 
-            #if defined ( GB_PHASE_1_OF_2 )
+            #if ( GB_ADD_PHASE == 1 )
             int64_t cjnz = 0 ;
             #else
             int64_t pC, pC_end ;
@@ -226,7 +226,7 @@
             // final count of nnz (C (:,j))
             //------------------------------------------------------------------
 
-            #if defined ( GB_PHASE_1_OF_2 )
+            #if ( GB_ADD_PHASE == 1 )
             if (fine_task)
             { 
                 TaskList [taskid].pC = cjnz ;
