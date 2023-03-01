@@ -34,6 +34,11 @@
 #define GB_JIT_KERNEL_ROWSCALE      11
 #define GB_JIT_KERNEL_ADD           12
 #define GB_JIT_KERNEL_UNION         13
+#define GB_JIT_KERNEL_EMULT2        14
+#define GB_JIT_KERNEL_EMULT3        15
+#define GB_JIT_KERNEL_EMULT4        16
+#define GB_JIT_KERNEL_EMULTBIT      17
+#define GB_JIT_KERNEL_EMULT8        18
 
 // ... etc FIXME: list them all here
 // or make this an enum

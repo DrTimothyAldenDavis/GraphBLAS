@@ -2,7 +2,7 @@
 // GB_emult_08_template: C=A.*B, C<M or !M>=A.*B when C is sparse/hyper
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -22,29 +22,30 @@
         //      ------------------------------------------
         //      C       =           A       .*      B
         //      ------------------------------------------
-        //      sparse  .           sparse          sparse  (method: 8)
+        //      sparse  .           sparse          sparse  (method: 8bcd)
 
         //      ------------------------------------------
         //      C       <M>=        A       .*      B
         //      ------------------------------------------
-        //      sparse  sparse      sparse          sparse  (method: 8)
-        //      sparse  bitmap      sparse          sparse  (method: 8)
-        //      sparse  full        sparse          sparse  (method: 8)
-        //      sparse  sparse      sparse          bitmap  (9 or 2)
-        //      sparse  sparse      sparse          full    (9 or 2)
-        //      sparse  sparse      bitmap          sparse  (10 or 3)
-        //      sparse  sparse      full            sparse  (10 or 3)
+        //      sparse  sparse      sparse          sparse  (method: 8e)
+        //      sparse  bitmap      sparse          sparse  (method: 8fgh)
+        //      sparse  full        sparse          sparse  (method: 8fgh)
+        //      sparse  sparse      sparse          bitmap  (9  (8e) or 2)
+        //      sparse  sparse      sparse          full    (9  (8e) or 2)
+        //      sparse  sparse      bitmap          sparse  (10 (8e) or 3)
+        //      sparse  sparse      full            sparse  (10 (8e) or 3)
 
         //      ------------------------------------------
         //      C       <!M>=       A       .*      B
         //      ------------------------------------------
-        //      sparse  sparse      sparse          sparse  (8: M later)
-        //      sparse  bitmap      sparse          sparse  (method: 8)
-        //      sparse  full        sparse          sparse  (method: 8)
+        //      sparse  sparse      sparse          sparse  (8bcd: M later)
+        //      sparse  bitmap      sparse          sparse  (method: 8fgh)
+        //      sparse  full        sparse          sparse  (method: 8fgh)
 
 // Methods 9 and 10 are not yet implemented, and are currently handled by this
-// Method 8 instead.  those cases.  Methods 2 and 3 can be used as well, but
-// only if M is applied later.  See GB_emult_sparsity for this decision.
+// Method 8 instead.  See GB_emult_sparsity for this decision.
+// "M later" means that C<!M>=A.*B is being computed, but the mask is not
+// handled here; insteadl T=A.*B is computed and C<!M>=T is done later.
 
 {
 
@@ -192,489 +193,40 @@
             #endif
 
             //------------------------------------------------------------------
-            // get M(:,j) if M is sparse or hypersparse
-            //------------------------------------------------------------------
-
-            int64_t pM = -1 ;
-            int64_t pM_end = -1 ;
-            if (M_is_sparse_or_hyper)
-            {
-                if (fine_task)
-                { 
-                    // A fine task operates on Mi,Mx [pM...pM_end-1], which is
-                    // a subset of the vector M(:,j)
-                    pM     = TaskList [taskid].pM ;
-                    pM_end = TaskList [taskid].pM_end ;
-                }
-                else
-                {
-                    int64_t kM = -1 ;
-                    if (Ch == Mh)
-                    { 
-                        // Ch is the same as Mh (a shallow copy), or both NULL
-                        kM = k ;
-                    }
-                    else
-                    { 
-                        kM = (C_to_M == NULL) ? j : C_to_M [k] ;
-                    }
-                    if (kM >= 0)
-                    { 
-                        pM     = GBP_M (Mp, kM, vlen) ;
-                        pM_end = GBP_M (Mp, kM+1, vlen) ;
-                    }
-                }
-            }
-
-            //------------------------------------------------------------------
             // C(:,j)<optional mask> = A (:,j) .* B (:,j) or subvector
             //------------------------------------------------------------------
 
             #if ( GB_EMULT_08_PHASE == 1 )
-
             if (ajnz == 0 || bjnz == 0)
             { 
-
-                //--------------------------------------------------------------
                 // Method8(a): A(:,j) and/or B(:,j) are empty
-                //--------------------------------------------------------------
-
                 ;
-
             }
             else if (iA_last < iB_first || iB_last < iA_first)
             { 
-
-                //--------------------------------------------------------------
                 // Method8(a): intersection of A(:,j) and B(:,j) is empty
-                //--------------------------------------------------------------
-
                 // the last entry of A(:,j) comes before the first entry
                 // of B(:,j), or visa versa
                 ;
-
             }
             else
-
             #endif
 
             if (M == NULL)
             {
-
-                //--------------------------------------------------------------
-                // Method8(b,c,d): C = A.*B, no mask
-                //--------------------------------------------------------------
-
-                //      ------------------------------------------
-                //      C       =           A       .*      B
-                //      ------------------------------------------
-                //      sparse  .           sparse          sparse  (method: 8)
-                //      sparse  sparse      sparse          sparse  (8, M later)
-
-                // both A and B are sparse/hyper
-                ASSERT (A_is_sparse || A_is_hyper) ;
-                ASSERT (B_is_sparse || B_is_hyper) ;
-
-                if (ajnz > 32 * bjnz)
-                {
-
-                    //----------------------------------------------------------
-                    // Method8(b): A(:,j) is much denser than B(:,j)
-                    //----------------------------------------------------------
-
-                    for ( ; pB < pB_end ; pB++)
-                    {
-                        int64_t i = Bi [pB] ;
-                        // find i in A(:,j)
-                        int64_t pright = pA_end - 1 ;
-                        bool found ;
-                        GB_BINARY_SEARCH (i, Ai, pA, pright, found) ;
-                        if (found)
-                        { 
-                            // C (i,j) = A (i,j) .* B (i,j)
-                            #if ( GB_EMULT_08_PHASE == 1 )
-                            cjnz++ ;
-                            #else
-                            ASSERT (pC < pC_end) ;
-                            Ci [pC] = i ;
-                            #ifndef GB_ISO_EMULT
-                            GB_DECLAREA (aij) ;
-                            GB_GETA (aij, Ax, pA, A_iso) ;
-                            GB_DECLAREB (bij) ;
-                            GB_GETB (bij, Bx, pB, B_iso) ;
-                            GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
-                            #endif
-                            pC++ ;
-                            #endif
-                        }
-                    }
-                    #if ( GB_EMULT_08_PHASE == 2 )
-                    ASSERT (pC == pC_end) ;
-                    #endif
-
-                }
-                else if (bjnz > 32 * ajnz)
-                {
-
-                    //----------------------------------------------------------
-                    // Method8(c): B(:,j) is much denser than A(:,j)
-                    //----------------------------------------------------------
-
-                    for ( ; pA < pA_end ; pA++)
-                    {
-                        int64_t i = Ai [pA] ;
-                        // find i in B(:,j)
-                        int64_t pright = pB_end - 1 ;
-                        bool found ;
-                        GB_BINARY_SEARCH (i, Bi, pB, pright, found) ;
-                        if (found)
-                        { 
-                            // C (i,j) = A (i,j) .* B (i,j)
-                            #if ( GB_EMULT_08_PHASE == 1 )
-                            cjnz++ ;
-                            #else
-                            ASSERT (pC < pC_end) ;
-                            Ci [pC] = i ;
-                            #ifndef GB_ISO_EMULT
-                            GB_DECLAREA (aij) ;
-                            GB_GETA (aij, Ax, pA, A_iso) ;
-                            GB_DECLAREB (bij) ;
-                            GB_GETB (bij, Bx, pB, B_iso) ;
-                            GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
-                            #endif
-                            pC++ ;
-                            #endif
-                        }
-                    }
-                    #if ( GB_EMULT_08_PHASE == 2 )
-                    ASSERT (pC == pC_end) ;
-                    #endif
-
-                }
-                else
-                {
-
-                    //----------------------------------------------------------
-                    // Method8(d): A(:,j) and B(:,j) about the sparsity
-                    //----------------------------------------------------------
-
-                    // linear-time scan of A(:,j) and B(:,j)
-
-                    while (pA < pA_end && pB < pB_end)
-                    {
-                        int64_t iA = Ai [pA] ;
-                        int64_t iB = Bi [pB] ;
-                        if (iA < iB)
-                        { 
-                            // A(i,j) exists but not B(i,j)
-                            pA++ ;
-                        }
-                        else if (iB < iA)
-                        { 
-                            // B(i,j) exists but not A(i,j)
-                            pB++ ;
-                        }
-                        else
-                        { 
-                            // both A(i,j) and B(i,j) exist
-                            // C (i,j) = A (i,j) .* B (i,j)
-                            #if ( GB_EMULT_08_PHASE == 1 )
-                            cjnz++ ;
-                            #else
-                            ASSERT (pC < pC_end) ;
-                            Ci [pC] = iB ;
-                            #ifndef GB_ISO_EMULT
-                            GB_DECLAREA (aij) ;
-                            GB_GETA (aij, Ax, pA, A_iso) ;
-                            GB_DECLAREB (bij) ;
-                            GB_GETB (bij, Bx, pB, B_iso) ;
-                            GB_BINOP (GB_CX (pC), aij, bij, iB, j) ;
-                            #endif
-                            pC++ ;
-                            #endif
-                            pA++ ;
-                            pB++ ;
-                        }
-                    }
-
-                    #if ( GB_EMULT_08_PHASE == 2 )
-                    ASSERT (pC == pC_end) ;
-                    #endif
-                }
-
+                // C=A.*B, all matrices sparse/hyper
+                #include "GB_emult_08bcd.c"
             }
             else if (M_is_sparse_or_hyper)
             {
-
-                //--------------------------------------------------------------
-                // Method8(e): C and M are sparse or hypersparse
-                //--------------------------------------------------------------
-
-                //      ------------------------------------------
-                //      C       <M>=        A       .*      B
-                //      ------------------------------------------
-                //      sparse  sparse      sparse          sparse  (method: 8)
-                //      sparse  sparse      sparse          bitmap  (9 or 2)
-                //      sparse  sparse      sparse          full    (9 or 2)
-                //      sparse  sparse      bitmap          sparse  (10 or 3)
-                //      sparse  sparse      full            sparse  (10 or 3)
-
-                // Methods 9 and 10 are not yet implemented; using Method 8
-                // (GB_emult_08_phase[012]) instead.
-
-                // ether A or B are sparse/hyper
-                ASSERT (A_is_sparse || A_is_hyper || B_is_sparse || B_is_hyper);
-
-                for ( ; pM < pM_end ; pM++)
-                {
-
-                    //----------------------------------------------------------
-                    // get M(i,j) for A(i,j) .* B (i,j)
-                    //----------------------------------------------------------
-
-                    int64_t i = GBI_M (Mi, pM, vlen) ;
-                    bool mij = GB_MCAST (Mx, pM, msize) ;
-                    if (!mij) continue ;
-
-                    //----------------------------------------------------------
-                    // get A(i,j)
-                    //----------------------------------------------------------
-
-                    bool afound ;
-                    if (adense)
-                    { 
-                        // A(:,j) is dense, bitmap, or full; use quick lookup
-                        pA = pA_start + i - iA_first ;
-                        afound = GBB_A (Ab, pA) ;
-                    }
-                    else
-                    { 
-                        // A(:,j) is sparse; use binary search for A(i,j)
-                        int64_t apright = pA_end - 1 ;
-                        GB_BINARY_SEARCH (i, Ai, pA, apright, afound) ;
-                    }
-                    if (!afound) continue ;
-                    ASSERT (GBI_A (Ai, pA, vlen) == i) ;
-
-                    //----------------------------------------------------------
-                    // get B(i,j)
-                    //----------------------------------------------------------
-
-                    bool bfound ;
-                    if (bdense)
-                    { 
-                        // B(:,j) is dense; use direct lookup for B(i,j)
-                        pB = pB_start + i - iB_first ;
-                        bfound = GBB_B (Bb, pB) ;
-                    }
-                    else
-                    { 
-                        // B(:,j) is sparse; use binary search for B(i,j)
-                        int64_t bpright = pB_end - 1 ;
-                        GB_BINARY_SEARCH (i, Bi, pB, bpright, bfound) ;
-                    }
-                    if (!bfound) continue ;
-                    ASSERT (GBI_B (Bi, pB, vlen) == i) ;
-
-                    //----------------------------------------------------------
-                    // C(i,j) = A(i,j) .* B(i,j)
-                    //----------------------------------------------------------
-
-                    // C (i,j) = A (i,j) .* B (i,j)
-                    #if ( GB_EMULT_08_PHASE == 1 )
-                    cjnz++ ;
-                    #else
-                    Ci [pC] = i ;
-                    #ifndef GB_ISO_EMULT
-                    GB_DECLAREA (aij) ;
-                    GB_GETA (aij, Ax, pA, A_iso) ;
-                    GB_DECLAREB (bij) ;
-                    GB_GETB (bij, Bx, pB, B_iso) ;
-                    GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
-                    #endif
-                    pC++ ;
-                    #endif
-                }
-
-                #if ( GB_EMULT_08_PHASE == 2 )
-                ASSERT (pC == pC_end) ;
-                #endif
-
+                // C<M>=A.*B, C and M are sparse/hyper
+                // either A or B are sparse/hyper
+                #include "GB_emult_08e.c"
             }
             else
             {
-
-                //--------------------------------------------------------------
-                // M is bitmap or full, for either C<M>=A.*B or C<!M>=A.*B
-                //--------------------------------------------------------------
-
-                //      ------------------------------------------
-                //      C       <M>=        A       .*      B
-                //      ------------------------------------------
-                //      sparse  bitmap      sparse          sparse  (method: 8)
-                //      sparse  full        sparse          sparse  (method: 8)
-
-                //      ------------------------------------------
-                //      C       <!M>=       A       .*      B
-                //      ------------------------------------------
-                //      sparse  bitmap      sparse          sparse  (method: 8)
-                //      sparse  full        sparse          sparse  (method: 8)
-
-                // GB_GET_MIJ: get M(i,j) where M is bitmap or full
-                #undef  GB_GET_MIJ
-                #define GB_GET_MIJ(i)                                     \
-                    int64_t pM = pM_start + i ;                           \
-                    bool mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ; \
-                    if (Mask_comp) mij = !mij ;
-
-                // both A and B are sparse/hyper
-                ASSERT (A_is_sparse || A_is_hyper) ;
-                ASSERT (B_is_sparse || B_is_hyper) ;
-
-                int64_t pM_start = j * vlen ;
-
-                if (ajnz > 32 * bjnz)
-                {
-
-                    //----------------------------------------------------------
-                    // Method8(f): A(:,j) much denser than B(:,j), M bitmap/full
-                    //----------------------------------------------------------
-
-                    for ( ; pB < pB_end ; pB++)
-                    {
-                        int64_t i = Bi [pB] ;
-                        GB_GET_MIJ (i) ;
-                        if (mij)
-                        {
-                            // find i in A(:,j)
-                            int64_t pright = pA_end - 1 ;
-                            bool found ;
-                            GB_BINARY_SEARCH (i, Ai, pA, pright, found) ;
-                            if (found)
-                            { 
-                                // C (i,j) = A (i,j) .* B (i,j)
-                                #if ( GB_EMULT_08_PHASE == 1 )
-                                cjnz++ ;
-                                #else
-                                ASSERT (pC < pC_end) ;
-                                Ci [pC] = i ;
-                                #ifndef GB_ISO_EMULT
-                                GB_DECLAREA (aij) ;
-                                GB_GETA (aij, Ax, pA, A_iso) ;
-                                GB_DECLAREB (bij) ;
-                                GB_GETB (bij, Bx, pB, B_iso) ;
-                                GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
-                                #endif
-                                pC++ ;
-                                #endif
-                            }
-                        }
-                    }
-
-                    #if ( GB_EMULT_08_PHASE == 2 )
-                    ASSERT (pC == pC_end) ;
-                    #endif
-
-                }
-                else if (bjnz > 32 * ajnz)
-                {
-
-                    //----------------------------------------------------------
-                    // Method8(g): B(:,j) much denser than A(:,j), M bitmap/full
-                    //----------------------------------------------------------
-
-                    for ( ; pA < pA_end ; pA++)
-                    {
-                        int64_t i = Ai [pA] ;
-                        GB_GET_MIJ (i) ;
-                        if (mij)
-                        {
-
-                            // find i in B(:,j)
-                            int64_t pright = pB_end - 1 ;
-                            bool found ;
-                            GB_BINARY_SEARCH (i, Bi, pB, pright, found) ;
-                            if (found)
-                            { 
-                                // C (i,j) = A (i,j) .* B (i,j)
-                                #if ( GB_EMULT_08_PHASE == 1 )
-                                cjnz++ ;
-                                #else
-                                ASSERT (pC < pC_end) ;
-                                Ci [pC] = i ;
-                                #ifndef GB_ISO_EMULT
-                                GB_DECLAREA (aij) ;
-                                GB_GETA (aij, Ax, pA, A_iso) ;
-                                GB_DECLAREB (bij) ;
-                                GB_GETB (bij, Bx, pB, B_iso) ;
-                                GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
-                                #endif
-                                pC++ ;
-                                #endif
-                            }
-                        }
-                    }
-
-                    #if ( GB_EMULT_08_PHASE == 2 )
-                    ASSERT (pC == pC_end) ;
-                    #endif
-
-                }
-                else
-                {
-
-                    //----------------------------------------------------------
-                    // Method8(h): A(:,j) and B(:,j) about same, M bitmap/full
-                    //----------------------------------------------------------
-
-                    // linear-time scan of A(:,j) and B(:,j)
-
-                    while (pA < pA_end && pB < pB_end)
-                    {
-                        int64_t iA = Ai [pA] ;
-                        int64_t iB = Bi [pB] ;
-                        if (iA < iB)
-                        { 
-                            // A(i,j) exists but not B(i,j)
-                            pA++ ;
-                        }
-                        else if (iB < iA)
-                        { 
-                            // B(i,j) exists but not A(i,j)
-                            pB++ ;
-                        }
-                        else
-                        {
-                            // both A(i,j) and B(i,j) exist
-                            int64_t i = iA ;
-                            GB_GET_MIJ (i) ;
-                            if (mij)
-                            { 
-                                // C (i,j) = A (i,j) .* B (i,j)
-                                #if ( GB_EMULT_08_PHASE == 1 )
-                                cjnz++ ;
-                                #else
-                                ASSERT (pC < pC_end) ;
-                                Ci [pC] = i ;
-                                #ifndef GB_ISO_EMULT
-                                GB_DECLAREA (aij) ;
-                                GB_GETA (aij, Ax, pA, A_iso) ;
-                                GB_DECLAREB (bij) ;
-                                GB_GETB (bij, Bx, pB, B_iso) ;
-                                GB_BINOP (GB_CX (pC), aij, bij, iB, j) ;
-                                #endif
-                                pC++ ;
-                                #endif
-                            }
-                            pA++ ;
-                            pB++ ;
-                        }
-                    }
-
-                    #if ( GB_EMULT_08_PHASE == 2 )
-                    ASSERT (pC == pC_end) ;
-                    #endif
-                }
+                // C<#M>=A.*B; C, A and B are sparse/hyper.  M is bitmap/full
+                #include "GB_emult_08fgh.c"
             }
 
             //------------------------------------------------------------------
