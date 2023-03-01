@@ -52,6 +52,29 @@ switch (binop)
         % these operators are not used in GB_AxB_*scale by any builtin semiring
         binop_is_semiring_multiplier = false ;
 end
+
+% commutative operators
+switch (binop)
+    case { 'min', 'max', 'plus', 'times', 'pair', 'iseq', 'isne', ...
+        'eq', 'ne', 'lor', 'land', 'lxor', 'hypot', ...
+        'bor', 'band', 'bxor', 'bxnor' }
+        % these operators are all commutative
+        binop_is_commutative = true ;
+    otherwise
+        % these operators are not commutative
+        binop_is_commutative = false ;
+end
+
+if (binop_is_commutative)
+    % disable GB_emult_03 for this operator: use GB_emult_02 instead
+    fprintf (f, 'm4_define(`_AemultB_03'', `(none)'')\n') ;
+    fprintf (f, 'm4_define(`if_binop_is_non_commutative'', `-1'')\n') ;
+else
+    % enable GB_emult_03 for non-commutative operators only
+    fprintf (f, 'm4_define(`_AemultB_03'', `_AemultB_03__%s'')\n', name) ;
+    fprintf (f, 'm4_define(`if_binop_is_non_commutative'', `0'')\n') ;
+end
+
 if (binop_is_semiring_multiplier)
     % enable rowscale and colscale
     fprintf (f, 'm4_define(`_AxD'', `_AxD__%s'')\n', name) ;
@@ -88,7 +111,6 @@ switch (binop)
         % disable emult for these operators
         fprintf (f, 'm4_define(`_AemultB_08'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`_AemultB_02'', `(none)'')\n') ;
-        fprintf (f, 'm4_define(`_AemultB_03'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`_AemultB_04'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`_AemultB_bitmap'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`if_binop_emult_is_enabled'', `-1'')\n') ;
@@ -96,7 +118,6 @@ switch (binop)
         % enable emult for these operators
         fprintf (f, 'm4_define(`_AemultB_08'', `_AemultB_08__%s'')\n', name) ;
         fprintf (f, 'm4_define(`_AemultB_02'', `_AemultB_02__%s'')\n', name) ;
-        fprintf (f, 'm4_define(`_AemultB_03'', `_AemultB_03__%s'')\n', name) ;
         fprintf (f, 'm4_define(`_AemultB_04'', `_AemultB_04__%s'')\n', name) ;
         fprintf (f, 'm4_define(`_AemultB_bitmap'', `_AemultB_bitmap__%s'')\n', name) ;
         fprintf (f, 'm4_define(`if_binop_emult_is_enabled'', `0'')\n') ;

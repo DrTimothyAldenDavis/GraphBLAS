@@ -311,6 +311,7 @@ GrB_Info GB (_AemultB_02)
     #endif
 }
 
+m4_divert(if_binop_is_non_commutative)
 //------------------------------------------------------------------------------
 // eWiseMult: C<#> = A.*B when A is bitmap/full and B is sparse/hyper
 //------------------------------------------------------------------------------
@@ -336,6 +337,7 @@ GrB_Info GB (_AemultB_03)
     return (GrB_SUCCESS) ;
     #endif
 }
+m4_divert(if_binop_emult_is_enabled)
 
 //------------------------------------------------------------------------------
 // eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full

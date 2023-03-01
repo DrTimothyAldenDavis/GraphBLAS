@@ -143,6 +143,7 @@ GrB_Info GB (_AemultB_02)
     const int A_nthreads
 ) ;
 
+m4_divert(if_binop_is_non_commutative)
 GrB_Info GB (_AemultB_03)
 (
     GrB_Matrix C,
@@ -156,6 +157,7 @@ GrB_Info GB (_AemultB_03)
     const int B_ntasks,
     const int B_nthreads
 ) ;
+m4_divert(if_binop_emult_is_enabled)
 
 GrB_Info GB (_AemultB_04)
 (

@@ -206,53 +206,14 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     int64_t *restrict Cp_kfirst = Work + A_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
-    // count entries in C
+    // phase1: count entries in C and allocate C->i and C->x
     //--------------------------------------------------------------------------
 
-    C->nvec_nonempty = A->nvec_nonempty ;
-    C->nvec = nvec ;
-    const bool C_has_pattern_of_A = !B_is_bitmap && (M == NULL) ;
-
-    if (!C_has_pattern_of_A)
-    { 
-        GB_emult_02_phase1 (C, M, Mask_struct, Mask_comp, A, B, A_ek_slicing,
-            A_ntasks, A_nthreads, Wfirst, Wlast, Cp_kfirst, Werk) ;
-    }
+    GB_OK (GB_emult_02_phase1 (C, C_iso, M, Mask_struct, Mask_comp, A, B,
+        A_ek_slicing, A_ntasks, A_nthreads, Wfirst, Wlast, Cp_kfirst, Werk)) ;
 
     //--------------------------------------------------------------------------
-    // allocate C->i and C->x
-    //--------------------------------------------------------------------------
-
-    int64_t cnz = (C_has_pattern_of_A) ? anz : Cp [nvec] ;
-    // set C->iso = C_iso   OK
-    GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, C_iso)) ;
-
-    //--------------------------------------------------------------------------
-    // copy pattern into C
-    //--------------------------------------------------------------------------
-
-    // TODO: could make these components of C shallow instead of memcpy
-
-    if (GB_IS_HYPERSPARSE (A))
-    { 
-        // copy A->h into C->h
-        GB_memcpy (C->h, Ah, nvec * sizeof (int64_t), A_nthreads) ;
-    }
-
-    if (C_has_pattern_of_A)
-    { 
-        // Method2(b): B is full and no mask present, so the pattern of C is
-        // the same as the pattern of A
-        GB_memcpy (Cp, Ap, (nvec+1) * sizeof (int64_t), A_nthreads) ;
-        GB_memcpy (C->i, Ai, cnz * sizeof (int64_t), A_nthreads) ;
-    }
-
-    C->nvals = cnz ;
-    C->jumbled = A->jumbled ;
-    C->magic = GB_MAGIC ;
-
-    //--------------------------------------------------------------------------
-    // get the opcode
+    // get the opcode for phase2
     //--------------------------------------------------------------------------
 
     GB_Opcode opcode = op->opcode ;

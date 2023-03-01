@@ -206,53 +206,14 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
     int64_t *restrict Cp_kfirst = Work + B_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
-    // count entries in C
+    // phase1: count entries in C and allocate C->i and C->x
     //--------------------------------------------------------------------------
 
-    C->nvec_nonempty = B->nvec_nonempty ;
-    C->nvec = nvec ;
-    const bool C_has_pattern_of_B = !A_is_bitmap && (M == NULL) ;
-
-    if (!C_has_pattern_of_B)
-    {
-        GB_emult_02_phase1 (C, M, Mask_struct, Mask_comp, B, A, B_ek_slicing,
-            B_ntasks, B_nthreads, Wfirst, Wlast, Cp_kfirst, Werk) ;
-    }
+    GB_OK (GB_emult_02_phase1 (C, C_iso, M, Mask_struct, Mask_comp, B, A,
+        B_ek_slicing, B_ntasks, B_nthreads, Wfirst, Wlast, Cp_kfirst, Werk)) ;
 
     //--------------------------------------------------------------------------
-    // allocate C->i and C->x
-    //--------------------------------------------------------------------------
-
-    int64_t cnz = (C_has_pattern_of_B) ? bnz : Cp [nvec] ;
-    // set C->iso = C_iso   OK
-    GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, C_iso)) ;
-
-    //--------------------------------------------------------------------------
-    // copy pattern into C
-    //--------------------------------------------------------------------------
-
-    // TODO: could make these components of C shallow instead of memcpy
-
-    if (GB_IS_HYPERSPARSE (B))
-    { 
-        // copy B->h into C->h
-        GB_memcpy (C->h, Bh, nvec * sizeof (int64_t), B_nthreads) ;
-    }
-
-    if (C_has_pattern_of_B)
-    { 
-        // Method3(b): A is full and no mask present, so the pattern of C is
-        // the same as the pattern of B
-        GB_memcpy (Cp, Bp, (nvec+1) * sizeof (int64_t), B_nthreads) ;
-        GB_memcpy (C->i, Bi, cnz * sizeof (int64_t), B_nthreads) ;
-    }
-
-    C->nvals = cnz ;
-    C->jumbled = B->jumbled ;
-    C->magic = GB_MAGIC ;
-
-    //--------------------------------------------------------------------------
-    // get the opcode
+    // get the opcode for phase2
     //--------------------------------------------------------------------------
 
     GB_Opcode opcode = op->opcode ;
@@ -333,6 +294,7 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
                 op, false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
             { 
                 #define GB_NO_PAIR
+                #define GB_NO_COMMUTATIVE_BINARY_OPS
                 #include "GB_binop_factory.c"
             }
 

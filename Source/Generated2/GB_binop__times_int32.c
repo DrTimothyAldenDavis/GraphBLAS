@@ -302,32 +302,6 @@ GrB_Info GB (_AemultB_02__times_int32)
 }
 
 //------------------------------------------------------------------------------
-// eWiseMult: C<#> = A.*B when A is bitmap/full and B is sparse/hyper
-//------------------------------------------------------------------------------
-
-GrB_Info GB (_AemultB_03__times_int32)
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int64_t *restrict Cp_kfirst,
-    const int64_t *B_ek_slicing,
-    const int B_ntasks,
-    const int B_nthreads
-)
-{ 
-    #if GB_DISABLE
-    return (GrB_NO_VALUE) ;
-    #else
-    #include "GB_emult_03_template.c"
-    return (GrB_SUCCESS) ;
-    #endif
-}
-
-//------------------------------------------------------------------------------
 // eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full
 //------------------------------------------------------------------------------
 

@@ -33,6 +33,7 @@
 
 #include "GB_emult.h"
 #include "GB_add.h"
+#include "GB_binop.h"
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \
@@ -104,6 +105,42 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     int ewise_method ;          // method to use
     int C_sparsity = GB_emult_sparsity (&apply_mask, &ewise_method,
         M, Mask_comp, A, B) ;
+
+    //--------------------------------------------------------------------------
+    // get the opcode and determine if f(x,y) == f(y,x)
+    //--------------------------------------------------------------------------
+
+    GB_Opcode opcode = op->opcode ;
+    if (op->xtype == GrB_BOOL)
+    {
+        opcode = GB_boolean_rename (opcode) ;
+    }
+
+    bool op_is_commutative ;
+    switch (opcode)
+    {
+        case GB_MIN_binop_code     :    // z = min(x,y)
+        case GB_MAX_binop_code     :    // z = max(x,y)
+        case GB_PLUS_binop_code    :    // z = x + y
+        case GB_TIMES_binop_code   :    // z = x * y
+        case GB_PAIR_binop_code    :    // z = 1
+        case GB_ISEQ_binop_code    :    // z = (x == y)
+        case GB_ISNE_binop_code    :    // z = (x != y)
+        case GB_EQ_binop_code      :    // z = (x == y)
+        case GB_NE_binop_code      :    // z = (x != y)
+        case GB_LOR_binop_code     :    // z = x || y
+        case GB_LAND_binop_code    :    // z = x && y
+        case GB_LXOR_binop_code    :    // z = x != y
+        case GB_HYPOT_binop_code   :    // z = hypot (x,y)
+        case GB_BOR_binop_code     :    // z = (x | y), bitwise or
+        case GB_BAND_binop_code    :    // z = (x & y), bitwise and
+        case GB_BXOR_binop_code    :    // z = (x ^ y), bitwise xor
+        case GB_BXNOR_binop_code   :    // z = ~(x ^ y), bitwise xnor
+            op_is_commutative = true ;
+            break ;
+        default : 
+            op_is_commutative = false ;
+    }
 
     //--------------------------------------------------------------------------
     // C<M or !M> = A.*B
@@ -206,9 +243,24 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             // M is not present, not applied, or bitmap/full
             // Note that A and B are flipped.
 
-            return (GB_emult_03 (C, ctype, C_is_csc,
-                (apply_mask) ? M : NULL, Mask_struct, Mask_comp,
-                A, B, op, Werk)) ;
+            if (op_is_commutative)
+            {
+                // replace A.*B with B.*A, and use GB_emult_02, since the op is
+                // commutative.  No need to change the op or flip it by using
+                // f(y,x).  Just swap A and B.  This allows GB_emult_03 to
+                // cover fewer cases via GB_NO_COMMUTATIVE_BINARY_OPS in the
+                // GB_binop_factory.
+                return (GB_emult_02 (C, ctype, C_is_csc,
+                    (apply_mask) ? M : NULL, Mask_struct, Mask_comp,
+                    B, A, op, Werk)) ;
+            }
+            else
+            {
+                // the op is not commutative: use GB_emult_03
+                return (GB_emult_03 (C, ctype, C_is_csc,
+                    (apply_mask) ? M : NULL, Mask_struct, Mask_comp,
+                    A, B, op, Werk)) ;
+            }
 
         case GB_EMULT_METHOD8 : 
 

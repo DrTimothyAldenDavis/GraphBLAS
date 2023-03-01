@@ -141,11 +141,12 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     GB_Werk Werk
 ) ;
 
-void GB_emult_02_phase1     // symbolic analysis for GB_emult_02 and GB_emult_03
+GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
 (
     // input/output:
     GrB_Matrix C,
     // input:
+    const bool C_iso,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
