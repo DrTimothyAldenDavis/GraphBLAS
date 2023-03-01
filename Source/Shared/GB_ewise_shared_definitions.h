@@ -37,11 +37,6 @@
 #define GB_COPY_B_TO_C(Cx,pC,Bx,pB,B_iso) Cx [pC] = Bx [(B_iso) ? 0 : (pB)]
 #endif
 
-// 1 if A and B have the same type
-#ifndef GB_ATYPE_IS_BTYPE
-#define GB_ATYPE_IS_BTYPE 1
-#endif
-
 // 1 if C and A have the same type
 #ifndef GB_CTYPE_IS_ATYPE
 #define GB_CTYPE_IS_ATYPE 1

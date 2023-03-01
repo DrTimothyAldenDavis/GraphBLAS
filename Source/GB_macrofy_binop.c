@@ -16,7 +16,7 @@ void GB_macrofy_binop
     FILE *fp,
     // input:
     const char *macro_name,
-    bool flipxy,                // if true: op is f(y,x)
+    bool flipxy,                // if true: op is f(y,x) for a semiring
     bool is_monoid_or_build,    // if true: additive operator for monoid,
                                 // or binary op for GrB_Matrix_build
     bool is_ewise,              // if true: binop for ewise methods

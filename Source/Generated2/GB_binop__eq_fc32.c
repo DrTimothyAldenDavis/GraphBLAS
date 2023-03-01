@@ -31,7 +31,6 @@
 #define GB_C_TYPE bool
 #define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = (crealf (Ax [(A_iso) ? 0 : (pA)]) != 0) || (cimagf (Ax [(A_iso) ? 0 : (pA)]) != 0)
 #define GB_COPY_B_TO_C(Cx,pC,Bx,pB,B_iso) Cx [pC] = (crealf (Bx [(B_iso) ? 0 : (pB)]) != 0) || (cimagf (Bx [(B_iso) ? 0 : (pB)]) != 0)
-
 #define GB_CTYPE_IS_ATYPE 0
 #define GB_CTYPE_IS_BTYPE 0
 
@@ -222,7 +221,6 @@ GrB_Info GB (_AemultB_02__eq_fc32)
     const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const bool flipxy,
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing,
     const int A_ntasks,
@@ -232,13 +230,33 @@ GrB_Info GB (_AemultB_02__eq_fc32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    
-        // No need to handle the flip: the operator is either commutative, or
-        // has been handled by changing z=div(y,x) to z=rdiv(x,y) for example.
-        #undef  GB_FLIPPED
-        #define GB_FLIPPED 0
-        #include "GB_emult_02_template.c"
-    
+    #include "GB_emult_02_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// eWiseMult: C<#> = A.*B when A is bitmap/full and B is sparse/hyper
+//------------------------------------------------------------------------------
+
+GrB_Info GB (_AemultB_03__eq_fc32)
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *restrict Cp_kfirst,
+    const int64_t *B_ek_slicing,
+    const int B_ntasks,
+    const int B_nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_emult_03_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

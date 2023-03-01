@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_02: C = A.*B where A is sparse/hyper and B is bitmap/full
+// GB_emult_03: C = A.*B where A is bitmap/full and B is sparse/hyper
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// C = A.*B where A is sparse/hyper and B is bitmap/full constructs C with
-// the same sparsity structure as A.
+// C = A.*B where B is sparse/hyper and A is bitmap/full constructs C with
+// the same sparsity structure as B.
 
 // When no mask is present, or the mask is applied later, this method handles
 // the following cases:
@@ -16,42 +16,42 @@
         //      ------------------------------------------
         //      C       =           A       .*      B
         //      ------------------------------------------
-        //      sparse  .           sparse          bitmap
-        //      sparse  .           sparse          full  
+        //      sparse  .           bitmap          sparse
+        //      sparse  .           full            sparse
 
 // If M is sparse/hyper and complemented, it is not passed here:
 
         //      ------------------------------------------
         //      C       <!M>=       A       .*      B
         //      ------------------------------------------
-        //      sparse  sparse      sparse          bitmap  (mask later)
-        //      sparse  sparse      sparse          full    (mask later)
+        //      sparse  sparse      bitmap          sparse  (mask later)
+        //      sparse  sparse      full            sparse  (mask later)
 
 // If M is present, it is bitmap/full:
 
         //      ------------------------------------------
         //      C      <M> =        A       .*      B
         //      ------------------------------------------
-        //      sparse  bitmap      sparse          bitmap
-        //      sparse  bitmap      sparse          full  
+        //      sparse  bitmap      bitmap          sparse
+        //      sparse  bitmap      full            sparse
 
         //      ------------------------------------------
         //      C      <M> =        A       .*      B
         //      ------------------------------------------
-        //      sparse  full        sparse          bitmap
-        //      sparse  full        sparse          full  
+        //      sparse  full        bitmap          sparse
+        //      sparse  full        full            sparse
 
         //      ------------------------------------------
         //      C      <!M> =        A       .*      B
         //      ------------------------------------------
-        //      sparse  bitmap      sparse          bitmap
-        //      sparse  bitmap      sparse          full  
+        //      sparse  bitmap      bitmap          sparse
+        //      sparse  bitmap      full            sparse
 
         //      ------------------------------------------
         //      C      <!M> =        A       .*      B
         //      ------------------------------------------
-        //      sparse  full        sparse          bitmap
-        //      sparse  full        sparse          full  
+        //      sparse  full        bitmap          sparse
+        //      sparse  full        full            sparse
 
 // FIXME: debug is on
 #define GB_DEBUG
@@ -68,7 +68,7 @@
 #define GB_FREE_WORKSPACE                   \
 {                                           \
     GB_WERK_POP (Work, int64_t) ;           \
-    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
+    GB_WERK_POP (B_ek_slicing, int64_t) ;   \
 }
 
 #define GB_FREE_ALL                         \
@@ -77,7 +77,7 @@
     GB_phybix_free (C) ;                    \
 }
 
-GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
+GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
 (
     GrB_Matrix C,           // output matrix, static header
     const GrB_Type ctype,   // type of output matrix C
@@ -85,8 +85,8 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     const GrB_Matrix M,     // optional mask, unused if NULL
     const bool Mask_struct, // if true, use the only structure of M
     const bool Mask_comp,   // if true, use !M
-    const GrB_Matrix A,     // input A matrix (sparse/hyper)
-    const GrB_Matrix B,     // input B matrix (bitmap/full)
+    const GrB_Matrix A,     // input A matrix (bitmap/full)
+    const GrB_Matrix B,     // input B matrix (sparse/hyper)
     GrB_BinaryOp op,        // op to perform C = op (A,B)
     GB_Werk Werk
 )
@@ -99,31 +99,31 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     GrB_Info info ;
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
 
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for emult_02", GB0) ;
-    ASSERT_MATRIX_OK (A, "A for emult_02", GB0) ;
-    ASSERT_MATRIX_OK (B, "B for emult_02", GB0) ;
-    ASSERT_BINARYOP_OK (op, "op for emult_02", GB0) ;
-    ASSERT_TYPE_OK (ctype, "ctype for emult_02", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for emult_03", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for emult_03", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for emult_03", GB0) ;
+    ASSERT_BINARYOP_OK (op, "op for emult_03", GB0) ;
+    ASSERT_TYPE_OK (ctype, "ctype for emult_03", GB0) ;
 
-    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
-    ASSERT (!GB_PENDING (A)) ;
-    ASSERT (GB_JUMBLED_OK (A)) ;
-    ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B)) ;
+    ASSERT (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B)) ;
+    ASSERT (!GB_PENDING (B)) ;
+    ASSERT (GB_JUMBLED_OK (B)) ;
+    ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
     ASSERT (M == NULL || GB_IS_BITMAP (M) || GB_IS_FULL (M)) ;
 
-    int C_sparsity = GB_sparsity (A) ;
+    int C_sparsity = GB_sparsity (B) ;
 
     if (M == NULL)
     { 
-        GBURBLE ("emult_02:(%s=%s.*%s)",
+        GBURBLE ("emult_03:(%s=%s.*%s)",
             GB_sparsity_char (C_sparsity),
             GB_sparsity_char_matrix (A),
             GB_sparsity_char_matrix (B)) ;
     }
     else
     { 
-        GBURBLE ("emult_02:(%s<%s%s%s>=%s.*%s) ",
+        GBURBLE ("emult_03:(%s<%s%s%s>=%s.*%s) ",
             GB_sparsity_char (C_sparsity),
             Mask_comp ? "!" : "",
             GB_sparsity_char_matrix (M),
@@ -140,7 +140,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     int64_t *restrict Wfirst    = NULL ;
     int64_t *restrict Wlast     = NULL ;
     int64_t *restrict Cp_kfirst = NULL ;
-    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
 
     //--------------------------------------------------------------------------
     // get M, A, and B
@@ -151,16 +151,16 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
         (const GB_M_TYPE *) M->x ;
     const size_t msize = (M == NULL) ? 0 : M->type->size ;
 
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
-    const int64_t vlen = A->vlen ;
-    const int64_t vdim = A->vdim ;
-    const int64_t nvec = A->nvec ;
-    const int64_t anz = GB_nnz (A) ;
+    const int64_t *restrict Bp = B->p ;
+    const int64_t *restrict Bh = B->h ;
+    const int64_t *restrict Bi = B->i ;
+    const int64_t vlen = B->vlen ;
+    const int64_t vdim = B->vdim ;
+    const int64_t nvec = B->nvec ;
+    const int64_t bnz = GB_nnz (B) ;
 
-    const int8_t *restrict Bb = B->b ;
-    const bool B_is_bitmap = GB_IS_BITMAP (B) ;
+    const int8_t *restrict Ab = A->b ;
+    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
 
     //--------------------------------------------------------------------------
     // check if C is iso and compute its iso value if it is
@@ -179,36 +179,36 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     // allocate C->p and C->h
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_new (&C, // sparse or hyper (same as A), existing header
+    GB_OK (GB_new (&C, // sparse or hyper (same as B), existing header
         ctype, vlen, vdim, GB_Ap_calloc, C_is_csc,
-        C_sparsity, A->hyper_switch, nvec)) ;
+        C_sparsity, B->hyper_switch, nvec)) ;
     int64_t *restrict Cp = C->p ;
 
     //--------------------------------------------------------------------------
-    // slice the input matrix A
+    // slice the input matrix B
     //--------------------------------------------------------------------------
 
-    int A_nthreads, A_ntasks ;
+    int B_nthreads, B_ntasks ;
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
-    GB_SLICE_MATRIX (A, 8, chunk) ;
+    GB_SLICE_MATRIX (B, 8, chunk) ;
 
     //--------------------------------------------------------------------------
     // count entries in C
     //--------------------------------------------------------------------------
 
-    C->nvec_nonempty = A->nvec_nonempty ;
+    C->nvec_nonempty = B->nvec_nonempty ;
     C->nvec = nvec ;
-    const bool C_has_pattern_of_A = !B_is_bitmap && (M == NULL) ;
+    const bool C_has_pattern_of_B = !A_is_bitmap && (M == NULL) ;
 
-    if (!C_has_pattern_of_A)
+    if (!C_has_pattern_of_B)
     {
 
         //----------------------------------------------------------------------
         // allocate workspace
         //----------------------------------------------------------------------
 
-        GB_WERK_PUSH (Work, 3*A_ntasks, int64_t) ;
+        GB_WERK_PUSH (Work, 3*B_ntasks, int64_t) ;
         if (Work == NULL)
         { 
             // out of memory
@@ -216,8 +216,8 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
             return (GrB_OUT_OF_MEMORY) ;
         }
         Wfirst    = Work ;
-        Wlast     = Work + A_ntasks ;
-        Cp_kfirst = Work + A_ntasks * 2 ;
+        Wlast     = Work + B_ntasks ;
+        Cp_kfirst = Work + B_ntasks * 2 ;
 
         //----------------------------------------------------------------------
         // count entries in C
@@ -229,31 +229,31 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
         {
 
             //------------------------------------------------------------------
-            // Method2(a): C = A.*B where A is sparse/hyper and B is bitmap
+            // Method3(a): C = A.*B where A is bitmap and B is sparse/hyper
             //------------------------------------------------------------------
 
-            ASSERT (B_is_bitmap) ;
+            ASSERT (A_is_bitmap) ;
 
             int tid ;
-            #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1)
-            for (tid = 0 ; tid < A_ntasks ; tid++)
+            #pragma omp parallel for num_threads(B_nthreads) schedule(dynamic,1)
+            for (tid = 0 ; tid < B_ntasks ; tid++)
             {
-                int64_t kfirst = kfirst_Aslice [tid] ;
-                int64_t klast  = klast_Aslice  [tid] ;
+                int64_t kfirst = kfirst_Bslice [tid] ;
+                int64_t klast  = klast_Bslice  [tid] ;
                 Wfirst [tid] = 0 ;
                 Wlast  [tid] = 0 ;
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // count the entries in C(:,j)
-                    int64_t j = GBH (Ah, k) ;
-                    int64_t pB_start = j * vlen ;
-                    int64_t pA, pA_end ;
-                    GB_get_pA (&pA, &pA_end, tid, k,
-                        kfirst, klast, pstart_Aslice, Ap, vlen) ;
+                    int64_t j = GBH (Bh, k) ;
+                    int64_t pA_start = j * vlen ;
+                    int64_t pB, pB_end ;
+                    GB_get_pA (&pB, &pB_end, tid, k,
+                        kfirst, klast, pstart_Bslice, Bp, vlen) ;
                     int64_t cjnz = 0 ;
-                    for ( ; pA < pA_end ; pA++)
+                    for ( ; pB < pB_end ; pB++)
                     { 
-                        cjnz += Bb [pB_start + Ai [pA]] ;
+                        cjnz += Ab [pA_start + Bi [pB]] ;
                     }
                     if (k == kfirst)
                     { 
@@ -275,35 +275,35 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
         {
 
             //------------------------------------------------------------------
-            // Method2(c): C<#M> = A.*B; A is sparse/hyper; M, B bitmap/full
+            // Method3(c): C<#M> = A.*B; M, A bitmap/full; B is sparse/hyper
             //------------------------------------------------------------------
 
             ASSERT (M != NULL) ;
 
             int tid ;
-            #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1)
-            for (tid = 0 ; tid < A_ntasks ; tid++)
+            #pragma omp parallel for num_threads(B_nthreads) schedule(dynamic,1)
+            for (tid = 0 ; tid < B_ntasks ; tid++)
             {
-                int64_t kfirst = kfirst_Aslice [tid] ;
-                int64_t klast  = klast_Aslice  [tid] ;
+                int64_t kfirst = kfirst_Bslice [tid] ;
+                int64_t klast  = klast_Bslice  [tid] ;
                 Wfirst [tid] = 0 ;
                 Wlast  [tid] = 0 ;
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // count the entries in C(:,j)
-                    int64_t j = GBH (Ah, k) ;
-                    int64_t pB_start = j * vlen ;
-                    int64_t pA, pA_end ;
-                    GB_get_pA (&pA, &pA_end, tid, k,
-                        kfirst, klast, pstart_Aslice, Ap, vlen) ;
+                    int64_t j = GBH (Bh, k) ;
+                    int64_t pA_start = j * vlen ;
+                    int64_t pB, pB_end ;
+                    GB_get_pA (&pB, &pB_end, tid, k,
+                        kfirst, klast, pstart_Bslice, Bp, vlen) ;
                     int64_t cjnz = 0 ;
-                    for ( ; pA < pA_end ; pA++)
+                    for ( ; pB < pB_end ; pB++)
                     { 
-                        int64_t i = Ai [pA] ;
-                        int64_t pB = pB_start + i ;
-                        bool mij = GBB (Mb, pB) && GB_MCAST (Mx, pB, msize) ;
+                        int64_t i = Bi [pB] ;
+                        int64_t pA = pA_start + i ;
+                        bool mij = GBB (Mb, pA) && GB_MCAST (Mx, pA, msize) ;
                         mij = mij ^ Mask_comp ;
-                        cjnz += (mij && GBB (Bb, pB)) ;
+                        cjnz += (mij && GBB (Ab, pA)) ;
                     }
                     if (k == kfirst)
                     { 
@@ -325,16 +325,16 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
         // finalize Cp, cumulative sum of Cp and compute Cp_kfirst
         //----------------------------------------------------------------------
 
-        GB_ek_slice_merge1 (Cp, Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
+        GB_ek_slice_merge1 (Cp, Wfirst, Wlast, B_ek_slicing, B_ntasks) ;
         GB_ek_slice_merge2 (&(C->nvec_nonempty), Cp_kfirst, Cp, nvec,
-            Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Werk) ;
+            Wfirst, Wlast, B_ek_slicing, B_ntasks, B_nthreads, Werk) ;
     }
 
     //--------------------------------------------------------------------------
     // allocate C->i and C->x
     //--------------------------------------------------------------------------
 
-    int64_t cnz = (C_has_pattern_of_A) ? anz : Cp [nvec] ;
+    int64_t cnz = (C_has_pattern_of_B) ? bnz : Cp [nvec] ;
     // set C->iso = C_iso   OK
     GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, C_iso)) ;
 
@@ -344,22 +344,22 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
 
     // TODO: could make these components of C shallow instead of memcpy
 
-    if (GB_IS_HYPERSPARSE (A))
+    if (GB_IS_HYPERSPARSE (B))
     { 
-        // copy A->h into C->h
-        GB_memcpy (C->h, Ah, nvec * sizeof (int64_t), A_nthreads) ;
+        // copy B->h into C->h
+        GB_memcpy (C->h, Bh, nvec * sizeof (int64_t), B_nthreads) ;
     }
 
-    if (C_has_pattern_of_A)
+    if (C_has_pattern_of_B)
     { 
-        // Method2(b): B is full and no mask present, so the pattern of C is
-        // the same as the pattern of A
-        GB_memcpy (Cp, Ap, (nvec+1) * sizeof (int64_t), A_nthreads) ;
-        GB_memcpy (C->i, Ai, cnz * sizeof (int64_t), A_nthreads) ;
+        // Method3(b): A is full and no mask present, so the pattern of C is
+        // the same as the pattern of B
+        GB_memcpy (Cp, Bp, (nvec+1) * sizeof (int64_t), B_nthreads) ;
+        GB_memcpy (C->i, Bi, cnz * sizeof (int64_t), B_nthreads) ;
     }
 
     C->nvals = cnz ;
-    C->jumbled = A->jumbled ;
+    C->jumbled = B->jumbled ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
@@ -406,7 +406,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
 
         // pattern of C = set intersection of pattern of A and B
         #define GB_ISO_EMULT
-        #include "GB_emult_02_template.c"
+        #include "GB_emult_03_template.c"
         done = true ;
 
     }
@@ -423,13 +423,13 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
             // define the worker for the switch factory
             //------------------------------------------------------------------
 
-            #define GB_AemultB_02(mult,xname) GB (_AemultB_02_ ## mult ## xname)
+            #define GB_AemultB_03(mult,xname) GB (_AemultB_03_ ## mult ## xname)
 
             #define GB_BINOP_WORKER(mult,xname)                         \
             {                                                           \
-                info = GB_AemultB_02(mult,xname) (C,                    \
+                info = GB_AemultB_03(mult,xname) (C,                    \
                     M, Mask_struct, Mask_comp, A, B,                    \
-                    Cp_kfirst, A_ek_slicing, A_ntasks, A_nthreads) ;    \
+                    Cp_kfirst, B_ek_slicing, B_ntasks, B_nthreads) ;    \
                 done = (info != GrB_NO_VALUE) ;                         \
             }                                                           \
             break ;
@@ -455,7 +455,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: ewise: emult_02
+    // JIT TODO: ewise: emult_03
     #endif
 
     //--------------------------------------------------------------------------
@@ -464,10 +464,10 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
 
     if (!done)
     { 
-        GB_BURBLE_MATRIX (C, "(generic emult_02: %s) ", op->name) ;
+        GB_BURBLE_MATRIX (C, "(generic emult_03: %s) ", op->name) ;
         GB_emult_generic (C, op, NULL, 0, 0,
-            NULL, NULL, NULL, C_sparsity, GB_EMULT_METHOD2, Cp_kfirst,
-            NULL, 0, 0, A_ek_slicing, A_ntasks, A_nthreads, NULL, 0, 0,
+            NULL, NULL, NULL, C_sparsity, GB_EMULT_METHOD3, Cp_kfirst,
+            NULL, 0, 0, NULL, 0, 0, B_ek_slicing, B_ntasks, B_nthreads,
             M, Mask_struct, Mask_comp, A, B, Werk) ;
     }
 
@@ -482,7 +482,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
-    ASSERT_MATRIX_OK (C, "C output for emult_02", GB0) ;
+    ASSERT_MATRIX_OK (C, "C output for emult_03", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

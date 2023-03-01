@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_02_template: C = A.*B when A is sparse/hyper and B is bitmap/full
+// GB_emult_03_template: C = A.*B when A is bitmap/full and B is sparse/hyper
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// C is sparse, with the same sparsity structure as A.  No mask is present, or
-// M is bitmap/full.  A is sparse/hyper, and B is bitmap/full.
+// C is sparse, with the same sparsity structure as B.  No mask is present, or
+// M is bitmap/full.  A is bitmap/full, and B is sparse/hyper.
 
 {
 
@@ -16,16 +16,16 @@
     // get A, B, and C
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
-    const int64_t vlen = A->vlen ;
+    const int64_t *restrict Bp = B->p ;
+    const int64_t *restrict Bh = B->h ;
+    const int64_t *restrict Bi = B->i ;
+    const int64_t vlen = B->vlen ;
 
-    const int8_t  *restrict Bb = B->b ;
+    const int8_t  *restrict Ab = A->b ;
 
-    const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
-    const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
-    const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
+    const int64_t *restrict kfirst_Bslice = B_ek_slicing ;
+    const int64_t *restrict klast_Bslice  = B_ek_slicing + B_ntasks ;
+    const int64_t *restrict pstart_Bslice = B_ek_slicing + B_ntasks * 2 ;
 
     const bool A_iso = A->iso ;
     const bool B_iso = B->iso ;
@@ -54,31 +54,31 @@
         // C = A.*B
         //----------------------------------------------------------------------
 
-        if (GB_IS_BITMAP (B))
+        if (GB_IS_BITMAP (A))
         {
 
             //------------------------------------------------------------------
-            // Method2(a): C=A.*B where A is sparse/hyper and B is bitmap
+            // Method3(a): C=A.*B where A is bitmap and B is sparse/hyper
             //------------------------------------------------------------------
 
             int tid ;
-            #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1)
-            for (tid = 0 ; tid < A_ntasks ; tid++)
+            #pragma omp parallel for num_threads(B_nthreads) schedule(dynamic,1)
+            for (tid = 0 ; tid < B_ntasks ; tid++)
             {
-                int64_t kfirst = kfirst_Aslice [tid] ;
-                int64_t klast  = klast_Aslice  [tid] ;
+                int64_t kfirst = kfirst_Bslice [tid] ;
+                int64_t klast  = klast_Bslice  [tid] ;
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
-                    int64_t j = GBH_A (Ah, k) ;
-                    int64_t pB_start = j * vlen ;
-                    int64_t pA, pA_end, pC ;
-                    GB_get_pA_and_pC (&pA, &pA_end, &pC, tid, k, kfirst, klast,
-                        pstart_Aslice, Cp_kfirst, Cp, vlen, Ap, vlen) ;
-                    for ( ; pA < pA_end ; pA++)
+                    int64_t j = GBH_B (Bh, k) ;
+                    int64_t pA_start = j * vlen ;
+                    int64_t pB, pB_end, pC ;
+                    GB_get_pA_and_pC (&pB, &pB_end, &pC, tid, k, kfirst, klast,
+                        pstart_Bslice, Cp_kfirst, Cp, vlen, Bp, vlen) ;
+                    for ( ; pB < pB_end ; pB++)
                     { 
-                        int64_t i = Ai [pA] ;
-                        int64_t pB = pB_start + i ;
-                        if (!Bb [pB]) continue ;
+                        int64_t i = Bi [pB] ;
+                        int64_t pA = pA_start + i ;
+                        if (!Ab [pA]) continue ;
                         // C (i,j) = A (i,j) .* B (i,j)
                         Ci [pC] = i ;
                         #ifndef GB_ISO_EMULT
@@ -98,34 +98,34 @@
         {
 
             //------------------------------------------------------------------
-            // Method2(b): C=A.*B where A is sparse/hyper and B is full
+            // Method3(b): C=A.*B where A is full and B is sparse/hyper
             //------------------------------------------------------------------
 
             int tid ;
-            #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1)
-            for (tid = 0 ; tid < A_ntasks ; tid++)
+            #pragma omp parallel for num_threads(B_nthreads) schedule(dynamic,1)
+            for (tid = 0 ; tid < B_ntasks ; tid++)
             {
-                int64_t kfirst = kfirst_Aslice [tid] ;
-                int64_t klast  = klast_Aslice  [tid] ;
+                int64_t kfirst = kfirst_Bslice [tid] ;
+                int64_t klast  = klast_Bslice  [tid] ;
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
-                    int64_t j = GBH_A (Ah, k) ;
-                    int64_t pB_start = j * vlen ;
-                    int64_t pA, pA_end ;
-                    GB_get_pA (&pA, &pA_end, tid, k, kfirst, klast,
-                        pstart_Aslice, Ap, vlen) ;
-                    for ( ; pA < pA_end ; pA++)
+                    int64_t j = GBH_B (Bh, k) ;
+                    int64_t pA_start = j * vlen ;
+                    int64_t pB, pB_end ;
+                    GB_get_pA (&pB, &pB_end, tid, k, kfirst, klast,
+                        pstart_Bslice, Bp, vlen) ;
+                    for ( ; pB < pB_end ; pB++)
                     { 
                         // C (i,j) = A (i,j) .* B (i,j)
-                        int64_t i = Ai [pA] ;
-                        int64_t pB = pB_start + i ;
-                        // Ci [pA] = i ; already defined
+                        int64_t i = Bi [pB] ;
+                        int64_t pA = pA_start + i ;
+                        // Ci [pB] = i ; already defined
                         #ifndef GB_ISO_EMULT
                         GB_DECLAREA (aij) ;
                         GB_GETA (aij, Ax, pA, A_iso) ;
                         GB_DECLAREB (bij) ;
                         GB_GETB (bij, Bx, pB, B_iso) ;
-                        GB_BINOP (GB_CX (pA), aij, bij, i, j) ;
+                        GB_BINOP (GB_CX (pB), aij, bij, i, j) ;
                         #endif
                     }
                 }
@@ -137,7 +137,7 @@
     {
 
         //----------------------------------------------------------------------
-        // Method2(c): C<#M>=A.*B, A is sparse/hyper, M and B are bitmap/full
+        // Method3(c): C<#M>=A.*B; M and A are bitmap/full; B is sparse/hyper
         //----------------------------------------------------------------------
 
         const int8_t  *restrict Mb = M->b ;
@@ -145,24 +145,24 @@
         const size_t msize = M->type->size ;
 
         int tid ;
-        #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1)
-        for (tid = 0 ; tid < A_ntasks ; tid++)
+        #pragma omp parallel for num_threads(B_nthreads) schedule(dynamic,1)
+        for (tid = 0 ; tid < B_ntasks ; tid++)
         {
-            int64_t kfirst = kfirst_Aslice [tid] ;
-            int64_t klast  = klast_Aslice  [tid] ;
+            int64_t kfirst = kfirst_Bslice [tid] ;
+            int64_t klast  = klast_Bslice  [tid] ;
             for (int64_t k = kfirst ; k <= klast ; k++)
             {
-                int64_t j = GBH_A (Ah, k) ;
-                int64_t pB_start = j * vlen ;
-                int64_t pA, pA_end, pC ;
-                GB_get_pA_and_pC (&pA, &pA_end, &pC, tid, k, kfirst, klast,
-                    pstart_Aslice, Cp_kfirst, Cp, vlen, Ap, vlen) ;
-                for ( ; pA < pA_end ; pA++)
+                int64_t j = GBH_B (Bh, k) ;
+                int64_t pA_start = j * vlen ;
+                int64_t pB, pB_end, pC ;
+                GB_get_pA_and_pC (&pB, &pB_end, &pC, tid, k, kfirst, klast,
+                    pstart_Bslice, Cp_kfirst, Cp, vlen, Bp, vlen) ;
+                for ( ; pB < pB_end ; pB++)
                 { 
-                    int64_t i = Ai [pA] ;
-                    int64_t pB = pB_start + i ;
-                    if (!GBB_B (Bb, pB)) continue ;
-                    bool mij = GBB_M (Mb, pB) && GB_MCAST (Mx, pB, msize) ;
+                    int64_t i = Bi [pB] ;
+                    int64_t pA = pA_start + i ;
+                    if (!GBB_A (Ab, pA)) continue ;
+                    bool mij = GBB_M (Mb, pA) && GB_MCAST (Mx, pA, msize) ;
                     mij = mij ^ Mask_comp ;
                     if (!mij) continue ;
                     // C (i,j) = A (i,j) .* B (i,j)

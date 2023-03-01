@@ -173,7 +173,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
             return (GB_emult_02 (C, ctype, C_is_csc,
                 (apply_mask) ? M : NULL, Mask_struct, Mask_comp,
-                A, B, op, false, Werk)) ;
+                A, B, op, Werk)) ;
 
         case GB_EMULT_METHOD3 :  // A bitmap/full, B sparse/hyper
 
@@ -202,13 +202,13 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      sparse  full        bitmap          sparse  (method: 3)
             //      sparse  full        full            sparse  (method: 3)
 
-            // A is bitmap/full and B is sparse/hyper, with flipxy true.
+            // A is bitmap/full and B is sparse/hyper.
             // M is not present, not applied, or bitmap/full
             // Note that A and B are flipped.
 
-            return (GB_emult_02 (C, ctype, C_is_csc,
+            return (GB_emult_03 (C, ctype, C_is_csc,
                 (apply_mask) ? M : NULL, Mask_struct, Mask_comp,
-                B, A, op, true, Werk)) ;
+                A, B, op, Werk)) ;
 
         case GB_EMULT_METHOD8 : 
 

@@ -228,7 +228,6 @@ GrB_Info GB (_AemultB_02__ldexp_fp32)
     const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const bool flipxy,
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing,
     const int A_ntasks,
@@ -238,24 +237,33 @@ GrB_Info GB (_AemultB_02__ldexp_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    
-        // The operator is not commutative, and does not have a flipped
-        // variant.  For example z=atan2(y,x).
-        if (flipxy)
-        {
-            // use fmult(y,x)
-            #undef  GB_FLIPPED
-            #define GB_FLIPPED 1
-            #include "GB_emult_02_template.c"
-        }
-        else
-        {
-            // use fmult(x,y)
-            #undef  GB_FLIPPED
-            #define GB_FLIPPED 0
-            #include "GB_emult_02_template.c"
-        }
-    
+    #include "GB_emult_02_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// eWiseMult: C<#> = A.*B when A is bitmap/full and B is sparse/hyper
+//------------------------------------------------------------------------------
+
+GrB_Info GB (_AemultB_03__ldexp_fp32)
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *restrict Cp_kfirst,
+    const int64_t *B_ek_slicing,
+    const int B_ntasks,
+    const int B_nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_emult_03_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

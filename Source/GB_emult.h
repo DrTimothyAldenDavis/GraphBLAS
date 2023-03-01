@@ -13,8 +13,8 @@
 #include "GB_bitmap_assign_methods.h"
 
 #define GB_EMULT_METHOD1_ADD 1      /* use GB_add instead of emult */
-#define GB_EMULT_METHOD2     2      /* use GB_emult_02 (A,B) */
-#define GB_EMULT_METHOD3     3      /* use GB_emult_02 (B,A) */
+#define GB_EMULT_METHOD2     2      /* use GB_emult_02 */
+#define GB_EMULT_METHOD3     3      /* use GB_emult_03 */
 #define GB_EMULT_METHOD4     4      /* use GB_emult_04 */
 #define GB_EMULT_METHOD5     5      /* use GB_emult_bitmap Method5 */
 #define GB_EMULT_METHOD6     6      /* use GB_emult_bitmap Method6 */
@@ -138,7 +138,20 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     const GrB_Matrix A,     // input A matrix (sparse/hyper)
     const GrB_Matrix B,     // input B matrix (bitmap/full)
     GrB_BinaryOp op,        // op to perform C = op (A,B)
-    bool flipxy,            // if true use fmult(y,x) else fmult(x,y)
+    GB_Werk Werk
+) ;
+
+GrB_Info GB_emult_03        // C=A.*B when A is bitmap/full, B sparse/hyper
+(
+    GrB_Matrix C,           // output matrix, static header
+    const GrB_Type ctype,   // type of output matrix C
+    const bool C_is_csc,    // format of output matrix C
+    const GrB_Matrix M,     // optional mask, unused if NULL
+    const bool Mask_struct, // if true, use the only structure of M
+    const bool Mask_comp,   // if true, use !M
+    const GrB_Matrix A,     // input A matrix (sparse/hyper)
+    const GrB_Matrix B,     // input B matrix (bitmap/full)
+    GrB_BinaryOp op,        // op to perform C = op (A,B)
     GB_Werk Werk
 ) ;
 
@@ -200,7 +213,7 @@ void GB_emult_generic       // generic emult
     const int C_sparsity,
     // from GB_emult_sparsity:
     const int ewise_method,
-    // from GB_emult_04 and GB_emult_02:
+    // from GB_emult_04, GB_emult_03, GB_emult_02:
     const int64_t *restrict Cp_kfirst,
     // to slice M, A, and/or B,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,

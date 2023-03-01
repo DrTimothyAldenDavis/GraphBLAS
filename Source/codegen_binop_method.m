@@ -88,6 +88,7 @@ switch (binop)
         % disable emult for these operators
         fprintf (f, 'm4_define(`_AemultB_08'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`_AemultB_02'', `(none)'')\n') ;
+        fprintf (f, 'm4_define(`_AemultB_03'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`_AemultB_04'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`_AemultB_bitmap'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`if_binop_emult_is_enabled'', `-1'')\n') ;
@@ -95,6 +96,7 @@ switch (binop)
         % enable emult for these operators
         fprintf (f, 'm4_define(`_AemultB_08'', `_AemultB_08__%s'')\n', name) ;
         fprintf (f, 'm4_define(`_AemultB_02'', `_AemultB_02__%s'')\n', name) ;
+        fprintf (f, 'm4_define(`_AemultB_03'', `_AemultB_03__%s'')\n', name) ;
         fprintf (f, 'm4_define(`_AemultB_04'', `_AemultB_04__%s'')\n', name) ;
         fprintf (f, 'm4_define(`_AemultB_bitmap'', `_AemultB_bitmap__%s'')\n', name) ;
         fprintf (f, 'm4_define(`if_binop_emult_is_enabled'', `0'')\n') ;
@@ -133,11 +135,6 @@ end
 fprintf (f, 'm4_define(`GB_ztype'',  `#define GB_Z_TYPE %s'')\n', ztype) ;
 fprintf (f, 'm4_define(`GB_ctype'',  `#define GB_C_TYPE %s'')\n', ztype) ;
 
-if (isequal (xtype, ytype))
-    fprintf (f, 'm4_define(`GB_atype_is_btype'', `'')\n') ;
-else
-    fprintf (f, 'm4_define(`GB_atype_is_btype'', `#define GB_ATYPE_IS_BTYPE 0'')\n') ;
-end
 if (isequal (ztype, xtype))
     fprintf (f, 'm4_define(`GB_ctype_is_atype'', `'')\n') ;
 else
@@ -235,23 +232,6 @@ end
 op = strrep (op, 'xarg', 'x') ;
 op = strrep (op, 'yarg', 'y') ;
 fprintf (f, 'm4_define(`GB_binaryop'', `#define GB_BINOP(z,x,y,i,j) z = %s'')\n', op) ;
-
-% handle non-commutative operators
-switch (binop)
-    case { 'pair' }
-        % PAIR is commutative, but disabled for emult_02
-        fprintf (f, 'm4_define(`binop_not_commutative'', `-1'')\n') ;
-        fprintf (f, 'm4_define(`binop_commutative'',     `-1'')\n') ;
-    case { 'pow', 'bget', 'bset', 'bclr', 'bshift', 'atan2', 'fmod', ...
-        'remainder', 'copysign', 'ldexp', 'cmplx' }
-        % these operators are not commutative
-        fprintf (f, 'm4_define(`binop_not_commutative'', `0'')\n') ;
-        fprintf (f, 'm4_define(`binop_commutative'',     `-1'')\n') ;
-    otherwise
-        % these operators are not commutative
-        fprintf (f, 'm4_define(`binop_not_commutative'', `-1'')\n') ;
-        fprintf (f, 'm4_define(`binop_commutative'',     `0'')\n') ;
-end
 
 % create the disable flag
 disable = sprintf ('GxB_NO_%s', upper (binop)) ;
