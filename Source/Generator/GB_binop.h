@@ -187,7 +187,6 @@ GrB_Info GB (_AemultB_bitmap)
     const int C_nthreads,
     GB_Werk Werk
 ) ;
-m4_divert(0)
 
 m4_divert(if_binop_bind_is_enabled)
 GrB_Info GB (_bind1st)

@@ -241,7 +241,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     // using a built-in binary operator (except for positional operators)
     //--------------------------------------------------------------------------
 
-    bool done = false ;
+    info = GrB_NO_VALUE ;
 
     if (C_iso)
     { 
@@ -257,7 +257,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
         // pattern of C = set intersection of pattern of A and B
         #define GB_ISO_EMULT
         #include "GB_emult_02_template.c"
-        done = true ;
+        info = GrB_SUCCESS ;
 
     }
     else
@@ -280,7 +280,6 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
                 info = GB_AemultB_02(mult,xname) (C,                    \
                     M, Mask_struct, Mask_comp, A, B,                    \
                     Cp_kfirst, A_ek_slicing, A_ntasks, A_nthreads) ;    \
-                done = (info != GrB_NO_VALUE) ;                         \
             }                                                           \
             break ;
 
@@ -312,7 +311,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     // via the generic kernel
     //--------------------------------------------------------------------------
 
-    if (!done)
+    if (info == GrB_NO_VALUE)
     { 
         GB_BURBLE_MATRIX (C, "(generic emult_02: %s) ", op->name) ;
         GB_emult_generic (C, op, NULL, 0, 0,

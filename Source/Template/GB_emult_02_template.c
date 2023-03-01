@@ -141,7 +141,8 @@
         //----------------------------------------------------------------------
 
         const int8_t  *restrict Mb = M->b ;
-        const GB_M_TYPE *restrict Mx = (Mask_struct) ? NULL : ((GB_M_TYPE *) M->x) ;
+        const GB_M_TYPE *restrict Mx =
+            (Mask_struct) ? NULL : ((GB_M_TYPE *) M->x) ;
         const size_t msize = M->type->size ;
 
         int tid ;
