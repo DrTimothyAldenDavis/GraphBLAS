@@ -137,9 +137,6 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     //--------------------------------------------------------------------------
 
     GB_WERK_DECLARE (Work, int64_t) ;
-    int64_t *restrict Wfirst    = NULL ;
-    int64_t *restrict Wlast     = NULL ;
-    int64_t *restrict Cp_kfirst = NULL ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
     //--------------------------------------------------------------------------
@@ -194,6 +191,21 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     GB_SLICE_MATRIX (A, 8, chunk) ;
 
     //--------------------------------------------------------------------------
+    // allocate workspace
+    //--------------------------------------------------------------------------
+
+    GB_WERK_PUSH (Work, 3*A_ntasks, int64_t) ;
+    if (Work == NULL)
+    { 
+        // out of memory
+        GB_FREE_ALL ;
+        return (GrB_OUT_OF_MEMORY) ;
+    }
+    int64_t *restrict Wfirst    = Work ;
+    int64_t *restrict Wlast     = Work + A_ntasks ;
+    int64_t *restrict Cp_kfirst = Work + A_ntasks * 2 ;
+
+    //--------------------------------------------------------------------------
     // count entries in C
     //--------------------------------------------------------------------------
 
@@ -202,132 +214,9 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     const bool C_has_pattern_of_A = !B_is_bitmap && (M == NULL) ;
 
     if (!C_has_pattern_of_A)
-    {
-
-        //----------------------------------------------------------------------
-        // allocate workspace
-        //----------------------------------------------------------------------
-
-        GB_WERK_PUSH (Work, 3*A_ntasks, int64_t) ;
-        if (Work == NULL)
-        { 
-            // out of memory
-            GB_FREE_ALL ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-        Wfirst    = Work ;
-        Wlast     = Work + A_ntasks ;
-        Cp_kfirst = Work + A_ntasks * 2 ;
-
-        //----------------------------------------------------------------------
-        // count entries in C
-        //----------------------------------------------------------------------
-
-        // This phase is very similar to GB_select_phase1 (GB_ENTRY_SELECTOR).
-
-        if (M == NULL)
-        {
-
-            //------------------------------------------------------------------
-            // Method2(a): C = A.*B where A is sparse/hyper and B is bitmap
-            //------------------------------------------------------------------
-
-            ASSERT (B_is_bitmap) ;
-
-            int tid ;
-            #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1)
-            for (tid = 0 ; tid < A_ntasks ; tid++)
-            {
-                int64_t kfirst = kfirst_Aslice [tid] ;
-                int64_t klast  = klast_Aslice  [tid] ;
-                Wfirst [tid] = 0 ;
-                Wlast  [tid] = 0 ;
-                for (int64_t k = kfirst ; k <= klast ; k++)
-                {
-                    // count the entries in C(:,j)
-                    int64_t j = GBH (Ah, k) ;
-                    int64_t pB_start = j * vlen ;
-                    int64_t pA, pA_end ;
-                    GB_get_pA (&pA, &pA_end, tid, k,
-                        kfirst, klast, pstart_Aslice, Ap, vlen) ;
-                    int64_t cjnz = 0 ;
-                    for ( ; pA < pA_end ; pA++)
-                    { 
-                        cjnz += Bb [pB_start + Ai [pA]] ;
-                    }
-                    if (k == kfirst)
-                    { 
-                        Wfirst [tid] = cjnz ;
-                    }
-                    else if (k == klast)
-                    { 
-                        Wlast [tid] = cjnz ;
-                    }
-                    else
-                    { 
-                        Cp [k] = cjnz ; 
-                    }
-                }
-            }
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // Method2(c): C<#M> = A.*B; A is sparse/hyper; M, B bitmap/full
-            //------------------------------------------------------------------
-
-            ASSERT (M != NULL) ;
-
-            int tid ;
-            #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1)
-            for (tid = 0 ; tid < A_ntasks ; tid++)
-            {
-                int64_t kfirst = kfirst_Aslice [tid] ;
-                int64_t klast  = klast_Aslice  [tid] ;
-                Wfirst [tid] = 0 ;
-                Wlast  [tid] = 0 ;
-                for (int64_t k = kfirst ; k <= klast ; k++)
-                {
-                    // count the entries in C(:,j)
-                    int64_t j = GBH (Ah, k) ;
-                    int64_t pB_start = j * vlen ;
-                    int64_t pA, pA_end ;
-                    GB_get_pA (&pA, &pA_end, tid, k,
-                        kfirst, klast, pstart_Aslice, Ap, vlen) ;
-                    int64_t cjnz = 0 ;
-                    for ( ; pA < pA_end ; pA++)
-                    { 
-                        int64_t i = Ai [pA] ;
-                        int64_t pB = pB_start + i ;
-                        bool mij = GBB (Mb, pB) && GB_MCAST (Mx, pB, msize) ;
-                        mij = mij ^ Mask_comp ;
-                        cjnz += (mij && GBB (Bb, pB)) ;
-                    }
-                    if (k == kfirst)
-                    { 
-                        Wfirst [tid] = cjnz ;
-                    }
-                    else if (k == klast)
-                    { 
-                        Wlast [tid] = cjnz ;
-                    }
-                    else
-                    { 
-                        Cp [k] = cjnz ; 
-                    }
-                }
-            }
-        }
-
-        //----------------------------------------------------------------------
-        // finalize Cp, cumulative sum of Cp and compute Cp_kfirst
-        //----------------------------------------------------------------------
-
-        GB_ek_slice_merge1 (Cp, Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
-        GB_ek_slice_merge2 (&(C->nvec_nonempty), Cp_kfirst, Cp, nvec,
-            Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Werk) ;
+    { 
+        GB_emult_02_phase1 (C, M, Mask_struct, Mask_comp, A, B, A_ek_slicing,
+            A_ntasks, A_nthreads, Wfirst, Wlast, Cp_kfirst, Werk) ;
     }
 
     //--------------------------------------------------------------------------

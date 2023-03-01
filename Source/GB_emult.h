@@ -141,6 +141,27 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     GB_Werk Werk
 ) ;
 
+void GB_emult_02_phase1     // symbolic analysis for GB_emult_02 and GB_emult_03
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *restrict A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads,
+    // workspace:
+    int64_t *restrict Wfirst,
+    int64_t *restrict Wlast,
+    // output:
+    int64_t *Cp_kfirst,
+    GB_Werk Werk
+) ;
+
 GrB_Info GB_emult_03        // C=A.*B when A is bitmap/full, B sparse/hyper
 (
     GrB_Matrix C,           // output matrix, static header
