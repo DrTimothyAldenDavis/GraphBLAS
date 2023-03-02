@@ -241,6 +241,21 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_emult_04_jit      // C<M>=A.*B, emult_04, via the JIT
+(
+    GrB_Matrix C,
+    const int C_sparsity,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_BinaryOp binaryop,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *restrict Cp_kfirst,
+    const int64_t *M_ek_slicing,
+    const int M_ntasks,
+    const int M_nthreads
+) ;
+
 GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 (
     GrB_Matrix C,           // output matrix, static header

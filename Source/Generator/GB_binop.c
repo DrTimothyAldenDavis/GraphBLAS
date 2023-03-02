@@ -349,7 +349,9 @@ GrB_Info GB (_AemultB_04)
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *restrict Cp_kfirst,
-    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+    const int64_t *M_ek_slicing,
+    const int M_ntasks,
+    const int M_nthreads
 )
 { 
     #if GB_DISABLE

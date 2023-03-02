@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // C<M>= A.*B, M sparse/hyper, A and B bitmap/full.  C has the same sparsity
-// structure as M, and its pattern is a subset of M.
+// structure as M, and its pattern is a subset of M.  M is not complemented.
 
             //      ------------------------------------------
             //      C       <M>=        A       .*      B
@@ -273,6 +273,8 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     // using a built-in binary operator (except for positional operators)
     //--------------------------------------------------------------------------
 
+    info = GrB_NO_VALUE ;
+
     if (C_iso)
     { 
 
@@ -287,6 +289,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
         // pattern of C = set intersection of pattern of A and B
         #define GB_ISO_EMULT
         #include "GB_emult_04_template.c"
+        info = GrB_SUCCESS ;
 
     }
     else
@@ -295,8 +298,6 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
         //----------------------------------------------------------------------
         // via the factory kernel
         //----------------------------------------------------------------------
-
-        bool done = false ;
 
         #ifndef GBCUDA_DEV
 
@@ -310,7 +311,6 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
             {                                                               \
                 info = GB_AemultB_04(mult,xname) (C, M, Mask_struct, A, B,  \
                     Cp_kfirst, M_ek_slicing, M_ntasks, M_nthreads) ;        \
-                done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
 
@@ -328,32 +328,43 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
             }
 
         #endif
+    }
 
-        //----------------------------------------------------------------------
-        // via the JIT kernel
-        //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // via the JIT kernel
+    //--------------------------------------------------------------------------
 
-        #if GB_JIT_ENABLED
-        // JIT TODO: ewise: emult_04
-        #endif
+    #if GB_JIT_ENABLED
+    if (info == GrB_NO_VALUE)
+    {
+        info = GB_emult_04_jit (C, C_sparsity, M, Mask_struct, op,
+            A, B, Cp_kfirst, M_ek_slicing, M_ntasks, M_nthreads) ;
+    }
+    #endif
 
-        //----------------------------------------------------------------------
-        // via the generic kernel
-        //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // via the generic kernel
+    //--------------------------------------------------------------------------
 
-        if (!done)
-        { 
-            GB_BURBLE_MATRIX (C, "(generic emult_04: %s) ", op->name) ;
-            GB_emult_generic (C, op, NULL, 0, 0,
-                NULL, NULL, NULL, C_sparsity, GB_EMULT_METHOD4, Cp_kfirst,
-                M_ek_slicing, M_ntasks, M_nthreads, NULL, 0, 0, NULL, 0, 0,
-                M, Mask_struct, false, A, B) ;
-        }
+    if (info == GrB_NO_VALUE)
+    { 
+        GB_BURBLE_MATRIX (C, "(generic emult_04: %s) ", op->name) ;
+        GB_emult_generic (C, op, NULL, 0, 0,
+            NULL, NULL, NULL, C_sparsity, GB_EMULT_METHOD4, Cp_kfirst,
+            M_ek_slicing, M_ntasks, M_nthreads, NULL, 0, 0, NULL, 0, 0,
+            M, Mask_struct, false, A, B) ;
     }
 
     //--------------------------------------------------------------------------
     // remove empty vectors from C, if hypersparse
     //--------------------------------------------------------------------------
+
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory, or other error
+        GB_FREE_ALL ;
+        return (info) ;
+    }
 
     GB_OK (GB_hypermatrix_prune (C, Werk)) ;
 
