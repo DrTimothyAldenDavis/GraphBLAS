@@ -18,8 +18,14 @@
 
     const int8_t *restrict Ab = A->b ;
     const int8_t *restrict Bb = B->b ;
+
+    #ifdef GB_JIT_KERNEL
+    #define A_iso GB_A_ISO
+    #define B_iso GB_B_ISO
+    #else
     const bool A_iso = A->iso ;
     const bool B_iso = B->iso ;
+    #endif
 
     #ifdef GB_ISO_EMULT
     ASSERT (C->iso) ;
@@ -30,6 +36,12 @@
     const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
+
+    #ifdef GB_JIT_KERNEL
+    #define Mask_comp   GB_MASK_COMP
+    #define Mask_struct GB_MASK_STRUCT
+    #endif
+    ASSERT (!Mask_comp) ;
 
     const int64_t *restrict Mp = M->p ;
     const int64_t *restrict Mh = M->h ;
@@ -59,9 +71,10 @@
         {
             int64_t j = GBH_M (Mh, k) ;
             int64_t pstart = j * vlen ;
-            int64_t pM, pM_end, pC ;
-            GB_get_pA_and_pC (&pM, &pM_end, &pC, tid, k, kfirst, klast,
-                pstart_Mslice, Cp_kfirst, Cp, vlen, Mp, vlen) ;
+            GB_GET_PA_AND_PC (pM, pM_end, pC, tid, k, kfirst, klast,
+                pstart_Mslice, Cp_kfirst,
+                GBP_M (Mp, k, vlen), GBP_M (Mp, k+1, vlen),
+                GBP_C (Cp, k, vlen)) ;
             for ( ; pM < pM_end ; pM++)
             {
                 int64_t i = Mi [pM] ;

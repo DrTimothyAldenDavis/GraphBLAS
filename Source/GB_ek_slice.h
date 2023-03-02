@@ -179,6 +179,34 @@ static inline void GB_get_pA_and_pC
     }
 }
 
+// as a macro, where p0, p1, and p2 are first obtained as above:
+//  p0 = GBP_A (Ap, k, avlen) ;
+//  p1 = GBP_A (Ap, k+1, avlen) ;
+//  p2 = GBP (Cp, k, cvlen) ;
+#define GB_GET_PA_AND_PC(pA_start,pA_end,pC,tid,k,kfirst,klast,pstart_slice,Cp_kfirst,p0,p1,p2)    \
+    int64_t pA_start, pA_end, pC ;                                          \
+    if (k == kfirst)                                                        \
+    {                                                                       \
+        /* First vector for task tid; may only be partially owned. */       \
+        pA_start = pstart_slice [tid] ;                                     \
+        pA_end   = GB_IMIN (p1, pstart_slice [tid+1]) ;                     \
+        pC = Cp_kfirst [tid] ;                                              \
+    }                                                                       \
+    else if (k == klast)                                                    \
+    {                                                                       \
+        /* Last vector for task tid; may only be partially owned. */        \
+        pA_start = p0 ;                                                     \
+        pA_end   = pstart_slice [tid+1] ;                                   \
+        pC = p2 ;                                                           \
+    }                                                                       \
+    else                                                                    \
+    {                                                                       \
+        /* task tid entirely owns this vector A(:,k). */                    \
+        pA_start = p0 ;                                                     \
+        pA_end   = p1 ;                                                     \
+        pC = p2 ;                                                           \
+    }
+
 //------------------------------------------------------------------------------
 // GB_get_pA: find the part of A(:,k) to be operated on by this task
 //------------------------------------------------------------------------------

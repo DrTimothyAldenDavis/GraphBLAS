@@ -33,32 +33,62 @@
     const int8_t  *restrict Ab = A->b ;
     const int64_t *restrict Ai = A->i ;
     const int64_t vlen = A->vlen ;
+
+    #ifdef GB_JIT_KENEL
+    #define A_is_hyper  GB_A_IS_HYPER
+    #define A_is_sparse GB_A_IS_SPARSE
+    #define A_is_bitmap GB_A_IS_BITMAP
+    #define A_is_full   GB_A_IS_FULL
+    #else
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_full = GB_as_if_full (A) ;
+    #endif
 
     const int64_t *restrict Bp = B->p ;
     const int64_t *restrict Bh = B->h ;
     const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
+
+    #ifdef GB_JIT_KENEL
+    #define B_is_hyper  GB_B_IS_HYPER
+    #define B_is_sparse GB_B_IS_SPARSE
+    #define B_is_bitmap GB_B_IS_BITMAP
+    #define B_is_full   GB_B_IS_FULL
+    #else
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_full = GB_as_if_full (B) ;
+    #endif
 
     const int64_t *restrict Mp = NULL ;
     const int64_t *restrict Mh = NULL ;
     const int8_t  *restrict Mb = NULL ;
     const int64_t *restrict Mi = NULL ;
     const GB_M_TYPE *restrict Mx = NULL ;
+
+    #ifdef GB_JIT_KENEL
+    #define M_is_hyper  GB_M_IS_HYPER
+    #define M_is_sparse GB_M_IS_SPARSE
+    #define M_is_bitmap GB_M_IS_BITMAP
+    #define M_is_full   GB_M_IS_FULL
+    #define M_is_sparse_or_hyper (GB_M_IS_SPARSE || GB_M_IS_HYPER)
+    #define Mask_comp   GB_MASK_COMP
+    #define Mask_struct GB_MASK_STRUCT
+    #define M_is_present (!GB_NO_MASK)
+    #else
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_sparse = GB_IS_SPARSE (M) ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
     const bool M_is_full = GB_as_if_full (M) ;
     const bool M_is_sparse_or_hyper = M_is_sparse || M_is_hyper ;
+    const bool M_is_present = (M != NULL) ;
+    #endif
+
     size_t msize = 0 ;
-    if (M != NULL)
+    if (M_is_present)
     { 
         Mp = M->p ;
         Mh = M->h ;
@@ -73,8 +103,13 @@
     #endif
 
     #if ( GB_EMULT_08_PHASE == 2 )
+    #ifdef GB_JIT_KERNEL
+    #define A_iso GB_A_ISO
+    #define B_iso GB_B_ISO
+    #else
     const bool A_iso = A->iso ;
     const bool B_iso = B->iso ;
+    #endif
     #ifdef GB_ISO_EMULT
     ASSERT (C->iso) ;
     #else

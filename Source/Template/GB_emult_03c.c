@@ -17,8 +17,7 @@
     //--------------------------------------------------------------------------
 
     const int8_t  *restrict Mb = M->b ;
-    const GB_M_TYPE *restrict Mx =
-        (Mask_struct) ? NULL : ((GB_M_TYPE *) M->x) ;
+    const GB_M_TYPE *restrict Mx = (Mask_struct) ? NULL : ((GB_M_TYPE *) M->x) ;
     const size_t msize = M->type->size ;
 
     int tid ;
@@ -31,9 +30,10 @@
         {
             int64_t j = GBH_B (Bh, k) ;
             int64_t pA_start = j * vlen ;
-            int64_t pB, pB_end, pC ;
-            GB_get_pA_and_pC (&pB, &pB_end, &pC, tid, k, kfirst, klast,
-                pstart_Bslice, Cp_kfirst, Cp, vlen, Bp, vlen) ;
+            GB_GET_PA_AND_PC (pB, pB_end, pC, tid, k, kfirst, klast,
+                pstart_Bslice, Cp_kfirst,
+                GBP_B (Bp, k, vlen), GBP_B (Bp, k+1, vlen),
+                GBP_C (Cp, k, vlen)) ;
             for ( ; pB < pB_end ; pB++)
             { 
                 int64_t i = Bi [pB] ;

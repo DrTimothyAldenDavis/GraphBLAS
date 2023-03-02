@@ -27,13 +27,6 @@
     //      sparse  bitmap      sparse          sparse  (method: 8)
     //      sparse  full        sparse          sparse  (method: 8)
 
-    // GB_GET_MIJ: get M(i,j) where M is bitmap or full
-    #undef  GB_GET_MIJ
-    #define GB_GET_MIJ(i)                                       \
-        int64_t pM = pM_start + i ;                             \
-        bool mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ; \
-        if (Mask_comp) mij = !mij ;
-
     // both A and B are sparse/hyper
     ASSERT (A_is_sparse || A_is_hyper) ;
     ASSERT (B_is_sparse || B_is_hyper) ;
@@ -50,7 +43,10 @@
         for ( ; pB < pB_end ; pB++)
         {
             int64_t i = Bi [pB] ;
-            GB_GET_MIJ (i) ;
+            // get M(i,j)
+            int64_t pM = pM_start + i ;
+            bool mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+            if (Mask_comp) mij = !mij ;
             if (mij)
             {
                 // find i in A(:,j)
@@ -93,7 +89,10 @@
         for ( ; pA < pA_end ; pA++)
         {
             int64_t i = Ai [pA] ;
-            GB_GET_MIJ (i) ;
+            // get M(i,j)
+            int64_t pM = pM_start + i ;
+            bool mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+            if (Mask_comp) mij = !mij ;
             if (mij)
             {
 
@@ -154,7 +153,10 @@
             {
                 // both A(i,j) and B(i,j) exist
                 int64_t i = iA ;
-                GB_GET_MIJ (i) ;
+                // get M(i,j)
+                int64_t pM = pM_start + i ;
+                bool mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+                if (Mask_comp) mij = !mij ;
                 if (mij)
                 { 
                     // C (i,j) = A (i,j) .* B (i,j)

@@ -212,22 +212,46 @@
             else
             #endif
 
-            if (M == NULL)
+            #ifdef GB_JIT_KERNEL
             {
-                // C=A.*B, all matrices sparse/hyper
-                #include "GB_emult_08bcd.c"
+                #if GB_NO_MASK
+                {
+                    // C=A.*B, all matrices sparse/hyper
+                    #include "GB_emult_08bcd.c"
+                }
+                #elif (GB_M_IS_SPARSE || GB_M_IS_HYPER)
+                {
+                    // C<M>=A.*B, C and M are sparse/hyper
+                    // either A or B are sparse/hyper
+                    #include "GB_emult_08e.c"
+                }
+                #else
+                {
+                    // C<#M>=A.*B; C, A and B are sparse/hyper; M is bitmap/full
+                    #include "GB_emult_08fgh.c"
+                }
+                #endif
             }
-            else if (M_is_sparse_or_hyper)
+            #else
             {
-                // C<M>=A.*B, C and M are sparse/hyper
-                // either A or B are sparse/hyper
-                #include "GB_emult_08e.c"
+                if (M == NULL)
+                {
+                    // C=A.*B, all matrices sparse/hyper
+                    #include "GB_emult_08bcd.c"
+                }
+                else if (M_is_sparse_or_hyper)
+                {
+                    // C<M>=A.*B, C and M are sparse/hyper
+                    // either A or B are sparse/hyper
+                    #include "GB_emult_08e.c"
+                }
+                else
+                {
+                    // C<#M>=A.*B; C, A and B are sparse/hyper; M is bitmap/full
+                    #include "GB_emult_08fgh.c"
+                }
             }
-            else
-            {
-                // C<#M>=A.*B; C, A and B are sparse/hyper.  M is bitmap/full
-                #include "GB_emult_08fgh.c"
-            }
+            #endif
 
             //------------------------------------------------------------------
             // final count of nnz (C (:,j))

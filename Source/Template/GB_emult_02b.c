@@ -26,9 +26,8 @@
         {
             int64_t j = GBH_A (Ah, k) ;
             int64_t pB_start = j * vlen ;
-            int64_t pA, pA_end ;
-            GB_get_pA (&pA, &pA_end, tid, k, kfirst, klast,
-                pstart_Aslice, Ap, vlen) ;
+            GB_GET_PA (pA, pA_end, tid, k, kfirst, klast, pstart_Aslice,
+                GBP_A (Ap, k, vlen), GBP_A (Ap, k+1, vlen)) ;
             for ( ; pA < pA_end ; pA++)
             { 
                 // C (i,j) = A (i,j) .* B (i,j)

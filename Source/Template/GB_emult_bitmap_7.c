@@ -46,14 +46,8 @@
     ASSERT (GB_IS_BITMAP (M) || GB_IS_FULL (M)) ;
 
     const int8_t  *restrict Mb = M->b ;
-    const GB_M_TYPE *restrict Mx =
-        (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
+    const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
     size_t msize = M->type->size ;
-
-    #undef  GB_GET_MIJ     
-    #define GB_GET_MIJ(p)                                       \
-        bool mij = GBB_M (Mb, p) && GB_MCAST (Mx, p, msize) ;   \
-        if (Mask_comp) mij = !mij ; /* TODO: use ^ */
 
     int tid ;
     #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
@@ -64,7 +58,9 @@
         GB_PARTITION (pstart, pend, cnz, tid, C_nthreads) ;
         for (int64_t p = pstart ; p < pend ; p++)
         {
-            GB_GET_MIJ (p) ;
+            // get M(i,j)
+            bool mij = GBB_M (Mb, p) && GB_MCAST (Mx, p, msize) ;
+            if (Mask_comp) mij = !mij ; /* TODO: use ^ */
             if (mij)
             {
                 // M(i,j) is true, so C(i,j) can be computed

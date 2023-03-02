@@ -27,8 +27,13 @@
     const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
     const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
 
+    #ifdef GB_JIT_KERNEL
+    #define A_iso GB_A_ISO
+    #define B_iso GB_B_ISO
+    #else
     const bool A_iso = A->iso ;
     const bool B_iso = B->iso ;
+    #endif
 
     #ifdef GB_ISO_EMULT
     ASSERT (C->iso) ;
@@ -43,24 +48,59 @@
     const int64_t  *restrict Cp = C->p ;
           int64_t  *restrict Ci = C->i ;
 
+    #ifdef GB_JIT_KERNEL
+    #define Mask_comp   GB_MASK_COMP
+    #define Mask_struct GB_MASK_STRUCT
+    #endif
+
     //--------------------------------------------------------------------------
     // C=A.*B or C<#M>=A.*B
     //--------------------------------------------------------------------------
 
-    if (M == NULL)
-    {
-        if (GB_IS_BITMAP (B))
+    #ifdef GB_JIT_KERNEL
+
+        #if GB_NOMASK
         {
-            #include "GB_emult_02a.c"
+            #if GB_B_IS_BITMAP
+            {
+                // C=A.*B, where A is sparse/hyper and B is bitmap
+                #include "GB_emult_02a.c"
+            }
+            #else
+            {
+                // C=A.*B, where A is sparse/hyper and B is full
+                #include "GB_emult_02b.c"
+            }
+            #endif
+        }
+        #else
+        {
+            // C<#M>=A.*B, where A is sparse/hyper; M and B are bitmap/full
+            #include "GB_emult_02c.c"
+        }
+        #endif
+
+    #else
+
+        if (M == NULL)
+        {
+            if (GB_IS_BITMAP (B))
+            {
+                // C=A.*B, where A is sparse/hyper and B is bitmap
+                #include "GB_emult_02a.c"
+            }
+            else
+            {
+                // C=A.*B, where A is sparse/hyper and B is full
+                #include "GB_emult_02b.c"
+            }
         }
         else
         {
-            #include "GB_emult_02b.c"
+            // C<#M>=A.*B, where A is sparse/hyper; M and B are bitmap/full
+            #include "GB_emult_02c.c"
         }
-    }
-    else
-    {
-        #include "GB_emult_02c.c"
-    }
+
+    #endif
 }
 

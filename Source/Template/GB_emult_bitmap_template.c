@@ -22,8 +22,13 @@
     ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A) || GB_as_if_full (A)) ;
     ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (A) || GB_as_if_full (B)) ;
 
+    #ifdef GB_JIT_KERNEL
+    #define A_iso GB_A_ISO
+    #define B_iso GB_B_ISO
+    #else
     const bool A_iso = A->iso ;
     const bool B_iso = B->iso ;
+    #endif
 
     int8_t *restrict Cb = C->b ;
     const int64_t cnz = GB_nnz_held (C) ;
@@ -38,6 +43,11 @@
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
 
+    #ifdef GB_JIT_KERNEL
+    #define Mask_comp   GB_MASK_COMP
+    #define Mask_struct GB_MASK_STRUCT
+    #endif
+
     //--------------------------------------------------------------------------
     // C=A.*B, C<M>=A.*B, or C<!M>=A.*B: C is bitmap
     //--------------------------------------------------------------------------
@@ -46,21 +56,47 @@
     // accum operator.
     int64_t cnvals = 0 ;
 
-    if (ewise_method == GB_EMULT_METHOD5)
+    #ifdef GB_JIT_KERNEL
     {
-        // C=A.*B; C bitmap, M not present, A and B are bitmap/full
-        #include "GB_emult_bitmap_5.c"
+        #if GB_NO_MASK
+        {
+            // C=A.*B; C bitmap, M not present, A and B are bitmap/full
+            #include "GB_emult_bitmap_5.c"
+        }
+        #elif GB_M_IS_SPARSE || GB_M_IS_HYPER
+        {
+            // C<!M>=A.*B; C bitmap, M sparse/hyper, A and B are bitmap/full
+            #include "GB_emult_bitmap_6.c"
+        }
+        #else
+        {
+            // C<#M>=A.*B; C bitmap; M, A, and B are all bitmap/full
+            #include "GB_emult_bitmap_7.c"
+        }
+        #endif
     }
-    else if (ewise_method == GB_EMULT_METHOD6)
+    #else
     {
-        // C<!M>=A.*B; C bitmap, M sparse, A and B are bitmap/full
-        #include "GB_emult_bitmap_6.c"
+        if (M == NULL)
+        {
+            // C=A.*B; C bitmap, M not present, A and B are bitmap/full
+            ASSERT (ewise_method == GB_EMULT_METHOD5) ;
+            #include "GB_emult_bitmap_5.c"
+        }
+        else if (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M))
+        {
+            // C<!M>=A.*B; C bitmap, M sparse/hyper, A and B are bitmap/full
+            ASSERT (ewise_method == GB_EMULT_METHOD6) ;
+            #include "GB_emult_bitmap_6.c"
+        }
+        else
+        {
+            // C<#M>=A.*B; C bitmap; M, A, and B are all bitmap/full
+            ASSERT (ewise_method == GB_EMULT_METHOD7) ;
+            #include "GB_emult_bitmap_7.c"
+        }
     }
-    else // if (ewise_method == GB_EMULT_METHOD7)
-    {
-        // C<#M>=A.*B; C bitmap; M, A, and B are all bitmap/full
-        #include "GB_emult_bitmap_7.c"
-    }
+    #endif
 
     C->nvals = cnvals ;
 }
