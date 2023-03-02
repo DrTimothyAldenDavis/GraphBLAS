@@ -230,6 +230,14 @@ int main (void)
     TRY (GrB_mxm (C, NULL, AddGauss, GaussSemiring, A, B, NULL)) ;
     printgauss (C) ;
 
+    // C = ciso+A
+    TRY (GrB_apply (C, NULL, NULL, AddGauss, (void *) &ciso, A, NULL)) ;
+    printgauss (C) ;
+
+    // C = A*ciso
+    TRY (GrB_apply (C, NULL, NULL, MultGauss, A, (void *) &ciso, NULL)) ;
+    printgauss (C) ;
+
     // free everything and finalize GraphBLAS
     GrB_free (&A) ;
     GrB_free (&B) ;
