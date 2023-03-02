@@ -272,6 +272,21 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_emult_bitmap_jit      // C<#M>=A.*B, emult_bitmap, via the JIT
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Type binaryop,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing,
+    const int M_ntasks,
+    const int M_nthreads,
+    const int C_nthreads
+) ;
+
 bool GB_iso_emult           // c = op(a,b), return true if C is iso
 (
     // output

@@ -263,7 +263,11 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: ewise: bitmap emult
+    if (info == GrB_NO_VALUE)
+    {
+        info = GB_emult_bitmap_jit (C, M, Mask_struct, Mask_comp, op,
+            A, B, M_ek_slicing, M_ntasks, M_nthreads, C_nthreads) ;
+    }
     #endif
 
     //--------------------------------------------------------------------------
