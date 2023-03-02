@@ -332,7 +332,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
             // C_replace is ignored
             GBURBLE ("dense C+=A+B ") ;
-            GB_dense_ewise3_accum (C, A1, B1, op, Werk) ;    // cannot fail
+            GB_ewise_full_accum (C, A1, B1, op, Werk) ;    // cannot fail
             GB_FREE_ALL ;
             ASSERT_MATRIX_OK (C, "C output for GB_ewise, dense C+=A+B", GB0) ;
             return (GrB_SUCCESS) ;
@@ -347,7 +347,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
             // C_replace is ignored
             GBURBLE ("dense C=A+B ") ;
-            info = GB_dense_ewise3_noaccum (C, C_as_if_full, A1, B1, op) ;
+            info = GB_ewise_full_noaccum (C, C_as_if_full, A1, B1, op) ;
             GB_FREE_ALL ;
             if (info == GrB_SUCCESS)
             {

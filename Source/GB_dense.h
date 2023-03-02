@@ -13,32 +13,6 @@
 #include "GB_ek_slice.h"
 
 //------------------------------------------------------------------------------
-// GB_dense_ewise3_accum: C += A+B, all 3 matrices dense
-//------------------------------------------------------------------------------
-
-void GB_dense_ewise3_accum          // C += A+B, all matrices dense
-(
-    GrB_Matrix C,                   // input/output matrix
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GrB_BinaryOp op,
-    GB_Werk Werk
-) ;
-
-//------------------------------------------------------------------------------
-// GB_dense_ewise3_noaccum: C = A+B where A and B are dense; C anything
-//------------------------------------------------------------------------------
-
-GrB_Info GB_dense_ewise3_noaccum    // C = A+B, where A and B are dense
-(
-    GrB_Matrix C,                   // input/output matrix
-    const bool C_is_dense,          // true if C is dense
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GrB_BinaryOp op
-) ;
-
-//------------------------------------------------------------------------------
 // GB_dense_subassign_23: C(:,:) += A where C is dense and A is sparse or dense
 //------------------------------------------------------------------------------
 

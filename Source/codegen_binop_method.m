@@ -21,17 +21,17 @@ fprintf (f, 'm4_define(`_AaddB'', `_AaddB__%s'')\n', name) ;
 fprintf (f, 'm4_define(`_AunionB'', `_AunionB__%s'')\n', name) ;
 fprintf (f, 'm4_define(`_Cdense_accumB'', `_Cdense_accumB__%s'')\n', name) ;
 fprintf (f, 'm4_define(`_Cdense_accumb'', `_Cdense_accumb__%s'')\n', name) ;
-fprintf (f, 'm4_define(`_Cdense_ewise3_noaccum'', `_Cdense_ewise3_noaccum__%s'')\n', name) ;
+fprintf (f, 'm4_define(`_Cewise_full_noaccum'', `_Cewise_full_noaccum__%s'')\n', name) ;
 
-% subset of operators for GB_dense_ewise3_accum
+% subset of operators for GB_ewise_full_accum
 switch (binop)
     case { 'min', 'max', 'plus', 'minus', 'rminus', 'times', 'div', 'rdiv' }
         % these operators are used in ewise3_accum
-        fprintf (f, 'm4_define(`_Cdense_ewise3_accum'', `_Cdense_ewise3_accum__%s'')\n', name) ;
+        fprintf (f, 'm4_define(`_Cewise_full_accum'', `_Cewise_full_accum__%s'')\n', name) ;
         fprintf (f, 'm4_define(`if_is_binop_subset'', `0'')\n') ;
     otherwise
-        % disable GB_dense_ewise3_accum
-        fprintf (f, 'm4_define(`_Cdense_ewise3_accum'', `(none)'')\n') ;
+        % disable GB_ewise_full_accum
+        fprintf (f, 'm4_define(`_Cewise_full_accum'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`if_is_binop_subset'', `-1'')\n') ;
 end
 

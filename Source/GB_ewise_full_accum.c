@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense_ewise3_accum: C += A+B where all 3 matries are dense
+// GB_ewise_full_accum: C += A+B where all 3 matries are dense
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -9,14 +9,14 @@
 
 // C += A+B where no matrix is iso and all three matrices are as-if-full
 
-#include "GB_dense.h"
+#include "GB_ewise.h"
 #include "GB_binop.h"
 #include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_binop__include.h"
 #endif
 
-void GB_dense_ewise3_accum          // C += A+B, all matrices dense
+void GB_ewise_full_accum          // C += A+B, all matrices dense
 (
     GrB_Matrix C,                   // input/output matrix
     const GrB_Matrix A,
@@ -94,12 +94,12 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
     // define the worker for the switch factory
     //--------------------------------------------------------------------------
 
-    #define GB_Cdense_ewise3_accum(op,xname) \
-        GB (_Cdense_ewise3_accum_ ## op ## xname)
+    #define GB_Cewise_full_accum(op,xname) \
+        GB (_Cewise_full_accum_ ## op ## xname)
 
     #define GB_BINOP_WORKER(op,xname)                                       \
     {                                                                       \
-        GB_Cdense_ewise3_accum(op,xname) (C, A, B, nthreads) ;              \
+        GB_Cewise_full_accum(op,xname) (C, A, B, nthreads) ;                \
     }                                                                       \
     break ;
 

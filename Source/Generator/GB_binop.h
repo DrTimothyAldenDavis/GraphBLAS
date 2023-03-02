@@ -1,7 +1,7 @@
 
 // SPDX-License-Identifier: Apache-2.0
 m4_divert(if_is_binop_subset)
-void GB (_Cdense_ewise3_accum)
+void GB (_Cewise_full_accum)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -10,7 +10,7 @@ void GB (_Cdense_ewise3_accum)
 ) ;
 m4_divert(0)
 
-void GB (_Cdense_ewise3_noaccum)
+void GB (_Cewise_full_noaccum)
 (
     GrB_Matrix C,
     const GrB_Matrix A,

@@ -42,7 +42,7 @@
 
 // The op must be MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, or RDIV.
 
-void GB (_Cdense_ewise3_accum__rminus_uint64)
+void GB (_Cewise_full_accum__rminus_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -50,14 +50,14 @@ void GB (_Cdense_ewise3_accum__rminus_uint64)
     const int nthreads
 )
 { 
-    #include "GB_dense_ewise3_accum_template.c"
+    #include "GB_ewise_full_accum_template.c"
 }
 
 //------------------------------------------------------------------------------
 // C = A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-void GB (_Cdense_ewise3_noaccum__rminus_uint64)
+void GB (_Cewise_full_noaccum__rminus_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -65,7 +65,7 @@ void GB (_Cdense_ewise3_noaccum__rminus_uint64)
     const int nthreads
 )
 { 
-    #include "GB_dense_ewise3_noaccum_template.c"
+    #include "GB_ewise_full_noaccum_template.c"
 }
 
 //------------------------------------------------------------------------------

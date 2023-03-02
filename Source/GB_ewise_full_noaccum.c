@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense_ewise3_noaccum: C = A+B where A and B are dense, C is anything
+// GB_ewise_full_noaccum: C = A+B where A and B are dense, C is anything
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -10,7 +10,7 @@
 // C can have any sparsity on input; it becomes a full non-iso matrix on output.
 // C can have pending work, which is discarded.
 
-#include "GB_dense.h"
+#include "GB_ewise.h"
 #include "GB_binop.h"
 #include "GB_stringify.h"
 #ifndef GBCUDA_DEV
@@ -19,7 +19,7 @@
 
 #define GB_FREE_ALL ;
 
-GrB_Info GB_dense_ewise3_noaccum    // C = A+B
+GrB_Info GB_ewise_full_noaccum    // C = A+B
 (
     GrB_Matrix C,                   // input/output matrix
     const bool C_as_if_full,        // true if C is as-if-full on input
@@ -113,12 +113,12 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     // define the worker for the switch factory
     //--------------------------------------------------------------------------
 
-    #define GB_Cdense_ewise3_noaccum(op,xname) \
-        GB (_Cdense_ewise3_noaccum_ ## op ## xname)
+    #define GB_Cewise_full_noaccum(op,xname) \
+        GB (_Cewise_full_noaccum_ ## op ## xname)
 
     #define GB_BINOP_WORKER(op,xname)                                       \
     {                                                                       \
-        GB_Cdense_ewise3_noaccum(op,xname) (C, A, B, nthreads) ;            \
+        GB_Cewise_full_noaccum(op,xname) (C, A, B, nthreads) ;              \
     }                                                                       \
     break ;
 

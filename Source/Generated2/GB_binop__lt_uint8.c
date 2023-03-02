@@ -43,7 +43,7 @@
 // C = A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-void GB (_Cdense_ewise3_noaccum__lt_uint8)
+void GB (_Cewise_full_noaccum__lt_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -51,7 +51,7 @@ void GB (_Cdense_ewise3_noaccum__lt_uint8)
     const int nthreads
 )
 { 
-    #include "GB_dense_ewise3_noaccum_template.c"
+    #include "GB_ewise_full_noaccum_template.c"
 }
 
 //------------------------------------------------------------------------------
