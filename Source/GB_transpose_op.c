@@ -37,7 +37,7 @@
 #include "GB_binop.h"
 #ifndef GBCUDA_DEV
 #include "GB_unop__include.h"
-#include "GB_binop__include.h"
+#include "GB_ew__include.h"
 #endif
 
 void GB_transpose_op    // transpose, typecast, and apply operator to a matrix

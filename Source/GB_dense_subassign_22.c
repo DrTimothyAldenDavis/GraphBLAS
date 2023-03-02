@@ -15,7 +15,7 @@
 #include "GB_binop.h"
 #include "GB_unused.h"
 #ifndef GBCUDA_DEV
-#include "GB_binop__include.h"
+#include "GB_aop__include.h"
 #endif
 
 #define GB_FREE_ALL ;
@@ -126,7 +126,7 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: ewise: subassign 22
+    // JIT TODO: aop: subassign 22
     #endif
 
     //--------------------------------------------------------------------------

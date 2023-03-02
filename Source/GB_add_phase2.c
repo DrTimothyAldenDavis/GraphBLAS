@@ -33,7 +33,7 @@
 #include "GB_ek_slice.h"
 #include "GB_stringify.h"
 #ifndef GBCUDA_DEV
-#include "GB_binop__include.h"
+#include "GB_ew__include.h"
 #endif
 
 #undef  GB_FREE_WORKSPACE

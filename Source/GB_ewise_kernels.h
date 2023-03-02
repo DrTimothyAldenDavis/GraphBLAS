@@ -10,6 +10,5 @@
 #include "GB.h"
 #include "GB_emult.h"
 #include "GB_ek_slice.h"
-#include "GB_dense.h"
 #include "GB_bitmap_assign_methods.h"
 

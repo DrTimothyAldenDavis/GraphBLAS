@@ -28,7 +28,7 @@
 #include "GB_unused.h"
 #include "GB_stringify.h"
 #ifndef GBCUDA_DEV
-#include "GB_binop__include.h"
+#include "GB_ew__include.h"
 #endif
 
 #define GB_FREE_WORKSPACE                   \

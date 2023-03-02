@@ -23,7 +23,7 @@
 #include "GB_dense.h"
 #include "GB_binop.h"
 #ifndef GBCUDA_DEV
-#include "GB_binop__include.h"
+#include "GB_aop__include.h"
 #endif
 #include "GB_unused.h"
 
@@ -159,7 +159,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: ewise: subassign 23
+    // JIT TODO: aop: subassign 23
     #endif
 
     //--------------------------------------------------------------------------

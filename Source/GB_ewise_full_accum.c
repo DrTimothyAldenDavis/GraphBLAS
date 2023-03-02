@@ -13,7 +13,7 @@
 #include "GB_binop.h"
 #include "GB_stringify.h"
 #ifndef GBCUDA_DEV
-#include "GB_binop__include.h"
+#include "GB_ew__include.h"
 #endif
 
 void GB_ewise_full_accum          // C += A+B, all matrices dense

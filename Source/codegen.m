@@ -3,12 +3,13 @@ function codegen
 %
 % This code generation method works on octave7 and MATLAB.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 codegen_1type ;     % types
 codegen_axb ;       % semirings
-codegen_binop ;     % binary operators
+codegen_ew ;        % ewise kernels: binary op and accum
+codegen_aop ;       % assign kernels with an accum op
 codegen_unop ;      % unary operators
 codegen_red ;       % monoids
 codegen_sel ;       % select operators
