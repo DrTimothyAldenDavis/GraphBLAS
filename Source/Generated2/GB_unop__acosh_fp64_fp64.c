@@ -119,7 +119,7 @@ GrB_Info GB (_unop_tran__acosh_fp64_fp64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_unop_transpose.c"
+    #include "GB_transpose_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

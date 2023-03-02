@@ -78,7 +78,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     int nthreads                        // # of threads to use
 ) ;
 
-void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
+GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
 (
     GrB_Matrix C,                       // output matrix
     const GB_iso_code C_code_iso,       // iso code for C

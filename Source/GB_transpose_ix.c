@@ -73,7 +73,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
 
         // C = pattern of A transposed
         #define GB_ISO_TRANSPOSE
-        #include "GB_unop_transpose.c"
+        #include "GB_transpose_template.c"
 
     }
     else
@@ -129,7 +129,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
             cast_A_to_X (Cx +((pC)*csize), Ax +((pA)*asize), asize) ;
         #define GB_A_TYPE GB_void
         #define GB_C_TYPE GB_void
-        #include "GB_unop_transpose.c"
+        #include "GB_transpose_template.c"
     }
 }
 

@@ -40,7 +40,7 @@
 #include "GB_ew__include.h"
 #endif
 
-void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
+GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
 (
     GrB_Matrix C,                       // output matrix
     const GB_iso_code C_code_iso,       // iso code for C
@@ -66,7 +66,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    GrB_Info info ;
+    GrB_Info info = GrB_NO_VALUE ;
     GrB_Type Atype = A->type ;
     ASSERT (op != NULL) ;
     GB_Opcode opcode = op->opcode ;
@@ -94,7 +94,8 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
 
         // C = transpose the pattern
         #define GB_ISO_TRANSPOSE
-        #include "GB_unop_transpose.c"
+        #include "GB_transpose_template.c"
+        info = GrB_SUCCESS ;
 
     }
     else if (GB_IS_UNARYOP_CODE (opcode))
@@ -129,7 +130,6 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
             {                                                               \
                 info = GB_unop_tran (opname,zname,aname)                    \
                     (C, A, Workspaces, A_slice, nworkspaces, nthreads) ;    \
-                if (info == GrB_SUCCESS) return ;                           \
             }                                                               \
             break ;
 
@@ -146,42 +146,49 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: unop: transpose_op with unop
+        if (info == GrB_NO_VALUE)
+        { 
+            // JIT TODO: unop: transpose_op with unop
+        }
         #endif
 
         //----------------------------------------------------------------------
         // via the generic kernel
         //----------------------------------------------------------------------
 
-        GB_BURBLE_MATRIX (A, "(generic transpose: %s) ", op->name) ;
+        if (info == GrB_NO_VALUE)
+        {
+            GB_BURBLE_MATRIX (A, "(generic transpose: %s) ", op->name) ;
 
-        size_t asize = Atype->size ;
-        size_t zsize = op->ztype->size ;
-        size_t xsize = op->xtype->size ;
-        GB_cast_function
-            cast_A_to_X = GB_cast_factory (op->xtype->code, Atype->code) ;
-        GxB_unary_function fop = op->unop_function ;
+            size_t asize = Atype->size ;
+            size_t zsize = op->ztype->size ;
+            size_t xsize = op->xtype->size ;
+            GB_cast_function
+                cast_A_to_X = GB_cast_factory (op->xtype->code, Atype->code) ;
+            GxB_unary_function fop = op->unop_function ;
 
-        ASSERT_TYPE_OK (op->ztype, "unop ztype", GB0) ;
-        ASSERT_TYPE_OK (op->xtype, "unop xtype", GB0) ;
-        ASSERT_TYPE_OK (C->type, "C type", GB0) ;
-        ASSERT (C->type->size == zsize) ;
-        ASSERT (C->type == op->ztype) ;
+            ASSERT_TYPE_OK (op->ztype, "unop ztype", GB0) ;
+            ASSERT_TYPE_OK (op->xtype, "unop xtype", GB0) ;
+            ASSERT_TYPE_OK (C->type, "C type", GB0) ;
+            ASSERT (C->type->size == zsize) ;
+            ASSERT (C->type == op->ztype) ;
 
-        // Cx [pC] = unop (cast (Ax [pA]))
-        #undef  GB_CAST_OP
-        #define GB_CAST_OP(pC,pA)                                       \
-        {                                                               \
-            /* xwork = (xtype) Ax [pA] */                               \
-            GB_void xwork [GB_VLA(xsize)] ;                             \
-            cast_A_to_X (xwork, Ax +((pA)*asize), asize) ;              \
-            /* Cx [pC] = fop (xwork) ; Cx is of type op->ztype */       \
-            fop (Cx +((pC)*zsize), xwork) ;                             \
+            // Cx [pC] = unop (cast (Ax [pA]))
+            #undef  GB_CAST_OP
+            #define GB_CAST_OP(pC,pA)                                       \
+            {                                                               \
+                /* xwork = (xtype) Ax [pA] */                               \
+                GB_void xwork [GB_VLA(xsize)] ;                             \
+                cast_A_to_X (xwork, Ax +((pA)*asize), asize) ;              \
+                /* Cx [pC] = fop (xwork) ; Cx is of type op->ztype */       \
+                fop (Cx +((pC)*zsize), xwork) ;                             \
+            }
+
+            #define GB_A_TYPE GB_void
+            #define GB_C_TYPE GB_void
+            #include "GB_transpose_template.c"
+            info = GrB_SUCCESS ;
         }
-
-        #define GB_A_TYPE GB_void
-        #define GB_C_TYPE GB_void
-        #include "GB_unop_transpose.c"
 
     }
     else
@@ -237,18 +244,14 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         GB_cast_function cast_A_to_Y = GB_cast_factory (ycode, acode) ;
         GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ;
 
-        //----------------------------------------------------------------------
-        // via the factory kernel
-        //----------------------------------------------------------------------
-
-        #ifndef GBCUDA_DEV
         if (binop_bind1st)
         {
 
             //------------------------------------------------------------------
-            // C = op(scalar,A')
+            // C = op(scalar,A') via the factory kernel
             //------------------------------------------------------------------
 
+            #ifndef GBCUDA_DEV
             if (GB_binop_builtin (op->xtype, false, Atype, false,
                 (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
             { 
@@ -262,9 +265,8 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
 
                 #define GB_BINOP_WORKER(op,xname)                           \
                 {                                                           \
-                    if (GB_bind1st_tran (op, xname) (C, scalarx, A,         \
-                        Workspaces, A_slice, nworkspaces, nthreads)         \
-                        == GrB_SUCCESS) return ;                            \
+                    info = GB_bind1st_tran (op, xname) (C, scalarx, A,      \
+                        Workspaces, A_slice, nworkspaces, nthreads) ;       \
                 }                                                           \
                 break ;
 
@@ -277,14 +279,28 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
                 #define GB_NO_PAIR
                 #include "GB_binop_factory.c"
             }
+            #endif
+
+            //------------------------------------------------------------------
+            // via the JIT kernel
+            //------------------------------------------------------------------
+
+            #if GB_JIT_ENABLED
+            if (info == GrB_NO_VALUE)
+            {
+                // JIT TODO: ewise: transpose_op with binop bind1st
+            }
+            #endif
+
         }
         else
         {
 
             //------------------------------------------------------------------
-            // C = op(A',scalar)
+            // C = op(A',scalar) via the factory kernel
             //------------------------------------------------------------------
 
+            #ifndef GBCUDA_DEV
             if (GB_binop_builtin (Atype, false, op->ytype, false,
                 (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
             { 
@@ -298,9 +314,8 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
                 #undef  GB_BINOP_WORKER
                 #define GB_BINOP_WORKER(op,xname)                           \
                 {                                                           \
-                    if (GB_bind2nd_tran (op, xname) (C, A, scalarx,         \
-                        Workspaces, A_slice, nworkspaces, nthreads)         \
-                        == GrB_SUCCESS) return ;                            \
+                    info = GB_bind2nd_tran (op, xname) (C, A, scalarx,      \
+                        Workspaces, A_slice, nworkspaces, nthreads) ;       \
                 }                                                           \
                 break ;
 
@@ -313,55 +328,65 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
                 #define GB_NO_PAIR
                 #include "GB_binop_factory.c"
             }
+            #endif
+
+            //------------------------------------------------------------------
+            // via the JIT kernel
+            //------------------------------------------------------------------
+
+            #if GB_JIT_ENABLED
+            if (info == GrB_NO_VALUE)
+            {
+                // JIT TODO: ewise: transpose_op with binop bind2nd
+            }
+            #endif
+
         }
-        #endif
-
-        //----------------------------------------------------------------------
-        // via the JIT kernel
-        //----------------------------------------------------------------------
-
-        #if GB_JIT_ENABLED
-        // JIT TODO: ewise: transpose_op with binop
-        #endif
 
         //----------------------------------------------------------------------
         // via the generic kernel
         //----------------------------------------------------------------------
 
-        GB_BURBLE_MATRIX (A, "(generic transpose: %s) ", op->name) ;
+        if (info == GrB_NO_VALUE)
+        {
+            GB_BURBLE_MATRIX (A, "(generic transpose: %s) ", op->name) ;
 
-        #define GB_CAST_OP_BIND_1ST(pC,pA)                              \
-        {                                                               \
-            /* ywork = (ytype) Ax [pA] */                               \
-            GB_void ywork [GB_VLA(ysize)] ;                             \
-            cast_A_to_Y (ywork, Ax +(pA)*asize, asize) ;                \
-            /* Cx [pC] = fop (xwork) ; Cx is of type op->ztype */       \
-            fop (Cx +((pC)*zsize), scalarx, ywork) ;                    \
-        }
+            #define GB_CAST_OP_BIND_1ST(pC,pA)                              \
+            {                                                               \
+                /* ywork = (ytype) Ax [pA] */                               \
+                GB_void ywork [GB_VLA(ysize)] ;                             \
+                cast_A_to_Y (ywork, Ax +(pA)*asize, asize) ;                \
+                /* Cx [pC] = fop (xwork) ; Cx is of type op->ztype */       \
+                fop (Cx +((pC)*zsize), scalarx, ywork) ;                    \
+            }
 
-        #define GB_CAST_OP_BIND_2ND(pC,pA)                              \
-        {                                                               \
-            /* xwork = (xtype) Ax [pA] */                               \
-            GB_void xwork [GB_VLA(xsize)] ;                             \
-            cast_A_to_X (xwork, Ax +(pA)*asize, asize) ;                \
-            /* Cx [pC] = fop (xwork) ; Cx is of type op->ztype */       \
-            fop (Cx +(pC*zsize), xwork, scalarx) ;                      \
-        }
+            #define GB_CAST_OP_BIND_2ND(pC,pA)                              \
+            {                                                               \
+                /* xwork = (xtype) Ax [pA] */                               \
+                GB_void xwork [GB_VLA(xsize)] ;                             \
+                cast_A_to_X (xwork, Ax +(pA)*asize, asize) ;                \
+                /* Cx [pC] = fop (xwork) ; Cx is of type op->ztype */       \
+                fop (Cx +(pC*zsize), xwork, scalarx) ;                      \
+            }
 
-        if (binop_bind1st)
-        { 
-            // Cx [pC] = op (cast (scalar), cast (Ax [pA]))
-            #undef  GB_CAST_OP
-            #define GB_CAST_OP(pC,pA) GB_CAST_OP_BIND_1ST(pC,pA)
-            #include "GB_unop_transpose.c"
-        }
-        else
-        { 
-            // Cx [pC] = op (cast (Ax [pA]), cast (scalar))
-            #undef  GB_CAST_OP
-            #define GB_CAST_OP(pC,pA) GB_CAST_OP_BIND_2ND(pC,pA)
-            #include "GB_unop_transpose.c"
+            if (binop_bind1st)
+            { 
+                // Cx [pC] = op (cast (scalar), cast (Ax [pA]))
+                #undef  GB_CAST_OP
+                #define GB_CAST_OP(pC,pA) GB_CAST_OP_BIND_1ST(pC,pA)
+                #include "GB_transpose_template.c"
+            }
+            else
+            { 
+                // Cx [pC] = op (cast (Ax [pA]), cast (scalar))
+                #undef  GB_CAST_OP
+                #define GB_CAST_OP(pC,pA) GB_CAST_OP_BIND_2ND(pC,pA)
+                #include "GB_transpose_template.c"
+            }
+            info = GrB_SUCCESS ;
         }
     }
+
+    return (info) ;
 }
 

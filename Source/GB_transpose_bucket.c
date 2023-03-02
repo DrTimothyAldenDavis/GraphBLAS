@@ -328,8 +328,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     else
     { 
         // apply an operator, C has type op->ztype
-        GB_transpose_op (C, C_code_iso, op, scalar, binop_bind1st, A,
-            Workspaces, A_slice, nworkspaces, nthreads) ;
+        GB_OK (GB_transpose_op (C, C_code_iso, op, scalar, binop_bind1st, A,
+            Workspaces, A_slice, nworkspaces, nthreads)) ;
     }
 
     //--------------------------------------------------------------------------

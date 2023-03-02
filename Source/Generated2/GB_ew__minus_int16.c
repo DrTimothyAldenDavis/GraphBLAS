@@ -402,8 +402,8 @@ GrB_Info GB (_bind1st_tran__minus_int16)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_A_TYPE x = (*((const GB_A_TYPE *) x_input)) ;
-    #include "GB_unop_transpose.c"
+    GB_X_TYPE x = (*((const GB_X_TYPE *) x_input)) ;
+    #include "GB_transpose_template.c"
     return (GrB_SUCCESS) ;
     #endif
     #undef GB_BIND_1ST
@@ -436,8 +436,8 @@ GrB_Info GB (_bind2nd_tran__minus_int16)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_B_TYPE y = (*((const GB_B_TYPE *) y_input)) ;
-    #include "GB_unop_transpose.c"
+    GB_Y_TYPE y = (*((const GB_Y_TYPE *) y_input)) ;
+    #include "GB_transpose_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

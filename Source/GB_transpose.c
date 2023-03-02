@@ -331,8 +331,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         else
         { 
             // apply an operator, T has type op->ztype
-            GB_transpose_op (T, C_code_iso, op, scalar, binop_bind1st, A,
-                NULL, NULL, 0, nthreads) ;
+            GB_OK (GB_transpose_op (T, C_code_iso, op, scalar, binop_bind1st, A,
+                NULL, NULL, 0, nthreads)) ;
         }
 
         ASSERT_MATRIX_OK (T, "T dense/bitmap", GB0) ;
