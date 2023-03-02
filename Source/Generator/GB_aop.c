@@ -14,6 +14,9 @@
 
 // operator:
 GB_binaryop
+GB_ztype
+GB_xtype
+GB_ytype
 GB_op_is_second
 
 // A matrix:

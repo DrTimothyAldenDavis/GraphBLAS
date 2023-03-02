@@ -14,6 +14,9 @@
 
 // operator:
 #define GB_BINOP(z,x,y,i,j) z = ~((x) ^ (y))
+#define GB_Z_TYPE uint32_t
+#define GB_X_TYPE uint32_t
+#define GB_Y_TYPE uint32_t
 
 // A matrix:
 #define GB_A_TYPE uint32_t

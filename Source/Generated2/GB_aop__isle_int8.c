@@ -14,6 +14,9 @@
 
 // operator:
 #define GB_BINOP(z,x,y,i,j) z = ((x) <= (y))
+#define GB_Z_TYPE int8_t
+#define GB_X_TYPE int8_t
+#define GB_Y_TYPE int8_t
 
 // A matrix:
 #define GB_A_TYPE int8_t

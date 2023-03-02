@@ -14,6 +14,9 @@
 
 // operator:
 #define GB_BINOP(z,x,y,i,j) z = 1
+#define GB_Z_TYPE uint32_t
+#define GB_X_TYPE uint32_t
+#define GB_Y_TYPE uint32_t
 
 // A matrix:
 #define GB_A_TYPE uint32_t
@@ -40,7 +43,7 @@
 // C = A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-void GB (_Cewise_full_noaccum__pair_uint32)
+GrB_Info GB (_Cewise_full_noaccum__pair_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -49,6 +52,7 @@ void GB (_Cewise_full_noaccum__pair_uint32)
 )
 { 
     #include "GB_ewise_full_noaccum_template.c"
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------

@@ -22,6 +22,7 @@
 #include "GB_binop.h"
 #include "GB_ek_slice.h"
 #include "GB_unused.h"
+#include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_unop__include.h"
 #include "GB_ew__include.h"
@@ -50,6 +51,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (Cx != NULL) ;
     ASSERT_MATRIX_OK (A, "A input for GB_apply_op", GB0) ;
     ASSERT (GB_JUMBLED_OK (A)) ;        // A can be jumbled
@@ -101,6 +103,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     //--------------------------------------------------------------------------
     // apply the operator
     //--------------------------------------------------------------------------
+
+    info = GrB_NO_VALUE ;
 
     if (GB_OPCODE_IS_POSITIONAL (opcode))
     {
@@ -358,9 +362,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
             #define GB_WORKER(unop,zname,ztype,aname,atype)             \
             {                                                           \
-                if (GB_unop_apply (unop,zname,aname) ((ztype *) Cx,     \
-                    (const atype *) Ax, Ab, anz, nthreads)              \
-                    == GrB_SUCCESS) return (GrB_SUCCESS) ;              \
+                info = GB_unop_apply (unop,zname,aname) ((ztype *) Cx,  \
+                    (const atype *) Ax, Ab, anz, nthreads) ;            \
             }                                                           \
             break ;
 
@@ -369,6 +372,11 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             //------------------------------------------------------------------
 
             #include "GB_unop_factory.c"
+
+            if (info == GrB_SUCCESS)
+            {
+                return (GrB_SUCCESS) ;
+            }
         }
         #endif
 
@@ -377,7 +385,15 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: unop: unop apply
+        if (info == GrB_NO_VALUE)
+        {
+            // JIT TODO: unop: unop apply
+            // info = ...
+            if (info == GrB_SUCCESS)
+            {
+                return (GrB_SUCCESS) ;
+            }
+        }
         #endif
 
         //----------------------------------------------------------------------
@@ -463,7 +479,6 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         // via the factory kernel
         //----------------------------------------------------------------------
 
-        #ifndef GBCUDA_DEV
         if (binop_bind1st)
         {
 
@@ -471,6 +486,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             // z = binop (scalar,Ax)
             //------------------------------------------------------------------
 
+            #ifndef GBCUDA_DEV
             if (GB_binop_builtin (op->xtype, false, Atype, false,
                 (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
             { 
@@ -482,9 +498,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 #define GB_bind1st(binop,xname) GB (_bind1st_ ## binop ## xname)
                 #define GB_BINOP_WORKER(binop,xname)                    \
                 {                                                       \
-                    if (GB_bind1st (binop, xname) (Cx, scalarx, Ax,     \
-                        Ab, anz, nthreads) == GrB_SUCCESS)              \
-                        return (GrB_SUCCESS) ;                          \
+                    info = GB_bind1st (binop, xname) (Cx, scalarx, Ax,  \
+                        Ab, anz, nthreads) ;                            \
                 }                                                       \
                 break ;
 
@@ -497,6 +512,20 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 #define GB_NO_PAIR
                 #include "GB_binop_factory.c"
             }
+            #endif
+
+            //------------------------------------------------------------------
+            // via the JIT kernel
+            //------------------------------------------------------------------
+
+            #if GB_JIT_ENABLED
+            if (info == GrB_NO_VALUE)
+            {
+                info = GB_apply_bind1st_jit (Cx, ctype, (GrB_BinaryOp) op,
+                    scalarx, A, nthreads) ;
+            }
+            #endif
+
         }
         else
         {
@@ -505,6 +534,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             // z = binop (Ax,scalar)
             //------------------------------------------------------------------
 
+            #ifndef GBCUDA_DEV
             if (GB_binop_builtin (Atype, false, op->ytype, false,
                 (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
             { 
@@ -517,9 +547,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 #undef  GB_BINOP_WORKER
                 #define GB_BINOP_WORKER(binop,xname)                    \
                 {                                                       \
-                    if (GB_bind2nd (binop, xname) (Cx, Ax, scalarx,     \
-                        Ab, anz, nthreads) == GrB_SUCCESS)              \
-                        return (GrB_SUCCESS) ;                          \
+                    info = GB_bind2nd (binop, xname) (Cx, Ax, scalarx,  \
+                        Ab, anz, nthreads) ;                            \
                 }                                                       \
                 break ;
 
@@ -532,16 +561,25 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 #define GB_NO_PAIR
                 #include "GB_binop_factory.c"
             }
+            #endif
+
+            //------------------------------------------------------------------
+            // via the JIT kernel
+            //------------------------------------------------------------------
+
+            #if GB_JIT_ENABLED
+            if (info == GrB_NO_VALUE)
+            {
+                info = GB_apply_bind2nd_jit (Cx, ctype, (GrB_BinaryOp) op,
+                    A, scalarx, nthreads) ;
+            }
+            #endif
         }
-        #endif
 
-        //----------------------------------------------------------------------
-        // via the JIT kernel
-        //----------------------------------------------------------------------
-
-        #if GB_JIT_ENABLED
-        // JIT TODO: ewise: binop bind 1st/2nd apply
-        #endif
+        if (info == GrB_SUCCESS)
+        {
+            return (GrB_SUCCESS) ;
+        }
 
         //----------------------------------------------------------------------
         // via the generic kernel
@@ -600,6 +638,11 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
         #if GB_JIT_ENABLED
         // JIT TODO: idxunop: user-defined IndexUnary op
+        // info = ...
+        if (info == GrB_SUCCESS)
+        {
+            return (GrB_SUCCESS) ;
+        }
         #endif
 
         //----------------------------------------------------------------------

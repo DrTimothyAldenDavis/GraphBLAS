@@ -14,6 +14,9 @@
 
 // operator:
 #define GB_BINOP(z,x,y,i,j) z = (((x) != 0) && ((y) != 0))
+#define GB_Z_TYPE double
+#define GB_X_TYPE double
+#define GB_Y_TYPE double
 
 // A matrix:
 #define GB_A_TYPE double

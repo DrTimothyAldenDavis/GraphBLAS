@@ -14,6 +14,9 @@
 
 // operator:
 #define GB_BINOP(z,x,y,i,j) z = y
+#define GB_Z_TYPE bool
+#define GB_X_TYPE bool
+#define GB_Y_TYPE bool
 #define GB_OP_IS_SECOND 1
 
 // A matrix:
@@ -41,7 +44,7 @@
 // C = A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-void GB (_Cewise_full_noaccum__second_bool)
+GrB_Info GB (_Cewise_full_noaccum__second_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -50,6 +53,7 @@ void GB (_Cewise_full_noaccum__second_bool)
 )
 { 
     #include "GB_ewise_full_noaccum_template.c"
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------

@@ -30,8 +30,8 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
     const bool flipxy,
-    const GrB_Matrix A,
-    const GrB_Matrix B
+    const GrB_Matrix A,         // NULL for apply bind1st
+    const GrB_Matrix B          // NULL for apply bind2nd
 )
 {
 

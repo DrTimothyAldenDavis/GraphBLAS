@@ -51,6 +51,8 @@ switch (binop)
 end
 
 fprintf (f, 'm4_define(`GB_ztype'',  `#define GB_Z_TYPE %s'')\n', ztype) ;
+fprintf (f, 'm4_define(`GB_xtype'',  `#define GB_X_TYPE %s'')\n', xtype) ;
+fprintf (f, 'm4_define(`GB_ytype'',  `#define GB_Y_TYPE %s'')\n', ytype) ;
 fprintf (f, 'm4_define(`GB_ctype'',  `#define GB_C_TYPE %s'')\n', ztype) ;
 
 if (isequal (ztype, xtype))

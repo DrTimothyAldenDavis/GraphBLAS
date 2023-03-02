@@ -14,6 +14,9 @@
 
 // operator:
 #define GB_BINOP(z,x,y,i,j) z = GB_CMPLX64 (x, y)
+#define GB_Z_TYPE GxB_FC64_t
+#define GB_X_TYPE double
+#define GB_Y_TYPE double
 
 // A matrix:
 #define GB_A_TYPE double

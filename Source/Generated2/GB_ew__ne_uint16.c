@@ -14,6 +14,9 @@
 
 // operator:
 #define GB_BINOP(z,x,y,i,j) z = ((x) != (y))
+#define GB_Z_TYPE bool
+#define GB_X_TYPE uint16_t
+#define GB_Y_TYPE uint16_t
 
 // A matrix:
 #define GB_A_TYPE uint16_t
@@ -43,7 +46,7 @@
 // C = A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-void GB (_Cewise_full_noaccum__ne_uint16)
+GrB_Info GB (_Cewise_full_noaccum__ne_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -52,6 +55,7 @@ void GB (_Cewise_full_noaccum__ne_uint16)
 )
 { 
     #include "GB_ewise_full_noaccum_template.c"
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------
@@ -302,18 +306,7 @@ GrB_Info GB (_bind1st__ne_uint16)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_C_TYPE *Cx = (GB_C_TYPE *) Cx_output ;
-    GB_A_TYPE   x = (*((GB_A_TYPE *) x_input)) ;
-    GB_B_TYPE *Bx = (GB_B_TYPE *) Bx_input ;
-    int64_t p ;
-    #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (p = 0 ; p < bnz ; p++)
-    {
-        if (!GBB (Bb, p)) continue ;
-        GB_DECLAREB (bij) ;
-        GB_GETB (bij, Bx, p, false) ;
-        GB_BINOP (Cx [p], x, bij, 0, 0) ;
-    }
+    #include "GB_apply_bind1st_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -335,18 +328,7 @@ GrB_Info GB (_bind2nd__ne_uint16)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    int64_t p ;
-    GB_C_TYPE *Cx = (GB_C_TYPE *) Cx_output ;
-    GB_A_TYPE *Ax = (GB_A_TYPE *) Ax_input ;
-    GB_B_TYPE   y = (*((GB_B_TYPE *) y_input)) ;
-    #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (p = 0 ; p < anz ; p++)
-    {
-        if (!GBB (Ab, p)) continue ;
-        GB_DECLAREA (aij) ;
-        GB_GETA (aij, Ax, p, false) ;
-        GB_BINOP (Cx [p], aij, y, 0, 0) ;
-    }
+    #include "GB_apply_bind2nd_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

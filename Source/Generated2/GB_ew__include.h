@@ -8,7 +8,7 @@
 // This file has been automatically generated from Generator/GB_ew.h
 
 
-void GB (_Cewise_full_noaccum__first_bool)
+GrB_Info GB (_Cewise_full_noaccum__first_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -162,7 +162,7 @@ GrB_Info GB (_AemultB_bitmap__first_bool)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__first_int8)
+GrB_Info GB (_Cewise_full_noaccum__first_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -316,7 +316,7 @@ GrB_Info GB (_AemultB_bitmap__first_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__first_int16)
+GrB_Info GB (_Cewise_full_noaccum__first_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -470,7 +470,7 @@ GrB_Info GB (_AemultB_bitmap__first_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__first_int32)
+GrB_Info GB (_Cewise_full_noaccum__first_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -624,7 +624,7 @@ GrB_Info GB (_AemultB_bitmap__first_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__first_int64)
+GrB_Info GB (_Cewise_full_noaccum__first_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -778,7 +778,7 @@ GrB_Info GB (_AemultB_bitmap__first_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__first_uint8)
+GrB_Info GB (_Cewise_full_noaccum__first_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -932,7 +932,7 @@ GrB_Info GB (_AemultB_bitmap__first_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__first_uint16)
+GrB_Info GB (_Cewise_full_noaccum__first_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -1086,7 +1086,7 @@ GrB_Info GB (_AemultB_bitmap__first_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__first_uint32)
+GrB_Info GB (_Cewise_full_noaccum__first_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -1240,7 +1240,7 @@ GrB_Info GB (_AemultB_bitmap__first_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__first_uint64)
+GrB_Info GB (_Cewise_full_noaccum__first_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -1394,7 +1394,7 @@ GrB_Info GB (_AemultB_bitmap__first_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__first_fp32)
+GrB_Info GB (_Cewise_full_noaccum__first_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -1548,7 +1548,7 @@ GrB_Info GB (_AemultB_bitmap__first_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__first_fp64)
+GrB_Info GB (_Cewise_full_noaccum__first_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -1702,7 +1702,7 @@ GrB_Info GB (_AemultB_bitmap__first_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__first_fc32)
+GrB_Info GB (_Cewise_full_noaccum__first_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -1856,7 +1856,7 @@ GrB_Info GB (_AemultB_bitmap__first_fc32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__first_fc64)
+GrB_Info GB (_Cewise_full_noaccum__first_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -2010,7 +2010,7 @@ GrB_Info GB (_AemultB_bitmap__first_fc64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__second_bool)
+GrB_Info GB (_Cewise_full_noaccum__second_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -2164,7 +2164,7 @@ GrB_Info GB (_AemultB_bitmap__second_bool)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__second_int8)
+GrB_Info GB (_Cewise_full_noaccum__second_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -2318,7 +2318,7 @@ GrB_Info GB (_AemultB_bitmap__second_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__second_int16)
+GrB_Info GB (_Cewise_full_noaccum__second_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -2472,7 +2472,7 @@ GrB_Info GB (_AemultB_bitmap__second_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__second_int32)
+GrB_Info GB (_Cewise_full_noaccum__second_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -2626,7 +2626,7 @@ GrB_Info GB (_AemultB_bitmap__second_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__second_int64)
+GrB_Info GB (_Cewise_full_noaccum__second_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -2780,7 +2780,7 @@ GrB_Info GB (_AemultB_bitmap__second_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__second_uint8)
+GrB_Info GB (_Cewise_full_noaccum__second_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -2934,7 +2934,7 @@ GrB_Info GB (_AemultB_bitmap__second_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__second_uint16)
+GrB_Info GB (_Cewise_full_noaccum__second_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -3088,7 +3088,7 @@ GrB_Info GB (_AemultB_bitmap__second_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__second_uint32)
+GrB_Info GB (_Cewise_full_noaccum__second_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -3242,7 +3242,7 @@ GrB_Info GB (_AemultB_bitmap__second_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__second_uint64)
+GrB_Info GB (_Cewise_full_noaccum__second_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -3396,7 +3396,7 @@ GrB_Info GB (_AemultB_bitmap__second_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__second_fp32)
+GrB_Info GB (_Cewise_full_noaccum__second_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -3550,7 +3550,7 @@ GrB_Info GB (_AemultB_bitmap__second_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__second_fp64)
+GrB_Info GB (_Cewise_full_noaccum__second_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -3704,7 +3704,7 @@ GrB_Info GB (_AemultB_bitmap__second_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__second_fc32)
+GrB_Info GB (_Cewise_full_noaccum__second_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -3858,7 +3858,7 @@ GrB_Info GB (_AemultB_bitmap__second_fc32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__second_fc64)
+GrB_Info GB (_Cewise_full_noaccum__second_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4012,7 +4012,7 @@ GrB_Info GB (_AemultB_bitmap__second_fc64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pair_bool)
+GrB_Info GB (_Cewise_full_noaccum__pair_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4077,7 +4077,7 @@ GrB_Info GB (_AunionB__pair_bool)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pair_int8)
+GrB_Info GB (_Cewise_full_noaccum__pair_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4142,7 +4142,7 @@ GrB_Info GB (_AunionB__pair_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pair_int16)
+GrB_Info GB (_Cewise_full_noaccum__pair_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4207,7 +4207,7 @@ GrB_Info GB (_AunionB__pair_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pair_int32)
+GrB_Info GB (_Cewise_full_noaccum__pair_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4272,7 +4272,7 @@ GrB_Info GB (_AunionB__pair_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pair_int64)
+GrB_Info GB (_Cewise_full_noaccum__pair_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4337,7 +4337,7 @@ GrB_Info GB (_AunionB__pair_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pair_uint8)
+GrB_Info GB (_Cewise_full_noaccum__pair_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4402,7 +4402,7 @@ GrB_Info GB (_AunionB__pair_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pair_uint16)
+GrB_Info GB (_Cewise_full_noaccum__pair_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4467,7 +4467,7 @@ GrB_Info GB (_AunionB__pair_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pair_uint32)
+GrB_Info GB (_Cewise_full_noaccum__pair_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4532,7 +4532,7 @@ GrB_Info GB (_AunionB__pair_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pair_uint64)
+GrB_Info GB (_Cewise_full_noaccum__pair_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4597,7 +4597,7 @@ GrB_Info GB (_AunionB__pair_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pair_fp32)
+GrB_Info GB (_Cewise_full_noaccum__pair_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4662,7 +4662,7 @@ GrB_Info GB (_AunionB__pair_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pair_fp64)
+GrB_Info GB (_Cewise_full_noaccum__pair_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4727,7 +4727,7 @@ GrB_Info GB (_AunionB__pair_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pair_fc32)
+GrB_Info GB (_Cewise_full_noaccum__pair_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4792,7 +4792,7 @@ GrB_Info GB (_AunionB__pair_fc32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pair_fc64)
+GrB_Info GB (_Cewise_full_noaccum__pair_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4857,7 +4857,7 @@ GrB_Info GB (_AunionB__pair_fc64)
 ) ;
 
 
-void GB (_Cewise_full_accum__min_int8)
+GrB_Info GB (_Cewise_full_accum__min_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4865,7 +4865,7 @@ void GB (_Cewise_full_accum__min_int8)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__min_int8)
+GrB_Info GB (_Cewise_full_noaccum__min_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -5047,7 +5047,7 @@ GrB_Info GB (_bind2nd_tran__min_int8)
 ) ;
 
 
-void GB (_Cewise_full_accum__min_int16)
+GrB_Info GB (_Cewise_full_accum__min_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -5055,7 +5055,7 @@ void GB (_Cewise_full_accum__min_int16)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__min_int16)
+GrB_Info GB (_Cewise_full_noaccum__min_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -5237,7 +5237,7 @@ GrB_Info GB (_bind2nd_tran__min_int16)
 ) ;
 
 
-void GB (_Cewise_full_accum__min_int32)
+GrB_Info GB (_Cewise_full_accum__min_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -5245,7 +5245,7 @@ void GB (_Cewise_full_accum__min_int32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__min_int32)
+GrB_Info GB (_Cewise_full_noaccum__min_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -5427,7 +5427,7 @@ GrB_Info GB (_bind2nd_tran__min_int32)
 ) ;
 
 
-void GB (_Cewise_full_accum__min_int64)
+GrB_Info GB (_Cewise_full_accum__min_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -5435,7 +5435,7 @@ void GB (_Cewise_full_accum__min_int64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__min_int64)
+GrB_Info GB (_Cewise_full_noaccum__min_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -5617,7 +5617,7 @@ GrB_Info GB (_bind2nd_tran__min_int64)
 ) ;
 
 
-void GB (_Cewise_full_accum__min_uint8)
+GrB_Info GB (_Cewise_full_accum__min_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -5625,7 +5625,7 @@ void GB (_Cewise_full_accum__min_uint8)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__min_uint8)
+GrB_Info GB (_Cewise_full_noaccum__min_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -5807,7 +5807,7 @@ GrB_Info GB (_bind2nd_tran__min_uint8)
 ) ;
 
 
-void GB (_Cewise_full_accum__min_uint16)
+GrB_Info GB (_Cewise_full_accum__min_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -5815,7 +5815,7 @@ void GB (_Cewise_full_accum__min_uint16)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__min_uint16)
+GrB_Info GB (_Cewise_full_noaccum__min_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -5997,7 +5997,7 @@ GrB_Info GB (_bind2nd_tran__min_uint16)
 ) ;
 
 
-void GB (_Cewise_full_accum__min_uint32)
+GrB_Info GB (_Cewise_full_accum__min_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -6005,7 +6005,7 @@ void GB (_Cewise_full_accum__min_uint32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__min_uint32)
+GrB_Info GB (_Cewise_full_noaccum__min_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -6187,7 +6187,7 @@ GrB_Info GB (_bind2nd_tran__min_uint32)
 ) ;
 
 
-void GB (_Cewise_full_accum__min_uint64)
+GrB_Info GB (_Cewise_full_accum__min_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -6195,7 +6195,7 @@ void GB (_Cewise_full_accum__min_uint64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__min_uint64)
+GrB_Info GB (_Cewise_full_noaccum__min_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -6377,7 +6377,7 @@ GrB_Info GB (_bind2nd_tran__min_uint64)
 ) ;
 
 
-void GB (_Cewise_full_accum__min_fp32)
+GrB_Info GB (_Cewise_full_accum__min_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -6385,7 +6385,7 @@ void GB (_Cewise_full_accum__min_fp32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__min_fp32)
+GrB_Info GB (_Cewise_full_noaccum__min_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -6567,7 +6567,7 @@ GrB_Info GB (_bind2nd_tran__min_fp32)
 ) ;
 
 
-void GB (_Cewise_full_accum__min_fp64)
+GrB_Info GB (_Cewise_full_accum__min_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -6575,7 +6575,7 @@ void GB (_Cewise_full_accum__min_fp64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__min_fp64)
+GrB_Info GB (_Cewise_full_noaccum__min_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -6757,7 +6757,7 @@ GrB_Info GB (_bind2nd_tran__min_fp64)
 ) ;
 
 
-void GB (_Cewise_full_accum__max_int8)
+GrB_Info GB (_Cewise_full_accum__max_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -6765,7 +6765,7 @@ void GB (_Cewise_full_accum__max_int8)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__max_int8)
+GrB_Info GB (_Cewise_full_noaccum__max_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -6947,7 +6947,7 @@ GrB_Info GB (_bind2nd_tran__max_int8)
 ) ;
 
 
-void GB (_Cewise_full_accum__max_int16)
+GrB_Info GB (_Cewise_full_accum__max_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -6955,7 +6955,7 @@ void GB (_Cewise_full_accum__max_int16)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__max_int16)
+GrB_Info GB (_Cewise_full_noaccum__max_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -7137,7 +7137,7 @@ GrB_Info GB (_bind2nd_tran__max_int16)
 ) ;
 
 
-void GB (_Cewise_full_accum__max_int32)
+GrB_Info GB (_Cewise_full_accum__max_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -7145,7 +7145,7 @@ void GB (_Cewise_full_accum__max_int32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__max_int32)
+GrB_Info GB (_Cewise_full_noaccum__max_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -7327,7 +7327,7 @@ GrB_Info GB (_bind2nd_tran__max_int32)
 ) ;
 
 
-void GB (_Cewise_full_accum__max_int64)
+GrB_Info GB (_Cewise_full_accum__max_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -7335,7 +7335,7 @@ void GB (_Cewise_full_accum__max_int64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__max_int64)
+GrB_Info GB (_Cewise_full_noaccum__max_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -7517,7 +7517,7 @@ GrB_Info GB (_bind2nd_tran__max_int64)
 ) ;
 
 
-void GB (_Cewise_full_accum__max_uint8)
+GrB_Info GB (_Cewise_full_accum__max_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -7525,7 +7525,7 @@ void GB (_Cewise_full_accum__max_uint8)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__max_uint8)
+GrB_Info GB (_Cewise_full_noaccum__max_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -7707,7 +7707,7 @@ GrB_Info GB (_bind2nd_tran__max_uint8)
 ) ;
 
 
-void GB (_Cewise_full_accum__max_uint16)
+GrB_Info GB (_Cewise_full_accum__max_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -7715,7 +7715,7 @@ void GB (_Cewise_full_accum__max_uint16)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__max_uint16)
+GrB_Info GB (_Cewise_full_noaccum__max_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -7897,7 +7897,7 @@ GrB_Info GB (_bind2nd_tran__max_uint16)
 ) ;
 
 
-void GB (_Cewise_full_accum__max_uint32)
+GrB_Info GB (_Cewise_full_accum__max_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -7905,7 +7905,7 @@ void GB (_Cewise_full_accum__max_uint32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__max_uint32)
+GrB_Info GB (_Cewise_full_noaccum__max_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -8087,7 +8087,7 @@ GrB_Info GB (_bind2nd_tran__max_uint32)
 ) ;
 
 
-void GB (_Cewise_full_accum__max_uint64)
+GrB_Info GB (_Cewise_full_accum__max_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -8095,7 +8095,7 @@ void GB (_Cewise_full_accum__max_uint64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__max_uint64)
+GrB_Info GB (_Cewise_full_noaccum__max_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -8277,7 +8277,7 @@ GrB_Info GB (_bind2nd_tran__max_uint64)
 ) ;
 
 
-void GB (_Cewise_full_accum__max_fp32)
+GrB_Info GB (_Cewise_full_accum__max_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -8285,7 +8285,7 @@ void GB (_Cewise_full_accum__max_fp32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__max_fp32)
+GrB_Info GB (_Cewise_full_noaccum__max_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -8467,7 +8467,7 @@ GrB_Info GB (_bind2nd_tran__max_fp32)
 ) ;
 
 
-void GB (_Cewise_full_accum__max_fp64)
+GrB_Info GB (_Cewise_full_accum__max_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -8475,7 +8475,7 @@ void GB (_Cewise_full_accum__max_fp64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__max_fp64)
+GrB_Info GB (_Cewise_full_noaccum__max_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -8657,7 +8657,7 @@ GrB_Info GB (_bind2nd_tran__max_fp64)
 ) ;
 
 
-void GB (_Cewise_full_accum__plus_int8)
+GrB_Info GB (_Cewise_full_accum__plus_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -8665,7 +8665,7 @@ void GB (_Cewise_full_accum__plus_int8)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__plus_int8)
+GrB_Info GB (_Cewise_full_noaccum__plus_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -8847,7 +8847,7 @@ GrB_Info GB (_bind2nd_tran__plus_int8)
 ) ;
 
 
-void GB (_Cewise_full_accum__plus_int16)
+GrB_Info GB (_Cewise_full_accum__plus_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -8855,7 +8855,7 @@ void GB (_Cewise_full_accum__plus_int16)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__plus_int16)
+GrB_Info GB (_Cewise_full_noaccum__plus_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -9037,7 +9037,7 @@ GrB_Info GB (_bind2nd_tran__plus_int16)
 ) ;
 
 
-void GB (_Cewise_full_accum__plus_int32)
+GrB_Info GB (_Cewise_full_accum__plus_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -9045,7 +9045,7 @@ void GB (_Cewise_full_accum__plus_int32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__plus_int32)
+GrB_Info GB (_Cewise_full_noaccum__plus_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -9227,7 +9227,7 @@ GrB_Info GB (_bind2nd_tran__plus_int32)
 ) ;
 
 
-void GB (_Cewise_full_accum__plus_int64)
+GrB_Info GB (_Cewise_full_accum__plus_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -9235,7 +9235,7 @@ void GB (_Cewise_full_accum__plus_int64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__plus_int64)
+GrB_Info GB (_Cewise_full_noaccum__plus_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -9417,7 +9417,7 @@ GrB_Info GB (_bind2nd_tran__plus_int64)
 ) ;
 
 
-void GB (_Cewise_full_accum__plus_uint8)
+GrB_Info GB (_Cewise_full_accum__plus_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -9425,7 +9425,7 @@ void GB (_Cewise_full_accum__plus_uint8)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__plus_uint8)
+GrB_Info GB (_Cewise_full_noaccum__plus_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -9607,7 +9607,7 @@ GrB_Info GB (_bind2nd_tran__plus_uint8)
 ) ;
 
 
-void GB (_Cewise_full_accum__plus_uint16)
+GrB_Info GB (_Cewise_full_accum__plus_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -9615,7 +9615,7 @@ void GB (_Cewise_full_accum__plus_uint16)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__plus_uint16)
+GrB_Info GB (_Cewise_full_noaccum__plus_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -9797,7 +9797,7 @@ GrB_Info GB (_bind2nd_tran__plus_uint16)
 ) ;
 
 
-void GB (_Cewise_full_accum__plus_uint32)
+GrB_Info GB (_Cewise_full_accum__plus_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -9805,7 +9805,7 @@ void GB (_Cewise_full_accum__plus_uint32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__plus_uint32)
+GrB_Info GB (_Cewise_full_noaccum__plus_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -9987,7 +9987,7 @@ GrB_Info GB (_bind2nd_tran__plus_uint32)
 ) ;
 
 
-void GB (_Cewise_full_accum__plus_uint64)
+GrB_Info GB (_Cewise_full_accum__plus_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -9995,7 +9995,7 @@ void GB (_Cewise_full_accum__plus_uint64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__plus_uint64)
+GrB_Info GB (_Cewise_full_noaccum__plus_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -10177,7 +10177,7 @@ GrB_Info GB (_bind2nd_tran__plus_uint64)
 ) ;
 
 
-void GB (_Cewise_full_accum__plus_fp32)
+GrB_Info GB (_Cewise_full_accum__plus_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -10185,7 +10185,7 @@ void GB (_Cewise_full_accum__plus_fp32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__plus_fp32)
+GrB_Info GB (_Cewise_full_noaccum__plus_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -10367,7 +10367,7 @@ GrB_Info GB (_bind2nd_tran__plus_fp32)
 ) ;
 
 
-void GB (_Cewise_full_accum__plus_fp64)
+GrB_Info GB (_Cewise_full_accum__plus_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -10375,7 +10375,7 @@ void GB (_Cewise_full_accum__plus_fp64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__plus_fp64)
+GrB_Info GB (_Cewise_full_noaccum__plus_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -10557,7 +10557,7 @@ GrB_Info GB (_bind2nd_tran__plus_fp64)
 ) ;
 
 
-void GB (_Cewise_full_accum__plus_fc32)
+GrB_Info GB (_Cewise_full_accum__plus_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -10565,7 +10565,7 @@ void GB (_Cewise_full_accum__plus_fc32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__plus_fc32)
+GrB_Info GB (_Cewise_full_noaccum__plus_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -10747,7 +10747,7 @@ GrB_Info GB (_bind2nd_tran__plus_fc32)
 ) ;
 
 
-void GB (_Cewise_full_accum__plus_fc64)
+GrB_Info GB (_Cewise_full_accum__plus_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -10755,7 +10755,7 @@ void GB (_Cewise_full_accum__plus_fc64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__plus_fc64)
+GrB_Info GB (_Cewise_full_noaccum__plus_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -10937,7 +10937,7 @@ GrB_Info GB (_bind2nd_tran__plus_fc64)
 ) ;
 
 
-void GB (_Cewise_full_accum__minus_int8)
+GrB_Info GB (_Cewise_full_accum__minus_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -10945,7 +10945,7 @@ void GB (_Cewise_full_accum__minus_int8)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__minus_int8)
+GrB_Info GB (_Cewise_full_noaccum__minus_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -11141,7 +11141,7 @@ GrB_Info GB (_bind2nd_tran__minus_int8)
 ) ;
 
 
-void GB (_Cewise_full_accum__minus_int16)
+GrB_Info GB (_Cewise_full_accum__minus_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -11149,7 +11149,7 @@ void GB (_Cewise_full_accum__minus_int16)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__minus_int16)
+GrB_Info GB (_Cewise_full_noaccum__minus_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -11345,7 +11345,7 @@ GrB_Info GB (_bind2nd_tran__minus_int16)
 ) ;
 
 
-void GB (_Cewise_full_accum__minus_int32)
+GrB_Info GB (_Cewise_full_accum__minus_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -11353,7 +11353,7 @@ void GB (_Cewise_full_accum__minus_int32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__minus_int32)
+GrB_Info GB (_Cewise_full_noaccum__minus_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -11549,7 +11549,7 @@ GrB_Info GB (_bind2nd_tran__minus_int32)
 ) ;
 
 
-void GB (_Cewise_full_accum__minus_int64)
+GrB_Info GB (_Cewise_full_accum__minus_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -11557,7 +11557,7 @@ void GB (_Cewise_full_accum__minus_int64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__minus_int64)
+GrB_Info GB (_Cewise_full_noaccum__minus_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -11753,7 +11753,7 @@ GrB_Info GB (_bind2nd_tran__minus_int64)
 ) ;
 
 
-void GB (_Cewise_full_accum__minus_uint8)
+GrB_Info GB (_Cewise_full_accum__minus_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -11761,7 +11761,7 @@ void GB (_Cewise_full_accum__minus_uint8)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__minus_uint8)
+GrB_Info GB (_Cewise_full_noaccum__minus_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -11957,7 +11957,7 @@ GrB_Info GB (_bind2nd_tran__minus_uint8)
 ) ;
 
 
-void GB (_Cewise_full_accum__minus_uint16)
+GrB_Info GB (_Cewise_full_accum__minus_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -11965,7 +11965,7 @@ void GB (_Cewise_full_accum__minus_uint16)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__minus_uint16)
+GrB_Info GB (_Cewise_full_noaccum__minus_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -12161,7 +12161,7 @@ GrB_Info GB (_bind2nd_tran__minus_uint16)
 ) ;
 
 
-void GB (_Cewise_full_accum__minus_uint32)
+GrB_Info GB (_Cewise_full_accum__minus_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -12169,7 +12169,7 @@ void GB (_Cewise_full_accum__minus_uint32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__minus_uint32)
+GrB_Info GB (_Cewise_full_noaccum__minus_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -12365,7 +12365,7 @@ GrB_Info GB (_bind2nd_tran__minus_uint32)
 ) ;
 
 
-void GB (_Cewise_full_accum__minus_uint64)
+GrB_Info GB (_Cewise_full_accum__minus_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -12373,7 +12373,7 @@ void GB (_Cewise_full_accum__minus_uint64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__minus_uint64)
+GrB_Info GB (_Cewise_full_noaccum__minus_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -12569,7 +12569,7 @@ GrB_Info GB (_bind2nd_tran__minus_uint64)
 ) ;
 
 
-void GB (_Cewise_full_accum__minus_fp32)
+GrB_Info GB (_Cewise_full_accum__minus_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -12577,7 +12577,7 @@ void GB (_Cewise_full_accum__minus_fp32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__minus_fp32)
+GrB_Info GB (_Cewise_full_noaccum__minus_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -12773,7 +12773,7 @@ GrB_Info GB (_bind2nd_tran__minus_fp32)
 ) ;
 
 
-void GB (_Cewise_full_accum__minus_fp64)
+GrB_Info GB (_Cewise_full_accum__minus_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -12781,7 +12781,7 @@ void GB (_Cewise_full_accum__minus_fp64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__minus_fp64)
+GrB_Info GB (_Cewise_full_noaccum__minus_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -12977,7 +12977,7 @@ GrB_Info GB (_bind2nd_tran__minus_fp64)
 ) ;
 
 
-void GB (_Cewise_full_accum__minus_fc32)
+GrB_Info GB (_Cewise_full_accum__minus_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -12985,7 +12985,7 @@ void GB (_Cewise_full_accum__minus_fc32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__minus_fc32)
+GrB_Info GB (_Cewise_full_noaccum__minus_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -13181,7 +13181,7 @@ GrB_Info GB (_bind2nd_tran__minus_fc32)
 ) ;
 
 
-void GB (_Cewise_full_accum__minus_fc64)
+GrB_Info GB (_Cewise_full_accum__minus_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -13189,7 +13189,7 @@ void GB (_Cewise_full_accum__minus_fc64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__minus_fc64)
+GrB_Info GB (_Cewise_full_noaccum__minus_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -13385,7 +13385,7 @@ GrB_Info GB (_bind2nd_tran__minus_fc64)
 ) ;
 
 
-void GB (_Cewise_full_accum__rminus_int8)
+GrB_Info GB (_Cewise_full_accum__rminus_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -13393,7 +13393,7 @@ void GB (_Cewise_full_accum__rminus_int8)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rminus_int8)
+GrB_Info GB (_Cewise_full_noaccum__rminus_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -13589,7 +13589,7 @@ GrB_Info GB (_bind2nd_tran__rminus_int8)
 ) ;
 
 
-void GB (_Cewise_full_accum__rminus_int16)
+GrB_Info GB (_Cewise_full_accum__rminus_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -13597,7 +13597,7 @@ void GB (_Cewise_full_accum__rminus_int16)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rminus_int16)
+GrB_Info GB (_Cewise_full_noaccum__rminus_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -13793,7 +13793,7 @@ GrB_Info GB (_bind2nd_tran__rminus_int16)
 ) ;
 
 
-void GB (_Cewise_full_accum__rminus_int32)
+GrB_Info GB (_Cewise_full_accum__rminus_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -13801,7 +13801,7 @@ void GB (_Cewise_full_accum__rminus_int32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rminus_int32)
+GrB_Info GB (_Cewise_full_noaccum__rminus_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -13997,7 +13997,7 @@ GrB_Info GB (_bind2nd_tran__rminus_int32)
 ) ;
 
 
-void GB (_Cewise_full_accum__rminus_int64)
+GrB_Info GB (_Cewise_full_accum__rminus_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -14005,7 +14005,7 @@ void GB (_Cewise_full_accum__rminus_int64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rminus_int64)
+GrB_Info GB (_Cewise_full_noaccum__rminus_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -14201,7 +14201,7 @@ GrB_Info GB (_bind2nd_tran__rminus_int64)
 ) ;
 
 
-void GB (_Cewise_full_accum__rminus_uint8)
+GrB_Info GB (_Cewise_full_accum__rminus_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -14209,7 +14209,7 @@ void GB (_Cewise_full_accum__rminus_uint8)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rminus_uint8)
+GrB_Info GB (_Cewise_full_noaccum__rminus_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -14405,7 +14405,7 @@ GrB_Info GB (_bind2nd_tran__rminus_uint8)
 ) ;
 
 
-void GB (_Cewise_full_accum__rminus_uint16)
+GrB_Info GB (_Cewise_full_accum__rminus_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -14413,7 +14413,7 @@ void GB (_Cewise_full_accum__rminus_uint16)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rminus_uint16)
+GrB_Info GB (_Cewise_full_noaccum__rminus_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -14609,7 +14609,7 @@ GrB_Info GB (_bind2nd_tran__rminus_uint16)
 ) ;
 
 
-void GB (_Cewise_full_accum__rminus_uint32)
+GrB_Info GB (_Cewise_full_accum__rminus_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -14617,7 +14617,7 @@ void GB (_Cewise_full_accum__rminus_uint32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rminus_uint32)
+GrB_Info GB (_Cewise_full_noaccum__rminus_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -14813,7 +14813,7 @@ GrB_Info GB (_bind2nd_tran__rminus_uint32)
 ) ;
 
 
-void GB (_Cewise_full_accum__rminus_uint64)
+GrB_Info GB (_Cewise_full_accum__rminus_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -14821,7 +14821,7 @@ void GB (_Cewise_full_accum__rminus_uint64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rminus_uint64)
+GrB_Info GB (_Cewise_full_noaccum__rminus_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -15017,7 +15017,7 @@ GrB_Info GB (_bind2nd_tran__rminus_uint64)
 ) ;
 
 
-void GB (_Cewise_full_accum__rminus_fp32)
+GrB_Info GB (_Cewise_full_accum__rminus_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -15025,7 +15025,7 @@ void GB (_Cewise_full_accum__rminus_fp32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rminus_fp32)
+GrB_Info GB (_Cewise_full_noaccum__rminus_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -15221,7 +15221,7 @@ GrB_Info GB (_bind2nd_tran__rminus_fp32)
 ) ;
 
 
-void GB (_Cewise_full_accum__rminus_fp64)
+GrB_Info GB (_Cewise_full_accum__rminus_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -15229,7 +15229,7 @@ void GB (_Cewise_full_accum__rminus_fp64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rminus_fp64)
+GrB_Info GB (_Cewise_full_noaccum__rminus_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -15425,7 +15425,7 @@ GrB_Info GB (_bind2nd_tran__rminus_fp64)
 ) ;
 
 
-void GB (_Cewise_full_accum__rminus_fc32)
+GrB_Info GB (_Cewise_full_accum__rminus_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -15433,7 +15433,7 @@ void GB (_Cewise_full_accum__rminus_fc32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rminus_fc32)
+GrB_Info GB (_Cewise_full_noaccum__rminus_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -15629,7 +15629,7 @@ GrB_Info GB (_bind2nd_tran__rminus_fc32)
 ) ;
 
 
-void GB (_Cewise_full_accum__rminus_fc64)
+GrB_Info GB (_Cewise_full_accum__rminus_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -15637,7 +15637,7 @@ void GB (_Cewise_full_accum__rminus_fc64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rminus_fc64)
+GrB_Info GB (_Cewise_full_noaccum__rminus_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -15833,7 +15833,7 @@ GrB_Info GB (_bind2nd_tran__rminus_fc64)
 ) ;
 
 
-void GB (_Cewise_full_accum__times_int8)
+GrB_Info GB (_Cewise_full_accum__times_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -15841,7 +15841,7 @@ void GB (_Cewise_full_accum__times_int8)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__times_int8)
+GrB_Info GB (_Cewise_full_noaccum__times_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -16023,7 +16023,7 @@ GrB_Info GB (_bind2nd_tran__times_int8)
 ) ;
 
 
-void GB (_Cewise_full_accum__times_int16)
+GrB_Info GB (_Cewise_full_accum__times_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -16031,7 +16031,7 @@ void GB (_Cewise_full_accum__times_int16)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__times_int16)
+GrB_Info GB (_Cewise_full_noaccum__times_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -16213,7 +16213,7 @@ GrB_Info GB (_bind2nd_tran__times_int16)
 ) ;
 
 
-void GB (_Cewise_full_accum__times_int32)
+GrB_Info GB (_Cewise_full_accum__times_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -16221,7 +16221,7 @@ void GB (_Cewise_full_accum__times_int32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__times_int32)
+GrB_Info GB (_Cewise_full_noaccum__times_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -16403,7 +16403,7 @@ GrB_Info GB (_bind2nd_tran__times_int32)
 ) ;
 
 
-void GB (_Cewise_full_accum__times_int64)
+GrB_Info GB (_Cewise_full_accum__times_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -16411,7 +16411,7 @@ void GB (_Cewise_full_accum__times_int64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__times_int64)
+GrB_Info GB (_Cewise_full_noaccum__times_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -16593,7 +16593,7 @@ GrB_Info GB (_bind2nd_tran__times_int64)
 ) ;
 
 
-void GB (_Cewise_full_accum__times_uint8)
+GrB_Info GB (_Cewise_full_accum__times_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -16601,7 +16601,7 @@ void GB (_Cewise_full_accum__times_uint8)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__times_uint8)
+GrB_Info GB (_Cewise_full_noaccum__times_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -16783,7 +16783,7 @@ GrB_Info GB (_bind2nd_tran__times_uint8)
 ) ;
 
 
-void GB (_Cewise_full_accum__times_uint16)
+GrB_Info GB (_Cewise_full_accum__times_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -16791,7 +16791,7 @@ void GB (_Cewise_full_accum__times_uint16)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__times_uint16)
+GrB_Info GB (_Cewise_full_noaccum__times_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -16973,7 +16973,7 @@ GrB_Info GB (_bind2nd_tran__times_uint16)
 ) ;
 
 
-void GB (_Cewise_full_accum__times_uint32)
+GrB_Info GB (_Cewise_full_accum__times_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -16981,7 +16981,7 @@ void GB (_Cewise_full_accum__times_uint32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__times_uint32)
+GrB_Info GB (_Cewise_full_noaccum__times_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -17163,7 +17163,7 @@ GrB_Info GB (_bind2nd_tran__times_uint32)
 ) ;
 
 
-void GB (_Cewise_full_accum__times_uint64)
+GrB_Info GB (_Cewise_full_accum__times_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -17171,7 +17171,7 @@ void GB (_Cewise_full_accum__times_uint64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__times_uint64)
+GrB_Info GB (_Cewise_full_noaccum__times_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -17353,7 +17353,7 @@ GrB_Info GB (_bind2nd_tran__times_uint64)
 ) ;
 
 
-void GB (_Cewise_full_accum__times_fp32)
+GrB_Info GB (_Cewise_full_accum__times_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -17361,7 +17361,7 @@ void GB (_Cewise_full_accum__times_fp32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__times_fp32)
+GrB_Info GB (_Cewise_full_noaccum__times_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -17543,7 +17543,7 @@ GrB_Info GB (_bind2nd_tran__times_fp32)
 ) ;
 
 
-void GB (_Cewise_full_accum__times_fp64)
+GrB_Info GB (_Cewise_full_accum__times_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -17551,7 +17551,7 @@ void GB (_Cewise_full_accum__times_fp64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__times_fp64)
+GrB_Info GB (_Cewise_full_noaccum__times_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -17733,7 +17733,7 @@ GrB_Info GB (_bind2nd_tran__times_fp64)
 ) ;
 
 
-void GB (_Cewise_full_accum__times_fc32)
+GrB_Info GB (_Cewise_full_accum__times_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -17741,7 +17741,7 @@ void GB (_Cewise_full_accum__times_fc32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__times_fc32)
+GrB_Info GB (_Cewise_full_noaccum__times_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -17923,7 +17923,7 @@ GrB_Info GB (_bind2nd_tran__times_fc32)
 ) ;
 
 
-void GB (_Cewise_full_accum__times_fc64)
+GrB_Info GB (_Cewise_full_accum__times_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -17931,7 +17931,7 @@ void GB (_Cewise_full_accum__times_fc64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__times_fc64)
+GrB_Info GB (_Cewise_full_noaccum__times_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -18113,7 +18113,7 @@ GrB_Info GB (_bind2nd_tran__times_fc64)
 ) ;
 
 
-void GB (_Cewise_full_accum__div_int8)
+GrB_Info GB (_Cewise_full_accum__div_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -18121,7 +18121,7 @@ void GB (_Cewise_full_accum__div_int8)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__div_int8)
+GrB_Info GB (_Cewise_full_noaccum__div_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -18317,7 +18317,7 @@ GrB_Info GB (_bind2nd_tran__div_int8)
 ) ;
 
 
-void GB (_Cewise_full_accum__div_int16)
+GrB_Info GB (_Cewise_full_accum__div_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -18325,7 +18325,7 @@ void GB (_Cewise_full_accum__div_int16)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__div_int16)
+GrB_Info GB (_Cewise_full_noaccum__div_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -18521,7 +18521,7 @@ GrB_Info GB (_bind2nd_tran__div_int16)
 ) ;
 
 
-void GB (_Cewise_full_accum__div_int32)
+GrB_Info GB (_Cewise_full_accum__div_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -18529,7 +18529,7 @@ void GB (_Cewise_full_accum__div_int32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__div_int32)
+GrB_Info GB (_Cewise_full_noaccum__div_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -18725,7 +18725,7 @@ GrB_Info GB (_bind2nd_tran__div_int32)
 ) ;
 
 
-void GB (_Cewise_full_accum__div_int64)
+GrB_Info GB (_Cewise_full_accum__div_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -18733,7 +18733,7 @@ void GB (_Cewise_full_accum__div_int64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__div_int64)
+GrB_Info GB (_Cewise_full_noaccum__div_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -18929,7 +18929,7 @@ GrB_Info GB (_bind2nd_tran__div_int64)
 ) ;
 
 
-void GB (_Cewise_full_accum__div_uint8)
+GrB_Info GB (_Cewise_full_accum__div_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -18937,7 +18937,7 @@ void GB (_Cewise_full_accum__div_uint8)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__div_uint8)
+GrB_Info GB (_Cewise_full_noaccum__div_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -19133,7 +19133,7 @@ GrB_Info GB (_bind2nd_tran__div_uint8)
 ) ;
 
 
-void GB (_Cewise_full_accum__div_uint16)
+GrB_Info GB (_Cewise_full_accum__div_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -19141,7 +19141,7 @@ void GB (_Cewise_full_accum__div_uint16)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__div_uint16)
+GrB_Info GB (_Cewise_full_noaccum__div_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -19337,7 +19337,7 @@ GrB_Info GB (_bind2nd_tran__div_uint16)
 ) ;
 
 
-void GB (_Cewise_full_accum__div_uint32)
+GrB_Info GB (_Cewise_full_accum__div_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -19345,7 +19345,7 @@ void GB (_Cewise_full_accum__div_uint32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__div_uint32)
+GrB_Info GB (_Cewise_full_noaccum__div_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -19541,7 +19541,7 @@ GrB_Info GB (_bind2nd_tran__div_uint32)
 ) ;
 
 
-void GB (_Cewise_full_accum__div_uint64)
+GrB_Info GB (_Cewise_full_accum__div_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -19549,7 +19549,7 @@ void GB (_Cewise_full_accum__div_uint64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__div_uint64)
+GrB_Info GB (_Cewise_full_noaccum__div_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -19745,7 +19745,7 @@ GrB_Info GB (_bind2nd_tran__div_uint64)
 ) ;
 
 
-void GB (_Cewise_full_accum__div_fp32)
+GrB_Info GB (_Cewise_full_accum__div_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -19753,7 +19753,7 @@ void GB (_Cewise_full_accum__div_fp32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__div_fp32)
+GrB_Info GB (_Cewise_full_noaccum__div_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -19949,7 +19949,7 @@ GrB_Info GB (_bind2nd_tran__div_fp32)
 ) ;
 
 
-void GB (_Cewise_full_accum__div_fp64)
+GrB_Info GB (_Cewise_full_accum__div_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -19957,7 +19957,7 @@ void GB (_Cewise_full_accum__div_fp64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__div_fp64)
+GrB_Info GB (_Cewise_full_noaccum__div_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -20153,7 +20153,7 @@ GrB_Info GB (_bind2nd_tran__div_fp64)
 ) ;
 
 
-void GB (_Cewise_full_accum__div_fc32)
+GrB_Info GB (_Cewise_full_accum__div_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -20161,7 +20161,7 @@ void GB (_Cewise_full_accum__div_fc32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__div_fc32)
+GrB_Info GB (_Cewise_full_noaccum__div_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -20357,7 +20357,7 @@ GrB_Info GB (_bind2nd_tran__div_fc32)
 ) ;
 
 
-void GB (_Cewise_full_accum__div_fc64)
+GrB_Info GB (_Cewise_full_accum__div_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -20365,7 +20365,7 @@ void GB (_Cewise_full_accum__div_fc64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__div_fc64)
+GrB_Info GB (_Cewise_full_noaccum__div_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -20561,7 +20561,7 @@ GrB_Info GB (_bind2nd_tran__div_fc64)
 ) ;
 
 
-void GB (_Cewise_full_accum__rdiv_int8)
+GrB_Info GB (_Cewise_full_accum__rdiv_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -20569,7 +20569,7 @@ void GB (_Cewise_full_accum__rdiv_int8)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rdiv_int8)
+GrB_Info GB (_Cewise_full_noaccum__rdiv_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -20765,7 +20765,7 @@ GrB_Info GB (_bind2nd_tran__rdiv_int8)
 ) ;
 
 
-void GB (_Cewise_full_accum__rdiv_int16)
+GrB_Info GB (_Cewise_full_accum__rdiv_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -20773,7 +20773,7 @@ void GB (_Cewise_full_accum__rdiv_int16)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rdiv_int16)
+GrB_Info GB (_Cewise_full_noaccum__rdiv_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -20969,7 +20969,7 @@ GrB_Info GB (_bind2nd_tran__rdiv_int16)
 ) ;
 
 
-void GB (_Cewise_full_accum__rdiv_int32)
+GrB_Info GB (_Cewise_full_accum__rdiv_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -20977,7 +20977,7 @@ void GB (_Cewise_full_accum__rdiv_int32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rdiv_int32)
+GrB_Info GB (_Cewise_full_noaccum__rdiv_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -21173,7 +21173,7 @@ GrB_Info GB (_bind2nd_tran__rdiv_int32)
 ) ;
 
 
-void GB (_Cewise_full_accum__rdiv_int64)
+GrB_Info GB (_Cewise_full_accum__rdiv_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -21181,7 +21181,7 @@ void GB (_Cewise_full_accum__rdiv_int64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rdiv_int64)
+GrB_Info GB (_Cewise_full_noaccum__rdiv_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -21377,7 +21377,7 @@ GrB_Info GB (_bind2nd_tran__rdiv_int64)
 ) ;
 
 
-void GB (_Cewise_full_accum__rdiv_uint8)
+GrB_Info GB (_Cewise_full_accum__rdiv_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -21385,7 +21385,7 @@ void GB (_Cewise_full_accum__rdiv_uint8)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rdiv_uint8)
+GrB_Info GB (_Cewise_full_noaccum__rdiv_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -21581,7 +21581,7 @@ GrB_Info GB (_bind2nd_tran__rdiv_uint8)
 ) ;
 
 
-void GB (_Cewise_full_accum__rdiv_uint16)
+GrB_Info GB (_Cewise_full_accum__rdiv_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -21589,7 +21589,7 @@ void GB (_Cewise_full_accum__rdiv_uint16)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rdiv_uint16)
+GrB_Info GB (_Cewise_full_noaccum__rdiv_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -21785,7 +21785,7 @@ GrB_Info GB (_bind2nd_tran__rdiv_uint16)
 ) ;
 
 
-void GB (_Cewise_full_accum__rdiv_uint32)
+GrB_Info GB (_Cewise_full_accum__rdiv_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -21793,7 +21793,7 @@ void GB (_Cewise_full_accum__rdiv_uint32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rdiv_uint32)
+GrB_Info GB (_Cewise_full_noaccum__rdiv_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -21989,7 +21989,7 @@ GrB_Info GB (_bind2nd_tran__rdiv_uint32)
 ) ;
 
 
-void GB (_Cewise_full_accum__rdiv_uint64)
+GrB_Info GB (_Cewise_full_accum__rdiv_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -21997,7 +21997,7 @@ void GB (_Cewise_full_accum__rdiv_uint64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rdiv_uint64)
+GrB_Info GB (_Cewise_full_noaccum__rdiv_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -22193,7 +22193,7 @@ GrB_Info GB (_bind2nd_tran__rdiv_uint64)
 ) ;
 
 
-void GB (_Cewise_full_accum__rdiv_fp32)
+GrB_Info GB (_Cewise_full_accum__rdiv_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -22201,7 +22201,7 @@ void GB (_Cewise_full_accum__rdiv_fp32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rdiv_fp32)
+GrB_Info GB (_Cewise_full_noaccum__rdiv_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -22397,7 +22397,7 @@ GrB_Info GB (_bind2nd_tran__rdiv_fp32)
 ) ;
 
 
-void GB (_Cewise_full_accum__rdiv_fp64)
+GrB_Info GB (_Cewise_full_accum__rdiv_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -22405,7 +22405,7 @@ void GB (_Cewise_full_accum__rdiv_fp64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rdiv_fp64)
+GrB_Info GB (_Cewise_full_noaccum__rdiv_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -22601,7 +22601,7 @@ GrB_Info GB (_bind2nd_tran__rdiv_fp64)
 ) ;
 
 
-void GB (_Cewise_full_accum__rdiv_fc32)
+GrB_Info GB (_Cewise_full_accum__rdiv_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -22609,7 +22609,7 @@ void GB (_Cewise_full_accum__rdiv_fc32)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rdiv_fc32)
+GrB_Info GB (_Cewise_full_noaccum__rdiv_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -22805,7 +22805,7 @@ GrB_Info GB (_bind2nd_tran__rdiv_fc32)
 ) ;
 
 
-void GB (_Cewise_full_accum__rdiv_fc64)
+GrB_Info GB (_Cewise_full_accum__rdiv_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -22813,7 +22813,7 @@ void GB (_Cewise_full_accum__rdiv_fc64)
     const int nthreads
 ) ;
 
-void GB (_Cewise_full_noaccum__rdiv_fc64)
+GrB_Info GB (_Cewise_full_noaccum__rdiv_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -23009,7 +23009,7 @@ GrB_Info GB (_bind2nd_tran__rdiv_fc64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__iseq_int8)
+GrB_Info GB (_Cewise_full_noaccum__iseq_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -23191,7 +23191,7 @@ GrB_Info GB (_bind2nd_tran__iseq_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__iseq_int16)
+GrB_Info GB (_Cewise_full_noaccum__iseq_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -23373,7 +23373,7 @@ GrB_Info GB (_bind2nd_tran__iseq_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__iseq_int32)
+GrB_Info GB (_Cewise_full_noaccum__iseq_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -23555,7 +23555,7 @@ GrB_Info GB (_bind2nd_tran__iseq_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__iseq_int64)
+GrB_Info GB (_Cewise_full_noaccum__iseq_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -23737,7 +23737,7 @@ GrB_Info GB (_bind2nd_tran__iseq_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__iseq_uint8)
+GrB_Info GB (_Cewise_full_noaccum__iseq_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -23919,7 +23919,7 @@ GrB_Info GB (_bind2nd_tran__iseq_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__iseq_uint16)
+GrB_Info GB (_Cewise_full_noaccum__iseq_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -24101,7 +24101,7 @@ GrB_Info GB (_bind2nd_tran__iseq_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__iseq_uint32)
+GrB_Info GB (_Cewise_full_noaccum__iseq_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -24283,7 +24283,7 @@ GrB_Info GB (_bind2nd_tran__iseq_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__iseq_uint64)
+GrB_Info GB (_Cewise_full_noaccum__iseq_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -24465,7 +24465,7 @@ GrB_Info GB (_bind2nd_tran__iseq_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__iseq_fp32)
+GrB_Info GB (_Cewise_full_noaccum__iseq_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -24647,7 +24647,7 @@ GrB_Info GB (_bind2nd_tran__iseq_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__iseq_fp64)
+GrB_Info GB (_Cewise_full_noaccum__iseq_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -24829,7 +24829,7 @@ GrB_Info GB (_bind2nd_tran__iseq_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__iseq_fc32)
+GrB_Info GB (_Cewise_full_noaccum__iseq_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -24993,7 +24993,7 @@ GrB_Info GB (_bind2nd_tran__iseq_fc32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__iseq_fc64)
+GrB_Info GB (_Cewise_full_noaccum__iseq_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -25157,7 +25157,7 @@ GrB_Info GB (_bind2nd_tran__iseq_fc64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isne_int8)
+GrB_Info GB (_Cewise_full_noaccum__isne_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -25339,7 +25339,7 @@ GrB_Info GB (_bind2nd_tran__isne_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isne_int16)
+GrB_Info GB (_Cewise_full_noaccum__isne_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -25521,7 +25521,7 @@ GrB_Info GB (_bind2nd_tran__isne_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isne_int32)
+GrB_Info GB (_Cewise_full_noaccum__isne_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -25703,7 +25703,7 @@ GrB_Info GB (_bind2nd_tran__isne_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isne_int64)
+GrB_Info GB (_Cewise_full_noaccum__isne_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -25885,7 +25885,7 @@ GrB_Info GB (_bind2nd_tran__isne_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isne_uint8)
+GrB_Info GB (_Cewise_full_noaccum__isne_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -26067,7 +26067,7 @@ GrB_Info GB (_bind2nd_tran__isne_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isne_uint16)
+GrB_Info GB (_Cewise_full_noaccum__isne_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -26249,7 +26249,7 @@ GrB_Info GB (_bind2nd_tran__isne_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isne_uint32)
+GrB_Info GB (_Cewise_full_noaccum__isne_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -26431,7 +26431,7 @@ GrB_Info GB (_bind2nd_tran__isne_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isne_uint64)
+GrB_Info GB (_Cewise_full_noaccum__isne_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -26613,7 +26613,7 @@ GrB_Info GB (_bind2nd_tran__isne_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isne_fp32)
+GrB_Info GB (_Cewise_full_noaccum__isne_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -26795,7 +26795,7 @@ GrB_Info GB (_bind2nd_tran__isne_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isne_fp64)
+GrB_Info GB (_Cewise_full_noaccum__isne_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -26977,7 +26977,7 @@ GrB_Info GB (_bind2nd_tran__isne_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isne_fc32)
+GrB_Info GB (_Cewise_full_noaccum__isne_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -27141,7 +27141,7 @@ GrB_Info GB (_bind2nd_tran__isne_fc32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isne_fc64)
+GrB_Info GB (_Cewise_full_noaccum__isne_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -27305,7 +27305,7 @@ GrB_Info GB (_bind2nd_tran__isne_fc64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isgt_int8)
+GrB_Info GB (_Cewise_full_noaccum__isgt_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -27501,7 +27501,7 @@ GrB_Info GB (_bind2nd_tran__isgt_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isgt_int16)
+GrB_Info GB (_Cewise_full_noaccum__isgt_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -27697,7 +27697,7 @@ GrB_Info GB (_bind2nd_tran__isgt_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isgt_int32)
+GrB_Info GB (_Cewise_full_noaccum__isgt_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -27893,7 +27893,7 @@ GrB_Info GB (_bind2nd_tran__isgt_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isgt_int64)
+GrB_Info GB (_Cewise_full_noaccum__isgt_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -28089,7 +28089,7 @@ GrB_Info GB (_bind2nd_tran__isgt_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isgt_uint8)
+GrB_Info GB (_Cewise_full_noaccum__isgt_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -28285,7 +28285,7 @@ GrB_Info GB (_bind2nd_tran__isgt_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isgt_uint16)
+GrB_Info GB (_Cewise_full_noaccum__isgt_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -28481,7 +28481,7 @@ GrB_Info GB (_bind2nd_tran__isgt_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isgt_uint32)
+GrB_Info GB (_Cewise_full_noaccum__isgt_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -28677,7 +28677,7 @@ GrB_Info GB (_bind2nd_tran__isgt_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isgt_uint64)
+GrB_Info GB (_Cewise_full_noaccum__isgt_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -28873,7 +28873,7 @@ GrB_Info GB (_bind2nd_tran__isgt_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isgt_fp32)
+GrB_Info GB (_Cewise_full_noaccum__isgt_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -29069,7 +29069,7 @@ GrB_Info GB (_bind2nd_tran__isgt_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isgt_fp64)
+GrB_Info GB (_Cewise_full_noaccum__isgt_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -29265,7 +29265,7 @@ GrB_Info GB (_bind2nd_tran__isgt_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__islt_int8)
+GrB_Info GB (_Cewise_full_noaccum__islt_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -29461,7 +29461,7 @@ GrB_Info GB (_bind2nd_tran__islt_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__islt_int16)
+GrB_Info GB (_Cewise_full_noaccum__islt_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -29657,7 +29657,7 @@ GrB_Info GB (_bind2nd_tran__islt_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__islt_int32)
+GrB_Info GB (_Cewise_full_noaccum__islt_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -29853,7 +29853,7 @@ GrB_Info GB (_bind2nd_tran__islt_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__islt_int64)
+GrB_Info GB (_Cewise_full_noaccum__islt_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -30049,7 +30049,7 @@ GrB_Info GB (_bind2nd_tran__islt_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__islt_uint8)
+GrB_Info GB (_Cewise_full_noaccum__islt_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -30245,7 +30245,7 @@ GrB_Info GB (_bind2nd_tran__islt_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__islt_uint16)
+GrB_Info GB (_Cewise_full_noaccum__islt_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -30441,7 +30441,7 @@ GrB_Info GB (_bind2nd_tran__islt_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__islt_uint32)
+GrB_Info GB (_Cewise_full_noaccum__islt_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -30637,7 +30637,7 @@ GrB_Info GB (_bind2nd_tran__islt_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__islt_uint64)
+GrB_Info GB (_Cewise_full_noaccum__islt_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -30833,7 +30833,7 @@ GrB_Info GB (_bind2nd_tran__islt_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__islt_fp32)
+GrB_Info GB (_Cewise_full_noaccum__islt_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -31029,7 +31029,7 @@ GrB_Info GB (_bind2nd_tran__islt_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__islt_fp64)
+GrB_Info GB (_Cewise_full_noaccum__islt_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -31225,7 +31225,7 @@ GrB_Info GB (_bind2nd_tran__islt_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isge_int8)
+GrB_Info GB (_Cewise_full_noaccum__isge_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -31421,7 +31421,7 @@ GrB_Info GB (_bind2nd_tran__isge_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isge_int16)
+GrB_Info GB (_Cewise_full_noaccum__isge_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -31617,7 +31617,7 @@ GrB_Info GB (_bind2nd_tran__isge_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isge_int32)
+GrB_Info GB (_Cewise_full_noaccum__isge_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -31813,7 +31813,7 @@ GrB_Info GB (_bind2nd_tran__isge_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isge_int64)
+GrB_Info GB (_Cewise_full_noaccum__isge_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -32009,7 +32009,7 @@ GrB_Info GB (_bind2nd_tran__isge_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isge_uint8)
+GrB_Info GB (_Cewise_full_noaccum__isge_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -32205,7 +32205,7 @@ GrB_Info GB (_bind2nd_tran__isge_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isge_uint16)
+GrB_Info GB (_Cewise_full_noaccum__isge_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -32401,7 +32401,7 @@ GrB_Info GB (_bind2nd_tran__isge_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isge_uint32)
+GrB_Info GB (_Cewise_full_noaccum__isge_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -32597,7 +32597,7 @@ GrB_Info GB (_bind2nd_tran__isge_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isge_uint64)
+GrB_Info GB (_Cewise_full_noaccum__isge_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -32793,7 +32793,7 @@ GrB_Info GB (_bind2nd_tran__isge_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isge_fp32)
+GrB_Info GB (_Cewise_full_noaccum__isge_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -32989,7 +32989,7 @@ GrB_Info GB (_bind2nd_tran__isge_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isge_fp64)
+GrB_Info GB (_Cewise_full_noaccum__isge_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -33185,7 +33185,7 @@ GrB_Info GB (_bind2nd_tran__isge_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isle_int8)
+GrB_Info GB (_Cewise_full_noaccum__isle_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -33381,7 +33381,7 @@ GrB_Info GB (_bind2nd_tran__isle_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isle_int16)
+GrB_Info GB (_Cewise_full_noaccum__isle_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -33577,7 +33577,7 @@ GrB_Info GB (_bind2nd_tran__isle_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isle_int32)
+GrB_Info GB (_Cewise_full_noaccum__isle_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -33773,7 +33773,7 @@ GrB_Info GB (_bind2nd_tran__isle_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isle_int64)
+GrB_Info GB (_Cewise_full_noaccum__isle_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -33969,7 +33969,7 @@ GrB_Info GB (_bind2nd_tran__isle_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isle_uint8)
+GrB_Info GB (_Cewise_full_noaccum__isle_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -34165,7 +34165,7 @@ GrB_Info GB (_bind2nd_tran__isle_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isle_uint16)
+GrB_Info GB (_Cewise_full_noaccum__isle_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -34361,7 +34361,7 @@ GrB_Info GB (_bind2nd_tran__isle_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isle_uint32)
+GrB_Info GB (_Cewise_full_noaccum__isle_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -34557,7 +34557,7 @@ GrB_Info GB (_bind2nd_tran__isle_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isle_uint64)
+GrB_Info GB (_Cewise_full_noaccum__isle_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -34753,7 +34753,7 @@ GrB_Info GB (_bind2nd_tran__isle_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isle_fp32)
+GrB_Info GB (_Cewise_full_noaccum__isle_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -34949,7 +34949,7 @@ GrB_Info GB (_bind2nd_tran__isle_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__isle_fp64)
+GrB_Info GB (_Cewise_full_noaccum__isle_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -35145,7 +35145,7 @@ GrB_Info GB (_bind2nd_tran__isle_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__eq_bool)
+GrB_Info GB (_Cewise_full_noaccum__eq_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -35327,7 +35327,7 @@ GrB_Info GB (_bind2nd_tran__eq_bool)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__eq_int8)
+GrB_Info GB (_Cewise_full_noaccum__eq_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -35509,7 +35509,7 @@ GrB_Info GB (_bind2nd_tran__eq_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__eq_int16)
+GrB_Info GB (_Cewise_full_noaccum__eq_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -35691,7 +35691,7 @@ GrB_Info GB (_bind2nd_tran__eq_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__eq_int32)
+GrB_Info GB (_Cewise_full_noaccum__eq_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -35873,7 +35873,7 @@ GrB_Info GB (_bind2nd_tran__eq_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__eq_int64)
+GrB_Info GB (_Cewise_full_noaccum__eq_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -36055,7 +36055,7 @@ GrB_Info GB (_bind2nd_tran__eq_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__eq_uint8)
+GrB_Info GB (_Cewise_full_noaccum__eq_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -36237,7 +36237,7 @@ GrB_Info GB (_bind2nd_tran__eq_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__eq_uint16)
+GrB_Info GB (_Cewise_full_noaccum__eq_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -36419,7 +36419,7 @@ GrB_Info GB (_bind2nd_tran__eq_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__eq_uint32)
+GrB_Info GB (_Cewise_full_noaccum__eq_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -36601,7 +36601,7 @@ GrB_Info GB (_bind2nd_tran__eq_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__eq_uint64)
+GrB_Info GB (_Cewise_full_noaccum__eq_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -36783,7 +36783,7 @@ GrB_Info GB (_bind2nd_tran__eq_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__eq_fp32)
+GrB_Info GB (_Cewise_full_noaccum__eq_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -36965,7 +36965,7 @@ GrB_Info GB (_bind2nd_tran__eq_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__eq_fp64)
+GrB_Info GB (_Cewise_full_noaccum__eq_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -37147,7 +37147,7 @@ GrB_Info GB (_bind2nd_tran__eq_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__eq_fc32)
+GrB_Info GB (_Cewise_full_noaccum__eq_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -37311,7 +37311,7 @@ GrB_Info GB (_bind2nd_tran__eq_fc32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__eq_fc64)
+GrB_Info GB (_Cewise_full_noaccum__eq_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -37475,7 +37475,7 @@ GrB_Info GB (_bind2nd_tran__eq_fc64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ne_int8)
+GrB_Info GB (_Cewise_full_noaccum__ne_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -37657,7 +37657,7 @@ GrB_Info GB (_bind2nd_tran__ne_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ne_int16)
+GrB_Info GB (_Cewise_full_noaccum__ne_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -37839,7 +37839,7 @@ GrB_Info GB (_bind2nd_tran__ne_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ne_int32)
+GrB_Info GB (_Cewise_full_noaccum__ne_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -38021,7 +38021,7 @@ GrB_Info GB (_bind2nd_tran__ne_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ne_int64)
+GrB_Info GB (_Cewise_full_noaccum__ne_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -38203,7 +38203,7 @@ GrB_Info GB (_bind2nd_tran__ne_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ne_uint8)
+GrB_Info GB (_Cewise_full_noaccum__ne_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -38385,7 +38385,7 @@ GrB_Info GB (_bind2nd_tran__ne_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ne_uint16)
+GrB_Info GB (_Cewise_full_noaccum__ne_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -38567,7 +38567,7 @@ GrB_Info GB (_bind2nd_tran__ne_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ne_uint32)
+GrB_Info GB (_Cewise_full_noaccum__ne_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -38749,7 +38749,7 @@ GrB_Info GB (_bind2nd_tran__ne_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ne_uint64)
+GrB_Info GB (_Cewise_full_noaccum__ne_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -38931,7 +38931,7 @@ GrB_Info GB (_bind2nd_tran__ne_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ne_fp32)
+GrB_Info GB (_Cewise_full_noaccum__ne_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -39113,7 +39113,7 @@ GrB_Info GB (_bind2nd_tran__ne_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ne_fp64)
+GrB_Info GB (_Cewise_full_noaccum__ne_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -39295,7 +39295,7 @@ GrB_Info GB (_bind2nd_tran__ne_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ne_fc32)
+GrB_Info GB (_Cewise_full_noaccum__ne_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -39459,7 +39459,7 @@ GrB_Info GB (_bind2nd_tran__ne_fc32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ne_fc64)
+GrB_Info GB (_Cewise_full_noaccum__ne_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -39623,7 +39623,7 @@ GrB_Info GB (_bind2nd_tran__ne_fc64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__gt_bool)
+GrB_Info GB (_Cewise_full_noaccum__gt_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -39819,7 +39819,7 @@ GrB_Info GB (_bind2nd_tran__gt_bool)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__gt_int8)
+GrB_Info GB (_Cewise_full_noaccum__gt_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -40015,7 +40015,7 @@ GrB_Info GB (_bind2nd_tran__gt_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__gt_int16)
+GrB_Info GB (_Cewise_full_noaccum__gt_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -40211,7 +40211,7 @@ GrB_Info GB (_bind2nd_tran__gt_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__gt_int32)
+GrB_Info GB (_Cewise_full_noaccum__gt_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -40407,7 +40407,7 @@ GrB_Info GB (_bind2nd_tran__gt_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__gt_int64)
+GrB_Info GB (_Cewise_full_noaccum__gt_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -40603,7 +40603,7 @@ GrB_Info GB (_bind2nd_tran__gt_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__gt_uint8)
+GrB_Info GB (_Cewise_full_noaccum__gt_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -40799,7 +40799,7 @@ GrB_Info GB (_bind2nd_tran__gt_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__gt_uint16)
+GrB_Info GB (_Cewise_full_noaccum__gt_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -40995,7 +40995,7 @@ GrB_Info GB (_bind2nd_tran__gt_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__gt_uint32)
+GrB_Info GB (_Cewise_full_noaccum__gt_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -41191,7 +41191,7 @@ GrB_Info GB (_bind2nd_tran__gt_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__gt_uint64)
+GrB_Info GB (_Cewise_full_noaccum__gt_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -41387,7 +41387,7 @@ GrB_Info GB (_bind2nd_tran__gt_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__gt_fp32)
+GrB_Info GB (_Cewise_full_noaccum__gt_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -41583,7 +41583,7 @@ GrB_Info GB (_bind2nd_tran__gt_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__gt_fp64)
+GrB_Info GB (_Cewise_full_noaccum__gt_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -41779,7 +41779,7 @@ GrB_Info GB (_bind2nd_tran__gt_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lt_bool)
+GrB_Info GB (_Cewise_full_noaccum__lt_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -41975,7 +41975,7 @@ GrB_Info GB (_bind2nd_tran__lt_bool)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lt_int8)
+GrB_Info GB (_Cewise_full_noaccum__lt_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -42171,7 +42171,7 @@ GrB_Info GB (_bind2nd_tran__lt_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lt_int16)
+GrB_Info GB (_Cewise_full_noaccum__lt_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -42367,7 +42367,7 @@ GrB_Info GB (_bind2nd_tran__lt_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lt_int32)
+GrB_Info GB (_Cewise_full_noaccum__lt_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -42563,7 +42563,7 @@ GrB_Info GB (_bind2nd_tran__lt_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lt_int64)
+GrB_Info GB (_Cewise_full_noaccum__lt_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -42759,7 +42759,7 @@ GrB_Info GB (_bind2nd_tran__lt_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lt_uint8)
+GrB_Info GB (_Cewise_full_noaccum__lt_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -42955,7 +42955,7 @@ GrB_Info GB (_bind2nd_tran__lt_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lt_uint16)
+GrB_Info GB (_Cewise_full_noaccum__lt_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -43151,7 +43151,7 @@ GrB_Info GB (_bind2nd_tran__lt_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lt_uint32)
+GrB_Info GB (_Cewise_full_noaccum__lt_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -43347,7 +43347,7 @@ GrB_Info GB (_bind2nd_tran__lt_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lt_uint64)
+GrB_Info GB (_Cewise_full_noaccum__lt_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -43543,7 +43543,7 @@ GrB_Info GB (_bind2nd_tran__lt_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lt_fp32)
+GrB_Info GB (_Cewise_full_noaccum__lt_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -43739,7 +43739,7 @@ GrB_Info GB (_bind2nd_tran__lt_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lt_fp64)
+GrB_Info GB (_Cewise_full_noaccum__lt_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -43935,7 +43935,7 @@ GrB_Info GB (_bind2nd_tran__lt_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ge_bool)
+GrB_Info GB (_Cewise_full_noaccum__ge_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -44131,7 +44131,7 @@ GrB_Info GB (_bind2nd_tran__ge_bool)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ge_int8)
+GrB_Info GB (_Cewise_full_noaccum__ge_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -44327,7 +44327,7 @@ GrB_Info GB (_bind2nd_tran__ge_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ge_int16)
+GrB_Info GB (_Cewise_full_noaccum__ge_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -44523,7 +44523,7 @@ GrB_Info GB (_bind2nd_tran__ge_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ge_int32)
+GrB_Info GB (_Cewise_full_noaccum__ge_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -44719,7 +44719,7 @@ GrB_Info GB (_bind2nd_tran__ge_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ge_int64)
+GrB_Info GB (_Cewise_full_noaccum__ge_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -44915,7 +44915,7 @@ GrB_Info GB (_bind2nd_tran__ge_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ge_uint8)
+GrB_Info GB (_Cewise_full_noaccum__ge_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -45111,7 +45111,7 @@ GrB_Info GB (_bind2nd_tran__ge_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ge_uint16)
+GrB_Info GB (_Cewise_full_noaccum__ge_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -45307,7 +45307,7 @@ GrB_Info GB (_bind2nd_tran__ge_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ge_uint32)
+GrB_Info GB (_Cewise_full_noaccum__ge_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -45503,7 +45503,7 @@ GrB_Info GB (_bind2nd_tran__ge_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ge_uint64)
+GrB_Info GB (_Cewise_full_noaccum__ge_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -45699,7 +45699,7 @@ GrB_Info GB (_bind2nd_tran__ge_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ge_fp32)
+GrB_Info GB (_Cewise_full_noaccum__ge_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -45895,7 +45895,7 @@ GrB_Info GB (_bind2nd_tran__ge_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ge_fp64)
+GrB_Info GB (_Cewise_full_noaccum__ge_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -46091,7 +46091,7 @@ GrB_Info GB (_bind2nd_tran__ge_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__le_bool)
+GrB_Info GB (_Cewise_full_noaccum__le_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -46287,7 +46287,7 @@ GrB_Info GB (_bind2nd_tran__le_bool)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__le_int8)
+GrB_Info GB (_Cewise_full_noaccum__le_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -46483,7 +46483,7 @@ GrB_Info GB (_bind2nd_tran__le_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__le_int16)
+GrB_Info GB (_Cewise_full_noaccum__le_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -46679,7 +46679,7 @@ GrB_Info GB (_bind2nd_tran__le_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__le_int32)
+GrB_Info GB (_Cewise_full_noaccum__le_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -46875,7 +46875,7 @@ GrB_Info GB (_bind2nd_tran__le_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__le_int64)
+GrB_Info GB (_Cewise_full_noaccum__le_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -47071,7 +47071,7 @@ GrB_Info GB (_bind2nd_tran__le_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__le_uint8)
+GrB_Info GB (_Cewise_full_noaccum__le_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -47267,7 +47267,7 @@ GrB_Info GB (_bind2nd_tran__le_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__le_uint16)
+GrB_Info GB (_Cewise_full_noaccum__le_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -47463,7 +47463,7 @@ GrB_Info GB (_bind2nd_tran__le_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__le_uint32)
+GrB_Info GB (_Cewise_full_noaccum__le_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -47659,7 +47659,7 @@ GrB_Info GB (_bind2nd_tran__le_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__le_uint64)
+GrB_Info GB (_Cewise_full_noaccum__le_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -47855,7 +47855,7 @@ GrB_Info GB (_bind2nd_tran__le_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__le_fp32)
+GrB_Info GB (_Cewise_full_noaccum__le_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -48051,7 +48051,7 @@ GrB_Info GB (_bind2nd_tran__le_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__le_fp64)
+GrB_Info GB (_Cewise_full_noaccum__le_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -48247,7 +48247,7 @@ GrB_Info GB (_bind2nd_tran__le_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lor_bool)
+GrB_Info GB (_Cewise_full_noaccum__lor_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -48429,7 +48429,7 @@ GrB_Info GB (_bind2nd_tran__lor_bool)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lor_int8)
+GrB_Info GB (_Cewise_full_noaccum__lor_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -48611,7 +48611,7 @@ GrB_Info GB (_bind2nd_tran__lor_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lor_int16)
+GrB_Info GB (_Cewise_full_noaccum__lor_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -48793,7 +48793,7 @@ GrB_Info GB (_bind2nd_tran__lor_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lor_int32)
+GrB_Info GB (_Cewise_full_noaccum__lor_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -48975,7 +48975,7 @@ GrB_Info GB (_bind2nd_tran__lor_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lor_int64)
+GrB_Info GB (_Cewise_full_noaccum__lor_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -49157,7 +49157,7 @@ GrB_Info GB (_bind2nd_tran__lor_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lor_uint8)
+GrB_Info GB (_Cewise_full_noaccum__lor_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -49339,7 +49339,7 @@ GrB_Info GB (_bind2nd_tran__lor_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lor_uint16)
+GrB_Info GB (_Cewise_full_noaccum__lor_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -49521,7 +49521,7 @@ GrB_Info GB (_bind2nd_tran__lor_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lor_uint32)
+GrB_Info GB (_Cewise_full_noaccum__lor_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -49703,7 +49703,7 @@ GrB_Info GB (_bind2nd_tran__lor_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lor_uint64)
+GrB_Info GB (_Cewise_full_noaccum__lor_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -49885,7 +49885,7 @@ GrB_Info GB (_bind2nd_tran__lor_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lor_fp32)
+GrB_Info GB (_Cewise_full_noaccum__lor_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -50067,7 +50067,7 @@ GrB_Info GB (_bind2nd_tran__lor_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lor_fp64)
+GrB_Info GB (_Cewise_full_noaccum__lor_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -50249,7 +50249,7 @@ GrB_Info GB (_bind2nd_tran__lor_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__land_bool)
+GrB_Info GB (_Cewise_full_noaccum__land_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -50431,7 +50431,7 @@ GrB_Info GB (_bind2nd_tran__land_bool)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__land_int8)
+GrB_Info GB (_Cewise_full_noaccum__land_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -50613,7 +50613,7 @@ GrB_Info GB (_bind2nd_tran__land_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__land_int16)
+GrB_Info GB (_Cewise_full_noaccum__land_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -50795,7 +50795,7 @@ GrB_Info GB (_bind2nd_tran__land_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__land_int32)
+GrB_Info GB (_Cewise_full_noaccum__land_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -50977,7 +50977,7 @@ GrB_Info GB (_bind2nd_tran__land_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__land_int64)
+GrB_Info GB (_Cewise_full_noaccum__land_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -51159,7 +51159,7 @@ GrB_Info GB (_bind2nd_tran__land_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__land_uint8)
+GrB_Info GB (_Cewise_full_noaccum__land_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -51341,7 +51341,7 @@ GrB_Info GB (_bind2nd_tran__land_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__land_uint16)
+GrB_Info GB (_Cewise_full_noaccum__land_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -51523,7 +51523,7 @@ GrB_Info GB (_bind2nd_tran__land_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__land_uint32)
+GrB_Info GB (_Cewise_full_noaccum__land_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -51705,7 +51705,7 @@ GrB_Info GB (_bind2nd_tran__land_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__land_uint64)
+GrB_Info GB (_Cewise_full_noaccum__land_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -51887,7 +51887,7 @@ GrB_Info GB (_bind2nd_tran__land_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__land_fp32)
+GrB_Info GB (_Cewise_full_noaccum__land_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -52069,7 +52069,7 @@ GrB_Info GB (_bind2nd_tran__land_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__land_fp64)
+GrB_Info GB (_Cewise_full_noaccum__land_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -52251,7 +52251,7 @@ GrB_Info GB (_bind2nd_tran__land_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lxor_bool)
+GrB_Info GB (_Cewise_full_noaccum__lxor_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -52433,7 +52433,7 @@ GrB_Info GB (_bind2nd_tran__lxor_bool)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lxor_int8)
+GrB_Info GB (_Cewise_full_noaccum__lxor_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -52615,7 +52615,7 @@ GrB_Info GB (_bind2nd_tran__lxor_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lxor_int16)
+GrB_Info GB (_Cewise_full_noaccum__lxor_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -52797,7 +52797,7 @@ GrB_Info GB (_bind2nd_tran__lxor_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lxor_int32)
+GrB_Info GB (_Cewise_full_noaccum__lxor_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -52979,7 +52979,7 @@ GrB_Info GB (_bind2nd_tran__lxor_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lxor_int64)
+GrB_Info GB (_Cewise_full_noaccum__lxor_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -53161,7 +53161,7 @@ GrB_Info GB (_bind2nd_tran__lxor_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lxor_uint8)
+GrB_Info GB (_Cewise_full_noaccum__lxor_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -53343,7 +53343,7 @@ GrB_Info GB (_bind2nd_tran__lxor_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lxor_uint16)
+GrB_Info GB (_Cewise_full_noaccum__lxor_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -53525,7 +53525,7 @@ GrB_Info GB (_bind2nd_tran__lxor_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lxor_uint32)
+GrB_Info GB (_Cewise_full_noaccum__lxor_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -53707,7 +53707,7 @@ GrB_Info GB (_bind2nd_tran__lxor_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lxor_uint64)
+GrB_Info GB (_Cewise_full_noaccum__lxor_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -53889,7 +53889,7 @@ GrB_Info GB (_bind2nd_tran__lxor_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lxor_fp32)
+GrB_Info GB (_Cewise_full_noaccum__lxor_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -54071,7 +54071,7 @@ GrB_Info GB (_bind2nd_tran__lxor_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__lxor_fp64)
+GrB_Info GB (_Cewise_full_noaccum__lxor_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -54253,7 +54253,7 @@ GrB_Info GB (_bind2nd_tran__lxor_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__atan2_fp32)
+GrB_Info GB (_Cewise_full_noaccum__atan2_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -54431,7 +54431,7 @@ GrB_Info GB (_bind2nd_tran__atan2_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__atan2_fp64)
+GrB_Info GB (_Cewise_full_noaccum__atan2_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -54609,7 +54609,7 @@ GrB_Info GB (_bind2nd_tran__atan2_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__hypot_fp32)
+GrB_Info GB (_Cewise_full_noaccum__hypot_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -54773,7 +54773,7 @@ GrB_Info GB (_bind2nd_tran__hypot_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__hypot_fp64)
+GrB_Info GB (_Cewise_full_noaccum__hypot_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -54937,7 +54937,7 @@ GrB_Info GB (_bind2nd_tran__hypot_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__fmod_fp32)
+GrB_Info GB (_Cewise_full_noaccum__fmod_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -55115,7 +55115,7 @@ GrB_Info GB (_bind2nd_tran__fmod_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__fmod_fp64)
+GrB_Info GB (_Cewise_full_noaccum__fmod_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -55293,7 +55293,7 @@ GrB_Info GB (_bind2nd_tran__fmod_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__remainder_fp32)
+GrB_Info GB (_Cewise_full_noaccum__remainder_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -55471,7 +55471,7 @@ GrB_Info GB (_bind2nd_tran__remainder_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__remainder_fp64)
+GrB_Info GB (_Cewise_full_noaccum__remainder_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -55649,7 +55649,7 @@ GrB_Info GB (_bind2nd_tran__remainder_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__copysign_fp32)
+GrB_Info GB (_Cewise_full_noaccum__copysign_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -55827,7 +55827,7 @@ GrB_Info GB (_bind2nd_tran__copysign_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__copysign_fp64)
+GrB_Info GB (_Cewise_full_noaccum__copysign_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -56005,7 +56005,7 @@ GrB_Info GB (_bind2nd_tran__copysign_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ldexp_fp32)
+GrB_Info GB (_Cewise_full_noaccum__ldexp_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -56183,7 +56183,7 @@ GrB_Info GB (_bind2nd_tran__ldexp_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__ldexp_fp64)
+GrB_Info GB (_Cewise_full_noaccum__ldexp_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -56361,7 +56361,7 @@ GrB_Info GB (_bind2nd_tran__ldexp_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__cmplx_fp32)
+GrB_Info GB (_Cewise_full_noaccum__cmplx_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -56539,7 +56539,7 @@ GrB_Info GB (_bind2nd_tran__cmplx_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__cmplx_fp64)
+GrB_Info GB (_Cewise_full_noaccum__cmplx_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -56717,7 +56717,7 @@ GrB_Info GB (_bind2nd_tran__cmplx_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bor_int8)
+GrB_Info GB (_Cewise_full_noaccum__bor_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -56881,7 +56881,7 @@ GrB_Info GB (_bind2nd_tran__bor_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bor_int16)
+GrB_Info GB (_Cewise_full_noaccum__bor_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -57045,7 +57045,7 @@ GrB_Info GB (_bind2nd_tran__bor_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bor_int32)
+GrB_Info GB (_Cewise_full_noaccum__bor_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -57209,7 +57209,7 @@ GrB_Info GB (_bind2nd_tran__bor_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bor_int64)
+GrB_Info GB (_Cewise_full_noaccum__bor_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -57373,7 +57373,7 @@ GrB_Info GB (_bind2nd_tran__bor_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bor_uint8)
+GrB_Info GB (_Cewise_full_noaccum__bor_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -57555,7 +57555,7 @@ GrB_Info GB (_bind2nd_tran__bor_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bor_uint16)
+GrB_Info GB (_Cewise_full_noaccum__bor_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -57737,7 +57737,7 @@ GrB_Info GB (_bind2nd_tran__bor_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bor_uint32)
+GrB_Info GB (_Cewise_full_noaccum__bor_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -57919,7 +57919,7 @@ GrB_Info GB (_bind2nd_tran__bor_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bor_uint64)
+GrB_Info GB (_Cewise_full_noaccum__bor_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -58101,7 +58101,7 @@ GrB_Info GB (_bind2nd_tran__bor_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__band_int8)
+GrB_Info GB (_Cewise_full_noaccum__band_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -58265,7 +58265,7 @@ GrB_Info GB (_bind2nd_tran__band_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__band_int16)
+GrB_Info GB (_Cewise_full_noaccum__band_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -58429,7 +58429,7 @@ GrB_Info GB (_bind2nd_tran__band_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__band_int32)
+GrB_Info GB (_Cewise_full_noaccum__band_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -58593,7 +58593,7 @@ GrB_Info GB (_bind2nd_tran__band_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__band_int64)
+GrB_Info GB (_Cewise_full_noaccum__band_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -58757,7 +58757,7 @@ GrB_Info GB (_bind2nd_tran__band_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__band_uint8)
+GrB_Info GB (_Cewise_full_noaccum__band_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -58939,7 +58939,7 @@ GrB_Info GB (_bind2nd_tran__band_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__band_uint16)
+GrB_Info GB (_Cewise_full_noaccum__band_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -59121,7 +59121,7 @@ GrB_Info GB (_bind2nd_tran__band_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__band_uint32)
+GrB_Info GB (_Cewise_full_noaccum__band_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -59303,7 +59303,7 @@ GrB_Info GB (_bind2nd_tran__band_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__band_uint64)
+GrB_Info GB (_Cewise_full_noaccum__band_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -59485,7 +59485,7 @@ GrB_Info GB (_bind2nd_tran__band_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bxor_int8)
+GrB_Info GB (_Cewise_full_noaccum__bxor_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -59649,7 +59649,7 @@ GrB_Info GB (_bind2nd_tran__bxor_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bxor_int16)
+GrB_Info GB (_Cewise_full_noaccum__bxor_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -59813,7 +59813,7 @@ GrB_Info GB (_bind2nd_tran__bxor_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bxor_int32)
+GrB_Info GB (_Cewise_full_noaccum__bxor_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -59977,7 +59977,7 @@ GrB_Info GB (_bind2nd_tran__bxor_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bxor_int64)
+GrB_Info GB (_Cewise_full_noaccum__bxor_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -60141,7 +60141,7 @@ GrB_Info GB (_bind2nd_tran__bxor_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bxor_uint8)
+GrB_Info GB (_Cewise_full_noaccum__bxor_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -60323,7 +60323,7 @@ GrB_Info GB (_bind2nd_tran__bxor_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bxor_uint16)
+GrB_Info GB (_Cewise_full_noaccum__bxor_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -60505,7 +60505,7 @@ GrB_Info GB (_bind2nd_tran__bxor_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bxor_uint32)
+GrB_Info GB (_Cewise_full_noaccum__bxor_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -60687,7 +60687,7 @@ GrB_Info GB (_bind2nd_tran__bxor_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bxor_uint64)
+GrB_Info GB (_Cewise_full_noaccum__bxor_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -60869,7 +60869,7 @@ GrB_Info GB (_bind2nd_tran__bxor_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bxnor_int8)
+GrB_Info GB (_Cewise_full_noaccum__bxnor_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -61033,7 +61033,7 @@ GrB_Info GB (_bind2nd_tran__bxnor_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bxnor_int16)
+GrB_Info GB (_Cewise_full_noaccum__bxnor_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -61197,7 +61197,7 @@ GrB_Info GB (_bind2nd_tran__bxnor_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bxnor_int32)
+GrB_Info GB (_Cewise_full_noaccum__bxnor_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -61361,7 +61361,7 @@ GrB_Info GB (_bind2nd_tran__bxnor_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bxnor_int64)
+GrB_Info GB (_Cewise_full_noaccum__bxnor_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -61525,7 +61525,7 @@ GrB_Info GB (_bind2nd_tran__bxnor_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bxnor_uint8)
+GrB_Info GB (_Cewise_full_noaccum__bxnor_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -61707,7 +61707,7 @@ GrB_Info GB (_bind2nd_tran__bxnor_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bxnor_uint16)
+GrB_Info GB (_Cewise_full_noaccum__bxnor_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -61889,7 +61889,7 @@ GrB_Info GB (_bind2nd_tran__bxnor_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bxnor_uint32)
+GrB_Info GB (_Cewise_full_noaccum__bxnor_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -62071,7 +62071,7 @@ GrB_Info GB (_bind2nd_tran__bxnor_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bxnor_uint64)
+GrB_Info GB (_Cewise_full_noaccum__bxnor_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -62253,7 +62253,7 @@ GrB_Info GB (_bind2nd_tran__bxnor_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bget_int8)
+GrB_Info GB (_Cewise_full_noaccum__bget_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -62431,7 +62431,7 @@ GrB_Info GB (_bind2nd_tran__bget_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bget_int16)
+GrB_Info GB (_Cewise_full_noaccum__bget_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -62609,7 +62609,7 @@ GrB_Info GB (_bind2nd_tran__bget_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bget_int32)
+GrB_Info GB (_Cewise_full_noaccum__bget_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -62787,7 +62787,7 @@ GrB_Info GB (_bind2nd_tran__bget_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bget_int64)
+GrB_Info GB (_Cewise_full_noaccum__bget_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -62965,7 +62965,7 @@ GrB_Info GB (_bind2nd_tran__bget_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bget_uint8)
+GrB_Info GB (_Cewise_full_noaccum__bget_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -63143,7 +63143,7 @@ GrB_Info GB (_bind2nd_tran__bget_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bget_uint16)
+GrB_Info GB (_Cewise_full_noaccum__bget_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -63321,7 +63321,7 @@ GrB_Info GB (_bind2nd_tran__bget_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bget_uint32)
+GrB_Info GB (_Cewise_full_noaccum__bget_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -63499,7 +63499,7 @@ GrB_Info GB (_bind2nd_tran__bget_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bget_uint64)
+GrB_Info GB (_Cewise_full_noaccum__bget_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -63677,7 +63677,7 @@ GrB_Info GB (_bind2nd_tran__bget_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bset_int8)
+GrB_Info GB (_Cewise_full_noaccum__bset_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -63855,7 +63855,7 @@ GrB_Info GB (_bind2nd_tran__bset_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bset_int16)
+GrB_Info GB (_Cewise_full_noaccum__bset_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -64033,7 +64033,7 @@ GrB_Info GB (_bind2nd_tran__bset_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bset_int32)
+GrB_Info GB (_Cewise_full_noaccum__bset_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -64211,7 +64211,7 @@ GrB_Info GB (_bind2nd_tran__bset_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bset_int64)
+GrB_Info GB (_Cewise_full_noaccum__bset_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -64389,7 +64389,7 @@ GrB_Info GB (_bind2nd_tran__bset_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bset_uint8)
+GrB_Info GB (_Cewise_full_noaccum__bset_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -64567,7 +64567,7 @@ GrB_Info GB (_bind2nd_tran__bset_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bset_uint16)
+GrB_Info GB (_Cewise_full_noaccum__bset_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -64745,7 +64745,7 @@ GrB_Info GB (_bind2nd_tran__bset_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bset_uint32)
+GrB_Info GB (_Cewise_full_noaccum__bset_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -64923,7 +64923,7 @@ GrB_Info GB (_bind2nd_tran__bset_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bset_uint64)
+GrB_Info GB (_Cewise_full_noaccum__bset_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -65101,7 +65101,7 @@ GrB_Info GB (_bind2nd_tran__bset_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bclr_int8)
+GrB_Info GB (_Cewise_full_noaccum__bclr_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -65279,7 +65279,7 @@ GrB_Info GB (_bind2nd_tran__bclr_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bclr_int16)
+GrB_Info GB (_Cewise_full_noaccum__bclr_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -65457,7 +65457,7 @@ GrB_Info GB (_bind2nd_tran__bclr_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bclr_int32)
+GrB_Info GB (_Cewise_full_noaccum__bclr_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -65635,7 +65635,7 @@ GrB_Info GB (_bind2nd_tran__bclr_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bclr_int64)
+GrB_Info GB (_Cewise_full_noaccum__bclr_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -65813,7 +65813,7 @@ GrB_Info GB (_bind2nd_tran__bclr_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bclr_uint8)
+GrB_Info GB (_Cewise_full_noaccum__bclr_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -65991,7 +65991,7 @@ GrB_Info GB (_bind2nd_tran__bclr_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bclr_uint16)
+GrB_Info GB (_Cewise_full_noaccum__bclr_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -66169,7 +66169,7 @@ GrB_Info GB (_bind2nd_tran__bclr_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bclr_uint32)
+GrB_Info GB (_Cewise_full_noaccum__bclr_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -66347,7 +66347,7 @@ GrB_Info GB (_bind2nd_tran__bclr_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bclr_uint64)
+GrB_Info GB (_Cewise_full_noaccum__bclr_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -66525,7 +66525,7 @@ GrB_Info GB (_bind2nd_tran__bclr_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bshift_int8)
+GrB_Info GB (_Cewise_full_noaccum__bshift_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -66703,7 +66703,7 @@ GrB_Info GB (_bind2nd_tran__bshift_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bshift_int16)
+GrB_Info GB (_Cewise_full_noaccum__bshift_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -66881,7 +66881,7 @@ GrB_Info GB (_bind2nd_tran__bshift_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bshift_int32)
+GrB_Info GB (_Cewise_full_noaccum__bshift_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -67059,7 +67059,7 @@ GrB_Info GB (_bind2nd_tran__bshift_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bshift_int64)
+GrB_Info GB (_Cewise_full_noaccum__bshift_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -67237,7 +67237,7 @@ GrB_Info GB (_bind2nd_tran__bshift_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bshift_uint8)
+GrB_Info GB (_Cewise_full_noaccum__bshift_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -67415,7 +67415,7 @@ GrB_Info GB (_bind2nd_tran__bshift_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bshift_uint16)
+GrB_Info GB (_Cewise_full_noaccum__bshift_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -67593,7 +67593,7 @@ GrB_Info GB (_bind2nd_tran__bshift_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bshift_uint32)
+GrB_Info GB (_Cewise_full_noaccum__bshift_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -67771,7 +67771,7 @@ GrB_Info GB (_bind2nd_tran__bshift_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__bshift_uint64)
+GrB_Info GB (_Cewise_full_noaccum__bshift_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -67949,7 +67949,7 @@ GrB_Info GB (_bind2nd_tran__bshift_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pow_int8)
+GrB_Info GB (_Cewise_full_noaccum__pow_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -68127,7 +68127,7 @@ GrB_Info GB (_bind2nd_tran__pow_int8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pow_int16)
+GrB_Info GB (_Cewise_full_noaccum__pow_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -68305,7 +68305,7 @@ GrB_Info GB (_bind2nd_tran__pow_int16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pow_int32)
+GrB_Info GB (_Cewise_full_noaccum__pow_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -68483,7 +68483,7 @@ GrB_Info GB (_bind2nd_tran__pow_int32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pow_int64)
+GrB_Info GB (_Cewise_full_noaccum__pow_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -68661,7 +68661,7 @@ GrB_Info GB (_bind2nd_tran__pow_int64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pow_uint8)
+GrB_Info GB (_Cewise_full_noaccum__pow_uint8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -68839,7 +68839,7 @@ GrB_Info GB (_bind2nd_tran__pow_uint8)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pow_uint16)
+GrB_Info GB (_Cewise_full_noaccum__pow_uint16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -69017,7 +69017,7 @@ GrB_Info GB (_bind2nd_tran__pow_uint16)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pow_uint32)
+GrB_Info GB (_Cewise_full_noaccum__pow_uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -69195,7 +69195,7 @@ GrB_Info GB (_bind2nd_tran__pow_uint32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pow_uint64)
+GrB_Info GB (_Cewise_full_noaccum__pow_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -69373,7 +69373,7 @@ GrB_Info GB (_bind2nd_tran__pow_uint64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pow_fp32)
+GrB_Info GB (_Cewise_full_noaccum__pow_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -69551,7 +69551,7 @@ GrB_Info GB (_bind2nd_tran__pow_fp32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pow_fp64)
+GrB_Info GB (_Cewise_full_noaccum__pow_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -69729,7 +69729,7 @@ GrB_Info GB (_bind2nd_tran__pow_fp64)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pow_fc32)
+GrB_Info GB (_Cewise_full_noaccum__pow_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -69907,7 +69907,7 @@ GrB_Info GB (_bind2nd_tran__pow_fc32)
 ) ;
 
 
-void GB (_Cewise_full_noaccum__pow_fc64)
+GrB_Info GB (_Cewise_full_noaccum__pow_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,

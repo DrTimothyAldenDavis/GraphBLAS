@@ -14,6 +14,9 @@
 
 // operator:
 #define GB_BINOP(z,x,y,i,j) z = GB_idiv_uint16 (y, x)
+#define GB_Z_TYPE uint16_t
+#define GB_X_TYPE uint16_t
+#define GB_Y_TYPE uint16_t
 
 // A matrix:
 #define GB_A_TYPE uint16_t

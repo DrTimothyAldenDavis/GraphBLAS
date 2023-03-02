@@ -18,8 +18,8 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     uint64_t scode,
     GrB_BinaryOp binaryop,      // binaryop to macrofy
     GrB_Type ctype,
-    GrB_Type atype,
-    GrB_Type btype
+    GrB_Type atype,             // NULL for apply bind1st
+    GrB_Type btype              // NULL for apply bind2nd
 )
 {
 

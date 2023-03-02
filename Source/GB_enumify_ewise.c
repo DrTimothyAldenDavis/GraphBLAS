@@ -143,7 +143,7 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
     GB_enumify_binop (&binop_ecode, binaryop_opcode, xcode, false) ;
 
     int is_union  = (is_eWiseUnion) ? 1 : 0 ;
-    int is_emult  = (is_eWiseMult) ? 1 : 0 ;
+    int is_emult  = (is_eWiseMult ) ? 1 : 0 ;
     int copy_to_C = (can_copy_to_C) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
@@ -158,8 +158,8 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
 
     int ccode = C_iso ? 0 : ctype->code ;          // 0 to 14
 
-    int A_iso_code = (A->iso) ? 1 : 0 ;
-    int B_iso_code = (B->iso) ? 1 : 0 ;
+    int A_iso_code = (A != NULL && A->iso) ? 1 : 0 ;
+    int B_iso_code = (B != NULL && B->iso) ? 1 : 0 ;
     int C_in_iso_cd = (C_in_iso) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------

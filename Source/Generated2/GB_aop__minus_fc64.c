@@ -14,6 +14,9 @@
 
 // operator:
 #define GB_BINOP(z,x,y,i,j) z = GB_FC64_minus (x, y)
+#define GB_Z_TYPE GxB_FC64_t
+#define GB_X_TYPE GxB_FC64_t
+#define GB_Y_TYPE GxB_FC64_t
 
 // A matrix:
 #define GB_A_TYPE GxB_FC64_t
