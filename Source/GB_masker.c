@@ -49,6 +49,9 @@
 // R is iso if both C and Z are iso and zij == cij.  This is handled in
 // GB_masker_phase2.
 
+// JIT TODO: masker; for matrix format and type.  No operators needed.
+// Add factory kernels?
+
 #include "GB_mask.h"
 #include "GB_add.h"
 #define GB_FREE_ALL ;
