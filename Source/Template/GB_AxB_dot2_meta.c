@@ -94,9 +94,9 @@
         #define Mask_struct GB_MASK_STRUCT
         #define Mask_comp   GB_MASK_COMP
 
-        const int8_t *restrict Mb = M->b ;
-        const GB_M_TYPE *restrict Mx = (GB_M_TYPE *)
-                (Mask_struct ? NULL : (M->x)) ;
+        const int8_t *restrict Mb = (M == NULL) ? NULL : M->b ;
+        const GB_M_TYPE *restrict Mx = (M == NULL) ? NULL :
+            ((GB_M_TYPE *) (Mask_struct ? NULL : (M->x))) ;
 
         #define GB_META16
         #include "GB_meta16_definitions.h"

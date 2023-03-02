@@ -423,14 +423,16 @@ int GB_jitifyer_compile
 
     // FIXME: allow user to set compiler and flags
     snprintf (command, 4096,
-    "gcc -fPIC -O3 -std=c11 -fexcess-precision=fast "
+//  "gcc -fPIC -O3 -std=c11 -fexcess-precision=fast "
+    "gcc -fPIC -g -std=c11 -fexcess-precision=fast "
     #ifdef GBRENAME
     " -DGBRENAME=1 "
     #endif
     "-fcx-limited-range -fno-math-errno -fwrapv -DNDEBUG "
     "-fopenmp %s -o "
     " %s/%s.o -c %s/%s.c ;" 
-    "gcc -fPIC -O3 -std=c11 -fexcess-precision=fast "
+//  "gcc -fPIC -O3 -std=c11 -fexcess-precision=fast "
+    "gcc -fPIC -g -std=c11 -fexcess-precision=fast "
     "-fcx-limited-range -fno-math-errno -fwrapv -DNDEBUG "
     "-fopenmp "
     " -shared -Wl,-soname,lib%s.so -o %s/lib%s.so"

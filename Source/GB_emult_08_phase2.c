@@ -276,7 +276,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     }
 
     //--------------------------------------------------------------------------
-    // construct the final C->h
+    // remove empty vectors from C, if hypersparse
     //--------------------------------------------------------------------------
 
     if (info != GrB_SUCCESS)

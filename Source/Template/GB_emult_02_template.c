@@ -59,7 +59,7 @@
 
     #ifdef GB_JIT_KERNEL
 
-        #if GB_NOMASK
+        #if GB_NO_MASK
         {
             #if GB_B_IS_BITMAP
             {
