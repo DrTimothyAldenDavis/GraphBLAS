@@ -39,6 +39,8 @@
 #define GB_JIT_KERNEL_EMULT4        16
 #define GB_JIT_KERNEL_EMULT_BITMAP  17
 #define GB_JIT_KERNEL_EMULT8        18
+#define GB_JIT_KERNEL_EWISEFA       19
+#define GB_JIT_KERNEL_EWISEFN       19
 
 // ... etc FIXME: list them all here
 // or make this an enum

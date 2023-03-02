@@ -36,26 +36,43 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 // GB_ewise_full_accum: C += A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-void GB_ewise_full_accum           // C += A+B, all matrices dense
+GrB_Info GB_ewise_full_accum        // C += A+B, all matrices dense
 (
     GrB_Matrix C,                   // input/output matrix
+    const GrB_BinaryOp op,          // only GB_BINOP_SUBSET operators supported
+    const GrB_Matrix A,
+    const GrB_Matrix B
+) ;
+
+GrB_Info GB_ewise_full_accum_jit    // C+=A+B via the JIT
+(
+    GrB_Matrix C,
+    const GrB_BinaryOp binaryop,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const GrB_BinaryOp op,
-    GB_Werk Werk
+    const int nthreads
 ) ;
 
 //------------------------------------------------------------------------------
 // GB_ewise_full_noaccum: C = A+B where A and B are dense; C anything
 //------------------------------------------------------------------------------
 
-GrB_Info GB_ewise_full_noaccum    // C = A+B, where A and B are dense
+GrB_Info GB_ewise_full_noaccum      // C = A+B
 (
     GrB_Matrix C,                   // input/output matrix
-    const bool C_is_dense,          // true if C is dense
+    const bool C_as_if_full,        // true if C is as-if-full on input
+    const GrB_BinaryOp op,          // must not be a positional op
+    const GrB_Matrix A,
+    const GrB_Matrix B
+) ;
+
+GrB_Info GB_ewise_full_noaccum_jit  // C=A+B via the JIT
+(
+    GrB_Matrix C,
+    const GrB_BinaryOp binaryop,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const GrB_BinaryOp op
+    const int nthreads
 ) ;
 
 #endif

@@ -19,16 +19,15 @@
 
 #define GB_FREE_ALL ;
 
-GrB_Info GB_ewise_full_noaccum    // C = A+B
+GrB_Info GB_ewise_full_noaccum      // C = A+B
 (
     GrB_Matrix C,                   // input/output matrix
     const bool C_as_if_full,        // true if C is as-if-full on input
+    const GrB_BinaryOp op,          // must not be a positional op
     const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GrB_BinaryOp op           // must not be a positional op
+    const GrB_Matrix B
 )
 {
-#ifndef GBCUDA_DEV
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -62,9 +61,6 @@ GrB_Info GB_ewise_full_noaccum    // C = A+B
 
     ASSERT_BINARYOP_OK (op, "op for dense C=A+B", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (op)) ;
-    ASSERT (op->ztype == C->type) ;
-    ASSERT (op->xtype == A->type) ;
-    ASSERT (op->ytype == B->type) ;
 
     #ifdef GB_DEBUGIFY_DEFN
     GB_debugify_ewise (false, false, false, false, false, GxB_FULL,
@@ -109,53 +105,59 @@ GrB_Info GB_ewise_full_noaccum    // C = A+B
     // via the factory kernel
     //--------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    // define the worker for the switch factory
-    //--------------------------------------------------------------------------
+    info = GrB_NO_VALUE ;
 
-    #define GB_Cewise_full_noaccum(op,xname) \
-        GB (_Cewise_full_noaccum_ ## op ## xname)
+    #ifndef GBCUDA_DEV
 
-    #define GB_BINOP_WORKER(op,xname)                                       \
-    {                                                                       \
-        GB_Cewise_full_noaccum(op,xname) (C, A, B, nthreads) ;              \
-    }                                                                       \
-    break ;
+        //----------------------------------------------------------------------
+        // define the worker for the switch factory
+        //----------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    // launch the switch factory
-    //--------------------------------------------------------------------------
+        #define GB_Cewise_full_noaccum(op,xname) \
+            GB (_Cewise_full_noaccum_ ## op ## xname)
 
-    GB_Opcode opcode ;
-    GB_Type_code xcode, ycode, zcode ;
-    if (GB_binop_builtin (A->type, false, B->type, false,
-        op, false, &opcode, &xcode, &ycode, &zcode))
-    { 
-        #include "GB_binop_factory.c"
-    }
-    else
-    {
-        // this function is not called if the op cannot be applied
-        // FIXME: extend this method to handle the JIT
-        ASSERT (GB_DEAD_CODE) ;
-    }
+        #define GB_BINOP_WORKER(op,xname)                                   \
+        {                                                                   \
+            info = GB_Cewise_full_noaccum(op,xname) (C, A, B, nthreads) ;   \
+        }                                                                   \
+        break ;
+
+        //----------------------------------------------------------------------
+        // launch the switch factory
+        //----------------------------------------------------------------------
+
+        GB_Opcode opcode ;
+        GB_Type_code xcode, ycode, zcode ;
+        if (GB_binop_builtin (A->type, false, B->type, false,
+            op, false, &opcode, &xcode, &ycode, &zcode))
+        { 
+            #include "GB_binop_factory.c"
+        }
+
+    #endif
 
     //--------------------------------------------------------------------------
     // via the JIT kernel
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: ewise: dense ewise3 no accum 
+    if (info == GrB_NO_VALUE)
+    { 
+        info = GB_ewise_full_noaccum_jit (C, op, A, B, nthreads) ;
+    }
     #endif
+
+    // no generic kernel: returns GrB_NO_VALUE if no factory kernel exists and
+    // no JIT kernel created.
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "C=A+B output", GB0) ;
-    return (GrB_SUCCESS) ;
-#else
-    return (GrB_NO_VALUE) ;
-#endif
+    if (info == GrB_SUCCESS)
+    {
+        ASSERT_MATRIX_OK (C, "C output, full C=A+B", GB0) ;
+    }
+    return (info) ;
 }
 

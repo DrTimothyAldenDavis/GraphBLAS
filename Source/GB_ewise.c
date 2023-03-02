@@ -277,8 +277,6 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // In all cases above, C remains dense and can be updated in-place
     // C_replace must be false.  M can be valued or structural.
 
-    #ifndef GBCUDA_DEV
-
     bool C_as_if_full = GB_as_if_full (C) ;
     bool A_as_if_full = GB_as_if_full (A1) ;
     bool B_as_if_full = GB_as_if_full (B1) ;
@@ -313,7 +311,6 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         && (M == NULL) && !Mask_comp        // no mask
         && (C->is_csc == T_is_csc)          // no transpose of C
         && no_typecast                      // no typecasting
-        && (opcode != GB_USER_binop_code)   // not a user-defined operator
         && !op_is_positional                // op is not positional
         && !any_bitmap                      // no bitmap matrices
         && !any_pending_work)               // no matrix has pending work
@@ -321,9 +318,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
         if (C_as_if_full                    // C is as-if-full
         && !C->iso                          // C is not iso
-        && accum == op                      // accum is same as the op
-        && (opcode >= GB_MIN_binop_code)    // subset of binary operators
-        && (opcode <= GB_RDIV_binop_code))
+        && accum == op)                     // accum is same as the op
         { 
 
             //------------------------------------------------------------------
@@ -332,10 +327,12 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
             // C_replace is ignored
             GBURBLE ("dense C+=A+B ") ;
-            GB_ewise_full_accum (C, A1, B1, op, Werk) ;    // cannot fail
-            GB_FREE_ALL ;
-            ASSERT_MATRIX_OK (C, "C output for GB_ewise, dense C+=A+B", GB0) ;
-            return (GrB_SUCCESS) ;
+            info = GB_ewise_full_accum (C, op, A1, B1) ;
+            if (info != GrB_NO_VALUE)
+            { 
+                GB_FREE_ALL ;
+                return (info) ;
+            }
 
         }
         else if (accum == NULL)             // no accum
@@ -347,17 +344,15 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
             // C_replace is ignored
             GBURBLE ("dense C=A+B ") ;
-            info = GB_ewise_full_noaccum (C, C_as_if_full, A1, B1, op) ;
-            GB_FREE_ALL ;
-            if (info == GrB_SUCCESS)
-            {
-                ASSERT_MATRIX_OK (C, "C output for GB_ewise, dense C=A+B", GB0);
+            info = GB_ewise_full_noaccum (C, C_as_if_full, op, A1, B1) ;
+
+            if (info != GrB_NO_VALUE)
+            { 
+                GB_FREE_ALL ;
+                return (info) ;
             }
-            return (info) ;
         }
     }
-
-    #endif
 
     //--------------------------------------------------------------------------
     // T = A+B or A.*B, or with any mask M

@@ -16,21 +16,20 @@
 #include "GB_ew__include.h"
 #endif
 
-void GB_ewise_full_accum          // C += A+B, all matrices dense
+GrB_Info GB_ewise_full_accum        // C += A+B, all matrices dense
 (
     GrB_Matrix C,                   // input/output matrix
-    const GrB_Matrix A,
-    const GrB_Matrix B,
     const GrB_BinaryOp op,          // only GB_BINOP_SUBSET operators supported
-    GB_Werk Werk
+    const GrB_Matrix A,
+    const GrB_Matrix B
 )
 {
-#ifndef GBCUDA_DEV
 
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for dense C+=A+B", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
@@ -60,17 +59,8 @@ void GB_ewise_full_accum          // C += A+B, all matrices dense
 
     ASSERT_BINARYOP_OK (op, "op for dense C+=A+B", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (op)) ;
-    ASSERT (op->ztype == C->type) ;
-    ASSERT (op->ztype == A->type) ;
-    ASSERT (op->ztype == B->type) ;
-    ASSERT (op->ztype == op->xtype) ;
-    ASSERT (op->ztype == op->ytype) ;
-    ASSERT (op->opcode >= GB_MIN_binop_code) ;
-    ASSERT (op->opcode <= GB_RDIV_binop_code) ;
 
     GB_ENSURE_FULL (C) ;    // convert C to full, if sparsity control allows it
-
-    // FUTURE::: handle IS*, LOR, LAND, LXOR operators
 
     #ifdef GB_DEBUGIFY_DEFN
     GB_debugify_ewise (false, false, false, false, false, GxB_FULL,
@@ -90,51 +80,60 @@ void GB_ewise_full_accum          // C += A+B, all matrices dense
     // via the factory kernel
     //--------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    // define the worker for the switch factory
-    //--------------------------------------------------------------------------
+    info = GrB_NO_VALUE ;
 
-    #define GB_Cewise_full_accum(op,xname) \
-        GB (_Cewise_full_accum_ ## op ## xname)
+    #ifndef GBCUDA_DEV
 
-    #define GB_BINOP_WORKER(op,xname)                                       \
-    {                                                                       \
-        GB_Cewise_full_accum(op,xname) (C, A, B, nthreads) ;                \
-    }                                                                       \
-    break ;
+        //----------------------------------------------------------------------
+        // define the worker for the switch factory
+        //----------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    // launch the switch factory
-    //--------------------------------------------------------------------------
+        #define GB_Cewise_full_accum(op,xname) \
+            GB (_Cewise_full_accum_ ## op ## xname)
 
-    GB_Opcode opcode ;
-    GB_Type_code xcode, ycode, zcode ;
-    if (GB_binop_builtin (A->type, false, B->type, false,
-        op, false, &opcode, &xcode, &ycode, &zcode))
-    { 
-        #define GB_BINOP_SUBSET
-        #include "GB_binop_factory.c"
-    }
-    else
-    {
-        // this function is not called if the op cannot be applied
-        // FIXME: extend this method for the JIT
-        ASSERT (GB_DEAD_CODE) ;
-    }
+        #define GB_BINOP_WORKER(op,xname)                                   \
+        {                                                                   \
+            info = GB_Cewise_full_accum(op,xname) (C, A, B, nthreads) ;     \
+        }                                                                   \
+        break ;
+
+        //----------------------------------------------------------------------
+        // launch the switch factory
+        //----------------------------------------------------------------------
+
+        GB_Opcode opcode ;
+        GB_Type_code xcode, ycode, zcode ;
+        if (GB_binop_builtin (A->type, false, B->type, false,
+            op, false, &opcode, &xcode, &ycode, &zcode))
+        { 
+            #define GB_BINOP_SUBSET
+            #include "GB_binop_factory.c"
+        }
+
+    #endif
 
     //--------------------------------------------------------------------------
     // via the JIT kernel
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: ewise: dense ewise3 accum
+    if (info == GrB_NO_VALUE)
+    {
+        info = GB_ewise_full_accum_jit (C, op, A, B, nthreads) ;
+    }
     #endif
+
+    // no generic kernel: returns GrB_NO_VALUE if no factory kernel exists and
+    // no JIT kernel created.
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "C+=A+B output", GB0) ;
-#endif
+    if (info == GrB_SUCCESS)
+    { 
+        ASSERT_MATRIX_OK (C, "C output, full C+=A+B", GB0) ;
+    }
+    return (info) ;
 }
 
