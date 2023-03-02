@@ -369,15 +369,15 @@ GrB_Info GB (_AemultB_04)
 GrB_Info GB (_AemultB_bitmap)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int64_t *M_ek_slicing,
+    const int M_ntasks,
+    const int M_nthreads,
+    const int C_nthreads
 )
 { 
     #if GB_DISABLE
@@ -387,7 +387,6 @@ GrB_Info GB (_AemultB_bitmap)
     return (GrB_SUCCESS) ;
     #endif
 }
-m4_divert(0)
 
 m4_divert(if_binop_bind_is_enabled)
 //------------------------------------------------------------------------------

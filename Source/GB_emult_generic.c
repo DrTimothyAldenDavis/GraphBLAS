@@ -22,7 +22,7 @@
 
 #include "GB_generic.h"
 
-void GB_emult_generic       // generic emult
+GrB_Info GB_emult_generic       // generic emult
 (
     // input/output:
     GrB_Matrix C,           // output matrix, static header
@@ -267,5 +267,6 @@ void GB_emult_generic       // generic emult
     }
 
     ASSERT_MATRIX_OK (C, "C from ewise generic", GB0) ;
+    return (GrB_SUCCESS) ;
 }
 

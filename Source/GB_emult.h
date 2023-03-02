@@ -283,7 +283,7 @@ bool GB_iso_emult           // c = op(a,b), return true if C is iso
     GrB_BinaryOp op         // binary operator
 ) ;
 
-void GB_emult_generic       // generic emult
+GrB_Info GB_emult_generic       // generic emult
 (
     // input/output:
     GrB_Matrix C,           // output matrix, static header

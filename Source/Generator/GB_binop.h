@@ -173,7 +173,6 @@ GrB_Info GB (_AemultB_04)
 GrB_Info GB (_AemultB_bitmap)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -182,8 +181,7 @@ GrB_Info GB (_AemultB_bitmap)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 m4_divert(if_binop_bind_is_enabled)

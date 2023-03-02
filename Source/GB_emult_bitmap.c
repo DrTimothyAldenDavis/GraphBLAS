@@ -199,7 +199,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // using a built-in binary operator (except for positional operators)
     //--------------------------------------------------------------------------
 
-    bool done = false ;
+    info = GrB_NO_VALUE ;
 
     if (C_iso)
     { 
@@ -215,7 +215,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // pattern of C = set intersection of pattern of A and B
         #define GB_ISO_EMULT
         #include "GB_emult_bitmap_template.c"
-        done = true ;
+        info = GrB_SUCCESS ;
 
     }
     else
@@ -236,10 +236,9 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
             #define GB_BINOP_WORKER(mult,xname)                             \
             {                                                               \
-                info = GB_AemultB_bitmap(mult,xname) (C, ewise_method,      \
-                    M, Mask_struct, Mask_comp, A, B, M_ek_slicing,          \
-                    M_ntasks, M_nthreads, C_nthreads, Werk) ;               \
-                done = (info != GrB_NO_VALUE) ;                             \
+                info = GB_AemultB_bitmap(mult,xname) (C, M,                 \
+                    Mask_struct, Mask_comp, A, B,                           \
+                    M_ek_slicing, M_ntasks, M_nthreads, C_nthreads) ;       \
             }                                                               \
             break ;
 
@@ -271,10 +270,10 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // via the generic kernel
     //--------------------------------------------------------------------------
 
-    if (!done)
+    if (info == GrB_NO_VALUE)
     { 
         GB_BURBLE_MATRIX (C, "(generic bitmap emult: %s) ", op->name) ;
-        GB_emult_generic (C, op, NULL, 0, C_nthreads,
+        info = GB_emult_generic (C, op, NULL, 0, C_nthreads,
             NULL, NULL, NULL, GxB_BITMAP, ewise_method, NULL,
             M_ek_slicing, M_ntasks, M_nthreads, NULL, 0, 0, NULL, 0, 0,
             M, Mask_struct, Mask_comp, A, B) ;
@@ -283,6 +282,13 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
+
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory, or other error
+        GB_FREE_ALL ;
+        return (info) ;
+    }
 
     GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (C, "C output for emult_bitmap", GB0) ;

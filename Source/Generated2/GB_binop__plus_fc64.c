@@ -311,7 +311,9 @@ GrB_Info GB (_AemultB_04__plus_fc64)
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *restrict Cp_kfirst,
-    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+    const int64_t *M_ek_slicing,
+    const int M_ntasks,
+    const int M_nthreads
 )
 { 
     #if GB_DISABLE
@@ -329,15 +331,15 @@ GrB_Info GB (_AemultB_04__plus_fc64)
 GrB_Info GB (_AemultB_bitmap__plus_fc64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int64_t *M_ek_slicing,
+    const int M_ntasks,
+    const int M_nthreads,
+    const int C_nthreads
 )
 { 
     #if GB_DISABLE

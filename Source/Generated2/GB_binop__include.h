@@ -166,7 +166,6 @@ GrB_Info GB (_AemultB_04__first_bool)
 GrB_Info GB (_AemultB_bitmap__first_bool)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -175,8 +174,7 @@ GrB_Info GB (_AemultB_bitmap__first_bool)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -338,7 +336,6 @@ GrB_Info GB (_AemultB_04__first_int8)
 GrB_Info GB (_AemultB_bitmap__first_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -347,8 +344,7 @@ GrB_Info GB (_AemultB_bitmap__first_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -510,7 +506,6 @@ GrB_Info GB (_AemultB_04__first_int16)
 GrB_Info GB (_AemultB_bitmap__first_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -519,8 +514,7 @@ GrB_Info GB (_AemultB_bitmap__first_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -682,7 +676,6 @@ GrB_Info GB (_AemultB_04__first_int32)
 GrB_Info GB (_AemultB_bitmap__first_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -691,8 +684,7 @@ GrB_Info GB (_AemultB_bitmap__first_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -854,7 +846,6 @@ GrB_Info GB (_AemultB_04__first_int64)
 GrB_Info GB (_AemultB_bitmap__first_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -863,8 +854,7 @@ GrB_Info GB (_AemultB_bitmap__first_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -1026,7 +1016,6 @@ GrB_Info GB (_AemultB_04__first_uint8)
 GrB_Info GB (_AemultB_bitmap__first_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -1035,8 +1024,7 @@ GrB_Info GB (_AemultB_bitmap__first_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -1198,7 +1186,6 @@ GrB_Info GB (_AemultB_04__first_uint16)
 GrB_Info GB (_AemultB_bitmap__first_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -1207,8 +1194,7 @@ GrB_Info GB (_AemultB_bitmap__first_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -1370,7 +1356,6 @@ GrB_Info GB (_AemultB_04__first_uint32)
 GrB_Info GB (_AemultB_bitmap__first_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -1379,8 +1364,7 @@ GrB_Info GB (_AemultB_bitmap__first_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -1542,7 +1526,6 @@ GrB_Info GB (_AemultB_04__first_uint64)
 GrB_Info GB (_AemultB_bitmap__first_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -1551,8 +1534,7 @@ GrB_Info GB (_AemultB_bitmap__first_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -1714,7 +1696,6 @@ GrB_Info GB (_AemultB_04__first_fp32)
 GrB_Info GB (_AemultB_bitmap__first_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -1723,8 +1704,7 @@ GrB_Info GB (_AemultB_bitmap__first_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -1886,7 +1866,6 @@ GrB_Info GB (_AemultB_04__first_fp64)
 GrB_Info GB (_AemultB_bitmap__first_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -1895,8 +1874,7 @@ GrB_Info GB (_AemultB_bitmap__first_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -2058,7 +2036,6 @@ GrB_Info GB (_AemultB_04__first_fc32)
 GrB_Info GB (_AemultB_bitmap__first_fc32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -2067,8 +2044,7 @@ GrB_Info GB (_AemultB_bitmap__first_fc32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -2230,7 +2206,6 @@ GrB_Info GB (_AemultB_04__first_fc64)
 GrB_Info GB (_AemultB_bitmap__first_fc64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -2239,8 +2214,7 @@ GrB_Info GB (_AemultB_bitmap__first_fc64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -2402,7 +2376,6 @@ GrB_Info GB (_AemultB_04__second_bool)
 GrB_Info GB (_AemultB_bitmap__second_bool)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -2411,8 +2384,7 @@ GrB_Info GB (_AemultB_bitmap__second_bool)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -2574,7 +2546,6 @@ GrB_Info GB (_AemultB_04__second_int8)
 GrB_Info GB (_AemultB_bitmap__second_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -2583,8 +2554,7 @@ GrB_Info GB (_AemultB_bitmap__second_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -2746,7 +2716,6 @@ GrB_Info GB (_AemultB_04__second_int16)
 GrB_Info GB (_AemultB_bitmap__second_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -2755,8 +2724,7 @@ GrB_Info GB (_AemultB_bitmap__second_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -2918,7 +2886,6 @@ GrB_Info GB (_AemultB_04__second_int32)
 GrB_Info GB (_AemultB_bitmap__second_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -2927,8 +2894,7 @@ GrB_Info GB (_AemultB_bitmap__second_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -3090,7 +3056,6 @@ GrB_Info GB (_AemultB_04__second_int64)
 GrB_Info GB (_AemultB_bitmap__second_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -3099,8 +3064,7 @@ GrB_Info GB (_AemultB_bitmap__second_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -3262,7 +3226,6 @@ GrB_Info GB (_AemultB_04__second_uint8)
 GrB_Info GB (_AemultB_bitmap__second_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -3271,8 +3234,7 @@ GrB_Info GB (_AemultB_bitmap__second_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -3434,7 +3396,6 @@ GrB_Info GB (_AemultB_04__second_uint16)
 GrB_Info GB (_AemultB_bitmap__second_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -3443,8 +3404,7 @@ GrB_Info GB (_AemultB_bitmap__second_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -3606,7 +3566,6 @@ GrB_Info GB (_AemultB_04__second_uint32)
 GrB_Info GB (_AemultB_bitmap__second_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -3615,8 +3574,7 @@ GrB_Info GB (_AemultB_bitmap__second_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -3778,7 +3736,6 @@ GrB_Info GB (_AemultB_04__second_uint64)
 GrB_Info GB (_AemultB_bitmap__second_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -3787,8 +3744,7 @@ GrB_Info GB (_AemultB_bitmap__second_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -3950,7 +3906,6 @@ GrB_Info GB (_AemultB_04__second_fp32)
 GrB_Info GB (_AemultB_bitmap__second_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -3959,8 +3914,7 @@ GrB_Info GB (_AemultB_bitmap__second_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -4122,7 +4076,6 @@ GrB_Info GB (_AemultB_04__second_fp64)
 GrB_Info GB (_AemultB_bitmap__second_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -4131,8 +4084,7 @@ GrB_Info GB (_AemultB_bitmap__second_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -4294,7 +4246,6 @@ GrB_Info GB (_AemultB_04__second_fc32)
 GrB_Info GB (_AemultB_bitmap__second_fc32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -4303,8 +4254,7 @@ GrB_Info GB (_AemultB_bitmap__second_fc32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -4466,7 +4416,6 @@ GrB_Info GB (_AemultB_04__second_fc64)
 GrB_Info GB (_AemultB_bitmap__second_fc64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -4475,8 +4424,7 @@ GrB_Info GB (_AemultB_bitmap__second_fc64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 
@@ -5685,7 +5633,6 @@ GrB_Info GB (_AemultB_04__min_int8)
 GrB_Info GB (_AemultB_bitmap__min_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -5694,8 +5641,7 @@ GrB_Info GB (_AemultB_bitmap__min_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__min_int8)
@@ -5893,7 +5839,6 @@ GrB_Info GB (_AemultB_04__min_int16)
 GrB_Info GB (_AemultB_bitmap__min_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -5902,8 +5847,7 @@ GrB_Info GB (_AemultB_bitmap__min_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__min_int16)
@@ -6101,7 +6045,6 @@ GrB_Info GB (_AemultB_04__min_int32)
 GrB_Info GB (_AemultB_bitmap__min_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -6110,8 +6053,7 @@ GrB_Info GB (_AemultB_bitmap__min_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__min_int32)
@@ -6309,7 +6251,6 @@ GrB_Info GB (_AemultB_04__min_int64)
 GrB_Info GB (_AemultB_bitmap__min_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -6318,8 +6259,7 @@ GrB_Info GB (_AemultB_bitmap__min_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__min_int64)
@@ -6517,7 +6457,6 @@ GrB_Info GB (_AemultB_04__min_uint8)
 GrB_Info GB (_AemultB_bitmap__min_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -6526,8 +6465,7 @@ GrB_Info GB (_AemultB_bitmap__min_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__min_uint8)
@@ -6725,7 +6663,6 @@ GrB_Info GB (_AemultB_04__min_uint16)
 GrB_Info GB (_AemultB_bitmap__min_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -6734,8 +6671,7 @@ GrB_Info GB (_AemultB_bitmap__min_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__min_uint16)
@@ -6933,7 +6869,6 @@ GrB_Info GB (_AemultB_04__min_uint32)
 GrB_Info GB (_AemultB_bitmap__min_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -6942,8 +6877,7 @@ GrB_Info GB (_AemultB_bitmap__min_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__min_uint32)
@@ -7141,7 +7075,6 @@ GrB_Info GB (_AemultB_04__min_uint64)
 GrB_Info GB (_AemultB_bitmap__min_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -7150,8 +7083,7 @@ GrB_Info GB (_AemultB_bitmap__min_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__min_uint64)
@@ -7349,7 +7281,6 @@ GrB_Info GB (_AemultB_04__min_fp32)
 GrB_Info GB (_AemultB_bitmap__min_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -7358,8 +7289,7 @@ GrB_Info GB (_AemultB_bitmap__min_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__min_fp32)
@@ -7557,7 +7487,6 @@ GrB_Info GB (_AemultB_04__min_fp64)
 GrB_Info GB (_AemultB_bitmap__min_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -7566,8 +7495,7 @@ GrB_Info GB (_AemultB_bitmap__min_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__min_fp64)
@@ -7765,7 +7693,6 @@ GrB_Info GB (_AemultB_04__max_int8)
 GrB_Info GB (_AemultB_bitmap__max_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -7774,8 +7701,7 @@ GrB_Info GB (_AemultB_bitmap__max_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__max_int8)
@@ -7973,7 +7899,6 @@ GrB_Info GB (_AemultB_04__max_int16)
 GrB_Info GB (_AemultB_bitmap__max_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -7982,8 +7907,7 @@ GrB_Info GB (_AemultB_bitmap__max_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__max_int16)
@@ -8181,7 +8105,6 @@ GrB_Info GB (_AemultB_04__max_int32)
 GrB_Info GB (_AemultB_bitmap__max_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -8190,8 +8113,7 @@ GrB_Info GB (_AemultB_bitmap__max_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__max_int32)
@@ -8389,7 +8311,6 @@ GrB_Info GB (_AemultB_04__max_int64)
 GrB_Info GB (_AemultB_bitmap__max_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -8398,8 +8319,7 @@ GrB_Info GB (_AemultB_bitmap__max_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__max_int64)
@@ -8597,7 +8517,6 @@ GrB_Info GB (_AemultB_04__max_uint8)
 GrB_Info GB (_AemultB_bitmap__max_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -8606,8 +8525,7 @@ GrB_Info GB (_AemultB_bitmap__max_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__max_uint8)
@@ -8805,7 +8723,6 @@ GrB_Info GB (_AemultB_04__max_uint16)
 GrB_Info GB (_AemultB_bitmap__max_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -8814,8 +8731,7 @@ GrB_Info GB (_AemultB_bitmap__max_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__max_uint16)
@@ -9013,7 +8929,6 @@ GrB_Info GB (_AemultB_04__max_uint32)
 GrB_Info GB (_AemultB_bitmap__max_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -9022,8 +8937,7 @@ GrB_Info GB (_AemultB_bitmap__max_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__max_uint32)
@@ -9221,7 +9135,6 @@ GrB_Info GB (_AemultB_04__max_uint64)
 GrB_Info GB (_AemultB_bitmap__max_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -9230,8 +9143,7 @@ GrB_Info GB (_AemultB_bitmap__max_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__max_uint64)
@@ -9429,7 +9341,6 @@ GrB_Info GB (_AemultB_04__max_fp32)
 GrB_Info GB (_AemultB_bitmap__max_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -9438,8 +9349,7 @@ GrB_Info GB (_AemultB_bitmap__max_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__max_fp32)
@@ -9637,7 +9547,6 @@ GrB_Info GB (_AemultB_04__max_fp64)
 GrB_Info GB (_AemultB_bitmap__max_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -9646,8 +9555,7 @@ GrB_Info GB (_AemultB_bitmap__max_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__max_fp64)
@@ -9845,7 +9753,6 @@ GrB_Info GB (_AemultB_04__plus_int8)
 GrB_Info GB (_AemultB_bitmap__plus_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -9854,8 +9761,7 @@ GrB_Info GB (_AemultB_bitmap__plus_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__plus_int8)
@@ -10053,7 +9959,6 @@ GrB_Info GB (_AemultB_04__plus_int16)
 GrB_Info GB (_AemultB_bitmap__plus_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -10062,8 +9967,7 @@ GrB_Info GB (_AemultB_bitmap__plus_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__plus_int16)
@@ -10261,7 +10165,6 @@ GrB_Info GB (_AemultB_04__plus_int32)
 GrB_Info GB (_AemultB_bitmap__plus_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -10270,8 +10173,7 @@ GrB_Info GB (_AemultB_bitmap__plus_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__plus_int32)
@@ -10469,7 +10371,6 @@ GrB_Info GB (_AemultB_04__plus_int64)
 GrB_Info GB (_AemultB_bitmap__plus_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -10478,8 +10379,7 @@ GrB_Info GB (_AemultB_bitmap__plus_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__plus_int64)
@@ -10677,7 +10577,6 @@ GrB_Info GB (_AemultB_04__plus_uint8)
 GrB_Info GB (_AemultB_bitmap__plus_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -10686,8 +10585,7 @@ GrB_Info GB (_AemultB_bitmap__plus_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__plus_uint8)
@@ -10885,7 +10783,6 @@ GrB_Info GB (_AemultB_04__plus_uint16)
 GrB_Info GB (_AemultB_bitmap__plus_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -10894,8 +10791,7 @@ GrB_Info GB (_AemultB_bitmap__plus_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__plus_uint16)
@@ -11093,7 +10989,6 @@ GrB_Info GB (_AemultB_04__plus_uint32)
 GrB_Info GB (_AemultB_bitmap__plus_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -11102,8 +10997,7 @@ GrB_Info GB (_AemultB_bitmap__plus_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__plus_uint32)
@@ -11301,7 +11195,6 @@ GrB_Info GB (_AemultB_04__plus_uint64)
 GrB_Info GB (_AemultB_bitmap__plus_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -11310,8 +11203,7 @@ GrB_Info GB (_AemultB_bitmap__plus_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__plus_uint64)
@@ -11509,7 +11401,6 @@ GrB_Info GB (_AemultB_04__plus_fp32)
 GrB_Info GB (_AemultB_bitmap__plus_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -11518,8 +11409,7 @@ GrB_Info GB (_AemultB_bitmap__plus_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__plus_fp32)
@@ -11717,7 +11607,6 @@ GrB_Info GB (_AemultB_04__plus_fp64)
 GrB_Info GB (_AemultB_bitmap__plus_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -11726,8 +11615,7 @@ GrB_Info GB (_AemultB_bitmap__plus_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__plus_fp64)
@@ -11925,7 +11813,6 @@ GrB_Info GB (_AemultB_04__plus_fc32)
 GrB_Info GB (_AemultB_bitmap__plus_fc32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -11934,8 +11821,7 @@ GrB_Info GB (_AemultB_bitmap__plus_fc32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__plus_fc32)
@@ -12133,7 +12019,6 @@ GrB_Info GB (_AemultB_04__plus_fc64)
 GrB_Info GB (_AemultB_bitmap__plus_fc64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -12142,8 +12027,7 @@ GrB_Info GB (_AemultB_bitmap__plus_fc64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__plus_fc64)
@@ -12355,7 +12239,6 @@ GrB_Info GB (_AemultB_04__minus_int8)
 GrB_Info GB (_AemultB_bitmap__minus_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -12364,8 +12247,7 @@ GrB_Info GB (_AemultB_bitmap__minus_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__minus_int8)
@@ -12577,7 +12459,6 @@ GrB_Info GB (_AemultB_04__minus_int16)
 GrB_Info GB (_AemultB_bitmap__minus_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -12586,8 +12467,7 @@ GrB_Info GB (_AemultB_bitmap__minus_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__minus_int16)
@@ -12799,7 +12679,6 @@ GrB_Info GB (_AemultB_04__minus_int32)
 GrB_Info GB (_AemultB_bitmap__minus_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -12808,8 +12687,7 @@ GrB_Info GB (_AemultB_bitmap__minus_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__minus_int32)
@@ -13021,7 +12899,6 @@ GrB_Info GB (_AemultB_04__minus_int64)
 GrB_Info GB (_AemultB_bitmap__minus_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -13030,8 +12907,7 @@ GrB_Info GB (_AemultB_bitmap__minus_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__minus_int64)
@@ -13243,7 +13119,6 @@ GrB_Info GB (_AemultB_04__minus_uint8)
 GrB_Info GB (_AemultB_bitmap__minus_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -13252,8 +13127,7 @@ GrB_Info GB (_AemultB_bitmap__minus_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__minus_uint8)
@@ -13465,7 +13339,6 @@ GrB_Info GB (_AemultB_04__minus_uint16)
 GrB_Info GB (_AemultB_bitmap__minus_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -13474,8 +13347,7 @@ GrB_Info GB (_AemultB_bitmap__minus_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__minus_uint16)
@@ -13687,7 +13559,6 @@ GrB_Info GB (_AemultB_04__minus_uint32)
 GrB_Info GB (_AemultB_bitmap__minus_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -13696,8 +13567,7 @@ GrB_Info GB (_AemultB_bitmap__minus_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__minus_uint32)
@@ -13909,7 +13779,6 @@ GrB_Info GB (_AemultB_04__minus_uint64)
 GrB_Info GB (_AemultB_bitmap__minus_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -13918,8 +13787,7 @@ GrB_Info GB (_AemultB_bitmap__minus_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__minus_uint64)
@@ -14131,7 +13999,6 @@ GrB_Info GB (_AemultB_04__minus_fp32)
 GrB_Info GB (_AemultB_bitmap__minus_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -14140,8 +14007,7 @@ GrB_Info GB (_AemultB_bitmap__minus_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__minus_fp32)
@@ -14353,7 +14219,6 @@ GrB_Info GB (_AemultB_04__minus_fp64)
 GrB_Info GB (_AemultB_bitmap__minus_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -14362,8 +14227,7 @@ GrB_Info GB (_AemultB_bitmap__minus_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__minus_fp64)
@@ -14575,7 +14439,6 @@ GrB_Info GB (_AemultB_04__minus_fc32)
 GrB_Info GB (_AemultB_bitmap__minus_fc32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -14584,8 +14447,7 @@ GrB_Info GB (_AemultB_bitmap__minus_fc32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__minus_fc32)
@@ -14797,7 +14659,6 @@ GrB_Info GB (_AemultB_04__minus_fc64)
 GrB_Info GB (_AemultB_bitmap__minus_fc64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -14806,8 +14667,7 @@ GrB_Info GB (_AemultB_bitmap__minus_fc64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__minus_fc64)
@@ -15019,7 +14879,6 @@ GrB_Info GB (_AemultB_04__rminus_int8)
 GrB_Info GB (_AemultB_bitmap__rminus_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -15028,8 +14887,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rminus_int8)
@@ -15241,7 +15099,6 @@ GrB_Info GB (_AemultB_04__rminus_int16)
 GrB_Info GB (_AemultB_bitmap__rminus_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -15250,8 +15107,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rminus_int16)
@@ -15463,7 +15319,6 @@ GrB_Info GB (_AemultB_04__rminus_int32)
 GrB_Info GB (_AemultB_bitmap__rminus_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -15472,8 +15327,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rminus_int32)
@@ -15685,7 +15539,6 @@ GrB_Info GB (_AemultB_04__rminus_int64)
 GrB_Info GB (_AemultB_bitmap__rminus_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -15694,8 +15547,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rminus_int64)
@@ -15907,7 +15759,6 @@ GrB_Info GB (_AemultB_04__rminus_uint8)
 GrB_Info GB (_AemultB_bitmap__rminus_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -15916,8 +15767,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rminus_uint8)
@@ -16129,7 +15979,6 @@ GrB_Info GB (_AemultB_04__rminus_uint16)
 GrB_Info GB (_AemultB_bitmap__rminus_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -16138,8 +15987,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rminus_uint16)
@@ -16351,7 +16199,6 @@ GrB_Info GB (_AemultB_04__rminus_uint32)
 GrB_Info GB (_AemultB_bitmap__rminus_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -16360,8 +16207,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rminus_uint32)
@@ -16573,7 +16419,6 @@ GrB_Info GB (_AemultB_04__rminus_uint64)
 GrB_Info GB (_AemultB_bitmap__rminus_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -16582,8 +16427,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rminus_uint64)
@@ -16795,7 +16639,6 @@ GrB_Info GB (_AemultB_04__rminus_fp32)
 GrB_Info GB (_AemultB_bitmap__rminus_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -16804,8 +16647,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rminus_fp32)
@@ -17017,7 +16859,6 @@ GrB_Info GB (_AemultB_04__rminus_fp64)
 GrB_Info GB (_AemultB_bitmap__rminus_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -17026,8 +16867,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rminus_fp64)
@@ -17239,7 +17079,6 @@ GrB_Info GB (_AemultB_04__rminus_fc32)
 GrB_Info GB (_AemultB_bitmap__rminus_fc32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -17248,8 +17087,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_fc32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rminus_fc32)
@@ -17461,7 +17299,6 @@ GrB_Info GB (_AemultB_04__rminus_fc64)
 GrB_Info GB (_AemultB_bitmap__rminus_fc64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -17470,8 +17307,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_fc64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rminus_fc64)
@@ -17669,7 +17505,6 @@ GrB_Info GB (_AemultB_04__times_int8)
 GrB_Info GB (_AemultB_bitmap__times_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -17678,8 +17513,7 @@ GrB_Info GB (_AemultB_bitmap__times_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__times_int8)
@@ -17877,7 +17711,6 @@ GrB_Info GB (_AemultB_04__times_int16)
 GrB_Info GB (_AemultB_bitmap__times_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -17886,8 +17719,7 @@ GrB_Info GB (_AemultB_bitmap__times_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__times_int16)
@@ -18085,7 +17917,6 @@ GrB_Info GB (_AemultB_04__times_int32)
 GrB_Info GB (_AemultB_bitmap__times_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -18094,8 +17925,7 @@ GrB_Info GB (_AemultB_bitmap__times_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__times_int32)
@@ -18293,7 +18123,6 @@ GrB_Info GB (_AemultB_04__times_int64)
 GrB_Info GB (_AemultB_bitmap__times_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -18302,8 +18131,7 @@ GrB_Info GB (_AemultB_bitmap__times_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__times_int64)
@@ -18501,7 +18329,6 @@ GrB_Info GB (_AemultB_04__times_uint8)
 GrB_Info GB (_AemultB_bitmap__times_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -18510,8 +18337,7 @@ GrB_Info GB (_AemultB_bitmap__times_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__times_uint8)
@@ -18709,7 +18535,6 @@ GrB_Info GB (_AemultB_04__times_uint16)
 GrB_Info GB (_AemultB_bitmap__times_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -18718,8 +18543,7 @@ GrB_Info GB (_AemultB_bitmap__times_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__times_uint16)
@@ -18917,7 +18741,6 @@ GrB_Info GB (_AemultB_04__times_uint32)
 GrB_Info GB (_AemultB_bitmap__times_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -18926,8 +18749,7 @@ GrB_Info GB (_AemultB_bitmap__times_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__times_uint32)
@@ -19125,7 +18947,6 @@ GrB_Info GB (_AemultB_04__times_uint64)
 GrB_Info GB (_AemultB_bitmap__times_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -19134,8 +18955,7 @@ GrB_Info GB (_AemultB_bitmap__times_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__times_uint64)
@@ -19333,7 +19153,6 @@ GrB_Info GB (_AemultB_04__times_fp32)
 GrB_Info GB (_AemultB_bitmap__times_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -19342,8 +19161,7 @@ GrB_Info GB (_AemultB_bitmap__times_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__times_fp32)
@@ -19541,7 +19359,6 @@ GrB_Info GB (_AemultB_04__times_fp64)
 GrB_Info GB (_AemultB_bitmap__times_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -19550,8 +19367,7 @@ GrB_Info GB (_AemultB_bitmap__times_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__times_fp64)
@@ -19749,7 +19565,6 @@ GrB_Info GB (_AemultB_04__times_fc32)
 GrB_Info GB (_AemultB_bitmap__times_fc32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -19758,8 +19573,7 @@ GrB_Info GB (_AemultB_bitmap__times_fc32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__times_fc32)
@@ -19957,7 +19771,6 @@ GrB_Info GB (_AemultB_04__times_fc64)
 GrB_Info GB (_AemultB_bitmap__times_fc64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -19966,8 +19779,7 @@ GrB_Info GB (_AemultB_bitmap__times_fc64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__times_fc64)
@@ -20179,7 +19991,6 @@ GrB_Info GB (_AemultB_04__div_int8)
 GrB_Info GB (_AemultB_bitmap__div_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -20188,8 +19999,7 @@ GrB_Info GB (_AemultB_bitmap__div_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__div_int8)
@@ -20401,7 +20211,6 @@ GrB_Info GB (_AemultB_04__div_int16)
 GrB_Info GB (_AemultB_bitmap__div_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -20410,8 +20219,7 @@ GrB_Info GB (_AemultB_bitmap__div_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__div_int16)
@@ -20623,7 +20431,6 @@ GrB_Info GB (_AemultB_04__div_int32)
 GrB_Info GB (_AemultB_bitmap__div_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -20632,8 +20439,7 @@ GrB_Info GB (_AemultB_bitmap__div_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__div_int32)
@@ -20845,7 +20651,6 @@ GrB_Info GB (_AemultB_04__div_int64)
 GrB_Info GB (_AemultB_bitmap__div_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -20854,8 +20659,7 @@ GrB_Info GB (_AemultB_bitmap__div_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__div_int64)
@@ -21067,7 +20871,6 @@ GrB_Info GB (_AemultB_04__div_uint8)
 GrB_Info GB (_AemultB_bitmap__div_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -21076,8 +20879,7 @@ GrB_Info GB (_AemultB_bitmap__div_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__div_uint8)
@@ -21289,7 +21091,6 @@ GrB_Info GB (_AemultB_04__div_uint16)
 GrB_Info GB (_AemultB_bitmap__div_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -21298,8 +21099,7 @@ GrB_Info GB (_AemultB_bitmap__div_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__div_uint16)
@@ -21511,7 +21311,6 @@ GrB_Info GB (_AemultB_04__div_uint32)
 GrB_Info GB (_AemultB_bitmap__div_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -21520,8 +21319,7 @@ GrB_Info GB (_AemultB_bitmap__div_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__div_uint32)
@@ -21733,7 +21531,6 @@ GrB_Info GB (_AemultB_04__div_uint64)
 GrB_Info GB (_AemultB_bitmap__div_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -21742,8 +21539,7 @@ GrB_Info GB (_AemultB_bitmap__div_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__div_uint64)
@@ -21955,7 +21751,6 @@ GrB_Info GB (_AemultB_04__div_fp32)
 GrB_Info GB (_AemultB_bitmap__div_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -21964,8 +21759,7 @@ GrB_Info GB (_AemultB_bitmap__div_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__div_fp32)
@@ -22177,7 +21971,6 @@ GrB_Info GB (_AemultB_04__div_fp64)
 GrB_Info GB (_AemultB_bitmap__div_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -22186,8 +21979,7 @@ GrB_Info GB (_AemultB_bitmap__div_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__div_fp64)
@@ -22399,7 +22191,6 @@ GrB_Info GB (_AemultB_04__div_fc32)
 GrB_Info GB (_AemultB_bitmap__div_fc32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -22408,8 +22199,7 @@ GrB_Info GB (_AemultB_bitmap__div_fc32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__div_fc32)
@@ -22621,7 +22411,6 @@ GrB_Info GB (_AemultB_04__div_fc64)
 GrB_Info GB (_AemultB_bitmap__div_fc64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -22630,8 +22419,7 @@ GrB_Info GB (_AemultB_bitmap__div_fc64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__div_fc64)
@@ -22843,7 +22631,6 @@ GrB_Info GB (_AemultB_04__rdiv_int8)
 GrB_Info GB (_AemultB_bitmap__rdiv_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -22852,8 +22639,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rdiv_int8)
@@ -23065,7 +22851,6 @@ GrB_Info GB (_AemultB_04__rdiv_int16)
 GrB_Info GB (_AemultB_bitmap__rdiv_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -23074,8 +22859,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rdiv_int16)
@@ -23287,7 +23071,6 @@ GrB_Info GB (_AemultB_04__rdiv_int32)
 GrB_Info GB (_AemultB_bitmap__rdiv_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -23296,8 +23079,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rdiv_int32)
@@ -23509,7 +23291,6 @@ GrB_Info GB (_AemultB_04__rdiv_int64)
 GrB_Info GB (_AemultB_bitmap__rdiv_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -23518,8 +23299,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rdiv_int64)
@@ -23731,7 +23511,6 @@ GrB_Info GB (_AemultB_04__rdiv_uint8)
 GrB_Info GB (_AemultB_bitmap__rdiv_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -23740,8 +23519,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rdiv_uint8)
@@ -23953,7 +23731,6 @@ GrB_Info GB (_AemultB_04__rdiv_uint16)
 GrB_Info GB (_AemultB_bitmap__rdiv_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -23962,8 +23739,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rdiv_uint16)
@@ -24175,7 +23951,6 @@ GrB_Info GB (_AemultB_04__rdiv_uint32)
 GrB_Info GB (_AemultB_bitmap__rdiv_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -24184,8 +23959,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rdiv_uint32)
@@ -24397,7 +24171,6 @@ GrB_Info GB (_AemultB_04__rdiv_uint64)
 GrB_Info GB (_AemultB_bitmap__rdiv_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -24406,8 +24179,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rdiv_uint64)
@@ -24619,7 +24391,6 @@ GrB_Info GB (_AemultB_04__rdiv_fp32)
 GrB_Info GB (_AemultB_bitmap__rdiv_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -24628,8 +24399,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rdiv_fp32)
@@ -24841,7 +24611,6 @@ GrB_Info GB (_AemultB_04__rdiv_fp64)
 GrB_Info GB (_AemultB_bitmap__rdiv_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -24850,8 +24619,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rdiv_fp64)
@@ -25063,7 +24831,6 @@ GrB_Info GB (_AemultB_04__rdiv_fc32)
 GrB_Info GB (_AemultB_bitmap__rdiv_fc32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -25072,8 +24839,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_fc32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rdiv_fc32)
@@ -25285,7 +25051,6 @@ GrB_Info GB (_AemultB_04__rdiv_fc64)
 GrB_Info GB (_AemultB_bitmap__rdiv_fc64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -25294,8 +25059,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_fc64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__rdiv_fc64)
@@ -25485,7 +25249,6 @@ GrB_Info GB (_AemultB_04__iseq_int8)
 GrB_Info GB (_AemultB_bitmap__iseq_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -25494,8 +25257,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__iseq_int8)
@@ -25685,7 +25447,6 @@ GrB_Info GB (_AemultB_04__iseq_int16)
 GrB_Info GB (_AemultB_bitmap__iseq_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -25694,8 +25455,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__iseq_int16)
@@ -25885,7 +25645,6 @@ GrB_Info GB (_AemultB_04__iseq_int32)
 GrB_Info GB (_AemultB_bitmap__iseq_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -25894,8 +25653,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__iseq_int32)
@@ -26085,7 +25843,6 @@ GrB_Info GB (_AemultB_04__iseq_int64)
 GrB_Info GB (_AemultB_bitmap__iseq_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -26094,8 +25851,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__iseq_int64)
@@ -26285,7 +26041,6 @@ GrB_Info GB (_AemultB_04__iseq_uint8)
 GrB_Info GB (_AemultB_bitmap__iseq_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -26294,8 +26049,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__iseq_uint8)
@@ -26485,7 +26239,6 @@ GrB_Info GB (_AemultB_04__iseq_uint16)
 GrB_Info GB (_AemultB_bitmap__iseq_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -26494,8 +26247,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__iseq_uint16)
@@ -26685,7 +26437,6 @@ GrB_Info GB (_AemultB_04__iseq_uint32)
 GrB_Info GB (_AemultB_bitmap__iseq_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -26694,8 +26445,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__iseq_uint32)
@@ -26885,7 +26635,6 @@ GrB_Info GB (_AemultB_04__iseq_uint64)
 GrB_Info GB (_AemultB_bitmap__iseq_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -26894,8 +26643,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__iseq_uint64)
@@ -27085,7 +26833,6 @@ GrB_Info GB (_AemultB_04__iseq_fp32)
 GrB_Info GB (_AemultB_bitmap__iseq_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -27094,8 +26841,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__iseq_fp32)
@@ -27285,7 +27031,6 @@ GrB_Info GB (_AemultB_04__iseq_fp64)
 GrB_Info GB (_AemultB_bitmap__iseq_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -27294,8 +27039,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__iseq_fp64)
@@ -27467,7 +27211,6 @@ GrB_Info GB (_AemultB_04__iseq_fc32)
 GrB_Info GB (_AemultB_bitmap__iseq_fc32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -27476,8 +27219,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_fc32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__iseq_fc32)
@@ -27649,7 +27391,6 @@ GrB_Info GB (_AemultB_04__iseq_fc64)
 GrB_Info GB (_AemultB_bitmap__iseq_fc64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -27658,8 +27399,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_fc64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__iseq_fc64)
@@ -27849,7 +27589,6 @@ GrB_Info GB (_AemultB_04__isne_int8)
 GrB_Info GB (_AemultB_bitmap__isne_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -27858,8 +27597,7 @@ GrB_Info GB (_AemultB_bitmap__isne_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isne_int8)
@@ -28049,7 +27787,6 @@ GrB_Info GB (_AemultB_04__isne_int16)
 GrB_Info GB (_AemultB_bitmap__isne_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -28058,8 +27795,7 @@ GrB_Info GB (_AemultB_bitmap__isne_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isne_int16)
@@ -28249,7 +27985,6 @@ GrB_Info GB (_AemultB_04__isne_int32)
 GrB_Info GB (_AemultB_bitmap__isne_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -28258,8 +27993,7 @@ GrB_Info GB (_AemultB_bitmap__isne_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isne_int32)
@@ -28449,7 +28183,6 @@ GrB_Info GB (_AemultB_04__isne_int64)
 GrB_Info GB (_AemultB_bitmap__isne_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -28458,8 +28191,7 @@ GrB_Info GB (_AemultB_bitmap__isne_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isne_int64)
@@ -28649,7 +28381,6 @@ GrB_Info GB (_AemultB_04__isne_uint8)
 GrB_Info GB (_AemultB_bitmap__isne_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -28658,8 +28389,7 @@ GrB_Info GB (_AemultB_bitmap__isne_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isne_uint8)
@@ -28849,7 +28579,6 @@ GrB_Info GB (_AemultB_04__isne_uint16)
 GrB_Info GB (_AemultB_bitmap__isne_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -28858,8 +28587,7 @@ GrB_Info GB (_AemultB_bitmap__isne_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isne_uint16)
@@ -29049,7 +28777,6 @@ GrB_Info GB (_AemultB_04__isne_uint32)
 GrB_Info GB (_AemultB_bitmap__isne_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -29058,8 +28785,7 @@ GrB_Info GB (_AemultB_bitmap__isne_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isne_uint32)
@@ -29249,7 +28975,6 @@ GrB_Info GB (_AemultB_04__isne_uint64)
 GrB_Info GB (_AemultB_bitmap__isne_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -29258,8 +28983,7 @@ GrB_Info GB (_AemultB_bitmap__isne_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isne_uint64)
@@ -29449,7 +29173,6 @@ GrB_Info GB (_AemultB_04__isne_fp32)
 GrB_Info GB (_AemultB_bitmap__isne_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -29458,8 +29181,7 @@ GrB_Info GB (_AemultB_bitmap__isne_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isne_fp32)
@@ -29649,7 +29371,6 @@ GrB_Info GB (_AemultB_04__isne_fp64)
 GrB_Info GB (_AemultB_bitmap__isne_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -29658,8 +29379,7 @@ GrB_Info GB (_AemultB_bitmap__isne_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isne_fp64)
@@ -29831,7 +29551,6 @@ GrB_Info GB (_AemultB_04__isne_fc32)
 GrB_Info GB (_AemultB_bitmap__isne_fc32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -29840,8 +29559,7 @@ GrB_Info GB (_AemultB_bitmap__isne_fc32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isne_fc32)
@@ -30013,7 +29731,6 @@ GrB_Info GB (_AemultB_04__isne_fc64)
 GrB_Info GB (_AemultB_bitmap__isne_fc64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -30022,8 +29739,7 @@ GrB_Info GB (_AemultB_bitmap__isne_fc64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isne_fc64)
@@ -30227,7 +29943,6 @@ GrB_Info GB (_AemultB_04__isgt_int8)
 GrB_Info GB (_AemultB_bitmap__isgt_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -30236,8 +29951,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isgt_int8)
@@ -30441,7 +30155,6 @@ GrB_Info GB (_AemultB_04__isgt_int16)
 GrB_Info GB (_AemultB_bitmap__isgt_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -30450,8 +30163,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isgt_int16)
@@ -30655,7 +30367,6 @@ GrB_Info GB (_AemultB_04__isgt_int32)
 GrB_Info GB (_AemultB_bitmap__isgt_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -30664,8 +30375,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isgt_int32)
@@ -30869,7 +30579,6 @@ GrB_Info GB (_AemultB_04__isgt_int64)
 GrB_Info GB (_AemultB_bitmap__isgt_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -30878,8 +30587,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isgt_int64)
@@ -31083,7 +30791,6 @@ GrB_Info GB (_AemultB_04__isgt_uint8)
 GrB_Info GB (_AemultB_bitmap__isgt_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -31092,8 +30799,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isgt_uint8)
@@ -31297,7 +31003,6 @@ GrB_Info GB (_AemultB_04__isgt_uint16)
 GrB_Info GB (_AemultB_bitmap__isgt_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -31306,8 +31011,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isgt_uint16)
@@ -31511,7 +31215,6 @@ GrB_Info GB (_AemultB_04__isgt_uint32)
 GrB_Info GB (_AemultB_bitmap__isgt_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -31520,8 +31223,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isgt_uint32)
@@ -31725,7 +31427,6 @@ GrB_Info GB (_AemultB_04__isgt_uint64)
 GrB_Info GB (_AemultB_bitmap__isgt_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -31734,8 +31435,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isgt_uint64)
@@ -31939,7 +31639,6 @@ GrB_Info GB (_AemultB_04__isgt_fp32)
 GrB_Info GB (_AemultB_bitmap__isgt_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -31948,8 +31647,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isgt_fp32)
@@ -32153,7 +31851,6 @@ GrB_Info GB (_AemultB_04__isgt_fp64)
 GrB_Info GB (_AemultB_bitmap__isgt_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -32162,8 +31859,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isgt_fp64)
@@ -32367,7 +32063,6 @@ GrB_Info GB (_AemultB_04__islt_int8)
 GrB_Info GB (_AemultB_bitmap__islt_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -32376,8 +32071,7 @@ GrB_Info GB (_AemultB_bitmap__islt_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__islt_int8)
@@ -32581,7 +32275,6 @@ GrB_Info GB (_AemultB_04__islt_int16)
 GrB_Info GB (_AemultB_bitmap__islt_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -32590,8 +32283,7 @@ GrB_Info GB (_AemultB_bitmap__islt_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__islt_int16)
@@ -32795,7 +32487,6 @@ GrB_Info GB (_AemultB_04__islt_int32)
 GrB_Info GB (_AemultB_bitmap__islt_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -32804,8 +32495,7 @@ GrB_Info GB (_AemultB_bitmap__islt_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__islt_int32)
@@ -33009,7 +32699,6 @@ GrB_Info GB (_AemultB_04__islt_int64)
 GrB_Info GB (_AemultB_bitmap__islt_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -33018,8 +32707,7 @@ GrB_Info GB (_AemultB_bitmap__islt_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__islt_int64)
@@ -33223,7 +32911,6 @@ GrB_Info GB (_AemultB_04__islt_uint8)
 GrB_Info GB (_AemultB_bitmap__islt_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -33232,8 +32919,7 @@ GrB_Info GB (_AemultB_bitmap__islt_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__islt_uint8)
@@ -33437,7 +33123,6 @@ GrB_Info GB (_AemultB_04__islt_uint16)
 GrB_Info GB (_AemultB_bitmap__islt_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -33446,8 +33131,7 @@ GrB_Info GB (_AemultB_bitmap__islt_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__islt_uint16)
@@ -33651,7 +33335,6 @@ GrB_Info GB (_AemultB_04__islt_uint32)
 GrB_Info GB (_AemultB_bitmap__islt_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -33660,8 +33343,7 @@ GrB_Info GB (_AemultB_bitmap__islt_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__islt_uint32)
@@ -33865,7 +33547,6 @@ GrB_Info GB (_AemultB_04__islt_uint64)
 GrB_Info GB (_AemultB_bitmap__islt_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -33874,8 +33555,7 @@ GrB_Info GB (_AemultB_bitmap__islt_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__islt_uint64)
@@ -34079,7 +33759,6 @@ GrB_Info GB (_AemultB_04__islt_fp32)
 GrB_Info GB (_AemultB_bitmap__islt_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -34088,8 +33767,7 @@ GrB_Info GB (_AemultB_bitmap__islt_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__islt_fp32)
@@ -34293,7 +33971,6 @@ GrB_Info GB (_AemultB_04__islt_fp64)
 GrB_Info GB (_AemultB_bitmap__islt_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -34302,8 +33979,7 @@ GrB_Info GB (_AemultB_bitmap__islt_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__islt_fp64)
@@ -34507,7 +34183,6 @@ GrB_Info GB (_AemultB_04__isge_int8)
 GrB_Info GB (_AemultB_bitmap__isge_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -34516,8 +34191,7 @@ GrB_Info GB (_AemultB_bitmap__isge_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isge_int8)
@@ -34721,7 +34395,6 @@ GrB_Info GB (_AemultB_04__isge_int16)
 GrB_Info GB (_AemultB_bitmap__isge_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -34730,8 +34403,7 @@ GrB_Info GB (_AemultB_bitmap__isge_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isge_int16)
@@ -34935,7 +34607,6 @@ GrB_Info GB (_AemultB_04__isge_int32)
 GrB_Info GB (_AemultB_bitmap__isge_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -34944,8 +34615,7 @@ GrB_Info GB (_AemultB_bitmap__isge_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isge_int32)
@@ -35149,7 +34819,6 @@ GrB_Info GB (_AemultB_04__isge_int64)
 GrB_Info GB (_AemultB_bitmap__isge_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -35158,8 +34827,7 @@ GrB_Info GB (_AemultB_bitmap__isge_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isge_int64)
@@ -35363,7 +35031,6 @@ GrB_Info GB (_AemultB_04__isge_uint8)
 GrB_Info GB (_AemultB_bitmap__isge_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -35372,8 +35039,7 @@ GrB_Info GB (_AemultB_bitmap__isge_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isge_uint8)
@@ -35577,7 +35243,6 @@ GrB_Info GB (_AemultB_04__isge_uint16)
 GrB_Info GB (_AemultB_bitmap__isge_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -35586,8 +35251,7 @@ GrB_Info GB (_AemultB_bitmap__isge_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isge_uint16)
@@ -35791,7 +35455,6 @@ GrB_Info GB (_AemultB_04__isge_uint32)
 GrB_Info GB (_AemultB_bitmap__isge_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -35800,8 +35463,7 @@ GrB_Info GB (_AemultB_bitmap__isge_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isge_uint32)
@@ -36005,7 +35667,6 @@ GrB_Info GB (_AemultB_04__isge_uint64)
 GrB_Info GB (_AemultB_bitmap__isge_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -36014,8 +35675,7 @@ GrB_Info GB (_AemultB_bitmap__isge_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isge_uint64)
@@ -36219,7 +35879,6 @@ GrB_Info GB (_AemultB_04__isge_fp32)
 GrB_Info GB (_AemultB_bitmap__isge_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -36228,8 +35887,7 @@ GrB_Info GB (_AemultB_bitmap__isge_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isge_fp32)
@@ -36433,7 +36091,6 @@ GrB_Info GB (_AemultB_04__isge_fp64)
 GrB_Info GB (_AemultB_bitmap__isge_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -36442,8 +36099,7 @@ GrB_Info GB (_AemultB_bitmap__isge_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isge_fp64)
@@ -36647,7 +36303,6 @@ GrB_Info GB (_AemultB_04__isle_int8)
 GrB_Info GB (_AemultB_bitmap__isle_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -36656,8 +36311,7 @@ GrB_Info GB (_AemultB_bitmap__isle_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isle_int8)
@@ -36861,7 +36515,6 @@ GrB_Info GB (_AemultB_04__isle_int16)
 GrB_Info GB (_AemultB_bitmap__isle_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -36870,8 +36523,7 @@ GrB_Info GB (_AemultB_bitmap__isle_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isle_int16)
@@ -37075,7 +36727,6 @@ GrB_Info GB (_AemultB_04__isle_int32)
 GrB_Info GB (_AemultB_bitmap__isle_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -37084,8 +36735,7 @@ GrB_Info GB (_AemultB_bitmap__isle_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isle_int32)
@@ -37289,7 +36939,6 @@ GrB_Info GB (_AemultB_04__isle_int64)
 GrB_Info GB (_AemultB_bitmap__isle_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -37298,8 +36947,7 @@ GrB_Info GB (_AemultB_bitmap__isle_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isle_int64)
@@ -37503,7 +37151,6 @@ GrB_Info GB (_AemultB_04__isle_uint8)
 GrB_Info GB (_AemultB_bitmap__isle_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -37512,8 +37159,7 @@ GrB_Info GB (_AemultB_bitmap__isle_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isle_uint8)
@@ -37717,7 +37363,6 @@ GrB_Info GB (_AemultB_04__isle_uint16)
 GrB_Info GB (_AemultB_bitmap__isle_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -37726,8 +37371,7 @@ GrB_Info GB (_AemultB_bitmap__isle_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isle_uint16)
@@ -37931,7 +37575,6 @@ GrB_Info GB (_AemultB_04__isle_uint32)
 GrB_Info GB (_AemultB_bitmap__isle_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -37940,8 +37583,7 @@ GrB_Info GB (_AemultB_bitmap__isle_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isle_uint32)
@@ -38145,7 +37787,6 @@ GrB_Info GB (_AemultB_04__isle_uint64)
 GrB_Info GB (_AemultB_bitmap__isle_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -38154,8 +37795,7 @@ GrB_Info GB (_AemultB_bitmap__isle_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isle_uint64)
@@ -38359,7 +37999,6 @@ GrB_Info GB (_AemultB_04__isle_fp32)
 GrB_Info GB (_AemultB_bitmap__isle_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -38368,8 +38007,7 @@ GrB_Info GB (_AemultB_bitmap__isle_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isle_fp32)
@@ -38573,7 +38211,6 @@ GrB_Info GB (_AemultB_04__isle_fp64)
 GrB_Info GB (_AemultB_bitmap__isle_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -38582,8 +38219,7 @@ GrB_Info GB (_AemultB_bitmap__isle_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__isle_fp64)
@@ -38773,7 +38409,6 @@ GrB_Info GB (_AemultB_04__eq_bool)
 GrB_Info GB (_AemultB_bitmap__eq_bool)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -38782,8 +38417,7 @@ GrB_Info GB (_AemultB_bitmap__eq_bool)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__eq_bool)
@@ -38973,7 +38607,6 @@ GrB_Info GB (_AemultB_04__eq_int8)
 GrB_Info GB (_AemultB_bitmap__eq_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -38982,8 +38615,7 @@ GrB_Info GB (_AemultB_bitmap__eq_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__eq_int8)
@@ -39173,7 +38805,6 @@ GrB_Info GB (_AemultB_04__eq_int16)
 GrB_Info GB (_AemultB_bitmap__eq_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -39182,8 +38813,7 @@ GrB_Info GB (_AemultB_bitmap__eq_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__eq_int16)
@@ -39373,7 +39003,6 @@ GrB_Info GB (_AemultB_04__eq_int32)
 GrB_Info GB (_AemultB_bitmap__eq_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -39382,8 +39011,7 @@ GrB_Info GB (_AemultB_bitmap__eq_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__eq_int32)
@@ -39573,7 +39201,6 @@ GrB_Info GB (_AemultB_04__eq_int64)
 GrB_Info GB (_AemultB_bitmap__eq_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -39582,8 +39209,7 @@ GrB_Info GB (_AemultB_bitmap__eq_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__eq_int64)
@@ -39773,7 +39399,6 @@ GrB_Info GB (_AemultB_04__eq_uint8)
 GrB_Info GB (_AemultB_bitmap__eq_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -39782,8 +39407,7 @@ GrB_Info GB (_AemultB_bitmap__eq_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__eq_uint8)
@@ -39973,7 +39597,6 @@ GrB_Info GB (_AemultB_04__eq_uint16)
 GrB_Info GB (_AemultB_bitmap__eq_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -39982,8 +39605,7 @@ GrB_Info GB (_AemultB_bitmap__eq_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__eq_uint16)
@@ -40173,7 +39795,6 @@ GrB_Info GB (_AemultB_04__eq_uint32)
 GrB_Info GB (_AemultB_bitmap__eq_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -40182,8 +39803,7 @@ GrB_Info GB (_AemultB_bitmap__eq_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__eq_uint32)
@@ -40373,7 +39993,6 @@ GrB_Info GB (_AemultB_04__eq_uint64)
 GrB_Info GB (_AemultB_bitmap__eq_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -40382,8 +40001,7 @@ GrB_Info GB (_AemultB_bitmap__eq_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__eq_uint64)
@@ -40573,7 +40191,6 @@ GrB_Info GB (_AemultB_04__eq_fp32)
 GrB_Info GB (_AemultB_bitmap__eq_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -40582,8 +40199,7 @@ GrB_Info GB (_AemultB_bitmap__eq_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__eq_fp32)
@@ -40773,7 +40389,6 @@ GrB_Info GB (_AemultB_04__eq_fp64)
 GrB_Info GB (_AemultB_bitmap__eq_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -40782,8 +40397,7 @@ GrB_Info GB (_AemultB_bitmap__eq_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__eq_fp64)
@@ -40955,7 +40569,6 @@ GrB_Info GB (_AemultB_04__eq_fc32)
 GrB_Info GB (_AemultB_bitmap__eq_fc32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -40964,8 +40577,7 @@ GrB_Info GB (_AemultB_bitmap__eq_fc32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__eq_fc32)
@@ -41137,7 +40749,6 @@ GrB_Info GB (_AemultB_04__eq_fc64)
 GrB_Info GB (_AemultB_bitmap__eq_fc64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -41146,8 +40757,7 @@ GrB_Info GB (_AemultB_bitmap__eq_fc64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__eq_fc64)
@@ -41337,7 +40947,6 @@ GrB_Info GB (_AemultB_04__ne_int8)
 GrB_Info GB (_AemultB_bitmap__ne_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -41346,8 +40955,7 @@ GrB_Info GB (_AemultB_bitmap__ne_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ne_int8)
@@ -41537,7 +41145,6 @@ GrB_Info GB (_AemultB_04__ne_int16)
 GrB_Info GB (_AemultB_bitmap__ne_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -41546,8 +41153,7 @@ GrB_Info GB (_AemultB_bitmap__ne_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ne_int16)
@@ -41737,7 +41343,6 @@ GrB_Info GB (_AemultB_04__ne_int32)
 GrB_Info GB (_AemultB_bitmap__ne_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -41746,8 +41351,7 @@ GrB_Info GB (_AemultB_bitmap__ne_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ne_int32)
@@ -41937,7 +41541,6 @@ GrB_Info GB (_AemultB_04__ne_int64)
 GrB_Info GB (_AemultB_bitmap__ne_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -41946,8 +41549,7 @@ GrB_Info GB (_AemultB_bitmap__ne_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ne_int64)
@@ -42137,7 +41739,6 @@ GrB_Info GB (_AemultB_04__ne_uint8)
 GrB_Info GB (_AemultB_bitmap__ne_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -42146,8 +41747,7 @@ GrB_Info GB (_AemultB_bitmap__ne_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ne_uint8)
@@ -42337,7 +41937,6 @@ GrB_Info GB (_AemultB_04__ne_uint16)
 GrB_Info GB (_AemultB_bitmap__ne_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -42346,8 +41945,7 @@ GrB_Info GB (_AemultB_bitmap__ne_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ne_uint16)
@@ -42537,7 +42135,6 @@ GrB_Info GB (_AemultB_04__ne_uint32)
 GrB_Info GB (_AemultB_bitmap__ne_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -42546,8 +42143,7 @@ GrB_Info GB (_AemultB_bitmap__ne_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ne_uint32)
@@ -42737,7 +42333,6 @@ GrB_Info GB (_AemultB_04__ne_uint64)
 GrB_Info GB (_AemultB_bitmap__ne_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -42746,8 +42341,7 @@ GrB_Info GB (_AemultB_bitmap__ne_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ne_uint64)
@@ -42937,7 +42531,6 @@ GrB_Info GB (_AemultB_04__ne_fp32)
 GrB_Info GB (_AemultB_bitmap__ne_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -42946,8 +42539,7 @@ GrB_Info GB (_AemultB_bitmap__ne_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ne_fp32)
@@ -43137,7 +42729,6 @@ GrB_Info GB (_AemultB_04__ne_fp64)
 GrB_Info GB (_AemultB_bitmap__ne_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -43146,8 +42737,7 @@ GrB_Info GB (_AemultB_bitmap__ne_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ne_fp64)
@@ -43319,7 +42909,6 @@ GrB_Info GB (_AemultB_04__ne_fc32)
 GrB_Info GB (_AemultB_bitmap__ne_fc32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -43328,8 +42917,7 @@ GrB_Info GB (_AemultB_bitmap__ne_fc32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ne_fc32)
@@ -43501,7 +43089,6 @@ GrB_Info GB (_AemultB_04__ne_fc64)
 GrB_Info GB (_AemultB_bitmap__ne_fc64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -43510,8 +43097,7 @@ GrB_Info GB (_AemultB_bitmap__ne_fc64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ne_fc64)
@@ -43715,7 +43301,6 @@ GrB_Info GB (_AemultB_04__gt_bool)
 GrB_Info GB (_AemultB_bitmap__gt_bool)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -43724,8 +43309,7 @@ GrB_Info GB (_AemultB_bitmap__gt_bool)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__gt_bool)
@@ -43929,7 +43513,6 @@ GrB_Info GB (_AemultB_04__gt_int8)
 GrB_Info GB (_AemultB_bitmap__gt_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -43938,8 +43521,7 @@ GrB_Info GB (_AemultB_bitmap__gt_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__gt_int8)
@@ -44143,7 +43725,6 @@ GrB_Info GB (_AemultB_04__gt_int16)
 GrB_Info GB (_AemultB_bitmap__gt_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -44152,8 +43733,7 @@ GrB_Info GB (_AemultB_bitmap__gt_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__gt_int16)
@@ -44357,7 +43937,6 @@ GrB_Info GB (_AemultB_04__gt_int32)
 GrB_Info GB (_AemultB_bitmap__gt_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -44366,8 +43945,7 @@ GrB_Info GB (_AemultB_bitmap__gt_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__gt_int32)
@@ -44571,7 +44149,6 @@ GrB_Info GB (_AemultB_04__gt_int64)
 GrB_Info GB (_AemultB_bitmap__gt_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -44580,8 +44157,7 @@ GrB_Info GB (_AemultB_bitmap__gt_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__gt_int64)
@@ -44785,7 +44361,6 @@ GrB_Info GB (_AemultB_04__gt_uint8)
 GrB_Info GB (_AemultB_bitmap__gt_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -44794,8 +44369,7 @@ GrB_Info GB (_AemultB_bitmap__gt_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__gt_uint8)
@@ -44999,7 +44573,6 @@ GrB_Info GB (_AemultB_04__gt_uint16)
 GrB_Info GB (_AemultB_bitmap__gt_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -45008,8 +44581,7 @@ GrB_Info GB (_AemultB_bitmap__gt_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__gt_uint16)
@@ -45213,7 +44785,6 @@ GrB_Info GB (_AemultB_04__gt_uint32)
 GrB_Info GB (_AemultB_bitmap__gt_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -45222,8 +44793,7 @@ GrB_Info GB (_AemultB_bitmap__gt_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__gt_uint32)
@@ -45427,7 +44997,6 @@ GrB_Info GB (_AemultB_04__gt_uint64)
 GrB_Info GB (_AemultB_bitmap__gt_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -45436,8 +45005,7 @@ GrB_Info GB (_AemultB_bitmap__gt_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__gt_uint64)
@@ -45641,7 +45209,6 @@ GrB_Info GB (_AemultB_04__gt_fp32)
 GrB_Info GB (_AemultB_bitmap__gt_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -45650,8 +45217,7 @@ GrB_Info GB (_AemultB_bitmap__gt_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__gt_fp32)
@@ -45855,7 +45421,6 @@ GrB_Info GB (_AemultB_04__gt_fp64)
 GrB_Info GB (_AemultB_bitmap__gt_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -45864,8 +45429,7 @@ GrB_Info GB (_AemultB_bitmap__gt_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__gt_fp64)
@@ -46069,7 +45633,6 @@ GrB_Info GB (_AemultB_04__lt_bool)
 GrB_Info GB (_AemultB_bitmap__lt_bool)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -46078,8 +45641,7 @@ GrB_Info GB (_AemultB_bitmap__lt_bool)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lt_bool)
@@ -46283,7 +45845,6 @@ GrB_Info GB (_AemultB_04__lt_int8)
 GrB_Info GB (_AemultB_bitmap__lt_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -46292,8 +45853,7 @@ GrB_Info GB (_AemultB_bitmap__lt_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lt_int8)
@@ -46497,7 +46057,6 @@ GrB_Info GB (_AemultB_04__lt_int16)
 GrB_Info GB (_AemultB_bitmap__lt_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -46506,8 +46065,7 @@ GrB_Info GB (_AemultB_bitmap__lt_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lt_int16)
@@ -46711,7 +46269,6 @@ GrB_Info GB (_AemultB_04__lt_int32)
 GrB_Info GB (_AemultB_bitmap__lt_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -46720,8 +46277,7 @@ GrB_Info GB (_AemultB_bitmap__lt_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lt_int32)
@@ -46925,7 +46481,6 @@ GrB_Info GB (_AemultB_04__lt_int64)
 GrB_Info GB (_AemultB_bitmap__lt_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -46934,8 +46489,7 @@ GrB_Info GB (_AemultB_bitmap__lt_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lt_int64)
@@ -47139,7 +46693,6 @@ GrB_Info GB (_AemultB_04__lt_uint8)
 GrB_Info GB (_AemultB_bitmap__lt_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -47148,8 +46701,7 @@ GrB_Info GB (_AemultB_bitmap__lt_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lt_uint8)
@@ -47353,7 +46905,6 @@ GrB_Info GB (_AemultB_04__lt_uint16)
 GrB_Info GB (_AemultB_bitmap__lt_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -47362,8 +46913,7 @@ GrB_Info GB (_AemultB_bitmap__lt_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lt_uint16)
@@ -47567,7 +47117,6 @@ GrB_Info GB (_AemultB_04__lt_uint32)
 GrB_Info GB (_AemultB_bitmap__lt_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -47576,8 +47125,7 @@ GrB_Info GB (_AemultB_bitmap__lt_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lt_uint32)
@@ -47781,7 +47329,6 @@ GrB_Info GB (_AemultB_04__lt_uint64)
 GrB_Info GB (_AemultB_bitmap__lt_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -47790,8 +47337,7 @@ GrB_Info GB (_AemultB_bitmap__lt_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lt_uint64)
@@ -47995,7 +47541,6 @@ GrB_Info GB (_AemultB_04__lt_fp32)
 GrB_Info GB (_AemultB_bitmap__lt_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -48004,8 +47549,7 @@ GrB_Info GB (_AemultB_bitmap__lt_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lt_fp32)
@@ -48209,7 +47753,6 @@ GrB_Info GB (_AemultB_04__lt_fp64)
 GrB_Info GB (_AemultB_bitmap__lt_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -48218,8 +47761,7 @@ GrB_Info GB (_AemultB_bitmap__lt_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lt_fp64)
@@ -48423,7 +47965,6 @@ GrB_Info GB (_AemultB_04__ge_bool)
 GrB_Info GB (_AemultB_bitmap__ge_bool)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -48432,8 +47973,7 @@ GrB_Info GB (_AemultB_bitmap__ge_bool)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ge_bool)
@@ -48637,7 +48177,6 @@ GrB_Info GB (_AemultB_04__ge_int8)
 GrB_Info GB (_AemultB_bitmap__ge_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -48646,8 +48185,7 @@ GrB_Info GB (_AemultB_bitmap__ge_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ge_int8)
@@ -48851,7 +48389,6 @@ GrB_Info GB (_AemultB_04__ge_int16)
 GrB_Info GB (_AemultB_bitmap__ge_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -48860,8 +48397,7 @@ GrB_Info GB (_AemultB_bitmap__ge_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ge_int16)
@@ -49065,7 +48601,6 @@ GrB_Info GB (_AemultB_04__ge_int32)
 GrB_Info GB (_AemultB_bitmap__ge_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -49074,8 +48609,7 @@ GrB_Info GB (_AemultB_bitmap__ge_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ge_int32)
@@ -49279,7 +48813,6 @@ GrB_Info GB (_AemultB_04__ge_int64)
 GrB_Info GB (_AemultB_bitmap__ge_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -49288,8 +48821,7 @@ GrB_Info GB (_AemultB_bitmap__ge_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ge_int64)
@@ -49493,7 +49025,6 @@ GrB_Info GB (_AemultB_04__ge_uint8)
 GrB_Info GB (_AemultB_bitmap__ge_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -49502,8 +49033,7 @@ GrB_Info GB (_AemultB_bitmap__ge_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ge_uint8)
@@ -49707,7 +49237,6 @@ GrB_Info GB (_AemultB_04__ge_uint16)
 GrB_Info GB (_AemultB_bitmap__ge_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -49716,8 +49245,7 @@ GrB_Info GB (_AemultB_bitmap__ge_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ge_uint16)
@@ -49921,7 +49449,6 @@ GrB_Info GB (_AemultB_04__ge_uint32)
 GrB_Info GB (_AemultB_bitmap__ge_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -49930,8 +49457,7 @@ GrB_Info GB (_AemultB_bitmap__ge_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ge_uint32)
@@ -50135,7 +49661,6 @@ GrB_Info GB (_AemultB_04__ge_uint64)
 GrB_Info GB (_AemultB_bitmap__ge_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -50144,8 +49669,7 @@ GrB_Info GB (_AemultB_bitmap__ge_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ge_uint64)
@@ -50349,7 +49873,6 @@ GrB_Info GB (_AemultB_04__ge_fp32)
 GrB_Info GB (_AemultB_bitmap__ge_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -50358,8 +49881,7 @@ GrB_Info GB (_AemultB_bitmap__ge_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ge_fp32)
@@ -50563,7 +50085,6 @@ GrB_Info GB (_AemultB_04__ge_fp64)
 GrB_Info GB (_AemultB_bitmap__ge_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -50572,8 +50093,7 @@ GrB_Info GB (_AemultB_bitmap__ge_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ge_fp64)
@@ -50777,7 +50297,6 @@ GrB_Info GB (_AemultB_04__le_bool)
 GrB_Info GB (_AemultB_bitmap__le_bool)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -50786,8 +50305,7 @@ GrB_Info GB (_AemultB_bitmap__le_bool)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__le_bool)
@@ -50991,7 +50509,6 @@ GrB_Info GB (_AemultB_04__le_int8)
 GrB_Info GB (_AemultB_bitmap__le_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -51000,8 +50517,7 @@ GrB_Info GB (_AemultB_bitmap__le_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__le_int8)
@@ -51205,7 +50721,6 @@ GrB_Info GB (_AemultB_04__le_int16)
 GrB_Info GB (_AemultB_bitmap__le_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -51214,8 +50729,7 @@ GrB_Info GB (_AemultB_bitmap__le_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__le_int16)
@@ -51419,7 +50933,6 @@ GrB_Info GB (_AemultB_04__le_int32)
 GrB_Info GB (_AemultB_bitmap__le_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -51428,8 +50941,7 @@ GrB_Info GB (_AemultB_bitmap__le_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__le_int32)
@@ -51633,7 +51145,6 @@ GrB_Info GB (_AemultB_04__le_int64)
 GrB_Info GB (_AemultB_bitmap__le_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -51642,8 +51153,7 @@ GrB_Info GB (_AemultB_bitmap__le_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__le_int64)
@@ -51847,7 +51357,6 @@ GrB_Info GB (_AemultB_04__le_uint8)
 GrB_Info GB (_AemultB_bitmap__le_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -51856,8 +51365,7 @@ GrB_Info GB (_AemultB_bitmap__le_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__le_uint8)
@@ -52061,7 +51569,6 @@ GrB_Info GB (_AemultB_04__le_uint16)
 GrB_Info GB (_AemultB_bitmap__le_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -52070,8 +51577,7 @@ GrB_Info GB (_AemultB_bitmap__le_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__le_uint16)
@@ -52275,7 +51781,6 @@ GrB_Info GB (_AemultB_04__le_uint32)
 GrB_Info GB (_AemultB_bitmap__le_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -52284,8 +51789,7 @@ GrB_Info GB (_AemultB_bitmap__le_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__le_uint32)
@@ -52489,7 +51993,6 @@ GrB_Info GB (_AemultB_04__le_uint64)
 GrB_Info GB (_AemultB_bitmap__le_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -52498,8 +52001,7 @@ GrB_Info GB (_AemultB_bitmap__le_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__le_uint64)
@@ -52703,7 +52205,6 @@ GrB_Info GB (_AemultB_04__le_fp32)
 GrB_Info GB (_AemultB_bitmap__le_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -52712,8 +52213,7 @@ GrB_Info GB (_AemultB_bitmap__le_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__le_fp32)
@@ -52917,7 +52417,6 @@ GrB_Info GB (_AemultB_04__le_fp64)
 GrB_Info GB (_AemultB_bitmap__le_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -52926,8 +52425,7 @@ GrB_Info GB (_AemultB_bitmap__le_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__le_fp64)
@@ -53117,7 +52615,6 @@ GrB_Info GB (_AemultB_04__lor_bool)
 GrB_Info GB (_AemultB_bitmap__lor_bool)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -53126,8 +52623,7 @@ GrB_Info GB (_AemultB_bitmap__lor_bool)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lor_bool)
@@ -53317,7 +52813,6 @@ GrB_Info GB (_AemultB_04__lor_int8)
 GrB_Info GB (_AemultB_bitmap__lor_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -53326,8 +52821,7 @@ GrB_Info GB (_AemultB_bitmap__lor_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lor_int8)
@@ -53517,7 +53011,6 @@ GrB_Info GB (_AemultB_04__lor_int16)
 GrB_Info GB (_AemultB_bitmap__lor_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -53526,8 +53019,7 @@ GrB_Info GB (_AemultB_bitmap__lor_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lor_int16)
@@ -53717,7 +53209,6 @@ GrB_Info GB (_AemultB_04__lor_int32)
 GrB_Info GB (_AemultB_bitmap__lor_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -53726,8 +53217,7 @@ GrB_Info GB (_AemultB_bitmap__lor_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lor_int32)
@@ -53917,7 +53407,6 @@ GrB_Info GB (_AemultB_04__lor_int64)
 GrB_Info GB (_AemultB_bitmap__lor_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -53926,8 +53415,7 @@ GrB_Info GB (_AemultB_bitmap__lor_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lor_int64)
@@ -54117,7 +53605,6 @@ GrB_Info GB (_AemultB_04__lor_uint8)
 GrB_Info GB (_AemultB_bitmap__lor_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -54126,8 +53613,7 @@ GrB_Info GB (_AemultB_bitmap__lor_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lor_uint8)
@@ -54317,7 +53803,6 @@ GrB_Info GB (_AemultB_04__lor_uint16)
 GrB_Info GB (_AemultB_bitmap__lor_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -54326,8 +53811,7 @@ GrB_Info GB (_AemultB_bitmap__lor_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lor_uint16)
@@ -54517,7 +54001,6 @@ GrB_Info GB (_AemultB_04__lor_uint32)
 GrB_Info GB (_AemultB_bitmap__lor_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -54526,8 +54009,7 @@ GrB_Info GB (_AemultB_bitmap__lor_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lor_uint32)
@@ -54717,7 +54199,6 @@ GrB_Info GB (_AemultB_04__lor_uint64)
 GrB_Info GB (_AemultB_bitmap__lor_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -54726,8 +54207,7 @@ GrB_Info GB (_AemultB_bitmap__lor_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lor_uint64)
@@ -54917,7 +54397,6 @@ GrB_Info GB (_AemultB_04__lor_fp32)
 GrB_Info GB (_AemultB_bitmap__lor_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -54926,8 +54405,7 @@ GrB_Info GB (_AemultB_bitmap__lor_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lor_fp32)
@@ -55117,7 +54595,6 @@ GrB_Info GB (_AemultB_04__lor_fp64)
 GrB_Info GB (_AemultB_bitmap__lor_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -55126,8 +54603,7 @@ GrB_Info GB (_AemultB_bitmap__lor_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lor_fp64)
@@ -55317,7 +54793,6 @@ GrB_Info GB (_AemultB_04__land_bool)
 GrB_Info GB (_AemultB_bitmap__land_bool)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -55326,8 +54801,7 @@ GrB_Info GB (_AemultB_bitmap__land_bool)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__land_bool)
@@ -55517,7 +54991,6 @@ GrB_Info GB (_AemultB_04__land_int8)
 GrB_Info GB (_AemultB_bitmap__land_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -55526,8 +54999,7 @@ GrB_Info GB (_AemultB_bitmap__land_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__land_int8)
@@ -55717,7 +55189,6 @@ GrB_Info GB (_AemultB_04__land_int16)
 GrB_Info GB (_AemultB_bitmap__land_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -55726,8 +55197,7 @@ GrB_Info GB (_AemultB_bitmap__land_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__land_int16)
@@ -55917,7 +55387,6 @@ GrB_Info GB (_AemultB_04__land_int32)
 GrB_Info GB (_AemultB_bitmap__land_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -55926,8 +55395,7 @@ GrB_Info GB (_AemultB_bitmap__land_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__land_int32)
@@ -56117,7 +55585,6 @@ GrB_Info GB (_AemultB_04__land_int64)
 GrB_Info GB (_AemultB_bitmap__land_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -56126,8 +55593,7 @@ GrB_Info GB (_AemultB_bitmap__land_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__land_int64)
@@ -56317,7 +55783,6 @@ GrB_Info GB (_AemultB_04__land_uint8)
 GrB_Info GB (_AemultB_bitmap__land_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -56326,8 +55791,7 @@ GrB_Info GB (_AemultB_bitmap__land_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__land_uint8)
@@ -56517,7 +55981,6 @@ GrB_Info GB (_AemultB_04__land_uint16)
 GrB_Info GB (_AemultB_bitmap__land_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -56526,8 +55989,7 @@ GrB_Info GB (_AemultB_bitmap__land_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__land_uint16)
@@ -56717,7 +56179,6 @@ GrB_Info GB (_AemultB_04__land_uint32)
 GrB_Info GB (_AemultB_bitmap__land_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -56726,8 +56187,7 @@ GrB_Info GB (_AemultB_bitmap__land_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__land_uint32)
@@ -56917,7 +56377,6 @@ GrB_Info GB (_AemultB_04__land_uint64)
 GrB_Info GB (_AemultB_bitmap__land_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -56926,8 +56385,7 @@ GrB_Info GB (_AemultB_bitmap__land_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__land_uint64)
@@ -57117,7 +56575,6 @@ GrB_Info GB (_AemultB_04__land_fp32)
 GrB_Info GB (_AemultB_bitmap__land_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -57126,8 +56583,7 @@ GrB_Info GB (_AemultB_bitmap__land_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__land_fp32)
@@ -57317,7 +56773,6 @@ GrB_Info GB (_AemultB_04__land_fp64)
 GrB_Info GB (_AemultB_bitmap__land_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -57326,8 +56781,7 @@ GrB_Info GB (_AemultB_bitmap__land_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__land_fp64)
@@ -57517,7 +56971,6 @@ GrB_Info GB (_AemultB_04__lxor_bool)
 GrB_Info GB (_AemultB_bitmap__lxor_bool)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -57526,8 +56979,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_bool)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lxor_bool)
@@ -57717,7 +57169,6 @@ GrB_Info GB (_AemultB_04__lxor_int8)
 GrB_Info GB (_AemultB_bitmap__lxor_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -57726,8 +57177,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lxor_int8)
@@ -57917,7 +57367,6 @@ GrB_Info GB (_AemultB_04__lxor_int16)
 GrB_Info GB (_AemultB_bitmap__lxor_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -57926,8 +57375,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lxor_int16)
@@ -58117,7 +57565,6 @@ GrB_Info GB (_AemultB_04__lxor_int32)
 GrB_Info GB (_AemultB_bitmap__lxor_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -58126,8 +57573,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lxor_int32)
@@ -58317,7 +57763,6 @@ GrB_Info GB (_AemultB_04__lxor_int64)
 GrB_Info GB (_AemultB_bitmap__lxor_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -58326,8 +57771,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lxor_int64)
@@ -58517,7 +57961,6 @@ GrB_Info GB (_AemultB_04__lxor_uint8)
 GrB_Info GB (_AemultB_bitmap__lxor_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -58526,8 +57969,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lxor_uint8)
@@ -58717,7 +58159,6 @@ GrB_Info GB (_AemultB_04__lxor_uint16)
 GrB_Info GB (_AemultB_bitmap__lxor_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -58726,8 +58167,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lxor_uint16)
@@ -58917,7 +58357,6 @@ GrB_Info GB (_AemultB_04__lxor_uint32)
 GrB_Info GB (_AemultB_bitmap__lxor_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -58926,8 +58365,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lxor_uint32)
@@ -59117,7 +58555,6 @@ GrB_Info GB (_AemultB_04__lxor_uint64)
 GrB_Info GB (_AemultB_bitmap__lxor_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -59126,8 +58563,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lxor_uint64)
@@ -59317,7 +58753,6 @@ GrB_Info GB (_AemultB_04__lxor_fp32)
 GrB_Info GB (_AemultB_bitmap__lxor_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -59326,8 +58761,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lxor_fp32)
@@ -59517,7 +58951,6 @@ GrB_Info GB (_AemultB_04__lxor_fp64)
 GrB_Info GB (_AemultB_bitmap__lxor_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -59526,8 +58959,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__lxor_fp64)
@@ -59713,7 +59145,6 @@ GrB_Info GB (_AemultB_04__atan2_fp32)
 GrB_Info GB (_AemultB_bitmap__atan2_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -59722,8 +59153,7 @@ GrB_Info GB (_AemultB_bitmap__atan2_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__atan2_fp32)
@@ -59909,7 +59339,6 @@ GrB_Info GB (_AemultB_04__atan2_fp64)
 GrB_Info GB (_AemultB_bitmap__atan2_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -59918,8 +59347,7 @@ GrB_Info GB (_AemultB_bitmap__atan2_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__atan2_fp64)
@@ -60091,7 +59519,6 @@ GrB_Info GB (_AemultB_04__hypot_fp32)
 GrB_Info GB (_AemultB_bitmap__hypot_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -60100,8 +59527,7 @@ GrB_Info GB (_AemultB_bitmap__hypot_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__hypot_fp32)
@@ -60273,7 +59699,6 @@ GrB_Info GB (_AemultB_04__hypot_fp64)
 GrB_Info GB (_AemultB_bitmap__hypot_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -60282,8 +59707,7 @@ GrB_Info GB (_AemultB_bitmap__hypot_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__hypot_fp64)
@@ -60469,7 +59893,6 @@ GrB_Info GB (_AemultB_04__fmod_fp32)
 GrB_Info GB (_AemultB_bitmap__fmod_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -60478,8 +59901,7 @@ GrB_Info GB (_AemultB_bitmap__fmod_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__fmod_fp32)
@@ -60665,7 +60087,6 @@ GrB_Info GB (_AemultB_04__fmod_fp64)
 GrB_Info GB (_AemultB_bitmap__fmod_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -60674,8 +60095,7 @@ GrB_Info GB (_AemultB_bitmap__fmod_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__fmod_fp64)
@@ -60861,7 +60281,6 @@ GrB_Info GB (_AemultB_04__remainder_fp32)
 GrB_Info GB (_AemultB_bitmap__remainder_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -60870,8 +60289,7 @@ GrB_Info GB (_AemultB_bitmap__remainder_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__remainder_fp32)
@@ -61057,7 +60475,6 @@ GrB_Info GB (_AemultB_04__remainder_fp64)
 GrB_Info GB (_AemultB_bitmap__remainder_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -61066,8 +60483,7 @@ GrB_Info GB (_AemultB_bitmap__remainder_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__remainder_fp64)
@@ -61253,7 +60669,6 @@ GrB_Info GB (_AemultB_04__copysign_fp32)
 GrB_Info GB (_AemultB_bitmap__copysign_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -61262,8 +60677,7 @@ GrB_Info GB (_AemultB_bitmap__copysign_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__copysign_fp32)
@@ -61449,7 +60863,6 @@ GrB_Info GB (_AemultB_04__copysign_fp64)
 GrB_Info GB (_AemultB_bitmap__copysign_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -61458,8 +60871,7 @@ GrB_Info GB (_AemultB_bitmap__copysign_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__copysign_fp64)
@@ -61645,7 +61057,6 @@ GrB_Info GB (_AemultB_04__ldexp_fp32)
 GrB_Info GB (_AemultB_bitmap__ldexp_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -61654,8 +61065,7 @@ GrB_Info GB (_AemultB_bitmap__ldexp_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ldexp_fp32)
@@ -61841,7 +61251,6 @@ GrB_Info GB (_AemultB_04__ldexp_fp64)
 GrB_Info GB (_AemultB_bitmap__ldexp_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -61850,8 +61259,7 @@ GrB_Info GB (_AemultB_bitmap__ldexp_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__ldexp_fp64)
@@ -62037,7 +61445,6 @@ GrB_Info GB (_AemultB_04__cmplx_fp32)
 GrB_Info GB (_AemultB_bitmap__cmplx_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -62046,8 +61453,7 @@ GrB_Info GB (_AemultB_bitmap__cmplx_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__cmplx_fp32)
@@ -62233,7 +61639,6 @@ GrB_Info GB (_AemultB_04__cmplx_fp64)
 GrB_Info GB (_AemultB_bitmap__cmplx_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -62242,8 +61647,7 @@ GrB_Info GB (_AemultB_bitmap__cmplx_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__cmplx_fp64)
@@ -62415,7 +61819,6 @@ GrB_Info GB (_AemultB_04__bor_int8)
 GrB_Info GB (_AemultB_bitmap__bor_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -62424,8 +61827,7 @@ GrB_Info GB (_AemultB_bitmap__bor_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bor_int8)
@@ -62597,7 +61999,6 @@ GrB_Info GB (_AemultB_04__bor_int16)
 GrB_Info GB (_AemultB_bitmap__bor_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -62606,8 +62007,7 @@ GrB_Info GB (_AemultB_bitmap__bor_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bor_int16)
@@ -62779,7 +62179,6 @@ GrB_Info GB (_AemultB_04__bor_int32)
 GrB_Info GB (_AemultB_bitmap__bor_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -62788,8 +62187,7 @@ GrB_Info GB (_AemultB_bitmap__bor_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bor_int32)
@@ -62961,7 +62359,6 @@ GrB_Info GB (_AemultB_04__bor_int64)
 GrB_Info GB (_AemultB_bitmap__bor_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -62970,8 +62367,7 @@ GrB_Info GB (_AemultB_bitmap__bor_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bor_int64)
@@ -63161,7 +62557,6 @@ GrB_Info GB (_AemultB_04__bor_uint8)
 GrB_Info GB (_AemultB_bitmap__bor_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -63170,8 +62565,7 @@ GrB_Info GB (_AemultB_bitmap__bor_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bor_uint8)
@@ -63361,7 +62755,6 @@ GrB_Info GB (_AemultB_04__bor_uint16)
 GrB_Info GB (_AemultB_bitmap__bor_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -63370,8 +62763,7 @@ GrB_Info GB (_AemultB_bitmap__bor_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bor_uint16)
@@ -63561,7 +62953,6 @@ GrB_Info GB (_AemultB_04__bor_uint32)
 GrB_Info GB (_AemultB_bitmap__bor_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -63570,8 +62961,7 @@ GrB_Info GB (_AemultB_bitmap__bor_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bor_uint32)
@@ -63761,7 +63151,6 @@ GrB_Info GB (_AemultB_04__bor_uint64)
 GrB_Info GB (_AemultB_bitmap__bor_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -63770,8 +63159,7 @@ GrB_Info GB (_AemultB_bitmap__bor_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bor_uint64)
@@ -63943,7 +63331,6 @@ GrB_Info GB (_AemultB_04__band_int8)
 GrB_Info GB (_AemultB_bitmap__band_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -63952,8 +63339,7 @@ GrB_Info GB (_AemultB_bitmap__band_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__band_int8)
@@ -64125,7 +63511,6 @@ GrB_Info GB (_AemultB_04__band_int16)
 GrB_Info GB (_AemultB_bitmap__band_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -64134,8 +63519,7 @@ GrB_Info GB (_AemultB_bitmap__band_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__band_int16)
@@ -64307,7 +63691,6 @@ GrB_Info GB (_AemultB_04__band_int32)
 GrB_Info GB (_AemultB_bitmap__band_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -64316,8 +63699,7 @@ GrB_Info GB (_AemultB_bitmap__band_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__band_int32)
@@ -64489,7 +63871,6 @@ GrB_Info GB (_AemultB_04__band_int64)
 GrB_Info GB (_AemultB_bitmap__band_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -64498,8 +63879,7 @@ GrB_Info GB (_AemultB_bitmap__band_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__band_int64)
@@ -64689,7 +64069,6 @@ GrB_Info GB (_AemultB_04__band_uint8)
 GrB_Info GB (_AemultB_bitmap__band_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -64698,8 +64077,7 @@ GrB_Info GB (_AemultB_bitmap__band_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__band_uint8)
@@ -64889,7 +64267,6 @@ GrB_Info GB (_AemultB_04__band_uint16)
 GrB_Info GB (_AemultB_bitmap__band_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -64898,8 +64275,7 @@ GrB_Info GB (_AemultB_bitmap__band_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__band_uint16)
@@ -65089,7 +64465,6 @@ GrB_Info GB (_AemultB_04__band_uint32)
 GrB_Info GB (_AemultB_bitmap__band_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -65098,8 +64473,7 @@ GrB_Info GB (_AemultB_bitmap__band_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__band_uint32)
@@ -65289,7 +64663,6 @@ GrB_Info GB (_AemultB_04__band_uint64)
 GrB_Info GB (_AemultB_bitmap__band_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -65298,8 +64671,7 @@ GrB_Info GB (_AemultB_bitmap__band_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__band_uint64)
@@ -65471,7 +64843,6 @@ GrB_Info GB (_AemultB_04__bxor_int8)
 GrB_Info GB (_AemultB_bitmap__bxor_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -65480,8 +64851,7 @@ GrB_Info GB (_AemultB_bitmap__bxor_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bxor_int8)
@@ -65653,7 +65023,6 @@ GrB_Info GB (_AemultB_04__bxor_int16)
 GrB_Info GB (_AemultB_bitmap__bxor_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -65662,8 +65031,7 @@ GrB_Info GB (_AemultB_bitmap__bxor_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bxor_int16)
@@ -65835,7 +65203,6 @@ GrB_Info GB (_AemultB_04__bxor_int32)
 GrB_Info GB (_AemultB_bitmap__bxor_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -65844,8 +65211,7 @@ GrB_Info GB (_AemultB_bitmap__bxor_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bxor_int32)
@@ -66017,7 +65383,6 @@ GrB_Info GB (_AemultB_04__bxor_int64)
 GrB_Info GB (_AemultB_bitmap__bxor_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -66026,8 +65391,7 @@ GrB_Info GB (_AemultB_bitmap__bxor_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bxor_int64)
@@ -66217,7 +65581,6 @@ GrB_Info GB (_AemultB_04__bxor_uint8)
 GrB_Info GB (_AemultB_bitmap__bxor_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -66226,8 +65589,7 @@ GrB_Info GB (_AemultB_bitmap__bxor_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bxor_uint8)
@@ -66417,7 +65779,6 @@ GrB_Info GB (_AemultB_04__bxor_uint16)
 GrB_Info GB (_AemultB_bitmap__bxor_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -66426,8 +65787,7 @@ GrB_Info GB (_AemultB_bitmap__bxor_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bxor_uint16)
@@ -66617,7 +65977,6 @@ GrB_Info GB (_AemultB_04__bxor_uint32)
 GrB_Info GB (_AemultB_bitmap__bxor_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -66626,8 +65985,7 @@ GrB_Info GB (_AemultB_bitmap__bxor_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bxor_uint32)
@@ -66817,7 +66175,6 @@ GrB_Info GB (_AemultB_04__bxor_uint64)
 GrB_Info GB (_AemultB_bitmap__bxor_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -66826,8 +66183,7 @@ GrB_Info GB (_AemultB_bitmap__bxor_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bxor_uint64)
@@ -66999,7 +66355,6 @@ GrB_Info GB (_AemultB_04__bxnor_int8)
 GrB_Info GB (_AemultB_bitmap__bxnor_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -67008,8 +66363,7 @@ GrB_Info GB (_AemultB_bitmap__bxnor_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bxnor_int8)
@@ -67181,7 +66535,6 @@ GrB_Info GB (_AemultB_04__bxnor_int16)
 GrB_Info GB (_AemultB_bitmap__bxnor_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -67190,8 +66543,7 @@ GrB_Info GB (_AemultB_bitmap__bxnor_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bxnor_int16)
@@ -67363,7 +66715,6 @@ GrB_Info GB (_AemultB_04__bxnor_int32)
 GrB_Info GB (_AemultB_bitmap__bxnor_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -67372,8 +66723,7 @@ GrB_Info GB (_AemultB_bitmap__bxnor_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bxnor_int32)
@@ -67545,7 +66895,6 @@ GrB_Info GB (_AemultB_04__bxnor_int64)
 GrB_Info GB (_AemultB_bitmap__bxnor_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -67554,8 +66903,7 @@ GrB_Info GB (_AemultB_bitmap__bxnor_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bxnor_int64)
@@ -67745,7 +67093,6 @@ GrB_Info GB (_AemultB_04__bxnor_uint8)
 GrB_Info GB (_AemultB_bitmap__bxnor_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -67754,8 +67101,7 @@ GrB_Info GB (_AemultB_bitmap__bxnor_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bxnor_uint8)
@@ -67945,7 +67291,6 @@ GrB_Info GB (_AemultB_04__bxnor_uint16)
 GrB_Info GB (_AemultB_bitmap__bxnor_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -67954,8 +67299,7 @@ GrB_Info GB (_AemultB_bitmap__bxnor_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bxnor_uint16)
@@ -68145,7 +67489,6 @@ GrB_Info GB (_AemultB_04__bxnor_uint32)
 GrB_Info GB (_AemultB_bitmap__bxnor_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -68154,8 +67497,7 @@ GrB_Info GB (_AemultB_bitmap__bxnor_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bxnor_uint32)
@@ -68345,7 +67687,6 @@ GrB_Info GB (_AemultB_04__bxnor_uint64)
 GrB_Info GB (_AemultB_bitmap__bxnor_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -68354,8 +67695,7 @@ GrB_Info GB (_AemultB_bitmap__bxnor_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bxnor_uint64)
@@ -68541,7 +67881,6 @@ GrB_Info GB (_AemultB_04__bget_int8)
 GrB_Info GB (_AemultB_bitmap__bget_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -68550,8 +67889,7 @@ GrB_Info GB (_AemultB_bitmap__bget_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bget_int8)
@@ -68737,7 +68075,6 @@ GrB_Info GB (_AemultB_04__bget_int16)
 GrB_Info GB (_AemultB_bitmap__bget_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -68746,8 +68083,7 @@ GrB_Info GB (_AemultB_bitmap__bget_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bget_int16)
@@ -68933,7 +68269,6 @@ GrB_Info GB (_AemultB_04__bget_int32)
 GrB_Info GB (_AemultB_bitmap__bget_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -68942,8 +68277,7 @@ GrB_Info GB (_AemultB_bitmap__bget_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bget_int32)
@@ -69129,7 +68463,6 @@ GrB_Info GB (_AemultB_04__bget_int64)
 GrB_Info GB (_AemultB_bitmap__bget_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -69138,8 +68471,7 @@ GrB_Info GB (_AemultB_bitmap__bget_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bget_int64)
@@ -69325,7 +68657,6 @@ GrB_Info GB (_AemultB_04__bget_uint8)
 GrB_Info GB (_AemultB_bitmap__bget_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -69334,8 +68665,7 @@ GrB_Info GB (_AemultB_bitmap__bget_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bget_uint8)
@@ -69521,7 +68851,6 @@ GrB_Info GB (_AemultB_04__bget_uint16)
 GrB_Info GB (_AemultB_bitmap__bget_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -69530,8 +68859,7 @@ GrB_Info GB (_AemultB_bitmap__bget_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bget_uint16)
@@ -69717,7 +69045,6 @@ GrB_Info GB (_AemultB_04__bget_uint32)
 GrB_Info GB (_AemultB_bitmap__bget_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -69726,8 +69053,7 @@ GrB_Info GB (_AemultB_bitmap__bget_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bget_uint32)
@@ -69913,7 +69239,6 @@ GrB_Info GB (_AemultB_04__bget_uint64)
 GrB_Info GB (_AemultB_bitmap__bget_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -69922,8 +69247,7 @@ GrB_Info GB (_AemultB_bitmap__bget_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bget_uint64)
@@ -70109,7 +69433,6 @@ GrB_Info GB (_AemultB_04__bset_int8)
 GrB_Info GB (_AemultB_bitmap__bset_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -70118,8 +69441,7 @@ GrB_Info GB (_AemultB_bitmap__bset_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bset_int8)
@@ -70305,7 +69627,6 @@ GrB_Info GB (_AemultB_04__bset_int16)
 GrB_Info GB (_AemultB_bitmap__bset_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -70314,8 +69635,7 @@ GrB_Info GB (_AemultB_bitmap__bset_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bset_int16)
@@ -70501,7 +69821,6 @@ GrB_Info GB (_AemultB_04__bset_int32)
 GrB_Info GB (_AemultB_bitmap__bset_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -70510,8 +69829,7 @@ GrB_Info GB (_AemultB_bitmap__bset_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bset_int32)
@@ -70697,7 +70015,6 @@ GrB_Info GB (_AemultB_04__bset_int64)
 GrB_Info GB (_AemultB_bitmap__bset_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -70706,8 +70023,7 @@ GrB_Info GB (_AemultB_bitmap__bset_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bset_int64)
@@ -70893,7 +70209,6 @@ GrB_Info GB (_AemultB_04__bset_uint8)
 GrB_Info GB (_AemultB_bitmap__bset_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -70902,8 +70217,7 @@ GrB_Info GB (_AemultB_bitmap__bset_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bset_uint8)
@@ -71089,7 +70403,6 @@ GrB_Info GB (_AemultB_04__bset_uint16)
 GrB_Info GB (_AemultB_bitmap__bset_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -71098,8 +70411,7 @@ GrB_Info GB (_AemultB_bitmap__bset_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bset_uint16)
@@ -71285,7 +70597,6 @@ GrB_Info GB (_AemultB_04__bset_uint32)
 GrB_Info GB (_AemultB_bitmap__bset_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -71294,8 +70605,7 @@ GrB_Info GB (_AemultB_bitmap__bset_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bset_uint32)
@@ -71481,7 +70791,6 @@ GrB_Info GB (_AemultB_04__bset_uint64)
 GrB_Info GB (_AemultB_bitmap__bset_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -71490,8 +70799,7 @@ GrB_Info GB (_AemultB_bitmap__bset_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bset_uint64)
@@ -71677,7 +70985,6 @@ GrB_Info GB (_AemultB_04__bclr_int8)
 GrB_Info GB (_AemultB_bitmap__bclr_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -71686,8 +70993,7 @@ GrB_Info GB (_AemultB_bitmap__bclr_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bclr_int8)
@@ -71873,7 +71179,6 @@ GrB_Info GB (_AemultB_04__bclr_int16)
 GrB_Info GB (_AemultB_bitmap__bclr_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -71882,8 +71187,7 @@ GrB_Info GB (_AemultB_bitmap__bclr_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bclr_int16)
@@ -72069,7 +71373,6 @@ GrB_Info GB (_AemultB_04__bclr_int32)
 GrB_Info GB (_AemultB_bitmap__bclr_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -72078,8 +71381,7 @@ GrB_Info GB (_AemultB_bitmap__bclr_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bclr_int32)
@@ -72265,7 +71567,6 @@ GrB_Info GB (_AemultB_04__bclr_int64)
 GrB_Info GB (_AemultB_bitmap__bclr_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -72274,8 +71575,7 @@ GrB_Info GB (_AemultB_bitmap__bclr_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bclr_int64)
@@ -72461,7 +71761,6 @@ GrB_Info GB (_AemultB_04__bclr_uint8)
 GrB_Info GB (_AemultB_bitmap__bclr_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -72470,8 +71769,7 @@ GrB_Info GB (_AemultB_bitmap__bclr_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bclr_uint8)
@@ -72657,7 +71955,6 @@ GrB_Info GB (_AemultB_04__bclr_uint16)
 GrB_Info GB (_AemultB_bitmap__bclr_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -72666,8 +71963,7 @@ GrB_Info GB (_AemultB_bitmap__bclr_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bclr_uint16)
@@ -72853,7 +72149,6 @@ GrB_Info GB (_AemultB_04__bclr_uint32)
 GrB_Info GB (_AemultB_bitmap__bclr_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -72862,8 +72157,7 @@ GrB_Info GB (_AemultB_bitmap__bclr_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bclr_uint32)
@@ -73049,7 +72343,6 @@ GrB_Info GB (_AemultB_04__bclr_uint64)
 GrB_Info GB (_AemultB_bitmap__bclr_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -73058,8 +72351,7 @@ GrB_Info GB (_AemultB_bitmap__bclr_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bclr_uint64)
@@ -73245,7 +72537,6 @@ GrB_Info GB (_AemultB_04__bshift_int8)
 GrB_Info GB (_AemultB_bitmap__bshift_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -73254,8 +72545,7 @@ GrB_Info GB (_AemultB_bitmap__bshift_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bshift_int8)
@@ -73441,7 +72731,6 @@ GrB_Info GB (_AemultB_04__bshift_int16)
 GrB_Info GB (_AemultB_bitmap__bshift_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -73450,8 +72739,7 @@ GrB_Info GB (_AemultB_bitmap__bshift_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bshift_int16)
@@ -73637,7 +72925,6 @@ GrB_Info GB (_AemultB_04__bshift_int32)
 GrB_Info GB (_AemultB_bitmap__bshift_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -73646,8 +72933,7 @@ GrB_Info GB (_AemultB_bitmap__bshift_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bshift_int32)
@@ -73833,7 +73119,6 @@ GrB_Info GB (_AemultB_04__bshift_int64)
 GrB_Info GB (_AemultB_bitmap__bshift_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -73842,8 +73127,7 @@ GrB_Info GB (_AemultB_bitmap__bshift_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bshift_int64)
@@ -74029,7 +73313,6 @@ GrB_Info GB (_AemultB_04__bshift_uint8)
 GrB_Info GB (_AemultB_bitmap__bshift_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -74038,8 +73321,7 @@ GrB_Info GB (_AemultB_bitmap__bshift_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bshift_uint8)
@@ -74225,7 +73507,6 @@ GrB_Info GB (_AemultB_04__bshift_uint16)
 GrB_Info GB (_AemultB_bitmap__bshift_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -74234,8 +73515,7 @@ GrB_Info GB (_AemultB_bitmap__bshift_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bshift_uint16)
@@ -74421,7 +73701,6 @@ GrB_Info GB (_AemultB_04__bshift_uint32)
 GrB_Info GB (_AemultB_bitmap__bshift_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -74430,8 +73709,7 @@ GrB_Info GB (_AemultB_bitmap__bshift_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bshift_uint32)
@@ -74617,7 +73895,6 @@ GrB_Info GB (_AemultB_04__bshift_uint64)
 GrB_Info GB (_AemultB_bitmap__bshift_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -74626,8 +73903,7 @@ GrB_Info GB (_AemultB_bitmap__bshift_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__bshift_uint64)
@@ -74813,7 +74089,6 @@ GrB_Info GB (_AemultB_04__pow_int8)
 GrB_Info GB (_AemultB_bitmap__pow_int8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -74822,8 +74097,7 @@ GrB_Info GB (_AemultB_bitmap__pow_int8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__pow_int8)
@@ -75009,7 +74283,6 @@ GrB_Info GB (_AemultB_04__pow_int16)
 GrB_Info GB (_AemultB_bitmap__pow_int16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -75018,8 +74291,7 @@ GrB_Info GB (_AemultB_bitmap__pow_int16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__pow_int16)
@@ -75205,7 +74477,6 @@ GrB_Info GB (_AemultB_04__pow_int32)
 GrB_Info GB (_AemultB_bitmap__pow_int32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -75214,8 +74485,7 @@ GrB_Info GB (_AemultB_bitmap__pow_int32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__pow_int32)
@@ -75401,7 +74671,6 @@ GrB_Info GB (_AemultB_04__pow_int64)
 GrB_Info GB (_AemultB_bitmap__pow_int64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -75410,8 +74679,7 @@ GrB_Info GB (_AemultB_bitmap__pow_int64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__pow_int64)
@@ -75597,7 +74865,6 @@ GrB_Info GB (_AemultB_04__pow_uint8)
 GrB_Info GB (_AemultB_bitmap__pow_uint8)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -75606,8 +74873,7 @@ GrB_Info GB (_AemultB_bitmap__pow_uint8)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__pow_uint8)
@@ -75793,7 +75059,6 @@ GrB_Info GB (_AemultB_04__pow_uint16)
 GrB_Info GB (_AemultB_bitmap__pow_uint16)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -75802,8 +75067,7 @@ GrB_Info GB (_AemultB_bitmap__pow_uint16)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__pow_uint16)
@@ -75989,7 +75253,6 @@ GrB_Info GB (_AemultB_04__pow_uint32)
 GrB_Info GB (_AemultB_bitmap__pow_uint32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -75998,8 +75261,7 @@ GrB_Info GB (_AemultB_bitmap__pow_uint32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__pow_uint32)
@@ -76185,7 +75447,6 @@ GrB_Info GB (_AemultB_04__pow_uint64)
 GrB_Info GB (_AemultB_bitmap__pow_uint64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -76194,8 +75455,7 @@ GrB_Info GB (_AemultB_bitmap__pow_uint64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__pow_uint64)
@@ -76381,7 +75641,6 @@ GrB_Info GB (_AemultB_04__pow_fp32)
 GrB_Info GB (_AemultB_bitmap__pow_fp32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -76390,8 +75649,7 @@ GrB_Info GB (_AemultB_bitmap__pow_fp32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__pow_fp32)
@@ -76577,7 +75835,6 @@ GrB_Info GB (_AemultB_04__pow_fp64)
 GrB_Info GB (_AemultB_bitmap__pow_fp64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -76586,8 +75843,7 @@ GrB_Info GB (_AemultB_bitmap__pow_fp64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__pow_fp64)
@@ -76773,7 +76029,6 @@ GrB_Info GB (_AemultB_04__pow_fc32)
 GrB_Info GB (_AemultB_bitmap__pow_fc32)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -76782,8 +76037,7 @@ GrB_Info GB (_AemultB_bitmap__pow_fc32)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__pow_fc32)
@@ -76969,7 +76223,6 @@ GrB_Info GB (_AemultB_04__pow_fc64)
 GrB_Info GB (_AemultB_bitmap__pow_fc64)
 (
     GrB_Matrix C,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -76978,8 +76231,7 @@ GrB_Info GB (_AemultB_bitmap__pow_fc64)
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads,
-    const int C_nthreads,
-    GB_Werk Werk
+    const int C_nthreads
 ) ;
 
 GrB_Info GB (_bind1st__pow_fc64)

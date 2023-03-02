@@ -80,19 +80,16 @@
         if (M == NULL)
         {
             // C=A.*B; C bitmap, M not present, A and B are bitmap/full
-            ASSERT (ewise_method == GB_EMULT_METHOD5) ;
             #include "GB_emult_bitmap_5.c"
         }
         else if (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M))
         {
             // C<!M>=A.*B; C bitmap, M sparse/hyper, A and B are bitmap/full
-            ASSERT (ewise_method == GB_EMULT_METHOD6) ;
             #include "GB_emult_bitmap_6.c"
         }
         else
         {
             // C<#M>=A.*B; C bitmap; M, A, and B are all bitmap/full
-            ASSERT (ewise_method == GB_EMULT_METHOD7) ;
             #include "GB_emult_bitmap_7.c"
         }
     }
