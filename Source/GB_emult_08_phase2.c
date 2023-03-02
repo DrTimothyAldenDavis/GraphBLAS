@@ -272,7 +272,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
         GB_emult_generic (C, op, TaskList, C_ntasks, C_nthreads,
             C_to_M, C_to_A, C_to_B, C_sparsity, ewise_method, NULL,
             NULL, 0, 0, NULL, 0, 0, NULL, 0, 0,
-            M, Mask_struct, Mask_comp, A, B, Werk) ;
+            M, Mask_struct, Mask_comp, A, B) ;
     }
 
     //--------------------------------------------------------------------------

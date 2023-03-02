@@ -296,8 +296,7 @@ void GB_emult_generic       // generic emult
     const bool Mask_struct,         // if true, use the only structure of M
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,
-    const GrB_Matrix B,
-    GB_Werk Werk
+    const GrB_Matrix B
 ) ;
 
 #endif

@@ -20,12 +20,6 @@
 #include "GB_unused.h"
 #include "GB_ek_slice.h"
 
-#undef  GB_FREE_ALL
-#define GB_FREE_ALL             \
-{                               \
-    GB_phybix_free (C) ;        \
-}
-
 #include "GB_generic.h"
 
 void GB_emult_generic       // generic emult
@@ -56,8 +50,7 @@ void GB_emult_generic       // generic emult
     const bool Mask_struct,         // if true, use the only structure of M
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,
-    const GrB_Matrix B,
-    GB_Werk Werk
+    const GrB_Matrix B
 )
 {
 

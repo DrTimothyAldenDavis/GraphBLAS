@@ -277,7 +277,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         GB_emult_generic (C, op, NULL, 0, C_nthreads,
             NULL, NULL, NULL, GxB_BITMAP, ewise_method, NULL,
             M_ek_slicing, M_ntasks, M_nthreads, NULL, 0, 0, NULL, 0, 0,
-            M, Mask_struct, Mask_comp, A, B, Werk) ;
+            M, Mask_struct, Mask_comp, A, B) ;
     }
 
     //--------------------------------------------------------------------------

@@ -322,7 +322,7 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
         GB_emult_generic (C, op, NULL, 0, 0,
             NULL, NULL, NULL, C_sparsity, GB_EMULT_METHOD3, Cp_kfirst,
             NULL, 0, 0, NULL, 0, 0, B_ek_slicing, B_ntasks, B_nthreads,
-            M, Mask_struct, Mask_comp, A, B, Werk) ;
+            M, Mask_struct, Mask_comp, A, B) ;
     }
 
     //--------------------------------------------------------------------------
