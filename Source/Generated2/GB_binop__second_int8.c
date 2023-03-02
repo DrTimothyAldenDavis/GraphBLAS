@@ -236,8 +236,6 @@ GrB_Info GB (_AunionB__second_int8)
 GrB_Info GB (_AemultB_08__second_int8)
 (
     GrB_Matrix C,
-    const int C_sparsity,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,

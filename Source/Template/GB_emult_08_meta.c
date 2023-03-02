@@ -136,7 +136,6 @@
     #else
 
         // phase2: numerical phase
-        ASSERT (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE) ;
         #include "GB_emult_08_template.c"
 
     #endif

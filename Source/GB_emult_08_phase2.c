@@ -15,13 +15,16 @@
 // GB_emult_08_phase2 computes the pattern and values of each vector of C(:,j),
 // entirely in parallel.
 
-// C, M, A, and B can be have any sparsity structure.  If M is sparse or
-// hypersparse, and complemented, however, then it is not applied and not
-// passed to this function.  It is applied later, as determined by
-// GB_emult_sparsity.
+// C is sparse or hypersparse; M, A, and B can be have any sparsity structure.
+// If M is sparse or hypersparse, and complemented, however, then it is not
+// applied and not passed to this function.  It is applied later, as determined
+// by GB_emult_sparsity.
 
 // This function either frees Cp or transplants it into C, as C->p.  Either
 // way, the caller must not free it.
+
+// FIXME: debug is on
+#define GB_DEBUG
 
 #include "GB_ewise.h"
 #include "GB_emult.h"
@@ -103,8 +106,8 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     //--------------------------------------------------------------------------
 
     bool C_is_hyper = (C_sparsity == GxB_HYPERSPARSE) ;
-    bool C_is_sparse_or_hyper = (C_sparsity == GxB_SPARSE) || C_is_hyper ;
-    ASSERT (C_is_sparse_or_hyper == (Cp != NULL)) ;
+    ASSERT (C_is_hyper || (C_sparsity == GxB_SPARSE)) ;
+    ASSERT (Cp != NULL) ;
     ASSERT (C_is_hyper == (Ch != NULL)) ;
 
     GB_Opcode opcode = op->opcode ;
@@ -136,11 +139,11 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     // allocate the output matrix C
     //--------------------------------------------------------------------------
 
-    int64_t cnz = (C_is_sparse_or_hyper) ? Cp [Cnvec] : GB_nnz_full (A) ;
+    int64_t cnz = Cp [Cnvec] ;
 
     // allocate the result C (but do not allocate C->p or C->h)
     // set C->iso = C_iso   OK
-    GrB_Info info = GB_new_bix (&C, // any sparsity, existing header
+    GrB_Info info = GB_new_bix (&C, // sparse/hyper, existing header
         ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
         C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso) ;
     if (info != GrB_SUCCESS)
@@ -152,13 +155,10 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     }
 
     // transplant Cp into C as the vector pointers, from GB_emult_08_phase1
-    if (C_is_sparse_or_hyper)
-    { 
-        C->nvec_nonempty = Cnvec_nonempty ;
-        C->p = (int64_t *) Cp ; C->p_size = Cp_size ;
-        C->nvals = cnz ;
-        (*Cp_handle) = NULL ;
-    }
+    C->nvec_nonempty = Cnvec_nonempty ;
+    C->p = (int64_t *) Cp ; C->p_size = Cp_size ;
+    C->nvals = cnz ;
+    (*Cp_handle) = NULL ;
 
     // add Ch as the hypersparse list for C, from GB_emult_08_phase0
     if (C_is_hyper)
@@ -192,7 +192,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     // using a built-in binary operator (except for positional operators)
     //--------------------------------------------------------------------------
 
-    bool done = false ;
+    info = GrB_NO_VALUE ;
 
     if (C_iso)
     { 
@@ -208,7 +208,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
         // pattern of C = set intersection of pattern of A and B
         #define GB_ISO_EMULT
         #include "GB_emult_08_meta.c"
-        done = true ;
+        info = GrB_SUCCESS ;
 
     }
     else
@@ -228,11 +228,9 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
 
             #define GB_BINOP_WORKER(mult,xname)                             \
             {                                                               \
-                info = GB_AemultB_08(mult,xname) (C, C_sparsity,            \
-                    ewise_method, M, Mask_struct, Mask_comp,                \
-                    A, B, C_to_M, C_to_A, C_to_B,                           \
+                info = GB_AemultB_08(mult,xname) (C, M,                     \
+                    Mask_struct, Mask_comp, A, B, C_to_M, C_to_A, C_to_B,   \
                     TaskList, C_ntasks, C_nthreads) ;                       \
-                done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
 
@@ -257,14 +255,18 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: ewise: emult_08_phase2
+    if (info == GrB_NO_VALUE)
+    {
+        info = GB_emult_08_jit (C, C_sparsity, M, Mask_struct, Mask_comp, op,
+            A, B, C_to_M, C_to_A, C_to_B, TaskList, C_ntasks, C_nthreads) ;
+    }
     #endif
 
     //--------------------------------------------------------------------------
     // via the generic kernel
     //--------------------------------------------------------------------------
 
-    if (!done)
+    if (info == GrB_NO_VALUE)
     { 
         GB_BURBLE_MATRIX (C, "(generic emult: %s) ", op->name) ;
         GB_emult_generic (C, op, TaskList, C_ntasks, C_nthreads,
@@ -276,6 +278,13 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     //--------------------------------------------------------------------------
     // construct the final C->h
     //--------------------------------------------------------------------------
+
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory, or other error
+        GB_FREE_ALL ;
+        return (info) ;
+    }
 
     GB_OK (GB_hypermatrix_prune (C, Werk)) ;
 

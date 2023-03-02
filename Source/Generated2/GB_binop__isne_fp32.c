@@ -235,8 +235,6 @@ GrB_Info GB (_AunionB__isne_fp32)
 GrB_Info GB (_AemultB_08__isne_fp32)
 (
     GrB_Matrix C,
-    const int C_sparsity,
-    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
