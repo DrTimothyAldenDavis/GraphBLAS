@@ -64,7 +64,6 @@
 #define GB_DISABLE \
     0
 
-// finalize anything not yet defined
 #include "GB_AxB_shared_definitions.h"
 
 //------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
-function codegen_unop_method (unop, op, fcast, ztype, xtype)
-%CODEGEN_UNOP_METHOD create a function to compute C=unop(cast(A))
+function codegen_unop_method (unop, op, ztype, xtype)
+%CODEGEN_UNOP_METHOD create a function to compute C=unop(A)
 %
-% codegen_unop_method (unop, op, fcast, ztype, xtype)
+% codegen_unop_method (unop, op, ztype, xtype)
 %
 %   unop: the name of the operator
 %   op: a string defining the computation
@@ -35,20 +35,22 @@ end
 fprintf (f, 'm4_define(`_unop_tran'', `_unop_tran__%s'')\n', name) ;
 
 % type of C and A
-fprintf (f, 'm4_define(`GB_ctype'', `%s'')\n', ztype) ;
-fprintf (f, 'm4_define(`GB_atype'', `%s'')\n', xtype) ;
+fprintf (f, 'm4_define(`GB_ctype'', `#define GB_C_TYPE %s'')\n', ztype) ;
+fprintf (f, 'm4_define(`GB_atype'', `#define GB_A_TYPE %s'')\n', xtype) ;
+fprintf (f, 'm4_define(`GB_xtype'', `#define GB_X_TYPE %s'')\n', xtype) ;
+fprintf (f, 'm4_define(`GB_ztype'', `#define GB_Z_TYPE %s'')\n', ztype) ;
 
 A_is_pattern = (isempty (strfind (op, 'xarg'))) ;
 
 % to get an entry from A
 if (A_is_pattern)
     % A(i,j) is not needed
-    fprintf (f, 'm4_define(`GB_declarea'', `;'')\n') ;
-    fprintf (f, 'm4_define(`GB_geta'', `;'')\n') ;
+    fprintf (f, 'm4_define(`GB_declarea'', `#define GB_DECLAREA(aij)'')\n') ;
+    fprintf (f, 'm4_define(`GB_geta'', `#define GB_GETA(aij,Ax,pA,A_iso)'')\n') ;
 else
-    % A is not iso, so GBX (Ax, p, A->iso) is not needed
-    fprintf (f, 'm4_define(`GB_declarea'', `%s $1'')\n', xtype) ;
-    fprintf (f, 'm4_define(`GB_geta'', `$1 = $2 [$3]'')\n') ;
+    % A is never iso
+    fprintf (f, 'm4_define(`GB_declarea'', `#define GB_DECLAREA(aij) %s aij'')\n', xtype) ;
+    fprintf (f, 'm4_define(`GB_geta'', `#define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [pA]'')\n') ;
 end
 
 % type-specific iminv
@@ -61,18 +63,8 @@ if (~isempty (strfind (op, 'iminv')))
 end
 
 % create the unary operator
-op = strrep (op, 'xarg', '`$2''') ;
-fprintf (f, 'm4_define(`GB_unaryop'', `$1 = %s'')\n', op) ;
-
-% create the cast operator
-if (A_is_pattern)
-    % cast (A(i,j)) is not needed
-    fprintf (f, 'm4_define(`GB_cast'', `;'')\n') ;
-else
-    fcast = strrep (fcast, 'zarg', '`$1''') ;
-    fcast = strrep (fcast, 'xarg', '`$2''') ;
-    fprintf (f, 'm4_define(`GB_cast'', `%s'')\n', fcast) ;
-end
+op = strrep (op, 'xarg', 'x') ;
+fprintf (f, 'm4_define(`GB_unaryop'', `#define GB_UNARYOP(z,x) z = %s'')\n', op) ;
 
 % create the disable flag
 disable  = sprintf ('GxB_NO_%s', upper (unop)) ;

@@ -1,9 +1,20 @@
+//------------------------------------------------------------------------------
+// GB_transpose_bitmap: C=op(cast(A')), transpose, typecast, and apply op
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
 
 {
 
     //------------------------------------------------------------------
     // A and C are both bitmap
     //------------------------------------------------------------------
+
+    ASSERT (GB_IS_BITMAP (A)) ;
+    ASSERT (GB_IS_BITMAP (C)) ;
 
     // A is avlen-by-avdim; C is avdim-by-avlen
     int64_t avlen = A->vlen ;
@@ -37,7 +48,7 @@
             if (cij_exists)
             { 
                 // Cx [pC] = op (Ax [pA])
-                GB_CAST_OP (pC, pA) ;
+                GB_APPLY_OP (pC, pA) ;
             }
             #endif
         }

@@ -11,51 +11,34 @@
 #include "GB_control.h"
 #include "GB_unop__include.h"
 
-// C type:   int32_t
-// A type:   int32_t
-// cast:     int32_t cij = aij
-// unaryop:  cij = !(aij != 0)
+// unary operator: z = f(x)
+#define GB_UNARYOP(z,x) z = !(x != 0)
+#define GB_Z_TYPE int32_t
+#define GB_X_TYPE int32_t
 
-#define GB_A_TYPE \
-    int32_t
+// A matrix
+#define GB_A_TYPE int32_t
+#define GB_DECLAREA(aij) int32_t aij
+#define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [pA]
 
-#define GB_C_TYPE \
-    int32_t
-
-// declare aij as atype
-#define GB_DECLAREA(aij) \
-    int32_t aij
-
-// aij = Ax [pA]
-#define GB_GETA(aij,Ax,pA,A_iso) \
-    aij = Ax [pA]
-
-#define GB_CX(p) Cx [p]
-
-// unary operator
-#define GB_OP(z, x) \
-    z = !(x != 0) ;
-
-// casting
-#define GB_CAST(z, aij) \
-    int32_t z = aij ;
+// C matrix
+#define GB_C_TYPE int32_t
 
 // cij = op (aij)
-#define GB_CAST_OP(pC,pA)           \
+#define GB_APPLY_OP(pC,pA)          \
 {                                   \
     /* aij = Ax [pA] */             \
-    int32_t aij ;              \
-    aij = Ax [pA] ;   \
-    /* Cx [pC] = op (cast (aij)) */ \
-    int32_t z = aij ;               \
-    Cx [pC] = !(z != 0) ;        \
+    GB_DECLAREA (aij) ;             \
+    GB_GETA (aij, Ax, pA, false) ;  \
+    /* Cx [pC] = unop (aij) */      \
+    GB_UNARYOP (Cx [pC], aij) ;     \
 }
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_LNOT || GxB_NO_INT32)
 
-#include "GB_kernel_shared_definitions.h"
+#include "GB_unop_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator
@@ -63,8 +46,8 @@
 
 GrB_Info GB (_unop_apply__lnot_int32_int32)
 (
-    int32_t *Cx,               // Cx and Ax may be aliased
-    const int32_t *Ax,         // A is always non-iso for this kernel
+    GB_void *Cx_out,            // Cx and Ax may be aliased
+    const GB_void *Ax_in,       // A is always non-iso for this kernel
     const int8_t *restrict Ab,  // A->b if A is bitmap
     int64_t anz,
     int nthreads
@@ -73,16 +56,16 @@ GrB_Info GB (_unop_apply__lnot_int32_int32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    GB_C_TYPE *Cx = (GB_C_TYPE *) Cx_out ;
+    GB_A_TYPE *Ax = (GB_A_TYPE *) Ax_in ;
     int64_t p ;
     if (Ab == NULL)
     { 
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < anz ; p++)
         {
-            int32_t aij ;
-            aij = Ax [p] ;
-            int32_t z = aij ;
-            Cx [p] = !(z != 0) ;
+            // Cx [p] = unop (Ax [p])
+            GB_APPLY_OP (p, p) ;
         }
     }
     else
@@ -92,10 +75,8 @@ GrB_Info GB (_unop_apply__lnot_int32_int32)
         for (p = 0 ; p < anz ; p++)
         {
             if (!Ab [p]) continue ;
-            int32_t aij ;
-            aij = Ax [p] ;
-            int32_t z = aij ;
-            Cx [p] = !(z != 0) ;
+            // Cx [p] = unop (Ax [p])
+            GB_APPLY_OP (p, p) ;
         }
     }
     return (GrB_SUCCESS) ;

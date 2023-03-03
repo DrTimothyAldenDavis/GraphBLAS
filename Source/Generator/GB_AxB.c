@@ -88,7 +88,6 @@ GB_is_secondj_multiplier
 #define GB_DISABLE \
     GB_disable
 
-// finalize anything not yet defined
 #include "GB_AxB_shared_definitions.h"
 
 //------------------------------------------------------------------------------

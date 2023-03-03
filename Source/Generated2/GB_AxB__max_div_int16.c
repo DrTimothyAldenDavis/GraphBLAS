@@ -63,7 +63,6 @@
 #define GB_DISABLE \
     (GxB_NO_MAX || GxB_NO_DIV || GxB_NO_INT16 || GxB_NO_MAX_INT16 || GxB_NO_DIV_INT16 || GxB_NO_MAX_DIV_INT16)
 
-// finalize anything not yet defined
 #include "GB_AxB_shared_definitions.h"
 
 //------------------------------------------------------------------------------

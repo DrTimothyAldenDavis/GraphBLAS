@@ -46,7 +46,9 @@ GrB_Info GB (_Cdense_05d__uint8)
     const GrB_Matrix M,
     const bool Mask_struct,
     const GB_void *p_cwork,     // scalar of type C->type
-    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+    const int64_t *M_ek_slicing,
+    const int M_ntasks,
+    const int M_nthreads
 )
 { 
     #if GB_DISABLE
@@ -67,7 +69,9 @@ GrB_Info GB (_Cdense_06d__uint8)
     GrB_Matrix C,
     const GrB_Matrix A,
     const bool Mask_struct,
-    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
 )
 { 
     #if GB_DISABLE
@@ -88,7 +92,9 @@ GrB_Info GB (_Cdense_25__uint8)
     GrB_Matrix C,
     const GrB_Matrix M,
     const GrB_Matrix A,
-    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+    const int64_t *M_ek_slicing,
+    const int M_ntasks,
+    const int M_nthreads
 )
 { 
     #if GB_DISABLE

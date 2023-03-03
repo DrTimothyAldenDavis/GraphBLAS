@@ -125,7 +125,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
         GB_cast_function cast_A_to_X = GB_cast_factory (code1, code2) ;
 
         // Cx [pC] = (ctype) Ax [pA]
-        #define GB_CAST_OP(pC,pA)  \
+        #define GB_APPLY_OP(pC,pA)  \
             cast_A_to_X (Cx +((pC)*csize), Ax +((pA)*asize), asize) ;
         #define GB_A_TYPE GB_void
         #define GB_C_TYPE GB_void

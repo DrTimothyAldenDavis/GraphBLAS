@@ -62,7 +62,6 @@
 #define GB_DISABLE \
     (GxB_NO_TIMES || GxB_NO_DIV || GxB_NO_UINT32 || GxB_NO_TIMES_UINT32 || GxB_NO_DIV_UINT32 || GxB_NO_TIMES_DIV_UINT32)
 
-// finalize anything not yet defined
 #include "GB_AxB_shared_definitions.h"
 
 //------------------------------------------------------------------------------

@@ -3,8 +3,8 @@
 m4_divert(if_unop_apply_enabled)
 GrB_Info GB (_unop_apply)
 (
-    GB_ctype *Cx,
-    const GB_atype *Ax,
+    GB_void *Cx,
+    const GB_void *Ax,
     const int8_t *restrict Ab,
     int64_t anz,
     int nthreads

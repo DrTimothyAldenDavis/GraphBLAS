@@ -60,7 +60,6 @@
 #define GB_DISABLE \
     (GxB_NO_LXOR || GxB_NO_NE || GxB_NO_UINT16 || GxB_NO_LXOR_BOOL || GxB_NO_NE_UINT16 || GxB_NO_LXOR_NE_UINT16)
 
-// finalize anything not yet defined
 #include "GB_AxB_shared_definitions.h"
 
 //------------------------------------------------------------------------------

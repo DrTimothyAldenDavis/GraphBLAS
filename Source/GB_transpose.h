@@ -103,5 +103,29 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_transpose_bind1st_jit
+(
+    GrB_Matrix C,
+    const GrB_BinaryOp binaryop,
+    const GB_void *xscalar,
+    const GrB_Matrix A,
+    int64_t *restrict *Workspaces,
+    const int64_t *restrict A_slice,
+    int nworkspaces,
+    int nthreads
+) ;
+
+GrB_Info GB_transpose_bind2nd_jit
+(
+    GrB_Matrix C,
+    const GrB_BinaryOp binaryop,
+    const GrB_Matrix A,
+    const GB_void *yscalar,
+    int64_t *restrict *Workspaces,
+    const int64_t *restrict A_slice,
+    int nworkspaces,
+    int nthreads
+) ;
+
 #endif
 

@@ -11,51 +11,34 @@
 #include "GB_control.h"
 #include "GB_unop__include.h"
 
-// C type:   float
-// A type:   float
-// cast:     float cij = aij
-// unaryop:  cij = aij
+// unary operator: z = f(x)
+#define GB_UNARYOP(z,x) z = x
+#define GB_Z_TYPE float
+#define GB_X_TYPE float
 
-#define GB_A_TYPE \
-    float
+// A matrix
+#define GB_A_TYPE float
+#define GB_DECLAREA(aij) float aij
+#define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [pA]
 
-#define GB_C_TYPE \
-    float
-
-// declare aij as atype
-#define GB_DECLAREA(aij) \
-    float aij
-
-// aij = Ax [pA]
-#define GB_GETA(aij,Ax,pA,A_iso) \
-    aij = Ax [pA]
-
-#define GB_CX(p) Cx [p]
-
-// unary operator
-#define GB_OP(z, x) \
-    z = x ;
-
-// casting
-#define GB_CAST(z, aij) \
-    float z = aij ;
+// C matrix
+#define GB_C_TYPE float
 
 // cij = op (aij)
-#define GB_CAST_OP(pC,pA)           \
+#define GB_APPLY_OP(pC,pA)          \
 {                                   \
     /* aij = Ax [pA] */             \
-    float aij ;              \
-    aij = Ax [pA] ;   \
-    /* Cx [pC] = op (cast (aij)) */ \
-    float z = aij ;               \
-    Cx [pC] = z ;        \
+    GB_DECLAREA (aij) ;             \
+    GB_GETA (aij, Ax, pA, false) ;  \
+    /* Cx [pC] = unop (aij) */      \
+    GB_UNARYOP (Cx [pC], aij) ;     \
 }
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_IDENTITY || GxB_NO_FP32)
 
-#include "GB_kernel_shared_definitions.h"
+#include "GB_unop_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // C = op (cast (A')): transpose, typecast, and apply a unary operator

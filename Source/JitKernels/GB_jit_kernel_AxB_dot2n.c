@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_AxB_dot2.c: JIT kernel for C<#M>=A*B dot2n method
+// GB_jit_kernel_AxB_dot2n.c: JIT kernel for C<#M>=A*B dot2n method
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.

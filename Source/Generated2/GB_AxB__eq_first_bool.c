@@ -57,7 +57,6 @@
 #define GB_DISABLE \
     (GxB_NO_EQ || GxB_NO_FIRST || GxB_NO_BOOL || GxB_NO_EQ_BOOL || GxB_NO_FIRST_BOOL || GxB_NO_EQ_FIRST_BOOL)
 
-// finalize anything not yet defined
 #include "GB_AxB_shared_definitions.h"
 
 //------------------------------------------------------------------------------

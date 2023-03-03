@@ -1,8 +1,20 @@
+//------------------------------------------------------------------------------
+// GB_transpose_sparse: C=op(cast(A')), transpose, typecast, and apply op
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 {
 
     //----------------------------------------------------------------------
     // A is sparse or hypersparse; C is sparse
     //----------------------------------------------------------------------
+
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
+    ASSERT (GB_IS_SPARSE (C)) ;
 
     const int64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
@@ -32,7 +44,7 @@
                 Ci [pC] = j ;
                 #ifndef GB_ISO_TRANSPOSE
                 // Cx [pC] = op (Ax [pA])
-                GB_CAST_OP (pC, pA) ;
+                GB_APPLY_OP (pC, pA) ;
                 #endif
             }
         }
@@ -66,7 +78,7 @@
                     Ci [pC] = j ;
                     #ifndef GB_ISO_TRANSPOSE
                     // Cx [pC] = op (Ax [pA])
-                    GB_CAST_OP (pC, pA) ;
+                    GB_APPLY_OP (pC, pA) ;
                     #endif
                 }
             }
@@ -99,7 +111,7 @@
                     Ci [pC] = j ;
                     #ifndef GB_ISO_TRANSPOSE
                     // Cx [pC] = op (Ax [pA])
-                    GB_CAST_OP (pC, pA) ;
+                    GB_APPLY_OP (pC, pA) ;
                     #endif
                 }
             }

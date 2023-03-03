@@ -11,51 +11,34 @@
 #include "GB_control.h"
 #include "GB_unop__include.h"
 
-// C type:   GxB_FC64_t
-// A type:   uint64_t
-// cast:     GxB_FC64_t cij = GB_CMPLX64 ((double) (aij), 0)
-// unaryop:  cij = aij
+// unary operator: z = f(x)
+#define GB_UNARYOP(z,x) z = GB_CMPLX64 ((double) (x), 0)
+#define GB_Z_TYPE GxB_FC64_t
+#define GB_X_TYPE uint64_t
 
-#define GB_A_TYPE \
-    uint64_t
+// A matrix
+#define GB_A_TYPE uint64_t
+#define GB_DECLAREA(aij) uint64_t aij
+#define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [pA]
 
-#define GB_C_TYPE \
-    GxB_FC64_t
-
-// declare aij as atype
-#define GB_DECLAREA(aij) \
-    uint64_t aij
-
-// aij = Ax [pA]
-#define GB_GETA(aij,Ax,pA,A_iso) \
-    aij = Ax [pA]
-
-#define GB_CX(p) Cx [p]
-
-// unary operator
-#define GB_OP(z, x) \
-    z = x ;
-
-// casting
-#define GB_CAST(z, aij) \
-    GxB_FC64_t z = GB_CMPLX64 ((double) (aij), 0) ;
+// C matrix
+#define GB_C_TYPE GxB_FC64_t
 
 // cij = op (aij)
-#define GB_CAST_OP(pC,pA)           \
+#define GB_APPLY_OP(pC,pA)          \
 {                                   \
     /* aij = Ax [pA] */             \
-    uint64_t aij ;              \
-    aij = Ax [pA] ;   \
-    /* Cx [pC] = op (cast (aij)) */ \
-    GxB_FC64_t z = GB_CMPLX64 ((double) (aij), 0) ;               \
-    Cx [pC] = z ;        \
+    GB_DECLAREA (aij) ;             \
+    GB_GETA (aij, Ax, pA, false) ;  \
+    /* Cx [pC] = unop (aij) */      \
+    GB_UNARYOP (Cx [pC], aij) ;     \
 }
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_IDENTITY || GxB_NO_FC64 || GxB_NO_UINT64)
 
-#include "GB_kernel_shared_definitions.h"
+#include "GB_unop_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator
@@ -63,8 +46,8 @@
 
 GrB_Info GB (_unop_apply__identity_fc64_uint64)
 (
-    GxB_FC64_t *Cx,               // Cx and Ax may be aliased
-    const uint64_t *Ax,         // A is always non-iso for this kernel
+    GB_void *Cx_out,            // Cx and Ax may be aliased
+    const GB_void *Ax_in,       // A is always non-iso for this kernel
     const int8_t *restrict Ab,  // A->b if A is bitmap
     int64_t anz,
     int nthreads
@@ -73,16 +56,16 @@ GrB_Info GB (_unop_apply__identity_fc64_uint64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    GB_C_TYPE *Cx = (GB_C_TYPE *) Cx_out ;
+    GB_A_TYPE *Ax = (GB_A_TYPE *) Ax_in ;
     int64_t p ;
     if (Ab == NULL)
     { 
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < anz ; p++)
         {
-            uint64_t aij ;
-            aij = Ax [p] ;
-            GxB_FC64_t z = GB_CMPLX64 ((double) (aij), 0) ;
-            Cx [p] = z ;
+            // Cx [p] = unop (Ax [p])
+            GB_APPLY_OP (p, p) ;
         }
     }
     else
@@ -92,10 +75,8 @@ GrB_Info GB (_unop_apply__identity_fc64_uint64)
         for (p = 0 ; p < anz ; p++)
         {
             if (!Ab [p]) continue ;
-            uint64_t aij ;
-            aij = Ax [p] ;
-            GxB_FC64_t z = GB_CMPLX64 ((double) (aij), 0) ;
-            Cx [p] = z ;
+            // Cx [p] = unop (Ax [p])
+            GB_APPLY_OP (p, p) ;
         }
     }
     return (GrB_SUCCESS) ;

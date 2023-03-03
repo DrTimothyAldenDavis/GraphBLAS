@@ -20,14 +20,7 @@ fprintf (fh, '// This file has been automatically generated from Generator/GB_un
 fprintf (fh, '\n\n') ;
 fclose (fh) ;
 
-codegen_unop_template ('identity', ...
-    'xarg',                     ... % bool
-    'xarg',                     ... % int
-    'xarg',                     ... % uint
-    'xarg',                     ... % float
-    'xarg',                     ... % double
-    'xarg',                     ... % GxB_FC32_t
-    'xarg') ;                   ... % GxB_FC64_t
+codegen_unop_identity ;
 
 codegen_unop_template ('ainv', ...
     'xarg',                     ... % bool
@@ -378,43 +371,43 @@ codegen_unop_template ('conj', ...
 
 % z = abs (x): x is complex, z is real
 fprintf ('\nabs      ') ;
-codegen_unop_method ('abs', 'cabsf (xarg)', 'GxB_FC32_t zarg = (xarg)', 'float' , 'GxB_FC32_t') ;
-codegen_unop_method ('abs', 'cabs (xarg)' , 'GxB_FC64_t zarg = (xarg)', 'double', 'GxB_FC64_t') ;
+codegen_unop_method ('abs', 'cabsf (xarg)', 'float' , 'GxB_FC32_t') ;
+codegen_unop_method ('abs', 'cabs (xarg)' , 'double', 'GxB_FC64_t') ;
 
 % z = creal (x): x is complex, z is real
 fprintf ('\ncreal    ') ;
-codegen_unop_method ('creal', 'crealf (xarg)', 'GxB_FC32_t zarg = (xarg)', 'float' , 'GxB_FC32_t') ;
-codegen_unop_method ('creal', 'creal (xarg)' , 'GxB_FC64_t zarg = (xarg)', 'double', 'GxB_FC64_t') ;
+codegen_unop_method ('creal', 'crealf (xarg)', 'float' , 'GxB_FC32_t') ;
+codegen_unop_method ('creal', 'creal (xarg)' , 'double', 'GxB_FC64_t') ;
 
 % z = cimag (x): x is complex, z is real
 fprintf ('\ncimag    ') ;
-codegen_unop_method ('cimag', 'cimagf (xarg)', 'GxB_FC32_t zarg = (xarg)', 'float' , 'GxB_FC32_t') ;
-codegen_unop_method ('cimag', 'cimag (xarg)' , 'GxB_FC64_t zarg = (xarg)', 'double', 'GxB_FC64_t') ;
+codegen_unop_method ('cimag', 'cimagf (xarg)', 'float' , 'GxB_FC32_t') ;
+codegen_unop_method ('cimag', 'cimag (xarg)' , 'double', 'GxB_FC64_t') ;
 
 % z = carg (x): x is complex, z is real
 fprintf ('\ncarg     ') ;
-codegen_unop_method ('carg', 'cargf (xarg)', 'GxB_FC32_t zarg = (xarg)', 'float' , 'GxB_FC32_t') ;
-codegen_unop_method ('carg', 'carg (xarg)' , 'GxB_FC64_t zarg = (xarg)', 'double', 'GxB_FC64_t') ;
+codegen_unop_method ('carg', 'cargf (xarg)', 'float' , 'GxB_FC32_t') ;
+codegen_unop_method ('carg', 'carg (xarg)' , 'double', 'GxB_FC64_t') ;
 
 % z = isinf (x): x is floating-point, z is bool
 fprintf ('\nisinf    ') ;
-codegen_unop_method ('isinf', 'isinf (xarg)'     , 'float zarg = (xarg)'     , 'bool', 'float') ;
-codegen_unop_method ('isinf', 'isinf (xarg)'     , 'double zarg = (xarg)'    , 'bool', 'double') ;
-codegen_unop_method ('isinf', 'GB_cisinff (xarg)', 'GxB_FC32_t zarg = (xarg)', 'bool', 'GxB_FC32_t') ;
-codegen_unop_method ('isinf', 'GB_cisinf (xarg)' , 'GxB_FC64_t zarg = (xarg)', 'bool', 'GxB_FC64_t') ;
+codegen_unop_method ('isinf', 'isinf (xarg)'     , 'bool', 'float') ;
+codegen_unop_method ('isinf', 'isinf (xarg)'     , 'bool', 'double') ;
+codegen_unop_method ('isinf', 'GB_cisinff (xarg)', 'bool', 'GxB_FC32_t') ;
+codegen_unop_method ('isinf', 'GB_cisinf (xarg)' , 'bool', 'GxB_FC64_t') ;
 
 % z = isnan (x): x is floating-point, z is bool
 fprintf ('\nisnan    ') ;
-codegen_unop_method ('isnan', 'isnan (xarg)'     , 'float zarg = (xarg)'     , 'bool', 'float') ;
-codegen_unop_method ('isnan', 'isnan (xarg)'     , 'double zarg = (xarg)'    , 'bool', 'double') ;
-codegen_unop_method ('isnan', 'GB_cisnanf (xarg)', 'GxB_FC32_t zarg = (xarg)', 'bool', 'GxB_FC32_t') ;
-codegen_unop_method ('isnan', 'GB_cisnan (xarg)' , 'GxB_FC64_t zarg = (xarg)', 'bool', 'GxB_FC64_t') ;
+codegen_unop_method ('isnan', 'isnan (xarg)'     , 'bool', 'float') ;
+codegen_unop_method ('isnan', 'isnan (xarg)'     , 'bool', 'double') ;
+codegen_unop_method ('isnan', 'GB_cisnanf (xarg)', 'bool', 'GxB_FC32_t') ;
+codegen_unop_method ('isnan', 'GB_cisnan (xarg)' , 'bool', 'GxB_FC64_t') ;
 
 % z = isfinite (x): x is floating-point, z is bool
 fprintf ('\nisfinite ') ;
-codegen_unop_method ('isfinite', 'isfinite (xarg)'     , 'float zarg = (xarg)'     , 'bool', 'float') ;
-codegen_unop_method ('isfinite', 'isfinite (xarg)'     , 'double zarg = (xarg)'    , 'bool', 'double') ;
-codegen_unop_method ('isfinite', 'GB_cisfinitef (xarg)', 'GxB_FC32_t zarg = (xarg)', 'bool', 'GxB_FC32_t') ;
-codegen_unop_method ('isfinite', 'GB_cisfinite (xarg)' , 'GxB_FC64_t zarg = (xarg)', 'bool', 'GxB_FC64_t') ;
+codegen_unop_method ('isfinite', 'isfinite (xarg)'     , 'bool', 'float') ;
+codegen_unop_method ('isfinite', 'isfinite (xarg)'     , 'bool', 'double') ;
+codegen_unop_method ('isfinite', 'GB_cisfinitef (xarg)', 'bool', 'GxB_FC32_t') ;
+codegen_unop_method ('isfinite', 'GB_cisfinite (xarg)' , 'bool', 'GxB_FC64_t') ;
 fprintf ('\n') ;
 

@@ -318,9 +318,9 @@ GrB_Info GB (_bind2nd__pow_int16)
 // C = op (x, A'): transpose and apply a binary operator
 //------------------------------------------------------------------------------
 
-// cij = op (x, aij), no typecasting (in spite of the macro name)
-#undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)                       \
+// cij = op (x, aij)
+#undef  GB_APPLY_OP
+#define GB_APPLY_OP(pC,pA)                      \
 {                                               \
     GB_DECLAREB (aij) ;                         \
     GB_GETB (aij, Ax, pA, false) ;              \
@@ -353,9 +353,9 @@ GrB_Info GB (_bind1st_tran__pow_int16)
 // C = op (A', y): transpose and apply a binary operator
 //------------------------------------------------------------------------------
 
-// cij = op (aij, y), no typecasting (in spite of the macro name)
-#undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)                       \
+// cij = op (aij, y)
+#undef  GB_APPLY_OP
+#define GB_APPLY_OP(pC,pA)                      \
 {                                               \
     GB_DECLAREA (aij) ;                         \
     GB_GETA (aij, Ax, pA, false) ;              \
