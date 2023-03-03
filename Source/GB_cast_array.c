@@ -63,7 +63,7 @@ void GB_cast_array              // typecast an array
         #define GB_WORKER(ignore1,zname,ztype,xname,xtype)                  \
         {                                                                   \
             GrB_Info info = GB_unop_apply (zname,xname)                     \
-                ((ztype *) Cx, (xtype *) Ax, Ab, anz, nthreads) ;           \
+                (Cx, Ax, Ab, anz, nthreads) ;                               \
             if (info == GrB_SUCCESS) return ;                               \
         }                                                                   \
         break ;
@@ -77,7 +77,7 @@ void GB_cast_array              // typecast an array
 
     #endif
 
-    // no JIT kernel needed
+    // JIT TODO: 2type: typecast
 
     //--------------------------------------------------------------------------
     // via the generic kernel (only used for GBCUDA_DEV case)

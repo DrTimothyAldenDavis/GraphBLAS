@@ -362,8 +362,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
             #define GB_WORKER(unop,zname,ztype,aname,atype)             \
             {                                                           \
-                info = GB_unop_apply (unop,zname,aname) ((ztype *) Cx,  \
-                    (const atype *) Ax, Ab, anz, nthreads) ;            \
+                info = GB_unop_apply (unop,zname,aname) (Cx, Ax, Ab,    \
+                    anz, nthreads) ;                                    \
             }                                                           \
             break ;
 
