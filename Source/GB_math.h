@@ -962,65 +962,141 @@
 // frexp for float and double
 //------------------------------------------------------------------------------
 
-inline float GB_frexpxf (float x)
-{
-    // ignore the exponent and just return the mantissa
-    int exp_ignored ;
-    return (frexpf (x, &exp_ignored)) ;
-}
+    inline
+    float GB_frexpxf (float x)
+    {
+        // ignore the exponent and just return the mantissa
+        int exp_ignored ;
+        return (frexpf (x, &exp_ignored)) ;
+    }
 
-inline float GB_frexpef (float x)
-{
-    // ignore the mantissa and just return the exponent
-    int exp ;
-    (void) frexpf (x, &exp) ;
-    return ((float) exp) ;
-}
+    #define GB_GUARD_GB_FREXPXF_DEFINED
+    #define GB_FREXPXF_DEFN                                                 \
+    "float GB_frexpxf (float x)                                         \n" \
+    "{                                                                  \n" \
+    "    int exp_ignored ;                                              \n" \
+    "    return (frexpf (x, &exp_ignored)) ;                            \n" \
+    "}"
 
-inline double GB_frexpx (double x)
-{
-    // ignore the exponent and just return the mantissa
-    int exp_ignored ;
-    return (frexp (x, &exp_ignored)) ;
-}
+    inline
+    float GB_frexpef (float x)
+    {
+        // ignore the mantissa and just return the exponent
+        int exp ;
+        (void) frexpf (x, &exp) ;
+        return ((float) exp) ;
+    }
 
-inline double GB_frexpe (double x)
-{
-    // ignore the mantissa and just return the exponent
-    int exp ;
-    (void) frexp (x, &exp) ;
-    return ((double) exp) ;
-}
+    #define GB_GUARD_GB_FREXPEF_DEFINED
+    #define GB_FREXPEF_DEFN                                                 \
+    "float GB_frexpef (float x)                                         \n" \
+    "{                                                                  \n" \
+    "    int exp ;                                                      \n" \
+    "    (void) frexpf (x, &exp) ;                                      \n" \
+    "    return ((float) exp) ;                                         \n" \
+    "}"
+
+    inline
+    double GB_frexpx (double x)
+    {
+        // ignore the exponent and just return the mantissa
+        int exp_ignored ;
+        return (frexp (x, &exp_ignored)) ;
+    }
+
+    #define GB_GUARD_GB_FREXPX_DEFINED
+    #define GB_FREXPX_DEFN                                                  \
+    "double GB_frexpx (double x)                                        \n" \
+    "{                                                                  \n" \
+    "    int exp_ignored ;                                              \n" \
+    "    return (frexp (x, &exp_ignored)) ;                             \n" \
+    "}"
+
+    inline
+    double GB_frexpe (double x)
+    {
+        // ignore the mantissa and just return the exponent
+        int exp ;
+        (void) frexp (x, &exp) ;
+        return ((double) exp) ;
+    }
+
+    #define GB_GUARD_GB_FREXPE_DEFINED
+    #define GB_FREXPE_DEFN                                                  \
+    "double GB_frexpe (double x)                                        \n" \
+    "{                                                                  \n" \
+    "    int exp ;                                                      \n" \
+    "    (void) frexp (x, &exp) ;                                       \n" \
+    "    return ((double) exp) ;                                        \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // signum functions
 //------------------------------------------------------------------------------
 
-inline float GB_signumf (float x)
-{
-    if (isnan (x)) return (x) ;
-    return ((float) ((x < 0) ? (-1) : ((x > 0) ? 1 : 0))) ;
-}
+    inline
+    float GB_signumf (float x)
+    {
+        if (isnan (x)) return (x) ;
+        return ((float) ((x < 0) ? (-1) : ((x > 0) ? 1 : 0))) ;
+    }
 
-inline double GB_signum (double x)
-{
-    if (isnan (x)) return (x) ;
-    return ((double) ((x < 0) ? (-1) : ((x > 0) ? 1 : 0))) ;
-}
+    #define GB_GUARD_GB_SIGNUMF_DEFINED
+    #define GB_SIGNUMF_DEFN                                                 \
+    "float GB_signumf (float x)                                         \n" \
+    "{                                                                  \n" \
+    "    if (isnan (x)) return (x) ;                                    \n" \
+    "    return ((float) ((x < 0) ? (-1) : ((x > 0) ? 1 : 0))) ;        \n" \
+    "}"
 
-inline GxB_FC32_t GB_csignumf (GxB_FC32_t x)
-{
-    if (crealf (x) == 0 && cimagf (x) == 0) return (GxB_CMPLXF (0,0)) ;
-    float y = cabsf (x) ;
-    return (GB_CMPLX32 (crealf (x) / y, cimagf (x) / y)) ;
-}
+    inline
+    double GB_signum (double x)
+    {
+        if (isnan (x)) return (x) ;
+        return ((double) ((x < 0) ? (-1) : ((x > 0) ? 1 : 0))) ;
+    }
 
-inline GxB_FC64_t GB_csignum (GxB_FC64_t x)
-{
-    if (creal (x) == 0 && cimag (x) == 0) return (GxB_CMPLX (0,0)) ;
-    double y = cabs (x) ;
-    return (GB_CMPLX64 (creal (x) / y, cimag (x) / y)) ;
-}
+    #define GB_GUARD_GB_SIGNUM_DEFINED
+    #define GB_SIGNUM_DEFN                                                  \
+    "double GB_signum (double x)                                        \n" \
+    "{                                                                  \n" \
+    "    if (isnan (x)) return (x) ;                                    \n" \
+    "    return ((double) ((x < 0) ? (-1) : ((x > 0) ? 1 : 0))) ;       \n" \
+    "}"
+
+    inline
+    GxB_FC32_t GB_csignumf (GxB_FC32_t x)
+    {
+        if (crealf (x) == 0 && cimagf (x) == 0) return (GxB_CMPLXF (0,0)) ;
+        float y = cabsf (x) ;
+        return (GB_CMPLX32 (crealf (x) / y, cimagf (x) / y)) ;
+    }
+
+    #define GB_GUARD_GB_CSIGNUMF_DEFINED
+    #define GB_CSIGNUMF_DEFN                                                   \
+    "GxB_FC32_t GB_csignumf (GxB_FC32_t x)                                  \n"\
+    "{                                                                      \n"\
+    "    if (crealf (x) == 0 && cimagf (x) == 0) return (GxB_CMPLXF (0,0)) ;\n"\
+    "    float y = cabsf (x) ;                                              \n"\
+    "    return (GB_CMPLX32 (crealf (x) / y, cimagf (x) / y)) ;             \n"\
+    "}"
+
+    inline
+    GxB_FC64_t GB_csignum (GxB_FC64_t x)
+    {
+        if (creal (x) == 0 && cimag (x) == 0) return (GxB_CMPLX (0,0)) ;
+        double y = cabs (x) ;
+        return (GB_CMPLX64 (creal (x) / y, cimag (x) / y)) ;
+    }
+
+    #define GB_GUARD_GB_CSIGNUM_DEFINED
+    #define GB_CSIGNUM_DEFN                                                    \
+    "GxB_FC64_t GB_csignum (GxB_FC64_t x)                                   \n"\
+    "{                                                                      \n"\
+    "    if (creal (x) == 0 && cimag (x) == 0) return (GxB_CMPLX (0,0)) ;   \n"\
+    "    double y = cabs (x) ;                                              \n"\
+    "    return (GB_CMPLX64 (creal (x) / y, cimag (x) / y)) ;               \n"\
+    "}"
 
 //------------------------------------------------------------------------------
 // complex functions
@@ -1035,73 +1111,137 @@ inline GxB_FC64_t GB_csignum (GxB_FC64_t x)
 // z = ceil (x) for float complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC32_t GB_cceilf (GxB_FC32_t x)
-{
-    return (GB_CMPLX32 (ceilf (crealf (x)), ceilf (cimagf (x)))) ;
-}
+    inline
+    GxB_FC32_t GB_cceilf (GxB_FC32_t x)
+    {
+        return (GB_CMPLX32 (ceilf (crealf (x)), ceilf (cimagf (x)))) ;
+    }
+
+    #define GB_GUARD_GB_CCEILF_DEFINED
+    #define GB_CCEILF_DEFN                                                  \
+    "GxB_FC32_t GB_cceilf (GxB_FC32_t x)                                \n" \
+    "{                                                                  \n" \
+        "return (GB_CMPLX32 (ceilf (crealf (x)), ceilf (cimagf (x)))) ; \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = ceil (x) for double complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC64_t GB_cceil (GxB_FC64_t x)
-{
-    return (GB_CMPLX64 (ceil (creal (x)), ceil (cimag (x)))) ;
-}
+    inline
+    GxB_FC64_t GB_cceil (GxB_FC64_t x)
+    {
+        return (GB_CMPLX64 (ceil (creal (x)), ceil (cimag (x)))) ;
+    }
+
+    #define GB_GUARD_GB_CCEIL_DEFINED
+    #define GB_CCEIL_DEFN                                                   \
+    "GxB_FC64_t GB_cceil (GxB_FC64_t x)                                 \n" \
+    "{                                                                  \n" \
+    "    return (GB_CMPLX64 (ceil (creal (x)), ceil (cimag (x)))) ;     \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = floor (x) for float complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC32_t GB_cfloorf (GxB_FC32_t x)
-{
-    return (GB_CMPLX32 (floorf (crealf (x)), floorf (cimagf (x)))) ;
-}
+    inline
+    GxB_FC32_t GB_cfloorf (GxB_FC32_t x)
+    {
+        return (GB_CMPLX32 (floorf (crealf (x)), floorf (cimagf (x)))) ;
+    }
+
+    #define GB_GUARD_GB_CFLOORF_DEFINED
+    #define GB_CFLOORF_DEFN                                                    \
+    "GxB_FC32_t GB_cfloorf (GxB_FC32_t x)                                   \n"\
+    "{                                                                      \n"\
+    "    return (GB_CMPLX32 (floorf (crealf (x)), floorf (cimagf (x)))) ;   \n"\
+    "}"
 
 //------------------------------------------------------------------------------
 // z = floor (x) for double complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC64_t GB_cfloor (GxB_FC64_t x)
-{
-    return (GB_CMPLX64 (floor (creal (x)), floor (cimag (x)))) ;
-}
+    inline
+    GxB_FC64_t GB_cfloor (GxB_FC64_t x)
+    {
+        return (GB_CMPLX64 (floor (creal (x)), floor (cimag (x)))) ;
+    }
+
+    #define GB_GUARD_GB_CFLOOR_DEFINED
+    #define GB_CFLOOR_DEFN                                                     \
+    "GxB_FC64_t GB_cfloor (GxB_FC64_t x)                                    \n"\
+    "{                                                                      \n"\
+    "    return (GB_CMPLX64 (floor (creal (x)), floor (cimag (x)))) ;       \n"\
+    "}"
 
 //------------------------------------------------------------------------------
 // z = round (x) for float complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC32_t GB_croundf (GxB_FC32_t x)
-{
-    return (GB_CMPLX32 (roundf (crealf (x)), roundf (cimagf (x)))) ;
-}
+    inline
+    GxB_FC32_t GB_croundf (GxB_FC32_t x)
+    {
+        return (GB_CMPLX32 (roundf (crealf (x)), roundf (cimagf (x)))) ;
+    }
+
+    #define GB_GUARD_GB_CROUNDF_DEFINED
+    #define GB_CROUNDF_DEFN                                                    \
+    "GxB_FC32_t GB_croundf (GxB_FC32_t x)                                   \n"\
+    "{                                                                      \n"\
+    "    return (GB_CMPLX32 (roundf (crealf (x)), roundf (cimagf (x)))) ;   \n"\
+    "}"
 
 //------------------------------------------------------------------------------
 // z = round (x) for double complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC64_t GB_cround (GxB_FC64_t x)
-{
-    return (GB_CMPLX64 (round (creal (x)), round (cimag (x)))) ;
-}
+    inline
+    GxB_FC64_t GB_cround (GxB_FC64_t x)
+    {
+        return (GB_CMPLX64 (round (creal (x)), round (cimag (x)))) ;
+    }
+
+    #define GB_GUARD_GB_CROUND_DEFINED
+    #define GB_CROUND_DEFN                                                  \
+    "GxB_FC64_t GB_cround (GxB_FC64_t x)                                \n" \
+    "{                                                                  \n" \
+    "    return (GB_CMPLX64 (round (creal (x)), round (cimag (x)))) ;   \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = trunc (x) for float complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC32_t GB_ctruncf (GxB_FC32_t x)
-{
-    return (GB_CMPLX32 (truncf (crealf (x)), truncf (cimagf (x)))) ;
-}
+    inline
+    GxB_FC32_t GB_ctruncf (GxB_FC32_t x)
+    {
+        return (GB_CMPLX32 (truncf (crealf (x)), truncf (cimagf (x)))) ;
+    }
+
+    #define GB_GUARD_GB_CTRUNCF_DEFINED
+    #define GB_CTRUNCF_DEFN                                                    \
+    "GxB_FC32_t GB_ctruncf (GxB_FC32_t x)                                   \n"\
+    "{                                                                      \n"\
+    "    return (GB_CMPLX32 (truncf (crealf (x)), truncf (cimagf (x)))) ;   \n"\
+    "}
 
 //------------------------------------------------------------------------------
 // z = trunc (x) for double complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC64_t GB_ctrunc (GxB_FC64_t x)
-{
-    return (GB_CMPLX64 (trunc (creal (x)), trunc (cimag (x)))) ;
-}
+    inline
+    GxB_FC64_t GB_ctrunc (GxB_FC64_t x)
+    {
+        return (GB_CMPLX64 (trunc (creal (x)), trunc (cimag (x)))) ;
+    }
+
+    #define GB_GUARD_GB_CTRUNC_DEFINED
+    #define GB_CTRUNC_DEFN                                                  \
+    "GxB_FC64_t GB_ctrunc (GxB_FC64_t x)                                \n" \
+    "{                                                                  \n" \
+    "    return (GB_CMPLX64 (trunc (creal (x)), trunc (cimag (x)))) ;   \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = exp2 (x) for float complex

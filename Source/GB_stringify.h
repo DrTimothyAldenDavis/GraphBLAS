@@ -567,6 +567,19 @@ void GB_macrofy_query_version
 ) ;
 
 //------------------------------------------------------------------------------
+// unary ops
+//------------------------------------------------------------------------------
+
+void GB_enumify_unop    // enumify a GrB_UnaryOp
+(
+    // output:
+    int *ecode,         // enumerated operator, range 0 to 160
+    // input:
+    GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
+    GB_Type_code xcode  // op->xtype->code of the operator
+) ;
+
+//------------------------------------------------------------------------------
 // GB_namify_problem: name a problem
 //------------------------------------------------------------------------------
 

@@ -105,7 +105,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     GB_CLEAR_STATIC_HEADER (T, &T_header) ;
     GB_OK (GB_selector (
         T,                      // output matrix
-        GB_DIAG_selop_code,     // just use the DIAG opcode
+        GB_DIAG_selop_code,     // just use the DIAG opcode // FIXME: use GB_DIAGINDEX_idxunop_code instead
         NULL,                   // do not use the GB_Operator
         false,                  // flipij is false
         A,                      // input matrix

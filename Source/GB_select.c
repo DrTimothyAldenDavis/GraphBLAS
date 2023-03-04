@@ -318,6 +318,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         // replace idxunop with their corresponding selectop positional ops
         //----------------------------------------------------------------------
 
+        // FIXME: reverse this and replace selectop with idxunop
+
         switch (opcode)
         {
             case GB_TRIL_idxunop_code : 
