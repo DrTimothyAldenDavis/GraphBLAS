@@ -25,8 +25,8 @@
         return ((x & (((int8_t) 1) << (k-1))) ? 1 : 0) ;
     }
 
-   #define GB_GUARD_GB_BITGET_INT8_DEFINED
-   #define GB_BITGET_INT8_DEFN                                      \
+   #define GB_GUARD_GB_bitget_int8_DEFINED
+   #define GB_bitget_int8_DEFN                                      \
    "int8_t GB_bitget_int8 (int8_t x, int8_t k)                  \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 8) return (0) ;                        \n" \
@@ -40,8 +40,8 @@
         return ((x & (((int16_t) 1) << (k-1))) ? 1 : 0) ;
     }
 
-   #define GB_GUARD_GB_BITGET_INT16_DEFINED
-   #define GB_BITGET_INT16_DEFN                                     \
+   #define GB_GUARD_GB_bitget_int16_DEFINED
+   #define GB_bitget_int16_DEFN                                     \
    "int16_t GB_bitget_int16 (int16_t x, int16_t k)              \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 16) return (0) ;                       \n" \
@@ -55,8 +55,8 @@
         return ((x & (((int32_t) 1) << (k-1))) ? 1 : 0) ;
     }
 
-   #define GB_GUARD_GB_BITGET_INT32_DEFINED
-   #define GB_BITGET_INT32_DEFN                                     \
+   #define GB_GUARD_GB_bitget_int32_DEFINED
+   #define GB_bitget_int32_DEFN                                     \
    "int32_t GB_bitget_int32 (int32_t x, int32_t k)              \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 32) return (0) ;                       \n" \
@@ -70,8 +70,8 @@
         return ((x & (((int64_t) 1) << (k-1))) ? 1 : 0) ;
     }
 
-   #define GB_GUARD_GB_BITGET_INT64_DEFINED
-   #define GB_BITGET_INT64_DEFN                                     \
+   #define GB_GUARD_GB_bitget_int64_DEFINED
+   #define GB_bitget_int64_DEFN                                     \
    "int64_t GB_bitget_int64 (int64_t x, int64_t k)              \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 64) return (0) ;                       \n" \
@@ -85,8 +85,8 @@
         return ((x & (((uint8_t) 1) << (k-1))) ? 1 : 0) ;
     }
 
-   #define GB_GUARD_GB_BITGET_UINT8_DEFINED
-   #define GB_BITGET_UINT8_DEFN                                     \
+   #define GB_GUARD_GB_bitget_uint8_DEFINED
+   #define GB_bitget_uint8_DEFN                                     \
    "uint8_t GB_bitget_uint8 (uint8_t x, uint8_t k)              \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 8) return (0) ;                        \n" \
@@ -100,8 +100,8 @@
         return ((x & (((uint16_t) 1) << (k-1))) ? 1 : 0) ;
     }
 
-   #define GB_GUARD_GB_BITGET_UINT16_DEFINED
-   #define GB_BITGET_UINT16_DEFN                                    \
+   #define GB_GUARD_GB_bitget_uint16_DEFINED
+   #define GB_bitget_uint16_DEFN                                    \
    "uint16_t GB_bitget_uint16 (uint16_t x, uint16_t k)          \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 16) return (0) ;                       \n" \
@@ -115,8 +115,8 @@
         return ((x & (((uint32_t) 1) << (k-1))) ? 1 : 0) ;
     }
 
-   #define GB_GUARD_GB_BITGET_UINT32_DEFINED
-   #define GB_BITGET_UINT32_DEFN                                    \
+   #define GB_GUARD_GB_bitget_uint32_DEFINED
+   #define GB_bitget_uint32_DEFN                                    \
    "uint32_t GB_bitget_uint32 (uint32_t x, uint32_t k)          \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 32) return (0) ;                       \n" \
@@ -130,8 +130,8 @@
         return ((x & (((uint64_t) 1) << (k-1))) ? 1 : 0) ;
     }
 
-   #define GB_GUARD_GB_BITGET_UINT64_DEFINED
-   #define GB_BITGET_UINT64_DEFN                                    \
+   #define GB_GUARD_GB_bitget_uint64_DEFINED
+   #define GB_bitget_uint64_DEFN                                    \
    "uint64_t GB_bitget_uint64 (uint64_t x, uint64_t k)          \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 64) return (0) ;                       \n" \
@@ -154,8 +154,8 @@
         return (x | (((int8_t) 1) << (k-1))) ;
     }
 
-   #define GB_GUARD_GB_BITSET_INT8_DEFINED
-   #define GB_BITSET_INT8_DEFN                                      \
+   #define GB_GUARD_GB_bitset_int8_DEFINED
+   #define GB_bitset_int8_DEFN                                      \
    "int8_t GB_bitset_int8 (int8_t x, int8_t k)                  \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 8) return (x) ;                        \n" \
@@ -169,8 +169,8 @@
         return (x | (((int16_t) 1) << (k-1))) ;
     }
 
-   #define GB_GUARD_GB_BITSET_INT16_DEFINED
-   #define GB_BITSET_INT16_DEFN                                     \
+   #define GB_GUARD_GB_bitset_int16_DEFINED
+   #define GB_bitset_int16_DEFN                                     \
    "int16_t GB_bitset_int16 (int16_t x, int16_t k)              \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 16) return (x) ;                       \n" \
@@ -184,8 +184,8 @@
         return (x | (((int32_t) 1) << (k-1))) ;
     }
 
-   #define GB_GUARD_GB_BITSET_INT32_DEFINED
-   #define GB_BITSET_INT32_DEFN                                     \
+   #define GB_GUARD_GB_bitset_int32_DEFINED
+   #define GB_bitset_int32_DEFN                                     \
    "int32_t GB_bitset_int32 (int32_t x, int32_t k)              \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 32) return (x) ;                       \n" \
@@ -200,8 +200,8 @@
         return (z) ;
     }
 
-   #define GB_GUARD_GB_BITSET_INT64_DEFINED
-   #define GB_BITSET_INT64_DEFN                                     \
+   #define GB_GUARD_GB_bitset_int64_DEFINED
+   #define GB_bitset_int64_DEFN                                     \
    "int64_t GB_bitset_int64 (int64_t x, int64_t k)              \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 64) return (x) ;                       \n" \
@@ -215,8 +215,8 @@
         return (x | (((uint8_t) 1) << (k-1))) ;
     }
 
-   #define GB_GUARD_GB_BITSET_UINT8_DEFINED
-   #define GB_BITSET_UINT8_DEFN                                     \
+   #define GB_GUARD_GB_bitset_uint8_DEFINED
+   #define GB_bitset_uint8_DEFN                                     \
    "uint8_t GB_bitset_uint8 (uint8_t x, uint8_t k)              \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 8) return (x) ;                        \n" \
@@ -230,8 +230,8 @@
         return (x | (((uint16_t) 1) << (k-1))) ;
     }
 
-   #define GB_GUARD_GB_BITSET_UINT16_DEFINED
-   #define GB_BITSET_UINT16_DEFN                                    \
+   #define GB_GUARD_GB_bitset_uint16_DEFINED
+   #define GB_bitset_uint16_DEFN                                    \
    "uint16_t GB_bitset_uint16 (uint16_t x, uint16_t k)          \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 16) return (x) ;                       \n" \
@@ -245,8 +245,8 @@
         return (x | (((uint32_t) 1) << (k-1))) ;
     }
 
-   #define GB_GUARD_GB_BITSET_UINT32_DEFINED
-   #define GB_BITSET_UINT32_DEFN                                    \
+   #define GB_GUARD_GB_bitset_uint32_DEFINED
+   #define GB_bitset_uint32_DEFN                                    \
    "uint32_t GB_bitset_uint32 (uint32_t x, uint32_t k)          \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 32) return (x) ;                       \n" \
@@ -260,8 +260,8 @@
         return (x | (((uint64_t) 1) << (k-1))) ;
     }
 
-   #define GB_GUARD_GB_BITSET_UINT64_DEFINED
-   #define GB_BITSET_UINT64_DEFN                                    \
+   #define GB_GUARD_GB_bitset_uint64_DEFINED
+   #define GB_bitset_uint64_DEFN                                    \
    "uint64_t GB_bitset_uint64 (uint64_t x, uint64_t k)          \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 64) return (x) ;                       \n" \
@@ -284,8 +284,8 @@
         return (x & ~(((int8_t) 1) << (k-1))) ;
     }
 
-   #define GB_GUARD_GB_BITCLR_INT8_DEFINED
-   #define GB_BITCLR_INT8_DEFN                                      \
+   #define GB_GUARD_GB_bitclr_int8_DEFINED
+   #define GB_bitclr_int8_DEFN                                      \
    "int8_t GB_bitclr_int8 (int8_t x, int8_t k)                  \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 8) return (x) ;                        \n" \
@@ -299,8 +299,8 @@
         return (x & ~(((int16_t) 1) << (k-1))) ;
     }
 
-   #define GB_GUARD_GB_BITCLR_INT16_DEFINED
-   #define GB_BITCLR_INT16_DEFN                                     \
+   #define GB_GUARD_GB_bitclr_int16_DEFINED
+   #define GB_bitclr_int16_DEFN                                     \
    "int16_t GB_bitclr_int16 (int16_t x, int16_t k)              \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 16) return (x) ;                       \n" \
@@ -314,8 +314,8 @@
         return (x & ~(((int32_t) 1) << (k-1))) ;
     }
 
-   #define GB_GUARD_GB_BITCLR_INT32_DEFINED
-   #define GB_BITCLR_INT32_DEFN                                     \
+   #define GB_GUARD_GB_bitclr_int32_DEFINED
+   #define GB_bitclr_int32_DEFN                                     \
    "int32_t GB_bitclr_int32 (int32_t x, int32_t k)              \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 32) return (x) ;                       \n" \
@@ -329,8 +329,8 @@
         return (x & ~(((int64_t) 1) << (k-1))) ;
     }
 
-   #define GB_GUARD_GB_BITCLR_INT64_DEFINED
-   #define GB_BITCLR_INT64_DEFN                                     \
+   #define GB_GUARD_GB_bitclr_int64_DEFINED
+   #define GB_bitclr_int64_DEFN                                     \
    "int64_t GB_bitclr_int64 (int64_t x, int64_t k)              \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 64) return (x) ;                       \n" \
@@ -344,8 +344,8 @@
         return (x & ~(((uint8_t) 1) << (k-1))) ;
     }
 
-   #define GB_GUARD_GB_BITCLR_UINT8_DEFINED
-   #define GB_BITCLR_UINT8_DEFN                                     \
+   #define GB_GUARD_GB_bitclr_uint8_DEFINED
+   #define GB_bitclr_uint8_DEFN                                     \
    "uint8_t GB_bitclr_uint8 (uint8_t x, uint8_t k)              \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 8) return (x) ;                        \n" \
@@ -359,8 +359,8 @@
         return (x & ~(((uint16_t) 1) << (k-1))) ;
     }
 
-   #define GB_GUARD_GB_BITCLR_UINT16_DEFINED
-   #define GB_BITCLR_UINT16_DEFN                                    \
+   #define GB_GUARD_GB_bitclr_uint16_DEFINED
+   #define GB_bitclr_uint16_DEFN                                    \
    "uint16_t GB_bitclr_uint16 (uint16_t x, uint16_t k)          \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 16) return (x) ;                       \n" \
@@ -374,8 +374,8 @@
         return (x & ~(((uint32_t) 1) << (k-1))) ;
     }
 
-   #define GB_GUARD_GB_BITCLR_UINT32_DEFINED
-   #define GB_BITCLR_UINT32_DEFN                                    \
+   #define GB_GUARD_GB_bitclr_uint32_DEFINED
+   #define GB_bitclr_uint32_DEFN                                    \
    "uint32_t GB_bitclr_uint32 (uint32_t x, uint32_t k)          \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 32) return (x) ;                       \n" \
@@ -389,8 +389,8 @@
         return (x & ~(((uint64_t) 1) << (k-1))) ;
     }
 
-   #define GB_GUARD_GB_BITCLR_UINT64_DEFINED
-   #define GB_BITCLR_UINT64_DEFN                                    \
+   #define GB_GUARD_GB_bitclr_uint64_DEFINED
+   #define GB_bitclr_uint64_DEFN                                    \
    "uint64_t GB_bitclr_uint64 (uint64_t x, uint64_t k)          \n" \
    "{                                                           \n" \
    "    if (k < 1 || k > 64) return (x) ;                       \n" \
@@ -431,8 +431,8 @@
         }
     }
 
-   #define GB_GUARD_GB_BITSHIFT_UINT8_DEFINED
-   #define GB_BITSHIFT_UINT8_DEFN                                       \
+   #define GB_GUARD_GB_bitshift_uint8_DEFINED
+   #define GB_bitshift_uint8_DEFN                                       \
    "uint8_t GB_bitshift_uint8 (uint8_t x, int8_t k)                 \n" \
    "{                                                               \n" \
    "    if (k == 0)                                                 \n" \
@@ -474,8 +474,8 @@
         }
     }
 
-   #define GB_GUARD_GB_BITSHIFT_UINT16_DEFINED
-   #define GB_BITSHIFT_UINT16_DEFN                                      \
+   #define GB_GUARD_GB_bitshift_uint16_DEFINED
+   #define GB_bitshift_uint16_DEFN                                      \
    "uint16_t GB_bitshift_uint16 (uint16_t x, int8_t k)              \n" \
    "{                                                               \n" \
    "    if (k == 0)                                                 \n" \
@@ -517,8 +517,8 @@
         }
     }
 
-   #define GB_GUARD_GB_BITSHIFT_UINT32_DEFINED
-   #define GB_BITSHIFT_UINT32_DEFN                                      \
+   #define GB_GUARD_GB_bitshift_uint32_DEFINED
+   #define GB_bitshift_uint32_DEFN                                      \
    "uint32_t GB_bitshift_uint32 (uint32_t x, int8_t k)              \n" \
    "{                                                               \n" \
    "    if (k == 0)                                                 \n" \
@@ -560,8 +560,8 @@
         }
     }
 
-   #define GB_GUARD_GB_BITSHIFT_UINT64_DEFINED
-   #define GB_BITSHIFT_UINT64_DEFN                                      \
+   #define GB_GUARD_GB_bitshift_uint64_DEFINED
+   #define GB_bitshift_uint64_DEFN                                      \
    "uint64_t GB_bitshift_uint64 (uint64_t x, int8_t k)              \n" \
    "{                                                               \n" \
    "    if (k == 0)                                                 \n" \
@@ -638,8 +638,8 @@
         }
     }
 
-   #define GB_GUARD_GB_BITSHIFT_INT8_DEFINED
-   #define GB_BITSHIFT_INT8_DEFN                                        \
+   #define GB_GUARD_GB_bitshift_int8_DEFINED
+   #define GB_bitshift_int8_DEFN                                        \
    "int8_t GB_bitshift_int8 (int8_t x, int8_t k)                    \n" \
    "{                                                               \n" \
    "    if (k == 0)                                                 \n" \
@@ -705,8 +705,8 @@
         }
     }
 
-   #define GB_GUARD_GB_BITSHIFT_INT16_DEFINED
-   #define GB_BITSHIFT_INT16_DEFN                                       \
+   #define GB_GUARD_GB_bitshift_int16_DEFINED
+   #define GB_bitshift_int16_DEFN                                       \
    "int16_t GB_bitshift_int16 (int16_t x, int8_t k)                 \n" \
    "{                                                               \n" \
    "    if (k == 0)                                                 \n" \
@@ -772,8 +772,8 @@
         }
     }
 
-   #define GB_GUARD_GB_BITSHIFT_INT32_DEFINED
-   #define GB_BITSHIFT_INT32_DEFN                                       \
+   #define GB_GUARD_GB_bitshift_int32_DEFINED
+   #define GB_bitshift_int32_DEFN                                       \
    "int32_t GB_bitshift_int32 (int32_t x, int8_t k)                 \n" \
    "{                                                               \n" \
    "    if (k == 0)                                                 \n" \
@@ -839,8 +839,8 @@
         }
     }
 
-   #define GB_GUARD_GB_BITSHIFT_INT64_DEFINED
-   #define GB_BITSHIFT_INT64_DEFN                                       \
+   #define GB_GUARD_GB_bitshift_int64_DEFINED
+   #define GB_bitshift_int64_DEFN                                       \
    "int64_t GB_bitshift_int64 (int64_t x, int8_t k)                 \n" \
    "{                                                               \n" \
    "    if (k == 0)                                                 \n" \

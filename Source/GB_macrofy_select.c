@@ -152,17 +152,17 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     break ;
                 case GB_FC32_code     : 
                     keep = "GB_FC32_ne0 (x)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC32_NE0", GB_FC32_NE0_DEFN) ;
+                    GB_macrofy_defn (fp, 1, "GB_FC32_ne0", GB_FC32_ne0_DEFN) ;
                     break ;
                 case GB_FC64_code     : 
                     keep = "GB_FC64_ne0 (x)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC64_NE0", GB_FC64_NE0_DEFN) ;
+                    GB_macrofy_defn (fp, 1, "GB_FC64_ne0", GB_FC64_ne0_DEFN) ;
                     break ;
 
                 case GB_UDT_code      : 
                     fprintf (fp,
-                        "#ifndef GB_GUARD_UDT_NE0_%d_DEFINED\n"
-                        "#define GB_GUARD_UDT_NE0_%d_DEFINED\n"
+                        "#ifndef GB_GUARD_GB_udt_ne0_%d_DEFINED\n"
+                        "#define GB_GUARD_GB_udt_ne0_%d_DEFINED\n"
                         "GB_STATIC_INLINE bool GB_udt_ne0_%d ",
                         asize, asize, asize) ;
                     if (asize_multiple_of_uint32)
@@ -225,17 +225,17 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     break ;
                 case GB_FC32_code     : 
                     keep = "GB_FC32_eq0 (x)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC32_EQ0", GB_FC32_EQ0_DEFN) ;
+                    GB_macrofy_defn (fp, 1, "GB_FC32_eq0", GB_FC32_eq0_DEFN) ;
                     break ;
                 case GB_FC64_code     : 
                     keep = "GB_FC64_eq0 (x)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC64_EQ0", GB_FC64_EQ0_DEFN) ;
+                    GB_macrofy_defn (fp, 1, "GB_FC64_eq0", GB_FC64_eq0_DEFN) ;
                     break ;
 
                 case GB_UDT_code      : 
                     fprintf (fp,
-                        "#ifndef GB_GUARD_UDT_EQ0_%d_DEFINED\n"
-                        "#define GB_GUARD_UDT_EQ0_%d_DEFINED\n"
+                        "#ifndef GB_GUARD_GB_udt_eq0_%d_DEFINED\n"
+                        "#define GB_GUARD_GB_udt_eq0_%d_DEFINED\n"
                         "GB_STATIC_INLINE bool GB_udt_eq0_%d ",
                         asize, asize, asize) ;
                     if (asize_multiple_of_uint32)
@@ -302,17 +302,17 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     break ;
                 case GB_FC32_code     : 
                     keep = "GB_FC32_ne (x)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC32_NE", GB_FC32_NE_DEFN) ;
+                    GB_macrofy_defn (fp, 1, "GB_FC32_ne", GB_FC32_ne_DEFN) ;
                     break ;
                 case GB_FC64_code     : 
                     keep = "GB_FC64_ne (x)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC64_NE", GB_FC64_NE_DEFN) ;
+                    GB_macrofy_defn (fp, 1, "GB_FC64_ne", GB_FC64_ne_DEFN) ;
                     break ;
 
                 case GB_UDT_code      : 
                     fprintf (fp,
-                        "#ifndef GB_GUARD_UDT_NE_%d_DEFINED\n"
-                        "#define GB_GUARD_UDT_NE_%d_DEFINED\n"
+                        "#ifndef GB_GUARD_GB_udt_ne_%d_DEFINED\n"
+                        "#define GB_GUARD_GB_udt_ne_%d_DEFINED\n"
                         "GB_STATIC_INLINE bool GB_udt_ne_%d ",
                         asize, asize, asize) ;
                     if (asize_multiple_of_uint32)
@@ -375,17 +375,17 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     break ;
                 case GB_FC32_code     : 
                     keep = "GB_FC32_eq (x)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC32_EQ", GB_FC32_EQ_DEFN) ;
+                    GB_macrofy_defn (fp, 1, "GB_FC32_eq", GB_FC32_eq_DEFN) ;
                     break ;
                 case GB_FC64_code     : 
                     keep = "GB_FC64_eq (x)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC64_EQ", GB_FC64_EQ_DEFN) ;
+                    GB_macrofy_defn (fp, 1, "GB_FC64_eq", GB_FC64_eq_DEFN) ;
                     break ;
 
                 case GB_UDT_code      : 
                     fprintf (fp,
-                        "#ifndef GB_GUARD_UDT_EQ_%d_DEFINED\n"
-                        "#define GB_GUARD_UDT_EQ_%d_DEFINED\n"
+                        "#ifndef GB_GUARD_GB_udt_eq_%d_DEFINED\n"
+                        "#define GB_GUARD_GB_udt_eq_%d_DEFINED\n"
                         "GB_STATIC_INLINE bool GB_udt_eq_%d ",
                         asize, asize, asize) ;
                     if (asize_multiple_of_uint32)
@@ -454,11 +454,11 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     break ;
                 case GB_FC32_code     : 
                     keep = "GB_FC32_eq (x,y)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC32_EQ", GB_FC32_EQ_DEFN) ;
+                    GB_macrofy_defn (fp, 1, "GB_FC32_eq", GB_FC32_eq_DEFN) ;
                     break ;
                 case GB_FC64_code     : 
                     keep = "GB_FC64_eq (x,y)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC64_EQ", GB_FC64_EQ_DEFN) ;
+                    GB_macrofy_defn (fp, 1, "GB_FC64_eq", GB_FC64_eq_DEFN) ;
                     break ;
                 default: ;
             }
@@ -484,11 +484,11 @@ void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
                     break ;
                 case GB_FC32_code     : 
                     keep = "GB_FC32_ne (x,y)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC32_NE", GB_FC32_NE_DEFN) ;
+                    GB_macrofy_defn (fp, 1, "GB_FC32_ne", GB_FC32_ne_DEFN) ;
                     break ;
                 case GB_FC64_code     : 
                     keep = "GB_FC64_ne (x,y)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC64_NE", GB_FC64_NE_DEFN) ;
+                    GB_macrofy_defn (fp, 1, "GB_FC64_ne", GB_FC64_ne_DEFN) ;
                     break ;
                 default: ;
             }

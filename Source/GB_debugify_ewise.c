@@ -41,10 +41,11 @@ void GB_debugify_ewise
     GrB_Type btype = B->type ;
 
     // enumify the ewise problem
-    bool builtin = GB_enumify_ewise (&scode,
+    GB_enumify_ewise (&scode,
         is_eWiseMult, is_eWiseUnion, can_copy_to_C,
         C_iso, C_in_iso, C_sparsity, ctype, M, Mask_struct, Mask_comp,
         binaryop, flipxy, A, B) ;
+    bool builtin = (binaryop->hash == 0) ;
 
     // namify the ewise problem
     char ewise_name [256 + 8*GxB_MAX_NAME_LEN] ;

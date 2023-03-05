@@ -570,13 +570,57 @@ void GB_macrofy_query_version
 // unary ops
 //------------------------------------------------------------------------------
 
-void GB_enumify_unop    // enumify a GrB_UnaryOp
+bool GB_enumify_apply       // enumerate an apply or tranpose/apply problem
 (
     // output:
-    int *ecode,         // enumerated operator, range 0 to 160
+    uint64_t *scode,        // unique encoding of the entire operation
     // input:
+    // C matrix:
+    int C_sparsity,         // sparse, hyper, bitmap, or full.  For apply
+                            // without transpose, Cx = op(A) is computed where
+                            // Cx is just C->x, so the caller uses 'full'
+    GrB_Type ctype,         // C=((ctype) T) is the final typecast
+    // operator:
+        const GB_Operator op,       // unary/index-unary to apply; not binaryop
+        bool flipij,                // if true, flip i,j for user idxunop
+    // A matrix:
+    const GrB_Matrix A              // input matrix
+) ;
+
+void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
+(
+    // output:
+    int *ecode,         // enumerated operator, range 0 to 255
+    bool *depends_on_x, // true if the op depends on x
+    bool *depends_on_i, // true if the op depends on i
+    bool *depends_on_j, // true if the op depends on j
+    bool *depends_on_y, // true if the op depends on y
+    // input:
+    bool flipij,        // if true, then the i and j indices are flipped
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
     GB_Type_code xcode  // op->xtype->code of the operator
+) ;
+
+void GB_macrofy_unop
+(
+    FILE *fp,
+    // input:
+    const char *macro_name,
+    bool flipij,                // if true: op is f(z,x,j,i,y) with ij flipped
+    int ecode,
+    GB_Operator op              // GrB_UnaryOp or GrB_IndexUnaryOp
+) ;
+
+void GB_macrofy_apply           // construct all macros for GrB_apply
+(
+    // output:
+    FILE *fp,                   // target file to write, already open
+    // input:
+    uint64_t scode,
+    // operator:
+        const GB_Operator op,       // unary/index-unary to apply; not binaryop
+    GrB_Type ctype,
+    GrB_Type atype
 ) ;
 
 //------------------------------------------------------------------------------
@@ -675,6 +719,18 @@ void GB_debugify_select
     int64_t ithunk,             // (int64_t) Thunk, if Thunk is NULL
     const GrB_Scalar Thunk,     // optional input for select operator
     bool in_place_A             // true if select is done in-place
+) ;
+
+void GB_debugify_apply
+(
+    // C matrix:
+    int C_sparsity,         // sparse, hyper, bitmap, or full
+    GrB_Type ctype,         // C=((ctype) T) is the final typecast
+    // operator:
+        const GB_Operator op,       // unary/index-unary to apply; not binaryop
+        bool flipij,                // if true, flip i,j for user idxunop
+    // A matrix:
+    GrB_Matrix A
 ) ;
 
 #endif

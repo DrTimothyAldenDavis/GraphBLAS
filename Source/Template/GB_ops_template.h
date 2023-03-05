@@ -637,9 +637,9 @@ inline void GB_FUNC (POW) (GB_Z_X_Y_ARGS)
     #elif defined ( GB_DOUBLE )
         (*z) = GB_pow ((*x), (*y)) ;
     #elif defined ( GB_FLOAT_COMPLEX )
-        (*z) = GB_cpowf ((*x), (*y)) ;
+        (*z) = GB_FC32_pow ((*x), (*y)) ;
     #elif defined ( GB_DOUBLE_COMPLEX )
-        (*z) = GB_cpow ((*x), (*y)) ;
+        (*z) = GB_FC64_pow ((*x), (*y)) ;
     #endif
 }
 

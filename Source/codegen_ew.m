@@ -376,8 +376,8 @@ codegen_ew_method ('pow', 'GB_pow_uint32 (xarg, yarg)', 'uint32_t'  ) ;
 codegen_ew_method ('pow', 'GB_pow_uint64 (xarg, yarg)', 'uint64_t'  ) ;
 codegen_ew_method ('pow', 'GB_powf (xarg, yarg)'      , 'float'     ) ;
 codegen_ew_method ('pow', 'GB_pow (xarg, yarg)'       , 'double'    ) ;
-codegen_ew_method ('pow', 'GB_cpowf (xarg, yarg)'     , 'GxB_FC32_t') ;
-codegen_ew_method ('pow', 'GB_cpow (xarg, yarg)'      , 'GxB_FC64_t') ;
+codegen_ew_method ('pow', 'GB_FC32_pow (xarg, yarg)'  , 'GxB_FC32_t') ;
+codegen_ew_method ('pow', 'GB_FC64_pow (xarg, yarg)'  , 'GxB_FC64_t') ;
 
 fprintf ('\n') ;
 

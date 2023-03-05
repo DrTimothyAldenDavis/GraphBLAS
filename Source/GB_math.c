@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: rename these GB_FC32_*, GB_FP32_*, GB_INT8_*, etc
+
 #include "GB.h"
 
 // complex constructors
@@ -56,10 +58,10 @@ extern bool GB_cisfinitef (GxB_FC32_t x) ;
 extern bool GB_cisfinite  (GxB_FC64_t x) ;
 
 // z = pow (x,y) for floating-point types
-extern float      GB_powf  (float      x, float      y) ;
-extern double     GB_pow   (double     x, double     y) ;
-extern GxB_FC32_t GB_cpowf (GxB_FC32_t x, GxB_FC32_t y) ;
-extern GxB_FC64_t GB_cpow  (GxB_FC64_t x, GxB_FC64_t y) ;
+extern float      GB_powf     (float      x, float      y) ;
+extern double     GB_pow      (double     x, double     y) ;
+extern GxB_FC32_t GB_FC32_pow (GxB_FC32_t x, GxB_FC32_t y) ;
+extern GxB_FC64_t GB_FC64_pow (GxB_FC64_t x, GxB_FC64_t y) ;
 
 // z = pow (x,y) for integers
 extern int8_t   GB_pow_int8   (int8_t   x, int8_t   y) ;

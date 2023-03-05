@@ -21,46 +21,46 @@
     //--------------------------------------------------------------------------
 
     // complex-complex multiply: z = x*y where both x and y are complex
-    #define GB_FC32_MUL_DEFN                                                \
+    #define GB_FC32_mul_DEFN                                                \
            "GB_FC32_mul(x,y) (_FCmulcc (x, y))"
     #define GB_FC32_mul(x,y) (_FCmulcc (x, y))
 
-    #define GB_FC64_MUL_DEFN                                                \
+    #define GB_FC64_mul_DEFN                                                \
            "GB_FC64_mul(x,y) ( _Cmulcc (x, y))"
     #define GB_FC64_mul(x,y) ( _Cmulcc (x, y))
 
     // complex-complex addition: z = x+y where both x and y are complex
-    #define GB_FC32_ADD_DEFN                                                \
+    #define GB_FC32_add_DEFN                                                \
        "    GB_FC32_add(x,y) "                                              \
        "GxB_CMPLXF (crealf (x) + crealf (y), cimagf (x) + cimagf (y))"
     #define GB_FC32_add(x,y)                                                \
         GxB_CMPLXF (crealf (x) + crealf (y), cimagf (x) + cimagf (y))
 
-    #define GB_FC64_ADD_DEFN                                                \
+    #define GB_FC64_add_DEFN                                                \
        "    GB_FC64_add(x,y) "                                              \
        "GxB_CMPLX  (creal  (x) + creal  (y), cimag  (x) + cimag  (y))"
     #define GB_FC64_add(x,y)                                                \
         GxB_CMPLX  (creal  (x) + creal  (y), cimag  (x) + cimag  (y))
 
     // complex-complex subtraction: z = x-y where both x and y are complex
-    #define GB_FC32_MINUS_DEFN                                              \
+    #define GB_FC32_minus_DEFN                                              \
        "    GB_FC32_minus(x,y) "                                            \
        "GxB_CMPLXF (crealf (x) - crealf (y), cimagf (x) - cimagf (y))"
     #define GB_FC32_minus(x,y)                                              \
         GxB_CMPLXF (crealf (x) - crealf (y), cimagf (x) - cimagf (y))
 
-    #define GB_FC64_MINUS_DEFN                                              \
+    #define GB_FC64_minus_DEFN                                              \
        "    GB_FC64_minus(x,y) "                                            \
        "GxB_CMPLX  (creal  (x) - creal  (y), cimag  (x) - cimag  (y))"
     #define GB_FC64_minus(x,y)                                              \
         GxB_CMPLX  (creal  (x) - creal  (y), cimag  (x) - cimag  (y))
 
     // complex negation: z = -x
-    #define GB_FC32_AINV_DEFN                                               \
+    #define GB_FC32_ainv_DEFN                                               \
            "GB_FC32_ainv(x) GxB_CMPLXF (-crealf (x), -cimagf (x))"
     #define GB_FC32_ainv(x) GxB_CMPLXF (-crealf (x), -cimagf (x))
 
-    #define GB_FC64_AINV_DEFN                                               \
+    #define GB_FC64_ainv_DEFN                                               \
            "GB_FC64_ainv(x) GxB_CMPLX  (-creal  (x), -cimag  (x))"
     #define GB_FC64_ainv(x) GxB_CMPLX  (-creal  (x), -cimag  (x))
 
@@ -71,110 +71,110 @@
     //--------------------------------------------------------------------------
 
     // complex-complex multiply: z = x*y where both x and y are complex
-    #define GB_FC32_MUL_DEFN                                                \
+    #define GB_FC32_mul_DEFN                                                \
            "GB_FC32_mul(x,y) ((x) * (y))"
     #define GB_FC32_mul(x,y) ((x) * (y))
 
-    #define GB_FC64_MUL_DEFN                                                \
+    #define GB_FC64_mul_DEFN                                                \
            "GB_FC64_mul(x,y) ((x) * (y))"
     #define GB_FC64_mul(x,y) ((x) * (y))
 
     // complex-complex addition: z = x+y where both x and y are complex
-    #define GB_FC32_ADD_DEFN                                                \
+    #define GB_FC32_add_DEFN                                                \
            "GB_FC32_add(x,y) ((x) + (y))"
     #define GB_FC32_add(x,y) ((x) + (y))
 
-    #define GB_FC64_ADD_DEFN                                                \
+    #define GB_FC64_add_DEFN                                                \
            "GB_FC64_add(x,y) ((x) + (y))"
     #define GB_FC64_add(x,y) ((x) + (y))
 
     // complex-complex subtraction: z = x-y where both x and y are complex
-    #define GB_FC32_MINUS_DEFN                                              \
+    #define GB_FC32_minus_DEFN                                              \
            "GB_FC32_minus(x,y) ((x) - (y))"
     #define GB_FC32_minus(x,y) ((x) - (y))
 
-    #define GB_FC64_MINUS_DEFN                                              \
+    #define GB_FC64_minus_DEFN                                              \
            "GB_FC64_minus(x,y) ((x) - (y))"
     #define GB_FC64_minus(x,y) ((x) - (y))
 
     // complex negation
-    #define GB_FC32_AINV_DEFN                                               \
+    #define GB_FC32_ainv_DEFN                                               \
            "GB_FC32_ainv(x) (-(x))"
     #define GB_FC32_ainv(x) (-(x))
 
-    #define GB_FC64_AINV_DEFN                                               \
+    #define GB_FC64_ainv_DEFN                                               \
            "GB_FC64_ainv(x) (-(x))"
     #define GB_FC64_ainv(x) (-(x))
 
 #endif
 
-#define GB_GUARD_GB_FC32_MUL_DEFINED
-#define GB_GUARD_GB_FC64_MUL_DEFINED
-#define GB_GUARD_GB_FC32_ADD_DEFINED
-#define GB_GUARD_GB_FC64_ADD_DEFINED
-#define GB_GUARD_GB_FC32_MINUS_DEFINED
-#define GB_GUARD_GB_FC64_MINUS_DEFINED
-#define GB_GUARD_GB_FC32_AINV_DEFINED
-#define GB_GUARD_GB_FC64_AINV_DEFINED
+#define GB_GUARD_GB_FC32_mul_DEFINED
+#define GB_GUARD_GB_FC64_mul_DEFINED
+#define GB_GUARD_GB_FC32_add_DEFINED
+#define GB_GUARD_GB_FC64_add_DEFINED
+#define GB_GUARD_GB_FC32_minus_DEFINED
+#define GB_GUARD_GB_FC64_minus_DEFINED
+#define GB_GUARD_GB_FC32_ainv_DEFINED
+#define GB_GUARD_GB_FC64_ainv_DEFINED
 
 // complex comparators
-#define GB_GUARD_GB_FC32_EQ_DEFINED
-#define GB_FC32_EQ_DEFN                                                     \
+#define GB_GUARD_GB_FC32_eq_DEFINED
+#define GB_FC32_eq_DEFN                                                     \
        "GB_FC32_eq(x,y) ((crealf(x) == crealf(y)) && (cimagf(x) == cimagf(y)))"
 #define GB_FC32_eq(x,y) ((crealf(x) == crealf(y)) && (cimagf(x) == cimagf(y)))
 
-#define GB_GUARD_GB_FC64_EQ_DEFINED
-#define GB_FC64_EQ_DEFN                                                     \
+#define GB_GUARD_GB_FC64_eq_DEFINED
+#define GB_FC64_eq_DEFN                                                     \
        "GB_FC64_eq(x,y) ((creal (x) == creal (y)) && (cimag (x) == cimag (y)))"
 #define GB_FC64_eq(x,y) ((creal (x) == creal (y)) && (cimag (x) == cimag (y)))
 
-#define GB_GUARD_GB_FC32_NE_DEFINED
-#define GB_FC32_NE_DEFN                                                     \
+#define GB_GUARD_GB_FC32_ne_DEFINED
+#define GB_FC32_ne_DEFN                                                     \
        "GB_FC32_ne(x,y) ((crealf(x) != crealf(y)) || (cimagf(x) != cimagf(y)))"
 #define GB_FC32_ne(x,y) ((crealf(x) != crealf(y)) || (cimagf(x) != cimagf(y)))
 
-#define GB_GUARD_GB_FC64_NE_DEFINED
-#define GB_FC64_NE_DEFN                                                     \
+#define GB_GUARD_GB_FC64_ne_DEFINED
+#define GB_FC64_ne_DEFN                                                     \
        "GB_FC64_ne(x,y) ((creal (x) != creal (y)) || (cimag (x) != cimag (y)))"
 #define GB_FC64_ne(x,y) ((creal (x) != creal (y)) || (cimag (x) != cimag (y)))
 
-#define GB_GUARD_GB_FC32_ISEQ_DEFINED
-#define GB_FC32_ISEQ_DEFN                                                   \
+#define GB_GUARD_GB_FC32_iseq_DEFINED
+#define GB_FC32_iseq_DEFN                                                   \
        "GB_FC32_iseq(x,y) GB_CMPLX32 ((float)  GB_FC32_eq (x,y), 0)"
 #define GB_FC32_iseq(x,y) GB_CMPLX32 ((float)  GB_FC32_eq (x,y), 0)
 
-#define GB_GUARD_GB_FC64_ISEQ_DEFINED
-#define GB_FC64_ISEQ_DEFN                                                   \
+#define GB_GUARD_GB_FC64_iseq_DEFINED
+#define GB_FC64_iseq_DEFN                                                   \
        "GB_FC64_iseq(x,y) GB_CMPLX64  ((double) GB_FC64_eq (x,y), 0)"
 #define GB_FC64_iseq(x,y) GB_CMPLX64  ((double) GB_FC64_eq (x,y), 0)
 
-#define GB_GUARD_GB_FC32_ISNE_DEFINED
-#define GB_FC32_ISNE_DEFN                                                   \
+#define GB_GUARD_GB_FC32_isne_DEFINED
+#define GB_FC32_isne_DEFN                                                   \
        "GB_FC32_isne(x,y) GB_CMPLX32 ((float)  GB_FC32_ne (x,y), 0)"
 #define GB_FC32_isne(x,y) GB_CMPLX32 ((float)  GB_FC32_ne (x,y), 0)
 
-#define GB_GUARD_GB_FC64_ISNE_DEFINED
-#define GB_FC64_ISNE_DEFN                                                   \
+#define GB_GUARD_GB_FC64_isne_DEFINED
+#define GB_FC64_isne_DEFN                                                   \
        "GB_FC64_isne(x,y) GB_CMPLX64  ((double) GB_FC64_ne (x,y), 0)"
 #define GB_FC64_isne(x,y) GB_CMPLX64  ((double) GB_FC64_ne (x,y), 0)
 
-#define GB_GUARD_GB_FC32_EQ0_DEFINED
-#define GB_FC32_EQ0_DEFN                                                    \
+#define GB_GUARD_GB_FC32_eq0_DEFINED
+#define GB_FC32_eq0_DEFN                                                    \
        "GB_FC32_eq0(x) ((crealf (x) == 0) && (cimagf (x) == 0))"
 #define GB_FC32_eq0(x) ((crealf (x) == 0) && (cimagf (x) == 0))
 
-#define GB_GUARD_GB_FC64_EQ0_DEFINED
-#define GB_FC64_EQ0_DEFN                                                    \
+#define GB_GUARD_GB_FC64_eq0_DEFINED
+#define GB_FC64_eq0_DEFN                                                    \
        "GB_FC64_eq0(x) ((creal  (x) == 0) && (cimag  (x) == 0))"
 #define GB_FC64_eq0(x) ((creal  (x) == 0) && (cimag  (x) == 0))
 
-#define GB_GUARD_GB_FC32_NE0_DEFINED
-#define GB_FC32_NE0_DEFN                                                    \
+#define GB_GUARD_GB_FC32_ne0_DEFINED
+#define GB_FC32_ne0_DEFN                                                    \
        "GB_FC32_ne0(x) ((crealf (x) != 0) || (cimagf (x) != 0))"
 #define GB_FC32_ne0(x) ((crealf (x) != 0) || (cimagf (x) != 0))
 
-#define GB_GUARD_GB_FC64_NE0_DEFINED
-#define GB_FC64_NE0_DEFN                                                    \
+#define GB_GUARD_GB_FC64_ne0_DEFINED
+#define GB_FC64_ne0_DEFN                                                    \
        "GB_FC64_ne0(x) ((creal  (x) != 0) || (cimag  (x) != 0))"
 #define GB_FC64_ne0(x) ((creal  (x) != 0) || (cimag  (x) != 0))
 
@@ -239,8 +239,8 @@
         }
     }
 
-#define GB_GUARD_GB_IDIV_INT8_DEFINED
-#define GB_IDIV_INT8_DEFN                                                   \
+#define GB_GUARD_GB_idiv_int8_DEFINED
+#define GB_idiv_int8_DEFN                                                   \
    "int8_t GB_idiv_int8 (int8_t x, int8_t y)                            \n" \
    "{                                                                   \n" \
    "    if (y == -1)                                                    \n" \
@@ -279,8 +279,8 @@
         }
     }
 
-#define GB_GUARD_GB_IDIV_INT16_DEFINED
-#define GB_IDIV_INT16_DEFN                                                  \
+#define GB_GUARD_GB_idiv_int16_DEFINED
+#define GB_idiv_int16_DEFN                                                  \
    "int16_t GB_idiv_int16 (int16_t x, int16_t y)                        \n" \
    "{                                                                   \n" \
    "    if (y == -1)                                                    \n" \
@@ -319,8 +319,8 @@
         }
     }
 
-#define GB_GUARD_GB_IDIV_INT32_DEFINED
-#define GB_IDIV_INT32_DEFN                                                  \
+#define GB_GUARD_GB_idiv_int32_DEFINED
+#define GB_idiv_int32_DEFN                                                  \
    "int32_t GB_idiv_int32 (int32_t x, int32_t y)                        \n" \
    "{                                                                   \n" \
    "    if (y == -1)                                                    \n" \
@@ -359,8 +359,8 @@
         }
     }
 
-#define GB_GUARD_GB_IDIV_INT64_DEFINED
-#define GB_IDIV_INT64_DEFN                                                  \
+#define GB_GUARD_GB_idiv_int64_DEFINED
+#define GB_idiv_int64_DEFN                                                  \
    "int64_t GB_idiv_int64 (int64_t x, int64_t y)                        \n" \
    "{                                                                   \n" \
    "    if (y == -1)                                                    \n" \
@@ -392,8 +392,8 @@
         }
     }
 
-#define GB_GUARD_GB_IDIV_UINT8_DEFINED
-#define GB_IDIV_UINT8_DEFN                                                  \
+#define GB_GUARD_GB_idiv_uint8_DEFINED
+#define GB_idiv_uint8_DEFN                                                  \
    "uint8_t GB_idiv_uint8 (uint8_t x, uint8_t y)                        \n" \
    "{                                                                   \n" \
    "    if (y == 0)                                                     \n" \
@@ -421,8 +421,8 @@
         }
     }
 
-#define GB_GUARD_GB_IDIV_UINT16_DEFINED
-#define GB_IDIV_UINT16_DEFN                                                 \
+#define GB_GUARD_GB_idiv_uint16_DEFINED
+#define GB_idiv_uint16_DEFN                                                 \
    "uint16_t GB_idiv_uint16 (uint16_t x, uint16_t y)                    \n" \
    "{                                                                   \n" \
    "    if (y == 0)                                                     \n" \
@@ -450,8 +450,8 @@
         }
     }
 
-#define GB_GUARD_GB_IDIV_UINT32_DEFINED
-#define GB_IDIV_UINT32_DEFN                                                 \
+#define GB_GUARD_GB_idiv_uint32_DEFINED
+#define GB_idiv_uint32_DEFN                                                 \
    "uint32_t GB_idiv_uint32 (uint32_t x, uint32_t y)                    \n" \
    "{                                                                   \n" \
    "    if (y == 0)                                                     \n" \
@@ -479,8 +479,8 @@
         }
     }
 
-#define GB_GUARD_GB_IDIV_UINT64_DEFINED
-#define GB_IDIV_UINT64_DEFN                                                 \
+#define GB_GUARD_GB_idiv_uint64_DEFINED
+#define GB_idiv_uint64_DEFN                                                 \
    "uint64_t GB_idiv_uint64 (uint64_t x, uint64_t y)                    \n" \
    "{                                                                   \n" \
    "    if (y == 0)                                                     \n" \
@@ -496,8 +496,6 @@
 //------------------------------------------------------------------------------
 // complex division
 //------------------------------------------------------------------------------
-
-#if 1
 
     // complex division is problematic.  It is not supported at all on MS
     // Visual Studio.  With other compilers, complex division exists but it has
@@ -549,7 +547,8 @@
         }
     }
 
-   #define GB_FC64_DIV_DEFN                                                 \
+   #define GB_GUARD_GB_FC64_div_DEFINED
+   #define GB_FC64_div_DEFN                                                 \
    "GxB_FC64_t GB_FC64_div (GxB_FC64_t x, GxB_FC64_t y)                 \n" \
    "{                                                                   \n" \
    "    double xr = creal (x) ;                                         \n" \
@@ -599,7 +598,9 @@
         return (GB_CMPLX32 ((float) creal (zz), (float) cimag (zz))) ;
     }
 
-   #define GB_FC32_DIV_DEFN                                                 \
+
+   #define GB_GUARD_GB_FC32_div_DEFINED
+   #define GB_FC32_div_DEFN                                                 \
    "GxB_FC32_t GB_FC32_div (GxB_FC32_t x, GxB_FC32_t y)                 \n" \
    "{                                                                   \n" \
    "    double xr = (double) crealf (x) ;                               \n" \
@@ -610,41 +611,6 @@
    "    zz = GB_FC64_div (GB_CMPLX64 (xr, xi), GB_CMPLX64 (yr, yi)) ;   \n" \
    "    return (GB_CMPLX32 ((float) creal (zz), (float) cimag (zz))) ;  \n" \
    "}"
-
-#else
-
-    // built-in complex division:  this works (except for MS Visual Studio) but
-    // it gives unpredictable results, particularly when considering Inf and
-    // NaN behavior.
-
-    inline
-    GxB_FC64_t GB_FC64_div (GxB_FC64_t x, GxB_FC64_t y)
-    {
-        return (x / y) ;
-    }
-
-   #define GB_FC64_DIV_DEFN                                                 \
-   "GxB_FC64_t GB_FC64_div (GxB_FC64_t x, GxB_FC64_t y)                 \n" \
-   "{                                                                   \n" \
-   "    return (x / y) ;                                                \n" \
-   "}"
-
-    inline
-    GxB_FC32_t GB_FC32_div (GxB_FC32_t x, GxB_FC32_t y)
-    {
-        return (x / y) ;
-    }
-
-   #define GB_FC32_DIV_DEFN                                                 \
-   "GxB_FC32_t GB_FC32_div (GxB_FC32_t x, GxB_FC32_t y)                 \n" \
-   "{                                                                   \n" \
-   "    return (x / y) ;                                                \n" \
-   "}"
-
-#endif
-
-#define GB_GUARD_GB_FC32_DIV_DEFINED
-#define GB_GUARD_GB_FC64_DIV_DEFINED
 
 //------------------------------------------------------------------------------
 // z = x^y: wrappers for pow, powf, cpow, and cpowf
@@ -675,8 +641,8 @@
         return (powf (x, y)) ;
     }
 
-   #define GB_GUARD_GB_POWF_DEFINED
-   #define GB_POWF_DEFN                                                     \
+   #define GB_GUARD_GB_powf_DEFINED
+   #define GB_powf_DEFN                                                     \
    "float GB_powf (float x, float y)                                    \n" \
    "{                                                                   \n" \
    "    int xr_class = fpclassify (x) ;                                 \n" \
@@ -711,8 +677,8 @@
         return (pow (x, y)) ;
     }
 
-   #define GB_GUARD_GB_POW_DEFINED
-   #define GB_POW_DEFN                                                      \
+   #define GB_GUARD_GB_pow_DEFINED
+   #define GB_pow_DEFN                                                      \
    "float GB_pow (float x, float y)                                     \n" \
    "{                                                                   \n" \
    "    int xr_class = fpclassify (x) ;                                 \n" \
@@ -729,7 +695,7 @@
    "}"
 
     inline
-    GxB_FC32_t GB_cpowf (GxB_FC32_t x, GxB_FC32_t y)
+    GxB_FC32_t GB_FC32_pow (GxB_FC32_t x, GxB_FC32_t y)
     {
         float xr = crealf (x) ;
         float yr = crealf (y) ;
@@ -761,9 +727,9 @@
         return (cpowf (x, y)) ;
     }
 
-   #define GB_GUARD_GB_CPOWF_DEFINED
-   #define GB_CPOWF_DEFN                                                    \
-   "GxB_FC32_t GB_cpowf (GxB_FC32_t x, GxB_FC32_t y)                    \n" \
+   #define GB_GUARD_GB_FC32_pow_DEFINED
+   #define GB_FC32_pow_DEFN                                                 \
+   "GxB_FC32_t GB_FC32_pow (GxB_FC32_t x, GxB_FC32_t y)                 \n" \
    "{                                                                   \n" \
    "    float xr = crealf (x) ;                                         \n" \
    "    float yr = crealf (y) ;                                         \n" \
@@ -792,7 +758,7 @@
    "}"
 
     inline
-    GxB_FC64_t GB_cpow (GxB_FC64_t x, GxB_FC64_t y)
+    GxB_FC64_t GB_FC64_pow (GxB_FC64_t x, GxB_FC64_t y)
     {
         double xr = creal (x) ;
         double yr = creal (y) ;
@@ -824,9 +790,9 @@
         return (cpow (x, y)) ;
     }
 
-   #define GB_GUARD_GB_CPOW_DEFINED
-   #define GB_CPOW_DEFN                                                     \
-   "GxB_FC64_t GB_cpow (GxB_FC64_t x, GxB_FC64_t y)                     \n" \
+   #define GB_GUARD_GB_FC64_pow_DEFINED
+   #define GB_FC64_pow_DEFN                                                 \
+   "GxB_FC64_t GB_FC64_pow (GxB_FC64_t x, GxB_FC64_t y)                 \n" \
    "{                                                                   \n" \
    "    double xr = creal (x) ;                                         \n" \
    "    double yr = creal (y) ;                                         \n" \
@@ -860,8 +826,8 @@
         return (GB_cast_to_int8_t (GB_pow ((double) x, (double) y))) ;
     }
 
-   #define GB_GUARD_GB_POW_INT8_DEFINED
-   #define GB_POW_INT8_DEFN                                                 \
+   #define GB_GUARD_GB_pow_int8_DEFINED
+   #define GB_pow_int8_DEFN                                                 \
    "int8_t GB_pow_int8 (int8_t x, int8_t y)                             \n" \
    "{                                                                   \n" \
    "    return (GB_cast_to_int8_t (GB_pow ((double) x, (double) y))) ;  \n" \
@@ -873,8 +839,8 @@
         return (GB_cast_to_int16_t (GB_pow ((double) x, (double) y))) ;
     }
 
-   #define GB_GUARD_GB_POW_INT16_DEFINED
-   #define GB_POW_INT16_DEFN                                                \
+   #define GB_GUARD_GB_pow_int16_DEFINED
+   #define GB_pow_int16_DEFN                                                \
    "int16_t GB_pow_int16 (int16_t x, int16_t y)                         \n" \
    "{                                                                   \n" \
    "    return (GB_cast_to_int16_t (GB_pow ((double) x, (double) y))) ; \n" \
@@ -886,8 +852,8 @@
         return (GB_cast_to_int32_t (GB_pow ((double) x, (double) y))) ;
     }
 
-   #define GB_GUARD_GB_POW_INT32_DEFINED
-   #define GB_POW_INT32_DEFN                                                \
+   #define GB_GUARD_GB_pow_int32_DEFINED
+   #define GB_pow_int32_DEFN                                                \
    "int32_t GB_pow_int32 (int32_t x, int32_t y)                         \n" \
    "{                                                                   \n" \
    "    return (GB_cast_to_int32_t (GB_pow ((double) x, (double) y))) ; \n" \
@@ -899,8 +865,8 @@
         return (GB_cast_to_int64_t (GB_pow ((double) x, (double) y))) ;
     }
 
-   #define GB_GUARD_GB_POW_INT64_DEFINED
-   #define GB_POW_INT64_DEFN                                                \
+   #define GB_GUARD_GB_pow_int64_DEFINED
+   #define GB_pow_int64_DEFN                                                \
    "int64_t GB_pow_int64 (int64_t x, int64_t y)                         \n" \
    "{                                                                   \n" \
    "    return (GB_cast_to_int64_t (GB_pow ((double) x, (double) y))) ; \n" \
@@ -912,8 +878,8 @@
         return (GB_cast_to_uint8_t (GB_pow ((double) x, (double) y))) ;
     }
 
-   #define GB_GUARD_GB_POW_UINT8_DEFINED
-   #define GB_POW_UINT8_DEFN                                                \
+   #define GB_GUARD_GB_pow_uint8_DEFINED
+   #define GB_pow_uint8_DEFN                                                \
    "int8_t GB_pow_uint8 (int8_t x, int8_t y)                            \n" \
    "{                                                                   \n" \
    "    return (GB_cast_to_uint8_t (GB_pow ((double) x, (double) y))) ; \n" \
@@ -925,8 +891,8 @@
         return (GB_cast_to_uint16_t (GB_pow ((double) x, (double) y))) ;
     }
 
-   #define GB_GUARD_GB_POW_UINT16_DEFINED
-   #define GB_POW_UINT16_DEFN                                               \
+   #define GB_GUARD_GB_pow_uint16_DEFINED
+   #define GB_pow_uint16_DEFN                                               \
    "int16_t GB_pow_uint16 (int16_t x, int16_t y)                        \n" \
    "{                                                                   \n" \
    "    return (GB_cast_to_uint16_t (GB_pow ((double) x, (double) y))) ;\n" \
@@ -938,8 +904,8 @@
         return (GB_cast_to_uint32_t (GB_pow ((double) x, (double) y))) ;
     }
 
-   #define GB_GUARD_GB_POW_UINT32_DEFINED
-   #define GB_POW_UINT32_DEFN                                               \
+   #define GB_GUARD_GB_pow_uint32_DEFINED
+   #define GB_pow_uint32_DEFN                                               \
    "int32_t GB_pow_uint32 (int32_t x, int32_t y)                        \n" \
    "{                                                                   \n" \
    "    return (GB_cast_to_uint32_t (GB_pow ((double) x, (double) y))) ;\n" \
@@ -951,8 +917,8 @@
         return (GB_cast_to_uint64_t (GB_pow ((double) x, (double) y))) ;
     }
 
-   #define GB_GUARD_GB_POW_UINT64_DEFINED
-   #define GB_POW_UINT64_DEFN                                               \
+   #define GB_GUARD_GB_pow_uint64_DEFINED
+   #define GB_pow_uint64_DEFN                                               \
    "int64_t GB_pow_uint64 (int64_t x, int64_t y)                        \n" \
    "{                                                                   \n" \
    "    return (GB_cast_to_uint64_t (GB_pow ((double) x, (double) y))) ;\n" \
@@ -970,8 +936,8 @@
         return (frexpf (x, &exp_ignored)) ;
     }
 
-    #define GB_GUARD_GB_FREXPXF_DEFINED
-    #define GB_FREXPXF_DEFN                                                 \
+    #define GB_GUARD_GB_frexpxf_DEFINED
+    #define GB_frexpxf_DEFN                                                 \
     "float GB_frexpxf (float x)                                         \n" \
     "{                                                                  \n" \
     "    int exp_ignored ;                                              \n" \
@@ -987,8 +953,8 @@
         return ((float) exp) ;
     }
 
-    #define GB_GUARD_GB_FREXPEF_DEFINED
-    #define GB_FREXPEF_DEFN                                                 \
+    #define GB_GUARD_GB_frexpef_DEFINED
+    #define GB_frexpef_DEFN                                                 \
     "float GB_frexpef (float x)                                         \n" \
     "{                                                                  \n" \
     "    int exp ;                                                      \n" \
@@ -1004,8 +970,8 @@
         return (frexp (x, &exp_ignored)) ;
     }
 
-    #define GB_GUARD_GB_FREXPX_DEFINED
-    #define GB_FREXPX_DEFN                                                  \
+    #define GB_GUARD_GB_frexpx_DEFINED
+    #define GB_frexpx_DEFN                                                  \
     "double GB_frexpx (double x)                                        \n" \
     "{                                                                  \n" \
     "    int exp_ignored ;                                              \n" \
@@ -1021,8 +987,8 @@
         return ((double) exp) ;
     }
 
-    #define GB_GUARD_GB_FREXPE_DEFINED
-    #define GB_FREXPE_DEFN                                                  \
+    #define GB_GUARD_GB_frexpe_DEFINED
+    #define GB_frexpe_DEFN                                                  \
     "double GB_frexpe (double x)                                        \n" \
     "{                                                                  \n" \
     "    int exp ;                                                      \n" \
@@ -1041,8 +1007,8 @@
         return ((float) ((x < 0) ? (-1) : ((x > 0) ? 1 : 0))) ;
     }
 
-    #define GB_GUARD_GB_SIGNUMF_DEFINED
-    #define GB_SIGNUMF_DEFN                                                 \
+    #define GB_GUARD_GB_signumf_DEFINED
+    #define GB_signumf_DEFN                                                 \
     "float GB_signumf (float x)                                         \n" \
     "{                                                                  \n" \
     "    if (isnan (x)) return (x) ;                                    \n" \
@@ -1056,8 +1022,8 @@
         return ((double) ((x < 0) ? (-1) : ((x > 0) ? 1 : 0))) ;
     }
 
-    #define GB_GUARD_GB_SIGNUM_DEFINED
-    #define GB_SIGNUM_DEFN                                                  \
+    #define GB_GUARD_GB_signum_DEFINED
+    #define GB_signum_DEFN                                                  \
     "double GB_signum (double x)                                        \n" \
     "{                                                                  \n" \
     "    if (isnan (x)) return (x) ;                                    \n" \
@@ -1072,8 +1038,8 @@
         return (GB_CMPLX32 (crealf (x) / y, cimagf (x) / y)) ;
     }
 
-    #define GB_GUARD_GB_CSIGNUMF_DEFINED
-    #define GB_CSIGNUMF_DEFN                                                   \
+    #define GB_GUARD_GB_csignumf_DEFINED
+    #define GB_csignumf_DEFN                                                   \
     "GxB_FC32_t GB_csignumf (GxB_FC32_t x)                                  \n"\
     "{                                                                      \n"\
     "    if (crealf (x) == 0 && cimagf (x) == 0) return (GxB_CMPLXF (0,0)) ;\n"\
@@ -1089,8 +1055,8 @@
         return (GB_CMPLX64 (creal (x) / y, cimag (x) / y)) ;
     }
 
-    #define GB_GUARD_GB_CSIGNUM_DEFINED
-    #define GB_CSIGNUM_DEFN                                                    \
+    #define GB_GUARD_GB_csignum_DEFINED
+    #define GB_csignum_DEFN                                                    \
     "GxB_FC64_t GB_csignum (GxB_FC64_t x)                                   \n"\
     "{                                                                      \n"\
     "    if (creal (x) == 0 && cimag (x) == 0) return (GxB_CMPLX (0,0)) ;   \n"\
@@ -1107,6 +1073,8 @@
 // but the corresponding functions do not appear in the ANSI C11 complex.h.
 // These functions are used instead, for float complex and double complex.
 
+// FIXME: rename these GB_FC32_* or GB_FC64_*
+
 //------------------------------------------------------------------------------
 // z = ceil (x) for float complex
 //------------------------------------------------------------------------------
@@ -1117,8 +1085,8 @@
         return (GB_CMPLX32 (ceilf (crealf (x)), ceilf (cimagf (x)))) ;
     }
 
-    #define GB_GUARD_GB_CCEILF_DEFINED
-    #define GB_CCEILF_DEFN                                                  \
+    #define GB_GUARD_GB_cceilf_DEFINED
+    #define GB_cceilf_DEFN                                                  \
     "GxB_FC32_t GB_cceilf (GxB_FC32_t x)                                \n" \
     "{                                                                  \n" \
         "return (GB_CMPLX32 (ceilf (crealf (x)), ceilf (cimagf (x)))) ; \n" \
@@ -1134,8 +1102,8 @@
         return (GB_CMPLX64 (ceil (creal (x)), ceil (cimag (x)))) ;
     }
 
-    #define GB_GUARD_GB_CCEIL_DEFINED
-    #define GB_CCEIL_DEFN                                                   \
+    #define GB_GUARD_GB_cceil_DEFINED
+    #define GB_cceil_DEFN                                                   \
     "GxB_FC64_t GB_cceil (GxB_FC64_t x)                                 \n" \
     "{                                                                  \n" \
     "    return (GB_CMPLX64 (ceil (creal (x)), ceil (cimag (x)))) ;     \n" \
@@ -1151,11 +1119,11 @@
         return (GB_CMPLX32 (floorf (crealf (x)), floorf (cimagf (x)))) ;
     }
 
-    #define GB_GUARD_GB_CFLOORF_DEFINED
-    #define GB_CFLOORF_DEFN                                                    \
-    "GxB_FC32_t GB_cfloorf (GxB_FC32_t x)                                   \n"\
-    "{                                                                      \n"\
-    "    return (GB_CMPLX32 (floorf (crealf (x)), floorf (cimagf (x)))) ;   \n"\
+    #define GB_GUARD_GB_cfloorf_DEFINED
+    #define GB_cfloorf_DEFN                                                   \
+    "GxB_FC32_t GB_cfloorf (GxB_FC32_t x)                                 \n" \
+    "{                                                                    \n" \
+    "    return (GB_CMPLX32 (floorf (crealf (x)), floorf (cimagf (x)))) ; \n" \
     "}"
 
 //------------------------------------------------------------------------------
@@ -1168,11 +1136,11 @@
         return (GB_CMPLX64 (floor (creal (x)), floor (cimag (x)))) ;
     }
 
-    #define GB_GUARD_GB_CFLOOR_DEFINED
-    #define GB_CFLOOR_DEFN                                                     \
-    "GxB_FC64_t GB_cfloor (GxB_FC64_t x)                                    \n"\
-    "{                                                                      \n"\
-    "    return (GB_CMPLX64 (floor (creal (x)), floor (cimag (x)))) ;       \n"\
+    #define GB_GUARD_GB_cfloor_DEFINED
+    #define GB_cfloor_DEFN                                                  \
+    "GxB_FC64_t GB_cfloor (GxB_FC64_t x)                                \n" \
+    "{                                                                  \n" \
+    "    return (GB_CMPLX64 (floor (creal (x)), floor (cimag (x)))) ;   \n" \
     "}"
 
 //------------------------------------------------------------------------------
@@ -1185,11 +1153,11 @@
         return (GB_CMPLX32 (roundf (crealf (x)), roundf (cimagf (x)))) ;
     }
 
-    #define GB_GUARD_GB_CROUNDF_DEFINED
-    #define GB_CROUNDF_DEFN                                                    \
-    "GxB_FC32_t GB_croundf (GxB_FC32_t x)                                   \n"\
-    "{                                                                      \n"\
-    "    return (GB_CMPLX32 (roundf (crealf (x)), roundf (cimagf (x)))) ;   \n"\
+    #define GB_GUARD_GB_croundf_DEFINED
+    #define GB_croundf_DEFN                                                   \
+    "GxB_FC32_t GB_croundf (GxB_FC32_t x)                                 \n" \
+    "{                                                                    \n" \
+    "    return (GB_CMPLX32 (roundf (crealf (x)), roundf (cimagf (x)))) ; \n" \
     "}"
 
 //------------------------------------------------------------------------------
@@ -1202,8 +1170,8 @@
         return (GB_CMPLX64 (round (creal (x)), round (cimag (x)))) ;
     }
 
-    #define GB_GUARD_GB_CROUND_DEFINED
-    #define GB_CROUND_DEFN                                                  \
+    #define GB_GUARD_GB_cround_DEFINED
+    #define GB_cround_DEFN                                                  \
     "GxB_FC64_t GB_cround (GxB_FC64_t x)                                \n" \
     "{                                                                  \n" \
     "    return (GB_CMPLX64 (round (creal (x)), round (cimag (x)))) ;   \n" \
@@ -1219,12 +1187,12 @@
         return (GB_CMPLX32 (truncf (crealf (x)), truncf (cimagf (x)))) ;
     }
 
-    #define GB_GUARD_GB_CTRUNCF_DEFINED
-    #define GB_CTRUNCF_DEFN                                                    \
-    "GxB_FC32_t GB_ctruncf (GxB_FC32_t x)                                   \n"\
-    "{                                                                      \n"\
-    "    return (GB_CMPLX32 (truncf (crealf (x)), truncf (cimagf (x)))) ;   \n"\
-    "}
+    #define GB_GUARD_GB_ctruncf_DEFINED
+    #define GB_ctruncf_DEFN                                                   \
+    "GxB_FC32_t GB_ctruncf (GxB_FC32_t x)                                 \n" \
+    "{                                                                    \n" \
+    "    return (GB_CMPLX32 (truncf (crealf (x)), truncf (cimagf (x)))) ; \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = trunc (x) for double complex
@@ -1236,8 +1204,8 @@
         return (GB_CMPLX64 (trunc (creal (x)), trunc (cimag (x)))) ;
     }
 
-    #define GB_GUARD_GB_CTRUNC_DEFINED
-    #define GB_CTRUNC_DEFN                                                  \
+    #define GB_GUARD_GB_ctrunc_DEFINED
+    #define GB_ctrunc_DEFN                                                  \
     "GxB_FC64_t GB_ctrunc (GxB_FC64_t x)                                \n" \
     "{                                                                  \n" \
     "    return (GB_CMPLX64 (trunc (creal (x)), trunc (cimag (x)))) ;   \n" \
@@ -1247,170 +1215,313 @@
 // z = exp2 (x) for float complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC32_t GB_cexp2f (GxB_FC32_t x)
-{
-    if (fpclassify (cimagf (x)) == FP_ZERO)
+    inline
+    GxB_FC32_t GB_cexp2f (GxB_FC32_t x)
     {
-        // x is real, use exp2f
-        return (GB_CMPLX32 (exp2f (crealf (x)), 0)) ;
+        if (fpclassify (cimagf (x)) == FP_ZERO)
+        {
+            // x is real, use exp2f
+            return (GB_CMPLX32 (exp2f (crealf (x)), 0)) ;
+        }
+        return (GB_FC32_pow (GxB_CMPLXF (2,0), x)) ;     // z = 2^x
     }
-    return (GB_cpowf (GxB_CMPLXF (2,0), x)) ;     // z = 2^x
-}
+
+    #define GB_GUARD_GB_cexp2f_DEFINED
+    #define GB_cexp2f_DEFN                                                  \
+    "GxB_FC32_t GB_cexp2f (GxB_FC32_t x)                                \n" \
+    "{                                                                  \n" \
+    "    if (fpclassify (cimagf (x)) == FP_ZERO)                        \n" \
+    "    {                                                              \n" \
+    "        return (GB_CMPLX32 (exp2f (crealf (x)), 0)) ;              \n" \
+    "    }                                                              \n" \
+    "    return (GB_FC32_pow (GxB_CMPLXF (2,0), x)) ;                   \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = exp2 (x) for double complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC64_t GB_cexp2 (GxB_FC64_t x)
-{
-    if (fpclassify (cimag (x)) == FP_ZERO)
+    inline
+    GxB_FC64_t GB_cexp2 (GxB_FC64_t x)
     {
-        // x is real, use exp2
-        return (GB_CMPLX64 (exp2 (creal (x)), 0)) ;
+        if (fpclassify (cimag (x)) == FP_ZERO)
+        {
+            // x is real, use exp2
+            return (GB_CMPLX64 (exp2 (creal (x)), 0)) ;
+        }
+        return (GB_FC64_pow (GxB_CMPLX (2,0), x)) ;      // z = 2^x
     }
-    return (GB_cpow (GxB_CMPLX (2,0), x)) ;      // z = 2^x
-}
+
+    #define GB_GUARD_GB_cexp2_DEFINED
+    #define GB_cexp2_DEFN                                                   \
+    "GxB_FC64_t GB_cexp2 (GxB_FC64_t x)                                 \n" \
+    "{                                                                  \n" \
+    "    if (fpclassify (cimag (x)) == FP_ZERO)                         \n" \
+    "    {                                                              \n" \
+    "        return (GB_CMPLX64 (exp2 (creal (x)), 0)) ;                \n" \
+    "    }                                                              \n" \
+    "    return (GB_FC64_pow (GxB_CMPLX (2,0), x)) ;                    \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = expm1 (x) for double complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC64_t GB_cexpm1 (GxB_FC64_t x)
-{
-    // FUTURE: GB_cexpm1 is not accurate
-    // z = cexp (x) - 1
-    GxB_FC64_t z = cexp (x) ;
-    return (GB_CMPLX64 (creal (z) - 1, cimag (z))) ;
-}
+    inline 
+    GxB_FC64_t GB_cexpm1 (GxB_FC64_t x)
+    {
+        // FUTURE: GB_cexpm1 is not accurate
+        // z = cexp (x) - 1
+        GxB_FC64_t z = cexp (x) ;
+        return (GB_CMPLX64 (creal (z) - 1, cimag (z))) ;
+    }
+
+    #define GB_GUARD_GB_cexpm1_DEFINED
+    #define GB_cexpm1_DEFN                                                  \
+    "GxB_FC64_t GB_cexpm1 (GxB_FC64_t x)                                \n" \
+    "{                                                                  \n" \
+    "    GxB_FC64_t z = cexp (x) ;                                      \n" \
+    "    return (GB_CMPLX64 (creal (z) - 1, cimag (z))) ;               \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = expm1 (x) for float complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC32_t GB_cexpm1f (GxB_FC32_t x)
-{
-    // typecast to double and use GB_cexpm1
-    GxB_FC64_t z = GB_CMPLX64 ((double) crealf (x), (double) cimagf (x)) ;
-    z = GB_cexpm1 (z) ;
-    return (GB_CMPLX32 ((float) creal (z), (float) cimag (z))) ;
-}
+    inline
+    GxB_FC32_t GB_cexpm1f (GxB_FC32_t x)
+    {
+        // typecast to double and use GB_cexpm1
+        GxB_FC64_t z = GB_CMPLX64 ((double) crealf (x), (double) cimagf (x)) ;
+        z = GB_cexpm1 (z) ;
+        return (GB_CMPLX32 ((float) creal (z), (float) cimag (z))) ;
+    }
+
+    #define GB_GUARD_GB_cexpm1f_DEFINED
+    #define GB_cexpm1f_DEFN                                                 \
+    "GxB_FC64_t GB_cexpm1f (GxB_FC64_t x)                               \n" \
+    "{                                                                  \n" \
+    "    GxB_FC64_t z = cexp (x) ;                                      \n" \
+    "    return (GB_CMPLX64 (creal (z) - 1, cimag (z))) ;               \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = log1p (x) for double complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC64_t GB_clog1p (GxB_FC64_t x)
-{
-    // FUTURE: GB_clog1p is not accurate
-    // z = clog (1+x)
-    return (clog (GB_CMPLX64 (creal (x) + 1, cimag (x)))) ;
-}
+    inline
+    GxB_FC64_t GB_clog1p (GxB_FC64_t x)
+    {
+        // FUTURE: GB_clog1p is not accurate
+        // z = clog (1+x)
+        return (clog (GB_CMPLX64 (creal (x) + 1, cimag (x)))) ;
+    }
+
+    #define GB_GUARD_GB_clog1p_DEFINED
+    #define GB_clog1p_DEFN                                                  \
+    "GxB_FC64_t GB_clog1p (GxB_FC64_t x)                                \n" \
+    "{                                                                  \n" \
+    "    return (clog (GB_CMPLX64 (creal (x) + 1, cimag (x)))) ;        \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = log1p (x) for float complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC32_t GB_clog1pf (GxB_FC32_t x)
-{
-    // typecast to double and use GB_clog1p
-    GxB_FC64_t z = GB_CMPLX64 ((double) crealf (x), (double) cimagf (x)) ;
-    z = GB_clog1p (z) ;
-    return (GB_CMPLX32 ((float) creal (z), (float) cimag (z))) ;
-}
+    inline
+    GxB_FC32_t GB_clog1pf (GxB_FC32_t x)
+    {
+        // typecast to double and use GB_clog1p
+        GxB_FC64_t z = GB_CMPLX64 ((double) crealf (x), (double) cimagf (x)) ;
+        z = GB_clog1p (z) ;
+        return (GB_CMPLX32 ((float) creal (z), (float) cimag (z))) ;
+    }
+
+    #define GB_GUARD_GB_clog1pf_DEFINED
+    #define GB_clog1pf_DEFN                                                 \
+    "GxB_FC32_t GB_clog1pf (GxB_FC32_t x)                               \n" \
+    "{                                                                  \n" \
+    "    GxB_FC64_t z = GB_CMPLX64 ((double) crealf (x),                \n" \
+    "                               (double) cimagf (x)) ;              \n"\
+    "    z = GB_clog1p (z) ;                                            \n" \
+    "    return (GB_CMPLX32 ((float) creal (z), (float) cimag (z))) ;   \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = log10 (x) for float complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC32_t GB_clog10f (GxB_FC32_t x)
-{
-    // z = log (x) / log (10)
-    return (GB_FC32_div (clogf (x), GxB_CMPLXF (2.3025851f, 0))) ;
-}
+    inline
+    GxB_FC32_t GB_clog10f (GxB_FC32_t x)
+    {
+        // z = log (x) / log (10)
+        return (GB_FC32_div (clogf (x), GxB_CMPLXF (2.3025851f, 0))) ;
+    }
+
+    #define GB_GUARD_GB_clog10f_DEFINED
+    #define GB_clog10f_DEFN                                                 \
+    "GxB_FC32_t GB_clog10f (GxB_FC32_t x)                               \n" \
+    "{                                                                  \n" \
+    "    return (GB_FC32_div (clogf (x), GxB_CMPLXF (2.3025851f, 0))) ; \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = log10 (x) for double complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC64_t GB_clog10 (GxB_FC64_t x)
-{
-    // z = log (x) / log (10)
-    return (GB_FC64_div (clog (x), GxB_CMPLX (2.302585092994045901, 0))) ;
-}
+    inline
+    GxB_FC64_t GB_clog10 (GxB_FC64_t x)
+    {
+        // z = log (x) / log (10)
+        return (GB_FC64_div (clog (x), GxB_CMPLX (2.302585092994045901, 0))) ;
+    }
+
+    #define GB_GUARD_GB_clog10_DEFINED
+    #define GB_clog10_DEFN                                                  \
+    "GxB_FC64_t GB_clog10 (GxB_FC64_t x)                                \n" \
+    "{                                                                  \n" \
+    "    return (GB_FC64_div (clog (x),                                 \n" \
+    "        GxB_CMPLX (2.302585092994045901, 0))) ;                    \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = log2 (x) for float complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC32_t GB_clog2f (GxB_FC32_t x)
-{
-    // z = log (x) / log (2)
-    return (GB_FC32_div (clogf (x), GxB_CMPLXF (0.69314718f, 0))) ;
-}
+    inline
+    GxB_FC32_t GB_clog2f (GxB_FC32_t x)
+    {
+        // z = log (x) / log (2)
+        return (GB_FC32_div (clogf (x), GxB_CMPLXF (0.69314718f, 0))) ;
+    }
+
+    #define GB_GUARD_GB_clog2f_DEFINED
+    #define GB_clog2f_DEFN                                                  \
+    "GxB_FC32_t GB_clog2f (GxB_FC32_t x)                                \n" \
+    "{                                                                  \n" \
+    "    return (GB_FC32_div (clogf (x), GxB_CMPLXF (0.69314718f, 0))) ;\n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = log2 (x) for double complex
 //------------------------------------------------------------------------------
 
-inline GxB_FC64_t GB_clog2 (GxB_FC64_t x)
-{
-    // z = log (x) / log (2)
-    return (GB_FC64_div (clog (x), GxB_CMPLX (0.693147180559945286, 0))) ;
-}
+    inline
+    GxB_FC64_t GB_clog2 (GxB_FC64_t x)
+    {
+        // z = log (x) / log (2)
+        return (GB_FC64_div (clog (x), GxB_CMPLX (0.693147180559945286, 0))) ;
+    }
+
+    #define GB_GUARD_GB_clog2_DEFINED
+    #define GB_clog2_DEFN                                                   \
+    "GxB_FC64_t GB_clog2 (GxB_FC64_t x)                                 \n" \
+    "{                                                                  \n" \
+    "    return (GB_FC64_div (clog (x),                                 \n" \
+    "        GxB_CMPLX (0.693147180559945286, 0))) ;                    \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = isinf (x) for float complex
 //------------------------------------------------------------------------------
 
-inline bool GB_cisinff (GxB_FC32_t x)
-{
-    return (isinf (crealf (x)) || isinf (cimagf (x))) ;
-}
+    inline
+    bool GB_cisinff (GxB_FC32_t x)
+    {
+        return (isinf (crealf (x)) || isinf (cimagf (x))) ;
+    }
+
+    #define GB_GUARD_GB_cisinff_DEFINED
+    #define GB_cisinff_DEFN                                                 \
+    "bool GB_cisinff (GxB_FC32_t x)                                     \n" \
+    "{                                                                  \n" \
+    "    return (isinf (crealf (x)) || isinf (cimagf (x))) ;            \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = isinf (x) for double complex
 //------------------------------------------------------------------------------
 
-inline bool GB_cisinf (GxB_FC64_t x)
-{
-    return (isinf (creal (x)) || isinf (cimag (x))) ;
-}
+    inline
+    bool GB_cisinf (GxB_FC64_t x)
+    {
+        return (isinf (creal (x)) || isinf (cimag (x))) ;
+    }
+
+    #define GB_GUARD_GB_cisinf_DEFINED
+    #define GB_cisinf_DEFN                                                  \
+    "bool GB_cisinf (GxB_FC64_t x)                                      \n" \
+    "{                                                                  \n" \
+    "    return (isinf (creal (x)) || isinf (cimag (x))) ;              \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = isnan (x) for float complex
 //------------------------------------------------------------------------------
 
-inline bool GB_cisnanf (GxB_FC32_t x)
-{
-    return (isnan (crealf (x)) || isnan (cimagf (x))) ;
-}
+    inline
+    bool GB_cisnanf (GxB_FC32_t x)
+    {
+        return (isnan (crealf (x)) || isnan (cimagf (x))) ;
+    }
+
+    #define GB_GUARD_GB_cisnanf_DEFINED
+    #define GB_cisnanf_DEFN                                                 \
+    "bool GB_cisnanf (GxB_FC32_t x)                                     \n" \
+    "{                                                                  \n" \
+    "    return (isnan (crealf (x)) || isnan (cimagf (x))) ;            \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = isnan (x) for double complex
 //------------------------------------------------------------------------------
 
-inline bool GB_cisnan (GxB_FC64_t x)
-{
-    return (isnan (creal (x)) || isnan (cimag (x))) ;
-}
+    inline
+    bool GB_cisnan (GxB_FC64_t x)
+    {
+        return (isnan (creal (x)) || isnan (cimag (x))) ;
+    }
+
+    #define GB_GUARD_GB_cisnan_DEFINED
+    #define GB_cisnan_DEFN                                                  \
+    "bool GB_cisnan (GxB_FC64_t x)                                      \n" \
+    "{                                                                  \n" \
+    "    return (isnan (creal (x)) || isnan (cimag (x))) ;              \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = isfinite (x) for float complex
 //------------------------------------------------------------------------------
 
-inline bool GB_cisfinitef (GxB_FC32_t x)
-{
-    return (isfinite (crealf (x)) && isfinite (cimagf (x))) ;
-}
+    inline
+    bool GB_cisfinitef (GxB_FC32_t x)
+    {
+        return (isfinite (crealf (x)) && isfinite (cimagf (x))) ;
+    }
+
+    #define GB_GUARD_GB_cisfinitef_DEFINED
+    #define GB_cisfinitef_DEFN                                              \
+    "bool GB_cisfinitef (GxB_FC32_t x)                                  \n" \
+    "{                                                                  \n" \
+    "    return (isfinite (crealf (x)) && isfinite (cimagf (x))) ;      \n" \
+    "}"
 
 //------------------------------------------------------------------------------
 // z = isfinite (x) for double complex
 //------------------------------------------------------------------------------
 
-inline bool GB_cisfinite (GxB_FC64_t x)
-{
-    return (isfinite (creal (x)) && isfinite (cimag (x))) ;
-}
+    inline
+    bool GB_cisfinite (GxB_FC64_t x)
+    {
+        return (isfinite (creal (x)) && isfinite (cimag (x))) ;
+    }
+
+    #define GB_GUARD_GB_cisfinite_DEFINED
+    #define GB_cisfinite_DEFN                                              \
+    "bool GB_cisfinite (GxB_FC64_t x)                                   \n" \
+    "{                                                                  \n" \
+    "    return (isfinite (creal (x)) && isfinite (cimag (x))) ;        \n" \
+    "}"
 
 #endif
 

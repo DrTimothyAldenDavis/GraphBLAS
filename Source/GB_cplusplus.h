@@ -31,6 +31,7 @@
 #define GB_csqrtf_DEFN  "csqrtf(x)   std::sqrt(x)"
 #define GB_csqrt_DEFN   "csqrt(x)    std::sqrt(x)"
 #define GB_conjf_DEFN   "conjf(x)    std::conj(x)"
+#define GB_conj_DEFN    "conj(x)     std::conj(x)"
 #define GB_cargf_DEFN   "cargf(x)    std::arg(x)"
 #define GB_carg_DEFN    "carg(x)     std::arg(x)"
 #define GB_csinf_DEFN   "csinf(x)    std::sin(x)"
@@ -75,6 +76,7 @@
     #define GB_GUARD_csqrtf_DEFINED
     #define GB_GUARD_csqrt_DEFINED
     #define GB_GUARD_conjf_DEFINED
+    #define GB_GUARD_conj_DEFINED
     #define GB_GUARD_cargf_DEFINED
     #define GB_GUARD_carg_DEFINED
     #define GB_GUARD_csinf_DEFINED
@@ -117,6 +119,7 @@
     #define csqrtf(x)   std::sqrt(x)
     #define csqrt(x)    std::sqrt(x)
     #define conjf(x)    std::conj(x)
+    #define conj(x)     std::conj(x)
     #define cargf(x)    std::arg(x)
     #define carg(x)     std::arg(x)
     #define csinf(x)    std::sin(x)

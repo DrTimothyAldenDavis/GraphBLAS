@@ -20,7 +20,8 @@ void GB_macrofy_type
 )
 {
 
-    if ((strcmp (name, "GB_void") == 0) || (strcmp (name, "void") == 0))
+    if ((name == NULL) ||
+        (strcmp (name, "GB_void") == 0) || (strcmp (name, "void") == 0))
     {
         // values of the matrix are not used
         fprintf (fp, "#define GB_%s%sTYPE void\n", what, what2) ;

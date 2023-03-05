@@ -45,7 +45,6 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
 (
     GrB_Matrix C,                       // output matrix
     const GB_iso_code C_code_iso,       // iso code for C
-        // no operator is applied if op is NULL
         const GB_Operator op,           // unary/idxunop/binop to apply
         const GrB_Scalar scalar,        // scalar to bind to binary operator
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)

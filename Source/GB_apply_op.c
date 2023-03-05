@@ -104,6 +104,14 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     // apply the operator
     //--------------------------------------------------------------------------
 
+    #ifdef GB_DEBUGIFY_DEFN
+    if ((op_is_unop || GB_IS_INDEXUNARYOP_CODE (opcode)) && op != NULL)
+    {
+        GB_debugify_apply (A->b == NULL ? GxB_FULL : GxB_BITMAP,
+            ctype, op, flipij, A) ;
+    }
+    #endif
+
     info = GrB_NO_VALUE ;
 
     if (GB_OPCODE_IS_POSITIONAL (opcode))

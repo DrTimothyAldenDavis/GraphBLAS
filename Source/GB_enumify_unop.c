@@ -38,6 +38,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 {
 
     int e = 0 ;
+    bool i_dep = false ;
+    bool j_dep = false ;
 
     switch (opcode)
     {
@@ -96,18 +98,18 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
             {
                 default             : 
                 case GB_BOOL_code   : e =   1 ; break ; // z = 1 (minv for bool)
-                case GB_INT8_code   : e =  11 ; break ; // z = GB_idiv_int8 (1, x)
-                case GB_INT16_code  : e =  12 ; break ; // z = GB_idiv_int16 (1, x)
-                case GB_INT32_code  : e =  13 ; break ; // z = GB_idiv_int32 (1, x)
-                case GB_INT64_code  : e =  14 ; break ; // z = GB_idiv_int64 (1, x)
-                case GB_UINT8_code  : e =  15 ; break ; // z = GB_idiv_uint8 (1, x)
-                case GB_UINT16_code : e =  16 ; break ; // z = GB_idiv_uint16 (1, x)
-                case GB_UINT32_code : e =  17 ; break ; // z = GB_idiv_uint32 (1, x)
-                case GB_UINT64_code : e =  18 ; break ; // z = GB_idiv_uint64 (1, x)
+                case GB_INT8_code   : e =  11 ; break ; // z = GB_idiv_* (1, x)
+                case GB_INT16_code  : e =  12 ; break ; // z = GB_idiv_* (1, x)
+                case GB_INT32_code  : e =  13 ; break ; // z = GB_idiv_* (1, x)
+                case GB_INT64_code  : e =  14 ; break ; // z = GB_idiv_* (1, x)
+                case GB_UINT8_code  : e =  15 ; break ; // z = GB_idiv_* (1, x)
+                case GB_UINT16_code : e =  16 ; break ; // z = GB_idiv_* (1, x)
+                case GB_UINT32_code : e =  17 ; break ; // z = GB_idiv_* (1, x)
+                case GB_UINT64_code : e =  18 ; break ; // z = GB_idiv_* (1, x)
                 case GB_FP32_code   : e =  19 ; break ; // z = (1.0F)/x
                 case GB_FP64_code   : e =  20 ; break ; // z = 1./x
-                case GB_FC32_code   : e =  21 ; break ; // z = GB_FC32_div (GxB_CMPLXF (1,0), x)
-                case GB_FC64_code   : e =  22 ; break ; // z = GB_FC64_div (GxB_CMPLX  (1,0), x)
+                case GB_FC32_code   : e =  21 ; break ; // z = GB_FC32_div (1,x)
+                case GB_FC64_code   : e =  22 ; break ; // z = GB_FC64_div (1,x)
             }
             break ;
 
@@ -595,53 +597,90 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
         //----------------------------------------------------------------------
 
         case GB_POSITIONI_unop_code     :   // z = position_i(A(i,j)) == i
+            i_dep = true ;
             e = 157 ; break ;               // z = i
+
         case GB_POSITIONI1_unop_code    :   // z = position_i1(A(i,j)) == i+1
+            i_dep = true ;
             e = 158 ; break ;               // z = i+1
 
         case GB_POSITIONJ_unop_code     :   // z = position_j(A(i,j)) == j
+            j_dep = true ;
             e = 159 ; break ;               // z = j
+
         case GB_POSITIONJ1_unop_code    :   // z = position_j1(A(i,j)) == j+1
+            j_dep = true ;
             e = 160 ; break ;               // z = j+1
 
         //----------------------------------------------------------------------
-        // built-in GrB_IndexUnaryOp
+        // built-in GrB_IndexUnaryOps that do not depend on x
         //----------------------------------------------------------------------
 
         // x is the matrix entry A(i,j), y is the thunk value
 
         // Result is INT32 or INT64, depending on i and y:
         case GB_ROWINDEX_idxunop_code   :   // z = (i+y)
+            i_dep = true ;
             e = 233 ; break ;
+
         // Result is BOOL, depending on i and y:
         case GB_ROWLE_idxunop_code      :   // z = (i <= y)
+            i_dep = true ;
             e = 234 ; break ;
+
         case GB_ROWGT_idxunop_code      :   // z = (i > y)
+            i_dep = true ;
             e = 235 ; break ;
 
         // Result is INT32 or INT64, depending on j and y:
         case GB_COLINDEX_idxunop_code   :   // z = (j+y)
+            j_dep = true ;
             e = 236 ; break ;
+
         // Result is BOOL, depending on j and y:
         case GB_COLLE_idxunop_code      :   // z = (j <= y)
+            j_dep = true ;
             e = 237 ; break ;
+
         case GB_COLGT_idxunop_code      :   // z = (j > y)
+            j_dep = true ;
             e = 238 ; break ;
 
         // Result is INT32 or INT64, depending on i, j, and y:
         case GB_DIAGINDEX_idxunop_code  :   // z = (j-(i+y))
+            i_dep = true ;
+            j_dep = true ;
             e = 239 ; break ;
+
         case GB_FLIPDIAGINDEX_idxunop_code :// z = (i-(j+y))
+            i_dep = true ;
+            j_dep = true ;
             e = 240 ; break ;
+
         // Result is BOOL, depending on i, j, and y:
         case GB_TRIL_idxunop_code       :   // z = (j <= (i+y))
+            i_dep = true ;
+            j_dep = true ;
             e = 241 ; break ;
+
         case GB_TRIU_idxunop_code       :   // z = (j >= (i+y))
+            i_dep = true ;
+            j_dep = true ;
             e = 242 ; break ;
+
         case GB_DIAG_idxunop_code       :   // z = (j == (i+y))
+            i_dep = true ;
+            j_dep = true ;
             e = 243 ; break ;
+
         case GB_OFFDIAG_idxunop_code    :   // z = (j != (i+y))
+            i_dep = true ;
+            j_dep = true ;
             e = 244 ; break ;
+
+        //----------------------------------------------------------------------
+        // built-in GrB_IndexUnaryOps that depend on x
+        //----------------------------------------------------------------------
 
         // Result is BOOL, depending on the value x and y:
         case GB_VALUENE_idxunop_code    :   // z = (x != y)
@@ -678,6 +717,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
         //----------------------------------------------------------------------
 
         case GB_USER_idxunop_code       : 
+            i_dep = true ;
+            j_dep = true ;
             e = 255 ; break ;               // user-defined GrB_IndexUnaryOp
 
         default:;
@@ -691,21 +732,11 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
     (*depends_on_y) = (e >= 233 && e <= 255) ;
 
     // many operators depend on x:
-    (*depends_on_x) = (e == 0) ||   // user unaryop
+    (*depends_on_x) = (e == 0)      // user unaryop
         || (e >= 2 && e <= 156)     // all unaryops except 1 and positional
         || (e >= 245 && e <= 255) ; // VALUE ops and user idxop
 
-    // DIAGINDEX to OFFDIAG depend on both i and j, and USER idxop:
-    bool depends_on_i_and_j = (e >= 239 && e <= 244) || (e == 255) ;
-
-    bool i_dep = (e == 157) || (e == 158)   // POSITIONALI*
-        || (e >= 233 && e <= 235)           // ROW*
-        || depends_on_i_and_j ;
-
-    bool j_dep = (e == 159) || (e == 160)   // POSITIONALJ*
-        || (e >= 236 || e <= 238)           // COL*
-        || depends_on_i_and_j ;
-
+    // operators that depend on i and/or j are affected by flipij:
     (*depends_on_i) = (flipij) ? j_dep : i_dep ;
     (*depends_on_j) = (flipij) ? i_dep : j_dep ;
 
