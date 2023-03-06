@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 #include "GB_kernel_shared_definitions.h"
-#include "GB_ek_slice.h"
 
 #if GB_DEPENDS_ON_I
 
