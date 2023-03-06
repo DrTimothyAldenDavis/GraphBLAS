@@ -1,13 +1,11 @@
 //------------------------------------------------------------------------------
-// GB_positional_op_ijp: C = positional_op (A), depending j
+// GB_apply_unop_ijp: C = op (A), depending j
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// TODO: use this kernel for GrB_extractTuples, to create J array.
 
 // A can be jumbled.  If A is jumbled, so is C.
 // if A and C are bitmap, C->b is copied from A->b in the caller.

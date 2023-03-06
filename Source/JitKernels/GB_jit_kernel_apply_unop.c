@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_apply_unop.c: Cx = op (A)
+// GB_jit_kernel_apply_unop.c: Cx = op (A) for unary or index unary op
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -74,11 +74,11 @@ GrB_Info GB_jit_kernel
         const int64_t *restrict Ah = A->h ;
         const int64_t *restrict Ai = A->i ;
         int64_t avlen = A->vlen ;
-        #include "GB_positional_op_ijp.c"
+        #include "GB_apply_unop_ijp.c"
     }
     #else
     { 
-        #include "GB_positional_op_ip.c"
+        #include "GB_apply_unop_ip.c"
     }
 
     #endif

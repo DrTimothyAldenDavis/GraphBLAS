@@ -11,8 +11,6 @@
 // the output J for GB_extractTuples, and I for GB_transpose when the qsort
 // method is used.
 
-// TODO: use #include "GB_positional_op_ijp.c" here
-
 #include "GB_ek_slice.h"
 
 #define GB_FREE_ALL                         \

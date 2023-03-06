@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-// GB_positional_op_ip: C = positional_op (A), depending only on i
+// GB_apply_unop_ip: C = op (A), depending only on i
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
