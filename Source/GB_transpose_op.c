@@ -72,7 +72,8 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
     GB_Opcode opcode = op->opcode ;
     int A_sparsity = GB_as_if_full (A) ? GxB_FULL : GB_sparsity (A) ;
 
-    // positional operators and user idxunop are applied after the transpose
+    // positional operators and idxunop are applied after the transpose
+    // FIXME: extend this method to handle positional and idxunop operators
     ASSERT (!GB_OPCODE_IS_POSITIONAL (opcode)) ;
     ASSERT (!GB_IS_INDEXUNARYOP_CODE (opcode)) ;
 
@@ -149,7 +150,8 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
         #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         { 
-            // JIT TODO: unop: transpose_op with unop
+            info = GB_transpose_unop_jit (C, op, A, Workspaces, A_slice,
+                nworkspaces, nthreads) ;
         }
         #endif
 

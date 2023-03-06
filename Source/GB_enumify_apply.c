@@ -11,8 +11,6 @@
 // iso cases (for C and/or A) are not handled.  The op is either unary or
 // index unary, not binary (that is handled as an ewise enumify).
 
-#define GB_DEBUG
-
 #include "GB.h"
 #include "GB_stringify.h"
 
@@ -26,6 +24,7 @@ bool GB_enumify_apply       // enumerate an apply or tranpose/apply problem
                             // without transpose, Cx = op(A) is computed where
                             // Cx is just C->x, so the caller uses 'full' when
                             // C is sparse, hyper, or full.
+    bool C_is_matrix,       // true for C=op(A), false for Cx=op(A)
     GrB_Type ctype,         // C=((ctype) T) is the final typecast
     // operator:
         const GB_Operator op,       // unary/index-unary to apply; not binaryop
@@ -57,26 +56,6 @@ bool GB_enumify_apply       // enumerate an apply or tranpose/apply problem
     GB_enumify_unop (&unop_ecode, &depends_on_x, &depends_on_i, &depends_on_j,
         &depends_on_y, flipij, opcode, xcode) ;
 
-#if 0
-    if (GB_IS_UNARYOP_CODE (opcode))
-    {
-        GxB_print ((GrB_UnaryOp) op, 3) ;
-    }
-    else if (GB_IS_BINARYOP_CODE (opcode))
-    {
-        GxB_print ((GrB_BinaryOp) op, 3) ;
-    }
-    else if (GB_IS_INDEXUNARYOP_CODE (opcode))
-    {
-        GxB_print ((GrB_IndexUnaryOp) op, 3) ;
-    }
-    printf ("opcode %d unop_ecode %d\n", opcode, unop_ecode) ;
-    printf ("depends_on_x %d\n", depends_on_x) ;
-    printf ("xcode %d\n", xcode) ;
-//  ASSERT (depends_on_x == (xcode != 0)) ;
-//  ASSERT (depends_on_y == (ycode != 0)) ;
-#endif
-
     if (!depends_on_x)
     {
         xcode = 0 ;
@@ -104,17 +83,19 @@ bool GB_enumify_apply       // enumerate an apply or tranpose/apply problem
     int csparsity, asparsity ;
     GB_enumify_sparsity (&csparsity, C_sparsity) ;
     GB_enumify_sparsity (&asparsity, GB_sparsity (A)) ;
+    int C_mat = (C_is_matrix) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
     // construct the apply scode
     //--------------------------------------------------------------------------
 
-    // total scode bits: 35 bits (9 hex digits)
+    // total scode bits: 36 bits (9 hex digits)
 
     (*scode) =
                                                // range        bits
 
-                // i/j dependency and flipij (3 bits)
+                // C kind, i/j dependency and flipij (4 bits)
+                GB_LSHIFT (C_mat      , 35) |  // 0 or 1       1
                 GB_LSHIFT (i_dep      , 34) |  // 0 or 1       1
                 GB_LSHIFT (j_dep      , 33) |  // 0 or 1       1
                 GB_LSHIFT (flipij     , 32) |  // 0 or 1       1

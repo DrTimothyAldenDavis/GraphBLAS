@@ -127,5 +127,16 @@ GrB_Info GB_transpose_bind2nd_jit
     int nthreads
 ) ;
 
+GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
+(
+    GrB_Matrix C,
+    GrB_UnaryOp op,
+    const GrB_Matrix A,
+    int64_t *restrict *Workspaces,
+    const int64_t *restrict A_slice,
+    int nworkspaces,
+    int nthreads
+) ;
+
 #endif
 

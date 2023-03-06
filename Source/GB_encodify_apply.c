@@ -19,6 +19,7 @@ uint64_t GB_encodify_apply      // encode an apply problem
     // input:
     const int kcode,            // kernel to encode
     const int C_sparsity,
+    const bool C_is_matrix,     // true for C=op(A), false for Cx=op(A)
     const GrB_Type ctype,
     const GB_Operator op,
     const bool flipij,
@@ -43,7 +44,8 @@ uint64_t GB_encodify_apply      // encode an apply problem
     //--------------------------------------------------------------------------
 
     encoding->kcode = kcode ;
-    GB_enumify_apply (&encoding->code, C_sparsity, ctype, op, flipij, A) ;
+    GB_enumify_apply (&encoding->code, C_sparsity, C_is_matrix, ctype, op,
+        flipij, A) ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length

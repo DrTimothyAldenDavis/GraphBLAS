@@ -14,6 +14,7 @@ void GB_debugify_apply
 (
     // C matrix:
     int C_sparsity,         // sparse, hyper, bitmap, or full
+    bool C_is_matrix,       // true for C=op(A), false for Cx=op(A)
     GrB_Type ctype,         // C=((ctype) T) is the final typecast
     // operator:
         const GB_Operator op,       // unary/index-unary to apply; not binaryop
@@ -29,7 +30,7 @@ void GB_debugify_apply
     GrB_Type atype = A->type ;
 
     // enumify the apply problem
-    GB_enumify_apply (&scode, C_sparsity, ctype, op, flipij, A) ;
+    GB_enumify_apply (&scode, C_sparsity, C_is_matrix, ctype, op, flipij, A) ;
     bool builtin = (op->hash == 0) ;
 
     // namify the apply problem

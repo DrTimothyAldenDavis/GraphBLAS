@@ -27,7 +27,8 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     // extract the unop scode
     //--------------------------------------------------------------------------
 
-    // i/j dependency and flipij (3 bits)
+    // C kind, i/j dependency and flipij (4 bits)
+    int C_mat      = GB_RSHIFT (scode, 35, 1) ;
     int i_dep      = GB_RSHIFT (scode, 34, 1) ;
     int j_dep      = GB_RSHIFT (scode, 33, 1) ;
     bool flipij    = GB_RSHIFT (scode, 32, 1) ;
@@ -105,13 +106,21 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     fprintf (fp, "#define GB_DEPENDS_ON_J %d\n", j_dep) ;
 
     //--------------------------------------------------------------------------
-    // macros for the C matrix
+    // macros for the C array or matrix
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "\n// C type:\n") ;
-    GB_macrofy_type (fp, "C", "_", ctype->name) ;
-//  GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, false,
-//      false) ;
+    if (C_mat)
+    {
+        // C = op(A'), for unary op with transpose
+        GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, false,
+            false) ;
+    }
+    else
+    {
+        // Cx = op(A) for unary or index unary op apply, no transpose
+        fprintf (fp, "\n// C type:\n") ;
+        GB_macrofy_type (fp, "C", "_", ctype->name) ;
+    }
 
     //--------------------------------------------------------------------------
     // construct the macros for A

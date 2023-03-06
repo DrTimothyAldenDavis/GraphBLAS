@@ -40,6 +40,7 @@ C = A.' * (1-2i)
 C = (1-2i) * A.'
 
 R = real (C)
+R = real (C')
 
 S = zeros (4,4) ;
 for i = 0:3

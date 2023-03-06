@@ -23,9 +23,6 @@
 // This function either frees Cp or transplants it into C, as C->p.  Either
 // way, the caller must not free it.
 
-// FIXME: debug is on
-#define GB_DEBUG
-
 #include "GB_ewise.h"
 #include "GB_emult.h"
 #include "GB_binop.h"

@@ -578,7 +578,9 @@ bool GB_enumify_apply       // enumerate an apply or tranpose/apply problem
     // C matrix:
     int C_sparsity,         // sparse, hyper, bitmap, or full.  For apply
                             // without transpose, Cx = op(A) is computed where
-                            // Cx is just C->x, so the caller uses 'full'
+                            // Cx is just C->x, so the caller uses 'full' when
+                            // C is sparse, hyper, or full.
+    bool C_is_matrix,       // true for C=op(A), false for Cx=op(A)
     GrB_Type ctype,         // C=((ctype) T) is the final typecast
     // operator:
         const GB_Operator op,       // unary/index-unary to apply; not binaryop
@@ -632,6 +634,7 @@ uint64_t GB_encodify_apply      // encode an apply problem
     // input:
     const int kcode,            // kernel to encode
     const int C_sparsity,
+    const bool C_is_matrix,     // true for C=op(A), false for Cx=op(A)
     const GrB_Type ctype,
     const GB_Operator op,
     const bool flipij,
@@ -740,6 +743,7 @@ void GB_debugify_apply
 (
     // C matrix:
     int C_sparsity,         // sparse, hyper, bitmap, or full
+    bool C_is_matrix,       // true for C=op(A), false for Cx=op(A)
     GrB_Type ctype,         // C=((ctype) T) is the final typecast
     // operator:
         const GB_Operator op,       // unary/index-unary to apply; not binaryop

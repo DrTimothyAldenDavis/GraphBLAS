@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_apply_unop_jit: Cx=op(A) apply unop method, via the JIT
+// GB_transpose_unop_jit: C=op(A) transpose unop method, via the JIT
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,31 +7,29 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_apply.h"
+#include "GB_transpose.h"
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
 typedef GrB_Info (*GB_jit_dl_function)
 (
-    GB_void *Cx,                // Cx and Ax may be aliased
-    GrB_Matrix A,
-    const void *ythunk,         // for index unary ops (op->ytype scalar)
-    const int64_t *restrict A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t *restrict *Workspaces,
+    const int64_t *restrict A_slice,
+    int nworkspaces,
+    int nthreads
 ) ;
 
-GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
+GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
 (
-    GB_void *Cx,
-    const GrB_Type ctype,
-    const GB_Operator op,       // unary or index unary op
-    const bool flipij,          // if true, use z = f(x,j,i,y)
+    GrB_Matrix C,
+    GrB_UnaryOp op,
     const GrB_Matrix A,
-    const void *ythunk,         // for index unary ops (op->ytype scalar)
-    const int64_t *restrict A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    int64_t *restrict *Workspaces,
+    const int64_t *restrict A_slice,
+    int nworkspaces,
+    int nthreads
 )
 {
 
@@ -47,7 +45,8 @@ GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
-        GB_JIT_KERNEL_APPLYUNOP, GxB_FULL, false, ctype, op, flipij, A) ;
+        GB_JIT_KERNEL_TRANSUNOP, GB_sparsity (C), true, C->type,
+        (GB_Operator) op, false, A) ;
     if (hash == UINT64_MAX)
     {
         // cannot JIT this op
@@ -73,12 +72,12 @@ GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
         if (suffix == NULL)
         {
             snprintf (kernel_name, KLEN-1,
-                "GB_jit_apply_unop_%0*" PRIx64, 9, scode) ;
+                "GB_jit_transpose_unop_%0*" PRIx64, 9, scode) ;
         }
         else
         {
             snprintf (kernel_name, KLEN-1,
-                "GB_jit_apply_unop_%0*" PRIx64 "__%s", 9, scode, suffix) ;
+                "GB_jit_transpose_unop_%0*" PRIx64 "__%s", 9, scode, suffix) ;
         }
 
         char lib_filename [2048] ;
@@ -120,7 +119,7 @@ GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
             need_to_compile =
                 !GB_jitifyer_match_version (dl_handle) ||
                 !GB_jitifyer_match_defn (dl_query, 1, op->defn) ||
-                !GB_jitifyer_match_defn (dl_query, 2, ctype->defn) ||
+                !GB_jitifyer_match_defn (dl_query, 2, C->type->defn) ||
                 !GB_jitifyer_match_defn (dl_query, 3, A->type->defn) ;
             if (need_to_compile)
             {
@@ -162,8 +161,8 @@ GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
             GB_macrofy_query_version (fp) ;
             // }
 
-            GB_macrofy_apply (fp, scode, op, ctype, A->type) ;
-            fprintf (fp, "\n#include \"GB_jit_kernel_apply_unop.c\"\n") ;
+            GB_macrofy_apply (fp, scode, op, C->type, A->type) ;
+            fprintf (fp, "\n#include \"GB_jit_kernel_trans_unop.c\"\n") ;
 
             if (!builtin)
             {
@@ -171,7 +170,7 @@ GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
                 GB_macrofy_query_defn (fp,
                     NULL,
                     (GB_Operator) op,
-                    ctype, A->type, NULL) ;
+                    C->type, A->type, NULL) ;
             }
 
             fclose (fp) ;
@@ -220,8 +219,8 @@ GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
     //------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    GrB_Info info = GB_jit_kernel (Cx, A, ythunk, A_ek_slicing,
-        A_ntasks, A_nthreads) ;
+    GrB_Info info = GB_jit_kernel (C, A, Workspaces, A_slice, nworkspaces,
+        nthreads) ;
     return (info) ;
 #endif
 }

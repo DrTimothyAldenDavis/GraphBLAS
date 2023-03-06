@@ -53,9 +53,6 @@
         //      sparse  full        sparse          bitmap
         //      sparse  full        sparse          full  
 
-// FIXME: debug is on
-#define GB_DEBUG
-
 #include "GB_ewise.h"
 #include "GB_emult.h"
 #include "GB_binop.h"

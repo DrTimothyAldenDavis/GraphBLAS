@@ -116,13 +116,13 @@ void ijgauss (int64_t *z, const gauss *x, GrB_Index i, GrB_Index j,
     }                           \
 }
 
-void printgauss (GrB_Matrix A)
+void printgauss (GrB_Matrix A, char *name)
 {
     // print the matrix
     GrB_Index m, n ;
     TRY (GrB_Matrix_nrows (&m, A)) ;
     TRY (GrB_Matrix_ncols (&n, A)) ;
-    printf ("size: %d-by-%d\n", (int) m, (int) n) ;
+    printf ("\n%s\nsize: %d-by-%d\n", name, (int) m, (int) n) ;
     for (int i = 0 ; i < m ; i++)
     {
         printf ("row %2d: ", i) ;
@@ -151,10 +151,11 @@ void printgauss (GrB_Matrix A)
 
 int main (void)
 {
-
     // start GraphBLAS
     TRY (GrB_init (GrB_NONBLOCKING)) ;
     TRY (GxB_set (GxB_BURBLE, true)) ;
+    printf ("Gauss demo.  Note that all transposes are array transposes,\n"
+        "not matrix (conjugate) transposes.") ;
 
     // create the Gauss type
     GrB_Type Gauss ;
@@ -203,8 +204,7 @@ int main (void)
             TRY (GrB_Matrix_setElement_UDT (A, &a, i, j)) ;
         }
     }
-    printf ("\n=============== A matrix:\n") ;
-    printgauss (A) ;
+    printgauss (A, "\n=============== Gauss A matrix:\n") ;
 
     // a = sum (A)
     TRY (GrB_Matrix_reduce_UDT (&a, NULL, AddMonoid, A, NULL)) ;
@@ -212,8 +212,7 @@ int main (void)
 
     // A = A*A
     TRY (GrB_mxm (A, NULL, NULL, GaussSemiring, A, A, NULL)) ;
-    printf ("\n=============== A^2 matrix:\n") ;
-    printgauss (A) ;
+    printgauss (A, "\n=============== Gauss A = A^2 matrix:\n") ;
 
     // a = sum (A)
     TRY (GrB_Matrix_reduce_UDT (&a, NULL, AddMonoid, A, NULL)) ;
@@ -222,12 +221,11 @@ int main (void)
     // C<D> = A*A' where A and D are sparse
     GrB_Matrix C ;
     TRY (GrB_Matrix_new (&C, Gauss, 4, 4)) ;
-    printgauss (C) ;
+    printgauss (C, "\nGauss C empty matrix") ;
     TRY (GxB_set (A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
     TRY (GxB_set (D, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
     TRY (GrB_mxm (C, D, NULL, GaussSemiring, A, A, GrB_DESC_T1)) ;
-    printf ("\n=============== diag(AA') matrix:\n") ;
-    printgauss (C) ;
+    printgauss (C, "\n=============== Gauss C = diag(AA') matrix:\n") ;
 
     // C = D*A
     GrB_free (&D) ;
@@ -235,50 +233,53 @@ int main (void)
     TRY (GxB_set (A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
     TRY (GxB_set (D, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
     TRY (GrB_select (D, NULL, NULL, GrB_DIAG, A, 0, NULL)) ;
-    printgauss (D) ;
+    printgauss (D, "\nGauss D matrix") ;
     TRY (GrB_mxm (C, NULL, NULL, GaussSemiring, D, A, NULL)) ;
-    printgauss (C) ;
+    printgauss (C, "\n=============== Gauss C = D*A matrix:\n") ;
 
     // C = A*D
     TRY (GrB_mxm (C, NULL, NULL, GaussSemiring, A, D, NULL)) ;
-    printgauss (C) ;
+    printgauss (C, "\n=============== Gauss C = A*D matrix:\n") ;
 
     // C = (1,2) then C += A*A' where C is full
     gauss ciso ;
     ciso.real = 1 ;
     ciso.imag = -2 ;
-    TRY (GrB_Matrix_assign_UDT (C, NULL, NULL, &ciso, GrB_ALL, 4, GrB_ALL, 4, NULL)) ;
-    printgauss (C) ;
-    printgauss (A) ;
+    TRY (GrB_Matrix_assign_UDT (C, NULL, NULL, &ciso,
+        GrB_ALL, 4, GrB_ALL, 4, NULL)) ;
+    printgauss (C, "\n=============== Gauss C = (1,-2) matrix:\n") ;
+    printgauss (A, "\n=============== Gauss A matrix:\n") ;
     TRY (GrB_mxm (C, NULL, AddGauss, GaussSemiring, A, A, GrB_DESC_T1)) ;
-    printgauss (C) ;
+    printgauss (C, "\n=============== Gauss C += A*A' matrix:\n") ;
 
     // C += B*A where B is full and A is sparse
     GrB_Matrix B ;
     TRY (GrB_Matrix_new (&B, Gauss, 4, 4)) ;
-    TRY (GrB_Matrix_assign_UDT (B, NULL, NULL, &ciso, GrB_ALL, 4, GrB_ALL, 4, NULL)) ;
+    TRY (GrB_Matrix_assign_UDT (B, NULL, NULL, &ciso,
+        GrB_ALL, 4, GrB_ALL, 4, NULL)) ;
+    printgauss (B, "\n=============== Gauss B = (1,-2) matrix:\n") ;
     TRY (GrB_mxm (C, NULL, AddGauss, GaussSemiring, B, A, NULL)) ;
-    printgauss (C) ;
+    printgauss (C, "\n=============== Gauss C += B*A:\n") ;
 
     // C += A*B where B is full and A is sparse
     TRY (GrB_mxm (C, NULL, AddGauss, GaussSemiring, A, B, NULL)) ;
-    printgauss (C) ;
+    printgauss (C, "\n=============== Gauss C += A*B:\n") ;
 
     // C = ciso+A
     TRY (GrB_apply (C, NULL, NULL, AddGauss, (void *) &ciso, A, NULL)) ;
-    printgauss (C) ;
+    printgauss (C, "\n=============== Gauss C = (1,-2) + A:\n") ;
 
     // C = A*ciso
     TRY (GrB_apply (C, NULL, NULL, MultGauss, A, (void *) &ciso, NULL)) ;
-    printgauss (C) ;
+    printgauss (C, "\n=============== Gauss C = A*(1,-2):\n") ;
 
     // C = A'*ciso
     TRY (GrB_apply (C, NULL, NULL, MultGauss, A, (void *) &ciso, GrB_DESC_T0)) ;
-    printgauss (C) ;
+    printgauss (C, "\n=============== Gauss C = A'*(1,-2):\n") ;
 
     // C = ciso*A'
     TRY (GrB_apply (C, NULL, NULL, MultGauss, (void *) &ciso, A, GrB_DESC_T1)) ;
-    printgauss (C) ;
+    printgauss (C, "\n=============== Gauss C = (1,-2)*A':\n") ;
 
     // create the RealGauss unary op
     GrB_UnaryOp RealGauss ;
@@ -287,8 +288,13 @@ int main (void)
     TRY (GxB_print (RealGauss, 3)) ;
     GrB_Matrix R ;
     TRY (GrB_Matrix_new (&R, GrB_INT32, 4, 4)) ;
+    // R = RealGauss (C)
     TRY (GrB_apply (R, NULL, NULL, RealGauss, C, NULL)) ;
     GxB_print (R, 3) ;
+    // R = RealGauss (C')
+    printgauss (C, "\n=============== R = RealGauss (C')\n") ;
+    TRY (GrB_apply (R, NULL, NULL, RealGauss, C, GrB_DESC_T0)) ;
+    GxB_print (R, 2) ;
     GrB_free (&R) ;
 
     // create the IJGauss IndexUnaryOp
@@ -296,9 +302,10 @@ int main (void)
     TRY (GxB_IndexUnaryOp_new (&IJGauss, (void *) ijgauss, GrB_INT64, Gauss,
         Gauss, "ijgauss", IJGAUSS_DEFN)) ;
     TRY (GrB_Matrix_new (&R, GrB_INT64, 4, 4)) ;
-    printgauss (C) ;
+    printgauss (C, "\n=============== C \n") ;
     TRY (GrB_Matrix_apply_IndexOp_UDT (R, NULL, NULL, IJGauss, C,
         (void *) &ciso, NULL)) ;
+    printf ("\nR = ijgauss (C)\n") ;
     GxB_print (R, 3) ;
 
     // free everything and finalize GraphBLAS
