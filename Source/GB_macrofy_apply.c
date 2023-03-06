@@ -28,8 +28,8 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     //--------------------------------------------------------------------------
 
     // i/j dependency and flipij (3 bits)
-    bool i_dep     = GB_RSHIFT (scode, 34, 1) ;
-    bool j_dep     = GB_RSHIFT (scode, 33, 1) ;
+    int i_dep      = GB_RSHIFT (scode, 34, 1) ;
+    int j_dep      = GB_RSHIFT (scode, 33, 1) ;
     bool flipij    = GB_RSHIFT (scode, 32, 1) ;
 
     // op, z = f(x,i,j,y) (5 hex digits)
@@ -55,8 +55,13 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
 
     GB_macrofy_copyright (fp) ;
 
-    xtype = op->xtype ;
-    ytype = op->ytype ;
+    if (xcode == 0)
+    { 
+        xtype = NULL ;
+    }
+
+    xtype = (xcode == 0) ? NULL : op->xtype ;
+    ytype = (ycode == 0) ? NULL : op->ytype ;
     ztype = op->ztype ;
     xtype_name = (xtype == NULL) ? "void" : xtype->name ;
     ytype_name = (ytype == NULL) ? "void" : ytype->name ;
@@ -95,6 +100,10 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     fprintf (fp, "\n// unary operator%s:\n", flipij ? " (flipped ij)" : "") ;
     GB_macrofy_unop (fp, "GB_UNARYOP", flipij, unop_ecode, op) ;
 
+    fprintf (fp, "#define GB_DEPENDS_ON_Y %d\n", (ytype != NULL) ? 1 : 0) ;
+    fprintf (fp, "#define GB_DEPENDS_ON_I %d\n", i_dep) ;
+    fprintf (fp, "#define GB_DEPENDS_ON_J %d\n", j_dep) ;
+
     //--------------------------------------------------------------------------
     // macros for the C matrix
     //--------------------------------------------------------------------------
@@ -107,11 +116,6 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     //--------------------------------------------------------------------------
     // construct the macros for A
     //--------------------------------------------------------------------------
-
-    if (xcode == 0)
-    { 
-        xtype = NULL ;
-    }
 
     GB_macrofy_input (fp, "a", "A", "A", true, xtype,
         atype, asparsity, acode, 0, -1) ;

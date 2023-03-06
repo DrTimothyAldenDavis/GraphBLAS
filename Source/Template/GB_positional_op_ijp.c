@@ -10,8 +10,7 @@
 // TODO: use this kernel for GrB_extractTuples, to create J array.
 
 // A can be jumbled.  If A is jumbled, so is C.
-// if A and C are bitmap, not all of Cx need to be written to, but it's faster
-// just to write to all of it.  C->b is copied from A->b in the caller.
+// if A and C are bitmap, C->b is copied from A->b in the caller.
 
 {
 
@@ -44,9 +43,8 @@
             //------------------------------------------------------------------
 
             int64_t j = GBH_A (Ah, k) ;
-            int64_t pA_start, pA_end ;
-            GB_get_pA (&pA_start, &pA_end, tid, k,
-                kfirst, klast, pstart_Aslice, Ap, avlen) ;
+            GB_GET_PA (pA_start, pA_end, tid, k, kfirst, klast, pstart_Aslice,
+                GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
 
             //------------------------------------------------------------------
             // C(:,j) = op (A(:,j))
@@ -54,12 +52,13 @@
 
             for (int64_t p = pA_start ; p < pA_end ; p++)
             { 
+                if (!GBB_A (Ab, p)) continue ;
                 // Cx [p] = op (A (i,j))
-                GB_APPLY (p) ;
+                GB_APPLY_OP (p) ;
             }
         }
     }
 }
 
-#undef GB_APPLY
+#undef GB_APPLY_OP
 

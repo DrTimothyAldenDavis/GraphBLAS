@@ -16,14 +16,14 @@
     //--------------------------------------------------------------------------
 
     int64_t p ;
-    #pragma omp parallel for num_threads(nthreads) schedule(static)
+    #pragma omp parallel for num_threads(A_nthreads) schedule(static)
     for (p = 0 ; p < anz ; p++)
     { 
+        if (!GBB_A (Ab, p)) continue ;
         // Cx [p] = op (A (i,j))
-        int64_t i = GBI_A (Ai, p, avlen) ;
-        GB_APPLY (p) ;
+        GB_APPLY_OP (p) ;
     }
 }
 
-#undef GB_APPLY
+#undef GB_APPLY_OP
 

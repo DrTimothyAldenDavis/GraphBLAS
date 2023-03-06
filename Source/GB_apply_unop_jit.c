@@ -13,11 +13,12 @@
 
 typedef GrB_Info (*GB_jit_dl_function)
 (
-    GB_void *Cx,
-    const GB_void *Ax,
-    const int8_t *restrict Ab,
-    const int64_t anz,
-    const int nthreads
+    GB_void *Cx,                // Cx and Ax may be aliased
+    GrB_Matrix A,
+    const void *ythunk,         // for index unary ops (op->ytype scalar)
+    const int64_t *restrict A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
 ) ;
 
 GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
@@ -27,7 +28,10 @@ GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
     const GB_Operator op,       // unary or index unary op
     const bool flipij,          // if true, use z = f(x,j,i,y)
     const GrB_Matrix A,
-    const int nthreads
+    const void *ythunk,         // for index unary ops (op->ytype scalar)
+    const int64_t *restrict A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
 )
 {
 
@@ -216,8 +220,8 @@ GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
     //------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    GrB_Info info = GB_jit_kernel (Cx, A->x, A->b,
-        GB_nnz_held (A), nthreads) ;
+    GrB_Info info = GB_jit_kernel (Cx, A, ythunk, A_ek_slicing,
+        A_ntasks, A_nthreads) ;
     return (info) ;
 #endif
 }

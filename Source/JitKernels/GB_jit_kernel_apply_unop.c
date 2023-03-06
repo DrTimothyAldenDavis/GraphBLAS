@@ -7,60 +7,80 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_ewise_shared_definitions.h"
+#include "GB_kernel_shared_definitions.h"
+#include "GB_ek_slice.h"
 
-// cij = op (aij)
-#define GB_APPLY_OP(pC,pA)                  \
-{                                           \
-    /* aij = Ax [pA] */                     \
-    GB_DECLAREA (aij) ;                     \
-    GB_GETA (aij, Ax, pA, false) ;          \
-    /* Cx [pC] = unop (aij) */              \
-    GB_UNARYOP (Cx [pC], aij, i, j, y) ;    \
-}
+#if GB_DEPENDS_ON_I
+
+    // cij = op (aij)
+    #define GB_APPLY_OP(p)                      \
+    {                                           \
+        int64_t i = GBI_A (Ai, p, avlen) ;      \
+        /* aij = Ax [p] */                      \
+        GB_DECLAREA (aij) ;                     \
+        GB_GETA (aij, Ax, p, false) ;           \
+        /* Cx [p] = unop (aij) */               \
+        GB_UNARYOP (Cx [p], aij, i, j, y) ;     \
+    }
+
+#else
+
+    // cij = op (aij)
+    #define GB_APPLY_OP(p)                      \
+    {                                           \
+        /* aij = Ax [p] */                      \
+        GB_DECLAREA (aij) ;                     \
+        GB_GETA (aij, Ax, p, false) ;           \
+        /* Cx [p] = unop (aij) */               \
+        GB_UNARYOP (Cx [p], aij, i, j, y) ;     \
+    }
+
+#endif
 
 GrB_Info GB_jit_kernel
 (
     GB_void *Cx_out,            // Cx and Ax may be aliased
-    const GB_void *Ax_in,       // A is always non-iso for this kernel
-    const int8_t *restrict Ab,  // A->b if A is bitmap
-    int64_t anz,
-    int nthreads
+    GrB_Matrix A,
+    const void *ythunk,         // for index unary ops (op->ytype scalar)
+    const int64_t *restrict A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
 ) ;
 
 GrB_Info GB_jit_kernel
 (
     GB_void *Cx_out,            // Cx and Ax may be aliased
-    const GB_void *Ax_in,       // A is always non-iso for this kernel
-    const int8_t *restrict Ab,  // A->b if A is bitmap
-    int64_t anz,
-    int nthreads
+    GrB_Matrix A,
+    const void *ythunk,         // for index unary ops (op->ytype scalar)
+    const int64_t *restrict A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
 )
 { 
 
     GB_C_TYPE *Cx = (GB_C_TYPE *) Cx_out ;
-    GB_A_TYPE *Ax = (GB_A_TYPE *) Ax_in ;
-    int64_t p ;
+    GB_A_TYPE *Ax = (GB_A_TYPE *) A->x ;
     #if GB_A_IS_BITMAP
-    { 
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (p = 0 ; p < anz ; p++)
-        {
-            if (!Ab [p]) continue ;
-            // Cx [p] = unop (Ax [p])
-            GB_APPLY_OP (p, p) ;
-        }
+    int8_t *restrict Ab = A->b ;
+    #endif
+    int64_t anz = GB_nnz_held (A) ;
+    #if GB_DEPENDS_ON_Y
+    GB_Y_TYPE y = (*((GB_Y_TYPE *) ythunk)) ;
+    #endif
+
+    #if GB_DEPENDS_ON_J
+    {
+        const int64_t *restrict Ap = A->p ;
+        const int64_t *restrict Ah = A->h ;
+        const int64_t *restrict Ai = A->i ;
+        int64_t avlen = A->vlen ;
+        #include "GB_positional_op_ijp.c"
     }
     #else
     { 
-        // bitmap case, no transpose; A->b already memcpy'd into C->b
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (p = 0 ; p < anz ; p++)
-        {
-            // Cx [p] = unop (Ax [p])
-            GB_APPLY_OP (p, p) ;
-        }
+        #include "GB_positional_op_ip.c"
     }
+
     #endif
     return (GrB_SUCCESS) ;
 }

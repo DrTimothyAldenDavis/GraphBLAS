@@ -15,9 +15,6 @@
 // it is in CSC format.  The caller has already modified the op if A is in CSR
 // format.
 
-// Template/GB_positional_op_ijp can return GrB_OUT_OF_MEMORY.
-// Otherwise, this function only returns GrB_SUCCESS.
-
 #include "GB_apply.h"
 #include "GB_binop.h"
 #include "GB_ek_slice.h"
@@ -56,7 +53,6 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     ASSERT_MATRIX_OK (A, "A input for GB_apply_op", GB0) ;
     ASSERT (GB_JUMBLED_OK (A)) ;        // A can be jumbled
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
-    int A_ntasks = 0, A_nthreads = 0 ;
     ASSERT (GB_IMPLIES (op != NULL, ctype == op->ztype)) ;
     ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_apply_op", GB0) ;
 
@@ -101,18 +97,6 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         opcode = GB_NOP_code ;
     }
 
-    //----------------------------------------------------------------------
-    // determine number of threads to use
-    //----------------------------------------------------------------------
-
-    int64_t anvec = A->nvec ;
-    int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
-    int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
-
-    //--------------------------------------------------------------------------
-    // slice the A matrix if the operator depends on j
-    //--------------------------------------------------------------------------
-
     #ifdef GB_DEBUGIFY_DEFN
     if ((op_is_unop || GB_IS_INDEXUNARYOP_CODE (opcode)) && op != NULL)
     {
@@ -120,6 +104,14 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             ctype, op, flipij, A) ;
     }
     #endif
+
+    //--------------------------------------------------------------------------
+    // determine number of threads to use and slice the A matrix if needed
+    //--------------------------------------------------------------------------
+
+    int64_t anvec = A->nvec ;
+    int A_ntasks = 0 ;
+    int A_nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
 
     info = GrB_NO_VALUE ;
     bool depends_on_j = (opcode == GB_USER_idxunop_code) ;
@@ -156,14 +148,10 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         const int64_t *restrict Ap = A->p ;
         const int64_t *restrict Ai = A->i ;
         int64_t avlen = A->vlen ;
-        int64_t avdim = A->vdim ;
 
         //----------------------------------------------------------------------
         // Cx = positional_op (A)
         //----------------------------------------------------------------------
-
-        // GB_positional_op_ijp allocates a set of tasks, which can possibly
-        // fail if out of memory.
 
         if (is64)
         { 
@@ -183,7 +171,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 case GB_SECONDI_binop_code   : // z = second_i(x,A(i,j)) == i
                 case GB_SECONDI1_binop_code  : // z = second_i1(x,A(i,j)) == i+1
                 case GB_ROWINDEX_idxunop_code : // z = i+thunk
-                    #define GB_APPLY(p)                     \
+                    #define GB_APPLY_OP(p)                      \
+                        int64_t i = GBI_A (Ai, p, avlen) ;      \
                         Cz [p] = (i + thunk) ;
                     #include "GB_positional_op_ip.c"
                     break ;
@@ -195,21 +184,21 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 case GB_SECONDJ_binop_code   : // z = second_j(x,A(i,j)) == j
                 case GB_SECONDJ1_binop_code  : // z = second_j1(x,A(i,j)) == j+1
                 case GB_COLINDEX_idxunop_code : // z = j+thunk
-                    #define GB_APPLY(p)                     \
+                    #define GB_APPLY_OP(p)                      \
                         Cz [p] = (j + thunk) ;
                     #include "GB_positional_op_ijp.c"
                     break ;
 
                 case GB_DIAGINDEX_idxunop_code : // z = (j-(i+thunk)
-                    #define GB_APPLY(p)                     \
-                        int64_t i = GBI (Ai, p, avlen) ;    \
+                    #define GB_APPLY_OP(p)                      \
+                        int64_t i = GBI_A (Ai, p, avlen) ;      \
                         Cz [p] = (j - (i+thunk)) ;
                     #include "GB_positional_op_ijp.c"
                     break ;
 
                 case GB_FLIPDIAGINDEX_idxunop_code : // z = (i-(j+thunk)
-                    #define GB_APPLY(p)                     \
-                        int64_t i = GBI (Ai, p, avlen) ;    \
+                    #define GB_APPLY_OP(p)                      \
+                        int64_t i = GBI_A (Ai, p, avlen) ;      \
                         Cz [p] = (i - (j+thunk)) ;
                     #include "GB_positional_op_ijp.c"
                     break ;
@@ -236,7 +225,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 case GB_SECONDI_binop_code   : // z = second_i(x,A(i,j)) == i
                 case GB_SECONDI1_binop_code  : // z = second_i1(x,A(i,j)) == i+1
                 case GB_ROWINDEX_idxunop_code : // z = i+thunk
-                    #define GB_APPLY(p)                     \
+                    #define GB_APPLY_OP(p)                      \
+                        int64_t i = GBI_A (Ai, p, avlen) ;      \
                         Cz [p] = (int32_t) (i + thunk) ;
                     #include "GB_positional_op_ip.c"
                     break ;
@@ -248,21 +238,21 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 case GB_SECONDJ_binop_code   : // z = second_j(x,A(i,j)) == j
                 case GB_SECONDJ1_binop_code  : // z = second_j1(x,A(i,j)) == j+1
                 case GB_COLINDEX_idxunop_code : // z = j+thunk
-                    #define GB_APPLY(p)                     \
+                    #define GB_APPLY_OP(p)                      \
                         Cz [p] = (int32_t) (j + thunk) ;
                     #include "GB_positional_op_ijp.c"
                     break ;
 
                 case GB_DIAGINDEX_idxunop_code : // z = (j-(i+thunk)
-                    #define GB_APPLY(p)                     \
-                        int64_t i = GBI (Ai, p, avlen) ;    \
+                    #define GB_APPLY_OP(p)                      \
+                        int64_t i = GBI_A (Ai, p, avlen) ;      \
                         Cz [p] = (int32_t) (j - (i+thunk)) ;
                     #include "GB_positional_op_ijp.c"
                     break ;
 
                 case GB_FLIPDIAGINDEX_idxunop_code : // z = (i-(j+thunk)
-                    #define GB_APPLY(p)                     \
-                        int64_t i = GBI (Ai, p, avlen) ;    \
+                    #define GB_APPLY_OP(p)                      \
+                        int64_t i = GBI_A (Ai, p, avlen) ;      \
                         Cz [p] = (int32_t) (i - (j+thunk)) ;
                     #include "GB_positional_op_ijp.c"
                     break ;
@@ -284,53 +274,55 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             {
 
                 case GB_TRIL_idxunop_code : // z = (j <= (i+thunk))
-                    #define GB_APPLY(p)                     \
-                        int64_t i = GBI (Ai, p, avlen) ;    \
+                    #define GB_APPLY_OP(p)                      \
+                        int64_t i = GBI_A (Ai, p, avlen) ;      \
                         Cz [p] = (j <= (i + thunk)) ;
                     #include "GB_positional_op_ijp.c"
                     break ; ;
 
                 case GB_TRIU_idxunop_code : // z = (j >= (i+thunk))
-                    #define GB_APPLY(p)                     \
-                        int64_t i = GBI (Ai, p, avlen) ;    \
+                    #define GB_APPLY_OP(p)                      \
+                        int64_t i = GBI_A (Ai, p, avlen) ;      \
                         Cz [p] = (j >= (i + thunk)) ;
                     #include "GB_positional_op_ijp.c"
                     break ; ;
 
                 case GB_DIAG_idxunop_code : // z = (j == (i+thunk))
-                    #define GB_APPLY(p)                     \
-                        int64_t i = GBI (Ai, p, avlen) ;    \
+                    #define GB_APPLY_OP(p)                      \
+                        int64_t i = GBI_A (Ai, p, avlen) ;      \
                         Cz [p] = (j == (i + thunk)) ;
                     #include "GB_positional_op_ijp.c"
                     break ; ;
 
                 case GB_OFFDIAG_idxunop_code : // z = (j != (i+thunk))
-                    #define GB_APPLY(p)                     \
-                        int64_t i = GBI (Ai, p, avlen) ;    \
+                    #define GB_APPLY_OP(p)                      \
+                        int64_t i = GBI_A (Ai, p, avlen) ;      \
                         Cz [p] = (j != (i + thunk)) ;
                     #include "GB_positional_op_ijp.c"
                     break ; ;
 
                 case GB_COLLE_idxunop_code : // z = (j <= thunk)
-                    #define GB_APPLY(p)                     \
+                    #define GB_APPLY_OP(p)                      \
                         Cz [p] = (j <= thunk) ;
                     #include "GB_positional_op_ijp.c"
                     break ; ;
 
                 case GB_COLGT_idxunop_code : // z = (j > thunk)
-                    #define GB_APPLY(p)                     \
+                    #define GB_APPLY_OP(p)                      \
                         Cz [p] = (j > thunk) ;
                     #include "GB_positional_op_ijp.c"
                     break ; ;
 
                 case GB_ROWLE_idxunop_code : // z = (i <= thunk)
-                    #define GB_APPLY(p)                     \
+                    #define GB_APPLY_OP(p)                      \
+                        int64_t i = GBI_A (Ai, p, avlen) ;      \
                         Cz [p] = (i <= thunk) ;
                     #include "GB_positional_op_ip.c"
                     break ; ;
 
                 case GB_ROWGT_idxunop_code : // z = (i > thunk)
-                    #define GB_APPLY(p)                     \
+                    #define GB_APPLY_OP(p)                      \
+                        int64_t i = GBI_A (Ai, p, avlen) ;      \
                         Cz [p] = (i > thunk) ;
                     #include "GB_positional_op_ip.c"
                     break ; ;
@@ -372,7 +364,6 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         ASSERT (!A->iso) ;
 
         // determine number of threads to use
-        int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
         #ifndef GBCUDA_DEV
         if (Atype == op->xtype || opcode == GB_IDENTITY_unop_code)
         { 
@@ -391,7 +382,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             #define GB_WORKER(unop,zname,ztype,aname,atype)             \
             {                                                           \
                 info = GB_unop_apply (unop,zname,aname) (Cx, Ax, Ab,    \
-                    anz, nthreads) ;                                    \
+                    anz, A_nthreads) ;                                  \
             }                                                           \
             break ;
 
@@ -410,7 +401,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
-            info = GB_apply_unop_jit (Cx, ctype, op, flipij, A, nthreads) ;
+            info = GB_apply_unop_jit (Cx, ctype, op, flipij, A,
+                NULL, NULL, 0, A_nthreads) ;
         }
         #endif
 
@@ -431,10 +423,10 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             GxB_unary_function fop = op->unop_function ;
 
             int64_t p ;
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            #pragma omp parallel for num_threads(A_nthreads) schedule(static)
             for (p = 0 ; p < anz ; p++)
             { 
-                if (!GBB (Ab, p)) continue ;
+                if (!GBB_A (Ab, p)) continue ;
                 // xwork = (xtype) Ax [p]
                 GB_void xwork [GB_VLA(xsize)] ;
                 cast_A_to_X (xwork, Ax +(p)*asize, asize) ;
@@ -494,9 +486,6 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             scalarx = swork ;
         }
 
-        // determine number of threads to use
-        int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
-
         //----------------------------------------------------------------------
         // via the factory kernel
         //----------------------------------------------------------------------
@@ -521,7 +510,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 #define GB_BINOP_WORKER(binop,xname)                    \
                 {                                                       \
                     info = GB_bind1st (binop, xname) (Cx, scalarx, Ax,  \
-                        Ab, anz, nthreads) ;                            \
+                        Ab, anz, A_nthreads) ;                          \
                 }                                                       \
                 break ;
 
@@ -544,7 +533,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             if (info == GrB_NO_VALUE)
             {
                 info = GB_apply_bind1st_jit (Cx, ctype, (GrB_BinaryOp) op,
-                    scalarx, A, nthreads) ;
+                    scalarx, A, A_nthreads) ;
             }
             #endif
 
@@ -570,7 +559,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 #define GB_BINOP_WORKER(binop,xname)                    \
                 {                                                       \
                     info = GB_bind2nd (binop, xname) (Cx, Ax, scalarx,  \
-                        Ab, anz, nthreads) ;                            \
+                        Ab, anz, A_nthreads) ;                          \
                 }                                                       \
                 break ;
 
@@ -593,7 +582,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             if (info == GrB_NO_VALUE)
             {
                 info = GB_apply_bind2nd_jit (Cx, ctype, (GrB_BinaryOp) op,
-                    A, scalarx, nthreads) ;
+                    A, scalarx, A_nthreads) ;
             }
             #endif
         }
@@ -616,10 +605,11 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 // Cx = binop (scalar,Ax)
                 GB_cast_function cast_A_to_Y = GB_cast_factory (ycode, acode) ;
                 int64_t p ;
-                #pragma omp parallel for num_threads(nthreads) schedule(static)
+                #pragma omp parallel for num_threads(A_nthreads) \
+                    schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 { 
-                    if (!GBB (Ab, p)) continue ;
+                    if (!GBB_A (Ab, p)) continue ;
                     // ywork = (ytype) Ax [p]
                     GB_void ywork [GB_VLA(ysize)] ;
                     cast_A_to_Y (ywork, Ax +(p)*asize, asize) ;
@@ -632,10 +622,11 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 // Cx = binop (Ax,scalar)
                 GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ;
                 int64_t p ;
-                #pragma omp parallel for num_threads(nthreads) schedule(static)
+                #pragma omp parallel for num_threads(A_nthreads) \
+                    schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 { 
-                    if (!GBB (Ab, p)) continue ;
+                    if (!GBB_A (Ab, p)) continue ;
                     // xwork = (xtype) Ax [p]
                     GB_void xwork [GB_VLA(xsize)] ;
                     cast_A_to_X (xwork, Ax +(p)*asize, asize) ;
@@ -654,22 +645,41 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         // apply a user-defined index_unary op
         //----------------------------------------------------------------------
 
+        // All valued GrB_IndexUnaryOps (GrB_VALUE*) have already been
+        // renamed to their corresponding binary op (GrB_VALUEEQ_FP32
+        // became GrB_EQ_FP32, for example).  The only remaining index
+        // unary ops are positional, and user-defined.  Positional ops have
+        // been handled above, so only user-defined index unary ops are
+        // left.
+
+        ASSERT (opcode == GB_USER_idxunop_code) ;
+        size_t ssize = scalar->type->size ;
+        size_t ysize = op->ytype->size ;
+
+        GB_Type_code scode = scalar->type->code ;
+        GB_Type_code ycode = op->ytype->code ;
+
+        GB_void ywork [GB_VLA(ysize)] ;
+        GB_void *ythunk = (GB_void *) scalar->x ;
+        if (ycode != scode)
+        { 
+            // typecast the scalar to the operator input, in ywork
+            GB_cast_function cast_s = GB_cast_factory (ycode, scode) ;
+            cast_s (ywork, scalar->x, ssize) ;
+            ythunk = ywork ;
+        }
+
         //----------------------------------------------------------------------
         // via the JIT kernel
         //----------------------------------------------------------------------
 
-#if 0
         #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
-            info = GB_apply_unop_jit (Cx, ctype, op, flipij, A, nthreads) ;
-            if (info == GrB_SUCCESS)
-            {
-                return (GrB_SUCCESS) ;
-            }
+            info = GB_apply_unop_jit (Cx, ctype, op, flipij, A,
+                ythunk, A_ek_slicing, A_ntasks, A_nthreads) ;
         }
         #endif
-#endif
 
         //----------------------------------------------------------------------
         // via the generic kernel
@@ -677,14 +687,6 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
         if (info == GrB_NO_VALUE)
         {
-
-            // All valued GrB_IndexUnaryOps (GrB_VALUE*) have already been
-            // renamed to their corresponding binary op (GrB_VALUEEQ_FP32
-            // became GrB_EQ_FP32, for example).  The only remaining index
-            // unary ops are positional, and user-defined.  Positional ops have
-            // been handled above, so only user-defined index unary ops are
-            // left.
-
             GB_BURBLE_N (anz, "(generic apply: user-defined idxunop) ") ;
 
             // get A and C
@@ -692,36 +694,17 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             const int64_t *restrict Ap = A->p ;
             const int64_t *restrict Ai = A->i ;
             int64_t avlen = A->vlen ;
-            int64_t avdim = A->vdim ;
+            GB_Type_code acode = Atype->code ;
 
-            ASSERT (opcode == GB_USER_idxunop_code) ;
             GxB_index_unary_function fop = op->idxunop_function ;
-
             size_t asize = Atype->size ;
-            size_t ssize = scalar->type->size ;
             size_t zsize = op->ztype->size ;
             size_t xsize = op->xtype->size ;
-            size_t ysize = op->ytype->size ;
-
-            GB_Type_code scode = scalar->type->code ;
-            GB_Type_code acode = Atype->code ;
             GB_Type_code xcode = op->xtype->code ;
-            GB_Type_code ycode = op->ytype->code ;
             GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ;
 
-            GB_void ywork [GB_VLA(ysize)] ;
-            GB_void *ythunk = (GB_void *) scalar->x ;
-            if (ycode != scode)
-            { 
-                // typecast the scalar to the operator input, in ywork
-                GB_cast_function cast_s = GB_cast_factory (ycode, scode) ;
-                cast_s (ywork, scalar->x, ssize) ;
-                ythunk = ywork ;
-            }
-
-            #define GB_APPLY(p)                                             \
-                if (!GBB (Ab, p)) continue ;                                \
-                int64_t i = GBI (Ai, p, avlen) ;                            \
+            #define GB_APPLY_OP(p)                                          \
+                int64_t i = GBI_A (Ai, p, avlen) ;                          \
                 GB_void xwork [GB_VLA(xsize)] ;                             \
                 cast_A_to_X (xwork, Ax +(p)*asize, asize) ;                 \
                 fop (Cx +(p*zsize), xwork,                                  \
