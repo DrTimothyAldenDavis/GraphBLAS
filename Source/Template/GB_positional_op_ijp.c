@@ -15,13 +15,9 @@
 
 {
 
-    //--------------------------------------------------------------------------
-    // slice the entries for each task
-    //--------------------------------------------------------------------------
-
-    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
-    int A_ntasks, A_nthreads ;
-    GB_SLICE_MATRIX (A, 32, chunk) ;
+    const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
+    const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
+    const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
     // Cx = positional_op (A)
@@ -63,12 +59,6 @@
             }
         }
     }
-
-    //--------------------------------------------------------------------------
-    // free workspace
-    //--------------------------------------------------------------------------
-
-    GB_WERK_POP (A_ek_slicing, int64_t) ;
 }
 
 #undef GB_APPLY

@@ -118,7 +118,7 @@
             GB_MULT (zwork, aki, bkj, i, k, j) ;                        \
             fadd (&cij, &cij, &zwork)
 
-        int64_t offset = GB_positional_offset (opcode, NULL) ;
+        int64_t offset = GB_positional_offset (opcode, NULL, NULL) ;
 
         if (mult->ztype == GrB_INT64)
         {

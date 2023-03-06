@@ -493,7 +493,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                 (opcode == GB_FIRSTI1_binop_code)   ||
                 (opcode == GB_SECONDI_binop_code)   ||
                 (opcode == GB_SECONDI1_binop_code) ;
-            const int64_t offset = GB_positional_offset (opcode, NULL) ;
+            const int64_t offset = GB_positional_offset (opcode, NULL, NULL) ;
             if (op->ztype == GrB_INT64)
             { 
                 #undef  GB_BINOP

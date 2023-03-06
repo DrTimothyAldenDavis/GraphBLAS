@@ -360,7 +360,8 @@ GrB_IndexUnaryOp GB_positional_idxunop_ijflip   // return flipped operator
 int64_t GB_positional_offset        // return the positional thunk
 (
     GB_Opcode opcode,               // opcode of positional operator
-    GrB_Scalar Thunk                // thunk for idxunops, or NULL
+    GrB_Scalar Thunk,               // thunk for idxunops, or NULL
+    bool *depends_on_j              // if true, the op depends on j
 ) ;
 
 // for internal use only

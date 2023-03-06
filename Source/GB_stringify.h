@@ -623,6 +623,21 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     GrB_Type atype
 ) ;
 
+uint64_t GB_encodify_apply      // encode an apply problem
+(
+    // output:
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char **suffix,              // suffix for user-defined kernel
+    // input:
+    const int kcode,            // kernel to encode
+    const int C_sparsity,
+    const GrB_Type ctype,
+    const GB_Operator op,
+    const bool flipij,
+    const GrB_Matrix A
+) ;
+
 //------------------------------------------------------------------------------
 // GB_namify_problem: name a problem
 //------------------------------------------------------------------------------

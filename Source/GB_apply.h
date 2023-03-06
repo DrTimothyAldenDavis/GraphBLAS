@@ -54,6 +54,16 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
+(
+    GB_void *Cx,
+    const GrB_Type ctype,
+    const GB_Operator op,       // unary or index unary op
+    const bool flipij,          // if true, use z = f(x,j,i,y)
+    const GrB_Matrix A,
+    const int nthreads
+) ;
+
 GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
 (
     GB_void *Cx,

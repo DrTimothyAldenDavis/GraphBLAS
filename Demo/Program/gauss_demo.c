@@ -64,6 +64,40 @@ void multgauss (gauss *z, const gauss *x, const gauss *y)
 "}"
 
 //------------------------------------------------------------------------------
+// realgauss: real part of a Gaussian integer
+//------------------------------------------------------------------------------
+
+void realgauss (int32_t *z, const gauss *x)
+{
+    (*z) = x->real ;
+}
+
+#define REALGAUSS_DEFN                                          \
+"void realgauss (int32_t *z, const gauss *x)                \n" \
+"{                                                          \n" \
+"    (*z) = x->real ;                                       \n" \
+"}"
+
+//------------------------------------------------------------------------------
+// ijgauss: Gaussian positional op
+//------------------------------------------------------------------------------
+
+void ijgauss (int64_t *z, const gauss *x, GrB_Index i, GrB_Index j, 
+    const gauss *y)
+{
+    (*z) = x->real + y->real + i - j ;
+//  printf ("i: %ld j: %ld x: (%d,%d), y: (%d,%d) result: %ld\n",
+//      i, j, x->real, x->imag, y->real, y->imag, *z) ;
+}
+
+#define IJGAUSS_DEFN                                                        \
+"void ijgauss (int64_t *z, const gauss *x, GrB_Index i, GrB_Index j,    \n" \
+"    const gauss *y)                                                    \n" \
+"{                                                                      \n" \
+"    (*z) = x->real + y->real + i - j ;                                 \n" \
+"}"
+
+//------------------------------------------------------------------------------
 // printgauss: print a Gauss matrix
 //------------------------------------------------------------------------------
 
@@ -246,13 +280,36 @@ int main (void)
     TRY (GrB_apply (C, NULL, NULL, MultGauss, (void *) &ciso, A, GrB_DESC_T1)) ;
     printgauss (C) ;
 
+    // create the RealGauss unary op
+    GrB_UnaryOp RealGauss ;
+    TRY (GxB_UnaryOp_new (&RealGauss, (void *) realgauss, GrB_INT32, Gauss,
+        "realgauss", REALGAUSS_DEFN)) ;
+    TRY (GxB_print (RealGauss, 3)) ;
+    GrB_Matrix R ;
+    TRY (GrB_Matrix_new (&R, GrB_INT32, 4, 4)) ;
+    TRY (GrB_apply (R, NULL, NULL, RealGauss, C, NULL)) ;
+    GxB_print (R, 3) ;
+    GrB_free (&R) ;
+
+    // create the IJGauss IndexUnaryOp
+    GrB_IndexUnaryOp IJGauss ;
+    TRY (GxB_IndexUnaryOp_new (&IJGauss, (void *) ijgauss, GrB_INT64, Gauss,
+        Gauss, "ijgauss", IJGAUSS_DEFN)) ;
+    TRY (GrB_Matrix_new (&R, GrB_INT64, 4, 4)) ;
+    printgauss (C) ;
+    TRY (GrB_Matrix_apply_IndexOp_UDT (R, NULL, NULL, IJGauss, C,
+        (void *) &ciso, NULL)) ;
+    GxB_print (R, 3) ;
+
     // free everything and finalize GraphBLAS
     GrB_free (&A) ;
     GrB_free (&B) ;
     GrB_free (&D) ;
     GrB_free (&C) ;
+    GrB_free (&R) ;
     GrB_free (&Gauss) ;
     GrB_free (&AddGauss) ;
+    GrB_free (&RealGauss) ;
     GrB_free (&AddMonoid) ;
     GrB_free (&MultGauss) ;
     GrB_free (&GaussSemiring) ;

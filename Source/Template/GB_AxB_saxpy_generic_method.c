@@ -230,7 +230,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
 
         // the original multiplier op may have been flipped, but the offset
         // is unchanged
-        int64_t offset = GB_positional_offset (mult->opcode, NULL) ;
+        int64_t offset = GB_positional_offset (mult->opcode, NULL, NULL) ;
 
         #if GB_GENERIC_OP_IS_INT64
         {

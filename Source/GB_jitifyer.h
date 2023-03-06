@@ -46,6 +46,9 @@
 #define GB_JIT_KERNEL_TRANSBIND1    23
 #define GB_JIT_KERNEL_TRANSBIND2    24
 
+// unop methods:
+#define GB_JIT_KERNEL_APPLYUNOP     25
+
 // ... etc FIXME: list them all here
 // or make this an enum
 

@@ -141,7 +141,9 @@ GrB_Info GB_emult_generic       // generic emult
         // C(i,j) = positional_op (aij, bij)
         //----------------------------------------------------------------------
 
-        const int64_t offset = GB_positional_offset (opcode, NULL) ;
+        bool depends_on_j ;
+        const int64_t offset = GB_positional_offset (opcode, NULL,
+            &depends_on_j) ;
         const bool index_is_i = 
             (opcode == GB_FIRSTI_binop_code  ) ||
             (opcode == GB_FIRSTI1_binop_code ) ||
