@@ -18,9 +18,12 @@
 // complain about typecasting these uninitialized values, but these warnings
 // are false positives.
 
-#include "GB.h"
+#define GB_DEBUG
 
-void GB_cast_matrix         // copy or typecast the values from A into C
+#include "GB.h"
+#define GB_FREE_ALL ;
+
+GrB_Info GB_cast_matrix     // copy or typecast the values from A into C
 (
     GrB_Matrix C,
     GrB_Matrix A
@@ -31,6 +34,7 @@ void GB_cast_matrix         // copy or typecast the values from A into C
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     const int64_t anz = GB_nnz_held (A) ;
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
@@ -39,7 +43,7 @@ void GB_cast_matrix         // copy or typecast the values from A into C
     if (anz == 0)
     { 
         // nothing to do
-        return ;
+        return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -81,11 +85,11 @@ void GB_cast_matrix         // copy or typecast the values from A into C
         }
         else
         { 
-            // typecast all the values from Ax to Cx
+            // typecast all the values from A to Cx
             ASSERT (GB_IMPLIES (anz > 0, Cx != NULL)) ;
-            GB_cast_array (Cx, C->type->code, (GB_void *) Ax, A->type->code,
-                A->b, anz, nthreads) ;
+            GB_OK (GB_cast_array (Cx, C->type->code, A, nthreads)) ;
         }
     }
+    return (GrB_SUCCESS) ;
 }
 

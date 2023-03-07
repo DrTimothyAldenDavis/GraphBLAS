@@ -13,7 +13,8 @@
 #define GB_DEVELOPER 0
 #else
 // in production: turn off developer flag
-#define GB_DEVELOPER 0
+// FIXME: dev is on
+#define GB_DEVELOPER 1
 #endif
 
 #include "GB_Pending.h"

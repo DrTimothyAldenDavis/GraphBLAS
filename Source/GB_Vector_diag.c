@@ -145,14 +145,14 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
         // transplant T->i into V->i
         V->i = T->i ;
         V->i_size = T->i_size ;
-        T->i = NULL ;
+        T->i_shallow = true ;
     }
     else
     { 
         // transplant T->h into V->i
         V->i = T->h ;
         V->i_size = T->h_size ;
-        T->h = NULL ;
+        T->h_shallow = true ;
     }
 
     //--------------------------------------------------------------------------
@@ -179,7 +179,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        GB_cast_matrix (V, T) ;
+        GB_OK (GB_cast_matrix (V, T)) ;
     }
 
     //--------------------------------------------------------------------------

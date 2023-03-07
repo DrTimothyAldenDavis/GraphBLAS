@@ -40,8 +40,8 @@
     #ifdef GB_JIT_KERNEL
     #define Mask_comp   GB_MASK_COMP
     #define Mask_struct GB_MASK_STRUCT
-    #endif
     ASSERT (!Mask_comp) ;
+    #endif
 
     const int64_t *restrict Mp = M->p ;
     const int64_t *restrict Mh = M->h ;

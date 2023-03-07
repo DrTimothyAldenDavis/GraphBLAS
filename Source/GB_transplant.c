@@ -192,7 +192,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         if (A->x_shallow)
         { 
             // A is shallow so make a deep copy; no typecast needed
-            GB_cast_matrix (C, A) ;
+            GB_OK (GB_cast_matrix (C, A)) ;
             A->x = NULL ;
         }
         else
@@ -205,7 +205,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     else
     {
         // types differ, must typecast from A to C.
-        GB_cast_matrix (C, A) ;
+        GB_OK (GB_cast_matrix (C, A)) ;
         if (!A->x_shallow)
         { 
             GB_FREE (&(A->x), A->x_size) ;

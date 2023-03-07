@@ -57,7 +57,7 @@ bool GB_enumify_ewise       // enumerate a GrB_eWise problem
 
     GB_Opcode binaryop_opcode ;
     GB_Type_code xcode, ycode, zcode ;
-    ASSERT (op != NULL) ;
+    ASSERT (binaryop != NULL) ;
 
     if (C_iso)
     {

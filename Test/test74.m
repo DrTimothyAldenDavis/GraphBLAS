@@ -119,8 +119,6 @@ for k0 = 1:size(m_list,2)
                 GB_spec_compare (C0, C1, identity) ;
 
                 % C = A*B, no Mask, no typecasting, Gustavson
-save gunk C semiring A B dnn_Gus identity C0
-% C0 = GB_spec_mxm (C, [ ], [ ], semiring, A, B, [ ]) ;
                 C1 = GB_mex_mxm  (C, [ ], [ ], semiring, A, B, dnn_Gus) ;
                 GB_spec_compare (C0, C1, identity) ;
 

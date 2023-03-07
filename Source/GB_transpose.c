@@ -391,14 +391,13 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         { 
             // T->x = unop (A), binop (A,scalar), or binop (scalar,A), or
             // compute the iso value of T = 1, A, or scalar, without any op
-            info = GB_apply_op ((GB_void *) T->x, ctype, C_code_iso, op,
-                scalar, binop_bind1st, flipij, A, Werk) ;
-            ASSERT (info == GrB_SUCCESS) ;
+            GB_OK (GB_apply_op ((GB_void *) T->x, ctype, C_code_iso, op,
+                scalar, binop_bind1st, flipij, A, Werk)) ;
         }
         else if (ctype != atype)
         { 
             // copy the values from A into T and cast from atype to ctype
-            GB_cast_matrix (T, A) ;
+            GB_OK (GB_cast_matrix (T, A)) ;
         }
         else
         { 
@@ -529,14 +528,13 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         { 
             // T->x = unop (A), binop (A,scalar), or binop (scalar,A), or
             // compute the iso value of T = 1, A, or scalar, without any op
-            info = GB_apply_op ((GB_void *) T->x, ctype, C_code_iso, op,
-                scalar, binop_bind1st, flipij, A, Werk) ;
-            ASSERT (info == GrB_SUCCESS) ;
+            GB_OK (GB_apply_op ((GB_void *) T->x, ctype, C_code_iso, op,
+                scalar, binop_bind1st, flipij, A, Werk)) ;
         }
         else if (ctype != atype)
         { 
             // copy the values from A into T and cast from atype to ctype
-            GB_cast_matrix (T, A) ;
+            GB_OK (GB_cast_matrix (T, A)) ;
         }
         else
         { 

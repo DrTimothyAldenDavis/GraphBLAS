@@ -10,6 +10,9 @@
 // Usage: C = GB_mex_cast (X, type) casts the dense array X to given type using
 // C-style typecasting rules instead of built-in rules.
 
+// FIXME: debug is on
+#define GB_DEBUG
+
 #include "GB_mex.h"
 
 #define USAGE "C = GB_mex_cast (X, type, cover)"
@@ -22,6 +25,9 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
+
+    struct GB_Matrix_opaque T_header ;
+    GrB_Matrix T = NULL ;
 
     // do not get coverage counts unless the 3rd arg is present
     bool do_cover = (nargin == 3) ;
@@ -70,7 +76,15 @@ void mexFunction
     }
     else
     {
-        GB_cast_array (C, ctype->code, X, xtype->code, NULL, cnz, 1) ;
+        // create a shallow cnz-by-1 matrix T to wrap the array X
+        T = NULL ;
+        void *Tx = X ;
+        GrB_Index nrows = cnz, ncols = 1, Tx_size = cnz * xtype->size ;
+        GxB_Matrix_import_FullC (&T, xtype, nrows, ncols, &Tx, Tx_size, false, NULL) ;
+        // GB_cast_array (C, ctype->code, X, xtype->code, NULL, cnz, 1) ;
+        GB_cast_array (C, ctype->code, T, 1) ;
+        bool iso ;
+        GxB_Matrix_export_FullC (&T, &xtype, &nrows, &ncols, &Tx, &Tx_size, &iso, NULL) ;
     }
 
     GB_mx_put_global (do_cover) ;

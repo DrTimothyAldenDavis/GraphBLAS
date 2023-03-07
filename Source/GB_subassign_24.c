@@ -128,7 +128,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         GBURBLE ("(typecast) ") ;
     }
 
-    GB_cast_matrix (C, A) ;
+    GB_OK (GB_cast_matrix (C, A)) ;
 
     //--------------------------------------------------------------------------
     // restore the sparsity control of C

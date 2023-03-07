@@ -150,7 +150,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
         //----------------------------------------------------------------------
 
         // C->x = (ctype) V->x
-        GB_cast_matrix (C, V) ;
+        GB_OK (GB_cast_matrix (C, V)) ;
 
         // construct Cp and Ci
         int64_t p ;
@@ -170,7 +170,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
         //----------------------------------------------------------------------
 
         // C->x = (ctype) V->x
-        GB_cast_matrix (C, V) ;
+        GB_OK (GB_cast_matrix (C, V)) ;
 
         // construct Cp, Ch, and Ci
         int64_t p ;
@@ -191,7 +191,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
         //----------------------------------------------------------------------
 
         // C->x = (ctype) V->x
-        GB_cast_matrix (C, V) ;
+        GB_OK (GB_cast_matrix (C, V)) ;
 
         int64_t *restrict Vi = V->i ;
 

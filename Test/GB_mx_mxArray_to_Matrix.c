@@ -23,7 +23,7 @@
 // The built-in matrix or struct is not modified.  If deep_copy is true, the
 // GraphBLAS matrix is always a deep copy and can be modified by GraphBLAS.
 // Otherwise, its pattern (A->p, A->h, and A->i) may be a shallow copy, and
-// A->x is a shallow copy if the built-in matrix is 'logical' or 'double'. 
+// A->x is a shallow copy if the built-in matrix is 'logical' or 'double'.
 
 // If the built-in matrix is double complex, it becomes a GraphBLAS
 // Complex or GxB_FC64 matrix.
@@ -43,11 +43,15 @@
 //    #define GxB_BITMAP      4   // a bitmap
 //    #define GxB_FULL        8   // full (all entries must be present)
 
+// FIXME: debug is on
+#define GB_DEBUG
+
 #include "GB_mex.h"
 
 #define FREE_ALL            \
 {                           \
     GrB_Matrix_free_(&A) ;  \
+    GrB_Matrix_free_(&T) ;  \
 }
 
 GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
@@ -65,6 +69,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     //--------------------------------------------------------------------------
 
     GrB_Matrix A = NULL ;
+    struct GB_Matrix_opaque T_header ;
+    GrB_Matrix T = NULL ;
 
     if (A_builtin == NULL)
     {
@@ -380,7 +386,16 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         }
         else
         {
-            GB_cast_array (A->x, code1, MatlabX, code2, NULL, anz, 1) ;
+            // create a shallow cnz-by-1 matrix T to wrap the array MatlabX
+            T = NULL ;
+            GrB_Type ttype = (atype_in_code == GB_UDT_code) ? GxB_FC64 : atype_in ;
+            void *Tx = MatlabX ;
+            GrB_Index nrows = anz, ncols = 1, Tx_size = anz * asize ;
+            GxB_Matrix_import_FullC (&T, ttype, nrows, ncols, &Tx, Tx_size, false, NULL) ;
+            GB_cast_array (A->x, code1, T, 1) ;
+            // GB_cast_array (A->x, code1, MatlabX, code2, NULL, anz, 1) ;
+            bool iso ;
+            GxB_Matrix_export_FullC (&T, &ttype, &nrows, &ncols, &Tx, &Tx_size, &iso, NULL) ;
         }
     }
 
