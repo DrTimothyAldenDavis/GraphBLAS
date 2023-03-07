@@ -13,6 +13,7 @@
 
 #include "GB.h"
 #include "GB_binop.h"
+#include "GB_unop.h"
 
 void GB_binop_rename            // rename a bound binary op or an idxunop
 (

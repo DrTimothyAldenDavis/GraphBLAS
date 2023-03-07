@@ -319,47 +319,7 @@ GrB_Info GB_wait                // finish all pending computations
     //--------------------------------------------------------------------------
 
     struct GB_BinaryOp_opaque op_header ;
-    GrB_BinaryOp op_2nd ;
-
-    switch (A->type->code)
-    {
-        case GB_BOOL_code   : op_2nd = GrB_SECOND_BOOL   ; break ;
-        case GB_INT8_code   : op_2nd = GrB_SECOND_INT8   ; break ;
-        case GB_INT16_code  : op_2nd = GrB_SECOND_INT16  ; break ;
-        case GB_INT32_code  : op_2nd = GrB_SECOND_INT32  ; break ;
-        case GB_INT64_code  : op_2nd = GrB_SECOND_INT64  ; break ;
-        case GB_UINT8_code  : op_2nd = GrB_SECOND_UINT8  ; break ;
-        case GB_UINT16_code : op_2nd = GrB_SECOND_UINT16 ; break ;
-        case GB_UINT32_code : op_2nd = GrB_SECOND_UINT32 ; break ;
-        case GB_UINT64_code : op_2nd = GrB_SECOND_UINT64 ; break ;
-        case GB_FP32_code   : op_2nd = GrB_SECOND_FP32   ; break ;
-        case GB_FP64_code   : op_2nd = GrB_SECOND_FP64   ; break ;
-        case GB_FC32_code   : op_2nd = GxB_SECOND_FC32   ; break ;
-        case GB_FC64_code   : op_2nd = GxB_SECOND_FC64   ; break ;
-        default : 
-            // Create a SECOND_UDT binary operator.  The function pointer for
-            // the SECOND_UDT op_2nd is NULL; it is not needed since A and B
-            // are disjoint.  The function defn is also NULL.  In the JIT, the
-            // SECOND multiply operator is a simple assignment so there's no
-            // need for a function definition (but this assignment will not be
-            // used at all anyway).  This binary op_2nd will not be treated as
-            // a builtin operator, however, since its data type is not builtin.
-            // Its hash, op_2nd->hash, will be nonzero.  The name of SECOND_UDT
-            // is the same as the name of A->type.
-            op_2nd = &op_header ;
-            op_2nd->header_size = 0 ;
-            info = GB_binop_new (op_2nd,
-                NULL,   // op_2nd->binop_function is NULL for SECOND_UDT
-                A->type, A->type, A->type,    // A->type is user-defined
-                A->type->name,          // same name as A->type
-                NULL,   // no op_2nd->defn for the SECOND_UDT operator
-                GB_SECOND_binop_code) ; // using a built-in opcode
-            break ;
-    }
-
-    // GB_binop_new cannot fail since it doesn't allocate the function defn.
-    ASSERT (info == GrB_SUCCESS) ;
-    ASSERT_BINARYOP_OK (op_2nd, "op_2nd for GB_wait", GB0) ;
+    GrB_BinaryOp op_2nd = GB_binop_second (A->type, &op_header) ;
 
     //--------------------------------------------------------------------------
     // determine the method for A = A+T

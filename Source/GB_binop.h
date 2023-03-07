@@ -79,5 +79,11 @@ void GB_binop_pattern
     const GB_Opcode opcode  // opcode of binary op
 ) ;
 
+GrB_BinaryOp GB_binop_second    // return SECOND operator, or NULL on error
+(
+    GrB_Type type,              // operator type
+    GrB_UnaryOp op              // header for SECOND_UDT operator
+) ;
+
 #endif
 

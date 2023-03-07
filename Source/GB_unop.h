@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_unop_new.h: create a new named unary operator
+// GB_unop.h: definitions for unary operators
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GB_UNOP_NEW_H
-#define GB_UNOP_NEW_H
+#ifndef GB_UNOP_H
+#define GB_UNOP_H
 
 GrB_Info GB_unop_new
 (
@@ -20,6 +20,14 @@ GrB_Info GB_unop_new
     const char *unop_defn,          // definition of the user function
     const GB_Opcode opcode          // opcode for the function
 ) ;
+
+GrB_UnaryOp GB_unop_identity    // return IDENTITY operator, or NULL on error
+(
+    GrB_Type type,              // operator type
+    GrB_UnaryOp op              // header for IDENTITY_UDT operator
+) ;
+
+GrB_UnaryOp GB_unop_one (GB_Type_code xcode) ;
 
 #endif
 

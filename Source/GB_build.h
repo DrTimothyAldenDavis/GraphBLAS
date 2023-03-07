@@ -49,12 +49,29 @@ GrB_Info GB_builder                 // build a matrix from tuples
                                     // or size 1 if S_input or S_work are iso
     const bool S_iso,               // true if S_input or S_work are iso
     const int64_t nvals,            // number of tuples, and size of K_work
-    const GrB_BinaryOp dup,         // binary function to assemble duplicates,
+    GrB_BinaryOp dup,               // binary function to assemble duplicates,
                                     // if NULL use the SECOND operator to
                                     // keep the most recent duplicate.
     const GrB_Type stype,           // the type of S_work or S_input
     bool do_burble,                 // if true, then burble is allowed
     GB_Werk Werk
+) ;
+
+GrB_Info GB_build_jit               // GB_builder JIT kernel
+(
+    GB_void *restrict Tx,
+    int64_t *restrict Ti,
+    const GB_void *restrict Sx,
+    const GrB_Type ttype,           // type of Tx
+    const GrB_Type stype,           // type of Sx
+    const GrB_BinaryOp dup,         // operator for summing duplicates
+    const int64_t nvals,            // number of tuples
+    const int64_t ndupl,            // number of duplicates
+    const int64_t *restrict I_work,
+    const int64_t *restrict K_work,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
+    int nthreads
 ) ;
 
 #endif

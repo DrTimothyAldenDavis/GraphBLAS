@@ -27,10 +27,6 @@ GrB_Info GB_cast_array              // typecast an array
     GB_void *Cx,                // output array
     const GB_Type_code code1,   // type code for Cx
     GrB_Matrix A,
-//  GB_void *Ax,                // input array
-//  const GB_Type_code code2,   // type code for Ax
-//  const int8_t *restrict Ab,  // bitmap for Ax
-//  const int64_t anz,          // number of entries in Cx and Ax
     const int nthreads          // number of threads to use
 )
 {
@@ -96,8 +92,8 @@ GrB_Info GB_cast_array              // typecast an array
     if (info == GrB_NO_VALUE)
     { 
         GrB_Type ctype = GB_code_type (code1, NULL) ;
-        GrB_UnaryOp op = GB_identity_op (ctype) ;
-        ASSERT (op != NULL) ;
+        GrB_UnaryOp op = GB_unop_identity (ctype, NULL) ;
+        ASSERT_UNARYOP_OK (op, "identity op for cast_array", GB0) ;
         info = GB_apply_unop_jit (Cx, ctype, op, false, A, NULL,
             NULL, 0, nthreads) ;
     }

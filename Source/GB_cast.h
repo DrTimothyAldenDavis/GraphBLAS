@@ -65,8 +65,6 @@ static inline void GB_cast_one  // z = 1 with typecasting zcode
 
 //------------------------------------------------------------------------------
 
-GrB_UnaryOp GB_identity_op (GrB_Type type) ;
-
 GrB_Info GB_cast_array          // typecast an array
 (
     GB_void *Cx,                // output array

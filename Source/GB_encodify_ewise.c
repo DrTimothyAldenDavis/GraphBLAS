@@ -60,7 +60,7 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     // determine the suffix and its length
     //--------------------------------------------------------------------------
 
-    // if hash is zero, it denotes a builtion binary operator
+    // if hash is zero, it denotes a builtin binary operator
     uint64_t hash = binaryop->hash ;
     encoding->suffix_len = (hash == 0) ? 0 : binaryop->name_len ;
     (*suffix) = (hash == 0) ? NULL : binaryop->name ;

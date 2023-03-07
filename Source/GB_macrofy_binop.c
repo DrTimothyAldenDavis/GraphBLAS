@@ -98,7 +98,7 @@ void GB_macrofy_binop
 
         if (is_monoid_or_build)
         {
-            fprintf (fp, "#define GB_UPDATE(z,y) GB_ADD(z,z,y)\n") ;
+            fprintf (fp, "#define GB_UPDATE(z,y) %s(z,z,y)\n", macro_name) ;
         }
 
     }
@@ -813,7 +813,7 @@ void GB_macrofy_binop
             else
             {
                 // create an update expression of the form z = z + y
-                fprintf (fp, "#define GB_UPDATE(z,y) GB_ADD(z,z,y)\n") ;
+                fprintf (fp, "#define GB_UPDATE(z,y) %s(z,z,y)\n", macro_name) ;
             }
         }
         else if (flipxy)

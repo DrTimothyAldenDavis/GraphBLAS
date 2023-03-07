@@ -642,6 +642,45 @@ uint64_t GB_encodify_apply      // encode an apply problem
 ) ;
 
 //------------------------------------------------------------------------------
+// builder kernel
+//------------------------------------------------------------------------------
+
+uint64_t GB_encodify_build      // encode an build problem
+(
+    // output:
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char **suffix,              // suffix for user-defined kernel
+    // input:
+    const int kcode,            // kernel to encode
+    const GrB_Type ttype,       // type of Tx array
+    const GrB_Type stype,       // type of Sx array
+    const GrB_BinaryOp dup      // operator for summing up duplicates
+) ;
+
+bool GB_enumify_build       // enumerate a GB_build problem
+(
+    // output:
+    uint64_t *build_code,   // unique encoding of the entire operation
+    // input:
+    GrB_Type ttype,         // type of Tx
+    GrB_Type stype,         // type of Sx
+    // operator:
+    GrB_BinaryOp dup        // operator for duplicates
+) ;
+
+void GB_macrofy_build           // construct all macros for GB_build
+(
+    // output:
+    FILE *fp,                   // target file to write, already open
+    // input:
+    uint64_t build_code,        // unique encoding of the entire problem
+    GrB_Type ttype,             // type of Tx
+    GrB_Type stype,             // type of Sx
+    GrB_BinaryOp dup            // dup binary operator to macrofy
+) ;
+
+//------------------------------------------------------------------------------
 // GB_namify_problem: name a problem
 //------------------------------------------------------------------------------
 

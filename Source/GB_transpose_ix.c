@@ -28,7 +28,7 @@
 #define GB_DEBUG
 
 #include "GB_transpose.h"
-#include "GB_unop_new.h"
+#include "GB_unop.h"
 #include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_unop__include.h"
@@ -121,20 +121,7 @@ GrB_Info GB_transpose_ix        // transpose the pattern and values of a matrix
         { 
             struct GB_UnaryOp_opaque op_header ;
             GrB_Type ctype = C->type ;
-            GrB_UnaryOp op = GB_identity_op (ctype) ;
-            if (op == NULL)
-            {
-                // construct the IDENTITY_UDT operator
-                op = &op_header ;
-                op->header_size = 0 ;
-                info = GB_unop_new (op,
-                    NULL,           // op->unop_function is NULL for IDENTITY_UDT
-                    ctype, ctype,   // ctype is user-defined
-                    ctype->name,    // name is same as the type
-                    NULL,           // no op->defn
-                    GB_IDENTITY_unop_code) ;    // using a built-in opcode
-                ASSERT (info == GrB_SUCCESS) ;
-            }
+            GrB_UnaryOp op = GB_unop_identity (ctype, &op_header) ;
             ASSERT_UNARYOP_OK (op, "identity op for transpose_ix", GB0) ;
             info = GB_transpose_unop_jit (C, op, A, Workspaces, A_slice,
                 nworkspaces, nthreads) ;

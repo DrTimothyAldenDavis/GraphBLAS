@@ -12,7 +12,7 @@
 // output arguments internally as needed.
 
 #include "GB.h"
-#include "GB_unop_new.h"
+#include "GB_unop.h"
 
 GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
 (

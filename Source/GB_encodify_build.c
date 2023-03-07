@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_encodify_apply: encode an apply problem, including types and op
+// GB_encodify_build: encode a build problem, including types and op
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -10,7 +10,7 @@
 #include "GB.h"
 #include "GB_stringify.h"
 
-uint64_t GB_encodify_apply      // encode an apply problem
+uint64_t GB_encodify_build      // encode an build problem
 (
     // output:
     GB_jit_encoding *encoding,  // unique encoding of the entire problem,
@@ -18,22 +18,19 @@ uint64_t GB_encodify_apply      // encode an apply problem
     char **suffix,              // suffix for user-defined kernel
     // input:
     const int kcode,            // kernel to encode
-    const int C_sparsity,
-    const bool C_is_matrix,     // true for C=op(A), false for Cx=op(A)
-    const GrB_Type ctype,
-    const GB_Operator op,
-    const bool flipij,
-    const GrB_Matrix A
+    const GrB_Type ttype,       // type of Tx array
+    const GrB_Type stype,       // type of Sx array
+    const GrB_BinaryOp dup      // operator for summing up duplicates
 )
 {
 
     //--------------------------------------------------------------------------
-    // check if the op is JIT'able
+    // check if the dup operator is JIT'able
     //--------------------------------------------------------------------------
 
-    if (op != NULL && op->hash == UINT64_MAX)
+    if (dup != NULL && dup->hash == UINT64_MAX)
     {
-        // cannot JIT this op
+        // cannot JIT this dup operator
         memset (encoding, 0, sizeof (GB_jit_encoding)) ;
         (*suffix) = NULL ;
         return (UINT64_MAX) ;
@@ -44,17 +41,16 @@ uint64_t GB_encodify_apply      // encode an apply problem
     //--------------------------------------------------------------------------
 
     encoding->kcode = kcode ;
-    GB_enumify_apply (&encoding->code, C_sparsity, C_is_matrix, ctype, op,
-        flipij, A) ;
+    GB_enumify_build (&encoding->code, ttype, stype, dup) ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length
     //--------------------------------------------------------------------------
 
     // if hash is zero, it denotes a builtin binary operator
-    uint64_t hash = op->hash ;
-    encoding->suffix_len = (hash == 0) ? 0 : op->name_len ;
-    (*suffix) = (hash == 0) ? NULL : op->name ;
+    uint64_t hash = dup->hash ;
+    encoding->suffix_len = (hash == 0) ? 0 : dup->name_len ;
+    (*suffix) = (hash == 0) ? NULL : dup->name ;
 
     //--------------------------------------------------------------------------
     // compute the hash of the entire problem

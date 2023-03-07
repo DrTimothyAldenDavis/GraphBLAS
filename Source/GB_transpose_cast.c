@@ -13,6 +13,7 @@
 // iso matrix, with an iso value of 1.
 
 #include "GB_transpose.h"
+#include "GB_unop.h"
 
 GrB_Info GB_transpose_cast      // C= (ctype) A' or one (A'), not in-place
 (
