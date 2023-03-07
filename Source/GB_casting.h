@@ -43,8 +43,8 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
         return ((int8_t) x) ;
     }
 
-   #define GB_GUARD_CAST_TO_INT8_DEFINED
-   #define GB_CAST_TO_INT8_DEFN                                 \
+   #define GB_GUARD_GB_cast_to_int8_DEFINED
+   #define GB_cast_to_int8_DEFN                                 \
    "int8_t GB_cast_to_int8_t (double x)                     \n" \
    "{                                                       \n" \
    "    if (isnan (x)) return (0) ;                         \n" \
@@ -62,8 +62,8 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
         return ((int16_t) x) ;
     }
 
-   #define GB_GUARD_CAST_TO_INT16_DEFINED
-   #define GB_CAST_TO_INT16_DEFN                                \
+   #define GB_GUARD_GB_cast_to_int16_DEFINED
+   #define GB_cast_to_int16_DEFN                                \
    "int16_t GB_cast_to_int16_t (double x)                   \n" \
    "{                                                       \n" \
    "    if (isnan (x)) return (0) ;                         \n" \
@@ -81,8 +81,8 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
         return ((int32_t) x) ;
     }
 
-   #define GB_GUARD_CAST_TO_INT32_DEFINED
-   #define GB_CAST_TO_INT32_DEFN                                \
+   #define GB_GUARD_GB_cast_to_int32_DEFINED
+   #define GB_cast_to_int32_DEFN                                \
    "int32_t GB_cast_to_int32_t (double x)                   \n" \
    "{                                                       \n" \
    "    if (isnan (x)) return (0) ;                         \n" \
@@ -100,8 +100,8 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
         return ((int64_t) x) ;
     }
 
-   #define GB_GUARD_CAST_TO_INT64_DEFINED
-   #define GB_CAST_TO_INT64_DEFN                                \
+   #define GB_GUARD_GB_cast_to_int64_DEFINED
+   #define GB_cast_to_int64_DEFN                                \
    "int64_t GB_cast_to_int64_t (double x)                   \n" \
    "{                                                       \n" \
    "    if (isnan (x)) return (0) ;                         \n" \
@@ -118,8 +118,8 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
         return ((uint8_t) x) ;
     }
 
-   #define GB_GUARD_CAST_TO_UINT8_DEFINED
-   #define GB_CAST_TO_UINT8_DEFN                                \
+   #define GB_GUARD_GB_cast_to_uint8_DEFINED
+   #define GB_cast_to_uint8_DEFN                                \
    "uint8_t GB_cast_to_uint8_t (double x)                   \n" \
    "{                                                       \n" \
    "    if (isnan (x) || x <= 0) return (0) ;               \n" \
@@ -135,8 +135,8 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
         return ((uint16_t) x) ;
     }
 
-   #define GB_GUARD_CAST_TO_UINT16_DEFINED
-   #define GB_CAST_TO_UINT16_DEFN                               \
+   #define GB_GUARD_GB_cast_to_uint16_DEFINED
+   #define GB_cast_to_uint16_DEFN                               \
    "uint16_t GB_cast_to_uint16_t (double x)                 \n" \
    "{                                                       \n" \
    "    if (isnan (x) || x <= 0) return (0) ;               \n" \
@@ -152,8 +152,8 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
         return ((uint32_t) x) ;
     }
 
-   #define GB_GUARD_CAST_TO_UINT32_DEFINED
-   #define GB_CAST_TO_UINT32_DEFN                               \
+   #define GB_GUARD_GB_cast_to_uint32_DEFINED
+   #define GB_cast_to_uint32_DEFN                               \
    "uint32_t GB_cast_to_uint32_t (double x)                 \n" \
    "{                                                       \n" \
    "    if (isnan (x) || x <= 0) return (0) ;               \n" \
@@ -169,8 +169,8 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
         return ((uint64_t) x) ;
     }
 
-   #define GB_GUARD_CAST_TO_UINT64_DEFINED
-   #define GB_CAST_TO_UINT64_DEFN                               \
+   #define GB_GUARD_GB_cast_to_uint64_DEFINED
+   #define GB_cast_to_uint64_DEFN                               \
    "uint64_t GB_cast_to_uint64_t (double x)                 \n" \
    "{                                                       \n" \
    "    if (isnan (x) || x <= 0) return (0) ;               \n" \

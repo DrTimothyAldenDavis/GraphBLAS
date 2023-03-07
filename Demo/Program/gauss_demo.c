@@ -307,6 +307,13 @@ int main (void)
         (void *) &ciso, NULL)) ;
     printf ("\nR = ijgauss (C)\n") ;
     GxB_print (R, 3) ;
+    GrB_Index I [100], J [100], rnvals = 100 ;
+    double X [100] ;
+    TRY (GrB_Matrix_extractTuples_FP64 (I, J, X, &rnvals, R)) ;
+    for (int k = 0 ; k < rnvals ; k++)
+    { 
+        printf ("R (%ld,%ld) = %g\n", I [k], J [k], X [k]) ;
+    }
 
     // free everything and finalize GraphBLAS
     GrB_free (&A) ;
@@ -317,6 +324,7 @@ int main (void)
     GrB_free (&Gauss) ;
     GrB_free (&AddGauss) ;
     GrB_free (&RealGauss) ;
+    GrB_free (&IJGauss) ;
     GrB_free (&AddMonoid) ;
     GrB_free (&MultGauss) ;
     GrB_free (&GaussSemiring) ;

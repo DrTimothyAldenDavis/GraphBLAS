@@ -16,6 +16,8 @@
 #define GB_DEBUG
 
 #include "GB.h"
+#include "GB_apply.h"
+#include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_unop__include.h"
 #endif
@@ -90,10 +92,9 @@ GrB_Info GB_cast_array              // typecast an array
     // via the JIT factory
     //--------------------------------------------------------------------------
 
-#if 0
     #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
-    {
+    { 
         GrB_Type ctype = GB_code_type (code1, NULL) ;
         GrB_UnaryOp op = GB_identity_op (ctype) ;
         ASSERT (op != NULL) ;
@@ -101,7 +102,6 @@ GrB_Info GB_cast_array              // typecast an array
             NULL, 0, nthreads) ;
     }
     #endif
-#endif
 
     //--------------------------------------------------------------------------
     // via the generic kernel (only used for GBCUDA_DEV case)
