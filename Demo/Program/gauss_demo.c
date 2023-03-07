@@ -315,6 +315,10 @@ int main (void)
         printf ("R (%ld,%ld) = %g\n", I [k], J [k], X [k]) ;
     }
 
+    printgauss (C, "\n=============== C\n") ;
+    TRY (GrB_transpose (C, NULL, NULL, C, NULL)) ;
+    printgauss (C, "\n=============== C = C'\n") ;
+
     // free everything and finalize GraphBLAS
     GrB_free (&A) ;
     GrB_free (&B) ;

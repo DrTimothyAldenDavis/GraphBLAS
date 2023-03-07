@@ -326,7 +326,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         else if (op == NULL)
         { 
             // do not apply an operator; optional typecast to T->type
-            GB_transpose_ix (T, A, NULL, NULL, 0, nthreads) ;
+            GB_OK (GB_transpose_ix (T, A, NULL, NULL, 0, nthreads)) ;
         }
         else
         { 

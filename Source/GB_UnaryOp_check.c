@@ -53,8 +53,9 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
 
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
     bool op_is_one = (opcode == GB_ONE_unop_code) ;
+    bool op_is_identity = (opcode == GB_IDENTITY_unop_code) ;
 
-    if (!op_is_positional && op->unop_function == NULL)
+    if (!op_is_positional && op->unop_function == NULL && !(op_is_identity))
     { 
         GBPR0 ("    UnaryOp has a NULL function pointer\n") ;
         return (GrB_INVALID_OBJECT) ;

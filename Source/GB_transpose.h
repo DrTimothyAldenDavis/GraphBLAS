@@ -66,7 +66,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     GB_Werk Werk
 ) ;
 
-void GB_transpose_ix            // transpose the pattern and values of a matrix
+GrB_Info GB_transpose_ix        // transpose the pattern and values of a matrix
 (
     GrB_Matrix C,                       // output matrix
     const GrB_Matrix A,                 // input matrix

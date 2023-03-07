@@ -12,6 +12,7 @@
 // output arguments internally as needed.
 
 #include "GB.h"
+#include "GB_unop_new.h"
 
 GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
 (
@@ -41,46 +42,22 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
 
     // allocate the unary operator
     size_t header_size ;
-    (*unaryop) = GB_MALLOC (1, struct GB_UnaryOp_opaque, &header_size) ;
-    if (*unaryop == NULL)
+    GrB_UnaryOp op = GB_MALLOC (1, struct GB_UnaryOp_opaque, &header_size) ;
+    if (op == NULL)
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    // initialize the unary operator
-    GrB_UnaryOp op = *unaryop ;
-    op->magic = GB_MAGIC ;
     op->header_size = header_size ;
-    op->xtype = xtype ;
-    op->ztype = ztype ;
-    op->ytype = NULL ;
 
-    op->unop_function = function ;
-    op->idxunop_function = NULL ;
-    op->binop_function = NULL ;
-    op->selop_function = NULL ;
+    GrB_Info info = GB_unop_new (op, function, ztype, xtype, unop_name,
+        unop_defn, GB_USER_unop_code) ;
 
-    op->opcode = GB_USER_unop_code ;
-
-    //--------------------------------------------------------------------------
-    // get the unary op name and defn
-    //--------------------------------------------------------------------------
-
-    // the unary op is JIT'able only if all its types are jitable
-    bool jitable =
-        (ztype->hash != UINT64_MAX) &&
-        (xtype->hash != UINT64_MAX) ;
-
-    GrB_Info info = GB_op_name_and_defn (
-        // output:
-        op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_size),
-        // input:
-        unop_name, unop_defn, "GxB_unary_function", 18, true, jitable) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        GB_FREE (unaryop, header_size) ;
+        GB_FREE (&op, header_size) ;
         return (info) ;
     }
 
@@ -89,6 +66,7 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     //--------------------------------------------------------------------------
 
     ASSERT_UNARYOP_OK (op, "new user-defined unary op", GB0) ;
+    (*unaryop) = op ;
     return (GrB_SUCCESS) ;
 }
 

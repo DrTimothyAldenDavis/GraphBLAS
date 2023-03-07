@@ -25,12 +25,16 @@
 //      Workspaces and A_slice are NULL.
 //      This method is parallel and fully scalable.
 
+#define GB_DEBUG
+
 #include "GB_transpose.h"
+#include "GB_unop_new.h"
+#include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_unop__include.h"
 #endif
 
-void GB_transpose_ix            // transpose the pattern and values of a matrix
+GrB_Info GB_transpose_ix        // transpose the pattern and values of a matrix
 (
     GrB_Matrix C,                       // output matrix
     const GrB_Matrix A,                 // input matrix
@@ -51,7 +55,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    GrB_Info info ;
+    GrB_Info info = GrB_NO_VALUE ;
     GrB_Type ctype = C->type ;
     GB_Type_code code1 = ctype->code ;          // defines ztype
     GB_Type_code code2 = A->type->code ;        // defines atype
@@ -74,6 +78,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
         // C = pattern of A transposed
         #define GB_ISO_TRANSPOSE
         #include "GB_transpose_template.c"
+        info = GrB_SUCCESS ;
 
     }
     else
@@ -96,7 +101,6 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
             {                                                               \
                 info = GB_unop_tran (zname,aname)                           \
                     (C, A, Workspaces, A_slice, nworkspaces, nthreads) ;    \
-                if (info == GrB_SUCCESS) return ;                           \
             }                                                               \
             break ;
 
@@ -113,23 +117,49 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: 2type: transpose_ix
+        if (info == GrB_NO_VALUE)
+        { 
+            struct GB_UnaryOp_opaque op_header ;
+            GrB_Type ctype = C->type ;
+            GrB_UnaryOp op = GB_identity_op (ctype) ;
+            if (op == NULL)
+            {
+                // construct the IDENTITY_UDT operator
+                op = &op_header ;
+                op->header_size = 0 ;
+                info = GB_unop_new (op,
+                    NULL,           // op->unop_function is NULL for IDENTITY_UDT
+                    ctype, ctype,   // ctype is user-defined
+                    ctype->name,    // name is same as the type
+                    NULL,           // no op->defn
+                    GB_IDENTITY_unop_code) ;    // using a built-in opcode
+                ASSERT (info == GrB_SUCCESS) ;
+            }
+            ASSERT_UNARYOP_OK (op, "identity op for transpose_ix", GB0) ;
+            info = GB_transpose_unop_jit (C, op, A, Workspaces, A_slice,
+                nworkspaces, nthreads) ;
+        }
         #endif
 
         //----------------------------------------------------------------------
         // via the generic kernel
         //----------------------------------------------------------------------
 
-        GB_BURBLE_MATRIX (A, "(generic transpose) ") ;
-        size_t csize = C->type->size ;
-        GB_cast_function cast_A_to_X = GB_cast_factory (code1, code2) ;
+        if (info == GrB_NO_VALUE)
+        {
+            GB_BURBLE_MATRIX (A, "(generic transpose) ") ;
+            size_t csize = C->type->size ;
+            GB_cast_function cast_A_to_X = GB_cast_factory (code1, code2) ;
 
-        // Cx [pC] = (ctype) Ax [pA]
-        #define GB_APPLY_OP(pC,pA)  \
-            cast_A_to_X (Cx +((pC)*csize), Ax +((pA)*asize), asize) ;
-        #define GB_A_TYPE GB_void
-        #define GB_C_TYPE GB_void
-        #include "GB_transpose_template.c"
+            // Cx [pC] = (ctype) Ax [pA]
+            #define GB_APPLY_OP(pC,pA)  \
+                cast_A_to_X (Cx +((pC)*csize), Ax +((pA)*asize), asize) ;
+            #define GB_A_TYPE GB_void
+            #define GB_C_TYPE GB_void
+            #include "GB_transpose_template.c"
+            info = GrB_SUCCESS ;
+        }
     }
-}
 
+    return (info) ;
+}

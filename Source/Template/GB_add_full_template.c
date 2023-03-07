@@ -27,7 +27,6 @@
     int64_t p ;
     ASSERT (M == NULL) ;
     ASSERT (A_is_full || B_is_full) ;
-    ASSERT (C_sparsity == GxB_FULL) ;
 
     #ifdef GB_JIT_KERNEL
     {

@@ -10,9 +10,6 @@
 // Usage: C = GB_mex_cast (X, type) casts the dense array X to given type using
 // C-style typecasting rules instead of built-in rules.
 
-// FIXME: debug is on
-#define GB_DEBUG
-
 #include "GB_mex.h"
 
 #define USAGE "C = GB_mex_cast (X, type, cover)"

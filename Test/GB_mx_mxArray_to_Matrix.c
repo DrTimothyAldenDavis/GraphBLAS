@@ -43,9 +43,6 @@
 //    #define GxB_BITMAP      4   // a bitmap
 //    #define GxB_FULL        8   // full (all entries must be present)
 
-// FIXME: debug is on
-#define GB_DEBUG
-
 #include "GB_mex.h"
 
 #define FREE_ALL            \

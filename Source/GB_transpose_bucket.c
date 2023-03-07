@@ -323,7 +323,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     if (op == NULL)
     { 
         // do not apply an operator; optional typecast to C->type
-        GB_transpose_ix (C, A, Workspaces, A_slice, nworkspaces, nthreads) ;
+        GB_OK (GB_transpose_ix (C, A, Workspaces, A_slice, nworkspaces,
+            nthreads)) ;
     }
     else
     { 

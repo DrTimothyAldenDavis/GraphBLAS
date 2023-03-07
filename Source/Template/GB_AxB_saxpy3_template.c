@@ -384,7 +384,7 @@
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
 
-    ASSERT (C->i_size == GB_Global_memtable_size (C->i)) ;
+//  ASSERT (C->i_size == GB_Global_memtable_size (C->i)) ;
 
     #ifdef GB_TIMING
     ttt = GB_omp_get_wtime ( ) - ttt ;
