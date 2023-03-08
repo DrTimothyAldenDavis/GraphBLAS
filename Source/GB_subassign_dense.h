@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense.h: definitions for dense matrix operations
+// GB_subassign_dense.h: definitions for dense subassign methods
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -7,16 +7,16 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GB_DENSE_H
-#define GB_DENSE_H
+#ifndef GB_SUBASSIGN_DENSE_H
+#define GB_SUBASSIGN_DENSE_H
 
 #include "GB_ek_slice.h"
 
 //------------------------------------------------------------------------------
-// GB_dense_subassign_23: C(:,:) += A where C is dense and A is sparse or dense
+// GB_subassign_23: C(:,:) += A where C is dense and A is sparse or dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
+GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
 (
     GrB_Matrix C,                   // input/output matrix
     const GrB_Matrix A,             // input matrix
@@ -25,10 +25,10 @@ GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_dense_subassign_22: C(:,:) += scalar where C is dense
+// GB_subassign_22: C(:,:) += scalar where C is dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB_dense_subassign_22      // C += x where C is dense and x is a scalar
+GrB_Info GB_subassign_22      // C += x where C is dense and x is a scalar
 (
     GrB_Matrix C,                   // input/output matrix
     const void *scalar,             // input scalar
@@ -38,10 +38,10 @@ GrB_Info GB_dense_subassign_22      // C += x where C is dense and x is a scalar
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_dense_subassign_05d: C(:,:)<M> = scalar ; C is dense
+// GB_subassign_05d: C(:,:)<M> = scalar ; C is dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB_dense_subassign_05d
+GrB_Info GB_subassign_05d
 (
     GrB_Matrix C,
     // input:
@@ -53,10 +53,10 @@ GrB_Info GB_dense_subassign_05d
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_dense_subassign_06d: C(:,:)<A> = A ; C is dense
+// GB_subassign_06d: C(:,:)<A> = A ; C is dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB_dense_subassign_06d
+GrB_Info GB_subassign_06d
 (
     GrB_Matrix C,
     // input:
@@ -77,10 +77,10 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_dense_subassign_25: C<M> = A ; C is empty, A is dense, M is structural
+// GB_subassign_25: C<M> = A ; C is empty, A is dense, M is structural
 //------------------------------------------------------------------------------
 
-GrB_Info GB_dense_subassign_25
+GrB_Info GB_subassign_25
 (
     GrB_Matrix C,
     // input:

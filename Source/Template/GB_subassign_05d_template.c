@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense_subassign_05d_template: C<M> = x where C is as-if-full
+// GB_subassign_05d_template: C<M> = x where C is as-if-full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.

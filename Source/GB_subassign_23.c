@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense_subassign_23: C += B where C is dense and B is sparse or dense
+// GB_subassign_23: C += B where C is dense and B is sparse or dense
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -20,7 +20,7 @@
 // match its use as the 2nd input to the binary accum operator.  C and B can
 // have any sparsity structure, but C must be dense.
 
-#include "GB_dense.h"
+#include "GB_subassign_dense.h"
 #include "GB_binop.h"
 #ifndef GBCUDA_DEV
 #include "GB_aop__include.h"
@@ -32,7 +32,7 @@
     GB_WERK_POP (B_ek_slicing, int64_t) ;   \
 }
 
-GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
+GrB_Info GB_subassign_23      // C += B; C is dense, B is sparse or dense
 (
     GrB_Matrix C,                   // input/output matrix
     const GrB_Matrix B,             // input matrix
@@ -202,7 +202,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
         #define GB_CX(p) Cx +((p)*csize)
 
         #define GB_BINOP(z,x,y,i,j) fadd (z,x,y)
-        #include "GB_dense_subassign_23_template.c"
+        #include "GB_subassign_23_template.c"
     }
 
     //--------------------------------------------------------------------------

@@ -61,7 +61,7 @@ void GB_iso_expand          // expand an iso scalar into an entire array
     size_t size             // size of the scalar and each entry of X
 ) ;
 
-bool GB_iso_check               // return true if A is iso, false otherwise
+bool GB_check_if_iso               // return true if A is iso, false otherwise
 (
     const GrB_Matrix A          // matrix to reduce
 ) ;

@@ -57,7 +57,7 @@ GrB_Info GB (_Cdense_accumB__lxor_fp64)
     #else
     
     { 
-        #include "GB_dense_subassign_23_template.c"
+        #include "GB_subassign_23_template.c"
     }
     
     return (GrB_SUCCESS) ;
@@ -82,7 +82,7 @@ GrB_Info GB (_Cdense_accumb__lxor_fp64)
     { 
         // get the scalar b for C += b, of type GB_B_TYPE
         GB_B_TYPE bwork = (*((GB_B_TYPE *) p_bwork)) ;
-        #include "GB_dense_subassign_22_template.c"
+        #include "GB_subassign_22_template.c"
         return (GrB_SUCCESS) ;
     }
     

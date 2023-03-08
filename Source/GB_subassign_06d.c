@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense_subassign_25: C(:,:)<M,s> = A; C empty, A dense, M structural
+// GB_subassign_06d: C(:,:)<A> = A; C is full/bitmap, M and A are aliased
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -7,26 +7,27 @@
 
 //------------------------------------------------------------------------------
 
-// Method 25: C(:,:)<M,s> = A ; C is empty, M structural, A bitmap/as-if-full
+// Method 06d: C(:,:)<A> = A ; no S, C is dense, M and A are aliased
 
 // M:           present
 // Mask_comp:   false
-// Mask_struct: true
-// C_replace:   effectively false (not relevant since C is empty)
+// Mask_struct: true or false (both cases handled)
+// C_replace:   false
 // accum:       NULL
-// A:           matrix
+// A:           matrix, and aliased to M
 // S:           none
 
-// C and M are sparse or hypersparse.  A can have any sparsity structure, even
-// bitmap, but it must either be bitmap, or as-if-full.  M may be jumbled.  If
-// so, C is constructed as jumbled.  C is reconstructed with the same structure
-// as M and can have any sparsity structure on input.  The only constraint on C
-// is nnz(C) is zero on input.
+// C must be bitmap or as-if-full.  No entries are deleted and thus no zombies
+// are introduced into C.  C can be hypersparse, sparse, bitmap, or full, and
+// its sparsity structure does not change.  If C is hypersparse, sparse, or
+// full, then the pattern does not change (all entries are present, and this
+// does not change), and these cases can all be treated the same (as if full).
+// If C is bitmap, new entries can be inserted into the bitmap C->b.
 
-// C is iso if A is iso
+// C and A can have any sparsity structure.
 
 #include "GB_subassign_methods.h"
-#include "GB_dense.h"
+#include "GB_subassign_dense.h"
 #ifndef GBCUDA_DEV
 #include "GB_type__include.h"
 #endif
@@ -34,60 +35,52 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
+    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
 }
 
-GrB_Info GB_dense_subassign_25
+GrB_Info GB_subassign_06d
 (
     GrB_Matrix C,
     // input:
-    const GrB_Matrix M,
     const GrB_Matrix A,
+    bool Mask_struct,
     GB_Werk Werk
 )
 {
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    ASSERT (!GB_IS_BITMAP (M)) ; ASSERT (!GB_IS_FULL (M)) ;
-    ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
-    ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
 
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT_MATRIX_OK (C, "C for subassign method_25", GB0) ;
-    ASSERT (GB_nnz (C) == 0) ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
+
+    ASSERT_MATRIX_OK (C, "C for subassign method_06d", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
+    ASSERT (GB_IS_BITMAP (C) || GB_as_if_full (C)) ;
+    ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
 
-    ASSERT_MATRIX_OK (M, "M for subassign method_25", GB0) ;
-    ASSERT (!GB_ZOMBIES (M)) ;
-    ASSERT (GB_JUMBLED_OK (M)) ;
-    ASSERT (!GB_PENDING (M)) ;
-
-    ASSERT_MATRIX_OK (A, "A for subassign method_25", GB0) ;
-    ASSERT (GB_as_if_full (A) || GB_IS_BITMAP (A)) ;
+    ASSERT_MATRIX_OK (A, "A for subassign method_06d", GB0) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
 
     const GB_Type_code ccode = C->type->code ;
-    const GB_Type_code acode = A->type->code ;
-    const size_t asize = A->type->size ;
-    const bool C_iso = A->iso ;       // C is iso if A is iso
+    const bool C_is_bitmap = GB_IS_BITMAP (C) ;
+    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    const bool A_is_dense = GB_as_if_full (A) ;
 
     //--------------------------------------------------------------------------
-    // Method 25: C(:,:)<M> = A ; C is empty, A is dense, M is structural
+    // Method 06d: C(:,:)<A> = A ; no S; C is dense, M and A are aliased
     //--------------------------------------------------------------------------
 
-    // Time: Optimal:  the method must iterate over all entries in M,
-    // and the time is O(nnz(M)).  This is also the size of C.
+    // Time: Optimal:  the method must iterate over all entries in A,
+    // and the time is O(nnz(A)).
 
     //--------------------------------------------------------------------------
-    // Parallel: slice M into equal-sized chunks
+    // Parallel: slice A into equal-sized chunks
     //--------------------------------------------------------------------------
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
@@ -97,38 +90,37 @@ GrB_Info GB_dense_subassign_25
     // slice the entries for each task
     //--------------------------------------------------------------------------
 
-    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
-    int M_nthreads, M_ntasks ;
-    GB_SLICE_MATRIX (M, 8, chunk) ;
+    int A_ntasks, A_nthreads ;
+    if (A_is_bitmap || A_is_dense)
+    { 
+        // no need to construct tasks
+        int64_t anz = GB_nnz_held (A) ;
+        A_nthreads = GB_nthreads ((anz + A->nvec), 32*chunk, nthreads_max) ;
+        A_ntasks = (A_nthreads == 1) ? 1 : (8 * A_nthreads) ;
+    }
+    else
+    { 
+        GB_SLICE_MATRIX (A, 8, 32*chunk) ;
+    }
 
     //--------------------------------------------------------------------------
-    // allocate C and create its pattern
+    // C<A> = A for built-in types
     //--------------------------------------------------------------------------
 
-    // clear prior content and then create a copy of the pattern of M.  Keep
-    // the same type and CSR/CSC for C.  Allocate the values of C but do not
-    // initialize them.
-
-    bool C_is_csc = C->is_csc ;
-    GB_phybix_free (C) ;
-    // set C->iso = C_iso   OK
-    GB_OK (GB_dup_worker (&C, C_iso, M, false, C->type)) ;
-    C->is_csc = C_is_csc ;
-
-    //--------------------------------------------------------------------------
-    // C<M> = A for built-in types
-    //--------------------------------------------------------------------------
-
-    if (C_iso)
+    if (C->iso)
     { 
 
         //----------------------------------------------------------------------
         // via the iso kernel
         //----------------------------------------------------------------------
 
+        // Since C is iso, A must be iso (or effectively iso), which is also
+        // the mask M.  An iso mask matrix M is converted into a structural
+        // mask by GB_get_mask, and thus Mask_struct must be true if C is iso.
+
+        ASSERT (Mask_struct) ;
         #define GB_ISO_ASSIGN
-        GB_cast_scalar (C->x, ccode, A->x, acode, asize) ;
-        #include "GB_dense_subassign_25_template.c"
+        #include "GB_subassign_06d_template.c"
 
     }
     else
@@ -146,12 +138,12 @@ GrB_Info GB_dense_subassign_25
             // define the worker for the switch factory
             //------------------------------------------------------------------
 
-            #define GB_Cdense_25(cname) GB (_Cdense_25_ ## cname)
+            #define GB_Cdense_06d(cname) GB (_Cdense_06d_ ## cname)
 
             #define GB_WORKER(cname)                                          \
             {                                                                 \
-                info = GB_Cdense_25(cname) (C, M, A,                          \
-                    M_ek_slicing, M_ntasks, M_nthreads) ;                     \
+                info = GB_Cdense_06d(cname) (C, A, Mask_struct,               \
+                    A_ek_slicing, A_ntasks, A_nthreads) ;                     \
                 done = (info != GrB_NO_VALUE) ;                               \
             }                                                                 \
             break ;
@@ -161,9 +153,8 @@ GrB_Info GB_dense_subassign_25
             //------------------------------------------------------------------
 
             if (C->type == A->type && ccode < GB_UDT_code)
-            {
-                // FUTURE: use cases 1,2,4,8,16
-                // C<M> = A
+            { 
+                // C<A> = A
                 switch (ccode)
                 {
                     case GB_BOOL_code   : GB_WORKER (_bool  )
@@ -190,7 +181,7 @@ GrB_Info GB_dense_subassign_25
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: type: subassign 25
+        // JIT TODO: type: subassign 06d
         #endif
 
         //----------------------------------------------------------------------
@@ -200,34 +191,33 @@ GrB_Info GB_dense_subassign_25
         if (!done)
         { 
 
-            //-----------------------------------------------------------------
+            //------------------------------------------------------------------
             // get operators, functions, workspace, contents of A and C
             //------------------------------------------------------------------
 
             #include "GB_generic.h"
-            GB_BURBLE_MATRIX (A, "(generic C(:,:)<M,struct>=A assign, "
-                "method 25) ") ;
+            GB_BURBLE_MATRIX (A, "(generic C(:,:)<Z>=Z assign) ") ;
 
             const size_t csize = C->type->size ;
+            const size_t asize = A->type->size ;
+            const GB_Type_code acode = A->type->code ;
             GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
-            // Cx [pC] = (ctype) Ax [pA]
+            // Cx [p] = (ctype) Ax [pA]
             #define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso) \
-                cast_A_to_C (Cx+((pC)*csize), Ax+(A_iso?0:(pA)*asize), asize)
+            cast_A_to_C (Cx + ((pC)*csize), Ax + (A_iso ? 0:(pA)*asize), asize)
 
-            #include "GB_dense_subassign_25_template.c"
+            #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, asize)
+
+            #include "GB_subassign_06d_template.c"
         }
     }
-
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
 
     GB_FREE_ALL ;
-    ASSERT_MATRIX_OK (C, "C output for subassign method_25", GB0) ;
-    ASSERT (GB_ZOMBIES_OK (C)) ;
-    ASSERT (GB_JUMBLED_OK (C)) ;
-    ASSERT (!GB_PENDING (C)) ;
+    ASSERT_MATRIX_OK (C, "C output for subassign method_06d", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

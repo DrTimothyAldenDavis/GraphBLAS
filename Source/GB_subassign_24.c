@@ -20,7 +20,7 @@
 // A can be jumbled, in which case C is also jumbled.
 // A can have any sparsity structure (sparse, hyper, bitmap, or full).
 
-#include "GB_dense.h"
+#include "GB_subassign_dense.h"
 #include "GB_Pending.h"
 #define GB_FREE_ALL ;
 

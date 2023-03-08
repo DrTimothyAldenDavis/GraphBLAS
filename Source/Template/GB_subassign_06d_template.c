@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense_subassign_06d_template: C<A> = A
+// GB_subassign_06d_template: C<A> = A
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.

@@ -24,7 +24,7 @@
 #include "GB_emult.h"
 #include "GB_transpose.h"
 #include "GB_accum_mask.h"
-#include "GB_dense.h"
+#include "GB_subassign_dense.h"
 #include "GB_binop.h"
 
 GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B

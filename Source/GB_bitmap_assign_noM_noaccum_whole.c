@@ -42,7 +42,7 @@
 // sparse or hyper, then the assignement is done by GB_subassign_24.
 
 #include "GB_bitmap_assign_methods.h"
-#include "GB_dense.h"
+#include "GB_subassign_dense.h"
 
 #define GB_FREE_ALL ;
 

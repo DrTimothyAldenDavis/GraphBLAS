@@ -57,7 +57,7 @@
 
 #include "GB_subassign.h"
 #include "GB_subassign_methods.h"
-#include "GB_dense.h"
+#include "GB_subassign_dense.h"
 #include "GB_bitmap_assign.h"
 
 #undef  GB_FREE_ALL
@@ -290,7 +290,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         {
             // Method 22: C(:,:) += x where C is dense or full
             GBURBLE ("Method 22: (C full) += scalar ") ;
-            GB_OK (GB_dense_subassign_22 (C, scalar, atype, accum, Werk)) ;
+            GB_OK (GB_subassign_22 (C, scalar, atype, accum, Werk)) ;
         }
         break ;
 
@@ -298,7 +298,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         {
             // Method 23: C(:,:) += A where C is dense or full
             GBURBLE ("Method 23: (C full) += Z ") ;
-            GB_OK (GB_dense_subassign_23 (C, A, accum, Werk)) ;
+            GB_OK (GB_subassign_23 (C, A, accum, Werk)) ;
         }
         break ;
 
@@ -336,7 +336,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             // Method 05d: C(:,:)<M> = scalar ; no S; C is dense or full;
             // C becomes full.
             GBURBLE ("Method 05d: (C full)<M> = scalar ") ;
-            GB_OK (GB_dense_subassign_05d (C,
+            GB_OK (GB_subassign_05d (C,
                 M, Mask_struct, scalar, atype, Werk)) ;
         }
         break ;
@@ -402,7 +402,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         {
             // Method 06d: C(:,:)<A> = A ; no S, C dense or full;
             GBURBLE ("Method 06d: (C full)<Z> = Z ") ;
-            GB_OK (GB_dense_subassign_06d (C, A, Mask_struct, Werk)) ;
+            GB_OK (GB_subassign_06d (C, A, Mask_struct, Werk)) ;
         }
         break ;
 
@@ -412,7 +412,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             // A is dense or full; remains unchanged
             // C is iso if A is so
             GB_BURBLE_DENSE (A, "Method 25: (C empty)<M> = (Z %s) ") ;
-            GB_OK (GB_dense_subassign_25 (C, M, A, Werk)) ;
+            GB_OK (GB_subassign_25 (C, M, A, Werk)) ;
         }
         break ;
 

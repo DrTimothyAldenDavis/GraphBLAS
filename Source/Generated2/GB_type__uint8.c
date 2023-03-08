@@ -55,7 +55,7 @@ GrB_Info GB (_Cdense_05d__uint8)
     return (GrB_NO_VALUE) ;
     #else
     uint8_t cwork = (*((uint8_t *) p_cwork)) ;
-    #include "GB_dense_subassign_05d_template.c"
+    #include "GB_subassign_05d_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -78,7 +78,7 @@ GrB_Info GB (_Cdense_06d__uint8)
     return (GrB_NO_VALUE) ;
     #else
     ASSERT (C->type == A->type) ;
-    #include "GB_dense_subassign_06d_template.c"
+    #include "GB_subassign_06d_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -101,7 +101,7 @@ GrB_Info GB (_Cdense_25__uint8)
     return (GrB_NO_VALUE) ;
     #else
     ASSERT (C->type == A->type) ;
-    #include "GB_dense_subassign_25_template.c"
+    #include "GB_subassign_25_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

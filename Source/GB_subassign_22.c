@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense_subassign_22: C += b where C is dense and b is a scalar
+// GB_subassign_22: C += b where C is dense and b is a scalar
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -11,7 +11,7 @@
 // C can have any sparsity format, as long as all entries are present;
 // GB_is_dense (C)) must hold.
 
-#include "GB_dense.h"
+#include "GB_subassign_dense.h"
 #include "GB_binop.h"
 #include "GB_unused.h"
 #ifndef GBCUDA_DEV
@@ -20,7 +20,7 @@
 
 #define GB_FREE_ALL ;
 
-GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar 
+GrB_Info GB_subassign_22      // C += b where C is dense and b is a scalar 
 (
     GrB_Matrix C,                   // input/output matrix
     const void *scalar,             // input scalar
@@ -156,7 +156,7 @@ GrB_Info GB_dense_subassign_22      // C += b where C is dense and b is a scalar
         // address of Cx [p]
         #define GB_CX(p) Cx +((p)*csize)
 
-        #include "GB_dense_subassign_22_template.c"
+        #include "GB_subassign_22_template.c"
     }
 
     //--------------------------------------------------------------------------

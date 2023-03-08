@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense_subassign_05d: C(:,:)<M> = scalar where C is as-if-full
+// GB_subassign_05d: C(:,:)<M> = scalar where C is as-if-full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -20,7 +20,7 @@
 // all entries present.
 
 #include "GB_subassign_methods.h"
-#include "GB_dense.h"
+#include "GB_subassign_dense.h"
 #include "GB_unused.h"
 #ifndef GBCUDA_DEV
 #include "GB_type__include.h"
@@ -35,7 +35,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_FREE_WORKSPACE
 
-GrB_Info GB_dense_subassign_05d
+GrB_Info GB_subassign_05d
 (
     GrB_Matrix C,
     // input:
@@ -178,7 +178,7 @@ GrB_Info GB_dense_subassign_05d
         #define GB_COPY_SCALAR_TO_C(p,x) \
             memcpy (Cx + ((p)*csize), x, csize)
 
-        #include "GB_dense_subassign_05d_template.c"
+        #include "GB_subassign_05d_template.c"
     }
 
     //--------------------------------------------------------------------------

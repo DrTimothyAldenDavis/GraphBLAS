@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense_subassign_22_template: C += b where C is dense and b is a scalar
+// GB_subassign_22_template: C += b where C is dense and b is a scalar
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.

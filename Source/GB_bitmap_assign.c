@@ -15,7 +15,7 @@
 // method, C can be returned with any sparsity structure.
 
 #include "GB_bitmap_assign_methods.h"
-#include "GB_dense.h"
+#include "GB_subassign_dense.h"
 
 #define GB_FREE_ALL GB_phybix_free (C) ;
 
