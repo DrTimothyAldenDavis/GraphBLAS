@@ -22,14 +22,14 @@ typedef enum
 }
 GB_iso_code ;
 
-GB_iso_code GB_iso_unop_code
+GB_iso_code GB_unop_code_iso    // return the iso status of C
 (
     GrB_Matrix A,           // input matrix
     GB_Operator op,         // unary/idxunop/binop, if present
     bool binop_bind1st      // if true, C = binop(x,A), else C = binop(A,y)
 ) ;
 
-void GB_iso_unop            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
+void GB_unop_iso            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
 (
     // output
     GB_void *restrict Cx,   // output scalar of iso array

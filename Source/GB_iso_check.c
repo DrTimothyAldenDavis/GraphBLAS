@@ -138,6 +138,8 @@ bool GB_iso_check               // return true if A is iso, false otherwise
         #include "GB_iso_check_template.c"
     }
 
+    // JIT TODO: type, check if matrix is iso
+
     return (iso) ;
 }
 

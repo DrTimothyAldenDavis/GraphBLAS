@@ -335,10 +335,10 @@ bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_iso_AxB: determine if C=A*B results in an iso matrix C
+// GB_AxB_iso: determine if C=A*B results in an iso matrix C
 //------------------------------------------------------------------------------
 
-bool GB_iso_AxB             // C = A*B, return true if C is iso
+bool GB_AxB_iso             // C = A*B, return true if C is iso
 (
     // output
     GB_void *restrict c,    // output scalar of iso array

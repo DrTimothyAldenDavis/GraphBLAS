@@ -81,7 +81,7 @@ GrB_Info GB_cast_matrix     // copy or typecast the values from A into C
         if (A->iso)
         { 
             // Cx [0] = (ctype) Ax [0]
-            GB_iso_unop (Cx, C->type, GB_ISO_A, NULL, A, NULL) ;
+            GB_unop_iso (Cx, C->type, GB_ISO_A, NULL, A, NULL) ;
         }
         else
         { 

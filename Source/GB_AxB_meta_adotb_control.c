@@ -66,7 +66,7 @@ void GB_AxB_meta_adotb_control
             // check if C will be iso on output (for dot4 control only).
             // Ignored if dot4 C_in is not present or C cannot be
             // computed in-place.
-            C_out_iso = GB_iso_AxB (NULL, A, B, A->vlen, semiring, flipxy,
+            C_out_iso = GB_AxB_iso (NULL, A, B, A->vlen, semiring, flipxy,
                 false) ;
         }
         if (GB_AxB_dot4_control (C_out_iso, can_do_in_place ? C_in : NULL,

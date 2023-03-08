@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_iso_add: apply a binary op and check for iso result for C=A+B
+// GB_add_iso: apply a binary op and check for iso result for C=A+B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -14,7 +14,7 @@
 #include "GB_add.h"
 #include "GB_emult.h"
 
-bool GB_iso_add             // c = op(a,b), return true if C is iso
+bool GB_add_iso             // c = op(a,b), return true if C is iso
 (
     // output
     GB_void *restrict c,    // output scalar of iso array
@@ -34,10 +34,10 @@ bool GB_iso_add             // c = op(a,b), return true if C is iso
     // get inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (A, "A for GB_iso_add", GB0) ;
-    ASSERT_MATRIX_OK (B, "B for GB_iso_add", GB0) ;
-    ASSERT_TYPE_OK (ctype, "ctype for GB_iso_add", GB0) ;
-    ASSERT_BINARYOP_OK (op, "op for GB_iso_add", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for GB_add_iso", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for GB_add_iso", GB0) ;
+    ASSERT_TYPE_OK (ctype, "ctype for GB_add_iso", GB0) ;
+    ASSERT_BINARYOP_OK (op, "op for GB_add_iso", GB0) ;
     ASSERT (c != NULL) ;
 
     //--------------------------------------------------------------------------
@@ -51,7 +51,7 @@ bool GB_iso_add             // c = op(a,b), return true if C is iso
         // condition and calls GB_add, so that GB_emult doesn't have to handle
         // this case.  GB_add tests the iso condition as if it were computing
         // C=A.*B.  The alpha_scalar and beta_scalar values are not used.
-        return (GB_iso_emult (c, ctype, A, B, op)) ;
+        return (GB_emult_iso (c, ctype, A, B, op)) ;
     }
 
     //--------------------------------------------------------------------------

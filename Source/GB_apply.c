@@ -282,7 +282,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         if (opcode != GB_IDENTITY_unop_code)
         {
             // the output Cx is aliased with C->x in GB_apply_op.
-            GB_iso_code C_code_iso = GB_iso_unop_code (C, op, binop_bind1st) ;
+            GB_iso_code C_code_iso = GB_unop_code_iso (C, op, binop_bind1st) ;
             info = GrB_SUCCESS ;
             if (C_code_iso == GB_NON_ISO && C->iso)
             { 

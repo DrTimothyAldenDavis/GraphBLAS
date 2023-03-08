@@ -27,7 +27,7 @@ GrB_Info GB_cast_array              // typecast an array
     GB_void *Cx,                // output array
     const GB_Type_code code1,   // type code for Cx
     GrB_Matrix A,
-    const int nthreads          // number of threads to use
+    const int A_nthreads        // number of threads to use
 )
 {
 
@@ -71,7 +71,8 @@ GrB_Info GB_cast_array              // typecast an array
 
         #define GB_WORKER(ignore1,zname,ztype,xname,xtype)                  \
         {                                                                   \
-            info = GB_unop_apply (zname,xname) (Cx, Ax, Ab, anz, nthreads) ;\
+            info = GB_unop_apply (zname,xname) (Cx, Ax, Ab, anz,            \
+                A_nthreads) ;                                               \
         }                                                                   \
         break ;
 
@@ -95,7 +96,7 @@ GrB_Info GB_cast_array              // typecast an array
         GrB_UnaryOp op = GB_unop_identity (ctype, NULL) ;
         ASSERT_UNARYOP_OK (op, "identity op for cast_array", GB0) ;
         info = GB_apply_unop_jit (Cx, ctype, op, false, A, NULL,
-            NULL, 0, nthreads) ;
+            NULL, 0, A_nthreads) ;
     }
     #endif
 
@@ -105,20 +106,13 @@ GrB_Info GB_cast_array              // typecast an array
 
     if (info == GrB_NO_VALUE)
     {
-
+        GB_BURBLE_N (anz, "(generic cast array) ") ;
         int64_t csize = GB_code_size (code1, 0) ;
         int64_t asize = GB_code_size (code2, 0) ;
         GB_cast_function cast_A_to_C = GB_cast_factory (code1, code2) ;
-
-        // FIXME: use GB_apply_unop_ip.c here
-        int64_t p ;
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (p = 0 ; p < anz ; p++)
-        {
-            if (!GBB (Ab, p)) continue ;
-            // Cx [p] = Ax [p]
-            cast_A_to_C (Cx +(p*csize), Ax +(p*asize), asize) ;
-        }
+        #define GB_APPLY_OP(p) \
+            cast_A_to_C (Cx +(p*csize), Ax +(p*asize), asize)
+        #include "GB_apply_unop_ip.c"
         info = GrB_SUCCESS ;
     }
 

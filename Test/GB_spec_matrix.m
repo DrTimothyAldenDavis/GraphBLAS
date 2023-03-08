@@ -131,7 +131,8 @@ else
 end
 
 % in the dense X, entries not in the xpattern must be set to the identity
-X (~xpattern) = GB_mex_cast (identity, xtype) ;
+id = GB_mex_cast (identity, xtype) ;
+X (~xpattern) = id ;
 
 if (~isequal (xtype, GB_spec_type (X)))
     % if X is complex, it may have been downgraded to real, if

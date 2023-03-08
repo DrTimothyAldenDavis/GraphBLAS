@@ -18,6 +18,7 @@
 
 // FIXME: add band, bor, bxor, bxnor for uint [8,16,32,64]
 
+if (tcode != GB_BOOL_code)
 {
 
     switch (opcode)
@@ -107,7 +108,6 @@
 
             switch (tcode)
             {
-                case GB_BOOL_code   : GB_BLD_WORKER (_any, _bool,   bool    )
                 case GB_INT8_code   : GB_BLD_WORKER (_any, _int8,   int8_t  )
                 case GB_INT16_code  : GB_BLD_WORKER (_any, _int16,  int16_t )
                 case GB_INT32_code  : GB_BLD_WORKER (_any, _int32,  int32_t )
@@ -132,7 +132,6 @@
 
             switch (tcode)
             {
-                case GB_BOOL_code   : GB_BLD_WORKER (_first, _bool,   bool    )
                 case GB_INT8_code   : GB_BLD_WORKER (_first, _int8,   int8_t  )
                 case GB_INT16_code  : GB_BLD_WORKER (_first, _int16,  int16_t )
                 case GB_INT32_code  : GB_BLD_WORKER (_first, _int32,  int32_t )
@@ -153,7 +152,6 @@
 
             switch (tcode)
             {
-                case GB_BOOL_code   : GB_BLD_WORKER (_second, _bool,   bool    )
                 case GB_INT8_code   : GB_BLD_WORKER (_second, _int8,   int8_t  )
                 case GB_INT16_code  : GB_BLD_WORKER (_second, _int16,  int16_t )
                 case GB_INT32_code  : GB_BLD_WORKER (_second, _int32,  int32_t )
@@ -170,15 +168,25 @@
             }
             break ;
 
-        //----------------------------------------------------------------------
-        // boolean operators
-        //----------------------------------------------------------------------
+        default: ;
+    }
+}
+else
+{
 
+    //--------------------------------------------------------------------------
+    // boolean operators
+    //--------------------------------------------------------------------------
+
+    switch (opcode)
+    {
         case GB_LOR_binop_code    : GB_BLD_WORKER (_lor,    _bool, bool)
         case GB_LAND_binop_code   : GB_BLD_WORKER (_land,   _bool, bool)
         case GB_LXOR_binop_code   : GB_BLD_WORKER (_lxor,   _bool, bool)
         case GB_EQ_binop_code     : GB_BLD_WORKER (_eq,     _bool, bool)
-
+        case GB_ANY_binop_code    : GB_BLD_WORKER (_any,    _bool, bool)
+        case GB_FIRST_binop_code  : GB_BLD_WORKER (_first,  _bool, bool)
+        case GB_SECOND_binop_code : GB_BLD_WORKER (_second, _bool, bool)
         default: ;
     }
 }

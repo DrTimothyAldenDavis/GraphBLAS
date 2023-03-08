@@ -86,7 +86,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     // construct a shallow copy of A for the pattern of C
     //--------------------------------------------------------------------------
 
-    GB_iso_code C_code_iso = GB_iso_unop_code (A, op, binop_bind1st) ;
+    GB_iso_code C_code_iso = GB_unop_code_iso (A, op, binop_bind1st) ;
     bool C_iso = (C_code_iso != GB_NON_ISO) ;
 
     // initialized the header for C, but do not allocate C->{p,h,b,i,x}

@@ -43,14 +43,14 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     GB_Werk Werk
 ) ;
 
-void GB_iso_reduce_to_scalar        // s = reduce (A) where A is iso
+void GB_reduce_to_scalar_iso        // s = reduce (A) where A is iso
 (
     GB_void *restrict s,            // output scalar of type reduce->op->ztype
     GrB_Monoid monoid,              // monoid to use for the reduction
     GrB_Matrix A                    // matrix to reduce
 ) ;
 
-void GB_iso_reduce_worker
+void GB_reduce_worker_iso
 (
     GB_void *restrict s,            // output scalar
     GxB_binary_function freduce,    // reduction function

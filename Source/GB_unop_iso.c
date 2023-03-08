@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_iso_unop: apply a unary or binary op (with scalar) with an iso result
+// GB_unop_iso: apply a unary or binary op (with scalar) with an iso result
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -13,7 +13,7 @@
 
 #include "GB.h"
 
-void GB_iso_unop            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
+void GB_unop_iso            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
 (
     // output
     GB_void *restrict Cx,   // output scalar of iso array
@@ -31,7 +31,7 @@ void GB_iso_unop            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
     //--------------------------------------------------------------------------
 
     ASSERT (A != NULL && A->type != NULL) ;
-    ASSERT_TYPE_OK (ctype, "ctype for GB_iso_unop", GB0) ;
+    ASSERT_TYPE_OK (ctype, "ctype for GB_unop_iso", GB0) ;
     ASSERT (Cx != NULL) ;
 
     GrB_Type stype = (scalar != NULL) ? scalar->type : GrB_BOOL ;
@@ -63,7 +63,7 @@ void GB_iso_unop            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
         // Cx [0] = (ctype) scalar via FIRST(s,A), SECOND(A,s), ANY(..), ...
         //----------------------------------------------------------------------
 
-        ASSERT_SCALAR_OK (scalar, "scalar for GB_iso_unop", GB0) ;
+        ASSERT_SCALAR_OK (scalar, "scalar for GB_unop_iso", GB0) ;
         GB_cast_scalar (Cx, ccode, scalar->x, scode, ssize) ;
 
     }
@@ -93,7 +93,7 @@ void GB_iso_unop            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
             // Cx [0] = unop (A)
             //------------------------------------------------------------------
 
-            ASSERT_UNARYOP_OK (op, "op for GB_iso_unop", GB0) ;
+            ASSERT_UNARYOP_OK (op, "op for GB_unop_iso", GB0) ;
 
             // x = (xtype) Ax [0]
             GB_Type_code xcode = op->xtype->code ;
@@ -113,8 +113,8 @@ void GB_iso_unop            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
             // Cx [0] = binop (scalar,A) or binop (A,scalar)
             //------------------------------------------------------------------
 
-            ASSERT_BINARYOP_OK (op, "op for GB_iso_unop", GB0) ;
-            ASSERT_SCALAR_OK (scalar, "scalar for GB_iso_unop binop", GB0) ;
+            ASSERT_BINARYOP_OK (op, "op for GB_unop_iso", GB0) ;
+            ASSERT_SCALAR_OK (scalar, "scalar for GB_unop_iso binop", GB0) ;
             GB_Type_code xcode = op->xtype->code ;
             GB_Type_code ycode = op->ytype->code ;
             size_t xsize = op->xtype->size ;

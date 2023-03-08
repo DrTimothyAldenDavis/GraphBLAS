@@ -125,7 +125,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
 
     const size_t csize = ctype->size ;
     GB_void cscalar [GB_VLA(csize)] ;
-    bool C_iso = GB_iso_emult (cscalar, ctype, A, B, op) ;
+    bool C_iso = GB_emult_iso (cscalar, ctype, A, B, op) ;
 
     #ifdef GB_DEBUGIFY_DEFN
     GB_debugify_ewise (true, false, false, C_iso, false, C_sparsity, ctype, M,

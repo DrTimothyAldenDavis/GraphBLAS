@@ -287,7 +287,7 @@ GrB_Info GB_emult_bitmap_jit      // C<#M>=A.*B, emult_bitmap, via the JIT
     const int C_nthreads
 ) ;
 
-bool GB_iso_emult           // c = op(a,b), return true if C is iso
+bool GB_emult_iso           // c = op(a,b), return true if C is iso
 (
     // output
     GB_void *restrict c,    // output scalar of iso array

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_iso_reduce_worker: reduce n entries, all equal to a, to the scalar s
+// GB_reduce_worker_iso: reduce n entries, all equal to a, to the scalar s
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -13,7 +13,7 @@
 
 #include "GB_reduce.h"
 
-void GB_iso_reduce_worker
+void GB_reduce_worker_iso
 (
     GB_void *restrict s,            // output scalar
     GxB_binary_function freduce,    // reduction function
@@ -31,7 +31,7 @@ void GB_iso_reduce_worker
     { 
 
         // reduce floor (n/2) entries to the scalar s
-        GB_iso_reduce_worker (s, freduce, a, n/2, zsize) ;
+        GB_reduce_worker_iso (s, freduce, a, n/2, zsize) ;
 
         // s = freduce (s, s)
         freduce (s, s, s) ;

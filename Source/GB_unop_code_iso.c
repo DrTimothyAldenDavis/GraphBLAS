@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_iso_unop_code: determine if C = A, C = unop(A), or C = binop(A) is iso
+// GB_unop_code_iso: determine if C = A, C = unop(A), or C = binop(A) is iso
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -12,7 +12,7 @@
 // C = A, C = unop(A), C = binop(A,scalar), or C = binop(scalar,A) is being
 // computed, with A optionally transposed.  Determine if C is iso.
 
-GB_iso_code GB_iso_unop_code
+GB_iso_code GB_unop_code_iso    // return the iso status of C
 (
     GrB_Matrix A,           // input matrix
     GB_Operator op,         // unary/idxunop/binop, if present

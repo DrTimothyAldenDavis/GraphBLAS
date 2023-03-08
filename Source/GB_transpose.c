@@ -221,7 +221,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     size_t csize = ctype->size ;
 
     ASSERT (GB_IMPLIES (avlen == 0 || avdim == 0, anz == 0)) ;
-    GB_iso_code C_code_iso = GB_iso_unop_code (A, op, binop_bind1st) ;
+    GB_iso_code C_code_iso = GB_unop_code_iso (A, op, binop_bind1st) ;
     bool C_iso = (C_code_iso != GB_NON_ISO) ;
 
     ASSERT (GB_IMPLIES (A->iso, C_iso)) ;
@@ -797,7 +797,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             if (C_iso)
             { 
                 // apply the op to the iso scalar
-                GB_iso_unop (sscalar, ctype, C_code_iso, op, A, scalar) ;
+                GB_unop_iso (sscalar, ctype, C_code_iso, op, A, scalar) ;
                 S_input = sscalar ;     // S_input is used instead of Swork
                 Swork = NULL ;
                 stype = ctype ;

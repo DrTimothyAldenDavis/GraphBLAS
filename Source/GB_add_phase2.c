@@ -232,7 +232,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     GB_void cscalar [GB_VLA(csize)] ;
-    bool C_iso = GB_iso_add (cscalar, ctype, A, alpha_scalar,
+    bool C_iso = GB_add_iso (cscalar, ctype, A, alpha_scalar,
         B, beta_scalar, op, A_and_B_are_disjoint, is_eWiseUnion) ;
 
     #ifdef GB_DEBUGIFY_DEFN

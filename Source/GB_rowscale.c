@@ -74,7 +74,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
 
     size_t zsize = ztype->size ;
     GB_void cscalar [GB_VLA(zsize)] ;
-    bool C_iso = GB_iso_AxB (cscalar, D, B, D->vdim, semiring, flipxy, true) ;
+    bool C_iso = GB_AxB_iso (cscalar, D, B, D->vdim, semiring, flipxy, true) ;
 
     //--------------------------------------------------------------------------
     // copy the pattern of B into C

@@ -170,7 +170,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
             //------------------------------------------------------------------
 
             // this takes at most O(log(nvals(A))) time, for any monoid
-            GB_iso_reduce_to_scalar (z, monoid, A) ;
+            GB_reduce_to_scalar_iso (z, monoid, A) ;
             done = true ;
 
         }

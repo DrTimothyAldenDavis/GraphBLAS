@@ -88,7 +88,7 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     // construct the macros for A
     //--------------------------------------------------------------------------
 
-    // iso reduction is handled by GB_iso_reduce_to_scalar, which takes
+    // iso reduction is handled by GB_reduce_to_scalar_iso, which takes
     // O(log(nvals(A))) for any monoid and uses the function pointer of the
     // monoid operator.  No JIT kernel is ever required to reduce an iso matrix
     // to a scalar, even for user-defined types and monoids.

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_iso_reduce_to_scalar: reduce an iso matrix to a scalar
+// GB_reduce_to_scalar_iso: reduce an iso matrix to a scalar
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 #include "GB_reduce.h"
 
-void GB_iso_reduce_to_scalar        // s = reduce (A) where A is iso
+void GB_reduce_to_scalar_iso        // s = reduce (A) where A is iso
 (
     GB_void *restrict s,            // output scalar of type reduce->op->ztype
     GrB_Monoid monoid,              // monoid to use for the reduction
@@ -22,8 +22,8 @@ void GB_iso_reduce_to_scalar        // s = reduce (A) where A is iso
     //--------------------------------------------------------------------------
 
     ASSERT (A->iso) ;
-    ASSERT_MATRIX_OK (A, "A for iso_reduce_to_scalar", GB0) ;
-    ASSERT_MONOID_OK (monoid, "monoid for iso_reduce_to_scalar", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for reduce_to_scalar_iso", GB0) ;
+    ASSERT_MONOID_OK (monoid, "monoid for reduce_to_scalar_iso", GB0) ;
     ASSERT (s != NULL) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
@@ -51,6 +51,6 @@ void GB_iso_reduce_to_scalar        // s = reduce (A) where A is iso
     // reduce n entries, all equal to a, to the scalar s, in O(log(n)) time
     //--------------------------------------------------------------------------
 
-    GB_iso_reduce_worker (s, freduce, a, n, zsize) ;
+    GB_reduce_worker_iso (s, freduce, a, n, zsize) ;
 }
 

@@ -90,7 +90,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     }
     else
     { 
-        // C is iso, with no operator to apply; just call GB_iso_unop below.
+        // C is iso, with no operator to apply; just call GB_unop_iso below.
         ASSERT (C_code_iso == GB_ISO_1 ||   // C iso value is 1
                 C_code_iso == GB_ISO_S ||   // C iso value is the scalar
                 C_code_iso == GB_ISO_A) ;   // C iso value is the iso value of A
@@ -343,11 +343,11 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
         // if C is iso, this function takes O(1) time
         GBURBLE ("(iso apply) ") ;
-        ASSERT_MATRIX_OK (A, "A passing to GB_iso_unop", GB0) ;
+        ASSERT_MATRIX_OK (A, "A passing to GB_unop_iso", GB0) ;
         if (anz > 0)
         { 
             // Cx [0] = unop (A), binop (scalar,A), or binop (A,scalar)
-            GB_iso_unop (Cx, ctype, C_code_iso, op, A, scalar) ;
+            GB_unop_iso (Cx, ctype, C_code_iso, op, A, scalar) ;
         }
 
         info = GrB_SUCCESS ;

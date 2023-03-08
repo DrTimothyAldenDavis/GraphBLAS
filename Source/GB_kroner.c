@@ -143,7 +143,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     GrB_Type ctype = op->ztype ;
     const size_t csize = ctype->size ;
     GB_void cscalar [GB_VLA(csize)] ;
-    bool C_iso = GB_iso_emult (cscalar, ctype, A, B, op) ;
+    bool C_iso = GB_emult_iso (cscalar, ctype, A, B, op) ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix C

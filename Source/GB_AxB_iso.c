@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_iso_AxB: check for iso result for C=A*B and compute the iso scalar for C
+// GB_AxB_iso: check for iso result for C=A*B and compute the iso scalar for C
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -24,10 +24,10 @@
 #include "GB_binop.h"
 
 //------------------------------------------------------------------------------
-// GB_iso_mult: c = mult(a,b) or c = mult(b,a)
+// GB_AxB_scalar_iso: c = mult(a,b) or c = mult(b,a)
 //------------------------------------------------------------------------------
 
-static void GB_iso_mult         // c = mult(a,b) or c=mult(b,a)
+static void GB_AxB_scalar_iso         // c = mult(a,b) or c=mult(b,a)
 (
     GB_void *restrict c,        // c has type zcode, and size zsize
     const GB_void *restrict a, const GB_Type_code acode, const size_t asize,
@@ -42,7 +42,7 @@ static void GB_iso_mult         // c = mult(a,b) or c=mult(b,a)
     if (flipxy)
     { 
         // c = mult(b,a)
-        GB_iso_mult (c, b, bcode, bsize, a, acode, asize, fmult, false,
+        GB_AxB_scalar_iso (c, b, bcode, bsize, a, acode, asize, fmult, false,
             xcode, xsize, ycode, ysize, zcode, zsize) ;
     }
     else
@@ -73,10 +73,10 @@ static void GB_iso_mult         // c = mult(a,b) or c=mult(b,a)
 }
 
 //------------------------------------------------------------------------------
-// GB_iso_AxB
+// GB_AxB_iso
 //------------------------------------------------------------------------------
 
-bool GB_iso_AxB             // C = A*B, return true if C is iso
+bool GB_AxB_iso             // C = A*B, return true if C is iso
 (
     // output
     GB_void *restrict c,    // output scalar of iso array (not computed if NULL)
@@ -94,9 +94,9 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
     // get inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (A, "A for GB_iso_AxB", GB0) ;
-    ASSERT_MATRIX_OK (B, "B for GB_iso_AxB", GB0) ;
-    ASSERT_SEMIRING_OK (semiring, "semiring for GB_iso_AxB", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for GB_AxB_iso", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for GB_AxB_iso", GB0) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for GB_AxB_iso", GB0) ;
 
     //--------------------------------------------------------------------------
     // quick return if multop is positional
@@ -273,7 +273,7 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
 
             if (c != NULL)
             { 
-                GB_iso_mult (c, Ax, acode, asize, Bx, bcode, bsize,
+                GB_AxB_scalar_iso (c, Ax, acode, asize, Bx, bcode, bsize,
                     fmult, flipxy, xcode, xsize, ycode, ysize, zcode, zsize) ;
             }
             return (true) ;
@@ -297,12 +297,12 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
             { 
                 // t = A(i,k)*B(k,j)
                 GB_void t [GB_VLA(zsize)] ;
-                GB_iso_mult (t, Ax, acode, asize, Bx, bcode, bsize,
+                GB_AxB_scalar_iso (t, Ax, acode, asize, Bx, bcode, bsize,
                     fmult, flipxy, xcode, xsize, ycode, ysize, zcode, zsize) ;
 
                 // reduce n copies of t to the single scalar c, in O(log(n))
                 GxB_binary_function freduce = semiring->add->op->binop_function;
-                GB_iso_reduce_worker (c, freduce, t, n, zsize) ;
+                GB_reduce_worker_iso (c, freduce, t, n, zsize) ;
             }
 
             // the total time to compute C=A*B where all matrices are n-by-n

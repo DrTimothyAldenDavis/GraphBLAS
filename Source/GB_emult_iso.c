@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_iso_emult: apply a binary op and check for iso result for C=A.*B
+// GB_emult_iso: apply a binary op and check for iso result for C=A.*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -13,7 +13,7 @@
 
 #include "GB_emult.h"
 
-bool GB_iso_emult           // c = op(a,b), return true if C is iso
+bool GB_emult_iso           // c = op(a,b), return true if C is iso
 (
     // output
     GB_void *restrict c,    // output scalar of iso array
@@ -29,10 +29,10 @@ bool GB_iso_emult           // c = op(a,b), return true if C is iso
     // get inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (A, "A for GB_iso_emult", GB0) ;
-    ASSERT_MATRIX_OK (B, "B for GB_iso_emult", GB0) ;
-    ASSERT_TYPE_OK (ctype, "ctype for GB_iso_emult", GB0) ;
-    ASSERT_BINARYOP_OK (op, "op for GB_iso_emult", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for GB_emult_iso", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for GB_emult_iso", GB0) ;
+    ASSERT_TYPE_OK (ctype, "ctype for GB_emult_iso", GB0) ;
+    ASSERT_BINARYOP_OK (op, "op for GB_emult_iso", GB0) ;
     ASSERT (c != NULL) ;
 
     //--------------------------------------------------------------------------

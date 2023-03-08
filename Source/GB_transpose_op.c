@@ -92,7 +92,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
         // takes O(1) time
 
         // Cx [0] = unop (A), binop (scalar,A), or binop (A,scalar)
-        GB_iso_unop ((GB_void *) C->x, C->type, C_code_iso, op, A, scalar) ;
+        GB_unop_iso ((GB_void *) C->x, C->type, C_code_iso, op, A, scalar) ;
 
         // C = transpose the pattern
         #define GB_ISO_TRANSPOSE
