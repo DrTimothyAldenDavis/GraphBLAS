@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_iso_expand: expand a scalar into an entire array
+// GB_expand_iso: expand a scalar into an entire array
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -10,7 +10,7 @@
 #include "GB.h"
 #include "GB_is_nonzero.h"
 
-void GB_iso_expand          // expand an iso scalar into an entire array
+void GB_expand_iso          // expand an iso scalar into an entire array
 (
     void *restrict X,       // output array to expand into
     int64_t n,              // # of entries in X

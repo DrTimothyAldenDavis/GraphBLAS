@@ -223,7 +223,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
                 size_t xsize = GB_code_size (xcode, asize) ;
                 GB_void scalar [GB_VLA(xsize)] ;
                 GB_cast_scalar (scalar, xcode, A->x, acode, asize) ;
-                GB_iso_expand (X, anz, scalar, xsize) ;
+                GB_expand_iso (X, anz, scalar, xsize) ;
             }
             else if (xcode == acode)
             { 

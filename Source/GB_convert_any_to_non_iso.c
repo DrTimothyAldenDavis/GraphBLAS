@@ -69,7 +69,7 @@ GrB_Info GB_convert_any_to_non_iso // convert iso matrix to non-iso
     if (initialize)
     { 
         // Ax [0:anz-1] = scalar
-        GB_iso_expand (A->x, anz, scalar, asize) ;
+        GB_expand_iso (A->x, anz, scalar, asize) ;
     }
     else
     { 
