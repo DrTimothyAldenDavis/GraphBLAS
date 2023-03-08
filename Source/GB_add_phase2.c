@@ -235,12 +235,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     bool C_iso = GB_add_iso (cscalar, ctype, A, alpha_scalar,
         B, beta_scalar, op, A_and_B_are_disjoint, is_eWiseUnion) ;
 
-    #ifdef GB_DEBUGIFY_DEFN
-    GB_debugify_ewise (false, is_eWiseUnion, !is_eWiseUnion,
-        C_iso, false, C_sparsity, ctype, M,
-        Mask_struct, Mask_comp, op, false, A, B) ;
-    #endif
-
     //--------------------------------------------------------------------------
     // allocate the output matrix C: hypersparse, sparse, bitmap, or full
     //--------------------------------------------------------------------------

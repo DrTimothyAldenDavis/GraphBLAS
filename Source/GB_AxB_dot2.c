@@ -371,11 +371,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         ctype, cvlen, cvdim, GB_Ap_malloc, true, C_sparsity,
         M_is_sparse_or_hyper, B->hyper_switch, cnvec, cnz, true, C_iso)) ;
 
-    #ifdef GB_DEBUGIFY_DEFN
-    GB_debugify_mxm (C_iso, false, C_sparsity, ctype, M,
-        Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
-    #endif
-
     //--------------------------------------------------------------------------
     // if M is sparse/hyper, scatter it into the C bitmap
     //--------------------------------------------------------------------------

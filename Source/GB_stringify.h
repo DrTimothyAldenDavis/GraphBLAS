@@ -717,55 +717,6 @@ void GB_namify_problem
 // GB_debugify_*: dump the definition file to /tmp
 //------------------------------------------------------------------------------
 
-void GB_debugify_mxm
-(
-    // C matrix:
-    bool C_iso,             // C output iso status: if true, operator is ignored
-    bool C_in_iso,          // C input iso status
-    int C_sparsity,         // sparse, hyper, bitmap, or full
-    GrB_Type ctype,         // C=((ctype) T) is the final typecast
-    // M matrix:
-    GrB_Matrix M,
-    bool Mask_struct,
-    bool Mask_comp,
-    // semiring:
-    GrB_Semiring semiring,
-    bool flipxy,
-    // A and B matrices:
-    GrB_Matrix A,
-    GrB_Matrix B
-) ;
-
-void GB_debugify_ewise
-(
-    // method:
-    bool is_eWiseMult,      // if true, method is emult
-    bool is_eWiseUnion,     // if true, method is eWiseUnion
-    bool can_copy_to_C,     // if true C(i,j)=A(i,j) can bypass the op
-    // C matrix:
-    bool C_iso,             // if true, operator is ignored
-    bool C_in_iso,          // if true, C is iso on input
-    int C_sparsity,         // sparse, hyper, bitmap, or full
-    GrB_Type ctype,         // C=((ctype) T) is the final typecast
-    // M matrix:
-    GrB_Matrix M,
-    bool Mask_struct,
-    bool Mask_comp,
-    // operator:
-    GrB_BinaryOp binaryop,
-    bool flipxy,
-    // A and B matrices:
-    GrB_Matrix A,
-    GrB_Matrix B
-) ;
-
-void GB_debugify_reduce     // enumerate and macrofy a GrB_reduce problem
-(
-    // input:
-    GrB_Monoid monoid,      // the monoid to enumify
-    GrB_Matrix A
-) ;
-
 void GB_debugify_select
 (
     bool C_iso,                 // true if C is iso
@@ -776,19 +727,6 @@ void GB_debugify_select
     int64_t ithunk,             // (int64_t) Thunk, if Thunk is NULL
     const GrB_Scalar Thunk,     // optional input for select operator
     bool in_place_A             // true if select is done in-place
-) ;
-
-void GB_debugify_apply
-(
-    // C matrix:
-    int C_sparsity,         // sparse, hyper, bitmap, or full
-    bool C_is_matrix,       // true for C=op(A), false for Cx=op(A)
-    GrB_Type ctype,         // C=((ctype) T) is the final typecast
-    // operator:
-        const GB_Operator op,       // unary/index-unary to apply; not binaryop
-        bool flipij,                // if true, flip i,j for user idxunop
-    // A matrix:
-    GrB_Matrix A
 ) ;
 
 #endif

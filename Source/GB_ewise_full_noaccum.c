@@ -62,11 +62,6 @@ GrB_Info GB_ewise_full_noaccum      // C = A+B
     ASSERT_BINARYOP_OK (op, "op for dense C=A+B", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (op)) ;
 
-    #ifdef GB_DEBUGIFY_DEFN
-    GB_debugify_ewise (false, false, false, false, false, GxB_FULL,
-        C->type, NULL, false, false, op, false, A, B) ;
-    #endif
-
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------

@@ -97,10 +97,6 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
     GB_void z [GB_VLA(zsize)] ;
     memcpy (z, monoid->identity, zsize) ;   // required, if nnz(A) is zero
 
-    #ifdef GB_DEBUGIFY_DEFN
-    GB_debugify_reduce (monoid, A) ;
-    #endif
-
     //--------------------------------------------------------------------------
     // z = reduce_to_scalar (A) on the GPU(s) or CPU
     //--------------------------------------------------------------------------

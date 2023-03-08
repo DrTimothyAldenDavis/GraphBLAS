@@ -62,11 +62,6 @@ GrB_Info GB_ewise_full_accum        // C += A+B, all matrices dense
 
     GB_ENSURE_FULL (C) ;    // convert C to full, if sparsity control allows it
 
-    #ifdef GB_DEBUGIFY_DEFN
-    GB_debugify_ewise (false, false, false, false, false, GxB_FULL,
-        C->type, NULL, false, false, op, false, A, B) ;
-    #endif
-
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------

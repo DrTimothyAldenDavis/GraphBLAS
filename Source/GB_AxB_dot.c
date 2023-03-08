@@ -136,11 +136,6 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         // complemented.  the C iso case is not handled (where C is iso on
         // output), but C_in might be iso on input.
 
-        #ifdef GB_DEBUGIFY_DEFN
-        GB_debugify_mxm (false, C_in->iso, GxB_FULL, ztype, M, Mask_struct,
-            Mask_comp, semiring, flipxy, A, B) ;
-        #endif
-
         (*mask_applied) = false ;    // no mask to apply
         info = GB_AxB_dot4 (C_in, A, B, semiring, flipxy, done_in_place, Werk) ;
         if (info != GrB_NO_VALUE)
@@ -190,11 +185,6 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
             Mask_struct ? "}" : ">",
             GB_sparsity_char_matrix (A),
             GB_sparsity_char_matrix (B)) ;
-
-        #ifdef GB_DEBUGIFY_DEFN
-        GB_debugify_mxm (C_iso, false, GB_sparsity (M), ztype, M,
-            Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
-        #endif
 
         #if defined ( GBCUDA )
         if (!C_iso &&   // fixme for CUDA, remove and create C iso on output

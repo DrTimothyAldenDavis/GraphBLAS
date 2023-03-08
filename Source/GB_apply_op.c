@@ -97,14 +97,6 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         opcode = GB_NOP_code ;
     }
 
-    #ifdef GB_DEBUGIFY_DEFN
-    if ((op_is_unop || GB_IS_INDEXUNARYOP_CODE (opcode)) && op != NULL)
-    {
-        GB_debugify_apply (A->b == NULL ? GxB_FULL : GxB_BITMAP, false,
-            ctype, op, flipij, A) ;
-    }
-    #endif
-
     //--------------------------------------------------------------------------
     // determine number of threads to use and slice the A matrix if needed
     //--------------------------------------------------------------------------
