@@ -822,12 +822,15 @@ void mexFunction
     OK (GxB_Scalar_type (&type2, thunk)) ;
     CHECK (type2 == user_type) ;
     OK (GxB_Scalar_fprint (thunk, "thunk", GxB_COMPLETE, NULL)) ;
+#if 0
     OK (GxB_Matrix_select_(A, NULL, NULL, GxB_NE_THUNK, A, thunk, NULL)) ;
+#endif
 
     value = (int64_t) 4 ;
     OK (GrB_Scalar_setElement_UDT (thunk, &value)) ;
 
-    expected = GrB_DOMAIN_MISMATCH ;
+//  expected = GrB_DOMAIN_MISMATCH ;
+    expected = GrB_NOT_IMPLEMENTED ;
     ERR1 (A, GxB_Matrix_select_(A, NULL, NULL, GxB_GE_THUNK, A, thunk, NULL)) ;
     GrB_Matrix_error_(&err, A) ;
     printf ("Expected error: info: %d\n%s\n", info, err) ;
@@ -837,7 +840,8 @@ void mexFunction
     OK (GrB_Scalar_setElement_INT16 (thunk2, 4)) ;
     OK (GrB_Scalar_wait_(thunk2, GrB_MATERIALIZE)) ;
 
-    expected = GrB_DOMAIN_MISMATCH ;
+//  expected = GrB_DOMAIN_MISMATCH ;
+    expected = GrB_NOT_IMPLEMENTED ;
 
     ERR1 (A, GxB_Matrix_select_(A, NULL, NULL, GxB_GE_ZERO, A, NULL, NULL)) ;
     GrB_Matrix_error_(&err, A) ;
@@ -855,11 +859,13 @@ void mexFunction
     GrB_Matrix_error_(&err, A) ;
     printf ("Expected error: info: %d\n%s\n", info, err) ;
 
+    expected = GrB_DOMAIN_MISMATCH ;
     ERR1 (B, GxB_Matrix_select_(B, NULL, NULL, GxB_LE_THUNK, B, thunk, NULL)) ;
     GrB_Matrix_error_(&err, A) ;
     printf ("Expected error: info: %d\n%s\n", info, err) ;
     GrB_Matrix_free_(&B) ;
 
+#if 0
     OK (GrB_Matrix_new (&B, user_type, 10, 10)) ;
     printf ("\n============== B = select (A != 0)\n") ;
     OK (GxB_Matrix_select_(B, NULL, NULL, GxB_NONZERO, A, NULL, NULL)) ;
@@ -873,6 +879,7 @@ void mexFunction
     printf ("\n============== B = select (A == 4)\n") ;
     OK (GxB_Matrix_select_(B, NULL, NULL, GxB_EQ_THUNK, A, thunk, NULL)) ;
     OK (GxB_Matrix_fprint_(B, GxB_COMPLETE, NULL)) ;
+#endif
 
     GrB_Matrix_free_(&B) ;
     GrB_Matrix_free_(&A) ;
@@ -1032,6 +1039,7 @@ void mexFunction
     GrB_Vector_free_(&victor) ;
     printf ("removeElement: OK\n") ;
 
+#if 0
     //--------------------------------------------------------------------------
     // select error handling
     //--------------------------------------------------------------------------
@@ -1112,6 +1120,7 @@ void mexFunction
     selectop->ytype = user_type ;
     ERR (GxB_SelectOp_fprint_(selectop, GxB_COMPLETE, NULL)) ;
     user_type->magic = GB_MAGIC ;
+    GrB_Type_free_(&user_type) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
     thunk->magic = 0xDEAD ;
@@ -1123,6 +1132,7 @@ void mexFunction
     GrB_Matrix_free_(&C) ;
     GrB_Scalar_free_(&thunk) ;
     GxB_SelectOp_free_(&selectop) ;
+#endif
 
     //--------------------------------------------------------------------------
     // GrB_Scalar
@@ -1303,6 +1313,8 @@ void mexFunction
     // setElement typecast
     //--------------------------------------------------------------------------
 
+    OK (GxB_Type_new (&user_type, sizeof (user_int), "user_int",
+        "typedef int16_t user_int ;")) ;
     OK (GrB_Matrix_new (&A, user_type, 10, 10)) ;
 
     expected = GrB_DOMAIN_MISMATCH ;

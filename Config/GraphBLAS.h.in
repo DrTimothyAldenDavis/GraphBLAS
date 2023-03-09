@@ -1772,14 +1772,9 @@ GB_GLOBAL GrB_IndexUnaryOp
 
     // These operators work on any data type, including user-defined.
 
-    // ROWINDEX: (i+y): row index plus y
-    GrB_ROWINDEX_INT32,  GrB_ROWINDEX_INT64,
-
-    // COLINDEX: (j+y): col index plus y
-    GrB_COLINDEX_INT32,  GrB_COLINDEX_INT64,
-
-    // DIAGINDEX: (j-(i+y)): diagonal index plus y
-    GrB_DIAGINDEX_INT32, GrB_DIAGINDEX_INT64,
+    GrB_ROWINDEX_INT32,  GrB_ROWINDEX_INT64,    // (i+y): row index plus y
+    GrB_COLINDEX_INT32,  GrB_COLINDEX_INT64,    // (j+y): col index plus y
+    GrB_DIAGINDEX_INT32, GrB_DIAGINDEX_INT64,   // (j-(i+y)): diag index plus y
 
     //--------------------------------------------------------------------------
     // Result is bool, depending only on the indices i,j, and y
@@ -1788,29 +1783,15 @@ GB_GLOBAL GrB_IndexUnaryOp
     // These operators work on any data type, including user-defined.
     // The scalar y is int64.
 
-    // TRIL: (j <= (i+y)): lower triangular part
-    GrB_TRIL,
+    GrB_TRIL,       // (j <= (i+y)): lower triangular part
+    GrB_TRIU,       // (j >= (i+y)): upper triangular part
+    GrB_DIAG,       // (j == (i+y)): diagonal
+    GrB_OFFDIAG,    // (j != (i+y)): offdiagonal
 
-    // TRIU: (j >= (i+y)): upper triangular part
-    GrB_TRIU,
-
-    // DIAG: (j == (i+y)): diagonal
-    GrB_DIAG,
-
-    // OFFDIAG: (j != (i+y)): offdiagonal
-    GrB_OFFDIAG,
-
-    // COLLE: (j <= y): columns 0:y
-    GrB_COLLE,
-
-    // COLGT: (j > y): columns y+1:ncols-1
-    GrB_COLGT,
-
-    // ROWLE: (i <= y): rows 0:y
-    GrB_ROWLE,
-
-    // ROWGT: (i > y): rows y+1:nrows-1
-    GrB_ROWGT,
+    GrB_COLLE,      // (j <= y): columns 0:y
+    GrB_COLGT,      // (j > y): columns y+1:ncols-1
+    GrB_ROWLE,      // (i <= y): rows 0:y
+    GrB_ROWGT,      // (i > y): rows y+1:nrows-1
 
     //--------------------------------------------------------------------------
     // Result is bool, depending only on the value aij

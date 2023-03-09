@@ -9,6 +9,13 @@
 
 // C<M> = accum(C,select(A,k)) or accum(C,select(A',))
 
+#define GB_DEBUG
+
+#define GB_FREE_ALL                             \
+{                                               \
+    GB_Matrix_free ((GrB_Matrix *) &NewThunk) ; \
+}
+
 #include "GB_select.h"
 #include "GB_get_mask.h"
 
@@ -17,9 +24,9 @@ GrB_Info GxB_Matrix_select  // C<M> = accum (C, select(A,k)) or select(A',k)
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix M_in,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
-    const GxB_SelectOp op,          // operator to select the entries
+    const GxB_SelectOp op_in,       // operator to select the entries
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Scalar Thunk,         // optional input for select operator
+    const GrB_Scalar Thunk_in,      // optional input for select operator
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
@@ -42,6 +49,35 @@ GrB_Info GxB_Matrix_select  // C<M> = accum (C, select(A,k)) or select(A',k)
     GrB_Matrix M = GB_get_mask (M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
+    // convert the GxB_SelectOp to a GrB_IndexUnaryOp
+    //--------------------------------------------------------------------------
+
+    GB_Operator op = NULL ;
+    GrB_IndexUnaryOp idxunop = NULL ;
+    GrB_Scalar NewThunk = NULL, Thunk ;
+    info = GB_selectop_to_idxunop (&idxunop, &NewThunk, op_in, Thunk_in,
+        A->type, Werk) ;
+    if (info == GrB_NOT_IMPLEMENTED)
+    {
+        // punt; use the original op (FIXME: remove this case)
+        fprintf (stderr, "Punt!!\n") ; printf ("Punt!!\n") ;
+        op = (GB_Operator) op_in ;
+        Thunk = Thunk_in ;
+        return (GrB_NOT_IMPLEMENTED) ;
+    }
+    else if (info == GrB_SUCCESS)
+    {
+        // use the new GrB_IndexUnaryOp
+        op = (GB_Operator) idxunop ;
+        Thunk = NewThunk ;
+    }
+    else
+    {
+        // the op or Thunk are not compatible, or out of memory
+        return (info) ;
+    }
+
+    //--------------------------------------------------------------------------
     // select the entries and optionally transpose; assemble pending tuples
     //--------------------------------------------------------------------------
 
@@ -49,13 +85,14 @@ GrB_Info GxB_Matrix_select  // C<M> = accum (C, select(A,k)) or select(A',k)
         C, C_replace,               // C and its descriptor
         M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                      // optional accum for Z=accum(C,T)
-        (GB_Operator) op,           // operator to select the entries
+        op,                         // operator to select the entries
         A,                          // first input: A
         Thunk,                      // optional input for select operator
         A_transpose,                // descriptor for A
         Werk) ;
 
     GB_BURBLE_END ;
+    GB_FREE_ALL ;
     return (info) ;
 }
 

@@ -19,7 +19,8 @@
     GrB_Matrix_free_(&C) ;              \
     GrB_Matrix_free_(&A) ;              \
     GrB_Scalar_free_(&Thunk_type) ;     \
-    GxB_SelectOp_free_(&op) ;           \
+/*  GxB_SelectOp_free_(&op) ;   */      \
+    GrB_IndexUnaryOp_free_(&op) ;       \
     GrB_Descriptor_free_(&desc) ;       \
     GB_mx_put_global (true) ;           \
 }
@@ -39,6 +40,7 @@
 #define LOHI_DEFN                                       \
 "typedef struct { int64_t lo ; int64_t hi ; } LoHi_type ;"
 
+#if 0
 bool LoHi_band (GrB_Index i, GrB_Index j,
     /* x is unused: */ const void *x, const LoHi_type *thunk) ;
 
@@ -49,6 +51,19 @@ bool LoHi_band (GrB_Index i, GrB_Index j,
     int64_t j2 = (int64_t) j ;
     return ((thunk->lo <= (j2-i2)) && ((j2-i2) <= thunk->hi)) ;
 }
+
+#else
+void LoHi_band (bool *z, /* x is unused: */ const void *x,
+    GrB_Index i, GrB_Index j, const LoHi_type *thunk) ;
+
+void LoHi_band (bool *z, /* x is unused: */ const void *x,
+    GrB_Index i, GrB_Index j, const LoHi_type *thunk)
+{
+    int64_t i2 = (int64_t) i ;
+    int64_t j2 = (int64_t) j ;
+    (*z) = ((thunk->lo <= (j2-i2)) && ((j2-i2) <= thunk->hi)) ;
+}
+#endif
 
 void mexFunction
 (
@@ -62,7 +77,8 @@ void mexFunction
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Matrix C = NULL ;
     GrB_Matrix A = NULL ;
-    GxB_SelectOp op = NULL ;
+//  GxB_SelectOp op = NULL ;
+    GrB_IndexUnaryOp op = NULL ;
     GrB_Info info ;
     GrB_Descriptor desc = NULL ;
     GrB_Scalar Thunk = NULL ;
@@ -110,15 +126,18 @@ void mexFunction
 
     // create operator
     // use the user-defined operator, from the LoHi_band function
-    METHOD (GxB_SelectOp_new (&op, (GxB_select_function) LoHi_band,
-        NULL, Thunk_type)) ;
+//  METHOD (GxB_SelectOp_new (&op, (GxB_select_function) LoHi_band,
+//      NULL, Thunk_type)) ;
+    METHOD (GrB_IndexUnaryOp_new (&op, (GxB_select_function) LoHi_band,
+        GrB_BOOL, GrB_FP64, Thunk_type)) ;
 
     GrB_Index nrows, ncols ;
     GrB_Matrix_nrows (&nrows, A) ;
     GrB_Matrix_ncols (&ncols, A) ;
     if (bandwidth.lo == 0 && bandwidth.hi == 0 && nrows == 10 && ncols == 10)
     {
-        GxB_SelectOp_fprint_ (op, 3, NULL) ;
+//      GxB_SelectOp_fprint_ (op, 3, NULL) ;
+        GxB_IndexUnaryOp_fprint (op, "lohi_op", 3, NULL) ;
     }
 
     // create result matrix C
@@ -135,12 +154,15 @@ void mexFunction
     if (GB_NCOLS (C) == 1 && !atranspose)
     {
         // this is just to test the Vector version
-        OK (GxB_Vector_select_((GrB_Vector) C, NULL, NULL, op, (GrB_Vector) A,
-            Thunk, NULL)) ;
+        OK (GrB_Vector_select_Scalar ((GrB_Vector) C, NULL, NULL, op,
+            (GrB_Vector) A, Thunk, NULL)) ;
+//      OK (GxB_Vector_select_((GrB_Vector) C, NULL, NULL, op, (GrB_Vector) A,
+//          Thunk, NULL)) ;
     }
     else
     {
-        OK (GxB_Matrix_select_(C, NULL, NULL, op, A, Thunk, desc)) ;
+//      OK (GxB_Matrix_select_(C, NULL, NULL, op, A, Thunk, desc)) ;
+        OK (GrB_Matrix_select_Scalar (C, NULL, NULL, op, A, Thunk, desc)) ;
     }
 
 

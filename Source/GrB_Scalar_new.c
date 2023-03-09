@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// The new GGr_Scalar has no entry.  Internally, it is identical to a
+// The new GrB_Scalar has no entry.  Internally, it is identical to a
 // GrB_Vector of length 1.  If this method fails, *s is set to NULL.
 
 #include "GB.h"

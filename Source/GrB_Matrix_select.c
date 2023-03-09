@@ -83,7 +83,7 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_select_, T)                              \
     GB_WHERE (C, GB_STR(prefix) "_Matrix_select_" GB_STR(T)                 \
         " (C, M, accum, op, A, thunk, desc)") ;                             \
     GB_SCALAR_WRAP (Thunk, thunk, GB_EVAL3 (prefix, _, T)) ;                \
-    return (GB_sel (C, M, accum, op, A, Thunk, desc, Werk)) ;            \
+    return (GB_sel (C, M, accum, op, A, Thunk, desc, Werk)) ;               \
 }
 
 GB_SEL (GrB, bool      , BOOL  )

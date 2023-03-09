@@ -121,8 +121,10 @@ void mexFunction
     // make M boolean, stored by column, and drop explicit zeros
     GrB_Matrix M_input = gb_get_shallow (pargin [1]) ;
     GrB_Matrix M = gb_new (GrB_BOOL, nrows, ncols, GxB_BY_COL, not_bitmap) ;
-    OK1 (M, GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input,
-        NULL, NULL)) ;
+//  OK1 (M, GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input,
+//      NULL, NULL)) ;
+    OK1 (M, GrB_Matrix_select_BOOL (M, NULL, NULL, GrB_VALUENE_BOOL, M_input,
+        0, NULL)) ;
     OK (GrB_Matrix_free (&M_input)) ;
 
     GrB_Index mnz ;

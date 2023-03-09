@@ -118,7 +118,8 @@ void mexFunction
 
     OK (GrB_Matrix_new (&C, GxB_FC32, n, n)) ;
     OK (GrB_Scalar_new (&scalar, GxB_FC32)) ;
-    expected = GrB_DOMAIN_MISMATCH ;
+//  expected = GrB_DOMAIN_MISMATCH ;
+    expected = GrB_NOT_IMPLEMENTED ;
     ERR (GxB_Matrix_select (C, NULL, NULL, GxB_LT_THUNK, A, scalar, NULL)) ;
     const char *message = NULL ;
     OK (GrB_Matrix_error (&message, C)) ;

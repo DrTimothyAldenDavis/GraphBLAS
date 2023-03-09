@@ -114,26 +114,6 @@ void mexFunction
         mexErrMsgTxt ("desc failed") ;
     }
 
-    // create the GB_mxm_scode.h file, if requested
-    if (nargin == 8)
-    {
-
-        GrB_Desc_Value Mask_desc = GxB_DEFAULT ;
-        if (desc != NULL) Mask_desc = desc->mask ;
-        bool Mask_comp = (Mask_desc == GrB_COMP)
-                      || (Mask_desc == GrB_COMP + GrB_STRUCTURE) ;
-        bool Mask_struct = (Mask_desc == GrB_STRUCTURE)
-                        || (Mask_desc == GrB_STRUCTURE + GrB_COMP) ;
-        bool flipxy = (bool) mxGetScalar (pargin [7]) ;
-
-        bool C_iso = C->iso ;
-        int C_sparsity = GB_sparsity (C) ;
-        GrB_Type ctype = C->type ;
-
-        GB_debugify_mxm (false, C_iso, C_sparsity, ctype, M,
-            Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
-    }
-
     // C<M> = accum(C,A*B)
     METHOD (GrB_mxm (C, M, accum, semiring, A, B, desc)) ;
 

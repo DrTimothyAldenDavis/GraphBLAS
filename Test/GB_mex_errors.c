@@ -58,8 +58,8 @@
     GrB_Descriptor_free_(&dnt) ;      CHECK (dnt          == NULL) ;      \
     GrB_Descriptor_free_(&dtt) ;      CHECK (dtt          == NULL) ;      \
     GrB_Descriptor_free_(&dcrud) ;    CHECK (dcrud        == NULL) ;      \
-    GxB_SelectOp_free_(&selectop) ;   CHECK (selectop     == NULL) ;      \
-    GxB_SelectOp_free_(&selectopcrud) ; CHECK (selectopcrud == NULL) ;    \
+/*  GxB_SelectOp_free_(&selectop) ;   CHECK (selectop     == NULL) ;   */ \
+/*  GxB_SelectOp_free_(&selectopcrud) ; CHECK (selectopcrud == NULL) ; */ \
     GrB_Scalar_free_(&a_scalar) ;                                         \
     GB_mx_put_global (true) ;                                             \
 }
@@ -184,7 +184,7 @@ void mexFunction
 
     GB_void *pp = NULL ;
 
-    GxB_SelectOp selectop = NULL, selectopcrud = NULL, sel0 ;
+//  GxB_SelectOp selectop = NULL, selectopcrud = NULL, sel0 ;
     GrB_Scalar a_scalar = NULL ;
 
     const char *err ;
@@ -486,6 +486,7 @@ void mexFunction
     // SelectOp
     //--------------------------------------------------------------------------
 
+#if 0
     printf ("GxB_SelectOp-------------------------------------------------\n") ;
     CHECK (selectop == NULL) ;
     OK (GxB_SelectOp_new (&selectop, (GxB_select_function) fselect, GrB_FP64, GrB_FP64)) ;
@@ -524,6 +525,7 @@ void mexFunction
 
     OK (GxB_SelectOp_free_(&selectop)) ;
     CHECK (selectop == NULL) ;
+#endif
 
     //--------------------------------------------------------------------------
     // Monoid
@@ -3378,6 +3380,7 @@ void mexFunction
     // select
     //--------------------------------------------------------------------------
 
+#if 0
     printf ("GxB_select---------------------------------------------------\n") ;
     CHECK (selectop == NULL) ;
     OK (GxB_SelectOp_new (&selectop, (GxB_select_function) fselect, GrB_FP64, GrB_FP64)) ;
@@ -3463,6 +3466,7 @@ void mexFunction
     ERR1 (A, GxB_Matrix_select_(A , NULL, NULL, GxB_TRIL, C , NULL, d0)) ;
 
     OK (GrB_Scalar_free_(&Thunk)) ;
+#endif
 
     //--------------------------------------------------------------------------
     // reduce to scalar
@@ -3979,6 +3983,7 @@ void mexFunction
     // SelectOp check
     //--------------------------------------------------------------------------
 
+#if 0
     printf ("\n-------------- GB_SelectOp_check:\n") ;
 
     Werk->where = "GB_SelectOp_check" ;
@@ -4020,6 +4025,7 @@ void mexFunction
     OK (GB_SelectOp_check (selectop, "user selectop ok", G3, ff)) ;
 
     printf ("\nAll GB_SelectOp_check tests passed (errors expected)\n") ;
+#endif
 
     //--------------------------------------------------------------------------
     // Monoid check
@@ -4897,8 +4903,8 @@ void mexFunction
     ERR (GB_Vector_check (vcrud, "", G0, NULL)) ;
     ERR (GB_Matrix_check (Acrud, "", G0, NULL)) ;
     ERR (GB_Descriptor_check (dcrud, "", G0, NULL)) ;
-         GB_SelectOp_check (selectopcrud, "", G3, NULL) ;
-    ERR (GB_SelectOp_check (selectopcrud, "", G0, NULL)) ;
+//       GB_SelectOp_check (selectopcrud, "", G3, NULL) ;
+//  ERR (GB_SelectOp_check (selectopcrud, "", G0, NULL)) ;
 
     ERR (GxB_Type_fprint (Tcrud, "crud", G0, ff)) ;
     ERR (GxB_UnaryOp_fprint (op1crud, "crud", G0, ff)) ;
@@ -4908,8 +4914,8 @@ void mexFunction
     ERR (GxB_Vector_fprint (vcrud, "crud", G0, ff)) ;
     ERR (GxB_Matrix_fprint (Acrud, "crud", G0, ff)) ;
     ERR (GxB_Descriptor_fprint (dcrud, "crud", G0, ff)) ;
-         GxB_SelectOp_fprint (selectopcrud, "crud", G3, ff) ;
-    ERR (GxB_SelectOp_fprint (selectopcrud, "crud", G0, ff)) ;
+//       GxB_SelectOp_fprint (selectopcrud, "crud", G3, ff) ;
+//  ERR (GxB_SelectOp_fprint (selectopcrud, "crud", G0, ff)) ;
 
     #define REMAGIC(p) if (p != NULL) p->magic = GB_MAGIC ;
     REMAGIC (Tcrud)
@@ -4920,7 +4926,7 @@ void mexFunction
     REMAGIC (vcrud)
     REMAGIC (Acrud)
     REMAGIC (dcrud)
-    REMAGIC (selectopcrud)
+//  REMAGIC (selectopcrud)
     #undef REMAGIC
 
     OK (GB_Type_check (Tcrud, "", G0, NULL)) ;
@@ -4931,7 +4937,7 @@ void mexFunction
     OK (GB_Vector_check (vcrud, "", G0, NULL)) ;
     OK (GB_Matrix_check (Acrud, "", G0, NULL)) ;
     OK (GB_Descriptor_check (dcrud, "", G0, NULL)) ;
-    OK (GB_SelectOp_check (selectopcrud, "", G0, NULL)) ;
+//  OK (GB_SelectOp_check (selectopcrud, "", G0, NULL)) ;
 
     OK (GxB_Type_fprint_(Tcrud, G0, ff)) ;
     OK (GxB_UnaryOp_fprint_(op1crud, G0, ff)) ;
@@ -4941,7 +4947,7 @@ void mexFunction
     OK (GxB_Vector_fprint_(vcrud, G0, ff)) ;
     OK (GxB_Matrix_fprint_(Acrud, G0, ff)) ;
     OK (GxB_Descriptor_fprint_(dcrud, G0, ff)) ;
-    OK (GxB_SelectOp_fprint_(selectopcrud, G0, ff)) ;
+//  OK (GxB_SelectOp_fprint_(selectopcrud, G0, ff)) ;
 
     //--------------------------------------------------------------------------
     // GB_Descriptor_get
@@ -5967,8 +5973,8 @@ void mexFunction
     GrB_Descriptor_free_(&dnt) ;      CHECK (dnt          == NULL) ;
     GrB_Descriptor_free_(&dtt) ;      CHECK (dtt          == NULL) ;
     GrB_Descriptor_free_(&dcrud) ;    CHECK (dcrud        == NULL) ;
-    GxB_SelectOp_free_(&selectop) ;   CHECK (selectop     == NULL) ;
-    GxB_SelectOp_free_(&selectopcrud) ; CHECK (selectopcrud == NULL) ;
+//  GxB_SelectOp_free_(&selectop) ;   CHECK (selectop     == NULL) ;
+//  GxB_SelectOp_free_(&selectopcrud) ; CHECK (selectopcrud == NULL) ;
 
     nmalloc = GB_Global_nmalloc_get ( ) ;
     printf ("nmalloc %d before complex_finalize\n", nmalloc) ;

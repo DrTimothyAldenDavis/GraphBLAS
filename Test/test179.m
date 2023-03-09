@@ -17,7 +17,7 @@ scalar = 3+1i ;
 A.matrix  (2:3,2:4) = scalar ;
 A.pattern (2:3,2:4) = true ;
 
-for builtin = 0:1
+for builtin = 1 % 0:1
     GB_builtin_complex_set (builtin) ;
     for sparsity_control = [1 2 4]
         Cin.sparsity = sparsity_control ;

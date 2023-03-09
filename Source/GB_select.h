@@ -53,6 +53,18 @@ GrB_Info GB_bitmap_selector
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_selectop_to_idxunop
+(
+    // output:
+    GrB_IndexUnaryOp *idxunop_handle,
+    GrB_Scalar *NewThunk_handle,
+    // input:
+    GxB_SelectOp selectop,
+    GrB_Scalar Thunk,
+    GrB_Type atype,
+    GB_Werk Werk
+) ;
+
 //------------------------------------------------------------------------------
 // GB_iso_select: assign the iso value of C for GB_*selector
 //------------------------------------------------------------------------------

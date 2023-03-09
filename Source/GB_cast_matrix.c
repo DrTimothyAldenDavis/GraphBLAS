@@ -39,7 +39,7 @@ GrB_Info GB_cast_matrix     // copy or typecast the values from A into C
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
-    ASSERT (A->iso == C->iso) ;
+    ASSERT (GB_IMPLIES (anz > 1, A->iso == C->iso)) ;
     if (anz == 0)
     { 
         // nothing to do
