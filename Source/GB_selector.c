@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// GB_selector does the work for GB_select and the GxB_*select methods.  It
-// also deletes zombies for GB_wait using the NONZOMBIE operator, and deletes
-// entries outside a smaller matrix for GxB_*resize.
+// GB_selector does the work for GB_select.  It also deletes zombies for
+// GB_wait using the GxB_NONZOMBIE operator, and deletes entries outside a
+// smaller matrix for GxB_*resize.
 
 // TODO: GB_selector does not exploit the mask.
 
@@ -43,12 +43,10 @@
 GrB_Info GB_selector
 (
     GrB_Matrix C,               // output matrix, NULL or existing header
-    GB_Opcode opcode,           // selector opcode
-    const GB_Operator op,       // user operator, NULL for resize/nonzombie
+    const GrB_IndexUnaryOp op,
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
-    int64_t ithunk,             // (int64_t) Thunk, if Thunk is NULL
-    const GrB_Scalar Thunk,     // optional input for select operator
+    const GrB_Scalar Thunk,
     GB_Werk Werk
 )
 {
@@ -58,12 +56,12 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT_OP_OK_OR_NULL (op, "selectop/idxunop for GB_selector", GB0) ;
-    ASSERT_SCALAR_OK_OR_NULL (Thunk, "Thunk for GB_selector", GB0) ;
-    ASSERT (GB_IS_SELECTOP_CODE (opcode) || GB_IS_INDEXUNARYOP_CODE (opcode)) ;
+    ASSERT_INDEXUNARYOP_OK (op, "idxunop for GB_selector", GB0) ;
+    ASSERT_SCALAR_OK (Thunk, "Thunk for GB_selector", GB0) ;
     ASSERT_MATRIX_OK (A, "A input for GB_selector", GB_FLIP (GB0)) ;
     // positional selector (tril, triu, diag, offdiag, resize, rowindex, ...):
     // can't be jumbled.  nonzombie, entry-valued op, user op: jumbled OK
+    GB_Opcode opcode = op->opcode ;
     ASSERT (GB_IMPLIES (GB_OPCODE_IS_POSITIONAL (opcode), !GB_JUMBLED (A))) ;
     ASSERT (C == NULL || (C != NULL && (C->static_header || GBNSTATIC))) ;
 
@@ -92,91 +90,65 @@ GrB_Info GB_selector
     // get Thunk
     //--------------------------------------------------------------------------
 
-    // The scalar value of Thunk has already been typecasted to an integer
-    // (int64_t ithunk).
-
-    // It is also now typecast to the same type as A (to the scalar athunk)
-    // which is required for GxB_SelectOps, and to the op->ytype (the scalar
-    // ythunk) for GrB_IndexUnaryOps.
-
-    // If Thunk is NULL, or has no entry, it is treated as a scalar value
-    // of zero.
-
     const size_t asize = A->type->size ;
     const GB_Type_code acode = A->type->code ;
 
-    GrB_Type ytype = NULL, xtype = NULL ;
-    GB_Type_code ycode = GB_ignore_code, xcode = GB_ignore_code ;
-    size_t ysize = 1, xsize = 1 ;
+    GrB_Type xtype = NULL ;
+    GB_Type_code xcode = GB_ignore_code ;
+    size_t xsize = 1 ;
 
-    if (op != NULL)
-    {
-        if (op->ytype != NULL)
-        { 
-            // get the type of the thunk input of the operator
-            ytype = op->ytype ;
-            ycode = ytype->code ;
-            ysize = ytype->size ;
-        }
-        if (op->xtype != NULL)
-        { 
-            // get the type of the A input of the operator
-            xtype = op->xtype ;
-            xcode = xtype->code ;
-            xsize = xtype->size ;
-        }
+    // get the type of the thunk input of the operator
+    GrB_Type ytype = op->ytype ;
+    GB_Type_code ycode = ytype->code ;
+    size_t ysize = ytype->size ;
+    if (op->xtype != NULL)
+    { 
+        // get the type of the A input of the operator
+        xtype = op->xtype ;
+        xcode = xtype->code ;
+        xsize = xtype->size ;
     }
 
-    // athunk = (A->type) Thunk, for selectop thunk comparators only
-    GB_void athunk [GB_VLA(asize)] ;
-    memset (athunk, 0, asize) ;
-
-    // ythunk = (op->ytype) Thunk, for idxnunop
-    GB_void ythunk [GB_VLA(ysize)] ;
-    memset (ythunk, 0, ysize) ;
-
-    bool op_is_selectop = GB_IS_SELECTOP_CODE (opcode) ;
-    bool op_is_idxunop  = GB_IS_INDEXUNARYOP_CODE (opcode) ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
 
-    if (Thunk != NULL)
+    ASSERT (GB_nnz ((GrB_Matrix) Thunk) > 0) ;
+    const GB_Type_code tcode = Thunk->type->code ;
+
+    // ythunk = (op->ytype) Thunk
+    GB_void ythunk [GB_VLA(ysize)] ;
+    memset (ythunk, 0, ysize) ;
+    GB_cast_scalar (ythunk, ycode, Thunk->x, tcode, ysize) ;
+
+    // ithunk = (int64) Thunk, if compatible
+    int64_t ithunk = 0 ;
+    if (GB_Type_compatible (GrB_INT64, Thunk->type))
     {
-        // Thunk is passed to GB_selector only if it is non-empty
-        ASSERT (GB_nnz ((GrB_Matrix) Thunk) > 0) ;
-        const GB_Type_code tcode = Thunk->type->code ;
-        if (op_is_selectop && opcode != GB_USER_selop_code)
-        { 
-            // athunk = (atype) Thunk, for built-in GxB_SelectOps only
-            GB_cast_scalar (athunk, acode, Thunk->x, tcode, asize) ;
-        }
-        if (ytype != NULL)
-        { 
-            // ythunk = (op->ytype) Thunk
-            GB_cast_scalar (ythunk, ycode, Thunk->x, tcode, ysize) ;
-        }
+        GB_cast_scalar (&ithunk, GB_INT64_code, Thunk->x, tcode,
+            sizeof (int64_t)) ;
+    }
+
+    // athunk = (A->type) Thunk, for VALUEEQ operator only
+    GB_void athunk [GB_VLA(asize)] ;
+    memset (athunk, 0, asize) ;
+    if (opcode == GB_VALUEEQ_idxunop_code)
+    {
+        ASSERT (GB_Type_compatible (A->type, Thunk->type)) ;
+        GB_cast_scalar (athunk, acode, Thunk->x, tcode, asize) ;
     }
 
     //--------------------------------------------------------------------------
-    // handle iso case for built-in select ops that depend only on the value
+    // handle iso case for built-in ops that depend only on the value
     //--------------------------------------------------------------------------
 
-    bool op_is_select_valued =
-        opcode >= GB_NONZERO_selop_code && opcode <= GB_LE_THUNK_selop_code ;
-
-    bool op_is_idxunop_valued =
-        opcode >= GB_VALUENE_idxunop_code && opcode <= GB_VALUELE_idxunop_code ;
-
-    if (A_iso && (op_is_select_valued || op_is_idxunop_valued))
+    if (A_iso && opcode >= GB_VALUENE_idxunop_code
+              && opcode <= GB_VALUELE_idxunop_code)
     { 
 
-        // select op is NONZERO, EQ_ZERO, GT_ZERO, GE_ZERO, LT_ZERO, LE_ZERO,
-        // EQ_THUNK, GT_THUNK, GE_THUNK, LT_THUNK, or LE_THUNK, or the idxunop
-        // VALUE* operators.  All of these select/idxunop ops depend only on
-        // the value of A(i,j).  Since A is iso, either all entries in A will
-        // be copied to C and thus C can be created as a shallow copy of A, or
-        // no entries from A will be copied to C and thus C is an empty matrix.
-        // The select factory is not needed, except to check the iso value via
-        // GB_bitmap_selector.
+        // The VALUE* operators depend only on the value of A(i,j).  Since A is
+        // iso, either all entries in A will be copied to C and thus C can be
+        // created as a shallow copy of A, or no entries from A will be copied
+        // to C and thus C is an empty matrix.  The select factory is not
+        // needed, except to check the iso value via GB_bitmap_selector.
 
         ASSERT (!in_place_A) ;
         ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
@@ -189,18 +161,10 @@ GrB_Info GB_selector
 
         struct GB_Scalar_opaque S_header ;
         GrB_Scalar S ;
-        if (op_is_select_valued)
-        { 
-            // wrap the iso-value of A in the scalar S, with no typecasting
-            S = GB_Scalar_wrap (&S_header, A->type, A->x) ;
-        }
-        else
-        { 
-            // wrap the iso-value of A in the scalar S, typecasted to xtype
-            // xscalar = (op->xtype) A->x
-            GB_cast_scalar (xscalar, xcode, A->x, acode, asize) ;
-            S = GB_Scalar_wrap (&S_header, xtype, xscalar) ;
-        }
+        // wrap the iso-value of A in the scalar S, typecasted to xtype
+        // xscalar = (op->xtype) A->x
+        GB_cast_scalar (xscalar, xcode, A->x, acode, asize) ;
+        S = GB_Scalar_wrap (&S_header, xtype, xscalar) ;
         S->iso = false ;    // but ensure S is not iso
         ASSERT_SCALAR_OK (S, "iso scalar wrap", GB0) ;
 
@@ -229,12 +193,12 @@ GrB_Info GB_selector
 
     // now if A is iso, the following operators still need to be handled:
 
-    //      GB_TRIL_selop_code        : use GB_sel__tril_iso
-    //      GB_TRIU_selop_code        : use GB_sel__triu_iso
-    //      GB_DIAG_selop_code        : use GB_sel__diag_iso
-    //      GB_OFFDIAG_selop_code     : use GB_sel__offdiag_iso
-    //      GB_NONZOMBIE_selop_code   : use GB_sel__nonzombie_iso
-    //      GB_USER_selop_code        : use GB_sel__user_iso
+    //      GB_TRIL_idxunop_code      : use GB_sel__tril_iso
+    //      GB_TRIU_idxunop_code      : use GB_sel__triu_iso
+    //      GB_DIAG_idxunop_code      : use GB_sel__diag_iso
+    //      GB_OFFDIAG_idxunop_code   : use GB_sel__offdiag_iso
+    //      GB_NONZOMBIE_idxunop_code : use GB_sel__nonzombie_iso
+    //      GB_USER_idxunop_code      : use GB_sel__user_iso
     //      GB_ROWINDEX_idxunop_code  : use GB_sel__rowindex_iso
     //      GB_ROWLE_idxunop_code     : use GB_sel__rowle_iso
     //      GB_ROWGT_idxunop_code     : use GB_sel__rowle_iso
@@ -245,7 +209,7 @@ GrB_Info GB_selector
     //      GB_COLLE_idxunop_code     : 
     //      GB_COLGT_idxunop_code     : 
 
-    // Except for GB_USER_selop_code and idxunop, the GB_sel__*_iso methods do
+    // Except for user idxunops, the GB_sel__*_iso methods do
     // not access the values of A and C, just the pattern.
 
     //--------------------------------------------------------------------------
@@ -253,14 +217,14 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     bool use_bitmap_selector ;
-    if (opcode == GB_NONZOMBIE_selop_code || in_place_A)
+    if (opcode == GB_NONZOMBIE_idxunop_code || in_place_A)
     { 
         // GB_bitmap_selector does not support the nonzombie opcode, nor does
         // it support operating on A in place.  For the NONZOMBIE operator, A
         // will never be bitmap.
         use_bitmap_selector = false ;
     }
-    else if (opcode == GB_DIAG_selop_code)
+    else if (opcode == GB_DIAG_idxunop_code)
     { 
         // GB_bitmap_selector supports the DIAG operator, but it is currently
         // not efficient (GB_bitmap_selector should return a sparse diagonal
@@ -283,18 +247,13 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     bool C_iso = A_iso ||                       // C iso value is Ax [0]
-        (opcode == GB_EQ_ZERO_selop_code) ||        // C iso value is zero
-        (opcode == GB_EQ_THUNK_selop_code) ||       // C iso value is thunk
-        (opcode == GB_NONZERO_selop_code &&
-         acode == GB_BOOL_code) ;               // C iso value is true
+        (opcode == GB_VALUEEQ_idxunop_code) ;   // C iso value is thunk
 
     if (C_iso)
     { 
         GB_BURBLE_MATRIX (A, "(iso select) ") ;
     }
 
-    //--------------------------------------------------------------------------
-    // debugify the select kernel
     //--------------------------------------------------------------------------
 
     // The CUDA select kernel would be called here.
@@ -303,11 +262,6 @@ GrB_Info GB_selector
     // or same as A otherwise
 
     // pass in ctype = A->type
-
-    #ifdef GB_DEBUGIFY_DEFN
-    GB_debugify_select (C_iso, opcode, op, flipij, A, ithunk, Thunk,
-        in_place_A) ;
-    #endif
 
     //==========================================================================
     // bitmap/full case
@@ -318,7 +272,7 @@ GrB_Info GB_selector
         GB_BURBLE_MATRIX (A, "(bitmap select) ") ;
         ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
         return (GB_bitmap_selector (C, C_iso, opcode, op,                  
-            flipij, A, ithunk, athunk, ythunk, Werk)) ;
+            flipij, A, ithunk, ythunk, Werk)) ;
     }
 
     //==========================================================================
@@ -638,7 +592,7 @@ GrB_Info GB_selector
 
     int A_ntasks, A_nthreads ;
     double work = 8*anvec
-        + ((opcode == GB_DIAG_selop_code) ? 0 : GB_nnz_held (A)) ;
+        + ((opcode == GB_DIAG_idxunop_code) ? 0 : GB_nnz_held (A)) ;
     GB_SLICE_MATRIX_WORK (A, 8, chunk, work) ;
 
     //--------------------------------------------------------------------------
@@ -691,7 +645,7 @@ GrB_Info GB_selector
     #define GB_SEL_WORKER(opname,aname,atype)                               \
     {                                                                       \
         GB_sel1 (opname, aname) (Zp, Cp, Wfirst, Wlast, A,                  \
-            flipij, ithunk, (atype *) athunk, ythunk, op,                   \
+            flipij, ithunk, (atype *) ythunk, op,                           \
             A_ek_slicing, A_ntasks, A_nthreads) ;                           \
     }                                                                       \
     break ;
@@ -745,9 +699,8 @@ GrB_Info GB_selector
 
     if (C_iso)
     { 
-        // The pattern of C is computed by the worker below, for the DIAG,
-        // OFFDIAG, TRIL, TRIU, NONZOMBIE, and USER select operators.
-        GB_iso_select (Cx, opcode, athunk, Ax, acode, asize) ;
+        // The pattern of C is computed by the worker below.
+        GB_iso_select (Cx, opcode, athunk, Ax, asize) ;
     }
 
     //--------------------------------------------------------------------------

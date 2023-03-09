@@ -215,53 +215,6 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 ) ;
 
 //------------------------------------------------------------------------------
-// GrB_select
-//------------------------------------------------------------------------------
-
-bool GB_enumify_select
-(
-    // output:
-    uint64_t *select_code,      // unique encoding of the selector
-    // input:
-    bool C_iso,                 // true if C is iso
-    GB_Opcode opcode,           // selector opcode
-    const GB_Operator op,       // user operator, NULL for resize/nonzombie
-    const bool flipij,          // if true, flip i and j for user operator
-    GrB_Matrix A,               // input matrix
-    bool in_place_A             // true if select is done in-place
-) ;
-
-void GB_typify_select           // determine x,y,z types for select
-(
-    // outputs:
-    GrB_Type *xtype,            // x,y,z types for select operator
-    GrB_Type *ytype,
-    GrB_Type *ztype,
-    // inputs:
-    GB_Opcode opcode,           // selector opcode
-    const GB_Operator op,       // user operator, NULL in some cases
-    GrB_Type atype              // the type of the A matrix
-) ;
-
-void GB_macrofy_select
-(
-    // output:
-    FILE *fp,                   // target file to write, already open
-    // input:
-    uint64_t select_code,       // unique encoding of the selector
-    GB_Opcode opcode,           // selector opcode
-    const GB_Operator op,       // user operator, NULL for resize/nonzombie
-    GrB_Type atype
-) ;
-
-char *GB_namify_select          // determine the select op name
-(
-    // inputs:
-    GB_Opcode opcode,           // selector opcode
-    const GB_Operator op        // user operator, NULL in some cases
-) ;
-
-//------------------------------------------------------------------------------
 // enumify and macrofy the mask matrix M
 //------------------------------------------------------------------------------
 
@@ -711,22 +664,6 @@ void GB_namify_problem
     const char *typename4,
     const char *typename5,
     const char *typename6
-) ;
-
-//------------------------------------------------------------------------------
-// GB_debugify_*: dump the definition file to /tmp
-//------------------------------------------------------------------------------
-
-void GB_debugify_select
-(
-    bool C_iso,                 // true if C is iso
-    GB_Opcode opcode,           // selector opcode
-    const GB_Operator op,       // user operator, NULL for resize/nonzombie
-    const bool flipij,          // if true, flip i and j for user operator
-    GrB_Matrix A,               // input matrix
-    int64_t ithunk,             // (int64_t) Thunk, if Thunk is NULL
-    const GrB_Scalar Thunk,     // optional input for select operator
-    bool in_place_A             // true if select is done in-place
 ) ;
 
 #endif

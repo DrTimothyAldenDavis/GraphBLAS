@@ -282,6 +282,8 @@ GXB_OP2 (POW    , "pow"   ) ;
     GRB_IDXOP_POSITIONAL_BOOL (ROWLE,   "rowle" ) ;
     GRB_IDXOP_POSITIONAL_BOOL (ROWGT,   "rowgt" ) ;
 
+    GXB_IDXOP_POSITIONAL_BOOL (NONZOMBIE, "nonzombie") ;
+
 #endif
 
 #if defined ( GB_COMPLEX )

@@ -324,6 +324,25 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
     } ;                                                                     \
     GrB_IndexUnaryOp GRB (op) = & GB_OPAQUE (GB_OP (op))
 
+// GxB_* IndexUnaryOps that depend on i,j, and y but not A(i,j), and result is
+// bool: NONZOMBIE
+#define GXB_IDXOP_POSITIONAL_BOOL(op,name)                                  \
+    extern void GB_FUNC_T(op,GB_XTYPE) (bool *z, const void *unused,        \
+        GrB_Index i, GrB_Index j, const GB_TYPE *y) ;                       \
+    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
+    {                                                                       \
+        GB_MAGIC, 0,                /* magic and header_size */             \
+        & GB_OPAQUE (BOOL),         /* ztype */                             \
+        NULL,                       /* xtype */                             \
+        & GB_OPAQUE (GB_XTYPE),     /* ytype */                             \
+        NULL, (GxB_index_unary_function) (& GB_FUNC_T (op, GB_XTYPE)),      \
+            NULL, NULL,                                                     \
+        name, 0,                    /* name and name_len */                 \
+        GB_ ## op ## _idxunop_code, /* opcode */                            \
+        NULL, 0, 0                  /* defn, alloc, hash */                 \
+    } ;                                                                     \
+    GrB_IndexUnaryOp GXB (op) = & GB_OPAQUE (GB_OP (op))
+
 // GrB_IndexUnaryOps that depend on A(i,j), and result is bool: VALUE* ops
 #define GRB_IDXOP_VALUE(op,name)                                            \
     extern void GB_FUNC_T(op,GB_XTYPE) (bool *z, const GB_TYPE *x,          \
@@ -342,7 +361,7 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
     } ;                                                                     \
     GrB_IndexUnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
 
-// GrB_IndexUnaryOps that depend on A(i,j), result is bool: VALUE* complex ops
+// GxB* IndexUnaryOps that depend on A(i,j), result is bool: VALUE* complex ops
 #define GXB_IDXOP_VALUE(op,name)                                            \
     extern void GB_FUNC_T(op,GB_XTYPE) (bool *z, const GB_TYPE *x,          \
         GrB_Index i_unused, GrB_Index j_unused, const GB_TYPE *y) ;         \
@@ -361,7 +380,7 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
     GrB_IndexUnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
 
 //------------------------------------------------------------------------------
-// built-in select operators
+// built-in select operators (historical: do not use in new code)
 //------------------------------------------------------------------------------
 
 #define GXB_SEL(op,name)                                                    \

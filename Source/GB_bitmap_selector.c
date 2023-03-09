@@ -16,13 +16,12 @@ GrB_Info GB_bitmap_selector
 (
     GrB_Matrix C,               // output matrix, static header
     const bool C_iso,           // if true, C is iso
-    GB_Opcode opcode,           // selector/idxunop opcode
-    const GB_Operator op,
+    const GrB_IndexUnaryOp op,
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
     const int64_t ithunk,       // (int64_t) Thunk, if Thunk is NULL
     const GB_void *restrict athunk,     // (A->type) Thunk
-    const GB_void *restrict ythunk,     // (op->utype) Thunk
+    const GB_void *restrict ythunk,     // (op->ytype) Thunk
     GB_Werk Werk
 )
 {
@@ -33,8 +32,9 @@ GrB_Info GB_bitmap_selector
 
     GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A for bitmap selector", GB0) ;
+    ASSERT_INDEXUNARYOP_OK (op, "idxunop for bitmap selector", GB0) ;
     ASSERT (GB_IS_BITMAP (A) || GB_as_if_full (A)) ;
-    ASSERT (opcode != GB_NONZOMBIE_selop_code) ;
+    ASSERT (opcode != GB_NONZOMBIE_idxunop_code) ;
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
 
     //--------------------------------------------------------------------------

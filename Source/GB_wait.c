@@ -256,14 +256,15 @@ GrB_Info GB_wait                // finish all pending computations
         // remove all zombies from A
         // GB_selector frees A->Y if it changes A->h, or leaves it
         // unmodified (and valid) otherwise.
+        struct GB_Scalar_opaque Thunk_header ;
+        int64_t k = 0 ;
+        GrB_Scalar Thunk = GB_Scalar_wrap (&Thunk_header, GrB_INT64, &k) ;
         GB_OK (GB_selector (
             NULL,                       // A in-place
-            GB_NONZOMBIE_selop_code,    // use the opcode only
-            NULL,                       // no GB_Operator
+            GxB_NONZOMBIE,
             false,                      // flipij is false
             A,                          // input/output matrix
-            0,                          // ithunk is unused
-            NULL,                       // no GrB_Scalar Thunk
+            Thunk,                      // Thunk = 0 (not used)
             Werk)) ;
         ASSERT (A->nzombies == (anz_orig - GB_nnz (A))) ;
         A->nzombies = 0 ;
