@@ -18,24 +18,23 @@
 #define GB_ENTRY_SELECTOR
 
 #define GB_A_TYPE \
-    GB_atype
+    int8_t
 
 // test value of Ax [p]
 #define GB_TEST_VALUE_OF_ENTRY(keep,p)                  \
-    GB_test_value_of_entry
+    bool keep = (Ax [p] != thunk)
 
 // Cx [pC] = Ax [pA], no typecast
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
-    GB_select_entry
+    Cx [pC] = Ax [pA]
 
 #include "GB_kernel_shared_definitions.h"
 
-m4_divert(if_phase1)
 //------------------------------------------------------------------------------
 // GB_sel_phase1
 //------------------------------------------------------------------------------
 
-void GB (_sel_phase1)
+void GB (_sel_phase1__ne_thunk_int8)
 (
     int64_t *restrict Cp,
     int64_t *restrict Wfirst,
@@ -51,12 +50,11 @@ void GB (_sel_phase1)
     #include "GB_select_entry_phase1_template.c"
 }
 
-m4_divert(if_phase2)
 //------------------------------------------------------------------------------
 // GB_sel_phase2
 //------------------------------------------------------------------------------
 
-void GB (_sel_phase2)
+void GB (_sel_phase2__ne_thunk_int8)
 (
     int64_t *restrict Ci,
     GB_void *restrict Cx_out,
@@ -73,14 +71,12 @@ void GB (_sel_phase2)
     GB_A_TYPE *restrict Cx = (GB_A_TYPE *) Cx_out ;
     #include "GB_select_phase2.c"
 }
-m4_divert(0)
 
-m4_divert(if_bitmap)
 //------------------------------------------------------------------------------
 // GB_sel_bitmap
 //------------------------------------------------------------------------------
 
-void GB (_sel_bitmap)
+void GB (_sel_bitmap__ne_thunk_int8)
 (
     int8_t *Cb,
     int64_t *cnvals_handle,
@@ -92,5 +88,4 @@ void GB (_sel_bitmap)
 { 
     #include "GB_bitmap_select_template.c"
 }
-m4_divert(0)
 

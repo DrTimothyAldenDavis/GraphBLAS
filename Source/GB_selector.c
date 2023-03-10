@@ -16,6 +16,8 @@
 // If C is NULL on input, A is modified in-place.
 // Otherwise, C is an uninitialized static header.
 
+#define GB_DEBUG
+
 #include "GB_select.h"
 #include "GB_ek_slice.h"
 #include "GB_sel__include.h"
@@ -109,7 +111,7 @@ GrB_Info GB_selector
         xsize = xtype->size ;
     }
 
-    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    bool op_is_positional = GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode) ;
 
     ASSERT (GB_nnz ((GrB_Matrix) Thunk) > 0) ;
     const GB_Type_code tcode = Thunk->type->code ;
@@ -148,28 +150,24 @@ GrB_Info GB_selector
         // iso, either all entries in A will be copied to C and thus C can be
         // created as a shallow copy of A, or no entries from A will be copied
         // to C and thus C is an empty matrix.  The select factory is not
-        // needed, except to check the iso value via GB_bitmap_selector.
+        // needed, except to check the iso value via GB_selector_bitmap.
 
         ASSERT (!in_place_A) ;
         ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
 
-        // construct a scalar containing the iso scalar of A
-
-        // xscalar = (op->xtype) A->x for idxunops
-        GB_void xscalar [GB_VLA(xsize)] ;
-        memset (xscalar, 0, xsize) ;
-
+        // construct a scalar S containing the iso scalar of ((xtype) A)
         struct GB_Scalar_opaque S_header ;
         GrB_Scalar S ;
         // wrap the iso-value of A in the scalar S, typecasted to xtype
         // xscalar = (op->xtype) A->x
+        GB_void xscalar [GB_VLA(xsize)] ;
         GB_cast_scalar (xscalar, xcode, A->x, acode, asize) ;
         S = GB_Scalar_wrap (&S_header, xtype, xscalar) ;
         S->iso = false ;    // but ensure S is not iso
         ASSERT_SCALAR_OK (S, "iso scalar wrap", GB0) ;
 
         // apply the select operator to the iso scalar S
-        GB_OK (GB_bitmap_selector (C, false, opcode, op, false,
+        GB_OK (GB_selector_bitmap (C, false, op, false,
             (GrB_Matrix) S, ithunk, athunk, ythunk, Werk)) ;
         ASSERT_MATRIX_OK (C, "C from iso scalar test", GB0) ;
         bool C_empty = (GB_nnz (C) == 0) ;
@@ -191,46 +189,25 @@ GrB_Info GB_selector
         }
     }
 
-    // now if A is iso, the following operators still need to be handled:
-
-    //      GB_TRIL_idxunop_code      : use GB_sel__tril_iso
-    //      GB_TRIU_idxunop_code      : use GB_sel__triu_iso
-    //      GB_DIAG_idxunop_code      : use GB_sel__diag_iso
-    //      GB_OFFDIAG_idxunop_code   : use GB_sel__offdiag_iso
-    //      GB_NONZOMBIE_idxunop_code : use GB_sel__nonzombie_iso
-    //      GB_USER_idxunop_code      : use GB_sel__user_iso
-    //      GB_ROWINDEX_idxunop_code  : use GB_sel__rowindex_iso
-    //      GB_ROWLE_idxunop_code     : use GB_sel__rowle_iso
-    //      GB_ROWGT_idxunop_code     : use GB_sel__rowle_iso
-    //      all other idxunop         : use GB_sel__idxunop_iso
-
-    // column selectors are handled below:
-    //      GB_COLINDEX_idxunop_code  : 
-    //      GB_COLLE_idxunop_code     : 
-    //      GB_COLGT_idxunop_code     : 
-
-    // Except for user idxunops, the GB_sel__*_iso methods do
-    // not access the values of A and C, just the pattern.
-
     //--------------------------------------------------------------------------
     // handle the bitmap/as-if-full case
     //--------------------------------------------------------------------------
 
-    bool use_bitmap_selector ;
+    bool use_selector_bitmap ;
     if (opcode == GB_NONZOMBIE_idxunop_code || in_place_A)
     { 
-        // GB_bitmap_selector does not support the nonzombie opcode, nor does
+        // GB_selector_bitmap does not support the nonzombie opcode, nor does
         // it support operating on A in place.  For the NONZOMBIE operator, A
         // will never be bitmap.
-        use_bitmap_selector = false ;
+        use_selector_bitmap = false ;
     }
     else if (opcode == GB_DIAG_idxunop_code)
     { 
-        // GB_bitmap_selector supports the DIAG operator, but it is currently
-        // not efficient (GB_bitmap_selector should return a sparse diagonal
+        // GB_selector_bitmap supports the DIAG operator, but it is currently
+        // not efficient (GB_selector_bitmap should return a sparse diagonal
         // matrix, not bitmap).  So use the sparse case if A is not bitmap,
         // since the sparse case below does not support the bitmap case.
-        use_bitmap_selector = GB_IS_BITMAP (A) ;
+        use_selector_bitmap = GB_IS_BITMAP (A) ;
     }
     else
     { 
@@ -239,7 +216,7 @@ GrB_Info GB_selector
         // tuples), use the bitmap selector for all other operators (TRIL,
         // TRIU, OFFDIAG, NONZERO, EQ*, GT*, GE*, LT*, LE*, and user-defined
         // operators).
-        use_bitmap_selector = GB_IS_BITMAP (A) || GB_as_if_full (A) ;
+        use_selector_bitmap = GB_IS_BITMAP (A) || GB_as_if_full (A) ;
     }
 
     //--------------------------------------------------------------------------
@@ -258,21 +235,16 @@ GrB_Info GB_selector
 
     // The CUDA select kernel would be called here.
 
-    // FIXME: pass in csparsity:  bitmap if use_bitmap_selector,
-    // or same as A otherwise
-
-    // pass in ctype = A->type
-
     //==========================================================================
     // bitmap/full case
     //==========================================================================
 
-    if (use_bitmap_selector)
+    if (use_selector_bitmap)
     { 
         GB_BURBLE_MATRIX (A, "(bitmap select) ") ;
         ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
-        return (GB_bitmap_selector (C, C_iso, opcode, op,                  
-            flipij, A, ithunk, ythunk, Werk)) ;
+        return (GB_selector_bitmap (C, C_iso, op,                  
+            flipij, A, ithunk, athunk, ythunk, Werk)) ;
     }
 
     //==========================================================================
@@ -290,7 +262,7 @@ GrB_Info GB_selector
     // get A: sparse, hypersparse, or full
     //--------------------------------------------------------------------------
 
-    // the case when A is bitmap is always handled above by GB_bitmap_selector
+    // the case when A is bitmap is always handled above by GB_selector_bitmap
     ASSERT (!GB_IS_BITMAP (A)) ;
 
     int64_t *restrict Ap = A->p ; size_t Ap_size = A->p_size ;
@@ -306,6 +278,7 @@ GrB_Info GB_selector
     //==========================================================================
 
     // The column selectors can be done in a single pass.
+    // FIXME: put this in its own function.
 
     if (opcode == GB_COLINDEX_idxunop_code ||
         opcode == GB_COLLE_idxunop_code ||
@@ -562,7 +535,7 @@ GrB_Info GB_selector
     }
 
     //==========================================================================
-    // all other select/idxunop operators
+    // all other operators
     //==========================================================================
 
     #undef  GB_FREE_ALL
@@ -631,43 +604,70 @@ GrB_Info GB_selector
         }
     }
 
-    //--------------------------------------------------------------------------
-    // via the factory kernel (includes user-defined ops)
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
+    //==========================================================================
     // phase1: count the live entries in each column
-    //--------------------------------------------------------------------------
+    //==========================================================================
 
-    // define the worker for the switch factory
-    #define GB_SELECT_PHASE1
-    #define GB_sel1(opname,aname) GB (_sel_phase1_ ## opname ## aname)
-    #define GB_SEL_WORKER(opname,aname,atype)                               \
-    {                                                                       \
-        GB_sel1 (opname, aname) (Zp, Cp, Wfirst, Wlast, A,                  \
-            flipij, ithunk, (atype *) ythunk, op,                           \
-            A_ek_slicing, A_ntasks, A_nthreads) ;                           \
-    }                                                                       \
-    break ;
+    info = GrB_NO_VALUE ;
+    if (op_is_positional || opcode == GB_NONZOMBIE_idxunop_code)
+    {
 
-    // launch the switch factory
-    const GB_Type_code typecode = (A_iso) ? GB_ignore_code : acode ;
-    #include "GB_select_factory.c"
+        //----------------------------------------------------------------------
+        // positional ops or nonzombie phase1 do not depend on the values
+        //----------------------------------------------------------------------
 
-    #undef  GB_SELECT_PHASE1
-    #undef  GB_SEL_WORKER
+        // no JIT worker needed for these operators
+        info = GB_select_positional_phase1 (Zp, Cp, Wfirst, Wlast, A, ithunk,
+            op, A_ek_slicing, A_ntasks, A_nthreads) ;
 
-    //--------------------------------------------------------------------------
-    // via the JIT kernel (for user-defined ops)
-    //--------------------------------------------------------------------------
+    }
+    else
+    {
 
-    #if GB_JIT_ENABLED
-    // JIT TODO: select: phase1
-    #endif
+        //----------------------------------------------------------------------
+        // entry selectors depend on the values in phase1
+        //----------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
+        ASSERT (!A_iso) ;
+        ASSERT (opcode >= GB_VALUENE_idxunop_code
+             && opcode <= GB_VALUELE_idxunop_code) ;
+
+        #ifndef GBCUDA_DEV
+
+            //------------------------------------------------------------------
+            // via the factory kernel (includes user-defined ops)
+            //------------------------------------------------------------------
+
+            // define the worker for the switch factory
+            #define GB_sel1(opname,aname) GB (_sel_phase1_ ## opname ## aname)
+            #define GB_SEL_WORKER(opname,aname)                             \
+            {                                                               \
+                info = GB_sel1 (opname, aname) (Cp, Wfirst, Wlast, A,       \
+                    ythunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;       \
+            }                                                               \
+            break ;
+
+            // launch the switch factory
+            #include "GB_select_entry_factory.c"
+            #undef  GB_SEL_WORKER
+
+        #endif
+
+        #if GB_JIT_ENABLED
+        // JIT TODO: select: phase1 entry selectors
+        #endif
+
+        if (info == GrB_NO_VALUE)
+        {
+            // generic entry selector, phase1
+            info = GB_select_generic_phase1 (Cp, Wfirst, Wlast, A,
+                flipij, ythunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;
+        }
+    }
+
+    //==========================================================================
     // phase1b: cumulative sum and allocate C
-    //--------------------------------------------------------------------------
+    //==========================================================================
 
     //--------------------------------------------------------------------------
     // cumulative sum of Cp and compute Cp_kfirst
@@ -700,42 +700,78 @@ GrB_Info GB_selector
     if (C_iso)
     { 
         // The pattern of C is computed by the worker below.
-        GB_iso_select (Cx, opcode, athunk, Ax, asize) ;
+        GB_select_iso (Cx, opcode, athunk, Ax, asize) ;
     }
 
-    //--------------------------------------------------------------------------
-    // via the factory kernel (includes user-defined ops)
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
+    //==========================================================================
     // phase2: select the entries
-    //--------------------------------------------------------------------------
+    //==========================================================================
 
-    // define the worker for the switch factory
-    #define GB_SELECT_PHASE2
-    #define GB_sel2(opname,aname) GB (_sel_phase2_ ## opname ## aname)
-    #define GB_SEL_WORKER(opname,aname,atype)                               \
-    {                                                                       \
-        GB_sel2 (opname, aname) (Ci, (atype *) Cx, Zp, Cp, Cp_kfirst, A,    \
-            flipij, ithunk, (atype *) athunk, ythunk, op,                   \
-            A_ek_slicing, A_ntasks, A_nthreads) ;                           \
-    }                                                                       \
-    break ;
+    info = GrB_NO_VALUE ;
+    if (op_is_positional || (opcode == GB_NONZOMBIE_idxunop && A_iso))
+    {
 
-    // launch the switch factory
-    #include "GB_select_factory.c"
+        //----------------------------------------------------------------------
+        // positional ops do not depend on the values
+        //----------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    // via the JIT kernel (for user-defined ops)
-    //--------------------------------------------------------------------------
+        // no JIT worker needed for these operators
+        info = GB_select_positional_phase2 (Ci, Cx, Zp, Cp, Cp_kfirst, A,
+            flipij, ithunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;
 
-    #if GB_JIT_ENABLED
-    // JIT TODO: select: phase2
-    #endif
+    }
+    else
+    {
 
-    //--------------------------------------------------------------------------
-    // create the result
-    //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // entry selectors depend on the values in phase2
+        //----------------------------------------------------------------------
+
+        ASSERT (!A_iso) ;
+        ASSERT ((opcode >= GB_VALUENE_idxunop_code &&
+                 opcode <= GB_VALUELE_idxunop_code)
+             || (opcode == GB_NONZOMBIE_idxunop && !A_iso)) ;
+
+        #ifndef GBCUDA_DEV
+
+            //------------------------------------------------------------------
+            // via the factory kernel
+            //------------------------------------------------------------------
+
+            // define the worker for the switch factory
+            #define GB_SELECT_PHASE2
+            #define GB_sel2(opname,aname) GB (_sel_phase2_ ## opname ## aname)
+            #define GB_SEL_WORKER(opname,aname)                             \
+            {                                                               \
+                info = GB_sel2 (opname, aname) (Ci, Cx, Cp, Cp_kfirst, A,   \
+                    ythunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;       \
+            }                                                               \
+            break ;
+
+            // launch the switch factory
+            #include "GB_select_entry_factory.c"
+
+        #endif
+
+        //----------------------------------------------------------------------
+        // via the JIT kernel
+        //----------------------------------------------------------------------
+
+        #if GB_JIT_ENABLED
+        // JIT TODO: select: phase2
+        #endif
+
+        if (info == GrB_NO_VALUE)
+        {
+            // generic entry selector, phase2
+            info = GB_select_generic_phase2 (Ci, Cx, Cp, Cp_kfirst, A, flipij,
+                ythunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;
+        }
+    }
+
+    //==========================================================================
+    // finalize the result
+    //==========================================================================
 
     if (in_place_A)
     {

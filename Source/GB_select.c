@@ -9,6 +9,8 @@
 
 // C<M> = accum (C, select(A,Thunk)) or select(A,Thunk)')
 
+#define GB_DEBUG
+
 #define GB_FREE_ALL         \
 {                           \
     GB_Matrix_free (&T) ;   \
@@ -174,7 +176,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
             sizeof (bool)) ;
     }
 
-    if (flipij &&GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode))
+    if (flipij && GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode))
     { 
 
         //----------------------------------------------------------------------

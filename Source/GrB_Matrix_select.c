@@ -9,6 +9,8 @@
 
 // C<M> = accum(C,select(A,k)) or accum(C,select(A',))
 
+#define GB_DEBUG
+
 #include "GB_select.h"
 #include "GB_get_mask.h"
 #include "GB_scalar.h"
