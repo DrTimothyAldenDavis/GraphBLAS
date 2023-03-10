@@ -46,7 +46,7 @@
     int64_t avdim = A->vdim ;
 
     ASSERT (GB_JUMBLED_OK (A)) ;
-    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) :
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
     //--------------------------------------------------------------------------
     // reduce each slice

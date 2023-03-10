@@ -38,6 +38,7 @@ GrB_Info GB_select_positional_phase1
         || (opcode == GB_DIAG_idxunop_code)) ;
     ASSERT (GB_OPCODE_IS_POSITIONAL (opcode)
         || opcode == GB_NONZOMBIE_idxunop_code) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
 
     //--------------------------------------------------------------------------
     // phase1: positional operators and nonzombie selector
@@ -85,7 +86,7 @@ GrB_Info GB_select_positional_phase1
         case GB_NONZOMBIE_idxunop_code : 
             // keep A(i,j) if it's not a zombie
             #define GB_A_TYPE void
-            #define GB_TEST_VALUE_OF_ENTRY(keep,p) bool keep = (Ai [p] >= 0)
+            #define GB_TEST_VALUE_OF_ENTRY(keep,p) bool keep = (i >= 0)
             #include "GB_select_entry_phase1_template.c"
             break ;
 

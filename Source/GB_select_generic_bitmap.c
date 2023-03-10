@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_select_generic_phase2.c: C=select(A,thunk)
+// GB_select_generic_bitmap.c: C=select(A,thunk) when C is bitmap
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,26 +7,22 @@
 
 //------------------------------------------------------------------------------
 
-// A is sparse or hypersparse, and the op is not positional.
+// A is sparse or hypersparse
 
 #define GB_DEBUG
 
 #include "GB_select.h"
 #include "GB_ek_slice.h"
 
-GrB_Info GB_select_generic_phase2
+GrB_Info GB_select_generic_bitmap
 (
-    int64_t *restrict Ci,
-    GB_void *restrict Cx,
-    const int64_t *restrict Cp,
-    const int64_t *restrict Cp_kfirst,
-    const GrB_Matrix A,
+    int8_t *Cb,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
     const bool flipij,
     const GB_void *restrict ythunk,
     const GrB_IndexUnaryOp op,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    const int nthreads
 )
 { 
 
@@ -34,20 +30,16 @@ GrB_Info GB_select_generic_phase2
     // check inputs
     //--------------------------------------------------------------------------
 
-    // The op is either valued, user-defined, or nonzombie.  If it is the
-    // nonzombie op, then A is not iso.
-
     GB_Opcode opcode = op->opcode ;
-    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
+    ASSERT (GB_IS_BITMAP (A) || GB_as_if_full (A)) ;
     ASSERT (!GB_OPCODE_IS_POSITIONAL (opcode)) ;
-    ASSERT (!(A->iso) || opcode == GB_USER_idxunop_code) ;
+    ASSERT (!(A->iso) || (opcode == GB_USER_idxunop_code)) ;
     ASSERT ((opcode >= GB_VALUENE_idxunop_code &&
-             opcode <= GB_VALUELE_idxunop_code)
-         || (opcode == GB_NONZOMBIE_idxunop_code && !(A->iso))
-         || (opcode == GB_USER_idxunop_code)) ;
+             opcode <= GB_VALUELE_idxunop_code) ||
+             (opcode == GB_USER_idxunop_code)) ;
 
     //--------------------------------------------------------------------------
-    // phase2: generic entry selector
+    // generic entry selector when C is bitmap
     //--------------------------------------------------------------------------
 
     GB_Type_code zcode = op->ztype->code ;
@@ -69,10 +61,6 @@ GrB_Info GB_select_generic_phase2
         // A is iso
         //----------------------------------------------------------------------
 
-        // Cx [pC] = Ax [pA], no typecast
-        #undef  GB_SELECT_ENTRY
-        #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)
-
         // x = (xtype) Ax [0]
         GB_void x [GB_VLA(xsize)] ;
         GB_cast_scalar (x, xcode, A->x, acode, asize) ;
@@ -88,7 +76,8 @@ GrB_Info GB_select_generic_phase2
             #define GB_TEST_VALUE_OF_ENTRY(keep,p)                          \
                 bool keep ;                                                 \
                 fkeep (&keep, x, flipij ? j : i, flipij ? i : j, ythunk) ;
-            #include "GB_select_phase2.c"
+
+            #include "GB_select_bitmap_template.c"
 
         }
         else
@@ -106,36 +95,15 @@ GrB_Info GB_select_generic_phase2
                 GB_void z [GB_VLA(zsize)] ;                                 \
                 fkeep (z, x, flipij ? j : i, flipij ? i : j, ythunk) ;      \
                 cast_Z_to_bool (&keep, z, zsize) ;
-            #include "GB_select_phase2.c"
 
+            #include "GB_select_bitmap_template.c"
         }
 
     }
     else
     {
 
-        //----------------------------------------------------------------------
-        // A is non-iso
-        //----------------------------------------------------------------------
-
-        // Cx [pC] = Ax [pA], no typecast
-        #undef  GB_SELECT_ENTRY
-        #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                                \
-            memcpy (Cx +((pC)*asize), Ax +((pA)*asize), asize)
-
-        if (opcode == GB_NONZOMBIE_idxunop_code)
-        {
-
-            //------------------------------------------------------------------
-            // nonzombie selector when A is not iso
-            //------------------------------------------------------------------
-
-            #undef  GB_TEST_VALUE_OF_ENTRY
-            #define GB_TEST_VALUE_OF_ENTRY(keep,p) bool keep = (i >= 0)
-            #include "GB_select_phase2.c"
-
-        }
-        else if (op->ztype == GrB_BOOL && op->xtype == A->type)
+        if (op->ztype == GrB_BOOL && op->xtype == A->type)
         {
 
             //------------------------------------------------------------------
@@ -147,7 +115,8 @@ GrB_Info GB_select_generic_phase2
                 bool keep ;                                                 \
                 fkeep (&keep, Ax +(p)*asize,                                \
                     flipij ? j : i, flipij ? i : j, ythunk) ;
-            #include "GB_select_phase2.c"
+
+            #include "GB_select_bitmap_template.c"
 
         }
         else
@@ -168,11 +137,12 @@ GrB_Info GB_select_generic_phase2
                 cast_A_to_X (x, Ax +(p)*asize, asize) ;                     \
                 fkeep (z, x, flipij ? j : i, flipij ? i : j, ythunk) ;      \
                 cast_Z_to_bool (&keep, z, zsize) ;
-            #include "GB_select_phase2.c"
+
+            #include "GB_select_bitmap_template.c"
 
         }
-    }
 
+    }
     return (GrB_SUCCESS) ;
 }
 

@@ -14,19 +14,11 @@
 #include "GB_ek_slice.h"
 #include "GB_sel__include.h"
 
-// kind
 #define GB_ENTRY_SELECTOR
-
-#define GB_A_TYPE \
-    GxB_FC32_t
-
-// test value of Ax [p]
-#define GB_TEST_VALUE_OF_ENTRY(keep,p)                  \
-    bool keep = (Ai [p] >= 0)
-
-// Cx [pC] = Ax [pA], no typecast
-#define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
-    Cx [pC] = Ax [pA]
+#define GB_A_TYPE GxB_FC32_t
+#define GB_Y_TYPE GxB_FC32_t
+#define GB_TEST_VALUE_OF_ENTRY(keep,p) bool keep = (i >= 0)
+#define GB_SELECT_ENTRY(Cx,pC,Ax,pA) Cx [pC] = Ax [pA]
 
 #include "GB_kernel_shared_definitions.h"
 
@@ -34,7 +26,7 @@
 // GB_sel_phase2
 //------------------------------------------------------------------------------
 
-void GB (_sel_phase2__nonzombie_fc32)
+GrB_Info GB (_sel_phase2__nonzombie_fc32)
 (
     int64_t *restrict Ci,
     GB_void *restrict Cx_out,
@@ -42,13 +34,15 @@ void GB (_sel_phase2__nonzombie_fc32)
     const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const GB_void *restrict ythunk,
-    const GB_IndexUnaryOp op,
+    const GrB_IndexUnaryOp op,
     const int64_t *A_ek_slicing,
     const int A_ntasks,
     const int A_nthreads
 )
 { 
     GB_A_TYPE *restrict Cx = (GB_A_TYPE *) Cx_out ;
+    GB_Y_TYPE y = *((GB_Y_TYPE *) ythunk) ;
     #include "GB_select_phase2.c"
+    return (GrB_SUCCESS) ;
 }
 

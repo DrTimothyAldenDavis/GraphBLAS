@@ -1,7 +1,7 @@
 
 // SPDX-License-Identifier: Apache-2.0
 m4_divert(if_phase1)
-void GB (_sel_phase1)
+GrB_Info GB (_sel_phase1)
 (
     int64_t *restrict Cp,
     int64_t *restrict Wfirst,
@@ -15,7 +15,7 @@ void GB (_sel_phase1)
 ) ;
 
 m4_divert(if_phase2)
-void GB (_sel_phase2)
+GrB_Info GB (_sel_phase2)
 (
     int64_t *restrict Ci,
     GB_void *restrict Cx_out,
@@ -30,7 +30,7 @@ void GB (_sel_phase2)
 ) ;
 
 m4_divert(if_bitmap)
-void GB (_sel_bitmap)
+GrB_Info GB (_sel_bitmap)
 (
     int8_t *Cb,
     int64_t *cnvals_handle,

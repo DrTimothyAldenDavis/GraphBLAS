@@ -76,7 +76,7 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     if (!C_has_pattern_of_A)
     { 
 
-        // This phase is very similar to GB_select_phase1 (GB_ENTRY_SELECTOR).
+        // This phase is very similar to GB_select_entry_phase1_template.c.
 
         if (M == NULL)
         {

@@ -194,7 +194,7 @@ void mexFunction
     bool op_is_positional = false ;
 
     gb_mxstring_to_idxunop (&idxunop, &thunk_zero,
-        &op_is_positional, &ithunk, String [nstrings-1], NULL) ;
+        &op_is_positional, &ithunk, String [nstrings-1], GrB_FP64) ;
 
     //--------------------------------------------------------------------------
     // get the matrices

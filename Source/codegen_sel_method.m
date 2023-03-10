@@ -4,10 +4,6 @@ function codegen_sel_method (opname, func, atype)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (nargin < 4)
-    kind = [ ] ;
-end
-
 is_nonzombie_selector = isequal (opname, 'nonzombie') ;
 C_iso = isequal (opname, 'eq_thunk') ;
 
@@ -48,11 +44,12 @@ else
     fprintf (f, 'm4_define(`if_bitmap'', `0'')\n') ;
 end
 
-% the type of A (no typecasting)
-fprintf (f, 'm4_define(`GB_atype'', `%s'')\n', atype) ;
+% the type of A and y (no typecasting)
+fprintf (f, 'm4_define(`GB_atype'',  `#define GB_A_TYPE %s'')\n', atype) ;
+fprintf (f, 'm4_define(`GB_ytype'',  `#define GB_Y_TYPE %s'')\n', atype) ;
 
 % create the operator to test the numerical values of the entries
-fprintf (f, 'm4_define(`GB_test_value_of_entry'', `%s'')\n', func) ;
+fprintf (f, 'm4_define(`GB_test_value_of_entry'', `#define GB_TEST_VALUE_OF_ENTRY(keep,p) %s'')\n', func) ;
 
 % enable phase1
 if (enable_phase1)
@@ -75,9 +72,9 @@ end
 % for phase2: copy the numerical value of the entry
 if (C_iso)
     % create C as iso for all EQ_THUNK ops even when A is not iso, with iso value athunk
-    fprintf (f, 'm4_define(`GB_select_entry'', `/* assignment skipped, C is iso with all entries equal to thunk */'')\n') ;
+    fprintf (f, 'm4_define(`GB_select_entry'', `#define GB_SELECT_ENTRY(Cx,pC,Ax,pA)'')\n') ;
 else
-    fprintf (f, 'm4_define(`GB_select_entry'', `Cx [pC] = Ax [pA]'')\n') ;
+    fprintf (f, 'm4_define(`GB_select_entry'', `#define GB_SELECT_ENTRY(Cx,pC,Ax,pA) Cx [pC] = Ax [pA]'')\n') ;
 end
 
 fprintf (f, 'm4_divert(0)\n') ;
@@ -92,5 +89,4 @@ system (cmd) ;
 system ('cat control.m4 Generator/GB_sel.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> Generated2/GB_sel__include.h') ;
 
 delete ('control.m4') ;
-
 

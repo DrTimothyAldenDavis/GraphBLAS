@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// A is sparse or hypersparse
+// A is sparse or hypersparse, and the op is not positional.
 
 #define GB_DEBUG
 
@@ -33,10 +33,10 @@ GrB_Info GB_select_generic_phase1
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
     GB_Opcode opcode = op->opcode ;
-    ASSERT (!GB_OPCODE_IS_POSITIONAL (opcode)
-        && opcode != GB_NONZOMBIE_idxunop_code) ;
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
+    ASSERT (!GB_OPCODE_IS_POSITIONAL (opcode)) ;
+    ASSERT (opcode != GB_NONZOMBIE_idxunop_code) ;
 
     //--------------------------------------------------------------------------
     // phase1: generic entry selector
@@ -47,6 +47,7 @@ GrB_Info GB_select_generic_phase1
     GB_Type_code acode = A->type->code ;
     size_t zsize = op->ztype->size ;
     size_t xsize = op->xtype->size ;
+    size_t asize = A->type->size ;
     GxB_index_unary_function fkeep = op->idxunop_function ;
     GB_cast_function cast_Z_to_bool, cast_A_to_X ;
 
@@ -72,7 +73,7 @@ GrB_Info GB_select_generic_phase1
 
             #define GB_TEST_VALUE_OF_ENTRY(keep,p)                          \
                 bool keep ;                                                 \
-                fkeep (&keep, x, flipij ? j : i, flipij ? i : j, ythunk) ;  \
+                fkeep (&keep, x, flipij ? j : i, flipij ? i : j, ythunk) ;
             #include "GB_select_entry_phase1_template.c"
 
         }
@@ -110,7 +111,7 @@ GrB_Info GB_select_generic_phase1
             #define GB_TEST_VALUE_OF_ENTRY(keep,p)                          \
                 bool keep ;                                                 \
                 fkeep (&keep, Ax +(p)*asize,                                \
-                    flipij ? j : i, flipij ? i : j, ythunk) ;               \
+                    flipij ? j : i, flipij ? i : j, ythunk) ;
             #include "GB_select_entry_phase1_template.c"
 
         }

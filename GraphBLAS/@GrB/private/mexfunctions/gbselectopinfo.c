@@ -38,7 +38,7 @@ void mexFunction
     char opstring [LEN+2] ;
     gb_mxstring_to_string (opstring, LEN, pargin [0], "select operator") ;
 
-    GrB_Type type = NULL ;
+    GrB_Type type = GrB_FP64 ;
     if (nargin > 1)
     { 
         type = gb_mxstring_to_type (pargin [1]) ;

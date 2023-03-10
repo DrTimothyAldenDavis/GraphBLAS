@@ -20,7 +20,7 @@ GrB_Info GB_select_positional_bitmap
     int64_t *cnvals_handle,
     GrB_Matrix A,
     const int64_t ithunk,
-    const GB_IndexUnaryOp op,
+    const GrB_IndexUnaryOp op,
     const int nthreads
 )
 {
@@ -29,8 +29,8 @@ GrB_Info GB_select_positional_bitmap
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_IS_BITMAP (A) || GB_as_if_full (A)) ;
     GB_Opcode opcode = op->opcode ;
+    ASSERT (GB_IS_BITMAP (A) || GB_as_if_full (A)) ;
     ASSERT (GB_OPCODE_IS_POSITIONAL (opcode)) ;
 
     //--------------------------------------------------------------------------

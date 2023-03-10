@@ -7,7 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 #include "GB_select.h"
+#include "GB_scalar.h"
 
 #define GB_FREE_ALL                     \
 {                                       \

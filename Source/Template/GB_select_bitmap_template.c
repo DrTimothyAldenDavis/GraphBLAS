@@ -11,7 +11,7 @@
 
 {
     int8_t *Ab = A->b ;
-    GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
+    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
     const size_t asize = A->type->size ;

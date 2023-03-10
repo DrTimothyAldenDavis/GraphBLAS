@@ -28,7 +28,9 @@
     //==========================================================================
 
     ASSERT (!GB_JUMBLED (A)) ;
-    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)
+        || (opcode == GB_DIAG_idxunop_code)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
 
     //--------------------------------------------------------------------------
     // tril, triu, diag, offdiag, row*: binary search in each vector
@@ -43,8 +45,8 @@
         // get A(:,k)
         //----------------------------------------------------------------------
 
-        int64_t pA_start = Ap [k  ] ;
-        int64_t pA_end   = Ap [k+1] ;
+        int64_t pA_start = GBP_A (Ap, k, avlen) ;
+        int64_t pA_end   = GBP_A (Ap, k+1, avlen) ;
         int64_t p = pA_start ;
         int64_t cjnz = 0 ;
         int64_t ajnz = pA_end - pA_start ;
@@ -57,8 +59,8 @@
             // search for the entry A(i,k)
             //------------------------------------------------------------------
 
-            int64_t ifirst = Ai [pA_start] ;
-            int64_t ilast  = Ai [pA_end-1] ;
+            int64_t ifirst = GBI_A (Ai, pA_start, avlen) ;
+            int64_t ilast  = GBI_A (Ai, pA_end-1, avlen) ;
 
             #if defined ( GB_ROWINDEX_SELECTOR )
             int64_t i = -ithunk ;
@@ -85,7 +87,7 @@
                 // A(:,k) is dense
                 found = true ;
                 p += i ;
-                ASSERT (Ai [p] == i) ;
+                ASSERT (GBI_A (Ai, p, avlen) == i) ;
             }
             else
             { 
@@ -178,7 +180,7 @@
         if (kfirst <= klast)
         {
             int64_t pA_start = pstart_Aslice [tid] ;
-            int64_t pA_end   = Ap [kfirst+1] ;
+            int64_t pA_end   = GBP_A (Ap, kfirst+1, avlen) ;
             pA_end = GB_IMIN (pA_end, pstart_Aslice [tid+1]) ;
             if (pA_start < pA_end)
             { 
@@ -219,7 +221,7 @@
 
         if (kfirst < klast)
         {
-            int64_t pA_start = Ap [klast] ;
+            int64_t pA_start = GBP_A (Ap, klast, avlen) ;
             int64_t pA_end   = pstart_Aslice [tid+1] ;
             if (pA_start < pA_end)
             { 

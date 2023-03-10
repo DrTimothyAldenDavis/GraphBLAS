@@ -57,7 +57,6 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // get the semiring
     //--------------------------------------------------------------------------
 
-    // GxB_print (semiring, 3) ;
     GrB_Monoid add = semiring->add ;
     GrB_BinaryOp mult = semiring->multiply ;
     GrB_BinaryOp addop = add->op ;

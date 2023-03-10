@@ -157,7 +157,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     // count entries in C
     //--------------------------------------------------------------------------
 
-    // This phase is very similar to GB_select_phase1 (GB_ENTRY_SELECTOR).
+    // This phase is very similar to GB_select_entry_phase1_template.c.
 
     // TODO: if M is structural and A and B are both full, then C has exactly
     // the same pattern as M, the first phase can be skipped.

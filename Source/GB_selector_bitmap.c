@@ -7,10 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_select.h"
-#include "GB_sel__include.h"
-
 #define GB_DEBUG
+
+#include "GB_select.h"
+#ifndef GBCUDA_DEV
+#include "GB_sel__include.h"
+#endif
 
 #define GB_FREE_ALL         \
     GB_phybix_free (C) ;
@@ -95,11 +97,20 @@ GrB_Info GB_selector_bitmap
 
     if (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode))
     {
+
+        //----------------------------------------------------------------------
+        // bitmap selector for positional ops
+        //----------------------------------------------------------------------
+
         info = GB_select_positional_bitmap (C->b, &cnvals, A, ithunk, op,
             nthreads) ;
     }
     else
     {
+
+        //----------------------------------------------------------------------
+        // bitmap selector for VALUE* and user-defined ops
+        //----------------------------------------------------------------------
 
         #ifndef GBCUDA_DEV
 
@@ -133,8 +144,8 @@ GrB_Info GB_selector_bitmap
 
         if (info == GrB_NO_VALUE)
         {
-            GB_select_generic_bitmap (C->b, &cnvals, A, flipij, ythunk, op,
-                nthreads) ;
+            info = GB_select_generic_bitmap (C->b, &cnvals, A, flipij, ythunk,
+                op, nthreads) ;
         }
     }
 

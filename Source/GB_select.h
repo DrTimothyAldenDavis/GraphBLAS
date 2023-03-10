@@ -41,13 +41,12 @@ GrB_Info GB_selector_bitmap
 (
     GrB_Matrix C,               // output matrix, static header
     const bool C_iso,           // if true, C is iso
-    GB_Opcode opcode,           // selector/idxunop opcode
-    const GB_Operator op,
+    const GrB_IndexUnaryOp op,
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
     const int64_t ithunk,       // (int64_t) Thunk, if Thunk is NULL
     const GB_void *restrict athunk,     // (A->type) Thunk
-    const GB_void *restrict ythunk,     // (op->utype) Thunk
+    const GB_void *restrict ythunk,     // (op->ytype) Thunk
     GB_Werk Werk
 ) ;
 
@@ -120,6 +119,27 @@ GrB_Info GB_select_positional_phase2
     const int64_t *A_ek_slicing,
     const int A_ntasks,
     const int A_nthreads
+) ;
+
+GrB_Info GB_select_positional_bitmap
+(
+    int8_t *Cb,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const int64_t ithunk,
+    const GrB_IndexUnaryOp op,
+    const int nthreads
+) ;
+
+GrB_Info GB_select_generic_bitmap
+(
+    int8_t *Cb,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const bool flipij,
+    const GB_void *restrict ythunk,
+    const GrB_IndexUnaryOp op,
+    const int nthreads
 ) ;
 
 //------------------------------------------------------------------------------

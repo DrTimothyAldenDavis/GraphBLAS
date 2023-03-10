@@ -14,19 +14,11 @@
 #include "GB_ek_slice.h"
 #include "GB_sel__include.h"
 
-// kind
 #define GB_ENTRY_SELECTOR
-
-#define GB_A_TYPE \
-    float
-
-// test value of Ax [p]
-#define GB_TEST_VALUE_OF_ENTRY(keep,p)                  \
-    bool keep = (Ax [p] >= thunk)
-
-// Cx [pC] = Ax [pA], no typecast
-#define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
-    Cx [pC] = Ax [pA]
+#define GB_A_TYPE float
+#define GB_Y_TYPE float
+#define GB_TEST_VALUE_OF_ENTRY(keep,p) bool keep = (Ax [p] >= y)
+#define GB_SELECT_ENTRY(Cx,pC,Ax,pA) Cx [pC] = Ax [pA]
 
 #include "GB_kernel_shared_definitions.h"
 
@@ -34,27 +26,29 @@
 // GB_sel_phase1
 //------------------------------------------------------------------------------
 
-void GB (_sel_phase1__ge_thunk_fp32)
+GrB_Info GB (_sel_phase1__ge_thunk_fp32)
 (
     int64_t *restrict Cp,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
     const GB_void *restrict ythunk,
-    const GB_IndexUnaryOp op,
+    const GrB_IndexUnaryOp op,
     const int64_t *A_ek_slicing,
     const int A_ntasks,
     const int A_nthreads
 )
 { 
+    GB_Y_TYPE y = *((GB_Y_TYPE *) ythunk) ;
     #include "GB_select_entry_phase1_template.c"
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------
 // GB_sel_phase2
 //------------------------------------------------------------------------------
 
-void GB (_sel_phase2__ge_thunk_fp32)
+GrB_Info GB (_sel_phase2__ge_thunk_fp32)
 (
     int64_t *restrict Ci,
     GB_void *restrict Cx_out,
@@ -62,30 +56,34 @@ void GB (_sel_phase2__ge_thunk_fp32)
     const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const GB_void *restrict ythunk,
-    const GB_IndexUnaryOp op,
+    const GrB_IndexUnaryOp op,
     const int64_t *A_ek_slicing,
     const int A_ntasks,
     const int A_nthreads
 )
 { 
     GB_A_TYPE *restrict Cx = (GB_A_TYPE *) Cx_out ;
+    GB_Y_TYPE y = *((GB_Y_TYPE *) ythunk) ;
     #include "GB_select_phase2.c"
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------
 // GB_sel_bitmap
 //------------------------------------------------------------------------------
 
-void GB (_sel_bitmap__ge_thunk_fp32)
+GrB_Info GB (_sel_bitmap__ge_thunk_fp32)
 (
     int8_t *Cb,
     int64_t *cnvals_handle,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
-    const GB_IndexUnaryOp op,
+    const GrB_IndexUnaryOp op,
     const int nthreads
 )
 { 
-    #include "GB_bitmap_select_template.c"
+    GB_Y_TYPE y = *((GB_Y_TYPE *) ythunk) ;
+    #include "GB_select_bitmap_template.c"
+    return (GrB_SUCCESS) ;
 }
 

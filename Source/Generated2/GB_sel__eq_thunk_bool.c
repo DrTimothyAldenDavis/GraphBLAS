@@ -15,10 +15,10 @@
 #include "GB_sel__include.h"
 
 #define GB_ENTRY_SELECTOR
-#define GB_A_TYPE uint8_t
-#define GB_Y_TYPE uint8_t
-#define GB_TEST_VALUE_OF_ENTRY(keep,p) bool keep = (Ax [p] > y)
-#define GB_SELECT_ENTRY(Cx,pC,Ax,pA) Cx [pC] = Ax [pA]
+#define GB_A_TYPE bool
+#define GB_Y_TYPE bool
+#define GB_TEST_VALUE_OF_ENTRY(keep,p) bool keep = (Ax [p] == y)
+#define GB_SELECT_ENTRY(Cx,pC,Ax,pA)
 
 #include "GB_kernel_shared_definitions.h"
 
@@ -26,7 +26,7 @@
 // GB_sel_phase1
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_sel_phase1__gt_thunk_uint8)
+GrB_Info GB (_sel_phase1__eq_thunk_bool)
 (
     int64_t *restrict Cp,
     int64_t *restrict Wfirst,
@@ -48,7 +48,7 @@ GrB_Info GB (_sel_phase1__gt_thunk_uint8)
 // GB_sel_phase2
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_sel_phase2__gt_thunk_uint8)
+GrB_Info GB (_sel_phase2__eq_thunk_bool)
 (
     int64_t *restrict Ci,
     GB_void *restrict Cx_out,
@@ -72,7 +72,7 @@ GrB_Info GB (_sel_phase2__gt_thunk_uint8)
 // GB_sel_bitmap
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_sel_bitmap__gt_thunk_uint8)
+GrB_Info GB (_sel_bitmap__eq_thunk_bool)
 (
     int8_t *Cb,
     int64_t *cnvals_handle,

@@ -20,6 +20,7 @@
 
 #include "GB_diag.h"
 #include "GB_select.h"
+#include "GB_scalar.h"
 
 GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
 (
@@ -108,7 +109,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     GB_CLEAR_STATIC_HEADER (T, &T_header) ;
     GB_OK (GB_selector (
         T,                      // output matrix
-        GrB_DIAGINDEX_INT64,
+        GrB_DIAG,
         false,                  // flipij is false
         A,                      // input matrix
         Thunk,                  // Thunk = k

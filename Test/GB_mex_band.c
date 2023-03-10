@@ -128,7 +128,7 @@ void mexFunction
     // use the user-defined operator, from the LoHi_band function
 //  METHOD (GxB_SelectOp_new (&op, (GxB_select_function) LoHi_band,
 //      NULL, Thunk_type)) ;
-    METHOD (GrB_IndexUnaryOp_new (&op, (GxB_select_function) LoHi_band,
+    METHOD (GrB_IndexUnaryOp_new (&op, (GxB_index_unary_function) LoHi_band,
         GrB_BOOL, GrB_FP64, Thunk_type)) ;
 
     GrB_Index nrows, ncols ;

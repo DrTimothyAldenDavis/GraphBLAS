@@ -19,6 +19,7 @@
 #include "GB_select.h"
 #include "GB_accum_mask.h"
 #include "GB_transpose.h"
+#include "GB_scalar.h"
 
 GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 (
@@ -169,7 +170,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     bool negate_thunk = false ;
     bool bthunk = false ;
     bool op_is_bool_valued = (xcode == GB_BOOL_code &&
-      (opcode >= GB_VALUENE_idxunop_code && value <= GB_VALUELE_idxunop_code)) ;
+      (opcode >= GB_VALUENE_idxunop_code && opcode <= GB_VALUELE_idxunop_code)) ;
     if (op_is_bool_valued)
     {
         GB_cast_scalar (&bthunk, GB_BOOL_code, Thunk->x, ttype->code,
@@ -260,7 +261,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         // convert all VALUE* bool cases to VALUEEQ
         //----------------------------------------------------------------------
 
-        op = GB_VALUEEQ_BOOL ;
+        op = GrB_VALUEEQ_BOOL ;
         switch (opcode)
         {
 
@@ -356,7 +357,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     else if (op_is_bool_valued)
     {
         // Thunk = bthunk
-        Thunk2 = GB_Scalar_wrap (&Thunk2_header, bool, &bthunk) ;
+        Thunk2 = GB_Scalar_wrap (&Thunk2_header, GrB_BOOL, &bthunk) ;
     }
     else
     {

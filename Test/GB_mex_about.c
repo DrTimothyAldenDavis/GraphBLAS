@@ -1361,8 +1361,8 @@ void mexFunction
     GrB_BinaryOp_error_(&err, GrB_PLUS_FP32) ;
     CHECK (err != NULL && err [0] == '\0') ;
 
-    GxB_SelectOp_error_(&err, GxB_TRIL) ;
-    CHECK (err != NULL && err [0] == '\0') ;
+//  GxB_SelectOp_error_(&err, GxB_TRIL) ;
+//  CHECK (err != NULL && err [0] == '\0') ;
 
     GrB_Monoid_error_(&err, GrB_LOR_MONOID_BOOL) ;
     CHECK (err != NULL && err [0] == '\0') ;

@@ -20,7 +20,9 @@
 
 #include "GB_select.h"
 #include "GB_ek_slice.h"
+#ifndef GBCUDA_DEV
 #include "GB_sel__include.h"
+#endif
 #include "GB_scalar.h"
 #include "GB_transpose.h"
 #include "GB_stringify.h"
@@ -190,6 +192,20 @@ GrB_Info GB_selector
     }
 
     //--------------------------------------------------------------------------
+    // determine if C is iso for a non-iso A
+    //--------------------------------------------------------------------------
+
+    bool C_iso = A_iso ||                       // C iso value is Ax [0]
+        (opcode == GB_VALUEEQ_idxunop_code) ;   // C iso value is thunk
+
+    if (C_iso)
+    { 
+        GB_BURBLE_MATRIX (A, "(iso select) ") ;
+    }
+
+    // The CUDA select kernel might be called here?
+
+    //--------------------------------------------------------------------------
     // handle the bitmap/as-if-full case
     //--------------------------------------------------------------------------
 
@@ -220,20 +236,8 @@ GrB_Info GB_selector
     }
 
     //--------------------------------------------------------------------------
-    // determine if C is iso for a non-iso A
-    //--------------------------------------------------------------------------
 
-    bool C_iso = A_iso ||                       // C iso value is Ax [0]
-        (opcode == GB_VALUEEQ_idxunop_code) ;   // C iso value is thunk
-
-    if (C_iso)
-    { 
-        GB_BURBLE_MATRIX (A, "(iso select) ") ;
-    }
-
-    //--------------------------------------------------------------------------
-
-    // The CUDA select kernel would be called here.
+    // The CUDA select kernel would be called here at the latest.
 
     //==========================================================================
     // bitmap/full case
@@ -314,6 +318,7 @@ GrB_Info GB_selector
         else if (A_is_hyper)
         { 
             // find the column j in the hyperlist of A
+            // FIXME: use hyperhash if present
             int64_t kright = anvec-1 ;
             GB_SPLIT_BINARY_SEARCH (j, Ah, k, kright, found) ;
             // if found is true the Ah [k] == j
@@ -628,9 +633,10 @@ GrB_Info GB_selector
         // entry selectors depend on the values in phase1
         //----------------------------------------------------------------------
 
-        ASSERT (!A_iso) ;
-        ASSERT (opcode >= GB_VALUENE_idxunop_code
-             && opcode <= GB_VALUELE_idxunop_code) ;
+        ASSERT (!A_iso || opcode == GB_USER_idxunop_code) ;
+        ASSERT ((opcode >= GB_VALUENE_idxunop_code
+             && opcode <= GB_VALUELE_idxunop_code)
+             || (opcode == GB_USER_idxunop_code)) ;
 
         #ifndef GBCUDA_DEV
 
@@ -708,7 +714,7 @@ GrB_Info GB_selector
     //==========================================================================
 
     info = GrB_NO_VALUE ;
-    if (op_is_positional || (opcode == GB_NONZOMBIE_idxunop && A_iso))
+    if (op_is_positional || (opcode == GB_NONZOMBIE_idxunop_code && A_iso))
     {
 
         //----------------------------------------------------------------------
@@ -727,10 +733,11 @@ GrB_Info GB_selector
         // entry selectors depend on the values in phase2
         //----------------------------------------------------------------------
 
-        ASSERT (!A_iso) ;
+        ASSERT (!A_iso || opcode == GB_USER_idxunop_code) ;
         ASSERT ((opcode >= GB_VALUENE_idxunop_code &&
                  opcode <= GB_VALUELE_idxunop_code)
-             || (opcode == GB_NONZOMBIE_idxunop && !A_iso)) ;
+             || (opcode == GB_NONZOMBIE_idxunop_code && !A_iso)
+             || (opcode == GB_USER_idxunop_code)) ;
 
         #ifndef GBCUDA_DEV
 

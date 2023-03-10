@@ -62,8 +62,13 @@ void gb_string_to_idxunop
         type = gb_string_to_type (op_typename) ;
     }
 
-    // type may still be NULL, which is OK for positional ops
-    GB_Type_code typecode = (type == NULL) ? GB_ignore_code : type->code ;
+    if (type == NULL)
+    {
+        // type may still be NULL, which is OK for positional ops since the
+        // ignore the type.  But a placeholder type is needed for VALUE ops.
+        type = GrB_FP64 ;
+    }
+    GB_Type_code typecode = type->code ;
 
     //--------------------------------------------------------------------------
     // convert the string to a GrB_IndexUnaryOp
