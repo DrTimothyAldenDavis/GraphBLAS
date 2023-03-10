@@ -42,6 +42,7 @@ GrB_Info GB_select_generic_bitmap
     // generic entry selector when C is bitmap
     //--------------------------------------------------------------------------
 
+    ASSERT_TYPE_OK (op->xtype, "op->xtype", GB0) ;
     GB_Type_code zcode = op->ztype->code ;
     GB_Type_code xcode = op->xtype->code ;
     GB_Type_code acode = A->type->code ;

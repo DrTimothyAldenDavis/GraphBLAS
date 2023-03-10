@@ -42,6 +42,7 @@ GrB_Info GB_select_generic_phase1
     // phase1: generic entry selector
     //--------------------------------------------------------------------------
 
+    ASSERT_TYPE_OK (op->xtype, "op->xtype", GB0) ;
     GB_Type_code zcode = op->ztype->code ;
     GB_Type_code xcode = op->xtype->code ;
     GB_Type_code acode = A->type->code ;

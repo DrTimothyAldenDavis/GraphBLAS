@@ -50,11 +50,13 @@ GrB_Info GB_select_generic_phase2
     // phase2: generic entry selector
     //--------------------------------------------------------------------------
 
+    // op->xtype is NULL for GxB_NONZOMBIE
+    ASSERT_TYPE_OK_OR_NULL (op->xtype, "op->xtype (OK if NULL)", GB0) ;
     GB_Type_code zcode = op->ztype->code ;
-    GB_Type_code xcode = op->xtype->code ;
+    GB_Type_code xcode = (op->xtype == NULL) ? 0 : op->xtype->code ;
     GB_Type_code acode = A->type->code ;
     size_t zsize = op->ztype->size ;
-    size_t xsize = op->xtype->size ;
+    size_t xsize = (op->xtype == NULL) ? 0 : op->xtype->size ;
     size_t asize = A->type->size ;
     GxB_index_unary_function fkeep = op->idxunop_function ;
     GB_cast_function cast_Z_to_bool, cast_A_to_X ;
