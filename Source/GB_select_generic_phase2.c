@@ -17,7 +17,7 @@
 GrB_Info GB_select_generic_phase2
 (
     int64_t *restrict Ci,
-    GB_void *restrict Cx,
+    GB_void *restrict Cx,                   // NULL if C is iso-valued
     const int64_t *restrict Cp,
     const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
@@ -35,7 +35,9 @@ GrB_Info GB_select_generic_phase2
     //--------------------------------------------------------------------------
 
     // The op is either valued, user-defined, or nonzombie.  If it is the
-    // nonzombie op, then A is not iso.
+    // nonzombie op, then A is not iso.  For the VALUEEQ* operators, C is
+    // always iso even if A is not iso.  In that case, Cx is passed here as
+    // NULL.
 
     GB_Opcode opcode = op->opcode ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
@@ -121,9 +123,13 @@ GrB_Info GB_select_generic_phase2
         //----------------------------------------------------------------------
 
         // Cx [pC] = Ax [pA], no typecast
+        // If Cx is NULL then C is iso-valued.
         #undef  GB_SELECT_ENTRY
         #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                                \
-            memcpy (Cx +((pC)*asize), Ax +((pA)*asize), asize)
+        if (Cx != NULL)                                                     \
+        {                                                                   \
+            memcpy (Cx +((pC)*asize), Ax +((pA)*asize), asize) ;            \
+        }
 
         if (opcode == GB_NONZOMBIE_idxunop_code)
         {

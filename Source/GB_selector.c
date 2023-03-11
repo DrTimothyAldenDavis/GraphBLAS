@@ -771,8 +771,9 @@ GrB_Info GB_selector
         if (info == GrB_NO_VALUE)
         {
             // generic entry selector, phase2
-            info = GB_select_generic_phase2 (Ci, Cx, Cp, Cp_kfirst, A, flipij,
-                ythunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;
+            info = GB_select_generic_phase2 (Ci, C_iso ? NULL : Cx, Cp,
+                Cp_kfirst, A, flipij, ythunk, op, A_ek_slicing, A_ntasks,
+                A_nthreads) ;
         }
     }
 
