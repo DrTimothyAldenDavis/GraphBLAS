@@ -5,7 +5,7 @@ function codegen_axb
 % built-in semirings (GB_AxB__*.c) and two include files,
 % Generated1/GB_AxB__include1.h and Generated2/GB_AxB__include2.h.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 % The ANY operator is not used as a multiplicative operator in the generated
@@ -21,7 +21,7 @@ for k = 1:2
     fprintf (fh, '// GB_AxB__include%d.h: definitions for Generated%d/GB_AxB__*.c\n', k, k) ;
     fprintf (fh, '//------------------------------------------------------------------------------\n') ;
     fprintf (fh, '\n') ;
-    fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.\n') ;
+    fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.\n') ;
     fprintf (fh, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
     fprintf (fh, '// This file has been automatically generated from Generator/GB_AxB.h') ;
     fprintf (fh, '\n\n') ;

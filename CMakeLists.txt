@@ -61,8 +61,8 @@ if ( SUITESPARSE_CUDA )
             LANGUAGES CUDA C )
 else ( )
 # FIXME!!!
-    set ( CMAKE_CUDA_DEV off )
-#   set ( CMAKE_CUDA_DEV on )
+#   set ( CMAKE_CUDA_DEV off )
+    set ( CMAKE_CUDA_DEV on )
     project ( graphblas
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES C )

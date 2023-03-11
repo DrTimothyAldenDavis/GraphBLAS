@@ -87,7 +87,6 @@
             int64_t cjnz = 0 ;
             for ( ; pA < pA_end ; pA++)
             { 
-                ASSERT (Ai != NULL) ;
                 int64_t i = Ai [pA] ;
                 GB_TEST_VALUE_OF_ENTRY (keep, pA) ;
                 if (keep) cjnz++ ;
