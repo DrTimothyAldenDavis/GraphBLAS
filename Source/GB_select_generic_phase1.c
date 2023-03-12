@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// A is sparse or hypersparse, and the op is not positional.
+// A is sparse, hypersparse, or full, and the op is not positional.
+// C is sparse or hypersparse.
 
 #define GB_DEBUG
 
@@ -66,7 +67,7 @@ GrB_Info GB_select_generic_phase1
         GB_cast_scalar (x, xcode, A->x, acode, asize) ;
 
         if (op->ztype == GrB_BOOL)
-        {
+        { 
 
             //------------------------------------------------------------------
             // A is iso and z is bool
@@ -79,7 +80,7 @@ GrB_Info GB_select_generic_phase1
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // A is iso and z requires typecasting
@@ -102,10 +103,10 @@ GrB_Info GB_select_generic_phase1
     {
 
         if (op->ztype == GrB_BOOL && op->xtype == A->type)
-        {
+        { 
 
             //------------------------------------------------------------------
-            // A is non-iso but no typecasting is required
+            // A is non-iso and no typecasting is required
             //------------------------------------------------------------------
 
             #undef  GB_TEST_VALUE_OF_ENTRY
@@ -117,7 +118,7 @@ GrB_Info GB_select_generic_phase1
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // A is non-iso and typecasting is required

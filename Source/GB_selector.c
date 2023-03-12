@@ -649,7 +649,7 @@ GrB_Info GB_selector
             #define GB_SEL_WORKER(opname,aname)                             \
             {                                                               \
                 info = GB_sel1 (opname, aname) (Cp, Wfirst, Wlast, A,       \
-                    ythunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;       \
+                    ythunk, A_ek_slicing, A_ntasks, A_nthreads) ;           \
             }                                                               \
             break ;
 
@@ -660,14 +660,19 @@ GrB_Info GB_selector
         #endif
 
         #if GB_JIT_ENABLED
-        // JIT TODO: select: phase1 entry selectors
+        if (info == GrB_NO_VALUE)
+        {
+            info = GB_select_phase1_jit (Cp, Wfirst, Wlast,
+                C_iso, in_place_A, A, ythunk, op, flipij, 
+                A_ek_slicing, A_ntasks, A_nthreads) ;
+        }
         #endif
 
         if (info == GrB_NO_VALUE)
         {
             // generic entry selector, phase1
-            info = GB_select_generic_phase1 (Cp, Wfirst, Wlast, A,
-                flipij, ythunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;
+            info = GB_select_generic_phase1 (Cp, Wfirst, Wlast,
+                A, flipij, ythunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;
         }
     }
 
@@ -751,7 +756,7 @@ GrB_Info GB_selector
             #define GB_SEL_WORKER(opname,aname)                             \
             {                                                               \
                 info = GB_sel2 (opname, aname) (Ci, Cx, Cp, Cp_kfirst, A,   \
-                    ythunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;       \
+                    ythunk, A_ek_slicing, A_ntasks, A_nthreads) ;           \
             }                                                               \
             break ;
 
@@ -765,7 +770,13 @@ GrB_Info GB_selector
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: select: phase2
+        if (info == GrB_NO_VALUE)
+        {
+            info = GB_select_phase2_jit (Ci, C_iso ? NULL : Cx, Cp,
+                C_iso, in_place_A,
+                Cp_kfirst, A, flipij, ythunk, op, A_ek_slicing, A_ntasks,
+                A_nthreads) ;
+        }
         #endif
 
         if (info == GrB_NO_VALUE)

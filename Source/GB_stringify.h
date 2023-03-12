@@ -634,6 +634,50 @@ void GB_macrofy_build           // construct all macros for GB_build
 ) ;
 
 //------------------------------------------------------------------------------
+// select kernel
+//------------------------------------------------------------------------------
+
+uint64_t GB_encodify_select     // encode an select problem
+(
+    // output:
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char **suffix,              // suffix for user-defined kernel
+    // input:
+    const int kcode,            // kernel to encode
+    const bool C_iso,
+    const bool in_place_A,
+    const GrB_IndexUnaryOp op,
+    const bool flipij,
+    const GrB_Matrix A
+) ;
+
+bool GB_enumify_select      // enumerate a GrB_selectproblem
+(
+    // output:
+    uint64_t *scode,        // unique encoding of the entire operation
+    // input:
+    bool C_iso,
+    bool in_place_A,
+    // operator:
+    GrB_IndexUnaryOp op,    // the index unary operator to enumify
+    bool flipij,            // if true, flip i and j
+    // A matrix:
+    GrB_Matrix A
+) ;
+
+void GB_macrofy_select          // construct all macros for GrB_select
+(
+    // output:
+    FILE *fp,                   // target file to write, already open
+    // input:
+    uint64_t scode,
+    // operator:
+    const GrB_IndexUnaryOp op,
+    GrB_Type atype
+) ;
+
+//------------------------------------------------------------------------------
 // GB_namify_problem: name a problem
 //------------------------------------------------------------------------------
 

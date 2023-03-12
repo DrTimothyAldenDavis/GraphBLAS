@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME:
+// FIXME: debug is on
 #define GB_DEBUG
 
 #include "GB_select.h"
@@ -34,7 +34,6 @@ GrB_Info GB (_sel_phase2__nonzombie_bool)
     const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const GB_void *restrict ythunk,
-    const GrB_IndexUnaryOp op,
     const int64_t *A_ek_slicing,
     const int A_ntasks,
     const int A_nthreads

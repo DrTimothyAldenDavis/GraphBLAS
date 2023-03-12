@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_enumify_apply: enumerate a GrB_apply problem
+// GB_enumify_select: enumerate a GrB_select problem
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,62 +7,58 @@
 
 //------------------------------------------------------------------------------
 
-// Enumify an apply or transpose/apply operation.  No accum or mask.  The
-// iso cases (for C and/or A) are not handled.  The op is either unary or
-// index unary, not binary (that is handled as an ewise enumify).
-
 #include "GB.h"
 #include "GB_stringify.h"
 
-bool GB_enumify_apply       // enumerate an apply or tranpose/apply problem
+// Currently, the mask M and the accum are not present, and C and A have the
+// same type, but these conditions may change in the future.
+
+bool GB_enumify_select      // enumerate a GrB_selectproblem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
     // input:
-    // C matrix:
-    int C_sparsity,         // sparse, hyper, bitmap, or full.  For apply
-                            // without transpose, Cx = op(A) is computed where
-                            // Cx is just C->x, so the caller uses 'full' when
-                            // C is sparse, hyper, or full.
-    bool C_is_matrix,       // true for C=op(A), false for Cx=op(A)
-    GrB_Type ctype,         // C=((ctype) T) is the final typecast
+    bool C_iso,
+    bool in_place_A,
     // operator:
-        const GB_Operator op,       // unary/index-unary to apply; not binaryop
-        bool flipij,                // if true, flip i,j for user idxunop
+    GrB_IndexUnaryOp op,    // the index unary operator to enumify
+    bool flipij,            // if true, flip i and j
     // A matrix:
-    const GrB_Matrix A              // input matrix
+    GrB_Matrix A
 )
 {
 
     //--------------------------------------------------------------------------
-    // get the types of X, Y, and Z
+    // get the types of A, X, Y, and Z
     //--------------------------------------------------------------------------
 
-    ASSERT (op != NULL) ;
+    GrB_Type atype = A->type ;
     GB_Opcode opcode = op->opcode ;
-    GrB_Type ztype = op->ztype ;
-    GrB_Type xtype = op->xtype ;
-    GrB_Type ytype = op->ytype ;
-    GB_Type_code zcode = (ztype == NULL) ? 0 : ztype->code ;
-    GB_Type_code xcode = (xtype == NULL) ? 0 : xtype->code ;
-    GB_Type_code ycode = (ytype == NULL) ? 0 : ytype->code ;
+    GB_Type_code zcode = op->ztype->code ;
+    GB_Type_code xcode = (op->xtype == NULL) ? 0 : op->xtype->code ;
+    GB_Type_code ycode = op->ytype->code ;
 
     //--------------------------------------------------------------------------
-    // enumify the unary operator
+    // enumify the idxunop operator
     //--------------------------------------------------------------------------
 
     bool depends_on_x, depends_on_i, depends_on_j, depends_on_y ;
-    int unop_ecode ;
-    GB_enumify_unop (&unop_ecode, &depends_on_x, &depends_on_i, &depends_on_j,
-        &depends_on_y, flipij, opcode, xcode) ;
+    int idxop_ecode ;
+    GB_enumify_unop (&idxop_ecode, &depends_on_x, &depends_on_i,
+        &depends_on_j, &depends_on_y, flipij, opcode, xcode) ;
+
+    ASSERT (idxop_ecode >= 232 && idxop_ecode <= 255) ;
 
     if (!depends_on_x)
     {
+        // VALUE* ops and user-defined index unary ops depend on x.  The
+        // positional ops (tril, triu, row*, col*, diag*) do not.
         xcode = 0 ;
     }
 
     if (!depends_on_y)
     {
+        // All index unary ops depend on y except for NONZOMBIE
         ycode = 0 ;
     }
 
@@ -70,49 +66,66 @@ bool GB_enumify_apply       // enumerate an apply or tranpose/apply problem
     int j_dep = (depends_on_j) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
-    // enumify the types of C and A
+    // enumify the types
     //--------------------------------------------------------------------------
 
-    int acode = (xcode == 0) ? 0 : (A->type->code) ;        // 0 to 14
-    int ccode = ctype->code ;                               // 0 to 14
+    int acode = atype->code ;               // 1 to 14
+    int ccode = acode ;                     // this may change in the future
+    int A_iso_code = (A->iso) ? 1 : 0 ;
+    int C_iso_code = (C_iso) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
-    // enumify the sparsity structures of C and A
+    // enumify the sparsity structure of A
     //--------------------------------------------------------------------------
 
-    int csparsity, asparsity ;
+    int A_sparsity = GB_sparsity (A) ;
+    int C_sparsity ;
+
+    if (opcode == GB_DIAG_idxunop_code)
+    { 
+        C_sparsity = (A_sparsity == GxB_FULL) ? GxB_SPARSE : A_sparsity ;
+    }
+    else
+    {
+        C_sparsity = (A_sparsity == GxB_FULL) ? GxB_BITMAP : A_sparsity ;
+    }
+
+    int asparsity, csparsity ;
     GB_enumify_sparsity (&csparsity, C_sparsity) ;
-    GB_enumify_sparsity (&asparsity, GB_sparsity (A)) ;
-    int C_mat = (C_is_matrix) ? 1 : 0 ;
+    GB_enumify_sparsity (&asparsity, A_sparsity) ;
+
+    int inplace = (in_place_A) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
-    // construct the apply scode
+    // construct the select scode
     //--------------------------------------------------------------------------
 
-    // total scode bits: 36 bits (9 hex digits)
+    // total scode bits:  38 (10 hex digits)
 
     (*scode) =
                                                // range        bits
+                // iso of A aand C (2 bits)
+                GB_LSHIFT (C_iso_code , 37) |  // 0 or 1       1
+                GB_LSHIFT (A_iso_code , 36) |  // 0 or 1       1
 
-                // C kind, i/j dependency and flipij (1 hex digit)
-                GB_LSHIFT (C_mat      , 35) |  // 0 or 1       1
+                // inplace, i/j dependency and flipij (1 hex digit)
+                GB_LSHIFT (inplace    , 35) |  // 0 or 1       1
                 GB_LSHIFT (i_dep      , 34) |  // 0 or 1       1
                 GB_LSHIFT (j_dep      , 33) |  // 0 or 1       1
                 GB_LSHIFT (flipij     , 32) |  // 0 or 1       1
 
                 // op, z = f(x,i,j,y) (5 hex digits)
-                GB_LSHIFT (unop_ecode , 24) |  // 0 to 255     8
+                GB_LSHIFT (idxop_ecode, 24) |  // 232 to 255   8
                 GB_LSHIFT (zcode      , 20) |  // 0 to 14      4
                 GB_LSHIFT (xcode      , 16) |  // 0 to 14      4
                 GB_LSHIFT (ycode      , 12) |  // 0 to 14      4
 
                 // types of C and A (2 hex digits)
-                GB_LSHIFT (ccode      ,  8) |  // 0 to 14      4
-                GB_LSHIFT (acode      ,  4) |  // 0 to 14      4
+                GB_LSHIFT (ccode      ,  8) |  // 0 to 15      4
+                GB_LSHIFT (acode      ,  4) |  // 0 to 15      4
 
                 // sparsity structures of C and A (1 hex digit)
                 GB_LSHIFT (csparsity  ,  2) |  // 0 to 3       2
                 GB_LSHIFT (asparsity  ,  0) ;  // 0 to 3       2
-
 }
 

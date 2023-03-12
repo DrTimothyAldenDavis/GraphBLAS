@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_encodify_apply: encode an apply problem, including types and op
+// GB_encodify_select: encode a select problem, including types and op
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -10,7 +10,7 @@
 #include "GB.h"
 #include "GB_stringify.h"
 
-uint64_t GB_encodify_apply      // encode an apply problem
+uint64_t GB_encodify_select     // encode an select problem
 (
     // output:
     GB_jit_encoding *encoding,  // unique encoding of the entire problem,
@@ -18,10 +18,9 @@ uint64_t GB_encodify_apply      // encode an apply problem
     char **suffix,              // suffix for user-defined kernel
     // input:
     const int kcode,            // kernel to encode
-    const int C_sparsity,
-    const bool C_is_matrix,     // true for C=op(A), false for Cx=op(A)
-    const GrB_Type ctype,
-    const GB_Operator op,
+    const bool C_iso,
+    const bool in_place_A,
+    const GrB_IndexUnaryOp op,
     const bool flipij,
     const GrB_Matrix A
 )
@@ -44,8 +43,7 @@ uint64_t GB_encodify_apply      // encode an apply problem
     //--------------------------------------------------------------------------
 
     encoding->kcode = kcode ;
-    GB_enumify_apply (&encoding->code, C_sparsity, C_is_matrix, ctype, op,
-        flipij, A) ;
+    GB_enumify_select (&encoding->code, C_iso, in_place_A, op, flipij, A) ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length

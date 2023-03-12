@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// A is sparse or hypersparse, and the op is not positional.
+// A is sparse, hypersparse, or full, and the op is not positional.
+// C is sparse or hypersparse.
 
 #define GB_DEBUG
 
@@ -28,7 +29,7 @@ GrB_Info GB_select_generic_phase2
     const int A_ntasks,
     const int A_nthreads
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -82,13 +83,12 @@ GrB_Info GB_select_generic_phase2
         GB_cast_scalar (x, xcode, A->x, acode, asize) ;
 
         if (op->ztype == GrB_BOOL)
-        {
+        { 
 
             //------------------------------------------------------------------
             // A is iso and z is bool
             //------------------------------------------------------------------
 
-            #undef  GB_TEST_VALUE_OF_ENTRY
             #define GB_TEST_VALUE_OF_ENTRY(keep,p)                          \
                 bool keep ;                                                 \
                 fkeep (&keep, x, flipij ? j : i, flipij ? i : j, ythunk) ;
@@ -96,7 +96,7 @@ GrB_Info GB_select_generic_phase2
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // A is iso and z requires typecasting
@@ -132,7 +132,7 @@ GrB_Info GB_select_generic_phase2
         }
 
         if (opcode == GB_NONZOMBIE_idxunop_code)
-        {
+        { 
 
             //------------------------------------------------------------------
             // nonzombie selector when A is not iso
@@ -144,7 +144,7 @@ GrB_Info GB_select_generic_phase2
 
         }
         else if (op->ztype == GrB_BOOL && op->xtype == A->type)
-        {
+        { 
 
             //------------------------------------------------------------------
             // A is non-iso; no typecasting is required
@@ -159,7 +159,7 @@ GrB_Info GB_select_generic_phase2
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // A is non-iso and typecasting is required

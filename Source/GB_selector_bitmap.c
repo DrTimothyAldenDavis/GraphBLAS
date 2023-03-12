@@ -122,7 +122,7 @@ GrB_Info GB_selector_bitmap
             #define GB_SEL_WORKER(opname,aname)                         \
             {                                                           \
                 info = GB_selbit (opname, aname) (C->b, &cnvals, A,     \
-                    ythunk, op, nthreads) ;                             \
+                    ythunk, nthreads) ;                                 \
             }                                                           \
             break ;
 

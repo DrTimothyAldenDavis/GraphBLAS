@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// A is sparse or hypersparse
+// A is bitmap or full, C is bitmap
 
 #define GB_DEBUG
 
@@ -24,7 +24,7 @@ GrB_Info GB_select_generic_bitmap
     const GrB_IndexUnaryOp op,
     const int nthreads
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -67,13 +67,12 @@ GrB_Info GB_select_generic_bitmap
         GB_cast_scalar (x, xcode, A->x, acode, asize) ;
 
         if (op->ztype == GrB_BOOL)
-        {
+        { 
 
             //------------------------------------------------------------------
             // A is iso and z is bool
             //------------------------------------------------------------------
 
-            #undef  GB_TEST_VALUE_OF_ENTRY
             #define GB_TEST_VALUE_OF_ENTRY(keep,p)                          \
                 bool keep ;                                                 \
                 fkeep (&keep, x, flipij ? j : i, flipij ? i : j, ythunk) ;
@@ -82,7 +81,7 @@ GrB_Info GB_select_generic_bitmap
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // A is iso and z requires typecasting
@@ -105,10 +104,10 @@ GrB_Info GB_select_generic_bitmap
     {
 
         if (op->ztype == GrB_BOOL && op->xtype == A->type)
-        {
+        { 
 
             //------------------------------------------------------------------
-            // A is non-iso; no typecasting is required
+            // A is non-iso and no typecasting is required
             //------------------------------------------------------------------
 
             #undef  GB_TEST_VALUE_OF_ENTRY
@@ -121,7 +120,7 @@ GrB_Info GB_select_generic_bitmap
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // A is non-iso and typecasting is required

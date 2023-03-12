@@ -618,6 +618,10 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
         // x is the matrix entry A(i,j), y is the thunk value
 
+        case GB_NONZOMBIE_idxunop_code  :   // z = (i >= 0) ;
+            i_dep = true ;
+            e = 232 ; break ;
+
         // Result is INT32 or INT64, depending on i and y:
         case GB_ROWINDEX_idxunop_code   :   // z = (i+y)
             i_dep = true ;
@@ -728,7 +732,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
     // determine dependencies
     //--------------------------------------------------------------------------
 
-    // all IDX ops depend on y:
+    // all IDX ops depend on y, except for NONZOMBIE
     (*depends_on_y) = (e >= 233 && e <= 255) ;
 
     // many operators depend on x:
