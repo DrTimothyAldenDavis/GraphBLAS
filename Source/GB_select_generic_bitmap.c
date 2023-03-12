@@ -9,8 +9,6 @@
 
 // A is bitmap or full, C is bitmap
 
-#define GB_DEBUG
-
 #include "GB_select.h"
 #include "GB_ek_slice.h"
 

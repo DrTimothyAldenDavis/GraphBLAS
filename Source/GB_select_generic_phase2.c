@@ -10,8 +10,6 @@
 // A is sparse, hypersparse, or full, and the op is not positional.
 // C is sparse or hypersparse.
 
-#define GB_DEBUG
-
 #include "GB_select.h"
 #include "GB_ek_slice.h"
 

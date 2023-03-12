@@ -9,8 +9,6 @@
 
 // A is sparse or hypersparse
 
-#define GB_DEBUG
-
 #include "GB_select.h"
 #include "GB_ek_slice.h"
 

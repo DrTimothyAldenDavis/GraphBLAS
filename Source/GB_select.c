@@ -9,8 +9,6 @@
 
 // C<M> = accum (C, select(A,Thunk)) or select(A,Thunk)')
 
-#define GB_DEBUG
-
 #define GB_FREE_ALL         \
 {                           \
     GB_Matrix_free (&T) ;   \

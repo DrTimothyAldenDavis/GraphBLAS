@@ -18,8 +18,6 @@
 // complain about typecasting these uninitialized values, but these warnings
 // are false positives.
 
-#define GB_DEBUG
-
 #include "GB.h"
 #define GB_FREE_ALL ;
 

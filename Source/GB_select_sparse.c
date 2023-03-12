@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 #include "GB_select.h"
 #include "GB_ek_slice.h"
 #ifndef GBCUDA_DEV
@@ -69,6 +67,7 @@ GrB_Info GB_select_sparse
     bool in_place_A = (C == NULL) ; // GrB_wait and GB_resize only
     const bool A_iso = A->iso ;
     const size_t asize = A->type->size ;
+    const GB_Type_code acode = A->type->code ;
 
     //--------------------------------------------------------------------------
     // determine the max number of threads to use

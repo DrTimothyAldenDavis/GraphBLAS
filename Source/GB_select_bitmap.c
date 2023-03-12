@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 #include "GB_select.h"
 #include "GB_stringify.h"
 #ifndef GBCUDA_DEV

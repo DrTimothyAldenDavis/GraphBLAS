@@ -9,8 +9,6 @@
 
 // The column selectors can be done in a single pass.  No JIT kernel is needed.
 
-#define GB_DEBUG
-
 #include "GB_select.h"
 #include "GB_transpose.h"
 #include "GB_stringify.h"

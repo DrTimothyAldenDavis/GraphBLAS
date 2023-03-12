@@ -19,8 +19,6 @@
 
 // TODO: GB_selector does not exploit the mask.
 
-#define GB_DEBUG
-
 #include "GB_select.h"
 
 #define GB_FREE_ALL ;

@@ -35,8 +35,6 @@
 
 // If the method is successful, it does an OpenMP flush just before returning.
 
-#define GB_DEBUG
-
 #define GB_FREE_WORKSPACE               \
 {                                       \
     GB_Matrix_free (&Y) ;               \

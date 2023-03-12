@@ -51,10 +51,8 @@ GrB_Info GB_IndexUnaryOp_check  // check a GraphBLAS index_unary operator
     }
     GBPR0 ("z=%s(x,i,j,y)\n", op->name) ;
 
-    if (opcode != GB_NONZOMBIE_idxunop_code && op->idxunop_function == NULL)
+    if (op->idxunop_function == NULL)
     { 
-        // the GxB_NONZOMBIE operator has a NULL function pointers.  All others
-        // are non-NULL
         GBPR0 ("    IndexUnaryOp has a NULL function pointer\n") ;
         return (GrB_INVALID_OBJECT) ;
     }

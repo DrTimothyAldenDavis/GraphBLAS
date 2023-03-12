@@ -322,22 +322,6 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
     } ;                                                                     \
     GrB_IndexUnaryOp GRB (op) = & GB_OPAQUE (GB_OP (op))
 
-// GxB_* IndexUnaryOps that depend on i,j, and y but not A(i,j), and result is
-// bool: NONZOMBIE.  No suffix on the GxB name.  No function pointer.
-#define GXB_IDXOP_POSITIONAL_BOOL(op,name)                                  \
-    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
-    {                                                                       \
-        GB_MAGIC, 0,                /* magic and header_size */             \
-        & GB_OPAQUE (BOOL),         /* ztype */                             \
-        NULL,                       /* xtype */                             \
-        & GB_OPAQUE (GB_XTYPE),     /* ytype */                             \
-        NULL, NULL, NULL,           /* no function pointer */               \
-        name, 0,                    /* name and name_len */                 \
-        GB_ ## op ## _idxunop_code, /* opcode */                            \
-        NULL, 0, 0                  /* defn, alloc, hash */                 \
-    } ;                                                                     \
-    GrB_IndexUnaryOp GXB (op) = & GB_OPAQUE (GB_OP (op))
-
 // GrB_IndexUnaryOps that depend on A(i,j), and result is bool: VALUE* ops
 #define GRB_IDXOP_VALUE(op,name)                                            \
     extern void GB_FUNC_T(op,GB_XTYPE) (bool *z, const GB_TYPE *x,          \
@@ -529,6 +513,10 @@ GrB_BinaryOp GrB_ONEB_FP64   = & GB_OPAQUE (PAIR_FP64) ;
 GrB_BinaryOp GxB_ONEB_FC32   = & GB_OPAQUE (PAIR_FC32) ;
 GrB_BinaryOp GxB_ONEB_FC64   = & GB_OPAQUE (PAIR_FC64) ;
 
+// nonzombie function for generic case
+extern void GB_nonzombie_func (bool *z, const void *x,
+    GrB_Index i, GrB_Index j, const void *y) ;
+
 // GxB_NONZOMBIE: internal use only
 struct GB_IndexUnaryOp_opaque GB_OPAQUE (NONZOMBIE) =
 {
@@ -536,7 +524,7 @@ struct GB_IndexUnaryOp_opaque GB_OPAQUE (NONZOMBIE) =
     & GB_OPAQUE (BOOL),         // ztype
     NULL,                       // xtype
     & GB_OPAQUE (INT64),        // ytype
-    NULL, NULL, NULL,           // no function pointer
+    NULL, (GxB_index_unary_function) &GB_nonzombie_func, NULL,
     "nonzombie", 0,             // name and name_len
     GB_NONZOMBIE_idxunop_code,  // opcode
     NULL, 0, 0                  // defn, alloc, hash

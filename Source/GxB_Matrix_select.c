@@ -9,8 +9,6 @@
 
 // C<M> = accum(C,select(A,k)) or accum(C,select(A',))
 
-#define GB_DEBUG
-
 #define GB_FREE_ALL             \
 {                               \
     GrB_Scalar_free (&Thunk) ;  \
