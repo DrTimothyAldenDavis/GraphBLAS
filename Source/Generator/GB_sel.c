@@ -67,7 +67,6 @@ GrB_Info GB (_sel_phase2)
     #include "GB_select_phase2.c"
     return (GrB_SUCCESS) ;
 }
-m4_divert(0)
 
 m4_divert(if_bitmap)
 //------------------------------------------------------------------------------
@@ -87,5 +86,4 @@ GrB_Info GB (_sel_bitmap)
     #include "GB_select_bitmap_template.c"
     return (GrB_SUCCESS) ;
 }
-m4_divert(0)
 

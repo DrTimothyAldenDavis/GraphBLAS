@@ -10,6 +10,7 @@
 #define GB_DEBUG
 
 #include "GB_select.h"
+#include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_sel__include.h"
 #endif
@@ -135,7 +136,11 @@ GrB_Info GB_selector_bitmap
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: select: bitmap select
+        if (info == GrB_NO_VALUE)
+        {
+            info = GB_select_bitmap_jit (C->b, &cnvals, C_iso, A, flipij,
+                ythunk, op, nthreads) ;
+        }
         #endif
 
         //----------------------------------------------------------------------

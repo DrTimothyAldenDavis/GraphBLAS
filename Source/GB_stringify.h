@@ -677,6 +677,18 @@ void GB_macrofy_select          // construct all macros for GrB_select
     GrB_Type atype
 ) ;
 
+GrB_Info GB_select_bitmap_jit      // select bitmap
+(
+    int8_t *Cb,
+    int64_t *cnvals_handle,
+    const bool C_iso,
+    const GrB_Matrix A,
+    const bool flipij,
+    const GB_void *restrict ythunk,
+    const GrB_IndexUnaryOp op,
+    const int nthreads
+) ;
+
 //------------------------------------------------------------------------------
 // GB_namify_problem: name a problem
 //------------------------------------------------------------------------------
