@@ -3648,6 +3648,7 @@
 #define GB_encodify_ewise GM_encodify_ewise
 #define GB_encodify_mxm GM_encodify_mxm
 #define GB_encodify_reduce GM_encodify_reduce
+#define GB_encodify_select GM_encodify_select
 #define GB_entry_check GM_entry_check
 #define GB_enumify_apply GM_enumify_apply
 #define GB_enumify_binop GM_enumify_binop
@@ -3658,6 +3659,7 @@
 #define GB_enumify_monoid GM_enumify_monoid
 #define GB_enumify_mxm GM_enumify_mxm
 #define GB_enumify_reduce GM_enumify_reduce
+#define GB_enumify_select GM_enumify_select
 #define GB_enumify_sparsity GM_enumify_sparsity
 #define GB_enumify_terminal GM_enumify_terminal
 #define GB_enumify_unop GM_enumify_unop
@@ -3909,8 +3911,8 @@
 #define GB_LZ4_compress_fast_extState GM_LZ4_compress_fast_extState
 #define GB_LZ4_compress_fast_extState_fastReset GM_LZ4_compress_fast_extState_fastReset
 #define GB_LZ4_compress_forceExtDict GM_LZ4_compress_forceExtDict
-#define GB_LZ4_compress_HC GM_LZ4_compress_HC
 #define GB_LZ4_compressHC GM_LZ4_compressHC
+#define GB_LZ4_compress_HC GM_LZ4_compress_HC
 #define GB_LZ4_compressHC2 GM_LZ4_compressHC2
 #define GB_LZ4_compressHC2_continue GM_LZ4_compressHC2_continue
 #define GB_LZ4_compressHC2_limitedOutput GM_LZ4_compressHC2_limitedOutput
@@ -3998,6 +4000,7 @@
 #define GB_macrofy_query_monoid GM_macrofy_query_monoid
 #define GB_macrofy_query_version GM_macrofy_query_version
 #define GB_macrofy_reduce GM_macrofy_reduce
+#define GB_macrofy_select GM_macrofy_select
 #define GB_macrofy_sparsity GM_macrofy_sparsity
 #define GB_macrofy_string GM_macrofy_string
 #define GB_macrofy_type GM_macrofy_type
@@ -4039,6 +4042,7 @@
 #define GB_nnz_full GM_nnz_full
 #define GB_nnz_held GM_nnz_held
 #define GB_nnz_max GM_nnz_max
+#define GB_nonzombie_func GM_nonzombie_func
 #define GB_nvals GM_nvals
 #define GB_nvec_nonempty GM_nvec_nonempty
 #define GB_omp_get_max_threads GM_omp_get_max_threads
@@ -4099,16 +4103,22 @@
 #define GB_Scalar_reduce GM_Scalar_reduce
 #define GB_Scalar_wrap GM_Scalar_wrap
 #define GB_select GM_select
+#define GB_select_bitmap GM_select_bitmap
+#define GB_select_bitmap_jit GM_select_bitmap_jit
+#define GB_select_column GM_select_column
 #define GB_select_generic_bitmap GM_select_generic_bitmap
 #define GB_select_generic_phase1 GM_select_generic_phase1
 #define GB_select_generic_phase2 GM_select_generic_phase2
 #define GB_SelectOp_check GM_SelectOp_check
 #define GB_selectop_to_idxunop GM_selectop_to_idxunop
 #define GB_selector GM_selector
-#define GB_selector_bitmap GM_selector_bitmap
+#define GB_select_phase1_jit GM_select_phase1_jit
+#define GB_select_phase2_jit GM_select_phase2_jit
 #define GB_select_positional_bitmap GM_select_positional_bitmap
 #define GB_select_positional_phase1 GM_select_positional_phase1
 #define GB_select_positional_phase2 GM_select_positional_phase2
+#define GB_select_sparse GM_select_sparse
+#define GB_select_value_iso GM_select_value_iso
 #define GB_Semiring_check GM_Semiring_check
 #define GB_Semiring_new GM_Semiring_new
 #define GB_serialize GM_serialize
