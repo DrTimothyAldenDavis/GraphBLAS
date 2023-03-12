@@ -2,7 +2,7 @@
 // GB_wait:  finish all pending computations on a single matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -57,7 +57,7 @@
 #include "GB_Pending.h"
 #include "GB_build.h"
 #include "GB_jappend.h"
-#include "GB_scalar.h"
+#include "GB_scalar_wrap.h"
 
 GrB_Info GB_wait                // finish all pending computations
 (
@@ -262,13 +262,7 @@ GrB_Info GB_wait                // finish all pending computations
         struct GB_Scalar_opaque Thunk_header ;
         int64_t k = 0 ;
         GrB_Scalar Thunk = GB_Scalar_wrap (&Thunk_header, GrB_INT64, &k) ;
-        GB_OK (GB_selector (
-            NULL,                       // A in-place
-            GxB_NONZOMBIE,
-            false,                      // flipij is false
-            A,                          // input/output matrix
-            Thunk,                      // Thunk = 0 (not used)
-            Werk)) ;
+        GB_OK (GB_selector (NULL, GxB_NONZOMBIE, false, A, Thunk, Werk)) ;
         ASSERT (A->nzombies == (anz_orig - GB_nnz (A))) ;
         A->nzombies = 0 ;
     }

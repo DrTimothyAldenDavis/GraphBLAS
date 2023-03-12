@@ -2,13 +2,13 @@
 // GrB_Matrix_apply: apply a unary or binary operator to a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 #include "GB_apply.h"
-#include "GB_scalar.h"
+#include "GB_scalar_wrap.h"
 #include "GB_get_mask.h"
 
 //------------------------------------------------------------------------------
@@ -256,7 +256,7 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_apply_BinaryOp1st_, T)                   \
     GB_WHERE (C, GB_STR(prefix) "_Matrix_apply_BinaryOp1st_" GB_STR(T)      \
         " (C, M, accum, op, x, A, desc)") ;                                 \
     GB_SCALAR_WRAP (scalar, x, GB_EVAL3 (prefix, _, T)) ;                   \
-    return (GB_1st (C, M, accum, op, scalar, A, desc, Werk)) ;           \
+    return (GB_1st (C, M, accum, op, scalar, A, desc, Werk)) ;              \
 }
 
 GB_BIND1ST (GrB, bool      , BOOL  )

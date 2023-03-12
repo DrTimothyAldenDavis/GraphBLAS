@@ -37,7 +37,41 @@ GrB_Info GB_selector
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_selector_bitmap
+GrB_Info GB_select_sparse
+(
+    GrB_Matrix C,
+    const bool C_iso,
+    const GrB_IndexUnaryOp op,
+    const bool flipij,
+    const GrB_Matrix A,
+    const int64_t ithunk,
+    const GB_void *restrict athunk,
+    const GB_void *restrict ythunk,
+    GB_Werk Werk
+) ;
+
+GrB_Info GB_select_value_iso
+(
+    GrB_Matrix C,
+    GrB_IndexUnaryOp op,
+    GrB_Matrix A,
+    int64_t ithunk,
+    const GB_void *restrict athunk,
+    const GB_void *restrict ythunk,
+    GB_Werk Werk
+) ;
+
+GrB_Info GB_select_column
+(
+    GrB_Matrix C,
+    const bool C_iso,
+    const GrB_IndexUnaryOp op,
+    GrB_Matrix A,
+    int64_t ithunk,
+    GB_Werk Werk
+) ;
+
+GrB_Info GB_select_bitmap
 (
     GrB_Matrix C,               // output matrix, static header
     const bool C_iso,           // if true, C is iso

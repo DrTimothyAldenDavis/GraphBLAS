@@ -1,14 +1,14 @@
 //------------------------------------------------------------------------------
-// GB_scalar.h: definitions for GrB_Scalar
+// GB_scalar_wrap.h: definitions for GB_scalar_wrap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-#ifndef GB_SCALAR_H
-#define GB_SCALAR_H
+#ifndef GB_SCALAR_WRAP_H
+#define GB_SCALAR_WRAP_H
 
 GrB_Scalar GB_Scalar_wrap   // create a new GrB_Scalar with one entry
 (

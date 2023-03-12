@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_selector_bitmap:  select entries from a bitmap or full matrix
+// GB_select_bitmap:  select entries from a bitmap or full matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -18,7 +18,7 @@
 #define GB_FREE_ALL         \
     GB_phybix_free (C) ;
 
-GrB_Info GB_selector_bitmap
+GrB_Info GB_select_bitmap
 (
     GrB_Matrix C,               // output matrix, static header
     const bool C_iso,           // if true, C is iso

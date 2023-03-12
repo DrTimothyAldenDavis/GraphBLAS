@@ -24,7 +24,7 @@
     int64_t anvec = A->nvec ;
 
     //==========================================================================
-    // positional selector (tril, triu, diag, offdiag, row*)
+    // positional op (tril, triu, diag, offdiag, row*, but not col*)
     //==========================================================================
 
     ASSERT (!GB_JUMBLED (A)) ;
@@ -166,7 +166,7 @@
     //--------------------------------------------------------------------------
 
     // Wfirst [0..A_ntasks-1] and Wlast [0..A_ntasks-1] are required for
-    // constructing C_start_slice [0..A_ntasks-1] in GB_selector.
+    // constructing Cp_kfirst [0..A_ntasks-1] in GB_selector.
 
     for (int tid = 0 ; tid < A_ntasks ; tid++)
     {

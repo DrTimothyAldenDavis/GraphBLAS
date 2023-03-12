@@ -2,18 +2,16 @@
 // GrB_Matrix_select: select entries from a matrix using a GrB_IndexUnaryOp
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 // C<M> = accum(C,select(A,k)) or accum(C,select(A',))
 
-#define GB_DEBUG
-
 #include "GB_select.h"
 #include "GB_get_mask.h"
-#include "GB_scalar.h"
+#include "GB_scalar_wrap.h"
 
 //------------------------------------------------------------------------------
 // GB_sel: select using a GrB_IndexUnaryOp

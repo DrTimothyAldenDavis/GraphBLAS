@@ -2,7 +2,7 @@
 // GB_select: apply a select operator
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -19,7 +19,7 @@
 #include "GB_select.h"
 #include "GB_accum_mask.h"
 #include "GB_transpose.h"
-#include "GB_scalar.h"
+#include "GB_scalar_wrap.h"
 
 GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 (
@@ -385,14 +385,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     }
     else
     { 
-        // T = selector (A, Thunk)
-        GB_OK (GB_selector (
-            T,          // output matrix
-            op,         // the GrB_IndexUnaryOp, perhaps modified above
-            flipij,     // if true, flip i and j for user-defined operator
-            A,          // input matrix
-            Thunk2,     // the Thunk scalar, perhaps modified above
-            Werk)) ;
+        // T = select (A, Thunk)
+        GB_OK (GB_selector (T, op, flipij, A, Thunk2, Werk)) ;
     }
 
     T->is_csc = A_csc ;

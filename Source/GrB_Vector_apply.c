@@ -2,13 +2,13 @@
 // GrB_Vector_apply: apply a unary or binary operator to a vector
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 #include "GB_apply.h"
-#include "GB_scalar.h"
+#include "GB_scalar_wrap.h"
 #include "GB_get_mask.h"
 
 //------------------------------------------------------------------------------
@@ -268,7 +268,7 @@ GrB_Info GB_EVAL3 (prefix, _Vector_apply_BinaryOp1st_, T)                   \
     GB_WHERE (w, GB_STR(prefix) "_Vector_apply_BinaryOp1st_" GB_STR(T)      \
         " (w, M, accum, op, x, u, desc)") ;                                 \
     GB_SCALAR_WRAP (scalar, x, GB_EVAL3 (prefix, _, T)) ;                   \
-    return (GB_1st (w, M, accum, op, scalar, u, desc, Werk)) ;           \
+    return (GB_1st (w, M, accum, op, scalar, u, desc, Werk)) ;              \
 }
 
 GB_BIND1ST (GrB, bool      , BOOL  )

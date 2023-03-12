@@ -2,16 +2,14 @@
 // GrB_Vector_select: select entries from a vector using a GrB_IndexUnaryOp
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 #include "GB_select.h"
 #include "GB_get_mask.h"
-#include "GB_scalar.h"
+#include "GB_scalar_wrap.h"
 
 //------------------------------------------------------------------------------
 // GB_sel: select using a GrB_IndexUnaryOp

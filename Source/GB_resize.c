@@ -2,7 +2,7 @@
 // GB_resize: change the size of a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -10,7 +10,7 @@
 #define GB_DEBUG
 
 #include "GB_select.h"
-#include "GB_scalar.h"
+#include "GB_scalar_wrap.h"
 
 #define GB_FREE_ALL                     \
 {                                       \
@@ -290,13 +290,7 @@ GrB_Info GB_resize              // change the size of a matrix
             struct GB_Scalar_opaque Thunk_header ;
             int64_t k = vlen_new - 1 ;
             GrB_Scalar Thunk = GB_Scalar_wrap (&Thunk_header, GrB_INT64, &k) ;
-            GB_OK (GB_selector (
-                NULL,                   // A in-place
-                GrB_ROWLE,
-                false,                  // flipij is false
-                A,                      // input/output matrix
-                Thunk,                  // Thunk = vlen_new-1
-                Werk)) ;
+            GB_OK (GB_selector (NULL, GrB_ROWLE, false, A, Thunk, Werk)) ;
         }
 
         //----------------------------------------------------------------------
