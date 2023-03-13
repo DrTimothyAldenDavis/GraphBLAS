@@ -44,6 +44,7 @@ GrB_Info GB_select_positional_phase2
     //--------------------------------------------------------------------------
 
     #define GB_A_TYPE void
+    #include "GB_select_shared_definitions.h"
 
     if (A->iso)
     {
@@ -52,6 +53,7 @@ GrB_Info GB_select_positional_phase2
         // A is iso
         //----------------------------------------------------------------------
 
+        #undef  GB_ISO_SELECT
         #define GB_ISO_SELECT 1
 
         switch (opcode)

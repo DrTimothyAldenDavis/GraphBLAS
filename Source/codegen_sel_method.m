@@ -72,8 +72,10 @@ end
 % for phase2: copy the numerical value of the entry
 if (C_iso)
     % create C as iso for all EQ_THUNK ops even when A is not iso, with iso value athunk
+    fprintf (f, 'm4_define(`GB_iso_select'', `#define GB_ISO_SELECT 1'')\n') ;
     fprintf (f, 'm4_define(`GB_select_entry'', `#define GB_SELECT_ENTRY(Cx,pC,Ax,pA)'')\n') ;
 else
+    fprintf (f, 'm4_define(`GB_iso_select'', `'')\n') ;
     fprintf (f, 'm4_define(`GB_select_entry'', `#define GB_SELECT_ENTRY(Cx,pC,Ax,pA) Cx [pC] = Ax [pA]'')\n') ;
 end
 

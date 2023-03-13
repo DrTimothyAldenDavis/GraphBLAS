@@ -36,6 +36,7 @@ GrB_Info GB_select_positional_bitmap
     //--------------------------------------------------------------------------
 
     #define GB_A_TYPE void
+    #include "GB_select_shared_definitions.h"
 
     switch (opcode)
     {

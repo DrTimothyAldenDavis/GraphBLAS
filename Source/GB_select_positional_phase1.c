@@ -42,6 +42,8 @@ GrB_Info GB_select_positional_phase1
     // phase1: positional operators and nonzombie selector
     //--------------------------------------------------------------------------
 
+    #include "GB_select_shared_definitions.h"
+
     switch (opcode)
     {
 

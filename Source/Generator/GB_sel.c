@@ -16,6 +16,7 @@ GB_atype
 GB_ytype
 GB_test_value_of_entry
 GB_select_entry
+GB_iso_select
 
 #include "GB_select_shared_definitions.h"
 

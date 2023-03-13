@@ -16,6 +16,7 @@
 #define GB_Y_TYPE uint32_t
 #define GB_TEST_VALUE_OF_ENTRY(keep,p) bool keep = (Ax [p] == y)
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)
+#define GB_ISO_SELECT 1
 
 #include "GB_select_shared_definitions.h"
 
