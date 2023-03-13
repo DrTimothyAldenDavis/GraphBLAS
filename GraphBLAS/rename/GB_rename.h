@@ -3547,7 +3547,6 @@
 #define GB_cexpm1f GM_cexpm1f
 #define GB_cfloor GM_cfloor
 #define GB_cfloorf GM_cfloorf
-#define GB_charify_id GM_charify_id
 #define GB_check_if_iso GM_check_if_iso
 #define GB_cisfinite GM_cisfinite
 #define GB_cisfinitef GM_cisfinitef
@@ -3991,6 +3990,7 @@
 #define GB_macrofy_copyright GM_macrofy_copyright
 #define GB_macrofy_defn GM_macrofy_defn
 #define GB_macrofy_ewise GM_macrofy_ewise
+#define GB_macrofy_id GM_macrofy_id
 #define GB_macrofy_input GM_macrofy_input
 #define GB_macrofy_mask GM_macrofy_mask
 #define GB_macrofy_monoid GM_macrofy_monoid
@@ -4034,8 +4034,6 @@
 #define GB_msort_3 GM_msort_3
 #define GB_msort_3_create_merge_tasks GM_msort_3_create_merge_tasks
 #define GB_mxm GM_mxm
-#define GB_namify_problem GM_namify_problem
-#define GB_namify_suffix GM_namify_suffix
 #define GB_new GM_new
 #define GB_new_bix GM_new_bix
 #define GB_nnz GM_nnz
