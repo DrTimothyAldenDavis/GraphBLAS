@@ -39,7 +39,7 @@ GrB_Info GB_EVAL2 (GXB (Vector_subassign_), T) /* w(I)<M> = accum (w(I),x)  */ \
     ASSERT (GB_IMPLIES (M != NULL, GB_VECTOR_OK (M))) ;                        \
     GrB_Info info = GB_subassign_scalar ((GrB_Matrix) w, (GrB_Matrix) M,       \
         accum, ampersand x, GB_## T ## _code, Rows, nRows, GrB_ALL, 1, desc,   \
-        Werk) ;                                                             \
+        Werk) ;                                                                \
     GB_BURBLE_END ;                                                            \
     return (info) ;                                                            \
 }
@@ -101,6 +101,14 @@ GrB_Info GxB_Vector_subassign_Scalar   // w<Mask>(I) = accum (w(I),s)
     GB_RETURN_IF_NULL (I) ;
     ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (M_in == NULL || GB_VECTOR_OK (M_in)) ;
+
+    // if w has a user-defined type, its type must match the scalar type
+    if (w->type->code == GB_UDT_code && w->type != scalar->type)
+    { 
+        GB_ERROR (GrB_DOMAIN_MISMATCH, "Input of type [%s]\n"
+            "cannot be typecast to output of type [%s]",
+            scalar->type->name, w->type->name) ;
+    }
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,

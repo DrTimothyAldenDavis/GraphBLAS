@@ -222,7 +222,7 @@ GrB_Info GB_assign_prep
         { 
             GB_ERROR (GrB_DOMAIN_MISMATCH, "Input of type [%s]\n"
                 "cannot be typecast to output of type [%s]",
-                atype->name, atype->name) ;
+                atype->name, ctype->name) ;
         }
     }
 
