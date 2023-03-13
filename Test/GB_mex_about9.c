@@ -128,7 +128,7 @@ void mexFunction
 
     bool has_byte = false ;
     uint8_t byte = 0 ;
-    const char *f = GB_charify_id (31, 1, &has_byte, &byte) ;
+    const char *f = GB_macrofy_id (31, 1, &has_byte, &byte) ;
     CHECK (f != NULL && strlen (f) == 0) ;
 
     // Using GB_boolean_rename results in  these cases not being tested.

@@ -19,10 +19,10 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                 \
 {                                   \
-    GB_Matrix_free (&Cwork) ;          \
-    GB_Matrix_free (&Awork) ;          \
+    GB_Matrix_free (&Cwork) ;       \
+    GB_Matrix_free (&Awork) ;       \
     GB_Matrix_free (&AT) ;          \
-    GB_Matrix_free (&Mwork) ;          \
+    GB_Matrix_free (&Mwork) ;       \
     GB_Matrix_free (&MT) ;          \
     GB_FREE_WORK (&I2, I2_size) ;   \
     GB_FREE_WORK (&J2, J2_size) ;   \
