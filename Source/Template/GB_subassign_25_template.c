@@ -99,7 +99,7 @@
                     { 
                         // C(i,j) = A(i,j)
                         #ifndef GB_ISO_ASSIGN
-                        GB_COPY_A_TO_C (Cx, pM, Ax, p, A_iso) ;
+                        GB_COPY_aij_to_C (Cx, pM, Ax, p, A_iso) ;
                         #endif
                     }
                     else
@@ -162,7 +162,7 @@
                     { 
                         // C(i,j) = A(i,j)
                         int64_t p = pA + GBI_M (Mi, pM, mvlen) ;
-                        GB_COPY_A_TO_C (Cx, pM, Ax, p, A_iso) ;
+                        GB_COPY_aij_to_C (Cx, pM, Ax, p, A_iso) ;
                     }
                 }
             }

@@ -60,8 +60,8 @@
             GB_get_pA (&pM_start, &pM_end, taskid, k,
                 kfirst, klast, pstart_Mslice, Mp, mvlen) ;
 
-            // pC points to the start of C(:,j) if C is dense
-            int64_t pC = j * cvlen ;
+            // pC_start points to the start of C(:,j)
+            int64_t pC_start = j * cvlen ;
 
             //------------------------------------------------------------------
             // C<M(:,j)> = x
@@ -72,8 +72,8 @@
                 GB_PRAGMA_SIMD_VECTORIZE
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 { 
-                    int64_t p = pC + GBI_M (Mi, pM, mvlen) ;
-                    GB_COPY_SCALAR_TO_C (p, cwork) ;        // Cx [p] = scalar
+                    int64_t pC = pC_start + GBI_M (Mi, pM, mvlen) ;
+                    GB_COPY_scalar_to_C (pC, cwork) ;        // Cx [pC] = cwork
                 }
             }
             else
@@ -83,8 +83,8 @@
                 {
                     if (GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize))
                     { 
-                        int64_t p = pC + GBI_M (Mi, pM, mvlen) ;
-                        GB_COPY_SCALAR_TO_C (p, cwork) ;    // Cx [p] = scalar
+                        int64_t pC = pC_start + GBI_M (Mi, pM, mvlen) ;
+                        GB_COPY_scalar_to_C (pC, cwork) ;    // Cx [pC] = cwork
                     }
                 }
             }

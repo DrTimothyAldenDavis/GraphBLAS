@@ -198,6 +198,8 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
                 #endif
             }
 
+            // JIT todo: type, concat bitmap
+
             if (!done)
             { 
                 // with typecasting or user-defined types

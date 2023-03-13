@@ -73,7 +73,7 @@
                 for (p = 0 ; p < anz ; p++)
                 { 
                     // Cx [p] = Ax [p]
-                    GB_COPY_A_TO_C (Cx, p, Ax, p, A_iso) ;
+                    GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso) ;
                 }
             }
             #endif
@@ -112,7 +112,7 @@
                         { 
                             // Cx [p] = Ax [p]
                             #ifndef GB_ISO_ASSIGN
-                            GB_COPY_A_TO_C (Cx, p, Ax, p, A_iso) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso) ;
                             #endif
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
@@ -141,7 +141,7 @@
                         // Cx [p] = Ax [p]
                         if (Ab [p])
                         { 
-                            GB_COPY_A_TO_C (Cx, p, Ax, p, A_iso) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso) ;
                         }
                     }
                 }
@@ -193,7 +193,7 @@
                             int64_t p = pC + Ai [pA] ;
                             // Cx [p] = Ax [pA]
                             #ifndef GB_ISO_ASSIGN
-                            GB_COPY_A_TO_C (Cx, p, Ax, pA, A_iso) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso) ;
                             #endif
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
@@ -235,7 +235,7 @@
                             { 
                                 int64_t p = pC + Ai [pA] ;
                                 // Cx [p] = Ax [pA]
-                                GB_COPY_A_TO_C (Cx, p, Ax, pA, A_iso) ;
+                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso) ;
                             }
                         }
                     }
@@ -279,7 +279,7 @@
                         if (GB_AX_MASK (Ax, p, asize))
                         { 
                             // Cx [p] = Ax [p]
-                            GB_COPY_A_TO_C (Cx, p, Ax, p, false) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, p, false) ;
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
                         }
@@ -303,7 +303,7 @@
                     if (GB_AX_MASK (Ax, p, asize))
                     { 
                         // Cx [p] = Ax [p]
-                        GB_COPY_A_TO_C (Cx, p, Ax, p, false) ;
+                        GB_COPY_aij_to_C (Cx, p, Ax, p, false) ;
                     }
                 }
             }
@@ -335,7 +335,7 @@
                         if (Ab [p] && GB_AX_MASK (Ax, p, asize))
                         { 
                             // Cx [p] = Ax [p]
-                            GB_COPY_A_TO_C (Cx, p, Ax, p, false) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, p, false) ;
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
                         }
@@ -359,7 +359,7 @@
                     if (Ab [p] && GB_AX_MASK (Ax, p, asize))
                     { 
                         // Cx [p] = Ax [p]
-                        GB_COPY_A_TO_C (Cx, p, Ax, p, false) ;
+                        GB_COPY_aij_to_C (Cx, p, Ax, p, false) ;
                     }
                 }
             }
@@ -410,7 +410,7 @@
                             { 
                                 int64_t p = pC + Ai [pA] ;
                                 // Cx [p] = Ax [pA]
-                                GB_COPY_A_TO_C (Cx, p, Ax, pA, A_iso) ;
+                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso) ;
                                 task_cnvals += (Cb [p] == 0) ;
                                 Cb [p] = 1 ;
                             }
@@ -452,7 +452,7 @@
                             { 
                                 int64_t p = pC + Ai [pA] ;
                                 // Cx [p] = Ax [pA]
-                                GB_COPY_A_TO_C (Cx, p, Ax, pA, A_iso) ;
+                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso) ;
                             }
                         }
                     }

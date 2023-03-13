@@ -185,6 +185,8 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
                 }
             #endif
 
+            // JIT todo: type, concat full
+
             if (!done)
             { 
                 // with typecasting or user-defined types

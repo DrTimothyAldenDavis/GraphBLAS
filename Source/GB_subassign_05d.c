@@ -23,7 +23,7 @@
 #include "GB_subassign_dense.h"
 #include "GB_unused.h"
 #ifndef GBCUDA_DEV
-#include "GB_type__include.h"
+#include "GB_as__include.h"
 #endif
 
 #undef  GB_FREE_WORKSPACE
@@ -107,7 +107,7 @@ GrB_Info GB_subassign_05d
     // via the factory kernel
     //--------------------------------------------------------------------------
 
-    bool done = false ;
+    info = GrB_NO_VALUE ;
 
     #ifndef GBCUDA_DEV
 
@@ -115,14 +115,12 @@ GrB_Info GB_subassign_05d
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_Cdense_05d(cname) GB (_Cdense_05d_ ## cname)
-
-        #define GB_WORKER(cname)                                              \
-        {                                                                     \
-            info = GB_Cdense_05d(cname) (C, M, Mask_struct, cwork,            \
-                M_ek_slicing, M_ntasks, M_nthreads) ;                         \
-            done = (info != GrB_NO_VALUE) ;                                   \
-        }                                                                     \
+        #define GB_sub05d(cname) GB (_subassign_05d_ ## cname)
+        #define GB_WORKER(cname)                                    \
+        {                                                           \
+            info = GB_sub05d (cname) (C, M, Mask_struct, cwork,     \
+                M_ek_slicing, M_ntasks, M_nthreads) ;               \
+        }                                                           \
         break ;
 
         //----------------------------------------------------------------------
@@ -162,7 +160,7 @@ GrB_Info GB_subassign_05d
     // via the generic kernel
     //--------------------------------------------------------------------------
 
-    if (!done)
+    if (info == GrB_NO_VALUE)
     { 
 
         //----------------------------------------------------------------------
@@ -176,11 +174,13 @@ GrB_Info GB_subassign_05d
 
         const size_t csize = C->type->size ;
 
-        // Cx [p] = scalar
-        #define GB_COPY_SCALAR_TO_C(p,x) \
-            memcpy (Cx + ((p)*csize), x, csize)
+        // Cx [pC] = cwork
+        #undef  GB_COPY_scalar_to_C
+        #define GB_COPY_scalar_to_C(pC,cwork) \
+            memcpy (Cx + ((pC)*csize), cwork, csize)
 
         #include "GB_subassign_05d_template.c"
+        info = GrB_SUCCESS ;
     }
 
     //--------------------------------------------------------------------------
@@ -188,7 +188,10 @@ GrB_Info GB_subassign_05d
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
-    ASSERT_MATRIX_OK (C, "C output for subassign method_05d", GB0) ;
-    return (GrB_SUCCESS) ;
+    if (info == GrB_SUCCESS)
+    {
+        ASSERT_MATRIX_OK (C, "C output for subassign method_05d", GB0) ;
+    }
+    return (info) ;
 }
 

@@ -8,9 +8,6 @@
 //------------------------------------------------------------------------------
 
 #include "GB_ek_slice.h"
-#ifndef GBCUDA_DEV
-#include "GB_type__include.h"
-#endif
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \
@@ -200,6 +197,8 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
                 }
             }
             #endif
+
+            // JIT todo: convert sparse to bitmap
 
             if (!done)
             { 

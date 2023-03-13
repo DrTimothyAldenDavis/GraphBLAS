@@ -289,6 +289,8 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                 #endif
             }
 
+            // JIT todo: split sparse
+
             if (!done)
             { 
                 // user-defined types

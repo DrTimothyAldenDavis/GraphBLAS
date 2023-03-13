@@ -28,7 +28,7 @@
 #include "GB_subassign_methods.h"
 #include "GB_subassign_dense.h"
 #ifndef GBCUDA_DEV
-#include "GB_type__include.h"
+#include "GB_as__include.h"
 #endif
 
 #undef  GB_FREE_ALL
@@ -119,6 +119,8 @@ GrB_Info GB_subassign_25
     // C<M> = A for built-in types
     //--------------------------------------------------------------------------
 
+    info = GrB_NO_VALUE ;
+
     if (C_iso)
     { 
 
@@ -129,6 +131,7 @@ GrB_Info GB_subassign_25
         #define GB_ISO_ASSIGN
         GB_cast_scalar (C->x, ccode, A->x, acode, asize) ;
         #include "GB_subassign_25_template.c"
+        info = GrB_SUCCESS ;
 
     }
     else
@@ -138,22 +141,18 @@ GrB_Info GB_subassign_25
         // via the factory kernel
         //----------------------------------------------------------------------
 
-        bool done = false ;
-
         #ifndef GBCUDA_DEV
 
             //------------------------------------------------------------------
             // define the worker for the switch factory
             //------------------------------------------------------------------
 
-            #define GB_Cdense_25(cname) GB (_Cdense_25_ ## cname)
-
-            #define GB_WORKER(cname)                                          \
-            {                                                                 \
-                info = GB_Cdense_25(cname) (C, M, A,                          \
-                    M_ek_slicing, M_ntasks, M_nthreads) ;                     \
-                done = (info != GrB_NO_VALUE) ;                               \
-            }                                                                 \
+            #define GB_sub25(cname) GB (_subassign_25_ ## cname)
+            #define GB_WORKER(cname)                            \
+            {                                                   \
+                info = GB_sub25 (cname) (C, M, A,               \
+                    M_ek_slicing, M_ntasks, M_nthreads) ;       \
+            }                                                   \
             break ;
 
             //------------------------------------------------------------------
@@ -197,7 +196,7 @@ GrB_Info GB_subassign_25
         // via the generic kernel
         //----------------------------------------------------------------------
 
-        if (!done)
+        if (info == GrB_NO_VALUE)
         { 
 
             //-----------------------------------------------------------------
@@ -211,11 +210,15 @@ GrB_Info GB_subassign_25
             const size_t csize = C->type->size ;
             GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
+// JIT: use GB_macrofy_cast_copy but revise for the iso case (precast Ax[0])
+
             // Cx [pC] = (ctype) Ax [pA]
-            #define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso) \
+            #undef  GB_COPY_aij_to_C
+            #define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso) \
                 cast_A_to_C (Cx+((pC)*csize), Ax+(A_iso?0:(pA)*asize), asize)
 
             #include "GB_subassign_25_template.c"
+            info = GrB_SUCCESS ;
         }
     }
 
@@ -224,10 +227,13 @@ GrB_Info GB_subassign_25
     //--------------------------------------------------------------------------
 
     GB_FREE_ALL ;
-    ASSERT_MATRIX_OK (C, "C output for subassign method_25", GB0) ;
-    ASSERT (GB_ZOMBIES_OK (C)) ;
-    ASSERT (GB_JUMBLED_OK (C)) ;
-    ASSERT (!GB_PENDING (C)) ;
-    return (GrB_SUCCESS) ;
+    if (info == GrB_SUCCESS)
+    {
+        ASSERT_MATRIX_OK (C, "C output for subassign method_25", GB0) ;
+        ASSERT (GB_ZOMBIES_OK (C)) ;
+        ASSERT (GB_JUMBLED_OK (C)) ;
+        ASSERT (!GB_PENDING (C)) ;
+    }
+    return (info) ;
 }
 

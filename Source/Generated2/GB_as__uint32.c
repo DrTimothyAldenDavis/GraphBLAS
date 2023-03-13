@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_type:  hard-coded functions for each built-in type
+// GB_as:  assign/subassign kernels with no accum
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,45 +7,43 @@
 
 //------------------------------------------------------------------------------
 
+// C(I,J)<M> = A
+
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_ek_slice.h"
-#include "GB_type__include.h"
+#include "GB_as__include.h"
 
-#define GB_C_TYPE \
-    GB_ctype
+#define GB_C_TYPE uint32_t
 
-// C must have the same type as A or the scalar x
+// C must have the same type as A or the scalar
 #define GB_A_TYPE GB_C_TYPE
 
-#define GB_CX(p) Cx [p]
+// Cx [pC] = cwork
+#define GB_COPY_scalar_to_C(pC,cwork) Cx [pC] = cwork
 
-// Cx [p] = scalar
-#define GB_COPY_SCALAR_TO_C(p,x) Cx [p] = x
-
-// Cx [p] = Ax [pA]
-#define GB_COPY_A_TO_C(Cx,p,Ax,pA,A_iso) Cx [p] = GBX (Ax, pA, A_iso)   // FIXME: use GB_GETA
+// Cx [pC] = Ax [pA]
+#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = GBX (Ax, pA, A_iso)
 
 // test the mask condition with Ax [pA]
-#define GB_AX_MASK(Ax,pA,asize) \
-    GB_ax_mask(Ax,pA,asize)
+#define GB_AX_MASK(Ax,pA,asize) (Ax [pA] != 0)
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
-    GB_disable
+    (GxB_NO_UINT32)
 
 #include "GB_kernel_shared_definitions.h"
 
 //------------------------------------------------------------------------------
-// C<M>=x, when C is dense
+// C<M> = scalar, when C is dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_Cdense_05d)
+GrB_Info GB (_subassign_05d__uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,     // scalar of type C->type
+    const GB_void *p_cwork,
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads
@@ -54,17 +52,17 @@ GrB_Info GB (_Cdense_05d)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_ctype cwork = (*((GB_ctype *) p_cwork)) ;
+    GB_C_TYPE cwork = (*((GB_C_TYPE *) p_cwork)) ;
     #include "GB_subassign_05d_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
 
 //------------------------------------------------------------------------------
-// C<A>=A, when C is dense
+// C<A> = A, when C is dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_Cdense_06d)
+GrB_Info GB (_subassign_06d__uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -84,10 +82,10 @@ GrB_Info GB (_Cdense_06d)
 }
 
 //------------------------------------------------------------------------------
-// C<M>=A, when C is empty and A is dense
+// C<M> = A, when C is empty and A is dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_Cdense_25)
+GrB_Info GB (_subassign_25__uint32)
 (
     GrB_Matrix C,
     const GrB_Matrix M,

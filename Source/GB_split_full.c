@@ -152,6 +152,8 @@ GrB_Info GB_split_full              // split a full matrix
                     }
                 }
                 #endif
+            
+                // JIT todo: split full
 
                 if (!done)
                 { 

@@ -377,6 +377,8 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 #endif
             }
 
+            // JIT todo: type, concat sparse
+
             if (!done)
             { 
                 // with typecasting or user-defined types

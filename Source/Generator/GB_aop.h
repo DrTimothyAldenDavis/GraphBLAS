@@ -1,6 +1,6 @@
 
 // SPDX-License-Identifier: Apache-2.0
-GrB_Info GB (_Cdense_accumB)
+GrB_Info GB (_subassign_23)
 (
     GrB_Matrix C,
     const GrB_Matrix B,
@@ -9,7 +9,7 @@ GrB_Info GB (_Cdense_accumB)
     const int B_nthreads
 ) ;
 
-GrB_Info GB (_Cdense_accumb)
+GrB_Info GB (_subassign_22)
 (
     GrB_Matrix C,
     const GB_void *p_bwork,

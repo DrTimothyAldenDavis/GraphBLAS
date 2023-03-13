@@ -124,6 +124,8 @@ bool GB_check_if_iso               // return true if A is iso, false otherwise
     }
     #endif
 
+    // JIT todo: type, check if matrix is iso
+
     if (!done)
     { 
         // with user-defined types of any size
@@ -137,8 +139,6 @@ bool GB_check_if_iso               // return true if A is iso, false otherwise
             my_iso = my_iso & (memcmp (a, Ax + (p)*asize, asize) == 0)
         #include "GB_check_if_iso_template.c"
     }
-
-    // JIT TODO: type, check if matrix is iso
 
     return (iso) ;
 }

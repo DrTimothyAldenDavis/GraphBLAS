@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_22: C += b where C is dense and b is a scalar
+// GB_subassign_22: C += scalar where C is dense
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// C += b where C is a dense or full matrix and b is a scalar
+// C += scalar where C is a dense or full matrix.
 // C can have any sparsity format, as long as all entries are present;
 // GB_is_dense (C)) must hold.
 
@@ -20,11 +20,11 @@
 
 #define GB_FREE_ALL ;
 
-GrB_Info GB_subassign_22      // C += b where C is dense and b is a scalar 
+GrB_Info GB_subassign_22      // C += scalar where C is dense
 (
     GrB_Matrix C,                   // input/output matrix
     const void *scalar,             // input scalar
-    const GrB_Type btype,           // type of the input scalar
+    const GrB_Type atype,           // type of the input scalar
     const GrB_BinaryOp accum,       // operator to apply
     GB_Werk Werk
 )
@@ -35,15 +35,15 @@ GrB_Info GB_subassign_22      // C += b where C is dense and b is a scalar
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT_MATRIX_OK (C, "C for C+=b", GB0) ;
+    ASSERT_MATRIX_OK (C, "C for C+=scalar", GB0) ;
     ASSERT (GB_as_if_full (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
 
     ASSERT (scalar != NULL) ;
-    ASSERT_TYPE_OK (btype, "btype for C+=b", GB0) ;
-    ASSERT_BINARYOP_OK (accum, "accum for C+=b", GB0) ;
+    ASSERT_TYPE_OK (atype, "atype for C+=scalar", GB0) ;
+    ASSERT_BINARYOP_OK (accum, "accum for C+=scalar", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
 
     GB_ENSURE_FULL (C) ;    // convert C to full, if sparsity control allows it
@@ -58,10 +58,10 @@ GrB_Info GB_subassign_22      // C += b where C is dense and b is a scalar
         return (GrB_SUCCESS) ;
     }
 
-    // C = accum (C,b) will be computed
+    // C = accum (C,scalar) will be computed
     ASSERT (C->type == accum->ztype) ;
     ASSERT (C->type == accum->xtype) ;
-    ASSERT (GB_Type_compatible (btype, accum->ytype)) ;
+    ASSERT (GB_Type_compatible (atype, accum->ytype)) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -80,15 +80,15 @@ GrB_Info GB_subassign_22      // C += b where C is dense and b is a scalar
     int64_t csize = C->type->size ;
     size_t ysize = accum->ytype->size ;
     GB_cast_function 
-        cast_B_to_Y = GB_cast_factory (accum->ytype->code, btype->code) ;
-    GB_void bwork [GB_VLA(ysize)] ;
-    cast_B_to_Y (bwork, scalar, btype->size) ;
+        cast_A_to_Y = GB_cast_factory (accum->ytype->code, atype->code) ;
+    GB_void ywork [GB_VLA(ysize)] ;
+    cast_A_to_Y (ywork, scalar, atype->size) ;
 
     //--------------------------------------------------------------------------
     // via the factory kernel
     //--------------------------------------------------------------------------
 
-    bool done = false ;
+    info = GrB_NO_VALUE ;
 
     #ifndef GBCUDA_DEV
 
@@ -96,13 +96,11 @@ GrB_Info GB_subassign_22      // C += b where C is dense and b is a scalar
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_Cdense_accumb(accum,xname) \
-            GB (_Cdense_accumb_ ## accum ## xname)
+        #define GB_sub22(accum,xname) GB (_subassign_22_ ## accum ## xname)
 
         #define GB_BINOP_WORKER(accum,xname)                                \
         {                                                                   \
-            info = GB_Cdense_accumb(accum,xname) (C, bwork, nthreads) ;     \
-            done = (info != GrB_NO_VALUE) ;                                 \
+            info = GB_sub22 (accum,xname) (C, ywork, nthreads) ;            \
         }                                                                   \
         break ;
 
@@ -112,7 +110,8 @@ GrB_Info GB_subassign_22      // C += b where C is dense and b is a scalar
 
         GB_Opcode opcode ;
         GB_Type_code xcode, ycode, zcode ;
-        if (GB_binop_builtin (C->type, false, btype, false, // C = C + b
+        // C = C + scalar where the scalar is cast to the Y input of accum
+        if (GB_binop_builtin (C->type, false, atype, false,
             accum, false, &opcode, &xcode, &ycode, &zcode))
         { 
             // accumulate sparse matrix into dense matrix with built-in operator
@@ -133,28 +132,17 @@ GrB_Info GB_subassign_22      // C += b where C is dense and b is a scalar
     // via the generic kernel
     //--------------------------------------------------------------------------
 
-    if (!done)
+    if (info == GrB_NO_VALUE)
     { 
 
         #include "GB_generic.h"
         GB_BURBLE_MATRIX (C, "(generic C(:,:)+=x assign) ") ;
 
-        //----------------------------------------------------------------------
-        // get operators, functions, workspace, contents of b and C
-        //----------------------------------------------------------------------
-
         GxB_binary_function faccum = accum->binop_function ;
 
-        //----------------------------------------------------------------------
-        // C += b via function pointers, and typecasting
-        //----------------------------------------------------------------------
-
-        // C(i,j) = C(i,j) + scalar
-        #define GB_BINOP(cout_ij, cin_aij, bwork, i, j) \
-            faccum (cout_ij, cin_aij, bwork)
-
-        // address of Cx [p]
-        #define GB_CX(p) Cx +((p)*csize)
+        // C(i,j) = C(i,j) + y
+        #define GB_ACCUMULATE_scalar(Cx,pC,ywork)           \
+            faccum (Cx +((pC)*csize), Cx +((pC)*csize), ywork)
 
         #include "GB_subassign_22_template.c"
     }
@@ -163,7 +151,7 @@ GrB_Info GB_subassign_22      // C += b where C is dense and b is a scalar
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "C+=b output", GB0) ;
+    ASSERT_MATRIX_OK (C, "C+=scalar output", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

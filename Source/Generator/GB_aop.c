@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_aop:  assign/subassign kernels for each built-in binary operator
+// GB_aop:  assign/subassign kernels with accum
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,46 +7,40 @@
 
 //------------------------------------------------------------------------------
 
-// C(I,J)<M> += B
+// C(I,J)<M> += A
 
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_assignop_kernels.h"
 #include "GB_aop__include.h"
 
-// accum:
 GB_accumop
 GB_ztype
 GB_xtype
 GB_ytype
-
-// B matrix:
-GB_btype
-GB_b2type
-GB_declareb
-GB_getb
-
-// C matrix:
+GB_atype
+GB_copy_aij_to_y
 GB_ctype
-GB_copy_b_to_c
+GB_copy_aij_to_c
+GB_accum_y
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     GB_disable
 
-#include "GB_ewise_shared_definitions.h"
+#include "GB_kernel_shared_definitions.h"
 
 //------------------------------------------------------------------------------
-// C += B, accumulate a sparse matrix into a dense matrix
+// C += A, accumulate a sparse matrix into a dense matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_Cdense_accumB)
+GrB_Info GB (_subassign_23)
 (
     GrB_Matrix C,
-    const GrB_Matrix B,
-    const int64_t *B_ek_slicing,
-    const int B_ntasks,
-    const int B_nthreads
+    const GrB_Matrix A,
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
 )
 {
     #if GB_DISABLE
@@ -62,13 +56,13 @@ GrB_Info GB (_Cdense_accumB)
 }
 
 //------------------------------------------------------------------------------
-// C += b, accumulate a scalar into a dense matrix
+// C += y, accumulate a scalar into a dense matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_Cdense_accumb)
+GrB_Info GB (_subassign_22)
 (
     GrB_Matrix C,
-    const GB_void *p_bwork,
+    const GB_void *ywork_handle,
     const int nthreads
 )
 {
@@ -77,8 +71,8 @@ GrB_Info GB (_Cdense_accumb)
     #else
     m4_divert(if_C_dense_update)
     { 
-        // get the scalar b for C += b, of type GB_B_TYPE
-        GB_B_TYPE bwork = (*((GB_B_TYPE *) p_bwork)) ;
+        // get the scalar ywork for C += ywork, of type GB_Y_TYPE
+        GB_Y_TYPE ywork = (*((GB_Y_TYPE *) ywork_handle)) ;
         #include "GB_subassign_22_template.c"
         return (GrB_SUCCESS) ;
     }

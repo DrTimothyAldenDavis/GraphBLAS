@@ -29,7 +29,7 @@
 #include "GB_subassign_methods.h"
 #include "GB_subassign_dense.h"
 #ifndef GBCUDA_DEV
-#include "GB_type__include.h"
+#include "GB_as__include.h"
 #endif
 
 #undef  GB_FREE_ALL
@@ -107,6 +107,8 @@ GrB_Info GB_subassign_06d
     // C<A> = A for built-in types
     //--------------------------------------------------------------------------
 
+    info = GrB_NO_VALUE ;
+
     if (C->iso)
     { 
 
@@ -121,6 +123,7 @@ GrB_Info GB_subassign_06d
         ASSERT (Mask_struct) ;
         #define GB_ISO_ASSIGN
         #include "GB_subassign_06d_template.c"
+        info = GrB_SUCCESS ;
 
     }
     else
@@ -130,22 +133,18 @@ GrB_Info GB_subassign_06d
         // via the factory kernel
         //----------------------------------------------------------------------
 
-        bool done = false ;
-
         #ifndef GBCUDA_DEV
 
             //------------------------------------------------------------------
             // define the worker for the switch factory
             //------------------------------------------------------------------
 
-            #define GB_Cdense_06d(cname) GB (_Cdense_06d_ ## cname)
-
-            #define GB_WORKER(cname)                                          \
-            {                                                                 \
-                info = GB_Cdense_06d(cname) (C, A, Mask_struct,               \
-                    A_ek_slicing, A_ntasks, A_nthreads) ;                     \
-                done = (info != GrB_NO_VALUE) ;                               \
-            }                                                                 \
+            #define GB_sub06d(cname) GB (_subassign_06d_ ## cname)
+            #define GB_WORKER(cname)                                \
+            {                                                       \
+                info = GB_sub06d(cname) (C, A, Mask_struct,         \
+                    A_ek_slicing, A_ntasks, A_nthreads) ;           \
+            }                                                       \
             break ;
 
             //------------------------------------------------------------------
@@ -188,7 +187,7 @@ GrB_Info GB_subassign_06d
         // via the generic kernel
         //----------------------------------------------------------------------
 
-        if (!done)
+        if (info == GrB_NO_VALUE)
         { 
 
             //------------------------------------------------------------------
@@ -203,21 +202,30 @@ GrB_Info GB_subassign_06d
             const GB_Type_code acode = A->type->code ;
             GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
+// JIT: use GB_macrofy_cast_copy but revise for the iso case (precast Ax[0])
+
             // Cx [p] = (ctype) Ax [pA]
-            #define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso) \
+            #undef  GB_COPY_aij_to_C
+            #define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso) \
             cast_A_to_C (Cx + ((pC)*csize), Ax + (A_iso ? 0:(pA)*asize), asize)
 
             #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, asize)
 
             #include "GB_subassign_06d_template.c"
+
+            info = GrB_SUCCESS ;
         }
     }
+
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
 
     GB_FREE_ALL ;
-    ASSERT_MATRIX_OK (C, "C output for subassign method_06d", GB0) ;
-    return (GrB_SUCCESS) ;
+    if (info == GrB_SUCCESS)
+    {
+        ASSERT_MATRIX_OK (C, "C output for subassign method_06d", GB0) ;
+    }
+    return (info) ;
 }
 

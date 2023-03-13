@@ -161,6 +161,8 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
                 #endif
             }
 
+            // JIT todo: split bitmap
+
             if (!done)
             { 
                 // user-defined types

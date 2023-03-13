@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_22_template: C += b where C is dense and b is a scalar
+// GB_subassign_22_template: C += y where C is dense and y is a scalar
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -18,14 +18,16 @@
     ASSERT (!C->iso) ;
 
     //--------------------------------------------------------------------------
-    // C += b where C is dense and b is a scalar
+    // C += y where C is dense and y is a scalar
     //--------------------------------------------------------------------------
 
     int64_t pC ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (pC = 0 ; pC < cnz ; pC++)
     { 
-        GB_BINOP (GB_CX (pC), GB_CX (pC), bwork, 0, 0) ;
+        // Cx [pC] += ywork
+        GB_ACCUMULATE_scalar (Cx, pC, ywork) ;
+        // GB_BINOP (GB_CX (pC), GB_CX (pC), bwork, 0, 0) ;
     }
 }
 

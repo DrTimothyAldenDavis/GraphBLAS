@@ -114,6 +114,7 @@
 // GB_GET_ACCUM: get the accumulator op and its related typecasting functions
 //------------------------------------------------------------------------------
 
+// JIT: not needed
 #define GB_GET_ACCUM                                                        \
     ASSERT_BINARYOP_OK (accum, "accum for assign", GB0) ;                   \
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;                                 \
@@ -134,15 +135,17 @@
     ASSERT_MATRIX_OK (A, "A for assign", GB0) ;                             \
     const GrB_Type atype = A->type ;                                        \
     const size_t asize = atype->size ;                                      \
-    const GB_Type_code acode = atype->code ;                                \
     const int64_t *Ap = A->p ;                                              \
     const int8_t  *Ab = A->b ;                                              \
     const int64_t *Ai = A->i ;                                              \
-    const GB_void *Ax = (GB_void *) A->x ;                                  \
-    const GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;   \
     const int64_t Avlen = A->vlen ;                                         \
+    /* JIT: will be GB_A_TYPE, not GB_void: */                              \
+    const GB_void *Ax = (GB_void *) A->x ;                                  \
+    /* JIT: not needed: */                                                  \
+    const bool A_iso = A->iso ;                                             \
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;                             \
-    const bool A_iso = A->iso ;
+    const GB_Type_code acode = atype->code ;                                \
+    const GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
 //------------------------------------------------------------------------------
 // GB_GET_SCALAR: get the scalar
@@ -151,10 +154,11 @@
 #define GB_GET_SCALAR                                                       \
     ASSERT_TYPE_OK (atype, "atype for assign", GB0) ;                       \
     const size_t asize = atype->size ;                                      \
+    /* JIT: will be a cast macro, to cwork scalar */                        \
     const GB_Type_code acode = atype->code ;                                \
     const GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;   \
     GB_void cwork [GB_VLA(csize)] ;                                         \
-    cast_A_to_C (cwork, scalar, asize) ;                                    \
+    cast_A_to_C (cwork, scalar, asize) ;
 
 //------------------------------------------------------------------------------
 // GB_GET_ACCUM_SCALAR: get the scalar and the accumulator
@@ -163,6 +167,7 @@
 #define GB_GET_ACCUM_SCALAR                                                 \
     GB_GET_SCALAR ;                                                         \
     GB_GET_ACCUM ;                                                          \
+    /* JIT: will be a cast macro, to ywork scalar */                        \
     GB_void ywork [GB_VLA(ysize)] ;                                         \
     cast_A_to_Y (ywork, scalar, asize) ;
 
@@ -260,44 +265,52 @@
     // basic operations
     //--------------------------------------------------------------------------
 
-    #define GB_COPY_scalar_to_C                                             \
+    #define GB_COPY_scalar_to_C(pC,cwork)                                   \
     {                                                                       \
-        /* C(iC,jC) = scalar, already typecasted into cwork      */         \
+        /* C(iC,jC) = scalar, already typecasted into cwork */              \
         if (!C_iso)                                                         \
         {                                                                   \
-            memcpy (Cx +(pC*csize), cwork, csize) ;                         \
+            memcpy (Cx +((pC)*csize), cwork, csize) ;                       \
         }                                                                   \
     }
 
-    #define GB_COPY_aij_to_C                                                \
+    #define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso)                             \
     {                                                                       \
-        /* C(iC,jC) = A(i,j), with typecasting                   */         \
+        /* C(iC,jC) = (ctype) A(i,j), with typecasting */                   \
         if (!C_iso)                                                         \
         {                                                                   \
-            cast_A_to_C (Cx +(pC*csize), Ax +(A_iso?0:(pA*asize)), csize) ; \
+            cast_A_to_C (Cx +(pC*csize), Ax +(A_iso?0:(pA*asize)), asize) ; \
         }                                                                   \
     }
 
-    #define GB_COPY_aij_to_ywork                                            \
+    #define GB_COPY_aij_to_ywork(Ax,pA,A_iso)                               \
     {                                                                       \
-        /* ywork = A(i,j), with typecasting                      */         \
+        /* ywork = A(i,j), with typecasting */                              \
         if (!C_iso)                                                         \
         {                                                                   \
             cast_A_to_Y (ywork, Ax + (A_iso ? 0 : (pA*asize)), asize) ;     \
         }                                                                   \
     }
 
-    #define GB_ACCUMULATE                                                   \
+    #define GB_ACCUMULATE_scalar(Cx,pC,ywork)                               \
     {                                                                       \
         if (!C_iso)                                                         \
         {                                                                   \
-            /* C(iC,jC) = accum (C(iC,jC), ywork)                    */     \
+            /* C(iC,jC) += ywork, with typecasting */                       \
             GB_void xwork [GB_VLA(xsize)] ;                                 \
             cast_C_to_X (xwork, Cx +(pC*csize), csize) ;                    \
             GB_void zwork [GB_VLA(zsize)] ;                                 \
             faccum (zwork, xwork, ywork) ;                                  \
             cast_Z_to_C (Cx +(pC*csize), zwork, csize) ;                    \
         }                                                                   \
+    }
+
+    #define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso)                            \
+    {                                                                       \
+        /* Cx [pC] += (ytype) Ax [A_iso ? 0 : pA] */                        \
+        GB_void ywork [GB_VLA(ysize)] ;                                     \
+        GB_COPY_aij_to_ywork (Ax,pA,A_iso) ;                                \
+        GB_ACCUMULATE_scalar (Cx,pC,ywork) ;                                \
     }
 
     #define GB_DELETE                                                       \
@@ -697,7 +710,7 @@
                 /* ----[X A 1]                                           */ \
                 /* action: ( undelete ): bring a zombie back to life     */ \
                 GB_UNDELETE ;                                               \
-                GB_COPY_aij_to_C ;                                          \
+                GB_COPY_aij_to_C (Cx,pC,Ax,pA,A_iso) ;                      \
             }
 
             // [X A 1] scalar case
@@ -706,7 +719,7 @@
                 /* ----[X A 1]                                           */ \
                 /* action: ( undelete ): bring a zombie back to life     */ \
                 GB_UNDELETE ;                                               \
-                GB_COPY_scalar_to_C ;                                       \
+                GB_COPY_scalar_to_C (pC,cwork) ;                            \
             }
 
             // [C A 1] matrix case when accum is present
@@ -722,9 +735,7 @@
                 {                                                           \
                     /* ----[C A 1] with accum                            */ \
                     /* action: ( =C+A ): apply the accumulator           */ \
-                    GB_void ywork [GB_VLA(ysize)] ;                         \
-                    GB_COPY_aij_to_ywork ;                                  \
-                    GB_ACCUMULATE ;                                         \
+                    GB_ACCUMULATE_aij (Cx,pC,Ax,pA,A_iso) ;                 \
                 }                                                           \
             }
 
@@ -741,7 +752,7 @@
                 {                                                           \
                     /* ----[C A 1] with accum, scalar expansion          */ \
                     /* action: ( =C+A ): apply the accumulator           */ \
-                    GB_ACCUMULATE ;                                         \
+                    GB_ACCUMULATE_scalar (Cx,pC,ywork) ;                    \
                 }                                                           \
             }
 
@@ -758,7 +769,7 @@
                 {                                                           \
                     /* ----[C A 1] no accum, scalar expansion            */ \
                     /* action: ( =A ): copy A into C                     */ \
-                    GB_COPY_aij_to_C ;                                      \
+                    GB_COPY_aij_to_C (Cx,pC,Ax,pA,A_iso) ;                  \
                 }                                                           \
             }
 
@@ -775,7 +786,7 @@
                 {                                                           \
                     /* ----[C A 1] no accum, scalar expansion            */ \
                     /* action: ( =A ): copy A into C                     */ \
-                    GB_COPY_scalar_to_C ;                                   \
+                    GB_COPY_scalar_to_C (pC,cwork) ;                        \
                 }                                                           \
             }
 

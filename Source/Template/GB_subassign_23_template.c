@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-// GB_subassign_23_template: C += B where C is dense; B is sparse or dense
+// GB_subassign_23_template: C += A where C is dense; A is sparse or dense
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -12,50 +12,56 @@
 {
 
     //--------------------------------------------------------------------------
-    // get C and B
+    // get C and A
     //--------------------------------------------------------------------------
 
     ASSERT (!C->iso) ;
-    const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
-    const bool B_iso = B->iso ;
+    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
+    const bool A_iso = A->iso ;
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     ASSERT (GB_is_dense (C)) ;
     const int64_t cnz = GB_nnz_held (C) ;
 
-    if (GB_IS_BITMAP (B))
+    if (GB_IS_BITMAP (A))
     {
 
         //----------------------------------------------------------------------
-        // C += B when C is dense and B is bitmap
+        // C += A when C is dense and A is bitmap
         //----------------------------------------------------------------------
 
-        const int8_t *restrict Bb = B->b ;
+        const int8_t *restrict Ab = A->b ;
         int64_t p ;
-        #pragma omp parallel for num_threads(B_nthreads) schedule(static)
+        #pragma omp parallel for num_threads(A_nthreads) schedule(static)
         for (p = 0 ; p < cnz ; p++)
         { 
-            if (!Bb [p]) continue ;
-            GB_DECLAREB (bij) ;
-            GB_GETB (bij, Bx, p, B_iso) ;                 // bij = B(i,j)
-            GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;  // C(i,j) += bij
+            if (!Ab [p]) continue ;
+            // Cx [p] += (ytype) Ax [p], with typecasting
+            GB_COPY_aij_to_ywork (ywork, Ax, p, A_iso) ;
+            GB_ACCUMULATE_scalar (Cx, p, ywork) ;
+//          GB_DECLAREB (bij) ;
+//          GB_GETB (bij, Bx, p, B_iso) ;
+//          GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
         }
 
     }
-    else if (B_ek_slicing == NULL)
+    else if (A_ek_slicing == NULL)
     {
 
         //----------------------------------------------------------------------
-        // C += B when both C and B are dense
+        // C += A when both C and A are dense
         //----------------------------------------------------------------------
 
-        ASSERT (GB_is_dense (B)) ;
+        ASSERT (GB_is_dense (A)) ;
         int64_t p ;
-        #pragma omp parallel for num_threads(B_nthreads) schedule(static)
+        #pragma omp parallel for num_threads(A_nthreads) schedule(static)
         for (p = 0 ; p < cnz ; p++)
         { 
-            GB_DECLAREB (bij) ;
-            GB_GETB (bij, Bx, p, B_iso) ;                 // bij = B(i,j)
-            GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;  // C(i,j) += bij
+            // Cx [p] += (ytype) Ax [p], with typecasting
+            GB_COPY_aij_to_ywork (ywork, Ax, p, A_iso) ;
+            GB_ACCUMULATE_scalar (Cx, p, ywork) ;
+//          GB_DECLAREB (bij) ;
+//          GB_GETB (bij, Bx, p, B_iso) ;
+//          GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
         }
 
     }
@@ -63,74 +69,76 @@
     {
 
         //----------------------------------------------------------------------
-        // C += B when C is dense and B is sparse
+        // C += A when C is dense and A is sparse
         //----------------------------------------------------------------------
 
-        ASSERT (GB_JUMBLED_OK (B)) ;
+        ASSERT (GB_JUMBLED_OK (A)) ;
 
-        const int64_t *restrict Bp = B->p ;
-        const int64_t *restrict Bh = B->h ;
-        const int64_t *restrict Bi = B->i ;
-        const int64_t bvlen = B->vlen ;
+        const int64_t *restrict Ap = A->p ;
+        const int64_t *restrict Ah = A->h ;
+        const int64_t *restrict Ai = A->i ;
+        const int64_t avlen = A->vlen ;
         const int64_t cvlen = C->vlen ;
-        bool B_jumbled = B->jumbled ;
+        bool A_jumbled = A->jumbled ;
 
-        const int64_t *restrict kfirst_Bslice = B_ek_slicing ;
-        const int64_t *restrict klast_Bslice  = kfirst_Bslice + B_ntasks ;
-        const int64_t *restrict pstart_Bslice = klast_Bslice + B_ntasks ;
+        const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
+        const int64_t *restrict klast_Aslice  = kfirst_Aslice + A_ntasks ;
+        const int64_t *restrict pstart_Aslice = klast_Aslice + A_ntasks ;
 
         int taskid ;
-        #pragma omp parallel for num_threads(B_nthreads) schedule(dynamic,1)
-        for (taskid = 0 ; taskid < B_ntasks ; taskid++)
+        #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1)
+        for (taskid = 0 ; taskid < A_ntasks ; taskid++)
         {
 
             // if kfirst > klast then taskid does no work at all
-            int64_t kfirst = kfirst_Bslice [taskid] ;
-            int64_t klast  = klast_Bslice  [taskid] ;
+            int64_t kfirst = kfirst_Aslice [taskid] ;
+            int64_t klast  = klast_Aslice  [taskid] ;
 
             //------------------------------------------------------------------
-            // C(:,kfirst:klast) += B(:,kfirst:klast)
+            // C(:,kfirst:klast) += A(:,kfirst:klast)
             //------------------------------------------------------------------
 
             for (int64_t k = kfirst ; k <= klast ; k++)
             {
 
                 //--------------------------------------------------------------
-                // find the part of B(:,k) and C(:,k) for this task
+                // find the part of A(:,k) and C(:,k) for this task
                 //--------------------------------------------------------------
 
-                int64_t j = GBH_B (Bh, k) ;
-                int64_t my_pB_start, my_pB_end ;
-                GB_get_pA (&my_pB_start, &my_pB_end, taskid, k,
-                    kfirst, klast, pstart_Bslice, Bp, bvlen) ;
+                int64_t j = GBH_A (Ah, k) ;
+                int64_t my_pA_start, my_pA_end ;
+                GB_get_pA (&my_pA_start, &my_pA_end, taskid, k,
+                    kfirst, klast, pstart_Aslice, Ap, avlen) ;
 
-                int64_t pB_start = GBP_B (Bp, k, bvlen) ;
-                int64_t pB_end   = GBP_B (Bp, k+1, bvlen) ;
-                bool bjdense = ((pB_end - pB_start) == cvlen) ;
+                int64_t pA_start = GBP_A (Ap, k, avlen) ;
+                int64_t pA_end   = GBP_A (Ap, k+1, avlen) ;
+                bool ajdense = ((pA_end - pA_start) == cvlen) ;
 
-                // pC points to the start of C(:,j) if C is dense
+                // pC points to the start of C(:,j)
                 int64_t pC = j * cvlen ;
 
                 //--------------------------------------------------------------
-                // C(:,j) += B(:,j)
+                // C(:,j) += A(:,j)
                 //--------------------------------------------------------------
 
-                if (bjdense && !B_jumbled)
+                if (ajdense && !A_jumbled)
                 {
 
                     //----------------------------------------------------------
-                    // both C(:,j) and B(:,j) are dense
+                    // both C(:,j) and A(:,j) are dense
                     //----------------------------------------------------------
 
                     GB_PRAGMA_SIMD_VECTORIZE
-                    for (int64_t pB = my_pB_start ; pB < my_pB_end ; pB++)
+                    for (int64_t pA = my_pA_start ; pA < my_pA_end ; pA++)
                     { 
-                        int64_t i = pB - pB_start ;
+                        int64_t i = pA - pA_start ;
                         int64_t p = pC + i ;
-                        GB_DECLAREB (bij) ;
-                        GB_GETB (bij, Bx, pB, B_iso) ;          // bij = B(i,j)
-                        // C(i,j) += bij
-                        GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
+                        // Cx [p] += (ytype) Ax [pA], with typecasting
+                        GB_COPY_aij_to_ywork (ywork, Ax, pA, A_iso) ;
+                        GB_ACCUMULATE_scalar (Cx, p, ywork) ;
+//                      GB_DECLAREB (bij) ;
+//                      GB_GETB (bij, Bx, pB, B_iso) ;
+//                      GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
                     }
 
                 }
@@ -138,18 +146,20 @@
                 {
 
                     //----------------------------------------------------------
-                    // C(:,j) is dense; B(:,j) is sparse 
+                    // C(:,j) is dense; A(:,j) is sparse 
                     //----------------------------------------------------------
 
                     GB_PRAGMA_SIMD_VECTORIZE
-                    for (int64_t pB = my_pB_start ; pB < my_pB_end ; pB++)
+                    for (int64_t pA = my_pA_start ; pA < my_pA_end ; pA++)
                     { 
-                        int64_t i = Bi [pB] ;
+                        int64_t i = Ai [pA] ;
                         int64_t p = pC + i ;
-                        GB_DECLAREB (bij) ;
-                        GB_GETB (bij, Bx, pB, B_iso) ;          // bij = B(i,j)
-                        // C(i,j) += bij
-                        GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
+                        // Cx [p] += (ytype) Ax [pA], with typecasting
+                        GB_COPY_aij_to_ywork (ywork, Ax, pA, A_iso) ;
+                        GB_ACCUMULATE_scalar (Cx, p, ywork) ;
+//                      GB_DECLAREB (bij) ;
+//                      GB_GETB (bij, Bx, pB, B_iso) ;
+//                      GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
                     }
                 }
             }
