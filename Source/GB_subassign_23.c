@@ -176,7 +176,7 @@ GrB_Info GB_subassign_23      // C += B; C is dense, B is sparse or dense
         #include "GB_generic.h"
         GB_BURBLE_MATRIX (B, "(generic C+=B) ") ;
 
-        GxB_binary_function fadd = accum->binop_function ;
+        GxB_binary_function faccum = accum->binop_function ;
 
         size_t csize = C->type->size ;
         size_t bsize = B->type->size ;
@@ -192,7 +192,7 @@ GrB_Info GB_subassign_23      // C += B; C is dense, B is sparse or dense
         //----------------------------------------------------------------------
 
         // bij = B(i,j), located in Bx [pB].  Note that GB_GETB is used,
-        // since B appears as the 2nd input to z = fadd (x,y)
+        // since B appears as the 2nd input to z = faccum (x,y)
         #define GB_DECLAREB(bij)                                            \
             GB_void bij [GB_VLA(ysize)] ;
         #define GB_GETB(bij,Bx,pB,B_iso)                                    \
@@ -201,7 +201,7 @@ GrB_Info GB_subassign_23      // C += B; C is dense, B is sparse or dense
         // address of Cx [p]
         #define GB_CX(p) Cx +((p)*csize)
 
-        #define GB_BINOP(z,x,y,i,j) fadd (z,x,y)
+        #define GB_BINOP(z,x,y,i,j) faccum (z,x,y)
         #include "GB_subassign_23_template.c"
     }
 

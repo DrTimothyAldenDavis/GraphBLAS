@@ -143,7 +143,7 @@ GrB_Info GB_subassign_22      // C += b where C is dense and b is a scalar
         // get operators, functions, workspace, contents of b and C
         //----------------------------------------------------------------------
 
-        GxB_binary_function fadd = accum->binop_function ;
+        GxB_binary_function faccum = accum->binop_function ;
 
         //----------------------------------------------------------------------
         // C += b via function pointers, and typecasting
@@ -151,7 +151,7 @@ GrB_Info GB_subassign_22      // C += b where C is dense and b is a scalar
 
         // C(i,j) = C(i,j) + scalar
         #define GB_BINOP(cout_ij, cin_aij, bwork, i, j) \
-            fadd (cout_ij, cin_aij, bwork)
+            faccum (cout_ij, cin_aij, bwork)
 
         // address of Cx [p]
         #define GB_CX(p) Cx +((p)*csize)
