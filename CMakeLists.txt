@@ -60,7 +60,9 @@ if ( SUITESPARSE_CUDA )
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES CUDA C )
 else ( )
-    set ( CMAKE_CUDA_DEV off )
+# FIXME!! cuda dev is on
+    set ( CMAKE_CUDA_DEV on )
+#   set ( CMAKE_CUDA_DEV off )
     project ( graphblas
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES C )

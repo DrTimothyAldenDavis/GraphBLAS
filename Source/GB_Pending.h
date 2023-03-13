@@ -149,33 +149,5 @@ static inline bool GB_Pending_add   // add a tuple to the list
     return (true) ;     // success
 }
 
-//------------------------------------------------------------------------------
-// add (iC,jC,aij) or just (iC,aij) if Pending_j is NULL
-//------------------------------------------------------------------------------
-
-// GB_PENDING_INSERT(aij) is used by GB_subassign_* to insert a pending tuple,
-// in phase 2.  The list has already been reallocated after phase 1 to hold all
-// the new pending tuples, so GB_Pending_realloc is not required.  If C is iso,
-// Pending->x is NULL.
-
-#define GB_PENDING_INSERT(aij)                                              \
-    if (task_sorted)                                                        \
-    {                                                                       \
-        if (!((jlast < jC) || (jlast == jC && ilast <= iC)))                \
-        {                                                                   \
-            task_sorted = false ;                                           \
-        }                                                                   \
-    }                                                                       \
-    Pending_i [n] = iC ;                                                    \
-    if (Pending_j != NULL) Pending_j [n] = jC ;                             \
-    if (Pending_x != NULL) memcpy (Pending_x +(n*asize), (aij), asize) ;    \
-    n++ ;                                                                   \
-    ilast = iC ;                                                            \
-    jlast = jC ;
-
-// insert A(i,j) into the list of pending tuples
-#define GB_PENDING_INSERT_aij                                               \
-    GB_PENDING_INSERT (Ax + (A_iso ? 0 : ((pA)*asize)))
-
 #endif
 
