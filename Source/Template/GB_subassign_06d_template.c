@@ -43,6 +43,15 @@
     #else
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
+    #ifndef GB_GENERIC
+    GB_C_TYPE cwork ;
+    if (A_iso)
+    { 
+        // JIT: need to typecast for the JIT kernel
+        GB_cast_scalar (&cwork, C->type->code, A->x, A->type->code,
+            A->type->size) ;
+    }
+    #endif
     #endif
 
     //--------------------------------------------------------------------------
@@ -73,7 +82,7 @@
                 for (p = 0 ; p < anz ; p++)
                 { 
                     // Cx [p] = Ax [p]
-                    GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso) ;
+                    GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso, cwork) ;
                 }
             }
             #endif
@@ -112,7 +121,7 @@
                         { 
                             // Cx [p] = Ax [p]
                             #ifndef GB_ISO_ASSIGN
-                            GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso, cwork) ;
                             #endif
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
@@ -141,7 +150,7 @@
                         // Cx [p] = Ax [p]
                         if (Ab [p])
                         { 
-                            GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso, cwork) ;
                         }
                     }
                 }
@@ -193,7 +202,7 @@
                             int64_t p = pC + Ai [pA] ;
                             // Cx [p] = Ax [pA]
                             #ifndef GB_ISO_ASSIGN
-                            GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso, cwork) ;
                             #endif
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
@@ -235,7 +244,7 @@
                             { 
                                 int64_t p = pC + Ai [pA] ;
                                 // Cx [p] = Ax [pA]
-                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso) ;
+                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso, cwork) ;
                             }
                         }
                     }
@@ -279,7 +288,7 @@
                         if (GB_AX_MASK (Ax, p, asize))
                         { 
                             // Cx [p] = Ax [p]
-                            GB_COPY_aij_to_C (Cx, p, Ax, p, false) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, p, false, cwork) ;
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
                         }
@@ -303,7 +312,7 @@
                     if (GB_AX_MASK (Ax, p, asize))
                     { 
                         // Cx [p] = Ax [p]
-                        GB_COPY_aij_to_C (Cx, p, Ax, p, false) ;
+                        GB_COPY_aij_to_C (Cx, p, Ax, p, false, cwork) ;
                     }
                 }
             }
@@ -335,7 +344,7 @@
                         if (Ab [p] && GB_AX_MASK (Ax, p, asize))
                         { 
                             // Cx [p] = Ax [p]
-                            GB_COPY_aij_to_C (Cx, p, Ax, p, false) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, p, false, cwork) ;
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
                         }
@@ -359,7 +368,7 @@
                     if (Ab [p] && GB_AX_MASK (Ax, p, asize))
                     { 
                         // Cx [p] = Ax [p]
-                        GB_COPY_aij_to_C (Cx, p, Ax, p, false) ;
+                        GB_COPY_aij_to_C (Cx, p, Ax, p, false, cwork) ;
                     }
                 }
             }
@@ -410,7 +419,7 @@
                             { 
                                 int64_t p = pC + Ai [pA] ;
                                 // Cx [p] = Ax [pA]
-                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso) ;
+                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso, cwork) ;
                                 task_cnvals += (Cb [p] == 0) ;
                                 Cb [p] = 1 ;
                             }
@@ -452,15 +461,13 @@
                             { 
                                 int64_t p = pC + Ai [pA] ;
                                 // Cx [p] = Ax [pA]
-                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso) ;
+                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso, cwork) ;
                             }
                         }
                     }
                 }
             }
         }
-
-
     }
     #endif
 

@@ -137,7 +137,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                     if (cb == 0)                            \
                     {                                       \
                         /* Cx [pC] = Ax [pC] */             \
-                        GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso) ;            \
+                        GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso, cwork) ;            \
                     }                                       \
                     else                                    \
                     {                                       \
@@ -170,7 +170,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                         if (cb == 0)                        \
                         {                                   \
                             /* Cx [pC] = Ax [pC] */         \
-                            GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso) ;        \
+                            GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso, cwork) ;        \
                             Cb [pC] = 1 ;                   \
                             task_cnvals++ ;                 \
                         }                                   \
@@ -199,7 +199,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                     if (cb == 0)                            \
                     {                                       \
                         /* Cx [pC] = Ax [pA] */             \
-                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso) ;            \
+                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;            \
                         Cb [pC] = 1 ;                       \
                         task_cnvals++ ;                     \
                     }                                       \

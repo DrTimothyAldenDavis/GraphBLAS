@@ -73,20 +73,20 @@ fprintf (f, 'm4_define(`GB_copy_scalar_to_c'', `#define GB_COPY_scalar_to_C(pC,c
 
 % to copy an entry from A to C
 if (isequal (ytype, 'GxB_FC32_t') && isequal (ztype, 'bool'))
-    a2c = '(crealf (Ax [(A_iso) ? 0 : (pA)]) != 0) || (cimagf (Ax [(A_iso) ? 0 : (pA)]) != 0)' ;
+    a2c = '((crealf (Ax [pA]) != 0) || (cimagf (Ax [pA]) != 0))' ;
 elseif (isequal (ytype, 'GxB_FC64_t') && isequal (ztype, 'bool'))
-    a2c = '(creal (Ax [(A_iso) ? 0 : (pA)]) != 0) || (cimag (Ax [(A_iso) ? 0 : (pA)]) != 0)' ;
+    a2c = '((creal (Ax [pA]) != 0) || (cimag (Ax [pA]) != 0))' ;
 elseif (isequal (ytype, 'float') && isequal (ztype, 'GxB_FC32_t'))
-    a2c = 'GB_CMPLX32 (Ax [(A_iso) ? 0 : (pA)], 0)' ;
+    a2c = '(GB_CMPLX32 (Ax [pA], 0))' ;
 elseif (isequal (ytype, 'double') && isequal (ztype, 'GxB_FC64_t'))
-    a2c = 'GB_CMPLX64 (Ax [(A_iso) ? 0 : (pA)], 0)' ;
+    a2c = '(GB_CMPLX64 (Ax [pA], 0))' ;
 elseif (isequal (ytype, xtype))
-    a2c = sprintf ('Ax [(A_iso) ? 0 : (pA)]') ;
+    a2c = sprintf ('Ax [pA]') ;
 else
     % use ANSI C typecasting
-    a2c = sprintf ('(%s) Ax [(A_iso) ? 0 : (pA)]', ytype) ;
+    a2c = sprintf ('((%s) Ax [pA])', ytype) ;
 end
-fprintf (f, 'm4_define(`GB_copy_aij_to_c'', `#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = %s'')\n', a2c) ;
+fprintf (f, 'm4_define(`GB_copy_aij_to_c'', `#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) Cx [pC] = (A_iso) ? cwork : %s'')\n', a2c) ;
 
 % mask macro
 if (isequal (xtype, 'GxB_FC32_t') || isequal (xtype, 'GxB_FC64_t'))

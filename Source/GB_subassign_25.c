@@ -213,10 +213,12 @@ GrB_Info GB_subassign_25
 
 // JIT: use GB_macrofy_cast_copy but revise for the iso case (precast Ax[0])
 
-            // Cx [pC] = (ctype) Ax [pA]
-            #undef  GB_COPY_aij_to_C
-            #define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso) \
-                cast_A_to_C (Cx+((pC)*csize), Ax+(A_iso?0:(pA)*asize), asize)
+            #define C_iso false
+            GB_void cwork [GB_VLA(csize)] ;
+            if (A->iso)
+            {
+                cast_A_to_C (cwork, A->x, asize) ;
+            }
 
             #include "GB_subassign_25_template.c"
             info = GrB_SUCCESS ;

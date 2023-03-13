@@ -27,7 +27,6 @@
     { 
         // Cx [pC] += ywork
         GB_ACCUMULATE_scalar (Cx, pC, ywork) ;
-        // GB_BINOP (GB_CX (pC), GB_CX (pC), bwork, 0, 0) ;
     }
 }
 

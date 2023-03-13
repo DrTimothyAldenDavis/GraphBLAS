@@ -199,7 +199,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                             if (GBB (Ab, pC))                           \
                             {                                           \
                                 /* Cx [pC] = Ax [pC] */                 \
-                                GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso) ;                \
+                                GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso, cwork) ;                \
                                 Cb [pC] = 1 ;                           \
                                 task_cnvals++ ;                         \
                             }                                           \
@@ -213,7 +213,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                             if (GBB (Ab, pC))                           \
                             {                                           \
                                 /* Cx [pC] = Ax [pC] */                 \
-                                GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso) ;                \
+                                GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso, cwork) ;                \
                                 Cb [pC] = 1 ;                           \
                             }                                           \
                             else                                        \
@@ -245,7 +245,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                         if (GBB (Ab, pC))                       \
                         {                                       \
                             /* Cx [pC] = Ax [pC] */             \
-                            GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso) ;            \
+                            GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso, cwork) ;            \
                         }                                       \
                         else                                    \
                         {                                       \
@@ -260,7 +260,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                         if (GBB (Ab, pC))                       \
                         {                                       \
                             /* Cx [pC] = Ax [pC] */             \
-                            GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso) ;            \
+                            GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso, cwork) ;            \
                             Cb [pC] = 1 ;                       \
                             task_cnvals++ ;                     \
                         }                                       \
@@ -303,7 +303,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                     {                                           \
                         /* M(i,j)=1 and A(i,j) present */       \
                         /* Cx [pC] = Ax [pA] ; */               \
-                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso) ;                \
+                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;                \
                         Cb [pC] = 4 ;                           \
                         task_cnvals += (cb == 2) ;              \
                     }                                           \
@@ -367,7 +367,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                     {                                           \
                         /* M(i,j)=1 and A(i,j) present */       \
                         /* Cx [pC] = Ax [pA] ; */               \
-                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso) ;                \
+                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;                \
                         Cb [pC] = 1 ;                           \
                         task_cnvals += (cb == 2) ;              \
                     }                                           \

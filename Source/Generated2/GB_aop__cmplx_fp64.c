@@ -25,7 +25,7 @@
 // A and C matrices
 #define GB_A_TYPE double
 #define GB_C_TYPE GxB_FC64_t
-#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = GB_CMPLX64 (Ax [(A_iso) ? 0 : (pA)], 0)
+#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) Cx [pC] = (A_iso) ? cwork : (GB_CMPLX64 (Ax [pA], 0))
 #define GB_COPY_scalar_to_C(pC,cwork) Cx [pC] = cwork
 #define GB_AX_MASK(Ax,pA,asize) (Ax [pA] != 0)
 

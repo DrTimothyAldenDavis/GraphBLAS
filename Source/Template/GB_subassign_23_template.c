@@ -21,6 +21,13 @@
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     ASSERT (GB_is_dense (C)) ;
     const int64_t cnz = GB_nnz_held (C) ;
+    #ifndef GB_GENERIC
+    GB_Y_TYPE ywork ;
+    if (A_iso)
+    {
+        GB_COPY_aij_to_ywork (ywork, Ax, 0, true) ;
+    }
+    #endif
 
     if (GB_IS_BITMAP (A))
     {

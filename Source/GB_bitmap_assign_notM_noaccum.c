@@ -152,7 +152,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
             if (cb <= 1)                    \
             {                               \
                 /* Cx [pC] = Ax [pA] */     \
-                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso) ;    \
+                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;    \
                 Cb [pC] = 4 ;               \
                 task_cnvals += (cb == 0) ;  \
             }                               \

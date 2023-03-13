@@ -42,6 +42,15 @@
     ASSERT (!C->iso) ;
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
+    #ifndef GB_GENERIC
+    GB_C_TYPE cwork ;
+    if (A_iso)
+    { 
+        // JIT: need to typecast for the JIT kernel
+        GB_cast_scalar (&cwork, C->type->code, A->x, A->type->code,
+            A->type->size) ;
+    }
+    #endif
     #endif
 
     //--------------------------------------------------------------------------
@@ -99,7 +108,7 @@
                     { 
                         // C(i,j) = A(i,j)
                         #ifndef GB_ISO_ASSIGN
-                        GB_COPY_aij_to_C (Cx, pM, Ax, p, A_iso) ;
+                        GB_COPY_aij_to_C (Cx, pM, Ax, p, A_iso, cwork) ;
                         #endif
                     }
                     else
@@ -162,7 +171,7 @@
                     { 
                         // C(i,j) = A(i,j)
                         int64_t p = pA + GBI_M (Mi, pM, Mvlen) ;
-                        GB_COPY_aij_to_C (Cx, pM, Ax, p, A_iso) ;
+                        GB_COPY_aij_to_C (Cx, pM, Ax, p, A_iso, cwork) ;
                     }
                 }
             }

@@ -149,16 +149,13 @@
     const bool A_iso = A->iso ;                                             \
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;                             \
     const GB_Type_code acode = atype->code ;                                \
-    const GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
-
-#if 0
+    const GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;   \
     GB_void cwork [GB_VLA(csize)] ;                                         \
-    if (!C_iso && A_iso)                                                    \
+    if (A_iso)                                                              \
     {                                                                       \
-        /* cwork = (ctype) Ax [0] */                                        \
+        /* cwork = (ctype) Ax [0], typecast iso value of A into cwork */    \
         cast_A_to_C (cwork, Ax, asize) ;                                    \
     }
-#endif
 
 //------------------------------------------------------------------------------
 // GB_GET_SCALAR: get the scalar
@@ -290,12 +287,20 @@
     #endif
 
     #ifndef GB_COPY_aij_to_C
-    #define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso)                             \
+    #define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork)                       \
     {                                                                       \
         /* C(iC,jC) = (ctype) A(i,j), with typecasting */                   \
         if (!C_iso)                                                         \
         {                                                                   \
-            cast_A_to_C (Cx +(pC*csize), Ax +(A_iso?0:(pA*asize)), asize) ; \
+            if (A_iso)                                                      \
+            {                                                               \
+                /* cwork = (ctype) Ax [0], A iso value already done */      \
+                memcpy (Cx +((pC)*csize), cwork, csize) ;                   \
+            }                                                               \
+            else                                                            \
+            {                                                               \
+                cast_A_to_C (Cx +(pC*csize), Ax +(pA*asize), asize) ;       \
+            }                                                               \
         }                                                                   \
     }
     #endif
@@ -733,7 +738,7 @@
                 /* ----[X A 1]                                           */ \
                 /* action: ( undelete ): bring a zombie back to life     */ \
                 GB_UNDELETE ;                                               \
-                GB_COPY_aij_to_C (Cx,pC,Ax,pA,A_iso) ;                      \
+                GB_COPY_aij_to_C (Cx,pC,Ax,pA,A_iso,cwork) ;                \
             }
 
             // [X A 1] scalar case
@@ -792,7 +797,7 @@
                 {                                                           \
                     /* ----[C A 1] no accum, scalar expansion            */ \
                     /* action: ( =A ): copy A into C                     */ \
-                    GB_COPY_aij_to_C (Cx,pC,Ax,pA,A_iso) ;                  \
+                    GB_COPY_aij_to_C (Cx,pC,Ax,pA,A_iso,cwork) ;            \
                 }                                                           \
             }
 
@@ -1517,6 +1522,11 @@
         {                                                                   \
             /* cwork = (ctype) scalar */                                    \
             cast_A_to_C (cwork, scalar, asize) ;                            \
+        }                                                                   \
+        else if (A_iso)                                                     \
+        {                                                                   \
+            /* cwork = (ctype) Ax [0], typecast iso value of A into cwork */\
+            cast_A_to_C (cwork, Ax, asize) ;                                \
         }                                                                   \
     }
 

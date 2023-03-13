@@ -199,7 +199,7 @@ GrB_Info GB_bitmap_assign_M_accum
                 if (cb == 2)                    \
                 {                               \
                     /* Cx [pC] = Ax [pA] */     \
-                    GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso) ;    \
+                    GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;    \
                     Cb [pC] = 3 ;               \
                     task_cnvals++ ;             \
                 }                               \

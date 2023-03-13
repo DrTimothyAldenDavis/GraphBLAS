@@ -165,7 +165,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
             {                                       \
                 int8_t cb = Cb [pC] ;               \
                 /* Cx [pC] = Ax [pA] */             \
-                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso) ;            \
+                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;            \
                 Cb [pC] = 1 ;                       \
             }
             #include "GB_bitmap_assign_A_template.c"
