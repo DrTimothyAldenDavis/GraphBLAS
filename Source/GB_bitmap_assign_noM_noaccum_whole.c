@@ -41,9 +41,11 @@
 // For matrix assignment, C = A, if A is sparse or hyper and C may become
 // sparse or hyper, then the assignement is done by GB_subassign_24.
 
+#include "GB_subassign_shared_definitions.h"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_subassign_dense.h"
 
+#undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 
 GrB_Info GB_bitmap_assign_noM_noaccum_whole
@@ -152,7 +154,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
                     #define GB_AIJ_WORK(pC,pA)              \
                     {                                       \
                         /* Cx [pC] = Ax [pA] */             \
-                        GB_ASSIGN_AIJ (pC, pA) ;            \
+                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso) ;            \
                         Cb [pC] = 1 ;                       \
                     }
                     #include "GB_bitmap_assign_A_whole_template.c"

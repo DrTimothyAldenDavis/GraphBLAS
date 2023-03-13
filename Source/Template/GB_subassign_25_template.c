@@ -25,7 +25,7 @@
     const int64_t *restrict Mp = M->p ;
     const int64_t *restrict Mh = M->h ;
     const int64_t *restrict Mi = M->i ;
-    const int64_t mvlen = M->vlen ;
+    const int64_t Mvlen = M->vlen ;
 
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_iso = A->iso ;
@@ -82,7 +82,7 @@
                 int64_t j = GBH_M (Mh, k) ;
                 int64_t pM_start, pM_end ;
                 GB_get_pA (&pM_start, &pM_end, tid, k,
-                    kfirst, klast, pstart_Mslice, Mp, mvlen) ;
+                    kfirst, klast, pstart_Mslice, Mp, Mvlen) ;
 
                 //--------------------------------------------------------------
                 // C<M(:,j)> = A(:,j)
@@ -148,7 +148,7 @@
                     int64_t j = GBH_M (Mh, k) ;
                     int64_t pM_start, pM_end ;
                     GB_get_pA (&pM_start, &pM_end, tid, k,
-                        kfirst, klast, pstart_Mslice, Mp, mvlen) ;
+                        kfirst, klast, pstart_Mslice, Mp, Mvlen) ;
 
                     //----------------------------------------------------------
                     // C<M(:,j)> = A(:,j)
@@ -161,7 +161,7 @@
                     for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                     { 
                         // C(i,j) = A(i,j)
-                        int64_t p = pA + GBI_M (Mi, pM, mvlen) ;
+                        int64_t p = pA + GBI_M (Mi, pM, Mvlen) ;
                         GB_COPY_aij_to_C (Cx, pM, Ax, p, A_iso) ;
                     }
                 }

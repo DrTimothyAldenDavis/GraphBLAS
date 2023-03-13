@@ -27,6 +27,7 @@
 // instead (which handles both M and A as bitmap).  As a result, this method
 // does not need to consider the bitmap case for C, M, or A.
 
+#include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 #include "GB_emult.h"
 // Npending is set to NULL by the GB_EMPTY_TASKLIST macro, but unused here.

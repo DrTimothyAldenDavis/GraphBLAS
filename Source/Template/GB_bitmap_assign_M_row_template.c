@@ -18,7 +18,7 @@
     const int64_t *restrict klast_Mslice  = M_ek_slicing + M_ntasks ;
     const int64_t *restrict pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
 
-    ASSERT (mvlen == 1) ;
+    ASSERT (Mvlen == 1) ;
     int64_t iC = I [0] ;
     int tid ;
     #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1) \
@@ -43,7 +43,7 @@
             int64_t jM = GBH_M (Mh, k) ;
             int64_t pM_start, pM_end ;
             GB_get_pA (&pM_start, &pM_end, tid, k, kfirst,
-                klast, pstart_Mslice, Mp, mvlen) ;
+                klast, pstart_Mslice, Mp, Mvlen) ;
 
             //------------------------------------------------------------------
             // traverse over M(0,jM), the kth vector of M

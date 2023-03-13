@@ -22,8 +22,10 @@
 // A:           matrix (hyper, sparse, bitmap, or full), or scalar
 // kind:        assign or subassign (same action)
 
+#include "GB_subassign_shared_definitions.h"
 #include "GB_bitmap_assign_methods.h"
 
+#undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \
 {                                           \
     GB_WERK_POP (M_ek_slicing, int64_t) ;   \
@@ -109,13 +111,13 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                         break ;                                     \
                     case 2: /* C(i,j) not present, M(i,j) = 1 */    \
                         /* Cx [pC] = scalar */                      \
-                        GB_ASSIGN_SCALAR (pC) ;                     \
+                        GB_COPY_scalar_to_C (pC, cwork) ;                     \
                         Cb [pC] = 1 ;                               \
                         task_cnvals++ ;                             \
                         break ;                                     \
                     case 3:  /* C(i,j) present, M(i,j) = 1 */       \
                         /* Cx [pC] = scalar */                      \
-                        GB_ASSIGN_SCALAR (pC) ;                     \
+                        GB_COPY_scalar_to_C (pC, cwork) ;                     \
                         Cb [pC] = 1 ;                               \
                     default: ;                                      \
                 }                                                   \
@@ -137,13 +139,13 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                 {                                           \
                     /* C(i,j) present, M(i,j) = 1 */        \
                     /* Cx [pC] = scalar */                  \
-                    GB_ASSIGN_SCALAR (pC) ;                 \
+                    GB_COPY_scalar_to_C (pC, cwork) ;                 \
                 }                                           \
                 else                                        \
                 {                                           \
                     /* C(i,j) not present, M(i,j) = 1 */    \
                     /* Cx [pC] = scalar */                  \
-                    GB_ASSIGN_SCALAR (pC) ;                 \
+                    GB_COPY_scalar_to_C (pC, cwork) ;                 \
                     Cb [pC] = 1 ;                           \
                     task_cnvals++ ;                         \
                 }                                           \
@@ -197,7 +199,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                             if (GBB (Ab, pC))                           \
                             {                                           \
                                 /* Cx [pC] = Ax [pC] */                 \
-                                GB_ASSIGN_AIJ (pC, pC) ;                \
+                                GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso) ;                \
                                 Cb [pC] = 1 ;                           \
                                 task_cnvals++ ;                         \
                             }                                           \
@@ -211,7 +213,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                             if (GBB (Ab, pC))                           \
                             {                                           \
                                 /* Cx [pC] = Ax [pC] */                 \
-                                GB_ASSIGN_AIJ (pC, pC) ;                \
+                                GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso) ;                \
                                 Cb [pC] = 1 ;                           \
                             }                                           \
                             else                                        \
@@ -243,7 +245,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                         if (GBB (Ab, pC))                       \
                         {                                       \
                             /* Cx [pC] = Ax [pC] */             \
-                            GB_ASSIGN_AIJ (pC, pC) ;            \
+                            GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso) ;            \
                         }                                       \
                         else                                    \
                         {                                       \
@@ -258,7 +260,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                         if (GBB (Ab, pC))                       \
                         {                                       \
                             /* Cx [pC] = Ax [pC] */             \
-                            GB_ASSIGN_AIJ (pC, pC) ;            \
+                            GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso) ;            \
                             Cb [pC] = 1 ;                       \
                             task_cnvals++ ;                     \
                         }                                       \
@@ -301,7 +303,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                     {                                           \
                         /* M(i,j)=1 and A(i,j) present */       \
                         /* Cx [pC] = Ax [pA] ; */               \
-                        GB_ASSIGN_AIJ (pC, pA) ;                \
+                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso) ;                \
                         Cb [pC] = 4 ;                           \
                         task_cnvals += (cb == 2) ;              \
                     }                                           \
@@ -365,7 +367,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                     {                                           \
                         /* M(i,j)=1 and A(i,j) present */       \
                         /* Cx [pC] = Ax [pA] ; */               \
-                        GB_ASSIGN_AIJ (pC, pA) ;                \
+                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso) ;                \
                         Cb [pC] = 1 ;                           \
                         task_cnvals += (cb == 2) ;              \
                     }                                           \

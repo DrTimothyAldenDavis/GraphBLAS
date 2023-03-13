@@ -32,8 +32,10 @@
 // already been handled by GB_assign_prep, which calls
 // GB_bitmap_assign_noM_noaccum, with a scalar (which is unused).
 
+#include "GB_subassign_shared_definitions.h"
 #include "GB_bitmap_assign_methods.h"
 
+#undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 
 GrB_Info GB_bitmap_assign_noM_accum
@@ -104,14 +106,14 @@ GrB_Info GB_bitmap_assign_noM_accum
                 if (cb == 0)                        \
                 {                                   \
                     /* Cx [pC] = scalar */          \
-                    GB_ASSIGN_SCALAR (pC) ;         \
+                    GB_COPY_scalar_to_C (pC, cwork) ;         \
                     Cb [pC] = 1 ;                   \
                     task_cnvals++ ;                 \
                 }                                   \
                 else                                \
                 {                                   \
                     /* Cx [pC] += scalar */         \
-                    GB_ACCUM_SCALAR (pC) ;          \
+                    GB_ACCUMULATE_scalar (Cx, pC, ywork) ;          \
                 }                                   \
             }
             #include "GB_bitmap_assign_IxJ_template.c"
@@ -138,14 +140,14 @@ GrB_Info GB_bitmap_assign_noM_accum
                 if (cb == 0)                        \
                 {                                   \
                     /* Cx [pC] = Ax [pA] */         \
-                    GB_ASSIGN_AIJ (pC, pA) ;        \
+                    GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso) ;        \
                     Cb [pC] = 1 ;                   \
                     task_cnvals++ ;                 \
                 }                                   \
                 else                                \
                 {                                   \
                     /* Cx [pC] += Ax [pA] */        \
-                    GB_ACCUM_AIJ (pC, pA) ;         \
+                    GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso) ;         \
                 }                                   \
             }
             #include "GB_bitmap_assign_A_template.c"

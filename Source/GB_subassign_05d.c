@@ -19,6 +19,7 @@
 // C can have any sparsity structure, but it must be entirely dense with
 // all entries present.
 
+#include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 #include "GB_subassign_dense.h"
 #include "GB_unused.h"

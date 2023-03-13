@@ -91,15 +91,18 @@
 
 // M and A can be aliased, but both are const.
 
-#define GB_GET_MASK                                                         \
-    ASSERT_MATRIX_OK (M, "M for assign", GB0) ;                             \
+#define GB_GET_M                                                            \
+    ASSERT_MATRIX_OK (M, "mask M", GB0) ;                                   \
     const int64_t *Mp = M->p ;                                              \
-    const int64_t *Mh = M->h ;                                              \
     const int8_t  *Mb = M->b ;                                              \
+    const int64_t *Mh = M->h ;                                              \
     const int64_t *Mi = M->i ;                                              \
     const GB_M_TYPE *Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;     \
     const size_t msize = M->type->size ;                                    \
-    const size_t Mvlen = M->vlen ;                                          \
+    const size_t Mvlen = M->vlen ;
+
+#define GB_GET_MASK                                                         \
+    GB_GET_M ;                                                              \
     const int64_t Mnvec = M->nvec ;                                         \
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;                         \
     const bool M_is_bitmap = GB_IS_BITMAP (M)
@@ -147,6 +150,15 @@
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;                             \
     const GB_Type_code acode = atype->code ;                                \
     const GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
+
+#if 0
+    GB_void cwork [GB_VLA(csize)] ;                                         \
+    if (!C_iso && A_iso)                                                    \
+    {                                                                       \
+        /* cwork = (ctype) Ax [0] */                                        \
+        cast_A_to_C (cwork, Ax, asize) ;                                    \
+    }
+#endif
 
 //------------------------------------------------------------------------------
 // GB_GET_SCALAR: get the scalar
@@ -319,8 +331,8 @@
     {                                                                       \
         /* Cx [pC] += (ytype) Ax [A_iso ? 0 : pA] */                        \
         GB_void ywork [GB_VLA(ysize)] ;                                     \
-        GB_COPY_aij_to_ywork (ywork,Ax,pA,A_iso) ;                          \
-        GB_ACCUMULATE_scalar (Cx,pC,ywork) ;                                \
+        GB_COPY_aij_to_ywork (ywork, Ax, pA, A_iso) ;                       \
+        GB_ACCUMULATE_scalar (Cx, pC, ywork) ;                              \
     }
     #endif
 
@@ -1063,7 +1075,7 @@
     GB_OK (GB_subassign_one_slice (                                         \
         &TaskList, &TaskList_size, &ntasks, &nthreads,                      \
         C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,                      \
-        M, Werk)) ;                                                      \
+        M, Werk)) ;                                                         \
     GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------
@@ -1085,11 +1097,11 @@
     GB_OK (GB_add_phase0 (                                                  \
         &Znvec, &Zh, &Zh_size, NULL, NULL, &Z_to_X, &Z_to_X_size,           \
         &Z_to_S, &Z_to_S_size, NULL, &Z_sparsity,                           \
-        NULL, X, S, Werk)) ;                                             \
+        NULL, X, S, Werk)) ;                                                \
     GB_OK (GB_ewise_slice (                                                 \
         &TaskList, &TaskList_size, &ntasks, &nthreads,                      \
         Znvec, Zh, NULL, Z_to_X, Z_to_S, false,                             \
-        NULL, X, S, Werk)) ;                                             \
+        NULL, X, S, Werk)) ;                                                \
     GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------
@@ -1103,7 +1115,7 @@
     GB_OK (GB_subassign_IxJ_slice (                                         \
         &TaskList, &TaskList_size, &ntasks, &nthreads,                      \
         /* I, */ nI, /* Ikind, Icolon, J, */ nJ, /* Jkind, Jcolon, */       \
-        Werk)) ;                                                         \
+        Werk)) ;                                                            \
     GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------
@@ -1425,6 +1437,103 @@
     GB_FREE_ALL ;                                                           \
     ASSERT_MATRIX_OK (C, "C with pending tuples", GB_FLIP (GB0)) ;          \
     return (GrB_SUCCESS) ;
+
+//==============================================================================
+// macros for bitmap_assign methods
+//==============================================================================
+
+//------------------------------------------------------------------------------
+// burble
+//------------------------------------------------------------------------------
+
+#define GBURBLE_BITMAP_ASSIGN(method,M,Mask_comp,accum,Ikind,Jkind,akind) \
+    GBURBLE ("Method:" method " ") ;                                    \
+    GB_burble_assign (C_replace, Ikind, Jkind, M, Mask_comp,            \
+        Mask_struct, accum, A, akind) ;
+
+//------------------------------------------------------------------------------
+// GB_GET_C_BITMAP: get the C matrix (must be bitmap)
+//------------------------------------------------------------------------------
+
+// C must be a bitmap matrix
+
+#define GB_GET_C_BITMAP                                                     \
+    GrB_Info info ;                                                         \
+    /* also get the max # of threads to use */                              \
+    int nthreads_max = GB_Context_nthreads_max ( ) ;                        \
+    double chunk = GB_Context_chunk ( ) ;                                   \
+    ASSERT_MATRIX_OK (C, "C for bitmap assign", GB0) ;                      \
+    ASSERT (GB_IS_BITMAP (C)) ;                                             \
+    int8_t  *Cb = C->b ;                                                    \
+    const bool C_iso = C->iso ;                                             \
+    GB_void *Cx = (C_iso) ? NULL : (GB_void *) C->x ;                       \
+    const size_t csize = C->type->size ;                                    \
+    const GB_Type_code ccode = C->type->code ;                              \
+    const int64_t cvdim = C->vdim ;                                         \
+    const int64_t cvlen = C->vlen ;                                         \
+    const int64_t vlen = cvlen ;    /* for GB_bitmap_assign_IxJ_template */ \
+    const int64_t cnzmax = cvlen * cvdim ;                                  \
+    int64_t cnvals = C->nvals ;
+
+//------------------------------------------------------------------------------
+// GB_SLICE_M: slice the mask matrix M
+//------------------------------------------------------------------------------
+
+#define GB_SLICE_M                                                          \
+    GB_GET_M                                                                \
+    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;                               \
+    int M_ntasks, M_nthreads ;                                              \
+    GB_SLICE_MATRIX (M, 8, chunk) ;
+
+//------------------------------------------------------------------------------
+// GB_GET_A_AND_SCALAR: get the A matrix or the scalar
+//------------------------------------------------------------------------------
+
+// ALIAS of C and A for bitmap methods: OK only for C(:,:)=A assignment.
+
+#define GB_GET_A_AND_SCALAR                                                 \
+    const int64_t *Ap = NULL ;                                              \
+    const int64_t *Ah = NULL ;                                              \
+    const int8_t  *Ab = NULL ;                                              \
+    const int64_t *Ai = NULL ;                                              \
+    const GB_void *Ax = NULL ;                                              \
+    const bool A_iso = (A == NULL) ? false : A->iso ;                       \
+    const size_t       asize = (A==NULL) ? scalar_type->size : A->type->size ; \
+    const GB_Type_code acode = (A==NULL) ? scalar_type->code : A->type->code ; \
+    if (A != NULL)                                                          \
+    {                                                                       \
+        ASSERT_MATRIX_OK (A, "A for bitmap assign/subassign", GB0) ;        \
+        Ap = A->p ;                                                         \
+        Ah = A->h ;                                                         \
+        Ab = A->b ;                                                         \
+        Ai = A->i ;                                                         \
+        Ax = (C_iso) ? NULL : (GB_void *) A->x ;                            \
+    }                                                                       \
+    GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;         \
+    GB_void cwork [GB_VLA(csize)] ;                                         \
+    if (!C_iso)                                                             \
+    {                                                                       \
+        if (A == NULL)                                                      \
+        {                                                                   \
+            /* cwork = (ctype) scalar */                                    \
+            cast_A_to_C (cwork, scalar, asize) ;                            \
+        }                                                                   \
+    }
+
+//------------------------------------------------------------------------------
+// GB_GET_ACCUM_FOR_BITMAP: get accum op and its related typecasting functions
+//------------------------------------------------------------------------------
+
+#define GB_GET_ACCUM_FOR_BITMAP                                             \
+    GB_GET_ACCUM ;                                                          \
+    GB_void ywork [GB_VLA(ysize)] ;                                         \
+    if (!C_iso)                                                             \
+    {                                                                       \
+        if (A == NULL)                                                      \
+        {                                                                   \
+            cast_A_to_Y (ywork, scalar, asize) ;                            \
+        }                                                                   \
+    }
 
 #endif
 

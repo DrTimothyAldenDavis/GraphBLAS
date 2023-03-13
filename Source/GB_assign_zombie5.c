@@ -19,6 +19,7 @@
 
 #include "GB_assign.h"
 #include "GB_assign_zombie.h"
+#include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 #include "GB_ek_slice.h"
 

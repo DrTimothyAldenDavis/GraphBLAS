@@ -81,6 +81,7 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
     }
 
     // C = accum (C,A) will be computed
+    ASSERT (!C->iso) ;
     ASSERT (C->type == accum->ztype) ;
     ASSERT (C->type == accum->xtype) ;
     ASSERT (GB_Type_compatible (A->type, accum->ytype)) ;

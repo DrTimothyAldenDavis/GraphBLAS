@@ -7,6 +7,7 @@
 
 //------------------------------------------------------------------------------
 
+#include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 #include "GB_subref.h"
 

@@ -18,6 +18,7 @@
 
 // C: not bitmap or full
 
+#include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 #include "GB_unused.h"
 

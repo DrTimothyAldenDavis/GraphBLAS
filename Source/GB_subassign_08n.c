@@ -20,6 +20,7 @@
 // If C is bitmap, then GB_bitmap_assign_M_accum is used instead.
 // M, A: not bitmap; Method 08s is used instead if M or A are bitmap.
 
+#include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 
 //------------------------------------------------------------------------------

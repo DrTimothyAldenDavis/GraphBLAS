@@ -22,7 +22,7 @@
     const int64_t *restrict Mi = M->i ;
     const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
-    const size_t mvlen = M->vlen ;
+    const size_t Mvlen = M->vlen ;
 
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     const int64_t cvlen = C->vlen ;
@@ -58,7 +58,7 @@
             int64_t j = GBH_M (Mh, k) ;
             int64_t pM_start, pM_end ;
             GB_get_pA (&pM_start, &pM_end, taskid, k,
-                kfirst, klast, pstart_Mslice, Mp, mvlen) ;
+                kfirst, klast, pstart_Mslice, Mp, Mvlen) ;
 
             // pC_start points to the start of C(:,j)
             int64_t pC_start = j * cvlen ;
@@ -72,7 +72,7 @@
                 GB_PRAGMA_SIMD_VECTORIZE
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 { 
-                    int64_t pC = pC_start + GBI_M (Mi, pM, mvlen) ;
+                    int64_t pC = pC_start + GBI_M (Mi, pM, Mvlen) ;
                     GB_COPY_scalar_to_C (pC, cwork) ;        // Cx [pC] = cwork
                 }
             }
@@ -83,7 +83,7 @@
                 {
                     if (GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize))
                     { 
-                        int64_t pC = pC_start + GBI_M (Mi, pM, mvlen) ;
+                        int64_t pC = pC_start + GBI_M (Mi, pM, Mvlen) ;
                         GB_COPY_scalar_to_C (pC, cwork) ;    // Cx [pC] = cwork
                     }
                 }

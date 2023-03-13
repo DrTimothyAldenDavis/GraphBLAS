@@ -20,6 +20,7 @@
 
 // C->iso is not affected.
 
+#include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 
 #undef  GB_FREE_ALL

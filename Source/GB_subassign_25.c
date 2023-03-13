@@ -25,6 +25,7 @@
 
 // C is iso if A is iso
 
+#include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 #include "GB_subassign_dense.h"
 #ifndef GBCUDA_DEV

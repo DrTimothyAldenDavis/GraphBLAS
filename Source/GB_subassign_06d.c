@@ -26,6 +26,7 @@
 
 // C and A can have any sparsity structure.
 
+#include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 #include "GB_subassign_dense.h"
 #ifndef GBCUDA_DEV

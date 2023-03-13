@@ -28,8 +28,10 @@
 // A:           matrix (hyper, sparse, bitmap, or full), or scalar
 // kind:        assign, row assign, col assign, or subassign
 
+#include "GB_subassign_shared_definitions.h"
 #include "GB_bitmap_assign_methods.h"
 
+#undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 
 GrB_Info GB_bitmap_assign_fullM_noaccum
@@ -135,7 +137,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
             {                                   \
                 int8_t cb = Cb [pC] ;           \
                 /* Cx [pC] = scalar */          \
-                GB_ASSIGN_SCALAR (pC) ;         \
+                GB_COPY_scalar_to_C (pC, cwork) ;         \
                 Cb [pC] = 1 ;                   \
                 task_cnvals += (cb == 0) ;      \
             }                                   \
@@ -200,7 +202,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
             {                                   \
                 int8_t cb = Cb [pC] ;           \
                 /* Cx [pC] = Ax [pA] */         \
-                GB_ASSIGN_AIJ (pC, pA) ;        \
+                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso) ;        \
                 Cb [pC] = 4 ;                   \
                 task_cnvals += (cb == 0) ;      \
             }                                   \

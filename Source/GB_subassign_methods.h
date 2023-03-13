@@ -7,10 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// macros for the construction of the GB_subassign methods
-
-#include "GB_subassign_shared_definitions.h"
-
 #ifndef GB_SUBASSIGN_METHODS_H
 #define GB_SUBASSIGN_METHODS_H
 

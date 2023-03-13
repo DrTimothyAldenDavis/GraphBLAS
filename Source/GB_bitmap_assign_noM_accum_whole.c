@@ -32,8 +32,10 @@
 // already been handled by GB_assign_prep, which calls GB_clear, and thus
 // Mask_comp is always false in this method.
 
+#include "GB_subassign_shared_definitions.h"
 #include "GB_bitmap_assign_methods.h"
 
+#undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 
 GrB_Info GB_bitmap_assign_noM_accum_whole
@@ -96,12 +98,12 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                 if (cb == 0)                        \
                 {                                   \
                     /* Cx [pC] = scalar */          \
-                    GB_ASSIGN_SCALAR (pC) ;         \
+                    GB_COPY_scalar_to_C (pC, cwork) ;         \
                 }                                   \
                 else                                \
                 {                                   \
                     /* Cx [pC] += scalar */         \
-                    GB_ACCUM_SCALAR (pC) ;          \
+                    GB_ACCUMULATE_scalar (Cx, pC, ywork) ;          \
                 }                                   \
             }
             if (!C_iso)
@@ -135,12 +137,12 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                     if (cb == 0)                            \
                     {                                       \
                         /* Cx [pC] = Ax [pC] */             \
-                        GB_ASSIGN_AIJ (pC, pC) ;            \
+                        GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso) ;            \
                     }                                       \
                     else                                    \
                     {                                       \
                         /* Cx [pC] += Ax [pC] */            \
-                        GB_ACCUM_AIJ (pC, pC) ;             \
+                        GB_ACCUMULATE_aij (Cx, pC, Ax, pC, A_iso) ;             \
                     }                                       \
                 }
                 if (!C_iso)
@@ -168,14 +170,14 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                         if (cb == 0)                        \
                         {                                   \
                             /* Cx [pC] = Ax [pC] */         \
-                            GB_ASSIGN_AIJ (pC, pC) ;        \
+                            GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso) ;        \
                             Cb [pC] = 1 ;                   \
                             task_cnvals++ ;                 \
                         }                                   \
                         else                                \
                         {                                   \
                             /* Cx [pC] += Ax [pC] */        \
-                            GB_ACCUM_AIJ (pC, pC) ;         \
+                            GB_ACCUMULATE_aij (Cx, pC, Ax, pC, A_iso) ;         \
                         }                                   \
                     }                                       \
                 }
@@ -197,14 +199,14 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                     if (cb == 0)                            \
                     {                                       \
                         /* Cx [pC] = Ax [pA] */             \
-                        GB_ASSIGN_AIJ (pC, pA) ;            \
+                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso) ;            \
                         Cb [pC] = 1 ;                       \
                         task_cnvals++ ;                     \
                     }                                       \
                     else                                    \
                     {                                       \
                         /* Cx [pC] += Ax [pA] */            \
-                        GB_ACCUM_AIJ (pC, pA) ;             \
+                        GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso) ;             \
                     }                                       \
                 }
                 #include "GB_bitmap_assign_A_whole_template.c"
