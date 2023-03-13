@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// C is sparse or hypersparse, but it is present only as Cp, Ci, and Cx.
+// A is never bitmap.  It is sparse or hypersparse in most cases.  It can also
+// by full for DIAG.
+
 {
     //--------------------------------------------------------------------------
     // get A
@@ -54,9 +58,9 @@
             // find the part of A(:,k) to be operated on by this task
             //------------------------------------------------------------------
 
-            int64_t pA_start, pA_end, pC ;
-            GB_get_pA_and_pC (&pA_start, &pA_end, &pC, tid, k, kfirst, klast,
-                pstart_Aslice, Cp_kfirst, Cp, avlen, Ap, avlen) ;
+            GB_GET_PA_AND_PC (pA_start, pA_end, pC, tid, k, kfirst, klast,
+                pstart_Aslice, Cp_kfirst,
+                GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen), Cp [k]) ;
 
             //------------------------------------------------------------------
             // compact Ai and Ax [pA_start ... pA_end-1] into Ci and Cx

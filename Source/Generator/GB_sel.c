@@ -17,7 +17,7 @@ GB_ytype
 GB_test_value_of_entry
 GB_select_entry
 
-#include "GB_kernel_shared_definitions.h"
+#include "GB_select_shared_definitions.h"
 
 m4_divert(if_phase1)
 //------------------------------------------------------------------------------

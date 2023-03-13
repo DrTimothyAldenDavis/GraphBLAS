@@ -205,7 +205,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
     {
         // C is iso:  A is iso, or the operator is VALUEEQ
         fprintf (fp, "\n") ;
-        fprintf (fp, "#define GB_ISO_SELECT\n") ;
+        fprintf (fp, "#define GB_ISO_SELECT 1\n") ;
     }
     else
     {

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_kernel_shared_definitions.h"
+#include "GB_select_shared_definitions.h"
 
 GrB_Info GB_jit_kernel
 (

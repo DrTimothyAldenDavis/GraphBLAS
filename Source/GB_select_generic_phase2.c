@@ -62,8 +62,10 @@ GrB_Info GB_select_generic_phase2
     GxB_index_unary_function fkeep = op->idxunop_function ;
     GB_cast_function cast_Z_to_bool, cast_A_to_X ;
 
+    #define GB_GENERIC
     #define GB_ENTRY_SELECTOR
     #define GB_A_TYPE GB_void
+    #include "GB_select_shared_definitions.h"
 
     if (A->iso)
     {

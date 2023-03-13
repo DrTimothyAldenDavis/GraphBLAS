@@ -76,9 +76,8 @@
             //------------------------------------------------------------------
 
             int64_t j = GBH_A (Ah, k) ;
-            int64_t pA, pA_end ;
-            GB_get_pA (&pA, &pA_end, tid, k,
-                kfirst, klast, pstart_Aslice, Ap, avlen) ;
+            GB_GET_PA (pA, pA_end, tid, k, kfirst, klast, pstart_Aslice,
+                Ap [k], Ap [k+1]) ;
 
             //------------------------------------------------------------------
             // count entries in Ax [pA ... pA_end-1]

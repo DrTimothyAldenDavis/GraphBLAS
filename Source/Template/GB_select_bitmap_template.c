@@ -10,17 +10,36 @@
 // C is bitmap.  A is bitmap or as-if-full.
 
 {
-    int8_t *Ab = A->b ;
-    if (Ab != NULL)
+    #ifdef GB_JIT_KERNEL
     {
-        // A is bitmap
-        #include "GB_select_bitmap_bitmap_template.c"
+        #if GB_A_IS_BITMAP
+        {
+            // A is bitmap
+            int8_t *Ab = A->b ;
+            #include "GB_select_bitmap_bitmap_template.c"
+        }
+        #else
+        {
+            // A is full
+            #include "GB_select_bitmap_full_template.c"
+        }
+        #endif
     }
-    else
+    #else
     {
-        // A is full
-        #include "GB_select_bitmap_full_template.c"
+        int8_t *Ab = A->b ;
+        if (Ab != NULL)
+        {
+            // A is bitmap
+            #include "GB_select_bitmap_bitmap_template.c"
+        }
+        else
+        {
+            // A is full
+            #include "GB_select_bitmap_full_template.c"
+        }
     }
+    #endif
 }
 
 #undef GB_TRIL_SELECTOR

@@ -17,7 +17,7 @@
 #define GB_TEST_VALUE_OF_ENTRY(keep,p) bool keep = GB_FC32_eq (Ax [p], y)
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)
 
-#include "GB_kernel_shared_definitions.h"
+#include "GB_select_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // GB_sel_phase1
