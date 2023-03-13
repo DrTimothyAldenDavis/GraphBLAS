@@ -15,8 +15,6 @@
     const int64_t  *restrict Ap = A->p ;
     const int64_t  *restrict Ah = A->h ;
     const int64_t  *restrict Ai = A->i ;
-    // if A is iso and the op is user-defined, Ax [0] is passed to the user
-    // selectop
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     size_t asize = A->type->size ;
     int64_t avlen = A->vlen ;
@@ -69,8 +67,7 @@
                 int64_t j = GBH_A (Ah, k) ;
                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                 {
-                    // A is never full; that case is now handled by the
-                    // bitmap selector instead.
+                    // A is sparse or hypersparse
                     ASSERT (Ai != NULL) ;
                     int64_t i = Ai [pA] ;
                     GB_TEST_VALUE_OF_ENTRY (keep, pA) ;
@@ -122,7 +119,7 @@
             #elif defined ( GB_DIAG_SELECTOR )
 
                 // task that owns the diagonal entry does this work
-                // A can be sparse or full, but not bitmap
+                // A can be sparse, hypersparse, or full, but not bitmap
                 int64_t p = Zp [k] ;
                 if (pA_start <= p && p < pA_end)
                 { 
@@ -170,4 +167,12 @@
         }
     }
 }
+
+#undef GB_TRIL_SELECTOR
+#undef GB_TRIU_SELECTOR
+#undef GB_DIAG_SELECTOR
+#undef GB_OFFDIAG_SELECTOR
+#undef GB_ROWINDEX_SELECTOR
+#undef GB_ROWLE_SELECTOR
+#undef GB_ROWGT_SELECTOR
 

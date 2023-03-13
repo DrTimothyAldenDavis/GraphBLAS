@@ -1563,18 +1563,7 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 // as zero, if it has a built-in type. The value of Thunk (if present) is not
 // modified by any built-in select operator.
 
-// For user-defined select operators, Thunk is not typecasted at all.  If
-// the user operator is defined with a non-NULL Thunk input, then it must
-// be non-NULL and of the same type, when calling GxB_select.
-
-// GxB_SelectOp:  a function z=f(i,j,x,thunk) for the GxB_Select operation.
-// The function f must have the signature:
-
-//      bool f (GrB_Index i, GrB_Index j, const void *x, const void *thunk) ;
-
-// The values of i and j are guaranteed to be in the range 0 to
-// GrB_INDEX_MAX, and they can be safely typecasted to int64_t then negated,
-// if desired, without any risk of integer overflow.
+// User-defined GxB_SelectOp operators can no longer be constructed.
 
 typedef struct GB_SelectOp_opaque *GxB_SelectOp ;
 
@@ -1608,59 +1597,28 @@ GB_GLOBAL GxB_SelectOp
 
 // For GxB_TRIL, GxB_TRIU, GxB_DIAG, and GxB_OFFDIAG, the parameter Thunk is a
 // GrB_Scalar of any built-in type.  If GrB_NULL, or empty, Thunk is treated as
-// zero.  Otherwise, the single entry is typecasted as (int64_t) Thunk.
-// These select operators do not depend on the values of A, but just their
-// position, and they work on matrices of any type.
+// zero.  Otherwise, the single entry is typecasted as (int64_t) Thunk.  These
+// select operators do not depend on the values of A, but just their position,
+// and they work on matrices of any type (all 13 built-in types and all
+// user-defined types).
 
 // For GxB_*ZERO, the result depends only on the value of A(i,j).  The Thunk
 // parameter to GxB_select is ignored and may be GrB_NULL.
 
-// The operators GxB_TRIL, GxB_TRIU, GxB_DIAG, GxB_OFFDIAG, GxB_NONZERO,
-// GxB_EQ_ZERO, GxB_NE_THUNK, and GxB_EQ_THUNK work on all built-in types and
-// all user-defined types.
+// GxB_NONZERO, GxB_EQ_ZERO, GxB_NE_THUNK, and GxB_EQ_THUNK work on all 13
+// built-in types (including complex).  They cannot be used for user-defined
+// types.
 
 // GxB_GT_*, GxB_GE_*, GxB_LT_*, and GxB_LE_* only work on the 11 built-in
-// types (not complex).  They cannot be used for user-defined types.
+// real/integer/bool types (not complex).  They cannot be used for user-defined
+// types.
 
 //------------------------------------------------------------------------------
 // select operators: (historical)
 //------------------------------------------------------------------------------
 
-// User-defined GxB_SelectOps are historical.  New code should use
+// User-defined GxB_SelectOps no longer be constructed. 
 // GrB_IndexUnaryOp_new instead.
-
-typedef bool (*GxB_select_function)      // return true if A(i,j) is kept
-(
-    GrB_Index i,                // row index of A(i,j)
-    GrB_Index j,                // column index of A(i,j)
-    const void *x,              // value of A(i,j)
-    const void *thunk           // optional input for select function
-) ;
-
-#undef GxB_SelectOp_new
-#undef GxM_SelectOp_new
-
-GrB_Info GXB (SelectOp_new)     // create a new user-defined select operator
-(
-    GxB_SelectOp *selectop,     // handle for the new select operator
-    GxB_select_function function,// pointer to the select function
-    GrB_Type xtype,             // type of input x, or NULL if type-generic
-    GrB_Type ttype              // type of thunk, or NULL if not used
-) ;
-
-#define GxB_SelectOp_new(op,f,x,t) GB_SelectOp_new (op,f,x,t, GB_STR(f))
-#define GxM_SelectOp_new(op,f,x,t) GM_SelectOp_new (op,f,x,t, GB_STR(f))
-
-// GB_SelectOp_new should not be called directly, but only through the
-// GxB_SelectOp_new macro (but use GrB_IndexUnaryOp_new instead).
-GrB_Info GB_SelectOp_new        // not user-callable
-(
-    GxB_SelectOp *selectop,     // handle for the new select operator
-    GxB_select_function function,// pointer to the select function
-    GrB_Type xtype,             // type of input x
-    GrB_Type ttype,             // type of thunk, or NULL if not used
-    const char *name            // name of the underlying function
-) ;
 
 // GxB_SelectOp_xtype is historical.  Use a GrB_IndexUnaryOp instead.
 GrB_Info GxB_SelectOp_xtype     // return the type of x
@@ -1674,11 +1632,6 @@ GrB_Info GxB_SelectOp_ttype     // return the type of thunk
 (
     GrB_Type *ttype,            // return type of input thunk
     GxB_SelectOp selectop       // select operator
-) ;
-
-GrB_Info GxB_SelectOp_free      // free a user-created select operator
-(
-    GxB_SelectOp *selectop      // handle of select operator to free
 ) ;
 
 //==============================================================================
@@ -4660,7 +4613,6 @@ GrB_Info GxB_Context_disengage      // disengage a Context
             GrB_Type         *: GrB_Type_free         , \
             GrB_UnaryOp      *: GrB_UnaryOp_free      , \
             GrB_BinaryOp     *: GrB_BinaryOp_free     , \
-            GxB_SelectOp     *: GxB_SelectOp_free     , \
             GrB_IndexUnaryOp *: GrB_IndexUnaryOp_free , \
             GrB_Monoid       *: GrB_Monoid_free       , \
             GrB_Semiring     *: GrB_Semiring_free     , \
@@ -4689,7 +4641,6 @@ GrB_WaitMode ;
 GrB_Info GrB_Type_wait         (GrB_Type       type    , GrB_WaitMode waitmode);
 GrB_Info GrB_UnaryOp_wait      (GrB_UnaryOp    op      , GrB_WaitMode waitmode);
 GrB_Info GrB_BinaryOp_wait     (GrB_BinaryOp   op      , GrB_WaitMode waitmode);
-GrB_Info GxB_SelectOp_wait     (GxB_SelectOp   op      , GrB_WaitMode waitmode);
 GrB_Info GrB_IndexUnaryOp_wait (GrB_IndexUnaryOp op    , GrB_WaitMode waitmode);
 GrB_Info GrB_Monoid_wait       (GrB_Monoid     monoid  , GrB_WaitMode waitmode);
 GrB_Info GrB_Semiring_wait     (GrB_Semiring   semiring, GrB_WaitMode waitmode);
@@ -4707,7 +4658,6 @@ GrB_Info GrB_Matrix_wait       (GrB_Matrix     A       , GrB_WaitMode waitmode);
             GrB_Type         : GrB_Type_wait         ,  \
             GrB_UnaryOp      : GrB_UnaryOp_wait      ,  \
             GrB_BinaryOp     : GrB_BinaryOp_wait     ,  \
-            GxB_SelectOp     : GxB_SelectOp_wait     ,  \
             GrB_IndexUnaryOp : GrB_IndexUnaryOp_wait ,  \
             GrB_Monoid       : GrB_Monoid_wait       ,  \
             GrB_Semiring     : GrB_Semiring_wait     ,  \
@@ -4734,7 +4684,6 @@ GrB_Info GxB_Scalar_wait (GrB_Scalar *s) ;
 GrB_Info GrB_Type_error         (const char **error, const GrB_Type      type) ;
 GrB_Info GrB_UnaryOp_error      (const char **error, const GrB_UnaryOp     op) ;
 GrB_Info GrB_BinaryOp_error     (const char **error, const GrB_BinaryOp    op) ;
-GrB_Info GxB_SelectOp_error     (const char **error, const GxB_SelectOp    op) ;
 GrB_Info GrB_IndexUnaryOp_error (const char **error, const GrB_IndexUnaryOp op) ;
 GrB_Info GrB_Monoid_error       (const char **error, const GrB_Monoid monoid) ;
 GrB_Info GrB_Semiring_error     (const char **error, const GrB_Semiring semiring) ;
@@ -4754,7 +4703,6 @@ GrB_Info GxB_Scalar_error       (const char **error, const GrB_Scalar     s) ;
                   GrB_Type         : GrB_Type_error         ,   \
                   GrB_UnaryOp      : GrB_UnaryOp_error      ,   \
                   GrB_BinaryOp     : GrB_BinaryOp_error     ,   \
-                  GxB_SelectOp     : GxB_SelectOp_error     ,   \
                   GrB_IndexUnaryOp : GrB_IndexUnaryOp_error ,   \
                   GrB_Monoid       : GrB_Monoid_error       ,   \
                   GrB_Semiring     : GrB_Semiring_error     ,   \

@@ -25,8 +25,6 @@
 //      Workspaces and A_slice are NULL.
 //      This method is parallel and fully scalable.
 
-#define GB_DEBUG
-
 #include "GB_transpose.h"
 #include "GB_unop.h"
 #include "GB_stringify.h"

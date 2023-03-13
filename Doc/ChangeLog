@@ -12,6 +12,8 @@ Version 8.0.0, (FIXME: DATE)
         enum values for the descriptor settings).
     * GxB_Context: an object for controlling computational resources:
         # of OpenMP threads, the chunk factor, and (draft) GPU id.
+    * GxB_SelectOp: GraphBLAS no longer supports user-defined GxB_SelectOps.
+        Use a GrB_IndexUnaryOp instead.
 
 Version 7.4.2, Jan 17, 2023
 

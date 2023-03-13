@@ -2,7 +2,7 @@
 // GrB_Matrix_select: select entries from a matrix using a GrB_IndexUnaryOp
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -11,7 +11,7 @@
 
 #include "GB_select.h"
 #include "GB_get_mask.h"
-#include "GB_scalar.h"
+#include "GB_scalar_wrap.h"
 
 //------------------------------------------------------------------------------
 // GB_sel: select using a GrB_IndexUnaryOp
@@ -54,7 +54,7 @@ static inline GrB_Info GB_sel   // C<M> = accum (C, select(A,k)) or select(A',k)
         C, C_replace,               // C and its descriptor
         M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                      // optional accum for Z=accum(C,T)
-        (GB_Operator) op,           // operator to select the entries
+        op,                         // operator to select the entries
         A,                          // first input: A
         Thunk,                      // optional input for select operator
         A_transpose,                // descriptor for A

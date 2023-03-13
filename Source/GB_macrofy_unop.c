@@ -672,6 +672,8 @@ void GB_macrofy_unop
             // IndexUnaryOps
             //------------------------------------------------------------------
 
+            case 232 : f = "z = (i >= 0)" ;             break ;
+
             case 233 : f = "z = ((i) + (y))" ;          break ;
             case 234 : f = "z = ((i) <= (y))" ;         break ;
             case 235 : f = "z = ((i) > (y))" ;          break ;

@@ -353,32 +353,30 @@ mxArray *gb_export              // return the exported built-in matrix or struct
     kind_enum_t kind            // GrB, sparse, or full
 ) ;
 
-void gb_string_to_selectop
+void gb_string_to_idxunop
 (
     // outputs: one of the outputs is non-NULL and the other NULL
-    GrB_IndexUnaryOp *idxunop,          // GrB_IndexUnaryOp, if found
-    GxB_SelectOp *selop,                // GxB_SelectOp if found
-    bool *thunk_required,               // true if op requires a thunk scalar
-    bool *op_is_positional,             // true if op is positional
+    GrB_IndexUnaryOp *op,       // GrB_IndexUnaryOp, if found
+    bool *thunk_zero,           // true if op requires a thunk zero
+    bool *op_is_positional,     // true if op is positional
     // input/output:
     int64_t *ithunk,
     // inputs:
-    char *opstring,                     // string defining the operator
-    const GrB_Type atype                // type of A, or NULL if not present
+    char *opstring,             // string defining the operator
+    const GrB_Type atype        // type of A, or NULL if not present
 ) ;
 
-void gb_mxstring_to_selectop
+void gb_mxstring_to_idxunop
 (
     // outputs: one of the outputs is non-NULL and the other NULL
-    GrB_IndexUnaryOp *idxunop,          // GrB_IndexUnaryOp, if found
-    GxB_SelectOp *selop,                // GxB_SelectOp if found
-    bool *thunk_required,               // true if op requires a thunk scalar
-    bool *op_is_positional,             // true if op is positional
+    GrB_IndexUnaryOp *op,       // GrB_IndexUnaryOp, if found
+    bool *thunk_zero,           // true if op requires a thunk zero
+    bool *op_is_positional,     // true if op is positional
     // input/output:
     int64_t *ithunk,
     // inputs:
-    const mxArray *mxstring,            // built-in string
-    const GrB_Type atype                // type of A, or NULL if not present
+    const mxArray *mxstring,    // built-in string
+    const GrB_Type atype        // type of A, or NULL if not present
 ) ;
 
 bool gb_mxarray_is_scalar   // true if built-in array is a scalar

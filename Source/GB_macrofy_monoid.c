@@ -56,7 +56,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     else if (id_ecode <= 28)
     {
         // built-in monoid: a simple assignment
-        const char *id_val = GB_charify_id (id_ecode, zsize, &has_byte, &byte) ;
+        const char *id_val = GB_macrofy_id (id_ecode, zsize, &has_byte, &byte) ;
         #define SLEN (256 + GxB_MAX_NAME_LEN)
         char id [SLEN] ;
         if (zcode == GB_FC32_code)
@@ -128,7 +128,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         // built-in terminal monoid: terminal value is a simple assignment
         monoid_is_terminal = true ;
         fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
-        const char *term_value = GB_charify_id (term_ecode, zsize, NULL, NULL) ;
+        const char *term_value = GB_macrofy_id (term_ecode, zsize, NULL, NULL) ;
         fprintf (fp, "#define GB_DECLARE_TERMINAL_CONST(zterminal) "
             "const %s zterminal = ", ztype_name) ;
         if (zcode == GB_FC32_code)

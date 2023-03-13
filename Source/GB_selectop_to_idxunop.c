@@ -14,8 +14,6 @@
 // Thunk scalar into its corresponding GrB_IndexUnaryOp and its required
 // NewThunk scalar.
 
-#define GB_DEBUG
-
 #define GB_FREE_ALL                             \
 {                                               \
     GB_Matrix_free ((GrB_Matrix *) &NewThunk) ; \

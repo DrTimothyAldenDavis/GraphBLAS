@@ -12,9 +12,6 @@
 // types.  The iso case is not handled; A->x and Cx must be the same size and no
 // iso expansion is done.
 
-// FIXME: debug is on
-#define GB_DEBUG
-
 #include "GB.h"
 #include "GB_apply.h"
 #include "GB_stringify.h"

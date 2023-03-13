@@ -49,7 +49,6 @@ GrB_Info GB_unop_new
     op->unop_function = function ;      // NULL for IDENTITY_UDT operator
     op->idxunop_function = NULL ;
     op->binop_function = NULL ;
-    op->selop_function = NULL ;
 
     op->opcode = opcode ;
 

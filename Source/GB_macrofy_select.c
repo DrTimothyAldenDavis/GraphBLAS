@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_macrofy_mxm: construct all macros for a semiring
+// GB_macrofy_select: construct all macros for select methods
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -10,559 +10,224 @@
 #include "GB.h"
 #include "GB_stringify.h"
 
-void GB_macrofy_select     // construct all macros for GrB_select and GxB_select
+void GB_macrofy_select          // construct all macros for GrB_select
 (
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t select_code,
-    GB_Opcode opcode,           // selector opcode
-    const GB_Operator op,       // user operator, NULL in some cases
+    uint64_t scode,
+    // operator:
+    const GrB_IndexUnaryOp op,
     GrB_Type atype
 )
 {
 
     //--------------------------------------------------------------------------
-    // extract the select codes
+    // extract the select scode
     //--------------------------------------------------------------------------
 
-    // FIXME: add csparsity and ccode
+    // iso of A and C (2 bits)
+    bool C_iso      = GB_RSHIFT (scode, 37, 1) ;
+    bool A_iso      = GB_RSHIFT (scode, 36, 1) ;
 
-    // flipij, inplace (2 bits)
-    int flip_ij     = GB_RSHIFT (select_code, 29, 1) ;
-    int inplace     = GB_RSHIFT (select_code, 28, 1) ;
+    // inplace, i/j dependency and flipij (4 bits)
+    int inplace     = GB_RSHIFT (scode, 35, 1) ;
+    int i_dep       = GB_RSHIFT (scode, 34, 1) ;
+    int j_dep       = GB_RSHIFT (scode, 33, 1) ;
+    bool flipij     = GB_RSHIFT (scode, 32, 1) ;
 
-    // opcde (8 bits; 2 hex digits)
-    ASSERT (opcode == GB_RSHIFT (select_code, 20, 8)) ;
+    // op, z = f(x,i,j,y) (5 hex digits)
+    int idxop_ecode = GB_RSHIFT (scode, 24, 8) ;
+    int zcode       = GB_RSHIFT (scode, 20, 4) ;
+    int xcode       = GB_RSHIFT (scode, 16, 4) ;
+    int ycode       = GB_RSHIFT (scode, 12, 4) ;
 
-    // type of x, y, z, and A (4 hex digits)
-    int zcode       = GB_RSHIFT (select_code, 16, 4) ;
-    int xcode       = GB_RSHIFT (select_code, 12, 4) ;
-    int ycode       = GB_RSHIFT (select_code,  8, 4) ;
-    int acode       = GB_RSHIFT (select_code,  4, 4) ;
+    // types of C and A (2 hex digits)
+    int ccode       = GB_RSHIFT (scode,  8, 4) ;
+    int acode       = GB_RSHIFT (scode,  4, 4) ;
 
-    // A sparstiy, A and C iso properties (1 hex digit)
-    int C_iso_code  = GB_RSHIFT (select_code,  3, 1) ;
-    int A_iso_code  = GB_RSHIFT (select_code,  2, 1) ;
-    int asparsity   = GB_RSHIFT (select_code,  0, 2) ;
+    // sparsity structures of C and A (1 hex digit)
+    int csparsity   = GB_RSHIFT (scode,  2, 2) ;
+    int asparsity   = GB_RSHIFT (scode,  0, 2) ;
 
     //--------------------------------------------------------------------------
-    // construct the select name
+    // describe the operator
     //--------------------------------------------------------------------------
 
     GrB_Type xtype, ytype, ztype ;
-    GB_typify_select (&xtype, &ytype, &ztype, opcode, op, atype) ;
-    char *opname = GB_namify_select (opcode, op) ;
-    char *xname = (xtype == NULL) ? "GB_void" : xtype->name ;
-    char *yname = (ytype == NULL) ? "GB_void" : ytype->name ;
-    char *zname = (ztype == NULL) ? "GB_void" : ztype->name ;
+    const char *xtype_name, *ytype_name, *ztype_name ;
 
     GB_macrofy_copyright (fp) ;
-    fprintf (fp, "// select: (%s", opname) ;
-    if (xtype != NULL) fprintf (fp, ", xtype: %s", xname) ;
-    if (ytype != NULL) fprintf (fp, ", ytype: %s", yname) ;
-    if (ztype != NULL) fprintf (fp, ", ztype: %s", zname) ;
-    int asize = (int) atype->size ;
-    fprintf (fp, ", atype: %s, size: %d bytes)\n\n", atype->name, (int) asize) ;
 
-    // true if asize is a multiply of sizeof (uint32_t)
-    bool asize_multiple_of_uint32 = ((asize % sizeof (uint32_t)) == 0) ;
-    int asize32 = asize / sizeof (uint32_t) ;
+    xtype = (xcode == 0) ? NULL : op->xtype ;
+    ytype = (ycode == 0) ? GrB_INT64 : op->ytype ;
+    ztype = op->ztype ;
+    xtype_name = (xtype == NULL) ? "void" : xtype->name ;
+    ytype_name = (ytype == NULL) ? "int64_t" : ytype->name ;
+    ztype_name = ztype->name ;
+    if (op->hash == 0)
+    {
+        // builtin operator
+        fprintf (fp, "// op: (%s%s, %s)\n\n",
+            op->name, flipij ? " (flipped ij)" : "", xtype_name) ;
+    }
+    else
+    {
+        // user-defined operator
+        fprintf (fp,
+            "// op: %s%s, ztype: %s, xtype: %s, ytype: %s\n\n",
+            op->name, flipij ? " (flipped ij)" : "",
+            ztype_name, xtype_name, ytype_name) ;
+    }
 
     //--------------------------------------------------------------------------
     // construct the typedefs
     //--------------------------------------------------------------------------
 
-    GB_macrofy_typedefs (fp, NULL, atype, NULL, xtype, ytype, ztype) ;
+    GrB_Type ctype = atype ;    // this may change in the future
+
+    GB_macrofy_typedefs (fp, ctype, atype, NULL,
+        xtype, ytype, ztype) ;
+
+    fprintf (fp, "// unary operator types:\n") ;
+    GB_macrofy_type (fp, "Z", "_", ztype_name) ;
+    GB_macrofy_type (fp, "X", "_", xtype_name) ;
+    GB_macrofy_type (fp, "Y", "_", ytype_name) ;
 
     //--------------------------------------------------------------------------
-    // construct the macros for the type names
+    // construct macros for the unary operator
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "// select types:\n") ;
-    GB_macrofy_type (fp, "X", "_", xname) ;
-    GB_macrofy_type (fp, "Y", "_", yname) ;
-    GB_macrofy_type (fp, "Z", "_", zname) ;
+    fprintf (fp, "\n// index unary operator%s:\n",
+        flipij ? " (flipped ij)" : "") ;
+    GB_macrofy_unop (fp, "GB_IDXUNOP", flipij, idxop_ecode, op) ;
 
-    //--------------------------------------------------------------------------
-    // construct the select macros
-    //--------------------------------------------------------------------------
-
-    fprintf (fp, "\n// select op:\n") ;
+    fprintf (fp, "#define GB_DEPENDS_ON_X %d\n", (xtype != NULL) ? 1 : 0) ;
+    fprintf (fp, "#define GB_DEPENDS_ON_I %d\n", i_dep) ;
+    fprintf (fp, "#define GB_DEPENDS_ON_J %d\n", j_dep) ;
+    fprintf (fp, "#define GB_DEPENDS_ON_Y %d\n", (ycode == 0) ? 0 : 1) ;
 
     char *kind ;
-    switch (opcode)
+    switch (op->opcode)
     {
-        case GB_TRIL_selop_code       : kind = "TRIL"       ; break ;
-        case GB_TRIU_selop_code       : kind = "TRIU"       ; break ;
-        case GB_DIAG_selop_code       : kind = "DIAG"       ; break ;
-        case GB_OFFDIAG_selop_code    : kind = "OFFDIAG"    ; break ;
-        case GB_ROWINDEX_idxunop_code : kind = "ROWINDEX"   ; break ;
-        case GB_ROWLE_idxunop_code    : kind = "ROWLE"      ; break ;
-        case GB_ROWGT_idxunop_code    : kind = "ROWGT"      ; break ;
-        case GB_COLINDEX_idxunop_code : kind = "COLINDEX"   ; break ;
-        case GB_COLLE_idxunop_code    : kind = "COLLE"      ; break ;
-        case GB_COLGT_idxunop_code    : kind = "COLGT"      ; break ;
-        default                       : kind = "ENTRY"      ; break ;
+        case GB_TRIL_idxunop_code       : kind = "TRIL"      ; break ;
+        case GB_TRIU_idxunop_code       : kind = "TRIU"      ; break ;
+        case GB_DIAG_idxunop_code       : kind = "DIAG"      ; break ;
+        case GB_DIAGINDEX_idxunop_code  : 
+        case GB_OFFDIAG_idxunop_code    : kind = "OFFDIAG"   ; break ;
+        case GB_ROWINDEX_idxunop_code   : kind = "ROWINDEX"  ; break ;
+        case GB_COLINDEX_idxunop_code   : kind = "COLINDEX"  ; break ;
+        case GB_COLLE_idxunop_code      : kind = "COLLE"     ; break ;
+        case GB_COLGT_idxunop_code      : kind = "COLGT"     ; break ;
+        case GB_ROWLE_idxunop_code      : kind = "ROWLE"     ; break ;
+        case GB_ROWGT_idxunop_code      : kind = "ROWGT"     ; break ;
+        default                         : kind = "ENTRY"     ; break ;
     }
     fprintf (fp, "#define GB_%s_SELECTOR\n", kind) ;
 
-    // handle flip_ij (needed for user-defined operators only)
-    char *i_user = (flip_ij) ? "j" : "i" ;
-    char *j_user = (flip_ij) ? "i" : "j" ;
+    //--------------------------------------------------------------------------
+    // construct the GB_TEST_VALUE_OF_ENTRY(keep,p) macro
+    //--------------------------------------------------------------------------
 
-    char *keep = NULL ;
-    switch (opcode)
+    fprintf (fp, "\n// test if A(i,j) is to be kept:\n") ;
+
+    if (zcode == GB_BOOL_code)
     {
-
-        // positional: depends on (i,j) and y
-        case GB_TRIL_selop_code       : keep = "(j)-(i) <= (y)" ; break ;
-        case GB_TRIU_selop_code       : keep = "(j)-(i) >= (y)" ; break ;
-        case GB_DIAG_selop_code       : keep = "(j)-(i) == (y)" ; break ;
-        case GB_OFFDIAG_selop_code    : keep = "(j)-(i) != (y)" ; break ;
-        case GB_ROWINDEX_idxunop_code : keep = "(i) != -(y)"    ; break ;
-        case GB_ROWLE_idxunop_code    : keep = "(i) <= (y)"     ; break ;
-        case GB_ROWGT_idxunop_code    : keep = "(i) > (y)"      ; break ;
-        case GB_COLINDEX_idxunop_code : keep = "(j) != -(y)"    ; break ;
-        case GB_COLLE_idxunop_code    : keep = "(j) <= (y)"     ; break ;
-        case GB_COLGT_idxunop_code    : keep = "(j) > (y)"      ; break ;
-
-        // depends on zombie status of A(i,j)
-        case GB_NONZOMBIE_selop_code  : keep = "(i) >= 0" ; break ;
-
-        // depends on A, OK for user-defined types
-        case GB_NONZERO_selop_code    : 
-
-            switch (xcode)
-            {
-                case GB_BOOL_code     : 
-                    keep = "(x)" ;
-                    break ;
-                case GB_INT8_code     : 
-                case GB_INT16_code    : 
-                case GB_INT32_code    : 
-                case GB_INT64_code    : 
-                case GB_UINT8_code    : 
-                case GB_UINT16_code   : 
-                case GB_UINT32_code   : 
-                case GB_UINT64_code   : 
-                case GB_FP32_code     : 
-                case GB_FP64_code     : 
-                    keep = "(x) != 0" ;
-                    break ;
-                case GB_FC32_code     : 
-                    keep = "GB_FC32_ne0 (x)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC32_ne0", GB_FC32_ne0_DEFN) ;
-                    break ;
-                case GB_FC64_code     : 
-                    keep = "GB_FC64_ne0 (x)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC64_ne0", GB_FC64_ne0_DEFN) ;
-                    break ;
-
-                case GB_UDT_code      : 
-                    fprintf (fp,
-                        "#ifndef GB_GUARD_GB_udt_ne0_%d_DEFINED\n"
-                        "#define GB_GUARD_GB_udt_ne0_%d_DEFINED\n"
-                        "GB_STATIC_INLINE bool GB_udt_ne0_%d ",
-                        asize, asize, asize) ;
-                    if (asize_multiple_of_uint32)
-                    { 
-                        fprintf (fp,
-                        "(uint32_t *aij)                        \n"
-                        "{                                      \n"
-                        "    bool ne0 = false ;                 \n"
-                        "    for (int k = 0 ; k < %d ; i++)     \n"
-                        "    {                                  \n"
-                        "        ne0 = ne0 || (aij [k] != 0) ;  \n"
-                        "    }                                  \n"
-                        "    return (ne0) ;                     \n"
-                        "}                                      \n"
-                        "#define GB_KEEP(keep,x,i,j,y) "
-                        "keep = GB_udt_ne0_%d ((uint32_t *) &(x))\n",
-                        asize32, asize) ;
-                    }
-                    else
-                    { 
-                        fprintf (fp,
-                        "(uint8_t *aij)                         \n"
-                        "{                                      \n"
-                        "    bool ne0 = false ;                 \n"
-                        "    for (int k = 0 ; k < %d ; i++)     \n"
-                        "    {                                  \n"
-                        "        ne0 = ne0 || (aij [k] != 0) ;  \n"
-                        "    }                                  \n"
-                        "    return (ne0) ;                     \n"
-                        "}                                      \n"
-                        "#define GB_KEEP(keep,x,i,j,y) "
-                        "keep = GB_udt_ne0_%d ((uint8_t *) &(x))\n",
-                        asize, asize) ;
-                    }
-                    break ;
-
-                default: ;
-            }
-            break ;
-
-        // depends on A, OK for user-defined types
-        case GB_EQ_ZERO_selop_code    : 
-
-            switch (xcode)
-            {
-                case GB_BOOL_code     : 
-                    keep = "!(x)" ;
-                    break ;
-                case GB_INT8_code     : 
-                case GB_INT16_code    : 
-                case GB_INT32_code    : 
-                case GB_INT64_code    : 
-                case GB_UINT8_code    : 
-                case GB_UINT16_code   : 
-                case GB_UINT32_code   : 
-                case GB_UINT64_code   : 
-                case GB_FP32_code     : 
-                case GB_FP64_code     : 
-                    keep = "(x) == 0" ;
-                    break ;
-                case GB_FC32_code     : 
-                    keep = "GB_FC32_eq0 (x)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC32_eq0", GB_FC32_eq0_DEFN) ;
-                    break ;
-                case GB_FC64_code     : 
-                    keep = "GB_FC64_eq0 (x)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC64_eq0", GB_FC64_eq0_DEFN) ;
-                    break ;
-
-                case GB_UDT_code      : 
-                    fprintf (fp,
-                        "#ifndef GB_GUARD_GB_udt_eq0_%d_DEFINED\n"
-                        "#define GB_GUARD_GB_udt_eq0_%d_DEFINED\n"
-                        "GB_STATIC_INLINE bool GB_udt_eq0_%d ",
-                        asize, asize, asize) ;
-                    if (asize_multiple_of_uint32)
-                    { 
-                        fprintf (fp,
-                        "(uint32_t *aij)                        \n"
-                        "{                                      \n"
-                        "    bool eq0 = true ;                  \n"
-                        "    for (int k = 0 ; k < %d ; i++)     \n"
-                        "    {                                  \n"
-                        "        eq0 = eq0 && (aij [k] == 0) ;  \n"
-                        "    }                                  \n"
-                        "    return (eq0) ;                     \n"
-                        "}                                      \n"
-                        "#define GB_KEEP(keep,x,i,j,y) "
-                        "keep = GB_udt_eq0_%d ((uint32_t *) &(x))\n",
-                        asize32, asize) ;
-                    }
-                    else
-                    { 
-                        fprintf (fp,
-                        "(uint8_t *aij)                         \n"
-                        "{                                      \n"
-                        "    bool eq0 = true ;                  \n"
-                        "    for (int k = 0 ; k < %d ; i++)     \n"
-                        "    {                                  \n"
-                        "        eq0 = eq0 && (aij [k] == 0) ;  \n"
-                        "    }                                  \n"
-                        "    return (eq0) ;                     \n"
-                        "}                                      \n"
-                        "#define GB_KEEP(keep,x,i,j,y) "
-                        "keep = GB_udt_eq0_%d ((uint8_t *) &(x))\n",
-                        asize, asize) ;
-                    }
-                    break ;
-
-                default: ;
-            }
-            break ;
-
-        // depends on A, for real built-in types only
-        case GB_GT_ZERO_selop_code    : keep = "(x) > 0"    ; break ; 
-        case GB_GE_ZERO_selop_code    : keep = "(x) >= 0"   ; break ;
-        case GB_LT_ZERO_selop_code    : keep = "(x) < 0"    ; break ;
-        case GB_LE_ZERO_selop_code    : keep = "(x) <= 0"   ; break ;
-
-        // depends on A, OK for user-defined types
-        case GB_NE_THUNK_selop_code   : 
-
-            switch (xcode)
-            {
-                case GB_BOOL_code     : 
-                case GB_INT8_code     : 
-                case GB_INT16_code    : 
-                case GB_INT32_code    : 
-                case GB_INT64_code    : 
-                case GB_UINT8_code    : 
-                case GB_UINT16_code   : 
-                case GB_UINT32_code   : 
-                case GB_UINT64_code   : 
-                case GB_FP32_code     : 
-                case GB_FP64_code     : 
-                    keep = "(x) != (y)" ;
-                    break ;
-                case GB_FC32_code     : 
-                    keep = "GB_FC32_ne (x)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC32_ne", GB_FC32_ne_DEFN) ;
-                    break ;
-                case GB_FC64_code     : 
-                    keep = "GB_FC64_ne (x)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC64_ne", GB_FC64_ne_DEFN) ;
-                    break ;
-
-                case GB_UDT_code      : 
-                    fprintf (fp,
-                        "#ifndef GB_GUARD_GB_udt_ne_%d_DEFINED\n"
-                        "#define GB_GUARD_GB_udt_ne_%d_DEFINED\n"
-                        "GB_STATIC_INLINE bool GB_udt_ne_%d ",
-                        asize, asize, asize) ;
-                    if (asize_multiple_of_uint32)
-                    { 
-                        fprintf (fp,
-                        "(uint32_t *aij, uint32_t *yy)              \n"
-                        "{                                          \n"
-                        "    bool ne = false ;                      \n"
-                        "    for (int k = 0 ; k < %d ; i++)         \n"
-                        "    {                                      \n"
-                        "        ne = ne || (aij [k] != yy [k]) ;   \n"
-                        "    }                                      \n"
-                        "    return (ne) ;                          \n"
-                        "}                                          \n"
-                        "#define GB_KEEP(keep,x,i,j,y) "
-                        "keep = GB_udt_ne_%d "
-                        "((uint32_t *) &(x), (uint32_t *) &(y))\n",
-                        asize32, asize) ;
-                    }
-                    else
-                    { 
-                        fprintf (fp,
-                        "(uint8_t *aij, uint8_t *yy)                \n"
-                        "{                                          \n"
-                        "    bool ne = false ;                      \n"
-                        "    for (int k = 0 ; k < %d ; i++)         \n"
-                        "    {                                      \n"
-                        "        ne = ne || (aij [k] != yy [k]) ;   \n"
-                        "    }                                      \n"
-                        "    return (ne) ;                          \n"
-                        "}                                          \n"
-                        "#define GB_KEEP(keep,x,i,j,y) "
-                        "keep = GB_udt_ne_%d "
-                        "((uint8_t *) &(x), (uint8_t *) &(y))\n",
-                        asize, asize) ;
-                    }
-                    break ;
-
-                default: ;
-            }
-            break ;
-
-        // depends on A, OK for user-defined types
-        case GB_EQ_THUNK_selop_code   : 
-
-            switch (xcode)
-            {
-                case GB_BOOL_code     : 
-                case GB_INT8_code     : 
-                case GB_INT16_code    : 
-                case GB_INT32_code    : 
-                case GB_INT64_code    : 
-                case GB_UINT8_code    : 
-                case GB_UINT16_code   : 
-                case GB_UINT32_code   : 
-                case GB_UINT64_code   : 
-                case GB_FP32_code     : 
-                case GB_FP64_code     : 
-                    keep = "(x) == (y)" ;
-                    break ;
-                case GB_FC32_code     : 
-                    keep = "GB_FC32_eq (x)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC32_eq", GB_FC32_eq_DEFN) ;
-                    break ;
-                case GB_FC64_code     : 
-                    keep = "GB_FC64_eq (x)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC64_eq", GB_FC64_eq_DEFN) ;
-                    break ;
-
-                case GB_UDT_code      : 
-                    fprintf (fp,
-                        "#ifndef GB_GUARD_GB_udt_eq_%d_DEFINED\n"
-                        "#define GB_GUARD_GB_udt_eq_%d_DEFINED\n"
-                        "GB_STATIC_INLINE bool GB_udt_eq_%d ",
-                        asize, asize, asize) ;
-                    if (asize_multiple_of_uint32)
-                    { 
-                        fprintf (fp,
-                        "(uint32_t *aij, uint32_t *yy)              \n"
-                        "{                                          \n"
-                        "    bool eq = true ;                       \n"
-                        "    for (int k = 0 ; k < %d ; i++)         \n"
-                        "    {                                      \n"
-                        "        eq = eq && (aij [k] == yy [k]) ;   \n"
-                        "    }                                      \n"
-                        "    return (eq) ;                          \n"
-                        "}                                          \n"
-                        "#define GB_KEEP(keep,x,i,j,y) "
-                        "keep = GB_udt_eq_%d "
-                        "((uint32_t *) &(x), (uint32_t *) &(y))\n",
-                        asize32, asize) ;
-                    }
-                    else
-                    { 
-                        fprintf (fp,
-                        "(uint8_t *aij, uint8_t *yy)                \n"
-                        "{                                          \n"
-                        "    bool eq = true ;                       \n"
-                        "    for (int k = 0 ; k < %d ; i++)         \n"
-                        "    {                                      \n"
-                        "        eq = eq && (aij [k] == yy [k]) ;   \n"
-                        "    }                                      \n"
-                        "    return (eq) ;                          \n"
-                        "}                                          \n"
-                        "#define GB_KEEP(keep,x,i,j,y) "
-                        "keep = GB_udt_eq_%d "
-                        "((uint8_t *) &(x), (uint8_t *) &(y))\n",
-                        asize, asize) ;
-                    }
-                    break ;
-
-                default: ;
-            }
-            break ;
-
-        // depends on A and Thunk, for real built-in types only
-        case GB_GT_THUNK_selop_code   : keep = "(x) > (y)"  ; break ;
-        case GB_GE_THUNK_selop_code   : keep = "(x) >= (y)"  ; break ;
-        case GB_LT_THUNK_selop_code   : keep = "(x) < (y)"  ; break ;
-        case GB_LE_THUNK_selop_code   : keep = "(x) <= (y)"  ; break ;
-
-        // depends on A and Thunk, for built-in types only
-        case GB_VALUEEQ_idxunop_code  : 
-
-            switch (xcode)
-            {
-                case GB_BOOL_code     : 
-                case GB_INT8_code     : 
-                case GB_INT16_code    : 
-                case GB_INT32_code    : 
-                case GB_INT64_code    : 
-                case GB_UINT8_code    : 
-                case GB_UINT16_code   : 
-                case GB_UINT32_code   : 
-                case GB_UINT64_code   : 
-                case GB_FP32_code     : 
-                case GB_FP64_code     : 
-                    keep = "(x) == (y)" ;
-                    break ;
-                case GB_FC32_code     : 
-                    keep = "GB_FC32_eq (x,y)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC32_eq", GB_FC32_eq_DEFN) ;
-                    break ;
-                case GB_FC64_code     : 
-                    keep = "GB_FC64_eq (x,y)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC64_eq", GB_FC64_eq_DEFN) ;
-                    break ;
-                default: ;
-            }
-            break ;
-
-        // depends on A and Thunk, for built-in types only
-        case GB_VALUENE_idxunop_code  : 
-
-            switch (xcode)
-            {
-                case GB_BOOL_code     : 
-                case GB_INT8_code     : 
-                case GB_INT16_code    : 
-                case GB_INT32_code    : 
-                case GB_INT64_code    : 
-                case GB_UINT8_code    : 
-                case GB_UINT16_code   : 
-                case GB_UINT32_code   : 
-                case GB_UINT64_code   : 
-                case GB_FP32_code     : 
-                case GB_FP64_code     : 
-                    keep = "(x) != (y)" ;
-                    break ;
-                case GB_FC32_code     : 
-                    keep = "GB_FC32_ne (x,y)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC32_ne", GB_FC32_ne_DEFN) ;
-                    break ;
-                case GB_FC64_code     : 
-                    keep = "GB_FC64_ne (x,y)" ;
-                    GB_macrofy_defn (fp, 1, "GB_FC64_ne", GB_FC64_ne_DEFN) ;
-                    break ;
-                default: ;
-            }
-            break ;
-
-        // depends on A and Thunk, for real built-in types only
-        case GB_VALUEGT_idxunop_code  : keep = "(x) > (y)"  ; break ;
-        case GB_VALUEGE_idxunop_code  : keep = "(x) >= (y)" ; break ;
-        case GB_VALUELT_idxunop_code  : keep = "(x) < (y)"  ; break ;
-        case GB_VALUELE_idxunop_code  : keep = "(x) <= (y)" ; break ;
-
-        // depends on A and Thunk (type and values); user-defined operators
-        case GB_USER_idxunop_code     : 
-            if (ztype == GrB_BOOL)
-            { 
-                // no need to typecast result of the user-defined operator
-                fprintf (fp,
-                "#define GB_KEEP(keep,x,i,j,y) "
-                "%s (&(keep), &(x), %s, %s, &(y)) ;\n",
-                opname, i_user, j_user) ;
-            }
-            else
-            { 
-                // need to typecast result to bool
-                GB_macrofy_cast_input (fp, "CAST_Z_TO_KEEP", "keep", "z", "z",
-                    GrB_BOOL, ztype) ;
-                fprintf (fp,
-                    "#define GB_KEEP(keep,x,i,j,y) { %s zkeep ; "
-                    "%s (&(zkeep), &(x), %s, %s, &(y)) ; "
-                    "CAST_Z_TO_KEEP (keep, zkeep) ; }\n",
-                    ztype->name, opname, i_user, j_user) ;
-            }
-            GB_macrofy_defn (fp, 3, op->name, op->defn) ;
-            break ;
-
-        case GB_USER_selop_code       : 
-
-            fprintf (fp,
-                "#define GB_KEEP(keep,x,i,j,y) "
-                "keep = %s (%s, %s, &(x), &(y)) ;\n",
-                opname, i_user, j_user) ;
-            GB_macrofy_defn (fp, 3, op->name, op->defn) ;
-            break ;
-
-        default: ;
+        // no typecasting of z to keep
+        fprintf (fp, "#define GB_TEST_VALUE_OF_ENTRY(keep,p) \\\n"
+                     "    bool keep ;                        \\\n") ;
+        if (xcode == 0)
+        {
+            // operator does not depend on x
+            fprintf (fp, "    GB_IDXUNOP (keep, , i, j, y) ;\n") ;
+        }
+        else if (acode == xcode)
+        {
+            // operator depends on x, but it has the same type as A
+            fprintf (fp, "    GB_IDXUNOP (keep, Ax [%s], i, j, y) ;\n",
+                A_iso ? "0" : "p") ;
+        }
+        else
+        {
+            // must typecast from A to x
+            fprintf (fp, "    GB_DECLAREA (x) ;                  \\\n"
+                         "    GB_GETA (x, Ax, p, ) ;             \\\n"
+                         "    GB_IDXUNOP (keep, x, i, j, y) ;\n") ;
+        }
     }
-
-    if (keep != NULL)
-    { 
-        fprintf (fp, "#define GB_KEEP(keep,x,i,j,y) keep = (%s) ;\n", keep) ;
+    else
+    {
+        // must typecast z to keep
+        int nargs ;
+        const char *cast_z_to_bool = GB_macrofy_cast_expression (fp,
+            ztype, GrB_BOOL, &nargs) ;
+        fprintf (fp, "#define GB_TEST_VALUE_OF_ENTRY(keep,p) \\\n"
+                     "    GB_Z_TYPE z ;                      \\\n") ;
+        if (xcode == 0)
+        {
+            // operator does not depend on x
+            fprintf (fp, "    GB_IDXUNOP (z, , i, j, y) ; \\\n") ;
+        }
+        else if (acode == xcode)
+        {
+            // operator depends on x, but it has the same type as A
+            fprintf (fp, "    GB_IDXUNOP (z, Ax [%s], i, j, y) ; \\\n",
+                A_iso ? "0" : "p") ;
+        }
+        else
+        {
+            // must typecast from A to x
+            fprintf (fp, "    GB_DECLAREA (x) ;                  \\\n"
+                         "    GB_GETA (x, Ax, p, ) ;             \\\n"
+                         "    GB_IDXUNOP (z, x, i, j, y) ;       \\\n") ;
+        }
+        if (cast_z_to_bool == NULL)
+        {
+            fprintf (fp, "    bool keep = (bool) z ;\n") ;
+        }
+        else if (nargs == 3)
+        {
+            fprintf (fp, cast_z_to_bool, "    bool keep", "z", "z") ;
+        }
+        else
+        {
+            fprintf (fp, cast_z_to_bool, "    bool keep", "z") ;
+        }
     }
 
     //--------------------------------------------------------------------------
-    // macros for the C matrix
+    // construct the GB_SELECT_ENTRY(Cx,pC,Ax,pA) macro
     //--------------------------------------------------------------------------
 
-    // FIXME: need csparsity (is it always the same as asparsity?)
-    // FIXME: this kernel could typecast from A to C
+    fprintf (fp, "\n// copy A(i,j) to C(i,j):\n"
+        "#define GB_SELECT_ENTRY(Cx,pC,Ax,pA)") ;
+    if (C_iso)
+    {
+        // C is iso:  A is iso, or the operator is VALUEEQ
+        fprintf (fp, "\n") ;
+        fprintf (fp, "#define GB_ISO_SELECT\n") ;
+    }
+    else
+    {
+        // C and A are both non-iso
+        // this would need to typcase if A and C had different types
+        ASSERT (!A_iso) ;
+        fprintf (fp, " Cx [pC] = Ax [pA]\n") ;
+    }
 
-    GB_macrofy_output (fp, "c", "C", "C", atype, atype, asparsity, C_iso_code,
-        false) ;
+    //--------------------------------------------------------------------------
+    // macros for the Cx array
+    //--------------------------------------------------------------------------
+
+    // Cx has the same type as A for now
+    fprintf (fp, "\n// C type:\n") ;
+    GB_macrofy_type (fp, "C", "_", ctype->name) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for A
     //--------------------------------------------------------------------------
 
-    // GB_GETA macro to get aij = A(i,j)
-    // aij is not typecasted
-    GB_macrofy_input (fp, "a", "A", "A", true, atype,
-        atype, asparsity, acode, A_iso_code, -1) ;
-
-    // GB_GETX macro to get x = (xtype) A(i,j)
-    // x is a value A(i,j) typecasted to the op->xtype of the select operator
-    GB_macrofy_input (fp, "x", "X", "A", false, xtype,
-        atype, asparsity, acode, A_iso_code, -1) ;
+    GB_macrofy_input (fp, "a", "A", "A", true, xtype,
+        atype, asparsity, acode, 0, -1) ;
 }
 

@@ -53,6 +53,11 @@
 // build method:
 #define GB_JIT_KERNEL_BUILD         27
 
+// select methods:
+#define GB_JIT_KERNEL_SELECT1       28
+#define GB_JIT_KERNEL_SELECT2       29
+#define GB_JIT_KERNEL_SELECT_BITMAP 30
+
 // ... etc FIXME: list them all here
 // or make this an enum
 

@@ -18,9 +18,6 @@
 
 // If A is iso and X is not NULL, the iso scalar Ax [0] is expanded into X.
 
-// FIXME: debug is on
-#define GB_DEBUG
-
 #include "GB.h"
 
 #define GB_FREE_ALL                             \

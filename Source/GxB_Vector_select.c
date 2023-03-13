@@ -7,11 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
-#define GB_FREE_ALL                             \
-{                                               \
-    GB_Matrix_free ((GrB_Matrix *) &NewThunk) ; \
+#define GB_FREE_ALL             \
+{                               \
+    GrB_Scalar_free (&Thunk) ;  \
 }
 
 #include "GB_select.h"
@@ -47,31 +45,16 @@ GrB_Info GxB_Vector_select          // w<M> = accum (w, select(u,k))
     GrB_Matrix M = GB_get_mask ((GrB_Matrix) M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
-    // convert the GxB_SelectOp to a GrB_IndexUnaryOp
+    // convert the GxB_SelectOp to a GrB_IndexUnaryOp, with a new Thunk
     //--------------------------------------------------------------------------
 
-    GB_Operator op = NULL ;
-    GrB_IndexUnaryOp idxunop = NULL ;
-    GrB_Scalar NewThunk = NULL, Thunk ;
-    info = GB_selectop_to_idxunop (&idxunop, &NewThunk, op_in, Thunk_in,
-        u->type, Werk) ;
-    if (info == GrB_NOT_IMPLEMENTED)
-    {
-        // punt; use the original op (FIXME: remove this case)
-        fprintf (stderr, "Punt!!\n") ; printf ("Punt!!\n") ;
-        op = (GB_Operator) op_in ;
-        Thunk = Thunk_in ;
-        return (GrB_NOT_IMPLEMENTED) ;
-    }
-    else if (info == GrB_SUCCESS)
-    {
-        // use the new GrB_IndexUnaryOp
-        op = (GB_Operator) idxunop ;
-        Thunk = NewThunk ;
-    }
-    else
-    {
-        // the op or Thunk are not compatible, or out of memory
+    GrB_IndexUnaryOp op = NULL ;
+    GrB_Scalar Thunk = NULL ;
+    info = GB_selectop_to_idxunop (&op, &Thunk, op_in, Thunk_in, u->type,
+        Werk) ;
+    if (info != GrB_SUCCESS)
+    { 
+        // op is not supported, not compatible, or out of memory
         return (info) ;
     }
 
@@ -83,7 +66,7 @@ GrB_Info GxB_Vector_select          // w<M> = accum (w, select(u,k))
         (GrB_Matrix) w, C_replace,          // w and its descriptor
         M, Mask_comp, Mask_struct,          // mask and its descriptor
         accum,                              // optional accum for Z=accum(C,T)
-        (GB_Operator) op,                   // operator to select the entries
+        op,                                 // operator to select the entries
         (GrB_Matrix) u,                     // first input: u
         Thunk,                              // optional input for select op
         false,                              // u, not transposed

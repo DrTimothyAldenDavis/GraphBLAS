@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 #include "GB_build.h"
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"

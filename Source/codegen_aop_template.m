@@ -3,7 +3,7 @@ function codegen_aop_template (binop, bfunc, ifunc, ffunc, dfunc, fcfunc, dcfunc
 %
 % Generate functions for a binary operator, for all types, for assign/subassign
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\n%-9s', binop) ;

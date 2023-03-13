@@ -4,7 +4,7 @@ function codegen_unop_identity
 % The 'identity' operator is unique: it is used for typecasting, and all 13*13
 % pairs of functions are generated.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 unop = 'identity' ;

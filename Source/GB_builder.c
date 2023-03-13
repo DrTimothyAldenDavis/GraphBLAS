@@ -103,9 +103,6 @@
 // This method always returns T as hypersparse, and T is iso if and only if Sx
 // is iso.
 
-// FIXME debug is on
-#define GB_DEBUG
-
 #include "GB_build.h"
 #include "GB_sort.h"
 #include "GB_binop.h"

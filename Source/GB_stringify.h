@@ -215,53 +215,6 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 ) ;
 
 //------------------------------------------------------------------------------
-// GrB_select
-//------------------------------------------------------------------------------
-
-bool GB_enumify_select
-(
-    // output:
-    uint64_t *select_code,      // unique encoding of the selector
-    // input:
-    bool C_iso,                 // true if C is iso
-    GB_Opcode opcode,           // selector opcode
-    const GB_Operator op,       // user operator, NULL for resize/nonzombie
-    const bool flipij,          // if true, flip i and j for user operator
-    GrB_Matrix A,               // input matrix
-    bool in_place_A             // true if select is done in-place
-) ;
-
-void GB_typify_select           // determine x,y,z types for select
-(
-    // outputs:
-    GrB_Type *xtype,            // x,y,z types for select operator
-    GrB_Type *ytype,
-    GrB_Type *ztype,
-    // inputs:
-    GB_Opcode opcode,           // selector opcode
-    const GB_Operator op,       // user operator, NULL in some cases
-    GrB_Type atype              // the type of the A matrix
-) ;
-
-void GB_macrofy_select
-(
-    // output:
-    FILE *fp,                   // target file to write, already open
-    // input:
-    uint64_t select_code,       // unique encoding of the selector
-    GB_Opcode opcode,           // selector opcode
-    const GB_Operator op,       // user operator, NULL for resize/nonzombie
-    GrB_Type atype
-) ;
-
-char *GB_namify_select          // determine the select op name
-(
-    // inputs:
-    GB_Opcode opcode,           // selector opcode
-    const GB_Operator op        // user operator, NULL in some cases
-) ;
-
-//------------------------------------------------------------------------------
 // enumify and macrofy the mask matrix M
 //------------------------------------------------------------------------------
 
@@ -465,7 +418,7 @@ void GB_enumify_identity       // return enum of identity value
     GB_Type_code zcode      // type code used in the opcode we want
 ) ;
 
-const char *GB_charify_id // return string encoding the value
+const char *GB_macrofy_id // return string encoding the value
 (
     // input:
     int ecode,          // enumerated identity/terminal value
@@ -681,52 +634,59 @@ void GB_macrofy_build           // construct all macros for GB_build
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_namify_problem: name a problem
+// select kernel
 //------------------------------------------------------------------------------
 
-void GB_namify_suffix
+uint64_t GB_encodify_select     // encode an select problem
 (
     // output:
-    char *suffix,
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char **suffix,              // suffix for user-defined kernel
     // input:
-    bool builtin,
-    const char *op1_name, int32_t op1_name_len,
-    const char *op2_name, int32_t op2_name_len
+    const int kcode,            // kernel to encode
+    const bool C_iso,
+    const bool in_place_A,
+    const GrB_IndexUnaryOp op,
+    const bool flipij,
+    const GrB_Matrix A
 ) ;
 
-void GB_namify_problem
+bool GB_enumify_select      // enumerate a GrB_selectproblem
 (
     // output:
-    char *problem_name,     // of size at least 256 + 8*GxB_MAX_NAME_LEN
+    uint64_t *scode,        // unique encoding of the entire operation
     // input:
-    char *base_name,
-    const int scode_width,  // # of hexadecimal digits to print for scode
-    const uint64_t scode,
-    const bool builtin,     // true if all objects are builtin
-    const char *opname1,    // each string has size at most GxB_MAX_NAME_LEN
-    const char *opname2,
-    const char *typename1,
-    const char *typename2,
-    const char *typename3,
-    const char *typename4,
-    const char *typename5,
-    const char *typename6
+    bool C_iso,
+    bool in_place_A,
+    // operator:
+    GrB_IndexUnaryOp op,    // the index unary operator to enumify
+    bool flipij,            // if true, flip i and j
+    // A matrix:
+    GrB_Matrix A
 ) ;
 
-//------------------------------------------------------------------------------
-// GB_debugify_*: dump the definition file to /tmp
-//------------------------------------------------------------------------------
-
-void GB_debugify_select
+void GB_macrofy_select          // construct all macros for GrB_select
 (
-    bool C_iso,                 // true if C is iso
-    GB_Opcode opcode,           // selector opcode
-    const GB_Operator op,       // user operator, NULL for resize/nonzombie
-    const bool flipij,          // if true, flip i and j for user operator
-    GrB_Matrix A,               // input matrix
-    int64_t ithunk,             // (int64_t) Thunk, if Thunk is NULL
-    const GrB_Scalar Thunk,     // optional input for select operator
-    bool in_place_A             // true if select is done in-place
+    // output:
+    FILE *fp,                   // target file to write, already open
+    // input:
+    uint64_t scode,
+    // operator:
+    const GrB_IndexUnaryOp op,
+    GrB_Type atype
+) ;
+
+GrB_Info GB_select_bitmap_jit      // select bitmap
+(
+    int8_t *Cb,
+    int64_t *cnvals_handle,
+    const bool C_iso,
+    const GrB_Matrix A,
+    const bool flipij,
+    const GB_void *restrict ythunk,
+    const GrB_IndexUnaryOp op,
+    const int nthreads
 ) ;
 
 #endif

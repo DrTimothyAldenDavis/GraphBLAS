@@ -129,7 +129,6 @@ typedef struct GB_Descriptor_opaque *GrB_Descriptor ;
 typedef struct GB_Type_opaque *GrB_Type ;
 typedef struct GB_UnaryOp_opaque *GrB_UnaryOp ;
 typedef struct GB_BinaryOp_opaque *GrB_BinaryOp ;
-typedef struct GB_SelectOp_opaque *GxB_SelectOp ;
 typedef struct GB_IndexUnaryOp_opaque *GrB_IndexUnaryOp ;
 typedef struct GB_Monoid_opaque *GrB_Monoid ;
 typedef struct GB_Semiring_opaque *GrB_Semiring ;

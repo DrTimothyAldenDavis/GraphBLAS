@@ -51,7 +51,7 @@ uint64_t GB_encodify_apply      // encode an apply problem
     // determine the suffix and its length
     //--------------------------------------------------------------------------
 
-    // if hash is zero, it denotes a builtin binary operator
+    // if hash is zero, it denotes a builtin operator
     uint64_t hash = op->hash ;
     encoding->suffix_len = (hash == 0) ? 0 : op->name_len ;
     (*suffix) = (hash == 0) ? NULL : op->name ;

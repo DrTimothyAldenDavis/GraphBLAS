@@ -2,7 +2,7 @@
 // GB_apply: apply a unary operator; optionally transpose a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -17,7 +17,7 @@
 #include "GB_binop.h"
 #include "GB_transpose.h"
 #include "GB_accum_mask.h"
-#include "GB_scalar.h"
+#include "GB_scalar_wrap.h"
 
 GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 (

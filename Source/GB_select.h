@@ -20,36 +20,67 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     const bool Mask_comp,           // descriptor for M
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
-    const GB_Operator op,           // GxB_SelectOp or GrB_IndexUnaryOp
+    const GrB_IndexUnaryOp op_in,
     const GrB_Matrix A,             // input matrix
-    const GrB_Scalar Thunk_in,      // optional input for select operator
+    const GrB_Scalar Thunk,         // always present
     const bool A_transpose,         // A matrix descriptor
     GB_Werk Werk
 ) ;
 
 GrB_Info GB_selector
 (
-    GrB_Matrix C,               // output matrix, NULL or static header
-    GB_Opcode opcode,           // selector opcode
-    const GB_Operator op,       // user GxB_SelectOp or GrB_IndexUnaryOp op
+    GrB_Matrix C,               // output matrix, NULL or existing header
+    const GrB_IndexUnaryOp op,
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
-    int64_t ithunk,             // (int64_t) Thunk, if Thunk is NULL
-    const GrB_Scalar Thunk,     // optional input for select operator
+    const GrB_Scalar Thunk,
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_selector
+GrB_Info GB_select_sparse
+(
+    GrB_Matrix C,
+    const bool C_iso,
+    const GrB_IndexUnaryOp op,
+    const bool flipij,
+    const GrB_Matrix A,
+    const int64_t ithunk,
+    const GB_void *restrict athunk,
+    const GB_void *restrict ythunk,
+    GB_Werk Werk
+) ;
+
+GrB_Info GB_select_value_iso
+(
+    GrB_Matrix C,
+    GrB_IndexUnaryOp op,
+    GrB_Matrix A,
+    int64_t ithunk,
+    const GB_void *restrict athunk,
+    const GB_void *restrict ythunk,
+    GB_Werk Werk
+) ;
+
+GrB_Info GB_select_column
+(
+    GrB_Matrix C,
+    const bool C_iso,
+    const GrB_IndexUnaryOp op,
+    GrB_Matrix A,
+    int64_t ithunk,
+    GB_Werk Werk
+) ;
+
+GrB_Info GB_select_bitmap
 (
     GrB_Matrix C,               // output matrix, static header
     const bool C_iso,           // if true, C is iso
-    GB_Opcode opcode,           // selector/idxunop opcode
-    const GB_Operator op,
+    const GrB_IndexUnaryOp op,
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
     const int64_t ithunk,       // (int64_t) Thunk, if Thunk is NULL
     const GB_void *restrict athunk,     // (A->type) Thunk
-    const GB_void *restrict ythunk,     // (op->utype) Thunk
+    const GB_void *restrict ythunk,     // (op->ytype) Thunk
     GB_Werk Werk
 ) ;
 
@@ -65,34 +96,136 @@ GrB_Info GB_selectop_to_idxunop
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_select_generic_phase1
+(
+    int64_t *restrict Cp,
+    int64_t *restrict Wfirst,
+    int64_t *restrict Wlast,
+    const GrB_Matrix A,
+    const bool flipij,
+    const GB_void *restrict ythunk,
+    const GrB_IndexUnaryOp op,
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
+) ;
+
+GrB_Info GB_select_generic_phase2
+(
+    int64_t *restrict Ci,
+    GB_void *restrict Cx,
+    const int64_t *restrict Cp,
+    const int64_t *restrict Cp_kfirst,
+    const GrB_Matrix A,
+    const bool flipij,
+    const GB_void *restrict ythunk,
+    const GrB_IndexUnaryOp op,
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
+) ;
+
+GrB_Info GB_select_positional_phase1
+(
+    int64_t *restrict Zp,
+    int64_t *restrict Cp,
+    int64_t *restrict Wfirst,
+    int64_t *restrict Wlast,
+    const GrB_Matrix A,
+    const int64_t ithunk,
+    const GrB_IndexUnaryOp op,
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
+) ;
+
+GrB_Info GB_select_positional_phase2
+(
+    int64_t *restrict Ci,
+    GB_void *restrict Cx,
+    const int64_t *restrict Zp,
+    const int64_t *restrict Cp,
+    const int64_t *restrict Cp_kfirst,
+    const GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GrB_IndexUnaryOp op,
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
+) ;
+
+GrB_Info GB_select_positional_bitmap
+(
+    int8_t *Cb,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const int64_t ithunk,
+    const GrB_IndexUnaryOp op,
+    const int nthreads
+) ;
+
+GrB_Info GB_select_generic_bitmap
+(
+    int8_t *Cb,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const bool flipij,
+    const GB_void *restrict ythunk,
+    const GrB_IndexUnaryOp op,
+    const int nthreads
+) ;
+
+GrB_Info GB_select_phase1_jit      // select phase1
+(
+    int64_t *restrict Cp,
+    int64_t *restrict Wfirst,
+    int64_t *restrict Wlast,
+    const bool C_iso,
+    const bool in_place_A,
+    const GrB_Matrix A,
+    const GB_void *restrict ythunk,
+    const GrB_IndexUnaryOp op,
+    const bool flipij,
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
+) ;
+
+GrB_Info GB_select_phase2_jit      // select phase2
+(
+    int64_t *restrict Ci,
+    GB_void *restrict Cx,                   // NULL if C is iso-valued
+    const int64_t *restrict Cp,
+    const bool C_iso,
+    const bool in_place_A,
+    const int64_t *restrict Cp_kfirst,
+    const GrB_Matrix A,
+    const bool flipij,
+    const GB_void *restrict ythunk,
+    const GrB_IndexUnaryOp op,
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
+) ;
+
 //------------------------------------------------------------------------------
-// GB_iso_select: assign the iso value of C for GB_*selector
+// GB_select_iso: assign the iso value of C for GB_*selector
 //------------------------------------------------------------------------------
 
-static inline void GB_iso_select
+static inline void GB_select_iso
 (
-    void *Cx,                       // output iso value
+    void *Cx,                       // output iso value (same type as A)
     const GB_Opcode opcode,         // selector opcode
     const void *athunk,             // thunk scalar, of size asize
     const void *Ax,                 // Ax [0] scalar, of size asize
-    const GB_Type_code acode,       // the type code of Ax
     const size_t asize
 )
 {
-    if (opcode == GB_EQ_ZERO_selop_code)
-    { 
-        // all entries in C are zero
-        memset (Cx, 0, asize) ;
-    }
-    else if (opcode == GB_EQ_THUNK_selop_code)
+    if (opcode == GB_VALUEEQ_idxunop_code)
     { 
         // all entries in C are equal to thunk
         memcpy (Cx, athunk, asize) ;
-    }
-    else if (opcode == GB_NONZERO_selop_code && acode == GB_BOOL_code)
-    { 
-        // all entries in C are true; C and A are boolean
-        memset (Cx, 1, 1) ;
     }
     else
     { 

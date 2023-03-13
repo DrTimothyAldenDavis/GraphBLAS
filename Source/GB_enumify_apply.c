@@ -94,7 +94,7 @@ bool GB_enumify_apply       // enumerate an apply or tranpose/apply problem
     (*scode) =
                                                // range        bits
 
-                // C kind, i/j dependency and flipij (4 bits)
+                // C kind, i/j dependency and flipij (1 hex digit)
                 GB_LSHIFT (C_mat      , 35) |  // 0 or 1       1
                 GB_LSHIFT (i_dep      , 34) |  // 0 or 1       1
                 GB_LSHIFT (j_dep      , 33) |  // 0 or 1       1
