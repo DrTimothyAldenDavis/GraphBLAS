@@ -7,22 +7,18 @@
 
 //------------------------------------------------------------------------------
 
+// C(I,J)<M> += B
+
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_assignop_kernels.h"
 #include "GB_aop__include.h"
 
-// operator:
+// accum:
 #define GB_BINOP(z,x,y,i,j) z = GB_FC64_div (y, x)
 #define GB_Z_TYPE GxB_FC64_t
 #define GB_X_TYPE GxB_FC64_t
 #define GB_Y_TYPE GxB_FC64_t
-
-// A matrix:
-#define GB_A_TYPE GxB_FC64_t
-#define GB_A2TYPE GxB_FC64_t
-#define GB_DECLAREA(aij) GxB_FC64_t aij
-#define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [(A_iso) ? 0 : (pA)]
 
 // B matrix:
 #define GB_B_TYPE GxB_FC64_t

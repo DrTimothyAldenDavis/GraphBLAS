@@ -20,12 +20,6 @@ name = sprintf ('%s_%s', binop, fname) ;
 fprintf (f, 'm4_define(`_Cdense_accumB'', `_Cdense_accumB__%s'')\n', name) ;
 fprintf (f, 'm4_define(`_Cdense_accumb'', `_Cdense_accumb__%s'')\n', name) ;
 
-if (isequal (binop, 'second'))
-    fprintf (f, 'm4_define(`GB_op_is_second'', `#define GB_OP_IS_SECOND 1'')\n') ;
-else
-    fprintf (f, 'm4_define(`GB_op_is_second'', `'')\n') ;
-end
-
 % determine type of z, x, and y from xtype and binop
 switch (binop)
     case { 'eq', 'ne', 'gt', 'lt', 'ge', 'le' }
@@ -55,17 +49,6 @@ fprintf (f, 'm4_define(`GB_xtype'',  `#define GB_X_TYPE %s'')\n', xtype) ;
 fprintf (f, 'm4_define(`GB_ytype'',  `#define GB_Y_TYPE %s'')\n', ytype) ;
 fprintf (f, 'm4_define(`GB_ctype'',  `#define GB_C_TYPE %s'')\n', ztype) ;
 
-if (isequal (ztype, xtype))
-    fprintf (f, 'm4_define(`GB_ctype_is_atype'', `'')\n') ;
-else
-    fprintf (f, 'm4_define(`GB_ctype_is_atype'', `#define GB_CTYPE_IS_ATYPE 0'')\n') ;
-end
-if (isequal (ztype, ytype))
-    fprintf (f, 'm4_define(`GB_ctype_is_btype'', `'')\n') ;
-else
-    fprintf (f, 'm4_define(`GB_ctype_is_btype'', `#define GB_CTYPE_IS_BTYPE 0'')\n') ;
-end
-
 % C_dense_update: operators z=f(x,y) where ztype and xtype match, and binop is not 'first'
 if (isequal (xtype, ztype) && ~isequal (binop, 'first'))
     % enable C dense update
@@ -74,20 +57,6 @@ else
     % disable C dense update
     fprintf (f, 'm4_define(`if_C_dense_update'', `-1'')\n') ;
 end
-
-% to get an entry from A as input to the operator
-fprintf (f, 'm4_define(`GB_atype'',  `#define GB_A_TYPE %s'')\n', xtype) ;
-if (isequal (binop, 'second') || isequal (binop, 'pair'))
-    % value of A is ignored for the SECOND, PAIR, and positional operators
-    gb_geta = '' ;
-    fprintf (f, 'm4_define(`GB_a2type'', `#define GB_A2TYPE void'')\n') ;
-else
-    gb_geta = ' aij = Ax [(A_iso) ? 0 : (pA)]' ;
-    fprintf (f, 'm4_define(`GB_a2type'', `#define GB_A2TYPE %s'')\n', xtype) ;
-end
-gb_declarea = sprintf (' %s aij', xtype) ;
-fprintf (f, 'm4_define(`GB_geta'', `#define GB_GETA(aij,Ax,pA,A_iso)%s'')\n', gb_geta) ;
-fprintf (f, 'm4_define(`GB_declarea'', `#define GB_DECLAREA(aij)%s'')\n', gb_declarea) ;
 
 % to get an entry from B as input to the operator
 fprintf (f, 'm4_define(`GB_btype'',  `#define GB_B_TYPE %s'')\n', ytype) ;
@@ -102,24 +71,6 @@ end
 gb_declareb = sprintf (' %s bij', ytype) ;
 fprintf (f, 'm4_define(`GB_getb'', `#define GB_GETB(bij,Bx,pB,B_iso)%s'')\n', gb_getb) ;
 fprintf (f, 'm4_define(`GB_declareb'', `#define GB_DECLAREB(bij)%s'')\n', gb_declareb) ;
-
-% to copy an entry from A to C
-if (isequal (xtype, 'GxB_FC32_t') && isequal (ztype, 'bool'))
-    a2c = '(crealf (Ax [(A_iso) ? 0 : (pA)]) != 0) || (cimagf (Ax [(A_iso) ? 0 : (pA)]) != 0)' ;
-elseif (isequal (xtype, 'GxB_FC64_t') && isequal (ztype, 'bool'))
-    a2c = '(creal (Ax [(A_iso) ? 0 : (pA)]) != 0) || (cimag (Ax [(A_iso) ? 0 : (pA)]) != 0)' ;
-elseif (isequal (xtype, 'float') && isequal (ztype, 'GxB_FC32_t'))
-    a2c = 'GB_CMPLX32 (Ax [(A_iso) ? 0 : (pA)], 0)' ;
-elseif (isequal (xtype, 'double') && isequal (ztype, 'GxB_FC64_t'))
-    a2c = 'GB_CMPLX64 (Ax [(A_iso) ? 0 : (pA)], 0)' ;
-else
-    a2c = '' ;
-end
-if (isempty (a2c))
-    fprintf (f, 'm4_define(`GB_copy_a_to_c'', `'')\n') ;
-else
-    fprintf (f, 'm4_define(`GB_copy_a_to_c'', `#define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = %s'')\n', a2c) ;
-end
 
 % to copy an entry from B to C
 if (isequal (ytype, 'GxB_FC32_t') && isequal (ztype, 'bool'))
@@ -151,7 +102,7 @@ end
 % create the binary operator
 op = strrep (op, 'xarg', 'x') ;
 op = strrep (op, 'yarg', 'y') ;
-fprintf (f, 'm4_define(`GB_binaryop'', `#define GB_BINOP(z,x,y,i,j) z = %s'')\n', op) ;
+fprintf (f, 'm4_define(`GB_accumop'', `#define GB_BINOP(z,x,y,i,j) z = %s'')\n', op) ;
 
 % create the disable flag
 disable = sprintf ('GxB_NO_%s', upper (binop)) ;

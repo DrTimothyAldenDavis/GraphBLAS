@@ -7,22 +7,18 @@
 
 //------------------------------------------------------------------------------
 
+// C(I,J)<M> += B
+
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_assignop_kernels.h"
 #include "GB_aop__include.h"
 
-// operator:
+// accum:
 #define GB_BINOP(z,x,y,i,j) z = GB_CMPLX32 (x, y)
 #define GB_Z_TYPE GxB_FC32_t
 #define GB_X_TYPE float
 #define GB_Y_TYPE float
-
-// A matrix:
-#define GB_A_TYPE float
-#define GB_A2TYPE float
-#define GB_DECLAREA(aij) float aij
-#define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [(A_iso) ? 0 : (pA)]
 
 // B matrix:
 #define GB_B_TYPE float
@@ -32,10 +28,7 @@
 
 // C matrix:
 #define GB_C_TYPE GxB_FC32_t
-#define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = GB_CMPLX32 (Ax [(A_iso) ? 0 : (pA)], 0)
 #define GB_COPY_B_TO_C(Cx,pC,Bx,pB,B_iso) Cx [pC] = GB_CMPLX32 (Bx [(B_iso) ? 0 : (pB)], 0)
-#define GB_CTYPE_IS_ATYPE 0
-#define GB_CTYPE_IS_BTYPE 0
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \

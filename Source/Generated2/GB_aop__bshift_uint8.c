@@ -7,22 +7,18 @@
 
 //------------------------------------------------------------------------------
 
+// C(I,J)<M> += B
+
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_assignop_kernels.h"
 #include "GB_aop__include.h"
 
-// operator:
+// accum:
 #define GB_BINOP(z,x,y,i,j) z = GB_bitshift_uint8 (x, y)
 #define GB_Z_TYPE uint8_t
 #define GB_X_TYPE uint8_t
 #define GB_Y_TYPE int8_t
-
-// A matrix:
-#define GB_A_TYPE uint8_t
-#define GB_A2TYPE uint8_t
-#define GB_DECLAREA(aij) uint8_t aij
-#define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [(A_iso) ? 0 : (pA)]
 
 // B matrix:
 #define GB_B_TYPE int8_t
@@ -32,8 +28,6 @@
 
 // C matrix:
 #define GB_C_TYPE uint8_t
-
-#define GB_CTYPE_IS_BTYPE 0
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \

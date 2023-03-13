@@ -7,23 +7,18 @@
 
 //------------------------------------------------------------------------------
 
+// C(I,J)<M> += B
+
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_assignop_kernels.h"
 #include "GB_aop__include.h"
 
-// operator:
-GB_binaryop
+// accum:
+GB_accumop
 GB_ztype
 GB_xtype
 GB_ytype
-GB_op_is_second
-
-// A matrix:
-GB_atype
-GB_a2type
-GB_declarea
-GB_geta
 
 // B matrix:
 GB_btype
@@ -33,10 +28,7 @@ GB_getb
 
 // C matrix:
 GB_ctype
-GB_copy_a_to_c
 GB_copy_b_to_c
-GB_ctype_is_atype
-GB_ctype_is_btype
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \

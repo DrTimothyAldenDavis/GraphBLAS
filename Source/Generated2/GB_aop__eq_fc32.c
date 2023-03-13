@@ -7,22 +7,18 @@
 
 //------------------------------------------------------------------------------
 
+// C(I,J)<M> += B
+
 #include "GB.h"
 #include "GB_control.h"
 #include "GB_assignop_kernels.h"
 #include "GB_aop__include.h"
 
-// operator:
+// accum:
 #define GB_BINOP(z,x,y,i,j) z = GB_FC32_eq (x, y)
 #define GB_Z_TYPE bool
 #define GB_X_TYPE GxB_FC32_t
 #define GB_Y_TYPE GxB_FC32_t
-
-// A matrix:
-#define GB_A_TYPE GxB_FC32_t
-#define GB_A2TYPE GxB_FC32_t
-#define GB_DECLAREA(aij) GxB_FC32_t aij
-#define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [(A_iso) ? 0 : (pA)]
 
 // B matrix:
 #define GB_B_TYPE GxB_FC32_t
@@ -32,10 +28,7 @@
 
 // C matrix:
 #define GB_C_TYPE bool
-#define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = (crealf (Ax [(A_iso) ? 0 : (pA)]) != 0) || (cimagf (Ax [(A_iso) ? 0 : (pA)]) != 0)
 #define GB_COPY_B_TO_C(Cx,pC,Bx,pB,B_iso) Cx [pC] = (crealf (Bx [(B_iso) ? 0 : (pB)]) != 0) || (cimagf (Bx [(B_iso) ? 0 : (pB)]) != 0)
-#define GB_CTYPE_IS_ATYPE 0
-#define GB_CTYPE_IS_BTYPE 0
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
