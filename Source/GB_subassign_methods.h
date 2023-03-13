@@ -283,7 +283,7 @@
         }                                                                   \
     }
 
-    #define GB_COPY_aij_to_ywork(Ax,pA,A_iso)                               \
+    #define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso)                         \
     {                                                                       \
         /* ywork = A(i,j), with typecasting */                              \
         if (!C_iso)                                                         \
@@ -309,7 +309,7 @@
     {                                                                       \
         /* Cx [pC] += (ytype) Ax [A_iso ? 0 : pA] */                        \
         GB_void ywork [GB_VLA(ysize)] ;                                     \
-        GB_COPY_aij_to_ywork (Ax,pA,A_iso) ;                                \
+        GB_COPY_aij_to_ywork (ywork,Ax,pA,A_iso) ;                          \
         GB_ACCUMULATE_scalar (Cx,pC,ywork) ;                                \
     }
 
