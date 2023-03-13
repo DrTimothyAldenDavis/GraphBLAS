@@ -38,9 +38,6 @@
             // Cx [p] += (ytype) Ax [p], with typecasting
             GB_COPY_aij_to_ywork (ywork, Ax, p, A_iso) ;
             GB_ACCUMULATE_scalar (Cx, p, ywork) ;
-//          GB_DECLAREB (bij) ;
-//          GB_GETB (bij, Bx, p, B_iso) ;
-//          GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
         }
 
     }
@@ -59,9 +56,6 @@
             // Cx [p] += (ytype) Ax [p], with typecasting
             GB_COPY_aij_to_ywork (ywork, Ax, p, A_iso) ;
             GB_ACCUMULATE_scalar (Cx, p, ywork) ;
-//          GB_DECLAREB (bij) ;
-//          GB_GETB (bij, Bx, p, B_iso) ;
-//          GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
         }
 
     }
@@ -136,9 +130,6 @@
                         // Cx [p] += (ytype) Ax [pA], with typecasting
                         GB_COPY_aij_to_ywork (ywork, Ax, pA, A_iso) ;
                         GB_ACCUMULATE_scalar (Cx, p, ywork) ;
-//                      GB_DECLAREB (bij) ;
-//                      GB_GETB (bij, Bx, pB, B_iso) ;
-//                      GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
                     }
 
                 }
@@ -157,9 +148,6 @@
                         // Cx [p] += (ytype) Ax [pA], with typecasting
                         GB_COPY_aij_to_ywork (ywork, Ax, pA, A_iso) ;
                         GB_ACCUMULATE_scalar (Cx, p, ywork) ;
-//                      GB_DECLAREB (bij) ;
-//                      GB_GETB (bij, Bx, pB, B_iso) ;
-//                      GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
                     }
                 }
             }
