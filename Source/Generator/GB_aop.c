@@ -11,24 +11,32 @@
 
 #include "GB.h"
 #include "GB_control.h"
-#include "GB_assignop_kernels.h"
+#include "GB_ek_slice.h"
 #include "GB_aop__include.h"
 
+// accum operator
 GB_accumop
 GB_ztype
 GB_xtype
 GB_ytype
-GB_atype
+GB_accum_y
 GB_copy_aij_to_y
+
+// A and C matrices
+GB_atype
 GB_ctype
 GB_copy_aij_to_c
-GB_accum_y
+GB_copy_scalar_to_c
+GB_ax_mask
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     GB_disable
 
-#include "GB_kernel_shared_definitions.h"
+#include "GB_subassign_shared_definitions.h"
+
+#undef  GB_FREE_ALL 
+#define GB_FREE_ALL ;
 
 //------------------------------------------------------------------------------
 // C += A, accumulate a sparse matrix into a dense matrix

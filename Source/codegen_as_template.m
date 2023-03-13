@@ -18,6 +18,14 @@ fprintf (f, 'm4_define(`_subassign_06d'', `_subassign_06d__%s'')\n', fname) ;
 fprintf (f, 'm4_define(`_subassign_25'', `_subassign_25__%s'')\n', fname) ;
 
 fprintf (f, 'm4_define(`GB_ctype'', `#define GB_C_TYPE %s'')\n', xtype) ;
+fprintf (f, 'm4_define(`GB_atype'', `#define GB_A_TYPE %s'')\n', xtype) ;
+
+% to copy a scalar into C (no typecasting)
+fprintf (f, 'm4_define(`GB_copy_scalar_to_c'', `#define GB_COPY_scalar_to_C(pC,cwork) Cx [pC] = cwork'')\n') ;
+
+% to copy an entry from A to C (no typecasting)
+a2c = sprintf ('Ax [(A_iso) ? 0 : (pA)]') ;
+fprintf (f, 'm4_define(`GB_copy_aij_to_c'', `#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = %s'')\n', a2c) ;
 
 % mask macro
 if (isequal (xtype, 'GxB_FC32_t') || isequal (xtype, 'GxB_FC64_t'))

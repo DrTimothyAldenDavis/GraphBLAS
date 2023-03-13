@@ -11,24 +11,32 @@
 
 #include "GB.h"
 #include "GB_control.h"
-#include "GB_assignop_kernels.h"
+#include "GB_ek_slice.h"
 #include "GB_aop__include.h"
 
+// accum operator
 #define GB_ACCUM_OP(z,x,y) z = GB_bitget_int64 (x, y)
 #define GB_Z_TYPE int64_t
 #define GB_X_TYPE int64_t
 #define GB_Y_TYPE int64_t
-#define GB_A_TYPE int64_t
+#define GB_ACCUMULATE_scalar(Cx,pC,ywork) GB_ACCUM_OP (Cx [pC], Cx [pC], ywork)
 #define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso) int64_t ywork = Ax [(A_iso) ? 0 : (pA)]
+
+// A and C matrices
+#define GB_A_TYPE int64_t
 #define GB_C_TYPE int64_t
 #define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = Ax [(A_iso) ? 0 : (pA)]
-#define GB_ACCUMULATE_scalar(Cx,pC,ywork) GB_ACCUM_OP (Cx [pC], Cx [pC], ywork)
+#define GB_COPY_scalar_to_C(pC,cwork) Cx [pC] = cwork
+#define GB_AX_MASK(Ax,pA,asize) (Ax [pA] != 0)
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_BGET || GxB_NO_INT64 || GxB_NO_BGET_INT64)
 
-#include "GB_kernel_shared_definitions.h"
+#include "GB_subassign_shared_definitions.h"
+
+#undef  GB_FREE_ALL 
+#define GB_FREE_ALL ;
 
 //------------------------------------------------------------------------------
 // C += A, accumulate a sparse matrix into a dense matrix

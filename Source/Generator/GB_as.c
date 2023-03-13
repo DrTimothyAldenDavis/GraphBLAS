@@ -14,25 +14,21 @@
 #include "GB_ek_slice.h"
 #include "GB_as__include.h"
 
+// A and C matrices
+GB_atype
 GB_ctype
-
-// C must have the same type as A or the scalar
-#define GB_A_TYPE GB_C_TYPE
-
-// Cx [pC] = cwork
-#define GB_COPY_scalar_to_C(pC,cwork) Cx [pC] = cwork
-
-// Cx [pC] = Ax [pA]
-#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = GBX (Ax, pA, A_iso)
-
-// test the mask condition with Ax [pA]
+GB_copy_aij_to_c
+GB_copy_scalar_to_c
 GB_ax_mask
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     GB_disable
 
-#include "GB_kernel_shared_definitions.h"
+#include "GB_subassign_shared_definitions.h"
+
+#undef  GB_FREE_ALL 
+#define GB_FREE_ALL ;
 
 //------------------------------------------------------------------------------
 // C<M> = scalar, when C is dense

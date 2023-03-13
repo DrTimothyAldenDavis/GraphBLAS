@@ -112,7 +112,7 @@
     }                                                                       \
 
 //------------------------------------------------------------------------------
-// GB_GET_ACCUM: get the accumulator op and its related typecasting functions
+// GB_GET_ACCUM_FOR_BITMAP: get accum op and its related typecasting functions
 //------------------------------------------------------------------------------
 
 #define GB_GET_ACCUM_FOR_BITMAP                                             \

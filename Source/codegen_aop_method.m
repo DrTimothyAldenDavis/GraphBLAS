@@ -59,7 +59,7 @@ else
     fprintf (f, 'm4_define(`if_C_dense_update'', `-1'')\n') ;
 end
 
-% to get an entry from A and cast to ywork
+% to get an entry from A and cast to ywork (but no typecasting here)
 if (isequal (binop, 'first') || isequal (binop, 'pair'))
     % value of A is ignored for the FIRST, PAIR, and positional operators
     gb_copy_aij_to_y = '' ;
@@ -67,6 +67,9 @@ else
     gb_copy_aij_to_y = sprintf (' %s ywork = Ax [(A_iso) ? 0 : (pA)]', ytype) ;
 end
 fprintf (f, 'm4_define(`GB_copy_aij_to_y'', `#define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso)%s'')\n', gb_copy_aij_to_y) ;
+
+% to copy a scalar into C (no typecasting)
+fprintf (f, 'm4_define(`GB_copy_scalar_to_c'', `#define GB_COPY_scalar_to_C(pC,cwork) Cx [pC] = cwork'')\n') ;
 
 % to copy an entry from A to C
 if (isequal (ytype, 'GxB_FC32_t') && isequal (ztype, 'bool'))
@@ -84,6 +87,14 @@ else
     a2c = sprintf ('(%s) Ax [(A_iso) ? 0 : (pA)]', ytype) ;
 end
 fprintf (f, 'm4_define(`GB_copy_aij_to_c'', `#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = %s'')\n', a2c) ;
+
+% mask macro
+if (isequal (xtype, 'GxB_FC32_t') || isequal (xtype, 'GxB_FC64_t'))
+    asize = sprintf ('sizeof (%s)', xtype) ;
+    fprintf (f, 'm4_define(`GB_ax_mask'', `#define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, %s)'')\n', asize) ;
+else
+    fprintf (f, 'm4_define(`GB_ax_mask'', `#define GB_AX_MASK(Ax,pA,asize) (Ax [pA] != 0)'')\n') ;
+end
 
 % type-specific idiv
 if (~isempty (strfind (op, 'idiv')))
@@ -125,5 +136,5 @@ system (cmd) ;
 % append to the *.h file
 system ('cat control.m4 Generator/GB_aop.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> Generated2/GB_aop__include.h') ;
 
-% delete ('control.m4') ;
+delete ('control.m4') ;
 
