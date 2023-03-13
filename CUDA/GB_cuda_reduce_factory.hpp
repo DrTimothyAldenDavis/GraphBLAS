@@ -76,7 +76,7 @@ public:
         this->monoid = monoid ;
         this->atype = A->type ;
 
-        // FIXME: use GB_namify_problem
+        // FIXME: use same name scheme as the CPU jit
         std::stringstream ss ;
         ss << "GB_reduce_" << this->rcode << ".h ";
 

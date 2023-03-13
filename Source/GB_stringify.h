@@ -418,7 +418,7 @@ void GB_enumify_identity       // return enum of identity value
     GB_Type_code zcode      // type code used in the opcode we want
 ) ;
 
-const char *GB_charify_id // return string encoding the value
+const char *GB_macrofy_id // return string encoding the value
 (
     // input:
     int ecode,          // enumerated identity/terminal value
@@ -687,39 +687,6 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
     const GB_void *restrict ythunk,
     const GrB_IndexUnaryOp op,
     const int nthreads
-) ;
-
-//------------------------------------------------------------------------------
-// GB_namify_problem: name a problem
-//------------------------------------------------------------------------------
-
-void GB_namify_suffix
-(
-    // output:
-    char *suffix,
-    // input:
-    bool builtin,
-    const char *op1_name, int32_t op1_name_len,
-    const char *op2_name, int32_t op2_name_len
-) ;
-
-void GB_namify_problem
-(
-    // output:
-    char *problem_name,     // of size at least 256 + 8*GxB_MAX_NAME_LEN
-    // input:
-    char *base_name,
-    const int scode_width,  // # of hexadecimal digits to print for scode
-    const uint64_t scode,
-    const bool builtin,     // true if all objects are builtin
-    const char *opname1,    // each string has size at most GxB_MAX_NAME_LEN
-    const char *opname2,
-    const char *typename1,
-    const char *typename2,
-    const char *typename3,
-    const char *typename4,
-    const char *typename5,
-    const char *typename6
 ) ;
 
 #endif

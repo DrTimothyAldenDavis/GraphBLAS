@@ -173,7 +173,7 @@ class reduceFactory
             blocksz, gridsz ) ;
 
         // construct and launch the kernel
-        // FIXME: use GB_namify_problem to get the full name
+        // FIXME: use same name scheme as the CPU jit
         // FIXME: where does it go if it fails?  try/catch?
         jit::launcher(hashable_name + "_" + rcode,
                 string_to_be_jitted.str(),

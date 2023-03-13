@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_charify_id: string for identity/terminal value
+// GB_macrofy_id: string for identity/terminal value
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -10,7 +10,7 @@
 #include "GB.h"
 #include "GB_stringify.h"
 
-const char *GB_charify_id // return string encoding the value
+const char *GB_macrofy_id // return string encoding the value
 (
     // input:
     int ecode,          // enumerated identity/terminal value
