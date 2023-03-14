@@ -122,7 +122,6 @@
 // GB_GET_ACCUM: get the accumulator op and its related typecasting functions
 //------------------------------------------------------------------------------
 
-// JIT: not needed
 #define GB_GET_ACCUM                                                        \
     ASSERT_BINARYOP_OK (accum, "accum for assign", GB0) ;                   \
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;                                 \
@@ -136,7 +135,7 @@
     const size_t zsize = accum->ztype->size ;
 
 #ifndef GB_DECLAREZ
-#define GB_DECLAREZ(zwork) GB_void zwork [GB_VLA(xsize)] ;
+#define GB_DECLAREZ(zwork) GB_void zwork [GB_VLA(zsize)] ;
 #endif
 
 #ifndef GB_DECLAREX
@@ -159,9 +158,7 @@
     const int8_t  *Ab = A->b ;                                              \
     const int64_t *Ai = A->i ;                                              \
     const int64_t Avlen = A->vlen ;                                         \
-    /* JIT: will be GB_A_TYPE, not GB_void: */                              \
     const GB_void *Ax = (GB_void *) A->x ;                                  \
-    /* JIT: not needed: */                                                  \
     const bool A_iso = A->iso ;                                             \
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;                             \
     const GB_Type_code acode = atype->code ;                                \
@@ -303,7 +300,7 @@
     //--------------------------------------------------------------------------
 
     #ifndef GB_COPY_scalar_to_C
-    #define GB_COPY_scalar_to_C(pC,cwork)                                   \
+    #define GB_COPY_scalar_to_C(Cx,pC,cwork)                                \
     {                                                                       \
         /* C(iC,jC) = scalar, already typecasted into cwork */              \
         if (!C_iso)                                                         \
@@ -805,7 +802,7 @@
                 /* ----[X A 1]                                           */ \
                 /* action: ( undelete ): bring a zombie back to life     */ \
                 GB_UNDELETE ;                                               \
-                GB_COPY_scalar_to_C (pC,cwork) ;                            \
+                GB_COPY_scalar_to_C (Cx, pC, cwork) ;                       \
             }
 
             // [C A 1] matrix case when accum is present
@@ -872,7 +869,7 @@
                 {                                                           \
                     /* ----[C A 1] no accum, scalar expansion            */ \
                     /* action: ( =A ): copy A into C                     */ \
-                    GB_COPY_scalar_to_C (pC,cwork) ;                        \
+                    GB_COPY_scalar_to_C (Cx, pC, cwork) ;                   \
                 }                                                           \
             }
 

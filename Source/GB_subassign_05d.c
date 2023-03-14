@@ -177,7 +177,7 @@ GrB_Info GB_subassign_05d
 
         // Cx [pC] = cwork
         #undef  GB_COPY_scalar_to_C
-        #define GB_COPY_scalar_to_C(pC,cwork) \
+        #define GB_COPY_scalar_to_C(Cx,pC,cwork) \
             memcpy (Cx + ((pC)*csize), cwork, csize)
 
         #include "GB_subassign_05d_template.c"

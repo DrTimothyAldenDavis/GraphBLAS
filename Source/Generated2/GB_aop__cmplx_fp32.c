@@ -28,7 +28,7 @@
 #define GB_DECLAREC(cwork) GxB_FC32_t cwork
 #define GB_COPY_aij_to_cwork(cwork,Ax,pA,A_iso) cwork = (GB_CMPLX32 (Ax [A_iso ? 0 : (pA)], 0))
 #define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) Cx [pC] = (A_iso) ? cwork : (GB_CMPLX32 (Ax [pA], 0))
-#define GB_COPY_scalar_to_C(pC,cwork) Cx [pC] = cwork
+#define GB_COPY_scalar_to_C(Cx,pC,cwork) Cx [pC] = cwork
 #define GB_AX_MASK(Ax,pA,asize) (Ax [pA] != 0)
 
 // C(i,j) += ywork

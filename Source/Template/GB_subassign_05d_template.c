@@ -73,7 +73,7 @@
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 { 
                     int64_t pC = pC_start + GBI_M (Mi, pM, Mvlen) ;
-                    GB_COPY_scalar_to_C (pC, cwork) ;        // Cx [pC] = cwork
+                    GB_COPY_scalar_to_C (Cx, pC, cwork) ;        // Cx [pC] = cwork
                 }
             }
             else
@@ -84,7 +84,7 @@
                     if (GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize))
                     { 
                         int64_t pC = pC_start + GBI_M (Mi, pM, Mvlen) ;
-                        GB_COPY_scalar_to_C (pC, cwork) ;    // Cx [pC] = cwork
+                        GB_COPY_scalar_to_C (Cx, pC, cwork) ;    // Cx [pC] = cwork
                     }
                 }
             }

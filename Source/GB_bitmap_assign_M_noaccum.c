@@ -121,22 +121,22 @@ GrB_Info GB_bitmap_assign_M_noaccum
 
             // for all IxJ
             #undef  GB_IXJ_WORK
-            #define GB_IXJ_WORK(pC,ignore)          \
-            {                                       \
-                int8_t cb = Cb [pC] ;               \
-                if (cb >= 2)                        \
-                {                                   \
-                    /* Cx [pC] = scalar */          \
-                    GB_COPY_scalar_to_C (pC, cwork) ;         \
-                    Cb [pC] = 1 ;                   \
-                    task_cnvals += (cb == 2) ;      \
-                }                                   \
-                else if (C_replace && cb == 1)      \
-                {                                   \
-                    /* delete this entry */         \
-                    Cb [pC] = 0 ;                   \
-                    task_cnvals-- ;                 \
-                }                                   \
+            #define GB_IXJ_WORK(pC,ignore)                  \
+            {                                               \
+                int8_t cb = Cb [pC] ;                       \
+                if (cb >= 2)                                \
+                {                                           \
+                    /* Cx [pC] = scalar */                  \
+                    GB_COPY_scalar_to_C (Cx, pC, cwork) ;   \
+                    Cb [pC] = 1 ;                           \
+                    task_cnvals += (cb == 2) ;              \
+                }                                           \
+                else if (C_replace && cb == 1)              \
+                {                                           \
+                    /* delete this entry */                 \
+                    Cb [pC] = 0 ;                           \
+                    task_cnvals-- ;                         \
+                }                                           \
             }
             #include "GB_bitmap_assign_IxJ_template.c"
 
@@ -152,16 +152,16 @@ GrB_Info GB_bitmap_assign_M_noaccum
 
             // for all IxJ
             #undef  GB_IXJ_WORK
-            #define GB_IXJ_WORK(pC,ignore)          \
-            {                                       \
-                int8_t cb = Cb [pC] ;               \
-                if (cb >= 2)                        \
-                {                                   \
-                    /* Cx [pC] = scalar */          \
-                    GB_COPY_scalar_to_C (pC, cwork) ;         \
-                    Cb [pC] = keep ;                \
-                    task_cnvals += (cb == 2) ;      \
-                }                                   \
+            #define GB_IXJ_WORK(pC,ignore)                  \
+            {                                               \
+                int8_t cb = Cb [pC] ;                       \
+                if (cb >= 2)                                \
+                {                                           \
+                    /* Cx [pC] = scalar */                  \
+                    GB_COPY_scalar_to_C (Cx, pC, cwork) ;   \
+                    Cb [pC] = keep ;                        \
+                    task_cnvals += (cb == 2) ;              \
+                }                                           \
             }
             #include "GB_bitmap_assign_IxJ_template.c"
 
@@ -206,16 +206,16 @@ GrB_Info GB_bitmap_assign_M_noaccum
         //      Cx(p) = aij     // C(iC,jC) is present, update it
         //      Cb(p) = 4       // keep it
 
-        #define GB_AIJ_WORK(pC,pA)              \
-        {                                       \
-            int8_t cb = Cb [pC] ;               \
-            if (cb >= 2)                        \
-            {                                   \
-                /* Cx [pC] = Ax [pA] ; */       \
-                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;        \
-                Cb [pC] = 4 ;                   \
-                task_cnvals += (cb == 2) ;      \
-            }                                   \
+        #define GB_AIJ_WORK(pC,pA)                                  \
+        {                                                           \
+            int8_t cb = Cb [pC] ;                                   \
+            if (cb >= 2)                                            \
+            {                                                       \
+                /* Cx [pC] = Ax [pA] ; */                           \
+                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
+                Cb [pC] = 4 ;                                       \
+                task_cnvals += (cb == 2) ;                          \
+            }                                                       \
         }
         #include "GB_bitmap_assign_A_template.c"
 

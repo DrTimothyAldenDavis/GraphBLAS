@@ -106,13 +106,13 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                 {                                                   \
                     case 0: /* C(i,j) not present, !M(i,j) = 1 */   \
                         /* Cx [pC] = scalar */                      \
-                        GB_COPY_scalar_to_C (pC, cwork) ;                     \
+                        GB_COPY_scalar_to_C (Cx, pC, cwork) ;       \
                         Cb [pC] = 1 ;                               \
                         task_cnvals++ ;                             \
                         break ;                                     \
                     case 1: /* C(i,j) present, !M(i,j) = 1 */       \
                         /* Cx [pC] = scalar */                      \
-                        GB_COPY_scalar_to_C (pC, cwork) ;                     \
+                        GB_COPY_scalar_to_C (Cx, pC, cwork) ;       \
                         break ;                                     \
                     case 2: /* C(i,j) not present, !M(i,j) = 0 */   \
                         /* clear the mask from C */                 \
@@ -143,13 +143,13 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                 {                                                   \
                     case 0: /* C(i,j) not present, !M(i,j) = 1 */   \
                         /* Cx [pC] = scalar */                      \
-                        GB_COPY_scalar_to_C (pC, cwork) ;                     \
+                        GB_COPY_scalar_to_C (Cx, pC, cwork) ;       \
                         Cb [pC] = 1 ;                               \
                         task_cnvals++ ;                             \
                         break ;                                     \
                     case 1: /* C(i,j) present, !M(i,j) = 1 */       \
                         /* Cx [pC] = scalar */                      \
-                        GB_COPY_scalar_to_C (pC, cwork) ;                     \
+                        GB_COPY_scalar_to_C (Cx, pC, cwork) ;       \
                         break ;                                     \
                     case 2: /* C(i,j) not present, !M(i,j) = 0 */   \
                         /* clear the mask from C */                 \
@@ -188,43 +188,43 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                 //--------------------------------------------------------------
 
                 #undef  GB_CIJ_WORK
-                #define GB_CIJ_WORK(pC)                                 \
-                {                                                       \
-                    switch (Cb [pC])                                    \
-                    {                                                   \
-                        case 0: /* C(i,j) not present, !M(i,j) = 1 */   \
-                            if (GBB (Ab, pC))                           \
-                            {                                           \
-                                /* Cx [pC] = Ax [pC] */                 \
-                                GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso, cwork) ;                \
-                                Cb [pC] = 1 ;                           \
-                                task_cnvals++ ;                         \
-                            }                                           \
-                            break ;                                     \
-                        case 1: /* C(i,j) present, !M(i,j) = 1 */       \
-                            if (GBB (Ab, pC))                           \
-                            {                                           \
-                                /* Cx [pC] = Ax [pC] */                 \
-                                GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso, cwork) ;                \
-                            }                                           \
-                            else                                        \
-                            {                                           \
-                                /* delete this entry */                 \
-                                Cb [pC] = 0 ;                           \
-                                task_cnvals-- ;                         \
-                            }                                           \
-                            break ;                                     \
-                        case 2: /* C(i,j) not present, !M(i,j) = 0 */   \
-                            /* clear the mask from C */                 \
-                            Cb [pC] = 0 ;                               \
-                            break ;                                     \
-                        case 3: /* C(i,j) present, !M(i,j) = 0 */       \
-                            /* delete this entry */                     \
-                            Cb [pC] = 0 ;                               \
-                            task_cnvals-- ;                             \
-                            break ;                                     \
-                        default: ;                                      \
-                    }                                                   \
+                #define GB_CIJ_WORK(pC)                                       \
+                {                                                             \
+                    switch (Cb [pC])                                          \
+                    {                                                         \
+                        case 0: /* C(i,j) not present, !M(i,j) = 1 */         \
+                            if (GBB (Ab, pC))                                 \
+                            {                                                 \
+                                /* Cx [pC] = Ax [pC] */                       \
+                                GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork) ;  \
+                                Cb [pC] = 1 ;                                 \
+                                task_cnvals++ ;                               \
+                            }                                                 \
+                            break ;                                           \
+                        case 1: /* C(i,j) present, !M(i,j) = 1 */             \
+                            if (GBB (Ab, pC))                                 \
+                            {                                                 \
+                                /* Cx [pC] = Ax [pC] */                       \
+                                GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork) ;  \
+                            }                                                 \
+                            else                                              \
+                            {                                                 \
+                                /* delete this entry */                       \
+                                Cb [pC] = 0 ;                                 \
+                                task_cnvals-- ;                               \
+                            }                                                 \
+                            break ;                                           \
+                        case 2: /* C(i,j) not present, !M(i,j) = 0 */         \
+                            /* clear the mask from C */                       \
+                            Cb [pC] = 0 ;                                     \
+                            break ;                                           \
+                        case 3: /* C(i,j) present, !M(i,j) = 0 */             \
+                            /* delete this entry */                           \
+                            Cb [pC] = 0 ;                                     \
+                            task_cnvals-- ;                                   \
+                            break ;                                           \
+                        default: ;                                            \
+                    }                                                         \
                 }
                 #include "GB_bitmap_assign_C_whole_template.c"
 
@@ -237,42 +237,42 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                 //--------------------------------------------------------------
 
                 #undef  GB_CIJ_WORK
-                #define GB_CIJ_WORK(pC)                                 \
-                {                                                       \
-                    switch (Cb [pC])                                    \
-                    {                                                   \
-                        case 0: /* C(i,j) not present, !M(i,j) = 1 */   \
-                            if (GBB (Ab, pC))                           \
-                            {                                           \
-                                /* Cx [pC] = Ax [pC] */                 \
-                                GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso, cwork) ;                \
-                                Cb [pC] = 1 ;                           \
-                                task_cnvals++ ;                         \
-                            }                                           \
-                            break ;                                     \
-                        case 1: /* C(i,j) present, !M(i,j) = 1 */       \
-                            if (GBB (Ab, pC))                           \
-                            {                                           \
-                                /* Cx [pC] = Ax [pC] */                 \
-                                GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso, cwork) ;                \
-                            }                                           \
-                            else                                        \
-                            {                                           \
-                                /* delete this entry */                 \
-                                Cb [pC] = 0 ;                           \
-                                task_cnvals-- ;                         \
-                            }                                           \
-                            break ;                                     \
-                        case 2: /* C(i,j) not present, !M(i,j) = 0 */   \
-                            /* clear the mask from C */                 \
-                            Cb [pC] = 0 ;                               \
-                            break ;                                     \
-                        case 3: /* C(i,j) present, !M(i,j) = 0 */       \
-                            /* keep the entry */                        \
-                            Cb [pC] = 1 ;                               \
-                            break ;                                     \
-                        default: ;                                      \
-                    }                                                   \
+                #define GB_CIJ_WORK(pC)                                       \
+                {                                                             \
+                    switch (Cb [pC])                                          \
+                    {                                                         \
+                        case 0: /* C(i,j) not present, !M(i,j) = 1 */         \
+                            if (GBB (Ab, pC))                                 \
+                            {                                                 \
+                                /* Cx [pC] = Ax [pC] */                       \
+                                GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork) ;  \
+                                Cb [pC] = 1 ;                                 \
+                                task_cnvals++ ;                               \
+                            }                                                 \
+                            break ;                                           \
+                        case 1: /* C(i,j) present, !M(i,j) = 1 */             \
+                            if (GBB (Ab, pC))                                 \
+                            {                                                 \
+                                /* Cx [pC] = Ax [pC] */                       \
+                                GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork) ;  \
+                            }                                                 \
+                            else                                              \
+                            {                                                 \
+                                /* delete this entry */                       \
+                                Cb [pC] = 0 ;                                 \
+                                task_cnvals-- ;                               \
+                            }                                                 \
+                            break ;                                           \
+                        case 2: /* C(i,j) not present, !M(i,j) = 0 */         \
+                            /* clear the mask from C */                       \
+                            Cb [pC] = 0 ;                                     \
+                            break ;                                           \
+                        case 3: /* C(i,j) present, !M(i,j) = 0 */             \
+                            /* keep the entry */                              \
+                            Cb [pC] = 1 ;                                     \
+                            break ;                                           \
+                        default: ;                                            \
+                    }                                                         \
                 }
                 #include "GB_bitmap_assign_C_whole_template.c"
             }
@@ -287,16 +287,16 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
 
             // assign entries from A into C
             #undef  GB_AIJ_WORK
-            #define GB_AIJ_WORK(pC,pA)          \
-            {                                   \
-                int8_t cb = Cb [pC] ;           \
-                if (cb <= 1)                    \
-                {                               \
-                    /* Cx [pC] = Ax [pA] */     \
-                    GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;    \
-                    Cb [pC] = 4 ;               \
-                    task_cnvals += (cb == 0) ;  \
-                }                               \
+            #define GB_AIJ_WORK(pC,pA)                                  \
+            {                                                           \
+                int8_t cb = Cb [pC] ;                                   \
+                if (cb <= 1)                                            \
+                {                                                       \
+                    /* Cx [pC] = Ax [pA] */                             \
+                    GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
+                    Cb [pC] = 4 ;                                       \
+                    task_cnvals += (cb == 0) ;                          \
+                }                                                       \
             }
             #include "GB_bitmap_assign_A_whole_template.c"
 

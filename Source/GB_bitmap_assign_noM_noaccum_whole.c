@@ -151,11 +151,11 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
                     // C remains bitmap: scatter A into the C bitmap
                     GB_memset (Cb, 0, cnzmax, nthreads_max) ;
                     cnvals = 0 ;
-                    #define GB_AIJ_WORK(pC,pA)              \
-                    {                                       \
-                        /* Cx [pC] = Ax [pA] */             \
-                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;            \
-                        Cb [pC] = 1 ;                       \
+                    #define GB_AIJ_WORK(pC,pA)                              \
+                    {                                                       \
+                        /* Cx [pC] = Ax [pA] */                             \
+                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
+                        Cb [pC] = 1 ;                                       \
                     }
                     #include "GB_bitmap_assign_A_whole_template.c"
                     C->nvals = GB_nnz (A) ;

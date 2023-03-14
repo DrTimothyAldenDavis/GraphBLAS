@@ -126,13 +126,13 @@ GrB_Info GB_bitmap_assign_noM_noaccum
 
             // for all IxJ
             #undef  GB_IXJ_WORK
-            #define GB_IXJ_WORK(pC,ignore)          \
-            {                                       \
-                int8_t cb = Cb [pC] ;               \
-                /* Cx [pC] = scalar */              \
-                GB_COPY_scalar_to_C (pC, cwork) ;             \
-                Cb [pC] = 1 ;                       \
-                task_cnvals += (cb == 0) ;          \
+            #define GB_IXJ_WORK(pC,ignore)              \
+            {                                           \
+                int8_t cb = Cb [pC] ;                   \
+                /* Cx [pC] = scalar */                  \
+                GB_COPY_scalar_to_C (Cx, pC, cwork) ;   \
+                Cb [pC] = 1 ;                           \
+                task_cnvals += (cb == 0) ;              \
             }
             #include "GB_bitmap_assign_IxJ_template.c"
 
@@ -161,12 +161,12 @@ GrB_Info GB_bitmap_assign_noM_noaccum
             //      Cx(p) = aij     // C(iC,jC) inserted or updated
             //      Cb(p) = 1
 
-            #define GB_AIJ_WORK(pC,pA)              \
-            {                                       \
-                int8_t cb = Cb [pC] ;               \
-                /* Cx [pC] = Ax [pA] */             \
-                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;            \
-                Cb [pC] = 1 ;                       \
+            #define GB_AIJ_WORK(pC,pA)                              \
+            {                                                       \
+                int8_t cb = Cb [pC] ;                               \
+                /* Cx [pC] = Ax [pA] */                             \
+                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
+                Cb [pC] = 1 ;                                       \
             }
             #include "GB_bitmap_assign_A_template.c"
 
