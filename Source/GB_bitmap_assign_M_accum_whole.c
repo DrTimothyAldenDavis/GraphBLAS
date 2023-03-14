@@ -212,7 +212,7 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                             if (GBB (Ab, pC))                           \
                             {                                           \
                                 /* Cx [pC] += Ax [pC] */                \
-                                GB_ACCUMULATE_aij (Cx, pC, Ax, pC, A_iso) ;                 \
+                                GB_ACCUMULATE_aij (Cx, pC, Ax, pC, A_iso, ywork) ;                 \
                             }                                           \
                             Cb [pC] = 1 ;                               \
                             break ;                                     \
@@ -239,7 +239,7 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                         {                                           \
                             /* C(i,j) present, M(i,j) = 1 */        \
                             /* Cx [pC] += Ax [pC] */                \
-                            GB_ACCUMULATE_aij (Cx, pC, Ax, pC, A_iso) ;                 \
+                            GB_ACCUMULATE_aij (Cx, pC, Ax, pC, A_iso, ywork) ;                 \
                         }                                           \
                         else                                        \
                         {                                           \
@@ -290,7 +290,7 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                 {                                           \
                     /* C(i,j) present, M(i,j) = 1 */        \
                     /* Cx [pC] += Ax [pA] */                \
-                    GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso) ;                 \
+                    GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork) ;                 \
                 }                                           \
             }
             #include "GB_bitmap_assign_A_whole_template.c"

@@ -110,9 +110,6 @@ op = strrep (op, 'xarg', 'x') ;
 op = strrep (op, 'yarg', 'y') ;
 fprintf (f, 'm4_define(`GB_accumop'', `#define GB_ACCUM_OP(z,x,y) z = %s'')\n', op) ;
 
-% C(i,j) += ywork (no typecasting here)
-fprintf (f, 'm4_define(`GB_accum_y'', `#define GB_ACCUMULATE_scalar(Cx,pC,ywork) GB_ACCUM_OP (Cx [pC], Cx [pC], ywork)'')\n') ;
-
 % create the disable flag
 disable = sprintf ('GxB_NO_%s', upper (binop)) ;
 disable = [disable (sprintf (' || GxB_NO_%s', upper (fname)))] ;

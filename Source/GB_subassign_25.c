@@ -211,12 +211,11 @@ GrB_Info GB_subassign_25
             const size_t csize = C->type->size ;
             GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
-// JIT: use GB_macrofy_cast_copy but revise for the iso case (precast Ax[0])
-
             #define C_iso false
             GB_void cwork [GB_VLA(csize)] ;
             if (A->iso)
             {
+                // cwork = (ctype) Ax [0]
                 cast_A_to_C (cwork, A->x, asize) ;
             }
 

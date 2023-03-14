@@ -186,14 +186,32 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
         // A is typecasted to y
         cast_A_to_Y = GB_cast_factory (accum->ytype->code, A->type->code) ;
 
-        // ywork = (ytype) A(i,j), located in Ax [pA]
-        #define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso)                     \
-            GB_void ywork [GB_VLA(ysize)] ;                                 \
-            cast_A_to_Y (ywork, Ax +(A_iso ? 0:(pA)*asize), asize)
+        // get the iso value of A
+        GB_void ywork [GB_VLA(ysize)] ;
+        if (A->iso)
+        {
+            // ywork = (ytype) Ax [0]
+            cast_A_to_Y (ywork, A->x, asize) ;
+        }
 
-        // C(i,j) += ywork
-        #define GB_ACCUMULATE_scalar(Cx,pC,ywork)                           \
-            faccum (Cx +((pC)*csize), Cx +((pC)*csize), ywork)
+        #define C_iso false
+
+        #ifndef GB_ACCUMULATE_aij
+        #define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork)              \
+        {                                                               \
+            /* Cx [pC] += (ytype) Ax [A_iso ? 0 : pA] */                \
+            if (A_iso)                                                  \
+            {                                                           \
+                faccum (Cx +((pC)*csize), Cx +((pC)*csize), ywork) ;    \
+            }                                                           \
+            else                                                        \
+            {                                                           \
+                GB_void ywork [GB_VLA(ysize)] ;                         \
+                cast_A_to_Y (ywork, Ax +((pA)*asize), asize) ;          \
+                faccum (Cx +((pC)*csize), Cx +((pC)*csize), ywork) ;    \
+            }                                                           \
+        }
+        #endif
 
         #include "GB_subassign_23_template.c"
     }

@@ -130,9 +130,8 @@ GrB_Info GB_subassign_08n
     const bool C_is_hyper = (Ch != NULL) ;
     GB_GET_C_HYPER_HASH ;
     GB_GET_MASK ;
-    GB_GET_A ;
-    const int64_t *restrict Ah = A->h ;
-    GB_GET_ACCUM ;
+    GB_GET_ACCUM_MATRIX ;
+    const int64_t *Ah = A->h ;
 
     //--------------------------------------------------------------------------
     // Method 08n: C(I,J)<M> += A ; no S

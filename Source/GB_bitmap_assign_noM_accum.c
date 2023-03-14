@@ -147,7 +147,7 @@ GrB_Info GB_bitmap_assign_noM_accum
                 else                                \
                 {                                   \
                     /* Cx [pC] += Ax [pA] */        \
-                    GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso) ;         \
+                    GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork) ;         \
                 }                                   \
             }
             #include "GB_bitmap_assign_A_template.c"

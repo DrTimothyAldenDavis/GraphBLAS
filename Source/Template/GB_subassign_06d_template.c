@@ -47,7 +47,8 @@
     GB_C_TYPE cwork ;
     if (A_iso)
     { 
-        // JIT: need to typecast for the JIT kernel
+        // get the iso value of A and typecast to C->type:
+        // cwork = (ctype) Ax [0]
         GB_cast_scalar (&cwork, C->type->code, A->x, A->type->code,
             A->type->size) ;
     }

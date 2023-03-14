@@ -184,7 +184,7 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
                             if (cb)                             \
                             {                                   \
                                 /* Cx [pC] += Ax [pC] */        \
-                                GB_ACCUMULATE_aij (Cx, pC, Ax, pC, A_iso) ;         \
+                                GB_ACCUMULATE_aij (Cx, pC, Ax, pC, A_iso, ywork) ;         \
                             }                                   \
                             else                                \
                             {                                   \
@@ -221,7 +221,7 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
                         if (Cb [pC])                        \
                         {                                   \
                             /* Cx [pC] += Ax [pC] */        \
-                            GB_ACCUMULATE_aij (Cx, pC, Ax, pC, A_iso) ;         \
+                            GB_ACCUMULATE_aij (Cx, pC, Ax, pC, A_iso, ywork) ;         \
                         }                                   \
                         else                                \
                         {                                   \
@@ -254,7 +254,7 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
                     if (Cb [pC])                        \
                     {                                   \
                         /* Cx [pC] += Ax [pA] */        \
-                        GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso) ;         \
+                        GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork) ;         \
                     }                                   \
                     else                                \
                     {                                   \

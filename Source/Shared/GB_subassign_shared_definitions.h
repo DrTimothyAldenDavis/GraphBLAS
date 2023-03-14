@@ -164,7 +164,6 @@
 #define GB_GET_SCALAR                                                       \
     ASSERT_TYPE_OK (atype, "atype for assign", GB0) ;                       \
     const size_t asize = atype->size ;                                      \
-    /* JIT: will be a cast macro, to cwork scalar */                        \
     const GB_Type_code acode = atype->code ;                                \
     const GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;   \
     GB_void cwork [GB_VLA(csize)] ;                                         \
@@ -177,9 +176,17 @@
 #define GB_GET_ACCUM_SCALAR                                                 \
     GB_GET_SCALAR ;                                                         \
     GB_GET_ACCUM ;                                                          \
-    /* JIT: will be a cast macro, to ywork scalar */                        \
     GB_void ywork [GB_VLA(ysize)] ;                                         \
     cast_A_to_Y (ywork, scalar, asize) ;
+
+#define GB_GET_ACCUM_MATRIX                                                 \
+    GB_GET_A ;                                                              \
+    GB_GET_ACCUM ;                                                          \
+    GB_void ywork [GB_VLA(ysize)] ;                                         \
+    if (A_iso)                                                              \
+    {                                                                       \
+        cast_A_to_Y (ywork, Ax, asize) ;                                    \
+    }
 
 //------------------------------------------------------------------------------
 // GB_GET_S: get the S matrix
@@ -332,12 +339,31 @@
     #endif
 
     #ifndef GB_ACCUMULATE_aij
-    #define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso)                            \
+    #define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork)                      \
     {                                                                       \
         /* Cx [pC] += (ytype) Ax [A_iso ? 0 : pA] */                        \
-        GB_void ywork [GB_VLA(ysize)] ;                                     \
-        GB_COPY_aij_to_ywork (ywork, Ax, pA, A_iso) ;                       \
-        GB_ACCUMULATE_scalar (Cx, pC, ywork) ;                              \
+        if (!C_iso)                                                         \
+        {                                                                   \
+            /* xwork = (xtype) Cx [pC] */                                   \
+            GB_void xwork [GB_VLA(xsize)] ;                                 \
+            cast_C_to_X (xwork, Cx +(pC*csize), csize) ;                    \
+            GB_void zwork [GB_VLA(zsize)] ;                                 \
+            if (A_iso)                                                      \
+            {                                                               \
+                /* zwork = op (xwork, ywork) */                             \
+                faccum (zwork, xwork, ywork) ;                              \
+            }                                                               \
+            else                                                            \
+            {                                                               \
+                /* ywork = (ytype) A(i,j) */                                \
+                GB_void ywork [GB_VLA(ysize)] ;                             \
+                cast_A_to_Y (ywork, Ax + (pA*asize), asize) ;               \
+                /* zwork = op (xwork, ywork) */                             \
+                faccum (zwork, xwork, ywork) ;                              \
+            }                                                               \
+            /* Cx [pC] = (ctype) zwork */                                   \
+            cast_Z_to_C (Cx +(pC*csize), zwork, csize) ;                    \
+        }                                                                   \
     }
     #endif
 
@@ -763,7 +789,7 @@
                 {                                                           \
                     /* ----[C A 1] with accum                            */ \
                     /* action: ( =C+A ): apply the accumulator           */ \
-                    GB_ACCUMULATE_aij (Cx,pC,Ax,pA,A_iso) ;                 \
+                    GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork) ;      \
                 }                                                           \
             }
 
@@ -1451,9 +1477,9 @@
 // burble
 //------------------------------------------------------------------------------
 
-#define GBURBLE_BITMAP_ASSIGN(method,M,Mask_comp,accum,Ikind,Jkind,akind) \
-    GBURBLE ("Method:" method " ") ;                                    \
-    GB_burble_assign (C_replace, Ikind, Jkind, M, Mask_comp,            \
+#define GBURBLE_BITMAP_ASSIGN(method,M,Mask_comp,accum,Ikind,Jkind,akind)   \
+    GBURBLE ("Method:" method " ") ;                                        \
+    GB_burble_assign (C_replace, Ikind, Jkind, M, Mask_comp,                \
         Mask_struct, accum, A, akind) ;
 
 //------------------------------------------------------------------------------
@@ -1542,6 +1568,10 @@
         if (A == NULL)                                                      \
         {                                                                   \
             cast_A_to_Y (ywork, scalar, asize) ;                            \
+        }                                                                   \
+        else if (A_iso)                                                     \
+        {                                                                   \
+            cast_A_to_Y (ywork, Ax, asize) ;                                \
         }                                                                   \
     }
 

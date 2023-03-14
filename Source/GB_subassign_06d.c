@@ -196,19 +196,18 @@ GrB_Info GB_subassign_06d
             //------------------------------------------------------------------
 
             #include "GB_generic.h"
-            GB_BURBLE_MATRIX (A, "(generic C(:,:)<Z>=Z assign) ") ;
+            GB_BURBLE_MATRIX (A, "(generic C(:,:)<A>=A assign) ") ;
 
             const size_t csize = C->type->size ;
             const size_t asize = A->type->size ;
             const GB_Type_code acode = A->type->code ;
             GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
-// JIT: use GB_macrofy_cast_copy but revise for the iso case (precast Ax[0])
-
             #define C_iso false
             GB_void cwork [GB_VLA(csize)] ;
             if (A->iso)
             {
+                // cwork = (ctype) Ax [0]
                 cast_A_to_C (cwork, A->x, asize) ;
             }
 

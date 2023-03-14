@@ -64,9 +64,8 @@ GrB_Info GB_subassign_04
     GB_MATRIX_WAIT_IF_JUMBLED (A) ;
 
     GB_GET_C ;      // C must not be bitmap
-    GB_GET_A ;
     GB_GET_S ;
-    GB_GET_ACCUM ;
+    GB_GET_ACCUM_MATRIX ;
 
     //--------------------------------------------------------------------------
     // Method 04: C(I,J) += A ; using S

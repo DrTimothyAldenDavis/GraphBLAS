@@ -25,6 +25,7 @@
     GB_Y_TYPE ywork ;
     if (A_iso)
     {
+        // ywork = (ytype) Ax [0]
         GB_COPY_aij_to_ywork (ywork, Ax, 0, true) ;
     }
     #endif
@@ -43,8 +44,9 @@
         { 
             if (!Ab [p]) continue ;
             // Cx [p] += (ytype) Ax [p], with typecasting
-            GB_COPY_aij_to_ywork (ywork, Ax, p, A_iso) ;
-            GB_ACCUMULATE_scalar (Cx, p, ywork) ;
+            GB_ACCUMULATE_aij (Cx, p, Ax, p, A_iso, ywork) ;
+            // GB_COPY_aij_to_ywork (ywork, Ax, p, A_iso) ;
+            // GB_ACCUMULATE_scalar (Cx, p, ywork) ;
         }
 
     }
@@ -61,8 +63,9 @@
         for (p = 0 ; p < cnz ; p++)
         { 
             // Cx [p] += (ytype) Ax [p], with typecasting
-            GB_COPY_aij_to_ywork (ywork, Ax, p, A_iso) ;
-            GB_ACCUMULATE_scalar (Cx, p, ywork) ;
+            GB_ACCUMULATE_aij (Cx, p, Ax, p, A_iso, ywork) ;
+            // GB_COPY_aij_to_ywork (ywork, Ax, p, A_iso) ;
+            // GB_ACCUMULATE_scalar (Cx, p, ywork) ;
         }
 
     }
@@ -135,8 +138,9 @@
                         int64_t i = pA - pA_start ;
                         int64_t p = pC + i ;
                         // Cx [p] += (ytype) Ax [pA], with typecasting
-                        GB_COPY_aij_to_ywork (ywork, Ax, pA, A_iso) ;
-                        GB_ACCUMULATE_scalar (Cx, p, ywork) ;
+                        GB_ACCUMULATE_aij (Cx, p, Ax, pA, A_iso, ywork) ;
+                        // GB_COPY_aij_to_ywork (ywork, Ax, pA, A_iso) ;
+                        // GB_ACCUMULATE_scalar (Cx, p, ywork) ;
                     }
 
                 }
@@ -153,8 +157,9 @@
                         int64_t i = Ai [pA] ;
                         int64_t p = pC + i ;
                         // Cx [p] += (ytype) Ax [pA], with typecasting
-                        GB_COPY_aij_to_ywork (ywork, Ax, pA, A_iso) ;
-                        GB_ACCUMULATE_scalar (Cx, p, ywork) ;
+                        GB_ACCUMULATE_aij (Cx, p, Ax, pA, A_iso, ywork) ;
+                        // GB_COPY_aij_to_ywork (ywork, Ax, pA, A_iso) ;
+                        // GB_ACCUMULATE_scalar (Cx, p, ywork) ;
                     }
                 }
             }

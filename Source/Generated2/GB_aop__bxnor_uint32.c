@@ -19,7 +19,6 @@
 #define GB_Z_TYPE uint32_t
 #define GB_X_TYPE uint32_t
 #define GB_Y_TYPE uint32_t
-#define GB_ACCUMULATE_scalar(Cx,pC,ywork) GB_ACCUM_OP (Cx [pC], Cx [pC], ywork)
 #define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso) uint32_t ywork = Ax [(A_iso) ? 0 : (pA)]
 
 // A and C matrices
@@ -28,6 +27,24 @@
 #define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) Cx [pC] = (A_iso) ? cwork : Ax [pA]
 #define GB_COPY_scalar_to_C(pC,cwork) Cx [pC] = cwork
 #define GB_AX_MASK(Ax,pA,asize) (Ax [pA] != 0)
+
+// C(i,j) += ywork
+#define GB_ACCUMULATE_scalar(Cx,pC,ywork) \
+    GB_ACCUM_OP (Cx [pC], Cx [pC], ywork)
+
+// C(i,j) += (ytype) A(i,j)
+#define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork)      \
+{                                                       \
+    if (A_iso)                                          \
+    {                                                   \
+        GB_ACCUMULATE_scalar (Cx, pC, ywork) ;          \
+    }                                                   \
+    else                                                \
+    {                                                   \
+        /* A and Y have the same type here */           \
+        GB_ACCUMULATE_scalar (Cx, pC, Ax [pA]) ;        \
+    }                                                   \
+}
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \

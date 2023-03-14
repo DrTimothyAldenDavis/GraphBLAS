@@ -19,7 +19,6 @@ GB_accumop
 GB_ztype
 GB_xtype
 GB_ytype
-GB_accum_y
 GB_copy_aij_to_y
 
 // A and C matrices
@@ -28,6 +27,24 @@ GB_ctype
 GB_copy_aij_to_c
 GB_copy_scalar_to_c
 GB_ax_mask
+
+// C(i,j) += ywork
+#define GB_ACCUMULATE_scalar(Cx,pC,ywork) \
+    GB_ACCUM_OP (Cx [pC], Cx [pC], ywork)
+
+// C(i,j) += (ytype) A(i,j)
+#define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork)      \
+{                                                       \
+    if (A_iso)                                          \
+    {                                                   \
+        GB_ACCUMULATE_scalar (Cx, pC, ywork) ;          \
+    }                                                   \
+    else                                                \
+    {                                                   \
+        /* A and Y have the same type here */           \
+        GB_ACCUMULATE_scalar (Cx, pC, Ax [pA]) ;        \
+    }                                                   \
+}
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
