@@ -204,13 +204,14 @@ GrB_Info GB_subassign_06d
             GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
             #define C_iso false
-            GB_void cwork [GB_VLA(csize)] ;
+            GB_DECLAREC (cwork) ;
             if (A->iso)
             {
                 // cwork = (ctype) Ax [0]
                 cast_A_to_C (cwork, A->x, asize) ;
             }
 
+            #undef  GB_AX_MASK
             #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, asize)
 
             #include "GB_subassign_06d_template.c"

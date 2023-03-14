@@ -78,6 +78,10 @@
     int64_t nzombies = C->nzombies ;                                        \
     const bool is_matrix = (cvdim > 1) ;
 
+#ifndef GB_DECLAREC
+#define GB_DECLAREC(cwork) GB_void cwork [GB_VLA(csize)] ;
+#endif
+
 #define GB_GET_C_HYPER_HASH                                                 \
     GB_OK (GB_hyper_hash_build (C, Werk)) ;                                 \
     const int64_t *restrict C_Yp = (C_is_hyper) ? C->Y->p : NULL ;          \
@@ -131,6 +135,18 @@
     const size_t ysize = accum->ytype->size ;                               \
     const size_t zsize = accum->ztype->size ;
 
+#ifndef GB_DECLAREZ
+#define GB_DECLAREZ(zwork) GB_void zwork [GB_VLA(xsize)] ;
+#endif
+
+#ifndef GB_DECLAREX
+#define GB_DECLAREX(xwork) GB_void xwork [GB_VLA(xsize)] ;
+#endif
+
+#ifndef GB_DECLAREY
+#define GB_DECLAREY(ywork) GB_void ywork [GB_VLA(ysize)] ;
+#endif
+
 //------------------------------------------------------------------------------
 // GB_GET_A: get the A matrix
 //------------------------------------------------------------------------------
@@ -150,12 +166,16 @@
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;                             \
     const GB_Type_code acode = atype->code ;                                \
     const GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;   \
-    GB_void cwork [GB_VLA(csize)] ;                                         \
+    GB_DECLAREC (cwork) ;                                                   \
     if (A_iso)                                                              \
     {                                                                       \
         /* cwork = (ctype) Ax [0], typecast iso value of A into cwork */    \
         cast_A_to_C (cwork, Ax, asize) ;                                    \
     }
+
+#ifndef GB_DECLAREA
+#define GB_DECLAREA(awork) GB_void awork [GB_VLA(asize)] ;
+#endif
 
 //------------------------------------------------------------------------------
 // GB_GET_SCALAR: get the scalar
@@ -166,7 +186,7 @@
     const size_t asize = atype->size ;                                      \
     const GB_Type_code acode = atype->code ;                                \
     const GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;   \
-    GB_void cwork [GB_VLA(csize)] ;                                         \
+    GB_DECLAREC (cwork) ;                                                   \
     cast_A_to_C (cwork, scalar, asize) ;
 
 //------------------------------------------------------------------------------
@@ -176,13 +196,13 @@
 #define GB_GET_ACCUM_SCALAR                                                 \
     GB_GET_SCALAR ;                                                         \
     GB_GET_ACCUM ;                                                          \
-    GB_void ywork [GB_VLA(ysize)] ;                                         \
+    GB_DECLAREY (ywork) ;                                                   \
     cast_A_to_Y (ywork, scalar, asize) ;
 
 #define GB_GET_ACCUM_MATRIX                                                 \
     GB_GET_A ;                                                              \
     GB_GET_ACCUM ;                                                          \
-    GB_void ywork [GB_VLA(ysize)] ;                                         \
+    GB_DECLAREY (ywork) ;                                                   \
     if (A_iso)                                                              \
     {                                                                       \
         cast_A_to_Y (ywork, Ax, asize) ;                                    \
@@ -329,9 +349,9 @@
         if (!C_iso)                                                         \
         {                                                                   \
             /* C(iC,jC) += ywork, with typecasting */                       \
-            GB_void xwork [GB_VLA(xsize)] ;                                 \
+            GB_DECLAREX (xwork) ;                                           \
             cast_C_to_X (xwork, Cx +(pC*csize), csize) ;                    \
-            GB_void zwork [GB_VLA(zsize)] ;                                 \
+            GB_DECLAREZ (zwork) ;                                           \
             faccum (zwork, xwork, ywork) ;                                  \
             cast_Z_to_C (Cx +(pC*csize), zwork, csize) ;                    \
         }                                                                   \
@@ -345,9 +365,9 @@
         if (!C_iso)                                                         \
         {                                                                   \
             /* xwork = (xtype) Cx [pC] */                                   \
-            GB_void xwork [GB_VLA(xsize)] ;                                 \
+            GB_DECLAREX (xwork) ;                                           \
             cast_C_to_X (xwork, Cx +(pC*csize), csize) ;                    \
-            GB_void zwork [GB_VLA(zsize)] ;                                 \
+            GB_DECLAREZ (zwork) ;                                           \
             if (A_iso)                                                      \
             {                                                               \
                 /* zwork = op (xwork, ywork) */                             \
@@ -356,7 +376,7 @@
             else                                                            \
             {                                                               \
                 /* ywork = (ytype) A(i,j) */                                \
-                GB_void ywork [GB_VLA(ysize)] ;                             \
+                GB_DECLAREY (ywork) ;                                       \
                 cast_A_to_Y (ywork, Ax + (pA*asize), asize) ;               \
                 /* zwork = op (xwork, ywork) */                             \
                 faccum (zwork, xwork, ywork) ;                              \
@@ -1541,7 +1561,7 @@
         Ax = (C_iso) ? NULL : (GB_void *) A->x ;                            \
     }                                                                       \
     GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;         \
-    GB_void cwork [GB_VLA(csize)] ;                                         \
+    GB_DECLAREC (cwork) ;                                                   \
     if (!C_iso)                                                             \
     {                                                                       \
         if (A == NULL)                                                      \
@@ -1562,7 +1582,7 @@
 
 #define GB_GET_ACCUM_FOR_BITMAP                                             \
     GB_GET_ACCUM ;                                                          \
-    GB_void ywork [GB_VLA(ysize)] ;                                         \
+    GB_DECLAREY (ywork) ;                                                   \
     if (!C_iso)                                                             \
     {                                                                       \
         if (A == NULL)                                                      \

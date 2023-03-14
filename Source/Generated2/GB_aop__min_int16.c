@@ -19,11 +19,13 @@
 #define GB_Z_TYPE int16_t
 #define GB_X_TYPE int16_t
 #define GB_Y_TYPE int16_t
-#define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso) int16_t ywork = Ax [(A_iso) ? 0 : (pA)]
+#define GB_DECLAREY(ywork) int16_t ywork
+#define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso) ywork = Ax [(A_iso) ? 0 : (pA)]
 
 // A and C matrices
 #define GB_A_TYPE int16_t
 #define GB_C_TYPE int16_t
+#define GB_DECLAREC(cwork) int16_t cwork
 #define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) Cx [pC] = (A_iso) ? cwork : Ax [pA]
 #define GB_COPY_scalar_to_C(pC,cwork) Cx [pC] = cwork
 #define GB_AX_MASK(Ax,pA,asize) (Ax [pA] != 0)

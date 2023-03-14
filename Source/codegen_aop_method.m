@@ -49,6 +49,7 @@ fprintf (f, 'm4_define(`GB_xtype'',  `#define GB_X_TYPE %s'')\n', xtype) ;
 fprintf (f, 'm4_define(`GB_ytype'',  `#define GB_Y_TYPE %s'')\n', ytype) ;
 fprintf (f, 'm4_define(`GB_ctype'',  `#define GB_C_TYPE %s'')\n', ztype) ;
 fprintf (f, 'm4_define(`GB_atype'',  `#define GB_A_TYPE %s'')\n', ytype) ;
+fprintf (f, 'm4_define(`GB_declarec'', `#define GB_DECLAREC(cwork) %s cwork'')\n', ztype) ;
 
 % C_dense_update: operators z=f(x,y) where ztype and xtype match, and binop is not 'first'
 if (isequal (xtype, ztype) && ~isequal (binop, 'first'))
@@ -63,8 +64,10 @@ end
 if (isequal (binop, 'first') || isequal (binop, 'pair'))
     % value of A is ignored for the FIRST, PAIR, and positional operators
     gb_copy_aij_to_y = '' ;
+    fprintf (f, 'm4_define(`GB_declarey'', `#define GB_DECLAREY(ywork)'')\n') ;
 else
-    gb_copy_aij_to_y = sprintf (' %s ywork = Ax [(A_iso) ? 0 : (pA)]', ytype) ;
+    gb_copy_aij_to_y = sprintf (' ywork = Ax [(A_iso) ? 0 : (pA)]') ;
+    fprintf (f, 'm4_define(`GB_declarey'', `#define GB_DECLAREY(ywork) %s ywork'')\n', ytype) ;
 end
 fprintf (f, 'm4_define(`GB_copy_aij_to_y'', `#define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso)%s'')\n', gb_copy_aij_to_y) ;
 

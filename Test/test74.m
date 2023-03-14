@@ -186,6 +186,7 @@ for k0 = 1:size(m_list,2)
 
                     % F += A_iso_full * B
                     Afull.iso = true ;
+save gunk Afull F semiring B monoid identity
                     C1 = GB_mex_mxm_update  (F, semiring, Afull, B, [ ]) ;
                     C0 = GB_spec_mxm (F, [ ], monoid, semiring, Afull, B, [ ]) ;
                     GB_spec_compare (C0, C1, identity) ;

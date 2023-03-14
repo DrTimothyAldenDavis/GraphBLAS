@@ -19,11 +19,13 @@ GB_accumop
 GB_ztype
 GB_xtype
 GB_ytype
+GB_declarey
 GB_copy_aij_to_y
 
 // A and C matrices
 GB_atype
 GB_ctype
+GB_declarec
 GB_copy_aij_to_c
 GB_copy_scalar_to_c
 GB_ax_mask

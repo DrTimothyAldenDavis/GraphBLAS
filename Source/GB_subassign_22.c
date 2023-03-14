@@ -11,6 +11,7 @@
 // C can have any sparsity format, as long as all entries are present;
 // GB_is_dense (C)) must hold.
 
+#include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_dense.h"
 #include "GB_binop.h"
 #include "GB_unused.h"
@@ -18,6 +19,7 @@
 #include "GB_aop__include.h"
 #endif
 
+#undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 
 GrB_Info GB_subassign_22      // C += scalar where C is dense
@@ -81,7 +83,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
     size_t ysize = accum->ytype->size ;
     GB_cast_function 
         cast_A_to_Y = GB_cast_factory (accum->ytype->code, atype->code) ;
-    GB_void ywork [GB_VLA(ysize)] ;
+    GB_DECLAREY (ywork) ;
     cast_A_to_Y (ywork, scalar, atype->size) ;
 
     //--------------------------------------------------------------------------
@@ -141,6 +143,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
         GxB_binary_function faccum = accum->binop_function ;
 
         // C(i,j) = C(i,j) + y
+        #undef  GB_ACCUMULATE_scalar
         #define GB_ACCUMULATE_scalar(Cx,pC,ywork)           \
             faccum (Cx +((pC)*csize), Cx +((pC)*csize), ywork)
 

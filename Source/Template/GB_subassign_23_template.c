@@ -21,14 +21,13 @@
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     ASSERT (GB_is_dense (C)) ;
     const int64_t cnz = GB_nnz_held (C) ;
-    #ifndef GB_GENERIC
-    GB_Y_TYPE ywork ;
+    GB_DECLAREY (ywork) ;
     if (A_iso)
     {
+        // get the iso value of A and typecast it to Y
         // ywork = (ytype) Ax [0]
         GB_COPY_aij_to_ywork (ywork, Ax, 0, true) ;
     }
-    #endif
 
     if (GB_IS_BITMAP (A))
     {
@@ -45,8 +44,6 @@
             if (!Ab [p]) continue ;
             // Cx [p] += (ytype) Ax [p], with typecasting
             GB_ACCUMULATE_aij (Cx, p, Ax, p, A_iso, ywork) ;
-            // GB_COPY_aij_to_ywork (ywork, Ax, p, A_iso) ;
-            // GB_ACCUMULATE_scalar (Cx, p, ywork) ;
         }
 
     }
@@ -64,8 +61,6 @@
         { 
             // Cx [p] += (ytype) Ax [p], with typecasting
             GB_ACCUMULATE_aij (Cx, p, Ax, p, A_iso, ywork) ;
-            // GB_COPY_aij_to_ywork (ywork, Ax, p, A_iso) ;
-            // GB_ACCUMULATE_scalar (Cx, p, ywork) ;
         }
 
     }
@@ -139,8 +134,6 @@
                         int64_t p = pC + i ;
                         // Cx [p] += (ytype) Ax [pA], with typecasting
                         GB_ACCUMULATE_aij (Cx, p, Ax, pA, A_iso, ywork) ;
-                        // GB_COPY_aij_to_ywork (ywork, Ax, pA, A_iso) ;
-                        // GB_ACCUMULATE_scalar (Cx, p, ywork) ;
                     }
 
                 }
@@ -158,8 +151,6 @@
                         int64_t p = pC + i ;
                         // Cx [p] += (ytype) Ax [pA], with typecasting
                         GB_ACCUMULATE_aij (Cx, p, Ax, pA, A_iso, ywork) ;
-                        // GB_COPY_aij_to_ywork (ywork, Ax, pA, A_iso) ;
-                        // GB_ACCUMULATE_scalar (Cx, p, ywork) ;
                     }
                 }
             }

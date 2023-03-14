@@ -19,11 +19,13 @@
 #define GB_Z_TYPE bool
 #define GB_X_TYPE GxB_FC32_t
 #define GB_Y_TYPE GxB_FC32_t
-#define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso) GxB_FC32_t ywork = Ax [(A_iso) ? 0 : (pA)]
+#define GB_DECLAREY(ywork) GxB_FC32_t ywork
+#define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso) ywork = Ax [(A_iso) ? 0 : (pA)]
 
 // A and C matrices
 #define GB_A_TYPE GxB_FC32_t
 #define GB_C_TYPE bool
+#define GB_DECLAREC(cwork) bool cwork
 #define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) Cx [pC] = (A_iso) ? cwork : ((crealf (Ax [pA]) != 0) || (cimagf (Ax [pA]) != 0))
 #define GB_COPY_scalar_to_C(pC,cwork) Cx [pC] = cwork
 #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, sizeof (GxB_FC32_t))

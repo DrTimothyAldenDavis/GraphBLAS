@@ -19,11 +19,13 @@
 #define GB_Z_TYPE bool
 #define GB_X_TYPE bool
 #define GB_Y_TYPE bool
+#define GB_DECLAREY(ywork)
 #define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso)
 
 // A and C matrices
 #define GB_A_TYPE bool
 #define GB_C_TYPE bool
+#define GB_DECLAREC(cwork) bool cwork
 #define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) Cx [pC] = (A_iso) ? cwork : Ax [pA]
 #define GB_COPY_scalar_to_C(pC,cwork) Cx [pC] = cwork
 #define GB_AX_MASK(Ax,pA,asize) (Ax [pA] != 0)

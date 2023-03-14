@@ -20,6 +20,7 @@
 
 #define GB_DEBUG
 
+#include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_dense.h"
 #include "GB_binop.h"
 #ifndef GBCUDA_DEV
@@ -27,6 +28,7 @@
 #endif
 #include "GB_unused.h"
 
+#undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \
 {                                           \
     GB_WERK_POP (A_ek_slicing, int64_t) ;   \
@@ -187,7 +189,7 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
         cast_A_to_Y = GB_cast_factory (accum->ytype->code, A->type->code) ;
 
         // get the iso value of A
-        GB_void ywork [GB_VLA(ysize)] ;
+        GB_DECLAREY (ywork) ;
         if (A->iso)
         {
             // ywork = (ytype) Ax [0]
@@ -196,7 +198,7 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
 
         #define C_iso false
 
-        #ifndef GB_ACCUMULATE_aij
+        #undef  GB_ACCUMULATE_aij
         #define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork)              \
         {                                                               \
             /* Cx [pC] += (ytype) Ax [A_iso ? 0 : pA] */                \
@@ -206,12 +208,11 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
             }                                                           \
             else                                                        \
             {                                                           \
-                GB_void ywork [GB_VLA(ysize)] ;                         \
+                GB_DECLAREY (ywork) ;                                   \
                 cast_A_to_Y (ywork, Ax +((pA)*asize), asize) ;          \
                 faccum (Cx +((pC)*csize), Cx +((pC)*csize), ywork) ;    \
             }                                                           \
         }
-        #endif
 
         #include "GB_subassign_23_template.c"
     }
