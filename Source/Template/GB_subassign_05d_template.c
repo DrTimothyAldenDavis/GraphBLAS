@@ -56,9 +56,9 @@
             //------------------------------------------------------------------
 
             int64_t j = GBH_M (Mh, k) ;
-            int64_t pM_start, pM_end ;
-            GB_get_pA (&pM_start, &pM_end, taskid, k,
-                kfirst, klast, pstart_Mslice, Mp, Mvlen) ;
+            GB_GET_PA (pM_start, pM_end, taskid, k,
+                kfirst, klast, pstart_Mslice,
+                GBP_M (Mp, k, Mvlen), GBP_M (Mp, k+1, Mvlen)) ;
 
             // pC_start points to the start of C(:,j)
             int64_t pC_start = j * cvlen ;

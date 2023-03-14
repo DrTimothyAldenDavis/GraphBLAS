@@ -212,13 +212,6 @@ GrB_Info GB_subassign_25
             GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
             #define C_iso false
-            GB_DECLAREC (cwork) ;
-            if (A->iso)
-            {
-                // cwork = (ctype) Ax [0]
-                cast_A_to_C (cwork, A->x, asize) ;
-            }
-
             #include "GB_subassign_25_template.c"
             info = GrB_SUCCESS ;
         }

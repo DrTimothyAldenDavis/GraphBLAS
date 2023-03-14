@@ -43,16 +43,13 @@
     #else
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
-    #ifndef GB_GENERIC
-    GB_C_TYPE cwork ;
+    GB_DECLAREC (cwork) ;
     if (A_iso)
     { 
-        // get the iso value of A and typecast to C->type:
+        // get the iso value of A and typecast to C->type
         // cwork = (ctype) Ax [0]
-        GB_cast_scalar (&cwork, C->type->code, A->x, A->type->code,
-            A->type->size) ;
+        GB_COPY_aij_to_cwork (cwork, Ax, 0, true) ;
     }
-    #endif
     #endif
 
     //--------------------------------------------------------------------------
@@ -191,9 +188,9 @@
                     {
                         // get A(:,j), the kth vector of A
                         int64_t j = GBH_A (Ah, k) ;
-                        int64_t pA_start, pA_end ;
-                        GB_get_pA (&pA_start, &pA_end, taskid, k,
-                            kfirst, klast, pstart_Aslice, Ap, avlen) ;
+                        GB_GET_PA (pA_start, pA_end, taskid, k,
+                            kfirst, klast, pstart_Aslice,
+                            GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
                         // pC is the start of C(:,j)
                         int64_t pC = j * cvlen ;
                         // C<A(:,j),struct>=A(:,j) with C bitmap, A sparse
@@ -234,9 +231,9 @@
                         {
                             // get A(:,j), the kth vector of A
                             int64_t j = GBH_A (Ah, k) ;
-                            int64_t pA_start, pA_end ;
-                            GB_get_pA (&pA_start, &pA_end, taskid, k,
-                                kfirst, klast, pstart_Aslice, Ap, avlen) ;
+                            GB_GET_PA (pA_start, pA_end, taskid, k,
+                                kfirst, klast, pstart_Aslice,
+                                GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
                             // pC is the start of C(:,j)
                             int64_t pC = j * cvlen ;
                             // C<A(:,j),struct>=A(:,j) with C full, A sparse
@@ -407,9 +404,9 @@
                     {
                         // get A(:,j), the kth vector of A
                         int64_t j = GBH_A (Ah, k) ;
-                        int64_t pA_start, pA_end ;
-                        GB_get_pA (&pA_start, &pA_end, taskid, k,
-                            kfirst, klast, pstart_Aslice, Ap, avlen) ;
+                        GB_GET_PA (pA_start, pA_end, taskid, k,
+                            kfirst, klast, pstart_Aslice,
+                            GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
                         // pC is the start of C(:,j)
                         int64_t pC = j * cvlen ;
                         // C<A(:,j),struct>=A(:,j) with C bitmap, A sparse
@@ -449,9 +446,9 @@
                     {
                         // get A(:,j), the kth vector of A
                         int64_t j = GBH_A (Ah, k) ;
-                        int64_t pA_start, pA_end ;
-                        GB_get_pA (&pA_start, &pA_end, taskid, k,
-                            kfirst, klast, pstart_Aslice, Ap, avlen) ;
+                        GB_GET_PA (pA_start, pA_end, taskid, k,
+                            kfirst, klast, pstart_Aslice,
+                            GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
                         // pC is the start of C(:,j)
                         int64_t pC = j * cvlen ;
                         // C<A(:,j),struct>=A(:,j) with C dense, A sparse

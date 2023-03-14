@@ -105,12 +105,10 @@
                 //--------------------------------------------------------------
 
                 int64_t j = GBH_A (Ah, k) ;
-                int64_t my_pA_start, my_pA_end ;
-                GB_get_pA (&my_pA_start, &my_pA_end, taskid, k,
-                    kfirst, klast, pstart_Aslice, Ap, avlen) ;
-
                 int64_t pA_start = GBP_A (Ap, k, avlen) ;
                 int64_t pA_end   = GBP_A (Ap, k+1, avlen) ;
+                GB_GET_PA (my_pA_start, my_pA_end, taskid, k,
+                    kfirst, klast, pstart_Aslice, pA_start, pA_end) ;
                 bool ajdense = ((pA_end - pA_start) == cvlen) ;
 
                 // pC points to the start of C(:,j)

@@ -63,13 +63,13 @@ end
 % to get an entry from A and cast to ywork (but no typecasting here)
 if (isequal (binop, 'first') || isequal (binop, 'pair'))
     % value of A is ignored for the FIRST, PAIR, and positional operators
-    gb_copy_aij_to_y = '' ;
+    gb_copy_aij_to_ywork = '' ;
     fprintf (f, 'm4_define(`GB_declarey'', `#define GB_DECLAREY(ywork)'')\n') ;
 else
-    gb_copy_aij_to_y = sprintf (' ywork = Ax [(A_iso) ? 0 : (pA)]') ;
+    gb_copy_aij_to_ywork = sprintf (' ywork = Ax [(A_iso) ? 0 : (pA)]') ;
     fprintf (f, 'm4_define(`GB_declarey'', `#define GB_DECLAREY(ywork) %s ywork'')\n', ytype) ;
 end
-fprintf (f, 'm4_define(`GB_copy_aij_to_y'', `#define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso)%s'')\n', gb_copy_aij_to_y) ;
+fprintf (f, 'm4_define(`GB_copy_aij_to_ywork'', `#define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso)%s'')\n', gb_copy_aij_to_ywork) ;
 
 % to copy a scalar into C (no typecasting)
 fprintf (f, 'm4_define(`GB_copy_scalar_to_c'', `#define GB_COPY_scalar_to_C(pC,cwork) Cx [pC] = cwork'')\n') ;
@@ -90,6 +90,8 @@ else
     a2c = sprintf ('((%s) Ax [pA])', ytype) ;
 end
 fprintf (f, 'm4_define(`GB_copy_aij_to_c'', `#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) Cx [pC] = (A_iso) ? cwork : %s'')\n', a2c) ;
+a2c = strrep (a2c, 'pA', 'A_iso ? 0 : (pA)') ;
+fprintf (f, 'm4_define(`GB_copy_aij_to_cwork'', `#define GB_COPY_aij_to_cwork(cwork,Ax,pA,A_iso) cwork = %s'')\n', a2c) ;
 
 % mask macro
 if (isequal (xtype, 'GxB_FC32_t') || isequal (xtype, 'GxB_FC64_t'))

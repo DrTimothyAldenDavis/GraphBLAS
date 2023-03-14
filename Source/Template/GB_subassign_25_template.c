@@ -42,15 +42,13 @@
     ASSERT (!C->iso) ;
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
-    #ifndef GB_GENERIC
-    GB_C_TYPE cwork ;
+    GB_DECLAREC (cwork) ;
     if (A_iso)
     { 
-        // JIT: need to typecast for the JIT kernel
-        GB_cast_scalar (&cwork, C->type->code, A->x, A->type->code,
-            A->type->size) ;
+        // get the iso value of A and typecast to C->type
+        // cwork = (ctype) Ax [0]
+        GB_COPY_aij_to_cwork (cwork, Ax, 0, true) ;
     }
-    #endif
     #endif
 
     //--------------------------------------------------------------------------
@@ -89,9 +87,9 @@
                 //--------------------------------------------------------------
 
                 int64_t j = GBH_M (Mh, k) ;
-                int64_t pM_start, pM_end ;
-                GB_get_pA (&pM_start, &pM_end, tid, k,
-                    kfirst, klast, pstart_Mslice, Mp, Mvlen) ;
+                GB_GET_PA (pM_start, pM_end, tid, k,
+                    kfirst, klast, pstart_Mslice,
+                    GBP_M (Mp, k, Mvlen), GBP_M (Mp, k+1, Mvlen)) ;
 
                 //--------------------------------------------------------------
                 // C<M(:,j)> = A(:,j)
@@ -155,9 +153,9 @@
                     //----------------------------------------------------------
 
                     int64_t j = GBH_M (Mh, k) ;
-                    int64_t pM_start, pM_end ;
-                    GB_get_pA (&pM_start, &pM_end, tid, k,
-                        kfirst, klast, pstart_Mslice, Mp, Mvlen) ;
+                    GB_GET_PA (pM_start, pM_end, tid, k,
+                        kfirst, klast, pstart_Mslice,
+                        GBP_M (Mp, k, Mvlen), GBP_M (Mp, k+1, Mvlen)) ;
 
                     //----------------------------------------------------------
                     // C<M(:,j)> = A(:,j)

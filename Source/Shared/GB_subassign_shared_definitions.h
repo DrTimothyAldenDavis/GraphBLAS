@@ -332,6 +332,18 @@
     }
     #endif
 
+    #ifndef GB_COPY_aij_to_cwork
+    #define GB_COPY_aij_to_cwork(cwork,Ax,pA,A_iso)                         \
+    {                                                                       \
+        /* cwork = (ctype) A(i,j), with typecasting */                      \
+        if (!C_iso)                                                         \
+        {                                                                   \
+            cast_A_to_C (cwork, Ax +(A_iso ? 0: (pA)*asize), asize) ;       \
+        }                                                                   \
+    }
+
+    #endif
+
     #ifndef GB_COPY_aij_to_ywork
     #define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso)                         \
     {                                                                       \

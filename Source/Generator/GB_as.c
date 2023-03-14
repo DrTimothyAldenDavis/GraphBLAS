@@ -17,6 +17,8 @@
 // A and C matrices
 GB_atype
 GB_ctype
+GB_declarec
+GB_copy_aij_to_cwork
 GB_copy_aij_to_c
 GB_copy_scalar_to_c
 GB_ax_mask
@@ -72,7 +74,6 @@ GrB_Info GB (_subassign_06d)
     return (GrB_NO_VALUE) ;
     #else
     ASSERT (C->type == A->type) ;
-
     #include "GB_subassign_06d_template.c"
     return (GrB_SUCCESS) ;
     #endif

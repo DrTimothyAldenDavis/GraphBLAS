@@ -26,6 +26,7 @@
 #define GB_A_TYPE int8_t
 #define GB_C_TYPE int32_t
 #define GB_DECLAREC(cwork) int32_t cwork
+#define GB_COPY_aij_to_cwork(cwork,Ax,pA,A_iso) cwork = ((int8_t) Ax [A_iso ? 0 : (pA)])
 #define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) Cx [pC] = (A_iso) ? cwork : ((int8_t) Ax [pA])
 #define GB_COPY_scalar_to_C(pC,cwork) Cx [pC] = cwork
 #define GB_AX_MASK(Ax,pA,asize) (Ax [pA] != 0)
