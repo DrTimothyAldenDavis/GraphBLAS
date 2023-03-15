@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: needed (now).
+
 // C += scalar where C is a dense or full matrix.
 // C can have any sparsity format, as long as all entries are present;
 // GB_is_dense (C)) must hold.

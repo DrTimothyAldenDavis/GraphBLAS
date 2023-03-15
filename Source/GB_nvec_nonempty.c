@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 // All pending tuples are ignored.  If a vector has all zombies it is still
 // counted as non-empty.
 

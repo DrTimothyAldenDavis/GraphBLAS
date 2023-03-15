@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: done.
+
 // c = accum (c, reduce_to_scalar(A)), reduce entries in a matrix to a scalar.
 // Does the work for GrB_*_reduce_TYPE, both matrix and vector.
 
@@ -110,6 +112,8 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         //----------------------------------------------------------------------
 
         GB_OK (GB_reduce_to_scalar_cuda (z, monoid, A)) ;
+        // FIXME: return info instead (GrB_NO_VALUE means not done on GPU,
+        // GrB_SUCCESS means done, other return as error)
 
     }
     else

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: done.
+
 // C = A.*B where A is sparse/hyper and B is bitmap/full constructs C with
 // the same sparsity structure as A.
 

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: needed.
+
 // GB_masker_phase1 counts the number of entries in each vector of R, for R =
 // masker (C,M,Z), and then does a cumulative sum to find Cp.  GB_masker_phase1
 // is preceded by GB_add_phase0, which finds the non-empty vectors of R.  This

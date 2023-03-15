@@ -55,7 +55,7 @@ void GB_macrofy_unop
         }
 
     }
-    else if (ecode == 255)
+    else if (ecode == 254)
     {
 
         //----------------------------------------------------------------------
@@ -672,35 +672,35 @@ void GB_macrofy_unop
             // IndexUnaryOps
             //------------------------------------------------------------------
 
-            case 232 : f = "z = (i >= 0)" ;             break ;
+            case 231 : f = "z = (i >= 0)" ;             break ;
 
-            case 233 : f = "z = ((i) + (y))" ;          break ;
-            case 234 : f = "z = ((i) <= (y))" ;         break ;
-            case 235 : f = "z = ((i) > (y))" ;          break ;
+            case 232 : f = "z = ((i) + (y))" ;          break ;
+            case 233 : f = "z = ((i) <= (y))" ;         break ;
+            case 234 : f = "z = ((i) > (y))" ;          break ;
 
-            case 236 : f = "z = ((j) + (y))" ;          break ;
-            case 237 : f = "z = ((j) <= (y))" ;         break ;
-            case 238 : f = "z = ((j) > (y))" ;          break ;
+            case 235 : f = "z = ((j) + (y))" ;          break ;
+            case 236 : f = "z = ((j) <= (y))" ;         break ;
+            case 237 : f = "z = ((j) > (y))" ;          break ;
 
-            case 239 : f = "z = ((j) - ((i) + (y)))" ;  break ;
-            case 240 : f = "z = ((i) - ((j) + (y)))" ;  break ;
-            case 241 : f = "z = ((j) <= ((i) + (y)))" ; break ;
-            case 242 : f = "z = ((j) >= ((i) + (y)))" ; break ;
-            case 243 : f = "z = ((j) == ((i) + (y)))" ; break ;
-            case 244 : f = "z = ((j) != ((i) + (y)))" ; break ;
+            case 238 : f = "z = ((j) - ((i) + (y)))" ;  break ;
+            case 230 : f = "z = ((i) - ((j) + (y)))" ;  break ;
+            case 240 : f = "z = ((j) <= ((i) + (y)))" ; break ;
+            case 241 : f = "z = ((j) >= ((i) + (y)))" ; break ;
+            case 242 : f = "z = ((j) == ((i) + (y)))" ; break ;
+            case 243 : f = "z = ((j) != ((i) + (y)))" ; break ;
 
-            case 245 : f = "z = GB_FC32_ne (x,y)" ;     break ;
-            case 246 : f = "z = GB_FC64_ne (x,y)" ;     break ;
-            case 247 : f = "z = ((x) != (y))" ;         break ;
+            case 244 : f = "z = GB_FC32_ne (x,y)" ;     break ;
+            case 245 : f = "z = GB_FC64_ne (x,y)" ;     break ;
+            case 246 : f = "z = ((x) != (y))" ;         break ;
 
-            case 248 : f = "z = GB_FC32_eq (x,y)" ;     break ;
-            case 249 : f = "z = GB_FC64_eq (x,y)" ;     break ;
-            case 250 : f = "z = ((x) == (y))" ;         break ;
+            case 247 : f = "z = GB_FC32_eq (x,y)" ;     break ;
+            case 248 : f = "z = GB_FC64_eq (x,y)" ;     break ;
+            case 249 : f = "z = ((x) == (y))" ;         break ;
 
-            case 251 : f = "z = ((x) > (y))" ;          break ;
-            case 252 : f = "z = ((x) >= (y))" ;         break ;
-            case 253 : f = "z = ((x) < (y))" ;          break ;
-            case 254 : f = "z = ((x) <= (y))" ;         break ;
+            case 250 : f = "z = ((x) > (y))" ;          break ;
+            case 251 : f = "z = ((x) >= (y))" ;         break ;
+            case 252 : f = "z = ((x) < (y))" ;          break ;
+            case 253 : f = "z = ((x) <= (y))" ;         break ;
 
             default: ;
         }

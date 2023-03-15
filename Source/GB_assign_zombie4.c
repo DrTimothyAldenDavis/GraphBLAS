@@ -7,6 +7,11 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: 96 variants, so perhaps not on CPU.  Could use one for each mask
+// type (6: 1, 2, 4, 8, 16 bytes and structural), for each matrix type (4:
+// bitmap/full/sparse/ hyper), mask comp (2), C sparsity (2: sparse/hyper):
+// 6*4*2*2 = 96 variants, so a JIT kernel is reasonable.
+
 // For GrB_Row_assign or GrB_Col_assign, C(i,J)<M,repl>=..., if C_replace is
 // true, and mask M is present, then any entry C(i,j) outside the list J must
 // be deleted, if M(0,j)=0.
@@ -21,7 +26,7 @@
 #include "GB_assign.h"
 #include "GB_assign_zombie.h"
 
-void GB_assign_zombie4
+GrB_Info GB_assign_zombie4
 (
     GrB_Matrix C,                   // the matrix C, or a copy
     const GrB_Matrix M,
@@ -191,5 +196,6 @@ void GB_assign_zombie4
     //--------------------------------------------------------------------------
 
     C->nzombies = nzombies ;
+    return (GrB_SUCCESS) ;
 }
 

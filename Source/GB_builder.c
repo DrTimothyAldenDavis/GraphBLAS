@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: done.
+
 // CALLED BY: GB_build, GB_wait, GB_transpose, GB_concat_hyper
 
 // This function is called by GB_build to build a matrix T for GrB_Matrix_build

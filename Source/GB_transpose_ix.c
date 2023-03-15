@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: done.
+
 // The values of A are typecasted to C->type, the type of the C matrix.
 
 // If A is sparse or hypersparse

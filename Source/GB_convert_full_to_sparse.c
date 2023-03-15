@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 #include "GB.h"
 
 GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse

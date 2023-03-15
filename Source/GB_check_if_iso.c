@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: needed (now).
+
 // Returns true if all entries in A are the same, and A can then be converted
 // to iso if currently non-iso.  Returns false if A is bitmap, has any zombies,
 // or has or pending tuples, since these are more costly to check.

@@ -34,6 +34,8 @@
 // for GB_ASSIGN, C<!,replace>(I,J)=anything clears all of C, regardless of
 // I and J.  In that case, GB_assign_prep calls GB_clear instead.
 
+// JIT: needed.
+
 #include "GB_subassign_shared_definitions.h"
 #include "GB_bitmap_assign_methods.h"
 

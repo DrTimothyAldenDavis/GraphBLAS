@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 // Sort an index array and remove duplicates:
 
 /*

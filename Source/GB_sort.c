@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: needed.
+
 #include "GB_sort.h"
 #include "GB_transpose.h"
 #include "GB_ek_slice.h"

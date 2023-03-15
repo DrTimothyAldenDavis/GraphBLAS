@@ -24,6 +24,8 @@
 // TODO: if the monoid is ANY, quick return GrB_SUCCESS and done_in_place
 // true, also for saxpy4.  No work is needed and C doesn't change.
 
+// JIT: done, but expand use of AVX to more semirings.
+
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"

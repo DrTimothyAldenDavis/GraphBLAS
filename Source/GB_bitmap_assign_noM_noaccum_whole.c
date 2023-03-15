@@ -41,6 +41,8 @@
 // For matrix assignment, C = A, if A is sparse or hyper and C may become
 // sparse or hyper, then the assignement is done by GB_subassign_24.
 
+// JIT: needed.
+
 #include "GB_subassign_shared_definitions.h"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_subassign_dense.h"

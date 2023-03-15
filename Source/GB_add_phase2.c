@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: done.
+
 // GB_add_phase2 computes C=A+B, C<M>=A+B, or C<!M>A+B.  It is preceded first
 // by GB_add_phase0, which computes the list of vectors of C to compute (Ch)
 // and their location in A and B (C_to_[AB]).  Next, GB_add_phase1 counts the

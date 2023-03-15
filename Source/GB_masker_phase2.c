@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: needed.
+
 // GB_masker_phase2 computes R = masker (C,M,Z).  It is preceded first by
 // GB_add_phase0, which computes the list of vectors of R to compute (Rh) and
 // their location in C and Z (R_to_[CZ]).  Next, GB_masker_phase1 counts the

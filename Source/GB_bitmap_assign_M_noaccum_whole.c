@@ -22,6 +22,8 @@
 // A:           matrix (hyper, sparse, bitmap, or full), or scalar
 // kind:        assign or subassign (same action)
 
+// JIT: needed.
+
 #include "GB_subassign_shared_definitions.h"
 #include "GB_bitmap_assign_methods.h"
 

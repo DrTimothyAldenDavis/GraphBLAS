@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 // A is bitmap or as-if-full.  C is bitmap
 
 #include "GB_select.h"

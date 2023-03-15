@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: needed.
+
 // If A is iso and Ax_new is not NULL, the iso scalar is expanded into the
 // non-iso array Ax_new.  Otherwise, if Ax_new and Ax are NULL then no values
 // are extracted.

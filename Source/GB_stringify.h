@@ -545,7 +545,7 @@ bool GB_enumify_apply       // enumerate an apply or tranpose/apply problem
 void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 (
     // output:
-    int *ecode,         // enumerated operator, range 0 to 255
+    int *ecode,         // enumerated operator, range 0 to 254
     bool *depends_on_x, // true if the op depends on x
     bool *depends_on_i, // true if the op depends on i
     bool *depends_on_j, // true if the op depends on j
@@ -687,6 +687,32 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
     const GB_void *restrict ythunk,
     const GrB_IndexUnaryOp op,
     const int nthreads
+) ;
+
+//------------------------------------------------------------------------------
+// assign/subassign kernel
+//------------------------------------------------------------------------------
+
+bool GB_enumify_assign      // enumerate a GrB_assign problem
+(
+    // output:
+    uint64_t *scode,        // unique encoding of the entire operation
+    // input:
+    // C matrix:
+    GrB_Matrix C,
+    bool C_replace,
+    // index types:
+    int Ikind,              // 0: all (no I), 1: range, 2: stride, 4: list
+    int Jkind,              // ditto
+    // M matrix:
+    GrB_Matrix M,           // may be NULL
+    bool Mask_struct,       // mask is structural
+    bool Mask_comp,         // mask is complemented
+    // operator:
+    GrB_BinaryOp accum,     // the accum operator to enumify (may be NULL)
+    // A matrix
+    GrB_Matrix A,           // NULL for scalar assign
+    int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
 ) ;
 
 #endif

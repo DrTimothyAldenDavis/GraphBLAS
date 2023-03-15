@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed, but many variants possible (matrix sparsity formats)
+
 // On input, A, B, and M (optional) are matrices for C=A*B, C<M>=A*B, or
 // C<!M>=A*B.  The flop count for each B(:,j) is computed, and returned as a
 // cumulative sum.  This function is CSR/CSC agnostic, but for simplicity of

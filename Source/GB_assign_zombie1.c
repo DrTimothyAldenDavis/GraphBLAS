@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 // C(:,j)<!> = anything: GrB_Row_assign or GrB_Col_assign with an empty
 // complemented mask requires all entries in the C(:,j) vector to be deleted.
 // C must be sparse or hypersparse.
@@ -16,7 +18,7 @@
 #include "GB_assign.h"
 #include "GB_assign_zombie.h"
 
-void GB_assign_zombie1
+GrB_Info GB_assign_zombie1
 (
     GrB_Matrix C,
     const int64_t j
@@ -88,5 +90,6 @@ void GB_assign_zombie1
     //--------------------------------------------------------------------------
 
     C->nzombies = nzombies ;
+    return (GrB_SUCCESS) ;
 }
 

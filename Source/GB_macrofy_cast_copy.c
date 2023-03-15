@@ -43,16 +43,17 @@ void GB_macrofy_cast_copy
     int nargs ;
     const char *f = GB_macrofy_cast_expression (fp, ctype, atype, &nargs) ;
 
-    char carg [256] ;
-    snprintf (carg, 255, "%sx [p%s]", cname, cname) ;
-    char aarg [256] ;
+    #define SLEN 256
+    char carg [SLEN+1] ;
+    snprintf (carg, SLEN, "%sx [p%s]", cname, cname) ;
+    char aarg [SLEN+1] ;
     if (A_iso)
     {
-        snprintf (aarg, 255, "%sx [0]", aname) ;
+        snprintf (aarg, SLEN, "%sx [0]", aname) ;
     }
     else
     {
-        snprintf (aarg, 255, "%sx [p%s]", aname, aname) ;
+        snprintf (aarg, SLEN, "%sx [p%s]", aname, aname) ;
     }
 
     fprintf (fp, " ") ;

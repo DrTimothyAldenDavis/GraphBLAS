@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 // Decompress a single array from a set of compressed blocks in the blob.  If
 // the input data is mangled, this method is still safe, since it performs the
 // bare minimum sanity checks to ensure no out-of-bounds indexing of arrays.

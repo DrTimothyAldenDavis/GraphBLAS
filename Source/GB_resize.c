@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 #include "GB_select.h"
 #include "GB_scalar_wrap.h"
 

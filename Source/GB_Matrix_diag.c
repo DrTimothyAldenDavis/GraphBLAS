@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 #define GB_FREE_WORKSPACE   \
 {                           \
     GB_Matrix_free (&T) ;   \

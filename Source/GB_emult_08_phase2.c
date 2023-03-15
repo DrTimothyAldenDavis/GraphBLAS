@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: done.
+
 // GB_emult_08_phase2 computes C=A.*B, C<M>=A.*B, or C<!M>=A.*B.  It is
 // preceded first by GB_emult_08_phase0, which computes the list of vectors of
 // C to compute (Ch) and their location in M, A, and B (C_to_[MAB]).  Next,

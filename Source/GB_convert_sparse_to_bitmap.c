@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: needed (now).
+
 #include "GB_ek_slice.h"
 
 #define GB_FREE_WORKSPACE                   \

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 // A parallel mergesort of an array of 1-by-n integers.
 
 #include "GB_msort_1.h"

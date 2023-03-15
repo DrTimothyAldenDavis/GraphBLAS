@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed, but could use variants for sparsity formats.
+
 // Constructs a set of tasks to compute C, for an element-wise operation that
 // operates on two input matrices, C=op(A,B).  These include:
 // GB_add, GB_emult, and GB_masker, and many GB_subassign_* methods

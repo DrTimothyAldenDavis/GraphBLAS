@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 // Compute the cumulative sum of an array count[0:n], of size n+1:
 
 //      k = sum (count [0:n-1] != 0) ;

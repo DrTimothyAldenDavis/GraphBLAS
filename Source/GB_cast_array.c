@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: done.
+
 // Casts an input array A->x to an output array Cx with a different type.  The
 // two types are always different, so this does not need to handle user-defined
 // types.  The iso case is not handled; A->x and Cx must be the same size and no

@@ -10,6 +10,8 @@
 // C=A(I,J), where A is bitmap or full, symbolic and numeric.
 // See GB_subref for details.
 
+// JIT: needed.
+
 #include "GB_subref.h"
 #include "GB_subassign_IxJ_slice.h"
 

@@ -499,7 +499,7 @@ GrB_Info GB_assign_prep
                         GB_MATRIX_WAIT_IF_JUMBLED (C) ;
                         GB_ENSURE_SPARSE (C) ;
                         GBURBLE ("C(i,:)=zombie ") ;
-                        GB_assign_zombie2 (C, I [0]) ;
+                        GB_OK (GB_assign_zombie2 (C, I [0])) ;
                     }
                 }
                 break ;
@@ -533,7 +533,7 @@ GrB_Info GB_assign_prep
                         GB_ENSURE_SPARSE (C) ;
                         GBURBLE ("C(:,j)=zombie ") ;
                         GB_OK (GB_hyper_hash_build (C, Werk)) ;
-                        GB_assign_zombie1 (C, J [0]) ;
+                        GB_OK (GB_assign_zombie1 (C, J [0])) ;
                     }
                 }
                 break ;
@@ -1005,7 +1005,6 @@ GrB_Info GB_assign_prep
             ASSERT (GB_JUMBLED_OK (C)) ;
             ASSERT (!GB_PENDING (C)) ;
             // Cwork = duplicate of C, which must be freed when done
-            // set Cwork->iso = C->iso OK
             GB_OK (GB_dup_worker (&Cwork, C->iso, C, true, NULL)) ;
         }
         // Cwork must be transplanted back into C when done
@@ -1228,14 +1227,14 @@ GrB_Info GB_assign_prep
     { 
         // C is iso on input, but non-iso on output; expand the iso value
         // into all of C->x
-        // set C->iso = false    OK
+        // set C->iso = false
         GB_OK (GB_convert_any_to_non_iso (C, true)) ;
     }
     else if (!C->iso && C_iso_out)
     { 
         // C is non-iso on input, but iso on output
         // copy the cout scalar into C->x
-        // set C->iso = true    OK
+        // set C->iso = true
         GB_OK (GB_convert_any_to_iso (C, cout)) ;
     }
     else if (C->iso && C_iso_out)

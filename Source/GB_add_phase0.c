@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 // The eWise add of two matrices, C=A+B, C<M>=A+B, or C<!M>=A+B starts with
 // this phase, which determines which vectors of C need to be computed.
 // This phase is also used for GB_masker, and for GB_SUBASSIGN_TWO_SLICE.

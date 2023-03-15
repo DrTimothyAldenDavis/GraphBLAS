@@ -22,6 +22,8 @@
 // performance is not as good as it could be.  For large problems, C=(A')*B is
 // faster with the saxpy3 method, as compared to this method with C=A'*B.
 
+// JIT: done.
+
 #define GB_FREE_WORKSPACE                   \
 {                                           \
     GB_Matrix_free (&Mwork) ;               \

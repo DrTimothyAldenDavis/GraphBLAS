@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: done.
+
 #include "GB_select.h"
 #include "GB_ek_slice.h"
 #ifndef GBCUDA_DEV

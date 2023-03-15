@@ -11,19 +11,19 @@
 #define GB_ASSIGN_ZOMBIE_H
 #include "GB_ij.h"
 
-void GB_assign_zombie1
+GrB_Info GB_assign_zombie1
 (
     GrB_Matrix C,
     const int64_t j
 ) ;
 
-void GB_assign_zombie2
+GrB_Info GB_assign_zombie2
 (
     GrB_Matrix C,
     const int64_t i
 ) ;
 
-void GB_assign_zombie3
+GrB_Info GB_assign_zombie3
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -36,7 +36,7 @@ void GB_assign_zombie3
     const int64_t Icolon [3]
 ) ;
 
-void GB_assign_zombie4
+GrB_Info GB_assign_zombie4
 (
     GrB_Matrix C,
     const GrB_Matrix M,

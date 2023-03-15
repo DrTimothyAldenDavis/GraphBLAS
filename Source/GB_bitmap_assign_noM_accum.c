@@ -32,6 +32,8 @@
 // already been handled by GB_assign_prep, which calls
 // GB_bitmap_assign_noM_noaccum, with a scalar (which is unused).
 
+// JIT: needed.
+
 #include "GB_subassign_shared_definitions.h"
 #include "GB_bitmap_assign_methods.h"
 

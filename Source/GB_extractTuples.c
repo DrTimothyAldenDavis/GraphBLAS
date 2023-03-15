@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 // Extracts all tuples from a matrix, like [I,J,X] = find (A).  If any
 // parameter I, J and/or X is NULL, then that component is not extracted.  The
 // size of the I, J, and X arrays (those that are not NULL) is given by nvals,

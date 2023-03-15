@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: needed.
+
 // C = kron(A,B) where op determines the binary multiplier to use.  The type of
 // A and B are compatible with the x and y inputs of z=op(x,y), but can be
 // different.  The type of C is the type of z.  C is hypersparse if either A

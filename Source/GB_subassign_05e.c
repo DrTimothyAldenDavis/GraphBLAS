@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.
+
 // Method 05e: C(:,:)<M,struct> = scalar ; no S
 // compare with Methods 21, 25, and 05d
 

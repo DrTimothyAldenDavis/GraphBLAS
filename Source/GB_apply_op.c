@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: done, but could extend for positional ops.
+
 // Cx = op (A)
 
 // Cx and A->x may be aliased.

@@ -322,8 +322,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 GBURBLE ("assign zombies outside C(I,j) ") ;
                 GB_MATRIX_WAIT (M) ;
                 GB_OK (GB_hyper_hash_build (C, Werk)) ;
-                GB_assign_zombie3 (C, M, Mask_comp, Mask_struct,
-                    j, I, nI, Ikind, Icolon) ;
+                GB_OK (GB_assign_zombie3 (C, M, Mask_comp, Mask_struct,
+                    j, I, nI, Ikind, Icolon)) ;
 
             }
             else if (assign_kind == GB_ROW_ASSIGN)
@@ -342,8 +342,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 GB_MATRIX_WAIT_IF_JUMBLED (C) ;
                 GB_MATRIX_WAIT (M) ;
                 GB_OK (GB_hyper_hash_build (M, Werk)) ;
-                GB_assign_zombie4 (C, M, Mask_comp, Mask_struct,
-                    i, J, nJ, Jkind, Jcolon) ;
+                GB_OK (GB_assign_zombie4 (C, M, Mask_comp, Mask_struct,
+                    i, J, nJ, Jkind, Jcolon)) ;
 
             }
             else

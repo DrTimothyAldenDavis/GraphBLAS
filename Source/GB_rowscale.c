@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: done.
+
 #include "GB_mxm.h"
 #include "GB_binop.h"
 #include "GB_apply.h"

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 // Removes empty vectors from a hypersparse list.  On input, *Ap and *Ah are
 // assumed to be NULL.  The input arrays Ap_old and Ah_old are not modified,
 // and thus can be shallow content from another matrix.  New hyperlists Ap and

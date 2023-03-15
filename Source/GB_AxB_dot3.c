@@ -12,6 +12,8 @@
 // applied.  C and M are both sparse or hypersparse, and have the same sparsity
 // structure.
 
+// JIT: done.
+
 #include "GB_mxm.h"
 #include "GB_binop.h"
 #include "GB_stringify.h"

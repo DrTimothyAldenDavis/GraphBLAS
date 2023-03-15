@@ -16,7 +16,7 @@
 void GB_enumify_binop
 (
     // output:
-    int *ecode,         // enumerated operator, range 0 to 139
+    int *ecode,         // enumerated operator, range 0 to 140
     // input:
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
     GB_Type_code xcode, // op->xtype->code of the operator
@@ -467,9 +467,9 @@ void GB_enumify_binop
 
             e = 139 ; break ;
 
-        case GB_NOP_code :              // no operator for GB_wait
+        case GB_NOP_code :              // no operator present
 
-            e = 140 ; break ;
+            e = 255 ; break ;
 
         default: ;
     }

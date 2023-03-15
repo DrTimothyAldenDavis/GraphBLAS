@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 // The eWise multiply of two matrices, C=A.*B, C<M>=A.*B, or C<!M>=A.*B starts
 // with this phase, which determines which vectors of C need to be computed.
 

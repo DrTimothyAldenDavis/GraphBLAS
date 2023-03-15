@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 // C = A' or op(A').  Optionally typecasts from A->type to the new type ctype,
 // and/or optionally applies a unary operator.
 

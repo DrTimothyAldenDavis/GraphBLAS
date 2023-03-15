@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: done, but could be extended. symbolic phase 1 has 48 variants of mask
+// M, matrices A, B.  6 mask types x (M sparse or hyper) x A and B (bitmap or
+// full) = 48.  Use the JIT for select phase1 instead?
+
 // C<M>= A.*B, M sparse/hyper, A and B bitmap/full.  C has the same sparsity
 // structure as M, and its pattern is a subset of M.  M is not complemented.
 

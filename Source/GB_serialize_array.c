@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 // Parallel compression method for an array.  The array is compressed into
 // a sequence of independently allocated blocks, or returned as-is if not
 // compressed.  Currently, only LZ4, LZ4HC, and ZSTD are supported.

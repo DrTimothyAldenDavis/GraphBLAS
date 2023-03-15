@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 // CALLS:     GB_builder
 
 // The matrix A has zombies and/or pending tuples placed there by

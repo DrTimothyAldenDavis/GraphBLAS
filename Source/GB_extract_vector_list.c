@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed, but 3 variants possible (sparse/hyper/full)
+
 // Constructs a list of vector indices for each entry in a matrix.  Creates
 // the output J for GB_extractTuples, and I for GB_transpose when the qsort
 // method is used.

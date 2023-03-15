@@ -32,6 +32,8 @@
 // already been handled by GB_assign_prep, which calls GB_clear, and thus
 // Mask_comp is always false in this method.
 
+// JIT: needed.
+
 #include "GB_subassign_shared_definitions.h"
 #include "GB_bitmap_assign_methods.h"
 

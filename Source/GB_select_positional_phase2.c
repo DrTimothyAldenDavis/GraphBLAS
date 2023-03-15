@@ -9,6 +9,8 @@
 
 // A is sparse or hypersparse
 
+// JIT: not needed, but 3 variants possible (A sparse, hyper, or full for DIAG)
+
 #include "GB_select.h"
 #include "GB_ek_slice.h"
 

@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: 36 variants, so perhaps not on CPU. One for each mask type (6: 1, 2, 4,
+// 8, 16 bytes and structural), for each matrix type (3: bitmap/full/sparse &
+// hyper), mask comp (2).  No variants needed for C.
+
 // For GrB_Row_assign or GrB_Col_assign, C(I,j)<#M,repl>=any must delete all
 // entries C(i,j) outside of C(I,j), if the mask M(i,0) (or its complement) is
 // zero.  This step is not done for GxB_*_subassign, since that method does not
@@ -24,7 +28,7 @@
 #include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 
-void GB_assign_zombie3
+GrB_Info GB_assign_zombie3
 (
     GrB_Matrix C,                   // the matrix C, or a copy
     const GrB_Matrix M,
@@ -157,5 +161,6 @@ void GB_assign_zombie3
     //--------------------------------------------------------------------------
 
     C->nzombies = nzombies ;
+    return (GrB_SUCCESS) ;
 }
 

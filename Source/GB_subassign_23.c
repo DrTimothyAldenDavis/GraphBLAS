@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: needed (now).
+
 // C and A must have the same vector dimension and vector length.
 // FUTURE::: the transposed case, C+=A' could easily be done.
 // The parallelism used is identical to GB_colscale.

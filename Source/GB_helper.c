@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: not needed.  Only one variant possible.
+
 // These functions are only used by the @GrB interface for
 // SuiteSparse:GraphBLAS.
 

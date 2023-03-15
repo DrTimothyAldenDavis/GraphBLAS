@@ -47,7 +47,7 @@ bool GB_enumify_select      // enumerate a GrB_selectproblem
     GB_enumify_unop (&idxop_ecode, &depends_on_x, &depends_on_i,
         &depends_on_j, &depends_on_y, flipij, opcode, xcode) ;
 
-    ASSERT (idxop_ecode >= 232 && idxop_ecode <= 255) ;
+    ASSERT (idxop_ecode >= 231 && idxop_ecode <= 254) ;
 
     if (!depends_on_x)
     {
@@ -115,7 +115,7 @@ bool GB_enumify_select      // enumerate a GrB_selectproblem
                 GB_LSHIFT (flipij     , 32) |  // 0 or 1       1
 
                 // op, z = f(x,i,j,y) (5 hex digits)
-                GB_LSHIFT (idxop_ecode, 24) |  // 232 to 255   8
+                GB_LSHIFT (idxop_ecode, 24) |  // 231 to 254   8
                 GB_LSHIFT (zcode      , 20) |  // 0 to 14      4
                 GB_LSHIFT (xcode      , 16) |  // 0 to 14      4
                 GB_LSHIFT (ycode      , 12) |  // 0 to 14      4

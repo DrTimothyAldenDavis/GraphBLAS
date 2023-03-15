@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: needed (now).
+
 #define GB_FREE_WORKSPACE                   \
     GB_WERK_POP (A_ek_slicing, int64_t) ;   \
     GB_Matrix_free (&T) ;

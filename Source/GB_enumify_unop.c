@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Handles GrB_UnaryOp (ecodes 0 to 160) and GrB_IndexUnaryOp (237 to 255).
+// Handles GrB_UnaryOp (ecodes 0 to 160) and GrB_IndexUnaryOp (231 to 254).
 //
 // A GrB_UnaryOp is a function of the form z = f(x), but the C signature for
 // user-defined functions is:
@@ -25,7 +25,7 @@
 void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 (
     // output:
-    int *ecode,         // enumerated operator, range 0 to 255
+    int *ecode,         // enumerated operator, range 0 to 254
     bool *depends_on_x, // true if the op depends on x
     bool *depends_on_i, // true if the op depends on i
     bool *depends_on_j, // true if the op depends on j
@@ -620,67 +620,67 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
         case GB_NONZOMBIE_idxunop_code  :   // z = (i >= 0) ;
             i_dep = true ;
-            e = 232 ; break ;
+            e = 231 ; break ;
 
         // Result is INT32 or INT64, depending on i and y:
         case GB_ROWINDEX_idxunop_code   :   // z = (i+y)
             i_dep = true ;
-            e = 233 ; break ;
+            e = 232 ; break ;
 
         // Result is BOOL, depending on i and y:
         case GB_ROWLE_idxunop_code      :   // z = (i <= y)
             i_dep = true ;
-            e = 234 ; break ;
+            e = 233 ; break ;
 
         case GB_ROWGT_idxunop_code      :   // z = (i > y)
             i_dep = true ;
-            e = 235 ; break ;
+            e = 234 ; break ;
 
         // Result is INT32 or INT64, depending on j and y:
         case GB_COLINDEX_idxunop_code   :   // z = (j+y)
             j_dep = true ;
-            e = 236 ; break ;
+            e = 235 ; break ;
 
         // Result is BOOL, depending on j and y:
         case GB_COLLE_idxunop_code      :   // z = (j <= y)
             j_dep = true ;
-            e = 237 ; break ;
+            e = 236 ; break ;
 
         case GB_COLGT_idxunop_code      :   // z = (j > y)
             j_dep = true ;
-            e = 238 ; break ;
+            e = 237 ; break ;
 
         // Result is INT32 or INT64, depending on i, j, and y:
         case GB_DIAGINDEX_idxunop_code  :   // z = (j-(i+y))
             i_dep = true ;
             j_dep = true ;
-            e = 239 ; break ;
+            e = 238 ; break ;
 
         case GB_FLIPDIAGINDEX_idxunop_code :// z = (i-(j+y))
             i_dep = true ;
             j_dep = true ;
-            e = 240 ; break ;
+            e = 239 ; break ;
 
         // Result is BOOL, depending on i, j, and y:
         case GB_TRIL_idxunop_code       :   // z = (j <= (i+y))
             i_dep = true ;
             j_dep = true ;
-            e = 241 ; break ;
+            e = 240 ; break ;
 
         case GB_TRIU_idxunop_code       :   // z = (j >= (i+y))
             i_dep = true ;
             j_dep = true ;
-            e = 242 ; break ;
+            e = 241 ; break ;
 
         case GB_DIAG_idxunop_code       :   // z = (j == (i+y))
             i_dep = true ;
             j_dep = true ;
-            e = 243 ; break ;
+            e = 242 ; break ;
 
         case GB_OFFDIAG_idxunop_code    :   // z = (j != (i+y))
             i_dep = true ;
             j_dep = true ;
-            e = 244 ; break ;
+            e = 243 ; break ;
 
         //----------------------------------------------------------------------
         // built-in GrB_IndexUnaryOps that depend on x
@@ -691,9 +691,9 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                case GB_FC32_code   : e = 245 ; break ; // GB_FC32_ne (x,y)
-                case GB_FC64_code   : e = 246 ; break ; // GB_FC64_ne (x,y)
-                default             : e = 247 ; break ; // z = (x != y)
+                case GB_FC32_code   : e = 244 ; break ; // GB_FC32_ne (x,y)
+                case GB_FC64_code   : e = 245 ; break ; // GB_FC64_ne (x,y)
+                default             : e = 246 ; break ; // z = (x != y)
             }
             break ;
 
@@ -701,20 +701,20 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                case GB_FC32_code   : e = 248 ; break ; // GB_FC32_eq (x,y)
-                case GB_FC64_code   : e = 249 ; break ; // GB_FC64_eq (x,y)
-                default             : e = 250 ; break ; // z = (x == y)
+                case GB_FC32_code   : e = 247 ; break ; // GB_FC32_eq (x,y)
+                case GB_FC64_code   : e = 248 ; break ; // GB_FC64_eq (x,y)
+                default             : e = 249 ; break ; // z = (x == y)
             }
             break ;
 
         case GB_VALUEGT_idxunop_code    :   // z = (x > y)
-            e = 251 ; break ;
+            e = 250 ; break ;
         case GB_VALUEGE_idxunop_code    :   // z = (x >= y)
-            e = 252 ; break ;
+            e = 251 ; break ;
         case GB_VALUELT_idxunop_code    :   // z = (x < y)
-            e = 253 ; break ;
+            e = 252 ; break ;
         case GB_VALUELE_idxunop_code    :   // z = (x <= y)
-            e = 254 ; break ;
+            e = 253 ; break ;
 
         //----------------------------------------------------------------------
         // user-defined GrB_IndexUnaryOp
@@ -723,7 +723,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
         case GB_USER_idxunop_code       : 
             i_dep = true ;
             j_dep = true ;
-            e = 255 ; break ;               // user-defined GrB_IndexUnaryOp
+            e = 254 ; break ;               // user-defined GrB_IndexUnaryOp
 
         default:;
     }
@@ -733,12 +733,12 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
     //--------------------------------------------------------------------------
 
     // all IDX ops depend on y, except for NONZOMBIE
-    (*depends_on_y) = (e >= 233 && e <= 255) ;
+    (*depends_on_y) = (e >= 232) ;
 
     // many operators depend on x:
     (*depends_on_x) = (e == 0)      // user unaryop
         || (e >= 2 && e <= 156)     // all unaryops except 1 and positional
-        || (e >= 245 && e <= 255) ; // VALUE ops and user idxop
+        || (e >= 244) ;             // VALUE ops and user idxop
 
     // operators that depend on i and/or j are affected by flipij:
     (*depends_on_i) = (flipij) ? j_dep : i_dep ;

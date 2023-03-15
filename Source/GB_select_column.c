@@ -7,7 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// The column selectors can be done in a single pass.  No JIT kernel is needed.
+// JIT: not needed.  Only one variant possible.
+
+// The column selectors can be done in a single pass.
 
 #include "GB_select.h"
 #include "GB_transpose.h"

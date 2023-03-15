@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// JIT: done.
+
 // C = op (A')
 
 // The values of A are typecasted to op->xtype and then passed to the unary
