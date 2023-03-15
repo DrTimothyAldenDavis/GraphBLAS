@@ -79,6 +79,7 @@ class GB_cuda_mxm_factory: public jit::File_Desc
     (
         // C matrix:
         bool C_iso,             // true if C is iso-valued
+        bool C_in_iso,          // C input iso status
         int C_sparsity,         // sparsity structure of C
         GrB_Type ctype,         // the type of C
         // M matrix:
@@ -108,6 +109,7 @@ class GB_cuda_mxm_factory: public jit::File_Desc
 	    &scode,         // unique encoding of the entire semiring
 	    // input:
             C_iso,          // true if C is iso-valued
+            C_in_iso,
 	    C_sparsity,     // sparsity structure of C
 	    ctype,          // the type of C
             // M matrix:

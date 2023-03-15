@@ -159,6 +159,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     int M_sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
     int C_sparsity = M_sparsity ;
     bool C_iso = false ;    // FIXME: pass in C_iso and cscalar
+    bool C_in_iso = false ;    // FIXME: pass in C_in_iso and cscalar
     info = GB_new_bix (&C, // sparse or hyper (from M), existing header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         M_sparsity, false, M->hyper_switch, cnvec,
@@ -228,7 +229,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     GB_cuda_mxm_factory my_mxm_spec = GB_cuda_mxm_factory ( ) ;
 
     // (1) create the mxm code and name
-    my_mxm_spec.mxm_factory ( C_iso, C_sparsity, ctype,
+    my_mxm_spec.mxm_factory ( C_iso, C_in_iso, C_sparsity, ctype,
         M, Mask_struct, false, semiring, flipxy, A, B) ;
 
     // (2) ensure the jitifier has "GB_mxm_[my_mxm_spec.sr_code].h"

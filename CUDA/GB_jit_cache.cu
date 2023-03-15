@@ -84,11 +84,13 @@ std::string getCacheDir() {
                                        : GRAPHBLAS_CACHE_PATH);
 
   struct stat st;
-  if ( (stat( kernel_cache_path.c_str(), &st) != 0) ) {
+  //if ( (stat( kernel_cache_path.c_str(), &st) != 0) ) {
+  if ( (stat( kernel_cache_path, &st) != 0) ) {
     // `mkdir -p` the kernel cache path if it doesn't exist
 //    printf("cache is going to path %s\n", kernel_cache_path.c_str());
     int status;
-    status = std::filesystem::create_directories(kernel_cache_path.c_str());
+    //status = std::filesystem::create_directories(kernel_cache_path.c_str());
+    status = std::filesystem::create_directories(kernel_cache_path);
 //    if (status != 0 ) return std::string();
     //boost::filesystem::create_directories(kernel_cache_path);
   }
