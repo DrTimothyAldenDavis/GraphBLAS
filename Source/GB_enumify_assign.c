@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// Enumify an assign operation: C(I,J)<M> += A.  No transpose is handled; this
-// is done first in GB_assign_prep.
+// Enumify an assign/subassign operation: C(I,J)<M> += A.  No transpose is
+// handled; this is done first in GB_assign_prep.
 
 // The user-callable methods, GrB_assign and GxB_subassign and their variants,
 // call GB_assign and GB_subassign, respectively.  Both of those call either
@@ -88,12 +88,12 @@ bool GB_enumify_assign      // enumerate a GrB_assign problem
 {
 
     //--------------------------------------------------------------------------
-    // get the types of C, A, and M
+    // get the types of C, M, and A
     //--------------------------------------------------------------------------
 
     GrB_Type ctype = C->type ;
-    GrB_Type atype = (A == NULL) ? NULL : A->type ;
     GrB_Type mtype = (M == NULL) ? NULL : M->type ;
+    GrB_Type atype = (A == NULL) ? NULL : A->type ;
 
     //--------------------------------------------------------------------------
     // get the types of X, Y, and Z

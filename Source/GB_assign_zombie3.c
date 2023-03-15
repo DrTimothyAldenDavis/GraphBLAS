@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: 36 variants, so perhaps not on CPU. One for each mask type (6: 1, 2, 4,
-// 8, 16 bytes and structural), for each matrix type (3: bitmap/full/sparse &
-// hyper), mask comp (2).  No variants needed for C.
+// JIT: not needed, but 36 variants possible, one for each mask type (6: 1, 2,
+// 4, 8, 16 bytes and structural), for each matrix type (3: bitmap/full/sparse
+// & hyper), mask comp (2).  No variants needed for C.
 
 // For GrB_Row_assign or GrB_Col_assign, C(I,j)<#M,repl>=any must delete all
 // entries C(i,j) outside of C(I,j), if the mask M(i,0) (or its complement) is

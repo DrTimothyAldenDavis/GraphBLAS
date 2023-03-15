@@ -7,10 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: 96 variants, so perhaps not on CPU.  Could use one for each mask
-// type (6: 1, 2, 4, 8, 16 bytes and structural), for each matrix type (4:
-// bitmap/full/sparse/ hyper), mask comp (2), C sparsity (2: sparse/hyper):
-// 6*4*2*2 = 96 variants, so a JIT kernel is reasonable.
+// JIT: not needed, but 96 variants. Could use one for each mask type (6: 1, 2,
+// 4, 8, 16 bytes and structural), for each matrix type (4: bitmap/full/sparse/
+// hyper), mask comp (2), C sparsity (2: sparse/hyper): 6*4*2*2 = 96 variants,
+// so a JIT kernel is reasonable.
 
 // For GrB_Row_assign or GrB_Col_assign, C(i,J)<M,repl>=..., if C_replace is
 // true, and mask M is present, then any entry C(i,j) outside the list J must
