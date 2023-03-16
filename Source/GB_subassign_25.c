@@ -162,9 +162,9 @@ GrB_Info GB_subassign_25
             // launch the switch factory
             //------------------------------------------------------------------
 
+            //
             if (C->type == A->type && ccode < GB_UDT_code)
             {
-                // FUTURE: use cases 1,2,4,8,16
                 // C<M> = A
                 switch (ccode)
                 {

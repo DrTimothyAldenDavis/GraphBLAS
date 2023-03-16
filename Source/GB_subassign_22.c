@@ -115,7 +115,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
         GB_Opcode opcode ;
         GB_Type_code xcode, ycode, zcode ;
         // C = C + scalar where the scalar has already been cast to Y type
-        if (GB_binop_builtin (C->type, false, ytype, false,
+        if (GB_binop_builtin (C->type, false, accum->ytype, false,
             accum, false, &opcode, &xcode, &ycode, &zcode))
         { 
             // accumulate sparse matrix into dense matrix with built-in operator

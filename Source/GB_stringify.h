@@ -693,6 +693,40 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
 // assign/subassign kernel
 //------------------------------------------------------------------------------
 
+void GB_enumify_assign      // enumerate a GrB_assign problem
+(
+    // output:
+    uint64_t *scode,        // unique encoding of the entire operation
+    // input:
+    // C matrix:
+    GrB_Matrix C,
+    bool C_replace,
+    // index types:
+    int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
+    int Jkind,              // ditto
+    // M matrix:
+    GrB_Matrix M,           // may be NULL
+    bool Mask_struct,       // mask is structural
+    bool Mask_comp,         // mask is complemented
+    // operator:
+    GrB_BinaryOp accum,     // the accum operator (may be NULL)
+    // A matrix
+    GrB_Matrix A,           // NULL for scalar assignment
+    GrB_Type scalar_type,
+    int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
+) ;
+
+void GB_macrofy_assign          // construct all macros for GrB_assign
+(
+    // output:
+    FILE *fp,                   // target file to write, already open
+    // input:
+    uint64_t scode,
+    GrB_BinaryOp accum,         // accum operator to macrofy
+    GrB_Type ctype,
+    GrB_Type atype              // matrix or scalar type
+) ;
+
 uint64_t GB_encodify_assign     // encode an assign problem
 (
     // output:
@@ -717,40 +751,6 @@ uint64_t GB_encodify_assign     // encode an assign problem
     GrB_Matrix A,           // NULL for scalar assignment
     GrB_Type scalar_type,
     int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
-) ;
-
-void GB_enumify_assign      // enumerate a GrB_assign problem
-(
-    // output:
-    uint64_t *scode,        // unique encoding of the entire operation
-    // input:
-    // C matrix:
-    GrB_Matrix C,
-    bool C_replace,
-    // index types:
-    int Ikind,              // 0: all (no I), 1: range, 2: stride, 4: list
-    int Jkind,              // ditto
-    // M matrix:
-    GrB_Matrix M,           // may be NULL
-    bool Mask_struct,       // mask is structural
-    bool Mask_comp,         // mask is complemented
-    // operator:
-    GrB_BinaryOp accum,     // the accum operator to enumify (may be NULL)
-    // A matrix
-    GrB_Matrix A,           // NULL for scalar assign
-    GrB_Type scalar_type,
-    int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
-) ;
-
-void GB_macrofy_assign          // construct all macros for GrB_assign
-(
-    // output:
-    FILE *fp,                   // target file to write, already open
-    // input:
-    uint64_t scode,
-    GrB_BinaryOp accum,         // accum operator to macrofy
-    GrB_Type ctype,
-    GrB_Type atype              // matrix or scalar type
 ) ;
 
 #endif

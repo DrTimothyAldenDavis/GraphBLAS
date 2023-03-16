@@ -64,11 +64,14 @@ void GB_macrofy_cast_input
 
     if (f == NULL)
     {
-        fprintf (fp, "#define %s(%s,%s) %s = ((%s) (%s))\n",
+        // ANSI C11 typecasting
+        ASSERT (ztype != xtype) ;
+        fprintf (fp, "#define %s(%s,%s) %s = (%s) (%s)\n",
             macro_name, zarg, xargs, zarg, ztype->name, xexpr) ;
     }
     else
     {
+        // GraphBLAS typecasting, or no typecasting
         fprintf (fp, "#define %s(%s,%s) ", macro_name, zarg, xargs) ;
         if (nargs == 3)
         {

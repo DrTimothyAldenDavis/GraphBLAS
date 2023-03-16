@@ -88,7 +88,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     const int64_t Jcolon [3],
     const bool scalar_expansion,    // if true, expand scalar to A
     const void *scalar,             // scalar to be expanded
-    const GrB_Type scalar_type,           // type code of scalar to expand
+    const GrB_Type scalar_type,     // type of scalar to expand
     GB_Werk Werk
 )
 {
