@@ -26,7 +26,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
     const int Jkind,
     const bool scalar_expansion,    // if true, expand scalar to A
     const void *scalar,
-    const GrB_Type atype            // type of A, or the type of the scalar
+    const GrB_Type scalar_type      // type of the scalar
 )
 {
 
@@ -657,6 +657,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
 
             GB_Type_code ccode = ctype->code ;
             size_t       csize = ctype->size ;
+            GrB_Type atype = (A == NULL) ? scalar_type : A->type ;
             GB_Type_code acode = atype->code ;
             size_t       asize = atype->size ;
 

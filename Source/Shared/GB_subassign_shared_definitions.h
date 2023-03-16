@@ -179,6 +179,7 @@
 //------------------------------------------------------------------------------
 
 #define GB_GET_SCALAR                                                       \
+    const GrB_Type atype = scalar_type ;                                    \
     ASSERT_TYPE_OK (atype, "atype for assign", GB0) ;                       \
     const size_t asize = atype->size ;                                      \
     const GB_Type_code acode = atype->code ;                                \

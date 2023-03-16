@@ -28,7 +28,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
 (
     GrB_Matrix C,                   // input/output matrix
     const void *scalar,             // input scalar
-    const GrB_Type atype,           // type of the input scalar
+    const GrB_Type scalar_type,           // type of the input scalar
     const GrB_BinaryOp accum,       // operator to apply
     GB_Werk Werk
 )
@@ -46,7 +46,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
     ASSERT (!GB_ZOMBIES (C)) ;
 
     ASSERT (scalar != NULL) ;
-    ASSERT_TYPE_OK (atype, "atype for C+=scalar", GB0) ;
+    ASSERT_TYPE_OK (scalar_type, "scalar_type for C+=scalar", GB0) ;
     ASSERT_BINARYOP_OK (accum, "accum for C+=scalar", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
 
@@ -65,7 +65,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
     // C = accum (C,scalar) will be computed
     ASSERT (C->type == accum->ztype) ;
     ASSERT (C->type == accum->xtype) ;
-    ASSERT (GB_Type_compatible (atype, accum->ytype)) ;
+    ASSERT (GB_Type_compatible (scalar_type, accum->ytype)) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -84,9 +84,9 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
     int64_t csize = C->type->size ;
     size_t ysize = accum->ytype->size ;
     GB_cast_function 
-        cast_A_to_Y = GB_cast_factory (accum->ytype->code, atype->code) ;
+        cast_A_to_Y = GB_cast_factory (accum->ytype->code, scalar_type->code) ;
     GB_DECLAREY (ywork) ;
-    cast_A_to_Y (ywork, scalar, atype->size) ;
+    cast_A_to_Y (ywork, scalar, scalar_type->size) ;
 
     //--------------------------------------------------------------------------
     // via the factory kernel
@@ -114,8 +114,8 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
 
         GB_Opcode opcode ;
         GB_Type_code xcode, ycode, zcode ;
-        // C = C + scalar where the scalar is cast to the Y input of accum
-        if (GB_binop_builtin (C->type, false, atype, false,
+        // C = C + scalar where the scalar has already been cast to Y type
+        if (GB_binop_builtin (C->type, false, ytype, false,
             accum, false, &opcode, &xcode, &ycode, &zcode))
         { 
             // accumulate sparse matrix into dense matrix with built-in operator

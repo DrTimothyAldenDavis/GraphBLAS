@@ -42,7 +42,7 @@ GrB_Info GB_subassign_19
     const bool Mask_struct,
     const GrB_BinaryOp accum,
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 )
 {

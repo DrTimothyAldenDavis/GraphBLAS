@@ -38,7 +38,7 @@ GrB_Info GB_subassign_01
     const int Jkind,
     const int64_t Jcolon [3],
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 )
 {

@@ -39,7 +39,7 @@ GrB_Info GB_subassign_05e
     // input:
     const GrB_Matrix M,
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 )
 { 
@@ -85,7 +85,7 @@ GrB_Info GB_subassign_05e
     // set C->iso = true    OK
     GB_OK (GB_dup_worker (&C, true, M, false, C->type)) ;
     C->is_csc = C_is_csc ;
-    GB_cast_scalar (C->x, C->type->code, scalar, atype->code, atype->size) ;
+    GB_cast_scalar (C->x, C->type->code, scalar, scalar_type->code, scalar_type->size) ;
 
     C->jumbled = M->jumbled ;       // C is jumbled if M is jumbled
     ASSERT_MATRIX_OK (C, "C output for subassign method_05e", GB0) ;

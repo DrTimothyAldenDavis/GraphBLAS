@@ -32,7 +32,7 @@ GrB_Info GB_subassign_22      // C += x where C is dense and x is a scalar
 (
     GrB_Matrix C,                   // input/output matrix
     const void *scalar,             // input scalar
-    const GrB_Type atype,           // type of the input scalar
+    const GrB_Type scalar_type,           // type of the input scalar
     const GrB_BinaryOp accum,       // operator to apply
     GB_Werk Werk
 ) ;
@@ -48,7 +48,7 @@ GrB_Info GB_subassign_05d
     const GrB_Matrix M,
     const bool Mask_struct,
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 ) ;
 

@@ -74,7 +74,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     GrB_Index *I2 = NULL ; size_t I2_size = 0 ;
     GrB_Index *J2 = NULL ; size_t J2_size = 0 ;
 
-    GrB_Type atype = NULL ;
+    GrB_Type scalar_type = NULL ;
     int64_t ni, nj, nI, nJ, Icolon [3], Jcolon [3] ;
     int Ikind, Jkind ;
     int assign_kind = GB_SUBASSIGN ;
@@ -85,7 +85,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         &Cwork_header, &Mwork_header, &Awork_header, &MT_header, &AT_header,
         &I, &I2, &I2_size, &ni, &nI, &Ikind, Icolon,
         &J, &J2, &J2_size, &nj, &nJ, &Jkind, Jcolon,
-        &atype, C_in, &C_replace, &assign_kind,
+        &scalar_type, C_in, &C_replace, &assign_kind,
         M_in, Mask_comp, Mask_struct, M_transpose, accum,
         A_in, A_transpose, Rows, nRows_in, Cols, nCols_in,
         scalar_expansion, scalar, scalar_code, Werk)) ;
@@ -109,7 +109,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     GB_OK (GB_subassigner (C, subassign_method, C_replace,
         M, Mask_comp, Mask_struct, accum, A,
         I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
-        scalar_expansion, scalar, atype, Werk)) ;
+        scalar_expansion, scalar, scalar_type, Werk)) ;
 
     //--------------------------------------------------------------------------
     // transplant C back into C_in

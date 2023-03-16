@@ -45,7 +45,7 @@ GrB_Info GB_subassign_05d
     const GrB_Matrix M,
     const bool Mask_struct,
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 )
 {
