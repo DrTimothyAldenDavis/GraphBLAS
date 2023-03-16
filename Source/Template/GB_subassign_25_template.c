@@ -11,7 +11,23 @@
 // pattern of C is an exact copy of M.  A is full, dense, or bitmap.
 // M is sparse or hypersparse, and C is constructed with the same pattern as M.
 
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
+}
+
 {
+
+    //--------------------------------------------------------------------------
+    // Parallel: slice M into equal-sized chunks
+    //--------------------------------------------------------------------------
+
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
+    int M_nthreads, M_ntasks ;
+    GB_SLICE_MATRIX (M, 8, chunk) ;
 
     //--------------------------------------------------------------------------
     // get C, M, and A
@@ -32,9 +48,9 @@
     const int8_t   *restrict Ab = A->b ;
     const int64_t avlen = A->vlen ;
 
-    const int64_t *restrict kfirst_Mslice = M_ek_slicing ;
-    const int64_t *restrict klast_Mslice  = M_ek_slicing + M_ntasks ;
-    const int64_t *restrict pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
+//  const int64_t *restrict kfirst_Mslice = M_ek_slicing ;
+//  const int64_t *restrict klast_Mslice  = M_ek_slicing + M_ntasks ;
+//  const int64_t *restrict pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
 
     #ifdef GB_ISO_ASSIGN
     ASSERT (C->iso) ;
@@ -176,7 +192,11 @@
         }
         #endif
     }
+
+    GB_FREE_ALL ;
 }
 
 #undef GB_ISO_ASSIGN
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL ;
 

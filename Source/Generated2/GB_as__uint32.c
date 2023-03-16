@@ -84,9 +84,7 @@ GrB_Info GB (_subassign_25__uint32)
     GrB_Matrix C,
     const GrB_Matrix M,
     const GrB_Matrix A,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    GB_Werk Werk
 )
 { 
     #if GB_DISABLE

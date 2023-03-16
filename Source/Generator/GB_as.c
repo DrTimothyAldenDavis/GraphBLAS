@@ -41,14 +41,14 @@ GrB_Info GB (_subassign_05d)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *cwork_handle,
     GB_Werk Werk
 )
 { 
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_C_TYPE cwork = (*((GB_C_TYPE *) p_cwork)) ;
+    GB_C_TYPE cwork = (*((GB_C_TYPE *) cwork_handle)) ;
     #include "GB_subassign_05d_template.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -84,9 +84,7 @@ GrB_Info GB (_subassign_25)
     GrB_Matrix C,
     const GrB_Matrix M,
     const GrB_Matrix A,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    GB_Werk Werk
 )
 { 
     #if GB_DISABLE

@@ -5,7 +5,7 @@ GrB_Info GB (_subassign_05d)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *cwork_handle,
     GB_Werk Werk
 ) ;
 
@@ -22,6 +22,6 @@ GrB_Info GB (_subassign_25)
     GrB_Matrix C,
     const GrB_Matrix M,
     const GrB_Matrix A,
-    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+    GB_Werk Werk
 ) ;
 

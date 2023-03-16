@@ -35,10 +35,7 @@
 #endif
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL                         \
-{                                           \
-    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
-}
+#define GB_FREE_ALL ;
 
 GrB_Info GB_subassign_25
 (
@@ -90,21 +87,6 @@ GrB_Info GB_subassign_25
     // and the time is O(nnz(M)).  This is also the size of C.
 
     //--------------------------------------------------------------------------
-    // Parallel: slice M into equal-sized chunks
-    //--------------------------------------------------------------------------
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
-
-    //--------------------------------------------------------------------------
-    // slice the entries for each task
-    //--------------------------------------------------------------------------
-
-    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
-    int M_nthreads, M_ntasks ;
-    GB_SLICE_MATRIX (M, 8, chunk) ;
-
-    //--------------------------------------------------------------------------
     // allocate C and create its pattern
     //--------------------------------------------------------------------------
 
@@ -153,8 +135,7 @@ GrB_Info GB_subassign_25
             #define GB_sub25(cname) GB (_subassign_25_ ## cname)
             #define GB_WORKER(cname)                            \
             {                                                   \
-                info = GB_sub25 (cname) (C, M, A,               \
-                    M_ek_slicing, M_ntasks, M_nthreads) ;       \
+                info = GB_sub25 (cname) (C, M, A, Werk) ;       \
             }                                                   \
             break ;
 
@@ -223,7 +204,6 @@ GrB_Info GB_subassign_25
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_ALL ;
     if (info == GrB_SUCCESS)
     {
         ASSERT_MATRIX_OK (C, "C output for subassign method_25", GB0) ;
