@@ -31,10 +31,7 @@
 #include "GB_unused.h"
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL                         \
-{                                           \
-    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
-}
+#define GB_FREE_ALL ;
 
 GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
 (
@@ -92,37 +89,6 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
     ASSERT (GB_Type_compatible (A->type, accum->ytype)) ;
 
     //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
-
-    //--------------------------------------------------------------------------
-    // slice the entries for each task
-    //--------------------------------------------------------------------------
-
-    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
-    int A_ntasks, A_nthreads ;
-
-    if (GB_IS_BITMAP (A) || GB_as_if_full (A))
-    { 
-        // C is dense and A is bitmap or as-if-full
-        GBURBLE ("(Z bitmap/as-if-full) ") ;
-        int64_t anvec = A->nvec ;
-        int64_t anz = GB_nnz_held (A) ;
-        A_nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
-        A_ntasks = 0 ;   // unused
-        ASSERT (A_ek_slicing == NULL) ;
-    }
-    else
-    { 
-        // create tasks to compute over the matrix A
-        GB_SLICE_MATRIX (A, 32, chunk) ;
-        ASSERT (A_ek_slicing != NULL) ;
-    }
-
-    //--------------------------------------------------------------------------
     // via the factory kernel
     //--------------------------------------------------------------------------
 
@@ -137,8 +103,7 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
         #define GB_sub23(accum,xname) GB (_subassign_23_ ## accum ## xname)
         #define GB_BINOP_WORKER(accum,xname)                    \
         {                                                       \
-            info = GB_sub23 (accum,xname) (C, A,                \
-                A_ek_slicing, A_ntasks, A_nthreads) ;           \
+            info = GB_sub23 (accum,xname) (C, A, Werk) ;        \
         }                                                       \
         break ;
 
@@ -220,14 +185,17 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
         }
 
         #include "GB_subassign_23_template.c"
+        info = GrB_SUCCESS ;
     }
 
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_ALL ;
-    ASSERT_MATRIX_OK (C, "C+=A output", GB0) ;
-    return (GrB_SUCCESS) ;
+    if (info == GrB_SUCCESS)
+    {
+        ASSERT_MATRIX_OK (C, "C+=A output", GB0) ;
+    }
+    return (info) ;
 }
 

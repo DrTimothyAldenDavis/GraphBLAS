@@ -9,7 +9,40 @@
 
 #include "GB_unused.h"
 
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
+}
+
 {
+
+    //--------------------------------------------------------------------------
+    // slice the A matrix
+    //--------------------------------------------------------------------------
+
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
+    int A_ntasks, A_nthreads ;
+    bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    bool A_is_full = GB_as_if_full (A) ;
+    if (A_is_bitmap || A_is_full)
+    { 
+        // C is dense and A is bitmap or as-if-full
+        GBURBLE ("(Z bitmap/as-if-full) ") ;
+        int64_t anvec = A->nvec ;
+        int64_t anz = GB_nnz_held (A) ;
+        A_nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
+        A_ntasks = 0 ;   // unused
+        ASSERT (A_ek_slicing == NULL) ;
+    }
+    else
+    { 
+        // create tasks to compute over the matrix A
+        GB_SLICE_MATRIX (A, 32, chunk) ;
+        ASSERT (A_ek_slicing != NULL) ;
+    }
 
     //--------------------------------------------------------------------------
     // get C and A
@@ -29,7 +62,7 @@
         GB_COPY_aij_to_ywork (ywork, Ax, 0, true) ;
     }
 
-    if (GB_IS_BITMAP (A))
+    if (A_is_bitmap)
     {
 
         //----------------------------------------------------------------------
@@ -47,7 +80,7 @@
         }
 
     }
-    else if (A_ek_slicing == NULL)
+    else if (A_is_full)
     {
 
         //----------------------------------------------------------------------
@@ -154,5 +187,10 @@
             }
         }
     }
+
+    GB_FREE_ALL ;
 }
+
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL ;
 

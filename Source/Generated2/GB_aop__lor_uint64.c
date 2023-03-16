@@ -66,9 +66,7 @@ GrB_Info GB (_subassign_23__lor_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    GB_Werk Werk
 )
 {
     #if GB_DISABLE
