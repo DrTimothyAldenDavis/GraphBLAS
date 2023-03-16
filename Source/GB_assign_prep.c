@@ -71,7 +71,7 @@ GrB_Info GB_assign_prep
     int *Jkind_handle,
     int64_t Jcolon [3],
 
-    GrB_Type *scalar_type_handle,         // type of A or the scalar
+    GrB_Type *scalar_type_handle,   // type of the scalar, or NULL if no scalar
 
     // input/output
     GrB_Matrix C_in,                // input/output matrix for results
@@ -1257,7 +1257,7 @@ GrB_Info GB_assign_prep
     (*Mwork_handle) = (MT != NULL) ? MT : Mwork ;
     (*Awork_handle) = (AT != NULL) ? AT : Awork ;
 
-    (*scalar_type_handle) = scalar_type ;
+    (*scalar_type_handle) = scalar_type ;   // may be NULL
 
     // modified versions of the Rows/Cols lists, and their analysis:
     (*I_handle) = (GrB_Index *) I ;     // either Rows, Cols, or I2

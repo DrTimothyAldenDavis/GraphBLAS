@@ -88,6 +88,11 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
     GB_DECLAREY (ywork) ;
     cast_A_to_Y (ywork, scalar, scalar_type->size) ;
 
+    // Since no pending tuples will be created, and no entries will be copied
+    // from the scalar into C, only the typecased ywork scalar is needed.  The
+    // scalar and its type (scalar_type) can now be ignored.  Only ctype and
+    // cwork need to be considered.
+
     //--------------------------------------------------------------------------
     // via the factory kernel
     //--------------------------------------------------------------------------
@@ -114,7 +119,8 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
 
         GB_Opcode opcode ;
         GB_Type_code xcode, ycode, zcode ;
-        // C = C + scalar where the scalar has already been cast to Y type
+        // C = C + scalar where the scalar ywork already matches the Y input of
+        // the accum op.  The original scalar_type of the scalar can be ignored.
         if (GB_binop_builtin (C->type, false, accum->ytype, false,
             accum, false, &opcode, &xcode, &ycode, &zcode))
         { 
@@ -130,6 +136,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
 
     #if GB_JIT_ENABLED
     // JIT TODO: aop: subassign 22
+    // pass (ywork, accum->ytype) in place of (scalar, scalar_type)
     #endif
 
     //--------------------------------------------------------------------------

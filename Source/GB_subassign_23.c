@@ -86,6 +86,7 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
 
     // C = accum (C,A) will be computed
     ASSERT (!C->iso) ;
+    // TODO: the types of C, Z, and X need not match for the JIT kernel
     ASSERT (C->type == accum->ztype) ;
     ASSERT (C->type == accum->xtype) ;
     ASSERT (GB_Type_compatible (A->type, accum->ytype)) ;
@@ -147,8 +148,10 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
 
         GB_Opcode opcode ;
         GB_Type_code xcode, ycode, zcode ;
-        // C = C + A so A must cast to the Y input of the accum operator
-        if (GB_binop_builtin (C->type, false, A->type, false,
+        // C = C + A so A must cast to the Y input of the accum operator.  To
+        // use the factory kernel, A->type and accum->ytype must be identical.
+        if (/* C->type == accum->ztype && C->type == accum->xtype && */
+            GB_binop_builtin (C->type, false, A->type, false,
             accum, false, &opcode, &xcode, &ycode, &zcode))
         { 
             // accumulate sparse matrix into dense matrix with built-in operator

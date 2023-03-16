@@ -1559,8 +1559,9 @@
     const int64_t *Ai = NULL ;                                              \
     const GB_void *Ax = NULL ;                                              \
     const bool A_iso = (A == NULL) ? false : A->iso ;                       \
-    const size_t       asize = (A==NULL) ? scalar_type->size : A->type->size ; \
-    const GB_Type_code acode = (A==NULL) ? scalar_type->code : A->type->code ; \
+    const GrB_Type atype = (A == NULL) ? scalar_type : A->type ;            \
+    const size_t       asize = atype->size ;                                \
+    const GB_Type_code acode = atype->code ;                                \
     if (A != NULL)                                                          \
     {                                                                       \
         ASSERT_MATRIX_OK (A, "A for bitmap assign/subassign", GB0) ;        \

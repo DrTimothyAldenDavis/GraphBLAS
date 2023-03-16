@@ -36,6 +36,8 @@
 // xexpr is an expression using the xargs that produce a value of type xtype.
 // z has type ztype.
 
+// This method is very similar to GB_macrofy_cast_output.
+
 #include "GB.h"
 #include "GB_stringify.h"
 

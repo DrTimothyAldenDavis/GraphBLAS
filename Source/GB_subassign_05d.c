@@ -130,6 +130,11 @@ GrB_Info GB_subassign_05d
         // launch the switch factory
         //----------------------------------------------------------------------
 
+        // The scalar scalar_type is not needed, and there is no accum operator.
+        // This method uses cwork = (ctype) scalar, typecasted above, so it
+        // works for any scalar type.  As a result, only a test of ccode is
+        // required.
+
         // C<M> = x
         switch (ccode)
         {
@@ -157,6 +162,7 @@ GrB_Info GB_subassign_05d
 
     #if GB_JIT_ENABLED
     // JIT TODO: type: subassign 05d
+    // pass (cwork,ctype) instead of (scalar,scalar_type)
     #endif
 
     //--------------------------------------------------------------------------
