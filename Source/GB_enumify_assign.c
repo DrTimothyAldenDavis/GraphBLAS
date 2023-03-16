@@ -83,6 +83,7 @@ bool GB_enumify_assign      // enumerate a GrB_assign problem
     GrB_BinaryOp accum,     // the accum operator to enumify (may be NULL)
     // A matrix
     GrB_Matrix A,           // NULL for scalar assign
+    GrB_Type scalar_type,
     int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
 )
 {

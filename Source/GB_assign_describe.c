@@ -1,41 +1,40 @@
 //------------------------------------------------------------------------------
-// GB_printf.c: printing for GraphBLAS *check functions
+// GB_assign_describe: construct a string that describes GrB_assign / subassign
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 #include "GB.h"
 
-void GB_burble_assign
+void GB_assign_describe
 (
+    // output
+    char *str,                  // string of size slen
+    int slen,
+    // input
     const bool C_replace,       // descriptor for C
     const int Ikind,
     const int Jkind,
-    const GrB_Matrix M,         // mask matrix, which is not NULL here
+//  const GrB_Matrix M,
+    const bool M_is_null,
+    const bool M_sparsity,
     const bool Mask_comp,       // true for !M, false for M
     const bool Mask_struct,     // true if M is structural, false if valued
     const GrB_BinaryOp accum,   // present here
-    const GrB_Matrix A,         // input matrix, not transposed
+//  const GrB_Matrix A,         // input matrix, not transposed
+    const bool A_is_null,
     const int assign_kind       // row assign, col assign, assign, or subassign
 )
 {
 
     //--------------------------------------------------------------------------
-    // quick return if burble is disabled
-    //--------------------------------------------------------------------------
-
-    if (!GB_Global_burble_get ( ))
-    {
-        return ;
-    }
-
-    //--------------------------------------------------------------------------
     // construct the accum operator string
     //--------------------------------------------------------------------------
 
+    str [0] = '\0' ;
     char *Op ;
     if (accum == NULL)
     {
@@ -63,7 +62,7 @@ void GB_burble_assign
     #define GB_STRLEN 128
     const char *Mask ;
     char Mask_string [GB_STRLEN+1] ;
-    if (M == NULL)
+    if (M_is_null)
     {
         // M is not present
         if (Mask_comp)
@@ -80,7 +79,8 @@ void GB_burble_assign
         // M is present
         snprintf (Mask_string, GB_STRLEN, "<%sM%s%s%s>",
             (Mask_comp) ? "!" : "",
-            GB_IS_BITMAP (M) ? ",bitmap" : (GB_IS_FULL (M) ? ",full" : ""),
+            (M_sparsity == GxB_BITMAP) ? ",bitmap"
+                : ((M_sparsity == GxB_FULL) ? ",full" : ""),
             Mask_struct ? ",struct" : "",
             C_replace ? ",replace" : "") ;
         Mask = Mask_string ;
@@ -90,7 +90,7 @@ void GB_burble_assign
     // construct the string for A or the scalar
     //--------------------------------------------------------------------------
 
-    const char *S = (A == NULL) ? "scalar" : "A" ;
+    const char *S = (A_is_null) ? "scalar" : "A" ;
 
     //--------------------------------------------------------------------------
     // construct the string for (I,J)
@@ -98,13 +98,14 @@ void GB_burble_assign
 
     const char *Istr = (Ikind == GB_ALL) ? ":" : "I" ;
     const char *Jstr = (Jkind == GB_ALL) ? ":" : "J" ;
-    char IJ [GB_STRLEN+1] ;
-    snprintf (IJ, GB_STRLEN, "(%s,%s)", Istr, Jstr) ;
-    if (Ikind == GB_ALL && Jkind == GB_ALL)
-    {
-        // do not print the (I,J) indices
-        IJ [0] = '\0' ;
-    }
+
+//  char IJ [GB_STRLEN+1] ;
+//  snprintf (IJ, GB_STRLEN, "(%s,%s)", Istr, Jstr) ;
+//  if (Ikind == GB_ALL && Jkind == GB_ALL)
+//  {
+//      // do not print the (I,J) indices
+//      IJ [0] = '\0' ;
+//  }
 
     //--------------------------------------------------------------------------
     // burble the final result
@@ -114,24 +115,48 @@ void GB_burble_assign
     {
         case GB_ROW_ASSIGN:
             // C(i,J) = A
-            snprintf (IJ, GB_STRLEN, "(i,%s)", Jstr) ;
-            GBURBLE ("C%s%s %s= A ", Mask, IJ, Op) ;
+            snprintf (str, slen, "C%s(i,%s) %s= A ", Mask, Jstr, Op) ;
+//          snprintf (IJ, GB_STRLEN, "(i,%s)", Jstr) ;
+//          GBURBLE ("C%s%s %s= A ", Mask, IJ, Op) ;
             break ;
 
         case GB_COL_ASSIGN:
             // C(I,j) = A
-            snprintf (IJ, GB_STRLEN, "(%s,j)", Istr) ;
-            GBURBLE ("C%s%s %s= A ", Mask, IJ, Op) ;
+            snprintf (str, slen, "C%s(%s,j) %s= A ", Mask, Istr, Op) ;
+//          snprintf (IJ, GB_STRLEN, "(%s,j)", Istr) ;
+//          GBURBLE ("C%s%s %s= A ", Mask, IJ, Op) ;
             break ;
 
         case GB_ASSIGN:
-            // C(I,J) = A
-            GBURBLE ("C%s%s %s= %s ", Mask, IJ, Op, S) ;
+            // C<M>(I,J) = A
+//          GBURBLE ("C%s%s %s= %s ", Mask, IJ, Op, S) ;
+            if (Ikind == GB_ALL && Jkind == GB_ALL)
+            {
+                // C<M> += A
+                snprintf (str, slen, "C%s %s= %s ", Mask, Op, S) ;
+            }
+            else
+            {
+                // C<M>(I,J) = A
+                snprintf (str, slen, "C%s(%s,%s) %s= %s ", Mask, Istr, Jstr,
+                    Op, S) ;
+            }
             break ;
 
         case GB_SUBASSIGN:
-            // C(i,J) = A
-            GBURBLE ("C%s%s %s= %s ", IJ, Mask, Op, S) ;
+            // C(I,J)<M> = A
+//          GBURBLE ("C%s%s %s= %s ", IJ, Mask, Op, S) ;
+            if (Ikind == GB_ALL && Jkind == GB_ALL)
+            {
+                // C<M> += A
+                snprintf (str, slen, "C%s %s= %s ", Mask, Op, S) ;
+            }
+            else
+            {
+                // C<M>(I,J) = A
+                snprintf (str, slen, "C(%s,%s)%s %s= %s ", Istr, Jstr, Mask,
+                    Op, S) ;
+            }
             break ;
 
         default: ;

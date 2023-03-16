@@ -124,7 +124,7 @@
 // Use GxB_set (GxB_BURBLE, true) to turn it on
 // and GxB_set (GxB_BURBLE, false) to turn it off.
 
-void GB_burble_assign
+void GB_assign_burble
 (
     const bool C_replace,       // descriptor for C
     const int Ikind,
@@ -134,6 +134,26 @@ void GB_burble_assign
     const bool Mask_struct,     // true if M is structural, false if valued
     const GrB_BinaryOp accum,   // present here
     const GrB_Matrix A,         // input matrix, not transposed
+    const int assign_kind       // row assign, col assign, assign, or subassign
+) ;
+
+void GB_assign_describe
+(
+    // output
+    char *str,                  // string of size slen
+    int slen,
+    // input
+    const bool C_replace,       // descriptor for C
+    const int Ikind,
+    const int Jkind,
+//  const GrB_Matrix M,
+    const bool M_is_null,
+    const bool M_sparsity,
+    const bool Mask_comp,       // true for !M, false for M
+    const bool Mask_struct,     // true if M is structural, false if valued
+    const GrB_BinaryOp accum,   // present here
+//  const GrB_Matrix A,         // input matrix, not transposed
+    const bool A_is_null,
     const int assign_kind       // row assign, col assign, assign, or subassign
 ) ;
 

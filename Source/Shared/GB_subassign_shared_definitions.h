@@ -1508,7 +1508,7 @@
 
 #define GBURBLE_BITMAP_ASSIGN(method,M,Mask_comp,accum,Ikind,Jkind,akind)   \
     GBURBLE ("Method:" method " ") ;                                        \
-    GB_burble_assign (C_replace, Ikind, Jkind, M, Mask_comp,                \
+    GB_assign_burble (C_replace, Ikind, Jkind, M, Mask_comp,                \
         Mask_struct, accum, A, akind) ;
 
 //------------------------------------------------------------------------------
