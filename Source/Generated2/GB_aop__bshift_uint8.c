@@ -88,8 +88,7 @@ GrB_Info GB (_subassign_23__bshift_uint8)
 GrB_Info GB (_subassign_22__bshift_uint8)
 (
     GrB_Matrix C,
-    const GB_void *ywork_handle,
-    const int nthreads
+    const GB_void *ywork_handle
 )
 {
     #if GB_DISABLE

@@ -68,16 +68,6 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
     ASSERT (GB_Type_compatible (scalar_type, accum->ytype)) ;
 
     //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    int64_t cnz = GB_nnz (C) ;
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
-    int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
-
-    //--------------------------------------------------------------------------
     // typecast the scalar into the same type as the y input of the binary op
     //--------------------------------------------------------------------------
 
@@ -109,7 +99,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
 
         #define GB_BINOP_WORKER(accum,xname)                                \
         {                                                                   \
-            info = GB_sub22 (accum,xname) (C, ywork, nthreads) ;            \
+            info = GB_sub22 (accum,xname) (C, ywork) ;                      \
         }                                                                   \
         break ;
 
@@ -121,7 +111,8 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
         GB_Type_code xcode, ycode, zcode ;
         // C = C + scalar where the scalar ywork already matches the Y input of
         // the accum op.  The original scalar_type of the scalar can be ignored.
-        if (GB_binop_builtin (C->type, false, accum->ytype, false,
+        if (/* (C->type == accum->ztype) && (C->type == accum->xtype) && */
+            GB_binop_builtin (C->type, false, accum->ytype, false,
             accum, false, &opcode, &xcode, &ycode, &zcode))
         { 
             // accumulate sparse matrix into dense matrix with built-in operator
@@ -157,13 +148,17 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
             faccum (Cx +((pC)*csize), Cx +((pC)*csize), ywork)
 
         #include "GB_subassign_22_template.c"
+        info = GrB_SUCCESS ;
     }
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "C+=scalar output", GB0) ;
-    return (GrB_SUCCESS) ;
+    if (info == GrB_SUCCESS)
+    {
+        ASSERT_MATRIX_OK (C, "C+=scalar output", GB0) ;
+    }
+    return (info) ;
 }
 

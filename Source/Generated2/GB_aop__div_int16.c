@@ -88,8 +88,7 @@ GrB_Info GB (_subassign_23__div_int16)
 GrB_Info GB (_subassign_22__div_int16)
 (
     GrB_Matrix C,
-    const GB_void *ywork_handle,
-    const int nthreads
+    const GB_void *ywork_handle
 )
 {
     #if GB_DISABLE

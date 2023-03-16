@@ -2,7 +2,7 @@
 // GB_jitifyer.h: definitions for the CPU jitifyer
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -17,49 +17,117 @@
 //------------------------------------------------------------------------------
 
 // reduce to scalar
-#define GB_JIT_KERNEL_REDUCE        1
+#define GB_JIT_KERNEL_REDUCE        1   /* GB_reduce_to_scalar  */
 
 // C<M> = A*B, except for row/col scale (which are ewise methods)
-#define GB_JIT_KERNEL_AXB_DOT2      2
-#define GB_JIT_KERNEL_AXB_DOT2N     3
-#define GB_JIT_KERNEL_AXB_DOT3      4
-#define GB_JIT_KERNEL_AXB_DOT4      5
-#define GB_JIT_KERNEL_AXB_SAXBIT    6
-#define GB_JIT_KERNEL_AXB_SAXPY3    7
-#define GB_JIT_KERNEL_AXB_SAXPY4    8
-#define GB_JIT_KERNEL_AXB_SAXPY5    9
+#define GB_JIT_KERNEL_AXB_DOT2      2   /* GB_AxB_dot2          */
+#define GB_JIT_KERNEL_AXB_DOT2N     3   /* GB_AxB_dot2          */
+#define GB_JIT_KERNEL_AXB_DOT3      4   /* GB_AxB_dot3          */
+#define GB_JIT_KERNEL_AXB_DOT4      5   /* GB_AxB_dot4          */
+#define GB_JIT_KERNEL_AXB_SAXBIT    6   /* GB_AxB_saxbit        */
+#define GB_JIT_KERNEL_AXB_SAXPY3    7   /* GB_AxB_saxpy3        */
+#define GB_JIT_KERNEL_AXB_SAXPY4    8   /* GB_AxB_saxpy4        */
+#define GB_JIT_KERNEL_AXB_SAXPY5    9   /* GB_AxB_saxpy5        */
 
 // ewise methods:
-#define GB_JIT_KERNEL_COLSCALE      10
-#define GB_JIT_KERNEL_ROWSCALE      11
-#define GB_JIT_KERNEL_ADD           12
-#define GB_JIT_KERNEL_UNION         13
-#define GB_JIT_KERNEL_EMULT2        14
-#define GB_JIT_KERNEL_EMULT3        15
-#define GB_JIT_KERNEL_EMULT4        16
-#define GB_JIT_KERNEL_EMULT_BITMAP  17
-#define GB_JIT_KERNEL_EMULT8        18
-#define GB_JIT_KERNEL_EWISEFA       19
-#define GB_JIT_KERNEL_EWISEFN       20
-#define GB_JIT_KERNEL_APPLYBIND1    21
-#define GB_JIT_KERNEL_APPLYBIND2    22
-#define GB_JIT_KERNEL_TRANSBIND1    23
-#define GB_JIT_KERNEL_TRANSBIND2    24
+#define GB_JIT_KERNEL_COLSCALE      10  /* GB_colscale              */
+#define GB_JIT_KERNEL_ROWSCALE      11  /* GB_rowscale              */
+#define GB_JIT_KERNEL_ADD           12  /* GB_add_phase2            */
+#define GB_JIT_KERNEL_UNION         13  /* GB_add_phase2            */
+#define GB_JIT_KERNEL_EMULT2        14  /* GB_emult_02              */
+#define GB_JIT_KERNEL_EMULT3        15  /* GB_emult_03              */
+#define GB_JIT_KERNEL_EMULT4        16  /* GB_emult_04              */
+#define GB_JIT_KERNEL_EMULT_BITMAP  17  /* GB_emult_bitmap          */
+#define GB_JIT_KERNEL_EMULT8        18  /* GB_emult_08_phase2       */
+#define GB_JIT_KERNEL_EWISEFA       19  /* GB_ewise_full_accum      */
+#define GB_JIT_KERNEL_EWISEFN       20  /* GB_ewise_full_noaccum    */
+#define GB_JIT_KERNEL_APPLYBIND1    21  /* GB_apply_op              */
+#define GB_JIT_KERNEL_APPLYBIND2    22  /* GB_apply_op              */
+#define GB_JIT_KERNEL_TRANSBIND1    23  /* GB_transpose_op          */
+#define GB_JIT_KERNEL_TRANSBIND2    24  /* GB_transpose_op          */
 
 // unop methods:
-#define GB_JIT_KERNEL_APPLYUNOP     25
-#define GB_JIT_KERNEL_TRANSUNOP     26
+#define GB_JIT_KERNEL_APPLYUNOP     25  /* GB_apply_op, GB_cast_array       */
+#define GB_JIT_KERNEL_TRANSUNOP     26  /* GB_transpose_op, GB_transpose_ix */
 
 // build method:
-#define GB_JIT_KERNEL_BUILD         27
+#define GB_JIT_KERNEL_BUILD         27  /* GB_builder               */
 
 // select methods:
-#define GB_JIT_KERNEL_SELECT1       28
-#define GB_JIT_KERNEL_SELECT2       29
-#define GB_JIT_KERNEL_SELECT_BITMAP 30
+#define GB_JIT_KERNEL_SELECT1       28  /* GB_select_sparse         */
+#define GB_JIT_KERNEL_SELECT2       29  /* GB_select_sparse         */
+#define GB_JIT_KERNEL_SELECT_BITMAP 30  /* GB_select_bitmap         */
 
-// ... etc FIXME: list them all here
-// or make this an enum
+// assign/subassign methods: in progress
+#define GB_JIT_KERNEL_SUBASSIGN_05d 36  /* GB_subassign_05d         */
+#define GB_JIT_KERNEL_SUBASSIGN_06d 37  /* GB_subassign_06d         */
+#define GB_JIT_KERNEL_SUBASSIGN_22  51  /* GB_subassign_22          */
+#define GB_JIT_KERNEL_SUBASSIGN_23  52  /* GB_subassign_23          */
+#define GB_JIT_KERNEL_SUBASSIGN_25  53  /* GB_subassign_25          */
+
+// assign/subassign methods: todo
+#define GB_JIT_KERNEL_SUBASSIGN_01  31  /* GB_subassign_01          */
+#define GB_JIT_KERNEL_SUBASSIGN_02  32  /* GB_subassign_02          */
+#define GB_JIT_KERNEL_SUBASSIGN_03  33  /* GB_subassign_03          */
+#define GB_JIT_KERNEL_SUBASSIGN_04  34  /* GB_subassign_04          */
+#define GB_JIT_KERNEL_SUBASSIGN_05  35  /* GB_subassign_05          */
+#define GB_JIT_KERNEL_SUBASSIGN_06n 38  /* GB_subassign_06n         */
+#define GB_JIT_KERNEL_SUBASSIGN_06s 39  /* GB_subassign_06s_and_14  */
+#define GB_JIT_KERNEL_SUBASSIGN_07  40  /* GB_subassign_07          */
+#define GB_JIT_KERNEL_SUBASSIGN_08n 41  /* GB_subassign_08n         */
+#define GB_JIT_KERNEL_SUBASSIGN_08s 42  /* GB_subassign_08s_and_16  */
+#define GB_JIT_KERNEL_SUBASSIGN_09  43  /* GB_subassign_09          */
+#define GB_JIT_KERNEL_SUBASSIGN_10  44  /* GB_subassign_10_and_18   */
+#define GB_JIT_KERNEL_SUBASSIGN_11  45  /* GB_subassign_11          */
+#define GB_JIT_KERNEL_SUBASSIGN_12  46  /* GB_subassign_12_and_20   */
+#define GB_JIT_KERNEL_SUBASSIGN_13  47  /* GB_subassign_13          */
+#define GB_JIT_KERNEL_SUBASSIGN_15  48  /* GB_subassign_15          */
+#define GB_JIT_KERNEL_SUBASSIGN_17  49  /* GB_subassign_17          */
+#define GB_JIT_KERNEL_SUBASSIGN_19  50  /* GB_subassign_19          */
+
+// bitmap assign/subassign: todo
+#define GB_JIT_KERNEL_ASSIGN_BITMAP_M_ACC           54  /* GB_bitmap_assign_M_accum             */
+#define GB_JIT_KERNEL_ASSIGN_BITMAP_M_ACC_WHOLE     55  /* GB_bitmap_assign_M_accum_whole       */
+#define GB_JIT_KERNEL_ASSIGN_BITMAP_M_NOACC         56  /* GB_bitmap_assign_M_noaccum           */
+#define GB_JIT_KERNEL_ASSIGN_BITMAP_M_NOACC_WHOLE   57  /* GB_bitmap_assign_M_noaccum_whole     */
+#define GB_JIT_KERNEL_ASSIGN_BITMAP_FM_ACC          58  /* GB_bitmap_assign_fullM_accum         */
+#define GB_JIT_KERNEL_ASSIGN_BITMAP_FM_ACC_WHOLE    59  /* GB_bitmap_assign_fullM_accum_whole   */
+#define GB_JIT_KERNEL_ASSIGN_BITMAP_FM_NOACC        60  /* GB_bitmap_assign_fullM_noaccum       */
+#define GB_JIT_KERNEL_ASSIGN_BITMAP_FM_NOACC_WHOLE  61  /* GB_bitmap_assign_fullM_noaccum_whole */
+#define GB_JIT_KERNEL_ASSIGN_BITMAP_NOM_ACC         62  /* GB_bitmap_assign_noM_accum           */
+#define GB_JIT_KERNEL_ASSIGN_BITMAP_NOM_ACC_WHOLE   63  /* GB_bitmap_assign_noM_accum_whole     */
+#define GB_JIT_KERNEL_ASSIGN_BITMAP_NOM_NOACC       64  /* GB_bitmap_assign_noM_noaccum         */
+#define GB_JIT_KERNEL_ASSIGN_BITMAP_NOM_NOACC_WHOLE 65  /* GB_bitmap_assign_noM_noaccum_whole   */
+#define GB_JIT_KERNEL_ASSIGN_BITMAP_NM_ACC          66  /* GB_bitmap_assign_notM_accum          */
+#define GB_JIT_KERNEL_ASSIGN_BITMAP_NM_ACC_WHOLE    67  /* GB_bitmap_assign_notM_accum_whole    */
+#define GB_JIT_KERNEL_ASSIGN_BITMAP_NM_NOACC        68  /* GB_bitmap_assign_notM_noaccum        */
+#define GB_JIT_KERNEL_ASSIGN_BITMAP_NM_NOACC_WHOLE  69  /* GB_bitmap_assign_notM_noaccum_whole  */
+
+// subref methods: todo
+// GB_bitmap_subref
+// GB_subref_phase3
+
+// concat/split: todo
+// GB_concat_bitmap
+// GB_concat_full
+// GB_concat_sparse
+// GB_split_bitmap
+// GB_split_full
+// GB_split_sparse
+
+// masker methods: todo
+// GB_masker_phase1
+// GB_masker_phase2
+
+// Kronecker: todo
+// GB_kroner
+
+// utilities: todo
+// GB_check_if_iso
+// GB_convert_bitmap_worker
+// GB_convert_sparse_to_bitmap
+// GB_expand_iso
+// GB_sort
 
 //------------------------------------------------------------------------------
 // GB_jitifyer_entry: an entry in the jitifyer hash table

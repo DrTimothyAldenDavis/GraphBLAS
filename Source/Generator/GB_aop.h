@@ -10,7 +10,6 @@ GrB_Info GB (_subassign_23)
 GrB_Info GB (_subassign_22)
 (
     GrB_Matrix C,
-    const GB_void *ywork_handle,
-    const int nthreads
+    const GB_void *ywork_handle
 ) ;
 
