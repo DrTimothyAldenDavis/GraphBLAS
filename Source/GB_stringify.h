@@ -116,7 +116,7 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     const GrB_Matrix B
 ) ;
 
-bool GB_enumify_ewise       // enumerate a GrB_eWise problem
+void GB_enumify_ewise       // enumerate a GrB_eWise problem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
@@ -523,7 +523,7 @@ void GB_macrofy_query_version
 // unary ops
 //------------------------------------------------------------------------------
 
-bool GB_enumify_apply       // enumerate an apply or tranpose/apply problem
+void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
@@ -611,7 +611,7 @@ uint64_t GB_encodify_build      // encode an build problem
     const GrB_BinaryOp dup      // operator for summing up duplicates
 ) ;
 
-bool GB_enumify_build       // enumerate a GB_build problem
+void GB_enumify_build       // enumerate a GB_build problem
 (
     // output:
     uint64_t *build_code,   // unique encoding of the entire operation
@@ -652,7 +652,7 @@ uint64_t GB_encodify_select     // encode an select problem
     const GrB_Matrix A
 ) ;
 
-bool GB_enumify_select      // enumerate a GrB_selectproblem
+void GB_enumify_select      // enumerate a GrB_selectproblem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
@@ -719,7 +719,7 @@ uint64_t GB_encodify_assign     // encode an assign problem
     int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
 ) ;
 
-bool GB_enumify_assign      // enumerate a GrB_assign problem
+void GB_enumify_assign      // enumerate a GrB_assign problem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire operation

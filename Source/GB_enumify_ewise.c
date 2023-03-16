@@ -17,7 +17,7 @@
 // accum is not present.  Kernels that use it would require accum to be
 // the same as the binary operator (but this may change in the future).
 
-bool GB_enumify_ewise       // enumerate a GrB_eWise problem
+void GB_enumify_ewise       // enumerate a GrB_eWise problem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire operation

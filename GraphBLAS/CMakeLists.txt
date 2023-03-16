@@ -48,9 +48,9 @@ project ( graphblas_matlab
     VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" LANGUAGES C )
 
 # enable this only for development
-  set ( CMAKE_CUDA_DEV off )
+# set ( CMAKE_CUDA_DEV off )
 # FIXME!! cuda dev is on
-# set ( CMAKE_CUDA_DEV on )
+  set ( CMAKE_CUDA_DEV on )
 if ( CMAKE_CUDA_DEV )
     # for CUDA development only; not for production use
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBCUDA_DEV=1 " )

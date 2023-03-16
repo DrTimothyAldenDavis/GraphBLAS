@@ -13,7 +13,7 @@
 // Currently, the mask M and the accum are not present, and C and A have the
 // same type, but these conditions may change in the future.
 
-bool GB_enumify_select      // enumerate a GrB_selectproblem
+void GB_enumify_select      // enumerate a GrB_selectproblem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
