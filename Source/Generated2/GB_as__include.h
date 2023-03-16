@@ -13,9 +13,7 @@ GrB_Info GB (_subassign_05d__bool)
     const GrB_Matrix M,
     const bool Mask_struct,
     const GB_void *p_cwork,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_subassign_06d__bool)
@@ -42,9 +40,7 @@ GrB_Info GB (_subassign_05d__int8)
     const GrB_Matrix M,
     const bool Mask_struct,
     const GB_void *p_cwork,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_subassign_06d__int8)
@@ -71,9 +67,7 @@ GrB_Info GB (_subassign_05d__int16)
     const GrB_Matrix M,
     const bool Mask_struct,
     const GB_void *p_cwork,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_subassign_06d__int16)
@@ -100,9 +94,7 @@ GrB_Info GB (_subassign_05d__int32)
     const GrB_Matrix M,
     const bool Mask_struct,
     const GB_void *p_cwork,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_subassign_06d__int32)
@@ -129,9 +121,7 @@ GrB_Info GB (_subassign_05d__int64)
     const GrB_Matrix M,
     const bool Mask_struct,
     const GB_void *p_cwork,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_subassign_06d__int64)
@@ -158,9 +148,7 @@ GrB_Info GB (_subassign_05d__uint8)
     const GrB_Matrix M,
     const bool Mask_struct,
     const GB_void *p_cwork,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_subassign_06d__uint8)
@@ -187,9 +175,7 @@ GrB_Info GB (_subassign_05d__uint16)
     const GrB_Matrix M,
     const bool Mask_struct,
     const GB_void *p_cwork,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_subassign_06d__uint16)
@@ -216,9 +202,7 @@ GrB_Info GB (_subassign_05d__uint32)
     const GrB_Matrix M,
     const bool Mask_struct,
     const GB_void *p_cwork,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_subassign_06d__uint32)
@@ -245,9 +229,7 @@ GrB_Info GB (_subassign_05d__uint64)
     const GrB_Matrix M,
     const bool Mask_struct,
     const GB_void *p_cwork,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_subassign_06d__uint64)
@@ -274,9 +256,7 @@ GrB_Info GB (_subassign_05d__fp32)
     const GrB_Matrix M,
     const bool Mask_struct,
     const GB_void *p_cwork,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_subassign_06d__fp32)
@@ -303,9 +283,7 @@ GrB_Info GB (_subassign_05d__fp64)
     const GrB_Matrix M,
     const bool Mask_struct,
     const GB_void *p_cwork,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_subassign_06d__fp64)
@@ -332,9 +310,7 @@ GrB_Info GB (_subassign_05d__fc32)
     const GrB_Matrix M,
     const bool Mask_struct,
     const GB_void *p_cwork,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_subassign_06d__fc32)
@@ -361,9 +337,7 @@ GrB_Info GB (_subassign_05d__fc64)
     const GrB_Matrix M,
     const bool Mask_struct,
     const GB_void *p_cwork,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_subassign_06d__fc64)

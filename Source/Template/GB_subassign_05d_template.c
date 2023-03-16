@@ -7,7 +7,24 @@
 
 //------------------------------------------------------------------------------
 
+#undef  GB_FREE_ALL        
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
+}
+
 {
+
+    //--------------------------------------------------------------------------
+    // Parallel: slice M into equal-sized chunks
+    //--------------------------------------------------------------------------
+
+    GrB_Info info ;
+    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+    int M_ntasks, M_nthreads ;
+    GB_SLICE_MATRIX (M, 8, chunk) ;
 
     //--------------------------------------------------------------------------
     // get C and M
@@ -27,9 +44,9 @@
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     const int64_t cvlen = C->vlen ;
 
-    const int64_t *restrict kfirst_Mslice = M_ek_slicing ;
-    const int64_t *restrict klast_Mslice  = M_ek_slicing + M_ntasks ;
-    const int64_t *restrict pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
+//  const int64_t *restrict kfirst_Mslice = M_ek_slicing ;
+//  const int64_t *restrict klast_Mslice  = M_ek_slicing + M_ntasks ;
+//  const int64_t *restrict pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
     // C<M> = x
@@ -90,5 +107,10 @@
             }
         }
     }
+
+    GB_FREE_ALL ;
 }
+
+#undef  GB_FREE_ALL        
+#define GB_FREE_ALL ;
 

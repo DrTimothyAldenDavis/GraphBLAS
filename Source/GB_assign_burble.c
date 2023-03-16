@@ -46,6 +46,6 @@ void GB_assign_burble
     // burble the description
     //--------------------------------------------------------------------------
 
-    GBURBLE (description) ;
+    GBURBLE ("%s", description) ;
 }
 

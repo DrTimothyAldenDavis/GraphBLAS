@@ -29,14 +29,8 @@
 #include "GB_as__include.h"
 #endif
 
-#undef  GB_FREE_WORKSPACE
-#define GB_FREE_WORKSPACE                   \
-{                                           \
-    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
-}
-
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL GB_FREE_WORKSPACE
+#define GB_FREE_ALL ;
 
 GrB_Info GB_subassign_05d
 (
@@ -61,7 +55,6 @@ GrB_Info GB_subassign_05d
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
 
     ASSERT_MATRIX_OK (C, "C for subassign method_05d", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
@@ -93,20 +86,6 @@ GrB_Info GB_subassign_05d
     // and the time is O(nnz(M)).
 
     //--------------------------------------------------------------------------
-    // Parallel: slice M into equal-sized chunks
-    //--------------------------------------------------------------------------
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
-
-    //--------------------------------------------------------------------------
-    // slice the entries for each task
-    //--------------------------------------------------------------------------
-
-    int M_ntasks, M_nthreads ;
-    GB_SLICE_MATRIX (M, 8, chunk) ;
-
-    //--------------------------------------------------------------------------
     // via the factory kernel
     //--------------------------------------------------------------------------
 
@@ -121,8 +100,7 @@ GrB_Info GB_subassign_05d
         #define GB_sub05d(cname) GB (_subassign_05d_ ## cname)
         #define GB_WORKER(cname)                                    \
         {                                                           \
-            info = GB_sub05d (cname) (C, M, Mask_struct, cwork,     \
-                M_ek_slicing, M_ntasks, M_nthreads) ;               \
+            info = GB_sub05d (cname) (C, M, Mask_struct, cwork, Werk) ;   \
         }                                                           \
         break ;
 
@@ -153,7 +131,11 @@ GrB_Info GB_subassign_05d
             case GB_FC64_code   : GB_WORKER (_fc64  )
             default: ;
         }
-
+if (info != GrB_NO_VALUE)
+{
+    printf ("HERE:05d factory %d\n", ccode) ;
+    fprintf (stderr, "HERE:05d factory %d\n", ccode) ;
+}
     #endif
 
     //--------------------------------------------------------------------------
@@ -176,6 +158,8 @@ GrB_Info GB_subassign_05d
         // GB_subassign_05d: C(:,:)<M> = scalar where C is as-if-full
         //----------------------------------------------------------------------
 
+printf ("HERE:05d generic\n") ;
+fprintf (stderr, "HERE:05d generic\n") ;
         // get operators, functions, workspace, contents of A and C
 
         #include "GB_generic.h"
@@ -196,7 +180,6 @@ GrB_Info GB_subassign_05d
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORKSPACE ;
     if (info == GrB_SUCCESS)
     {
         ASSERT_MATRIX_OK (C, "C output for subassign method_05d", GB0) ;

@@ -42,9 +42,7 @@ GrB_Info GB (_subassign_05d__fp64)
     const GrB_Matrix M,
     const bool Mask_struct,
     const GB_void *p_cwork,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    GB_Werk Werk
 )
 { 
     #if GB_DISABLE
