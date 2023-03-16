@@ -131,11 +131,6 @@ GrB_Info GB_subassign_05d
             case GB_FC64_code   : GB_WORKER (_fc64  )
             default: ;
         }
-if (info != GrB_NO_VALUE)
-{
-    printf ("HERE:05d factory %d\n", ccode) ;
-    fprintf (stderr, "HERE:05d factory %d\n", ccode) ;
-}
     #endif
 
     //--------------------------------------------------------------------------
@@ -158,8 +153,6 @@ if (info != GrB_NO_VALUE)
         // GB_subassign_05d: C(:,:)<M> = scalar where C is as-if-full
         //----------------------------------------------------------------------
 
-printf ("HERE:05d generic\n") ;
-fprintf (stderr, "HERE:05d generic\n") ;
         // get operators, functions, workspace, contents of A and C
 
         #include "GB_generic.h"
