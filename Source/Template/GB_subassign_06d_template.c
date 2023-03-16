@@ -2,12 +2,41 @@
 // GB_subassign_06d_template: C<A> = A
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
+}
+
 {
+
+    //--------------------------------------------------------------------------
+    // Parallel: slice A into equal-sized chunks
+    //--------------------------------------------------------------------------
+
+    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
+    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    const bool A_is_dense = GB_as_if_full (A) ;
+    const int64_t anz = GB_nnz_held (A) ;
+
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+    int A_ntasks, A_nthreads ;
+    if (A_is_bitmap || A_is_dense)
+    { 
+        // no need to construct tasks
+        A_nthreads = GB_nthreads ((anz + A->nvec), 32*chunk, nthreads_max) ;
+        A_ntasks = (A_nthreads == 1) ? 1 : (8 * A_nthreads) ;
+    }
+    else
+    { 
+        GB_SLICE_MATRIX (A, 8, 32*chunk) ;
+    }
 
     //--------------------------------------------------------------------------
     // get C and A
@@ -23,9 +52,6 @@
     const int8_t  *restrict Ab = A->b ;
     const bool A_iso = A->iso ;
     const int64_t avlen = A->vlen ;
-    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    const bool A_is_dense = GB_as_if_full (A) ;
-    const int64_t anz = GB_nnz_held (A) ;
 
     // since A is the mask, if A->iso is true, Mask_struct has been set true
     ASSERT (GB_IMPLIES (A_iso, Mask_struct)) ;
@@ -477,7 +503,11 @@
     { 
         C->nvals = cnvals ;
     }
+
+    GB_FREE_ALL ;
 }
 
 #undef GB_ISO_ASSIGN
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL ;
 
