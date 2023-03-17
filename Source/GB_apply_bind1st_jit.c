@@ -45,9 +45,10 @@ GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
-        GB_JIT_KERNEL_APPLYBIND1, false, false, false, false, false,
-        GxB_FULL, ctype, NULL, false, false, binaryop,
-        false, NULL, B) ;
+        GB_JIT_KERNEL_APPLYBIND1, false, false,
+        /* can copy to C: */ false,
+        false, false, GxB_FULL, ctype, NULL, false, false,
+        binaryop, false, NULL, B) ;
     if (hash == UINT64_MAX)
     {
         // cannot JIT this binaryop

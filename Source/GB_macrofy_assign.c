@@ -76,7 +76,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         case 3 : M_sparsity = GxB_FULL        ; break ;
     }
     GB_assign_describe (description, SLEN, C_repl, Ikind, Jkind,
-        M_is_null, msparsity, Mask_comp, Mask_struct, accum, !s_assign,
+        M_is_null, msparsity, Mask_comp, Mask_struct, accum, s_assign,
         assign_kind) ;
     fprintf (fp, "// assign/subassign: %s\n", description) ;
 
@@ -257,8 +257,8 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     else
     {
         // C(i,j) = (ctype) A(i,j)
-        GB_macrofy_cast_copy (fp, "C", "A",
-                (C_iso) ? NULL : ctype, atype, A_iso) ;
+        GB_macrofy_cast_copy (fp, "C", "A", (C_iso) ? NULL : ctype, atype,
+            A_iso) ;
         if (C_iso)
         {
             fprintf (fp, "#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork)\n");
@@ -273,9 +273,8 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         {
             // general case
             fprintf (fp, "#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) "
-                "GB_COPY_A_TO_C (Cx, pC, Ax, pA, A_iso)\n") ;
+                "GB_COPY_A_to_C (Cx, pC, Ax, pA, A_iso)\n") ;
         }
-
         // cwork = (ctype) A(i,j)
         GB_macrofy_cast_input (fp, "GB_COPY_aij_to_cwork", "cwork",
             "Ax,p,iso", A_iso ? "Ax [0]" : "Ax [p]", ctype, atype) ;
@@ -296,14 +295,10 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         // scalar assignment
         fprintf (fp, "\n// scalar:\n") ;
         GB_macrofy_type (fp, "A", "_", atype->name) ;
-        if (accum == NULL)
-        {
-            // no accum is present; no ytype or ywork scalar
-        }
-        else
+        if (accum != NULL)
         {
             // accum is present
-            // create macro for ywork = (ytype) scalar 
+            // ywork = (ytype) scalar 
             GB_macrofy_cast_input (fp, "GB_COPY_scalar_to_ywork", "ywork",
                 "scalar", "scalar", ytype, atype) ;
         }
@@ -311,19 +306,12 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     else
     {
         // matrix assignment
-        if (accum == NULL)
-        {
-            // no accum is present; no ytype or ywork scalar
-            GB_macrofy_sparsity (fp, "A", asparsity) ;
-            GB_macrofy_type (fp, "A", "_", atype->name) ;
-        }
-        else
+        GB_macrofy_input (fp, "a", "A", "A", true, ytype, atype, asparsity,
+            acode, A_iso, -1) ;
+        if (accum != NULL)
         {
             // accum is present
-            // create macro for ywork = (ytype) A(i,j) 
-            GB_macrofy_input (fp, "a", "A", "A", true, ytype, atype, asparsity,
-                acode, A_iso, -1) ;
-            fprintf (fp, "#define GB_DECLAREY(ywork) %s ywork\n", ytype->name) ;
+            // ywork = (ytype) A(i,j) 
             fprintf (fp, "#define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso) "
                 "GB_GETA (ywork, Ax, pA, A_iso)\n") ;
         }

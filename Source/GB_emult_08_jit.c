@@ -59,9 +59,11 @@ GrB_Info GB_emult_08_jit      // C<#M>=A.*B, emult_08, via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
-        GB_JIT_KERNEL_EMULT8, true, false, false, false, false,
-        C_sparsity, C->type, M, Mask_struct, Mask_comp, binaryop,
-        false, A, B) ;
+        GB_JIT_KERNEL_EMULT8, true, false,
+        /* can copy to C: */ false,
+        false, false,
+        C_sparsity, C->type, M, Mask_struct, Mask_comp,
+        binaryop, false, A, B) ;
     if (hash == UINT64_MAX)
     {
         // cannot JIT this binaryop

@@ -208,7 +208,7 @@ end
 if (isempty (a2c))
     fprintf (f, 'm4_define(`GB_copy_a_to_c'', `'')\n') ;
 else
-    fprintf (f, 'm4_define(`GB_copy_a_to_c'', `#define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = %s'')\n', a2c) ;
+    fprintf (f, 'm4_define(`GB_copy_a_to_c'', `#define GB_COPY_A_to_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = %s'')\n', a2c) ;
 end
 
 % to copy an entry from B to C
@@ -226,7 +226,7 @@ end
 if (isempty (b2c))
     fprintf (f, 'm4_define(`GB_copy_b_to_c'', `'')\n') ;
 else
-    fprintf (f, 'm4_define(`GB_copy_b_to_c'', `#define GB_COPY_B_TO_C(Cx,pC,Bx,pB,B_iso) Cx [pC] = %s'')\n', b2c) ;
+    fprintf (f, 'm4_define(`GB_copy_b_to_c'', `#define GB_COPY_B_to_C(Cx,pC,Bx,pB,B_iso) Cx [pC] = %s'')\n', b2c) ;
 end
 
 % type-specific idiv

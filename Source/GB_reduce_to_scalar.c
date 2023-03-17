@@ -260,9 +260,9 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
             #define GB_PANEL 1
             #define GB_NO_PANEL_CASE
 
-            // W [k] = t, no typecast
-            #define GB_COPY_SCALAR_TO_ARRAY(W, k, t)                \
-                memcpy (W +(k*zsize), t, zsize)
+            // W [k] = z, no typecast
+            #define GB_COPY_SCALAR_TO_ARRAY(W, k, z)                \
+                memcpy (W +(k*zsize), z, zsize)
 
             // z += W [k], no typecast
             #define GB_ADD_ARRAY_TO_SCALAR(z,W,k)                   \

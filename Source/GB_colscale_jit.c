@@ -47,9 +47,11 @@ GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
-        GB_JIT_KERNEL_COLSCALE, false, false, false, false, false,
-        GB_sparsity (C), C->type, NULL, false, false, binaryop,
-        flipxy, A, D) ;
+        GB_JIT_KERNEL_COLSCALE, false, false,
+        /* can copy to C: */ false,
+        false, false,
+        GB_sparsity (C), C->type, NULL, false, false,
+        binaryop, flipxy, A, D) ;
     if (hash == UINT64_MAX)
     {
         // cannot JIT this binaryop

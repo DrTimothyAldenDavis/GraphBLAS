@@ -437,13 +437,13 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         GB_BURBLE_MATRIX (C, "(generic add: %s) ", op->name) ;
 
         // C(i,j) = (ctype) A(i,j), located in Ax [pA]
-        #undef  GB_COPY_A_TO_C 
-        #define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso)                             \
+        #undef  GB_COPY_A_to_C 
+        #define GB_COPY_A_to_C(Cx,pC,Ax,pA,A_iso)                             \
         cast_A_to_C (Cx +((pC)*csize), Ax +((A_iso) ? 0: (pA)*asize), asize) ;
 
         // C(i,j) = (ctype) B(i,j), located in Bx [pB]
-        #undef  GB_COPY_B_TO_C
-        #define GB_COPY_B_TO_C(Cx,pC,Bx,pB,B_iso)                             \
+        #undef  GB_COPY_B_to_C
+        #define GB_COPY_B_to_C(Cx,pC,Bx,pB,B_iso)                             \
         cast_B_to_C (Cx +((pC)*csize), Bx +((B_iso) ? 0: (pB)*bsize), bsize) ;
 
         // declare aij as xtype

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: needed (now).
+// JIT: done.
 
 // Method 05d: C(:,:)<M> = scalar ; no S, C is dense
 
@@ -94,6 +94,7 @@ GrB_Info GB_subassign_05d
     info = GrB_NO_VALUE ;
 
 #if 0
+    // FIXME: factory kernels disabled for now
     #ifndef GBCUDA_DEV
 
         //----------------------------------------------------------------------
@@ -144,7 +145,7 @@ GrB_Info GB_subassign_05d
     #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     {
-        info = GB_subassign_jit ( C,
+        info = GB_subassign_jit (C,
             /* C_replace: */ false,
             /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
             /* J, nj, nJ, Jkind, Jcolon: */ NULL, 0, 0, GB_ALL, NULL,

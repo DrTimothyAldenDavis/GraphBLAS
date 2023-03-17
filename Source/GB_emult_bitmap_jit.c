@@ -54,9 +54,11 @@ GrB_Info GB_emult_bitmap_jit      // C<#M>=A.*B, emult_bitmap, via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
-        GB_JIT_KERNEL_EMULT_BITMAP, true, false, false, false, false,
-        GxB_BITMAP, C->type, M, Mask_struct, Mask_comp, binaryop,
-        false, A, B) ;
+        GB_JIT_KERNEL_EMULT_BITMAP, true, false,
+        /* can copy to C: */ false,
+        false, false,
+        GxB_BITMAP, C->type, M, Mask_struct, Mask_comp,
+        binaryop, false, A, B) ;
     if (hash == UINT64_MAX)
     {
         // cannot JIT this binaryop

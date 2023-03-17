@@ -34,7 +34,7 @@
             #else
             { 
                 // C (i,j) = A (i,j)
-                GB_COPY_A_TO_C (Cx, p, Ax, p, A_iso) ;
+                GB_COPY_A_to_C (Cx, p, Ax, p, A_iso) ;
             }
             #endif
         }

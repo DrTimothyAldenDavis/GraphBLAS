@@ -11,9 +11,9 @@
 
 // Method 06d: C(:,:)<A> = A ; no S, C is dense, M and A are aliased
 
-// M:           present
+// M:           present, and aliased to A
 // Mask_comp:   false
-// Mask_struct: true or false (both cases handled)
+// Mask_struct: true or false
 // C_replace:   false
 // accum:       NULL
 // A:           matrix, and aliased to M
@@ -31,6 +31,7 @@
 #include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 #include "GB_subassign_dense.h"
+#include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_as__include.h"
 #endif
@@ -108,6 +109,8 @@ GrB_Info GB_subassign_06d
         // via the factory kernel
         //----------------------------------------------------------------------
 
+#if 0
+        // FIXME: factory kernel disabled
         #ifndef GBCUDA_DEV
 
             //------------------------------------------------------------------
@@ -148,13 +151,28 @@ GrB_Info GB_subassign_06d
             }
 
         #endif
+#endif
 
         //----------------------------------------------------------------------
         // via the JIT kernel
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: type: subassign 06d
+        if (info == GrB_NO_VALUE)
+        {
+            info = GB_subassign_jit (C,
+                /* C_replace: */ false,
+                /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
+                /* J, nj, nJ, Jkind, Jcolon: */ NULL, 0, 0, GB_ALL, NULL,
+                /* M and A are aliased: */ A,
+                /* Mask_comp: */ false,
+                Mask_struct,
+                /* accum: */ NULL,
+                /* A: */ A,
+                /* scalar, scalar_type: */ NULL, NULL,
+                GB_SUBASSIGN, "subassign_06d", GB_JIT_KERNEL_SUBASSIGN_06d,
+                Werk) ;
+        }
         #endif
 
         //----------------------------------------------------------------------

@@ -42,9 +42,11 @@ GrB_Info GB_ewise_full_accum_jit    // C+=A+B via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
-        GB_JIT_KERNEL_EWISEFA, false, false, false, false, false,
-        GxB_FULL, C->type, NULL, false, false, binaryop,
-        false, A, B) ;
+        GB_JIT_KERNEL_EWISEFA, false, false,
+        /* can copy to C: */ false,
+        false, false,
+        GxB_FULL, C->type, NULL, false, false,
+        binaryop, false, A, B) ;
     if (hash == UINT64_MAX)
     {
         // cannot JIT this binaryop

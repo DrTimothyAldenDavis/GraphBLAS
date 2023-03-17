@@ -77,9 +77,10 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
-        GB_JIT_KERNEL_ADD, false, false, true, false, false,
-        C_sparsity, C->type, M, Mask_struct, Mask_comp, binaryop,
-        false, A, B) ;
+        GB_JIT_KERNEL_ADD, false, false,
+        /* can copy to C: */ true,
+        false, false, C_sparsity, C->type, M, Mask_struct, Mask_comp,
+        binaryop, false, A, B) ;
     if (hash == UINT64_MAX)
     {
         // cannot JIT this binaryop
