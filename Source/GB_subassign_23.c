@@ -7,11 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: needed (now).
+// JIT: done.
 
-// C and A must have the same vector dimension and vector length.
-// FUTURE::: the transposed case, C+=A' could easily be done.
-// The parallelism used is identical to GB_colscale.
+// Method 23: C += A, where C is dense
+
+// M:           NULL
+// Mask_comp:   false
+// Mask_struct: ignored
+// C_replace:   false
+// accum:       present
+// A:           matrix
+// S:           none
 
 // The type of C must match the type of x and z for the accum function, since
 // C(i,j) = accum (C(i,j), A(i,j)) is handled.  The generic case here can
@@ -25,6 +31,7 @@
 #include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_dense.h"
 #include "GB_binop.h"
+#include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_aop__include.h"
 #endif
@@ -94,6 +101,7 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
 
     info = GrB_NO_VALUE ;
 
+#if 0
     #ifndef GBCUDA_DEV
 
         //----------------------------------------------------------------------
@@ -124,13 +132,28 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
         }
 
     #endif
+#endif
 
     //--------------------------------------------------------------------------
     // via the JIT kernel
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: aop: subassign 23
+    if (info == GrB_NO_VALUE)
+    {
+        info = GB_subassign_jit (C,
+            /* C_replace: */ false,
+            /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
+            /* J, nj, nJ, Jkind, Jcolon: */ NULL, 0, 0, GB_ALL, NULL,
+            /* M: */ NULL,
+            /* Mask_comp: */ false,
+            /* Mask_struct: */ true,
+            /* accum: */ accum,
+            /* A: */ A,
+            /* scalar, scalar_type: */ NULL, NULL,
+            GB_SUBASSIGN, "subassign_23", GB_JIT_KERNEL_SUBASSIGN_23,
+            Werk) ;
+    }
     #endif
 
     //--------------------------------------------------------------------------

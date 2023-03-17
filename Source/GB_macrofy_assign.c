@@ -219,7 +219,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
             // FIXME: simplify if xtype == ctype and/or ztype == ctype
             fprintf (fp,
                 "    GB_DECLAREX (xwork) ;                  \\\n"
-                "    GB_GETC (xwork, Cx, pC, ) ;            \\\n"
+                "    GB_COPY_C_to_xwork (xwork, Cx, pC) ;   \\\n"
                 "    GB_DECLAREZ (zwork) ;                  \\\n"
                 "    GB_ACCUM_OP (zwork, xwork, ywork) ;    \\\n"
                 "    GB_PUTC (zwork, Cx, pC) ;              \\\n"
@@ -259,25 +259,35 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         // C(i,j) = (ctype) A(i,j)
         GB_macrofy_cast_copy (fp, "C", "A", (C_iso) ? NULL : ctype, atype,
             A_iso) ;
+        fprintf (fp, "#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork)");
         if (C_iso)
         {
-            fprintf (fp, "#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork)\n");
+            fprintf (fp, "\n");
         }
         else if (A_iso)
         {
             // cwork = (ctype) Ax [0] already done
-            fprintf (fp, "#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) "
-                "Cx [pC] = cwork\n") ;
+            fprintf (fp, " Cx [pC] = cwork\n") ;
         }
         else
         {
             // general case
-            fprintf (fp, "#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) "
-                "GB_COPY_A_to_C (Cx, pC, Ax, pA, A_iso)\n") ;
+            fprintf (fp, " \\\n    GB_COPY_A_to_C (Cx, pC, Ax, pA, A_iso)\n") ;
+        }
+        if (C_iso)
+        {
+            fprintf (fp, "#define GB_COPY_C_to_xwork(xwork,Cx,pC)\n");
+        }
+        else
+        {
+            // xwork = (xtype) C(i,j)
+            GB_macrofy_cast_input (fp, "GB_COPY_C_to_xwork", "xwork",
+                "Cx,p", "Cx [p]", xtype, ctype) ;
         }
         // cwork = (ctype) A(i,j)
         GB_macrofy_cast_input (fp, "GB_COPY_aij_to_cwork", "cwork",
             "Ax,p,iso", A_iso ? "Ax [0]" : "Ax [p]", ctype, atype) ;
+
     }
 
     //--------------------------------------------------------------------------
