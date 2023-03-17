@@ -30,6 +30,7 @@
 #include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 #include "GB_subassign_dense.h"
+#include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_as__include.h"
 #endif
@@ -173,7 +174,21 @@ GrB_Info GB_subassign_25
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: type: subassign 25
+        if (info == GrB_NO_VALUE)
+        {
+            info = GB_subassign_jit (C,
+                /* C_replace: */ false,
+                /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
+                /* J, nj, nJ, Jkind, Jcolon: */ NULL, 0, 0, GB_ALL, NULL,
+                M,
+                /* Mask_comp: */ false,
+                /* Mask_struct: */ true,
+                /* accum: */ NULL,
+                /* A: */ A,
+                /* scalar, scalar_type: */ NULL, NULL,
+                GB_SUBASSIGN, "subassign_25", GB_JIT_KERNEL_SUBASSIGN_25,
+                Werk) ;
+        }
         #endif
 
         //----------------------------------------------------------------------

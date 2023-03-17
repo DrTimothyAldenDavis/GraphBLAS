@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: needed (now).
+// JIT: done.
 
 // Method 06d: C(:,:)<A> = A ; no S, C is dense, M and A are aliased
 
@@ -109,8 +109,6 @@ GrB_Info GB_subassign_06d
         // via the factory kernel
         //----------------------------------------------------------------------
 
-#if 0
-        // FIXME: factory kernel disabled
         #ifndef GBCUDA_DEV
 
             //------------------------------------------------------------------
@@ -151,7 +149,6 @@ GrB_Info GB_subassign_06d
             }
 
         #endif
-#endif
 
         //----------------------------------------------------------------------
         // via the JIT kernel

@@ -93,8 +93,6 @@ GrB_Info GB_subassign_05d
 
     info = GrB_NO_VALUE ;
 
-#if 0
-    // FIXME: factory kernels disabled for now
     #ifndef GBCUDA_DEV
 
         //----------------------------------------------------------------------
@@ -136,7 +134,6 @@ GrB_Info GB_subassign_05d
             default: ;
         }
     #endif
-#endif
 
     //--------------------------------------------------------------------------
     // via the JIT kernel
