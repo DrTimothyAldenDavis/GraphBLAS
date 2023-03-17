@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: needed (now).
+// JIT: done.
 
 // Method 25: C(:,:)<M,s> = A ; C is empty, M structural, A bitmap/as-if-full
 
