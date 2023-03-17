@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME
+#define GB_DEBUG
+
 #include "GB.h"
 #include "GB_stringify.h"
 
@@ -66,6 +69,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 
     GrB_Type xtype, ytype, ztype ;
     const char *xtype_name, *ytype_name, *ztype_name ;
+    ASSERT_BINARYOP_OK (binaryop, "binaryop to macrofy", GB0) ;
 
     GB_macrofy_copyright (fp) ;
 

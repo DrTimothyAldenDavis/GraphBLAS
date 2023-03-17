@@ -13,6 +13,7 @@
 
 // M:           present
 // Mask_comp:   false
+// Mask_struct: true or false
 // C_replace:   false
 // accum:       NULL
 // A:           scalar
@@ -25,6 +26,7 @@
 #include "GB_subassign_methods.h"
 #include "GB_subassign_dense.h"
 #include "GB_unused.h"
+#include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_as__include.h"
 #endif
@@ -91,6 +93,7 @@ GrB_Info GB_subassign_05d
 
     info = GrB_NO_VALUE ;
 
+#if 0
     #ifndef GBCUDA_DEV
 
         //----------------------------------------------------------------------
@@ -98,10 +101,10 @@ GrB_Info GB_subassign_05d
         //----------------------------------------------------------------------
 
         #define GB_sub05d(cname) GB (_subassign_05d_ ## cname)
-        #define GB_WORKER(cname)                                    \
-        {                                                           \
-            info = GB_sub05d (cname) (C, M, Mask_struct, cwork, Werk) ;   \
-        }                                                           \
+        #define GB_WORKER(cname)                                        \
+        {                                                               \
+            info = GB_sub05d (cname) (C, M, Mask_struct, cwork, Werk) ; \
+        }                                                               \
         break ;
 
         //----------------------------------------------------------------------
@@ -132,14 +135,28 @@ GrB_Info GB_subassign_05d
             default: ;
         }
     #endif
+#endif
 
     //--------------------------------------------------------------------------
     // via the JIT kernel
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: type: subassign 05d
-    // pass (cwork,ctype) instead of (scalar,scalar_type)
+    if (info == GrB_NO_VALUE)
+    {
+        info = GB_subassign_jit ( C,
+            /* C_replace: */ false,
+            /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
+            /* J, nj, nJ, Jkind, Jcolon: */ NULL, 0, 0, GB_ALL, NULL,
+            M,
+            /* Mask_comp: */ false,
+            Mask_struct,
+            /* accum: */ NULL,
+            /* A: */ NULL,
+            /* scalar, scalar_type: */ cwork, C->type,
+            GB_SUBASSIGN, "subassign_05d", GB_JIT_KERNEL_SUBASSIGN_05d,
+            Werk) ;
+    }
     #endif
 
     //--------------------------------------------------------------------------
@@ -157,8 +174,6 @@ GrB_Info GB_subassign_05d
 
         #include "GB_generic.h"
         GB_BURBLE_MATRIX (M, "(generic C(:,:)<M>=x assign) ") ;
-
-        const size_t csize = C->type->size ;
 
         // Cx [pC] = cwork
         #undef  GB_COPY_scalar_to_C

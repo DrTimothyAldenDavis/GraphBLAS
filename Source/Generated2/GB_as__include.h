@@ -12,7 +12,7 @@ GrB_Info GB (_subassign_05d__bool)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *scalar,
     GB_Werk Werk
 ) ;
 
@@ -37,7 +37,7 @@ GrB_Info GB (_subassign_05d__int8)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *scalar,
     GB_Werk Werk
 ) ;
 
@@ -62,7 +62,7 @@ GrB_Info GB (_subassign_05d__int16)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *scalar,
     GB_Werk Werk
 ) ;
 
@@ -87,7 +87,7 @@ GrB_Info GB (_subassign_05d__int32)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *scalar,
     GB_Werk Werk
 ) ;
 
@@ -112,7 +112,7 @@ GrB_Info GB (_subassign_05d__int64)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *scalar,
     GB_Werk Werk
 ) ;
 
@@ -137,7 +137,7 @@ GrB_Info GB (_subassign_05d__uint8)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *scalar,
     GB_Werk Werk
 ) ;
 
@@ -162,7 +162,7 @@ GrB_Info GB (_subassign_05d__uint16)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *scalar,
     GB_Werk Werk
 ) ;
 
@@ -187,7 +187,7 @@ GrB_Info GB (_subassign_05d__uint32)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *scalar,
     GB_Werk Werk
 ) ;
 
@@ -212,7 +212,7 @@ GrB_Info GB (_subassign_05d__uint64)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *scalar,
     GB_Werk Werk
 ) ;
 
@@ -237,7 +237,7 @@ GrB_Info GB (_subassign_05d__fp32)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *scalar,
     GB_Werk Werk
 ) ;
 
@@ -262,7 +262,7 @@ GrB_Info GB (_subassign_05d__fp64)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *scalar,
     GB_Werk Werk
 ) ;
 
@@ -287,7 +287,7 @@ GrB_Info GB (_subassign_05d__fc32)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *scalar,
     GB_Werk Werk
 ) ;
 
@@ -312,7 +312,7 @@ GrB_Info GB (_subassign_05d__fc64)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *scalar,
     GB_Werk Werk
 ) ;
 

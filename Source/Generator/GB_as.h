@@ -5,7 +5,7 @@ GrB_Info GB (_subassign_05d)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *cwork_handle,
+    const GB_void *scalar,
     GB_Werk Werk
 ) ;
 

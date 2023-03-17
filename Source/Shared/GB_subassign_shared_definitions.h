@@ -13,6 +13,9 @@
 // definitions redefined as needed
 //------------------------------------------------------------------------------
 
+// FIXME: debug is on
+#define GB_DEBUG
+
 #include "GB_static_header.h"
 
 #ifndef GB_FREE_WORKSPACE

@@ -29,9 +29,6 @@
 
 #include "GB_subassign_shared_definitions.h"
 
-#undef  GB_FREE_ALL 
-#define GB_FREE_ALL ;
-
 //------------------------------------------------------------------------------
 // C<M> = scalar, when C is dense
 //------------------------------------------------------------------------------
@@ -41,14 +38,14 @@ GrB_Info GB (_subassign_05d__fc32)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *p_cwork,
+    const GB_void *scalar,      // of type C->type
     GB_Werk Werk
 )
 { 
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_C_TYPE cwork = (*((GB_C_TYPE *) p_cwork)) ;
+    GB_C_TYPE cwork = (*((GB_C_TYPE *) scalar)) ;
     #include "GB_subassign_05d_template.c"
     return (GrB_SUCCESS) ;
     #endif

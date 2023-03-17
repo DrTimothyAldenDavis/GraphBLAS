@@ -33,20 +33,21 @@
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!C->iso) ;
 
+    #ifdef GB_JIT_KERNEL
+    #define Mask_struct GB_MASK_STRUCT
+    #else
+    const size_t msize = M->type->size ;
+    #endif
+
     const int64_t *restrict Mp = M->p ;
     const int8_t  *restrict Mb = M->b ;
     const int64_t *restrict Mh = M->h ;
     const int64_t *restrict Mi = M->i ;
     const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
-    const size_t msize = M->type->size ;
     const size_t Mvlen = M->vlen ;
 
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     const int64_t cvlen = C->vlen ;
-
-//  const int64_t *restrict kfirst_Mslice = M_ek_slicing ;
-//  const int64_t *restrict klast_Mslice  = M_ek_slicing + M_ntasks ;
-//  const int64_t *restrict pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
     // C<M> = x
@@ -90,7 +91,8 @@
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 { 
                     int64_t pC = pC_start + GBI_M (Mi, pM, Mvlen) ;
-                    GB_COPY_scalar_to_C (Cx, pC, cwork) ;        // Cx [pC] = cwork
+                    // Cx [pC] = cwork
+                    GB_COPY_scalar_to_C (Cx, pC, cwork) ;
                 }
             }
             else
@@ -101,7 +103,8 @@
                     if (GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize))
                     { 
                         int64_t pC = pC_start + GBI_M (Mi, pM, Mvlen) ;
-                        GB_COPY_scalar_to_C (Cx, pC, cwork) ;    // Cx [pC] = cwork
+                        // Cx [pC] = cwork
+                        GB_COPY_scalar_to_C (Cx, pC, cwork) ;
                     }
                 }
             }

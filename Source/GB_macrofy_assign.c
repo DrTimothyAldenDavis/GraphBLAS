@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_macrofy_assign construct all macros for assignmethods
+// GB_macrofy_assign: construct all macros for assign methods
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -59,6 +59,8 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     // describe the assignment
     //--------------------------------------------------------------------------
 
+    GB_macrofy_copyright (fp) ;
+
     #define SLEN 512
     char description [SLEN] ;
     bool Mask_comp = (mask_ecode % 2 == 1) ;
@@ -76,35 +78,35 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     GB_assign_describe (description, SLEN, C_repl, Ikind, Jkind,
         M_is_null, msparsity, Mask_comp, Mask_struct, accum, !s_assign,
         assign_kind) ;
-    fprintf (fp, "\n// Assign/subassign: %s\n", description) ;
+    fprintf (fp, "// assign/subassign: %s\n", description) ;
 
     fprintf (fp, "#define GB_ASSIGN_KIND ") ;
     switch (assign_kind)
     {
-        case GB_ASSIGN     : fprintf (fp, "GB_ASSIGN\n") ;
-        case GB_SUBASSIGN  : fprintf (fp, "GB_SUBASSIGN\n") ;
-        case GB_ROW_ASSIGN : fprintf (fp, "GB_ROW_ASSIGN\n") ;
-        case GB_COL_ASSIGN : fprintf (fp, "GB_COL_ASSIGN\n") ;
+        case GB_ASSIGN     : fprintf (fp, "GB_ASSIGN\n"     ) ; break ;
+        case GB_SUBASSIGN  : fprintf (fp, "GB_SUBASSIGN\n"  ) ; break ;
+        case GB_ROW_ASSIGN : fprintf (fp, "GB_ROW_ASSIGN\n" ) ; break ;
+        case GB_COL_ASSIGN : fprintf (fp, "GB_COL_ASSIGN\n" ) ; break ;
         default:;
     }
 
     fprintf (fp, "#define GB_I_KIND ") ;
     switch (Ikind)
     {
-        case GB_ALL    : fprintf (fp, "GB_ALL\n") ;
-        case GB_RANGE  : fprintf (fp, "GB_RANGE\n") ;
-        case GB_STRIDE : fprintf (fp, "GB_STRIDE\n") ;
-        case GB_LIST   : fprintf (fp, "GB_LIST\n") ;
+        case GB_ALL    : fprintf (fp, "GB_ALL\n"    ) ; break ;
+        case GB_RANGE  : fprintf (fp, "GB_RANGE\n"  ) ; break ;
+        case GB_STRIDE : fprintf (fp, "GB_STRIDE\n" ) ; break ;
+        case GB_LIST   : fprintf (fp, "GB_LIST\n"   ) ; break ;
         default:;
     }
 
     fprintf (fp, "#define GB_J_KIND ") ;
     switch (Jkind)
     {
-        case GB_ALL    : fprintf (fp, "GB_ALL\n") ;
-        case GB_RANGE  : fprintf (fp, "GB_RANGE\n") ;
-        case GB_STRIDE : fprintf (fp, "GB_STRIDE\n") ;
-        case GB_LIST   : fprintf (fp, "GB_LIST\n") ;
+        case GB_ALL    : fprintf (fp, "GB_ALL\n"    ) ; break ;
+        case GB_RANGE  : fprintf (fp, "GB_RANGE\n"  ) ; break ;
+        case GB_STRIDE : fprintf (fp, "GB_STRIDE\n" ) ; break ;
+        case GB_LIST   : fprintf (fp, "GB_LIST\n"   ) ; break ;
         default:;
     }
 
@@ -116,8 +118,6 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
 
     GrB_Type xtype, ytype, ztype ;
     const char *xtype_name, *ytype_name, *ztype_name ;
-
-    GB_macrofy_copyright (fp) ;
 
     if (accum == NULL)
     {
@@ -231,8 +231,18 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     // macros for the C matrix
     //--------------------------------------------------------------------------
 
-    GB_macrofy_output (fp, "zwork", "C", "C", ctype,
-        (accum == NULL) ? ctype : ztype, csparsity, C_iso, C_iso) ;
+    if (accum == NULL)
+    {
+        // C(i,j) = (ctype) cwork, no typecasting
+        GB_macrofy_output (fp, "cwork", "C", "C", ctype, ctype, csparsity,
+            C_iso, C_iso) ;
+    }
+    else
+    {
+        // C(i,j) = (ctype) zwork, with possible typecasting
+        GB_macrofy_output (fp, "zwork", "C", "C", ctype, ztype, csparsity,
+            C_iso, C_iso) ;
+    }
 
     fprintf (fp, "#define GB_DECLAREC(cwork) %s cwork\n", ctype->name) ;
     if (s_assign)

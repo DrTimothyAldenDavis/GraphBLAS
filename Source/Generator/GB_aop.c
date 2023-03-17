@@ -55,9 +55,6 @@ GB_ax_mask
 
 #include "GB_subassign_shared_definitions.h"
 
-#undef  GB_FREE_ALL 
-#define GB_FREE_ALL ;
-
 //------------------------------------------------------------------------------
 // C += A, accumulate a sparse matrix into a dense matrix
 //------------------------------------------------------------------------------
