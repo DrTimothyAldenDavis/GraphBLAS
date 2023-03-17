@@ -7,6 +7,20 @@
 
 //------------------------------------------------------------------------------
 
+// Method 22: C += scalar, where C is dense
+
+// M:           NULL
+// Mask_comp:   false
+// Mask_struct: ignored
+// C_replace:   false
+// accum:       present
+// A:           scalar
+// S:           none
+
+// C += scalar where C is a dense or full matrix.
+// C can have any sparsity format, as long as all entries are present;
+// GB_is_dense (C)) must hold.
+
 {
 
     //--------------------------------------------------------------------------

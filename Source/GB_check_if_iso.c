@@ -15,9 +15,9 @@
 
 #include "GB.h"
 
-bool GB_check_if_iso               // return true if A is iso, false otherwise
+bool GB_check_if_iso        // return true if A is iso, false otherwise
 (
-    const GrB_Matrix A          // matrix to reduce
+    const GrB_Matrix A      // matrix to check if iso
 )
 {
 

@@ -101,7 +101,6 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
 
     info = GrB_NO_VALUE ;
 
-#if 0
     #ifndef GBCUDA_DEV
 
         //----------------------------------------------------------------------
@@ -132,7 +131,6 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
         }
 
     #endif
-#endif
 
     //--------------------------------------------------------------------------
     // via the JIT kernel
@@ -162,11 +160,6 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
 
     if (info == GrB_NO_VALUE)
     { 
-
-        //----------------------------------------------------------------------
-        // get operators, functions, workspace, contents of A and C
-        //----------------------------------------------------------------------
-
         #include "GB_generic.h"
         GB_BURBLE_MATRIX (A, "(generic C+=A) ") ;
 
@@ -175,10 +168,8 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
         size_t csize = C->type->size ;
         size_t asize = A->type->size ;
         size_t ysize = accum->ytype->size ;
-
-        GB_cast_function cast_A_to_Y ;
-
         // A is typecasted to y
+        GB_cast_function cast_A_to_Y ;
         cast_A_to_Y = GB_cast_factory (accum->ytype->code, A->type->code) ;
 
         // get the iso value of A

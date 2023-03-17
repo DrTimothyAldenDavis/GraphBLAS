@@ -197,11 +197,6 @@ GrB_Info GB_subassign_25
 
         if (info == GrB_NO_VALUE)
         { 
-
-            //-----------------------------------------------------------------
-            // get operators, functions, workspace, contents of A and C
-            //------------------------------------------------------------------
-
             #include "GB_generic.h"
             GB_BURBLE_MATRIX (A, "(generic C(:,:)<M,struct>=A assign, "
                 "method 25) ") ;

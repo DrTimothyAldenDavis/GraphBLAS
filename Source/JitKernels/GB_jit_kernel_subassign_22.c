@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_subassign_23.c: C += A where C is dense, A is sparse or dense
+// GB_jit_kernel_subassign_22.c: C += A where C is dense, A is sparse or dense
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -27,8 +27,8 @@ GrB_Info GB_jit_kernel
     // mask M:
     const GrB_Matrix M,         // NULL
     // A matrix or scalar:
-    const GrB_Matrix A,
-    const void *scalar,         // NULL
+    const GrB_Matrix A,         // NULL
+    const void *scalar,
     GB_Werk Werk
 ) ;
 
@@ -50,12 +50,13 @@ GrB_Info GB_jit_kernel
     // mask M:
     const GrB_Matrix M,         // NULL
     // A matrix or scalar:
-    const GrB_Matrix A,
-    const void *scalar,         // NULL
+    const GrB_Matrix A,         // NULL
+    const void *scalar,
     GB_Werk Werk
 )
 {
-    #include "GB_subassign_23_template.c"
+    GB_Y_TYPE ywork = (*((GB_Y_TYPE *) scalar)) ;
+    #include "GB_subassign_22_template.c"
     return (GrB_SUCCESS) ;
 }
 

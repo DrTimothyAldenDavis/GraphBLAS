@@ -319,6 +319,11 @@ int main (void)
     TRY (GrB_transpose (C, NULL, NULL, C, NULL)) ;
     printgauss (C, "\n=============== C = C'\n") ;
 
+    // C += ciso
+    TRY (GrB_Matrix_assign_UDT (C, NULL, AddGauss, (void *) &ciso,
+        GrB_ALL, 4, GrB_ALL, 4, NULL)) ;
+    printgauss (C, "\n=============== C = C + ciso\n") ;
+
     // free everything and finalize GraphBLAS
     GrB_free (&A) ;
     GrB_free (&B) ;

@@ -357,6 +357,7 @@ void GB_macrofy_binop
                 break ;
             case  45 : 
                 f = "z = (x) - (y)" ;
+                u = "z -= y" ;
                 break ;
 
             // rminus
@@ -432,7 +433,10 @@ void GB_macrofy_binop
                 break ;
 
             // div (float and double)
-            case  59 : f = "z = (x) / (y)" ; break ;
+            case  59 :
+                f = "z = (x) / (y)" ;
+                u = "z /= y" ;
+                break ;
 
             // rdiv (integer)
             case  60 : 

@@ -163,13 +163,6 @@ GrB_Info GB_subassign_05d
 
     if (info == GrB_NO_VALUE)
     { 
-
-        //----------------------------------------------------------------------
-        // GB_subassign_05d: C(:,:)<M> = scalar where C is as-if-full
-        //----------------------------------------------------------------------
-
-        // get operators, functions, workspace, contents of A and C
-
         #include "GB_generic.h"
         GB_BURBLE_MATRIX (M, "(generic C(:,:)<M>=x assign) ") ;
 
