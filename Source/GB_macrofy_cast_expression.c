@@ -48,7 +48,7 @@ const char *GB_macrofy_cast_expression  // return cast expression
         ASSERT (GB_IMPLIES (zcode == GB_UDT_code, (ztype == xtype) &&
             ztype->name != NULL && ztype->defn != NULL)) ;
 
-        f = "%s = (%s)" ;
+        f = "%s = %s" ;
 
     }
     else if (zcode == GB_BOOL_code)

@@ -139,7 +139,6 @@ void mexFunction
 
     int64_t nmalloc ;
     nmalloc = GB_Global_nmalloc_get ( ) ;
-
     printf ("nmalloc %d at start\n", nmalloc) ;
     bool malloc_debug = GB_mx_get_global (true) ;
     nmalloc = GB_Global_nmalloc_get ( ) ;
@@ -212,6 +211,12 @@ void mexFunction
     // init
     //--------------------------------------------------------------------------
 
+    nmalloc = GB_Global_nmalloc_get ( ) ;
+    printf ("nmalloc %d befor 2nd start\n", nmalloc) ;
+    OK (Complex_finalize ( )) ;
+    nmalloc = GB_Global_nmalloc_get ( ) ;
+    printf ("nmalloc %d after Complex_finialize\n", nmalloc) ;
+
     printf ("GrB_init-----------------------------------------------------\n") ;
 
     // can't call it twice
@@ -229,6 +234,14 @@ void mexFunction
     ERR (GxB_init (GrB_NONBLOCKING, mxMalloc, NULL, NULL, NULL  )) ;
 
     OK (GxB_init (GrB_NONBLOCKING, mxMalloc, NULL, NULL, mxFree)) ;
+
+    nmalloc = GB_Global_nmalloc_get ( ) ;
+    bool complex_is_builtin = (Complex == GxB_FC64) ;
+    printf ("nmalloc %d at 2nd start, reinit complex with builtin: %d\n",
+        nmalloc, complex_is_builtin) ;
+    OK (Complex_init (complex_is_builtin)) ;
+    nmalloc = GB_Global_nmalloc_get ( ) ;
+    printf ("nmalloc %d after 2nd complex init\n", nmalloc) ;
 
     //--------------------------------------------------------------------------
     // Type
@@ -798,13 +811,21 @@ void mexFunction
     // user defined ops
     //--------------------------------------------------------------------------
 
+    printf ("User defined (complex) --------------------------------------\n") ;
+
     #define FREE_DEEP_COPY Complex_finalize ( ) ;
     #define GET_DEEP_COPY ;
 
+    printf ("Complex_finalize:\n") ;
     OK (Complex_finalize ( )) ;
+    printf ("Complex_init (true): using builtin complex\n") ;
     OK (Complex_init (true)) ;
+    CHECK (Complex == GxB_FC64) ;
+    printf ("Complex_finalize again:\n") ;
     OK (Complex_finalize ( )) ;
+    printf ("Complex_init (false): user-defined complex\n") ;
     OK (Complex_init (false)) ;
+    CHECK (Complex != NULL && Complex != GxB_FC64) ;
 
     #undef FREE_DEEP_COPY
     #undef GET_DEEP_COPY

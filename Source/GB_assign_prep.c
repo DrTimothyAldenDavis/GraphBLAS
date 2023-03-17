@@ -71,7 +71,7 @@ GrB_Info GB_assign_prep
     int *Jkind_handle,
     int64_t Jcolon [3],
 
-    GrB_Type *atype_handle,         // type of A or the scalar
+    GrB_Type *scalar_type_handle,   // type of the scalar, or NULL if no scalar
 
     // input/output
     GrB_Matrix C_in,                // input/output matrix for results
@@ -126,7 +126,7 @@ GrB_Info GB_assign_prep
     GrB_Index *J2  = NULL ; size_t J2_size = 0 ;
     GrB_Index *I2k = NULL ; size_t I2k_size = 0 ;
     GrB_Index *J2k = NULL ; size_t J2k_size = 0 ;
-    (*atype_handle) = NULL ;
+    (*scalar_type_handle) = NULL ;
 
     (*Chandle) = NULL ;
     (*Mhandle) = NULL ;
@@ -154,7 +154,7 @@ GrB_Info GB_assign_prep
     // determine the type of A or the scalar
     //--------------------------------------------------------------------------
 
-    GrB_Type atype ;
+    GrB_Type atype, scalar_type = NULL ;
     GrB_Type ctype = C->type ;
     if (scalar_expansion)
     { 
@@ -163,7 +163,8 @@ GrB_Info GB_assign_prep
         ASSERT (scalar != NULL) ;
         ASSERT (A == NULL) ;
         ASSERT ((*assign_kind) == GB_ASSIGN || (*assign_kind) == GB_SUBASSIGN) ;
-        atype = GB_code_type (scode, ctype) ;
+        scalar_type = GB_code_type (scode, ctype) ;
+        atype = scalar_type ;
     }
     else
     { 
@@ -1046,7 +1047,7 @@ GrB_Info GB_assign_prep
     GB_void cout [GB_VLA(csize)] ;
     (*subassign_method) = GB_subassigner_method (&C_iso_out, cout, C,
         (*C_replace), M, Mask_comp, Mask_struct, accum, A, Ikind, Jkind,
-        scalar_expansion, scalar, atype) ;
+        scalar_expansion, scalar, scalar_type) ;
 
     //--------------------------------------------------------------------------
     // check compatibilty of prior pending tuples
@@ -1182,7 +1183,7 @@ GrB_Info GB_assign_prep
         // C has changed so recompute the subassigner method
         (*subassign_method) = GB_subassigner_method (&C_iso_out, cout, C,
             (*C_replace), M, Mask_comp, Mask_struct, accum, A, Ikind, Jkind,
-            scalar_expansion, scalar, atype) ;
+            scalar_expansion, scalar, scalar_type) ;
     }
 
     ASSERT_MATRIX_OK (C, "C before subassign", GB0) ;
@@ -1256,7 +1257,7 @@ GrB_Info GB_assign_prep
     (*Mwork_handle) = (MT != NULL) ? MT : Mwork ;
     (*Awork_handle) = (AT != NULL) ? AT : Awork ;
 
-    (*atype_handle) = atype ;
+    (*scalar_type_handle) = scalar_type ;   // may be NULL
 
     // modified versions of the Rows/Cols lists, and their analysis:
     (*I_handle) = (GrB_Index *) I ;     // either Rows, Cols, or I2

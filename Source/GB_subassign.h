@@ -65,7 +65,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
     const int Jkind,
     const bool scalar_expansion,    // if true, expand scalar to A
     const void *scalar,
-    const GrB_Type atype            // type of A, or the type of the scalar
+    const GrB_Type scalar_type      // type of the scalar
 ) ;
 
 GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
@@ -92,7 +92,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     const int64_t Jcolon [3],
     const bool scalar_expansion,    // if true, expand scalar to A
     const void *scalar,             // scalar to be expanded
-    const GrB_Type atype,           // type code of scalar to expand
+    const GrB_Type scalar_type,     // type code of scalar to expand
     GB_Werk Werk
 ) ;
 
@@ -133,7 +133,7 @@ GrB_Info GB_assign_prep
     int *Jkind_handle,
     int64_t Jcolon [3],
 
-    GrB_Type *atype_handle,         // type of A or the scalar
+    GrB_Type *scalar_type_handle,   // type of the scalar, or NULL if no scalar
 
     // input/output
     GrB_Matrix C_in,                // input/output matrix for results

@@ -3,16 +3,13 @@
 GrB_Info GB (_subassign_23)
 (
     GrB_Matrix C,
-    const GrB_Matrix B,
-    const int64_t *B_ek_slicing,
-    const int B_ntasks,
-    const int B_nthreads
+    const GrB_Matrix A,
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB (_subassign_22)
 (
     GrB_Matrix C,
-    const GB_void *p_bwork,
-    const int nthreads
+    const GB_void *ywork_handle
 ) ;
 

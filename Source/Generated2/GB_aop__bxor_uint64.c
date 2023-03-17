@@ -55,9 +55,6 @@
 
 #include "GB_subassign_shared_definitions.h"
 
-#undef  GB_FREE_ALL 
-#define GB_FREE_ALL ;
-
 //------------------------------------------------------------------------------
 // C += A, accumulate a sparse matrix into a dense matrix
 //------------------------------------------------------------------------------
@@ -66,9 +63,7 @@ GrB_Info GB (_subassign_23__bxor_uint64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    GB_Werk Werk
 )
 {
     #if GB_DISABLE
@@ -90,8 +85,7 @@ GrB_Info GB (_subassign_23__bxor_uint64)
 GrB_Info GB (_subassign_22__bxor_uint64)
 (
     GrB_Matrix C,
-    const GB_void *ywork_handle,
-    const int nthreads
+    const GB_void *ywork_handle
 )
 {
     #if GB_DISABLE

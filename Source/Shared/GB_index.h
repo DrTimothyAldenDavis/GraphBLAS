@@ -27,7 +27,7 @@
 #define GB_ALL 0
 #define GB_RANGE 1
 #define GB_STRIDE 2
-#define GB_LIST 4
+#define GB_LIST 3
 
 #define GB_ASSIGN 0
 #define GB_SUBASSIGN 1

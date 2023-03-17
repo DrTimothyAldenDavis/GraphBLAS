@@ -13,6 +13,9 @@
 // definitions redefined as needed
 //------------------------------------------------------------------------------
 
+// FIXME: debug is on
+#define GB_DEBUG
+
 #include "GB_static_header.h"
 
 #ifndef GB_FREE_WORKSPACE
@@ -179,6 +182,7 @@
 //------------------------------------------------------------------------------
 
 #define GB_GET_SCALAR                                                       \
+    const GrB_Type atype = scalar_type ;                                    \
     ASSERT_TYPE_OK (atype, "atype for assign", GB0) ;                       \
     const size_t asize = atype->size ;                                      \
     const GB_Type_code acode = atype->code ;                                \
@@ -1508,7 +1512,7 @@
 
 #define GBURBLE_BITMAP_ASSIGN(method,M,Mask_comp,accum,Ikind,Jkind,akind)   \
     GBURBLE ("Method:" method " ") ;                                        \
-    GB_burble_assign (C_replace, Ikind, Jkind, M, Mask_comp,                \
+    GB_assign_burble (C_replace, Ikind, Jkind, M, Mask_comp,                \
         Mask_struct, accum, A, akind) ;
 
 //------------------------------------------------------------------------------
@@ -1558,8 +1562,9 @@
     const int64_t *Ai = NULL ;                                              \
     const GB_void *Ax = NULL ;                                              \
     const bool A_iso = (A == NULL) ? false : A->iso ;                       \
-    const size_t       asize = (A==NULL) ? scalar_type->size : A->type->size ; \
-    const GB_Type_code acode = (A==NULL) ? scalar_type->code : A->type->code ; \
+    const GrB_Type atype = (A == NULL) ? scalar_type : A->type ;            \
+    const size_t       asize = atype->size ;                                \
+    const GB_Type_code acode = atype->code ;                                \
     if (A != NULL)                                                          \
     {                                                                       \
         ASSERT_MATRIX_OK (A, "A for bitmap assign/subassign", GB0) ;        \

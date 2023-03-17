@@ -36,6 +36,8 @@
 // xexpr is an expression using the xargs that produce a value of type xtype.
 // z has type ztype.
 
+// This method is very similar to GB_macrofy_cast_output.
+
 #include "GB.h"
 #include "GB_stringify.h"
 
@@ -64,11 +66,14 @@ void GB_macrofy_cast_input
 
     if (f == NULL)
     {
-        fprintf (fp, "#define %s(%s,%s) %s = ((%s) (%s))\n",
+        // ANSI C11 typecasting
+        ASSERT (ztype != xtype) ;
+        fprintf (fp, "#define %s(%s,%s) %s = (%s) (%s)\n",
             macro_name, zarg, xargs, zarg, ztype->name, xexpr) ;
     }
     else
     {
+        // GraphBLAS typecasting, or no typecasting
         fprintf (fp, "#define %s(%s,%s) ", macro_name, zarg, xargs) ;
         if (nargs == 3)
         {

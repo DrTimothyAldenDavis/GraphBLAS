@@ -18,7 +18,8 @@ void GB_macrofy_binop
     const char *macro_name,
     bool flipxy,                // if true: op is f(y,x) for a semiring
     bool is_monoid_or_build,    // if true: additive operator for monoid,
-                                // or binary op for GrB_Matrix_build
+                                // or binary op for GrB_Matrix_build, or
+                                // accum operator
     bool is_ewise,              // if true: binop for ewise methods
     int ecode,
     bool C_iso,                 // if true: C is iso
@@ -41,7 +42,10 @@ void GB_macrofy_binop
 
         if (is_monoid_or_build)
         {
-            fprintf (fp, "#define GB_UPDATE(z,y)\n") ;
+            if (op->ztype == op->xtype)
+            {
+                fprintf (fp, "#define GB_UPDATE(z,y)\n") ;
+            }
             fprintf (fp, "#define %s(z,x,y)\n", macro_name) ;
         }
         else
@@ -96,7 +100,7 @@ void GB_macrofy_binop
             fprintf (fp, " %s (&(z), &(x), &(y))\n", op->name) ;
         }
 
-        if (is_monoid_or_build)
+        if (is_monoid_or_build && op->ztype == op->xtype)
         {
             fprintf (fp, "#define GB_UPDATE(z,y) %s(z,z,y)\n", macro_name) ;
         }
@@ -795,25 +799,29 @@ void GB_macrofy_binop
         {
             // additive operator: no i,k,j parameters
             fprintf (fp, "#define %s(z,x,y) %s\n", macro_name, f) ;
-            if (g != NULL)
+            if (op->ztype == op->xtype)
             {
-                // create an update expression of the form z += y,
-                // but it differs for the CPU and CUDA JIT kernels
-                fprintf (fp, "#ifdef  GB_CUDA_KERNEL\n"
-                             "#define GB_UPDATE(z,y) %s\n"
-                             "#else\n"
-                             "#define GB_UPDATE(z,y) %s\n"
-                             "#endif\n", g, u) ;
-            }
-            else if (u != NULL)
-            {
-                // create an update expression of the form z += y
-                fprintf (fp, "#define GB_UPDATE(z,y) %s\n", u) ;
-            }
-            else
-            {
-                // create an update expression of the form z = z + y
-                fprintf (fp, "#define GB_UPDATE(z,y) %s(z,z,y)\n", macro_name) ;
+                if (g != NULL)
+                {
+                    // create an update expression of the form z += y,
+                    // but it differs for the CPU and CUDA JIT kernels
+                    fprintf (fp, "#ifdef  GB_CUDA_KERNEL\n"
+                                 "#define GB_UPDATE(z,y) %s\n"
+                                 "#else\n"
+                                 "#define GB_UPDATE(z,y) %s\n"
+                                 "#endif\n", g, u) ;
+                }
+                else if (u != NULL)
+                {
+                    // create an update expression of the form z += y
+                    fprintf (fp, "#define GB_UPDATE(z,y) %s\n", u) ;
+                }
+                else
+                {
+                    // create an update expression of the form z = z + y
+                    fprintf (fp, "#define GB_UPDATE(z,y) %s(z,z,y)\n",
+                        macro_name) ;
+                }
             }
         }
         else if (flipxy)

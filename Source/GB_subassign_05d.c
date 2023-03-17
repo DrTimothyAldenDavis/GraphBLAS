@@ -7,12 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: needed (now).
+// JIT: done.
 
 // Method 05d: C(:,:)<M> = scalar ; no S, C is dense
 
 // M:           present
 // Mask_comp:   false
+// Mask_struct: true or false
 // C_replace:   false
 // accum:       NULL
 // A:           scalar
@@ -25,18 +26,13 @@
 #include "GB_subassign_methods.h"
 #include "GB_subassign_dense.h"
 #include "GB_unused.h"
+#include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_as__include.h"
 #endif
 
-#undef  GB_FREE_WORKSPACE
-#define GB_FREE_WORKSPACE                   \
-{                                           \
-    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
-}
-
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL GB_FREE_WORKSPACE
+#define GB_FREE_ALL ;
 
 GrB_Info GB_subassign_05d
 (
@@ -45,7 +41,7 @@ GrB_Info GB_subassign_05d
     const GrB_Matrix M,
     const bool Mask_struct,
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 )
 {
@@ -61,7 +57,6 @@ GrB_Info GB_subassign_05d
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
 
     ASSERT_MATRIX_OK (C, "C for subassign method_05d", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
@@ -93,20 +88,6 @@ GrB_Info GB_subassign_05d
     // and the time is O(nnz(M)).
 
     //--------------------------------------------------------------------------
-    // Parallel: slice M into equal-sized chunks
-    //--------------------------------------------------------------------------
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
-
-    //--------------------------------------------------------------------------
-    // slice the entries for each task
-    //--------------------------------------------------------------------------
-
-    int M_ntasks, M_nthreads ;
-    GB_SLICE_MATRIX (M, 8, chunk) ;
-
-    //--------------------------------------------------------------------------
     // via the factory kernel
     //--------------------------------------------------------------------------
 
@@ -119,16 +100,20 @@ GrB_Info GB_subassign_05d
         //----------------------------------------------------------------------
 
         #define GB_sub05d(cname) GB (_subassign_05d_ ## cname)
-        #define GB_WORKER(cname)                                    \
-        {                                                           \
-            info = GB_sub05d (cname) (C, M, Mask_struct, cwork,     \
-                M_ek_slicing, M_ntasks, M_nthreads) ;               \
-        }                                                           \
+        #define GB_WORKER(cname)                                        \
+        {                                                               \
+            info = GB_sub05d (cname) (C, M, Mask_struct, cwork, Werk) ; \
+        }                                                               \
         break ;
 
         //----------------------------------------------------------------------
         // launch the switch factory
         //----------------------------------------------------------------------
+
+        // The scalar scalar_type is not needed, and there is no accum operator.
+        // This method uses cwork = (ctype) scalar, typecasted above, so it
+        // works for any scalar type.  As a result, only a test of ccode is
+        // required.
 
         // C<M> = x
         switch (ccode)
@@ -148,7 +133,6 @@ GrB_Info GB_subassign_05d
             case GB_FC64_code   : GB_WORKER (_fc64  )
             default: ;
         }
-
     #endif
 
     //--------------------------------------------------------------------------
@@ -156,7 +140,21 @@ GrB_Info GB_subassign_05d
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: type: subassign 05d
+    if (info == GrB_NO_VALUE)
+    {
+        info = GB_subassign_jit (C,
+            /* C_replace: */ false,
+            /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
+            /* J, nj, nJ, Jkind, Jcolon: */ NULL, 0, 0, GB_ALL, NULL,
+            M,
+            /* Mask_comp: */ false,
+            Mask_struct,
+            /* accum: */ NULL,
+            /* A: */ NULL,
+            /* scalar, scalar_type: */ cwork, C->type,
+            GB_SUBASSIGN, "subassign_05d", GB_JIT_KERNEL_SUBASSIGN_05d,
+            Werk) ;
+    }
     #endif
 
     //--------------------------------------------------------------------------
@@ -175,8 +173,6 @@ GrB_Info GB_subassign_05d
         #include "GB_generic.h"
         GB_BURBLE_MATRIX (M, "(generic C(:,:)<M>=x assign) ") ;
 
-        const size_t csize = C->type->size ;
-
         // Cx [pC] = cwork
         #undef  GB_COPY_scalar_to_C
         #define GB_COPY_scalar_to_C(Cx,pC,cwork) \
@@ -190,7 +186,6 @@ GrB_Info GB_subassign_05d
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORKSPACE ;
     if (info == GrB_SUCCESS)
     {
         ASSERT_MATRIX_OK (C, "C output for subassign method_05d", GB0) ;

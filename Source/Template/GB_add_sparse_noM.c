@@ -108,7 +108,7 @@
             #else
             { 
                 // C (i,j) = A (i,j)
-                GB_COPY_A_TO_C (Cx, pC+p, Ax, pA+p, A_iso) ;
+                GB_COPY_A_to_C (Cx, pC+p, Ax, pA+p, A_iso) ;
             }
             #endif
             #endif
@@ -161,7 +161,7 @@
             #else
             { 
                 // C (i,j) = B (i,j)
-                GB_COPY_B_TO_C (Cx, pC+p, Bx, pB+p, B_iso) ;
+                GB_COPY_B_to_C (Cx, pC+p, Bx, pB+p, B_iso) ;
             }
             #endif
             #endif
@@ -207,7 +207,7 @@
             #else
             { 
                 // C (i,j) = B (i,j)
-                GB_COPY_B_TO_C (Cx, pC+p, Bx, pB+p, B_iso) ;
+                GB_COPY_B_to_C (Cx, pC+p, Bx, pB+p, B_iso) ;
             }
             #endif
         }
@@ -240,7 +240,7 @@
             #else
             { 
                 // C (i,j) = A (i,j)
-                GB_COPY_A_TO_C (Cx, pC+p, Ax, pA+p, A_iso) ;
+                GB_COPY_A_to_C (Cx, pC+p, Ax, pA+p, A_iso) ;
             }
             #endif
         }
@@ -273,7 +273,7 @@
             #else
             { 
                 // C (i,j) = A (i,j)
-                GB_COPY_A_TO_C (Cx, pC+p, Ax, pA+p, A_iso) ;
+                GB_COPY_A_to_C (Cx, pC+p, Ax, pA+p, A_iso) ;
             }
             #endif
         }
@@ -293,7 +293,7 @@
             #else
             { 
                 // C (i,j) = B (i,j)
-                GB_COPY_B_TO_C (Cx, pC+p, Bx, pB+p, B_iso) ;
+                GB_COPY_B_to_C (Cx, pC+p, Bx, pB+p, B_iso) ;
             }
             #endif
         }
@@ -326,7 +326,7 @@
             #else
             { 
                 // C (i,j) = B (i,j)
-                GB_COPY_B_TO_C (Cx, pC+p, Bx, pB+p, B_iso) ;
+                GB_COPY_B_to_C (Cx, pC+p, Bx, pB+p, B_iso) ;
             }
             #endif
         }
@@ -346,7 +346,7 @@
             #else
             { 
                 // C (i,j) = A (i,j)
-                GB_COPY_A_TO_C (Cx, pC+p, Ax, pA+p, A_iso) ;
+                GB_COPY_A_to_C (Cx, pC+p, Ax, pA+p, A_iso) ;
             }
             #endif
         }
@@ -425,7 +425,7 @@
                 #else
                 { 
                     // C (iA,j) = A (iA,j)
-                    GB_COPY_A_TO_C (Cx, pC, Ax, pA, A_iso) ;
+                    GB_COPY_A_to_C (Cx, pC, Ax, pA, A_iso) ;
                 }
                 #endif
                 #endif
@@ -446,7 +446,7 @@
                 #else
                 { 
                     // C (iB,j) = B (iB,j)
-                    GB_COPY_B_TO_C (Cx, pC, Bx, pB, B_iso) ;
+                    GB_COPY_B_to_C (Cx, pC, Bx, pB, B_iso) ;
                 }
                 #endif
                 #endif
@@ -497,7 +497,7 @@
             #else
             { 
                 // C (i,j) = A (i,j)
-                GB_COPY_A_TO_C (Cx, pC+p, Ax, pA+p, A_iso) ;
+                GB_COPY_A_to_C (Cx, pC+p, Ax, pA+p, A_iso) ;
             }
             #endif
         }
@@ -515,7 +515,7 @@
             #else
             { 
                 // C (i,j) = B (i,j)
-                GB_COPY_B_TO_C (Cx, pC+p, Bx, pB+p, B_iso) ;
+                GB_COPY_B_to_C (Cx, pC+p, Bx, pB+p, B_iso) ;
             }
             #endif
         }

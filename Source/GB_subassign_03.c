@@ -39,7 +39,7 @@ GrB_Info GB_subassign_03
     const int64_t Jcolon [3],
     const GrB_BinaryOp accum,
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 )
 {

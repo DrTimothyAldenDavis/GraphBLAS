@@ -7,13 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: needed (now).
+// JIT: done.
 
 // Method 06d: C(:,:)<A> = A ; no S, C is dense, M and A are aliased
 
-// M:           present
+// M:           present, and aliased to A
 // Mask_comp:   false
-// Mask_struct: true or false (both cases handled)
+// Mask_struct: true or false
 // C_replace:   false
 // accum:       NULL
 // A:           matrix, and aliased to M
@@ -31,15 +31,13 @@
 #include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 #include "GB_subassign_dense.h"
+#include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_as__include.h"
 #endif
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL                         \
-{                                           \
-    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
-}
+#define GB_FREE_ALL ;
 
 GrB_Info GB_subassign_06d
 (
@@ -56,7 +54,6 @@ GrB_Info GB_subassign_06d
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
     ASSERT_MATRIX_OK (C, "C for subassign method_06d", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
@@ -81,30 +78,6 @@ GrB_Info GB_subassign_06d
 
     // Time: Optimal:  the method must iterate over all entries in A,
     // and the time is O(nnz(A)).
-
-    //--------------------------------------------------------------------------
-    // Parallel: slice A into equal-sized chunks
-    //--------------------------------------------------------------------------
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
-
-    //--------------------------------------------------------------------------
-    // slice the entries for each task
-    //--------------------------------------------------------------------------
-
-    int A_ntasks, A_nthreads ;
-    if (A_is_bitmap || A_is_dense)
-    { 
-        // no need to construct tasks
-        int64_t anz = GB_nnz_held (A) ;
-        A_nthreads = GB_nthreads ((anz + A->nvec), 32*chunk, nthreads_max) ;
-        A_ntasks = (A_nthreads == 1) ? 1 : (8 * A_nthreads) ;
-    }
-    else
-    { 
-        GB_SLICE_MATRIX (A, 8, 32*chunk) ;
-    }
 
     //--------------------------------------------------------------------------
     // C<A> = A for built-in types
@@ -145,8 +118,7 @@ GrB_Info GB_subassign_06d
             #define GB_sub06d(cname) GB (_subassign_06d_ ## cname)
             #define GB_WORKER(cname)                                \
             {                                                       \
-                info = GB_sub06d(cname) (C, A, Mask_struct,         \
-                    A_ek_slicing, A_ntasks, A_nthreads) ;           \
+                info = GB_sub06d(cname) (C, A, Mask_struct, Werk) ; \
             }                                                       \
             break ;
 
@@ -183,7 +155,21 @@ GrB_Info GB_subassign_06d
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: type: subassign 06d
+        if (info == GrB_NO_VALUE)
+        {
+            info = GB_subassign_jit (C,
+                /* C_replace: */ false,
+                /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
+                /* J, nj, nJ, Jkind, Jcolon: */ NULL, 0, 0, GB_ALL, NULL,
+                /* M and A are aliased: */ A,
+                /* Mask_comp: */ false,
+                Mask_struct,
+                /* accum: */ NULL,
+                /* A: */ A,
+                /* scalar, scalar_type: */ NULL, NULL,
+                GB_SUBASSIGN, "subassign_06d", GB_JIT_KERNEL_SUBASSIGN_06d,
+                Werk) ;
+        }
         #endif
 
         //----------------------------------------------------------------------
@@ -219,7 +205,6 @@ GrB_Info GB_subassign_06d
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_ALL ;
     if (info == GrB_SUCCESS)
     {
         ASSERT_MATRIX_OK (C, "C output for subassign method_06d", GB0) ;

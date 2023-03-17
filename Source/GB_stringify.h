@@ -116,7 +116,7 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     const GrB_Matrix B
 ) ;
 
-bool GB_enumify_ewise       // enumerate a GrB_eWise problem
+void GB_enumify_ewise       // enumerate a GrB_eWise problem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
@@ -523,7 +523,7 @@ void GB_macrofy_query_version
 // unary ops
 //------------------------------------------------------------------------------
 
-bool GB_enumify_apply       // enumerate an apply or tranpose/apply problem
+void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
@@ -611,7 +611,7 @@ uint64_t GB_encodify_build      // encode an build problem
     const GrB_BinaryOp dup      // operator for summing up duplicates
 ) ;
 
-bool GB_enumify_build       // enumerate a GB_build problem
+void GB_enumify_build       // enumerate a GB_build problem
 (
     // output:
     uint64_t *build_code,   // unique encoding of the entire operation
@@ -652,7 +652,7 @@ uint64_t GB_encodify_select     // encode an select problem
     const GrB_Matrix A
 ) ;
 
-bool GB_enumify_select      // enumerate a GrB_selectproblem
+void GB_enumify_select      // enumerate a GrB_selectproblem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
@@ -693,7 +693,7 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
 // assign/subassign kernel
 //------------------------------------------------------------------------------
 
-bool GB_enumify_assign      // enumerate a GrB_assign problem
+void GB_enumify_assign      // enumerate a GrB_assign problem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
@@ -702,17 +702,90 @@ bool GB_enumify_assign      // enumerate a GrB_assign problem
     GrB_Matrix C,
     bool C_replace,
     // index types:
-    int Ikind,              // 0: all (no I), 1: range, 2: stride, 4: list
+    int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
     int Jkind,              // ditto
     // M matrix:
     GrB_Matrix M,           // may be NULL
     bool Mask_struct,       // mask is structural
     bool Mask_comp,         // mask is complemented
     // operator:
-    GrB_BinaryOp accum,     // the accum operator to enumify (may be NULL)
+    GrB_BinaryOp accum,     // the accum operator (may be NULL)
     // A matrix
-    GrB_Matrix A,           // NULL for scalar assign
+    GrB_Matrix A,           // NULL for scalar assignment
+    GrB_Type scalar_type,
     int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
+) ;
+
+void GB_macrofy_assign          // construct all macros for GrB_assign
+(
+    // output:
+    FILE *fp,                   // target file to write, already open
+    // input:
+    uint64_t scode,
+    GrB_BinaryOp accum,         // accum operator to macrofy
+    GrB_Type ctype,
+    GrB_Type atype              // matrix or scalar type
+) ;
+
+uint64_t GB_encodify_assign     // encode an assign problem
+(
+    // output:
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char **suffix,              // suffix for user-defined kernel
+    // input:
+    const int kcode,            // kernel to encode (add, emult, rowscale, ...)
+    // C matrix:
+    GrB_Matrix C,
+    bool C_replace,
+    // index types:
+    int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
+    int Jkind,              // ditto
+    // M matrix:
+    GrB_Matrix M,           // may be NULL
+    bool Mask_struct,       // mask is structural
+    bool Mask_comp,         // mask is complemented
+    // operator:
+    GrB_BinaryOp accum,     // the accum operator (may be NULL)
+    // A matrix or scalar
+    GrB_Matrix A,           // NULL for scalar assignment
+    GrB_Type scalar_type,
+    int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
+) ;
+
+GrB_Info GB_subassign_jit
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const bool C_replace,
+    // I:
+    const GrB_Index *I,
+    const int64_t ni,
+    const int64_t nI,
+    const int Ikind,
+    const int64_t Icolon [3],
+    // J:
+    const GrB_Index *J,
+    const int64_t nj,
+    const int64_t nJ,
+    const int Jkind,
+    const int64_t Jcolon [3],
+    // mask M:
+    const GrB_Matrix M,
+    const bool Mask_comp,
+    const bool Mask_struct,
+    // accum, if present:
+    const GrB_BinaryOp accum,   // may be NULL
+    // A matrix or scalar:
+    const GrB_Matrix A,         // NULL for scalar assignment
+    const void *scalar,
+    const GrB_Type scalar_type,
+    // kind and kernel:
+    const int assign_kind,      // row assign, col assign, assign, or subassign
+    const char *kname,          // "sub01", etc
+    const int assign_kernel,    // GB_JIT_KERNEL_SUBASSIGN_01, ... etc
+    GB_Werk Werk
 ) ;
 
 #endif

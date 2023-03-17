@@ -14,6 +14,8 @@
 
 // A generic method via memcpy is not supported.
 
+// The Panel and W arrays always have the same type as z, GB_Z_TYPE.
+
 // default panel size
 #ifndef GB_PANEL
 #define GB_PANEL 16

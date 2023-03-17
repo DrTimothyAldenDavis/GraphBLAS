@@ -28,13 +28,13 @@
 #endif
 
 // copy A(i,j) to C(i,j)
-#ifndef GB_COPY_A_TO_C
-#define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = Ax [(A_iso) ? 0 : (pA)]
+#ifndef GB_COPY_A_to_C
+#define GB_COPY_A_to_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = Ax [(A_iso) ? 0 : (pA)]
 #endif
 
 // copy B(i,j) to C(i,j)
-#ifndef GB_COPY_B_TO_C
-#define GB_COPY_B_TO_C(Cx,pC,Bx,pB,B_iso) Cx [pC] = Bx [(B_iso) ? 0 : (pB)]
+#ifndef GB_COPY_B_to_C
+#define GB_COPY_B_to_C(Cx,pC,Bx,pB,B_iso) Cx [pC] = Bx [(B_iso) ? 0 : (pB)]
 #endif
 
 // 1 if C and A have the same type

@@ -14,7 +14,7 @@
 #include "GB.h"
 #include "GB_stringify.h"
 
-bool GB_enumify_apply       // enumerate an apply or tranpose/apply problem
+void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire operation

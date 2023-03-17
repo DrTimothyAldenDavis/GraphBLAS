@@ -62,9 +62,7 @@
 #include "GB.h"
 #include "GB_stringify.h"
 
-// FIXME: change 4 to 3 for GB_LIST
-
-bool GB_enumify_assign      // enumerate a GrB_assign problem
+void GB_enumify_assign      // enumerate a GrB_assign problem
 (
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
@@ -73,27 +71,29 @@ bool GB_enumify_assign      // enumerate a GrB_assign problem
     GrB_Matrix C,
     bool C_replace,
     // index types:
-    int Ikind,              // 0: all (no I), 1: range, 2: stride, 4: list
+    int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
     int Jkind,              // ditto
     // M matrix:
     GrB_Matrix M,           // may be NULL
     bool Mask_struct,       // mask is structural
     bool Mask_comp,         // mask is complemented
     // operator:
-    GrB_BinaryOp accum,     // the accum operator to enumify (may be NULL)
-    // A matrix
-    GrB_Matrix A,           // NULL for scalar assign
+    GrB_BinaryOp accum,     // the accum operator (may be NULL)
+    // A matrix or scalar
+    GrB_Matrix A,           // NULL for scalar assignment
+    GrB_Type scalar_type,
     int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
 )
 {
 
     //--------------------------------------------------------------------------
-    // get the types of C, M, and A
+    // get the types of C, M, and A (or the scalar)
     //--------------------------------------------------------------------------
 
     GrB_Type ctype = C->type ;
     GrB_Type mtype = (M == NULL) ? NULL : M->type ;
-    GrB_Type atype = (A == NULL) ? NULL : A->type ;
+    GrB_Type atype = (A == NULL) ? scalar_type : A->type ;
+    ASSERT (atype != NULL) ;
 
     //--------------------------------------------------------------------------
     // get the types of X, Y, and Z
@@ -153,14 +153,9 @@ bool GB_enumify_assign      // enumerate a GrB_assign problem
     // enumify the types
     //--------------------------------------------------------------------------
 
-    // if (acode == 15): scalar assignment.  The method must first cast the
-    // scalar to ctype and accum->ytype (if present), and then call the JIT or
-    // generic kernel with those typecasted scalars.  The JIT and generic
-    // kernels assume the scalar is already typecasted, if needed, so they do
-    // not need to be specialized based on the scalar type.
-
-    int acode = (A == NULL) ? 15 : atype->code ;        // 0 to 15
+    int acode = atype->code ;                           // 1 to 14
     int A_iso_code = (A != NULL && A->iso) ? 1 : 0 ;
+    int s_assign = (A == NULL) ? 1 : 0 ;                // scalar assignment
 
     // if (ccode == 0): C is iso and the kernel does not access its values
     int ccode = (C->iso) ? 0 : ctype->code ;            // 0 to 14
@@ -190,18 +185,19 @@ bool GB_enumify_assign      // enumerate a GrB_assign problem
     int C_repl = (C_replace) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
-    // construct the ewise scode
+    // construct the assign scode
     //--------------------------------------------------------------------------
 
-    // total scode bits: 48 (12 hex digits)
+    // total scode bits: 47 (12 hex digits)
 
     (*scode) =
                                                // range        bits
 
                 // assign_kind, Ikind, and Jkind (2 hex digits)
-                GB_LSHIFT (assign_kind, 46) |  // 0 to 3       2
-                GB_LSHIFT (Ikind      , 43) |  // 0 to 4       3    FIXME
-                GB_LSHIFT (Jkind      , 40) |  // 0 to 4       3    FIXME
+                GB_LSHIFT (C_repl     , 46) |  // 0 to 1       1
+                GB_LSHIFT (assign_kind, 44) |  // 0 to 3       2
+                GB_LSHIFT (Ikind      , 42) |  // 0 to 3       2
+                GB_LSHIFT (Jkind      , 40) |  // 0 to 3       2
 
                 // accum, z = f(x,y) (5 hex digits)
                 GB_LSHIFT (accum_ecode, 32) |  // 0 to 255     8
@@ -212,15 +208,15 @@ bool GB_enumify_assign      // enumerate a GrB_assign problem
                 // mask (one hex digit)
                 GB_LSHIFT (mask_ecode , 16) |  // 0 to 13      4
 
-                // types of C, A, and B (2 hex digits)
+                // types of C and A (or scalar type) (2 hex digits)
                 GB_LSHIFT (ccode      , 12) |  // 0 to 14      4
-                GB_LSHIFT (acode      ,  8) |  // 0 to 15      4
+                GB_LSHIFT (acode      ,  8) |  // 1 to 14      4
 
                 // sparsity structures of C, M, and A (2 hex digits),
-                // iso status of A and C_replace
+                // iso status of A and scalar assignment
                 GB_LSHIFT (csparsity  ,  6) |  // 0 to 3       2
                 GB_LSHIFT (msparsity  ,  4) |  // 0 to 3       2
-                GB_LSHIFT (C_repl     ,  3) |  // 0 to 1       1
+                GB_LSHIFT (s_assign   ,  3) |  // 0 to 1       1
                 GB_LSHIFT (A_iso_code ,  2) |  // 0 or 1       1
                 GB_LSHIFT (asparsity  ,  0) ;  // 0 to 3       2
 

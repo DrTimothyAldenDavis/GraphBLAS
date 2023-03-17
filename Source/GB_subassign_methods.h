@@ -74,7 +74,7 @@ GrB_Info GB_subassign_01
     const int Jkind,
     const int64_t Jcolon [3],
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 ) ;
 
@@ -120,7 +120,7 @@ GrB_Info GB_subassign_03
     const int64_t Jcolon [3],
     const GrB_BinaryOp accum,
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 ) ;
 
@@ -166,7 +166,7 @@ GrB_Info GB_subassign_05
     const GrB_Matrix M,
     const bool Mask_struct,
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 ) ;
 
@@ -180,7 +180,7 @@ GrB_Info GB_subassign_05e
     // input:
     const GrB_Matrix M,
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 ) ;
 
@@ -251,7 +251,7 @@ GrB_Info GB_subassign_07
     const bool Mask_struct,
     const GrB_BinaryOp accum,
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 ) ;
 
@@ -299,7 +299,7 @@ GrB_Info GB_subassign_09
     const GrB_Matrix M,
     const bool Mask_struct,
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 ) ;
 
@@ -350,7 +350,7 @@ GrB_Info GB_subassign_11
     const bool Mask_struct,
     const GrB_BinaryOp accum,
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 ) ;
 
@@ -401,7 +401,7 @@ GrB_Info GB_subassign_13
     const GrB_Matrix M,
     const bool Mask_struct,
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 ) ;
 
@@ -427,7 +427,7 @@ GrB_Info GB_subassign_15
     const bool Mask_struct,
     const GrB_BinaryOp accum,
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 ) ;
 
@@ -479,7 +479,7 @@ GrB_Info GB_subassign_17
     const GrB_Matrix M,
     const bool Mask_struct,
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 ) ;
 
@@ -505,7 +505,7 @@ GrB_Info GB_subassign_19
     const bool Mask_struct,
     const GrB_BinaryOp accum,
     const void *scalar,
-    const GrB_Type atype,
+    const GrB_Type scalar_type,
     GB_Werk Werk
 ) ;
 

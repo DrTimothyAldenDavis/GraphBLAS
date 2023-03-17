@@ -7,7 +7,7 @@ function codegen_aop
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-fprintf ('\nassign binary operators:\n') ;
+fprintf ('\nassign/subassign with accum operator:\n') ;
 
 fh = fopen ('Generated2/GB_aop__include.h', 'w') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;

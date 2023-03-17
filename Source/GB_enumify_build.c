@@ -12,7 +12,7 @@
 #include "GB.h"
 #include "GB_stringify.h"
 
-bool GB_enumify_build       // enumerate a GB_build problem
+void GB_enumify_build       // enumerate a GB_build problem
 (
     // output:
     uint64_t *build_code,   // unique encoding of the entire operation

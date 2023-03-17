@@ -9,7 +9,7 @@
 
 // constructs a macro of the form:
 
-//      #define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = (cast) Ax [pA]
+//      #define GB_COPY_A_to_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = (cast) Ax [pA]
 
 // The matrices A and C are named by aname and cname, and have type atype
 // and ctype.  A_iso is true if A is iso.  If either atype or ctype is NULL,

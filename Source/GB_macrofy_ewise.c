@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME
+#define GB_DEBUG
+
 #include "GB.h"
 #include "GB_stringify.h"
 
@@ -66,6 +69,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 
     GrB_Type xtype, ytype, ztype ;
     const char *xtype_name, *ytype_name, *ztype_name ;
+    ASSERT_BINARYOP_OK (binaryop, "binaryop to macrofy", GB0) ;
 
     GB_macrofy_copyright (fp) ;
 
@@ -131,15 +135,11 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     GB_macrofy_binop (fp, "GB_BINOP", flipxy, false, true, binop_ecode, C_iso,
         binaryop, NULL, NULL) ;
 
-    GB_macrofy_cast_copy (fp, "C", "A",
-            (C_iso || !copy_to_C) ? NULL : ctype,
-            (acode == 0 || acode == 15) ? NULL : atype,
-            A_iso_code) ;
+    GB_macrofy_cast_copy (fp, "C", "A", (C_iso || !copy_to_C) ? NULL : ctype,
+            (acode == 0 || acode == 15) ? NULL : atype, A_iso_code) ;
 
-    GB_macrofy_cast_copy (fp, "C", "B",
-            (C_iso || !copy_to_C) ? NULL : ctype,
-            (bcode == 0 || bcode == 15) ? NULL : btype,
-            B_iso_code) ;
+    GB_macrofy_cast_copy (fp, "C", "B", (C_iso || !copy_to_C) ? NULL : ctype,
+            (bcode == 0 || bcode == 15) ? NULL : btype, B_iso_code) ;
 
     //--------------------------------------------------------------------------
     // macros for the C matrix

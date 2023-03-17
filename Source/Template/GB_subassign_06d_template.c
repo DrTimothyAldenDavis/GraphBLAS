@@ -2,12 +2,59 @@
 // GB_subassign_06d_template: C<A> = A
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
+}
+
 {
+
+    //--------------------------------------------------------------------------
+    // get the inputs
+    //--------------------------------------------------------------------------
+
+    #ifdef GB_JIT_KERNEL
+    #define Mask_struct GB_MASK_STRUCT
+    #define C_is_bitmap GB_C_IS_BITMAP
+    #define A_is_bitmap GB_A_IS_BITMAP
+    #define A_is_dense  GB_A_IS_FULL
+    #define A_iso       GB_A_ISO
+    #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, asize)
+    #else
+    const bool C_is_bitmap = GB_IS_BITMAP (C) ;
+    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    const bool A_is_dense = GB_as_if_full (A) ;
+    const bool A_iso = A->iso ;
+    const size_t asize = A->type->size ;
+    #endif
+
+    ASSERT (C_is_bitmap || GB_as_if_full (C)) ;
+
+    //--------------------------------------------------------------------------
+    // Parallel: slice A into equal-sized chunks
+    //--------------------------------------------------------------------------
+
+    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
+    const int64_t anz = GB_nnz_held (A) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+    int A_ntasks, A_nthreads ;
+    if (A_is_bitmap || A_is_dense)
+    { 
+        // no need to construct tasks
+        A_nthreads = GB_nthreads ((anz + A->nvec), 32*chunk, nthreads_max) ;
+        A_ntasks = (A_nthreads == 1) ? 1 : (8 * A_nthreads) ;
+    }
+    else
+    { 
+        GB_SLICE_MATRIX (A, 8, 32*chunk) ;
+    }
 
     //--------------------------------------------------------------------------
     // get C and A
@@ -21,22 +68,18 @@
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
     const int8_t  *restrict Ab = A->b ;
-    const bool A_iso = A->iso ;
     const int64_t avlen = A->vlen ;
-    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    const bool A_is_dense = GB_as_if_full (A) ;
-    const int64_t anz = GB_nnz_held (A) ;
 
     // since A is the mask, if A->iso is true, Mask_struct has been set true
     ASSERT (GB_IMPLIES (A_iso, Mask_struct)) ;
 
     int8_t *restrict Cb = C->b ;
     const int64_t cvlen = C->vlen ;
-    const bool C_is_bitmap = GB_IS_BITMAP (C) ;
 
     #ifdef GB_ISO_ASSIGN
     // C is iso, and A is either iso or effectively iso (with a single entry
-    // and not in bitmap form)
+    // and not in bitmap form).  This case is only used by GB_subassign_06d
+    // directly, and it is not needed for any kernel (generic, factor, or JIT).
     ASSERT (C->iso) ;
     ASSERT (A_iso || (GB_nnz (A) == 1 && !A_is_bitmap)) ;
     ASSERT (Mask_struct) ;
@@ -58,6 +101,7 @@
 
     int64_t cnvals = C->nvals ;     // for C bitmap
 
+    // FIXME: divide this Templates into sub-Templates (Mask_struct, etc)
     if (Mask_struct)
     {
 
@@ -477,7 +521,11 @@
     { 
         C->nvals = cnvals ;
     }
+
+    GB_FREE_ALL ;
 }
 
 #undef GB_ISO_ASSIGN
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL ;
 

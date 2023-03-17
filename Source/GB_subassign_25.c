@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: needed (now).
+// JIT: done.
 
 // Method 25: C(:,:)<M,s> = A ; C is empty, M structural, A bitmap/as-if-full
 
@@ -30,15 +30,13 @@
 #include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 #include "GB_subassign_dense.h"
+#include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_as__include.h"
 #endif
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL                         \
-{                                           \
-    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
-}
+#define GB_FREE_ALL ;
 
 GrB_Info GB_subassign_25
 (
@@ -90,21 +88,6 @@ GrB_Info GB_subassign_25
     // and the time is O(nnz(M)).  This is also the size of C.
 
     //--------------------------------------------------------------------------
-    // Parallel: slice M into equal-sized chunks
-    //--------------------------------------------------------------------------
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
-
-    //--------------------------------------------------------------------------
-    // slice the entries for each task
-    //--------------------------------------------------------------------------
-
-    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
-    int M_nthreads, M_ntasks ;
-    GB_SLICE_MATRIX (M, 8, chunk) ;
-
-    //--------------------------------------------------------------------------
     // allocate C and create its pattern
     //--------------------------------------------------------------------------
 
@@ -153,8 +136,7 @@ GrB_Info GB_subassign_25
             #define GB_sub25(cname) GB (_subassign_25_ ## cname)
             #define GB_WORKER(cname)                            \
             {                                                   \
-                info = GB_sub25 (cname) (C, M, A,               \
-                    M_ek_slicing, M_ntasks, M_nthreads) ;       \
+                info = GB_sub25 (cname) (C, M, A, Werk) ;       \
             }                                                   \
             break ;
 
@@ -162,9 +144,9 @@ GrB_Info GB_subassign_25
             // launch the switch factory
             //------------------------------------------------------------------
 
+            //
             if (C->type == A->type && ccode < GB_UDT_code)
             {
-                // FUTURE: use cases 1,2,4,8,16
                 // C<M> = A
                 switch (ccode)
                 {
@@ -192,7 +174,21 @@ GrB_Info GB_subassign_25
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        // JIT TODO: type: subassign 25
+        if (info == GrB_NO_VALUE)
+        {
+            info = GB_subassign_jit (C,
+                /* C_replace: */ false,
+                /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
+                /* J, nj, nJ, Jkind, Jcolon: */ NULL, 0, 0, GB_ALL, NULL,
+                M,
+                /* Mask_comp: */ false,
+                /* Mask_struct: */ true,
+                /* accum: */ NULL,
+                /* A: */ A,
+                /* scalar, scalar_type: */ NULL, NULL,
+                GB_SUBASSIGN, "subassign_25", GB_JIT_KERNEL_SUBASSIGN_25,
+                Werk) ;
+        }
         #endif
 
         //----------------------------------------------------------------------
@@ -223,7 +219,6 @@ GrB_Info GB_subassign_25
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_ALL ;
     if (info == GrB_SUCCESS)
     {
         ASSERT_MATRIX_OK (C, "C output for subassign method_25", GB0) ;

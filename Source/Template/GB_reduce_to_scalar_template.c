@@ -8,16 +8,17 @@
 //------------------------------------------------------------------------------
 
 // Reduce a matrix to a scalar, with typecasting and generic operators.
-// No panel is used.
+// No panel is used.  The workspace W always has the same type as the ztype
+// of the monoid, GB_Z_TYPE.
 
-// z += S [i], no typecast
+// z += W [i], no typecast
 #ifndef GB_ADD_ARRAY_TO_SCALAR
-#define GB_ADD_ARRAY_TO_SCALAR(z,S,i) GB_UPDATE (z, S [i])
+#define GB_ADD_ARRAY_TO_SCALAR(z,W,i) GB_UPDATE (z, W [i])
 #endif
 
-// W [k] = s, no typecast
+// W [k] = z, no typecast
 #ifndef GB_COPY_SCALAR_TO_ARRAY
-#define GB_COPY_SCALAR_TO_ARRAY(W,k,s) W [k] = s
+#define GB_COPY_SCALAR_TO_ARRAY(W,k,z) W [k] = z
 #endif
 
 {

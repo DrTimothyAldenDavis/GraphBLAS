@@ -109,6 +109,8 @@ int GB_add_sparsity         // return the sparsity structure for C
             // mask can be asympotically slow, when C and M are sparse, and A
             // and/or B are sparse.
 
+// FIXME: need this test            if ( ... ) (*apply_mask) = false ;
+
             // TODO: check the sparse_mask_is_easy condition:  use M
             // if Mask_struct is true, A is not bitmap, B is not bitmap,
             // and one of the 3 conditions holds.  In this case, ignore the
