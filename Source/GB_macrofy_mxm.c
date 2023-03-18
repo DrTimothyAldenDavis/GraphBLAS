@@ -68,7 +68,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     GrB_BinaryOp mult = semiring->multiply ;
     GrB_BinaryOp addop = monoid->op ;
 
-    GB_macrofy_copyright (fp) ;
+    // GB_macrofy_copyright (fp) ;
 
     bool C_iso = (ccode == 0) ;
 

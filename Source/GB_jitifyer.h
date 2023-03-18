@@ -161,12 +161,13 @@ typedef struct GB_jit_entry_struct GB_jit_entry ;
 
 char *GB_jitifyer_libfolder (void) ;    // return path to library folder
 
-void *GB_jitifyer_load  // return dl_handle to library, or NULL if not found
+GrB_Info GB_jitifyer_load
 (
     // output:
-    char *kernel_name,      // of length GB_KLEN
+    void **dl_handle,       // if library found, returned as not NULL
+    FILE **fp_handle,       // source file created, if library not found
+    char *kernel_name,      // full name of the kernel
     char *lib_filename,     // full path name of compiled libkernel_name.so
-    char *source_filename,  // full path name of kernel source file
 
     // input:
     const char *kname,      // kname for the kernel_name

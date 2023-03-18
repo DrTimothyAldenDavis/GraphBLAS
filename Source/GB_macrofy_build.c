@@ -40,7 +40,7 @@ void GB_macrofy_build           // construct all macros for GB_build
     // describe the operator
     //--------------------------------------------------------------------------
 
-    GB_macrofy_copyright (fp) ;
+    // GB_macrofy_copyright (fp) ;
 
     ASSERT_BINARYOP_OK (dup, "dup for macrofy build", GB0) ;
 

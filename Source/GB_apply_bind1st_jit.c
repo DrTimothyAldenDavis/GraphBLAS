@@ -44,6 +44,7 @@ GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
     // enumify the problem and look it up in the jit hash
     //------------------------------------------------------------------
 
+    GrB_Info info ;
     GBURBLE ("(jit) ") ;
     GB_jit_encoding encoding ;
     char *suffix ;
@@ -71,10 +72,12 @@ GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
 
         char kernel_name [GB_KLEN] ;
         char lib_filename [2048] ;
-        char source_filename [2048] ;
-        void *dl_handle = GB_jitifyer_load (kernel_name, lib_filename,
-            source_filename, kname, 13, &encoding, suffix,
+        void *dl_handle ;
+        FILE *fp ;
+        info = GB_jitifyer_load (&dl_handle, &fp, kernel_name, lib_filename,
+            kname, 13, &encoding, suffix,
             NULL, (GB_Operator) binaryop, ctype, NULL, B->type) ;
+        if (info != GrB_SUCCESS) return (info) ;
 
         //--------------------------------------------------------------
         // compile the jit kernel, if not found or if op/type changed
@@ -83,30 +86,9 @@ GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
         if (dl_handle == NULL)
         {
 
-            //----------------------------------------------------------
-            // construct a new jit kernel for this instance
-            //----------------------------------------------------------
-
-            // {
-            GBURBLE ("(compiling) ") ;
-            FILE *fp = fopen (source_filename, "w") ;
-            if (fp == NULL)
-            {
-                // unable to open source file: punt to generic
-                printf ("failed to write to *.c file!\n") ;
-                return (GrB_PANIC) ;
-            }
-            fprintf (fp,
-                "//--------------------------------------"
-                "----------------------------------------\n") ;
-            fprintf (fp, "// %s.c\n"
-                "#include \"GB_jit_kernel_ewise.h\"\n",
-                kernel_name) ;
-            // create query_version function
-            GB_macrofy_query_version (fp) ;
-            // }
-
-            GB_macrofy_ewise (fp, encoding.code, binaryop, ctype, NULL, B->type) ;
+            fprintf (fp, "\n#include \"GB_jit_kernel_ewise.h\"\n") ;
+            GB_macrofy_ewise (fp, encoding.code, binaryop, ctype, NULL,
+                B->type) ;
             fprintf (fp, "\n#include \"GB_jit_kernel_%s.c\"\n", kname) ;
 
             bool builtin = (encoding.suffix_len == 0) ;
@@ -119,6 +101,7 @@ GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
                     ctype, NULL, B->type) ;
             }
 
+            GB_macrofy_query_version (fp) ;
             fclose (fp) ;
 
             //----------------------------------------------------------
@@ -164,7 +147,7 @@ GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
     //------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    GrB_Info info = GB_jit_kernel (Cx, xscalar, B->x, B->b,
+    info = GB_jit_kernel (Cx, xscalar, B->x, B->b,
         GB_nnz_held (B), nthreads) ;
     return (info) ;
 #endif

@@ -39,15 +39,16 @@ char *GB_jitifyer_libfolder (void)
 }
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_load: name a kernel and try to load the *.so file
+// GB_jitifyer: 
 //------------------------------------------------------------------------------
 
-void *GB_jitifyer_load  // return dl_handle to library, or NULL if not found
+GrB_Info GB_jitifyer_load
 (
     // output:
-    char *kernel_name,      // of length GB_KLEN
+    void **dl_handle,       // if library found, returned as not NULL
+    FILE **fp_handle,       // source file created, if library not found
+    char *kernel_name,      // full name of the kernel
     char *lib_filename,     // full path name of compiled libkernel_name.so
-    char *source_filename,  // full path name of kernel source file
 
     // input:
     const char *kname,      // kname for the kernel_name
@@ -64,48 +65,71 @@ void *GB_jitifyer_load  // return dl_handle to library, or NULL if not found
 )
 {
 
+    //--------------------------------------------------------------------------
     // name the problem
+    //--------------------------------------------------------------------------
+
     GB_macrofy_name (kernel_name, "GB_jit", kname, scode_digits,
         encoding->code, suffix) ;
+
+    //--------------------------------------------------------------------------
+    // try to load the libkernel_name.so from the user's library folder
+    //--------------------------------------------------------------------------
 
     // get the user's library folder
     char *lib_folder = GB_jitifyer_libfolder ( ) ;
 
-    // try to load the libkernel_name.so from the user's library folder
     snprintf (lib_filename, 2048, "%s/lib%s.so", lib_folder, kernel_name) ;
 
-    void *dl_handle = dlopen (lib_filename, RTLD_LAZY) ;
+    (*dl_handle) = dlopen (lib_filename, RTLD_LAZY) ;
+    (*fp_handle) = NULL ;
 
-    bool need_to_compile = (dl_handle == NULL) ;
+    //--------------------------------------------------------------------------
+    // check if the kernel needs to be compiled
+    //--------------------------------------------------------------------------
+
+    bool need_to_compile = (*dl_handle == NULL) ;
     bool builtin = (encoding->suffix_len == 0) ;
 
     if (!need_to_compile && !builtin)
     {
         // not loaded but already compiled; make sure the defn are OK
-        void *dl_query = dlsym (dl_handle, "GB_jit_query_defn") ;
-        need_to_compile =
-            !GB_jitifyer_match_version (dl_handle) ||
-(op0 != NULL && !GB_jitifyer_match_defn (dl_query, 0, op0->defn)) ||
-(op1 != NULL && !GB_jitifyer_match_defn (dl_query, 1, op1->defn)) ||
-(type0 != NULL && !GB_jitifyer_match_defn (dl_query, 2, type0->defn)) ||
-(type1 != NULL && !GB_jitifyer_match_defn (dl_query, 3, type1->defn)) ||
-(type2 != NULL && !GB_jitifyer_match_defn (dl_query, 4, type2->defn)) ;
+        void *dl_query = dlsym (*dl_handle, "GB_jit_query_defn") ;
+        need_to_compile = !GB_jitifyer_match_version (*dl_handle) ||
+        (op0 != NULL && !GB_jitifyer_match_defn (dl_query, 0, op0->defn)) ||
+        (op1 != NULL && !GB_jitifyer_match_defn (dl_query, 1, op1->defn)) ||
+        (type0 != NULL && !GB_jitifyer_match_defn (dl_query, 2, type0->defn)) ||
+        (type1 != NULL && !GB_jitifyer_match_defn (dl_query, 3, type1->defn)) ||
+        (type2 != NULL && !GB_jitifyer_match_defn (dl_query, 4, type2->defn)) ;
         if (need_to_compile)
         {
             // library is loaded but needs to change, so close it
-            dlclose (dl_handle) ;
-            dl_handle = NULL ;
+            dlclose (*dl_handle) ;
+            (*dl_handle) = NULL ;
         }
     }
 
-    // construct the source filename, if the kernel needs to be compiled
-    source_filename [0] = '\0' ;
-    if (dl_handle == NULL)
+    // create source file, if the kernel needs to be compiled
+    if (*dl_handle == NULL)
     {
+        GBURBLE ("(compiling) ") ;
+        char source_filename [2048] ;
         snprintf (source_filename, 2048, "%s/%s.c", lib_folder, kernel_name) ;
+        FILE *fp = fopen (source_filename, "w") ;
+        if (fp == NULL)
+        {
+            // FIXME: use another error code here
+            return (GrB_PANIC) ;
+        }
+        fprintf (fp,
+            "//--------------------------------------"
+            "----------------------------------------\n"
+            "// %s.c\n", kernel_name) ;
+        GB_macrofy_copyright (fp) ;
+        (*fp_handle) = fp ;
     }
 
-    return (dl_handle) ;
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------
