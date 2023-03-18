@@ -9,6 +9,7 @@
 
 #include "GB.h"
 #include "GB_jitifyer.h"
+#include "GB_stringify.h"
 #include <dlfcn.h>
 
 //------------------------------------------------------------------------------
@@ -26,6 +27,86 @@ static int64_t  GB_jit_table_size = 0 ;  // always a power of 2
 static uint64_t GB_jit_table_bits = 0 ;  // hash mask (0xFFFF if size is 2^16)
 static size_t   GB_jit_table_allocated = 0 ;
 static int64_t  GB_jit_table_populated = 0 ;
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_libfolder: return the path to the user's library folder
+//------------------------------------------------------------------------------
+
+char *GB_jitifyer_libfolder (void)
+{
+    // FIXME: determine this at GrB_init time
+    return ("/home/faculty/d/davis/.SuiteSparse/GraphBLAS/v8.0.0") ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_load: name a kernel and try to load the *.so file
+//------------------------------------------------------------------------------
+
+void *GB_jitifyer_load  // return dl_handle to library, or NULL if not found
+(
+    // output:
+    char *kernel_name,      // of length GB_KLEN
+    char *lib_filename,     // full path name of compiled libkernel_name.so
+    char *source_filename,  // full path name of kernel source file
+
+    // input:
+    const char *kname,      // kname for the kernel_name
+    int scode_digits,       // # of hexadecimal digits printed
+    GB_jit_encoding *encoding,  // encoding of the problem
+    const char *suffix,     // suffix for the kernel_name (NULL if none)
+
+    // operator and type definitions
+    const GB_Operator op0,  // operator 0, or NULL
+    const GB_Operator op1,  // operator 1, or NULL
+    const GrB_Type type0,   // type 0, or NULL
+    const GrB_Type type1,   // type 1, or NULL
+    const GrB_Type type2    // type 2, or NULL
+)
+{
+
+    // name the problem
+    GB_macrofy_name (kernel_name, "GB_jit", kname, scode_digits,
+        encoding->code, suffix) ;
+
+    // get the user's library folder
+    char *lib_folder = GB_jitifyer_libfolder ( ) ;
+
+    // try to load the libkernel_name.so from the user's library folder
+    snprintf (lib_filename, 2048, "%s/lib%s.so", lib_folder, kernel_name) ;
+
+    void *dl_handle = dlopen (lib_filename, RTLD_LAZY) ;
+
+    bool need_to_compile = (dl_handle == NULL) ;
+    bool builtin = (encoding->suffix_len == 0) ;
+
+    if (!need_to_compile && !builtin)
+    {
+        // not loaded but already compiled; make sure the defn are OK
+        void *dl_query = dlsym (dl_handle, "GB_jit_query_defn") ;
+        need_to_compile =
+            !GB_jitifyer_match_version (dl_handle) ||
+(op0 != NULL && !GB_jitifyer_match_defn (dl_query, 0, op0->defn)) ||
+(op1 != NULL && !GB_jitifyer_match_defn (dl_query, 1, op1->defn)) ||
+(type0 != NULL && !GB_jitifyer_match_defn (dl_query, 2, type0->defn)) ||
+(type1 != NULL && !GB_jitifyer_match_defn (dl_query, 3, type1->defn)) ||
+(type2 != NULL && !GB_jitifyer_match_defn (dl_query, 4, type2->defn)) ;
+        if (need_to_compile)
+        {
+            // library is loaded but needs to change, so close it
+            dlclose (dl_handle) ;
+            dl_handle = NULL ;
+        }
+    }
+
+    // construct the source filename, if the kernel needs to be compiled
+    source_filename [0] = '\0' ;
+    if (dl_handle == NULL)
+    {
+        snprintf (source_filename, 2048, "%s/%s.c", lib_folder, kernel_name) ;
+    }
+
+    return (dl_handle) ;
+}
 
 //------------------------------------------------------------------------------
 // GB_jitifyer_lookup:  find a jit entry in the hash table

@@ -260,7 +260,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         { 
-            info = GB_colscale_jit (C, A, D, mult, flipxy,
+            info = GB_colscale_jit ("colscale", C, A, D, mult, flipxy,
                 A_ek_slicing, A_ntasks, A_nthreads) ;
         }
         #endif

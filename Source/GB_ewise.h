@@ -44,15 +44,6 @@ GrB_Info GB_ewise_full_accum        // C += A+B, all matrices dense
     const GrB_Matrix B
 ) ;
 
-GrB_Info GB_ewise_full_accum_jit    // C+=A+B via the JIT
-(
-    GrB_Matrix C,
-    const GrB_BinaryOp binaryop,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int nthreads
-) ;
-
 //------------------------------------------------------------------------------
 // GB_ewise_full_noaccum: C = A+B where A and B are dense; C anything
 //------------------------------------------------------------------------------
@@ -64,15 +55,6 @@ GrB_Info GB_ewise_full_noaccum      // C = A+B
     const GrB_BinaryOp op,          // must not be a positional op
     const GrB_Matrix A,
     const GrB_Matrix B
-) ;
-
-GrB_Info GB_ewise_full_noaccum_jit  // C=A+B via the JIT
-(
-    GrB_Matrix C,
-    const GrB_BinaryOp binaryop,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int nthreads
 ) ;
 
 #endif

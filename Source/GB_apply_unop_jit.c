@@ -23,7 +23,10 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
 (
+    const char *kname,          // kernel name
+    // output:
     GB_void *Cx,
+    // input:
     const GrB_Type ctype,
     const GB_Operator op,       // unary or index unary op
     const bool flipij,          // if true, use z = f(x,j,i,y)
@@ -66,36 +69,16 @@ GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
         // first time this kernel has been seen since GrB_init
         //--------------------------------------------------------------
 
-        // namify the problem
-        #define KLEN (256 + 2*GxB_MAX_NAME_LEN)
-        char kernel_name [KLEN] ;
-        uint64_t scode = encoding.code ;
-        if (suffix == NULL)
-        {
-            snprintf (kernel_name, KLEN-1,
-                "GB_jit_apply_unop_%0*" PRIx64, 9, scode) ;
-        }
-        else
-        {
-            snprintf (kernel_name, KLEN-1,
-                "GB_jit_apply_unop_%0*" PRIx64 "__%s", 9, scode, suffix) ;
-        }
-
-        char lib_filename [2048] ;
+        // name the problem
+        char kernel_name [GB_KLEN] ;
+        GB_macrofy_name (kernel_name, "GB_jit", kname, 9,
+            encoding.code, suffix) ;
 
         //==============================================================
         // FIXME: make this a helper function for all kernels
         // FIXME: create this at GrB_init time, or by GxB_set
-        char lib_folder [2048] ;
-        snprintf (lib_folder, 2047,
-            "/home/faculty/d/davis/.SuiteSparse/GraphBLAS/v%d.%d.%d"
-            #ifdef GBRENAME
-            "_matlab"
-            #endif
-            ,
-            GxB_IMPLEMENTATION_MAJOR,
-            GxB_IMPLEMENTATION_MINOR,
-            GxB_IMPLEMENTATION_SUB) ;
+        char lib_filename [2048] ;
+        char *lib_folder = GB_jitifyer_libfolder ( ) ;
         // try to load the libkernelname.so from the user's
         // .SuiteSparse/GraphBLAS folder (if already compiled)
         snprintf (lib_filename, 2048, "%s/lib%s.so", lib_folder, kernel_name) ;
@@ -162,8 +145,8 @@ GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
             GB_macrofy_query_version (fp) ;
             // }
 
-            GB_macrofy_apply (fp, scode, op, ctype, A->type) ;
-            fprintf (fp, "\n#include \"GB_jit_kernel_apply_unop.c\"\n") ;
+            GB_macrofy_apply (fp, encoding.code, op, ctype, A->type) ;
+            fprintf (fp, "\n#include \"GB_jit_kernel_%s.c\"\n", kname) ;
 
             if (!builtin)
             {
@@ -209,7 +192,6 @@ GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
             dl_handle, dl_function))
         {
             // unable to add kernel to hash table: punt to generic
-            printf ("punt to generic\n") ;
             dlclose (dl_handle) ; 
             return (GrB_OUT_OF_MEMORY) ;
         }

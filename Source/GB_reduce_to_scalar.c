@@ -219,7 +219,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         #if GB_JIT_ENABLED
         if (!done)
         {
-            info = GB_reduce_to_scalar_jit (z, monoid, A, W, F,
+            info = GB_reduce_to_scalar_jit ("reduce", z, monoid, A, W, F,
                 ntasks, nthreads) ;
             done = (info == GrB_SUCCESS) ;
         }

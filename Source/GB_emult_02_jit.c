@@ -28,7 +28,10 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
 (
+    const char *kname,          // kernel name
+    // input/output:
     GrB_Matrix C,
+    // input:
     const int C_sparsity,
     const GrB_Matrix M,
     const bool Mask_struct,
@@ -55,10 +58,8 @@ GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
-        GB_JIT_KERNEL_EMULT2, true, false,
-        /* can copy to C: */ false,
-        false, false,
-        C_sparsity, C->type, M, Mask_struct, Mask_comp,
+        GB_JIT_KERNEL_EMULT2, true,
+        false, false, C_sparsity, C->type, M, Mask_struct, Mask_comp,
         binaryop, false, A, B) ;
     if (hash == UINT64_MAX)
     {
@@ -78,36 +79,16 @@ GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
         // first time this kernel has been seen since GrB_init
         //--------------------------------------------------------------
 
-        // namify the problem
-        #define KLEN (256 + 2*GxB_MAX_NAME_LEN)
-        char kernel_name [KLEN] ;
-        uint64_t scode = encoding.code ;
-        if (suffix == NULL)
-        {
-            snprintf (kernel_name, KLEN-1,
-                "GB_jit_emult_02_%0*" PRIx64, 13, scode) ;
-        }
-        else
-        {
-            snprintf (kernel_name, KLEN-1,
-                "GB_jit_emult_02_%0*" PRIx64 "__%s", 13, scode, suffix) ;
-        }
-
-        char lib_filename [2048] ;
+        // name the problem
+        char kernel_name [GB_KLEN] ;
+        GB_macrofy_name (kernel_name, "GB_jit", kname, 13,
+            encoding.code, suffix) ;
 
         //==============================================================
         // FIXME: make this a helper function for all kernels
         // FIXME: create this at GrB_init time, or by GxB_set
-        char lib_folder [2048] ;
-        snprintf (lib_folder, 2047,
-            "/home/faculty/d/davis/.SuiteSparse/GraphBLAS/v%d.%d.%d"
-            #ifdef GBRENAME
-            "_matlab"
-            #endif
-            ,
-            GxB_IMPLEMENTATION_MAJOR,
-            GxB_IMPLEMENTATION_MINOR,
-            GxB_IMPLEMENTATION_SUB) ;
+        char lib_filename [2048] ;
+        char *lib_folder = GB_jitifyer_libfolder ( ) ;
         // try to load the libkernelname.so from the user's
         // .SuiteSparse/GraphBLAS folder (if already compiled)
         snprintf (lib_filename, 2048, "%s/lib%s.so", lib_folder, kernel_name) ;
@@ -175,8 +156,8 @@ GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
             GB_macrofy_query_version (fp) ;
             // }
 
-            GB_macrofy_ewise (fp, scode, binaryop, C->type, A->type, B->type) ;
-            fprintf (fp, "\n#include \"GB_jit_kernel_emult_02.c\"\n") ;
+            GB_macrofy_ewise (fp, encoding.code, binaryop, C->type, A->type, B->type) ;
+            fprintf (fp, "\n#include \"GB_jit_kernel_%s.c\"\n", kname) ;
 
             if (!builtin)
             {
@@ -222,7 +203,6 @@ GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
             dl_handle, dl_function))
         {
             // unable to add kernel to hash table: punt to generic
-            printf ("punt to generic\n") ;
             dlclose (dl_handle) ; 
             return (GrB_OUT_OF_MEMORY) ;
         }

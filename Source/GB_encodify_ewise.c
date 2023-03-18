@@ -19,8 +19,6 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     // input:
     const int kcode,            // kernel to encode (add, emult, rowscale, ...)
     const bool is_eWiseMult,    // if true, method is emult
-    const bool is_eWiseUnion,   // if true, method is eWiseUnion
-    const bool can_copy_to_C,   // if true C(i,j)=A(i,j) can bypass the op
     const bool C_iso,
     const bool C_in_iso,
     const int C_sparsity,
@@ -50,6 +48,10 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     //--------------------------------------------------------------------------
     // primary encoding of the problem
     //--------------------------------------------------------------------------
+
+    // only eWiseAdd can copy entries directly from A or B into C
+    bool can_copy_to_C = (kcode == GB_JIT_KERNEL_ADD) ;
+    bool is_eWiseUnion = (kcode == GB_JIT_KERNEL_UNION) ;
 
     encoding->kcode = kcode ;
     GB_enumify_ewise (&encoding->code, is_eWiseMult, is_eWiseUnion,

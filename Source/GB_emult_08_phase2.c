@@ -251,8 +251,9 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     {
-        info = GB_emult_08_jit (C, C_sparsity, M, Mask_struct, Mask_comp, op,
-            A, B, C_to_M, C_to_A, C_to_B, TaskList, C_ntasks, C_nthreads) ;
+        info = GB_emult_08_jit ("emult_08", C, C_sparsity, M, Mask_struct,
+            Mask_comp, op, A, B, C_to_M, C_to_A, C_to_B, TaskList, C_ntasks,
+            C_nthreads) ;
     }
     #endif
 

@@ -38,12 +38,15 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
 (
+    const char *kname,          // kernel name
+    // input/output:
     GrB_Matrix C,
+    // input:
     const int C_sparsity,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
-    const GrB_Type binaryop,
+    const GrB_BinaryOp binaryop,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool Ch_is_Mh,
@@ -77,8 +80,7 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
-        GB_JIT_KERNEL_ADD, false, false,
-        /* can copy to C: */ true,
+        GB_JIT_KERNEL_ADD, false,
         false, false, C_sparsity, C->type, M, Mask_struct, Mask_comp,
         binaryop, false, A, B) ;
     if (hash == UINT64_MAX)
@@ -95,79 +97,22 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
     if (dl_function == NULL)
     { 
 
-        //--------------------------------------------------------------
-        // first time this kernel has been seen since GrB_init
-        //--------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // name and load the jit kernel
+        //----------------------------------------------------------------------
 
-        // namify the problem
-        #define KLEN (256 + 2*GxB_MAX_NAME_LEN)
-        char kernel_name [KLEN] ;
-        uint64_t scode = encoding.code ;
-        if (suffix == NULL)
-        {
-            snprintf (kernel_name, KLEN-1,
-                "GB_jit_add_%0*" PRIx64, 13, scode) ;
-        }
-        else
-        {
-            snprintf (kernel_name, KLEN-1,
-                "GB_jit_add_%0*" PRIx64 "__%s", 13, scode, suffix) ;
-        }
-
+        char kernel_name [GB_KLEN] ;
         char lib_filename [2048] ;
-
-        //==============================================================
-        // FIXME: make this a helper function for all kernels
-        // FIXME: create this at GrB_init time, or by GxB_set
-        char lib_folder [2048] ;
-        snprintf (lib_folder, 2047,
-            "/home/faculty/d/davis/.SuiteSparse/GraphBLAS/v%d.%d.%d"
-            #ifdef GBRENAME
-            "_matlab"
-            #endif
-            ,
-            GxB_IMPLEMENTATION_MAJOR,
-            GxB_IMPLEMENTATION_MINOR,
-            GxB_IMPLEMENTATION_SUB) ;
-        // try to load the libkernelname.so from the user's
-        // .SuiteSparse/GraphBLAS folder (if already compiled)
-        snprintf (lib_filename, 2048, "%s/lib%s.so", lib_folder, kernel_name) ;
-
-//      char command [4096] ;
-//      sprintf (command, "ldd %s\n", lib_filename) ;
-//      int res = system (command) ;
-//      printf ("result: %d\n", res) ;
-//      sprintf (command, "readelf -d %s\n", lib_filename) ;
-//      res = system (command) ;
-//      printf ("result: %d\n", res) ;
-
-        void *dl_handle = dlopen (lib_filename, RTLD_LAZY) ;
-
-        bool need_to_compile = (dl_handle == NULL) ;
-        bool builtin = (encoding.suffix_len == 0) ;
-
-        if (!need_to_compile && !builtin)
-        {
-            // not loaded but already compiled; make sure the defn are OK
-            void *dl_query = dlsym (dl_handle, "GB_jit_query_defn") ;
-            need_to_compile =
-                !GB_jitifyer_match_version (dl_handle) ||
-                !GB_jitifyer_match_defn (dl_query, 1, binaryop->defn) ||
-                !GB_jitifyer_match_defn (dl_query, 2, C->type->defn) ||
-                !GB_jitifyer_match_defn (dl_query, 3, A->type->defn) ||
-                !GB_jitifyer_match_defn (dl_query, 4, B->type->defn) ;
-            if (need_to_compile)
-            {
-                // library is loaded but needs to change, so close it
-                dlclose (dl_handle) ;
-            }
-        }
+        char source_filename [2048] ;
+        void *dl_handle = GB_jitifyer_load (kernel_name, lib_filename,
+            source_filename, kname, 13, &encoding, suffix,
+            NULL, (GB_Operator) binaryop, C->type, A->type, B->type) ;
 
         //--------------------------------------------------------------
         // compile the jit kernel, if not found or if op/type changed
         //--------------------------------------------------------------
 
-        if (need_to_compile)
+        if (dl_handle == NULL)
         {
 
             //----------------------------------------------------------
@@ -176,9 +121,6 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
 
             // {
             GBURBLE ("(compiling) ") ;
-            char source_filename [2048] ;
-            snprintf (source_filename, 2048, "%s/%s.c",
-                lib_folder, kernel_name) ;
             FILE *fp = fopen (source_filename, "w") ;
             if (fp == NULL)
             {
@@ -196,9 +138,10 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
             GB_macrofy_query_version (fp) ;
             // }
 
-            GB_macrofy_ewise (fp, scode, binaryop, C->type, A->type, B->type) ;
-            fprintf (fp, "\n#include \"GB_jit_kernel_add.c\"\n") ;
+            GB_macrofy_ewise (fp, encoding.code, binaryop, C->type, A->type, B->type) ;
+            fprintf (fp, "\n#include \"GB_jit_kernel_%s.c\"\n", kname) ;
 
+            bool builtin = (encoding.suffix_len == 0) ;
             if (!builtin)
             {
                 // create query_defn function
@@ -243,7 +186,6 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
             dl_handle, dl_function))
         {
             // unable to add kernel to hash table: punt to generic
-            printf ("punt to generic\n") ;
             dlclose (dl_handle) ; 
             return (GrB_OUT_OF_MEMORY) ;
         }

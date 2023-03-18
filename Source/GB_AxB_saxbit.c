@@ -311,8 +311,8 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
         #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
-            info = GB_AxB_saxbit_jit (C, M, Mask_comp, Mask_struct,
-                A, B, semiring, flipxy, ntasks, nthreads,
+            info = GB_AxB_saxbit_jit ("AxB_saxbit", C, M, Mask_comp,
+                Mask_struct, A, B, semiring, flipxy, ntasks, nthreads,
                 nfine_tasks_per_vector, use_coarse_tasks, use_atomics,
                 M_ek_slicing, M_nthreads, M_ntasks, A_slice, H_slice, Wcx, Wf) ;
         }

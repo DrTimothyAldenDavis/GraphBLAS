@@ -94,7 +94,7 @@ GrB_Info GB_cast_array              // typecast an array
         GrB_Type ctype = GB_code_type (code1, NULL) ;
         GrB_UnaryOp op = GB_unop_identity (ctype, NULL) ;
         ASSERT_UNARYOP_OK (op, "identity op for cast_array", GB0) ;
-        info = GB_apply_unop_jit (Cx, ctype, op, false, A, NULL,
+        info = GB_apply_unop_jit ("apply_unop", Cx, ctype, op, false, A, NULL,
             NULL, 0, A_nthreads) ;
     }
     #endif

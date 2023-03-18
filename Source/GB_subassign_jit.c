@@ -39,6 +39,7 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_subassign_jit
 (
+    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -67,7 +68,6 @@ GrB_Info GB_subassign_jit
     const GrB_Type scalar_type,
     // kind and kernel:
     const int assign_kind,      // row assign, col assign, assign, or subassign
-    const char *kname,          // "sub01", etc
     const int assign_kernel,    // GB_JIT_KERNEL_SUBASSIGN_01, ... etc
     GB_Werk Werk
 )
@@ -105,36 +105,16 @@ GrB_Info GB_subassign_jit
         // first time this kernel has been seen since GrB_init
         //--------------------------------------------------------------
 
-        // namify the problem
-        #define KLEN (256 + 2*GxB_MAX_NAME_LEN)
-        char kernel_name [KLEN] ;
-        uint64_t scode = encoding.code ;
-        if (suffix == NULL)
-        {
-            snprintf (kernel_name, KLEN-1,
-                "GB_jit_%s_%0*" PRIx64, kname, 12, scode) ;
-        }
-        else
-        {
-            snprintf (kernel_name, KLEN-1,
-                "GB_jit_%s_%0*" PRIx64 "__%s", kname, 12, scode, suffix) ;
-        }
-
-        char lib_filename [2048] ;
+        // name the problem
+        char kernel_name [GB_KLEN] ;
+        GB_macrofy_name (kernel_name, "GB_jit", kname, 12,
+            encoding.code, suffix) ;
 
         //==============================================================
         // FIXME: make this a helper function for all kernels
         // FIXME: create this at GrB_init time, or by GxB_set
-        char lib_folder [2048] ;
-        snprintf (lib_folder, 2047,
-            "/home/faculty/d/davis/.SuiteSparse/GraphBLAS/v%d.%d.%d"
-            #ifdef GBRENAME
-            "_matlab"
-            #endif
-            ,
-            GxB_IMPLEMENTATION_MAJOR,
-            GxB_IMPLEMENTATION_MINOR,
-            GxB_IMPLEMENTATION_SUB) ;
+        char lib_filename [2048] ;
+        char *lib_folder = GB_jitifyer_libfolder ( ) ;
         // try to load the libkernelname.so from the user's
         // .SuiteSparse/GraphBLAS folder (if already compiled)
         snprintf (lib_filename, 2048, "%s/lib%s.so", lib_folder, kernel_name) ;
@@ -203,7 +183,7 @@ GrB_Info GB_subassign_jit
             GB_macrofy_query_version (fp) ;
             // }
 
-            GB_macrofy_assign (fp, scode, accum, C->type, atype) ;
+            GB_macrofy_assign (fp, encoding.code, accum, C->type, atype) ;
             fprintf (fp, "\n#include \"GB_jit_kernel_%s.c\"\n", kname) ;
 
             if (!builtin)
@@ -250,7 +230,6 @@ GrB_Info GB_subassign_jit
             dl_handle, dl_function))
         {
             // unable to add kernel to hash table: punt to generic
-            printf ("punt to generic\n") ;
             dlclose (dl_handle) ; 
             return (GrB_OUT_OF_MEMORY) ;
         }

@@ -22,8 +22,11 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_select_bitmap_jit      // select bitmap
 (
+    const char *kname,          // kernel name
+    // output:
     int8_t *Cb,
     int64_t *cnvals_handle,
+    // input:
     const bool C_iso,
     const GrB_Matrix A,
     const bool flipij,
@@ -64,36 +67,16 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
         // first time this kernel has been seen since GrB_init
         //--------------------------------------------------------------
 
-        // namify the problem
-        #define KLEN (256 + 2*GxB_MAX_NAME_LEN)
-        char kernel_name [KLEN] ;
-        uint64_t scode = encoding.code ;
-        if (suffix == NULL)
-        {
-            snprintf (kernel_name, KLEN-1,
-                "GB_jit_select_bitmap_%0*" PRIx64, 10, scode) ;
-        }
-        else
-        {
-            snprintf (kernel_name, KLEN-1,
-                "GB_jit_select_bitmap_%0*" PRIx64 "__%s", 10, scode, suffix) ;
-        }
-
-        char lib_filename [2048] ;
+        // name the problem
+        char kernel_name [GB_KLEN] ;
+        GB_macrofy_name (kernel_name, "GB_jit", kname, 10,
+            encoding.code, suffix) ;
 
         //==============================================================
         // FIXME: make this a helper function for all kernels
         // FIXME: create this at GrB_init time, or by GxB_set
-        char lib_folder [2048] ;
-        snprintf (lib_folder, 2047,
-            "/home/faculty/d/davis/.SuiteSparse/GraphBLAS/v%d.%d.%d"
-            #ifdef GBRENAME
-            "_matlab"
-            #endif
-            ,
-            GxB_IMPLEMENTATION_MAJOR,
-            GxB_IMPLEMENTATION_MINOR,
-            GxB_IMPLEMENTATION_SUB) ;
+        char lib_filename [2048] ;
+        char *lib_folder = GB_jitifyer_libfolder ( ) ;
         // try to load the libkernelname.so from the user's
         // .SuiteSparse/GraphBLAS folder (if already compiled)
         snprintf (lib_filename, 2048, "%s/lib%s.so", lib_folder, kernel_name) ;
@@ -159,8 +142,8 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
             GB_macrofy_query_version (fp) ;
             // }
 
-            GB_macrofy_select (fp, scode, op, A->type) ;
-            fprintf (fp, "\n#include \"GB_jit_kernel_select_bitmap.c\"\n") ;
+            GB_macrofy_select (fp, encoding.code, op, A->type) ;
+            fprintf (fp, "\n#include \"GB_jit_kernel_%s.c\"\n", kname) ;
 
             if (!builtin)
             {
@@ -206,7 +189,6 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
             dl_handle, dl_function))
         {
             // unable to add kernel to hash table: punt to generic
-            printf ("punt to generic\n") ;
             dlclose (dl_handle) ; 
             return (GrB_OUT_OF_MEMORY) ;
         }

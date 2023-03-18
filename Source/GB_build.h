@@ -57,21 +57,4 @@ GrB_Info GB_builder                 // build a matrix from tuples
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_build_jit               // GB_builder JIT kernel
-(
-    GB_void *restrict Tx,
-    int64_t *restrict Ti,
-    const GB_void *restrict Sx,
-    const GrB_Type ttype,           // type of Tx
-    const GrB_Type stype,           // type of Sx
-    const GrB_BinaryOp dup,         // operator for summing duplicates
-    const int64_t nvals,            // number of tuples
-    const int64_t ndupl,            // number of duplicates
-    const int64_t *restrict I_work,
-    const int64_t *restrict K_work,
-    const int64_t *restrict tstart_slice,
-    const int64_t *restrict tnz_slice,
-    int nthreads
-) ;
-
 #endif

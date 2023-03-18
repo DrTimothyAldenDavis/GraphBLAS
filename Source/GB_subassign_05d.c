@@ -142,7 +142,7 @@ GrB_Info GB_subassign_05d
     #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     {
-        info = GB_subassign_jit (C,
+        info = GB_subassign_jit ("subassign_05d", C,
             /* C_replace: */ false,
             /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
             /* J, nj, nJ, Jkind, Jcolon: */ NULL, 0, 0, GB_ALL, NULL,
@@ -152,8 +152,7 @@ GrB_Info GB_subassign_05d
             /* accum: */ NULL,
             /* A: */ NULL,
             /* scalar, scalar_type: */ cwork, C->type,
-            GB_SUBASSIGN, "subassign_05d", GB_JIT_KERNEL_SUBASSIGN_05d,
-            Werk) ;
+            GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_05d, Werk) ;
     }
     #endif
 

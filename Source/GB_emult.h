@@ -127,24 +127,6 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_emult_08_jit      // C<#M>=A.*B, emult_08, via the JIT
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_BinaryOp binaryop,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const GB_task_struct *restrict TaskList,
-    const int C_ntasks,
-    const int C_nthreads
-) ;
-
 GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
 (
     GrB_Matrix C,           // output matrix, static header
@@ -157,22 +139,6 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     const GrB_Matrix B,     // input B matrix (bitmap/full)
     GrB_BinaryOp op,        // op to perform C = op (A,B)
     GB_Werk Werk
-) ;
-
-GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_BinaryOp binaryop,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int64_t *restrict Cp_kfirst,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
 ) ;
 
 GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
@@ -211,22 +177,6 @@ GrB_Info GB_emult_03        // C=A.*B when A is bitmap/full, B sparse/hyper
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_emult_03_jit      // C<#M>=A.*B, emult_03, via the JIT
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_BinaryOp binaryop,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int64_t *restrict Cp_kfirst,
-    const int64_t *B_ek_slicing,
-    const int B_ntasks,
-    const int B_nthreads
-) ;
-
 GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
 (
     GrB_Matrix C,           // output matrix, static header
@@ -239,21 +189,6 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     const GrB_Matrix B,     // input B matrix (bitmap/full)
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
     GB_Werk Werk
-) ;
-
-GrB_Info GB_emult_04_jit      // C<M>=A.*B, emult_04, via the JIT
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const GrB_BinaryOp binaryop,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int64_t *restrict Cp_kfirst,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
 ) ;
 
 GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
@@ -270,21 +205,6 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     const GrB_Matrix B,     // input B matrix (bitmap/full)
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
     GB_Werk Werk
-) ;
-
-GrB_Info GB_emult_bitmap_jit      // C<#M>=A.*B, emult_bitmap, via the JIT
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Type binaryop,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads,
-    const int C_nthreads
 ) ;
 
 bool GB_emult_iso           // c = op(a,b), return true if C is iso

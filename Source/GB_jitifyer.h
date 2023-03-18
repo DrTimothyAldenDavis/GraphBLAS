@@ -159,6 +159,29 @@ typedef struct GB_jit_entry_struct GB_jit_entry ;
 // GB_jitifyer methods for GraphBLAS
 //------------------------------------------------------------------------------
 
+char *GB_jitifyer_libfolder (void) ;    // return path to library folder
+
+void *GB_jitifyer_load  // return dl_handle to library, or NULL if not found
+(
+    // output:
+    char *kernel_name,      // of length GB_KLEN
+    char *lib_filename,     // full path name of compiled libkernel_name.so
+    char *source_filename,  // full path name of kernel source file
+
+    // input:
+    const char *kname,      // kname for the kernel_name
+    int scode_digits,       // # of hexadecimal digits printed
+    GB_jit_encoding *encoding,  // encoding of the problem
+    const char *suffix,     // suffix for the kernel_name (NULL if none)
+
+    // operator and type definitions
+    const GB_Operator op0,  // operator 0, or NULL
+    const GB_Operator op1,  // operator 1, or NULL
+    const GrB_Type type0,   // type 0, or NULL
+    const GrB_Type type1,   // type 1, or NULL
+    const GrB_Type type2    // type 2, or NULL
+) ;
+
 void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
 (
     // input:

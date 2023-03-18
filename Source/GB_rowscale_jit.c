@@ -22,10 +22,13 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
 (
+    const char *kname,          // kernel name
+    // input/output:
     GrB_Matrix C,
+    // input:
     const GrB_Matrix D,
     const GrB_Matrix B,
-    const GrB_BinaryOp multiply,
+    const GrB_BinaryOp binaryop,
     const bool flipxy,
     const int nthreads
 )
@@ -43,11 +46,9 @@ GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
-        GB_JIT_KERNEL_ROWSCALE, false, false,
-        /* can copy to C: */ false,
-        false, false,
-        GB_sparsity (C), C->type, NULL, false, false,
-        multiply, flipxy, D, B) ;
+        GB_JIT_KERNEL_ROWSCALE, false,
+        false, false, GB_sparsity (C), C->type, NULL, false, false,
+        binaryop, flipxy, D, B) ;
     if (hash == UINT64_MAX)
     {
         // cannot JIT this binaryop
@@ -66,36 +67,16 @@ GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
         // first time this kernel has been seen since GrB_init
         //--------------------------------------------------------------
 
-        // namify the problem
-        #define KLEN (256 + 2*GxB_MAX_NAME_LEN)
-        char kernel_name [KLEN] ;
-        uint64_t scode = encoding.code ;
-        if (suffix == NULL)
-        {
-            snprintf (kernel_name, KLEN-1,
-                "GB_jit_rowscale_%0*" PRIx64, 13, scode) ;
-        }
-        else
-        {
-            snprintf (kernel_name, KLEN-1,
-                "GB_jit_rowscale_%0*" PRIx64 "__%s", 13, scode, suffix) ;
-        }
-
-        char lib_filename [2048] ;
+        // name the problem
+        char kernel_name [GB_KLEN] ;
+        GB_macrofy_name (kernel_name, "GB_jit", kname, 13,
+            encoding.code, suffix) ;
 
         //==============================================================
         // FIXME: make this a helper function for all kernels
         // FIXME: create this at GrB_init time, or by GxB_set
-        char lib_folder [2048] ;
-        snprintf (lib_folder, 2047,
-            "/home/faculty/d/davis/.SuiteSparse/GraphBLAS/v%d.%d.%d"
-            #ifdef GBRENAME
-            "_matlab"
-            #endif
-            ,
-            GxB_IMPLEMENTATION_MAJOR,
-            GxB_IMPLEMENTATION_MINOR,
-            GxB_IMPLEMENTATION_SUB) ;
+        char lib_filename [2048] ;
+        char *lib_folder = GB_jitifyer_libfolder ( ) ;
         // try to load the libkernelname.so from the user's
         // .SuiteSparse/GraphBLAS folder (if already compiled)
         snprintf (lib_filename, 2048, "%s/lib%s.so", lib_folder, kernel_name) ;
@@ -119,7 +100,7 @@ GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
             void *dl_query = dlsym (dl_handle, "GB_jit_query_defn") ;
             need_to_compile =
                 !GB_jitifyer_match_version (dl_handle) ||
-                !GB_jitifyer_match_defn (dl_query, 1, multiply->defn) ||
+                !GB_jitifyer_match_defn (dl_query, 1, binaryop->defn) ||
                 !GB_jitifyer_match_defn (dl_query, 2, C->type->defn) ||
                 !GB_jitifyer_match_defn (dl_query, 3, D->type->defn) ||
                 !GB_jitifyer_match_defn (dl_query, 4, B->type->defn) ;
@@ -163,15 +144,15 @@ GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
             GB_macrofy_query_version (fp) ;
             // }
 
-            GB_macrofy_ewise (fp, scode, multiply, C->type, D->type, B->type) ;
-            fprintf (fp, "\n#include \"GB_jit_kernel_rowscale.c\"\n") ;
+            GB_macrofy_ewise (fp, encoding.code, binaryop, C->type, D->type, B->type) ;
+            fprintf (fp, "\n#include \"GB_jit_kernel_%s.c\"\n", kname) ;
 
             if (!builtin)
             {
                 // create query_defn function
                 GB_macrofy_query_defn (fp,
                     NULL,
-                    (GB_Operator) multiply,
+                    (GB_Operator) binaryop,
                     C->type, D->type, B->type) ;
             }
 
@@ -210,7 +191,6 @@ GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
             dl_handle, dl_function))
         {
             // unable to add kernel to hash table: punt to generic
-            printf ("punt to generic\n") ;
             dlclose (dl_handle) ; 
             return (GrB_OUT_OF_MEMORY) ;
         }
