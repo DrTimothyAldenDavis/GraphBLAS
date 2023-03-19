@@ -26,8 +26,6 @@
 
 // C and A can have any sparsity structure, but C must be as-if-full.
 
-#define GB_DEBUG
-
 #include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_dense.h"
 #include "GB_binop.h"

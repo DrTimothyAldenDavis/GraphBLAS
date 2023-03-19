@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME
-#define GB_DEBUG
-
 #include "GB.h"
 #include "GB_stringify.h"
 

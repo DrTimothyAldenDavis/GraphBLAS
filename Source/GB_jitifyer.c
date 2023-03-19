@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 #include "GB.h"
 #include "GB_jitifyer.h"
 #include "GB_stringify.h"
@@ -73,12 +71,11 @@ GrB_Info GB_jitifyer_load
         return (GrB_NO_VALUE) ;
     }
 
-    GBURBLE ("(jit) ") ;
-
     (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix) ;
     if ((*dl_function) != NULL)
     {
         // found the kernel in the hash table
+        GBURBLE ("(jit) ") ;
         return (GrB_SUCCESS) ;
     }
 
@@ -241,7 +238,7 @@ GrB_Info GB_jitifyer_load
     }
     else
     {
-        GBURBLE ("(jit loaded) ") ;
+        GBURBLE ("(jit load) ") ;
     }
 
     //--------------------------------------------------------------------------
