@@ -10,14 +10,7 @@
 #include "GB_kernel_shared_definitions.h"
 
 // cij = op (aij)
-#define GB_COPY(Axnew,pnew,Ax,p)                \
-{                                               \
-    /* aij = Ax [p] */                          \
-    GB_DECLAREA (aij) ;                         \
-    GB_GETA (aij, Ax, p, false) ;               \
-    /* Cx [p] = unop (aij) */                   \
-    GB_UNARYOP (Axnew [pnew], aij, i, j, y) ;   \
-}
+#define GB_COPY(Axnew,pnew,Ax,p) GB_UNOP (Axnew, pnew, Ax, p, A_iso, i, j, y)
 
 GrB_Info GB_jit_kernel
 (

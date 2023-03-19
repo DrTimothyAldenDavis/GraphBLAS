@@ -93,7 +93,7 @@ GrB_Info GB_jitifyer_load
         case GB_jit_apply_family  : 
             family_name = "apply" ;
             op1 = op ;
-            scode_digits = 9 ;
+            scode_digits = 10 ;
             break ;
 
         case GB_jit_assign_family : 

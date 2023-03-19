@@ -69,7 +69,7 @@ void GB_macrofy_output
 
         // becomes:
 
-        //      Cx [p] = (double) aij ;
+        //      Cx [p] = (double) cij ;
 
         // or, if C is iso: nothing happens; the macro is empty.
 

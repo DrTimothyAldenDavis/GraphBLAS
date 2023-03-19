@@ -12,14 +12,7 @@
 #include "GB_kernel_shared_definitions.h"
 
 // cij = op (aij)
-#define GB_APPLY_OP(pC,pA)                  \
-{                                           \
-    /* aij = Ax [p] */                      \
-    GB_DECLAREA (aij) ;                     \
-    GB_GETA (aij, Ax, pA, false) ;          \
-    /* Cx [p] = unop (aij) */               \
-    GB_UNARYOP (Cx [pC], aij, , , ) ;       \
-}
+#define GB_APPLY_OP(pC,pA) GB_UNOP (Cx, pC, Ax, pA, A_iso, i, j, y)
 
 GrB_Info GB_jit_kernel
 (

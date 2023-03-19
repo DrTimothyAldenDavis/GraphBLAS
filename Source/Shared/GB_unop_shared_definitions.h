@@ -17,6 +17,11 @@
 #ifndef GB_UNOP_SHARED_DEFINITIONS_H
 #define GB_UNOP_SHARED_DEFINITIONS_H
 
+// 1 if A has zombies
+#ifndef GB_A_HAS_ZOMBIES
+#define GB_A_HAS_ZOMBIES 0
+#endif
+
 // access C(i,j) in Cx [p]
 #ifndef GB_CX
 #define GB_CX(p) Cx [p]
