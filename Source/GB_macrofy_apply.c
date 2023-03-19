@@ -55,8 +55,6 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     GrB_Type xtype, ytype, ztype ;
     const char *xtype_name, *ytype_name, *ztype_name ;
 
-    // GB_macrofy_copyright (fp) ;
-
     xtype = (xcode == 0) ? NULL : op->xtype ;
     ytype = (ycode == 0) ? NULL : op->ytype ;
     ztype = op->ztype ;

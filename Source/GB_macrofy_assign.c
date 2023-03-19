@@ -59,8 +59,6 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     // describe the assignment
     //--------------------------------------------------------------------------
 
-    // GB_macrofy_copyright (fp) ;
-
     #define SLEN 512
     char description [SLEN] ;
     bool Mask_comp = (mask_ecode % 2 == 1) ;

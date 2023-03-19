@@ -68,8 +68,6 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     const char *xtype_name, *ytype_name, *ztype_name ;
     ASSERT_BINARYOP_OK (binaryop, "binaryop to macrofy", GB0) ;
 
-    // GB_macrofy_copyright (fp) ;
-
     if (C_iso)
     {
         // values of C are not computed by the kernel
