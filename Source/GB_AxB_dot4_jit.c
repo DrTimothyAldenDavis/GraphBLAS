@@ -151,7 +151,7 @@ GrB_Info GB_AxB_dot4_jit            // C+=A'*B, dot4 method, via the JIT
                 "//--------------------------------------"
                 "----------------------------------------\n") ;
             fprintf (fp, "// %s.c\n"
-                "#include \"GB_jit_kernel_AxB.h\"\n",
+                "#include \"GB_jit_kernel_mxm.h\"\n",
                 kernel_name) ;
             // create query_version function
             GB_macrofy_query_version (fp) ;

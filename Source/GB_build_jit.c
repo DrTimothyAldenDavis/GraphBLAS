@@ -58,7 +58,7 @@ GrB_Info GB_build_jit               // GB_builder JIT kernel
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_build (&encoding, &suffix,
-        GB_JIT_KERNEL_BUILD, ttype, stype, dup) ;
+        GB_JIT_KERNEL_BUILD, dup, ttype, stype) ;
     if (hash == UINT64_MAX)
     {
         // cannot JIT this dup operator
@@ -153,7 +153,7 @@ GrB_Info GB_build_jit               // GB_builder JIT kernel
             GB_macrofy_query_version (fp) ;
             // }
 
-            GB_macrofy_build (fp, encoding.code, ttype, stype, dup) ;
+            GB_macrofy_build (fp, encoding.code, dup, ttype, stype) ;
             fprintf (fp, "\n#include \"GB_jit_kernel_%s.c\"\n", kname) ;
 
             if (!builtin)

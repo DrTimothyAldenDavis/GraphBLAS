@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 #include "GB.h"
 #include "GB_jitifyer.h"
 #include "GB_stringify.h"
@@ -39,38 +41,104 @@ char *GB_jitifyer_libfolder (void)
 }
 
 //------------------------------------------------------------------------------
-// GB_jitifyer: 
+// GB_jitifyer_load: load a JIT kernel, compiling it if needed
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_load
 (
     // output:
-    void **dl_handle,       // if library found, returned as not NULL
-    FILE **fp_handle,       // source file created, if library not found
-    char *kernel_name,      // full name of the kernel
-    char *lib_filename,     // full path name of compiled libkernel_name.so
-
+    void **dl_function,         // pointer to JIT kernel
     // input:
-    const char *kname,      // kname for the kernel_name
-    int scode_digits,       // # of hexadecimal digits printed
+    GB_jit_family family,       // kernel family
+    const char *kname,          // kname for the kernel_name
+    uint64_t hash,              // hash code for the kernel
     GB_jit_encoding *encoding,  // encoding of the problem
-    const char *suffix,     // suffix for the kernel_name (NULL if none)
-
+    const char *suffix,         // suffix for the kernel_name (NULL if none)
     // operator and type definitions
-    const GB_Operator op0,  // operator 0, or NULL
-    const GB_Operator op1,  // operator 1, or NULL
-    const GrB_Type type0,   // type 0, or NULL
-    const GrB_Type type1,   // type 1, or NULL
-    const GrB_Type type2    // type 2, or NULL
+    const GrB_Semiring semiring,
+    const GrB_Monoid monoid,
+    const GB_Operator op,
+    const GrB_Type type1,
+    const GrB_Type type2,
+    const GrB_Type type3
 )
 {
+
+    //--------------------------------------------------------------------------
+    // quick return if the kernel cannot be hashed
+    //--------------------------------------------------------------------------
+
+    (*dl_function) = NULL ;
+    if (hash == UINT64_MAX)
+    {
+        return (GrB_NO_VALUE) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // get the family properties
+    //--------------------------------------------------------------------------
+
+    GB_Operator op1 = NULL ;
+    GB_Operator op2 = NULL ;
+    char *family_name = NULL ;
+    int scode_digits = 0 ;
+
+    switch (family)
+    {
+        case GB_jit_apply_family  : 
+            family_name = "apply" ;
+            op1 = op ;
+            scode_digits = 9 ;
+            break ;
+
+        case GB_jit_assign_family : 
+            family_name = "assign" ;
+            op1 = op ;
+            scode_digits = 12 ;
+            break ;
+
+        case GB_jit_build_family  : 
+            family_name = "build" ;
+            op1 = op ;
+            scode_digits = 7 ;
+            break ;
+
+        case GB_jit_ewise_family  : 
+            family_name = "ewise" ;
+            op1 = op ;
+            scode_digits = 13 ;
+            break ;
+
+        case GB_jit_mxm_family    : 
+            family_name = "mxm" ;
+            op1 = (GB_Operator) semiring->add->op ;
+            op2 = (GB_Operator) semiring->multiply ;
+            scode_digits = 16 ;
+            break ;
+
+        case GB_jit_reduce_family : 
+            family_name = "reduce" ;
+            op1 = (GB_Operator) monoid->op ;
+            scode_digits = 7 ;
+            break ;
+
+        case GB_jit_select_family : 
+            family_name = "select" ;
+            op1 = op ;
+            scode_digits = 10 ;
+            break ;
+
+        default: ;
+    }
 
     //--------------------------------------------------------------------------
     // name the problem
     //--------------------------------------------------------------------------
 
+    char kernel_name [GB_KLEN] ;
     GB_macrofy_name (kernel_name, "GB_jit", kname, scode_digits,
         encoding->code, suffix) ;
+//  printf ("kernel name: %s\n", kernel_name) ;
 
     //--------------------------------------------------------------------------
     // try to load the libkernel_name.so from the user's library folder
@@ -78,40 +146,45 @@ GrB_Info GB_jitifyer_load
 
     // get the user's library folder
     char *lib_folder = GB_jitifyer_libfolder ( ) ;
-
+    char lib_filename [2048] ;
     snprintf (lib_filename, 2048, "%s/lib%s.so", lib_folder, kernel_name) ;
-
-    (*dl_handle) = dlopen (lib_filename, RTLD_LAZY) ;
-    (*fp_handle) = NULL ;
+    void *dl_handle = dlopen (lib_filename, RTLD_LAZY) ;
 
     //--------------------------------------------------------------------------
-    // check if the kernel needs to be compiled
+    // check if the kernel was found, but needs to be compiled anyway
     //--------------------------------------------------------------------------
 
-    bool need_to_compile = (*dl_handle == NULL) ;
     bool builtin = (encoding->suffix_len == 0) ;
-
-    if (!need_to_compile && !builtin)
+//  printf ("builtin %d\n", builtin) ;
+    if (dl_handle != NULL && !builtin)
     {
-        // not loaded but already compiled; make sure the defn are OK
-        void *dl_query = dlsym (*dl_handle, "GB_jit_query_defn") ;
-        need_to_compile = !GB_jitifyer_match_version (*dl_handle) ||
-        (op0 != NULL && !GB_jitifyer_match_defn (dl_query, 0, op0->defn)) ||
-        (op1 != NULL && !GB_jitifyer_match_defn (dl_query, 1, op1->defn)) ||
-        (type0 != NULL && !GB_jitifyer_match_defn (dl_query, 2, type0->defn)) ||
-        (type1 != NULL && !GB_jitifyer_match_defn (dl_query, 3, type1->defn)) ||
-        (type2 != NULL && !GB_jitifyer_match_defn (dl_query, 4, type2->defn)) ;
+        // library is loaded but make sure the defn are OK
+        void *dl_query = dlsym (dl_handle, "GB_jit_query_defn") ;
+        bool need_to_compile = !GB_jitifyer_match_version (dl_handle) ||
+        (op1 != NULL && !GB_jitifyer_match_defn (dl_query, 0, op1->defn)) ||
+        (op2 != NULL && !GB_jitifyer_match_defn (dl_query, 1, op2->defn)) ||
+        (type1 != NULL && !GB_jitifyer_match_defn (dl_query, 2, type1->defn)) ||
+        (type2 != NULL && !GB_jitifyer_match_defn (dl_query, 3, type2->defn)) ||
+        (type3 != NULL && !GB_jitifyer_match_defn (dl_query, 4, type3->defn)) ;
         if (need_to_compile)
         {
             // library is loaded but needs to change, so close it
-            dlclose (*dl_handle) ;
-            (*dl_handle) = NULL ;
+            dlclose (dl_handle) ;
+            dl_handle = NULL ;
         }
     }
 
-    // create source file, if the kernel needs to be compiled
-    if (*dl_handle == NULL)
+    //--------------------------------------------------------------------------
+    // create and compile source file, if needed
+    //--------------------------------------------------------------------------
+
+    if (dl_handle == NULL)
     {
+
+        //----------------------------------------------------------------------
+        // create the kernel source file
+        //----------------------------------------------------------------------
+
         GBURBLE ("(compiling) ") ;
         char source_filename [2048] ;
         snprintf (source_filename, 2048, "%s/%s.c", lib_folder, kernel_name) ;
@@ -119,6 +192,7 @@ GrB_Info GB_jitifyer_load
         if (fp == NULL)
         {
             // FIXME: use another error code here
+            printf ("cannot open source file\n") ;
             return (GrB_PANIC) ;
         }
         fprintf (fp,
@@ -126,7 +200,57 @@ GrB_Info GB_jitifyer_load
             "----------------------------------------\n"
             "// %s.c\n", kernel_name) ;
         GB_macrofy_copyright (fp) ;
-        (*fp_handle) = fp ;
+        fprintf (fp, "#include \"GB_jit_kernel_%s.h\"\n", family_name) ;
+        GB_macrofy_family (fp, family, encoding->code, semiring, monoid,
+            op, type1, type2, type3) ;
+        fprintf (fp, "\n#include \"GB_jit_kernel_%s.c\"\n", kname) ;
+        if (!builtin)
+        {
+            // create query_defn function
+            GB_macrofy_query_defn (fp, op1, op2, type1, type2, type3) ;
+        }
+        GB_macrofy_query_version (fp) ;
+        fclose (fp) ;
+
+        //----------------------------------------------------------------------
+        // compile the source file to create the lib*.so file
+        //----------------------------------------------------------------------
+
+        GB_jitifyer_compile (kernel_name) ;
+        dl_handle = dlopen (lib_filename, RTLD_LAZY) ;
+        if (dl_handle == NULL)
+        {
+            // unable to open lib*.so file: punt to generic
+            // FIXME: use another error code here
+            printf ("cannot load library .so\n") ;
+            return (GrB_PANIC) ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // get the jit_kernel_function pointer
+    //--------------------------------------------------------------------------
+
+    (*dl_function) = dlsym (dl_handle, "GB_jit_kernel") ;
+    if ((*dl_function) == NULL)
+    {
+        // unable to find GB_jit_kernel: punt to generic
+        dlclose (dl_handle) ; 
+        printf ("cannot load kernel\n") ;
+        return (GrB_PANIC) ;
+    }
+
+//  printf ("encoding code: %0" PRIx64 "\n", encoding->code) ;
+//  printf ("encoding kcode: %u\n", encoding->kcode) ;
+//  printf ("encoding suffix len: %u\n", encoding->suffix_len) ;
+
+    // insert the new kernel into the hash table
+    if (!GB_jitifyer_insert (hash, encoding, suffix,
+        dl_handle, (*dl_function)))
+    {
+        // unable to add kernel to hash table: punt to generic
+        dlclose (dl_handle) ; 
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     return (GrB_SUCCESS) ;
@@ -155,27 +279,6 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
 
     uint32_t suffix_len = encoding->suffix_len ;
     bool builtin = (bool) (suffix_len == 0) ;
-
-#if 0
-    // dump the hash table
-    printf ("\nlookup GB_jit_table at %p\n", GB_jit_table) ;
-    for (int64_t k = 0 ; k < GB_jit_table_size ; k++)
-    {
-        GB_jit_entry *e = &(GB_jit_table [k]) ;
-        if (e->dl_handle != NULL)
-        {
-            char *s = e->suffix ;
-            printf ("k %4ld: \n", k) ;
-            printf ("   hash %016" PRIx64 "\n", e->hash) ;
-            printf ("   code %016" PRIx64 "\n", e->encoding.code) ;
-            printf ("   kcode: %d\n", e->encoding.kcode) ;
-            printf ("   suffix [%s]\n", (s == NULL) ? "" : s) ;
-            printf ("   suffix_len %d \n", e->encoding.suffix_len) ;
-            printf ("   handle %p\n", e->dl_handle) ;
-            printf ("   func %p\n", e->dl_function) ;
-        } 
-    }
-#endif
 
     // look up the entry in the hash table
     for (int64_t k = hash ; ; k++)
@@ -211,7 +314,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
     // input:
     uint64_t hash,              // hash for the problem
     GB_jit_encoding *encoding,  // primary encoding
-    char *suffix,               // suffix for user-defined types/operators
+    const char *suffix,         // suffix for user-defined types/operators
     void *dl_handle,            // library handle from dlopen
     void *dl_function           // function handle from dlsym
 )
@@ -290,6 +393,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 
     uint32_t suffix_len = encoding->suffix_len ;
     bool builtin = (bool) (suffix_len == 0) ;
+//  printf ("here builtin %d\n", builtin) ;
 
     for (int64_t k = hash ; ; k++)
     {
@@ -310,9 +414,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
                     // out of memory
                     return (false) ;
                 }
-                // printf ("   suffix %p\n", e->suffix) ;
                 strncpy (e->suffix, suffix, suffix_len+1) ;
-                // printf ("       [%s]\n", e->suffix) ;
             }
             e->hash = hash ;
             memcpy (&(e->encoding), encoding, sizeof (GB_jit_encoding)) ;

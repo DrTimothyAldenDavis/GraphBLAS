@@ -188,7 +188,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     // construct the ewise scode
     //--------------------------------------------------------------------------
 
-    // total scode bits: 51
+    // total scode bits: 51 (13 hex digits)
 
     (*scode) =
                                                // range        bits

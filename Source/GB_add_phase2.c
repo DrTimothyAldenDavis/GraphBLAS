@@ -29,6 +29,8 @@
 // This is used by GB_wait only, for merging the pending tuple matrix T into A.
 // In this case, C is always sparse or hypersparse, not bitmap or full.
 
+#define GB_DEBUG
+
 #include "GB_add.h"
 #include "GB_binop.h"
 #include "GB_unused.h"
@@ -95,10 +97,10 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
-    ASSERT_BINARYOP_OK (op, "op for add phase2", GB0) ;
-    ASSERT_MATRIX_OK (A, "A for add phase2", GB0) ;
-    ASSERT_MATRIX_OK (B, "B for add phase2", GB0) ;
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for add phase2", GB0) ;
+    ASSERT_BINARYOP_OK (op, "op for add phase2", GB3) ;
+    ASSERT_MATRIX_OK (A, "A for add phase2", GB3) ;
+    ASSERT_MATRIX_OK (B, "B for add phase2", GB3) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for add phase2", GB3) ;
     ASSERT (A->vdim == B->vdim) ;
 
     ASSERT (!GB_JUMBLED (M)) ;
@@ -580,7 +582,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     // caller must free C_to_M, C_to_A, and C_to_B, but not Cp or Ch
     GB_FREE_WORKSPACE ;
-    ASSERT_MATRIX_OK (C, "C output for add phase2", GB0) ;
+    ASSERT_MATRIX_OK (C, "C output for add phase2", GB3) ;
     return (GrB_SUCCESS) ;
 }
 

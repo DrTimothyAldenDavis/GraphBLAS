@@ -16,6 +16,20 @@
 // list of jitifyed kernels
 //------------------------------------------------------------------------------
 
+// kernel families
+
+typedef enum
+{
+    GB_jit_apply_family  = 0,
+    GB_jit_assign_family = 1,
+    GB_jit_build_family  = 2,
+    GB_jit_ewise_family  = 3,
+    GB_jit_mxm_family    = 4,
+    GB_jit_reduce_family = 5,
+    GB_jit_select_family = 6
+}
+GB_jit_family ;
+
 // reduce to scalar
 #define GB_JIT_KERNEL_REDUCE        1   /* GB_reduce_to_scalar  */
 
@@ -150,7 +164,7 @@ struct GB_jit_entry_struct
                                 // NULL for built-in kernels
     size_t suffix_size ;        // size of suffix malloc'd block
     void *dl_handle ;           // handle from dlopen, to be passed to dlclose
-    void *dl_function ;         // address of the function itself, from dlsym
+    void *dl_function ;         // address of function itself, from dlsym
 } ;
 
 typedef struct GB_jit_entry_struct GB_jit_entry ;
@@ -164,23 +178,20 @@ char *GB_jitifyer_libfolder (void) ;    // return path to library folder
 GrB_Info GB_jitifyer_load
 (
     // output:
-    void **dl_handle,       // if library found, returned as not NULL
-    FILE **fp_handle,       // source file created, if library not found
-    char *kernel_name,      // full name of the kernel
-    char *lib_filename,     // full path name of compiled libkernel_name.so
-
+    void **dl_function,         // pointer to JIT kernel
     // input:
-    const char *kname,      // kname for the kernel_name
-    int scode_digits,       // # of hexadecimal digits printed
+    GB_jit_family family,       // kernel family
+    const char *kname,          // kname for the kernel_name
+    uint64_t hash,              // hash code for the kernel
     GB_jit_encoding *encoding,  // encoding of the problem
-    const char *suffix,     // suffix for the kernel_name (NULL if none)
-
+    const char *suffix,         // suffix for the kernel_name (NULL if none)
     // operator and type definitions
-    const GB_Operator op0,  // operator 0, or NULL
-    const GB_Operator op1,  // operator 1, or NULL
-    const GrB_Type type0,   // type 0, or NULL
-    const GrB_Type type1,   // type 1, or NULL
-    const GrB_Type type2    // type 2, or NULL
+    const GrB_Semiring semiring,
+    const GrB_Monoid monoid,
+    const GB_Operator op,
+    const GrB_Type type1,
+    const GrB_Type type2,
+    const GrB_Type type3
 ) ;
 
 void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
@@ -196,7 +207,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
     // input:
     uint64_t hash,              // hash for the problem
     GB_jit_encoding *encoding,  // primary encoding
-    char *suffix,               // suffix for user-defined types/operators
+    const char *suffix,         // suffix for user-defined types/operators
     void *dl_handle,            // library handle from dlopen
     void *dl_function           // function handle from dlsym
 ) ;

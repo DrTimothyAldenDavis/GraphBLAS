@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_AxB.h:  JIT kernel #include for AxB methods
+// GB_jit_kernel_mxm.h:  JIT kernel #include for AxB methods
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2023, All Rights Reserved.

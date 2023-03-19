@@ -78,7 +78,7 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     // construct the reduction rcode
     //--------------------------------------------------------------------------
 
-    // total rcode bits: 27
+    // total rcode bits: 27 (7 hex digits)
 
     (*rcode) = 
                                                // range        bits

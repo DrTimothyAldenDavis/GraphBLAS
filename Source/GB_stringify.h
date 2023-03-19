@@ -1089,9 +1089,9 @@ uint64_t GB_encodify_build      // encode an build problem
     char **suffix,              // suffix for user-defined kernel
     // input:
     const int kcode,            // kernel to encode
+    const GrB_BinaryOp dup,     // operator for summing up duplicates
     const GrB_Type ttype,       // type of Tx array
-    const GrB_Type stype,       // type of Sx array
-    const GrB_BinaryOp dup      // operator for summing up duplicates
+    const GrB_Type stype        // type of Sx array
 ) ;
 
 void GB_enumify_build       // enumerate a GB_build problem
@@ -1099,10 +1099,9 @@ void GB_enumify_build       // enumerate a GB_build problem
     // output:
     uint64_t *build_code,   // unique encoding of the entire operation
     // input:
+    GrB_BinaryOp dup,       // operator for duplicates
     GrB_Type ttype,         // type of Tx
-    GrB_Type stype,         // type of Sx
-    // operator:
-    GrB_BinaryOp dup        // operator for duplicates
+    GrB_Type stype          // type of Sx
 ) ;
 
 void GB_macrofy_build           // construct all macros for GB_build
@@ -1111,9 +1110,9 @@ void GB_macrofy_build           // construct all macros for GB_build
     FILE *fp,                   // target file to write, already open
     // input:
     uint64_t build_code,        // unique encoding of the entire problem
+    GrB_BinaryOp dup,           // dup binary operator to macrofy
     GrB_Type ttype,             // type of Tx
-    GrB_Type stype,             // type of Sx
-    GrB_BinaryOp dup            // dup binary operator to macrofy
+    GrB_Type stype              // type of Sx
 ) ;
 
 GrB_Info GB_build_jit               // GB_builder JIT kernel
@@ -1331,6 +1330,25 @@ GrB_Info GB_subassign_jit
     const int assign_kind,      // row assign, col assign, assign, or subassign
     const int assign_kernel,    // GB_JIT_KERNEL_SUBASSIGN_01, ... etc
     GB_Werk Werk
+) ;
+
+//------------------------------------------------------------------------------
+// macrofy for all methods
+//------------------------------------------------------------------------------
+
+void GB_macrofy_family
+(
+    // output:
+    FILE *fp,                   // target file to write, already open
+    // input:
+    GB_jit_family family,       // family to macrofy
+    uint64_t scode,             // encoding of the specific problem
+    GrB_Semiring semiring,      // semiring (for mxm family only)
+    GrB_Monoid monoid,          // monoid (for reduce family only)
+    GB_Operator op,             // unary/index_unary/binary op
+    GrB_Type type1,
+    GrB_Type type2,
+    GrB_Type type3
 ) ;
 
 #endif

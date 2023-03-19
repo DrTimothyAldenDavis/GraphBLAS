@@ -18,9 +18,9 @@ uint64_t GB_encodify_build      // encode an build problem
     char **suffix,              // suffix for user-defined kernel
     // input:
     const int kcode,            // kernel to encode
+    const GrB_BinaryOp dup,     // operator for summing up duplicates
     const GrB_Type ttype,       // type of Tx array
-    const GrB_Type stype,       // type of Sx array
-    const GrB_BinaryOp dup      // operator for summing up duplicates
+    const GrB_Type stype        // type of Sx array
 )
 {
 
@@ -41,7 +41,7 @@ uint64_t GB_encodify_build      // encode an build problem
     //--------------------------------------------------------------------------
 
     encoding->kcode = kcode ;
-    GB_enumify_build (&encoding->code, ttype, stype, dup) ;
+    GB_enumify_build (&encoding->code, dup, ttype, stype) ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length
