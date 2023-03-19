@@ -27,7 +27,7 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_build_jit               // GB_builder JIT kernel
 (
-    const char *kname,          // kernel name
+    const char *kname,          // kernel base name
     // output:
     GB_void *restrict Tx,
     int64_t *restrict Ti,

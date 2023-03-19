@@ -23,7 +23,7 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
 (
-    const char *kname,          // kernel name
+    const char *kname,          // kernel base name
     // output:
     GrB_Matrix C,
     // input:
