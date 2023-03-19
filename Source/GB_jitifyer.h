@@ -199,7 +199,7 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
     // input:
     uint64_t hash,          // hash = GB_jitifyer_hash_encoding (encoding) ;
     GB_jit_encoding *encoding,
-    char *suffix
+    const char *suffix
 ) ;
 
 bool GB_jitifyer_insert         // return true if successful, false if failure

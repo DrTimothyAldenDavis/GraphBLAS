@@ -26,7 +26,7 @@ void GB_macrofy_query_defn
     //--------------------------------------------------------------------------
 
     fprintf (fp, 
-        "\n// to query the kernel for its op and type definitions:\n"
+        "// to query the kernel for its op and type definitions:\n"
         "const char *GB_jit_query_defn (int k)\n"
         "{\n"
         "    const char **defn [5] ;\n") ;

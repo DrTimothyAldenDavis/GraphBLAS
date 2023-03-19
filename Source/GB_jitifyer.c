@@ -65,13 +65,21 @@ GrB_Info GB_jitifyer_load
 {
 
     //--------------------------------------------------------------------------
-    // quick return if the kernel cannot be hashed
+    // check for quick return
     //--------------------------------------------------------------------------
 
-    (*dl_function) = NULL ;
     if (hash == UINT64_MAX)
     {
         return (GrB_NO_VALUE) ;
+    }
+
+    GBURBLE ("(jit) ") ;
+
+    (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix) ;
+    if ((*dl_function) != NULL)
+    {
+        // found the kernel in the hash table
+        return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -138,7 +146,6 @@ GrB_Info GB_jitifyer_load
     char kernel_name [GB_KLEN] ;
     GB_macrofy_name (kernel_name, "GB_jit", kname, scode_digits,
         encoding->code, suffix) ;
-//  printf ("kernel name: %s\n", kernel_name) ;
 
     //--------------------------------------------------------------------------
     // try to load the libkernel_name.so from the user's library folder
@@ -155,7 +162,6 @@ GrB_Info GB_jitifyer_load
     //--------------------------------------------------------------------------
 
     bool builtin = (encoding->suffix_len == 0) ;
-//  printf ("builtin %d\n", builtin) ;
     if (dl_handle != NULL && !builtin)
     {
         // library is loaded but make sure the defn are OK
@@ -185,7 +191,7 @@ GrB_Info GB_jitifyer_load
         // create the kernel source file
         //----------------------------------------------------------------------
 
-        GBURBLE ("(compiling) ") ;
+        GBURBLE ("(jit compile and load) ") ;
         char source_filename [2048] ;
         snprintf (source_filename, 2048, "%s/%s.c", lib_folder, kernel_name) ;
         FILE *fp = fopen (source_filename, "w") ;
@@ -200,10 +206,10 @@ GrB_Info GB_jitifyer_load
             "----------------------------------------\n"
             "// %s.c\n", kernel_name) ;
         GB_macrofy_copyright (fp) ;
-        fprintf (fp, "#include \"GB_jit_kernel_%s.h\"\n", family_name) ;
+        fprintf (fp, "#include \"GB_jit_kernel_%s.h\"\n\n", family_name) ;
         GB_macrofy_family (fp, family, encoding->code, semiring, monoid,
             op, type1, type2, type3) ;
-        fprintf (fp, "\n#include \"GB_jit_kernel_%s.c\"\n", kname) ;
+        fprintf (fp, "\n#include \"GB_jit_kernel_%s.c\"\n\n", kname) ;
         if (!builtin)
         {
             // create query_defn function
@@ -226,6 +232,10 @@ GrB_Info GB_jitifyer_load
             return (GrB_PANIC) ;
         }
     }
+    else
+    {
+        GBURBLE ("(jit loaded) ") ;
+    }
 
     //--------------------------------------------------------------------------
     // get the jit_kernel_function pointer
@@ -240,13 +250,9 @@ GrB_Info GB_jitifyer_load
         return (GrB_PANIC) ;
     }
 
-//  printf ("encoding code: %0" PRIx64 "\n", encoding->code) ;
-//  printf ("encoding kcode: %u\n", encoding->kcode) ;
-//  printf ("encoding suffix len: %u\n", encoding->suffix_len) ;
-
     // insert the new kernel into the hash table
-    if (!GB_jitifyer_insert (hash, encoding, suffix,
-        dl_handle, (*dl_function)))
+    if (!GB_jitifyer_insert (hash, encoding, suffix, dl_handle,
+        (*dl_function)))
     {
         // unable to add kernel to hash table: punt to generic
         dlclose (dl_handle) ; 
@@ -265,7 +271,7 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
     // input:
     uint64_t hash,          // hash = GB_jitifyer_hash_encoding (encoding) ;
     GB_jit_encoding *encoding,
-    char *suffix
+    const char *suffix
 )
 {
 
@@ -321,8 +327,14 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 {
 
     // FIXME: need to place this entire function in a critical section
+    // FIXME return GrB_Info instead of bool
 
-    // FIXME return GrB_Info
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // the kernel must not already appear in the hash table
+    ASSERT (GB_jitifyer_lookup (hash, encoding, suffix) == NULL) ;
 
     //--------------------------------------------------------------------------
     // ensure the hash table is large enough
@@ -393,7 +405,6 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 
     uint32_t suffix_len = encoding->suffix_len ;
     bool builtin = (bool) (suffix_len == 0) ;
-//  printf ("here builtin %d\n", builtin) ;
 
     for (int64_t k = hash ; ; k++)
     {
@@ -402,7 +413,6 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         if (e->dl_handle == NULL)
         {
             // found an empty slot
-            // printf ("hash table [%ld] insert\n", k) ;
             e->suffix = NULL ;
             e->suffix_size = 0 ;
             if (!builtin)
@@ -440,8 +450,6 @@ void GB_jitifyer_finalize (void)
         return ;
     }
 
-    // printf ("GB_jit_table at %p\n", GB_jit_table) ;
-
     // clear all entries in the table
     for (int64_t k = 0 ; k < GB_jit_table_size ; k++)
     {
@@ -449,10 +457,8 @@ void GB_jitifyer_finalize (void)
         if (e->dl_handle != NULL)
         {
             // found an entry; free the suffix if present
-            // printf ("free hash table [%ld]: %p\n", k, e->dl_handle) ;
             if (e->suffix != NULL)
             {
-                // printf ("    free the suffix: %p\n", e->suffix) ;
                 GB_FREE (&(e->suffix), e->suffix_size) ;
             }
             // unload the dl library
@@ -463,7 +469,6 @@ void GB_jitifyer_finalize (void)
     }
 
     // free the table
-    // printf ("free the table %p\n", GB_jit_table) ;
     GB_FREE (&GB_jit_table, GB_jit_table_allocated) ;
     GB_jit_table_allocated = 0 ;
     GB_jit_table_size = 0 ;

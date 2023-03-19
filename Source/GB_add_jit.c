@@ -75,26 +75,22 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
 #else
 
     //--------------------------------------------------------------------------
-    // enumify the problem and look it up in the jit hash
+    // encodify the problem
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
-    GBURBLE ("(jit) ") ;
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_ADD, false,
         false, false, C_sparsity, C->type, M, Mask_struct, Mask_comp,
         binaryop, false, A, B) ;
-//  printf ("GB_add_jit: suffix %p\n", suffix) ;
-//  if (suffix != NULL) printf ("[%s]\n", suffix) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
     //--------------------------------------------------------------------------
 
     void *dl_function ;
-    info = GB_jitifyer_load (&dl_function, GB_jit_ewise_family, kname,
+    GrB_Info info = GB_jitifyer_load (&dl_function, GB_jit_ewise_family, kname,
         hash, &encoding, suffix, NULL, NULL,
         (GB_Operator) binaryop, C->type, A->type, B->type) ;
     if (info != GrB_SUCCESS) return (info) ;
