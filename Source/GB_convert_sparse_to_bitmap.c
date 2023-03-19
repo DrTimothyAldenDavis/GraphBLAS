@@ -46,7 +46,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     GB_void *restrict Ax_new  = NULL ; size_t Ax_size = 0 ;
     GB_void *restrict Ax_keep = NULL ;
 
-    ASSERT_MATRIX_OK (A, "A converting sparse/hypersparse to bitmap", GB3) ;
+    ASSERT_MATRIX_OK (A, "A converting sparse/hypersparse to bitmap", GB0) ;
     ASSERT (!GB_IS_FULL (A)) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
@@ -136,6 +136,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         ASSERT (nzombies == 0) ;
         // set all of Ab [0..anz-1] to 1, in parallel
         GB_memset (Ab, 1, anz, nthreads_max) ;
+        info = GrB_SUCCESS ;
 
     }
     else

@@ -11,6 +11,8 @@
 // iso cases (for C and/or A) are not handled.  The op is either unary or
 // index unary, not binary (that is handled as an ewise enumify).
 
+// FIXME: add the case for A iso
+
 #include "GB.h"
 #include "GB_stringify.h"
 

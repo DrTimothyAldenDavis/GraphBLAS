@@ -685,6 +685,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             GB_Type_code xcode = op->xtype->code ;
             GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ;
 
+            // Cx [p] = op (Ax [p], i, j, ythunk)
             #define GB_APPLY_OP(p)                                          \
                 int64_t i = GBI_A (Ai, p, avlen) ;                          \
                 GB_void xwork [GB_VLA(xsize)] ;                             \
