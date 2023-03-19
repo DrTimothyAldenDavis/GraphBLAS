@@ -237,6 +237,15 @@ int main (void)
     TRY (GrB_mxm (C, NULL, NULL, GaussSemiring, D, A, NULL)) ;
     printgauss (C, "\n=============== Gauss C = D*A matrix:\n") ;
 
+    // convert D to bitmap then back to sparse
+    TRY (GxB_set (D, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+    TRY (GxB_set (D, GxB_SPARSITY_CONTROL, GxB_BITMAP)) ;
+    printgauss (D, "\nGauss D matrix (bitmap)") ;
+    TRY (GxB_print (D, 3)) ;
+    TRY (GxB_set (D, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+    printgauss (D, "\nGauss D matrix (back to sparse)") ;
+    TRY (GxB_print (D, 3)) ;
+
     // C = A*D
     TRY (GrB_mxm (C, NULL, NULL, GaussSemiring, A, D, NULL)) ;
     printgauss (C, "\n=============== Gauss C = A*D matrix:\n") ;

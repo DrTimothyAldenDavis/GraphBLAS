@@ -85,7 +85,7 @@ GrB_Info GB_cast_array              // typecast an array
     #endif
 
     //--------------------------------------------------------------------------
-    // via the JIT factory
+    // via the JIT kernel
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED

@@ -63,6 +63,7 @@ GB_jit_family ;
 // unop methods:
 #define GB_JIT_KERNEL_APPLYUNOP     25  /* GB_apply_op, GB_cast_array       */
 #define GB_JIT_KERNEL_TRANSUNOP     26  /* GB_transpose_op, GB_transpose_ix */
+#define GB_JIT_KERNEL_CONVERTS2B   101
 
 // build method:
 #define GB_JIT_KERNEL_BUILD         27  /* GB_builder               */

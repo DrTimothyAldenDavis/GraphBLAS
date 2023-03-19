@@ -1333,6 +1333,23 @@ GrB_Info GB_subassign_jit
 ) ;
 
 //------------------------------------------------------------------------------
+// utilities
+//------------------------------------------------------------------------------
+
+GrB_Info GB_convert_sparse_to_bitmap_jit    // convert sparse to bitmap
+(
+    // output:
+    GB_void *Ax_new,
+    int8_t *Ab,
+    // input:
+    GB_Operator op,
+    const GrB_Matrix A,
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
+) ;
+
+//------------------------------------------------------------------------------
 // macrofy for all methods
 //------------------------------------------------------------------------------
 
