@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUB
-
 #include "GB_add.h"
 #include "GB_ewise_kernels.h"
 #include "GB_stringify.h"

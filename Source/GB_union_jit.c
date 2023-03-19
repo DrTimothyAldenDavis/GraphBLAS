@@ -77,11 +77,9 @@ GrB_Info GB_union_jit      // C=A+B, C<#M>=A+B, eWiseUnion, via the JIT
 #else
 
     //--------------------------------------------------------------------------
-    // enumify the problem and look it up in the jit hash
+    // encodify the problem
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
-    GBURBLE ("(jit) ") ;
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
@@ -94,7 +92,7 @@ GrB_Info GB_union_jit      // C=A+B, C<#M>=A+B, eWiseUnion, via the JIT
     //--------------------------------------------------------------------------
 
     void *dl_function ;
-    info = GB_jitifyer_load (&dl_function, GB_jit_ewise_family, kname,
+    GrB_Info info = GB_jitifyer_load (&dl_function, GB_jit_ewise_family, kname,
         hash, &encoding, suffix, NULL, NULL,
         (GB_Operator) binaryop, C->type, A->type, B->type) ;
     if (info != GrB_SUCCESS) return (info) ;

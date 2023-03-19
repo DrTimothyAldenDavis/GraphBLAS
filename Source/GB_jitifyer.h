@@ -186,12 +186,12 @@ GrB_Info GB_jitifyer_load
     GB_jit_encoding *encoding,  // encoding of the problem
     const char *suffix,         // suffix for the kernel_name (NULL if none)
     // operator and type definitions
-    const GrB_Semiring semiring,
-    const GrB_Monoid monoid,
-    const GB_Operator op,
-    const GrB_Type type1,
-    const GrB_Type type2,
-    const GrB_Type type3
+    GrB_Semiring semiring,
+    GrB_Monoid monoid,
+    GB_Operator op,
+    GrB_Type type1,
+    GrB_Type type2,
+    GrB_Type type3
 ) ;
 
 void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found

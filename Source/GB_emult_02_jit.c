@@ -28,7 +28,7 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
 (
-    const char *kname,          // kernel name
+    const char *kname,          // kernel base name
     // input/output:
     GrB_Matrix C,
     // input:

@@ -55,12 +55,12 @@ GrB_Info GB_jitifyer_load
     GB_jit_encoding *encoding,  // encoding of the problem
     const char *suffix,         // suffix for the kernel_name (NULL if none)
     // operator and type definitions
-    const GrB_Semiring semiring,
-    const GrB_Monoid monoid,
-    const GB_Operator op,
-    const GrB_Type type1,
-    const GrB_Type type2,
-    const GrB_Type type3
+    GrB_Semiring semiring,
+    GrB_Monoid monoid,
+    GB_Operator op,
+    GrB_Type type1,
+    GrB_Type type2,
+    GrB_Type type3
 )
 {
 
@@ -119,6 +119,7 @@ GrB_Info GB_jitifyer_load
 
         case GB_jit_mxm_family    : 
             family_name = "mxm" ;
+            monoid = semiring->add ;
             op1 = (GB_Operator) semiring->add->op ;
             op2 = (GB_Operator) semiring->multiply ;
             scode_digits = 16 ;
@@ -171,7 +172,8 @@ GrB_Info GB_jitifyer_load
         (op2 != NULL && !GB_jitifyer_match_defn (dl_query, 1, op2->defn)) ||
         (type1 != NULL && !GB_jitifyer_match_defn (dl_query, 2, type1->defn)) ||
         (type2 != NULL && !GB_jitifyer_match_defn (dl_query, 3, type2->defn)) ||
-        (type3 != NULL && !GB_jitifyer_match_defn (dl_query, 4, type3->defn)) ;
+        (type3 != NULL && !GB_jitifyer_match_defn (dl_query, 4, type3->defn)) ||
+        (monoid != NULL && !GB_jitifyer_match_idterm (dl_handle, monoid)) ;
         if (need_to_compile)
         {
             // library is loaded but needs to change, so close it
@@ -214,6 +216,11 @@ GrB_Info GB_jitifyer_load
         {
             // create query_defn function
             GB_macrofy_query_defn (fp, op1, op2, type1, type2, type3) ;
+        }
+        if (monoid != NULL)
+        {
+            // create query_monoid function if the monoid is not builtin
+            GB_macrofy_query_monoid (fp, monoid) ;
         }
         GB_macrofy_query_version (fp) ;
         fclose (fp) ;
