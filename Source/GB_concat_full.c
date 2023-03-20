@@ -234,9 +234,9 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
 
             if (info != GrB_SUCCESS)
             { 
-                // out of memory or JIT error
+                // out of memory, or other error
                 GB_FREE_ALL ;
-                return (GrB_OUT_OF_MEMORY) ;
+                return (info) ;
             }
         }
     }

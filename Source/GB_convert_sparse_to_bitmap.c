@@ -246,9 +246,9 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
 
     if (info != GrB_SUCCESS)
     { 
-        // out of memory or JIT error
+        // out of memory, or other error
         GB_FREE_ALL ;
-        return (GrB_OUT_OF_MEMORY) ;
+        return (info) ;
     }
 
     //--------------------------------------------------------------------------

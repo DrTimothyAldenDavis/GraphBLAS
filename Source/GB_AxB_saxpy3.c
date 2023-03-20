@@ -711,7 +711,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     if (info != GrB_SUCCESS)
     { 
-        // out of memory or other error
+        // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;
     }

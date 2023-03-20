@@ -336,7 +336,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
 
     if (info != GrB_SUCCESS)
     { 
-        // out of memory
+        // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;
     }

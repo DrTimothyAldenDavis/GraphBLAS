@@ -303,7 +303,6 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     { 
         // out of memory, or other error
         GB_FREE_ALL ;
-        printf ("panic! %d\n", info) ;
     }
     return (info) ;
 }

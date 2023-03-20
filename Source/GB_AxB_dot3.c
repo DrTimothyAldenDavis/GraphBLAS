@@ -334,7 +334,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     if (info != GrB_SUCCESS)
     { 
         // out of memory, or other error
-        printf ("dot3 died %d\n", info) ;
         GB_FREE_ALL ;
         return (info) ;
     }

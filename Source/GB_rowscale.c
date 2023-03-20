@@ -343,6 +343,13 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         }
     }
 
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory, or other error
+        GB_FREE_ALL ;
+        return (info) ;
+    }
+
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------

@@ -332,6 +332,13 @@ GrB_Info GB_select_sparse
         }
     }
 
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory, or other error
+        GB_FREE_ALL ;
+        return (info) ;
+    }
+
     //==========================================================================
     // finalize the result
     //==========================================================================
