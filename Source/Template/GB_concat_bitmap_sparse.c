@@ -20,6 +20,7 @@
     const int64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
+
     int tid ;
     #pragma omp parallel for num_threads(A_nthreads) schedule(static)
     for (tid = 0 ; tid < A_ntasks ; tid++)
@@ -31,9 +32,12 @@
             int64_t j = GBH_A (Ah, k) ;
             int64_t jC = cvstart + j ;
             int64_t pC_start = cistart + jC * cvlen ;
-            int64_t pA_start, pA_end ;
-            GB_get_pA (&pA_start, &pA_end, tid, k,
-                kfirst, klast, pstart_Aslice, Ap, avlen) ;
+//          int64_t pA_start, pA_end ;
+//          GB_get_pA (&pA_start, &pA_end, tid, k,
+//              kfirst, klast, pstart_Aslice, Ap, avlen) ;
+            GB_GET_PA (pA_start, pA_end, tid, k,
+                kfirst, klast, pstart_Aslice,
+                GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
             GB_PRAGMA_SIMD
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             { 
