@@ -190,6 +190,7 @@ GrB_Info GB_split_full              // split a full matrix
                     #define GB_COPY(pC,pA)  \
                         memcpy (Cx +(pC)*asize, Ax +(pA)*asize, asize) ;
                     #include "GB_split_full_template.c"
+                    info = GrB_SUCCESS ;
                 }
 
                 if (info != GrB_SUCCESS)
