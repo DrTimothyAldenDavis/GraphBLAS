@@ -32,11 +32,9 @@
 
     #ifdef GB_JIT_KERNEL
     {
-
         const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
         const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
         const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
-
         #if GB_A_HAS_ZOMBIES
         {
             #include "GB_convert_sparse_to_bitmap_zombies.c"
@@ -46,7 +44,6 @@
             #include "GB_convert_sparse_to_bitmap_nozombies.c"
         }
         #endif
-    
     }
     #else
     {
