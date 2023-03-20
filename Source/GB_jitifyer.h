@@ -69,6 +69,7 @@ GB_jit_family ;
 #define GB_JIT_KERNEL_CONCAT_SPARSE 102
 #define GB_JIT_KERNEL_CONCAT_FULL   103
 #define GB_JIT_KERNEL_CONCAT_BITMAP 104
+#define GB_JIT_KERNEL_SPLIT_SPARSE  105
 
 // build method:
 #define GB_JIT_KERNEL_BUILD         27  /* GB_builder               */

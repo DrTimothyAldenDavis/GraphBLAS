@@ -331,8 +331,9 @@ int main (void)
     for (int trial = 0 ; trial <= 1 ; trial++)
     {
         GrB_Matrix Z, E ;
+        int ncols = 8 ;
         int nrows = (trial == 0) ? 256 : 16 ;
-        TRY (GrB_Matrix_new (&Z, Gauss, nrows, 8)) ;
+        TRY (GrB_Matrix_new (&Z, Gauss, nrows, ncols)) ;
         TRY (GrB_Matrix_new (&E, Gauss, nrows-8, 4)) ;
         TRY (GxB_set (Z, GxB_FORMAT, GxB_BY_COL)) ;
         GrB_Matrix Tiles [3][2] ;
@@ -342,6 +343,23 @@ int main (void)
         TRY (GxB_Matrix_concat (Z, (GrB_Matrix *) Tiles, 3, 2, NULL)) ;
         printgauss (Z, "\n=============== Z = [C D ; E E ; D C]") ;
         GxB_print (Z, 3) ;
+
+        GrB_Matrix CTiles [4] ;
+        GrB_Index Tile_nrows [2] ;
+        GrB_Index Tile_ncols [2] ;
+        Tile_nrows [0] = nrows / 2 ;
+        Tile_nrows [1] = nrows / 2 ;
+        Tile_ncols [0] = 3 ;
+        Tile_ncols [1] = 5 ;
+        TRY (GxB_Matrix_split (CTiles, 2, 2, Tile_nrows, Tile_ncols, Z, NULL)) ;
+
+        for (int k = 0 ; k < 4 ; k++)
+        {
+            printgauss (CTiles [k], "\n=============== C Tile from Z:\n") ;
+            GxB_print (CTiles [k], 3) ;
+            GrB_free (& (CTiles [k])) ;
+        }
+
         GrB_free (&Z) ;
         GrB_free (&E) ;
     }

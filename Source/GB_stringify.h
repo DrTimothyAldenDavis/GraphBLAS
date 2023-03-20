@@ -1102,6 +1102,21 @@ GrB_Info GB_concat_bitmap_jit      // concatenate A into a bitmap matrix C
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_split_sparse_jit      // split A into a sparse tile C
+(
+    // input/output
+    GrB_Matrix C,
+    // input:
+    const GrB_UnaryOp op,
+    const GrB_Matrix A,
+    int64_t akstart,
+    int64_t aistart,
+    int64_t *restrict Wp,
+    const int64_t *restrict C_ek_slicing,
+    const int C_ntasks,
+    const int C_nthreads
+) ;
+
 //------------------------------------------------------------------------------
 // builder kernel
 //------------------------------------------------------------------------------
