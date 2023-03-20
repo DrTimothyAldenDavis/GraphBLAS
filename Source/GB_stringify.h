@@ -1117,6 +1117,18 @@ GrB_Info GB_split_sparse_jit      // split A into a sparse tile C
     const int C_nthreads
 ) ;
 
+GrB_Info GB_split_full_jit      // split A into a full tile C
+(
+    // input/output
+    GrB_Matrix C,
+    // input:
+    const GrB_UnaryOp op,
+    const GrB_Matrix A,
+    int64_t avstart,
+    int64_t aistart,
+    const int C_nthreads
+) ;
+
 //------------------------------------------------------------------------------
 // builder kernel
 //------------------------------------------------------------------------------

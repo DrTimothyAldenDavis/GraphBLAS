@@ -369,6 +369,20 @@ int main (void)
         GrB_ALL, 4, GrB_ALL, 4, NULL)) ;
     printgauss (C, "\n=============== C = C + ciso\n") ;
 
+    // split the full matrix C
+    TRY (GxB_set (C, GxB_SPARSITY_CONTROL, GxB_FULL)) ;
+    GrB_Matrix STiles [4] ;
+    GrB_Index Tile_nrows [2] = { 1, 3 } ;
+    GrB_Index Tile_ncols [2] = { 2, 2 } ;
+    TRY (GxB_Matrix_split (STiles, 2, 2, Tile_nrows, Tile_ncols, C, NULL)) ;
+
+    for (int k = 0 ; k < 4 ; k++)
+    {
+        printgauss (STiles [k], "\n=============== S Tile from C:\n") ;
+        GxB_print (STiles [k], 3) ;
+        GrB_free (& (STiles [k])) ;
+    }
+
     // free everything and finalize GraphBLAS
     GrB_free (&A) ;
     GrB_free (&B) ;
