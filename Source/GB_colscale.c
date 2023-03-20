@@ -97,6 +97,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     // allocate C->x but do not initialize it
     // set C->iso = C_iso   OK
     GB_OK (GB_dup_worker (&C, C_iso, A, false, ztype)) ;
+    info = GrB_NO_VALUE ;
 
     //--------------------------------------------------------------------------
     // C = A*D, column scale, compute numerical values
@@ -150,6 +151,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
             (GB_Operator) op,   // positional op
             NULL, false, false, A, Werk)) ;
         ASSERT_MATRIX_OK (C, "colscale positional: C = A*D output", GB0) ;
+        info = GrB_SUCCESS ;
 
     }
     else if (C_iso)
@@ -161,6 +163,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
 
         GBURBLE ("(iso colscale) ") ;
         memcpy (C->x, cscalar, zsize) ;
+        info = GrB_SUCCESS ;
 
     }
     else
@@ -221,6 +224,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         //----------------------------------------------------------------------
 
         info = GrB_NO_VALUE ;
+
         #ifndef GBCUDA_DEV
 
             //------------------------------------------------------------------
@@ -354,6 +358,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
                 #include "GB_colscale_template.c"
                 #undef GB_BINOP
             }
+            info = GrB_SUCCESS ;
         }
     }
 

@@ -85,6 +85,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     // allocate C->x but do not initialize it
     // set C->iso = C_iso   OK
     GB_OK (GB_dup_worker (&C, C_iso, B, false, ztype)) ;
+    info = GrB_NO_VALUE ;
 
     //--------------------------------------------------------------------------
     // C = D*B, row scale, compute numerical values
@@ -138,6 +139,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
             (GB_Operator) op,   // positional op
             NULL, false, false, B, Werk)) ;
         ASSERT_MATRIX_OK (C, "rowscale positional: C = D*B output", GB0) ;
+        info = GrB_SUCCESS ;
 
     }
     else if (C_iso)
@@ -150,6 +152,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         // C is iso; pattern already computed above
         GBURBLE ("(iso rowscale) ") ;
         memcpy (C->x, cscalar, zsize) ;
+        info = GrB_SUCCESS ;
 
     }
     else
@@ -340,6 +343,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
                 #include "GB_rowscale_template.c"
                 #undef GB_BINOP
             }
+            info = GrB_SUCCESS ;
         }
     }
 
