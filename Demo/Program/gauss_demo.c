@@ -328,6 +328,20 @@ int main (void)
     TRY (GrB_transpose (C, NULL, NULL, C, NULL)) ;
     printgauss (C, "\n=============== C = C'\n") ;
 
+    GrB_Matrix Z, E ;
+    TRY (GrB_Matrix_new (&Z, Gauss, 256, 8)) ;
+    TRY (GrB_Matrix_new (&E, Gauss, 248, 4)) ;
+    TRY (GxB_set (Z, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+    TRY (GxB_set (Z, GxB_FORMAT, GxB_BY_COL)) ;
+    GrB_Matrix Tiles [3][2] ;
+    Tiles [0][0] = C ; Tiles [0][1] = D ;
+    Tiles [1][0] = E ; Tiles [1][1] = E ;
+    Tiles [2][0] = D ; Tiles [2][1] = C ;
+
+    TRY (GxB_Matrix_concat (Z, (GrB_Matrix *) Tiles, 3, 2, NULL)) ;
+    printgauss (Z, "\n=============== Z = [C D D ; D D D ; D D D]") ;
+    GxB_print (Z, 3) ;
+
     // C += ciso
     TRY (GrB_Matrix_assign_UDT (C, NULL, AddGauss, (void *) &ciso,
         GrB_ALL, 4, GrB_ALL, 4, NULL)) ;
@@ -339,6 +353,8 @@ int main (void)
     GrB_free (&D) ;
     GrB_free (&C) ;
     GrB_free (&R) ;
+    GrB_free (&Z) ;
+    GrB_free (&E) ;
     GrB_free (&Gauss) ;
     GrB_free (&AddGauss) ;
     GrB_free (&RealGauss) ;
