@@ -30,6 +30,8 @@ typedef enum
 }
 GB_jit_family ;
 
+// FIXME: make this an enum:
+
 // reduce to scalar
 #define GB_JIT_KERNEL_REDUCE        1   /* GB_reduce_to_scalar  */
 
@@ -63,8 +65,10 @@ GB_jit_family ;
 // apply (unary and idxunary op) methods:
 #define GB_JIT_KERNEL_APPLYUNOP     25  /* GB_apply_op, GB_cast_array       */
 #define GB_JIT_KERNEL_TRANSUNOP     26  /* GB_transpose_op, GB_transpose_ix */
-#define GB_JIT_KERNEL_CONVERTS2B   101
+#define GB_JIT_KERNEL_CONVERTS2B    101
 #define GB_JIT_KERNEL_CONCAT_SPARSE 102
+#define GB_JIT_KERNEL_CONCAT_FULL   103
+#define GB_JIT_KERNEL_CONCAT_BITMAP 104
 
 // build method:
 #define GB_JIT_KERNEL_BUILD         27  /* GB_builder               */
@@ -124,9 +128,6 @@ GB_jit_family ;
 // GB_subref_phase3
 
 // concat/split: todo
-// GB_concat_bitmap
-// GB_concat_full
-// GB_concat_sparse
 // GB_split_bitmap
 // GB_split_full
 // GB_split_sparse
@@ -141,7 +142,6 @@ GB_jit_family ;
 // utilities: todo
 // GB_check_if_iso
 // GB_convert_bitmap_worker
-// GB_convert_sparse_to_bitmap
 // GB_expand_iso
 // GB_sort
 

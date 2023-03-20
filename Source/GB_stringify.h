@@ -1078,6 +1078,30 @@ GrB_Info GB_concat_sparse_jit      // concatenate A into a sparse matrix C
     const int A_nthreads
 ) ;
 
+GrB_Info GB_concat_full_jit      // concatenate A into a full matrix C
+(
+    // input/output
+    GrB_Matrix C,
+    // input:
+    int64_t cistart,
+    int64_t cvstart,
+    const GrB_UnaryOp op,
+    const GrB_Matrix A,
+    const int A_nthreads
+) ;
+
+GrB_Info GB_concat_bitmap_jit      // concatenate A into a bitmap matrix C
+(
+    // input/output
+    GrB_Matrix C,
+    // input:
+    int64_t cistart,
+    int64_t cvstart,
+    const GrB_UnaryOp op,
+    const GrB_Matrix A,
+    GB_Werk Werk
+) ;
+
 //------------------------------------------------------------------------------
 // builder kernel
 //------------------------------------------------------------------------------
