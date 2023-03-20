@@ -221,7 +221,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
             { 
                 struct GB_UnaryOp_opaque op_header ;
                 GB_Operator op = GB_unop_identity (A->type, &op_header) ;
-                ASSERT_UNARYOP_OK (op, "identity op for convert s2b", GB3) ;
+                ASSERT_UNARYOP_OK (op, "identity op for convert s2b", GB0) ;
                 info = GB_convert_sparse_to_bitmap_jit (Ax_new, Ab, op,
                     A, A_ek_slicing, A_ntasks, A_nthreads) ;
             }
@@ -284,7 +284,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
-    ASSERT_MATRIX_OK (A, "A converted from sparse to bitmap", GB3) ;
+    ASSERT_MATRIX_OK (A, "A converted from sparse to bitmap", GB0) ;
     ASSERT (GB_IS_BITMAP (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;

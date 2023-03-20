@@ -24,7 +24,6 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
 (
-    const char *kname,          // kernel base name
     // output:
     void *z,                    // result
     // input:
@@ -54,7 +53,8 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
     //--------------------------------------------------------------------------
 
     void *dl_function ;
-    GrB_Info info = GB_jitifyer_load (&dl_function, GB_jit_reduce_family, kname,
+    GrB_Info info = GB_jitifyer_load (&dl_function,
+        GB_jit_reduce_family, "reduce",
         hash, &encoding, suffix, NULL, monoid,
         NULL, A->type, NULL, NULL) ;
     if (info != GrB_SUCCESS) return (info) ;

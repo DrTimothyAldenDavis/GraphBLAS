@@ -22,7 +22,6 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
 (
-    const char *kname,          // kernel base name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -54,7 +53,8 @@ GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
     //--------------------------------------------------------------------------
 
     void *dl_function ;
-    GrB_Info info = GB_jitifyer_load (&dl_function, GB_jit_ewise_family, kname,
+    GrB_Info info = GB_jitifyer_load (&dl_function,
+        GB_jit_ewise_family, "rowscale",
         hash, &encoding, suffix, NULL, NULL,
         (GB_Operator) binaryop, C->type, D->type, B->type) ;
     if (info != GrB_SUCCESS) return (info) ;

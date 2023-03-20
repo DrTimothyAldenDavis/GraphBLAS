@@ -23,7 +23,6 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_AxB_saxpy5_jit          // C+=A*B, saxpy5 method, via the JIT
 (
-    const char *kname,          // kernel base name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -59,7 +58,8 @@ GrB_Info GB_AxB_saxpy5_jit          // C+=A*B, saxpy5 method, via the JIT
     //--------------------------------------------------------------------------
 
     void *dl_function ;
-    GrB_Info info = GB_jitifyer_load (&dl_function, GB_jit_mxm_family, kname,
+    GrB_Info info = GB_jitifyer_load (&dl_function,
+        GB_jit_mxm_family, "AxB_saxpy5",
         hash, &encoding, suffix, semiring, NULL,
         NULL, C->type, A->type, B->type) ;
     if (info != GrB_SUCCESS) return (info) ;

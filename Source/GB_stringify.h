@@ -106,7 +106,6 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
 
 GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
 (
-    const char *kname,          // kernel name
     // output:
     void *z,                    // result
     // input:
@@ -185,7 +184,6 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 
 GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -216,7 +214,6 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
 
 GrB_Info GB_union_jit      // C=A+B, C<#M>=A+B, eWiseUnion, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -249,7 +246,6 @@ GrB_Info GB_union_jit      // C=A+B, C<#M>=A+B, eWiseUnion, via the JIT
 
 GrB_Info GB_emult_08_jit      // C<#M>=A.*B, emult_08, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -270,7 +266,6 @@ GrB_Info GB_emult_08_jit      // C<#M>=A.*B, emult_08, via the JIT
 
 GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -289,7 +284,6 @@ GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
 
 GrB_Info GB_emult_03_jit      // C<#M>=A.*B, emult_03, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -308,7 +302,6 @@ GrB_Info GB_emult_03_jit      // C<#M>=A.*B, emult_03, via the JIT
 
 GrB_Info GB_emult_04_jit      // C<M>=A.*B, emult_04, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -326,7 +319,6 @@ GrB_Info GB_emult_04_jit      // C<M>=A.*B, emult_04, via the JIT
 
 GrB_Info GB_emult_bitmap_jit      // C<#M>=A.*B, emult_bitmap, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -344,7 +336,6 @@ GrB_Info GB_emult_bitmap_jit      // C<#M>=A.*B, emult_bitmap, via the JIT
 
 GrB_Info GB_ewise_full_accum_jit    // C+=A+B via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -356,7 +347,6 @@ GrB_Info GB_ewise_full_accum_jit    // C+=A+B via the JIT
 
 GrB_Info GB_ewise_full_noaccum_jit  // C=A+B via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -368,7 +358,6 @@ GrB_Info GB_ewise_full_noaccum_jit  // C=A+B via the JIT
 
 GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -381,7 +370,6 @@ GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
 
 GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -457,7 +445,6 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
 GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -479,7 +466,6 @@ GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
 
 GrB_Info GB_AxB_saxpy4_jit          // C+=A*B, saxpy4 method, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -500,7 +486,6 @@ GrB_Info GB_AxB_saxpy4_jit          // C+=A*B, saxpy4 method, via the JIT
 
 GrB_Info GB_AxB_saxpy5_jit          // C+=A*B, saxpy5 method, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -515,7 +500,6 @@ GrB_Info GB_AxB_saxpy5_jit          // C+=A*B, saxpy5 method, via the JIT
 
 GrB_Info GB_AxB_saxbit_jit      // C<M>=A*B, saxbit, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -542,7 +526,6 @@ GrB_Info GB_AxB_saxbit_jit      // C<M>=A*B, saxbit, via the JIT
 
 GrB_Info GB_AxB_dot2_jit        // C<M>=A'*B, dot2 method, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -560,7 +543,6 @@ GrB_Info GB_AxB_dot2_jit        // C<M>=A'*B, dot2 method, via the JIT
 
 GrB_Info GB_AxB_dot2n_jit        // C<M>=A*B, dot2n method, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -578,7 +560,6 @@ GrB_Info GB_AxB_dot2n_jit        // C<M>=A*B, dot2n method, via the JIT
 
 GrB_Info GB_AxB_dot3_jit        // C<M>=A'B, dot3, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,               // never iso for this kernel
     // input:
@@ -594,7 +575,6 @@ GrB_Info GB_AxB_dot3_jit        // C<M>=A'B, dot3, via the JIT
 
 GrB_Info GB_AxB_dot4_jit            // C+=A'*B, dot4 method, via the JIT
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -993,7 +973,6 @@ uint64_t GB_encodify_apply      // encode an apply problem
 
 GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
 (
-    const char *kname,          // kernel name
     // output:
     GB_void *Cx,
     // input:
@@ -1009,7 +988,6 @@ GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
 
 GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
 (
-    const char *kname,          // kernel name
     // output:
     GB_void *Cx,
     // input:
@@ -1022,7 +1000,6 @@ GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
 
 GrB_Info GB_apply_bind2nd_jit   // Cx = op (x,B), apply bind2nd via the JIT
 (
-    const char *kname,          // kernel name
     // output:
     GB_void *Cx,
     // input:
@@ -1035,7 +1012,6 @@ GrB_Info GB_apply_bind2nd_jit   // Cx = op (x,B), apply bind2nd via the JIT
 
 GrB_Info GB_transpose_bind1st_jit
 (
-    const char *kname,          // kernel name
     // output:
     GrB_Matrix C,
     // input:
@@ -1050,7 +1026,6 @@ GrB_Info GB_transpose_bind1st_jit
 
 GrB_Info GB_transpose_bind2nd_jit
 (
-    const char *kname,          // kernel name
     // output:
     GrB_Matrix C,
     // input:
@@ -1065,7 +1040,6 @@ GrB_Info GB_transpose_bind2nd_jit
 
 GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
 (
-    const char *kname,          // kernel name
     // output:
     GrB_Matrix C,
     // input:
@@ -1075,6 +1049,33 @@ GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
     const int64_t *restrict A_slice,
     int nworkspaces,
     int nthreads
+) ;
+
+GrB_Info GB_convert_sparse_to_bitmap_jit    // convert sparse to bitmap
+(
+    // output:
+    GB_void *Ax_new,
+    int8_t *Ab,
+    // input:
+    GB_Operator op,
+    const GrB_Matrix A,
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
+) ;
+
+GrB_Info GB_concat_sparse_jit      // concatenate A into a sparse matrix C
+(
+    // input/output
+    GrB_Matrix C,
+    // input:
+    int64_t cistart,
+    const GrB_UnaryOp op,
+    const GrB_Matrix A,
+    int64_t *restrict W,
+    const int64_t *restrict A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1117,7 +1118,6 @@ void GB_macrofy_build           // construct all macros for GB_build
 
 GrB_Info GB_build_jit               // GB_builder JIT kernel
 (
-    const char *kname,          // kernel name
     // output:
     GB_void *restrict Tx,
     int64_t *restrict Ti,
@@ -1181,7 +1181,6 @@ void GB_macrofy_select          // construct all macros for GrB_select
 
 GrB_Info GB_select_bitmap_jit      // select bitmap
 (
-    const char *kname,          // kernel name
     // output:
     int8_t *Cb,
     int64_t *cnvals_handle,
@@ -1196,7 +1195,6 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
 
 GrB_Info GB_select_phase1_jit      // select phase1
 (
-    const char *kname,          // kernel name
     // output:
     int64_t *restrict Cp,
     int64_t *restrict Wfirst,
@@ -1215,7 +1213,6 @@ GrB_Info GB_select_phase1_jit      // select phase1
 
 GrB_Info GB_select_phase2_jit      // select phase2
 (
-    const char *kname,          // kernel name
     // output:
     int64_t *restrict Ci,
     GB_void *restrict Cx,                   // NULL if C is iso-valued
@@ -1299,7 +1296,6 @@ uint64_t GB_encodify_assign     // encode an assign problem
 
 GrB_Info GB_subassign_jit
 (
-    const char *kname,          // kernel name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -1329,24 +1325,8 @@ GrB_Info GB_subassign_jit
     // kind and kernel:
     const int assign_kind,      // row assign, col assign, assign, or subassign
     const int assign_kernel,    // GB_JIT_KERNEL_SUBASSIGN_01, ... etc
+    const char *kname,          // kernel name
     GB_Werk Werk
-) ;
-
-//------------------------------------------------------------------------------
-// utilities
-//------------------------------------------------------------------------------
-
-GrB_Info GB_convert_sparse_to_bitmap_jit    // convert sparse to bitmap
-(
-    // output:
-    GB_void *Ax_new,
-    int8_t *Ab,
-    // input:
-    GB_Operator op,
-    const GrB_Matrix A,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
 ) ;
 
 //------------------------------------------------------------------------------

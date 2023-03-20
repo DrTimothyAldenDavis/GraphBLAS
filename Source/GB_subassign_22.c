@@ -140,7 +140,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
     // pass (ywork, accum->ytype) in place of (scalar, scalar_type)
     if (info == GrB_NO_VALUE)
     {
-        info = GB_subassign_jit ("subassign_22", C,
+        info = GB_subassign_jit (C,
             /* C_replace: */ false,
             /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
             /* J, nj, nJ, Jkind, Jcolon: */ NULL, 0, 0, GB_ALL, NULL,
@@ -150,7 +150,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
             /* accum: */ accum,
             /* A: */ NULL,
             /* scalar, scalar_type: */ ywork, accum->ytype,
-            GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_22, Werk) ;
+            GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_22, "subassign_22", Werk) ;
     }
     #endif
 

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_apply_bind2nd_jit: Cx=op(A,y) apply bind2nd method, via the JIT
+// GB_concat_sparse_jit: concat A into Ci, Cx where C is sparse
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -8,30 +8,34 @@
 //------------------------------------------------------------------------------
 
 #include "GB_apply.h"
-#include "GB_ewise_kernels.h"
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
 typedef GrB_Info (*GB_jit_dl_function)
 (
-    GB_void *Cx,
-    const GB_void *Ax,
-    const GB_void *yscalar,
-    const int8_t *restrict Ab,
-    const int64_t anz,
-    const int nthreads
+    // input/output
+    GrB_Matrix C,
+    // input:
+    int64_t cistart,
+    GrB_Matrix A,
+    int64_t *restrict W,
+    const int64_t *restrict A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
 ) ;
 
-GrB_Info GB_apply_bind2nd_jit   // Cx = op (x,B), apply bind2nd via the JIT
+GrB_Info GB_concat_sparse_jit      // concatenate A into a sparse matrix C
 (
-    // output:
-    GB_void *Cx,
+    // input/output
+    GrB_Matrix C,
     // input:
-    const GrB_Type ctype,
-    const GrB_BinaryOp binaryop,
+    int64_t cistart,
+    const GrB_UnaryOp op,
     const GrB_Matrix A,
-    const GB_void *yscalar,
-    const int nthreads
+    int64_t *restrict W,
+    const int64_t *restrict A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
 )
 {
 
@@ -45,10 +49,9 @@ GrB_Info GB_apply_bind2nd_jit   // Cx = op (x,B), apply bind2nd via the JIT
 
     GB_jit_encoding encoding ;
     char *suffix ;
-    uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
-        GB_JIT_KERNEL_APPLYBIND2, false,
-        false, false, GxB_FULL, ctype, NULL, false, false,
-        binaryop, false, A, NULL) ;
+    uint64_t hash = GB_encodify_apply (&encoding, &suffix,
+        GB_JIT_KERNEL_CONCAT_SPARSE, GxB_SPARSE, true, C->type,
+        (GB_Operator) op, false, A) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -56,9 +59,9 @@ GrB_Info GB_apply_bind2nd_jit   // Cx = op (x,B), apply bind2nd via the JIT
 
     void *dl_function ;
     GrB_Info info = GB_jitifyer_load (&dl_function,
-        GB_jit_ewise_family, "apply_bind2nd",
+        GB_jit_apply_family, "concat_sparse",
         hash, &encoding, suffix, NULL, NULL,
-        (GB_Operator) binaryop, ctype, A->type, NULL) ;
+        (GB_Operator) op, C->type, A->type, NULL) ;
     if (info != GrB_SUCCESS) return (info) ;
 
     //--------------------------------------------------------------------------
@@ -66,8 +69,8 @@ GrB_Info GB_apply_bind2nd_jit   // Cx = op (x,B), apply bind2nd via the JIT
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (Cx, A->x, yscalar, A->b, GB_nnz_held (A),
-        nthreads)) ;
+    return (GB_jit_kernel (C, cistart, A, W, A_ek_slicing, A_ntasks,
+        A_nthreads)) ;
 #endif
 }
 

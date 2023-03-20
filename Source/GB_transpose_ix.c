@@ -123,7 +123,7 @@ GrB_Info GB_transpose_ix        // transpose the pattern and values of a matrix
             GrB_Type ctype = C->type ;
             GrB_UnaryOp op = GB_unop_identity (ctype, &op_header) ;
             ASSERT_UNARYOP_OK (op, "identity op for transpose_ix", GB0) ;
-            info = GB_transpose_unop_jit ("trans_unop", C, op, A, Workspaces,
+            info = GB_transpose_unop_jit (C, op, A, Workspaces,
                 A_slice, nworkspaces, nthreads) ;
         }
         #endif

@@ -58,8 +58,8 @@ GrB_Info GB_convert_sparse_to_bitmap_jit    // convert sparse to bitmap
     //--------------------------------------------------------------------------
 
     void *dl_function ;
-    GrB_Info info = GB_jitifyer_load (&dl_function, GB_jit_apply_family,
-        "convert_sparse_to_bitmap",
+    GrB_Info info = GB_jitifyer_load (&dl_function,
+        GB_jit_apply_family, "convert_sparse_to_bitmap",
         hash, &encoding, suffix, NULL, NULL,
         op, A->type, A->type, NULL) ;
     if (info != GrB_SUCCESS) return (info) ;

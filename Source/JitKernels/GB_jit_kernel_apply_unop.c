@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_kernel_shared_definitions.h"
+#include "GB_unop_shared_definitions.h"
 
 #if GB_DEPENDS_ON_I
 

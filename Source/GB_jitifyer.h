@@ -60,10 +60,11 @@ GB_jit_family ;
 #define GB_JIT_KERNEL_TRANSBIND1    23  /* GB_transpose_op          */
 #define GB_JIT_KERNEL_TRANSBIND2    24  /* GB_transpose_op          */
 
-// unop methods:
+// apply (unary and idxunary op) methods:
 #define GB_JIT_KERNEL_APPLYUNOP     25  /* GB_apply_op, GB_cast_array       */
 #define GB_JIT_KERNEL_TRANSUNOP     26  /* GB_transpose_op, GB_transpose_ix */
 #define GB_JIT_KERNEL_CONVERTS2B   101
+#define GB_JIT_KERNEL_CONCAT_SPARSE 102
 
 // build method:
 #define GB_JIT_KERNEL_BUILD         27  /* GB_builder               */

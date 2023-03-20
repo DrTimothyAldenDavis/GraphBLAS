@@ -27,7 +27,6 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_build_jit               // GB_builder JIT kernel
 (
-    const char *kname,          // kernel base name
     // output:
     GB_void *restrict Tx,
     int64_t *restrict Ti,
@@ -64,7 +63,8 @@ GrB_Info GB_build_jit               // GB_builder JIT kernel
     //--------------------------------------------------------------------------
 
     void *dl_function ;
-    GrB_Info info = GB_jitifyer_load (&dl_function, GB_jit_build_family, kname,
+    GrB_Info info = GB_jitifyer_load (&dl_function,
+        GB_jit_build_family, "build",
         hash, &encoding, suffix, NULL, NULL,
         (GB_Operator) dup, ttype, stype, NULL) ;
     if (info != GrB_SUCCESS) return (info) ;

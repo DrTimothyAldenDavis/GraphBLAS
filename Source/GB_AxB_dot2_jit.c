@@ -24,7 +24,6 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_AxB_dot2_jit        // C<M>=A'*B, dot2 method, via the JIT
 (
-    const char *kname,          // kernel base name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -59,9 +58,9 @@ GrB_Info GB_AxB_dot2_jit        // C<M>=A'*B, dot2 method, via the JIT
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
     //--------------------------------------------------------------------------
-
     void *dl_function ;
-    GrB_Info info = GB_jitifyer_load (&dl_function, GB_jit_mxm_family, kname,
+    GrB_Info info = GB_jitifyer_load (&dl_function,
+        GB_jit_mxm_family, "AxB_dot2",
         hash, &encoding, suffix, semiring, NULL,
         NULL, C->type, A->type, B->type) ;
     if (info != GrB_SUCCESS) return (info) ;

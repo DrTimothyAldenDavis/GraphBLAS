@@ -243,8 +243,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         { 
-            info = GB_rowscale_jit ("rowscale", C, D, B, mult, flipxy,
-                nthreads) ;
+            info = GB_rowscale_jit (C, D, B, mult, flipxy, nthreads) ;
         }
         #endif
 

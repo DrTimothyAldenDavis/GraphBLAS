@@ -30,7 +30,6 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_emult_08_jit      // C<#M>=A.*B, emult_08, via the JIT
 (
-    const char *kname,          // kernel base name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -70,7 +69,8 @@ GrB_Info GB_emult_08_jit      // C<#M>=A.*B, emult_08, via the JIT
     //--------------------------------------------------------------------------
 
     void *dl_function ;
-    GrB_Info info = GB_jitifyer_load (&dl_function, GB_jit_ewise_family, kname,
+    GrB_Info info = GB_jitifyer_load (&dl_function,
+        GB_jit_ewise_family, "emult_08",
         hash, &encoding, suffix, NULL, NULL,
         (GB_Operator) binaryop, C->type, A->type, B->type) ;
     if (info != GrB_SUCCESS) return (info) ;

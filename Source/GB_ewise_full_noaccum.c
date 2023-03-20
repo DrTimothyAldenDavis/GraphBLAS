@@ -140,8 +140,7 @@ GrB_Info GB_ewise_full_noaccum      // C = A+B
     #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     { 
-        info = GB_ewise_full_noaccum_jit ("ewise_full_noaccum", C, op, A, B,
-            nthreads) ;
+        info = GB_ewise_full_noaccum_jit (C, op, A, B, nthreads) ;
     }
     #endif
 

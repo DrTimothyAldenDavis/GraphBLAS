@@ -272,7 +272,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     { 
-        info = GB_AxB_saxpy4_jit ("AxB_saxpy4", C, A, B, semiring, flipxy,
+        info = GB_AxB_saxpy4_jit (C, A, B, semiring, flipxy,
             ntasks, nthreads, nfine_tasks_per_vector, use_coarse_tasks,
             use_atomics, A_slice, H_slice, Wcx, Wf) ;
     }

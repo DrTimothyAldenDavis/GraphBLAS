@@ -138,7 +138,7 @@ GrB_Info GB_select_bitmap
         #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
-            info = GB_select_bitmap_jit ("select_bitmap", C->b, &cnvals, C_iso,
+            info = GB_select_bitmap_jit (C->b, &cnvals, C_iso,
                 A, flipij, ythunk, op, nthreads) ;
         }
         #endif

@@ -36,7 +36,6 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_subassign_jit
 (
-    const char *kname,          // kernel base name
     // input/output:
     GrB_Matrix C,
     // input:
@@ -66,6 +65,7 @@ GrB_Info GB_subassign_jit
     // kind and kernel:
     const int assign_kind,      // row assign, col assign, assign, or subassign
     const int assign_kernel,    // GB_JIT_KERNEL_SUBASSIGN_01, ... etc
+    const char *kname,          // kernel base name
     GB_Werk Werk
 )
 {

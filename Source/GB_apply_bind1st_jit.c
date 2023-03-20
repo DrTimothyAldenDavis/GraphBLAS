@@ -24,7 +24,6 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
 (
-    const char *kname,          // kernel base name
     // output:
     GB_void *Cx,
     // input:
@@ -56,7 +55,8 @@ GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
     //--------------------------------------------------------------------------
 
     void *dl_function ;
-    GrB_Info info = GB_jitifyer_load (&dl_function, GB_jit_ewise_family, kname,
+    GrB_Info info = GB_jitifyer_load (&dl_function,
+        GB_jit_ewise_family, "apply_bind1st",
         hash, &encoding, suffix, NULL, NULL,
         (GB_Operator) binaryop, ctype, NULL, B->type) ;
     if (info != GrB_SUCCESS) return (info) ;

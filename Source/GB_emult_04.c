@@ -336,7 +336,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     {
-        info = GB_emult_04_jit ("emult_04", C, C_sparsity, M, Mask_struct, op,
+        info = GB_emult_04_jit (C, C_sparsity, M, Mask_struct, op,
             A, B, Cp_kfirst, M_ek_slicing, M_ntasks, M_nthreads) ;
     }
     #endif

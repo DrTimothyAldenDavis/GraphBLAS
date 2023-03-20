@@ -25,7 +25,6 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_select_phase1_jit      // select phase1
 (
-    const char *kname,          // kernel base name
     // output:
     int64_t *restrict Cp,
     int64_t *restrict Wfirst,
@@ -61,7 +60,8 @@ GrB_Info GB_select_phase1_jit      // select phase1
     //--------------------------------------------------------------------------
 
     void *dl_function ;
-    GrB_Info info = GB_jitifyer_load (&dl_function, GB_jit_select_family, kname,
+    GrB_Info info = GB_jitifyer_load (&dl_function,
+        GB_jit_select_family, "select_phase1",
         hash, &encoding, suffix, NULL, NULL,
         (GB_Operator) op, A->type, NULL, NULL) ;
     if (info != GrB_SUCCESS) return (info) ;

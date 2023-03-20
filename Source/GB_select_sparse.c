@@ -208,9 +208,8 @@ GrB_Info GB_select_sparse
         #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
-            info = GB_select_phase1_jit ("select_phase1", Cp, Wfirst, Wlast,
-                C_iso, in_place_A, A, ythunk, op, flipij, 
-                A_ek_slicing, A_ntasks, A_nthreads) ;
+            info = GB_select_phase1_jit (Cp, Wfirst, Wlast, C_iso, in_place_A,
+                A, ythunk, op, flipij, A_ek_slicing, A_ntasks, A_nthreads) ;
         }
         #endif
 
@@ -318,9 +317,9 @@ GrB_Info GB_select_sparse
         #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
-            info = GB_select_phase2_jit ("select_phase2", Ci,
-                C_iso ? NULL : Cx, Cp, C_iso, in_place_A, Cp_kfirst, A, flipij,
-                ythunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;
+            info = GB_select_phase2_jit (Ci, C_iso ? NULL : Cx, Cp, C_iso,
+                in_place_A, Cp_kfirst, A, flipij, ythunk, op, A_ek_slicing,
+                A_ntasks, A_nthreads) ;
         }
         #endif
 

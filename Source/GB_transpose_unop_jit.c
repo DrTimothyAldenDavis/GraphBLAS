@@ -23,7 +23,6 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
 (
-    const char *kname,          // kernel base name
     // output:
     GrB_Matrix C,
     // input:
@@ -55,7 +54,8 @@ GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
     //--------------------------------------------------------------------------
 
     void *dl_function ;
-    GrB_Info info = GB_jitifyer_load (&dl_function, GB_jit_apply_family, kname,
+    GrB_Info info = GB_jitifyer_load (&dl_function,
+        GB_jit_apply_family, "trans_unop",
         hash, &encoding, suffix, NULL, NULL,
         (GB_Operator) op, C->type, A->type, NULL) ;
     if (info != GrB_SUCCESS) return (info) ;

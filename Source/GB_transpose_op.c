@@ -152,8 +152,8 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
         #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         { 
-            info = GB_transpose_unop_jit ("trans_unop", C, op, A, Workspaces,
-                A_slice, nworkspaces, nthreads) ;
+            info = GB_transpose_unop_jit (C, op, A, Workspaces, A_slice,
+                nworkspaces, nthreads) ;
         }
         #endif
 
@@ -293,9 +293,8 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
             #if GB_JIT_ENABLED
             if (info == GrB_NO_VALUE)
             {
-                info = GB_transpose_bind1st_jit ("trans_bind1st", C,
-                    (GrB_BinaryOp) op, scalarx, A, Workspaces, A_slice,
-                    nworkspaces, nthreads) ;
+                info = GB_transpose_bind1st_jit (C, (GrB_BinaryOp) op,
+                    scalarx, A, Workspaces, A_slice, nworkspaces, nthreads) ;
             }
             #endif
 
@@ -344,9 +343,8 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
             #if GB_JIT_ENABLED
             if (info == GrB_NO_VALUE)
             {
-                info = GB_transpose_bind2nd_jit ("trans_bind2nd", C,
-                    (GrB_BinaryOp) op, A, scalarx, Workspaces, A_slice,
-                    nworkspaces, nthreads) ;
+                info = GB_transpose_bind2nd_jit (C, (GrB_BinaryOp) op,
+                    A, scalarx, Workspaces, A_slice, nworkspaces, nthreads) ;
             }
             #endif
 

@@ -268,7 +268,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     if (info == GrB_NO_VALUE)
     { 
         // C+= A*B, C is full
-        info = GB_AxB_dot4_jit ("AxB_dot4", C, C_in_iso, A, B, semiring,
+        info = GB_AxB_dot4_jit (C, C_in_iso, A, B, semiring,
             flipxy, A_slice, B_slice, naslice, nbslice, nthreads, Werk) ;
     }
     #endif

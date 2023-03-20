@@ -137,7 +137,7 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
     #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     {
-        info = GB_subassign_jit ("subassign_23", C,
+        info = GB_subassign_jit (C,
             /* C_replace: */ false,
             /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
             /* J, nj, nJ, Jkind, Jcolon: */ NULL, 0, 0, GB_ALL, NULL,
@@ -147,7 +147,7 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
             /* accum: */ accum,
             /* A: */ A,
             /* scalar, scalar_type: */ NULL, NULL,
-            GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_23, Werk) ;
+            GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_23, "subassign_23", Werk) ;
     }
     #endif
 

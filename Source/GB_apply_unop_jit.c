@@ -23,7 +23,6 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
 (
-    const char *kname,          // kernel base name
     // output:
     GB_void *Cx,
     // input:
@@ -56,7 +55,8 @@ GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
     //--------------------------------------------------------------------------
 
     void *dl_function ;
-    GrB_Info info = GB_jitifyer_load (&dl_function, GB_jit_apply_family, kname,
+    GrB_Info info = GB_jitifyer_load (&dl_function,
+        GB_jit_apply_family, "apply_unop",
         hash, &encoding, suffix, NULL, NULL,
         op, ctype, A->type, NULL) ;
     if (info != GrB_SUCCESS) return (info) ;

@@ -313,7 +313,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
-            info = GB_AxB_dot3_jit ("AxB_dot3", C, M, Mask_struct, A, B,
+            info = GB_AxB_dot3_jit (C, M, Mask_struct, A, B,
                 semiring, flipxy, TaskList, ntasks, nthreads) ;
         }
         #endif

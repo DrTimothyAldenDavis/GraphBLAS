@@ -300,7 +300,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     {
-        info = GB_emult_02_jit ("emult_02", C, C_sparsity, M, Mask_struct,
+        info = GB_emult_02_jit (C, C_sparsity, M, Mask_struct,
             Mask_comp, op, A, B, Cp_kfirst, A_ek_slicing, A_ntasks,
             A_nthreads) ;
     }

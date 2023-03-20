@@ -116,7 +116,7 @@ GrB_Info GB_ewise_full_accum        // C += A+B, all matrices dense
     #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     {
-        info = GB_ewise_full_accum_jit ("ewise_full_accum", C, op, A, B,
+        info = GB_ewise_full_accum_jit (C, op, A, B,
             nthreads) ;
     }
     #endif

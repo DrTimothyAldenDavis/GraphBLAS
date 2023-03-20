@@ -471,14 +471,14 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
             if (A_not_transposed)
             {
                 // C<#M> = A*B, C is bitmap/full
-                info = GB_AxB_dot2n_jit ("AxB_dot2n", C, M, Mask_comp,
+                info = GB_AxB_dot2n_jit (C, M, Mask_comp,
                     Mask_struct, A, A_slice, B, B_slice, semiring, flipxy,
                     nthreads, naslice, nbslice) ;
             }
             else
             {
                 // C<#M> = A'*B, C is bitmap
-                info = GB_AxB_dot2_jit ("AxB_dot2", C, M, Mask_comp,
+                info = GB_AxB_dot2_jit (C, M, Mask_comp,
                     Mask_struct, A, A_slice, B, B_slice, semiring, flipxy,
                     nthreads, naslice, nbslice) ;
             }

@@ -9,7 +9,7 @@
 
 // TODO: C=op(A') is used only for unary ops; extend it to index unary ops
 
-#include "GB_kernel_shared_definitions.h"
+#include "GB_unop_shared_definitions.h"
 
 // cij = op (aij)
 #define GB_APPLY_OP(pC,pA) GB_UNOP (Cx, pC, Ax, pA, A_iso, i, j, y)

@@ -22,7 +22,6 @@ typedef GrB_Info (*GB_jit_dl_function)
 
 GrB_Info GB_select_bitmap_jit      // select bitmap
 (
-    const char *kname,          // kernel base name
     // output:
     int8_t *Cb,
     int64_t *cnvals_handle,
@@ -54,7 +53,8 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
     //--------------------------------------------------------------------------
 
     void *dl_function ;
-    GrB_Info info = GB_jitifyer_load (&dl_function, GB_jit_select_family, kname,
+    GrB_Info info = GB_jitifyer_load (&dl_function,
+        GB_jit_select_family, "select_bitmap",
         hash, &encoding, suffix, NULL, NULL,
         (GB_Operator) op, A->type, NULL, NULL) ;
     if (info != GrB_SUCCESS) return (info) ;
