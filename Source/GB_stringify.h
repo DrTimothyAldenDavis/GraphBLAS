@@ -1129,6 +1129,18 @@ GrB_Info GB_split_full_jit      // split A into a full tile C
     const int C_nthreads
 ) ;
 
+GrB_Info GB_split_bitmap_jit      // split A into a bitmap tile C
+(
+    // input/output
+    GrB_Matrix C,
+    // input:
+    const GrB_UnaryOp op,
+    const GrB_Matrix A,
+    int64_t avstart,
+    int64_t aistart,
+    const int C_nthreads
+) ;
+
 //------------------------------------------------------------------------------
 // builder kernel
 //------------------------------------------------------------------------------
