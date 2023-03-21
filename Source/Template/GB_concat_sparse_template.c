@@ -2,7 +2,7 @@
 // GB_concat_sparse_template: concatenate a tile into a sparse matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -17,8 +17,19 @@
     //--------------------------------------------------------------------------
 
     #ifndef GB_ISO_CONCAT
-    const GB_C_TYPE *restrict Ax = (GB_C_TYPE *) A->x ;
+    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
+    #endif
+
+    #ifdef GB_JIT_KERNEL
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
+    const int64_t *restrict Ai = A->i ;
+    int64_t avlen = A->vlen ;
+    int64_t *restrict Ci = C->i ;
+    const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
+    const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
+    const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -78,10 +89,9 @@
             }
         }
     }
-
-    done = true ;
 }
 
 #undef GB_C_TYPE
+#undef GB_A_TYPE
 #undef GB_ISO_CONCAT
 

@@ -17,10 +17,9 @@ void GB_enumify_build       // enumerate a GB_build problem
     // output:
     uint64_t *build_code,   // unique encoding of the entire operation
     // input:
+    GrB_BinaryOp dup,       // operator for duplicates
     GrB_Type ttype,         // type of Tx
-    GrB_Type stype,         // type of Sx
-    // operator:
-    GrB_BinaryOp dup        // operator for duplicates
+    GrB_Type stype          // type of Sx
 )
 {
 

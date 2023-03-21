@@ -176,39 +176,6 @@ GrB_Info GB_select_generic_bitmap
     const int nthreads
 ) ;
 
-GrB_Info GB_select_phase1_jit      // select phase1
-(
-    int64_t *restrict Cp,
-    int64_t *restrict Wfirst,
-    int64_t *restrict Wlast,
-    const bool C_iso,
-    const bool in_place_A,
-    const GrB_Matrix A,
-    const GB_void *restrict ythunk,
-    const GrB_IndexUnaryOp op,
-    const bool flipij,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
-) ;
-
-GrB_Info GB_select_phase2_jit      // select phase2
-(
-    int64_t *restrict Ci,
-    GB_void *restrict Cx,                   // NULL if C is iso-valued
-    const int64_t *restrict Cp,
-    const bool C_iso,
-    const bool in_place_A,
-    const int64_t *restrict Cp_kfirst,
-    const GrB_Matrix A,
-    const bool flipij,
-    const GB_void *restrict ythunk,
-    const GrB_IndexUnaryOp op,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
-) ;
-
 //------------------------------------------------------------------------------
 // GB_select_iso: assign the iso value of C for GB_*selector
 //------------------------------------------------------------------------------

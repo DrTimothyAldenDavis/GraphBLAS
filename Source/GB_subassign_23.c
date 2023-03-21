@@ -7,11 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: needed (now).
+// JIT: done.
 
-// C and A must have the same vector dimension and vector length.
-// FUTURE::: the transposed case, C+=A' could easily be done.
-// The parallelism used is identical to GB_colscale.
+// Method 23: C += A, where C is dense
+
+// M:           NULL
+// Mask_comp:   false
+// Mask_struct: ignored
+// C_replace:   false
+// accum:       present
+// A:           matrix
+// S:           none
 
 // The type of C must match the type of x and z for the accum function, since
 // C(i,j) = accum (C(i,j), A(i,j)) is handled.  The generic case here can
@@ -20,11 +26,10 @@
 
 // C and A can have any sparsity structure, but C must be as-if-full.
 
-#define GB_DEBUG
-
 #include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_dense.h"
 #include "GB_binop.h"
+#include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_aop__include.h"
 #endif
@@ -130,7 +135,20 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: aop: subassign 23
+    if (info == GrB_NO_VALUE)
+    {
+        info = GB_subassign_jit (C,
+            /* C_replace: */ false,
+            /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
+            /* J, nj, nJ, Jkind, Jcolon: */ NULL, 0, 0, GB_ALL, NULL,
+            /* M: */ NULL,
+            /* Mask_comp: */ false,
+            /* Mask_struct: */ true,
+            /* accum: */ accum,
+            /* A: */ A,
+            /* scalar, scalar_type: */ NULL, NULL,
+            GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_23, "subassign_23", Werk) ;
+    }
     #endif
 
     //--------------------------------------------------------------------------
@@ -139,11 +157,6 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
 
     if (info == GrB_NO_VALUE)
     { 
-
-        //----------------------------------------------------------------------
-        // get operators, functions, workspace, contents of A and C
-        //----------------------------------------------------------------------
-
         #include "GB_generic.h"
         GB_BURBLE_MATRIX (A, "(generic C+=A) ") ;
 
@@ -152,10 +165,8 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
         size_t csize = C->type->size ;
         size_t asize = A->type->size ;
         size_t ysize = accum->ytype->size ;
-
-        GB_cast_function cast_A_to_Y ;
-
         // A is typecasted to y
+        GB_cast_function cast_A_to_Y ;
         cast_A_to_Y = GB_cast_factory (accum->ytype->code, A->type->code) ;
 
         // get the iso value of A

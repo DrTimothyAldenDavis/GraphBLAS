@@ -167,7 +167,7 @@ GrB_Info GB_subassign_06d
                 /* accum: */ NULL,
                 /* A: */ A,
                 /* scalar, scalar_type: */ NULL, NULL,
-                GB_SUBASSIGN, "subassign_06d", GB_JIT_KERNEL_SUBASSIGN_06d,
+                GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_06d, "subassign_06d",
                 Werk) ;
         }
         #endif
@@ -178,11 +178,6 @@ GrB_Info GB_subassign_06d
 
         if (info == GrB_NO_VALUE)
         { 
-
-            //------------------------------------------------------------------
-            // get operators, functions, workspace, contents of A and C
-            //------------------------------------------------------------------
-
             #include "GB_generic.h"
             GB_BURBLE_MATRIX (A, "(generic C(:,:)<A>=A assign) ") ;
 
@@ -196,7 +191,6 @@ GrB_Info GB_subassign_06d
             #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, asize)
 
             #include "GB_subassign_06d_template.c"
-
             info = GrB_SUCCESS ;
         }
     }

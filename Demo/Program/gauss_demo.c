@@ -237,6 +237,15 @@ int main (void)
     TRY (GrB_mxm (C, NULL, NULL, GaussSemiring, D, A, NULL)) ;
     printgauss (C, "\n=============== Gauss C = D*A matrix:\n") ;
 
+    // convert D to bitmap then back to sparse
+    TRY (GxB_set (D, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+    TRY (GxB_set (D, GxB_SPARSITY_CONTROL, GxB_BITMAP)) ;
+    printgauss (D, "\nGauss D matrix (bitmap)") ;
+    TRY (GxB_print (D, 3)) ;
+    TRY (GxB_set (D, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+    printgauss (D, "\nGauss D matrix (back to sparse)") ;
+    TRY (GxB_print (D, 3)) ;
+
     // C = A*D
     TRY (GrB_mxm (C, NULL, NULL, GaussSemiring, A, D, NULL)) ;
     printgauss (C, "\n=============== Gauss C = A*D matrix:\n") ;
@@ -318,6 +327,61 @@ int main (void)
     printgauss (C, "\n=============== C\n") ;
     TRY (GrB_transpose (C, NULL, NULL, C, NULL)) ;
     printgauss (C, "\n=============== C = C'\n") ;
+
+    for (int trial = 0 ; trial <= 1 ; trial++)
+    {
+        GrB_Matrix Z, E ;
+        int ncols = 8 ;
+        int nrows = (trial == 0) ? 256 : 16 ;
+        TRY (GrB_Matrix_new (&Z, Gauss, nrows, ncols)) ;
+        TRY (GrB_Matrix_new (&E, Gauss, nrows-8, 4)) ;
+        TRY (GxB_set (Z, GxB_FORMAT, GxB_BY_COL)) ;
+        GrB_Matrix Tiles [3][2] ;
+        Tiles [0][0] = C ; Tiles [0][1] = D ;
+        Tiles [1][0] = E ; Tiles [1][1] = E ;
+        Tiles [2][0] = D ; Tiles [2][1] = C ;
+        TRY (GxB_Matrix_concat (Z, (GrB_Matrix *) Tiles, 3, 2, NULL)) ;
+        printgauss (Z, "\n=============== Z = [C D ; E E ; D C]") ;
+        GxB_print (Z, 3) ;
+
+        GrB_Matrix CTiles [4] ;
+        GrB_Index Tile_nrows [2] ;
+        GrB_Index Tile_ncols [2] ;
+        Tile_nrows [0] = nrows / 2 ;
+        Tile_nrows [1] = nrows / 2 ;
+        Tile_ncols [0] = 3 ;
+        Tile_ncols [1] = 5 ;
+        TRY (GxB_Matrix_split (CTiles, 2, 2, Tile_nrows, Tile_ncols, Z, NULL)) ;
+
+        for (int k = 0 ; k < 4 ; k++)
+        {
+            printgauss (CTiles [k], "\n=============== C Tile from Z:\n") ;
+            GxB_print (CTiles [k], 3) ;
+            GrB_free (& (CTiles [k])) ;
+        }
+
+        GrB_free (&Z) ;
+        GrB_free (&E) ;
+    }
+
+    // C += ciso
+    TRY (GrB_Matrix_assign_UDT (C, NULL, AddGauss, (void *) &ciso,
+        GrB_ALL, 4, GrB_ALL, 4, NULL)) ;
+    printgauss (C, "\n=============== C = C + ciso\n") ;
+
+    // split the full matrix C
+    TRY (GxB_set (C, GxB_SPARSITY_CONTROL, GxB_FULL)) ;
+    GrB_Matrix STiles [4] ;
+    GrB_Index Tile_nrows [2] = { 1, 3 } ;
+    GrB_Index Tile_ncols [2] = { 2, 2 } ;
+    TRY (GxB_Matrix_split (STiles, 2, 2, Tile_nrows, Tile_ncols, C, NULL)) ;
+
+    for (int k = 0 ; k < 4 ; k++)
+    {
+        printgauss (STiles [k], "\n=============== S Tile from C:\n") ;
+        GxB_print (STiles [k], 3) ;
+        GrB_free (& (STiles [k])) ;
+    }
 
     // free everything and finalize GraphBLAS
     GrB_free (&A) ;

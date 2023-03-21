@@ -16,9 +16,9 @@ void GB_macrofy_build           // construct all macros for GB_build
     FILE *fp,                   // target file to write, already open
     // input:
     uint64_t build_code,        // unique encoding of the entire problem
+    GrB_BinaryOp dup,           // dup binary operator to macrofy
     GrB_Type ttype,             // type of Tx
-    GrB_Type stype,             // type of Sx
-    GrB_BinaryOp dup            // dup binary operator to macrofy
+    GrB_Type stype              // type of Sx
 )
 {
 
@@ -39,8 +39,6 @@ void GB_macrofy_build           // construct all macros for GB_build
     //--------------------------------------------------------------------------
     // describe the operator
     //--------------------------------------------------------------------------
-
-    GB_macrofy_copyright (fp) ;
 
     ASSERT_BINARYOP_OK (dup, "dup for macrofy build", GB0) ;
 

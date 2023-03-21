@@ -11,6 +11,8 @@
 // iso cases (for C and/or A) are not handled.  The op is either unary or
 // index unary, not binary (that is handled as an ewise enumify).
 
+// FIXME: add the case for A iso
+
 #include "GB.h"
 #include "GB_stringify.h"
 
@@ -84,15 +86,19 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
     GB_enumify_sparsity (&csparsity, C_sparsity) ;
     GB_enumify_sparsity (&asparsity, GB_sparsity (A)) ;
     int C_mat = (C_is_matrix) ? 1 : 0 ;
+    int A_iso_code = (A->iso) ? 1 : 0 ;
+    int A_zombies = (A->nzombies > 0) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
     // construct the apply scode
     //--------------------------------------------------------------------------
 
-    // total scode bits: 36 bits (9 hex digits)
+    // total scode bits: 38 bits (10 hex digits)
 
     (*scode) =
                                                // range        bits
+                GB_LSHIFT (A_zombies  , 37) |  // 0 or 1       1
+                GB_LSHIFT (A_iso_code , 36) |  // 0 or 1       1
 
                 // C kind, i/j dependency and flipij (1 hex digit)
                 GB_LSHIFT (C_mat      , 35) |  // 0 or 1       1

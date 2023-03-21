@@ -152,8 +152,7 @@ GrB_Info GB_subassign_05d
             /* accum: */ NULL,
             /* A: */ NULL,
             /* scalar, scalar_type: */ cwork, C->type,
-            GB_SUBASSIGN, "subassign_05d", GB_JIT_KERNEL_SUBASSIGN_05d,
-            Werk) ;
+            GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_05d, "subassign_05d", Werk) ;
     }
     #endif
 
@@ -163,13 +162,6 @@ GrB_Info GB_subassign_05d
 
     if (info == GrB_NO_VALUE)
     { 
-
-        //----------------------------------------------------------------------
-        // GB_subassign_05d: C(:,:)<M> = scalar where C is as-if-full
-        //----------------------------------------------------------------------
-
-        // get operators, functions, workspace, contents of A and C
-
         #include "GB_generic.h"
         GB_BURBLE_MATRIX (M, "(generic C(:,:)<M>=x assign) ") ;
 

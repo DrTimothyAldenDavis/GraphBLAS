@@ -103,6 +103,8 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
     // z = reduce_to_scalar (A) on the GPU(s) or CPU
     //--------------------------------------------------------------------------
 
+    info = GrB_NO_VALUE ;
+
     #if defined ( GBCUDA )
     if (GB_reduce_to_scalar_cuda_branch (monoid, A))
     {
@@ -112,8 +114,8 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         //----------------------------------------------------------------------
 
         GB_OK (GB_reduce_to_scalar_cuda (z, monoid, A)) ;
-        // FIXME: return info instead (GrB_NO_VALUE means not done on GPU,
-        // GrB_SUCCESS means done, other return as error)
+        // FIXME: return info (GrB_NO_VALUE: not done, GrB_SUCCESS, etc)
+        info = GrB_SUCCESS ;
 
     }
     else
@@ -124,7 +126,6 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         // use OpenMP on the CPU threads
         //----------------------------------------------------------------------
 
-        bool done = false ;
         int nthreads_max = GB_Context_nthreads_max ( ) ;
         double chunk = GB_Context_chunk ( ) ;
         int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
@@ -159,7 +160,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
             // no live entries in A; nothing to do
             //------------------------------------------------------------------
 
-            done = true ;
+            info = GrB_SUCCESS ;
 
         }
         else if (A->iso)
@@ -171,7 +172,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
 
             // this takes at most O(log(nvals(A))) time, for any monoid
             GB_reduce_to_scalar_iso (z, monoid, A) ;
-            done = true ;
+            info = GrB_SUCCESS ;
 
         }
         else if (A->type == ztype)
@@ -194,7 +195,6 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 {                                                           \
                     info = GB_red (opname, aname) ((ztype *) z, A, W, F,    \
                         ntasks, nthreads) ;                                 \
-                    done = (info != GrB_NO_VALUE) ;                         \
                 }                                                           \
                 break ;
 
@@ -217,11 +217,10 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         //----------------------------------------------------------------------
 
         #if GB_JIT_ENABLED
-        if (!done)
+        if (info == GrB_NO_VALUE)
         {
-            info = GB_reduce_to_scalar_jit (z, monoid, A, W, F,
-                ntasks, nthreads) ;
-            done = (info == GrB_SUCCESS) ;
+            info = GB_reduce_to_scalar_jit (z, monoid, A, W, F, ntasks,
+                nthreads) ;
         }
         #endif
 
@@ -229,7 +228,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         // via the generic kernel
         //----------------------------------------------------------------------
 
-        if (!done)
+        if (info == GrB_NO_VALUE)
         {
 
             //------------------------------------------------------------------
@@ -355,7 +354,15 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     #include "GB_reduce_to_scalar_template.c"
                 }
             }
+            info = GrB_SUCCESS ;
         }
+    }
+
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory, or other error
+        GB_FREE_ALL ;
+        return (info) ;
     }
 
     //--------------------------------------------------------------------------

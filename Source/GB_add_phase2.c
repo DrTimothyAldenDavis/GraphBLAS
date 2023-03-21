@@ -405,8 +405,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     {
         if (is_eWiseUnion)
         {
-            info = GB_union_jit (C, C_sparsity, M, Mask_struct, Mask_comp, op,
-                A, B, alpha_scalar, beta_scalar,
+            info = GB_union_jit (C, C_sparsity, M, Mask_struct,
+                Mask_comp, op, A, B, alpha_scalar, beta_scalar,
                 Ch_is_Mh, C_to_M, C_to_A, C_to_B, 
                 TaskList, C_ntasks, C_nthreads,
                 M_ek_slicing, M_nthreads, M_ntasks,
@@ -415,8 +415,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         }
         else
         {
-            info = GB_add_jit (C, C_sparsity, M, Mask_struct, Mask_comp, op,
-                A, B,
+            info = GB_add_jit (C, C_sparsity, M, Mask_struct,
+                Mask_comp, op, A, B,
                 Ch_is_Mh, C_to_M, C_to_A, C_to_B, 
                 TaskList, C_ntasks, C_nthreads,
                 M_ek_slicing, M_nthreads, M_ntasks,

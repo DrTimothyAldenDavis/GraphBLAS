@@ -138,8 +138,8 @@ GrB_Info GB_select_bitmap
         #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
-            info = GB_select_bitmap_jit (C->b, &cnvals, C_iso, A, flipij,
-                ythunk, op, nthreads) ;
+            info = GB_select_bitmap_jit (C->b, &cnvals, C_iso,
+                A, flipij, ythunk, op, nthreads) ;
         }
         #endif
 
@@ -158,16 +158,16 @@ GrB_Info GB_select_bitmap
     // return result
     //--------------------------------------------------------------------------
 
-    if (info == GrB_SUCCESS)
-    {
-        C->nvals = cnvals ;
-        C->magic = GB_MAGIC ;
-        ASSERT_MATRIX_OK (C, "C from bitmap selector", GB0) ;
-    }
-    else
-    {
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory, or other error
         GB_FREE_ALL ;
+        return (info) ;
     }
-    return (info) ;
+
+    C->nvals = cnvals ;
+    C->magic = GB_MAGIC ;
+    ASSERT_MATRIX_OK (C, "C from bitmap selector", GB0) ;
+    return (GrB_SUCCESS) ;
 }
 

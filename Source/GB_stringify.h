@@ -54,6 +54,24 @@ void GB_macrofy_copyright (FILE *fp) ;
 #define GB_RSHIFT(x,k,b) ((x >> k) & ((((uint64_t)0x00000001) << b) -1))
 
 //------------------------------------------------------------------------------
+// GB_macrofy_name: create the kernel name
+//------------------------------------------------------------------------------
+
+#define GB_KLEN (256 + 2*GxB_MAX_NAME_LEN)
+
+void GB_macrofy_name
+(
+    // output:
+    char *kernel_name,      // string of length GB_KLEN
+    // input
+    const char *name_space, // namespace for the kernel_name
+    const char *kname,      // kname for the kernel_name
+    int scode_digits,       // # of hexadecimal digits printed
+    uint64_t scode,         // enumify'd code of the kernel
+    const char *suffix      // suffix for the kernel_name (NULL if none)
+) ;
+
+//------------------------------------------------------------------------------
 // GrB_reduce
 //------------------------------------------------------------------------------
 
@@ -86,6 +104,19 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     GrB_Type atype          // type of the A matrix to reduce
 ) ;
 
+GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
+(
+    // output:
+    void *z,                    // result
+    // input:
+    const GrB_Monoid monoid,    // monoid to do the reduction
+    const GrB_Matrix A,         // matrix to reduce
+    GB_void *restrict W,        // workspace
+    bool *restrict F,           // workspace
+    int ntasks,                 // # of tasks to use
+    int nthreads                // # of threads to use
+) ;
+
 //------------------------------------------------------------------------------
 // GrB_eWiseAdd, GrB_eWiseMult, GxB_eWiseUnion
 //------------------------------------------------------------------------------
@@ -101,8 +132,6 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     // input:
     const int kcode,            // kernel to encode (add, emult, rowscale, ...)
     const bool is_eWiseMult,    // if true, method is emult
-    const bool is_eWiseUnion,   // if true, method is eWiseUnion
-    const bool can_copy_to_C,   // if true C(i,j)=A(i,j) can bypass the op
     const bool C_iso,
     const bool C_in_iso,
     const int C_sparsity,
@@ -151,6 +180,206 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     GrB_Type ctype,
     GrB_Type atype,
     GrB_Type btype
+) ;
+
+GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const int C_sparsity,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_BinaryOp binaryop,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool Ch_is_Mh,
+    const int64_t *restrict C_to_M,
+    const int64_t *restrict C_to_A,
+    const int64_t *restrict C_to_B,
+    const GB_task_struct *restrict TaskList,
+    const int C_ntasks,
+    const int C_nthreads,
+    const int64_t *restrict M_ek_slicing,
+    const int M_nthreads,
+    const int M_ntasks,
+    const int64_t *restrict A_ek_slicing,
+    const int A_nthreads,
+    const int A_ntasks,
+    const int64_t *restrict B_ek_slicing,
+    const int B_nthreads,
+    const int B_ntasks
+) ;
+
+GrB_Info GB_union_jit      // C=A+B, C<#M>=A+B, eWiseUnion, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const int C_sparsity,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_BinaryOp binaryop,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const GB_void *alpha_scalar_in,
+    const GB_void *beta_scalar_in,
+    const bool Ch_is_Mh,
+    const int64_t *restrict C_to_M,
+    const int64_t *restrict C_to_A,
+    const int64_t *restrict C_to_B,
+    const GB_task_struct *restrict TaskList,
+    const int C_ntasks,
+    const int C_nthreads,
+    const int64_t *restrict M_ek_slicing,
+    const int M_nthreads,
+    const int M_ntasks,
+    const int64_t *restrict A_ek_slicing,
+    const int A_nthreads,
+    const int A_ntasks,
+    const int64_t *restrict B_ek_slicing,
+    const int B_nthreads,
+    const int B_ntasks
+) ;
+
+GrB_Info GB_emult_08_jit      // C<#M>=A.*B, emult_08, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const int C_sparsity,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_BinaryOp binaryop,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *restrict C_to_M,
+    const int64_t *restrict C_to_A,
+    const int64_t *restrict C_to_B,
+    const GB_task_struct *restrict TaskList,
+    const int C_ntasks,
+    const int C_nthreads
+) ;
+
+GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const int C_sparsity,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_BinaryOp binaryop,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *restrict Cp_kfirst,
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
+) ;
+
+GrB_Info GB_emult_03_jit      // C<#M>=A.*B, emult_03, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const int C_sparsity,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_BinaryOp binaryop,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *restrict Cp_kfirst,
+    const int64_t *B_ek_slicing,
+    const int B_ntasks,
+    const int B_nthreads
+) ;
+
+GrB_Info GB_emult_04_jit      // C<M>=A.*B, emult_04, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const int C_sparsity,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_BinaryOp binaryop,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *restrict Cp_kfirst,
+    const int64_t *M_ek_slicing,
+    const int M_ntasks,
+    const int M_nthreads
+) ;
+
+GrB_Info GB_emult_bitmap_jit      // C<#M>=A.*B, emult_bitmap, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_BinaryOp binaryop,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing,
+    const int M_ntasks,
+    const int M_nthreads,
+    const int C_nthreads
+) ;
+
+GrB_Info GB_ewise_full_accum_jit    // C+=A+B via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const GrB_BinaryOp binaryop,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int nthreads
+) ;
+
+GrB_Info GB_ewise_full_noaccum_jit  // C=A+B via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const GrB_BinaryOp binaryop,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int nthreads
+) ;
+
+GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const GrB_Matrix D,
+    const GrB_Matrix B,
+    const GrB_BinaryOp binaryop,
+    const bool flipxy,
+    const int nthreads
+) ;
+
+GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const GrB_Matrix A,
+    const GrB_Matrix D,
+    const GrB_BinaryOp binaryop,
+    const bool flipxy,
+    const int64_t *restrict A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
 ) ;
 
 //------------------------------------------------------------------------------
@@ -212,6 +441,154 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     GrB_Type ctype,
     GrB_Type atype,
     GrB_Type btype
+) ;
+
+GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const GrB_Matrix M,
+    const bool Mask_comp,
+    const bool Mask_struct,
+    const bool M_in_place,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const GrB_Semiring semiring,
+    const bool flipxy,
+    void *SaxpyTasks,
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    const int do_sort,          // if nonzero, try to sort in saxpy3
+    GB_Werk Werk
+) ;
+
+GrB_Info GB_AxB_saxpy4_jit          // C+=A*B, saxpy4 method, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const GrB_Semiring semiring,
+    const bool flipxy,
+    const int ntasks,
+    const int nthreads,
+    const int nfine_tasks_per_vector,
+    const bool use_coarse_tasks,
+    const bool use_atomics,
+    const int64_t *A_slice,
+    const int64_t *H_slice,
+    GB_void *restrict Wcx,
+    int8_t *restrict Wf
+) ;
+
+GrB_Info GB_AxB_saxpy5_jit          // C+=A*B, saxpy5 method, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const GrB_Semiring semiring,
+    const bool flipxy,
+    const int ntasks,
+    const int nthreads,
+    const int64_t *B_slice
+) ;
+
+GrB_Info GB_AxB_saxbit_jit      // C<M>=A*B, saxbit, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const GrB_Matrix M,
+    const bool Mask_comp,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const GrB_Semiring semiring,
+    const bool flipxy,
+    const int ntasks,
+    const int nthreads,
+    const int nfine_tasks_per_vector,
+    const bool use_coarse_tasks,
+    const bool use_atomics,
+    const int64_t *restrict M_ek_slicing,
+    const int M_nthreads,
+    const int M_ntasks,
+    const int64_t *restrict A_slice,
+    const int64_t *restrict H_slice,
+    GB_void *restrict Wcx,
+    int8_t *restrict Wf
+) ;
+
+GrB_Info GB_AxB_dot2_jit        // C<M>=A'*B, dot2 method, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const GrB_Matrix M,
+    const bool Mask_comp,
+    const bool Mask_struct,
+    const GrB_Matrix A, int64_t *restrict A_slice,
+    const GrB_Matrix B, int64_t *restrict B_slice,
+    const GrB_Semiring semiring,
+    const bool flipxy,
+    const int nthreads,
+    const int naslice,
+    const int nbslice
+) ;
+
+GrB_Info GB_AxB_dot2n_jit        // C<M>=A*B, dot2n method, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const GrB_Matrix M,
+    const bool Mask_comp,
+    const bool Mask_struct,
+    const GrB_Matrix A, int64_t *restrict A_slice,
+    const GrB_Matrix B, int64_t *restrict B_slice,
+    const GrB_Semiring semiring,
+    const bool flipxy,
+    const int nthreads,
+    const int naslice,
+    const int nbslice
+) ;
+
+GrB_Info GB_AxB_dot3_jit        // C<M>=A'B, dot3, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,               // never iso for this kernel
+    // input:
+    const GrB_Matrix M, const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const GrB_Semiring semiring,
+    const bool flipxy,
+    const GB_task_struct *restrict TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_AxB_dot4_jit            // C+=A'*B, dot4 method, via the JIT
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const bool C_in_iso,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const GrB_Semiring semiring,
+    const bool flipxy,
+    const int64_t *restrict A_slice,
+    const int64_t *restrict B_slice,
+    const int naslice,
+    const int nbslice,
+    const int nthreads,
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------
@@ -594,6 +971,176 @@ uint64_t GB_encodify_apply      // encode an apply problem
     const GrB_Matrix A
 ) ;
 
+GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
+(
+    // output:
+    GB_void *Cx,
+    // input:
+    const GrB_Type ctype,
+    const GB_Operator op,       // unary or index unary op
+    const bool flipij,          // if true, use z = f(x,j,i,y)
+    const GrB_Matrix A,
+    const void *ythunk,         // for index unary ops (op->ytype scalar)
+    const int64_t *restrict A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
+) ;
+
+GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
+(
+    // output:
+    GB_void *Cx,
+    // input:
+    const GrB_Type ctype,
+    const GrB_BinaryOp binaryop,
+    const GB_void *xscalar,
+    const GrB_Matrix B,
+    const int nthreads
+) ;
+
+GrB_Info GB_apply_bind2nd_jit   // Cx = op (x,B), apply bind2nd via the JIT
+(
+    // output:
+    GB_void *Cx,
+    // input:
+    const GrB_Type ctype,
+    const GrB_BinaryOp binaryop,
+    const GrB_Matrix A,
+    const GB_void *yscalar,
+    const int nthreads
+) ;
+
+GrB_Info GB_transpose_bind1st_jit
+(
+    // output:
+    GrB_Matrix C,
+    // input:
+    const GrB_BinaryOp binaryop,
+    const GB_void *xscalar,
+    const GrB_Matrix A,
+    int64_t *restrict *Workspaces,
+    const int64_t *restrict A_slice,
+    int nworkspaces,
+    int nthreads
+) ;
+
+GrB_Info GB_transpose_bind2nd_jit
+(
+    // output:
+    GrB_Matrix C,
+    // input:
+    const GrB_BinaryOp binaryop,
+    const GrB_Matrix A,
+    const GB_void *yscalar,
+    int64_t *restrict *Workspaces,
+    const int64_t *restrict A_slice,
+    int nworkspaces,
+    int nthreads
+) ;
+
+GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
+(
+    // output:
+    GrB_Matrix C,
+    // input:
+    GrB_UnaryOp op,
+    const GrB_Matrix A,
+    int64_t *restrict *Workspaces,
+    const int64_t *restrict A_slice,
+    int nworkspaces,
+    int nthreads
+) ;
+
+GrB_Info GB_convert_sparse_to_bitmap_jit    // convert sparse to bitmap
+(
+    // output:
+    GB_void *Ax_new,
+    int8_t *Ab,
+    // input:
+    GB_Operator op,
+    const GrB_Matrix A,
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
+) ;
+
+GrB_Info GB_concat_sparse_jit      // concatenate A into a sparse matrix C
+(
+    // input/output
+    GrB_Matrix C,
+    // input:
+    int64_t cistart,
+    const GrB_UnaryOp op,
+    const GrB_Matrix A,
+    int64_t *restrict W,
+    const int64_t *restrict A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
+) ;
+
+GrB_Info GB_concat_full_jit      // concatenate A into a full matrix C
+(
+    // input/output
+    GrB_Matrix C,
+    // input:
+    int64_t cistart,
+    int64_t cvstart,
+    const GrB_UnaryOp op,
+    const GrB_Matrix A,
+    const int A_nthreads
+) ;
+
+GrB_Info GB_concat_bitmap_jit      // concatenate A into a bitmap matrix C
+(
+    // input/output
+    GrB_Matrix C,
+    // input:
+    int64_t cistart,
+    int64_t cvstart,
+    const GrB_UnaryOp op,
+    const GrB_Matrix A,
+    GB_Werk Werk
+) ;
+
+GrB_Info GB_split_sparse_jit      // split A into a sparse tile C
+(
+    // input/output
+    GrB_Matrix C,
+    // input:
+    const GrB_UnaryOp op,
+    const GrB_Matrix A,
+    int64_t akstart,
+    int64_t aistart,
+    int64_t *restrict Wp,
+    const int64_t *restrict C_ek_slicing,
+    const int C_ntasks,
+    const int C_nthreads
+) ;
+
+GrB_Info GB_split_full_jit      // split A into a full tile C
+(
+    // input/output
+    GrB_Matrix C,
+    // input:
+    const GrB_UnaryOp op,
+    const GrB_Matrix A,
+    int64_t avstart,
+    int64_t aistart,
+    const int C_nthreads
+) ;
+
+GrB_Info GB_split_bitmap_jit      // split A into a bitmap tile C
+(
+    // input/output
+    GrB_Matrix C,
+    // input:
+    const GrB_UnaryOp op,
+    const GrB_Matrix A,
+    int64_t avstart,
+    int64_t aistart,
+    const int C_nthreads
+) ;
+
 //------------------------------------------------------------------------------
 // builder kernel
 //------------------------------------------------------------------------------
@@ -606,9 +1153,9 @@ uint64_t GB_encodify_build      // encode an build problem
     char **suffix,              // suffix for user-defined kernel
     // input:
     const int kcode,            // kernel to encode
+    const GrB_BinaryOp dup,     // operator for summing up duplicates
     const GrB_Type ttype,       // type of Tx array
-    const GrB_Type stype,       // type of Sx array
-    const GrB_BinaryOp dup      // operator for summing up duplicates
+    const GrB_Type stype        // type of Sx array
 ) ;
 
 void GB_enumify_build       // enumerate a GB_build problem
@@ -616,10 +1163,9 @@ void GB_enumify_build       // enumerate a GB_build problem
     // output:
     uint64_t *build_code,   // unique encoding of the entire operation
     // input:
+    GrB_BinaryOp dup,       // operator for duplicates
     GrB_Type ttype,         // type of Tx
-    GrB_Type stype,         // type of Sx
-    // operator:
-    GrB_BinaryOp dup        // operator for duplicates
+    GrB_Type stype          // type of Sx
 ) ;
 
 void GB_macrofy_build           // construct all macros for GB_build
@@ -628,9 +1174,28 @@ void GB_macrofy_build           // construct all macros for GB_build
     FILE *fp,                   // target file to write, already open
     // input:
     uint64_t build_code,        // unique encoding of the entire problem
+    GrB_BinaryOp dup,           // dup binary operator to macrofy
     GrB_Type ttype,             // type of Tx
-    GrB_Type stype,             // type of Sx
-    GrB_BinaryOp dup            // dup binary operator to macrofy
+    GrB_Type stype              // type of Sx
+) ;
+
+GrB_Info GB_build_jit               // GB_builder JIT kernel
+(
+    // output:
+    GB_void *restrict Tx,
+    int64_t *restrict Ti,
+    // input:
+    const GB_void *restrict Sx,
+    const GrB_Type ttype,           // type of Tx
+    const GrB_Type stype,           // type of Sx
+    const GrB_BinaryOp dup,         // operator for summing duplicates
+    const int64_t nvals,            // number of tuples
+    const int64_t ndupl,            // number of duplicates
+    const int64_t *restrict I_work,
+    const int64_t *restrict K_work,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
+    int nthreads
 ) ;
 
 //------------------------------------------------------------------------------
@@ -679,14 +1244,53 @@ void GB_macrofy_select          // construct all macros for GrB_select
 
 GrB_Info GB_select_bitmap_jit      // select bitmap
 (
+    // output:
     int8_t *Cb,
     int64_t *cnvals_handle,
+    // input:
     const bool C_iso,
     const GrB_Matrix A,
     const bool flipij,
     const GB_void *restrict ythunk,
     const GrB_IndexUnaryOp op,
     const int nthreads
+) ;
+
+GrB_Info GB_select_phase1_jit      // select phase1
+(
+    // output:
+    int64_t *restrict Cp,
+    int64_t *restrict Wfirst,
+    int64_t *restrict Wlast,
+    // input:
+    const bool C_iso,
+    const bool in_place_A,
+    const GrB_Matrix A,
+    const GB_void *restrict ythunk,
+    const GrB_IndexUnaryOp op,
+    const bool flipij,
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
+) ;
+
+GrB_Info GB_select_phase2_jit      // select phase2
+(
+    // output:
+    int64_t *restrict Ci,
+    GB_void *restrict Cx,                   // NULL if C is iso-valued
+    // input:
+    const int64_t *restrict Cp,
+    const bool C_iso,
+    const bool in_place_A,
+    const int64_t *restrict Cp_kfirst,
+    const GrB_Matrix A,
+    const bool flipij,
+    const GB_void *restrict ythunk,
+    const GrB_IndexUnaryOp op,
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
 ) ;
 
 //------------------------------------------------------------------------------
@@ -783,9 +1387,28 @@ GrB_Info GB_subassign_jit
     const GrB_Type scalar_type,
     // kind and kernel:
     const int assign_kind,      // row assign, col assign, assign, or subassign
-    const char *kname,          // "sub01", etc
     const int assign_kernel,    // GB_JIT_KERNEL_SUBASSIGN_01, ... etc
+    const char *kname,          // kernel name
     GB_Werk Werk
+) ;
+
+//------------------------------------------------------------------------------
+// macrofy for all methods
+//------------------------------------------------------------------------------
+
+void GB_macrofy_family
+(
+    // output:
+    FILE *fp,                   // target file to write, already open
+    // input:
+    GB_jit_family family,       // family to macrofy
+    uint64_t scode,             // encoding of the specific problem
+    GrB_Semiring semiring,      // semiring (for mxm family only)
+    GrB_Monoid monoid,          // monoid (for reduce family only)
+    GB_Operator op,             // unary/index_unary/binary op
+    GrB_Type type1,
+    GrB_Type type2,
+    GrB_Type type3
 ) ;
 
 #endif

@@ -13,9 +13,7 @@
 // non-iso array Ax_new.  Otherwise, if Ax_new and Ax are NULL then no values
 // are extracted.
 
-// TODO allow this function to do typecasting.  Create 169 different versions
-// for all 13x13 versions.  Use this as part of Method 24, C=A assignment.
-// Can also use typecasting for GB_Matrix_diag.
+// TODO allow this function to do typecasting.
 
 #include "GB.h"
 #include "GB_partition.h"

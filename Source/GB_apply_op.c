@@ -524,8 +524,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             #if GB_JIT_ENABLED
             if (info == GrB_NO_VALUE)
             {
-                info = GB_apply_bind1st_jit (Cx, ctype, (GrB_BinaryOp) op,
-                    scalarx, A, A_nthreads) ;
+                info = GB_apply_bind1st_jit (Cx, ctype,
+                    (GrB_BinaryOp) op, scalarx, A, A_nthreads) ;
             }
             #endif
 
@@ -573,8 +573,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             #if GB_JIT_ENABLED
             if (info == GrB_NO_VALUE)
             {
-                info = GB_apply_bind2nd_jit (Cx, ctype, (GrB_BinaryOp) op,
-                    A, scalarx, A_nthreads) ;
+                info = GB_apply_bind2nd_jit (Cx, ctype,
+                    (GrB_BinaryOp) op, A, scalarx, A_nthreads) ;
             }
             #endif
         }
@@ -685,6 +685,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             GB_Type_code xcode = op->xtype->code ;
             GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ;
 
+            // Cx [p] = op (Ax [p], i, j, ythunk)
             #define GB_APPLY_OP(p)                                          \
                 int64_t i = GBI_A (Ai, p, avlen) ;                          \
                 GB_void xwork [GB_VLA(xsize)] ;                             \

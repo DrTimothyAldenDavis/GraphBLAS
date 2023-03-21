@@ -7,12 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: needed (now).
+// JIT: done.
 
 #define GB_FREE_ALL         \
     GB_Matrix_free (&C) ;
 
 #include "GB_split.h"
+#include "GB_stringify.h"
+#include "GB_apply.h"
 
 GrB_Info GB_split_bitmap            // split a bitmap matrix
 (
@@ -89,13 +91,12 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;
             int C_nthreads = GB_nthreads (cnzmax, chunk, nthreads_max) ;
-            int64_t cnz = 0 ;
 
             //------------------------------------------------------------------
             // copy the tile from A into C
             //------------------------------------------------------------------
 
-            bool done = false ;
+            info = GrB_NO_VALUE ;
 
             if (A_iso)
             { 
@@ -109,6 +110,7 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
                 #define GB_ISO_SPLIT
                 #define GB_COPY(pC,pA) ;
                 #include "GB_split_bitmap_template.c"
+                info = GrB_SUCCESS ;
 
             }
             else
@@ -127,35 +129,38 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
 
                     case GB_1BYTE : // uint8, int8, bool, or 1-byte user
                         #define GB_C_TYPE uint8_t
+                        #define GB_A_TYPE uint8_t
                         #include "GB_split_bitmap_template.c"
+                        info = GrB_SUCCESS ;
                         break ;
 
                     case GB_2BYTE : // uint16, int16, or 2-byte user
                         #define GB_C_TYPE uint16_t
+                        #define GB_A_TYPE uint16_t
                         #include "GB_split_bitmap_template.c"
+                        info = GrB_SUCCESS ;
                         break ;
 
                     case GB_4BYTE : // uint32, int32, float, or 4-byte user
                         #define GB_C_TYPE uint32_t
+                        #define GB_A_TYPE uint32_t
                         #include "GB_split_bitmap_template.c"
+                        info = GrB_SUCCESS ;
                         break ;
 
                     case GB_8BYTE : // uint64, int64, double, float complex,
                                     // or 8-byte user defined
                         #define GB_C_TYPE uint64_t
+                        #define GB_A_TYPE uint64_t
                         #include "GB_split_bitmap_template.c"
+                        info = GrB_SUCCESS ;
                         break ;
 
                     case GB_16BYTE : // double complex or 16-byte user-defined
                         #define GB_C_TYPE GB_blob16
-                        /*
-                        #define GB_C_TYPE uint64_t
-                        #undef  GB_COPY
-                        #define GB_COPY(pC,pA)                      \
-                            Cx [2*pC  ] = Ax [2*pA  ] ;             \
-                            Cx [2*pC+1] = Ax [2*pA+1] ;
-                        */
+                        #define GB_A_TYPE GB_blob16
                         #include "GB_split_bitmap_template.c"
+                        info = GrB_SUCCESS ;
                         break ;
 
                     default:;
@@ -163,16 +168,42 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
                 #endif
             }
 
-            // JIT todo: split bitmap
+            //------------------------------------------------------------------
+            // via the JIT kernel
+            //------------------------------------------------------------------
 
-            if (!done)
+            #if GB_JIT_ENABLED
+            if (info == GrB_NO_VALUE)
+            { 
+                struct GB_UnaryOp_opaque op_header ;
+                GB_Operator op = GB_unop_identity (atype, &op_header) ;
+                ASSERT_UNARYOP_OK (op, "id op for split bitmap", GB0) ;
+                info = GB_split_bitmap_jit (C, op, A, avstart, aistart,
+                    C_nthreads) ;
+            }
+            #endif
+
+            //------------------------------------------------------------------
+            // via the generic kernel
+            //------------------------------------------------------------------
+
+            if (info == GrB_NO_VALUE)
             { 
                 // user-defined types
                 #define GB_C_TYPE GB_void
+                #define GB_A_TYPE GB_void
                 #undef  GB_COPY
                 #define GB_COPY(pC,pA)  \
                     memcpy (Cx + (pC)*asize, Ax +(pA)*asize, asize) ;
                 #include "GB_split_bitmap_template.c"
+                info = GrB_SUCCESS ;
+            }
+
+            if (info != GrB_SUCCESS)
+            { 
+                // out of memory, or other error
+                GB_FREE_ALL ;
+                return (info) ;
             }
 
             //------------------------------------------------------------------
@@ -180,7 +211,6 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
             //------------------------------------------------------------------
 
             C->magic = GB_MAGIC ;
-            C->nvals = cnz ;
             ASSERT_MATRIX_OK (C, "C for GB_split", GB0) ;
             GB_OK (GB_conform (C, Werk)) ;
             if (csc)

@@ -268,8 +268,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     if (info == GrB_NO_VALUE)
     { 
         // C+= A*B, C is full
-        info = GB_AxB_dot4_jit (C, C_in_iso, A, B, semiring, flipxy,
-            A_slice, B_slice, naslice, nbslice, nthreads, Werk) ;
+        info = GB_AxB_dot4_jit (C, C_in_iso, A, B, semiring,
+            flipxy, A_slice, B_slice, naslice, nbslice, nthreads, Werk) ;
     }
     #endif
 
@@ -303,7 +303,6 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     { 
         // out of memory, or other error
         GB_FREE_ALL ;
-        printf ("panic! %d\n", info) ;
     }
     return (info) ;
 }

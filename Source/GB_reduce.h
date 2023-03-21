@@ -21,17 +21,6 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
-(
-    void *z,                    // result
-    const GrB_Monoid monoid,    // monoid to do the reduction
-    const GrB_Matrix A,         // matrix to reduce
-    GB_void *restrict W,        // workspace
-    bool *restrict F,           // workspace
-    int ntasks,                 // # of tasks to use
-    int nthreads                // # of threads to use
-) ;
-
 GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 (
     GrB_Matrix C,                   // input/output for results, size n-by-1

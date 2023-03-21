@@ -84,24 +84,6 @@ void GB_AxB_saxpy4_tasks
     int64_t cvlen                   // # of vectors of C (bitmap or full)
 ) ;
 
-GrB_Info GB_AxB_saxpy4_jit          // C+=A*B, saxpy4 method, via the JIT
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GrB_Semiring semiring,
-    const bool flipxy,
-    const int ntasks,
-    const int nthreads,
-    const int nfine_tasks_per_vector,
-    const bool use_coarse_tasks,
-    const bool use_atomics,
-    const int64_t *A_slice,
-    const int64_t *H_slice,
-    GB_void *restrict Wcx,
-    int8_t *restrict Wf
-) ;
-
 //------------------------------------------------------------------------------
 // saxpy5: C+=A*B where A is bitmap/full and B is sparse/hyper
 //------------------------------------------------------------------------------
@@ -115,18 +97,6 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *done_in_place,            // if true, saxpy5 has computed the result
     GB_Werk Werk
-) ;
-
-GrB_Info GB_AxB_saxpy5_jit          // C+=A*B, saxpy5 method, via the JIT
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GrB_Semiring semiring,
-    const bool flipxy,
-    const int ntasks,
-    const int nthreads,
-    const int64_t *B_slice
 ) ;
 
 //------------------------------------------------------------------------------
@@ -149,30 +119,6 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     GB_Werk Werk
-) ;
-
-GrB_Info GB_AxB_saxbit_jit      // C<M>=A*B, saxbit, via the JIT
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const bool Mask_comp,
-    const bool Mask_struct,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GrB_Semiring semiring,
-    const bool flipxy,
-    const int ntasks,
-    const int nthreads,
-    const int nfine_tasks_per_vector,
-    const bool use_coarse_tasks,
-    const bool use_atomics,
-    const int64_t *restrict M_ek_slicing,
-    const int M_nthreads,
-    const int M_ntasks,
-    const int64_t *restrict A_slice,
-    const int64_t *restrict H_slice,
-    GB_void *restrict Wcx,
-    int8_t *restrict Wf
 ) ;
 
 //------------------------------------------------------------------------------

@@ -690,28 +690,5 @@ void GB_AxB_saxpy3_sym_nss      // C<!M> = A*B, A is sparse, B is sparse
     const int nthreads          // number of threads
 ) ;
 
-//------------------------------------------------------------------------------
-// GB_AxB_saxpy3_jit: construct, compile, and call the JIT kernel for saxpy3
-//------------------------------------------------------------------------------
-
-GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const bool Mask_comp,
-    const bool Mask_struct,
-    const bool M_in_place,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GrB_Semiring semiring,
-    const bool flipxy,
-    GB_saxpy3task_struct *restrict SaxpyTasks,
-    const int ntasks,
-    const int nfine,
-    const int nthreads,
-    const int do_sort,          // if nonzero, try to sort in saxpy3
-    GB_Werk Werk
-) ;
-
 #endif
 

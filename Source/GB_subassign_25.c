@@ -186,7 +186,7 @@ GrB_Info GB_subassign_25
                 /* accum: */ NULL,
                 /* A: */ A,
                 /* scalar, scalar_type: */ NULL, NULL,
-                GB_SUBASSIGN, "subassign_25", GB_JIT_KERNEL_SUBASSIGN_25,
+                GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_25, "subassign_25",
                 Werk) ;
         }
         #endif
@@ -197,11 +197,6 @@ GrB_Info GB_subassign_25
 
         if (info == GrB_NO_VALUE)
         { 
-
-            //-----------------------------------------------------------------
-            // get operators, functions, workspace, contents of A and C
-            //------------------------------------------------------------------
-
             #include "GB_generic.h"
             GB_BURBLE_MATRIX (A, "(generic C(:,:)<M,struct>=A assign, "
                 "method 25) ") ;

@@ -515,7 +515,7 @@ GrB_BinaryOp GxB_ONEB_FC64   = & GB_OPAQUE (PAIR_FC64) ;
 
 // nonzombie function for generic case
 extern void GB_nonzombie_func (bool *z, const void *x,
-    GrB_Index i, GrB_Index j, const void *y) ;
+    int64_t i, GrB_Index j, const void *y) ;
 
 // GxB_NONZOMBIE: internal use only
 struct GB_IndexUnaryOp_opaque GB_OPAQUE (NONZOMBIE) =

@@ -2,7 +2,7 @@
 // GB_reduce_to_scalar_template: z=reduce(A), reduce a matrix to a scalar
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -32,7 +32,11 @@
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     int64_t anz = GB_nnz_held (A) ;
     ASSERT (anz > 0) ;
+    #ifdef GB_JIT_KERNEL
+    #define A_has_zombies GB_A_HAS_ZOMBIES
+    #else
     const bool A_has_zombies = (A->nzombies > 0) ;
+    #endif
     ASSERT (!A->iso) ;
     GB_DECLARE_TERMINAL_CONST (zterminal) ;
 

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: needed (now).
+// JIT: needed.
 
 // Returns true if all entries in A are the same, and A can then be converted
 // to iso if currently non-iso.  Returns false if A is bitmap, has any zombies,
@@ -15,9 +15,9 @@
 
 #include "GB.h"
 
-bool GB_check_if_iso               // return true if A is iso, false otherwise
+bool GB_check_if_iso        // return true if A is iso, false otherwise
 (
-    const GrB_Matrix A          // matrix to reduce
+    const GrB_Matrix A      // matrix to check if iso
 )
 {
 
@@ -77,7 +77,7 @@ bool GB_check_if_iso               // return true if A is iso, false otherwise
 
     bool done = false ;
 
-    #ifndef GBCUDA_DEV
+    // TODO: disable these kernels for the compact case:
     {
 
         #define GB_GET_FIRST_VALUE(atype_t, a, Ax)                      \
@@ -124,9 +124,8 @@ bool GB_check_if_iso               // return true if A is iso, false otherwise
             default:;
         }
     }
-    #endif
 
-    // JIT todo: type, check if matrix is iso
+    // TODO: JIT would go here
 
     if (!done)
     { 

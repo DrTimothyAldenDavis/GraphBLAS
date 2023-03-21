@@ -313,8 +313,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
-            info = GB_AxB_dot3_jit (C, M, Mask_struct, A, B, semiring, flipxy,
-                TaskList, ntasks, nthreads) ;
+            info = GB_AxB_dot3_jit (C, M, Mask_struct, A, B,
+                semiring, flipxy, TaskList, ntasks, nthreads) ;
         }
         #endif
 
@@ -334,7 +334,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     if (info != GrB_SUCCESS)
     { 
         // out of memory, or other error
-        printf ("dot3 died %d\n", info) ;
         GB_FREE_ALL ;
         return (info) ;
     }

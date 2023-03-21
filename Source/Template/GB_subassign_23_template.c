@@ -18,6 +18,20 @@
 {
 
     //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
+    #ifdef GB_JIT_KERNEL
+    #define A_is_bitmap GB_A_IS_BITMAP
+    #define A_is_full   GB_A_IS_FULL
+    #define A_iso       GB_A_ISO
+    #else
+    bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    bool A_is_full = GB_as_if_full (A) ;
+    const bool A_iso = A->iso ;
+    #endif
+
+    //--------------------------------------------------------------------------
     // slice the A matrix
     //--------------------------------------------------------------------------
 
@@ -25,8 +39,6 @@
     double chunk = GB_Context_chunk ( ) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     int A_ntasks, A_nthreads ;
-    bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    bool A_is_full = GB_as_if_full (A) ;
     if (A_is_bitmap || A_is_full)
     { 
         // C is dense and A is bitmap or as-if-full
@@ -50,7 +62,6 @@
 
     ASSERT (!C->iso) ;
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
-    const bool A_iso = A->iso ;
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     ASSERT (GB_is_dense (C)) ;
     const int64_t cnz = GB_nnz_held (C) ;

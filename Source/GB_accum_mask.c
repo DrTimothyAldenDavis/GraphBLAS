@@ -101,7 +101,7 @@
         c = GB_mex_cast (C.matrix (p), opclass) ;
         t = GB_mex_cast (T.matrix (p), opclass) ;
         z = GB_spec_op (accum, c, t) ;
-        % cast the result z frop opclass into the class of C
+        % cast the result z from opclass into the class of C
         Z.matrix (p) = GB_mex_cast (z, C.class) ;
 
         % copy entries in C but not in T, into the result Z, no typecasting

@@ -86,16 +86,6 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
-(
-    GrB_Matrix C,
-    const GrB_Matrix D,
-    const GrB_Matrix B,
-    const GrB_BinaryOp multiply,
-    const bool flipxy,
-    const int nthreads
-) ;
-
 GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
 (
     GrB_Matrix C,                   // output matrix, static header
@@ -105,18 +95,6 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
                                     // the monoid is not used
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     GB_Werk Werk
-) ;
-
-GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix D,
-    const GrB_BinaryOp multiply,
-    const bool flipxy,
-    const int64_t *restrict A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
 ) ;
 
 bool GB_AxB_semiring_builtin        // true if semiring is builtin
@@ -152,36 +130,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_AxB_dot2_jit        // C<M>=A'*B, dot2 method, via the JIT
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const bool Mask_comp,
-    const bool Mask_struct,
-    const GrB_Matrix A, int64_t *restrict A_slice,
-    const GrB_Matrix B, int64_t *restrict B_slice,
-    const GrB_Semiring semiring,
-    const bool flipxy,
-    const int nthreads,
-    const int naslice,
-    const int nbslice
-) ;
-
-GrB_Info GB_AxB_dot2n_jit        // C<M>=A*B, dot2n method, via the JIT
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const bool Mask_comp,
-    const bool Mask_struct,
-    const GrB_Matrix A, int64_t *restrict A_slice,
-    const GrB_Matrix B, int64_t *restrict B_slice,
-    const GrB_Semiring semiring,
-    const bool flipxy,
-    const int nthreads,
-    const int naslice,
-    const int nbslice
-) ;
-
 bool GB_is_diagonal             // true if A is diagonal
 (
     const GrB_Matrix A          // input matrix to examine
@@ -199,19 +147,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     GB_Werk Werk
-) ;
-
-GrB_Info GB_AxB_dot3_jit        // C<M>=A'B, dot3, via the JIT
-(
-    GrB_Matrix C,               // never iso for this kernel
-    const GrB_Matrix M, const bool Mask_struct,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GrB_Semiring semiring,
-    const bool flipxy,
-    const GB_task_struct *restrict TaskList,
-    const int ntasks,
-    const int nthreads
 ) ;
 
 GrB_Info GB_AxB_dot3_slice
@@ -246,22 +181,6 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     const GrB_Semiring semiring,    // semiring that defines C+=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *done_in_place,            // if true, dot4 has computed the result
-    GB_Werk Werk
-) ;
-
-GrB_Info GB_AxB_dot4_jit            // C+=A'*B, dot4 method, via the JIT
-(
-    GrB_Matrix C,
-    const bool C_in_iso,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GrB_Semiring semiring,
-    const bool flipxy,
-    const int64_t *restrict A_slice,
-    const int64_t *restrict B_slice,
-    const int naslice,
-    const int nbslice,
-    const int nthreads,
     GB_Werk Werk
 ) ;
 

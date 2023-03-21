@@ -16,6 +16,22 @@
 // list of jitifyed kernels
 //------------------------------------------------------------------------------
 
+// kernel families
+
+typedef enum
+{
+    GB_jit_apply_family  = 0,
+    GB_jit_assign_family = 1,
+    GB_jit_build_family  = 2,
+    GB_jit_ewise_family  = 3,
+    GB_jit_mxm_family    = 4,
+    GB_jit_reduce_family = 5,
+    GB_jit_select_family = 6
+}
+GB_jit_family ;
+
+// FIXME: make this an enum:
+
 // reduce to scalar
 #define GB_JIT_KERNEL_REDUCE        1   /* GB_reduce_to_scalar  */
 
@@ -46,9 +62,16 @@
 #define GB_JIT_KERNEL_TRANSBIND1    23  /* GB_transpose_op          */
 #define GB_JIT_KERNEL_TRANSBIND2    24  /* GB_transpose_op          */
 
-// unop methods:
+// apply (unary and idxunary op) methods:
 #define GB_JIT_KERNEL_APPLYUNOP     25  /* GB_apply_op, GB_cast_array       */
 #define GB_JIT_KERNEL_TRANSUNOP     26  /* GB_transpose_op, GB_transpose_ix */
+#define GB_JIT_KERNEL_CONVERTS2B    101
+#define GB_JIT_KERNEL_CONCAT_SPARSE 102
+#define GB_JIT_KERNEL_CONCAT_FULL   103
+#define GB_JIT_KERNEL_CONCAT_BITMAP 104
+#define GB_JIT_KERNEL_SPLIT_SPARSE  105
+#define GB_JIT_KERNEL_SPLIT_FULL    106
+#define GB_JIT_KERNEL_SPLIT_BITMAP  107
 
 // build method:
 #define GB_JIT_KERNEL_BUILD         27  /* GB_builder               */
@@ -108,9 +131,6 @@
 // GB_subref_phase3
 
 // concat/split: todo
-// GB_concat_bitmap
-// GB_concat_full
-// GB_concat_sparse
 // GB_split_bitmap
 // GB_split_full
 // GB_split_sparse
@@ -125,7 +145,6 @@
 // utilities: todo
 // GB_check_if_iso
 // GB_convert_bitmap_worker
-// GB_convert_sparse_to_bitmap
 // GB_expand_iso
 // GB_sort
 
@@ -150,7 +169,7 @@ struct GB_jit_entry_struct
                                 // NULL for built-in kernels
     size_t suffix_size ;        // size of suffix malloc'd block
     void *dl_handle ;           // handle from dlopen, to be passed to dlclose
-    void *dl_function ;         // address of the function itself, from dlsym
+    void *dl_function ;         // address of function itself, from dlsym
 } ;
 
 typedef struct GB_jit_entry_struct GB_jit_entry ;
@@ -159,12 +178,33 @@ typedef struct GB_jit_entry_struct GB_jit_entry ;
 // GB_jitifyer methods for GraphBLAS
 //------------------------------------------------------------------------------
 
+char *GB_jitifyer_libfolder (void) ;    // return path to library folder
+
+GrB_Info GB_jitifyer_load
+(
+    // output:
+    void **dl_function,         // pointer to JIT kernel
+    // input:
+    GB_jit_family family,       // kernel family
+    const char *kname,          // kname for the kernel_name
+    uint64_t hash,              // hash code for the kernel
+    GB_jit_encoding *encoding,  // encoding of the problem
+    const char *suffix,         // suffix for the kernel_name (NULL if none)
+    // operator and type definitions
+    GrB_Semiring semiring,
+    GrB_Monoid monoid,
+    GB_Operator op,
+    GrB_Type type1,
+    GrB_Type type2,
+    GrB_Type type3
+) ;
+
 void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
 (
     // input:
     uint64_t hash,          // hash = GB_jitifyer_hash_encoding (encoding) ;
     GB_jit_encoding *encoding,
-    char *suffix
+    const char *suffix
 ) ;
 
 bool GB_jitifyer_insert         // return true if successful, false if failure
@@ -172,7 +212,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
     // input:
     uint64_t hash,              // hash for the problem
     GB_jit_encoding *encoding,  // primary encoding
-    char *suffix,               // suffix for user-defined types/operators
+    const char *suffix,         // suffix for user-defined types/operators
     void *dl_handle,            // library handle from dlopen
     void *dl_function           // function handle from dlsym
 ) ;

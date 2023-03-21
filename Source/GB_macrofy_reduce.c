@@ -46,7 +46,6 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     // copyright, license, and describe monoid
     //--------------------------------------------------------------------------
 
-    GB_macrofy_copyright (fp) ;
     fprintf (fp, "// reduce: (%s, %s)\n",
         monoid->op->name, monoid->op->ztype->name) ;
 

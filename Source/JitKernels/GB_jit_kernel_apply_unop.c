@@ -7,32 +7,21 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_kernel_shared_definitions.h"
+#include "GB_unop_shared_definitions.h"
 
 #if GB_DEPENDS_ON_I
 
     // cij = op (aij)
-    #define GB_APPLY_OP(p)                      \
-    {                                           \
-        int64_t i = GBI_A (Ai, p, avlen) ;      \
-        /* aij = Ax [p] */                      \
-        GB_DECLAREA (aij) ;                     \
-        GB_GETA (aij, Ax, p, false) ;           \
-        /* Cx [p] = unop (aij) */               \
-        GB_UNARYOP (Cx [p], aij, i, j, y) ;     \
+    #define GB_APPLY_OP(p)                          \
+    {                                               \
+        int64_t i = GBI_A (Ai, p, avlen) ;          \
+        GB_UNOP (Cx, p, Ax, p, A_iso, i, j, y) ;    \
     }
 
 #else
 
     // cij = op (aij)
-    #define GB_APPLY_OP(p)                      \
-    {                                           \
-        /* aij = Ax [p] */                      \
-        GB_DECLAREA (aij) ;                     \
-        GB_GETA (aij, Ax, p, false) ;           \
-        /* Cx [p] = unop (aij) */               \
-        GB_UNARYOP (Cx [p], aij, i, j, y) ;     \
-    }
+    #define GB_APPLY_OP(p) GB_UNOP (Cx, p, Ax, p, A_iso, i, j, y)
 
 #endif
 

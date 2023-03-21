@@ -6048,7 +6048,7 @@ the row indices given by \verb'vi', with the corresponding values in \verb'vx'.
 The two pointers \verb'vi' and \verb'vx' are returned as \verb'NULL', which
 denotes that they are no longer owned by the user application.  They have
 instead been moved into \verb'v'.  If \verb'jumbled'
-is true, the row indices in \verb'vi' must appear in sorted order.  No
+is false, the row indices in \verb'vi' must appear in sorted order.  No
 duplicates can appear.  These conditions are not checked, so results are
 undefined if they are not met exactly.  The user application can check the
 resulting vector \verb'v' with \verb'GxB_print', if desired, which will

@@ -7,6 +7,14 @@
 
 //------------------------------------------------------------------------------
 
+// Create a macro for a unary operator, of the form
+//
+//      #define GB_UNARYOP(z,x,i,j,y) z = f (x,i,j,y)
+//
+// if flipij is true:
+//
+//      #define GB_UNARYOP(z,x,j,i,y) z = f (x,i,j,y)
+
 #include "GB.h"
 #include "GB_stringify.h"
 #include <ctype.h>

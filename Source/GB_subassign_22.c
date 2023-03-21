@@ -7,7 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: needed (now).
+// JIT: done.
+
+// Method 22: C += scalar, where C is dense
+
+// M:           NULL
+// Mask_comp:   false
+// Mask_struct: ignored
+// C_replace:   false
+// accum:       present
+// A:           scalar
+// S:           none
 
 // C += scalar where C is a dense or full matrix.
 // C can have any sparsity format, as long as all entries are present;
@@ -17,6 +27,7 @@
 #include "GB_subassign_dense.h"
 #include "GB_binop.h"
 #include "GB_unused.h"
+#include "GB_stringify.h"
 #ifndef GBCUDA_DEV
 #include "GB_aop__include.h"
 #endif
@@ -126,8 +137,21 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
     //--------------------------------------------------------------------------
 
     #if GB_JIT_ENABLED
-    // JIT TODO: aop: subassign 22
     // pass (ywork, accum->ytype) in place of (scalar, scalar_type)
+    if (info == GrB_NO_VALUE)
+    {
+        info = GB_subassign_jit (C,
+            /* C_replace: */ false,
+            /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
+            /* J, nj, nJ, Jkind, Jcolon: */ NULL, 0, 0, GB_ALL, NULL,
+            /* M: */ NULL,
+            /* Mask_comp: */ false,
+            /* Mask_struct: */ true,
+            /* accum: */ accum,
+            /* A: */ NULL,
+            /* scalar, scalar_type: */ ywork, accum->ytype,
+            GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_22, "subassign_22", Werk) ;
+    }
     #endif
 
     //--------------------------------------------------------------------------
@@ -136,7 +160,6 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
 
     if (info == GrB_NO_VALUE)
     { 
-
         #include "GB_generic.h"
         GB_BURBLE_MATRIX (C, "(generic C(:,:)+=x assign) ") ;
 
