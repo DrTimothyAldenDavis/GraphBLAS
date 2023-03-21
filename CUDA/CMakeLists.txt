@@ -94,7 +94,7 @@ set_target_properties(graphblascuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 # FIXME: use SUITESPARSE_CUDA_ARCHITECTURES
 set_target_properties(graphblascuda PROPERTIES CUDA_ARCHITECTURES "52;75;80" )
 
-target_link_libraries(graphblascuda CUDA::nvrtc CUDA::cudart_static CUDA::nvToolsExt )
+target_link_libraries(graphblascuda CUDA::nvrtc CUDA::cudart_static CUDA::cuda_driver CUDA::nvToolsExt )
 
 #-------------------------------------------------------------------------------
 # installation location
