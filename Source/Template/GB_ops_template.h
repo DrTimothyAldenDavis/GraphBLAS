@@ -355,7 +355,7 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     GB_OP (LOG2  , GB_clog2f   )
 
     // complex only
-    GB_OP (CONJ  , conjf       )
+    //GB_OP (CONJ  , conjf       )
 
 #elif defined ( GB_DOUBLE_COMPLEX )
 
@@ -396,7 +396,7 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     GB_OP (LOG2  , GB_clog2    )
 
     // complex only
-    GB_OP (CONJ  , conj        )
+    //GB_OP (CONJ  , conj        )
 
 #endif
 

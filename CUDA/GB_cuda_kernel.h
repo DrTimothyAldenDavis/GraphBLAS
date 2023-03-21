@@ -207,6 +207,7 @@ GrB_Desc_Value ;
 #define GBI_UNFLIP(Ai,p,avlen)      \
     ((Ai == NULL) ? ((p) % (avlen)) : GB_UNFLIP (Ai [p]))
 
+#include "GB_index.h"
 #include "GB_partition.h"
 #include "GB_pun.h"
 #include "GB_opaque.h"

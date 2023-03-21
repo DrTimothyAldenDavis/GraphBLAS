@@ -81,7 +81,7 @@ GXB_OP1 (ONE, "one") ;
 
     #if defined ( GB_COMPLEX )
     // complex only
-    GXB_OP1 (CONJ     , "conj"     ) ;
+    //GXB_OP1 (CONJ     , "conj"     ) ;
     #else
     // real only
     GXB_OP1 (LGAMMA   , "lgamma"   ) ;
