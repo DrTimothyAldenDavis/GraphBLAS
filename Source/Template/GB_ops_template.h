@@ -355,7 +355,10 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     GB_OP (LOG2  , GB_clog2f   )
 
     // complex only
-    //GB_OP (CONJ  , conjf       )
+    #ifndef GBCUDA
+    // FIXME: conj is causing problems in CUDA
+    GB_OP (CONJ  , conjf       )
+    #endif
 
 #elif defined ( GB_DOUBLE_COMPLEX )
 
@@ -396,7 +399,10 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     GB_OP (LOG2  , GB_clog2    )
 
     // complex only
-    //GB_OP (CONJ  , conj        )
+    #ifndef GBCUDA
+    // FIXME: conj is causing problems in CUDA
+    GB_OP (CONJ  , conj        )
+    #endif
 
 #endif
 

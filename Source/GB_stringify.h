@@ -33,7 +33,9 @@
 #define GB_JIT_ENABLED 0
 #endif
 
-#undef GB_JIT_ENABLED
+// FIXME: CPU JIT disabled for now
+#undef  GB_JIT_ENABLED
+#define GB_JIT_ENABLED 0
 
 //------------------------------------------------------------------------------
 // print copyright and license
