@@ -19,7 +19,6 @@
     GrB_Matrix_free_(&C) ;              \
     GrB_Matrix_free_(&A) ;              \
     GrB_Scalar_free_(&Thunk_type) ;     \
-/*  GxB_SelectOp_free_(&op) ;   */      \
     GrB_IndexUnaryOp_free_(&op) ;       \
     GrB_Descriptor_free_(&desc) ;       \
     GB_mx_put_global (true) ;           \
@@ -77,7 +76,6 @@ void mexFunction
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Matrix C = NULL ;
     GrB_Matrix A = NULL ;
-//  GxB_SelectOp op = NULL ;
     GrB_IndexUnaryOp op = NULL ;
     GrB_Info info ;
     GrB_Descriptor desc = NULL ;
@@ -126,8 +124,6 @@ void mexFunction
 
     // create operator
     // use the user-defined operator, from the LoHi_band function
-//  METHOD (GxB_SelectOp_new (&op, (GxB_select_function) LoHi_band,
-//      NULL, Thunk_type)) ;
     METHOD (GrB_IndexUnaryOp_new (&op, (GxB_index_unary_function) LoHi_band,
         GrB_BOOL, GrB_FP64, Thunk_type)) ;
 
@@ -136,7 +132,6 @@ void mexFunction
     GrB_Matrix_ncols (&ncols, A) ;
     if (bandwidth.lo == 0 && bandwidth.hi == 0 && nrows == 10 && ncols == 10)
     {
-//      GxB_SelectOp_fprint_ (op, 3, NULL) ;
         GxB_IndexUnaryOp_fprint (op, "lohi_op", 3, NULL) ;
     }
 

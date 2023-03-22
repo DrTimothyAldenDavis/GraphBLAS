@@ -19,7 +19,6 @@
     GrB_Matrix_free_(&C) ;              \
     GrB_Matrix_free_(&M) ;              \
     GrB_Matrix_free_(&A) ;              \
-/*  GxB_SelectOp_free_(&isnanop) ;   */ \
     GrB_IndexUnaryOp_free_(&isnanop) ;  \
     GrB_Descriptor_free_(&desc) ;       \
     GB_mx_put_global (true) ;           \
@@ -56,7 +55,6 @@ void mexFunction
     GrB_Matrix A = NULL ;
     GrB_Descriptor desc = NULL ;
     GrB_Scalar Thunk = NULL ;
-//  GxB_SelectOp isnanop = NULL ;
     GrB_IndexUnaryOp isnanop = NULL ;
 
     // check inputs
@@ -115,8 +113,6 @@ void mexFunction
     if (op == NULL)
     {
         // user-defined isnan operator, with no Thunk
-//      GxB_SelectOp_new (&isnanop, isnan64, GrB_FP64, NULL) ;
-//      op = isnanop ;
         GrB_IndexUnaryOp_new (&isnanop, (void *) isnan64,
             GrB_BOOL, GrB_FP64, GrB_FP64) ;
     }

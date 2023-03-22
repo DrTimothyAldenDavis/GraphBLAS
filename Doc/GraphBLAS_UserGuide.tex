@@ -793,7 +793,7 @@ GraphBLAS matrices.  Some of these may be added in future releases.
         % a MATLAB/Octave mexFunction to modify its inputs, which is
         % technically possible but not permitted by the MATLAB/Octave API.
         % This can have significant impact on performance, if an
-        % m-file makes many repeated tiny changes to a matrix.  This 
+        % m-file makes many repeated tiny changes to a matrix.  This
         % can be done in the C API but not MATLAB/Octave.
     \item Linear indexing: \verb'A(:)' for a 2D matrix, and \verb'I=find(A)'.
     \item Singleton expansion.
@@ -834,8 +834,8 @@ Both of them allow for pending work to be left pending in a \verb'GrB_Matrix'.
 
 The Julia interface is at
 \url{https://github.com/JuliaSparse/SuiteSparseGraphBLAS.jl}, developed by Will
-Kimmerer, Abhinav Mehndiratta, Miha Zgubic, and Viral Shah.  
-Unlike the MATLAB/Octave interface (and like the Python interfaces) the Julia 
+Kimmerer, Abhinav Mehndiratta, Miha Zgubic, and Viral Shah.
+Unlike the MATLAB/Octave interface (and like the Python interfaces) the Julia
 interface can keep pending work (zombies, pending tuples, jumbled state) in
 a \verb'GrB_Matrix'. This makes Python and Julia the best high-level interfaces
 for SuiteSparse:GraphBLAS.  MATLAB is not as well suited, since it does not
@@ -1015,7 +1015,7 @@ Finally, SuiteSparse:GraphBLAS gives itself a unique name of the form
 \verb'#ifdef' tests. This is helpful in case a particular implementation
 provides non-standard features that extend the GraphBLAS specification, such as
 additional predefined built-in operators, or if a GraphBLAS implementation does
-not yet fully implement all of the GraphBLAS specification. 
+not yet fully implement all of the GraphBLAS specification.
 
 For example, SuiteSparse:GraphBLAS predefines additional built-in operators not
 in the specification.  If the user application wishes to use these in any
@@ -1303,7 +1303,7 @@ Error                         & value & description \\
 {\footnotesize
 \begin{verbatim}
 GrB_Info GrB_error      // return a string describing the last error
-( 
+(
     const char **error, // error string
     <type> object       // a GrB_matrix, GrB_Vector, etc.
 ) ;
@@ -1850,7 +1850,7 @@ of $z$ and $x$ need not be the same.
 
 In the notation in the tables
 below, $T$ is any of the 13 built-in types and is a place-holder for
-\verb'BOOL', \verb'INT8', \verb'UINT8', ... 
+\verb'BOOL', \verb'INT8', \verb'UINT8', ...
 \verb'FP32', \verb'FP64', \verb'FC32', or \verb'FC64'.
 For example, \verb'GrB_AINV_INT32' is a unary operator that computes
 \verb'z=-x' for two values \verb'x' and \verb'z' of type \verb'GrB_INT32'.
@@ -2956,7 +2956,7 @@ better performance.
 \begin{verbatim}
 GrB_Info GrB_wait               // wait for a user-defined binary operator
 (
-    GrB_IndexUnaryOp op,        // index-unary operator to wait for   
+    GrB_IndexUnaryOp op,        // index-unary operator to wait for
     GrB_WaitMode mode           // GrB_COMPLETE or GrB_MATERIALIZE
 ) ;
 \end{verbatim}
@@ -3466,7 +3466,7 @@ Twelve kinds of \verb'GrB*' semirings are available for all 10 real, non-boolean
     \verb'PLUS_TIMES', \verb'PLUS_MIN',
     \verb'MIN_PLUS', \verb'MIN_TIMES', \verb'MIN_FIRST', \verb'MIN_SECOND', \verb'MIN_MAX',
     \verb'MAX_PLUS', \verb'MAX_TIMES', \verb'MAX_FIRST', \verb'MAX_SECOND', and \verb'MAX_MIN'.
-Four semirings are for boolean types only: 
+Four semirings are for boolean types only:
     \verb'LOR_LAND', \verb'LAND_LOR', \verb'LXOR_LAND', and \verb'LXNOR_LOR'.
 
 SuiteSparse:GraphBLAS pre-defines 1,553 semirings from built-in types and
@@ -5254,7 +5254,7 @@ $(i,j)$th tile.  The matrix \verb'C' is constructed by concatenating these
 tiles together, as:
 
 \[
-C = 
+C =
 \left[
 \begin{array}{ccccc}
           A_{0,0}   & A_{0,1}   & A_{0,2}   & \cdots & A_{0,n-1}   \\
@@ -5548,7 +5548,7 @@ GraphBLAS function   & purpose                                      & Section \\
 %) ;
 %\end{verbatim}
 %} \end{mdframed}
-% 
+%
 % \verb'GrB_Vector_serializeSize' returns an upper bound on the size of the blob
 % needed to serialize a \verb'GrB_Vector' using \verb'GrB_Vector_serialize'.
 % After the vector is serialized, the actual size used is returned, and the blob
@@ -5634,7 +5634,7 @@ a matrix; see Section \ref{matrix_serialize_GxB} for more information.
 % ) ;
 % \end{verbatim}
 % } \end{mdframed}
-% 
+%
 % This method creates a vector \verb'w' by deserializing the contents of the
 % blob, constructed by either \verb'GrB_Vector_serialize' or
 % \verb'GxB_Vector_serialize'.
@@ -6897,7 +6897,7 @@ unpack then pack a hypersparse CSC matrix:
     // use the unpacked contents of A here, but do not change Ah or nvec.
     ...
     // to pack the data back into A:
-    GxB_Matrix_pack_HyperCSC (A, ...) ;     // pack most of A, except A->Y 
+    GxB_Matrix_pack_HyperCSC (A, ...) ;     // pack most of A, except A->Y
     GxB_pack_HyperHash (A, &Y, desc) ;      // then pack A->Y \end{verbatim}}
 
 The same process is used with \verb'GxB_Matrix_unpack_HyperCSR'.
@@ -6909,7 +6909,7 @@ returned as \verb'NULL'.  This is not an error condition, and
 \verb'A' is a matrix that provides quick access to the inverse of \verb'Ah'.
 It is not always needed and may not be present.  It is left as pending work to
 be computed when needed.  To ensure that the hyper-hash is constructed for a
-hypersparse matrix \verb'A', use \verb'GrB_Matrix_wait (A, GrB_MATERIALIZE)' 
+hypersparse matrix \verb'A', use \verb'GrB_Matrix_wait (A, GrB_MATERIALIZE)'
 
 If \verb'Y' is moved from \verb'A' and returned as non-\verb'NULL' to the
 caller, then it is the responsibility of the user application to free it, or to
@@ -7365,7 +7365,7 @@ The matrix can be imported in one of three different formats:
         \verb'Ai[Ap[j]...Ap[j+1]-1]', and the values of those entries appear in
         the same locations in \verb'Ax'.
         The row indices need not be in any particular order.
-        
+
     \item \verb'GrB_COO_FORMAT': % triplet format (like input to GrB*build)
         Coordinate format.  This is the same format as \newline
         \verb'GrB_Matrix_build'.
@@ -7784,7 +7784,7 @@ GrB_Desc_Value ;
 \item \verb'GxB_IMPORT' informs the \verb'GxB' pack methods
     that they can trust their input data, or not.  The default is to trust
     the input, for faster packing.  If the data is being packed from an
-    untrusted source, then additional checks should be made, and the 
+    untrusted source, then additional checks should be made, and the
     following descriptor setting should be used:
 
     {\footnotesize
@@ -8021,7 +8021,7 @@ safely does nothing if passed a \verb'NULL' handle, or if
 Built-in descriptors are listed in the table below.  A dash in the table
 indicates the default.  These descriptors may not be modified or freed.
 Attempts to modify them result in an error (\verb'GrB_INVALID_VALUE'); attempts
-to free them are silently ignored. 
+to free them are silently ignored.
 
 % \verb'GrB_NULL' is the default descriptor, with all settings at their defaults:
 % \verb'OUTP': do not replace the output,
@@ -8225,7 +8225,7 @@ used as the accumulator unifies the first cases, shown in
 Table~\ref{tab:maskaccum_nomask_2nd}.  The only difference now is the behavior
 when $c_{ij}$ is present but $t_{ij}$ is not.  Finally, the effect of
 \verb'GrB_FIRST_T' as the accumulator is shown in
-Table~\ref{tab:maskaccum_nomask_1st}. 
+Table~\ref{tab:maskaccum_nomask_1st}.
 
 \begin{table}[h]
 \begin{center}
@@ -8277,7 +8277,7 @@ Table~\ref{tab:maskaccum_nomask_1st}.
 \hline
        accum & ${\bf C}$ & ${\bf T}$        & action taken by ${\bf C = C \odot T}$ \\
 \hline
-        yes & $c_{ij}$ & $t_{ij}$         &  \\ 
+        yes & $c_{ij}$ & $t_{ij}$         &  \\
         yes &  -       & $t_{ij}$         &  $c_{ij} = t_{ij}$, insert \\
         yes & $c_{ij}$ &  -               &   \\
         yes &  -       &  -               &   \\
@@ -8992,7 +8992,7 @@ current implementation.  For all of these, \verb'GxB_get' returns a string
 \verb'int' array of size three.  The \verb'GxB_API_*' options can be used with
 \verb'GxB_get' to query the current GraphBLAS C API Specification.  For all of
 these, \verb'GxB_get' returns a string (\verb'char *'), except for
-\verb'GxB_API_VERSION', which takes as input an \verb'int' array of size three.  
+\verb'GxB_API_VERSION', which takes as input an \verb'int' array of size three.
 
 %===============================================================================
 \subsection{{\sf GxB\_Global\_Option\_set:} set a global option}
@@ -9177,7 +9177,7 @@ For example:
         {
             printf ("for vectors and matrices with 1 row or column\n") ;
         }
-        else if (k == GxB_NBITMAP_SWITCH - 1) 
+        else if (k == GxB_NBITMAP_SWITCH - 1)
         {
             printf ("for matrices with min dimension > %d\n", 1 << (k-1)) ;
         }
@@ -11875,7 +11875,7 @@ GrB_Info GrB_apply                  // C<M>=accum(C,op(x,A))
 
 \verb'GrB_Matrix_apply_BinaryOp1st_<type>'  applies a binary operator
 $z=f(x,y)$ to a matrix, where a scalar $x$ is bound to the first input of the
-operator. 
+operator.
 The scalar \verb'x' can be a non-opaque C scalar corresponding to a built-in
 type, a \verb'void *' for user-defined types, or a \verb'GrB_Scalar'.
 It is otherwise identical to \verb'GrB_Matrix_apply'.
@@ -12088,7 +12088,7 @@ functions discussed in this section.  When the details of a specific function
 are discussed, the specific name is used for clarity.
 
 \begin{alert}
-{\bf SPEC:} 
+{\bf SPEC:}
 All methods below use a monoid for the reduction.  The Specification also
 allows reductions using an associative and commutative binary operator.
 SuiteSparse:GraphBLAS permits the use of a \verb'GrB_BinaryOp' instead of a
@@ -12714,7 +12714,7 @@ The \verb'GxB_Iterator' is an object that allows user applications to iterate
 over the entries of a matrix or vector, one entry at a time.  Iteration can
 be done in a linear manner (analogous to reading a file one entry at a time,
 from start to finish), or in a random-access pattern (analogous to
-the \verb'fseek' method for repositioning the access to file to a different 
+the \verb'fseek' method for repositioning the access to file to a different
 position).
 
 Multiple iterators can be used on a single matrix or vector, even in parallel
@@ -12798,14 +12798,14 @@ it is freed, but with just one access method at a time.
 Once it is created, the \verb'iterator' must be attached to a matrix or
 vector.  This process also selects the method by which the \verb'iterator'
 will be used for a matrix.  Each of the four \verb'GxB_*Iterator_attach'
-methods returns a \verb'GrB_Info' result. 
+methods returns a \verb'GrB_Info' result.
 
     \begin{enumerate}
-    \item {\em row iterator}: 
+    \item {\em row iterator}:
     {\footnotesize
     \begin{verbatim}
     GrB_Info info = GxB_rowIterator_attach (iterator, A, desc) ; \end{verbatim}}
-    \item {\em column iterator}: 
+    \item {\em column iterator}:
     {\footnotesize
     \begin{verbatim}
     GrB_Info info = GxB_colIterator_attach (iterator, A, desc) ; \end{verbatim}}
@@ -12858,7 +12858,7 @@ the corresponding {\em seek} method is required.  These
 position of the iterator arbitrarily.
 
     \begin{enumerate}
-    \item {\em row iterator}: 
+    \item {\em row iterator}:
     {\footnotesize
     \begin{verbatim}
     GrB_Info info = GxB_rowIterator_seekRow (iterator, row) ;
@@ -12901,7 +12901,7 @@ position of the iterator arbitrarily.
         attached to a matrix via a prior call to \verb'GxB_rowIterator_attach'.
         Results are undefined if this precondition is not met.
 
-    \item {\em column iterator}: 
+    \item {\em column iterator}:
     {\footnotesize
     \begin{verbatim}
     GrB_Info info = GxB_colIterator_seekCol (iterator, col) ;
@@ -13017,7 +13017,7 @@ method, described below for each iterator:
     Preconditions: on input, the row iterator must already be attached to a
     matrix via a prior call to \verb'GxB_rowIterator_attach', and the
     \verb'iterator' must be at a specific row, via a prior call to
-    \verb'GxB_rowIterator_*seek*' or \verb'GxB_rowIterator_nextRow'. 
+    \verb'GxB_rowIterator_*seek*' or \verb'GxB_rowIterator_nextRow'.
     Results are undefined if these conditions are not met.
 
     \item {\em row iterator}:  To move to the next entry within a row.
@@ -13440,7 +13440,7 @@ sparse adjacency matrices of unweighted graphs, yet does not change the C API.
 To the user application, it still appears that $\bf C$ has \verb'nvals(C)'
 entries, all equal to 1.
 
-Creating and operating on iso-valued matrices (or just {\em iso matrices} for 
+Creating and operating on iso-valued matrices (or just {\em iso matrices} for
 short) is significantly faster than creating matrices with different data
 values.  A matrix that is iso requires only $O(1)$ space for its numerical
 values.  The sparse and hypersparse formats require an additional $O(n+e)$ or
@@ -13621,7 +13621,7 @@ Consider \verb'GrB_mxm', \verb'GrB_mxv', and \verb'GrB_vxm', and
 
     \item If \verb'A', \verb'B', and the monoid are all iso, then \verb'C'
     is iso, with a value $c=f(a,b)$, where $f$ is any multiplicative op
-    (including user-defined, which assumes that a user-defined $f$ has no 
+    (including user-defined, which assumes that a user-defined $f$ has no
     side effects).
 
     \item If \verb'A' and \verb'B' are both iso and full (all entries present,
@@ -13811,7 +13811,7 @@ has the same size as the submatrix \verb'C(I,J)'.
 If no accumulator operator is present, the following rules are used.
 
 \begin{itemize}
-\item 
+\item
 For matrix assignment, \verb'A' must be iso.  For scalar assignment, the single
 scalar is implicitly expanded into an iso matrix \verb'A' of the right size.
 If these rules do not hold, \verb'C' is not iso.
@@ -13867,12 +13867,12 @@ Positional operators (\verb'GxB_FIRSTI' and related) cannot be used as
 accumulator operators, so these rules do not consider that case.
 
 \begin{itemize}
-\item 
+\item
 For matrix assignment, \verb'A' must be iso.  For scalar assignment, the single
 scalar is implicitly expanded into an iso matrix \verb'A' of the right size.
 If these rules do not hold, \verb'C' is not iso.
 
-\item For these forms of assignment \verb'C' is iso if \verb'C' is 
+\item For these forms of assignment \verb'C' is iso if \verb'C' is
 empty on input, or if $c=c+a$ for the where $a$ is the iso value of \verb'A' or
 the value of the scalar for scalar assignment.
 
@@ -14171,7 +14171,7 @@ result, the following computation can be slower than it could be:
     GrB_mxv (y, NULL, NULL, semiring, A, x, NULL) ; \end{verbatim}}
 
 SuiteSparse must do extra work to compute the sparsity of this vector \verb'y',
-but if this is not needed, and \verb'y' can be padded with zeros (or 
+but if this is not needed, and \verb'y' can be padded with zeros (or
 the identity value of the monoid, to be precise), a faster method can be used,
 by relying on the accumulator.  Instead of computing \verb'y=A*x', set all
 entries of \verb'y' to zero first, and then compute \verb'y+=A*x' where the
@@ -14774,7 +14774,7 @@ if GraphBLAS is compiled without OpenMP.
 
 GraphBLAS makes extensive use of features in the ANSI C11 standard, and thus a
 C compiler supporting this version of the C standard is required to use
-all features of GraphBLAS. 
+all features of GraphBLAS.
 
 {\bf Any version of the Intel \verb'icx' compiler is highly recommended.} In
 most cases, the Intel \verb'icx' and the Intel OpenMP library (\verb'libiomp')
@@ -15114,7 +15114,7 @@ Visual Studio 2019, but may work for earlier versions.
         your Windows username) to the \verb'Path'.
     \item If the above steps do not work, you can instead copy the
         \verb'graphblas.*' files from \verb'GraphBLAS\build\Release' into any
-        existing folder listed in your \verb'Path'. 
+        existing folder listed in your \verb'Path'.
     \end{itemize}
 
 \item The \verb'GraphBLAS/Include/GraphBLAS.h' file must be included in user
@@ -15139,7 +15139,7 @@ First, compile the SuiteSparse:GraphBLAS dynamic library
 or \verb'graphblas.dll' for Windows), as described in the prior two
 subsections.
 
-On the Mac, SuiteSparse:GraphBLAS v6.1.4 and Octave 7 will work 
+On the Mac, SuiteSparse:GraphBLAS v6.1.4 and Octave 7 will work
 Apple Silicon (thanks to G{\'{a}}bor Sz{\'{a}}rnyas).  Here are his instructions
 (replicated from
 \url{https://github.com/DrTimothyAldenDavis/GraphBLAS/issues/90}); do
@@ -15297,7 +15297,7 @@ libraries via \verb'sudo make install', then augment your
 \verb'LD_LIBRARY_PATH' (Linux) or \verb'DYLD_LIBRARY_PATH' (MacOS) to point to
 your personal copy \verb'SuiteSparse/GraphBLAS/GraphBLAS/build' folder.  See
 \url{https://www.mathworks.com/help/matlab/matlab_external/building-on-unix-operating-systems.html}
-for details. 
+for details.
 
 Next, compile the MATLAB interface as described in Section~\ref{gbmake}.  For
 any instructions in that Section that refer to the \verb'GraphBLAS/build'
@@ -15474,6 +15474,31 @@ GraphBLAS folder.
 
 \begin{itemize}
 
+\item Version 8.0.0 (TODO, 2023)
+
+    \item math kernels: revised for CUDA JIT.  More accurate complex
+        floating-point for Mac OS on Apple Silicon.
+    \item \verb'Demo/wildtype_demo': change to double so that CPU and GPU
+        versions compute the same result.
+    \item \verb'GxB_get': can return malloc/calloc/realloc/free
+    \item \verb'GrB_Descriptor':
+        removed ability to control # of OpenMP threads from the
+        descriptor (a rarely used feature).  Replaced with the
+        \verb'GxB_Context'
+        object.  This change requires a major SO version increase, since
+        it removes a user-visible feature from SuiteSparse:GraphBLAS (the
+        enum values for the descriptor settings).
+    \item \verb'GxB_Context':
+        an object for controlling computational resources:
+        number of OpenMP threads, the chunk factor, and (draft) GPU id.
+    \item \verb'GxB_SelectOp': GraphBLAS no longer supports
+        user-defined GxB_SelectOps.  Use a \verb'GrB_IndexUnaryOp' instead.
+        The built-in \verb'GxB_SelectOps' still work, and \verb'GxB_*_select'
+        still exists.  However, the \verb'GxB_EQ_THUNK', \verb'GxB_EQ_ZERO',
+        \verb'GxB_NE_THUNK', and \verb'GxB_NE_ZERO' operators no longer work on
+        user-defined types.  Create a user-defined \verb'GrB_IndexUnaryOp' to
+        compute these operations instead, and use \verb'GrB_select'.
+
 \item Version 7.4.2 (Jan 17, 2023)
 
     \begin{itemize}
@@ -15522,7 +15547,7 @@ GraphBLAS folder.
 \item Version 7.3.2 (Nov 12, 2022)
 
     \begin{packed_itemize}
-    \item \verb'cmake_modules': minor revision to build system, to sync 
+    \item \verb'cmake_modules': minor revision to build system, to sync
         with SuiteSparse v6.0.0
     \item Added option \verb'-DNOPENMP=1' to disable OpenMP parallelism.
     \end{packed_itemize}
@@ -15684,7 +15709,7 @@ GraphBLAS folder.
         but built directly into \verb'libgraphblas.so' and
         \verb'libgraphblas.a'.  Added compile-time flags to
         optionally disable the use of \verb'cpu_features' completely.
-    \item Octave 7: port to Apple Silicon (thanks to 
+    \item Octave 7: port to Apple Silicon (thanks to
             G{\'{a}}bor Sz{\'{a}}rnyas).
     \item min/max monoids:  real case (FP32 and FP64) no longer terminal
     \item \verb'@GrB' interface: overloaded \verb'C=A*B' syntax where one
@@ -15710,7 +15735,7 @@ GraphBLAS folder.
         could be higher in other cases).
     \end{packed_itemize}
 
-\item Version 6.1.1 (Dec 28, 2021) 
+\item Version 6.1.1 (Dec 28, 2021)
 
     \begin{packed_itemize}
     \item minor revision to AVX2 and AVX512f selection
@@ -16013,7 +16038,7 @@ GraphBLAS folder.
 
     \begin{packed_itemize}
     \item significant performance improvements: compared with v3.3.3,
-        up to 5x faster in breadth-first-search (using 
+        up to 5x faster in breadth-first-search (using
         \verb'LAGraph_bfs_parent2'), and 2x faster in
         Betweenness-Centrality (using \verb'LAGraph_bc_batch5').
     \item \verb'GrB_wait(void)', with no inputs: removed
@@ -16133,7 +16158,7 @@ manager functions (\verb'malloc', etc) to be specified.
 \item
 Version 2.2 (Nov 2018)
 adds user-defined objects at compile-time, via user \verb'*.m4' files placed in
-\verb'GraphBLAS/User', which use the \verb'GxB_*_define' macros 
+\verb'GraphBLAS/User', which use the \verb'GxB_*_define' macros
 (NOTE: feature removed in v3.2).
 The default matrix format is now \verb'GxB_BY_ROW'.
 Also added are the \verb'GxB_*print' methods for printing the contents of each

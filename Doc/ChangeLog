@@ -14,6 +14,11 @@ Version 8.0.0, (FIXME: DATE)
         # of OpenMP threads, the chunk factor, and (draft) GPU id.
     * GxB_SelectOp: GraphBLAS no longer supports user-defined GxB_SelectOps.
         Use a GrB_IndexUnaryOp instead.
+        The built-in GxB_SelectOps still work, and GxB_*_select
+        still exists.  However, the GxB_EQ_THUNK, GxB_EQ_ZERO,
+        GxB_NE_THUNK, and GxB_NE_ZERO operators no longer work on
+        user-defined types.  Create a user-defined GrB_IndexUnaryOp
+        to compute these operations instead, and use GrB_select.
 
 Version 7.4.2, Jan 17, 2023
 
