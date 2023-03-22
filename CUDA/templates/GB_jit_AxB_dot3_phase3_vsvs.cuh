@@ -245,7 +245,7 @@ __global__ void AxB_dot3_phase3_vsvs
 
     if( threadIdx.x == 0 && my_nzombies > 0)
     {
-        GB_atomic_add <int64_t>( &(C->nzombies), my_nzombies) ;
+        GB_cuda_atomic_add <int64_t>( &(C->nzombies), my_nzombies) ;
     }
 }
 

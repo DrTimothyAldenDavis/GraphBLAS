@@ -447,7 +447,7 @@ __global__ void AxB_dot3_phase3_mp
 
     if( tid ==0 && zc > 0)
     {
-        GB_atomic_add <int64_t>( &(C->nzombies), zc) ;
+        GB_cuda_atomic_add <int64_t>( &(C->nzombies), zc) ;
     }
 }
 

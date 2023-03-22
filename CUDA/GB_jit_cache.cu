@@ -58,6 +58,7 @@ namespace jit {
 // This definition can be overridden at compile time by specifying a
 // `-DGRAPHBLAS_CACHE_PATH=/kernel/cache/path` CMake argument.
 // This path is used in the `getCacheDir()` function below.
+#undef GRAPHBLAS_CACHE_PATH
 #if !defined(GRAPHBLAS_CACHE_PATH)
 #define GRAPHBLAS_CACHE_PATH  get_user_home_cache_dir()
 #endif
