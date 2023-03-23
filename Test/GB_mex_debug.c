@@ -44,10 +44,14 @@ void mexFunction
     pargout [0] = mxCreateDoubleScalar (0) ;
     #endif
 
-    #ifdef GBCUDA_DEV
-    #error "CUDA development not yet enabled for @GrB interface"
-    #else
+    #ifndef GBCUDA_DEV
+    // compact is off
+    if (pr) printf ("GBCUDA_DEV:   normal: GBCUDA_DEV not enabled\n") ;
     pargout [1] = mxCreateDoubleScalar (0) ;
+    #else
+    // compact is on
+    if (pr) printf ("GBCUDA_DEV:   enabled (for development only)\n") ;
+    pargout [1] = mxCreateDoubleScalar (1) ;
     #endif
 
     if (malloc_debug)

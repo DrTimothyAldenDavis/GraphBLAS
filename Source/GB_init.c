@@ -37,6 +37,7 @@
 
 #include "GB.h"
 #include "GB_init.h"
+#include "GB_stringify.h"
 
 //------------------------------------------------------------------------------
 // GB_init
@@ -78,7 +79,7 @@ GrB_Info GB_init            // start up GraphBLAS
     // establish malloc/calloc/realloc/free
     //--------------------------------------------------------------------------
 
-    #if defined ( GBCUDA )
+    #if defined ( SUITESPARSE_CUDA )
     if (mode == GxB_NONBLOCKING_GPU || mode == GxB_BLOCKING_GPU)
     {
         // ignore the memory management function pointers and use rmm_wrap_*
@@ -120,6 +121,20 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_cpu_features_query ( ) ;
 
     //--------------------------------------------------------------------------
+    // set up the JIT folder locations and compiler flags
+    //--------------------------------------------------------------------------
+
+    printf ("JIT enabled: %d\n", GB_JIT_ENABLED) ;
+    #if defined ( SUITESPARSE_CUDA )
+    printf ("CUDA enabled:\n") ;
+    #else
+    printf ("CUDA not enabled:\n") ;
+    #endif
+    #if GB_JIT_ENABLED || defined ( SUITESPARSE_CUDA )
+    GB_jitifyer_init ( ) ;
+    #endif
+
+    //--------------------------------------------------------------------------
     // max number of threads
     //--------------------------------------------------------------------------
 
@@ -144,7 +159,7 @@ GrB_Info GB_init            // start up GraphBLAS
     // initialize the GPUs, if present
     //--------------------------------------------------------------------------
 
-    #if defined ( GBCUDA )
+    #if defined ( SUITESPARSE_CUDA )
     if (mode == GxB_BLOCKING_GPU || mode == GxB_NONBLOCKING_GPU)
     {
         // initialize the GPUs

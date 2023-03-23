@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #ifndef GBNSTATIC
-    #if defined (GBCUDA)
+    #if defined ( SUITESPARSE_CUDA )
     #define GBNSTATIC 1
     #else
     #define GBNSTATIC 0

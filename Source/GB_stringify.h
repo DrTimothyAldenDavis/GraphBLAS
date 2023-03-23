@@ -11,31 +11,30 @@
 #define GB_STRINGIFY_H
 
 //------------------------------------------------------------------------------
-// dump definitions (for debugging and test coverage only)
-//------------------------------------------------------------------------------
-
-// uncomment this line to dump GB*.h files to /tmp, or compile with
-// -DGB_DEBUGIFY_DEFN=1
-// #undef  GB_DEBUGIFY_DEFN
-// FIXME: debugify is on
-#define GB_DEBUGIFY_DEFN 1
-
-//------------------------------------------------------------------------------
 // determine if the JIT is enabled at compile-time
 //------------------------------------------------------------------------------
 
-// FIXME: allow cmake to control this option.  Remove GB_DEBUGIFY_DEFN.
 // Fix GBRENAME case and get the JIT working in MATLAB.
 
-#if defined ( GB_DEBUGIFY_DEFN ) && !defined ( GBRENAME )
-#define GB_JIT_ENABLED 1
+#ifdef NJIT
+// disable the JIT
+#undef  GB_JIT_ENABLED
+#define GB_JIT_ENABLED 0
 #else
+#undef  GB_JIT_ENABLED
+#define GB_JIT_ENABLED 1
+#endif
+
+#ifdef GBRENAME
+#undef  GB_JIT_ENABLED
 #define GB_JIT_ENABLED 0
 #endif
 
-// FIXME: CPU JIT disabled for now
+// FIXME: CPU JIT disabled for now when CUDA is in use
+#ifdef SUITESPARSE_CUDA
 #undef  GB_JIT_ENABLED
 #define GB_JIT_ENABLED 0
+#endif
 
 //------------------------------------------------------------------------------
 // print copyright and license
@@ -61,7 +60,7 @@ void GB_macrofy_copyright (FILE *fp) ;
 // GB_macrofy_name: create the kernel name
 //------------------------------------------------------------------------------
 
-#define GB_KLEN (256 + 2*GxB_MAX_NAME_LEN)
+#define GB_KLEN (100 + 2*GxB_MAX_NAME_LEN)
 
 void GB_macrofy_name
 (

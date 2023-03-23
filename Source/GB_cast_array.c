@@ -100,7 +100,7 @@ GrB_Info GB_cast_array              // typecast an array
     #endif
 
     //--------------------------------------------------------------------------
-    // via the generic kernel (only used for GBCUDA_DEV case)
+    // via the generic kernel
     //--------------------------------------------------------------------------
 
     if (info == GrB_NO_VALUE)

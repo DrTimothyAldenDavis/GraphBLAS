@@ -871,7 +871,7 @@ bool GB_Global_gpu_count_set (bool enable_cuda)
 { 
     // set the # of GPUs in the system;
     // this function is only called once, by GB_init.
-    #if defined ( GBCUDA )
+    #if defined ( SUITESPARSE_CUDA )
     if (enable_cuda)
     {
         return (GB_cuda_get_device_count (&GB_Global.gpu_count)) ;
@@ -941,7 +941,7 @@ bool GB_Global_gpu_device_properties_get (int device)
     // get all properties of a specific GPU;
     // this function is only called once per GPU, by GB_init.
     GB_GPU_DEVICE_CHECK (false) ;   // fail if invalid GPU
-    #if defined ( GBCUDA )
+    #if defined ( SUITESPARSE_CUDA )
     return (GB_cuda_get_device_properties (device,
         &(GB_Global.gpu_properties [device]))) ;
     #else

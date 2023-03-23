@@ -81,7 +81,7 @@ GXB_OP1 (ONE, "one") ;
 
     #if defined ( GB_COMPLEX )
     // complex only
-    #ifndef GBCUDA
+    #ifndef SUITESPARSE_CUDA
     // FIXME: conj is causing problems in CUDA
     GXB_OP1 (CONJ     , "conj"     ) ;
     #endif

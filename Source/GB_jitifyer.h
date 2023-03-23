@@ -268,10 +268,11 @@ bool GB_jitifyer_match_version
     void *dl_handle             // dl_handle for the jit kernel library
 ) ;
 
-int GB_jitifyer_compile         // return result of system() call
-(
-    const char *kernel_name     // kernel to compile
-) ;
+int GB_jitifyer_compile (char *kernel_name) ;  // compile a kernel
+
+void GB_jit_free (void) ;       // free the JIT table
+
+void GB_jitifyer_init (void) ;
 
 #endif
 

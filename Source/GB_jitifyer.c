@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_jitifyer.h"
 #include "GB_stringify.h"
 #include <dlfcn.h>
 
@@ -23,19 +22,260 @@
 #define GB_JITIFIER_INITIAL_SIZE 1024
 
 static GB_jit_entry *GB_jit_table = NULL ;
+static size_t   GB_jit_table_allocated = 0 ;
+
 static int64_t  GB_jit_table_size = 0 ;  // always a power of 2
 static uint64_t GB_jit_table_bits = 0 ;  // hash mask (0xFFFF if size is 2^16)
-static size_t   GB_jit_table_allocated = 0 ;
 static int64_t  GB_jit_table_populated = 0 ;
 
+static char    *GB_jit_cache_path = NULL ;
+static size_t   GB_jit_cache_path_allocated = 0 ;
+
+static char    *GB_jit_source_path = NULL ;
+static size_t   GB_jit_source_path_allocated = 0 ;
+
+static char    *GB_jit_C_compiler = NULL ;
+static size_t   GB_jit_C_compiler_allocated = 0 ;
+
+static char    *GB_jit_C_flags = NULL ;
+static size_t   GB_jit_C_flags_allocated = 0 ;
+
+static char    *GB_jit_library_name = NULL ;
+static size_t   GB_jit_library_name_allocated = 0 ;
+
+static char    *GB_jit_source_name = NULL ;
+static size_t   GB_jit_source_name_allocated = 0 ;
+
+static char    *GB_jit_include = NULL ;
+static size_t   GB_jit_include_allocated = 0 ;
+
+static char    *GB_jit_command = NULL ;
+static size_t   GB_jit_command_allocated = 0 ;
+
 //------------------------------------------------------------------------------
-// GB_jitifyer_libfolder: return the path to the user's library folder
+// GB_jitifyer_free: free the JIT table and all the strings
 //------------------------------------------------------------------------------
 
-char *GB_jitifyer_libfolder (void)
+void GB_jit_free (void)
+{ 
+    GB_FREE (&GB_jit_table, GB_jit_table_allocated) ;
+    GB_jit_table_allocated = 0 ;
+    GB_FREE (&GB_jit_cache_path, GB_jit_cache_path_allocated) ;
+    GB_jit_cache_path_allocated = 0 ;
+    GB_FREE (&GB_jit_source_path, GB_jit_source_path_allocated) ;
+    GB_jit_source_path_allocated = 0 ;
+    GB_FREE (&GB_jit_C_compiler, GB_jit_C_compiler_allocated) ;
+    GB_jit_C_compiler_allocated = 0 ;
+    GB_FREE (&GB_jit_C_flags, GB_jit_C_flags_allocated) ;
+    GB_jit_C_flags_allocated = 0 ;
+    GB_FREE (&GB_jit_library_name, GB_jit_library_name_allocated) ;
+    GB_jit_library_name_allocated = 0 ;
+    GB_FREE (&GB_jit_source_name, GB_jit_source_name_allocated) ;
+    GB_jit_source_name_allocated = 0 ;
+    GB_FREE (&GB_jit_include, GB_jit_include_allocated) ;
+    GB_jit_include_allocated = 0 ;
+    GB_FREE (&GB_jit_command, GB_jit_command_allocated) ;
+    GB_jit_command_allocated = 0 ;
+    GB_jit_table_size = 0 ;
+    GB_jit_table_bits = 0 ;
+    GB_jit_table_populated = 0 ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_init: initialize the CPU and CUDA JIT folders, flags, etc
+//------------------------------------------------------------------------------
+
+#define OK(ok)                          \
+    if (!(ok))                          \
+    {                                   \
+        GB_jit_free ( ) ;               \
+        if (fp != NULL) fclose (fp) ;   \
+        fp = NULL ;                     \
+        GB_FREE (&str, str_alloc) ;     \
+        return ;                        \
+    }
+
+void GB_jitifyer_init (void)
 {
-    // FIXME: determine this at GrB_init time
-    return ("/home/faculty/d/davis/.SuiteSparse/GraphBLAS/v8.0.0") ;
+    size_t len = 0, str_alloc = 0 ;
+    char *str = NULL ;
+    FILE *fp = NULL ;
+
+    //--------------------------------------------------------------------------
+    // find the GB_jit_cache_path
+    //--------------------------------------------------------------------------
+
+    // printf ("JIT init:\n") ;
+    char *cache_path = getenv ("GRAPHBLAS_CACHE_PATH") ;
+    if (cache_path != NULL)
+    { 
+        // use the environment variable GRAPHBLAS_CACHE_PATH as-is
+        len = strlen (cache_path) ;
+        GB_jit_cache_path = GB_MALLOC (len+2, char,
+            &(GB_jit_cache_path_allocated)) ;
+        OK (GB_jit_cache_path != NULL) ;
+        // printf ("cache %d %d\n", len, GB_jit_cache_path_allocated) ;
+        strncpy (GB_jit_cache_path, cache_path, GB_jit_cache_path_allocated) ;
+    }
+    else
+    { 
+        // Linux, Mac, Unix: look for HOME
+        cache_path = getenv ("HOME") ;
+        char *dot = "." ;
+        if (cache_path == NULL)
+        { 
+            // Windows: look for LOCALAPPDATA
+            cache_path = getenv ("LOCALAPPDATA") ;
+            dot = "" ;
+        }
+        if (cache_path != NULL)
+        { 
+            // found the cache_path
+            size_t len = strlen (cache_path) + 80 ;
+            GB_jit_cache_path = GB_MALLOC (len, char,
+                &(GB_jit_cache_path_allocated)) ;
+            OK (GB_jit_cache_path != NULL) ;
+            // printf ("cache %d %d\n", len, GB_jit_cache_path_allocated) ;
+            snprintf (GB_jit_cache_path,
+                GB_jit_cache_path_allocated,
+                "%s/%sSuiteSparse/GraphBLAS/%d.%d.%d", cache_path, dot,
+                GxB_IMPLEMENTATION_MAJOR,
+                GxB_IMPLEMENTATION_MINOR,
+                GxB_IMPLEMENTATION_SUB) ;
+        }
+    }
+
+    OK (GB_jit_cache_path != NULL) ;
+
+    //--------------------------------------------------------------------------
+    // open the GraphBLAS_config.txt file
+    //--------------------------------------------------------------------------
+
+    len = strlen (GB_jit_cache_path) + 80 ;
+    str = GB_MALLOC (len, char, &str_alloc) ;
+    OK (str != NULL) ;
+    // printf ("str %d %d\n", len, str_alloc) ;
+
+    snprintf (str, str_alloc, "%s/GraphBLAS_config.txt", GB_jit_cache_path) ;
+    fp = fopen (str, "r") ;
+    OK (fp != NULL) ;
+
+    //--------------------------------------------------------------------------
+    // determine the size of the GraphBLAS_config.txt file
+    //--------------------------------------------------------------------------
+
+    size_t file_size = 0 ;
+    while (fgetc (fp) != EOF)
+    { 
+        file_size++ ;
+    }
+    rewind (fp) ;
+
+    //--------------------------------------------------------------------------
+    // reallocate workspace (large enough to hold the whole file)
+    //--------------------------------------------------------------------------
+
+    GB_FREE (&str, str_alloc) ;
+    str = GB_MALLOC (file_size+2, char, &str_alloc) ;
+    OK (str != NULL) ;
+    // printf ("str %d %d\n", len, str_alloc) ;
+
+    //--------------------------------------------------------------------------
+    // parse the GraphBLAS_config.txt file
+    //--------------------------------------------------------------------------
+
+    // line 1: get the GB_jit_source_path
+    OK (fgets (str, file_size+2, fp) != NULL) ;
+    len = strlen (str) ;
+    str [len-1] = '\0' ;
+    GB_jit_source_path = GB_MALLOC (len + 2, char,
+        &(GB_jit_source_path_allocated)) ;
+    OK (GB_jit_source_path != NULL) ;
+    // printf ("source %d %d\n", len, GB_jit_source_path_allocated) ;
+    strncpy (GB_jit_source_path, str, GB_jit_source_path_allocated) ;
+
+    // line 2: get the GB_jit_C_compiler
+    OK (fgets (str, file_size+2, fp) != NULL) ;
+    len = strlen (str) ;
+    str [len-1] = '\0' ;
+    GB_jit_C_compiler = GB_MALLOC (len + 2, char,
+        &(GB_jit_C_compiler_allocated)) ;
+    OK (GB_jit_C_compiler != NULL) ;
+    // printf ("compiler %d %d\n", len, GB_jit_C_compiler_allocated) ;
+    strncpy (GB_jit_C_compiler, str, GB_jit_C_compiler_allocated) ;
+
+    // line 3: get the GB_jit_C_flags
+    OK (fgets (str, file_size+2, fp) != NULL) ;
+    len = strlen (str) ;
+    str [len-1] = '\0' ;
+    GB_jit_C_flags = GB_MALLOC (len + 2, char, &(GB_jit_C_flags_allocated)) ;
+    OK (GB_jit_C_flags != NULL) ;
+    // printf ("flags %d %d\n", len, GB_jit_C_flags_allocated) ;
+    strncpy (GB_jit_C_flags, str, GB_jit_C_flags_allocated) ;
+
+    //--------------------------------------------------------------------------
+    // free workspace
+    //--------------------------------------------------------------------------
+
+    fclose (fp) ;
+    fp = NULL ;
+    GB_FREE (&str, str_alloc) ;
+
+    //--------------------------------------------------------------------------
+    // allocate permanent workspace
+    //--------------------------------------------------------------------------
+
+    len = GB_jit_cache_path_allocated + 300 + 2 * GxB_MAX_NAME_LEN ;
+    GB_jit_library_name = GB_MALLOC (len, char,
+        &(GB_jit_library_name_allocated)) ;
+    OK (GB_jit_library_name != NULL) ;
+    // printf ("libname %d %d\n", len, GB_jit_library_name_allocated) ;
+
+    GB_jit_source_name = GB_MALLOC (len, char,
+        &(GB_jit_source_name_allocated)) ;
+    OK (GB_jit_source_name != NULL) ;
+    // printf ("sourcename %d %d\n", len, GB_jit_source_name_allocated) ;
+
+    len = 9 * GB_jit_source_path_allocated + 300 ;
+    GB_jit_include = GB_MALLOC (len, char, &(GB_jit_include_allocated)) ;
+    OK (GB_jit_include != NULL) ;
+    // printf ("inc %d %d\n", len, GB_jit_include_allocated) ;
+
+    snprintf (GB_jit_include, GB_jit_include_allocated,
+        "-I%s/Include "
+        "-I%s/Source "
+        "-I%s/Source/Shared "
+        "-I%s/Source/SharedTemplate "
+        "-I%s/Source/Template "
+        "-I%s/Source/JitKernels "
+        "-I%s/cpu_features "
+        "-I%s/cpu_features/include "
+        "-I%s/GraphBLAS/rename ",
+        GB_jit_source_path,
+        GB_jit_source_path,
+        GB_jit_source_path,
+        GB_jit_source_path,
+        GB_jit_source_path,
+        GB_jit_source_path,
+        GB_jit_source_path,
+        GB_jit_source_path,
+        GB_jit_source_path) ;
+
+    size_t inc_len = strlen (GB_jit_include) ;
+    len = 2 * GB_jit_C_flags_allocated + inc_len +
+        4 * GB_jit_cache_path_allocated + 5 * GB_KLEN +
+        GB_jit_source_path_allocated + 300 ;
+    GB_jit_command = GB_MALLOC (len, char, &(GB_jit_command_allocated)) ;
+    OK (GB_jit_command != NULL) ;
+    // printf ("command len: %d\n", len) ;
+    // printf ("cmd %d %d\n", len, GB_jit_command_allocated) ;
+    // printf ("5 * GB_KLEN: %d\n", 5*GB_KLEN) ;
+
+    printf ("cache:  %s\n", GB_jit_cache_path) ;
+    printf ("source: [%s]\n", GB_jit_source_path) ;
+    printf ("C compiler: [%s]\n", GB_jit_C_compiler) ;
+    printf ("C flags: [%s]\n", GB_jit_C_flags) ;
+    printf ("Include: [%s]\n", GB_jit_include) ;
 }
 
 //------------------------------------------------------------------------------
@@ -67,13 +307,13 @@ GrB_Info GB_jitifyer_load
     //--------------------------------------------------------------------------
 
     if (hash == UINT64_MAX)
-    {
+    { 
         return (GrB_NO_VALUE) ;
     }
 
     (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix) ;
     if ((*dl_function) != NULL)
-    {
+    { 
         // found the kernel in the hash table
         GBURBLE ("(jit) ") ;
         return (GrB_SUCCESS) ;
@@ -149,11 +389,9 @@ GrB_Info GB_jitifyer_load
     // try to load the libkernel_name.so from the user's library folder
     //--------------------------------------------------------------------------
 
-    // get the user's library folder
-    char *lib_folder = GB_jitifyer_libfolder ( ) ;
-    char lib_filename [2048] ;
-    snprintf (lib_filename, 2048, "%s/lib%s.so", lib_folder, kernel_name) ;
-    void *dl_handle = dlopen (lib_filename, RTLD_LAZY) ;
+    snprintf (GB_jit_library_name, GB_jit_library_name_allocated,
+        "%s/cpu/lib%s.so", GB_jit_cache_path, kernel_name) ;
+    void *dl_handle = dlopen (GB_jit_library_name, RTLD_LAZY) ;
 
     //--------------------------------------------------------------------------
     // check if the kernel was found, but needs to be compiled anyway
@@ -161,7 +399,7 @@ GrB_Info GB_jitifyer_load
 
     bool builtin = (encoding->suffix_len == 0) ;
     if (dl_handle != NULL && !builtin)
-    {
+    { 
         // library is loaded but make sure the defn are OK
         void *dl_query = dlsym (dl_handle, "GB_jit_query_defn") ;
         bool need_to_compile = !GB_jitifyer_match_version (dl_handle) ||
@@ -172,7 +410,7 @@ GrB_Info GB_jitifyer_load
         (type3 != NULL && !GB_jitifyer_match_defn (dl_query, 4, type3->defn)) ||
         (monoid != NULL && !GB_jitifyer_match_idterm (dl_handle, monoid)) ;
         if (need_to_compile)
-        {
+        { 
             // library is loaded but needs to change, so close it
             dlclose (dl_handle) ;
             dl_handle = NULL ;
@@ -184,20 +422,20 @@ GrB_Info GB_jitifyer_load
     //--------------------------------------------------------------------------
 
     if (dl_handle == NULL)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // create the kernel source file
         //----------------------------------------------------------------------
 
         GBURBLE ("(jit compile and load) ") ;
-        char source_filename [2048] ;
-        snprintf (source_filename, 2048, "%s/%s.c", lib_folder, kernel_name) ;
-        FILE *fp = fopen (source_filename, "w") ;
+        snprintf (GB_jit_source_name, GB_jit_source_name_allocated,
+            "%s/cpu/%s.c", GB_jit_cache_path, kernel_name) ;
+        FILE *fp = fopen (GB_jit_source_name, "w") ;
         if (fp == NULL)
-        {
+        { 
             // FIXME: use another error code here
-            printf ("cannot open source file\n") ;
+            printf ("cannot open source file: %s\n", GB_jit_source_name) ;
             return (GrB_PANIC) ;
         }
         fprintf (fp,
@@ -210,12 +448,12 @@ GrB_Info GB_jitifyer_load
             op, type1, type2, type3) ;
         fprintf (fp, "\n#include \"GB_jit_kernel_%s.c\"\n\n", kname) ;
         if (!builtin)
-        {
+        { 
             // create query_defn function
             GB_macrofy_query_defn (fp, op1, op2, type1, type2, type3) ;
         }
         if (monoid != NULL)
-        {
+        { 
             // create query_monoid function if the monoid is not builtin
             GB_macrofy_query_monoid (fp, monoid) ;
         }
@@ -227,9 +465,9 @@ GrB_Info GB_jitifyer_load
         //----------------------------------------------------------------------
 
         GB_jitifyer_compile (kernel_name) ;
-        dl_handle = dlopen (lib_filename, RTLD_LAZY) ;
+        dl_handle = dlopen (GB_jit_library_name, RTLD_LAZY) ;
         if (dl_handle == NULL)
-        {
+        { 
             // unable to open lib*.so file: punt to generic
             // FIXME: use another error code here
             printf ("cannot load library .so\n") ;
@@ -237,7 +475,7 @@ GrB_Info GB_jitifyer_load
         }
     }
     else
-    {
+    { 
         GBURBLE ("(jit load) ") ;
     }
 
@@ -247,7 +485,7 @@ GrB_Info GB_jitifyer_load
 
     (*dl_function) = dlsym (dl_handle, "GB_jit_kernel") ;
     if ((*dl_function) == NULL)
-    {
+    { 
         // unable to find GB_jit_kernel: punt to generic
         dlclose (dl_handle) ; 
         printf ("cannot load kernel\n") ;
@@ -257,7 +495,7 @@ GrB_Info GB_jitifyer_load
     // insert the new kernel into the hash table
     if (!GB_jitifyer_insert (hash, encoding, suffix, dl_handle,
         (*dl_function)))
-    {
+    { 
         // unable to add kernel to hash table: punt to generic
         dlclose (dl_handle) ; 
         return (GrB_OUT_OF_MEMORY) ;
@@ -282,7 +520,7 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
     // FIXME: need to place this entire function in a critical section
 
     if (GB_jit_table == NULL)
-    {
+    { 
         // no table yet so it isn't present
         return (NULL) ;
     }
@@ -296,7 +534,7 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
         k = k & GB_jit_table_bits ;
         GB_jit_entry *e = &(GB_jit_table [k]) ;
         if (e->dl_handle == NULL)
-        {
+        { 
             // found an empty entry, so the entry is not in the table
             // FIXME: place a marker here as a placeholder, so other user
             // threads know that the jit kernel is currently being compiled...
@@ -307,7 +545,7 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
             e->encoding.kcode == encoding->kcode &&
             e->encoding.suffix_len == suffix_len &&
             (builtin || (memcmp (e->suffix, suffix, suffix_len) == 0)))
-        {
+        { 
             // found the right entry: return the corresponding dl_function
             return (e->dl_function) ;
         }
@@ -354,7 +592,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         GB_jit_table = GB_CALLOC (GB_JITIFIER_INITIAL_SIZE,
                 struct GB_jit_entry_struct, &GB_jit_table_allocated) ;
         if (GB_jit_table == NULL)
-        {
+        { 
             // out of memory
             return (false) ;
         }
@@ -377,7 +615,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
                 struct GB_jit_entry_struct, &new_allocated) ;
 
         if (GB_jit_table == NULL)
-        {
+        { 
             // out of memory; leave the existing table as-is
             return (false) ;
         }
@@ -386,7 +624,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         for (int64_t k = 0 ; k < GB_jit_table_size ; k++)
         {
             if (GB_jit_table [k].dl_handle != NULL)
-            {
+            { 
                 // rehash the entry to the larger hash table
                 uint64_t hash = GB_jit_table [k].hash ;
                 new_table [hash & new_bits] = GB_jit_table [k] ;
@@ -424,7 +662,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
                 // allocate the suffix if the kernel is not builtin
                 e->suffix = GB_MALLOC (suffix_len+1, char, &(e->suffix_size)) ;
                 if (e->suffix == NULL)
-                {
+                { 
                     // out of memory
                     return (false) ;
                 }
@@ -448,37 +686,27 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 void GB_jitifyer_finalize (void)
 {
 
+    // clear all entries in the table
     if (GB_jit_table == NULL)
     {
-        // no table yet so nothing to do
-        return ;
-    }
-
-    // clear all entries in the table
-    for (int64_t k = 0 ; k < GB_jit_table_size ; k++)
-    {
-        GB_jit_entry *e = &(GB_jit_table [k]) ;
-        if (e->dl_handle != NULL)
+        for (int64_t k = 0 ; k < GB_jit_table_size ; k++)
         {
-            // found an entry; free the suffix if present
-            if (e->suffix != NULL)
+            GB_jit_entry *e = &(GB_jit_table [k]) ;
+            if (e->dl_handle != NULL)
             {
-                GB_FREE (&(e->suffix), e->suffix_size) ;
+                // found an entry; free the suffix if present
+                if (e->suffix != NULL)
+                { 
+                    GB_FREE (&(e->suffix), e->suffix_size) ;
+                }
+                // unload the dl library
+                dlclose (e->dl_handle) ;
             }
-            // unload the dl library
-            #ifndef GBRENAME
-            dlclose (e->dl_handle) ;
-            #endif
         }
     }
 
-    // free the table
-    GB_FREE (&GB_jit_table, GB_jit_table_allocated) ;
-    GB_jit_table_allocated = 0 ;
-    GB_jit_table_size = 0 ;
-    GB_jit_table_bits = 0 ;
-    GB_jit_table_allocated = 0 ;
-    GB_jit_table_populated = 0 ;
+    // free the table and all workspace
+    GB_jit_free ( ) ;
 }
 
 //------------------------------------------------------------------------------
@@ -494,25 +722,25 @@ bool GB_jitifyer_match_defn     // return true if definitions match
 )
 {
     if (dl_query == NULL)
-    {
+    { 
         // library is missing the query_defn method
         return (false) ;
     }
     GB_jit_query_defn_func query_defn = (GB_jit_query_defn_func) dl_query ;
     const char *library_defn = query_defn (k) ;
     if ((current_defn != NULL) != (library_defn != NULL))
-    {
+    { 
         // one is not NULL but the other is NULL
         return (false) ;
     }
     else if (current_defn != NULL)
-    {
+    { 
         // both definitions are present
         // ensure the definition hasn't changed
         return (strcmp (library_defn, current_defn) == 0) ;
     }
     else
-    {
+    { 
         // both definitions are NULL, so they match
         return (true) ;
     }
@@ -528,13 +756,10 @@ bool GB_jitifyer_match_idterm   // return true if monoid id and term match
     GrB_Monoid monoid           // current monoid to compare
 )
 {
-#ifdef GBRENAME
-    return (false) ;
-#else
     // compare the identity and terminal
     void *dl_query = dlsym (dl_handle, "GB_jit_query_monoid") ;
     if (dl_query == NULL)
-    {
+    { 
         // the library is invalid; need recompile it
         return (false) ;
     }
@@ -543,7 +768,6 @@ bool GB_jitifyer_match_idterm   // return true if monoid id and term match
     size_t zsize = monoid->op->ztype->size ;
     size_t tsize = (monoid->terminal == NULL) ? 0 : zsize ;
     return (query_monoid (monoid->identity, monoid->terminal, zsize, tsize)) ;
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -555,13 +779,10 @@ bool GB_jitifyer_match_version
     void *dl_handle             // dl_handle for the jit kernel library
 )
 {
-#ifdef GBRENAME
-    return (false) ;
-#else
     // compare the version
     void *dl_query = dlsym (dl_handle, "GB_jit_query_version") ;
     if (dl_query == NULL)
-    {
+    { 
         // the library is invalid; need recompile it
         return (false) ;
     }
@@ -574,94 +795,39 @@ bool GB_jitifyer_match_version
     return ((version [0] == GxB_IMPLEMENTATION_MAJOR) &&
             (version [1] == GxB_IMPLEMENTATION_MINOR) &&
             (version [2] == GxB_IMPLEMENTATION_SUB)) ;
-#endif
 }
 
 //------------------------------------------------------------------------------
 // GB_jitifyer_compile: compile a kernel
 //------------------------------------------------------------------------------
 
-int GB_jitifyer_compile
-(
-    const char *kernel_name
-)
-{
-    printf ("compiling %s\n", kernel_name) ;
+int GB_jitifyer_compile (char *kernel_name)
+{ 
 
-    // FIXME: create this at GrB_init time
-    char root_folder [256] ;
-    snprintf (root_folder, 256, "%s",
-    "/home/faculty/d/davis/cuda/GraphBLAS") ;
-
-    // FIXME: create this at GrB_init time, or by GxB_set
-    char lib_folder [2048] ;
-    snprintf (lib_folder, 2047,
-            "/home/faculty/d/davis/.SuiteSparse/GraphBLAS/v%d.%d.%d"
-            #ifdef GBRENAME
-            "_matlab"
-            #endif
-            ,
-        GxB_IMPLEMENTATION_MAJOR,
-        GxB_IMPLEMENTATION_MINOR,
-        GxB_IMPLEMENTATION_SUB) ;
-
-    // FIXME: create this at GrB_init time
-    char include_files [4096] ;
-    snprintf (include_files, 4096,
-        "-I%s "
-        "-I%s/Include "
-        "-I%s/Source "
-        "-I%s/Source/Shared "
-        "-I%s/Source/SharedTemplate "
-        "-I%s/Source/Template "
-        "-I%s/Source/JitKernels "
-        "-I%s/cpu_features "
-        "-I%s/cpu_features/include "
-        #ifdef GBRENAME
-        "-I%s/GraphBLAS/rename "
-        #endif
-        ,
-        lib_folder,
-        root_folder,
-        root_folder,
-        root_folder,
-        root_folder,
-        root_folder,
-        root_folder,
-        root_folder,
-        root_folder
-        #ifdef GBRENAME
-        , root_folder
-        #endif
-        ) ;
-
-    char command [4096] ;
-
-    // FIXME: allow user to set compiler and flags
-    snprintf (command, 4096,
-//  "gcc -fPIC -O3 -std=c11 -fexcess-precision=fast "
-    "gcc -fPIC -g -std=c11 -fexcess-precision=fast "    /* FIXME: debug -g on */
+    snprintf (GB_jit_command, GB_jit_command_allocated,
+    "gcc -fPIC "
     #ifdef GBRENAME
-    " -DGBRENAME=1 "
+    "-DGBRENAME=1 "
     #endif
-    "-fcx-limited-range -fno-math-errno -fwrapv -DNDEBUG "
-    "-fopenmp %s -o "
-    " %s/%s.o -c %s/%s.c ;" 
-//  "gcc -fPIC -O3 -std=c11 -fexcess-precision=fast "
-    "gcc -fPIC -g -std=c11 -fexcess-precision=fast "    /* FIXME: debug -g on */
-    "-fcx-limited-range -fno-math-errno -fwrapv -DNDEBUG "
-    "-fopenmp "
-    " -shared -Wl,-soname,lib%s.so -o %s/lib%s.so"
-    " %s/%s.o "
-    " %s%s/build/libgraphblas%s.so -lm "
+    "%s "                       // C flags
+    "%s "                       // include directories
+    " -o %s/cpu/%s.o "          // *.o file, first gcc command
+    " -c %s/cpu/%s.c ;"         // *.c file, first gcc command
+    "gcc -fPIC "                // 2nd gcc command
+    "%s -shared "               // C flags for 2nd gcc command
+    " -Wl,-soname,lib%s.so "    // soname 
+    " -o %s/cpu/lib%s.so"       // lib*.so output
+    " %s/cpu/%s.o "             // *.o file for 2nd gcc commnand
+    " %s%s/build/libgraphblas%s.so -lm "    // libgraphblas.so
     ,
-    include_files,
-    lib_folder, kernel_name,    // *.o file, first gcc command
-    lib_folder, kernel_name,    // *.c file, first gcc command
-    kernel_name,                // soname
-    lib_folder, kernel_name,    // lib*.so output file
-    lib_folder, kernel_name,    // *.o file for 2nd gcc
-    root_folder,
+    GB_jit_C_flags, GB_jit_include,
+    GB_jit_cache_path, kernel_name,     // *.o file, first gcc command
+    GB_jit_cache_path, kernel_name,     // *.c file, first gcc command
+    GB_jit_C_flags,                     // C flags for 2nd gcc command
+    kernel_name,                        // soname
+    GB_jit_cache_path, kernel_name,     // lib*.so output file
+    GB_jit_cache_path, kernel_name,     // *.o file for 2nd gcc
+    GB_jit_source_path,                 // libgraphblas.so
     #ifdef GBRENAME
     "/GraphBLAS", "_matlab"
     #else
@@ -669,10 +835,10 @@ int GB_jitifyer_compile
     #endif
     ) ;
 
-    printf ("command: %s\n", command) ;
+    printf ("command: %s\n", GB_jit_command) ;
 
     // compile the library and return result
-    int result = system (command) ;
+    int result = system (GB_jit_command) ;
     return (result) ;
 }
 
@@ -700,7 +866,7 @@ uint64_t GB_jitifyer_hash_encoding
 (
     GB_jit_encoding *encoding
 )
-{
+{ 
     uint64_t hash ;
     hash = XXH3_64bits ((const void *) encoding, sizeof (GB_jit_encoding)) ;
     return ((hash == 0 || hash == UINT64_MAX) ? GB_MAGIC : hash) ;
@@ -712,7 +878,7 @@ uint64_t GB_jitifyer_hash
     size_t nbytes,          // # of bytes to hash
     bool jitable            // true if the object can be JIT'd
 )
-{
+{ 
     if (bytes == NULL || nbytes == 0) return (0) ;
     if (!jitable) return (UINT64_MAX) ;
     uint64_t hash ;

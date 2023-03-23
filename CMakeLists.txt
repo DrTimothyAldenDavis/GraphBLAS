@@ -36,11 +36,72 @@ message ( STATUS "GraphBLAS C API: v"
 # SuiteSparse policies
 #-------------------------------------------------------------------------------
 
+option ( NJIT "ON: do not use the CPU JIT.  OFF (default): enable the CPU JIT" off )
+
 # CUDA is under development for now, and not deployed in production:
 # option ( ENABLE_CUDA "Enable CUDA acceleration" off )
 # FIXME
-#  set ( ENABLE_CUDA false )
-  set ( ENABLE_CUDA true )
+  set ( ENABLE_CUDA false )
+# set ( ENABLE_CUDA true )
+
+#-------------------------------------------------------------------------------
+# JIT configuration
+#-------------------------------------------------------------------------------
+
+# The GraphBLAS CPU and CUDA JITs need to know where the GraphBLAS source is
+# located, and where to put the compiled libraries.
+
+if ( NOT NJIT OR ENABLE_CUDA )
+
+    # set the GRAPHBLAS_SOURCE_PATH
+    if ( DEFINED GRAPHBLAS_SOURCE_PATH )
+        # if the -DGRAPHBLAS_SOURCE_PATH variable is set use that setting
+    elseif ( DEFINED ENV{GRAPHBLAS_SOURCE_PATH} )
+        # otherwise, use the GRAPHBLAS_SOURCE_PATH environment variable
+        set ( GRAPHBLAS_SOURCE_PATH "$ENV{GRAPHBLAS_SOURCE_PATH}" )
+    else ( )
+        # if no other option, use the CMAKE_SOURCE_DIR.  This is the typical
+        # case if the one compiling GraphBLAS does not set any variables first.
+        set ( GRAPHBLAS_SOURCE_PATH ${CMAKE_SOURCE_DIR} )
+    endif ( )
+
+    message ( STATUS "GraphBLAS source path for JIT: ${GRAPHBLAS_SOURCE_PATH}")
+
+    # set the GRAPHBLAS_CACHE_PATH for compiled JIT kernels
+    if ( DEFINED ENV{GRAPHBLAS_CACHE_PATH} )
+        # use the GRAPHBLAS_CACHE_PATH environment variable
+        set ( GRAPHBLAS_CACHE_PATH "$ENV{GRAPHBLAS_CACHE_PATH}" )
+    elseif ( DEFINED ENV{HOME} )
+        # use the current HOME environment variable from cmake (for Linux, Unix, Mac)
+        set ( GRAPHBLAS_CACHE_PATH "$ENV{HOME}/.SuiteSparse/GraphBLAS/${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" )
+    elseif ( WIN32 )
+        # use LOCALAPPDATA for Windows
+        set ( GRAPHBLAS_CACHE_PATH "$ENV{LOCALAPPDATA}/SuiteSparse/GraphBLAS/${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" )
+    else ( )
+        # if no other option, disable both JITs
+        set ( NJIT on )
+        set ( ENABLE_CUDA false )
+    endif ( )
+
+endif ( )
+
+if ( NJIT )
+    # disable the CPU JIT
+    add_compile_definitions ( NJIT )
+    message ( STATUS "GraphBLAS CPU JIT: disabled")
+else ( )
+    message ( STATUS "GraphBLAS CPU JIT: enabled")
+endif ( )
+
+if ( ENABLE_CUDA )
+    message ( STATUS "GraphBLAS CUDA JIT: enabled")
+else ( )
+    message ( STATUS "GraphBLAS CUDA JIT: disabled")
+endif ( )
+
+#-------------------------------------------------------------------------------
+# SuiteSparse policies
+#-------------------------------------------------------------------------------
 
 # GraphBLAS takes a long time to build, so do not build the static library
 # by default
@@ -82,7 +143,7 @@ endif ( )
 
 if ( SUITESPARSE_CUDA )
     # with CUDA and RMM
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBCUDA" )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DSUITESPARSE_CUDA" )
     add_subdirectory ( CUDA )
     set ( GB_CUDA graphblascuda  ${CUDA_LIBRARIES} )
     set ( GB_RMM rmm_wrap ${CUDA_LIBRARIES} )
@@ -152,12 +213,16 @@ endif ( )
 
 if ( CMAKE_CUDA_DEV )
     # for CUDA development only; not for production use
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBCUDA_DEV=1 " )
+    add_compile_definitions ( GBCUDA_DEV )
 endif ( )
 
 #-------------------------------------------------------------------------------
 # Configure Include/GraphBLAS.h and documentation with version number
 #-------------------------------------------------------------------------------
+
+configure_file ( "Config/GraphBLAS.h.in"
+    "${PROJECT_SOURCE_DIR}/Include/GraphBLAS.h"
+    NEWLINE_STYLE LF )
 
 configure_file ( "Config/GraphBLAS_version.tex.in"
     "${PROJECT_SOURCE_DIR}/Doc/GraphBLAS_version.tex"
@@ -445,68 +510,6 @@ if ( SUITESPARSE_CUDA )
     endif ( )
 endif ( )
 
-#-------------------------------------------------------------------------------
-# JIT configuration
-#-------------------------------------------------------------------------------
-
-# The GraphBLAS JIT needs to know where the GraphBLAS source is located.
-# By default
-
-option ( NJIT "ON: do not use the JIT.  OFF (default): enable the JIT" off )
-
-if ( NJIT )
-
-    # disable the JIT entirely
-    add_compile_definitions ( NJIT )
-    message ( STATUS "GraphBLAS JIT: disabled")
-
-else ( )
-
-    message ( STATUS "GraphBLAS JIT: enabled")
-
-    # set the GRAPHBLAS_SOURCE_PATH
-    if ( DEFINED GRAPHBLAS_SOURCE_PATH )
-        # if the -DGRAPHBLAS_SOURCE_PATH variable is set use that setting
-    elseif ( DEFINED ENV{GRAPHBLAS_SOURCE_PATH} )
-        # otherwise, use the GRAPHBLAS_SOURCE_PATH environment variable
-        set ( GRAPHBLAS_SOURCE_PATH "$ENV{GRAPHBLAS_SOURCE_PATH}" )
-    else ( )
-        # if no other option, use the CMAKE_SOURCE_DIR.  This is the typical
-        # case if the one compiling GraphBLAS does not set any variables first.
-        set ( GRAPHBLAS_SOURCE_PATH ${CMAKE_SOURCE_DIR} )
-    endif ( )
-
-    message ( STATUS "GraphBLAS source path for JIT: ${GRAPHBLAS_SOURCE_PATH}")
-
-    # set the GRAPHBLAS_CACHE_PATH for compiled JIT kernels
-    if ( DEFINED GRAPHBLAS_CACHE_PATH )
-        # if the -DGRAPHBLAS_CACHE_PATH variable is set use that setting
-    elseif ( DEFINED ENV{GRAPHBLAS_CACHE_PATH} )
-        # otherwise, use the GRAPHBLAS_CACHE_PATH environment variable
-        set ( GRAPHBLAS_CACHE_PATH "$ENV{GRAPHBLAS_CACHE_PATH}" )
-    elseif ( HAVE_GETENV_HOME )
-        # otherwise, if GraphBLAS can call getenv("HOME") at run time, use
-        # tilde.  This is the typical case if the one compiling GraphBLAS does
-        # not set any variables first, since getenv("HOME") typically works.
-        set ( GRAPHBLAS_CACHE_PATH "~/.SuiteSparse/GraphBLAS/v${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" )
-    elseif ( DEFINED ENV{HOME} )
-        # otherwise, use the current HOME environment variable from cmake
-        set ( GRAPHBLAS_CACHE_PATH "$ENV{HOME}/.SuiteSparse/GraphBLAS/v${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" )
-    else ( )
-        # if no other option, create a CMAKE_BINARY_DIR/JIT folder.
-        set ( GRAPHBLAS_CACHE_PATH "${CMAKE_BINARY_DIR}/jit" )
-    endif ( )
-
-    message ( STATUS "GraphBLAS cache path for JIT:  ${GRAPHBLAS_CACHE_PATH}")
-
-    # make sure the cache path exists
-    file ( MAKE_DIRECTORY ${GRAPHBLAS_CACHE_PATH} )
-
-endif ( )
-
-configure_file ( "Config/GraphBLAS.h.in"
-    "${PROJECT_SOURCE_DIR}/Include/GraphBLAS.h"
-    NEWLINE_STYLE LF )
 
 #-------------------------------------------------------------------------------
 # print final C flags
@@ -593,11 +596,28 @@ install ( TARGETS graphblas
     RUNTIME DESTINATION ${SUITESPARSE_BINDIR}
     PUBLIC_HEADER DESTINATION ${SUITESPARSE_INCLUDEDIR} )
 install ( FILES ${CMAKE_SOURCE_DIR}/cmake_modules/FindGraphBLAS.cmake
-    DESTINATION ${SUITESPARSE_LIBDIR}/cmake/SuiteSparse 
+    DESTINATION ${SUITESPARSE_LIBDIR}/cmake/SuiteSparse
     COMPONENT Development )
 if ( NOT NSTATIC )
     install ( TARGETS graphblas_static
         ARCHIVE DESTINATION ${SUITESPARSE_LIBDIR} )
+endif ( )
+
+#-------------------------------------------------------------------------------
+# configure the JITs
+#-------------------------------------------------------------------------------
+
+if ( NOT NJIT OR ENABLE_CUDA )
+    # one or both JITs are enabled; make sure the cache path exists
+    file ( MAKE_DIRECTORY ${GRAPHBLAS_CACHE_PATH} )
+    file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/cpu" )
+    file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/cuda" )
+    message ( STATUS "GraphBLAS JIT: enabled")
+    configure_file ( "Config/GraphBLAS_config.txt.in"
+        "${GRAPHBLAS_CACHE_PATH}/GraphBLAS_config.txt"
+        NEWLINE_STYLE LF )
+    message ( STATUS "GraphBLAS cache path for JIT:   ${GRAPHBLAS_CACHE_PATH}")
+    message ( STATUS "GraphBLAS source path for JIT:  ${GRAPHBLAS_SOURCE_PATH}")
 endif ( )
 
 #-------------------------------------------------------------------------------

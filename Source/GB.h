@@ -47,7 +47,7 @@
 // internal #include files
 //------------------------------------------------------------------------------
 
-#if defined ( GBCUDA )
+#if defined ( SUITESPARSE_CUDA )
 #include "rmm_wrap.h"
 #endif
 

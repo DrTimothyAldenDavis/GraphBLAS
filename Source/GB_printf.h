@@ -157,7 +157,7 @@ void GB_assign_describe
     const int assign_kind       // row assign, col assign, assign, or subassign
 ) ;
 
-#if defined ( GBCUDA ) && defined ( GBNVTX )
+#if defined ( SUITESPARSE_CUDA ) && defined ( GBNVTX )
 // enable nvtxMark for CUDA
 #include <nvToolsExt.h>
 #define GB_NVTX { nvtxMark ("nvtx:" __FILE__ ":" GB_XSTR(__LINE__)) ; }
