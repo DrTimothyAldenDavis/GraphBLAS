@@ -48,10 +48,6 @@ GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
 )
 {
 
-#ifdef GBRENAME
-    return (GrB_NO_VALUE) ;
-#else
-
     //--------------------------------------------------------------------------
     // encodify the problem
     //--------------------------------------------------------------------------
@@ -82,6 +78,5 @@ GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
     return (GB_jit_kernel (C, M, M_in_place, A, B,
         (GB_saxpy3task_struct *) SaxpyTasks, ntasks, nfine, nthreads, do_sort,
         Werk)) ;
-#endif
 }
 

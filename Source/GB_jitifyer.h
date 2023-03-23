@@ -229,8 +229,6 @@ uint64_t GB_jitifyer_hash
     bool jitable            // true if the object can be JIT'd
 ) ;
 
-void GB_jitifyer_finalize (void) ;
-
 // to query a library for its type and operator definitions
 typedef const char *(*GB_jit_query_defn_func) (int k) ;
 
@@ -270,9 +268,27 @@ bool GB_jitifyer_match_version
 
 int GB_jitifyer_compile (char *kernel_name) ;  // compile a kernel
 
-void GB_jit_free (void) ;       // free the JIT table
+GrB_Info GB_jitifyer_init (void) ;  // initialize the JIT
 
-void GB_jitifyer_init (void) ;
+void GB_jitifyer_finalize (void) ;  // finalize the JIT
+
+void GB_jitifyer_table_free (void) ;    // free the JIT table
+
+GrB_Info GB_jit_alloc_space (void) ;
+
+GrB_Info GB_jit_set_include_path (void) ;
+
+const char *GB_jitifyer_get_source_path (void) ;
+GrB_Info GB_jitifyer_set_source_path (const char *new_source_path) ;
+
+const char *GB_jitifyer_get_cache_path (void) ;
+GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path) ;
+
+const char *GB_jitifyer_get_C_compiler (void) ;
+GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler) ;
+
+const char *GB_jitifyer_get_C_flags (void) ;
+GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags) ;
 
 #endif
 

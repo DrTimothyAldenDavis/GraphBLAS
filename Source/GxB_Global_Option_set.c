@@ -15,9 +15,11 @@
 //  GxB_Global_Option_set_FP64          double scalars
 //  GxB_Global_Option_set_FP64_ARRAY    double arrays
 //  GxB_Global_Option_set_INT64_ARRAY   int64_t arrays
+//  GxB_Global_Option_set_CHAR          strings
 //  GxB_Global_Option_set_FUNCTION      function pointers (as void *)
 
 #include "GB.h"
+#include "GB_jitifyer.h"
 
 //------------------------------------------------------------------------------
 // GxB_Global_Option_set_INT32: set a global option (int32_t)
@@ -205,6 +207,52 @@ GrB_Info GxB_Global_Option_set_INT64_ARRAY      // set a global default option
     }
 
     return (GrB_SUCCESS) ;
+}
+
+//------------------------------------------------------------------------------
+// GxB_Global_Option_set_CHAR: set a global option (string)
+//------------------------------------------------------------------------------
+
+GrB_Info GxB_Global_Option_set_CHAR      // set a global default option
+(
+    GxB_Option_Field field,         // option to change
+    const char *value               // value to change it to
+)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_WHERE1 ("GxB_Global_Option_set_CHAR (field, value)") ;
+
+    //--------------------------------------------------------------------------
+    // set the global option
+    //--------------------------------------------------------------------------
+
+    switch (field)
+    {
+
+        case GxB_JIT_C_COMPILER_NAME : 
+
+            return (GB_jitifyer_set_C_compiler (value)) ;
+
+        case GxB_JIT_C_COMPILER_FLAGS : 
+
+            return (GB_jitifyer_set_C_flags (value)) ;
+
+        case GxB_JIT_CACHE_PATH : 
+
+            return (GB_jitifyer_set_cache_path (value)) ;
+
+        case GxB_JIT_SOURCE_PATH : 
+
+            return (GB_jitifyer_set_source_path (value)) ;
+
+        default : 
+
+            return (GrB_INVALID_VALUE) ;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -411,6 +459,46 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 GB_Global_print_one_based_set ((bool) onebased) ;
             }
             break ;
+
+        //----------------------------------------------------------------------
+        // JIT configuruation
+        //----------------------------------------------------------------------
+
+        case GxB_JIT_C_COMPILER_NAME : 
+
+            {
+                va_start (ap, field) ;
+                char *C_compiler = va_arg (ap, char *) ;
+                va_end (ap) ;
+                return (GB_jitifyer_set_C_compiler (C_compiler)) ;
+            }
+
+        case GxB_JIT_C_COMPILER_FLAGS : 
+
+            {
+                va_start (ap, field) ;
+                char *C_flags = va_arg (ap, char *) ;
+                va_end (ap) ;
+                return (GB_jitifyer_set_C_flags (C_flags)) ;
+            }
+
+        case GxB_JIT_CACHE_PATH : 
+
+            {
+                va_start (ap, field) ;
+                char *cache_path = va_arg (ap, char *) ;
+                va_end (ap) ;
+                return (GB_jitifyer_set_cache_path (cache_path)) ;
+            }
+
+        case GxB_JIT_SOURCE_PATH : 
+
+            {
+                va_start (ap, field) ;
+                char *source_path = va_arg (ap, char *) ;
+                va_end (ap) ;
+                return (GB_jitifyer_set_source_path (source_path)) ;
+            }
 
         default : 
 

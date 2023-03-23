@@ -67,10 +67,6 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
 )
 {
 
-#ifdef GBRENAME
-    return (GrB_NO_VALUE) ;
-#else
-
     //--------------------------------------------------------------------------
     // encodify the problem
     //--------------------------------------------------------------------------
@@ -102,6 +98,5 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
         Ch_is_Mh, C_to_M, C_to_A, C_to_B, TaskList, C_ntasks, C_nthreads,
         M_ek_slicing, M_nthreads, M_ntasks, A_ek_slicing, A_nthreads, A_ntasks,
         B_ek_slicing, B_nthreads, B_ntasks)) ;
-#endif
 }
 

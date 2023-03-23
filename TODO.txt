@@ -1,0 +1,46 @@
+FIXME / TODO: for v8.0.1.draft1:
+
+    add instructions about the JIT to the user guide
+        
+        environment variables:
+            HOME (or LOCALAPPDATA for future Windows port)
+            GRAPHBLAS_SOURCE_PATH
+            GRAPHBLAS_CACHE_PATH
+
+    JIT control (get/set):
+
+        GxB_JIT_NONE = -1
+            JIT disabled at compile time.  No JIT avaiable at all.
+
+        GxB_JIT_OFF = 0
+            do not use the JIT at all: free all JIT kernels if loaded, and
+            dlclose all of them (call GB_jitifyer_table_free)
+
+        GxB_JIT_PAUSE = 1
+            do not run JIT kernels but keep any loaded JIT kernels loaded
+
+        GxB_JIT_RUN = 2
+            able to run JIT kernels if already loaded; may not load or compile
+
+        GxB_JIT_LOAD = 3
+            able to load and run JIT kernels; may not compile
+
+        GxB_JIT_ON = 4
+            full JIT: able to compile, load, and run
+
+    port to the Mac
+
+    performance tests (GAP, etc)
+
+    rename GBCUDA_DEV to COMPACT and document it
+
+for 8.0.2.draft2:
+
+    MATLAB interface (testing, and @GrB)
+    pre-constructed JIT kernels:  copy ~/.SuiteSparse/GraphBLAS/8.0.0/cpu/*.c
+        to GraphBLAS/Source/PreJIT (or something).  Recompile GraphBLAS;
+        cmake finds the list of sources in PreJIT/*.c.
+
+    more JIT kernels: GrB_assign (34 kernels), subref (3 kernels),
+        masker (2 kernels), other (5 kernels)
+

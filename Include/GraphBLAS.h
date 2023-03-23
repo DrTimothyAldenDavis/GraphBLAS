@@ -233,10 +233,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Jan XX, 2023"
+#define GxB_IMPLEMENTATION_DATE "Mar 23, 2023 (draft1)"
 #define GxB_IMPLEMENTATION_MAJOR 8
 #define GxB_IMPLEMENTATION_MINOR 0
-#define GxB_IMPLEMENTATION_SUB   0
+#define GxB_IMPLEMENTATION_SUB   1
 #define GxB_SPEC_DATE "Nov 15, 2021"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 0
@@ -771,10 +771,9 @@ GrB_Info GRB (Type_new)         // create a new GraphBLAS type
 //      GxB_Type_new (&MyQtype, sizeof (myquaternion), "myquaternion",
 //          "typedef struct { float x [4][4] ; int color ; } myquaternion ;") ;
 //
-// The type_name and type_defn are both null-terminated strings.  Currently,
-// type_defn is unused, but it will be required for best performance when a JIT
-// is implemented in SuiteSparse:GraphBLAS (both on the CPU and GPU).  User
-// defined types created by GrB_Type_new will not work with a JIT.
+// The type_name and type_defn are both null-terminated strings.  The two
+// strings are required for best performance in the JIT (both on the CPU and
+// GPU).  User defined types created by GrB_Type_new will not work with a JIT.
 //
 // At most GxB_MAX_NAME_LEN characters are accessed in type_name; characters
 // beyond that limit are silently ignored.
@@ -4062,6 +4061,11 @@ typedef enum            // for global options or matrix options
     GxB_MEMORY_POOL = 103,  // no longer used
     GxB_PRINT_1BASED = 104,   // print matrices as 0-based or 1-based
 
+    GxB_JIT_C_COMPILER_NAME = 110,  // CPU JIT C compiler name
+    GxB_JIT_C_COMPILER_FLAGS = 111, // CPU JIT C compiler flags
+    GxB_JIT_CACHE_PATH = 112,       // CPU/CUDA JIT path for compiled kernels
+    GxB_JIT_SOURCE_PATH = 113,      // CPU/CUDA JIT path to GraphBLAS source
+
     //------------------------------------------------------------
     // for GxB_Matrix_Option_get only:
     //------------------------------------------------------------
@@ -4306,6 +4310,12 @@ GrB_Info GxB_Global_Option_set_INT64_ARRAY      // set a global default option
     int64_t *value                  // value to change it to
 ) ;
 
+GrB_Info GxB_Global_Option_set_CHAR      // set a global default option
+(
+    GxB_Option_Field field,         // option to change
+    const char *value               // value to change it to
+) ;
+
 GrB_Info GxB_Global_Option_set_FUNCTION      // set a global default option
 (
     GxB_Option_Field field,         // option to change
@@ -4339,7 +4349,7 @@ GrB_Info GxB_Global_Option_get_INT64        // gets the current global option
 GrB_Info GxB_Global_Option_get_CHAR         // gets the current global option
 (
     GxB_Option_Field field,         // option to query
-    char **value                    // return value of the global option
+    const char **value              // return value of the global option
 ) ;
 
 GrB_Info GxB_Global_Option_get_FUNCTION // gets the current global option

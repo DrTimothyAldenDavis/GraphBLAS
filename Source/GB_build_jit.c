@@ -45,10 +45,6 @@ GrB_Info GB_build_jit               // GB_builder JIT kernel
 )
 {
 
-#ifdef GBRENAME
-    return (GrB_NO_VALUE) ;
-#else
-
     //--------------------------------------------------------------------------
     // encodify the problem
     //--------------------------------------------------------------------------
@@ -76,6 +72,5 @@ GrB_Info GB_build_jit               // GB_builder JIT kernel
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (Tx, Ti, Sx, nvals, ndupl, I_work, K_work,
         tstart_slice, tnz_slice, nthreads)) ;
-#endif
 }
 

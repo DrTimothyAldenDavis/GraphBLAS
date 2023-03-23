@@ -155,7 +155,22 @@ int main (void)
     TRY (GrB_init (GrB_NONBLOCKING)) ;
     TRY (GxB_set (GxB_BURBLE, true)) ;
     printf ("Gauss demo.  Note that all transposes are array transposes,\n"
-        "not matrix (conjugate) transposes.") ;
+        "not matrix (conjugate) transposes.\n\n") ;
+
+    char *compiler, *cache, *src, *flags ;
+    TRY (GxB_get (GxB_JIT_C_COMPILER_NAME, &compiler)) ;
+    TRY (GxB_get (GxB_JIT_C_COMPILER_FLAGS, &flags)) ;
+    TRY (GxB_get (GxB_JIT_SOURCE_PATH, &src)) ;
+    TRY (GxB_get (GxB_JIT_CACHE_PATH, &cache)) ;
+    printf ("JIT configuration: ------------------\n") ;
+    printf ("JIT C compiler: [%s]\n", compiler) ;
+    printf ("JIT C flags:    [%s]\n", flags) ;
+    printf ("JIT source:     [%s]\n", src) ;
+    printf ("JIT cache:      [%s]\n", cache) ;
+    printf ("-------------------------------------\n\n") ;
+//  TRY (GxB_set (GxB_JIT_C_COMPILER_NAME, "gcc")) ;
+//  TRY (GxB_get (GxB_JIT_C_COMPILER_NAME, &compiler)) ;
+//  printf ("JIT C compiler: [%s]\n", compiler) ;
 
     // create the Gauss type
     GrB_Type Gauss ;

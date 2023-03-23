@@ -35,10 +35,6 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
 )
 {
 
-#ifdef GBRENAME
-    return (GrB_NO_VALUE) ;
-#else
-
     //--------------------------------------------------------------------------
     // encodify the problem
     //--------------------------------------------------------------------------
@@ -65,6 +61,5 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (Cb, cnvals_handle, A, ythunk, nthreads)) ;
-#endif
 }
 

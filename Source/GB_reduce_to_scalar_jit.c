@@ -36,10 +36,6 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
 )
 {
 
-#ifdef GBRENAME
-    return (GrB_NO_VALUE) ;
-#else
-
     //--------------------------------------------------------------------------
     // encodify the problem
     //--------------------------------------------------------------------------
@@ -65,6 +61,5 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (z, A, W, F, ntasks, nthreads)) ;
-#endif
 }
 

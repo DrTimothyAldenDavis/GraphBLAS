@@ -48,10 +48,6 @@ GrB_Info GB_AxB_saxpy4_jit          // C+=A*B, saxpy4 method, via the JIT
 )
 {
 
-#ifdef GBRENAME
-    return (GrB_NO_VALUE) ;
-#else
-
     //--------------------------------------------------------------------------
     // encodify the problem
     //--------------------------------------------------------------------------
@@ -84,6 +80,5 @@ GrB_Info GB_AxB_saxpy4_jit          // C+=A*B, saxpy4 method, via the JIT
     return (GB_jit_kernel (C, A, B, ntasks, nthreads,
         nfine_tasks_per_vector, use_coarse_tasks, use_atomics,
         A_slice, H_slice, Wcx, Wf)) ;
-#endif
 }
 

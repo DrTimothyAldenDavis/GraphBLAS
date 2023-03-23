@@ -18,6 +18,7 @@
 //  GxB_Global_Option_get_FUNCTION      function pointers (as void **)
 
 #include "GB.h"
+#include "GB_jitifyer.h"
 
 //------------------------------------------------------------------------------
 // GxB_Global_Option_get_INT32: get global options (int32_t scalars or arrays)
@@ -216,7 +217,7 @@ GrB_Info GxB_Global_Option_get_INT64    // gets the current global option
 GrB_Info GxB_Global_Option_get_CHAR     // gets the current global option
 (
     GxB_Option_Field field,         // option to query
-    char **value                    // return value of the global option
+    const char **value              // return value of the global option
 )
 {
 
@@ -287,6 +288,30 @@ GrB_Info GxB_Global_Option_get_CHAR     // gets the current global option
         case GxB_COMPILER_NAME : 
 
             (*value) = GB_COMPILER_NAME ;
+            break ;
+
+        //----------------------------------------------------------------------
+        // JIT configuration:
+        //----------------------------------------------------------------------
+
+        case GxB_JIT_C_COMPILER_NAME : 
+
+            (*value) = GB_jitifyer_get_C_compiler ( ) ;
+            break ;
+
+        case GxB_JIT_C_COMPILER_FLAGS : 
+
+            (*value) = GB_jitifyer_get_C_flags ( ) ;
+            break ;
+
+        case GxB_JIT_CACHE_PATH : 
+
+            (*value) = GB_jitifyer_get_cache_path ( ) ;
+            break ;
+
+        case GxB_JIT_SOURCE_PATH : 
+
+            (*value) = GB_jitifyer_get_source_path ( ) ;
             break ;
 
         default : 
@@ -782,6 +807,54 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (free_function) ;
                 (*free_function) = GB_Global_free_function_get ( ) ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        // JIT configuruation
+        //----------------------------------------------------------------------
+
+        case GxB_JIT_C_COMPILER_NAME : 
+
+            {
+                va_start (ap, field) ;
+                const char **compiler_name = va_arg (ap, char **) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (compiler_name) ;
+                (*compiler_name) = GB_jitifyer_get_C_compiler ( ) ;
+            }
+            break ;
+
+        case GxB_JIT_C_COMPILER_FLAGS : 
+
+            {
+                va_start (ap, field) ;
+                const char **compiler_flags = va_arg (ap, char **) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (compiler_flags) ;
+                (*compiler_flags) = GB_jitifyer_get_C_flags ( ) ;
+            }
+            break ;
+
+        case GxB_JIT_CACHE_PATH : 
+
+            {
+                va_start (ap, field) ;
+                const char **cache_path = va_arg (ap, char **) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (cache_path) ;
+                (*cache_path) = GB_jitifyer_get_cache_path ( ) ;
+            }
+            break ;
+
+        case GxB_JIT_SOURCE_PATH : 
+
+            {
+                va_start (ap, field) ;
+                const char **source_path = va_arg (ap, char **) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (source_path) ;
+                (*source_path) = GB_jitifyer_get_source_path ( ) ;
             }
             break ;
 

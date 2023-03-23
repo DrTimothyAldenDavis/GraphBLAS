@@ -14,8 +14,6 @@
 // determine if the JIT is enabled at compile-time
 //------------------------------------------------------------------------------
 
-// Fix GBRENAME case and get the JIT working in MATLAB.
-
 #ifdef NJIT
 // disable the JIT
 #undef  GB_JIT_ENABLED
@@ -26,12 +24,7 @@
 #endif
 
 #ifdef GBRENAME
-#undef  GB_JIT_ENABLED
-#define GB_JIT_ENABLED 0
-#endif
-
-// FIXME: CPU JIT disabled for now when CUDA is in use
-#ifdef SUITESPARSE_CUDA
+// FIXME: JIT does not yet work inside MATLAB; turn it off
 #undef  GB_JIT_ENABLED
 #define GB_JIT_ENABLED 0
 #endif
