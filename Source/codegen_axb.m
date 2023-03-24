@@ -3,7 +3,7 @@ function codegen_axb
 %
 % This function creates all files of the form GB_AxB__*.[ch], including all
 % built-in semirings (GB_AxB__*.c) and two include files,
-% Generated1/GB_AxB__include1.h and Generated2/GB_AxB__include2.h.
+% Source/GB_AxB__include1.h and FactoryKernels/GB_AxB__include2.h.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -15,10 +15,14 @@ function codegen_axb
 fprintf ('\nsemirings:\n') ;
 
 for k = 1:2
-    filename = sprintf ('Generated%d/GB_AxB__include%d.h', k, k) ;
+    if (k == 1)
+        filename = sprintf ('./GB_AxB__include%d.h', k) ;
+    else
+        filename = sprintf ('FactoryKernels/GB_AxB__include%d.h', k) ;
+    end
     fh = fopen (filename, 'w') ;
     fprintf (fh, '//------------------------------------------------------------------------------\n') ;
-    fprintf (fh, '// GB_AxB__include%d.h: definitions for Generated%d/GB_AxB__*.c\n', k, k) ;
+    fprintf (fh, '// GB_AxB__include%d.h: definitions for GB_AxB__*.c methods\n', k) ;
     fprintf (fh, '//------------------------------------------------------------------------------\n') ;
     fprintf (fh, '\n') ;
     fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.\n') ;

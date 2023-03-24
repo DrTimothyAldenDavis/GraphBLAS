@@ -143,7 +143,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
             info = GrB_NO_VALUE ;
 
             //------------------------------------------------------------------
-            // via the factory kernel (inline; not in Generated2 folder)
+            // via the factory kernel (inline; not in FactoryKernels folder)
             //------------------------------------------------------------------
 
             #ifndef GBCUDA_DEV

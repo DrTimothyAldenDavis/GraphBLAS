@@ -14,10 +14,8 @@
 // Result are undefined if multiple user threads simultaneously call GrB_init
 // or GxB_init.
 
-// Per the spec, GrB_finalize must be called as the last GraphBLAS operation.
-// Not even GrB_Matrix_free can be safely called after GrB_finalize.  In the
-// current version of SuiteSparse:GraphBLAS, GrB_finalize does nothing, but in
-// future versions it may do critical work such as freeing a memory pool.
+// GrB_finalize must be called as the last GraphBLAS operation.
+// Not even GrB_Matrix_free can be safely called after GrB_finalize.
 
 // GrB_init or GxB_init define the mode that GraphBLAS will use:  blocking or
 // non-blocking.  With blocking mode, all operations finish before returning to
@@ -187,18 +185,18 @@ GrB_Info GB_init            // start up GraphBLAS
     // set up the JIT folder locations and compiler flags
     //--------------------------------------------------------------------------
 
-    // FIXME: remove printfs here
-    printf ("JIT enabled: %d\n", GB_JIT_ENABLED) ;
-    #if defined ( SUITESPARSE_CUDA )
-    printf ("CUDA enabled:\n") ;
-    #else
-    printf ("CUDA not enabled:\n") ;
-    #endif
+//  printf ("JIT enabled: %d\n", GB_JIT_ENABLED) ;
+//  #if defined ( SUITESPARSE_CUDA )
+//  printf ("CUDA enabled:\n") ;
+//  #else
+//  printf ("CUDA not enabled:\n") ;
+//  #endif
+
     #if GB_JIT_ENABLED || defined ( SUITESPARSE_CUDA )
     info = GB_jitifyer_init ( ) ;
     if (info != GrB_SUCCESS)
     {
-        printf ("JIT: failed to initialize\n") ;
+//      printf ("JIT: failed to initialize\n") ;
         return (info) ;
     }
     #endif

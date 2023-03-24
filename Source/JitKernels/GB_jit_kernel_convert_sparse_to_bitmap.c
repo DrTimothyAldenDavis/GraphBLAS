@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_unop_shared_definitions.h"
-
 // cij = op (aij)
 #define GB_COPY(Axnew,pnew,Ax,p) GB_UNOP (Axnew, pnew, Ax, p, A_iso, i, j, y)
 

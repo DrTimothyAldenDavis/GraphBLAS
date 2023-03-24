@@ -173,5 +173,11 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
 
     GB_macrofy_input (fp, "a", "A", "A", true, xtype,
         atype, asparsity, acode, A_iso, A_zombies) ;
+
+    //--------------------------------------------------------------------------
+    // include the final default definitions
+    //--------------------------------------------------------------------------
+
+    fprintf (fp, "\n#include \"GB_apply_shared_definitions.h\"\n") ;
 }
 

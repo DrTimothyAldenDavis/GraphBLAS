@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_transpose_unop.c: C = op (A') for unary op
+// GB_jit_kernel_trans_unop.c: C = op (A') for unary op
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -8,8 +8,6 @@
 //------------------------------------------------------------------------------
 
 // TODO: C=op(A') is used only for unary ops; extend it to index unary ops
-
-#include "GB_unop_shared_definitions.h"
 
 // cij = op (aij)
 #define GB_APPLY_OP(pC,pA) GB_UNOP (Cx, pC, Ax, pA, A_iso, i, j, y)

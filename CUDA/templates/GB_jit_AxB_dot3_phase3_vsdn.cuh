@@ -23,7 +23,6 @@
 #define tile_sz 32
 //#include "local_cub/block/block_reduce.cuh"
 #include <cub/block/block_reduce.cuh>
-#include "GB_AxB_shared_definitions.h"
 #include "GB_cuda_dot3_defn.h"
 
 using namespace cooperative_groups;

@@ -9,11 +9,11 @@ applications.
 The Template/ files are not compiled separately, but are #include'd into files
 in this folder instead.
 
-The Generated1/* and Generated2/* files are created by the *.m scripts from the
+The FactoryKernel/* files are created by the *.m scripts from the
 Generator/* files, and should not be editted.  If the Generator/ files are
 modified then type:
 
     codegen
 
-in MATLAB to construct the Generated1/* and Generated2/* files.
+in MATLAB to construct them.
 

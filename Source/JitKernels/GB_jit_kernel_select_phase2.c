@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_select_shared_definitions.h"
-
 GrB_Info GB_jit_kernel
 (
     int64_t *restrict Ci,

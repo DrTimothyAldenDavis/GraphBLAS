@@ -1,5 +1,5 @@
 function codegen
-%CODEGEN generate all code for Generated1 and Generated2
+%CODEGEN generate all code for FactoryKernels/*.c
 %
 % This code generation method works on octave7 and MATLAB.
 

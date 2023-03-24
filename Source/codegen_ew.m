@@ -9,7 +9,7 @@ function codegen_ew
 
 fprintf ('\newise binary operators:\n') ;
 
-fh = fopen ('Generated2/GB_ew__include.h', 'w') ;
+fh = fopen ('FactoryKernels/GB_ew__include.h', 'w') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;
 fprintf (fh, '// GB_ew__include.h: definitions for GB_ew__*.c\n') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;

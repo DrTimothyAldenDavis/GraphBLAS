@@ -25,8 +25,6 @@
 
 // C is iso if A is iso
 
-#include "GB_subassign_shared_definitions.h"
-
 GrB_Info GB_jit_kernel
 (
     // input/output:

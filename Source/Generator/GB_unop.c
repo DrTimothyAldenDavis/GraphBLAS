@@ -38,7 +38,7 @@ GB_ctype
 #define GB_DISABLE \
     GB_disable
 
-#include "GB_unop_shared_definitions.h"
+#include "GB_apply_shared_definitions.h"
 
 m4_divert(if_unop_apply_enabled)
 //------------------------------------------------------------------------------

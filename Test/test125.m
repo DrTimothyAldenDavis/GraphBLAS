@@ -100,7 +100,7 @@ for k1 = 1:length(mult_ops)
             C0 = GB_spec_mxm (C, [ ], [ ], semiring, B, A, dnn);
             GB_spec_compare (C0, C1, identity) ;
 
-            % dump the semiring list to compare with Source/Generated2
+            % dump the semiring list to compare with Source/FactoryKernels
             switch (xtype)
                 case { 'logical' }
                     xtype = 'bool' ;
@@ -137,7 +137,7 @@ for k1 = 1:length(mult_ops)
                     end
             end
 
-% This produces a list of all files in Source/Generated1 and Source/Generated2
+% This produces a list of all files in Source/FactoryKernels
 % fprintf ('GB_AxB__%s_%s_%s.c\n', add_opname, mult_opname, xtype) ;
 
         end

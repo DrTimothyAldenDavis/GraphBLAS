@@ -132,12 +132,12 @@ if ( CMAKE_CUDA_DEV )
     # for CUDA development only; not for production use
     include_directories ( ../Source/Template ../Source ../Include rename
         ../Source/Shared ../Source/SharedTemplate
-        ../Source/Generated1 ../lz4 ../zstd ../zstd/zstd_subset ../xxHash )
+        ../lz4 ../zstd ../zstd/zstd_subset ../xxHash )
 else ( )
     include_directories ( ../Source/Template ../Source ../Include rename
         ../Source/Shared ../Source/SharedTemplate
-        ../Source/Generated1 ../lz4 ../zstd ../zstd/zstd_subset ../xxHash
-        ../Source/Generated2 )
+        ../lz4 ../zstd ../zstd/zstd_subset ../xxHash
+        ../Source/FactoryKernels )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -203,12 +203,10 @@ endif ( )
 
 if ( CMAKE_CUDA_DEV )
     # for CUDA development only; not for production use
-    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../Source/Generated1/*.c"
-        "../Source/Shared/*.c" )
+    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../Source/Shared/*.c" )
 else ( )
-    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../Source/Generated1/*.c"
-        "../Source/Shared/*.c"
-        "../Source/Generated2/*.c" )
+    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../Source/Shared/*.c"
+        "../Source/FactoryKernels/*.c" )
 endif ( )
 
 add_library ( graphblas_matlab SHARED ${GRAPHBLAS_SOURCES} )

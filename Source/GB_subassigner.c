@@ -56,7 +56,6 @@
 // GB_assign_prep, so if C->iso is true, there is no numeric work to do.
 
 #include "GB_subassign.h"
-// #include "GB_subassign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 #include "GB_subassign_dense.h"
 #include "GB_bitmap_assign.h"

@@ -88,7 +88,7 @@ GB_is_secondj_multiplier
 #define GB_DISABLE \
     GB_disable
 
-#include "GB_AxB_shared_definitions.h"
+#include "GB_mxm_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // GB_Adot2B: C=A'*B, C<M>=A'*B, or C<!M>=A'*B: dot product method, C is bitmap

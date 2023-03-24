@@ -10,7 +10,7 @@
 // A and B matrices have any format: hypersparse, sparse, bitmap, or full.
 // C can be sparse, hypersparse, or bitmap, but not full.
 
-#include "GB_AxB_shared_definitions.h"
+#include "GB_mxm_shared_definitions.h"
 
 {
     #if GB_GENERIC_C_IS_SPARSE_OR_HYPERSPARSE            

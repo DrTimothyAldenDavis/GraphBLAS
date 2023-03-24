@@ -341,7 +341,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             {
 
                 //--------------------------------------------------------------
-                // via the factory kernel (inline; not in Generated2 folder)
+                // via the factory kernel (inline; not in FactoryKernels folder)
                 //--------------------------------------------------------------
 
                 #ifndef GBCUDA_DEV

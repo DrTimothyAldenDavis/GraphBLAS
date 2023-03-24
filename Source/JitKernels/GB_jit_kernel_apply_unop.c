@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_unop_shared_definitions.h"
-
 #if GB_DEPENDS_ON_I
 
     // cij = op (aij)

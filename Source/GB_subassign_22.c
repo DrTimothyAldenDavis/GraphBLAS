@@ -23,7 +23,7 @@
 // C can have any sparsity format, as long as all entries are present;
 // GB_is_dense (C)) must hold.
 
-#include "GB_subassign_shared_definitions.h"
+#include "GB_assign_shared_definitions.h"
 #include "GB_subassign_dense.h"
 #include "GB_binop.h"
 #include "GB_unused.h"

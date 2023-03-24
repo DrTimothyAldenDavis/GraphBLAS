@@ -19,7 +19,6 @@
 #include "GB_binop.h"
 #include "GB_unused.h"
 #include "GB_ek_slice.h"
-
 #include "GB_generic.h"
 
 GrB_Info GB_emult_generic       // generic emult
@@ -129,6 +128,8 @@ GrB_Info GB_emult_generic       // generic emult
 
     // address of Cx [p]
     #define GB_CX(p) Cx +((p)*csize)
+
+    #include "GB_ewise_shared_definitions.h"
 
     //--------------------------------------------------------------------------
     // do the ewise operation

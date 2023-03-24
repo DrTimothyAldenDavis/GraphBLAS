@@ -62,8 +62,8 @@
 #include "GB_sort.h"
 #include "GB_ek_slice_search.c"
 #include "GB_bitmap_assign_methods.h"
+#include "GB_mxm_shared_definitions.h"
 #include "GB_AxB_saxpy_generic.h"
-#include "GB_AxB_shared_definitions.h"
 #include "GB_generic.h"
 
 GrB_Info GB_AXB_SAXPY_GENERIC_METHOD

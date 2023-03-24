@@ -30,7 +30,6 @@
 #include "GB_cuda_atomics.cuh"
 #include "GB_hash.h"
 #include "GB_hyper_hash_lookup.h"
-#include "GB_AxB_shared_definitions.h"
 #include "GB_cuda_dot3_defn.h"
 
 using namespace cooperative_groups;

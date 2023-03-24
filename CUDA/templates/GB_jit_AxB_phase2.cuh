@@ -9,7 +9,6 @@
 #include <stdint.h>
 #include <cooperative_groups.h>
 #include <cub/block/block_scan.cuh>
-#include "GB_AxB_shared_definitions.h"
 
 using namespace cooperative_groups;
 

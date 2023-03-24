@@ -9,12 +9,12 @@
 
 // The installer of SuiteSparse:GraphBLAS can edit this file to reduce the code
 // size of the compiled library, by disabling the corresonding hard-coded
-// functions in Source/Generated2.  For example, if SuiteSparse:GraphBLAS is
-// integrated into an application that makes no use of the GrB_INT16 data type,
-// or just occassional use where performance is not a concern, then uncomment
-// the line "#define GxB_NO_INT16 1".  Alternatively, SuiteSparse:GraphBLAS can
-// be compiled with a list of options, such as -DGxB_NO_INT16=1, which does the
-// same thing.
+// functions in Source/FactoryKernels.  For example, if SuiteSparse:GraphBLAS
+// is integrated into an application that makes no use of the GrB_INT16 data
+// type, or just occassional use where performance is not a concern, then
+// uncomment the line "#define GxB_NO_INT16 1".  Alternatively,
+// SuiteSparse:GraphBLAS can be compiled with a list of options, such as
+// -DGxB_NO_INT16=1, which does the same thing.
 
 // GraphBLAS will still work as expected.  It will simply use a generic method
 // instead of the type- or operator-specific code.  It will be slower, by about
@@ -70,9 +70,7 @@
 // Thus, below there is a #define GxB_NO_LAND_FIRST_BOOL, but no #define
 // GxB_NO_LAND_DIV_BOOL.
 
-// Note that there are no macros that disable the hard-coded functions for
-// GxB_select (Generated1/GB_sel__*), since they have no generic equivalents.
-// The ANY_PAIR semirings appear in Generated1/GB_AxB__any_pair_iso.c and
+// The ANY_PAIR semirings appear in Source/GB_AxB__any_pair_iso.c and
 // cannot be disabled.
 
 // In this version of SuiteSparse:GraphBLAS, some of the fast hard-coded

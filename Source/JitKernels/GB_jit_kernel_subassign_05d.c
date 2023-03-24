@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_subassign_shared_definitions.h"
-
 // Method 05d: C(:,:)<M> = scalar ; no S, C is dense
 
 // M:           present

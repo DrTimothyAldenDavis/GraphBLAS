@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_AxB_shared_definitions.h"
 #include "GB_AxB_saxpy3_template.h"
 
 GrB_Info GB_jit_kernel

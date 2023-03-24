@@ -27,7 +27,7 @@ GB_ax_mask
 #define GB_DISABLE \
     GB_disable
 
-#include "GB_subassign_shared_definitions.h"
+#include "GB_assign_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // C<M> = scalar, when C is dense

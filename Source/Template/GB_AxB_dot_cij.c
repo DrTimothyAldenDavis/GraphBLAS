@@ -33,7 +33,7 @@
 // The #include'ing file must use GB_DECLARE_TERMINAL_CONST (zterminal),
 // or define zterminal another way (see Template/GB_AxB_dot_generic.c).
 
-#ifndef GB_AXB_SHARED_DEFINITIONS_H
+#ifndef GB_MXM_SHARED_DEFINITIONS_H
 #error "undefined"
 #endif
 

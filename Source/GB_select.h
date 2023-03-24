@@ -205,7 +205,8 @@ static inline void GB_select_iso
 // compiler diagnostics
 //------------------------------------------------------------------------------
 
-// Some parameters are unused for some uses of the Generated2/GB_sel_* functions
+// Some parameters are unused for some uses of the FactoryKernels/GB_sel_*
+// functions
 #include "GB_unused.h"
 
 #endif

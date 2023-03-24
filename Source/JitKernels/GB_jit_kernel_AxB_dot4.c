@@ -9,8 +9,6 @@
 
 // C+=A'*B: dot product, C is full, dot4 method
 
-#include "GB_AxB_shared_definitions.h"
-
 GrB_Info GB_jit_kernel
 (
     GrB_Matrix C,

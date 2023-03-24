@@ -227,5 +227,11 @@ void GB_macrofy_select          // construct all macros for GrB_select
 
     GB_macrofy_input (fp, "a", "A", "A", true, xtype,
         atype, asparsity, acode, 0, -1) ;
+
+    //--------------------------------------------------------------------------
+    // include the final default definitions
+    //--------------------------------------------------------------------------
+
+    fprintf (fp, "\n#include \"GB_select_shared_definitions.h\"\n") ;
 }
 

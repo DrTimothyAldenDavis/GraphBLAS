@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_ewise_shared_definitions.h"
-
 GrB_Info GB_jit_kernel
 (
     GrB_Matrix C,

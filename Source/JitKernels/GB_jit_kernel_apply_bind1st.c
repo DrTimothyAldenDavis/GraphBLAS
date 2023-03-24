@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_ewise_shared_definitions.h"
-
 GrB_Info GB_jit_kernel
 (
     GB_void *Cx_output,         // Cx and Bx may be aliased

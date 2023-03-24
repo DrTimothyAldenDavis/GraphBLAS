@@ -23,7 +23,6 @@
 #include "GB_cuda_atomics.cuh"
 #include <cstdint>
 #include <cooperative_groups.h>
-#include "GB_monoid_shared_definitions.h"
 
 #if GB_C_ISO
 #error "kernel undefined for C iso"

@@ -180,5 +180,10 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     GB_macrofy_input (fp, "b", "B", "B", true, flipxy ? xtype : ytype,
         btype, bsparsity, bcode, B_iso_code, -1) ;
 
+    //--------------------------------------------------------------------------
+    // include the final default definitions
+    //--------------------------------------------------------------------------
+
+    fprintf (fp, "\n#include \"GB_ewise_shared_definitions.h\"\n") ;
 }
 

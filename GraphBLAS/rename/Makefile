@@ -2,7 +2,7 @@
 # GraphBLAS/GraphBLAS/rename/Makefile
 #-------------------------------------------------------------------------------
 
-# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
 #-------------------------------------------------------------------------------
@@ -13,11 +13,10 @@
 # libgraphblas_matlab.so with renamed symbols, to avoid conflicting with the
 # built-in libmwgraphblas.so (v3.3.3) in MATLAB R2021a and later.
 
-# GrB_Type_new, GrB_UnaryOp_new, GrB_BinaryOp_new, and
-# GxB_*Iterator* methods are #define'd as both macros and functions in
-# GraphBLAS.h, so they are not renamed.  Generated functions (with "__" in
-# their name) are renamed using macros internally, and so they do not need to
-# be renamed with GB_rename.h.
+# GrB_Type_new, GrB_UnaryOp_new, GrB_BinaryOp_new, and GxB_*Iterator* methods
+# are #define'd as both macros and functions in GraphBLAS.h, so they are not
+# renamed.  Functions with "__" in their name are renamed using macros
+# internally, and so they do not need to be renamed with GB_rename.h.
 
 go:
 	nm -gD ../../build/libgraphblas.so | grep -v "__" > lib

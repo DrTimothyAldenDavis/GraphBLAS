@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_AxB_shared_definitions.h"
 #define Mask_comp   GB_MASK_COMP
 #define Mask_struct GB_MASK_STRUCT
 #include "GB_AxB_saxpy3_template.h"

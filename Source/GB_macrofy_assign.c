@@ -370,5 +370,11 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
                 "GB_GETA (ywork, Ax, pA, A_iso)\n") ;
         }
     }
+
+    //--------------------------------------------------------------------------
+    // include the final default definitions
+    //--------------------------------------------------------------------------
+
+    fprintf (fp, "\n#include \"GB_assign_shared_definitions.h\"\n") ;
 }
 

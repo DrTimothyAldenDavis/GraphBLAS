@@ -199,5 +199,11 @@ void GB_macrofy_build           // construct all macros for GB_build
         }
         fprintf (fp, " ;\n") ;
     }
+
+    //--------------------------------------------------------------------------
+    // include the final default definitions
+    //--------------------------------------------------------------------------
+
+    fprintf (fp, "\n#include \"GB_kernel_shared_definitions.h\"\n") ;
 }
 

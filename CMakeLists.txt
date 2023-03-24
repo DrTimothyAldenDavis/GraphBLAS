@@ -116,9 +116,8 @@ if ( SUITESPARSE_CUDA )
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES CUDA C )
 else ( )
-# FIXME!!
-    set ( CMAKE_CUDA_DEV on )
-#   set ( CMAKE_CUDA_DEV off )
+#   set ( CMAKE_CUDA_DEV on )
+    set ( CMAKE_CUDA_DEV off )
     project ( graphblas
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES C )
@@ -243,13 +242,13 @@ configure_file ( "CUDA/Config/GB_cuda_common_jitFactory.hpp.in"
 
 if ( CMAKE_CUDA_DEV )
     # for CUDA development only; not for production use
-    include_directories ( Source/Template Source Include Source/Generated1
+    include_directories ( Source/Template Source Include
         Source/Shared Source/SharedTemplate xxHash Config
         lz4 zstd zstd/zstd_subset Demo/Include rmm_wrap )
 else ( )
-    include_directories ( Source/Template Source Include Source/Generated1
+    include_directories ( Source/Template Source Include
         Source/Shared Source/SharedTemplate xxHash Config
-        lz4 zstd zstd/zstd_subset Source/Generated2 Demo/Include rmm_wrap )
+        lz4 zstd zstd/zstd_subset Source/FactoryKernels Demo/Include rmm_wrap )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -346,13 +345,10 @@ endif ( )
 
 if ( CMAKE_CUDA_DEV )
     # for CUDA development only; not for production use
-    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c"
-        "Source/Shared/*.c"
-        "Source/Generated1/*.c" )
+    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Source/Shared/*.c" )
 else ( )
-    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c"
-        "Source/Shared/*.c"
-        "Source/Generated1/*.c" "Source/Generated2/*.c" )
+    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Source/Shared/*.c"
+        "Source/FactoryKernels/*.c" )
 endif ( )
 
 add_library ( graphblas SHARED ${GRAPHBLAS_SOURCES} )

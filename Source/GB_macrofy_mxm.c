@@ -376,5 +376,11 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     GB_macrofy_input (fp, "b", "B", "B", true,
         flipxy ? mult->xtype : mult->ytype,
         btype, bsparsity, bcode, B_iso_code, -1) ;
+
+    //--------------------------------------------------------------------------
+    // include the final default definitions
+    //--------------------------------------------------------------------------
+
+    fprintf (fp, "\n#include \"GB_mxm_shared_definitions.h\"\n") ;
 }
 

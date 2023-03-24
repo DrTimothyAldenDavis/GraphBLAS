@@ -9353,11 +9353,11 @@ controlled via \verb'GrB.burble(b)' in the MATLAB/Octave interface.
 
 If enabled, SuiteSparse:GraphBLAS reports which internal kernels it uses, and
 how much time is spent.  If you see the word \verb'generic', it means that
-SuiteSparse:GraphBLAS was unable to use is faster kernels in
-\verb'Source/Generated2', but used a generic kernel that relies on function
-pointers.  This is done for user-defined types and operators, and when
-typecasting is performed, and it is typically slower than the kernels in
-\verb'Source/Generated2'.
+SuiteSparse:GraphBLAS was unable to use its JIT kernels, or its faster kernels
+in \verb'Source/FactoryKernels', but used a generic kernel that relies on
+function pointers.  This is done for user-defined types and operators, and when
+typecasting is performed, and it is typically slower than the JIT kernels
+or kernels in \verb'Source/FactoryKernels'.
 
 If you see a lot of \verb'wait' statements, it may mean that a lot of time is
 spent finishing a matrix or vector.  This may be the result of an inefficient

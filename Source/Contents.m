@@ -1,8 +1,8 @@
 % SuiteSparse/GraphBLAS/Source
 %
-% These files are used to create the files in Source/Generated1 and
-% Source/Generated2, from the input files in Source/Generator.  These functions
-% do not need to be used by the user.
+% These files are used to create the files in Source/*__* and
+% Source/FactoryKernels, from the input files in Source/Generator.  These
+% functions do not need to be used by the user.
 %
 %   codegen
 %   codegen_aop

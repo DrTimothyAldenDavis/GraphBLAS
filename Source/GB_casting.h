@@ -553,11 +553,11 @@ GB_CAST_FUNCTION (GxB_FC64_t, GxB_FC64_t)
 // Instead, it is faster to simply use type punning, based on the size of the
 // data type, and use the inline GB_mcast function instead.
 
-// By default, the pre-generated kernels in Source/Generated* and the generic
-// kernels use GB_void as the data type for the M matrix, and then call this
-// function to evaluate the value of a mask entry M(i,j).  The JIT kernels have
-// a specific matrix type for M, and they #undef these definitions and replace
-// them with specific types and a simpler test of the M(i,j) value.
+// By default, the pre-generated kernels in Source/FactoryKernels and the
+// generic kernels use GB_void as the data type for the M matrix, and then call
+// this function to evaluate the value of a mask entry M(i,j).  The JIT kernels
+// have a specific matrix type for M, and they #undef these definitions and
+// replace them with specific types and a simpler test of the M(i,j) value.
 
 #define GB_M_TYPE GB_void
 #define GB_MCAST(Mx,pM,msize) GB_mcast ((GB_void *) Mx, pM, msize)

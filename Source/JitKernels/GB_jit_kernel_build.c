@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_kernel_shared_definitions.h"
-
 GrB_Info GB_jit_kernel
 (
     GB_void *restrict Tx_void,

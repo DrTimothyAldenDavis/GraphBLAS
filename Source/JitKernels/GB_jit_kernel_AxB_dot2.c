@@ -9,8 +9,6 @@
 
 // C<#M>=A'*B: dot product, C is bitmap/full, dot2 method
 
-#include "GB_AxB_shared_definitions.h"
-
 GrB_Info GB_jit_kernel
 (
     GrB_Matrix C,

@@ -43,7 +43,7 @@
 
 // JIT: needed.
 
-#include "GB_subassign_shared_definitions.h"
+#include "GB_assign_shared_definitions.h"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_subassign_dense.h"
 

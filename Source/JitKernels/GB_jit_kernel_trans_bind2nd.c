@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_ewise_shared_definitions.h"
-
 // cij = op (aij, y)
 #undef  GB_APPLY_OP
 #define GB_APPLY_OP(pC,pA)                      \

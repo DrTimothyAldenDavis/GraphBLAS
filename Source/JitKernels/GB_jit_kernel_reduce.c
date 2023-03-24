@@ -59,11 +59,11 @@
     // panel size for reduction:
     #define GB_PANEL 32
 
+    #include "GB_monoid_shared_definitions.h"
     #include "GB_jit_kernel_reduce.c"
 
 #endif
 
-#include "GB_monoid_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // reduce to a non-iso matrix to scalar, for monoids only
@@ -71,7 +71,7 @@
 
 // The two template files GB_reduce_to_scalar_template.c and GB_reduce_panel.c
 // appear in GraphBLAS/Source/Template.  They are used by both the pre-compiled
-// kernels in GraphBLAS/Source/Generated*, and by the JIT kernel here.
+// kernels in GraphBLAS/Source/FactoryKernels, and by the JIT kernel here.
 
 GrB_Info GB_jit_kernel
 (

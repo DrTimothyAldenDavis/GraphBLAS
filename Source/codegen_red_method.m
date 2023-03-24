@@ -141,18 +141,18 @@ fclose (f) ;
 
 if (is_monoid)
     % construct the *.c file for the reduction to scalar
-    cmd = sprintf ('cat control.m4 Generator/GB_red.c | m4 -P | awk -f codegen_blank.awk > Generated2/GB_red__%s.c', name) ;
+    cmd = sprintf ('cat control.m4 Generator/GB_red.c | m4 -P | awk -f codegen_blank.awk > FactoryKernels/GB_red__%s.c', name) ;
     fprintf ('.') ;
     system (cmd) ;
     % append to the *.h file
-    system ('cat control.m4 Generator/GB_red.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> Generated2/GB_red__include.h') ;
+    system ('cat control.m4 Generator/GB_red.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> FactoryKernels/GB_red__include.h') ;
 end
 
 % construct the build *.c and *.h files
-cmd = sprintf ('cat control.m4 Generator/GB_bld.c | m4 -P | awk -f codegen_blank.awk > Generated2/GB_bld__%s.c', name) ;
+cmd = sprintf ('cat control.m4 Generator/GB_bld.c | m4 -P | awk -f codegen_blank.awk > FactoryKernels/GB_bld__%s.c', name) ;
 fprintf ('.') ;
 system (cmd) ;
-system ('cat control.m4 Generator/GB_bld.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> Generated2/GB_bld__include.h') ;
+system ('cat control.m4 Generator/GB_bld.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> FactoryKernels/GB_bld__include.h') ;
 
 delete ('control.m4') ;
 

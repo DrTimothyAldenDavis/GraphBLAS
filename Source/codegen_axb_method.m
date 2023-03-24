@@ -844,21 +844,23 @@ fprintf (f, 'm4_divert(0)\n') ;
 fclose (f) ;
 
 if (is_any_pair)
-    % the ANY_PAIR_ISO semiring goes in Generated1
+    % the ANY_PAIR_ISO semiring goes in Source
+    s = '.' ;
     k = 1 ;
 else
-    % all other semirings go in Generated2
+    % all other semirings go in FactoryKernels
+    s = 'FactoryKernels' ;
     k = 2 ;
 end
 
 % construct the *.c file for the semiring
-cmd = sprintf ('cat control.m4 Generator/GB_AxB.c | m4 -P | awk -f codegen_blank.awk > Generated%d/GB_AxB__%s.c', k, name) ;
+cmd = sprintf ('cat control.m4 Generator/GB_AxB.c | m4 -P | awk -f codegen_blank.awk > %s/GB_AxB__%s.c', s, name) ;
 system (cmd) ;
 
 fprintf ('.') ;
 
 % append to the *.h file
-cmd = sprintf ('cat control.m4 Generator/GB_AxB.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> Generated%d/GB_AxB__include%d.h', k, k) ;
+cmd = sprintf ('cat control.m4 Generator/GB_AxB.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> %s/GB_AxB__include%d.h', s, k) ;
 system (cmd) ;
 
 delete ('control.m4') ;

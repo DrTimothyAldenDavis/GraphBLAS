@@ -21,7 +21,7 @@
 // C: not bitmap
 // M: any sparsity
 
-#include "GB_subassign_shared_definitions.h"
+#include "GB_assign_shared_definitions.h"
 #include "GB_subassign_methods.h"
 
 GrB_Info GB_subassign_07

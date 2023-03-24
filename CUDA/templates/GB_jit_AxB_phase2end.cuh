@@ -6,7 +6,6 @@
 #pragma once
 #include "GB_cuda_kernel.h"
 #include "GB_cuda_buckets.h"
-#include "GB_AxB_shared_definitions.h"
 
 //#include <cooperative_groups.h>
 //#include <cub/block/block_scan.cuh>

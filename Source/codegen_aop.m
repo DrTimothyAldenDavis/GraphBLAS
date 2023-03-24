@@ -9,7 +9,7 @@ function codegen_aop
 
 fprintf ('\nassign/subassign with accum operator:\n') ;
 
-fh = fopen ('Generated2/GB_aop__include.h', 'w') ;
+fh = fopen ('FactoryKernels/GB_aop__include.h', 'w') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;
 fprintf (fh, '// GB_aop__include.h: definitions for GB_aop__*.c\n') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;
