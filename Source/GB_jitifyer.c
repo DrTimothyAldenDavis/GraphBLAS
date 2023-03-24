@@ -201,7 +201,7 @@ GrB_Info GB_jitifyer_include (void)
     // allocate and determine GB_jit_include
     //--------------------------------------------------------------------------
 
-    size_t len = 9 * GB_jit_source_path_allocated + 200 ;
+    size_t len = 10 * GB_jit_source_path_allocated + 200 ;
     GB_jit_include = GB_MALLOC (len, char, &(GB_jit_include_allocated)) ;
     OK (GB_jit_include != NULL) ;
 
@@ -212,12 +212,14 @@ GrB_Info GB_jitifyer_include (void)
         "-I%s/Source/SharedTemplate "
         "-I%s/Source/Template "
         "-I%s/Source/JitKernels "
+        "-I%s/rmm_wrap "
         "-I%s/cpu_features "
         "-I%s/cpu_features/include "
         #ifdef GBRENAME
         "-I%s/GraphBLAS/rename "
         #endif
         ,
+        GB_jit_source_path,
         GB_jit_source_path,
         GB_jit_source_path,
         GB_jit_source_path,
