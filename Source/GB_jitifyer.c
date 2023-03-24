@@ -86,6 +86,7 @@ void GB_jitifyer_finalize (void)
 #define OK(ok)                          \
     if (!(ok))                          \
     {                                   \
+        printf ("Out of memory in %s, line %d!\n", __FILE__,__LINE__) ; \
         GB_jitifyer_finalize ( ) ;      \
         return (GrB_OUT_OF_MEMORY) ;    \
     }
