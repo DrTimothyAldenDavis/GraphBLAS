@@ -157,6 +157,7 @@ int main (void)
     printf ("Gauss demo.  Note that all transposes are array transposes,\n"
         "not matrix (conjugate) transposes.\n\n") ;
 
+    TRY (GxB_print (GxB_CONTEXT_WORLD, 3)) ;
     char *compiler, *cache, *src, *flags ;
     TRY (GxB_get (GxB_JIT_C_COMPILER_NAME, &compiler)) ;
     TRY (GxB_get (GxB_JIT_C_COMPILER_FLAGS, &flags)) ;

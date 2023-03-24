@@ -51,38 +51,33 @@ option ( NJIT "ON: do not use the CPU JIT.  OFF (default): enable the CPU JIT" o
 # The GraphBLAS CPU and CUDA JITs need to know where the GraphBLAS source is
 # located, and where to put the compiled libraries.
 
-if ( NOT NJIT OR ENABLE_CUDA )
+# set the GRAPHBLAS_SOURCE_PATH
+if ( DEFINED GRAPHBLAS_SOURCE_PATH )
+    # if the -DGRAPHBLAS_SOURCE_PATH variable is set use that setting
+elseif ( DEFINED ENV{GRAPHBLAS_SOURCE_PATH} )
+    # otherwise, use the GRAPHBLAS_SOURCE_PATH environment variable
+    set ( GRAPHBLAS_SOURCE_PATH "$ENV{GRAPHBLAS_SOURCE_PATH}" )
+else ( )
+    # if no other option, use the CMAKE_SOURCE_DIR.  This is the typical
+    # case if the one compiling GraphBLAS does not set any variables first.
+    set ( GRAPHBLAS_SOURCE_PATH ${CMAKE_SOURCE_DIR} )
+endif ( )
 
-    # set the GRAPHBLAS_SOURCE_PATH
-    if ( DEFINED GRAPHBLAS_SOURCE_PATH )
-        # if the -DGRAPHBLAS_SOURCE_PATH variable is set use that setting
-    elseif ( DEFINED ENV{GRAPHBLAS_SOURCE_PATH} )
-        # otherwise, use the GRAPHBLAS_SOURCE_PATH environment variable
-        set ( GRAPHBLAS_SOURCE_PATH "$ENV{GRAPHBLAS_SOURCE_PATH}" )
-    else ( )
-        # if no other option, use the CMAKE_SOURCE_DIR.  This is the typical
-        # case if the one compiling GraphBLAS does not set any variables first.
-        set ( GRAPHBLAS_SOURCE_PATH ${CMAKE_SOURCE_DIR} )
-    endif ( )
+message ( STATUS "GraphBLAS source path for JIT: ${GRAPHBLAS_SOURCE_PATH}")
 
-    message ( STATUS "GraphBLAS source path for JIT: ${GRAPHBLAS_SOURCE_PATH}")
-
-    # set the GRAPHBLAS_CACHE_PATH for compiled JIT kernels
-    if ( DEFINED ENV{GRAPHBLAS_CACHE_PATH} )
-        # use the GRAPHBLAS_CACHE_PATH environment variable
-        set ( GRAPHBLAS_CACHE_PATH "$ENV{GRAPHBLAS_CACHE_PATH}" )
-    elseif ( DEFINED ENV{HOME} )
-        # use the current HOME environment variable from cmake (for Linux, Unix, Mac)
-        set ( GRAPHBLAS_CACHE_PATH "$ENV{HOME}/.SuiteSparse/GraphBLAS/${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" )
-    elseif ( WIN32 )
-        # use LOCALAPPDATA for Windows
-        set ( GRAPHBLAS_CACHE_PATH "$ENV{LOCALAPPDATA}/SuiteSparse/GraphBLAS/${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" )
-    else ( )
-        # if no other option, disable both JITs
-        set ( NJIT on )
-        set ( ENABLE_CUDA false )
-    endif ( )
-
+# set the GRAPHBLAS_CACHE_PATH for compiled JIT kernels
+if ( DEFINED ENV{GRAPHBLAS_CACHE_PATH} )
+    # use the GRAPHBLAS_CACHE_PATH environment variable
+    set ( GRAPHBLAS_CACHE_PATH "$ENV{GRAPHBLAS_CACHE_PATH}" )
+elseif ( DEFINED ENV{HOME} )
+    # use the current HOME environment variable from cmake (for Linux, Unix, Mac)
+    set ( GRAPHBLAS_CACHE_PATH "$ENV{HOME}/.SuiteSparse/GraphBLAS/${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" )
+elseif ( WIN32 )
+    # use LOCALAPPDATA for Windows
+    set ( GRAPHBLAS_CACHE_PATH "$ENV{LOCALAPPDATA}/SuiteSparse/GraphBLAS/${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" )
+else ( )
+    # if no other option, the cache path must be set at run time via GxB_set
+    set ( GRAPHBLAS_CACHE_PATH "cache path not found" )
 endif ( )
 
 if ( NJIT )
@@ -249,11 +244,11 @@ configure_file ( "CUDA/Config/GB_cuda_common_jitFactory.hpp.in"
 if ( CMAKE_CUDA_DEV )
     # for CUDA development only; not for production use
     include_directories ( Source/Template Source Include Source/Generated1
-        Source/Shared Source/SharedTemplate xxHash
+        Source/Shared Source/SharedTemplate xxHash Config
         lz4 zstd zstd/zstd_subset Demo/Include rmm_wrap )
 else ( )
     include_directories ( Source/Template Source Include Source/Generated1
-        Source/Shared Source/SharedTemplate xxHash
+        Source/Shared Source/SharedTemplate xxHash Config
         lz4 zstd zstd/zstd_subset Source/Generated2 Demo/Include rmm_wrap )
 endif ( )
 
@@ -610,15 +605,14 @@ endif ( )
 if ( NOT NJIT OR ENABLE_CUDA )
     # one or both JITs are enabled; make sure the cache path exists
     file ( MAKE_DIRECTORY ${GRAPHBLAS_CACHE_PATH} )
-    file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/cpu" )
-    file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/cuda" )
     message ( STATUS "GraphBLAS JIT: enabled")
-    configure_file ( "Config/GraphBLAS_config.txt.in"
-        "${GRAPHBLAS_CACHE_PATH}/GraphBLAS_config.txt"
-        NEWLINE_STYLE LF )
     message ( STATUS "GraphBLAS cache path for JIT:   ${GRAPHBLAS_CACHE_PATH}")
     message ( STATUS "GraphBLAS source path for JIT:  ${GRAPHBLAS_SOURCE_PATH}")
 endif ( )
+
+configure_file ( "Config/GB_config.h.in"
+    "${PROJECT_SOURCE_DIR}/Source/Shared/GB_config.h"
+    NEWLINE_STYLE LF )
 
 #-------------------------------------------------------------------------------
 # dump all variables, for debugging only

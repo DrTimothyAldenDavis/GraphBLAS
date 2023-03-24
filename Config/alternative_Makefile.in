@@ -7,6 +7,10 @@
 
 #-------------------------------------------------------------------------------
 
+# To enable the JIT, you must first edit ../Config/GB_config.h to define
+# the source path, the C compiler, and the C compiler flags.  You must also
+# create a cache folder, typically ~/.SuiteSparse/GraphBLAS/@GraphBLAS_VERSION_MAJOR@.@GraphBLAS_VERSION_MINOR@.@GraphBLAS_VERSION_SUB@
+
 # To compile with 8 threads:
 #
 #   make -j8

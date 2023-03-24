@@ -6,8 +6,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Mar 23, 2023 (draft1)" )
+set ( GraphBLAS_DATE "Mar 23, 2023 (draft2)" )
 set ( GraphBLAS_VERSION_MAJOR 8 )
 set ( GraphBLAS_VERSION_MINOR 0 )
-set ( GraphBLAS_VERSION_SUB   1 )
+set ( GraphBLAS_VERSION_SUB   0 )
 

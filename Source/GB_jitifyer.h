@@ -274,9 +274,9 @@ void GB_jitifyer_finalize (void) ;  // finalize the JIT
 
 void GB_jitifyer_table_free (void) ;    // free the JIT table
 
-GrB_Info GB_jit_alloc_space (void) ;
+GrB_Info GB_jitifyer_alloc_space (void) ;
 
-GrB_Info GB_jit_set_include_path (void) ;
+GrB_Info GB_jitifyer_include (void) ;
 
 const char *GB_jitifyer_get_source_path (void) ;
 GrB_Info GB_jitifyer_set_source_path (const char *new_source_path) ;
