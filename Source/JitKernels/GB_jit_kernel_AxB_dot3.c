@@ -9,8 +9,6 @@
 
 // C<M>=A'*B: masked dot product, C and M are both sparse or both hyper
 
-#include "GB_AxB_shared_definitions.h"
-
 GrB_Info GB_jit_kernel
 (
     GrB_Matrix C,

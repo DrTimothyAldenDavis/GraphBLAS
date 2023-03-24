@@ -30,6 +30,7 @@
 #include "GB_hash.h"
 #include "GB_hyper_hash_lookup.h"
 #include "GB_AxB_shared_definitions.h"
+#include "GB_cuda_dot3_defn.h"
 
 using namespace cooperative_groups;
 
@@ -224,6 +225,7 @@ __global__ void AxB_dot3_phase3_vsvs
         }
 
         GB_CIJ_EXIST_POSTCHECK ;
+        printf ("i: %ld j: %ld cij: %ld exists: %d\n", i, j, cij, cij_exists) ;
         if (cij_exists)
         {
             GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (T_C) cij
