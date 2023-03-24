@@ -9,17 +9,16 @@
 #ifndef RMM_WRAP_H
 #define RMM_WRAP_H
 
-#include <cuda_runtime.h>
+//#include <cuda_runtime.h>
 
 // FIXME: consider another way to report the error (not std::cout)
+#define cudaSucess 0 
 #define RMM_WRAP_CHECK_CUDA(call)                                         \
   do {                                                                    \
-    cudaError_t err = call;                                               \
-    if (err != cudaSuccess) {                                             \
-      const char* str = cudaGetErrorName( err);                           \
-      std::cout << "(CUDA runtime) returned " << str;                     \
-      std::cout << " (" << __FILE__ << ":" << __LINE__ << ":" << __func__ \
-                << "())" << std::endl;                                    \
+    int err = call;                                               \
+    if (err != cudaSucess) {                                             \
+      printf( "(CUDA runtime) returned %d\n", err);                       \
+      printf( " ( %s", __FILE__, ": %d" , __LINE__ ,": %s()\n",__func__); \
     }                                                                     \
   } while (0)
 
