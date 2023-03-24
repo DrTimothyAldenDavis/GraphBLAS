@@ -41,7 +41,7 @@
         #if GB_Z_IGNORE_OVERFLOW
             // plus_pair for int64, uint64, float, or double
             #define GB_DOT_MERGE(pA,pB) cij++ ;
-            #define GB_CIJ_EXIST_POSTCHECK cij_garbage_exists = (cij != 0) ;
+            #define GB_CIJ_EXIST_POSTCHECK cij_exists = (cij != 0) ;
         #else
             // plus_pair semiring for small integers
             #define GB_DOT_MERGE(pA,pB)                                     \

@@ -18,7 +18,7 @@
     int err = call;                                               \
     if (err != cudaSucess) {                                             \
       printf( "(CUDA runtime) returned %d\n", err);                       \
-      printf( " ( %s", __FILE__, ": %d" , __LINE__ ,": %s()\n",__func__); \
+      printf( " ( %s: %d : %s\n", __FILE__,  __LINE__ ,__func__); \
     }                                                                     \
   } while (0)
 

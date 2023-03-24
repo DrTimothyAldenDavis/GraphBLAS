@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <cooperative_groups.h>
 #include "GB_cuda_kernel.h"
+#include "GB_cuda_atomics.cuh"
 #include "GB_hash.h"
 #include "GB_hyper_hash_lookup.h"
 #include "GB_AxB_shared_definitions.h"
@@ -224,8 +225,8 @@ __global__ void AxB_dot3_phase3_vsvs
             pB += ( ib <= ia);  // incr pB if B(ib,j) at or before A(ia,i)
         }
 
+
         GB_CIJ_EXIST_POSTCHECK ;
-        printf ("i: %ld j: %ld cij: %ld exists: %d\n", i, j, cij, cij_exists) ;
         if (cij_exists)
         {
             GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (T_C) cij
@@ -247,7 +248,7 @@ __global__ void AxB_dot3_phase3_vsvs
 
     if( threadIdx.x == 0 && my_nzombies > 0)
     {
-        GB_cuda_atomic_add <int64_t>( &(C->nzombies), my_nzombies) ;
+        GB_cuda_atomic_add <uint64_t>( &(C->nzombies), (uint64_t) my_nzombies) ;
     }
 }
 
