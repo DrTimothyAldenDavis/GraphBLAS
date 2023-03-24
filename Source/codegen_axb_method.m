@@ -196,7 +196,9 @@ elseif (isequal (addop, 'times'))
         omp_atomic_version = 2 ;
     elseif (isequal (ztype, 'GxB_FC32_t'))
         % single complex can be done as compare-and-swap
-        has_atomic_update = true ;
+        % but this fails with gcc on Power8
+        % has_atomic_update = true ;
+        has_atomic_update = false ;
         omp_atomic_version = 0 ;
     end
 

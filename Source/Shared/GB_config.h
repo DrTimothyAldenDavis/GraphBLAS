@@ -22,10 +22,10 @@
 #ifndef GB_CONFIG_H
 #define GB_CONFIG_H
 
-#define GB_BUILD_PATH  "/home/faculty/d/davis/cuda/GraphBLAS/build"
-#define GB_SOURCE_PATH "/home/faculty/d/davis/cuda/GraphBLAS"
+#define GB_BUILD_PATH  "/home/faculty/d/davis/master/GraphBLAS/build"
+#define GB_SOURCE_PATH "/home/faculty/d/davis/master/GraphBLAS"
 #define GB_C_COMPILER  "/usr/bin/gcc"
-#define GB_C_FLAGS     " -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -g -fopenmp "
+#define GB_C_FLAGS     " -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -O3 -DNDEBUG -fopenmp "
 
 #endif
 

@@ -411,8 +411,7 @@
         do                                                          \
         {                                                           \
             /* zold = Hx [i] via atomic read */                     \
-            GB_ATOMIC_READ                                          \
-            zold = (*pz) ;                                          \
+            GB_Z_ATOMIC_READ (zold, *pz) ;                          \
             /* done if zold <= t for MIN, or zold >= t for MAX, */  \
             /* but not done if zold is NaN */                       \
             if (done) break ;                                       \
@@ -503,8 +502,7 @@
             do                                                          \
             {                                                           \
                 /* zold = Hx [i] via atomic read */                     \
-                GB_ATOMIC_READ                                          \
-                zold = (*pz) ;                                          \
+                GB_Z_ATOMIC_READ (zold, *pz) ;                          \
                 /* znew = zold + t */                                   \
                 GB_ADD (znew, zold, t) ;                                \
             }                                                           \
