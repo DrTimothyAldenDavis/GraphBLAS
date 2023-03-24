@@ -12,12 +12,12 @@
 // and B can have any sparsity format.  C is computed as sparse or hypersparse,
 // with the same format as M.
 
+#include "GB_cuda.h"
 extern "C"
 {
     #include "GB_mxm.h"
 }
 
-#include "GB_cuda.h"
 #include "GB_jit_cache.h"
 #include "GB_cuda_common_jitFactory.hpp"
 #include "GB_cuda_reduce_jitFactory.hpp"

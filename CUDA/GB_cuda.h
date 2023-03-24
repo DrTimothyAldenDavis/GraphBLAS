@@ -13,6 +13,17 @@
 #define GB_CUDA_H
 
 extern "C"
+{ 
+    #include "GB_dev.h"
+    #include "GB_compiler.h"
+    #include "GB_cpu_features.h"
+    #include "GB_warnings.h"
+    #include "GB_coverage.h"
+    #define GB_LIBRARY
+    #include "GraphBLAS.h"
+}
+
+extern "C"
 {
     #include <cassert>
     #include <cmath>
