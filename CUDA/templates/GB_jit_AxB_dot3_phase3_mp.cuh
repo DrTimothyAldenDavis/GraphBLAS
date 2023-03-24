@@ -37,6 +37,7 @@
 #include <cstdint>
 #include <cooperative_groups.h>
 #include "GB_cuda_kernel.h"
+#include "GB_cuda_atomics.cuh"
 #include "GB_hash.h"
 #include "GB_hyper_hash_lookup.h"
 #include "GB_AxB_shared_definitions.h"
@@ -448,7 +449,7 @@ __global__ void AxB_dot3_phase3_mp
 
     if( tid ==0 && zc > 0)
     {
-        GB_cuda_atomic_add <int64_t>( &(C->nzombies), zc) ;
+        GB_cuda_atomic_add <uint64_t>( &(C->nzombies), (uint64_t) zc) ;
     }
 }
 
