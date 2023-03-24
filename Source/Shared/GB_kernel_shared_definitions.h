@@ -62,19 +62,25 @@
     // atomic write (0, 1, 2, 4, or 8 byte types)
     //--------------------------------------------------------------------------
 
-    // if GB_Z_HAS_ATOMIC_WRITE is true, then the Z type has both an atomic
-    // write and an atomic compare/exchange
+    // if GB_Z_HAS_ATOMIC_WRITE is true, then the Z type has an atomic
+    // write, an atomic read, and an atomic compare/exchange
     #define GB_Z_HAS_ATOMIC_WRITE 1
 
     #if ( GB_Z_ATOMIC_BITS == 0 )
 
-        // no atomic write needed (any_pair semiring)
+        // no atomic read/write needed (any_pair semiring)
+        #define GB_Z_ATOMIC_READ(z,t)
         #define GB_Z_ATOMIC_WRITE(z,t)
 
     #elif defined ( GB_Z_ATOMIC_TYPE )
 
-        // user-defined types of the right size can use atomic write.
+        // user-defined types of the right size can use atomic read/write.
         // float complex also uses this version.
+        #define GB_Z_ATOMIC_READ(z,t)                                       \
+        {                                                                   \
+            GB_ATOMIC_READ                                                  \
+            GB_PUN (GB_Z_ATOMIC_TYPE, z) = GB_PUN (GB_Z_ATOMIC_TYPE, t) ;   \
+        }
         #define GB_Z_ATOMIC_WRITE(z,t)                                      \
         {                                                                   \
             GB_ATOMIC_WRITE                                                 \
@@ -84,6 +90,11 @@
     #else
 
         // built-in types of size 1, 2, 4, or 8 bytes
+        #define GB_Z_ATOMIC_READ(z,t)                                       \
+        {                                                                   \
+            GB_ATOMIC_READ                                                  \
+            (z) = (t) ;                                                     \
+        }
         #define GB_Z_ATOMIC_WRITE(z,t)                                      \
         {                                                                   \
             GB_ATOMIC_WRITE                                                 \
