@@ -109,7 +109,7 @@
 #include "GB_sort.h"
 #include "GB_binop.h"
 #include "GB_stringify.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_bld__include.h"
 #endif
 
@@ -1217,7 +1217,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
                 // T and Sx are not iso; call in the workers
 
-                #ifndef GBCUDA_DEV
+                #ifndef GBCOMPACT
 
                     //----------------------------------------------------------
                     // define the worker for the switch factory

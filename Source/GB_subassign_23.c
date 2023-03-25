@@ -30,7 +30,7 @@
 #include "GB_subassign_dense.h"
 #include "GB_binop.h"
 #include "GB_stringify.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_aop__include.h"
 #endif
 #include "GB_unused.h"
@@ -99,7 +99,7 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
 
     info = GrB_NO_VALUE ;
 
-    #ifndef GBCUDA_DEV
+    #ifndef GBCOMPACT
 
         //----------------------------------------------------------------------
         // define the worker for the switch factory

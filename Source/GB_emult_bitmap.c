@@ -64,7 +64,7 @@
 #include "GB_unused.h"
 #include "GB_ek_slice.h"
 #include "GB_stringify.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_ew__include.h"
 #endif
 
@@ -222,7 +222,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // via the factory kernel
         //----------------------------------------------------------------------
 
-        #ifndef GBCUDA_DEV
+        #ifndef GBCOMPACT
 
             //------------------------------------------------------------------
             // define the worker for the switch factory

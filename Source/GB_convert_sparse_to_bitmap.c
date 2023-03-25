@@ -168,7 +168,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         else
         {
 
-            #ifndef GBCUDA_DEV
+            #ifndef GBCOMPACT
             {
                 switch (asize)
                 {

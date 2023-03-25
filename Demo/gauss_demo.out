@@ -3,13 +3,13 @@ not matrix (conjugate) transposes.
 
 
     GraphBLAS Context: GxB_CONTEXT_WORLD 
-    Context.nthreads: 40
+    Context.nthreads: 8
     Context.chunk:    65536
 JIT configuration: ------------------
-JIT C compiler: [/usr/bin/gcc]
-JIT C flags:    [ -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -g -fopenmp ]
-JIT source:     [/home/faculty/d/davis/cuda/GraphBLAS]
-JIT cache:      [/home/faculty/d/davis/.SuiteSparse/GraphBLAS/8.0.0]
+JIT C compiler: [/usr/bin/cc]
+JIT C flags:    [ -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -O3 -DNDEBUG -fopenmp ]
+JIT source:     [/opt/SuiteSparse/GraphBLAS]
+JIT cache:      [/home/davis/.SuiteSparse/GraphBLAS/8.0.0]
 -------------------------------------
 
     GraphBLAS type: Gauss user-defined: [gauss] size: 8
@@ -95,11 +95,11 @@ row  2:  (   3,   2) (   3,   1) (   3,   0) (   3,  -1)
 row  3:  (   4,   2) (   4,   1) (   4,   0) (   4,  -1)
 
  [ GrB_reduce (A bitmap) (jit load) 
-   0.000143 sec ]
+   5.29e-05 sec ]
 
 sum (A) = (39,6)
  [ GrB_mxm C=A*B, saxpy (B = B*B, anz: 15 bnz: 15) (bitmap saxpy) (jit load) (bitmap to full) 
-   0.000134 sec ]
+   4.91e-05 sec ]
 
 
 =============== Gauss A = A^2 matrix:
@@ -111,7 +111,7 @@ row  2:  (  27,  16) (  28,  12) (  30,   0) (  32, -12)
 row  3:  (  36,  22) (  38,  16) (  40,   0) (  42, -16)
 
  [ GrB_reduce (A full) (jit load) 
-   7.58e-05 sec ]
+   2.71e-05 sec ]
 
 sum (A^2) = (387,46)
 
@@ -124,11 +124,11 @@ row  2:       .           .           .           .
 row  3:       .           .           .           .     
 
  [ GxB_set (full to sparse) 
-   1.13e-05 sec ]
+   3.07e-06 sec ]
  [ GxB_set (hyper to sparse) 
-   6.25e-06 sec ]
+   2.14e-06 sec ]
  [ GrB_mxm (iso mask: struct) (iso wait:M 0 zombies, 4 pending) (iso build) (hyper to sparse) C<M>=A'*B, masked_dot_product (dot3) (S{S} = Sf'*Sf) nthreads 1 ntasks 1 (jit load) (sparse to bitmap) (jit load) 
-   0.000226 sec ]
+   7.38e-05 sec ]
 
 
 =============== Gauss C = diag(AA') matrix:
@@ -140,11 +140,11 @@ row  2:       .           .      (2893, 768)      .
 row  3:       .           .           .      (5108,1456)
 
  [ GxB_set 
-   6.5e-07 sec ]
+   1.7e-07 sec ]
  [ GxB_set (hyper to sparse) 
-   4.99e-06 sec ]
+   1.5e-06 sec ]
  [ GrB_select (A dense) 
-   3.2e-05 sec ]
+   8.36e-06 sec ]
 
 
 Gauss D matrix
@@ -155,7 +155,7 @@ row  2:       .           .      (  30,   0)      .
 row  3:       .           .           .      (  42, -16)
 
  [ GrB_mxm C=A*B, colscale (Sf=Sf*S) (jit load) 
-   9.45e-05 sec ]
+   3.18e-05 sec ]
 
 
 =============== Gauss C = D*A matrix:
@@ -167,9 +167,9 @@ row  2:  ( 810, 480) ( 840, 360) ( 900,   0) ( 960,-360)
 row  3:  (1864, 348) (1852,  64) (1680,-640) (1508,-1344)
 
  [ GxB_set 
-   2.93e-07 sec ]
+   1.31e-07 sec ]
  [ GxB_set (sparse to bitmap) (jit run) 
-   1.14e-05 sec ]
+   3.29e-06 sec ]
 
 
 Gauss D matrix (bitmap)
@@ -190,7 +190,7 @@ row  3:       .           .           .      (  42, -16)
     (3,3) [user-defined value]
 
  [ GxB_set (bitmap to sparse) 
-   8.13e-06 sec ]
+   2.71e-06 sec ]
 
 
 Gauss D matrix (back to sparse)
@@ -211,7 +211,7 @@ row  3:       .           .           .      (  42, -16)
     (3,3) [user-defined value]
 
  [ GrB_mxm C=A*B, rowscale (Sf=S*Sf) (jit load) 
-   9.7e-05 sec ]
+   3.19e-05 sec ]
 
 
 =============== Gauss C = A*D matrix:
@@ -223,7 +223,7 @@ row  2:  ( 179, 252) ( 408, 440) ( 900,   0) (1152,-1016)
 row  3:  ( 236, 342) ( 556, 592) (1200,   0) (1508,-1344)
 
  [ GrB_assign (C iso assign) (pending: 0) Method 21: (C full) = scalar 
-   2.47e-05 sec ]
+   7.65e-06 sec ]
 
 
 =============== Gauss C = (1,-2) matrix:
@@ -245,7 +245,7 @@ row  2:  (  27,  16) (  28,  12) (  30,   0) (  32, -12)
 row  3:  (  36,  22) (  38,  16) (  40,   0) (  42, -16)
 
  [ GrB_mxm C=A'*B, dot_product (dot4: F += Sf'*Sf) (jit load) (C in place) 
-   9.91e-05 sec ]
+   3.33e-05 sec ]
 
 
 =============== Gauss C += A*A' matrix:
@@ -257,7 +257,7 @@ row  2:  ( 918,  58) (1943, 476) (2894, 766) (3845,1056)
 row  3:  (1221,  88) (2581, 658) (3845,1056) (5109,1454)
 
  [ GrB_assign (C iso assign) (pending: 0) Method 21: (C full) = scalar 
-   1.22e-05 sec ]
+   4.12e-06 sec ]
 
 
 =============== Gauss B = (1,-2) matrix:
@@ -269,7 +269,7 @@ row  2:  (   1,  -2) (   1,  -2) (   1,  -2) (   1,  -2)
 row  3:  (   1,  -2) (   1,  -2) (   1,  -2) (   1,  -2)
 
  [ GrB_mxm C=A*B, saxpy (saxpy4: F += Sf*F) (coarse, threads: 1) (jit load) (C in place) 
-   9.56e-05 sec ]
+   3.42e-05 sec ]
 
 
 =============== Gauss C += B*A:
@@ -281,7 +281,7 @@ row  2:  (1112, -70) (2110, 327) (2989, 566) (3868, 805)
 row  3:  (1415, -40) (2748, 509) (3940, 856) (5132,1203)
 
  [ GrB_mxm C=A*B, saxpy (saxpy5: F += F*Sf) (jit load) (C in place) 
-   8.8e-05 sec ]
+   2.94e-05 sec ]
 
 
 =============== Gauss C += A*B:
@@ -293,7 +293,7 @@ row  2:  (1261,-288) (2259, 109) (3138, 348) (4017, 587)
 row  3:  (1615,-330) (2948, 219) (4140, 566) (5332, 913)
 
  [ GrB_apply (shallow-op) (jit load) 
-   8.07e-05 sec ]
+   2.65e-05 sec ]
 
 
 =============== Gauss C = (1,-2) + A:
@@ -305,7 +305,7 @@ row  2:  (  28,  14) (  29,  10) (  31,  -2) (  33, -14)
 row  3:  (  37,  20) (  39,  14) (  41,  -2) (  43, -18)
 
  [ GrB_apply (shallow-op) (jit load) 
-   8.05e-05 sec ]
+   2.56e-05 sec ]
 
 
 =============== Gauss C = A*(1,-2):
@@ -317,7 +317,7 @@ row  2:  (  59, -38) (  52, -44) (  30, -60) (   8, -76)
 row  3:  (  80, -50) (  70, -60) (  40, -80) (  10,-100)
 
  [ GrB_apply (transpose-op) (transpose) (bitmap/full transpose) (jit load) (full to sparse) 
-   9.23e-05 sec ]
+   2.95e-05 sec ]
 
 
 =============== Gauss C = A'*(1,-2):
@@ -329,7 +329,7 @@ row  2:  (   5, -20) (  20, -40) (  30, -60) (  40, -80)
 row  3:  (  -1, -23) (   6, -52) (   8, -76) (  10,-100)
 
  [ GrB_apply (transpose-op) (transpose) (bitmap/full transpose) (jit load) (full to sparse) 
-   8.98e-05 sec ]
+   2.7e-05 sec ]
 
 
 =============== Gauss C = (1,-2)*A':
@@ -350,7 +350,7 @@ void realgauss (int32_t *z, const gauss *x)
     (*z) = x->real ;                                       
 }
  [ GrB_apply (shallow-op) (jit load) 
-   8.69e-05 sec ]
+   3.27e-05 sec ]
 
   4x4 GraphBLAS int32_t matrix, full by row
   R, 16 entries, memory: 280 bytes
@@ -383,7 +383,7 @@ row  2:  (   5, -20) (  20, -40) (  30, -60) (  40, -80)
 row  3:  (  -1, -23) (   6, -52) (   8, -76) (  10,-100)
 
  [ GrB_apply (transpose-op) (transpose) (bitmap/full transpose) (jit load) 
-   8.76e-05 sec ]
+   2.86e-05 sec ]
 
   4x4 GraphBLAS int32_t matrix, full by row
   R, 16 entries, memory: 280 bytes
@@ -415,7 +415,7 @@ row  2:  (   5, -20) (  20, -40) (  30, -60) (  40, -80)
 row  3:  (  -1, -23) (   6, -52) (   8, -76) (  10,-100)
 
  [ GrB_apply (shallow-op) (jit load) 
-   9.64e-05 sec ]
+   2.95e-05 sec ]
 
 R = ijgauss (C)
 
@@ -440,7 +440,7 @@ R = ijgauss (C)
     (3,3)   11
 
  [ GrB_Matrix_extractTuples (A full) (jit load) 
-   8.24e-05 sec ]
+   2.8e-05 sec ]
 R (0,0) = 18
 R (0,1) = 38
 R (0,2) = 58
@@ -468,7 +468,7 @@ row  2:  (   5, -20) (  20, -40) (  30, -60) (  40, -80)
 row  3:  (  -1, -23) (   6, -52) (   8, -76) (  10,-100)
 
  [ GrB_transpose (transpose) (bitmap/full transpose) (jit load) 
-   8.07e-05 sec ]
+   2.74e-05 sec ]
 
 
 =============== C = C'
@@ -480,9 +480,9 @@ row  2:  (  59, -38) (  52, -44) (  30, -60) (   8, -76)
 row  3:  (  80, -50) (  70, -60) (  40, -80) (  10,-100)
 
  [ GxB_set (in-place transpose) (transpose) 
-   9.65e-06 sec ]
+   3.39e-06 sec ]
  [ GxB_Matrix_concat (sparse concat) (transpose) (bitmap/full transpose) (jit run) (transpose) (transpose) (1-thread bucket transpose) (jit load) (transpose) (1-thread bucket transpose) (jit run) (transpose) (transpose) (bitmap/full transpose) (jit run) (jit load) (jit load) (jit load) (jit run) (jit run) (jit run) 
-   0.000372 sec ]
+   0.000125 sec ]
 
 
 =============== Z = [C D ; E E ; D C]
@@ -790,7 +790,7 @@ row 255:       .           .           .      (  42, -16) (  80, -50) (  70, -60
     (255,7) [user-defined value]
 
  [ GxB_Matrix_split (sparse/hyper split) (jit load) (jit run) (jit run) (jit run) 
-   0.000117 sec ]
+   3.58e-05 sec ]
 
 
 =============== C Tile from Z:
@@ -1388,9 +1388,9 @@ row 127:  (  42, -16) (  80, -50) (  70, -60) (  40, -80) (  10,-100)
     (127,4) [user-defined value]
 
  [ GxB_set (in-place transpose) (transpose) 
-   8.07e-06 sec ]
+   2.67e-06 sec ]
  [ GxB_Matrix_concat (bitmap concat) (transpose) (bitmap/full transpose) (jit run) (jit load) (transpose) (jit load) (transpose) (1-thread bucket transpose) (jit run) (jit load) (transpose) (1-thread bucket transpose) (jit run) (jit run) (transpose) (jit run) (transpose) (bitmap/full transpose) (jit run) (jit run) 
-   0.00032 sec ]
+   0.000109 sec ]
 
 
 =============== Z = [C D ; E E ; D C]
@@ -1458,7 +1458,7 @@ row 15:       .           .           .      (  42, -16) (  80, -50) (  70, -60)
     (15,7) [user-defined value]
 
  [ GxB_Matrix_split (bitmap split) (jit load) (jit run) (jit run) (jit run) 
-   0.000104 sec ]
+   3.61e-05 sec ]
 
 
 =============== C Tile from Z:
@@ -1576,7 +1576,7 @@ row  7:  (  42, -16) (  80, -50) (  70, -60) (  40, -80) (  10,-100)
     (7,4) [user-defined value]
 
  [ GrB_assign (pending: 0) Method 22: (C full) += scalar (jit load) 
-   9.62e-05 sec ]
+   3.54e-05 sec ]
 
 
 =============== C = C + ciso
@@ -1588,9 +1588,9 @@ row  2:  (  60, -40) (  53, -46) (  31, -62) (   9, -78)
 row  3:  (  81, -52) (  71, -62) (  41, -82) (  11,-102)
 
  [ GxB_set 
-   3.51e-07 sec ]
+   1.24e-07 sec ]
  [ GxB_Matrix_split (full split) (jit load) (jit run) (jit run) (jit run) 
-   9.35e-05 sec ]
+   3.08e-05 sec ]
 
 
 =============== S Tile from C:
@@ -1675,7 +1675,7 @@ row  2:  (  60, -40) (  53, -46) (  31, -62) (   9, -78)
 row  3:  (  81, -52) (  71, -62) (  41, -82) (  11,-102)
 
  [ GrB_assign (pending: 0) Method 22: (C full) += scalar (jit paused) (generic C(:,:)+=x assign) 
-   4.17e-05 sec ]
+   5.84e-06 sec ]
 
 
 =============== C = C + ciso (JIT paused):
@@ -1697,7 +1697,7 @@ row  2:  (  61, -42) (  54, -48) (  32, -64) (  10, -80)
 row  3:  (  82, -54) (  72, -64) (  42, -84) (  12,-104)
 
  [ GrB_assign (pending: 0) Method 22: (C full) += scalar (jit paused) (generic C(:,:)+=x assign) 
-   1.45e-05 sec ]
+   4.26e-06 sec ]
 
 
 =============== C = C * ciso (JIT paused):
@@ -1710,7 +1710,7 @@ row  3:  ( -26,  -2) ( -56,  48) (-126, 168) (-196, 288)
 
 JIT: run (may not load or compile)
  [ GrB_assign (pending: 0) Method 22: (C full) += scalar (jit run) 
-   1.11e-05 sec ]
+   3.34e-06 sec ]
 
 
 =============== C = C + ciso (JIT run):
@@ -1722,7 +1722,7 @@ row  2:  ( -22,   2) ( -41,  34) ( -95, 126) (-149, 218)
 row  3:  ( -25,  -4) ( -55,  46) (-125, 166) (-195, 286)
 
  [ GrB_assign (pending: 0) Method 22: (C full) += scalar (jit not loaded) (generic C(:,:)+=x assign) 
-   1.32e-05 sec ]
+   4.19e-06 sec ]
 
 
 =============== C = C * ciso (JIT not loaded):
@@ -1735,7 +1735,7 @@ row  3:  ( -33,  62) (  37, -28) ( 207,-248) ( 377,-468)
 
 JIT: on
  [ GrB_assign (pending: 0) Method 22: (C full) += scalar (jit load) 
-   9.98e-05 sec ]
+   2.95e-05 sec ]
 
 
 =============== C = C * ciso (full JIT):

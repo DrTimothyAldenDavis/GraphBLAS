@@ -36,11 +36,10 @@ message ( STATUS "GraphBLAS C API: v"
 # SuiteSparse policies
 #-------------------------------------------------------------------------------
 
+option ( COMPACT "ON: do not compile FactoryKernels.  OFF (default): compile FactoryKernels" off )
 option ( NJIT "ON: do not use the CPU JIT.  OFF (default): enable the CPU JIT" off )
 
 # CUDA is under development for now, and not deployed in production:
-# option ( ENABLE_CUDA "Enable CUDA acceleration" off )
-# FIXME
   set ( ENABLE_CUDA false )
 # set ( ENABLE_CUDA true )
 
@@ -110,14 +109,12 @@ include ( SuiteSparse_getenv )
 #-------------------------------------------------------------------------------
 
 if ( SUITESPARSE_CUDA )
-    # for CUDA development only; not for production use
-    set ( CMAKE_CUDA_DEV on )
+    # do not compile the FactoryKernels when developing the CUDA kernels
+    set ( COMPACT on )
     project ( graphblas
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES CUDA C )
 else ( )
-    set ( CMAKE_CUDA_DEV on )
-#   set ( CMAKE_CUDA_DEV off )
     project ( graphblas
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES C )
@@ -205,9 +202,11 @@ else ( )
     message ( STATUS "Building dynamic GraphBLAS library" )
 endif ( )
 
-if ( CMAKE_CUDA_DEV )
-    # for CUDA development only; not for production use
-    add_compile_definitions ( GBCUDA_DEV )
+if ( COMPACT )
+    # FactoryKernels will not be compiled.  Performance will rely solely on the
+    # JIT kernels.  Do not use GBCOMPACT at the same time disabling the JIT.
+    add_compile_definitions ( GBCOMPACT )
+    message ( STATUS "GBCOMPACT: enabled; FactoryKernels will not be built" )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -240,15 +239,16 @@ configure_file ( "CUDA/Config/GB_cuda_common_jitFactory.hpp.in"
 # include directories for both graphblas and graphblasdemo libraries
 #-------------------------------------------------------------------------------
 
-if ( CMAKE_CUDA_DEV )
-    # for CUDA development only; not for production use
-    include_directories ( Source/Template Source Include
-        Source/Shared Source/SharedTemplate xxHash Config
-        lz4 zstd zstd/zstd_subset Demo/Include rmm_wrap )
+if ( COMPACT )
+    # do not compile the FactoryKernels
+    include_directories ( Source/Template Source Include Source/Shared
+        Source/SharedTemplate xxHash Config lz4 zstd zstd/zstd_subset
+        Demo/Include rmm_wrap )
 else ( )
-    include_directories ( Source/Template Source Include
-        Source/Shared Source/SharedTemplate xxHash Config
-        lz4 zstd zstd/zstd_subset Source/FactoryKernels Demo/Include rmm_wrap )
+    include_directories ( Source/Template Source Include Source/Shared
+        Source/SharedTemplate xxHash Config lz4 zstd zstd/zstd_subset
+        Source/FactoryKernels
+        Demo/Include rmm_wrap )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -343,12 +343,11 @@ endif ( )
 #   - a public enum is extended (by adding a new item at the end, but without
 #       changing the already existing items)
 
-if ( CMAKE_CUDA_DEV )
-    # for CUDA development only; not for production use
-    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Source/Shared/*.c" )
+if ( COMPACT )
+    # do not compile the FactoryKernels
+    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" )
 else ( )
-    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Source/Shared/*.c"
-        "Source/FactoryKernels/*.c" )
+    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Source/FactoryKernels/*.c" )
 endif ( )
 
 add_library ( graphblas SHARED ${GRAPHBLAS_SOURCES} )
@@ -601,10 +600,14 @@ endif ( )
 if ( NOT NJIT OR ENABLE_CUDA )
     # one or both JITs are enabled; make sure the cache path exists
     file ( MAKE_DIRECTORY ${GRAPHBLAS_CACHE_PATH} )
-    message ( STATUS "GraphBLAS JIT: enabled")
     message ( STATUS "GraphBLAS cache path for JIT:   ${GRAPHBLAS_CACHE_PATH}")
     message ( STATUS "GraphBLAS source path for JIT:  ${GRAPHBLAS_SOURCE_PATH}")
 endif ( )
+
+if ( NJIT AND COMPACT )
+    # FactoryKernels and the CPU JIT are both disabled!
+    message ( WARNING ">>>> CPU JIT disabled and COMPACT mode enabled: GraphBLAS will be SLOW!" )
+endif ( ) 
 
 configure_file ( "Config/GB_config.h.in"
     "${PROJECT_SOURCE_DIR}/Source/Shared/GB_config.h"

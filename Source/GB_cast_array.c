@@ -17,7 +17,7 @@
 #include "GB.h"
 #include "GB_apply.h"
 #include "GB_stringify.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_unop__include.h"
 #endif
 
@@ -59,7 +59,7 @@ GrB_Info GB_cast_array              // typecast an array
 
     GrB_Info info = GrB_NO_VALUE ;
 
-    #ifndef GBCUDA_DEV
+    #ifndef GBCOMPACT
 
         //----------------------------------------------------------------------
         // define the worker for the switch factory

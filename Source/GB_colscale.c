@@ -14,7 +14,7 @@
 #include "GB_apply.h"
 #include "GB_ek_slice.h"
 #include "GB_stringify.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_ew__include.h"
 #endif
 #include "GB_unused.h"
@@ -225,7 +225,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
 
         info = GrB_NO_VALUE ;
 
-        #ifndef GBCUDA_DEV
+        #ifndef GBCOMPACT
 
             //------------------------------------------------------------------
             // define the worker for the switch factory

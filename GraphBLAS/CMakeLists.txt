@@ -47,13 +47,11 @@ set ( SUITESPARSE_CUDA off )
 project ( graphblas_matlab
     VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" LANGUAGES C )
 
-# enable this only for development
-  set ( CMAKE_CUDA_DEV off )
-# FIXME!! cuda dev is on
-# set ( CMAKE_CUDA_DEV on )
-if ( CMAKE_CUDA_DEV )
-    # for CUDA development only; not for production use
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBCUDA_DEV=1 " )
+option ( COMPACT "ON: do not compile FactoryKernels.  OFF (default): compile FactoryKernels" off )
+if ( COMPACT )
+    # FIXME: MATLAB cannot yet use the JIT.  GraphBLAS will be SLOW!
+    add_compile_definitions ( GBCOMPACT )
+    message ( WARNING "GBCOMPACT: enabled; FactoryKernels will not be built; GraphBLAS will be SLOW!" )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -128,8 +126,8 @@ message ( STATUS "CMAKE have OpenMP:          ${OPENMP_FOUND}" )
 
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
-if ( CMAKE_CUDA_DEV )
-    # for CUDA development only; not for production use
+if ( COMPACT )
+    # do not compile the FactoryKernels
     include_directories ( ../Source/Template ../Source ../Include rename
         ../Source/Shared ../Source/SharedTemplate
         ../lz4 ../zstd ../zstd/zstd_subset ../xxHash )
@@ -201,12 +199,10 @@ endif ( )
 # dynamic graphblas_matlab library properties
 #-------------------------------------------------------------------------------
 
-if ( CMAKE_CUDA_DEV )
-    # for CUDA development only; not for production use
-    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../Source/Shared/*.c" )
+if ( COMPACT )
+    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" )
 else ( )
-    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../Source/Shared/*.c"
-        "../Source/FactoryKernels/*.c" )
+    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../Source/FactoryKernels/*.c" )
 endif ( )
 
 add_library ( graphblas_matlab SHARED ${GRAPHBLAS_SOURCES} )

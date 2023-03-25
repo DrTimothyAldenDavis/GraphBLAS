@@ -22,7 +22,7 @@
 #include "GB_ek_slice.h"
 #include "GB_unused.h"
 #include "GB_stringify.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_unop__include.h"
 #include "GB_ew__include.h"
 #endif
@@ -358,7 +358,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         ASSERT (!A->iso) ;
 
         // determine number of threads to use
-        #ifndef GBCUDA_DEV
+        #ifndef GBCOMPACT
         if (Atype == op->xtype || opcode == GB_IDENTITY_unop_code)
         { 
 
@@ -489,7 +489,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             // z = binop (scalar,Ax)
             //------------------------------------------------------------------
 
-            #ifndef GBCUDA_DEV
+            #ifndef GBCOMPACT
             if (GB_binop_builtin (op->xtype, false, Atype, false,
                 (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
             { 
@@ -537,7 +537,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             // z = binop (Ax,scalar)
             //------------------------------------------------------------------
 
-            #ifndef GBCUDA_DEV
+            #ifndef GBCOMPACT
             if (GB_binop_builtin (Atype, false, op->ytype, false,
                 (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
             { 

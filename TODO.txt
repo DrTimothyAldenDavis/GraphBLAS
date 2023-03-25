@@ -4,10 +4,6 @@ FIXME / TODO: for v8.0.0.draft:
 
     performance tests (GAP, etc)
 
-    rename GBCUDA_DEV to GBCOMPACT and document it
-
-    wildtype output (for smaller diff)
-
 FIXME / TODO for 8.0.1.draft:
 
     MATLAB interface (testing, and @GrB)

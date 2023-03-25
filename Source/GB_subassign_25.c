@@ -31,7 +31,7 @@
 #include "GB_subassign_methods.h"
 #include "GB_subassign_dense.h"
 #include "GB_stringify.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_as__include.h"
 #endif
 
@@ -127,7 +127,7 @@ GrB_Info GB_subassign_25
         // via the factory kernel
         //----------------------------------------------------------------------
 
-        #ifndef GBCUDA_DEV
+        #ifndef GBCOMPACT
 
             //------------------------------------------------------------------
             // define the worker for the switch factory

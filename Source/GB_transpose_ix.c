@@ -30,7 +30,7 @@
 #include "GB_transpose.h"
 #include "GB_unop.h"
 #include "GB_stringify.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_unop__include.h"
 #endif
 
@@ -88,7 +88,7 @@ GrB_Info GB_transpose_ix        // transpose the pattern and values of a matrix
         // via the factory kernel
         //----------------------------------------------------------------------
 
-        #ifndef GBCUDA_DEV
+        #ifndef GBCOMPACT
 
             //------------------------------------------------------------------
             // define the worker for the switch factory

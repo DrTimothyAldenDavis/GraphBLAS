@@ -27,7 +27,7 @@
 #include "GB_reduce.h"
 #include "GB_binop.h"
 #include "GB_stringify.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_red__include.h"
 #endif
 #include "GB_monoid_shared_definitions.h"
@@ -182,7 +182,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
             // via the factory kernel
             //------------------------------------------------------------------
 
-            #ifndef GBCUDA_DEV
+            #ifndef GBCOMPACT
 
                 //--------------------------------------------------------------
                 // define the worker for the switch factory

@@ -344,7 +344,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 // via the factory kernel (inline; not in FactoryKernels folder)
                 //--------------------------------------------------------------
 
-                #ifndef GBCUDA_DEV
+                #ifndef GBCOMPACT
                 if (ccode == acode)
                 {
                     // no typecasting needed

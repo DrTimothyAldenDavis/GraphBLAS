@@ -11,7 +11,7 @@
 
 #include "GB_select.h"
 #include "GB_stringify.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_sel__include.h"
 #endif
 
@@ -113,7 +113,7 @@ GrB_Info GB_select_bitmap
         // bitmap selector for VALUE* and user-defined ops
         //----------------------------------------------------------------------
 
-        #ifndef GBCUDA_DEV
+        #ifndef GBCOMPACT
 
             //------------------------------------------------------------------
             // via the factory kernel 

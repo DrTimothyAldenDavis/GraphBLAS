@@ -31,7 +31,7 @@
 #include "GB_ek_slice.h"
 #include "GB_AxB_saxpy_generic.h"
 #include "GB_AxB__include1.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_AxB__include2.h"
 #endif
 
@@ -270,7 +270,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
         info = GrB_NO_VALUE ;
         GBURBLE ("(bitmap saxpy) ") ;
 
-        #ifndef GBCUDA_DEV
+        #ifndef GBCOMPACT
 
             //------------------------------------------------------------------
             // define the worker for the switch factory

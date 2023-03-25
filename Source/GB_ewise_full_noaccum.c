@@ -15,7 +15,7 @@
 #include "GB_ewise.h"
 #include "GB_binop.h"
 #include "GB_stringify.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_ew__include.h"
 #endif
 
@@ -104,7 +104,7 @@ GrB_Info GB_ewise_full_noaccum      // C = A+B
 
     info = GrB_NO_VALUE ;
 
-    #ifndef GBCUDA_DEV
+    #ifndef GBCOMPACT
 
         //----------------------------------------------------------------------
         // define the worker for the switch factory

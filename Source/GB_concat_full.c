@@ -146,7 +146,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
             // via the factory kernel (inline; not in FactoryKernels folder)
             //------------------------------------------------------------------
 
-            #ifndef GBCUDA_DEV
+            #ifndef GBCOMPACT
                 if (ccode == acode)
                 {
                     // no typecasting needed

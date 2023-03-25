@@ -38,7 +38,7 @@
 #include "GB_transpose.h"
 #include "GB_binop.h"
 #include "GB_stringify.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_unop__include.h"
 #include "GB_ew__include.h"
 #endif
@@ -115,7 +115,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
         // via the factory kernel
         //----------------------------------------------------------------------
 
-        #ifndef GBCUDA_DEV
+        #ifndef GBCOMPACT
         if (Atype == op->xtype || opcode == GB_IDENTITY_unop_code)
         { 
 
@@ -256,7 +256,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
             // C = op(scalar,A') via the factory kernel
             //------------------------------------------------------------------
 
-            #ifndef GBCUDA_DEV
+            #ifndef GBCOMPACT
             if (GB_binop_builtin (op->xtype, false, Atype, false,
                 (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
             { 
@@ -306,7 +306,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
             // C = op(A',scalar) via the factory kernel
             //------------------------------------------------------------------
 
-            #ifndef GBCUDA_DEV
+            #ifndef GBCOMPACT
             if (GB_binop_builtin (Atype, false, op->ytype, false,
                 (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
             { 

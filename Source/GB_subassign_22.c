@@ -28,7 +28,7 @@
 #include "GB_binop.h"
 #include "GB_unused.h"
 #include "GB_stringify.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_aop__include.h"
 #endif
 
@@ -100,7 +100,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
 
     info = GrB_NO_VALUE ;
 
-    #ifndef GBCUDA_DEV
+    #ifndef GBCOMPACT
 
         //----------------------------------------------------------------------
         // define the worker for the switch factory

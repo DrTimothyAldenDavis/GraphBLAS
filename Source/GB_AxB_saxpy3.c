@@ -94,7 +94,7 @@
 #include "GB_AxB_saxpy_generic.h"
 #include "GB_control.h"
 #include "GB_AxB__include1.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_AxB__include2.h"
 #endif
 #include "GB_unused.h"
@@ -653,7 +653,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         info = GrB_NO_VALUE ;
         GBURBLE ("(sparse saxpy) ") ;
 
-        #ifndef GBCUDA_DEV
+        #ifndef GBCOMPACT
 
             //------------------------------------------------------------------
             // define the worker for the switch factory

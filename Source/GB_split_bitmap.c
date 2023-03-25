@@ -120,7 +120,7 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
                 // split a non-iso matrix A into an non-iso tile C
                 //--------------------------------------------------------------
 
-                #ifndef GBCUDA_DEV
+                #ifndef GBCOMPACT
                 // no typecasting needed
                 switch (asize)
                 {

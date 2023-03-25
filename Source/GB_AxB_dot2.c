@@ -46,7 +46,7 @@
 #include "GB_bitmap_assign_methods.h"
 #include "GB_stringify.h"
 #include "GB_AxB__include1.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_AxB__include2.h"
 #endif
 
@@ -427,7 +427,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         //----------------------------------------------------------------------
 
         info = GrB_NO_VALUE ;
-        #ifndef GBCUDA_DEV
+        #ifndef GBCOMPACT
 
             //------------------------------------------------------------------
             // define the worker for the switch factory

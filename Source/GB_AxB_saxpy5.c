@@ -31,7 +31,7 @@
 #include "GB_mxm.h"
 #include "GB_control.h"
 #include "GB_stringify.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_AxB__include2.h"
 #endif
 
@@ -154,7 +154,7 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     //--------------------------------------------------------------------------
 
     info = GrB_NO_VALUE ;
-    #ifndef GBCUDA_DEV
+    #ifndef GBCOMPACT
     {
 
         //----------------------------------------------------------------------

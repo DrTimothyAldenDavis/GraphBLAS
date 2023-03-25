@@ -11,7 +11,7 @@
 
 #include "GB_select.h"
 #include "GB_ek_slice.h"
-#ifndef GBCUDA_DEV
+#ifndef GBCOMPACT
 #include "GB_sel__include.h"
 #endif
 #include "GB_scalar_wrap.h"
@@ -184,7 +184,7 @@ GrB_Info GB_select_sparse
              && opcode <= GB_VALUELE_idxunop_code)
              || (opcode == GB_USER_idxunop_code)) ;
 
-        #ifndef GBCUDA_DEV
+        #ifndef GBCOMPACT
 
             //------------------------------------------------------------------
             // via the factory kernel (includes user-defined ops)
@@ -289,7 +289,7 @@ GrB_Info GB_select_sparse
              || (opcode == GB_NONZOMBIE_idxunop_code && !A_iso)
              || (opcode == GB_USER_idxunop_code)) ;
 
-        #ifndef GBCUDA_DEV
+        #ifndef GBCOMPACT
 
             //------------------------------------------------------------------
             // via the factory kernel

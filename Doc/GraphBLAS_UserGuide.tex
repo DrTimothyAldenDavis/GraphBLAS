@@ -12,6 +12,7 @@
 % \usepackage{pdflscape}
 \newmdenv[backgroundcolor=yellow]{alert}
 \newmdenv[backgroundcolor=red]{note}
+\newmdenv[backgroundcolor=red]{warning}
 \hyphenation{Suite-Sparse}
 \hyphenation{Graph-BLAS}
 \hyphenation{Suite-Sparse-Graph-BLAS}
@@ -8748,7 +8749,7 @@ and can thus be used with no overhead.
 
 However, if a user-defined type or operator is freed and redefined with the
 same name but a different definition, any loaded kernels should be freed.  This
-case is not detected by GraphBLAS since it would be far too costly to check
+case is not detected by GraphBLAS since it would be far too costly to chec
 each time a previously loaded kernel is called.  As a result, this condition is
 only checked when the kernel is first loaded.  To avoid this issue, if the user
 application frees a user-defined type or operator and creates a new one with a
@@ -8756,6 +8757,34 @@ different definition but with the same name, clear all prior kernels by setting
 the control to \verb'GxB_JIT_OFF'.  Then turn the JIT back on with
 \verb'GxB_JIT_ON'.  The kernels will be checked when reloaded, and recompiled
 if their definitions changed.
+
+%-------------------------------------------------------------------------------
+\subsection{Compilation options: {\sf NJIT} and {\sf COMPACT}}
+%-------------------------------------------------------------------------------
+
+The CPU JIT can be disabled entirely at compile time by setting the \verb'NJIT'
+option \verb'on' in the cmake build options.  The \verb'GxB_JIT_C_CONTROL'
+cannot be modified, and \verb'GxB_get (GxB_JIT_C_CONTROL, &c)' will return
+\verb'c =' \verb'GxB_JIT_NONE'.  Good performance will be obtained only by
+using the \verb'FactoryKernels' that are compiled into GraphBLAS when it is
+first compiled with \verb'cmake'.  By default, \verb'NJIT' is off, to enable
+the CPU JIT.
+
+With the introduction of the JIT kernels, it is now possible to obtain good
+performance in GraphBLAS without compiling the many {\em factory kernels} that
+appear in the \verb'GraphBLAS/Source/FactoryKernels' directory.  If the full
+JIT is enabled, GraphBLAS will still be fast, once the JIT kernels are
+compiled.  To compile GraphBLAS without its \verb'FactoryKernels', enable the
+\verb'COMPACT' option in the cmake build options.  By default, \verb'COMPACT'
+is off, to enable the \verb'FactoryKernels'.
+
+If both \verb'NJIT' and \verb'COMPACT' options are enabled, all features of
+GraphBLAS will be functional but very slow.  Only generic kernels will be used,
+in which every single operator is implemented with a function pointer, and
+every scalar assignent requires a \verb'memcpy'.  {\bf This is not recommended,
+and the cmake build will issue a warning.  Using these settings to benchmark
+GraphBLAS, or for production use in a Linux distro or other widely used
+distribution would be inappropriate; do not do it.}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
