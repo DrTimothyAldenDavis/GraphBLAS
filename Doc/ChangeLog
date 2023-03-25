@@ -1,3 +1,9 @@
+Version 7.4.4, Mar 25, 2023
+
+    * (47) bug fix: OpenMP atomics require seq_cst on the ARM.
+        Revised GB_atomics.h accordingly, and added them for all
+        architectures (caught by Gabor Szarnyas).
+
 Version 7.4.3, Jan 20, 2023
 
     * debug: turned on in GrB_Matrix_removeElement by mistake.

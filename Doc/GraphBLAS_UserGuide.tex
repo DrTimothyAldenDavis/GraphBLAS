@@ -15489,6 +15489,14 @@ GraphBLAS folder.
 
 \begin{itemize}
 
+\item Version 7.4.4, Mar 25, 2023
+
+    \begin{itemize}
+    \item (47) bug fix: OpenMP atomics require \verb'seq_cst' on the ARM.
+        Revised \verb'GB_atomics.h' accordingly, and added them for
+        all architectures (caught by Gabor Szarnyas).
+    \end{itemize}
+
 \item Version 7.4.3, Jan 20, 2023
 
     \begin{itemize}
