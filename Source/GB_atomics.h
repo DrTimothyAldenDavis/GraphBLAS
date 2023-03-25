@@ -25,13 +25,13 @@
 // Whenever possible, the OpenMP pragma is used with a clause (as introduced in
 // OpenMP 3.1), as follow:
 //
-//      #pragma omp atomic [clause]
+//      #pragma omp atomic seq_cst [clause]
 //
 // where [clause] is read, write, update, or capture.
 //
 // Microsoft Visual Studio only supports OpenMP 2.0, which does not have the
-// [clause].  Without the [clause], #pragma omp atomic is like 
-// #pragma omp atomic update, but the expression can only be one of:
+// [clause].  Without the [clause], #pragma omp atomic seq_cst is like 
+// #pragma omp atomic seq_cst update, but the expression can only be one of:
 //      
 //      x binop= expression
 //      x++
@@ -60,18 +60,18 @@
 #if ( _OPENMP >= 201307 )
 
     // OpenMP 4.0 or later
-    // #define GB_ATOMIC_UPDATE GB_PRAGMA (omp atomic update seq_cst)
-    #define GB_ATOMIC_UPDATE GB_PRAGMA (omp atomic update)
+    // #define GB_ATOMIC_UPDATE GB_PRAGMA (omp atomic seq_cst update seq_cst)
+    #define GB_ATOMIC_UPDATE GB_PRAGMA (omp atomic seq_cst update)
 
 #elif ( _OPENMP >= 201107 )
 
     // OpenMP 3.1
-    #define GB_ATOMIC_UPDATE GB_PRAGMA (omp atomic update)
+    #define GB_ATOMIC_UPDATE GB_PRAGMA (omp atomic seq_cst update)
 
 #elif ( _OPENMP >= 199810 )
 
     // OpenMP 1.0 to 3.0: no optional clauses, "update" is assumed
-    #define GB_ATOMIC_UPDATE GB_PRAGMA (omp atomic)
+    #define GB_ATOMIC_UPDATE GB_PRAGMA (omp atomic seq_cst)
 
 #else
 
@@ -105,8 +105,8 @@
 #elif ( _OPENMP >= 201107 )
 
     // OpenMP 3.1 and later have atomic reads and writes
-    #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read)
-    #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write)
+    #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic seq_cst read)
+    #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic seq_cst write)
 
 #else
 
@@ -148,12 +148,12 @@
 //
 // OpenMP 3.1 and later supports atomic captures with a "capture" clause: 
 //
-//      #pragma omp atomic capture
+//      #pragma omp atomic seq_cst capture
 //      { result = target ; target = value ; }
 //
 // or with a binary operator
 //
-//      #pragma omp atomic capture
+//      #pragma omp atomic seq_cst capture
 //      { result = target ; target binop= value ; }
 //
 // MS Visual Studio supports only OpenMP 2.0, and does not support any
@@ -166,13 +166,13 @@
 #if ( _OPENMP >= 201307 )
 
     // OpenMP 4.0 or later
-    // #define GB_ATOMIC_CAPTURE GB_PRAGMA (omp atomic capture seq_cst)
-    #define GB_ATOMIC_CAPTURE GB_PRAGMA (omp atomic capture)
+    // #define GB_ATOMIC_CAPTURE GB_PRAGMA (omp atomic seq_cst capture seq_cst)
+    #define GB_ATOMIC_CAPTURE GB_PRAGMA (omp atomic seq_cst capture)
 
 #elif ( _OPENMP >= 201107 )
 
     // OpenMP 3.1
-    #define GB_ATOMIC_CAPTURE GB_PRAGMA (omp atomic capture)
+    #define GB_ATOMIC_CAPTURE GB_PRAGMA (omp atomic seq_cst capture)
 
 #elif ( _OPENMP >= 199810 )
 
