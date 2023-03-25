@@ -290,5 +290,8 @@ GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler) ;
 const char *GB_jitifyer_get_C_flags (void) ;
 GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags) ;
 
+void GB_jitifyer_set_control (int control) ;
+GxB_JIT_Control GB_jitifyer_get_control (void) ;
+
 #endif
 

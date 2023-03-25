@@ -1,33 +1,14 @@
 FIXME / TODO: for v8.0.0.draft:
 
-    JIT control (get/set):
-
-        GxB_JIT_NONE = -1
-            JIT disabled at compile time.  No JIT avaiable at all.
-
-        GxB_JIT_OFF = 0
-            do not use the JIT at all: free all JIT kernels if loaded, and
-            dlclose all of them (call GB_jitifyer_table_free)
-
-        GxB_JIT_PAUSE = 1
-            do not run JIT kernels but keep any loaded JIT kernels loaded
-
-        GxB_JIT_RUN = 2
-            able to run JIT kernels if already loaded; may not load or compile
-
-        GxB_JIT_LOAD = 3
-            able to load and run JIT kernels; may not compile
-
-        GxB_JIT_ON = 4
-            full JIT: able to compile, load, and run
-
     port to the Mac
 
     performance tests (GAP, etc)
 
-    rename GBCUDA_DEV to COMPACT and document it
+    rename GBCUDA_DEV to GBCOMPACT and document it
 
-for 8.0.1.draft:
+    wildtype output (for smaller diff)
+
+FIXME / TODO for 8.0.1.draft:
 
     MATLAB interface (testing, and @GrB)
 
@@ -38,3 +19,4 @@ for 8.0.1.draft:
     more JIT kernels: GrB_assign (34 kernels), subref (3 kernels),
         masker (2 kernels), other (5 kernels)
 
+    port to Windows

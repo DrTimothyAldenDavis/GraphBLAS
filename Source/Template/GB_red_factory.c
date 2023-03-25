@@ -15,7 +15,8 @@
 //  4:   lor, land, eq (same as lxnor), lxor for boolean
 //  13:  any: for all 13 types
 
-// FIXME: add band, bor, bxor, bxnor for uint [8,16,32,64]
+// FUTURE: band, bor, bxor, bxnor for uint [8,16,32,64] could be added.
+// Or, just use the JIT.
 
 if (typecode != GB_BOOL_code)
 {

@@ -16,7 +16,8 @@
 //  13:  any: for all 13 types
 //  26:  first, second: for all 13 types
 
-// FIXME: add band, bor, bxor, bxnor for uint [8,16,32,64]
+// FUTUTE: add band, bor, bxor, bxnor for uint [8,16,32,64].
+// Or, just use the JIT.
 
 if (tcode != GB_BOOL_code)
 {

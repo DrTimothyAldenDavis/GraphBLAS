@@ -52,12 +52,12 @@ GrB_Info GxB_Global_Option_get_INT32    // gets the current global option
 
         case GxB_GLOBAL_GPU_ID :            // same as GxB_GPU_ID
 
-            (*value) = (int32_t) GB_Context_gpu_id_get (NULL) ; 
+            (*value) = (int32_t) GB_Context_gpu_id_get (NULL) ;
             break ;
 
         case GxB_API_VERSION : 
 
-            value [0] = GxB_SPEC_MAJOR ; 
+            value [0] = GxB_SPEC_MAJOR ;
             value [1] = GxB_SPEC_MINOR ;
             value [2] = GxB_SPEC_SUB ;
             break ;
@@ -71,7 +71,7 @@ GrB_Info GxB_Global_Option_get_INT32    // gets the current global option
 
         case GxB_COMPILER_VERSION : 
 
-            value [0] = GB_COMPILER_MAJOR ; 
+            value [0] = GB_COMPILER_MAJOR ;
             value [1] = GB_COMPILER_MINOR ;
             value [2] = GB_COMPILER_SUB ;
             break ;
@@ -104,6 +104,11 @@ GrB_Info GxB_Global_Option_get_INT32    // gets the current global option
         case GxB_PRINT_1BASED : 
 
             (*value) = (int32_t) GB_Global_print_one_based_get ( ) ;
+            break ;
+
+        case GxB_JIT_C_CONTROL : 
+
+            (*value) = (int32_t) GB_jitifyer_get_control ( ) ;
             break ;
 
         default : 
@@ -149,7 +154,7 @@ GrB_Info GxB_Global_Option_get_FP64     // gets the current global option
 
             for (int k = 0 ; k < GxB_NBITMAP_SWITCH ; k++)
             {
-                value [k] = (double) GB_Global_bitmap_switch_get (k) ; 
+                value [k] = (double) GB_Global_bitmap_switch_get (k) ;
             }
             break ;
 
@@ -813,6 +818,17 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
         //----------------------------------------------------------------------
         // JIT configuruation
         //----------------------------------------------------------------------
+
+        case GxB_JIT_C_CONTROL : 
+
+            {
+                va_start (ap, field) ;
+                int *control = va_arg (ap, int *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (control) ;
+                (*control) = (int) GB_jitifyer_get_control ( ) ;
+            }
+            break ;
 
         case GxB_JIT_C_COMPILER_NAME : 
 

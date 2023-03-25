@@ -54,6 +54,14 @@ all:
 demos: all
 	( cd Demo && ./demo )
 
+# diff the demo output
+demodiffs: demos
+	echo "Comparing demo output:"
+	- diff -w Demo/Output/simple_demo.out       Demo/simple_demo.out
+	- diff -w Demo/Output/complex_demo_out.m    Demo/complex_demo_out.m
+	- diff -w Demo/Output/wildtype_demo.out     Demo/wildtype_demo.out
+	- diff -w Demo/Output/gauss_demo.out        Demo/gauss_demo.out
+
 # just do 'make' in build; do not rerun the cmake script
 remake:
 	( cd build && cmake --build . -j$(JOBS) )

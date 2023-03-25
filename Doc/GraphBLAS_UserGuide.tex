@@ -8442,6 +8442,7 @@ A new context is created and initialized with the current global settings for
 The context object will have an effect on any calls to GraphBLAS until it
 is {\em engaged} by a user thread.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsection{{\sf GxB\_Context\_set:}  change a setting in a context}
 %-------------------------------------------------------------------------------
@@ -8497,6 +8498,7 @@ For example, \verb'GxB_get (Context, GxB_NTHREADS, &nthreads)' returns the
 number of threads set in the \verb'Context', returning the result in the
 \verb'int32_t' scalar, \verb'nthreads'.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsection{{\sf GxB\_Context\_engage:}  engaging context}
 %-------------------------------------------------------------------------------
@@ -8637,9 +8639,28 @@ top-level SuiteSparse:GraphBLAS source folder.
 \end{itemize}
 
 When the user application starts, it can modify the location of these two
-folders.  It can also modify the C compiler and its flags.  These changes are
-made via \verb'GxB_Global_Option_set', and can be queried via
-\verb'GxB_Global_Option_get'; refer to Section~\ref{options} for details.
+folders.  It can also modify the C compiler and its flags, and can control when
+and how the JIT is used.  These changes are made via
+\verb'GxB_Global_Option_set', and can be queried via
+\verb'GxB_Global_Option_get'; refer to Section~\ref{options} for details, and
+the \verb'GxB_JIT_*' settings:
+
+\vspace{0.1in}
+{\footnotesize
+\begin{tabular}{lll}
+\hline
+field                       & value         & description \\
+\hline
+\verb'GxB_JIT_C_COMPILER_NAME' & \verb'char *' & C compiler for JIT kernels \\
+\verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
+\verb'GxB_JIT_CACHE_PATH'      & \verb'char *' & folder with compiled kernels \\
+\verb'GxB_JIT_SOURCE_PATH'     & \verb'char *' & folder with all of GraphBLAS
+                                                 source \\
+\verb'GxB_JIT_C_CONTROL'    & see below & CPU JIT control \\
+\hline
+\end{tabular}
+}
+\vspace{0.1in}
 
 Kernels compiled during one run of a user application are kept in the cache
 folder, so that when the user application runs again, the kernels do not have
@@ -8649,7 +8670,92 @@ definition of the user-defined type or operator does not exactly match the
 definition when the kernel was compiled, then the compiled kernel is discarded
 and recompiled.
 
-% FIXME: create and describe the JIT controls
+The usage of the CPU JIT can be controlled via \verb'GxB_get/set' using the
+\verb'GxB_JIT_C_CONTROL' setting.  If the JIT is enabled at compile time, the
+initial setting is \verb'GxB_JIT_ON'.  This can be modified; for example to
+disable the JIT and clear all loaded JIT kernels from memory, use:
+
+\begin{verbatim}
+    GxB_set (GxB_JIT_CONTROL, GxB_JIT_OFF) ;
+\end{verbatim}
+
+The following settings are available for \verb'GxB_JIT_CONTROL'.
+For examples on how to use it, see
+\verb'GraphBLAS/Demo/Program/gauss_demo.c'.
+
+{\footnotesize
+\begin{verbatim}
+typedef enum
+{
+    GxB_JIT_NONE = -1,  // JIT disabled at compile time.  No JIT avaiable.
+    GxB_JIT_OFF = 0,    // do not use the JIT: free all JIT kernels if loaded
+    GxB_JIT_PAUSE = 1,  // do not run JIT kernels but keep any loaded
+    GxB_JIT_RUN = 2,    // run JIT kernels if already loaded; no load/compile
+    GxB_JIT_LOAD = 3,   // able to load and run JIT kernels; may not compile
+    GxB_JIT_ON = 4,     // full JIT: able to compile, load, and run
+}
+GxB_JIT_Control ;
+\end{verbatim} }
+
+These settings can be changed by GraphBLAS itself, based on following error
+conditions.  These changes affect all kernels, not just the kernel causing the
+error.  If any of these cases occur, the call to GraphBLAS will return
+\verb'GrB_INVALID_VALUE' to indicate that some kind of JIT failure occured, or
+\verb'GrB_OUT_OF_MEMORY' for the last case below.  The error is also reported
+if the \verb'GxB_BURBLE' is enabled.
+
+\begin{itemize}
+
+\item When a kernel is loaded that relies on user-defined types and/or
+operators, the defintions in the previously compiled kernel are checked against
+the current definitions.  If they do not match, the old one is discarded, and a
+new kernel will be compiled.  However, if the control is set to
+\verb'GxB_JIT_LOAD', no new kernels may be compiled.  To avoid a continual
+reloading and checking of kernels, the control is changed from
+\verb'GxB_JIT_LOAD' to \verb'GxB_JIT_RUN'.  To solve this problem, delete the
+compiled kernel with the stale definition, or enable the full JIT by setting
+the control to \verb'GxB_JIT_ON' so that the kernel can recompiled with the
+current definitions.
+
+\item If a new kernel is to be compiled with the control set to
+\verb'GxB_JIT_ON' but the source file cannot be created in the cache folder, or
+a compiler error occurs, further compilation is disabled.  The control is
+changed from \verb'GxB_JIT_ON' to \verb'GxB_JIT_LOAD'.
+To solve this problem, make sure your application has write permission to
+the cache path, the source path contains a valid copy of GraphBLAS,
+and that any user-defined types and operators are defined properly so that
+no syntax error is detected by the compiler.
+
+\item If a kernel is loaded but the lookup of the kernel function itself in the
+compiled library fails, the control is changed to \verb'GxB_JIT_RUN' to prevent
+this error from occuring again.  To solve this problem, delete the corrupted
+compiled kernel from the cache folder.
+
+\item If an out-of-memory condition occurs in the JIT, the JIT control is
+set to \verb'GxB_JIT_PAUSE'.  To solve this, try freeing up memory or solve
+smaller problems.
+
+\end{itemize}
+
+In many use cases of GraphBLAS (such as LAGraph), and function will create
+a type or operator, use it, and then free it.  It would be far to costly to
+clear the loaded kernel and reload it or recompile it each time the
+LAGraph function is called, so any kernels that use this type or operator
+are kept loaded.  The typical case is that when the LAGraph function is called
+again, it will recreate the type or operator with the identical name and
+definition.  The kernels that use these types or operators will still be loaded
+and can thus be used with no overhead.
+
+However, if a user-defined type or operator is freed and redefined with the
+same name but a different definition, any loaded kernels should be freed.  This
+case is not detected by GraphBLAS since it would be far too costly to check
+each time a previously loaded kernel is called.  As a result, this condition is
+only checked when the kernel is first loaded.  To avoid this issue, if the user
+application frees a user-defined type or operator and creates a new one with a
+different definition but with the same name, clear all prior kernels by setting
+the control to \verb'GxB_JIT_OFF'.  Then turn the JIT back on with
+\verb'GxB_JIT_ON'.  The kernels will be checked when reloaded, and recompiled
+if their definitions changed.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -8694,6 +8800,7 @@ field                       & value         & description \\
 \verb'GxB_JIT_CACHE_PATH'      & \verb'char *' & folder with compiled kernels \\
 \verb'GxB_JIT_SOURCE_PATH'     & \verb'char *' & folder with all of GraphBLAS
                                                  source \\
+\verb'GxB_JIT_C_CONTROL'    & see below & CPU JIT control \\
 \hline
 \end{tabular}
 }
@@ -8714,6 +8821,7 @@ field                       & value         & description \\
 \end{tabular}
 }
 
+\newpage
 \item \verb'GxB_set (GrB_Vector v, field, value)' provides hints to
     SuiteSparse: GraphBLAS on how to store a particular vector.
 
@@ -8791,6 +8899,7 @@ field                       & value         & description \\
 \verb'GxB_JIT_CACHE_PATH'      & \verb'char *' & folder with compiled kernels \\
 \verb'GxB_JIT_SOURCE_PATH'     & \verb'char *' & folder with all of GraphBLAS
                                                  source \\
+\verb'GxB_JIT_C_CONTROL'    & see below & CPU JIT control \\
 \verb'GxB_MODE'                 & \verb'int'    & blocking/non-blocking \\
 \verb'GxB_LIBRARY_NAME'         & \verb'char *' & name of library \\
 \verb'GxB_LIBRARY_VERSION'      & \verb'int [3]' & library version \\
@@ -8811,6 +8920,7 @@ field                       & value         & description \\
 \end{tabular}
 }
 
+\newpage
 \item \verb'GxB_get (GrB_Matrix A, field, &value)' retrieves the current
     value of an option from a particular matrix \verb'A'.
 
@@ -9206,6 +9316,7 @@ typedef enum
     GxB_JIT_C_COMPILER_FLAGS = 111, // CPU JIT C compiler flags
     GxB_JIT_CACHE_PATH = 112,       // CPU/CUDA JIT path for compiled kernels
     GxB_JIT_SOURCE_PATH = 113,      // CPU/CUDA JIT path to GraphBLAS source
+    GxB_JIT_C_CONTROL = 114,        // CPU JIT control
 
     // for matrix/vector get only:
     GxB_SPARSITY_STATUS = 33,   // query the sparsity of a matrix or vector
@@ -9430,8 +9541,9 @@ The \verb'field' parameter can be
 \verb'GxB_PRINT_1BASED', \newline
 \verb'GxB_JIT_C_COMPILER_NAME',
 \verb'GxB_JIT_C_COMPILER_FLAGS',
-\verb'GxB_JIT_CACHE_PATH', or
-\verb'GxB_JIT_SOURCE_PATH'.
+\verb'GxB_JIT_CACHE_PATH',
+\verb'GxB_JIT_SOURCE_PATH', or
+\verb'GxB_JIT_C_CONTROL'.
 
 For example, the following usage sets the global hypersparsity ratio to 0.2,
 the format of future matrices to \verb'GxB_BY_COL', the maximum number
@@ -9556,6 +9668,7 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
         \verb'GxB_JIT_C_COMPILER_FLAGS' & flags for the C compiler \\
         \verb'GxB_JIT_CACHE_PATH'       & folder with compiled kernels \\
         \verb'GxB_JIT_SOURCE_PATH'      & folder with all of GraphBLAS source \\
+        \verb'GxB_JIT_C_CONTROL'        & CPU JIT control \\
         \hline
         \verb'GxB_LIBRARY_NAME'         & the string
                                         \verb'"SuiteSparse:GraphBLAS"' \\
@@ -9747,6 +9860,8 @@ To set/get the global options:
     GxB_get (GxB_JIT_SOURCE_PATH, const char **src) ;
     GxB_set (GxB_JIT_CACHE_PATH, const char *cache) ;
     GxB_get (GxB_JIT_CACHE_PATH, const char **cache) ;
+    GxB_set (GxB_JIT_C_CONTROL, int control) ;
+    GxB_get (GxB_JIT_C_CONTROL, int *control) ;
     \end{verbatim} }
 
 \noindent
@@ -14433,19 +14548,22 @@ The burble output can help you detect when you are likely using sub-optimal
 methods, as described in the next sections.
 
 %-------------------------------------------------------------------------------
-\subsection{Data types and typecasting}
+\subsection{Data types and typecasting: use the JIT}
 %-------------------------------------------------------------------------------
 
-Avoid mixing data types and relying on typecasting as much as possible.
+If the JIT is disabled,
+avoid mixing data types and relying on typecasting as much as possible.
 SuiteSparse:GraphBLAS has a set of highly-tuned kernels for each data type,
 and many operators and semirings, but there are too many combinations to
 generate ahead of time.  If typecasting is required, or if
 SuiteSparse:GraphBLAS does not have a kernel for the specific operator or
 semiring, the word \verb'generic' will appear in the burble.  The generic
 methods rely on function pointers for each operation on every scalar, so they
-are slow.  A future JIT will avoid this problem.
+are slow.  Enabling the JIT avoids this problem, since GraphBLAS can then
+compile kernel specific to the types used.
 
-The only time that typecasting is fast is when computing \verb'C=A' via
+Without the JIT,
+the only time that typecasting is fast is when computing \verb'C=A' via
 \verb'GrB_assign' or \verb'GrB_apply', where the data types of \verb'C' and
 \verb'A' can differ.  In this case, one of $13^2 = 169$ kernels are called,
 each of which performs the specific typecasting requested, without relying on
@@ -14697,13 +14815,12 @@ above assignment in O(1) time and space, independent of the dimension of
 \verb'C' or the number of entries in contains.
 
 %-------------------------------------------------------------------------------
-\subsection{User-defined types and operators}
+\subsection{User-defined types and operators: use the JIT}
 %-------------------------------------------------------------------------------
 
-These are currently slow.  Once SuiteSparse:GraphBLAS employs a JIT
-accelerator, these data types and operators will be just as fast as built-in
-types and operators.  This work is in progress for the GPU, in CUDA, in
-collaboration with Joe Eaton and Corey Nolet.
+If the JIT is disabled, these will be slow.  With the JIT enabled, data types
+and operators are just as fast as built-in types and operators.  A CUDA JIT for
+the GPU is in progress, collaboration with Joe Eaton and Corey Nolet.
 
 %-------------------------------------------------------------------------------
 \subsection{About NUMA systems}

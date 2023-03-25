@@ -399,6 +399,45 @@ int main (void)
         GrB_free (& (STiles [k])) ;
     }
 
+    // pause the JIT
+    printf ("JIT: paused\n") ;
+    TRY (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_PAUSE)) ;
+
+    // C += ciso
+    printgauss (C, "\n=============== C: \n") ;
+    TRY (GrB_Matrix_assign_UDT (C, NULL, AddGauss, (void *) &ciso,
+        GrB_ALL, 4, GrB_ALL, 4, NULL)) ;
+    printgauss (C, "\n=============== C = C + ciso (JIT paused):\n") ;
+
+    // C *= ciso
+    printgauss (C, "\n=============== C: \n") ;
+    TRY (GrB_Matrix_assign_UDT (C, NULL, MultGauss, (void *) &ciso,
+        GrB_ALL, 4, GrB_ALL, 4, NULL)) ;
+    printgauss (C, "\n=============== C = C * ciso (JIT paused):\n") ;
+
+    // re-enable the JIT, but not to compile anything new
+    printf ("JIT: run (may not load or compile)\n") ;
+    TRY (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_RUN)) ;
+
+    // C += ciso, using the previous loaded JIT kernel
+    TRY (GrB_Matrix_assign_UDT (C, NULL, AddGauss, (void *) &ciso,
+        GrB_ALL, 4, GrB_ALL, 4, NULL)) ;
+    printgauss (C, "\n=============== C = C + ciso (JIT run):\n") ;
+
+    // C *= ciso, but using generic since it is not compiled
+    TRY (GrB_Matrix_assign_UDT (C, NULL, MultGauss, (void *) &ciso,
+        GrB_ALL, 4, GrB_ALL, 4, NULL)) ;
+    printgauss (C, "\n=============== C = C * ciso (JIT not loaded):\n") ;
+
+    // re-enable the JIT entirely
+    printf ("JIT: on\n") ;
+    TRY (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
+
+    // C *= ciso, compiling a new JIT kernel if needed
+    TRY (GrB_Matrix_assign_UDT (C, NULL, MultGauss, (void *) &ciso,
+        GrB_ALL, 4, GrB_ALL, 4, NULL)) ;
+    printgauss (C, "\n=============== C = C * ciso (full JIT):\n") ;
+
     // free everything and finalize GraphBLAS
     GrB_free (&A) ;
     GrB_free (&B) ;

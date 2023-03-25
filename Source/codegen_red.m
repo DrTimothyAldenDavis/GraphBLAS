@@ -165,8 +165,6 @@ op {1} = 'zarg = yarg' ;
 op {2} = 'zarg = yarg' ;
 codegen_red_method ('any'  ,  op, 'bool','false') ;
 
-% FIXME: add bor, band, bxor, bxnor for uint [8,16,32,64]
-
 %-------------------------------------------------------------------------------
 % FIRST and SECOND (not monoids; used for GB_bld__first,second_type)
 %-------------------------------------------------------------------------------

@@ -53,6 +53,40 @@ static size_t   GB_jit_include_allocated = 0 ;
 static char    *GB_jit_command = NULL ;
 static size_t   GB_jit_command_allocated = 0 ;
 
+static GxB_JIT_Control GB_jit_control =
+    #if GB_JIT_ENABLED
+    GxB_JIT_ON ;        // JIT enabled
+    #else
+    GxB_JIT_NONE ;      // JIT disabled at compile time
+    #endif
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_get_control: get the JIT control
+//------------------------------------------------------------------------------
+
+GxB_JIT_Control GB_jitifyer_get_control (void)
+{
+    return (GB_jit_control) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_control: set the JIT control
+//------------------------------------------------------------------------------
+
+void GB_jitifyer_set_control (int control)
+{
+    #if GB_JIT_ENABLED
+    control = GB_IMAX (control, GxB_JIT_OFF) ;
+    control = GB_IMIN (control, GxB_JIT_ON) ;
+    GB_jit_control = (GxB_JIT_Control) control ;
+    if (GB_jit_control == GxB_JIT_OFF)
+    {
+        // free all loaded JIT kernels and free the JIT hash table
+        GB_jitifyer_table_free ( ) ;
+    }
+    #endif
+}
+
 //------------------------------------------------------------------------------
 // GB_jitifyer_finalize: free the JIT table and all the strings
 //------------------------------------------------------------------------------
@@ -86,7 +120,6 @@ void GB_jitifyer_finalize (void)
 #define OK(ok)                          \
     if (!(ok))                          \
     {                                   \
-        printf ("Out of memory in %s, line %d!\n", __FILE__,__LINE__) ; \
         GB_jitifyer_finalize ( ) ;      \
         return (GrB_OUT_OF_MEMORY) ;    \
     }
@@ -291,17 +324,6 @@ GrB_Info GB_jitifyer_alloc_space (void)
         GB_jit_command = GB_MALLOC (len, char, &(GB_jit_command_allocated)) ;
         OK (GB_jit_command != NULL) ;
     }
-
-#if 0
-printf ("cache: %ld [%s]\n", GB_jit_cache_path_allocated, GB_jit_cache_path) ;
-printf ("source: %ld [%s]\n", GB_jit_source_path_allocated, GB_jit_source_path) ;
-printf ("C compiler: %ld [%s]\n", GB_jit_C_compiler_allocated, GB_jit_C_compiler) ;
-printf ("C flags: %ld [%s]\n", GB_jit_C_flags_allocated, GB_jit_C_flags) ;
-printf ("Include: %ld %ld [%s]\n", GB_jit_include_allocated, strlen (GB_jit_include), GB_jit_include) ;
-printf ("kernel name %ld\n", GB_jit_kernel_name_allocated) ;
-printf ("library name %ld\n", GB_jit_library_name_allocated) ;
-printf ("command %ld\n", GB_jit_command_allocated) ;
-#endif
 
     return (GrB_SUCCESS) ;
 }
@@ -539,8 +561,21 @@ GrB_Info GB_jitifyer_load
 
     if (hash == UINT64_MAX)
     { 
+        // The kernel may not be compiled; it does not have a valid definition.
+        GBURBLE ("(jit undefined) ") ;
         return (GrB_NO_VALUE) ;
     }
+
+    if (GB_jit_control <= GxB_JIT_PAUSE)
+    { 
+        // The JIT control has disabled all JIT kernels.  Punt to generic.
+        GBURBLE ("(jit paused) ") ;
+        return (GrB_NO_VALUE) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // look up the kernel in the hash table
+    //--------------------------------------------------------------------------
 
     // FIXME: need to place this entire function in a critical section
 
@@ -548,12 +583,25 @@ GrB_Info GB_jitifyer_load
     if ((*dl_function) != NULL)
     { 
         // found the kernel in the hash table
-        GBURBLE ("(jit) ") ;
+        GBURBLE ("(jit run) ") ;
         return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
-    // get the family properties
+    // quick return if not in the hash table
+    //--------------------------------------------------------------------------
+
+    if (GB_jit_control <= GxB_JIT_RUN)
+    { 
+        // No kernels may be loaded or compiled, but existing kernels already
+        // loaded may be run (handled above if dl_function was found).  This
+        // kernel was not loaded, so punt to generic.
+        GBURBLE ("(jit not loaded) ") ;
+        return (GrB_NO_VALUE) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // the kernel needs to be loaded, and perhaps compiled; get its properties
     //--------------------------------------------------------------------------
 
     GB_Operator op1 = NULL ;
@@ -647,6 +695,18 @@ GrB_Info GB_jitifyer_load
             // library is loaded but needs to change, so close it
             dlclose (dl_handle) ;
             dl_handle = NULL ;
+            if (GB_jit_control == GxB_JIT_LOAD)
+            { 
+                // If the JIT control is set to GxB_JIT_LOAD, new kernels
+                // cannot be compiled.  This kernel has just been loaded but it
+                // has stale definition.  Loading it again will result in the
+                // same issue, but will take a lot of time if the kernel is
+                // loaded again and again, since no new kernels can be
+                // compiled.  Set the JIT control to GxB_JIT_RUN to avoid this
+                // performance issue.
+                GB_jit_control = GxB_JIT_RUN ;
+                return (GrB_INVALID_VALUE) ;
+            }
         }
     }
 
@@ -658,6 +718,17 @@ GrB_Info GB_jitifyer_load
     { 
 
         //----------------------------------------------------------------------
+        // quick return if the JIT is not permitted to compile new kernels
+        //----------------------------------------------------------------------
+
+        if (GB_jit_control < GxB_JIT_ON)
+        { 
+            // No new kernels may be compiled, so punt to generic.
+            GBURBLE ("(jit not compiled) ") ;
+            return (GrB_NO_VALUE) ;
+        }
+
+        //----------------------------------------------------------------------
         // create the kernel source file
         //----------------------------------------------------------------------
 
@@ -667,9 +738,9 @@ GrB_Info GB_jitifyer_load
         FILE *fp = fopen (GB_jit_kernel_name, "w") ;
         if (fp == NULL)
         { 
-            // FIXME: burble; do not print
-            printf ("cannot open source file: %s\n", GB_jit_kernel_name) ;
-            // FIXME: disable the JIT if this error occurs
+            // disable the JIT to avoid repeated compilation errors
+            GBURBLE ("(jit: cannot create kernel; compilation disabled) ") ;
+            GB_jit_control = GxB_JIT_LOAD ;
             return (GrB_INVALID_VALUE) ;
         }
         fprintf (fp,
@@ -702,10 +773,10 @@ GrB_Info GB_jitifyer_load
         dl_handle = dlopen (GB_jit_library_name, RTLD_LAZY) ;
         if (dl_handle == NULL)
         { 
-            // unable to open lib*.so file: punt to generic
-            // FIXME: burble; do not print
-            printf ("cannot load library .so\n") ;
-            // FIXME: disable the JIT if this error occurs
+            // unable to open lib*.so file
+            GBURBLE ("(jit: compiler error; compilation disabled) ") ;
+            // disable the JIT to avoid repeated compilation errors
+            GB_jit_control = GxB_JIT_LOAD ;
             return (GrB_INVALID_VALUE) ;
         }
     }
@@ -722,10 +793,10 @@ GrB_Info GB_jitifyer_load
     if ((*dl_function) == NULL)
     { 
         // unable to find GB_jit_kernel: punt to generic
+        GBURBLE ("(jit: load error; JIT loading disabled) ") ;
         dlclose (dl_handle) ; 
-        // FIXME: burble; do not print
-        printf ("cannot load kernel\n") ;
-        // FIXME: disable the JIT if this error occurs
+        // disable the JIT to avoid repeated loading errors
+        GB_jit_control = GxB_JIT_RUN ;
         return (GrB_INVALID_VALUE) ;
     }
 
@@ -735,6 +806,8 @@ GrB_Info GB_jitifyer_load
     { 
         // unable to add kernel to hash table: punt to generic
         dlclose (dl_handle) ; 
+        // disable the JIT to avoid repeated errors
+        GB_jit_control = GxB_JIT_PAUSE ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -802,8 +875,6 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
     void *dl_function           // function handle from dlsym
 )
 {
-
-    // FIXME return GrB_Info instead of bool
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -1074,8 +1145,7 @@ int GB_jitifyer_compile (char *kernel_name)
     #endif
     ) ;
 
-    // FIXME: burble; do not print
-    printf ("command: %s\n", GB_jit_command) ;
+    GBURBLE ("(jit compile: %s) ", GB_jit_command) ;
 
     // compile the library and return result
     int result = system (GB_jit_command) ;

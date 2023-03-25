@@ -233,7 +233,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Mar 23, 2023 (draft2)"
+#define GxB_IMPLEMENTATION_DATE "Mar 24, 2023 (draft2)"
 #define GxB_IMPLEMENTATION_MAJOR 8
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -4065,6 +4065,8 @@ typedef enum            // for global options or matrix options
     GxB_JIT_C_COMPILER_FLAGS = 111, // CPU JIT C compiler flags
     GxB_JIT_CACHE_PATH = 112,       // CPU/CUDA JIT path for compiled kernels
     GxB_JIT_SOURCE_PATH = 113,      // CPU/CUDA JIT path to GraphBLAS source
+    GxB_JIT_C_CONTROL = 114,        // CPU JIT control
+//  GxB_JIT_CUDA_CONTROL = 115,     // CUDA JIT control (future)
 
     //------------------------------------------------------------
     // for GxB_Matrix_Option_get only:
@@ -4089,6 +4091,18 @@ typedef enum            // for global options or matrix options
     GxB_FREE_FUNCTION = 108,
 
 } GxB_Option_Field ;
+
+// for GxB_JIT_C_CONTROL:
+typedef enum
+{
+    GxB_JIT_NONE = -1,  // JIT disabled at compile time.  No JIT avaiable.
+    GxB_JIT_OFF = 0,    // do not use the JIT: free all JIT kernels if loaded
+    GxB_JIT_PAUSE = 1,  // do not run JIT kernels but keep any loaded
+    GxB_JIT_RUN = 2,    // run JIT kernels if already loaded; no load/compile
+    GxB_JIT_LOAD = 3,   // able to load and run JIT kernels; may not compile
+    GxB_JIT_ON = 4,     // full JIT: able to compile, load, and run
+}
+GxB_JIT_Control ;
 
 // GxB_FORMAT can be by row or by column:
 typedef enum
@@ -4486,6 +4500,17 @@ GrB_Info GxB_Context_disengage      // disengage a Context
 //
 //      GxB_set (GxB_FLUSH, void *flush_function) ;
 //      GxB_get (GxB_FLUSH, void **flush_function) ;
+
+//      GxB_set (GxB_JIT_C_COMPILER_NAME, const char *compiler) ;
+//      GxB_get (GxB_JIT_C_COMPILER_NAME, const char **compiler) ;
+//      GxB_set (GxB_JIT_C_COMPILER_FLAGS, const char *flags) ;
+//      GxB_get (GxB_JIT_C_COMPILER_FLAGS, const char **flags) ;
+//      GxB_set (GxB_JIT_CACHE_PATH, const char *cache_path) ;
+//      GxB_get (GxB_JIT_CACHE_PATH, const char **cache_path) ;
+//      GxB_set (GxB_JIT_SOURCE_PATH, const char *source_path) ;
+//      GxB_get (GxB_JIT_SOURCE_PATH, const char **source_path) ;
+//      GxB_set (GxB_JIT_C_CONTROL, int control) ;
+//      GxB_get (GxB_JIT_C_CONTROL, int *control) ;
 
 // To set/get the GxB_CONTEXT_WORLD options:  These have the same effect as
 // the global set/get for NTHREADS and CHUNK, listed above.

@@ -74,6 +74,11 @@ GrB_Info GxB_Global_Option_set_INT32      // set a global default option
             GB_Global_print_one_based_set ((bool) value) ;
             break ;
 
+        case GxB_JIT_C_CONTROL : 
+
+            GB_jitifyer_set_control ((int) value) ;
+            break ;
+
         default : 
 
             return (GrB_INVALID_VALUE) ;
@@ -463,6 +468,16 @@ GrB_Info GxB_Global_Option_set      // set a global default option
         //----------------------------------------------------------------------
         // JIT configuruation
         //----------------------------------------------------------------------
+
+        case GxB_JIT_C_CONTROL : 
+
+            {
+                va_start (ap, field) ;
+                int value = va_arg (ap, int) ;
+                va_end (ap) ;
+                GB_jitifyer_set_control (value) ;
+            }
+            break ;
 
         case GxB_JIT_C_COMPILER_NAME : 
 
