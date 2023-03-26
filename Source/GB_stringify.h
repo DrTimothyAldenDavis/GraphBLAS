@@ -1039,7 +1039,7 @@ GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
     // output:
     GrB_Matrix C,
     // input:
-    GrB_UnaryOp op,
+    GB_Operator op,
     const GrB_Matrix A,
     int64_t *restrict *Workspaces,
     const int64_t *restrict A_slice,
@@ -1066,7 +1066,7 @@ GrB_Info GB_concat_sparse_jit      // concatenate A into a sparse matrix C
     GrB_Matrix C,
     // input:
     int64_t cistart,
-    const GrB_UnaryOp op,
+    const GB_Operator op,
     const GrB_Matrix A,
     int64_t *restrict W,
     const int64_t *restrict A_ek_slicing,
@@ -1081,7 +1081,7 @@ GrB_Info GB_concat_full_jit      // concatenate A into a full matrix C
     // input:
     int64_t cistart,
     int64_t cvstart,
-    const GrB_UnaryOp op,
+    const GB_Operator op,
     const GrB_Matrix A,
     const int A_nthreads
 ) ;
@@ -1093,7 +1093,7 @@ GrB_Info GB_concat_bitmap_jit      // concatenate A into a bitmap matrix C
     // input:
     int64_t cistart,
     int64_t cvstart,
-    const GrB_UnaryOp op,
+    const GB_Operator op,
     const GrB_Matrix A,
     GB_Werk Werk
 ) ;
@@ -1103,7 +1103,7 @@ GrB_Info GB_split_sparse_jit      // split A into a sparse tile C
     // input/output
     GrB_Matrix C,
     // input:
-    const GrB_UnaryOp op,
+    const GB_Operator op,
     const GrB_Matrix A,
     int64_t akstart,
     int64_t aistart,
@@ -1118,7 +1118,7 @@ GrB_Info GB_split_full_jit      // split A into a full tile C
     // input/output
     GrB_Matrix C,
     // input:
-    const GrB_UnaryOp op,
+    const GB_Operator op,
     const GrB_Matrix A,
     int64_t avstart,
     int64_t aistart,
@@ -1130,7 +1130,7 @@ GrB_Info GB_split_bitmap_jit      // split A into a bitmap tile C
     // input/output
     GrB_Matrix C,
     // input:
-    const GrB_UnaryOp op,
+    const GB_Operator op,
     const GrB_Matrix A,
     int64_t avstart,
     int64_t aistart,

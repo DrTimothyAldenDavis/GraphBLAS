@@ -598,7 +598,7 @@ endif ( )
 if ( NJIT AND COMPACT )
     # FactoryKernels and the CPU JIT are both disabled!
     message ( WARNING ">>>> CPU JIT disabled and COMPACT mode enabled: GraphBLAS will be SLOW!" )
-endif ( ) 
+endif ( )
 
 if ( NOT NJIT OR ENABLE_CUDA )
 
@@ -617,6 +617,7 @@ if ( NOT NJIT OR ENABLE_CUDA )
     set ( GB_C_LINK_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}" )
     set ( GB_LIB_SUFFIX "${CMAKE_SHARED_LIBRARY_SUFFIX}" )
 
+    # construct the C flags and link flags 
     if ( APPLE )
         set ( GB_C_FLAGS "${GB_C_FLAGS} -fPIC " )
         set ( GB_C_FLAGS "${GB_C_FLAGS} -arch ${CMAKE_HOST_SYSTEM_PROCESSOR} " )
@@ -632,22 +633,53 @@ if ( NOT NJIT OR ENABLE_CUDA )
         set ( GB_OBJ_SUFFIX ".o" )
     endif ( )
 
-    message ( STATUS "JIT C compiler:  ${GB_C_COMPILER}" )
-    message ( STATUS "JIT C flags:     ${GB_C_FLAGS}" )
-    message ( STATUS "JIT link flags:  ${GB_C_LINK_FLAGS}" )
-    message ( STATUS "JIT lib suffix : ${GB_LIB_SUFFIX}")
-    message ( STATUS "JIT obj suffix : ${GB_OBJ_SUFFIX}")
-    message ( STATUS "JIT source :     ${GB_SOURCE_PATH}")
-    message ( STATUS "JIT build  :     ${GB_BUILD_PATH}")
+    # construct the -I list for OpenMP
+    if ( OPENMP_FOUND )
+        set ( GB_OMP_INC ${OpenMP_C_INCLUDE_DIRS} )
+        list ( TRANSFORM GB_OMP_INC PREPEND " -I" )
+    else ( )
+        set ( GB_OMP_INC "" )
+    endif ( )
+
+    # construct the library list
+    get_target_property ( GB_LIST_LIB graphblas LINK_LIBRARIES )
+    string ( REPLACE "." "\\." LIBSUFFIX ${GB_LIB_SUFFIX} )
+    set ( GB_LIBRARIES "" )
+#   message ( STATUS "lib suffix: ${LIBSUFFIX}" )
+    foreach ( LIB_NAME ${GB_LIST_LIB} )
+#       message ( STATUS "Lib: ${LIB_NAME}" )
+        if ( LIB_NAME MATCHES ${LIBSUFFIX} )
+#           message ( STATUS "has suffix" )
+            string ( APPEND GB_LIBRARIES " " ${LIB_NAME} )
+        else ( )
+#           message ( STATUS "no suffix" )
+            string ( APPEND GB_LIBRARIES " -l" ${LIB_NAME} )
+        endif ( )
+    endforeach ( )
+
+    message ( STATUS "JIT C compiler: ${GB_C_COMPILER}" )
+    message ( STATUS "JIT C flags:    ${GB_C_FLAGS}" )
+    message ( STATUS "JIT link flags: ${GB_C_LINK_FLAGS}" )
+    message ( STATUS "JIT lib suffix: ${GB_LIB_SUFFIX}" )
+    message ( STATUS "JIT obj suffix: ${GB_OBJ_SUFFIX}" )
+    message ( STATUS "JIT source:     ${GB_SOURCE_PATH}" )
+    message ( STATUS "JIT cache:      ${GRAPHBLAS_CACHE_PATH}" )
+    message ( STATUS "JIT fall-back:  ${GB_BUILD_PATH}" )
+    message ( STATUS "JIT openmp inc: ${GB_OMP_INC}" )
+    message ( STATUS "JIT libraries:  ${GB_LIBRARIES}" )
 
 else ( )
 
+    # JIT is disabled
     set ( GB_C_COMPILER  "" )
     set ( GB_C_FLAGS "" )
     set ( GB_C_LINK_FLAGS "" )
+    set ( GB_LIB_SUFFIX  "" )
+    set ( GB_OBJ_SUFFIX  "" )
     set ( GB_SOURCE_PATH "" )
     set ( GB_BUILD_PATH  "" )
-    set ( GB_LIB_SUFFIX  "" )
+    set ( GB_OMP_INC "" )
+    set ( GB_LIBRARIES "" )
 
 endif ( )
 

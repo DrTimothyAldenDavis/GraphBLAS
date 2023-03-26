@@ -393,6 +393,7 @@
 // typecasting.  The address of the variable is first typecasted to a (type *)
 // pointer, and then the pointer is dereferenced.
 
+#undef  GB_PUN
 #define GB_PUN(type,value) (*((type *) (&(value))))
 
 #if GB_COMPILER_MSC

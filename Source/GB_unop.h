@@ -21,7 +21,7 @@ GrB_Info GB_unop_new
     const GB_Opcode opcode          // opcode for the function
 ) ;
 
-GrB_UnaryOp GB_unop_identity    // return IDENTITY operator, or NULL on error
+GB_Operator GB_unop_identity    // return IDENTITY operator, or NULL on error
 (
     GrB_Type type,              // operator type
     GrB_UnaryOp op              // header for IDENTITY_UDT operator

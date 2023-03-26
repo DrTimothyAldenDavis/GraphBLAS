@@ -13,7 +13,7 @@
 GrB_BinaryOp GB_binop_second    // return SECOND operator, or NULL on error
 (
     GrB_Type type,              // operator type
-    GrB_UnaryOp op              // header for SECOND_UDT operator
+    GrB_BinaryOp op             // header for SECOND_UDT operator
 )
 {
 

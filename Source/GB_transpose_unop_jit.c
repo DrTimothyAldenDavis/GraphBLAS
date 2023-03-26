@@ -26,7 +26,7 @@ GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
     // output:
     GrB_Matrix C,
     // input:
-    GrB_UnaryOp op,
+    GB_Operator op,
     const GrB_Matrix A,
     int64_t *restrict *Workspaces,
     const int64_t *restrict A_slice,
@@ -42,8 +42,7 @@ GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
-        GB_JIT_KERNEL_TRANSUNOP, GB_sparsity (C), true, C->type,
-        (GB_Operator) op, false, A) ;
+        GB_JIT_KERNEL_TRANSUNOP, GB_sparsity (C), true, C->type, op, false, A) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -53,7 +52,7 @@ GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
     GrB_Info info = GB_jitifyer_load (&dl_function,
         GB_jit_apply_family, "trans_unop",
         hash, &encoding, suffix, NULL, NULL,
-        (GB_Operator) op, C->type, A->type, NULL) ;
+        op, C->type, A->type, NULL) ;
     if (info != GrB_SUCCESS) return (info) ;
 
     //--------------------------------------------------------------------------

@@ -15473,7 +15473,7 @@ to use 32 parallel jobs and the \verb'gcc' compiler, do the following:
 If you do not have \verb'cmake', refer to Section~\ref{altmake}.
 
 %----------------------------------------
-\subsection{More details on the Mac (Intel-based)}
+\subsection{More details on the Mac (Intel-based) using gcc}
 %----------------------------------------
 
 SuiteSparse:GraphBLAS requires OpenMP for its internal parallelism, but
@@ -15724,6 +15724,22 @@ Visual Studio 2019, but may work for earlier versions.
     you in the MATLAB/Octave interface discussed in the next section.
 
 \end{enumerate}
+
+%----------------------------------------
+\subsection{Mac using clang}
+%----------------------------------------
+
+To use OpenMP with clang on the Mac, try installing it from the 
+    \url{https://mac.r-project.org/openmp/} project:
+
+    {\scriptsize
+    \begin{verbatim}
+    curl -O https://mac.r-project.org/openmp/openmp-13.0.0-darwin21-Release.tar.gz
+    sudo tar fvxz openmp-13.0.0-darwin21-Release.tar.gz -C /
+    \end{verbatim} }
+
+Once you do this, the GraphBLAS Cmake should find this copy of OpenMP
+for clang.
 
 %----------------------------------------
 \subsection{Compiling the MATLAB/Octave interface (for Octave)}

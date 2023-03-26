@@ -1616,7 +1616,7 @@ GB_GLOBAL GxB_SelectOp
 // select operators: (historical)
 //------------------------------------------------------------------------------
 
-// User-defined GxB_SelectOps no longer be constructed. 
+// User-defined GxB_SelectOps no longer be constructed.
 // GrB_IndexUnaryOp_new instead.
 
 // GxB_SelectOp_xtype is historical.  Use a GrB_IndexUnaryOp instead.
@@ -10320,9 +10320,9 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
 //
 //      // use the unpacked contents of A here, but do not change Ah or nvec.
 //      ...
-//      
+//
 //      // to pack the data back into A:
-//      GxB_Matrix_pack_HyperCSC (A, ...) ;     // pack most of A, except A->Y 
+//      GxB_Matrix_pack_HyperCSC (A, ...) ;     // pack most of A, except A->Y
 //      GxB_pack_HyperHash (A, &Y, desc) ;      // then pack A->Y
 
 // The same process is used with GxB_Matrix_unpack_HyperCSR,

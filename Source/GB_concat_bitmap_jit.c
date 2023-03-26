@@ -29,7 +29,7 @@ GrB_Info GB_concat_bitmap_jit      // concatenate A into a bitmap matrix C
     // input:
     int64_t cistart,
     int64_t cvstart,
-    const GrB_UnaryOp op,
+    const GB_Operator op,
     const GrB_Matrix A,
     GB_Werk Werk
 )
@@ -42,8 +42,7 @@ GrB_Info GB_concat_bitmap_jit      // concatenate A into a bitmap matrix C
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
-        GB_JIT_KERNEL_CONCAT_BITMAP, GxB_BITMAP, true, C->type,
-        (GB_Operator) op, false, A) ;
+        GB_JIT_KERNEL_CONCAT_BITMAP, GxB_BITMAP, true, C->type, op, false, A) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -53,7 +52,7 @@ GrB_Info GB_concat_bitmap_jit      // concatenate A into a bitmap matrix C
     GrB_Info info = GB_jitifyer_load (&dl_function,
         GB_jit_apply_family, "concat_bitmap",
         hash, &encoding, suffix, NULL, NULL,
-        (GB_Operator) op, C->type, A->type, NULL) ;
+        op, C->type, A->type, NULL) ;
     if (info != GrB_SUCCESS) return (info) ;
 
     //--------------------------------------------------------------------------

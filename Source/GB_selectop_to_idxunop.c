@@ -208,8 +208,9 @@ GrB_Info GB_selectop_to_idxunop
     GB_MATRIX_WAIT (Thunk) ;
 
     // allocate the NewThunk as a full scalar
-    GB_OK (GB_new_bix (&NewThunk, idxunop->ytype, 1, 1, GB_Ap_calloc, true,
-        GxB_FULL, false, GB_Global_hyper_switch_get ( ), 1, 1, true, false)) ;
+    GB_OK (GB_new_bix ((GrB_Matrix *) &NewThunk, idxunop->ytype, 1, 1,
+        GB_Ap_calloc, true, GxB_FULL, false, GB_Global_hyper_switch_get ( ),
+        1, 1, true, false)) ;
 
     // NewThunk = 0
     memset (NewThunk->x, 0, idxunop->ytype->size) ;

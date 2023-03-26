@@ -1177,29 +1177,32 @@ link:
     snprintf (GB_jit_command, GB_jit_command_allocated,
 
     // compile:
-    "%s "                       // compiler command
+    "%s "                           // compiler command
     #ifdef GBRENAME
-    "-DGBRENAME=1 "             // rename for MATLAB
+    "-DGBRENAME=1 "                 // rename for MATLAB
     #endif
-    "%s "                       // C flags
-    "%s "                       // include directories
-    "-o %s/%s%s "               // *.o output file
-    "-c %s/%s.c ; "             // *.c input file
+    "%s "                           // C flags
+    "%s "                           // include directories
+    "%s "                           // openmp include directories
+    "-o %s/%s%s "                   // *.o output file
+    "-c %s/%s.c ; "                 // *.c input file
 
     // link:
-    "%s "                       // C compiler
-    "%s "                       // C flags
-    "%s "                       // C link flags
-//  " -Wl,-soname,lib%s.so "    // soname 
-    "-o %s/lib%s%s "            // lib*.so output file
-    "%s/%s%s "                   // *.o input file
-    "%s%s/build/libgraphblas%s%s -lm "    // libgraphblas.so
+    "%s "                           // C compiler
+    "%s "                           // C flags
+    "%s "                           // C link flags
+//  " -Wl,-soname,lib%s.so "        // soname 
+    "-o %s/lib%s%s "                // lib*.so output file
+    "%s/%s%s "                      // *.o input file
+    "%s%s/build/libgraphblas%s%s"   // libgraphblas.so
+    "%s "                           // libraries to link with
     ,
 
     // compile:
     GB_jit_C_compiler,                              // C compiler
     GB_jit_C_flags,                                 // C flags
     GB_jit_include,                                 // include directories
+    GB_OMP_INC,                                     // openmp include
     GB_jit_cache_path, kernel_name, GB_OBJ_SUFFIX,  // *.o output file
     GB_jit_cache_path, kernel_name,                 // *.c input file
 
@@ -1210,19 +1213,19 @@ link:
 //  kernel_name,                                    // soname
     GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX,  // lib*.so output file
     GB_jit_cache_path, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
-    GB_jit_source_path,               // libgraphblas.so
+    GB_jit_source_path,                             // libgraphblas.so
     #ifdef GBRENAME
     "/GraphBLAS", "_matlab"
     #else
     "", "",
     #endif
-    GB_LIB_SUFFIX) ;
+    GB_LIB_SUFFIX,
+    GB_LIBRARIES) ;                 // libraries to link with
 
     GBURBLE ("(jit compile: %s) ", GB_jit_command) ;
 
     // compile the library and return result
     int result = system (GB_jit_command) ;
-    printf ("result %d\n", result) ;
     return (result) ;
 }
 

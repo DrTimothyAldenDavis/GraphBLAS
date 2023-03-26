@@ -74,7 +74,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         case 3 : M_sparsity = GxB_FULL        ; break ;
     }
     GB_assign_describe (description, SLEN, C_repl, Ikind, Jkind,
-        M_is_null, msparsity, Mask_comp, Mask_struct, accum, s_assign,
+        M_is_null, M_sparsity, Mask_comp, Mask_struct, accum, s_assign,
         assign_kind) ;
     fprintf (fp, "// assign/subassign: %s\n", description) ;
 

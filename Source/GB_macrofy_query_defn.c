@@ -29,7 +29,7 @@ void GB_macrofy_query_defn
         "// to query the kernel for its op and type definitions:\n"
         "const char *GB_jit_query_defn (int k)\n"
         "{\n"
-        "    const char **defn [5] ;\n") ;
+        "    const char *defn [5] ;\n") ;
 
     // create the definition string for op0
     if (op0 == NULL || op0->defn == NULL)

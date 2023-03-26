@@ -27,7 +27,7 @@ GrB_Info GB_split_full_jit      // split A into a full tile C
     // input/output
     GrB_Matrix C,
     // input:
-    const GrB_UnaryOp op,
+    const GB_Operator op,
     const GrB_Matrix A,
     int64_t avstart,
     int64_t aistart,
@@ -42,8 +42,7 @@ GrB_Info GB_split_full_jit      // split A into a full tile C
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
-        GB_JIT_KERNEL_SPLIT_FULL, GxB_FULL, true, C->type,
-        (GB_Operator) op, false, A) ;
+        GB_JIT_KERNEL_SPLIT_FULL, GxB_FULL, true, C->type, op, false, A) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -53,7 +52,7 @@ GrB_Info GB_split_full_jit      // split A into a full tile C
     GrB_Info info = GB_jitifyer_load (&dl_function,
         GB_jit_apply_family, "split_full",
         hash, &encoding, suffix, NULL, NULL,
-        (GB_Operator) op, C->type, A->type, NULL) ;
+        op, C->type, A->type, NULL) ;
     if (info != GrB_SUCCESS) return (info) ;
 
     //--------------------------------------------------------------------------

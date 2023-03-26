@@ -20,7 +20,7 @@ void GB_assign_describe
     const int Jkind,
 //  const GrB_Matrix M,
     const bool M_is_null,
-    const bool M_sparsity,
+    const int M_sparsity,
     const bool Mask_comp,       // true for !M, false for M
     const bool Mask_struct,     // true if M is structural, false if valued
     const GrB_BinaryOp accum,   // present here

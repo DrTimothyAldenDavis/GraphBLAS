@@ -1,10 +1,10 @@
-FIXME / TODO: for v8.0.0.draft:
-
-    port to the Mac
+FIXME / TODO: for v8.0.0.draft2:
 
     performance tests (GAP, etc)
 
-FIXME / TODO for 8.0.1.draft:
+FIXME / TODO for 8.0.0.draft3:
+
+    JIT is not yet thread safe
 
     MATLAB interface (testing, and @GrB)
 
@@ -16,3 +16,4 @@ FIXME / TODO for 8.0.1.draft:
         masker (2 kernels), other (5 kernels)
 
     port to Windows
+

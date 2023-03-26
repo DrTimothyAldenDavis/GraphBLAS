@@ -98,7 +98,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
 
     fprintf (fp, "\n// index unary operator%s:\n",
         flipij ? " (flipped ij)" : "") ;
-    GB_macrofy_unop (fp, "GB_IDXUNOP", flipij, idxop_ecode, op) ;
+    GB_macrofy_unop (fp, "GB_IDXUNOP", flipij, idxop_ecode, (GB_Operator) op) ;
 
     fprintf (fp, "#define GB_DEPENDS_ON_X %d\n", (xtype != NULL) ? 1 : 0) ;
     fprintf (fp, "#define GB_DEPENDS_ON_I %d\n", i_dep) ;
