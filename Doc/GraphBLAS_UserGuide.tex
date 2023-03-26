@@ -8654,8 +8654,9 @@ field                       & value         & description \\
 \hline
 \verb'GxB_JIT_C_COMPILER_NAME' & \verb'char *' & C compiler for JIT kernels \\
 \verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
-\verb'GxB_JIT_CACHE_PATH'      & \verb'char *' & folder with compiled kernels \\
-\verb'GxB_JIT_SOURCE_PATH'     & \verb'char *' & folder with all of GraphBLAS
+\verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
+\verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
+\verb'GxB_JIT_SOURCE_PATH'    & \verb'char *' & folder with all of GraphBLAS
                                                  source \\
 \verb'GxB_JIT_C_CONTROL'    & see below & CPU JIT control \\
 \hline
@@ -8826,8 +8827,9 @@ field                       & value         & description \\
 \hline
 \verb'GxB_JIT_C_COMPILER_NAME' & \verb'char *' & C compiler for JIT kernels \\
 \verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
-\verb'GxB_JIT_CACHE_PATH'      & \verb'char *' & folder with compiled kernels \\
-\verb'GxB_JIT_SOURCE_PATH'     & \verb'char *' & folder with all of GraphBLAS
+\verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
+\verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
+\verb'GxB_JIT_SOURCE_PATH'    & \verb'char *' & folder with all of GraphBLAS
                                                  source \\
 \verb'GxB_JIT_C_CONTROL'    & see below & CPU JIT control \\
 \hline
@@ -8925,8 +8927,9 @@ field                       & value         & description \\
 \verb'GxB_PRINT_1BASED'     & \verb'int'    & for printing matrices/vectors \\
 \verb'GxB_JIT_C_COMPILER_NAME' & \verb'char *' & C compiler for JIT kernels \\
 \verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
-\verb'GxB_JIT_CACHE_PATH'      & \verb'char *' & folder with compiled kernels \\
-\verb'GxB_JIT_SOURCE_PATH'     & \verb'char *' & folder with all of GraphBLAS
+\verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
+\verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
+\verb'GxB_JIT_SOURCE_PATH'    & \verb'char *' & folder with all of GraphBLAS
                                                  source \\
 \verb'GxB_JIT_C_CONTROL'    & see below & CPU JIT control \\
 \verb'GxB_MODE'                 & \verb'int'    & blocking/non-blocking \\
@@ -9343,9 +9346,10 @@ typedef enum
     GxB_PRINT_1BASED = 104, // print matrices as 0-based or 1-based
     GxB_JIT_C_COMPILER_NAME = 110,  // CPU JIT C compiler name
     GxB_JIT_C_COMPILER_FLAGS = 111, // CPU JIT C compiler flags
-    GxB_JIT_CACHE_PATH = 112,       // CPU/CUDA JIT path for compiled kernels
-    GxB_JIT_SOURCE_PATH = 113,      // CPU/CUDA JIT path to GraphBLAS source
-    GxB_JIT_C_CONTROL = 114,        // CPU JIT control
+    GxB_JIT_C_LINKER_FLAGS = 112,   // CPU JIT C compiler flags
+    GxB_JIT_CACHE_PATH = 113,       // CPU/CUDA JIT path for compiled kernels
+    GxB_JIT_SOURCE_PATH = 114,      // CPU/CUDA JIT path to GraphBLAS source
+    GxB_JIT_C_CONTROL = 115,        // CPU JIT control
 
     // for matrix/vector get only:
     GxB_SPARSITY_STATUS = 33,   // query the sparsity of a matrix or vector
@@ -9570,6 +9574,7 @@ The \verb'field' parameter can be
 \verb'GxB_PRINT_1BASED', \newline
 \verb'GxB_JIT_C_COMPILER_NAME',
 \verb'GxB_JIT_C_COMPILER_FLAGS',
+\verb'GxB_JIT_C_LINKER_FLAGS',
 \verb'GxB_JIT_CACHE_PATH',
 \verb'GxB_JIT_SOURCE_PATH', or
 \verb'GxB_JIT_C_CONTROL'.
@@ -9695,6 +9700,7 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
         \hline
         \verb'GxB_JIT_C_COMPILER_NAME'  & C compiler for JIT kernels \\
         \verb'GxB_JIT_C_COMPILER_FLAGS' & flags for the C compiler \\
+        \verb'GxB_JIT_C_LINKER_FLAGS'   & link flags for the C compiler \\
         \verb'GxB_JIT_CACHE_PATH'       & folder with compiled kernels \\
         \verb'GxB_JIT_SOURCE_PATH'      & folder with all of GraphBLAS source \\
         \verb'GxB_JIT_C_CONTROL'        & CPU JIT control \\
@@ -9885,6 +9891,8 @@ To set/get the global options:
     GxB_get (GxB_JIT_C_COMPILER_NAME, const char **compiler) ;
     GxB_set (GxB_JIT_C_COMPILER_FLAGS, const char *flags) ;
     GxB_get (GxB_JIT_C_COMPILER_FLAGS, const char **flags) ;
+    GxB_set (GxB_JIT_C_LINKER_FLAGS, const char *flags) ;
+    GxB_get (GxB_JIT_C_LINKER_FLAGS, const char **flags) ;
     GxB_set (GxB_JIT_SOURCE_PATH, const char *src) ;
     GxB_get (GxB_JIT_SOURCE_PATH, const char **src) ;
     GxB_set (GxB_JIT_CACHE_PATH, const char *cache) ;

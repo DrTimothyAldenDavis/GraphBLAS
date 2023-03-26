@@ -309,6 +309,11 @@ GrB_Info GxB_Global_Option_get_CHAR     // gets the current global option
             (*value) = GB_jitifyer_get_C_flags ( ) ;
             break ;
 
+        case GxB_JIT_C_LINKER_FLAGS : 
+
+            (*value) = GB_jitifyer_get_C_link_flags ( ) ;
+            break ;
+
         case GxB_JIT_CACHE_PATH : 
 
             (*value) = GB_jitifyer_get_cache_path ( ) ;
@@ -849,6 +854,17 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (compiler_flags) ;
                 (*compiler_flags) = GB_jitifyer_get_C_flags ( ) ;
+            }
+            break ;
+
+        case GxB_JIT_C_LINKER_FLAGS : 
+
+            {
+                va_start (ap, field) ;
+                const char **linker_flags = va_arg (ap, char **) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (linker_flags) ;
+                (*linker_flags) = GB_jitifyer_get_C_link_flags ( ) ;
             }
             break ;
 

@@ -62,8 +62,6 @@ else ( )
     set ( GRAPHBLAS_SOURCE_PATH ${CMAKE_SOURCE_DIR} )
 endif ( )
 
-message ( STATUS "GraphBLAS source path for JIT: ${GRAPHBLAS_SOURCE_PATH}")
-
 # set the GRAPHBLAS_CACHE_PATH for compiled JIT kernels
 if ( DEFINED ENV{GRAPHBLAS_CACHE_PATH} )
     # use the GRAPHBLAS_CACHE_PATH environment variable
@@ -597,17 +595,61 @@ endif ( )
 # configure the JITs
 #-------------------------------------------------------------------------------
 
-if ( NOT NJIT OR ENABLE_CUDA )
-    # one or both JITs are enabled; make sure the cache path exists
-    file ( MAKE_DIRECTORY ${GRAPHBLAS_CACHE_PATH} )
-    message ( STATUS "GraphBLAS cache path for JIT:   ${GRAPHBLAS_CACHE_PATH}")
-    message ( STATUS "GraphBLAS source path for JIT:  ${GRAPHBLAS_SOURCE_PATH}")
-endif ( )
-
 if ( NJIT AND COMPACT )
     # FactoryKernels and the CPU JIT are both disabled!
     message ( WARNING ">>>> CPU JIT disabled and COMPACT mode enabled: GraphBLAS will be SLOW!" )
 endif ( ) 
+
+if ( NOT NJIT OR ENABLE_CUDA )
+
+    message ( STATUS "------------------------------------------------------------------------" )
+    message ( STATUS "JIT configuration:" )
+    message ( STATUS "------------------------------------------------------------------------" )
+
+    # one or both JITs are enabled; make sure the cache path exists
+    file ( MAKE_DIRECTORY ${GRAPHBLAS_CACHE_PATH} )
+
+    # construct the JIT compiler/link strings
+    set ( GB_SOURCE_PATH "${GRAPHBLAS_SOURCE_PATH}" )
+    set ( GB_BUILD_PATH  "${CMAKE_BINARY_DIR}" )
+    set ( GB_C_COMPILER  "${CMAKE_C_COMPILER}" )
+    set ( GB_C_FLAGS "${CMAKE_C_FLAGS}" )
+    set ( GB_C_LINK_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}" )
+    set ( GB_LIB_SUFFIX "${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+
+    if ( APPLE )
+        set ( GB_C_FLAGS "${GB_C_FLAGS} -fPIC " )
+        set ( GB_C_FLAGS "${GB_C_FLAGS} -arch ${CMAKE_HOST_SYSTEM_PROCESSOR} " )
+        set ( GB_C_FLAGS "${GB_C_FLAGS} -isysroot ${CMAKE_OSX_SYSROOT} " )
+        set ( GB_C_LINK_FLAGS "${GB_C_LINK_FLAGS} -dynamiclib " )
+        set ( GB_OBJ_SUFFIX ".o" )
+    elseif ( WIN32 )
+        # FIXME: probably need more here...
+        set ( GB_OBJ_SUFFIX ".dll" )
+    else ( )
+        set ( GB_C_FLAGS "${GB_C_FLAGS} -fPIC " )
+        set ( GB_C_LINK_FLAGS "${GB_C_LINK_FLAGS} -shared " )
+        set ( GB_OBJ_SUFFIX ".o" )
+    endif ( )
+
+    message ( STATUS "JIT C compiler:  ${GB_C_COMPILER}" )
+    message ( STATUS "JIT C flags:     ${GB_C_FLAGS}" )
+    message ( STATUS "JIT link flags:  ${GB_C_LINK_FLAGS}" )
+    message ( STATUS "JIT lib suffix : ${GB_LIB_SUFFIX}")
+    message ( STATUS "JIT obj suffix : ${GB_OBJ_SUFFIX}")
+    message ( STATUS "JIT source :     ${GB_SOURCE_PATH}")
+    message ( STATUS "JIT build  :     ${GB_BUILD_PATH}")
+
+else ( )
+
+    set ( GB_C_COMPILER  "" )
+    set ( GB_C_FLAGS "" )
+    set ( GB_C_LINK_FLAGS "" )
+    set ( GB_SOURCE_PATH "" )
+    set ( GB_BUILD_PATH  "" )
+    set ( GB_LIB_SUFFIX  "" )
+
+endif ( )
 
 configure_file ( "Config/GB_config.h.in"
     "${PROJECT_SOURCE_DIR}/Source/Shared/GB_config.h"

@@ -246,6 +246,10 @@ GrB_Info GxB_Global_Option_set_CHAR      // set a global default option
 
             return (GB_jitifyer_set_C_flags (value)) ;
 
+        case GxB_JIT_C_LINKER_FLAGS : 
+
+            return (GB_jitifyer_set_C_link_flags (value)) ;
+
         case GxB_JIT_CACHE_PATH : 
 
             return (GB_jitifyer_set_cache_path (value)) ;
@@ -495,6 +499,15 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 char *C_flags = va_arg (ap, char *) ;
                 va_end (ap) ;
                 return (GB_jitifyer_set_C_flags (C_flags)) ;
+            }
+
+        case GxB_JIT_C_LINKER_FLAGS : 
+
+            {
+                va_start (ap, field) ;
+                char *C_link = va_arg (ap, char *) ;
+                va_end (ap) ;
+                return (GB_jitifyer_set_C_link_flags (C_link)) ;
             }
 
         case GxB_JIT_CACHE_PATH : 

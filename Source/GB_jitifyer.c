@@ -41,6 +41,9 @@ static size_t   GB_jit_C_compiler_allocated = 0 ;
 static char    *GB_jit_C_flags = NULL ;
 static size_t   GB_jit_C_flags_allocated = 0 ;
 
+static char    *GB_jit_C_link_flags = NULL ;
+static size_t   GB_jit_C_link_flags_allocated = 0 ;
+
 static char    *GB_jit_library_name = NULL ;
 static size_t   GB_jit_library_name_allocated = 0 ;
 
@@ -97,6 +100,14 @@ void GB_jitifyer_set_control (int control)
     X ## _allocated = 0 ;               \
 }
 
+#define GB_COPY_STUFF(X,src)                            \
+{                                                       \
+    size_t len = strlen (src) ;                         \
+    X = GB_MALLOC (len + 2, char, &(X ## _allocated)) ; \
+    OK (X != NULL) ;                                    \
+    strncpy (X, src, X ## _allocated) ;                 \
+}
+
 void GB_jitifyer_finalize (void)
 { 
     GB_jitifyer_table_free ( ) ;
@@ -104,6 +115,7 @@ void GB_jitifyer_finalize (void)
     GB_FREE_STUFF (GB_jit_source_path) ;
     GB_FREE_STUFF (GB_jit_C_compiler) ;
     GB_FREE_STUFF (GB_jit_C_flags) ;
+    GB_FREE_STUFF (GB_jit_C_link_flags) ;
     GB_FREE_STUFF (GB_jit_library_name) ;
     GB_FREE_STUFF (GB_jit_kernel_name) ;
     GB_FREE_STUFF (GB_jit_include) ;
@@ -136,33 +148,29 @@ GrB_Info GB_jitifyer_init (void)
     if (cache_path != NULL)
     { 
         // use the environment variable GRAPHBLAS_CACHE_PATH as-is
-        len = strlen (cache_path) ;
-        GB_jit_cache_path = GB_MALLOC (len+2, char,
-            &(GB_jit_cache_path_allocated)) ;
-        OK (GB_jit_cache_path != NULL) ;
-        strncpy (GB_jit_cache_path, cache_path, GB_jit_cache_path_allocated) ;
+        GB_COPY_STUFF (GB_jit_cache_path, cache_path) ;
     }
     else
     { 
         // Linux, Mac, Unix: look for HOME
-        cache_path = getenv ("HOME") ;
+        char *home = getenv ("HOME") ;
         char *dot = "." ;
-        if (cache_path == NULL)
+        if (home == NULL)
         { 
             // Windows: look for LOCALAPPDATA
-            cache_path = getenv ("LOCALAPPDATA") ;
+            home = getenv ("LOCALAPPDATA") ;
             dot = "" ;
         }
-        if (cache_path != NULL)
+        if (home != NULL)
         { 
-            // found the cache_path
-            len = strlen (cache_path) + 60 ;
+            // found home; create the cache path
+            size_t len = strlen (home) + 60 ;
             GB_jit_cache_path = GB_MALLOC (len, char,
                 &(GB_jit_cache_path_allocated)) ;
             OK (GB_jit_cache_path != NULL) ;
             snprintf (GB_jit_cache_path,
                 GB_jit_cache_path_allocated,
-                "%s/%sSuiteSparse/GraphBLAS/%d.%d.%d", cache_path, dot,
+                "%s/%sSuiteSparse/GraphBLAS/%d.%d.%d", home, dot,
                 GxB_IMPLEMENTATION_MAJOR,
                 GxB_IMPLEMENTATION_MINOR,
                 GxB_IMPLEMENTATION_SUB) ;
@@ -172,42 +180,17 @@ GrB_Info GB_jitifyer_init (void)
     if (GB_jit_cache_path == NULL)
     { 
         // cannot determine the JIT cache path; use the cmake build directory
-        len = strlen (GB_BUILD_PATH) ;
-        GB_jit_cache_path = GB_MALLOC (len+2, char,
-            &(GB_jit_cache_path_allocated)) ;
-        OK (GB_jit_cache_path != NULL) ;
-        strncpy (GB_jit_cache_path, GB_BUILD_PATH,
-            GB_jit_cache_path_allocated) ;
+        GB_COPY_STUFF (GB_jit_cache_path, GB_BUILD_PATH) ;
     }
 
     //--------------------------------------------------------------------------
-    // find the GB_jit_source_path
+    // initialize the remaining strings
     //--------------------------------------------------------------------------
 
-    len = strlen (GB_SOURCE_PATH) ;
-    GB_jit_source_path = GB_MALLOC (len + 2, char,
-        &(GB_jit_source_path_allocated)) ;
-    OK (GB_jit_source_path != NULL) ;
-    strncpy (GB_jit_source_path, GB_SOURCE_PATH, GB_jit_source_path_allocated) ;
-
-    //--------------------------------------------------------------------------
-    // find the GB_C_compiler used to compile GraphBLAS
-    //--------------------------------------------------------------------------
-
-    len = strlen (GB_C_COMPILER) ;
-    GB_jit_C_compiler = GB_MALLOC (len + 2, char,
-        &(GB_jit_C_compiler_allocated)) ;
-    OK (GB_jit_C_compiler != NULL) ;
-    strncpy (GB_jit_C_compiler, GB_C_COMPILER, GB_jit_C_compiler_allocated) ;
-
-    //--------------------------------------------------------------------------
-    // find the GB_C_flags used to compile GraphBLAS
-    //--------------------------------------------------------------------------
-
-    len = strlen (GB_C_FLAGS) ;
-    GB_jit_C_flags = GB_MALLOC (len + 2, char, &(GB_jit_C_flags_allocated)) ;
-    OK (GB_jit_C_flags != NULL) ;
-    strncpy (GB_jit_C_flags, GB_C_FLAGS, GB_jit_C_flags_allocated) ;
+    GB_COPY_STUFF (GB_jit_C_compiler,   GB_C_COMPILER) ;
+    GB_COPY_STUFF (GB_jit_C_flags,      GB_C_FLAGS) ;
+    GB_COPY_STUFF (GB_jit_C_link_flags, GB_C_LINK_FLAGS) ;
+    GB_COPY_STUFF (GB_jit_source_path,  GB_SOURCE_PATH) ;
 
     //--------------------------------------------------------------------------
     // set the include string and allocate permanent workspace
@@ -280,8 +263,11 @@ GrB_Info GB_jitifyer_alloc_space (void)
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (GB_jit_C_flags == NULL || GB_jit_include == NULL ||
-        GB_jit_cache_path == NULL || GB_jit_source_path == NULL)
+    if (GB_jit_C_flags == NULL ||
+        GB_jit_include == NULL ||
+        GB_jit_C_link_flags == NULL ||
+        GB_jit_cache_path == NULL ||
+        GB_jit_source_path == NULL)
     { 
         return (GrB_NULL_POINTER) ;
     }
@@ -317,7 +303,7 @@ GrB_Info GB_jitifyer_alloc_space (void)
     if (GB_jit_command == NULL)
     {
         size_t inc_len = strlen (GB_jit_include) ;
-        size_t len = GB_jit_C_compiler_allocated +
+        size_t len = 2 * GB_jit_C_compiler_allocated +
             2 * GB_jit_C_flags_allocated + inc_len +
             4 * GB_jit_cache_path_allocated + 5 * GB_KLEN +
             GB_jit_source_path_allocated + 300 ;
@@ -368,11 +354,7 @@ GrB_Info GB_jitifyer_set_source_path (const char *new_source_path)
     // allocate the new GB_jit_source_path
     //--------------------------------------------------------------------------
 
-    size_t len = strlen (new_source_path) ;
-    GB_jit_source_path = GB_MALLOC (len + 2, char,
-        &(GB_jit_source_path_allocated)) ;
-    OK (GB_jit_source_path != NULL) ;
-    strncpy (GB_jit_source_path, new_source_path, GB_jit_source_path_allocated);
+    GB_COPY_STUFF (GB_jit_source_path, new_source_path) ;
 
     //--------------------------------------------------------------------------
     // allocate and define strings that depend on GB_jit_source_path
@@ -420,11 +402,7 @@ GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path)
     // allocate the new GB_jit_cache_path
     //--------------------------------------------------------------------------
 
-    size_t len = strlen (new_cache_path) ;
-    GB_jit_cache_path = GB_MALLOC (len+2, char,
-        &(GB_jit_cache_path_allocated)) ;
-    OK (GB_jit_cache_path != NULL) ;
-    strncpy (GB_jit_cache_path, new_cache_path, GB_jit_cache_path_allocated) ;
+    GB_COPY_STUFF (GB_jit_cache_path, new_cache_path) ;
 
     //--------------------------------------------------------------------------
     // allocate and define strings that depend on GB_jit_cache_path
@@ -469,11 +447,7 @@ GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler)
     // allocate the new GB_jit_C_compiler
     //--------------------------------------------------------------------------
 
-    size_t len = strlen (new_C_compiler) ;
-    GB_jit_C_compiler = GB_MALLOC (len + 2, char,
-        &(GB_jit_C_compiler_allocated)) ;
-    OK (GB_jit_C_compiler != NULL) ;
-    strncpy (GB_jit_C_compiler, new_C_compiler, GB_jit_C_compiler_allocated) ;
+    GB_COPY_STUFF (GB_jit_C_compiler, new_C_compiler) ;
 
     //--------------------------------------------------------------------------
     // allocate and define strings that depend on GB_jit_C_compiler
@@ -518,14 +492,55 @@ GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags)
     // allocate the new GB_jit_C_flags
     //--------------------------------------------------------------------------
 
-    size_t len = strlen (new_C_flags) ;
-    GB_jit_C_flags = GB_MALLOC (len + 2, char,
-        &(GB_jit_C_flags_allocated)) ;
-    OK (GB_jit_C_flags != NULL) ;
-    strncpy (GB_jit_C_flags, new_C_flags, GB_jit_C_flags_allocated) ;
+    GB_COPY_STUFF (GB_jit_C_flags, new_C_flags) ;
 
     //--------------------------------------------------------------------------
     // allocate and define strings that depend on GB_jit_C_flags
+    //--------------------------------------------------------------------------
+
+    return (GB_jitifyer_alloc_space ( )) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_get_C_link_flags: return the current C link flags
+//------------------------------------------------------------------------------
+
+const char *GB_jitifyer_get_C_link_flags (void)
+{
+    return (GB_jit_C_link_flags) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_C_link_flags: set new C flags
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_set_C_link_flags (const char *new_C_link_flags)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    if (new_C_link_flags == NULL)
+    {
+        return (GrB_NULL_POINTER) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // free the old strings that depend on the C flags
+    //--------------------------------------------------------------------------
+
+    GB_FREE_STUFF (GB_jit_C_link_flags) ;
+    GB_FREE_STUFF (GB_jit_command) ;
+
+    //--------------------------------------------------------------------------
+    // allocate the new GB_jit_C_link_flags
+    //--------------------------------------------------------------------------
+
+    GB_COPY_STUFF (GB_jit_C_link_flags, new_C_link_flags) ;
+
+    //--------------------------------------------------------------------------
+    // allocate and define strings that depend on GB_jit_C_link_flags
     //--------------------------------------------------------------------------
 
     return (GB_jitifyer_alloc_space ( )) ;
@@ -671,7 +686,7 @@ GrB_Info GB_jitifyer_load
     //--------------------------------------------------------------------------
 
     snprintf (GB_jit_library_name, GB_jit_library_name_allocated,
-        "%s/lib%s.so", GB_jit_cache_path, kernel_name) ;
+        "%s/lib%s%s", GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX) ;
     void *dl_handle = dlopen (GB_jit_library_name, RTLD_LAZY) ;
 
     //--------------------------------------------------------------------------
@@ -774,6 +789,7 @@ GrB_Info GB_jitifyer_load
         if (dl_handle == NULL)
         { 
             // unable to open lib*.so file
+            printf ("cannot open lib: [%s]\n", GB_jit_library_name) ;
             GBURBLE ("(jit: compiler error; compilation disabled) ") ;
             // disable the JIT to avoid repeated compilation errors
             GB_jit_control = GxB_JIT_LOAD ;
@@ -1113,42 +1129,100 @@ bool GB_jitifyer_match_version
 int GB_jitifyer_compile (char *kernel_name)
 { 
 
+// gcc on the Mac arm64:
+/* Need to append: "-arch arm64 -isysroot OSXROOT" to C_flags
+
+compile:
+
+    C_compiler -Iinclude C_flags
+    -arch arm64
+    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk
+    -fPIC
+
+    -o output_file.o
+    -c input_file.c
+
+
+link:
+
+    C_compiler C_flags
+    -arch arm64
+    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk
+    -fPIC
+
+        -shared and/or
+        -dynamiclib
+
+    not needed?
+
+        -Wl,-headerpad_max_install_names
+        -compatibility_version 8.0.0 -current_version 8.0.0
+
+    -o output_file.dylib
+
+    not needed/
+
+        -install_name @rpath/libgraphblasdemo.8.dylib
+
+    object_file.o
+
+    not needed?
+
+        -Wl,-rpath,/Users/davis/master/GraphBLAS/build
+        libgraphblas.8.0.0.dylib -lm
+        -ldl /opt/homebrew/Cellar/gcc/12.2.0/lib/gcc/current/libgomp.dylib
+
+*/
+
     snprintf (GB_jit_command, GB_jit_command_allocated,
-    "%s -fPIC "
+
+    // compile:
+    "%s "                       // compiler command
     #ifdef GBRENAME
-    "-DGBRENAME=1 "
+    "-DGBRENAME=1 "             // rename for MATLAB
     #endif
     "%s "                       // C flags
     "%s "                       // include directories
-    " -o %s/%s.o "              // *.o file, first gcc command
-    " -c %s/%s.c ;"             // *.c file, first gcc command
-    "gcc -fPIC "                // 2nd gcc command
-    "%s -shared "               // C flags for 2nd gcc command
-    " -Wl,-soname,lib%s.so "    // soname 
-    " -o %s/lib%s.so"           // lib*.so output
-    " %s/%s.o "                 // *.o file for 2nd gcc commnand
-    " %s%s/build/libgraphblas%s.so -lm "    // libgraphblas.so
+    "-o %s/%s%s "               // *.o output file
+    "-c %s/%s.c ; "             // *.c input file
+
+    // link:
+    "%s "                       // C compiler
+    "%s "                       // C flags
+    "%s "                       // C link flags
+//  " -Wl,-soname,lib%s.so "    // soname 
+    "-o %s/lib%s%s "            // lib*.so output file
+    "%s/%s%s "                   // *.o input file
+    "%s%s/build/libgraphblas%s%s -lm "    // libgraphblas.so
     ,
-    GB_jit_C_compiler,                  // C compiler
-    GB_jit_C_flags, GB_jit_include,
-    GB_jit_cache_path, kernel_name,     // *.o file, first gcc command
-    GB_jit_cache_path, kernel_name,     // *.c file, first gcc command
-    GB_jit_C_flags,                     // C flags for 2nd gcc command
-    kernel_name,                        // soname
-    GB_jit_cache_path, kernel_name,     // lib*.so output file
-    GB_jit_cache_path, kernel_name,     // *.o file for 2nd gcc
-    GB_jit_source_path,                 // libgraphblas.so
+
+    // compile:
+    GB_jit_C_compiler,                              // C compiler
+    GB_jit_C_flags,                                 // C flags
+    GB_jit_include,                                 // include directories
+    GB_jit_cache_path, kernel_name, GB_OBJ_SUFFIX,  // *.o output file
+    GB_jit_cache_path, kernel_name,                 // *.c input file
+
+    // link:
+    GB_jit_C_compiler,                              // C compiler
+    GB_jit_C_flags,                                 // C flags
+    GB_jit_C_link_flags,                            // C link flags
+//  kernel_name,                                    // soname
+    GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX,  // lib*.so output file
+    GB_jit_cache_path, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
+    GB_jit_source_path,               // libgraphblas.so
     #ifdef GBRENAME
     "/GraphBLAS", "_matlab"
     #else
-    "", ""
+    "", "",
     #endif
-    ) ;
+    GB_LIB_SUFFIX) ;
 
     GBURBLE ("(jit compile: %s) ", GB_jit_command) ;
 
     // compile the library and return result
     int result = system (GB_jit_command) ;
+    printf ("result %d\n", result) ;
     return (result) ;
 }
 

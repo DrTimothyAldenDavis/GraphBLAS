@@ -4063,10 +4063,11 @@ typedef enum            // for global options or matrix options
 
     GxB_JIT_C_COMPILER_NAME = 110,  // CPU JIT C compiler name
     GxB_JIT_C_COMPILER_FLAGS = 111, // CPU JIT C compiler flags
-    GxB_JIT_CACHE_PATH = 112,       // CPU/CUDA JIT path for compiled kernels
-    GxB_JIT_SOURCE_PATH = 113,      // CPU/CUDA JIT path to GraphBLAS source
-    GxB_JIT_C_CONTROL = 114,        // CPU JIT control
-//  GxB_JIT_CUDA_CONTROL = 115,     // CUDA JIT control (future)
+    GxB_JIT_C_LINKER_FLAGS = 112,   // CPU JIT C linker flags
+    GxB_JIT_CACHE_PATH = 113,       // CPU/CUDA JIT path for compiled kernels
+    GxB_JIT_SOURCE_PATH = 114,      // CPU/CUDA JIT path to GraphBLAS source
+    GxB_JIT_C_CONTROL = 115,        // CPU JIT control
+//  GxB_JIT_CUDA_CONTROL = 116,     // CUDA JIT control (future)
 
     //------------------------------------------------------------
     // for GxB_Matrix_Option_get only:
@@ -4505,6 +4506,8 @@ GrB_Info GxB_Context_disengage      // disengage a Context
 //      GxB_get (GxB_JIT_C_COMPILER_NAME, const char **compiler) ;
 //      GxB_set (GxB_JIT_C_COMPILER_FLAGS, const char *flags) ;
 //      GxB_get (GxB_JIT_C_COMPILER_FLAGS, const char **flags) ;
+//      GxB_set (GxB_JIT_C_LINKER_FLAGS, const char *flags) ;
+//      GxB_get (GxB_JIT_C_LINKER_FLAGS, const char **flags) ;
 //      GxB_set (GxB_JIT_CACHE_PATH, const char *cache_path) ;
 //      GxB_get (GxB_JIT_CACHE_PATH, const char **cache_path) ;
 //      GxB_set (GxB_JIT_SOURCE_PATH, const char *source_path) ;
