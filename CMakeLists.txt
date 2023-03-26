@@ -619,15 +619,18 @@ if ( NOT NJIT OR ENABLE_CUDA )
 
     # construct the C flags and link flags 
     if ( APPLE )
+        # MacOS
         set ( GB_C_FLAGS "${GB_C_FLAGS} -fPIC " )
         set ( GB_C_FLAGS "${GB_C_FLAGS} -arch ${CMAKE_HOST_SYSTEM_PROCESSOR} " )
         set ( GB_C_FLAGS "${GB_C_FLAGS} -isysroot ${CMAKE_OSX_SYSROOT} " )
         set ( GB_C_LINK_FLAGS "${GB_C_LINK_FLAGS} -dynamiclib " )
         set ( GB_OBJ_SUFFIX ".o" )
     elseif ( WIN32 )
+        # Windows
         # FIXME: probably need more here...
         set ( GB_OBJ_SUFFIX ".dll" )
     else ( )
+        # Linux / Unix
         set ( GB_C_FLAGS "${GB_C_FLAGS} -fPIC " )
         set ( GB_C_LINK_FLAGS "${GB_C_LINK_FLAGS} -shared " )
         set ( GB_OBJ_SUFFIX ".o" )

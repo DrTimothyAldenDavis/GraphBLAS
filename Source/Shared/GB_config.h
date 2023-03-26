@@ -13,11 +13,11 @@
 #define GB_CONFIG_H
 
 // GB_C_COMPILER: the C compiler used to compile GraphBLAS:
-#define GB_C_COMPILER   "/Library/Developer/CommandLineTools/usr/bin/cc"
+#define GB_C_COMPILER   "/opt/homebrew/bin/gcc-12"
 
 // GB_C_FLAGS: the C compiler flags used to compile GraphBLAS.  Used
 // for compiling and linking:
-#define GB_C_FLAGS      " -O3 -DNDEBUG -Xclang -fopenmp  -fPIC  -arch arm64  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk "
+#define GB_C_FLAGS      " -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -O3 -DNDEBUG -fopenmp  -fPIC  -arch arm64  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk "
 
 // GB_C_LINK_FLAGS: the flags passed to the C compiler for the link phase:
 #define GB_C_LINK_FLAGS " -dynamiclib "
@@ -37,9 +37,9 @@
 #define GB_BUILD_PATH   "/Users/davis/master/GraphBLAS/build"
 
 // GB_OMP_INC: include directories for OpenMP, if in use by GraphBLAS:
-#define GB_OMP_INC      " -I/usr/local/include"
+#define GB_OMP_INC      ""
 
 // GB_LIBRARIES: libraries to link with
-#define GB_LIBRARIES    " -lm -ldl /usr/local/lib/libomp.dylib"
+#define GB_LIBRARIES    " -lm -ldl /opt/homebrew/Cellar/gcc/12.2.0/lib/gcc/current/libgomp.dylib"
 #endif
 
