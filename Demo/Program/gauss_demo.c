@@ -339,7 +339,7 @@ int main (void)
     TRY (GrB_Matrix_extractTuples_FP64 (I, J, X, &rnvals, R)) ;
     for (int k = 0 ; k < rnvals ; k++)
     { 
-        printf ("R (%ld,%ld) = %g\n", I [k], J [k], X [k]) ;
+        printf ("R (%d,%d) = %g\n", (int) I [k], (int) J [k], X [k]) ;
     }
 
     printgauss (C, "\n=============== C\n") ;

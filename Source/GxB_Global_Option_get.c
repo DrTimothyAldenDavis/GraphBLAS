@@ -839,7 +839,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
             {
                 va_start (ap, field) ;
-                const char **compiler_name = va_arg (ap, char **) ;
+                const char **compiler_name = va_arg (ap, const char **) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (compiler_name) ;
                 (*compiler_name) = GB_jitifyer_get_C_compiler ( ) ;
@@ -850,7 +850,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
             {
                 va_start (ap, field) ;
-                const char **compiler_flags = va_arg (ap, char **) ;
+                const char **compiler_flags = va_arg (ap, const char **) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (compiler_flags) ;
                 (*compiler_flags) = GB_jitifyer_get_C_flags ( ) ;
@@ -861,7 +861,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
             {
                 va_start (ap, field) ;
-                const char **linker_flags = va_arg (ap, char **) ;
+                const char **linker_flags = va_arg (ap, const char **) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (linker_flags) ;
                 (*linker_flags) = GB_jitifyer_get_C_link_flags ( ) ;
@@ -872,7 +872,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
             {
                 va_start (ap, field) ;
-                const char **cache_path = va_arg (ap, char **) ;
+                const char **cache_path = va_arg (ap, const char **) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (cache_path) ;
                 (*cache_path) = GB_jitifyer_get_cache_path ( ) ;
@@ -883,7 +883,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
             {
                 va_start (ap, field) ;
-                const char **source_path = va_arg (ap, char **) ;
+                const char **source_path = va_arg (ap, const char **) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (source_path) ;
                 (*source_path) = GB_jitifyer_get_source_path ( ) ;

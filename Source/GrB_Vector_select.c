@@ -52,7 +52,7 @@ static inline GrB_Info GB_sel   // w<M> = accum (w, select(w,k))
         (GrB_Matrix) w, C_replace,  // w and its descriptor
         M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                      // optional accum for Z=accum(w,T)
-        (GB_Operator) op,           // operator to select the entries
+        op,                         // operator to select the entries
         (GrB_Matrix) u,             // first input: u
         Thunk,                      // optional input for select operator
         false,                      // vector u is never transposed
