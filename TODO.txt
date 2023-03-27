@@ -1,12 +1,14 @@
 FIXME / TODO: for v8.0.0.draft2:
 
-    test on Intel MacBook, ...
+    test with icx, clang on hypersparse
 
-    performance tests (GAP, etc)
+    GAP performance tests on hypersparse
+
+    JIT is not yet thread safe: add simple critical section
 
 FIXME / TODO for 8.0.0.draft3:
 
-    JIT is not yet thread safe
+    better JIT critical section (many readers, 1 writer, for the JIT table)
 
     MATLAB interface (testing, and @GrB)
 
