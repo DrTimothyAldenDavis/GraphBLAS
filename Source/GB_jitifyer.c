@@ -9,8 +9,10 @@
 
 #include "GB.h"
 #include "GB_stringify.h"
-#include <dlfcn.h>
 #include "GB_config.h"
+
+// FIXME: dlfcn.h only exists on Linux/Unix/Mac; need to port to Windows
+#include <dlfcn.h>
 
 //------------------------------------------------------------------------------
 // GB_jitifyer_hash_table: a hash table of jitifyer entries
@@ -100,11 +102,16 @@ void GB_jitifyer_set_control (int control)
     X ## _allocated = 0 ;               \
 }
 
+#define GB_MALLOC_STUFF(X,len)                          \
+{                                                       \
+    X = GB_MALLOC (len + 2, char, &(X ## _allocated)) ; \
+    OK (X != NULL) ;                                    \
+}
+
 #define GB_COPY_STUFF(X,src)                            \
 {                                                       \
     size_t len = strlen (src) ;                         \
-    X = GB_MALLOC (len + 2, char, &(X ## _allocated)) ; \
-    OK (X != NULL) ;                                    \
+    GB_MALLOC_STUFF (X, len) ;                          \
     strncpy (X, src, X ## _allocated) ;                 \
 }
 
@@ -165,9 +172,10 @@ GrB_Info GB_jitifyer_init (void)
         { 
             // found home; create the cache path
             size_t len = strlen (home) + 60 ;
-            GB_jit_cache_path = GB_MALLOC (len, char,
-                &(GB_jit_cache_path_allocated)) ;
-            OK (GB_jit_cache_path != NULL) ;
+            GB_MALLOC_STUFF (GB_jit_cache_path, len) ;
+//          GB_jit_cache_path = GB_MALLOC (len, char,
+//              &(GB_jit_cache_path_allocated)) ;
+//          OK (GB_jit_cache_path != NULL) ;
             snprintf (GB_jit_cache_path,
                 GB_jit_cache_path_allocated,
                 "%s/%sSuiteSparse/GraphBLAS/%d.%d.%d", home, dot,
@@ -218,8 +226,9 @@ GrB_Info GB_jitifyer_include (void)
     //--------------------------------------------------------------------------
 
     size_t len = 10 * GB_jit_source_path_allocated + 200 ;
-    GB_jit_include = GB_MALLOC (len, char, &(GB_jit_include_allocated)) ;
-    OK (GB_jit_include != NULL) ;
+    GB_MALLOC_STUFF (GB_jit_include, len) ;
+//  GB_jit_include = GB_MALLOC (len, char, &(GB_jit_include_allocated)) ;
+//  OK (GB_jit_include != NULL) ;
 
     snprintf (GB_jit_include, GB_jit_include_allocated,
         "-I%s/Include "
@@ -279,9 +288,10 @@ GrB_Info GB_jitifyer_alloc_space (void)
     if (GB_jit_kernel_name == NULL)
     {
         size_t len = GB_jit_cache_path_allocated + 300 + 2 * GxB_MAX_NAME_LEN ;
-        GB_jit_kernel_name = GB_MALLOC (len, char,
-            &(GB_jit_kernel_name_allocated)) ;
-        OK (GB_jit_kernel_name != NULL) ;
+        GB_MALLOC_STUFF (GB_jit_kernel_name, len) ;
+//      GB_jit_kernel_name = GB_MALLOC (len, char,
+//          &(GB_jit_kernel_name_allocated)) ;
+//      OK (GB_jit_kernel_name != NULL) ;
     }
 
     //--------------------------------------------------------------------------
@@ -291,9 +301,10 @@ GrB_Info GB_jitifyer_alloc_space (void)
     if (GB_jit_library_name == NULL)
     {
         size_t len = GB_jit_cache_path_allocated + 300 + 2 * GxB_MAX_NAME_LEN ;
-        GB_jit_library_name = GB_MALLOC (len, char,
-            &(GB_jit_library_name_allocated)) ;
-        OK (GB_jit_library_name != NULL) ;
+        GB_MALLOC_STUFF (GB_jit_library_name, len) ;
+//      GB_jit_library_name = GB_MALLOC (len, char,
+//          &(GB_jit_library_name_allocated)) ;
+//      OK (GB_jit_library_name != NULL) ;
     }
 
     //--------------------------------------------------------------------------
@@ -307,8 +318,9 @@ GrB_Info GB_jitifyer_alloc_space (void)
             2 * GB_jit_C_flags_allocated + inc_len +
             4 * GB_jit_cache_path_allocated + 5 * GB_KLEN +
             GB_jit_source_path_allocated + 300 ;
-        GB_jit_command = GB_MALLOC (len, char, &(GB_jit_command_allocated)) ;
-        OK (GB_jit_command != NULL) ;
+        GB_MALLOC_STUFF (GB_jit_command, len) ;
+//      GB_jit_command = GB_MALLOC (len, char, &(GB_jit_command_allocated)) ;
+//      OK (GB_jit_command != NULL) ;
     }
 
     return (GrB_SUCCESS) ;
@@ -687,6 +699,7 @@ GrB_Info GB_jitifyer_load
 
     snprintf (GB_jit_library_name, GB_jit_library_name_allocated,
         "%s/lib%s%s", GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX) ;
+    // FIXME: dlopen only exists on Linux/Unix/Mac
     void *dl_handle = dlopen (GB_jit_library_name, RTLD_LAZY) ;
 
     //--------------------------------------------------------------------------
@@ -697,6 +710,7 @@ GrB_Info GB_jitifyer_load
     if (dl_handle != NULL && !builtin)
     { 
         // library is loaded but make sure the defn are OK
+        // FIXME: dlsym only exists on Linux/Unix/Mac
         void *dl_query = dlsym (dl_handle, "GB_jit_query_defn") ;
         bool need_to_compile = !GB_jitifyer_match_version (dl_handle) ||
         (op1 != NULL && !GB_jitifyer_match_defn (dl_query, 0, op1->defn)) ||
@@ -708,6 +722,7 @@ GrB_Info GB_jitifyer_load
         if (need_to_compile)
         { 
             // library is loaded but needs to change, so close it
+            // FIXME: dlclose only exists on Linux/Unix/Mac
             dlclose (dl_handle) ;
             dl_handle = NULL ;
             if (GB_jit_control == GxB_JIT_LOAD)
@@ -785,6 +800,7 @@ GrB_Info GB_jitifyer_load
         //----------------------------------------------------------------------
 
         GB_jitifyer_compile (kernel_name) ;
+        // FIXME: dlopen only exists on Linux/Unix/Mac
         dl_handle = dlopen (GB_jit_library_name, RTLD_LAZY) ;
         if (dl_handle == NULL)
         { 
@@ -805,11 +821,13 @@ GrB_Info GB_jitifyer_load
     // get the jit_kernel_function pointer
     //--------------------------------------------------------------------------
 
+    // FIXME: dlsym only exists on Linux/Unix/Mac
     (*dl_function) = dlsym (dl_handle, "GB_jit_kernel") ;
     if ((*dl_function) == NULL)
     { 
         // unable to find GB_jit_kernel: punt to generic
         GBURBLE ("(jit: load error; JIT loading disabled) ") ;
+        // FIXME: dlclose only exists on Linux/Unix/Mac
         dlclose (dl_handle) ; 
         // disable the JIT to avoid repeated loading errors
         GB_jit_control = GxB_JIT_RUN ;
@@ -817,10 +835,10 @@ GrB_Info GB_jitifyer_load
     }
 
     // insert the new kernel into the hash table
-    if (!GB_jitifyer_insert (hash, encoding, suffix, dl_handle,
-        (*dl_function)))
+    if (!GB_jitifyer_insert (hash, encoding, suffix, dl_handle, (*dl_function)))
     { 
         // unable to add kernel to hash table: punt to generic
+        // FIXME: dlclose only exists on Linux/Unix/Mac
         dlclose (dl_handle) ; 
         // disable the JIT to avoid repeated errors
         GB_jit_control = GxB_JIT_PAUSE ;
@@ -1023,6 +1041,7 @@ void GB_jitifyer_table_free (void)
                     GB_FREE (&(e->suffix), e->suffix_size) ;
                 }
                 // unload the dl library
+                // FIXME: dlclose only exists on Linux/Unix/Mac
                 dlclose (e->dl_handle) ;
             }
         }
@@ -1082,6 +1101,7 @@ bool GB_jitifyer_match_idterm   // return true if monoid id and term match
 )
 {
     // compare the identity and terminal
+    // FIXME: dlsym only exists on Linux/Unix/Mac
     void *dl_query = dlsym (dl_handle, "GB_jit_query_monoid") ;
     if (dl_query == NULL)
     { 
@@ -1105,6 +1125,7 @@ bool GB_jitifyer_match_version
 )
 {
     // compare the version
+    // FIXME: dlsym only exists on Linux/Unix/Mac
     void *dl_query = dlsym (dl_handle, "GB_jit_query_version") ;
     if (dl_query == NULL)
     { 
@@ -1129,51 +1150,6 @@ bool GB_jitifyer_match_version
 int GB_jitifyer_compile (char *kernel_name)
 { 
 
-// gcc on the Mac arm64:
-/* Need to append: "-arch arm64 -isysroot OSXROOT" to C_flags
-
-compile:
-
-    C_compiler -Iinclude C_flags
-    -arch arm64
-    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk
-    -fPIC
-
-    -o output_file.o
-    -c input_file.c
-
-
-link:
-
-    C_compiler C_flags
-    -arch arm64
-    -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk
-    -fPIC
-
-        -shared and/or
-        -dynamiclib
-
-    not needed?
-
-        -Wl,-headerpad_max_install_names
-        -compatibility_version 8.0.0 -current_version 8.0.0
-
-    -o output_file.dylib
-
-    not needed/
-
-        -install_name @rpath/libgraphblasdemo.8.dylib
-
-    object_file.o
-
-    not needed?
-
-        -Wl,-rpath,/Users/davis/master/GraphBLAS/build
-        libgraphblas.8.0.0.dylib -lm
-        -ldl /opt/homebrew/Cellar/gcc/12.2.0/lib/gcc/current/libgomp.dylib
-
-*/
-
     snprintf (GB_jit_command, GB_jit_command_allocated,
 
     // compile:
@@ -1191,9 +1167,10 @@ link:
     "%s "                           // C compiler
     "%s "                           // C flags
     "%s "                           // C link flags
-//  " -Wl,-soname,lib%s.so "        // soname 
     "-o %s/lib%s%s "                // lib*.so output file
     "%s/%s%s "                      // *.o input file
+    // FIXME: add libgraphblas to GB_LIBRARIES
+    // allow GB_LIBRARIES to be modified
     "%s%s/build/libgraphblas%s%s"   // libgraphblas.so
     "%s "                           // libraries to link with
     ,
@@ -1210,7 +1187,6 @@ link:
     GB_jit_C_compiler,                              // C compiler
     GB_jit_C_flags,                                 // C flags
     GB_jit_C_link_flags,                            // C link flags
-//  kernel_name,                                    // soname
     GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX,  // lib*.so output file
     GB_jit_cache_path, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
     GB_jit_source_path,                             // libgraphblas.so
