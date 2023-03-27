@@ -1,5 +1,7 @@
 FIXME / TODO: for v8.0.0.draft2:
 
+    test on Intel MacBook, ...
+
     performance tests (GAP, etc)
 
 FIXME / TODO for 8.0.0.draft3:
