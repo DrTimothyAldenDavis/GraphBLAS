@@ -199,6 +199,25 @@ GrB_Info GB_jitifyer_load
     GrB_Type type3
 ) ;
 
+GrB_Info GB_jitifyer_worker
+(
+    // output:
+    void **dl_function,         // pointer to JIT kernel
+    // input:
+    GB_jit_family family,       // kernel family
+    const char *kname,          // kname for the kernel_name
+    uint64_t hash,              // hash code for the kernel
+    GB_jit_encoding *encoding,  // encoding of the problem
+    const char *suffix,         // suffix for the kernel_name (NULL if none)
+    // operator and type definitions
+    GrB_Semiring semiring,
+    GrB_Monoid monoid,
+    GB_Operator op,
+    GrB_Type type1,
+    GrB_Type type2,
+    GrB_Type type3
+) ;
+
 void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
 (
     // input:
@@ -278,23 +297,28 @@ GrB_Info GB_jitifyer_alloc_space (void) ;
 
 GrB_Info GB_jitifyer_include (void) ;
 
-const char *GB_jitifyer_get_source_path (void) ;
-GrB_Info GB_jitifyer_set_source_path (const char *new_source_path) ;
-
-const char *GB_jitifyer_get_cache_path (void) ;
-GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path) ;
-
-const char *GB_jitifyer_get_C_compiler (void) ;
-GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler) ;
-
-const char *GB_jitifyer_get_C_flags (void) ;
-GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags) ;
-
 void GB_jitifyer_set_control (int control) ;
 GxB_JIT_Control GB_jitifyer_get_control (void) ;
 
+const char *GB_jitifyer_get_source_path (void) ;
+GrB_Info GB_jitifyer_set_source_path (const char *new_source_path) ;
+GrB_Info GB_jitifyer_set_source_path_worker (const char *new_source_path) ;
+
+const char *GB_jitifyer_get_cache_path (void) ;
+GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path) ;
+GrB_Info GB_jitifyer_set_cache_path_worker (const char *new_cache_path) ;
+
+const char *GB_jitifyer_get_C_compiler (void) ;
+GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler) ;
+GrB_Info GB_jitifyer_set_C_compiler_worker (const char *new_C_compiler) ;
+
+const char *GB_jitifyer_get_C_flags (void) ;
+GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags) ;
+GrB_Info GB_jitifyer_set_C_flags_worker (const char *new_C_flags) ;
+
 const char *GB_jitifyer_get_C_link_flags (void) ;
 GrB_Info GB_jitifyer_set_C_link_flags (const char *new_C_link_flags) ;
+GrB_Info GB_jitifyer_set_C_link_flags_worker (const char *new_C_link_flags) ;
 
 #endif
 

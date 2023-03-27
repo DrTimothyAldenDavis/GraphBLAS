@@ -66,33 +66,6 @@ static GxB_JIT_Control GB_jit_control =
     #endif
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_get_control: get the JIT control
-//------------------------------------------------------------------------------
-
-GxB_JIT_Control GB_jitifyer_get_control (void)
-{
-    return (GB_jit_control) ;
-}
-
-//------------------------------------------------------------------------------
-// GB_jitifyer_set_control: set the JIT control
-//------------------------------------------------------------------------------
-
-void GB_jitifyer_set_control (int control)
-{
-    #if GB_JIT_ENABLED
-    control = GB_IMAX (control, GxB_JIT_OFF) ;
-    control = GB_IMIN (control, GxB_JIT_ON) ;
-    GB_jit_control = (GxB_JIT_Control) control ;
-    if (GB_jit_control == GxB_JIT_OFF)
-    {
-        // free all loaded JIT kernels and free the JIT hash table
-        GB_jitifyer_table_free ( ) ;
-    }
-    #endif
-}
-
-//------------------------------------------------------------------------------
 // GB_jitifyer_finalize: free the JIT table and all the strings
 //------------------------------------------------------------------------------
 
@@ -208,6 +181,41 @@ GrB_Info GB_jitifyer_init (void)
 }
 
 //------------------------------------------------------------------------------
+// GB_jitifyer_get_control: get the JIT control
+//------------------------------------------------------------------------------
+
+GxB_JIT_Control GB_jitifyer_get_control (void)
+{
+    GxB_JIT_Control control ;
+    #pragma omp critical (GB_jitifyer_worker)
+    {
+        control = GB_jit_control ;
+    }
+    return (control) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_control: set the JIT control
+//------------------------------------------------------------------------------
+
+void GB_jitifyer_set_control (int control)
+{
+    #if GB_JIT_ENABLED
+    #pragma omp critical (GB_jitifyer_worker)
+    {
+        control = GB_IMAX (control, GxB_JIT_OFF) ;
+        control = GB_IMIN (control, GxB_JIT_ON) ;
+        GB_jit_control = (GxB_JIT_Control) control ;
+        if (GB_jit_control == GxB_JIT_OFF)
+        {
+            // free all loaded JIT kernels and free the JIT hash table
+            GB_jitifyer_table_free ( ) ;
+        }
+    }
+    #endif
+}
+
+//------------------------------------------------------------------------------
 // GB_jitifyer_include:  allocate and determine -Istring
 //------------------------------------------------------------------------------
 
@@ -288,9 +296,6 @@ GrB_Info GB_jitifyer_alloc_space (void)
     {
         size_t len = GB_jit_cache_path_allocated + 300 + 2 * GxB_MAX_NAME_LEN ;
         GB_MALLOC_STUFF (GB_jit_kernel_name, len) ;
-//      GB_jit_kernel_name = GB_MALLOC (len, char,
-//          &(GB_jit_kernel_name_allocated)) ;
-//      OK (GB_jit_kernel_name != NULL) ;
     }
 
     //--------------------------------------------------------------------------
@@ -301,9 +306,6 @@ GrB_Info GB_jitifyer_alloc_space (void)
     {
         size_t len = GB_jit_cache_path_allocated + 300 + 2 * GxB_MAX_NAME_LEN ;
         GB_MALLOC_STUFF (GB_jit_library_name, len) ;
-//      GB_jit_library_name = GB_MALLOC (len, char,
-//          &(GB_jit_library_name_allocated)) ;
-//      OK (GB_jit_library_name != NULL) ;
     }
 
     //--------------------------------------------------------------------------
@@ -317,8 +319,6 @@ GrB_Info GB_jitifyer_alloc_space (void)
             4 * GB_jit_cache_path_allocated + 5 * GB_KLEN +
             GB_jit_source_path_allocated + 300 ;
         GB_MALLOC_STUFF (GB_jit_command, len) ;
-//      GB_jit_command = GB_MALLOC (len, char, &(GB_jit_command_allocated)) ;
-//      OK (GB_jit_command != NULL) ;
     }
 
     return (GrB_SUCCESS) ;
@@ -330,7 +330,12 @@ GrB_Info GB_jitifyer_alloc_space (void)
 
 const char *GB_jitifyer_get_source_path (void)
 {
-    return (GB_jit_source_path) ;
+    const char *s ;
+    #pragma omp critical (GB_jitifyer_worker)
+    {
+        s = GB_jit_source_path ;
+    }
+    return (s) ;
 }
 
 //------------------------------------------------------------------------------
@@ -348,9 +353,28 @@ GrB_Info GB_jitifyer_set_source_path (const char *new_source_path)
     //--------------------------------------------------------------------------
 
     if (new_source_path == NULL)
-    {
+    { 
         return (GrB_NULL_POINTER) ;
     }
+
+    //--------------------------------------------------------------------------
+    // set the source path in a critical section
+    //--------------------------------------------------------------------------
+
+    GrB_Info info ;
+    #pragma omp critical (GB_jitifyer_worker)
+    { 
+        info = GB_jitifyer_set_source_path_worker (new_source_path) ;
+    }
+    return (info) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_source_path_worker: set source path in a critical section
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_set_source_path_worker (const char *new_source_path)
+{
 
     //--------------------------------------------------------------------------
     // free the old strings that depend on the source path
@@ -380,7 +404,12 @@ GrB_Info GB_jitifyer_set_source_path (const char *new_source_path)
 
 const char *GB_jitifyer_get_cache_path (void)
 {
-    return (GB_jit_cache_path) ;
+    const char *s ;
+    #pragma omp critical (GB_jitifyer_worker)
+    {
+        s = GB_jit_cache_path ;
+    }
+    return (s) ;
 }
 
 //------------------------------------------------------------------------------
@@ -398,6 +427,25 @@ GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path)
     {
         return (GrB_NULL_POINTER) ;
     }
+
+    //--------------------------------------------------------------------------
+    // set the cache path in a critical section
+    //--------------------------------------------------------------------------
+
+    GrB_Info info ;
+    #pragma omp critical (GB_jitifyer_worker)
+    { 
+        info = GB_jitifyer_set_cache_path_worker (new_cache_path) ;
+    }
+    return (info) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_cache_path_worker: set cache path in a critical section
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_set_cache_path_worker (const char *new_cache_path)
+{
 
     //--------------------------------------------------------------------------
     // free the old strings that depend on the cache path
@@ -427,7 +475,12 @@ GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path)
 
 const char *GB_jitifyer_get_C_compiler (void)
 {
-    return (GB_jit_C_compiler) ;
+    const char *s ;
+    #pragma omp critical (GB_jitifyer_worker)
+    {
+        s = GB_jit_C_compiler ;
+    }
+    return (s) ;
 }
 
 //------------------------------------------------------------------------------
@@ -445,6 +498,25 @@ GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler)
     {
         return (GrB_NULL_POINTER) ;
     }
+
+    //--------------------------------------------------------------------------
+    // set the C compiler in a critical section
+    //--------------------------------------------------------------------------
+
+    GrB_Info info ;
+    #pragma omp critical (GB_jitifyer_worker)
+    { 
+        info = GB_jitifyer_set_C_compiler_worker (new_C_compiler) ;
+    }
+    return (info) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_C_compiler_worker: set C compiler in a critical section
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_set_C_compiler_worker (const char *new_C_compiler)
+{
 
     //--------------------------------------------------------------------------
     // free the old strings that depend on the C compiler
@@ -472,7 +544,12 @@ GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler)
 
 const char *GB_jitifyer_get_C_flags (void)
 {
-    return (GB_jit_C_flags) ;
+    const char *s ;
+    #pragma omp critical (GB_jitifyer_worker)
+    {
+        s = GB_jit_C_flags ;
+    }
+    return (s) ;
 }
 
 //------------------------------------------------------------------------------
@@ -490,6 +567,25 @@ GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags)
     {
         return (GrB_NULL_POINTER) ;
     }
+
+    //--------------------------------------------------------------------------
+    // set the C flags in a critical section
+    //--------------------------------------------------------------------------
+
+    GrB_Info info ;
+    #pragma omp critical (GB_jitifyer_worker)
+    { 
+        info = GB_jitifyer_set_C_flags_worker (new_C_flags) ;
+    }
+    return (info) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_C_flags_worker: set C flags in a critical section
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_set_C_flags_worker (const char *new_C_flags)
+{
 
     //--------------------------------------------------------------------------
     // free the old strings that depend on the C flags
@@ -517,11 +613,16 @@ GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags)
 
 const char *GB_jitifyer_get_C_link_flags (void)
 {
-    return (GB_jit_C_link_flags) ;
+    const char *s ;
+    #pragma omp critical (GB_jitifyer_worker)
+    {
+        s = GB_jit_C_link_flags ;
+    }
+    return (s) ;
 }
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_set_C_link_flags: set new C flags
+// GB_jitifyer_set_C_link_flags: set new C link flags
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_set_C_link_flags (const char *new_C_link_flags)
@@ -535,6 +636,25 @@ GrB_Info GB_jitifyer_set_C_link_flags (const char *new_C_link_flags)
     {
         return (GrB_NULL_POINTER) ;
     }
+
+    //--------------------------------------------------------------------------
+    // set the C link flags in a critical section
+    //--------------------------------------------------------------------------
+
+    GrB_Info info ;
+    #pragma omp critical (GB_jitifyer_worker)
+    { 
+        info = GB_jitifyer_set_C_link_flags_worker (new_C_link_flags) ;
+    }
+    return (info) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_C_link_flags_worker: set C link flags in a critical section
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_set_C_link_flags_worker (const char *new_C_link_flags)
+{
 
     //--------------------------------------------------------------------------
     // free the old strings that depend on the C flags
@@ -599,10 +719,46 @@ GrB_Info GB_jitifyer_load
     }
 
     //--------------------------------------------------------------------------
-    // look up the kernel in the hash table
+    // do the rest inside a critical section
     //--------------------------------------------------------------------------
 
-    // FIXME: need to place this entire function in a critical section
+    GrB_Info info ;
+    #pragma omp critical (GB_jitifyer_worker)
+    {
+        info = GB_jitifyer_worker (dl_function, family, kname, hash,
+            encoding, suffix, semiring, monoid, op, type1, type2, type3) ;
+    }
+
+    return (info) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_worker: do the work for GB_jitifyer_load in a critical section
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_worker
+(
+    // output:
+    void **dl_function,         // pointer to JIT kernel
+    // input:
+    GB_jit_family family,       // kernel family
+    const char *kname,          // kname for the kernel_name
+    uint64_t hash,              // hash code for the kernel
+    GB_jit_encoding *encoding,  // encoding of the problem
+    const char *suffix,         // suffix for the kernel_name (NULL if none)
+    // operator and type definitions
+    GrB_Semiring semiring,
+    GrB_Monoid monoid,
+    GB_Operator op,
+    GrB_Type type1,
+    GrB_Type type2,
+    GrB_Type type3
+)
+{
+
+    //--------------------------------------------------------------------------
+    // look up the kernel in the hash table
+    //--------------------------------------------------------------------------
 
     (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix) ;
     if ((*dl_function) != NULL)
