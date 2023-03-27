@@ -96,6 +96,13 @@ void GB_jitifyer_set_control (int control)
 // GB_jitifyer_finalize: free the JIT table and all the strings
 //------------------------------------------------------------------------------
 
+#define OK(ok)                          \
+    if (!(ok))                          \
+    {                                   \
+        GB_jitifyer_finalize ( ) ;      \
+        return (GrB_OUT_OF_MEMORY) ;    \
+    }
+
 #define GB_FREE_STUFF(X)                \
 {                                       \
     GB_FREE (&X, X ## _allocated) ;     \
@@ -136,13 +143,6 @@ void GB_jitifyer_finalize (void)
 // Returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_NO_VALUE if the cache path
 // cannot be found.
 
-#define OK(ok)                          \
-    if (!(ok))                          \
-    {                                   \
-        GB_jitifyer_finalize ( ) ;      \
-        return (GrB_OUT_OF_MEMORY) ;    \
-    }
-
 GrB_Info GB_jitifyer_init (void)
 {
 
@@ -150,7 +150,6 @@ GrB_Info GB_jitifyer_init (void)
     // find the GB_jit_cache_path
     //--------------------------------------------------------------------------
 
-    size_t len = 0 ;
     char *cache_path = getenv ("GRAPHBLAS_CACHE_PATH") ;
     if (cache_path != NULL)
     { 
@@ -313,9 +312,8 @@ GrB_Info GB_jitifyer_alloc_space (void)
 
     if (GB_jit_command == NULL)
     {
-        size_t inc_len = strlen (GB_jit_include) ;
         size_t len = 2 * GB_jit_C_compiler_allocated +
-            2 * GB_jit_C_flags_allocated + inc_len +
+            2 * GB_jit_C_flags_allocated + strlen (GB_jit_include) +
             4 * GB_jit_cache_path_allocated + 5 * GB_KLEN +
             GB_jit_source_path_allocated + 300 ;
         GB_MALLOC_STUFF (GB_jit_command, len) ;
