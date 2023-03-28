@@ -56,7 +56,7 @@
 
 // special case multipliers:
 
-#define GB_IS_SECONDJ_MULTIPLIER 1 /* SECONDJ1 */
+#define GB_IS_SECONDJ_MULTIPLIER 1 /* or SECONDJ1 */
 
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \

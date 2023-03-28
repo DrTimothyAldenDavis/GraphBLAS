@@ -49,6 +49,8 @@ GB_is_plus_32_pair_semiring
 GB_is_plus_big_pair_semiring
 GB_is_plus_fc32_pair_semiring
 GB_is_plus_fc64_pair_semiring
+GB_is_min_firstj_semiring
+GB_is_max_firstj_semiring
 GB_semiring_has_avx
 
 // monoid properties:

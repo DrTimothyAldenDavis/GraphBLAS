@@ -145,9 +145,6 @@ GrB_Info GB_jitifyer_init (void)
             // found home; create the cache path
             size_t len = strlen (home) + 60 ;
             GB_MALLOC_STUFF (GB_jit_cache_path, len) ;
-//          GB_jit_cache_path = GB_MALLOC (len, char,
-//              &(GB_jit_cache_path_allocated)) ;
-//          OK (GB_jit_cache_path != NULL) ;
             snprintf (GB_jit_cache_path,
                 GB_jit_cache_path_allocated,
                 "%s/%sSuiteSparse/GraphBLAS/%d.%d.%d", home, dot,
@@ -234,8 +231,6 @@ GrB_Info GB_jitifyer_include (void)
 
     size_t len = 10 * GB_jit_source_path_allocated + 200 ;
     GB_MALLOC_STUFF (GB_jit_include, len) ;
-//  GB_jit_include = GB_MALLOC (len, char, &(GB_jit_include_allocated)) ;
-//  OK (GB_jit_include != NULL) ;
 
     snprintf (GB_jit_include, GB_jit_include_allocated,
         "-I%s/Include "
@@ -704,6 +699,7 @@ GrB_Info GB_jitifyer_load
     // check for quick return
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     if (hash == UINT64_MAX)
     { 
         // The kernel may not be compiled; it does not have a valid definition.
@@ -719,10 +715,37 @@ GrB_Info GB_jitifyer_load
     }
 
     //--------------------------------------------------------------------------
+    // handle the GxB_JIT_RUN case: critical section not required
+    //--------------------------------------------------------------------------
+
+    if (GB_jit_control == GxB_JIT_RUN)
+    {
+
+        //----------------------------------------------------------------------
+        // look up the kernel in the hash table
+        //----------------------------------------------------------------------
+
+        (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix) ;
+        if ((*dl_function) != NULL)
+        { 
+            // found the kernel in the hash table
+            GBURBLE ("(jit run) ") ;
+            return (GrB_SUCCESS) ;
+        }
+        else
+        {
+            // No kernels may be loaded or compiled, but existing kernels
+            // already loaded may be run (handled above if dl_function was
+            // found).  This kernel was not loaded, so punt to generic.
+            GBURBLE ("(jit not loaded) ") ;
+            return (GrB_NO_VALUE) ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
     // do the rest inside a critical section
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     #pragma omp critical (GB_jitifyer_worker)
     {
         info = GB_jitifyer_worker (dl_function, family, kname, hash,

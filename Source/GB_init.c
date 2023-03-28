@@ -185,18 +185,10 @@ GrB_Info GB_init            // start up GraphBLAS
     // set up the JIT folder locations and compiler flags
     //--------------------------------------------------------------------------
 
-//  printf ("JIT enabled: %d\n", GB_JIT_ENABLED) ;
-//  #if defined ( SUITESPARSE_CUDA )
-//  printf ("CUDA enabled:\n") ;
-//  #else
-//  printf ("CUDA not enabled:\n") ;
-//  #endif
-
     #if GB_JIT_ENABLED || defined ( SUITESPARSE_CUDA )
     info = GB_jitifyer_init ( ) ;
     if (info != GrB_SUCCESS)
     {
-//      printf ("JIT: failed to initialize\n") ;
         return (info) ;
     }
     #endif

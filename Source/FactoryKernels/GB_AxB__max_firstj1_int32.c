@@ -40,6 +40,8 @@
 
 // special case semirings:
 
+#define GB_IS_MAX_FIRSTJ_SEMIRING 1
+
 // monoid properties:
 #define GB_Z_TYPE int32_t
 #define GB_DECLARE_IDENTITY(z) int32_t z = INT32_MIN

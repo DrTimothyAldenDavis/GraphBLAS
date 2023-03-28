@@ -69,6 +69,16 @@
 #define GB_IS_PLUS_FC64_PAIR_SEMIRING 0
 #endif
 
+// 1 for MIN_FIRSTJ
+#ifndef GB_IS_MIN_FIRSTJ_SEMIRING
+#define GB_IS_MIN_FIRSTJ_SEMIRING 0
+#endif
+
+// 1 for MAX_FIRSTJ
+#ifndef GB_IS_MAX_FIRSTJ_SEMIRING
+#define GB_IS_MAX_FIRSTJ_SEMIRING 0
+#endif
+
 // 1 if the semiring has an AVX512 or AVX2 implementation
 #ifndef GB_SEMIRING_HAS_AVX_IMPLEMENTATION
 #define GB_SEMIRING_HAS_AVX_IMPLEMENTATION 0

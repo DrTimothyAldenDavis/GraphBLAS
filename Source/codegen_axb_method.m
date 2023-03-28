@@ -327,6 +327,7 @@ fprintf (f, 'm4_define(`GB_pair_one'', `%s'')\n', one) ;
 %-------------------------------------------------------------------------------
 
 if (is_plus_pair_real)
+    % plus_pair_(int or fp*), not complex 
     fprintf (f, 'm4_define(`GB_is_plus_pair_real_semiring'', `%s'')\n', ...
         '#define GB_IS_PLUS_PAIR_REAL_SEMIRING 1') ;
 else
@@ -335,7 +336,6 @@ end
 
 if (is_eq && is_pair)
     % eq_pair_bool
-    % FIXME: delete this case
     fprintf (f, 'm4_define(`GB_is_eq_pair_semiring'', `%s'')\n', ...
         '#define GB_IS_EQ_PAIR_SEMIRING 1') ;
 else
@@ -527,7 +527,8 @@ else
 end
 
 % firstj or firstj1 multiply operator
-if (codegen_contains (multop, 'firstj'))
+is_firstj = codegen_contains (multop, 'firstj') ;
+if (is_firstj)
     fprintf (f, 'm4_define(`GB_is_firstj_multiplier'', `%s'')\n', ...
         '#define GB_IS_FIRSTJ_MULTIPLIER 1 /* or FIRSTJ1 */') ;
 else
@@ -535,9 +536,10 @@ else
 end
 
 % secondj or secondj1 multiply operator
-if (codegen_contains (multop, 'secondj'))
+is_secondj = codegen_contains (multop, 'secondj') ;
+if (is_secondj)
     fprintf (f, 'm4_define(`GB_is_secondj_multiplier'', `%s'')\n', ...
-        '#define GB_IS_SECONDJ_MULTIPLIER 1 /* SECONDJ1 */') ;
+        '#define GB_IS_SECONDJ_MULTIPLIER 1 /* or SECONDJ1 */') ;
 else
     fprintf (f, 'm4_define(`GB_is_secondj_multiplier'', `'')\n') ;
 end
@@ -596,6 +598,13 @@ else
     fprintf (f, 'm4_define(`GB_is_fmin_monoid'', `'')\n') ;
 end
 
+if (is_imin && is_firstj)
+    fprintf (f, 'm4_define(`GB_is_min_firstj_semiring'', `%s'')\n', ...
+        '#define GB_IS_MIN_FIRSTJ_SEMIRING 1') ;
+else
+    fprintf (f, 'm4_define(`GB_is_min_firstj_semiring'', `'')\n') ;
+end
+
 % max monoids:
 is_imax = false ;
 is_fmax = false ;
@@ -623,6 +632,13 @@ if (is_fmax)
         '#define GB_IS_FMAX_MONOID 1') ;
 else
     fprintf (f, 'm4_define(`GB_is_fmax_monoid'', `'')\n') ;
+end
+
+if (is_imax && is_firstj)
+    fprintf (f, 'm4_define(`GB_is_max_firstj_semiring'', `%s'')\n', ...
+        '#define GB_IS_MAX_FIRSTJ_SEMIRING 1') ;
+else
+    fprintf (f, 'm4_define(`GB_is_max_firstj_semiring'', `'')\n') ;
 end
 
 % to get an entry from A

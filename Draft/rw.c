@@ -69,14 +69,14 @@ void reader (int k)
     // many readers here
     // do some useless reader work
     {
-        #pragma omp atomic update
+        #pragma omp atomic
         {
             garbage++ ;
         }
         int x = work (k) ;
         printf ("    reader %d:%d %s: %d\n", k, omp_get_thread_num ( ),
             (x == 0) ? "0" : ".", reader_count)  ;
-        #pragma omp atomic update
+        #pragma omp atomic
         {
             garbage-- ;
         }

@@ -276,7 +276,9 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
     }
     else if (mult->opcode == GB_FIRSTJ_binop_code
-          || mult->opcode == GB_FIRSTJ1_binop_code)
+          || mult->opcode == GB_FIRSTJ1_binop_code
+          || mult->opcode == GB_SECONDI_binop_code
+          || mult->opcode == GB_SECONDI1_binop_code)
     {
 
         //----------------------------------------------------------------------
