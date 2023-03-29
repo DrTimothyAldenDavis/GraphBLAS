@@ -88,6 +88,8 @@ desktop.ini
 .idea/
 cmake-build-debug/
 
+Source/Shared/GB_config.h
+
 # Do not ignore this file
 !.gitignore
 
