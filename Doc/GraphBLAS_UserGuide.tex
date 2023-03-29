@@ -98,11 +98,13 @@ v8.0.0 release:
 \begin{itemize}
 
     \item {\bf Lots of testing:} some of the new JIT features have not been
-        fully tested, such as \verb'GxB_set (GxB_JIT_CONTROL, ...)'.  Expect
-        to see some bugs.  I am posting this version
+        fully tested.  Expect to see some bugs.  I am posting this version:
+
         \input{GraphBLAS_version.tex}
-        as a rough draft, not even a beta pre-release, to get feedback on
-        the design of the JIT.
+        
+        as a rough draft, not even a beta pre-release, to get feedback on the
+        design of the JIT.  My fully brutal test requires my MATLAB interface
+        (see below).
 
     \item {\bf working compilers:} This version has been tested on Linux using
     gcc 7.5, 9.4, and 12.2, and clang 10.0, and on the Mac using gcc 12.2 and
@@ -116,7 +118,8 @@ v8.0.0 release:
 
     \item {\bf broken compilers on Linux:}
         icx (2022.0.1 and 2023.0.1) hits a compiler bug with -O3, when
-        compiling \verb'Source/FactoryKernels/GB_AxB__lxor_pair_bool.c'.
+        compiling \newline
+        \verb'Source/FactoryKernels/GB_AxB__lxor_pair_bool.c'.
         This occurs when compiling GraphBLAS itself; it has nothing to do
         with the new JIT.
 
@@ -136,6 +139,7 @@ v8.0.0 release:
 
     \item {\bf pre-constructed JIT kernels:}  The plan is to allow the
     end user to compile and run GraphBLAS, letting it construct kernels in
+    \newline
     \verb'~/.SuiteSparse/GraphBLAS/8.0.0/*.c'.  Next, these \verb'*.c' files
     (or any desired subset) could be copied into
     \verb'GraphBLAS/Source/PreJITKernels', and all of GraphBLAS could then be
@@ -915,10 +919,7 @@ it also appears at
 
 See Jim Kitchen and Erik Welch's (both from Anaconda, Inc.) Python interface at
 \url{https://github.com/python-graphblas/python-graphblas} (formerly known as grblas).
-See also \\
-\url{https://anaconda.org/conda-forge/graphblas}.
-
-Both of them allow for pending work to be left pending in a \verb'GrB_Matrix'.
+See also \url{https://anaconda.org/conda-forge/graphblas}.
 
 %===============================================================================
 \subsection{Julia Interface}
@@ -1482,7 +1483,6 @@ string.
 % Section~\ref{operations} can return an error string in their input/output
 % object, except for \verb'GrB_reduce' when reducing to a scalar.
 
-\newpage
 %===============================================================================
 \subsection{{\sf GrB\_finalize:} finish GraphBLAS} %============================
 %===============================================================================
@@ -2718,7 +2718,6 @@ GxB_BinaryOp_new (&AbsDiff, absdiff, GrB_FP64, GrB_FP64, GrB_FP64, "absdiff",
 The two strings \verb'binop_name' and \verb'binop_defn' are optional, but are
 required to enable the JIT compilation of kernels that use this operator.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_BinaryOp\_wait:} wait for a binary operator}
 %-------------------------------------------------------------------------------
@@ -2740,6 +2739,7 @@ to exploit non-blocking mode to delay its creation.  Currently,
 SuiteSparse:GraphBLAS currently does nothing for except to ensure that the
 \verb'binaryop' is valid.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_BinaryOp\_ztype\_name:} return the name of the type of $z$}
 %-------------------------------------------------------------------------------
@@ -12873,7 +12873,6 @@ If \verb'c' is a non-opaque scalar, no error message can be returned by
 \verb'GrB_error(&err,c)' can be used to return an error string, if an error
 occurs.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_reduce\_$<$type$>$:} reduce a matrix to a scalar}
 %-------------------------------------------------------------------------------
@@ -13305,7 +13304,6 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
 This method can be used to print the context created for a user thread,
 or the contents of the \verb'GxB_CONTEXT_WORLD' object.
 
-\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Matrix\_fprint:} Print a {\sf GrB\_Matrix}}
 %===============================================================================
@@ -13345,6 +13343,7 @@ GrB_Info GxB_Vector_fprint          // print and check a GrB_Vector
 For example, \verb'GxB_Vector_fprint (v, "my vector", GxB_SHORT, f)'
 prints about 30 entries from the vector \verb'v' to the file \verb'f'.
 
+\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Scalar\_fprint:} Print a {\sf GrB\_Scalar}}
 %===============================================================================
@@ -13364,7 +13363,6 @@ GrB_Info GxB_Scalar_fprint          // print and check a GrB_Scalar
 For example, \verb'GxB_Scalar_fprint (s, "my scalar", GxB_SHORT, f)'
 prints a short description of the scalar \verb's' to the file \verb'f'.
 
-\newpage
 %===============================================================================
 \subsection{Performance and portability considerations}
 %===============================================================================
@@ -13453,7 +13451,6 @@ for four different access patterns:
         just a single loop.  Any vector can be accessed with a vector iterator.
     \end{enumerate}
 
-\newpage
 %===============================================================================
 \subsection{Creating and destroying an iterator}
 %===============================================================================
@@ -13625,7 +13622,8 @@ position of the iterator arbitrarily.
         is exhausted and \verb'GxB_EXHAUSTED' is returned.
         The \verb'GxB_colIterator_kseek' method always moves to the \verb'k'th
         explicit column, for any matrix.
-        Use \verb'GxB_colIterator_getColIndex', described below, to determine
+        Use \newline
+        \verb'GxB_colIterator_getColIndex', described below, to determine
         the column index of the current position.
 
         Precondition: on input, the \verb'iterator' must have been successfully
@@ -14671,6 +14669,12 @@ Turn on the burble with \verb'GxB_set (GxB_BURBLE, true)'.  You will get a
 single line of output from each (significant) call to GraphBLAS.
 The burble output can help you detect when you are likely using sub-optimal
 methods, as described in the next sections.
+When the JIT is in use the burble reports when a JIT kernel is run (which
+is quick), loaded for the first time (which takes a small amount of time),
+and when a JIT kernels is compiled (which can take a few tenths of a second
+or more).  The compiler command is printed in full.  If you encounter a
+compiler error, you can cut-and-paste the compiler command while outside
+of your application to help track down the compiler error.
 
 %-------------------------------------------------------------------------------
 \subsection{Data types and typecasting: use the JIT}
@@ -16001,7 +16005,8 @@ libraries share the identical \verb'GraphBLAS.h' include file.
 If you do not have system privileges to install the GraphBLAS compiled
 libraries via \verb'sudo make install', then augment your
 \verb'LD_LIBRARY_PATH' (Linux) or \verb'DYLD_LIBRARY_PATH' (MacOS) to point to
-your personal copy \verb'SuiteSparse/GraphBLAS/GraphBLAS/build' folder.  See
+your personal copy of the \newline
+\verb'SuiteSparse/GraphBLAS/GraphBLAS/build' folder.  See \newline
 \url{https://www.mathworks.com/help/matlab/matlab_external/building-on-unix-operating-systems.html}
 for details.
 
@@ -16253,6 +16258,7 @@ GraphBLAS folder.
 
     \begin{itemize}
     \item \verb'stdatomic.h': using \verb'#include <stdatomic.h>' and
+        \newline
         \verb'atomic_compare_exchange_weak'
         instead of GCC/clang/icx \verb'__atomic_*' variants.
         Added \verb'-latomic' if required.
