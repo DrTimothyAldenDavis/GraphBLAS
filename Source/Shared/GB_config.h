@@ -7,39 +7,73 @@
 
 //------------------------------------------------------------------------------
 
-// This file is configured by cmake.
+// The GraphBLAS/Source/Shared/GB_config.h file is configured by cmake, using
+// GraphBLAS/Config/GB_config.h.in.  When using a simple Makefile
+// (GraphBLAS/alternative/Makefile) without using cmake first, these settings
+// are not likely to be useful.  Instead, the alternative/Makefile should
+// configure the build of GraphBLAS using -D options, such as
+
+// CFLAGS = -DGB_SOURCE_PATH=\"/home/me/mystuff/GraphBLAS\"
+
+// The default GraphBLAS/Source/Shared/GB_config.h file that comes from the
+// GraphBLAS distribution assumes the C compiler is just "cc", and other simple
+// defaults are used.  It is then overwritten by cmake.  The GB_SOURCE_PATH
+// setting does not have a good default value, so it is likely you will need to
+// revise it if using the alternative/Makefile when not using cmake.
+
+// Alternatively, the path to the GraphBLAS source can be set at run time:
+//      GxB_set (GxB_JIT_SOURCE_PATH, "/home/me/mystuff/GraphBLAS") ;
 
 #ifndef GB_CONFIG_H
 #define GB_CONFIG_H
 
 // GB_C_COMPILER: the C compiler used to compile GraphBLAS:
-#define GB_C_COMPILER   "/usr/bin/gcc"
+#ifndef GB_C_COMPILER
+#define GB_C_COMPILER   "cc"
+#endif
 
 // GB_C_FLAGS: the C compiler flags used to compile GraphBLAS.  Used
 // for compiling and linking:
-#define GB_C_FLAGS      " -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -O3 -DNDEBUG -fopenmp  -fPIC "
+#ifndef GB_C_FLAGS
+#define GB_C_FLAGS      " -O3 -fopenmp -fPIC "
+#endif
 
 // GB_C_LINK_FLAGS: the flags passed to the C compiler for the link phase:
+#ifndef GB_C_LINK_FLAGS
 #define GB_C_LINK_FLAGS " -shared "
+#endif
 
 // GB_LIB_SUFFIX: library suffix (.so for Linux/Unix, .dylib for Mac, etc):
+#ifndef GB_LIB_SUFFIX
 #define GB_LIB_SUFFIX   ".so"
+#endif
 
 // GB_OBJ_SUFFIX: object suffix (.o for Linux/Unix/Mac, .obj for Windows):
+#ifndef GB_OBJ_SUFFIX
 #define GB_OBJ_SUFFIX   ".o"
+#endif
 
 // GB_SOURCE_PATH: the source code for GraphBLAS, which is the path of the
 // top-level GraphBLAS folder:
+#ifndef GB_SOURCE_PATH
 #define GB_SOURCE_PATH  "/opt/SuiteSparse/GraphBLAS"
+#endif
 
 // GB_BUILD_PATH: the location where GraphBLAS was built.  This is only used
 // if the GraphBLAS cache path cannot be determined by GrB_init.
-#define GB_BUILD_PATH   "/home/davis/master/GraphBLAS/build"
+#ifndef GB_BUILD_PATH
+#define GB_BUILD_PATH   "/opt/SuiteSparse/GraphBLAS/build"
+#endif
 
 // GB_OMP_INC: include directories for OpenMP, if in use by GraphBLAS:
+#ifndef GB_OMP_INC
 #define GB_OMP_INC      ""
+#endif
 
 // GB_LIBRARIES: libraries to link with
-#define GB_LIBRARIES    " -lm -ldl /usr/lib/gcc/x86_64-linux-gnu/7/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.so"
+#ifndef GB_LIBRARIES
+#define GB_LIBRARIES    " -lm -ldl "
+#endif
+
 #endif
 
