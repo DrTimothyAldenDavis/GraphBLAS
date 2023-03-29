@@ -388,7 +388,6 @@ end
 
 if (is_plus && is_pair && isequal (ztype, 'GxB_FC32_t'))
     % plus_pair_fc32
-    % FIXME: this is overkill -- remove it
     fprintf (f, 'm4_define(`GB_is_plus_fc32_pair_semiring'', `%s'')\n', ...
         '#define GB_IS_PLUS_FC32_PAIR_SEMIRING 1') ;
 else
@@ -397,7 +396,6 @@ end
 
 if (is_plus && is_pair && isequal (ztype, 'GxB_FC64_t'))
     % plus_pair_fc64
-    % FIXME: this is overkill -- remove it
     fprintf (f, 'm4_define(`GB_is_plus_fc64_pair_semiring'', `%s'')\n', ...
         '#define GB_IS_PLUS_FC64_PAIR_SEMIRING 1') ;
 else

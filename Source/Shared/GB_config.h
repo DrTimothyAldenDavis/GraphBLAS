@@ -13,11 +13,11 @@
 #define GB_CONFIG_H
 
 // GB_C_COMPILER: the C compiler used to compile GraphBLAS:
-#define GB_C_COMPILER   "/raid/spack/opt/spack/linux-ubuntu20.04-broadwell/gcc-9.3.0/gcc-12.2.0-jvbqfq4l73txvbyocplypy25adjvj4hf/bin/gcc"
+#define GB_C_COMPILER   "/usr/bin/clang"
 
 // GB_C_FLAGS: the C compiler flags used to compile GraphBLAS.  Used
 // for compiling and linking:
-#define GB_C_FLAGS      " -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -O3 -DNDEBUG -fopenmp  -fPIC "
+#define GB_C_FLAGS      " -Wno-pointer-sign  -O3 -DNDEBUG -fopenmp=libomp  -fPIC "
 
 // GB_C_LINK_FLAGS: the flags passed to the C compiler for the link phase:
 #define GB_C_LINK_FLAGS " -shared "
@@ -40,6 +40,6 @@
 #define GB_OMP_INC      ""
 
 // GB_LIBRARIES: libraries to link with
-#define GB_LIBRARIES    " -lm -ldl /raid/spack/opt/spack/linux-ubuntu20.04-broadwell/gcc-9.3.0/gcc-12.2.0-jvbqfq4l73txvbyocplypy25adjvj4hf/lib64/libgomp.so /lib/x86_64-linux-gnu/libpthread.so"
+#define GB_LIBRARIES    " -lm -ldl /usr/lib/llvm-10/lib/libomp.so /usr/lib/x86_64-linux-gnu/libpthread.so"
 #endif
 

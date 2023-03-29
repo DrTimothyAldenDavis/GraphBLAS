@@ -88,6 +88,94 @@ See Sections~\ref{context} and \ref{jit} for details.
 \end{abstract}
 
 \newpage
+\begin{warning}
+NOTE: this version:
+\input{GraphBLAS_version.tex}
+is a DRAFT.  The following features/revisions will appear in the stable
+v8.0.0 release:
+\end{warning}
+
+\begin{itemize}
+
+    \item {\bf Lots of testing:} some of the new JIT features have not been
+        fully tested, such as \verb'GxB_set (GxB_JIT_CONTROL, ...)'.  Expect
+        to see some bugs.  I am posting this version
+        \input{GraphBLAS_version.tex}
+        as a rough draft, not even a beta pre-release, to get feedback on
+        the design of the JIT.
+
+    \item {\bf working compilers:} This version has been tested on Linux using
+    gcc 7.5, 9.4, and 12.2, and clang 10.0, and on the Mac using gcc 12.2 and
+    the Apple version of clang.  These compilers all work in the JIT.
+
+    \item {\bf Windows: do not attempt.}
+    The JIT needs to be ported to Windows.  This draft will not even compile
+    on Windows at all, even with the JIT disabled.  This draft uses
+    \verb'dlopen', \verb'dlsym', and \verb'dlclose', which do not appear in
+    Windows.
+
+    \item {\bf broken compilers on Linux:}
+        icx (2022.0.1 and 2023.0.1) hits a compiler bug with -O3, when
+        compiling \verb'Source/FactoryKernels/GB_AxB__lxor_pair_bool.c'.
+        This occurs when compiling GraphBLAS itself; it has nothing to do
+        with the new JIT.
+
+    \item {\bf compiler warnings:}  using \verb'clang' leads to some
+        compiler warnings when compiling the demos (typecasting complex
+        types).  These are safe but need to be silenced.
+
+    \item {\bf better performance:}
+    This draft is thread-safe when used in a multithread user application,
+    but a better JIT critical section (many readers, 1 writer) is needed.
+    The current critical section may be sufficient but this has not been
+    tested.
+
+    \item {\bf MATLAB:}
+    This version works in MATLAB, but the MATLAB interface (testing, and the
+    \verb'@GrB' interface) does not support the JIT.
+
+    \item {\bf pre-constructed JIT kernels:}  The plan is to allow the
+    end user to compile and run GraphBLAS, letting it construct kernels in
+    \verb'~/.SuiteSparse/GraphBLAS/8.0.0/*.c'.  Next, these \verb'*.c' files
+    (or any desired subset) could be copied into
+    \verb'GraphBLAS/Source/PreJITKernels', and all of GraphBLAS could then be
+    recompiled.   cmake would then incorporate these kernels directly into
+    \verb'libgraphblas.so', and the JIT compilation could be disabled in the
+    final user application, while at the same time exploiting the JIT for the
+    the kernels already compiled.  This feature has not yet been drafted.
+
+    \item {\bf timing metrics:} It would be nice to enable a profile report,
+    where each JIT kernel can record the number of times it has been called,
+    and the total time spent in each JIT kernel.  This would guide the use
+    of pre-constructed JIT kernels.
+
+    \item {\bf more JIT kernels:} \verb'GrB_assign' (34 kernels), \verb'subref'
+    (3 kernels), \verb'masker' (2 kernels), and other (5 kernels).  Grep the
+    source code for \verb'JIT: needed' for a list.  The current JIT kernels
+    cover all the \verb'generic' kernels in SuiteSparse GraphBLAS v7.x and
+    earlier for which {\em factory} kernels are available.  However, in those
+    versions, some kernels are only generic.  This draft does not accelerate
+    those, but they will be accelerated by the JIT in v8.x.
+
+    \item {\bf FIXME:} Lots of \verb'FIXME''s tagged in the \verb'Source/'
+    folder.  These are not broken features, but some will be done for v8.0.0.
+    Many of these are optional and should be tagged \verb'FUTURE' instead.
+
+    \item \verb'.gitignore' needs to ignore \verb'Source/Shared/GB_config.h',
+        which is configured by cmake with the compiler and flags used to
+        build GraphBLAS.
+
+    \item {\bf User-defined operators with NULL function pointers:} With the
+        JIT, I could compile kernels for user-defined operators that have no
+        function pointer, but just the strings that define the function.
+        These kernels would require the JIT to function, and would allow
+        systems in other languages such as Python, Julia, and MATLAB to create
+        operators at run time without the need for those systems to pass me a
+        pointer to a pre-compiled C function.
+
+\end{itemize}
+
+\newpage
 {\small
 \tableofcontents
 }
