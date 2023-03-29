@@ -1,5 +1,0 @@
-# Ignore any changes to the Source/Shared/GB_config.h file
-GB_config.h
-
-# Do not ignore this file
-!.gitignore

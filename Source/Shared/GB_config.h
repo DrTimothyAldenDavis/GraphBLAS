@@ -15,12 +15,6 @@
 
 // CFLAGS = -DGB_SOURCE_PATH=\"/home/me/mystuff/GraphBLAS\"
 
-// The default GraphBLAS/Source/Shared/GB_config.h file that comes from the
-// GraphBLAS distribution assumes the C compiler is just "cc", and other simple
-// defaults are used.  It is then overwritten by cmake.  The GB_SOURCE_PATH
-// setting does not have a good default value, so it is likely you will need to
-// revise it if using the alternative/Makefile when not using cmake.
-
 // Alternatively, the path to the GraphBLAS source can be set at run time:
 //      GxB_set (GxB_JIT_SOURCE_PATH, "/home/me/mystuff/GraphBLAS") ;
 
@@ -29,13 +23,13 @@
 
 // GB_C_COMPILER: the C compiler used to compile GraphBLAS:
 #ifndef GB_C_COMPILER
-#define GB_C_COMPILER   "cc"
+#define GB_C_COMPILER   "/usr/bin/gcc"
 #endif
 
 // GB_C_FLAGS: the C compiler flags used to compile GraphBLAS.  Used
 // for compiling and linking:
 #ifndef GB_C_FLAGS
-#define GB_C_FLAGS      " -O3 -fopenmp -fPIC "
+#define GB_C_FLAGS      " -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -O3 -DNDEBUG -fopenmp  -fPIC "
 #endif
 
 // GB_C_LINK_FLAGS: the flags passed to the C compiler for the link phase:
@@ -72,7 +66,7 @@
 
 // GB_LIBRARIES: libraries to link with
 #ifndef GB_LIBRARIES
-#define GB_LIBRARIES    " -lm -ldl "
+#define GB_LIBRARIES    " -lm -ldl /usr/lib/gcc/x86_64-linux-gnu/7/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.so"
 #endif
 
 #endif

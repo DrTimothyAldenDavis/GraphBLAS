@@ -15,12 +15,6 @@
 
 // CFLAGS = -DGB_SOURCE_PATH=\"/home/me/mystuff/GraphBLAS\"
 
-// The default GraphBLAS/Source/Shared/GB_config.h file that comes from the
-// GraphBLAS distribution assumes the C compiler is just "cc", and other simple
-// defaults are used.  It is then overwritten by cmake.  The GB_SOURCE_PATH
-// setting does not have a good default value, so it is likely you will need to
-// revise it if using the alternative/Makefile when not using cmake.
-
 // Alternatively, the path to the GraphBLAS source can be set at run time:
 //      GxB_set (GxB_JIT_SOURCE_PATH, "/home/me/mystuff/GraphBLAS") ;
 
