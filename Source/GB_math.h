@@ -1073,8 +1073,6 @@
 // but the corresponding functions do not appear in the ANSI C11 complex.h.
 // These functions are used instead, for float complex and double complex.
 
-// FIXME: rename these GB_FC32_* or GB_FC64_*
-
 //------------------------------------------------------------------------------
 // z = ceil (x) for float complex
 //------------------------------------------------------------------------------

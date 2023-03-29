@@ -74,7 +74,7 @@
             // (boolean EQ (LXNOR) monoid)_PAIR semiring
             cij = 1 ;
         }
-        #elif GB_IS_XOR_PAIR_SEMIRING
+        #elif GB_IS_LXOR_PAIR_SEMIRING
         { 
             // (boolean XOR monoid)_PAIR semiring
             cij = (GB_C_TYPE) (((uint64_t) vlen) & 0x1L) ;
@@ -205,7 +205,7 @@
             // (boolean EQ (LXNOR) monoid)_PAIR semiring
             cij = 1 ;
         }
-        #elif GB_IS_XOR_PAIR_SEMIRING
+        #elif GB_IS_LXOR_PAIR_SEMIRING
         { 
             // (boolean XOR monoid)_PAIR semiring
             cij = (GB_C_TYPE) (((uint64_t) bjnz) & 0x1L) ;
@@ -435,7 +435,7 @@
             // (boolean EQ (LXNOR) monoid)_PAIR semiring
             cij = 1 ;
         }
-        #elif GB_IS_XOR_PAIR_SEMIRING
+        #elif GB_IS_LXOR_PAIR_SEMIRING
         { 
             // (boolean XOR monoid)_PAIR semiring
             cij = (GB_C_TYPE) (((uint64_t) ainz) & 0x1L) ;

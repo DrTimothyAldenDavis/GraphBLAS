@@ -264,14 +264,12 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
         else if (addop->opcode == GB_EQ_binop_code)
         {
             // semiring is eq_pair_bool
-            // FIXME: delete this
             fprintf (fp, "#define GB_IS_EQ_PAIR_SEMIRING 1\n") ;
         }
         else if (addop->opcode == GB_LXOR_binop_code)
         {
             // semiring is lxor_pair_bool
-            // FIXME: rename _LXOR_PAIR_
-            fprintf (fp, "#define GB_IS_XOR_PAIR_SEMIRING 1\n") ;
+            fprintf (fp, "#define GB_IS_LXOR_PAIR_SEMIRING 1\n") ;
         }
 
     }

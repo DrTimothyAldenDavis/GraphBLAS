@@ -7,11 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// Enumify an apply or transpose/apply operation.  No accum or mask.  The
-// iso cases (for C and/or A) are not handled.  The op is either unary or
-// index unary, not binary (that is handled as an ewise enumify).
-
-// FIXME: add the case for A iso
+// Enumify an apply or transpose/apply operation.  No accum or mask.  The iso
+// cases for C is not handled.  The op is either unary or index unary, not
+// binary (that is handled as an ewise enumify).
 
 #include "GB.h"
 #include "GB_stringify.h"

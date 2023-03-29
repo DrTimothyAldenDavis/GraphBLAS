@@ -547,9 +547,8 @@ void mexFunction
     OK (GrB_IndexUnaryOp_wait_ (Banded, GrB_MATERIALIZE)) ;
     OK (GxB_IndexUnaryOp_fprint (Banded, "banded", 3, NULL)) ;
 
-    // FIXME: UpperBanded and UpperBanded_int64: definition not provided
-    #undef GrB_IndexUnaryOp_new
-    #undef GrM_IndexUnaryOp_new
+//  #undef GrB_IndexUnaryOp_new
+//  #undef GrM_IndexUnaryOp_new
 //  OK (GRB (IndexUnaryOp_new) (&UpperBanded,
 //      (GxB_index_unary_function) upperbanded_idx,
 //      GrB_BOOL, GrB_INT64, GrB_INT64)) ;

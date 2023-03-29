@@ -878,10 +878,10 @@ GrB_Info GB_jitifyer_worker
         "%s/lib%s%s", GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX) ;
     // FIXME: dlopen only exists on Linux/Unix/Mac
     void *dl_handle = dlopen (GB_jit_library_name, RTLD_LAZY) ;
-    if (dl_handle != NULL) 
-    {
-        printf ("dlopen: %s\n", GB_jit_library_name) ;
-    }
+//  if (dl_handle != NULL) 
+//  {
+//      printf ("dlopen: %s\n", GB_jit_library_name) ;
+//  }
 
     //--------------------------------------------------------------------------
     // check if the kernel was found, but needs to be compiled anyway
@@ -976,7 +976,7 @@ GrB_Info GB_jitifyer_worker
         GB_macrofy_query_version (fp) ;
         fclose (fp) ;
 
-        printf ("compile: %s\n", GB_jit_kernel_name) ;
+//      printf ("compile: %s\n", GB_jit_kernel_name) ;
 
         //----------------------------------------------------------------------
         // compile the source file to create the lib*.so file
@@ -988,7 +988,7 @@ GrB_Info GB_jitifyer_worker
         if (dl_handle == NULL)
         { 
             // unable to open lib*.so file
-            printf ("cannot open lib: [%s]\n", GB_jit_library_name) ;
+//          printf ("cannot open lib: [%s]\n", GB_jit_library_name) ;
             GBURBLE ("(jit: compiler error; compilation disabled) ") ;
             // disable the JIT to avoid repeated compilation errors
             GB_jit_control = GxB_JIT_LOAD ;

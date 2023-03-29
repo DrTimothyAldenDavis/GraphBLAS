@@ -32,7 +32,7 @@ is_any = isequal (addop, 'any') ;
 is_max = isequal (addop, 'max') ;
 is_min = isequal (addop, 'min') ;
 is_eq  = isequal (addop, 'eq') ;
-is_xor = isequal (addop, 'xor') ;
+is_lxor = isequal (addop, 'lxor') ;
 is_plus = isequal (addop, 'plus') ;
 is_any_pair = is_any && is_pair ;
 
@@ -342,12 +342,12 @@ else
     fprintf (f, 'm4_define(`GB_is_eq_pair_semiring'', `'')\n') ;
 end
 
-if (is_xor && is_pair)
+if (is_lxor && is_pair)
     % xor_pair_bool
-    fprintf (f, 'm4_define(`GB_is_xor_pair_semiring'', `%s'')\n', ...
-        '#define GB_IS_XOR_PAIR_SEMIRING 1') ;
+    fprintf (f, 'm4_define(`GB_is_lxor_pair_semiring'', `%s'')\n', ...
+        '#define GB_IS_LXOR_PAIR_SEMIRING 1') ;
 else
-    fprintf (f, 'm4_define(`GB_is_xor_pair_semiring'', `'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_lxor_pair_semiring'', `'')\n') ;
 end
 
 if (is_plus && ztype_nbits == 8 && is_pair)

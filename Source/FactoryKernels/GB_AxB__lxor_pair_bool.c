@@ -40,6 +40,8 @@
 
 // special case semirings:
 
+#define GB_IS_LXOR_PAIR_SEMIRING 1
+
 // monoid properties:
 #define GB_Z_TYPE bool
 #define GB_DECLARE_IDENTITY(z) bool z = false

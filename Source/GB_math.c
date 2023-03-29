@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: rename these GB_FC32_*, GB_FP32_*, GB_INT8_*, etc
-
 #include "GB.h"
 
 // complex constructors

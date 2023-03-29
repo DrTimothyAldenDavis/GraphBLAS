@@ -42,7 +42,7 @@ GB_putc
 GB_is_any_pair_semiring
 GB_is_plus_pair_real_semiring
 GB_is_eq_pair_semiring
-GB_is_xor_pair_semiring
+GB_is_lxor_pair_semiring
 GB_is_plus_8_pair_semiring
 GB_is_plus_16_pair_semiring
 GB_is_plus_32_pair_semiring

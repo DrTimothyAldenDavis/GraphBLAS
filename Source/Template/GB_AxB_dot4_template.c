@@ -104,7 +104,7 @@
                         // (boolean EQ (LXNOR) monoid)_PAIR semiring
                         cij = (cij == 1) ;
                     }
-                    #elif GB_IS_XOR_PAIR_SEMIRING
+                    #elif GB_IS_LXOR_PAIR_SEMIRING
                     { 
                         // (boolean XOR monoid)_PAIR semiring
                         uint64_t t = ((uint64_t) cij) + vlen ;
@@ -789,7 +789,7 @@
                         // (boolean EQ (LXNOR) monoid)_PAIR semiring
                         cij = (cij == 1) ;
                     }
-                    #elif GB_IS_XOR_PAIR_SEMIRING
+                    #elif GB_IS_LXOR_PAIR_SEMIRING
                     { 
                         // (boolean XOR monoid)_PAIR semiring
                         uint64_t t = ((uint64_t) cij) + bjnz ;
