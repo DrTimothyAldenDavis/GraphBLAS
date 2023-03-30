@@ -117,12 +117,6 @@ v8.0.0 release:
     \verb'dlopen', \verb'dlsym', and \verb'dlclose', which do not appear in
     Windows.
 
-    \item {\bf broken compilers on Linux:}
-        icx (2022.0.1 and 2023.0.1 on Linux) hits a compiler bug with -O3, when
-        compiling \newline
-        \verb'Source/FactoryKernels/GB_AxB__lxor_pair_bool.c'.  This occurs
-        when compiling GraphBLAS itself; it has nothing to do with the new JIT.
-
     \item {\bf compiler warnings:}  using \verb'clang' leads to some
         compiler warnings when compiling the demos (typecasting complex
         types).  These are safe but need to be silenced.
