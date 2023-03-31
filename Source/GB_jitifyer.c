@@ -878,10 +878,6 @@ GrB_Info GB_jitifyer_worker
         "%s/lib%s%s", GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX) ;
     // FIXME: dlopen only exists on Linux/Unix/Mac
     void *dl_handle = dlopen (GB_jit_library_name, RTLD_LAZY) ;
-//  if (dl_handle != NULL) 
-//  {
-//      printf ("dlopen: %s\n", GB_jit_library_name) ;
-//  }
 
     //--------------------------------------------------------------------------
     // check if the kernel was found, but needs to be compiled anyway
@@ -962,7 +958,13 @@ GrB_Info GB_jitifyer_worker
         fprintf (fp, "#include \"GB_jit_kernel_%s.h\"\n\n", family_name) ;
         GB_macrofy_family (fp, family, encoding->code, semiring, monoid,
             op, type1, type2, type3) ;
-        fprintf (fp, "\n#include \"GB_jit_kernel_%s.c\"\n\n", kname) ;
+
+        fprintf (fp, "#ifndef GB_JIT_RUNTIME\n"
+                     "#define GB_jit_kernel %s\n"
+                     "#endif\n"
+                     "#include \"GB_jit_kernel_%s.c\"\n\n",
+                     kernel_name, kname) ;
+        fprintf (fp, "\n#ifdef GB_JIT_RUNTIME\n") ;
         if (!builtin)
         { 
             // create query_defn function
@@ -974,6 +976,7 @@ GrB_Info GB_jitifyer_worker
             GB_macrofy_query_monoid (fp, monoid) ;
         }
         GB_macrofy_query_version (fp) ;
+        fprintf (fp, "#endif\n") ;
         fclose (fp) ;
 
 //      printf ("compile: %s\n", GB_jit_kernel_name) ;
@@ -1336,7 +1339,7 @@ int GB_jitifyer_compile (char *kernel_name)
     snprintf (GB_jit_command, GB_jit_command_allocated,
 
     // compile:
-    "%s "                           // compiler command
+    "%s -DGB_JIT_RUNTIME "          // compiler command
     #ifdef GBRENAME
     "-DGBRENAME=1 "                 // rename for MATLAB
     #endif

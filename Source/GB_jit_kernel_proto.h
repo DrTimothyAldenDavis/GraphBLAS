@@ -176,7 +176,7 @@ GrB_Info GB_jit_kernel_AxB_saxpy4                                       \
     int8_t *restrict Wf                                                 \
 )
 
-#define GB_JIT_KERNEL_AXB_SAXY5_PROTO(GB_jit_kernel_AxB_saxpy5)         \
+#define GB_JIT_KERNEL_AXB_SAXPY5_PROTO(GB_jit_kernel_AxB_saxpy5)        \
 GrB_Info GB_jit_kernel_AxB_saxpy5                                       \
 (                                                                       \
     GrB_Matrix C,                                                       \

@@ -11,7 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GB_JIT_KERNEL_AXB_SAXY5_PROTO ((*GB_jit_dl_function)) ;
+typedef GB_JIT_KERNEL_AXB_SAXPY5_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_AxB_saxpy5_jit          // C+=A*B, saxpy5 method, via the JIT
 (

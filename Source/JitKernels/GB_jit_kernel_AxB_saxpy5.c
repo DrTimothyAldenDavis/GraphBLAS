@@ -9,7 +9,7 @@
 
 #include "GB_AxB_saxpy3_template.h"
 
-GB_JIT_KERNEL_AXB_SAXY5_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel) ;
 
 #if !GB_A_IS_PATTERN && !GB_A_ISO && !GB_A_BITMAP
 
@@ -116,7 +116,7 @@ GB_JIT_KERNEL_AXB_SAXY5_PROTO (GB_jit_kernel) ;
 // GB_jit_kernel: for saxpy5 method
 //------------------------------------------------------------------------------
 
-GB_JIT_KERNEL_AXB_SAXY5_PROTO (GB_jit_kernel)
+GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel)
 {
 
     #if GB_A_IS_PATTERN || GB_A_ISO
