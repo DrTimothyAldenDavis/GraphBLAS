@@ -374,7 +374,6 @@ set_property ( TARGET graphblas PROPERTY C_STANDARD 11 )
 
 if ( SUITESPARSE_CUDA )
     add_dependencies ( graphblas graphblascuda )
-    add_dependencies ( graphblas rmm_wrap )
 endif ( )
 
 if ( WIN32 )
@@ -405,7 +404,6 @@ if ( NOT NSTATIC )
 
     if ( SUITESPARSE_CUDA )
         add_dependencies ( graphblas_static graphblascuda )
-        add_dependencies ( graphblas_static rmm_wrap )
     endif ( )
 endif ( )
 
@@ -504,13 +502,15 @@ else ( )
     endif ( )
 endif ( )
 
+# get the current library list, before linking with cuda and rmm
+get_target_property ( GB_LIST_LIB graphblas LINK_LIBRARIES )
+
 if ( SUITESPARSE_CUDA )
     target_link_libraries ( graphblas PUBLIC ${GB_CUDA} ${GB_RMM} )
     if ( NOT NSTATIC )
         target_link_libraries ( graphblas_static PUBLIC ${GB_CUDA} ${GB_RMM} )
     endif ( )
 endif ( )
-
 
 #-------------------------------------------------------------------------------
 # print final C flags
@@ -658,7 +658,6 @@ if ( NOT NJIT OR ENABLE_CUDA )
     endif ( )
 
     # construct the library list
-    get_target_property ( GB_LIST_LIB graphblas LINK_LIBRARIES )
     string ( REPLACE "." "\\." LIBSUFFIX ${GB_LIB_SUFFIX} )
     set ( GB_LIBRARIES "" )
 #   message ( STATUS "lib suffix: ${LIBSUFFIX}" )
@@ -710,8 +709,6 @@ set ( PREJITNAMES "" )
 foreach ( PSRC ${PRE1} )
     get_filename_component ( F ${PSRC} NAME_WE )
     list ( APPEND PREJIT ${F} )
-    string ( REGEX MATCH "reduce" FMATCH ${F} )
-    message ( STATUS "match ${FMATCH}" )
     if ( ${F} MATCHES "reduce" )
         message ( STATUS "got reduce: ${F}" )
     endif ( )
