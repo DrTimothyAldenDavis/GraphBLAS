@@ -350,7 +350,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             return (GrB_OUT_OF_MEMORY) ;
         }
 
-        // fixme: do async with streams
+        // FIXME: do async with streams
         // FIXME: do we need any of these?
         //CU_OK (cudaMemsetAsync(Nanobuckets, 0,
         //    nanobuckets_size * sizeof(int64_t), stream));

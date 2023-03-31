@@ -30,7 +30,7 @@
 //  GrB_Matrix B           <- input matrix B
 //  int sz                 <- size parameter (not used) 
 
-/* fixme: This kernel needs to be split into 4 methods:
+/* FIXME: This kernel needs to be split into 4 methods:
 
         (A bitmap) * (B bitmap)
         (A full ) * (B bitmap)
