@@ -355,9 +355,10 @@ endif ( )
 
 if ( COMPACT )
     # do not compile the FactoryKernels
-    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "PreJIT/*.c")
+#   file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "PreJIT/*.c")
+    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" )
 else ( )
-    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "PreJIT/*.c"
+    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" 
         "Source/FactoryKernels/*.c" )
 endif ( )
 
@@ -720,11 +721,10 @@ list ( JOIN PREJIT "\",\n\"" PRENAMES )
 list ( APPEND PREJIT "NULL" )
 list ( JOIN PREJIT ",\n" PRESTUFF )
 
-list ( LENGTH PREJIT PLEN )
-message (STATUS ${PRESTUFF} )
+list ( LENGTH PREJIT GB_PREJIT_LEN )
 
-configure_file ( "Config/GB_prejit.h.in"
-    "${PROJECT_SOURCE_DIR}/PreJIT/GB_prejit.h"
+configure_file ( "Config/GB_prejit.c.in"
+    "${PROJECT_SOURCE_DIR}/PreJIT/GB_prejit.c"
     NEWLINE_STYLE LF )
 
 #-------------------------------------------------------------------------------

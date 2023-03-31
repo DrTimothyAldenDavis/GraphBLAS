@@ -1,0 +1,46 @@
+//------------------------------------------------------------------------------
+// GraphBLAS/PreJit/GB_prejit.c: return list of PreJIT kernels
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
+// This file is configured by cmake from Config/GB_prejit.c.in.
+
+#include "GB.h"
+
+#define GB_PREJIT_LEN @GB_PREJIT_LEN@
+
+//------------------------------------------------------------------------------
+// GB_prejit_functions: a list of function pointers to PreJIT kernels
+//------------------------------------------------------------------------------
+
+static void *GB_prejit_functions [@GB_PREJIT_LEN@] =
+{
+@PRESTUFF@
+}
+
+//------------------------------------------------------------------------------
+// GB_prejit_names: a list of names of PreJIT kernels
+//------------------------------------------------------------------------------
+
+#if ( @GB_PREJIT_LEN@ == 0 )
+char *Names [0] = NULL ;
+#else
+char *Names [@GB_PREJIT_LEN@-1] =
+{
+"@PRENAMES@"
+}
+#endif
+
+void GB_prejit
+(
+    int32_t *nkernels,      // return # of kernels
+    void **Func_handle,     // return list of function pointers
+    char **Name_handle
+)
+{
+    (*nkernels) = @G
+}
