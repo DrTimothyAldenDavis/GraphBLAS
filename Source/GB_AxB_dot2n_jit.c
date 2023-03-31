@@ -11,16 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const GrB_Matrix A, int64_t *restrict A_slice,
-    const GrB_Matrix B, int64_t *restrict B_slice,
-    const int nthreads,
-    const int maslice,
-    const int nbslice
-) ;
+typedef GB_JIT_KERNEL_AXB_DOT2N_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_AxB_dot2n_jit        // C<M>=A*B, dot2n method, via the JIT
 (
@@ -30,8 +21,10 @@ GrB_Info GB_AxB_dot2n_jit        // C<M>=A*B, dot2n method, via the JIT
     const GrB_Matrix M,
     const bool Mask_comp,
     const bool Mask_struct,
-    const GrB_Matrix A, int64_t *restrict A_slice,
-    const GrB_Matrix B, int64_t *restrict B_slice,
+    const GrB_Matrix A,
+    const int64_t *restrict A_slice,
+    const GrB_Matrix B,
+    const int64_t *restrict B_slice,
     const GrB_Semiring semiring,
     const bool flipxy,
     const int nthreads,

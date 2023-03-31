@@ -16,27 +16,8 @@
     GB_BINOP (Cx [pC], aij, y, 0, 0) ;          \
 }
 
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GB_void *y_input,
-    int64_t *restrict *Workspaces,
-    const int64_t *restrict A_slice,
-    int nworkspaces,
-    int nthreads
-) ;
-
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GB_void *y_input,
-    int64_t *restrict *Workspaces,
-    const int64_t *restrict A_slice,
-    int nworkspaces,
-    int nthreads
-)
+GB_JIT_KERNEL_TRANS_BIND2ND_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_TRANS_BIND2ND_PROTO (GB_jit_kernel)
 { 
     GB_Y_TYPE y = (*((const GB_Y_TYPE *) y_input)) ;
     #include "GB_transpose_template.c"

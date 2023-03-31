@@ -11,28 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    // input/output:
-    GrB_Matrix C,
-    // input:
-    // I:
-    const GrB_Index *I,
-    const int64_t ni,
-    const int64_t nI,
-    const int64_t Icolon [3],
-    // J:
-    const GrB_Index *J,
-    const int64_t nj,
-    const int64_t nJ,
-    const int64_t Jcolon [3],
-    // mask M:
-    const GrB_Matrix M,
-    // A matrix or scalar:
-    const GrB_Matrix A,
-    const void *scalar,
-    GB_Werk Werk
-) ;
+typedef GB_JIT_KERNEL_SUBASSIGN_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_subassign_jit
 (

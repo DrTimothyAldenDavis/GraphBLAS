@@ -7,33 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads,
-    const int C_nthreads
-) ;
-
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads,
-    const int C_nthreads
-)
+GB_JIT_KERNEL_EMULT_BITMAP_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_EMULT_BITMAP_PROTO (GB_jit_kernel)
 { 
     #include "GB_emult_bitmap_template.c"
     return (GrB_SUCCESS) ;

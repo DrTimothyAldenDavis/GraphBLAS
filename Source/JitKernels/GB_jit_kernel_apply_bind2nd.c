@@ -7,25 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-GrB_Info GB_jit_kernel
-(
-    GB_void *Cx_output,         // Cx and Ax may be aliased
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-GrB_Info GB_jit_kernel
-(
-    GB_void *Cx_output,         // Cx and Ax may be aliased
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-)
+GB_JIT_KERNEL_APPLY_BIND2ND_PROTO(GB_jit_kernel) ;
+GB_JIT_KERNEL_APPLY_BIND2ND_PROTO(GB_jit_kernel)
 { 
     #include "GB_apply_bind2nd_template.c"
     return (GrB_SUCCESS) ;

@@ -10,27 +10,8 @@
 // cij = op (aij)
 #define GB_COPY(pC,pA,A_iso) GB_UNOP (Cx, pC, Ax, pA, A_iso, i, j, y)
 
-GrB_Info GB_jit_kernel
-(
-    // input/output
-    GrB_Matrix C,
-    // input:
-    int64_t cistart,
-    int64_t cvstart,
-    GrB_Matrix A,
-    GB_Werk Werk
-) ;
-
-GrB_Info GB_jit_kernel
-(
-    // input/output
-    GrB_Matrix C,
-    // input:
-    int64_t cistart,
-    int64_t cvstart,
-    GrB_Matrix A,
-    GB_Werk Werk
-)
+GB_JIT_KERNEL_CONCAT_BITMAP_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_CONCAT_BITMAP_PROTO (GB_jit_kernel)
 { 
     #include "GB_concat_bitmap_template.c"
     return (GrB_SUCCESS) ;

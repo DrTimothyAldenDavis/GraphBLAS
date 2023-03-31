@@ -11,20 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const bool M_in_place,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    GB_saxpy3task_struct *restrict SaxpyTasks,
-    const int ntasks,
-    const int nfine,
-    const int nthreads,
-    const int do_sort,
-    GB_Werk
-) ;
+typedef GB_JIT_KERNEL_AXB_SAXPY3_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
 (

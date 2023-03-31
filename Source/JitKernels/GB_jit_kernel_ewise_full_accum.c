@@ -7,21 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int nthreads
-) ;
-
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int nthreads
-)
+GB_JIT_KERNEL_EWISE_FULL_ACCUM_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_EWISE_FULL_ACCUM_PROTO (GB_jit_kernel)
 { 
     #include "GB_ewise_full_accum_template.c"
     return (GrB_SUCCESS) ;

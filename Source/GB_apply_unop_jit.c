@@ -11,15 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    GB_void *Cx,                // Cx and Ax may be aliased
-    GrB_Matrix A,
-    const void *ythunk,         // for index unary ops (op->ytype scalar)
-    const int64_t *restrict A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
-) ;
+typedef GB_JIT_KERNEL_APPLY_UNOP_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
 (

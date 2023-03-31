@@ -12,15 +12,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix D,
-    const int64_t *restrict A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
-) ;
+typedef GB_JIT_KERNEL_COLSCALE_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
 (

@@ -9,15 +9,7 @@
 
 #include "GB_AxB_saxpy3_template.h"
 
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int ntasks,
-    const int nthreads,
-    const int64_t *B_slice
-) ;
+GB_JIT_KERNEL_AXB_SAXY5_PROTO (GB_jit_kernel) ;
 
 #if !GB_A_IS_PATTERN && !GB_A_ISO && !GB_A_BITMAP
 
@@ -124,15 +116,7 @@ GrB_Info GB_jit_kernel
 // GB_jit_kernel: for saxpy5 method
 //------------------------------------------------------------------------------
 
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int ntasks,
-    const int nthreads,
-    const int64_t *B_slice
-)
+GB_JIT_KERNEL_AXB_SAXY5_PROTO (GB_jit_kernel)
 {
 
     #if GB_A_IS_PATTERN || GB_A_ISO

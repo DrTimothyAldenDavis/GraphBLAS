@@ -12,13 +12,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int nthreads
-) ;
+typedef GB_JIT_KERNEL_EWISE_FULL_ACCUM_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_ewise_full_accum_jit    // C+=A+B via the JIT
 (

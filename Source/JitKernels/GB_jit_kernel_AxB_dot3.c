@@ -9,27 +9,8 @@
 
 // C<M>=A'*B: masked dot product, C and M are both sparse or both hyper
 
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GB_task_struct *restrict TaskList,
-    const int ntasks,
-    const int nthreads
-) ;
-
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GB_task_struct *restrict TaskList,
-    const int ntasks,
-    const int nthreads
-)
+GB_JIT_KERNEL_AXB_DOT3_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_AXB_DOT3_PROTO (GB_jit_kernel)
 { 
     #include "GB_AxB_dot3_meta.c"
     return (GrB_SUCCESS) ;

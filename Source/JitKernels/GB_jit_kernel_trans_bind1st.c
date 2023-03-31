@@ -15,28 +15,8 @@
     GB_BINOP (Cx [pC], x, aij, 0, 0) ;          \
 }
 
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GB_void *x_input,
-    const GrB_Matrix A,
-    int64_t *restrict *Workspaces,
-    const int64_t *restrict A_slice,
-    int nworkspaces,
-    int nthreads
-)
- ;
-
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GB_void *x_input,
-    const GrB_Matrix A,
-    int64_t *restrict *Workspaces,
-    const int64_t *restrict A_slice,
-    int nworkspaces,
-    int nthreads
-)
+GB_JIT_KERNEL_TRANS_BIND1ST_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_TRANS_BIND1ST_PROTO (GB_jit_kernel)
 { 
     #define GB_BIND_1ST
     GB_X_TYPE x = (*((const GB_X_TYPE *) x_input)) ;

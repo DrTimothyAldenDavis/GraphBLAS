@@ -11,16 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    // input/output
-    GrB_Matrix C,
-    // input:
-    GrB_Matrix A,
-    int64_t avstart,
-    int64_t aistart,
-    const int C_nthreads
-) ;
+typedef GB_JIT_KERNEL_SPLIT_FULL_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_split_full_jit      // split A into a full tile C
 (

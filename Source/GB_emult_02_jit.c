@@ -12,19 +12,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int64_t *restrict Cp_kfirst,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
-) ;
+typedef GB_JIT_KERNEL_EMULT_02_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
 (

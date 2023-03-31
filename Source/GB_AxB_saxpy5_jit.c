@@ -11,15 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int ntasks,
-    const int nthreads,
-    const int64_t *B_slice
-) ;
+typedef GB_JIT_KERNEL_AXB_SAXY5_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_AxB_saxpy5_jit          // C+=A*B, saxpy5 method, via the JIT
 (

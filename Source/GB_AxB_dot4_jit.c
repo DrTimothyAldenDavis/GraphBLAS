@@ -11,18 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int64_t *restrict A_slice,
-    const int64_t *restrict B_slice,
-    const int naslice,
-    const int nbslice,
-    const int nthreads,
-    GB_Werk
-) ;
+typedef GB_JIT_KERNEL_AXB_DOT4_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_AxB_dot4_jit            // C+=A'*B, dot4 method, via the JIT
 (

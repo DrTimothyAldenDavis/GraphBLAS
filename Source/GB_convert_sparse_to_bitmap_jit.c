@@ -14,17 +14,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    // output:
-    GB_void *Ax_new,
-    int8_t *Ab,
-    // input:
-    const GrB_Matrix A,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
-) ;
+typedef GB_JIT_KERNEL_CONVERT_S2B_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_convert_sparse_to_bitmap_jit    // convert sparse to bitmap
 (

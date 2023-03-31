@@ -7,25 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix D,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
-) ;
-
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix D,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
-)
+GB_JIT_KERNEL_COLSCALE_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_COLSCALE_PROTO (GB_jit_kernel)
 { 
     #include "GB_colscale_template.c"
     return (GrB_SUCCESS) ;

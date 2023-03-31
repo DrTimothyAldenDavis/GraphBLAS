@@ -163,6 +163,12 @@ v8.0.0 release:
         operators at run time without the need for those systems to pass me a
         pointer to a pre-compiled C function.
 
+    \item {\bf Thread-safety:}  GraphBLAS is thread-safe when used in a single
+        multithreaded user application.  However, if the user runs multiple
+        instances of GraphBLAS at the same time, and each of them attempts to
+        compile the same JIT kernels, a file read/write conflict will occur on
+        your \verb'~/.SuiteSparse/GraphBLAS/8.0.0' folder.
+
 \end{itemize}
 
 \newpage

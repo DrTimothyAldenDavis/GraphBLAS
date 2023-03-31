@@ -12,15 +12,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    GB_void *Cx,
-    const GB_void *xscalar,
-    const GB_void *Bx,
-    const int8_t *restrict Bb,
-    const int64_t bnz,
-    const int nthreads
-) ;
+typedef GB_JIT_KERNEL_APPLY_BIND1ST_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
 (

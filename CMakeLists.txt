@@ -253,12 +253,12 @@ if ( COMPACT )
     # do not compile the FactoryKernels
     include_directories ( Source/Template Source Include Source/Shared
         Source/SharedTemplate xxHash Config lz4 zstd zstd/zstd_subset
-        Demo/Include rmm_wrap )
+        Demo/Include rmm_wrap Source/JitKernels )
 else ( )
     include_directories ( Source/Template Source Include Source/Shared
         Source/SharedTemplate xxHash Config lz4 zstd zstd/zstd_subset
         Source/FactoryKernels
-        Demo/Include rmm_wrap )
+        Demo/Include rmm_wrap Source/JitKernels )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -355,9 +355,10 @@ endif ( )
 
 if ( COMPACT )
     # do not compile the FactoryKernels
-    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" )
+    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "PreJIT/*.c")
 else ( )
-    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Source/FactoryKernels/*.c" )
+    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "PreJIT/*.c"
+        "Source/FactoryKernels/*.c" )
 endif ( )
 
 add_library ( graphblas SHARED ${GRAPHBLAS_SOURCES} )
@@ -628,7 +629,7 @@ if ( NOT NJIT OR ENABLE_CUDA )
     set ( GB_C_LINK_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}" )
     set ( GB_LIB_SUFFIX "${CMAKE_SHARED_LIBRARY_SUFFIX}" )
 
-    # construct the C flags and link flags 
+    # construct the C flags and link flags
     if ( APPLE )
         # MacOS
         set ( GB_C_FLAGS "${GB_C_FLAGS} -fPIC " )
@@ -699,6 +700,31 @@ endif ( )
 
 configure_file ( "Config/GB_config.h.in"
     "${PROJECT_SOURCE_DIR}/Source/Shared/GB_config.h"
+    NEWLINE_STYLE LF )
+
+# create a list of files
+file ( GLOB PRE1 "PreJIT/*.c" )
+set ( PREJIT "" )
+set ( PREJITNAMES "" )
+foreach ( PSRC ${PRE1} )
+    get_filename_component ( F ${PSRC} NAME_WE )
+    list ( APPEND PREJIT ${F} )
+    string ( REGEX MATCH "reduce" FMATCH ${F} )
+    message ( STATUS "match ${FMATCH}" )
+    if ( ${F} MATCHES "reduce" )
+        message ( STATUS "got reduce: ${F}" )
+    endif ( )
+endforeach ( )
+list ( JOIN PREJIT "\",\n\"" PRENAMES )
+
+list ( APPEND PREJIT "NULL" )
+list ( JOIN PREJIT ",\n" PRESTUFF )
+
+list ( LENGTH PREJIT PLEN )
+message (STATUS ${PRESTUFF} )
+
+configure_file ( "Config/GB_prejit.h.in"
+    "${PROJECT_SOURCE_DIR}/PreJIT/GB_prejit.h"
     NEWLINE_STYLE LF )
 
 #-------------------------------------------------------------------------------

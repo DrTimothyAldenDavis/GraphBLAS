@@ -11,15 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    int64_t *restrict *Workspaces,
-    const int64_t *restrict A_slice,
-    int nworkspaces,
-    int nthreads
-) ;
+typedef GB_JIT_KERNEL_TRANS_UNOP_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
 (

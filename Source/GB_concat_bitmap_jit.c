@@ -11,16 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    // input/output
-    GrB_Matrix C,
-    // input:
-    int64_t cistart,
-    int64_t cvstart,
-    GrB_Matrix A,
-    GB_Werk Werk
-) ;
+typedef GB_JIT_KERNEL_CONCAT_BITMAP_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_concat_bitmap_jit      // concatenate A into a bitmap matrix C
 (

@@ -46,6 +46,10 @@ cuda:
 debug:
 	( cd build && cmake -DCMAKE_BUILD_TYPE=Debug $(CMAKE_OPTIONS) .. && cmake --build . -j$(JOBS) )
 
+# compile without FactoryKernels
+compact:
+	( cd build && cmake $(CMAKE_OPTIONS) -DCOMPACT=1 .. && cmake --build . -j$(JOBS) )
+
 # build the dynamic library and the demos
 all:
 	( cd build && cmake $(CMAKE_OPTIONS) -DDEMO=1 .. && cmake --build . -j$(JOBS) )

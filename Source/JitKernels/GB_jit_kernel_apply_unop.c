@@ -23,25 +23,8 @@
 
 #endif
 
-GrB_Info GB_jit_kernel
-(
-    GB_void *Cx_out,            // Cx and Ax may be aliased
-    GrB_Matrix A,
-    const void *ythunk,         // for index unary ops (op->ytype scalar)
-    const int64_t *restrict A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
-) ;
-
-GrB_Info GB_jit_kernel
-(
-    GB_void *Cx_out,            // Cx and Ax may be aliased
-    GrB_Matrix A,
-    const void *ythunk,         // for index unary ops (op->ytype scalar)
-    const int64_t *restrict A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
-)
+GB_JIT_KERNEL_APPLY_UNOP_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_APPLY_UNOP_PROTO (GB_jit_kernel)
 { 
 
     GB_C_TYPE *Cx = (GB_C_TYPE *) Cx_out ;

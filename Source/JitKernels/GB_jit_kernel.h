@@ -11,6 +11,7 @@
 
 #define GB_JIT_KERNEL
 #include "GB.h"
+#include "GB_jit_kernel_proto.h"
 
 #undef GB_M_TYPE
 #undef GB_MCAST

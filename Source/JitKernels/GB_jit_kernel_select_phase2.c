@@ -7,31 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-GrB_Info GB_jit_kernel
-(
-    int64_t *restrict Ci,
-    GB_void *restrict Cx_out,
-    const int64_t *restrict Cp,
-    const int64_t *restrict Cp_kfirst,
-    const GrB_Matrix A,
-    const GB_void *restrict ythunk,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
-) ;
-
-GrB_Info GB_jit_kernel
-(
-    int64_t *restrict Ci,
-    GB_void *restrict Cx_out,
-    const int64_t *restrict Cp,
-    const int64_t *restrict Cp_kfirst,
-    const GrB_Matrix A,
-    const GB_void *restrict ythunk,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
-)
+GB_JIT_KERNEL_SELECT_PHASE2_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_SELECT_PHASE2_PROTO (GB_jit_kernel)
 { 
     GB_A_TYPE *restrict Cx = (GB_A_TYPE *) Cx_out ;
     #if GB_DEPENDS_ON_Y

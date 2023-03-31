@@ -7,25 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-GrB_Info GB_jit_kernel
-(
-    GB_void *Cx_output,         // Cx and Bx may be aliased
-    const GB_void *x_input,
-    const GB_void *Bx_input,
-    const int8_t *restrict Bb,
-    int64_t bnz,
-    int nthreads
-) ;
-
-GrB_Info GB_jit_kernel
-(
-    GB_void *Cx_output,         // Cx and Bx may be aliased
-    const GB_void *x_input,
-    const GB_void *Bx_input,
-    const int8_t *restrict Bb,
-    int64_t bnz,
-    int nthreads
-)
+GB_JIT_KERNEL_APPLY_BIND1ST_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_APPLY_BIND1ST_PROTO (GB_jit_kernel)
 { 
     #include "GB_apply_bind1st_template.c"
     return (GrB_SUCCESS) ;

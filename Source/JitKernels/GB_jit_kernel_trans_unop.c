@@ -12,25 +12,8 @@
 // cij = op (aij)
 #define GB_APPLY_OP(pC,pA) GB_UNOP (Cx, pC, Ax, pA, A_iso, i, j, y)
 
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    int64_t *restrict *Workspaces,
-    const int64_t *restrict A_slice,
-    int nworkspaces,
-    int nthreads
-) ;
-
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    int64_t *restrict *Workspaces,
-    const int64_t *restrict A_slice,
-    int nworkspaces,
-    int nthreads
-)
+GB_JIT_KERNEL_TRANS_UNOP_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_TRANS_UNOP_PROTO (GB_jit_kernel)
 { 
     #include "GB_transpose_template.c"
     return (GrB_SUCCESS) ;

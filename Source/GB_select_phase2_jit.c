@@ -11,18 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    int64_t *restrict Ci,
-    GB_void *restrict Cx,                   // NULL if C is iso-valued
-    const int64_t *restrict Cp,
-    const int64_t *restrict Cp_kfirst,
-    const GrB_Matrix A,
-    const GB_void *restrict ythunk,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
-) ;
+typedef GB_JIT_KERNEL_SELECT_PHASE2_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_select_phase2_jit      // select phase2
 (

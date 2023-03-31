@@ -11,6 +11,7 @@
 #define GB_JITIFYER_H
 
 #include <dlfcn.h>
+#include "GB_jit_kernel_proto.h"
 
 //------------------------------------------------------------------------------
 // list of jitifyed kernels

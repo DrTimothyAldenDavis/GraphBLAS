@@ -11,25 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int ntasks,
-    const int nthreads,
-    const int nfine_tasks_per_vector,
-    const bool use_coarse_tasks,
-    const bool use_atomics,
-    const int64_t *restrict M_ek_slicing,
-    const int M_nthreads,
-    const int M_ntasks,
-    const int64_t *restrict A_slice,
-    const int64_t *restrict H_slice,
-    GB_void *restrict Wcx,
-    int8_t *restrict Wf
-) ;
+typedef GB_JIT_KERNEL_AXB_SAXBIT_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_AxB_saxbit_jit      // C<M>=A*B, saxbit, via the JIT
 (

@@ -11,19 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    // input/output
-    GrB_Matrix C,
-    // input:
-    GrB_Matrix A,
-    int64_t akstart,
-    int64_t aistart,
-    int64_t *restrict Wp,
-    const int64_t *restrict C_ek_slicing,
-    const int C_ntasks,
-    const int C_nthreads
-) ;
+typedef GB_JIT_KERNEL_SPLIT_SPARSE_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_split_sparse_jit      // split A into a sparse tile C
 (

@@ -11,14 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    int8_t *Cb,
-    int64_t *cnvals_handle,
-    GrB_Matrix A,
-    const GB_void *restrict ythunk,
-    const int nthreads
-) ;
+typedef GB_JIT_KERNEL_SELECT_BITMAP_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_select_bitmap_jit      // select bitmap
 (

@@ -9,23 +9,8 @@
 
 // C<#M>=A*B: dot product, C is bitmap/full, dot2n method
 
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const GrB_Matrix A, int64_t *restrict A_slice,
-    const GrB_Matrix B, int64_t *restrict B_slice,
-    int nthreads, int naslice, int nbslice
-) ;
-
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const GrB_Matrix A, int64_t *restrict A_slice,
-    const GrB_Matrix B, int64_t *restrict B_slice,
-    int nthreads, int naslice, int nbslice
-)
+GB_JIT_KERNEL_AXB_DOT2N_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_AXB_DOT2N_PROTO (GB_jit_kernel)
 { 
     #define GB_A_NOT_TRANSPOSED
     #include "GB_AxB_dot2_meta.c"

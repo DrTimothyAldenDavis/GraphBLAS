@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_subassign_25.c:
+// GB_jit_kernel_subassign_25.c: C(:,:)<M,s> = A ; M struct, A bitmap/full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -16,6 +16,8 @@
 // accum:       NULL
 // A:           matrix
 // S:           none
+// I:           NULL
+// J:           NULL
 
 // C and M are sparse or hypersparse.  A can have any sparsity structure, even
 // bitmap, but it must either be bitmap, or as-if-full.  M may be jumbled.  If
@@ -25,51 +27,8 @@
 
 // C is iso if A is iso
 
-GrB_Info GB_jit_kernel
-(
-    // input/output:
-    GrB_Matrix C,
-    // input:
-    // I:
-    const GrB_Index *I,         // NULL
-    const int64_t ni,           // 0
-    const int64_t nI,           // 0
-    const int64_t Icolon [3],   // NULL
-    // J:
-    const GrB_Index *J,         // NULL
-    const int64_t nj,           // 0
-    const int64_t nJ,           // 0
-    const int64_t Jcolon [3],   // NULL
-    // mask M:
-    const GrB_Matrix M,
-    // A matrix or scalar:
-    const GrB_Matrix A,
-    const void *scalar,         // NULL
-    GB_Werk Werk
-) ;
-
-GrB_Info GB_jit_kernel
-(
-    // input/output:
-    GrB_Matrix C,
-    // input:
-    // I:
-    const GrB_Index *I,         // NULL
-    const int64_t ni,           // 0
-    const int64_t nI,           // 0
-    const int64_t Icolon [3],   // NULL
-    // J:
-    const GrB_Index *J,         // NULL
-    const int64_t nj,           // 0
-    const int64_t nJ,           // 0
-    const int64_t Jcolon [3],   // NULL
-    // mask M:
-    const GrB_Matrix M,
-    // A matrix or scalar:
-    const GrB_Matrix A,
-    const void *scalar,         // NULL
-    GB_Werk Werk
-)
+GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
 {
     #include "GB_subassign_25_template.c"
     return (GrB_SUCCESS) ;

@@ -9,31 +9,8 @@
 
 // C+=A'*B: dot product, C is full, dot4 method
 
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int64_t *restrict A_slice,
-    const int64_t *restrict B_slice,
-    const int naslice,
-    const int nbslice,
-    const int nthreads,
-    GB_Werk Werk
-) ;
-
-GrB_Info GB_jit_kernel
-(
-    GrB_Matrix C,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const int64_t *restrict A_slice,
-    const int64_t *restrict B_slice,
-    const int naslice,
-    const int nbslice,
-    const int nthreads,
-    GB_Werk Werk
-)
+GB_JIT_KERNEL_AXB_DOT4_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_AXB_DOT4_PROTO (GB_jit_kernel)
 { 
     #include "GB_AxB_dot4_meta.c"
     return (GrB_SUCCESS) ;

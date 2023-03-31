@@ -11,19 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    GB_void *restrict Tx,
-    int64_t *restrict Ti,
-    const GB_void *restrict Sx,
-    const int64_t nvals,
-    const int64_t ndupl,
-    const int64_t *restrict I_work,
-    const int64_t *restrict K_work,
-    const int64_t *restrict tstart_slice,
-    const int64_t *restrict tnz_slice,
-    int nthreads
-) ;
+typedef GB_JIT_KERNEL_BUILD_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_build_jit               // GB_builder JIT kernel
 (

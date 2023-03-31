@@ -11,18 +11,7 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GrB_Info (*GB_jit_dl_function)
-(
-    // input/output
-    GrB_Matrix C,
-    // input:
-    int64_t cistart,
-    GrB_Matrix A,
-    int64_t *restrict W,
-    const int64_t *restrict A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
-) ;
+typedef GB_JIT_KERNEL_CONCAT_SPARSE_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_concat_sparse_jit      // concatenate A into a sparse matrix C
 (

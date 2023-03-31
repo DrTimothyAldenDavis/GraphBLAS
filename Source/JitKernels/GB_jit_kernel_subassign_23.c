@@ -7,51 +7,22 @@
 
 //------------------------------------------------------------------------------
 
-GrB_Info GB_jit_kernel
-(
-    // input/output:
-    GrB_Matrix C,
-    // input:
-    // I:
-    const GrB_Index *I,         // NULL
-    const int64_t ni,           // 0
-    const int64_t nI,           // 0
-    const int64_t Icolon [3],   // NULL
-    // J:
-    const GrB_Index *J,         // NULL
-    const int64_t nj,           // 0
-    const int64_t nJ,           // 0
-    const int64_t Jcolon [3],   // NULL
-    // mask M:
-    const GrB_Matrix M,         // NULL
-    // A matrix or scalar:
-    const GrB_Matrix A,
-    const void *scalar,         // NULL
-    GB_Werk Werk
-) ;
+// Method 23: C += A, where C is dense
 
-GrB_Info GB_jit_kernel
-(
-    // input/output:
-    GrB_Matrix C,
-    // input:
-    // I:
-    const GrB_Index *I,         // NULL
-    const int64_t ni,           // 0
-    const int64_t nI,           // 0
-    const int64_t Icolon [3],   // NULL
-    // J:
-    const GrB_Index *J,         // NULL
-    const int64_t nj,           // 0
-    const int64_t nJ,           // 0
-    const int64_t Jcolon [3],   // NULL
-    // mask M:
-    const GrB_Matrix M,         // NULL
-    // A matrix or scalar:
-    const GrB_Matrix A,
-    const void *scalar,         // NULL
-    GB_Werk Werk
-)
+// M:           NULL
+// Mask_comp:   false
+// Mask_struct: ignored
+// C_replace:   false
+// accum:       present
+// A:           matrix
+// S:           none
+// I:           NULL
+// J:           NULL
+
+// C and A can have any sparsity structure, but C must be as-if-full.
+
+GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
 {
     #include "GB_subassign_23_template.c"
     return (GrB_SUCCESS) ;

@@ -10,33 +10,8 @@
 // cij = op (aij)
 #define GB_COPY(pC,pA) GB_UNOP (Cx, pC, Ax, pA, false, i, j, y)
 
-GrB_Info GB_jit_kernel
-(
-    // input/output
-    GrB_Matrix C,
-    // input:
-    GrB_Matrix A,
-    int64_t akstart,
-    int64_t aistart,
-    int64_t *restrict Wp,
-    const int64_t *restrict C_ek_slicing,
-    const int C_ntasks,
-    const int C_nthreads
-) ;
-
-GrB_Info GB_jit_kernel
-(
-    // input/output
-    GrB_Matrix C,
-    // input:
-    GrB_Matrix A,
-    int64_t akstart,
-    int64_t aistart,
-    int64_t *restrict Wp,
-    const int64_t *restrict C_ek_slicing,
-    const int C_ntasks,
-    const int C_nthreads
-)
+GB_JIT_KERNEL_SPLIT_SPARSE_PROTO (GB_jit_kernel) ;
+GB_JIT_KERNEL_SPLIT_SPARSE_PROTO (GB_jit_kernel)
 { 
     #include "GB_split_sparse_template.c"
     return (GrB_SUCCESS) ;
