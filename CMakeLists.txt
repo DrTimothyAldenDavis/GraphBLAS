@@ -374,6 +374,7 @@ set_property ( TARGET graphblas PROPERTY C_STANDARD 11 )
 
 if ( SUITESPARSE_CUDA )
     add_dependencies ( graphblas graphblascuda )
+#   add_dependencies ( graphblas rmm_wrap )
 endif ( )
 
 if ( WIN32 )
@@ -404,6 +405,7 @@ if ( NOT NSTATIC )
 
     if ( SUITESPARSE_CUDA )
         add_dependencies ( graphblas_static graphblascuda )
+#       add_dependencies ( graphblas_static rmm_wrap )
     endif ( )
 endif ( )
 
