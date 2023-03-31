@@ -9,8 +9,8 @@ they are still refered to as "JIT" kernels since they were at one time created
 at run time by the GraphBLAS JIT.  Thus the name of this folder:
 GraphBLAS/PreJIT.
 
-If the GraphBLAS version is changed at all (even in the last digit), all files
-in this folder must be deleted.
+If the GraphBLAS version is changed at all (even in the last digit), all *.c
+files in this folder must be deleted.
 
 If a user-defined type or operator is changed, the relevant kernels must also
 be deleted.  For example, the GraphBLAS/Demo/Program/gauss_demo.c program
@@ -19,5 +19,8 @@ If the type and/or operators are changed, then the *gauss*.c files in this
 folder should be deleted, so that the JIT can recompile them with the new
 definition.  Otherwise, GraphBLAS will detect that the definitions do not
 match, and it will not use the related kernels in this file.  Instead, it will
-compile new ones in your ~/.SuiteSparse/GraphBLAS/*.*.* folder.
+compile new ones in your ~/.SuiteSparse/GraphBLAS/*.*.* folder.  GraphBLAS will
+work with stale functions in this folder.  It will compile them and include
+them in libgraphblas.so, but not use them at all.  So deleting them will reduce
+the size of the compiled libgraphblas.so library.
 
