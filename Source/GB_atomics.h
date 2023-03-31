@@ -17,7 +17,6 @@
 
 #ifndef GB_ATOMICS_H
 #define GB_ATOMICS_H
-#include "GB.h"
 
 //------------------------------------------------------------------------------
 // atomic updates
@@ -440,7 +439,9 @@
     // compare/exchange for gcc, icc, and clang on x86 and Power8/9
     //--------------------------------------------------------------------------
 
+    #ifndef __cplusplus
     #include <stdatomic.h>
+    #endif
 
     // bool, int8_t, and uint8_t
     #define GB_ATOMIC_COMPARE_EXCHANGE_8(target, expected, desired)     \
