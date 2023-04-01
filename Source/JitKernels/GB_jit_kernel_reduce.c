@@ -65,8 +65,6 @@
 
     #include "GB_jit_kernel_reduce.c"
 
-    void GB_jit_query_version (int *v) { v [0] = 8 ; v [1] = 0 ; v [2] = 0 ; }
-
 #endif
 
 //------------------------------------------------------------------------------

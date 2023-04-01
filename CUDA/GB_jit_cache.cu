@@ -80,6 +80,7 @@ namespace jit {
 std::string getCacheDir() {
   // The environment variable always overrides the
   // default/compile-time value of `GRAPHBLAS_CACHE_PATH`
+  // FIXME: use GB_jitifyer_get_cache_path ( ) here.
   auto kernel_cache_path_env = std::getenv("GRAPHBLAS_CACHE_PATH");
   auto kernel_cache_path = (kernel_cache_path_env != nullptr ? kernel_cache_path_env
                                        : GRAPHBLAS_CACHE_PATH);

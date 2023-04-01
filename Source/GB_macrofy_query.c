@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_macrofy_query_defn: construct query_defn function for a kernel
+// GB_macrofy_query: construct GB_jit_query function for a kernel
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -10,9 +10,11 @@
 #include "GB.h"
 #include "GB_stringify.h"
 
-void GB_macrofy_query_defn
+void GB_macrofy_query
 (
     FILE *fp,
+    const bool builtin, // true if method is all builtin
+    GrB_Monoid monoid,  // monoid for reduce or semiring; NULL otherwise
     GB_Operator op0,    // monoid op, select op, unary op, etc
     GB_Operator op1,    // binaryop for a semring
     GrB_Type type0,
@@ -22,17 +24,26 @@ void GB_macrofy_query_defn
 {
 
     //--------------------------------------------------------------------------
-    // create a function to query the operator and type definitions
+    // create the function header, and query the version
     //--------------------------------------------------------------------------
 
     fprintf (fp, 
-        "// to query the kernel for its op and type definitions:\n"
-        "const char *GB_jit_query_defn (int k)\n"
+        "bool GB_jit_query (int v [3], char *defn [5],\n"
+        "    void *id, void *term, size_t id_size, size_t term_size) ;\n"
+        "bool GB_jit_query (int v [3], char *defn [5],\n"
+        "    void *id, void *term, size_t id_size, size_t term_size)\n"
         "{\n"
-        "    const char *defn [5] ;\n") ;
+        "    v [0] = %d ; v [1] = %d ; v [2] = %d ;\n",
+            GxB_IMPLEMENTATION_MAJOR,
+            GxB_IMPLEMENTATION_MINOR,
+            GxB_IMPLEMENTATION_SUB) ;
+
+    //--------------------------------------------------------------------------
+    // query the operators
+    //--------------------------------------------------------------------------
 
     // create the definition string for op0
-    if (op0 == NULL || op0->defn == NULL)
+    if (builtin || op0 == NULL || op0->defn == NULL)
     {
         // op0 does not appear, or is builtin
         fprintf (fp, "    defn [0] = NULL ;\n") ;
@@ -44,7 +55,7 @@ void GB_macrofy_query_defn
     }
 
     // create the definition string for op1
-    if (op1 == NULL || op1->defn == NULL)
+    if (builtin || op1 == NULL || op1->defn == NULL)
     {
         // op1 does not appear, or is builtin
         fprintf (fp, "    defn [1] = NULL ;\n") ;
@@ -60,7 +71,10 @@ void GB_macrofy_query_defn
         fprintf (fp, "    defn [1] = GB_%s_USER_DEFN ;\n", op1->name) ;
     }
 
-    // create the definition string for the 3 types
+    //--------------------------------------------------------------------------
+    // querty the three types
+    //--------------------------------------------------------------------------
+
     GrB_Type types [3] ;
     types [0] = type0 ;
     types [1] = type1 ;
@@ -68,7 +82,7 @@ void GB_macrofy_query_defn
     for (int k = 0 ; k <= 2 ; k++)
     {
         GrB_Type type = types [k] ;
-        if (type == NULL || type->defn == NULL)
+        if (builtin || type == NULL || type->defn == NULL)
         {
             // types [k] does not appear, or is builtin
             fprintf (fp, "    defn [%d] = NULL ;\n", k+2) ;
@@ -95,9 +109,29 @@ void GB_macrofy_query_defn
         }
     }
 
-    // return the requested defn
-    fprintf (fp,
-        "    return (defn [k]) ;\n"
-        "}\n\n") ;
+    //--------------------------------------------------------------------------
+    // query the monoid identity and terminal values
+    //--------------------------------------------------------------------------
+
+    if (monoid != NULL && monoid->hash != 0)
+    {
+        // only create the query_monoid method if the monoid is not builtin
+        bool has_terminal = (monoid->terminal != NULL) ;
+        int zsize = (int) monoid->op->ztype->size ;
+        int tsize = (has_terminal) ? zsize : 0 ;
+        fprintf (fp,
+            "    if (id_size != %d || term_size != %d) return (false) ;\n"
+            "    GB_DECLARE_IDENTITY_CONST (zidentity) ;\n"
+            "    if (id == NULL || memcmp (id, &zidentity, %d) != 0) "
+                     "return (false) ;\n", zsize, tsize, zsize) ;
+        if (has_terminal)
+        {
+            fprintf (fp,
+            "    GB_DECLARE_TERMINAL_CONST (zterminal) ;\n"
+            "    if (term == NULL || memcmp (term, &zterminal, %d) != 0) "
+                    "return (false) ;\n", tsize) ;
+        }
+    }
+    fprintf (fp, "    return (true) ;\n}\n") ;
 }
 

@@ -178,7 +178,7 @@ class reduceFactory
         jit::launcher(hashable_name + "_" + rcode,
                 string_to_be_jitted.str(),
                 header_names,
-                compiler_flags,
+                GB_jit_cuda_compiler_flags,
                 file_callback)  // FIXME: where is file_callback defined?
            .set_kernel_inst(  hashable_name ,
                 { A->type->name, monoid->op->ztype->name })

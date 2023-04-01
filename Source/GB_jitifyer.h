@@ -261,22 +261,8 @@ uint64_t GB_jitifyer_hash
 ) ;
 
 // to query a library for its type and operator definitions
-typedef const char *(*GB_jit_query_defn_func) (int k) ;
-
-// to query a library for its type and operator definitions
-typedef bool (*GB_jit_query_monoid_func)
-(
-    void *id,
-    void *term,
-    size_t id_size,
-    size_t term_size
-) ;
-
-// to query a library for its version
-typedef void (*GB_jit_query_version_func)
-(
-    int *version
-) ;
+typedef bool (*GB_jit_query_func) (int v [3], char *defn [5],
+    void *id, void *term, size_t id_size, size_t term_size) ;
 
 bool GB_jitifyer_match_defn     // return true if definitions match
 (
@@ -290,11 +276,6 @@ bool GB_jitifyer_match_idterm   // return true if monoid id and term match
 (
     void *dl_handle,            // dl_handle for the jit kernel library
     GrB_Monoid monoid           // current monoid to compare
-) ;
-
-bool GB_jitifyer_match_version
-(
-    void *dl_handle             // dl_handle for the jit kernel library
 ) ;
 
 int GB_jitifyer_compile (char *kernel_name) ;  // compile a kernel

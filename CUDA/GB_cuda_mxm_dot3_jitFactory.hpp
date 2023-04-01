@@ -128,7 +128,7 @@ public:
     jit::launcher( kernel_name + "_" + sr_code_str + ".jtfy",
                    string_to_be_jitted.str(),
                    header_names,
-                   compiler_flags,
+                   GB_jit_cuda_compiler_flags,
                    file_callback /* FIXME: make NULL */)
                  .set_kernel_inst(  kernel_name, template_types)
                  .configure(grid, block, SMEM, stream)
@@ -211,7 +211,7 @@ public:
     jit::launcher( kernel_name + "_" + sr_code_str + ".jtfy",
                    string_to_be_jitted.str(),
                    header_names,
-                   compiler_flags,
+                   GB_jit_cuda_compiler_flags,
                    file_callback)
                  .set_kernel_inst(  kernel_name, template_types)
                  .configure(grid, block, SMEM, stream)
@@ -273,7 +273,7 @@ public:
       jit::launcher( hashable_name,
                      string_to_be_jitted.str(),
                      header_names,
-                     compiler_flags,
+                     GB_jit_cuda_compiler_flags,
                      file_callback)
                    .set_kernel_inst( kernel_name, {})
                    .configure(grid, block, SMEM, stream)
@@ -331,7 +331,7 @@ public:
       jit::launcher( hashable_name,
                      string_to_be_jitted.str(),
                      header_names,
-                     compiler_flags,
+                     GB_jit_cuda_compiler_flags,
                      file_callback)
                    .set_kernel_inst(  kernel_name , {})
                    .configure(grid, block, SMEM, stream)
@@ -415,7 +415,7 @@ public:
     jit::launcher( hashable_name + "_" + sr_code,
                    string_to_be_jitted.str(),
                    header_names,
-                   compiler_flags,
+                   GB_jit_cuda_compiler_flags,
                    file_callback)
                .set_kernel_inst(final_kernel_name_ss.str(), template_types )
                                // { C->type->name,
@@ -526,7 +526,7 @@ public:
     jit::launcher( hashable_name + "_" + sr_code,
                    string_to_be_jitted.str(),
                    header_names,
-                   compiler_flags,
+                   GB_jit_cuda_compiler_flags,
                    file_callback)
                .set_kernel_inst(final_kernel_name_ss.str(), template_types )
                                // { C->type->name,
@@ -645,7 +645,7 @@ public:
     jit::launcher( hashable_name + "_" + sr_code,
                    string_to_be_jitted.str(),
                    header_names,
-                   compiler_flags,
+                   GB_jit_cuda_compiler_flags,
                    file_callback)
                .set_kernel_inst(final_kernel_name_ss.str(), template_types )
                                // { C->type->name,

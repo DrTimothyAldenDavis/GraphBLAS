@@ -39,11 +39,10 @@ extern "C"
 #include "../rmm_wrap/rmm_wrap.h"
 #include "GB_iceil.h"
 
-// FIXME: what is SMEM and why is it all caps?
+// amount of shared memory to use in CUDA kernel launches
 constexpr unsigned int SMEM = 0 ;
 
-// FIXME: rename GB_jit_compiler_flags or something
-static const std::vector<std::string> compiler_flags{
+static const std::vector<std::string> GB_jit_cuda_compiler_flags{
    "-std=c++17",
    //"-G",
    "-remove-unused-globals",
@@ -66,10 +65,10 @@ static const std::vector<std::string> compiler_flags{
    // FIXME: add SUITESPARSE_CUDA_ARCHITECTURES here, via config
 };
 
-// FIXME: rename GB_cuda_jit_header_names or something
+// FIXME: rename GB_jit_cuda_header_names or something
 static const std::vector<std::string> header_names ={};
 
-// FIXME: rename GB_something
+// FIXME: rename GB_jit_cuda_file_callback
 inline std::istream* (*file_callback)(std::string, std::iostream&);
 
 #endif

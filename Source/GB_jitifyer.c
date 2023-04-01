@@ -884,19 +884,73 @@ GrB_Info GB_jitifyer_worker
     //--------------------------------------------------------------------------
 
     bool builtin = (encoding->suffix_len == 0) ;
-    if (dl_handle != NULL && !builtin)
+    if (dl_handle != NULL)
     { 
         // library is loaded but make sure the defn are OK
         // FIXME: dlsym only exists on Linux/Unix/Mac
-        void *dl_query = dlsym (dl_handle, "GB_jit_query_defn") ;
-        bool need_to_compile = !GB_jitifyer_match_version (dl_handle) ||
-        (op1 != NULL && !GB_jitifyer_match_defn (dl_query, 0, op1->defn)) ||
-        (op2 != NULL && !GB_jitifyer_match_defn (dl_query, 1, op2->defn)) ||
-        (type1 != NULL && !GB_jitifyer_match_defn (dl_query, 2, type1->defn)) ||
-        (type2 != NULL && !GB_jitifyer_match_defn (dl_query, 3, type2->defn)) ||
-        (type3 != NULL && !GB_jitifyer_match_defn (dl_query, 4, type3->defn)) ||
-        (monoid != NULL && !GB_jitifyer_match_idterm (dl_handle, monoid)) ;
-        if (need_to_compile)
+        GB_jit_query_func dl_query = (GB_jit_query_func)
+            dlsym (dl_handle, "GB_jit_query") ;
+
+        bool ok = true ;
+        if (dl_query == NULL)
+        { 
+            // library is missing the GB_jit_query method
+            ok = false ;
+            GB_jit_control = GxB_JIT_RUN ;
+            return (GrB_INVALID_VALUE) ;
+        }
+
+        if (ok)
+        {
+            int version [3] ;
+            char *library_defn [5] ;
+            size_t zsize = 0 ;
+            size_t tsize = 0 ;
+            void *id = NULL ;
+            void *term = NULL ;
+
+            if (monoid != NULL && monoid->hash != 0)
+            {
+                // compare the user-defined identity and terminal values
+                zsize = monoid->op->ztype->size ;
+                tsize = (monoid->terminal == NULL) ? 0 : zsize ;
+                id = monoid->identity ;
+                term = monoid->terminal ;
+            }
+
+            ok = dl_query (version, library_defn, id, term, zsize, tsize) ;
+            ok = ok && (version [0] == GxB_IMPLEMENTATION_MAJOR) &&
+                       (version [1] == GxB_IMPLEMENTATION_MINOR) &&
+                       (version [2] == GxB_IMPLEMENTATION_SUB) ;
+
+            char *defn [5] ;
+            defn [0] = (op1 == NULL) ? NULL : op1->defn ;
+            defn [1] = (op2 == NULL) ? NULL : op2->defn ;
+            defn [2] = (type1 == NULL) ? NULL : type1->defn ;
+            defn [3] = (type2 == NULL) ? NULL : type2->defn ;
+            defn [4] = (type3 == NULL) ? NULL : type3->defn ;
+
+            for (int k = 0 ; k < 5 ; k++)
+            {
+                if ((defn [k] != NULL) != (library_defn [k] != NULL))
+                { 
+                    // one is not NULL but the other is NULL
+                    ok = false ;
+                }
+                else if (defn [k] != NULL)
+                { 
+                    // both definitions are present
+                    // ensure the definition hasn't changed
+                    ok = ok && (strcmp (defn [k], library_defn [k]) == 0) ;
+                }
+                else
+                { 
+                    // both definitions are NULL, so they match
+                }
+            }
+        }
+
+        if (!ok)
         { 
             // library is loaded but needs to change, so close it
             // FIXME: dlclose only exists on Linux/Unix/Mac
@@ -950,36 +1004,30 @@ GrB_Info GB_jitifyer_worker
             GB_jit_control = GxB_JIT_LOAD ;
             return (GrB_INVALID_VALUE) ;
         }
+
+        // create the header and copyright
         fprintf (fp,
             "//--------------------------------------"
             "----------------------------------------\n"
             "// %s.c\n", kernel_name) ;
         GB_macrofy_copyright (fp) ;
         fprintf (fp, "#include \"GB_jit_kernel_%s.h\"\n\n", family_name) ;
+
+        // macrofy the kernel operators, types, and matrix formats
         GB_macrofy_family (fp, family, encoding->code, semiring, monoid,
             op, type1, type2, type3) ;
 
+        // include the kernel, renaming it for the PreJIT
         fprintf (fp, "#ifndef GB_JIT_RUNTIME\n"
                      "#define GB_jit_kernel %s\n"
+                     "#define GB_jit_query  %s_query\n"
                      "#endif\n"
-                     "#include \"GB_jit_kernel_%s.c\"\n\n",
-                     kernel_name, kname) ;
-        fprintf (fp, "\n#ifdef GB_JIT_RUNTIME\n") ;
-        if (!builtin)
-        { 
-            // create query_defn function
-            GB_macrofy_query_defn (fp, op1, op2, type1, type2, type3) ;
-        }
-        if (monoid != NULL)
-        { 
-            // create query_monoid function if the monoid is not builtin
-            GB_macrofy_query_monoid (fp, monoid) ;
-        }
-        GB_macrofy_query_version (fp) ;
-        fprintf (fp, "#endif\n") ;
-        fclose (fp) ;
+                     "#include \"GB_jit_kernel_%s.c\"\n",
+                     kernel_name, kernel_name, kname) ;
 
-//      printf ("compile: %s\n", GB_jit_kernel_name) ;
+        // macrofy the query function
+        GB_macrofy_query (fp, builtin, monoid, op1, op2, type1, type2, type3) ;
+        fclose (fp) ;
 
         //----------------------------------------------------------------------
         // compile the source file to create the lib*.so file
@@ -991,7 +1039,6 @@ GrB_Info GB_jitifyer_worker
         if (dl_handle == NULL)
         { 
             // unable to open lib*.so file
-//          printf ("cannot open lib: [%s]\n", GB_jit_library_name) ;
             GBURBLE ("(jit: compiler error; compilation disabled) ") ;
             // disable the JIT to avoid repeated compilation errors
             GB_jit_control = GxB_JIT_LOAD ;
@@ -1237,96 +1284,6 @@ void GB_jitifyer_table_free (void)
     GB_jit_table_size = 0 ;
     GB_jit_table_bits = 0 ;
     GB_jit_table_populated = 0 ;
-}
-
-//------------------------------------------------------------------------------
-// GB_jitifyer_match_defn: check if library and current definitions match
-//------------------------------------------------------------------------------
-
-bool GB_jitifyer_match_defn     // return true if definitions match
-(
-    // input:
-    void *dl_query,             // query_defn function pointer
-    int k,                      // compare current_defn with query_defn (k)
-    const char *current_defn    // current definition (or NULL if not present)
-)
-{
-    if (dl_query == NULL)
-    { 
-        // library is missing the query_defn method
-        return (false) ;
-    }
-    GB_jit_query_defn_func query_defn = (GB_jit_query_defn_func) dl_query ;
-    const char *library_defn = query_defn (k) ;
-    if ((current_defn != NULL) != (library_defn != NULL))
-    { 
-        // one is not NULL but the other is NULL
-        return (false) ;
-    }
-    else if (current_defn != NULL)
-    { 
-        // both definitions are present
-        // ensure the definition hasn't changed
-        return (strcmp (library_defn, current_defn) == 0) ;
-    }
-    else
-    { 
-        // both definitions are NULL, so they match
-        return (true) ;
-    }
-}
-
-//------------------------------------------------------------------------------
-// GB_jitifyer_match_idterm: check if monoid identity and terminal values match
-//------------------------------------------------------------------------------
-
-bool GB_jitifyer_match_idterm   // return true if monoid id and term match
-(
-    void *dl_handle,            // dl_handle for the jit kernel library
-    GrB_Monoid monoid           // current monoid to compare
-)
-{
-    // compare the identity and terminal
-    // FIXME: dlsym only exists on Linux/Unix/Mac
-    void *dl_query = dlsym (dl_handle, "GB_jit_query_monoid") ;
-    if (dl_query == NULL)
-    { 
-        // the library is invalid; need recompile it
-        return (false) ;
-    }
-    // check the identity and terminal values
-    GB_jit_query_monoid_func query_monoid = (GB_jit_query_monoid_func) dl_query;
-    size_t zsize = monoid->op->ztype->size ;
-    size_t tsize = (monoid->terminal == NULL) ? 0 : zsize ;
-    return (query_monoid (monoid->identity, monoid->terminal, zsize, tsize)) ;
-}
-
-//------------------------------------------------------------------------------
-// GB_jitifyer_match_version: check the version of a kernel
-//------------------------------------------------------------------------------
-
-bool GB_jitifyer_match_version
-(
-    void *dl_handle             // dl_handle for the jit kernel library
-)
-{
-    // compare the version
-    // FIXME: dlsym only exists on Linux/Unix/Mac
-    void *dl_query = dlsym (dl_handle, "GB_jit_query_version") ;
-    if (dl_query == NULL)
-    { 
-        // the library is invalid; need recompile it
-        return (false) ;
-    }
-    // check the version
-    int version [3] ;
-    GB_jit_query_version_func query_version =
-        (GB_jit_query_version_func) dl_query ;
-    query_version (version) ;
-    // return true if the version matches
-    return ((version [0] == GxB_IMPLEMENTATION_MAJOR) &&
-            (version [1] == GxB_IMPLEMENTATION_MINOR) &&
-            (version [2] == GxB_IMPLEMENTATION_SUB)) ;
 }
 
 //------------------------------------------------------------------------------

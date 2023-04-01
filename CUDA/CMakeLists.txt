@@ -2,7 +2,7 @@
 # GraphBLAS/CUDA/CMakeLists.txt:  cmake script for GraphBLAS/CUDA
 #-------------------------------------------------------------------------------
 
-# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 
 # Some files in this folder are (c) NVIDIA or (c) Google.  Please refer
 # to their individual licenses (Apache, BSD, or others).
@@ -29,12 +29,7 @@ set ( CMAKE_CXX_STANDARD 17 )
 set ( CMAKE_CUDA_FLAGS "-cudart=static -lineinfo " )
 set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fPIC " )
 
-# set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DGBNCPUFEAT")
-# set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGBNCPUFEAT")
 add_compile_definitions ( GBNCPUFEAT )
-
-# silence warning in local_cub:
-# add_compile_definitions ( __CDPRT_SUPPRESS_SYNC_DEPRECATION_WARNING )
 
 message ( STATUS "C++ flags for CUDA: ${CMAKE_CXX_FLAGS}" )
 
@@ -62,31 +57,12 @@ set ( GRAPHBLAS_CUDA_INCLUDES
         ../CUDA )
 
 message ( STATUS "GraphBLAS CUDA includes: ${GRAPHBLAS_CUDA_INCLUDES}" )
-#
-##-------------------------------------------------------------------------------
-## add folder for cuco and download it if necessary
-##-------------------------------------------------------------------------------
-#
-#set ( EXTERNAL_INCLUDES_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
-#
-#IF ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY} )
-#    file ( MAKE_DIRECTORY ${EXTERNAL_INCLUDES_DIRECTORY} )
-#endif ( )
-#
-#IF ( NOT EXISTS ${EXTERNAL_INCLUDES_DIRECTORY}/cuco )
-#    execute_process (
-#            COMMAND git clone "https://github.com/NVIDIA/cuCollections.git" --branch main --recursive cuco
-#            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes )
-#endif ( )
-#
-#include_directories(${CMAKE_CURRENT_BINARY_DIR}/external_includes/cuco/include)
 
 #-------------------------------------------------------------------------------
 # graphblascuda properties
 #-------------------------------------------------------------------------------
 
 target_include_directories(graphblascuda PUBLIC
-        ${CMAKE_CURRENT_BINARY_DIR}/external_includes/cuco/include
         ${CUDAToolkit_INCLUDE_DIRS}
         ${GRAPHBLAS_CUDA_INCLUDES})
 set_target_properties(graphblascuda PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -105,10 +81,6 @@ install ( TARGETS graphblascuda
     ARCHIVE DESTINATION ${SUITESPARSE_LIBDIR}
     RUNTIME DESTINATION ${SUITESPARSE_BINDIR}
     PUBLIC_HEADER DESTINATION ${SUITESPARSE_INCLUDEDIR} )
-# if ( BUILD_GRB_STATIC_LIBRARY )
-#     install ( TARGETS graphblas_static
-#         ARCHIVE DESTINATION ${SUITESPARSE_LIBDIR} )
-# endif ( )
 
 #-------------------------------------------------------------------------------
 # test suite for the CUDA kernels
@@ -141,9 +113,9 @@ set ( CUDA_TEST_FORMATS sparse dense sparse_dense reduce )
 # Separate individual kernels from larger "overview" test (e.g. 2-level testing structure)
 # We want to test all the *_cuda versions
 
-# FIXME
+# TODO: make this a shorter test
 set(CUDA_TEST_CPP_FILES "")
-if ( FALSE )
+if ( FALSE ) # TODO: use a cmake option
     foreach(var ${CUDA_TEST_SUITES})
         foreach(semiring ${CUDA_TEST_SEMIRINGS})
             foreach(kernel ${CUDA_TEST_KERNELS})

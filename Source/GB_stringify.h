@@ -647,10 +647,16 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     const char **u_expression
 ) ;
 
-void GB_macrofy_query_monoid
+void GB_macrofy_query
 (
     FILE *fp,
-    GrB_Monoid monoid
+    const bool builtin, // true if method is all builtin
+    GrB_Monoid monoid,  // monoid for reduce or semiring; NULL otherwise
+    GB_Operator op0,    // monoid op, select op, unary op, etc
+    GB_Operator op1,    // binaryop for a semring
+    GrB_Type type0,
+    GrB_Type type1,
+    GrB_Type type2
 ) ;
 
 //------------------------------------------------------------------------------
@@ -879,21 +885,6 @@ void GB_macrofy_type
     const char *what,       // typically X, Y, Z, A, B, or C
     const char *what2,      // typically "_" or "2"
     const char *name        // name of the type
-) ;
-
-void GB_macrofy_query_defn
-(
-    FILE *fp,
-    GB_Operator op0,    // monoid op, select op, unary op, etc
-    GB_Operator op1,    // binaryop for a semring
-    GrB_Type type0,
-    GrB_Type type1,
-    GrB_Type type2
-) ;
-
-void GB_macrofy_query_version
-(
-    FILE *fp
 ) ;
 
 //------------------------------------------------------------------------------
