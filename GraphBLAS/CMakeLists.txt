@@ -200,9 +200,9 @@ endif ( )
 #-------------------------------------------------------------------------------
 
 if ( COMPACT )
-    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../PreJIT/GB_prejit.c" )
+    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../Config/GB_prejit.c" )
 else ( )
-    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../PreJIT/GB_prejit.c"
+    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../Config/GB_prejit.c"
         "../Source/FactoryKernels/*.c" )
 endif ( )
 
