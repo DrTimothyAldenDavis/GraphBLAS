@@ -10,6 +10,10 @@
 #ifndef GB_JIT_KERNEL_PROTO_H
 #define GB_JIT_KERNEL_PROTO_H
 
+//------------------------------------------------------------------------------
+// JIT kernel prototypes
+//------------------------------------------------------------------------------
+
 #define GB_JIT_QUERY_PROTO(query_func)                                  \
 bool query_func (uint64_t *hash, int v [3], char *defn [5],             \
     void *id, void *term, size_t id_size, size_t term_size)
@@ -524,6 +528,50 @@ GrB_Info GB_jit_kernel_union                                            \
     const int B_nthreads,                                               \
     const int B_ntasks                                                  \
 )
+
+//------------------------------------------------------------------------------
+// shorthand macros for GB_prejit.c:
+//------------------------------------------------------------------------------
+
+#define JIT_DOT2(g) GB_JIT_KERNEL_AXB_DOT2_PROTO(g) ;
+#define JIT_DO2N(g) GB_JIT_KERNEL_AXB_DOT2N_PROTO(g) ;
+#define JIT_DOT3(g) GB_JIT_KERNEL_AXB_DOT3_PROTO(g) ;
+#define JIT_DOT4(g) GB_JIT_KERNEL_AXB_DOT4_PROTO(g) ;
+#define JIT_SAXB(g) GB_JIT_KERNEL_AXB_SAXBIT_PROTO(g) ;
+#define JIT_SAX3(g) GB_JIT_KERNEL_AXB_SAXPY3_PROTO(g) ;
+#define JIT_SAX4(g) GB_JIT_KERNEL_AXB_SAXPY4_PROTO(g) ;
+#define JIT_SAX5(g) GB_JIT_KERNEL_AXB_SAXPY5_PROTO(g) ;
+#define JIT_ADD(g)  GB_JIT_KERNEL_ADD_PROTO(g) ;
+#define JIT_AP1(g)  GB_JIT_KERNEL_APPLY_BIND1ST_PROTO(g) ;
+#define JIT_AP2(g)  GB_JIT_KERNEL_APPLY_BIND2ND_PROTO(g) ;
+#define JIT_AP0(g)  GB_JIT_KERNEL_APPLY_UNOP_PROTO(g) ;
+#define JIT_BLD(g)  GB_JIT_KERNEL_BUILD_PROTO(g) ;
+#define JIT_COLS(g) GB_JIT_KERNEL_COLSCALE_PROTO(g) ;
+#define JIT_CONB(g) GB_JIT_KERNEL_CONCAT_BITMAP_PROTO(g) ;
+#define JIT_CONF(g) GB_JIT_KERNEL_CONCAT_FULL_PROTO(g) ;
+#define JIT_CONS(g) GB_JIT_KERNEL_CONCAT_SPARSE_PROTO(g) ;
+#define JIT_CS2B(g) GB_JIT_KERNEL_CONVERT_S2B_PROTO(g) ;
+#define JIT_EM2(g)  GB_JIT_KERNEL_EMULT_02_PROTO(g) ;
+#define JIT_EM3(g)  GB_JIT_KERNEL_EMULT_03_PROTO(g) ;
+#define JIT_EM4(g)  GB_JIT_KERNEL_EMULT_04_PROTO(g) ;
+#define JIT_EM8(g)  GB_JIT_KERNEL_EMULT_08_PROTO(g) ;
+#define JIT_EMB(g)  GB_JIT_KERNEL_EMULT_BITMAP_PROTO(g) ;
+#define JIT_EWFA(g) GB_JIT_KERNEL_EWISE_FULLA_PROTO(g) ;
+#define JIT_EWFN(g) GB_JIT_KERNEL_EWISE_FULLN_PROTO(g) ;
+#define JIT_RED(g)  GB_JIT_KERNEL_REDUCE_PROTO(g) ;
+#define JIT_ROWS(g) GB_JIT_KERNEL_ROWSCALE_PROTO(g) ;
+#define JIT_SELB(g) GB_JIT_KERNEL_SELECT_BITMAP_PROTO(g) ;
+#define JIT_SEL1(g) GB_JIT_KERNEL_SELECT_PHASE1_PROTO(g) ;
+#define JIT_SEL2(g) GB_JIT_KERNEL_SELECT_PHASE2_PROTO(g) ;
+#define JIT_SPB(g)  GB_JIT_KERNEL_SPLIT_BITMAP_PROTO(g) ;
+#define JIT_SPF(g)  GB_JIT_KERNEL_SPLIT_FULL_PROTO(g) ;
+#define JIT_SPS(g)  GB_JIT_KERNEL_SPLIT_SPARSE_PROTO(g) ;
+#define JIT_SUB(g)  GB_JIT_KERNEL_SUBASSIGN_PROTO(g) ;
+#define JIT_TR1(g)  GB_JIT_KERNEL_TRANS_BIND1ST_PROTO(g) ;
+#define JIT_TR2(g)  GB_JIT_KERNEL_TRANS_BIND2ND_PROTO(g) ;
+#define JIT_TR0(g)  GB_JIT_KERNEL_TRANS_UNOP_PROTO(g) ;
+#define JIT_UNI(g)  GB_JIT_KERNEL_UNION_PROTO(g) ;
+#define JIT_Q(q)    GB_JIT_QUERY_PROTO(q) ;
 
 #endif
 

@@ -8684,7 +8684,7 @@ safely does nothing if passed a \verb'NULL' handle, or if
 SuiteSparse:GraphBLAS v8.0 adds a new JIT feature that greatly improves
 performance of user-defined types and operators, and improves the performance
 of built-in operators as well.  The JIT can compile kernels that are specific
-to the matrix type and the operators that work on it.  In version v7.4.3 and
+to the matrix type and the operators that work on it.  In version v7.4.4 and
 before, user-defined types and operators were handled by {\em generic} kernels
 that used function pointers for each operator and for any typecasting required.
 Even built-in types and operators were sometimes handled by the generic
@@ -8695,9 +8695,10 @@ compiled.
 Using the JIT in a user application is simple:  by default, there is nothing
 to do.  LAGraph v1.0.1 can use the JIT (and PreJIT) kernels without changing
 a single line of code.\footnote{LAGraph v1.0.1 does not work with GraphBLAS
-v8.0.0 but not because of the JIT.  It must be updated because it uses two
-deprecated {\sf GxB\_SelectOp} operators; these are be replaced with {\sf
-GrB\_IndexUnaryOp} operators in the {\sf dev} branch of LAGraph.}
+v8.0.0 but not because of the JIT.  LAGraph must be updated because it uses two
+deprecated {\sf GxB\_SelectOp} operators; these are replaced with {\sf
+GrB\_IndexUnaryOp} operators in the {\sf dev} branch of LAGraph, to appear
+in a future release of LAGraph.}
 
 Currently, the JIT compiles kernels for the CPU only, but a CUDA JIT is in
 progress to exploit NVIDIA GPUs, in collaboration with Joe Eaton and
@@ -8719,6 +8720,7 @@ following two folders.  These environment variables are read by \verb'cmake'
 when GraphBLAS is compiled, and by \verb'GrB_init' when the user application
 runs:
 
+\newpage
 \begin{itemize}
 \item \verb'GRAPHBLAS_CACHE_PATH':  this variable gives the path to the
 folder where compiled kernels will be kept.  By default it is 
@@ -8838,7 +8840,7 @@ this error from occuring again.  To solve this problem, delete the corrupted
 compiled kernel from the cache folder.  This case is unlikely to occur since no
 user action can trigger it.  It could indicate a system problem with loading
 the kernel, or some kind of compiler error that allows the kernel to be
-compiled but not be loaded.
+compiled but not loaded.
 
 \item If an out-of-memory condition occurs in the JIT, the JIT control is
 set to \verb'GxB_JIT_PAUSE'.  To solve this, try freeing up memory, use a
@@ -8889,11 +8891,11 @@ options.  By default, \verb'COMPACT' is off, to enable the
 \verb'FactoryKernels'.
 
 When GraphBLAS is compiled with \verb'NJIT', the \verb'GxB_JIT_CONTROL' may be
-set to \verb'OFF', \verb'PAUSE', or \verb'RUN'.  No kernels will be loaded at
-run-time (the \verb'GxB_JIT_LOAD' setting is disabled and treated as
-\verb'GxB_JIT_RUN'), and no new kernels will be compiled at run-time (the
-\verb'GxB_JIT_ON' is disabled and treated as \verb'GxB_JIT_RUN').  Only
-pre-existing \verb'PreJIT' kernels can be run, described in
+set to \verb'GxB_JIT_OFF', \verb'GxB_JIT_PAUSE', or \verb'GxB_JIT_RUN'.  No
+kernels will be loaded at run-time (the \verb'GxB_JIT_LOAD' setting is disabled
+and treated as \verb'GxB_JIT_RUN'), and no new kernels will be compiled at
+run-time (the \verb'GxB_JIT_ON' is disabled and treated as \verb'GxB_JIT_RUN').
+Only pre-existing \verb'PreJIT' kernels can be run, described in
 Section~\ref{prejit}.
 
 If both \verb'NJIT' and \verb'COMPACT' options are enabled, all features of
@@ -8903,7 +8905,11 @@ which every single operator is implemented with a function pointer, and every
 scalar assignment requires a \verb'memcpy'.  Generic kernels are slow, so using
 both \verb'NJIT' and \verb'COMPACT' options enabled is not recommended when
 preparing GraphBLAS for production use, benchmarking, or for a Linux distro or
-other widely-used distribution.
+other widely-used distribution, unless you are able to run your application in
+advance and create all the JIT kernel you need, and then copy them into
+\verb'GraphBLAS/PreJIT'.  This would be impossible to do for a general-purpose
+case such as a Linux distro, but feasible for a more targetted application such
+as RedisGraph.
 
 %-------------------------------------------------------------------------------
 \subsection{Adding {\sf PreJIT} kernels to GraphBLAS}
@@ -8977,6 +8983,11 @@ permitted.  If not permitted, by either compiling GraphBLAS with the
 kernel will be used instead.  This will be slower than the PreJIT or JIT
 kernel, but GraphBLAS will still be functional.
 
+In addition to a single \verb'README.txt' file, the \verb'GraphBLAS/PreJIT'
+folder includes a \verb'.gitignore' file that prevents any files in the folder
+from being synced via \verb'git'.  If you wish to add your PreJIT kernels to a
+fork of GraphBLAS, you will need to revise this \verb'.gitignore' file.
+
 %-------------------------------------------------------------------------------
 \subsection{{\sf JIT} and {\sf PreJIT} performance considerations}
 %-------------------------------------------------------------------------------
@@ -8998,7 +9009,7 @@ as could be expected to appear in production use.
 GraphBLAS can encounter very small matrices, and it will often select its
 bitmap format to store them.  This change of format will trigger a different
 kernel than the sparse or hypersparse cases.  There are many other cases like
-that were specific kernels are only needed for small problems.  In this case,
+that where specific kernels are only needed for small problems.  In this case,
 compiling an entirely new kernel is costly, since using a compiled kernel will
 be no faster than the generic kernel.  When benchmarking an application to
 allow GraphBLAS to compile its JIT kernels, it may be useful to pause the JIT
@@ -9041,36 +9052,41 @@ application.  This is a bit awkward and may thus limit the use of the JIT.  A
 future GraphBLAS could easily be redesigned where the cmake build system
 configures it so that all required source code is ingested into the
 \verb'libgraphblas.so' binary compiled library itself.  Then when
-\verb'GrB_init' is called, this body of source code could then be copied into
-the user's cache folder.  Not all source is required: just the contents of
-\verb'GraphBLAS/Source/JitKernels', \verb'GraphBLAS/Source/Template', \newline
+\verb'GrB_init' is called, GraphBLAS would extract this body of source code
+from its own \verb'libgraphblas.so' binary library, and write it into the
+user's cache folder.  Not all source is required: just the contents of
+\verb'GraphBLAS/Source/JitKernels', \verb'GraphBLAS/Source/Template',
 \verb'GraphBLAS/Source/Shared', and a subset of the \verb'GraphBLAS/Source/*.h'
 files.  If compressed, this amounts to just 350KB so the \verb'libgraphblas.so'
 file would increase by just this size, and the files would take just 3MB of
 space in the user's cache path.  Then by default, any user application or
 distro would automatically carry with it the ability to create the source code
 for JIT kernels, simply by distributing two files: \verb'libgraphblas.so' and
-the \verb'GraphBLAS.h' include file.  GraphBLAS already includes two
-compression methods built-in (lz4 and zstd) so this feature would be easy to
-add.  All GraphBLAS would need is access to a C compiler, and a cache folder in
-which to place its source code and compiled JIT kernels.
+the \verb'GraphBLAS.h' include file.  GraphBLAS already includes two built-in
+compression methods (lz4 and zstd) so this feature would be easy to add.  All
+GraphBLAS would need is access to a C compiler and a cache folder in which to
+place its source code and compiled JIT kernels.
 
 \subsubsection{SYCL / OpenCL kernels}
 The CUDA JIT will enable NVIDIA GPUs to be exploited.  There are simply too
 many kernels to create at compile time as the ``factory kernels.''  This CUDA
-JIT is in progress.  A releated JIT for SYCL / OpenCL could also be created.
+JIT is in progress.  A related JIT for SYCL / OpenCL could also be created.
 
-\subsubsection{Creating new user-defined operators from MATLAB, Python, and
-Julia} The current methods for creating new operators, monoids, and semirings
+\subsubsection{Creating new user-defined operators from MATLAB, Python, Go,
+Julia, Java...}
+The current methods for creating new operators, monoids, and semirings
 requires the user application to pass GraphBLAS a pointer to a compiled C
 function.  This is fine for a C/C++ application that uses GraphBLAS, but it is
-awkward for users in MATLAB, Python, Julia, and Go.  The \verb'GrB_UnaryOp_new',
-\verb'GrB_IndexUnaryOp_new', and \verb'GrB_BnaryOp_new' methods could be
-extended to allow those function pointers to be \verb'NULL'.  The JIT kernels
-do not require the function pointers at all.  They are used in GraphBLAS in
-only a few places, outside of any JIT kernel, when performance is not critical.
-For example, they are used when computing single scalars of iso-valued
-matrices, and for the accumulate/mask phase after reduction to a scalar.
+awkward for users in MATLAB, Python, Julia, Go, Java, etc.  The
+\verb'GrB_UnaryOp_new', \verb'GrB_IndexUnaryOp_new', and
+\verb'GrB_BinaryOp_new' methods could be extended to allow those function
+pointers to be \verb'NULL'.
+
+The JIT kernels do not require the function pointers at all.  They are used in
+GraphBLAS in only a few places, outside of any JIT kernel, when performance is
+not critical.  For example, they are used when computing single scalars of
+iso-valued matrices, and for the accumulate/mask phase after reduction to a
+scalar.
 
 For example, consider these excerpts of the \verb'gauss_demo' program in the
 \verb'GraphBLAS/Demo' folder:
@@ -9114,15 +9130,15 @@ For example, consider these excerpts of the \verb'gauss_demo' program in the
 \end{verbatim} }
 
 GraphBLAS already has everything it needs to create the \verb'gauss' type
-definition, so new user-defined data types originating from MATLAB, Python, or
-Julia need no futher work.  All that is needed is a C-style \verb'typedef',
+definition, so new user-defined data types originating from these other
+languages need no futher work.  All that is needed is a C-style \verb'typedef',
 provided as a string (such as the \verb'GAUSS_DEFN' string above).
 
 However, GraphBLAS currently requires the \verb'multgauss' function pointer.
 If passed a \verb'NULL' function pointer, GraphBLAS could simply compile a copy
 of the function itself from the \verb'MULTGAUSS_DEFN' string, and place it in
 the user's cache folder.  This feature will make it far easier for the full
-JIT to be exploited from MATLAB, Python, Julia, or GoLang applications.
+JIT to be exploited from applications in languages other than C/C++.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
