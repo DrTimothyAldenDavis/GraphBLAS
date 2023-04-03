@@ -129,9 +129,8 @@
 // definitions for complex types
 //------------------------------------------------------------------------------
 
-// This is a copy of GraphBLAS/Source/SharedTemplate/GxB_complex.h.  It is
-// included here as a full copy so that the GraphBLAS.h file can be self
-// contained.
+// This is a copy of GraphBLAS/Source/Shared/GxB_complex.h.  It is included
+// here as a full copy so that the GraphBLAS.h file can be self contained.
 
 // See:
 // https://www.drdobbs.com/complex-arithmetic-in-the-intersection-o/184401628#
@@ -233,7 +232,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "(DRAFT4) Mar 31, 2023"
+#define GxB_IMPLEMENTATION_DATE "(DRAFT4) Apr 2, 2023"
 #define GxB_IMPLEMENTATION_MAJOR 8
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -4096,7 +4095,6 @@ typedef enum            // for global options or matrix options
 // for GxB_JIT_C_CONTROL:
 typedef enum
 {
-    GxB_JIT_NONE = -1,  // JIT disabled at compile time.  No JIT avaiable.
     GxB_JIT_OFF = 0,    // do not use the JIT: free all JIT kernels if loaded
     GxB_JIT_PAUSE = 1,  // do not run JIT kernels but keep any loaded
     GxB_JIT_RUN = 2,    // run JIT kernels if already loaded; no load/compile
@@ -8354,7 +8352,7 @@ GB_GLOBAL GrB_Monoid
     GxB_LAND_BOOL_MONOID,       // identity: true         terminal: false
     GxB_LXOR_BOOL_MONOID,       // identity: false
     GxB_LXNOR_BOOL_MONOID,      // identity: true
-    GxB_EQ_BOOL_MONOID,         // (alternative name for GrB_LXNOR_MONOID_BOOL)
+    GxB_EQ_BOOL_MONOID,         // (another name for GrB_LXNOR_MONOID_BOOL)
 
     // preferred names from the v1.3 spec:
     GrB_LOR_MONOID_BOOL,        // identity: false        terminal: true

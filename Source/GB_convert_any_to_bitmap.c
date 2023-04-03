@@ -38,7 +38,7 @@ GrB_Info GB_convert_any_to_bitmap   // convert to bitmap
     if (GB_IS_HYPERSPARSE (A))
     { 
         // convert from hypersparse to bitmap
-        GB_OK (GB_convert_sparse_to_bitmap (A, Werk)) ;
+        GB_OK (GB_convert_s2b (A, Werk)) ;
     }
     else if (GB_IS_FULL (A))
     { 
@@ -53,7 +53,7 @@ GrB_Info GB_convert_any_to_bitmap   // convert to bitmap
     else
     { 
         // convert from sparse to bitmap
-        GB_OK (GB_convert_sparse_to_bitmap (A, Werk)) ;
+        GB_OK (GB_convert_s2b (A, Werk)) ;
     }
 
     //--------------------------------------------------------------------------

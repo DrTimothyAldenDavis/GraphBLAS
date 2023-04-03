@@ -397,10 +397,9 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     }
 
     //--------------------------------------------------------------------------
-    // via the JIT kernel
+    // via the JIT or PreJIT kernel
     //--------------------------------------------------------------------------
 
-    #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     {
         if (is_eWiseUnion)
@@ -424,7 +423,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                 B_ek_slicing, B_nthreads, B_ntasks) ;
         }
     }
-    #endif
 
     //--------------------------------------------------------------------------
     // via the generic kernel

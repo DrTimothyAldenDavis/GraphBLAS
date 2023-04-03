@@ -8,8 +8,8 @@
 //------------------------------------------------------------------------------
 
 // GxB_Global_Option_get is a single va_arg-based method for any global option,
-// of any type.  The following functions are alternative methods that do not
-// use va_arg (useful for compilers and interfaces that do not support va_arg):
+// of any type.  The following functions are non-va_arg-based methods
+// (useful for compilers and interfaces that do not support va_arg):
 //
 //  GxB_Global_Option_get_INT32         int32_t scalars or arrays
 //  GxB_Global_Option_get_FP64          double scalars or arrays

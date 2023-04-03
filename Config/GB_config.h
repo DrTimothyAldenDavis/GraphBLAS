@@ -7,29 +7,21 @@
 
 //------------------------------------------------------------------------------
 
-// The GraphBLAS/Source/Shared/GB_config.h file is configured by cmake, using
-// GraphBLAS/Config/GB_config.h.in.  When using a simple Makefile
-// (GraphBLAS/alternative/Makefile) without using cmake first, these settings
-// are not likely to be useful.  Instead, the alternative/Makefile should
-// configure the build of GraphBLAS using -D options, such as
-
-// CFLAGS = -DGB_SOURCE_PATH=\"/home/me/mystuff/GraphBLAS\"
-
-// Alternatively, the path to the GraphBLAS source can be set at run time:
-//      GxB_set (GxB_JIT_SOURCE_PATH, "/home/me/mystuff/GraphBLAS") ;
+// The GraphBLAS/Config/GB_config.h file is configured by cmake from
+// GraphBLAS/Config/GB_config.h.in.
 
 #ifndef GB_CONFIG_H
 #define GB_CONFIG_H
 
 // GB_C_COMPILER: the C compiler used to compile GraphBLAS:
 #ifndef GB_C_COMPILER
-#define GB_C_COMPILER   "/usr/bin/gcc"
+#define GB_C_COMPILER   "/usr/bin/cc"
 #endif
 
 // GB_C_FLAGS: the C compiler flags used to compile GraphBLAS.  Used
 // for compiling and linking:
 #ifndef GB_C_FLAGS
-#define GB_C_FLAGS      " -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -O3 -DNDEBUG -fopenmp  -fPIC "
+#define GB_C_FLAGS      " -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -g -fopenmp  -fPIC "
 #endif
 
 // GB_C_LINK_FLAGS: the flags passed to the C compiler for the link phase:

@@ -90,9 +90,9 @@ else ( )
 endif ( )
 
 if ( NJIT )
-    # disable the CPU JIT
+    # disable the CPU JIT (but keep any PreJIT kernels enabled)
     add_compile_definitions ( NJIT )
-    message ( STATUS "GraphBLAS CPU JIT: disabled")
+    message ( STATUS "GraphBLAS CPU JIT: disabled (any PreJIT kernels will still be enabled)")
 else ( )
     message ( STATUS "GraphBLAS CPU JIT: enabled")
 endif ( )
@@ -236,9 +236,6 @@ configure_file ( "Config/GraphBLAS_API_version.tex.in"
 configure_file ( "Config/README.md.in"
     "${PROJECT_SOURCE_DIR}/README.md"
     NEWLINE_STYLE LF )
-configure_file ( "Config/alternative_Makefile.in"
-    "${PROJECT_SOURCE_DIR}/alternative/Makefile"
-    NEWLINE_STYLE LF )
 
 # for CUDA
 configure_file ( "CUDA/Config/GB_cuda_common_jitFactory.hpp.in"
@@ -252,11 +249,11 @@ configure_file ( "CUDA/Config/GB_cuda_common_jitFactory.hpp.in"
 if ( COMPACT )
     # do not compile the FactoryKernels
     include_directories ( Source/Template Source Include Source/Shared
-        Source/SharedTemplate xxHash Config lz4 zstd zstd/zstd_subset
+        Config xxHash Config lz4 zstd zstd/zstd_subset
         Demo/Include rmm_wrap Source/JitKernels )
 else ( )
     include_directories ( Source/Template Source Include Source/Shared
-        Source/SharedTemplate xxHash Config lz4 zstd zstd/zstd_subset
+        Config xxHash Config lz4 zstd zstd/zstd_subset
         Source/FactoryKernels
         Demo/Include rmm_wrap Source/JitKernels )
 endif ( )
@@ -355,7 +352,7 @@ endif ( )
 
 if ( COMPACT )
     # do not compile the FactoryKernels
-    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "PreJIT/*.c")
+    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "PreJIT/*.c" )
 else ( )
     file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "PreJIT/*.c"
         "Source/FactoryKernels/*.c" )
@@ -609,70 +606,62 @@ endif ( )
 # configure the JITs
 #-------------------------------------------------------------------------------
 
-if ( NJIT AND COMPACT )
-    # FactoryKernels and the CPU JIT are both disabled!
-    message ( WARNING ">>>> CPU JIT disabled and COMPACT mode enabled: GraphBLAS will be SLOW!" )
+# construct the JIT compiler/link strings
+set ( GB_SOURCE_PATH "${GRAPHBLAS_SOURCE_PATH}" )
+set ( GB_BUILD_PATH  "${GRAPHBLAS_BUILD_PATH}" )
+set ( GB_C_COMPILER  "${CMAKE_C_COMPILER}" )
+set ( GB_C_FLAGS "${CMAKE_C_FLAGS}" )
+set ( GB_C_LINK_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}" )
+set ( GB_LIB_SUFFIX "${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+
+# construct the C flags and link flags
+if ( APPLE )
+    # MacOS
+    set ( GB_C_FLAGS "${GB_C_FLAGS} -fPIC " )
+    set ( GB_C_FLAGS "${GB_C_FLAGS} -arch ${CMAKE_HOST_SYSTEM_PROCESSOR} " )
+    set ( GB_C_FLAGS "${GB_C_FLAGS} -isysroot ${CMAKE_OSX_SYSROOT} " )
+    set ( GB_C_LINK_FLAGS "${GB_C_LINK_FLAGS} -dynamiclib " )
+    set ( GB_OBJ_SUFFIX ".o" )
+elseif ( WIN32 )
+    # Windows
+    # FIXME: need more here for Windows
+    set ( GB_OBJ_SUFFIX ".dll" )
+else ( )
+    # Linux / Unix
+    set ( GB_C_FLAGS "${GB_C_FLAGS} -fPIC " )
+    set ( GB_C_LINK_FLAGS "${GB_C_LINK_FLAGS} -shared " )
+    set ( GB_OBJ_SUFFIX ".o" )
 endif ( )
 
-if ( NOT NJIT OR ENABLE_CUDA )
+# construct the -I list for OpenMP
+if ( OPENMP_FOUND )
+    set ( GB_OMP_INC ${OpenMP_C_INCLUDE_DIRS} )
+    list ( TRANSFORM GB_OMP_INC PREPEND " -I" )
+else ( )
+    set ( GB_OMP_INC "" )
+endif ( )
 
+# construct the library list
+string ( REPLACE "." "\\." LIBSUFFIX ${GB_LIB_SUFFIX} )
+set ( GB_LIBRARIES "" )
+#   message ( STATUS "lib suffix: ${LIBSUFFIX}" )
+foreach ( LIB_NAME ${GB_LIST_LIB} )
+#       message ( STATUS "Lib: ${LIB_NAME}" )
+    if ( LIB_NAME MATCHES ${LIBSUFFIX} )
+#           message ( STATUS "has suffix" )
+        string ( APPEND GB_LIBRARIES " " ${LIB_NAME} )
+    else ( )
+#           message ( STATUS "no suffix" )
+        string ( APPEND GB_LIBRARIES " -l" ${LIB_NAME} )
+    endif ( )
+endforeach ( )
+
+if ( NOT NJIT OR ENABLE_CUDA )
     message ( STATUS "------------------------------------------------------------------------" )
     message ( STATUS "JIT configuration:" )
     message ( STATUS "------------------------------------------------------------------------" )
-
     # one or both JITs are enabled; make sure the cache path exists
     file ( MAKE_DIRECTORY ${GRAPHBLAS_CACHE_PATH} )
-
-    # construct the JIT compiler/link strings
-    set ( GB_SOURCE_PATH "${GRAPHBLAS_SOURCE_PATH}" )
-    set ( GB_BUILD_PATH  "${GRAPHBLAS_BUILD_PATH}" )
-    set ( GB_C_COMPILER  "${CMAKE_C_COMPILER}" )
-    set ( GB_C_FLAGS "${CMAKE_C_FLAGS}" )
-    set ( GB_C_LINK_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}" )
-    set ( GB_LIB_SUFFIX "${CMAKE_SHARED_LIBRARY_SUFFIX}" )
-
-    # construct the C flags and link flags
-    if ( APPLE )
-        # MacOS
-        set ( GB_C_FLAGS "${GB_C_FLAGS} -fPIC " )
-        set ( GB_C_FLAGS "${GB_C_FLAGS} -arch ${CMAKE_HOST_SYSTEM_PROCESSOR} " )
-        set ( GB_C_FLAGS "${GB_C_FLAGS} -isysroot ${CMAKE_OSX_SYSROOT} " )
-        set ( GB_C_LINK_FLAGS "${GB_C_LINK_FLAGS} -dynamiclib " )
-        set ( GB_OBJ_SUFFIX ".o" )
-    elseif ( WIN32 )
-        # Windows
-        # FIXME: need more here for Windows
-        set ( GB_OBJ_SUFFIX ".dll" )
-    else ( )
-        # Linux / Unix
-        set ( GB_C_FLAGS "${GB_C_FLAGS} -fPIC " )
-        set ( GB_C_LINK_FLAGS "${GB_C_LINK_FLAGS} -shared " )
-        set ( GB_OBJ_SUFFIX ".o" )
-    endif ( )
-
-    # construct the -I list for OpenMP
-    if ( OPENMP_FOUND )
-        set ( GB_OMP_INC ${OpenMP_C_INCLUDE_DIRS} )
-        list ( TRANSFORM GB_OMP_INC PREPEND " -I" )
-    else ( )
-        set ( GB_OMP_INC "" )
-    endif ( )
-
-    # construct the library list
-    string ( REPLACE "." "\\." LIBSUFFIX ${GB_LIB_SUFFIX} )
-    set ( GB_LIBRARIES "" )
-#   message ( STATUS "lib suffix: ${LIBSUFFIX}" )
-    foreach ( LIB_NAME ${GB_LIST_LIB} )
-#       message ( STATUS "Lib: ${LIB_NAME}" )
-        if ( LIB_NAME MATCHES ${LIBSUFFIX} )
-#           message ( STATUS "has suffix" )
-            string ( APPEND GB_LIBRARIES " " ${LIB_NAME} )
-        else ( )
-#           message ( STATUS "no suffix" )
-            string ( APPEND GB_LIBRARIES " -l" ${LIB_NAME} )
-        endif ( )
-    endforeach ( )
-
     message ( STATUS "JIT C compiler: ${GB_C_COMPILER}" )
     message ( STATUS "JIT C flags:    ${GB_C_FLAGS}" )
     message ( STATUS "JIT link flags: ${GB_C_LINK_FLAGS}" )
@@ -683,116 +672,108 @@ if ( NOT NJIT OR ENABLE_CUDA )
     message ( STATUS "JIT fall-back:  ${GB_BUILD_PATH}" )
     message ( STATUS "JIT openmp inc: ${GB_OMP_INC}" )
     message ( STATUS "JIT libraries:  ${GB_LIBRARIES}" )
-
-else ( )
-
-    # JIT is disabled
-    set ( GB_C_COMPILER  "" )
-    set ( GB_C_FLAGS "" )
-    set ( GB_C_LINK_FLAGS "" )
-    set ( GB_LIB_SUFFIX  "" )
-    set ( GB_OBJ_SUFFIX  "" )
-    set ( GB_SOURCE_PATH "" )
-    set ( GB_BUILD_PATH  "" )
-    set ( GB_OMP_INC "" )
-    set ( GB_LIBRARIES "" )
-
 endif ( )
 
 configure_file ( "Config/GB_config.h.in"
-    "${PROJECT_SOURCE_DIR}/Source/Shared/GB_config.h"
+    "${PROJECT_SOURCE_DIR}/Config/GB_config.h"
     NEWLINE_STYLE LF )
 
 # create a list of files
 file ( GLOB PRE1 "PreJIT/GB_jit_*.c" )
 set ( PREJIT "" )
 set ( PREPRO "" )
+set ( PREQUERY "" )
+set ( PREQ "" )
 foreach ( PSRC ${PRE1} )
     get_filename_component ( F ${PSRC} NAME_WE )
     list ( APPEND PREJIT ${F} )
-    if ( ${F} MATCHES "^GB_jit_add_" )
+    list ( APPEND PREQUERY "JIT_Q (" ${F} "_query)\n" )
+    list ( APPEND PREQ "${F}_query" )
+    if ( ${F} MATCHES "^GB_jit__add_" )
         list ( APPEND PREPRO "JIT_ADD  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_apply_bind1" )
+    elseif ( ${F} MATCHES "^GB_jit__apply_bind1" )
         list ( APPEND PREPRO "JIT_AP1  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_apply_bind2" )
+    elseif ( ${F} MATCHES "^GB_jit__apply_bind2" )
         list ( APPEND PREPRO "JIT_AP2  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_apply_unop" )
+    elseif ( ${F} MATCHES "^GB_jit__apply_unop" )
         list ( APPEND PREPRO "JIT_AP0  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_AxB_dot2_" )
+    elseif ( ${F} MATCHES "^GB_jit__AxB_dot2_" )
         list ( APPEND PREPRO "JIT_DOT2 (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_AxB_dot2n_" )
+    elseif ( ${F} MATCHES "^GB_jit__AxB_dot2n_" )
         list ( APPEND PREPRO "JIT_DO2N (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_AxB_dot3_" )
+    elseif ( ${F} MATCHES "^GB_jit__AxB_dot3_" )
         list ( APPEND PREPRO "JIT_DOT3 (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_AxB_dot4_" )
+    elseif ( ${F} MATCHES "^GB_jit__AxB_dot4_" )
         list ( APPEND PREPRO "JIT_DOT4 (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_AxB_saxbit" )
+    elseif ( ${F} MATCHES "^GB_jit__AxB_saxbit" )
         list ( APPEND PREPRO "JIT_SAXB (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_AxB_saxpy3" )
+    elseif ( ${F} MATCHES "^GB_jit__AxB_saxpy3" )
         list ( APPEND PREPRO "JIT_SAX3 (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_AxB_saxpy4" )
+    elseif ( ${F} MATCHES "^GB_jit__AxB_saxpy4" )
         list ( APPEND PREPRO "JIT_SAX4 (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_AxB_saxpy5" )
+    elseif ( ${F} MATCHES "^GB_jit__AxB_saxpy5" )
         list ( APPEND PREPRO "JIT_SAX5 (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_build" )
+    elseif ( ${F} MATCHES "^GB_jit__build" )
         list ( APPEND PREPRO "JIT_BLD  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_colscale" )
+    elseif ( ${F} MATCHES "^GB_jit__colscale" )
         list ( APPEND PREPRO "JIT_COLS (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_concat_bitmap" )
+    elseif ( ${F} MATCHES "^GB_jit__concat_bitmap" )
         list ( APPEND PREPRO "JIT_CONB (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_concat_full" )
+    elseif ( ${F} MATCHES "^GB_jit__concat_full" )
         list ( APPEND PREPRO "JIT_CONF (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_concat_sparse" )
+    elseif ( ${F} MATCHES "^GB_jit__concat_sparse" )
         list ( APPEND PREPRO "JIT_CONS (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_convert_sparse_to_bitmap" )
+    elseif ( ${F} MATCHES "^GB_jit__convert_s2b" )
         list ( APPEND PREPRO "JIT_CS2B (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_emult_02" )
+    elseif ( ${F} MATCHES "^GB_jit__emult_02" )
         list ( APPEND PREPRO "JIT_EM2  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_emult_03" )
+    elseif ( ${F} MATCHES "^GB_jit__emult_03" )
         list ( APPEND PREPRO "JIT_EM3  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_emult_04" )
+    elseif ( ${F} MATCHES "^GB_jit__emult_04" )
         list ( APPEND PREPRO "JIT_EM4  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_emult_08" )
+    elseif ( ${F} MATCHES "^GB_jit__emult_08" )
         list ( APPEND PREPRO "JIT_EM8  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_emult_bitmap" )
+    elseif ( ${F} MATCHES "^GB_jit__emult_bitmap" )
         list ( APPEND PREPRO "JIT_EMB  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_ewise_full_accum" )
+    elseif ( ${F} MATCHES "^GB_jit__ewise_full_accum" )
         list ( APPEND PREPRO "JIT_EWFA (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_ewise_full_noaccum" )
+    elseif ( ${F} MATCHES "^GB_jit__ewise_full_noaccum" )
         list ( APPEND PREPRO "JIT_EWFN (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_reduce" )
+    elseif ( ${F} MATCHES "^GB_jit__reduce" )
         list ( APPEND PREPRO "JIT_RED  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_rowscale" )
+    elseif ( ${F} MATCHES "^GB_jit__rowscale" )
         list ( APPEND PREPRO "JIT_ROWS (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_select_bitmap" )
+    elseif ( ${F} MATCHES "^GB_jit__select_bitmap" )
         list ( APPEND PREPRO "JIT_SELB (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_select_phase1" )
+    elseif ( ${F} MATCHES "^GB_jit__select_phase1" )
         list ( APPEND PREPRO "JIT_SEL1 (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_select_phase2" )
+    elseif ( ${F} MATCHES "^GB_jit__select_phase2" )
         list ( APPEND PREPRO "JIT_SEL2 (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_split_bitmap" )
+    elseif ( ${F} MATCHES "^GB_jit__split_bitmap" )
         list ( APPEND PREPRO "JIT_SPB  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_split_full" )
+    elseif ( ${F} MATCHES "^GB_jit__split_full" )
         list ( APPEND PREPRO "JIT_SPF  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_split_sparse" )
+    elseif ( ${F} MATCHES "^GB_jit__split_sparse" )
         list ( APPEND PREPRO "JIT_SPS  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_subassign" )
+    elseif ( ${F} MATCHES "^GB_jit__subassign" )
         list ( APPEND PREPRO "JIT_SUB  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_trans_bind1" )
+    elseif ( ${F} MATCHES "^GB_jit__trans_bind1" )
         list ( APPEND PREPRO "JIT_TR1  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_trans_bind2" )
+    elseif ( ${F} MATCHES "^GB_jit__trans_bind2" )
         list ( APPEND PREPRO "JIT_TR2  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_trans_unop" )
+    elseif ( ${F} MATCHES "^GB_jit__trans_unop" )
         list ( APPEND PREPRO "JIT_TR0  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit_union" )
+    elseif ( ${F} MATCHES "^GB_jit__union" )
         list ( APPEND PREPRO "JIT_UNI  (" ${F} ")\n" )
     endif ( )
 endforeach ( )
 
 list ( JOIN PREPRO "" PREJIT_PROTO )
+list ( JOIN PREQUERY "" PREJIT_QUERY )
 list ( JOIN PREJIT "\",\n\"" PRENAMES )
 list ( LENGTH PREJIT GB_PREJIT_LEN )
 list ( JOIN PREJIT ",\n" PREFUNCS )
+list ( JOIN PREQ ",\n" PREQFUNCS )
 
 configure_file ( "Config/GB_prejit.c.in"
     "${PROJECT_SOURCE_DIR}/PreJIT/GB_prejit.c"

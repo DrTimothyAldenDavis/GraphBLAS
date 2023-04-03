@@ -7,16 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// The GraphBLAS/Source/Shared/GB_config.h file is configured by cmake, using
-// GraphBLAS/Config/GB_config.h.in.  When using a simple Makefile
-// (GraphBLAS/alternative/Makefile) without using cmake first, these settings
-// are not likely to be useful.  Instead, the alternative/Makefile should
-// configure the build of GraphBLAS using -D options, such as
-
-// CFLAGS = -DGB_SOURCE_PATH=\"/home/me/mystuff/GraphBLAS\"
-
-// Alternatively, the path to the GraphBLAS source can be set at run time:
-//      GxB_set (GxB_JIT_SOURCE_PATH, "/home/me/mystuff/GraphBLAS") ;
+// The GraphBLAS/Config/GB_config.h file is configured by cmake from
+// GraphBLAS/Config/GB_config.h.in.
 
 #ifndef GB_CONFIG_H
 #define GB_CONFIG_H

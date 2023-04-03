@@ -185,13 +185,11 @@ GrB_Info GB_init            // start up GraphBLAS
     // set up the JIT folder locations and compiler flags
     //--------------------------------------------------------------------------
 
-    #if GB_JIT_ENABLED || defined ( SUITESPARSE_CUDA )
     info = GB_jitifyer_init ( ) ;
     if (info != GrB_SUCCESS)
     {
         return (info) ;
     }
-    #endif
 
     //--------------------------------------------------------------------------
     // return result

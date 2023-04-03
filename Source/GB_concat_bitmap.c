@@ -214,10 +214,9 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
             }
 
             //------------------------------------------------------------------
-            // via the JIT kernel
+            // via the JIT or PreJIT kernel
             //------------------------------------------------------------------
 
-            #if GB_JIT_ENABLED
             if (info == GrB_NO_VALUE)
             { 
                 struct GB_UnaryOp_opaque op_header ;
@@ -225,7 +224,6 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
                 ASSERT_UNARYOP_OK (op, "identity op for concat bitmap", GB0) ;
                 info = GB_concat_bitmap_jit (C, cistart, cvstart, op, A, Werk) ;
             }
-            #endif
 
             //------------------------------------------------------------------
             // via the generic kernel

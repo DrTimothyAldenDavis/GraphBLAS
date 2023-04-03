@@ -397,10 +397,9 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             }
 
             //------------------------------------------------------------------
-            // via the JIT kernel
+            // via the JIT or PreJIT kernel
             //------------------------------------------------------------------
 
-            #if GB_JIT_ENABLED
             if (info == GrB_NO_VALUE)
             { 
                 struct GB_UnaryOp_opaque op_header ;
@@ -409,7 +408,6 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 info = GB_concat_sparse_jit (C, cistart, op, A, W,
                     A_ek_slicing, A_ntasks, A_nthreads) ;
             }
-            #endif
 
             //------------------------------------------------------------------
             // via the generic kernel

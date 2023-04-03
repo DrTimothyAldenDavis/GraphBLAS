@@ -85,10 +85,9 @@ GrB_Info GB_cast_array              // typecast an array
     #endif
 
     //--------------------------------------------------------------------------
-    // via the JIT kernel
+    // via the JIT or PreJIT kernel
     //--------------------------------------------------------------------------
 
-    #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     { 
         GrB_Type ctype = GB_code_type (code1, NULL) ;
@@ -97,7 +96,6 @@ GrB_Info GB_cast_array              // typecast an array
         info = GB_apply_unop_jit (Cx, ctype, op, false, A, NULL, NULL, 0,
             A_nthreads) ;
     }
-    #endif
 
     //--------------------------------------------------------------------------
     // via the generic kernel

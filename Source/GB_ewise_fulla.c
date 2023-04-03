@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_ewise_full_accum: C += A+B where all 3 matries are dense
+// GB_ewise_fulla: C += A+B where all 3 matries are dense
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -18,7 +18,7 @@
 #include "GB_ew__include.h"
 #endif
 
-GrB_Info GB_ewise_full_accum        // C += A+B, all matrices dense
+GrB_Info GB_ewise_fulla        // C += A+B, all matrices dense
 (
     GrB_Matrix C,                   // input/output matrix
     const GrB_BinaryOp op,          // only GB_BINOP_SUBSET operators supported
@@ -85,12 +85,12 @@ GrB_Info GB_ewise_full_accum        // C += A+B, all matrices dense
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_Cewise_full_accum(op,xname) \
-            GB (_Cewise_full_accum_ ## op ## xname)
+        #define GB_Cewise_fulla(op,xname) \
+            GB (_Cewise_fulla_ ## op ## xname)
 
         #define GB_BINOP_WORKER(op,xname)                                   \
         {                                                                   \
-            info = GB_Cewise_full_accum(op,xname) (C, A, B, nthreads) ;     \
+            info = GB_Cewise_fulla(op,xname) (C, A, B, nthreads) ;     \
         }                                                                   \
         break ;
 
@@ -110,16 +110,14 @@ GrB_Info GB_ewise_full_accum        // C += A+B, all matrices dense
     #endif
 
     //--------------------------------------------------------------------------
-    // via the JIT kernel
+    // via the JIT or PreJIT kernel
     //--------------------------------------------------------------------------
 
-    #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     {
-        info = GB_ewise_full_accum_jit (C, op, A, B,
+        info = GB_ewise_fulla_jit (C, op, A, B,
             nthreads) ;
     }
-    #endif
 
     // no generic kernel: returns GrB_NO_VALUE if no factory kernel exists and
     // no JIT kernel created.

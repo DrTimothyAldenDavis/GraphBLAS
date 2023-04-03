@@ -11,25 +11,6 @@
 #define GB_STRINGIFY_H
 
 //------------------------------------------------------------------------------
-// determine if the JIT is enabled at compile-time
-//------------------------------------------------------------------------------
-
-#ifdef NJIT
-// disable the JIT
-#undef  GB_JIT_ENABLED
-#define GB_JIT_ENABLED 0
-#else
-#undef  GB_JIT_ENABLED
-#define GB_JIT_ENABLED 1
-#endif
-
-#ifdef GBRENAME
-// FIXME: JIT does not yet work inside MATLAB; turn it off
-#undef  GB_JIT_ENABLED
-#define GB_JIT_ENABLED 0
-#endif
-
-//------------------------------------------------------------------------------
 // print copyright and license
 //------------------------------------------------------------------------------
 
@@ -65,6 +46,18 @@ void GB_macrofy_name
     int scode_digits,       // # of hexadecimal digits printed
     uint64_t scode,         // enumify'd code of the kernel
     const char *suffix      // suffix for the kernel_name (NULL if none)
+) ;
+
+GrB_Info GB_demacrofy_name
+(
+    // input/output:
+    char *kernel_name,      // string of length GB_KLEN; NUL's are inserted
+                            // to demarcate each part of the kernel_name.
+    // output
+    char **name_space,      // namespace for the kernel_name
+    char **kname,           // kname for the kernel_name
+    uint64_t *scode,        // enumify'd code of the kernel
+    char **suffix           // suffix for the kernel_name (NULL if none)
 ) ;
 
 //------------------------------------------------------------------------------
@@ -330,7 +323,7 @@ GrB_Info GB_emult_bitmap_jit      // C<#M>=A.*B, emult_bitmap, via the JIT
     const int C_nthreads
 ) ;
 
-GrB_Info GB_ewise_full_accum_jit    // C+=A+B via the JIT
+GrB_Info GB_ewise_fulla_jit    // C+=A+B via the JIT
 (
     // input/output:
     GrB_Matrix C,
@@ -341,7 +334,7 @@ GrB_Info GB_ewise_full_accum_jit    // C+=A+B via the JIT
     const int nthreads
 ) ;
 
-GrB_Info GB_ewise_full_noaccum_jit  // C=A+B via the JIT
+GrB_Info GB_ewise_fulln_jit  // C=A+B via the JIT
 (
     // input/output:
     GrB_Matrix C,
@@ -656,7 +649,8 @@ void GB_macrofy_query
     GB_Operator op1,    // binaryop for a semring
     GrB_Type type0,
     GrB_Type type1,
-    GrB_Type type2
+    GrB_Type type2,
+    uint64_t hash       // hash code for the kernel
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1042,7 +1036,7 @@ GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
     int nthreads
 ) ;
 
-GrB_Info GB_convert_sparse_to_bitmap_jit    // convert sparse to bitmap
+GrB_Info GB_convert_s2b_jit    // convert sparse to bitmap
 (
     // output:
     GB_void *Ax_new,

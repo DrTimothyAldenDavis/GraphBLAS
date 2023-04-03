@@ -14,14 +14,15 @@
 #include "GB_jit_kernel_proto.h"
 
 //------------------------------------------------------------------------------
-// get list of PreJIT kernels
+// get list of PreJIT kernels: function pointers and names
 //------------------------------------------------------------------------------
 
 void GB_prejit
 (
     int32_t *nkernels,      // return # of kernels
-    void **Func_handle,     // return list of function pointers
-    char **Name_handle
+    void **Kernel_handle,   // return list of function pointers to kernels
+    void **Query_handle,    // return list of function pointers to queries
+    char **Name_handle      // return list of kernel names
 ) ;
 
 //------------------------------------------------------------------------------
@@ -67,8 +68,8 @@ GB_jit_family ;
 #define GB_JIT_KERNEL_EMULT4        16  /* GB_emult_04              */
 #define GB_JIT_KERNEL_EMULT_BITMAP  17  /* GB_emult_bitmap          */
 #define GB_JIT_KERNEL_EMULT8        18  /* GB_emult_08_phase2       */
-#define GB_JIT_KERNEL_EWISEFA       19  /* GB_ewise_full_accum      */
-#define GB_JIT_KERNEL_EWISEFN       20  /* GB_ewise_full_noaccum    */
+#define GB_JIT_KERNEL_EWISEFA       19  /* GB_ewise_fulla      */
+#define GB_JIT_KERNEL_EWISEFN       20  /* GB_ewise_fulln    */
 #define GB_JIT_KERNEL_APPLYBIND1    21  /* GB_apply_op              */
 #define GB_JIT_KERNEL_APPLYBIND2    22  /* GB_apply_op              */
 #define GB_JIT_KERNEL_TRANSBIND1    23  /* GB_transpose_op          */
@@ -93,7 +94,7 @@ GB_jit_family ;
 #define GB_JIT_KERNEL_SELECT2       29  /* GB_select_sparse         */
 #define GB_JIT_KERNEL_SELECT_BITMAP 30  /* GB_select_bitmap         */
 
-// assign/subassign methods: in progress
+// assign/subassign methods:
 #define GB_JIT_KERNEL_SUBASSIGN_05d 36  /* GB_subassign_05d         */
 #define GB_JIT_KERNEL_SUBASSIGN_06d 37  /* GB_subassign_06d         */
 #define GB_JIT_KERNEL_SUBASSIGN_22  51  /* GB_subassign_22          */
@@ -181,7 +182,9 @@ struct GB_jit_entry_struct
                                 // NULL for built-in kernels
     size_t suffix_size ;        // size of suffix malloc'd block
     void *dl_handle ;           // handle from dlopen, to be passed to dlclose
-    void *dl_function ;         // address of function itself, from dlsym
+    void *dl_function ;         // address of kernel function
+    int64_t prejit_index ;      // -1: JIT kernel or checked PreJIT kernel
+                                // >= 0: index of unchecked PreJIT kernel
 } ;
 
 typedef struct GB_jit_entry_struct GB_jit_entry ;
@@ -235,7 +238,10 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
     // input:
     uint64_t hash,          // hash = GB_jitifyer_hash_encoding (encoding) ;
     GB_jit_encoding *encoding,
-    const char *suffix
+    const char *suffix,
+    // output
+    int64_t *k1,            // location of kernel in PreJIT table
+    int64_t *kk             // location of hash entry in hash table
 ) ;
 
 bool GB_jitifyer_insert         // return true if successful, false if failure
@@ -244,8 +250,9 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
     uint64_t hash,              // hash for the problem
     GB_jit_encoding *encoding,  // primary encoding
     const char *suffix,         // suffix for user-defined types/operators
-    void *dl_handle,            // library handle from dlopen
-    void *dl_function           // function handle from dlsym
+    void *dl_handle,            // library handle from dlopen (NULL for PreJIT)
+    void *dl_function,          // function handle from dlsym
+    int32_t prejit_index        // index into PreJIT table; -1 if JIT kernel
 ) ;
 
 uint64_t GB_jitifyer_hash_encoding
@@ -261,30 +268,28 @@ uint64_t GB_jitifyer_hash
 ) ;
 
 // to query a library for its type and operator definitions
-typedef bool (*GB_jit_query_func) (int v [3], char *defn [5],
-    void *id, void *term, size_t id_size, size_t term_size) ;
+typedef GB_JIT_QUERY_PROTO ((*GB_jit_query_func)) ;
 
-bool GB_jitifyer_match_defn     // return true if definitions match
+bool GB_jitifyer_query
 (
-    // input:
-    void *dl_query,             // query_defn function pointer
-    int k,                      // compare current_defn with query_defn (k)
-    const char *current_defn    // current definition (or NULL if not present)
-) ;
-
-bool GB_jitifyer_match_idterm   // return true if monoid id and term match
-(
-    void *dl_handle,            // dl_handle for the jit kernel library
-    GrB_Monoid monoid           // current monoid to compare
+    GB_jit_query_func dl_query,
+    uint64_t hash,              // hash code for the kernel
+    // operator and type definitions
+    GrB_Semiring semiring,
+    GrB_Monoid monoid,
+    GB_Operator op,
+    GrB_Type type1,
+    GrB_Type type2,
+    GrB_Type type3
 ) ;
 
 int GB_jitifyer_compile (char *kernel_name) ;  // compile a kernel
 
 GrB_Info GB_jitifyer_init (void) ;  // initialize the JIT
 
-void GB_jitifyer_finalize (void) ;  // finalize the JIT
+void GB_jitifyer_finalize (bool freeall) ;      // finalize the JIT
 
-void GB_jitifyer_table_free (void) ;    // free the JIT table
+void GB_jitifyer_table_free (bool freeall) ;    // free the JIT table
 
 GrB_Info GB_jitifyer_alloc_space (void) ;
 

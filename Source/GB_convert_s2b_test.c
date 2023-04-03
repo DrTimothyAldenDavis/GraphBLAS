@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_convert_sparse_to_bitmap_test: test conversion of hyper/sparse to bitmap
+// GB_convert_s2b_test: test conversion of hyper/sparse to bitmap
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -20,7 +20,7 @@
 
 #include "GB.h"
 
-bool GB_convert_sparse_to_bitmap_test    // test for hyper/sparse to bitmap
+bool GB_convert_s2b_test    // test for hyper/sparse to bitmap
 (
     float bitmap_switch,    // A->bitmap_switch
     int64_t anz,            // # of entries in A = GB_nnz (A)

@@ -113,10 +113,9 @@ GrB_Info GB_transpose_ix        // transpose the pattern and values of a matrix
         #endif
 
         //----------------------------------------------------------------------
-        // via the JIT kernel
+        // via the JIT or PreJIT kernel
         //----------------------------------------------------------------------
 
-        #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         { 
             struct GB_UnaryOp_opaque op_header ;
@@ -126,7 +125,6 @@ GrB_Info GB_transpose_ix        // transpose the pattern and values of a matrix
             info = GB_transpose_unop_jit (C, op, A, Workspaces,
                 A_slice, nworkspaces, nthreads) ;
         }
-        #endif
 
         //----------------------------------------------------------------------
         // via the generic kernel

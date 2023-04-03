@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_ewise_full_noaccum_jit: C=A+B via the JIT
+// GB_ewise_fulln_jit: C=A+B via the JIT
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -12,9 +12,9 @@
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
 
-typedef GB_JIT_KERNEL_EWISE_FULL_NOACCUM_PROTO ((*GB_jit_dl_function)) ;
+typedef GB_JIT_KERNEL_EWISE_FULLN_PROTO ((*GB_jit_dl_function)) ;
 
-GrB_Info GB_ewise_full_noaccum_jit  // C=A+B via the JIT
+GrB_Info GB_ewise_fulln_jit  // C=A+B via the JIT
 (
     // input/output:
     GrB_Matrix C,
@@ -43,7 +43,7 @@ GrB_Info GB_ewise_full_noaccum_jit  // C=A+B via the JIT
 
     void *dl_function ;
     GrB_Info info = GB_jitifyer_load (&dl_function,
-        GB_jit_ewise_family, "ewise_full_noaccum",
+        GB_jit_ewise_family, "ewise_fulln",
         hash, &encoding, suffix, NULL, NULL,
         (GB_Operator) binaryop, C->type, A->type, B->type) ;
     if (info != GrB_SUCCESS) return (info) ;

@@ -462,10 +462,9 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         #endif
 
         //----------------------------------------------------------------------
-        // via the JIT kernel
+        // via the JIT or PreJIT kernel
         //----------------------------------------------------------------------
 
-        #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
             if (A_not_transposed)
@@ -483,7 +482,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
                     nthreads, naslice, nbslice) ;
             }
         }
-        #endif
 
         //----------------------------------------------------------------------
         // via the generic kernel

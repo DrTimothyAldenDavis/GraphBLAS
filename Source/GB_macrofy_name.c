@@ -9,13 +9,15 @@
 
 // The kernel name has the following form, if the suffix is non-NULL:
 //
-//      namespace_kname_012345__suffix
+//      namespace__kname__012345__suffix
 //
 // or, when suffix is NULL:
 //
-//      namespace_kname_012345
+//      namespace__kname__012345
 //
-// where "012345" is a hexadecimal printing of the scode.
+// where "012345" is a hexadecimal printing of the scode.  Note the double
+// underscores (2 or 3 of them).  These are used by GB_demacrofy_name for
+// parsing the kernel_name of a PreJIT kernel.
 //
 // The suffix is used only for user-defined types and operators.
 
@@ -37,13 +39,13 @@ void GB_macrofy_name
     if (suffix == NULL)
     {
         // kernel uses only built-in types and operators
-        snprintf (kernel_name, GB_KLEN-1, "%s_%s__%0*" PRIx64,
+        snprintf (kernel_name, GB_KLEN-1, "%s__%s__%0*" PRIx64,
             name_space, kname, scode_digits, scode) ;
     }
     else
     {
         // kernel uses at least one built-in types and/or operator
-        snprintf (kernel_name, GB_KLEN-1, "%s_%s__%0*" PRIx64 "__%s",
+        snprintf (kernel_name, GB_KLEN-1, "%s__%s__%0*" PRIx64 "__%s",
             name_space, kname, scode_digits, scode, suffix) ;
     }
 }

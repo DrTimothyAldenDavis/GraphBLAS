@@ -341,7 +341,7 @@ GrB_Info wathen             // construct a random Wathen matrix
     // scale the matrix, if requested
     //--------------------------------------------------------------------------
 
-    // An alternative to multiplying by the inverse of the diagonal would be to
+    // Another way to multiply by the inverse of the diagonal would be to
     // compute A=A/D using the PLUS_DIV_FP64 semiring, which scales the columns
     // instead of the rows, and then transposing the result, since A is
     // symmetric but D\A and A/D are not.  Alternatively, a user-defined

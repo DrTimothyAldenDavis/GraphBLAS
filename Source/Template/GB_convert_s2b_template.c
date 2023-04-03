@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_convert_sparse_to_bitmap_template: convert A from sparse to bitmap
+// GB_convert_s2b_template: convert A from sparse to bitmap
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -37,11 +37,11 @@
         const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
         #if GB_A_HAS_ZOMBIES
         {
-            #include "GB_convert_sparse_to_bitmap_zombies.c"
+            #include "GB_convert_s2b_zombies.c"
         }
         #else
         {
-            #include "GB_convert_sparse_to_bitmap_nozombies.c"
+            #include "GB_convert_s2b_nozombies.c"
         }
         #endif
     }
@@ -49,11 +49,11 @@
     {
         if (nzombies > 0)
         {
-            #include "GB_convert_sparse_to_bitmap_zombies.c"
+            #include "GB_convert_s2b_zombies.c"
         }
         else
         {
-            #include "GB_convert_sparse_to_bitmap_nozombies.c"
+            #include "GB_convert_s2b_nozombies.c"
         }
     }
     #endif

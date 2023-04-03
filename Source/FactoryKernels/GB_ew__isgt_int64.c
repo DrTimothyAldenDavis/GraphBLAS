@@ -43,7 +43,7 @@
 // C = A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_Cewise_full_noaccum__isgt_int64)
+GrB_Info GB (_Cewise_fulln__isgt_int64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -51,7 +51,7 @@ GrB_Info GB (_Cewise_full_noaccum__isgt_int64)
     const int nthreads
 )
 { 
-    #include "GB_ewise_full_noaccum_template.c"
+    #include "GB_ewise_fulln_template.c"
     return (GrB_SUCCESS) ;
 }
 

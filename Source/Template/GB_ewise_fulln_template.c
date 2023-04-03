@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_ewise_full_noaccum_template: C = A+B where all 3 matrices are dense
+// GB_ewise_fulln_template: C = A+B where all 3 matrices are dense
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.

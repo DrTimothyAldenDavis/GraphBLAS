@@ -228,8 +228,7 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
         GB_OK (GB_concat_full (C, C_iso, cscalar,
             Tiles, m, n, Tile_rows, Tile_cols, Werk)) ;
     }
-    else if (GB_convert_sparse_to_bitmap_test (C->bitmap_switch, cnz, cnrows,
-        cncols))
+    else if (GB_convert_s2b_test (C->bitmap_switch, cnz, cnrows, cncols))
     { 
         // construct C as bitmap
         GBURBLE ("(%sbitmap concat) ", C_iso ? "iso " : "") ;

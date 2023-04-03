@@ -10,6 +10,10 @@
 #ifndef GB_JIT_KERNEL_PROTO_H
 #define GB_JIT_KERNEL_PROTO_H
 
+#define GB_JIT_QUERY_PROTO(query_func)                                  \
+bool query_func (uint64_t *hash, int v [3], char *defn [5],             \
+    void *id, void *term, size_t id_size, size_t term_size)
+
 #define GB_JIT_KERNEL_ADD_PROTO(GB_jit_kernel_add)                      \
 GrB_Info GB_jit_kernel_add                                              \
 (                                                                       \
@@ -332,8 +336,8 @@ GrB_Info GB_jit_kernel_emult_bitmap                                     \
     const int C_nthreads                                                \
 )
 
-#define GB_JIT_KERNEL_EWISE_FULL_ACCUM_PROTO(GB_jit_kernel_ewise_full_accum) \
-GrB_Info GB_jit_kernel_ewise_full_accum                                 \
+#define GB_JIT_KERNEL_EWISE_FULLA_PROTO(GB_jit_kernel_ewise_fulla)      \
+GrB_Info GB_jit_kernel_ewise_fulla                                      \
 (                                                                       \
     GrB_Matrix C,                                                       \
     const GrB_Matrix A,                                                 \
@@ -341,8 +345,8 @@ GrB_Info GB_jit_kernel_ewise_full_accum                                 \
     const int nthreads                                                  \
 )
 
-#define GB_JIT_KERNEL_EWISE_FULL_NOACCUM_PROTO(GB_jit_kernel_ewise_full_noacc) \
-GrB_Info GB_jit_kernel_ewise_full_noacc                                 \
+#define GB_JIT_KERNEL_EWISE_FULLN_PROTO(GB_jit_kernel_ewise_fulln)      \
+GrB_Info GB_jit_kernel_ewise_fulln                                      \
 (                                                                       \
     GrB_Matrix C,                                                       \
     const GrB_Matrix A,                                                 \

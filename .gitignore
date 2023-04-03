@@ -56,13 +56,6 @@ Demo/gauss_demo.out
 Demo/t1.out
 Demo/t2.out
 
-alternative/*.out
-alternative/*_out.m
-alternative/*_out2.m
-alternative/*_demo
-alternative/*.so*
-alternative/*.dylib*
-
 Test/*.log
 Test/errlog.txt
 Test/errlog*.txt

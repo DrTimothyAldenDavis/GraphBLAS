@@ -30,8 +30,8 @@ function C = select (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %
 % The selectop is a string defining the operator:
 %
-%   operator        built-in equivalent         alternative strings
-%   --------        -----------------           -------------------
+%   operator        built-in equivalent         equivalent strings
+%   --------        -----------------           ------------------
 %   'tril'          C = tril (A,b)
 %   'triu'          C = triu (A,b)
 %   'diag'          C = diag (A,b), see note

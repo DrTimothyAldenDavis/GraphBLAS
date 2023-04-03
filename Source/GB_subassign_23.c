@@ -131,10 +131,9 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
     #endif
 
     //--------------------------------------------------------------------------
-    // via the JIT kernel
+    // via the JIT or PreJIT kernel
     //--------------------------------------------------------------------------
 
-    #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     {
         info = GB_subassign_jit (C,
@@ -149,7 +148,6 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
             /* scalar, scalar_type: */ NULL, NULL,
             GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_23, "subassign_23", Werk) ;
     }
-    #endif
 
     //--------------------------------------------------------------------------
     // via the generic kernel

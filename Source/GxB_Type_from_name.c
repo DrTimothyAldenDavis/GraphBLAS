@@ -41,7 +41,7 @@
     }
 */
 
-// The alternative to this approach is a single function:
+// Another approach is a single function:
 //
 //      GxB_Matrix_type (&type, A)
 //

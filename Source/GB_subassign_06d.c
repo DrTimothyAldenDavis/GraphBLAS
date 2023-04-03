@@ -151,10 +151,9 @@ GrB_Info GB_subassign_06d
         #endif
 
         //----------------------------------------------------------------------
-        // via the JIT kernel
+        // via the JIT or PreJIT kernel
         //----------------------------------------------------------------------
 
-        #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
             info = GB_subassign_jit (C,
@@ -170,7 +169,6 @@ GrB_Info GB_subassign_06d
                 GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_06d, "subassign_06d",
                 Werk) ;
         }
-        #endif
 
         //----------------------------------------------------------------------
         // via the generic kernel

@@ -19,7 +19,8 @@ void GB_macrofy_query
     GB_Operator op1,    // binaryop for a semring
     GrB_Type type0,
     GrB_Type type1,
-    GrB_Type type2
+    GrB_Type type2,
+    uint64_t hash       // hash code for the kernel
 )
 {
 
@@ -28,12 +29,12 @@ void GB_macrofy_query
     //--------------------------------------------------------------------------
 
     fprintf (fp, 
-        "bool GB_jit_query (int v [3], char *defn [5],\n"
-        "    void *id, void *term, size_t id_size, size_t term_size) ;\n"
-        "bool GB_jit_query (int v [3], char *defn [5],\n"
-        "    void *id, void *term, size_t id_size, size_t term_size)\n"
+        "GB_JIT_QUERY_PROTO (GB_jit_query) ;\n"
+        "GB_JIT_QUERY_PROTO (GB_jit_query)\n"
         "{\n"
+        "    (*hash) = 0x%016" PRIx64 " ;\n"
         "    v [0] = %d ; v [1] = %d ; v [2] = %d ;\n",
+            hash,
             GxB_IMPLEMENTATION_MAJOR,
             GxB_IMPLEMENTATION_MINOR,
             GxB_IMPLEMENTATION_SUB) ;

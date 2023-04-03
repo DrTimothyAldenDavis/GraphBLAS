@@ -213,16 +213,14 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         }
 
         //----------------------------------------------------------------------
-        // via the JIT kernel
+        // via the JIT or PreJIT kernel
         //----------------------------------------------------------------------
 
-        #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
             info = GB_reduce_to_scalar_jit (z, monoid, A, W, F, ntasks,
                 nthreads) ;
         }
-        #endif
 
         //----------------------------------------------------------------------
         // via the generic kernel

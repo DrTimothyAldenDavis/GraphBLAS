@@ -133,10 +133,9 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
     #endif
 
     //--------------------------------------------------------------------------
-    // via the JIT kernel
+    // via the JIT or PreJIT kernel
     //--------------------------------------------------------------------------
 
-    #if GB_JIT_ENABLED
     // pass (ywork, accum->ytype) in place of (scalar, scalar_type)
     if (info == GrB_NO_VALUE)
     {
@@ -152,7 +151,6 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
             /* scalar, scalar_type: */ ywork, accum->ytype,
             GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_22, "subassign_22", Werk) ;
     }
-    #endif
 
     //--------------------------------------------------------------------------
     // via the generic kernel

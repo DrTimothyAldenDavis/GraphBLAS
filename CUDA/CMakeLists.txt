@@ -52,7 +52,6 @@ set ( GRAPHBLAS_CUDA_INCLUDES
         ../Source
         ../Source/Shared
         ../Source/Template
-        ../Source/SharedTemplate
         ../Include
         ../CUDA )
 

@@ -51,7 +51,7 @@ m4_divert(if_is_binop_subset)
 
 // The op must be MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, or RDIV.
 
-GrB_Info GB (_Cewise_full_accum)
+GrB_Info GB (_Cewise_fulla)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -59,7 +59,7 @@ GrB_Info GB (_Cewise_full_accum)
     const int nthreads
 )
 { 
-    #include "GB_ewise_full_accum_template.c"
+    #include "GB_ewise_fulla_template.c"
     return (GrB_SUCCESS) ;
 }
 m4_divert(0)
@@ -68,7 +68,7 @@ m4_divert(0)
 // C = A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_Cewise_full_noaccum)
+GrB_Info GB (_Cewise_fulln)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -76,7 +76,7 @@ GrB_Info GB (_Cewise_full_noaccum)
     const int nthreads
 )
 { 
-    #include "GB_ewise_full_noaccum_template.c"
+    #include "GB_ewise_fulln_template.c"
     return (GrB_SUCCESS) ;
 }
 

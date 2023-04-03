@@ -298,10 +298,9 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             }
 
             //------------------------------------------------------------------
-            // via the JIT kernel
+            // via the JIT or PreJIT kernel
             //------------------------------------------------------------------
 
-            #if GB_JIT_ENABLED
             if (info == GrB_NO_VALUE)
             { 
                 struct GB_UnaryOp_opaque op_header ;
@@ -310,7 +309,6 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                 info = GB_split_sparse_jit (C, op, A, akstart, aistart, Wp,
                     C_ek_slicing, C_ntasks, C_nthreads) ;
             }
-            #endif
 
             //------------------------------------------------------------------
             // via the generic kernel

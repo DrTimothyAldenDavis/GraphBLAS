@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_ewise_full_noaccum: C = A+B where A and B are dense, C is anything
+// GB_ewise_fulln: C = A+B where A and B are dense, C is anything
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -21,7 +21,7 @@
 
 #define GB_FREE_ALL ;
 
-GrB_Info GB_ewise_full_noaccum      // C = A+B
+GrB_Info GB_ewise_fulln      // C = A+B
 (
     GrB_Matrix C,                   // input/output matrix
     const bool C_as_if_full,        // true if C is as-if-full on input
@@ -110,12 +110,12 @@ GrB_Info GB_ewise_full_noaccum      // C = A+B
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_Cewise_full_noaccum(op,xname) \
-            GB (_Cewise_full_noaccum_ ## op ## xname)
+        #define GB_Cewise_fulln(op,xname) \
+            GB (_Cewise_fulln_ ## op ## xname)
 
         #define GB_BINOP_WORKER(op,xname)                                   \
         {                                                                   \
-            info = GB_Cewise_full_noaccum(op,xname) (C, A, B, nthreads) ;   \
+            info = GB_Cewise_fulln(op,xname) (C, A, B, nthreads) ;   \
         }                                                                   \
         break ;
 
@@ -134,15 +134,13 @@ GrB_Info GB_ewise_full_noaccum      // C = A+B
     #endif
 
     //--------------------------------------------------------------------------
-    // via the JIT kernel
+    // via the JIT or PreJIT kernel
     //--------------------------------------------------------------------------
 
-    #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     { 
-        info = GB_ewise_full_noaccum_jit (C, op, A, B, nthreads) ;
+        info = GB_ewise_fulln_jit (C, op, A, B, nthreads) ;
     }
-    #endif
 
     // no generic kernel: returns GrB_NO_VALUE if no factory kernel exists and
     // no JIT kernel created.

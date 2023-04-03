@@ -129,11 +129,11 @@ set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 if ( COMPACT )
     # do not compile the FactoryKernels
     include_directories ( ../Source/Template ../Source ../Include rename
-        ../Source/Shared ../Source/SharedTemplate
+        ../Source/Shared ../Config
         ../lz4 ../zstd ../zstd/zstd_subset ../xxHash )
 else ( )
     include_directories ( ../Source/Template ../Source ../Include rename
-        ../Source/Shared ../Source/SharedTemplate
+        ../Source/Shared ../Config
         ../lz4 ../zstd ../zstd/zstd_subset ../xxHash
         ../Source/FactoryKernels )
 endif ( )
@@ -200,9 +200,10 @@ endif ( )
 #-------------------------------------------------------------------------------
 
 if ( COMPACT )
-    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" )
+    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../PreJIT/GB_prejit.c" )
 else ( )
-    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../Source/FactoryKernels/*.c" )
+    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../PreJIT/GB_prejit.c"
+        "../Source/FactoryKernels/*.c" )
 endif ( )
 
 add_library ( graphblas_matlab SHARED ${GRAPHBLAS_SOURCES} )

@@ -239,7 +239,7 @@ int main (void)
     GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads) ;
     fprintf (stderr, "wildtype demo: nthreads %d\n", nthreads) ;
 
-    /* alternative method via #defines:
+    /* via #defines:
     fprintf (stderr, LINE2 "SuiteSparse:GraphBLAS Version %d.%d.%d, %s\n" LINE2
         "%s" LINE "License: %s" LINE "GraphBLAS API Version %d.%d.%d, %s"
         " (http://graphblas.org)\n%s" LINE2, GxB_IMPLEMENTATION_MAJOR,

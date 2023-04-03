@@ -14,7 +14,7 @@
 #include "GB_AxB_saxpy3.h"
 
 //------------------------------------------------------------------------------
-// PreJIT prototype macros
+// prototypes for all PreJIT kernels
 //------------------------------------------------------------------------------
 
 #define JIT_DOT2(g) GB_JIT_KERNEL_AXB_DOT2_PROTO(g) ;
@@ -40,8 +40,8 @@
 #define JIT_EM4(g)  GB_JIT_KERNEL_EMULT_04_PROTO(g) ;
 #define JIT_EM8(g)  GB_JIT_KERNEL_EMULT_08_PROTO(g) ;
 #define JIT_EMB(g)  GB_JIT_KERNEL_EMULT_BITMAP_PROTO(g) ;
-#define JIT_EWFA(g) GB_JIT_KERNEL_EWISE_FULL_ACCUM_PROTO(g) ;
-#define JIT_EWFN(g) GB_JIT_KERNEL_EWISE_FULL_NOACCUM_PROTO(g) ;
+#define JIT_EWFA(g) GB_JIT_KERNEL_EWISE_FULLA_PROTO(g) ;
+#define JIT_EWFN(g) GB_JIT_KERNEL_EWISE_FULLN_PROTO(g) ;
 #define JIT_RED(g)  GB_JIT_KERNEL_REDUCE_PROTO(g) ;
 #define JIT_ROWS(g) GB_JIT_KERNEL_ROWSCALE_PROTO(g) ;
 #define JIT_SELB(g) GB_JIT_KERNEL_SELECT_BITMAP_PROTO(g) ;
@@ -56,20 +56,35 @@
 #define JIT_TR0(g)  GB_JIT_KERNEL_TRANS_UNOP_PROTO(g) ;
 #define JIT_UNI(g)  GB_JIT_KERNEL_UNION_PROTO(g) ;
 
-//------------------------------------------------------------------------------
-// prototypes for all PreJIT kernels
-//------------------------------------------------------------------------------
-
 @PREJIT_PROTO@
 
 //------------------------------------------------------------------------------
-// GB_prejit_functions: a list of function pointers to PreJIT kernels
+// prototypes for all PreJIT query kernels
+//------------------------------------------------------------------------------
+
+#define JIT_Q(q) GB_JIT_QUERY_PROTO(q) ;
+
+@PREJIT_QUERY@
+
+//------------------------------------------------------------------------------
+// GB_prejit_kernels: a list of function pointers to PreJIT kernels
 //------------------------------------------------------------------------------
 
 #if ( @GB_PREJIT_LEN@ > 0 )
-static void *GB_prejit_functions [@GB_PREJIT_LEN@] =
+static void *GB_prejit_kernels [@GB_PREJIT_LEN@] =
 {
 @PREFUNCS@
+} ;
+#endif
+
+//------------------------------------------------------------------------------
+// GB_prejit_queries: a list of function pointers to PreJIT query kernels
+//------------------------------------------------------------------------------
+
+#if ( @GB_PREJIT_LEN@ > 0 )
+static void *GB_prejit_queries [@GB_PREJIT_LEN@] =
+{
+@PREQFUNCS@
 } ;
 #endif
 
@@ -91,16 +106,19 @@ static char *GB_prejit_names [@GB_PREJIT_LEN@] =
 void GB_prejit
 (
     int32_t *nkernels,      // return # of kernels
-    void **Func_handle,     // return list of function pointers
-    char **Name_handle
+    void **Kernel_handle,   // return list of function pointers to kernels
+    void **Query_handle,    // return list of function pointers to queries
+    char **Name_handle      // return list of kernel names
 )
 {
     (*nkernels) = @GB_PREJIT_LEN@ ;
     #if ( @GB_PREJIT_LEN@ == 0 )
-    (*Func_handle) = NULL ;
+    (*Kernel_handle) = NULL ;
+    (*Query_handle) = NULL ;
     (*Name_handle) = NULL ;
     #else
-    (*Func_handle) = GB_prejit_functions ;
+    (*Kernel_handle) = GB_prejit_kernels ;
+    (*Query_handle) = GB_prejit_queries ;
     (*Name_handle) = GB_prejit_names ;
     #endif
 }

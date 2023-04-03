@@ -45,7 +45,7 @@
 
 // The op must be MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, or RDIV.
 
-GrB_Info GB (_Cewise_full_accum__times_fp32)
+GrB_Info GB (_Cewise_fulla__times_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -53,7 +53,7 @@ GrB_Info GB (_Cewise_full_accum__times_fp32)
     const int nthreads
 )
 { 
-    #include "GB_ewise_full_accum_template.c"
+    #include "GB_ewise_fulla_template.c"
     return (GrB_SUCCESS) ;
 }
 
@@ -61,7 +61,7 @@ GrB_Info GB (_Cewise_full_accum__times_fp32)
 // C = A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_Cewise_full_noaccum__times_fp32)
+GrB_Info GB (_Cewise_fulln__times_fp32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -69,7 +69,7 @@ GrB_Info GB (_Cewise_full_noaccum__times_fp32)
     const int nthreads
 )
 { 
-    #include "GB_ewise_full_noaccum_template.c"
+    #include "GB_ewise_fulln_template.c"
     return (GrB_SUCCESS) ;
 }
 

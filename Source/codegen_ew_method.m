@@ -17,17 +17,17 @@ name = sprintf ('%s_%s', binop, fname) ;
 % function names
 fprintf (f, 'm4_define(`_AaddB'', `_AaddB__%s'')\n', name) ;
 fprintf (f, 'm4_define(`_AunionB'', `_AunionB__%s'')\n', name) ;
-fprintf (f, 'm4_define(`_Cewise_full_noaccum'', `_Cewise_full_noaccum__%s'')\n', name) ;
+fprintf (f, 'm4_define(`_Cewise_fulln'', `_Cewise_fulln__%s'')\n', name) ;
 
-% subset of operators for GB_ewise_full_accum
+% subset of operators for GB_ewise_fulla
 switch (binop)
     case { 'min', 'max', 'plus', 'minus', 'rminus', 'times', 'div', 'rdiv' }
         % these operators are used in ewise3_accum
-        fprintf (f, 'm4_define(`_Cewise_full_accum'', `_Cewise_full_accum__%s'')\n', name) ;
+        fprintf (f, 'm4_define(`_Cewise_fulla'', `_Cewise_fulla__%s'')\n', name) ;
         fprintf (f, 'm4_define(`if_is_binop_subset'', `0'')\n') ;
     otherwise
-        % disable GB_ewise_full_accum
-        fprintf (f, 'm4_define(`_Cewise_full_accum'', `(none)'')\n') ;
+        % disable GB_ewise_fulla
+        fprintf (f, 'm4_define(`_Cewise_fulla'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`if_is_binop_subset'', `-1'')\n') ;
 end
 

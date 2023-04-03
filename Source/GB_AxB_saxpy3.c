@@ -682,17 +682,15 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         #endif
 
         //----------------------------------------------------------------------
-        // via the JIT kernel
+        // via the JIT or PreJIT kernel
         //----------------------------------------------------------------------
 
-        #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
             info = GB_AxB_saxpy3_jit (C, M, Mask_comp,
                 Mask_struct, M_in_place, A, B, semiring, flipxy,
                 SaxpyTasks, ntasks, nfine, nthreads, do_sort, Werk) ;
         }
-        #endif
 
         //----------------------------------------------------------------------
         // via the generic kernel

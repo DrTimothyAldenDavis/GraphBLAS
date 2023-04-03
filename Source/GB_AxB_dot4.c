@@ -131,15 +131,6 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         return (GrB_NO_VALUE) ;
     }
 
-    #if !GB_JIT_ENABLED
-    if (!builtin_semiring)
-    { 
-        // The semiring must be built-in for pre-generated kernels
-        GBURBLE ("(punt: not builtin) ") ;
-        return (GrB_NO_VALUE) ;
-    }
-    #endif
-
     GBURBLE ("(dot4: %s += %s'*%s) ",
         GB_sparsity_char_matrix (C),
         GB_sparsity_char_matrix (A),
@@ -261,17 +252,15 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     #endif
 
     //--------------------------------------------------------------------------
-    // via the JIT kernel
+    // via the JIT or PreJIT kernel
     //--------------------------------------------------------------------------
 
-    #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     { 
         // C+= A*B, C is full
         info = GB_AxB_dot4_jit (C, C_in_iso, A, B, semiring,
             flipxy, A_slice, B_slice, naslice, nbslice, nthreads, Werk) ;
     }
-    #endif
 
     //--------------------------------------------------------------------------
     // free workspace and return result

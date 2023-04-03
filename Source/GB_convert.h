@@ -96,7 +96,7 @@ bool GB_convert_bitmap_to_sparse_test    // test for hyper/sparse to bitmap
     int64_t vdim            // A->vdim
 ) ;
 
-bool GB_convert_sparse_to_bitmap_test    // test for hyper/sparse to bitmap
+bool GB_convert_s2b_test    // test for hyper/sparse to bitmap
 (
     float bitmap_switch,    // A->bitmap_switch
     int64_t anz,            // # of entries in A = GB_nnz (A)
@@ -114,7 +114,7 @@ GrB_Info GB_convert_full_to_bitmap      // convert matrix from full to bitmap
     GrB_Matrix A                // matrix to convert from full to bitmap
 ) ;
 
-GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
+GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
 (
     GrB_Matrix A,               // matrix to convert from sparse to bitmap
     GB_Werk Werk

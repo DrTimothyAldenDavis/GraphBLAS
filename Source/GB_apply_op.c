@@ -389,16 +389,14 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         #endif
 
         //----------------------------------------------------------------------
-        // via the JIT kernel
+        // via the JIT or PreJIT kernel
         //----------------------------------------------------------------------
 
-        #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
             info = GB_apply_unop_jit (Cx, ctype, op, flipij, A,
                 NULL, NULL, 0, A_nthreads) ;
         }
-        #endif
 
         //----------------------------------------------------------------------
         // via the generic kernel
@@ -518,16 +516,14 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             #endif
 
             //------------------------------------------------------------------
-            // via the JIT kernel
+            // via the JIT or PreJIT kernel
             //------------------------------------------------------------------
 
-            #if GB_JIT_ENABLED
             if (info == GrB_NO_VALUE)
             {
                 info = GB_apply_bind1st_jit (Cx, ctype,
                     (GrB_BinaryOp) op, scalarx, A, A_nthreads) ;
             }
-            #endif
 
         }
         else
@@ -567,16 +563,14 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             #endif
 
             //------------------------------------------------------------------
-            // via the JIT kernel
+            // via the JIT or PreJIT kernel
             //------------------------------------------------------------------
 
-            #if GB_JIT_ENABLED
             if (info == GrB_NO_VALUE)
             {
                 info = GB_apply_bind2nd_jit (Cx, ctype,
                     (GrB_BinaryOp) op, A, scalarx, A_nthreads) ;
             }
-            #endif
         }
 
         //----------------------------------------------------------------------
@@ -652,16 +646,14 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         }
 
         //----------------------------------------------------------------------
-        // via the JIT kernel
+        // via the JIT or PreJIT kernel
         //----------------------------------------------------------------------
 
-        #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
             info = GB_apply_unop_jit (Cx, ctype, op, flipij, A,
                 ythunk, A_ek_slicing, A_ntasks, A_nthreads) ;
         }
-        #endif
 
         //----------------------------------------------------------------------
         // via the generic kernel

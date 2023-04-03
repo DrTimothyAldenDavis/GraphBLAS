@@ -146,16 +146,14 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
         #endif
 
         //----------------------------------------------------------------------
-        // via the JIT kernel
+        // via the JIT or PreJIT kernel
         //----------------------------------------------------------------------
 
-        #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         { 
             info = GB_transpose_unop_jit (C, op, A, Workspaces, A_slice,
                 nworkspaces, nthreads) ;
         }
-        #endif
 
         //----------------------------------------------------------------------
         // via the generic kernel
@@ -287,16 +285,14 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
             #endif
 
             //------------------------------------------------------------------
-            // via the JIT kernel
+            // via the JIT or PreJIT kernel
             //------------------------------------------------------------------
 
-            #if GB_JIT_ENABLED
             if (info == GrB_NO_VALUE)
             {
                 info = GB_transpose_bind1st_jit (C, (GrB_BinaryOp) op,
                     scalarx, A, Workspaces, A_slice, nworkspaces, nthreads) ;
             }
-            #endif
 
         }
         else
@@ -337,16 +333,14 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
             #endif
 
             //------------------------------------------------------------------
-            // via the JIT kernel
+            // via the JIT or PreJIT kernel
             //------------------------------------------------------------------
 
-            #if GB_JIT_ENABLED
             if (info == GrB_NO_VALUE)
             {
                 info = GB_transpose_bind2nd_jit (C, (GrB_BinaryOp) op,
                     A, scalarx, Workspaces, A_slice, nworkspaces, nthreads) ;
             }
-            #endif
 
         }
 

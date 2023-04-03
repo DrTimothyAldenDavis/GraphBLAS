@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-// GB_convert_sparse_to_bitmap_zombies: convert A from sparse to bitmap
+// GB_convert_s2b_nozombies: convert A from sparse to bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -11,9 +11,8 @@
 // and represent a bitmap format.
 
 {
-
     //--------------------------------------------------------------------------
-    // convert from sparse/hyper to bitmap (with zombies)
+    // convert from sparse/hyper to bitmap (no zombies)
     //--------------------------------------------------------------------------
 
     int tid ;
@@ -41,17 +40,14 @@
             //------------------------------------------------------------------
 
             for (int64_t p = pA_start ; p < pA_end ; p++)
-            {
+            { 
                 // A(i,j) has index i, value Ax [p]
                 int64_t i = Ai [p] ;
-                if (!GB_IS_ZOMBIE (i))
-                { 
-                    int64_t pnew = i + pA_new ;
-                    // move A(i,j) to its new place in the bitmap
-                    // Axnew [pnew] = Ax [p]
-                    GB_COPY (Axnew, pnew, Ax, p) ;
-                    Ab [pnew] = 1 ;
-                }
+                int64_t pnew = i + pA_new ;
+                // move A(i,j) to its new place in the bitmap
+                // Axnew [pnew] = Ax [p]
+                GB_COPY (Axnew, pnew, Ax, p) ;
+                Ab [pnew] = 1 ;
             }
         }
     }

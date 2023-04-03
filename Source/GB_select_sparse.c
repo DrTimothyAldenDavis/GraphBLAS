@@ -205,13 +205,19 @@ GrB_Info GB_select_sparse
 
         #endif
 
-        #if GB_JIT_ENABLED
+        //----------------------------------------------------------------------
+        // via the JIT or PreJIT kernel
+        //----------------------------------------------------------------------
+
         if (info == GrB_NO_VALUE)
         {
             info = GB_select_phase1_jit (Cp, Wfirst, Wlast, C_iso, in_place_A,
                 A, ythunk, op, flipij, A_ek_slicing, A_ntasks, A_nthreads) ;
         }
-        #endif
+
+        //----------------------------------------------------------------------
+        // via the generic kernel
+        //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
         {
@@ -311,17 +317,19 @@ GrB_Info GB_select_sparse
         #endif
 
         //----------------------------------------------------------------------
-        // via the JIT kernel
+        // via the JIT or PreJIT kernel
         //----------------------------------------------------------------------
 
-        #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
             info = GB_select_phase2_jit (Ci, C_iso ? NULL : Cx, Cp, C_iso,
                 in_place_A, Cp_kfirst, A, flipij, ythunk, op, A_ek_slicing,
                 A_ntasks, A_nthreads) ;
         }
-        #endif
+
+        //----------------------------------------------------------------------
+        // via the generic kernel
+        //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
         {

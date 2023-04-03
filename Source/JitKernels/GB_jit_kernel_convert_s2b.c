@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_convert_sparse_to_bitmap.c: convert sparse to bitmap
+// GB_jit_kernel_convert_s2b.c: convert sparse to bitmap
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -13,7 +13,7 @@
 GB_JIT_KERNEL_CONVERT_S2B_PROTO (GB_jit_kernel) ;
 GB_JIT_KERNEL_CONVERT_S2B_PROTO (GB_jit_kernel)
 { 
-    #include "GB_convert_sparse_to_bitmap_template.c"
+    #include "GB_convert_s2b_template.c"
     return (GrB_SUCCESS) ;
 }
 

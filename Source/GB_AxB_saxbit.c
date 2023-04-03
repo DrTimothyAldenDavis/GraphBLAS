@@ -305,10 +305,9 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
         #endif
 
         //----------------------------------------------------------------------
-        // via the JIT kernel
+        // via the JIT or PreJIT kernel
         //----------------------------------------------------------------------
 
-        #if GB_JIT_ENABLED
         if (info == GrB_NO_VALUE)
         {
             info = GB_AxB_saxbit_jit (C, M, Mask_comp,
@@ -316,7 +315,6 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
                 nfine_tasks_per_vector, use_coarse_tasks, use_atomics,
                 M_ek_slicing, M_nthreads, M_ntasks, A_slice, H_slice, Wcx, Wf) ;
         }
-        #endif
 
         //----------------------------------------------------------------------
         // via the generic kernel

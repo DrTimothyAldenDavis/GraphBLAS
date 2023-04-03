@@ -330,16 +330,14 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     }
 
     //--------------------------------------------------------------------------
-    // via the JIT kernel
+    // via the JIT or PreJIT kernel
     //--------------------------------------------------------------------------
 
-    #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     {
         info = GB_emult_04_jit (C, C_sparsity, M, Mask_struct, op,
             A, B, Cp_kfirst, M_ek_slicing, M_ntasks, M_nthreads) ;
     }
-    #endif
 
     //--------------------------------------------------------------------------
     // via the generic kernel

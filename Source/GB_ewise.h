@@ -33,10 +33,10 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_ewise_full_accum: C += A+B, all 3 matrices dense
+// GB_ewise_fulla: C += A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB_ewise_full_accum        // C += A+B, all matrices dense
+GrB_Info GB_ewise_fulla        // C += A+B, all matrices dense
 (
     GrB_Matrix C,                   // input/output matrix
     const GrB_BinaryOp op,          // only GB_BINOP_SUBSET operators supported
@@ -45,10 +45,10 @@ GrB_Info GB_ewise_full_accum        // C += A+B, all matrices dense
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_ewise_full_noaccum: C = A+B where A and B are dense; C anything
+// GB_ewise_fulln: C = A+B where A and B are dense; C anything
 //------------------------------------------------------------------------------
 
-GrB_Info GB_ewise_full_noaccum      // C = A+B
+GrB_Info GB_ewise_fulln      // C = A+B
 (
     GrB_Matrix C,                   // input/output matrix
     const bool C_as_if_full,        // true if C is as-if-full on input

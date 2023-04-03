@@ -30,7 +30,7 @@ static inline GrB_Info GB_conform_hyper_or_bitmap
 {
     GrB_Info info ;
     if (is_full || ((is_hyper || is_sparse) &&
-        GB_convert_sparse_to_bitmap_test (A->bitmap_switch,
+        GB_convert_s2b_test (A->bitmap_switch,
             GB_nnz (A), A->vlen, A->vdim)))
     { 
         // if full or sparse/hypersparse with many entries: to bitmap
@@ -58,7 +58,7 @@ static inline GrB_Info GB_conform_sparse_or_bitmap
 {
     GrB_Info info ;
     if (is_full || ((is_hyper || is_sparse) &&
-        GB_convert_sparse_to_bitmap_test (A->bitmap_switch,
+        GB_convert_s2b_test (A->bitmap_switch,
             GB_nnz (A), A->vlen, A->vdim)))
     { 
         // if full or sparse/hypersparse with many entries: to bitmap
@@ -86,7 +86,7 @@ static inline GrB_Info GB_conform_hyper_sparse_or_bitmap
 {
     GrB_Info info ;
     if (is_full || ((is_hyper || is_sparse) &&
-        GB_convert_sparse_to_bitmap_test (A->bitmap_switch,
+        GB_convert_s2b_test (A->bitmap_switch,
             GB_nnz (A), A->vlen, A->vdim)))
     { 
         // if full or sparse/hypersparse with many entries: to bitmap

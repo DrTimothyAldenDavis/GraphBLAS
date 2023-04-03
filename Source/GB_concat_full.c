@@ -197,10 +197,9 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
             #endif
 
             //------------------------------------------------------------------
-            // via the JIT kernel
+            // via the JIT or PreJIT kernel
             //------------------------------------------------------------------
 
-            #if GB_JIT_ENABLED
             if (info == GrB_NO_VALUE)
             { 
                 struct GB_UnaryOp_opaque op_header ;
@@ -209,7 +208,6 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
                 info = GB_concat_full_jit (C, cistart, cvstart, op, A,
                     A_nthreads) ;
             }
-            #endif
 
             //------------------------------------------------------------------
             // via the generic kernel

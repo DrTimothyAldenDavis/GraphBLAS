@@ -1250,16 +1250,14 @@ GrB_Info GB_builder                 // build a matrix from tuples
             }
 
             //------------------------------------------------------------------
-            // via the JIT kernel
+            // via the JIT or PreJIT kernel
             //------------------------------------------------------------------
 
-            #if GB_JIT_ENABLED
             if (info == GrB_NO_VALUE)
             { 
                 info = GB_build_jit (Tx, Ti, Sx, ttype, stype, dup, nvals,
                     ndupl, I_work, K_work, tstart_slice, tnz_slice, nthreads) ;
             }
-            #endif
 
             //------------------------------------------------------------------
             // via the generic kernel
@@ -1323,16 +1321,14 @@ GrB_Info GB_builder                 // build a matrix from tuples
             //------------------------------------------------------------------
 
             //------------------------------------------------------------------
-            // via the JIT kernel
+            // via the JIT or PreJIT kernel
             //------------------------------------------------------------------
 
-            #if GB_JIT_ENABLED
             if (info == GrB_NO_VALUE)
             { 
                 info = GB_build_jit (Tx, Ti, Sx, ttype, stype, dup, nvals,
                     ndupl, I_work, K_work, tstart_slice, tnz_slice, nthreads) ;
             }
-            #endif
 
             //------------------------------------------------------------------
             // via the generic kernel

@@ -108,5 +108,4 @@ distclean:
 	( cd Test && $(MAKE) distclean )
 	( cd Tcov && $(MAKE) distclean )
 	( cd Doc  && $(MAKE) distclean )
-	( cd alternative && $(MAKE) distclean )
 

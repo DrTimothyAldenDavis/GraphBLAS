@@ -105,11 +105,7 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
         B_is_pattern, semiring, flipxy, &mult_binop_code, &add_binop_code,
         &xcode, &ycode, &zcode) ;
 
-    if (add_binop_code == GB_ANY_binop_code
-        #if !GB_JIT_ENABLED
-        || !builtin_semiring
-        #endif
-        )
+    if (add_binop_code == GB_ANY_binop_code)
     { 
         // The semiring cannot use the ANY monoid.
         // The semiring must be builtin, or use the JIT (no generic method).
@@ -182,16 +178,14 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     #endif
 
     //--------------------------------------------------------------------------
-    // via the JIT kernel
+    // via the JIT or PreJIT kernel
     //--------------------------------------------------------------------------
 
-    #if GB_JIT_ENABLED
     if (info == GrB_NO_VALUE)
     { 
         info = GB_AxB_saxpy5_jit (C, A, B, semiring, flipxy,
             ntasks, nthreads, B_slice) ;
     }
-    #endif
 
     //--------------------------------------------------------------------------
     // free workspace and return result

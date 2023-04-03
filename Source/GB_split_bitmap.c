@@ -169,10 +169,9 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
             }
 
             //------------------------------------------------------------------
-            // via the JIT kernel
+            // via the JIT or PreJIT kernel
             //------------------------------------------------------------------
 
-            #if GB_JIT_ENABLED
             if (info == GrB_NO_VALUE)
             { 
                 struct GB_UnaryOp_opaque op_header ;
@@ -181,7 +180,6 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
                 info = GB_split_bitmap_jit (C, op, A, avstart, aistart,
                     C_nthreads) ;
             }
-            #endif
 
             //------------------------------------------------------------------
             // via the generic kernel

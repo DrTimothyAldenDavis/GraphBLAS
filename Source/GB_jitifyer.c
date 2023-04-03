@@ -11,8 +11,33 @@
 #include "GB_stringify.h"
 #include "GB_config.h"
 
+//------------------------------------------------------------------------------
+// determine if the JIT is enabled at compile-time
+//------------------------------------------------------------------------------
+
+#ifdef NJIT
+// disable the JIT
+#undef  GB_JIT_ENABLED
+#define GB_JIT_ENABLED 0
+#else
+#undef  GB_JIT_ENABLED
+#define GB_JIT_ENABLED 1
+#endif
+
+#ifdef GBRENAME
+// FIXME: JIT does not yet work inside MATLAB; turn it off
+#undef  GB_JIT_ENABLED
+#define GB_JIT_ENABLED 0
+#endif
+
+#if GB_JIT_ENABLED
 // FIXME: dlfcn.h only exists on Linux/Unix/Mac; need to port to Windows
 #include <dlfcn.h>
+#else
+#define dlopen garbage_dlopen
+#define dlclose garbage_dlclose
+#define dlsym garbage_dlsym
+#endif
 
 //------------------------------------------------------------------------------
 // GB_jitifyer_hash_table: a hash table of jitifyer entries
@@ -62,7 +87,8 @@ static GxB_JIT_Control GB_jit_control =
     #if GB_JIT_ENABLED
     GxB_JIT_ON ;        // JIT enabled
     #else
-    GxB_JIT_NONE ;      // JIT disabled at compile time
+    GxB_JIT_RUN ;       // JIT disabled at compile time; only PreJIT available.
+                        // No JIT kernels can be loaded or compiled.
     #endif
 
 //------------------------------------------------------------------------------
@@ -72,7 +98,7 @@ static GxB_JIT_Control GB_jit_control =
 #define OK(ok)                          \
     if (!(ok))                          \
     {                                   \
-        GB_jitifyer_finalize ( ) ;      \
+        GB_jitifyer_finalize (false) ;  \
         return (GrB_OUT_OF_MEMORY) ;    \
     }
 
@@ -95,9 +121,9 @@ static GxB_JIT_Control GB_jit_control =
     strncpy (X, src, X ## _allocated) ;                 \
 }
 
-void GB_jitifyer_finalize (void)
+void GB_jitifyer_finalize (bool freeall)
 { 
-    GB_jitifyer_table_free ( ) ;
+    GB_jitifyer_table_free (freeall) ;
     GB_FREE_STUFF (GB_jit_cache_path) ;
     GB_FREE_STUFF (GB_jit_source_path) ;
     GB_FREE_STUFF (GB_jit_C_compiler) ;
@@ -122,6 +148,8 @@ GrB_Info GB_jitifyer_init (void)
     //--------------------------------------------------------------------------
     // find the GB_jit_cache_path
     //--------------------------------------------------------------------------
+
+    #ifndef GBRENAME
 
     char *cache_path = getenv ("GRAPHBLAS_CACHE_PATH") ;
     if (cache_path != NULL)
@@ -180,6 +208,180 @@ GrB_Info GB_jitifyer_init (void)
     // hash all PreJIT kernels
     //--------------------------------------------------------------------------
 
+    void **Kernels = NULL ;
+    void **Queries = NULL ;
+    char **Names = NULL ;
+    int32_t nkernels = 0 ;
+    GB_prejit (&nkernels, &Kernels, &Queries, &Names) ;
+
+    if (nkernels == 0)
+    {
+        // quick return; no PreJIT kernels
+        return (GrB_SUCCESS) ;
+    }
+
+    for (int k = 0 ; k < nkernels ; k++)
+    {
+
+        //----------------------------------------------------------------------
+        // get the name and function pointer of the PreJIT kernel
+        //----------------------------------------------------------------------
+
+        void *dl_function = Kernels [k] ;
+        GB_jit_query_func dl_query = (GB_jit_query_func) Queries [k] ;
+        if (dl_function == NULL || dl_query == NULL || Names [k] == NULL)
+        {
+            // ignore this kernel
+            printf ("kernel null! %d\n", k) ;
+            continue ;
+        }
+        char kernel_name [GB_KLEN+1] ;
+        strncpy (kernel_name, Names [k], GB_KLEN) ;
+        kernel_name [GB_KLEN] = '\0' ;
+
+        //----------------------------------------------------------------------
+        // parse the kernel name
+        //----------------------------------------------------------------------
+
+        char *name_space = NULL ;
+        char *kname = NULL ;
+        uint64_t scode = 0 ;
+        char *suffix = NULL ;
+        GrB_Info info = GB_demacrofy_name (kernel_name, &name_space, &kname,
+            &scode, &suffix) ;
+
+        if (info != GrB_SUCCESS)
+        {
+            // kernel_name is invalid; ignore this kernel
+            printf ("demacrofy failed! %d:%s\n", k, Names [k]) ;
+            continue ;
+        }
+
+        if (!GB_STRING_MATCH (name_space, "GB_jit"))
+        { 
+            // kernel_name is invalid; ignore this kernel
+            printf ("wrong namespace! %d:%s [%s]\n", k, Names [k], name_space) ;
+            continue ;
+        }
+
+        //----------------------------------------------------------------------
+        // find the kcode of the kname
+        //----------------------------------------------------------------------
+
+        GB_jit_encoding encoding_struct ;
+        GB_jit_encoding *encoding = &encoding_struct ;
+        memset (encoding, 0, sizeof (GB_jit_encoding)) ;
+
+        #define IS(kernel) GB_STRING_MATCH (kname, kernel)
+
+        int c = 0 ;
+        if      (IS ("add"          )) c = GB_JIT_KERNEL_ADD ;
+        else if (IS ("apply_bind1st")) c = GB_JIT_KERNEL_APPLYBIND1 ;
+        else if (IS ("apply_bind2nd")) c = GB_JIT_KERNEL_APPLYBIND2 ;
+        else if (IS ("apply_unop"   )) c = GB_JIT_KERNEL_APPLYUNOP ;
+        else if (IS ("AxB_dot2"     )) c = GB_JIT_KERNEL_AXB_DOT2 ;
+        else if (IS ("AxB_dot2n"    )) c = GB_JIT_KERNEL_AXB_DOT2N ;
+        else if (IS ("AxB_dot3"     )) c = GB_JIT_KERNEL_AXB_DOT3 ;
+        else if (IS ("AxB_dot4"     )) c = GB_JIT_KERNEL_AXB_DOT4 ;
+        else if (IS ("AxB_saxbit"   )) c = GB_JIT_KERNEL_AXB_SAXBIT ;
+        else if (IS ("AxB_saxpy3"   )) c = GB_JIT_KERNEL_AXB_SAXPY3 ;
+        else if (IS ("AxB_saxpy4"   )) c = GB_JIT_KERNEL_AXB_SAXPY4 ;
+        else if (IS ("AxB_saxpy5"   )) c = GB_JIT_KERNEL_AXB_SAXPY5 ;
+        else if (IS ("build"        )) c = GB_JIT_KERNEL_BUILD ;
+        else if (IS ("colscale"     )) c = GB_JIT_KERNEL_COLSCALE ;
+        else if (IS ("concat_bitmap")) c = GB_JIT_KERNEL_CONCAT_BITMAP ;
+        else if (IS ("concat_full"  )) c = GB_JIT_KERNEL_CONCAT_FULL ;
+        else if (IS ("concat_sparse")) c = GB_JIT_KERNEL_CONCAT_SPARSE ;
+        else if (IS ("convert_s2b"  )) c = GB_JIT_KERNEL_CONVERTS2B ;
+        else if (IS ("emult_02"     )) c = GB_JIT_KERNEL_EMULT2 ;
+        else if (IS ("emult_03"     )) c = GB_JIT_KERNEL_EMULT3 ;
+        else if (IS ("emult_04"     )) c = GB_JIT_KERNEL_EMULT4 ;
+        else if (IS ("emult_08"     )) c = GB_JIT_KERNEL_EMULT8 ;
+        else if (IS ("emult_bitmap" )) c = GB_JIT_KERNEL_EMULT_BITMAP ;
+        else if (IS ("ewise_fulla"  )) c = GB_JIT_KERNEL_EWISEFA ;
+        else if (IS ("ewise_fulln"  )) c = GB_JIT_KERNEL_EWISEFN ;
+        else if (IS ("reduce"       )) c = GB_JIT_KERNEL_REDUCE ;
+        else if (IS ("rowscale"     )) c = GB_JIT_KERNEL_ROWSCALE ;
+        else if (IS ("select_bitmap")) c = GB_JIT_KERNEL_SELECT_BITMAP ;
+        else if (IS ("select_phase1")) c = GB_JIT_KERNEL_SELECT1 ;
+        else if (IS ("select_phase2")) c = GB_JIT_KERNEL_SELECT2 ;
+        else if (IS ("split_bitmap" )) c = GB_JIT_KERNEL_SPLIT_BITMAP ;
+        else if (IS ("split_full"   )) c = GB_JIT_KERNEL_SPLIT_FULL ;
+        else if (IS ("split_sparse" )) c = GB_JIT_KERNEL_SPLIT_SPARSE ;
+        else if (IS ("subassign_05d")) c = GB_JIT_KERNEL_SUBASSIGN_05d ;
+        else if (IS ("subassign_06d")) c = GB_JIT_KERNEL_SUBASSIGN_06d ;
+        else if (IS ("subassign_22" )) c = GB_JIT_KERNEL_SUBASSIGN_22 ;
+        else if (IS ("subassign_23" )) c = GB_JIT_KERNEL_SUBASSIGN_23 ;
+        else if (IS ("subassign_25" )) c = GB_JIT_KERNEL_SUBASSIGN_25 ;
+        else if (IS ("trans_bind1st")) c = GB_JIT_KERNEL_TRANSBIND1 ;
+        else if (IS ("trans_bind2nd")) c = GB_JIT_KERNEL_TRANSBIND2 ;
+        else if (IS ("trans_unop"   )) c = GB_JIT_KERNEL_TRANSUNOP ;
+        else if (IS ("union"        )) c = GB_JIT_KERNEL_UNION ;
+        else
+        {
+            // kernel_name is invalid; ignore this kernel
+            printf ("Kernel invalid! %s [%s]\n", Names [k], kname) ;
+            continue ;
+        }
+
+        #undef IS
+        encoding->kcode = c ;
+        encoding->code = scode ;
+        encoding->suffix_len = (suffix == NULL) ? 0 : strlen (suffix) ;
+
+        //----------------------------------------------------------------------
+        // get the hash of this PreJIT kernel
+        //----------------------------------------------------------------------
+
+        // Query the kernel for its hash and version number.  The hash is
+        // needed now so the PreJIT kernel can be added to the hash table.
+
+        // The type/op definitions and monoid id/term values for user-defined
+        // types/ops/ monoids are ignored, because the user-defined objects
+        // have not yet been created during this use of GraphBLAS (this method
+        // is called by GrB_init).  These definitions are checked the first
+        // time the kernel is run.
+
+        uint64_t hash = 0 ;
+        char *ignored [5] ;
+        int version [3] ;
+        (void) dl_query (&hash, version, ignored, NULL, NULL, 0, 0) ;
+
+        if (hash == 0 || hash == UINT64_MAX ||
+            (version [0] != GxB_IMPLEMENTATION_MAJOR) ||
+            (version [1] != GxB_IMPLEMENTATION_MINOR) ||
+            (version [2] != GxB_IMPLEMENTATION_SUB))
+        {
+            printf ("STALE: %d [%s]\n", k, Names [k]) ;
+            continue ;
+        }
+
+        //----------------------------------------------------------------------
+        // make sure this kernel is not a duplicate
+        //----------------------------------------------------------------------
+
+        int64_t k1 = -1, kk = -1 ;
+        if (GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) != NULL)
+        {
+            // kernel_name is invalid; ignore this kernel
+            printf ("Kernel duplicate! %s\n", Names [k]) ;
+            continue ;
+        }
+
+        //----------------------------------------------------------------------
+        // insert the PreJIT kernel in the hash table
+        //----------------------------------------------------------------------
+
+        if (!GB_jitifyer_insert (hash, encoding, suffix, NULL, dl_function,
+            k))
+        {
+            GB_jit_control = GxB_JIT_PAUSE ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+    }
+
+    #endif
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------
@@ -202,19 +404,25 @@ GxB_JIT_Control GB_jitifyer_get_control (void)
 
 void GB_jitifyer_set_control (int control)
 {
-    #if GB_JIT_ENABLED
     #pragma omp critical (GB_jitifyer_worker)
     {
         control = GB_IMAX (control, GxB_JIT_OFF) ;
+        #if GB_JIT_ENABLED
+        // The full JIT is available.
         control = GB_IMIN (control, GxB_JIT_ON) ;
+        #else
+        // The JIT is restricted; only OFF, PAUSE, and RUN settings can be
+        // used.  No JIT kernels can be loaded or compiled.
+        control = GB_IMIN (control, GxB_JIT_RUN) ;
+        #endif
         GB_jit_control = (GxB_JIT_Control) control ;
         if (GB_jit_control == GxB_JIT_OFF)
         {
-            // free all loaded JIT kernels and free the JIT hash table
-            GB_jitifyer_table_free ( ) ;
+            // free all loaded JIT kernels but do not free the JIT hash table,
+            // and do not free the PreJIT kernels
+            GB_jitifyer_table_free (false) ;
         }
     }
-    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -241,7 +449,6 @@ GrB_Info GB_jitifyer_include (void)
         "-I%s/Include "
         "-I%s/Source "
         "-I%s/Source/Shared "
-        "-I%s/Source/SharedTemplate "
         "-I%s/Source/Template "
         "-I%s/Source/JitKernels "
         "-I%s/rmm_wrap "
@@ -251,7 +458,6 @@ GrB_Info GB_jitifyer_include (void)
         "-I%s/GraphBLAS/rename "
         #endif
         ,
-        GB_jit_source_path,
         GB_jit_source_path,
         GB_jit_source_path,
         GB_jit_source_path,
@@ -677,6 +883,92 @@ GrB_Info GB_jitifyer_set_C_link_flags_worker (const char *new_C_link_flags)
 }
 
 //------------------------------------------------------------------------------
+// GB_jitifyer_query: check if the type/op/monoid definitions match
+//------------------------------------------------------------------------------
+
+bool GB_jitifyer_query
+(
+    GB_jit_query_func dl_query,
+    uint64_t hash,              // hash code for the kernel
+    // operator and type definitions
+    GrB_Semiring semiring,
+    GrB_Monoid monoid,
+    GB_Operator op,
+    GrB_Type type1,
+    GrB_Type type2,
+    GrB_Type type3
+)
+{
+
+    int version [3] ;
+    char *library_defn [5] ;
+    size_t zsize = 0 ;
+    size_t tsize = 0 ;
+    void *id = NULL ;
+    void *term = NULL ;
+
+    GB_Operator op1 = NULL, op2 = NULL ;
+    if (semiring != NULL)
+    {
+        monoid = semiring->add ;
+        op1 = (GB_Operator) monoid->op ;
+        op2 = (GB_Operator) semiring->multiply ;
+    }
+    else if (monoid != NULL)
+    {
+        op1 = (GB_Operator) monoid->op ;
+    }
+    else
+    {
+        op1 = op ;
+    }
+
+    if (monoid != NULL && monoid->hash != 0)
+    {
+        // compare the user-defined identity and terminal values
+        zsize = monoid->op->ztype->size ;
+        tsize = (monoid->terminal == NULL) ? 0 : zsize ;
+        id = monoid->identity ;
+        term = monoid->terminal ;
+    }
+
+    uint64_t hash2 = 0 ;
+    bool ok = dl_query (&hash2, version, library_defn, id, term,
+        zsize, tsize) ;
+    ok = ok && (version [0] == GxB_IMPLEMENTATION_MAJOR) &&
+               (version [1] == GxB_IMPLEMENTATION_MINOR) &&
+               (version [2] == GxB_IMPLEMENTATION_SUB) &&
+               (hash == hash2) ;
+
+    char *defn [5] ;
+    defn [0] = (op1 == NULL) ? NULL : op1->defn ;
+    defn [1] = (op2 == NULL) ? NULL : op2->defn ;
+    defn [2] = (type1 == NULL) ? NULL : type1->defn ;
+    defn [3] = (type2 == NULL) ? NULL : type2->defn ;
+    defn [4] = (type3 == NULL) ? NULL : type3->defn ;
+
+    for (int k = 0 ; k < 5 ; k++)
+    {
+        if ((defn [k] != NULL) != (library_defn [k] != NULL))
+        { 
+            // one is not NULL but the other is NULL
+            ok = false ;
+        }
+        else if (defn [k] != NULL)
+        { 
+            // both definitions are present
+            // ensure the definition hasn't changed
+            ok = ok && (strcmp (defn [k], library_defn [k]) == 0) ;
+        }
+        else
+        { 
+            // both definitions are NULL, so they match
+        }
+    }
+    return (ok) ;
+}
+
+//------------------------------------------------------------------------------
 // GB_jitifyer_load: load a JIT kernel, compiling it if needed
 //------------------------------------------------------------------------------
 
@@ -730,8 +1022,13 @@ GrB_Info GB_jitifyer_load
         // look up the kernel in the hash table
         //----------------------------------------------------------------------
 
-        (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix) ;
-        if ((*dl_function) != NULL)
+        int64_t k1 = -1, kk = -1 ;
+        (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) ;
+        if (k1 >= 0)
+        {
+            // an unchecked PreJIT kernel; check it inside the critical section
+        }
+        else if ((*dl_function) != NULL)
         { 
             // found the kernel in the hash table
             GBURBLE ("(jit run) ") ;
@@ -788,19 +1085,57 @@ GrB_Info GB_jitifyer_worker
     // look up the kernel in the hash table
     //--------------------------------------------------------------------------
 
-    (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix) ;
+    int64_t k1 = -1, kk = -1 ;
+    (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) ;
     if ((*dl_function) != NULL)
     { 
         // found the kernel in the hash table
-        GBURBLE ("(jit run) ") ;
-        return (GrB_SUCCESS) ;
+        if (k1 >= 0)
+        {
+            // unchecked PreJIT kernel; check it now
+            void **Kernels = NULL ;
+            void **Queries = NULL ;
+            char **Names = NULL ;
+            int32_t nkernels = 0 ;
+            GB_prejit (&nkernels, &Kernels, &Queries, &Names) ;
+            GB_jit_query_func dl_query = (GB_jit_query_func) Queries [k1] ;
+            bool ok = GB_jitifyer_query (dl_query, hash, semiring, monoid, op,
+                type1, type2, type3) ;
+            GB_jit_entry *e = &(GB_jit_table [kk]) ;
+            if (ok)
+            {
+                // PreJIT kernel is fine; flag it as checked
+                GBURBLE ("(prejit: ok) ") ;
+                e->prejit_index = -1 ;
+                return (GrB_SUCCESS) ;
+            }
+            else
+            {
+                // remove the PreJIT kernel from the hash table
+                GBURBLE ("(prejit: disabled) ") ;
+                e->dl_function = NULL ;
+                GB_jit_table_populated-- ;
+                if (e->suffix != NULL)
+                { 
+                    GB_FREE (&(e->suffix), e->suffix_size) ;
+                }
+            }
+        }
+        else
+        {
+            // JIT kernel, or checked PreJIT kernel
+            GBURBLE ("(jit run) ") ;
+            return (GrB_SUCCESS) ;
+        }
     }
 
     //--------------------------------------------------------------------------
     // quick return if not in the hash table
     //--------------------------------------------------------------------------
 
+    #if GB_JIT_ENABLED
     if (GB_jit_control <= GxB_JIT_RUN)
+    #endif
     { 
         // No kernels may be loaded or compiled, but existing kernels already
         // loaded may be run (handled above if dl_function was found).  This
@@ -812,6 +1147,8 @@ GrB_Info GB_jitifyer_worker
     //--------------------------------------------------------------------------
     // the kernel needs to be loaded, and perhaps compiled; get its properties
     //--------------------------------------------------------------------------
+
+    #if GB_JIT_ENABLED
 
     GB_Operator op1 = NULL ;
     GB_Operator op2 = NULL ;
@@ -907,59 +1244,18 @@ GrB_Info GB_jitifyer_worker
 
         if (ok)
         {
-            int version [3] ;
-            char *library_defn [5] ;
-            size_t zsize = 0 ;
-            size_t tsize = 0 ;
-            void *id = NULL ;
-            void *term = NULL ;
-
-            if (monoid != NULL && monoid->hash != 0)
-            {
-                // compare the user-defined identity and terminal values
-                zsize = monoid->op->ztype->size ;
-                tsize = (monoid->terminal == NULL) ? 0 : zsize ;
-                id = monoid->identity ;
-                term = monoid->terminal ;
-            }
-
-            ok = dl_query (version, library_defn, id, term, zsize, tsize) ;
-            ok = ok && (version [0] == GxB_IMPLEMENTATION_MAJOR) &&
-                       (version [1] == GxB_IMPLEMENTATION_MINOR) &&
-                       (version [2] == GxB_IMPLEMENTATION_SUB) ;
-
-            char *defn [5] ;
-            defn [0] = (op1 == NULL) ? NULL : op1->defn ;
-            defn [1] = (op2 == NULL) ? NULL : op2->defn ;
-            defn [2] = (type1 == NULL) ? NULL : type1->defn ;
-            defn [3] = (type2 == NULL) ? NULL : type2->defn ;
-            defn [4] = (type3 == NULL) ? NULL : type3->defn ;
-
-            for (int k = 0 ; k < 5 ; k++)
-            {
-                if ((defn [k] != NULL) != (library_defn [k] != NULL))
-                { 
-                    // one is not NULL but the other is NULL
-                    ok = false ;
-                }
-                else if (defn [k] != NULL)
-                { 
-                    // both definitions are present
-                    // ensure the definition hasn't changed
-                    ok = ok && (strcmp (defn [k], library_defn [k]) == 0) ;
-                }
-                else
-                { 
-                    // both definitions are NULL, so they match
-                }
-            }
+            ok = GB_jitifyer_query (dl_query, hash, semiring, monoid, op,
+                type1, type2, type3) ;
         }
+
 
         if (!ok)
         { 
             // library is loaded but needs to change, so close it
+            #if GB_JIT_ENABLED
             // FIXME: dlclose only exists on Linux/Unix/Mac
             dlclose (dl_handle) ;
+            #endif
             dl_handle = NULL ;
             if (GB_jit_control == GxB_JIT_LOAD)
             { 
@@ -1031,7 +1327,8 @@ GrB_Info GB_jitifyer_worker
                      kernel_name, kernel_name, kname) ;
 
         // macrofy the query function
-        GB_macrofy_query (fp, builtin, monoid, op1, op2, type1, type2, type3) ;
+        GB_macrofy_query (fp, builtin, monoid, op1, op2, type1, type2, type3,
+            hash) ;
         fclose (fp) ;
 
         //----------------------------------------------------------------------
@@ -1067,23 +1364,27 @@ GrB_Info GB_jitifyer_worker
         GBURBLE ("(jit: load error; JIT loading disabled) ") ;
         // FIXME: dlclose only exists on Linux/Unix/Mac
         dlclose (dl_handle) ; 
+        dl_handle = NULL ;
         // disable the JIT to avoid repeated loading errors
         GB_jit_control = GxB_JIT_RUN ;
         return (GrB_INVALID_VALUE) ;
     }
 
     // insert the new kernel into the hash table
-    if (!GB_jitifyer_insert (hash, encoding, suffix, dl_handle, (*dl_function)))
+    if (!GB_jitifyer_insert (hash, encoding, suffix, dl_handle, (*dl_function),
+        -1))
     { 
         // unable to add kernel to hash table: punt to generic
         // FIXME: dlclose only exists on Linux/Unix/Mac
         dlclose (dl_handle) ; 
+        dl_handle = NULL ;
         // disable the JIT to avoid repeated errors
         GB_jit_control = GxB_JIT_PAUSE ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
     return (GrB_SUCCESS) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -1095,9 +1396,14 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
     // input:
     uint64_t hash,          // hash = GB_jitifyer_hash_encoding (encoding) ;
     GB_jit_encoding *encoding,
-    const char *suffix
+    const char *suffix,
+    // output
+    int64_t *k1,            // location of unchecked kernel in PreJIT table
+    int64_t *kk             // location of hash entry in hash table
 )
 {
+
+    (*k1) = -1 ;
 
     if (GB_jit_table == NULL)
     { 
@@ -1113,11 +1419,9 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
     {
         k = k & GB_jit_table_bits ;
         GB_jit_entry *e = &(GB_jit_table [k]) ;
-        if (e->dl_handle == NULL)
+        if (e->dl_function == NULL)
         { 
             // found an empty entry, so the entry is not in the table
-            // FIXME: place a marker here as a placeholder, so other user
-            // threads know that the jit kernel is currently being compiled...
             return (NULL) ;
         }
         else if (e->hash == hash &&
@@ -1127,6 +1431,11 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
             (builtin || (memcmp (e->suffix, suffix, suffix_len) == 0)))
         { 
             // found the right entry: return the corresponding dl_function
+            int64_t my_k1 ;
+            GB_ATOMIC_READ
+            my_k1 = e->prejit_index ;
+            (*k1) = my_k1 ;
+            (*kk) = k ;
             return (e->dl_function) ;
         }
         // otherwise, keep looking
@@ -1143,17 +1452,11 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
     uint64_t hash,              // hash for the problem
     GB_jit_encoding *encoding,  // primary encoding
     const char *suffix,         // suffix for user-defined types/operators
-    void *dl_handle,            // library handle from dlopen
-    void *dl_function           // function handle from dlsym
+    void *dl_handle,            // library handle from dlopen; NULL for PreJIT
+    void *dl_function,          // function handle from dlsym
+    int32_t prejit_index        // index into PreJIT table; -1 if JIT kernel
 )
 {
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    // the kernel must not already appear in the hash table
-    ASSERT (GB_jitifyer_lookup (hash, encoding, suffix) == NULL) ;
 
     //--------------------------------------------------------------------------
     // ensure the hash table is large enough
@@ -1200,7 +1503,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         // rehash into the new table
         for (int64_t k = 0 ; k < GB_jit_table_size ; k++)
         {
-            if (GB_jit_table [k].dl_handle != NULL)
+            if (GB_jit_table [k].dl_function != NULL)
             { 
                 // rehash the entry to the larger hash table
                 uint64_t hash = GB_jit_table [k].hash ;
@@ -1229,7 +1532,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
     {
         k = k & GB_jit_table_bits ;
         GB_jit_entry *e = &(GB_jit_table [k]) ;
-        if (e->dl_handle == NULL)
+        if (e->dl_function == NULL)
         {
             // found an empty slot
             e->suffix = NULL ;
@@ -1247,8 +1550,9 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
             }
             e->hash = hash ;
             memcpy (&(e->encoding), encoding, sizeof (GB_jit_encoding)) ;
-            e->dl_handle = dl_handle ;
+            e->dl_handle = dl_handle ;              // NULL for PreJIT
             e->dl_function = dl_function ;
+            e->prejit_index = prejit_index ;        // -1 for JIT kernels
             GB_jit_table_populated++ ;
             return (true) ;
         }
@@ -1260,40 +1564,73 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 // GB_jitifyer_table_free:  free the hash and clear all loaded kernels
 //------------------------------------------------------------------------------
 
+// Clears all runtime JIT kernels from the hash table.  PreJIT kernels are
+// freed if freall is true (only done by GrB_finalize).
+
 // After calling this function, the JIT is still enabled.  GB_jitifyer_insert
 // will reallocate the table if it is NULL.
 
-void GB_jitifyer_table_free (void)
+void GB_jitifyer_table_free (bool freeall)
 { 
-    // clear all entries in the table
-    if (GB_jit_table == NULL)
+    int64_t nremaining = 0 ;
+
+    if (GB_jit_table != NULL)
     {
         for (int64_t k = 0 ; k < GB_jit_table_size ; k++)
         {
             GB_jit_entry *e = &(GB_jit_table [k]) ;
-            if (e->dl_handle != NULL)
+            if (e->dl_function != NULL)
             {
-                // found an entry; free the suffix if present
-                if (e->suffix != NULL)
-                { 
-                    GB_FREE (&(e->suffix), e->suffix_size) ;
+                // found an entry
+//              printf ("found entry at %ld\n", k) ;
+                if (!freeall && e->dl_handle == NULL)
+                {
+                    // leave the PreJIT kernel in the hash table
+//                  printf ("   keep entry at %ld\n", k) ;
+                    nremaining++ ;
                 }
-                // unload the dl library
-                // FIXME: dlclose only exists on Linux/Unix/Mac
-                dlclose (e->dl_handle) ;
+                else
+                {
+                    // free the entry; free the suffix if present
+//                  printf ("   free entry at %ld\n", k) ;
+                    e->dl_function = NULL ;
+                    if (e->suffix != NULL)
+                    { 
+                        GB_FREE (&(e->suffix), e->suffix_size) ;
+                    }
+                    // unload the dl library
+                    if (e->dl_handle != NULL)
+                    {
+                        #if GB_JIT_ENABLED
+                        // FIXME: dlclose only exists on Linux/Unix/Mac
+                        dlclose (e->dl_handle) ;
+                        #endif
+                        e->dl_handle = NULL ;
+                    }
+                }
             }
         }
     }
 
-    GB_FREE_STUFF (GB_jit_table) ;
-    GB_jit_table_size = 0 ;
-    GB_jit_table_bits = 0 ;
-    GB_jit_table_populated = 0 ;
+    if (freeall)
+    {
+//      printf ("free all %ld\n", nremaining) ;
+        GB_FREE_STUFF (GB_jit_table) ;
+        GB_jit_table_size = 0 ;
+        GB_jit_table_bits = 0 ;
+        ASSERT (nremaining == 0) ;
+//      if (nremaining != 0) abort ( ) ;
+    }
+    GB_jit_table_populated = nremaining ;
 }
 
 //------------------------------------------------------------------------------
 // GB_jitifyer_compile: compile a kernel
 //------------------------------------------------------------------------------
+
+#if GB_JIT_ENABLED
+
+// If the runtime JIT is disabled, no new JIT kernels may be compiled.
 
 int GB_jitifyer_compile (char *kernel_name)
 { 
@@ -1352,6 +1689,8 @@ int GB_jitifyer_compile (char *kernel_name)
     int result = system (GB_jit_command) ;
     return (result) ;
 }
+
+#endif
 
 //------------------------------------------------------------------------------
 // GB_jitifyer_hash:  compute the hash
