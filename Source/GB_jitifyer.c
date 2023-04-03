@@ -34,6 +34,8 @@
 // FIXME: dlfcn.h only exists on Linux/Unix/Mac; need to port to Windows
 #include <dlfcn.h>
 #else
+// FIXME: for testing; force a compiler error if the code attempts to use
+// dlopen, dlclose, or dlsym.
 #define dlopen garbage_dlopen
 #define dlclose garbage_dlclose
 #define dlsym garbage_dlsym
@@ -1104,9 +1106,10 @@ GrB_Info GB_jitifyer_worker
             GB_jit_entry *e = &(GB_jit_table [kk]) ;
             if (ok)
             {
-                // PreJIT kernel is fine; flag it as checked
+                // PreJIT kernel is fine; flag it as checked by flipping
+                // its prejit_index.
                 GBURBLE ("(prejit: ok) ") ;
-                e->prejit_index = -1 ;
+                e->prejit_index = GB_FLIP (k1) ;
                 return (GrB_SUCCESS) ;
             }
             else
@@ -1433,7 +1436,7 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
             // found the right entry: return the corresponding dl_function
             int64_t my_k1 ;
             GB_ATOMIC_READ
-            my_k1 = e->prejit_index ;
+            my_k1 = e->prejit_index ;   // >= 0: unchecked JIT kernel
             (*k1) = my_k1 ;
             (*kk) = k ;
             return (e->dl_function) ;
@@ -1454,7 +1457,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
     const char *suffix,         // suffix for user-defined types/operators
     void *dl_handle,            // library handle from dlopen; NULL for PreJIT
     void *dl_function,          // function handle from dlsym
-    int32_t prejit_index        // index into PreJIT table; -1 if JIT kernel
+    int32_t prejit_index        // index into PreJIT table; =>0 if unchecked.
 )
 {
 
@@ -1564,8 +1567,12 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 // GB_jitifyer_table_free:  free the hash and clear all loaded kernels
 //------------------------------------------------------------------------------
 
-// Clears all runtime JIT kernels from the hash table.  PreJIT kernels are
-// freed if freall is true (only done by GrB_finalize).
+// Clears all runtime JIT kernels from the hash table.  PreJIT kernels are not
+// freed if freall is true (only done by GrB_finalize), but they are flagged as
+// unchecked.  This allows the application to call GxB_set to set the JIT
+// control to OFF then ON again, to indicate that a user-defined type or
+// operator has been changed, and that all JIT kernels must cleared and all
+// PreJIT kernels checked again before using them.
 
 // After calling this function, the JIT is still enabled.  GB_jitifyer_insert
 // will reallocate the table if it is NULL.
@@ -1582,17 +1589,19 @@ void GB_jitifyer_table_free (bool freeall)
             if (e->dl_function != NULL)
             {
                 // found an entry
-//              printf ("found entry at %ld\n", k) ;
+                if (e->dl_handle == NULL)
+                {
+                    // flag the PreJIT kernel as unchecked
+                    e->prejit_index = GB_UNFLIP (e->prejit_index) ;
+                }
                 if (!freeall && e->dl_handle == NULL)
                 {
                     // leave the PreJIT kernel in the hash table
-//                  printf ("   keep entry at %ld\n", k) ;
                     nremaining++ ;
                 }
                 else
                 {
                     // free the entry; free the suffix if present
-//                  printf ("   free entry at %ld\n", k) ;
                     e->dl_function = NULL ;
                     if (e->suffix != NULL)
                     { 
@@ -1614,12 +1623,10 @@ void GB_jitifyer_table_free (bool freeall)
 
     if (freeall)
     {
-//      printf ("free all %ld\n", nremaining) ;
         GB_FREE_STUFF (GB_jit_table) ;
         GB_jit_table_size = 0 ;
         GB_jit_table_bits = 0 ;
         ASSERT (nremaining == 0) ;
-//      if (nremaining != 0) abort ( ) ;
     }
     GB_jit_table_populated = nremaining ;
 }

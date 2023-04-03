@@ -352,9 +352,9 @@ endif ( )
 
 if ( COMPACT )
     # do not compile the FactoryKernels
-    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "PreJIT/*.c" )
+    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Config/*.c" "PreJIT/*.c" )
 else ( )
-    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "PreJIT/*.c"
+    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Config/*.c" "PreJIT/*.c"
         "Source/FactoryKernels/*.c" )
 endif ( )
 
@@ -776,7 +776,7 @@ list ( JOIN PREJIT ",\n" PREFUNCS )
 list ( JOIN PREQ ",\n" PREQFUNCS )
 
 configure_file ( "Config/GB_prejit.c.in"
-    "${PROJECT_SOURCE_DIR}/PreJIT/GB_prejit.c"
+    "${PROJECT_SOURCE_DIR}/Config/GB_prejit.c"
     NEWLINE_STYLE LF )
 
 #-------------------------------------------------------------------------------

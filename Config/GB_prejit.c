@@ -56,7 +56,7 @@
 #define JIT_TR0(g)  GB_JIT_KERNEL_TRANS_UNOP_PROTO(g) ;
 #define JIT_UNI(g)  GB_JIT_KERNEL_UNION_PROTO(g) ;
 
-@PREJIT_PROTO@
+
 
 //------------------------------------------------------------------------------
 // prototypes for all PreJIT query kernels
@@ -64,16 +64,16 @@
 
 #define JIT_Q(q) GB_JIT_QUERY_PROTO(q) ;
 
-@PREJIT_QUERY@
+
 
 //------------------------------------------------------------------------------
 // GB_prejit_kernels: a list of function pointers to PreJIT kernels
 //------------------------------------------------------------------------------
 
-#if ( @GB_PREJIT_LEN@ > 0 )
-static void *GB_prejit_kernels [@GB_PREJIT_LEN@] =
+#if ( 0 > 0 )
+static void *GB_prejit_kernels [0] =
 {
-@PREFUNCS@
+
 } ;
 #endif
 
@@ -81,10 +81,10 @@ static void *GB_prejit_kernels [@GB_PREJIT_LEN@] =
 // GB_prejit_queries: a list of function pointers to PreJIT query kernels
 //------------------------------------------------------------------------------
 
-#if ( @GB_PREJIT_LEN@ > 0 )
-static void *GB_prejit_queries [@GB_PREJIT_LEN@] =
+#if ( 0 > 0 )
+static void *GB_prejit_queries [0] =
 {
-@PREQFUNCS@
+
 } ;
 #endif
 
@@ -92,10 +92,10 @@ static void *GB_prejit_queries [@GB_PREJIT_LEN@] =
 // GB_prejit_names: a list of names of PreJIT kernels
 //------------------------------------------------------------------------------
 
-#if ( @GB_PREJIT_LEN@ > 0 )
-static char *GB_prejit_names [@GB_PREJIT_LEN@] =
+#if ( 0 > 0 )
+static char *GB_prejit_names [0] =
 {
-"@PRENAMES@"
+""
 } ;
 #endif
 
@@ -111,8 +111,8 @@ void GB_prejit
     char **Name_handle      // return list of kernel names
 )
 {
-    (*nkernels) = @GB_PREJIT_LEN@ ;
-    #if ( @GB_PREJIT_LEN@ == 0 )
+    (*nkernels) = 0 ;
+    #if ( 0 == 0 )
     (*Kernel_handle) = NULL ;
     (*Query_handle) = NULL ;
     (*Name_handle) = NULL ;

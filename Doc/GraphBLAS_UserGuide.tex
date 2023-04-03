@@ -82,7 +82,7 @@ a second, while MATLAB takes about 4 to 5 days.
 SuiteSparse:GraphBLAS is under the Apache-2.0 license.
 
 Version 8.0 adds several new features, in particular a JIT for compiling
-kernels at run time, and a new \verb'GxB_Context' object.
+kernels at run-time, and a new \verb'GxB_Context' object.
 See Sections~\ref{context} and \ref{jit} for details.
 
 \end{abstract}
@@ -96,6 +96,13 @@ v8.0.0 release:
 \end{warning}
 
 \begin{itemize}
+
+    \item NOTE: if you have JIT kernels in your
+        \verb'~/.SuiteSparse/GraphBLAS/8.0.0' folder, delete them.
+        Normally, a new version of GraphBLAS will create a new folder and
+        ignore the old one, but this draft is still numbered 8.0.0.
+        Its kernels are incompatible with the DRAFT3 version of 8.0.0,
+        however.
 
     \item {\bf Lots of testing:} some of the new JIT features have not been
         fully tested.  Expect to see some bugs.  I am posting this version:
@@ -112,11 +119,10 @@ v8.0.0 release:
     Power8 system with Linux and gcc 9.4.  These compilers and systems all work
     in the JIT.
 
-    \item {\bf Windows: do not attempt.}
-    The JIT needs to be ported to Windows.  This draft will not even compile
-    on Windows at all, even with the JIT disabled.  This draft uses
-    \verb'dlopen', \verb'dlsym', and \verb'dlclose', which do not appear in
-    Windows.
+    \item {\bf Windows:}
+    The JIT needs to be ported to Windows.  This draft will not compile
+    on Windows with the JIT enabled.  I think it will compile with \verb'-DNJIT'
+    but I haven't tested it.
 
     \item {\bf compiler warnings:}  using \verb'clang' leads to some
         compiler warnings when compiling the demos (typecasting complex
@@ -131,7 +137,7 @@ v8.0.0 release:
     \item {\bf MATLAB:}
     This version works in MATLAB, where the JIT is disabled by default.
     The MATLAB interface (testing, and the
-    \verb'@GrB' interface) does not support the JIT.
+    \verb'@GrB' interface) does not yet support the JIT.
 
     \item {\bf more JIT kernels:} \verb'GrB_assign' (34 kernels), \verb'subref'
     (3 kernels), \verb'masker' (2 kernels), and other (5 kernels).  Grep the
@@ -150,14 +156,19 @@ v8.0.0 release:
         function pointer, but just the strings that define the function.
         These kernels would require the JIT to function, and would allow
         systems in other languages such as Python, Julia, and MATLAB to create
-        operators at run time without the need for those systems to pass me a
+        operators at run-time without the need for those systems to pass me a
         pointer to a pre-compiled C function.
 
     \item {\bf Thread-safety:}  GraphBLAS is thread-safe when used in a single
-        multithreaded user application.  However, if the user runs multiple
-        instances of GraphBLAS at the same time, and each of them attempts to
-        compile the same JIT kernels, a file read/write conflict will occur on
-        your \verb'~/.SuiteSparse/GraphBLAS/8.0.0' folder.
+        multithreaded user application, even when multiple user threads try
+        to compile the same JIT kernel at the same time.  However, if the user
+        runs multiple instances of GraphBLAS at the same time, from entirely
+        different user processed, and each of them attempts to compile the same
+        JIT kernels, a file read/write conflict will occur on your
+        \verb'~/.SuiteSparse/GraphBLAS/8.0.0' folder.  I need a portable
+        file-locking mechanism for Linux/Unix, Mac, and Windows.
+        As a short-term workaround, each user application should use its
+        own cache folder, instead of sharing a single default cache folder.
 
 \end{itemize}
 
@@ -1255,7 +1266,7 @@ see Section~\ref{options} for details.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_getVersion         // runtime access to C API version number
+GrB_Info GrB_getVersion         // run-time access to C API version number
 (
     unsigned int *version,      // returns GRB_VERSION
     unsigned int *subversion    // returns GRB_SUBVERSION
@@ -1270,7 +1281,7 @@ that is implemented by the library:
 If the user program was compiled with one
 version of the library but linked with a different one later on, the
 compile-time version check with \verb'GRB_VERSION' would be stale.
-\verb'GrB_getVersion' thus provides a runtime access of the version of the C
+\verb'GrB_getVersion' thus provides a run-time access of the version of the C
 API Specification supported by the library.
 
 \newpage
@@ -8681,8 +8692,16 @@ kernels, if any typecasting was done, or if the specific operator, monoid, or
 semiring was disabled by the \verb'Source/GB_control.h' file when GraphBLAS was
 compiled.
 
+Using the JIT in a user application is simple:  by default, there is nothing
+to do.  LAGraph v1.0.1 can use the JIT (and PreJIT) kernels without changing
+a single line of code.\footnote{LAGraph v1.0.1 does not work with GraphBLAS
+v8.0.0 but not because of the JIT.  It must be updated because it uses two
+deprecated {\sf GxB\_SelectOp} operators; these are be replaced with {\sf
+GrB\_IndexUnaryOp} operators in the {\sf dev} branch of LAGraph.}
+
 Currently, the JIT compiles kernels for the CPU only, but a CUDA JIT is in
-progress to exploit NVIDIA GPUs.
+progress to exploit NVIDIA GPUs, in collaboration with Joe Eaton and
+Corey Nolet, with NVIDIA.
 
 When GraphBLAS is compiled, the \verb'cmake' build system creates a {\em cache}
 folder where it will keep any kernels created and compiled by the JIT.  The
@@ -8710,13 +8729,13 @@ top-level SuiteSparse:GraphBLAS source folder.
 \end{itemize}
 
 When the user application starts, it can modify the location of these two
-folders.  It can also modify the C compiler and its flags, and can control when
-and how the JIT is used.  These changes are made via
-\verb'GxB_Global_Option_set', and can be queried via
+folders after calling \verb'GrB_init'.  It can also modify the C compiler and
+its flags, and can control when and how the JIT is used.  These changes are
+made via \verb'GxB_Global_Option_set', and can be queried via
 \verb'GxB_Global_Option_get'; refer to Section~\ref{options} for details, and
 the \verb'GxB_JIT_*' settings:
 
-\vspace{0.1in}
+\vspace{0.15in}
 {\footnotesize
 \begin{tabular}{lll}
 \hline
@@ -8732,7 +8751,7 @@ field                       & value         & description \\
 \hline
 \end{tabular}
 }
-\vspace{0.1in}
+\vspace{0.15in}
 
 Kernels compiled during one run of a user application are kept in the cache
 folder, so that when the user application runs again, the kernels do not have
@@ -8740,16 +8759,24 @@ to be compiled.  If the kernel relies on user-defined types and/or operators, a
 check is made the first time the compiled kernel is loaded.  If the current
 definition of the user-defined type or operator does not exactly match the
 definition when the kernel was compiled, then the compiled kernel is discarded
-and recompiled.
+and recompiled.  The stale kernel is overwitten with the new one, so there is
+no need to for the user to take any action to delete the stale kernel from the
+cache path.
 
 The usage of the CPU JIT can be controlled via \verb'GxB_get/set' using the
 \verb'GxB_JIT_C_CONTROL' setting.  If the JIT is enabled at compile time, the
-initial setting is \verb'GxB_JIT_ON'.  This can be modified; for example to
+initial setting is \verb'GxB_JIT_ON'.  If the JIT is disabled at compile time
+(via \verb'NJIT'), the initial setting is \verb'GxB_JIT_RUN', so that any
+PreJIT kernels can be run.  This setting can be modified; for example to
 disable the JIT and clear all loaded JIT kernels from memory, use:
 
 \begin{verbatim}
     GxB_set (GxB_JIT_CONTROL, GxB_JIT_OFF) ;
 \end{verbatim}
+
+The above call to \verb'GxB_set' does not clear any PreJIT kernels, however,
+since those are integral components of the single compiled GraphBLAS library
+and cannot be cleared (see Section~\ref{prejit}).
 
 The following settings are available for \verb'GxB_JIT_CONTROL'.
 For examples on how to use it, see
@@ -8768,21 +8795,29 @@ typedef enum
 GxB_JIT_Control ;
 \end{verbatim} }
 
-These settings can be changed by GraphBLAS itself, based on following error
-conditions.  These changes affect all kernels, not just the kernel causing the
-error.  If any of these cases occur, the call to GraphBLAS will return
-\verb'GrB_INVALID_VALUE' to indicate that some kind of JIT failure occured, or
-\verb'GrB_OUT_OF_MEMORY' for the last case below.  The error is also reported
-if the \verb'GxB_BURBLE' is enabled.
+If the JIT is disabled at compile time via the \verb'NJIT' option,
+\verb'PreJIT' kernels are still available, and can be controlled via the
+\verb'GxB_JIT_OFF', \verb'GxB_JIT_PAUSE', or \verb'GxB_JIT_RUN' settings
+listed above.  If the application tries to set the control to
+\verb'GxB_JIT_LOAD' or \verb'GxB_JIT_ON', the setting is changed to
+\verb'GxB_JIT_RUN' instead.  This is not an error condition.  The resulting
+setting can be queried via \verb'GxB_get', if desired.
+
+The JIT control setting can be also changed by GraphBLAS itself, based on
+following error conditions.  These changes affect all kernels, not just the
+kernel causing the error.  If any of these cases occur, the call to GraphBLAS
+will return \verb'GrB_INVALID_VALUE' to indicate that some kind of JIT failure
+occured, or \verb'GrB_OUT_OF_MEMORY' for the last case below.  The error is
+also reported if the \verb'GxB_BURBLE' is enabled.
 
 \begin{itemize}
 
 \item When a kernel is loaded that relies on user-defined types and/or
-operators, the defintions in the previously compiled kernel are checked against
-the current definitions.  If they do not match, the old one is discarded, and a
-new kernel will be compiled.  However, if the control is set to
-\verb'GxB_JIT_LOAD', no new kernels may be compiled.  To avoid a continual
-reloading and checking of kernels, the control is changed from
+operators, the definitions in the previously compiled kernel are checked
+against the current definitions.  If they do not match, the old one is
+discarded, and a new kernel will be compiled.  However, if the control is set
+to \verb'GxB_JIT_LOAD', no new kernels may be compiled.  To avoid a continual
+reloading and checking of stale kernels, the control is changed from
 \verb'GxB_JIT_LOAD' to \verb'GxB_JIT_RUN'.  To solve this problem, delete the
 compiled kernel with the stale definition, or enable the full JIT by setting
 the control to \verb'GxB_JIT_ON' so that the kernel can recompiled with the
@@ -8800,33 +8835,39 @@ no syntax error is detected by the compiler.
 \item If a kernel is loaded but the lookup of the kernel function itself in the
 compiled library fails, the control is changed to \verb'GxB_JIT_RUN' to prevent
 this error from occuring again.  To solve this problem, delete the corrupted
-compiled kernel from the cache folder.
+compiled kernel from the cache folder.  This case is unlikely to occur since no
+user action can trigger it.  It could indicate a system problem with loading
+the kernel, or some kind of compiler error that allows the kernel to be
+compiled but not be loaded.
 
 \item If an out-of-memory condition occurs in the JIT, the JIT control is
-set to \verb'GxB_JIT_PAUSE'.  To solve this, try freeing up memory or solve
-smaller problems.
+set to \verb'GxB_JIT_PAUSE'.  To solve this, try freeing up memory, use a
+larger system, or solve smaller problems.
 
 \end{itemize}
 
-In many use cases of GraphBLAS (such as LAGraph), and function will create
-a type or operator, use it, and then free it.  It would be far to costly to
-clear the loaded kernel and reload it or recompile it each time the
-LAGraph function is called, so any kernels that use this type or operator
-are kept loaded.  The typical case is that when the LAGraph function is called
-again, it will recreate the type or operator with the identical name and
-definition.  The kernels that use these types or operators will still be loaded
-and can thus be used with no overhead.
+In many use cases of GraphBLAS (such as LAGraph), a function will create a type
+or operator, use it, and then free it just before returning.  It would be far
+to costly to clear the loaded kernel and reload it each time the LAGraph
+function is called, so any kernels that use this type or operator are kept
+loaded when the type or operator is freed.  The typical case is that when the
+LAGraph function is called again, it will recreate the type or operator with
+the identical name and definition.  The kernels that use these types or
+operators will still be loaded and can thus be used with no overhead.
 
-However, if a user-defined type or operator is freed and redefined with the
-same name but a different definition, any loaded kernels should be freed.  This
-case is not detected by GraphBLAS since it would be far too costly to chec
-each time a previously loaded kernel is called.  As a result, this condition is
-only checked when the kernel is first loaded.  To avoid this issue, if the user
-application frees a user-defined type or operator and creates a new one with a
-different definition but with the same name, clear all prior kernels by setting
-the control to \verb'GxB_JIT_OFF'.  Then turn the JIT back on with
-\verb'GxB_JIT_ON'.  The kernels will be checked when reloaded, and recompiled
-if their definitions changed.
+However, if a user-defined type or operator is freed and then redefined with
+the same name but a different definition, any loaded kernels should be freed.
+This case is not detected by GraphBLAS since it would be far too costly to
+check each time a previously loaded kernel is called.  As a result, this
+condition is only checked when the kernel is first loaded.  To avoid this
+issue, if the user application frees a user-defined type or operator and
+creates a new one with a different definition but with the same name, clear all
+prior kernels by setting the control to \verb'GxB_JIT_OFF'.  Then turn the JIT
+back on with \verb'GxB_JIT_ON'.  This clears all run-time JIT kernels so that
+they will be checked when reloaded, and recompiled if their definitions
+changed.  All PreJIT kernels are flagged as unchecked, just as they were
+flagged by \verb'GrB_init', so that they will be checked the next time they
+run.
 
 %-------------------------------------------------------------------------------
 \subsection{Compilation options: {\sf NJIT} and {\sf COMPACT}}
@@ -8849,53 +8890,61 @@ options.  By default, \verb'COMPACT' is off, to enable the
 
 When GraphBLAS is compiled with \verb'NJIT', the \verb'GxB_JIT_CONTROL' may be
 set to \verb'OFF', \verb'PAUSE', or \verb'RUN'.  No kernels will be loaded at
-run time (\verb'GxB_JIT_LOAD'), and no new kernels will be compiled at run time
-(\verb'GxB_JIT_ON').  Only pre-existing \verb'PreJIT' kernels can be run,
-described in the next section.
+run-time (the \verb'GxB_JIT_LOAD' setting is disabled and treated as
+\verb'GxB_JIT_RUN'), and no new kernels will be compiled at run-time (the
+\verb'GxB_JIT_ON' is disabled and treated as \verb'GxB_JIT_RUN').  Only
+pre-existing \verb'PreJIT' kernels can be run, described in
+Section~\ref{prejit}.
 
 If both \verb'NJIT' and \verb'COMPACT' options are enabled, all features of
 GraphBLAS will be functional.  The only fast kernels available will be the
-\verb'PreJIT' kernels.  Otherwise, generic kernels will be used, in which every
-single operator is implemented with a function pointer, and every scalar
-assignent requires a \verb'memcpy'.  Generic kernels are slow, so using both
-\verb'NJIT' and \verb'COMPACT' options enabled is not recommended when
-preparing GraphBLAS for benchmarking, or for a Linux distro or other
-widely-used distribution.
+\verb'PreJIT' kernels (if any).  Otherwise, generic kernels will be used, in
+which every single operator is implemented with a function pointer, and every
+scalar assignment requires a \verb'memcpy'.  Generic kernels are slow, so using
+both \verb'NJIT' and \verb'COMPACT' options enabled is not recommended when
+preparing GraphBLAS for production use, benchmarking, or for a Linux distro or
+other widely-used distribution.
 
 %-------------------------------------------------------------------------------
-\subsection{Adding {\bf PreJIT} kernels to GraphBLAS}
+\subsection{Adding {\sf PreJIT} kernels to GraphBLAS}
 %-------------------------------------------------------------------------------
+\label{prejit}
 
 When GraphBLAS runs, it constructs JIT kernels in the user's cache folder,
 which by default is \verb'~/.SuiteSparse/GraphBLAS/8.0.0' for v8.0.0.  Some or
-all of these kernels can then incorporated into the compiled GraphBLAS
-library.
+all of these kernels can then incorporated into the compiled GraphBLAS library
+by copying them into the \verb'GraphBLAS/PreJIT' folder.  If GraphBLAS is then
+recompiled via cmake, the build system will detect these kernels, compile them,
+and make them available as pre-compiled JIT kernels.  The kernels are no longer
+``Just-In-Time'' kernels since they are not compiled at run-time.  They are
+refered to as \verb'PreJIT' kernels since they were at one time created at
+run-time by the GraphBLAS JIT, but are now compiled into GraphBLAS before it
+runs.
 
-JIT kernel source files created by GraphBLAS may be copied into the
-\verb'GraphBLAS/PreJIT' folder.  If GraphBLAS is then recompiled via cmake, the
-build system will detect these kernels, compile them, and make them available
-as pre-compiled JIT kernels.  The kernels are no longer ``Just-In-Time''
-kernels since they are not compiled at run-time, but they are still refered to
-as JIT kernels since they were at one time created at run time by the GraphBLAS
-JIT.  Thus the name \verb'PreJIT'.
+{\bf It's that simple.}  Just copy the source files for any kernels you want
+from your cache folder (typically \verb'~/.SuiteSparse/GraphBLAS/8.0.0') into
+\verb'GraphBLAS/PreJIT', and recompile GraphBLAS.  There's no need to change
+any other cmake setting, and no need to do anything different in any
+applications that use GraphBLAS.  Do not copy the compiled files;
+they are not needed and will be ignored.  Just copy the \verb'*.c' files.
 
-If the GraphBLAS library is installed for system-wide usage (say in a Linux
-distro, Python, RedisGraph, etc), the \verb'GraphBLAS/PreJIT' kernels will be
-available to all users of that library.  They are not disabled by the
+If the resulting GraphBLAS library is installed for system-wide usage (say in a
+Linux distro, Python, RedisGraph, etc), the \verb'GraphBLAS/PreJIT' kernels
+will be available to all users of that library.  They are not disabled by the
 \verb'NJIT' option.
 
 Once these kernels are moved to \verb'GraphBLAS/PreJIT' and GraphBLAS is
 recompiled, they can be deleted from the cache folder.  However, even if they
 are left there, they will not be used since GraphBLAS will find these kernels
-inside the compiled library itself (\verb'libgraphblas.so' on Linux,
-\verb'libgraphblas.dylib' on the Mac).  GraphBLAS will not be any slower if
-these kernels are left in the cache folder, and the compiled library size will
-not be affected.
+as PreJIT kernels inside the compiled library itself (\verb'libgraphblas.so' on
+Linux, \verb'libgraphblas.dylib' on the Mac).  GraphBLAS will not be any slower
+if these kernels are left in the cache folder, and the compiled library size
+will not be affected.
 
 If the GraphBLAS version is changed at all (even in the last digit), all
 \verb'GB_jit_*.c' files in the \verb'GraphBLAS/PreJIT' folder should be
 deleted.  The version mismatch will be detected during the call to
-\verb'GrB_init', and any stale kernels will be ignored.  Likewise, if a
+\verb'GrB_init', and any stale kernels will be safely ignored.  Likewise, if a
 user-defined type or operator is changed, the relevant kernels should also be
 deleted from \verb'GraphBLAS/PreJIT'.  For example, the
 \verb'GraphBLAS/Demo/Program/gauss_demo.c' program creates a user-defined
@@ -8903,20 +8952,177 @@ deleted from \verb'GraphBLAS/PreJIT'.  For example, the
 the type and/or operators are changed, then the \verb'*gauss*.c' files in the
 \verb'GraphBLAS/PreJIT' folder should be deleted.
 
-Do not delete the \verb'GraphBLAS/PreJIT/GB_prejit.c' index file.  GraphBLAS
-uses this to index all the kernels in this \verb'PreJIT' folder, and it is
-automatically updated by cmake if new kernels are added.  If you accidentally
-delete it, the recompilation will fail.  However, the first failed compilation
-will recreate a valid index file, so a second attempt to compile GraphBLAS will
-succeed. 
+GraphBLAS will safely detect any stale \verb'PreJIT' kernels by checking them
+the first time they are run after calling \verb'GrB_init' and will not use them
+if they are found to be stale.  If the JIT control is set to \verb'GxB_JIT_OFF'
+all PreJIT kernels are flagged as unchecked.  If the JIT is then renabled by
+setting the control to \verb'GxB_JIT_RUN' or \verb'GxB_JIT_ON', all PreJIT
+kernels will be checked again and any stale kernels will be detected.
 
-GraphBLAS will detect any stale \verb'PreJIT' kernels and will not use them.
-Instead, it will use its runtime JIT to compile new ones with the current
-definitions, or it will punt to a generic kernel if JIT compilation is
-disabled.  GraphBLAS will be functional, but the stale kernels take up space
-inside the compiled GraphBLAS library.  So the best practice is to delete any
-stale kernels from the \verb'GraphBLAS/PreJIT' folder, or replace them with
+If a stale PreJIT kernel is found, GraphBLAS will use its run-time JIT to
+compile new ones with the current definitions, or it will punt to a generic
+kernel if JIT compilation is disabled.  GraphBLAS will be functional, and fast
+if it can rely on a JIT kernel, but the unusable stale PreJIT kernels take up
+space inside the compiled GraphBLAS library.  The best practice is to delete
+any stale kernels from the \verb'GraphBLAS/PreJIT' folder, or replace them with
 newly compiled JIT kernels from the cache folder, and recompile GraphBLAS.
+
+It is safe to copy only a subset of the JIT kernels from the cache folder into
+\verb'GraphBLAS/PreJIT'.  You may also delete any files in
+\verb'GraphBLAS/PreJIT' and recompile GraphBLAS without those kernels.  If
+GraphBLAS encounters a need for a particular kernel that has been removed from
+\verb'GraphBLAS/PreJIT', it will create it at run-time via the JIT, if
+permitted.  If not permitted, by either compiling GraphBLAS with the
+\verb'NJIT' option, or by using \verb'GxB_JIT_CONTROL' at run-time, the generic
+kernel will be used instead.  This will be slower than the PreJIT or JIT
+kernel, but GraphBLAS will still be functional.
+
+%-------------------------------------------------------------------------------
+\subsection{{\sf JIT} and {\sf PreJIT} performance considerations}
+%-------------------------------------------------------------------------------
+\label{jit_performance}
+
+To create a good set of PreJIT kernels for a particular user application, it is
+necessary to run the application with many different kinds of workloads.  Each
+JIT or PreJIT kernel is specialized to the particular matrix format, data type,
+operators, and descriptors of its inputs.  GraphBLAS can change a matrix format
+(from sparse to hypersparse, for example), at its discretion, thus triggering
+the use of a different kernel.  Some GraphBLAS methods use heuristics to select
+between different methods based upon the sparsity structure or estimates of the
+kind or amount of work required.  In these cases, entirely different kernels
+will be compiled.  As a result, it's very difficult to predict which kernels
+GraphBLAS will find the need to compile, and thus a wide set of test cases
+should be used in an application to allow GraphBLAS to generate as many kernels
+as could be expected to appear in production use.
+
+GraphBLAS can encounter very small matrices, and it will often select its
+bitmap format to store them.  This change of format will trigger a different
+kernel than the sparse or hypersparse cases.  There are many other cases like
+that were specific kernels are only needed for small problems.  In this case,
+compiling an entirely new kernel is costly, since using a compiled kernel will
+be no faster than the generic kernel.  When benchmarking an application to
+allow GraphBLAS to compile its JIT kernels, it may be useful to pause the JIT
+via \verb'GxB_JIT_PAUSE', \verb'GxB_JIT_RUN', or \verb'GxB_JIT_LOAD', when the
+application knows it is calling GraphBLAS for tiny problems.  These three
+settings keep any loaded JIT kernels in memory, but pauses the compilation of
+any new JIT kernels.  Then the control can be reset to \verb'GxB_JIT_ON' once
+the application finishes with its tiny problems and moves to larger ones where
+the JIT will improve performance.  A future version of GraphBLAS may allow
+this heuristic to be implemented inside GraphBLAS itself, but for now, the
+JIT does not second guess the user application; if it wants a new kernel,
+the JIT will compile it if the contorl is set to \verb'GxB_JIT_ON'.
+
+%-------------------------------------------------------------------------------
+\subsection{Future plans for the {\sf JIT} and {\sf PreJIT}}
+%-------------------------------------------------------------------------------
+\label{jit_future}
+
+\subsubsection{Kernel fusion}
+The introduction of the JIT and its related PreJIT kernels allow for the future
+exploitation of kernel fusion via an aggressive exploitation of the GraphBLAS
+non-blocking mode.  In that mode, multiple calls to GraphBLAS can be fused into
+a single kernel.  There are far to many possible variants to allow a fused
+kernel to appear in the \verb'GraphBLAS/Source/FactoryKernels' folder, but
+specific fused kernels could be created by the JIT.
+
+\subsubsection{Heuristics for controlling the JIT}
+As mentioned in Section~\ref{jit_performance}, GraphBLAS may compile JIT
+kernels that are used for only tiny problems where the compile time of a single
+kernel will dominate any performance gains from using the compiled kernel.  A
+heuristic could be introduced so that it compiles them only for larger
+problems.
+
+\subsubsection{Removing the need for GraphBLAS to find its own source}
+The \verb'GxB_JIT_SOURCE_PATH' setting is initialized to the location of the
+GraphBLAS source code itself so that new JIT kernels can be compiled that rely
+on this source code.  To use the JIT in production, a Linux distro or any other
+distro would need to provide the source code of GraphBLAS to the end user
+application.  This is a bit awkward and may thus limit the use of the JIT.  A
+future GraphBLAS could easily be redesigned where the cmake build system
+configures it so that all required source code is ingested into the
+\verb'libgraphblas.so' binary compiled library itself.  Then when
+\verb'GrB_init' is called, this body of source code could then be copied into
+the user's cache folder.  Not all source is required: just the contents of
+\verb'GraphBLAS/Source/JitKernels', \verb'GraphBLAS/Source/Template', \newline
+\verb'GraphBLAS/Source/Shared', and a subset of the \verb'GraphBLAS/Source/*.h'
+files.  If compressed, this amounts to just 350KB so the \verb'libgraphblas.so'
+file would increase by just this size, and the files would take just 3MB of
+space in the user's cache path.  Then by default, any user application or
+distro would automatically carry with it the ability to create the source code
+for JIT kernels, simply by distributing two files: \verb'libgraphblas.so' and
+the \verb'GraphBLAS.h' include file.  GraphBLAS already includes two
+compression methods built-in (lz4 and zstd) so this feature would be easy to
+add.  All GraphBLAS would need is access to a C compiler, and a cache folder in
+which to place its source code and compiled JIT kernels.
+
+\subsubsection{SYCL / OpenCL kernels}
+The CUDA JIT will enable NVIDIA GPUs to be exploited.  There are simply too
+many kernels to create at compile time as the ``factory kernels.''  This CUDA
+JIT is in progress.  A releated JIT for SYCL / OpenCL could also be created.
+
+\subsubsection{Creating new user-defined operators from MATLAB, Python, and
+Julia} The current methods for creating new operators, monoids, and semirings
+requires the user application to pass GraphBLAS a pointer to a compiled C
+function.  This is fine for a C/C++ application that uses GraphBLAS, but it is
+awkward for users in MATLAB, Python, Julia, and Go.  The \verb'GrB_UnaryOp_new',
+\verb'GrB_IndexUnaryOp_new', and \verb'GrB_BnaryOp_new' methods could be
+extended to allow those function pointers to be \verb'NULL'.  The JIT kernels
+do not require the function pointers at all.  They are used in GraphBLAS in
+only a few places, outside of any JIT kernel, when performance is not critical.
+For example, they are used when computing single scalars of iso-valued
+matrices, and for the accumulate/mask phase after reduction to a scalar.
+
+For example, consider these excerpts of the \verb'gauss_demo' program in the
+\verb'GraphBLAS/Demo' folder:
+
+{\footnotesize
+\begin{verbatim}
+
+    typedef struct
+    {
+        int32_t real ;
+        int32_t imag ;
+    }
+    gauss ;
+
+    #define GAUSS_DEFN              \
+    "typedef struct "               \
+    "{ "                            \
+       "int32_t real ; "            \
+       "int32_t imag ; "            \
+    "} "                            \
+    "gauss ;"
+
+    void multgauss (gauss *z, const gauss *x, const gauss *y)
+    {
+        z->real = x->real * y->real - x->imag * y->imag ;
+        z->imag = x->real * y->imag + x->imag * y->real ;
+    }
+
+    #define MULTGAUSS_DEFN                                          \
+    "void multgauss (gauss *z, const gauss *x, const gauss *y)  \n" \
+    "{                                                          \n" \
+    "    z->real = x->real * y->real - x->imag * y->imag ;      \n" \
+    "    z->imag = x->real * y->imag + x->imag * y->real ;      \n" \
+    "}"
+
+    ...
+
+    GxB_Type_new (&Gauss, sizeof (gauss), "gauss", GAUSS_DEFN) ;
+    GxB_BinaryOp_new (&MultGauss, (void *) multgauss,
+        Gauss, Gauss, Gauss, "multgauss", MULTGAUSS_DEFN) ;
+\end{verbatim} }
+
+GraphBLAS already has everything it needs to create the \verb'gauss' type
+definition, so new user-defined data types originating from MATLAB, Python, or
+Julia need no futher work.  All that is needed is a C-style \verb'typedef',
+provided as a string (such as the \verb'GAUSS_DEFN' string above).
+
+However, GraphBLAS currently requires the \verb'multgauss' function pointer.
+If passed a \verb'NULL' function pointer, GraphBLAS could simply compile a copy
+of the function itself from the \verb'MULTGAUSS_DEFN' string, and place it in
+the user's cache folder.  This feature will make it far easier for the full
+JIT to be exploited from MATLAB, Python, Julia, or GoLang applications.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -9230,7 +9436,7 @@ nothing.  If OpenMP is not available or \verb'-DNOPEMP=1' is used, then
 user applications need to ensure their own thread safety when one user thread
 computes a result that is then read by another thread.
 
-You can query GraphBLAS at run time to ask if it was compiled with OpenMP:
+You can query GraphBLAS at run-time to ask if it was compiled with OpenMP:
 
 \begin{verbatim}
     bool have_openmp ;
@@ -16219,7 +16425,7 @@ GraphBLAS folder.
         \verb'GrB_Descriptor' no longer supports threading control, and some
         features of the \verb'GxB_SelectOp' are removed (see below).
     \item The JIT:  GraphBLAS v8.0.0 includes a JIT for the CPU kernels,
-        which can compile kernels at run time.  Added \verb'GxB_set/get'
+        which can compile kernels at run-time.  Added \verb'GxB_set/get'
         options and environment variables to control the JIT.
     \item math kernels: revised for CUDA JIT.  More accurate complex
         floating-point for Mac OS on Apple Silicon.
