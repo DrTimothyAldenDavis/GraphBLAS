@@ -44,15 +44,7 @@ void mexFunction
     pargout [0] = mxCreateDoubleScalar (0) ;
     #endif
 
-    #ifndef GBCOMPACT
-    // compact is off
-    if (pr) printf ("GBCOMPACT:   normal: GBCOMPACT not enabled\n") ;
     pargout [1] = mxCreateDoubleScalar (0) ;
-    #else
-    // compact is on
-    if (pr) printf ("GBCOMPACT:   enabled (for development only)\n") ;
-    pargout [1] = mxCreateDoubleScalar (1) ;
-    #endif
 
     if (malloc_debug)
     {

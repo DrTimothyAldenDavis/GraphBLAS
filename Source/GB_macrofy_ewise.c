@@ -130,6 +130,11 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     GB_macrofy_binop (fp, "GB_BINOP", flipxy, false, true, binop_ecode, C_iso,
         binaryop, NULL, NULL) ;
 
+    if (binaryop->opcode == GB_SECOND_binop_code)
+    {
+        fprintf (fp, "#define GB_OP_IS_SECOND 1\n") ;
+    }
+
     GB_macrofy_cast_copy (fp, "C", "A", (C_iso || !copy_to_C) ? NULL : ctype,
             (acode == 0 || acode == 15) ? NULL : atype, A_iso_code) ;
 

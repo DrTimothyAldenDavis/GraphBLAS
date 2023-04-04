@@ -19,7 +19,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     int term_ecode,     // terminal value as an enum (<= 28 is terminal)
     bool C_iso,         // true if C is iso
     GrB_Monoid monoid,  // monoid to macrofy
-    bool disable_terminal_condition,    // if true, the monoid is assumed
+    bool disable_terminal_condition,    // if true, a builtin monoid is assumed
                         // to be non-terminal.  For the (times, firstj, int64)
                         // semiring, times is normally a terminal monoid, but
                         // it's not worth exploiting in GrB_mxm.
@@ -116,18 +116,22 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         fprintf (fp, "#define GB_IS_ANY_MONOID 1\n") ;
         monoid_is_terminal = true ;
     }
-    else if (monoid->terminal == NULL || disable_terminal_condition)
+    else if (monoid->terminal == NULL)
     {
-        // monoid is not terminal (either built-in or user-defined), or
-        // its terminal condition is ignored (for (times, firstj, int64),
-        // for example).
+        // monoid is not terminal (either built-in or user-defined)
         monoid_is_terminal = false ;
     }
     else if (term_ecode <= 28)
     {
-        // built-in terminal monoid: terminal value is a simple assignment
-        monoid_is_terminal = true ;
-        fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
+        // built-in terminal monoid: terminal value is a simple assignment.
+        // Its terminal condition can be ignored (for (times, firstj, int64),
+        // for example) if disable_terminal_condition is true, but in that case
+        // its terminal value must still be constructed for the query function.
+        monoid_is_terminal = !disable_terminal_condition ;
+        if (monoid_is_terminal)
+        {
+            fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
+        }
         const char *term_value = GB_macrofy_id (term_ecode, zsize, NULL, NULL) ;
         fprintf (fp, "#define GB_DECLARE_TERMINAL_CONST(zterminal) "
             "const %s zterminal = ", ztype_name) ;
@@ -143,10 +147,13 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         {
             fprintf (fp, "%s\n", term_value) ;
         }
-        fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) "
-            "((z) == %s)\n", term_value) ;
-        fprintf (fp, "#define GB_IF_TERMINAL_BREAK(z,zterminal) "
-            "if ((z) == %s) break\n", term_value) ;
+        if (monoid_is_terminal)
+        {
+            fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) "
+                "((z) == %s)\n", term_value) ;
+            fprintf (fp, "#define GB_IF_TERMINAL_BREAK(z,zterminal) "
+                "if ((z) == %s) break\n", term_value) ;
+        }
     }
     else
     {
@@ -158,8 +165,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) "
             " (memcmp (&(z), &(zterminal), %d) == 0)\n", (int) zsize) ;
         fprintf (fp, "#define GB_IF_TERMINAL_BREAK(z,zterminal) "
-            " if (memcmp (&(z), &(zterminal), %d) == 0) break\n",
-            (int) zsize) ;
+            " if (memcmp (&(z), &(zterminal), %d) == 0) break\n", (int) zsize) ;
     }
 
     //--------------------------------------------------------------------------

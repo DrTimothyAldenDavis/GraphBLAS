@@ -113,11 +113,13 @@ void mexFunction
 
     GrB_Info info, expected  ;
 
-    GB_Global_GrB_init_called_set (false) ;
+    // finalize, but tell GraphBLAS that GrB_init can be called again:
+    GB_mx_at_exit ( ) ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
-    OK (GrB_finalize ( )) ;
 
-    GB_Global_GrB_init_called_set (false) ;
+    // finalize, but tell GraphBLAS that GrB_init can be called again:
+    GB_mx_at_exit ( ) ;
+
     OK (GxB_init (GrB_NONBLOCKING, mxMalloc, NULL, NULL, mxFree)) ;
 
     // mxMalloc, mxCalloc, mxRealloc, and mxFree are not thread safe
@@ -219,7 +221,7 @@ void mexFunction
     // can't call it twice
     expected = GrB_INVALID_VALUE ;
     ERR (GxB_init (GrB_NONBLOCKING, mxMalloc, NULL, NULL, mxFree)) ;
-    GB_Global_GrB_init_called_set (false) ;
+    GB_mx_at_exit ( ) ;
 
     // invalid mode
     expected = GrB_INVALID_VALUE ;
@@ -5991,14 +5993,14 @@ void mexFunction
     Complex_finalize ( ) ;
     nmalloc = GB_Global_nmalloc_get ( ) ;
     printf ("nmalloc %d done\n", nmalloc) ;
-    GrB_finalize ( ) ;
+    GB_mx_at_exit ( ) ;
     nmalloc = GB_Global_nmalloc_get ( ) ;
     printf ("nmalloc %d all freed\n", nmalloc) ;
 
     FREE_ALL ;
     nmalloc = GB_Global_nmalloc_get ( ) ;
     printf ("nmalloc %d all freed\n", nmalloc) ;
-    GrB_finalize ( ) ;
+    GB_mx_at_exit ( ) ;
     nmalloc = GB_Global_nmalloc_get ( ) ;
     printf ("nmalloc %d after finalize\n", nmalloc) ;
     CHECK (nmalloc == 0) ;

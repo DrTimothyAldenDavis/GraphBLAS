@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mex.h"
+#include "GB_jitifyer.h"
 
 bool GB_mx_get_global       // true if doing malloc_debug
 (
@@ -38,7 +39,6 @@ bool GB_mx_get_global       // true if doing malloc_debug
         debug = (bool *) mxGetData (debug_builtin) ;
         if (debug == NULL) mexErrMsgTxt ("debug_builtin null!") ;
         malloc_debug = debug [0] ;
-        // if (malloc_debug) printf ("GraphBLAS malloc debug enabled\n") ;
     }
 
     //--------------------------------------------------------------------------
@@ -53,17 +53,33 @@ bool GB_mx_get_global       // true if doing malloc_debug
     // initialize GraphBLAS
     //--------------------------------------------------------------------------
 
-    bool burble = GB_Global_burble_get ( ) ;            // save current burble
-    GB_Global_GrB_init_called_set (false) ;
-    GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree) ;
+    // save current burble
+    bool burble = GB_Global_burble_get ( ) ;
+
+    // save JIT control
+    GxB_JIT_Control control = GB_jitifyer_get_control ( ) ;
+
+    if (!GB_Global_GrB_init_called_get ( ))
+    {
+        // call GxB_init (see also gb_usage in @GrB)
+        mexAtExit (GB_mx_at_exit) ;
+        GB_Global_persistent_set (mexMakeMemoryPersistent) ;
+        GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree) ;
+    }
     // mxMalloc, mxCalloc, mxRealloc, and mxFree are not thread safe
     GB_Global_malloc_is_thread_safe_set (false) ;
     ASSERT (GB_Global_nmalloc_get ( ) == 0) ;
     GB_Global_abort_function_set (GB_mx_abort) ;
     GB_Global_malloc_tracking_set (true) ;
     GxB_Global_Option_set_(GxB_FORMAT, GxB_BY_COL) ;
-    GxB_Global_Option_set_(GxB_BURBLE, burble) ;        // restore the burble
     GxB_Global_Option_set_(GxB_PRINTF, mexPrintf) ;
+
+    // restore the burble
+    GxB_Global_Option_set_(GxB_BURBLE, burble) ;
+
+    // restore the JIT control
+    GB_jitifyer_set_control (control) ;
+    GxB_Global_Option_set_(GxB_JIT_C_CONTROL, control) ;
 
     //--------------------------------------------------------------------------
     // get nthreads

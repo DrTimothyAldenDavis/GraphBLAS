@@ -59,6 +59,7 @@ for k = [1 2 4 16 128]
 
                 for threads = [1 4 16]
                     nthreads_set (threads, 1) ;
+                    fprintf ('.') ;
 
                     % no mask
                     C1 = A*B ;

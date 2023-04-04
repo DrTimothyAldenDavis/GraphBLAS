@@ -97,6 +97,7 @@
         const int8_t *restrict Mb = (M == NULL) ? NULL : M->b ;
         const GB_M_TYPE *restrict Mx = (M == NULL) ? NULL :
             ((GB_M_TYPE *) (Mask_struct ? NULL : (M->x))) ;
+        GB_DECLARE_TERMINAL_CONST (zterminal) ;
 
         #define GB_META16
         #include "GB_meta16_definitions.h"

@@ -42,6 +42,8 @@ uint64_t simple_rand_i (void) ;
 
 void GB_mx_abort (void) ;               // assertion failure
 
+void GB_mx_at_exit ( void ) ;           // for mexAtExit
+
 bool GB_mx_mxArray_to_BinaryOp          // true if successful, false otherwise
 (
     GrB_BinaryOp *op_handle,            // the binary op

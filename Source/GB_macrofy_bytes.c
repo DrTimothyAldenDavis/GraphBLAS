@@ -36,9 +36,9 @@ void GB_macrofy_bytes
         // all bytes are the same; use memset
         fprintf (fp,
             "#define GB_DECLARE_%s(%s) %s %s ; "
-            "memset (&z, 0x%02x, %d)\n",
+            "memset (&%s, 0x%02x, %d)\n",
             Name, variable, type_name, variable,
-            value [0], (int) nbytes) ;
+            variable, value [0], (int) nbytes) ;
     }
     else
     {

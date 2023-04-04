@@ -30,10 +30,10 @@ void GB_mx_put_global
     #endif
 
     //--------------------------------------------------------------------------
-    // finalize GraphBLAS
+    // finalize GraphBLAS, but allow it to be called again
     //--------------------------------------------------------------------------
 
-    GrB_finalize ( ) ;
+    GB_mx_at_exit ( ) ;
 
     //--------------------------------------------------------------------------
     // check nmemtable and nmalloc
@@ -54,11 +54,5 @@ void GB_mx_put_global
         GB_Global_memtable_dump ( ) ;
         mexErrMsgTxt ("memory leak in test!") ;
     }
-
-    //--------------------------------------------------------------------------
-    // allow GrB_init to be called again
-    //--------------------------------------------------------------------------
-
-    GB_Global_GrB_init_called_set (false) ;
 }
 

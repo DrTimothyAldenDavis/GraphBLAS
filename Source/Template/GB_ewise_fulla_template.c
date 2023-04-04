@@ -40,8 +40,13 @@
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < cnz ; p++)
         { 
+            #if GB_OP_IS_SECOND
+            GB_DECLAREB (aij) ;
+            GB_GETB (aij, Ax, p, false) ;           // aij = Ax [p]
+            #else
             GB_DECLAREA (aij) ;
             GB_GETA (aij, Ax, p, false) ;           // aij = Ax [p]
+            #endif
             GB_C_TYPE t ;                           // declare scalar t
             GB_BINOP (t, aij, aij, 0, 0) ;          // t = aij + aij
             GB_BINOP (GB_CX (p), GB_CX (p), t, 0, 0) ; // Cx [p] = cij + t

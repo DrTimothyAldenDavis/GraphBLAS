@@ -527,6 +527,7 @@ void mexFunction
             nargin == 6 || nargin == 7)) ||
           ((nargout == 2 || nargout == 3) && nargin == 8)))
     {
+        GB_mx_put_global (true) ;
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
 

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_at_exit: terminate GraphBLAS
+// GB_mx_at_exit: terminate GraphBLAS
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -10,9 +10,9 @@
 // This method is called by MATLAB when the mexFunction that called GrB_init
 // (or GxB_init) is cleared.
 
-#include "gb_interface.h"
+#include "GB_mex.h"
 
-void gb_at_exit ( void )
+void GB_mx_at_exit ( void )
 {
     // Finalize GraphBLAS, clearing all JIT kernels and freeing the hash table.
     // MATLAB can only use GraphBLAS if GrB_init / GxB_init is called again.
@@ -29,6 +29,5 @@ void gb_at_exit ( void )
     // both of them.
 
     GrB_finalize ( ) ; GB_Global_GrB_init_called_set (false) ;
-    mexPrintf ("GrB: finalized\n") ;
 }
 

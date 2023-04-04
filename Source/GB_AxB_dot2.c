@@ -98,12 +98,10 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     GB_WERK_DECLARE (B_slice, int64_t) ;
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
 
-    // FIXME: use GB_as_if_full in GB_enumify_* for inputs M, A, and B
-
     // GB_AxB_saxpy punts to this dot2 method for for C=A*B, and in this case,
     // A is bitmap or full, and B is hypersparse or sparse
-    bool A_is_full = GB_IS_FULL (A_in) ; // GB_as_if_full (A_in) ;
-    bool B_is_full = GB_IS_FULL (B_in) ; // GB_as_if_full (B_in) ;
+    bool A_is_full = GB_IS_FULL (A_in) ;
+    bool B_is_full = GB_IS_FULL (B_in) ;
     bool A_bitmap_or_full = (GB_IS_BITMAP (A_in) || A_is_full) ;
     bool B_bitmap_or_full = (GB_IS_BITMAP (B_in) || B_is_full) ;
     ASSERT (GB_IMPLIES (A_not_transposed,

@@ -130,6 +130,17 @@ void GB_jitifyer_finalize (bool freeall)
     GB_FREE_STUFF (GB_jit_kernel_name) ;
     GB_FREE_STUFF (GB_jit_include) ;
     GB_FREE_STUFF (GB_jit_command) ;
+
+    if (freeall) ASSERT (GB_jit_table == NULL) ;
+    ASSERT (GB_jit_cache_path == NULL) ;
+    ASSERT (GB_jit_source_path == NULL) ;
+    ASSERT (GB_jit_C_compiler == NULL) ;
+    ASSERT (GB_jit_C_flags == NULL) ;
+    ASSERT (GB_jit_C_link_flags == NULL) ;
+    ASSERT (GB_jit_library_name == NULL) ;
+    ASSERT (GB_jit_kernel_name == NULL) ;
+    ASSERT (GB_jit_include == NULL) ;
+    ASSERT (GB_jit_command == NULL) ;
 }
 
 //------------------------------------------------------------------------------
@@ -248,7 +259,7 @@ GrB_Info GB_jitifyer_init (void)
         if (dl_function == NULL || dl_query == NULL || Names [k] == NULL)
         {
             // ignore this kernel
-            printf ("PreJIT kernel null! %d\n", k) ;
+            printf ("PreJIT kernel null! %d\n", k) ;    // FIXME
             continue ;
         }
         char kernel_name [GB_KLEN+1] ;
@@ -269,14 +280,15 @@ GrB_Info GB_jitifyer_init (void)
         if (info != GrB_SUCCESS)
         {
             // kernel_name is invalid; ignore this kernel
-            printf ("PreJIT demacrofy failed! %d:%s\n", k, Names [k]) ;
+            printf ("PreJIT demacrofy failed! %d:%s\n", k, Names [k]) ; // FIXME
             continue ;
         }
 
         if (!GB_STRING_MATCH (name_space, "GB_jit"))
         { 
             // kernel_name is invalid; ignore this kernel
-            printf ("PreJIT wrong namespace! %d:%s [%s]\n", k, Names [k], name_space) ;
+            printf ("PreJIT wrong namespace! %d:%s [%s]\n", // FIXME
+                k, Names [k], name_space) ;
             continue ;
         }
 
@@ -336,7 +348,8 @@ GrB_Info GB_jitifyer_init (void)
         else
         {
             // kernel_name is invalid; ignore this kernel
-            printf ("PreJIT Kernel invalid! %s [%s]\n", Names [k], kname) ;
+            printf ("PreJIT Kernel invalid! %s [%s]\n", // FIXME
+                Names [k], kname) ;
             continue ;
         }
 
@@ -368,7 +381,7 @@ GrB_Info GB_jitifyer_init (void)
             (version [1] != GxB_IMPLEMENTATION_MINOR) ||
             (version [2] != GxB_IMPLEMENTATION_SUB))
         {
-            printf ("PreJIT STALE: %d [%s]\n", k, Names [k]) ;
+            printf ("PreJIT STALE: %d [%s]\n", k, Names [k]) ;  // FIXME
             continue ;
         }
 
@@ -380,7 +393,7 @@ GrB_Info GB_jitifyer_init (void)
         if (GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) != NULL)
         {
             // kernel_name is invalid; ignore this kernel
-            printf ("PreJIT Kernel duplicate! %s\n", Names [k]) ;
+            printf ("PreJIT Kernel duplicate! %s\n", Names [k]) ;   // FIXME
             continue ;
         }
 
@@ -390,10 +403,12 @@ GrB_Info GB_jitifyer_init (void)
 
         if (!GB_jitifyer_insert (hash, encoding, suffix, NULL, dl_function, k))
         {
+            printf ("PreJIT: out of memory\n") ;    // FIXME
             GB_jit_control = GxB_JIT_PAUSE ;
             return (GrB_OUT_OF_MEMORY) ;
         }
     }
+
     return (GrB_SUCCESS) ;
 }
 
@@ -1020,7 +1035,7 @@ GrB_Info GB_jitifyer_load
     if (GB_jit_control <= GxB_JIT_PAUSE)
     { 
         // The JIT control has disabled all JIT kernels.  Punt to generic.
-        GBURBLE ("(jit paused) ") ;
+        GBURBLE ("(jit paused: %d) ", GB_jit_control) ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -1388,6 +1403,7 @@ GrB_Info GB_jitifyer_worker
         dlclose (dl_handle) ; 
         dl_handle = NULL ;
         // disable the JIT to avoid repeated errors
+        printf ("cannot insert into the hash table\n") ;    // FIXME
         GB_jit_control = GxB_JIT_PAUSE ;
         return (GrB_OUT_OF_MEMORY) ;
     }

@@ -104,7 +104,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     // construct the monoid macros
     //--------------------------------------------------------------------------
 
-    // turn off terminal condition for monoids coupled with positional
+    // turn off terminal condition for builtin monoids coupled with positional
     // multiply operators
     bool is_positional = GB_IS_BINARYOP_CODE_POSITIONAL (mult->opcode) ;
 

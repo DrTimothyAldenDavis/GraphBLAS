@@ -154,6 +154,7 @@
 
     #ifdef GB_JIT_KERNEL
     {
+        GB_DECLARE_TERMINAL_CONST (zterminal) ;
         #define GB_META16
         #include "GB_meta16_definitions.h"
         #include "GB_AxB_dot3_template.c"

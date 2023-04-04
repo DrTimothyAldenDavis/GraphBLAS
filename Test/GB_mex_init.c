@@ -25,6 +25,10 @@ void mexFunction
 {
     mexPrintf ("usage:\n%s\n", USAGE) ;
 
+    // finalize GraphBLAS but tell it that it can be called again
+    GB_mx_at_exit ( ) ;
+
+    // initialize GraphBLAS
     GxB_init (GrB_NONBLOCKING, mxMalloc, NULL, NULL, mxFree) ;
 
     // mxMalloc, mxCalloc, mxRealloc, and mxFree are not thread safe
@@ -124,6 +128,7 @@ void mexFunction
 
     // #include "GB_Test_init_mkl_template.c"
 
-    GrB_finalize ( ) ;
+    // finalize GraphBLAS but tell it that it can be called again
+    GB_mx_at_exit ( ) ;
 }
 
