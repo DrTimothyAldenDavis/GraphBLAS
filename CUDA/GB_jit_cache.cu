@@ -58,9 +58,8 @@ namespace jit {
 // This definition can be overridden at compile time by specifying a
 // `-DGRAPHBLAS_CACHE_PATH=/kernel/cache/path` CMake argument.
 // This path is used in the `getCacheDir()` function below.
-#undef GRAPHBLAS_CACHE_PATH
 #if !defined(GRAPHBLAS_CACHE_PATH)
-#define GRAPHBLAS_CACHE_PATH  get_user_home_cache_dir()
+#define GRAPHBLAS_CACHE_PATH get_user_home_cache_dir() 
 #endif
 
 /**
@@ -81,11 +80,14 @@ std::string getCacheDir() {
   // The environment variable always overrides the
   // default/compile-time value of `GRAPHBLAS_CACHE_PATH`
   // FIXME: use GB_jitifyer_get_cache_path ( ) here.
+  //std::cout<<"Cache-dir runtime=>"<< get_user_home_cache_dir() << std::endl;
   auto kernel_cache_path_env = std::getenv("GRAPHBLAS_CACHE_PATH");
+  //auto kernel_cache_path_env = get_user_home_cache_dir();
   auto kernel_cache_path = (kernel_cache_path_env != nullptr ? kernel_cache_path_env
                                        : GRAPHBLAS_CACHE_PATH);
 
   struct stat st;
+  //if ( (stat( kernel_cache_path.c_str(), &st) != 0) ) {
   if ( (stat( kernel_cache_path.c_str(), &st) != 0) ) {
     // `mkdir -p` the kernel cache path if it doesn't exist
 //    printf("cache is going to path %s\n", kernel_cache_path.c_str());
@@ -158,7 +160,7 @@ named_prog<jitify::experimental::KernelInstantiation> GBJitCache::getKernelInsta
     std::string kern_inst_name = kern_name;
     for ( auto&& arg : arguments ) kern_inst_name += '_' + arg;
 
-//    printf(" got kernel instance %s\n",kern_inst_name.c_str());
+    //printf(" got kernel instance %s\n",kern_inst_name.c_str());
 
     return getCached(kern_inst_name, kernel_inst_map, 
         [&](){return program.kernel(kern_name)
@@ -247,7 +249,7 @@ void GBJitCache::cacheFile::write(std::string content)
     // Open file and create if it doesn't exist, with access 0600
     int fd = open ( _file_name.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
     if ( fd == -1 ) {
-//        printf(" failed to open cache file for write %s\n",_file_name.c_str());
+        //printf(" failed to open cache file for write %s\n",_file_name.c_str());
         successful_write = false;
         return;
     }
@@ -263,7 +265,7 @@ void GBJitCache::cacheFile::write(std::string content)
 
     // Copy string into file
     if( fwrite(content.c_str(), content.length(), 1, fp) != 1 ) {
-//        printf(" failed to write cache file %s\n",_file_name.c_str());
+        //printf(" failed to write cache file %s\n",_file_name.c_str());
         successful_write = false;
         fclose(fp);
         return;

@@ -48,11 +48,11 @@ static const std::vector<std::string> GB_jit_cuda_compiler_flags{
    "-remove-unused-globals",
    "-w",
    "-D__CUDACC_RTC__",
-   "-I.",
-   "-I..",
-   "-I../templates",
-   "-I../CUDA",
-   "-I../Source/Shared",
+//   "-I.",
+//   "-I..",
+//   "-I../templates",
+//   "-I../CUDA",
+//   "-I../Source/Shared",
 
    // Add includes relative to GRAPHBLAS_SOURCE_PATH variable
    "-I" + jit::get_user_graphblas_source_path() + "/CUDA",

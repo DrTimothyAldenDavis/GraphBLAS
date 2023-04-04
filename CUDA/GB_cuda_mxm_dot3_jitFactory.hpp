@@ -204,6 +204,10 @@ public:
     R"(#include "templates/)" << kernel_name << R"(.cuh")" << std::endl;
 
     bool result = false;
+    
+ // std::cout<< "GB_jit_cuda_compiler_flags ";
+ // for ( std::string s : GB_jit_cuda_compiler_flags)
+ //     std::cout<< s<< std::endl; 
 
     dim3 grid(get_number_of_blocks(M));
     dim3 block(get_threads_per_block());
