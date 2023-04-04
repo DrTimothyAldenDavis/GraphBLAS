@@ -185,7 +185,10 @@ void GB_Context_chunk_set
     double chunk
 )
 {
-    if (chunk < 1) chunk = GB_CHUNK_DEFAULT ;
+    if (chunk < 1)
+    {
+        chunk = GB_CHUNK_DEFAULT ;
+    }
     if (Context == NULL || Context == GxB_CONTEXT_WORLD)
     { 
         GB_ATOMIC_WRITE

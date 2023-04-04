@@ -19,7 +19,7 @@
 // to rename the LZ4 functions.
 #undef GB
 
-#ifdef GBRENAME
+#ifdef GBMATLAB
     #define GBLZ4(x) GB_EVAL2 (GM_, x)
 #else
     #define GBLZ4(x) GB_EVAL2 (GB_, x)

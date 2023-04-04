@@ -565,5 +565,9 @@ GrB_UnaryOp gb_round_op (const GrB_Type type) ;
 
 mxArray *gb_mxclass_to_mxstring (mxClassID class, bool is_complex) ;
 
+void gb_defaults (void) ;   // set global GraphBLAS defaults for MATLAB
+
+void gb_at_exit ( void ) ;  // call GrB_finalize
+
 #endif
 

@@ -76,7 +76,7 @@
                 for (int64_t k = 0 ; k < anz-p ; k++)
                 { 
                     // Panel [k] += (ztype) Ax [p+k]
-                    GB_UPDATE (Panel [k], Ax [p+k]) ;
+                    GB_GETA_AND_UPDATE (Panel [k], Ax, p+k) ;
                 }
             }
             else
@@ -85,7 +85,7 @@
                 for (int64_t k = 0 ; k < GB_PANEL ; k++)
                 { 
                     // Panel [k] += (ztype) Ax [p+k]
-                    GB_UPDATE (Panel [k], Ax [p+k]) ;
+                    GB_GETA_AND_UPDATE (Panel [k], Ax, p+k) ;
                 }
                 #if GB_MONOID_IS_TERMINAL
                 panel_count-- ;
@@ -202,7 +202,7 @@
                         for (int64_t k = 0 ; k < pend-p ; k++)
                         { 
                             // Panel [k] += (ztype) Ax [p+k]
-                            GB_UPDATE (Panel [k], Ax [p+k]) ;
+                            GB_GETA_AND_UPDATE (Panel [k], Ax, p+k) ;
                         }
                     }
                     else
@@ -211,7 +211,7 @@
                         for (int64_t k = 0 ; k < GB_PANEL ; k++)
                         { 
                             // Panel [k] += (ztype) Ax [p+k]
-                            GB_UPDATE (Panel [k], Ax [p+k]) ;
+                            GB_GETA_AND_UPDATE (Panel [k], Ax, p+k) ;
                         }
                         #if GB_MONOID_IS_TERMINAL
                         panel_count-- ;

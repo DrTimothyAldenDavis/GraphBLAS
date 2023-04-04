@@ -72,6 +72,10 @@ bool     GB_Global_malloc_debug_get (void) ;
 void     GB_Global_malloc_debug_count_set (int64_t malloc_debug_count) ;
 bool     GB_Global_malloc_debug_count_decrement (void) ;
 
+void *   GB_Global_persistent_malloc (size_t size) ;
+void     GB_Global_persistent_set (void (* persistent_function) (void *)) ;
+void     GB_Global_persistent_free (void **p) ;
+
 void     GB_Global_hack_set (int k, int64_t hack) ;
 int64_t  GB_Global_hack_get (int k) ;
 

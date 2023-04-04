@@ -62,7 +62,7 @@
 #define GB_CAT2(x,y) x ## y
 #define GB_EVAL2(x,y) GB_CAT2 (x,y)
 
-#ifdef GBRENAME
+#ifdef GBMATLAB
     // All symbols must be renamed for the @GrB interface when using
     // R2021a and following, since those versions include an earlier
     // version of SuiteSparse:GraphBLAS.

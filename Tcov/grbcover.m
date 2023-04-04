@@ -56,7 +56,7 @@ addpath ../Test/spok
 
 flags = '-g -DGBCOVER -R2018a -DGBNCPUFEAT' ;
 if (need_rename)
-    flags = [flags ' -DGBRENAME=1 '] ;
+    flags = [flags ' -DGBMATLAB=1 '] ;
 end
 
 fprintf ('\nCompiling GraphBLAS tests\nplease wait [') ;

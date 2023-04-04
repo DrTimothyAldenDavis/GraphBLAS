@@ -77,7 +77,7 @@ here = pwd ;
 
 if (need_rename)
     % use renamed version for all MATLAB versions:
-    flags = [flags ' -DGBRENAME=1 ' ] ;
+    flags = [flags ' -DGBMATLAB=1 ' ] ;
     inc = sprintf ('-I%s/../../rename ', here) ;
     libraries = '-L../../../../../build -L. -L/usr/local/lib -lgraphblas_matlab' ;
 else

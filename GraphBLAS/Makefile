@@ -34,6 +34,10 @@ debug:
 compact:
 	( cd build && cmake $(CMAKE_OPTIONS) -DCOMPACT=1 .. && cmake --build . -j$(JOBS) )
 
+# compile with -g, and without FactoryKernels
+cdebug:
+	( cd build && cmake -DCMAKE_BUILD_TYPE=Debug -DCOMPACT=1 $(CMAKE_OPTIONS) .. && cmake --build . -j$(JOBS) )
+
 # just do 'make' in build; do not rerun the cmake script
 remake:
 	( cd build && cmake --build . -j$(JOBS) )

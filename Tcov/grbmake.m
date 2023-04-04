@@ -20,6 +20,7 @@ copyfile ('../GraphBLAS/rename/GB_rename.h', 'tmp_include/GB_rename.h') ;
 % create the include files and place in tmp_include
 hfiles = [ dir('../Include/*') ; ...
            dir('../Source/*.h') ; ...
+           dir('../GraphBLAS/Config/*.h') ; ...
            dir('../Source/Template') ; ...
            dir('../Source/Shared') ; ...
            dir('../Source/FactoryKernels/*.h') ; ] ;
@@ -28,6 +29,7 @@ fprintf ('hfile count: %d\n', count) ;
 
 % create the C files and place in tmp_source
 cfiles = [ dir('../Source/*.c') ; ...
+           dir('../GraphBLAS/Config/*.c') ; ...
            dir('../Source/FactoryKernels/*.c') ; ...
            dir('GB_cover_finish.c')
            ] ;
@@ -51,8 +53,8 @@ else
 end
 
 if (need_rename)
-    fprintf ('Rename with -DGBRENAME=1\n') ;
-    system (sprintf ('make -j%d RENAME="-DGBRENAME=1"', feature ('numcores'))) ;
+    fprintf ('Rename with -DGBMATLAB=1\n') ;
+    system (sprintf ('make -j%d MATLAB="-DGBMATLAB=1"', feature ('numcores'))) ;
 else
     system (sprintf ('make -j%d', feature ('numcores'))) ;
 end

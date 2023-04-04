@@ -230,13 +230,13 @@ void GB_macrofy_binop
             // lor
             case  17 : 
                 f = "z = ((x) || (y))" ;
-                u = "z = (z || (y))" ;
+                u = "z |= y" ;
                 break ;
 
             // land
             case  18 : 
                 f = "z = ((x) && (y))" ;
-                u = "z = (z && (y))" ;
+                u = "z &= y" ;
                 break ;
 
             // bor

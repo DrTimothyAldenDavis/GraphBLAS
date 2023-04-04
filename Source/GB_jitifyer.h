@@ -180,7 +180,6 @@ struct GB_jit_entry_struct
     GB_jit_encoding encoding ;  // encoding of the problem, except for suffix
     char *suffix ;              // kernel suffix for user-defined op / types,
                                 // NULL for built-in kernels
-    size_t suffix_size ;        // size of suffix malloc'd block
     void *dl_handle ;           // handle from dlopen, to be passed to dlclose
     void *dl_function ;         // address of kernel function
     int64_t prejit_index ;      // -1: JIT kernel or checked PreJIT kernel

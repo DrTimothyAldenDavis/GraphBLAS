@@ -8773,14 +8773,14 @@ PreJIT kernels can be run.  This setting can be modified; for example to
 disable the JIT and clear all loaded JIT kernels from memory, use:
 
 \begin{verbatim}
-    GxB_set (GxB_JIT_CONTROL, GxB_JIT_OFF) ;
+    GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_OFF) ;
 \end{verbatim}
 
 The above call to \verb'GxB_set' does not clear any PreJIT kernels, however,
 since those are integral components of the single compiled GraphBLAS library
 and cannot be cleared (see Section~\ref{prejit}).
 
-The following settings are available for \verb'GxB_JIT_CONTROL'.
+The following settings are available for \verb'GxB_JIT_C_CONTROL'.
 For examples on how to use it, see
 \verb'GraphBLAS/Demo/Program/gauss_demo.c'.
 
@@ -8890,7 +8890,7 @@ using any \verb'PreJIT' kernels.  To compile GraphBLAS without its
 options.  By default, \verb'COMPACT' is off, to enable the
 \verb'FactoryKernels'.
 
-When GraphBLAS is compiled with \verb'NJIT', the \verb'GxB_JIT_CONTROL' may be
+When GraphBLAS is compiled with \verb'NJIT', the \verb'GxB_JIT_C_CONTROL' may be
 set to \verb'GxB_JIT_OFF', \verb'GxB_JIT_PAUSE', or \verb'GxB_JIT_RUN'.  No
 kernels will be loaded at run-time (the \verb'GxB_JIT_LOAD' setting is disabled
 and treated as \verb'GxB_JIT_RUN'), and no new kernels will be compiled at
@@ -8979,7 +8979,7 @@ It is safe to copy only a subset of the JIT kernels from the cache folder into
 GraphBLAS encounters a need for a particular kernel that has been removed from
 \verb'GraphBLAS/PreJIT', it will create it at run-time via the JIT, if
 permitted.  If not permitted, by either compiling GraphBLAS with the
-\verb'NJIT' option, or by using \verb'GxB_JIT_CONTROL' at run-time, the generic
+\verb'NJIT' option, or by using \verb'GxB_JIT_C_CONTROL' at run-time, the generic
 kernel will be used instead.  This will be slower than the PreJIT or JIT
 kernel, but GraphBLAS will still be functional.
 

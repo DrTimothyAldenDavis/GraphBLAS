@@ -117,7 +117,7 @@ end
 
 if (need_rename)
     fprintf ('Linking with -lgraphblas_matlab\n') ;
-    flags = [flags ' -DGBRENAME=1 ' ] ;
+    flags = [flags ' -DGBMATLAB=1 ' ] ;
     inc = [inc ' -I../GraphBLAS/rename ' ] ;
     libgraphblas = '-lgraphblas_matlab' ;
 else

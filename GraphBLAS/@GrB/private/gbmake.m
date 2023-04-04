@@ -47,7 +47,8 @@ end
 
 make_all = (isequal (what, 'all')) ;
 
-flags = '-O -R2018a -DGBNCPUFEAT' ;
+% flags = '-O -R2018a -DGBNCPUFEAT' ;
+flags = '-g -R2018a -DGBNCPUFEAT' ; % FIXME
 
 % use -R2018a for the new interleaved complex API
 if (have_octave)
@@ -130,7 +131,7 @@ else
 end
 
 if (need_rename)
-    flags = [flags ' -DGBRENAME=1 ' ] ;
+    flags = [flags ' -DGBMATLAB=1 ' ] ;
     inc = [inc ' -I../../rename ' ] ;
     libgraphblas = '-lgraphblas_matlab' ;
 else

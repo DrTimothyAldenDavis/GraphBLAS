@@ -24,12 +24,6 @@
 #define GB_JIT_ENABLED 1
 #endif
 
-#ifdef GBRENAME
-// FIXME: JIT does not yet work inside MATLAB; turn it off
-#undef  GB_JIT_ENABLED
-#define GB_JIT_ENABLED 0
-#endif
-
 #if GB_JIT_ENABLED
 // FIXME: dlfcn.h only exists on Linux/Unix/Mac; need to port to Windows
 #include <dlfcn.h>
@@ -52,11 +46,10 @@
 #define GB_JITIFIER_INITIAL_SIZE 1024
 
 static GB_jit_entry *GB_jit_table = NULL ;
-static size_t   GB_jit_table_allocated = 0 ;
-
 static int64_t  GB_jit_table_size = 0 ;  // always a power of 2
 static uint64_t GB_jit_table_bits = 0 ;  // hash mask (0xFFFF if size is 2^16)
 static int64_t  GB_jit_table_populated = 0 ;
+static size_t   GB_jit_table_allocated = 0 ;
 
 static char    *GB_jit_cache_path = NULL ;
 static size_t   GB_jit_cache_path_allocated = 0 ;
@@ -106,14 +99,15 @@ static GxB_JIT_Control GB_jit_control =
 
 #define GB_FREE_STUFF(X)                \
 {                                       \
-    GB_FREE (&X, X ## _allocated) ;     \
+    GB_Global_persistent_free (&X) ;    \
     X ## _allocated = 0 ;               \
 }
 
 #define GB_MALLOC_STUFF(X,len)                          \
 {                                                       \
-    X = GB_MALLOC (len + 2, char, &(X ## _allocated)) ; \
+    X = GB_Global_persistent_malloc ((len) + 2) ;       \
     OK (X != NULL) ;                                    \
+    X ## _allocated = (len) + 2 ;                       \
 }
 
 #define GB_COPY_STUFF(X,src)                            \
@@ -151,9 +145,11 @@ GrB_Info GB_jitifyer_init (void)
     // find the GB_jit_cache_path
     //--------------------------------------------------------------------------
 
-    #ifndef GBRENAME
-
+    #if GBMATLAB
+    char *cache_path = getenv ("GRAPHBLAS_MATLAB_PATH") ;
+    #else
     char *cache_path = getenv ("GRAPHBLAS_CACHE_PATH") ;
+    #endif
     if (cache_path != NULL)
     { 
         // use the environment variable GRAPHBLAS_CACHE_PATH as-is
@@ -177,10 +173,16 @@ GrB_Info GB_jitifyer_init (void)
             GB_MALLOC_STUFF (GB_jit_cache_path, len) ;
             snprintf (GB_jit_cache_path,
                 GB_jit_cache_path_allocated,
-                "%s/%sSuiteSparse/GraphBLAS/%d.%d.%d", home, dot,
+                "%s/%sSuiteSparse/GraphBLAS/%d.%d.%d%s", home, dot,
                 GxB_IMPLEMENTATION_MAJOR,
                 GxB_IMPLEMENTATION_MINOR,
-                GxB_IMPLEMENTATION_SUB) ;
+                GxB_IMPLEMENTATION_SUB,
+                #if GBMATLAB
+                "_matlab"
+                #else
+                ""
+                #endif
+                ) ;
         }
     }
 
@@ -374,15 +376,12 @@ GrB_Info GB_jitifyer_init (void)
         // insert the PreJIT kernel in the hash table
         //----------------------------------------------------------------------
 
-        if (!GB_jitifyer_insert (hash, encoding, suffix, NULL, dl_function,
-            k))
+        if (!GB_jitifyer_insert (hash, encoding, suffix, NULL, dl_function, k))
         {
             GB_jit_control = GxB_JIT_PAUSE ;
             return (GrB_OUT_OF_MEMORY) ;
         }
     }
-
-    #endif
     return (GrB_SUCCESS) ;
 }
 
@@ -444,7 +443,7 @@ GrB_Info GB_jitifyer_include (void)
     // allocate and determine GB_jit_include
     //--------------------------------------------------------------------------
 
-    size_t len = 10 * GB_jit_source_path_allocated + 200 ;
+    size_t len = 9 * GB_jit_source_path_allocated + 200 ;
     GB_MALLOC_STUFF (GB_jit_include, len) ;
 
     snprintf (GB_jit_include, GB_jit_include_allocated,
@@ -456,7 +455,7 @@ GrB_Info GB_jitifyer_include (void)
         "-I%s/rmm_wrap "
         "-I%s/cpu_features "
         "-I%s/cpu_features/include "
-        #ifdef GBRENAME
+        #ifdef GBMATLAB
         "-I%s/GraphBLAS/rename "
         #endif
         ,
@@ -468,7 +467,7 @@ GrB_Info GB_jitifyer_include (void)
         GB_jit_source_path,
         GB_jit_source_path,
         GB_jit_source_path
-        #ifdef GBRENAME
+        #ifdef GBMATLAB
         , GB_jit_source_path
         #endif
         ) ;
@@ -1117,11 +1116,8 @@ GrB_Info GB_jitifyer_worker
                 // remove the PreJIT kernel from the hash table
                 GBURBLE ("(prejit: disabled) ") ;
                 e->dl_function = NULL ;
+                GB_Global_persistent_free (&(e->suffix)) ;
                 GB_jit_table_populated-- ;
-                if (e->suffix != NULL)
-                { 
-                    GB_FREE (&(e->suffix), e->suffix_size) ;
-                }
             }
         }
         else
@@ -1255,10 +1251,8 @@ GrB_Info GB_jitifyer_worker
         if (!ok)
         { 
             // library is loaded but needs to change, so close it
-            #if GB_JIT_ENABLED
             // FIXME: dlclose only exists on Linux/Unix/Mac
             dlclose (dl_handle) ;
-            #endif
             dl_handle = NULL ;
             if (GB_jit_control == GxB_JIT_LOAD)
             { 
@@ -1461,6 +1455,8 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 )
 {
 
+    size_t siz = 0 ;
+
     //--------------------------------------------------------------------------
     // ensure the hash table is large enough
     //--------------------------------------------------------------------------
@@ -1472,18 +1468,20 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         // allocate the initial hash table
         //----------------------------------------------------------------------
 
-        GB_jit_table = GB_CALLOC (GB_JITIFIER_INITIAL_SIZE,
-                struct GB_jit_entry_struct, &GB_jit_table_allocated) ;
+        siz = GB_JITIFIER_INITIAL_SIZE * sizeof (struct GB_jit_entry_struct) ;
+        GB_jit_table = GB_Global_persistent_malloc (siz) ;
         if (GB_jit_table == NULL)
         { 
             // out of memory
             return (false) ;
         }
+        memset (GB_jit_table, 0, siz) ;
         GB_jit_table_size = GB_JITIFIER_INITIAL_SIZE ;
         GB_jit_table_bits = GB_JITIFIER_INITIAL_SIZE - 1 ; 
+        GB_jit_table_allocated = siz ;
 
     }
-    else if (GB_jit_table_populated >= GB_jit_table_size / 4)
+    else if (4 * GB_jit_table_populated >= GB_jit_table_size)
     {
 
         //----------------------------------------------------------------------
@@ -1493,10 +1491,8 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         // create a new table that is four times the size
         int64_t new_size = 4 * GB_jit_table_size ;
         int64_t new_bits = new_size - 1 ;
-        size_t  new_allocated ;
-        GB_jit_entry *new_table = GB_CALLOC (new_size,
-                struct GB_jit_entry_struct, &new_allocated) ;
-
+        siz = new_size * sizeof (struct GB_jit_entry_struct) ;
+        GB_jit_entry *new_table = GB_Global_persistent_malloc (siz) ;
         if (GB_jit_table == NULL)
         { 
             // out of memory; leave the existing table as-is
@@ -1504,6 +1500,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         }
 
         // rehash into the new table
+        memset (new_table, 0, siz) ;
         for (int64_t k = 0 ; k < GB_jit_table_size ; k++)
         {
             if (GB_jit_table [k].dl_function != NULL)
@@ -1521,7 +1518,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         GB_jit_table = new_table ;
         GB_jit_table_size = new_size ;
         GB_jit_table_bits = new_bits ;
-        GB_jit_table_allocated = new_allocated ;
+        GB_jit_table_allocated = siz ;
     }
 
     //--------------------------------------------------------------------------
@@ -1539,11 +1536,10 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         {
             // found an empty slot
             e->suffix = NULL ;
-            e->suffix_size = 0 ;
             if (!builtin)
             {
                 // allocate the suffix if the kernel is not builtin
-                e->suffix = GB_MALLOC (suffix_len+1, char, &(e->suffix_size)) ;
+                e->suffix = GB_Global_persistent_malloc (suffix_len+1) ;
                 if (e->suffix == NULL)
                 { 
                     // out of memory
@@ -1603,10 +1599,7 @@ void GB_jitifyer_table_free (bool freeall)
                 {
                     // free the entry; free the suffix if present
                     e->dl_function = NULL ;
-                    if (e->suffix != NULL)
-                    { 
-                        GB_FREE (&(e->suffix), e->suffix_size) ;
-                    }
+                    GB_Global_persistent_free (&(e->suffix)) ;
                     // unload the dl library
                     if (e->dl_handle != NULL)
                     {
@@ -1646,8 +1639,8 @@ int GB_jitifyer_compile (char *kernel_name)
 
     // compile:
     "%s -DGB_JIT_RUNTIME "          // compiler command
-    #ifdef GBRENAME
-    "-DGBRENAME=1 "                 // rename for MATLAB
+    #ifdef GBMATLAB
+    "-DGBMATLAB=1 "                 // rename for MATLAB
     #endif
     "%s "                           // C flags
     "%s "                           // include directories
@@ -1682,8 +1675,8 @@ int GB_jitifyer_compile (char *kernel_name)
     GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX,  // lib*.so output file
     GB_jit_cache_path, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
     GB_jit_source_path,                             // libgraphblas.so
-    #ifdef GBRENAME
-    "/GraphBLAS", "_matlab"
+    #ifdef GBMATLAB
+    "/GraphBLAS", "_matlab",
     #else
     "", "",
     #endif

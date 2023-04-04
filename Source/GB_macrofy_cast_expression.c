@@ -164,7 +164,7 @@ const char *GB_macrofy_cast_expression  // return cast expression
                         f = "%s = GB_cast_to_int64_t ((double) crealf (%s))" ;
                         break ;
                     case GB_FC64_code : 
-                        f = "%s = GB_cast_to_int64_t (creal (x))" ;
+                        f = "%s = GB_cast_to_int64_t (creal (%s))" ;
                         break ;
                     default:;
                 }

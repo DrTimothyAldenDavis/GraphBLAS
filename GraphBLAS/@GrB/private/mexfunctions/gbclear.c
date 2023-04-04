@@ -1,18 +1,13 @@
 //------------------------------------------------------------------------------
-// gbsetup: initialize or finalize GraphBLAS
+// gbclear: set all global GraphBLAS settings to their defaults for MATLAB
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// gbsetup initializes GraphBLAS by calling GxB_init and by setting
-// all GraphBLAS global variables to their defaults.
-
 #include "gb_interface.h"
-
-#define USAGE "GrB.setup"
 
 void mexFunction
 (
@@ -32,25 +27,16 @@ void mexFunction
     #endif
 
     //--------------------------------------------------------------------------
-    // finalize GraphBLAS, if it is already started
+    // initialize GraphBLAS if necessary
     //--------------------------------------------------------------------------
 
-    if (GB_Global_GrB_init_called_get ( ))
-    {
-        GrB_finalize ( ) ;
-    }
+    gb_usage (true, "") ;
 
     //--------------------------------------------------------------------------
-    // allow GraphBLAS to be called again
+    // set global defaults
     //--------------------------------------------------------------------------
 
-    GB_Global_GrB_init_called_set (false) ;
-
-    //--------------------------------------------------------------------------
-    // initialize GraphBLAS
-    //--------------------------------------------------------------------------
-
-    gb_usage (true, USAGE) ;
+    gb_defaults ( ) ;
 
     //--------------------------------------------------------------------------
     // save test coverage

@@ -58,6 +58,12 @@ typedef struct
     bool malloc_is_thread_safe ;   // default is true
 
     //--------------------------------------------------------------------------
+    // tell MATLAB to make memory persistent
+    //--------------------------------------------------------------------------
+
+    void (* persistent_function ) (void *) ;
+
+    //--------------------------------------------------------------------------
     // memory usage tracking: for testing and debugging only
     //--------------------------------------------------------------------------
 
@@ -176,6 +182,9 @@ static GB_Global_struct GB_Global =
     .realloc_function = realloc,
     .free_function    = free,
     .malloc_is_thread_safe = true,
+
+    // tell MATLAB to make memory persistent
+    .persistent_function = NULL,
 
     // malloc tracking, for testing, statistics, and debugging only
     .malloc_tracking = false,
@@ -700,6 +709,42 @@ void GB_Global_free_function (void *p)
         }
     }
     GB_Global_memtable_remove (p) ;
+}
+
+//------------------------------------------------------------------------------
+// malloc/free persistent memory: malloc and make the memory persistent
+//------------------------------------------------------------------------------
+
+// By default, MATLAB frees any memory allocated by mxMalloc when a mexFunction
+// returns, except for any memory passed back to the MATLAB caller.  This is
+// fine for all of GraphBLAS, except for the JIT hash table.
+
+void * GB_Global_persistent_malloc (size_t size)
+{
+    // malloc persistent memory
+    void *p = GB_Global.malloc_function (size) ;
+    if (p != NULL && GB_Global.persistent_function != NULL)
+    { 
+        // tell MATLAB to make this memory persistent
+        GB_Global.persistent_function (p) ;
+    }
+    return (p) ;
+}
+
+void GB_Global_persistent_set (void (* persistent_function) (void *))
+{ 
+    // set the persistent function for MATLAB
+    GB_Global.persistent_function = persistent_function ;
+}
+
+void GB_Global_persistent_free (void **p)
+{
+    // free persistent memory
+    if (p != NULL && *p != NULL)
+    { 
+        GB_Global.free_function (*p) ;
+    }
+    (*p) = NULL ;
 }
 
 //------------------------------------------------------------------------------

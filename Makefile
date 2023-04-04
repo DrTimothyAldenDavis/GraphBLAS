@@ -50,6 +50,10 @@ debug:
 compact:
 	( cd build && cmake $(CMAKE_OPTIONS) -DCOMPACT=1 .. && cmake --build . -j$(JOBS) )
 
+# compile with -g, and without FactoryKernels
+cdebug:
+	( cd build && cmake -DCMAKE_BUILD_TYPE=Debug -DCOMPACT=1 $(CMAKE_OPTIONS) .. && cmake --build . -j$(JOBS) )
+
 # build the dynamic library and the demos
 all:
 	( cd build && cmake $(CMAKE_OPTIONS) -DDEMO=1 .. && cmake --build . -j$(JOBS) )

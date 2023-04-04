@@ -19,7 +19,7 @@
 // to rename the ZSTD functions.
 #undef GB
 
-#ifdef GBRENAME
+#ifdef GBMATLAB
     #define GBZSTD(x) GB_EVAL2 (GM_, x)
 #else
     #define GBZSTD(x) GB_EVAL2 (GB_, x)

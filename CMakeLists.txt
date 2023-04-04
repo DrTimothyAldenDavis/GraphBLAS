@@ -18,90 +18,13 @@ set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 
 include ( GraphBLAS_version )
 
-# GraphBLAS C API Specification version, at graphblas.org
-set ( GraphBLAS_API_DATE "Nov 15, 2021" )
-set ( GraphBLAS_API_VERSION_MAJOR 2 )
-set ( GraphBLAS_API_VERSION_MINOR 0 )
-set ( GraphBLAS_API_VERSION_SUB   0 )
-
-message ( STATUS "Building SuiteSparse:GraphBLAS version: v"
-    ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
-    ", date: " ${GraphBLAS_DATE} )
-
-message ( STATUS "GraphBLAS C API: v"
-    ${GraphBLAS_API_VERSION_MAJOR}.${GraphBLAS_API_VERSION_MINOR}
-    ", date: ${GraphBLAS_API_DATE}" )
-
 #-------------------------------------------------------------------------------
 # SuiteSparse policies
 #-------------------------------------------------------------------------------
 
-option ( COMPACT "ON: do not compile FactoryKernels.  OFF (default): compile FactoryKernels" off )
-option ( NJIT "ON: do not use the CPU JIT.  OFF (default): enable the CPU JIT" off )
-
 # CUDA is under development for now, and not deployed in production:
   set ( ENABLE_CUDA false )
 # set ( ENABLE_CUDA true )
-
-#-------------------------------------------------------------------------------
-# JIT configuration
-#-------------------------------------------------------------------------------
-
-# The GraphBLAS CPU and CUDA JITs need to know where the GraphBLAS source is
-# located, and where to put the compiled libraries.
-
-# set the GRAPHBLAS_SOURCE_PATH
-if ( DEFINED GRAPHBLAS_SOURCE_PATH )
-    # if the -DGRAPHBLAS_SOURCE_PATH variable is set use that setting
-elseif ( DEFINED ENV{GRAPHBLAS_SOURCE_PATH} )
-    # otherwise, use the GRAPHBLAS_SOURCE_PATH environment variable
-    set ( GRAPHBLAS_SOURCE_PATH "$ENV{GRAPHBLAS_SOURCE_PATH}" )
-else ( )
-    # if no other option, use the CMAKE_SOURCE_DIR.  This is the typical
-    # case if the one compiling GraphBLAS does not set any variables first.
-    set ( GRAPHBLAS_SOURCE_PATH ${CMAKE_SOURCE_DIR} )
-endif ( )
-
-# set the GRAPHBLAS_BUILD_PATH
-if ( DEFINED GRAPHBLAS_BUILD_PATH )
-    # if the -DGRAPHBLAS_BUILD_PATH variable is set use that setting
-elseif ( DEFINED ENV{GRAPHBLAS_BUILD_PATH} )
-    # otherwise, use the GRAPHBLAS_BUILD_PATH environment variable
-    set ( GRAPHBLAS_BUILD_PATH "$ENV{GRAPHBLAS_BUILD_PATH}" )
-else ( )
-    # if no other option, use the CMAKE_BINARY_DIR.  This is the typical
-    # case if the one compiling GraphBLAS does not set any variables first.
-    set ( GRAPHBLAS_BUILD_PATH ${CMAKE_BINARY_DIR} )
-endif ( )
-
-# set the GRAPHBLAS_CACHE_PATH for compiled JIT kernels
-if ( DEFINED ENV{GRAPHBLAS_CACHE_PATH} )
-    # use the GRAPHBLAS_CACHE_PATH environment variable
-    set ( GRAPHBLAS_CACHE_PATH "$ENV{GRAPHBLAS_CACHE_PATH}" )
-elseif ( DEFINED ENV{HOME} )
-    # use the current HOME environment variable from cmake (for Linux, Unix, Mac)
-    set ( GRAPHBLAS_CACHE_PATH "$ENV{HOME}/.SuiteSparse/GraphBLAS/${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" )
-elseif ( WIN32 )
-    # use LOCALAPPDATA for Windows
-    set ( GRAPHBLAS_CACHE_PATH "$ENV{LOCALAPPDATA}/SuiteSparse/GraphBLAS/${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" )
-else ( )
-    # if no other option, the cache path must be set at run time via GxB_set
-    set ( GRAPHBLAS_CACHE_PATH "cache path not found" )
-endif ( )
-
-if ( NJIT )
-    # disable the CPU JIT (but keep any PreJIT kernels enabled)
-    add_compile_definitions ( NJIT )
-    message ( STATUS "GraphBLAS CPU JIT: disabled (any PreJIT kernels will still be enabled)")
-else ( )
-    message ( STATUS "GraphBLAS CPU JIT: enabled")
-endif ( )
-
-if ( ENABLE_CUDA )
-    message ( STATUS "GraphBLAS CUDA JIT: enabled")
-else ( )
-    message ( STATUS "GraphBLAS CUDA JIT: disabled")
-endif ( )
 
 #-------------------------------------------------------------------------------
 # SuiteSparse policies
@@ -112,19 +35,21 @@ endif ( )
 set ( NSTATIC_DEFAULT_ON true )
 
 include ( SuiteSparsePolicy )
-include ( SuiteSparse_getenv )
+include ( GraphBLAS_JIT_paths )
 
 #-------------------------------------------------------------------------------
 # define the project
 #-------------------------------------------------------------------------------
 
 if ( SUITESPARSE_CUDA )
-    # do not compile the FactoryKernels when developing the CUDA kernels
+    # FOR NOW: do not compile FactoryKernels when developing the CUDA kernels
     set ( COMPACT on )
+    message ( STATUS "GraphBLAS CUDA JIT: enabled")
     project ( graphblas
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES CUDA C )
 else ( )
+    message ( STATUS "GraphBLAS CUDA JIT: disabled")
     project ( graphblas
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES C )
@@ -133,14 +58,6 @@ endif ( )
 #-------------------------------------------------------------------------------
 # find OpenMP, CUDA, RMM, and cpu_features
 #-------------------------------------------------------------------------------
-
-option ( NOPENMP "ON: do not use OpenMP.  OFF (default): use OpenMP" off )
-if ( NOPENMP )
-    # OpenMP has been disabled.
-    set ( OPENMP_FOUND false )
-else ( )
-    find_package ( OpenMP )
-endif ( )
 
 if ( SUITESPARSE_CUDA )
     # with CUDA and RMM
@@ -158,6 +75,15 @@ else ( )
     set ( CMAKE_RMM_FLAG " " )
     set ( GB_CUDA )
     set ( GB_RMM )
+endif ( )
+
+
+option ( NOPENMP "ON: do not use OpenMP.  OFF (default): use OpenMP" off )
+if ( NOPENMP )
+    # OpenMP has been disabled.
+    set ( OPENMP_FOUND false )
+else ( )
+    find_package ( OpenMP )
 endif ( )
 
 if ( NOT GBNCPUFEAT )
@@ -212,13 +138,6 @@ else ( )
     message ( STATUS "Building dynamic GraphBLAS library" )
 endif ( )
 
-if ( COMPACT )
-    # FactoryKernels will not be compiled.  Performance will rely solely on the
-    # JIT kernels.  Do not use GBCOMPACT at the same time disabling the JIT.
-    add_compile_definitions ( GBCOMPACT )
-    message ( STATUS "GBCOMPACT: enabled; FactoryKernels will not be built" )
-endif ( )
-
 #-------------------------------------------------------------------------------
 # Configure Include/GraphBLAS.h and documentation with version number
 #-------------------------------------------------------------------------------
@@ -262,68 +181,7 @@ endif ( )
 # compiler options
 #-------------------------------------------------------------------------------
 
-# check which compiler is being used.  If you need to make
-# compiler-specific modifications, here is the place to do it.
-if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" )
-    # The -g option is useful for the Intel VTune tool, but it should be
-    # removed in production.  Comment this line out if not in use:
-    # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
-    # cmake 2.8 workaround: gcc needs to be told to do ANSI C11.
-    # cmake 3.0 doesn't have this problem.
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -lm -Wno-pragmas " )
-    # operations may be carried out in higher precision
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fexcess-precision=fast " )
-    # faster single complex multiplication and division
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fcx-limited-range " )
-    # math functions do not need to report errno
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fno-math-errno " )
-    # integer operations wrap
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fwrapv " )
-    # check all warnings (uncomment for development only)
-#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic " )
-    if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 4.9 )
-        message ( FATAL_ERROR "gcc version must be at least 4.9" )
-    endif ( )
-elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" )
-    # options for icc: also needs -std=c11
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -diag-disable 10397,15552 " )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -qopt-report=5 -qopt-report-phase=vec" )
-    # the -mp1 option is important for predictable floating-point results with
-    # the icc compiler.  Without, ((float) 1.)/((float) 0.) produces NaN,
-    # instead of the correct result, Inf.
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -mp1" )
-    # The -g option is useful for the Intel VTune tool, but it should be
-    # removed in production.  Comment this line out if not in use:
-    # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
-#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -qopt-malloc-options=3" )
-    # check all warnings and remarks (uncomment for development only):
-#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -w3 -Wremarks -Werror " )
-    if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 19.0 )
-        message ( FATAL_ERROR "icc version must be at least 19.0" )
-    endif ( )
-elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "IntelLLVM" )
-    # options for icx
-elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
-    # options for clang
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wno-pointer-sign " )
-    if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 3.3 )
-        message ( FATAL_ERROR "clang version must be at least 3.3" )
-    endif ( )
-elseif ( MSVC )
-    # options for MicroSoft Visual Studio
-    set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /O2 -wd\"4244\" -wd\"4146\" -wd\"4018\" -wd\"4996\" -wd\"4047\" -wd\"4554\"" )
-elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "PGI" )
-    # options for PGI pgcc compiler.  The compiler has a bug, and the
-    # -DPGI_COMPILER_BUG causes GraphBLAS to use a workaround.
-    set ( CMAKE_C_FLAGS    "${CMAKE_C_FLAGS} -Mnoopenmp -noswitcherror -c11 -lm -DPGI_COMPILER_BUG" )
-    set ( CMAKE_CXX_FLAGS  "${CMAKE_C_FLAGS} -Mnoopenmp -D__GCC_ATOMIC_TEST_AND_SET_TRUEVAL=1 -noswitcherror --c++11 -lm -DPGI_COMPILER_BUG" )
-endif ( )
-
-if ( ${CMAKE_BUILD_TYPE} STREQUAL "Debug" )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG}" )
-else ( )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}" )
-endif ( )
+include ( GraphBLAS_compiler_options )
 
 #-------------------------------------------------------------------------------
 # dynamic graphblas library properties
@@ -606,174 +464,13 @@ endif ( )
 # configure the JITs
 #-------------------------------------------------------------------------------
 
-# construct the JIT compiler/link strings
-set ( GB_SOURCE_PATH "${GRAPHBLAS_SOURCE_PATH}" )
-set ( GB_BUILD_PATH  "${GRAPHBLAS_BUILD_PATH}" )
-set ( GB_C_COMPILER  "${CMAKE_C_COMPILER}" )
-set ( GB_C_FLAGS "${CMAKE_C_FLAGS}" )
-set ( GB_C_LINK_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}" )
-set ( GB_LIB_SUFFIX "${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+include ( GraphBLAS_JIT_configure )
 
-# construct the C flags and link flags
-if ( APPLE )
-    # MacOS
-    set ( GB_C_FLAGS "${GB_C_FLAGS} -fPIC " )
-    set ( GB_C_FLAGS "${GB_C_FLAGS} -arch ${CMAKE_HOST_SYSTEM_PROCESSOR} " )
-    set ( GB_C_FLAGS "${GB_C_FLAGS} -isysroot ${CMAKE_OSX_SYSROOT} " )
-    set ( GB_C_LINK_FLAGS "${GB_C_LINK_FLAGS} -dynamiclib " )
-    set ( GB_OBJ_SUFFIX ".o" )
-elseif ( WIN32 )
-    # Windows
-    # FIXME: need more here for Windows
-    set ( GB_OBJ_SUFFIX ".dll" )
-else ( )
-    # Linux / Unix
-    set ( GB_C_FLAGS "${GB_C_FLAGS} -fPIC " )
-    set ( GB_C_LINK_FLAGS "${GB_C_LINK_FLAGS} -shared " )
-    set ( GB_OBJ_SUFFIX ".o" )
-endif ( )
-
-# construct the -I list for OpenMP
-if ( OPENMP_FOUND )
-    set ( GB_OMP_INC ${OpenMP_C_INCLUDE_DIRS} )
-    list ( TRANSFORM GB_OMP_INC PREPEND " -I" )
-else ( )
-    set ( GB_OMP_INC "" )
-endif ( )
-
-# construct the library list
-string ( REPLACE "." "\\." LIBSUFFIX ${GB_LIB_SUFFIX} )
-set ( GB_LIBRARIES "" )
-#   message ( STATUS "lib suffix: ${LIBSUFFIX}" )
-foreach ( LIB_NAME ${GB_LIST_LIB} )
-#       message ( STATUS "Lib: ${LIB_NAME}" )
-    if ( LIB_NAME MATCHES ${LIBSUFFIX} )
-#           message ( STATUS "has suffix" )
-        string ( APPEND GB_LIBRARIES " " ${LIB_NAME} )
-    else ( )
-#           message ( STATUS "no suffix" )
-        string ( APPEND GB_LIBRARIES " -l" ${LIB_NAME} )
-    endif ( )
-endforeach ( )
-
-if ( NOT NJIT OR ENABLE_CUDA )
-    message ( STATUS "------------------------------------------------------------------------" )
-    message ( STATUS "JIT configuration:" )
-    message ( STATUS "------------------------------------------------------------------------" )
-    # one or both JITs are enabled; make sure the cache path exists
-    file ( MAKE_DIRECTORY ${GRAPHBLAS_CACHE_PATH} )
-    message ( STATUS "JIT C compiler: ${GB_C_COMPILER}" )
-    message ( STATUS "JIT C flags:    ${GB_C_FLAGS}" )
-    message ( STATUS "JIT link flags: ${GB_C_LINK_FLAGS}" )
-    message ( STATUS "JIT lib suffix: ${GB_LIB_SUFFIX}" )
-    message ( STATUS "JIT obj suffix: ${GB_OBJ_SUFFIX}" )
-    message ( STATUS "JIT source:     ${GB_SOURCE_PATH}" )
-    message ( STATUS "JIT cache:      ${GRAPHBLAS_CACHE_PATH}" )
-    message ( STATUS "JIT fall-back:  ${GB_BUILD_PATH}" )
-    message ( STATUS "JIT openmp inc: ${GB_OMP_INC}" )
-    message ( STATUS "JIT libraries:  ${GB_LIBRARIES}" )
-endif ( )
+file ( MAKE_DIRECTORY ${GRAPHBLAS_CACHE_PATH} )
 
 configure_file ( "Config/GB_config.h.in"
     "${PROJECT_SOURCE_DIR}/Config/GB_config.h"
     NEWLINE_STYLE LF )
-
-# create a list of files
-file ( GLOB PRE1 "PreJIT/GB_jit_*.c" )
-set ( PREJIT "" )
-set ( PREPRO "" )
-set ( PREQUERY "" )
-set ( PREQ "" )
-foreach ( PSRC ${PRE1} )
-    get_filename_component ( F ${PSRC} NAME_WE )
-    list ( APPEND PREJIT ${F} )
-    list ( APPEND PREQUERY "JIT_Q (" ${F} "_query)\n" )
-    list ( APPEND PREQ "${F}_query" )
-    if ( ${F} MATCHES "^GB_jit__add_" )
-        list ( APPEND PREPRO "JIT_ADD  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__apply_bind1" )
-        list ( APPEND PREPRO "JIT_AP1  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__apply_bind2" )
-        list ( APPEND PREPRO "JIT_AP2  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__apply_unop" )
-        list ( APPEND PREPRO "JIT_AP0  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__AxB_dot2_" )
-        list ( APPEND PREPRO "JIT_DOT2 (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__AxB_dot2n_" )
-        list ( APPEND PREPRO "JIT_DO2N (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__AxB_dot3_" )
-        list ( APPEND PREPRO "JIT_DOT3 (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__AxB_dot4_" )
-        list ( APPEND PREPRO "JIT_DOT4 (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__AxB_saxbit" )
-        list ( APPEND PREPRO "JIT_SAXB (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__AxB_saxpy3" )
-        list ( APPEND PREPRO "JIT_SAX3 (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__AxB_saxpy4" )
-        list ( APPEND PREPRO "JIT_SAX4 (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__AxB_saxpy5" )
-        list ( APPEND PREPRO "JIT_SAX5 (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__build" )
-        list ( APPEND PREPRO "JIT_BLD  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__colscale" )
-        list ( APPEND PREPRO "JIT_COLS (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__concat_bitmap" )
-        list ( APPEND PREPRO "JIT_CONB (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__concat_full" )
-        list ( APPEND PREPRO "JIT_CONF (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__concat_sparse" )
-        list ( APPEND PREPRO "JIT_CONS (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__convert_s2b" )
-        list ( APPEND PREPRO "JIT_CS2B (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__emult_02" )
-        list ( APPEND PREPRO "JIT_EM2  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__emult_03" )
-        list ( APPEND PREPRO "JIT_EM3  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__emult_04" )
-        list ( APPEND PREPRO "JIT_EM4  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__emult_08" )
-        list ( APPEND PREPRO "JIT_EM8  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__emult_bitmap" )
-        list ( APPEND PREPRO "JIT_EMB  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__ewise_full_accum" )
-        list ( APPEND PREPRO "JIT_EWFA (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__ewise_full_noaccum" )
-        list ( APPEND PREPRO "JIT_EWFN (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__reduce" )
-        list ( APPEND PREPRO "JIT_RED  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__rowscale" )
-        list ( APPEND PREPRO "JIT_ROWS (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__select_bitmap" )
-        list ( APPEND PREPRO "JIT_SELB (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__select_phase1" )
-        list ( APPEND PREPRO "JIT_SEL1 (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__select_phase2" )
-        list ( APPEND PREPRO "JIT_SEL2 (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__split_bitmap" )
-        list ( APPEND PREPRO "JIT_SPB  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__split_full" )
-        list ( APPEND PREPRO "JIT_SPF  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__split_sparse" )
-        list ( APPEND PREPRO "JIT_SPS  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__subassign" )
-        list ( APPEND PREPRO "JIT_SUB  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__trans_bind1" )
-        list ( APPEND PREPRO "JIT_TR1  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__trans_bind2" )
-        list ( APPEND PREPRO "JIT_TR2  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__trans_unop" )
-        list ( APPEND PREPRO "JIT_TR0  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__union" )
-        list ( APPEND PREPRO "JIT_UNI  (" ${F} ")\n" )
-    endif ( )
-endforeach ( )
-
-list ( JOIN PREPRO "" PREJIT_PROTO )
-list ( JOIN PREQUERY "" PREJIT_QUERY )
-list ( JOIN PREJIT "\",\n\"" PRENAMES )
-list ( LENGTH PREJIT GB_PREJIT_LEN )
-list ( JOIN PREJIT ",\n" PREFUNCS )
-list ( JOIN PREQ ",\n" PREQFUNCS )
 
 configure_file ( "Config/GB_prejit.c.in"
     "${PROJECT_SOURCE_DIR}/Config/GB_prejit.c"

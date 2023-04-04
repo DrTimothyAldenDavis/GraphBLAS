@@ -87,7 +87,7 @@
         for (int64_t pM = pMstart ; pM < pMend ; pM++)                      \
         {                                                                   \
             /* if (M (i,j) is present) mark Hf [i] */                       \
-            if (GBB_M (Mb,pM) && GB_MCAST (Mx,p,))                          \
+            if (GBB_M (Mb,pM) && GB_MCAST (Mx,pM,))                         \
             {                                                               \
                 Hf [GBI_M (Mi, pM, mvlen)] = mark ;                         \
             }                                                               \
