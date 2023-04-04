@@ -179,9 +179,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         #endif
         if (accum != NULL)
         { 
-            // C is hypersparse, sparse, or full, and accum is present.
-            // check if C_in is competely dense:  no pending work.
-            bool C_is_dense = GB_as_if_full (C_in) ;
+            // accum is present; check if C_in is full.
+            bool C_is_full = GB_IS_FULL (C_in) ;
 
             // accum must be present, and must match the monoid of the
             // semiring, and the ztype of the monoid must match the type of C
@@ -191,7 +190,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // C += A*B with C_replace ignored (effectively false)
             // C<M> += A*B with C_replace false
             // C<!M> += A*B with C_replace false
-            can_do_in_place = C_is_dense && accum_is_monoid
+            can_do_in_place = C_is_full && accum_is_monoid
                 && ((M_in == NULL) || (M_in != NULL && !C_replace)) ;
         }
 

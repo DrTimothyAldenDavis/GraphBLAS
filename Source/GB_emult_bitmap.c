@@ -108,8 +108,8 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     ASSERT_MATRIX_OK_OR_NULL (M, "M for bitmap emult ", GB0) ;
     ASSERT_BINARYOP_OK (op, "op for bitmap emult ", GB0) ;
 
-    ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A) || GB_as_if_full (A)) ;
-    ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B) || GB_as_if_full (B)) ;
+    ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
+    ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B)) ;
 
     //--------------------------------------------------------------------------
     // declare workspace

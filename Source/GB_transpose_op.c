@@ -72,7 +72,6 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
     GrB_Type Atype = A->type ;
     ASSERT (op != NULL) ;
     GB_Opcode opcode = op->opcode ;
-    int A_sparsity = GB_as_if_full (A) ? GxB_FULL : GB_sparsity (A) ;
 
     // positional operators and idxunop are applied after the transpose
     // FIXME: extend this method to handle positional and idxunop operators

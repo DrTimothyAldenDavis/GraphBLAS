@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_ewise_fulln_template: C = A+B where all 3 matrices are dense
+// GB_ewise_fulln_template: C = A+B where all 3 matrices are full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -20,8 +20,8 @@
     GB_B_TYPE *Bx = (GB_B_TYPE *) B->x ;
     GB_C_TYPE *Cx = (GB_C_TYPE *) C->x ;
     const int64_t cnz = GB_nnz (C) ;
-    ASSERT (GB_as_if_full (A)) ;
-    ASSERT (GB_as_if_full (B)) ;
+    ASSERT (GB_IS_FULL (A)) ;
+    ASSERT (GB_IS_FULL (B)) ;
     ASSERT (GB_IS_FULL (C)) ;
     ASSERT (!C->iso) ;
     ASSERT (!A->iso) ;
@@ -29,7 +29,7 @@
     int64_t p ;
 
     //--------------------------------------------------------------------------
-    // C = A+B where all 3 matrices are dense
+    // C = A+B where all 3 matrices are full
     //--------------------------------------------------------------------------
 
     #if GB_CTYPE_IS_BTYPE
@@ -38,7 +38,7 @@
     {
 
         //----------------------------------------------------------------------
-        // C = A+C where A and C are dense
+        // C = A+C where A and C are full
         //----------------------------------------------------------------------
 
         // C and B cannot be aliased if their types differ
@@ -60,7 +60,7 @@
     {
 
         //----------------------------------------------------------------------
-        // C = C+B where B and C are dense
+        // C = C+B where B and C are full
         //----------------------------------------------------------------------
 
         #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -78,7 +78,7 @@
     {
 
         //----------------------------------------------------------------------
-        // C = A+B where all 3 matrices are dense
+        // C = A+B where all 3 matrices are full
         //----------------------------------------------------------------------
 
         // note that A and B may still be aliased to each other

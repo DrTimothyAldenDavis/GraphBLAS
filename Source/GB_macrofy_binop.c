@@ -215,28 +215,28 @@ void GB_macrofy_binop
                 u = "z *= y" ;              // times real update
                 break ;
 
-            // eq, iseq, lxnor
+            // eq, iseq, lxnor (only a monoid for the boolean lxnor)
             case  15 : 
                 f = "z = ((x) == (y))" ;
                 u = "z = (z == (y))" ;
                 break ;
 
-            // ne, isne, lxor
+            // lxor
             case  16 : 
                 f = "z = ((x) != (y))" ;
-                u = "z = (z != (y))" ;
+                u = "z ^= y" ;              // lxor update
                 break ;
 
             // lor
             case  17 : 
                 f = "z = ((x) || (y))" ;
-                u = "z |= y" ;
+                u = "z |= y" ;              // lor update
                 break ;
 
             // land
             case  18 : 
                 f = "z = ((x) && (y))" ;
-                u = "z &= y" ;
+                u = "z &= y" ;              // land update
                 break ;
 
             // bor
@@ -297,6 +297,12 @@ void GB_macrofy_binop
                 GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
                 GB_macrofy_defn (fp, 1, "GB_FC64_eq", GB_FC64_eq_DEFN) ;
                 GB_macrofy_defn (fp, 1, "GB_FC64_iseq", GB_FC64_iseq_DEFN) ;
+                break ;
+
+            // ne, isne
+            case 141 : 
+                f = "z = ((x) != (y))" ;
+                u = "z = (z != (y))" ;
                 break ;
 
             // ne for complex

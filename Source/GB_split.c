@@ -108,7 +108,7 @@ GrB_Info GB_split                   // split a matrix
     // Tiles = split (A)
     //--------------------------------------------------------------------------
 
-    if (GB_is_dense (A))
+    if (GB_IS_FULL (A))
     { 
         // A is full
         GBURBLE ("(full split) ") ;

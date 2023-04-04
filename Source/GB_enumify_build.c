@@ -73,7 +73,7 @@ void GB_enumify_build       // enumerate a GB_build problem
     (*build_code) =
                                                // range        bits
                 // dup, z = f(x,y) (5 hex digits)
-                GB_LSHIFT (dup_ecode  , 20) |  // 0 to 140     8
+                GB_LSHIFT (dup_ecode  , 20) |  // 0 to 141     8
                 GB_LSHIFT (zcode      , 16) |  // 0 to 14      4
                 GB_LSHIFT (xcode      , 12) |  // 0 to 14      4
                 GB_LSHIFT (ycode      ,  8) |  // 0 to 14      4

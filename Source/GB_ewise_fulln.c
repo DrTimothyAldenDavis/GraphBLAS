@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_ewise_fulln: C = A+B where A and B are dense, C is anything
+// GB_ewise_fulln: C = A+B where A and B are full, C is anything
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -24,7 +24,6 @@
 GrB_Info GB_ewise_fulln      // C = A+B
 (
     GrB_Matrix C,                   // input/output matrix
-    const bool C_as_if_full,        // true if C is as-if-full on input
     const GrB_BinaryOp op,          // must not be a positional op
     const GrB_Matrix A,
     const GrB_Matrix B
@@ -37,23 +36,23 @@ GrB_Info GB_ewise_fulln      // C = A+B
 
     GrB_Info info ;
 
-    ASSERT_MATRIX_OK (C, "C for dense C=A+B", GB0) ;
+    ASSERT_MATRIX_OK (C, "C for full C=A+B", GB0) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;    // C is entirely overwritten by A+B
     ASSERT (GB_PENDING_OK (C)) ;
 
-    ASSERT_MATRIX_OK (A, "A for dense C=A+B", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for full C=A+B", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    ASSERT_MATRIX_OK (B, "B for dense C=A+B", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for full C=A+B", GB0) ;
     ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_PENDING (B)) ;
 
-    ASSERT (GB_as_if_full (A)) ;
-    ASSERT (GB_as_if_full (B)) ;
+    ASSERT (GB_IS_FULL (A)) ;
+    ASSERT (GB_IS_FULL (B)) ;
 
     ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (!GB_IS_BITMAP (B)) ;
@@ -61,7 +60,7 @@ GrB_Info GB_ewise_fulln      // C = A+B
     ASSERT (!A->iso) ;
     ASSERT (!B->iso) ;
 
-    ASSERT_BINARYOP_OK (op, "op for dense C=A+B", GB0) ;
+    ASSERT_BINARYOP_OK (op, "op for full C=A+B", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (op)) ;
 
     //--------------------------------------------------------------------------
@@ -80,7 +79,7 @@ GrB_Info GB_ewise_fulln      // C = A+B
     // clear prior content and create C as a full matrix.  Keep the same type
     // and CSR/CSC for C.  Allocate the values of C but do not initialize them.
 
-    if (!C_as_if_full)
+    if (!GB_IS_FULL (C))
     { 
         // free the content of C and reallocate it as a non-iso full matrix
         ASSERT (C != A && C != B) ;

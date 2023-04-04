@@ -108,7 +108,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
 
     GrB_Matrix M = M_input ;
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
-    if (Mask_struct && GB_is_dense (M))
+    if (Mask_struct && GB_as_if_full (M))
     { 
         // ignore the mask if all entries present and not complemented
         M = NULL ;

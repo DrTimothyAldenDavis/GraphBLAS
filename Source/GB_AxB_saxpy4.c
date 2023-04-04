@@ -68,7 +68,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     int8_t  *restrict Wf = NULL ; size_t Wf_size  = 0 ;
 
     ASSERT_MATRIX_OK (C, "C for saxpy4 C+=A*B", GB0) ;
-    ASSERT (GB_as_if_full (C)) ;
+    ASSERT (GB_IS_FULL (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
@@ -80,7 +80,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     ASSERT (!GB_ZOMBIES (A)) ;
 
     ASSERT_MATRIX_OK (B, "B for saxpy4 C+=A*B", GB0) ;
-    ASSERT (GB_IS_BITMAP (B) || GB_as_if_full (B)) ;
+    ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B)) ;
     ASSERT (!GB_PENDING (B)) ;
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_ZOMBIES (B)) ;

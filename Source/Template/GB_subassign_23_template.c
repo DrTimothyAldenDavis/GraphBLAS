@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_23_template: C += A where C is dense; A is sparse or dense
+// GB_subassign_23_template: C += A where C is full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -27,7 +27,7 @@
     #define A_iso       GB_A_ISO
     #else
     bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    bool A_is_full = GB_as_if_full (A) ;
+    bool A_is_full = GB_IS_FULL (A) ;
     const bool A_iso = A->iso ;
     #endif
 
@@ -41,7 +41,7 @@
     int A_ntasks, A_nthreads ;
     if (A_is_bitmap || A_is_full)
     { 
-        // C is dense and A is bitmap or as-if-full
+        // C is full and A is bitmap or as-if-full
         GBURBLE ("(Z bitmap/as-if-full) ") ;
         int64_t anvec = A->nvec ;
         int64_t anz = GB_nnz_held (A) ;
@@ -63,7 +63,7 @@
     ASSERT (!C->iso) ;
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
-    ASSERT (GB_is_dense (C)) ;
+    ASSERT (GB_IS_FULL (C)) ;
     const int64_t cnz = GB_nnz_held (C) ;
     GB_DECLAREY (ywork) ;
     if (A_iso)
@@ -77,7 +77,7 @@
     {
 
         //----------------------------------------------------------------------
-        // C += A when C is dense and A is bitmap
+        // C += A when C is full and A is bitmap
         //----------------------------------------------------------------------
 
         const int8_t *restrict Ab = A->b ;
@@ -95,10 +95,9 @@
     {
 
         //----------------------------------------------------------------------
-        // C += A when both C and A are dense
+        // C += A when both C and A are ffull
         //----------------------------------------------------------------------
 
-        ASSERT (GB_is_dense (A)) ;
         int64_t p ;
         #pragma omp parallel for num_threads(A_nthreads) schedule(static)
         for (p = 0 ; p < cnz ; p++)
@@ -112,7 +111,7 @@
     {
 
         //----------------------------------------------------------------------
-        // C += A when C is dense and A is sparse
+        // C += A when C is full and A is sparse
         //----------------------------------------------------------------------
 
         ASSERT (GB_JUMBLED_OK (A)) ;
@@ -166,7 +165,7 @@
                 {
 
                     //----------------------------------------------------------
-                    // both C(:,j) and A(:,j) are dense
+                    // A(:,j) is dense
                     //----------------------------------------------------------
 
                     GB_PRAGMA_SIMD_VECTORIZE
@@ -183,7 +182,7 @@
                 {
 
                     //----------------------------------------------------------
-                    // C(:,j) is dense; A(:,j) is sparse 
+                    // A(:,j) is sparse 
                     //----------------------------------------------------------
 
                     GB_PRAGMA_SIMD_VECTORIZE

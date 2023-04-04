@@ -23,18 +23,18 @@
     #define Mask_struct GB_MASK_STRUCT
     #define C_is_bitmap GB_C_IS_BITMAP
     #define A_is_bitmap GB_A_IS_BITMAP
-    #define A_is_dense  GB_A_IS_FULL
+    #define A_is_full   GB_A_IS_FULL
     #define A_iso       GB_A_ISO
     #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, asize)
     #else
     const bool C_is_bitmap = GB_IS_BITMAP (C) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    const bool A_is_dense = GB_as_if_full (A) ;
+    const bool A_is_full = GB_IS_FULL (A) ;
     const bool A_iso = A->iso ;
     const size_t asize = A->type->size ;
     #endif
 
-    ASSERT (C_is_bitmap || GB_as_if_full (C)) ;
+    ASSERT (C_is_bitmap || GB_IS_FULL (C)) ;
 
     //--------------------------------------------------------------------------
     // Parallel: slice A into equal-sized chunks
@@ -45,7 +45,7 @@
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
     int A_ntasks, A_nthreads ;
-    if (A_is_bitmap || A_is_dense)
+    if (A_is_bitmap || A_is_full)
     { 
         // no need to construct tasks
         A_nthreads = GB_nthreads ((anz + A->nvec), 32*chunk, nthreads_max) ;
@@ -109,11 +109,11 @@
         // C<A,struct> = A where A can be iso or non-iso; mask is structural
         //----------------------------------------------------------------------
 
-        if (A_is_dense)
+        if (A_is_full)
         {
 
             //------------------------------------------------------------------
-            // A is dense: all entries present
+            // A is full: all entries present
             //------------------------------------------------------------------
 
             #ifndef GB_ISO_ASSIGN
@@ -204,7 +204,7 @@
         {
 
             //------------------------------------------------------------------
-            // A is hypersparse or sparse; C is dense or a bitmap
+            // A is hypersparse or sparse; C is full or a bitmap
             //------------------------------------------------------------------
 
             const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
@@ -304,18 +304,18 @@
         // C<A> = A where A must be non-iso, and the mask is valued
         //----------------------------------------------------------------------
 
-        if (A_is_dense)
+        if (A_is_full)
         {
 
             //------------------------------------------------------------------
-            // A is dense: all entries present
+            // A is full: all entries present
             //------------------------------------------------------------------
 
             if (C_is_bitmap)
             {
 
                 //--------------------------------------------------------------
-                // C is bitmap, A is dense
+                // C is bitmap, A is full
                 //--------------------------------------------------------------
 
                 int tid ;
@@ -420,7 +420,7 @@
         {
 
             //------------------------------------------------------------------
-            // A is hypersparse or sparse; C is dense or a bitmap
+            // A is hypersparse or sparse; C is full or bitmap
             //------------------------------------------------------------------
 
             const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
@@ -495,7 +495,7 @@
                             GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
                         // pC is the start of C(:,j)
                         int64_t pC = j * cvlen ;
-                        // C<A(:,j),struct>=A(:,j) with C dense, A sparse
+                        // C<A(:,j),struct>=A(:,j) with C full, A sparse
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                         {

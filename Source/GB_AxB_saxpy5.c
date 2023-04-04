@@ -70,13 +70,13 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     GB_WERK_DECLARE (B_slice, int64_t) ;
 
     ASSERT_MATRIX_OK (C, "C for saxpy5 C+=A*B", GB0) ;
-    ASSERT (GB_as_if_full (C)) ;
+    ASSERT (GB_IS_FULL (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
 
     ASSERT_MATRIX_OK (A, "A for saxpy5 C+=A*B", GB0) ;
-    ASSERT (GB_IS_BITMAP (A) || GB_as_if_full (A)) ;
+    ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
     ASSERT (!GB_PENDING (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;

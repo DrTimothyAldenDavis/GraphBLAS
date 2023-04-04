@@ -183,17 +183,6 @@ GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
     }                                                       \
 }
 
-#define GB_ENSURE_FULL(C)                                               \
-{                                                                       \
-    ASSERT (GB_is_dense (C)) ;                                          \
-    if (GB_sparsity_control (C->sparsity_control, C->vdim) & GxB_FULL)  \
-    {                                                                   \
-        /* convert C from any structure to full, */                     \
-        /* if permitted by C->sparsity_control */                       \
-        GB_convert_any_to_full (C) ;                                    \
-    }                                                                   \
-}
-
 //------------------------------------------------------------------------------
 // GB_is_dense
 //------------------------------------------------------------------------------

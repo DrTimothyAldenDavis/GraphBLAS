@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_22_template: C += y where C is dense and y is a scalar
+// GB_subassign_22_template: C += y where C is full and y is a scalar
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -17,9 +17,7 @@
 // A:           scalar
 // S:           none
 
-// C += scalar where C is a dense or full matrix.
-// C can have any sparsity format, as long as all entries are present;
-// GB_is_dense (C)) must hold.
+// C += scalar where C is full.
 
 {
 

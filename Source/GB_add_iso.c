@@ -41,7 +41,7 @@ bool GB_add_iso             // c = op(a,b), return true if C is iso
     ASSERT (c != NULL) ;
 
     //--------------------------------------------------------------------------
-    // special case if both A and B are full (or as-if-full) 
+    // special case if both A and B are as-if-full
     //--------------------------------------------------------------------------
 
     if (GB_as_if_full (A) && GB_as_if_full (B))

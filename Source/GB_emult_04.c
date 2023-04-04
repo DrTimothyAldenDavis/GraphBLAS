@@ -78,8 +78,8 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     ASSERT (!GB_PENDING (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!GB_ZOMBIES (M)) ;
-    ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A) || GB_as_if_full (A)) ;
-    ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B) || GB_as_if_full (B)) ;
+    ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
+    ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B)) ;
 
     int C_sparsity = GB_sparsity (M) ;
 

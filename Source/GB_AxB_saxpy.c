@@ -78,7 +78,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     bool C_iso = GB_AxB_iso (cscalar, A, B, A->vdim, semiring, flipxy, false) ;
     if (C_iso)
     {
-        // revise the method if A and B are both iso and full
+        // revise the method if A and B are both iso and as-if-full
         if (A->iso && GB_as_if_full (A) && B->iso && GB_as_if_full (B))
         { 
             saxpy_method = GB_SAXPY_METHOD_ISO_FULL ;
@@ -92,19 +92,19 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 
     if (!C_iso                              // C must be non-iso on output
         && C_in != NULL                     // GB_AxB_meta says it is OK
-        && GB_as_if_full (C_in)             // C must be "as if" full
+        && GB_IS_FULL (C_in)                // C must be full
         && M == NULL                        // no mask present
         && (accum != NULL)                  // accum is present
         && (accum == semiring->add->op)     // accum is same as monoid
         && (C_in->type == accum->ztype))    // no typecast from accum output
     {
         if ((GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))
-        &&  (GB_IS_BITMAP (B) || GB_as_if_full (B)))
+        &&  (GB_IS_BITMAP (B) || GB_IS_FULL (B)))
         { 
-            // GB_AxB_saxpy4 computes C += A*B where C is as-if-full, no mask
+            // GB_AxB_saxpy4 computes C += A*B where C is full, no mask
             // is present, accum is present and matches the monoid, no
             // typecasting, A is sparse or hypersparse, and B is bitmap or
-            // as-if-full.  The ANY monoid is not supported since it would be
+            // full.  The ANY monoid is not supported since it would be
             // unusual to use ANY as the accum.  C may be iso on input but the
             // method is not used if C is iso on output.
 
@@ -117,10 +117,10 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
                 return (info) ;
             }
         }
-        else if ((GB_IS_BITMAP (A) || GB_as_if_full (A))
+        else if ((GB_IS_BITMAP (A) || GB_IS_FULL (A))
              &&  (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B)))
         {
-            // GB_AxB_saxpy5 computes C+=A*B where C is as-if-full, just like
+            // GB_AxB_saxpy5 computes C+=A*B where C is full, just like
             // GB_AxB_saxpy4, except that the sparsity format of A and B are
             // reversed.  A is bitmap or full, and B is sparse or hypersparse.
 

@@ -57,8 +57,8 @@ int GB_emult_sparsity       // return the sparsity structure for C
     bool A_is_sparse_or_hyper = GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A) ;
     bool B_is_sparse_or_hyper = GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B) ;
 
-    bool A_is_full = GB_as_if_full (A) ;
-    bool B_is_full = GB_as_if_full (B) ;
+    bool A_is_full = GB_IS_FULL (A) ;
+    bool B_is_full = GB_IS_FULL (B) ;
 
     if (M == NULL)
     {

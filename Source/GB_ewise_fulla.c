@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_ewise_fulla: C += A+B where all 3 matries are dense
+// GB_ewise_fulla: C += A+B where all 3 matries are full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -18,7 +18,7 @@
 #include "GB_ew__include.h"
 #endif
 
-GrB_Info GB_ewise_fulla        // C += A+B, all matrices dense
+GrB_Info GB_ewise_fulla        // C += A+B, all matrices full
 (
     GrB_Matrix C,                   // input/output matrix
     const GrB_BinaryOp op,          // only GB_BINOP_SUBSET operators supported
@@ -32,24 +32,24 @@ GrB_Info GB_ewise_fulla        // C += A+B, all matrices dense
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT_MATRIX_OK (C, "C for dense C+=A+B", GB0) ;
+    ASSERT_MATRIX_OK (C, "C for full C+=A+B", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
 
-    ASSERT_MATRIX_OK (A, "A for dense C+=A+B", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for full C+=A+B", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    ASSERT_MATRIX_OK (B, "B for dense C+=A+B", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for full C+=A+B", GB0) ;
     ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_PENDING (B)) ;
 
-    ASSERT (GB_as_if_full (C)) ;
-    ASSERT (GB_as_if_full (A)) ;
-    ASSERT (GB_as_if_full (B)) ;
+    ASSERT (GB_IS_FULL (C)) ;
+    ASSERT (GB_IS_FULL (A)) ;
+    ASSERT (GB_IS_FULL (B)) ;
 
     ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
@@ -59,10 +59,8 @@ GrB_Info GB_ewise_fulla        // C += A+B, all matrices dense
     ASSERT (!A->iso) ;
     ASSERT (!B->iso) ;
 
-    ASSERT_BINARYOP_OK (op, "op for dense C+=A+B", GB0) ;
+    ASSERT_BINARYOP_OK (op, "op for full C+=A+B", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (op)) ;
-
-    GB_ENSURE_FULL (C) ;    // convert C to full, if sparsity control allows it
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use

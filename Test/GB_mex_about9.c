@@ -131,7 +131,7 @@ void mexFunction
     const char *f = GB_macrofy_id (31, 1, &has_byte, &byte) ;
     CHECK (f != NULL && strlen (f) == 0) ;
 
-    // Using GB_boolean_rename results in  these cases not being tested.
+    // Using GB_boolean_rename results in these cases not being tested.
     int ecode = -1 ;
     GB_enumify_binop (&ecode, GB_MIN_binop_code, GB_BOOL_code, false) ;
     CHECK (ecode == 18) ;

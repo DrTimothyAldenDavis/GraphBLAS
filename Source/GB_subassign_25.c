@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_25: C(:,:)<M,s> = A; C empty, A dense, M structural
+// GB_subassign_25: C(:,:)<M,s> = A; C empty, A full, M structural
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -73,7 +73,7 @@ GrB_Info GB_subassign_25
     ASSERT (!GB_PENDING (M)) ;
 
     ASSERT_MATRIX_OK (A, "A for subassign method_25", GB0) ;
-    ASSERT (GB_as_if_full (A) || GB_IS_BITMAP (A)) ;
+    ASSERT (GB_IS_FULL (A) || GB_IS_BITMAP (A)) ;
 
     const GB_Type_code ccode = C->type->code ;
     const GB_Type_code acode = A->type->code ;
@@ -81,7 +81,7 @@ GrB_Info GB_subassign_25
     const bool C_iso = A->iso ;       // C is iso if A is iso
 
     //--------------------------------------------------------------------------
-    // Method 25: C(:,:)<M> = A ; C is empty, A is dense, M is structural
+    // Method 25: C(:,:)<M> = A ; C is empty, A is full, M is structural
     //--------------------------------------------------------------------------
 
     // Time: Optimal:  the method must iterate over all entries in M,

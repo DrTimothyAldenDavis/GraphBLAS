@@ -65,7 +65,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     ASSERT_MATRIX_OK (C, "C for dot in-place += A'*B", GB0) ;
     ASSERT_MATRIX_OK (A, "A for dot in-place += A'*B", GB0) ;
     ASSERT_MATRIX_OK (B, "B for dot in-place += A'*B", GB0) ;
-    ASSERT (GB_as_if_full (C)) ;
+    ASSERT (GB_IS_FULL (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;

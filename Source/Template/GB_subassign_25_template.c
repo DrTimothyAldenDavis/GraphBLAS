@@ -30,7 +30,7 @@
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_iso = A->iso ;
     #endif
-    ASSERT (GB_as_if_full (A) || A_is_bitmap) ;
+    ASSERT (GB_IS_FULL (A) || A_is_bitmap) ;
 
     //--------------------------------------------------------------------------
     // Parallel: slice M into equal-sized chunks

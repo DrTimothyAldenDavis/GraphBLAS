@@ -48,7 +48,7 @@
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    const bool A_is_full = GB_as_if_full (A) ;
+    const bool A_is_full = GB_IS_FULL (A) ;
     // unlike GB_emult, both A and B may be iso
     const bool A_iso = A->iso ;
     #endif
@@ -68,7 +68,7 @@
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
-    const bool B_is_full = GB_as_if_full (B) ;
+    const bool B_is_full = GB_IS_FULL (B) ;
     const bool B_iso = B->iso ;
     #endif
 
@@ -91,7 +91,7 @@
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_sparse = GB_IS_SPARSE (M) ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
-    const bool M_is_full = GB_as_if_full (M) ;
+    const bool M_is_full = GB_IS_FULL (M) ;
     const bool M_is_sparse_or_hyper = M_is_sparse || M_is_hyper ;
     #endif
 

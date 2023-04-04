@@ -276,10 +276,6 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // In all cases above, C remains dense and can be updated in-place
     // C_replace must be false.  M can be valued or structural.
 
-    bool C_as_if_full = GB_as_if_full (C) ;
-    bool A_as_if_full = GB_as_if_full (A1) ;
-    bool B_as_if_full = GB_as_if_full (B1) ;
-
     bool no_typecast =
         (op->ztype == C->type)              // no typecasting of C
         && (op->xtype == A1->type)          // no typecasting of A
@@ -288,8 +284,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     bool any_bitmap =
         GB_IS_BITMAP (C) ||
         GB_IS_BITMAP (M) ||
-        GB_IS_BITMAP (A) ||
-        GB_IS_BITMAP (B) ;
+        GB_IS_BITMAP (A1) ||
+        GB_IS_BITMAP (B1) ;
 
     bool any_pending_work =
         GB_ANY_PENDING_WORK (M1) ||
@@ -304,8 +300,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // C is not empty.  Use a kernel that computes T<A>=A+B
         // where T starts out empty; just iterate over the entries in A.
 
-    if (A_as_if_full                        // A and B are as-if-full
-        && B_as_if_full
+    if (GB_IS_FULL (A1)                     // A and B are full
+        && GB_IS_FULL (B1)
         && !any_iso                         // A and B are not iso
         && (M == NULL) && !Mask_comp        // no mask
         && (C->is_csc == T_is_csc)          // no transpose of C
@@ -315,7 +311,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         && !any_pending_work)               // no matrix has pending work
     {
 
-        if (C_as_if_full                    // C is as-if-full
+        if (GB_IS_FULL (C)                  // C is full
         && !C->iso                          // C is not iso
         && accum == op)                     // accum is same as the op
         { 
@@ -343,7 +339,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
             // C_replace is ignored
             GBURBLE ("dense C=A+B ") ;
-            info = GB_ewise_fulln (C, C_as_if_full, op, A1, B1) ;
+            info = GB_ewise_fulln (C, op, A1, B1) ;
 
             if (info != GrB_NO_VALUE)
             { 

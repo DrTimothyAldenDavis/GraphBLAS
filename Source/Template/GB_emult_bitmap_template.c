@@ -19,8 +19,8 @@
     const int8_t  *restrict Bb = B->b ;
     const int64_t vlen = A->vlen ;
 
-    ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A) || GB_as_if_full (A)) ;
-    ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (A) || GB_as_if_full (B)) ;
+    ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
+    ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (A)) ;
 
     #ifdef GB_JIT_KERNEL
     #define A_iso GB_A_ISO

@@ -94,6 +94,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // check inputs
     //--------------------------------------------------------------------------
 
+    printf ("GB_add: C_sparsity: %d\n", C_sparsity) ;
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
     ASSERT_BINARYOP_OK (op, "op for add phase2", GB0) ;
     ASSERT_MATRIX_OK (A, "A for add phase2", GB0) ;
@@ -131,7 +132,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
 #ifdef GB_DEBUG
     // assert that the op is compatible with A, B, and C
-    if (!(GB_as_if_full (A) && GB_as_if_full (B)))
+    if (!(GB_IS_FULL (A) && GB_IS_FULL (B)))
     {
         // eWiseMult uses GB_add when A and B are both as-if-full,
         // and in this case, the entries of A and B are never typecasted

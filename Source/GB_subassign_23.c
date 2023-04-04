@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_23: C += A where C is dense and A is sparse or dense
+// GB_subassign_23: C += A where C is full and A is any matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 // JIT: done.
 
-// Method 23: C += A, where C is dense
+// Method 23: C += A, where C is full
 
 // M:           NULL
 // Mask_comp:   false
@@ -38,7 +38,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 
-GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
+GrB_Info GB_subassign_23      // C += A; C is full
 (
     GrB_Matrix C,                   // input/output matrix
     const GrB_Matrix A,             // input matrix
@@ -62,7 +62,7 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
-    ASSERT (GB_is_dense (C)) ;
+    ASSERT (GB_IS_FULL (C)) ;
 
     ASSERT_MATRIX_OK (A, "A for C+=A", GB0) ;
     ASSERT (!GB_PENDING (A)) ;
@@ -73,8 +73,6 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
     ASSERT (A->vlen == C->vlen) ;
     ASSERT (A->vdim == C->vdim) ;
-
-    GB_ENSURE_FULL (C) ;    // convert C to full, if sparsity control allows it
 
     //--------------------------------------------------------------------------
     // get the operator
@@ -124,7 +122,7 @@ GrB_Info GB_subassign_23      // C += A; C is dense, A is sparse or dense
             GB_binop_builtin (C->type, false, A->type, false,
             accum, false, &opcode, &xcode, &ycode, &zcode))
         { 
-            // accumulate sparse matrix into dense matrix with built-in operator
+            // accumulate sparse matrix into full matrix with built-in operator
             #include "GB_binop_factory.c"
         }
 

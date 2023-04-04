@@ -133,7 +133,7 @@ GrB_Info GB_selector
         // tuples), use the bitmap selector for all other operators (TRIL,
         // TRIU, OFFDIAG, NONZERO, EQ*, GT*, GE*, LT*, LE*, and user-defined
         // operators).
-        use_select_bitmap = GB_IS_BITMAP (A) || GB_as_if_full (A) ;
+        use_select_bitmap = GB_IS_BITMAP (A) || GB_IS_FULL (A) ;
     }
 
     if (use_select_bitmap)

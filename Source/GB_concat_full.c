@@ -98,7 +98,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
                 GB_MATRIX_WAIT (A) ;
             }
             ASSERT (C->is_csc == A->is_csc) ;
-            ASSERT (GB_is_dense (A)) ;
+            ASSERT (GB_IS_FULL (A)) ;
             ASSERT (!GB_ANY_PENDING_WORK (A)) ;
             GB_Type_code acode = A->type->code ;
 

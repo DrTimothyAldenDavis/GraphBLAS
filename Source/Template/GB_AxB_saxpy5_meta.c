@@ -33,11 +33,11 @@
     // get C, A, and B
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_as_if_full (C)) ;
+    ASSERT (GB_IS_FULL (C)) ;
     ASSERT (C->vlen == A->vlen) ;
     ASSERT (C->vdim == B->vdim) ;
     ASSERT (A->vdim == B->vlen) ;
-    ASSERT (GB_IS_BITMAP (A) || GB_as_if_full (A)) ;
+    ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
     ASSERT (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B)) ;
 
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;

@@ -1120,9 +1120,8 @@ GrB_Info GB_assign_prep
         {
             // This GxB_subassign can potentially use action: ( delete ), and
             // thus prior pending tuples must be assembled first.  However, if
-            // A is completely dense, then C(I,J)=A cannot delete any entries
-            // from C.
-            if (scalar_expansion || GB_is_dense (A))
+            // A is full, then C(I,J)=A cannot delete any entries from C.
+            if (scalar_expansion || GB_IS_FULL (A))
             { 
                 // A is a scalar or dense matrix, so entries cannot be deleted
                 wait = false ;

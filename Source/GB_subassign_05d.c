@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_05d: C(:,:)<M> = scalar where C is as-if-full
+// GB_subassign_05d: C(:,:)<M> = scalar where C is full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -62,14 +62,13 @@ GrB_Info GB_subassign_05d
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
-    ASSERT (GB_as_if_full (C)) ;
+    ASSERT (GB_IS_FULL (C)) ;
 
     ASSERT_MATRIX_OK (M, "M for subassign method_05d", GB0) ;
     ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!GB_PENDING (M)) ;
 
-    GB_ENSURE_FULL (C) ;    // convert C to full, if sparsity control allows it
     if (C->iso)
     { 
         // work has already been done by GB_assign_prep

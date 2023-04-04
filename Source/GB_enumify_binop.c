@@ -16,7 +16,7 @@
 void GB_enumify_binop
 (
     // output:
-    int *ecode,         // enumerated operator, range 0 to 140
+    int *ecode,         // enumerated operator, range 0 to 255
     // input:
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
     GB_Type_code xcode, // op->xtype->code of the operator
@@ -112,10 +112,10 @@ void GB_enumify_binop
             // only a monoid for bool (lxor)
             switch (xcode)
             {
-                case GB_BOOL_code   : e = 16 ; break ; // x != y
+                case GB_BOOL_code   : e = 16 ; break ; // x ^ y
                 case GB_FC32_code   : e = 36 ; break ; // GB_FC32_ne (x,y)
                 case GB_FC64_code   : e = 37 ; break ; // GB_FC64_ne (x,y)
-                default             : e = 16 ; break ; // x != y
+                default             : e =141 ; break ; // x != y
             }
             break ;
 
@@ -141,7 +141,7 @@ void GB_enumify_binop
 
             switch (xcode)
             {
-                case GB_BOOL_code   : e = 16 ; break ; // x != y
+                case GB_BOOL_code   : e = 16 ; break ; // x ^ y
                 default             : e = 42 ; break ; // not a monoid
             }
             break ;

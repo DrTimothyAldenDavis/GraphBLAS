@@ -30,7 +30,7 @@ GrB_Info GB_select_positional_bitmap
     //--------------------------------------------------------------------------
 
     GB_Opcode opcode = op->opcode ;
-    ASSERT (GB_IS_BITMAP (A) || GB_as_if_full (A)) ;
+    ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
     ASSERT (GB_OPCODE_IS_POSITIONAL (opcode)) ;
 
     //--------------------------------------------------------------------------

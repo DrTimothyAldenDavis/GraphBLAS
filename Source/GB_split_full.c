@@ -33,7 +33,7 @@ GrB_Info GB_split_full              // split a full matrix
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (GB_is_dense (A)) ;
+    ASSERT (GB_IS_FULL (A)) ;
     GrB_Matrix C = NULL ;
 
     int sparsity_control = A->sparsity_control ;

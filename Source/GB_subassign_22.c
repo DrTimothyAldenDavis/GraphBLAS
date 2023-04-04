@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_22: C += scalar where C is dense
+// GB_subassign_22: C += scalar where C is full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 // JIT: done.
 
-// Method 22: C += scalar, where C is dense
+// Method 22: C += scalar, where C is full
 
 // M:           NULL
 // Mask_comp:   false
@@ -19,9 +19,7 @@
 // A:           scalar
 // S:           none
 
-// C += scalar where C is a dense or full matrix.
-// C can have any sparsity format, as long as all entries are present;
-// GB_is_dense (C)) must hold.
+// C += scalar where C is full
 
 #include "GB_assign_shared_definitions.h"
 #include "GB_subassign_dense.h"
@@ -35,7 +33,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 
-GrB_Info GB_subassign_22      // C += scalar where C is dense
+GrB_Info GB_subassign_22      // C += scalar where C is full
 (
     GrB_Matrix C,                   // input/output matrix
     const void *scalar,             // input scalar
@@ -51,7 +49,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
 
     GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for C+=scalar", GB0) ;
-    ASSERT (GB_as_if_full (C)) ;
+    ASSERT (GB_IS_FULL (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
@@ -60,8 +58,6 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
     ASSERT_TYPE_OK (scalar_type, "scalar_type for C+=scalar", GB0) ;
     ASSERT_BINARYOP_OK (accum, "accum for C+=scalar", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
-
-    GB_ENSURE_FULL (C) ;    // convert C to full, if sparsity control allows it
 
     //--------------------------------------------------------------------------
     // get the operator
@@ -126,7 +122,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is dense
             GB_binop_builtin (C->type, false, accum->ytype, false,
             accum, false, &opcode, &xcode, &ycode, &zcode))
         { 
-            // accumulate sparse matrix into dense matrix with built-in operator
+            // accumulate sparse matrix into full matrix with built-in operator
             #include "GB_binop_factory.c"
         }
 

@@ -14,7 +14,7 @@
     //------------------------------------------------------------------
 
     ASSERT (Workspaces == NULL) ;
-    ASSERT (GB_as_if_full (A)) ;
+    ASSERT (GB_IS_FULL (A)) ;
     ASSERT (GB_IS_FULL (C)) ;
 
     // A is avlen-by-avdim; C is avdim-by-avlen

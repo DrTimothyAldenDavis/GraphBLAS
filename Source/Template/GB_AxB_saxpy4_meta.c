@@ -28,7 +28,7 @@
     // get C, M, A, and B
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_as_if_full (C)) ;                 // C is always full
+    ASSERT (GB_IS_FULL (C)) ;                 // C is always full
     const int64_t cvlen = C->vlen ;
     ASSERT (C->vlen == A->vlen) ;
     ASSERT (C->vdim == B->vdim) ;
@@ -44,7 +44,7 @@
     const int64_t bvlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
-    ASSERT (B_is_bitmap || GB_as_if_full (B)) ;
+    ASSERT (B_is_bitmap || GB_IS_FULL (B)) ;
 
     const int64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;

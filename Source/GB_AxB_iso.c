@@ -286,7 +286,7 @@ bool GB_AxB_iso             // C = A*B, return true if C is iso
             // C = A*B where A and B are both full and iso
             //------------------------------------------------------------------
 
-            // If A and B are both full and iso, then C is also full and iso,
+            // If A and B are both as-if-full and iso, then C is full and iso,
             // for any semiring (including user-defined) except those with a
             // positional multiplicative operator.  Each entry C(i,j) is the
             // reduction of n copies of the single iso scalar t, where t =

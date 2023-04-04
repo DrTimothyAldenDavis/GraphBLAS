@@ -201,7 +201,7 @@ GrB_Info GB_bitmap_expand_to_hyper
 //------------------------------------------------------------------------------
 
 // C += A'*B where C is modified in-place. C may be iso on input but dot4
-// does not handle the case where C is iso on output.  C must be as-if-full
+// does not handle the case where C is iso on output.  C must be full
 // on input, and remains so on output.
 
 static inline bool GB_AxB_dot4_control
@@ -216,7 +216,7 @@ static inline bool GB_AxB_dot4_control
 )
 {
     return (!C_out_iso                  // C must not be iso on output
-        && GB_as_if_full (C_in)         // C must be present and as-if-full
+        && GB_IS_FULL (C_in)            // C must be present and full
         && (M == NULL) && (!Mask_comp)  // no mask, and must not be complemented
         && (accum != NULL)              // accum must be present
         // FIXME: the JIT kernel can be extended to these cases:

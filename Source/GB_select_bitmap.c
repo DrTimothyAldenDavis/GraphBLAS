@@ -39,7 +39,7 @@ GrB_Info GB_select_bitmap
     GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A for bitmap selector", GB0) ;
     ASSERT_INDEXUNARYOP_OK (op, "idxunop for bitmap selector", GB0) ;
-    ASSERT (GB_IS_BITMAP (A) || GB_as_if_full (A)) ;
+    ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
     GB_Opcode opcode = op->opcode ;
     ASSERT (opcode != GB_NONZOMBIE_idxunop_code) ;
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;

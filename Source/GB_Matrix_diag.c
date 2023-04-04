@@ -87,7 +87,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
 
     // C is sparse if V is dense and k == 0, and hypersparse otherwise
     const int64_t vnz = GB_nnz (V) ;
-    const bool V_is_full = GB_is_dense (V) ;
+    const bool V_is_full = GB_as_if_full (V) ;
     const int C_sparsity = (V_is_full && k == 0) ? GxB_SPARSE : GxB_HYPERSPARSE;
     const bool C_iso = V->iso ;
     if (C_iso)
