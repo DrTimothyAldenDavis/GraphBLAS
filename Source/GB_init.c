@@ -64,6 +64,7 @@ GrB_Info GB_init            // start up GraphBLAS
     if (GB_Global_GrB_init_called_get ( ))
     { 
         // GrB_init can only be called once
+        printf ("Hey, you can't call init twice!\n") ;
         return (GrB_INVALID_VALUE) ;
     }
 

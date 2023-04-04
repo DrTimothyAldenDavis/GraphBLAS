@@ -7,6 +7,7 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
 #include "GB.h"
 #include "GB_stringify.h"
 #include "GB_config.h"
@@ -145,6 +146,17 @@ GrB_Info GB_jitifyer_init (void)
     // find the GB_jit_cache_path
     //--------------------------------------------------------------------------
 
+    ASSERT (GB_jit_table == NULL) ;
+    ASSERT (GB_jit_cache_path == NULL) ;
+    ASSERT (GB_jit_source_path == NULL) ;
+    ASSERT (GB_jit_C_compiler == NULL) ;
+    ASSERT (GB_jit_C_flags == NULL) ;
+    ASSERT (GB_jit_C_link_flags == NULL) ;
+    ASSERT (GB_jit_library_name == NULL) ;
+    ASSERT (GB_jit_kernel_name == NULL) ;
+    ASSERT (GB_jit_include == NULL) ;
+    ASSERT (GB_jit_command == NULL) ;
+
     #if GBMATLAB
     char *cache_path = getenv ("GRAPHBLAS_MATLAB_PATH") ;
     #else
@@ -236,7 +248,7 @@ GrB_Info GB_jitifyer_init (void)
         if (dl_function == NULL || dl_query == NULL || Names [k] == NULL)
         {
             // ignore this kernel
-            printf ("kernel null! %d\n", k) ;
+            printf ("PreJIT kernel null! %d\n", k) ;
             continue ;
         }
         char kernel_name [GB_KLEN+1] ;
@@ -257,14 +269,14 @@ GrB_Info GB_jitifyer_init (void)
         if (info != GrB_SUCCESS)
         {
             // kernel_name is invalid; ignore this kernel
-            printf ("demacrofy failed! %d:%s\n", k, Names [k]) ;
+            printf ("PreJIT demacrofy failed! %d:%s\n", k, Names [k]) ;
             continue ;
         }
 
         if (!GB_STRING_MATCH (name_space, "GB_jit"))
         { 
             // kernel_name is invalid; ignore this kernel
-            printf ("wrong namespace! %d:%s [%s]\n", k, Names [k], name_space) ;
+            printf ("PreJIT wrong namespace! %d:%s [%s]\n", k, Names [k], name_space) ;
             continue ;
         }
 
@@ -324,7 +336,7 @@ GrB_Info GB_jitifyer_init (void)
         else
         {
             // kernel_name is invalid; ignore this kernel
-            printf ("Kernel invalid! %s [%s]\n", Names [k], kname) ;
+            printf ("PreJIT Kernel invalid! %s [%s]\n", Names [k], kname) ;
             continue ;
         }
 
@@ -356,7 +368,7 @@ GrB_Info GB_jitifyer_init (void)
             (version [1] != GxB_IMPLEMENTATION_MINOR) ||
             (version [2] != GxB_IMPLEMENTATION_SUB))
         {
-            printf ("STALE: %d [%s]\n", k, Names [k]) ;
+            printf ("PreJIT STALE: %d [%s]\n", k, Names [k]) ;
             continue ;
         }
 
@@ -368,7 +380,7 @@ GrB_Info GB_jitifyer_init (void)
         if (GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) != NULL)
         {
             // kernel_name is invalid; ignore this kernel
-            printf ("Kernel duplicate! %s\n", Names [k]) ;
+            printf ("PreJIT Kernel duplicate! %s\n", Names [k]) ;
             continue ;
         }
 

@@ -37,6 +37,18 @@ set ( NSTATIC_DEFAULT_ON true )
 include ( SuiteSparsePolicy )
 include ( GraphBLAS_JIT_paths )
 
+# set the GRAPHBLAS_SOURCE_PATH
+if ( DEFINED GRAPHBLAS_SOURCE_PATH )
+    # if the -DGRAPHBLAS_SOURCE_PATH variable is set use that setting
+elseif ( DEFINED ENV{GRAPHBLAS_SOURCE_PATH} )
+    # otherwise, use the GRAPHBLAS_SOURCE_PATH environment variable
+    set ( GRAPHBLAS_SOURCE_PATH "$ENV{GRAPHBLAS_SOURCE_PATH}" )
+else ( )
+    # if no other option, use the CMAKE_SOURCE_DIR.  This is the typical
+    # case if the one compiling GraphBLAS does not set any variables first.
+    set ( GRAPHBLAS_SOURCE_PATH "${CMAKE_SOURCE_DIR}" )
+endif ( )
+
 #-------------------------------------------------------------------------------
 # define the project
 #-------------------------------------------------------------------------------
