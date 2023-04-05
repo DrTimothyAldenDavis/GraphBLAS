@@ -101,17 +101,16 @@ v8.0.0 release:
         \verb'~/.SuiteSparse/GraphBLAS/8.0.0' folder, delete them.
         Normally, a new version of GraphBLAS will create a new folder and
         ignore the old one, but this draft is still numbered 8.0.0.
-        Its kernels are incompatible with the DRAFT3 version of 8.0.0,
+        Its kernels are incompatible with the earlier DRAFT* versions of 8.0.0,
         however.
 
     \item {\bf Lots of testing:} some of the new JIT features have not been
         fully tested.  Expect to see some bugs.  I am posting this version:
 
         \input{GraphBLAS_version.tex}
-        
+
         as a rough draft, not even a beta pre-release, to get feedback on the
-        design of the JIT.  My fully brutal test requires my MATLAB interface
-        (see below).
+        design of the JIT.
 
     \item {\bf working compilers:} This version has been tested on Linux
     systems (x86-based) using gcc 7.5, 9.4, 12.2, clang 10.0, and icx 2022,
@@ -131,13 +130,10 @@ v8.0.0 release:
     \item {\bf better performance:}
     This draft is thread-safe when used in a multithread user application,
     but a better JIT critical section (many readers, 1 writer) is needed.
-    The current critical section may be sufficient but this has not been
+    The current critical section may be sufficiently fast since the typical
+    case of work done inside the critical section is a single hash table
+    lookup.  However, the performance issues related to this have not been
     tested.
-
-    \item {\bf MATLAB:}
-    This version works in MATLAB, where the JIT is disabled by default.
-    The MATLAB interface (testing, and the
-    \verb'@GrB' interface) does not yet support the JIT.
 
     \item {\bf more JIT kernels:} \verb'GrB_assign' (34 kernels), \verb'subref'
     (3 kernels), \verb'masker' (2 kernels), and other (5 kernels).  Grep the
@@ -8715,6 +8711,11 @@ compiled, that variable defines the folder.  If the user's home directory
 cannot be determined and the \verb'GRAPHBLAS_CACHE_PATH' environment variable
 is not set, then the \verb'cmake' build folder is used instead as a fallback.
 
+The \verb'@GrB' MATLAB interface must compile its JIT kernels slightly
+differently, so these are placed in another folder,
+\verb'~/.SuiteSparse/GraphBLAS/8.0.0_matlab', by default.  The \verb'*.c'
+files are the same but do not mix the compiled kernels.
+
 Two optional environment variables can be used to control the location of the
 following two folders.  These environment variables are read by \verb'cmake'
 when GraphBLAS is compiled, and by \verb'GrB_init' when the user application
@@ -8726,13 +8727,19 @@ runs:
 folder where compiled kernels will be kept.  By default it is 
 \verb'~/.SuiteSparse/GraphBLAS/8.0.0' (for example), where the last
 three numbers change when the GraphBLAS version changes.
+
+\item \verb'GRAPHBLAS_MATLAB_PATH':  this variable gives the path to the
+cache folder for compiled kernels for the MATLAB interface,
+\verb'~/.SuiteSparse/GraphBLAS/8.0.0_matlab' by default.
+
 \item \verb'GRAPHBLAS_SOURCE_PATH':  this variable gives the path to the
 top-level SuiteSparse:GraphBLAS source folder.
 \end{itemize}
 
 When the user application starts, it can modify the location of these two
 folders after calling \verb'GrB_init'.  It can also modify the C compiler and
-its flags, and can control when and how the JIT is used.  These changes are
+its flags, and can control when and how the JIT is used.  This feature is
+not available within the MATLAB interface, however.  These changes are
 made via \verb'GxB_Global_Option_set', and can be queried via
 \verb'GxB_Global_Option_get'; refer to Section~\ref{options} for details, and
 the \verb'GxB_JIT_*' settings:
@@ -8811,6 +8818,10 @@ kernel causing the error.  If any of these cases occur, the call to GraphBLAS
 will return \verb'GrB_INVALID_VALUE' to indicate that some kind of JIT failure
 occured, or \verb'GrB_OUT_OF_MEMORY' for the last case below.  The error is
 also reported if the \verb'GxB_BURBLE' is enabled.
+
+Currently there are no JIT controls made available to the MATLAB interface;
+the JIT is always on, unless it has been disabled with the \verb'NJIT'
+option.
 
 \begin{itemize}
 
@@ -8979,14 +8990,20 @@ It is safe to copy only a subset of the JIT kernels from the cache folder into
 GraphBLAS encounters a need for a particular kernel that has been removed from
 \verb'GraphBLAS/PreJIT', it will create it at run-time via the JIT, if
 permitted.  If not permitted, by either compiling GraphBLAS with the
-\verb'NJIT' option, or by using \verb'GxB_JIT_C_CONTROL' at run-time, the generic
-kernel will be used instead.  This will be slower than the PreJIT or JIT
-kernel, but GraphBLAS will still be functional.
+\verb'NJIT' option, or by using \verb'GxB_JIT_C_CONTROL' at run-time, the
+generic kernel will be used instead.  This will be slower than the PreJIT or
+JIT kernel, but GraphBLAS will still be functional.
 
 In addition to a single \verb'README.txt' file, the \verb'GraphBLAS/PreJIT'
 folder includes a \verb'.gitignore' file that prevents any files in the folder
 from being synced via \verb'git'.  If you wish to add your PreJIT kernels to a
 fork of GraphBLAS, you will need to revise this \verb'.gitignore' file.
+
+An identical mechanism is available for the MATLAB interface.  Simply copy
+any or all source \verb'*.c' files from your MATLAB cache folder
+(\verb'~/.SuiteSparse/GraphBLAS/8.0.0_matlab' by default) into the
+\verb'GraphBLAS/GraphBLAS/PreJIT' folder, where the MATLAB interface
+resides.  Then recompile \verb'libgraphblas_matlab.so' in that folder.
 
 %-------------------------------------------------------------------------------
 \subsection{{\sf JIT} and {\sf PreJIT} performance considerations}
