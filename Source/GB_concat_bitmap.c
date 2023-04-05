@@ -53,7 +53,7 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
     bool csc = C->is_csc ;
     size_t csize = ctype->size ;
     GB_Type_code ccode = ctype->code ;
-    if (!GB_IS_BITMAP (C))
+    if (!GB_IS_BITMAP (C) || C->iso != C_iso)
     { 
         // set C->iso = C_iso   OK
         GB_phybix_free (C) ;
@@ -64,6 +64,7 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
         C->nvec_nonempty = (cvlen > 0) ? cvdim : 0 ;
     }
     ASSERT (GB_IS_BITMAP (C)) ;
+    ASSERT (C->iso == C_iso) ;
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
 
