@@ -89,6 +89,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
 
             A = csc ? GB_TILE (Tiles, inner, outer)
                     : GB_TILE (Tiles, outer, inner) ;
+            ASSERT (GB_IS_FULL (A)) ;
             if (csc != A->is_csc)
             { 
                 // T = (ctype) A', not in-place

@@ -149,13 +149,11 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
             // check if C is iso, full, and/or empty
             //------------------------------------------------------------------
 
-            bool A_full = (A_sparsity == GxB_FULL) || (anz == GB_nnz_full (A)) ;
+            bool A_full = (A_sparsity == GxB_FULL) ;
             bool A_empty = (anz == 0) ;
             bool A_iso = A->iso || (anz == 1 && A_sparsity != GxB_BITMAP) ;
 
-            // C is full only if all tiles are full or as-if-full.  A tile with
-            // a zero dimension has no entries and is both as-if-full and
-            // empty, but not iso.
+            // C is full only if all tiles are full.
             C_is_full = C_is_full && A_full ;
 
             // get the iso value of an iso tile, typecasted to C->type
