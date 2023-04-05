@@ -64,7 +64,7 @@ setup:
 
 # build both the static and dynamic libraries; do not run the demo
 static:
-	( cd build && cmake $(CMAKE_OPTIONS) -DBUILD_GRB_STATIC_LIBRARY=1 .. && cmake --build . -j$(JOBS) )
+	( cd build && cmake $(CMAKE_OPTIONS) -DNSTATIC=0 .. && cmake --build . -j$(JOBS) )
 
 # installs GraphBLAS to the install location defined by cmake, usually
 # /usr/local/lib and /usr/local/include
