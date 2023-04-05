@@ -20,7 +20,7 @@
     const int64_t vlen = A->vlen ;
 
     ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
-    ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (A)) ;
+    ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B)) ;
 
     #ifdef GB_JIT_KERNEL
     #define A_iso GB_A_ISO
