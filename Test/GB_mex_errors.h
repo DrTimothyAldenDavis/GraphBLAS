@@ -11,6 +11,7 @@
 {                                                                           \
     mexPrintf ("\nTest failure: %s line %d\n", __FILE__, __LINE__) ;        \
     mexPrintf ( "%s\n", GB_STR(s)) ;                                        \
+    GB_mx_at_exit ( ) ;                                                     \
     mexErrMsgTxt (GB_STR(s) " line: " GB_XSTR(__LINE__)) ;                  \
 }
 

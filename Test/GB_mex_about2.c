@@ -460,6 +460,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     printf ("\n ======================== split/concat tests: ") ;
+    OK (GxB_Global_Option_set_(GxB_BURBLE, true)) ;
     int sparsity [4] ;
     sparsity [0] = GxB_HYPERSPARSE ;
     sparsity [1] = GxB_SPARSE ;
@@ -492,12 +493,20 @@ void mexFunction
                 }
             }
             // split C into 4 matrices
+//          printf ("Split C:\n") ;
+//          GxB_print (C, 3) ;
             OK (GxB_Matrix_split (Tiles, 2, 2, Tile_nrows, Tile_ncols, C,
                 NULL)) ;
+            GxB_print (Tiles [0], 3) ;
+            GxB_print (Tiles [1], 3) ;
+            GxB_print (Tiles [2], 3) ;
+            GxB_print (Tiles [3], 3) ;
             // concatenate the 4 matrices back in X
             OK (GrB_Matrix_new (&X, Wild, n, n)) ;
             OK (GxB_Matrix_Option_set (X, GxB_SPARSITY_CONTROL, sparsity [k])) ;
             OK (GxB_Matrix_concat (X, Tiles, 2, 2, NULL)) ;
+//          printf ("Got X:\n") ;
+//          GxB_print (X, 3) ;
             // ensure C and X are the same (just use a brute force method)
             for (int64_t i = 0 ; i < n ; i++)
             {
@@ -508,10 +517,13 @@ void mexFunction
                     int infox = GrB_Matrix_extractElement_UDT (&wx, X, i, j) ;
                     CHECK (infoc == GrB_SUCCESS || infoc == GrB_NO_VALUE) ;
                     CHECK (infoc == infox) ;
+//                  printf ("entry (%ld,%ld):\n", i, j) ;
                     if (infoc == GrB_SUCCESS)
                     {
                         for (int kk = 0 ; kk < 16 ; kk++)
                         {
+//                          printf ("    %d: %ld %ld\n", kk,
+//                          wc.stuff [kk], wx.stuff [kk]) ;
                             CHECK (wc.stuff [kk] == wx.stuff [kk]) ;
                         }
                     }
@@ -558,6 +570,7 @@ void mexFunction
             GrB_Matrix_free (&X) ;
         }
     }
+    OK (GxB_Global_Option_set_(GxB_BURBLE, false)) ;
 
     //--------------------------------------------------------------------------
     // split/concat error handling
