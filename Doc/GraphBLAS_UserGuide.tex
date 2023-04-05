@@ -8728,9 +8728,10 @@ folder where compiled kernels will be kept.  By default it is
 \verb'~/.SuiteSparse/GraphBLAS/8.0.0' (for example), where the last
 three numbers change when the GraphBLAS version changes.
 
-\item \verb'GRAPHBLAS_MATLAB_PATH':  this variable gives the path to the
-cache folder for compiled kernels for the MATLAB interface,
+\item \verb'GRAPHBLAS_MATLAB_PATH':  this variable gives the path to the cache
+folder for compiled kernels for the MATLAB interface,
 \verb'~/.SuiteSparse/GraphBLAS/8.0.0_matlab' by default.
+It must differ from the \verb'GRAPHBLAS_CACHE_PATH'. % FIXME: check this
 
 \item \verb'GRAPHBLAS_SOURCE_PATH':  this variable gives the path to the
 top-level SuiteSparse:GraphBLAS source folder.

@@ -45,12 +45,6 @@
 #define GB_SOURCE_PATH  "@GB_SOURCE_PATH@"
 #endif
 
-// GB_BUILD_PATH: the location where GraphBLAS was built.  This is only used
-// if the GraphBLAS cache path cannot be determined by GrB_init.
-#ifndef GB_BUILD_PATH
-#define GB_BUILD_PATH   "@GB_BUILD_PATH@"
-#endif
-
 // GB_OMP_INC: include directories for OpenMP, if in use by GraphBLAS:
 #ifndef GB_OMP_INC
 #define GB_OMP_INC      "@GB_OMP_INC@"

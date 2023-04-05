@@ -211,8 +211,10 @@ GrB_Info GB_jitifyer_init (void)
 
     if (GB_jit_cache_path == NULL)
     { 
-        // cannot determine the JIT cache path; use the cmake build directory
-        GB_COPY_STUFF (GB_jit_cache_path, GB_BUILD_PATH) ;
+        // cannot determine the JIT cache path; disable loading and compiling
+        printf ("JIT: no cache path\n") ;    // FIXME
+        GB_jit_control = GxB_JIT_RUN ;
+        GB_COPY_STUFF (GB_jit_cache_path, "") ;
     }
 
     //--------------------------------------------------------------------------

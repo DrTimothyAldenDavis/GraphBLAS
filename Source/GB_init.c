@@ -64,14 +64,14 @@ GrB_Info GB_init            // start up GraphBLAS
     if (GB_Global_GrB_init_called_get ( ))
     { 
         // GrB_init can only be called once
-        printf ("Hey, you can't call init twice!\n") ;      // FIXME
+//      printf ("Hey, you can't call init twice!\n") ;
         return (GrB_INVALID_VALUE) ;
     }
 
     if (mode < GrB_NONBLOCKING || mode > GxB_BLOCKING_GPU)
     { 
         // invalid mode
-        printf ("init: mode invalid\n") ;       // FIXME
+//      printf ("init: mode invalid\n") ;
         return (GrB_INVALID_VALUE) ;
     }
 
@@ -92,9 +92,8 @@ GrB_Info GB_init            // start up GraphBLAS
 
     if (malloc_function == NULL || free_function == NULL)
     { 
-        // only malloc and free are required.  calloc and/or realloc may be
-        // NULL
-        printf ("init: null pointer\n") ;       // FIXME
+        // only malloc and free required.  calloc and/or realloc may be NULL
+//      printf ("init: null pointer\n") ;
         return (GrB_NULL_POINTER) ;
     }
 
@@ -191,7 +190,7 @@ GrB_Info GB_init            // start up GraphBLAS
     info = GB_jitifyer_init ( ) ;
     if (info != GrB_SUCCESS)
     {
-        printf ("GB_jitifyer_init: that failed %d\n", info) ;       // FIXME
+//      printf ("GB_jitifyer_init: that failed %d\n", info) ;
         return (info) ;
     }
 

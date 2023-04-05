@@ -14,18 +14,6 @@
 
 include ( SuiteSparse_getenv )
 
-# set the GRAPHBLAS_BUILD_PATH
-if ( DEFINED GRAPHBLAS_BUILD_PATH )
-    # if the -DGRAPHBLAS_BUILD_PATH variable is set use that setting
-elseif ( DEFINED ENV{GRAPHBLAS_BUILD_PATH} )
-    # otherwise, use the GRAPHBLAS_BUILD_PATH environment variable
-    set ( GRAPHBLAS_BUILD_PATH "$ENV{GRAPHBLAS_BUILD_PATH}" )
-else ( )
-    # if no other option, use the CMAKE_BINARY_DIR.  This is the typical
-    # case if the one compiling GraphBLAS does not set any variables first.
-    set ( GRAPHBLAS_BUILD_PATH ${CMAKE_BINARY_DIR} )
-endif ( )
-
 # set the GRAPHBLAS_CACHE_PATH for compiled JIT kernels
 if ( DEFINED ENV{GRAPHBLAS_CACHE_PATH} )
     # use the GRAPHBLAS_CACHE_PATH environment variable
