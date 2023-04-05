@@ -94,7 +94,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // check inputs
     //--------------------------------------------------------------------------
 
-    printf ("GB_add: C_sparsity: %d\n", C_sparsity) ;
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
     ASSERT_BINARYOP_OK (op, "op for add phase2", GB0) ;
     ASSERT_MATRIX_OK (A, "A for add phase2", GB0) ;
