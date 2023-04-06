@@ -100,7 +100,7 @@ GrB_Info GB_select_sparse
     //--------------------------------------------------------------------------
 
     int64_t cnz = 0 ;
-    int64_t cplen = anvec ;
+    int64_t cplen = (avdim == 1) ? 1 : anvec ;
 
     Cp = GB_CALLOC (cplen+1, int64_t, &Cp_size) ;
     if (Cp == NULL)
