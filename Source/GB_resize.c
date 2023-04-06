@@ -82,6 +82,7 @@ GrB_Info GB_resize              // change the size of a matrix
     }
 
     ASSERT (!GB_JUMBLED (A)) ;
+    ASSERT_MATRIX_OK (A, "Final A to resize", GB0) ;
 
     //--------------------------------------------------------------------------
     // resize the matrix
@@ -246,6 +247,7 @@ GrB_Info GB_resize              // change the size of a matrix
         // convert to hypersparse
         GB_OK (GB_convert_any_to_hyper (A, Werk)) ;
         ASSERT (GB_IS_HYPERSPARSE (A)) ;
+        ASSERT_MATRIX_OK (A, "A converted to hyper", GB0) ;
 
         // A->Y will be invalidated, so free it
         GB_hyper_hash_free (A) ;

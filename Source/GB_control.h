@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // The installer of SuiteSparse:GraphBLAS can edit this file to reduce the code
-// size of the compiled library, by disabling the corresonding hard-coded
+// size of the compiled library, by disabling the corresponding hard-coded
 // functions in Source/FactoryKernels.  For example, if SuiteSparse:GraphBLAS
 // is integrated into an application that makes no use of the GrB_INT16 data
 // type, or just occassional use where performance is not a concern, then

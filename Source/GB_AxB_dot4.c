@@ -13,7 +13,8 @@
 // on input (if so, C is converted from iso on input to non-iso on output).
 
 // The accum operator is the same as monoid operator semiring->add->op, and the
-// type of C (C->type) matches the accum->ztype so no typecasting is needed.
+// type of C (C->type) matches the accum->ztype so no typecasting is needed
+// from the monoid ztype to C.
 
 // The ANY monoid is a special case: C is not modified at all.
 

@@ -23,7 +23,7 @@
 // if C is m-by-n.  It is thus only suitable for cases when A and B are large,
 // and C is small.  GB_AxB_dot3 computes C<M>=A'*B, and it only needs to
 // examine entries in M, taking Omega(nnz(M)) time.  It can thus be used for
-// very large matrices C.  GB_AxB_dot4 computes C+=A'*B when C is dense.
+// very large matrices C.  GB_AxB_dot4 computes C+=A'*B when C is full.
 
 // The output matrix C has not been allocated.  It is an uninitialzed static
 // header on input.  The mask M is optional.
@@ -132,7 +132,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 
     if (GB_AxB_dot4_control (C_iso, C_in, M, Mask_comp, accum, semiring))
     { 
-        // C_in must be as-if-full on input.  M must be NULL and not
+        // C_in must be full on input.  M must be NULL and not
         // complemented.  the C iso case is not handled (where C is iso on
         // output), but C_in might be iso on input.
 

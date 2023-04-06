@@ -355,7 +355,7 @@
     #if GB_UNROLL
     const int64_t wp = (bvdim == 1) ? 0 : GB_IMIN (bvdim, 4) ;
     const int64_t anz = GB_nnz (A) ;
-    if (anz < wp * vlen || B_iso)
+    if ((anz < wp * vlen) || B_iso)
     #endif
     {
 
@@ -447,12 +447,11 @@
         // C += A'*B: with workspace W for transposing B, one panel at a time
         //----------------------------------------------------------------------
 
-        // FIXME: allocate workspace in GB_AxB_dot4.c, not here.
         size_t W_size = 0 ;
-        GB_B_TYPE *restrict W = NULL ;
+        GB_B2TYPE *restrict W = NULL ;
         if (bvdim > 1)
         {
-            W = GB_MALLOC_WORK (wp * vlen, GB_B_TYPE, &W_size) ;
+            W = GB_MALLOC_WORK (wp * vlen, GB_B2TYPE, &W_size) ;
             if (W == NULL)
             { 
                 // out of memory
@@ -464,7 +463,7 @@
         {
 
             //------------------------------------------------------------------
-            // C(:,j1:j2-1) += A * B (:,j1:j2-1) for a single panel
+            // C(:,j1:j2-1) += A' * B (:,j1:j2-1) for a single panel
             //------------------------------------------------------------------
 
             const int64_t j2 = GB_IMIN (j1 + 4, bvdim) ;
@@ -479,7 +478,7 @@
                     // C(:,j1:j2-1) is a single vector; use B(:,j1) in place
                     //----------------------------------------------------------
 
-                    const GB_B_TYPE *restrict G = Bx + j1 * vlen ;
+                    const GB_B_TYPE *restrict Bxj1 = Bx + j1 * vlen ;
                     int tid ;
                     #pragma omp parallel for num_threads(nthreads) \
                         schedule(dynamic,1)
@@ -496,15 +495,17 @@
                             // cx [0] = C(i,j1)
                             GB_C_TYPE cx [1] ;
                             GB_GET4C (cx [0], i + j1*cvlen) ;
-                            // cx [0] += A (:,i)'*G
+                            // cx [0] += A (:,i)'*B(:,j1)
                             for (int64_t p = pA ; p < pA_end ; p++)
                             { 
                                 // aki = A(k,i)
                                 const int64_t k = Ai [p] ;
                                 GB_DECLAREA (aki) ;
                                 GB_GETA (aki, Ax, p, A_iso) ;
-                                // cx [0] += A(k,i)*G(k,0)
-                                GB_MULTADD (cx [0], aki, G [k], i, k, j1) ;
+                                GB_DECLAREB (bkj) ;
+                                GB_GETB (bkj, Bxj1, k, false) ;
+                                // cx [0] += A(k,i)*B(k,j1)
+                                GB_MULTADD (cx [0], aki, bkj, i, k, j1) ;
                             }
                             // C(i,j1) = cx [0]
                             Cx [i + j1*cvlen] = cx [0] ;
@@ -520,7 +521,7 @@
                     // G = B(:,j1:j1+1) and convert to row-form
                     //----------------------------------------------------------
 
-                    GB_B_TYPE *restrict G = W ;
+                    GB_B2TYPE *restrict G = W ;
                     int64_t k ;
                     #pragma omp parallel for num_threads(nthreads) \
                         schedule(static)
@@ -528,8 +529,10 @@
                     {
                         // G (k,0:1) = B (k,j1:j1+1)
                         const int64_t k2 = k << 1 ;
-                        G [k2    ] = Bx [k + (j1    ) * vlen] ;
-                        G [k2 + 1] = Bx [k + (j1 + 1) * vlen] ;
+//                      G [k2    ] = Bx [k + (j1    ) * vlen] ;
+//                      G [k2 + 1] = Bx [k + (j1 + 1) * vlen] ;
+                        GB_GETB (G [k2    ], Bx, k + (j1    ) * vlen, false) ;
+                        GB_GETB (G [k2 + 1], Bx, k + (j1 + 1) * vlen, false) ;
                     }
 
                     //----------------------------------------------------------
@@ -580,7 +583,7 @@
                     // G = B(:,j1:j1+2) and convert to row-form
                     //----------------------------------------------------------
 
-                    GB_B_TYPE *restrict G = W ;
+                    GB_B2TYPE *restrict G = W ;
                     int64_t k ;
                     #pragma omp parallel for num_threads(nthreads) \
                         schedule(static)
@@ -588,9 +591,12 @@
                     {
                         // G (k,0:2) = B (k,j1:j1+2)
                         const int64_t k3 = k * 3 ;
-                        G [k3    ] = Bx [k + (j1    ) * vlen] ;
-                        G [k3 + 1] = Bx [k + (j1 + 1) * vlen] ;
-                        G [k3 + 2] = Bx [k + (j1 + 2) * vlen] ;
+//                      G [k3    ] = Bx [k + (j1    ) * vlen] ;
+//                      G [k3 + 1] = Bx [k + (j1 + 1) * vlen] ;
+//                      G [k3 + 2] = Bx [k + (j1 + 2) * vlen] ;
+                        GB_GETB (G [k3    ], Bx, k + (j1    ) * vlen, false) ;
+                        GB_GETB (G [k3 + 1], Bx, k + (j1 + 1) * vlen, false) ;
+                        GB_GETB (G [k3 + 2], Bx, k + (j1 + 2) * vlen, false) ;
                     }
 
                     //----------------------------------------------------------
@@ -644,7 +650,8 @@
                     // G = B(:,j1:j1+3) and convert to row-form
                     //----------------------------------------------------------
 
-                    GB_B_TYPE *restrict G = W ;
+                    GB_B2TYPE *restrict G = W ;
+
                     int64_t k ;
                     #pragma omp parallel for num_threads(nthreads) \
                         schedule(static)
@@ -652,10 +659,14 @@
                     {
                         // G (k,0:3) = B (k,j1:j1+3)
                         const int64_t k4 = k << 2 ;
-                        G [k4    ] = Bx [k + (j1    ) * vlen] ;
-                        G [k4 + 1] = Bx [k + (j1 + 1) * vlen] ;
-                        G [k4 + 2] = Bx [k + (j1 + 2) * vlen] ;
-                        G [k4 + 3] = Bx [k + (j1 + 3) * vlen] ;
+//                      G [k4    ] = Bx [k + (j1    ) * vlen] ;
+//                      G [k4 + 1] = Bx [k + (j1 + 1) * vlen] ;
+//                      G [k4 + 2] = Bx [k + (j1 + 2) * vlen] ;
+//                      G [k4 + 3] = Bx [k + (j1 + 3) * vlen] ;
+                        GB_GETB (G [k4    ], Bx, k + (j1    ) * vlen, false) ;
+                        GB_GETB (G [k4 + 1], Bx, k + (j1 + 1) * vlen, false) ;
+                        GB_GETB (G [k4 + 2], Bx, k + (j1 + 2) * vlen, false) ;
+                        GB_GETB (G [k4 + 3], Bx, k + (j1 + 3) * vlen, false) ;
                     }
 
                     //----------------------------------------------------------

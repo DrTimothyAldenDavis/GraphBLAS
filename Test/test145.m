@@ -7,7 +7,6 @@ function test145
 
 fprintf ('test145 -------------------- C+=A''*B when C is dense, with dot4\n') ;
 
-GrB.burble (0) ;
 rng ('default') ;
 
 A = sparse (rand (4)) ;
