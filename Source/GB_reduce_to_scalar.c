@@ -120,14 +120,36 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         {
             // reduction must continue.  Result is in V, not the scalar z.
             ASSERT (info == GrB_SUCCESS) ;
-            info = GB_reduce_to_scalar (c, ctype, accum, monoid, V, Werk) ;
-            GB_Matrix_free (&V) ;
+            if (V->len == 1)
+            {
+                // the CUDA kernel has reduced A to a single scalar, V [0],
+                // with a single threadblock; no more recursion.  Copy the
+                // single scalar into z, for the accum phase below.
+                memcpy (z, V->x, zsize) ;
+                GB_Matrix_free (&V) ;
+            }
+            else
+            {
+                // the CUDA kernel has reduced A to an array V; keep going
+                info = GB_reduce_to_scalar (c, ctype, accum, monoid, V, Werk) ;
+                GB_Matrix_free (&V) ;
+                return (info) ;
+            }
         }
-        return (info) ;
+
+        // GB_reduce_to_scalar_cuda may refuse to do the reduction and indicate
+        // this by returning GrB_NO_VALUE.  If so, the CPU will do it below.
+        if (!(info == GrB_SUCCESS || info == GrB_NO_VALUE))
+        {
+            // GB_reduce_to_scalar_cuda has returned an error
+            // (out of memory, or other error)
+            return (info) ;
+        }
 
     }
-    else
     #endif
+
+    if (info == GrB_NO_VALUE)
     {
 
         //----------------------------------------------------------------------
