@@ -25,7 +25,7 @@
     #define A_is_bitmap GB_A_IS_BITMAP
     #define A_is_full   GB_A_IS_FULL
     #define A_iso       GB_A_ISO
-    #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, asize)
+    #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (((GB_M_TYPE *) Ax), pA, asize)
     #else
     const bool C_is_bitmap = GB_IS_BITMAP (C) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
