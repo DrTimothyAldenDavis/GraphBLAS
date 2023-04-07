@@ -33,6 +33,7 @@
 // If the mode is GxB_BLOCKING_GPU or GxB_NONBLOCKING_GPU, the 4 function
 // pointers are ignored, and rmm_wrap_malloc/.../rmm_wrap_free are used instead.
 
+#define GB_FREE_ALL ;
 #include "GB.h"
 #include "GB_init.h"
 #include "GB_stringify.h"
@@ -59,19 +60,16 @@ GrB_Info GB_init            // start up GraphBLAS
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GrB_SUCCESS ;
-
+    GrB_Info info ;
     if (GB_Global_GrB_init_called_get ( ))
     { 
         // GrB_init can only be called once
-//      printf ("Hey, you can't call init twice!\n") ;
         return (GrB_INVALID_VALUE) ;
     }
 
     if (mode < GrB_NONBLOCKING || mode > GxB_BLOCKING_GPU)
     { 
         // invalid mode
-//      printf ("init: mode invalid\n") ;
         return (GrB_INVALID_VALUE) ;
     }
 
@@ -93,7 +91,6 @@ GrB_Info GB_init            // start up GraphBLAS
     if (malloc_function == NULL || free_function == NULL)
     { 
         // only malloc and free required.  calloc and/or realloc may be NULL
-//      printf ("init: null pointer\n") ;
         return (GrB_NULL_POINTER) ;
     }
 
@@ -149,7 +146,7 @@ GrB_Info GB_init            // start up GraphBLAS
     if (mode == GxB_BLOCKING_GPU || mode == GxB_NONBLOCKING_GPU)
     {
         // initialize the GPUs
-        info = GB_cuda_init ( ) ;
+        GB_OK (GB_cuda_init ( )) ;
     }
     else
     #endif
@@ -187,17 +184,13 @@ GrB_Info GB_init            // start up GraphBLAS
     // set up the JIT folder locations and compiler flags
     //--------------------------------------------------------------------------
 
-    info = GB_jitifyer_init ( ) ;
-    if (info != GrB_SUCCESS)
-    {
-//      printf ("GB_jitifyer_init: that failed %d\n", info) ;
-        return (info) ;
-    }
+    GB_OK (GB_jitifyer_init ( )) ;
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
-    return (info) ;
+    #pragma omp flush
+    return (GrB_SUCCESS) ;
 }
 

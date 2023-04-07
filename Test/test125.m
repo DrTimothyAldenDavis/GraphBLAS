@@ -137,7 +137,7 @@ for k1 = 1:length(mult_ops)
                     end
             end
 
-% This produces a list of all files in Source/FactoryKernels
+% This produces a subset of the list of all files in Source/FactoryKernels
 % fprintf ('GB_AxB__%s_%s_%s.c\n', add_opname, mult_opname, xtype) ;
 
         end

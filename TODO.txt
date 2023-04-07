@@ -1,0 +1,17 @@
+TODO:
+
+Use function pointers to any required GB* routines in a single struct, so the
+JIT can pass it to each JIT kernel.  Then the JIT kernel does not need to
+be linked against libgraphblas.so itself.
+
+Ingest all of Source/Template into libgraphblas.so itself, compressing it first
+with zstd.  Then GrB_init can write all this source code into
+~/.SuiteSparse/GraphBLAS/8.0.0_source (for example).  Then the
+GRAPHBLAS_SOURCE_PATH can be removed.
+
+Port to Windows
+
+See also the list in the user guide for other pending tasks.
+
+Can some "seq_cst" atomic clauses be safely removed?
+
