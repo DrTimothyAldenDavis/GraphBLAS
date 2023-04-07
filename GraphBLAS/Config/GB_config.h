@@ -15,7 +15,7 @@
 
 // GB_C_COMPILER: the C compiler used to compile GraphBLAS:
 #ifndef GB_C_COMPILER
-#define GB_C_COMPILER   "/usr/bin/gcc"
+#define GB_C_COMPILER   "/usr/bin/cc"
 #endif
 
 // GB_C_FLAGS: the C compiler flags used to compile GraphBLAS.  Used
@@ -43,12 +43,6 @@
 // top-level GraphBLAS folder:
 #ifndef GB_SOURCE_PATH
 #define GB_SOURCE_PATH  "/home/faculty/d/davis/master/GraphBLAS/GraphBLAS/.."
-#endif
-
-// GB_BUILD_PATH: the location where GraphBLAS was built.  This is only used
-// if the GraphBLAS cache path cannot be determined by GrB_init.
-#ifndef GB_BUILD_PATH
-#define GB_BUILD_PATH   "/home/faculty/d/davis/master/GraphBLAS/GraphBLAS/build"
 #endif
 
 // GB_OMP_INC: include directories for OpenMP, if in use by GraphBLAS:

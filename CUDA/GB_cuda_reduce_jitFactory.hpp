@@ -115,33 +115,32 @@ class reduceFactory
     //--------------------------------------------------------------------------
 
     // Note: this does assume the erased types are compatible w/ the monoid's
-    // ztype (FIXME: what does this comment mean?)
+    // ztype (an erased type is the type overwritten by a pun type).
 
     bool jitGridBlockLaunch     // FIXME: return GrB_Info
     (
         GrB_Matrix A,           // matrix to reduce to a scalar
         GB_void *output,        // output scalar (static on CPU), of size zsize
+        GrB_Matrix *V_handle,   // result of a partial reduction
         GrB_Monoid monoid,      // monoid to use for the reducution
         cudaStream_t stream = 0 // stream to use, default stream 0
     )
     {
         GBURBLE ("\n(launch reduce factory) \n") ;
 
-        // allocate and initialize zscalar (upscaling it to at least 32 bits)
-        size_t zsize = monoid->op->ztype->size ;
-        size_t zscalar_size = GB_IMAX (zsize, sizeof (uint32_t)) ;
-        GB_void *zscalar = (GB_void *) rmm_wrap_malloc (zscalar_size) ;
-        if (zscalar == NULL)
-        {
-            // out of memory
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-        GB_cuda_upscale_identity (zscalar, monoid) ;
+        GrB_Type ztype = monoid->op->ztype ;
+        size_t zsize = ztype->size ;
+
+        GB_void *zscalar = NULL ;
+        (*V_handle) = NULL ;
+        GrB_Matrix V = NULL :
 
         jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
         filecache.getFile (reduce_factory_) ;
 
         auto rcode = std::to_string(reduce_factory_.rcode);
+        bool has_cheeseburger = GB_RSHIFT (rcode, 27, 1) ;
+        GBURBLE ("has_cheeseburger %d\n", has_cheeseburger) ;
 
         std::string hashable_name = base_name + "_" + kernel_name;
         std::stringstream string_to_be_jitted ;
@@ -154,20 +153,41 @@ class reduceFactory
 
         int64_t anvals = GB_nnz_held (A) ;
 
-        uint32_t *mutex ;
-        mutex = (uint32_t *) rmm_wrap_calloc (1, sizeof (uint32_t)) ;
-        if (mutex == NULL)
-        {
-            // out of memory
-            rmm_wrap_free (zscalar) ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-
         // determine kernel launch geometry
         int blocksz = GB_get_threads_per_block ( ) ;
         int gridsz = GB_get_number_of_blocks (anvals) ;
         dim3 grid (gridsz) ;
         dim3 block (blocksz) ;
+
+        // determine the kind of reduction: partial (to &V), or complete
+        // (to the scalar output)
+        if (has_cheeseburger)
+        {
+            // the kernel launch can reduce A to zscalar all by itself
+            // allocate and initialize zscalar (upscaling it to at least 32 bits)
+            size_t zscalar_size = GB_IMAX (zsize, sizeof (uint32_t)) ;
+            (GB_void *) rmm_wrap_malloc (zscalar_size) ;
+            zscalar = (GB_void *) rmm_wrap_malloc (zscalar_size) ;
+            if (zscalar == NULL)
+            {
+                // out of memory
+                return (GrB_OUT_OF_MEMORY) ;
+            }
+            GB_cuda_upscale_identity (zscalar, monoid) ;
+        }
+        else
+        {
+            // allocate a full GrB_Matrix V for the partial result, of size
+            // gridsz-by-1, and of type ztype.  V is allocated but not
+            // initialized.
+            info = GB_new_bix (&V, ztype, gridsz, 1, GB_Ap_null,
+                true, GxB_FULL, false, 0, -1, gridsz, true, false) ;
+            if (info != GrB_SUCCESS)
+            {
+                // out of memory
+                return (info) ;
+            }
+        }
 
         GBURBLE ("(cuda reduce launch %d threads in %d blocks)",
             blocksz, gridsz ) ;
@@ -183,22 +203,28 @@ class reduceFactory
            .set_kernel_inst(  hashable_name ,
                 { A->type->name, monoid->op->ztype->name })
            .configure(grid, block, SMEM, stream)
-           .launch (A, zscalar, anvals, mutex) ;
+           .launch (A, zscalar, V, anvals) ;
 
         // synchronize before copying result to host
         CHECK_CUDA (cudaStreamSynchronize (stream)) ;
 
         // FIXME: sometimes we use CHECK_CUDA, sometimes CU_OK.  Need to
-        // be consistent.  Also, if this method fails, mutex and zscalar
+        // be consistent.  Also, if this method fails, zscalar
         // must be freed: we can do this in the CU_OK or CHECK_CUDA macros.
         // Or in a try/catch?
 
-        // output = zscalar (but only the first zsize bytes of it)
-        memcpy (output, zscalar, zsize) ;
-
-        // free workspace and return result
-        rmm_wrap_free (mutex) ;
-        rmm_wrap_free (zscalar) ;
+        if (has_cheeseburger)
+        {
+            // return the scalar result
+            // output = zscalar (but only the first zsize bytes of it)
+            memcpy (output, zscalar, zsize) ;
+            rmm_wrap_free (zscalar) ;
+        }
+        else
+        {
+            // return the partial reduction
+            (*V_handle) = V ;
+        }
 
         return (GrB_SUCCESS) ;
     }
@@ -213,13 +239,14 @@ inline bool GB_cuda_reduce      // FIXME: return GrB_Info, not bool
     GB_cuda_reduce_factory &myreducefactory,    // reduction JIT factory
     GrB_Matrix A,               // matrix to reduce
     GB_void *output,            // result of size monoid->op->ztype->size
+    GrB_Matrix *V_handle,       // result of a partial reduction
     GrB_Monoid monoid,          // monoid for the reduction
     cudaStream_t stream = 0     // stream to use
 )
 {
     reduceFactory rf(myreducefactory);
     GBURBLE ("(starting cuda reduce)" ) ;
-    bool result = rf.jitGridBlockLaunch (A, output, monoid, stream) ;
+    bool result = rf.jitGridBlockLaunch (A, output, V_handle, monoid, stream) ;
     GBURBLE ("(ending cuda reduce)" ) ;
     return (result) ;
 }

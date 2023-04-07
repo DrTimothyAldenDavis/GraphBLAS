@@ -640,6 +640,19 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     const char **u_expression
 ) ;
 
+bool GB_enumify_cuda_atomic         // return true if CUDA can do it atomically
+(
+    // output:
+    const char **a,                 // CUDA atomic function name
+    bool *user_monoid_atomically,   // true if user monoid has an atomic update
+    const char **cuda_type,         // CUDA atomic type
+    // input:
+    GrB_Monoid monoid,  // monoid to query
+    int add_ecode,      // binary op as an enum
+    size_t zsize,       // ztype->size
+    int zcode           // ztype->code
+) ;
+
 void GB_macrofy_query
 (
     FILE *fp,

@@ -113,9 +113,17 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         // via the CUDA kernel
         //----------------------------------------------------------------------
 
-        GB_OK (GB_reduce_to_scalar_cuda (z, monoid, A)) ;
-        // FIXME: return info (GrB_NO_VALUE: not done, GrB_SUCCESS, etc)
-        info = GrB_SUCCESS ;
+        GrB_Matrix V = NULL ;
+        info = GB_reduce_to_scalar_cuda (z, &V, monoid, A) ;
+
+        if (V != NULL)
+        {
+            // reduction must continue.  Result is in V, not the scalar z.
+            ASSERT (info == GrB_SUCCESS) ;
+            info = GB_reduce_to_scalar (c, ctype, accum, monoid, V, Werk) ;
+            GB_Matrix_free (&V) ;
+        }
+        return (info) ;
 
     }
     else

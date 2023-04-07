@@ -65,6 +65,13 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     GB_enumify_monoid (&red_ecode, &id_ecode, &term_ecode, reduce_opcode,
         zcode) ;
 
+    char *a = NULL, *cuda_type = NULL ;
+    bool user_monoid_atomically = false ;
+    bool has_cheeseburger = GB_enumify_cuda_atomic (&a,
+        &user_monoid_atomically, &cuda_type,
+        monoid, red_ecode, ztype->size, zcode) ;
+    int cheese = (has_cheeseburger) ? 1 : 0 ;
+
     //--------------------------------------------------------------------------
     // enumify the type and sparsity structure of A
     //--------------------------------------------------------------------------
@@ -78,11 +85,12 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     // construct the reduction rcode
     //--------------------------------------------------------------------------
 
-    // total rcode bits: 27 (7 hex digits)
+    // total rcode bits: 28 (7 hex digits)
 
     (*rcode) = 
                                                // range        bits
-                // monoid: 15 bits (4 hex digits)
+                // monoid: 16 bits (4 hex digits)
+                GB_LSHIFT (cheese     , 27) |  // 0 to 1       1
                 GB_LSHIFT (red_ecode  , 22) |  // 0 to 22      5
                 GB_LSHIFT (id_ecode   , 17) |  // 0 to 31      5
                 GB_LSHIFT (term_ecode , 12) |  // 0 to 31      5

@@ -100,8 +100,8 @@ __global__ void GB_jit_reduce
 (
     GrB_Matrix A,   // matrix to reduce
     void *zscalar,  // scalar result, at least sizeof (uint32_t)
-    int64_t anz,    // # of entries in A: anz = GB_nnz_held (A)
-    uint32_t *mutex // for monoids that need it
+    GrB_Matrix V,   // matrix result, for partial reduction (or NULL)
+    int64_t anz     // # of entries in A: anz = GB_nnz_held (A)
 )
 {
 
@@ -216,18 +216,9 @@ __global__ void GB_jit_reduce
 
         #else
 
-            // FIXME:  use another kind of reduction.  Write the kth
-            // threadblock result to Result [k], and use another kernel launch?
-            // The Result array should be padded for 8-bit and maybe 16-bit
-            // types, even for user-defined types, so that each threadblock
-            // writes at least one single word.  Limit the # of threadblocks to
-            // some upperbound, say 64K.
-
-            GB_Z_TYPE *z = (GB_Z_TYPE *) zscalar ;
-            GB_cuda_lock (mutex) ;
-            GB_ADD (z, z, zmine) ;
-            // flush to global
-            GB_cuda_unlock (mutex) ;
+            // save my result in V
+            GB_Z_TYPE *Vx = (GB_Z_TYPE) V->x ;
+            Vx [blockIdx.x] = zscalar ;
 
         #endif
     }

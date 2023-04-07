@@ -178,6 +178,11 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 
     bool is_complex = (zcode == GB_FC32_code || zcode == GB_FC64_code) ;
 
+    if (is_complex)
+    {
+        fprintf (fp, "#define GB_Z_IS_COMPLEX 1\n") ;
+    }
+
     if (!monoid_is_terminal && !is_complex)
     {
         char *redop = NULL ;
@@ -392,279 +397,33 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // create macros for the atomic CUDA operator, if available
     //--------------------------------------------------------------------------
 
-    // All built-in monoids are handled, except for the double complex cases of
-    // ANY and TIMES.  Those need to be done the same way user-defined monoids
-    // are computed.
-
-    char *a = NULL ;
+    char *a = NULL, *cuda_type = NULL ;
     bool user_monoid_atomically = false ;
-
-    switch (add_ecode)
-    {
-
-        // user defined monoid: can apply GB_ADD via atomicCAS if the ztype has
-        // 16, 32, or 64 bits
-        case  0 :
-
-            user_monoid_atomically =
-                (zsize == sizeof (uint16_t) ||
-                 zsize == sizeof (uint32_t) ||
-                 zsize == sizeof (uint64_t))  ;
-            break ;
-
-        // FIRST, ANY, SECOND: atomic write (not double complex)
-        case  1 :
-        case  2 :
-
-            switch (zcode)
-            {
-                case GB_BOOL_code    : 
-                case GB_INT8_code    : 
-                case GB_UINT8_code   : 
-                case GB_INT16_code   : 
-                case GB_UINT16_code  : 
-                case GB_INT32_code   : 
-                case GB_UINT32_code  : 
-                case GB_INT64_code   : 
-                case GB_UINT64_code  : 
-                case GB_FP32_code    : 
-                case GB_FP64_code    : 
-                case GB_FC32_code    : a = "GB_cuda_atomic_write" ;
-                default              : break ;
-            }
-            break ;
-
-        // MIN (real only)
-        case  3 :
-        case  4 :
-        case  5 :
-
-            switch (zcode)
-            {
-                case GB_INT8_code    : 
-                case GB_UINT8_code   : 
-                case GB_INT16_code   : 
-                case GB_UINT16_code  : 
-                case GB_INT32_code   : 
-                case GB_UINT32_code  : 
-                case GB_INT64_code   : 
-                case GB_UINT64_code  : 
-                case GB_FP32_code    : 
-                case GB_FP64_code    : a = "GB_cuda_atomic_min" ;
-                default              : break ;
-            }
-            break ;
-
-        // MAX (real only)
-        case  6 :
-        case  7 :
-        case  8 :
-
-            switch (zcode)
-            {
-                case GB_INT8_code    : 
-                case GB_UINT8_code   : 
-                case GB_INT16_code   : 
-                case GB_UINT16_code  : 
-                case GB_INT32_code   : 
-                case GB_UINT32_code  : 
-                case GB_INT64_code   : 
-                case GB_UINT64_code  : 
-                case GB_FP32_code    : 
-                case GB_FP64_code    : a = "GB_cuda_atomic_max" ;
-                default              : break ;
-            }
-            break ;
-
-        // PLUS:  all types
-        case  9 :
-        case 10 :
-        case 11 :
-
-            switch (zcode)
-            {
-                case GB_INT8_code    : 
-                case GB_UINT8_code   : 
-                case GB_INT16_code   : 
-                case GB_UINT16_code  : 
-                case GB_INT32_code   : 
-                case GB_UINT32_code  : 
-                case GB_INT64_code   : 
-                case GB_UINT64_code  : 
-                case GB_FP32_code    : 
-                case GB_FP64_code    : 
-                case GB_FC32_code    : 
-                case GB_FC64_code    : a = "GB_cuda_atomic_add" ;
-                default              : break ;
-            }
-            break ;
-
-        // TIMES: all real types, and float complex (but not double complex)
-        case 12 : 
-        case 14 : 
-
-            switch (zcode)
-            {
-                case GB_INT8_code    : 
-                case GB_UINT8_code   : 
-                case GB_INT16_code   : 
-                case GB_UINT16_code  : 
-                case GB_INT32_code   : 
-                case GB_UINT32_code  : 
-                case GB_INT64_code   : 
-                case GB_UINT64_code  : 
-                case GB_FP32_code    : 
-                case GB_FP64_code    : 
-                case GB_FC32_code    : a = "GB_cuda_atomic_times" ;
-                default              : break ;
-            }
-            break ;
-
-        // BOR: z = (x | y), bitwise or,
-        // logical LOR (via upscale to uint32_t and BOR)
-        case 17 :
-        case 19 :
-
-            switch (zcode)
-            {
-                case GB_BOOL_code    : 
-                case GB_UINT8_code   : 
-                case GB_UINT16_code  : 
-                case GB_UINT32_code  : 
-                case GB_UINT64_code  : a = "GB_cuda_atomic_bor" ;
-                default              : break ;
-            }
-            break ;
-
-        // BAND: z = (x & y), bitwise and
-        // logical LAND (via upscale to uint32_t and BAND)
-        case 18 :
-        case 20 :
-
-            switch (zcode)
-            {
-                case GB_BOOL_code    : 
-                case GB_UINT8_code   : 
-                case GB_UINT16_code  : 
-                case GB_UINT32_code  : 
-                case GB_UINT64_code  : a = "GB_cuda_atomic_band" ;
-                default              : break ;
-            }
-            break ;
-
-        // BXOR: z = (x ^ y), bitwise xor, and boolean LXOR
-        case 16 :
-        case 21 :
-
-            switch (zcode)
-            {
-                case GB_BOOL_code    : 
-                case GB_UINT8_code   : 
-                case GB_UINT16_code  : 
-                case GB_UINT32_code  : 
-                case GB_UINT64_code  : a = "GB_cuda_atomic_bxor" ;
-                default              : break ;
-            }
-            break ;
-
-        // BXNOR: z = ~(x ^ y), bitwise xnor, and boolean LXNOR
-        case 15 :
-        case 22 :
-
-            switch (zcode)
-            {
-                case GB_BOOL_code    : 
-                case GB_UINT8_code   : 
-                case GB_UINT16_code  : 
-                case GB_UINT32_code  : 
-                case GB_UINT64_code  : a = "GB_cuda_atomic_bxnor" ;
-                default              : break ;
-            }
-            break ;
-
-        // all other monoids
-        default: break ;
-    }
+    bool has_cheeseburger = GB_enumify_cuda_atomic (&a,
+        &user_monoid_atomically, &cuda_type, monoid, add_ecode, zsize, zcode) ;
 
     if (monoid == NULL || zcode == 0)
     {
-
-        //----------------------------------------------------------------------
-        // C is iso: no values computed so no need for any CUDA atomics
-        //----------------------------------------------------------------------
-
+        // nothing to do: C is iso-valued.  For GrB_mxm only.
         ;
-
     }
     else if (user_monoid_atomically)
     {
-
-        //----------------------------------------------------------------------
-        // user-defined monoid with a type of 16, 32, or 64 bits
-        //----------------------------------------------------------------------
-
-        char *cuda_type = NULL ;
-        if (zsize == sizeof (uint16_t))
-        {
-            cuda_type = "unsigned short int" ;
-        }
-        else if (zsize == sizeof (uint32_t))
-        {
-            cuda_type = "unsigned int" ;
-        }
-        else // if (zsize == sizeof (uint64_t))
-        {
-            cuda_type = "unsigned long long int" ;
-        }
-
+        // CUDA atomic for a user monoid
         fprintf (fp, "#define GB_Z_HAS_CUDA_ATOMIC_USER 1\n") ;
         fprintf (fp, "#define GB_Z_CUDA_ATOMIC_TYPE %s\n", cuda_type) ;
-
     }
     else if (a == NULL)
     {
-
-        //----------------------------------------------------------------------
-        // no CUDA atomic available
-        //----------------------------------------------------------------------
-
-        // either built-in (GxB_ANY_FC64_MONOID or GxB_TIMES_FC64_MONOID),
-        // or user-defined where the type is not 16, 32, or 64 bits in size
-
+        // no CUDA atomics for this monoid
         ;
-
     }
     else
     {
-
-        //----------------------------------------------------------------------
         // CUDA atomic available for a built-in monoid
-        //----------------------------------------------------------------------
-
         fprintf (fp, "#define GB_Z_HAS_CUDA_ATOMIC_BUILTIN 1\n") ;
         fprintf (fp, "#define GB_Z_CUDA_ATOMIC %s\n", a) ;
-
-        // upscale 8-bit and 16-bit types to 32-bits,
-        // all others use their native types
-        char *t = "" ;
-        switch (zcode)
-        {
-            case GB_INT8_code    : 
-            case GB_INT16_code   : 
-            case GB_INT32_code   : t = "int32_t"    ; break ;
-            case GB_INT64_code   : t = "int64_t"    ; break ;
-            case GB_BOOL_code    : 
-            case GB_UINT8_code   : 
-            case GB_UINT16_code  : 
-            case GB_UINT32_code  : t = "uint32_t"   ; break ;
-            case GB_UINT64_code  : t = "uint64_t"   ; break ;
-            case GB_FP32_code    : t = "float"      ; break ;
-            case GB_FP64_code    : t = "double"     ; break ;
-            case GB_FC32_code    : t = "GxB_FC32_t" ; break ;
-            case GB_FC64_code    : t = "GxB_FC64_t" ; break ;
-            default :;
-        }
-        fprintf (fp, "#define GB_Z_CUDA_ATOMIC_TYPE %s\n", t) ;
+        fprintf (fp, "#define GB_Z_CUDA_ATOMIC_TYPE %s\n", cuda_type) ;
     }
 }
 

@@ -25,6 +25,7 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     //--------------------------------------------------------------------------
 
     // monoid
+    int cheese      = GB_RSHIFT (rcode, 27, 1) ;
     int red_ecode   = GB_RSHIFT (rcode, 22, 5) ;
     int id_ecode    = GB_RSHIFT (rcode, 17, 5) ;
     int term_ecode  = GB_RSHIFT (rcode, 12, 5) ;

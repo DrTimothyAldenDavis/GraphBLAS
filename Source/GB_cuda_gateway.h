@@ -124,7 +124,12 @@ bool GB_reduce_to_scalar_cuda_branch    // return true to use the GPU
 
 GrB_Info GB_reduce_to_scalar_cuda
 (
-    GB_void *s,
+    // output:
+    GB_void *s,                 // note: statically allocated on CPU stack; if
+                                // the result is in s then V is NULL.
+    GrB_Matrix *V_handle,       // partial result if unable to reduce to scalar;
+                                // NULL if result is in s.
+    // input:
     const GrB_Monoid monoid,
     const GrB_Matrix A
 ) ;

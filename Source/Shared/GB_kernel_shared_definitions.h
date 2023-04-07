@@ -13,6 +13,11 @@
 #ifndef GB_KERNEL_SHARED_DEFINITIONS_H
 #define GB_KERNEL_SHARED_DEFINITIONS_H
 
+// 1 if ztype is complex
+#ifndef GB_Z_IS_COMPLEX
+#define GB_Z_IS_COMPLEX 0
+#endif
+
 //------------------------------------------------------------------------------
 // atomic compare/exchange for the GB_Z_TYPE data type
 //------------------------------------------------------------------------------
