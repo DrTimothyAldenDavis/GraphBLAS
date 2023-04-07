@@ -127,11 +127,11 @@ set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 if ( COMPACT )
     # do not compile the FactoryKernels
     include_directories ( ../Source/Template ../Source ../Include rename
-        ../Source/Shared Config
+        ../Source/Shared Config ../Source/JitKernels
         ../lz4 ../zstd ../zstd/zstd_subset ../xxHash )
 else ( )
     include_directories ( ../Source/Template ../Source ../Include rename
-        ../Source/Shared Config
+        ../Source/Shared Config ../Source/JitKernels
         ../lz4 ../zstd ../zstd/zstd_subset ../xxHash
         ../Source/FactoryKernels )
 endif ( )
@@ -147,9 +147,9 @@ include ( GraphBLAS_compiler_options )
 #-------------------------------------------------------------------------------
 
 if ( COMPACT )
-    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "Config/GB_prejit.c" )
+    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "Config/*.c" "PreJIT/*.c" )
 else ( )
-    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "Config/GB_prejit.c"
+    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "Config/*.c" "PreJIT/*.c"
         "../Source/FactoryKernels/*.c" )
 endif ( )
 
