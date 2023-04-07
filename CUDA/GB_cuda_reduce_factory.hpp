@@ -78,7 +78,7 @@ public:
 
         // FIXME: use same name scheme as the CPU jit
         std::stringstream ss ;
-        ss << "GB_reduce_" << this->rcode << ".h ";
+        ss << "GB_reduce_" << this->rcode << ".h";
 
         std::string new_filename = ss.str() ;
         filename.resize(new_filename.size()) ;

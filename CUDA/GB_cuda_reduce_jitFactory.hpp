@@ -133,13 +133,13 @@ class reduceFactory
 
         GB_void *zscalar = NULL ;
         (*V_handle) = NULL ;
-        GrB_Matrix V = NULL :
+        GrB_Matrix V = NULL ;
 
         jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
         filecache.getFile (reduce_factory_) ;
 
         auto rcode = std::to_string(reduce_factory_.rcode);
-        bool has_cheeseburger = GB_RSHIFT (rcode, 27, 1) ;
+        bool has_cheeseburger = GB_RSHIFT (reduce_factory_.rcode, 27, 1) ;
         GBURBLE ("has_cheeseburger %d\n", has_cheeseburger) ;
 
         std::string hashable_name = base_name + "_" + kernel_name;
@@ -180,7 +180,7 @@ class reduceFactory
             // allocate a full GrB_Matrix V for the partial result, of size
             // gridsz-by-1, and of type ztype.  V is allocated but not
             // initialized.
-            info = GB_new_bix (&V, ztype, gridsz, 1, GB_Ap_null,
+            GrB_Info info = GB_new_bix (&V, ztype, gridsz, 1, GB_Ap_null,
                 true, GxB_FULL, false, 0, -1, gridsz, true, false) ;
             if (info != GrB_SUCCESS)
             {
