@@ -215,7 +215,7 @@ void GB_macrofy_binop
                 u = "z *= y" ;              // times real update
                 break ;
 
-            // eq, iseq, lxnor (only a monoid for the boolean lxnor)
+            // eq, lxnor (only a monoid for the boolean lxnor)
             case  15 : 
                 f = "z = ((x) == (y))" ;
                 u = "z = (z == (y))" ;
@@ -283,6 +283,11 @@ void GB_macrofy_binop
                 GB_macrofy_defn (fp, 1, "GB_FC64_eq", GB_FC64_eq_DEFN) ;
                 break ;
 
+            // iseq for non-boolean real
+            case 142 : 
+                f = "z = (GB_Z_TYPE) ((x) == (y))" ;
+                break ;
+
             // iseq for complex
             case  34 : 
                 f = "z = GB_FC32_iseq (x,y)" ;
@@ -299,7 +304,7 @@ void GB_macrofy_binop
                 GB_macrofy_defn (fp, 1, "GB_FC64_iseq", GB_FC64_iseq_DEFN) ;
                 break ;
 
-            // ne, isne
+            // ne
             case 141 : 
                 f = "z = ((x) != (y))" ;
                 u = "z = (z != (y))" ;
@@ -319,6 +324,11 @@ void GB_macrofy_binop
                 GB_macrofy_defn (fp, 1, "GB_FC64_ne", GB_FC64_ne_DEFN) ;
                 break ;
 
+            // isne for non-boolean real
+            case 143 : 
+                f = "z = (GB_Z_TYPE) ((x) != (y))" ;
+                break ;
+
             // isne for complex
             case  38 : 
                 f = "z = GB_FC32_isne (x,y)" ;
@@ -336,13 +346,13 @@ void GB_macrofy_binop
                 break ;
 
             // lor for non-boolean
-            case  40 : f = "z = (((x)!=0) || ((y)!=0))" ; break ;
+            case  40 : f = "z = (GB_Z_TYPE) (((x)!=0) || ((y)!=0))" ; break ;
 
             // land for non-boolean
-            case  41 : f = "z = (((x)!=0) && ((y)!=0))" ; break ;
+            case  41 : f = "z = (GB_Z_TYPE) (((x)!=0) && ((y)!=0))" ; break ;
 
             // lxor for non-boolean
-            case  42 : f = "z = (((x)!=0) != ((y)!=0))" ; break ;
+            case  42 : f = "z = (GB_Z_TYPE) (((x)!=0) != ((y)!=0))" ; break ;
 
             // minus
             case  43 : 
@@ -498,17 +508,29 @@ void GB_macrofy_binop
             // rdiv (real floating-point)
             case  70 : f = "z = (y) / (x)" ; break ;
 
-            // gt, isgt
+            // gt
             case  71 : f = "z = ((x) > (y))" ; break ;
 
-            // lt, islt
+            // isgt
+            case 144 : f = "z = (GB_Z_TYPE) ((x) > (y))" ; break ;
+
+            // lt
             case  72 : f = "z = ((x) < (y))" ; break ;
 
-            // ge, isge
+            // islt
+            case 145 : f = "z = (GB_Z_TYPE) ((x) < (y))" ; break ;
+
+            // ge
             case  73 : f = "z = ((x) >= (y))" ; break ;
 
-            // le, isle
+            // isge
+            case 146 : f = "z = (GB_Z_TYPE) ((x) >= (y))" ; break ;
+
+            // le
             case  74 : f = "z = ((x) <= (y))" ; break ;
+
+            // isle
+            case 147 : f = "z = (GB_Z_TYPE) ((x) <= (y))" ; break ;
 
             // bget
             case  75 : 

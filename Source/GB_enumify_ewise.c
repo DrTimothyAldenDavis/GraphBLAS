@@ -204,7 +204,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
                 GB_LSHIFT (flipxy     , 44) |  // 0 or 1       1
 
                 // binaryop, z = f(x,y) (5 hex digits)
-                GB_LSHIFT (binop_ecode, 36) |  // 0 to 141     8
+                GB_LSHIFT (binop_ecode, 36) |  // 0 to 254     8
                 GB_LSHIFT (zcode      , 32) |  // 0 to 14      4
                 GB_LSHIFT (xcode      , 28) |  // 0 to 14      4
                 GB_LSHIFT (ycode      , 24) |  // 0 to 14      4

@@ -177,7 +177,7 @@ void GB_enumify_binop
                 case GB_BOOL_code   : e = 15 ; break ; // x == y
                 case GB_FC32_code   : e = 34 ; break ; // GB_FC32_iseq(x,y)
                 case GB_FC64_code   : e = 35 ; break ; // GB_FC64_iseq(x,y)
-                default             : e = 15 ; break ; // x == y, not a monoid
+                default             : e =142 ; break ; // (ztype) (x == y)
             }
             break ;
 
@@ -188,7 +188,7 @@ void GB_enumify_binop
                 case GB_BOOL_code   : e = 16 ; break ; // x != y
                 case GB_FC32_code   : e = 38 ; break ; // GB_FC32_isne(x,y)
                 case GB_FC64_code   : e = 39 ; break ; // GB_FC64_isne(x,y)
-                default             : e = 16 ; break ; // x != y
+                default             : e =143 ; break ; // (ztype) (x != y)
             }
             break ;
 
@@ -252,25 +252,37 @@ void GB_enumify_binop
             }
             break ;
 
-        case GB_GT_binop_code :
-        case GB_ISGT_binop_code :   // z = (x > y)
+        case GB_GT_binop_code :     // z = (x > y)
 
             e = 71 ; break ;
 
-        case GB_LT_binop_code :
-        case GB_ISLT_binop_code :   // z = (x < y)
+        case GB_ISGT_binop_code :   // z = (ztype) (x > y)
+
+            e = 144 ; break ;
+
+        case GB_LT_binop_code :     // z = (x < y)
 
             e = 72 ; break ;
 
-        case GB_GE_binop_code :
-        case GB_ISGE_binop_code :   // z = (x >= y)
+        case GB_ISLT_binop_code :   // z = (ztype) (x < y)
+
+            e = 145 ; break ;
+
+        case GB_GE_binop_code :     // z = (x >= y)
 
             e = 73 ; break ;
 
-        case GB_LE_binop_code :
-        case GB_ISLE_binop_code :   // z = (x <= y)
+        case GB_ISGE_binop_code :   // z = (ztype) (x >= y)
+
+            e = 146 ; break ;
+
+        case GB_LE_binop_code :     // z = (x <= y)
 
             e = 74 ; break ;
+
+        case GB_ISLE_binop_code :   // z = (ztype) (x <= y)
+
+            e =147 ; break ;
 
         case GB_BGET_binop_code :   // z = bitget (x,y)
 
