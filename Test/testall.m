@@ -295,8 +295,6 @@ logstat ('testca(1)',t) ;  % test complex mxm, mxv, and vxm
 logstat ('test81' ,t) ; % GrB_Matrix_extract with stride, range, backwards
 logstat ('test18' ,t) ; % quick tests of GrB_eWiseAdd and eWiseMult
 
-end
-
 if (malloc_debugging)
     debug_on
     fprintf ('[malloc debugging turned back on]\n') ;
