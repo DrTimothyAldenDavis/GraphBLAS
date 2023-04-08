@@ -561,24 +561,32 @@ static inline GrB_Matrix GB_clear_static_header // clear a static header
 #define GBH_C(Ch,k)      GBH (Ch,k)
 #define GBI_C(Ci,p,vlen) GBI (Ci,p,vlen)
 #define GBB_C(Cb,p)      GBB (Cb,p)
+#define GB_C_NVALS(e)    int64_t e = GB_nnz (C)
+#define GB_C_NHELD(e)    int64_t e = GB_nnz_held (C)
 
 // accessing the M matrix
 #define GBP_M(Mp,k,vlen) GBP (Mp,k,vlen)
 #define GBH_M(Mh,k)      GBH (Mh,k)
 #define GBI_M(Mi,p,vlen) GBI (Mi,p,vlen)
 #define GBB_M(Mb,p)      GBB (Mb,p)
+#define GB_M_NVALS(e)    int64_t e = GB_nnz (M)
+#define GB_M_NHELD(e)    int64_t e = GB_nnz_held (M)
 
 // accessing the A matrix
 #define GBP_A(Ap,k,vlen) GBP (Ap,k,vlen)
 #define GBH_A(Ah,k)      GBH (Ah,k)
 #define GBI_A(Ai,p,vlen) GBI (Ai,p,vlen)
 #define GBB_A(Ab,p)      GBB (Ab,p)
+#define GB_A_NVALS(e)    int64_t e = GB_nnz (A)
+#define GB_A_NHELD(e)    int64_t e = GB_nnz_held (A)
 
 // accessing the B matrix
 #define GBP_B(Bp,k,vlen) GBP (Bp,k,vlen)
 #define GBH_B(Bh,k)      GBH (Bh,k)
 #define GBI_B(Bi,p,vlen) GBI (Bi,p,vlen)
 #define GBB_B(Bb,p)      GBB (Bb,p)
+#define GB_B_NVALS(e)    int64_t e = GB_nnz (B)
+#define GB_B_NHELD(e)    int64_t e = GB_nnz_held (B)
 
 #endif
 

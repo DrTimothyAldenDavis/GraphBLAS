@@ -41,14 +41,14 @@
     //--------------------------------------------------------------------------
 
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
-    const int64_t anz = GB_nnz_held (A) ;
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
+    GB_A_NHELD (anz) ;      // const int64_t anz = GB_nnz_held (A) ;
+//  int nthreads_max = GB_Context_nthreads_max ( ) ;
+//  double chunk = GB_Context_chunk ( ) ;
     int A_ntasks, A_nthreads ;
     if (A_is_bitmap || A_is_full)
     { 
         // no need to construct tasks
-        A_nthreads = GB_nthreads ((anz + A->nvec), 32*chunk, nthreads_max) ;
+        A_nthreads = GB_nthreads (anz + A->nvec, 32*chunk, nthreads_max) ;
         A_ntasks = (A_nthreads == 1) ? 1 : (8 * A_nthreads) ;
     }
     else
@@ -81,7 +81,8 @@
     // and not in bitmap form).  This case is only used by GB_subassign_06d
     // directly, and it is not needed for any kernel (generic, factor, or JIT).
     ASSERT (C->iso) ;
-    ASSERT (A_iso || (GB_nnz (A) == 1 && !A_is_bitmap)) ;
+    GB_A_NVALS (e) ;
+    ASSERT (A_iso || (e == 1 && !A_is_bitmap)) ;
     ASSERT (Mask_struct) ;
     #else
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;

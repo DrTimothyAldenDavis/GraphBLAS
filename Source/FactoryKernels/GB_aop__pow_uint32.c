@@ -71,6 +71,8 @@ GrB_Info GB (_subassign_23__pow_uint32)
     #else
     
     { 
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
         #include "GB_subassign_23_template.c"
     }
     
@@ -95,6 +97,8 @@ GrB_Info GB (_subassign_22__pow_uint32)
     { 
         // get the scalar ywork for C += ywork, of type GB_Y_TYPE
         GB_Y_TYPE ywork = (*((GB_Y_TYPE *) ywork_handle)) ;
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
         #include "GB_subassign_22_template.c"
         return (GrB_SUCCESS) ;
     }

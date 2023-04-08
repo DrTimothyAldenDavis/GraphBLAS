@@ -678,7 +678,7 @@ static GrB_Info GB_SORT (matrix)
     ASSERT (op->xtype == op->ytype) ;
     #endif
 
-    int64_t cnz = GB_nnz (C) ;
+    GB_C_NVALS (cnz) ;      // int64_t cnz = GB_nnz (C) ;
     if (C->iso || cnz <= 1)
     { 
         // nothing to do

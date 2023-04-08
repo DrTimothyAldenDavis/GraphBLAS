@@ -62,6 +62,9 @@ GrB_Info GB_AxB_saxbit_jit      // C<M>=A*B, saxbit, via the JIT
         NULL, C->type, A->type, B->type) ;
     if (info != GrB_SUCCESS) return (info) ;
 
+    double chunk = GB_Context_chunk ( ) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+
     //--------------------------------------------------------------------------
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
@@ -69,6 +72,7 @@ GrB_Info GB_AxB_saxbit_jit      // C<M>=A*B, saxbit, via the JIT
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, M, A, B, ntasks, nthreads,
         nfine_tasks_per_vector, use_coarse_tasks, use_atomics,
-        M_ek_slicing, M_nthreads, M_ntasks, A_slice, H_slice, Wcx, Wf)) ;
+        M_ek_slicing, M_nthreads, M_ntasks, A_slice, H_slice, Wcx, Wf,
+        nthreads_max, chunk)) ;
 }
 

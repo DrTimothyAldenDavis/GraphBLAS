@@ -57,9 +57,11 @@
 
 #define GB_IS_PLUS_FC32_MONOID 1
 
+#define GB_Z_IS_COMPLEX 1
+
 // special case multipliers:
 #define GB_IS_PAIR_MULTIPLIER 1
-#define GB_PAIR_ONE GB_CMPLX32 (1,0)
+#define GB_PAIR_ONE GxB_CMPLXF (1,0)
 
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \
@@ -171,6 +173,8 @@ GrB_Info GB (_AsaxbitB__plus_pair_fc32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     #include "GB_AxB_saxbit_template.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -317,6 +321,8 @@ GrB_Info GB (_Asaxpy3B__plus_pair_fc32)
         GB_Werk Werk
     )
     {
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
         if (GB_IS_SPARSE (A) && GB_IS_SPARSE (B))
         {
             // both A and B are sparse
@@ -365,6 +371,8 @@ GrB_Info GB (_Asaxpy3B__plus_pair_fc32)
         GB_Werk Werk
     )
     {
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
         if (GB_IS_SPARSE (A) && GB_IS_SPARSE (B))
         {
             // both A and B are sparse
@@ -415,6 +423,8 @@ GrB_Info GB (_Asaxpy3B__plus_pair_fc32)
         GB_Werk Werk
     )
     {
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
         if (GB_IS_SPARSE (A) && GB_IS_SPARSE (B))
         {
             // both A and B are sparse

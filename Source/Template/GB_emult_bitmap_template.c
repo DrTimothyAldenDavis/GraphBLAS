@@ -31,7 +31,7 @@
     #endif
 
     int8_t *restrict Cb = C->b ;
-    const int64_t cnz = GB_nnz_held (C) ;
+    GB_C_NHELD (cnz) ;      // const int64_t cnz = GB_nnz_held (C) ;
 
     #ifdef GB_ISO_EMULT
     ASSERT (C->iso) ;

@@ -46,6 +46,8 @@ GrB_Info GB (_subassign_05d)
     return (GrB_NO_VALUE) ;
     #else
     GB_C_TYPE cwork = (*((GB_C_TYPE *) scalar)) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     #include "GB_subassign_05d_template.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -67,6 +69,8 @@ GrB_Info GB (_subassign_06d)
     return (GrB_NO_VALUE) ;
     #else
     ASSERT (C->type == A->type) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     #include "GB_subassign_06d_template.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -88,6 +92,8 @@ GrB_Info GB (_subassign_25)
     return (GrB_NO_VALUE) ;
     #else
     ASSERT (C->type == A->type) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     #include "GB_subassign_25_template.c"
     return (GrB_SUCCESS) ;
     #endif

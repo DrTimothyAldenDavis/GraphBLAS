@@ -28,6 +28,7 @@ void GB_macrofy_mask
     if (mask_ecode >= 2)
     {
         GB_macrofy_sparsity (fp, Mname, msparsity) ;
+        GB_macrofy_nvals (fp, Mname, msparsity, false) ;
     }
 
     switch (mask_ecode)

@@ -15,10 +15,10 @@
 #include "GB_helper.h"
 
 //------------------------------------------------------------------------------
-// GB_NTHREADS: determine the number of threads to use
+// GB_NTHREADS_HELPER: determine the number of threads to use
 //------------------------------------------------------------------------------
 
-#define GB_NTHREADS(work)                                       \
+#define GB_NTHREADS_HELPER(work)                                \
     int nthreads_max = GB_Context_nthreads_max ( ) ;            \
     double chunk = GB_Context_chunk ( ) ;                       \
     int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
@@ -60,7 +60,7 @@ void GB_helper1              // convert zero-based indices to one-based
 )
 {
 
-    GB_NTHREADS (nvals) ;
+    GB_NTHREADS_HELPER (nvals) ;
 
     int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -81,7 +81,7 @@ void GB_helper1i             // convert zero-based indices to one-based
 )
 {
 
-    GB_NTHREADS (nvals) ;
+    GB_NTHREADS_HELPER (nvals) ;
 
     int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -104,7 +104,7 @@ bool GB_helper3             // return true if OK, false on error
 )
 {
 
-    GB_NTHREADS (len) ;
+    GB_NTHREADS_HELPER (len) ;
 
     ASSERT (List != NULL) ;
     ASSERT (List_double != NULL) ;
@@ -162,7 +162,7 @@ bool GB_helper3i        // return true if OK, false on error
 )
 {
 
-    GB_NTHREADS (len) ;
+    GB_NTHREADS_HELPER (len) ;
 
     int64_t listmax = -1 ;
 
@@ -208,7 +208,7 @@ bool GB_helper4             // return true if OK, false on error
 )
 {
 
-    GB_NTHREADS (len) ;
+    GB_NTHREADS_HELPER (len) ;
 
     GrB_Index listmax = 0 ;
 
@@ -258,7 +258,7 @@ void GB_helper5              // construct pattern of S
 )
 {
 
-    GB_NTHREADS (anz) ;
+    GB_NTHREADS_HELPER (anz) ;
     ASSERT (Mj != NULL) ;
     ASSERT (Si != NULL) ;
     ASSERT (Sj != NULL) ;
@@ -286,7 +286,7 @@ void GB_helper7              // Kx = uint64 (0:mnz-1)
 )
 {
 
-    GB_NTHREADS (mnz) ;
+    GB_NTHREADS_HELPER (mnz) ;
 
     int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -311,7 +311,7 @@ void GB_helper8
 )
 {
 
-    GB_NTHREADS (nvals) ;
+    GB_NTHREADS_HELPER (nvals) ;
 
     int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -365,7 +365,7 @@ double GB_helper10       // norm (x-y,p), or -1 on error
     // allocate workspace and determine # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_NTHREADS (n) ;
+    GB_NTHREADS_HELPER (n) ;
     GB_ALLOCATE_WORK (double) ;
 
     #define xx(k) x [x_iso ? 0 : k]

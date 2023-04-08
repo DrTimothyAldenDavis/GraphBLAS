@@ -441,7 +441,13 @@ void GB_enumify_binop
 
         case GB_PAIR_binop_code :   // z = 1
 
-            e = 133 ; break ;
+            switch (xcode)
+            {
+                case GB_FC32_code   : e = 148 ; break ; // z = GxB_CMPLXF (1,0)
+                case GB_FC64_code   : e = 149 ; break ; // z = GxB_CMPLX (1,0)
+                default             : e = 133 ; break ; // z = 1
+            }
+            break ;
 
         //----------------------------------------------------------------------
         // positional ops

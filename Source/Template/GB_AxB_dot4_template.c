@@ -354,7 +354,7 @@
 
     #if GB_UNROLL
     const int64_t wp = (bvdim == 1) ? 0 : GB_IMIN (bvdim, 4) ;
-    const int64_t anz = GB_nnz (A) ;
+    GB_A_NVALS (anz) ;      // const int64_t anz = GB_nnz (A) ;
     if ((anz < wp * vlen) || B_iso)
     #endif
     {

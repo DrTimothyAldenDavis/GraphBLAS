@@ -35,16 +35,15 @@
     // slice the A matrix
     //--------------------------------------------------------------------------
 
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
+//  int nthreads_max = GB_Context_nthreads_max ( ) ;
+//  double chunk = GB_Context_chunk ( ) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     int A_ntasks, A_nthreads ;
     if (A_is_bitmap || A_is_full)
     { 
         // C is full and A is bitmap or as-if-full
-        GBURBLE ("(Z bitmap/as-if-full) ") ;
         int64_t anvec = A->nvec ;
-        int64_t anz = GB_nnz_held (A) ;
+        GB_A_NHELD (anz) ;      // int64_t anz = GB_nnz_held (A) ;
         A_nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
         A_ntasks = 0 ;   // unused
         ASSERT (A_ek_slicing == NULL) ;
@@ -64,7 +63,7 @@
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     ASSERT (GB_IS_FULL (C)) ;
-    const int64_t cnz = GB_nnz_held (C) ;
+    GB_C_NHELD (cnz) ;      // const int64_t cnz = GB_nnz_held (C) ;
     GB_DECLAREY (ywork) ;
     if (A_iso)
     {

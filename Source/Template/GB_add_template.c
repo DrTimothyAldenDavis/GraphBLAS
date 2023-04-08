@@ -137,7 +137,7 @@
         const int64_t  *restrict Ch = C->h ;
               int8_t   *restrict Cb = C->b ;
               int64_t  *restrict Ci = C->i ;
-        const int64_t cnz = GB_nnz_held (C) ;
+        GB_C_NHELD (cnz) ;      // const int64_t cnz = GB_nnz_held (C) ;
 
     #endif
 

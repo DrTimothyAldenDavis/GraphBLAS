@@ -149,6 +149,9 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     }
     #endif
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // C = A*B via saxpy3 or bitmap method, function pointers, and typecasting
     //--------------------------------------------------------------------------

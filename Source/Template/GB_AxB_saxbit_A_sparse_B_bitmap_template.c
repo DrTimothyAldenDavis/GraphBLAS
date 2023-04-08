@@ -115,7 +115,7 @@
                 #endif
 
                 #undef GB_MULT_A_ik_G_kj
-                #if GB_IS_PAIR_MULTIPLIER
+                #if ( GB_IS_PAIR_MULTIPLIER && !GB_Z_IS_COMPLEX )
                     // t = A(i,k) * B (k,j) is already #defined as 1
                     #define GB_MULT_A_ik_G_kj(gkj,jj)
                 #else
@@ -152,7 +152,6 @@
                 // FIXME: make this a template when this method is split.
                 switch (np)
                 {
-
                     case 4 : 
 
                         for (int64_t kA = 0 ; kA < anvec ; kA++)

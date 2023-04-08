@@ -19,7 +19,7 @@
     GB_A_TYPE *Ax = (GB_A_TYPE *) A->x ;
     GB_B_TYPE *Bx = (GB_B_TYPE *) B->x ;
     GB_C_TYPE *Cx = (GB_C_TYPE *) C->x ;
-    const int64_t cnz = GB_nnz (C) ;
+    GB_C_NVALS (cnz) ;      // const int64_t cnz = GB_nnz (C) ;
     ASSERT (!C->iso) ;
     ASSERT (!A->iso) ;
     ASSERT (!B->iso) ;

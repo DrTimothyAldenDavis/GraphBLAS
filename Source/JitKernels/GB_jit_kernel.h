@@ -25,6 +25,8 @@
 #undef GBI_C
 #undef GBB_C
 #undef GBX_C
+#undef GB_C_NVALS
+#undef GB_C_NHELD
 
 // accessing the A matrix
 #undef GBP_A
@@ -32,6 +34,8 @@
 #undef GBI_A
 #undef GBB_A
 #undef GBX_A
+#undef GB_A_NVALS
+#undef GB_A_NHELD
 
 // accessing the B matrix
 #undef GBP_B
@@ -39,6 +43,8 @@
 #undef GBI_B
 #undef GBB_B
 #undef GBX_B
+#undef GB_B_NVALS
+#undef GB_B_NHELD
 
 // accessing the M matrix
 #undef GBP_M
@@ -46,4 +52,6 @@
 #undef GBI_M
 #undef GBB_M
 #undef GBX_M
+#undef GB_M_NVALS
+#undef GB_M_NHELD
 

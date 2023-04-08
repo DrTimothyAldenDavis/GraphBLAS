@@ -79,6 +79,9 @@ GrB_Info GB_subassign_05d
     const size_t csize = C->type->size ;
     GB_GET_SCALAR ;
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // Method 05d: C(:,:)<M> = scalar ; no S; C is dense
     //--------------------------------------------------------------------------

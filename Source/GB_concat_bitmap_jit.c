@@ -46,11 +46,14 @@ GrB_Info GB_concat_bitmap_jit      // concatenate A into a bitmap matrix C
         op, C->type, A->type, NULL) ;
     if (info != GrB_SUCCESS) return (info) ;
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, cistart, cvstart, A, Werk)) ;
+    return (GB_jit_kernel (C, cistart, cvstart, A, nthreads_max, chunk, Werk)) ;
 }
 

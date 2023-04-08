@@ -29,7 +29,7 @@
 
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     ASSERT (!A->iso) ;
-    int64_t anz = GB_nnz (A) ;
+    GB_A_NVALS (anz) ;      // int64_t anz = GB_nnz (A) ;
     ASSERT (anz > 0) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (A->nzombies == 0) ;

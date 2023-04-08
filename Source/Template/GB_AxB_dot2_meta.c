@@ -278,7 +278,6 @@
             // Mask_struct: true
 
             ASSERT (!A_not_transposed) ;    // C<#M>=A'*B is being computed
-            GBURBLE ("(specialized) ") ;
             #define GB_ANY_SPECIALIZED
             #define GB_A_IS_SPARSE 1
             #define GB_A_IS_HYPER  0
