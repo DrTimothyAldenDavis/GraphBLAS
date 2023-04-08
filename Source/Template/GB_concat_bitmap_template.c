@@ -19,8 +19,8 @@
     const int64_t avlen = A->vlen ;
     const int64_t cvlen = C->vlen ;
     const int64_t anz = avlen * avdim ;
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
+//  int nthreads_max = GB_Context_nthreads_max ( ) ;
+//  double chunk = GB_Context_chunk ( ) ;
     #else
     const bool A_iso = A->iso ;
     #endif

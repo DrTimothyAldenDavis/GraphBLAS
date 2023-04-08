@@ -861,6 +861,15 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
     int sparsity
 ) ;
 
+void GB_macrofy_nvals  
+(
+    FILE *fp,
+    // input:
+    const char *Aname,      // name of input matrix (typically A, B, C,..)
+    int asparsity,          // sparsity format of the input matrix, -1 if NULL
+    bool A_iso              // true if A is iso
+) ;
+
 //------------------------------------------------------------------------------
 // typedefs, type name and size
 //------------------------------------------------------------------------------

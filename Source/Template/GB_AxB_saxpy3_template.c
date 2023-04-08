@@ -26,8 +26,8 @@
     // get the chunk size
     //--------------------------------------------------------------------------
 
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
+//  int nthreads_max = GB_Context_nthreads_max ( ) ;
+//  double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // get M, A, B, and C

@@ -74,7 +74,6 @@ hack (2) = 0 ; GB_mex_hack (hack) ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
-%{
 logstat ('test247',t) ; % GrB_mxm: fine Hash method
 logstat ('test246',t) ; % GrB_mxm parallelism (changes slice_balanced)
 logstat ('test01' ,t) ; % error handling
@@ -153,20 +152,17 @@ hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
 logstat ('test232',t) ; % test assign with GrB_Scalar
 logstat ('test228',t) ; % test serialize/deserialize
-%}
 
 %----------------------------------------
 % tests with low coverage/sec rates (1/sec to 10/sec)
 %----------------------------------------
 
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
-%{
 logstat ('test154',t) ; % apply with binop and scalar binding
 logstat ('test238',t) ; % test GrB_mxm (dot4 and dot2)
 logstat ('test151b',t); % test bshift operator
 logstat ('test184',t) ; % test special cases for mxm, transpose, and build
 logstat ('test191',t) ; % test split
-%}
 logstat ('test188',t) ; % test concat
 logstat ('test237',t) ; % test GrB_mxm (saxpy4)
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack

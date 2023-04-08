@@ -46,6 +46,7 @@ void GB_macrofy_input
     if (do_matrix_macros)
     {
         GB_macrofy_sparsity (fp, Aname, asparsity) ;
+        GB_macrofy_nvals (fp, Aname, asparsity, A_iso_code) ;
         fprintf (fp, "#define GB_%s_ISO %d\n", Aname, A_iso_code) ;
         if (azombies >= 0)
         {

@@ -168,6 +168,8 @@ GrB_Info GB (_AsaxbitB__min_firsti_int64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
     #include "GB_AxB_saxbit_template.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -314,6 +316,8 @@ GrB_Info GB (_Asaxpy3B__min_firsti_int64)
         GB_Werk Werk
     )
     {
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
         if (GB_IS_SPARSE (A) && GB_IS_SPARSE (B))
         {
             // both A and B are sparse
@@ -362,6 +366,8 @@ GrB_Info GB (_Asaxpy3B__min_firsti_int64)
         GB_Werk Werk
     )
     {
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
         if (GB_IS_SPARSE (A) && GB_IS_SPARSE (B))
         {
             // both A and B are sparse
@@ -412,6 +418,8 @@ GrB_Info GB (_Asaxpy3B__min_firsti_int64)
         GB_Werk Werk
     )
     {
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
         if (GB_IS_SPARSE (A) && GB_IS_SPARSE (B))
         {
             // both A and B are sparse

@@ -21,8 +21,8 @@
 
     GrB_Info info ;
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
+//  int nthreads_max = GB_Context_nthreads_max ( ) ;
+//  double chunk = GB_Context_chunk ( ) ;
     int M_ntasks, M_nthreads ;
     GB_SLICE_MATRIX (M, 8, chunk) ;
 

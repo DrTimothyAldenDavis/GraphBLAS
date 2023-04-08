@@ -94,6 +94,9 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
     // via the factory kernel
     //--------------------------------------------------------------------------
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     info = GrB_NO_VALUE ;
 
     #ifndef GBCOMPACT

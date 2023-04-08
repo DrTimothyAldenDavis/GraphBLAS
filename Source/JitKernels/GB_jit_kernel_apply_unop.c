@@ -32,7 +32,7 @@ GB_JIT_KERNEL_APPLY_UNOP_PROTO (GB_jit_kernel)
     #if GB_A_IS_BITMAP
     int8_t *restrict Ab = A->b ;
     #endif
-    int64_t anz = GB_nnz_held (A) ;
+    GB_A_NHELD (anz) ;      // int64_t anz = GB_nnz_held (A) ;
     #if GB_DEPENDS_ON_Y
     GB_Y_TYPE y = (*((GB_Y_TYPE *) ythunk)) ;
     #endif

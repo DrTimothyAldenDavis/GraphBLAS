@@ -173,8 +173,8 @@ GrB_Info GB (_AunionB__lxor_uint8)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_A_TYPE alpha_scalar = (*((GB_A_TYPE *) alpha_scalar_in)) ;
-    GB_B_TYPE beta_scalar  = (*((GB_B_TYPE *) beta_scalar_in )) ;
+    GB_X_TYPE alpha_scalar = (*((GB_X_TYPE *) alpha_scalar_in)) ;
+    GB_Y_TYPE beta_scalar  = (*((GB_Y_TYPE *) beta_scalar_in )) ;
     #define GB_IS_EWISEUNION 1
     #include "GB_add_template.c"
     return (GrB_SUCCESS) ;

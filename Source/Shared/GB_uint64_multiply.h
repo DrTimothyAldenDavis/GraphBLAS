@@ -53,7 +53,7 @@ GB_STATIC_INLINE bool GB_uint64_multiply    // c = a*b, return true if ok
     uint64_t a0 = a & 0x3FFFFFFFL ;
 
     // b = b1 * 2^30 + b0
-    uint64_t b0 = b & 0x3FFFFFFFL;
+    uint64_t b0 = b & 0x3FFFFFFFL ;
 
     // a*b = (a1*b1) * 2^60 + (a1*b0 + a0*b1) * 2^30 + a0*b0
 

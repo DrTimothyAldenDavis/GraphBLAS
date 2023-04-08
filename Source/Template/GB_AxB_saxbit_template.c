@@ -39,7 +39,7 @@
     const int8_t *restrict Bb = B->b ;
     const int64_t bvlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
-    const int64_t bnz = GB_nnz_held (B) ;
+    GB_B_NHELD (bnz) ;      // const int64_t bnz = GB_nnz_held (B) ;
 
     #ifdef GB_JIT_KERNEL
     #define B_iso GB_B_ISO
@@ -61,7 +61,7 @@
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
     const bool A_jumbled = A->jumbled ;
-    const int64_t anz = GB_nnz_held (A) ;
+    GB_A_NHELD (anz) ;      // const int64_t anz = GB_nnz_held (A) ;
 
     #ifdef GB_JIT_KERNEL
     #define A_iso GB_A_ISO

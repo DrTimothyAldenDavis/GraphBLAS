@@ -71,12 +71,15 @@ GrB_Info GB_subassign_jit
         (GB_Operator) accum, C->type, atype, NULL) ;
     if (info != GrB_SUCCESS) return (info) ;
 
+    double chunk = GB_Context_chunk ( ) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+
     //--------------------------------------------------------------------------
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, I, ni, nI, Icolon, J, nj, nJ, Jcolon, M, A,
-        scalar, Werk)) ;
+        scalar, nthreads_max, chunk, Werk)) ;
 }
 

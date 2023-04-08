@@ -33,6 +33,7 @@ void GB_macrofy_output
     //--------------------------------------------------------------------------
 
     GB_macrofy_sparsity (fp, Cname, csparsity) ;
+    GB_macrofy_nvals (fp, Cname, csparsity, C_iso && C_in_iso) ;
     fprintf (fp, "#define GB_%s_ISO %d\n", Cname, C_iso ? 1 : 0) ;
     fprintf (fp, "#define GB_%s_IN_ISO %d\n", Cname, C_in_iso ? 1 : 0) ;
 

@@ -30,7 +30,7 @@
     const int8_t   *restrict Ab = A->b ;
     const int64_t  *restrict Ai = A->i ;
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
-    int64_t anz = GB_nnz_held (A) ;
+    GB_A_NHELD (anz) ;      // int64_t anz = GB_nnz_held (A) ;
     ASSERT (anz > 0) ;
     #ifdef GB_JIT_KERNEL
     #define A_has_zombies GB_A_HAS_ZOMBIES

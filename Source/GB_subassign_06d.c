@@ -69,6 +69,9 @@ GrB_Info GB_subassign_06d
 
     const GB_Type_code ccode = C->type->code ;
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // Method 06d: C(:,:)<A> = A ; no S; C is dense, M and A are aliased
     //--------------------------------------------------------------------------

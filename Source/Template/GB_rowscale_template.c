@@ -41,7 +41,7 @@
     #endif
 
     const int64_t *restrict Bi = B->i ;
-    const int64_t bnz = GB_nnz (B) ;
+    GB_B_NVALS (bnz) ;      // const int64_t bnz = GB_nnz (B) ;
     const int64_t bvlen = B->vlen ;
 
     //--------------------------------------------------------------------------

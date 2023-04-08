@@ -105,6 +105,9 @@ GrB_Info GB_subassign_25
     // C<M> = A for built-in types
     //--------------------------------------------------------------------------
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     info = GrB_NO_VALUE ;
 
     if (C_iso)

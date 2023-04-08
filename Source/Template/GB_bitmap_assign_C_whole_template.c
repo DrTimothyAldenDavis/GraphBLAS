@@ -21,7 +21,7 @@
 
 {
     // iterate over all of C(:,:).
-    int nthreads = GB_nthreads (cnzmax, chunk, nthreads_max) ;
+    const int nthreads = GB_nthreads (cnzmax, chunk, nthreads_max) ;
     int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(static) \
         reduction(+:cnvals)

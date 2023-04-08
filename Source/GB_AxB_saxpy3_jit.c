@@ -57,6 +57,9 @@ GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
         NULL, C->type, A->type, B->type) ;
     if (info != GrB_SUCCESS) return (info) ;
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
@@ -64,6 +67,6 @@ GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, M, M_in_place, A, B,
         (GB_saxpy3task_struct *) SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-        Werk)) ;
+        nthreads_max, chunk, Werk)) ;
 }
 
