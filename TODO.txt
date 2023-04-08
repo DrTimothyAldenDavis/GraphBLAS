@@ -1,5 +1,7 @@
 TODO:
 
+Add JIT control get/set to @GrB MATLAB interface
+
 Use function pointers to any required GB* routines in a single struct, so the
 JIT can pass it to each JIT kernel.  Then the JIT kernel does not need to
 be linked against libgraphblas.so itself.
