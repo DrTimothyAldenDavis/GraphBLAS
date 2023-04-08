@@ -56,9 +56,11 @@
 
 #define GB_IS_PLUS_FC64_MONOID 1
 
+#define GB_Z_IS_COMPLEX 1
+
 // special case multipliers:
 #define GB_IS_PAIR_MULTIPLIER 1
-#define GB_PAIR_ONE GB_CMPLX64 (1,0)
+#define GB_PAIR_ONE GxB_CMPLX (1,0)
 
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \

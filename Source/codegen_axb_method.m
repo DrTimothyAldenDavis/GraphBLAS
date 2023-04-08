@@ -312,9 +312,9 @@ if (is_pair)
         '#define GB_IS_PAIR_MULTIPLIER 1') ;
     switch (ztype)
         case { 'GxB_FC32_t' }
-            one = '#define GB_PAIR_ONE GB_CMPLX32 (1,0)' ;
+            one = '#define GB_PAIR_ONE GxB_CMPLXF (1,0)' ;
         case { 'GxB_FC64_t' }
-            one = '#define GB_PAIR_ONE GB_CMPLX64 (1,0)' ;
+            one = '#define GB_PAIR_ONE GxB_CMPLX (1,0)' ;
         otherwise
     end
 else
@@ -400,6 +400,12 @@ if (is_plus && is_pair && isequal (ztype, 'GxB_FC64_t'))
         '#define GB_IS_PLUS_FC64_PAIR_SEMIRING 1') ;
 else
     fprintf (f, 'm4_define(`GB_is_plus_fc64_pair_semiring'', `'')\n') ;
+end
+
+if (codegen_contains (ztype, 'GxB_FC'))
+    fprintf (f, 'm4_define(`GB_ztype_is_complex'', `#define GB_Z_IS_COMPLEX 1'')\n') ;
+else
+    fprintf (f, 'm4_define(`GB_ztype_is_complex'', `'')\n') ;
 end
 
 %-------------------------------------------------------------------------------

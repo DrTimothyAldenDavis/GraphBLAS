@@ -52,6 +52,8 @@
 
 #define GB_MONOID_IS_TERMINAL 1
 
+#define GB_Z_IS_COMPLEX 1
+
 // special case multipliers:
 
 // disable this semiring and use the generic case if these conditions hold

@@ -51,6 +51,8 @@
 
 #define GB_Z_IGNORE_OVERFLOW 1
 
+#define GB_Z_IS_COMPLEX 1
+
 // special case multipliers:
 
 // disable this semiring and use the generic case if these conditions hold

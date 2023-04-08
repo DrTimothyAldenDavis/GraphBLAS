@@ -77,6 +77,7 @@ GB_monoid_is_terminal
 GB_terminal_condition
 GB_if_terminal_break
 GB_declare_const_terminal
+GB_ztype_is_complex
 
 // special case multipliers:
 GB_is_pair_multiplier

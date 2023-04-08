@@ -795,8 +795,14 @@ void GB_macrofy_binop
             case 131 : f = "z = GB_CMPLX32 (x, y)" ; break ;
             case 132 : f = "z = GB_CMPLX64 (x, y)" ; break ;
 
-            // pair
+            // pair, real
             case 133 : f = "z = 1" ; break ;
+
+            // pair, single complex
+            case 148 : f = "z = GxB_CMPLXF (1,0)" ; break ;
+
+            // pair, double complex
+            case 149 : f = "z = GxB_CMPLX (1,0)" ; break ;
 
             //------------------------------------------------------------------
             // positional ops

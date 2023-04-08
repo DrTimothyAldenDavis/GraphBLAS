@@ -252,18 +252,13 @@
 // GB_MULT_A_ik_B_kj: declare t and compute t = A(i,k) * B(k,j)
 //------------------------------------------------------------------------------
 
-#if GB_IS_PAIR_MULTIPLIER
+#if ( GB_IS_PAIR_MULTIPLIER && !GB_Z_IS_COMPLEX )
 
     // PAIR multiplier: t is always 1; no numeric work to do to compute t.
     // The LXOR_PAIR and PLUS_PAIR semirings need the value t = 1 to use in
     // their monoid operator, however.
-    #if GB_Z_IS_COMPLEX
-    #define GB_MULT_A_ik_B_kj                                       \
-        const GB_Z_TYPE t = GB_PAIR_ONE
-    #else
     #define t GB_PAIR_ONE
     #define GB_MULT_A_ik_B_kj
-    #endif
 
 #elif ( GB_IS_FIRSTJ_MULTIPLIER || GB_IS_SECONDJ_MULTIPLIER )
 
