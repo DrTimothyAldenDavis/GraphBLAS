@@ -410,6 +410,19 @@ GrB_Info GB_jitifyer_init (void)
         }
     }
 
+    //--------------------------------------------------------------------------
+    // enable the JIT
+    //--------------------------------------------------------------------------
+
+    GB_jit_control =
+        #if GB_JIT_ENABLED
+        GxB_JIT_ON ;        // JIT enabled
+        #else
+        GxB_JIT_RUN ;       // JIT disabled at compile time; only PreJIT available.
+                            // No JIT kernels can be loaded or compiled.
+        #endif
+
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 
@@ -929,6 +942,10 @@ bool GB_jitifyer_query
 )
 {
 
+    //--------------------------------------------------------------------------
+    // get the terms to query
+    //--------------------------------------------------------------------------
+
     int version [3] ;
     char *library_defn [5] ;
     size_t zsize = 0 ;
@@ -961,6 +978,10 @@ bool GB_jitifyer_query
         term = monoid->terminal ;
     }
 
+    //--------------------------------------------------------------------------
+    // query the JIT kernel for its definitions
+    //--------------------------------------------------------------------------
+
     uint64_t hash2 = 0 ;
     bool ok = dl_query (&hash2, version, library_defn, id, term,
         zsize, tsize) ;
@@ -968,6 +989,10 @@ bool GB_jitifyer_query
                (version [1] == GxB_IMPLEMENTATION_MINOR) &&
                (version [2] == GxB_IMPLEMENTATION_SUB) &&
                (hash == hash2) ;
+
+    //--------------------------------------------------------------------------
+    // compare current definitions with the ones in the JIT kernel
+    //--------------------------------------------------------------------------
 
     char *defn [5] ;
     defn [0] = (op1 == NULL) ? NULL : op1->defn ;
