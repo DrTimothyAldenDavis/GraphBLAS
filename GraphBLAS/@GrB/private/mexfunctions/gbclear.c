@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// This method does not clear the JIT hash table.  To do that, use:
+//
+//      GrB.jit ('off') ; GrB.jit ('on') ;
+
 #include "gb_interface.h"
 
 void mexFunction

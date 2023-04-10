@@ -29,6 +29,5 @@ void gb_at_exit ( void )
     // both of them.
 
     GrB_finalize ( ) ; GB_Global_GrB_init_called_set (false) ;
-    mexPrintf ("GrB: finalized\n") ;
 }
 
