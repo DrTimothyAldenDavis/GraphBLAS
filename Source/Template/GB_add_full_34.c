@@ -20,7 +20,7 @@
         { 
             // C (i,j) = alpha + B(i,j)
             GB_LOAD_B (bij, Bx, p, B_iso) ;
-            GB_BINOP (GB_CX (p), alpha_scalar, bij, p % vlen, p / vlen) ;
+            GB_EWISEOP (Cx, p, alpha_scalar, bij, p % vlen, p / vlen) ;
         }
         #else
         { 
@@ -54,7 +54,7 @@
                 int64_t p = pC_start + i ;
                 GB_LOAD_A (aij, Ax, pA, A_iso) ;
                 GB_LOAD_B (bij, Bx, p , B_iso) ;
-                GB_BINOP (GB_CX (p), aij, bij, i, j) ;
+                GB_EWISEOP (Cx, p, aij, bij, i, j) ;
             }
         }
     }

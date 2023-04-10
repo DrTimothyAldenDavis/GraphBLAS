@@ -322,24 +322,21 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
                     cast_B (bij, Bx +(B_iso ? 0:(pB)*bsize), bsize) ;   \
                 }
 
-            // address of Cx [p]
-            #define GB_CX(p) Cx +((p)*csize)
-
             #define GB_C_TYPE GB_void
 
             #include "GB_ewise_shared_definitions.h"
 
             if (flipxy)
             { 
-                #define GB_BINOP(z,x,y,i,j) fmult (z,y,x)
+                #undef  GB_EWISEOP
+                #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),y,x)
                 #include "GB_rowscale_template.c"
-                #undef GB_BINOP
             }
             else
             { 
-                #define GB_BINOP(z,x,y,i,j) fmult (z,x,y)
+                #undef  GB_EWISEOP
+                #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),y,x)
                 #include "GB_rowscale_template.c"
-                #undef GB_BINOP
             }
             info = GrB_SUCCESS ;
         }

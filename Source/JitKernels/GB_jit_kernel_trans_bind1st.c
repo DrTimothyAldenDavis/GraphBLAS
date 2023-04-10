@@ -12,7 +12,7 @@
 {                                               \
     GB_DECLAREB (aij) ;                         \
     GB_GETB (aij, Ax, pA, false) ;              \
-    GB_BINOP (Cx [pC], x, aij, 0, 0) ;          \
+    GB_EWISEOP (Cx, pC, x, aij, 0, 0) ;         \
 }
 
 GB_JIT_KERNEL_TRANS_BIND1ST_PROTO (GB_jit_kernel) ;

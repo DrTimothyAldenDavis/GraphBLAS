@@ -39,7 +39,7 @@
                 GB_GETA (aij, Ax, pA, A_iso) ;
                 GB_DECLAREB (bij) ;
                 GB_GETB (bij, Bx, pB, B_iso) ;
-                GB_BINOP (GB_CX (pA), aij, bij, i, j) ;
+                GB_EWISEOP (Cx, pA, aij, bij, i, j) ;
                 #endif
             }
         }

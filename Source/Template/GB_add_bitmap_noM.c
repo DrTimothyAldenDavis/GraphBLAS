@@ -27,14 +27,17 @@
     {
         #if (GB_A_IS_BITMAP && GB_B_IS_BITMAP)
         {
+            // A and B are both bitmap
             #include "GB_add_bitmap_noM_21.c"
         }
         #elif (GB_A_IS_BITMAP)
         {
+            // A is bitmap, B is sparse/hyper
             #include "GB_add_bitmap_noM_22.c"
         }
         #else
         {
+            // A is sparse/hyper, B is bitmap
             #include "GB_add_bitmap_noM_23.c"
         }
         #endif

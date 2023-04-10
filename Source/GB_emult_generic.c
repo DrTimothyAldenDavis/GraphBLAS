@@ -126,14 +126,15 @@ GrB_Info GB_emult_generic       // generic emult
             cast_B_to_Y (bij, Bx +((B_iso) ? 0:(pB)*bsize), bsize) ;    \
         }
 
-    // address of Cx [p]
-    #define GB_CX(p) Cx +((p)*csize)
-
     #include "GB_ewise_shared_definitions.h"
 
     //--------------------------------------------------------------------------
     // do the ewise operation
     //--------------------------------------------------------------------------
+
+    // C (i,j) = (ctype) z
+    #undef  GB_PUTC
+    #define GB_PUTC(z, Cx, p) cast_Z_to_C (Cx +((p)*csize), &z, csize)
 
     if (op_is_positional)
     { 
@@ -153,10 +154,21 @@ GrB_Info GB_emult_generic       // generic emult
 
         if (op->ztype == GrB_INT64)
         {
+
+            // z = op (aij, bij)
             #undef  GB_BINOP
-            #define GB_BINOP(cij, aij, bij, i, j)                         \
-                int64_t z = ((index_is_i) ? i : j) + offset ;             \
-                cast_Z_to_C (cij, &z, csize) ;
+            #define GB_BINOP(z,x,y,i,j)                             \
+                z = ((index_is_i)? (i):(j)) + offset
+
+            // C(i,j) = positional_op (aij, bij)
+            #undef  GB_EWISEOP
+            #define GB_EWISEOP(Cx, p, aij, bij, i, j)               \
+            {                                                       \
+                int64_t z ;                                         \
+                GB_BINOP (z, , , i, j) ;                            \
+                GB_PUTC (z, Cx, p) ;                                \
+            }
+
             if (ewise_method == GB_EMULT_METHOD2)
             {
                 // C=A.*B or C<#M>=A.*B; A sparse/hyper; M and B bitmap/full
@@ -188,10 +200,17 @@ GrB_Info GB_emult_generic       // generic emult
         }
         else
         {
-            #undef  GB_BINOP
-            #define GB_BINOP(cij, aij, bij, i, j)                         \
-                int32_t z = (int32_t) (((index_is_i) ? i : j) + offset) ; \
-                cast_Z_to_C (cij, &z, csize) ;
+
+            // C(i,j) = positional_op (aij, bij)
+            #undef  GB_EWISEOP
+            #define GB_EWISEOP(Cx, p, aij, bij, i, j)               \
+            {                                                       \
+                int64_t z ;                                         \
+                GB_BINOP (z, , , i, j) ;                            \
+                int32_t z32 = (int32_t) z ;                         \
+                GB_PUTC (z32, Cx, p) ;                              \
+            }
+
             if (ewise_method == GB_EMULT_METHOD2)
             {
                 // C=A.*B or C<#M>=A.*B; A sparse/hyper; M and B bitmap/full
@@ -230,11 +249,20 @@ GrB_Info GB_emult_generic       // generic emult
         // standard binary operator
         //----------------------------------------------------------------------
 
+        // z = op (aij, bij)
         #undef  GB_BINOP
-        #define GB_BINOP(cij, aij, bij, i, j)   \
-            GB_void z [GB_VLA(zsize)] ;         \
-            fop (z, aij, bij) ;                 \
-            cast_Z_to_C (cij, z, csize) ;
+        #define GB_BINOP(z, aij, bij, i, j)             \
+            ASSERT (fop != NULL) ;                      \
+            fop (z, aij, bij) ;
+
+        // C(i,j) = (ctype) (A(i,j) + B(i,j))
+        #undef  GB_EWISEOP
+        #define GB_EWISEOP(Cx, p, aij, bij, i, j)       \
+        {                                               \
+            GB_void z [GB_VLA(zsize)] ;                 \
+            GB_BINOP (z, aij, bij, i, j) ;              \
+            GB_PUTC (z, Cx, p) ;                        \
+        }
 
         // C(i,j) = (ctype) (A(i,j) + B(i,j))
         if (ewise_method == GB_EMULT_METHOD2)

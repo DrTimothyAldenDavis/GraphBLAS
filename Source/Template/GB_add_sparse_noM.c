@@ -75,7 +75,7 @@
             #ifndef GB_ISO_ADD
             GB_LOAD_A (aij, Ax, pA + p, A_iso) ;
             GB_LOAD_B (bij, Bx, pB + p, B_iso) ;
-            GB_BINOP (GB_CX (pC + p), aij, bij, i, j) ;
+            GB_EWISEOP (Cx, pC + p, aij, bij, i, j) ;
             #endif
         }
         #endif
@@ -103,7 +103,7 @@
             { 
                 // C (i,j) = A(i,j) + beta
                 GB_LOAD_A (aij, Ax, pA+p, A_iso) ;
-                GB_BINOP (GB_CX (pC+p), aij, beta_scalar, i, j) ;
+                GB_EWISEOP (Cx, pC+p, aij, beta_scalar, i, j) ;
             }
             #else
             { 
@@ -123,7 +123,7 @@
             #ifndef GB_ISO_ADD
             GB_LOAD_A (aij, Ax, pA + ii, A_iso) ;
             GB_LOAD_B (bij, Bx, pB + p, B_iso) ;
-            GB_BINOP (GB_CX (pC + ii), aij, bij, i, j) ;
+            GB_EWISEOP (Cx, pC + ii, aij, bij, i, j) ;
             #endif
         }
         #endif
@@ -156,7 +156,7 @@
                 // 2019, only for the FIRST_FC32 and SECOND_FC32 operators.  As
                 // a workaround, this template is not used for those operators
                 // when compiling GraphBLAS with this compiler.
-                GB_BINOP (GB_CX (pC+p), alpha_scalar, bij, i, j) ;
+                GB_EWISEOP (Cx, pC+p, alpha_scalar, bij, i, j) ;
             }
             #else
             { 
@@ -176,7 +176,7 @@
             #ifndef GB_ISO_ADD
             GB_LOAD_A (aij, Ax, pA + p, A_iso) ;
             GB_LOAD_B (bij, Bx, pB + ii, B_iso) ;
-            GB_BINOP (GB_CX (pC + ii), aij, bij, i, j) ;
+            GB_EWISEOP (Cx, pC + ii, aij, bij, i, j) ;
             #endif
         }
         #endif
@@ -202,7 +202,7 @@
             { 
                 // C (i,j) = alpha + B(i,j)
                 GB_LOAD_B (bij, Bx, pB+p, B_iso) ;
-                GB_BINOP (GB_CX (pC+p), alpha_scalar, bij, Bi [pB+p], j) ;
+                GB_EWISEOP (Cx, pC+p, alpha_scalar, bij, Bi [pB+p], j) ;
             }
             #else
             { 
@@ -235,7 +235,7 @@
             { 
                 // C (i,j) = A(i,j) + beta
                 GB_LOAD_A (aij, Ax, pA+p, A_iso) ;
-                GB_BINOP (GB_CX (pC+p), aij, beta_scalar, Ai [pA+p], j) ;
+                GB_EWISEOP (Cx, pC+p, aij, beta_scalar, Ai [pA+p], j) ;
             }
             #else
             { 
@@ -268,7 +268,7 @@
             { 
                 // C (i,j) = A(i,j) + beta
                 GB_LOAD_A (aij, Ax, pA+p, A_iso) ;
-                GB_BINOP (GB_CX (pC+p), aij, beta_scalar, Ai [pA+p], j) ;
+                GB_EWISEOP (Cx, pC+p, aij, beta_scalar, Ai [pA+p], j) ;
             }
             #else
             { 
@@ -288,7 +288,7 @@
             { 
                 // C (i,j) = alpha + B(i,j)
                 GB_LOAD_B (bij, Bx, pB+p, B_iso) ;
-                GB_BINOP (GB_CX (pC+p), alpha_scalar, bij, Bi [pB+p], j) ;
+                GB_EWISEOP (Cx, pC+p, alpha_scalar, bij, Bi [pB+p], j) ;
             }
             #else
             { 
@@ -321,7 +321,7 @@
             { 
                 // C (i,j) = alpha + B(i,j)
                 GB_LOAD_B (bij, Bx, pB+p, B_iso) ;
-                GB_BINOP (GB_CX (pC+p), alpha_scalar, bij, Bi [pB+p], j) ;
+                GB_EWISEOP (Cx, pC+p, alpha_scalar, bij, Bi [pB+p], j) ;
             }
             #else
             { 
@@ -341,7 +341,7 @@
             { 
                 // C (i,j) = A(i,j) + beta
                 GB_LOAD_A (aij, Ax, pA+p, A_iso) ;
-                GB_BINOP (GB_CX (pC+p), aij, beta_scalar, Ai [pA+p], j) ;
+                GB_EWISEOP (Cx, pC+p, aij, beta_scalar, Ai [pA+p], j) ;
             }
             #else
             { 
@@ -420,7 +420,7 @@
                 { 
                     // C (iA,j) = A(iA,j) + beta
                     GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                    GB_BINOP (GB_CX (pC), aij, beta_scalar, iA, j) ;
+                    GB_EWISEOP (Cx, pC, aij, beta_scalar, iA, j) ;
                 }
                 #else
                 { 
@@ -441,7 +441,7 @@
                 { 
                     // C (iB,j) = alpha + B(iB,j)
                     GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                    GB_BINOP (GB_CX (pC), alpha_scalar, bij, iB, j) ;
+                    GB_EWISEOP (Cx, pC, alpha_scalar, bij, iB, j) ;
                 }
                 #else
                 { 
@@ -461,7 +461,7 @@
                 #ifndef GB_ISO_ADD
                 GB_LOAD_A (aij, Ax, pA, A_iso) ;
                 GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                GB_BINOP (GB_CX (pC), aij, bij, iB, j) ;
+                GB_EWISEOP (Cx, pC, aij, bij, iB, j) ;
                 #endif
                 #endif
                 pA++ ;
@@ -492,7 +492,7 @@
             { 
                 // C (i,j) = A(i,j) + beta
                 GB_LOAD_A (aij, Ax, pA+p, A_iso) ;
-                GB_BINOP (GB_CX (pC+p), aij, beta_scalar, Ai [pA+p], j) ;
+                GB_EWISEOP (Cx, pC+p, aij, beta_scalar, Ai [pA+p], j) ;
             }
             #else
             { 
@@ -510,7 +510,7 @@
             { 
                 // C (i,j) = alpha + B(i,j)
                 GB_LOAD_B (bij, Bx, pB+p, B_iso) ;
-                GB_BINOP (GB_CX (pC+p), alpha_scalar, bij, Bi [pB+p], j) ;
+                GB_EWISEOP (Cx, pC+p, alpha_scalar, bij, Bi [pB+p], j) ;
             }
             #else
             { 

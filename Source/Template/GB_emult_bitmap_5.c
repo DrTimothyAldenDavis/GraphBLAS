@@ -39,7 +39,7 @@
                 GB_GETA (aij, Ax, p, A_iso) ;
                 GB_DECLAREB (bij) ;
                 GB_GETB (bij, Bx, p, B_iso) ;
-                GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
+                GB_EWISEOP (Cx, p, aij, bij, p % vlen, p / vlen) ;
                 #endif
                 Cb [p] = 1 ;
                 task_cnvals++ ;

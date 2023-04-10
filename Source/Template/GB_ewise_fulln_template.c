@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+//  This template is not used for any generic kernels.
+
 #include "GB_unused.h"
 
 {
@@ -32,65 +34,15 @@
     // C = A+B where all 3 matrices are full
     //--------------------------------------------------------------------------
 
-    #if GB_CTYPE_IS_BTYPE
-
-    if (C == B)
-    {
-
-        //----------------------------------------------------------------------
-        // C = A+C where A and C are full
-        //----------------------------------------------------------------------
-
-        // C and B cannot be aliased if their types differ
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (p = 0 ; p < cnz ; p++)
-        { 
-            GB_DECLAREA (aij) ;
-            GB_GETA (aij, Ax, p, false) ;                // aij = Ax [p]
-            GB_BINOP (GB_CX (p), aij, GB_CX (p), 0, 0) ; // Cx [p] = aij+Cx [p]
-        }
-
-    }
-    else 
-    #endif
-
-    #if GB_CTYPE_IS_ATYPE
-
-    if (C == A)
-    {
-
-        //----------------------------------------------------------------------
-        // C = C+B where B and C are full
-        //----------------------------------------------------------------------
-
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (p = 0 ; p < cnz ; p++)
-        { 
-            GB_DECLAREB (bij) ;
-            GB_GETB (bij, Bx, p, false) ;                   // bij = Bx [p]
-            GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;    // Cx [p] += bij
-        }
-
-    }
-    else
-    #endif
-
-    {
-
-        //----------------------------------------------------------------------
-        // C = A+B where all 3 matrices are full
-        //----------------------------------------------------------------------
-
-        // note that A and B may still be aliased to each other
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (p = 0 ; p < cnz ; p++)
-        { 
-            GB_DECLAREA (aij) ;
-            GB_GETA (aij, Ax, p, false) ;               // aij = Ax [p]
-            GB_DECLAREB (bij) ;
-            GB_GETB (bij, Bx, p, false) ;               // bij = Bx [p]
-            GB_BINOP (GB_CX (p), aij, bij, 0, 0) ;      // Cx [p] = aij + bij
-        }
+    // note that A, B and C may all be aliased to each other, in any way
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
+    for (p = 0 ; p < cnz ; p++)
+    { 
+        GB_DECLAREA (aij) ;
+        GB_GETA (aij, Ax, p, false) ;               // aij = Ax [p]
+        GB_DECLAREB (bij) ;
+        GB_GETB (bij, Bx, p, false) ;               // bij = Bx [p]
+        GB_EWISEOP (Cx, p, aij, bij, 0, 0) ;        // Cx [p] = aij + bij
     }
 }
 

@@ -65,7 +65,7 @@
             GB_GETA (dii, Dx, i, D_iso) ;           // dii = D(i,i)
             GB_DECLAREB (bij) ;
             GB_GETB (bij, Bx, p, B_iso) ;           // bij = B(i,j)
-            GB_BINOP (GB_CX (p), dii, bij, 0, 0) ;  // C(i,j) = dii*bij
+            GB_EWISEOP (Cx, p, dii, bij, 0, 0) ;    // C(i,j) = dii*bij
         }
     }
 }

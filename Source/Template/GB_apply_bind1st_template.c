@@ -18,7 +18,7 @@
         if (!GBB_B (Bb, p)) continue ;
         GB_DECLAREB (bij) ;
         GB_GETB (bij, Bx, p, false) ;
-        GB_BINOP (Cx [p], x, bij, 0, 0) ;
+        GB_EWISEOP (Cx, p, x, bij, 0, 0) ;
     }
 }
 

@@ -98,6 +98,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     // set C->iso = C_iso   OK
     GB_OK (GB_dup_worker (&C, C_iso, A, false, ztype)) ;
     info = GrB_NO_VALUE ;
+    ASSERT (C->type == ztype) ;
 
     //--------------------------------------------------------------------------
     // C = A*D, column scale, compute numerical values
@@ -337,24 +338,21 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
                     cast_D (djj, Dx +(D_iso ? 0:(j)*dsize), dsize) ;    \
                 }
 
-            // address of Cx [p]
-            #define GB_CX(p) Cx +((p)*csize)
-
             #define GB_C_TYPE GB_void
 
             #include "GB_ewise_shared_definitions.h"
 
             if (flipxy)
             { 
-                #define GB_BINOP(z,x,y,i,j) fmult (z,y,x)
+                #undef  GB_EWISEOP
+                #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),y,x)
                 #include "GB_colscale_template.c"
-                #undef GB_BINOP
             }
             else
             { 
-                #define GB_BINOP(z,x,y,i,j) fmult (z,x,y)
+                #undef  GB_EWISEOP
+                #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),x,y)
                 #include "GB_colscale_template.c"
-                #undef GB_BINOP
             }
             info = GrB_SUCCESS ;
         }

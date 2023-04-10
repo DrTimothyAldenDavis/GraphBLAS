@@ -91,7 +91,7 @@
                     GB_GETA (aij, Ax, p, A_iso) ;
                     GB_DECLAREB (bij) ;
                     GB_GETB (bij, Bx, p, B_iso) ;
-                    GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
+                    GB_EWISEOP (Cx, pC, aij, bij, i, j) ;
                     #endif
                     pC++ ;
                 }

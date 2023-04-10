@@ -148,6 +148,25 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, C_iso,
         false) ;
 
+    fprintf (fp, "#define GB_EWISEOP(Cx,p,aij,bij,i,j)") ;
+    if (C_iso)
+    {
+        fprintf (fp, "\n") ;
+    }
+    else if (ctype == ztype)
+    {
+        fprintf (fp, " GB_BINOP (Cx [p], aij, bij, i, j)\n") ;
+    }
+    else
+    {
+        fprintf (fp, " \\\n"
+            "{                                      \\\n"
+            "    GB_Z_TYPE z ;                      \\\n"
+            "    GB_BINOP (z, aij, bij, i, j) ;     \\\n"
+            "    GB_PUTC (z, Cx, p) ;               \\\n"
+            "}\n") ;
+    }
+
     //--------------------------------------------------------------------------
     // construct the macros to access the mask (if any), and its name
     //--------------------------------------------------------------------------

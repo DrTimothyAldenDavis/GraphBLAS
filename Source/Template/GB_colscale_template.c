@@ -86,7 +86,7 @@
             { 
                 GB_DECLAREA (aij) ;
                 GB_GETA (aij, Ax, p, A_iso) ;           // aij = A(i,j)
-                GB_BINOP (GB_CX (p), aij, djj, 0, 0) ;  // C(i,j) = aij * djj
+                GB_EWISEOP (Cx, p, aij, djj, 0, 0) ;    // C(i,j) = aij * djj
             }
         }
     }

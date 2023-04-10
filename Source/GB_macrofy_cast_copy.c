@@ -30,18 +30,22 @@ void GB_macrofy_cast_copy
 )
 {
 
+    int nargs = 0 ;
+    const char *f = NULL ;
+    if (ctype != NULL && atype != NULL)
+    { 
+        f = GB_macrofy_cast_expression (fp, ctype, atype, &nargs) ;
+    }
+
     fprintf (fp, "#define GB_COPY_%s_to_%s(%sx,p%s,%sx,p%s,%s_iso)",
         aname, cname, cname, cname, aname, aname, aname) ;
 
     if (ctype == NULL || atype == NULL)
-    {
+    { 
         // empty macro if atype or ctype are NULL (value not needed)
         fprintf (fp, "\n") ;
         return ;
     }
-
-    int nargs ;
-    const char *f = GB_macrofy_cast_expression (fp, ctype, atype, &nargs) ;
 
     #define SLEN 256
     char carg [SLEN+1] ;

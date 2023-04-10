@@ -74,7 +74,7 @@
                 #ifndef GB_ISO_ADD
                 GB_LOAD_A (aij, Ax, pA + p, A_iso) ;
                 GB_LOAD_B (bij, Bx, pB + p, B_iso) ;
-                GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
+                GB_EWISEOP (Cx, pC, aij, bij, i, j) ;
                 #endif
                 pC++ ;
                 #endif
@@ -105,7 +105,7 @@
                 { 
                     // C (i,j) = alpha + B(i,j)
                     GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                    GB_BINOP (GB_CX (pC), alpha_scalar, bij, i, j) ;
+                    GB_EWISEOP (Cx, pC, alpha_scalar, bij, i, j) ;
                 }
                 #else
                 { 
@@ -142,7 +142,7 @@
                 { 
                     // C (i,j) = A(i,j) + beta
                     GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                    GB_BINOP (GB_CX (pC), aij, beta_scalar, i, j) ;
+                    GB_EWISEOP (Cx, pC, aij, beta_scalar, i, j) ;
                 }
                 #else
                 { 
@@ -179,7 +179,7 @@
                 { 
                     // C (i,j) = A(i,j) + beta
                     GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                    GB_BINOP (GB_CX (pC), aij, beta_scalar, i, j) ;
+                    GB_EWISEOP (Cx, pC, aij, beta_scalar, i, j) ;
                 }
                 #else
                 { 
@@ -208,7 +208,7 @@
                 { 
                     // C (i,j) = alpha + B(i,j)
                     GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                    GB_BINOP (GB_CX (pC), alpha_scalar, bij, i, j) ;
+                    GB_EWISEOP (Cx, pC, alpha_scalar, bij, i, j) ;
                 }
                 #else
                 { 
@@ -246,7 +246,7 @@
                 { 
                     // C (i,j) = alpha + B(i,j)
                     GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                    GB_BINOP (GB_CX (pC), alpha_scalar, bij, i, j) ;
+                    GB_EWISEOP (Cx, pC, alpha_scalar, bij, i, j) ;
                 }
                 #else
                 { 
@@ -275,7 +275,7 @@
                 { 
                     // C (i,j) = A(i,j) + beta
                     GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                    GB_BINOP (GB_CX (pC), aij, beta_scalar, i, j) ;
+                    GB_EWISEOP (Cx, pC, aij, beta_scalar, i, j) ;
                 }
                 #else
                 { 
@@ -315,8 +315,7 @@
                     { 
                         // C (iA,j) = A(iA,j) + beta
                         GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                        GB_BINOP (GB_CX (pC), aij, beta_scalar,
-                            iA, j);
+                        GB_EWISEOP (Cx, pC, aij, beta_scalar, iA, j);
                     }
                     #else
                     { 
@@ -345,8 +344,7 @@
                     { 
                         // C (iB,j) = alpha + B(iB,j)
                         GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                        GB_BINOP (GB_CX (pC), alpha_scalar, bij,
-                            iB, j) ;
+                        GB_EWISEOP (Cx, pC, alpha_scalar, bij, iB, j) ;
                     }
                     #else
                     { 
@@ -373,7 +371,7 @@
                     #ifndef GB_ISO_ADD
                     GB_LOAD_A (aij, Ax, pA, A_iso) ;
                     GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                    GB_BINOP (GB_CX (pC), aij, bij, iB, j) ;
+                    GB_EWISEOP (Cx, pC, aij, bij, iB, j) ;
                     #endif
                     pC++ ;
                     #endif
@@ -402,7 +400,7 @@
                 { 
                     // C (iA,j) = A(iA,j) + beta
                     GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                    GB_BINOP (GB_CX (pC), aij, beta_scalar, iA, j) ;
+                    GB_EWISEOP (Cx, pC, aij, beta_scalar, iA, j) ;
                 }
                 #else
                 { 
@@ -432,8 +430,7 @@
                 { 
                     // C (iB,j) = alpha + B(iB,j)
                     GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                    GB_BINOP (GB_CX (pC), alpha_scalar, bij,
-                        iB, j) ;
+                    GB_EWISEOP (Cx, pC, alpha_scalar, bij, iB, j) ;
                 }
                 #else
                 { 

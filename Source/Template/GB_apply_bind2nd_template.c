@@ -18,7 +18,7 @@
         if (!GBB_A (Ab, p)) continue ;
         GB_DECLAREA (aij) ;
         GB_GETA (aij, Ax, p, false) ;
-        GB_BINOP (Cx [p], aij, y, 0, 0) ;
+        GB_EWISEOP (Cx, p, aij, y, 0, 0) ;
     }
 }
 

@@ -50,7 +50,7 @@
                 GB_GETA (aij, Ax, pA, A_iso) ;
                 GB_DECLAREB (bij) ;
                 GB_GETB (bij, Bx, pB, B_iso) ;
-                GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
+                GB_EWISEOP (Cx, pC, aij, bij, i, j) ;
                 #endif
                 pC++ ;
                 #endif
@@ -88,7 +88,7 @@
                 GB_GETA (aij, Ax, pA, A_iso) ;
                 GB_DECLAREB (bij) ;
                 GB_GETB (bij, Bx, pB, B_iso) ;
-                GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
+                GB_EWISEOP (Cx, pC, aij, bij, i, j) ;
                 #endif
                 pC++ ;
                 #endif
@@ -136,7 +136,7 @@
                 GB_GETA (aij, Ax, pA, A_iso) ;
                 GB_DECLAREB (bij) ;
                 GB_GETB (bij, Bx, pB, B_iso) ;
-                GB_BINOP (GB_CX (pC), aij, bij, iB, j) ;
+                GB_EWISEOP (Cx, pC, aij, bij, iB, j) ;
                 #endif
                 pC++ ;
                 #endif

@@ -113,8 +113,7 @@ GrB_Info GB_ewise_fulla        // C += A+B, all matrices full
 
     if (info == GrB_NO_VALUE)
     {
-        info = GB_ewise_fulla_jit (C, op, A, B,
-            nthreads) ;
+        info = GB_ewise_fulla_jit (C, op, A, B, nthreads) ;
     }
 
     // no generic kernel: returns GrB_NO_VALUE if no factory kernel exists and

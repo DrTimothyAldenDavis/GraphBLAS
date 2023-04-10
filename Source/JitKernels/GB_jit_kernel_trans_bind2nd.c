@@ -13,7 +13,7 @@
 {                                               \
     GB_DECLAREA (aij) ;                         \
     GB_GETA (aij, Ax, pA, false) ;              \
-    GB_BINOP (Cx [pC], aij, y, 0, 0) ;          \
+    GB_EWISEOP (Cx, pC, aij, y, 0, 0) ;         \
 }
 
 GB_JIT_KERNEL_TRANS_BIND2ND_PROTO (GB_jit_kernel) ;

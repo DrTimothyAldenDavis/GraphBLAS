@@ -40,7 +40,7 @@
                     // C (i,j) = A (i,j) + B (i,j)
                     GB_LOAD_A (aij, Ax, p, A_iso) ;
                     GB_LOAD_B (bij, Bx, p, B_iso) ;
-                    GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
+                    GB_EWISEOP (Cx, p, aij, bij, p % vlen, p / vlen) ;
                     c = 1 ;
                 }
                 else if (b)
@@ -49,7 +49,7 @@
                     { 
                         // C (i,j) = alpha + B(i,j)
                         GB_LOAD_B (bij, Bx, p, B_iso) ;
-                        GB_BINOP (GB_CX (p), alpha_scalar, bij,
+                        GB_EWISEOP (Cx, p, alpha_scalar, bij,
                             p % vlen, p / vlen) ;
                     }
                     #else
@@ -66,7 +66,7 @@
                     { 
                         // C (i,j) = A(i,j) + beta
                         GB_LOAD_A (aij, Ax, p, A_iso) ;
-                        GB_BINOP (GB_CX (p), aij, beta_scalar,
+                        GB_EWISEOP (Cx, p, aij, beta_scalar,
                             p % vlen, p / vlen) ;
                     }
                     #else

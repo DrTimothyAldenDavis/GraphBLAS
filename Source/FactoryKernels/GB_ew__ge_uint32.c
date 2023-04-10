@@ -369,7 +369,7 @@ GrB_Info GB (_bind2nd__ge_uint32)
 {                                               \
     GB_DECLAREB (aij) ;                         \
     GB_GETB (aij, Ax, pA, false) ;              \
-    GB_BINOP (Cx [pC], x, aij, 0, 0) ;          \
+    GB_EWISEOP (Cx, pC, x, aij, 0, 0) ;         \
 }
 
 GrB_Info GB (_bind1st_tran__ge_uint32)
@@ -404,7 +404,7 @@ GrB_Info GB (_bind1st_tran__ge_uint32)
 {                                               \
     GB_DECLAREA (aij) ;                         \
     GB_GETA (aij, Ax, pA, false) ;              \
-    GB_BINOP (Cx [pC], aij, y, 0, 0) ;          \
+    GB_EWISEOP (Cx, pC, aij, y, 0, 0) ;         \
 }
 
 GrB_Info GB (_bind2nd_tran__ge_uint32)

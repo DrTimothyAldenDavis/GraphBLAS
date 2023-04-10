@@ -470,9 +470,9 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                 cast_B_to_Y (bij, Bx +((B_iso) ? 0:(pB)*bsize), bsize) ;    \
             }
 
-        // address of Cx [p]
-        #undef  GB_CX
-        #define GB_CX(p) Cx +((p)*csize)
+        // C (i,j) = (ctype) z
+        #undef  GB_PUTC
+        #define GB_PUTC(z, Cx, p) cast_Z_to_C (Cx +((p)*csize), &z, csize)
 
         if (op_is_positional)
         {
@@ -480,6 +480,11 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             //------------------------------------------------------------------
             // C(i,j) = positional_op (aij, bij)
             //------------------------------------------------------------------
+
+            // z = op (aij, bij)
+            #undef  GB_BINOP
+            #define GB_BINOP(z,x,y,i,j)                             \
+                z = (positional_is_i ? (i):(j)) + offset
 
             #define GB_POSITIONAL_OP
             const bool positional_is_i = 
@@ -490,10 +495,16 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             const int64_t offset = GB_positional_offset (opcode, NULL, NULL) ;
             if (op->ztype == GrB_INT64)
             { 
-                #undef  GB_BINOP
-                #define GB_BINOP(cij, aij, bij, i, j)                   \
-                    int64_t z = (positional_is_i ? (i):(j)) + offset ;  \
-                    cast_Z_to_C (cij, &z, csize) ;
+
+                // C(i,j) = positional_op (aij, bij)
+                #undef  GB_EWISEOP
+                #define GB_EWISEOP(Cx, p, aij, bij, i, j)               \
+                {                                                       \
+                    int64_t z ;                                         \
+                    GB_BINOP (z, , , i, j) ;                            \
+                    GB_PUTC (z, Cx, p) ;                                \
+                }
+
                 if (is_eWiseUnion)
                 {
                     #define GB_IS_EWISEUNION 1
@@ -507,11 +518,17 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             }
             else
             { 
-                #undef  GB_BINOP
-                #define GB_BINOP(cij, aij, bij, i, j)                   \
-                    int32_t z = (int32_t)                               \
-                        ((positional_is_i ? (i):(j)) + offset) ;        \
-                    cast_Z_to_C (cij, &z, csize) ;
+
+                // C(i,j) = positional_op (aij, bij)
+                #undef  GB_EWISEOP
+                #define GB_EWISEOP(Cx, p, aij, bij, i, j)               \
+                {                                                       \
+                    int64_t z ;                                         \
+                    GB_BINOP (z, , , i, j) ;                            \
+                    int32_t z32 = (int32_t) z ;                         \
+                    GB_PUTC (z32, Cx, p) ;                              \
+                }
+
                 if (is_eWiseUnion)
                 {
                     #define GB_IS_EWISEUNION 1
@@ -535,15 +552,23 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             #undef GB_POSITIONAL_OP
             GxB_binary_function fadd = op->binop_function ;
 
-            // C(i,j) = (ctype) (A(i,j) + B(i,j))
             // The binary op is not used if fadd is null since in that case
             // the intersection of A and B is empty
+
+            // z = op (aij, bij)
             #undef  GB_BINOP
-            #define GB_BINOP(cij, aij, bij, i, j)   \
-                ASSERT (fadd != NULL) ;             \
-                GB_void z [GB_VLA(zsize)] ;         \
-                fadd (z, aij, bij) ;                \
-                cast_Z_to_C (cij, z, csize) ;
+            #define GB_BINOP(z, aij, bij, i, j)             \
+                ASSERT (fadd != NULL) ;                     \
+                fadd (z, aij, bij) ;
+
+            // C(i,j) = (ctype) (A(i,j) + B(i,j))
+            #undef  GB_EWISEOP
+            #define GB_EWISEOP(Cx, p, aij, bij, i, j)       \
+            {                                               \
+                GB_void z [GB_VLA(zsize)] ;                 \
+                GB_BINOP (z, aij, bij, i, j) ;              \
+                GB_PUTC (z, Cx, p) ;                        \
+            }
 
             if (is_eWiseUnion)
             {

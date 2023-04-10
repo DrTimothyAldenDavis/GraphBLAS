@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// No matrix is iso.
+// No matrix is iso.  This template is not used for any generic kernels.
 
 {
 
@@ -47,9 +47,10 @@
             GB_DECLAREA (aij) ;
             GB_GETA (aij, Ax, p, false) ;           // aij = Ax [p]
             #endif
-            GB_C_TYPE t ;                           // declare scalar t
-            GB_BINOP (t, aij, aij, 0, 0) ;          // t = aij + aij
-            GB_BINOP (GB_CX (p), GB_CX (p), t, 0, 0) ; // Cx [p] = cij + t
+            GB_C_TYPE z1 ;                          // declare scalar z1
+            GB_BINOP (z1, aij, aij, 0, 0) ;         // z1 = aij + aij
+            GB_C_TYPE z0 = Cx [p] ;                 // z0 = cij
+            GB_EWISEOP (Cx, p, z0, z1, 0, 0) ;      // Cx [p] = z0 + z1
         }
 
     }
@@ -67,9 +68,10 @@
             GB_GETA (aij, Ax, p, false) ;           // aij = Ax [p]
             GB_DECLAREB (bij) ;
             GB_GETB (bij, Bx, p, false) ;           // bij = Bx [p]
-            GB_C_TYPE t ;                           // declare scalar t
-            GB_BINOP (t, aij, bij, 0, 0) ;          // t = aij + bij
-            GB_BINOP (GB_CX (p), GB_CX (p), t, 0, 0) ; // Cx [p] = cij + t
+            GB_C_TYPE z1 ;                          // declare scalar z1
+            GB_BINOP (z1, aij, bij, 0, 0) ;         // z1 = aij + bij
+            GB_C_TYPE z0 = Cx [p] ;                 // z0 = cij
+            GB_EWISEOP (Cx, p, z0, z1, 0, 0) ;      // Cx [p] = z0 + z1
         }
     }
 }

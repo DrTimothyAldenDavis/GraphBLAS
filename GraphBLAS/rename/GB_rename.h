@@ -3661,6 +3661,7 @@
 #define GB_enumify_assign GM_enumify_assign
 #define GB_enumify_binop GM_enumify_binop
 #define GB_enumify_build GM_enumify_build
+#define GB_enumify_cuda_atomic GM_enumify_cuda_atomic
 #define GB_enumify_ewise GM_enumify_ewise
 #define GB_enumify_identity GM_enumify_identity
 #define GB_enumify_mask GM_enumify_mask
@@ -3782,6 +3783,9 @@
 #define GB_Global_mode_set GM_Global_mode_set
 #define GB_Global_nmalloc_clear GM_Global_nmalloc_clear
 #define GB_Global_nmalloc_get GM_Global_nmalloc_get
+#define GB_Global_persistent_free GM_Global_persistent_free
+#define GB_Global_persistent_malloc GM_Global_persistent_malloc
+#define GB_Global_persistent_set GM_Global_persistent_set
 #define GB_Global_printf_get GM_Global_printf_get
 #define GB_Global_printf_set GM_Global_printf_set
 #define GB_Global_print_mem_shallow_get GM_Global_print_mem_shallow_get
@@ -4028,6 +4032,7 @@
 #define GB_macrofy_monoid GM_macrofy_monoid
 #define GB_macrofy_mxm GM_macrofy_mxm
 #define GB_macrofy_name GM_macrofy_name
+#define GB_macrofy_nvals GM_macrofy_nvals
 #define GB_macrofy_output GM_macrofy_output
 #define GB_macrofy_query GM_macrofy_query
 #define GB_macrofy_reduce GM_macrofy_reduce

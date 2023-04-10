@@ -17,9 +17,14 @@
 #ifndef GB_EWISE_SHARED_DEFINITIONS_H
 #define GB_EWISE_SHARED_DEFINITIONS_H
 
-// access C(i,j) in Cx [p]
-#ifndef GB_CX
-#define GB_CX(p) Cx [p]
+// C(i,j) = op (aij,bij) ;
+#ifndef GB_EWISEOP
+#define GB_EWISEOP(Cx,p,aij,bij,i,j) GB_BINOP (Cx [p], aij, bij, i, j)
+#endif
+
+// Cx [p] = z
+#ifndef GB_PUTC
+#define GB_PUTC(z,Cx,p) Cx [p] = z
 #endif
 
 // 1 if operator is second
