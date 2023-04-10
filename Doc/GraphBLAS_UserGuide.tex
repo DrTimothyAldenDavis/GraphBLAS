@@ -8739,8 +8739,8 @@ top-level SuiteSparse:GraphBLAS source folder.
 
 When the user application starts, it can modify the location of these two
 folders after calling \verb'GrB_init'.  It can also modify the C compiler and
-its flags, and can control when and how the JIT is used.  This feature is
-not available within the MATLAB interface, however.  These changes are
+its flags, and can control when and how the JIT is used.
+These changes are
 made via \verb'GxB_Global_Option_set', and can be queried via
 \verb'GxB_Global_Option_get'; refer to Section~\ref{options} for details, and
 the \verb'GxB_JIT_*' settings:
@@ -8762,6 +8762,9 @@ field                       & value         & description \\
 \end{tabular}
 }
 \vspace{0.15in}
+
+To control the JIT in the MATLAB \verb'@GrB' interface, use the \verb'GrB.jit'
+method.  Refer to \verb'help GrB.jit' for details. 
 
 Kernels compiled during one run of a user application are kept in the cache
 folder, so that when the user application runs again, the kernels do not have
@@ -8819,10 +8822,6 @@ kernel causing the error.  If any of these cases occur, the call to GraphBLAS
 will return \verb'GrB_INVALID_VALUE' to indicate that some kind of JIT failure
 occured, or \verb'GrB_OUT_OF_MEMORY' for the last case below.  The error is
 also reported if the \verb'GxB_BURBLE' is enabled.
-
-Currently there are no JIT controls made available to the MATLAB interface;
-the JIT is always on, unless it has been disabled with the \verb'NJIT'
-option.
 
 \begin{itemize}
 
