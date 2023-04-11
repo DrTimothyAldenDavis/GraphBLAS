@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// The GJ_cast* methods are only used in JIT kernels.
+
 #ifndef GB_CASTING_H
 #define GB_CASTING_H
 
@@ -43,9 +45,9 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
         return ((int8_t) x) ;
     }
 
-   #define GB_GUARD_GB_cast_to_int8_DEFINED
-   #define GB_cast_to_int8_DEFN                                 \
-   "int8_t GB_cast_to_int8_t (double x)                     \n" \
+   #define GB_GUARD_GJ_cast_to_int8_DEFINED
+   #define GJ_cast_to_int8_DEFN                                 \
+   "int8_t GJ_cast_to_int8_t (double x)                     \n" \
    "{                                                       \n" \
    "    if (isnan (x)) return (0) ;                         \n" \
    "    if (x <= (double) INT8_MIN) return (INT8_MIN) ;     \n" \
@@ -62,9 +64,9 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
         return ((int16_t) x) ;
     }
 
-   #define GB_GUARD_GB_cast_to_int16_DEFINED
-   #define GB_cast_to_int16_DEFN                                \
-   "int16_t GB_cast_to_int16_t (double x)                   \n" \
+   #define GB_GUARD_GJ_cast_to_int16_DEFINED
+   #define GJ_cast_to_int16_DEFN                                \
+   "int16_t GJ_cast_to_int16_t (double x)                   \n" \
    "{                                                       \n" \
    "    if (isnan (x)) return (0) ;                         \n" \
    "    if (x <= (double) INT16_MIN) return (INT16_MIN) ;   \n" \
@@ -81,9 +83,9 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
         return ((int32_t) x) ;
     }
 
-   #define GB_GUARD_GB_cast_to_int32_DEFINED
-   #define GB_cast_to_int32_DEFN                                \
-   "int32_t GB_cast_to_int32_t (double x)                   \n" \
+   #define GB_GUARD_GJ_cast_to_int32_DEFINED
+   #define GJ_cast_to_int32_DEFN                                \
+   "int32_t GJ_cast_to_int32_t (double x)                   \n" \
    "{                                                       \n" \
    "    if (isnan (x)) return (0) ;                         \n" \
    "    if (x <= (double) INT32_MIN) return (INT32_MIN) ;   \n" \
@@ -100,9 +102,9 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
         return ((int64_t) x) ;
     }
 
-   #define GB_GUARD_GB_cast_to_int64_DEFINED
-   #define GB_cast_to_int64_DEFN                                \
-   "int64_t GB_cast_to_int64_t (double x)                   \n" \
+   #define GB_GUARD_GJ_cast_to_int64_DEFINED
+   #define GJ_cast_to_int64_DEFN                                \
+   "int64_t GJ_cast_to_int64_t (double x)                   \n" \
    "{                                                       \n" \
    "    if (isnan (x)) return (0) ;                         \n" \
    "    if (x <= (double) INT64_MIN) return (INT64_MIN) ;   \n" \
@@ -118,9 +120,9 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
         return ((uint8_t) x) ;
     }
 
-   #define GB_GUARD_GB_cast_to_uint8_DEFINED
-   #define GB_cast_to_uint8_DEFN                                \
-   "uint8_t GB_cast_to_uint8_t (double x)                   \n" \
+   #define GB_GUARD_GJ_cast_to_uint8_DEFINED
+   #define GJ_cast_to_uint8_DEFN                                \
+   "uint8_t GJ_cast_to_uint8_t (double x)                   \n" \
    "{                                                       \n" \
    "    if (isnan (x) || x <= 0) return (0) ;               \n" \
    "    if (x >= (double) UINT8_MAX) return (UINT8_MAX) ;   \n" \
@@ -135,9 +137,9 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
         return ((uint16_t) x) ;
     }
 
-   #define GB_GUARD_GB_cast_to_uint16_DEFINED
-   #define GB_cast_to_uint16_DEFN                               \
-   "uint16_t GB_cast_to_uint16_t (double x)                 \n" \
+   #define GB_GUARD_GJ_cast_to_uint16_DEFINED
+   #define GJ_cast_to_uint16_DEFN                               \
+   "uint16_t GJ_cast_to_uint16_t (double x)                 \n" \
    "{                                                       \n" \
    "    if (isnan (x) || x <= 0) return (0) ;               \n" \
    "    if (x >= (double) UINT16_MAX) return (UINT16_MAX) ; \n" \
@@ -152,9 +154,9 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
         return ((uint32_t) x) ;
     }
 
-   #define GB_GUARD_GB_cast_to_uint32_DEFINED
-   #define GB_cast_to_uint32_DEFN                               \
-   "uint32_t GB_cast_to_uint32_t (double x)                 \n" \
+   #define GB_GUARD_GJ_cast_to_uint32_DEFINED
+   #define GJ_cast_to_uint32_DEFN                               \
+   "uint32_t GJ_cast_to_uint32_t (double x)                 \n" \
    "{                                                       \n" \
    "    if (isnan (x) || x <= 0) return (0) ;               \n" \
    "    if (x >= (double) UINT32_MAX) return (UINT32_MAX) ; \n" \
@@ -169,9 +171,9 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
         return ((uint64_t) x) ;
     }
 
-   #define GB_GUARD_GB_cast_to_uint64_DEFINED
-   #define GB_cast_to_uint64_DEFN                               \
-   "uint64_t GB_cast_to_uint64_t (double x)                 \n" \
+   #define GB_GUARD_GJ_cast_to_uint64_DEFINED
+   #define GJ_cast_to_uint64_DEFN                               \
+   "uint64_t GJ_cast_to_uint64_t (double x)                 \n" \
    "{                                                       \n" \
    "    if (isnan (x) || x <= 0) return (0) ;               \n" \
    "    if (x >= (double) UINT64_MAX) return (UINT64_MAX) ; \n" \

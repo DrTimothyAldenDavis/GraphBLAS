@@ -44,7 +44,7 @@ bool GB_macrofy_defn    // return true if user-defined operator is a macro
         }
         else if (kind == 3)
         {
-            // built-in operator defined by a function or macro
+            // user-defined operator defined by a function or macro
             if (defn [0] == '#')
             {
                 // user-defined operator defined as macro

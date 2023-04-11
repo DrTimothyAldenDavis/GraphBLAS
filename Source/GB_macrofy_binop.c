@@ -534,167 +534,167 @@ void GB_macrofy_binop
 
             // bget
             case  75 : 
-                f = "z = GB_bitget_int8 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitget_int8", GB_bitget_int8_DEFN) ;
+                f = "z = GJ_bitget_int8 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitget_int8", GJ_bitget_int8_DEFN) ;
                 break ;
             case  76 : 
-                f = "z = GB_bitget_int16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitget_int16",
-                    GB_bitget_int16_DEFN) ;
+                f = "z = GJ_bitget_int16 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitget_int16",
+                    GJ_bitget_int16_DEFN) ;
                 break ;
             case  77 : 
-                f = "z = GB_bitget_int32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitget_int32",
-                    GB_bitget_int32_DEFN) ;
+                f = "z = GJ_bitget_int32 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitget_int32",
+                    GJ_bitget_int32_DEFN) ;
                 break ;
             case  78 : 
-                f = "z = GB_bitget_int64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitget_int64",
-                    GB_bitget_int64_DEFN) ;
+                f = "z = GJ_bitget_int64 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitget_int64",
+                    GJ_bitget_int64_DEFN) ;
                 break ;
             case  79 : 
-                f = "z = GB_bitget_uint8 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitget_uint8",
-                    GB_bitget_uint8_DEFN) ;
+                f = "z = GJ_bitget_uint8 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitget_uint8",
+                    GJ_bitget_uint8_DEFN) ;
                 break ;
             case  80 : 
-                f = "z = GB_bitget_uint16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitget_uint16",
-                    GB_bitget_uint16_DEFN) ;
+                f = "z = GJ_bitget_uint16 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitget_uint16",
+                    GJ_bitget_uint16_DEFN) ;
                 break ;
             case  81 : 
-                f = "z = GB_bitget_uint32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitget_uint32",
-                    GB_bitget_uint32_DEFN) ;
+                f = "z = GJ_bitget_uint32 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitget_uint32",
+                    GJ_bitget_uint32_DEFN) ;
                 break ;
             case  82 : 
-                f = "z = GB_bitget_uint64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitget_uint64",
-                    GB_bitget_uint64_DEFN) ;
+                f = "z = GJ_bitget_uint64 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitget_uint64",
+                    GJ_bitget_uint64_DEFN) ;
                 break ;
 
             // bset
             case  83 : 
-                f = "z = GB_bitset_int8 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitset_int8", GB_bitset_int8_DEFN) ;
+                f = "z = GJ_bitset_int8 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitset_int8", GJ_bitset_int8_DEFN) ;
                 break ;
             case  84 : 
-                f = "z = GB_bitset_int16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitset_int16",
-                    GB_bitset_int16_DEFN) ;
+                f = "z = GJ_bitset_int16 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitset_int16",
+                    GJ_bitset_int16_DEFN) ;
                 break ;
             case  85 : 
-                f = "z = GB_bitset_int32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitset_int32",
-                    GB_bitset_int32_DEFN) ;
+                f = "z = GJ_bitset_int32 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitset_int32",
+                    GJ_bitset_int32_DEFN) ;
                 break ;
             case  86 : 
-                f = "z = GB_bitset_int64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitset_int64",
-                    GB_bitset_int64_DEFN) ;
+                f = "z = GJ_bitset_int64 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitset_int64",
+                    GJ_bitset_int64_DEFN) ;
                 break ;
             case  87 : 
-                f = "z = GB_bitset_uint8 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitset_uint8",
-                    GB_bitset_uint8_DEFN) ;
+                f = "z = GJ_bitset_uint8 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitset_uint8",
+                    GJ_bitset_uint8_DEFN) ;
                 break ;
             case  88 : 
-                f = "z = GB_bitset_uint16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitset_uint16",
-                    GB_bitset_uint16_DEFN) ;
+                f = "z = GJ_bitset_uint16 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitset_uint16",
+                    GJ_bitset_uint16_DEFN) ;
                 break ;
             case  89 : 
-                f = "z = GB_bitset_uint32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitset_uint32",
-                    GB_bitset_uint32_DEFN) ;
+                f = "z = GJ_bitset_uint32 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitset_uint32",
+                    GJ_bitset_uint32_DEFN) ;
                 break ;
             case  90 : 
-                f = "z = GB_bitset_uint64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitset_uint64",
-                    GB_bitset_uint64_DEFN) ;
+                f = "z = GJ_bitset_uint64 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitset_uint64",
+                    GJ_bitset_uint64_DEFN) ;
                 break ;
 
             // bclr
             case  91 : 
-                f = "z = GB_bitclr_int8 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitclr_int8", GB_bitclr_int8_DEFN) ;
+                f = "z = GJ_bitclr_int8 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitclr_int8", GJ_bitclr_int8_DEFN) ;
                 break ;
             case  92 : 
-                f = "z = GB_bitclr_int16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitclr_int16",
-                    GB_bitclr_int16_DEFN) ;
+                f = "z = GJ_bitclr_int16 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitclr_int16",
+                    GJ_bitclr_int16_DEFN) ;
                 break ;
             case  93 : 
-                f = "z = GB_bitclr_int32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitclr_int32",
-                    GB_bitclr_int32_DEFN) ;
+                f = "z = GJ_bitclr_int32 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitclr_int32",
+                    GJ_bitclr_int32_DEFN) ;
                 break ;
             case  94 : 
-                f = "z = GB_bitclr_int64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitclr_int64",
-                    GB_bitclr_int64_DEFN) ;
+                f = "z = GJ_bitclr_int64 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitclr_int64",
+                    GJ_bitclr_int64_DEFN) ;
                 break ;
             case  95 : 
-                f = "z = GB_bitclr_uint8 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitclr_uint8",
-                    GB_bitclr_uint8_DEFN) ;
+                f = "z = GJ_bitclr_uint8 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitclr_uint8",
+                    GJ_bitclr_uint8_DEFN) ;
                 break ;
             case  96 : 
-                f = "z = GB_bitclr_uint16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitclr_uint16",
-                    GB_bitclr_uint16_DEFN) ;
+                f = "z = GJ_bitclr_uint16 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitclr_uint16",
+                    GJ_bitclr_uint16_DEFN) ;
                 break ;
             case  97 : 
-                f = "z = GB_bitclr_uint32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitclr_uint32",
-                    GB_bitclr_uint32_DEFN) ;
+                f = "z = GJ_bitclr_uint32 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitclr_uint32",
+                    GJ_bitclr_uint32_DEFN) ;
                 break ;
             case  98 : 
-                f = "z = GB_bitclr_uint64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitclr_uint64",
-                    GB_bitclr_uint64_DEFN) ;
+                f = "z = GJ_bitclr_uint64 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitclr_uint64",
+                    GJ_bitclr_uint64_DEFN) ;
                 break ;
 
             // bshift
             case  99 : 
-                f = "z = GB_bitshift_int8 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitshift_int8",
-                    GB_bitshift_int8_DEFN) ;
+                f = "z = GJ_bitshift_int8 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitshift_int8",
+                    GJ_bitshift_int8_DEFN) ;
                 break ;
             case 100 : 
-                f = "z = GB_bitshift_int16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitshift_int16",
-                    GB_bitshift_int16_DEFN) ;
+                f = "z = GJ_bitshift_int16 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitshift_int16",
+                    GJ_bitshift_int16_DEFN) ;
                 break ;
             case 101 : 
-                f = "z = GB_bitshift_int32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitshift_int32",
-                    GB_bitshift_int32_DEFN) ;
+                f = "z = GJ_bitshift_int32 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitshift_int32",
+                    GJ_bitshift_int32_DEFN) ;
                 break ;
             case 102 : 
-                f = "z = GB_bitshift_int64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitshift_int64",
-                    GB_bitshift_int64_DEFN) ;
+                f = "z = GJ_bitshift_int64 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitshift_int64",
+                    GJ_bitshift_int64_DEFN) ;
                 break ;
             case 103 : 
-                f = "z = GB_bitshift_uint8 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitshift_uint8",
-                    GB_bitshift_uint8_DEFN) ;
+                f = "z = GJ_bitshift_uint8 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitshift_uint8",
+                    GJ_bitshift_uint8_DEFN) ;
                 break ;
             case 104 : 
-                f = "z = GB_bitshift_uint16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitshift_uint16",
-                    GB_bitshift_uint16_DEFN) ;
+                f = "z = GJ_bitshift_uint16 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitshift_uint16",
+                    GJ_bitshift_uint16_DEFN) ;
                 break ;
             case 105 : 
-                f = "z = GB_bitshift_uint32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitshift_uint32",
-                    GB_bitshift_uint32_DEFN) ;
+                f = "z = GJ_bitshift_uint32 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitshift_uint32",
+                    GJ_bitshift_uint32_DEFN) ;
                 break ;
             case 106 : 
-                f = "z = GB_bitshift_uint64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_bitshift_uint64",
-                    GB_bitshift_uint64_DEFN) ;
+                f = "z = GJ_bitshift_uint64 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_bitshift_uint64",
+                    GJ_bitshift_uint64_DEFN) ;
                 break ;
 
             // pow (integer cases)
