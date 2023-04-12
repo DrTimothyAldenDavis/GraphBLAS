@@ -17,6 +17,8 @@
 // complex constructors
 //------------------------------------------------------------------------------
 
+// FIXME NOW!  Uncomment the following, or else it breaks CUDA
+
 // #if defined ( __cplusplus ) || defined ( __NVCC__ )                     \
 //    || ( _MSC_VER && !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )    \
 //    || !(defined (CMPLX) && defined (CMPLXF))
