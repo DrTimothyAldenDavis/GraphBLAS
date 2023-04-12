@@ -1544,7 +1544,8 @@
     GB_GET_M                                                                \
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;                               \
     int M_ntasks, M_nthreads ;                                              \
-    GB_SLICE_MATRIX (M, 8, chunk) ;
+    GB_M_NHELD (M_nnz_held) ;                                               \
+    GB_SLICE_MATRIX_WORK (M, 8, M_nnz_held + M->nvec, M_nnz_held) ;
 
 //------------------------------------------------------------------------------
 // GB_GET_A_AND_SCALAR: get the A matrix or the scalar

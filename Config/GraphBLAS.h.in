@@ -181,7 +181,6 @@
         #undef I
         typedef float  complex GxB_FC32_t ;
         typedef double complex GxB_FC64_t ;
-
         #if (defined (CMPLX) && defined (CMPLXF))
             // use the ANSI C11 CMPLX and CMPLXF macros
             #define GxB_CMPLX(r,i) CMPLX (r,i)

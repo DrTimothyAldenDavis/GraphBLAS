@@ -36,11 +36,10 @@
     // Parallel: slice M into equal-sized chunks
     //--------------------------------------------------------------------------
 
-//  int nthreads_max = GB_Context_nthreads_max ( ) ;
-//  double chunk = GB_Context_chunk ( ) ;
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
     int M_nthreads, M_ntasks ;
-    GB_SLICE_MATRIX (M, 8, chunk) ;
+    GB_M_NHELD (M_nnz_held) ;
+    GB_SLICE_MATRIX_WORK (M, 8, M_nnz_held + M->nvec, M_nnz_held) ;
 
     //--------------------------------------------------------------------------
     // get C, M, and A

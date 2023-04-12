@@ -150,7 +150,7 @@ GrB_Info GB_jit_kernel_AxB_saxbit                                       \
     GB_void *restrict Wcx,                                              \
     int8_t *restrict Wf,                                                \
     const int nthreads_max,                                             \
-    const double chunk                                                  \
+    double chunk                                                        \
 )
 
 #define GB_JIT_KERNEL_AXB_SAXPY3_PROTO(GB_jit_kernel_AxB_saxpy3)        \
@@ -167,7 +167,7 @@ GrB_Info GB_jit_kernel_AxB_saxpy3                                       \
     const int nthreads,                                                 \
     const int do_sort,                                                  \
     const int nthreads_max,                                             \
-    const double chunk,                                                 \
+    double chunk,                                                       \
     GB_Werk Werk                                                        \
 )
 
@@ -233,7 +233,7 @@ GrB_Info GB_jit_kernel_concat_bitmap                                    \
     const int64_t cvstart,                                              \
     const GrB_Matrix A,                                                 \
     const int nthreads_max,                                             \
-    const double chunk,                                                 \
+    double chunk,                                                       \
     GB_Werk Werk                                                        \
 )
 
@@ -471,7 +471,7 @@ GrB_Info GB_jit_kernel_subassign_any                                    \
     const GrB_Matrix A,                                                 \
     const void *scalar,                                                 \
     const int nthreads_max,                                             \
-    const double chunk,                                                 \
+    double chunk,                                                       \
     GB_Werk Werk                                                        \
 )
 

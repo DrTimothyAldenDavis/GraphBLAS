@@ -693,8 +693,8 @@ void GB_macrofy_binop
             case 130 : f = "z = ldexp (x, y)" ; break ;
 
             // cmplex
-            case 131 : f = "z = GB_CMPLX32 (x, y)" ; break ;
-            case 132 : f = "z = GB_CMPLX64 (x, y)" ; break ;
+            case 131 : f = "z = GJ_CMPLX32 (x, y)" ; break ;
+            case 132 : f = "z = GJ_CMPLX64 (x, y)" ; break ;
 
             // pair, real
             case 133 : f = "z = 1" ; break ;

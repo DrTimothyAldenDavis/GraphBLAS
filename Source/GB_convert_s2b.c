@@ -153,7 +153,7 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
         //----------------------------------------------------------------------
 
         int A_nthreads, A_ntasks ;
-        GB_SLICE_MATRIX (A, 8, chunk) ;
+        GB_SLICE_MATRIX (A, 8) ;
 
         info = GrB_NO_VALUE ;
 

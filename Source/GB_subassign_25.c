@@ -27,8 +27,8 @@
 
 // C is iso if A is iso
 
-#include "GB_assign_shared_definitions.h"
 #include "GB_subassign_methods.h"
+#include "GB_assign_shared_definitions.h"
 #include "GB_subassign_dense.h"
 #include "GB_stringify.h"
 #ifndef GBCOMPACT

@@ -299,15 +299,15 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         double chunk = GB_Context_chunk ( ) ;
         if (M != NULL && (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)))
         {
-            GB_SLICE_MATRIX (M, 8, chunk) ;
+            GB_SLICE_MATRIX (M, 8) ;
         }
         if (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))
         {
-            GB_SLICE_MATRIX (A, 8, chunk) ;
+            GB_SLICE_MATRIX (A, 8) ;
         }
         if (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B))
         {
-            GB_SLICE_MATRIX (B, 8, chunk) ;
+            GB_SLICE_MATRIX (B, 8) ;
         }
     }
 

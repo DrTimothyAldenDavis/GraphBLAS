@@ -20,8 +20,8 @@
 
 // C is not bitmap: use GB_bitmap_assign instead
 
-#include "GB_assign_shared_definitions.h"
 #include "GB_subassign_methods.h"
+#include "GB_assign_shared_definitions.h"
 
 GrB_Info GB_subassign_03
 (

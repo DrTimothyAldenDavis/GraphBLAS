@@ -461,7 +461,7 @@ GrB_Info GB_sort
     }
 
     int C_nthreads, C_ntasks ;
-    GB_SLICE_MATRIX (C, 1, chunk) ;
+    GB_SLICE_MATRIX (C, 1) ;
     int64_t *restrict Cp = C->p ;
     const int64_t cvlen = C->vlen ;
     int tid ;

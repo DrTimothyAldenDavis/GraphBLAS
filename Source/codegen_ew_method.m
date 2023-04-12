@@ -199,9 +199,9 @@ if (isequal (xtype, 'GxB_FC32_t') && isequal (ztype, 'bool'))
 elseif (isequal (xtype, 'GxB_FC64_t') && isequal (ztype, 'bool'))
     a2c = '(GB_creal (Ax [(A_iso) ? 0 : (pA)]) != 0) || (GB_cimag (Ax [(A_iso) ? 0 : (pA)]) != 0)' ;
 elseif (isequal (xtype, 'float') && isequal (ztype, 'GxB_FC32_t'))
-    a2c = 'GB_CMPLX32 (Ax [(A_iso) ? 0 : (pA)], 0)' ;
+    a2c = 'GJ_CMPLX32 (Ax [(A_iso) ? 0 : (pA)], 0)' ;
 elseif (isequal (xtype, 'double') && isequal (ztype, 'GxB_FC64_t'))
-    a2c = 'GB_CMPLX64 (Ax [(A_iso) ? 0 : (pA)], 0)' ;
+    a2c = 'GJ_CMPLX64 (Ax [(A_iso) ? 0 : (pA)], 0)' ;
 else
     a2c = '' ;
 end
@@ -217,9 +217,9 @@ if (isequal (ytype, 'GxB_FC32_t') && isequal (ztype, 'bool'))
 elseif (isequal (ytype, 'GxB_FC64_t') && isequal (ztype, 'bool'))
     b2c = '(GB_creal (Bx [(B_iso) ? 0 : (pB)]) != 0) || (GB_cimag (Bx [(B_iso) ? 0 : (pB)]) != 0)' ;
 elseif (isequal (ytype, 'float') && isequal (ztype, 'GxB_FC32_t'))
-    b2c = 'GB_CMPLX32 (Bx [(B_iso) ? 0 : (pB)], 0)' ;
+    b2c = 'GJ_CMPLX32 (Bx [(B_iso) ? 0 : (pB)], 0)' ;
 elseif (isequal (ytype, 'double') && isequal (ztype, 'GxB_FC64_t'))
-    b2c = 'GB_CMPLX64 (Bx [(B_iso) ? 0 : (pB)], 0)' ;
+    b2c = 'GJ_CMPLX64 (Bx [(B_iso) ? 0 : (pB)], 0)' ;
 else
     b2c = '' ;
 end

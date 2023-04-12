@@ -383,7 +383,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
 
         ASSERT (C_sparsity == GxB_BITMAP) ;
         int M_ntasks, M_nthreads ;
-        GB_SLICE_MATRIX (M, 8, chunk) ;
+        GB_SLICE_MATRIX (M, 8) ;
 
         // Cb [pC] += 2 for each entry M(i,j) in the mask
         GB_bitmap_M_scatter (C,

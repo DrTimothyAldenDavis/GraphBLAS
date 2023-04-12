@@ -222,7 +222,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             //------------------------------------------------------------------
 
             int C_ntasks, C_nthreads ;
-            GB_SLICE_MATRIX (C, 8, chunk) ;
+            GB_SLICE_MATRIX (C, 8) ;
 
             info = GrB_NO_VALUE ;
 

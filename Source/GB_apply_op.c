@@ -119,7 +119,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     if (depends_on_j)
     {
         // slice the entries for each task
-        GB_SLICE_MATRIX (A, 32, chunk) ;
+        GB_SLICE_MATRIX (A, 32) ;
     }
 
     //--------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_05d_template: C<M> = x where C is as-if-full
+// GB_subassign_05d_template: C<M> = x where C is full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -21,10 +21,9 @@
 
     GrB_Info info ;
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
-//  int nthreads_max = GB_Context_nthreads_max ( ) ;
-//  double chunk = GB_Context_chunk ( ) ;
     int M_ntasks, M_nthreads ;
-    GB_SLICE_MATRIX (M, 8, chunk) ;
+    GB_M_NHELD (M_nnz_held) ;
+    GB_SLICE_MATRIX_WORK (M, 8, M_nnz_held + M->nvec, M_nnz_held) ;
 
     //--------------------------------------------------------------------------
     // get C and M

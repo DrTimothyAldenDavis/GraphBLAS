@@ -140,7 +140,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
 
     if (M != NULL)
     {
-        GB_SLICE_MATRIX (M, 8, chunk) ;
+        GB_SLICE_MATRIX (M, 8) ;
     }
 
     //--------------------------------------------------------------------------

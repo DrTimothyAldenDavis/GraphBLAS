@@ -80,9 +80,9 @@ if (isequal (ytype, 'GxB_FC32_t') && isequal (ztype, 'bool'))
 elseif (isequal (ytype, 'GxB_FC64_t') && isequal (ztype, 'bool'))
     a2c = '((GB_creal (Ax [pA]) != 0) || (GB_cimag (Ax [pA]) != 0))' ;
 elseif (isequal (ytype, 'float') && isequal (ztype, 'GxB_FC32_t'))
-    a2c = '(GB_CMPLX32 (Ax [pA], 0))' ;
+    a2c = '(GJ_CMPLX32 (Ax [pA], 0))' ;
 elseif (isequal (ytype, 'double') && isequal (ztype, 'GxB_FC64_t'))
-    a2c = '(GB_CMPLX64 (Ax [pA], 0))' ;
+    a2c = '(GJ_CMPLX64 (Ax [pA], 0))' ;
 elseif (isequal (ytype, xtype))
     a2c = sprintf ('Ax [pA]') ;
 else

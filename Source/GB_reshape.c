@@ -196,7 +196,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         int nthreads_max = GB_Context_nthreads_max ( ) ;
         double chunk = GB_Context_chunk ( ) ;
         int T_nthreads, T_ntasks ;
-        GB_SLICE_MATRIX (T, 1, chunk) ;
+        GB_SLICE_MATRIX (T, 1) ;
 
         //----------------------------------------------------------------------
         // allocate output and workspace

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// C is bitmap.  A is bitmap or as-if-full.
+// C is bitmap.  A is bitmap or full.
 
 {
     #ifdef GB_JIT_KERNEL

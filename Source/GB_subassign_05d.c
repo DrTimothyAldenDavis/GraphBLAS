@@ -22,8 +22,8 @@
 // C can have any sparsity structure, but it must be entirely dense with
 // all entries present.
 
-#include "GB_assign_shared_definitions.h"
 #include "GB_subassign_methods.h"
+#include "GB_assign_shared_definitions.h"
 #include "GB_subassign_dense.h"
 #include "GB_unused.h"
 #include "GB_stringify.h"
@@ -153,7 +153,8 @@ GrB_Info GB_subassign_05d
             /* accum: */ NULL,
             /* A: */ NULL,
             /* scalar, scalar_type: */ cwork, C->type,
-            GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_05d, "subassign_05d", Werk) ;
+            GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_05d, "subassign_05d",
+            Werk) ;
     }
 
     //--------------------------------------------------------------------------

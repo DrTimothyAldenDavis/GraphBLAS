@@ -204,7 +204,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
     //--------------------------------------------------------------------------
 
     int B_ntasks, B_nthreads ;
-    GB_SLICE_MATRIX (B, 64, chunk) ;
+    GB_SLICE_MATRIX (B, 64) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace

@@ -53,7 +53,7 @@ for code1 = 1:ntypes
                 func = sprintf ('(%s) GB_crealf (xarg)', ctype) ;
             elseif (isequal (ctype, 'GxB_FC64_t'))
                 % to GxB_FC64_t from GxB_FC32_t 
-                func = 'GB_CMPLX64 ((double) GB_crealf (xarg), (double) GB_cimagf (xarg))' ;
+                func = 'GJ_CMPLX64 ((double) GB_crealf (xarg), (double) GB_cimagf (xarg))' ;
             end
 
         elseif (isequal (atype, 'GxB_FC64_t'))
@@ -70,7 +70,7 @@ for code1 = 1:ntypes
                 func = sprintf ('(%s) GB_creal (xarg)', ctype) ;
             elseif (isequal (ctype, 'GxB_FC32_t'))
                 % to GxB_FC32_t from GxB_FC64_t 
-                func = 'GB_CMPLX32 ((float) GB_creal (xarg), (float) GB_cimag (xarg))' ;
+                func = 'GJ_CMPLX32 ((float) GB_creal (xarg), (float) GB_cimag (xarg))' ;
             end
 
         elseif (isequal (atype, 'float') || isequal (atype, 'double'))
@@ -84,21 +84,21 @@ for code1 = 1:ntypes
                 func = sprintf ('GB_cast_to_%s ((double) (xarg))', ctype) ;
             elseif (isequal (ctype, 'GxB_FC32_t'))
                 % to GxB_FC32_t from float or double
-                func = 'GB_CMPLX32 ((float) (xarg), 0)' ;
+                func = 'GJ_CMPLX32 ((float) (xarg), 0)' ;
             elseif (isequal (ctype, 'GxB_FC64_t'))
                 % to GxB_FC64_t from float or double
-                func = 'GB_CMPLX64 ((double) (xarg), 0)' ;
+                func = 'GJ_CMPLX64 ((double) (xarg), 0)' ;
             end
 
         elseif (isequal (ctype, 'GxB_FC32_t'))
 
             % typecasting to GxB_FC32_t from any real type
-            func = 'GB_CMPLX32 ((float) (xarg), 0)' ;
+            func = 'GJ_CMPLX32 ((float) (xarg), 0)' ;
 
         elseif (isequal (ctype, 'GxB_FC64_t'))
 
             % typecasting to GxB_FC64_t from any real type
-            func = 'GB_CMPLX64 ((double) (xarg), 0)' ;
+            func = 'GJ_CMPLX64 ((double) (xarg), 0)' ;
 
         else
             % use ANSI typecasting rules

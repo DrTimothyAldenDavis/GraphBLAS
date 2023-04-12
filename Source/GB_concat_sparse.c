@@ -316,7 +316,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             const int64_t *restrict Ah = A->h ;
             const int64_t *restrict Ai = A->i ;
             const bool A_iso = A->iso ;
-            GB_SLICE_MATRIX (A, 1, chunk) ;
+            GB_SLICE_MATRIX (A, 1) ;
 
             //------------------------------------------------------------------
             // copy the tile A into C

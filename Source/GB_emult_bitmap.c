@@ -144,7 +144,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // slice the M matrix for Method6
     if (ewise_method == GB_EMULT_METHOD6)
     { 
-        GB_SLICE_MATRIX (M, 8, chunk) ;
+        GB_SLICE_MATRIX (M, 8) ;
     }
 
     //--------------------------------------------------------------------------

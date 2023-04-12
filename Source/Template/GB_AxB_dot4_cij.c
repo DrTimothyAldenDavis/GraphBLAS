@@ -69,12 +69,12 @@
         #elif GB_IS_PLUS_FC32_PAIR_SEMIRING
         { 
             // (PLUS monoid for float complex)_PAIR semiring
-            cij = GB_CMPLX32 (GB_crealf (cij) + (float) ainz, GB_imagf (cij)) ;
+            cij = GJ_CMPLX32 (GB_crealf (cij) + (float) ainz, GB_imagf (cij)) ;
         }
         #elif GB_IS_PLUS_FC64_PAIR_SEMIRING
         { 
             // (PLUS monoid for double complex)_PAIR semiring
-            cij = GB_CMPLX64 (GB_creal (cij) + (double) ainz, GB_imag (cij)) ;
+            cij = GJ_CMPLX64 (GB_creal (cij) + (double) ainz, GB_imag (cij)) ;
         }
         #elif GB_IS_MIN_FIRSTJ_SEMIRING
         {

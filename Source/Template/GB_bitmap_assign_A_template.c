@@ -20,7 +20,8 @@
 
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     int A_ntasks, A_nthreads ;
-    GB_SLICE_MATRIX (A, 8, chunk) ;
+    GB_A_NHELD (A_nnz_held) ;
+    GB_SLICE_MATRIX_WORK (A, 8, A_nnz_held + A->nvec, A_nnz_held) ;
 
     //--------------------------------------------------------------------------
     // traverse of the entries of the matrix A

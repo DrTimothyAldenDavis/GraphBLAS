@@ -11,7 +11,7 @@
 // The accumulator matches the semiring monoid.
 // The ANY monoid is not supported.
 
-// C is as-if-full.
+// C is full.
 // A is bitmap or full.
 // B is sparse or hypersparse.
 

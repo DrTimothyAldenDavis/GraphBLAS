@@ -114,9 +114,9 @@ GrB_Info GB_select_sparse
     //--------------------------------------------------------------------------
 
     int A_ntasks, A_nthreads ;
-    double work = 8*anvec
-        + ((opcode == GB_DIAG_idxunop_code) ? 0 : GB_nnz_held (A)) ;
-    GB_SLICE_MATRIX_WORK (A, 8, chunk, work) ;
+    int64_t anz_held = GB_nnz_held (A) ;
+    double work = 8*anvec + ((opcode == GB_DIAG_idxunop_code) ? 0 : anz_held) ;
+    GB_SLICE_MATRIX_WORK (A, 8, work, anz_held) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace for each task

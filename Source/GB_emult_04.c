@@ -140,7 +140,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
     int M_ntasks, M_nthreads ;
-    GB_SLICE_MATRIX (M, 8, chunk) ;
+    GB_SLICE_MATRIX (M, 8) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace

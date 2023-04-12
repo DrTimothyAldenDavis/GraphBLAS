@@ -13,7 +13,7 @@
 // The accumulator matches the semiring monoid.
 // The ANY monoid and non-atomic monoids are not supported.
 
-// C is as-if-full.
+// C is full.
 // M is not present.
 // A is sparse or hypersparse.
 // B is bitmap or full.

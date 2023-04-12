@@ -16,7 +16,8 @@
     #endif
 
     int A_nthreads, A_ntasks ;
-    GB_SLICE_MATRIX (A, 1, chunk) ;
+    GB_A_NHELD (A_nnz_held) ;
+    GB_SLICE_MATRIX_WORK (A, 1, A_nnz_held + A->nvec, A_nnz_held) ;
     const int64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
@@ -32,9 +33,6 @@
             int64_t j = GBH_A (Ah, k) ;
             int64_t jC = cvstart + j ;
             int64_t pC_start = cistart + jC * cvlen ;
-//          int64_t pA_start, pA_end ;
-//          GB_get_pA (&pA_start, &pA_end, tid, k,
-//              kfirst, klast, pstart_Aslice, Ap, avlen) ;
             GB_GET_PA (pA_start, pA_end, tid, k,
                 kfirst, klast, pstart_Aslice,
                 GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;

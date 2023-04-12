@@ -102,12 +102,12 @@
         #elif GB_IS_PLUS_FC32_PAIR_SEMIRING
         { 
             // (PLUS monoid for float complex)_PAIR semiring
-            cij = GB_CMPLX32 ((float) vlen, 0) ;
+            cij = GJ_CMPLX32 ((float) vlen, 0) ;
         }
         #elif GB_IS_PLUS_FC64_PAIR_SEMIRING
         { 
             // (PLUS monoid for double complex)_PAIR semiring
-            cij = GB_CMPLX64 ((double) vlen, 0) ;
+            cij = GJ_CMPLX64 ((double) vlen, 0) ;
         }
         #elif GB_IS_MIN_FIRSTJ_SEMIRING
         { 
@@ -233,12 +233,12 @@
         #elif GB_IS_PLUS_FC32_PAIR_SEMIRING
         { 
             // (PLUS monoid for float complex)_PAIR semiring
-            cij = GB_CMPLX32 ((float) bjnz, 0) ;
+            cij = GJ_CMPLX32 ((float) bjnz, 0) ;
         }
         #elif GB_IS_PLUS_FC64_PAIR_SEMIRING
         { 
             // (PLUS monoid for double complex)_PAIR semiring
-            cij = GB_CMPLX64 ((double) bjnz, 0) ;
+            cij = GJ_CMPLX64 ((double) bjnz, 0) ;
         }
         #elif GB_IS_MIN_FIRSTJ_SEMIRING
         { 
@@ -463,12 +463,12 @@
         #elif GB_IS_PLUS_FC32_PAIR_SEMIRING
         { 
             // (PLUS monoid for float complex)_PAIR semiring
-            cij = GB_CMPLX32 ((float) ainz, 0) ;
+            cij = GJ_CMPLX32 ((float) ainz, 0) ;
         }
         #elif GB_IS_PLUS_FC64_PAIR_SEMIRING
         { 
             // (PLUS monoid for double complex)_PAIR semiring
-            cij = GB_CMPLX64 ((double) ainz, 0) ;
+            cij = GJ_CMPLX64 ((double) ainz, 0) ;
         }
         #elif GB_IS_MIN_FIRSTJ_SEMIRING
         { 

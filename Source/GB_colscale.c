@@ -218,7 +218,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         //----------------------------------------------------------------------
 
         int A_nthreads, A_ntasks ;
-        GB_SLICE_MATRIX (A, 32, chunk) ;
+        GB_SLICE_MATRIX (A, 32) ;
 
         //----------------------------------------------------------------------
         // via the factory kernel

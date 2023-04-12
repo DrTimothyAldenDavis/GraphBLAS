@@ -21,8 +21,8 @@
 
 // C += scalar where C is full
 
-#include "GB_assign_shared_definitions.h"
 #include "GB_subassign_dense.h"
+#include "GB_assign_shared_definitions.h"
 #include "GB_binop.h"
 #include "GB_unused.h"
 #include "GB_stringify.h"
@@ -148,7 +148,8 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
             /* accum: */ accum,
             /* A: */ NULL,
             /* scalar, scalar_type: */ ywork, accum->ytype,
-            GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_22, "subassign_22", Werk) ;
+            GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_22, "subassign_22",
+            Werk) ;
     }
 
     //--------------------------------------------------------------------------

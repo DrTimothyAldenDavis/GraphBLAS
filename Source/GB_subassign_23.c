@@ -26,8 +26,8 @@
 
 // C and A can have any sparsity structure, but C must be as-if-full.
 
-#include "GB_assign_shared_definitions.h"
 #include "GB_subassign_dense.h"
+#include "GB_assign_shared_definitions.h"
 #include "GB_binop.h"
 #include "GB_stringify.h"
 #ifndef GBCOMPACT
@@ -147,7 +147,8 @@ GrB_Info GB_subassign_23      // C += A; C is full
             /* accum: */ accum,
             /* A: */ A,
             /* scalar, scalar_type: */ NULL, NULL,
-            GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_23, "subassign_23", Werk) ;
+            GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_23, "subassign_23",
+            Werk) ;
     }
 
     //--------------------------------------------------------------------------

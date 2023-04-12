@@ -13,7 +13,7 @@
 #include "GB_ew__include.h"
 
 // operator:
-#define GB_BINOP(z,x,y,i,j) z = GB_CMPLX64 (x, y)
+#define GB_BINOP(z,x,y,i,j) z = GJ_CMPLX64 (x, y)
 #define GB_Z_TYPE GxB_FC64_t
 #define GB_X_TYPE double
 #define GB_Y_TYPE double
@@ -32,8 +32,8 @@
 
 // C matrix:
 #define GB_C_TYPE GxB_FC64_t
-#define GB_COPY_A_to_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = GB_CMPLX64 (Ax [(A_iso) ? 0 : (pA)], 0)
-#define GB_COPY_B_to_C(Cx,pC,Bx,pB,B_iso) Cx [pC] = GB_CMPLX64 (Bx [(B_iso) ? 0 : (pB)], 0)
+#define GB_COPY_A_to_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = GJ_CMPLX64 (Ax [(A_iso) ? 0 : (pA)], 0)
+#define GB_COPY_B_to_C(Cx,pC,Bx,pB,B_iso) Cx [pC] = GJ_CMPLX64 (Bx [(B_iso) ? 0 : (pB)], 0)
 #define GB_CTYPE_IS_ATYPE 0
 #define GB_CTYPE_IS_BTYPE 0
 

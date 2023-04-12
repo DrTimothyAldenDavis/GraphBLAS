@@ -283,8 +283,8 @@ codegen_ew_template ('ldexp',        ...
 codegen_ew_template ('cmplx',        ...
     [ ],                                ... % bool
     [ ],                                ... % int, uint
-    'GB_CMPLX32 (xarg, yarg)',          ... % float  (z is GxB_FC32_t)
-    'GB_CMPLX64 (xarg, yarg)',          ... % double (z is GxB_FC64_t)
+    'GJ_CMPLX32 (xarg, yarg)',          ... % float  (z is GxB_FC32_t)
+    'GJ_CMPLX64 (xarg, yarg)',          ... % double (z is GxB_FC64_t)
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
 

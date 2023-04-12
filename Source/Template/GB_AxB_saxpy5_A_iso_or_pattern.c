@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// C is as-if-full.
+// C is full.
 // A is bitmap or full, and either iso or pattern-only
 // B is sparse or hypersparse.
 

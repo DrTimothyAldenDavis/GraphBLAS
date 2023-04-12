@@ -41,19 +41,19 @@
     //--------------------------------------------------------------------------
 
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
-    GB_A_NHELD (anz) ;      // const int64_t anz = GB_nnz_held (A) ;
-//  int nthreads_max = GB_Context_nthreads_max ( ) ;
-//  double chunk = GB_Context_chunk ( ) ;
+    GB_A_NHELD (anz) ;
     int A_ntasks, A_nthreads ;
+    double work = anz + A->nvec ;
+    chunk = 32 * chunk ;        // method 06d needs a larger chunk
     if (A_is_bitmap || A_is_full)
     { 
         // no need to construct tasks
-        A_nthreads = GB_nthreads (anz + A->nvec, 32*chunk, nthreads_max) ;
+        A_nthreads = GB_nthreads (work, chunk, nthreads_max) ;
         A_ntasks = (A_nthreads == 1) ? 1 : (8 * A_nthreads) ;
     }
     else
     { 
-        GB_SLICE_MATRIX (A, 8, 32*chunk) ;
+        GB_SLICE_MATRIX_WORK (A, 8, work, anz) ;
     }
 
     //--------------------------------------------------------------------------

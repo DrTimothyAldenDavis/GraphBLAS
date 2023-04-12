@@ -25,8 +25,8 @@
 
 // C: not bitmap
 
-#include "GB_assign_shared_definitions.h"
 #include "GB_subassign_methods.h"
+#include "GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE           \

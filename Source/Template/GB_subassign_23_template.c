@@ -35,23 +35,21 @@
     // slice the A matrix
     //--------------------------------------------------------------------------
 
-//  int nthreads_max = GB_Context_nthreads_max ( ) ;
-//  double chunk = GB_Context_chunk ( ) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     int A_ntasks, A_nthreads ;
+    GB_A_NHELD (anz) ;      // int64_t anz = GB_nnz_held (A) ;
+    double work = anz + A->nvec ;
     if (A_is_bitmap || A_is_full)
     { 
-        // C is full and A is bitmap or as-if-full
-        int64_t anvec = A->nvec ;
-        GB_A_NHELD (anz) ;      // int64_t anz = GB_nnz_held (A) ;
-        A_nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
+        // C is full and A is bitmap or full
+        A_nthreads = GB_nthreads (work, chunk, nthreads_max) ;
         A_ntasks = 0 ;   // unused
         ASSERT (A_ek_slicing == NULL) ;
     }
     else
     { 
         // create tasks to compute over the matrix A
-        GB_SLICE_MATRIX (A, 32, chunk) ;
+        GB_SLICE_MATRIX_WORK (A, 32, work, anz) ;
         ASSERT (A_ek_slicing != NULL) ;
     }
 

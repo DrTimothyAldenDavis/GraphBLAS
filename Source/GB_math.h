@@ -377,29 +377,29 @@ inline GxB_FC64_t GB_FC64_div (GxB_FC64_t x, GxB_FC64_t y)
 "    int yi_class = fpclassify (yi) ;                                \n" \
 "    if (yi_class == FP_ZERO)                                        \n" \
 "    {                                                               \n" \
-"        return (GB_CMPLX64 (xr / yr, xi / yr)) ;                    \n" \
+"        return (GJ_CMPLX64 (xr / yr, xi / yr)) ;                    \n" \
 "    }                                                               \n" \
 "    else if (yr_class == FP_ZERO)                                   \n" \
 "    {                                                               \n" \
-"        return (GB_CMPLX64 (xi / yi, -xr / yi)) ;                   \n" \
+"        return (GJ_CMPLX64 (xi / yi, -xr / yi)) ;                   \n" \
 "    }                                                               \n" \
 "    else if (yi_class == FP_INFINITE && yr_class == FP_INFINITE)    \n" \
 "    {                                                               \n" \
 "        double r = (signbit (yr) == signbit (yi)) ? (1) : (-1) ;    \n" \
 "        double d = yr + r * yi ;                                    \n" \
-"        return (GB_CMPLX64 ((xr + xi * r) / d, (xi - xr * r) / d)) ;\n" \
+"        return (GJ_CMPLX64 ((xr + xi * r) / d, (xi - xr * r) / d)) ;\n" \
 "    }                                                               \n" \
 "    else if (fabs (yr) >= fabs (yi))                                \n" \
 "    {                                                               \n" \
 "        double r = yi / yr ;                                        \n" \
 "        double d = yr + r * yi ;                                    \n" \
-"        return (GB_CMPLX64 ((xr + xi * r) / d, (xi - xr * r) / d)) ;\n" \
+"        return (GJ_CMPLX64 ((xr + xi * r) / d, (xi - xr * r) / d)) ;\n" \
 "    }                                                               \n" \
 "    else                                                            \n" \
 "    {                                                               \n" \
 "        double r = yr / yi ;                                        \n" \
 "        double d = r * yr + yi ;                                    \n" \
-"        return (GB_CMPLX64 ((xr * r + xi) / d, (xi * r - xr) / d)) ;\n" \
+"        return (GJ_CMPLX64 ((xr * r + xi) / d, (xi * r - xr) / d)) ;\n" \
 "    }                                                               \n" \
 "}"
 
@@ -423,8 +423,8 @@ inline GxB_FC32_t GB_FC32_div (GxB_FC32_t x, GxB_FC32_t y)
 "    double yr = (double) GB_crealf (y) ;                               \n" \
 "    double yi = (double) GB_cimagf (y) ;                               \n" \
 "    GxB_FC64_t zz ;                                                    \n" \
-"    zz = GJ_FC64_div (GB_CMPLX64 (xr, xi), GB_CMPLX64 (yr, yi)) ;      \n" \
-"    return (GB_CMPLX32 ((float) GB_creal(zz), (float) GB_cimag(zz))) ; \n" \
+"    zz = GJ_FC64_div (GJ_CMPLX64 (xr, xi), GJ_CMPLX64 (yr, yi)) ;      \n" \
+"    return (GJ_CMPLX32 ((float) GB_creal(zz), (float) GB_cimag(zz))) ; \n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -554,13 +554,13 @@ inline GxB_FC32_t GB_FC32_pow (GxB_FC32_t x, GxB_FC32_t y)
 "        if (xr >= 0 || yr_class == FP_NAN ||                        \n" \
 "            yr_class == FP_INFINITE || yr == truncf (yr))           \n" \
 "        {                                                           \n" \
-"            return (GB_CMPLX32 (GJ_powf (xr, yr), 0)) ;             \n" \
+"            return (GJ_CMPLX32 (GJ_powf (xr, yr), 0)) ;             \n" \
 "        }                                                           \n" \
 "    }                                                               \n" \
 "    if (xr_class == FP_NAN || xi_class == FP_NAN ||                 \n" \
 "        yr_class == FP_NAN || yi_class == FP_NAN)                   \n" \
 "    {                                                               \n" \
-"        return (GB_CMPLX32 (NAN, NAN)) ;                            \n" \
+"        return (GJ_CMPLX32 (NAN, NAN)) ;                            \n" \
 "    }                                                               \n" \
 "    if (yr_class == FP_ZERO && yi_class == FP_ZERO)                 \n" \
 "    {                                                               \n" \
@@ -615,13 +615,13 @@ inline GxB_FC64_t GB_FC64_pow (GxB_FC64_t x, GxB_FC64_t y)
 "        if (xr >= 0 || yr_class == FP_NAN ||                        \n" \
 "            yr_class == FP_INFINITE || yr == trunc (yr))            \n" \
 "        {                                                           \n" \
-"            return (GB_CMPLX64 (GJ_pow (xr, yr), 0)) ;              \n" \
+"            return (GJ_CMPLX64 (GJ_pow (xr, yr), 0)) ;              \n" \
 "        }                                                           \n" \
 "    }                                                               \n" \
 "    if (xr_class == FP_NAN || xi_class == FP_NAN ||                 \n" \
 "        yr_class == FP_NAN || yi_class == FP_NAN)                   \n" \
 "    {                                                               \n" \
-"        return (GB_CMPLX64 (NAN, NAN)) ;                            \n" \
+"        return (GJ_CMPLX64 (NAN, NAN)) ;                            \n" \
 "    }                                                               \n" \
 "    if (yr_class == FP_ZERO && yi_class == FP_ZERO)                 \n" \
 "    {                                                               \n" \
@@ -830,7 +830,7 @@ inline GxB_FC32_t GB_csignumf (GxB_FC32_t x)
 "        return (GxB_CMPLXF (0,0)) ;                                \n" \
 "    }                                                              \n" \
 "    float y = GB_cabsf (x) ;                                       \n" \
-"    return (GB_CMPLX32 (GB_crealf (x) / y, GB_cimagf (x) / y)) ;   \n" \
+"    return (GJ_CMPLX32 (GB_crealf (x) / y, GB_cimagf (x) / y)) ;   \n" \
 "}"
 
 inline GxB_FC64_t GB_csignum (GxB_FC64_t x)
@@ -851,7 +851,7 @@ inline GxB_FC64_t GB_csignum (GxB_FC64_t x)
 "        return (GxB_CMPLX (0,0)) ;                                 \n" \
 "    }                                                              \n" \
 "    double y = GB_cabs (x) ;                                       \n" \
-"    return (GB_CMPLX64 (GB_creal (x) / y, GB_cimag (x) / y)) ;     \n" \
+"    return (GJ_CMPLX64 (GB_creal (x) / y, GB_cimag (x) / y)) ;     \n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -875,7 +875,7 @@ inline GxB_FC32_t GB_cceilf (GxB_FC32_t x)
 #define     GJ_cceilf_DEFN                                                    \
 "GxB_FC32_t GJ_cceilf (GxB_FC32_t x)                                      \n" \
 "{                                                                        \n" \
-"    return (GB_CMPLX32 (ceilf (GB_crealf (x)), ceilf (GB_cimagf (x)))) ; \n" \
+"    return (GJ_CMPLX32 (ceilf (GB_crealf (x)), ceilf (GB_cimagf (x)))) ; \n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -890,7 +890,7 @@ inline GxB_FC64_t GB_cceil (GxB_FC64_t x)
 #define     GJ_cceil_DEFN                                                   \
 "GxB_FC64_t GJ_cceil (GxB_FC64_t x)                                     \n" \
 "{                                                                      \n" \
-"    return (GB_CMPLX64 (ceil (GB_creal (x)), ceil (GB_cimag (x)))) ;   \n" \
+"    return (GJ_CMPLX64 (ceil (GB_creal (x)), ceil (GB_cimag (x)))) ;   \n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -905,7 +905,7 @@ inline GxB_FC32_t GB_cfloorf (GxB_FC32_t x)
 #define     GJ_cfloorf_DEFN                                                    \
 "GxB_FC32_t GJ_cfloorf (GxB_FC32_t x)                                      \n" \
 "{                                                                         \n" \
-"    return (GB_CMPLX32 (floorf (GB_crealf (x)), floorf (GB_cimagf (x)))) ;\n" \
+"    return (GJ_CMPLX32 (floorf (GB_crealf (x)), floorf (GB_cimagf (x)))) ;\n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -920,7 +920,7 @@ inline GxB_FC64_t GB_cfloor (GxB_FC64_t x)
 #define     GJ_cfloor_DEFN                                                  \
 "GxB_FC64_t GJ_cfloor (GxB_FC64_t x)                                    \n" \
 "{                                                                      \n" \
-"    return (GB_CMPLX64 (floor (GB_creal (x)), floor (GB_cimag (x)))) ; \n" \
+"    return (GJ_CMPLX64 (floor (GB_creal (x)), floor (GB_cimag (x)))) ; \n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -935,7 +935,7 @@ inline GxB_FC32_t GB_croundf (GxB_FC32_t x)
 #define     GJ_croundf_DEFN                                                    \
 "GxB_FC32_t GJ_croundf (GxB_FC32_t x)                                      \n" \
 "{                                                                         \n" \
-"    return (GB_CMPLX32 (roundf (GB_crealf (x)), roundf (GB_cimagf (x)))) ;\n" \
+"    return (GJ_CMPLX32 (roundf (GB_crealf (x)), roundf (GB_cimagf (x)))) ;\n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -950,7 +950,7 @@ inline GxB_FC64_t GB_cround (GxB_FC64_t x)
 #define     GJ_cround_DEFN                                                  \
 "GxB_FC64_t GJ_cround (GxB_FC64_t x)                                    \n" \
 "{                                                                      \n" \
-"    return (GB_CMPLX64 (round (GB_creal (x)), round (GB_cimag (x)))) ; \n" \
+"    return (GJ_CMPLX64 (round (GB_creal (x)), round (GB_cimag (x)))) ; \n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -965,7 +965,7 @@ inline GxB_FC32_t GB_ctruncf (GxB_FC32_t x)
 #define     GJ_ctruncf_DEFN                                                    \
 "GxB_FC32_t GJ_ctruncf (GxB_FC32_t x)                                      \n" \
 "{                                                                         \n" \
-"    return (GB_CMPLX32 (truncf (GB_crealf (x)), truncf (GB_cimagf (x)))) ;\n" \
+"    return (GJ_CMPLX32 (truncf (GB_crealf (x)), truncf (GB_cimagf (x)))) ;\n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -980,7 +980,7 @@ inline GxB_FC64_t GB_ctrunc (GxB_FC64_t x)
 #define     GJ_ctrunc_DEFN                                                  \
 "GxB_FC64_t GJ_ctrunc (GxB_FC64_t x)                                    \n" \
 "{                                                                      \n" \
-"    return (GB_CMPLX64 (trunc (GB_creal (x)), trunc (GB_cimag (x)))) ; \n" \
+"    return (GJ_CMPLX64 (trunc (GB_creal (x)), trunc (GB_cimag (x)))) ; \n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -1002,7 +1002,7 @@ inline GxB_FC32_t GB_cexp2f (GxB_FC32_t x)
 "{                                                                  \n" \
 "    if (fpclassify (GB_cimagf (x)) == FP_ZERO)                     \n" \
 "    {                                                              \n" \
-"        return (GB_CMPLX32 (exp2f (GB_crealf (x)), 0)) ;           \n" \
+"        return (GJ_CMPLX32 (exp2f (GB_crealf (x)), 0)) ;           \n" \
 "    }                                                              \n" \
 "    return (GJ_FC32_pow (GxB_CMPLXF (2,0), x)) ;                   \n" \
 "}"
@@ -1026,7 +1026,7 @@ inline GxB_FC64_t GB_cexp2 (GxB_FC64_t x)
 "{                                                                  \n" \
 "    if (fpclassify (GB_cimag (x)) == FP_ZERO)                      \n" \
 "    {                                                              \n" \
-"        return (GB_CMPLX64 (exp2 (GB_creal (x)), 0)) ;             \n" \
+"        return (GJ_CMPLX64 (exp2 (GB_creal (x)), 0)) ;             \n" \
 "    }                                                              \n" \
 "    return (GJ_FC64_pow (GxB_CMPLX (2,0), x)) ;                    \n" \
 "}"
@@ -1047,7 +1047,7 @@ inline GxB_FC64_t GB_cexpm1 (GxB_FC64_t x)
 "GxB_FC64_t GJ_cexpm1 (GxB_FC64_t x)                                \n" \
 "{                                                                  \n" \
 "    GxB_FC64_t z = GB_cexp (x) ;                                   \n" \
-"    return (GB_CMPLX64 (GB_creal (z) - 1, GB_cimag (z))) ;         \n" \
+"    return (GJ_CMPLX64 (GB_creal (z) - 1, GB_cimag (z))) ;         \n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -1067,10 +1067,10 @@ inline GxB_FC32_t GB_cexpm1f (GxB_FC32_t x)
 #define     GJ_cexpm1f_DEFN                                             \
 "GxB_FC32_t GJ_cexpm1f (GxB_FC32_t x)                               \n" \
 "{                                                                  \n" \
-"    GxB_FC64_t z = GB_CMPLX64 ((double) GB_crealf (x),             \n" \
+"    GxB_FC64_t z = GJ_CMPLX64 ((double) GB_crealf (x),             \n" \
 "                               (double) GB_cimagf (x)) ;           \n" \
 "    z = GJ_cexpm1 (z) ;                                            \n" \
-"    return (GB_CMPLX32 ((float) GB_creal (z),                      \n" \
+"    return (GJ_CMPLX32 ((float) GB_creal (z),                      \n" \
 "                        (float) GB_cimag (z))) ;                   \n" \
 "}"
 
@@ -1088,7 +1088,7 @@ inline GxB_FC64_t GB_clog1p (GxB_FC64_t x)
 #define     GJ_clog1p_DEFN                                                  \
 "GxB_FC64_t GJ_clog1p (GxB_FC64_t x)                                    \n" \
 "{                                                                      \n" \
-"    return (GB_clog (GB_CMPLX64 (GB_creal (x) + 1, GB_cimag (x)))) ;   \n" \
+"    return (GB_clog (GJ_CMPLX64 (GB_creal (x) + 1, GB_cimag (x)))) ;   \n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -1108,10 +1108,10 @@ inline GxB_FC32_t GB_clog1pf (GxB_FC32_t x)
 #define     GJ_clog1pf_DEFN                                             \
 "GxB_FC32_t GJ_clog1pf (GxB_FC32_t x)                               \n" \
 "{                                                                  \n" \
-"    GxB_FC64_t z = GB_CMPLX64 ((double) GB_crealf (x),             \n" \
+"    GxB_FC64_t z = GJ_CMPLX64 ((double) GB_crealf (x),             \n" \
 "                               (double) GB_cimagf (x)) ;           \n" \
 "    z = GJ_clog1p (z) ;                                            \n" \
-"    return (GB_CMPLX32 ((float) GB_creal (z),                      \n" \
+"    return (GJ_CMPLX32 ((float) GB_creal (z),                      \n" \
 "                        (float) GB_cimag (z))) ;                   \n" \
 "}"
 
