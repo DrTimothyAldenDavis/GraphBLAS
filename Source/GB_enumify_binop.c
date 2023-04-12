@@ -219,16 +219,16 @@ void GB_enumify_binop
             switch (xcode)
             {
                 case GB_BOOL_code   : e =  1 ; break ; // x
-                case GB_INT8_code   : e = 49 ; break ; // GB_idiv_int8 (x,y)
-                case GB_INT16_code  : e = 50 ; break ; // GB_idiv_int16 (x,y)
-                case GB_INT32_code  : e = 51 ; break ; // GB_idiv_int32 (x,y)
-                case GB_INT64_code  : e = 52 ; break ; // GB_idiv_int64 (x,y)
-                case GB_UINT8_code  : e = 53 ; break ; // GB_idiv_uint8 (x,y)
-                case GB_UINT16_code : e = 54 ; break ; // GB_idiv_uint16 (x,y)
-                case GB_UINT32_code : e = 55 ; break ; // GB_idiv_uint32 (x,y)
-                case GB_UINT64_code : e = 56 ; break ; // GB_idiv_uint64 (x,y)
-                case GB_FC32_code   : e = 57 ; break ; // GB_FC32_div(x,y)
-                case GB_FC64_code   : e = 58 ; break ; // GB_FC64_div(x,y)
+                case GB_INT8_code   : e = 49 ; break ; // GJ_idiv_int8 (x,y)
+                case GB_INT16_code  : e = 50 ; break ; // GJ_idiv_int16 (x,y)
+                case GB_INT32_code  : e = 51 ; break ; // GJ_idiv_int32 (x,y)
+                case GB_INT64_code  : e = 52 ; break ; // GJ_idiv_int64 (x,y)
+                case GB_UINT8_code  : e = 53 ; break ; // GJ_idiv_uint8 (x,y)
+                case GB_UINT16_code : e = 54 ; break ; // GJ_idiv_uint16 (x,y)
+                case GB_UINT32_code : e = 55 ; break ; // GJ_idiv_uint32 (x,y)
+                case GB_UINT64_code : e = 56 ; break ; // GJ_idiv_uint64 (x,y)
+                case GB_FC32_code   : e = 57 ; break ; // GJ_FC32_div(x,y)
+                case GB_FC64_code   : e = 58 ; break ; // GJ_FC64_div(x,y)
                 default             : e = 59 ; break ; // (x) / (y)
             }
             break ;
@@ -238,16 +238,16 @@ void GB_enumify_binop
             switch (xcode)
             {
                 case GB_BOOL_code   : e =  2 ; break ; // y
-                case GB_INT8_code   : e = 60 ; break ; // GB_idiv_int8 (y,x)
-                case GB_INT16_code  : e = 61 ; break ; // GB_idiv_int16 (y,x)
-                case GB_INT32_code  : e = 62 ; break ; // GB_idiv_int32 (y,x)
-                case GB_INT64_code  : e = 63 ; break ; // GB_idiv_int64 (y,x)
-                case GB_UINT8_code  : e = 64 ; break ; // GB_idiv_uint8 (y,x)
-                case GB_UINT16_code : e = 65 ; break ; // GB_idiv_uint16 (y,x)
-                case GB_UINT32_code : e = 66 ; break ; // GB_idiv_uint32 (y,x)
-                case GB_UINT64_code : e = 67 ; break ; // GB_idiv_uint64 (y,x)
-                case GB_FC32_code   : e = 68 ; break ; // GB_FC32_div(y,x)
-                case GB_FC64_code   : e = 69 ; break ; // GB_FC64_div(y,x)
+                case GB_INT8_code   : e = 60 ; break ; // GJ_idiv_int8 (y,x)
+                case GB_INT16_code  : e = 61 ; break ; // GJ_idiv_int16 (y,x)
+                case GB_INT32_code  : e = 62 ; break ; // GJ_idiv_int32 (y,x)
+                case GB_INT64_code  : e = 63 ; break ; // GJ_idiv_int64 (y,x)
+                case GB_UINT8_code  : e = 64 ; break ; // GJ_idiv_uint8 (y,x)
+                case GB_UINT16_code : e = 65 ; break ; // GJ_idiv_uint16 (y,x)
+                case GB_UINT32_code : e = 66 ; break ; // GJ_idiv_uint32 (y,x)
+                case GB_UINT64_code : e = 67 ; break ; // GJ_idiv_uint64 (y,x)
+                case GB_FC32_code   : e = 68 ; break ; // GJ_FC32_div(y,x)
+                case GB_FC64_code   : e = 69 ; break ; // GJ_FC64_div(y,x)
                 default             : e = 70 ; break ; // (y) / (x)
             }
             break ;

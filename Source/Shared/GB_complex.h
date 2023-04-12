@@ -14,6 +14,47 @@
 #define GB_COMPLEX_H
 
 //------------------------------------------------------------------------------
+// complex constructors
+//------------------------------------------------------------------------------
+
+#if defined ( __cplusplus ) || defined ( __NVCC__ )                     \
+    || ( _MSC_VER && !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )    \
+    || !(defined (CMPLX) && defined (CMPLX))
+
+    // The GxB_CMPLX* macros defined in GraphBLAS.h do no flops so they are
+    // safe to use if the inputs are Inf or NaN.
+
+    #define GB_CMPLX32(xreal,ximag) GxB_CMPLXF (xreal, ximag)
+    #define GB_CMPLX64(xreal,ximag) GxB_CMPLX  (xreal, ximag)
+
+#else
+
+    // gcc on the Mac does not define the CMPLX and CMPLXF macros.  The macros
+    // defined in GraphBLAS.h do arithmetic, so they are not safe with Inf or
+    // NaN.
+
+    #define GB_CMPLX32(xreal,ximag) GB_complexf (xreal, ximag)
+    #define GB_CMPLX64(xreal,ximag) GB_complex  (xreal, ximag)
+
+    inline GxB_FC32_t GB_complexf (float xreal, float ximag)
+    {
+        float z [2] ;
+        z [0] = xreal ;
+        z [1] = ximag ;
+        return (* ((GxB_FC32_t *) z)) ;
+    }
+
+    inline GxB_FC64_t GB_complex (double xreal, double ximag)
+    {
+        double z [2] ;
+        z [0] = xreal ;
+        z [1] = ximag ;
+        return (* ((GxB_FC64_t *) z)) ;
+    }
+
+#endif
+
+//------------------------------------------------------------------------------
 // macros for complex built-in functions
 //------------------------------------------------------------------------------
 
@@ -118,7 +159,7 @@
 #endif
 
 //------------------------------------------------------------------------------
-// complex macros for basic operations
+// macros for basic complex operations: mult, add, minus, ainv
 //------------------------------------------------------------------------------
 
 #if GB_COMPILER_MSC
@@ -167,7 +208,10 @@
 
 #endif
 
+//------------------------------------------------------------------------------
 // complex comparators
+//------------------------------------------------------------------------------
+
 #define GB_FC32_eq(x,y) ((GB_crealf(x) == GB_crealf(y)) && (GB_cimagf(x) == GB_cimagf(y)))
 #define GB_FC64_eq(x,y) ((GB_creal (x) == GB_creal (y)) && (GB_cimag (x) == GB_cimag (y)))
 

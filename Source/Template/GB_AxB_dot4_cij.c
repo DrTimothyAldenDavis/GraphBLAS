@@ -16,7 +16,7 @@
     //--------------------------------------------------------------------------
 
     // FIXME: allow for the use of any accum:  set cij = identity, and then
-    // use the accume when done (instead of GB_PUTC)
+    // use the accum when done (instead of GB_PUTC)
 
     const int64_t pC = i + pC_start ;   // C(i,j) is at Cx [pC]
     GB_C_TYPE GB_GET4C (cij, pC) ;      // cij = Cx [pC]
@@ -69,12 +69,12 @@
         #elif GB_IS_PLUS_FC32_PAIR_SEMIRING
         { 
             // (PLUS monoid for float complex)_PAIR semiring
-            cij = GB_CMPLX32 (GB_crealf (cij) + (float) ainz, 0) ;
+            cij = GB_CMPLX32 (GB_crealf (cij) + (float) ainz, GB_imagf (cij)) ;
         }
         #elif GB_IS_PLUS_FC64_PAIR_SEMIRING
         { 
             // (PLUS monoid for double complex)_PAIR semiring
-            cij = GB_CMPLX64 (GB_creal (cij) + (double) ainz, 0) ;
+            cij = GB_CMPLX64 (GB_creal (cij) + (double) ainz, GB_imag (cij)) ;
         }
         #elif GB_IS_MIN_FIRSTJ_SEMIRING
         {
@@ -150,7 +150,6 @@
                     GB_DOT (k, p, pB+k) ; // cij+=A(k,i)*B(k,j)
                 }
             }
-
         }
         #endif
 
