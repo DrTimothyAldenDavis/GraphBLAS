@@ -44,16 +44,16 @@ for code1 = 1:ntypes
             % typecasting from GxB_FC32_t
             if (isequal (ctype, 'bool')) 
                 % to bool from GxB_FC32_t 
-                func = '(crealf (xarg) != 0) || (cimagf (xarg) != 0)' ;
+                func = '(GB_crealf (xarg) != 0) || (GB_cimagf (xarg) != 0)' ;
             elseif (codegen_contains (ctype, 'int'))
                 % to integer from GxB_FC32_t 
-                func = sprintf ('GB_cast_to_%s ((double) crealf (xarg))', ctype) ;
+                func = sprintf ('GB_cast_to_%s ((double) GB_crealf (xarg))', ctype) ;
             elseif (isequal (ctype, 'float') || isequal (ctype, 'double')) 
                 % to float or double from GxB_FC32_t 
-                func = sprintf ('(%s) crealf (xarg)', ctype) ;
+                func = sprintf ('(%s) GB_crealf (xarg)', ctype) ;
             elseif (isequal (ctype, 'GxB_FC64_t'))
                 % to GxB_FC64_t from GxB_FC32_t 
-                func = 'GB_CMPLX64 ((double) crealf (xarg), (double) cimagf (xarg))' ;
+                func = 'GB_CMPLX64 ((double) GB_crealf (xarg), (double) GB_cimagf (xarg))' ;
             end
 
         elseif (isequal (atype, 'GxB_FC64_t'))
@@ -61,16 +61,16 @@ for code1 = 1:ntypes
             % typecasting from GxB_FC64_t
             if (isequal (ctype, 'bool')) 
                 % to bool from GxB_FC64_t 
-                func = '(creal (xarg) != 0) || (cimag (xarg) != 0)' ;
+                func = '(GB_creal (xarg) != 0) || (GB_cimag (xarg) != 0)' ;
             elseif (codegen_contains (ctype, 'int'))
                 % to integer from GxB_FC64_t 
-                func = sprintf ('GB_cast_to_%s (creal (xarg))', ctype) ;
+                func = sprintf ('GB_cast_to_%s (GB_creal (xarg))', ctype) ;
             elseif (isequal (ctype, 'float') || isequal (ctype, 'double')) 
                 % to float or double from GxB_FC64_t 
-                func = sprintf ('(%s) creal (xarg)', ctype) ;
+                func = sprintf ('(%s) GB_creal (xarg)', ctype) ;
             elseif (isequal (ctype, 'GxB_FC32_t'))
                 % to GxB_FC32_t from GxB_FC64_t 
-                func = 'GB_CMPLX32 ((float) creal (xarg), (float) cimag (xarg))' ;
+                func = 'GB_CMPLX32 ((float) GB_creal (xarg), (float) GB_cimag (xarg))' ;
             end
 
         elseif (isequal (atype, 'float') || isequal (atype, 'double'))

@@ -32,8 +32,8 @@
 
 // C matrix:
 #define GB_C_TYPE bool
-#define GB_COPY_A_to_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = (crealf (Ax [(A_iso) ? 0 : (pA)]) != 0) || (cimagf (Ax [(A_iso) ? 0 : (pA)]) != 0)
-#define GB_COPY_B_to_C(Cx,pC,Bx,pB,B_iso) Cx [pC] = (crealf (Bx [(B_iso) ? 0 : (pB)]) != 0) || (cimagf (Bx [(B_iso) ? 0 : (pB)]) != 0)
+#define GB_COPY_A_to_C(Cx,pC,Ax,pA,A_iso) Cx [pC] = (GB_crealf (Ax [(A_iso) ? 0 : (pA)]) != 0) || (GB_cimagf (Ax [(A_iso) ? 0 : (pA)]) != 0)
+#define GB_COPY_B_to_C(Cx,pC,Bx,pB,B_iso) Cx [pC] = (GB_crealf (Bx [(B_iso) ? 0 : (pB)]) != 0) || (GB_cimagf (Bx [(B_iso) ? 0 : (pB)]) != 0)
 #define GB_CTYPE_IS_ATYPE 0
 #define GB_CTYPE_IS_BTYPE 0
 

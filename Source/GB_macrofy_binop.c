@@ -177,20 +177,10 @@ void GB_macrofy_binop
             // plus (complex)
             case   9 : 
                 f = "z = GB_FC32_add (x,y)" ;
-                #if GB_COMPILER_MSC
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                #endif
-                GB_macrofy_defn (fp, 1, "GB_FC32_add", GB_FC32_add_DEFN) ;
                 break ;
 
             case  10 : 
                 f = "z = GB_FC64_add (x,y)" ;
-                #if GB_COMPILER_MSC
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                #endif
-                GB_macrofy_defn (fp, 1, "GB_FC64_add", GB_FC64_add_DEFN) ;
                 break ;
 
             // plus (real)
@@ -202,11 +192,9 @@ void GB_macrofy_binop
             // times (complex)
             case  12 : 
                 f = "z = GB_FC32_mul (x,y)" ;
-                GB_macrofy_defn (fp, 1, "GB_FC32_mul", GB_FC64_mul_DEFN) ;
                 break ;
             case  13 : 
                 f = "z = GB_FC64_mul (x,y)" ;
-                GB_macrofy_defn (fp, 1, "GB_FC64_mul", GB_FC64_mul_DEFN) ;
                 break ;
 
             // times (real)
@@ -272,15 +260,9 @@ void GB_macrofy_binop
             // eq for complex
             case  32 : 
                 f = "z = GB_FC32_eq (x,y)" ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 1, "GB_FC32_eq", GB_FC32_eq_DEFN) ;
                 break ;
             case  33 : 
                 f = "z = GB_FC64_eq (x,y)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 1, "GB_FC64_eq", GB_FC64_eq_DEFN) ;
                 break ;
 
             // iseq for non-boolean real
@@ -291,17 +273,9 @@ void GB_macrofy_binop
             // iseq for complex
             case  34 : 
                 f = "z = GB_FC32_iseq (x,y)" ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 1, "GB_FC32_eq", GB_FC32_eq_DEFN) ;
-                GB_macrofy_defn (fp, 1, "GB_FC32_iseq", GB_FC32_iseq_DEFN) ;
                 break ;
             case  35 : 
                 f = "z = GB_FC64_iseq (x,y)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 1, "GB_FC64_eq", GB_FC64_eq_DEFN) ;
-                GB_macrofy_defn (fp, 1, "GB_FC64_iseq", GB_FC64_iseq_DEFN) ;
                 break ;
 
             // ne
@@ -313,15 +287,9 @@ void GB_macrofy_binop
             // ne for complex
             case  36 : 
                 f = "z = GB_FC32_ne (x,y)" ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 1, "GB_FC32_ne", GB_FC32_ne_DEFN) ;
                 break ;
             case  37 : 
                 f = "z = GB_FC64_ne (x,y)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 1, "GB_FC64_ne", GB_FC64_ne_DEFN) ;
                 break ;
 
             // isne for non-boolean real
@@ -332,17 +300,9 @@ void GB_macrofy_binop
             // isne for complex
             case  38 : 
                 f = "z = GB_FC32_isne (x,y)" ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 1, "GB_FC32_ne", GB_FC32_ne_DEFN) ;
-                GB_macrofy_defn (fp, 1, "GB_FC32_isne", GB_FC32_isne_DEFN) ;
                 break ;
             case  39 : 
                 f = "z = GB_FC64_isne (x,y)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 1, "GB_FC64_ne", GB_FC64_ne_DEFN) ;
-                GB_macrofy_defn (fp, 1, "GB_FC64_isne", GB_FC64_isne_DEFN) ;
                 break ;
 
             // lor for non-boolean
@@ -357,19 +317,9 @@ void GB_macrofy_binop
             // minus
             case  43 : 
                 f = "z = GB_FC32_minus (x,y)" ;
-                #if GB_COMPILER_MSC
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                #endif
-                GB_macrofy_defn (fp, 1, "GB_FC32_minus", GB_FC32_minus_DEFN) ;
                 break ;
             case  44 : 
                 f = "z = GB_FC64_minus (x,y)" ;
-                #if GB_COMPILER_MSC
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                #endif
-                GB_macrofy_defn (fp, 1, "GB_FC64_minus", GB_FC64_minus_DEFN) ;
                 break ;
             case  45 : 
                 f = "z = (x) - (y)" ;
@@ -379,19 +329,9 @@ void GB_macrofy_binop
             // rminus
             case  46 : 
                 f = "z = GB_FC32_minus (y,x)" ;
-                #if GB_COMPILER_MSC
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                #endif
-                GB_macrofy_defn (fp, 1, "GB_FC32_minus", GB_FC32_minus_DEFN) ;
                 break ;
             case  47 : 
                 f = "z = GB_FC64_minus (y,x)" ;
-                #if GB_COMPILER_MSC
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                #endif
-                GB_macrofy_defn (fp, 1, "GB_FC64_minus", GB_FC64_minus_DEFN) ;
                 break ;
             case  48 : 
                 f = "z = (y) - (x)" ;
@@ -399,53 +339,47 @@ void GB_macrofy_binop
 
             // div (integer)
             case  49 : 
-                f = "z = GB_idiv_int8 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_int8", GB_idiv_int8_DEFN) ;
+                f = "z = GJ_idiv_int8 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_int8", GJ_idiv_int8_DEFN) ;
                 break ;
             case  50 : 
-                f = "z = GB_idiv_int16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_int16", GB_idiv_int16_DEFN) ;
+                f = "z = GJ_idiv_int16 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_int16", GJ_idiv_int16_DEFN) ;
                 break ;
             case  51 : 
-                f = "z = GB_idiv_int32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_int32", GB_idiv_int32_DEFN) ;
+                f = "z = GJ_idiv_int32 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_int32", GJ_idiv_int32_DEFN) ;
                 break ;
             case  52 : 
-                f = "z = GB_idiv_int64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_int64", GB_idiv_int64_DEFN) ;
+                f = "z = GJ_idiv_int64 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_int64", GJ_idiv_int64_DEFN) ;
                 break ;
             case  53 : 
-                f = "z = GB_idiv_uint8 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_uint8", GB_idiv_uint8_DEFN) ;
+                f = "z = GJ_idiv_uint8 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_uint8", GJ_idiv_uint8_DEFN) ;
                 break ;
             case  54 : 
-                f = "z = GB_idiv_uint16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_uint16", GB_idiv_uint16_DEFN) ;
+                f = "z = GJ_idiv_uint16 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_uint16", GJ_idiv_uint16_DEFN) ;
                 break ;
             case  55 : 
-                f = "z = GB_idiv_uint32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_uint32", GB_idiv_uint32_DEFN) ;
+                f = "z = GJ_idiv_uint32 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_uint32", GJ_idiv_uint32_DEFN) ;
                 break ;
             case  56 : 
-                f = "z = GB_idiv_uint64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_uint64", GB_idiv_uint64_DEFN) ;
+                f = "z = GJ_idiv_uint64 (x,y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_uint64", GJ_idiv_uint64_DEFN) ;
                 break ;
 
             // div (complex floating-point)
             case  57 : 
                 f = "z = GB_FC32_div (x,y)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC64_div", GB_FC64_div_DEFN) ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC32_div", GB_FC32_div_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_FC64_div", GJ_FC64_div_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_FC32_div", GJ_FC32_div_DEFN) ;
                 break ;
             case  58 : 
                 f = "z = GB_FC64_div (x,y)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC64_div", GB_FC64_div_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_FC64_div", GJ_FC64_div_DEFN) ;
                 break ;
 
             // div (float and double)
@@ -456,53 +390,47 @@ void GB_macrofy_binop
 
             // rdiv (integer)
             case  60 : 
-                f = "z = GB_idiv_int8 (y,x)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_int8", GB_idiv_int8_DEFN) ;
+                f = "z = GJ_idiv_int8 (y,x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_int8", GJ_idiv_int8_DEFN) ;
                 break ;
             case  61 : 
-                f = "z = GB_idiv_int16 (y,x)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_int16", GB_idiv_int16_DEFN) ;
+                f = "z = GJ_idiv_int16 (y,x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_int16", GJ_idiv_int16_DEFN) ;
                 break ;
             case  62 : 
-                f = "z = GB_idiv_int32 (y,x)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_int32", GB_idiv_int32_DEFN) ;
+                f = "z = GJ_idiv_int32 (y,x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_int32", GJ_idiv_int32_DEFN) ;
                 break ;
             case  63 : 
-                f = "z = GB_idiv_int64 (y,x)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_int64", GB_idiv_int64_DEFN) ;
+                f = "z = GJ_idiv_int64 (y,x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_int64", GJ_idiv_int64_DEFN) ;
                 break ;
             case  64 : 
-                f = "z = GB_idiv_uint8 (y,x)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_uint8", GB_idiv_uint8_DEFN) ;
+                f = "z = GJ_idiv_uint8 (y,x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_uint8", GJ_idiv_uint8_DEFN) ;
                 break ;
             case  65 : 
-                f = "z = GB_idiv_uint16 (y,x)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_uint16", GB_idiv_uint16_DEFN) ;
+                f = "z = GJ_idiv_uint16 (y,x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_uint16", GJ_idiv_uint16_DEFN) ;
                 break ;
             case  66 : 
-                f = "z = GB_idiv_uint32 (y,x)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_uint32", GB_idiv_uint32_DEFN) ;
+                f = "z = GJ_idiv_uint32 (y,x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_uint32", GJ_idiv_uint32_DEFN) ;
                 break ;
             case  67 : 
-                f = "z = GB_idiv_uint64 (y,x)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_uint64", GB_idiv_uint64_DEFN) ;
+                f = "z = GJ_idiv_uint64 (y,x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_uint64", GJ_idiv_uint64_DEFN) ;
                 break ;
 
             // rdiv (complex floating-point)
             case  68 : 
                 f = "z = GB_FC32_div (y,x)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC64_div", GB_FC64_div_DEFN) ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC32_div", GB_FC32_div_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_FC64_div", GJ_FC64_div_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_FC32_div", GJ_FC32_div_DEFN) ;
                 break ;
             case  69 : 
                 f = "z = GB_FC64_div (y,x)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC64_div", GB_FC64_div_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_FC64_div", GJ_FC64_div_DEFN) ;
                 break ;
 
             // rdiv (real floating-point)
@@ -539,38 +467,31 @@ void GB_macrofy_binop
                 break ;
             case  76 : 
                 f = "z = GJ_bitget_int16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitget_int16",
-                    GJ_bitget_int16_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitget_int16", GJ_bitget_int16_DEFN) ;
                 break ;
             case  77 : 
                 f = "z = GJ_bitget_int32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitget_int32",
-                    GJ_bitget_int32_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitget_int32", GJ_bitget_int32_DEFN) ;
                 break ;
             case  78 : 
                 f = "z = GJ_bitget_int64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitget_int64",
-                    GJ_bitget_int64_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitget_int64", GJ_bitget_int64_DEFN) ;
                 break ;
             case  79 : 
                 f = "z = GJ_bitget_uint8 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitget_uint8",
-                    GJ_bitget_uint8_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitget_uint8", GJ_bitget_uint8_DEFN) ;
                 break ;
             case  80 : 
                 f = "z = GJ_bitget_uint16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitget_uint16",
-                    GJ_bitget_uint16_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitget_uint16", GJ_bitget_uint16_DEFN) ;
                 break ;
             case  81 : 
                 f = "z = GJ_bitget_uint32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitget_uint32",
-                    GJ_bitget_uint32_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitget_uint32", GJ_bitget_uint32_DEFN) ;
                 break ;
             case  82 : 
                 f = "z = GJ_bitget_uint64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitget_uint64",
-                    GJ_bitget_uint64_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitget_uint64", GJ_bitget_uint64_DEFN) ;
                 break ;
 
             // bset
@@ -580,38 +501,31 @@ void GB_macrofy_binop
                 break ;
             case  84 : 
                 f = "z = GJ_bitset_int16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitset_int16",
-                    GJ_bitset_int16_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitset_int16", GJ_bitset_int16_DEFN) ;
                 break ;
             case  85 : 
                 f = "z = GJ_bitset_int32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitset_int32",
-                    GJ_bitset_int32_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitset_int32", GJ_bitset_int32_DEFN) ;
                 break ;
             case  86 : 
                 f = "z = GJ_bitset_int64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitset_int64",
-                    GJ_bitset_int64_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitset_int64", GJ_bitset_int64_DEFN) ;
                 break ;
             case  87 : 
                 f = "z = GJ_bitset_uint8 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitset_uint8",
-                    GJ_bitset_uint8_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitset_uint8", GJ_bitset_uint8_DEFN) ;
                 break ;
             case  88 : 
                 f = "z = GJ_bitset_uint16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitset_uint16",
-                    GJ_bitset_uint16_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitset_uint16", GJ_bitset_uint16_DEFN) ;
                 break ;
             case  89 : 
                 f = "z = GJ_bitset_uint32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitset_uint32",
-                    GJ_bitset_uint32_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitset_uint32", GJ_bitset_uint32_DEFN) ;
                 break ;
             case  90 : 
                 f = "z = GJ_bitset_uint64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitset_uint64",
-                    GJ_bitset_uint64_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitset_uint64", GJ_bitset_uint64_DEFN) ;
                 break ;
 
             // bclr
@@ -621,150 +535,137 @@ void GB_macrofy_binop
                 break ;
             case  92 : 
                 f = "z = GJ_bitclr_int16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitclr_int16",
-                    GJ_bitclr_int16_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitclr_int16", GJ_bitclr_int16_DEFN) ;
                 break ;
             case  93 : 
                 f = "z = GJ_bitclr_int32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitclr_int32",
-                    GJ_bitclr_int32_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitclr_int32", GJ_bitclr_int32_DEFN) ;
                 break ;
             case  94 : 
                 f = "z = GJ_bitclr_int64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitclr_int64",
-                    GJ_bitclr_int64_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitclr_int64", GJ_bitclr_int64_DEFN) ;
                 break ;
             case  95 : 
                 f = "z = GJ_bitclr_uint8 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitclr_uint8",
-                    GJ_bitclr_uint8_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitclr_uint8", GJ_bitclr_uint8_DEFN) ;
                 break ;
             case  96 : 
                 f = "z = GJ_bitclr_uint16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitclr_uint16",
-                    GJ_bitclr_uint16_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitclr_uint16", GJ_bitclr_uint16_DEFN) ;
                 break ;
             case  97 : 
                 f = "z = GJ_bitclr_uint32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitclr_uint32",
-                    GJ_bitclr_uint32_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitclr_uint32", GJ_bitclr_uint32_DEFN) ;
                 break ;
             case  98 : 
                 f = "z = GJ_bitclr_uint64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitclr_uint64",
-                    GJ_bitclr_uint64_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitclr_uint64", GJ_bitclr_uint64_DEFN) ;
                 break ;
 
             // bshift
             case  99 : 
                 f = "z = GJ_bitshift_int8 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitshift_int8",
-                    GJ_bitshift_int8_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitshift_int8", GJ_bitshift_int8_DEFN) ;
                 break ;
             case 100 : 
                 f = "z = GJ_bitshift_int16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitshift_int16",
-                    GJ_bitshift_int16_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitshift_int16", GJ_bitshift_int16_DEFN) ;
                 break ;
             case 101 : 
                 f = "z = GJ_bitshift_int32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitshift_int32",
-                    GJ_bitshift_int32_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitshift_int32", GJ_bitshift_int32_DEFN) ;
                 break ;
             case 102 : 
                 f = "z = GJ_bitshift_int64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitshift_int64",
-                    GJ_bitshift_int64_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitshift_int64", GJ_bitshift_int64_DEFN) ;
                 break ;
             case 103 : 
                 f = "z = GJ_bitshift_uint8 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitshift_uint8",
-                    GJ_bitshift_uint8_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitshift_uint8", GJ_bitshift_uint8_DEFN) ;
                 break ;
             case 104 : 
                 f = "z = GJ_bitshift_uint16 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitshift_uint16",
-                    GJ_bitshift_uint16_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitshift_uint16", GJ_bitshift_uint16_DEFN) ;
                 break ;
             case 105 : 
                 f = "z = GJ_bitshift_uint32 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitshift_uint32",
-                    GJ_bitshift_uint32_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitshift_uint32", GJ_bitshift_uint32_DEFN) ;
                 break ;
             case 106 : 
                 f = "z = GJ_bitshift_uint64 (x,y)" ;
-                GB_macrofy_defn (fp, 0, "GJ_bitshift_uint64",
-                    GJ_bitshift_uint64_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_bitshift_uint64", GJ_bitshift_uint64_DEFN) ;
                 break ;
 
             // pow (integer cases)
             case 107 : 
-                f = "z = GB_pow_int8 (x, y)" ;
-                GB_macrofy_defn (fp, 0, "GB_pow", GB_pow_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_pow_int8", GB_pow_int8_DEFN) ;
+                f = "z = GJ_pow_int8 (x, y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_pow", GJ_pow_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cast_to_int8", GJ_cast_to_int8_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_pow_int8", GJ_pow_int8_DEFN) ;
                 break ;
             case 108 : 
-                f = "z = GB_pow_int16 (x, y)" ;
-                GB_macrofy_defn (fp, 0, "GB_pow", GB_pow_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_pow_int16", GB_pow_int16_DEFN) ;
+                f = "z = GJ_pow_int16 (x, y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_pow", GJ_pow_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cast_to_int16", GJ_cast_to_int16_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_pow_int16", GJ_pow_int16_DEFN) ;
                 break ;
             case 109 : 
-                f = "z = GB_pow_int32 (x, y)" ;
-                GB_macrofy_defn (fp, 0, "GB_pow", GB_pow_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_pow_int32", GB_pow_int32_DEFN) ;
+                f = "z = GJ_pow_int32 (x, y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_pow", GJ_pow_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cast_to_int32", GJ_cast_to_int32_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_pow_int32", GJ_pow_int32_DEFN) ;
                 break ;
             case 110 : 
-                f = "z = GB_pow_int64 (x, y)" ;
-                GB_macrofy_defn (fp, 0, "GB_pow", GB_pow_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_pow_int64", GB_pow_int64_DEFN) ;
+                f = "z = GJ_pow_int64 (x, y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_pow", GJ_pow_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cast_to_int32", GJ_cast_to_int64_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_pow_int64", GJ_pow_int64_DEFN) ;
                 break ;
             case 111 : 
-                f = "z = GB_pow_uint8 (x, y)" ;
-                GB_macrofy_defn (fp, 0, "GB_pow", GB_pow_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_pow_uint8", GB_pow_uint8_DEFN) ;
+                f = "z = GJ_pow_uint8 (x, y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_pow", GJ_pow_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cast_to_uint8", GJ_cast_to_uint8_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_pow_uint8", GJ_pow_uint8_DEFN) ;
                 break ;
             case 112 : 
-                f = "z = GB_pow_uint16 (x, y)" ;
-                GB_macrofy_defn (fp, 0, "GB_pow", GB_pow_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_pow_uint16", GB_pow_uint16_DEFN) ;
+                f = "z = GJ_pow_uint16 (x, y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_pow", GJ_pow_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cast_to_uint16", GJ_cast_to_uint16_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_pow_uint16", GJ_pow_uint16_DEFN) ;
                 break ;
             case 113 : 
-                f = "z = GB_pow_uint32 (x, y)" ;
-                GB_macrofy_defn (fp, 0, "GB_pow", GB_pow_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_pow_uint32", GB_pow_uint32_DEFN) ;
+                f = "z = GJ_pow_uint32 (x, y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_pow", GJ_pow_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cast_to_uint32", GJ_cast_to_uint32_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_pow_uint32", GJ_pow_uint32_DEFN) ;
                 break ;
             case 114 : 
-                f = "z = GB_pow_uint64 (x, y)" ;
-                GB_macrofy_defn (fp, 0, "GB_pow", GB_pow_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_pow_uint64", GB_pow_uint64_DEFN) ;
+                f = "z = GJ_pow_uint64 (x, y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_pow", GJ_pow_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cast_to_uint64", GJ_cast_to_uint64_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_pow_uint64", GJ_pow_uint64_DEFN) ;
                 break ;
 
             // pow (float and double)
             case 115 : 
-                f = "z = GB_powf (x, y)" ;
-                GB_macrofy_defn (fp, 0, "GB_powf", GB_powf_DEFN) ;
+                f = "z = GJ_powf (x, y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_powf", GJ_powf_DEFN) ;
                 break ;
             case 116 : 
-                f = "z = GB_pow (x, y)" ;
-                GB_macrofy_defn (fp, 0, "GB_pow", GB_pow_DEFN) ;
+                f = "z = GJ_pow (x, y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_pow", GJ_pow_DEFN) ;
                 break ;
 
             // pow (complex float and double)
             case 117 : 
-                f = "z = GB_FC32_pow (x, y)" ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cpowf", GB_cpowf_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_powf", GB_powf_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC32_pow", GB_FC32_pow_DEFN) ;
+                f = "z = GJ_FC32_pow (x, y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_powf", GJ_powf_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_FC32_pow", GJ_FC32_pow_DEFN) ;
                 break ;
             case 118 : 
-                f = "z = GB_FC64_pow (x, y)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cpow", GB_cpow_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_pow", GB_pow_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC64_pow", GB_FC64_pow_DEFN) ;
+                f = "z = GJ_FC64_pow (x, y)" ;
+                GB_macrofy_defn (fp, 0, "GJ_pow", GJ_pow_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_FC64_pow", GJ_FC64_pow_DEFN) ;
                 break ;
 
             // atan2

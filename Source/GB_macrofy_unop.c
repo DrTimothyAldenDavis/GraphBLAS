@@ -111,78 +111,58 @@ void GB_macrofy_unop
 
             case   2 : f = "z = x" ;                            break ;
 
-            case   3 : f = "z = GB_FC32_ainv (x)" ;
-                #if GB_COMPILER_MSC
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                #endif
-                GB_macrofy_defn (fp, 1, "GB_FC32_ainv", GB_FC32_ainv_DEFN) ;
-                break ;
-
-            case   4 : f = "z = GB_FC64_ainv (x)" ;
-                #if GB_COMPILER_MSC
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                #endif
-                GB_macrofy_defn (fp, 1, "GB_FC64_ainv", GB_FC64_ainv_DEFN) ;
-                break ;
-
+            case   3 : f = "z = GB_FC32_ainv (x)" ;             break ;
+            case   4 : f = "z = GB_FC64_ainv (x)" ;             break ;
             case   5 : f = "z = -(x)" ;                         break ;
 
             case   6 : f = "z = (((x) >= 0) ? (x) : (-(x)))" ;  break ;
             case   7 : f = "z = fabsf (x)" ;                    break ;
             case   8 : f = "z = fabs (x)" ;                     break ;
-            case   9 : f = "z = cabsf (x)" ;                    break ;
-            case  10 : f = "z = cabs (x)" ;                     break ;
+            case   9 : f = "z = GB_cabsf (x)" ;                 break ;
+            case  10 : f = "z = GB_cabs (x)" ;                  break ;
 
-            case  11 : f = "z = GB_idiv_int8 (1, x)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_int8", GB_idiv_int8_DEFN) ;
+            case  11 : f = "z = GJ_idiv_int8 (1, x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_int8", GJ_idiv_int8_DEFN) ;
                 break ;
 
-            case  12 : f = "z = GB_idiv_int16 (1, x)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_int16", GB_idiv_int16_DEFN) ;
+            case  12 : f = "z = GJ_idiv_int16 (1, x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_int16", GJ_idiv_int16_DEFN) ;
                 break ;
 
-            case  13 : f = "z = GB_idiv_int32 (1, x)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_int32", GB_idiv_int32_DEFN) ;
+            case  13 : f = "z = GJ_idiv_int32 (1, x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_int32", GJ_idiv_int32_DEFN) ;
                 break ;
 
-            case  14 : f = "z = GB_idiv_int64 (1, x)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_int64", GB_idiv_int64_DEFN) ;
+            case  14 : f = "z = GJ_idiv_int64 (1, x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_int64", GJ_idiv_int64_DEFN) ;
                 break ;
 
-            case  15 : f = "z = GB_idiv_uint8 (1, x)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_uint8", GB_idiv_uint8_DEFN) ;
+            case  15 : f = "z = GJ_idiv_uint8 (1, x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_uint8", GJ_idiv_uint8_DEFN) ;
                 break ;
 
-            case  16 : f = "z = GB_idiv_uint16 (1, x)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_uint16", GB_idiv_uint16_DEFN) ;
+            case  16 : f = "z = GJ_idiv_uint16 (1, x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_uint16", GJ_idiv_uint16_DEFN) ;
                 break ;
 
-            case  17 : f = "z = GB_idiv_uint32 (1, x)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_uint32", GB_idiv_uint32_DEFN) ;
+            case  17 : f = "z = GJ_idiv_uint32 (1, x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_uint32", GJ_idiv_uint32_DEFN) ;
                 break ;
 
-            case  18 : f = "z = GB_idiv_uint64 (1, x)" ;
-                GB_macrofy_defn (fp, 0, "GB_idiv_uint64", GB_idiv_uint64_DEFN) ;
+            case  18 : f = "z = GJ_idiv_uint64 (1, x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_idiv_uint64", GJ_idiv_uint64_DEFN) ;
                 break ;
 
             case  19 : f = "z = (1.0F)/(x)" ;               break ;
             case  20 : f = "z = 1./(x)" ;                   break ;
 
-            case  21 : f = "z = GB_FC32_div (GxB_CMPLXF (1,0), x)" ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC64_div", GB_FC64_div_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC32_div", GB_FC32_div_DEFN) ;
+            case  21 : f = "z = GJ_FC32_div (GxB_CMPLXF (1,0), x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_FC64_div", GJ_FC64_div_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_FC32_div", GJ_FC32_div_DEFN) ;
                 break ;
 
-            case  22 : f = "z = GB_FC64_div (GxB_CMPLX  (1,0), x)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC64_div", GB_FC64_div_DEFN) ;
+            case  22 : f = "z = GJ_FC64_div (GxB_CMPLX  (1,0), x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_FC64_div", GJ_FC64_div_DEFN) ;
                 break ;
 
             case  23 : f = "z = !(x)" ;                     break ;
@@ -196,354 +176,204 @@ void GB_macrofy_unop
 
             case  26 : f = "z = sqrtf (x)" ;        break ;
             case  27 : f = "z = sqrt (x)" ;         break ;
-
-            case  28 : f = "z = csqrtf (x)" ;
-                GB_macrofy_defn (fp, 2, "csqrtf", GB_csqrtf_DEFN) ;
-                break ;
-
-            case  29 : f = "z = csqrt (x)" ;
-                GB_macrofy_defn (fp, 2, "csqrt", GB_csqrt_DEFN) ;
-                break ;
+            case  28 : f = "z = GB_csqrtf (x)" ;    break ;
+            case  29 : f = "z = GB_csqrt (x)" ;     break ;
 
             case  30 : f = "z = logf (x)" ;         break ;
             case  31 : f = "z = log (x)" ;          break ;
-
-            case  32 : f = "z = clogf (x)" ;
-                GB_macrofy_defn (fp, 2, "clogf", GB_clogf_DEFN) ;
-                break ;
-
-            case  33 : f = "z = clog (x)" ;
-                GB_macrofy_defn (fp, 2, "clog", GB_clog_DEFN) ;
-                break ;
+            case  32 : f = "z = GB_clogf (x)" ;     break ;
+            case  33 : f = "z = GB_clog (x)" ;      break ;
 
             case  34 : f = "z = expf (x)" ;         break ;
             case  35 : f = "z = exp (x)" ;          break ;
-
-            case  36 : f = "z = cexpf (x)" ;
-                GB_macrofy_defn (fp, 2, "cexpf", GB_cexpf_DEFN) ;
-                break ;
-
-            case  37 : f = "z = cexp (x)" ; 
-                GB_macrofy_defn (fp, 2, "cexp", GB_cexp_DEFN) ;
-                break ;
+            case  36 : f = "z = GB_cexpf (x)" ;     break ;
+            case  37 : f = "z = GB_cexp (x)" ;      break ;
 
             case  38 : f = "z = sinf (x)" ;         break ;
             case  39 : f = "z = sin (x)" ;          break ;
-
-            case  40 : f = "z = csinf (x)" ;
-                GB_macrofy_defn (fp, 2, "csinf", GB_csinf_DEFN) ;
-                break ;
-
-            case  41 : f = "z = csin (x)" ;
-                GB_macrofy_defn (fp, 2, "csin", GB_csin_DEFN) ;
-                break ;
+            case  40 : f = "z = GB_csinf (x)" ;     break ;
+            case  41 : f = "z = GB_csin (x)" ;      break ;
 
             case  42 : f = "z = cosf (x)" ;         break ;
             case  43 : f = "z = cos (x)" ;          break ;
-
-            case  44 : f = "z = ccosf (x)" ;
-                GB_macrofy_defn (fp, 2, "ccosf", GB_ccosf_DEFN) ;
-                break ;
-
-            case  45 : f = "z = ccos (x)" ;
-                GB_macrofy_defn (fp, 2, "ccos", GB_ccos_DEFN) ;
-                break ;
+            case  44 : f = "z = GB_ccosf (x)" ;     break ;
+            case  45 : f = "z = GB_ccos (x)" ;      break ;
 
             case  46 : f = "z = tanf (x)" ;         break ;
             case  47 : f = "z = tan (x)" ;          break ;
-
-            case  48 : f = "z = ctanf (x)" ;
-                GB_macrofy_defn (fp, 2, "ctanf", GB_ctanf_DEFN) ;
-                break ;
-
-            case  49 : f = "z = ctan (x)" ;
-                GB_macrofy_defn (fp, 2, "ctan", GB_ctan_DEFN) ;
-                break ;
+            case  48 : f = "z = GB_ctanf (x)" ;     break ;
+            case  49 : f = "z = GB_ctan (x)" ;      break ;
 
             case  50 : f = "z = asinf (x)" ;        break ;
             case  51 : f = "z = asin (x)" ;         break ;
-
-            case  52 : f = "z = casinf (x)" ;
-                GB_macrofy_defn (fp, 2, "casinf", GB_casinf_DEFN) ;
-                break ;
-
-            case  53 : f = "z = casin (x)" ;
-                GB_macrofy_defn (fp, 2, "casin", GB_casin_DEFN) ;
-                break ;
+            case  52 : f = "z = GB_casinf (x)" ;    break ;
+            case  53 : f = "z = GB_casin (x)" ;     break ;
 
             case  54 : f = "z = acosf (x)" ;        break ;
             case  55 : f = "z = acos (x)" ;         break ;
-
-            case  56 : f = "z = cacosf (x)" ;
-                GB_macrofy_defn (fp, 2, "cacosf", GB_cacosf_DEFN) ;
-                break ;
-
-            case  57 : f = "z = cacos (x)" ;
-                GB_macrofy_defn (fp, 2, "cacos", GB_cacos_DEFN) ;
-                break ;
+            case  56 : f = "z = GB_cacosf (x)" ;    break ;
+            case  57 : f = "z = GB_cacos (x)" ;     break ;
 
             case  58 : f = "z = atanf (x)" ;        break ;
             case  59 : f = "z = atan (x)" ;         break ;
-
-            case  60 : f = "z = catanf (x)" ;
-                GB_macrofy_defn (fp, 2, "catanf", GB_catanf_DEFN) ;
-                break ;
-
-            case  61 : f = "z = catan (x)" ;
-                GB_macrofy_defn (fp, 2, "catan", GB_catan_DEFN) ;
-                break ;
+            case  60 : f = "z = GB_catanf (x)" ;    break ;
+            case  61 : f = "z = GB_catan (x)" ;     break ;
 
             case  62 : f = "z = sinhf (x)" ;        break ;
             case  63 : f = "z = sinh (x)" ;         break ;
-
-            case  64 : f = "z = csinhf (x)" ;
-                GB_macrofy_defn (fp, 2, "csinhf", GB_csinhf_DEFN) ;
-                break ;
-
-            case  65 : f = "z = csinh (x)" ;
-                GB_macrofy_defn (fp, 2, "csinh", GB_csinh_DEFN) ;
-                break ;
+            case  64 : f = "z = GB_csinhf (x)" ;    break ;
+            case  65 : f = "z = GB_csinh (x)" ;     break ;
 
             case  66 : f = "z = coshf (x)" ;        break ;
             case  67 : f = "z = cosh (x)" ;         break ;
-
-            case  68 : f = "z = ccoshf (x)" ;
-                GB_macrofy_defn (fp, 2, "ccoshf", GB_ccoshf_DEFN) ;
-                break ;
-
-            case  69 : f = "z = ccosh (x)" ;
-                GB_macrofy_defn (fp, 2, "ccosh", GB_ccosh_DEFN) ;
-                break ;
+            case  68 : f = "z = GB_ccoshf (x)" ;    break ;
+            case  69 : f = "z = GB_ccosh (x)" ;     break ;
 
             case  70 : f = "z = tanhf (x)" ;        break ;
             case  71 : f = "z = tanh (x)" ;         break ;
-
-            case  72 : f = "z = ctanhf (x)" ;
-                GB_macrofy_defn (fp, 2, "ctanhf", GB_ctanhf_DEFN) ;
-                break ;
-
-            case  73 : f = "z = ctanh (x)" ;
-                GB_macrofy_defn (fp, 2, "ctanh", GB_ctanh_DEFN) ;
-                break ;
+            case  72 : f = "z = GB_ctanhf (x)" ;    break ;
+            case  73 : f = "z = GB_ctanh (x)" ;     break ;
 
             case  74 : f = "z = asinhf (x)" ;       break ;
             case  75 : f = "z = asinh (x)" ;        break ;
-
-            case  76 : f = "z = casinhf (x)" ;
-                GB_macrofy_defn (fp, 2, "casinhf", GB_casinhf_DEFN) ;
-                break ;
-
-            case  77 : f = "z = casinh (x)" ;
-                GB_macrofy_defn (fp, 2, "casinh", GB_casinh_DEFN) ;
-                break ;
+            case  76 : f = "z = GB_casinhf (x)" ;   break ;
+            case  77 : f = "z = GB_casinh (x)" ;    break ;
 
             case  78 : f = "z = acoshf (x)" ;       break ;
             case  79 : f = "z = acosh (x)" ;        break ;
-
-            case  80 : f = "z = cacoshf (x)" ;
-                GB_macrofy_defn (fp, 2, "cacoshf", GB_cacoshf_DEFN) ;
-                break ;
-
-            case  81 : f = "z = cacosh (x)" ;
-                GB_macrofy_defn (fp, 2, "cacosh", GB_cacosh_DEFN) ;
-                break ;
+            case  80 : f = "z = GB_cacoshf (x)" ;   break ;
+            case  81 : f = "z = GB_cacosh (x)" ;    break ;
 
             case  82 : f = "z = atanhf (x)" ;       break ;
             case  83 : f = "z = atanh (x)" ;        break ;
+            case  84 : f = "z = GB_catanhf (x)" ;   break ;
+            case  85 : f = "z = GB_catanh (x)" ;    break ;
 
-            case  84 : f = "z = catanhf (x)" ;
-                GB_macrofy_defn (fp, 2, "catanhf", GB_catanhf_DEFN) ;
+            case  86 : f = "z = GJ_signumf (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_signumf", GJ_signumf_DEFN) ;
                 break ;
 
-            case  85 : f = "z = catanh (x)" ;
-                GB_macrofy_defn (fp, 2, "catanh", GB_catanh_DEFN) ;
+            case  87 : f = "z = GJ_signum (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_signum", GJ_signum_DEFN) ;
                 break ;
 
-            case  86 : f = "z = GB_signumf (x)" ;
-                GB_macrofy_defn (fp, 0, "GB_signumf", GB_signumf_DEFN) ;
+            case  88 : f = "z = GJ_csignumf (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_csignumf", GJ_csignumf_DEFN) ;
                 break ;
 
-            case  87 : f = "z = GB_signum (x)" ;
-                GB_macrofy_defn (fp, 0, "GB_signum", GB_signum_DEFN) ;
-                break ;
-
-            case  88 : f = "z = GB_csignumf (x)" ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_csignumf", GB_csignumf_DEFN) ;
-                break ;
-
-            case  89 : f = "z = GB_csignum (x)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_csignum", GB_csignum_DEFN) ;
+            case  89 : f = "z = GJ_csignum (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_csignum", GJ_csignum_DEFN) ;
                 break ;
 
             case  90 : f = "z = ceilf (x)" ;        break ;
             case  91 : f = "z = ceil (x)" ;         break ;
 
-            case  92 : f = "z = GB_cceilf (x)" ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_cceilf", GB_cceilf_DEFN) ;
+            case  92 : f = "z = GJ_cceilf (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_cceilf", GJ_cceilf_DEFN) ;
                 break ;
 
-            case  93 : f = "z = GB_cceil (x)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_cceil", GB_cceil_DEFN) ;
+            case  93 : f = "z = GJ_cceil (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_cceil", GJ_cceil_DEFN) ;
                 break ;
 
             case  94 : f = "z = floorf (x)" ;       break ;
             case  95 : f = "z = floor (x)" ;        break ;
 
-            case  96 : f = "z = GB_cfloorf (x)" ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_cfloorf", GB_cfloorf_DEFN) ;
+            case  96 : f = "z = GJ_cfloorf (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_cfloorf", GJ_cfloorf_DEFN) ;
                 break ;
 
-            case  97 : f = "z = GB_cfloor (x)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_cfloor", GB_cfloor_DEFN) ;
+            case  97 : f = "z = GJ_cfloor (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_cfloor", GJ_cfloor_DEFN) ;
                 break ;
 
             case  98 : f = "z = roundf (x)" ;       break ;
             case  99 : f = "z = round (x)" ;        break ;
 
-            case 100 : f = "z = GB_croundf (x)" ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_croundf", GB_croundf_DEFN) ;
+            case 100 : f = "z = GJ_croundf (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_croundf", GJ_croundf_DEFN) ;
                 break ;
 
-            case 101 : f = "z = GB_cround (x)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_cround", GB_cround_DEFN) ;
+            case 101 : f = "z = GJ_cround (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_cround", GJ_cround_DEFN) ;
                 break ;
 
             case 102 : f = "z = truncf (x)" ;       break ;
             case 103 : f = "z = trunc (x)" ;        break ;
 
-            case 104 : f = "z = GB_ctruncf (x)" ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_ctruncf", GB_ctruncf_DEFN) ;
+            case 104 : f = "z = GJ_ctruncf (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_ctruncf", GJ_ctruncf_DEFN) ;
                 break ;
 
-            case 105 : f = "z = GB_ctrunc (x)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_ctrunc", GB_ctrunc_DEFN) ;
+            case 105 : f = "z = GJ_ctrunc (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_ctrunc", GJ_ctrunc_DEFN) ;
                 break ;
 
             case 106 : f = "z = exp2f (x)" ;        break ;
             case 107 : f = "z = exp2 (x)" ;         break ;
 
-            case 108 : f = "z = GB_cexp2f (x)" ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cpowf", GB_cpowf_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_powf", GB_powf_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC32_pow", GB_FC32_pow_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_cexp2f", GB_cexp2f_DEFN) ;
+            case 108 : f = "z = GJ_cexp2f (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_powf", GJ_powf_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_FC32_pow", GJ_FC32_pow_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cexp2f", GJ_cexp2f_DEFN) ;
                 break ;
 
-            case 109 : f = "z = GB_cexp2 (x)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cpow", GB_cpow_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_pow", GB_pow_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC64_pow", GB_FC64_pow_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_cexp2", GB_cexp2_DEFN) ;
+            case 109 : f = "z = GJ_cexp2 (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_pow", GJ_pow_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_FC64_pow", GJ_FC64_pow_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cexp2", GJ_cexp2_DEFN) ;
                 break ;
 
             case 110 : f = "z = expm1f (x)" ;       break ;
             case 111 : f = "z = expm1 (x)" ;        break ;
 
-            case 112 : f = "z = GB_cexpm1f (x)" ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cexp", GB_cexp_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_cexpm1", GB_cexpm1_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_cexpm1f", GB_cexpm1f_DEFN) ;
+            case 112 : f = "z = GJ_cexpm1f (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_cexpm1", GJ_cexpm1_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cexpm1f", GJ_cexpm1f_DEFN) ;
                 break ;
 
-            case 113 : f = "z = GB_cexpm1 (x)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cexp", GB_cexp_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_cexpm1", GB_cexpm1_DEFN) ;
+            case 113 : f = "z = GJ_cexpm1 (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_cexpm1", GJ_cexpm1_DEFN) ;
                 break ;
 
             case 114 : f = "z = log10f (x)" ;       break ;
             case 115 : f = "z = log10 (x)" ;        break ;
 
-            case 116 : f = "z = GB_clog10f (x)" ;
-                GB_macrofy_defn (fp, 2, "clogf", GB_clogf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_clog10f", GB_clog10f_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC64_div", GB_FC64_div_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC32_div", GB_FC32_div_DEFN) ;
+            case 116 : f = "z = GJ_clog10f (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_FC64_div", GJ_FC64_div_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_FC32_div", GJ_FC32_div_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_clog10f", GJ_clog10f_DEFN) ;
                 break ;
 
-
-            case 117 : f = "z = GB_clog10 (x)" ;
-                GB_macrofy_defn (fp, 2, "clog", GB_clog_DEFN) ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_clog10", GB_clog10_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC64_div", GB_FC64_div_DEFN) ;
+            case 117 : f = "z = GJ_clog10 (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_FC64_div", GJ_FC64_div_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_clog10", GJ_clog10_DEFN) ;
                 break ;
 
             case 118 : f = "z = log1pf (x)" ;       break ;
-
             case 119 : f = "z = log1p (x)" ;        break ;
 
-            case 120 : f = "z = GB_clog1pf (x)" ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 2, "clog", GB_clog_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_clog1p", GB_clog1p_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_clog1pf", GB_clog1pf_DEFN) ;
+            case 120 : f = "z = GJ_clog1pf (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_clog1p", GJ_clog1p_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_clog1pf", GJ_clog1pf_DEFN) ;
                 break ;
 
-            case 121 : f = "z = GB_clog1p (x)" ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 2, "clog", GB_clog_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_clog1p", GB_clog1p_DEFN) ;
+            case 121 : f = "z = GJ_clog1p (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_clog1p", GJ_clog1p_DEFN) ;
                 break ;
 
             case 122 : f = "z = log2f (x)" ;        break ;
             case 123 : f = "z = log2 (x)" ;         break ;
 
-            case 124 : f = "z = GB_clog2f (x)" ;
-                GB_macrofy_defn (fp, 2, "clogf", GB_clogf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC64_div", GB_FC64_div_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC32_div", GB_FC32_div_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_clog2f", GB_clog2f_DEFN) ;
+            case 124 : f = "z = GJ_clog2f (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_FC64_div", GJ_FC64_div_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_FC32_div", GJ_FC32_div_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_clog2f", GJ_clog2f_DEFN) ;
                 break ;
 
-            case 125 : f = "z = GB_clog2 (x)" ;
-                GB_macrofy_defn (fp, 2, "clog", GB_clog_DEFN) ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_FC64_div", GB_FC64_div_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_clog2", GB_clog2_DEFN) ;
+            case 125 : f = "z = GJ_clog2 (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_FC64_div", GJ_FC64_div_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_clog2", GJ_clog2_DEFN) ;
                 break ;
 
             //------------------------------------------------------------------
@@ -565,61 +395,39 @@ void GB_macrofy_unop
             case 134 : f = "z = cbrtf (x)" ;        break ;
             case 135 : f = "z = cbrt (x)" ;         break ;
 
-            case 136 : f = "z = GB_frexpxf (x)" ;
-                GB_macrofy_defn (fp, 0, "GB_frexpxf", GB_frexpxf_DEFN) ;
+            case 136 : f = "z = GJ_frexpxf (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_frexpxf", GJ_frexpxf_DEFN) ;
                 break ;
 
-            case 137 : f = "z = GB_frexpx (x)" ;
-                GB_macrofy_defn (fp, 0, "GB_frexpx", GB_frexpx_DEFN) ;
+            case 137 : f = "z = GJ_frexpx (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_frexpx", GJ_frexpx_DEFN) ;
                 break ;
 
-            case 138 : f = "z = GB_frexpef (x)" ;
-                GB_macrofy_defn (fp, 0, "GB_frexpef", GB_frexpef_DEFN) ;
+            case 138 : f = "z = GJ_frexpef (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_frexpef", GJ_frexpef_DEFN) ;
                 break ;
 
-            case 139 : f = "z = GB_frexpe (x)" ;
-                GB_macrofy_defn (fp, 0, "GB_frexpe", GB_frexpe_DEFN) ;
+            case 139 : f = "z = GJ_frexpe (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_frexpe", GJ_frexpe_DEFN) ;
                 break ;
 
             //------------------------------------------------------------------
             // unary operators for complex types only
             //------------------------------------------------------------------
 
-            case 140 : f = "z = conjf (x)" ;
-                GB_macrofy_defn (fp, 2, "conjf", GB_conjf_DEFN) ;
-                break ;
-
-            case 141 : f = "z = conj (x)" ;
-                GB_macrofy_defn (fp, 2, "conj", GB_conj_DEFN) ;
-                break ;
+            case 140 : f = "z = GB_conjf (x)" ;     break ;
+            case 141 : f = "z = GB_conj (x)" ;      break ;
 
             //------------------------------------------------------------------
             // unary operators where z is real and x is complex
             //------------------------------------------------------------------
 
-            case 142 : f = "z = crealf (x)" ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                break ;
-
-            case 143 : f = "z = creal (x)" ; 
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                break ;
-
-            case 144 : f = "z = cimagf (x)" ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                break ;
-
-            case 145 : f = "z = cimag (x)" ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                break ;
-
-            case 146 : f = "z = cargf (x)" ;
-                GB_macrofy_defn (fp, 2, "cargf", GB_cargf_DEFN) ;
-                break ;
-
-            case 147 : f = "z = carg (x)" ;
-                GB_macrofy_defn (fp, 2, "carg", GB_carg_DEFN) ;
-                break ;
+            case 142 : f = "z = GB_crealf (x)" ;    break ;
+            case 143 : f = "z = GB_creal (x)" ;     break ;
+            case 144 : f = "z = GB_cimagf (x)" ;    break ;
+            case 145 : f = "z = GB_cimag (x)" ;     break ;
+            case 146 : f = "z = GB_cargf (x)" ;     break ;
+            case 147 : f = "z = GB_carg (x)" ;      break ;
 
             //------------------------------------------------------------------
             // unary operators where z is bool and x is any floating-point type
@@ -627,44 +435,32 @@ void GB_macrofy_unop
 
             case 148 : f = "z = isinf (x)" ;            break ;
 
-            case 149 : f = "z = GB_cisinff (x)" ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_cisinff", GB_cisinff_DEFN) ;
+            case 149 : f = "z = GJ_cisinff (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_cisinff", GJ_cisinff_DEFN) ;
                 break ;
 
-            case 150 : f = "z = GB_cisinf (x)" ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_cisinf", GB_cisinf_DEFN) ;
+            case 150 : f = "z = GJ_cisinf (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_cisinf", GJ_cisinf_DEFN) ;
                 break ;
 
             case 151 : f = "z = isnan (x)" ;            break ;
 
-            case 152 : f = "z = GB_cisnanf (x)" ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_cisnanf", GB_cisnanf_DEFN) ;
+            case 152 : f = "z = GJ_cisnanf (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_cisnanf", GJ_cisnanf_DEFN) ;
                 break ;
 
-            case 153 : f = "z = GB_cisnan (x)" ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_cisnan", GB_cisnan_DEFN) ;
+            case 153 : f = "z = GJ_cisnan (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_cisnan", GJ_cisnan_DEFN) ;
                 break ;
 
             case 154 : f = "z = isfinite (x)" ;         break ;
 
-            case 155 : f = "z = GB_cisfinitef (x)" ;
-                GB_macrofy_defn (fp, 2, "cimagf", GB_cimagf_DEFN) ;
-                GB_macrofy_defn (fp, 2, "crealf", GB_crealf_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_cisfinitef", GB_cisfinitef_DEFN) ;
+            case 155 : f = "z = GJ_cisfinitef (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_cisfinitef", GJ_cisfinitef_DEFN) ;
                 break ;
 
-            case 156 : f = "z = GB_cisfinite (x)" ;
-                GB_macrofy_defn (fp, 2, "cimag", GB_cimag_DEFN) ;
-                GB_macrofy_defn (fp, 2, "creal", GB_creal_DEFN) ;
-                GB_macrofy_defn (fp, 0, "GB_cisfinite", GB_cisfinite_DEFN) ;
+            case 156 : f = "z = GJ_cisfinite (x)" ;
+                GB_macrofy_defn (fp, 0, "GJ_cisfinite", GJ_cisfinite_DEFN) ;
                 break ;
 
             //------------------------------------------------------------------

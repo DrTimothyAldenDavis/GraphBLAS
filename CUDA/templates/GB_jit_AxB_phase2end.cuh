@@ -5,6 +5,7 @@
 // TODO describe me
 #pragma once
 #include "GB_cuda_kernel.h"
+#include "GB_mxm_shared_definitions.h"
 #include "GB_cuda_buckets.h"
 
 //#include <cooperative_groups.h>

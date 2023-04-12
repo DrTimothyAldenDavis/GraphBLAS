@@ -47,6 +47,7 @@
 #include <limits>
 #include <cstdint>
 #include "GB_cuda_kernel.h"
+#include "GB_mxm_shared_definitions.h"
 #include <cooperative_groups.h>
 
 // Using tile size fixed at compile time, we don't need shared memory

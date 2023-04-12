@@ -26,8 +26,8 @@
 #define GB_A_TYPE GxB_FC64_t
 #define GB_C_TYPE bool
 #define GB_DECLAREC(cwork) bool cwork
-#define GB_COPY_aij_to_cwork(cwork,Ax,pA,A_iso) cwork = ((creal (Ax [A_iso ? 0 : (pA)]) != 0) || (cimag (Ax [A_iso ? 0 : (pA)]) != 0))
-#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) Cx [pC] = (A_iso) ? cwork : ((creal (Ax [pA]) != 0) || (cimag (Ax [pA]) != 0))
+#define GB_COPY_aij_to_cwork(cwork,Ax,pA,A_iso) cwork = ((GB_creal (Ax [A_iso ? 0 : (pA)]) != 0) || (GB_cimag (Ax [A_iso ? 0 : (pA)]) != 0))
+#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) Cx [pC] = (A_iso) ? cwork : ((GB_creal (Ax [pA]) != 0) || (GB_cimag (Ax [pA]) != 0))
 #define GB_COPY_scalar_to_C(Cx,pC,cwork) Cx [pC] = cwork
 #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, sizeof (GxB_FC64_t))
 

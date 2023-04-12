@@ -465,9 +465,9 @@
         #define GB_Z_ATOMIC_UPDATE_HX(i,t)                          \
         {                                                           \
             GB_ATOMIC_UPDATE                                        \
-            Hx_real [2*(i)] += crealf (t) ;                         \
+            Hx_real [2*(i)] += GB_crealf (t) ;                      \
             GB_ATOMIC_UPDATE                                        \
-            Hx_imag [2*(i)] += cimagf (t) ;                         \
+            Hx_imag [2*(i)] += GB_cimagf (t) ;                      \
         }
 
     #elif GB_IS_PLUS_FC64_MONOID
@@ -476,9 +476,9 @@
         #define GB_Z_ATOMIC_UPDATE_HX(i,t)                          \
         {                                                           \
             GB_ATOMIC_UPDATE                                        \
-            Hx_real [2*(i)] += creal (t) ;                          \
+            Hx_real [2*(i)] += GB_creal (t) ;                       \
             GB_ATOMIC_UPDATE                                        \
-            Hx_imag [2*(i)] += cimag (t) ;                          \
+            Hx_imag [2*(i)] += GB_cimag (t) ;                       \
         }
 
     #elif GB_Z_HAS_OMP_ATOMIC_UPDATE

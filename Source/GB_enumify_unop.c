@@ -86,8 +86,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
                 case GB_INT64_code  : e =   6 ; break ; // z = GB_IABS (x)
                 case GB_FP32_code   : e =   7 ; break ; // z = fabsf (x)
                 case GB_FP64_code   : e =   8 ; break ; // z = fabs (x)
-                case GB_FC32_code   : e =   9 ; break ; // z = cabsf (x)
-                case GB_FC64_code   : e =  10 ; break ; // z = cabs (x)
+                case GB_FC32_code   : e =   9 ; break ; // z = GB_cabsf (x)
+                case GB_FC64_code   : e =  10 ; break ; // z = GB_cabs (x)
                 default             : e =   2 ; break ; // z = x (uint, bool)
             }
             break ;
@@ -137,8 +137,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
                 default             : 
                 case GB_FP32_code   : e =  26 ; break ; // z = sqrtf (x)
                 case GB_FP64_code   : e =  27 ; break ; // z = sqrt (x)
-                case GB_FC32_code   : e =  28 ; break ; // z = csqrtf (x)
-                case GB_FC64_code   : e =  29 ; break ; // z = csqrt (x)
+                case GB_FC32_code   : e =  28 ; break ; // z = GB_csqrtf (x)
+                case GB_FC64_code   : e =  29 ; break ; // z = GB_csqrt (x)
             }
             break ;
 
@@ -149,8 +149,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
                 default             : 
                 case GB_FP32_code   : e =  30 ; break ; // z = logf (x)
                 case GB_FP64_code   : e =  31 ; break ; // z = log (x)
-                case GB_FC32_code   : e =  32 ; break ; // z = clogf (x)
-                case GB_FC64_code   : e =  33 ; break ; // z = clog (x)
+                case GB_FC32_code   : e =  32 ; break ; // z = GB_clogf (x)
+                case GB_FC64_code   : e =  33 ; break ; // z = GB_clog (x)
             }
             break ;
 
@@ -161,8 +161,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
                 default             : 
                 case GB_FP32_code   : e =  34 ; break ; // z = expf (x)
                 case GB_FP64_code   : e =  35 ; break ; // z = exp (x)
-                case GB_FC32_code   : e =  36 ; break ; // z = cexpf (x)
-                case GB_FC64_code   : e =  37 ; break ; // z = cexp (x)
+                case GB_FC32_code   : e =  36 ; break ; // z = GB_cexpf (x)
+                case GB_FC64_code   : e =  37 ; break ; // z = GB_cexp (x)
             }
             break ;
 
@@ -173,8 +173,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
                 default             : 
                 case GB_FP32_code   : e =  38 ; break ; // z = sinf (x)
                 case GB_FP64_code   : e =  39 ; break ; // z = sin (x)
-                case GB_FC32_code   : e =  40 ; break ; // z = csinf (x)
-                case GB_FC64_code   : e =  41 ; break ; // z = csin (x)
+                case GB_FC32_code   : e =  40 ; break ; // z = GB_csinf (x)
+                case GB_FC64_code   : e =  41 ; break ; // z = GB_csin (x)
             }
             break ;
 
@@ -185,8 +185,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
                 default             : 
                 case GB_FP32_code   : e =  42 ; break ; // z = cosf (x)
                 case GB_FP64_code   : e =  43 ; break ; // z = cos (x)
-                case GB_FC32_code   : e =  44 ; break ; // z = ccosf (x)
-                case GB_FC64_code   : e =  45 ; break ; // z = ccos (x)
+                case GB_FC32_code   : e =  44 ; break ; // z = GB_cosf (x)
+                case GB_FC64_code   : e =  45 ; break ; // z = GB_cos (x)
             }
             break ;
 
@@ -197,8 +197,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
                 default             : 
                 case GB_FP32_code   : e =  46 ; break ; // z = tanf (x)
                 case GB_FP64_code   : e =  47 ; break ; // z = tan (x)
-                case GB_FC32_code   : e =  48 ; break ; // z = ctanf (x)
-                case GB_FC64_code   : e =  49 ; break ; // z = ctan (x)
+                case GB_FC32_code   : e =  48 ; break ; // z = GB_tanf (x)
+                case GB_FC64_code   : e =  49 ; break ; // z = GB_tan (x)
             }
             break ;
 
@@ -209,8 +209,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
                 default             : 
                 case GB_FP32_code   : e =  50 ; break ; // z = asinf (x)
                 case GB_FP64_code   : e =  51 ; break ; // z = asin (x)
-                case GB_FC32_code   : e =  52 ; break ; // z = casinf (x)
-                case GB_FC64_code   : e =  53 ; break ; // z = casin (x)
+                case GB_FC32_code   : e =  52 ; break ; // z = GB_asinf (x)
+                case GB_FC64_code   : e =  53 ; break ; // z = GB_asin (x)
             }
             break ;
 
@@ -221,8 +221,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
                 default             : 
                 case GB_FP32_code   : e =  54 ; break ; // z = acosf (x)
                 case GB_FP64_code   : e =  55 ; break ; // z = acos (x)
-                case GB_FC32_code   : e =  56 ; break ; // z = cacosf (x)
-                case GB_FC64_code   : e =  57 ; break ; // z = cacos (x)
+                case GB_FC32_code   : e =  56 ; break ; // z = GB_acosf (x)
+                case GB_FC64_code   : e =  57 ; break ; // z = GB_acos (x)
             }
             break ;
 
@@ -233,8 +233,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
                 default             : 
                 case GB_FP32_code   : e =  58 ; break ; // z = atanf (x)
                 case GB_FP64_code   : e =  59 ; break ; // z = atan (x)
-                case GB_FC32_code   : e =  60 ; break ; // z = catanf (x)
-                case GB_FC64_code   : e =  61 ; break ; // z = catan (x)
+                case GB_FC32_code   : e =  60 ; break ; // z = GB_atanf (x)
+                case GB_FC64_code   : e =  61 ; break ; // z = GB_atan (x)
             }
             break ;
 
@@ -245,8 +245,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
                 default             : 
                 case GB_FP32_code   : e =  62 ; break ; // z = sinhf (x)
                 case GB_FP64_code   : e =  63 ; break ; // z = sinh (x)
-                case GB_FC32_code   : e =  64 ; break ; // z = csinhf (x)
-                case GB_FC64_code   : e =  65 ; break ; // z = csinh (x)
+                case GB_FC32_code   : e =  64 ; break ; // z = GB_sinhf (x)
+                case GB_FC64_code   : e =  65 ; break ; // z = GB_sinh (x)
             }
             break ;
 
@@ -257,8 +257,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
                 default             : 
                 case GB_FP32_code   : e =  66 ; break ; // z = coshf (x)
                 case GB_FP64_code   : e =  67 ; break ; // z = cosh (x)
-                case GB_FC32_code   : e =  68 ; break ; // z = ccoshf (x)
-                case GB_FC64_code   : e =  69 ; break ; // z = ccosh (x)
+                case GB_FC32_code   : e =  68 ; break ; // z = GB_coshf (x)
+                case GB_FC64_code   : e =  69 ; break ; // z = GB_cosh (x)
             }
             break ;
 
@@ -269,8 +269,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
                 default             : 
                 case GB_FP32_code   : e =  70 ; break ; // z = tanhf (x)
                 case GB_FP64_code   : e =  71 ; break ; // z = tanh (x)
-                case GB_FC32_code   : e =  72 ; break ; // z = ctanhf (x)
-                case GB_FC64_code   : e =  73 ; break ; // z = ctanh (x)
+                case GB_FC32_code   : e =  72 ; break ; // z = GB_tanhf (x)
+                case GB_FC64_code   : e =  73 ; break ; // z = GB_tanh (x)
             }
             break ;
 
@@ -281,8 +281,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
                 default             : 
                 case GB_FP32_code   : e =  74 ; break ; // z = asinhf (x)
                 case GB_FP64_code   : e =  75 ; break ; // z = asinh (x)
-                case GB_FC32_code   : e =  76 ; break ; // z = casinhf (x)
-                case GB_FC64_code   : e =  77 ; break ; // z = casinh (x)
+                case GB_FC32_code   : e =  76 ; break ; // z = GB_asinhf (x)
+                case GB_FC64_code   : e =  77 ; break ; // z = GB_asinh (x)
             }
             break ;
 
@@ -293,8 +293,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
                 default             : 
                 case GB_FP32_code   : e =  78 ; break ; // z = acoshf (x)
                 case GB_FP64_code   : e =  79 ; break ; // z = acosh (x)
-                case GB_FC32_code   : e =  80 ; break ; // z = cacoshf (x)
-                case GB_FC64_code   : e =  81 ; break ; // z = cacosh (x)
+                case GB_FC32_code   : e =  80 ; break ; // z = GB_acoshf (x)
+                case GB_FC64_code   : e =  81 ; break ; // z = GB_acosh (x)
             }
             break ;
 
@@ -305,8 +305,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
                 default             : 
                 case GB_FP32_code   : e =  82 ; break ; // z = atanhf (x)
                 case GB_FP64_code   : e =  83 ; break ; // z = atanh (x)
-                case GB_FC32_code   : e =  84 ; break ; // z = catanhf (x)
-                case GB_FC64_code   : e =  85 ; break ; // z = catanh (x)
+                case GB_FC32_code   : e =  84 ; break ; // z = GB_atanhf (x)
+                case GB_FC64_code   : e =  85 ; break ; // z = GB_atanh (x)
             }
             break ;
 
@@ -508,13 +508,13 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
         // unary operators for complex types only
         //----------------------------------------------------------------------
 
-        case GB_CONJ_unop_code      :       // z = conj (x)
+        case GB_CONJ_unop_code      :       // z = GB_conj (x)
 
             switch (xcode)
             {
                 default             : 
-                case GB_FC32_code   : e = 140 ; break ; // z = conjf (x)
-                case GB_FC64_code   : e = 141 ; break ; // z = conj (x)
+                case GB_FC32_code   : e = 140 ; break ; // z = GB_conjf (x)
+                case GB_FC64_code   : e = 141 ; break ; // z = GB_conj (x)
             }
             break ;
 
@@ -527,8 +527,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
             switch (xcode)
             {
                 default             : 
-                case GB_FC32_code   : e = 142 ; break ; // z = crealf (x)
-                case GB_FC64_code   : e = 143 ; break ; // z = creal (x)
+                case GB_FC32_code   : e = 142 ; break ; // z = GB_crealf (x)
+                case GB_FC64_code   : e = 143 ; break ; // z = GB_creal (x)
             }
             break ;
 
@@ -537,8 +537,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
             switch (xcode)
             {
                 default             : 
-                case GB_FC32_code   : e = 144 ; break ; // z = cimagf (x)
-                case GB_FC64_code   : e = 145 ; break ; // z = cimag (x)
+                case GB_FC32_code   : e = 144 ; break ; // z = GB_cimagf (x)
+                case GB_FC64_code   : e = 145 ; break ; // z = GB_cimag (x)
             }
             break ;
 
@@ -547,8 +547,8 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
             switch (xcode)
             {
                 default             : 
-                case GB_FC32_code   : e = 146 ; break ; // z = cargf (x)
-                case GB_FC64_code   : e = 147 ; break ; // z = carg (x)
+                case GB_FC32_code   : e = 146 ; break ; // z = GB_cargf (x)
+                case GB_FC64_code   : e = 147 ; break ; // z = GB_carg (x)
             }
             break ;
 

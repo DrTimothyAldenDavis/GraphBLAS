@@ -12,7 +12,7 @@
 #include "GB_unop__include.h"
 
 // unary operator: z = f(x)
-#define GB_UNARYOP(z,x) z = cargf (x)
+#define GB_UNARYOP(z,x) z = GB_cargf (x)
 #define GB_Z_TYPE float
 #define GB_X_TYPE GxB_FC32_t
 

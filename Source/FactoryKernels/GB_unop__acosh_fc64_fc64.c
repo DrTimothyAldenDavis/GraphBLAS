@@ -12,7 +12,7 @@
 #include "GB_unop__include.h"
 
 // unary operator: z = f(x)
-#define GB_UNARYOP(z,x) z = cacosh (x)
+#define GB_UNARYOP(z,x) z = GB_cacosh (x)
 #define GB_Z_TYPE GxB_FC64_t
 #define GB_X_TYPE GxB_FC64_t
 

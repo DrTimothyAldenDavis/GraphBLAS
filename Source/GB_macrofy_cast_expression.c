@@ -60,12 +60,12 @@ const char *GB_macrofy_cast_expression  // return cast expression
 
         if (xcode == GB_FC32_code)
         {
-            f = "%s = (crealf (%s) != 0 || cimagf (%s) != 0)" ;
+            f = "%s = (GB_crealf (%s) != 0 || GB_cimagf (%s) != 0)" ;
             (*nargs) = 3 ;
         }
         else if (xcode == GB_FC64_code)
         {
-            f = "%s = (creal (%s) != 0 || cimag (%s) != 0)" ;
+            f = "%s = (GB_creal (%s) != 0 || GB_cimag (%s) != 0)" ;
             (*nargs) = 3 ;
         }
         else
@@ -89,21 +89,20 @@ const char *GB_macrofy_cast_expression  // return cast expression
                 switch (xcode)
                 {
                     case GB_FP32_code : 
-                        f = "%s = GJ_cast_to_int8_t ((double) (%s))" ;
+                        f = "%s = GJ_cast_to_int8 ((double) (%s))" ;
                         break ;
                     case GB_FP64_code : 
-                        f = "%s = GJ_cast_to_int8_t (%s)" ;
+                        f = "%s = GJ_cast_to_int8 (%s)" ;
                         break ;
                     case GB_FC32_code : 
-                        f = "%s = GJ_cast_to_int8_t ((double) crealf (%s))" ;
+                        f = "%s = GJ_cast_to_int8 ((double) GB_crealf (%s))" ;
                         break ;
                     case GB_FC64_code : 
-                        f = "%s = GJ_cast_to_int8_t (creal (%s))" ;
+                        f = "%s = GJ_cast_to_int8 (GB_creal (%s))" ;
                         break ;
                     default:;
                 }
-                GB_macrofy_defn (fp, 0, "GJ_cast_to_int8",
-                    GJ_cast_to_int8_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cast_to_int8", GJ_cast_to_int8_DEFN) ;
                 break ;
 
             case GB_INT16_code  : 
@@ -111,21 +110,20 @@ const char *GB_macrofy_cast_expression  // return cast expression
                 switch (xcode)
                 {
                     case GB_FP32_code : 
-                        f = "%s = GJ_cast_to_int16_t ((double) (%s))" ;
+                        f = "%s = GJ_cast_to_int16 ((double) (%s))" ;
                         break ;
                     case GB_FP64_code : 
-                        f = "%s = GJ_cast_to_int16_t (%s)" ;
+                        f = "%s = GJ_cast_to_int16 (%s)" ;
                         break ;
                     case GB_FC32_code : 
-                        f = "%s = GJ_cast_to_int16_t ((double) crealf (%s))" ;
+                        f = "%s = GJ_cast_to_int16 ((double) GB_crealf (%s))" ;
                         break ;
                     case GB_FC64_code : 
-                        f = "%s = GJ_cast_to_int16_t (creal (%s))" ;
+                        f = "%s = GJ_cast_to_int16 (GB_creal (%s))" ;
                         break ;
                     default:;
                 }
-                GB_macrofy_defn (fp, 0, "GJ_cast_to_int16",
-                    GJ_cast_to_int16_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cast_to_int16", GJ_cast_to_int16_DEFN) ;
                 break ;
 
             case GB_INT32_code  : 
@@ -133,21 +131,20 @@ const char *GB_macrofy_cast_expression  // return cast expression
                 switch (xcode)
                 {
                     case GB_FP32_code : 
-                        f = "%s = GJ_cast_to_int32_t ((double) (%s))" ;
+                        f = "%s = GJ_cast_to_int32 ((double) (%s))" ;
                         break ;
                     case GB_FP64_code : 
-                        f = "%s = GJ_cast_to_int32_t (%s)" ;
+                        f = "%s = GJ_cast_to_int32 (%s)" ;
                         break ;
                     case GB_FC32_code : 
-                        f = "%s = GJ_cast_to_int32_t ((double) crealf (%s))" ;
+                        f = "%s = GJ_cast_to_int32 ((double) GB_crealf (%s))" ;
                         break ;
                     case GB_FC64_code : 
-                        f = "%s = GJ_cast_to_int32_t (creal (%s))" ;
+                        f = "%s = GJ_cast_to_int32 (GB_creal (%s))" ;
                         break ;
                     default:;
                 }
-                GB_macrofy_defn (fp, 0, "GJ_cast_to_int32",
-                    GJ_cast_to_int32_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cast_to_int32", GJ_cast_to_int32_DEFN) ;
                 break ;
 
             case GB_INT64_code  : 
@@ -155,21 +152,20 @@ const char *GB_macrofy_cast_expression  // return cast expression
                 switch (xcode)
                 {
                     case GB_FP32_code : 
-                        f = "%s = GJ_cast_to_int64_t ((double) (%s))" ;
+                        f = "%s = GJ_cast_to_int64 ((double) (%s))" ;
                         break ;
                     case GB_FP64_code : 
-                        f = "%s = GJ_cast_to_int64_t (%s)" ;
+                        f = "%s = GJ_cast_to_int64 (%s)" ;
                         break ;
                     case GB_FC32_code : 
-                        f = "%s = GJ_cast_to_int64_t ((double) crealf (%s))" ;
+                        f = "%s = GJ_cast_to_int64 ((double) GB_crealf (%s))" ;
                         break ;
                     case GB_FC64_code : 
-                        f = "%s = GJ_cast_to_int64_t (creal (%s))" ;
+                        f = "%s = GJ_cast_to_int64 (GB_creal (%s))" ;
                         break ;
                     default:;
                 }
-                GB_macrofy_defn (fp, 0, "GJ_cast_to_int64",
-                    GJ_cast_to_int64_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cast_to_int64", GJ_cast_to_int64_DEFN) ;
                 break ;
 
             case GB_UINT8_code  : 
@@ -177,21 +173,20 @@ const char *GB_macrofy_cast_expression  // return cast expression
                 switch (xcode)
                 {
                     case GB_FP32_code : 
-                        f = "%s = GJ_cast_to_uint8_t ((double) (%s))" ;
+                        f = "%s = GJ_cast_to_uint8 ((double) (%s))" ;
                         break ;
                     case GB_FP64_code : 
-                        f = "%s = GJ_cast_to_uint8_t (%s)" ;
+                        f = "%s = GJ_cast_to_uint8 (%s)" ;
                         break ;
                     case GB_FC32_code : 
-                        f = "%s = GJ_cast_to_uint8_t ((double) crealf (%s))" ;
+                        f = "%s = GJ_cast_to_uint8 ((double) GB_crealf (%s))" ;
                         break ;
                     case GB_FC64_code : 
-                        f = "%s = GJ_cast_to_uint8_t (creal (%s))" ;
+                        f = "%s = GJ_cast_to_uint8 (GB_creal (%s))" ;
                         break ;
                     default:;
                 }
-                GB_macrofy_defn (fp, 0, "GJ_cast_to_uint8",
-                    GJ_cast_to_uint8_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cast_to_uint8", GJ_cast_to_uint8_DEFN) ;
                 break ;
 
             case GB_UINT16_code : 
@@ -199,21 +194,20 @@ const char *GB_macrofy_cast_expression  // return cast expression
                 switch (xcode)
                 {
                     case GB_FP32_code : 
-                        f = "%s = GJ_cast_to_uint16_t ((double) (%s))" ;
+                        f = "%s = GJ_cast_to_uint16 ((double) (%s))" ;
                         break ;
                     case GB_FP64_code : 
-                        f = "%s = GJ_cast_to_uint16_t (%s)" ;
+                        f = "%s = GJ_cast_to_uint16 (%s)" ;
                         break ;
                     case GB_FC32_code : 
-                        f = "%s = GJ_cast_to_uint16_t ((double) crealf (%s))" ;
+                        f = "%s = GJ_cast_to_uint16 ((double) GB_crealf (%s))" ;
                         break ;
                     case GB_FC64_code : 
-                        f = "%s = GJ_cast_to_uint16_t (creal (%s))" ;
+                        f = "%s = GJ_cast_to_uint16 (GB_creal (%s))" ;
                         break ;
                     default:;
                 }
-                GB_macrofy_defn (fp, 0, "GJ_cast_to_uint16",
-                    GJ_cast_to_uint16_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cast_to_uint16", GJ_cast_to_uint16_DEFN) ;
                 break ;
 
             case GB_UINT32_code : 
@@ -221,21 +215,20 @@ const char *GB_macrofy_cast_expression  // return cast expression
                 switch (xcode)
                 {
                     case GB_FP32_code : 
-                        f = "%s = GJ_cast_to_uint32_t ((double) (%s))" ;
+                        f = "%s = GJ_cast_to_uint32 ((double) (%s))" ;
                         break ;
                     case GB_FP64_code : 
-                        f = "%s = GJ_cast_to_uint32_t (%s)" ;
+                        f = "%s = GJ_cast_to_uint32 (%s)" ;
                         break ;
                     case GB_FC32_code : 
-                        f = "%s = GJ_cast_to_uint32_t ((double) crealf (%s))" ;
+                        f = "%s = GJ_cast_to_uint32 ((double) GB_crealf (%s))" ;
                         break ;
                     case GB_FC64_code : 
-                        f = "%s = GJ_cast_to_uint32_t (creal (%s))" ;
+                        f = "%s = GJ_cast_to_uint32 (GB_creal (%s))" ;
                         break ;
                     default:;
                 }
-                GB_macrofy_defn (fp, 0, "GJ_cast_to_uint32",
-                    GJ_cast_to_uint32_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cast_to_uint32", GJ_cast_to_uint32_DEFN) ;
                 break ;
 
             case GB_UINT64_code : 
@@ -243,21 +236,20 @@ const char *GB_macrofy_cast_expression  // return cast expression
                 switch (xcode)
                 {
                     case GB_FP32_code : 
-                        f = "%s = GJ_cast_to_uint64_t ((double) (%s))" ;
+                        f = "%s = GJ_cast_to_uint64 ((double) (%s))" ;
                         break ;
                     case GB_FP64_code : 
-                        f = "%s = GJ_cast_to_uint64_t (%s)" ;
+                        f = "%s = GJ_cast_to_uint64 (%s)" ;
                         break ;
                     case GB_FC32_code : 
-                        f = "%s = GJ_cast_to_uint64_t ((double) crealf (%s))" ;
+                        f = "%s = GJ_cast_to_uint64 ((double) GB_crealf (%s))" ;
                         break ;
                     case GB_FC64_code : 
-                        f = "%s = GJ_cast_to_uint64_t (creal (%s))" ;
+                        f = "%s = GJ_cast_to_uint64 (GB_creal (%s))" ;
                         break ;
                     default:;
                 }
-                GB_macrofy_defn (fp, 0, "GJ_cast_to_uint64",
-                    GJ_cast_to_uint64_DEFN) ;
+                GB_macrofy_defn (fp, 0, "GJ_cast_to_uint64", GJ_cast_to_uint64_DEFN) ;
                 break ;
 
             default:;

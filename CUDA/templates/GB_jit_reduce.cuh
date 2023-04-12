@@ -20,6 +20,7 @@
 #include <limits>
 #include <type_traits>
 #include "GB_cuda_kernel.h"
+#include "GB_monoid_shared_definitions.h"
 #include "GB_cuda_atomics.cuh"
 #include <cstdint>
 #include <cooperative_groups.h>

@@ -27,6 +27,7 @@ void GB_macrofy_typedefs
     // define complex types, if any types are GxB_FC32 or GxB_FC64
     //--------------------------------------------------------------------------
 
+#if 0
     // If the user-defined types and operators wish to use the GraphBLAS
     // typedefs GxB_FC32_t and GxB_FC64_t, they can add the string
     // "#include <GxB_complex.h>\n" to their string definition.  See
@@ -41,6 +42,7 @@ void GB_macrofy_typedefs
     {
         fprintf (fp, "\n#include <GxB_complex.h>\n") ;
     }
+#endif
 
     //--------------------------------------------------------------------------
     // create typedefs, checking for duplicates

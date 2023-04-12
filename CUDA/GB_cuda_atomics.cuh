@@ -328,8 +328,8 @@ template<> __device__ __inline__ void GB_cuda_atomic_add<GxB_FC32_t>
 {
     // native CUDA method on each float, real and imaginary parts
     float *p = (float *) ptr ;
-    atomicAdd (p  , crealf (val)) ;
-    atomicAdd (p+1, cimagf (val)) ;
+    atomicAdd (p  , GB_crealf (val)) ;
+    atomicAdd (p+1, GB_cimagf (val)) ;
 }
 
 template<> __device__ __inline__ void GB_cuda_atomic_add<GxB_FC64_t>
@@ -340,8 +340,8 @@ template<> __device__ __inline__ void GB_cuda_atomic_add<GxB_FC64_t>
 {
     // native CUDA method on each double, real and imaginary parts
     double *p = (double *) ptr ;
-    atomicAdd (p  , creal (val)) ;
-    atomicAdd (p+1, cimag (val)) ;
+    atomicAdd (p  , GB_creal (val)) ;
+    atomicAdd (p+1, GB_cimag (val)) ;
 }
 #endif
 

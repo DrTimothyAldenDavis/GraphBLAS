@@ -135,12 +135,12 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     #if defined ( GB_FLOAT_COMPLEX )
         inline void GB_FUNC (ABS) (float *z, const GB_TYPE *x)
         {
-            (*z) = cabsf (*x) ;
+            (*z) = GB_cabsf (*x) ;
         }
     #else
         inline void GB_FUNC (ABS) (double *z, const GB_TYPE *x)
         {
-            (*z) = cabs (*x) ;
+            (*z) = GB_cabs (*x) ;
         }
     #endif
 
@@ -322,25 +322,25 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     // float complex
     //--------------------------------------------------------------------------
 
-    GB_OP (SQRT  , csqrtf   )
-    GB_OP (LOG   , clogf    )
-    GB_OP (EXP   , cexpf    )
+    GB_OP (SQRT  , GB_csqrtf   )
+    GB_OP (LOG   , GB_clogf    )
+    GB_OP (EXP   , GB_cexpf    )
 
-    GB_OP (SIN   , csinf    )
-    GB_OP (COS   , ccosf    )
-    GB_OP (TAN   , ctanf    )
+    GB_OP (SIN   , GB_csinf    )
+    GB_OP (COS   , GB_ccosf    )
+    GB_OP (TAN   , GB_ctanf    )
 
-    GB_OP (ASIN  , casinf   )
-    GB_OP (ACOS  , cacosf   )
-    GB_OP (ATAN  , catanf   )
+    GB_OP (ASIN  , GB_casinf   )
+    GB_OP (ACOS  , GB_cacosf   )
+    GB_OP (ATAN  , GB_catanf   )
 
-    GB_OP (SINH  , csinhf   )
-    GB_OP (COSH  , ccoshf   )
-    GB_OP (TANH  , ctanhf   )
+    GB_OP (SINH  , GB_csinhf   )
+    GB_OP (COSH  , GB_ccoshf   )
+    GB_OP (TANH  , GB_ctanhf   )
 
-    GB_OP (ASINH , casinhf  )
-    GB_OP (ACOSH , cacoshf  )
-    GB_OP (ATANH , catanhf  )
+    GB_OP (ASINH , GB_casinhf  )
+    GB_OP (ACOSH , GB_cacoshf  )
+    GB_OP (ATANH , GB_catanhf  )
 
     GB_OP (SIGNUM, GB_csignumf )
     GB_OP (CEIL  , GB_cceilf   )
@@ -354,11 +354,7 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     GB_OP (LOG1P , GB_clog1pf  )
     GB_OP (LOG2  , GB_clog2f   )
 
-    // complex only
-    #ifndef SUITESPARSE_CUDA
-    // FIXME: conj is causing problems in CUDA
-    GB_OP (CONJ  , conjf       )
-    #endif
+    GB_OP (CONJ  , GB_conjf    )
 
 #elif defined ( GB_DOUBLE_COMPLEX )
 
@@ -366,25 +362,25 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     // double complex
     //--------------------------------------------------------------------------
 
-    GB_OP (SQRT  , csqrt    )
-    GB_OP (LOG   , clog     )
-    GB_OP (EXP   , cexp     )
+    GB_OP (SQRT  , GB_csqrt    )
+    GB_OP (LOG   , GB_clog     )
+    GB_OP (EXP   , GB_cexp     )
 
-    GB_OP (SIN   , csin     )
-    GB_OP (COS   , ccos     )
-    GB_OP (TAN   , ctan     )
+    GB_OP (SIN   , GB_csin     )
+    GB_OP (COS   , GB_ccos     )
+    GB_OP (TAN   , GB_ctan     )
 
-    GB_OP (ASIN  , casin    )
-    GB_OP (ACOS  , cacos    )
-    GB_OP (ATAN  , catan    )
+    GB_OP (ASIN  , GB_casin    )
+    GB_OP (ACOS  , GB_cacos    )
+    GB_OP (ATAN  , GB_catan    )
 
-    GB_OP (SINH  , csinh    )
-    GB_OP (COSH  , ccosh    )
-    GB_OP (TANH  , ctanh    )
+    GB_OP (SINH  , GB_csinh    )
+    GB_OP (COSH  , GB_ccosh    )
+    GB_OP (TANH  , GB_ctanh    )
 
-    GB_OP (ASINH , casinh   )
-    GB_OP (ACOSH , cacosh   )
-    GB_OP (ATANH , catanh   )
+    GB_OP (ASINH , GB_casinh   )
+    GB_OP (ACOSH , GB_cacosh   )
+    GB_OP (ATANH , GB_catanh   )
 
     GB_OP (SIGNUM, GB_csignum  )
     GB_OP (CEIL  , GB_cceil    )
@@ -398,11 +394,7 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     GB_OP (LOG1P , GB_clog1p   )
     GB_OP (LOG2  , GB_clog2    )
 
-    // complex only
-    #ifndef SUITESPARSE_CUDA
-    // FIXME: conj is causing problems in CUDA
-    GB_OP (CONJ  , conj        )
-    #endif
+    GB_OP (CONJ  , GB_conj     )
 
 #endif
 
@@ -439,9 +431,9 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     GB_OP (ISFINITE , GB_cisfinitef (*x), bool, GxB_FC32_t)
 
     // complex only
-    GB_OP (CREAL , crealf (*x), float, GxB_FC32_t)
-    GB_OP (CIMAG , cimagf (*x), float, GxB_FC32_t)
-    GB_OP (CARG  , cargf  (*x), float, GxB_FC32_t)
+    GB_OP (CREAL , GB_crealf (*x), float, GxB_FC32_t)
+    GB_OP (CIMAG , GB_cimagf (*x), float, GxB_FC32_t)
+    GB_OP (CARG  , GB_cargf  (*x), float, GxB_FC32_t)
 
 #elif defined ( GB_DOUBLE_COMPLEX )
 
@@ -450,9 +442,9 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     GB_OP (ISFINITE , GB_cisfinite (*x) , bool, GxB_FC64_t)
 
     // complex only
-    GB_OP (CREAL , creal (*x), double, GxB_FC64_t)
-    GB_OP (CIMAG , cimag (*x), double, GxB_FC64_t)
-    GB_OP (CARG  , carg  (*x), double, GxB_FC64_t)
+    GB_OP (CREAL , GB_creal (*x), double, GxB_FC64_t)
+    GB_OP (CIMAG , GB_cimag (*x), double, GxB_FC64_t)
+    GB_OP (CARG  , GB_carg  (*x), double, GxB_FC64_t)
 
 #endif
 

@@ -152,6 +152,7 @@ GrB_Desc_Value ;
 #include "GB_pun.h"
 #include "GB_opaque.h"
 #include "GB_nnz.h"
+#include "GB_complex.h"
 
 // version for the GPU, with fewer branches
 #define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                             \

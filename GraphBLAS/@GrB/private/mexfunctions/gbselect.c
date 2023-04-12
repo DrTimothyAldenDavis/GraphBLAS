@@ -99,7 +99,7 @@ void gb_isnotnan64 (bool *z, const double *aij,
 void gb_isnanfc32 (bool *z, const GxB_FC32_t *aij,
                    int64_t i, int64_t j, const void *thunk)
 { 
-    (*z) = isnan (crealf (*aij)) || isnan (cimagf (*aij)) ;
+    (*z) = isnan (GB_crealf (*aij)) || isnan (GB_cimagf (*aij)) ;
 }
 
 
@@ -107,46 +107,46 @@ void gb_isnanfc32 (bool *z, const GxB_FC32_t *aij,
 "void gb_isnanfc32 (bool *z, const GxB_FC32_t *aij,             \n" \
 "                   int64_t i, int64_t j, const void *thunk)    \n" \
 "{                                                              \n" \
-"    (*z) = isnan (crealf (*aij)) || isnan (cimagf (*aij)) ;    \n" \
+"    (*z) = isnan (GB_crealf (*aij)) || isnan (GB_cimagf (*aij)) ;  \n" \
 "}"
 
 void gb_isnanfc64 (bool *z, const GxB_FC64_t *aij,
                    int64_t i, int64_t j, const void *thunk)
 { 
-    (*z) = isnan (creal (*aij)) || isnan (cimag (*aij)) ;
+    (*z) = isnan (GB_creal (*aij)) || isnan (GB_cimag (*aij)) ;
 }
 
 #define GB_ISNANFC64_DEFN                                           \
 "void gb_isnanfc64 (bool *z, const GxB_FC64_t *aij,             \n" \
 "                   int64_t i, int64_t j, const void *thunk)    \n" \
 "{                                                              \n" \
-"    (*z) = isnan (creal (*aij)) || isnan (cimag (*aij)) ;      \n" \
+"    (*z) = isnan (GB_creal (*aij)) || isnan (GB_cimag (*aij)) ;\n" \
 "}"
 
 void gb_isnotnanfc32 (bool *z, const GxB_FC32_t *aij,
                       int64_t i, int64_t j, const void *thunk)
 { 
-    (*z) = !isnan (crealf (*aij)) && !isnan (cimag (*aij)) ;
+    (*z) = !isnan (GB_crealf (*aij)) && !isnan (GB_cimag (*aij)) ;
 }
 
 #define GB_ISNOTNANFC32_DEFN                                        \
 "void gb_isnotnanfc32 (bool *z, const GxB_FC32_t *aij,          \n" \
 "                      int64_t i, int64_t j, const void *thunk) \n" \
 "{                                                              \n" \
-"    (*z) = !isnan (crealf (*aij)) && !isnan (cimag (*aij)) ;   \n" \
+"    (*z) = !isnan (GB_crealf (*aij)) && !isnan (GB_cimag (*aij)) ; \n" \
 "}"
 
 void gb_isnotnanfc64 (bool *z, const GxB_FC64_t *aij,
                       int64_t i, int64_t j, const void *thunk)
 { 
-    (*z) = !isnan (creal (*aij)) && !isnan (cimag (*aij)) ;
+    (*z) = !isnan (GB_creal (*aij)) && !isnan (GB_cimag (*aij)) ;
 }
 
 #define GB_ISNOTNANFC64_DEFN                                        \
 "void gb_isnotnanfc64 (bool *z, const GxB_FC64_t *aij,          \n" \
 "                      int64_t i, int64_t j, const void *thunk) \n" \
 "{                                                              \n" \
-"    (*z) = !isnan (creal (*aij)) && !isnan (cimag (*aij)) ;    \n" \
+"    (*z) = !isnan (GB_creal (*aij)) && !isnan (GB_cimag (*aij)) ;  \n" \
 "}"
 
 //------------------------------------------------------------------------------

@@ -76,9 +76,9 @@ fprintf (f, 'm4_define(`GB_copy_scalar_to_c'', `#define GB_COPY_scalar_to_C(Cx,p
 
 % to copy an entry from A to C
 if (isequal (ytype, 'GxB_FC32_t') && isequal (ztype, 'bool'))
-    a2c = '((crealf (Ax [pA]) != 0) || (cimagf (Ax [pA]) != 0))' ;
+    a2c = '((GB_crealf (Ax [pA]) != 0) || (GB_cimagf (Ax [pA]) != 0))' ;
 elseif (isequal (ytype, 'GxB_FC64_t') && isequal (ztype, 'bool'))
-    a2c = '((creal (Ax [pA]) != 0) || (cimag (Ax [pA]) != 0))' ;
+    a2c = '((GB_creal (Ax [pA]) != 0) || (GB_cimag (Ax [pA]) != 0))' ;
 elseif (isequal (ytype, 'float') && isequal (ztype, 'GxB_FC32_t'))
     a2c = '(GB_CMPLX32 (Ax [pA], 0))' ;
 elseif (isequal (ytype, 'double') && isequal (ztype, 'GxB_FC64_t'))

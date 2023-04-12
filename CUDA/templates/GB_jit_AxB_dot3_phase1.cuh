@@ -14,6 +14,7 @@
 #include <limits>
 #include <stdint.h>
 #include "GB_cuda_kernel.h"
+#include "GB_mxm_shared_definitions.h"
 #include "GB_hash.h"
 #include "GB_hyper_hash_lookup.h"
 #include "GB_cuda_buckets.h"

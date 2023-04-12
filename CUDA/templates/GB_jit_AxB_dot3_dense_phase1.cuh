@@ -13,6 +13,7 @@
 
 #include <limits>
 #include "GB_cuda_kernel.h"
+#include "GB_mxm_shared_definitions.h"
 #include "GB_cuda_buckets.h"
 #include <cub/block/block_scan.cuh>
 #include <cooperative_groups.h>

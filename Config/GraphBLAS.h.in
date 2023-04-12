@@ -138,7 +138,19 @@
 #ifndef GXB_COMPLEX_H
 #define GXB_COMPLEX_H
 
-    #if defined ( __cplusplus )
+    #if defined ( __NVCC__ )
+
+        // CUDA complex types (using the C++ variant)
+        extern "C++"
+        {
+            #include <cuda/std/complex>
+            typedef std::complex<float>  GxB_FC32_t ;
+            typedef std::complex<double> GxB_FC64_t ;
+        }
+        #define GxB_CMPLXF(r,i) GxB_FC32_t(r,i)
+        #define GxB_CMPLX(r,i)  GxB_FC64_t(r,i)
+
+    #elif defined ( __cplusplus )
 
         // C++ complex types
         extern "C++"
