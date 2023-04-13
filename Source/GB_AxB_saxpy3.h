@@ -12,6 +12,8 @@
 
 #ifndef GB_AXB_SAXPY3_H
 #define GB_AXB_SAXPY3_H
+
+#include "GB_callback_proto.h"
 #include "GB.h"
 #include "GB_hash.h"
 
@@ -93,15 +95,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
 // GB_AxB_saxpy3_cumsum: cumulative sum of C->p for GB_AxB_saxpy3
 //------------------------------------------------------------------------------
 
-void GB_AxB_saxpy3_cumsum
-(
-    GrB_Matrix C,               // finalize C->p
-    GB_saxpy3task_struct *SaxpyTasks, // list of tasks, and workspace
-    int nfine,                  // number of fine tasks
-    double chunk,               // chunk size
-    int nthreads,               // number of threads
-    GB_Werk Werk
-) ;
+GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum) ;
 
 //------------------------------------------------------------------------------
 // GB_AxB_saxpy3_slice_balanced: create balanced parallel tasks for saxpy3

@@ -10,6 +10,7 @@
 #ifndef GB_BITMAP_ASSIGN_METHODS_H
 #define GB_BITMAP_ASSIGN_METHODS_H
 
+#include "GB_callback_proto.h"
 #include "GB_bitmap_assign.h"
 #include "GB_ek_slice.h"
 #include "GB_partition.h"
@@ -354,40 +355,9 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
 #define GB_BITMAP_M_SCATTER_SET_2   2
 #define GB_BITMAP_M_SCATTER_MOD_2   3
 
-void GB_bitmap_M_scatter        // scatter M into the C bitmap
-(
-    // input/output:
-    GrB_Matrix C,
-    // inputs:
-    const GrB_Index *I,         // I index list
-    const int64_t nI,
-    const int Ikind,
-    const int64_t Icolon [3],
-    const GrB_Index *J,         // J index list
-    const int64_t nJ,
-    const int Jkind,
-    const int64_t Jcolon [3],
-    const GrB_Matrix M,         // mask to scatter into the C bitmap
-    const bool Mask_struct,     // true if M is structural, false if valued
-    const int assign_kind,      // row assign, col assign, assign, or subassign
-    const int operation,        // +=2, -=2, or %=2
-    const int64_t *M_ek_slicing,    // size M_ntasks+1
-    const int M_ntasks,
-    const int M_nthreads
-) ;
+GB_CALLBACK_BITMAP_M_SCATTER_PROTO (GB_bitmap_M_scatter) ;
 
-void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
-(
-    // input/output:
-    GrB_Matrix C,
-    // inputs:
-    const GrB_Matrix M,         // mask to scatter into the C bitmap
-    const bool Mask_struct,     // true if M is structural, false if valued
-    const int operation,        // +=2, -=2, or %=2
-    const int64_t *M_ek_slicing,    // size M_ntasks+1
-    const int M_ntasks,
-    const int M_nthreads
-) ;
+GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO (GB_bitmap_M_scatter_whole) ;
 
 void GB_bitmap_assign_to_full   // set all C->b to 1, or free it and make C full
 (

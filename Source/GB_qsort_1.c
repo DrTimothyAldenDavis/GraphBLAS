@@ -7,6 +7,7 @@
 
 //------------------------------------------------------------------------------
 
+#include "GB_callback_proto.h"
 #include "GB_sort.h"
 
 // returns true if A [a] < B [b]
@@ -39,11 +40,7 @@
 
 #include "GB_qsort_template.c"
 
-void GB_qsort_1    // sort array A of size 1-by-n
-(
-    int64_t *restrict A_0,      // size n array
-    const int64_t n
-)
+GB_CALLBACK_QSORT_1_PROTO (GB_qsort_1)
 { 
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;

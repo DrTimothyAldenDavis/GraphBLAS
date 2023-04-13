@@ -10,6 +10,7 @@
 #include "GB_mxm.h"
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
+#include "GB_callback.h"
 
 typedef GB_JIT_KERNEL_AXB_SAXBIT_PROTO ((*GB_jit_dl_function)) ;
 
@@ -73,6 +74,6 @@ GrB_Info GB_AxB_saxbit_jit      // C<M>=A*B, saxbit, via the JIT
     return (GB_jit_kernel (C, M, A, B, ntasks, nthreads,
         nfine_tasks_per_vector, use_coarse_tasks, use_atomics,
         M_ek_slicing, M_nthreads, M_ntasks, A_slice, H_slice, Wcx, Wf,
-        nthreads_max, chunk)) ;
+        nthreads_max, chunk, &GB_callback)) ;
 }
 

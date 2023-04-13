@@ -9,9 +9,12 @@
 
 #include "GB.h"
 
-// complex constructors
+#if !GB_HAS_CMPLX_MACROS
+// complex constructors when the C compiler does not provide CMPLX and CMPLXF
+// macros.  See Source/Shared/GB_complex.h
 extern GxB_FC32_t GB_complexf (float  xreal, float  ximag) ;
 extern GxB_FC64_t GB_complex  (double xreal, double ximag) ;
+#endif
 
 // integer division
 extern int8_t   GB_idiv_int8   (int8_t   x, int8_t   y) ;

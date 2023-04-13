@@ -127,7 +127,8 @@ GrB_Info GB_jit_kernel_AxB_dot4                                         \
     const int naslice,                                                  \
     const int nbslice,                                                  \
     const int nthreads,                                                 \
-    GB_Werk Werk                                                        \
+    GB_Werk Werk,                                                       \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_AXB_SAXBIT_PROTO(GB_jit_kernel_AxB_saxbit)        \
@@ -150,7 +151,8 @@ GrB_Info GB_jit_kernel_AxB_saxbit                                       \
     GB_void *restrict Wcx,                                              \
     int8_t *restrict Wf,                                                \
     const int nthreads_max,                                             \
-    double chunk                                                        \
+    double chunk,                                                       \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_AXB_SAXPY3_PROTO(GB_jit_kernel_AxB_saxpy3)        \
@@ -168,7 +170,8 @@ GrB_Info GB_jit_kernel_AxB_saxpy3                                       \
     const int do_sort,                                                  \
     const int nthreads_max,                                             \
     double chunk,                                                       \
-    GB_Werk Werk                                                        \
+    GB_Werk Werk,                                                       \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_AXB_SAXPY4_PROTO(GB_jit_kernel_AxB_saxpy4)        \
@@ -234,7 +237,8 @@ GrB_Info GB_jit_kernel_concat_bitmap                                    \
     const GrB_Matrix A,                                                 \
     const int nthreads_max,                                             \
     double chunk,                                                       \
-    GB_Werk Werk                                                        \
+    GB_Werk Werk,                                                       \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_CONCAT_FULL_PROTO(GB_jit_kernel_concat_full)      \
@@ -343,7 +347,8 @@ GrB_Info GB_jit_kernel_emult_bitmap                                     \
     const int64_t *M_ek_slicing,                                        \
     const int M_ntasks,                                                 \
     const int M_nthreads,                                               \
-    const int C_nthreads                                                \
+    const int C_nthreads,                                               \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_EWISE_FULLA_PROTO(GB_jit_kernel_ewise_fulla)      \
@@ -404,7 +409,8 @@ GrB_Info GB_jit_kernel_select_phase1                                    \
     const GB_void *restrict ythunk,                                     \
     const int64_t *A_ek_slicing,                                        \
     const int A_ntasks,                                                 \
-    const int A_nthreads                                                \
+    const int A_nthreads,                                               \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_SELECT_PHASE2_PROTO(GB_jit_kernel_select_phase2)  \
@@ -472,7 +478,8 @@ GrB_Info GB_jit_kernel_subassign_any                                    \
     const void *scalar,                                                 \
     const int nthreads_max,                                             \
     double chunk,                                                       \
-    GB_Werk Werk                                                        \
+    GB_Werk Werk,                                                       \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_TRANS_BIND1ST_PROTO(GB_jit_kernel_trans_bind1st)  \

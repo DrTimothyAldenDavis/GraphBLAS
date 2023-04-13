@@ -10,6 +10,7 @@
 #include "GB_apply.h"
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
+#include "GB_callback.h"
 
 typedef GB_JIT_KERNEL_CONCAT_BITMAP_PROTO ((*GB_jit_dl_function)) ;
 
@@ -54,6 +55,7 @@ GrB_Info GB_concat_bitmap_jit      // concatenate A into a bitmap matrix C
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, cistart, cvstart, A, nthreads_max, chunk, Werk)) ;
+    return (GB_jit_kernel (C, cistart, cvstart, A, nthreads_max, chunk, Werk,
+        &GB_callback)) ;
 }
 

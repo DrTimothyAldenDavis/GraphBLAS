@@ -204,7 +204,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                     int64_t *restrict
                         Hf = (int64_t *restrict) SaxpyTasks [taskid].Hf ;
                     int64_t hash_bits = (hash_size-1) ;
-                    // scan my M(:,j)
+                    // scan this task's M(:,j)
                     for (int64_t pM = mystart ; pM < myend ; pM++)
                     {
                         GB_GET_M_ij (pM) ;              // get M(i,j)
@@ -214,7 +214,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                         for (GB_HASH (i))
                         { 
                             int64_t hf ;
-                            // swap my hash entry into the hash table;
+                            // swap this task's hash entry into the hash table;
                             // does the following using an atomic capture:
                             // { hf = Hf [hash] ; Hf [hash] = i_mine ; }
                             GB_ATOMIC_CAPTURE_INT64 (hf, Hf [hash], i_mine) ;

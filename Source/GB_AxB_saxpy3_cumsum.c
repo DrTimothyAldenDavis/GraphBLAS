@@ -12,18 +12,11 @@
 // phase3: fine tasks finalize their computation nnz(C(:,j))
 // phase4: cumulative sum of C->p
 
+#include "GB_callback_proto.h"
 #include "GB_AxB_saxpy3.h"
 #include "GB_unused.h"
 
-void GB_AxB_saxpy3_cumsum
-(
-    GrB_Matrix C,               // finalize C->p
-    GB_saxpy3task_struct *SaxpyTasks, // list of tasks, and workspace
-    int nfine,                  // number of fine tasks
-    double chunk,               // chunk size
-    int nthreads,               // number of threads
-    GB_Werk Werk
-)
+GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
 {
 
     //--------------------------------------------------------------------------
@@ -102,7 +95,7 @@ void GB_AxB_saxpy3_cumsum
             }
         }
 
-        SaxpyTasks [taskid].my_cjnz = my_cjnz ;   // count my nnz(C(:,j))
+        SaxpyTasks [taskid].my_cjnz = my_cjnz ; // count this task's nnz(C(:,j))
     }
 
     //==========================================================================

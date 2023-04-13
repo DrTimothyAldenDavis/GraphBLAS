@@ -12,17 +12,11 @@
 // The memory is freed using the free() function pointer passed in to GrB_init,
 // which is typically the ANSI C free function.
 
+#include "GB_callback_proto.h"
 #include "GB.h"
 
-void GB_free_memory         // free memory
-(
-    // input/output
-    void **p,               // pointer to allocated block of memory to free
-    // input
-    size_t size_allocated   // # of bytes actually allocated
-)
+GB_CALLBACK_FREE_MEMORY_PROTO (GB_free_memory)
 {
-
     if (p != NULL && (*p) != NULL)
     {
         ASSERT (size_allocated == GB_Global_memtable_size (*p)) ;

@@ -9,12 +9,6 @@ v8.0.0 release (or in v8.x for some x > 0):
     kernels are incompatible with the earlier DRAFT* versions of 8.0.0,
     however.
 
-* Linking:
-
-    I plan to use function pointers to any required GB* routines in a single
-    struct, so the JIT can pass it to each JIT kernel.  Then the JIT kernel
-    does not need to be linked against libgraphblas.so itself.
-
 * Ingest source:
 
     I plan to add all of Source/Template into libgraphblas.so itself,

@@ -17,26 +17,23 @@
 // complex constructors
 //------------------------------------------------------------------------------
 
-// FIXME NOW!  Uncomment the following, or else it breaks CUDA
-
-// #if defined ( __cplusplus ) || defined ( __NVCC__ )                     \
-//    || ( _MSC_VER && !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )    \
-//    || !(defined (CMPLX) && defined (CMPLXF))
+#if GB_HAS_CMPLX_MACROS
 
     //--------------------------------------------------------------------------
     // typical case
     //--------------------------------------------------------------------------
 
     // The GxB_CMPLX* macros defined in GraphBLAS.h do no flops so they are
-    // safe to use if the inputs are Inf or NaN.
+    // safe to use if the inputs are Inf or NaN.  The CUDA kernels use these
+    // methods.
 
-//    #define GJ_CMPLX32(xreal,ximag) GxB_CMPLXF (xreal, ximag)
-//    #define GJ_CMPLX64(xreal,ximag) GxB_CMPLX  (xreal, ximag)
+    #define GJ_CMPLX32(xreal,ximag) GxB_CMPLXF (xreal, ximag)
+    #define GJ_CMPLX64(xreal,ximag) GxB_CMPLX  (xreal, ximag)
 
-//    #define GB_CMPLX32(xreal,ximag) GxB_CMPLXF (xreal, ximag)
-//    #define GB_CMPLX64(xreal,ximag) GxB_CMPLX  (xreal, ximag)
+    #define GB_CMPLX32(xreal,ximag) GxB_CMPLXF (xreal, ximag)
+    #define GB_CMPLX64(xreal,ximag) GxB_CMPLX  (xreal, ximag)
 
-//#else
+#else
 
     //--------------------------------------------------------------------------
     // Mac only, or other compilers that do not #define CMPLX and CMPLXF
@@ -51,7 +48,7 @@
     //--------------------------------------------------------------------------
 
     // These methods are 'static inline' because they are meant to be used
-    // directly inside CUDA, CPU JIT, or Factory Kernels.
+    // directly inside JIT, or Factory Kernels.
 
     #define GJ_CMPLX32(xreal,ximag) GJ_complexf (xreal, ximag)
     #define GJ_CMPLX64(xreal,ximag) GJ_complex  (xreal, ximag)
@@ -98,7 +95,7 @@
         return (* ((GxB_FC64_t *) z)) ;
     }
 
-//#endif
+#endif
 
 //------------------------------------------------------------------------------
 // macros for complex built-in functions
@@ -264,7 +261,7 @@
 #define GB_FC32_ne(x,y) ((GB_crealf(x) != GB_crealf(y)) || (GB_cimagf(x) != GB_cimagf(y)))
 #define GB_FC64_ne(x,y) ((GB_creal (x) != GB_creal (y)) || (GB_cimag (x) != GB_cimag (y)))
 
-// save to use GxB_CMPLX* here because the eq and ne operators return boolean
+// safe to use GxB_CMPLX* here because the eq and ne operators return boolean
 #define GB_FC32_iseq(x,y) GxB_CMPLXF ((float)  GB_FC32_eq (x,y), 0)
 #define GB_FC64_iseq(x,y) GxB_CMPLX  ((double) GB_FC64_eq (x,y), 0)
 

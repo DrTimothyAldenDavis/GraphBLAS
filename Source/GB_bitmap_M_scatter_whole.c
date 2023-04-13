@@ -9,21 +9,11 @@
 
 // JIT: not needed, but variants possible for each kind of mask matrix.
 
+#include "GB_callback_proto.h"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_assign_shared_definitions.h"
 
-void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
-(
-    // input/output:
-    GrB_Matrix C,
-    // inputs:
-    const GrB_Matrix M,         // mask to scatter into the C bitmap
-    const bool Mask_struct,     // true if M is structural, false if valued
-    const int operation,        // +=2, -=2, or %=2
-    const int64_t *M_ek_slicing, // size 3*M_ntasks+1
-    const int M_ntasks,
-    const int M_nthreads
-)
+GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO (GB_bitmap_M_scatter_whole)
 {
 
     //--------------------------------------------------------------------------

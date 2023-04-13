@@ -15,14 +15,22 @@
 #ifndef GB_KERNEL_SHARED_DEFINITIONS_H
 #define GB_KERNEL_SHARED_DEFINITIONS_H
 
-// 1 if ztype is complex
-#ifndef GB_Z_IS_COMPLEX
-#define GB_Z_IS_COMPLEX 0
+//------------------------------------------------------------------------------
+// callback methods for CPU JIT
+//------------------------------------------------------------------------------
+
+#ifdef GB_JIT_KERNEL
+#include "GB_callback.h"
 #endif
 
 //------------------------------------------------------------------------------
 // atomic compare/exchange for the GB_Z_TYPE data type
 //------------------------------------------------------------------------------
+
+// 1 if ztype is complex
+#ifndef GB_Z_IS_COMPLEX
+#define GB_Z_IS_COMPLEX 0
+#endif
 
 #if defined ( GB_Z_ATOMIC_BITS ) && !defined ( GB_GENERIC ) && !defined ( GB_CUDA_KERNEL )
 

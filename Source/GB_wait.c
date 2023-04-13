@@ -595,7 +595,7 @@ GrB_Info GB_wait                // finish all pending computations
                         my_hsame = hsame ;
                         if (my_hsame)
                         {
-                            // compare my region of Ah and Sh
+                            // compare this task's region of Ah and Sh
                             my_hsame = (memcmp (Ah + kstart, Sh + kstart,
                                 (kend - kstart) * sizeof (int64_t)) == 0) ;
                             if (!my_hsame)

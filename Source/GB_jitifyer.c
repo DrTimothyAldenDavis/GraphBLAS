@@ -1692,7 +1692,7 @@ int GB_jitifyer_compile (char *kernel_name)
     snprintf (GB_jit_command, GB_jit_command_allocated,
 
     // compile:
-    "%s -DGB_JIT_RUNTIME "          // compiler command
+    "%s -DGB_JIT_RUNTIME=1 "        // compiler command
     #ifdef GBMATLAB
     "-DGBMATLAB=1 "                 // rename for MATLAB
     #endif
@@ -1708,9 +1708,8 @@ int GB_jitifyer_compile (char *kernel_name)
     "%s "                           // C link flags
     "-o %s/lib%s%s "                // lib*.so output file
     "%s/%s%s "                      // *.o input file
-    // FIXME: add libgraphblas to GB_LIBRARIES
-    // allow GB_LIBRARIES to be modified
-    "%s%s/build/libgraphblas%s%s"   // libgraphblas.so
+    // FIXME: allow GB_LIBRARIES to be modified
+//  "%s%s/build/libgraphblas%s%s"   // libgraphblas.so
     "%s "                           // libraries to link with
     ,
 
@@ -1728,13 +1727,13 @@ int GB_jitifyer_compile (char *kernel_name)
     GB_jit_C_link_flags,                            // C link flags
     GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX,  // lib*.so output file
     GB_jit_cache_path, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
-    GB_jit_source_path,                             // libgraphblas.so
-    #ifdef GBMATLAB
-    "/GraphBLAS", "_matlab",
-    #else
-    "", "",
-    #endif
-    GB_LIB_SUFFIX,
+//  GB_jit_source_path,                             // libgraphblas.so
+//  #ifdef GBMATLAB
+//  "/GraphBLAS", "_matlab",
+//  #else
+//  "", "",
+//  #endif
+//  GB_LIB_SUFFIX,
     GB_LIBRARIES) ;                 // libraries to link with
 
     GBURBLE ("(jit compile: %s) ", GB_jit_command) ;

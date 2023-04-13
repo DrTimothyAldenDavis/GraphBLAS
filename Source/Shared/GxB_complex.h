@@ -2,7 +2,7 @@
 // GxB_complex.h: definitions for the GraphBLAS complex types
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -28,6 +28,7 @@
         }
         #define GxB_CMPLXF(r,i) GxB_FC32_t(r,i)
         #define GxB_CMPLX(r,i)  GxB_FC64_t(r,i)
+        #define GB_HAS_CMPLX_MACROS 1
 
     #elif defined ( __cplusplus )
 
@@ -42,6 +43,7 @@
         }
         #define GxB_CMPLXF(r,i) GxB_FC32_t(r,i)
         #define GxB_CMPLX(r,i)  GxB_FC64_t(r,i)
+        #define GB_HAS_CMPLX_MACROS 1
 
     #elif ( _MSC_VER && !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )
 
@@ -52,6 +54,7 @@
         typedef _Dcomplex GxB_FC64_t ;
         #define GxB_CMPLXF(r,i) (_FCbuild (r,i))
         #define GxB_CMPLX(r,i)  ( _Cbuild (r,i))
+        #define GB_HAS_CMPLX_MACROS 1
 
     #else
 
@@ -65,8 +68,10 @@
             // use the ANSI C11 CMPLX and CMPLXF macros
             #define GxB_CMPLX(r,i) CMPLX (r,i)
             #define GxB_CMPLXF(r,i) CMPLXF (r,i)
+            #define GB_HAS_CMPLX_MACROS 1
         #else
             // gcc 6.2 on the the Mac doesn't #define CMPLX
+            #define GB_HAS_CMPLX_MACROS 0
             #define GxB_CMPLX(r,i) \
             ((GxB_FC64_t)((double)(r)) + (GxB_FC64_t)((double)(i) * _Complex_I))
             #define GxB_CMPLXF(r,i) \

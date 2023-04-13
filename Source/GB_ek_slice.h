@@ -9,6 +9,8 @@
 
 #ifndef GB_EK_SLICE_H
 #define GB_EK_SLICE_H
+
+#include "GB_callback_proto.h"
 #include "GB.h"
 
 //------------------------------------------------------------------------------
@@ -81,25 +83,9 @@ static inline void GB_ek_slice_ntasks
 // On input, ntasks must be <= nnz (A), unless nnz (A) is zero.  In that
 // case, ntasks must be 1.
 
-void GB_ek_slice            // slice a matrix
-(
-    // output:
-    int64_t *restrict A_ek_slicing,  // size 3*ntasks+1
-    // input:
-    GrB_Matrix A,                       // matrix to slice
-    int ntasks                          // # of tasks
-) ;
+GB_CALLBACK_EK_SLICE_PROTO (GB_ek_slice) ;
 
-void GB_ek_slice_merge1     // merge column counts for the matrix C
-(
-    // input/output:
-    int64_t *restrict Cp,                    // column counts
-    // input:
-    const int64_t *restrict Wfirst,          // size ntasks
-    const int64_t *restrict Wlast,           // size ntasks
-    const int64_t *ek_slicing,                  // size 3*ntasks+1
-    const int ntasks                            // # of tasks
-) ;
+GB_CALLBACK_EK_SLICE_MERGE1_PROTO (GB_ek_slice_merge1) ;
 
 void GB_ek_slice_merge2     // merge final results for matrix C
 (

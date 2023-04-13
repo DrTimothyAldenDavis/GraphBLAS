@@ -9,6 +9,7 @@
 
 // A wrapper for malloc.  Space is not initialized.
 
+#include "GB_callback_proto.h"
 #include "GB.h"
 
 //------------------------------------------------------------------------------
@@ -41,13 +42,7 @@ static inline void *GB_malloc_helper
 // GB_malloc_memory
 //------------------------------------------------------------------------------
 
-void *GB_malloc_memory      // pointer to allocated block of memory
-(
-    size_t nitems,          // number of items to allocate
-    size_t size_of_item,    // sizeof each item
-    // output
-    size_t *size_allocated  // # of bytes actually allocated
-)
+GB_CALLBACK_MALLOC_MEMORY_PROTO (GB_malloc_memory)
 {
 
     //--------------------------------------------------------------------------

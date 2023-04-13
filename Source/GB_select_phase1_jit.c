@@ -10,6 +10,7 @@
 #include "GB_select.h"
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
+#include "GB_callback.h"
 
 typedef GB_JIT_KERNEL_SELECT_PHASE1_PROTO ((*GB_jit_dl_function)) ;
 
@@ -58,6 +59,6 @@ GrB_Info GB_select_phase1_jit      // select phase1
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (Cp, Wfirst, Wlast, A, ythunk, A_ek_slicing,
-        A_ntasks, A_nthreads)) ;
+        A_ntasks, A_nthreads, &GB_callback)) ;
 }
 

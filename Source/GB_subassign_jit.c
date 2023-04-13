@@ -10,6 +10,7 @@
 #include "GB.h"
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
+#include "GB_callback.h"
 
 typedef GB_JIT_KERNEL_SUBASSIGN_PROTO ((*GB_jit_dl_function)) ;
 
@@ -80,6 +81,6 @@ GrB_Info GB_subassign_jit
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, I, ni, nI, Icolon, J, nj, nJ, Jcolon, M, A,
-        scalar, nthreads_max, chunk, Werk)) ;
+        scalar, nthreads_max, chunk, Werk, &GB_callback)) ;
 }
 

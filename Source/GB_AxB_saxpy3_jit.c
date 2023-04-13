@@ -10,6 +10,7 @@
 #include "GB_mxm.h"
 #include "GB_stringify.h"
 #include "GB_jitifyer.h"
+#include "GB_callback.h"
 
 typedef GB_JIT_KERNEL_AXB_SAXPY3_PROTO ((*GB_jit_dl_function)) ;
 
@@ -67,6 +68,6 @@ GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, M, M_in_place, A, B,
         (GB_saxpy3task_struct *) SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-        nthreads_max, chunk, Werk)) ;
+        nthreads_max, chunk, Werk, &GB_callback)) ;
 }
 

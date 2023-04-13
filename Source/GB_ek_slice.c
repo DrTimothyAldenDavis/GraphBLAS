@@ -22,17 +22,11 @@
 // A can have any sparsity structure (sparse, hyper, bitmap, or full).
 // A may be jumbled.
 
+#include "GB_callback_proto.h"
 #include "GB_ek_slice.h"
 #include "GB_ek_slice_search.c"
 
-void GB_ek_slice            // slice a matrix
-(
-    // output:
-    int64_t *restrict A_ek_slicing,  // size 3*ntasks+1
-    // input:
-    GrB_Matrix A,                       // matrix to slice
-    int ntasks                          // # of tasks
-)
+GB_CALLBACK_EK_SLICE_PROTO (GB_ek_slice)
 {
 
     //--------------------------------------------------------------------------

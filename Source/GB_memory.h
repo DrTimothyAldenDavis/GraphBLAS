@@ -10,6 +10,8 @@
 #ifndef GB_MEMORY_H
 #define GB_MEMORY_H
 
+#include "GB_callback_proto.h"
+
 //------------------------------------------------------------------------------
 // memory management
 //------------------------------------------------------------------------------
@@ -23,21 +25,9 @@ void GB_memoryUsage         // count # allocated blocks and their sizes
     bool count_hyper_hash   // if true, include A->Y
 ) ;
 
-void *GB_malloc_memory      // pointer to allocated block of memory
-(
-    size_t nitems,          // number of items to allocate
-    size_t size_of_item,    // sizeof each item
-    // output
-    size_t *size_allocated  // # of bytes actually allocated
-) ;
+GB_CALLBACK_MALLOC_MEMORY_PROTO (GB_malloc_memory) ;
 
-void GB_free_memory         // free memory
-(
-    // input/output
-    void **p,               // pointer to allocated block of memory to free
-    // input
-    size_t size_allocated   // # of bytes actually allocated
-) ;
+GB_CALLBACK_FREE_MEMORY_PROTO (GB_free_memory) ;
 
 void *GB_calloc_memory      // pointer to allocated block of memory
 (
@@ -82,13 +72,7 @@ void GB_memcpy                  // parallel memcpy
     int nthreads                // # of threads to use
 ) ;
 
-void GB_memset                  // parallel memset
-(
-    void *dest,                 // destination
-    const int c,                // value to to set
-    size_t n,                   // # of bytes to set
-    int nthreads                // # of threads to use
-) ;
+GB_CALLBACK_MEMSET_PROTO (GB_memset) ;
 
 //------------------------------------------------------------------------------
 // malloc/calloc/realloc/free: for permanent contents of GraphBLAS objects

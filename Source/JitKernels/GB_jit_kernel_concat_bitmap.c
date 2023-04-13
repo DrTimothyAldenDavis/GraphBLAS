@@ -13,6 +13,13 @@
 GB_JIT_KERNEL_CONCAT_BITMAP_PROTO (GB_jit_kernel) ;
 GB_JIT_KERNEL_CONCAT_BITMAP_PROTO (GB_jit_kernel)
 { 
+    #ifdef GB_JIT_RUNTIME
+    // get callback functions
+    GB_ek_slice_f GB_ek_slice = my_callback->GB_ek_slice_func ;
+    GB_werk_pop_f GB_werk_pop = my_callback->GB_werk_pop_func ;
+    GB_werk_push_f GB_werk_push = my_callback->GB_werk_push_func ;
+    #endif
+
     #include "GB_concat_bitmap_template.c"
     return (GrB_SUCCESS) ;
 }
