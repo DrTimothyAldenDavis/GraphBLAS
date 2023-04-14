@@ -65,7 +65,7 @@
 #define GBNCPUFEAT 1
 #endif
 
-#if !defined ( GBNCPUFEAT )
+#if !defined ( GBNCPUFEAT ) && ( !GB_JIT_RUNTIME )
 
     #include "cpu_features_macros.h"
     #define STACK_LINE_READER_BUFFER_SIZE 1024

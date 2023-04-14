@@ -162,13 +162,11 @@ int main (void)
     TRY (GxB_get (GxB_JIT_C_COMPILER_NAME, &compiler)) ;
     TRY (GxB_get (GxB_JIT_C_COMPILER_FLAGS, &flags)) ;
     TRY (GxB_get (GxB_JIT_C_LINKER_FLAGS, &link)) ;
-    TRY (GxB_get (GxB_JIT_SOURCE_PATH, &src)) ;
     TRY (GxB_get (GxB_JIT_CACHE_PATH, &cache)) ;
     printf ("JIT configuration: ------------------\n") ;
     printf ("JIT C compiler:   [%s]\n", compiler) ;
     printf ("JIT C flags:      [%s]\n", flags) ;
     printf ("JIT C link flags: [%s]\n", link) ;
-    printf ("JIT source:       [%s]\n", src) ;
     printf ("JIT cache:        [%s]\n", cache) ;
     printf ("-------------------------------------\n\n") ;
 //  TRY (GxB_set (GxB_JIT_C_COMPILER_NAME, "gcc")) ;

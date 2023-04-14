@@ -37,18 +37,6 @@ set ( NSTATIC_DEFAULT_ON true )
 include ( SuiteSparsePolicy )
 include ( GraphBLAS_JIT_paths )
 
-# set the GRAPHBLAS_SOURCE_PATH
-if ( DEFINED GRAPHBLAS_SOURCE_PATH )
-    # if the -DGRAPHBLAS_SOURCE_PATH variable is set use that setting
-elseif ( DEFINED ENV{GRAPHBLAS_SOURCE_PATH} )
-    # otherwise, use the GRAPHBLAS_SOURCE_PATH environment variable
-    set ( GRAPHBLAS_SOURCE_PATH "$ENV{GRAPHBLAS_SOURCE_PATH}" )
-else ( )
-    # if no other option, use the CMAKE_SOURCE_DIR.  This is the typical
-    # case if the one compiling GraphBLAS does not set any variables first.
-    set ( GRAPHBLAS_SOURCE_PATH "${CMAKE_SOURCE_DIR}" )
-endif ( )
-
 #-------------------------------------------------------------------------------
 # define the project
 #-------------------------------------------------------------------------------
@@ -180,11 +168,11 @@ configure_file ( "CUDA/Config/GB_cuda_common_jitFactory.hpp.in"
 if ( COMPACT )
     # do not compile the FactoryKernels
     include_directories ( Source/Template Source Include Source/Shared
-        Config xxHash Config lz4 zstd zstd/zstd_subset
+        Config xxHash Config lz4 zstd zstd/zstd_subset JITpackage
         Demo/Include rmm_wrap Source/JitKernels )
 else ( )
     include_directories ( Source/Template Source Include Source/Shared
-        Config xxHash Config lz4 zstd zstd/zstd_subset
+        Config xxHash Config lz4 zstd zstd/zstd_subset JITpackage
         Source/FactoryKernels
         Demo/Include rmm_wrap Source/JitKernels )
 endif ( )
@@ -220,12 +208,25 @@ include ( GraphBLAS_compiler_options )
 #   - a public enum is extended (by adding a new item at the end, but without
 #       changing the already existing items)
 
-if ( COMPACT )
-    # do not compile the FactoryKernels
-    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Config/*.c" "PreJIT/*.c" )
+if ( NJIT )
+    if ( COMPACT )
+        # no JIT, do not compile the FactoryKernels
+        file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Config/*.c" "PreJIT/*.c" )
+    else ( )
+        # no JIT, but do compile the FactoryKernels
+        file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Config/*.c" "PreJIT/*.c"
+            "Source/FactoryKernels/*.c" )
+    endif ( )
 else ( )
-    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Config/*.c" "PreJIT/*.c"
-        "Source/FactoryKernels/*.c" )
+    if ( COMPACT )
+        # with the JIT; but do not compile the FactoryKernels
+        file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Config/*.c" "PreJIT/*.c" 
+            "JITpackage/*.c" )
+    else ( )
+        # with the JIT and the FactoryKernels
+        file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Config/*.c" "PreJIT/*.c"
+            "JITpackage/*.c" "Source/FactoryKernels/*.c" )
+    endif ( )
 endif ( )
 
 add_library ( graphblas SHARED ${GRAPHBLAS_SOURCES} )
@@ -479,6 +480,7 @@ endif ( )
 include ( GraphBLAS_JIT_configure )
 
 file ( MAKE_DIRECTORY ${GRAPHBLAS_CACHE_PATH} )
+file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/src" )
 
 configure_file ( "Config/GB_config.h.in"
     "${PROJECT_SOURCE_DIR}/Config/GB_config.h"

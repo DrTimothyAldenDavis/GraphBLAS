@@ -8675,12 +8675,12 @@ SuiteSparse:GraphBLAS v8.0 adds a new JIT feature that greatly improves
 performance of user-defined types and operators, and improves the performance
 of built-in operators as well.  The JIT can compile kernels that are specific
 to the matrix type and the operators that work on it.  In version v7.4.4 and
-before, user-defined types and operators were handled by {\em generic} kernels
-that used function pointers for each operator and for any typecasting required.
-Even built-in types and operators were sometimes handled by the generic
-kernels, if any typecasting was done, or if the specific operator, monoid, or
-semiring was disabled by the \verb'Source/GB_control.h' file when GraphBLAS was
-compiled.
+prior versions, user-defined types and operators were handled by {\em generic}
+kernels that used function pointers for each operator and for any typecasting
+required.  Even built-in types and operators were sometimes handled by the
+generic kernels, if any typecasting was done, or if the specific operator,
+monoid, or semiring was disabled by the \verb'Source/GB_control.h' file when
+GraphBLAS was compiled.
 
 Using the JIT in a user application is simple:  by default, there is nothing
 to do.  LAGraph v1.0.1 can use the JIT (and PreJIT) kernels without changing
@@ -8705,34 +8705,15 @@ compiled, that variable defines the folder.  If the user's home directory
 cannot be determined and the \verb'GRAPHBLAS_CACHE_PATH' environment variable
 is not set, then the \verb'cmake' build folder is used instead as a fallback.
 
-The \verb'@GrB' MATLAB interface must compile its JIT kernels slightly
-differently, so these are placed in another folder,
-\verb'~/.SuiteSparse/GraphBLAS/8.0.0_matlab', by default.  The \verb'*.c'
-files are the same but do not mix the compiled kernels.
+An optional environment variable, \verb'GRAPHBLAS_CACHE_PATH', can be used to
+control the location of the the cache folder This environment variable is read
+by \verb'cmake' when GraphBLAS is compiled, and by \verb'GrB_init' when the
+user application runs.  By default it is \verb'~/.SuiteSparse/GraphBLAS/8.0.0'
+(for example), where the last three numbers change when the GraphBLAS version
+changes.
 
-Two optional environment variables can be used to control the location of the
-following two folders.  These environment variables are read by \verb'cmake'
-when GraphBLAS is compiled, and by \verb'GrB_init' when the user application
-runs:
-
-\newpage
-\begin{itemize}
-\item \verb'GRAPHBLAS_CACHE_PATH':  this variable gives the path to the
-folder where compiled kernels will be kept.  By default it is 
-\verb'~/.SuiteSparse/GraphBLAS/8.0.0' (for example), where the last
-three numbers change when the GraphBLAS version changes.
-
-\item \verb'GRAPHBLAS_MATLAB_PATH':  this variable gives the path to the cache
-folder for compiled kernels for the MATLAB interface,
-\verb'~/.SuiteSparse/GraphBLAS/8.0.0_matlab' by default.
-It must differ from the \verb'GRAPHBLAS_CACHE_PATH'. % FIXME: check this
-
-\item \verb'GRAPHBLAS_SOURCE_PATH':  this variable gives the path to the
-top-level SuiteSparse:GraphBLAS source folder.
-\end{itemize}
-
-When the user application starts, it can modify the location of these two
-folders after calling \verb'GrB_init'.  It can also modify the C compiler and
+When the user application starts, it can modify the location of the cache
+folder after calling \verb'GrB_init'.  It can also modify the C compiler and
 its flags, and can control when and how the JIT is used.
 These changes are
 made via \verb'GxB_Global_Option_set', and can be queried via
@@ -8749,8 +8730,6 @@ field                       & value         & description \\
 \verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
 \verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
 \verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
-\verb'GxB_JIT_SOURCE_PATH'    & \verb'char *' & folder with all of GraphBLAS
-                                                 source \\
 \verb'GxB_JIT_C_CONTROL'    & see below & CPU JIT control \\
 \hline
 \end{tabular}
@@ -9054,30 +9033,6 @@ kernel will dominate any performance gains from using the compiled kernel.  A
 heuristic could be introduced so that it compiles them only for larger
 problems.
 
-\subsubsection{Removing the need for GraphBLAS to find its own source}
-The \verb'GxB_JIT_SOURCE_PATH' setting is initialized to the location of the
-GraphBLAS source code itself so that new JIT kernels can be compiled that rely
-on this source code.  To use the JIT in production, a Linux distro or any other
-distro would need to provide the source code of GraphBLAS to the end user
-application.  This is a bit awkward and may thus limit the use of the JIT.  A
-future GraphBLAS could easily be redesigned where the cmake build system
-configures it so that all required source code is ingested into the
-\verb'libgraphblas.so' binary compiled library itself.  Then when
-\verb'GrB_init' is called, GraphBLAS would extract this body of source code
-from its own \verb'libgraphblas.so' binary library, and write it into the
-user's cache folder.  Not all source is required: just the contents of
-\verb'GraphBLAS/Source/JitKernels', \verb'GraphBLAS/Source/Template',
-\verb'GraphBLAS/Source/Shared', and a subset of the \verb'GraphBLAS/Source/*.h'
-files.  If compressed, this amounts to just 350KB so the \verb'libgraphblas.so'
-file would increase by just this size, and the files would take just 3MB of
-space in the user's cache path.  Then by default, any user application or
-distro would automatically carry with it the ability to create the source code
-for JIT kernels, simply by distributing two files: \verb'libgraphblas.so' and
-the \verb'GraphBLAS.h' include file.  GraphBLAS already includes two built-in
-compression methods (lz4 and zstd) so this feature would be easy to add.  All
-GraphBLAS would need is access to a C compiler and a cache folder in which to
-place its source code and compiled JIT kernels.
-
 \subsubsection{SYCL / OpenCL kernels}
 The CUDA JIT will enable NVIDIA GPUs to be exploited.  There are simply too
 many kernels to create at compile time as the ``factory kernels.''  This CUDA
@@ -9193,8 +9148,6 @@ field                       & value         & description \\
 \verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
 \verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
 \verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
-\verb'GxB_JIT_SOURCE_PATH'    & \verb'char *' & folder with all of GraphBLAS
-                                                 source \\
 \verb'GxB_JIT_C_CONTROL'    & see below & CPU JIT control \\
 \hline
 \end{tabular}
@@ -9289,13 +9242,13 @@ field                       & value         & description \\
 \verb'GxB_PRINTF'           & see below     & diagnostic output \\
 \verb'GxB_FLUSH'            & see below     & diagnostic output \\
 \verb'GxB_PRINT_1BASED'     & \verb'int'    & for printing matrices/vectors \\
+\hline
 \verb'GxB_JIT_C_COMPILER_NAME' & \verb'char *' & C compiler for JIT kernels \\
 \verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
 \verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
 \verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
-\verb'GxB_JIT_SOURCE_PATH'    & \verb'char *' & folder with all of GraphBLAS
-                                                 source \\
 \verb'GxB_JIT_C_CONTROL'    & see below & CPU JIT control \\
+\hline
 \verb'GxB_MODE'                 & \verb'int'    & blocking/non-blocking \\
 \verb'GxB_LIBRARY_NAME'         & \verb'char *' & name of library \\
 \verb'GxB_LIBRARY_VERSION'      & \verb'int [3]' & library version \\
@@ -9712,7 +9665,6 @@ typedef enum
     GxB_JIT_C_COMPILER_FLAGS = 111, // CPU JIT C compiler flags
     GxB_JIT_C_LINKER_FLAGS = 112,   // CPU JIT C compiler flags
     GxB_JIT_CACHE_PATH = 113,       // CPU/CUDA JIT path for compiled kernels
-    GxB_JIT_SOURCE_PATH = 114,      // CPU/CUDA JIT path to GraphBLAS source
     GxB_JIT_C_CONTROL = 115,        // CPU JIT control
 
     // for matrix/vector get only:
@@ -9939,8 +9891,7 @@ The \verb'field' parameter can be
 \verb'GxB_JIT_C_COMPILER_NAME',
 \verb'GxB_JIT_C_COMPILER_FLAGS',
 \verb'GxB_JIT_C_LINKER_FLAGS',
-\verb'GxB_JIT_CACHE_PATH',
-\verb'GxB_JIT_SOURCE_PATH', or
+\verb'GxB_JIT_CACHE_PATH', or
 \verb'GxB_JIT_C_CONTROL'.
 
 For example, the following usage sets the global hypersparsity ratio to 0.2,
@@ -10066,7 +10017,6 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
         \verb'GxB_JIT_C_COMPILER_FLAGS' & flags for the C compiler \\
         \verb'GxB_JIT_C_LINKER_FLAGS'   & link flags for the C compiler \\
         \verb'GxB_JIT_CACHE_PATH'       & folder with compiled kernels \\
-        \verb'GxB_JIT_SOURCE_PATH'      & folder with all of GraphBLAS source \\
         \verb'GxB_JIT_C_CONTROL'        & CPU JIT control \\
         \hline
         \verb'GxB_LIBRARY_NAME'         & the string
@@ -10257,8 +10207,6 @@ To set/get the global options:
     GxB_get (GxB_JIT_C_COMPILER_FLAGS, const char **flags) ;
     GxB_set (GxB_JIT_C_LINKER_FLAGS, const char *flags) ;
     GxB_get (GxB_JIT_C_LINKER_FLAGS, const char **flags) ;
-    GxB_set (GxB_JIT_SOURCE_PATH, const char *src) ;
-    GxB_get (GxB_JIT_SOURCE_PATH, const char **src) ;
     GxB_set (GxB_JIT_CACHE_PATH, const char *cache) ;
     GxB_get (GxB_JIT_CACHE_PATH, const char **cache) ;
     GxB_set (GxB_JIT_C_CONTROL, int control) ;

@@ -7,10 +7,11 @@
 
 #-------------------------------------------------------------------------------
 
-default: library
-
-library:
+go:
 	( cd build && cmake $(CMAKE_OPTIONS) .. && cmake --build . -j${JOBS} )
+	./build/grb_jitpackage ../Include/GraphBLAS.h ../Source/*.h \
+            ../Source/Template/*.[ch] ../Source/JitKernels/*.[ch] \
+            ../Source/Shared/*.[ch]
 
 clean: distclean
 
@@ -18,5 +19,5 @@ purge: distclean
 
 # remove all files not in the distribution
 distclean:
-	- rm -rf build/* GB_JITpackage*
+	- rm -rf build/*
 

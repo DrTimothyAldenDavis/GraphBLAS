@@ -254,10 +254,6 @@ GrB_Info GxB_Global_Option_set_CHAR      // set a global default option
 
             return (GB_jitifyer_set_cache_path (value)) ;
 
-        case GxB_JIT_SOURCE_PATH : 
-
-            return (GB_jitifyer_set_source_path (value)) ;
-
         default : 
 
             return (GrB_INVALID_VALUE) ;
@@ -517,15 +513,6 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 char *cache_path = va_arg (ap, char *) ;
                 va_end (ap) ;
                 return (GB_jitifyer_set_cache_path (cache_path)) ;
-            }
-
-        case GxB_JIT_SOURCE_PATH : 
-
-            {
-                va_start (ap, field) ;
-                char *source_path = va_arg (ap, char *) ;
-                va_end (ap) ;
-                return (GB_jitifyer_set_source_path (source_path)) ;
             }
 
         default : 

@@ -25,23 +25,8 @@ elseif ( WIN32 )
     # use LOCALAPPDATA for Windows
     set ( GRAPHBLAS_CACHE_PATH "$ENV{LOCALAPPDATA}/SuiteSparse/GraphBLAS/${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" )
 else ( )
-    # if no other option, the cache path must be set at run time via GxB_set
-    set ( GRAPHBLAS_CACHE_PATH "cache path not found" )
-endif ( )
-
-# set the GRAPHBLAS_MATLAB_PATH for compiled JIT kernels for MATLAB
-if ( DEFINED ENV{GRAPHBLAS_MATLAB_PATH} )
-    # use the GRAPHBLAS_MATLAB_PATH environment variable
-    set ( GRAPHBLAS_MATLAB_PATH "$ENV{GRAPHBLAS_MATLAB_PATH}" )
-elseif ( DEFINED ENV{HOME} )
-    # use the current HOME environment variable from cmake (for Linux, Unix, Mac)
-    set ( GRAPHBLAS_MATLAB_PATH "$ENV{HOME}/.SuiteSparse/GraphBLAS/${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}_matlab" )
-elseif ( WIN32 )
-    # use LOCALAPPDATA for Windows
-    set ( GRAPHBLAS_MATLAB_PATH "$ENV{LOCALAPPDATA}/SuiteSparse/GraphBLAS/${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}_matlab" )
-else ( )
-    # if no other option, the cache path must be set at run time via GxB_set
-    set ( GRAPHBLAS_MATLAB_PATH "cache path not found" )
+    # otherwise the cache path must be set at run time by GB_jitifyer_init
+    set ( GRAPHBLAS_CACHE_PATH "" )
 endif ( )
 
 #-------------------------------------------------------------------------------

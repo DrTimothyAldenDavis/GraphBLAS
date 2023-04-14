@@ -1,3 +1,4 @@
+// SuiteSparse:GraphBLAS 8.0.0
 //------------------------------------------------------------------------------
 // GraphBLAS.h: definitions for the GraphBLAS package
 //------------------------------------------------------------------------------
@@ -62,10 +63,12 @@
 #define GB_CAT2(x,y) x ## y
 #define GB_EVAL2(x,y) GB_CAT2 (x,y)
 
-#ifdef GBMATLAB
-    // All symbols must be renamed for the @GrB interface when using
-    // R2021a and following, since those versions include an earlier
-    // version of SuiteSparse:GraphBLAS.
+#if defined ( GBMATLAB ) && !defined ( GB_JIT_RUNTIME )
+    // All symbols must be renamed for the @GrB interface when using R2021a and
+    // following, since those versions include an earlier version of
+    // SuiteSparse:GraphBLAS.  The renaming does not need to occur for the JIT
+    // kernels, however.  Those can be shared between MATLAB and non-MATLAB
+    // applications.
     #define GB(x)   GB_EVAL2 (GM_, x)
     #define GRB(x)  GB_EVAL2 (GrM_, x)
     #define GXB(x)  GB_EVAL2 (GxM_, x)
@@ -248,7 +251,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "(DRAFT6) Apr 12, 2023"
+#define GxB_IMPLEMENTATION_DATE "(DRAFT6) Apr 13, 2023"
 #define GxB_IMPLEMENTATION_MAJOR 8
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -4080,7 +4083,6 @@ typedef enum            // for global options or matrix options
     GxB_JIT_C_COMPILER_FLAGS = 111, // CPU JIT C compiler flags
     GxB_JIT_C_LINKER_FLAGS = 112,   // CPU JIT C linker flags
     GxB_JIT_CACHE_PATH = 113,       // CPU/CUDA JIT path for compiled kernels
-    GxB_JIT_SOURCE_PATH = 114,      // CPU/CUDA JIT path to GraphBLAS source
     GxB_JIT_C_CONTROL = 115,        // CPU JIT control
 //  GxB_JIT_CUDA_CONTROL = 116,     // CUDA JIT control (future)
 
@@ -4524,8 +4526,6 @@ GrB_Info GxB_Context_disengage      // disengage a Context
 //      GxB_get (GxB_JIT_C_LINKER_FLAGS, const char **flags) ;
 //      GxB_set (GxB_JIT_CACHE_PATH, const char *cache_path) ;
 //      GxB_get (GxB_JIT_CACHE_PATH, const char **cache_path) ;
-//      GxB_set (GxB_JIT_SOURCE_PATH, const char *source_path) ;
-//      GxB_get (GxB_JIT_SOURCE_PATH, const char **source_path) ;
 //      GxB_set (GxB_JIT_C_CONTROL, int control) ;
 //      GxB_get (GxB_JIT_C_CONTROL, int *control) ;
 

@@ -9,12 +9,10 @@ v8.0.0 release (or in v8.x for some x > 0):
     kernels are incompatible with the earlier DRAFT* versions of 8.0.0,
     however.
 
-* Ingest source:
+* #include files for user-defined types and operators
 
-    I plan to add all of Source/Template into libgraphblas.so itself,
-    compressing it first with zstd.  Then GrB_init can write all this source
-    code into the user's cache path, ~/.SuiteSparse/GraphBLAS/8.0.0_source (for
-    example).  Then the GRAPHBLAS_SOURCE_PATH can be removed.
+    allow the user to specify include files for types and operators:
+    GxB_set (type, "#include \"whatever.h\"\n#include \"morestuff.h\"\n") ;
 
 * Atomics:
 

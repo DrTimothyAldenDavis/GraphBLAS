@@ -286,6 +286,10 @@ int GB_jitifyer_compile (char *kernel_name) ;  // compile a kernel
 
 GrB_Info GB_jitifyer_init (void) ;  // initialize the JIT
 
+GrB_Info GB_jitifyer_mkdir (char *path) ;
+
+GrB_Info GB_jitifyer_extract_JITpackage (void) ;
+
 void GB_jitifyer_finalize (bool freeall) ;      // finalize the JIT
 
 void GB_jitifyer_table_free (bool freeall) ;    // free the JIT table
@@ -296,10 +300,6 @@ GrB_Info GB_jitifyer_include (void) ;
 
 void GB_jitifyer_set_control (int control) ;
 GxB_JIT_Control GB_jitifyer_get_control (void) ;
-
-const char *GB_jitifyer_get_source_path (void) ;
-GrB_Info GB_jitifyer_set_source_path (const char *new_source_path) ;
-GrB_Info GB_jitifyer_set_source_path_worker (const char *new_source_path) ;
 
 const char *GB_jitifyer_get_cache_path (void) ;
 GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path) ;

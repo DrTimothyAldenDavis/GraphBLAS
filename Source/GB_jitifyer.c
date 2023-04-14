@@ -10,23 +10,19 @@
 #include "GB.h"
 #include "GB_stringify.h"
 #include "GB_config.h"
+#include "GB_zstd.h"
+#include "GB_JITpackage.h"
 
 //------------------------------------------------------------------------------
 // determine if the JIT is enabled at compile-time
 //------------------------------------------------------------------------------
 
-#ifdef NJIT
-// disable the JIT
-#undef  GB_JIT_ENABLED
-#define GB_JIT_ENABLED 0
-#else
-#undef  GB_JIT_ENABLED
-#define GB_JIT_ENABLED 1
-#endif
-
-#if GB_JIT_ENABLED
+#ifndef NJIT
 // FIXME: dlfcn.h only exists on Linux/Unix/Mac; need to port to Windows
 #include <dlfcn.h>
+// FIXME: for Windows: need to use _mkdir(name) instead mkdir(name,mode)
+#include <sys/stat.h>
+#include <errno.h>
 #else
 // FIXME: for testing; force a compiler error if the code attempts to use
 // dlopen, dlclose, or dlsym.
@@ -54,8 +50,8 @@ static size_t   GB_jit_table_allocated = 0 ;
 static char    *GB_jit_cache_path = NULL ;
 static size_t   GB_jit_cache_path_allocated = 0 ;
 
-static char    *GB_jit_source_path = NULL ;
-static size_t   GB_jit_source_path_allocated = 0 ;
+static char    *GB_jit_src_path = NULL ;
+static size_t   GB_jit_src_path_allocated = 0 ;
 
 static char    *GB_jit_C_compiler = NULL ;
 static size_t   GB_jit_C_compiler_allocated = 0 ;
@@ -72,14 +68,11 @@ static size_t   GB_jit_library_name_allocated = 0 ;
 static char    *GB_jit_kernel_name = NULL ;
 static size_t   GB_jit_kernel_name_allocated = 0 ;
 
-static char    *GB_jit_include = NULL ;
-static size_t   GB_jit_include_allocated = 0 ;
-
 static char    *GB_jit_command = NULL ;
 static size_t   GB_jit_command_allocated = 0 ;
 
 static GxB_JIT_Control GB_jit_control =
-    #if GB_JIT_ENABLED
+    #ifndef NJIT
     GxB_JIT_ON ;        // JIT enabled
     #else
     GxB_JIT_RUN ;       // JIT disabled at compile time; only PreJIT available.
@@ -121,24 +114,22 @@ void GB_jitifyer_finalize (bool freeall)
 { 
     GB_jitifyer_table_free (freeall) ;
     GB_FREE_STUFF (GB_jit_cache_path) ;
-    GB_FREE_STUFF (GB_jit_source_path) ;
+    GB_FREE_STUFF (GB_jit_src_path) ;
     GB_FREE_STUFF (GB_jit_C_compiler) ;
     GB_FREE_STUFF (GB_jit_C_flags) ;
     GB_FREE_STUFF (GB_jit_C_link_flags) ;
     GB_FREE_STUFF (GB_jit_library_name) ;
     GB_FREE_STUFF (GB_jit_kernel_name) ;
-    GB_FREE_STUFF (GB_jit_include) ;
     GB_FREE_STUFF (GB_jit_command) ;
 
     if (freeall) ASSERT (GB_jit_table == NULL) ;
     ASSERT (GB_jit_cache_path == NULL) ;
-    ASSERT (GB_jit_source_path == NULL) ;
+    ASSERT (GB_jit_src_path == NULL) ;
     ASSERT (GB_jit_C_compiler == NULL) ;
     ASSERT (GB_jit_C_flags == NULL) ;
     ASSERT (GB_jit_C_link_flags == NULL) ;
     ASSERT (GB_jit_library_name == NULL) ;
     ASSERT (GB_jit_kernel_name == NULL) ;
-    ASSERT (GB_jit_include == NULL) ;
     ASSERT (GB_jit_command == NULL) ;
 }
 
@@ -153,25 +144,32 @@ GrB_Info GB_jitifyer_init (void)
 {
 
     //--------------------------------------------------------------------------
-    // find the GB_jit_cache_path
+    // enable the JIT
     //--------------------------------------------------------------------------
+
+    GB_jit_control =
+        #ifndef NJIT
+        GxB_JIT_ON ;        // JIT enabled
+        #else
+        GxB_JIT_RUN ;       // JIT disabled at compile time; only PreJIT available.
+                            // No JIT kernels can be loaded or compiled.
+        #endif
 
     ASSERT (GB_jit_table == NULL) ;
     ASSERT (GB_jit_cache_path == NULL) ;
-    ASSERT (GB_jit_source_path == NULL) ;
+    ASSERT (GB_jit_src_path == NULL) ;
     ASSERT (GB_jit_C_compiler == NULL) ;
     ASSERT (GB_jit_C_flags == NULL) ;
     ASSERT (GB_jit_C_link_flags == NULL) ;
     ASSERT (GB_jit_library_name == NULL) ;
     ASSERT (GB_jit_kernel_name == NULL) ;
-    ASSERT (GB_jit_include == NULL) ;
     ASSERT (GB_jit_command == NULL) ;
 
-    #if GBMATLAB
-    char *cache_path = getenv ("GRAPHBLAS_MATLAB_PATH") ;
-    #else
+    //--------------------------------------------------------------------------
+    // find the GB_jit_cache_path
+    //--------------------------------------------------------------------------
+
     char *cache_path = getenv ("GRAPHBLAS_CACHE_PATH") ;
-    #endif
     if (cache_path != NULL)
     { 
         // use the environment variable GRAPHBLAS_CACHE_PATH as-is
@@ -195,25 +193,42 @@ GrB_Info GB_jitifyer_init (void)
             GB_MALLOC_STUFF (GB_jit_cache_path, len) ;
             snprintf (GB_jit_cache_path,
                 GB_jit_cache_path_allocated,
-                "%s/%sSuiteSparse/GraphBLAS/%d.%d.%d%s", home, dot,
+                "%s/%sSuiteSparse/GraphBLAS/%d.%d.%d", home, dot,
                 GxB_IMPLEMENTATION_MAJOR,
                 GxB_IMPLEMENTATION_MINOR,
-                GxB_IMPLEMENTATION_SUB,
-                #if GBMATLAB
-                "_matlab"
-                #else
-                ""
-                #endif
-                ) ;
+                GxB_IMPLEMENTATION_SUB) ;
         }
     }
 
-    if (GB_jit_cache_path == NULL)
+    //--------------------------------------------------------------------------
+    // find the GB_jit_src_path
+    //--------------------------------------------------------------------------
+
+    if (GB_jit_cache_path != NULL)
+    {
+        size_t len = GB_jit_cache_path_allocated + 12 ;
+        GB_MALLOC_STUFF (GB_jit_src_path, len) ;
+        snprintf (GB_jit_src_path, GB_jit_src_path_allocated, "%s/src",
+            GB_jit_cache_path) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // make sure the cache and source paths exist
+    //--------------------------------------------------------------------------
+
+    GrB_Info info1 = GB_jitifyer_mkdir (GB_jit_cache_path) ;
+    GrB_Info info2 = GB_jitifyer_mkdir (GB_jit_src_path) ;
+
+    if (info1 != GrB_SUCCESS || info2 != GrB_SUCCESS)
     { 
-        // cannot determine the JIT cache path; disable loading and compiling
-        printf ("JIT: no cache path\n") ;    // FIXME
+        // JIT is disabled, or cannot determine the JIT cache and/or source
+        // path.  Disable loading and compiling, but continue with the rest of
+        // the initializations.  The PreJIT could still be used.
         GB_jit_control = GxB_JIT_RUN ;
+        GB_FREE_STUFF (GB_jit_cache_path) ;
+        GB_FREE_STUFF (GB_jit_src_path) ;
         GB_COPY_STUFF (GB_jit_cache_path, "") ;
+        GB_COPY_STUFF (GB_jit_src_path, "") ;
     }
 
     //--------------------------------------------------------------------------
@@ -223,13 +238,11 @@ GrB_Info GB_jitifyer_init (void)
     GB_COPY_STUFF (GB_jit_C_compiler,   GB_C_COMPILER) ;
     GB_COPY_STUFF (GB_jit_C_flags,      GB_C_FLAGS) ;
     GB_COPY_STUFF (GB_jit_C_link_flags, GB_C_LINK_FLAGS) ;
-    GB_COPY_STUFF (GB_jit_source_path,  GB_SOURCE_PATH) ;
 
     //--------------------------------------------------------------------------
-    // set the include string and allocate permanent workspace
+    // allocate permanent workspace
     //--------------------------------------------------------------------------
 
-    OK (GB_jitifyer_include ( ) == GrB_SUCCESS) ;
     OK (GB_jitifyer_alloc_space ( ) == GrB_SUCCESS) ;
 
     //--------------------------------------------------------------------------
@@ -241,12 +254,6 @@ GrB_Info GB_jitifyer_init (void)
     char **Names = NULL ;
     int32_t nkernels = 0 ;
     GB_prejit (&nkernels, &Kernels, &Queries, &Names) ;
-
-    if (nkernels == 0)
-    {
-        // quick return; no PreJIT kernels
-        return (GrB_SUCCESS) ;
-    }
 
     for (int k = 0 ; k < nkernels ; k++)
     {
@@ -411,19 +418,179 @@ GrB_Info GB_jitifyer_init (void)
     }
 
     //--------------------------------------------------------------------------
-    // enable the JIT
+    // uncompress all the source files into the user source folder
     //--------------------------------------------------------------------------
 
-    GB_jit_control =
-        #if GB_JIT_ENABLED
-        GxB_JIT_ON ;        // JIT enabled
-        #else
-        GxB_JIT_RUN ;       // JIT disabled at compile time; only PreJIT available.
-                            // No JIT kernels can be loaded or compiled.
-        #endif
+    return (GB_jitifyer_extract_JITpackage ( )) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_mkdir: create a directory
+//------------------------------------------------------------------------------
+
+// Create a directory, including all parent directories if they do not exist.
+// Returns success if the directory already exists or if it was successfully
+// created.  Returns GrB_NO_VALUE or GrB_NULL_POINTER on error.  Returns
+// GrB_NO_VALUE if the JIT is disabled.
+
+GrB_Info GB_jitifyer_mkdir (char *path)
+{
+    int result = 0 ;
+    int err = -1 ;
+    if (path == NULL) return (GrB_NULL_POINTER) ;
+
+    #ifndef NJIT
+
+    // create all the leading directories
+    bool first = true ;
+    for (char *p = path ; *p ; p++)
+    {
+        // look for a file separator
+        if (*p == '/' || *p == '\\')
+        {
+            // found a file separator
+            if (!first)
+            {
+                // terminate the path at this file separator
+                char save = *p ;
+                *p = '\0' ;
+                // construct the directory at this path
+                // FIXME: need _mkdir on Windows
+                result = mkdir (path, S_IRWXU) ;
+                err = (result == -1) ? errno : 0 ;
+                // restore the path
+                *p = save ;
+            }
+            first = false ;
+        }
+    }
+
+    // create the final directory
+    // FIXME: need _mkdir on Windows
+    result = mkdir (path, S_IRWXU) ;
+    err = (result == -1) ? errno : 0 ;
+    return ((err == 0 || err == EEXIST) ? GrB_SUCCESS : GrB_NO_VALUE) ;
+    #else
+    // JIT is disabled at compile time; no need to make any directories
+    return (GrB_NO_VALUE) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_extract_JITpackage: extract the GraphBLAS source
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_extract_JITpackage (void)
+{
+
+    bool ok = true ;
+    #ifndef NJIT
+
+    //--------------------------------------------------------------------------
+    // allocate workspace
+    //--------------------------------------------------------------------------
+
+    // allocate space for the full path to the output file
+    size_t fsize = 0 ;
+    char *filename = GB_MALLOC_WORK (GB_jit_src_path_allocated + 300, char,
+        &fsize) ;
+    if (filename == NULL)
+    {
+        // out of memory; disable the JIT
+        GB_jit_control = GxB_JIT_RUN ;
+        return (GrB_OUT_OF_MEMORY) ;
+    }
+
+    // check the GraphBLAS.h file to see if it's OK
+    snprintf (filename, fsize, "%s/GraphBLAS.h", GB_jit_src_path) ;
+    FILE *fp = fopen (filename, "r") ;
+    if (fp != NULL)
+    {
+        // found the file; read the 1st line for the version number
+        int v1 = -1, v2 = -1, v3 = -1 ;
+        int r = fscanf (fp, "// SuiteSparse:GraphBLAS %d.%d.%d", &v1, &v2, &v3);
+        if (r == 3 &&
+            v1 == GxB_IMPLEMENTATION_MAJOR &&
+            v2 == GxB_IMPLEMENTATION_MINOR &&
+            v3 == GxB_IMPLEMENTATION_SUB)
+        {
+            // the header looks fine; assume the rest is OK
+            fclose (fp) ;
+            GB_FREE_WORK (&filename, fsize) ;
+            return (GrB_SUCCESS) ;
+        }
+    }
+
+    // find the largest uncompressed filesize
+    size_t max_uncompressed = 0 ;
+    for (int k = 0 ; k < GB_JITpackage_nfiles ; k++)
+    { 
+        size_t uncompressed_size = GB_JITpackage_index [k].uncompressed_size ;
+        max_uncompressed = GB_IMAX (max_uncompressed, uncompressed_size) ;
+    }
+
+    // allocate workspace for the largest uncompressed file
+    size_t dst_size = 0 ;
+    uint8_t *dst = GB_MALLOC_WORK (max_uncompressed+2, uint8_t, &dst_size) ;
+
+    if (dst == NULL || filename == NULL)
+    { 
+        // out of memory; disable the JIT
+        GB_jit_control = GxB_JIT_RUN ;
+        GB_FREE_WORK (&dst, dst_size) ;
+        GB_FREE_WORK (&filename, fsize) ;
+        return (GrB_OUT_OF_MEMORY) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // uncompress each file
+    //--------------------------------------------------------------------------
+
+    for (int k = 0 ; k < GB_JITpackage_nfiles ; k++)
+    { 
+        // uncompress the blob
+        uint8_t *src = GB_JITpackage_index [k].blob ;
+        size_t src_size = GB_JITpackage_index [k].compressed_size ;
+        size_t u = ZSTD_decompress (dst, dst_size, src, src_size) ;
+        if (u != GB_JITpackage_index [k].uncompressed_size)
+        { 
+            // blob is invalid
+            ok = false ;
+            break ;
+        }
+        // construct the filename
+        snprintf (filename, fsize, "%s/%s", GB_jit_src_path,
+            GB_JITpackage_index [k].filename) ;
+        printf ("unpack %s\n", filename) ;
+        // open the file
+        fp = fopen (filename, "w") ;
+        if (fp == NULL)
+        { 
+            // file cannot be created
+            ok = false ;
+            break ;
+        }
+        // write the uncompressed blob to the file
+        size_t nwritten = fwrite (dst, sizeof (uint8_t), u, fp) ;
+        fclose (fp) ;
+        if (nwritten != u)
+        {
+            // file is invalid
+            ok = false ;
+            break ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
+
+    GB_FREE_WORK (&dst, dst_size) ;
+    GB_FREE_WORK (&filename, fsize) ;
+    #endif
 
     #pragma omp flush
-    return (GrB_SUCCESS) ;
+    return (ok ? GrB_SUCCESS : GrB_NO_VALUE) ;
 }
 
 //------------------------------------------------------------------------------
@@ -449,7 +616,7 @@ void GB_jitifyer_set_control (int control)
     #pragma omp critical (GB_jitifyer_worker)
     {
         control = GB_IMAX (control, GxB_JIT_OFF) ;
-        #if GB_JIT_ENABLED
+        #ifndef NJIT
         // The full JIT is available.
         control = GB_IMIN (control, GxB_JIT_ON) ;
         #else
@@ -468,55 +635,6 @@ void GB_jitifyer_set_control (int control)
 }
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_include:  allocate and determine -Istring
-//------------------------------------------------------------------------------
-
-GrB_Info GB_jitifyer_include (void)
-{
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    ASSERT (GB_jit_source_path != NULL) ;
-
-    //--------------------------------------------------------------------------
-    // allocate and determine GB_jit_include
-    //--------------------------------------------------------------------------
-
-    size_t len = 9 * GB_jit_source_path_allocated + 200 ;
-    GB_MALLOC_STUFF (GB_jit_include, len) ;
-
-    snprintf (GB_jit_include, GB_jit_include_allocated,
-        "-I%s/Include "
-        "-I%s/Source "
-        "-I%s/Source/Shared "
-        "-I%s/Source/Template "
-        "-I%s/Source/JitKernels "
-        "-I%s/rmm_wrap "
-        "-I%s/cpu_features "
-        "-I%s/cpu_features/include "
-        #ifdef GBMATLAB
-        "-I%s/GraphBLAS/rename "
-        #endif
-        ,
-        GB_jit_source_path,
-        GB_jit_source_path,
-        GB_jit_source_path,
-        GB_jit_source_path,
-        GB_jit_source_path,
-        GB_jit_source_path,
-        GB_jit_source_path,
-        GB_jit_source_path
-        #ifdef GBMATLAB
-        , GB_jit_source_path
-        #endif
-        ) ;
-
-    return (GrB_SUCCESS) ;
-}
-
-//------------------------------------------------------------------------------
 // GB_jitifyer_alloc_space: allocate workspaces for the JIT
 //------------------------------------------------------------------------------
 
@@ -528,10 +646,9 @@ GrB_Info GB_jitifyer_alloc_space (void)
     //--------------------------------------------------------------------------
 
     if (GB_jit_C_flags == NULL ||
-        GB_jit_include == NULL ||
         GB_jit_C_link_flags == NULL ||
         GB_jit_cache_path == NULL ||
-        GB_jit_source_path == NULL)
+        GB_jit_src_path == NULL)
     { 
         return (GrB_NULL_POINTER) ;
     }
@@ -562,88 +679,19 @@ GrB_Info GB_jitifyer_alloc_space (void)
 
     if (GB_jit_command == NULL)
     {
-        size_t len = 2 * GB_jit_C_compiler_allocated +
-            2 * GB_jit_C_flags_allocated + strlen (GB_jit_include) +
+        size_t len =
+            2 * GB_jit_C_compiler_allocated +
+            2 * GB_jit_C_flags_allocated +
+            GB_jit_C_link_flags_allocated +
+            GB_jit_src_path_allocated +
+            strlen (GB_OMP_INC) +
             4 * GB_jit_cache_path_allocated + 5 * GB_KLEN +
-            GB_jit_source_path_allocated + 300 ;
+            strlen (GB_LIBRARIES) +
+            300 ;
         GB_MALLOC_STUFF (GB_jit_command, len) ;
     }
 
     return (GrB_SUCCESS) ;
-}
-
-//------------------------------------------------------------------------------
-// GB_jitifyer_get_source_path: return the current source path
-//------------------------------------------------------------------------------
-
-const char *GB_jitifyer_get_source_path (void)
-{
-    const char *s ;
-    #pragma omp critical (GB_jitifyer_worker)
-    {
-        s = GB_jit_source_path ;
-    }
-    return (s) ;
-}
-
-//------------------------------------------------------------------------------
-// GB_jitifyer_set_source_path: set source path
-//------------------------------------------------------------------------------
-
-// Redefines the GB_jit_source_path.  This requires the -Istring to
-// reconstructed, the command buffer to be reallocated.
-
-GrB_Info GB_jitifyer_set_source_path (const char *new_source_path)
-{
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    if (new_source_path == NULL)
-    { 
-        return (GrB_NULL_POINTER) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // set the source path in a critical section
-    //--------------------------------------------------------------------------
-
-    GrB_Info info ;
-    #pragma omp critical (GB_jitifyer_worker)
-    { 
-        info = GB_jitifyer_set_source_path_worker (new_source_path) ;
-    }
-    return (info) ;
-}
-
-//------------------------------------------------------------------------------
-// GB_jitifyer_set_source_path_worker: set source path in a critical section
-//------------------------------------------------------------------------------
-
-GrB_Info GB_jitifyer_set_source_path_worker (const char *new_source_path)
-{
-
-    //--------------------------------------------------------------------------
-    // free the old strings that depend on the source path
-    //--------------------------------------------------------------------------
-
-    GB_FREE_STUFF (GB_jit_source_path) ;
-    GB_FREE_STUFF (GB_jit_include) ;
-    GB_FREE_STUFF (GB_jit_command) ;
-
-    //--------------------------------------------------------------------------
-    // allocate the new GB_jit_source_path
-    //--------------------------------------------------------------------------
-
-    GB_COPY_STUFF (GB_jit_source_path, new_source_path) ;
-
-    //--------------------------------------------------------------------------
-    // allocate and define strings that depend on GB_jit_source_path
-    //--------------------------------------------------------------------------
-
-    OK (GB_jitifyer_include ( ) == GrB_SUCCESS) ;
-    return (GB_jitifyer_alloc_space ( )) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1185,7 +1233,7 @@ GrB_Info GB_jitifyer_worker
     // quick return if not in the hash table
     //--------------------------------------------------------------------------
 
-    #if GB_JIT_ENABLED
+    #ifndef NJIT
     if (GB_jit_control <= GxB_JIT_RUN)
     #endif
     { 
@@ -1200,7 +1248,7 @@ GrB_Info GB_jitifyer_worker
     // the kernel needs to be loaded, and perhaps compiled; get its properties
     //--------------------------------------------------------------------------
 
-    #if GB_JIT_ENABLED
+    #ifndef NJIT
 
     GB_Operator op1 = NULL ;
     GB_Operator op2 = NULL ;
@@ -1657,7 +1705,7 @@ void GB_jitifyer_table_free (bool freeall)
                     // unload the dl library
                     if (e->dl_handle != NULL)
                     {
-                        #if GB_JIT_ENABLED
+                        #ifndef NJIT
                         // FIXME: dlclose only exists on Linux/Unix/Mac
                         dlclose (e->dl_handle) ;
                         #endif
@@ -1682,9 +1730,10 @@ void GB_jitifyer_table_free (bool freeall)
 // GB_jitifyer_compile: compile a kernel
 //------------------------------------------------------------------------------
 
-#if GB_JIT_ENABLED
+#ifndef NJIT
 
-// If the runtime JIT is disabled, no new JIT kernels may be compiled.
+// If the runtime JIT is disabled, no new JIT kernels may be compiled at run
+// time.  The PreJIT may still be used.
 
 int GB_jitifyer_compile (char *kernel_name)
 { 
@@ -1693,11 +1742,8 @@ int GB_jitifyer_compile (char *kernel_name)
 
     // compile:
     "%s -DGB_JIT_RUNTIME=1 "        // compiler command
-    #ifdef GBMATLAB
-    "-DGBMATLAB=1 "                 // rename for MATLAB
-    #endif
     "%s "                           // C flags
-    "%s "                           // include directories
+    "-I%s "                         // include source directory
     "%s "                           // openmp include directories
     "-o %s/%s%s "                   // *.o output file
     "-c %s/%s.c ; "                 // *.c input file
@@ -1708,32 +1754,25 @@ int GB_jitifyer_compile (char *kernel_name)
     "%s "                           // C link flags
     "-o %s/lib%s%s "                // lib*.so output file
     "%s/%s%s "                      // *.o input file
-    // FIXME: allow GB_LIBRARIES to be modified
-//  "%s%s/build/libgraphblas%s%s"   // libgraphblas.so
     "%s "                           // libraries to link with
     ,
 
     // compile:
-    GB_jit_C_compiler,                              // C compiler
-    GB_jit_C_flags,                                 // C flags
-    GB_jit_include,                                 // include directories
-    GB_OMP_INC,                                     // openmp include
-    GB_jit_cache_path, kernel_name, GB_OBJ_SUFFIX,  // *.o output file
-    GB_jit_cache_path, kernel_name,                 // *.c input file
+    GB_jit_C_compiler,              // C compiler
+    GB_jit_C_flags,                 // C flags
+    GB_jit_src_path,                // include source directory
+    GB_OMP_INC,                     // openmp include
+    GB_jit_cache_path, kernel_name,
+    GB_OBJ_SUFFIX,                  // *.o output file
+    GB_jit_cache_path, kernel_name, // *.c input file
 
     // link:
-    GB_jit_C_compiler,                              // C compiler
-    GB_jit_C_flags,                                 // C flags
-    GB_jit_C_link_flags,                            // C link flags
+    GB_jit_C_compiler,              // C compiler
+    GB_jit_C_flags,                 // C flags
+    GB_jit_C_link_flags,            // C link flags
     GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX,  // lib*.so output file
     GB_jit_cache_path, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
-//  GB_jit_source_path,                             // libgraphblas.so
-//  #ifdef GBMATLAB
-//  "/GraphBLAS", "_matlab",
-//  #else
-//  "", "",
-//  #endif
-//  GB_LIB_SUFFIX,
+    // FIXME: allow GB_LIBRARIES to be modified
     GB_LIBRARIES) ;                 // libraries to link with
 
     GBURBLE ("(jit compile: %s) ", GB_jit_command) ;

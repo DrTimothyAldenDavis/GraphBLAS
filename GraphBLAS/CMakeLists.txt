@@ -32,18 +32,6 @@ set ( SUITESPARSE_CUDA off )
 include ( SuiteSparsePolicy )
 include ( GraphBLAS_JIT_paths )
 
-# set the GRAPHBLAS_SOURCE_PATH
-if ( DEFINED GRAPHBLAS_SOURCE_PATH )
-    # if the -DGRAPHBLAS_SOURCE_PATH variable is set use that setting
-elseif ( DEFINED ENV{GRAPHBLAS_SOURCE_PATH} )
-    # otherwise, use the GRAPHBLAS_SOURCE_PATH environment variable
-    set ( GRAPHBLAS_SOURCE_PATH "$ENV{GRAPHBLAS_SOURCE_PATH}" )
-else ( )
-    # if no other option, use the CMAKE_SOURCE_DIR.  This is the typical
-    # case if the one compiling GraphBLAS does not set any variables first.
-    set ( GRAPHBLAS_SOURCE_PATH "${CMAKE_SOURCE_DIR}/.." )
-endif ( )
-
 #-------------------------------------------------------------------------------
 # define the project
 #-------------------------------------------------------------------------------
@@ -127,11 +115,11 @@ set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 if ( COMPACT )
     # do not compile the FactoryKernels
     include_directories ( ../Source/Template ../Source ../Include rename
-        ../Source/Shared Config ../Source/JitKernels
+        ../Source/Shared Config ../Source/JitKernels ../JITpackage
         ../lz4 ../zstd ../zstd/zstd_subset ../xxHash )
 else ( )
     include_directories ( ../Source/Template ../Source ../Include rename
-        ../Source/Shared Config ../Source/JitKernels
+        ../Source/Shared Config ../Source/JitKernels ../JITpackage
         ../lz4 ../zstd ../zstd/zstd_subset ../xxHash
         ../Source/FactoryKernels )
 endif ( )
@@ -146,11 +134,26 @@ include ( GraphBLAS_compiler_options )
 # dynamic graphblas_matlab library properties
 #-------------------------------------------------------------------------------
 
-if ( COMPACT )
-    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "Config/*.c" "PreJIT/*.c" )
+if ( NJIT )
+    if ( COMPACT )
+        # no JIT, do not compile the FactoryKernels
+        file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "Config/*.c"
+            "PreJIT/*.c" )
+    else ( )
+        # no JIT, but do compile the FactoryKernels
+        file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "Config/*.c"
+            "PreJIT/*.c" "../Source/FactoryKernels/*.c" )
+    endif ( )
 else ( )
-    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "Config/*.c" "PreJIT/*.c"
-        "../Source/FactoryKernels/*.c" )
+    if ( COMPACT )
+        # with the JIT; but do not compile the FactoryKernels
+        file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "Config/*.c"
+            "PreJIT/*.c" "../JITpackage/*.c" )
+    else ( )
+        # with the JIT and the FactoryKernels
+        file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "Config/*.c"
+            "PreJIT/*.c" "../JITpackage/*.c" "../Source/FactoryKernels/*.c" )
+    endif ( )
 endif ( )
 
 add_library ( graphblas_matlab SHARED ${GRAPHBLAS_SOURCES} )
@@ -248,9 +251,8 @@ install ( TARGETS graphblas_matlab
 
 include ( GraphBLAS_JIT_configure )
 
-set ( GRAPHBLAS_CACHE_PATH ${GRAPHBLAS_MATLAB_PATH} )
-message ( STATUS "JIT cache for MATLAB: ${GRAPHBLAS_CACHE_PATH}" )
 file ( MAKE_DIRECTORY ${GRAPHBLAS_CACHE_PATH} )
+file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/src" )
 
 configure_file ( "../Config/GB_config.h.in"
     "${PROJECT_SOURCE_DIR}/Config/GB_config.h"

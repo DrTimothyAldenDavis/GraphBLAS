@@ -8,7 +8,6 @@
 #-------------------------------------------------------------------------------
 
 # construct the JIT compiler/link strings
-set ( GB_SOURCE_PATH "${GRAPHBLAS_SOURCE_PATH}" )
 set ( GB_C_COMPILER  "${CMAKE_C_COMPILER}" )
 set ( GB_C_FLAGS "${CMAKE_C_FLAGS}" )
 set ( GB_C_LINK_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}" )
@@ -66,7 +65,6 @@ if ( NOT NJIT OR ENABLE_CUDA )
     message ( STATUS "JIT link flags: ${GB_C_LINK_FLAGS}" )
     message ( STATUS "JIT lib suffix: ${GB_LIB_SUFFIX}" )
     message ( STATUS "JIT obj suffix: ${GB_OBJ_SUFFIX}" )
-    message ( STATUS "JIT source:     ${GB_SOURCE_PATH}" )
     message ( STATUS "JIT cache:      ${GRAPHBLAS_CACHE_PATH}" )
     message ( STATUS "JIT openmp inc: ${GB_OMP_INC}" )
     message ( STATUS "JIT libraries:  ${GB_LIBRARIES}" )

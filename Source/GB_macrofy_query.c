@@ -73,8 +73,10 @@ void GB_macrofy_query
     }
 
     //--------------------------------------------------------------------------
-    // querty the three types
+    // query the three types
     //--------------------------------------------------------------------------
+
+    // FIXME: add sizeof (type)
 
     GrB_Type types [3] ;
     types [0] = type0 ;

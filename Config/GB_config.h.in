@@ -39,12 +39,6 @@
 #define GB_OBJ_SUFFIX   "@GB_OBJ_SUFFIX@"
 #endif
 
-// GB_SOURCE_PATH: the source code for GraphBLAS, which is the path of the
-// top-level GraphBLAS folder:
-#ifndef GB_SOURCE_PATH
-#define GB_SOURCE_PATH  "@GB_SOURCE_PATH@"
-#endif
-
 // GB_OMP_INC: include directories for OpenMP, if in use by GraphBLAS:
 #ifndef GB_OMP_INC
 #define GB_OMP_INC      "@GB_OMP_INC@"

@@ -47,7 +47,7 @@
 // internal #include files
 //------------------------------------------------------------------------------
 
-#if defined ( SUITESPARSE_CUDA )
+#if defined ( SUITESPARSE_CUDA ) && (! GB_JIT_RUNTIME )
 #include "rmm_wrap.h"
 #endif
 
