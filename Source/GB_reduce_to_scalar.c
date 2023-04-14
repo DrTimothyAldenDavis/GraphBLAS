@@ -120,7 +120,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         {
             // reduction must continue.  Result is in V, not the scalar z.
             ASSERT (info == GrB_SUCCESS) ;
-            if (V->len == 1)
+            if (V->vlen == 1)
             {
                 // the CUDA kernel has reduced A to a single scalar, V [0],
                 // with a single threadblock; no more recursion.  Copy the
