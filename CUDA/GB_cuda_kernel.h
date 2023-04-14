@@ -152,6 +152,7 @@ GrB_Desc_Value ;
 #include "GB_pun.h"
 #include "GB_opaque.h"
 #include "GB_nnz.h"
+#define GB_HAS_CMPLX_MACROS 1
 #include "GB_complex.h"
 
 // version for the GPU, with fewer branches
