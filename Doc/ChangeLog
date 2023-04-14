@@ -1,4 +1,4 @@
-Version 8.0.0 (draft4; Apr 3, 2023)
+Version 8.0.0 (DRAFT)
 
     * version 8:  This version is a major SO version increase, since
         it removes user-visible features from SuiteSparse:GraphBLAS:
@@ -26,6 +26,7 @@ Version 8.0.0 (draft4; Apr 3, 2023)
         in v7.4.4 and earlier.  Create a user-defined GrB_IndexUnaryOp to
         compute these operations instead, and use GrB_select.
     * alternative/Makefile: removed; incompatible with the JIT
+    * zstd: upgraded to v1.5.5 (Apr 4, 2023)
 
 Version 7.4.4, Mar 25, 2023
 
