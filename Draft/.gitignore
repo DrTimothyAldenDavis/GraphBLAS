@@ -1,0 +1,3 @@
+# Ignore these files:
+*.o
+a.out
