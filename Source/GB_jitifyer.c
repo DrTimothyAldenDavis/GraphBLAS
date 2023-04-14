@@ -561,7 +561,6 @@ GrB_Info GB_jitifyer_extract_JITpackage (void)
         // construct the filename
         snprintf (filename, fsize, "%s/%s", GB_jit_src_path,
             GB_JITpackage_index [k].filename) ;
-        printf ("unpack %s\n", filename) ;
         // open the file
         fp = fopen (filename, "w") ;
         if (fp == NULL)
