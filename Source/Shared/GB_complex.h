@@ -101,7 +101,8 @@
 // macros for complex built-in functions
 //------------------------------------------------------------------------------
 
-#if defined ( __cplusplus ) || defined ( __NVCC__ )
+// #if defined ( __cplusplus ) || defined ( __NVCC__ )
+#if 0
 
     //--------------------------------------------------------------------------
     // ANSI C++ or NVCC
