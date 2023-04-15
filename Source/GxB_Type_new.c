@@ -50,6 +50,8 @@ GrB_Info GxB_Type_new
     GB_RETURN_IF_NULL (type) ;
     (*type) = NULL ;
 
+    // FIXME: if sizeof_ctype == 0: use the JIT
+
     #if ( ! GB_HAS_VLA )
     {
         // Microsoft Visual Studio does not support VLAs allocating

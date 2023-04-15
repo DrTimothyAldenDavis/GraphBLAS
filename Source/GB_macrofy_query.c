@@ -112,6 +112,19 @@ void GB_macrofy_query
         }
     }
 
+    for (int k = 0 ; k <= 2 ; k++)
+    {
+        GrB_Type type = types [k] ;
+        if (type == NULL)
+        {
+            fprintf (fp, "    typesize [%d] = 0 ;\n", k) ;
+        }
+        else
+        {
+            fprintf (fp, "    typesize [%d] = sizeof (%s) ;\n", k, type->name) ;
+        }
+    }
+
     //--------------------------------------------------------------------------
     // query the monoid identity and terminal values
     //--------------------------------------------------------------------------

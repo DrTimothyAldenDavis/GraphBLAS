@@ -16,6 +16,7 @@
 // internally as needed.  When used with a GrB_Vector, j is zero.
 
 #include "GB.h"
+#include "GB_stringify.h"
 
 GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
 (
@@ -37,7 +38,7 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
         ", name, defn)") ;
     GB_RETURN_IF_NULL (op) ;
     (*op) = NULL ;
-    GB_RETURN_IF_NULL (function) ;
+//  GB_RETURN_IF_NULL (function) ;
     GB_RETURN_IF_NULL_OR_FAULTY (ztype) ;
     GB_RETURN_IF_NULL_OR_FAULTY (xtype) ;
     GB_RETURN_IF_NULL_OR_FAULTY (ytype) ;
@@ -91,6 +92,23 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
         // out of memory
         GB_FREE (op, header_size) ;
         return (info) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // create the function pointer, if NULL
+    //--------------------------------------------------------------------------
+
+    if (function == NULL)
+    {
+        void *user_function ;
+        info = GB_user_op_jit (&user_function, *op) ;
+        if (info != GrB_SUCCESS)
+        {
+            // unable to construct the function pointer
+            GB_FREE (op, header_size) ;
+            return (GrB_NULL_POINTER) ;
+        }
+        (*op)->idxunop_function = (GxB_binary_function) user_function ;
     }
 
     //--------------------------------------------------------------------------

@@ -31,6 +31,9 @@
 #define dlsym garbage_dlsym
 #endif
 
+typedef GB_JIT_KERNEL_USER_OP_PROTO ((*GB_user_op_f)) ;
+typedef GB_JIT_KERNEL_USER_TYPE_PROTO ((*GB_user_type_f)) ;
+
 //------------------------------------------------------------------------------
 // GB_jitifyer_hash_table: a hash table of jitifyer entries
 //------------------------------------------------------------------------------
@@ -382,7 +385,8 @@ GrB_Info GB_jitifyer_init (void)
         uint64_t hash = 0 ;
         char *ignored [5] ;
         int version [3] ;
-        (void) dl_query (&hash, version, ignored, NULL, NULL, 0, 0) ;
+        size_t ignored2 [3] ;
+        (void) dl_query (&hash, version, ignored, ignored2, NULL, NULL, 0, 0) ;
 
         if (hash == 0 || hash == UINT64_MAX ||
             (version [0] != GxB_IMPLEMENTATION_MAJOR) ||
@@ -1013,6 +1017,7 @@ bool GB_jitifyer_query
     }
     else
     {
+        // op may be NULL, if this is a user_type kernel
         op1 = op ;
     }
 
@@ -1030,8 +1035,9 @@ bool GB_jitifyer_query
     //--------------------------------------------------------------------------
 
     uint64_t hash2 = 0 ;
-    bool ok = dl_query (&hash2, version, library_defn, id, term,
-        zsize, tsize) ;
+    size_t typesize [3] ;
+    bool ok = dl_query (&hash2, version, library_defn, typesize,
+        id, term, zsize, tsize) ;
     ok = ok && (version [0] == GxB_IMPLEMENTATION_MAJOR) &&
                (version [1] == GxB_IMPLEMENTATION_MINOR) &&
                (version [2] == GxB_IMPLEMENTATION_SUB) &&
@@ -1116,7 +1122,8 @@ GrB_Info GB_jitifyer_load
     // handle the GxB_JIT_RUN case: critical section not required
     //--------------------------------------------------------------------------
 
-    if (GB_jit_control == GxB_JIT_RUN)
+    if (GB_jit_control == GxB_JIT_RUN &
+        family != GB_jit_user_op_family && family != GB_jit_user_type_family)
     {
 
         //----------------------------------------------------------------------
@@ -1127,7 +1134,7 @@ GrB_Info GB_jitifyer_load
         (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) ;
         if (k1 >= 0)
         {
-            // an unchecked PreJIT kernel; check it inside the critical section
+            // an unchecked PreJIT kernel; check it inside critical section
         }
         else if ((*dl_function) != NULL)
         { 
@@ -1191,6 +1198,7 @@ GrB_Info GB_jitifyer_worker
     if ((*dl_function) != NULL)
     { 
         // found the kernel in the hash table
+        GB_jit_entry *e = &(GB_jit_table [kk]) ;
         if (k1 >= 0)
         {
             // unchecked PreJIT kernel; check it now
@@ -1202,7 +1210,6 @@ GrB_Info GB_jitifyer_worker
             GB_jit_query_func dl_query = (GB_jit_query_func) Queries [k1] ;
             bool ok = GB_jitifyer_query (dl_query, hash, semiring, monoid, op,
                 type1, type2, type3) ;
-            GB_jit_entry *e = &(GB_jit_table [kk]) ;
             if (ok)
             {
                 // PreJIT kernel is fine; flag it as checked by flipping
@@ -1215,9 +1222,45 @@ GrB_Info GB_jitifyer_worker
             {
                 // remove the PreJIT kernel from the hash table
                 GBURBLE ("(prejit: disabled) ") ;
-                e->dl_function = NULL ;
-                GB_Global_persistent_free (&(e->suffix)) ;
-                GB_jit_table_populated-- ;
+                GB_jitifyer_entry_free (e) ;
+            }
+        }
+        else if (family == GB_jit_user_op_family)
+        {
+            // user-defined operator; check it now
+            GB_user_op_f GB_user_op = (GB_user_op_f) (*dl_function) ;
+            void *ignore ;
+            char *defn ;
+            GB_user_op (&ignore, &defn) ;
+            if (strcmp (defn, op->defn) == 0)
+            {
+                GBURBLE ("(jit op: ok) ") ;
+                return (GrB_SUCCESS) ;
+            }
+            else
+            {
+                // the op has changed; need to re-JIT the kernel
+                GBURBLE ("(jit op: changed) ") ;
+                GB_jitifyer_entry_free (e) ;
+            }
+        }
+        else if (family == GB_jit_user_type_family)
+        {
+            // user-defined type; check it now
+            GB_user_type_f GB_user_type = (GB_user_type_f) (*dl_function) ;
+            size_t *ignore ;
+            char *defn ;
+            GB_user_type (&ignore, &defn) ;
+            if (strcmp (defn, type1->defn) == 0)
+            {
+                GBURBLE ("(jit type: ok) ") ;
+                return (GrB_SUCCESS) ;
+            }
+            else
+            {
+                // the type has changed; need to re-JIT the kernel
+                GBURBLE ("(jit type: changed) ") ;
+                GB_jitifyer_entry_free (e) ;
             }
         }
         else
@@ -1300,6 +1343,17 @@ GrB_Info GB_jitifyer_worker
             scode_digits = 10 ;
             break ;
 
+        case GB_jit_user_type_family : 
+            family_name = "user_type" ;
+            scode_digits = 1 ;
+            break ;
+
+        case GB_jit_user_op_family : 
+            family_name = "user_op" ;
+            scode_digits = 1 ;
+            op1 = op ;
+            break ;
+
         default: ;
     }
 
@@ -1346,7 +1400,6 @@ GrB_Info GB_jitifyer_worker
             ok = GB_jitifyer_query (dl_query, hash, semiring, monoid, op,
                 type1, type2, type3) ;
         }
-
 
         if (!ok)
         { 
@@ -1661,23 +1714,42 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 }
 
 //------------------------------------------------------------------------------
+// GB_jitifyer_entry_free: free a single JIT hash table entry
+//------------------------------------------------------------------------------
+
+void GB_jitifyer_entry_free (GB_jit_entry *e)
+{
+    e->dl_function = NULL ;
+    GB_Global_persistent_free (&(e->suffix)) ;
+    // unload the dl library
+    if (e->dl_handle != NULL)
+    {
+        #ifndef NJIT
+        // FIXME: dlclose only exists on Linux/Unix/Mac
+        dlclose (e->dl_handle) ;
+        #endif
+        e->dl_handle = NULL ;
+    }
+    GB_jit_table_populated-- ;
+}
+
+//------------------------------------------------------------------------------
 // GB_jitifyer_table_free:  free the hash and clear all loaded kernels
 //------------------------------------------------------------------------------
 
-// Clears all runtime JIT kernels from the hash table.  PreJIT kernels are not
-// freed if freall is true (only done by GrB_finalize), but they are flagged as
-// unchecked.  This allows the application to call GxB_set to set the JIT
-// control to OFF then ON again, to indicate that a user-defined type or
-// operator has been changed, and that all JIT kernels must cleared and all
-// PreJIT kernels checked again before using them.
+// Clears all runtime JIT kernels from the hash table.  PreJIT kernels and JIT
+// kernels containing user-defined operators are not freed if freall is true
+// (only done by GrB_finalize), but they are flagged as unchecked.  This allows
+// the application to call GxB_set to set the JIT control to OFF then ON again,
+// to indicate that a user-defined type or operator has been changed, and that
+// all JIT kernels must cleared and all PreJIT kernels checked again before
+// using them.
 
 // After calling this function, the JIT is still enabled.  GB_jitifyer_insert
 // will reallocate the table if it is NULL.
 
 void GB_jitifyer_table_free (bool freeall)
 { 
-    int64_t nremaining = 0 ;
-
     if (GB_jit_table != NULL)
     {
         for (int64_t k = 0 ; k < GB_jit_table_size ; k++)
@@ -1691,38 +1763,24 @@ void GB_jitifyer_table_free (bool freeall)
                     // flag the PreJIT kernel as unchecked
                     e->prejit_index = GB_UNFLIP (e->prejit_index) ;
                 }
-                if (!freeall && e->dl_handle == NULL)
+                // free it
+                if (freeall || 
+                     (e->dl_handle != NULL &&
+                      e->encoding.kcode == GB_JIT_KERNEL_USEROP))
                 {
-                    // leave the PreJIT kernel in the hash table
-                    nremaining++ ;
-                }
-                else
-                {
-                    // free the entry; free the suffix if present
-                    e->dl_function = NULL ;
-                    GB_Global_persistent_free (&(e->suffix)) ;
-                    // unload the dl library
-                    if (e->dl_handle != NULL)
-                    {
-                        #ifndef NJIT
-                        // FIXME: dlclose only exists on Linux/Unix/Mac
-                        dlclose (e->dl_handle) ;
-                        #endif
-                        e->dl_handle = NULL ;
-                    }
+                    // free the entry
+                    GB_jitifyer_entry_free (e) ;
                 }
             }
         }
     }
 
-    if (freeall)
+    if (GB_jit_table_populated == 0)
     {
         GB_FREE_STUFF (GB_jit_table) ;
         GB_jit_table_size = 0 ;
         GB_jit_table_bits = 0 ;
-        ASSERT (nremaining == 0) ;
     }
-    GB_jit_table_populated = nremaining ;
 }
 
 //------------------------------------------------------------------------------

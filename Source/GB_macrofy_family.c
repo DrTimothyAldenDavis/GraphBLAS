@@ -28,6 +28,7 @@ void GB_macrofy_family
 
     switch (family)
     {
+
         case GB_jit_apply_family  : 
             GB_macrofy_apply (fp, scode, op, type1, type2) ;
             break ;
@@ -55,6 +56,14 @@ void GB_macrofy_family
 
         case GB_jit_select_family : 
             GB_macrofy_select (fp, scode, (GrB_IndexUnaryOp) op, type1) ;
+            break ;
+
+        case GB_jit_user_op_family  : 
+            GB_macrofy_user_op (fp, op) ;
+            break ;
+
+        case GB_jit_user_type_family  : 
+            GB_macrofy_user_type (fp, type1) ;
             break ;
 
         default: ;

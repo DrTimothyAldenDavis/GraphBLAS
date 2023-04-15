@@ -33,13 +33,15 @@ void GB_prejit
 
 typedef enum
 {
-    GB_jit_apply_family  = 0,
-    GB_jit_assign_family = 1,
-    GB_jit_build_family  = 2,
-    GB_jit_ewise_family  = 3,
-    GB_jit_mxm_family    = 4,
-    GB_jit_reduce_family = 5,
-    GB_jit_select_family = 6
+    GB_jit_apply_family     = 0,
+    GB_jit_assign_family    = 1,
+    GB_jit_build_family     = 2,
+    GB_jit_ewise_family     = 3,
+    GB_jit_mxm_family       = 4,
+    GB_jit_reduce_family    = 5,
+    GB_jit_select_family    = 6,
+    GB_jit_user_op_family   = 7,
+    GB_jit_user_type_family = 8
 }
 GB_jit_family ;
 
@@ -100,6 +102,10 @@ GB_jit_family ;
 #define GB_JIT_KERNEL_SUBASSIGN_22  51  /* GB_subassign_22          */
 #define GB_JIT_KERNEL_SUBASSIGN_23  52  /* GB_subassign_23          */
 #define GB_JIT_KERNEL_SUBASSIGN_25  53  /* GB_subassign_25          */
+
+// user type and op
+#define GB_JIT_KERNEL_USERTYPE      98
+#define GB_JIT_KERNEL_USEROP        99
 
 // assign/subassign methods: todo
 #define GB_JIT_KERNEL_SUBASSIGN_01  31  /* GB_subassign_01          */
@@ -242,6 +248,8 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
     int64_t *k1,            // location of kernel in PreJIT table
     int64_t *kk             // location of hash entry in hash table
 ) ;
+
+void GB_jitifyer_entry_free (GB_jit_entry *e) ;
 
 bool GB_jitifyer_insert         // return true if successful, false if failure
 (

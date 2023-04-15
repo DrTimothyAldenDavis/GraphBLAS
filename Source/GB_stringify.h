@@ -1400,6 +1400,62 @@ GrB_Info GB_subassign_jit
 ) ;
 
 //------------------------------------------------------------------------------
+// macrofy a user operator or type as its own kernel
+//------------------------------------------------------------------------------
+
+void GB_macrofy_user_op         // construct a user-defined operator
+(
+    // output:
+    FILE *fp,                   // target file to write, already open
+    // input:
+    const GB_Operator op        // op to construct in a JIT kernel
+) ;
+
+uint64_t GB_encodify_user_op      // encode a user defined op
+(
+    // output:
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char **suffix,              // suffix for user-defined kernel
+    // input:
+    const GB_Operator op
+) ;
+
+GrB_Info GB_user_op_jit         // construct a user operator in a JIT kernel
+(
+    // output:
+    void **user_function,       // function pointer
+    // input:
+    const GB_Operator op        // unary, index unary, or binary op
+) ;
+
+void GB_macrofy_user_type       // construct a user-defined type
+(
+    // output:
+    FILE *fp,                   // target file to write, already open
+    // input:
+    const GrB_Type type         // type to construct in a JIT kernel
+) ;
+
+uint64_t GB_encodify_user_type      // encode a user defined type
+(
+    // output:
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char **suffix,              // suffix for user-defined kernel
+    // input:
+    const GrB_Type type
+) ;
+
+GrB_Info GB_user_type_jit       // construct a user type in a JIT kernel
+(
+    // output:
+    size_t *typesize,           // sizeof the type
+    // input:
+    const GrB_Type type         // user-defined type
+) ;
+
+//------------------------------------------------------------------------------
 // macrofy for all methods
 //------------------------------------------------------------------------------
 

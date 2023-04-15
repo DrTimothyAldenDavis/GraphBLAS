@@ -13,6 +13,7 @@
 
 #include "GB.h"
 #include "GB_unop.h"
+#include "GB_stringify.h"
 
 GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
 (
@@ -32,7 +33,7 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     GB_WHERE1 ("GxB_UnaryOp_new (unaryop, function, ztype, xtype, name, defn)");
     GB_RETURN_IF_NULL (unaryop) ;
     (*unaryop) = NULL ;
-    GB_RETURN_IF_NULL (function) ;
+//  GB_RETURN_IF_NULL (function) ;
     GB_RETURN_IF_NULL_OR_FAULTY (ztype) ;
     GB_RETURN_IF_NULL_OR_FAULTY (xtype) ;
 
@@ -59,6 +60,23 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
         // out of memory
         GB_FREE (&op, header_size) ;
         return (info) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // create the function pointer, if NULL
+    //--------------------------------------------------------------------------
+
+    if (function == NULL)
+    {
+        void *user_function ;
+        info = GB_user_op_jit (&user_function, op) ;
+        if (info != GrB_SUCCESS)
+        {
+            // unable to construct the function pointer
+            GB_FREE (&op, header_size) ;
+            return (GrB_NULL_POINTER) ;
+        }
+        op->unop_function = (GxB_unary_function) user_function ;
     }
 
     //--------------------------------------------------------------------------
