@@ -256,7 +256,7 @@ GrB_Info GB_jitifyer_init (void)
     void **Queries = NULL ;
     char **Names = NULL ;
     int32_t nkernels = 0 ;
-    GB_prejit (&nkernels, Kernels, Queries, Names) ;
+    GB_prejit (&nkernels, &Kernels, &Queries, &Names) ;
 
     for (int k = 0 ; k < nkernels ; k++)
     {
@@ -1204,7 +1204,7 @@ GrB_Info GB_jitifyer_worker
             void **Queries = NULL ;
             char **Names = NULL ;
             int32_t nkernels = 0 ;
-            GB_prejit (&nkernels, Kernels, Queries, Names) ;
+            GB_prejit (&nkernels, &Kernels, &Queries, &Names) ;
             GB_jit_query_func dl_query = (GB_jit_query_func) Queries [k1] ;
             bool ok = GB_jitifyer_query (dl_query, hash, semiring, monoid, op,
                 type1, type2, type3) ;

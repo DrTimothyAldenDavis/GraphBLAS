@@ -66,9 +66,9 @@ static char *GB_prejit_names [0] =
 void GB_prejit
 (
     int32_t *nkernels,      // return # of kernels
-    void **Kernel_handle,   // return list of function pointers to kernels
-    void **Query_handle,    // return list of function pointers to queries
-    char **Name_handle      // return list of kernel names
+    void ***Kernel_handle,  // return list of function pointers to kernels
+    void ***Query_handle,   // return list of function pointers to queries
+    char ***Name_handle     // return list of kernel names
 )
 {
     (*nkernels) = 0 ;
