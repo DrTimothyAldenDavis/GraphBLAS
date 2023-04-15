@@ -27,9 +27,9 @@ function [s,path] = jit (s,path)
 % 'pause', and'run' options are avaiable.  These options do not allow for
 % any JIT kernels to be loaded and compiled from the cache path.
 % Instead, they control just the 'PreJIT' kernels.  Those kernels are JIT
-% kernels from a prior session that were then copied into
-% GraphBLAS/GraphBLAS/PreJIT, after which the libgraphblas_matlab.so
-% library was compiled.  Refer to the GraphBLAS User Guide for details.
+% kernels from a prior session that were then copied into GraphBLAS/PreJIT,
+% after which the libgraphblas_matlab.so library was compiled.  Refer to
+% the GraphBLAS User Guide for details.
 %
 % Example:
 %

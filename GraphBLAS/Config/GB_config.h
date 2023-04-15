@@ -46,7 +46,7 @@
 
 // GB_LIBRARIES: libraries to link with
 #ifndef GB_LIBRARIES
-#define GB_LIBRARIES    " -lm -ldl /usr/lib/gcc/x86_64-linux-gnu/9/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.so"
+#define GB_LIBRARIES    " -lm -ldl /usr/lib/gcc/x86_64-linux-gnu/7/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.so"
 #endif
 
 #endif

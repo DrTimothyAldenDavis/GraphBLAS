@@ -593,6 +593,8 @@ GrB_Info GB_jit_kernel_union                                            \
 #define JIT_TR2(g)  GB_JIT_KERNEL_TRANS_BIND2ND_PROTO(g) ;
 #define JIT_TR0(g)  GB_JIT_KERNEL_TRANS_UNOP_PROTO(g) ;
 #define JIT_UNI(g)  GB_JIT_KERNEL_UNION_PROTO(g) ;
+#define JIT_UOP(g)  GB_JIT_KERNEL_USER_OP_PROTO(g) ;
+#define JIT_UTYP(g) GB_JIT_KERNEL_USER_TYPE_PROTO(g) ;
 #define JIT_Q(q)    GB_JIT_QUERY_PROTO(q) ;
 
 #endif

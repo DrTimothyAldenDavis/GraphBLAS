@@ -139,16 +139,6 @@ v8.0.0 release:
     folder.  These are not broken features, but some will be done for v8.0.0.
     Many of these are optional and should be tagged \verb'FUTURE' instead.
 
-    \item {\bf User-defined operators with NULL function pointers:} With the
-        JIT, I could compile kernels for user-defined operators that have no
-        function pointer, but just the strings that define the function.
-        These kernels would require the JIT to function, and would allow
-        systems in other languages such as Python, Julia, and MATLAB to create
-        operators at run-time without the need for those systems to pass me a
-        pointer to a pre-compiled C function.
-        This feature will likely not appear in v8.0, but in v8.$x$ for 
-        some $x > 0$.
-
     \item {\bf Thread-safety:}  GraphBLAS is thread-safe when used in a single
         multithreaded user application, even when multiple user threads try
         to compile the same JIT kernel at the same time.  However, if the user
@@ -1684,6 +1674,9 @@ Performing arithmetic on matrices and vectors with user-defined types requires
 operators to be defined.  Refer to Section~\ref{user} for more details on these
 example user-defined types.
 
+User defined types created by \verb'GrB_Type_new' will not work with
+the JIT; use \verb'GxB_Type_new' instead.
+
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Type\_new:} create a user-defined type (with name and definition)}
 %-------------------------------------------------------------------------------
@@ -1719,11 +1712,18 @@ not contain any white-space characters.  For example, to create a type of size
 The \verb'type_name' and \verb'type_defn' are both null-terminated strings.
 The two strings are optional, but are
 required to enable the JIT compilation of kernels that use this type.
-User defined types created by \verb'GrB_Type_new' will not work with
-the JIT.
-
 At most \verb'GxB_MAX_NAME_LEN' characters are accessed in \verb'type_name';
 characters beyond that limit are silently ignored.
+
+% FIXME:
+\begin{note}
+FIXME: THIS IS UNTESTED BUT IN PROGRESS:
+if the \verb'sizeof_ctype' is zero, and the strings are valid, a
+JIT kernel is compiled just to determine the size of the type.  This is
+feature useful for interfaces in languages other than C, which could create
+valid strings for C types but would not have a reliable way to determine the
+size of the type.
+\end{note}
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Type\_wait:} wait for a type}
@@ -2208,6 +2208,12 @@ entire function itself.  For example:
 
 The two strings \verb'unop_name' and \verb'unop_defn' are optional, but are
 required to enable the JIT compilation of kernels that use this operator.
+
+If JIT compilation is enabled, or if the corresponding JIT kernel has been
+copied into the \verb'PreJIT' folder, the \verb'function' may be \verb'NULL'.
+In this case, a JIT kernel is compiled that contains just the user-defined
+function.  If the JIT is disabled and the \verb'function' is \verb'NULL', this
+method returns \verb'GrB_NULL_POINTER'.
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -2701,6 +2707,12 @@ GxB_BinaryOp_new (&AbsDiff, absdiff, GrB_FP64, GrB_FP64, GrB_FP64, "absdiff",
 The two strings \verb'binop_name' and \verb'binop_defn' are optional, but are
 required to enable the JIT compilation of kernels that use this operator.
 
+If the JIT is enabled, or if the corresponding JIT kernel has been copied
+into the \verb'PreJIT' folder, the \verb'function' may be \verb'NULL'.  In this
+case, a JIT kernel is compiled that contains just the user-defined function.
+If the JIT is disabled and the \verb'function' is \verb'NULL', this method
+returns \verb'GrB_NULL_POINTER'.
+
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_BinaryOp\_wait:} wait for a binary operator}
 %-------------------------------------------------------------------------------
@@ -3022,6 +3034,12 @@ entire function itself.
 
 The two strings \verb'idxop_name' and \verb'idxop_defn' are optional, but are
 required to enable the JIT compilation of kernels that use this operator.
+
+If JIT compilation is enabled, or if the corresponding JIT kernel has been
+copied into the \verb'PreJIT' folder, the \verb'function' may be \verb'NULL'.
+In this case, a JIT kernel is compiled that contains just the user-defined
+function.  If the JIT is disabled and the \verb'function' is \verb'NULL', this
+method returns \verb'GrB_NULL_POINTER'.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_IndexUnaryOp\_wait:} wait for an index-unary operator}
@@ -9037,74 +9055,6 @@ problems.
 The CUDA JIT will enable NVIDIA GPUs to be exploited.  There are simply too
 many kernels to create at compile time as the ``factory kernels.''  This CUDA
 JIT is in progress.  A related JIT for SYCL / OpenCL could also be created.
-
-\subsubsection{Creating new user-defined operators from MATLAB, Python, Go,
-Julia, Java...}
-The current methods for creating new operators, monoids, and semirings
-requires the user application to pass GraphBLAS a pointer to a compiled C
-function.  This is fine for a C/C++ application that uses GraphBLAS, but it is
-awkward for users in MATLAB, Python, Julia, Go, Java, etc.  The
-\verb'GrB_UnaryOp_new', \verb'GrB_IndexUnaryOp_new', and
-\verb'GrB_BinaryOp_new' methods could be extended to allow those function
-pointers to be \verb'NULL'.
-
-The JIT kernels do not require the function pointers at all.  They are used in
-GraphBLAS in only a few places, outside of any JIT kernel, when performance is
-not critical.  For example, they are used when computing single scalars of
-iso-valued matrices, and for the accumulate/mask phase after reduction to a
-scalar.
-
-For example, consider these excerpts of the \verb'gauss_demo' program in the
-\verb'GraphBLAS/Demo' folder:
-
-{\footnotesize
-\begin{verbatim}
-
-    typedef struct
-    {
-        int32_t real ;
-        int32_t imag ;
-    }
-    gauss ;
-
-    #define GAUSS_DEFN              \
-    "typedef struct "               \
-    "{ "                            \
-       "int32_t real ; "            \
-       "int32_t imag ; "            \
-    "} "                            \
-    "gauss ;"
-
-    void multgauss (gauss *z, const gauss *x, const gauss *y)
-    {
-        z->real = x->real * y->real - x->imag * y->imag ;
-        z->imag = x->real * y->imag + x->imag * y->real ;
-    }
-
-    #define MULTGAUSS_DEFN                                          \
-    "void multgauss (gauss *z, const gauss *x, const gauss *y)  \n" \
-    "{                                                          \n" \
-    "    z->real = x->real * y->real - x->imag * y->imag ;      \n" \
-    "    z->imag = x->real * y->imag + x->imag * y->real ;      \n" \
-    "}"
-
-    ...
-
-    GxB_Type_new (&Gauss, sizeof (gauss), "gauss", GAUSS_DEFN) ;
-    GxB_BinaryOp_new (&MultGauss, (void *) multgauss,
-        Gauss, Gauss, Gauss, "multgauss", MULTGAUSS_DEFN) ;
-\end{verbatim} }
-
-GraphBLAS already has everything it needs to create the \verb'gauss' type
-definition, so new user-defined data types originating from these other
-languages need no futher work.  All that is needed is a C-style \verb'typedef',
-provided as a string (such as the \verb'GAUSS_DEFN' string above).
-
-However, GraphBLAS currently requires the \verb'multgauss' function pointer.
-If passed a \verb'NULL' function pointer, GraphBLAS could simply compile a copy
-of the function itself from the \verb'MULTGAUSS_DEFN' string, and place it in
-the user's cache folder.  This feature will make it far easier for the full
-JIT to be exploited from applications in languages other than C/C++.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

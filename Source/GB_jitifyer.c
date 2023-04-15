@@ -270,7 +270,7 @@ GrB_Info GB_jitifyer_init (void)
         if (dl_function == NULL || dl_query == NULL || Names [k] == NULL)
         {
             // ignore this kernel
-            printf ("PreJIT kernel null! %d\n", k) ;    // FIXME
+//          printf ("PreJIT kernel null! %d\n", k) ;
             continue ;
         }
         char kernel_name [GB_KLEN+1] ;
@@ -291,15 +291,15 @@ GrB_Info GB_jitifyer_init (void)
         if (info != GrB_SUCCESS)
         {
             // kernel_name is invalid; ignore this kernel
-            printf ("PreJIT demacrofy failed! %d:%s\n", k, Names [k]) ; // FIXME
+//          printf ("PreJIT demacrofy failed! %d:%s\n", k, Names [k]) ;
             continue ;
         }
 
         if (!GB_STRING_MATCH (name_space, "GB_jit"))
         { 
             // kernel_name is invalid; ignore this kernel
-            printf ("PreJIT wrong namespace! %d:%s [%s]\n", // FIXME
-                k, Names [k], name_space) ;
+//          printf ("PreJIT wrong namespace! %d:%s [%s]\n",
+//              k, Names [k], name_space) ;
             continue ;
         }
 
@@ -356,11 +356,12 @@ GrB_Info GB_jitifyer_init (void)
         else if (IS ("trans_bind2nd")) c = GB_JIT_KERNEL_TRANSBIND2 ;
         else if (IS ("trans_unop"   )) c = GB_JIT_KERNEL_TRANSUNOP ;
         else if (IS ("union"        )) c = GB_JIT_KERNEL_UNION ;
+        else if (IS ("user_op"      )) c = GB_JIT_KERNEL_USEROP ;
+        else if (IS ("user_type"    )) c = GB_JIT_KERNEL_USERTYPE ;
         else
         {
             // kernel_name is invalid; ignore this kernel
-            printf ("PreJIT Kernel invalid! %s [%s]\n", // FIXME
-                Names [k], kname) ;
+//          printf ("PreJIT Kernel invalid! %s [%s]\n", Names [k], kname) ;
             continue ;
         }
 
@@ -393,7 +394,7 @@ GrB_Info GB_jitifyer_init (void)
             (version [1] != GxB_IMPLEMENTATION_MINOR) ||
             (version [2] != GxB_IMPLEMENTATION_SUB))
         {
-            printf ("PreJIT STALE: %d [%s]\n", k, Names [k]) ;  // FIXME
+//          printf ("PreJIT STALE: %d [%s]\n", k, Names [k]) ;
             continue ;
         }
 
@@ -405,7 +406,7 @@ GrB_Info GB_jitifyer_init (void)
         if (GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) != NULL)
         {
             // kernel_name is invalid; ignore this kernel
-            printf ("PreJIT Kernel duplicate! %s\n", Names [k]) ;   // FIXME
+//          printf ("PreJIT Kernel duplicate! %s\n", Names [k]) ;
             continue ;
         }
 
@@ -415,7 +416,7 @@ GrB_Info GB_jitifyer_init (void)
 
         if (!GB_jitifyer_insert (hash, encoding, suffix, NULL, dl_function, k))
         {
-            printf ("PreJIT: out of memory\n") ;    // FIXME
+//          printf ("PreJIT: out of memory\n") ;
             GB_jit_control = GxB_JIT_PAUSE ;
             return (GrB_OUT_OF_MEMORY) ;
         }
@@ -1529,7 +1530,6 @@ GrB_Info GB_jitifyer_worker
         dlclose (dl_handle) ; 
         dl_handle = NULL ;
         // disable the JIT to avoid repeated errors
-        printf ("cannot insert into the hash table\n") ;    // FIXME
         GB_jit_control = GxB_JIT_PAUSE ;
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -1707,6 +1707,9 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
             e->dl_function = dl_function ;
             e->prejit_index = prejit_index ;        // -1 for JIT kernels
             GB_jit_table_populated++ ;
+//          printf ("alloc JIT entry (%ld): e %p func %p suffix %s handle %p\n",
+//          GB_jit_table_populated,
+//          e, e->dl_function, e->suffix, e->dl_handle) ;
             return (true) ;
         }
         // otherwise, keep looking
@@ -1719,6 +1722,8 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 
 void GB_jitifyer_entry_free (GB_jit_entry *e)
 {
+//  printf ("free JIT entry (%ld): e %p func %p suffix %s handle %p\n",
+//      GB_jit_table_populated, e, e->dl_function, e->suffix, e->dl_handle) ;
     e->dl_function = NULL ;
     GB_Global_persistent_free (&(e->suffix)) ;
     // unload the dl library
@@ -1766,9 +1771,10 @@ void GB_jitifyer_table_free (bool freeall)
                 // free it
                 if (freeall || 
                      (e->dl_handle != NULL &&
-                      e->encoding.kcode == GB_JIT_KERNEL_USEROP))
+                      e->encoding.kcode != GB_JIT_KERNEL_USEROP))
                 {
                     // free the entry
+//                  printf ("free the JIT entry e\n")  ;
                     GB_jitifyer_entry_free (e) ;
                 }
             }
@@ -1777,6 +1783,7 @@ void GB_jitifyer_table_free (bool freeall)
 
     if (GB_jit_table_populated == 0)
     {
+//      printf ("JIT table now empty\n") ;
         GB_FREE_STUFF (GB_jit_table) ;
         GB_jit_table_size = 0 ;
         GB_jit_table_bits = 0 ;

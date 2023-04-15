@@ -35,7 +35,7 @@ GrB_Info GB_user_type_jit       // construct a user type in a JIT kernel
     //--------------------------------------------------------------------------
 
     void *dl_function ;
-    GrB_Info info = GB_jitifyer_load (dl_function,
+    GrB_Info info = GB_jitifyer_load (&dl_function,
         GB_jit_user_type_family, "user_type",
         hash, &encoding, suffix, NULL, NULL,
         NULL, type, NULL, NULL) ;

@@ -138,21 +138,21 @@ if ( NJIT )
     if ( COMPACT )
         # no JIT, do not compile the FactoryKernels
         file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "Config/*.c"
-            "PreJIT/*.c" )
+            "../PreJIT/*.c" )
     else ( )
         # no JIT, but do compile the FactoryKernels
         file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "Config/*.c"
-            "PreJIT/*.c" "../Source/FactoryKernels/*.c" )
+            "../PreJIT/*.c" "../Source/FactoryKernels/*.c" )
     endif ( )
 else ( )
     if ( COMPACT )
         # with the JIT; but do not compile the FactoryKernels
         file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "Config/*.c"
-            "PreJIT/*.c" "../JITpackage/*.c" )
+            "../PreJIT/*.c" "../JITpackage/*.c" )
     else ( )
         # with the JIT and the FactoryKernels
         file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "Config/*.c"
-            "PreJIT/*.c" "../JITpackage/*.c" "../Source/FactoryKernels/*.c" )
+            "../PreJIT/*.c" "../JITpackage/*.c" "../Source/FactoryKernels/*.c" )
     endif ( )
 endif ( )
 
@@ -259,6 +259,6 @@ configure_file ( "../Config/GB_config.h.in"
     NEWLINE_STYLE LF )
 
 configure_file ( "../Config/GB_prejit.c.in"
-    "${PROJECT_SOURCE_DIR}/Config/GB_prejit.c"
+    "${PROJECT_SOURCE_DIR}/../Config/GB_prejit.c"
     NEWLINE_STYLE LF )
 

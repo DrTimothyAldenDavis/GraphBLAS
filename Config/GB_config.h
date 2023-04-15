@@ -15,13 +15,13 @@
 
 // GB_C_COMPILER: the C compiler used to compile GraphBLAS:
 #ifndef GB_C_COMPILER
-#define GB_C_COMPILER   "/usr/bin/cc"
+#define GB_C_COMPILER   "/usr/bin/gcc"
 #endif
 
 // GB_C_FLAGS: the C compiler flags used to compile GraphBLAS.  Used
 // for compiling and linking:
 #ifndef GB_C_FLAGS
-#define GB_C_FLAGS      " -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -g -fopenmp  -fPIC "
+#define GB_C_FLAGS      " -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -O3 -DNDEBUG -fopenmp  -fPIC "
 #endif
 
 // GB_C_LINK_FLAGS: the flags passed to the C compiler for the link phase:
@@ -39,12 +39,6 @@
 #define GB_OBJ_SUFFIX   ".o"
 #endif
 
-// GB_SOURCE_PATH: the source code for GraphBLAS, which is the path of the
-// top-level GraphBLAS folder:
-#ifndef GB_SOURCE_PATH
-#define GB_SOURCE_PATH  "/home/faculty/d/davis/master/GraphBLAS"
-#endif
-
 // GB_OMP_INC: include directories for OpenMP, if in use by GraphBLAS:
 #ifndef GB_OMP_INC
 #define GB_OMP_INC      ""
@@ -52,7 +46,7 @@
 
 // GB_LIBRARIES: libraries to link with
 #ifndef GB_LIBRARIES
-#define GB_LIBRARIES    " -lm -ldl /usr/lib/gcc/x86_64-linux-gnu/9/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.so"
+#define GB_LIBRARIES    " -lm -ldl /usr/lib/gcc/x86_64-linux-gnu/7/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.so"
 #endif
 
 #endif

@@ -62,11 +62,17 @@ GrB_BinaryOp My_rdiv = NULL ;
 GrB_Info axb (GB_Werk Werk, bool cprint)
 {
     // create the rdiv operator
-//  info = GrB_BinaryOp_new (&My_rdiv,
-//      (GxB_binary_function) my_rdiv, GrB_FP64, GrB_FP64, GrB_FP64) ;
+    // try with a NULL function pointer, to test the JIT
     info = GxB_BinaryOp_new (&My_rdiv,
-        (GxB_binary_function) my_rdiv, GrB_FP64, GrB_FP64, GrB_FP64,
+        NULL, GrB_FP64, GrB_FP64, GrB_FP64,
         "my_rdiv", MY_RDIV) ;
+    if (info == GrB_NULL_POINTER)
+    {
+        // try again with the my_rdiv function pointer
+        info = GxB_BinaryOp_new (&My_rdiv,
+            (GxB_binary_function) my_rdiv, GrB_FP64, GrB_FP64, GrB_FP64,
+            "my_rdiv", MY_RDIV) ;
+    }
     if (info != GrB_SUCCESS) return (info) ;
     GrB_BinaryOp_wait_(My_rdiv, GrB_MATERIALIZE) ;
     if (info != GrB_SUCCESS) return (info) ;

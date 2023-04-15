@@ -2,7 +2,7 @@
 // GxB_BinaryOp_new: create a new user-defined binary operator
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -11,6 +11,7 @@
 // must be void f (void *z, const void *x, const void *y), and then it must
 // recast its input and output arguments internally as needed.
 
+#define GB_DEBUG
 #include "GB.h"
 #include "GB_binop.h"
 #include "GB_stringify.h"

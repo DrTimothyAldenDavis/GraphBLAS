@@ -6,7 +6,8 @@ Version 8.0.0 (DRAFT)
         features of the GxB_SelectOp are removed (see below).
     * The JIT:  GraphBLAS v8.0.0 now includes a JIT for the CPU kernels, which
         can compile kernels at run time.  Added GxB_set/get options and
-        environment variables to control the JIT.
+        environment variables to control the JIT.  The GxB_*Op_new methods can
+        accept NULL function pointers, if the strings are provided and valid.
     * math kernels: revised for CUDA JIT.  More accurate complex
         floating-point for Mac OS on Apple Silicon.
     * Demo/wildtype_demo: change to double so that CPU and GPU versions compute

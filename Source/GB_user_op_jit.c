@@ -35,7 +35,7 @@ GrB_Info GB_user_op_jit         // construct a user operator in a JIT kernel
     //--------------------------------------------------------------------------
 
     void *dl_function ;
-    GrB_Info info = GB_jitifyer_load (dl_function,
+    GrB_Info info = GB_jitifyer_load (&dl_function,
         GB_jit_user_op_family, "user_op",
         hash, &encoding, suffix, NULL, NULL,
         op, NULL, NULL, NULL) ;

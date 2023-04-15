@@ -24,3 +24,7 @@ work with stale functions in this folder.  It will compile them and include
 them in libgraphblas.so, but not use them at all.  So deleting them will reduce
 the size of the compiled libgraphblas.so library.
 
+These PreJIT kernels are also compiled into libgraphblas_matlab.so for use
+in MATLAB.  Any JIT or PreJIT kernels used or created by libgraphblas.so
+or libgraphblas_matlab.so can be used by each other, interchangebly.
+

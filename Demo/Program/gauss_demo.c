@@ -169,20 +169,22 @@ int main (void)
     printf ("JIT C link flags: [%s]\n", link) ;
     printf ("JIT cache:        [%s]\n", cache) ;
     printf ("-------------------------------------\n\n") ;
-//  TRY (GxB_set (GxB_JIT_C_COMPILER_NAME, "gcc")) ;
-//  TRY (GxB_get (GxB_JIT_C_COMPILER_NAME, &compiler)) ;
-//  printf ("JIT C compiler: [%s]\n", compiler) ;
 
     // create the Gauss type
     GrB_Type Gauss ;
     TRY (GxB_Type_new (&Gauss, sizeof (gauss), "gauss", GAUSS_DEFN)) ;
     TRY (GxB_print (Gauss, 3)) ;
 
-    // create the AddGauss operators
+    // create the AddGauss operator; use a NULL function pointer to test the JIT
     GrB_BinaryOp AddGauss ; 
-    TRY (GxB_BinaryOp_new (&AddGauss, (void *) addgauss, Gauss, Gauss, Gauss,
-        "addgauss", ADDGAUSS_DEFN)) ;
+    TRY (GxB_BinaryOp_new (&AddGauss, NULL /* (void *) addgauss */,
+        Gauss, Gauss, Gauss, "addgauss", ADDGAUSS_DEFN)) ;
     TRY (GxB_print (AddGauss, 3)) ;
+
+//  printf ("JIT: off\n") ;
+//  TRY (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_OFF)) ;
+//  printf ("JIT: on\n") ;
+//  TRY (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
 
     // create the AddMonoid
     gauss zero ;
