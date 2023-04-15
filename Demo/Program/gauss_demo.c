@@ -29,6 +29,20 @@ gauss ;
 "} "                            \
 "gauss ;"
 
+typedef struct
+{
+    int32_t real ;
+}
+badgauss ;
+
+// just to test the JIT: same 'gauss' name but different definition
+#define BAD_GAUSS_DEFN          \
+"typedef struct "               \
+"{ "                            \
+   "int32_t real ; "            \
+"} "                            \
+"gauss ;"
+
 //------------------------------------------------------------------------------
 // addgauss: add two Gaussian integers
 //------------------------------------------------------------------------------
@@ -44,6 +58,18 @@ void addgauss (gauss *z, const gauss *x, const gauss *y)
 "{                                                          \n" \
 "    z->real = x->real + y->real ;                          \n" \
 "    z->imag = x->imag + y->imag ;                          \n" \
+"}"
+
+void badaddgauss (gauss *z, const gauss *x, const gauss *y)
+{
+    z->real = x->real + y->real ;
+}
+
+// just to test the JIT: same name but different definition
+#define BAD_ADDGAUSS_DEFN                                       \
+"void addgauss (gauss *z, const gauss *x, const gauss *y)   \n" \
+"{                                                          \n" \
+"    z->real = x->real + y->real ;                          \n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -105,15 +131,20 @@ void ijgauss (int64_t *z, const gauss *x, GrB_Index i, GrB_Index j,
 // not recommended for large matrices.  However, it looks nice for this demo
 // since the matrix is small.
 
-#define TRY(method)             \
+#define OK(x)                   \
 {                               \
-    GrB_Info info = method ;    \
-    if (info != GrB_SUCCESS)    \
+    if (!(x))                   \
     {                           \
         printf ("info: %d error! Line %d\n", info, __LINE__)  ; \
         fflush (stdout) ;       \
         abort ( ) ;             \
     }                           \
+}
+
+#define TRY(method)             \
+{                               \
+    GrB_Info info = method ;    \
+    OK (info == GrB_SUCCESS) ;  \
 }
 
 void printgauss (GrB_Matrix A, char *name)
@@ -170,16 +201,88 @@ int main (void)
     printf ("JIT cache:        [%s]\n", cache) ;
     printf ("-------------------------------------\n\n") ;
 
-    // create the Gauss type
-    GrB_Type Gauss ;
-    TRY (GxB_Type_new (&Gauss, sizeof (gauss), "gauss", GAUSS_DEFN)) ;
-    TRY (GxB_print (Gauss, 3)) ;
+    // create the Gauss type but do it wrong the first time.  This will always
+    // require a new JIT kernel to be compiled: if this is the first run of
+    // this demo, the cache folder is empty.  Otherwise, the good gauss type
+    // will be left in the cache folder from a prior run of this program, and
+    // its type defintion does not match this one.  The burble will say "jit:
+    // loaded but must recompile" in this case.
+    GrB_Type BadGauss = NULL ;
+    GrB_Info info = GxB_Type_new (&BadGauss, 0, "gauss", BAD_GAUSS_DEFN) ;
+    if (info != GrB_SUCCESS)
+    {
+        // JIT disabled
+        printf ("JIT: unable to determine type size: set it to %d\n",
+            (int) sizeof (badgauss)) ;
+        TRY (GrB_Type_new (&BadGauss, sizeof (badgauss))) ;
+    }
+    TRY (GxB_print (BadGauss, 3)) ;
+    size_t sizeof_gauss ;
+    TRY (GxB_Type_size (&sizeof_gauss, BadGauss)) ;
+    OK (sizeof_gauss == sizeof (badgauss)) ;
+    GrB_free (&BadGauss) ;
 
-    // create the AddGauss operator; use a NULL function pointer to test the JIT
-    GrB_BinaryOp AddGauss ; 
-    TRY (GxB_BinaryOp_new (&AddGauss, NULL /* (void *) addgauss */,
-        Gauss, Gauss, Gauss, "addgauss", ADDGAUSS_DEFN)) ;
-    TRY (GxB_print (AddGauss, 3)) ;
+    // create the Gauss type, and let the JIT determine the size.  This causes
+    // an intentional name collision.  The new 'gauss' type does not match the
+    // old one (above), and this will be safely detected.  The burble will say
+    // "(jit type: changed)" and the JIT kernel will be recompiled.  The
+    // Gauss type is created twice, just to exercise the JIT.
+    GrB_Type Gauss = NULL ;
+    for (int trial = 0 ; trial <= 1 ; trial++)
+    {
+        // free the type and create it yet again, to test the JIT again
+        GrB_free (&Gauss) ;
+        info = GxB_Type_new (&Gauss, 0, "gauss", GAUSS_DEFN) ;
+        if (info != GrB_SUCCESS)
+        {
+            // JIT disabled
+            printf ("JIT: unable to determine type size: set it to %d\n",
+                (int) sizeof (gauss)) ;
+            TRY (GrB_Type_new (&Gauss, sizeof (gauss))) ;
+        }
+        TRY (GxB_print (Gauss, 3)) ;
+        TRY (GxB_Type_size (&sizeof_gauss, Gauss)) ;
+        OK (sizeof_gauss == sizeof (gauss)) ;
+    }
+
+    // create the BadAddGauss operator; use a NULL function pointer to test the
+    // JIT.  Like the BadGauss type, this will always require a JIT
+    // compilation, because the type will not match the good 'addgauss'
+    // definition from a prior run of this demo.
+    GrB_BinaryOp BadAddGauss = NULL ; 
+    info = GxB_BinaryOp_new (&BadAddGauss, NULL,
+        Gauss, Gauss, Gauss, "addgauss", BAD_ADDGAUSS_DEFN) ;
+    if (info != GrB_SUCCESS)
+    {
+        // JIT disabled
+        printf ("JIT: unable to compile the BadAddGauss kernel\n") ;
+        TRY (GrB_BinaryOp_new (&BadAddGauss, (void *) badaddgauss,
+            Gauss, Gauss, Gauss)) ;
+    }
+    TRY (GxB_print (BadAddGauss, 3)) ;
+    GrB_free (&BadAddGauss) ;
+
+    // create the AddGauss operator; use a NULL function pointer to test the
+    // JIT.  Causes an intentional name collision because of reusing the name
+    // 'addgauss' with a different definition.  This is safely detected and
+    // the kernel is recompiled.  The operator is created twice to exercise
+    // the JIT.  The first trial will report "jit op: changed" and the 2nd
+    // will say "jit op: ok".
+    GrB_BinaryOp AddGauss = NULL ; 
+    for (int trial = 0 ; trial <= 1 ; trial++)
+    {
+        GrB_free (&AddGauss) ;
+        info = GxB_BinaryOp_new (&AddGauss, NULL,
+            Gauss, Gauss, Gauss, "addgauss", ADDGAUSS_DEFN) ;
+        if (info != GrB_SUCCESS)
+        {
+            // JIT disabled
+            printf ("JIT: unable to compile the AddGauss kernel\n") ;
+            TRY (GrB_BinaryOp_new (&AddGauss, (void *) addgauss,
+                Gauss, Gauss, Gauss)) ;
+        }
+        TRY (GxB_print (AddGauss, 3)) ;
+    }
 
 //  printf ("JIT: off\n") ;
 //  TRY (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_OFF)) ;

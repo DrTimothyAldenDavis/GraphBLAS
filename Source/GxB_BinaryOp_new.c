@@ -11,6 +11,8 @@
 // must be void f (void *z, const void *x, const void *y), and then it must
 // recast its input and output arguments internally as needed.
 
+// If the function pointer is NULL, the function is compiled with the JIT.
+
 #define GB_DEBUG
 #include "GB.h"
 #include "GB_binop.h"
@@ -34,9 +36,9 @@ GrB_Info GxB_BinaryOp_new
 
     GB_WHERE1 ("GxB_BinaryOp_new (op, function, ztype, xtype, ytype"
         ", name, defn)") ;
+    GB_BURBLE_START ("GxB_BinaryOp_new") ;
     GB_RETURN_IF_NULL (op) ;
     (*op) = NULL ;
-//  GB_RETURN_IF_NULL (function) ;
     GB_RETURN_IF_NULL_OR_FAULTY (ztype) ;
     GB_RETURN_IF_NULL_OR_FAULTY (xtype) ;
     GB_RETURN_IF_NULL_OR_FAULTY (ytype) ;
@@ -84,6 +86,7 @@ GrB_Info GxB_BinaryOp_new
         (*op)->binop_function = (GxB_binary_function) user_function ;
     }
 
+    GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }
 

@@ -28,10 +28,13 @@
 //      "typedef struct { float x [4][4] ; int color ; } myquaternion ;") ;
 
 // The type_name and type_defn are optional and may by NULL, but they are
-// required for the JIT.
+// required for the JIT.  If the type size is passed in as zero, it means the
+// size is unknown; in this case, the type size is determined via the JIT.
+// If the type size is zero but the JIT is disabled, of the two strings are not
+// provided, then an error is returned (GrB_INVALID_VALUE). 
 
 #include "GB.h"
-#include "GB_jitifyer.h"
+#include "GB_stringify.h"
 
 GrB_Info GxB_Type_new
 (
@@ -47,23 +50,16 @@ GrB_Info GxB_Type_new
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GxB_Type_new (&type, sizeof (ctype), type_name, type_defn)") ;
+    GB_BURBLE_START ("GxB_Type_new") ;
     GB_RETURN_IF_NULL (type) ;
     (*type) = NULL ;
 
-    // FIXME: if sizeof_ctype == 0: use the JIT
-
-    #if ( ! GB_HAS_VLA )
+    if (sizeof_ctype == 0 && (type_defn == NULL || type_name == NULL))
     {
-        // Microsoft Visual Studio does not support VLAs allocating
-        // automatically on the stack.  These arrays are used for scalar values
-        // for a given type.  If VLA is not supported, user-defined types can
-        // be no larger than GB_VLA_MAXSIZE.
-        if (sizeof_ctype > GB_VLA_MAXSIZE)
-        {
-            return (GrB_INVALID_VALUE) ;
-        }
+        // so the JIT is required to determine size of the type, but this
+        // requires two valid strings: the type name and the type definition
+        return (GrB_INVALID_VALUE) ;
     }
-    #endif
 
     //--------------------------------------------------------------------------
     // create the type
@@ -80,7 +76,7 @@ GrB_Info GxB_Type_new
 
     // initialize the type
     t->header_size = header_size ;
-    t->size = GB_IMAX (sizeof_ctype, 1) ;
+    t->size = sizeof_ctype ;
     t->code = GB_UDT_code ;         // user-defined type
     memset (t->name, 0, GxB_MAX_NAME_LEN) ;   // no name yet
     t->defn = NULL ;                // no definition yet
@@ -160,13 +156,50 @@ GrB_Info GxB_Type_new
         memcpy (t->defn, type_defn, defn_len+1) ;
     }
 
+    // the type is valid, except perhaps for the typesize
+    t->magic = GB_MAGIC ;
+
+    //--------------------------------------------------------------------------
+    // determine the type size via the JIT, if necessary
+    //--------------------------------------------------------------------------
+
+    if (sizeof_ctype == 0)
+    {
+        GrB_Info info = GB_user_type_jit (&sizeof_ctype, t) ;
+        if (info != GrB_SUCCESS)
+        {
+            // unable to determine the type size
+            GB_FREE (&t, header_size) ;
+            return (GrB_INVALID_VALUE) ;
+        }
+        t->size = sizeof_ctype ;
+    }
+
+    //--------------------------------------------------------------------------
+    // typesize is limited on MS Visual Studio
+    //--------------------------------------------------------------------------
+
+    #if ( ! GB_HAS_VLA )
+    {
+        // Microsoft Visual Studio does not support VLAs allocating
+        // automatically on the stack.  These arrays are used for scalar values
+        // for a given type.  If VLA is not supported, user-defined types can
+        // be no larger than GB_VLA_MAXSIZE.
+        if (sizeof_ctype > GB_VLA_MAXSIZE)
+        {
+            GB_FREE (&t, header_size) ;
+            return (GrB_INVALID_VALUE) ;
+        }
+    }
+    #endif
+
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
-    t->magic = GB_MAGIC ;
     (*type) = t ;
     ASSERT_TYPE_OK (t, "new user-defined type", GB0) ;
+    GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }
 

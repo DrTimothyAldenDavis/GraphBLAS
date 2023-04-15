@@ -1403,6 +1403,7 @@ GrB_Info GB_jitifyer_worker
         { 
             // library is loaded but needs to change, so close it
             // FIXME: dlclose only exists on Linux/Unix/Mac
+            GBURBLE ("(jit: loaded but must recompile) ") ;
             dlclose (dl_handle) ;
             dl_handle = NULL ;
             if (GB_jit_control == GxB_JIT_LOAD)

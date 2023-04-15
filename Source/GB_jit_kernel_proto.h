@@ -22,7 +22,7 @@ bool query_func (uint64_t *hash, int v [3], char *defn [5],             \
 GrB_Info GB_jit_kernel_user_op (void **user_function, char **defn)
 
 #define GB_JIT_KERNEL_USER_TYPE_PROTO(GB_jit_kernel_user_type)          \
-GrB_Info GB_jit_kernel_user_type (size_t *typesize, char **defn)
+GrB_Info GB_jit_kernel_user_type (size_t *user_type_size, char **defn)
 
 #define GB_JIT_KERNEL_ADD_PROTO(GB_jit_kernel_add)                      \
 GrB_Info GB_jit_kernel_add                                              \

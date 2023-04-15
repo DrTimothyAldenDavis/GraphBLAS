@@ -15,6 +15,8 @@
 // and then it must recast its inputs (x and thunk) and output (z) arguments
 // internally as needed.  When used with a GrB_Vector, j is zero.
 
+// If the function pointer is NULL, the function is compiled with the JIT.
+
 #include "GB.h"
 #include "GB_stringify.h"
 
@@ -36,9 +38,9 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
 
     GB_WHERE1 ("GxB_IndexUnaryOp_new (op, function, ztype, xtype, ytype"
         ", name, defn)") ;
+    GB_BURBLE_START ("GxB_IndexUnaryOp_new") ;
     GB_RETURN_IF_NULL (op) ;
     (*op) = NULL ;
-//  GB_RETURN_IF_NULL (function) ;
     GB_RETURN_IF_NULL_OR_FAULTY (ztype) ;
     GB_RETURN_IF_NULL_OR_FAULTY (xtype) ;
     GB_RETURN_IF_NULL_OR_FAULTY (ytype) ;
@@ -116,6 +118,7 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     //--------------------------------------------------------------------------
 
     ASSERT_INDEXUNARYOP_OK ((*op), "new user-defined index_unary op", GB0) ;
+    GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }
 

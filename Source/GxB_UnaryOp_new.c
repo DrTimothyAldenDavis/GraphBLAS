@@ -31,9 +31,9 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GxB_UnaryOp_new (unaryop, function, ztype, xtype, name, defn)");
+    GB_BURBLE_START ("GxB_UnaryOp_new") ;
     GB_RETURN_IF_NULL (unaryop) ;
     (*unaryop) = NULL ;
-//  GB_RETURN_IF_NULL (function) ;
     GB_RETURN_IF_NULL_OR_FAULTY (ztype) ;
     GB_RETURN_IF_NULL_OR_FAULTY (xtype) ;
 
@@ -85,6 +85,7 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
 
     ASSERT_UNARYOP_OK (op, "new user-defined unary op", GB0) ;
     (*unaryop) = op ;
+    GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }
 
