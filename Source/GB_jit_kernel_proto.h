@@ -16,7 +16,6 @@
 
 #define GB_JIT_QUERY_PROTO(query_func)                                  \
 bool query_func (uint64_t *hash, int v [3], char *defn [5],             \
-    size_t typesize [3],                                                \
     void *id, void *term, size_t id_size, size_t term_size)
 
 #define GB_JIT_KERNEL_USER_OP_PROTO(GB_jit_kernel_user_op)              \

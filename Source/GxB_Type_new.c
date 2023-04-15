@@ -124,7 +124,7 @@ GrB_Info GxB_Type_new
     }
     else
     { 
-        // no type name, so give it a generic name, with the typesize only
+        // no type name, so give it a generic name, with the size of type only
         snprintf (t->name, GxB_MAX_NAME_LEN-1, "user_type_of_size_" GBu,
             (uint64_t) sizeof_ctype) ;
     }

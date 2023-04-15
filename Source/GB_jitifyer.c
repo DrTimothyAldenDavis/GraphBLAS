@@ -386,8 +386,7 @@ GrB_Info GB_jitifyer_init (void)
         uint64_t hash = 0 ;
         char *ignored [5] ;
         int version [3] ;
-        size_t ignored2 [3] ;
-        (void) dl_query (&hash, version, ignored, ignored2, NULL, NULL, 0, 0) ;
+        (void) dl_query (&hash, version, ignored, NULL, NULL, 0, 0) ;
 
         if (hash == 0 || hash == UINT64_MAX ||
             (version [0] != GxB_IMPLEMENTATION_MAJOR) ||
@@ -1036,9 +1035,7 @@ bool GB_jitifyer_query
     //--------------------------------------------------------------------------
 
     uint64_t hash2 = 0 ;
-    size_t typesize [3] ;
-    bool ok = dl_query (&hash2, version, library_defn, typesize,
-        id, term, zsize, tsize) ;
+    bool ok = dl_query (&hash2, version, library_defn, id, term, zsize, tsize) ;
     ok = ok && (version [0] == GxB_IMPLEMENTATION_MAJOR) &&
                (version [1] == GxB_IMPLEMENTATION_MINOR) &&
                (version [2] == GxB_IMPLEMENTATION_SUB) &&

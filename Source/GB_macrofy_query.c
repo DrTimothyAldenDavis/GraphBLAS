@@ -76,8 +76,6 @@ void GB_macrofy_query
     // query the three types
     //--------------------------------------------------------------------------
 
-    // FIXME: add sizeof (type)
-
     GrB_Type types [3] ;
     types [0] = type0 ;
     types [1] = type1 ;
@@ -109,19 +107,6 @@ void GB_macrofy_query
                 fprintf (fp, "    defn [%d] = GB_%s_USER_DEFN ;\n", k+2,
                     type->name) ;
             }
-        }
-    }
-
-    for (int k = 0 ; k <= 2 ; k++)
-    {
-        GrB_Type type = types [k] ;
-        if (type == NULL)
-        {
-            fprintf (fp, "    typesize [%d] = 0 ;\n", k) ;
-        }
-        else
-        {
-            fprintf (fp, "    typesize [%d] = sizeof (%s) ;\n", k, type->name) ;
         }
     }
 
