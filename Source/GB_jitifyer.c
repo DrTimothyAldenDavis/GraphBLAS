@@ -93,10 +93,10 @@ static GxB_JIT_Control GB_jit_control =
         return (GrB_OUT_OF_MEMORY) ;    \
     }
 
-#define GB_FREE_STUFF(X)                \
-{                                       \
-    GB_Global_persistent_free (&X) ;    \
-    X ## _allocated = 0 ;               \
+#define GB_FREE_STUFF(X)                                \
+{                                                       \
+    GB_Global_persistent_free ((void **) &X) ;          \
+    X ## _allocated = 0 ;                               \
 }
 
 #define GB_MALLOC_STUFF(X,len)                          \
@@ -256,7 +256,7 @@ GrB_Info GB_jitifyer_init (void)
     void **Queries = NULL ;
     char **Names = NULL ;
     int32_t nkernels = 0 ;
-    GB_prejit (&nkernels, &Kernels, &Queries, &Names) ;
+    GB_prejit (&nkernels, Kernels, Queries, Names) ;
 
     for (int k = 0 ; k < nkernels ; k++)
     {
@@ -1204,7 +1204,7 @@ GrB_Info GB_jitifyer_worker
             void **Queries = NULL ;
             char **Names = NULL ;
             int32_t nkernels = 0 ;
-            GB_prejit (&nkernels, &Kernels, &Queries, &Names) ;
+            GB_prejit (&nkernels, Kernels, Queries, Names) ;
             GB_jit_query_func dl_query = (GB_jit_query_func) Queries [k1] ;
             bool ok = GB_jitifyer_query (dl_query, hash, semiring, monoid, op,
                 type1, type2, type3) ;
@@ -1246,7 +1246,7 @@ GrB_Info GB_jitifyer_worker
         {
             // user-defined type; check it now
             GB_user_type_f GB_user_type = (GB_user_type_f) (*dl_function) ;
-            size_t *ignore ;
+            size_t ignore ;
             char *defn ;
             GB_user_type (&ignore, &defn) ;
             if (strcmp (defn, type1->defn) == 0)
@@ -1722,7 +1722,7 @@ void GB_jitifyer_entry_free (GB_jit_entry *e)
 //  printf ("free JIT entry (%ld): e %p func %p suffix %s handle %p\n",
 //      GB_jit_table_populated, e, e->dl_function, e->suffix, e->dl_handle) ;
     e->dl_function = NULL ;
-    GB_Global_persistent_free (&(e->suffix)) ;
+    GB_Global_persistent_free ((void **) (&(e->suffix))) ;
     // unload the dl library
     if (e->dl_handle != NULL)
     {

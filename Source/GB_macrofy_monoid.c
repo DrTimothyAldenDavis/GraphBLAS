@@ -397,7 +397,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // create macros for the atomic CUDA operator, if available
     //--------------------------------------------------------------------------
 
-    char *a = NULL, *cuda_type = NULL ;
+    const char *a = NULL, *cuda_type = NULL ;
     bool user_monoid_atomically = false ;
     bool has_cheeseburger = GB_enumify_cuda_atomic (&a,
         &user_monoid_atomically, &cuda_type, monoid, add_ecode, zsize, zcode) ;

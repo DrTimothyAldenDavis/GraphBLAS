@@ -101,14 +101,14 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     if (function == NULL)
     {
         void *user_function ;
-        info = GB_user_op_jit (&user_function, *op) ;
+        info = GB_user_op_jit (&user_function, (GB_Operator) *op) ;
         if (info != GrB_SUCCESS)
         {
             // unable to construct the function pointer
             GB_FREE (op, header_size) ;
             return (GrB_NULL_POINTER) ;
         }
-        (*op)->idxunop_function = (GxB_binary_function) user_function ;
+        (*op)->idxunop_function = (GxB_index_unary_function) user_function ;
     }
 
     //--------------------------------------------------------------------------

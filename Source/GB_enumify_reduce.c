@@ -65,7 +65,7 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     GB_enumify_monoid (&red_ecode, &id_ecode, &term_ecode, reduce_opcode,
         zcode) ;
 
-    char *a = NULL, *cuda_type = NULL ;
+    const char *a = NULL, *cuda_type = NULL ;
     bool user_monoid_atomically = false ;
     bool has_cheeseburger = GB_enumify_cuda_atomic (&a,
         &user_monoid_atomically, &cuda_type,

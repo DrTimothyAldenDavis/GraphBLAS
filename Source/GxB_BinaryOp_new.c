@@ -74,7 +74,7 @@ GrB_Info GxB_BinaryOp_new
     if (function == NULL)
     {
         void *user_function ;
-        info = GB_user_op_jit (&user_function, *op) ;
+        info = GB_user_op_jit (&user_function, (GB_Operator) *op) ;
         if (info != GrB_SUCCESS)
         {
             // unable to construct the function pointer
