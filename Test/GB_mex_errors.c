@@ -125,7 +125,7 @@ void mexFunction
     // mxMalloc, mxCalloc, mxRealloc, and mxFree are not thread safe
     GB_Global_malloc_is_thread_safe_set (false) ;
 
-    GB_Global_abort_function_set (GB_mx_abort) ;
+    GB_Global_abort_set (GB_mx_abort) ;
     GB_Global_malloc_tracking_set (true) ;
 
     fprintf (f,"\n========================================================\n") ;

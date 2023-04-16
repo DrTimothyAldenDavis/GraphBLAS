@@ -10,6 +10,10 @@
 #ifndef USERCOMPLEX_H
 #define USERCOMPLEX_H
 
+ typedef struct { double re ; double im ; } mycx ;
+#define MYCX_DEFN \
+"typedef struct { double re ; double im ; } mycx ;"
+
 //------------------------------------------------------------------------------
 // 10 binary functions, z=f(x,y), where CxC -> C
 //------------------------------------------------------------------------------
@@ -83,7 +87,69 @@ extern GrB_Monoid   Complex_plus_monoid, Complex_times_monoid ;
 extern GrB_Semiring Complex_plus_times ;
 
 GrB_Info Complex_init (bool builtin_complex) ;
-GrB_Info Complex_finalize ( ) ;
+GrB_Info Complex_finalize (void) ;
+
+//------------------------------------------------------------------------------
+// function prototypes
+//------------------------------------------------------------------------------
+
+void mycx_first (mycx *z, const mycx *x, const mycx *y) ;
+void mycx_second (mycx *z, const mycx *x, const mycx *y) ;
+void mycx_pair (mycx *z, const mycx *x, const mycx *y) ;
+void mycx_plus (mycx *z, const mycx *x, const mycx *y) ;
+void mycx_minus (mycx *z, const mycx *x, const mycx *y) ;
+void mycx_rminus (mycx *z, const mycx *x, const mycx *y) ;
+void mycx_times (mycx *z, const mycx *x, const mycx *y) ;
+void mycx_div (mycx *z, const mycx *x, const mycx *y) ;
+void mycx_rdiv (mycx *z, const mycx *x, const mycx *y) ;
+void fx64_min (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y) ;
+void mycx_min (mycx *z, const mycx *x, const mycx *y) ;
+void fx64_max (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y) ;
+void mycx_max (mycx *z, const mycx *x, const mycx *y) ;
+void mycx_iseq (mycx *z, const mycx *x, const mycx *y) ;
+void mycx_isne (mycx *z, const mycx *x, const mycx *y) ;
+void fx64_isgt (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y) ;
+void mycx_isgt (mycx *z, const mycx *x, const mycx *y) ;
+void fx64_islt (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y) ;
+void mycx_islt (mycx *z, const mycx *x, const mycx *y) ;
+void fx64_isge (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y) ;
+void mycx_isge (mycx *z, const mycx *x, const mycx *y) ;
+void fx64_isle (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y) ;
+void mycx_isle (mycx *z, const mycx *x, const mycx *y) ;
+void fx64_or (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y) ;
+void mycx_or (mycx *z, const mycx *x, const mycx *y) ;
+void fx64_and (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y) ;
+void mycx_and (mycx *z, const mycx *x, const mycx *y) ;
+void fx64_xor (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y) ;
+void mycx_xor (mycx *z, const mycx *x, const mycx *y) ;
+void mycx_eq (bool *z, const mycx *x, const mycx *y) ;
+void mycx_ne (bool *z, const mycx *x, const mycx *y) ;
+void fx64_gt (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y) ;
+void mycx_gt (bool *z, const mycx *x, const mycx *y) ;
+void fx64_lt (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y) ;
+void mycx_lt (bool *z, const mycx *x, const mycx *y) ;
+void fx64_ge (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y) ;
+void mycx_ge (bool *z, const mycx *x, const mycx *y) ;
+void fx64_le (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y) ;
+void mycx_le (bool *z, const mycx *x, const mycx *y) ;
+void mycx_cmplx (mycx *z, const double *x, const double *y) ;
+void mycx_one (mycx *z, const mycx *x) ;
+void mycx_identity (mycx *z, const mycx *x) ;
+void mycx_ainv (mycx *z, const mycx *x) ;
+void mycx_minv (mycx *z, const mycx *x) ;
+void mycx_conj (mycx *z, const mycx *x) ;
+void fx64_abs (GxB_FC64_t *z, const GxB_FC64_t *x) ;
+void mycx_abs (mycx *z, const mycx *x) ;
+void fx64_not (GxB_FC64_t *z, const GxB_FC64_t *x) ;
+void mycx_not (mycx *z, const mycx *x) ;
+void mycx_real (double *z, const mycx *x) ;
+void mycx_imag (double *z, const mycx *x) ;
+void mycx_cabs (double *z, const mycx *x) ;
+void mycx_angle (double *z, const mycx *x) ;
+void fx64_cmplx_real (GxB_FC64_t *z, const double *x) ;
+void mycx_cmplx_real (mycx *z, const double *x) ;
+void fx64_cmplx_imag (GxB_FC64_t *z, const double *x) ;
+void mycx_cmplx_imag (mycx *z, const double *x) ;
 
 //------------------------------------------------------------------------------
 // C++ compatibility

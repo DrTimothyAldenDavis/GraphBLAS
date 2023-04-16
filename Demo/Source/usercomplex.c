@@ -82,120 +82,132 @@ GrB_Semiring Complex_plus_times = NULL ;
 // binary functions, z=f(x,y), where CxC -> Complex
 //------------------------------------------------------------------------------
 
- void complex_first (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
-    (*z) = (*x) ;
- }
+void mycx_first (mycx *z, const mycx *x, const mycx *y)
+{
+    z->re = x->re ;
+    z->im = x->im ;
+}
 
-#define COMPLEX_FIRST                                                         \
-"void "                                                                       \
-"complex_first GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)   \n" \
-"{                                                                        \n" \
-"   (*z) = (*x) :                                                         \n" \
+#define MYCX_FIRST                                                          \
+"void mycx_first (mycx *z, const mycx *x, const mycx *y)                \n" \
+"{                                                                      \n" \
+"    z->re = x->re ;                                                    \n" \
+"    z->im = x->im ;                                                    \n" \
 "}"
 
- void complex_second (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
-    (*z) = (*y) ;
- }
+void mycx_second (mycx *z, const mycx *x, const mycx *y)
+{
+    z->re = y->re ;
+    z->im = y->im ;
+}
 
-#define COMPLEX_SECOND                                                        \
-"void "                                                                       \
-"complex_second (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y) \n" \
-"{                                                                        \n" \
-"   (*z) = (*y) ;                                                         \n" \
+#define MYCX_SECOND                                                         \
+"void mycx_second (mycx *z, const mycx *x, const mycx *y)               \n" \
+"{                                                                      \n" \
+"    z->re = y->re ;                                                    \n" \
+"    z->im = y->im ;                                                    \n" \
 "}"
 
- void complex_pair (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
-    (*z) = GxB_CMPLX (1,0) ;
- }
+void mycx_pair (mycx *z, const mycx *x, const mycx *y)
+{
+    z->re = 1 ;
+    z->im = 0 ;
+}
 
-#define COMPLEX_PAIR                                                          \
-"void "                                                                       \
-"complex_pair (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)   \n" \
-"{                                                                        \n" \
-"   (*z) = GxB_CMPLX (1,0) ;                                              \n" \
+#define MYCX_PAIR                                                           \
+"void mycx_pair (mycx *z, const mycx *x, const mycx *y)                 \n" \
+"{                                                                      \n" \
+"    z->re = 1 ;                                                        \n" \
+"    z->im = 0 ;                                                        \n" \
 "}"
 
- void
- complex_plus (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
-    (*z) = (*x) + (*y) ;
- }
+void mycx_plus (mycx *z, const mycx *x, const mycx *y)
+{
+    z->re = x->re + y->re ;
+    z->im = x->im + y->im ;
+}
 
-#define COMPLEX_PLUS                                                          \
-"void "                                                                       \
-"complex_plus (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)   \n" \
-"{                                                                        \n" \
-"   (*z) = (*x) + (*y) ;                                                  \n" \
+#define MYCX_PLUS                                                           \
+"void mycx_plus (mycx *z, const mycx *x, const mycx *y)                 \n" \
+"{                                                                      \n" \
+"    z->re = x->re + y->re ;                                            \n" \
+"    z->im = x->im + y->im ;                                            \n" \
 "}"
 
- void complex_minus (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
-    (*z) = (*x) - (*y) ;
- }
+void mycx_minus (mycx *z, const mycx *x, const mycx *y)
+{
+    z->re = x->re - y->re ;
+    z->im = x->im - y->im ;
+}
 
-#define COMPLEX_MINUS                                                         \
-"void "                                                                       \
-"complex_minus (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)  \n" \
-"{                                                                        \n" \
-"   (*z) = (*x) - (*y) ;                                                  \n" \
+#define MYCX_MINUS                                                          \
+"void mycx_minus (mycx *z, const mycx *x, const mycx *y)                \n" \
+"{                                                                      \n" \
+"    z->re = x->re - y->re ;                                            \n" \
+"    z->im = x->im - y->im ;                                            \n" \
 "}"
 
- void complex_rminus (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
-    (*z) = (*y) - (*x) ;
- }
+void mycx_rminus (mycx *z, const mycx *x, const mycx *y)
+{
+    z->re = y->re - x->re ;
+    z->im = y->im - x->im ;
+}
 
-#define COMPLEX_RMINUS                                                        \
-"void "                                                                       \
-"complex_rminus (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y) \n" \
-"{                                                                        \n" \
-"   (*z) = (*y) - (*x) ;                                                  \n" \
+#define MYCX_RMINUS                                                         \
+"void mycx_rminus (mycx *z, const mycx *x, const mycx *y)               \n" \
+"{                                                                      \n" \
+"    z->re = y->re - x->re ;                                            \n" \
+"    z->im = y->im - x->im ;                                            \n" \
 "}"
 
- void complex_times (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
-    (*z) = (*x) * (*y) ;
- }
+void mycx_times (mycx *z, const mycx *x, const mycx *y)
+{
+    z->re = (x->re * y->re) - (x->im * y->im) ;
+    z->im = (x->re * y->im) + (x->im * y->re) ;
+}
 
-#define COMPLEX_TIMES                                                         \
-"void "                                                                       \
-"complex_times (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)  \n" \
-"{                                                                        \n" \
-"   (*z) = (*x) * (*y) ;                                                  \n" \
+#define MYCX_TIMES                                                          \
+"void mycx_times (mycx *z, const mycx *x, const mycx *y)                \n" \
+"{                                                                      \n" \
+"    z->re = (x->re * y->re) - (x->im * y->im) ;                        \n" \
+"    z->im = (x->re * y->im) + (x->im * y->re) ;                        \n" \
 "}"
 
- void complex_div (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
-    (*z) = (*x) / (*y) ;
- }
+void mycx_div (mycx *z, const mycx *x, const mycx *y)
+{
+    double den = (y->re * y->re) + (y->im * y->im) ;
+    z->re = ((x->re * y->re) + (x->im * y->im)) / den ;
+    z->im = ((x->im * y->re) - (x->re * y->im)) / den ;
+}
 
-#define COMPLEX_DIV                                                           \
-"void "                                                                       \
-"complex_div (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)    \n" \
-"{                                                                        \n" \
-"   (*z) = (*x) / (*y) ;                                                  \n" \
+#define MYCX_DIV                                                            \
+"void mycx_div (mycx *z, const mycx *x, const mycx *y)                  \n" \
+"{                                                                      \n" \
+"    double den = (y->re * y->re) + (y->im * y->im) ;                   \n" \
+"    z->re = ((x->re * y->re) + (x->im * y->im)) / den ;                \n" \
+"    z->im = ((x->im * y->re) - (x->re * y->im)) / den ;                \n" \
 "}"
 
- void complex_rdiv (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
-    (*z) = (*y) / (*x) ;
- }
+void mycx_rdiv (mycx *z, const mycx *x, const mycx *y)
+{
+    double den = (x->re * x->re) + (x->im * x->im) ;
+    z->re = ((y->re * x->re) + (y->im * x->im)) / den ;
+    z->im = ((y->im * x->re) - (y->re * x->im)) / den ;
+}
 
-#define COMPLEX_RDIV                                                          \
-"void "                                                                       \
-"complex_rdiv (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)   \n" \
-"{                                                                        \n" \
-"   (*z) = (*y) / (*x) ;                                                  \n" \
+#define MYCX_RDIV                                                           \
+"void mycx_div (mycx *z, const mycx *x, const mycx *y)                  \n" \
+"{                                                                      \n" \
+"    double den = (x->re * x->re) + (x->im * x->im) ;                   \n" \
+"    z->re = ((y->re * x->re) + (y->im * x->im)) / den ;                \n" \
+"    z->im = ((y->im * x->re) - (y->re * x->im)) / den ;                \n" \
 "}"
 
 // min (x,y): complex number with smallest magnitude.  If tied, select the
 // one with the smallest phase angle.  No special cases for NaNs.
 
- void complex_min (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
+void fx64_min (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
+{
     double absx = cabs (*x) ;
     double absy = cabs (*y) ;
     if (absx < absy)
@@ -210,33 +222,95 @@ GrB_Semiring Complex_plus_times = NULL ;
     {
         (*z) = (carg (*x) < carg (*y)) ? (*x) : (*y) ;
     }
- }
+}
 
-#define COMPLEX_MIN                                                           \
-"void "                                                                       \
-"complex_min (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)    \n" \
-"{                                                                        \n" \
-"   double absx = cabs (*x) ;                                             \n" \
-"   double absy = cabs (*y) ;                                             \n" \
-"   if (absx < absy)                                                      \n" \
-"   {                                                                     \n" \
-"       (*z) = (*x) ;                                                     \n" \
-"   }                                                                     \n" \
-"   else if (absx > absy)                                                 \n" \
-"   {                                                                     \n" \
-"       (*z) = (*y) ;                                                     \n" \
-"   }                                                                     \n" \
-"   else                                                                  \n" \
-"   {                                                                     \n" \
-"       (*z) = (carg (*x) < carg (*y)) ? (*x) : (*y) ;                    \n" \
-"   }                                                                     \n" \
+#define FX64_MIN                                                            \
+"void fx64_min (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)\n" \
+"{                                                                      \n" \
+"    double absx = cabs (*x) ;                                          \n" \
+"    double absy = cabs (*y) ;                                          \n" \
+"    if (absx < absy)                                                   \n" \
+"    {                                                                  \n" \
+"        (*z) = (*x) ;                                                  \n" \
+"    }                                                                  \n" \
+"    else if (absx > absy)                                              \n" \
+"    {                                                                  \n" \
+"        (*z) = (*y) ;                                                  \n" \
+"    }                                                                  \n" \
+"    else                                                               \n" \
+"    {                                                                  \n" \
+"        (*z) = (carg (*x) < carg (*y)) ? (*x) : (*y) ;                 \n" \
+"    }                                                                  \n" \
+"}"
+
+void mycx_min (mycx *z, const mycx *x, const mycx *y)
+{
+    GxB_FC64_t X = GxB_CMPLX (x->re, x->im) ;
+    GxB_FC64_t Y = GxB_CMPLX (y->re, y->im) ;
+    double absx = cabs (X) ;
+    double absy = cabs (Y) ;
+    if (absx < absy)
+    {
+        z->re = x->re ;
+        z->im = x->im ;
+    }
+    else if (absx > absy)
+    {
+        z->re = y->re ;
+        z->im = y->im ;
+    }
+    else
+    {
+        if (carg (X) < carg (Y))
+        {
+            z->re = x->re ;
+            z->im = x->im ;
+        }
+        else
+        {
+            z->re = y->re ;
+            z->im = y->im ;
+        }
+    }
+}
+
+#define MYCX_MIN                                                            \
+"void mycx_min (mycx *z, const mycx *x, const mycx *y)                  \n" \
+"{                                                                      \n" \
+"    GxB_FC64_t X = GxB_CMPLX (x->re, x->im) ;                          \n" \
+"    GxB_FC64_t Y = GxB_CMPLX (y->re, y->im) ;                          \n" \
+"    double absx = cabs (X) ;                                           \n" \
+"    double absy = cabs (Y) ;                                           \n" \
+"    if (absx < absy)                                                   \n" \
+"    {                                                                  \n" \
+"        z->re = x->re ;                                                \n" \
+"        z->im = x->im ;                                                \n" \
+"    }                                                                  \n" \
+"    else if (absx > absy)                                              \n" \
+"    {                                                                  \n" \
+"        z->re = y->re ;                                                \n" \
+"        z->im = y->im ;                                                \n" \
+"    }                                                                  \n" \
+"    else                                                               \n" \
+"    {                                                                  \n" \
+"        if (carg (X) < carg (Y))                                       \n" \
+"        {                                                              \n" \
+"            z->re = x->re ;                                            \n" \
+"            z->im = x->im ;                                            \n" \
+"        }                                                              \n" \
+"        else                                                           \n" \
+"        {                                                              \n" \
+"            z->re = y->re ;                                            \n" \
+"            z->im = y->im ;                                            \n" \
+"        }                                                              \n" \
+"    }                                                                  \n" \
 "}"
 
 // max (x,y): complex number with largest magnitude.  If tied, select the one
 // with the largest phase angle.  No special cases for NaNs.
 
- void complex_max (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
+void fx64_max (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
+{
     double absx = cabs (*x) ;
     double absy = cabs (*y) ;
     if (absx > absy)
@@ -251,416 +325,677 @@ GrB_Semiring Complex_plus_times = NULL ;
     {
         (*z) = (carg (*x) > carg (*y)) ? (*x) : (*y) ;
     }
- }
+}
 
-#define COMPLEX_MAX                                                           \
-"void "                                                                       \
-"complex_max (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)    \n" \
-"{                                                                        \n" \
-"   double absx = cabs (*x) ;                                             \n" \
-"   double absy = cabs (*y) ;                                             \n" \
-"   if (absx > absy)                                                      \n" \
-"   {                                                                     \n" \
-"       (*z) = (*x) ;                                                     \n" \
-"   }                                                                     \n" \
-"   else if (absx < absy)                                                 \n" \
-"   {                                                                     \n" \
-"       (*z) = (*y) ;                                                     \n" \
-"   }                                                                     \n" \
-"   else                                                                  \n" \
-"   {                                                                     \n" \
-"       (*z) = (carg (*x) > carg (*y)) ? (*x) : (*y) ;                    \n" \
-"   }                                                                     \n" \
+#define FX64_MAX                                                            \
+"void fx64_max (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)\n" \
+"{                                                                      \n" \
+"    double absx = cabs (*x) ;                                          \n" \
+"    double absy = cabs (*y) ;                                          \n" \
+"    if (absx > absy)                                                   \n" \
+"    {                                                                  \n" \
+"        (*z) = (*x) ;                                                  \n" \
+"    }                                                                  \n" \
+"    else if (absx < absy)                                              \n" \
+"    {                                                                  \n" \
+"        (*z) = (*y) ;                                                  \n" \
+"    }                                                                  \n" \
+"    else                                                               \n" \
+"    {                                                                  \n" \
+"        (*z) = (carg (*x) > carg (*y)) ? (*x) : (*y) ;                 \n" \
+"    }                                                                  \n" \
+"}"
+
+void mycx_max (mycx *z, const mycx *x, const mycx *y)
+{
+    GxB_FC64_t X = GxB_CMPLX (x->re, x->im) ;
+    GxB_FC64_t Y = GxB_CMPLX (y->re, y->im) ;
+    double absx = cabs (X) ;
+    double absy = cabs (Y) ;
+    if (absx > absy)
+    {
+        z->re = x->re ;
+        z->im = x->im ;
+    }
+    else if (absx < absy)
+    {
+        z->re = y->re ;
+        z->im = y->im ;
+    }
+    else
+    {
+        if (carg (X) > carg (Y))
+        {
+            z->re = x->re ;
+            z->im = x->im ;
+        }
+        else
+        {
+            z->re = y->re ;
+            z->im = y->im ;
+        }
+    }
+}
+
+#define MYCX_MAX                                                            \
+"void mycx_max (mycx *z, const mycx *x, const mycx *y)                  \n" \
+"{                                                                      \n" \
+"    GxB_FC64_t X = GxB_CMPLX (x->re, x->im) ;                          \n" \
+"    GxB_FC64_t Y = GxB_CMPLX (y->re, y->im) ;                          \n" \
+"    double absx = cabs (X) ;                                           \n" \
+"    double absy = cabs (Y) ;                                           \n" \
+"    if (absx > absy)                                                   \n" \
+"    {                                                                  \n" \
+"        z->re = x->re ;                                                \n" \
+"        z->im = x->im ;                                                \n" \
+"    }                                                                  \n" \
+"    else if (absx < absy)                                              \n" \
+"    {                                                                  \n" \
+"        z->re = y->re ;                                                \n" \
+"        z->im = y->im ;                                                \n" \
+"    }                                                                  \n" \
+"    else                                                               \n" \
+"    {                                                                  \n" \
+"        if (carg (X) > carg (Y))                                       \n" \
+"        {                                                              \n" \
+"            z->re = x->re ;                                            \n" \
+"            z->im = x->im ;                                            \n" \
+"        }                                                              \n" \
+"        else                                                           \n" \
+"        {                                                              \n" \
+"            z->re = y->re ;                                            \n" \
+"            z->im = y->im ;                                            \n" \
+"        }                                                              \n" \
+"    }                                                                  \n" \
 "}"
 
 //------------------------------------------------------------------------------
 // 6 binary functions, z=f(x,y); CxC -> Complex ; (1,0) = true, (0,0) = false
 //------------------------------------------------------------------------------
 
- void complex_iseq (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
-    bool eq = (creal (*x) == creal (*y) && cimag (*x) == cimag (*y)) ;
-    (*z) = eq ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;
- }
+void mycx_iseq (mycx *z, const mycx *x, const mycx *y)
+{
+    z->re = (x->re == y->re && x->im == y->im) ? 1 : 0 ;
+    z->im = 0 ;
+}
 
-#define COMPLEX_ISEQ                                                          \
-"void "                                                                       \
-"complex_iseq (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)   \n" \
-"{                                                                        \n" \
-"   bool eq = (creal (*x) == creal (*y) && cimag (*x) == cimag (*y)) ;    \n" \
-"   (*z) = eq ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;                       \n" \
+#define MYCX_ISEQ                                                           \
+"void mycx_iseq (mycx *z, const mycx *x, const mycx *y)                 \n" \
+"{                                                                      \n" \
+"    z->re = (x->re == y->re && x->im == y->im) ? 1 : 0 ;               \n" \
+"    z->im = 0 ;                                                        \n" \
 "}"
 
- void complex_isne (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
-    bool ne = (creal (*x) != creal (*y) || cimag (*x) != cimag (*y)) ;
-    (*z) = ne ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;
- }
+void mycx_isne (mycx *z, const mycx *x, const mycx *y)
+{
+    z->re = (x->re != y->re || x->im != y->im) ? 1 : 0 ;
+    z->im = 0 ;
+}
 
-#define COMPLEX_ISNE                                                          \
-"void "                                                                       \
-"complex_isne (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)   \n" \
-"{                                                                        \n" \
-"   bool ne = (creal (*x) != creal (*y) || cimag (*x) != cimag (*y)) ;    \n" \
-"   (*z) = ne ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;                       \n" \
+#define MYCX_ISNE                                                           \
+"void mycx_isne (mycx *z, const mycx *x, const mycx *y)                 \n" \
+"{                                                                      \n" \
+"    z->re = (x->re != y->re || x->im != y->im) ? 1 : 0 ;               \n" \
+"    z->im = 0 ;                                                        \n" \
 "}"
 
- void complex_isgt (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
+void fx64_isgt (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
+{
     bool gt = (creal (*x) > creal (*y)) ;
     (*z) = gt ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;
- }
+}
 
-#define COMPLEX_ISGT                                                          \
-"void "                                                                       \
-"complex_isgt (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)   \n" \
-"{                                                                        \n" \
-"   bool gt = (creal (*x) > creal (*y)) ;                                 \n" \
-"   (*z) = gt ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;                       \n" \
+#define FX64_ISGT                                                           \
+"void fx64_isgt (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)\n"\
+"{                                                                      \n" \
+"    bool gt = (creal (*x) > creal (*y)) ;                              \n" \
+"    (*z) = gt ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;                    \n" \
 "}"
 
- void complex_islt (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
+void mycx_isgt (mycx *z, const mycx *x, const mycx *y)
+{
+    z->re = (x->re > y->re) ? 1 : 0 ;
+    z->im = 0 ;
+}
+
+#define MYCX_ISGT                                                           \
+"void mycx_isgt (mycx *z, const mycx *x, const mycx *y)                 \n" \
+"{                                                                      \n" \
+"    z->re = (x->re > y->re) ? 1 : 0 ;                                  \n" \
+"    z->im = 0 ;                                                        \n" \
+"}"
+
+void fx64_islt (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
+{
     bool lt = (creal (*x) < creal (*y)) ;
     (*z) = lt ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;
- }
+}
 
-#define COMPLEX_ISLT                                                          \
-"void "                                                                       \
-"complex_islt (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)   \n" \
-"{                                                                        \n" \
-"   bool lt = (creal (*x) < creal (*y)) ;                                 \n" \
-"   (*z) = lt ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;                       \n" \
+#define FX64_ISLT                                                           \
+"void fx64_islt (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)\n"\
+"{                                                                      \n" \
+"    bool lt = (creal (*x) < creal (*y)) ;                              \n" \
+"    (*z) = lt ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;                    \n" \
 "}"
 
- void complex_isge (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
+void mycx_islt (mycx *z, const mycx *x, const mycx *y)
+{
+    z->re = (x->re < y->re) ? 1 : 0 ;
+    z->im = 0 ;
+}
+
+#define MYCX_ISLT                                                           \
+"void mycx_islt (mycx *z, const mycx *x, const mycx *y)                 \n" \
+"{                                                                      \n" \
+"    z->re = (x->re < y->re) ? 1 : 0 ;                                  \n" \
+"    z->im = 0 ;                                                        \n" \
+"}"
+
+void fx64_isge (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
+{
     bool ge = (creal (*x) >= creal (*y)) ;
     (*z) = ge ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;
- }
+}
 
-#define COMPLEX_ISGE                                                          \
-"void "                                                                       \
-"complex_isge (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)   \n" \
-"{                                                                        \n" \
-"   bool ge = (creal (*x) >= creal (*y)) ;                                \n" \
-"   (*z) = ge ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;                       \n" \
+#define FX64_ISGE                                                           \
+"void fx64_isge (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)\n"\
+"{                                                                      \n" \
+"    bool ge = (creal (*x) >= creal (*y)) ;                             \n" \
+"    (*z) = ge ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;                    \n" \
 "}"
 
- void complex_isle (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
+void mycx_isge (mycx *z, const mycx *x, const mycx *y)
+{
+    z->re = (x->re >= y->re) ? 1 : 0 ;
+    z->im = 0 ;
+}
+
+#define MYCX_ISGE                                                           \
+"void mycx_isge (mycx *z, const mycx *x, const mycx *y)                 \n" \
+"{                                                                      \n" \
+"    z->re = (x->re >= y->re) ? 1 : 0 ;                                 \n" \
+"    z->im = 0 ;                                                        \n" \
+"}"
+
+void fx64_isle (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
+{
     bool le = (creal (*x) <= creal (*y)) ;
     (*z) = le ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;
- }
+}
 
-#define COMPLEX_ISLE                                                          \
-"void "                                                                       \
-"complex_isle (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)   \n" \
-"{                                                                        \n" \
-"   bool le = (creal (*x) <= creal (*y)) ;                                \n" \
-"   (*z) = le ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;                       \n" \
+#define FX64_ISLE                                                           \
+"void fx64_isle (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)\n"\
+"{                                                                      \n" \
+"    bool le = (creal (*x) <= creal (*y)) ;                             \n" \
+"    (*z) = le ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;                    \n" \
+"}"
+
+void mycx_isle (mycx *z, const mycx *x, const mycx *y)
+{
+    z->re = (x->re <= y->re) ? 1 : 0 ;
+    z->im = 0 ;
+}
+
+#define MYCX_ISLE                                                           \
+"void mycx_isle (mycx *z, const mycx *x, const mycx *y)                 \n" \
+"{                                                                      \n" \
+"    z->re = (x->re <= y->re) ? 1 : 0 ;                                 \n" \
+"    z->im = 0 ;                                                        \n" \
 "}"
 
 //------------------------------------------------------------------------------
 // binary boolean functions, z=f(x,y), where CxC -> Complex
 //------------------------------------------------------------------------------
 
- void complex_or (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
+void fx64_or (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
+{
     bool xbool = (creal (*x) != 0 || cimag (*x) != 0) ;
     bool ybool = (creal (*y) != 0 || cimag (*y) != 0) ;
     (*z) = (xbool || ybool) ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;
- }
+}
 
-#define COMPLEX_OR                                                            \
-"void "                                                                       \
-"complex_or (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)     \n" \
-"{                                                                        \n" \
-"   bool xbool = (creal (*x) != 0 || cimag (*x) != 0) ;                   \n" \
-"   bool ybool = (creal (*y) != 0 || cimag (*y) != 0) ;                   \n" \
-"   (*z) = (xbool || ybool) ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;         \n" \
+#define FX64_OR                                                             \
+"void fx64_or (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y) \n" \
+"{                                                                      \n" \
+"    bool xbool = (creal (*x) != 0 || cimag (*x) != 0) ;                \n" \
+"    bool ybool = (creal (*y) != 0 || cimag (*y) != 0) ;                \n" \
+"    (*z) = (xbool || ybool) ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;      \n" \
 "}"
 
- void complex_and (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
+void mycx_or (mycx *z, const mycx *x, const mycx *y)
+{
+    bool xbool = (x->re != 0 || x->im != 0) ;
+    bool ybool = (y->re != 0 || y->im != 0) ;
+    z->re = (xbool || ybool) ? 1 : 0 ;
+    z->im = 0 ;
+}
+
+#define MYCX_OR                                                             \
+"void mycx_or (mycx *z, const mycx *x, const mycx *y)                   \n" \
+"{                                                                      \n" \
+"    bool xbool = (x->re != 0 || x->im != 0) ;                          \n" \
+"    bool ybool = (y->re != 0 || y->im != 0) ;                          \n" \
+"    z->re = (xbool || ybool) ? 1 : 0 ;                                 \n" \
+"    z->im = 0 ;                                                        \n" \
+"}"
+
+void fx64_and (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
+{
     bool xbool = (creal (*x) != 0 || cimag (*x) != 0) ;
     bool ybool = (creal (*y) != 0 || cimag (*y) != 0) ;
     (*z) = (xbool && ybool) ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;
- }
+}
 
-#define COMPLEX_AND                                                           \
-"void "                                                                       \
-"complex_and (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)    \n" \
-"{                                                                        \n" \
-"   bool xbool = (creal (*x) != 0 || cimag (*x) != 0) ;                   \n" \
-"   bool ybool = (creal (*y) != 0 || cimag (*y) != 0) ;                   \n" \
-"   (*z) = (xbool && ybool) ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;         \n" \
+#define FX64_AND                                                            \
+"void fx64_and (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)\n" \
+"{                                                                      \n" \
+"    bool xbool = (creal (*x) != 0 || cimag (*x) != 0) ;                \n" \
+"    bool ybool = (creal (*y) != 0 || cimag (*y) != 0) ;                \n" \
+"    (*z) = (xbool && ybool) ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;      \n" \
 "}"
 
- void complex_xor (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
+void mycx_and (mycx *z, const mycx *x, const mycx *y)
+{
+    bool xbool = (x->re != 0 || x->im != 0) ;
+    bool ybool = (y->re != 0 || y->im != 0) ;
+    z->re = (xbool && ybool) ? 1 : 0 ;
+    z->im = 0 ;
+}
+
+#define MYCX_AND                                                            \
+"void mycx_and (mycx *z, const mycx *x, const mycx *y)                  \n" \
+"{                                                                      \n" \
+"    bool xbool = (x->re != 0 || x->im != 0) ;                          \n" \
+"    bool ybool = (y->re != 0 || y->im != 0) ;                          \n" \
+"    z->re = (xbool && ybool) ? 1 : 0 ;                                 \n" \
+"    z->im = 0 ;                                                        \n" \
+"}"
+
+void fx64_xor (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
+{
     bool xbool = (creal (*x) != 0 || cimag (*x) != 0) ;
     bool ybool = (creal (*y) != 0 || cimag (*y) != 0) ;
     (*z) = (xbool != ybool) ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;
- }
+}
 
-#define COMPLEX_XOR                                                           \
-"void "                                                                       \
-"complex_xor (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)    \n" \
-"{                                                                        \n" \
-"   bool xbool = (creal (*x) != 0 || cimag (*x) != 0) ;                   \n" \
-"   bool ybool = (creal (*y) != 0 || cimag (*y) != 0) ;                   \n" \
-"   (*z) = (xbool != ybool) ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;         \n" \
+#define FX64_XOR                                                            \
+"void fx64_xor (GxB_FC64_t *z, const GxB_FC64_t *x, const GxB_FC64_t *y)\n" \
+"{                                                                      \n" \
+"    bool xbool = (creal (*x) != 0 || cimag (*x) != 0) ;                \n" \
+"    bool ybool = (creal (*y) != 0 || cimag (*y) != 0) ;                \n" \
+"    (*z) = (xbool != ybool) ? GxB_CMPLX (1,0) : GxB_CMPLX (0,0) ;      \n" \
+"}"
+
+void mycx_xor (mycx *z, const mycx *x, const mycx *y)
+{
+    bool xbool = (x->re != 0 || x->im != 0) ;
+    bool ybool = (y->re != 0 || y->im != 0) ;
+    z->re = (xbool && ybool) ? 1 : 0 ;
+    z->im = 0 ;
+}
+
+#define MYCX_XOR                                                            \
+"void mycx_xor (mycx *z, const mycx *x, const mycx *y)                  \n" \
+"{                                                                      \n" \
+"    bool xbool = (x->re != 0 || x->im != 0) ;                          \n" \
+"    bool ybool = (y->re != 0 || y->im != 0) ;                          \n" \
+"    z->re = (xbool != ybool) ? 1 : 0 ;                                 \n" \
+"    z->im = 0 ;                                                        \n" \
 "}"
 
 //------------------------------------------------------------------------------
 // 6 binary functions, z=f(x,y), where CxC -> bool
 //------------------------------------------------------------------------------
 
- void complex_eq (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
-    (*z) = (creal (*x) == creal (*y) && cimag (*x) == cimag (*y)) ;
- }
+void mycx_eq (bool *z, const mycx *x, const mycx *y)
+{
+    (*z) = (x->re == y->re && x->im == y->im) ;
+}
 
-#define COMPLEX_EQ                                                            \
-"void complex_eq (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)      \n" \
-"{                                                                        \n" \
-"   (*z) = (creal (*x) == creal (*y) && cimag (*x) == cimag (*y)) ;       \n" \
+#define MYCX_EQ                                                             \
+"void mycx_eq (bool *z, const mycx *x, const mycx *y)                   \n" \
+"{                                                                      \n" \
+"    (*z) = (x->re == y->re && x->im == y->im) ;                        \n" \
 "}"
 
- void complex_ne (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
-    (*z) = (creal (*x) != creal (*y) || cimag (*x) != cimag (*y)) ;
- }
+void mycx_ne (bool *z, const mycx *x, const mycx *y)
+{
+    (*z) = (x->re == y->re && x->im == y->im) ;
+}
 
-#define COMPLEX_NE                                                            \
-"void complex_ne (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)      \n" \
-"{                                                                        \n" \
-"   (*z) = (creal (*x) != creal (*y) || cimag (*x) != cimag (*y)) ;       \n" \
+#define MYCX_NE                                                             \
+"void mycx_ne (bool *z, const mycx *x, const mycx *y)                   \n" \
+"{                                                                      \n" \
+"    (*z) = (x->re == y->re && x->im == y->im) ;                        \n" \
 "}"
 
- void complex_gt (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
+void fx64_gt (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
+{
     (*z) = (creal (*x) > creal (*y)) ;
- }
+}
 
-#define COMPLEX_GT                                                            \
-"void complex_gt (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)      \n" \
-"{                                                                        \n" \
-"   (*z) = (creal (*x) > creal (*y)) ;                                    \n" \
+#define FX64_GT                                                             \
+"void fx64_gt (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)       \n" \
+"{                                                                      \n" \
+"    (*z) = (creal (*x) > creal (*y)) ;                                 \n" \
 "}"
 
- void complex_lt (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
-    (*z) = (creal (*x) < creal (*y)) ;
- }
+void mycx_gt (bool *z, const mycx *x, const mycx *y)
+{
+    (*z) = (x->re > y->re) ;
+}
 
-#define COMPLEX_LT                                                            \
-"void complex_lt (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)      \n" \
-"{                                                                        \n" \
-"   (*z) = (creal (*x) < creal (*y)) ;                                    \n" \
+#define MYCX_GT                                                             \
+"void mycx_gt (bool *z, const mycx *x, const mycx *y)                   \n" \
+"{                                                                      \n" \
+"    (*z) = (x->re > y->re) ;                                           \n" \
 "}"
 
- void complex_ge (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
+void fx64_lt (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
+{
+    (*z) = (creal (*x) > creal (*y)) ;
+}
+
+#define FX64_LT                                                             \
+"void fx64_lt (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)       \n" \
+"{                                                                      \n" \
+"    (*z) = (creal (*x) < creal (*y)) ;                                 \n" \
+"}"
+
+void mycx_lt (bool *z, const mycx *x, const mycx *y)
+{
+    (*z) = (x->re < y->re) ;
+}
+
+#define MYCX_LT                                                             \
+"void mycx_lt (bool *z, const mycx *x, const mycx *y)                   \n" \
+"{                                                                      \n" \
+"    (*z) = (x->re < y->re) ;                                           \n" \
+"}"
+
+void fx64_ge (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
+{
     (*z) = (creal (*x) >= creal (*y)) ;
- }
+}
 
-#define COMPLEX_GE                                                            \
-"void complex_ge (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)      \n" \
-"{                                                                        \n" \
-"   (*z) = (creal (*x) >= creal (*y)) ;                                   \n" \
+#define FX64_GE                                                             \
+"void fx64_ge (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)       \n" \
+"{                                                                      \n" \
+"    (*z) = (creal (*x) >= creal (*y)) ;                                \n" \
 "}"
 
- void complex_le (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
- {
-    (*z) = (creal (*x) <= creal (*y)) ;
- }
+void mycx_ge (bool *z, const mycx *x, const mycx *y)
+{
+    (*z) = (x->re >= y->re) ;
+}
 
-#define COMPLEX_LE                                                            \
-"void complex_le (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)      \n" \
-"{                                                                        \n" \
-"   (*z) = (creal (*x) <= creal (*y)) ;                                   \n" \
+#define MYCX_GE                                                             \
+"void mycx_ge (bool *z, const mycx *x, const mycx *y)                   \n" \
+"{                                                                      \n" \
+"    (*z) = (x->re >= y->re) ;                                          \n" \
 "}"
+
+void fx64_le (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)
+{
+    (*z) = (creal (*x) >= creal (*y)) ;
+}
+
+#define FX64_LE                                                             \
+"void fx64_lt (bool *z, const GxB_FC64_t *x, const GxB_FC64_t *y)       \n" \
+"{                                                                      \n" \
+"    (*z) = (creal (*x) <= creal (*y)) ;                                \n" \
+"}"
+
+void mycx_le (bool *z, const mycx *x, const mycx *y)
+{
+    (*z) = (x->re <= y->re) ;
+}
+
+#define MYCX_LE                                                             \
+"void mycx_le (bool *z, const mycx *x, const mycx *y)                   \n" \
+"{                                                                      \n" \
+"    (*z) = (x->re <= y->re) ;                                          \n" \
+"}"
+
 
 //------------------------------------------------------------------------------
 // binary functions, z=f(x,y), where double x double -> complex
 //------------------------------------------------------------------------------
 
- void complex_complex (GxB_FC64_t *z, const double *x, const double *y)
- {
-    ((double *) z) [0] = (*x) ;
-    ((double *) z) [1] = (*y) ;
- }
+void mycx_cmplx (mycx *z, const double *x, const double *y)
+{
+    z->re = (*x) ;
+    z->im = (*y) ;
+}
 
-#define COMPLEX_COMPLEX                                                       \
-"void complex_complex (GxB_FC64_t *z, const double *x, const double *y)   \n" \
-"{                                                                        \n" \
-"   ((double *) z) [0] = (*x) ;                                           \n" \
-"   ((double *) z) [1] = (*y) ;                                           \n" \
+#define MYCX_CMPLX                                                          \
+"void mycx_cmplx (mycx *z, const double *x, const double *y)            \n" \
+"{                                                                      \n" \
+"    z->re = (*x) ;                                                     \n" \
+"    z->im = (*y) ;                                                     \n" \
 "}"
 
 //------------------------------------------------------------------------------
 // unary functions, z=f(x) where Complex -> Complex
 //------------------------------------------------------------------------------
 
- void complex_one (GxB_FC64_t *z, const GxB_FC64_t *x)
- {
-    (*z) = GxB_CMPLX (1,0) ;
- }
+void mycx_one (mycx *z, const mycx *x)
+{
+    z->re = 1 ;
+    z->im = 0 ;
+}
 
-#define COMPLEX_ONE                                                           \
-"void complex_one (GxB_FC64_t *z, const GxB_FC64_t *x)                    \n" \
-"{                                                                        \n" \
-"   (*z) = GxB_CMPLX (1,0) ;                                              \n" \
+#define MYCX_ONE                                                            \
+"void mycx_one (mycx *z, const mycx *x)                                 \n" \
+"{                                                                      \n" \
+"    z->re = 1 ;                                                        \n" \
+"    z->im = 0 ;                                                        \n" \
 "}"
 
- void complex_identity (GxB_FC64_t *z, const GxB_FC64_t *x)
- {
-    (*z) = (*x)  ;
- }
+void mycx_identity (mycx *z, const mycx *x)
+{
+    z->re = x->re ;
+    z->im = x->im ;
+}
 
-#define COMPLEX_IDENTITY                                                      \
-"void complex_identity (GxB_FC64_t *z, const GxB_FC64_t *x)               \n" \
-"{                                                                        \n" \
-"   (*z) = (*x)  ;                                                        \n" \
+#define MYCX_IDENTITY                                                       \
+"void mycx_identity (mycx *z, const mycx *x)                            \n" \
+"{                                                                      \n" \
+"    z->re = x->re ;                                                    \n" \
+"    z->im = x->im ;                                                    \n" \
 "}"
 
- void complex_ainv (GxB_FC64_t *z, const GxB_FC64_t *x)
- {
-    (*z) = -(*x)  ;
- }
+void mycx_ainv (mycx *z, const mycx *x)
+{
+    z->re = -(x->re) ;
+    z->im = -(x->im) ;
+}
 
-#define COMPLEX_AINV                                                          \
-"void complex_ainv (GxB_FC64_t *z, const GxB_FC64_t *x)                   \n" \
-"{                                                                        \n" \
-"   (*z) = -(*x)  ;                                                       \n" \
+#define MYCX_AINV                                                           \
+"void mycx_ainv (mycx *z, const mycx *x)                                \n" \
+"{                                                                      \n" \
+"    z->re = -(x->re) ;                                                 \n" \
+"    z->im = -(x->im) ;                                                 \n" \
 "}"
 
- void complex_minv (GxB_FC64_t *z, const GxB_FC64_t *x)
- {
-    (*z) =  1. / (*x) ;
- }
+void mycx_minv (mycx *z, const mycx *x)
+{
+    double den = (x->re * x->re) + (x->im * x->im) ;
+    z->re =  (x->re) / den ;
+    z->im = -(x->im) / den ;
+}
 
-#define COMPLEX_MINV                                                          \
-"void complex_minv (GxB_FC64_t *z, const GxB_FC64_t *x)                   \n" \
-"{                                                                        \n" \
-"   (*z) =  1. / (*x) ;                                                   \n" \
+#define MYCX_MINV                                                           \
+"void mycx_minv (mycx *z, const mycx *x)                                \n" \
+"{                                                                      \n" \
+"    double den = (x->re * x->re) + (x->im * x->im) ;                   \n" \
+"    z->re =  (x->re) / den ;                                           \n" \
+"    z->im = -(x->im) / den ;                                           \n" \
 "}"
 
- void complex_conj (GxB_FC64_t *z, const GxB_FC64_t *x)
- {
-    (*z) = conj (*x) ;
- }
+void mycx_conj (mycx *z, const mycx *x)
+{
+    z->re =  (x->re) ;
+    z->im = -(x->im) ;
+}
 
-#define COMPLEX_CONJ                                                          \
-"void complex_conj (GxB_FC64_t *z, const GxB_FC64_t *x)                   \n" \
-"{                                                                        \n" \
-"   (*z) = conj (*x) ;                                                    \n" \
+#define MYCX_CONJ                                                           \
+"void mycx_conj (mycx *z, const mycx *x)                                \n" \
+"{                                                                      \n" \
+"    z->re =  (x->re) ;                                                 \n" \
+"    z->im = -(x->im) ;                                                 \n" \
 "}"
 
- void complex_abs (GxB_FC64_t *z, const GxB_FC64_t *x)
- {
-    ((double *) z) [0] = cabs (*x) ;
-    ((double *) z) [1] = 0 ;
- }
+void fx64_abs (GxB_FC64_t *z, const GxB_FC64_t *x)
+{
+    (*z) = GxB_CMPLX (cabs (*x), 0) ;
+}
 
-#define COMPLEX_ABS                                                           \
-"void complex_abs (GxB_FC64_t *z, const GxB_FC64_t *x)                    \n" \
-"{                                                                        \n" \
-"   ((double *) z) [0] = cabs (*x) ;                                      \n" \
-"   ((double *) z) [1] = 0 ;                                              \n" \
+#define FX64_ABS                                                            \
+"void fx64_abs (GxB_FC64_t *z, const GxB_FC64_t *x)                     \n" \
+"{                                                                      \n" \
+"    (*z) = GxB_CMPLX (cabs (*x), 0) ;                                  \n" \
 "}"
 
- void complex_not (GxB_FC64_t *z, const GxB_FC64_t *x)
- {
+void mycx_abs (mycx *z, const mycx *x)
+{
+    z->re = sqrt ((x->re * x->re) + (x->im * x->im)) ;
+    z->im = 0 ;
+}
+
+#define MYCX_ABS                                                            \
+"void mycx_abs (mycx *z, const mycx *x)                                 \n" \
+"{                                                                      \n" \
+"    z->re = sqrt ((x->re * x->re) + (x->im * x->im)) ;                 \n" \
+"    z->im = 0 ;                                                        \n" \
+"}"
+
+void fx64_not (GxB_FC64_t *z, const GxB_FC64_t *x)
+{
     bool xbool = (creal (*x) != 0 || cimag (*x) != 0) ;
     (*z) = xbool ? GxB_CMPLX (0,0) : GxB_CMPLX (1,0) ;
- }
+}
 
-#define COMPLEX_NOT                                                           \
-"void complex_not (GxB_FC64_t *z, const GxB_FC64_t *x)                    \n" \
-"{                                                                        \n" \
-"   bool xbool = (creal (*x) != 0 || cimag (*x) != 0) ;                   \n" \
-"   (*z) = xbool ? GxB_CMPLX (0,0) : GxB_CMPLX (1,0) ;                    \n" \
+#define FX64_NOT                                                            \
+"void fx64_not (GxB_FC64_t *z, const GxB_FC64_t *x)                     \n" \
+"{                                                                      \n" \
+"   bool xbool = (creal (*x) != 0 || cimag (*x) != 0) ;                 \n" \
+"   (*z) = xbool ? GxB_CMPLX (0,0) : GxB_CMPLX (1,0) ;                  \n" \
+"}"
+
+void mycx_not (mycx *z, const mycx *x)
+{
+    z->re = (x->re != 0 || x->im != 0) ? 1 : 0 ;
+    z->im = 0 ;
+}
+
+#define MYCX_NOT                                                            \
+"void mycx_not (mycx *z, const mycx *x)                                 \n" \
+"{                                                                      \n" \
+"    z->re = (x->re != 0 || x->im != 0) ? 1 : 0 ;                       \n" \
+"    z->im = 0 ;                                                        \n" \
 "}"
 
 //------------------------------------------------------------------------------
 // unary functions, z=f(x) where Complex -> double
 //------------------------------------------------------------------------------
 
- void complex_real (double *z, const GxB_FC64_t *x)
- {
-    (*z) = creal (*x) ;
- }
+void mycx_real (double *z, const mycx *x)
+{
+    (*z) = x->re ;
+}
 
-#define COMPLEX_REAL                                                          \
-"void complex_real (double *z, const GxB_FC64_t *x)                       \n" \
-"{                                                                        \n" \
-"   (*z) = creal (*x) ;                                                   \n" \
+#define MYCX_REAL                                                           \
+"void mycx_real (double *z, const mycx *x)                              \n" \
+"{                                                                      \n" \
+"    (*z) = x->re ;                                                     \n" \
 "}"
 
- void complex_imag (double *z, const GxB_FC64_t *x)
- {
-    (*z) = cimag (*x) ;
- }
+void mycx_imag (double *z, const mycx *x)
+{
+    (*z) = x->im ;
+}
 
-#define COMPLEX_IMAG                                                          \
-"void complex_imag (double *z, const GxB_FC64_t *x)                       \n" \
-"{                                                                        \n" \
-"   (*z) = cimag (*x) ;                                                   \n" \
+#define MYCX_IMAG                                                           \
+"void mycx_imag (double *z, const mycx *x)                              \n" \
+"{                                                                      \n" \
+"    (*z) = x->im ;                                                     \n" \
 "}"
 
- void complex_cabs (double *z, const GxB_FC64_t *x)
- {
-    (*z) = cabs (*x) ;
- }
+void mycx_cabs (double *z, const mycx *x)
+{
+    (*z) = sqrt ((x->re * x->re) + (x->im * x->im)) ;
+}
 
-#define COMPLEX_CABS                                                          \
-"void complex_cabs (double *z, const GxB_FC64_t *x)                       \n" \
-"{                                                                        \n" \
-"   (*z) = cabs (*x) ;                                                    \n" \
+#define MYCX_CABS                                                           \
+"void mycx_cabs (double *z, const mycx *x)                              \n" \
+"{                                                                      \n" \
+"    (*z) = sqrt ((x->re * x->re) + (x->im * x->im)) ;                  \n" \
 "}"
 
- void complex_angle (double *z, const GxB_FC64_t *x)
- {
-    (*z) = carg (*x) ;
- }
+void mycx_angle (double *z, const mycx *x)
+{
+    GxB_FC64_t X = GxB_CMPLX (x->re, x->im) ;
+    (*z) = carg (X) ;
+}
 
-#define COMPLEX_ANGLE                                                         \
-"void complex_angle (double *z, const GxB_FC64_t *x)                      \n" \
-"{                                                                        \n" \
-"   (*z) = carg (*x) ;                                                    \n" \
+#define MYCX_ANGLE                                                          \
+"void mycx_angle (double *z, const mycx *x)                             \n" \
+"{                                                                      \n" \
+"    GxB_FC64_t X = GxB_CMPLX (x->re, x->im) ;                          \n" \
+"    (*z) = carg (X) ;                                                  \n" \
 "}"
 
 //------------------------------------------------------------------------------
 // unary functions, z=f(x) where double -> Complex
 //------------------------------------------------------------------------------
 
- void complex_complex_real (GxB_FC64_t *z, const double *x)
- {
-    ((double *) z) [0] = (*x) ;
-    ((double *) z) [1] = 0 ;
- }
+void fx64_cmplx_real (GxB_FC64_t *z, const double *x)
+{
+    (*z) = GxB_CMPLX ((*x), 0) ;
+}
 
-#define COMPLEX_COMPLEX_REAL                                                  \
-"void complex_complex_real (GxB_FC64_t *z, const double *x)               \n" \
-"{                                                                        \n" \
-"   ((double *) z) [0] = (*x) ;                                           \n" \
-"   ((double *) z) [1] = 0 ;                                              \n" \
+#define FX64_CMPLX_REAL                                                     \
+"void fx64_cmplx_real (GxB_FC64_t *z, const double *x)                  \n" \
+"{                                                                      \n" \
+"    (*z) = GxB_CMPLX ((*x), 0) ;                                       \n" \
 "}"
 
- void complex_complex_imag (GxB_FC64_t *z, const double *x)
- {
-    ((double *) z) [0] = 0 ;
-    ((double *) z) [1] = (*x) ;
- }
+void mycx_cmplx_real (mycx *z, const double *x)
+{
+    z->re = (*x) ;
+    z->im = 0 ;
+}
 
-#define COMPLEX_COMPLEX_IMAG                                                  \
-"void complex_complex_imag (GxB_FC64_t *z, const double *x)               \n" \
-"{                                                                        \n" \
-"   ((double *) z) [0] = 0 ;                                              \n" \
-"   ((double *) z) [1] = (*x) ;                                           \n" \
+#define MYCX_CMPLX_REAL                                                     \
+"void mycx_cmplx_real (mycx *z, const double *x)                        \n" \
+"{                                                                      \n" \
+"    z->re = (*x) ;                                                     \n" \
+"    z->im = 0 ;                                                        \n" \
+"}"
+
+void fx64_cmplx_imag (GxB_FC64_t *z, const double *x)
+{
+    (*z) = GxB_CMPLX (0, (*x)) ;
+}
+
+#define FX64_CMPLX_IMAG                                                     \
+"void fx64_cmplx_imag (GxB_FC64_t *z, const double *x)                  \n" \
+"{                                                                      \n" \
+"    (*z) = GxB_CMPLX (0, (*x)) ;                                       \n" \
+"}"
+
+void mycx_cmplx_imag (mycx *z, const double *x)
+{
+    z->re = 0 ;
+    z->im = (*x) ;
+}
+
+#define MYCX_CMPLX_IMAG                                                     \
+"void mycx_cmplx_imag (mycx *z, const double *x)                        \n" \
+"{                                                                      \n" \
+"    z->re = 0 ;                                                        \n" \
+"    z->im = (*x) ;                                                     \n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -689,8 +1024,7 @@ GrB_Info Complex_init (bool builtin_complex)
         // create the user-defined type
         // Normally, the typename should be "GxB_FC64_t",
         // but the C type GxB_FC64_t is already defined.
-        OK (GxB_Type_new (&Complex, sizeof (GxB_FC64_t), "mycomplex",
-            "typedef struct { double xreal ; double ximag ; } mycomplex ;" )) ;
+        OK (GxB_Type_new (&Complex, sizeof (GxB_FC64_t), "mycx", MYCX_DEFN)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -713,38 +1047,28 @@ GrB_Info Complex_init (bool builtin_complex)
     else
     {
         // create user-defined versions
-        OK (GxB_BinaryOp_new (&Complex_first  , B complex_first  ,
-            Complex, Complex, Complex, "complex_first", COMPLEX_FIRST)) ;
-
-        // FUTURE C API suggestion:
-//      OK (GrB_BinaryOp_new (&Complex_first  , B complex_first  ,
-//          Complex, Complex, Complex)) ;
-//      GrB_set (Complex_first, GRB_NAME, "complex_first") ;
-//      GrB_set (Complex_first, GRB_DEFN, COMPLEX_FIRST) ;
-
-        OK (GxB_BinaryOp_new (&Complex_second , B complex_second ,
-            Complex, Complex, Complex, "complex_second", COMPLEX_SECOND)) ;
-        OK (GxB_BinaryOp_new (&Complex_pair   , B complex_pair   ,
-            Complex, Complex, Complex, "complex_pair", COMPLEX_PAIR)) ;
-        OK (GxB_BinaryOp_new (&Complex_plus   , B complex_plus   ,
-            Complex, Complex, Complex, "complex_plus", COMPLEX_PLUS)) ;
-        OK (GxB_BinaryOp_new (&Complex_minus  , B complex_minus  ,
-            Complex, Complex, Complex, "complex_minus", COMPLEX_MINUS)) ;
-        OK (GxB_BinaryOp_new (&Complex_rminus , B complex_rminus ,
-            Complex, Complex, Complex, "complex_rminus", COMPLEX_RMINUS)) ;
-        OK (GxB_BinaryOp_new (&Complex_times  , B complex_times  ,
-            Complex, Complex, Complex, "complex_times", COMPLEX_TIMES)) ;
-        OK (GxB_BinaryOp_new (&Complex_div    , B complex_div    ,
-            Complex, Complex, Complex, "complex_div", COMPLEX_DIV)) ;
-        OK (GxB_BinaryOp_new (&Complex_rdiv   , B complex_rdiv   ,
-            Complex, Complex, Complex, "complex_rdiv", COMPLEX_RDIV)) ;
+        OK (GxB_BinaryOp_new (&Complex_first  , B mycx_first  , Complex, Complex, Complex, "mycx_first" , MYCX_FIRST)) ;
+        OK (GxB_BinaryOp_new (&Complex_second , B mycx_second , Complex, Complex, Complex, "mycx_second", MYCX_SECOND)) ;
+        OK (GxB_BinaryOp_new (&Complex_pair   , B mycx_pair   , Complex, Complex, Complex, "mycx_pair"  , MYCX_PAIR)) ;
+        OK (GxB_BinaryOp_new (&Complex_plus   , B mycx_plus   , Complex, Complex, Complex, "mycx_plus"  , MYCX_PLUS)) ;
+        OK (GxB_BinaryOp_new (&Complex_minus  , B mycx_minus  , Complex, Complex, Complex, "mycx_minus" , MYCX_MINUS)) ;
+        OK (GxB_BinaryOp_new (&Complex_rminus , B mycx_rminus , Complex, Complex, Complex, "mycx_rminus", MYCX_RMINUS)) ;
+        OK (GxB_BinaryOp_new (&Complex_times  , B mycx_times  , Complex, Complex, Complex, "mycx_times" , MYCX_TIMES)) ;
+        OK (GxB_BinaryOp_new (&Complex_div    , B mycx_div    , Complex, Complex, Complex, "mycx_div"   , MYCX_DIV)) ;
+        OK (GxB_BinaryOp_new (&Complex_rdiv   , B mycx_rdiv   , Complex, Complex, Complex, "mycx_rdiv"  , MYCX_RDIV)) ;
     }
 
     // these are not built-in
-    OK (GxB_BinaryOp_new (&Complex_min    , B complex_min    ,
-        Complex, Complex, Complex, "complex_min", COMPLEX_MIN)) ;
-    OK (GxB_BinaryOp_new (&Complex_max    , B complex_max    ,
-        Complex, Complex, Complex, "complex_max", COMPLEX_MAX)) ;
+    if (builtin_complex)
+    {
+        OK (GxB_BinaryOp_new (&Complex_min    , B fx64_min    , Complex, Complex, Complex, "fx64_min"   , FX64_MIN)) ;
+        OK (GxB_BinaryOp_new (&Complex_max    , B fx64_max    , Complex, Complex, Complex, "fx64_max"   , FX64_MAX)) ;
+    }
+    else
+    {
+        OK (GxB_BinaryOp_new (&Complex_min    , B mycx_min    , Complex, Complex, Complex, "mycx_min"   , MYCX_MIN)) ;
+        OK (GxB_BinaryOp_new (&Complex_max    , B mycx_max    , Complex, Complex, Complex, "mycx_max"   , MYCX_MAX)) ;
+    }
 
     //--------------------------------------------------------------------------
     // create the Complex binary comparators, CxC -> Complex
@@ -759,33 +1083,43 @@ GrB_Info Complex_init (bool builtin_complex)
     else
     {
         // create user-defined versions
-        OK (GxB_BinaryOp_new (&Complex_iseq , B complex_iseq ,
-            Complex, Complex, Complex, "complex_iseq", COMPLEX_ISEQ)) ;
-        OK (GxB_BinaryOp_new (&Complex_isne , B complex_isne ,
-            Complex, Complex, Complex, "complex_isne", COMPLEX_ISNE)) ;
+        OK (GxB_BinaryOp_new (&Complex_iseq   , B mycx_iseq   , Complex, Complex, Complex, "mycx_iseq"  , MYCX_ISEQ)) ;
+        OK (GxB_BinaryOp_new (&Complex_isne   , B mycx_isne   , Complex, Complex, Complex, "mycx_isne"  , MYCX_ISNE)) ;
     }
 
     // these are not built-in
-    OK (GxB_BinaryOp_new (&Complex_isgt , B complex_isgt ,
-        Complex, Complex, Complex, "complex_isgt", COMPLEX_ISGT)) ;
-    OK (GxB_BinaryOp_new (&Complex_islt , B complex_islt ,
-        Complex, Complex, Complex, "complex_islt", COMPLEX_ISLT)) ;
-    OK (GxB_BinaryOp_new (&Complex_isge , B complex_isge ,
-        Complex, Complex, Complex, "complex_isge", COMPLEX_ISGE)) ;
-    OK (GxB_BinaryOp_new (&Complex_isle , B complex_isle ,
-        Complex, Complex, Complex, "complex_isle", COMPLEX_ISLE)) ;
+    if (builtin_complex)
+    {
+        OK (GxB_BinaryOp_new (&Complex_isgt   , B fx64_isgt   , Complex, Complex, Complex, "fx64_isgt"  , FX64_ISGT)) ;
+        OK (GxB_BinaryOp_new (&Complex_islt   , B fx64_islt   , Complex, Complex, Complex, "fx64_islt"  , FX64_ISLT)) ;
+        OK (GxB_BinaryOp_new (&Complex_isge   , B fx64_isge   , Complex, Complex, Complex, "fx64_isge"  , FX64_ISGE)) ;
+        OK (GxB_BinaryOp_new (&Complex_isle   , B fx64_isle   , Complex, Complex, Complex, "fx64_isle"  , FX64_ISLE)) ;
+    }
+    else
+    {
+        OK (GxB_BinaryOp_new (&Complex_isgt   , B mycx_isgt   , Complex, Complex, Complex, "mycx_isgt"  , MYCX_ISGT)) ;
+        OK (GxB_BinaryOp_new (&Complex_islt   , B mycx_islt   , Complex, Complex, Complex, "mycx_islt"  , MYCX_ISLT)) ;
+        OK (GxB_BinaryOp_new (&Complex_isge   , B mycx_isge   , Complex, Complex, Complex, "mycx_isge"  , MYCX_ISGE)) ;
+        OK (GxB_BinaryOp_new (&Complex_isle   , B mycx_isle   , Complex, Complex, Complex, "mycx_isle"  , MYCX_ISLE)) ;
+    }
 
     //--------------------------------------------------------------------------
     // create the Complex boolean operators, CxC -> Complex
     //--------------------------------------------------------------------------
 
     // these are not built-in
-    OK (GxB_BinaryOp_new (&Complex_or  , B complex_or  ,
-        Complex, Complex, Complex, "complex_or", COMPLEX_OR)) ;
-    OK (GxB_BinaryOp_new (&Complex_and , B complex_and ,
-        Complex, Complex, Complex, "complex_and", COMPLEX_AND)) ;
-    OK (GxB_BinaryOp_new (&Complex_xor , B complex_xor ,
-        Complex, Complex, Complex, "complex_xor", COMPLEX_XOR)) ;
+    if (builtin_complex)
+    {
+        OK (GxB_BinaryOp_new (&Complex_or     , B fx64_or     , Complex, Complex, Complex, "fx64_or"    , FX64_OR)) ;
+        OK (GxB_BinaryOp_new (&Complex_and    , B fx64_and    , Complex, Complex, Complex, "fx64_and"   , FX64_AND)) ;
+        OK (GxB_BinaryOp_new (&Complex_xor    , B fx64_xor    , Complex, Complex, Complex, "fx64_xor"   , FX64_XOR)) ;
+    }
+    else
+    {
+        OK (GxB_BinaryOp_new (&Complex_or     , B mycx_or     , Complex, Complex, Complex, "mycx_or"    , MYCX_OR)) ;
+        OK (GxB_BinaryOp_new (&Complex_and    , B mycx_and    , Complex, Complex, Complex, "mycx_and"   , MYCX_AND)) ;
+        OK (GxB_BinaryOp_new (&Complex_xor    , B mycx_xor    , Complex, Complex, Complex, "mycx_xor"   , MYCX_XOR)) ;
+    }
 
     //--------------------------------------------------------------------------
     // create the Complex binary operators, CxC -> bool
@@ -800,21 +1134,25 @@ GrB_Info Complex_init (bool builtin_complex)
     else
     {
         // create user-defined versions
-        OK (GxB_BinaryOp_new (&Complex_eq , B complex_eq ,
-            GrB_BOOL, Complex, Complex, "complex_eq", COMPLEX_EQ)) ;
-        OK (GxB_BinaryOp_new (&Complex_ne , B complex_ne ,
-            GrB_BOOL, Complex, Complex, "complex_ne", COMPLEX_NE)) ;
+        OK (GxB_BinaryOp_new (&Complex_eq     , B mycx_eq     ,GrB_BOOL, Complex, Complex, "mycx_eq"    , MYCX_EQ)) ;
+        OK (GxB_BinaryOp_new (&Complex_ne     , B mycx_ne     ,GrB_BOOL, Complex, Complex, "mycx_ne"    , MYCX_NE)) ;
     }
 
     // these are not built-in
-    OK (GxB_BinaryOp_new (&Complex_gt , B complex_gt ,
-        GrB_BOOL, Complex, Complex, "complex_gt", COMPLEX_GT)) ;
-    OK (GxB_BinaryOp_new (&Complex_lt , B complex_lt ,
-        GrB_BOOL, Complex, Complex, "complex_lt", COMPLEX_LT)) ;
-    OK (GxB_BinaryOp_new (&Complex_ge , B complex_ge ,
-        GrB_BOOL, Complex, Complex, "complex_ge", COMPLEX_GE)) ;
-    OK (GxB_BinaryOp_new (&Complex_le , B complex_le ,
-        GrB_BOOL, Complex, Complex, "complex_le", COMPLEX_LE)) ;
+    if (builtin_complex)
+    {
+        OK (GxB_BinaryOp_new (&Complex_gt     , B fx64_gt     ,GrB_BOOL, Complex, Complex, "fx64_gt"    , FX64_GT)) ;
+        OK (GxB_BinaryOp_new (&Complex_lt     , B fx64_lt     ,GrB_BOOL, Complex, Complex, "fx64_lt"    , FX64_LT)) ;
+        OK (GxB_BinaryOp_new (&Complex_ge     , B fx64_ge     ,GrB_BOOL, Complex, Complex, "fx64_ge"    , FX64_GE)) ;
+        OK (GxB_BinaryOp_new (&Complex_le     , B fx64_le     ,GrB_BOOL, Complex, Complex, "fx64_le"    , FX64_LE)) ;
+    }
+    else
+    {
+        OK (GxB_BinaryOp_new (&Complex_gt     , B mycx_gt     ,GrB_BOOL, Complex, Complex, "mycx_gt"    , MYCX_GT)) ;
+        OK (GxB_BinaryOp_new (&Complex_lt     , B mycx_lt     ,GrB_BOOL, Complex, Complex, "mycx_lt"    , MYCX_LT)) ;
+        OK (GxB_BinaryOp_new (&Complex_ge     , B mycx_ge     ,GrB_BOOL, Complex, Complex, "mycx_ge"    , MYCX_GE)) ;
+        OK (GxB_BinaryOp_new (&Complex_le     , B mycx_le     ,GrB_BOOL, Complex, Complex, "mycx_le"    , MYCX_LE)) ;
+    }
 
     //--------------------------------------------------------------------------
     // create the Complex binary operator, double x double -> Complex
@@ -828,8 +1166,7 @@ GrB_Info Complex_init (bool builtin_complex)
     else
     {
         // create user-defined versions
-        OK (GxB_BinaryOp_new (&Complex_complex, B complex_complex,
-            Complex, GrB_FP64, GrB_FP64, "complex_complex", COMPLEX_COMPLEX)) ;
+        OK (GxB_BinaryOp_new (&Complex_complex, B mycx_cmplx  , Complex,GrB_FP64,GrB_FP64, "mycx_cmplx" ,MYCX_CMPLX)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -848,23 +1185,24 @@ GrB_Info Complex_init (bool builtin_complex)
     else
     {
         // create user-defined versions
-        OK (GxB_UnaryOp_new (&Complex_one     , U complex_one     ,
-            Complex, Complex, "complex_one", COMPLEX_ONE)) ;
-        OK (GxB_UnaryOp_new (&Complex_identity, U complex_identity,
-            Complex, Complex, "complex_identity", COMPLEX_IDENTITY)) ;
-        OK (GxB_UnaryOp_new (&Complex_ainv    , U complex_ainv    ,
-            Complex, Complex, "complex_ainv", COMPLEX_AINV)) ;
-        OK (GxB_UnaryOp_new (&Complex_minv    , U complex_minv    ,
-            Complex, Complex, "complex_minv", COMPLEX_MINV)) ;
-        OK (GxB_UnaryOp_new (&Complex_conj    , U complex_conj    ,
-            Complex, Complex, "complex_conj", COMPLEX_CONJ)) ;
+        OK (GxB_UnaryOp_new (&Complex_one     , U mycx_one     , Complex, Complex, "mycx_one"     , MYCX_ONE)) ;
+        OK (GxB_UnaryOp_new (&Complex_identity, U mycx_identity, Complex, Complex, "mycx_identity", MYCX_IDENTITY)) ;
+        OK (GxB_UnaryOp_new (&Complex_ainv    , U mycx_ainv    , Complex, Complex, "mycx_ainv"    , MYCX_AINV)) ;
+        OK (GxB_UnaryOp_new (&Complex_minv    , U mycx_minv    , Complex, Complex, "mycx_minv"    , MYCX_MINV)) ;
+        OK (GxB_UnaryOp_new (&Complex_conj    , U mycx_conj    , Complex, Complex, "mycx_conj"    , MYCX_CONJ)) ;
     }
 
     // these are not built-in
-    OK (GxB_UnaryOp_new (&Complex_abs     , U complex_abs     ,
-        Complex, Complex, "complex_abs", COMPLEX_ABS)) ;
-    OK (GxB_UnaryOp_new (&Complex_not     , U complex_not     ,
-        Complex, Complex, "complex_not", COMPLEX_NOT)) ;
+    if (builtin_complex)
+    {
+        OK (GxB_UnaryOp_new (&Complex_abs     , U fx64_abs     , Complex, Complex, "fx64_abs"     , FX64_ABS)) ;
+        OK (GxB_UnaryOp_new (&Complex_not     , U fx64_not     , Complex, Complex, "fx64_not"     , FX64_NOT)) ;
+    }
+    else
+    {
+        OK (GxB_UnaryOp_new (&Complex_abs     , U mycx_abs     , Complex, Complex, "mycx_abs"     , MYCX_ABS)) ;
+        OK (GxB_UnaryOp_new (&Complex_not     , U mycx_not     , Complex, Complex, "mycx_not"     , MYCX_NOT)) ;
+    }
 
     //--------------------------------------------------------------------------
     // create the unary functions, Complex -> double
@@ -881,14 +1219,10 @@ GrB_Info Complex_init (bool builtin_complex)
     else
     {
         // create user-defined versions
-        OK (GxB_UnaryOp_new (&Complex_real  , U complex_real  ,
-            GrB_FP64, Complex, "complex_real", COMPLEX_REAL)) ;
-        OK (GxB_UnaryOp_new (&Complex_imag  , U complex_imag  ,
-            GrB_FP64, Complex, "complex_imag", COMPLEX_IMAG)) ;
-        OK (GxB_UnaryOp_new (&Complex_cabs  , U complex_cabs  ,
-            GrB_FP64, Complex, "complex_cabs", COMPLEX_CABS)) ;
-        OK (GxB_UnaryOp_new (&Complex_angle , U complex_angle ,
-            GrB_FP64, Complex, "complex_angle", COMPLEX_ANGLE)) ;
+        OK (GxB_UnaryOp_new (&Complex_real    , U mycx_real    ,GrB_FP64, Complex, "mycx_real"    , MYCX_REAL)) ;
+        OK (GxB_UnaryOp_new (&Complex_imag    , U mycx_imag    ,GrB_FP64, Complex, "mycx_imag"    , MYCX_IMAG)) ;
+        OK (GxB_UnaryOp_new (&Complex_cabs    , U mycx_cabs    ,GrB_FP64, Complex, "mycx_cabs"    , MYCX_CABS)) ;
+        OK (GxB_UnaryOp_new (&Complex_angle   , U mycx_angle   ,GrB_FP64, Complex, "mycx_angle"   , MYCX_ANGLE)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -896,10 +1230,16 @@ GrB_Info Complex_init (bool builtin_complex)
     //--------------------------------------------------------------------------
 
     // these are not built-in
-    OK (GxB_UnaryOp_new (&Complex_complex_real, U complex_complex_real,
-        Complex, GrB_FP64, "complex_complex_real", COMPLEX_COMPLEX_REAL)) ;
-    OK (GxB_UnaryOp_new (&Complex_complex_imag, U complex_complex_imag,
-        Complex, GrB_FP64, "complex_complex_imag", COMPLEX_COMPLEX_IMAG)) ;
+    if (builtin_complex)
+    {
+        OK (GxB_UnaryOp_new (&Complex_complex_real, U fx64_cmplx_real, Complex, GrB_FP64, "fx64_cmplx_real", FX64_CMPLX_REAL)) ;
+        OK (GxB_UnaryOp_new (&Complex_complex_imag, U fx64_cmplx_imag, Complex, GrB_FP64, "fx64_cmplx_imag", FX64_CMPLX_IMAG)) ;
+    }
+    else
+    {
+        OK (GxB_UnaryOp_new (&Complex_complex_real, U mycx_cmplx_real, Complex, GrB_FP64, "mycx_cmplx_real", MYCX_CMPLX_REAL)) ;
+        OK (GxB_UnaryOp_new (&Complex_complex_imag, U mycx_cmplx_imag, Complex, GrB_FP64, "mycx_cmplx_imag", MYCX_CMPLX_IMAG)) ;
+    }
 
     //--------------------------------------------------------------------------
     // create the Complex monoids
@@ -914,10 +1254,13 @@ GrB_Info Complex_init (bool builtin_complex)
     else
     {
         // create user-defined versions
-        GxB_FC64_t C_1 = GxB_CMPLX (1,0) ;
-        GxB_FC64_t C_0 = GxB_CMPLX (0,0) ;
-        OK (GrB_Monoid_new_UDT (&Complex_plus_monoid,  Complex_plus,  &C_0)) ;
-        OK (GrB_Monoid_new_UDT (&Complex_times_monoid, Complex_times, &C_1)) ;
+        mycx one, zero ;
+        one.re = 1 ;
+        one.im = 0 ;
+        zero.re = 0 ;
+        zero.im = 0 ;
+        OK (GrB_Monoid_new_UDT (&Complex_plus_monoid,  Complex_plus,  (void *) &zero)) ;
+        OK (GrB_Monoid_new_UDT (&Complex_times_monoid, Complex_times, (void *) &one)) ;
     }
 
     //----------------------------------------------------------------------
@@ -932,8 +1275,7 @@ GrB_Info Complex_init (bool builtin_complex)
     else
     {
         // more could be created, but this suffices for testing GraphBLAS
-        OK (GrB_Semiring_new (&Complex_plus_times, Complex_plus_monoid,
-            Complex_times)) ;
+        OK (GrB_Semiring_new (&Complex_plus_times, Complex_plus_monoid, Complex_times)) ;
     }
 
     return (GrB_SUCCESS) ;
