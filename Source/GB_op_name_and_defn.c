@@ -48,7 +48,7 @@ GrB_Info GB_op_name_and_defn
     // get the name of the operator
     //--------------------------------------------------------------------------
 
-    // FIXME: this can get a mangled name; see the BF methods in LAGraph
+    // note: this can get a mangled name; see the BF methods in LAGraph
 
     memset (op_name, 0, GxB_MAX_NAME_LEN) ;
     if (!user_op)

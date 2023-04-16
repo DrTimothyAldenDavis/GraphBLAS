@@ -241,7 +241,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
             #define GB_C_TYPE int64_t
             #undef  GB_Z_TYPE
             #define GB_Z_TYPE int64_t
-            // FIXME: rename GB_Z_SIZE?
+            // future:: rename GB_C_SIZE to GB_Z_SIZE
             #undef  GB_C_SIZE
             #define GB_C_SIZE (sizeof (int64_t))
             ASSERT (C->type == GrB_INT64) ;

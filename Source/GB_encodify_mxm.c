@@ -17,7 +17,7 @@ uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
                                 // except for the suffix
     char **suffix,              // suffix for user-defined kernel
     // input:
-    const int kcode,            // kernel to encode (dot3, saxpy3, etc)
+    const GB_jit_kcode kcode,   // kernel to encode
     const bool C_iso,
     const bool C_in_iso,
     const int C_sparsity,

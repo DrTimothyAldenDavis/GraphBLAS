@@ -17,7 +17,7 @@ uint64_t GB_encodify_apply      // encode an apply problem
                                 // except for the suffix
     char **suffix,              // suffix for user-defined kernel
     // input:
-    const int kcode,            // kernel to encode
+    const GB_jit_kcode kcode,   // kernel to encode
     const int C_sparsity,
     const bool C_is_matrix,     // true for C=op(A), false for Cx=op(A)
     const GrB_Type ctype,

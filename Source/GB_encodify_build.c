@@ -17,7 +17,7 @@ uint64_t GB_encodify_build      // encode an build problem
                                 // except for the suffix
     char **suffix,              // suffix for user-defined kernel
     // input:
-    const int kcode,            // kernel to encode
+    const GB_jit_kcode kcode,   // kernel to encode
     const GrB_BinaryOp dup,     // operator for summing up duplicates
     const GrB_Type ttype,       // type of Tx array
     const GrB_Type stype        // type of Sx array

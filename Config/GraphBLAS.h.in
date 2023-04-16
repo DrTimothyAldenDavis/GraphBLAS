@@ -57,15 +57,15 @@
 #include <stdarg.h>
 
 //==============================================================================
-// renaming for use in R2021a or later
+// renaming for use in MATLAB R2021a or later
 //==============================================================================
 
 #define GB_CAT2(x,y) x ## y
 #define GB_EVAL2(x,y) GB_CAT2 (x,y)
 
 #if defined ( GBMATLAB ) && !defined ( GB_JIT_RUNTIME )
-    // All symbols must be renamed for the @GrB interface when using R2021a and
-    // following, since those versions include an earlier version of
+    // All symbols must be renamed for the @GrB interface when using MATLAB
+    // R2021a and following, since those versions include an earlier version of
     // SuiteSparse:GraphBLAS.  The renaming does not need to occur for the JIT
     // kernels, however.  Those can be shared between MATLAB and non-MATLAB
     // applications.
@@ -4069,8 +4069,9 @@ typedef enum            // for global options or matrix options
     GxB_JIT_C_COMPILER_NAME = 110,  // CPU JIT C compiler name
     GxB_JIT_C_COMPILER_FLAGS = 111, // CPU JIT C compiler flags
     GxB_JIT_C_LINKER_FLAGS = 112,   // CPU JIT C linker flags
-    GxB_JIT_CACHE_PATH = 113,       // CPU/CUDA JIT path for compiled kernels
-    GxB_JIT_C_CONTROL = 115,        // CPU JIT control
+    GxB_JIT_C_LIBRARIES = 113,      // CPU JIT C libraries
+    GxB_JIT_C_CONTROL = 114,        // CPU JIT control
+    GxB_JIT_CACHE_PATH = 115,       // CPU/CUDA JIT path for compiled kernels
 //  GxB_JIT_CUDA_CONTROL = 116,     // CUDA JIT control (future)
 
     //------------------------------------------------------------

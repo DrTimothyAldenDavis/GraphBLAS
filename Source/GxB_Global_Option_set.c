@@ -250,6 +250,10 @@ GrB_Info GxB_Global_Option_set_CHAR      // set a global default option
 
             return (GB_jitifyer_set_C_link_flags (value)) ;
 
+        case GxB_JIT_C_LIBRARIES : 
+
+            return (GB_jitifyer_set_C_libraries (value)) ;
+
         case GxB_JIT_CACHE_PATH : 
 
             return (GB_jitifyer_set_cache_path (value)) ;
@@ -469,16 +473,6 @@ GrB_Info GxB_Global_Option_set      // set a global default option
         // JIT configuruation
         //----------------------------------------------------------------------
 
-        case GxB_JIT_C_CONTROL : 
-
-            {
-                va_start (ap, field) ;
-                int value = va_arg (ap, int) ;
-                va_end (ap) ;
-                GB_jitifyer_set_control (value) ;
-            }
-            break ;
-
         case GxB_JIT_C_COMPILER_NAME : 
 
             {
@@ -505,6 +499,25 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 va_end (ap) ;
                 return (GB_jitifyer_set_C_link_flags (C_link)) ;
             }
+
+        case GxB_JIT_C_LIBRARIES : 
+
+            {
+                va_start (ap, field) ;
+                char *C_libraries = va_arg (ap, char *) ;
+                va_end (ap) ;
+                return (GB_jitifyer_set_C_libraries (C_libraries)) ;
+            }
+
+        case GxB_JIT_C_CONTROL : 
+
+            {
+                va_start (ap, field) ;
+                int value = va_arg (ap, int) ;
+                va_end (ap) ;
+                GB_jitifyer_set_control (value) ;
+            }
+            break ;
 
         case GxB_JIT_CACHE_PATH : 
 

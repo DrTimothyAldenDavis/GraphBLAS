@@ -102,7 +102,7 @@
 
     int64_t cnvals = C->nvals ;     // for C bitmap
 
-    // FIXME: divide this Templates into sub-Templates (Mask_struct, etc)
+    // future:: divide this Templates into sub-Templates (Mask_struct, etc)
     if (Mask_struct)
     {
 

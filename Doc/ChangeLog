@@ -8,6 +8,11 @@ Version 8.0.0 (DRAFT)
         can compile kernels at run time.  Added GxB_set/get options and
         environment variables to control the JIT.  The GxB_*Op_new methods can
         accept NULL function pointers, if the strings are provided and valid.
+    * GxB_Type_new: the size of the type can be given as zero,
+        in which case the size is determined via a JIT kernel.
+    * GxB_UnaryOp_new, GxB_BinaryOp_new, and GxB_IndexUnaryOp_new: the function
+        pointer can be given as NULL, in which case the function is created by
+        the JIT.
     * math kernels: revised for CUDA JIT.  More accurate complex
         floating-point for Mac OS on Apple Silicon.
     * Demo/wildtype_demo: change to double so that CPU and GPU versions compute

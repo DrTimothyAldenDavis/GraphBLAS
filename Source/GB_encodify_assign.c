@@ -17,7 +17,7 @@ uint64_t GB_encodify_assign     // encode an assign problem
                                 // except for the suffix
     char **suffix,              // suffix for user-defined kernel
     // input:
-    const int kcode,            // kernel to encode (add, emult, rowscale, ...)
+    const GB_jit_kcode kcode,   // kernel to encode
     // C matrix:
     GrB_Matrix C,
     bool C_replace,

@@ -188,16 +188,21 @@ int main (void)
     printf ("Gauss demo.  Note that all transposes are array transposes,\n"
         "not matrix (conjugate) transposes.\n\n") ;
 
+//  try changing the cache path
+//  TRY (GxB_set (GxB_JIT_CACHE_PATH, "/home/davis/mycache")) ;
+
     TRY (GxB_print (GxB_CONTEXT_WORLD, 3)) ;
-    char *compiler, *cache, *src, *flags, *link ;
+    char *compiler, *cache, *src, *flags, *link, *libraries ;
     TRY (GxB_get (GxB_JIT_C_COMPILER_NAME, &compiler)) ;
     TRY (GxB_get (GxB_JIT_C_COMPILER_FLAGS, &flags)) ;
     TRY (GxB_get (GxB_JIT_C_LINKER_FLAGS, &link)) ;
+    TRY (GxB_get (GxB_JIT_C_LIBRARIES, &libraries)) ;
     TRY (GxB_get (GxB_JIT_CACHE_PATH, &cache)) ;
     printf ("JIT configuration: ------------------\n") ;
     printf ("JIT C compiler:   [%s]\n", compiler) ;
     printf ("JIT C flags:      [%s]\n", flags) ;
     printf ("JIT C link flags: [%s]\n", link) ;
+    printf ("JIT C libraries:  [%s]\n", libraries) ;
     printf ("JIT cache:        [%s]\n", cache) ;
     printf ("-------------------------------------\n\n") ;
 

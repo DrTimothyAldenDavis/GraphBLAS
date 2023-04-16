@@ -119,7 +119,7 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
                                 // except for the suffix
     char **suffix,              // suffix for user-defined kernel
     // input:
-    const int kcode,            // kernel to encode (add, emult, rowscale, ...)
+    const GB_jit_kcode kcode,   // kernel to encode
     const bool is_eWiseMult,    // if true, method is emult
     const bool C_iso,
     const bool C_in_iso,
@@ -384,7 +384,7 @@ uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
                                 // except for the suffix
     char **suffix,              // suffix for user-defined kernel
     // input:
-    const int kcode,            // kernel to encode (dot3, saxpy3, etc)
+    const GB_jit_kcode kcode,   // kernel to encode
     const bool C_iso,
     const bool C_in_iso,
     const int C_sparsity,
@@ -400,7 +400,7 @@ uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
 
 void GB_enumify_mxm         // enumerate a GrB_mxm problem
 (
-    // output:              // future: may need to become 2 x uint64
+    // output:              // future:: may need to become 2 x uint64
     uint64_t *scode,        // unique encoding of the entire semiring
     // input:
     // C matrix:
@@ -969,7 +969,7 @@ uint64_t GB_encodify_apply      // encode an apply problem
                                 // except for the suffix
     char **suffix,              // suffix for user-defined kernel
     // input:
-    const int kcode,            // kernel to encode
+    const GB_jit_kcode kcode,   // kernel to encode
     const int C_sparsity,
     const bool C_is_matrix,     // true for C=op(A), false for Cx=op(A)
     const GrB_Type ctype,
@@ -1159,7 +1159,7 @@ uint64_t GB_encodify_build      // encode an build problem
                                 // except for the suffix
     char **suffix,              // suffix for user-defined kernel
     // input:
-    const int kcode,            // kernel to encode
+    const GB_jit_kcode kcode,   // kernel to encode
     const GrB_BinaryOp dup,     // operator for summing up duplicates
     const GrB_Type ttype,       // type of Tx array
     const GrB_Type stype        // type of Sx array
@@ -1216,7 +1216,7 @@ uint64_t GB_encodify_select     // encode an select problem
                                 // except for the suffix
     char **suffix,              // suffix for user-defined kernel
     // input:
-    const int kcode,            // kernel to encode
+    const GB_jit_kcode kcode,   // kernel to encode
     const bool C_iso,
     const bool in_place_A,
     const GrB_IndexUnaryOp op,
@@ -1345,7 +1345,7 @@ uint64_t GB_encodify_assign     // encode an assign problem
                                 // except for the suffix
     char **suffix,              // suffix for user-defined kernel
     // input:
-    const int kcode,            // kernel to encode (add, emult, rowscale, ...)
+    const GB_jit_kcode kcode,   // kernel to encode
     // C matrix:
     GrB_Matrix C,
     bool C_replace,

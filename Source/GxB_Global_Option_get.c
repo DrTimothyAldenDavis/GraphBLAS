@@ -314,6 +314,11 @@ GrB_Info GxB_Global_Option_get_CHAR     // gets the current global option
             (*value) = GB_jitifyer_get_C_link_flags ( ) ;
             break ;
 
+        case GxB_JIT_C_LIBRARIES : 
+
+            (*value) = GB_jitifyer_get_C_libraries ( ) ;
+            break ;
+
         case GxB_JIT_CACHE_PATH : 
 
             (*value) = GB_jitifyer_get_cache_path ( ) ;
@@ -819,17 +824,6 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
         // JIT configuruation
         //----------------------------------------------------------------------
 
-        case GxB_JIT_C_CONTROL : 
-
-            {
-                va_start (ap, field) ;
-                int *control = va_arg (ap, int *) ;
-                va_end (ap) ;
-                GB_RETURN_IF_NULL (control) ;
-                (*control) = (int) GB_jitifyer_get_control ( ) ;
-            }
-            break ;
-
         case GxB_JIT_C_COMPILER_NAME : 
 
             {
@@ -860,6 +854,28 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (linker_flags) ;
                 (*linker_flags) = GB_jitifyer_get_C_link_flags ( ) ;
+            }
+            break ;
+
+        case GxB_JIT_C_LIBRARIES : 
+
+            {
+                va_start (ap, field) ;
+                const char **libraries = va_arg (ap, const char **) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (libraries) ;
+                (*libraries) = GB_jitifyer_get_C_libraries ( ) ;
+            }
+            break ;
+
+        case GxB_JIT_C_CONTROL : 
+
+            {
+                va_start (ap, field) ;
+                int *control = va_arg (ap, int *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (control) ;
+                (*control) = (int) GB_jitifyer_get_control ( ) ;
             }
             break ;
 

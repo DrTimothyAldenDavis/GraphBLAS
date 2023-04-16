@@ -304,7 +304,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
         // semiring is PLUS_TIMES_FP32 or PLUS_TIMES_FP64
         //----------------------------------------------------------------------
 
-        // FIXME: try this on other semirings...
+        // future:: try AVX acceleration on more semirings
         fprintf (fp, "#define GB_SEMIRING_HAS_AVX_IMPLEMENTATION 1\n") ;
     }
 

@@ -150,7 +150,7 @@
                 }
 
                 // handles both C bitmap and C full, using macros defined above
-                // FIXME: make this a template when this method is split.
+                // FIXME: make this a template
                 switch (np)
                 {
 

@@ -74,7 +74,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
     GB_Opcode opcode = op->opcode ;
 
     // positional operators and idxunop are applied after the transpose
-    // FIXME: extend this method to handle positional and idxunop operators
+    // future:: extend this method to handle positional and idxunop operators
     ASSERT (!GB_OPCODE_IS_POSITIONAL (opcode)) ;
     ASSERT (!GB_IS_INDEXUNARYOP_CODE (opcode)) ;
 

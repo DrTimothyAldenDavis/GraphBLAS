@@ -25,10 +25,11 @@
 #include <errno.h>
 #else
 // FIXME: for testing; force a compiler error if the code attempts to use
-// dlopen, dlclose, or dlsym.
+// dlopen, dlclose, dlsym, or mkdir (need to port to Windows)
 #define dlopen garbage_dlopen
 #define dlclose garbage_dlclose
 #define dlsym garbage_dlsym
+#define mkdir garbage_mkdir
 #endif
 
 typedef GB_JIT_KERNEL_USER_OP_PROTO ((*GB_user_op_f)) ;
@@ -64,6 +65,9 @@ static size_t   GB_jit_C_flags_allocated = 0 ;
 
 static char    *GB_jit_C_link_flags = NULL ;
 static size_t   GB_jit_C_link_flags_allocated = 0 ;
+
+static char    *GB_jit_C_libraries = NULL ;
+static size_t   GB_jit_C_libraries_allocated = 0 ;
 
 static char    *GB_jit_library_name = NULL ;
 static size_t   GB_jit_library_name_allocated = 0 ;
@@ -121,6 +125,7 @@ void GB_jitifyer_finalize (bool freeall)
     GB_FREE_STUFF (GB_jit_C_compiler) ;
     GB_FREE_STUFF (GB_jit_C_flags) ;
     GB_FREE_STUFF (GB_jit_C_link_flags) ;
+    GB_FREE_STUFF (GB_jit_C_libraries) ;
     GB_FREE_STUFF (GB_jit_library_name) ;
     GB_FREE_STUFF (GB_jit_kernel_name) ;
     GB_FREE_STUFF (GB_jit_command) ;
@@ -131,6 +136,7 @@ void GB_jitifyer_finalize (bool freeall)
     ASSERT (GB_jit_C_compiler == NULL) ;
     ASSERT (GB_jit_C_flags == NULL) ;
     ASSERT (GB_jit_C_link_flags == NULL) ;
+    ASSERT (GB_jit_C_libraries == NULL) ;
     ASSERT (GB_jit_library_name == NULL) ;
     ASSERT (GB_jit_kernel_name == NULL) ;
     ASSERT (GB_jit_command == NULL) ;
@@ -164,6 +170,7 @@ GrB_Info GB_jitifyer_init (void)
     ASSERT (GB_jit_C_compiler == NULL) ;
     ASSERT (GB_jit_C_flags == NULL) ;
     ASSERT (GB_jit_C_link_flags == NULL) ;
+    ASSERT (GB_jit_C_libraries == NULL) ;
     ASSERT (GB_jit_library_name == NULL) ;
     ASSERT (GB_jit_kernel_name == NULL) ;
     ASSERT (GB_jit_command == NULL) ;
@@ -204,35 +211,10 @@ GrB_Info GB_jitifyer_init (void)
     }
 
     //--------------------------------------------------------------------------
-    // find the GB_jit_src_path
+    // establish the cache path and src path, and make sure they exist
     //--------------------------------------------------------------------------
 
-    if (GB_jit_cache_path != NULL)
-    {
-        size_t len = GB_jit_cache_path_allocated + 12 ;
-        GB_MALLOC_STUFF (GB_jit_src_path, len) ;
-        snprintf (GB_jit_src_path, GB_jit_src_path_allocated, "%s/src",
-            GB_jit_cache_path) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // make sure the cache and source paths exist
-    //--------------------------------------------------------------------------
-
-    GrB_Info info1 = GB_jitifyer_mkdir (GB_jit_cache_path) ;
-    GrB_Info info2 = GB_jitifyer_mkdir (GB_jit_src_path) ;
-
-    if (info1 != GrB_SUCCESS || info2 != GrB_SUCCESS)
-    { 
-        // JIT is disabled, or cannot determine the JIT cache and/or source
-        // path.  Disable loading and compiling, but continue with the rest of
-        // the initializations.  The PreJIT could still be used.
-        GB_jit_control = GxB_JIT_RUN ;
-        GB_FREE_STUFF (GB_jit_cache_path) ;
-        GB_FREE_STUFF (GB_jit_src_path) ;
-        GB_COPY_STUFF (GB_jit_cache_path, "") ;
-        GB_COPY_STUFF (GB_jit_src_path, "") ;
-    }
+    OK (GB_jitifyer_establish_paths ( ) == GrB_SUCCESS) ;
 
     //--------------------------------------------------------------------------
     // initialize the remaining strings
@@ -241,6 +223,7 @@ GrB_Info GB_jitifyer_init (void)
     GB_COPY_STUFF (GB_jit_C_compiler,   GB_C_COMPILER) ;
     GB_COPY_STUFF (GB_jit_C_flags,      GB_C_FLAGS) ;
     GB_COPY_STUFF (GB_jit_C_link_flags, GB_C_LINK_FLAGS) ;
+    GB_COPY_STUFF (GB_jit_C_libraries,  GB_C_LIBRARIES) ;
 
     //--------------------------------------------------------------------------
     // allocate permanent workspace
@@ -313,7 +296,7 @@ GrB_Info GB_jitifyer_init (void)
 
         #define IS(kernel) GB_STRING_MATCH (kname, kernel)
 
-        int c = 0 ;
+        GB_jit_kcode c = 0 ;
         if      (IS ("add"          )) c = GB_JIT_KERNEL_ADD ;
         else if (IS ("apply_bind1st")) c = GB_JIT_KERNEL_APPLYBIND1 ;
         else if (IS ("apply_bind2nd")) c = GB_JIT_KERNEL_APPLYBIND2 ;
@@ -426,6 +409,48 @@ GrB_Info GB_jitifyer_init (void)
     //--------------------------------------------------------------------------
 
     return (GB_jitifyer_extract_JITpackage ( )) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_establist_paths: make sure cache and src paths exist
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_establish_paths (void)
+{
+
+    //--------------------------------------------------------------------------
+    // find the GB_jit_src_path
+    //--------------------------------------------------------------------------
+
+    GB_FREE_STUFF (GB_jit_src_path) ;
+    if (GB_jit_cache_path != NULL)
+    {
+        size_t len = GB_jit_cache_path_allocated + 12 ;
+        GB_MALLOC_STUFF (GB_jit_src_path, len) ;
+        snprintf (GB_jit_src_path, GB_jit_src_path_allocated, "%s/src",
+            GB_jit_cache_path) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // make sure the cache and source paths exist
+    //--------------------------------------------------------------------------
+
+    GrB_Info info1 = GB_jitifyer_mkdir (GB_jit_cache_path) ;
+    GrB_Info info2 = GB_jitifyer_mkdir (GB_jit_src_path) ;
+    if (info1 != GrB_SUCCESS || info2 != GrB_SUCCESS)
+    { 
+        // JIT is disabled, or cannot determine the JIT cache and/or source
+        // path.  Disable loading and compiling, but continue with the rest of
+        // the initializations.  The PreJIT could still be used.
+        GBURBLE ("(jit: unable to access cache path, jit disabled) ") ;
+        GB_jit_control = GxB_JIT_RUN ;
+        GB_FREE_STUFF (GB_jit_cache_path) ;
+        GB_FREE_STUFF (GB_jit_src_path) ;
+        GB_COPY_STUFF (GB_jit_cache_path, "") ;
+        GB_COPY_STUFF (GB_jit_src_path, "") ;
+    }
+
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------
@@ -650,6 +675,7 @@ GrB_Info GB_jitifyer_alloc_space (void)
 
     if (GB_jit_C_flags == NULL ||
         GB_jit_C_link_flags == NULL ||
+        GB_jit_C_libraries == NULL ||
         GB_jit_cache_path == NULL ||
         GB_jit_src_path == NULL)
     { 
@@ -689,7 +715,7 @@ GrB_Info GB_jitifyer_alloc_space (void)
             GB_jit_src_path_allocated +
             strlen (GB_OMP_INC) +
             4 * GB_jit_cache_path_allocated + 5 * GB_KLEN +
-            strlen (GB_LIBRARIES) +
+            GB_jit_C_libraries_allocated +
             300 ;
         GB_MALLOC_STUFF (GB_jit_command, len) ;
     }
@@ -762,10 +788,22 @@ GrB_Info GB_jitifyer_set_cache_path_worker (const char *new_cache_path)
     GB_COPY_STUFF (GB_jit_cache_path, new_cache_path) ;
 
     //--------------------------------------------------------------------------
+    // set the src path and make sure cache and src paths are accessible
+    //--------------------------------------------------------------------------
+
+    OK (GB_jitifyer_establish_paths ( ) == GrB_SUCCESS) ;
+
+    //--------------------------------------------------------------------------
     // allocate and define strings that depend on GB_jit_cache_path
     //--------------------------------------------------------------------------
 
-    return (GB_jitifyer_alloc_space ( )) ;
+    OK (GB_jitifyer_alloc_space ( ) == GrB_SUCCESS) ;
+
+    //--------------------------------------------------------------------------
+    // uncompress all the source files into the user source folder
+    //--------------------------------------------------------------------------
+
+    return (GB_jitifyer_extract_JITpackage ( )) ;
 }
 
 //------------------------------------------------------------------------------
@@ -970,6 +1008,75 @@ GrB_Info GB_jitifyer_set_C_link_flags_worker (const char *new_C_link_flags)
 
     //--------------------------------------------------------------------------
     // allocate and define strings that depend on GB_jit_C_link_flags
+    //--------------------------------------------------------------------------
+
+    return (GB_jitifyer_alloc_space ( )) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_get_C_libraries: return the current C libraries
+//------------------------------------------------------------------------------
+
+const char *GB_jitifyer_get_C_libraries (void)
+{
+    const char *s ;
+    #pragma omp critical (GB_jitifyer_worker)
+    {
+        s = GB_jit_C_libraries ;
+    }
+    return (s) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_C_libraries: set new C libraries
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_set_C_libraries (const char *new_C_libraries)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    if (new_C_libraries == NULL)
+    {
+        return (GrB_NULL_POINTER) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // set the C libraries in a critical section
+    //--------------------------------------------------------------------------
+
+    GrB_Info info ;
+    #pragma omp critical (GB_jitifyer_worker)
+    { 
+        info = GB_jitifyer_set_C_libraries_worker (new_C_libraries) ;
+    }
+    return (info) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_C_libraries_worker: set C libraries in a critical section
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_set_C_libraries_worker (const char *new_C_libraries)
+{
+
+    //--------------------------------------------------------------------------
+    // free the old strings that depend on the C flags
+    //--------------------------------------------------------------------------
+
+    GB_FREE_STUFF (GB_jit_C_libraries) ;
+    GB_FREE_STUFF (GB_jit_command) ;
+
+    //--------------------------------------------------------------------------
+    // allocate the new GB_jit_C_libraries
+    //--------------------------------------------------------------------------
+
+    GB_COPY_STUFF (GB_jit_C_libraries, new_C_libraries) ;
+
+    //--------------------------------------------------------------------------
+    // allocate and define strings that depend on GB_jit_C_libraries
     //--------------------------------------------------------------------------
 
     return (GB_jitifyer_alloc_space ( )) ;
@@ -1834,8 +1941,7 @@ int GB_jitifyer_compile (char *kernel_name)
     GB_jit_C_link_flags,            // C link flags
     GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX,  // lib*.so output file
     GB_jit_cache_path, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
-    // FIXME: allow GB_LIBRARIES to be modified
-    GB_LIBRARIES) ;                 // libraries to link with
+    GB_jit_C_libraries) ;           // libraries to link with
 
     GBURBLE ("(jit compile: %s) ", GB_jit_command) ;
 

@@ -17,7 +17,7 @@ uint64_t GB_encodify_select     // encode an select problem
                                 // except for the suffix
     char **suffix,              // suffix for user-defined kernel
     // input:
-    const int kcode,            // kernel to encode
+    const GB_jit_kcode kcode,   // kernel to encode
     const bool C_iso,
     const bool in_place_A,
     const GrB_IndexUnaryOp op,

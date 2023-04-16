@@ -26,146 +26,152 @@ void GB_prejit
 ) ;
 
 //------------------------------------------------------------------------------
-// list of jitifyed kernels
+// list of jitifyed kernel families
 //------------------------------------------------------------------------------
-
-// kernel families
 
 typedef enum
 {
-    GB_jit_apply_family     = 0,
-    GB_jit_assign_family    = 1,
-    GB_jit_build_family     = 2,
-    GB_jit_ewise_family     = 3,
-    GB_jit_mxm_family       = 4,
-    GB_jit_reduce_family    = 5,
-    GB_jit_select_family    = 6,
-    GB_jit_user_op_family   = 7,
-    GB_jit_user_type_family = 8
+    GB_jit_reduce_family    = 1,    // kcode 1
+    GB_jit_mxm_family       = 2,    // kcodes 2 to 9
+    GB_jit_ewise_family     = 3,    // kcodes 10 to 24
+    GB_jit_apply_family     = 4,    // kcodes 25 to 33
+    GB_jit_build_family     = 5,    // kcode 34
+    GB_jit_select_family    = 6,    // kcodes 35 to 37
+    GB_jit_user_op_family   = 7,    // kcode 38
+    GB_jit_user_type_family = 8,    // kcode 39
+    GB_jit_assign_family    = 9,    // kcodes 40 to 44 (future:: to 78)
 }
 GB_jit_family ;
 
-// FIXME: make this an enum:
+//------------------------------------------------------------------------------
+// list of jitifyed kernels
+//------------------------------------------------------------------------------
 
-// reduce to scalar
-#define GB_JIT_KERNEL_REDUCE        1   /* GB_reduce_to_scalar  */
+typedef enum
+{
+    // no JIT kernel
+    GB_JIT_KERNEL_NONE          = 0,
 
-// C<M> = A*B, except for row/col scale (which are ewise methods)
-#define GB_JIT_KERNEL_AXB_DOT2      2   /* GB_AxB_dot2          */
-#define GB_JIT_KERNEL_AXB_DOT2N     3   /* GB_AxB_dot2          */
-#define GB_JIT_KERNEL_AXB_DOT3      4   /* GB_AxB_dot3          */
-#define GB_JIT_KERNEL_AXB_DOT4      5   /* GB_AxB_dot4          */
-#define GB_JIT_KERNEL_AXB_SAXBIT    6   /* GB_AxB_saxbit        */
-#define GB_JIT_KERNEL_AXB_SAXPY3    7   /* GB_AxB_saxpy3        */
-#define GB_JIT_KERNEL_AXB_SAXPY4    8   /* GB_AxB_saxpy4        */
-#define GB_JIT_KERNEL_AXB_SAXPY5    9   /* GB_AxB_saxpy5        */
+    // reduce to scalar
+    GB_JIT_KERNEL_REDUCE        = 1,  // GB_reduce_to_scalar
 
-// ewise methods:
-#define GB_JIT_KERNEL_COLSCALE      10  /* GB_colscale              */
-#define GB_JIT_KERNEL_ROWSCALE      11  /* GB_rowscale              */
-#define GB_JIT_KERNEL_ADD           12  /* GB_add_phase2            */
-#define GB_JIT_KERNEL_UNION         13  /* GB_add_phase2            */
-#define GB_JIT_KERNEL_EMULT2        14  /* GB_emult_02              */
-#define GB_JIT_KERNEL_EMULT3        15  /* GB_emult_03              */
-#define GB_JIT_KERNEL_EMULT4        16  /* GB_emult_04              */
-#define GB_JIT_KERNEL_EMULT_BITMAP  17  /* GB_emult_bitmap          */
-#define GB_JIT_KERNEL_EMULT8        18  /* GB_emult_08_phase2       */
-#define GB_JIT_KERNEL_EWISEFA       19  /* GB_ewise_fulla      */
-#define GB_JIT_KERNEL_EWISEFN       20  /* GB_ewise_fulln    */
-#define GB_JIT_KERNEL_APPLYBIND1    21  /* GB_apply_op              */
-#define GB_JIT_KERNEL_APPLYBIND2    22  /* GB_apply_op              */
-#define GB_JIT_KERNEL_TRANSBIND1    23  /* GB_transpose_op          */
-#define GB_JIT_KERNEL_TRANSBIND2    24  /* GB_transpose_op          */
+    // C<M> = A*B, except for row/col scale (which are ewise methods)
+    GB_JIT_KERNEL_AXB_DOT2      = 2,  // GB_AxB_dot2
+    GB_JIT_KERNEL_AXB_DOT2N     = 3,  // GB_AxB_dot2
+    GB_JIT_KERNEL_AXB_DOT3      = 4,  // GB_AxB_dot3
+    GB_JIT_KERNEL_AXB_DOT4      = 5,  // GB_AxB_dot4
+    GB_JIT_KERNEL_AXB_SAXBIT    = 6,  // GB_AxB_saxbit
+    GB_JIT_KERNEL_AXB_SAXPY3    = 7,  // GB_AxB_saxpy3
+    GB_JIT_KERNEL_AXB_SAXPY4    = 8,  // GB_AxB_saxpy4
+    GB_JIT_KERNEL_AXB_SAXPY5    = 9,  // GB_AxB_saxpy5
 
-// apply (unary and idxunary op) methods:
-#define GB_JIT_KERNEL_APPLYUNOP     25  /* GB_apply_op, GB_cast_array       */
-#define GB_JIT_KERNEL_TRANSUNOP     26  /* GB_transpose_op, GB_transpose_ix */
-#define GB_JIT_KERNEL_CONVERTS2B    101
-#define GB_JIT_KERNEL_CONCAT_SPARSE 102
-#define GB_JIT_KERNEL_CONCAT_FULL   103
-#define GB_JIT_KERNEL_CONCAT_BITMAP 104
-#define GB_JIT_KERNEL_SPLIT_SPARSE  105
-#define GB_JIT_KERNEL_SPLIT_FULL    106
-#define GB_JIT_KERNEL_SPLIT_BITMAP  107
+    // ewise methods:
+    GB_JIT_KERNEL_COLSCALE      = 10, // GB_colscale
+    GB_JIT_KERNEL_ROWSCALE      = 11, // GB_rowscale
+    GB_JIT_KERNEL_ADD           = 12, // GB_add_phase2
+    GB_JIT_KERNEL_UNION         = 13, // GB_add_phase2
+    GB_JIT_KERNEL_EMULT2        = 14, // GB_emult_02
+    GB_JIT_KERNEL_EMULT3        = 15, // GB_emult_03
+    GB_JIT_KERNEL_EMULT4        = 16, // GB_emult_04
+    GB_JIT_KERNEL_EMULT_BITMAP  = 17, // GB_emult_bitmap
+    GB_JIT_KERNEL_EMULT8        = 18, // GB_emult_08_phase2
+    GB_JIT_KERNEL_EWISEFA       = 19, // GB_ewise_fulla
+    GB_JIT_KERNEL_EWISEFN       = 20, // GB_ewise_fulln
+    GB_JIT_KERNEL_APPLYBIND1    = 21, // GB_apply_op, bind1st
+    GB_JIT_KERNEL_APPLYBIND2    = 22, // GB_apply_op, bind2nd
+    GB_JIT_KERNEL_TRANSBIND1    = 23, // GB_transpose_op, bind1st
+    GB_JIT_KERNEL_TRANSBIND2    = 24, // GB_transpose_op, bind2nd
 
-// build method:
-#define GB_JIT_KERNEL_BUILD         27  /* GB_builder               */
+    // apply (unary and idxunary op) methods:
+    GB_JIT_KERNEL_APPLYUNOP     = 25, // GB_apply_op, GB_cast_array
+    GB_JIT_KERNEL_TRANSUNOP     = 26, // GB_transpose_op, GB_transpose_ix
+    GB_JIT_KERNEL_CONVERTS2B    = 27, // GB_convert_2sb
+    GB_JIT_KERNEL_CONCAT_SPARSE = 28, // GB_concat_sparse
+    GB_JIT_KERNEL_CONCAT_FULL   = 29, // GB_concat_full
+    GB_JIT_KERNEL_CONCAT_BITMAP = 30, // GB_concat_bitmap
+    GB_JIT_KERNEL_SPLIT_SPARSE  = 31, // GB_split_sparse
+    GB_JIT_KERNEL_SPLIT_FULL    = 32, // GB_split_full
+    GB_JIT_KERNEL_SPLIT_BITMAP  = 33, // GB_split_bitmap
 
-// select methods:
-#define GB_JIT_KERNEL_SELECT1       28  /* GB_select_sparse         */
-#define GB_JIT_KERNEL_SELECT2       29  /* GB_select_sparse         */
-#define GB_JIT_KERNEL_SELECT_BITMAP 30  /* GB_select_bitmap         */
+    // build method:
+    GB_JIT_KERNEL_BUILD         = 34, // GB_builder
 
-// assign/subassign methods:
-#define GB_JIT_KERNEL_SUBASSIGN_05d 36  /* GB_subassign_05d         */
-#define GB_JIT_KERNEL_SUBASSIGN_06d 37  /* GB_subassign_06d         */
-#define GB_JIT_KERNEL_SUBASSIGN_22  51  /* GB_subassign_22          */
-#define GB_JIT_KERNEL_SUBASSIGN_23  52  /* GB_subassign_23          */
-#define GB_JIT_KERNEL_SUBASSIGN_25  53  /* GB_subassign_25          */
+    // select methods:
+    GB_JIT_KERNEL_SELECT1       = 35, // GB_select_sparse
+    GB_JIT_KERNEL_SELECT2       = 36, // GB_select_sparse
+    GB_JIT_KERNEL_SELECT_BITMAP = 37, // GB_select_bitmap
 
-// user type and op
-#define GB_JIT_KERNEL_USERTYPE      98
-#define GB_JIT_KERNEL_USEROP        99
+    // user type and op
+    GB_JIT_KERNEL_USERTYPE      = 38, // GxB_Type_new
+    GB_JIT_KERNEL_USEROP        = 39, // GxB_*Op_new
 
-// assign/subassign methods: todo
-#define GB_JIT_KERNEL_SUBASSIGN_01  31  /* GB_subassign_01          */
-#define GB_JIT_KERNEL_SUBASSIGN_02  32  /* GB_subassign_02          */
-#define GB_JIT_KERNEL_SUBASSIGN_03  33  /* GB_subassign_03          */
-#define GB_JIT_KERNEL_SUBASSIGN_04  34  /* GB_subassign_04          */
-#define GB_JIT_KERNEL_SUBASSIGN_05  35  /* GB_subassign_05          */
-#define GB_JIT_KERNEL_SUBASSIGN_06n 38  /* GB_subassign_06n         */
-#define GB_JIT_KERNEL_SUBASSIGN_06s 39  /* GB_subassign_06s_and_14  */
-#define GB_JIT_KERNEL_SUBASSIGN_07  40  /* GB_subassign_07          */
-#define GB_JIT_KERNEL_SUBASSIGN_08n 41  /* GB_subassign_08n         */
-#define GB_JIT_KERNEL_SUBASSIGN_08s 42  /* GB_subassign_08s_and_16  */
-#define GB_JIT_KERNEL_SUBASSIGN_09  43  /* GB_subassign_09          */
-#define GB_JIT_KERNEL_SUBASSIGN_10  44  /* GB_subassign_10_and_18   */
-#define GB_JIT_KERNEL_SUBASSIGN_11  45  /* GB_subassign_11          */
-#define GB_JIT_KERNEL_SUBASSIGN_12  46  /* GB_subassign_12_and_20   */
-#define GB_JIT_KERNEL_SUBASSIGN_13  47  /* GB_subassign_13          */
-#define GB_JIT_KERNEL_SUBASSIGN_15  48  /* GB_subassign_15          */
-#define GB_JIT_KERNEL_SUBASSIGN_17  49  /* GB_subassign_17          */
-#define GB_JIT_KERNEL_SUBASSIGN_19  50  /* GB_subassign_19          */
+    // assign/subassign methods:
+    GB_JIT_KERNEL_SUBASSIGN_05d = 40, // GB_subassign_05d
+    GB_JIT_KERNEL_SUBASSIGN_06d = 41, // GB_subassign_06d
+    GB_JIT_KERNEL_SUBASSIGN_22  = 42, // GB_subassign_22
+    GB_JIT_KERNEL_SUBASSIGN_23  = 43, // GB_subassign_23
+    GB_JIT_KERNEL_SUBASSIGN_25  = 44, // GB_subassign_25
 
-// bitmap assign/subassign: todo
-#define GB_JIT_KERNEL_ASSIGN_BITMAP_M_ACC           54  /* GB_bitmap_assign_M_accum             */
-#define GB_JIT_KERNEL_ASSIGN_BITMAP_M_ACC_WHOLE     55  /* GB_bitmap_assign_M_accum_whole       */
-#define GB_JIT_KERNEL_ASSIGN_BITMAP_M_NOACC         56  /* GB_bitmap_assign_M_noaccum           */
-#define GB_JIT_KERNEL_ASSIGN_BITMAP_M_NOACC_WHOLE   57  /* GB_bitmap_assign_M_noaccum_whole     */
-#define GB_JIT_KERNEL_ASSIGN_BITMAP_FM_ACC          58  /* GB_bitmap_assign_fullM_accum         */
-#define GB_JIT_KERNEL_ASSIGN_BITMAP_FM_ACC_WHOLE    59  /* GB_bitmap_assign_fullM_accum_whole   */
-#define GB_JIT_KERNEL_ASSIGN_BITMAP_FM_NOACC        60  /* GB_bitmap_assign_fullM_noaccum       */
-#define GB_JIT_KERNEL_ASSIGN_BITMAP_FM_NOACC_WHOLE  61  /* GB_bitmap_assign_fullM_noaccum_whole */
-#define GB_JIT_KERNEL_ASSIGN_BITMAP_NOM_ACC         62  /* GB_bitmap_assign_noM_accum           */
-#define GB_JIT_KERNEL_ASSIGN_BITMAP_NOM_ACC_WHOLE   63  /* GB_bitmap_assign_noM_accum_whole     */
-#define GB_JIT_KERNEL_ASSIGN_BITMAP_NOM_NOACC       64  /* GB_bitmap_assign_noM_noaccum         */
-#define GB_JIT_KERNEL_ASSIGN_BITMAP_NOM_NOACC_WHOLE 65  /* GB_bitmap_assign_noM_noaccum_whole   */
-#define GB_JIT_KERNEL_ASSIGN_BITMAP_NM_ACC          66  /* GB_bitmap_assign_notM_accum          */
-#define GB_JIT_KERNEL_ASSIGN_BITMAP_NM_ACC_WHOLE    67  /* GB_bitmap_assign_notM_accum_whole    */
-#define GB_JIT_KERNEL_ASSIGN_BITMAP_NM_NOACC        68  /* GB_bitmap_assign_notM_noaccum        */
-#define GB_JIT_KERNEL_ASSIGN_BITMAP_NM_NOACC_WHOLE  69  /* GB_bitmap_assign_notM_noaccum_whole  */
+    //--------------------------------------------------------------------------
+    // future:: the following kernels have not been implemented yet
+    //--------------------------------------------------------------------------
 
-// subref methods: todo
-// GB_bitmap_subref
-// GB_subref_phase3
+    // future:: assign/subassign methods: continued
+    GB_JIT_KERNEL_SUBASSIGN_01  = 45, // GB_subassign_01
+    GB_JIT_KERNEL_SUBASSIGN_02  = 46, // GB_subassign_02
+    GB_JIT_KERNEL_SUBASSIGN_03  = 47, // GB_subassign_03
+    GB_JIT_KERNEL_SUBASSIGN_04  = 48, // GB_subassign_04
+    GB_JIT_KERNEL_SUBASSIGN_05  = 49, // GB_subassign_05
+    GB_JIT_KERNEL_SUBASSIGN_06n = 50, // GB_subassign_06n
+    GB_JIT_KERNEL_SUBASSIGN_06s = 51, // GB_subassign_06s_and_14
+    GB_JIT_KERNEL_SUBASSIGN_07  = 52, // GB_subassign_07
+    GB_JIT_KERNEL_SUBASSIGN_08n = 53, // GB_subassign_08n
+    GB_JIT_KERNEL_SUBASSIGN_08s = 54, // GB_subassign_08s_and_16
+    GB_JIT_KERNEL_SUBASSIGN_09  = 55, // GB_subassign_09
+    GB_JIT_KERNEL_SUBASSIGN_10  = 56, // GB_subassign_10_and_18
+    GB_JIT_KERNEL_SUBASSIGN_11  = 57, // GB_subassign_11
+    GB_JIT_KERNEL_SUBASSIGN_12  = 58, // GB_subassign_12_and_20
+    GB_JIT_KERNEL_SUBASSIGN_13  = 59, // GB_subassign_13
+    GB_JIT_KERNEL_SUBASSIGN_15  = 60, // GB_subassign_15
+    GB_JIT_KERNEL_SUBASSIGN_17  = 61, // GB_subassign_17
+    GB_JIT_KERNEL_SUBASSIGN_19  = 62, // GB_subassign_19
 
-// concat/split: todo
-// GB_split_bitmap
-// GB_split_full
-// GB_split_sparse
+    // future:: bitmap assign/subassign:
+    GB_JIT_KERNEL_ASSIGN_BITMAP_M_ACC           = 63, // GB_bitmap_assign_M_accum
+    GB_JIT_KERNEL_ASSIGN_BITMAP_M_ACC_WHOLE     = 64, // GB_bitmap_assign_M_accum_whole
+    GB_JIT_KERNEL_ASSIGN_BITMAP_M_NOACC         = 65, // GB_bitmap_assign_M_noaccum
+    GB_JIT_KERNEL_ASSIGN_BITMAP_M_NOACC_WHOLE   = 66, // GB_bitmap_assign_M_noaccum_whole
+    GB_JIT_KERNEL_ASSIGN_BITMAP_FM_ACC          = 67, // GB_bitmap_assign_fullM_accum
+    GB_JIT_KERNEL_ASSIGN_BITMAP_FM_ACC_WHOLE    = 68, // GB_bitmap_assign_fullM_accum_whole
+    GB_JIT_KERNEL_ASSIGN_BITMAP_FM_NOACC        = 69, // GB_bitmap_assign_fullM_noaccum
+    GB_JIT_KERNEL_ASSIGN_BITMAP_FM_NOACC_WHOLE  = 70, // GB_bitmap_assign_fullM_noaccum_whole
+    GB_JIT_KERNEL_ASSIGN_BITMAP_NOM_ACC         = 71, // GB_bitmap_assign_noM_accum
+    GB_JIT_KERNEL_ASSIGN_BITMAP_NOM_ACC_WHOLE   = 72, // GB_bitmap_assign_noM_accum_whole
+    GB_JIT_KERNEL_ASSIGN_BITMAP_NOM_NOACC       = 73, // GB_bitmap_assign_noM_noaccum
+    GB_JIT_KERNEL_ASSIGN_BITMAP_NOM_NOACC_WHOLE = 74, // GB_bitmap_assign_noM_noaccum_whole
+    GB_JIT_KERNEL_ASSIGN_BITMAP_NM_ACC          = 75, // GB_bitmap_assign_notM_accum
+    GB_JIT_KERNEL_ASSIGN_BITMAP_NM_ACC_WHOLE    = 76, // GB_bitmap_assign_notM_accum_whole
+    GB_JIT_KERNEL_ASSIGN_BITMAP_NM_NOACC        = 77, // GB_bitmap_assign_notM_noaccum
+    GB_JIT_KERNEL_ASSIGN_BITMAP_NM_NOACC_WHOLE  = 78, // GB_bitmap_assign_notM_noaccum_whole
 
-// masker methods: todo
-// GB_masker_phase1
-// GB_masker_phase2
+    // future:: subref methods:
+    GB_JIT_KERNEL_SUBREF        = 79, // GB_bitmap_subref
+    GB_JIT_KERNEL_SUBREF_PHASE3 = 80, // GB_subref_phase3
 
-// Kronecker: todo
-// GB_kroner
+    // future:: masker methods:
+    GB_JIT_KERNEL_MASKER_PHASE1 = 81, // GB_masker_phase1
+    GB_JIT_KERNEL_MASKER_PHASE2 = 82, // GB_masker_phase2
 
-// utilities: todo
-// GB_check_if_iso
-// GB_convert_bitmap_worker
-// GB_expand_iso
-// GB_sort
+    // future:: Kronecker:
+    GB_JIT_KERNEL_KRONER        = 83, // GB_kroner
+
+    // future:: utilities:
+    GB_JIT_KERNEL_CHECKISO      = 84, // GB_check_if_iso
+    GB_JIT_KERNEL_CONVERTBITMAP = 85, // GB_convert_bitmap_worker
+    GB_JIT_KERNEL_EXPANDISO     = 86, // GB_expand_iso
+    GB_JIT_KERNEL_SORT          = 87, // GB_sort
+}
+GB_jit_kcode ;
 
 //------------------------------------------------------------------------------
 // GB_jitifyer_entry: an entry in the jitifyer hash table
@@ -174,7 +180,7 @@ GB_jit_family ;
 struct GB_jit_encoding_struct
 {
     uint64_t code ;         // from GB_enumify_*
-    uint32_t kcode ;        // which kernel
+    uint32_t kcode ;        // which kernel (a GB_jit_kcode)
     uint32_t suffix_len ;   // length of the suffix (0 for builtin)
 } ;
 
@@ -294,6 +300,7 @@ int GB_jitifyer_compile (char *kernel_name) ;  // compile a kernel
 
 GrB_Info GB_jitifyer_init (void) ;  // initialize the JIT
 
+GrB_Info GB_jitifyer_establish_paths (void) ;
 GrB_Info GB_jitifyer_mkdir (char *path) ;
 
 GrB_Info GB_jitifyer_extract_JITpackage (void) ;
@@ -324,6 +331,10 @@ GrB_Info GB_jitifyer_set_C_flags_worker (const char *new_C_flags) ;
 const char *GB_jitifyer_get_C_link_flags (void) ;
 GrB_Info GB_jitifyer_set_C_link_flags (const char *new_C_link_flags) ;
 GrB_Info GB_jitifyer_set_C_link_flags_worker (const char *new_C_link_flags) ;
+
+const char *GB_jitifyer_get_C_libraries (void) ;
+GrB_Info GB_jitifyer_set_C_libraries (const char *new_C_libraries) ;
+GrB_Info GB_jitifyer_set_C_libraries_worker (const char *new_C_libraries) ;
 
 #endif
 

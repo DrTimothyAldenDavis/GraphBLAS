@@ -1,11 +1,5 @@
 THIS IS A DRAFT.  The following features/revisions will appear in the stable
-v8.0.0 release (or in v8.x for some x > 0):
-
-* size of user-defined types:
-
-    Allow GxB_Type_new to create a user-defined type but pass in a size of
-    zero.  A JIT kernel will be compiled and then queried for the size of the
-    type.  This is in progresss.
+v8.0.0 release:
 
 * NOTE: remove prior JIT kernels!
 
@@ -48,21 +42,10 @@ v8.0.0 release (or in v8.x for some x > 0):
     lookup.  However, the performance issues related to this have not been
     tested.
 
-* more JIT kernels:
-
-    I have 42 JIT kernels in this version, but could add 44 more for
-    GrB_assign (34 kernels), subref (3 kernels), masker (2 kernels), and other
-    (5 kernels).  Grep the source code for "JIT: needed" for a list.  The
-    current JIT kernels cover all the "generic" kernels in SuiteSparse
-    GraphBLAS v7.x and earlier for which "factory" kernels are available.
-    However, in those versions, some kernels are only generic.  This draft does
-    not accelerate those, but they will be accelerated by the JIT in v8.x.
-
 * FIXMEs:
 
-    Lots of FIXME's tagged in the Source/ folder.  These are not broken
-    features, but some will be done for v8.0.0.  Many of these are optional and
-    should be tagged FUTURE instead.
+    Some FIXME's tagged in the Source/ folder.
+    These need to be done for v8.0.0.
 
 * Thread-safety:
 

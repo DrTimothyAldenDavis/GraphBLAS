@@ -22,7 +22,7 @@
 
 void GB_enumify_mxm         // enumerate a GrB_mxm problem
 (
-    // output:              // future: may need to become 2 x uint64
+    // output:              // future:: may need to become 2 x uint64
     uint64_t *scode,        // unique encoding of the entire semiring
     // input:
     // C matrix:

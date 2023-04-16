@@ -42,16 +42,16 @@ endif ( )
 
 # construct the library list
 string ( REPLACE "." "\\." LIBSUFFIX ${GB_LIB_SUFFIX} )
-set ( GB_LIBRARIES "" )
+set ( GB_C_LIBRARIES "" )
 #   message ( STATUS "lib suffix: ${LIBSUFFIX}" )
 foreach ( LIB_NAME ${GB_LIST_LIB} )
 #       message ( STATUS "Lib: ${LIB_NAME}" )
     if ( LIB_NAME MATCHES ${LIBSUFFIX} )
 #           message ( STATUS "has suffix" )
-        string ( APPEND GB_LIBRARIES " " ${LIB_NAME} )
+        string ( APPEND GB_C_LIBRARIES " " ${LIB_NAME} )
     else ( )
 #           message ( STATUS "no suffix" )
-        string ( APPEND GB_LIBRARIES " -l" ${LIB_NAME} )
+        string ( APPEND GB_C_LIBRARIES " -l" ${LIB_NAME} )
     endif ( )
 endforeach ( )
 
@@ -67,7 +67,7 @@ if ( NOT NJIT OR ENABLE_CUDA )
     message ( STATUS "JIT obj suffix: ${GB_OBJ_SUFFIX}" )
     message ( STATUS "JIT cache:      ${GRAPHBLAS_CACHE_PATH}" )
     message ( STATUS "JIT openmp inc: ${GB_OMP_INC}" )
-    message ( STATUS "JIT libraries:  ${GB_LIBRARIES}" )
+    message ( STATUS "JIT libraries:  ${GB_C_LIBRARIES}" )
 endif ( )
 
 # create a list of files

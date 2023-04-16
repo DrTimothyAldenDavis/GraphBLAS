@@ -44,9 +44,9 @@
 #define GB_OMP_INC      "@GB_OMP_INC@"
 #endif
 
-// GB_LIBRARIES: libraries to link with
-#ifndef GB_LIBRARIES
-#define GB_LIBRARIES    "@GB_LIBRARIES@"
+// GB_C_LIBRARIES: libraries to link with
+#ifndef GB_C_LIBRARIES
+#define GB_C_LIBRARIES  "@GB_C_LIBRARIES@"
 #endif
 
 #endif

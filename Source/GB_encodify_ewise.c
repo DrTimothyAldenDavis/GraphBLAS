@@ -17,7 +17,7 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
                                 // except for the suffix
     char **suffix,              // suffix for user-defined kernel
     // input:
-    const int kcode,            // kernel to encode (add, emult, rowscale, ...)
+    const GB_jit_kcode kcode,   // kernel to encode
     const bool is_eWiseMult,    // if true, method is emult
     const bool C_iso,
     const bool C_in_iso,

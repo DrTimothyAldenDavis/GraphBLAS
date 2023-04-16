@@ -15,8 +15,8 @@
     // get C(i,j)
     //--------------------------------------------------------------------------
 
-    // FIXME: allow for the use of any accum:  set cij = identity, and then
-    // use the accum when done (instead of GB_PUTC)
+    // future:: allow for the use of any accum in the JIT:  set cij = identity,
+    // and then use the accum when done.
 
     const int64_t pC = i + pC_start ;   // C(i,j) is at Cx [pC]
     GB_C_TYPE GB_GET4C (cij, pC) ;      // cij = Cx [pC]
@@ -160,8 +160,8 @@
     // save C(i,j)
     //--------------------------------------------------------------------------
 
-    // FIXME: add the accum here for the JIT kernel (arbitrary accum
-    // and typecasting
+    // future:: add the accum here for the JIT kernel (arbitrary accum
+    // and typecasting)
     Cx [pC] = cij ;
 }
 

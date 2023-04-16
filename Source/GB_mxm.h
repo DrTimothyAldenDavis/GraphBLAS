@@ -219,7 +219,7 @@ static inline bool GB_AxB_dot4_control
         && GB_IS_FULL (C_in)            // C must be present and full
         && (M == NULL) && (!Mask_comp)  // no mask, and must not be complemented
         && (accum != NULL)              // accum must be present
-        // FIXME: the JIT kernel can be extended to these cases:
+        // future:: the JIT kernel can be extended to handle these cases:
         && (accum == semiring->add->op)     // accum must match the monoid
         && (C_in->type == accum->ztype)) ;  // ctype must match ztype
 }

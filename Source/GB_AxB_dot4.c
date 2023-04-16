@@ -127,8 +127,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     if (add_binop_code == GB_ANY_binop_code)
     {
         // no work to do
-        // FIXME: when the JIT is extended to handle typecasting, and
-        // accum != monoid->op, then this case must be modified.
+        // future:: when the JIT is extended to handle the case when
+        // accum != monoid->op, this case must be modified.
         return (GrB_NO_VALUE) ;
     }
 

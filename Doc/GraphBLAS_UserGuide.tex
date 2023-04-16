@@ -104,12 +104,6 @@ v8.0.0 release:
         Its kernels are incompatible with the earlier DRAFT* versions of 8.0.0,
         however.
 
-    \item {\bf working compilers:} This version has been tested on Linux
-    systems (x86-based) using gcc 7.5, 9.4, 12.2, clang 10.0, and icx 2022,
-    and on the Mac using gcc 12.2 and the Apple version of clang, and on a
-    Power8 system with Linux and gcc 9.4.  These compilers and systems all work
-    in the JIT.
-
     \item {\bf Windows:}
     The JIT needs to be ported to Windows.  This draft will not compile
     on Windows with the JIT enabled.  I think it will compile with \verb'-DNJIT'
@@ -127,17 +121,8 @@ v8.0.0 release:
     lookup.  However, the performance issues related to this have not been
     tested.
 
-    \item {\bf more JIT kernels:} \verb'GrB_assign' (34 kernels), \verb'subref'
-    (3 kernels), \verb'masker' (2 kernels), and other (5 kernels).  Grep the
-    source code for \verb'JIT: needed' for a list.  The current JIT kernels
-    cover all the \verb'generic' kernels in SuiteSparse GraphBLAS v7.x and
-    earlier for which {\em factory} kernels are available.  However, in those
-    versions, some kernels are only generic.  This draft does not accelerate
-    those, but they will be accelerated by the JIT in v8.x.
-
-    \item {\bf FIXME:} Lots of \verb'FIXME''s tagged in the \verb'Source/'
-    folder.  These are not broken features, but some will be done for v8.0.0.
-    Many of these are optional and should be tagged \verb'FUTURE' instead.
+    \item {\bf FIXME:} Some \verb'FIXME''s tagged in the \verb'Source/'
+    folder.
 
     \item {\bf Thread-safety:}  GraphBLAS is thread-safe when used in a single
         multithreaded user application, even when multiple user threads try
@@ -1715,15 +1700,11 @@ required to enable the JIT compilation of kernels that use this type.
 At most \verb'GxB_MAX_NAME_LEN' characters are accessed in \verb'type_name';
 characters beyond that limit are silently ignored.
 
-% FIXME:
-\begin{note}
-FIXME: THIS IS UNTESTED BUT IN PROGRESS:
-if the \verb'sizeof_ctype' is zero, and the strings are valid, a
+If the \verb'sizeof_ctype' is zero, and the strings are valid, a
 JIT kernel is compiled just to determine the size of the type.  This is
 feature useful for interfaces in languages other than C, which could create
 valid strings for C types but would not have a reliable way to determine the
 size of the type.
-\end{note}
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Type\_wait:} wait for a type}
@@ -3008,6 +2989,7 @@ The type \verb'ytype' is the GraphBLAS type of the scalar input $y$ of the
 user-defined function $z=f(x,i,j,y)$.  The type may be built-in
 or user-defined.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_IndexUnaryOp\_new:} create a named user-defined index-unary operator}
 %-------------------------------------------------------------------------------
@@ -3062,6 +3044,7 @@ to exploit non-blocking mode to delay its creation.  Currently,
 SuiteSparse:GraphBLAS currently does nothing except to ensure that the
 \verb'op' is valid.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_IndexUnaryOp\_ztype\_name:} return the name of the type of $z$}
 %-------------------------------------------------------------------------------
@@ -3276,7 +3259,6 @@ GraphBLAS function   & purpose                                      & Section \\
 }
 \vspace{0.2in}
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Monoid\_new:} create a monoid}
 %-------------------------------------------------------------------------------
@@ -3651,7 +3633,6 @@ use is preferred, for portability to other GraphBLAS implementations.
 
 \end{itemize}
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Semiring\_wait:} wait for a semiring}
 %-------------------------------------------------------------------------------
@@ -3691,6 +3672,7 @@ GrB_Info GxB_Semiring_add           // return the add monoid of a semiring
 
 \verb'GxB_Semiring_add' returns the additive monoid of a semiring.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Semiring\_multiply:} return multiply operator of a semiring}
 %-------------------------------------------------------------------------------
@@ -4321,7 +4303,6 @@ returned by \verb'GrB_Vector_nvals' after the vector is constructed).  All
 entries in the sparsity pattern of \verb'w' are identical, and equal to the
 input scalar value.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_setElement:}    add an entry to a vector}
 %-------------------------------------------------------------------------------
@@ -4373,6 +4354,7 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
 \verb'x = A(i,0)' from an \verb'n'-by-1 matrix; see
 Section~\ref{matrix_extractElement}.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_isStoredElement:} check if entry present in vector}
 %-------------------------------------------------------------------------------
@@ -4436,6 +4418,7 @@ array of column indices \verb'J' does not appear in this function.  Refer to
 Section~\ref{matrix_extractTuples} where further details of this function are
 described.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_resize:}          resize a vector}
 %-------------------------------------------------------------------------------
@@ -4454,7 +4437,6 @@ GrB_Info GrB_Vector_resize      // change the size of a vector
 \verb'GrB_Vector_resize' changes the size of a vector.  If the dimension
 decreases, entries that fall outside the resized vector are deleted.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_diag:} extract a diagonal from a matrix}
 %-------------------------------------------------------------------------------
@@ -4495,6 +4477,7 @@ are typecasted into the type of \verb'v'.  Any settings made to \verb'v' by
 \verb'GxB_Vector_Option_set' (bitmap switch and sparsity control) are
 unchanged.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_iso:} query iso status of a vector}
 %-------------------------------------------------------------------------------
@@ -4512,7 +4495,6 @@ GrB_Info GxB_Vector_iso     // return iso status of a vector
 
 Returns the true if the vector is iso-valued, false otherwise.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_memoryUsage:} memory used by a vector}
 %-------------------------------------------------------------------------------
@@ -8713,7 +8695,8 @@ progress to exploit NVIDIA GPUs, in collaboration with Joe Eaton and
 Corey Nolet, with NVIDIA.
 
 When GraphBLAS is compiled, the \verb'cmake' build system creates a {\em cache}
-folder where it will keep any kernels created and compiled by the JIT.  The
+folder where it will keep any kernels created and compiled by the JIT
+(both source code and compiled libraries for each kernel).  The
 default folder is \verb'~/.SuiteSparse/GraphBLAS/8.0.0' for SuiteSparse:
 GraphBLAS version v8.0.0, where the tilde refers to the user's home directory.
 The version numbers in the folder name are set automatically, so that a new
@@ -8722,13 +8705,8 @@ version will ignore kernels compiled by an older version of GraphBLAS.  If the
 compiled, that variable defines the folder.  If the user's home directory
 cannot be determined and the \verb'GRAPHBLAS_CACHE_PATH' environment variable
 is not set, then the \verb'cmake' build folder is used instead as a fallback.
-
-An optional environment variable, \verb'GRAPHBLAS_CACHE_PATH', can be used to
-control the location of the the cache folder This environment variable is read
-by \verb'cmake' when GraphBLAS is compiled, and by \verb'GrB_init' when the
-user application runs.  By default it is \verb'~/.SuiteSparse/GraphBLAS/8.0.0'
-(for example), where the last three numbers change when the GraphBLAS version
-changes.
+The optional environment variable, \verb'GRAPHBLAS_CACHE_PATH', is also read by
+\verb'GrB_init' when the user application runs.
 
 When the user application starts, it can modify the location of the cache
 folder after calling \verb'GrB_init'.  It can also modify the C compiler and
@@ -8747,8 +8725,9 @@ field                       & value         & description \\
 \verb'GxB_JIT_C_COMPILER_NAME' & \verb'char *' & C compiler for JIT kernels \\
 \verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
 \verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
+\verb'GxB_JIT_C_LIBRARIES'    & \verb'char *' & libraries to link against \\
+\verb'GxB_JIT_C_CONTROL'      & see below     & CPU JIT control \\
 \verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
-\verb'GxB_JIT_C_CONTROL'    & see below & CPU JIT control \\
 \hline
 \end{tabular}
 }
@@ -8780,7 +8759,9 @@ disable the JIT and clear all loaded JIT kernels from memory, use:
 
 The above call to \verb'GxB_set' does not clear any PreJIT kernels, however,
 since those are integral components of the single compiled GraphBLAS library
-and cannot be cleared (see Section~\ref{prejit}).
+and cannot be cleared (see Section~\ref{prejit}).  It also does not clear any
+compiled user functions, created by the JIT for \verb'GxB_*Op_new' when the
+input function pointer is \verb'NULL'.
 
 The following settings are available for \verb'GxB_JIT_C_CONTROL'.
 For examples on how to use it, see
@@ -8990,12 +8971,6 @@ folder includes a \verb'.gitignore' file that prevents any files in the folder
 from being synced via \verb'git'.  If you wish to add your PreJIT kernels to a
 fork of GraphBLAS, you will need to revise this \verb'.gitignore' file.
 
-An identical mechanism is available for the MATLAB interface.  Simply copy
-any or all source \verb'*.c' files from your MATLAB cache folder
-(\verb'~/.SuiteSparse/GraphBLAS/8.0.0_matlab' by default) into the
-\verb'GraphBLAS/GraphBLAS/PreJIT' folder, where the MATLAB interface
-resides.  Then recompile \verb'libgraphblas_matlab.so' in that folder.
-
 %-------------------------------------------------------------------------------
 \subsection{{\sf JIT} and {\sf PreJIT} performance considerations}
 %-------------------------------------------------------------------------------
@@ -9036,6 +9011,15 @@ the JIT will compile it if the contorl is set to \verb'GxB_JIT_ON'.
 %-------------------------------------------------------------------------------
 \label{jit_future}
 
+\subsubsection{More JIT kernels}
+I have 44 JIT kernels but could write about another 43 for \verb'GrB_assign',
+\verb'GrB_extract', \verb'GrB_kronecker', and other kernels.  Grep the source
+code for \verb'JIT: needed' for a list.  The current JIT kernels cover all the
+\verb'generic' kernels in SuiteSparse GraphBLAS v7.x and earlier for which {\em
+factory} kernels are available.  However, in those versions, some kernels are
+only generic.  This version does not accelerate those, but they will be
+accelerated by the JIT in a future version.
+
 \subsubsection{Kernel fusion}
 The introduction of the JIT and its related PreJIT kernels allow for the future
 exploitation of kernel fusion via an aggressive exploitation of the GraphBLAS
@@ -9054,7 +9038,8 @@ problems.
 \subsubsection{SYCL / OpenCL kernels}
 The CUDA JIT will enable NVIDIA GPUs to be exploited.  There are simply too
 many kernels to create at compile time as the ``factory kernels.''  This CUDA
-JIT is in progress.  A related JIT for SYCL / OpenCL could also be created.
+JIT is in progress.  A related JIT for SYCL / OpenCL kernels is under
+consideration.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -9097,8 +9082,9 @@ field                       & value         & description \\
 \verb'GxB_JIT_C_COMPILER_NAME' & \verb'char *' & C compiler for JIT kernels \\
 \verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
 \verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
+\verb'GxB_JIT_C_LIBRARIES'    & \verb'char *' & libraries to link against \\
+\verb'GxB_JIT_C_CONTROL'      & see Section \ref{jit} & CPU JIT control \\
 \verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
-\verb'GxB_JIT_C_CONTROL'    & see below & CPU JIT control \\
 \hline
 \end{tabular}
 }
@@ -9196,8 +9182,9 @@ field                       & value         & description \\
 \verb'GxB_JIT_C_COMPILER_NAME' & \verb'char *' & C compiler for JIT kernels \\
 \verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
 \verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
+\verb'GxB_JIT_C_LIBRARIES'    & \verb'char *' & libraries to link against \\
+\verb'GxB_JIT_C_CONTROL'      & see Section \ref{jit} & CPU JIT control \\
 \verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
-\verb'GxB_JIT_C_CONTROL'    & see below & CPU JIT control \\
 \hline
 \verb'GxB_MODE'                 & \verb'int'    & blocking/non-blocking \\
 \verb'GxB_LIBRARY_NAME'         & \verb'char *' & name of library \\
@@ -9613,9 +9600,10 @@ typedef enum
     GxB_PRINT_1BASED = 104, // print matrices as 0-based or 1-based
     GxB_JIT_C_COMPILER_NAME = 110,  // CPU JIT C compiler name
     GxB_JIT_C_COMPILER_FLAGS = 111, // CPU JIT C compiler flags
-    GxB_JIT_C_LINKER_FLAGS = 112,   // CPU JIT C compiler flags
-    GxB_JIT_CACHE_PATH = 113,       // CPU/CUDA JIT path for compiled kernels
-    GxB_JIT_C_CONTROL = 115,        // CPU JIT control
+    GxB_JIT_C_LINKER_FLAGS = 112,   // CPU JIT C linker flags
+    GxB_JIT_C_LIBRARIES = 113,      // CPU JIT C libraries
+    GxB_JIT_C_CONTROL = 114,        // CPU JIT control
+    GxB_JIT_CACHE_PATH = 115,       // CPU/CUDA JIT path for compiled kernels
 
     // for matrix/vector get only:
     GxB_SPARSITY_STATUS = 33,   // query the sparsity of a matrix or vector
@@ -9841,8 +9829,9 @@ The \verb'field' parameter can be
 \verb'GxB_JIT_C_COMPILER_NAME',
 \verb'GxB_JIT_C_COMPILER_FLAGS',
 \verb'GxB_JIT_C_LINKER_FLAGS',
-\verb'GxB_JIT_CACHE_PATH', or
-\verb'GxB_JIT_C_CONTROL'.
+\verb'GxB_JIT_C_LIBRRIES',
+\verb'GxB_JIT_C_CONTROL', or
+\verb'GxB_JIT_CACHE_PATH'.
 
 For example, the following usage sets the global hypersparsity ratio to 0.2,
 the format of future matrices to \verb'GxB_BY_COL', the maximum number
@@ -9859,6 +9848,7 @@ No existing matrices are changed.
     GxB_set (GxB_PRINTF, mexPrintf) ;
 \end{verbatim} }
 
+\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Matrix\_Option\_set:} set a matrix option}
 %===============================================================================
@@ -9905,6 +9895,7 @@ For performance, the matrix option should be set as soon as it is created with
 
 If an error occurs, \verb'GrB_error(&err,A)' returns details about the error.
 
+\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Desc\_set:} set a {\sf GrB\_Descriptor} value}
 %===============================================================================
@@ -9966,8 +9957,9 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
         \verb'GxB_JIT_C_COMPILER_NAME'  & C compiler for JIT kernels \\
         \verb'GxB_JIT_C_COMPILER_FLAGS' & flags for the C compiler \\
         \verb'GxB_JIT_C_LINKER_FLAGS'   & link flags for the C compiler \\
-        \verb'GxB_JIT_CACHE_PATH'       & folder with compiled kernels \\
+        \verb'GxB_JIT_C_LIBRARIES'      & libraries to link against \\
         \verb'GxB_JIT_C_CONTROL'        & CPU JIT control \\
+        \verb'GxB_JIT_CACHE_PATH'       & folder with compiled kernels \\
         \hline
         \verb'GxB_LIBRARY_NAME'         & the string
                                         \verb'"SuiteSparse:GraphBLAS"' \\
@@ -10157,6 +10149,8 @@ To set/get the global options:
     GxB_get (GxB_JIT_C_COMPILER_FLAGS, const char **flags) ;
     GxB_set (GxB_JIT_C_LINKER_FLAGS, const char *flags) ;
     GxB_get (GxB_JIT_C_LINKER_FLAGS, const char **flags) ;
+    GxB_set (GxB_JIT_C_LIBRARIES, const char *libraries) ;
+    GxB_get (GxB_JIT_C_LIBRARIES, const char **libraries) ;
     GxB_set (GxB_JIT_CACHE_PATH, const char *cache) ;
     GxB_get (GxB_JIT_CACHE_PATH, const char **cache) ;
     GxB_set (GxB_JIT_C_CONTROL, int control) ;
@@ -14884,7 +14878,7 @@ changes during its lifetime, possibly taking on all four different formats
 at different times.  This can be modified via \verb'GxB_set'.  For example,
 this line of code:
 
-    {\scriptsize
+    {\footnotesize
     \begin{verbatim}
     GxB_set (A, GxB_SPARSITY_CONTROL, GxB_SPARSE + GxB_BITMAP) ; \end{verbatim}}
 
@@ -14895,7 +14889,7 @@ format will be used if the matrix has enough entries, or sparse otherwise.
 Sometimes this selection is best controlled by the user algorithm, so a single
 format can be requested:
 
-    {\scriptsize
+    {\footnotesize
     \begin{verbatim}
     GxB_set (A, GxB_SPARSITY_CONTROL, GxB_SPARSE) ; \end{verbatim}}
 
@@ -14947,7 +14941,7 @@ copy of \verb'A' but held in another orientation via \verb'GxB_set'.  For
 example, assuming the default matrix format is by-row, and that \verb'A' is
 \verb'm'-by-\verb'n' of type \verb'GrB_FP32':
 
-    {\scriptsize
+    {\footnotesize
     \begin{verbatim}
     // method 1: AT = A'
     GrB_Matrix_new (AT, GrB_FP32, n, m) ;
@@ -14967,7 +14961,7 @@ matrices \verb'AT' and \verb'A2' do differ in one very significant way:  their
 dimensions are different, and they behave differement mathematically.
 Computing \verb"C=A'*B" using these matrices would differ:
 
-    {\scriptsize
+    {\footnotesize
     \begin{verbatim}
     // method 1: C=A'*B using AT
     GrB_mxm (C, NULL, NULL, semiring, AT, B, NULL) ;
@@ -14989,7 +14983,7 @@ linear algebraic terms, this is simply deciding whether to multiply by the
 matrix or its transpose.  Examples can be see in the BFS and
 Betweeness-Centrality methods of LAGraph.  Here is the BFS kernel:
 
-    {\scriptsize
+    {\footnotesize
     \begin{verbatim}
     int sparsity = do_push ? GxB_SPARSE : GxB_BITMAP ;
     GxB_set (q, GxB_SPARSITY_CONTROL, sparsity) ;
@@ -15035,7 +15029,7 @@ $i$th row of \verb'A' has no entries then \verb'y(i)' must not appear as an
 entry in the vector \verb'y', so it cannot be held as a full vector.  As a
 result, the following computation can be slower than it could be:
 
-    {\scriptsize
+    {\footnotesize
     \begin{verbatim}
     GrB_mxv (y, NULL, NULL, semiring, A, x, NULL) ; \end{verbatim}}
 
@@ -15048,7 +15042,7 @@ accumulator operator and type matches the monoid of the semiring.  SuiteSparse
 has special kernels for this case; you can see them in the burble as
 \verb'F+=S*F' for example.
 
-    {\scriptsize
+    {\footnotesize
     \begin{verbatim}
     // y = 0
     GrB_assign (y, NULL, NULL, 0, GrB_ALL, n, NULL) ;
@@ -15058,7 +15052,7 @@ has special kernels for this case; you can see them in the burble as
 You can see this computation in the LAGraph PageRank method, where all
 entries of \verb'r' are set to the \verb'teleport' scalar first.
 
-    {\scriptsize
+    {\footnotesize
     \begin{verbatim}
     for (iters = 0 ; iters < itermax && rdiff > tol ; iters++)
     {
@@ -15103,7 +15097,7 @@ Sometimes a matrix or vector may have values that are all the same, but
 SuiteSparse hasn't detected this.  If this occurs, you can force a matrix
 or vector to be iso-valued by assigning a single scalar to all its entries.
 
-    {\scriptsize
+    {\footnotesize
     \begin{verbatim}
     // C<s(C)> = 3.14159
     GrB_assign (C, C, NULL, 3.14159, GrB_ALL, m, GrB_ALL, n, GrB_DESC_S) ; \end{verbatim}}
@@ -15124,6 +15118,7 @@ above assignment in O(1) time and space, independent of the dimension of
 If the JIT is disabled, these will be slow.  With the JIT enabled, data types
 and operators are just as fast as built-in types and operators.  A CUDA JIT for
 the GPU is in progress, collaboration with Joe Eaton and Corey Nolet.
+A SYCL/OpenCL JIT is under consideration, but work has not yet been started.
 
 %-------------------------------------------------------------------------------
 \subsection{About NUMA systems}
@@ -15866,7 +15861,7 @@ make CC=/usr/local/bin/gcc-12 CXX=/usr/local/bin/g++-12 JOBS=8
 sudo make install
 \end{verbatim}
 
-Ignore the \verb'"-arch option ignored' warnings.
+Ignore the \verb'"-arch option ignored..."' warnings.
 
 You can now start MATLAB and install the MATLAB interface with
 \verb'gbmake' as described in the previous section.
@@ -16352,6 +16347,11 @@ GraphBLAS folder.
     \item The JIT:  GraphBLAS v8.0.0 includes a JIT for the CPU kernels,
         which can compile kernels at run-time.  Added \verb'GxB_set/get'
         options and environment variables to control the JIT.
+    \item \verb'GxB_Type_new': the size of the type can be given as zero,
+        in which case the size is determined via a JIT kernel.
+    \item \verb'GxB_UnaryOp_new', \verb'GxB_BinaryOp_new', and
+        \verb'GxB_IndexUnaryOp_new': the function pointer can be given as
+        \verb'NULL', in which case the function is created by the JIT.
     \item math kernels: revised for CUDA JIT.  More accurate complex
         floating-point for Mac OS on Apple Silicon.
     \item \verb'Demo/wildtype_demo': change to double so that CPU and GPU
@@ -16376,6 +16376,21 @@ GraphBLAS folder.
         Create a user-defined \verb'GrB_IndexUnaryOp' to compute these
         operations instead, and use \verb'GrB_select'.
     \item \verb'alternative/Makefile': removed; not compatible with the JIT.
+    \item \verb'zstd': upgraded to v1.5.5 (Apr 4, 2023)
+    \end{itemize}
+
+\item Version 7.4.4 (Mar 25, 2023)
+
+    \begin{itemize}
+    \item (47) bug fix: OpenMP atomics require \verb'seq_cst' on the ARM.
+        Revised \verb'GB_atomics.h' accordingly, and added them for all
+        architectures (caught by G{\'{a}}bor Sz{\'{a}}rnyas).
+    \end{itemize}
+
+\item Version 7.4.3 (Jan 20, 2023)
+
+    \begin{itemize}
+    \item debug: turned on in \verb'GrB_Matrix_removeElement' by mistake.
     \end{itemize}
 
 \item Version 7.4.2 (Jan 17, 2023)
