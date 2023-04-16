@@ -158,10 +158,10 @@ GrB_Info GB_jitifyer_init (void)
 
     GB_jit_control =
         #ifndef NJIT
-        GxB_JIT_ON ;        // JIT enabled
+        GxB_JIT_ON ;    // JIT enabled
         #else
-        GxB_JIT_RUN ;       // JIT disabled at compile time; only PreJIT available.
-                            // No JIT kernels can be loaded or compiled.
+        GxB_JIT_RUN ;   // JIT disabled at compile time; only PreJIT available.
+                        // No JIT kernels can be loaded or compiled.
         #endif
 
     ASSERT (GB_jit_table == NULL) ;
@@ -251,9 +251,8 @@ GrB_Info GB_jitifyer_init (void)
         void *dl_function = Kernels [k] ;
         GB_jit_query_func dl_query = (GB_jit_query_func) Queries [k] ;
         if (dl_function == NULL || dl_query == NULL || Names [k] == NULL)
-        {
+        { 
             // ignore this kernel
-//          printf ("PreJIT kernel null! %d\n", k) ;
             continue ;
         }
         char kernel_name [GB_KLEN+1] ;
@@ -271,18 +270,9 @@ GrB_Info GB_jitifyer_init (void)
         GrB_Info info = GB_demacrofy_name (kernel_name, &name_space, &kname,
             &scode, &suffix) ;
 
-        if (info != GrB_SUCCESS)
-        {
-            // kernel_name is invalid; ignore this kernel
-//          printf ("PreJIT demacrofy failed! %d:%s\n", k, Names [k]) ;
-            continue ;
-        }
-
-        if (!GB_STRING_MATCH (name_space, "GB_jit"))
+        if (info != GrB_SUCCESS || !GB_STRING_MATCH (name_space, "GB_jit"))
         { 
             // kernel_name is invalid; ignore this kernel
-//          printf ("PreJIT wrong namespace! %d:%s [%s]\n",
-//              k, Names [k], name_space) ;
             continue ;
         }
 
@@ -342,9 +332,8 @@ GrB_Info GB_jitifyer_init (void)
         else if (IS ("user_op"      )) c = GB_JIT_KERNEL_USEROP ;
         else if (IS ("user_type"    )) c = GB_JIT_KERNEL_USERTYPE ;
         else
-        {
+        { 
             // kernel_name is invalid; ignore this kernel
-//          printf ("PreJIT Kernel invalid! %s [%s]\n", Names [k], kname) ;
             continue ;
         }
 
@@ -375,8 +364,8 @@ GrB_Info GB_jitifyer_init (void)
             (version [0] != GxB_IMPLEMENTATION_MAJOR) ||
             (version [1] != GxB_IMPLEMENTATION_MINOR) ||
             (version [2] != GxB_IMPLEMENTATION_SUB))
-        {
-//          printf ("PreJIT STALE: %d [%s]\n", k, Names [k]) ;
+        { 
+            // the kernel is stale; ignore it
             continue ;
         }
 
@@ -386,9 +375,8 @@ GrB_Info GB_jitifyer_init (void)
 
         int64_t k1 = -1, kk = -1 ;
         if (GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) != NULL)
-        {
-            // kernel_name is invalid; ignore this kernel
-//          printf ("PreJIT Kernel duplicate! %s\n", Names [k]) ;
+        { 
+            // the kernel is a duplicate; ignore it
             continue ;
         }
 
@@ -397,8 +385,8 @@ GrB_Info GB_jitifyer_init (void)
         //----------------------------------------------------------------------
 
         if (!GB_jitifyer_insert (hash, encoding, suffix, NULL, dl_function, k))
-        {
-//          printf ("PreJIT: out of memory\n") ;
+        { 
+            // out of memory
             GB_jit_control = GxB_JIT_PAUSE ;
             return (GrB_OUT_OF_MEMORY) ;
         }
@@ -412,7 +400,7 @@ GrB_Info GB_jitifyer_init (void)
 }
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_establist_paths: make sure cache and src paths exist
+// GB_jitifyer_establish_paths: make sure cache and src paths exist
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_establish_paths (void)
@@ -424,7 +412,7 @@ GrB_Info GB_jitifyer_establish_paths (void)
 
     GB_FREE_STUFF (GB_jit_src_path) ;
     if (GB_jit_cache_path != NULL)
-    {
+    { 
         size_t len = GB_jit_cache_path_allocated + 12 ;
         GB_MALLOC_STUFF (GB_jit_src_path, len) ;
         snprintf (GB_jit_src_path, GB_jit_src_path_allocated, "%s/src",
@@ -479,7 +467,7 @@ GrB_Info GB_jitifyer_mkdir (char *path)
         {
             // found a file separator
             if (!first)
-            {
+            { 
                 // terminate the path at this file separator
                 char save = *p ;
                 *p = '\0' ;
@@ -524,7 +512,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (void)
     char *filename = GB_MALLOC_WORK (GB_jit_src_path_allocated + 300, char,
         &fsize) ;
     if (filename == NULL)
-    {
+    { 
         // out of memory; disable the JIT
         GB_jit_control = GxB_JIT_RUN ;
         return (GrB_OUT_OF_MEMORY) ;
@@ -542,7 +530,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (void)
             v1 == GxB_IMPLEMENTATION_MAJOR &&
             v2 == GxB_IMPLEMENTATION_MINOR &&
             v3 == GxB_IMPLEMENTATION_SUB)
-        {
+        { 
             // the header looks fine; assume the rest is OK
             fclose (fp) ;
             GB_FREE_WORK (&filename, fsize) ;
@@ -602,7 +590,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (void)
         size_t nwritten = fwrite (dst, sizeof (uint8_t), u, fp) ;
         fclose (fp) ;
         if (nwritten != u)
-        {
+        { 
             // file is invalid
             ok = false ;
             break ;
@@ -629,7 +617,7 @@ GxB_JIT_Control GB_jitifyer_get_control (void)
 {
     GxB_JIT_Control control ;
     #pragma omp critical (GB_jitifyer_worker)
-    {
+    { 
         control = GB_jit_control ;
     }
     return (control) ;
@@ -654,7 +642,7 @@ void GB_jitifyer_set_control (int control)
         #endif
         GB_jit_control = (GxB_JIT_Control) control ;
         if (GB_jit_control == GxB_JIT_OFF)
-        {
+        { 
             // free all loaded JIT kernels but do not free the JIT hash table,
             // and do not free the PreJIT kernels
             GB_jitifyer_table_free (false) ;
@@ -687,7 +675,7 @@ GrB_Info GB_jitifyer_alloc_space (void)
     //--------------------------------------------------------------------------
 
     if (GB_jit_kernel_name == NULL)
-    {
+    { 
         size_t len = GB_jit_cache_path_allocated + 300 + 2 * GxB_MAX_NAME_LEN ;
         GB_MALLOC_STUFF (GB_jit_kernel_name, len) ;
     }
@@ -697,7 +685,7 @@ GrB_Info GB_jitifyer_alloc_space (void)
     //--------------------------------------------------------------------------
 
     if (GB_jit_library_name == NULL)
-    {
+    { 
         size_t len = GB_jit_cache_path_allocated + 300 + 2 * GxB_MAX_NAME_LEN ;
         GB_MALLOC_STUFF (GB_jit_library_name, len) ;
     }
@@ -707,7 +695,7 @@ GrB_Info GB_jitifyer_alloc_space (void)
     //--------------------------------------------------------------------------
 
     if (GB_jit_command == NULL)
-    {
+    { 
         size_t len =
             2 * GB_jit_C_compiler_allocated +
             2 * GB_jit_C_flags_allocated +
@@ -731,7 +719,7 @@ const char *GB_jitifyer_get_cache_path (void)
 {
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
-    {
+    { 
         s = GB_jit_cache_path ;
     }
     return (s) ;
@@ -749,7 +737,7 @@ GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path)
     //--------------------------------------------------------------------------
 
     if (new_cache_path == NULL)
-    {
+    { 
         return (GrB_NULL_POINTER) ;
     }
 
@@ -770,7 +758,7 @@ GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path)
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_set_cache_path_worker (const char *new_cache_path)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // free the old strings that depend on the cache path
@@ -814,7 +802,7 @@ const char *GB_jitifyer_get_C_compiler (void)
 {
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
-    {
+    { 
         s = GB_jit_C_compiler ;
     }
     return (s) ;
@@ -832,7 +820,7 @@ GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler)
     //--------------------------------------------------------------------------
 
     if (new_C_compiler == NULL)
-    {
+    { 
         return (GrB_NULL_POINTER) ;
     }
 
@@ -853,7 +841,7 @@ GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler)
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_set_C_compiler_worker (const char *new_C_compiler)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // free the old strings that depend on the C compiler
@@ -883,7 +871,7 @@ const char *GB_jitifyer_get_C_flags (void)
 {
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
-    {
+    { 
         s = GB_jit_C_flags ;
     }
     return (s) ;
@@ -901,7 +889,7 @@ GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags)
     //--------------------------------------------------------------------------
 
     if (new_C_flags == NULL)
-    {
+    { 
         return (GrB_NULL_POINTER) ;
     }
 
@@ -922,7 +910,7 @@ GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags)
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_set_C_flags_worker (const char *new_C_flags)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // free the old strings that depend on the C flags
@@ -952,7 +940,7 @@ const char *GB_jitifyer_get_C_link_flags (void)
 {
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
-    {
+    { 
         s = GB_jit_C_link_flags ;
     }
     return (s) ;
@@ -970,7 +958,7 @@ GrB_Info GB_jitifyer_set_C_link_flags (const char *new_C_link_flags)
     //--------------------------------------------------------------------------
 
     if (new_C_link_flags == NULL)
-    {
+    { 
         return (GrB_NULL_POINTER) ;
     }
 
@@ -991,7 +979,7 @@ GrB_Info GB_jitifyer_set_C_link_flags (const char *new_C_link_flags)
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_set_C_link_flags_worker (const char *new_C_link_flags)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // free the old strings that depend on the C flags
@@ -1021,7 +1009,7 @@ const char *GB_jitifyer_get_C_libraries (void)
 {
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
-    {
+    { 
         s = GB_jit_C_libraries ;
     }
     return (s) ;
@@ -1039,7 +1027,7 @@ GrB_Info GB_jitifyer_set_C_libraries (const char *new_C_libraries)
     //--------------------------------------------------------------------------
 
     if (new_C_libraries == NULL)
-    {
+    { 
         return (GrB_NULL_POINTER) ;
     }
 
@@ -1060,7 +1048,7 @@ GrB_Info GB_jitifyer_set_C_libraries (const char *new_C_libraries)
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_set_C_libraries_worker (const char *new_C_libraries)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // free the old strings that depend on the C flags
@@ -1113,23 +1101,23 @@ bool GB_jitifyer_query
 
     GB_Operator op1 = NULL, op2 = NULL ;
     if (semiring != NULL)
-    {
+    { 
         monoid = semiring->add ;
         op1 = (GB_Operator) monoid->op ;
         op2 = (GB_Operator) semiring->multiply ;
     }
     else if (monoid != NULL)
-    {
+    { 
         op1 = (GB_Operator) monoid->op ;
     }
     else
-    {
+    { 
         // op may be NULL, if this is a user_type kernel
         op1 = op ;
     }
 
     if (monoid != NULL && monoid->hash != 0)
-    {
+    { 
         // compare the user-defined identity and terminal values
         zsize = monoid->op->ztype->size ;
         tsize = (monoid->terminal == NULL) ? 0 : zsize ;
@@ -1238,7 +1226,7 @@ GrB_Info GB_jitifyer_load
         int64_t k1 = -1, kk = -1 ;
         (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) ;
         if (k1 >= 0)
-        {
+        { 
             // an unchecked PreJIT kernel; check it inside critical section
         }
         else if ((*dl_function) != NULL)
@@ -1248,7 +1236,7 @@ GrB_Info GB_jitifyer_load
             return (GrB_SUCCESS) ;
         }
         else
-        {
+        { 
             // No kernels may be loaded or compiled, but existing kernels
             // already loaded may be run (handled above if dl_function was
             // found).  This kernel was not loaded, so punt to generic.
@@ -1262,7 +1250,7 @@ GrB_Info GB_jitifyer_load
     //--------------------------------------------------------------------------
 
     #pragma omp critical (GB_jitifyer_worker)
-    {
+    { 
         info = GB_jitifyer_worker (dl_function, family, kname, hash,
             encoding, suffix, semiring, monoid, op, type1, type2, type3) ;
     }
@@ -1316,7 +1304,7 @@ GrB_Info GB_jitifyer_worker
             bool ok = GB_jitifyer_query (dl_query, hash, semiring, monoid, op,
                 type1, type2, type3) ;
             if (ok)
-            {
+            { 
                 // PreJIT kernel is fine; flag it as checked by flipping
                 // its prejit_index.
                 GBURBLE ("(prejit: ok) ") ;
@@ -1324,7 +1312,7 @@ GrB_Info GB_jitifyer_worker
                 return (GrB_SUCCESS) ;
             }
             else
-            {
+            { 
                 // remove the PreJIT kernel from the hash table
                 GBURBLE ("(prejit: disabled) ") ;
                 GB_jitifyer_entry_free (e) ;
@@ -1338,12 +1326,12 @@ GrB_Info GB_jitifyer_worker
             char *defn ;
             GB_user_op (&ignore, &defn) ;
             if (strcmp (defn, op->defn) == 0)
-            {
+            { 
                 GBURBLE ("(jit op: ok) ") ;
                 return (GrB_SUCCESS) ;
             }
             else
-            {
+            { 
                 // the op has changed; need to re-JIT the kernel
                 GBURBLE ("(jit op: changed) ") ;
                 GB_jitifyer_entry_free (e) ;
@@ -1357,19 +1345,19 @@ GrB_Info GB_jitifyer_worker
             char *defn ;
             GB_user_type (&ignore, &defn) ;
             if (strcmp (defn, type1->defn) == 0)
-            {
+            { 
                 GBURBLE ("(jit type: ok) ") ;
                 return (GrB_SUCCESS) ;
             }
             else
-            {
+            { 
                 // the type has changed; need to re-JIT the kernel
                 GBURBLE ("(jit type: changed) ") ;
                 GB_jitifyer_entry_free (e) ;
             }
         }
         else
-        {
+        { 
             // JIT kernel, or checked PreJIT kernel
             GBURBLE ("(jit run) ") ;
             return (GrB_SUCCESS) ;
@@ -1501,7 +1489,7 @@ GrB_Info GB_jitifyer_worker
         }
 
         if (ok)
-        {
+        { 
             ok = GB_jitifyer_query (dl_query, hash, semiring, monoid, op,
                 type1, type2, type3) ;
         }
@@ -1721,7 +1709,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
     //--------------------------------------------------------------------------
 
     if (GB_jit_table == NULL)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // allocate the initial hash table
@@ -1792,11 +1780,11 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         k = k & GB_jit_table_bits ;
         GB_jit_entry *e = &(GB_jit_table [k]) ;
         if (e->dl_function == NULL)
-        {
+        { 
             // found an empty slot
             e->suffix = NULL ;
             if (!builtin)
-            {
+            { 
                 // allocate the suffix if the kernel is not builtin
                 e->suffix = GB_Global_persistent_malloc (suffix_len+1) ;
                 if (e->suffix == NULL)
@@ -1812,9 +1800,6 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
             e->dl_function = dl_function ;
             e->prejit_index = prejit_index ;        // -1 for JIT kernels
             GB_jit_table_populated++ ;
-//          printf ("alloc JIT entry (%ld): e %p func %p suffix %s handle %p\n",
-//          GB_jit_table_populated,
-//          e, e->dl_function, e->suffix, e->dl_handle) ;
             return (true) ;
         }
         // otherwise, keep looking
@@ -1827,8 +1812,6 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 
 void GB_jitifyer_entry_free (GB_jit_entry *e)
 {
-//  printf ("free JIT entry (%ld): e %p func %p suffix %s handle %p\n",
-//      GB_jit_table_populated, e, e->dl_function, e->suffix, e->dl_handle) ;
     e->dl_function = NULL ;
     GB_Global_persistent_free ((void **) (&(e->suffix))) ;
     // unload the dl library
@@ -1869,17 +1852,15 @@ void GB_jitifyer_table_free (bool freeall)
             {
                 // found an entry
                 if (e->dl_handle == NULL)
-                {
+                { 
                     // flag the PreJIT kernel as unchecked
                     e->prejit_index = GB_UNFLIP (e->prejit_index) ;
                 }
-                // free it
-                if (freeall || 
-                     (e->dl_handle != NULL &&
+                // free it if permitted
+                if (freeall || (e->dl_handle != NULL &&
                       e->encoding.kcode != GB_JIT_KERNEL_USEROP))
-                {
+                { 
                     // free the entry
-//                  printf ("free the JIT entry e\n")  ;
                     GB_jitifyer_entry_free (e) ;
                 }
             }
@@ -1887,8 +1868,8 @@ void GB_jitifyer_table_free (bool freeall)
     }
 
     if (GB_jit_table_populated == 0)
-    {
-//      printf ("JIT table now empty\n") ;
+    { 
+        // the JIT table is now empty, so free it
         GB_FREE_STUFF (GB_jit_table) ;
         GB_jit_table_size = 0 ;
         GB_jit_table_bits = 0 ;
