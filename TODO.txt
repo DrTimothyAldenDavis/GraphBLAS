@@ -21,7 +21,7 @@ v8.0.0 release:
     Windows with the JIT enabled.  I think it will compile with -DNJIT
     but I haven't tested it.
 
-* compiler warnings:
+* compiler warnings: should be fixed now
 
     using clang leads to some compiler warnings when compiling the demos
     (typecasting complex types).  These are safe but need to be silenced.
