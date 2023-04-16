@@ -13,7 +13,6 @@
 
 // If the function pointer is NULL, the function is compiled with the JIT.
 
-#define GB_DEBUG
 #include "GB.h"
 #include "GB_binop.h"
 #include "GB_stringify.h"
@@ -80,7 +79,7 @@ GrB_Info GxB_BinaryOp_new
         if (info != GrB_SUCCESS)
         {
             // unable to construct the function pointer
-            GB_FREE (op, header_size) ;
+            GB_Op_free ((GB_Operator *) op) ;
             return (GrB_NULL_POINTER) ;
         }
         (*op)->binop_function = (GxB_binary_function) user_function ;

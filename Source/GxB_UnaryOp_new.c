@@ -73,7 +73,7 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
         if (info != GrB_SUCCESS)
         {
             // unable to construct the function pointer
-            GB_FREE (&op, header_size) ;
+            GB_Op_free ((GB_Operator *) &op) ;
             return (GrB_NULL_POINTER) ;
         }
         op->unop_function = (GxB_unary_function) user_function ;

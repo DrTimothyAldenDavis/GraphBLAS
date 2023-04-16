@@ -107,7 +107,7 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
         if (info != GrB_SUCCESS)
         {
             // unable to construct the function pointer
-            GB_FREE (op, header_size) ;
+            GB_Op_free ((GB_Operator *) op) ;
             return (GrB_NULL_POINTER) ;
         }
         (*op)->idxunop_function = (GxB_index_unary_function) user_function ;
