@@ -9,7 +9,6 @@
 
 #include "GB_apply.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
 
 typedef GB_JIT_KERNEL_CONCAT_FULL_PROTO ((*GB_jit_dl_function)) ;
 
@@ -51,6 +50,6 @@ GrB_Info GB_concat_full_jit      // concatenate A into a full matrix C
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, cistart, cvstart, A, A_nthreads)) ;
+    return (GB_jit_kernel (C, cistart, cvstart, A, A_nthreads, &GB_callback)) ;
 }
 

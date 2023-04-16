@@ -10,7 +10,6 @@
 #include "GB_add.h"
 #include "GB_ewise_kernels.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
 
 typedef GB_JIT_KERNEL_ADD_PROTO ((*GB_jit_dl_function)) ;
 
@@ -75,6 +74,6 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
     return (GB_jit_kernel (C, M, A, B,
         Ch_is_Mh, C_to_M, C_to_A, C_to_B, TaskList, C_ntasks, C_nthreads,
         M_ek_slicing, M_nthreads, M_ntasks, A_ek_slicing, A_nthreads, A_ntasks,
-        B_ek_slicing, B_nthreads, B_ntasks)) ;
+        B_ek_slicing, B_nthreads, B_ntasks, &GB_callback)) ;
 }
 

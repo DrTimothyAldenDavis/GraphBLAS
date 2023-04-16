@@ -85,7 +85,6 @@
     int64_t A_hash_bits = 0 ;
     if (A_is_hyper)
     {
-        ASSERT_MATRIX_OK (A->Y, "A->Y hyper_hash", GB0) ;
         A_Yp = A->Y->p ;
         A_Yi = A->Y->i ;
         A_Yx = A->Y->x ;

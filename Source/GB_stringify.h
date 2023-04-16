@@ -10,18 +10,15 @@
 #ifndef GB_STRINGIFY_H
 #define GB_STRINGIFY_H
 
+#include "GB_binop.h"
+#include "GB_jitifyer.h"
+#include "GB_callback.h"
+
 //------------------------------------------------------------------------------
 // print copyright and license
 //------------------------------------------------------------------------------
 
 void GB_macrofy_copyright (FILE *fp) ;
-
-//------------------------------------------------------------------------------
-// for GB_boolean_rename and related methods
-//------------------------------------------------------------------------------
-
-#include "GB_binop.h"
-#include "GB_jitifyer.h"
 
 //------------------------------------------------------------------------------
 // left and right shift

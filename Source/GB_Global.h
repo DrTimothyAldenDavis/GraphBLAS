@@ -39,9 +39,8 @@ void     GB_Global_bitmap_switch_default (void) ;
 void     GB_Global_is_csc_set (bool is_csc) ;
 bool     GB_Global_is_csc_get (void) ;
 
-void     GB_Global_abort_function_set
-                        (void (* abort_function) (void)) ;
-void     GB_Global_abort_function (void) ;
+void     GB_Global_abort_set (void (* abort_function) (void)) ;
+void     GB_Global_abort (void) ;
 
 void     GB_Global_malloc_function_set (void * (* malloc_function) (size_t)) ;
 void  *  GB_Global_malloc_function (size_t size) ;

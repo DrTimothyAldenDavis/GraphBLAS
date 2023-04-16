@@ -20,6 +20,7 @@ GB_JIT_KERNEL_AXB_SAXPY3_PROTO (GB_jit_kernel)
         my_callback->GB_AxB_saxpy3_cumsum_func ;
     GB_bix_alloc_f GB_bix_alloc = my_callback->GB_bix_alloc_func ;
     GB_qsort_1_f GB_qsort_1 = my_callback->GB_qsort_1_func ;
+    GB_GET_DEBUG_FUNCTIONS ;
     #endif
 
     ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;

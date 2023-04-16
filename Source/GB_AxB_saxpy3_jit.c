@@ -9,8 +9,6 @@
 
 #include "GB_mxm.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
-#include "GB_callback.h"
 
 typedef GB_JIT_KERNEL_AXB_SAXPY3_PROTO ((*GB_jit_dl_function)) ;
 

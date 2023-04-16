@@ -402,12 +402,12 @@ bool GB_Global_is_csc_get (void)
 // abort_function
 //------------------------------------------------------------------------------
 
-void GB_Global_abort_function_set (void (* abort_function) (void))
+void GB_Global_abort_set (void (* abort_function) (void))
 { 
     GB_Global.abort_function = abort_function ;
 }
 
-void GB_Global_abort_function (void)
+void GB_Global_abort (void)
 {
     GB_Global.abort_function ( ) ;
 }

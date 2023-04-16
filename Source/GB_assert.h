@@ -26,7 +26,7 @@
         if (!(X))                                                           \
         {                                                                   \
             GBDUMP ("assertion failed: " __FILE__ " line %d\n", __LINE__) ; \
-            GB_Global_abort_function ( ) ;                                  \
+            GB_Global_abort ( ) ;                                  \
         }                                                                   \
     }
 
@@ -70,7 +70,7 @@
 {                                                                   \
     fprintf (stderr, "gotcha: " __FILE__ " line: %d\n", __LINE__) ; \
     GBDUMP ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;          \
-    GB_Global_abort_function ( ) ;                                  \
+    GB_Global_abort ( ) ;                                  \
 }
 #endif
 #endif

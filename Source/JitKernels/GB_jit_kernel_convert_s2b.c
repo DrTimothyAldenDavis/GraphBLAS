@@ -13,6 +13,7 @@
 GB_JIT_KERNEL_CONVERT_S2B_PROTO (GB_jit_kernel) ;
 GB_JIT_KERNEL_CONVERT_S2B_PROTO (GB_jit_kernel)
 { 
+    GB_GET_DEBUG_FUNCTIONS ;
     #include "GB_convert_s2b_template.c"
     return (GrB_SUCCESS) ;
 }

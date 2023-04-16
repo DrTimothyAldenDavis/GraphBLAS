@@ -10,7 +10,6 @@
 #include "GB_mxm.h"
 #include "GB_ewise_kernels.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
 
 typedef GB_JIT_KERNEL_ROWSCALE_PROTO ((*GB_jit_dl_function)) ;
 
@@ -54,6 +53,6 @@ GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, D, B, nthreads)) ;
+    return (GB_jit_kernel (C, D, B, nthreads, &GB_callback)) ;
 }
 

@@ -157,5 +157,15 @@ void *GX_werk_push    /* return pointer to newly allocated space */         \
     GB_Werk Werk                                                            \
 )
 
+// for debugging only:
+#define GB_CALLBACK_GLOBAL_ABORT_PROTO(GX_Global_abort)                     \
+void GX_Global_abort (void)
+
+#define GB_CALLBACK_FLUSH_GET_PROTO(GX_Global_flush_get)                    \
+GB_flush_function_t GX_Global_flush_get (void)
+
+#define GB_CALLBACK_PRINTF_GET_PROTO(GX_Global_printf_get)                  \
+GB_printf_function_t GX_Global_printf_get (void)
+
 #endif
 

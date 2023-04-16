@@ -78,6 +78,7 @@
 GB_JIT_KERNEL_REDUCE_PROTO (GB_jit_kernel) ;
 GB_JIT_KERNEL_REDUCE_PROTO (GB_jit_kernel)
 { 
+    GB_GET_DEBUG_FUNCTIONS ;
     GB_Z_TYPE z = (* ((GB_Z_TYPE *) result)) ;
     GB_Z_TYPE *W = (GB_Z_TYPE *) Workspace ;
     #if GB_A_HAS_ZOMBIES || GB_A_IS_BITMAP || (GB_PANEL == 1)

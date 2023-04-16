@@ -9,7 +9,6 @@
 
 #include "GB_transpose.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
 
 typedef GB_JIT_KERNEL_TRANS_UNOP_PROTO ((*GB_jit_dl_function)) ;
 
@@ -52,6 +51,7 @@ GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, A, Workspaces, A_slice, nworkspaces, nthreads)) ;
+    return (GB_jit_kernel (C, A, Workspaces, A_slice, nworkspaces, nthreads,
+        &GB_callback)) ;
 }
 

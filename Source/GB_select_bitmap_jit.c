@@ -9,7 +9,6 @@
 
 #include "GB_select.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
 
 typedef GB_JIT_KERNEL_SELECT_BITMAP_PROTO ((*GB_jit_dl_function)) ;
 
@@ -53,6 +52,7 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (Cb, cnvals_handle, A, ythunk, nthreads)) ;
+    return (GB_jit_kernel (Cb, cnvals_handle, A, ythunk, nthreads,
+        &GB_callback)) ;
 }
 

@@ -10,7 +10,6 @@
 #include "GB_ewise.h"
 #include "GB_ewise_kernels.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
 
 typedef GB_JIT_KERNEL_EWISE_FULLA_PROTO ((*GB_jit_dl_function)) ;
 
@@ -53,6 +52,6 @@ GrB_Info GB_ewise_fulla_jit    // C+=A+B via the JIT
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, A, B, nthreads)) ;
+    return (GB_jit_kernel (C, A, B, nthreads, &GB_callback)) ;
 }
 

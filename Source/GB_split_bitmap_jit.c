@@ -9,7 +9,6 @@
 
 #include "GB_apply.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
 
 typedef GB_JIT_KERNEL_SPLIT_BITMAP_PROTO ((*GB_jit_dl_function)) ;
 
@@ -51,6 +50,6 @@ GrB_Info GB_split_bitmap_jit      // split A into a bitmap tile C
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, A, avstart, aistart, C_nthreads)) ;
+    return (GB_jit_kernel (C, A, avstart, aistart, C_nthreads, &GB_callback)) ;
 }
 

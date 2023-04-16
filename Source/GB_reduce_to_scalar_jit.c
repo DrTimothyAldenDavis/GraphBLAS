@@ -10,7 +10,6 @@
 #include "GB_reduce.h"
 #include "GB_binop.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
 
 typedef GB_JIT_KERNEL_REDUCE_PROTO ((*GB_jit_dl_function)) ;
 
@@ -52,6 +51,6 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (z, A, W, F, ntasks, nthreads)) ;
+    return (GB_jit_kernel (z, A, W, F, ntasks, nthreads, &GB_callback)) ;
 }
 

@@ -10,7 +10,6 @@
 #include "GB_mxm.h"
 #include "GB_ewise_kernels.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
 
 typedef GB_JIT_KERNEL_COLSCALE_PROTO ((*GB_jit_dl_function)) ;
 
@@ -56,6 +55,7 @@ GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
     //------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, A, D, A_ek_slicing, A_ntasks, A_nthreads)) ;
+    return (GB_jit_kernel (C, A, D, A_ek_slicing, A_ntasks, A_nthreads,
+        &GB_callback)) ;
 }
 

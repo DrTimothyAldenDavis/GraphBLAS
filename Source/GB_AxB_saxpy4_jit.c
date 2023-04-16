@@ -9,7 +9,6 @@
 
 #include "GB_mxm.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
 
 typedef GB_JIT_KERNEL_AXB_SAXPY4_PROTO ((*GB_jit_dl_function)) ;
 
@@ -64,6 +63,7 @@ GrB_Info GB_AxB_saxpy4_jit          // C+=A*B, saxpy4 method, via the JIT
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, A, B, ntasks, nthreads, nfine_tasks_per_vector,
-        use_coarse_tasks, use_atomics, A_slice, H_slice, Wcx, Wf)) ;
+        use_coarse_tasks, use_atomics, A_slice, H_slice, Wcx, Wf,
+        &GB_callback)) ;
 }
 

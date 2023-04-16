@@ -10,6 +10,7 @@
 GB_JIT_KERNEL_EMULT_08_PROTO (GB_jit_kernel) ;
 GB_JIT_KERNEL_EMULT_08_PROTO (GB_jit_kernel)
 { 
+    GB_GET_DEBUG_FUNCTIONS ;
     #include "GB_emult_08_meta.c"
     return (GrB_SUCCESS) ;
 }

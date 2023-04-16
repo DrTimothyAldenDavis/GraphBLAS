@@ -9,7 +9,6 @@
 
 #include "GB_apply.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
 
 typedef GB_JIT_KERNEL_APPLY_UNOP_PROTO ((*GB_jit_dl_function)) ;
 
@@ -54,6 +53,7 @@ GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (Cx, A, ythunk, A_ek_slicing, A_ntasks, A_nthreads)) ;
+    return (GB_jit_kernel (Cx, A, ythunk, A_ek_slicing, A_ntasks, A_nthreads,
+        &GB_callback)) ;
 }
 

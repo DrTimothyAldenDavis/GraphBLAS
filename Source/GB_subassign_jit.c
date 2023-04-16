@@ -9,8 +9,6 @@
 
 #include "GB.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
-#include "GB_callback.h"
 
 typedef GB_JIT_KERNEL_SUBASSIGN_PROTO ((*GB_jit_dl_function)) ;
 
@@ -67,7 +65,8 @@ GrB_Info GB_subassign_jit
     GrB_Type atype = (A == NULL) ? scalar_type : A->type ;
 
     void *dl_function ;
-    GrB_Info info = GB_jitifyer_load (&dl_function, GB_jit_assign_family, kname,
+    GrB_Info info = GB_jitifyer_load (&dl_function,
+        GB_jit_assign_family, kname,
         hash, &encoding, suffix, NULL, NULL,
         (GB_Operator) accum, C->type, atype, NULL) ;
     if (info != GrB_SUCCESS) return (info) ;

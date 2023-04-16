@@ -9,7 +9,6 @@
 
 #include "GB_mxm.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
 
 typedef GB_JIT_KERNEL_AXB_DOT2_PROTO ((*GB_jit_dl_function)) ;
 
@@ -60,6 +59,6 @@ GrB_Info GB_AxB_dot2_jit        // C<M>=A'*B, dot2 method, via the JIT
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, M, A, A_slice, B, B_slice, nthreads, naslice,
-        nbslice)) ;
+        nbslice, &GB_callback)) ;
 }
 

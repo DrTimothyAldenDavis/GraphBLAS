@@ -54,7 +54,6 @@
     // scatter C into the R bitmap
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "C input to R_bitmap_masker", GB0) ;
     GB_C_NHELD (C_nnz_held) ;
     GB_SLICE_MATRIX_WORK (C, 8, C_nnz_held + C->nvec, C_nnz_held) ;
 
@@ -88,7 +87,6 @@
     }
 
     R->nvals = rnvals ;
-    ASSERT_MATRIX_OK (R, "R with C scattered", GB0) ;
 
     //--------------------------------------------------------------------------
     // R<M>=Z or R<!M>=Z

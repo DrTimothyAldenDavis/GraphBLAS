@@ -9,8 +9,6 @@
 
 #include "GB_apply.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
-#include "GB_callback.h"
 
 typedef GB_JIT_KERNEL_CONCAT_BITMAP_PROTO ((*GB_jit_dl_function)) ;
 

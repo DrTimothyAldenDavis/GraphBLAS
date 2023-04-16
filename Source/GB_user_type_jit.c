@@ -9,7 +9,6 @@
 
 #include "GB.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
 
 typedef GB_JIT_KERNEL_USER_TYPE_PROTO ((*GB_jit_dl_function)) ;
 

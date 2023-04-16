@@ -669,11 +669,9 @@ static GrB_Info GB_SORT (matrix)
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "C to sort", GB0) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;
     #if GB_SORT_UDT
-    ASSERT_BINARYOP_OK (op, "op", GB0) ;
     ASSERT (op->ztype == GrB_BOOL) ;
     ASSERT (op->xtype == op->ytype) ;
     #endif
@@ -879,7 +877,6 @@ static GrB_Info GB_SORT (matrix)
 
     GB_FREE_WORKSPACE ;
     C->jumbled = true ;
-    ASSERT_MATRIX_OK (C, "C sorted by value", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

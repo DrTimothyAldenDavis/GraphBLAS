@@ -10,7 +10,6 @@
 #include "GB_emult.h"
 #include "GB_ewise_kernels.h"
 #include "GB_stringify.h"
-#include "GB_jitifyer.h"
 
 typedef GB_JIT_KERNEL_EMULT_08_PROTO ((*GB_jit_dl_function)) ;
 
@@ -63,6 +62,6 @@ GrB_Info GB_emult_08_jit      // C<#M>=A.*B, emult_08, via the JIT
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, M, Mask_struct, Mask_comp, A, B, C_to_M, C_to_A,
-        C_to_B, TaskList, C_ntasks, C_nthreads)) ;
+        C_to_B, TaskList, C_ntasks, C_nthreads, &GB_callback)) ;
 }
 
