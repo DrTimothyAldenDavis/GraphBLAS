@@ -336,5 +336,9 @@ const char *GB_jitifyer_get_C_libraries (void) ;
 GrB_Info GB_jitifyer_set_C_libraries (const char *new_C_libraries) ;
 GrB_Info GB_jitifyer_set_C_libraries_worker (const char *new_C_libraries) ;
 
+const char *GB_jitifyer_get_C_preface (void) ;
+GrB_Info GB_jitifyer_set_C_preface (const char *new_C_preface) ;
+GrB_Info GB_jitifyer_set_C_preface_worker (const char *new_C_preface) ;
+
 #endif
 

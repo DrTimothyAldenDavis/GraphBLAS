@@ -319,6 +319,11 @@ GrB_Info GxB_Global_Option_get_CHAR     // gets the current global option
             (*value) = GB_jitifyer_get_C_libraries ( ) ;
             break ;
 
+        case GxB_JIT_C_PREFACE : 
+
+            (*value) = GB_jitifyer_get_C_preface ( ) ;
+            break ;
+
         case GxB_JIT_CACHE_PATH : 
 
             (*value) = GB_jitifyer_get_cache_path ( ) ;
@@ -865,6 +870,17 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (libraries) ;
                 (*libraries) = GB_jitifyer_get_C_libraries ( ) ;
+            }
+            break ;
+
+        case GxB_JIT_C_PREFACE : 
+
+            {
+                va_start (ap, field) ;
+                const char **preface = va_arg (ap, const char **) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (preface) ;
+                (*preface) = GB_jitifyer_get_C_preface ( ) ;
             }
             break ;
 

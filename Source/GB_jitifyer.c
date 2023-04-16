@@ -69,6 +69,9 @@ static size_t   GB_jit_C_link_flags_allocated = 0 ;
 static char    *GB_jit_C_libraries = NULL ;
 static size_t   GB_jit_C_libraries_allocated = 0 ;
 
+static char    *GB_jit_C_preface = NULL ;
+static size_t   GB_jit_C_preface_allocated = 0 ;
+
 static char    *GB_jit_library_name = NULL ;
 static size_t   GB_jit_library_name_allocated = 0 ;
 
@@ -126,6 +129,7 @@ void GB_jitifyer_finalize (bool freeall)
     GB_FREE_STUFF (GB_jit_C_flags) ;
     GB_FREE_STUFF (GB_jit_C_link_flags) ;
     GB_FREE_STUFF (GB_jit_C_libraries) ;
+    GB_FREE_STUFF (GB_jit_C_preface) ;
     GB_FREE_STUFF (GB_jit_library_name) ;
     GB_FREE_STUFF (GB_jit_kernel_name) ;
     GB_FREE_STUFF (GB_jit_command) ;
@@ -137,6 +141,7 @@ void GB_jitifyer_finalize (bool freeall)
     ASSERT (GB_jit_C_flags == NULL) ;
     ASSERT (GB_jit_C_link_flags == NULL) ;
     ASSERT (GB_jit_C_libraries == NULL) ;
+    ASSERT (GB_jit_C_preface == NULL) ;
     ASSERT (GB_jit_library_name == NULL) ;
     ASSERT (GB_jit_kernel_name == NULL) ;
     ASSERT (GB_jit_command == NULL) ;
@@ -171,6 +176,7 @@ GrB_Info GB_jitifyer_init (void)
     ASSERT (GB_jit_C_flags == NULL) ;
     ASSERT (GB_jit_C_link_flags == NULL) ;
     ASSERT (GB_jit_C_libraries == NULL) ;
+    ASSERT (GB_jit_C_preface == NULL) ;
     ASSERT (GB_jit_library_name == NULL) ;
     ASSERT (GB_jit_kernel_name == NULL) ;
     ASSERT (GB_jit_command == NULL) ;
@@ -224,6 +230,7 @@ GrB_Info GB_jitifyer_init (void)
     GB_COPY_STUFF (GB_jit_C_flags,      GB_C_FLAGS) ;
     GB_COPY_STUFF (GB_jit_C_link_flags, GB_C_LINK_FLAGS) ;
     GB_COPY_STUFF (GB_jit_C_libraries,  GB_C_LIBRARIES) ;
+    GB_COPY_STUFF (GB_jit_C_preface,    "") ;
 
     //--------------------------------------------------------------------------
     // allocate permanent workspace
@@ -1051,7 +1058,7 @@ GrB_Info GB_jitifyer_set_C_libraries_worker (const char *new_C_libraries)
 { 
 
     //--------------------------------------------------------------------------
-    // free the old strings that depend on the C flags
+    // free the old strings that depend on the C libraries
     //--------------------------------------------------------------------------
 
     GB_FREE_STUFF (GB_jit_C_libraries) ;
@@ -1068,6 +1075,69 @@ GrB_Info GB_jitifyer_set_C_libraries_worker (const char *new_C_libraries)
     //--------------------------------------------------------------------------
 
     return (GB_jitifyer_alloc_space ( )) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_get_C_preface: return the current C libraries
+//------------------------------------------------------------------------------
+
+const char *GB_jitifyer_get_C_preface (void)
+{
+    const char *s ;
+    #pragma omp critical (GB_jitifyer_worker)
+    { 
+        s = GB_jit_C_preface ;
+    }
+    return (s) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_C_preface: set new C libraries
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_set_C_preface (const char *new_C_preface)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    if (new_C_preface == NULL)
+    { 
+        return (GrB_NULL_POINTER) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // set the C preface in a critical section
+    //--------------------------------------------------------------------------
+
+    GrB_Info info ;
+    #pragma omp critical (GB_jitifyer_worker)
+    { 
+        info = GB_jitifyer_set_C_preface_worker (new_C_preface) ;
+    }
+    return (info) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_C_preface_worker: set C libraries in a critical section
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_set_C_preface_worker (const char *new_C_preface)
+{ 
+
+    //--------------------------------------------------------------------------
+    // free the old strings that depend on the C preface
+    //--------------------------------------------------------------------------
+
+    GB_FREE_STUFF (GB_jit_C_preface) ;
+
+    //--------------------------------------------------------------------------
+    // allocate the new GB_jit_C_preface
+    //--------------------------------------------------------------------------
+
+    GB_COPY_STUFF (GB_jit_C_preface, new_C_preface) ;
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1556,6 +1626,11 @@ GrB_Info GB_jitifyer_worker
             "----------------------------------------\n"
             "// %s.c\n", kernel_name) ;
         GB_macrofy_copyright (fp) ;
+
+        // add the preface, which is an empty string by default
+        fprintf (fp, "%s\n", GB_jit_C_preface) ;
+
+        // #include the GB_jit_kernel_[family].h header file
         fprintf (fp, "#include \"GB_jit_kernel_%s.h\"\n\n", family_name) ;
 
         // macrofy the kernel operators, types, and matrix formats

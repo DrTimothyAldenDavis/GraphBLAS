@@ -4070,9 +4070,10 @@ typedef enum            // for global options or matrix options
     GxB_JIT_C_COMPILER_FLAGS = 111, // CPU JIT C compiler flags
     GxB_JIT_C_LINKER_FLAGS = 112,   // CPU JIT C linker flags
     GxB_JIT_C_LIBRARIES = 113,      // CPU JIT C libraries
-    GxB_JIT_C_CONTROL = 114,        // CPU JIT control
-    GxB_JIT_CACHE_PATH = 115,       // CPU/CUDA JIT path for compiled kernels
-//  GxB_JIT_CUDA_CONTROL = 116,     // CUDA JIT control (future)
+    GxB_JIT_C_PREFACE = 114,        // CPU JIT C preface
+    GxB_JIT_C_CONTROL = 115,        // CPU JIT C control
+    GxB_JIT_CACHE_PATH = 116,       // CPU/CUDA JIT path for compiled kernels
+//  GxB_JIT_CUDA_CONTROL = 117,     // CUDA JIT control (future)
 
     //------------------------------------------------------------
     // for GxB_Matrix_Option_get only:

@@ -8726,6 +8726,7 @@ field                       & value         & description \\
 \verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
 \verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
 \verb'GxB_JIT_C_LIBRARIES'    & \verb'char *' & libraries to link against \\
+\verb'GxB_JIT_C_PREFACE'      & \verb'char *' & C code as preface to JIT kernels \\
 \verb'GxB_JIT_C_CONTROL'      & see below     & CPU JIT control \\
 \verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
 \hline
@@ -8853,6 +8854,16 @@ they will be checked when reloaded, and recompiled if their definitions
 changed.  All PreJIT kernels are flagged as unchecked, just as they were
 flagged by \verb'GrB_init', so that they will be checked the next time they
 run.
+
+The \verb'GxB_JIT_C_PREFACE' string is added at the top of each JIT kernel.  It
+is useful for providing additional \verb'#include' files that GraphBLAS does
+not provide.  It can also be useful for diagnostics and for configuring the
+\verb'PreJIT'.  For example, suppose you wish to tag specific kernels as having
+been constructed for particular parts of an application.  The application can
+modify this string to some unique comment, and then run some benchmarks that
+call GraphBLAS.  Any JIT kernels created will be tagged with this unique
+comment, which may be helpful to select specific kernels to copy into the
+\verb'PreJIT' folder.
 
 %-------------------------------------------------------------------------------
 \subsection{Compilation options: {\sf NJIT} and {\sf COMPACT}}
@@ -9083,6 +9094,7 @@ field                       & value         & description \\
 \verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
 \verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
 \verb'GxB_JIT_C_LIBRARIES'    & \verb'char *' & libraries to link against \\
+\verb'GxB_JIT_C_PREFACE'      & \verb'char *' & C code as preface to JIT kernels \\
 \verb'GxB_JIT_C_CONTROL'      & see Section \ref{jit} & CPU JIT control \\
 \verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
 \hline
@@ -9183,6 +9195,7 @@ field                       & value         & description \\
 \verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
 \verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
 \verb'GxB_JIT_C_LIBRARIES'    & \verb'char *' & libraries to link against \\
+\verb'GxB_JIT_C_PREFACE'      & \verb'char *' & C code as preface to JIT kernels \\
 \verb'GxB_JIT_C_CONTROL'      & see Section \ref{jit} & CPU JIT control \\
 \verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
 \hline
@@ -9598,12 +9611,14 @@ typedef enum
     GxB_PRINTF = 101,               // printf function for diagnostic output
     GxB_FLUSH = 102,                // flush function for diagnostic output
     GxB_PRINT_1BASED = 104, // print matrices as 0-based or 1-based
+
     GxB_JIT_C_COMPILER_NAME = 110,  // CPU JIT C compiler name
     GxB_JIT_C_COMPILER_FLAGS = 111, // CPU JIT C compiler flags
     GxB_JIT_C_LINKER_FLAGS = 112,   // CPU JIT C linker flags
     GxB_JIT_C_LIBRARIES = 113,      // CPU JIT C libraries
-    GxB_JIT_C_CONTROL = 114,        // CPU JIT control
-    GxB_JIT_CACHE_PATH = 115,       // CPU/CUDA JIT path for compiled kernels
+    GxB_JIT_C_PREFACE = 114,        // CPU JIT C preface
+    GxB_JIT_C_CONTROL = 115,        // CPU JIT C control
+    GxB_JIT_CACHE_PATH = 116,       // CPU/CUDA JIT path for compiled kernels
 
     // for matrix/vector get only:
     GxB_SPARSITY_STATUS = 33,   // query the sparsity of a matrix or vector
@@ -9830,6 +9845,7 @@ The \verb'field' parameter can be
 \verb'GxB_JIT_C_COMPILER_FLAGS',
 \verb'GxB_JIT_C_LINKER_FLAGS',
 \verb'GxB_JIT_C_LIBRRIES',
+\verb'GxB_JIT_C_PREFACE',
 \verb'GxB_JIT_C_CONTROL', or
 \verb'GxB_JIT_CACHE_PATH'.
 
@@ -9958,6 +9974,7 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
         \verb'GxB_JIT_C_COMPILER_FLAGS' & flags for the C compiler \\
         \verb'GxB_JIT_C_LINKER_FLAGS'   & link flags for the C compiler \\
         \verb'GxB_JIT_C_LIBRARIES'      & libraries to link against \\
+        \verb'GxB_JIT_C_PREFACE'        & preface for JIT kernels \\
         \verb'GxB_JIT_C_CONTROL'        & CPU JIT control \\
         \verb'GxB_JIT_CACHE_PATH'       & folder with compiled kernels \\
         \hline
@@ -10143,16 +10160,18 @@ To set/get the global options:
     GxB_set (GxB_PRINT_1BASED, bool onebased) ;
     GxB_get (GxB_PRINT_1BASED, bool *onebased) ;
 
-    GxB_set (GxB_JIT_C_COMPILER_NAME, const char *compiler) ;
-    GxB_get (GxB_JIT_C_COMPILER_NAME, const char **compiler) ;
-    GxB_set (GxB_JIT_C_COMPILER_FLAGS, const char *flags) ;
-    GxB_get (GxB_JIT_C_COMPILER_FLAGS, const char **flags) ;
-    GxB_set (GxB_JIT_C_LINKER_FLAGS, const char *flags) ;
-    GxB_get (GxB_JIT_C_LINKER_FLAGS, const char **flags) ;
-    GxB_set (GxB_JIT_C_LIBRARIES, const char *libraries) ;
-    GxB_get (GxB_JIT_C_LIBRARIES, const char **libraries) ;
-    GxB_set (GxB_JIT_CACHE_PATH, const char *cache) ;
-    GxB_get (GxB_JIT_CACHE_PATH, const char **cache) ;
+    GxB_set (GxB_JIT_C_COMPILER_NAME, char *compiler) ;
+    GxB_get (GxB_JIT_C_COMPILER_NAME, char **compiler) ;
+    GxB_set (GxB_JIT_C_COMPILER_FLAGS, char *flags) ;
+    GxB_get (GxB_JIT_C_COMPILER_FLAGS, char **flags) ;
+    GxB_set (GxB_JIT_C_LINKER_FLAGS, char *flags) ;
+    GxB_get (GxB_JIT_C_LINKER_FLAGS, char **flags) ;
+    GxB_set (GxB_JIT_C_LIBRARIES, char *libraries) ;
+    GxB_get (GxB_JIT_C_LIBRARIES, char **libraries) ;
+    GxB_set (GxB_JIT_C_PREFACE, char *preface) ;
+    GxB_get (GxB_JIT_C_PREFACE, char **preface) ;
+    GxB_set (GxB_JIT_CACHE_PATH, char *cache) ;
+    GxB_get (GxB_JIT_CACHE_PATH, char **cache) ;
     GxB_set (GxB_JIT_C_CONTROL, int control) ;
     GxB_get (GxB_JIT_C_CONTROL, int *control) ;
     \end{verbatim} }

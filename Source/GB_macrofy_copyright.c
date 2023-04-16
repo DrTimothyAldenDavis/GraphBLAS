@@ -28,7 +28,7 @@ void GB_macrofy_copyright
         "// The above copyright and license do not apply to any\n"
         "// user-defined types and operators defined below.\n"
         "//--------------------------------------"
-        "----------------------------------------\n\n",
+        "----------------------------------------\n",
         GxB_IMPLEMENTATION_MAJOR,
         GxB_IMPLEMENTATION_MINOR,
         GxB_IMPLEMENTATION_SUB,
