@@ -37,7 +37,7 @@ void gb_defaults (void)     // set global GraphBLAS defaults for MATLAB
     OK (GxB_Global_Option_set (GxB_CHUNK, GB_CHUNK_DEFAULT)) ;
 
     // for debug only
-    GB_Global_abort_function_set (gb_abort) ;
+    GB_Global_abort_set (gb_abort) ;
 
     // for printing memory sizes of matrices
     GB_Global_print_mem_shallow_set (true) ;
