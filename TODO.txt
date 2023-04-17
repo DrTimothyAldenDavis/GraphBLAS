@@ -9,31 +9,11 @@ v8.0.0 release:
     kernels are incompatible with the earlier DRAFT* versions of 8.0.0,
     however.
 
-* Atomics:
-
-    Can some "seq_cst" atomic clauses be safely removed?  I'm unsure.
-    The current version gives correct results on the Arm (see the bug fix
-    made for v7.4.4, also included here).
-
 * Windows:
 
     The JIT needs to be ported to Windows.  This draft will not compile on
     Windows with the JIT enabled.  I think it will compile with -DNJIT
     but I haven't tested it.
-
-* compiler warnings: should be fixed now
-
-    using clang leads to some compiler warnings when compiling the demos
-    (typecasting complex types).  These are safe but need to be silenced.
-
-* better performance:
-
-    This draft is thread-safe when used in a multithread user application,
-    but a better JIT critical section (many readers, 1 writer) is needed.
-    The current critical section may be sufficiently fast since the typical
-    case of work done inside the critical section is a single hash table
-    lookup.  However, the performance issues related to this have not been
-    tested.
 
 * FIXMEs:
 

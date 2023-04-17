@@ -109,18 +109,6 @@ v8.0.0 release:
     on Windows with the JIT enabled.  I think it will compile with \verb'-DNJIT'
     but I haven't tested it.
 
-    \item {\bf compiler warnings:}  using \verb'clang' leads to some
-        compiler warnings when compiling the demos (typecasting complex
-        types).  These are safe but need to be silenced.
-
-    \item {\bf better performance:}
-    This draft is thread-safe when used in a multithread user application,
-    but a better JIT critical section (many readers, 1 writer) is needed.
-    The current critical section may be sufficiently fast since the typical
-    case of work done inside the critical section is a single hash table
-    lookup.  However, the performance issues related to this have not been
-    tested.
-
     \item {\bf FIXME:} Some \verb'FIXME''s tagged in the \verb'Source/'
     folder.
 
@@ -9051,6 +9039,13 @@ The CUDA JIT will enable NVIDIA GPUs to be exploited.  There are simply too
 many kernels to create at compile time as the ``factory kernels.''  This CUDA
 JIT is in progress.  A related JIT for SYCL / OpenCL kernels is under
 consideration.
+
+\subsection{Better performance for multithreaded user programs:}
+This version is thread-safe when used in a multithread user application, but a
+better JIT critical section (many readers, 1 writer) might be needed.  The
+current critical section may be sufficiently fast since the typical case of
+work done inside the critical section is a single hash table lookup.  However,
+the performance issues related to this have not been tested.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

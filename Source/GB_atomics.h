@@ -1,4 +1,4 @@
-//------------------------------------------------------------------------------
+/------------------------------------------------------------------------------
 // GB_atomics.h: definitions for atomic operations
 //------------------------------------------------------------------------------
 
@@ -14,6 +14,11 @@
 // OpenMP 3.1 or later, or Microsoft Visual Studio on 64-bit Windows (which
 // only supports OpenMP 2.0).  SuiteSparse:GraphBLAS is not supported on 32-bit
 // Windows.
+
+// For v7.4.4, seq_cst was added to all atomics; otherwise, incorrect results
+// were obtained in the Arm64 cpu.
+
+// future:: try to remove seq_cst from some atomics.
 
 #ifndef GB_ATOMICS_H
 #define GB_ATOMICS_H
