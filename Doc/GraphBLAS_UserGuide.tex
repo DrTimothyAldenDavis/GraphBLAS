@@ -103,6 +103,7 @@ v8.0.0 release:
         ignore the old one, but this draft is still numbered 8.0.0.
         Its kernels are incompatible with the earlier DRAFT* versions of 8.0.0,
         however.
+        Also delete the \verb'~/.SuiteSparse/GraphBLAS/8.0.0/src' folder.
 
     \item {\bf Windows:}
     The JIT needs to be ported to Windows.  This draft will not compile
@@ -116,7 +117,7 @@ v8.0.0 release:
         multithreaded user application, even when multiple user threads try
         to compile the same JIT kernel at the same time.  However, if the user
         runs multiple instances of GraphBLAS at the same time, from entirely
-        different user processed, and each of them attempts to compile the same
+        different user process, and each of them attempts to compile the same
         JIT kernels, a file read/write conflict will occur on your
         \verb'~/.SuiteSparse/GraphBLAS/8.0.0' folder.  I need a portable
         file-locking mechanism for Linux/Unix, Mac, and Windows.
@@ -129,7 +130,7 @@ v8.0.0 release:
     a JIT kernel is compiled inside MATLAB.  These warnings need to be
     silenced.  gcc-12 is compiling x86 code to use inside MATLAB on the
     arm-based Mac, which is required since MATLAB is not a native Arm package
-    yet.
+    yet.  The warning is spurious.
 
 \end{itemize}
 
@@ -8700,7 +8701,8 @@ version will ignore kernels compiled by an older version of GraphBLAS.  If the
 \verb'GRAPHBLAS_CACHE_PATH' environment variable is set when GraphBLAS is
 compiled, that variable defines the folder.  If the user's home directory
 cannot be determined and the \verb'GRAPHBLAS_CACHE_PATH' environment variable
-is not set, then the \verb'cmake' build folder is used instead as a fallback.
+is not set, then JIT compilation is disabled and only PreJIT kernels can be
+used.
 The optional environment variable, \verb'GRAPHBLAS_CACHE_PATH', is also read by
 \verb'GrB_init' when the user application runs.
 
@@ -8741,7 +8743,8 @@ definition of the user-defined type or operator does not exactly match the
 definition when the kernel was compiled, then the compiled kernel is discarded
 and recompiled.  The stale kernel is overwitten with the new one, so there is
 no need to for the user to take any action to delete the stale kernel from the
-cache path.
+cache path.  If the cache path is changed via \verb'GxB_set', compiled kernels
+in the old cache folder are not copied over.  New ones are compiled instead.
 
 The usage of the CPU JIT can be controlled via \verb'GxB_get/set' using the
 \verb'GxB_JIT_C_CONTROL' setting.  If the JIT is enabled at compile time, the
