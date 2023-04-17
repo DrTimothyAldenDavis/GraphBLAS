@@ -170,7 +170,7 @@ GrB_Info GB_split_full              // split a full matrix
                 { 
                     struct GB_UnaryOp_opaque op_header ;
                     GB_Operator op = GB_unop_identity (atype, &op_header) ;
-                    ASSERT_UNARYOP_OK (op, "id op for split full", GB0) ;
+                    ASSERT_OP_OK (op, "id op for split full", GB0) ;
                     info = GB_split_full_jit (C, op, A, avstart, aistart,
                         C_nthreads) ;
                 }

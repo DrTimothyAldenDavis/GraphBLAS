@@ -205,7 +205,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
             { 
                 struct GB_UnaryOp_opaque op_header ;
                 GB_Operator op = GB_unop_identity (ctype, &op_header) ;
-                ASSERT_UNARYOP_OK (op, "identity op for concat full", GB0) ;
+                ASSERT_OP_OK (op, "identity op for concat full", GB0) ;
                 info = GB_concat_full_jit (C, cistart, cvstart, op, A,
                     A_nthreads) ;
             }

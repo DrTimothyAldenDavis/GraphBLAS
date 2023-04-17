@@ -305,7 +305,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             { 
                 struct GB_UnaryOp_opaque op_header ;
                 GB_Operator op = GB_unop_identity (atype, &op_header) ;
-                ASSERT_UNARYOP_OK (op, "identity op for split sparse", GB0) ;
+                ASSERT_OP_OK (op, "identity op for split sparse", GB0) ;
                 info = GB_split_sparse_jit (C, op, A, akstart, aistart, Wp,
                     C_ek_slicing, C_ntasks, C_nthreads) ;
             }

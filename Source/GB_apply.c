@@ -68,7 +68,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     if (op_is_unop)
     {
         // apply a unary operator: scalar is ignored
-        ASSERT_UNARYOP_OK (op, "unop for GB_apply", GB0) ;
+        ASSERT_OP_OK ( op, "unop for GB_apply", GB0) ;
         if (!op_is_positional)
         {
             // A must also be compatible with op->xtype
@@ -85,7 +85,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     else if (op_is_binop)
     {
         // apply a binary operator, with one input bound to a scalar
-        ASSERT_BINARYOP_OK (op, "binop for GB_apply", GB0) ;
+        ASSERT_OP_OK (op, "binop for GB_apply", GB0) ;
         ASSERT_SCALAR_OK (scalar, "scalar for GB_apply", GB0) ;
         if (!op_is_positional)
         {
@@ -145,7 +145,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     else // op_is_idxunop
     {
         // apply an idxunop operator, with a thunk scalar
-        ASSERT_INDEXUNARYOP_OK (op, "idxunop for GB_apply", GB0) ;
+        ASSERT_OP_OK (op, "idxunop for GB_apply", GB0) ;
         ASSERT_SCALAR_OK (scalar, "thunk for GB_apply", GB0) ;
         // A must be compatible with op->xtype
         if (!GB_Type_compatible (A->type, op->xtype))

@@ -404,7 +404,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             { 
                 struct GB_UnaryOp_opaque op_header ;
                 GB_Operator op = GB_unop_identity (ctype, &op_header) ;
-                ASSERT_UNARYOP_OK (op, "identity op for concat sparse", GB0) ;
+                ASSERT_OP_OK (op, "identity op for concat sparse", GB0) ;
                 info = GB_concat_sparse_jit (C, cistart, op, A, W,
                     A_ek_slicing, A_ntasks, A_nthreads) ;
             }

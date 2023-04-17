@@ -220,7 +220,7 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
             { 
                 struct GB_UnaryOp_opaque op_header ;
                 GB_Operator op = GB_unop_identity (A->type, &op_header) ;
-                ASSERT_UNARYOP_OK (op, "identity op for convert s2b", GB0) ;
+                ASSERT_OP_OK (op, "identity op for convert s2b", GB0) ;
                 info = GB_convert_s2b_jit (Ax_new, Ab, op,
                     A, A_ek_slicing, A_ntasks, A_nthreads) ;
             }

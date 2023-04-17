@@ -46,7 +46,7 @@ GrB_Info GB_selectop_to_idxunop
 
     ASSERT (idxunop_handle != NULL) ;
     ASSERT (NewThunk_handle != NULL) ;
-    ASSERT_OP_OK (selectop, "selectop to convert to idxunop", GB0) ;
+    ASSERT_OP_OK ((GB_Operator) selectop, "selop to convert to idxunop", GB0) ;
     ASSERT_TYPE_OK (atype, "atype for selectop_to_idxunop", GB0) ;
     ASSERT (GB_IS_SELECTOP_CODE (selectop->opcode)) ;
 

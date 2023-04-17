@@ -354,7 +354,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         // unop via the factory kernel
         //----------------------------------------------------------------------
 
-        ASSERT_UNARYOP_OK (op, "unop for GB_apply_op", GB0) ;
+        ASSERT_OP_OK (op, "unop for GB_apply_op", GB0) ;
         ASSERT (!A->iso) ;
 
         // determine number of threads to use
@@ -434,7 +434,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         // apply a binary operator (bound to a scalar)
         //----------------------------------------------------------------------
 
-        ASSERT_BINARYOP_OK (op, "standard binop for GB_apply_op", GB0) ;
+        ASSERT_OP_OK (op, "standard binop for GB_apply_op", GB0) ;
         ASSERT_SCALAR_OK (scalar, "scalar for GB_apply_op", GB0) ;
 
         GB_Type_code xcode, ycode, zcode ;

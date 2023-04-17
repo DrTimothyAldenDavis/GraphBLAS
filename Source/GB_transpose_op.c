@@ -108,7 +108,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
         // apply the unary operator to all entries
         //----------------------------------------------------------------------
 
-        ASSERT_UNARYOP_OK (op, "op for transpose", GB0) ;
+        ASSERT_OP_OK (op, "op for transpose", GB0) ;
 
         //----------------------------------------------------------------------
         // via the factory kernel
@@ -200,7 +200,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
         // apply a binary operator (bound to a scalar)
         //----------------------------------------------------------------------
 
-        ASSERT_BINARYOP_OK (op, "binop for transpose", GB0) ;
+        ASSERT_OP_OK (op, "binop for transpose", GB0) ;
 
         GB_Type_code xcode, ycode, zcode ;
         ASSERT (opcode != GB_FIRST_binop_code) ;

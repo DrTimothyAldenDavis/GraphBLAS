@@ -59,7 +59,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
     if (GB_IS_UNARYOP_CODE (opcode))
     {
-        ASSERT_UNARYOP_OK (op, "unop for shallow_op", GB0) ;
+        ASSERT_OP_OK (op, "unop for shallow_op", GB0) ;
         if (!op_is_positional)
         { 
             ASSERT (GB_Type_compatible (op->xtype, A->type)) ;
@@ -68,7 +68,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     }
     else if (GB_IS_BINARYOP_CODE (opcode))
     {
-        ASSERT_BINARYOP_OK (op, "binop for shallow_op", GB0) ;
+        ASSERT_OP_OK (op, "binop for shallow_op", GB0) ;
         if (!op_is_positional)
         { 
             op_intype = (binop_bind1st) ? op->xtype : op->ytype ;
@@ -77,7 +77,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     }
     else // GB_IS_INDEXUNARYOP_CODE (opcode)
     {
-        ASSERT_INDEXUNARYOP_OK (op, "ixdunop for shallow_op", GB0) ;
+        ASSERT_OP_OK (op, "ixdunop for shallow_op", GB0) ;
         op_intype = op->xtype ;
         ASSERT (GB_Type_compatible (op_intype, A->type)) ;
     }

@@ -93,7 +93,7 @@ void GB_unop_iso            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
             // Cx [0] = unop (A)
             //------------------------------------------------------------------
 
-            ASSERT_UNARYOP_OK (op, "op for GB_unop_iso", GB0) ;
+            ASSERT_OP_OK (op, "op for GB_unop_iso", GB0) ;
 
             // x = (xtype) Ax [0]
             GB_Type_code xcode = op->xtype->code ;
@@ -113,7 +113,7 @@ void GB_unop_iso            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
             // Cx [0] = binop (scalar,A) or binop (A,scalar)
             //------------------------------------------------------------------
 
-            ASSERT_BINARYOP_OK (op, "op for GB_unop_iso", GB0) ;
+            ASSERT_OP_OK (op, "op for GB_unop_iso", GB0) ;
             ASSERT_SCALAR_OK (scalar, "scalar for GB_unop_iso binop", GB0) ;
             GB_Type_code xcode = op->xtype->code ;
             GB_Type_code ycode = op->ytype->code ;

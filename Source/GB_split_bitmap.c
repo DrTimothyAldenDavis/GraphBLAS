@@ -176,7 +176,7 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
             { 
                 struct GB_UnaryOp_opaque op_header ;
                 GB_Operator op = GB_unop_identity (atype, &op_header) ;
-                ASSERT_UNARYOP_OK (op, "id op for split bitmap", GB0) ;
+                ASSERT_OP_OK (op, "id op for split bitmap", GB0) ;
                 info = GB_split_bitmap_jit (C, op, A, avstart, aistart,
                     C_nthreads) ;
             }
