@@ -47,6 +47,8 @@ badgauss ;
 // addgauss: add two Gaussian integers
 //------------------------------------------------------------------------------
 
+// z, x, and/or y can be aliased, but the computation is correct in that case.
+
 void addgauss (gauss *z, const gauss *x, const gauss *y)
 {
     z->real = x->real + y->real ;
@@ -63,6 +65,7 @@ void addgauss (gauss *z, const gauss *x, const gauss *y)
 void badaddgauss (gauss *z, const gauss *x, const gauss *y)
 {
     z->real = x->real + y->real ;
+    z->imag = -911 ;
 }
 
 // just to test the JIT: same name but different definition
@@ -70,23 +73,31 @@ void badaddgauss (gauss *z, const gauss *x, const gauss *y)
 "void addgauss (gauss *z, const gauss *x, const gauss *y)   \n" \
 "{                                                          \n" \
 "    z->real = x->real + y->real ;                          \n" \
+"    z->imag = -911 ;                                       \n" \
 "}"
 
 //------------------------------------------------------------------------------
 // multgauss: multiply two Gaussian integers
 //------------------------------------------------------------------------------
 
+// z, x, and/or y can be aliased, so temporary variables zreal and zimag
+// are required.
+
 void multgauss (gauss *z, const gauss *x, const gauss *y)
 {
-    z->real = x->real * y->real - x->imag * y->imag ;
-    z->imag = x->real * y->imag + x->imag * y->real ;
+    int32_t zreal = x->real * y->real - x->imag * y->imag ;
+    int32_t zimag = x->real * y->imag + x->imag * y->real ;
+    z->real = zreal ;
+    z->imag = zimag ;
 }
 
 #define MULTGAUSS_DEFN                                          \
 "void multgauss (gauss *z, const gauss *x, const gauss *y)  \n" \
 "{                                                          \n" \
-"    z->real = x->real * y->real - x->imag * y->imag ;      \n" \
-"    z->imag = x->real * y->imag + x->imag * y->real ;      \n" \
+"    int32_t zreal = x->real * y->real - x->imag * y->imag ;\n" \
+"    int32_t zimag = x->real * y->imag + x->imag * y->real ;\n" \
+"    z->real = zreal ;                                      \n" \
+"    z->imag = zimag ;                                      \n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -112,8 +123,6 @@ void ijgauss (int64_t *z, const gauss *x, GrB_Index i, GrB_Index j,
     const gauss *y)
 {
     (*z) = x->real + y->real + i - j ;
-//  printf ("i: %ld j: %ld x: (%d,%d), y: (%d,%d) result: %ld\n",
-//      i, j, x->real, x->imag, y->real, y->imag, *z) ;
 }
 
 #define IJGAUSS_DEFN                                                        \

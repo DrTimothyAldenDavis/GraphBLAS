@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// All functions must work if any input/outputs x, y, and/or z are aliased.
+// Some methods (times, div, and rdiv) require temporary variables zre and zim
+// as a result.  All other functions are OK as-is.
+
 #ifdef MATLAB_MEX_FILE
 
     #include "GB_mex.h"
@@ -160,47 +164,60 @@ void mycx_rminus (mycx *z, const mycx *x, const mycx *y)
 "    z->im = y->im - x->im ;                                            \n" \
 "}"
 
+// temporary variables zre and zim are required for times, div, and rdiv:
 void mycx_times (mycx *z, const mycx *x, const mycx *y)
 {
-    z->re = (x->re * y->re) - (x->im * y->im) ;
-    z->im = (x->re * y->im) + (x->im * y->re) ;
+    double zre = (x->re * y->re) - (x->im * y->im) ;
+    double zim = (x->re * y->im) + (x->im * y->re) ;
+    z->re = zre ;
+    z->im = zim ;
 }
 
 #define MYCX_TIMES                                                          \
 "void mycx_times (mycx *z, const mycx *x, const mycx *y)                \n" \
 "{                                                                      \n" \
-"    z->re = (x->re * y->re) - (x->im * y->im) ;                        \n" \
-"    z->im = (x->re * y->im) + (x->im * y->re) ;                        \n" \
+"    double zre = (x->re * y->re) - (x->im * y->im) ;                   \n" \
+"    double zim = (x->re * y->im) + (x->im * y->re) ;                   \n" \
+"    z->re = zre ;                                                      \n" \
+"    z->im = zim ;                                                      \n" \
 "}"
 
 void mycx_div (mycx *z, const mycx *x, const mycx *y)
 {
     double den = (y->re * y->re) + (y->im * y->im) ;
-    z->re = ((x->re * y->re) + (x->im * y->im)) / den ;
-    z->im = ((x->im * y->re) - (x->re * y->im)) / den ;
+    double zre = ((x->re * y->re) + (x->im * y->im)) / den ;
+    double zim = ((x->im * y->re) - (x->re * y->im)) / den ;
+    z->re = zre ;
+    z->im = zim ;
 }
 
 #define MYCX_DIV                                                            \
 "void mycx_div (mycx *z, const mycx *x, const mycx *y)                  \n" \
 "{                                                                      \n" \
 "    double den = (y->re * y->re) + (y->im * y->im) ;                   \n" \
-"    z->re = ((x->re * y->re) + (x->im * y->im)) / den ;                \n" \
-"    z->im = ((x->im * y->re) - (x->re * y->im)) / den ;                \n" \
+"    double zre = ((x->re * y->re) + (x->im * y->im)) / den ;           \n" \
+"    double zim = ((x->im * y->re) - (x->re * y->im)) / den ;           \n" \
+"    z->re = zre ;                                                      \n" \
+"    z->im = zim ;                                                      \n" \
 "}"
 
 void mycx_rdiv (mycx *z, const mycx *x, const mycx *y)
 {
     double den = (x->re * x->re) + (x->im * x->im) ;
-    z->re = ((y->re * x->re) + (y->im * x->im)) / den ;
-    z->im = ((y->im * x->re) - (y->re * x->im)) / den ;
+    double zre = ((y->re * x->re) + (y->im * x->im)) / den ;
+    double zim = ((y->im * x->re) - (y->re * x->im)) / den ;
+    z->re = zre ;
+    z->im = zim ;
 }
 
 #define MYCX_RDIV                                                           \
 "void mycx_div (mycx *z, const mycx *x, const mycx *y)                  \n" \
 "{                                                                      \n" \
 "    double den = (x->re * x->re) + (x->im * x->im) ;                   \n" \
-"    z->re = ((y->re * x->re) + (y->im * x->im)) / den ;                \n" \
-"    z->im = ((y->im * x->re) - (y->re * x->im)) / den ;                \n" \
+"    double zre = ((y->re * x->re) + (y->im * x->im)) / den ;           \n" \
+"    double zim = ((y->im * x->re) - (y->re * x->im)) / den ;           \n" \
+"    z->re = zre ;                                                      \n" \
+"    z->im = zim ;                                                      \n" \
 "}"
 
 // min (x,y): complex number with smallest magnitude.  If tied, select the

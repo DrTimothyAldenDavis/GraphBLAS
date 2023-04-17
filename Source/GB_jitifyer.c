@@ -134,7 +134,6 @@ void GB_jitifyer_finalize (bool freeall)
     GB_FREE_STUFF (GB_jit_kernel_name) ;
     GB_FREE_STUFF (GB_jit_command) ;
 
-    if (freeall) ASSERT (GB_jit_table == NULL) ;
     ASSERT (GB_jit_cache_path == NULL) ;
     ASSERT (GB_jit_src_path == NULL) ;
     ASSERT (GB_jit_C_compiler == NULL) ;
@@ -1277,7 +1276,7 @@ GrB_Info GB_jitifyer_load
     if (GB_jit_control <= GxB_JIT_PAUSE)
     { 
         // The JIT control has disabled all JIT kernels.  Punt to generic.
-        GBURBLE ("(jit paused: %d) ", GB_jit_control) ;
+        GBURBLE ("(jit paused) ") ;
         return (GrB_NO_VALUE) ;
     }
 
