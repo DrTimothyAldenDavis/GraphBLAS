@@ -1992,6 +1992,7 @@ int GB_jitifyer_compile (char *kernel_name)
 
     // compile the library and return result
     int result = system (GB_jit_command) ;
+    GBURBLE ("(jit result: %d) ", result) ;
     return (result) ;
 }
 

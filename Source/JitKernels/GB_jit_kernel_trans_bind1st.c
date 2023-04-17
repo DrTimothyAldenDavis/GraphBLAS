@@ -18,7 +18,6 @@
 GB_JIT_KERNEL_TRANS_BIND1ST_PROTO (GB_jit_kernel) ;
 GB_JIT_KERNEL_TRANS_BIND1ST_PROTO (GB_jit_kernel)
 { 
-    GB_GET_DEBUG_FUNCTIONS ;
     #define GB_BIND_1ST
     GB_X_TYPE x = (*((const GB_X_TYPE *) x_input)) ;
     #include "GB_transpose_template.c"

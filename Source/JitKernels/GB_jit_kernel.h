@@ -13,9 +13,6 @@
 #include "GB.h"
 #include "GB_jit_kernel_proto.h"
 
-#undef GB_M_TYPE
-#undef GB_MCAST
-
 // these macros are redefined by the JIT kernels to specialize them for each
 // specific matrix format.
 
@@ -54,4 +51,7 @@
 #undef GBX_M
 #undef GB_M_NVALS
 #undef GB_M_NHELD
+
+#undef GB_M_TYPE
+#undef GB_MCAST
 

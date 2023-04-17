@@ -14,7 +14,6 @@ GB_JIT_KERNEL_EMULT_BITMAP_PROTO (GB_jit_kernel)
     // get callback functions
     GB_bitmap_M_scatter_whole_f GB_bitmap_M_scatter_whole =
         my_callback->GB_bitmap_M_scatter_whole_func ;
-    GB_GET_DEBUG_FUNCTIONS ;
     #endif
 
     #include "GB_emult_bitmap_template.c"

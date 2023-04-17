@@ -31,7 +31,6 @@ GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
     GB_ek_slice_f GB_ek_slice = my_callback->GB_ek_slice_func ;
     GB_werk_pop_f GB_werk_pop = my_callback->GB_werk_pop_func ;
     GB_werk_push_f GB_werk_push = my_callback->GB_werk_push_func ;
-    GB_GET_DEBUG_FUNCTIONS ;
     #endif
 
     #include "GB_subassign_23_template.c"

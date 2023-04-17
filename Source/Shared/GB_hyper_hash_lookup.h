@@ -13,13 +13,7 @@
 // Let j = Ah [k]
 // k = A->Y (j, hash(j)), if present, or k=-1 if not found.
 
-static 
-#ifdef GB_CUDA_KERNEL
-__device__ __inline__
-#else
-inline
-#endif
-int64_t GB_hyper_hash_lookup  // k if j==Ah[k], or -1 if not found
+GB_STATIC_INLINE int64_t GB_hyper_hash_lookup  // k if j==Ah[k]; -1 if not found
 (
     // input, not modified
     const int64_t *restrict Ap,     // A->p [0..A->nvec]: pointers to vectors
@@ -48,7 +42,7 @@ int64_t GB_hyper_hash_lookup  // k if j==Ah[k], or -1 if not found
     int64_t k = -1 ;
     if ((ypend - ypstart) > 256)
     {
-        // The hash bucket jhash has over 256 entries, which is a very hign
+        // The hash bucket jhash has over 256 entries, which is a very high
         // number of collisions.  The load factor of the hash table ranges from
         // 2 to 4.  Do a binary search as a fallback.
         bool found ;

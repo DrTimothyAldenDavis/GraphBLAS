@@ -12,109 +12,141 @@
 
 #define GB_STRING_MATCH(s,t) (strcmp (s,t) == 0)
 
-//------------------------------------------------------------------------------
-// printing control
-//------------------------------------------------------------------------------
-
 // format strings, normally %llu and %lld, for GrB_Index values
 #define GBu "%" PRIu64
 #define GBd "%" PRId64
 
+//------------------------------------------------------------------------------
+// GBDUMP: print to stdout
+//------------------------------------------------------------------------------
+
 // print to the standard output, and flush the result.  No error check is done.
 // This function is used for the BURBLE, and for debugging output. 
-#define GBDUMP(...)                                                     \
-{                                                                       \
-    GB_printf_function_t printf_func = GB_Global_printf_get ( ) ;       \
-    if (printf_func != NULL)                                            \
-    {                                                                   \
-        printf_func (__VA_ARGS__) ;                                     \
-    }                                                                   \
-    else                                                                \
+
+#ifdef GB_JIT_RUNTIME
+
+    // the JIT run time kernels use printf and flush directly from libc:
+    #define GBDUMP(...)                                                 \
     {                                                                   \
         printf (__VA_ARGS__) ;                                          \
-    }                                                                   \
-    GB_flush_function_t flush_func = GB_Global_flush_get ( ) ;          \
-    if (flush_func != NULL)                                             \
-    {                                                                   \
-        flush_func ( ) ;                                                \
-    }                                                                   \
-    else                                                                \
-    {                                                                   \
         fflush (stdout) ;                                               \
-    }                                                                   \
-}
+    }
+
+#else
+
+    // all other cases use GB_Global_*
+    #define GBDUMP(...)                                                 \
+    {                                                                   \
+        GB_printf_function_t printf_func = GB_Global_printf_get ( ) ;   \
+        if (printf_func != NULL)                                        \
+        {                                                               \
+            printf_func (__VA_ARGS__) ;                                 \
+        }                                                               \
+        else                                                            \
+        {                                                               \
+            printf (__VA_ARGS__) ;                                      \
+        }                                                               \
+        GB_flush_function_t flush_func = GB_Global_flush_get ( ) ;      \
+        if (flush_func != NULL)                                         \
+        {                                                               \
+            flush_func ( ) ;                                            \
+        }                                                               \
+        else                                                            \
+        {                                                               \
+            fflush (stdout) ;                                           \
+        }                                                               \
+    }
+
+#endif
+
+//------------------------------------------------------------------------------
+// GBPR: print to a file, or stdout if the file is NULL
+//------------------------------------------------------------------------------
 
 // print to a file f, or to stdout if f is NULL, and check the result.  This
 // macro is used by all user-callable GxB_*print and GB_*check functions.
-#define GBPR(...)                                                           \
-{                                                                           \
-    int printf_result = 0 ;                                                 \
-    if (f == NULL)                                                          \
+// The method is not used in any JIT run time kernel.
+
+#ifdef GB_JIT_RUNTIME
+
+    // JIT runtime kernels do not use these methods
+    #define GBPR(...)
+    #define GBPR0(...)
+    #define GB_CHECK_MAGIC(object)
+
+#else
+
+    #define GBPR(...)                                                       \
     {                                                                       \
-        GB_printf_function_t printf_func = GB_Global_printf_get ( ) ;       \
-        if (printf_func != NULL)                                            \
+        int printf_result = 0 ;                                             \
+        if (f == NULL)                                                      \
         {                                                                   \
-            printf_result = printf_func (__VA_ARGS__) ;                     \
+            GB_printf_function_t printf_func = GB_Global_printf_get ( ) ;   \
+            if (printf_func != NULL)                                        \
+            {                                                               \
+                printf_result = printf_func (__VA_ARGS__) ;                 \
+            }                                                               \
+            else                                                            \
+            {                                                               \
+                printf_result = printf (__VA_ARGS__) ;                      \
+            }                                                               \
+            GB_flush_function_t flush_func = GB_Global_flush_get ( ) ;      \
+            if (flush_func != NULL)                                         \
+            {                                                               \
+                flush_func ( ) ;                                            \
+            }                                                               \
+            else                                                            \
+            {                                                               \
+                fflush (stdout) ;                                           \
+            }                                                               \
         }                                                                   \
         else                                                                \
         {                                                                   \
-            printf_result = printf (__VA_ARGS__) ;                          \
+            printf_result = fprintf (f, __VA_ARGS__)  ;                     \
+            fflush (f) ;                                                    \
         }                                                                   \
-        GB_flush_function_t flush_func = GB_Global_flush_get ( ) ;          \
-        if (flush_func != NULL)                                             \
+        if (printf_result < 0)                                              \
         {                                                                   \
-            flush_func ( ) ;                                                \
+            return (GrB_INVALID_VALUE) ;                                    \
         }                                                                   \
-        else                                                                \
-        {                                                                   \
-            fflush (stdout) ;                                               \
-        }                                                                   \
-    }                                                                       \
-    else                                                                    \
-    {                                                                       \
-        printf_result = fprintf (f, __VA_ARGS__)  ;                         \
-        fflush (f) ;                                                        \
-    }                                                                       \
-    if (printf_result < 0)                                                  \
-    {                                                                       \
-        return (GrB_INVALID_VALUE) ;                                        \
-    }                                                                       \
-}
+    }
 
-// print if the print level is greater than zero
-#define GBPR0(...)                  \
-{                                   \
-    if (pr != GxB_SILENT)           \
-    {                               \
-        GBPR (__VA_ARGS__) ;        \
-    }                               \
-}
+    // print if the print level is greater than zero
+    #define GBPR0(...)                  \
+    {                                   \
+        if (pr != GxB_SILENT)           \
+        {                               \
+            GBPR (__VA_ARGS__) ;        \
+        }                               \
+    }
 
-// check object->magic and print an error if invalid
-#define GB_CHECK_MAGIC(object)                                          \
-{                                                                       \
-    switch (object->magic)                                              \
-    {                                                                   \
-        case GB_MAGIC :                                                 \
-            /* the object is valid */                                   \
-            break ;                                                     \
-                                                                        \
-        case GB_FREED :                                                 \
-            /* dangling pointer! */                                     \
-            GBPR0 (" object already freed!\n") ;                        \
-            return (GrB_UNINITIALIZED_OBJECT) ;                         \
-                                                                        \
-        case GB_MAGIC2 :                                                \
-            /* invalid */                                               \
-            GBPR0 (" invalid object\n") ;                               \
-            return (GrB_INVALID_OBJECT) ;                               \
-                                                                        \
-        default :                                                       \
-            /* uninitialized */                                         \
-            GBPR0 (" uninititialized object\n") ;                       \
-            return (GrB_UNINITIALIZED_OBJECT) ;                         \
-    }                                                                   \
-}
+    // check object->magic and print an error if invalid
+    #define GB_CHECK_MAGIC(object)                              \
+    {                                                           \
+        switch (object->magic)                                  \
+        {                                                       \
+            case GB_MAGIC :                                     \
+                /* the object is valid */                       \
+                break ;                                         \
+                                                                \
+            case GB_FREED :                                     \
+                /* dangling pointer! */                         \
+                GBPR0 (" object already freed!\n") ;            \
+                return (GrB_UNINITIALIZED_OBJECT) ;             \
+                                                                \
+            case GB_MAGIC2 :                                    \
+                /* invalid */                                   \
+                GBPR0 (" invalid object\n") ;                   \
+                return (GrB_INVALID_OBJECT) ;                   \
+                                                                \
+            default :                                           \
+                /* uninitialized */                             \
+                GBPR0 (" uninititialized object\n") ;           \
+                return (GrB_UNINITIALIZED_OBJECT) ;             \
+        }                                                       \
+    }
+
+#endif
 
 //------------------------------------------------------------------------------
 // burble
@@ -157,86 +189,99 @@ void GB_assign_describe
     const int assign_kind       // row assign, col assign, assign, or subassign
 ) ;
 
-#if defined ( SUITESPARSE_CUDA ) && defined ( GBNVTX )
-// enable nvtxMark for CUDA
-#include <nvToolsExt.h>
-#define GB_NVTX { nvtxMark ("nvtx:" __FILE__ ":" GB_XSTR(__LINE__)) ; }
+#ifdef GB_JIT_RUNTIME
+
+    // JIT kernels cannot burble
+    #define GBURBLE(...)
+    #define GB_BURBLE_DENSE(A,format)
+    #define GB_BURBLE_START(func)
+    #define GB_BURBLE_END
+    #define GB_BURBLE_N(n,...)
+    #define GB_BURBLE_MATRIX(A, ...)
+
 #else
-#define GB_NVTX
-#endif
 
-// define the function to use to burble
-#define GBURBLE(...)                                \
-{                                                   \
-    GB_NVTX                                         \
-    if (GB_Global_burble_get ( ))                   \
-    {                                               \
-        GBDUMP (__VA_ARGS__) ;                      \
-    }                                               \
-}
+    #if defined ( SUITESPARSE_CUDA ) && defined ( GBNVTX )
+    // enable nvtxMark for CUDA
+    #include <nvToolsExt.h>
+    #define GB_NVTX { nvtxMark ("nvtx:" __FILE__ ":" GB_XSTR(__LINE__)) ; }
+    #else
+    #define GB_NVTX
+    #endif
 
-// burble if a matrix is dense or full
-#define GB_BURBLE_DENSE(A,format)                               \
-{                                                               \
-    if (GB_IS_FULL (A))                                         \
-    {                                                           \
-        GBURBLE (format, "full") ;                              \
-    }                                                           \
-    else if (GB_IS_BITMAP (A))                                  \
-    {                                                           \
-        GBURBLE (format, "bitmap") ;                            \
-    }                                                           \
-    else if (GB_is_dense (A) && !GB_PENDING_OR_ZOMBIES (A))     \
-    {                                                           \
-        GBURBLE (format, "dense") ;                             \
-    }                                                           \
-}
-
-#if defined ( _OPENMP )
-
-    // burble with timing
-    #define GB_BURBLE_START(func)                       \
-    double t_burble = 0 ;                               \
+    // define the function to use to burble
+    #define GBURBLE(...)                                \
     {                                                   \
         GB_NVTX                                         \
         if (GB_Global_burble_get ( ))                   \
         {                                               \
-            GBURBLE (" [ " func " ") ;                  \
-            t_burble = GB_OPENMP_GET_WTIME ;            \
+            GBDUMP (__VA_ARGS__) ;                      \
         }                                               \
     }
 
-    #define GB_BURBLE_END                               \
-    {                                                   \
-        GB_NVTX                                         \
-        if (GB_Global_burble_get ( ))                   \
-        {                                               \
-            t_burble = GB_OPENMP_GET_WTIME - t_burble ; \
-            GBURBLE ("\n   %.3g sec ]\n", t_burble) ;   \
-        }                                               \
+    // burble if a matrix is dense or full
+    #define GB_BURBLE_DENSE(A,format)                               \
+    {                                                               \
+        if (GB_IS_FULL (A))                                         \
+        {                                                           \
+            GBURBLE (format, "full") ;                              \
+        }                                                           \
+        else if (GB_IS_BITMAP (A))                                  \
+        {                                                           \
+            GBURBLE (format, "bitmap") ;                            \
+        }                                                           \
+        else if (GB_is_dense (A) && !GB_PENDING_OR_ZOMBIES (A))     \
+        {                                                           \
+            GBURBLE (format, "dense") ;                             \
+        }                                                           \
     }
 
-#else
+    #if defined ( _OPENMP )
 
-    // burble with no timing
+        // burble with timing
+        #define GB_BURBLE_START(func)                       \
+        double t_burble = 0 ;                               \
+        {                                                   \
+            GB_NVTX                                         \
+            if (GB_Global_burble_get ( ))                   \
+            {                                               \
+                GBURBLE (" [ " func " ") ;                  \
+                t_burble = GB_OPENMP_GET_WTIME ;            \
+            }                                               \
+        }
 
-    #define GB_BURBLE_START(func)                       \
-        GBURBLE (" [ " func " ")
+        #define GB_BURBLE_END                               \
+        {                                                   \
+            GB_NVTX                                         \
+            if (GB_Global_burble_get ( ))                   \
+            {                                               \
+                t_burble = GB_OPENMP_GET_WTIME - t_burble ; \
+                GBURBLE ("\n   %.3g sec ]\n", t_burble) ;   \
+            }                                               \
+        }
 
-    #define GB_BURBLE_END                               \
-        GBURBLE ("]\n")
+    #else
+
+        // burble with no timing
+
+        #define GB_BURBLE_START(func)                       \
+            GBURBLE (" [ " func " ")
+
+        #define GB_BURBLE_END                               \
+            GBURBLE ("]\n")
+
+    #endif
+
+    #define GB_BURBLE_N(n,...)                              \
+    {                                                       \
+        if (n > 1) GBURBLE (__VA_ARGS__)                    \
+    }
+
+    #define GB_BURBLE_MATRIX(A, ...)                                    \
+    {                                                                   \
+        if (!(A->vlen <= 1 && A->vdim <= 1)) GBURBLE (__VA_ARGS__)      \
+    }
 
 #endif
-
-#define GB_BURBLE_N(n,...)                              \
-{                                                       \
-    if (n > 1) GBURBLE (__VA_ARGS__)                    \
-}
-
-#define GB_BURBLE_MATRIX(A, ...)                                    \
-{                                                                   \
-    if (!(A->vlen <= 1 && A->vdim <= 1)) GBURBLE (__VA_ARGS__)      \
-}
-
 #endif
 

@@ -12,7 +12,6 @@
 GB_JIT_KERNEL_AXB_DOT2N_PROTO (GB_jit_kernel) ;
 GB_JIT_KERNEL_AXB_DOT2N_PROTO (GB_jit_kernel)
 { 
-    GB_GET_DEBUG_FUNCTIONS ;
     #define GB_A_NOT_TRANSPOSED
     #include "GB_AxB_dot2_meta.c"
     return (GrB_SUCCESS) ;

@@ -14,6 +14,13 @@
 // debugging definitions
 //------------------------------------------------------------------------------
 
+#ifdef GB_JIT_RUNTIME
+// the JIT run time kernels use abort directly from libc:
+#define GB_ABORT abort ( )
+#else
+#define GB_ABORT GB_Global_abort ( )
+#endif
+
 #undef ASSERT
 #undef ASSERT_OK
 #undef ASSERT_OK_OR_NULL
@@ -26,9 +33,18 @@
         if (!(X))                                                           \
         {                                                                   \
             GBDUMP ("assertion failed: " __FILE__ " line %d\n", __LINE__) ; \
-            GB_Global_abort ( ) ;                                  \
+            GB_ABORT ;                                                      \
         }                                                                   \
     }
+
+#else
+
+    // debugging disabled
+    #define ASSERT(X)
+
+#endif
+
+#if defined ( GB_DEBUG ) && !defined ( GB_JIT_RUNTIME )
 
     // call a GraphBLAS method and assert that it returns GrB_SUCCESS
     #define ASSERT_OK(X)                                                    \
@@ -47,8 +63,7 @@
 
 #else
 
-    // debugging disabled
-    #define ASSERT(X)
+    // ASSERT_OK* debugging disabled
     #define ASSERT_OK(X)
     #define ASSERT_OK_OR_NULL(X)
 
@@ -70,7 +85,7 @@
 {                                                                   \
     fprintf (stderr, "gotcha: " __FILE__ " line: %d\n", __LINE__) ; \
     GBDUMP ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;          \
-    GB_Global_abort ( ) ;                                  \
+    GB_ABORT ;                                                      \
 }
 #endif
 #endif
@@ -90,6 +105,9 @@
 //------------------------------------------------------------------------------
 // assertions for checking specific objects
 //------------------------------------------------------------------------------
+
+// these assertions are disabled in the JIT runtime kernels, since the
+// functions do not appear in GB_callback.
 
 #define ASSERT_TYPE_OK(t,name,pr)  \
     ASSERT_OK (GB_Type_check (t, name, pr, NULL))

@@ -25,11 +25,6 @@ GB_callback_struct GB_callback =
     .GB_memset_func                 = GB_memset,
     .GB_qsort_1_func                = GB_qsort_1,
     .GB_werk_pop_func               = GB_werk_pop,
-    .GB_werk_push_func              = GB_werk_push,
-
-    // for debugging only:
-    .GB_Global_abort_func           = GB_Global_abort,
-    .GB_Global_flush_get_func       = GB_Global_flush_get,
-    .GB_Global_printf_get_func      = GB_Global_printf_get,
+    .GB_werk_push_func              = GB_werk_push
 } ;
 

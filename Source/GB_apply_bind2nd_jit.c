@@ -54,6 +54,6 @@ GrB_Info GB_apply_bind2nd_jit   // Cx = op (x,B), apply bind2nd via the JIT
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (Cx, A->x, yscalar, A->b, GB_nnz_held (A),
-        nthreads, &GB_callback)) ;
+        nthreads)) ;
 }
 

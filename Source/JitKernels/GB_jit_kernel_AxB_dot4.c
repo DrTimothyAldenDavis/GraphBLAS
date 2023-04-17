@@ -16,7 +16,6 @@ GB_JIT_KERNEL_AXB_DOT4_PROTO (GB_jit_kernel)
     // get callback functions
     GB_free_memory_f GB_free_memory = my_callback->GB_free_memory_func ;
     GB_malloc_memory_f GB_malloc_memory = my_callback->GB_malloc_memory_func ;
-    GB_GET_DEBUG_FUNCTIONS ;
     #endif
 
     #include "GB_AxB_dot4_meta.c"

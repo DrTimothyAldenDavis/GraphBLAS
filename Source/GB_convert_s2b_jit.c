@@ -54,7 +54,6 @@ GrB_Info GB_convert_s2b_jit    // convert sparse to bitmap
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (Ax_new, Ab, A, A_ek_slicing, A_ntasks, A_nthreads,
-        &GB_callback)) ;
+    return (GB_jit_kernel (Ax_new, Ab, A, A_ek_slicing, A_ntasks, A_nthreads)) ;
 }
 

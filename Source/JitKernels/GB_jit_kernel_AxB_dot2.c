@@ -12,7 +12,6 @@
 GB_JIT_KERNEL_AXB_DOT2_PROTO (GB_jit_kernel) ;
 GB_JIT_KERNEL_AXB_DOT2_PROTO (GB_jit_kernel)
 { 
-    GB_GET_DEBUG_FUNCTIONS ;
     #include "GB_AxB_dot2_meta.c"
     return (GrB_SUCCESS) ;
 }

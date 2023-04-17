@@ -39,7 +39,6 @@ GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
     GB_werk_pop_f GB_werk_pop = my_callback->GB_werk_pop_func ;
     GB_werk_push_f GB_werk_push = my_callback->GB_werk_push_func ;
     GB_memset_f GB_memset = my_callback->GB_memset_func ;
-    GB_GET_DEBUG_FUNCTIONS ;
     #endif
 
     ASSERT (M == A) ;

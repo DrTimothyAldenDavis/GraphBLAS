@@ -147,7 +147,7 @@ void mexFunction
     // yvdim = GB_IMAX (yvdim, 4) ;
     // #define GB_HASHF2(i,b) ((((i) >> 2) + 17L*((i) >> 8)) & (b))
 
-    // The hash bucket zero will 257 entries:  change this if yvdim in
+    // The hash bucket zero will have 257 entries:  change this if yvdim in
     // GB_hyper_hash_build.c, or GB_HASHF2 in GB_hash.h, change.
 
     int64_t n = 1024*1024 ;

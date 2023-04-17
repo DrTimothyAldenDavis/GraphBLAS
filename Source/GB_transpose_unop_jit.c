@@ -51,7 +51,6 @@ GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, A, Workspaces, A_slice, nworkspaces, nthreads,
-        &GB_callback)) ;
+    return (GB_jit_kernel (C, A, Workspaces, A_slice, nworkspaces, nthreads)) ;
 }
 

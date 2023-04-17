@@ -13,7 +13,6 @@
 GB_JIT_KERNEL_CONCAT_SPARSE_PROTO (GB_jit_kernel) ;
 GB_JIT_KERNEL_CONCAT_SPARSE_PROTO (GB_jit_kernel)
 { 
-    GB_GET_DEBUG_FUNCTIONS ;
     #include "GB_concat_sparse_template.c"
     return (GrB_SUCCESS) ;
 }

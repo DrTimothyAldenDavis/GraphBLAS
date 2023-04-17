@@ -16,7 +16,6 @@ GB_JIT_KERNEL_AXB_SAXBIT_PROTO (GB_jit_kernel)
     // get callback functions
     GB_bitmap_M_scatter_f GB_bitmap_M_scatter =
         my_callback->GB_bitmap_M_scatter_func ;
-    GB_GET_DEBUG_FUNCTIONS ;
     #endif
 
     #include "GB_AxB_saxbit_template.c"

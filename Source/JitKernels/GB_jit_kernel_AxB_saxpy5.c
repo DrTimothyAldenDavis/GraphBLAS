@@ -39,11 +39,9 @@ GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel) ;
                 const GrB_Matrix B,
                 const int ntasks,
                 const int nthreads,
-                const int64_t *B_slice,
-                const GB_callback_struct *restrict my_callback
+                const int64_t *B_slice
             )
             {
-                GB_GET_DEBUG_FUNCTIONS ;
                 #include "GB_AxB_saxpy5_unrolled.c"
             }
 
@@ -77,11 +75,9 @@ GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel) ;
                 const GrB_Matrix B,
                 const int ntasks,
                 const int nthreads,
-                const int64_t *B_slice,
-                const GB_callback_struct *restrict my_callback
+                const int64_t *B_slice
             )
             {
-                GB_GET_DEBUG_FUNCTIONS ;
                 #include "GB_AxB_saxpy5_unrolled.c"
             }
 
@@ -108,11 +104,9 @@ GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel) ;
         const GrB_Matrix B,
         const int ntasks,
         const int nthreads,
-        const int64_t *B_slice,
-        const GB_callback_struct *restrict my_callback
+        const int64_t *B_slice
     )
     {
-        GB_GET_DEBUG_FUNCTIONS ;
         #include "GB_AxB_saxpy5_unrolled.c"
     }
 
@@ -132,7 +126,6 @@ GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel)
         // saxpy5: C+=A*B where A is bitmap/full and iso or pattern
         //----------------------------------------------------------------------
 
-        GB_GET_DEBUG_FUNCTIONS ;
         #include "GB_AxB_saxpy5_A_iso_or_pattern.c"
 
     }
@@ -143,7 +136,6 @@ GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel)
         // saxpy5: C+=A*B where A is bitmap (but not iso or pattern)
         //----------------------------------------------------------------------
 
-        GB_GET_DEBUG_FUNCTIONS ;
         #include "GB_AxB_saxpy5_A_bitmap.c"
 
     }
@@ -158,7 +150,7 @@ GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel)
             {
                 // x86_64 with AVX512f
                 GB_AxB_saxpy5_unrolled_avx512f (C, A, B, ntasks, nthreads,
-                    B_slice, my_callback) ;
+                    B_slice) ;
                 return (GrB_SUCCESS) ;
             }
             #endif
@@ -168,7 +160,7 @@ GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel)
             {
                 // x86_64 with AVX2
                 GB_AxB_saxpy5_unrolled_avx2 (C, A, B, ntasks, nthreads,
-                    B_slice, my_callback) ;
+                    B_slice) ;
                 return (GrB_SUCCESS) ;
             }
             #endif
@@ -176,8 +168,7 @@ GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel)
         #endif
 
         // any architecture and any semiring
-        GB_AxB_saxpy5_unrolled_vanilla (C, A, B, ntasks, nthreads, B_slice,
-            my_callback) ;
+        GB_AxB_saxpy5_unrolled_vanilla (C, A, B, ntasks, nthreads, B_slice) ;
 
     }
     #endif

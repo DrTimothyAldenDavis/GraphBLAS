@@ -31,11 +31,6 @@ typedef GB_CALLBACK_QSORT_1_PROTO ((*GB_qsort_1_f)) ;
 typedef GB_CALLBACK_WERK_POP_PROTO ((*GB_werk_pop_f)) ;
 typedef GB_CALLBACK_WERK_PUSH_PROTO ((*GB_werk_push_f)) ;
 
-// for debugging only:
-typedef GB_CALLBACK_GLOBAL_ABORT_PROTO ((*GB_Global_abort_f)) ;
-typedef GB_CALLBACK_FLUSH_GET_PROTO ((*GB_Global_flush_get_f)) ;
-typedef GB_CALLBACK_PRINTF_GET_PROTO ((*GB_Global_printf_get_f)) ;
-
 //------------------------------------------------------------------------------
 // GB_callback: a struct to pass to kernels to give them their callback methods
 //------------------------------------------------------------------------------
@@ -54,27 +49,10 @@ typedef struct
     GB_qsort_1_f                GB_qsort_1_func ;
     GB_werk_pop_f               GB_werk_pop_func ;
     GB_werk_push_f              GB_werk_push_func ;
-
-    // for debugging only:
-    GB_Global_abort_f           GB_Global_abort_func ;
-    GB_Global_flush_get_f       GB_Global_flush_get_func ;
-    GB_Global_printf_get_f      GB_Global_printf_get_func ;
 }
 GB_callback_struct ;
 
 GB_GLOBAL GB_callback_struct GB_callback ;
-
-#if defined ( GB_JIT_RUNTIME )
-#define GB_GET_DEBUG_FUNCTIONS                                          \
-    GB_Global_abort_f                                                   \
-        GB_Global_abort = my_callback->GB_Global_abort_func ;           \
-    GB_Global_flush_get_f                                               \
-        GB_Global_flush_get = my_callback->GB_Global_flush_get_func ;   \
-    GB_Global_printf_get_f                                              \
-        GB_Global_printf_get = my_callback->GB_Global_printf_get_func ;
-#else
-#define GB_GET_DEBUG_FUNCTIONS
-#endif
 
 #endif
 
