@@ -15,7 +15,7 @@
 
 // GB_C_COMPILER: the C compiler used to compile GraphBLAS:
 #ifndef GB_C_COMPILER
-#define GB_C_COMPILER   "/usr/bin/gcc"
+#define GB_C_COMPILER   "/usr/bin/cc"
 #endif
 
 // GB_C_FLAGS: the C compiler flags used to compile GraphBLAS.  Used
@@ -44,9 +44,9 @@
 #define GB_OMP_INC      ""
 #endif
 
-// GB_LIBRARIES: libraries to link with
-#ifndef GB_LIBRARIES
-#define GB_LIBRARIES    " -lm -ldl /usr/lib/gcc/x86_64-linux-gnu/7/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.so"
+// GB_C_LIBRARIES: libraries to link with
+#ifndef GB_C_LIBRARIES
+#define GB_C_LIBRARIES  " -lm -ldl /usr/lib/gcc/x86_64-linux-gnu/7/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.so"
 #endif
 
 #endif

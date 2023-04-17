@@ -9051,7 +9051,7 @@ many kernels to create at compile time as the ``factory kernels.''  This CUDA
 JIT is in progress.  A related JIT for SYCL / OpenCL kernels is under
 consideration.
 
-\subsection{Better performance for multithreaded user programs:}
+\subsubsection{Better performance for multithreaded user programs:}
 This version is thread-safe when used in a multithread user application, but a
 better JIT critical section (many readers, 1 writer) might be needed.  The
 current critical section may be sufficiently fast since the typical case of
