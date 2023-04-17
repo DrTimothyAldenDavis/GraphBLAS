@@ -123,6 +123,14 @@ v8.0.0 release:
         As a short-term workaround, each user application should use its
         own cache folder, instead of sharing a single default cache folder.
 
+\item {\bf compiler warnings:}
+
+    For the arm-based Mac, the JIT compiler warns about \verb'-arch' every time
+    a JIT kernel is compiled inside MATLAB.  These warnings need to be
+    silenced.  gcc-12 is compiling x86 code to use inside MATLAB on the
+    arm-based Mac, which is required since MATLAB is not a native Arm package
+    yet.
+
 \end{itemize}
 
 \newpage
@@ -15744,8 +15752,6 @@ to use 32 parallel jobs and the \verb'gcc' compiler, do the following:
     {\small
     \begin{verbatim}
     JOBS=32 CC=gcc make \end{verbatim} }
-
-If you do not have \verb'cmake', refer to Section~\ref{altmake}.
 
 %----------------------------------------
 \subsection{More details on the Mac (Intel-based) using gcc}
