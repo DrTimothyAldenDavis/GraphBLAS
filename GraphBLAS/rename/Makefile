@@ -28,8 +28,6 @@ go:
 	grep " GxB_" lib \
             | grep -v Iterator >> temp.h
 	grep " GB_"  lib \
-            | grep -v Iterator \
-            | grep -v GB_JITpackage \
-            >> temp.h
+            | grep -v Iterator >> temp.h
 	awk -f rename.awk < temp.h > GB_rename.h
 	rm temp.h lib

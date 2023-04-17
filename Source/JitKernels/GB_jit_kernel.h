@@ -10,7 +10,7 @@
 // This file is #include'd into all JIT kernels on the CPU.
 
 #define GB_JIT_KERNEL
-#include "GB.h"
+#include "GB_Template.h"
 #include "GB_jit_kernel_proto.h"
 
 // these macros are redefined by the JIT kernels to specialize them for each

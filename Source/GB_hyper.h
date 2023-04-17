@@ -54,8 +54,6 @@ GrB_Info GB_hyper_hash_build    // construct A->Y if not already constructed
     GB_Werk Werk
 ) ;
 
-#include "GB_hyper_hash_lookup.h"
-
 //------------------------------------------------------------------------------
 // GB_lookup: find k so that j == Ah [k], without using the A->Y hyper_hash
 //------------------------------------------------------------------------------

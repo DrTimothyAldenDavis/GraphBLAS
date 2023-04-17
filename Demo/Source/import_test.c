@@ -57,8 +57,6 @@
     else if (type == GrB_FP64  ) printf ("%g", (double) Ax_fp64   [p]) ; \
 }
 
-#include "../Source/GB.h"
-
 GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
 {
     

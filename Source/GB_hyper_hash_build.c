@@ -23,7 +23,6 @@
 }
 
 #include "GB_build.h"
-#include "GB_hash.h"
 
 GrB_Info GB_hyper_hash_build    // construct A->Y if not already constructed
 (

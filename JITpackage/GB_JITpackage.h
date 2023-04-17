@@ -11,6 +11,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#ifdef GBMATLAB
+#include "GB_rename.h"
+#endif
+
 typedef struct
 {
     size_t uncompressed_size ;  // size of the uncompressed file

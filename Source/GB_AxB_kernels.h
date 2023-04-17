@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_kernels.h: include files for both FactoryKernels and JIT kernels
+// GB_AxB_kernels.h: include files for FactoryKernels
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -11,5 +11,4 @@
 #include "GB_AxB_saxpy.h"
 #include "GB_unused.h"
 #include "GB_bitmap_assign_methods.h"
-#include "GB_ek_slice_search.c"
 

@@ -7,7 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+#include "GB_Template.h"
 #include "GB_callback.h"
+#include "GB_AxB_saxpy3.h"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_ek_slice.h"
 #include "GB_sort.h"

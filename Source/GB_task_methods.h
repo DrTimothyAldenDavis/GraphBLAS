@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_task_struct.h: parallel task descriptor
+// GB_task_methods.h: parallel task descriptor
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GB_TASK_STRUCT_H
-#define GB_TASK_STRUCT_H
+#ifndef GB_TASK_METHODS_H
+#define GB_TASK_METHODS_H
 
 // The element-wise computations (GB_add, GB_emult, and GB_mask) compute
 // C(:,j)<M(:,j)> = op (A (:,j), B(:,j)).  They are parallelized by slicing the
@@ -28,21 +28,8 @@
 
 // The GB_subassign functions use the TaskList, in many different ways.
 
-typedef struct          // task descriptor
-{
-    int64_t kfirst ;    // C(:,kfirst) is the first vector in this task.
-    int64_t klast  ;    // C(:,klast) is the last vector in this task.
-    int64_t pC ;        // fine task starts at Ci, Cx [pC]
-    int64_t pC_end ;    // fine task ends at Ci, Cx [pC_end-1]
-    int64_t pM ;        // fine task starts at Mi, Mx [pM]
-    int64_t pM_end ;    // fine task ends at Mi, Mx [pM_end-1]
-    int64_t pA ;        // fine task starts at Ai, Ax [pA]
-    int64_t pA_end ;    // fine task ends at Ai, Ax [pA_end-1]
-    int64_t pB ;        // fine task starts at Bi, Bx [pB]
-    int64_t pB_end ;    // fine task ends at Bi, Bx [pB_end-1]
-    int64_t len ;       // fine task handles a subvector of this length
-}
-GB_task_struct ;
+// typedef GB_task_struct:
+#include "GB_task_struct.h"
 
 // GB_REALLOC_TASK_WORK: Allocate or reallocate the TaskList so that it can
 // hold at least ntasks.  Double the size if it's too small.
@@ -131,25 +118,6 @@ void GB_task_cumsum
     const int nthreads,                 // # of threads
     GB_Werk Werk
 ) ;
-
-//------------------------------------------------------------------------------
-// GB_GET_VECTOR: get the content of a vector for a coarse/fine task
-//------------------------------------------------------------------------------
-
-#define GB_GET_VECTOR(pX_start, pX_fini, pX, pX_end, Xp, kX, Xvlen)         \
-    int64_t pX_start, pX_fini ;                                             \
-    if (fine_task)                                                          \
-    {                                                                       \
-        /* A fine task operates on a slice of X(:,k) */                     \
-        pX_start = TaskList [taskid].pX ;                                   \
-        pX_fini  = TaskList [taskid].pX_end ;                               \
-    }                                                                       \
-    else                                                                    \
-    {                                                                       \
-        /* vectors are never sliced for a coarse task */                    \
-        pX_start = GBP (Xp, kX, Xvlen) ;                                    \
-        pX_fini  = GBP (Xp, kX+1, Xvlen) ;                                  \
-    }
 
 #endif
 

@@ -341,6 +341,7 @@
     }
 
     #ifdef GB_TIMING
+    // FIXME remove timing from Template
     ttt = GB_omp_get_wtime ( ) - ttt ;
     GB_Global_timing_add (9, ttt) ;
     ttt = GB_omp_get_wtime ( ) ;

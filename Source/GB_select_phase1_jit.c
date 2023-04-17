@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_select.h"
+#include "GB.h"
 #include "GB_stringify.h"
 
 typedef GB_JIT_KERNEL_SELECT_PHASE1_PROTO ((*GB_jit_dl_function)) ;

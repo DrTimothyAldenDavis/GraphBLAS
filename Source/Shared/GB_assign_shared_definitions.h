@@ -13,8 +13,6 @@
 // definitions redefined as needed
 //------------------------------------------------------------------------------
 
-#include "GB_static_header.h"
-
 #ifndef GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE ;
 #endif

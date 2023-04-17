@@ -7,8 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_reduce.h"
-#include "GB_binop.h"
+#include "GB.h"
 #include "GB_stringify.h"
 
 typedef GB_JIT_KERNEL_REDUCE_PROTO ((*GB_jit_dl_function)) ;

@@ -169,12 +169,12 @@ if ( COMPACT )
     # do not compile the FactoryKernels
     include_directories ( Source/Template Source Include Source/Shared
         Config xxHash Config lz4 zstd zstd/zstd_subset JITpackage
-        Demo/Include rmm_wrap Source/JitKernels )
+        Source/Factories Demo/Include rmm_wrap Source/JitKernels )
 else ( )
     include_directories ( Source/Template Source Include Source/Shared
         Config xxHash Config lz4 zstd zstd/zstd_subset JITpackage
         Source/FactoryKernels
-        Demo/Include rmm_wrap Source/JitKernels )
+        Source/Factories Demo/Include rmm_wrap Source/JitKernels )
 endif ( )
 
 #-------------------------------------------------------------------------------

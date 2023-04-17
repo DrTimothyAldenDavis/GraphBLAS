@@ -13,7 +13,6 @@
 #include "GB_callback_proto.h"
 #include "GB_bitmap_assign.h"
 #include "GB_ek_slice.h"
-#include "GB_partition.h"
 #include "GB_ij.h"
 #include "GB_subassign_IxJ_slice.h"
 #include "GB_unused.h"
@@ -349,11 +348,6 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
     const GrB_Type scalar_type, // type of input scalar
     GB_Werk Werk
 ) ;
-
-#define GB_BITMAP_M_SCATTER_PLUS_2  0
-#define GB_BITMAP_M_SCATTER_MINUS_2 1
-#define GB_BITMAP_M_SCATTER_SET_2   2
-#define GB_BITMAP_M_SCATTER_MOD_2   3
 
 GB_CALLBACK_BITMAP_M_SCATTER_PROTO (GB_bitmap_M_scatter) ;
 

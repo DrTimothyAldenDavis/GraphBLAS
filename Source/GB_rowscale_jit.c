@@ -7,8 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_mxm.h"
-#include "GB_ewise_kernels.h"
+#include "GB.h"
 #include "GB_stringify.h"
 
 typedef GB_JIT_KERNEL_ROWSCALE_PROTO ((*GB_jit_dl_function)) ;

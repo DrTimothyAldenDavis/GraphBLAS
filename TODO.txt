@@ -40,7 +40,3 @@ v8.0.0 release:
     arm-based Mac, which is required since MATLAB is not a native Arm
     package yet.
 
-* JIT package:
-
-    I need to trim files from GB_JITpackage.c; not all of them are necessary.
-

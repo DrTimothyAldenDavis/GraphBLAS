@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_ewise_kernels.h: include files for both Factory and JIT kernels  
+// GB_ewise_kernels.h: include files for Factory kernels  
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.

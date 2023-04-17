@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_ek_slice_search: find the first and last vectors in a slice
+// GB_ek_slice_search.c: find the first and last vectors in a slice
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.

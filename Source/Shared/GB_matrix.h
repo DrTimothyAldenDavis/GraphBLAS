@@ -9,7 +9,7 @@
 
 // The GrB_Matrix and GrB_Vector objects are different names for the same
 // content.  A GrB_Vector is held as an m-by-1 non-hypersparse CSC matrix.
-// This file is #include'd in GB.h to define the GB_Matrix_opaque and
+// This file is #include'd in GB_opaque.h to define the GB_Matrix_opaque and
 // GB_Vector_opaque structs.  It would be cleaner to define just one opaque
 // struct, and then GrB_Matrix and GrB_Vector would be typedef'd as pointers to
 // the same struct, but then the compiler gets confused with Generic(x).

@@ -881,14 +881,6 @@ void GB_macrofy_typedefs
     GrB_Type xtype,
     GrB_Type ytype,
     GrB_Type ztype
-#if 0
-    const char *ctype_defn,
-    const char *atype_defn,
-    const char *btype_defn,
-    const char *xtype_defn,
-    const char *ytype_defn,
-    const char *ztype_defn
-#endif
 ) ;
 
 void GB_macrofy_type

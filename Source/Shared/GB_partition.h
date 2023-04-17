@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_parition.h: definitions for partitioning an index range
+// GB_partition.h: definitions for partitioning an index range
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.

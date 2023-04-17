@@ -2,7 +2,7 @@
 // GB_opaque.h: definitions of opaque objects
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -341,33 +341,6 @@ GB_Opcode ;
 #define GB_OP_IS_POSITIONAL(op) \
     (((op) == NULL) ? false : GB_OPCODE_IS_POSITIONAL ((op)->opcode))
 
-GrB_UnaryOp GB_positional_unop_ijflip   // return flipped operator
-(
-    GrB_UnaryOp op                      // operator to flip
-) ;
-
-GrB_BinaryOp GB_positional_binop_ijflip // return flipped operator
-(
-    GrB_BinaryOp op                     // operator to flip
-) ;
-
-GrB_IndexUnaryOp GB_positional_idxunop_ijflip   // return flipped operator
-(
-    int64_t *ithunk,            // input/output: revised value of thunk
-    GrB_IndexUnaryOp op         // operator to flip
-) ;
-
-int64_t GB_positional_offset        // return the positional thunk
-(
-    GB_Opcode opcode,               // opcode of positional operator
-    GrB_Scalar Thunk,               // thunk for idxunops, or NULL
-    bool *depends_on_j              // if true, the op depends on j
-) ;
-
-// for internal use only
-GB_GLOBAL GrB_IndexUnaryOp GxB_FLIPDIAGINDEX_INT32, GxB_FLIPDIAGINDEX_INT64,
-    GxB_NONZOMBIE ;
-
 //------------------------------------------------------------------------------
 // opaque content of GraphBLAS objects
 //------------------------------------------------------------------------------
@@ -517,6 +490,20 @@ typedef struct GB_Pending_struct *GB_Pending ;
 //------------------------------------------------------------------------------
 // scalar, vector, and matrix types
 //------------------------------------------------------------------------------
+
+// true if A is bitmap
+#define GB_IS_BITMAP(A) ((A) != NULL && ((A)->b != NULL))
+
+// true if A is full (but not bitmap)
+#define GB_IS_FULL(A) \
+    ((A) != NULL && (A)->h == NULL && (A)->p == NULL && (A)->i == NULL \
+        && (A)->b == NULL)
+
+// true if A is hypersparse
+#define GB_IS_HYPERSPARSE(A) ((A) != NULL && ((A)->h != NULL))
+
+// true if A is sparse (but not hypersparse)
+#define GB_IS_SPARSE(A) ((A) != NULL && ((A)->h == NULL) && (A)->p != NULL)
 
 struct GB_Scalar_opaque     // content of GrB_Scalar: 1-by-1 standard CSC matrix
 {

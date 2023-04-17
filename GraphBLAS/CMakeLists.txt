@@ -116,12 +116,12 @@ if ( COMPACT )
     # do not compile the FactoryKernels
     include_directories ( ../Source/Template ../Source ../Include rename
         ../Source/Shared Config ../Source/JitKernels ../JITpackage
-        ../lz4 ../zstd ../zstd/zstd_subset ../xxHash )
+        ../lz4 ../zstd ../zstd/zstd_subset ../xxHash ../Source/Factories )
 else ( )
     include_directories ( ../Source/Template ../Source ../Include rename
         ../Source/Shared Config ../Source/JitKernels ../JITpackage
-        ../lz4 ../zstd ../zstd/zstd_subset ../xxHash
-        ../Source/FactoryKernels )
+        ../Source/FactoryKernels
+        ../lz4 ../zstd ../zstd/zstd_subset ../xxHash ../Source/Factories )
 endif ( )
 
 #-------------------------------------------------------------------------------

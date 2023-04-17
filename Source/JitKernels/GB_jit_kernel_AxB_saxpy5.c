@@ -146,7 +146,7 @@ GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel)
         {
 
             #if GB_COMPILER_SUPPORTS_AVX512F && GB_V4_512
-            if (GB_Global_cpu_features_avx512f ( ))
+            if (GB_Global_cpu_features_avx512f ( )) // FIXME
             {
                 // x86_64 with AVX512f
                 GB_AxB_saxpy5_unrolled_avx512f (C, A, B, ntasks, nthreads,
@@ -156,7 +156,7 @@ GB_JIT_KERNEL_AXB_SAXPY5_PROTO (GB_jit_kernel)
             #endif
 
             #if GB_COMPILER_SUPPORTS_AVX2 && GB_V4_256
-            if (GB_Global_cpu_features_avx2 ( ))
+            if (GB_Global_cpu_features_avx2 ( ))    // FIXME
             {
                 // x86_64 with AVX2
                 GB_AxB_saxpy5_unrolled_avx2 (C, A, B, ntasks, nthreads,

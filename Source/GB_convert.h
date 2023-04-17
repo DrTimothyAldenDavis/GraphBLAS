@@ -15,20 +15,6 @@
 #define GB_ALWAYS_HYPER (1.0)
 #define GB_NEVER_HYPER  (-1.0)
 
-// true if A is bitmap
-#define GB_IS_BITMAP(A) ((A) != NULL && ((A)->b != NULL))
-
-// true if A is full (but not bitmap)
-#define GB_IS_FULL(A) \
-    ((A) != NULL && (A)->h == NULL && (A)->p == NULL && (A)->i == NULL \
-        && (A)->b == NULL)
-
-// true if A is hypersparse
-#define GB_IS_HYPERSPARSE(A) ((A) != NULL && ((A)->h != NULL))
-
-// true if A is sparse (but not hypersparse)
-#define GB_IS_SPARSE(A) ((A) != NULL && ((A)->h == NULL) && (A)->p != NULL)
-
 // determine the sparsity_control for a matrix
 int GB_sparsity_control     // revised sparsity_control
 (

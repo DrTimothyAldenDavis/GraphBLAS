@@ -18,7 +18,6 @@
 
 #include "GB_Pending.h"
 #include "GB.h"
-#include "GB_hash.h"
 
 GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 (

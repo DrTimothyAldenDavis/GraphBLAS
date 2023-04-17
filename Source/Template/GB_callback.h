@@ -11,8 +11,7 @@
 #define GB_CALLBACK_H
 
 #include "GB_callback_proto.h"
-#include "GB_AxB_saxpy3.h"
-#include "GB_Global.h"
+#include "GB_saxpy3task_struct.h"
 
 //------------------------------------------------------------------------------
 // function pointers to callback methods

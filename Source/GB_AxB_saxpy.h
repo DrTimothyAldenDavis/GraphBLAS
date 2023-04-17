@@ -55,9 +55,6 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
 // saxpy4: C+=A*B where A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
 
-// number of columns in the workspace for each task in saxpy4
-#define GB_SAXPY4_PANEL_SIZE 4
-
 GrB_Info GB_AxB_saxpy4              // C += A*B
 (
     GrB_Matrix C,                   // users input/output matrix
@@ -103,9 +100,6 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
 // saxbit:
 //------------------------------------------------------------------------------
 
-// number of columns in the workspace for each saxbit task 
-#define GB_SAXBIT_PANEL_SIZE 4
-
 GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
 (
     GrB_Matrix C,                   // output matrix, static header
@@ -120,14 +114,6 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     GB_Werk Werk
 ) ;
-
-//------------------------------------------------------------------------------
-// saxpy methods
-//------------------------------------------------------------------------------
-
-#define GB_SAXPY_METHOD_3 3
-#define GB_SAXPY_METHOD_BITMAP 5
-#define GB_SAXPY_METHOD_ISO_FULL 6
 
 #endif
 

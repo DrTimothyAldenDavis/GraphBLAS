@@ -7,8 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_transpose.h"
-#include "GB_ewise_kernels.h"
+#include "GB.h"
 #include "GB_stringify.h"
 
 typedef GB_JIT_KERNEL_TRANS_BIND2ND_PROTO ((*GB_jit_dl_function)) ;

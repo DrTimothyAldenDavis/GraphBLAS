@@ -7,8 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_emult.h"
-#include "GB_ewise_kernels.h"
+#include "GB.h"
 #include "GB_stringify.h"
 
 typedef GB_JIT_KERNEL_EMULT_BITMAP_PROTO ((*GB_jit_dl_function)) ;

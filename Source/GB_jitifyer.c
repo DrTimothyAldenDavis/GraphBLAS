@@ -1446,37 +1446,31 @@ GrB_Info GB_jitifyer_worker
 
     GB_Operator op1 = NULL ;
     GB_Operator op2 = NULL ;
-    char *family_name = NULL ;
     int scode_digits = 0 ;
 
     switch (family)
     {
         case GB_jit_apply_family  : 
-            family_name = "apply" ;
             op1 = op ;
             scode_digits = 10 ;
             break ;
 
         case GB_jit_assign_family : 
-            family_name = "assign" ;
             op1 = op ;
             scode_digits = 12 ;
             break ;
 
         case GB_jit_build_family  : 
-            family_name = "build" ;
             op1 = op ;
             scode_digits = 7 ;
             break ;
 
         case GB_jit_ewise_family  : 
-            family_name = "ewise" ;
             op1 = op ;
             scode_digits = 13 ;
             break ;
 
         case GB_jit_mxm_family    : 
-            family_name = "mxm" ;
             monoid = semiring->add ;
             op1 = (GB_Operator) semiring->add->op ;
             op2 = (GB_Operator) semiring->multiply ;
@@ -1484,24 +1478,20 @@ GrB_Info GB_jitifyer_worker
             break ;
 
         case GB_jit_reduce_family : 
-            family_name = "reduce" ;
             op1 = (GB_Operator) monoid->op ;
             scode_digits = 7 ;
             break ;
 
         case GB_jit_select_family : 
-            family_name = "select" ;
             op1 = op ;
             scode_digits = 10 ;
             break ;
 
         case GB_jit_user_type_family : 
-            family_name = "user_type" ;
             scode_digits = 1 ;
             break ;
 
         case GB_jit_user_op_family : 
-            family_name = "user_op" ;
             scode_digits = 1 ;
             op1 = op ;
             break ;
@@ -1619,8 +1609,8 @@ GrB_Info GB_jitifyer_worker
         // add the preface, which is an empty string by default
         fprintf (fp, "%s\n", GB_jit_C_preface) ;
 
-        // #include the GB_jit_kernel_[family].h header file
-        fprintf (fp, "#include \"GB_jit_kernel_%s.h\"\n\n", family_name) ;
+        // #include the GB_jit_kernel.h header file
+        fprintf (fp, "#include \"GB_jit_kernel.h\"\n\n") ;
 
         // macrofy the kernel operators, types, and matrix formats
         GB_macrofy_family (fp, family, encoding->code, semiring, monoid,

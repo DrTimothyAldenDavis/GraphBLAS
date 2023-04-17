@@ -14,63 +14,6 @@
 #include "GB.h"
 
 //------------------------------------------------------------------------------
-// GB_ek_slice_ntasks: determine # of threads and tasks to use for GB_ek_slice
-//------------------------------------------------------------------------------
-
-static inline void GB_ek_slice_ntasks
-(
-    // output
-    int *nthreads,              // # of threads to use for GB_ek_slice
-    int *ntasks,                // # of tasks to create for GB_ek_slice
-    // input
-    int64_t anz_held,           // GB_nnz_held(A) of the matrix to slice
-    int ntasks_per_thread,      // # of tasks per thread
-    double work,                // total work to do
-    double chunk,               // give each thread at least this much work
-    int nthreads_max            // max # of threads to use
-)
-{
-    if (anz_held == 0)
-    {
-        (*nthreads) = 1 ;
-        (*ntasks) = 1 ;
-    }
-    else
-    {
-        (*nthreads) = GB_nthreads (work, chunk, nthreads_max) ;
-        (*ntasks) = (*nthreads == 1) ? 1 : ((ntasks_per_thread) * (*nthreads)) ;
-        (*ntasks) = GB_IMIN (*ntasks, anz_held) ;
-        (*ntasks) = GB_IMAX (*ntasks, 1) ;
-    }
-}
-
-//------------------------------------------------------------------------------
-// GB_SLICE_MATRIX: slice a single matrix using GB_ek_slice
-//------------------------------------------------------------------------------
-
-// chunk and nthreads_max must already be defined.
-
-#define GB_SLICE_MATRIX_WORK(X,ntasks_per_thread,work,xnz_held)               \
-    GB_ek_slice_ntasks (&(X ## _nthreads), &(X ## _ntasks), xnz_held,         \
-        ntasks_per_thread, work, chunk, nthreads_max) ;                       \
-    GB_WERK_PUSH (X ## _ek_slicing, 3*(X ## _ntasks)+1, int64_t) ;            \
-    if (X ## _ek_slicing == NULL)                                             \
-    {                                                                         \
-        /* out of memory */                                                   \
-        GB_FREE_ALL ;                                                         \
-        return (GrB_OUT_OF_MEMORY) ;                                          \
-    }                                                                         \
-    GB_ek_slice (X ## _ek_slicing, X, X ## _ntasks) ;                         \
-    const int64_t *kfirst_ ## X ## slice = X ## _ek_slicing ;                 \
-    const int64_t *klast_  ## X ## slice = X ## _ek_slicing + X ## _ntasks ;  \
-    const int64_t *pstart_ ## X ## slice = X ## _ek_slicing + X ## _ntasks*2 ;
-
-#define GB_SLICE_MATRIX(X,ntasks_per_thread)                                  \
-    const int64_t X ## _held = GB_nnz_held (X) ;                              \
-    const double  X ## _wrk = X ## _held + X->nvec ;                          \
-    GB_SLICE_MATRIX_WORK (X, ntasks_per_thread, X ## _wrk, X ## _held)
-
-//------------------------------------------------------------------------------
 // GB_ek_slice prototypes
 //------------------------------------------------------------------------------
 

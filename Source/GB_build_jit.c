@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_build.h"
+#include "GB.h"
 #include "GB_stringify.h"
 
 typedef GB_JIT_KERNEL_BUILD_PROTO ((*GB_jit_dl_function)) ;
