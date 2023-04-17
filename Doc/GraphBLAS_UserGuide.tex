@@ -8812,10 +8812,9 @@ current definitions.
 \verb'GxB_JIT_ON' but the source file cannot be created in the cache folder, or
 a compiler error occurs, further compilation is disabled.  The control is
 changed from \verb'GxB_JIT_ON' to \verb'GxB_JIT_LOAD'.
-To solve this problem, make sure your application has write permission to
-the cache path, the source path contains a valid copy of GraphBLAS,
-and that any user-defined types and operators are defined properly so that
-no syntax error is detected by the compiler.
+To solve this problem, make sure your application has write permission to the
+cache path and that any user-defined types and operators are defined properly
+so that no syntax error is detected by the compiler.
 
 \item If a kernel is loaded but the lookup of the kernel function itself in the
 compiled library fails, the control is changed to \verb'GxB_JIT_RUN' to prevent
@@ -8899,7 +8898,7 @@ scalar assignment requires a \verb'memcpy'.  Generic kernels are slow, so using
 both \verb'NJIT' and \verb'COMPACT' options enabled is not recommended when
 preparing GraphBLAS for production use, benchmarking, or for a Linux distro or
 other widely-used distribution, unless you are able to run your application in
-advance and create all the JIT kernel you need, and then copy them into
+advance and create all the JIT kernels you need, and then copy them into
 \verb'GraphBLAS/PreJIT'.  This would be impossible to do for a general-purpose
 case such as a Linux distro, but feasible for a more targetted application such
 as RedisGraph.
@@ -9045,7 +9044,7 @@ kernel will dominate any performance gains from using the compiled kernel.  A
 heuristic could be introduced so that it compiles them only for larger
 problems.
 
-\subsubsection{SYCL / OpenCL kernels}
+\subsubsection{CUDA / SYCL / OpenCL kernels}
 The CUDA JIT will enable NVIDIA GPUs to be exploited.  There are simply too
 many kernels to create at compile time as the ``factory kernels.''  This CUDA
 JIT is in progress.  A related JIT for SYCL / OpenCL kernels is under
@@ -9056,7 +9055,10 @@ This version is thread-safe when used in a multithread user application, but a
 better JIT critical section (many readers, 1 writer) might be needed.  The
 current critical section may be sufficiently fast since the typical case of
 work done inside the critical section is a single hash table lookup.  However,
-the performance issues related to this have not been tested.
+the performance issues related to this have not been tested.  This has no
+effect if all parallelism is exploited only within GraphBLAS.  It only
+affects the case when multiple user threads each call GraphBLAS in parallel
+(using the \verb'GxB_Context'; see Section~\ref{context}).
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
