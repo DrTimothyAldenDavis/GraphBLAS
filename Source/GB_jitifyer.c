@@ -168,17 +168,7 @@ GrB_Info GB_jitifyer_init (void)
                         // No JIT kernels can be loaded or compiled.
         #endif
 
-    ASSERT (GB_jit_table == NULL) ;
-    ASSERT (GB_jit_cache_path == NULL) ;
-    ASSERT (GB_jit_src_path == NULL) ;
-    ASSERT (GB_jit_C_compiler == NULL) ;
-    ASSERT (GB_jit_C_flags == NULL) ;
-    ASSERT (GB_jit_C_link_flags == NULL) ;
-    ASSERT (GB_jit_C_libraries == NULL) ;
-    ASSERT (GB_jit_C_preface == NULL) ;
-    ASSERT (GB_jit_library_name == NULL) ;
-    ASSERT (GB_jit_kernel_name == NULL) ;
-    ASSERT (GB_jit_command == NULL) ;
+    GB_jitifyer_finalize (true) ;
 
     //--------------------------------------------------------------------------
     // find the GB_jit_cache_path

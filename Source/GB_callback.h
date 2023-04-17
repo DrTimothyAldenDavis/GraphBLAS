@@ -64,7 +64,7 @@ GB_callback_struct ;
 
 GB_GLOBAL GB_callback_struct GB_callback ;
 
-#if defined ( GB_DEBUG ) && defined ( GB_JIT_RUNTIME )
+#if defined ( GB_JIT_RUNTIME )
 #define GB_GET_DEBUG_FUNCTIONS                                          \
     GB_Global_abort_f                                                   \
         GB_Global_abort = my_callback->GB_Global_abort_func ;           \
