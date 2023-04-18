@@ -1,6 +1,6 @@
 # SuiteSparse:GraphBLAS
 
-SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 
 SPDX-License-Identifier: Apache-2.0
 
@@ -63,6 +63,8 @@ README.md file with further details.
 
 CMakeLists.txt:  cmake instructions to compile GraphBLAS
 
+cmake_modules:  additional cmake files
+
 Config:         version-dependent files used by CMake
 
 Demo:           a set of demos on how to use GraphBLAS
@@ -103,9 +105,22 @@ cpu_features: (c) Google.com, Apache 2.0 license.
 logo:           the (awesome!) GraphBLAS logo by Jakab Rokob, CC BY 4.0 license
 
 lz4:            LZ4 compression, (c) 2011-2016, Yann Collet, BSD2 license
+zstd:           ZSTD compression, (c) Meta, by Yann Collet, BSD3 license
+xxHash:         xxHash code, (c) 2012-2021, Yann Collet
 
 rmm_wrap:       Rapids Memory Manager, (c) NVIDIA, to use with CUDA.
                 (draft; not yet in use)
+
+
+JITpackage:     a small program that packages the GraphBLAS source code into
+                the GraphBLAS library itself so it can compile the JIT kernels.
+                If you edit the GraphBLAS source code, see the README.txt file
+                in this director for instructions.
+
+LICENSE:        licenses for GraphBLAS and its 3rd party dependencies
+
+PreJIT:         a folder for JIT kernels that are to be integrated into the
+                compiled GraphBLAS library.
 
 --------------------------------------------------------------------------------
 
@@ -191,8 +206,8 @@ Rights Reserved.  davis@tamu.edu.
 SuiteSparse:GraphBLAS relies on the following packages (details in the LICENSE
 file, and in the GraphBLAS User Guide):
 
-(1) the LZ4 compression package (c) by Yann Collet, appearing here under the
-BSD-2-clause license.
+(1) LZ4, xxHash, and ZSTD by Yann Collet, appearing here under the
+BSD2 or BSD3 licenses.
 
 (2) cpu_features (c) Google, Apache 2.0 license with components (c) IBM and
 Intel (also Apache 2.0), and the cpu_featurer/ndk_compat component (c)

@@ -32,11 +32,5 @@ v8.0.0 release:
     short-term workaround, each user application should use its own cache
     folder, instead of sharing a single default cache folder.
 
-* compiler warnings:
-
-    For the arm-based Mac, the JIT compiler warns about -arch every time
-    a JIT kernel is compiled inside MATLAB.  These warnings need to be
-    silenced.  gcc-12 is compiling x86 code to use inside MATLAB on the
-    arm-based Mac, which is required since MATLAB is not a native Arm
-    package yet.
+FIXME: delete this file in the final stable v8.0.0 release
 
