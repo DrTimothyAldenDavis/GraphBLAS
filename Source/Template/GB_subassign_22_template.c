@@ -26,8 +26,6 @@
     //--------------------------------------------------------------------------
 
     GB_C_NVALS (cnz) ;      // int64_t cnz = GB_nnz (C) ;
-//  int nthreads_max = GB_Context_nthreads_max ( ) ;
-//  double chunk = GB_Context_chunk ( ) ;
     const int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------

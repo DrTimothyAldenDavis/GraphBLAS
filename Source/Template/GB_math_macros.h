@@ -34,7 +34,8 @@
 #define GB_IABS(x) (((x) >= 0) ? (x) : (-(x)))
 
 // suitable for integers, and non-NaN floating point:
-#include "GB_imin.h"
+#define GB_IMAX(x,y) (((x) > (y)) ? (x) : (y))
+#define GB_IMIN(x,y) (((x) < (y)) ? (x) : (y))
 
 // ceiling of a/b for two integers a and b
 #include "GB_iceil.h"

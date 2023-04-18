@@ -53,6 +53,7 @@
 #include "GB_convert.h"
 #include "GB_ops.h"
 #include "GB_where.h"
+#include "GB_Context.h"
 #include "GB_cuda_gateway.h"
 
 #endif
