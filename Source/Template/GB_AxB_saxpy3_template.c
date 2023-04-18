@@ -18,7 +18,7 @@
 
 {
 
-    #ifdef GB_TIMING
+    #if defined ( GB_TIMING ) && !defined ( GB_JIT_RUNTIME)
     double ttt = GB_omp_get_wtime ( ) ;
     #endif
 
@@ -340,8 +340,7 @@
         }
     }
 
-    #ifdef GB_TIMING
-    // FIXME remove timing from Template
+    #if defined ( GB_TIMING ) && !defined ( GB_JIT_RUNTIME)
     ttt = GB_omp_get_wtime ( ) - ttt ;
     GB_Global_timing_add (9, ttt) ;
     ttt = GB_omp_get_wtime ( ) ;
@@ -353,7 +352,7 @@
 
     GB_AxB_saxpy3_cumsum (C, SaxpyTasks, nfine, chunk, nthreads, Werk) ;
 
-    #ifdef GB_TIMING
+    #if defined ( GB_TIMING ) && !defined ( GB_JIT_RUNTIME)
     ttt = GB_omp_get_wtime ( ) - ttt ;
     GB_Global_timing_add (10, ttt) ;
     ttt = GB_omp_get_wtime ( ) ;
@@ -384,9 +383,7 @@
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
 
-//  ASSERT (C->i_size == GB_Global_memtable_size (C->i)) ;
-
-    #ifdef GB_TIMING
+    #if defined ( GB_TIMING ) && !defined ( GB_JIT_RUNTIME)
     ttt = GB_omp_get_wtime ( ) - ttt ;
     GB_Global_timing_add (11, ttt) ;
     ttt = GB_omp_get_wtime ( ) ;
@@ -643,7 +640,7 @@
 
     C->jumbled = C_jumbled ;    // C is jumbled if any task left it jumbled
 
-    #ifdef GB_TIMING
+    #if defined ( GB_TIMING ) && !defined ( GB_JIT_RUNTIME)
     ttt = GB_omp_get_wtime ( ) - ttt ;
     GB_Global_timing_add (12, ttt) ;
     #endif

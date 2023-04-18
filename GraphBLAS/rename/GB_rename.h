@@ -4025,6 +4025,7 @@
 #define GB_JITpackage_22 GM_JITpackage_22
 #define GB_JITpackage_220 GM_JITpackage_220
 #define GB_JITpackage_221 GM_JITpackage_221
+#define GB_JITpackage_222 GM_JITpackage_222
 #define GB_JITpackage_23 GM_JITpackage_23
 #define GB_JITpackage_24 GM_JITpackage_24
 #define GB_JITpackage_25 GM_JITpackage_25

@@ -17,19 +17,18 @@ function [s,path] = jit (s,path)
 %   'load'      able to load and run JIT kernels; may not compile.
 %   'on'        full JIT: able to compile, load, and run.
 %
+% Refer to the GraphBLAS User Guide for details (GxB_JIT_C_CONTROL).
+%
 % A second input/output parameter gives the path to a cache folder where
 % GraphBLAS keeps the kernels it compiles for the user.  By default, this
-% is ~/.SuiteSparse/GraphBLAS/8.0.0_matlab for Linux and the Mac for
-% GraphBLAS v8.0.0, with a new cache path used for each future @GrB
-% version.
+% is ~/.SuiteSparse/GraphBLAS/8.0.0 for GraphBLAS v8.0.0, with a new
+% cache path used for each future @GrB version.
 %
-% If GraphBLAS was compiled with its JIT disabled, only the 'off',
-% 'pause', and'run' options are avaiable.  These options do not allow for
-% any JIT kernels to be loaded and compiled from the cache path.
-% Instead, they control just the 'PreJIT' kernels.  Those kernels are JIT
-% kernels from a prior session that were then copied into GraphBLAS/PreJIT,
-% after which the libgraphblas_matlab.so library was compiled.  Refer to
-% the GraphBLAS User Guide for details.
+% On Apple Silicon, the MATLAB JIT kernels are compiled as x86 binaries,
+% but the pure C installation may compile native Arm64 binaries.  Do not
+% mix the two.  In this case, set another cache path for MATLAB using
+% this method or using GxB_set in the C interface for your native Arm64
+% binaries.  See the User Guide for details.
 %
 % Example:
 %
