@@ -222,6 +222,32 @@ GrB_Info GB_jitifyer_init (void)
     GB_COPY_STUFF (GB_jit_C_preface,    "") ;
 
     //--------------------------------------------------------------------------
+    // remove "-arch arm64" if compiling JIT kernels for MATLAB
+    //--------------------------------------------------------------------------
+
+    // When the x86-based version of gcc-12 is configured to compile the MATLAB
+    // GraphBLAS library on an Apple-Silicon-based Mac, cmake gives it flag
+    // "-arch arm64".  MATLAB does not support that architecture directly,
+    // using Rosetta 2 instead.  gcc-12 also does not support "-arch arm64", so
+    // it ignores it (which is the right thing to do), but it generates a
+    // warning.  This warning message appears every time a JIT kernel is
+    // compiled.  As a result, "-arch arm64" is removed from the initial C
+    // flags, if compiling for MATLAB.
+
+    #ifdef GBMATLAB
+    {
+        #define ARCH_ARM64 "-arch arm64"
+        char *dst = strstr (GB_jit_C_flags, ARCH_ARM64) ;
+        if (dst != NULL)
+        {
+            // found it; now remove it from the C flags
+            char *src = dst + strlen (ARCH_ARM64) ;
+            while (*dst++ = *src++) ;
+        }
+    }
+    #endif
+
+    //--------------------------------------------------------------------------
     // allocate permanent workspace
     //--------------------------------------------------------------------------
 
