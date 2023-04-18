@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_unjumble_template: unjumble the vectors of a matrix
+// GB_unjumbled_template.c: unjumble the vectors of a matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
