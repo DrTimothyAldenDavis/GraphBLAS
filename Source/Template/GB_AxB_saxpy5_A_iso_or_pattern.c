@@ -11,6 +11,8 @@
 // A is bitmap or full, and either iso or pattern-only
 // B is sparse or hypersparse.
 
+// The type of A and C must match the multiply op.  B can be typecasted.
+
 #ifdef GB_GENERIC
 #error "saxpy5 generic kernel undefined"
 #endif
@@ -49,7 +51,7 @@
     for (tid = 0 ; tid < ntasks ; tid++)
     {
         #if !GB_A_IS_PATTERN
-        // get the iso value of A
+        // get the iso value of A (no typecast required)
         const GB_A_TYPE ax = Ax [0] ;
         #endif
         // get the task descriptor
@@ -78,8 +80,9 @@
                 #else
                     // s = ax * bkj, not dependent on i
                     GB_C_TYPE s ;
-                    // FIXME: use GB_GETB (Bx, pB, B_iso) here:
-                    GB_MULT (s, ax, GBX (Bx, pB, B_iso), ignore, k, j) ;
+                    GB_DECLAREB (bkj) ;
+                    GB_GETB (bkj, Bx, pB, B_iso) ;
+                    GB_MULT (s, ax, bkj, ignore, k, j) ;
                 #endif
                 // C(:,j) += s
                 for (int64_t i = 0 ; i < m ; i++)

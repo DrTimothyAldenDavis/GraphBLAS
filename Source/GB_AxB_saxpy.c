@@ -124,6 +124,8 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             // GB_AxB_saxpy4, except that the sparsity format of A and B are
             // reversed.  A is bitmap or full, and B is sparse or hypersparse.
 
+            // FIXME: require A->type to match mult->xtype (or ytype if flipped)
+
             info = GB_AxB_saxpy5 (C_in, A, B, semiring, flipxy, done_in_place,
                 Werk) ;
             if (info != GrB_NO_VALUE)

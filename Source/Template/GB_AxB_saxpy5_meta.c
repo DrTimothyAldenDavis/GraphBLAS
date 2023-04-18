@@ -15,6 +15,10 @@
 // A is bitmap or full.
 // B is sparse or hypersparse.
 
+// The type of A and C must match the multiply op.  B can be typecasted.
+// This particular template is only used in FactoryKernels.  The JIT kernel
+// uses the same logic but not this file.
+
 #ifdef GB_GENERIC
 #error "saxpy5 generic kernel undefined"
 #endif

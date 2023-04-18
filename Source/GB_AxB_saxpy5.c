@@ -8,9 +8,11 @@
 //------------------------------------------------------------------------------
 
 // GB_AxB_saxpy5 computes C+=A*B where C is full, A is bitmap/full, and B is
-// sparse/hypersparse.  No mask is present, C_replace is false, the accum
-// matches the monoid, no typecasting is needed, and no user-defined types or
-// operators are used.
+// sparse/hypersparse.  No mask is present, C_replace is false, and the accum
+// matches the monoid.
+
+// The type of A and C must match the multiply op.  B can be typecasted
+// if using the JIT.
 
 // See also GB_AxB_saxpy4, which computes C+=A*B but with the sparsity formats
 // of A and B reversed.

@@ -8,8 +8,10 @@
 //------------------------------------------------------------------------------
 
 // C is full.
-// A is bitmap, and not iso-valued and not pattern-only
+// A is bitmap, and not iso-valued and not pattern-only.
 // B is sparse or hypersparse.
+
+// The type of A and C must match the multiply op.  B can be typecasted.
 
 #ifdef GB_GENERIC
 #error "saxpy5 generic kernel undefined"

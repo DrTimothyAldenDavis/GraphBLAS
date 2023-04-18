@@ -11,6 +11,8 @@
 // A is full and not iso-valued nor pattern-only
 // B is sparse or hypersparse.  It may be iso and/or pattern.
 
+// The type of A and C must match the multiply op.  B can be typecasted.
+
 #ifdef GB_GENERIC
 #error "saxpy5 generic kernel undefined"
 #endif
