@@ -235,13 +235,13 @@ GrB_Info GB_jitifyer_init (void)
     //--------------------------------------------------------------------------
 
     // When the x86-based version of gcc-12 is configured to compile the MATLAB
-    // GraphBLAS library on an Apple-Silicon-based Mac, cmake gives it flag
+    // GraphBLAS library on an Apple-Silicon-based Mac, cmake gives it the flag
     // "-arch arm64".  MATLAB does not support that architecture directly,
     // using Rosetta 2 instead.  gcc-12 also does not support "-arch arm64", so
     // it ignores it (which is the right thing to do), but it generates a
-    // warning.  This warning message appears every time a JIT kernel is
-    // compiled.  As a result, "-arch arm64" is removed from the initial C
-    // flags, if compiling for MATLAB.
+    // warning.  This spurious warning message appears every time a JIT kernel
+    // is compiled while inside MATLAB.  As a result, "-arch arm64" is removed
+    // from the initial C flags, if compiling for MATLAB.
 
     #ifdef GBMATLAB
     {
