@@ -2,7 +2,7 @@
 // GB_AxB_saxpy5_meta.c: C+=A*B when C is full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -17,7 +17,8 @@
 // general (in the JIT version), but not here for the FactoryKernel.
 
 // This method is only used for built-in semirings with no typecasting, in
-// the FactoryKernels.  The JIT kernel has nearly identical logic.
+// the FactoryKernels.  It is not used for JIT kernels, but the JIT kernel
+// (Source/JitKernels/GB_jit_kernel_AxB_saxpy5.c) has nearly identical logic.
 
 #ifdef GB_GENERIC
 #error "saxpy5 generic kernel undefined"

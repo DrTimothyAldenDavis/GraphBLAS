@@ -4,7 +4,7 @@ FindGraphBLAS
 
 The following copyright and license applies to just this file only, not to
 the GraphBLAS library itself:
-LAGraph, (c) 2019-2022 by The LAGraph Contributors, All Rights Reserved.
+LAGraph, (c) 2019-2023 by The LAGraph Contributors, All Rights Reserved.
 SPDX-License-Identifier: BSD-2-Clause
 See additional acknowledgments in the LICENSE file,
 or contact permission@sei.cmu.edu for the full terms.

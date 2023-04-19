@@ -2,7 +2,7 @@
 // GB_AxB_dot4_template:  C+=A'*B via dot products, where C is full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -529,8 +529,6 @@
                     {
                         // G (k,0:1) = B (k,j1:j1+1)
                         const int64_t k2 = k << 1 ;
-//                      G [k2    ] = Bx [k + (j1    ) * vlen] ;
-//                      G [k2 + 1] = Bx [k + (j1 + 1) * vlen] ;
                         GB_GETB (G [k2    ], Bx, k + (j1    ) * vlen, false) ;
                         GB_GETB (G [k2 + 1], Bx, k + (j1 + 1) * vlen, false) ;
                     }
@@ -591,9 +589,6 @@
                     {
                         // G (k,0:2) = B (k,j1:j1+2)
                         const int64_t k3 = k * 3 ;
-//                      G [k3    ] = Bx [k + (j1    ) * vlen] ;
-//                      G [k3 + 1] = Bx [k + (j1 + 1) * vlen] ;
-//                      G [k3 + 2] = Bx [k + (j1 + 2) * vlen] ;
                         GB_GETB (G [k3    ], Bx, k + (j1    ) * vlen, false) ;
                         GB_GETB (G [k3 + 1], Bx, k + (j1 + 1) * vlen, false) ;
                         GB_GETB (G [k3 + 2], Bx, k + (j1 + 2) * vlen, false) ;
@@ -659,10 +654,6 @@
                     {
                         // G (k,0:3) = B (k,j1:j1+3)
                         const int64_t k4 = k << 2 ;
-//                      G [k4    ] = Bx [k + (j1    ) * vlen] ;
-//                      G [k4 + 1] = Bx [k + (j1 + 1) * vlen] ;
-//                      G [k4 + 2] = Bx [k + (j1 + 2) * vlen] ;
-//                      G [k4 + 3] = Bx [k + (j1 + 3) * vlen] ;
                         GB_GETB (G [k4    ], Bx, k + (j1    ) * vlen, false) ;
                         GB_GETB (G [k4 + 1], Bx, k + (j1 + 1) * vlen, false) ;
                         GB_GETB (G [k4 + 2], Bx, k + (j1 + 2) * vlen, false) ;

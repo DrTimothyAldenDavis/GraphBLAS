@@ -34,7 +34,6 @@ v8.0.0 release:
 
 FIXME: delete this file in the final stable v8.0.0 release
 
-FIXME: copyright dates on all files (2022 -> 2023)
 FIXME: exhaustive Tcov tests, with all 4 combinations of:
     (NJIT on/off) x (COMPACT on/off)
     also do the same exhaustive tests in ./Test but with GB_DEBUG enabled

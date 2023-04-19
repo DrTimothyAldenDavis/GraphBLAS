@@ -35,7 +35,7 @@
 
 #elif defined ( __INTEL_CLANG_COMPILER )
 
-    // Intel icx compiler, 2022.0.0 based on clang/llvm 14.0.0
+    // Intel icx compiler
     #undef  GB_COMPILER_ICX
     #define GB_COMPILER_ICX     1
 
@@ -46,7 +46,7 @@
 
 #elif defined ( __INTEL_COMPILER )
 
-    // Intel icc compiler: 2021.5.0 uses "gcc 7.5 mode"
+    // Intel icc compiler
     #undef  GB_COMPILER_ICC
     #define GB_COMPILER_ICC     1
 

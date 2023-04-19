@@ -2,7 +2,7 @@
 // GB_AxB_saxpy5_A_iso_or_pattern.c: C+=A*B; C full, A bitmap/full & iso/pattern
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------

@@ -520,17 +520,6 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
     #include "GB_matrix.h"
 } ;
 
-static inline GrB_Matrix GB_clear_static_header // clear a static header
-(
-    GrB_Matrix C    // static header to clear
-)
-{
-    ASSERT (C != NULL) ;
-    memset (C, 0, sizeof (struct GB_Matrix_opaque)) ;
-    C->static_header = true ;
-    return (C) ;
-}
-
 //------------------------------------------------------------------------------
 // Accessing the content of a scalar, vector, or matrix
 //------------------------------------------------------------------------------
