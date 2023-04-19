@@ -17,8 +17,17 @@ v8.0.0 release:
 
 * FIXMEs:
 
-    Some FIXME's tagged in the Source/ folder.
-    These need to be done for v8.0.0.
+    FIXME: delete this file in the final stable v8.0.0 release
+
+    FIXME: exhaustive Tcov tests, with all 4 combinations of:
+        (NJIT on/off) x (COMPACT on/off)
+        also do the same exhaustive tests in ./Test but with GB_DEBUG enabled
+
+    Some FIXME's tagged in the Source, Doc, etc folders:
+        (1) pick a release date
+        (2) delete the Draft folder
+        (3) port the JIT to Windows (see FIXMEs in GB_jitifyer.c and cmake)
+        (4) add file locking (see below)
 
 * Thread-safety:
 
@@ -32,9 +41,4 @@ v8.0.0 release:
     short-term workaround, each user application should use its own cache
     folder, instead of sharing a single default cache folder.
 
-FIXME: delete this file in the final stable v8.0.0 release
-
-FIXME: exhaustive Tcov tests, with all 4 combinations of:
-    (NJIT on/off) x (COMPACT on/off)
-    also do the same exhaustive tests in ./Test but with GB_DEBUG enabled
 
