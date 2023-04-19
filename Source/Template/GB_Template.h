@@ -53,8 +53,8 @@
 #include "GB_complex.h"
 #include "GB_pun.h"
 #include "GB_atomics.h"
-#include "GB_printf.h"
-#include "GB_assert.h"
+#include "GB_printf_kernels.h"
+#include "GB_assert_kernels.h"
 #include "GB_opaque.h"
 #include "GB_math_macros.h"
 #include "GB_binary_search.h"
@@ -72,6 +72,7 @@
 #include "GB_bitmap_scatter_macros.h"
 #include "GB_int64_mult.h"
 #include "GB_hyper_hash_lookup.h"
+#include "GB_omp_kernels.h"
 
 #endif
 
