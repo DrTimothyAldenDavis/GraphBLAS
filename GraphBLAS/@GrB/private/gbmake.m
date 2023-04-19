@@ -16,7 +16,7 @@ function gbmake (what)
 %
 % See also mex, version, GrB.clear.
 %
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 fprintf ('Note: the libgraphblas_matlab dynamic library must already be\n') ;

@@ -3,7 +3,7 @@ function gbcovmake
 %
 % See also: gbcover, gbcov_edit
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 fprintf ('Compiling @GrB interface for mexFunction statement coverage...\n') ;
