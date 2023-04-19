@@ -221,6 +221,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // as the pth entry in C.  This phase is purely symbolic and does not
     // depend on the data types or semiring.
 
+    #include "GB_mxm_shared_definitions.h"
     #define GB_DOT3
     #define GB_DOT3_PHASE1
 

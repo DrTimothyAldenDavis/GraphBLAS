@@ -40,7 +40,6 @@ int main (void)
     int i ;
 
     fprintf (stderr, "simple_demo:\n") ;
-    double n = ((double) LEN) / 1e6 ;
 
     // calloc the space for more accurate timing
     x = (double *) calloc (LEN, sizeof (double)) ;
@@ -64,8 +63,6 @@ int main (void)
     }
 
     // generate random uint64_t numbers
-    double t1 ;
-
     for (i = 0 ; i < LEN ; i++)
     {
         simple_rand_i ( ) ;

@@ -38,12 +38,12 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
 
     // op, z = f(x,i,j,y) (5 hex digits)
     int unop_ecode  = GB_RSHIFT (scode, 24, 8) ;
-    int zcode       = GB_RSHIFT (scode, 20, 4) ;
+//  int zcode       = GB_RSHIFT (scode, 20, 4) ;
     int xcode       = GB_RSHIFT (scode, 16, 4) ;
     int ycode       = GB_RSHIFT (scode, 12, 4) ;
 
     // types of C and A (2 hex digits)
-    int ccode       = GB_RSHIFT (scode,  8, 4) ;
+//  int ccode       = GB_RSHIFT (scode,  8, 4) ;
     int acode       = GB_RSHIFT (scode,  4, 4) ;
 
     // sparsity structures of C and A (1 hex digit)

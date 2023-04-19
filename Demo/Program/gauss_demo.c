@@ -198,10 +198,11 @@ int main (void)
         "not matrix (conjugate) transposes.\n\n") ;
 
 //  try changing the cache path
-//  TRY (GxB_set (GxB_JIT_CACHE_PATH, "/home/davis/mycache")) ;
+//  TRY (GxB_set (GxB_JIT_CACHE_PATH,
+//      "/home/faculty/d/davis/mycache")) ;
 
     TRY (GxB_print (GxB_CONTEXT_WORLD, 3)) ;
-    char *compiler, *cache, *src, *flags, *link, *libraries, *preface ;
+    char *compiler, *cache, *flags, *link, *libraries, *preface ;
     TRY (GxB_get (GxB_JIT_C_COMPILER_NAME, &compiler)) ;
     TRY (GxB_get (GxB_JIT_C_COMPILER_FLAGS, &flags)) ;
     TRY (GxB_get (GxB_JIT_C_LINKER_FLAGS, &link)) ;

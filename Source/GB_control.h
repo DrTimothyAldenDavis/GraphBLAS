@@ -2,30 +2,33 @@
 // GB_control.h:  disable hard-coded functions to reduce code size
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
+// The maximal way to reduce code size and compile time is to use the COMPACT
+// cmake option (-DCOMPACT=1).  That setting disables all FactoryKernels.
+// Performance will then rely on the JIT kernels, once they are compiled at run
+// time, or from an PreJIT kernels.  See the User Guide for details.  If
+// COMPACT is enabled, the settings in this file have no additional effect.
+
 // The installer of SuiteSparse:GraphBLAS can edit this file to reduce the code
-// size of the compiled library, by disabling the corresponding hard-coded
-// functions in Source/FactoryKernels.  For example, if SuiteSparse:GraphBLAS
-// is integrated into an application that makes no use of the GrB_INT16 data
-// type, or just occassional use where performance is not a concern, then
-// uncomment the line "#define GxB_NO_INT16 1".  Alternatively,
+// size of the compiled library, by seletively disabling the corresponding
+// hard-coded functions in Source/FactoryKernels.  For example, if
+// SuiteSparse:GraphBLAS is integrated into an application that makes no use of
+// the GrB_INT16 data type, or just occassional use where performance is not a
+// concern, then uncomment the line "#define GxB_NO_INT16 1".  Alternatively,
 // SuiteSparse:GraphBLAS can be compiled with a list of options, such as
 // -DGxB_NO_INT16=1, which does the same thing.
 
-// GraphBLAS will still work as expected.  It will simply use a generic method
-// instead of the type- or operator-specific code.  It will be slower, by about
-// 2x or 3x, depending on the operation. but its results will be the same.  A
-// few operations will be 10x slower, such as GrB_reduce to scalar using the
-// GrB_MAX_FP64 operator.
-
-// However, the code size can be reduced significantly.  Uncommenting all of
-// the options below cuts the code from 55MB to under 2.7MB, on a MacBook Pro
-// using gcc 8.2.0 (as of the draft V3.0.0 version, June 18, 2019).  Disabling
-// all types except GxB_NO_FP64 results in a code size of 7.8MB.
+// GraphBLAS will still work as expected.  It will simply use a JIT or PreJIT
+// kernel, if the JIT is enabled.  Failing that, it relies on a generic method
+// instead of the type- or operator-specific code.  The JIT and PreJIT kernels
+// are fast.  The generic methods will be slower, by about 2x or 3x, depending
+// on the operation, but their results will be the same.  A few operations will
+// be 10x slower when using generic methods, such as GrB_reduce to scalar using
+// the GrB_MAX_FP64 operator.
 
 // Note that some semirings are renamed.  For example, C=A*B when all matrices
 // are in CSC format, uses the semiring as-is.  If all matrices are in CSR

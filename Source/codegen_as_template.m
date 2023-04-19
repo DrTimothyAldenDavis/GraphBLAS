@@ -39,7 +39,7 @@ else
 end
 
 % create the disable flag
-disable = sprintf ('GxB_NO_%s', upper (fname)) ;
+disable = sprintf ('defined(GxB_NO_%s)', upper (fname)) ;
 fprintf (f, 'm4_define(`GB_disable'', `(%s)'')\n', disable) ;
 fprintf (f, 'm4_divert(0)\n') ;
 fclose (f) ;

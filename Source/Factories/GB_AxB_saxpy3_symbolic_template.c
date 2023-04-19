@@ -20,6 +20,7 @@
 // as is the 3 cases of the mask (no M, M, or !M).
 
 #include "GB_AxB_saxpy3.h"
+#include "GB_mxm_shared_definitions.h"
 #include "GB_AxB_saxpy3_template.h"
 #include "GB_unused.h"
 

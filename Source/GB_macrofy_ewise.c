@@ -28,19 +28,19 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     //--------------------------------------------------------------------------
 
     // method (3 bits)
-    bool is_emult   = GB_RSHIFT (scode, 50, 1) ;
-    bool is_union   = GB_RSHIFT (scode, 49, 1) ;
+//  bool is_emult   = GB_RSHIFT (scode, 50, 1) ;
+//  bool is_union   = GB_RSHIFT (scode, 49, 1) ;
     bool copy_to_C  = GB_RSHIFT (scode, 48, 1) ;
 
     // C in, A, and B iso-valued and flipxy (one hex digit)
-    bool C_in_iso   = GB_RSHIFT (scode, 47, 1) ;
+//  bool C_in_iso   = GB_RSHIFT (scode, 47, 1) ;
     int A_iso_code  = GB_RSHIFT (scode, 46, 1) ;
     int B_iso_code  = GB_RSHIFT (scode, 45, 1) ;
     bool flipxy     = GB_RSHIFT (scode, 44, 1) ;
 
     // binary operator (5 hex digits)
     int binop_ecode = GB_RSHIFT (scode, 36, 8) ;
-    int zcode       = GB_RSHIFT (scode, 32, 4) ;
+//  int zcode       = GB_RSHIFT (scode, 32, 4) ;
     int xcode       = GB_RSHIFT (scode, 28, 4) ;
     int ycode       = GB_RSHIFT (scode, 24, 4) ;
 

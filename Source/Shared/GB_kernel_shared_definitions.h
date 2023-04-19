@@ -10,18 +10,14 @@
 // This header is #include'd just before using any templates for any method:
 // pre-generated kernel, CPU or GPU JIT, or generic.
 
+#include "GB_unused.h"
 #include "GB_complex.h"
-
-#ifndef GB_KERNEL_SHARED_DEFINITIONS_H
-#define GB_KERNEL_SHARED_DEFINITIONS_H
-
-//------------------------------------------------------------------------------
-// callback methods for CPU JIT
-//------------------------------------------------------------------------------
-
 #ifdef GB_JIT_KERNEL
 #include "GB_callback.h"
 #endif
+
+#ifndef GB_KERNEL_SHARED_DEFINITIONS_H
+#define GB_KERNEL_SHARED_DEFINITIONS_H
 
 //------------------------------------------------------------------------------
 // atomic compare/exchange for the GB_Z_TYPE data type

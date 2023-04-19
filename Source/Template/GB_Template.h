@@ -16,7 +16,6 @@
 
 #include "GB_dev.h"
 #include "GB_compiler.h"
-#include "GB_cpu_features.h"
 #include "GB_warnings.h"
 #include "GB_coverage.h"
 #define GB_LIBRARY

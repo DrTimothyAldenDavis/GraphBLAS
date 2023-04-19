@@ -131,9 +131,9 @@ add_op = strrep (add_op, 'yarg', 'a') ;
 fprintf (f, 'm4_define(`GB_add_op'', `#define GB_ADD(z,zin,a) %s'')\n', add_op) ;
 
 % create the disable flag
-disable  = sprintf ('GxB_NO_%s', upper (opname)) ;
-disable = [disable (sprintf (' || GxB_NO_%s', upper (aname)))] ;
-disable = [disable (sprintf (' || GxB_NO_%s_%s', upper (opname), upper (aname)))] ;
+disable  = sprintf ('defined(GxB_NO_%s)', upper (opname)) ;
+disable = [disable (sprintf (' || defined(GxB_NO_%s)', upper (aname)))] ;
+disable = [disable (sprintf (' || defined(GxB_NO_%s_%s)', upper (opname), upper (aname)))] ;
 fprintf (f, 'm4_define(`GB_disable'', `(%s)'')\n', disable) ;
 
 fprintf (f, 'm4_divert(0)\n') ;

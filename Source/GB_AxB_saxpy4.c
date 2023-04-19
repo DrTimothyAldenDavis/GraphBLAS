@@ -99,7 +99,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
 
     GB_Opcode mult_binop_code, add_binop_code ;
     GB_Type_code xcode, ycode, zcode ;
-    bool builtin_semiring = GB_AxB_semiring_builtin (A, A_is_pattern, B,
+    GB_AxB_semiring_builtin (A, A_is_pattern, B,
         B_is_pattern, semiring, flipxy, &mult_binop_code, &add_binop_code,
         &xcode, &ycode, &zcode) ;
 

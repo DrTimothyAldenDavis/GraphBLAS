@@ -31,7 +31,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
     bool A_iso      = GB_RSHIFT (scode, 36, 1) ;
 
     // inplace, i/j dependency and flipij (4 bits)
-    int inplace     = GB_RSHIFT (scode, 35, 1) ;
+//  int inplace     = GB_RSHIFT (scode, 35, 1) ;
     int i_dep       = GB_RSHIFT (scode, 34, 1) ;
     int j_dep       = GB_RSHIFT (scode, 33, 1) ;
     bool flipij     = GB_RSHIFT (scode, 32, 1) ;
@@ -43,11 +43,11 @@ void GB_macrofy_select          // construct all macros for GrB_select
     int ycode       = GB_RSHIFT (scode, 12, 4) ;
 
     // types of C and A (2 hex digits)
-    int ccode       = GB_RSHIFT (scode,  8, 4) ;
+//  int ccode       = GB_RSHIFT (scode,  8, 4) ;
     int acode       = GB_RSHIFT (scode,  4, 4) ;
 
     // sparsity structures of C and A (1 hex digit)
-    int csparsity   = GB_RSHIFT (scode,  2, 2) ;
+//  int csparsity   = GB_RSHIFT (scode,  2, 2) ;
     int asparsity   = GB_RSHIFT (scode,  0, 2) ;
 
     //--------------------------------------------------------------------------

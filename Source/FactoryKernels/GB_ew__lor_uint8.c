@@ -35,7 +35,7 @@
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
-    (GxB_NO_LOR || GxB_NO_UINT8 || GxB_NO_LOR_UINT8)
+    (defined(GxB_NO_LOR) || defined(GxB_NO_UINT8) || defined(GxB_NO_LOR_UINT8))
 
 #include "GB_ewise_shared_definitions.h"
 

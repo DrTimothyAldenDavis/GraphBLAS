@@ -26,7 +26,7 @@
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
-    (GxB_NO_ANY || GxB_NO_INT8 || GxB_NO_ANY_INT8)
+    (defined(GxB_NO_ANY) || defined(GxB_NO_INT8) || defined(GxB_NO_ANY_INT8))
 
 #include "GB_kernel_shared_definitions.h"
 

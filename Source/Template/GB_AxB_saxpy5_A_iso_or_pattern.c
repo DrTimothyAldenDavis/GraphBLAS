@@ -11,7 +11,13 @@
 // A is bitmap or full, and either iso or pattern-only
 // B is sparse or hypersparse.
 
-// The type of A and C must match the multiply op.  B can be typecasted.
+// The monoid is identical to the accum op, and is not the ANY operator.
+// The type of A must match the multiply operator input.
+// The type of C must match the monoid/accum op.  B can be typecasted for a
+// JIT kernel but not the FactoryKernels.
+
+// This method is used for both built-in semirings with no typecasting, in
+// the FactoryKernels, and the JIT kernels.
 
 #ifdef GB_GENERIC
 #error "saxpy5 generic kernel undefined"
@@ -52,7 +58,7 @@
     {
         #if !GB_A_IS_PATTERN
         // get the iso value of A (no typecast required)
-        const GB_A_TYPE ax = Ax [0] ;
+        const GB_A_TYPE a = Ax [0] ;
         #endif
         // get the task descriptor
         const int64_t jB_start = B_slice [tid] ;
@@ -78,11 +84,11 @@
                     // s depends on i
                     #define s (i + GB_OFFSET)
                 #else
-                    // s = ax * bkj, not dependent on i
+                    // s = a * bkj, not dependent on i
                     GB_C_TYPE s ;
                     GB_DECLAREB (bkj) ;
                     GB_GETB (bkj, Bx, pB, B_iso) ;
-                    GB_MULT (s, ax, bkj, ignore, k, j) ;
+                    GB_MULT (s, a, bkj, ignore, k, j) ;
                 #endif
                 // C(:,j) += s
                 for (int64_t i = 0 ; i < m ; i++)

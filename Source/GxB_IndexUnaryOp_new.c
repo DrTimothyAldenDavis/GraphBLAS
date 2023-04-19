@@ -22,7 +22,7 @@
 
 GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
 (
-    GrB_IndexUnaryOp *op,           // handle for the new IndexUnary operator
+    GrB_IndexUnaryOp *op_handle,    // handle for the new IndexUnary operator
     GxB_index_unary_function function,    // pointer to index_unary function
     GrB_Type ztype,                 // type of output z
     GrB_Type xtype,                 // type of input x (the A(i,j) entry)
@@ -38,9 +38,8 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
 
     GB_WHERE1 ("GxB_IndexUnaryOp_new (op, function, ztype, xtype, ytype"
         ", name, defn)") ;
-    GB_BURBLE_START ("GxB_IndexUnaryOp_new") ;
-    GB_RETURN_IF_NULL (op) ;
-    (*op) = NULL ;
+    GB_RETURN_IF_NULL (op_handle) ;
+    (*op_handle) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (ztype) ;
     GB_RETURN_IF_NULL_OR_FAULTY (xtype) ;
     GB_RETURN_IF_NULL_OR_FAULTY (ytype) ;
@@ -50,28 +49,29 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     //--------------------------------------------------------------------------
 
     size_t header_size ;
-    (*op) = GB_MALLOC (1, struct GB_IndexUnaryOp_opaque, &header_size) ;
-    if (*op == NULL)
+    GrB_IndexUnaryOp op = GB_MALLOC (1, struct GB_IndexUnaryOp_opaque,
+        &header_size) ;
+    if (op == NULL)
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
-    (*op)->header_size = header_size ;
+    op->header_size = header_size ;
 
     //--------------------------------------------------------------------------
     // initialize the index_unary operator
     //--------------------------------------------------------------------------
 
-    (*op)->magic = GB_MAGIC ;
-    (*op)->ztype = ztype ;
-    (*op)->xtype = xtype ;
-    (*op)->ytype = ytype ;      // thunk type
+    op->magic = GB_MAGIC ;
+    op->ztype = ztype ;
+    op->xtype = xtype ;
+    op->ytype = ytype ;      // thunk type
 
-    (*op)->unop_function = NULL ;
-    (*op)->idxunop_function = function ;
-    (*op)->binop_function = NULL ;
+    op->unop_function = NULL ;
+    op->idxunop_function = function ;
+    op->binop_function = NULL ;
 
-    (*op)->opcode = GB_USER_idxunop_code ;
+    op->opcode = GB_USER_idxunop_code ;
 
     //--------------------------------------------------------------------------
     // get the index_unary op name and defn
@@ -85,14 +85,13 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
 
     GrB_Info info = GB_op_name_and_defn (
         // output:
-        (*op)->name, &((*op)->name_len), &((*op)->hash),
-        &((*op)->defn), &((*op)->defn_size),
+        op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_size),
         // input:
         idxop_name, idxop_defn, "GxB_index_unary_function", 24, true, jitable) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        GB_FREE (op, header_size) ;
+        GB_FREE (&op, header_size) ;
         return (info) ;
     }
 
@@ -102,23 +101,25 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
 
     if (function == NULL)
     {
+        GB_BURBLE_START ("GxB_IndexUnaryOp_new") ;
         void *user_function ;
-        info = GB_user_op_jit (&user_function, (GB_Operator) *op) ;
+        info = GB_user_op_jit (&user_function, (GB_Operator) op) ;
         if (info != GrB_SUCCESS)
         {
             // unable to construct the function pointer
-            GB_Op_free ((GB_Operator *) op) ;
+            GB_Op_free ((GB_Operator *) &op) ;
             return (GrB_NULL_POINTER) ;
         }
-        (*op)->idxunop_function = (GxB_index_unary_function) user_function ;
+        op->idxunop_function = (GxB_index_unary_function) user_function ;
+        GB_BURBLE_END ;
     }
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_INDEXUNARYOP_OK ((*op), "new user-defined index_unary op", GB0) ;
-    GB_BURBLE_END ;
+    ASSERT_INDEXUNARYOP_OK (op, "new user-defined index_unary op", GB0) ;
+    (*op_handle) = op ;
     return (GrB_SUCCESS) ;
 }
 

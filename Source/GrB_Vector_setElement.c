@@ -72,7 +72,6 @@ GrB_Info GrB_Vector_setElement_Scalar
     // set or remove the element
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     GB_MATRIX_WAIT (scalar) ;
     if (GB_nnz ((GrB_Matrix) scalar) > 0)
     { 

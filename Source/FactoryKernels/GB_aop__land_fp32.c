@@ -51,7 +51,7 @@
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
-    (GxB_NO_LAND || GxB_NO_FP32 || GxB_NO_LAND_FP32)
+    (defined(GxB_NO_LAND) || defined(GxB_NO_FP32) || defined(GxB_NO_LAND_FP32))
 
 #include "GB_assign_shared_definitions.h"
 

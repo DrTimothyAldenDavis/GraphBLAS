@@ -116,9 +116,9 @@ op = strrep (op, 'yarg', 'y') ;
 fprintf (f, 'm4_define(`GB_accumop'', `#define GB_ACCUM_OP(z,x,y) z = %s'')\n', op) ;
 
 % create the disable flag
-disable = sprintf ('GxB_NO_%s', upper (binop)) ;
-disable = [disable (sprintf (' || GxB_NO_%s', upper (fname)))] ;
-disable = [disable (sprintf (' || GxB_NO_%s_%s', upper (binop), upper (fname)))] ;
+disable = sprintf ('defined(GxB_NO_%s)', upper (binop)) ;
+disable = [disable (sprintf (' || defined(GxB_NO_%s)', upper (fname)))] ;
+disable = [disable (sprintf (' || defined(GxB_NO_%s_%s)', upper (binop), upper (fname)))] ;
 if (isequal (ytype, 'GxB_FC32_t') && ...
     (isequal (binop, 'first') || isequal (binop, 'second')))
     % disable the FIRST_FC32 and SECOND_FC32 binary operators for

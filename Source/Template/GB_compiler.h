@@ -111,17 +111,6 @@
 #endif
 
 //------------------------------------------------------------------------------
-// MINGW system, for Windows
-//------------------------------------------------------------------------------
-
-#if defined ( __MINGW32__ )
-    // MinGW (32-bit or 64-bit): using gcc, clang, or other compilers.
-    #define GB_MINGW   1
-#else
-    #define GB_MINGW   0
-#endif
-
-//------------------------------------------------------------------------------
 // Workaround for compiler bug in Microsoft Visual Studio 2019
 //------------------------------------------------------------------------------
 
@@ -241,6 +230,22 @@
 #endif
 
 //------------------------------------------------------------------------------
+// determine the target architecture
+//------------------------------------------------------------------------------
+
+#if !defined ( GBX86 )
+
+    #if ( defined (_M_X64) || defined (__x86_64__)) && \
+        ! ( defined (__CLR_VER) || defined (__pnacl__) )
+    // the target architecture is x86_64, and not a virtual machine
+    #define GBX86 1
+    #else
+    #define GBX86 0
+    #endif
+
+#endif
+
+//------------------------------------------------------------------------------
 // AVX2 and AVX512F support for the x86_64 architecture
 //------------------------------------------------------------------------------
 
@@ -249,7 +254,6 @@
 // gcc 9.3.0 or later.  It might be OK on gcc 8.x but I haven't tested this.
 
 #if GBX86
-
     #if GB_COMPILER_GCC
         #if __GNUC__ >= 9
             // enable avx512f on gcc 9.x and later
@@ -270,13 +274,10 @@
         #define GB_COMPILER_SUPPORTS_AVX512F 0
         #define GB_COMPILER_SUPPORTS_AVX2 0
     #endif
-
 #else
-
     // non-X86_64 architecture
     #define GB_COMPILER_SUPPORTS_AVX512F 0
     #define GB_COMPILER_SUPPORTS_AVX2 0
-
 #endif
 
 // prefix for function with target avx512f
@@ -289,7 +290,7 @@
         #define GB_TARGET_AVX512F __attribute__ ((target ("avx512f")))
     #endif
 #else
-#define GB_TARGET_AVX512F
+    #define GB_TARGET_AVX512F
 #endif
 
 // prefix for function with target avx2
@@ -302,7 +303,19 @@
         #define GB_TARGET_AVX2 __attribute__ ((target ("avx2")))
     #endif
 #else
-#define GB_TARGET_AVX2
+    #define GB_TARGET_AVX2
+#endif
+
+//------------------------------------------------------------------------------
+// disable Google's cpu_featgures on some compilers
+//------------------------------------------------------------------------------
+
+#if defined (_WIN32) || GB_COMPILER_NVCC
+
+    // entirely disable cpu_features for MS Visual Studio, nvcc, and MinGW
+    #undef  GBNCPUFEAT
+    #define GBNCPUFEAT 1
+
 #endif
 
 #endif

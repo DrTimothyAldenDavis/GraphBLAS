@@ -67,10 +67,10 @@ op = strrep (op, 'xarg', 'x') ;
 fprintf (f, 'm4_define(`GB_unaryop'', `#define GB_UNARYOP(z,x) z = %s'')\n', op) ;
 
 % create the disable flag
-disable  = sprintf ('GxB_NO_%s', upper (unop)) ;
-disable = [disable (sprintf (' || GxB_NO_%s', upper (zname)))] ;
+disable  = sprintf ('defined(GxB_NO_%s)', upper (unop)) ;
+disable = [disable (sprintf (' || defined(GxB_NO_%s)', upper (zname)))] ;
 if (~isequal (zname, xname))
-    disable = [disable (sprintf (' || GxB_NO_%s', upper (xname)))] ;
+    disable = [disable (sprintf (' || defined(GxB_NO_%s)', upper (xname)))] ;
 end
 fprintf (f, 'm4_define(`GB_disable'', `(%s)'')\n', disable) ;
 fprintf (f, 'm4_divert(0)\n') ;

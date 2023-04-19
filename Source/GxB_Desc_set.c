@@ -83,7 +83,6 @@ GrB_Info GxB_Desc_set_INT32     // set a parameter in a descriptor
                         (int) GrB_STRUCTURE,
                         (int) (GrB_COMP + GrB_STRUCTURE)) ;
             }
-            int mask = (int) desc->mask ;
             switch (value)
             {
                 case GrB_COMP      : mask |= GrB_COMP ;      break ;

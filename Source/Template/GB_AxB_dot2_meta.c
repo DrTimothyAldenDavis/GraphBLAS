@@ -284,7 +284,7 @@
             #define GB_A_IS_BITMAP 0
             #define GB_A_IS_FULL   0
             #define GB_B_IS_SPARSE 0
-            #define GB_B_IS_SPARSE 0
+            #define GB_B_IS_HYPER  0
             #define GB_B_IS_BITMAP 1
             #define GB_B_IS_FULL   0
             #include "GB_AxB_dot2_template.c"

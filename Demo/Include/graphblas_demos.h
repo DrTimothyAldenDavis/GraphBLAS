@@ -46,7 +46,7 @@
 #endif
 
 #ifndef GB_MICROSOFT
-#if ( _MSC_VER && !__INTEL_COMPILER )
+#if ( defined (_MSC_VER) && !defined(__INTEL_COMPILER) )
 #define GB_MICROSOFT 1
 #else
 #define GB_MICROSOFT 0

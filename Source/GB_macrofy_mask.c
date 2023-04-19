@@ -23,8 +23,6 @@ void GB_macrofy_mask
 )
 {
 
-    const char *f ;
-
     if (mask_ecode >= 2)
     {
         GB_macrofy_sparsity (fp, Mname, msparsity) ;

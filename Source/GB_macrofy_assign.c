@@ -34,9 +34,9 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
 
     // binary operator (5 hex digits)
     int accum_ecode = GB_RSHIFT (scode, 32, 8) ;
-    int zcode       = GB_RSHIFT (scode, 28, 4) ;
-    int xcode       = GB_RSHIFT (scode, 24, 4) ;
-    int ycode       = GB_RSHIFT (scode, 20, 4) ;
+//  int zcode       = GB_RSHIFT (scode, 28, 4) ;
+//  int xcode       = GB_RSHIFT (scode, 24, 4) ;
+//  int ycode       = GB_RSHIFT (scode, 20, 4) ;
 
     // mask (one hex digit)
     int mask_ecode  = GB_RSHIFT (scode, 16, 4) ;

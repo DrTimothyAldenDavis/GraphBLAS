@@ -12,6 +12,8 @@
 // file.  This file is shared by generic, pre-generated, and both CPU and CUDA
 // JIT kernels.
 
+#include "GB_monoid_shared_definitions.h"
+
 #ifndef GB_MXM_SHARED_DEFINITIONS_H
 #define GB_MXM_SHARED_DEFINITIONS_H
 
@@ -235,11 +237,4 @@
     #endif
 
 #endif
-
-//------------------------------------------------------------------------------
-// monoid definitions
-//------------------------------------------------------------------------------
-
-#include "GB_monoid_shared_definitions.h"
-
 #endif

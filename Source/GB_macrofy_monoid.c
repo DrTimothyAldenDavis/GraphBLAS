@@ -399,8 +399,8 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 
     const char *a = NULL, *cuda_type = NULL ;
     bool user_monoid_atomically = false ;
-    bool has_cheeseburger = GB_enumify_cuda_atomic (&a,
-        &user_monoid_atomically, &cuda_type, monoid, add_ecode, zsize, zcode) ;
+    GB_enumify_cuda_atomic (&a, &user_monoid_atomically, &cuda_type,
+        monoid, add_ecode, zsize, zcode) ;
 
     if (monoid == NULL || zcode == 0)
     {

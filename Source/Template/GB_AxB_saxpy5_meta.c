@@ -7,17 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// This method is only used for built-in semirings with no typecasting.
-// The accumulator matches the semiring monoid.
-// The ANY monoid is not supported.
-
 // C is full.
 // A is bitmap or full.
 // B is sparse or hypersparse.
 
-// The type of A and C must match the multiply op.  B can be typecasted.
-// This particular template is only used in FactoryKernels.  The JIT kernel
-// uses the same logic but not this file.
+// The monoid is identical to the accum op, and is not the ANY operator.
+// The type of A must match the multiply operator input.
+// The type of C must match the monoid/accum op.  B can be typecasted in
+// general (in the JIT version), but not here for the FactoryKernel.
+
+// This method is only used for built-in semirings with no typecasting, in
+// the FactoryKernels.  The JIT kernel has nearly identical logic.
 
 #ifdef GB_GENERIC
 #error "saxpy5 generic kernel undefined"

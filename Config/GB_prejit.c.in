@@ -12,7 +12,7 @@
 
 #include "GB.h"
 #include "GB_jitifyer.h"
-#include "GB_AxB_saxpy3.h"
+#include "GB_saxpy3task_struct.h"
 
 //------------------------------------------------------------------------------
 // prototypes for all PreJIT kernels

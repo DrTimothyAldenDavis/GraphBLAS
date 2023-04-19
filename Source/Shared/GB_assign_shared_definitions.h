@@ -9,6 +9,8 @@
 
 // macros for the construction of the GB_subassign kernels
 
+#include "GB_kernel_shared_definitions.h"
+
 //------------------------------------------------------------------------------
 // definitions redefined as needed
 //------------------------------------------------------------------------------
@@ -37,8 +39,6 @@
 
 #ifndef GB_SUBASSIGN_SHARED_DEFINITIONS_H
 #define GB_SUBASSIGN_SHARED_DEFINITIONS_H
-
-#include "GB_kernel_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // GB_EMPTY_TASKLIST: declare an empty TaskList

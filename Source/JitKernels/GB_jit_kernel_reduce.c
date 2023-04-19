@@ -2,7 +2,7 @@
 // GB_jit_kernel_reduce.c: JIT kernel for reduction to scalar
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -15,7 +15,7 @@
 // file, to define the kernel routine itself.  The kernel is always called
 // GB_jit_kernel, regardless of what it computes.
 
-#if comments
+#ifdef for_comments_only    // only so vim will add color to the code below:
 
     // example file: GB_jit_reduce_2c1fbb2.c
 

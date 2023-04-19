@@ -59,7 +59,7 @@
 
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \
-    (GxB_NO_ANY || GxB_NO_LE || GxB_NO_BOOL || GxB_NO_ANY_BOOL || GxB_NO_LE_BOOL || GxB_NO_ANY_LE_BOOL)
+    (defined(GxB_NO_ANY) || defined(GxB_NO_LE) || defined(GxB_NO_BOOL) || defined(GxB_NO_ANY_BOOL) || defined(GxB_NO_LE_BOOL) || defined(GxB_NO_ANY_LE_BOOL))
 
 #include "GB_mxm_shared_definitions.h"
 

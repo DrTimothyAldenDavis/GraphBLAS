@@ -106,7 +106,9 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             // typecasting, A is sparse or hypersparse, and B is bitmap or
             // full.  The ANY monoid is not supported since it would be
             // unusual to use ANY as the accum.  C may be iso on input but the
-            // method is not used if C is iso on output.
+            // method is not used if C is iso on output.  The type of C must
+            // match the ztype of the monoid, but the JIT may do any
+            // typecasting with A and B.
 
             info = GB_AxB_saxpy4 (C_in, A, B, semiring, flipxy, done_in_place,
                 Werk) ;
@@ -118,13 +120,16 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             }
         }
         else if ((GB_IS_BITMAP (A) || GB_IS_FULL (A))
-             &&  (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B)))
+             &&  (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B))
+             && A->type == (flipxy ? semiring->multiply->ytype :
+                                     semiring->multiply->xtype))
         {
             // GB_AxB_saxpy5 computes C+=A*B where C is full, just like
             // GB_AxB_saxpy4, except that the sparsity format of A and B are
             // reversed.  A is bitmap or full, and B is sparse or hypersparse.
-
-            // FIXME: require A->type to match mult->xtype (or ytype if flipped)
+            // A->type must match the multiply input type (xtype if flipxy
+            // false, ytype if true).  The type of C must match the ztype of
+            // the monoid.  The JIT may do any typecasting with B.
 
             info = GB_AxB_saxpy5 (C_in, A, B, semiring, flipxy, done_in_place,
                 Werk) ;

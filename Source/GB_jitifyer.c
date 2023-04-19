@@ -93,12 +93,15 @@ static GxB_JIT_Control GB_jit_control =
 // GB_jitifyer_finalize: free the JIT table and all the strings
 //------------------------------------------------------------------------------
 
-#define OK(ok)                          \
-    if (!(ok))                          \
+#define OK(method)                      \
+{                                       \
+    GrB_Info myinfo = (method) ;        \
+    if (myinfo != GrB_SUCCESS)          \
     {                                   \
         GB_jitifyer_finalize (false) ;  \
-        return (GrB_OUT_OF_MEMORY) ;    \
-    }
+        return (myinfo) ;               \
+    }                                   \
+}
 
 #define GB_FREE_STUFF(X)                                \
 {                                                       \
@@ -109,7 +112,11 @@ static GxB_JIT_Control GB_jit_control =
 #define GB_MALLOC_STUFF(X,len)                          \
 {                                                       \
     X = GB_Global_persistent_malloc ((len) + 2) ;       \
-    OK (X != NULL) ;                                    \
+    if (X == NULL)                                      \
+    {                                                   \
+        GB_jitifyer_finalize (false) ;                  \
+        return (GrB_OUT_OF_MEMORY) ;                    \
+    }                                                   \
     X ## _allocated = (len) + 2 ;                       \
 }
 
@@ -150,8 +157,10 @@ void GB_jitifyer_finalize (bool freeall)
 // GB_jitifyer_init: initialize the CPU and CUDA JIT folders, flags, etc
 //------------------------------------------------------------------------------
 
-// Returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_NO_VALUE if the cache path
-// cannot be found.
+// Returns GrB_SUCCESS or GrB_OUT_OF_MEMORY.  If any other error occurs (such
+// as being unable to access the cache folder), the JIT is disabled, but
+// GrB_SUCCESS is returned.  This is because GrB_init calls this method, and
+// GraphBLAS can continue without the JIT.
 
 GrB_Info GB_jitifyer_init (void)
 {
@@ -209,7 +218,7 @@ GrB_Info GB_jitifyer_init (void)
     // establish the cache path and src path, and make sure they exist
     //--------------------------------------------------------------------------
 
-    OK (GB_jitifyer_establish_paths ( ) == GrB_SUCCESS) ;
+    OK (GB_jitifyer_establish_paths (GrB_SUCCESS)) ;
 
     //--------------------------------------------------------------------------
     // initialize the remaining strings
@@ -242,7 +251,7 @@ GrB_Info GB_jitifyer_init (void)
         {
             // found it; now remove it from the C flags
             char *src = dst + strlen (ARCH_ARM64) ;
-            while (*dst++ = *src++) ;
+            while (((*dst++) = (*src++))) ;
         }
     }
     #endif
@@ -251,7 +260,7 @@ GrB_Info GB_jitifyer_init (void)
     // allocate permanent workspace
     //--------------------------------------------------------------------------
 
-    OK (GB_jitifyer_alloc_space ( ) == GrB_SUCCESS) ;
+    OK (GB_jitifyer_alloc_space ( )) ;
 
     //--------------------------------------------------------------------------
     // hash all PreJIT kernels
@@ -418,14 +427,20 @@ GrB_Info GB_jitifyer_init (void)
     // uncompress all the source files into the user source folder
     //--------------------------------------------------------------------------
 
-    return (GB_jitifyer_extract_JITpackage ( )) ;
+    return (GB_jitifyer_extract_JITpackage (GrB_SUCCESS)) ;
 }
 
 //------------------------------------------------------------------------------
 // GB_jitifyer_establish_paths: make sure cache and src paths exist
 //------------------------------------------------------------------------------
 
-GrB_Info GB_jitifyer_establish_paths (void)
+// Returns GrB_SUCCESS if succesful, or GrB_OUT_OF_MEMORY if out of memory.  If
+// the paths cannot be established, the JIT is disabled, and the
+// error_condition is returned.  GrB_init uses this to return GrB_SUCCESS,
+// since GraphBLAS can continue without the JIT.  GxB_set returns
+// GrB_INVALID_VALUE to indicate that the cache path is not valid.
+
+GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
 {
 
     //--------------------------------------------------------------------------
@@ -445,9 +460,9 @@ GrB_Info GB_jitifyer_establish_paths (void)
     // make sure the cache and source paths exist
     //--------------------------------------------------------------------------
 
-    GrB_Info info1 = GB_jitifyer_mkdir (GB_jit_cache_path) ;
-    GrB_Info info2 = GB_jitifyer_mkdir (GB_jit_src_path) ;
-    if (info1 != GrB_SUCCESS || info2 != GrB_SUCCESS)
+    GrB_Info info = GrB_SUCCESS ;
+    if (!(GB_jitifyer_mkdir (GB_jit_cache_path) &&
+          GB_jitifyer_mkdir (GB_jit_src_path)))
     { 
         // JIT is disabled, or cannot determine the JIT cache and/or source
         // path.  Disable loading and compiling, but continue with the rest of
@@ -458,9 +473,10 @@ GrB_Info GB_jitifyer_establish_paths (void)
         GB_FREE_STUFF (GB_jit_src_path) ;
         GB_COPY_STUFF (GB_jit_cache_path, "") ;
         GB_COPY_STUFF (GB_jit_src_path, "") ;
+        info = error_condition ;
     }
 
-    return (GrB_SUCCESS) ;
+    return (info) ;
 }
 
 //------------------------------------------------------------------------------
@@ -468,15 +484,14 @@ GrB_Info GB_jitifyer_establish_paths (void)
 //------------------------------------------------------------------------------
 
 // Create a directory, including all parent directories if they do not exist.
-// Returns success if the directory already exists or if it was successfully
-// created.  Returns GrB_NO_VALUE or GrB_NULL_POINTER on error.  Returns
-// GrB_NO_VALUE if the JIT is disabled.
+// Returns true if the directory already exists or if it was successfully
+// created.  Returns false on error.
 
-GrB_Info GB_jitifyer_mkdir (char *path)
+bool GB_jitifyer_mkdir (char *path)
 {
     int result = 0 ;
     int err = -1 ;
-    if (path == NULL) return (GrB_NULL_POINTER) ;
+    if (path == NULL) return (false) ;
 
     #ifndef NJIT
 
@@ -508,10 +523,10 @@ GrB_Info GB_jitifyer_mkdir (char *path)
     // FIXME: need _mkdir on Windows
     result = mkdir (path, S_IRWXU) ;
     err = (result == -1) ? errno : 0 ;
-    return ((err == 0 || err == EEXIST) ? GrB_SUCCESS : GrB_NO_VALUE) ;
+    return (err == 0 || err == EEXIST) ;
     #else
     // JIT is disabled at compile time; no need to make any directories
-    return (GrB_NO_VALUE) ;
+    return (false) ;
     #endif
 }
 
@@ -519,7 +534,11 @@ GrB_Info GB_jitifyer_mkdir (char *path)
 // GB_jitifyer_extract_JITpackage: extract the GraphBLAS source
 //------------------------------------------------------------------------------
 
-GrB_Info GB_jitifyer_extract_JITpackage (void)
+// Returns GrB_SUCCESS if successful, GrB_OUT_OF_MEMORY if out of memory, or
+// error_condition if the files cannot be written to the cache folder for any
+// reason.
+
+GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
 {
 
     bool ok = true ;
@@ -540,7 +559,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (void)
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    // check the GraphBLAS.h file to see if it's OK
+    // check the GraphBLAS.h file to see if it is there with the right version
     snprintf (filename, fsize, "%s/GraphBLAS.h", GB_jit_src_path) ;
     FILE *fp = fopen (filename, "r") ;
     if (fp != NULL)
@@ -553,7 +572,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (void)
             v2 == GxB_IMPLEMENTATION_MINOR &&
             v3 == GxB_IMPLEMENTATION_SUB)
         { 
-            // the header looks fine; assume the rest is OK
+            // the header looks fine; assume the rest of the source is fine
             fclose (fp) ;
             GB_FREE_WORK (&filename, fsize) ;
             return (GrB_SUCCESS) ;
@@ -628,7 +647,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (void)
     #endif
 
     #pragma omp flush
-    return (ok ? GrB_SUCCESS : GrB_NO_VALUE) ;
+    return (ok ? GrB_SUCCESS : error_condition) ;
 }
 
 //------------------------------------------------------------------------------
@@ -676,6 +695,8 @@ void GB_jitifyer_set_control (int control)
 // GB_jitifyer_alloc_space: allocate workspaces for the JIT
 //------------------------------------------------------------------------------
 
+// Returns GrB_SUCCESS or GrB_OUT_OF_MEMORY.
+
 GrB_Info GB_jitifyer_alloc_space (void)
 {
 
@@ -689,7 +710,7 @@ GrB_Info GB_jitifyer_alloc_space (void)
         GB_jit_cache_path == NULL ||
         GB_jit_src_path == NULL)
     { 
-        return (GrB_NULL_POINTER) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -751,6 +772,11 @@ const char *GB_jitifyer_get_cache_path (void)
 // GB_jitifyer_set_cache_path: set a new cache path
 //------------------------------------------------------------------------------
 
+// This method is only used by GxB_set.  It returns GrB_SUCCESS if successful,
+// GrB_OUT_OF_MEMORY if out of memory, GrB_NULL_POINTER if the requested path
+// is a NULL string, or GrB_INVALID_VALUE if any file I/O error occurs.  The
+// latter indicates that the requested path is not valid.
+
 GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path)
 {
 
@@ -801,19 +827,19 @@ GrB_Info GB_jitifyer_set_cache_path_worker (const char *new_cache_path)
     // set the src path and make sure cache and src paths are accessible
     //--------------------------------------------------------------------------
 
-    OK (GB_jitifyer_establish_paths ( ) == GrB_SUCCESS) ;
+    OK (GB_jitifyer_establish_paths (GrB_INVALID_VALUE)) ;
 
     //--------------------------------------------------------------------------
     // allocate and define strings that depend on GB_jit_cache_path
     //--------------------------------------------------------------------------
 
-    OK (GB_jitifyer_alloc_space ( ) == GrB_SUCCESS) ;
+    OK (GB_jitifyer_alloc_space ( )) ;
 
     //--------------------------------------------------------------------------
     // uncompress all the source files into the user source folder
     //--------------------------------------------------------------------------
 
-    return (GB_jitifyer_extract_JITpackage ( )) ;
+    return (GB_jitifyer_extract_JITpackage (GrB_INVALID_VALUE)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1159,6 +1185,8 @@ GrB_Info GB_jitifyer_set_C_preface_worker (const char *new_C_preface)
 // GB_jitifyer_query: check if the type/op/monoid definitions match
 //------------------------------------------------------------------------------
 
+// Returns true if type/op/monoid/etc definitions match, false otherwise.
+
 bool GB_jitifyer_query
 (
     GB_jit_query_func dl_query,
@@ -1257,6 +1285,12 @@ bool GB_jitifyer_query
 // GB_jitifyer_load: load a JIT kernel, compiling it if needed
 //------------------------------------------------------------------------------
 
+// Returns GrB_SUCCESS if kernel is found (already loaded, or just now loaded,
+// or just now compiled and loaded).
+
+// Returns GrB_NO_VALUE if the kernel is not found and cannot be loaded or
+// compiled.  This tells the caller that a generic method must be used.
+
 GrB_Info GB_jitifyer_load
 (
     // output:
@@ -1285,14 +1319,14 @@ GrB_Info GB_jitifyer_load
     if (hash == UINT64_MAX)
     { 
         // The kernel may not be compiled; it does not have a valid definition.
-        GBURBLE ("(jit undefined) ") ;
+        GBURBLE ("(jit: undefined) ") ;
         return (GrB_NO_VALUE) ;
     }
 
     if (GB_jit_control <= GxB_JIT_PAUSE)
     { 
         // The JIT control has disabled all JIT kernels.  Punt to generic.
-        GBURBLE ("(jit paused) ") ;
+        GBURBLE ("(jit: paused) ") ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -1300,8 +1334,9 @@ GrB_Info GB_jitifyer_load
     // handle the GxB_JIT_RUN case: critical section not required
     //--------------------------------------------------------------------------
 
-    if (GB_jit_control == GxB_JIT_RUN &
-        family != GB_jit_user_op_family && family != GB_jit_user_type_family)
+    if ((GB_jit_control == GxB_JIT_RUN) &&
+        (family != GB_jit_user_op_family) &&
+        (family != GB_jit_user_type_family))
     {
 
         //----------------------------------------------------------------------
@@ -1317,7 +1352,7 @@ GrB_Info GB_jitifyer_load
         else if ((*dl_function) != NULL)
         { 
             // found the kernel in the hash table
-            GBURBLE ("(jit run) ") ;
+            GBURBLE ("(jit: run) ") ;
             return (GrB_SUCCESS) ;
         }
         else
@@ -1325,7 +1360,7 @@ GrB_Info GB_jitifyer_load
             // No kernels may be loaded or compiled, but existing kernels
             // already loaded may be run (handled above if dl_function was
             // found).  This kernel was not loaded, so punt to generic.
-            GBURBLE ("(jit not loaded) ") ;
+            GBURBLE ("(jit: not loaded) ") ;
             return (GrB_NO_VALUE) ;
         }
     }
@@ -1398,7 +1433,8 @@ GrB_Info GB_jitifyer_worker
             }
             else
             { 
-                // remove the PreJIT kernel from the hash table
+                // remove the PreJIT kernel from the hash table; do not return.
+                // Instead, keep going and compile a JIT kernel.
                 GBURBLE ("(prejit: disabled) ") ;
                 GB_jitifyer_entry_free (e) ;
             }
@@ -1412,13 +1448,14 @@ GrB_Info GB_jitifyer_worker
             GB_user_op (&ignore, &defn) ;
             if (strcmp (defn, op->defn) == 0)
             { 
-                GBURBLE ("(jit op: ok) ") ;
+                GBURBLE ("(jit: op ok) ") ;
                 return (GrB_SUCCESS) ;
             }
             else
             { 
-                // the op has changed; need to re-JIT the kernel
-                GBURBLE ("(jit op: changed) ") ;
+                // the op has changed; need to re-JIT the kernel; do not return.
+                // Instead, keep going and compile a JIT kernel.
+                GBURBLE ("(jit: op changed) ") ;
                 GB_jitifyer_entry_free (e) ;
             }
         }
@@ -1431,20 +1468,21 @@ GrB_Info GB_jitifyer_worker
             GB_user_type (&ignore, &defn) ;
             if (strcmp (defn, type1->defn) == 0)
             { 
-                GBURBLE ("(jit type: ok) ") ;
+                GBURBLE ("(jit: type ok) ") ;
                 return (GrB_SUCCESS) ;
             }
             else
             { 
-                // the type has changed; need to re-JIT the kernel
-                GBURBLE ("(jit type: changed) ") ;
+                // type has changed; need to re-JIT the kernel; do not return.
+                // Instead, keep going and compile a JIT kernel.
+                GBURBLE ("(jit: type changed) ") ;
                 GB_jitifyer_entry_free (e) ;
             }
         }
         else
         { 
             // JIT kernel, or checked PreJIT kernel
-            GBURBLE ("(jit run) ") ;
+            GBURBLE ("(jit: run) ") ;
             return (GrB_SUCCESS) ;
         }
     }
@@ -1460,7 +1498,7 @@ GrB_Info GB_jitifyer_worker
         // No kernels may be loaded or compiled, but existing kernels already
         // loaded may be run (handled above if dl_function was found).  This
         // kernel was not loaded, so punt to generic.
-        GBURBLE ("(jit not loaded) ") ;
+        GBURBLE ("(jit: not loaded) ") ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -1549,7 +1587,7 @@ GrB_Info GB_jitifyer_worker
     bool builtin = (encoding->suffix_len == 0) ;
     if (dl_handle != NULL)
     { 
-        // library is loaded but make sure the defn are OK
+        // library is loaded but make sure the defn match
         // FIXME: dlsym only exists on Linux/Unix/Mac
         GB_jit_query_func dl_query = (GB_jit_query_func)
             dlsym (dl_handle, "GB_jit_query") ;
@@ -1559,8 +1597,9 @@ GrB_Info GB_jitifyer_worker
         { 
             // library is missing the GB_jit_query method
             ok = false ;
+            GBURBLE ("(jit: library corrupted; jit disabled) ") ;
             GB_jit_control = GxB_JIT_RUN ;
-            return (GrB_INVALID_VALUE) ;
+            return (GrB_NO_VALUE) ;
         }
 
         if (ok)
@@ -1573,7 +1612,6 @@ GrB_Info GB_jitifyer_worker
         { 
             // library is loaded but needs to change, so close it
             // FIXME: dlclose only exists on Linux/Unix/Mac
-            GBURBLE ("(jit: loaded but must recompile) ") ;
             dlclose (dl_handle) ;
             dl_handle = NULL ;
             if (GB_jit_control == GxB_JIT_LOAD)
@@ -1586,8 +1624,11 @@ GrB_Info GB_jitifyer_worker
                 // compiled.  Set the JIT control to GxB_JIT_RUN to avoid this
                 // performance issue.
                 GB_jit_control = GxB_JIT_RUN ;
-                return (GrB_INVALID_VALUE) ;
+                GBURBLE ("(jit: must recompile but not permited to;"
+                    " jit load disabled) ") ;
+                return (GrB_NO_VALUE) ;
             }
+            GBURBLE ("(jit: loaded but must recompile) ") ;
         }
     }
 
@@ -1605,7 +1646,7 @@ GrB_Info GB_jitifyer_worker
         if (GB_jit_control < GxB_JIT_ON)
         { 
             // No new kernels may be compiled, so punt to generic.
-            GBURBLE ("(jit not compiled) ") ;
+            GBURBLE ("(jit: not compiled) ") ;
             return (GrB_NO_VALUE) ;
         }
 
@@ -1613,16 +1654,16 @@ GrB_Info GB_jitifyer_worker
         // create the kernel source file
         //----------------------------------------------------------------------
 
-        GBURBLE ("(jit compile and load) ") ;
+        GBURBLE ("(jit: compile and load) ") ;
         snprintf (GB_jit_kernel_name, GB_jit_kernel_name_allocated,
             "%s/%s.c", GB_jit_cache_path, kernel_name) ;
         FILE *fp = fopen (GB_jit_kernel_name, "w") ;
         if (fp == NULL)
         { 
             // disable the JIT to avoid repeated compilation errors
-            GBURBLE ("(jit: cannot create kernel; compilation disabled) ") ;
+            GBURBLE ("(jit: cannot create kernel; jit compilation disabled) ") ;
             GB_jit_control = GxB_JIT_LOAD ;
-            return (GrB_INVALID_VALUE) ;
+            return (GrB_NO_VALUE) ;
         }
 
         // create the header and copyright
@@ -1668,12 +1709,12 @@ GrB_Info GB_jitifyer_worker
             GBURBLE ("(jit: compiler error; compilation disabled) ") ;
             // disable the JIT to avoid repeated compilation errors
             GB_jit_control = GxB_JIT_LOAD ;
-            return (GrB_INVALID_VALUE) ;
+            return (GrB_NO_VALUE) ;
         }
     }
     else
     { 
-        GBURBLE ("(jit load) ") ;
+        GBURBLE ("(jit: load) ") ;
     }
 
     //--------------------------------------------------------------------------
@@ -1691,7 +1732,7 @@ GrB_Info GB_jitifyer_worker
         dl_handle = NULL ;
         // disable the JIT to avoid repeated loading errors
         GB_jit_control = GxB_JIT_RUN ;
-        return (GrB_INVALID_VALUE) ;
+        return (GrB_NO_VALUE) ;
     }
 
     // insert the new kernel into the hash table
@@ -1704,7 +1745,7 @@ GrB_Info GB_jitifyer_worker
         dl_handle = NULL ;
         // disable the JIT to avoid repeated errors
         GB_jit_control = GxB_JIT_PAUSE ;
-        return (GrB_OUT_OF_MEMORY) ;
+        return (GrB_NO_VALUE) ;
     }
 
     return (GrB_SUCCESS) ;
@@ -1960,12 +2001,15 @@ void GB_jitifyer_table_free (bool freeall)
 // GB_jitifyer_compile: compile a kernel
 //------------------------------------------------------------------------------
 
+// This method does not return any result.  If the compilation fails for any
+// reason, the subsequent load of the compiled kernel will fail.
+
 #ifndef NJIT
 
 // If the runtime JIT is disabled, no new JIT kernels may be compiled at run
 // time.  The PreJIT may still be used.
 
-int GB_jitifyer_compile (char *kernel_name)
+void GB_jitifyer_compile (char *kernel_name)
 { 
 
     snprintf (GB_jit_command, GB_jit_command_allocated,
@@ -2004,12 +2048,11 @@ int GB_jitifyer_compile (char *kernel_name)
     GB_jit_cache_path, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
     GB_jit_C_libraries) ;           // libraries to link with
 
-    GBURBLE ("(jit compile: %s) ", GB_jit_command) ;
+    GBURBLE ("(jit: compile: %s) ", GB_jit_command) ;
 
     // compile the library and return result
     int result = system (GB_jit_command) ;
-    GBURBLE ("(jit result: %d) ", result) ;
-    return (result) ;
+    GBURBLE ("(jit: compile result: %d) ", result) ;
 }
 
 #endif

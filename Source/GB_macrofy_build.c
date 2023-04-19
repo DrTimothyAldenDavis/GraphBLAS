@@ -28,13 +28,13 @@ void GB_macrofy_build           // construct all macros for GB_build
 
     // dup, z = f(x,y) (5 hex digits)
     int dup_ecode = GB_RSHIFT (build_code, 20, 8) ;
-    int zcode     = GB_RSHIFT (build_code, 16, 4) ;
-    int xcode     = GB_RSHIFT (build_code, 12, 4) ;
-    int ycode     = GB_RSHIFT (build_code,  8, 4) ;
+//  int zcode     = GB_RSHIFT (build_code, 16, 4) ;
+//  int xcode     = GB_RSHIFT (build_code, 12, 4) ;
+//  int ycode     = GB_RSHIFT (build_code,  8, 4) ;
 
     // types of S and T (2 hex digits)
-    int tcode     = GB_RSHIFT (build_code, 4, 4) ;
-    int scode     = GB_RSHIFT (build_code, 0, 4) ;
+//  int tcode     = GB_RSHIFT (build_code, 4, 4) ;
+//  int scode     = GB_RSHIFT (build_code, 0, 4) ;
 
     //--------------------------------------------------------------------------
     // describe the operator

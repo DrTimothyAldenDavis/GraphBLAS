@@ -13,6 +13,13 @@
 
 // The type of A and C must match the multiply op.  B can be typecasted.
 
+// The monoid is identical to the accum op, and is not the ANY operator.
+// The type of A must match the multiply operator input.
+// The type of C must match the monoid/accum op.  B can be typecasted in
+// the JIT version, but not for the FactoryKernel.
+
+// This method is used for both Factory and JIT kernels.
+
 #ifdef GB_GENERIC
 #error "saxpy5 generic kernel undefined"
 #endif

@@ -31,7 +31,7 @@
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
-    (GxB_NO_EQ || GxB_NO_BOOL || GxB_NO_EQ_BOOL)
+    (defined(GxB_NO_EQ) || defined(GxB_NO_BOOL) || defined(GxB_NO_EQ_BOOL))
 
 #include "GB_monoid_shared_definitions.h"
 

@@ -78,7 +78,6 @@ GrB_Info GB_deserialize_from_blob
     //--------------------------------------------------------------------------
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // decompress the blocks from the blob

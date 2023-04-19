@@ -89,7 +89,7 @@
 // GB_GLOBAL: for declaring global variables visible to the user application.
 // These are not used for functions, just global variables like the predefined
 // operators (GrB_PLUS_FP32), types, monoids, semirings, and descriptors.
-#if ( _MSC_VER && !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )
+#if defined (_MSC_VER) && !(defined (__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER))
     #if defined ( GB_DLL_EXPORT )
         // Compiling SuiteSparse:GraphBLAS as a Windows DLL, exporting symbols
         // to user apps.
@@ -156,7 +156,7 @@
         #define GxB_CMPLX(r,i)  GxB_FC64_t(r,i)
         #define GB_HAS_CMPLX_MACROS 1
 
-    #elif ( _MSC_VER && !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )
+    #elif defined (_MSC_VER) && !(defined (__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER))
 
         // Microsoft Windows complex types for C
         #include <complex.h>
@@ -197,7 +197,7 @@
 #undef GB_restrict
 #if defined ( __cplusplus )
     #define GB_restrict
-#elif ( _MSC_VER && !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )
+#elif defined (_MSC_VER) && !(defined (__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER))
     #define GB_restrict __restrict
 #elif defined ( __NVCC__ )
     // NVIDIA nvcc

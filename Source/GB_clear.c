@@ -50,7 +50,6 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     //--------------------------------------------------------------------------
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
     int sparsity_control = GB_sparsity_control (A->sparsity_control, A->vdim) ;
     if (((sparsity_control & (GxB_SPARSE + GxB_HYPERSPARSE)) == 0)
         && GB_IS_BITMAP (A))

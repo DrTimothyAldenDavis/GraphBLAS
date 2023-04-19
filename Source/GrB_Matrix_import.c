@@ -161,7 +161,6 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     //--------------------------------------------------------------------------
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // copy the user input arrays

@@ -71,18 +71,24 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     GrB_Info info ;
     GB_WERK_DECLARE (B_slice, int64_t) ;
 
+    // C type must match the ztype of the monoid
     ASSERT_MATRIX_OK (C, "C for saxpy5 C+=A*B", GB0) ;
     ASSERT (GB_IS_FULL (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
+    ASSERT (C->type == semiring->add->ztype) ;
 
+    // A cannot be typecasted
     ASSERT_MATRIX_OK (A, "A for saxpy5 C+=A*B", GB0) ;
     ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
     ASSERT (!GB_PENDING (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (A->type == (flipxy ? semiring->multiply->ytype :
+                                 semiring->multiply->xtype)) ;
 
+    // B can have any type for the JIT kernel
     ASSERT_MATRIX_OK (B, "B for saxpy5 C+=A*B", GB0) ;
     ASSERT (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B)) ;
     ASSERT (!GB_PENDING (B)) ;
@@ -103,7 +109,7 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
 
     GB_Opcode mult_binop_code, add_binop_code ;
     GB_Type_code xcode, ycode, zcode ;
-    bool builtin_semiring = GB_AxB_semiring_builtin (A, A_is_pattern, B,
+    GB_AxB_semiring_builtin (A, A_is_pattern, B,
         B_is_pattern, semiring, flipxy, &mult_binop_code, &add_binop_code,
         &xcode, &ycode, &zcode) ;
 

@@ -215,7 +215,6 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 
     int64_t n = A->vdim ;
     int64_t Anvec = A->nvec ;
-    int64_t vlen = A->vlen ;
     const int64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
     bool A_is_hyper = (Ah != NULL) ;

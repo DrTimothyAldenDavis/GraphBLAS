@@ -32,7 +32,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     int add_ecode   = GB_RSHIFT (scode, 58, 5) ;
     int id_ecode    = GB_RSHIFT (scode, 53, 5) ;
     int term_ecode  = GB_RSHIFT (scode, 48, 5) ;
-    bool is_term    = (term_ecode < 30) ;
+//  bool is_term    = (term_ecode < 30) ;
 
     // C in, A, B iso-valued and flipxy (one hex digit)
     bool C_in_iso   = GB_RSHIFT (scode, 47, 1) ;

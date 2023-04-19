@@ -205,7 +205,9 @@ GrB_Info GB_jit_kernel_AxB_saxpy5                                       \
     const GrB_Matrix B,                                                 \
     const int ntasks,                                                   \
     const int nthreads,                                                 \
-    const int64_t *restrict B_slice                                     \
+    const int64_t *restrict B_slice,                                    \
+    bool cpu_has_avx2,                                                  \
+    bool cpu_has_avx512f                                                \
 )
 
 #define GB_JIT_KERNEL_BUILD_PROTO(GB_jit_kernel_build)                  \

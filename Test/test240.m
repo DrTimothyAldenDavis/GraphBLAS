@@ -4,6 +4,7 @@ function test240
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% GrB.burble (1) ;
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
 mult_ops = binops.all ;
 types = types.all ;
@@ -49,7 +50,6 @@ for k = 1:32
     GB_spec_compare (C1, C2, 0, 1e-12) ;
 end
 
-GrB.burble (1) ;
 % test saxpy5: A iso bitmap, B sparse
 A.sparsity = 4 ;    % A is bitmap
 A.iso = true ;      % A is bitmap
@@ -64,6 +64,6 @@ for k = 1:32
     GB_spec_compare (C1, C2, 0, 1e-12) ;
 end
 
-GrB.burble (0) ;
+% GrB.burble (0) ;
 fprintf ('\ntest240: all tests passed\n') ;
 
