@@ -2,7 +2,7 @@
 // GB_static_header.h: macros for allocating static headers
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -51,6 +51,22 @@
     {                                                                       \
         XX = GB_clear_static_header (XX_header_handle) ;                    \
     }
+
+#endif
+
+#ifndef GB_STATIC_HEADER_H
+#define GB_STATIC_HEADER_H
+
+static inline GrB_Matrix GB_clear_static_header // clear a static header
+(
+    GrB_Matrix C    // static header to clear
+)
+{
+    ASSERT (C != NULL) ;
+    memset (C, 0, sizeof (struct GB_Matrix_opaque)) ;
+    C->static_header = true ;
+    return (C) ;
+}
 
 #endif
 

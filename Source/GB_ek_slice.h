@@ -2,7 +2,7 @@
 // GB_ek_slice.h: slice the entries and vectors of a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -99,34 +99,6 @@ static inline void GB_get_pA_and_pC
     }
 }
 
-// as a macro, where p0, p1, and p2 are first obtained as above:
-//  p0 = GBP_A (Ap, k, avlen) ;
-//  p1 = GBP_A (Ap, k+1, avlen) ;
-//  p2 = GBP (Cp, k, cvlen) ;
-#define GB_GET_PA_AND_PC(pA_start,pA_end,pC,tid,k,kfirst,klast,pstart_slice,Cp_kfirst,p0,p1,p2)    \
-    int64_t pA_start, pA_end, pC ;                                          \
-    if (k == kfirst)                                                        \
-    {                                                                       \
-        /* First vector for task tid; may only be partially owned. */       \
-        pA_start = pstart_slice [tid] ;                                     \
-        pA_end   = GB_IMIN (p1, pstart_slice [tid+1]) ;                     \
-        pC = Cp_kfirst [tid] ;                                              \
-    }                                                                       \
-    else if (k == klast)                                                    \
-    {                                                                       \
-        /* Last vector for task tid; may only be partially owned. */        \
-        pA_start = p0 ;                                                     \
-        pA_end   = pstart_slice [tid+1] ;                                   \
-        pC = p2 ;                                                           \
-    }                                                                       \
-    else                                                                    \
-    {                                                                       \
-        /* task tid entirely owns this vector A(:,k). */                    \
-        pA_start = p0 ;                                                     \
-        pA_end   = p1 ;                                                     \
-        pC = p2 ;                                                           \
-    }
-
 //------------------------------------------------------------------------------
 // GB_get_pA: find the part of A(:,k) to be operated on by this task
 //------------------------------------------------------------------------------
@@ -171,31 +143,6 @@ static inline void GB_get_pA
         (*pA_end  ) = p1 ;
     }
 }
-
-// as a macro, where p0 and p1 are first obtained as above:
-//  p0 = GBP_A (Ap, k, avlen) ;
-//  p1 = GBP_A (Ap, k+1, avlen) ;
-#define GB_GET_PA(pA_start,pA_end,tid,k,kfirst,klast,pstart_slice,p0,p1)    \
-    int64_t pA_start, pA_end ;                                              \
-    if (k == kfirst)                                                        \
-    {                                                                       \
-        /* First vector for task tid; may only be partially owned. */       \
-        pA_start = pstart_slice [tid] ;                                     \
-        pA_end   = GB_IMIN (p1, pstart_slice [tid+1]) ;                     \
-    }                                                                       \
-    else if (k == klast)                                                    \
-    {                                                                       \
-        /* Last vector for task tid; may only be partially owned. */        \
-        pA_start = p0 ;                                                     \
-        pA_end   = pstart_slice [tid+1] ;                                   \
-    }                                                                       \
-    else                                                                    \
-    {                                                                       \
-        /* task tid entirely owns this vector A(:,k). */                    \
-        pA_start = p0 ;                                                     \
-        pA_end   = p1 ;                                                     \
-    }
-
 
 #endif
 

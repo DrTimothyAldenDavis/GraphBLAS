@@ -11,11 +11,13 @@
 #define GB_H
 
 #include "GB_Template.h"
+#include "GB_Global.h"
+#include "GB_printf.h"
+#include "GB_assert.h"
 #if defined ( SUITESPARSE_CUDA )
 #include "rmm_wrap.h"
 #endif
 #include "GB_static_header.h"
-#include "GB_Global.h"
 #include "GB_positional.h"
 #include "GB_casting.h"
 #include "GB_math.h"
