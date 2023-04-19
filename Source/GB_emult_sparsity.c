@@ -22,11 +22,7 @@
 // C is full.
 
 #include "GB_emult.h"
-
-// GB_MASK_VERY_SPARSE is true if C<M>=A+B, C<M>=A.*B or C<M>=accum(C,T) is
-// being computed, and the mask M is very sparse compared with A and B.
-#define GB_MASK_VERY_SPARSE(mfactor,M,A,B) \
-    ((mfactor) * GB_nnz (M) < GB_nnz (A) + GB_nnz (B))
+#include "GB_mask_very_sparse.h"
 
 int GB_emult_sparsity       // return the sparsity structure for C
 (

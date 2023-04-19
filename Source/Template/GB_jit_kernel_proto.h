@@ -46,7 +46,9 @@ GrB_Info GB_jit_kernel_add                                              \
     const int A_ntasks,                                                 \
     const int64_t *B_ek_slicing,                                        \
     const int B_nthreads,                                               \
-    const int B_ntasks                                                  \
+    const int B_ntasks,                                                 \
+    const bool M_is_A,                                                  \
+    const bool M_is_B                                                   \
 )
 
 #define GB_JIT_KERNEL_APPLY_BIND1ST_PROTO(GB_jit_kernel_apply_bind1st)  \
@@ -365,7 +367,8 @@ GrB_Info GB_jit_kernel_ewise_fulla                                      \
     GrB_Matrix C,                                                       \
     const GrB_Matrix A,                                                 \
     const GrB_Matrix B,                                                 \
-    const int nthreads                                                  \
+    const int nthreads,                                                 \
+    const bool A_is_B                                                   \
 )
 
 #define GB_JIT_KERNEL_EWISE_FULLN_PROTO(GB_jit_kernel_ewise_fulln)      \
@@ -549,7 +552,9 @@ GrB_Info GB_jit_kernel_union                                            \
     const int A_ntasks,                                                 \
     const int64_t *B_ek_slicing,                                        \
     const int B_nthreads,                                               \
-    const int B_ntasks                                                  \
+    const int B_ntasks,                                                 \
+    const bool M_is_A,                                                  \
+    const bool M_is_B                                                   \
 )
 
 //------------------------------------------------------------------------------

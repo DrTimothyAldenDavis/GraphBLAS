@@ -41,7 +41,6 @@ GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
     GB_memset_f GB_memset = my_callback->GB_memset_func ;
     #endif
 
-    ASSERT (M == A) ;
     #include "GB_subassign_06d_template.c"
     return (GrB_SUCCESS) ;
 }

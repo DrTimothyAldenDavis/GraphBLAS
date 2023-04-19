@@ -17,6 +17,7 @@
 // returns GxB_SPARSE.  The final determination is made by GB_add_phase0.
 
 #include "GB_add.h"
+#include "GB_mask_very_sparse.h"
 
 int GB_add_sparsity         // return the sparsity structure for C
 (
@@ -24,6 +25,7 @@ int GB_add_sparsity         // return the sparsity structure for C
     bool *apply_mask,       // if true then mask will be applied by GB_add
     // input:
     const GrB_Matrix M,     // optional mask for C, unused if NULL
+    const bool Mask_struct, // if true, use only the structure of M
     const bool Mask_comp,   // if true, use !M
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B      // input B matrix
@@ -101,22 +103,33 @@ int GB_add_sparsity         // return the sparsity structure for C
             //      sparse  sparse      full            bitmap
             //      sparse  sparse      full            full  
 
-            // TODO: if M and A and/or B are all sparse, use the mask only if:
+            // if M and A and/or B are all sparse, use the mask only if
+            // M is very easy to use, or if:
             // 8*nnz(M) <= ( (A sparse or hyper) ? nnz(A) : 0 ) +
             //             ( (B sparse or hyper) ? nnz(B) : 0 )
+
+            if (A_is_sparse_or_hyper || B_is_sparse_or_hyper)
+            {
+                // see Template/GB_add_sparse_M_sparse.c for a vector-by-vector
+                // test of the "easy mask" condition.  This test is global for
+                // all vectors of the matrices:
+                bool M_is_A = GB_all_aliased (M, A) ;
+                bool M_is_B = GB_all_aliased (M, B) ;
+                bool all_easy_mask = Mask_struct &&
+                    ((A_is_full && M_is_B) ||
+                     (B_is_full && M_is_A) ||
+                     (M_is_A && M_is_B)) ;
+
+                (*apply_mask) = all_easy_mask ||
+                    GB_MASK_VERY_SPARSE (8, M,
+                        A_is_sparse_or_hyper ? A : NULL,
+                        B_is_sparse_or_hyper ? B : NULL) ;
+            }
+
             // if A and B are both bitmap or full, then always use the mask.
             // GB_add_sparse_template handles this case, but exploiting the
             // mask can be asympotically slow, when C and M are sparse, and A
             // and/or B are sparse.
-
-// FIXME: need this test            if ( ... ) (*apply_mask) = false ;
-
-            // TODO: check the sparse_mask_is_easy condition:  use M
-            // if Mask_struct is true, A is not bitmap, B is not bitmap,
-            // and one of the 3 conditions holds.  In this case, ignore the
-            // 8*nnz(M) <= (...) test, and always use the mask.
-
-            // TODO: See the GB_MASK_VERY_SPARSE (M, A, B) macro for this test.
 
             C_sparsity = GxB_SPARSE ;
 

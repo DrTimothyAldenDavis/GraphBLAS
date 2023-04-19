@@ -43,7 +43,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
 
     // no_mask: mask not present and not complemented
     bool no_mask = (M == NULL) && !Mask_comp ;
-    bool M_is_A = (M == A) ;
+    bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_bitmap = GB_IS_BITMAP (M) ;
 
     bool A_is_bitmap = GB_IS_BITMAP (A) ;
@@ -444,7 +444,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         { 
             // Method 06d: C(:,:)<A> = A ; no S, C full
             subassign_method = GB_SUBASSIGN_METHOD_06d ;
-            ASSERT ((C_is_full || C_is_bitmap) && whole_C_matrix && M == A) ;
+            ASSERT ((C_is_full || C_is_bitmap) && whole_C_matrix && M_is_A) ;
         }
         else if (method_25)
         { 

@@ -50,16 +50,18 @@
 
     // The "easy mask" condition requires M to be sparse/hyper and structural.
     // A and B cannot be bitmap, and one of these 3 conditions must hold:
-    // (1) all entries are present in A(:,j) and B == M
-    // (2) all entries are present in B(:,j) and A == M
+    // (1) all entries are present in A(:,j) and M == B
+    // (2) all entries are present in B(:,j) and M == A
     // (3) both A and B are aliased to M
+    // This test is done on a vector-by-vector basis.  See GB_add_sparsity.c
+    // for a global test.
 
     if (Mask_struct &&          // M must be structural
         !A_is_bitmap &&         // A must not be bitmap
         !B_is_bitmap &&         // B must not be bitmap
-        ((adense && B == M) ||  // one of 3 conditions holds
-         (bdense && A == M) ||
-         (A == M && B == M)))
+        ((adense && M_is_B) ||  // one of 3 conditions holds
+         (bdense && M_is_A) ||
+         (M_is_A && M_is_B)))
     {
 
         //----------------------------------------------------------------------
@@ -95,11 +97,11 @@
         int64_t pA_offset = pA_start - iA_first ;
         int64_t pB_offset = pB_start - iB_first ;
 
-        if (adense && B == M)
+        if (adense && M_is_B)
         { 
 
             //------------------------------------------------------------------
-            // Method11: A dense, B == M
+            // Method11: A dense, M == B
             //------------------------------------------------------------------
 
             GB_PRAGMA_SIMD_VECTORIZE
@@ -119,11 +121,11 @@
             }
 
         }
-        else if (bdense && A == M)
+        else if (bdense && M_is_A)
         { 
 
             //------------------------------------------------------------------
-            // Method12: B dense, A == M
+            // Method12: B dense, M == A
             //------------------------------------------------------------------
 
             GB_PRAGMA_SIMD_VECTORIZE
@@ -143,11 +145,11 @@
             }
 
         }
-        else // (A == M) && (B == M)
+        else // (M == A) && (M == B)
         { 
 
             //------------------------------------------------------------------
-            // Method13: A == M == B: all three matrices the same
+            // Method13: M == A == B: all three matrices the same
             //------------------------------------------------------------------
 
             #ifndef GB_ISO_ADD
@@ -228,7 +230,7 @@
                 pA = pA_start + (i - iA_first) ;
                 afound = GBB_A (Ab, pA) ;
             }
-            else if (A == M)
+            else if (M_is_A)
             { 
                 // A is aliased to M
                 pA = pM ;
@@ -255,7 +257,7 @@
                 pB = pB_start + (i - iB_first) ;
                 bfound = GBB_B (Bb, pB) ;
             }
-            else if (B == M)
+            else if (M_is_B)
             { 
                 // B is aliased to M
                 pB = pM ;

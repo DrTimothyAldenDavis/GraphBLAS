@@ -15,7 +15,14 @@
 // more restrictive.
 
 // GB_aliased also checks the content of A and B
-bool GB_aliased             // determine if A and B are aliased
+bool GB_aliased             // determine if A and B are aliased in any way
+(
+    GrB_Matrix A,           // input A matrix
+    GrB_Matrix B            // input B matrix
+) ;
+
+// GB_all_aliased is true if A and B are identical 
+bool GB_all_aliased         // determine if A and B are all aliased
 (
     GrB_Matrix A,           // input A matrix
     GrB_Matrix B            // input B matrix

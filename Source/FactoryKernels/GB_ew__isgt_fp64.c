@@ -132,6 +132,9 @@ GrB_Info GB (_AaddB__isgt_fp64)
     return (GrB_NO_VALUE) ;
     #else
     #define GB_IS_EWISEUNION 0
+    // for the "easy mask" condition:
+    bool M_is_A = GB_all_aliased (M, A) ;
+    bool M_is_B = GB_all_aliased (M, B) ;
     #include "GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -176,6 +179,9 @@ GrB_Info GB (_AunionB__isgt_fp64)
     GB_X_TYPE alpha_scalar = (*((GB_X_TYPE *) alpha_scalar_in)) ;
     GB_Y_TYPE beta_scalar  = (*((GB_Y_TYPE *) beta_scalar_in )) ;
     #define GB_IS_EWISEUNION 1
+    // for the "easy mask" condition:
+    bool M_is_A = GB_all_aliased (M, A) ;
+    bool M_is_B = GB_all_aliased (M, B) ;
     #include "GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif

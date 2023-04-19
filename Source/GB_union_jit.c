@@ -71,10 +71,14 @@ GrB_Info GB_union_jit      // C=A+B, C<#M>=A+B, eWiseUnion, via the JIT
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    // for the "easy mask" condition:
+    bool M_is_A = GB_all_aliased (M, A) ;
+    bool M_is_B = GB_all_aliased (M, B) ;
+
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, M, A, B, alpha_scalar_in, beta_scalar_in,
         Ch_is_Mh, C_to_M, C_to_A, C_to_B, TaskList, C_ntasks, C_nthreads,
         M_ek_slicing, M_nthreads, M_ntasks, A_ek_slicing, A_nthreads, A_ntasks,
-        B_ek_slicing, B_nthreads, B_ntasks)) ;
+        B_ek_slicing, B_nthreads, B_ntasks, M_is_A, M_is_B)) ;
 }
 

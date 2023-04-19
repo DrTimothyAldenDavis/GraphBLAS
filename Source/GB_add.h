@@ -114,9 +114,10 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 int GB_add_sparsity         // return the sparsity structure for C
 (
     // output:
-    bool *apply_mask,       // if true then mask will be applied
+    bool *apply_mask,       // if true then mask will be applied by GB_add
     // input:
     const GrB_Matrix M,     // optional mask for C, unused if NULL
+    const bool Mask_struct, // if true, use only the structure of M
     const bool Mask_comp,   // if true, use !M
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B      // input B matrix

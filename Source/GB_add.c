@@ -102,7 +102,8 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     bool apply_mask ;
-    int C_sparsity = GB_add_sparsity (&apply_mask, M, Mask_comp, A, B) ;
+    int C_sparsity = GB_add_sparsity (&apply_mask, M, Mask_struct, Mask_comp,
+        A, B) ;
 
     //--------------------------------------------------------------------------
     // initializations

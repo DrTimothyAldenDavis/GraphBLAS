@@ -90,6 +90,10 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     // count the entries in each vector of C
     //--------------------------------------------------------------------------
 
+    // for the "easy mask" condition:
+    bool M_is_A = GB_all_aliased (M, A) ;
+    bool M_is_B = GB_all_aliased (M, B) ;
+
     #define GB_ADD_PHASE 1
     #include "GB_add_template.c"
 
