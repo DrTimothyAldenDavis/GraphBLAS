@@ -253,15 +253,15 @@ bool GB_file_unlock_and_close   // true if successful, false on error
 
 bool GB_file_mkdir (char *path)
 {
-    #ifndef NJIT
-    int result = 0 ;
     if (path == NULL)
     {
         // invalid input
         return (false) ;
     }
 
+    #ifndef NJIT
     // create all the leading directories
+    int result = 0 ;
     bool first = true ;
     for (char *p = path ; *p ; p++)
     {
@@ -291,7 +291,7 @@ bool GB_file_mkdir (char *path)
 
     #else
     // JIT not enabled
-    return (false) ;
+    return (true) ;
     #endif
 }
 

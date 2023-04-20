@@ -35,38 +35,33 @@ static uint64_t GB_jit_table_bits = 0 ;  // hash mask (0xFFFF if size is 2^16)
 static int64_t  GB_jit_table_populated = 0 ;
 static size_t   GB_jit_table_allocated = 0 ;
 
+// path to user cache folder:
 static char    *GB_jit_cache_path = NULL ;
 static size_t   GB_jit_cache_path_allocated = 0 ;
 
-static char    *GB_jit_src_path = NULL ;
-static size_t   GB_jit_src_path_allocated = 0 ;
-
+// name of the C compiler:
 static char    *GB_jit_C_compiler = NULL ;
 static size_t   GB_jit_C_compiler_allocated = 0 ;
 
+// flags for the C compiler:
 static char    *GB_jit_C_flags = NULL ;
 static size_t   GB_jit_C_flags_allocated = 0 ;
 
+// link flags for the C compiler:
 static char    *GB_jit_C_link_flags = NULL ;
 static size_t   GB_jit_C_link_flags_allocated = 0 ;
 
+// libraries to link against:
 static char    *GB_jit_C_libraries = NULL ;
 static size_t   GB_jit_C_libraries_allocated = 0 ;
 
+// preface to add to each JIT kernel:
 static char    *GB_jit_C_preface = NULL ;
 static size_t   GB_jit_C_preface_allocated = 0 ;
 
-static char    *GB_jit_library_name = NULL ;
-static size_t   GB_jit_library_name_allocated = 0 ;
-
-static char    *GB_jit_kernel_src = NULL ;
-static size_t   GB_jit_kernel_src_allocated = 0 ;
-
-static char    *GB_jit_kernel_lock = NULL ;
-static size_t   GB_jit_kernel_lock_allocated = 0 ;
-
-static char    *GB_jit_command = NULL ;
-static size_t   GB_jit_command_allocated = 0 ;
+// temporary workspace for filenames and system commands:
+static char    *GB_jit_temp = NULL ;
+static size_t   GB_jit_temp_allocated = 0 ;
 
 static GxB_JIT_Control GB_jit_control =
     #ifndef NJIT
@@ -118,28 +113,20 @@ void GB_jitifyer_finalize (bool freeall)
 { 
     GB_jitifyer_table_free (freeall) ;
     GB_FREE_STUFF (GB_jit_cache_path) ;
-    GB_FREE_STUFF (GB_jit_src_path) ;
     GB_FREE_STUFF (GB_jit_C_compiler) ;
     GB_FREE_STUFF (GB_jit_C_flags) ;
     GB_FREE_STUFF (GB_jit_C_link_flags) ;
     GB_FREE_STUFF (GB_jit_C_libraries) ;
     GB_FREE_STUFF (GB_jit_C_preface) ;
-    GB_FREE_STUFF (GB_jit_library_name) ;
-    GB_FREE_STUFF (GB_jit_kernel_src) ;
-    GB_FREE_STUFF (GB_jit_kernel_lock) ;
-    GB_FREE_STUFF (GB_jit_command) ;
+    GB_FREE_STUFF (GB_jit_temp) ;
 
     ASSERT (GB_jit_cache_path == NULL) ;
-    ASSERT (GB_jit_src_path == NULL) ;
     ASSERT (GB_jit_C_compiler == NULL) ;
     ASSERT (GB_jit_C_flags == NULL) ;
     ASSERT (GB_jit_C_link_flags == NULL) ;
     ASSERT (GB_jit_C_libraries == NULL) ;
     ASSERT (GB_jit_C_preface == NULL) ;
-    ASSERT (GB_jit_library_name == NULL) ;
-    ASSERT (GB_jit_kernel_src == NULL) ;
-    ASSERT (GB_jit_kernel_lock == NULL) ;
-    ASSERT (GB_jit_command == NULL) ;
+    ASSERT (GB_jit_temp == NULL) ;
 }
 
 //------------------------------------------------------------------------------
@@ -203,11 +190,16 @@ GrB_Info GB_jitifyer_init (void)
         }
     }
 
-    //--------------------------------------------------------------------------
-    // establish the cache path and src path, and make sure they exist
-    //--------------------------------------------------------------------------
-
-    OK (GB_jitifyer_establish_paths (GrB_SUCCESS)) ;
+    if (GB_jit_cache_path == NULL)
+    {
+        // cannot determine the JIT cache.  Disable loading and compiling, but
+        // continue with the rest of the initializations.  The PreJIT could
+        // still be used.
+        GBURBLE ("(jit: unable to access cache path, jit disabled) ") ;
+        GB_jit_control = GxB_JIT_RUN ;
+        GB_FREE_STUFF (GB_jit_cache_path) ;
+        GB_COPY_STUFF (GB_jit_cache_path, "") ;
+    }
 
     //--------------------------------------------------------------------------
     // initialize the remaining strings
@@ -218,6 +210,13 @@ GrB_Info GB_jitifyer_init (void)
     GB_COPY_STUFF (GB_jit_C_link_flags, GB_C_LINK_FLAGS) ;
     GB_COPY_STUFF (GB_jit_C_libraries,  GB_C_LIBRARIES) ;
     GB_COPY_STUFF (GB_jit_C_preface,    "") ;
+    OK (GB_jitifyer_alloc_space ( )) ;
+
+    //--------------------------------------------------------------------------
+    // establish the cache path and src path, and make sure they exist
+    //--------------------------------------------------------------------------
+
+    OK (GB_jitifyer_establish_paths (GrB_SUCCESS)) ;
 
     //--------------------------------------------------------------------------
     // remove "-arch arm64" if compiling JIT kernels for MATLAB
@@ -244,12 +243,6 @@ GrB_Info GB_jitifyer_init (void)
         }
     }
     #endif
-
-    //--------------------------------------------------------------------------
-    // allocate permanent workspace
-    //--------------------------------------------------------------------------
-
-    OK (GB_jitifyer_alloc_space ( )) ;
 
     //--------------------------------------------------------------------------
     // hash all PreJIT kernels
@@ -428,45 +421,44 @@ GrB_Info GB_jitifyer_init (void)
 // error_condition is returned.  GrB_init uses this to return GrB_SUCCESS,
 // since GraphBLAS can continue without the JIT.  GxB_set returns
 // GrB_INVALID_VALUE to indicate that the cache path is not valid.
+// If the JIT is disabled at compile time, the directories are not created and
+// GrB_SUCCESS is returned (except if an out of memory condition occurs).
 
 GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
 {
 
     //--------------------------------------------------------------------------
-    // find the GB_jit_src_path
+    // construct the src and lock folders
     //--------------------------------------------------------------------------
 
-    GB_FREE_STUFF (GB_jit_src_path) ;
-    if (GB_jit_cache_path != NULL)
-    { 
-        size_t len = GB_jit_cache_path_allocated + 12 ;
-        GB_MALLOC_STUFF (GB_jit_src_path, len) ;
-        snprintf (GB_jit_src_path, GB_jit_src_path_allocated, "%s/src",
-            GB_jit_cache_path) ;
-    }
+    bool ok = GB_file_mkdir (GB_jit_cache_path) ;
+
+    // construct the lock path
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lock",
+        GB_jit_cache_path) ;
+    ok = ok && GB_file_mkdir (GB_jit_temp) ;
+
+    // construct the src path
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/src",
+        GB_jit_cache_path) ;
+    ok = ok && GB_file_mkdir (GB_jit_temp) ;
 
     //--------------------------------------------------------------------------
     // make sure the cache and source paths exist
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GrB_SUCCESS ;
-    #ifndef NJIT
-    if (!(GB_file_mkdir (GB_jit_cache_path) && GB_file_mkdir (GB_jit_src_path)))
+    if (!ok)
     { 
-        // JIT is disabled, or cannot determine the JIT cache and/or source
-        // path.  Disable loading and compiling, but continue with the rest of
-        // the initializations.  The PreJIT could still be used.
+        // JIT is disabled, or cannot determine the JIT cache path.  path.
+        // Disable loading and compiling, but continue with the rest of the
+        // initializations.  The PreJIT could still be used.
         GBURBLE ("(jit: unable to access cache path, jit disabled) ") ;
         GB_jit_control = GxB_JIT_RUN ;
         GB_FREE_STUFF (GB_jit_cache_path) ;
-        GB_FREE_STUFF (GB_jit_src_path) ;
         GB_COPY_STUFF (GB_jit_cache_path, "") ;
-        GB_COPY_STUFF (GB_jit_src_path, "") ;
-        info = error_condition ;
     }
-    #endif
 
-    return (info) ;
+    return (ok ? GrB_SUCCESS : error_condition) ;
 }
 
 //------------------------------------------------------------------------------
@@ -494,24 +486,15 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     }
 
     //--------------------------------------------------------------------------
-    // allocate workspace
+    // allocate workspace for the largest uncompressed file
     //--------------------------------------------------------------------------
 
-    // allocate space for the full path to the output file
-    size_t fsize = 0 ;
-    char *filename = GB_MALLOC_WORK (GB_jit_src_path_allocated + 300, char,
-        &fsize) ;
-
-    // allocate workspace for the largest uncompressed file
     size_t dst_size = 0 ;
     uint8_t *dst = GB_MALLOC_WORK (max_uncompressed+2, uint8_t, &dst_size) ;
-
-    if (dst == NULL || filename == NULL)
+    if (dst == NULL)
     { 
         // out of memory; disable the JIT
         GB_jit_control = GxB_JIT_RUN ;
-        GB_FREE_WORK (&dst, dst_size) ;
-        GB_FREE_WORK (&filename, fsize) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -519,17 +502,17 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     // lock the src/README.txt file
     //--------------------------------------------------------------------------
 
-    snprintf (filename, fsize, "%s/README.txt", GB_jit_src_path) ;
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/src/README.txt",
+        GB_jit_cache_path) ;
     FILE *fp_readme = NULL ;
     int fd_readme = -1 ;
-    int64_t where = GB_file_open_and_lock (filename, &fp_readme, &fd_readme) ;
+    int64_t where = GB_file_open_and_lock (GB_jit_temp, &fp_readme, &fd_readme);
     if (where < 0)
     {
         // failure; disable the JIT
         GBURBLE ("(jit: unable to access cache folder) ") ;
         GB_jit_control = GxB_JIT_RUN ;
         GB_FREE_WORK (&dst, dst_size) ;
-        GB_FREE_WORK (&filename, fsize) ;
         return (error_condition) ;
     }
 
@@ -549,7 +532,6 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
             // README.txt looks fine; assume the rest of the source is fine
             GB_file_unlock_and_close (&fp_readme, &fd_readme) ;
             GB_FREE_WORK (&dst, dst_size) ;
-            GB_FREE_WORK (&filename, fsize) ;
             return (GrB_SUCCESS) ;
         }
     }
@@ -572,10 +554,10 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
             break ;
         }
         // construct the filename
-        snprintf (filename, fsize, "%s/%s", GB_jit_src_path,
-            GB_JITpackage_index [k].filename) ;
+        snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/src/%s",
+            GB_jit_cache_path, GB_JITpackage_index [k].filename) ;
         // open the file
-        FILE *fp_src = fopen (filename, "w") ;
+        FILE *fp_src = fopen (GB_jit_temp, "w") ;
         if (fp_src == NULL)
         { 
             // file cannot be created
@@ -608,7 +590,6 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
 
     GB_file_unlock_and_close (&fp_readme, &fd_readme) ;
     GB_FREE_WORK (&dst, dst_size) ;
-    GB_FREE_WORK (&filename, fsize) ;
     if (!ok)
     {
         // failure; disable the JIT
@@ -664,7 +645,7 @@ void GB_jitifyer_set_control (int control)
 }
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_alloc_space: allocate workspaces for the JIT
+// GB_jitifyer_alloc_space: allocate temporary workspace for the JIT
 //------------------------------------------------------------------------------
 
 // Returns GrB_SUCCESS or GrB_OUT_OF_MEMORY.
@@ -679,50 +660,26 @@ GrB_Info GB_jitifyer_alloc_space (void)
     if (GB_jit_C_flags == NULL ||
         GB_jit_C_link_flags == NULL ||
         GB_jit_C_libraries == NULL ||
-        GB_jit_cache_path == NULL ||
-        GB_jit_src_path == NULL)
+        GB_jit_C_compiler == NULL ||
+        GB_jit_cache_path == NULL)
     { 
         return (GrB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
-    // allocate GB_jit_kernel_src if needed
+    // free the old GB_jit_temp and allocate it at the proper size
     //--------------------------------------------------------------------------
 
-    if (GB_jit_kernel_src == NULL)
-    { 
-        size_t len = GB_jit_cache_path_allocated + 300 + 2 * GxB_MAX_NAME_LEN ;
-        GB_MALLOC_STUFF (GB_jit_kernel_src, len) ;
-        GB_MALLOC_STUFF (GB_jit_kernel_lock, len) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // allocate GB_jit_library_name if needed
-    //--------------------------------------------------------------------------
-
-    if (GB_jit_library_name == NULL)
-    { 
-        size_t len = GB_jit_cache_path_allocated + 300 + 2 * GxB_MAX_NAME_LEN ;
-        GB_MALLOC_STUFF (GB_jit_library_name, len) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // allocate GB_jit_command if needed
-    //--------------------------------------------------------------------------
-
-    if (GB_jit_command == NULL)
-    { 
-        size_t len =
-            2 * GB_jit_C_compiler_allocated +
-            2 * GB_jit_C_flags_allocated +
-            GB_jit_C_link_flags_allocated +
-            GB_jit_src_path_allocated +
-            strlen (GB_OMP_INC) +
-            4 * GB_jit_cache_path_allocated + 5 * GB_KLEN +
-            GB_jit_C_libraries_allocated +
-            300 ;
-        GB_MALLOC_STUFF (GB_jit_command, len) ;
-    }
+    GB_FREE_STUFF (GB_jit_temp) ;
+    size_t len =
+        2 * GB_jit_C_compiler_allocated +
+        2 * GB_jit_C_flags_allocated +
+        GB_jit_C_link_flags_allocated +
+        strlen (GB_OMP_INC) +
+        5 * GB_jit_cache_path_allocated + 7 * GB_KLEN +
+        GB_jit_C_libraries_allocated +
+        300 ;
+    GB_MALLOC_STUFF (GB_jit_temp, len) ;
 
     return (GrB_SUCCESS) ;
 }
@@ -780,39 +737,15 @@ GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path)
 
 GrB_Info GB_jitifyer_set_cache_path_worker (const char *new_cache_path)
 { 
-
-    //--------------------------------------------------------------------------
-    // free the old strings that depend on the cache path
-    //--------------------------------------------------------------------------
-
+    // free the old the cache path
     GB_FREE_STUFF (GB_jit_cache_path) ;
-    GB_FREE_STUFF (GB_jit_kernel_src) ;
-    GB_FREE_STUFF (GB_jit_kernel_lock) ;
-    GB_FREE_STUFF (GB_jit_library_name) ;
-    GB_FREE_STUFF (GB_jit_command) ;
-
-    //--------------------------------------------------------------------------
     // allocate the new GB_jit_cache_path
-    //--------------------------------------------------------------------------
-
     GB_COPY_STUFF (GB_jit_cache_path, new_cache_path) ;
-
-    //--------------------------------------------------------------------------
-    // set the src path and make sure cache and src paths are accessible
-    //--------------------------------------------------------------------------
-
-    OK (GB_jitifyer_establish_paths (GrB_INVALID_VALUE)) ;
-
-    //--------------------------------------------------------------------------
-    // allocate and define strings that depend on GB_jit_cache_path
-    //--------------------------------------------------------------------------
-
+    // allocate workspace
     OK (GB_jitifyer_alloc_space ( )) ;
-
-    //--------------------------------------------------------------------------
+    // set the src path and make sure cache and src paths are accessible
+    OK (GB_jitifyer_establish_paths (GrB_INVALID_VALUE)) ;
     // uncompress all the source files into the user source folder
-    //--------------------------------------------------------------------------
-
     return (GB_jitifyer_extract_JITpackage (GrB_INVALID_VALUE)) ;
 }
 
@@ -864,24 +797,11 @@ GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler)
 
 GrB_Info GB_jitifyer_set_C_compiler_worker (const char *new_C_compiler)
 { 
-
-    //--------------------------------------------------------------------------
-    // free the old strings that depend on the C compiler
-    //--------------------------------------------------------------------------
-
+    // free the old C compiler string
     GB_FREE_STUFF (GB_jit_C_compiler) ;
-    GB_FREE_STUFF (GB_jit_command) ;
-
-    //--------------------------------------------------------------------------
     // allocate the new GB_jit_C_compiler
-    //--------------------------------------------------------------------------
-
     GB_COPY_STUFF (GB_jit_C_compiler, new_C_compiler) ;
-
-    //--------------------------------------------------------------------------
-    // allocate and define strings that depend on GB_jit_C_compiler
-    //--------------------------------------------------------------------------
-
+    // allocate workspace
     return (GB_jitifyer_alloc_space ( )) ;
 }
 
@@ -933,24 +853,11 @@ GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags)
 
 GrB_Info GB_jitifyer_set_C_flags_worker (const char *new_C_flags)
 { 
-
-    //--------------------------------------------------------------------------
-    // free the old strings that depend on the C flags
-    //--------------------------------------------------------------------------
-
+    // free the old C flag string
     GB_FREE_STUFF (GB_jit_C_flags) ;
-    GB_FREE_STUFF (GB_jit_command) ;
-
-    //--------------------------------------------------------------------------
     // allocate the new GB_jit_C_flags
-    //--------------------------------------------------------------------------
-
     GB_COPY_STUFF (GB_jit_C_flags, new_C_flags) ;
-
-    //--------------------------------------------------------------------------
-    // allocate and define strings that depend on GB_jit_C_flags
-    //--------------------------------------------------------------------------
-
+    // allocate workspace
     return (GB_jitifyer_alloc_space ( )) ;
 }
 
@@ -1002,24 +909,11 @@ GrB_Info GB_jitifyer_set_C_link_flags (const char *new_C_link_flags)
 
 GrB_Info GB_jitifyer_set_C_link_flags_worker (const char *new_C_link_flags)
 { 
-
-    //--------------------------------------------------------------------------
-    // free the old strings that depend on the C flags
-    //--------------------------------------------------------------------------
-
+    // free the old C link flags string
     GB_FREE_STUFF (GB_jit_C_link_flags) ;
-    GB_FREE_STUFF (GB_jit_command) ;
-
-    //--------------------------------------------------------------------------
     // allocate the new GB_jit_C_link_flags
-    //--------------------------------------------------------------------------
-
     GB_COPY_STUFF (GB_jit_C_link_flags, new_C_link_flags) ;
-
-    //--------------------------------------------------------------------------
-    // allocate and define strings that depend on GB_jit_C_link_flags
-    //--------------------------------------------------------------------------
-
+    // allocate workspace
     return (GB_jitifyer_alloc_space ( )) ;
 }
 
@@ -1071,24 +965,11 @@ GrB_Info GB_jitifyer_set_C_libraries (const char *new_C_libraries)
 
 GrB_Info GB_jitifyer_set_C_libraries_worker (const char *new_C_libraries)
 { 
-
-    //--------------------------------------------------------------------------
-    // free the old strings that depend on the C libraries
-    //--------------------------------------------------------------------------
-
+    // free the old C libraries string
     GB_FREE_STUFF (GB_jit_C_libraries) ;
-    GB_FREE_STUFF (GB_jit_command) ;
-
-    //--------------------------------------------------------------------------
     // allocate the new GB_jit_C_libraries
-    //--------------------------------------------------------------------------
-
     GB_COPY_STUFF (GB_jit_C_libraries, new_C_libraries) ;
-
-    //--------------------------------------------------------------------------
-    // allocate and define strings that depend on GB_jit_C_libraries
-    //--------------------------------------------------------------------------
-
+    // allocate workspace
     return (GB_jitifyer_alloc_space ( )) ;
 }
 
@@ -1140,17 +1021,9 @@ GrB_Info GB_jitifyer_set_C_preface (const char *new_C_preface)
 
 GrB_Info GB_jitifyer_set_C_preface_worker (const char *new_C_preface)
 { 
-
-    //--------------------------------------------------------------------------
     // free the old strings that depend on the C preface
-    //--------------------------------------------------------------------------
-
     GB_FREE_STUFF (GB_jit_C_preface) ;
-
-    //--------------------------------------------------------------------------
     // allocate the new GB_jit_C_preface
-    //--------------------------------------------------------------------------
-
     GB_COPY_STUFF (GB_jit_C_preface, new_C_preface) ;
     return (GrB_SUCCESS) ;
 }
@@ -1549,9 +1422,9 @@ GrB_Info GB_jitifyer_worker
     // try to load the lib*.so from the user's library folder
     //--------------------------------------------------------------------------
 
-    snprintf (GB_jit_library_name, GB_jit_library_name_allocated,
+    snprintf (GB_jit_temp, GB_jit_temp_allocated,
         "%s/lib%s%s", GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX) ;
-    void *dl_handle = GB_file_dlopen (GB_jit_library_name) ;
+    void *dl_handle = GB_file_dlopen (GB_jit_temp) ;
 
     //--------------------------------------------------------------------------
     // check if the kernel was found, but needs to be compiled anyway
@@ -1626,16 +1499,16 @@ GrB_Info GB_jitifyer_worker
         //----------------------------------------------------------------------
 
         GBURBLE ("(jit: compile and load) ") ;
-        snprintf (GB_jit_kernel_lock, GB_jit_kernel_lock_allocated,
-            "%s/%s_lock", GB_jit_cache_path, kernel_name) ;
+        snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lock/%s_lock",
+            GB_jit_cache_path, kernel_name) ;
         FILE *fl = NULL ;
         int fd = -1 ;
-        if (GB_file_open_and_lock (GB_jit_kernel_lock, &fl, &fd) == 0)
+        if (GB_file_open_and_lock (GB_jit_temp, &fl, &fd) == 0)
         { 
             // create (or recreate) the kernel source, compile it, and load it
-            snprintf (GB_jit_kernel_src, GB_jit_kernel_src_allocated,
-                "%s/%s.c", GB_jit_cache_path, kernel_name) ;
-            FILE *fp = fopen (GB_jit_kernel_src, "w") ;
+            snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/%s.c",
+                GB_jit_cache_path, kernel_name) ;
+            FILE *fp = fopen (GB_jit_temp, "w") ;
             if (fp != NULL)
             {
                 // create the preface
@@ -1657,7 +1530,9 @@ GrB_Info GB_jitifyer_worker
                 // compile the kernel to get the lib*.so file
                 GB_jitifyer_compile (kernel_name) ;
                 // load the kernel from the lib*.so file
-                dl_handle = GB_file_dlopen (GB_jit_library_name) ;
+                snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lib%s%s",
+                    GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX) ;
+                dl_handle = GB_file_dlopen (GB_jit_temp) ;
             }
             // unlock and close the lockfile
             GB_file_unlock_and_close (&fl, &fd) ;
@@ -1972,12 +1847,12 @@ void GB_jitifyer_table_free (bool freeall)
 void GB_jitifyer_compile (char *kernel_name)
 { 
 
-    snprintf (GB_jit_command, GB_jit_command_allocated,
+    snprintf (GB_jit_temp, GB_jit_temp_allocated,
 
     // compile:
     "%s -DGB_JIT_RUNTIME=1 "        // compiler command
     "%s "                           // C flags
-    "-I%s "                         // include source directory
+    "-I%s/src "                     // include source directory
     "%s "                           // openmp include directories
     "-o %s/%s%s "                   // *.o output file
     "-c %s/%s.c ; "                 // *.c input file
@@ -1994,7 +1869,7 @@ void GB_jitifyer_compile (char *kernel_name)
     // compile:
     GB_jit_C_compiler,              // C compiler
     GB_jit_C_flags,                 // C flags
-    GB_jit_src_path,                // include source directory
+    GB_jit_cache_path,              // include source directory (cache/src)
     GB_OMP_INC,                     // openmp include
     GB_jit_cache_path, kernel_name,
     GB_OBJ_SUFFIX,                  // *.o output file
@@ -2008,10 +1883,10 @@ void GB_jitifyer_compile (char *kernel_name)
     GB_jit_cache_path, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
     GB_jit_C_libraries) ;           // libraries to link with
 
-    GBURBLE ("(jit: compile: %s) ", GB_jit_command) ;
+    GBURBLE ("(jit: compile: %s) ", GB_jit_temp) ;
 
     // compile the library and return result
-    int result = system (GB_jit_command) ;
+    int result = system (GB_jit_temp) ;
     GBURBLE ("(jit: compile result: %d) ", result) ;
 }
 
