@@ -69,7 +69,7 @@ void mexFunction
         mexErrMsgTxt ("op failed") ;
     }
 
-    // C = A+B using the op.  No mask
+    // C = A+B using the op.  No mask, so this will always work.
     bool ignore ;
     METHOD (GB_add (C, A->type, true, NULL, false, false, &ignore, A, B,
         false, NULL, NULL, op, false, Werk)) ;

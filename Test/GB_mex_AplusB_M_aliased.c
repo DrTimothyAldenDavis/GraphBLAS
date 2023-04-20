@@ -31,7 +31,8 @@ void mexFunction
 )
 {
     struct GB_Matrix_opaque C_header ;
-    GrB_Matrix C = GB_clear_static_header (&C_header) ;
+    GrB_Matrix C = NULL ;
+//  GrB_Matrix C = GB_clear_static_header (&C_header) ;
 
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Matrix A = NULL ;
@@ -69,9 +70,19 @@ void mexFunction
     }
 
     // C<B> = A+B using the op.  M == B alias
-    bool ignore ;
-    METHOD (GB_add (C, A->type, true, B, false, false, &ignore, A, B,
-        false, NULL, NULL, op, false, Werk)) ;
+
+// this can ignore the mask now; so use GB_eWiseAdd instead:
+//  bool ignore ;
+//  METHOD (GB_add (C, A->type, true, B, false, false, &ignore, A, B,
+//      false, NULL, NULL, op, false, Werk)) ;
+
+    // using eWiseAdd instead:
+    GrB_Index nrows, ncols ;
+    GrB_Matrix_nrows (&nrows, A) ;
+    GrB_Matrix_ncols (&ncols, A) ;
+    GrB_Matrix_new (&C, op->ztype, nrows, ncols) ;
+    GxB_Matrix_Option_set (C, GxB_FORMAT, GxB_BY_COL) ;
+    METHOD (GrB_Matrix_eWiseAdd_BinaryOp (C, B, NULL, op, A, B, NULL)) ;
 
     // return C as a plain sparse matrix
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C<B>=A+B result", false) ;
