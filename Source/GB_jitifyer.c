@@ -516,7 +516,9 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
         return (error_condition) ;
     }
 
-    #define GB_README "SuiteSparse:GraphBLAS %d.%d.%d"
+    #define GB_README "%d %d %d"
+
+    printf ("SRC readme %s where %ld\n", GB_jit_temp, where) ;
 
     if (where > 0)
     {
@@ -524,17 +526,22 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
         rewind (fp_readme) ;
         int v1 = -1, v2 = -1, v3 = -1 ;
         int r = fscanf (fp_readme, GB_README, &v1, &v2, &v3) ;
+        printf ("r %d v: %d %d %d\n", r, v1, v2, v3) ;
         if (r == 3 &&
             v1 == GxB_IMPLEMENTATION_MAJOR &&
             v2 == GxB_IMPLEMENTATION_MINOR &&
             v3 == GxB_IMPLEMENTATION_SUB)
         { 
             // README.txt looks fine; assume the rest of the source is fine
+            printf ("looks fine\n") ;
             GB_file_unlock_and_close (&fp_readme, &fd_readme) ;
             GB_FREE_WORK (&dst, dst_size) ;
             return (GrB_SUCCESS) ;
         }
     }
+
+    printf ("UNCOMPRESS ALL SOURCE FILES\n") ;
+    rewind (fp_readme) ;
 
     //--------------------------------------------------------------------------
     // uncompress each file
@@ -582,6 +589,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     // write the current version of GraphBLAS to the README.txt file
     if (ok)
     {
+        rewind (fp_readme) ;
         ok = (fprintf (fp_readme, GB_README "\n",
             GxB_IMPLEMENTATION_MAJOR,
             GxB_IMPLEMENTATION_MINOR,
