@@ -26,6 +26,7 @@
         // MS Visual Studio
         #include <io.h>
         #include <direct.h>
+        #include <windows.h>
         #define GB_OPEN         _open
         #define GB_CLOSE        _close
         #define GB_FDOPEN       _fdopen
@@ -37,8 +38,9 @@
 
     #else
 
-        // assume POSIX compliance
+        // POSIX
         #include <unistd.h>
+        #include <dlfcn.h>
         #define GB_OPEN         open
         #define GB_CLOSE        close
         #define GB_FDOPEN       fdopen
@@ -290,6 +292,55 @@ bool GB_file_mkdir (char *path)
     #else
     // JIT not enabled
     return (false) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// GB_file_dlopen: open a dynamic library
+//------------------------------------------------------------------------------
+
+void *GB_file_dlopen (char *library_name)
+{
+    #ifndef NJIT
+    #if GB_COMPILER_MSC
+    return ((void *) LoadLibrary (library_name)) ;
+    #else
+    return (dlopen (library_name, RTLD_LAZY)) ;
+    #endif
+    #else
+    return (NULL) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// GB_file_dlsym: get a function pointer from a dynamic library
+//------------------------------------------------------------------------------
+
+void *GB_file_dlsym (void *dl_handle, char *symbol)
+{
+    #ifndef NJIT
+    #if GB_COMPILER_MSC
+    return ((void *) GetProcAddress (dl_handle, symbol)) ;
+    #else
+    return (dlsym (dl_handle, symbol)) ;
+    #endif
+    #else
+    return (NULL) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// GB_file_dlclose: close a dynamic library
+//------------------------------------------------------------------------------
+
+void GB_file_dlclose (void *dl_handle)
+{
+    #ifndef NJIT
+    #if GB_COMPILER_MSC
+    FreeLibrary (dl_handle) ;
+    #else
+    dlclose (dl_handle) ;
+    #endif
     #endif
 }
 

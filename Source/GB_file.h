@@ -28,5 +28,11 @@ bool GB_file_unlock_and_close   // true if successful, false on error
 
 bool GB_file_mkdir (char *path) ;
 
+void *GB_file_dlopen (char *library_name) ;
+
+void *GB_file_dlsym (void *dl_handle, char *symbol) ;
+
+void GB_file_dlclose (void *dl_handle) ;
+
 #endif
 

@@ -15,10 +15,15 @@
 #include "GB_callback.h"
 
 //------------------------------------------------------------------------------
-// print copyright and license
+// print kernel preface
 //------------------------------------------------------------------------------
 
-void GB_macrofy_copyright (FILE *fp) ;
+void GB_macrofy_preface
+(
+    FILE *fp,               // target file to write, already open
+    char *kernel_name,      // name of the kernel
+    char *preface           // user-provided preface
+) ;
 
 //------------------------------------------------------------------------------
 // left and right shift

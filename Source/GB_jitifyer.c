@@ -14,25 +14,18 @@
 #include "GB_JITpackage.h"
 #include "GB_file.h"
 
-//------------------------------------------------------------------------------
-// determine if the JIT is enabled at compile-time
-//------------------------------------------------------------------------------
-
-#ifndef NJIT
-// FIXME: dlfcn.h only exists on Linux/Unix/Mac; need to port to Windows
-#include <dlfcn.h>
-#endif
-
 typedef GB_JIT_KERNEL_USER_OP_PROTO ((*GB_user_op_f)) ;
 typedef GB_JIT_KERNEL_USER_TYPE_PROTO ((*GB_user_type_f)) ;
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_hash_table: a hash table of jitifyer entries
+// static objects:  hash table, strings, and status
 //------------------------------------------------------------------------------
 
 // The hash table is static and shared by all threads of the user application.
 // It is only visible inside this file.  It starts out empty (NULL).  Its size
 // is either zero (at the beginning), or a power of two (of size 1024 or more).
+
+// The strings are used to create filenames and JIT compilation commands.
 
 #define GB_JITIFIER_INITIAL_SIZE 1024
 
@@ -66,8 +59,11 @@ static size_t   GB_jit_C_preface_allocated = 0 ;
 static char    *GB_jit_library_name = NULL ;
 static size_t   GB_jit_library_name_allocated = 0 ;
 
-static char    *GB_jit_kernel_name = NULL ;
-static size_t   GB_jit_kernel_name_allocated = 0 ;
+static char    *GB_jit_kernel_src = NULL ;
+static size_t   GB_jit_kernel_src_allocated = 0 ;
+
+static char    *GB_jit_kernel_lock = NULL ;
+static size_t   GB_jit_kernel_lock_allocated = 0 ;
 
 static char    *GB_jit_command = NULL ;
 static size_t   GB_jit_command_allocated = 0 ;
@@ -129,7 +125,8 @@ void GB_jitifyer_finalize (bool freeall)
     GB_FREE_STUFF (GB_jit_C_libraries) ;
     GB_FREE_STUFF (GB_jit_C_preface) ;
     GB_FREE_STUFF (GB_jit_library_name) ;
-    GB_FREE_STUFF (GB_jit_kernel_name) ;
+    GB_FREE_STUFF (GB_jit_kernel_src) ;
+    GB_FREE_STUFF (GB_jit_kernel_lock) ;
     GB_FREE_STUFF (GB_jit_command) ;
 
     ASSERT (GB_jit_cache_path == NULL) ;
@@ -140,7 +137,8 @@ void GB_jitifyer_finalize (bool freeall)
     ASSERT (GB_jit_C_libraries == NULL) ;
     ASSERT (GB_jit_C_preface == NULL) ;
     ASSERT (GB_jit_library_name == NULL) ;
-    ASSERT (GB_jit_kernel_name == NULL) ;
+    ASSERT (GB_jit_kernel_src == NULL) ;
+    ASSERT (GB_jit_kernel_lock == NULL) ;
     ASSERT (GB_jit_command == NULL) ;
 }
 
@@ -577,16 +575,16 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
         snprintf (filename, fsize, "%s/%s", GB_jit_src_path,
             GB_JITpackage_index [k].filename) ;
         // open the file
-        FILE *fp = fopen (filename, "w") ;
-        if (fp == NULL)
+        FILE *fp_src = fopen (filename, "w") ;
+        if (fp_src == NULL)
         { 
             // file cannot be created
             ok = false ;
             break ;
         }
         // write the uncompressed blob to the file
-        size_t nwritten = fwrite (dst, sizeof (uint8_t), u, fp) ;
-        fclose (fp) ;
+        size_t nwritten = fwrite (dst, sizeof (uint8_t), u, fp_src) ;
+        fclose (fp_src) ;
         if (nwritten != u)
         { 
             // file is invalid
@@ -688,13 +686,14 @@ GrB_Info GB_jitifyer_alloc_space (void)
     }
 
     //--------------------------------------------------------------------------
-    // allocate GB_jit_kernel_name if needed
+    // allocate GB_jit_kernel_src if needed
     //--------------------------------------------------------------------------
 
-    if (GB_jit_kernel_name == NULL)
+    if (GB_jit_kernel_src == NULL)
     { 
         size_t len = GB_jit_cache_path_allocated + 300 + 2 * GxB_MAX_NAME_LEN ;
-        GB_MALLOC_STUFF (GB_jit_kernel_name, len) ;
+        GB_MALLOC_STUFF (GB_jit_kernel_src, len) ;
+        GB_MALLOC_STUFF (GB_jit_kernel_lock, len) ;
     }
 
     //--------------------------------------------------------------------------
@@ -787,7 +786,8 @@ GrB_Info GB_jitifyer_set_cache_path_worker (const char *new_cache_path)
     //--------------------------------------------------------------------------
 
     GB_FREE_STUFF (GB_jit_cache_path) ;
-    GB_FREE_STUFF (GB_jit_kernel_name) ;
+    GB_FREE_STUFF (GB_jit_kernel_src) ;
+    GB_FREE_STUFF (GB_jit_kernel_lock) ;
     GB_FREE_STUFF (GB_jit_library_name) ;
     GB_FREE_STUFF (GB_jit_command) ;
 
@@ -1546,13 +1546,12 @@ GrB_Info GB_jitifyer_worker
         encoding->code, suffix) ;
 
     //--------------------------------------------------------------------------
-    // try to load the libkernel_name.so from the user's library folder
+    // try to load the lib*.so from the user's library folder
     //--------------------------------------------------------------------------
 
     snprintf (GB_jit_library_name, GB_jit_library_name_allocated,
         "%s/lib%s%s", GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX) ;
-    // FIXME: dlopen only exists on Linux/Unix/Mac
-    void *dl_handle = dlopen (GB_jit_library_name, RTLD_LAZY) ;
+    void *dl_handle = GB_file_dlopen (GB_jit_library_name) ;
 
     //--------------------------------------------------------------------------
     // check if the kernel was found, but needs to be compiled anyway
@@ -1562,9 +1561,8 @@ GrB_Info GB_jitifyer_worker
     if (dl_handle != NULL)
     { 
         // library is loaded but make sure the defn match
-        // FIXME: dlsym only exists on Linux/Unix/Mac
         GB_jit_query_func dl_query = (GB_jit_query_func)
-            dlsym (dl_handle, "GB_jit_query") ;
+            GB_file_dlsym (dl_handle, "GB_jit_query") ;
 
         bool ok = true ;
         if (dl_query == NULL)
@@ -1585,8 +1583,7 @@ GrB_Info GB_jitifyer_worker
         if (!ok)
         { 
             // library is loaded but needs to change, so close it
-            // FIXME: dlclose only exists on Linux/Unix/Mac
-            dlclose (dl_handle) ;
+            GB_file_dlclose (dl_handle) ;
             dl_handle = NULL ;
             if (GB_jit_control == GxB_JIT_LOAD)
             { 
@@ -1625,66 +1622,60 @@ GrB_Info GB_jitifyer_worker
         }
 
         //----------------------------------------------------------------------
-        // create the kernel source file
+        // lock the kernel, create the source, compile it, and load it
         //----------------------------------------------------------------------
 
         GBURBLE ("(jit: compile and load) ") ;
-        snprintf (GB_jit_kernel_name, GB_jit_kernel_name_allocated,
-            "%s/%s.c", GB_jit_cache_path, kernel_name) ;
-        FILE *fp = fopen (GB_jit_kernel_name, "w") ;
-        if (fp == NULL)
+        snprintf (GB_jit_kernel_lock, GB_jit_kernel_lock_allocated,
+            "%s/%s_lock", GB_jit_cache_path, kernel_name) ;
+        FILE *fl = NULL ;
+        int fd = -1 ;
+        if (GB_file_open_and_lock (GB_jit_kernel_lock, &fl, &fd) == 0)
         { 
-            // disable the JIT to avoid repeated compilation errors
-            GBURBLE ("(jit: cannot create kernel; jit compilation disabled) ") ;
-            GB_jit_control = GxB_JIT_LOAD ;
-            return (GrB_NO_VALUE) ;
+            // create (or recreate) the kernel source, compile it, and load it
+            snprintf (GB_jit_kernel_src, GB_jit_kernel_src_allocated,
+                "%s/%s.c", GB_jit_cache_path, kernel_name) ;
+            FILE *fp = fopen (GB_jit_kernel_src, "w") ;
+            if (fp != NULL)
+            {
+                // create the preface
+                GB_macrofy_preface (fp, kernel_name, GB_jit_C_preface) ;
+                // macrofy the kernel operators, types, and matrix formats
+                GB_macrofy_family (fp, family, encoding->code, semiring,
+                    monoid, op, type1, type2, type3) ;
+                // #include the kernel, renaming it for the PreJIT
+                fprintf (fp, "#ifndef GB_JIT_RUNTIME\n"
+                             "#define GB_jit_kernel %s\n"
+                             "#define GB_jit_query  %s_query\n"
+                             "#endif\n"
+                             "#include \"GB_jit_kernel_%s.c\"\n",
+                             kernel_name, kernel_name, kname) ;
+                // macrofy the query function
+                GB_macrofy_query (fp, builtin, monoid, op1, op2, type1, type2,
+                    type3, hash) ;
+                fclose (fp) ;
+                // compile the kernel to get the lib*.so file
+                GB_jitifyer_compile (kernel_name) ;
+                // load the kernel from the lib*.so file
+                dl_handle = GB_file_dlopen (GB_jit_library_name) ;
+            }
+            // unlock and close the lockfile
+            GB_file_unlock_and_close (&fl, &fd) ;
         }
 
-        // create the header and copyright
-        fprintf (fp,
-            "//--------------------------------------"
-            "----------------------------------------\n"
-            "// %s.c\n", kernel_name) ;
-        GB_macrofy_copyright (fp) ;
-
-        // add the preface, which is an empty string by default
-        fprintf (fp, "%s\n", GB_jit_C_preface) ;
-
-        // #include the GB_jit_kernel.h header file
-        fprintf (fp, "#include \"GB_jit_kernel.h\"\n\n") ;
-
-        // macrofy the kernel operators, types, and matrix formats
-        GB_macrofy_family (fp, family, encoding->code, semiring, monoid,
-            op, type1, type2, type3) ;
-
-        // include the kernel, renaming it for the PreJIT
-        fprintf (fp, "#ifndef GB_JIT_RUNTIME\n"
-                     "#define GB_jit_kernel %s\n"
-                     "#define GB_jit_query  %s_query\n"
-                     "#endif\n"
-                     "#include \"GB_jit_kernel_%s.c\"\n",
-                     kernel_name, kernel_name, kname) ;
-
-        // macrofy the query function
-        GB_macrofy_query (fp, builtin, monoid, op1, op2, type1, type2, type3,
-            hash) ;
-        fclose (fp) ;
-
         //----------------------------------------------------------------------
-        // compile the source file to create the lib*.so file
+        // handle any error conditions
         //----------------------------------------------------------------------
 
-        GB_jitifyer_compile (kernel_name) ;
-        // FIXME: dlopen only exists on Linux/Unix/Mac
-        dl_handle = dlopen (GB_jit_library_name, RTLD_LAZY) ;
         if (dl_handle == NULL)
         { 
-            // unable to open lib*.so file
+            // unable to create the kernel source or open lib*.so file
             GBURBLE ("(jit: compiler error; compilation disabled) ") ;
             // disable the JIT to avoid repeated compilation errors
             GB_jit_control = GxB_JIT_LOAD ;
             return (GrB_NO_VALUE) ;
         }
+
     }
     else
     { 
@@ -1695,14 +1686,12 @@ GrB_Info GB_jitifyer_worker
     // get the jit_kernel_function pointer
     //--------------------------------------------------------------------------
 
-    // FIXME: dlsym only exists on Linux/Unix/Mac
-    (*dl_function) = dlsym (dl_handle, "GB_jit_kernel") ;
+    (*dl_function) = GB_file_dlsym (dl_handle, "GB_jit_kernel") ;
     if ((*dl_function) == NULL)
     { 
         // unable to find GB_jit_kernel: punt to generic
         GBURBLE ("(jit: load error; JIT loading disabled) ") ;
-        // FIXME: dlclose only exists on Linux/Unix/Mac
-        dlclose (dl_handle) ; 
+        GB_file_dlclose (dl_handle) ; 
         dl_handle = NULL ;
         // disable the JIT to avoid repeated loading errors
         GB_jit_control = GxB_JIT_RUN ;
@@ -1714,8 +1703,7 @@ GrB_Info GB_jitifyer_worker
         -1))
     { 
         // unable to add kernel to hash table: punt to generic
-        // FIXME: dlclose only exists on Linux/Unix/Mac
-        dlclose (dl_handle) ; 
+        GB_file_dlclose (dl_handle) ; 
         dl_handle = NULL ;
         // disable the JIT to avoid repeated errors
         GB_jit_control = GxB_JIT_PAUSE ;
@@ -1791,8 +1779,9 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
     uint64_t hash,              // hash for the problem
     GB_jit_encoding *encoding,  // primary encoding
     const char *suffix,         // suffix for user-defined types/operators
-    void *dl_handle,            // library handle from dlopen; NULL for PreJIT
-    void *dl_function,          // function handle from dlsym
+    void *dl_handle,            // library handle from GB_file_dlopen;
+                                // NULL for PreJIT
+    void *dl_function,          // function handle from GB_file_dlsym
     int32_t prejit_index        // index into PreJIT table; =>0 if unchecked.
 )
 {
@@ -1912,10 +1901,7 @@ void GB_jitifyer_entry_free (GB_jit_entry *e)
     // unload the dl library
     if (e->dl_handle != NULL)
     {
-        #ifndef NJIT
-        // FIXME: dlclose only exists on Linux/Unix/Mac
-        dlclose (e->dl_handle) ;
-        #endif
+        GB_file_dlclose (e->dl_handle) ;
         e->dl_handle = NULL ;
     }
     GB_jit_table_populated-- ;
