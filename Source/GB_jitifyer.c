@@ -12,6 +12,7 @@
 #include "GB_config.h"
 #include "GB_zstd.h"
 #include "GB_JITpackage.h"
+#include "GB_file.h"
 
 //------------------------------------------------------------------------------
 // determine if the JIT is enabled at compile-time
@@ -20,16 +21,6 @@
 #ifndef NJIT
 // FIXME: dlfcn.h only exists on Linux/Unix/Mac; need to port to Windows
 #include <dlfcn.h>
-// FIXME: for Windows: need to use _mkdir(name) instead mkdir(name,mode)
-#include <sys/stat.h>
-#include <errno.h>
-#else
-// FIXME: for testing; force a compiler error if the code attempts to use
-// dlopen, dlclose, dlsym, or mkdir (need to port to Windows)
-#define dlopen garbage_dlopen
-#define dlclose garbage_dlclose
-#define dlsym garbage_dlsym
-#define mkdir garbage_mkdir
 #endif
 
 typedef GB_JIT_KERNEL_USER_OP_PROTO ((*GB_user_op_f)) ;
@@ -461,8 +452,8 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
     //--------------------------------------------------------------------------
 
     GrB_Info info = GrB_SUCCESS ;
-    if (!(GB_jitifyer_mkdir (GB_jit_cache_path) &&
-          GB_jitifyer_mkdir (GB_jit_src_path)))
+    #ifndef NJIT
+    if (!(GB_file_mkdir (GB_jit_cache_path) && GB_file_mkdir (GB_jit_src_path)))
     { 
         // JIT is disabled, or cannot determine the JIT cache and/or source
         // path.  Disable loading and compiling, but continue with the rest of
@@ -475,59 +466,9 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
         GB_COPY_STUFF (GB_jit_src_path, "") ;
         info = error_condition ;
     }
+    #endif
 
     return (info) ;
-}
-
-//------------------------------------------------------------------------------
-// GB_jitifyer_mkdir: create a directory
-//------------------------------------------------------------------------------
-
-// Create a directory, including all parent directories if they do not exist.
-// Returns true if the directory already exists or if it was successfully
-// created.  Returns false on error.
-
-bool GB_jitifyer_mkdir (char *path)
-{
-    int result = 0 ;
-    int err = -1 ;
-    if (path == NULL) return (false) ;
-
-    #ifndef NJIT
-
-    // create all the leading directories
-    bool first = true ;
-    for (char *p = path ; *p ; p++)
-    {
-        // look for a file separator
-        if (*p == '/' || *p == '\\')
-        {
-            // found a file separator
-            if (!first)
-            { 
-                // terminate the path at this file separator
-                char save = *p ;
-                *p = '\0' ;
-                // construct the directory at this path
-                // FIXME: need _mkdir on Windows
-                result = mkdir (path, S_IRWXU) ;
-                err = (result == -1) ? errno : 0 ;
-                // restore the path
-                *p = save ;
-            }
-            first = false ;
-        }
-    }
-
-    // create the final directory
-    // FIXME: need _mkdir on Windows
-    result = mkdir (path, S_IRWXU) ;
-    err = (result == -1) ? errno : 0 ;
-    return (err == 0 || err == EEXIST) ;
-    #else
-    // JIT is disabled at compile time; no need to make any directories
-    return (false) ;
-    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -541,8 +482,18 @@ bool GB_jitifyer_mkdir (char *path)
 GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
 {
 
-    bool ok = true ;
     #ifndef NJIT
+
+    //--------------------------------------------------------------------------
+    // find the largest uncompressed filesize
+    //--------------------------------------------------------------------------
+
+    size_t max_uncompressed = 0 ;
+    for (int k = 0 ; k < GB_JITpackage_nfiles ; k++)
+    { 
+        size_t uncompressed_size = GB_JITpackage_index [k].uncompressed_size ;
+        max_uncompressed = GB_IMAX (max_uncompressed, uncompressed_size) ;
+    }
 
     //--------------------------------------------------------------------------
     // allocate workspace
@@ -552,40 +503,6 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     size_t fsize = 0 ;
     char *filename = GB_MALLOC_WORK (GB_jit_src_path_allocated + 300, char,
         &fsize) ;
-    if (filename == NULL)
-    { 
-        // out of memory; disable the JIT
-        GB_jit_control = GxB_JIT_RUN ;
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-
-    // check the GraphBLAS.h file to see if it is there with the right version
-    snprintf (filename, fsize, "%s/GraphBLAS.h", GB_jit_src_path) ;
-    FILE *fp = fopen (filename, "r") ;
-    if (fp != NULL)
-    {
-        // found the file; read the 1st line for the version number
-        int v1 = -1, v2 = -1, v3 = -1 ;
-        int r = fscanf (fp, "// SuiteSparse:GraphBLAS %d.%d.%d", &v1, &v2, &v3);
-        if (r == 3 &&
-            v1 == GxB_IMPLEMENTATION_MAJOR &&
-            v2 == GxB_IMPLEMENTATION_MINOR &&
-            v3 == GxB_IMPLEMENTATION_SUB)
-        { 
-            // the header looks fine; assume the rest of the source is fine
-            fclose (fp) ;
-            GB_FREE_WORK (&filename, fsize) ;
-            return (GrB_SUCCESS) ;
-        }
-    }
-
-    // find the largest uncompressed filesize
-    size_t max_uncompressed = 0 ;
-    for (int k = 0 ; k < GB_JITpackage_nfiles ; k++)
-    { 
-        size_t uncompressed_size = GB_JITpackage_index [k].uncompressed_size ;
-        max_uncompressed = GB_IMAX (max_uncompressed, uncompressed_size) ;
-    }
 
     // allocate workspace for the largest uncompressed file
     size_t dst_size = 0 ;
@@ -601,9 +518,49 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     }
 
     //--------------------------------------------------------------------------
+    // lock the src/README.txt file
+    //--------------------------------------------------------------------------
+
+    snprintf (filename, fsize, "%s/README.txt", GB_jit_src_path) ;
+    FILE *fp_readme = NULL ;
+    int fd_readme = -1 ;
+    int64_t where = GB_file_open_and_lock (filename, &fp_readme, &fd_readme) ;
+    if (where < 0)
+    {
+        // failure; disable the JIT
+        GBURBLE ("(jit: unable to access cache folder) ") ;
+        GB_jit_control = GxB_JIT_RUN ;
+        GB_FREE_WORK (&dst, dst_size) ;
+        GB_FREE_WORK (&filename, fsize) ;
+        return (error_condition) ;
+    }
+
+    #define GB_README "SuiteSparse:GraphBLAS %d.%d.%d"
+
+    if (where > 0)
+    {
+        // README.txt file exists already; check the version number
+        rewind (fp_readme) ;
+        int v1 = -1, v2 = -1, v3 = -1 ;
+        int r = fscanf (fp_readme, GB_README, &v1, &v2, &v3) ;
+        if (r == 3 &&
+            v1 == GxB_IMPLEMENTATION_MAJOR &&
+            v2 == GxB_IMPLEMENTATION_MINOR &&
+            v3 == GxB_IMPLEMENTATION_SUB)
+        { 
+            // README.txt looks fine; assume the rest of the source is fine
+            GB_file_unlock_and_close (&fp_readme, &fd_readme) ;
+            GB_FREE_WORK (&dst, dst_size) ;
+            GB_FREE_WORK (&filename, fsize) ;
+            return (GrB_SUCCESS) ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
     // uncompress each file
     //--------------------------------------------------------------------------
 
+    bool ok = true ;
     for (int k = 0 ; k < GB_JITpackage_nfiles ; k++)
     { 
         // uncompress the blob
@@ -620,7 +577,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
         snprintf (filename, fsize, "%s/%s", GB_jit_src_path,
             GB_JITpackage_index [k].filename) ;
         // open the file
-        fp = fopen (filename, "w") ;
+        FILE *fp = fopen (filename, "w") ;
         if (fp == NULL)
         { 
             // file cannot be created
@@ -639,15 +596,32 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     }
 
     //--------------------------------------------------------------------------
-    // free workspace and return result
+    // unlock and close the src/README.txt file, and free workspace
     //--------------------------------------------------------------------------
 
+    // write the current version of GraphBLAS to the README.txt file
+    if (ok)
+    {
+        ok = (fprintf (fp_readme, GB_README "\n",
+            GxB_IMPLEMENTATION_MAJOR,
+            GxB_IMPLEMENTATION_MINOR,
+            GxB_IMPLEMENTATION_SUB) > 0) ;
+    }
+
+    GB_file_unlock_and_close (&fp_readme, &fd_readme) ;
     GB_FREE_WORK (&dst, dst_size) ;
     GB_FREE_WORK (&filename, fsize) ;
+    if (!ok)
+    {
+        // failure; disable the JIT
+        GBURBLE ("(jit: failure to write source to cache folder) ") ;
+        GB_jit_control = GxB_JIT_RUN ;
+        return (error_condition) ;
+    }
     #endif
 
     #pragma omp flush
-    return (ok ? GrB_SUCCESS : error_condition) ;
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------

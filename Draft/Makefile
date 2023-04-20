@@ -1,3 +1,7 @@
+lock:
+	gcc -g fl.c -lm
+	./a.out
+
 also:
 	gcc -g cmplx.c -lm
 	./a.out

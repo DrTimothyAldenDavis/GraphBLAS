@@ -301,7 +301,6 @@ void GB_jitifyer_compile (char *kernel_name) ;  // compile a kernel
 GrB_Info GB_jitifyer_init (void) ;  // initialize the JIT
 
 GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition) ;
-bool GB_jitifyer_mkdir (char *path) ;
 
 GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition) ;
 
