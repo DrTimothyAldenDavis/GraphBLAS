@@ -10,7 +10,6 @@
 #ifndef GB_JITIFYER_H
 #define GB_JITIFYER_H
 
-#include <dlfcn.h>
 #include "GB_jit_kernel_proto.h"
 
 //------------------------------------------------------------------------------
@@ -57,7 +56,7 @@ typedef enum
 
     // C<M> = A*B, except for row/col scale (which are ewise methods)
     GB_JIT_KERNEL_AXB_DOT2      = 2,  // GB_AxB_dot2
-    GB_JIT_KERNEL_AXB_DOT2N     = 3,  // GB_AxB_dot2
+    GB_JIT_KERNEL_AXB_DOT2N     = 3,  // GB_AxB_dot2n
     GB_JIT_KERNEL_AXB_DOT3      = 4,  // GB_AxB_dot3
     GB_JIT_KERNEL_AXB_DOT4      = 5,  // GB_AxB_dot4
     GB_JIT_KERNEL_AXB_SAXBIT    = 6,  // GB_AxB_saxbit
