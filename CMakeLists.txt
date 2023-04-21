@@ -481,6 +481,7 @@ include ( GraphBLAS_JIT_configure )
 
 file ( MAKE_DIRECTORY ${GRAPHBLAS_CACHE_PATH} )
 file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/src" )
+file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/lock" )
 
 configure_file ( "Config/GB_config.h.in"
     "${PROJECT_SOURCE_DIR}/Config/GB_config.h"
