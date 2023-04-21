@@ -6,8 +6,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-// FIXME: remove this
-#include <unistd.h>
 
 #include "GB.h"
 #include "GB_stringify.h"
