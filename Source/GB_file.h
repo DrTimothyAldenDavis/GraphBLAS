@@ -10,7 +10,7 @@
 #ifndef GB_FILE_H
 #define GB_FILE_H
 
-int64_t GB_file_open_and_lock   // returns position if >= 0, or -1 on error
+bool GB_file_open_and_lock  // true if successful, false on error
 (
     // input
     char *filename,     // full path to file to open

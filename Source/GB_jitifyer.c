@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+// FIXME: remove this
+#include <unistd.h>
 
 #include "GB.h"
 #include "GB_stringify.h"
@@ -439,8 +441,7 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
     ok = ok && GB_file_mkdir (GB_jit_temp) ;
 
     // construct the src path
-    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/src",
-        GB_jit_cache_path) ;
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/src", GB_jit_cache_path) ;
     ok = ok && GB_file_mkdir (GB_jit_temp) ;
 
     //--------------------------------------------------------------------------
@@ -475,6 +476,45 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     #ifndef NJIT
 
     //--------------------------------------------------------------------------
+    // lock the lock/GB_src_lock file
+    //--------------------------------------------------------------------------
+
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lock/GB_src_lock",
+        GB_jit_cache_path) ;
+    FILE *fp_lock = NULL ;
+    int fd_lock = -1 ;
+    if (GB_file_open_and_lock (GB_jit_temp, &fp_lock, &fd_lock) < 0)
+    {
+        // failure; disable the JIT
+        GBURBLE ("(jit: unable to access cache folder) ") ;
+        GB_jit_control = GxB_JIT_RUN ;
+        return (error_condition) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // check the version number in src/GraphBLAS.h
+    //--------------------------------------------------------------------------
+
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/src/GraphBLAS.h",
+        GB_jit_cache_path) ;
+    FILE *fp_graphblas = fopen (GB_jit_temp, "r") ;
+    if (fp_graphblas != NULL)
+    {
+        int v1 = -1, v2 = -1, v3 = -1 ;
+        int r = fscanf (fp_graphblas, "// SuiteSparse:GraphBLAS %d.%d.%d",
+            &v1, &v2, &v3) ;
+        if (r == 3 &&
+            v1 == GxB_IMPLEMENTATION_MAJOR &&
+            v2 == GxB_IMPLEMENTATION_MINOR &&
+            v3 == GxB_IMPLEMENTATION_SUB)
+        { 
+            // looks fine; assume the rest of the source is fine
+            GB_file_unlock_and_close (&fp_lock, &fd_lock) ;
+            return (GrB_SUCCESS) ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
     // find the largest uncompressed filesize
     //--------------------------------------------------------------------------
 
@@ -497,51 +537,6 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
         GB_jit_control = GxB_JIT_RUN ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-
-    //--------------------------------------------------------------------------
-    // lock the src/README.txt file
-    //--------------------------------------------------------------------------
-
-    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/src/README.txt",
-        GB_jit_cache_path) ;
-    FILE *fp_readme = NULL ;
-    int fd_readme = -1 ;
-    int64_t where = GB_file_open_and_lock (GB_jit_temp, &fp_readme, &fd_readme);
-    if (where < 0)
-    {
-        // failure; disable the JIT
-        GBURBLE ("(jit: unable to access cache folder) ") ;
-        GB_jit_control = GxB_JIT_RUN ;
-        GB_FREE_WORK (&dst, dst_size) ;
-        return (error_condition) ;
-    }
-
-    #define GB_README "%d %d %d"
-
-    printf ("SRC readme %s where %ld\n", GB_jit_temp, where) ;
-
-    if (where > 0)
-    {
-        // README.txt file exists already; check the version number
-        rewind (fp_readme) ;
-        int v1 = -1, v2 = -1, v3 = -1 ;
-        int r = fscanf (fp_readme, GB_README, &v1, &v2, &v3) ;
-        printf ("r %d v: %d %d %d\n", r, v1, v2, v3) ;
-        if (r == 3 &&
-            v1 == GxB_IMPLEMENTATION_MAJOR &&
-            v2 == GxB_IMPLEMENTATION_MINOR &&
-            v3 == GxB_IMPLEMENTATION_SUB)
-        { 
-            // README.txt looks fine; assume the rest of the source is fine
-            printf ("looks fine\n") ;
-            GB_file_unlock_and_close (&fp_readme, &fd_readme) ;
-            GB_FREE_WORK (&dst, dst_size) ;
-            return (GrB_SUCCESS) ;
-        }
-    }
-
-    printf ("UNCOMPRESS ALL SOURCE FILES\n") ;
-    rewind (fp_readme) ;
 
     //--------------------------------------------------------------------------
     // uncompress each file
@@ -583,21 +578,16 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     }
 
     //--------------------------------------------------------------------------
-    // unlock and close the src/README.txt file, and free workspace
+    // free workspace
     //--------------------------------------------------------------------------
 
-    // write the current version of GraphBLAS to the README.txt file
-    if (ok)
-    {
-        rewind (fp_readme) ;
-        ok = (fprintf (fp_readme, GB_README "\n",
-            GxB_IMPLEMENTATION_MAJOR,
-            GxB_IMPLEMENTATION_MINOR,
-            GxB_IMPLEMENTATION_SUB) > 0) ;
-    }
-
-    GB_file_unlock_and_close (&fp_readme, &fd_readme) ;
     GB_FREE_WORK (&dst, dst_size) ;
+
+    //--------------------------------------------------------------------------
+    // unlock and close the lock/GB_src_lock file
+    //--------------------------------------------------------------------------
+
+    GB_file_unlock_and_close (&fp_lock, &fd_lock) ;
     if (!ok)
     {
         // failure; disable the JIT
@@ -1343,7 +1333,7 @@ GrB_Info GB_jitifyer_worker
     }
 
     //--------------------------------------------------------------------------
-    // quick return if not in the hash table
+    // quick return if not in the hash table and load/compile is disabled
     //--------------------------------------------------------------------------
 
     #ifndef NJIT
@@ -1358,11 +1348,10 @@ GrB_Info GB_jitifyer_worker
     }
 
     //--------------------------------------------------------------------------
-    // the kernel needs to be loaded, and perhaps compiled; get its properties
+    // construct the kernel name
     //--------------------------------------------------------------------------
 
     #ifndef NJIT
-
     GB_Operator op1 = NULL ;
     GB_Operator op2 = NULL ;
     int scode_digits = 0 ;
@@ -1418,13 +1407,75 @@ GrB_Info GB_jitifyer_worker
         default: ;
     }
 
-    //--------------------------------------------------------------------------
-    // name the problem
-    //--------------------------------------------------------------------------
-
     char kernel_name [GB_KLEN] ;
     GB_macrofy_name (kernel_name, "GB_jit", kname, scode_digits,
         encoding->code, suffix) ;
+
+    //--------------------------------------------------------------------------
+    // lock the kernel
+    //--------------------------------------------------------------------------
+
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lock/%s_lock",
+        GB_jit_cache_path, kernel_name) ;
+    FILE *fp_klock = NULL ;
+    int fd_klock = -1 ;
+    if (GB_file_open_and_lock (GB_jit_temp, &fp_klock, &fd_klock) < 0)
+    {
+        // unable to lock the kernel
+        // disable the JIT to avoid repeated load errors
+        GB_jit_control = GxB_JIT_RUN ;
+        return (GrB_NO_VALUE) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // load the kernel, compiling it if needed
+    //--------------------------------------------------------------------------
+
+    GrB_Info info = GB_jitifyer_load_worker (dl_function, kernel_name, family,
+        kname, hash, encoding, suffix, semiring, monoid, op, op1, op2,
+        type1, type2, type3) ;
+
+    //--------------------------------------------------------------------------
+    // unlock the kernel
+    //--------------------------------------------------------------------------
+
+    GB_file_unlock_and_close (&fp_klock, &fd_klock) ;
+    return (info) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_load_worker: load/compile a kernel
+//------------------------------------------------------------------------------
+
+// This work is done inside a critical section for this process, and inside a
+// file lock/unlock section (fp_lock) to guard against access from other
+// processes.
+
+GrB_Info GB_jitifyer_load_worker
+(
+    // output:
+    void **dl_function,         // pointer to JIT kernel
+    // input:
+    char *kernel_name,          // kernel file name (excluding the path)
+    GB_jit_family family,       // kernel family
+    const char *kname,          // kname for the kernel_name
+    uint64_t hash,              // hash code for the kernel
+    GB_jit_encoding *encoding,  // encoding of the problem
+    const char *suffix,         // suffix for the kernel_name (NULL if none)
+    // operator and type definitions
+    GrB_Semiring semiring,
+    GrB_Monoid monoid,
+    GB_Operator op,
+    GB_Operator op1,
+    GB_Operator op2,
+    GrB_Type type1,
+    GrB_Type type2,
+    GrB_Type type3
+)
+{
+
+    #ifndef NJIT
 
     //--------------------------------------------------------------------------
     // try to load the lib*.so from the user's library folder
@@ -1438,7 +1489,6 @@ GrB_Info GB_jitifyer_worker
     // check if the kernel was found, but needs to be compiled anyway
     //--------------------------------------------------------------------------
 
-    bool builtin = (encoding->suffix_len == 0) ;
     if (dl_handle != NULL)
     { 
         // library is loaded but make sure the defn match
@@ -1503,47 +1553,40 @@ GrB_Info GB_jitifyer_worker
         }
 
         //----------------------------------------------------------------------
-        // lock the kernel, create the source, compile it, and load it
+        // create the source, compile it, and load it
         //----------------------------------------------------------------------
 
         GBURBLE ("(jit: compile and load) ") ;
-        snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lock/%s_lock",
+
+        // create (or recreate) the kernel source, compile it, and load it
+        snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/%s.c",
             GB_jit_cache_path, kernel_name) ;
-        FILE *fl = NULL ;
-        int fd = -1 ;
-        if (GB_file_open_and_lock (GB_jit_temp, &fl, &fd) == 0)
-        { 
-            // create (or recreate) the kernel source, compile it, and load it
-            snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/%s.c",
-                GB_jit_cache_path, kernel_name) ;
-            FILE *fp = fopen (GB_jit_temp, "w") ;
-            if (fp != NULL)
-            {
-                // create the preface
-                GB_macrofy_preface (fp, kernel_name, GB_jit_C_preface) ;
-                // macrofy the kernel operators, types, and matrix formats
-                GB_macrofy_family (fp, family, encoding->code, semiring,
-                    monoid, op, type1, type2, type3) ;
-                // #include the kernel, renaming it for the PreJIT
-                fprintf (fp, "#ifndef GB_JIT_RUNTIME\n"
-                             "#define GB_jit_kernel %s\n"
-                             "#define GB_jit_query  %s_query\n"
-                             "#endif\n"
-                             "#include \"GB_jit_kernel_%s.c\"\n",
-                             kernel_name, kernel_name, kname) ;
-                // macrofy the query function
-                GB_macrofy_query (fp, builtin, monoid, op1, op2, type1, type2,
-                    type3, hash) ;
-                fclose (fp) ;
-                // compile the kernel to get the lib*.so file
-                GB_jitifyer_compile (kernel_name) ;
-                // load the kernel from the lib*.so file
-                snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lib%s%s",
-                    GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX) ;
-                dl_handle = GB_file_dlopen (GB_jit_temp) ;
-            }
-            // unlock and close the lockfile
-            GB_file_unlock_and_close (&fl, &fd) ;
+        FILE *fp = fopen (GB_jit_temp, "w") ;
+        if (fp != NULL)
+        {
+            // create the preface
+            GB_macrofy_preface (fp, kernel_name, GB_jit_C_preface) ;
+            // macrofy the kernel operators, types, and matrix formats
+            GB_macrofy_family (fp, family, encoding->code, semiring,
+                monoid, op, type1, type2, type3) ;
+            // #include the kernel, renaming it for the PreJIT
+            fprintf (fp, "#ifndef GB_JIT_RUNTIME\n"
+                         "#define GB_jit_kernel %s\n"
+                         "#define GB_jit_query  %s_query\n"
+                         "#endif\n"
+                         "#include \"GB_jit_kernel_%s.c\"\n",
+                         kernel_name, kernel_name, kname) ;
+            // macrofy the query function
+            bool builtin = (encoding->suffix_len == 0) ;
+            GB_macrofy_query (fp, builtin, monoid, op1, op2, type1, type2,
+                type3, hash) ;
+            fclose (fp) ;
+            // compile the kernel to get the lib*.so file
+            GB_jitifyer_compile (kernel_name) ;
+            // load the kernel from the lib*.so file
+            snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lib%s%s",
+                GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX) ;
+            dl_handle = GB_file_dlopen (GB_jit_temp) ;
         }
 
         //----------------------------------------------------------------------

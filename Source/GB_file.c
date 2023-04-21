@@ -115,14 +115,10 @@ static bool GB_file_unlock (FILE *fp, int fd)
 }
 
 //------------------------------------------------------------------------------
-// GB_file_open_and_lock:  open and lock a file for exclusive read/write
+// GB_file_open_and_lock:  open and lock a file for exclusive write
 //------------------------------------------------------------------------------
 
-// Returns 0 if the file was newly created.  If the file already existed, this
-// method seeks to the end of the file and returns the position there (a value
-// > 0).  Returns -1 on error.
-
-int64_t GB_file_open_and_lock   // returns position if >= 0, or -1 on error
+bool GB_file_open_and_lock  // true if successful, false on error
 (
     // input
     char *filename,     // full path to file to open
@@ -136,7 +132,7 @@ int64_t GB_file_open_and_lock   // returns position if >= 0, or -1 on error
     if (filename == NULL || fp_handle == NULL || fd_handle == NULL)
     {
         // failure: inputs invalid
-        return (-1) ;
+        return (false) ;
     }
 
     (*fp_handle) = NULL ;
@@ -147,16 +143,16 @@ int64_t GB_file_open_and_lock   // returns position if >= 0, or -1 on error
     if (fd == -1)
     {
         // failure: file does not exist or cannot be created
-        return (-1) ;
+        return (false) ;
     }
 
     // get the file pointer from the file descriptor
-    FILE *fp = GB_FDOPEN (fd, "a") ;
+    FILE *fp = GB_FDOPEN (fd, "w+") ;
     if (fp == NULL)
     {
         // failure: cannot create file pointer from file descriptor
         GB_CLOSE (fd) ;
-        return (-1) ;
+        return (false) ;
     }
 
     // lock the file
@@ -164,36 +160,17 @@ int64_t GB_file_open_and_lock   // returns position if >= 0, or -1 on error
     {
         // failure: cannot lock the file
         fclose (fp) ;
-        return (-1) ;
-    }
-
-    // seek to the end of the file
-    if (fseek (fp, 0L, SEEK_END) != 0)
-    {
-        // failure: cannot seek to the end of the file
-        GB_file_unlock (fp, fd) ;
-        fclose (fp) ;
-        return (-1) ;
-    }
-
-    // get the position at the end of the file
-    int64_t where = (int64_t) ftell (fp) ;
-    if (where == -1)
-    {
-        // failure: tell the position in the file 
-        GB_file_unlock (fp, fd) ;
-        fclose (fp) ;
-        return (-1) ;
+        return (false) ;
     }
 
     // success: file exists, is open, and is locked for writing
     (*fp_handle) = fp ;
     (*fd_handle) = fd ;
-    return (where) ;
+    return (true) ;
 
     #else
     // JIT not enabled
-    return (-1) ;
+    return (false) ;
     #endif
 }
 

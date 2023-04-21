@@ -244,6 +244,28 @@ GrB_Info GB_jitifyer_worker
     GrB_Type type3
 ) ;
 
+GrB_Info GB_jitifyer_load_worker
+(
+    // output:
+    void **dl_function,         // pointer to JIT kernel
+    // input:
+    char *kernel_name,          // kernel file name (excluding the path)
+    GB_jit_family family,       // kernel family
+    const char *kname,          // kname for the kernel_name
+    uint64_t hash,              // hash code for the kernel
+    GB_jit_encoding *encoding,  // encoding of the problem
+    const char *suffix,         // suffix for the kernel_name (NULL if none)
+    // operator and type definitions
+    GrB_Semiring semiring,
+    GrB_Monoid monoid,
+    GB_Operator op,
+    GB_Operator op1,
+    GB_Operator op2,
+    GrB_Type type1,
+    GrB_Type type2,
+    GrB_Type type3
+) ;
+
 void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
 (
     // input:
