@@ -9,12 +9,10 @@ v8.0.0 release:
     kernels are incompatible with the earlier DRAFT* versions of 8.0.0,
     however.
 
-FIXME: delete this file in the final stable v8.0.0 release
+FIXME: testing, release date, delete Draft folder and TODO.txt, port to Windows
 
-FIXME: exhaustive Tcov tests
+    exhaustive Tcov tests:
     with all 4 combinations of: (NJIT on/off) x (COMPACT on/off)
     also do the same exhaustive tests in ./Test but with GB_DEBUG enabled
 
-FIXME: release date, delete Draft folder, port to Windows, add file locking
-
-
+FIXME: PreJIT
