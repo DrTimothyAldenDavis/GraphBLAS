@@ -47,7 +47,8 @@ __global__ void GB_jit_AxB_dot3_dense_phase1
     #endif
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
-    const int64_t mnz =  GB_nnz(M) ;
+//  const int64_t mnz =  GB_nnz(M) ;
+    const GB_M_NVALS (mnz) ;
 
     int64_t *__restrict__ Ci = C->i ;   // for zombies, or bucket assignment
 

@@ -151,7 +151,7 @@ GrB_Desc_Value ;
 #include "GB_partition.h"
 #include "GB_pun.h"
 #include "GB_opaque.h"
-#include "GB_nnz.h"
+#include "GB_int64_mult.h"
 #define GB_HAS_CMPLX_MACROS 1
 #include "GB_complex.h"
 

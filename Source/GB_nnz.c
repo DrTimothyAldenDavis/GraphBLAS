@@ -12,7 +12,6 @@
 // are ignored; to count them, use GB_wait first.  A may be NULL.
 
 #include "GB.h"
-#include "GB_nnz.h"
 
 int64_t GB_nnz      // return nnz(A) or INT64_MAX if integer overflow
 (

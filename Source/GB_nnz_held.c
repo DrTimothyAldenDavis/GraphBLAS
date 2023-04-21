@@ -13,7 +13,6 @@
 // same as the # of entries in a full matrix (# rows times # columns).
 
 #include "GB.h"
-#include "GB_nnz.h"
 
 int64_t GB_nnz_held
 (

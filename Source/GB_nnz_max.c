@@ -13,7 +13,6 @@
 // GB_nnz_full (A), and is typically 1.
 
 #include "GB.h"
-#include "GB_nnz.h"
 
 int64_t GB_nnz_max
 (

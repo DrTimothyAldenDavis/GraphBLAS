@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-#include "GB_nnz.h"
 
 int64_t GB_nnz_full      // return nnz(A) or INT64_MAX if integer overflow
 (

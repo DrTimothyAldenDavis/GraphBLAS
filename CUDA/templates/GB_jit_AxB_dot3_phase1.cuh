@@ -75,7 +75,8 @@ __global__ void GB_jit_AxB_dot3_phase1
     #endif
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
-    const int64_t mnz = GB_nnz(M) ;
+//  const int64_t mnz = GB_nnz(M) ;
+    const GB_M_NVALS (mnz) ;
     const bool M_is_hyper = M->h != NULL ;
     ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
 
@@ -83,13 +84,15 @@ __global__ void GB_jit_AxB_dot3_phase1
     const int64_t *__restrict__ Ap = A->p ;
     const int64_t *__restrict__ Ai = A->i ;
     const int64_t avlen = A->vlen ;
-    const int64_t anz = GB_nnz(A) ;
+//  const int64_t anz = GB_nnz(A) ;
+    const GB_A_NVALS (anz) ;
 
     const int64_t *__restrict__ Bh = B->h ;
     const int64_t *__restrict__ Bp = B->p ;
     const int64_t *__restrict__ Bi = B->i ;
     const int64_t bvlen = B->vlen ;
-    const int64_t bnz = GB_nnz(B);
+//  const int64_t bnz = GB_nnz(B);
+    const GB_B_NVALS (bnz) ;
 
     #if GB_A_IS_HYPER
     const int64_t *__restrict__ A_Yp = A->Y->p ;
