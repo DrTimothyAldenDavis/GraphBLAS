@@ -11,7 +11,6 @@
 
 // Note that this function uses its own hard-coded chunk size.
 
-#include "GB_callback_proto.h"
 #include "GB.h"
 
 #define GB_MEM_CHUNK (1024*1024)

@@ -10,8 +10,6 @@
 #ifndef GB_NEW_H
 #define GB_NEW_H
 
-#include "GB_callback_proto.h"
-
 typedef enum                    // input parameter to GB_new and GB_new_bix
 {
     GB_Ap_calloc,               // 0: calloc A->p, malloc A->h if hypersparse
@@ -61,7 +59,8 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     const bool iso              // if true, allocate A as iso
 ) ;
 
-GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc) ;
+// See GB_callbacks.h:
+// GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc) ;
 
 GrB_Info GB_ix_realloc      // reallocate space in a matrix
 (

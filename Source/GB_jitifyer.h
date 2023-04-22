@@ -176,6 +176,10 @@ GB_jit_kcode ;
 // GB_jitifyer_entry: an entry in the jitifyer hash table
 //------------------------------------------------------------------------------
 
+// kcode can be reduced to uint8_t, and suffix_len to uint16_t.
+// To save space, prejit_index could then be reduced to uint32_t and saved
+// in the encoding struct.
+
 struct GB_jit_encoding_struct
 {
     uint64_t code ;         // from GB_enumify_*
@@ -184,6 +188,9 @@ struct GB_jit_encoding_struct
 } ;
 
 typedef struct GB_jit_encoding_struct GB_jit_encoding ;
+
+// prejit_index could be int32_t, but making it int64_t rounds up the size of
+// the GB_jit_entry_struct to a multiple of 8 (56 bytes):
 
 struct GB_jit_entry_struct
 {
@@ -194,7 +201,7 @@ struct GB_jit_entry_struct
     void *dl_handle ;           // handle from dlopen, to be passed to dlclose
     void *dl_function ;         // address of kernel function
     int64_t prejit_index ;      // -1: JIT kernel or checked PreJIT kernel
-                                // >= 0: index of unchecked PreJIT kernel
+                                // >= 0: index of unchecked PreJIT kernel.
 } ;
 
 typedef struct GB_jit_entry_struct GB_jit_entry ;
@@ -317,7 +324,7 @@ bool GB_jitifyer_query
     GrB_Type type3
 ) ;
 
-void GB_jitifyer_compile (char *kernel_name) ;  // compile a kernel
+void GB_jitifyer_compile (char *kernel_name, uint32_t bucket) ;
 
 GrB_Info GB_jitifyer_init (void) ;  // initialize the JIT
 

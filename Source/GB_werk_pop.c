@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_callback_proto.h"
 #include "GB.h"
 
 // If the werkspace was allocated from the Werk stack, it must be at the top of

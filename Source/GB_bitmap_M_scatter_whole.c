@@ -9,7 +9,6 @@
 
 // JIT: not needed, but variants possible for each kind of mask matrix.
 
-#include "GB_callback_proto.h"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_assign_shared_definitions.h"
 

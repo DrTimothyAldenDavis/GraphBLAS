@@ -13,7 +13,6 @@
 #ifndef GB_AXB_SAXPY3_H
 #define GB_AXB_SAXPY3_H
 
-#include "GB_callback_proto.h"
 #include "GB.h"
 
 GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
@@ -81,7 +80,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
 // GB_AxB_saxpy3_cumsum: cumulative sum of C->p for GB_AxB_saxpy3
 //------------------------------------------------------------------------------
 
-GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum) ;
+// GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum) ;
 
 //------------------------------------------------------------------------------
 // GB_AxB_saxpy3_slice_balanced: create balanced parallel tasks for saxpy3

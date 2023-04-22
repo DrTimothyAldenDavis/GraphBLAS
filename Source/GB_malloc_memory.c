@@ -9,7 +9,6 @@
 
 // A wrapper for malloc.  Space is not initialized.
 
-#include "GB_callback_proto.h"
 #include "GB.h"
 
 //------------------------------------------------------------------------------

@@ -11,8 +11,8 @@
 // indexed the following 0 kernels in GraphBLAS/PreJIT:
 
 #include "GB.h"
+#include "GB_jit_kernel_proto.h"
 #include "GB_jitifyer.h"
-#include "GB_saxpy3task_struct.h"
 
 //------------------------------------------------------------------------------
 // prototypes for all PreJIT kernels

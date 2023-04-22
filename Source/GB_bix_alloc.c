@@ -15,7 +15,6 @@
 // If this method fails, A->b, A->i, and A->x are NULL,
 // but A->p and A->h are not modified.
 
-#include "GB_callback_proto.h"
 #include "GB.h"
 
 GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)

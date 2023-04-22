@@ -12,7 +12,6 @@
 // The memory is freed using the free() function pointer passed in to GrB_init,
 // which is typically the ANSI C free function.
 
-#include "GB_callback_proto.h"
 #include "GB.h"
 
 GB_CALLBACK_FREE_MEMORY_PROTO (GB_free_memory)

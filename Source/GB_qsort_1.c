@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_callback_proto.h"
 #include "GB_sort.h"
 
 // returns true if A [a] < B [b]

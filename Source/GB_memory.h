@@ -10,8 +10,6 @@
 #ifndef GB_MEMORY_H
 #define GB_MEMORY_H
 
-#include "GB_callback_proto.h"
-
 //------------------------------------------------------------------------------
 // memory management
 //------------------------------------------------------------------------------
@@ -25,9 +23,10 @@ void GB_memoryUsage         // count # allocated blocks and their sizes
     bool count_hyper_hash   // if true, include A->Y
 ) ;
 
-GB_CALLBACK_MALLOC_MEMORY_PROTO (GB_malloc_memory) ;
-
-GB_CALLBACK_FREE_MEMORY_PROTO (GB_free_memory) ;
+// See GB_callbacks.h:
+// GB_CALLBACK_MALLOC_MEMORY_PROTO (GB_malloc_memory) ;
+// GB_CALLBACK_FREE_MEMORY_PROTO (GB_free_memory) ;
+// GB_CALLBACK_MEMSET_PROTO (GB_memset) ;
 
 void *GB_calloc_memory      // pointer to allocated block of memory
 (
@@ -71,8 +70,6 @@ void GB_memcpy                  // parallel memcpy
     size_t n,                   // # of bytes to copy
     int nthreads                // # of threads to use
 ) ;
-
-GB_CALLBACK_MEMSET_PROTO (GB_memset) ;
 
 #endif
 

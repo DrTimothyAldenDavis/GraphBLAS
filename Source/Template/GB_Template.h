@@ -69,10 +69,11 @@
 #include "GB_wait_macros.h"
 #include "GB_AxB_macros.h"
 #include "GB_ek_slice_kernels.h"
-#include "GB_bitmap_scatter_macros.h"
+#include "GB_bitmap_scatter.h"
 #include "GB_int64_mult.h"
 #include "GB_hyper_hash_lookup.h"
 #include "GB_omp_kernels.h"
+#include "GB_callback.h"
 
 #endif
 

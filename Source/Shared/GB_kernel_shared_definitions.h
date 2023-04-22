@@ -12,9 +12,6 @@
 
 #include "GB_unused.h"
 #include "GB_complex.h"
-#ifdef GB_JIT_KERNEL
-#include "GB_callback.h"
-#endif
 
 #ifndef GB_KERNEL_SHARED_DEFINITIONS_H
 #define GB_KERNEL_SHARED_DEFINITIONS_H

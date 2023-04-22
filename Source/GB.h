@@ -58,5 +58,7 @@
 #include "GB_Context.h"
 #include "GB_cuda_gateway.h"
 
+#include "GB_saxpy3task_struct.h"
+#include "GB_callbacks.h"
 #endif
 

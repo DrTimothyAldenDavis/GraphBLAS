@@ -23,7 +23,7 @@ if ( APPLE )
     set ( GB_OBJ_SUFFIX ".o" )
 elseif ( WIN32 )
     # Windows
-    # FIXME: need more here for Windows
+    # FIXME: port to Windows
     set ( GB_OBJ_SUFFIX ".dll" )
 else ( )
     # Linux / Unix
@@ -124,9 +124,9 @@ foreach ( PSRC ${PRE1} )
         list ( APPEND PREPRO "JIT_EM8  (" ${F} ")\n" )
     elseif ( ${F} MATCHES "^GB_jit__emult_bitmap" )
         list ( APPEND PREPRO "JIT_EMB  (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__ewise_full_accum" )
+    elseif ( ${F} MATCHES "^GB_jit__ewise_fulla" )
         list ( APPEND PREPRO "JIT_EWFA (" ${F} ")\n" )
-    elseif ( ${F} MATCHES "^GB_jit__ewise_full_noaccum" )
+    elseif ( ${F} MATCHES "^GB_jit__ewise_fulln" )
         list ( APPEND PREPRO "JIT_EWFN (" ${F} ")\n" )
     elseif ( ${F} MATCHES "^GB_jit__reduce" )
         list ( APPEND PREPRO "JIT_RED  (" ${F} ")\n" )

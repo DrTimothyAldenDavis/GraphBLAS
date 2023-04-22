@@ -16,6 +16,7 @@
 #include "GB_ij.h"
 #include "GB_subassign_IxJ_slice.h"
 #include "GB_unused.h"
+#include "GB_bitmap_scatter.h"
 
 //------------------------------------------------------------------------------
 // prototypes
@@ -348,10 +349,6 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
     const GrB_Type scalar_type, // type of input scalar
     GB_Werk Werk
 ) ;
-
-GB_CALLBACK_BITMAP_M_SCATTER_PROTO (GB_bitmap_M_scatter) ;
-
-GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO (GB_bitmap_M_scatter_whole) ;
 
 void GB_bitmap_assign_to_full   // set all C->b to 1, or free it and make C full
 (

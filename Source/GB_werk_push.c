@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_callback_proto.h"
 #include "GB.h"
 
 // The werkspace is allocated from the Werk static if it small enough and space

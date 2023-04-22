@@ -10,7 +10,6 @@
 #ifndef GB_EK_SLICE_H
 #define GB_EK_SLICE_H
 
-#include "GB_callback_proto.h"
 #include "GB.h"
 
 //------------------------------------------------------------------------------
@@ -26,9 +25,9 @@
 // On input, ntasks must be <= nnz (A), unless nnz (A) is zero.  In that
 // case, ntasks must be 1.
 
-GB_CALLBACK_EK_SLICE_PROTO (GB_ek_slice) ;
-
-GB_CALLBACK_EK_SLICE_MERGE1_PROTO (GB_ek_slice_merge1) ;
+// See GB_callbacks.h:
+// GB_CALLBACK_EK_SLICE_PROTO (GB_ek_slice) ;
+// GB_CALLBACK_EK_SLICE_MERGE1_PROTO (GB_ek_slice_merge1) ;
 
 void GB_ek_slice_merge2     // merge final results for matrix C
 (

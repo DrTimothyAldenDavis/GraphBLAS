@@ -3352,6 +3352,7 @@
 #define GB_add_phase2 GM_add_phase2
 #define GB_add_sparsity GM_add_sparsity
 #define GB_aliased GM_aliased
+#define GB_all_aliased GM_all_aliased
 #define GB_apply GM_apply
 #define GB_apply_bind1st_jit GM_apply_bind1st_jit
 #define GB_apply_bind2nd_jit GM_apply_bind2nd_jit
@@ -3690,6 +3691,12 @@
 #define GB_FC32_pow GM_FC32_pow
 #define GB_FC64_div GM_FC64_div
 #define GB_FC64_pow GM_FC64_pow
+#define GB_file_dlclose GM_file_dlclose
+#define GB_file_dlopen GM_file_dlopen
+#define GB_file_dlsym GM_file_dlsym
+#define GB_file_mkdir GM_file_mkdir
+#define GB_file_open_and_lock GM_file_open_and_lock
+#define GB_file_unlock_and_close GM_file_unlock_and_close
 #define GB_flip_binop GM_flip_binop
 #define GB_free_memory GM_free_memory
 #define GB_frexpe GM_frexpe
@@ -3869,8 +3876,8 @@
 #define GB_jitifyer_init GM_jitifyer_init
 #define GB_jitifyer_insert GM_jitifyer_insert
 #define GB_jitifyer_load GM_jitifyer_load
+#define GB_jitifyer_load_worker GM_jitifyer_load_worker
 #define GB_jitifyer_lookup GM_jitifyer_lookup
-#define GB_jitifyer_mkdir GM_jitifyer_mkdir
 #define GB_jitifyer_query GM_jitifyer_query
 #define GB_jitifyer_set_cache_path GM_jitifyer_set_cache_path
 #define GB_jitifyer_set_cache_path_worker GM_jitifyer_set_cache_path_worker
@@ -4019,13 +4026,7 @@
 #define GB_JITpackage_214 GM_JITpackage_214
 #define GB_JITpackage_215 GM_JITpackage_215
 #define GB_JITpackage_216 GM_JITpackage_216
-#define GB_JITpackage_217 GM_JITpackage_217
-#define GB_JITpackage_218 GM_JITpackage_218
-#define GB_JITpackage_219 GM_JITpackage_219
 #define GB_JITpackage_22 GM_JITpackage_22
-#define GB_JITpackage_220 GM_JITpackage_220
-#define GB_JITpackage_221 GM_JITpackage_221
-#define GB_JITpackage_222 GM_JITpackage_222
 #define GB_JITpackage_23 GM_JITpackage_23
 #define GB_JITpackage_24 GM_JITpackage_24
 #define GB_JITpackage_25 GM_JITpackage_25
@@ -4205,7 +4206,6 @@
 #define GB_macrofy_cast_expression GM_macrofy_cast_expression
 #define GB_macrofy_cast_input GM_macrofy_cast_input
 #define GB_macrofy_cast_output GM_macrofy_cast_output
-#define GB_macrofy_copyright GM_macrofy_copyright
 #define GB_macrofy_defn GM_macrofy_defn
 #define GB_macrofy_ewise GM_macrofy_ewise
 #define GB_macrofy_family GM_macrofy_family
@@ -4217,6 +4217,7 @@
 #define GB_macrofy_name GM_macrofy_name
 #define GB_macrofy_nvals GM_macrofy_nvals
 #define GB_macrofy_output GM_macrofy_output
+#define GB_macrofy_preface GM_macrofy_preface
 #define GB_macrofy_query GM_macrofy_query
 #define GB_macrofy_reduce GM_macrofy_reduce
 #define GB_macrofy_select GM_macrofy_select

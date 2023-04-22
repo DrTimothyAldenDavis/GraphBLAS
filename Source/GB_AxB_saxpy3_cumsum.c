@@ -12,8 +12,7 @@
 // phase3: fine tasks finalize their computation nnz(C(:,j))
 // phase4: cumulative sum of C->p
 
-#include "GB_callback_proto.h"
-#include "GB_AxB_saxpy3.h"
+#include "GB.h"
 #include "GB_unused.h"
 
 GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)

@@ -23,11 +23,12 @@ typedef GB_JIT_KERNEL_USER_TYPE_PROTO ((*GB_user_type_f)) ;
 
 // The hash table is static and shared by all threads of the user application.
 // It is only visible inside this file.  It starts out empty (NULL).  Its size
-// is either zero (at the beginning), or a power of two (of size 1024 or more).
+// is either zero (at the beginning), or a power of two (of size
+// GB_JITIFIER_INITIAL_SIZE or more).
 
 // The strings are used to create filenames and JIT compilation commands.
 
-#define GB_JITIFIER_INITIAL_SIZE 1024
+#define GB_JITIFIER_INITIAL_SIZE (32*1024)
 
 static GB_jit_entry *GB_jit_table = NULL ;
 static int64_t  GB_jit_table_size = 0 ;  // always a power of 2
@@ -70,6 +71,40 @@ static GxB_JIT_Control GB_jit_control =
     GxB_JIT_RUN ;       // JIT disabled at compile time; only PreJIT available.
                         // No JIT kernels can be loaded or compiled.
     #endif
+
+//------------------------------------------------------------------------------
+// check_table: check if the hash table is OK
+//------------------------------------------------------------------------------
+
+#ifdef GB_DEBUG
+static void check_table (void)
+{
+    int64_t populated = 0 ;
+    if (GB_jit_table != NULL)
+    {
+        for (uint64_t k = 0 ; k < GB_jit_table_size ; k++)
+        {
+            GB_jit_entry *e = &(GB_jit_table [k]) ;
+            if (e->dl_function != NULL)
+            {
+                uint64_t hash = e->hash ;
+                uint64_t k2 = (hash & GB_jit_table_bits) ;
+//              printf ("  %4ld table %6ld(%6lu):%4ld "
+//                  "%p %p (%0lx,%d,%d) %0lx (%s)\n",
+//                  populated, k, k2, e->prejit_index, e->dl_function,
+//                  e->dl_handle, e->encoding.code, e->encoding.kcode,
+//                  e->encoding.suffix_len, hash, e->suffix) ;
+                populated++ ;
+            }
+        }
+//      printf ("pop %ld %ld\n", populated, GB_jit_table_populated) ;
+    }
+    ASSERT (populated == GB_jit_table_populated) ;
+}
+#define ASSERT_TABLE_OK check_table ( ) ;
+#else
+#define ASSERT_TABLE_OK
+#endif
 
 //------------------------------------------------------------------------------
 // GB_jitifyer_finalize: free the JIT table and all the strings
@@ -119,14 +154,6 @@ void GB_jitifyer_finalize (bool freeall)
     GB_FREE_STUFF (GB_jit_C_libraries) ;
     GB_FREE_STUFF (GB_jit_C_preface) ;
     GB_FREE_STUFF (GB_jit_temp) ;
-
-    ASSERT (GB_jit_cache_path == NULL) ;
-    ASSERT (GB_jit_C_compiler == NULL) ;
-    ASSERT (GB_jit_C_flags == NULL) ;
-    ASSERT (GB_jit_C_link_flags == NULL) ;
-    ASSERT (GB_jit_C_libraries == NULL) ;
-    ASSERT (GB_jit_C_preface == NULL) ;
-    ASSERT (GB_jit_temp == NULL) ;
 }
 
 //------------------------------------------------------------------------------
@@ -181,8 +208,7 @@ GrB_Info GB_jitifyer_init (void)
             // found home; create the cache path
             size_t len = strlen (home) + 60 ;
             GB_MALLOC_STUFF (GB_jit_cache_path, len) ;
-            snprintf (GB_jit_cache_path,
-                GB_jit_cache_path_allocated,
+            snprintf (GB_jit_cache_path, GB_jit_cache_path_allocated,
                 "%s/%sSuiteSparse/GraphBLAS/%d.%d.%d", home, dot,
                 GxB_IMPLEMENTATION_MAJOR,
                 GxB_IMPLEMENTATION_MINOR,
@@ -261,6 +287,7 @@ GrB_Info GB_jitifyer_init (void)
         // get the name and function pointer of the PreJIT kernel
         //----------------------------------------------------------------------
 
+        // printf ("k %d :\n", k) ;
         void *dl_function = Kernels [k] ;
         GB_jit_query_func dl_query = (GB_jit_query_func) Queries [k] ;
         if (dl_function == NULL || dl_query == NULL || Names [k] == NULL)
@@ -271,6 +298,7 @@ GrB_Info GB_jitifyer_init (void)
         char kernel_name [GB_KLEN+1] ;
         strncpy (kernel_name, Names [k], GB_KLEN) ;
         kernel_name [GB_KLEN] = '\0' ;
+        // printf ("   %p %p %s\n", dl_function, dl_query, kernel_name) ;
 
         //----------------------------------------------------------------------
         // parse the kernel name
@@ -282,6 +310,8 @@ GrB_Info GB_jitifyer_init (void)
         char *suffix = NULL ;
         GrB_Info info = GB_demacrofy_name (kernel_name, &name_space, &kname,
             &scode, &suffix) ;
+        // printf ("   (%s,%s,%s) code %0lx\n",
+        //  name_space, kname, suffix, scode) ;
 
         if (info != GrB_SUCCESS || !GB_STRING_MATCH (name_space, "GB_jit"))
         { 
@@ -354,6 +384,7 @@ GrB_Info GB_jitifyer_init (void)
         encoding->kcode = c ;
         encoding->code = scode ;
         encoding->suffix_len = (suffix == NULL) ? 0 : strlen (suffix) ;
+        // printf ("   %d %d\n", c, encoding->suffix_len) ;
 
         //----------------------------------------------------------------------
         // get the hash of this PreJIT kernel
@@ -372,6 +403,7 @@ GrB_Info GB_jitifyer_init (void)
         char *ignored [5] ;
         int version [3] ;
         (void) dl_query (&hash, version, ignored, NULL, NULL, 0, 0) ;
+        // printf ("   hash %0lx\n", hash) ;
 
         if (hash == 0 || hash == UINT64_MAX ||
             (version [0] != GxB_IMPLEMENTATION_MAJOR) ||
@@ -390,6 +422,7 @@ GrB_Info GB_jitifyer_init (void)
         if (GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) != NULL)
         { 
             // the kernel is a duplicate; ignore it
+            // printf ("   duplicate\n") ;
             continue ;
         }
 
@@ -397,6 +430,7 @@ GrB_Info GB_jitifyer_init (void)
         // insert the PreJIT kernel in the hash table
         //----------------------------------------------------------------------
 
+        // printf ("   insert:\n") ;
         if (!GB_jitifyer_insert (hash, encoding, suffix, NULL, dl_function, k))
         { 
             // out of memory
@@ -433,10 +467,26 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
 
     bool ok = GB_file_mkdir (GB_jit_cache_path) ;
 
-    // construct the lock path
+    // construct the c path and its 256 subfolders
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c", GB_jit_cache_path) ;
+    ok = ok && GB_file_mkdir (GB_jit_temp) ;
+    for (uint32_t bucket = 0 ; bucket <= 0xFF ; bucket++)
+    {
+        snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x",
+            GB_jit_cache_path, bucket) ;
+        ok = ok && GB_file_mkdir (GB_jit_temp) ;
+    }
+
+    // construct the lock path and its 256 subfolders
     snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lock",
         GB_jit_cache_path) ;
     ok = ok && GB_file_mkdir (GB_jit_temp) ;
+    for (uint32_t bucket = 0 ; bucket <= 0xFF ; bucket++)
+    {
+        snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lock/%02x",
+            GB_jit_cache_path, bucket) ;
+        ok = ok && GB_file_mkdir (GB_jit_temp) ;
+    }
 
     // construct the src path
     snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/src", GB_jit_cache_path) ;
@@ -474,10 +524,10 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     #ifndef NJIT
 
     //--------------------------------------------------------------------------
-    // lock the lock/GB_src_lock file
+    // lock the lock/00/src_lock file
     //--------------------------------------------------------------------------
 
-    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lock/GB_src_lock",
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lock/00/src_lock",
         GB_jit_cache_path) ;
     FILE *fp_lock = NULL ;
     int fd_lock = -1 ;
@@ -501,6 +551,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
         int v1 = -1, v2 = -1, v3 = -1 ;
         int r = fscanf (fp_graphblas, "// SuiteSparse:GraphBLAS %d.%d.%d",
             &v1, &v2, &v3) ;
+        fclose (fp_graphblas) ;
         if (r == 3 &&
             v1 == GxB_IMPLEMENTATION_MAJOR &&
             v2 == GxB_IMPLEMENTATION_MINOR &&
@@ -537,7 +588,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     }
 
     //--------------------------------------------------------------------------
-    // uncompress each file
+    // uncompress each file into the src folder
     //--------------------------------------------------------------------------
 
     bool ok = true ;
@@ -1413,8 +1464,9 @@ GrB_Info GB_jitifyer_worker
     // lock the kernel
     //--------------------------------------------------------------------------
 
-    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lock/%s_lock",
-        GB_jit_cache_path, kernel_name) ;
+    uint32_t bucket = hash & 0xFF ;
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lock/%02x/%s_lock",
+        GB_jit_cache_path, bucket, kernel_name) ;
     FILE *fp_klock = NULL ;
     int fd_klock = -1 ;
     if (GB_file_open_and_lock (GB_jit_temp, &fp_klock, &fd_klock) < 0)
@@ -1447,7 +1499,7 @@ GrB_Info GB_jitifyer_worker
 //------------------------------------------------------------------------------
 
 // This work is done inside a critical section for this process, and inside a
-// file lock/unlock section (fp_lock) to guard against access from other
+// file lock/unlock section (fp_klock) to guard against access from other
 // processes.
 
 GrB_Info GB_jitifyer_load_worker
@@ -1479,8 +1531,9 @@ GrB_Info GB_jitifyer_load_worker
     // try to load the lib*.so from the user's library folder
     //--------------------------------------------------------------------------
 
-    snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        "%s/lib%s%s", GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX) ;
+    uint32_t bucket = hash & 0xFF ;
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/lib%s%s",
+        GB_jit_cache_path, bucket, kernel_name, GB_LIB_SUFFIX) ;
     void *dl_handle = GB_file_dlopen (GB_jit_temp) ;
 
     //--------------------------------------------------------------------------
@@ -1557,8 +1610,8 @@ GrB_Info GB_jitifyer_load_worker
         GBURBLE ("(jit: compile and load) ") ;
 
         // create (or recreate) the kernel source, compile it, and load it
-        snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/%s.c",
-            GB_jit_cache_path, kernel_name) ;
+        snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/%s.c",
+            GB_jit_cache_path, bucket, kernel_name) ;
         FILE *fp = fopen (GB_jit_temp, "w") ;
         if (fp != NULL)
         {
@@ -1580,10 +1633,10 @@ GrB_Info GB_jitifyer_load_worker
                 type3, hash) ;
             fclose (fp) ;
             // compile the kernel to get the lib*.so file
-            GB_jitifyer_compile (kernel_name) ;
+            GB_jitifyer_compile (kernel_name, bucket) ;
             // load the kernel from the lib*.so file
-            snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lib%s%s",
-                GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX) ;
+            snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/lib%s%s",
+                GB_jit_cache_path, bucket, kernel_name, GB_LIB_SUFFIX) ;
             dl_handle = GB_file_dlopen (GB_jit_temp) ;
         }
 
@@ -1666,7 +1719,7 @@ void *GB_jitifyer_lookup    // return dl_function pointer, or NULL if not found
     bool builtin = (bool) (suffix_len == 0) ;
 
     // look up the entry in the hash table
-    for (int64_t k = hash ; ; k++)
+    for (uint64_t k = hash ; ; k++)
     {
         k = k & GB_jit_table_bits ;
         GB_jit_entry *e = &(GB_jit_table [k]) ;
@@ -1711,6 +1764,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 {
 
     size_t siz = 0 ;
+    ASSERT_TABLE_OK ;
 
     //--------------------------------------------------------------------------
     // ensure the hash table is large enough
@@ -1743,12 +1797,14 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         // expand the existing hash table by a factor of 4 and rehash
         //----------------------------------------------------------------------
 
+        // printf ("rehash\n") ;
+        ASSERT_TABLE_OK ;
         // create a new table that is four times the size
         int64_t new_size = 4 * GB_jit_table_size ;
         int64_t new_bits = new_size - 1 ;
         siz = new_size * sizeof (struct GB_jit_entry_struct) ;
         GB_jit_entry *new_table = GB_Global_persistent_malloc (siz) ;
-        if (GB_jit_table == NULL)
+        if (new_table == NULL)
         { 
             // out of memory; leave the existing table as-is
             return (false) ;
@@ -1756,13 +1812,23 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 
         // rehash into the new table
         memset (new_table, 0, siz) ;
-        for (int64_t k = 0 ; k < GB_jit_table_size ; k++)
+        for (uint64_t k = 0 ; k < GB_jit_table_size ; k++)
         {
             if (GB_jit_table [k].dl_function != NULL)
             { 
                 // rehash the entry to the larger hash table
                 uint64_t hash = GB_jit_table [k].hash ;
-                new_table [hash & new_bits] = GB_jit_table [k] ;
+                for (uint64_t knew = hash ; ; knew++)
+                {
+                    knew = knew & new_bits ;
+                    GB_jit_entry *e = &(new_table [knew]) ;
+                    if (e->dl_function == NULL)
+                    {
+                        // found an empty slot in the new table
+                        new_table [knew] = GB_jit_table [k] ;
+                        break ;
+                    }
+                }
             }
         }
 
@@ -1774,6 +1840,8 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         GB_jit_table_size = new_size ;
         GB_jit_table_bits = new_bits ;
         GB_jit_table_allocated = siz ;
+        // printf ("rehashed\n") ;
+        ASSERT_TABLE_OK ;
     }
 
     //--------------------------------------------------------------------------
@@ -1782,8 +1850,9 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 
     uint32_t suffix_len = encoding->suffix_len ;
     bool builtin = (bool) (suffix_len == 0) ;
+    ASSERT_TABLE_OK ;
 
-    for (int64_t k = hash ; ; k++)
+    for (uint64_t k = hash ; ; k++)
     {
         k = k & GB_jit_table_bits ;
         GB_jit_entry *e = &(GB_jit_table [k]) ;
@@ -1806,8 +1875,9 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
             memcpy (&(e->encoding), encoding, sizeof (GB_jit_encoding)) ;
             e->dl_handle = dl_handle ;              // NULL for PreJIT
             e->dl_function = dl_function ;
-            e->prejit_index = prejit_index ;        // -1 for JIT kernels
             GB_jit_table_populated++ ;
+            e->prejit_index = prejit_index ;        // -1 for JIT kernels
+            ASSERT_TABLE_OK ;
             return (true) ;
         }
         // otherwise, keep looking
@@ -1821,6 +1891,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
 void GB_jitifyer_entry_free (GB_jit_entry *e)
 {
     e->dl_function = NULL ;
+    GB_jit_table_populated-- ;
     GB_Global_persistent_free ((void **) (&(e->suffix))) ;
     // unload the dl library
     if (e->dl_handle != NULL)
@@ -1828,7 +1899,7 @@ void GB_jitifyer_entry_free (GB_jit_entry *e)
         GB_file_dlclose (e->dl_handle) ;
         e->dl_handle = NULL ;
     }
-    GB_jit_table_populated-- ;
+    ASSERT_TABLE_OK ;
 }
 
 //------------------------------------------------------------------------------
@@ -1850,7 +1921,7 @@ void GB_jitifyer_table_free (bool freeall)
 { 
     if (GB_jit_table != NULL)
     {
-        for (int64_t k = 0 ; k < GB_jit_table_size ; k++)
+        for (uint64_t k = 0 ; k < GB_jit_table_size ; k++)
         {
             GB_jit_entry *e = &(GB_jit_table [k]) ;
             if (e->dl_function != NULL)
@@ -1872,6 +1943,10 @@ void GB_jitifyer_table_free (bool freeall)
         }
     }
 
+    // printf ("JIT populated %ld freeall %d\n",
+    //  GB_jit_table_populated, freeall) ;
+    ASSERT (GB_IMPLIES (freeall, GB_jit_table_populated == 0)) ;
+
     if (GB_jit_table_populated == 0)
     { 
         // the JIT table is now empty, so free it
@@ -1890,10 +1965,7 @@ void GB_jitifyer_table_free (bool freeall)
 
 #ifndef NJIT
 
-// If the runtime JIT is disabled, no new JIT kernels may be compiled at run
-// time.  The PreJIT may still be used.
-
-void GB_jitifyer_compile (char *kernel_name)
+void GB_jitifyer_compile (char *kernel_name, uint32_t bucket)
 { 
 
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
@@ -1903,15 +1975,15 @@ void GB_jitifyer_compile (char *kernel_name)
     "%s "                           // C flags
     "-I%s/src "                     // include source directory
     "%s "                           // openmp include directories
-    "-o %s/%s%s "                   // *.o output file
-    "-c %s/%s.c ; "                 // *.c input file
+    "-o %s/c/%02x/%s%s "            // *.o output file
+    "-c %s/c/%02x/%s.c ; "          // *.c input file
 
     // link:
     "%s "                           // C compiler
     "%s "                           // C flags
     "%s "                           // C link flags
-    "-o %s/lib%s%s "                // lib*.so output file
-    "%s/%s%s "                      // *.o input file
+    "-o %s/c/%02x/lib%s%s "         // lib*.so output file
+    "%s/c/%02x/%s%s "               // *.o input file
     "%s "                           // libraries to link with
     ,
 
@@ -1920,16 +1992,15 @@ void GB_jitifyer_compile (char *kernel_name)
     GB_jit_C_flags,                 // C flags
     GB_jit_cache_path,              // include source directory (cache/src)
     GB_OMP_INC,                     // openmp include
-    GB_jit_cache_path, kernel_name,
-    GB_OBJ_SUFFIX,                  // *.o output file
-    GB_jit_cache_path, kernel_name, // *.c input file
+    GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o output file
+    GB_jit_cache_path, bucket, kernel_name,                 // *.c input file
 
     // link:
     GB_jit_C_compiler,              // C compiler
     GB_jit_C_flags,                 // C flags
     GB_jit_C_link_flags,            // C link flags
-    GB_jit_cache_path, kernel_name, GB_LIB_SUFFIX,  // lib*.so output file
-    GB_jit_cache_path, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
+    GB_jit_cache_path, bucket, kernel_name, GB_LIB_SUFFIX,  // lib*.so file
+    GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
     GB_jit_C_libraries) ;           // libraries to link with
 
     GBURBLE ("(jit: compile: %s) ", GB_jit_temp) ;

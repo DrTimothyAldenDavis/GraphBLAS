@@ -15,7 +15,6 @@
 #ifndef GB_SORT_H
 #define GB_SORT_H
 
-#include "GB_callback_proto.h"
 #include "GB.h"
 
 #define GB_BASECASE (64 * 1024)
@@ -63,7 +62,8 @@ void GB_qsort_1b_size16 // GB_qsort_1b with A_1 with sizeof = 16
     const int64_t n
 ) ;
 
-GB_CALLBACK_QSORT_1_PROTO (GB_qsort_1) ; 
+// See GB_callbacks.h:
+// GB_CALLBACK_QSORT_1_PROTO (GB_qsort_1) ; 
 
 void GB_qsort_2     // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 (

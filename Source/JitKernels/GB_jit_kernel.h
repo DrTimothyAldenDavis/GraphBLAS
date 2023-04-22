@@ -9,9 +9,17 @@
 
 // This file is #include'd into all JIT kernels on the CPU.
 
+#ifndef GB_JIT_KERNEL_H
+#define GB_JIT_KERNEL_H
+
 #define GB_JIT_KERNEL
 #include "GB_Template.h"
 #include "GB_jit_kernel_proto.h"
+
+#ifndef GB_JIT_RUNTIME
+// for PreJIT kernels
+#include "GB_callbacks.h"
+#endif
 
 // these macros are redefined by the JIT kernels to specialize them for each
 // specific matrix format.
@@ -54,4 +62,6 @@
 
 #undef GB_M_TYPE
 #undef GB_MCAST
+
+#endif
 
