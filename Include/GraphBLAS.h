@@ -238,7 +238,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "(DRAFT8) Apr 22, 2023"
+#define GxB_IMPLEMENTATION_DATE "(DRAFT9) Apr 24, 2023"
 #define GxB_IMPLEMENTATION_MAJOR 8
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -4073,7 +4073,9 @@ typedef enum            // for global options or matrix options
     GxB_JIT_C_PREFACE = 114,        // CPU JIT C preface
     GxB_JIT_C_CONTROL = 115,        // CPU JIT C control
     GxB_JIT_CACHE_PATH = 116,       // CPU/CUDA JIT path for compiled kernels
-//  GxB_JIT_CUDA_CONTROL = 117,     // CUDA JIT control (future)
+    GxB_JIT_C_CMAKE_LIBS = 117,     // CPU JIT C libraries when using cmake
+    GxB_JIT_USE_CMAKE = 118,        // CPU JIT: use cmake or direct compile
+//  GxB_JIT_CUDA_CONTROL = 119,     // CUDA JIT control (future)
 
     //------------------------------------------------------------
     // for GxB_Matrix_Option_get only:

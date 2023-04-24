@@ -533,6 +533,9 @@ int main (void)
     printf ("JIT: paused\n") ;
     TRY (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_PAUSE)) ;
 
+    // try using cmake instead
+    TRY (GxB_set (GxB_JIT_USE_CMAKE, true)) ;
+
     // C += ciso
     printgauss (C, "\n=============== C: \n") ;
     TRY (GrB_Matrix_assign_UDT (C, NULL, AddGauss, (void *) &ciso,

@@ -10,6 +10,8 @@
 #ifndef GB_FILE_H
 #define GB_FILE_H
 
+#define GB_WINDOWS (defined (_WIN64) || defined (_WIN32))
+
 bool GB_file_open_and_lock  // true if successful, false on error
 (
     // input
@@ -33,6 +35,8 @@ void *GB_file_dlopen (char *library_name) ;
 void *GB_file_dlsym (void *dl_handle, char *symbol) ;
 
 void GB_file_dlclose (void *dl_handle) ;
+
+void GB_command (char *command) ;
 
 #endif
 

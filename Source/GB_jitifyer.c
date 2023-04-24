@@ -36,6 +36,13 @@ static uint64_t GB_jit_table_bits = 0 ;  // hash mask (0xFFFF if size is 2^16)
 static int64_t  GB_jit_table_populated = 0 ;
 static size_t   GB_jit_table_allocated = 0 ;
 
+static bool GB_jit_use_cmake =
+    #if GB_WINDOWS
+    true ;      // Windows requires cmake
+    #else
+    false ;     // otherwise, default is to skip cmake and compile directly
+    #endif
+
 // path to user cache folder:
 static char    *GB_jit_cache_path = NULL ;
 static size_t   GB_jit_cache_path_allocated = 0 ;
@@ -52,9 +59,13 @@ static size_t   GB_jit_C_flags_allocated = 0 ;
 static char    *GB_jit_C_link_flags = NULL ;
 static size_t   GB_jit_C_link_flags_allocated = 0 ;
 
-// libraries to link against:
+// libraries to link against when using the direct compile/link:
 static char    *GB_jit_C_libraries = NULL ;
 static size_t   GB_jit_C_libraries_allocated = 0 ;
+
+// libraries to link against when using cmake: 
+static char    *GB_jit_C_cmake_libs = NULL ;
+static size_t   GB_jit_C_cmake_libs_allocated = 0 ;
 
 // preface to add to each JIT kernel:
 static char    *GB_jit_C_preface = NULL ;
@@ -152,6 +163,7 @@ void GB_jitifyer_finalize (bool freeall)
     GB_FREE_STUFF (GB_jit_C_flags) ;
     GB_FREE_STUFF (GB_jit_C_link_flags) ;
     GB_FREE_STUFF (GB_jit_C_libraries) ;
+    GB_FREE_STUFF (GB_jit_C_cmake_libs) ;
     GB_FREE_STUFF (GB_jit_C_preface) ;
     GB_FREE_STUFF (GB_jit_temp) ;
 }
@@ -235,6 +247,7 @@ GrB_Info GB_jitifyer_init (void)
     GB_COPY_STUFF (GB_jit_C_flags,      GB_C_FLAGS) ;
     GB_COPY_STUFF (GB_jit_C_link_flags, GB_C_LINK_FLAGS) ;
     GB_COPY_STUFF (GB_jit_C_libraries,  GB_C_LIBRARIES) ;
+    GB_COPY_STUFF (GB_jit_C_cmake_libs, GB_CMAKE_LIBRARIES) ;
     GB_COPY_STUFF (GB_jit_C_preface,    "") ;
     OK (GB_jitifyer_alloc_space ( )) ;
 
@@ -447,6 +460,24 @@ GrB_Info GB_jitifyer_init (void)
 }
 
 //------------------------------------------------------------------------------
+// GB_jitifyer_path_256: establish a folder and its 256 subfolders
+//------------------------------------------------------------------------------
+
+bool GB_jitifyer_path_256 (char *folder)
+{
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/%s",
+        GB_jit_cache_path, folder) ;
+    bool ok = GB_file_mkdir (GB_jit_temp) ;
+    for (uint32_t bucket = 0 ; bucket <= 0xFF ; bucket++)
+    {
+        snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/%s/%02x",
+            GB_jit_cache_path, folder, bucket) ;
+        ok = ok && GB_file_mkdir (GB_jit_temp) ;
+    }
+    return (ok) ;
+}
+
+//------------------------------------------------------------------------------
 // GB_jitifyer_establish_paths: make sure cache and src paths exist
 //------------------------------------------------------------------------------
 
@@ -467,29 +498,17 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
 
     bool ok = GB_file_mkdir (GB_jit_cache_path) ;
 
-    // construct the c path and its 256 subfolders
-    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c", GB_jit_cache_path) ;
-    ok = ok && GB_file_mkdir (GB_jit_temp) ;
-    for (uint32_t bucket = 0 ; bucket <= 0xFF ; bucket++)
-    {
-        snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x",
-            GB_jit_cache_path, bucket) ;
-        ok = ok && GB_file_mkdir (GB_jit_temp) ;
-    }
-
-    // construct the lock path and its 256 subfolders
-    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lock",
-        GB_jit_cache_path) ;
-    ok = ok && GB_file_mkdir (GB_jit_temp) ;
-    for (uint32_t bucket = 0 ; bucket <= 0xFF ; bucket++)
-    {
-        snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lock/%02x",
-            GB_jit_cache_path, bucket) ;
-        ok = ok && GB_file_mkdir (GB_jit_temp) ;
-    }
+    // construct the c, lib, and lock paths and their 256 subfolders
+    ok = ok && GB_jitifyer_path_256 ("c") ;
+    ok = ok && GB_jitifyer_path_256 ("lib") ;
+    ok = ok && GB_jitifyer_path_256 ("lock") ;
 
     // construct the src path
     snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/src", GB_jit_cache_path) ;
+    ok = ok && GB_file_mkdir (GB_jit_temp) ;
+
+    // construct the temp path
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/temp", GB_jit_cache_path) ;
     ok = ok && GB_file_mkdir (GB_jit_temp) ;
 
     //--------------------------------------------------------------------------
@@ -707,6 +726,7 @@ GrB_Info GB_jitifyer_alloc_space (void)
     if (GB_jit_C_flags == NULL ||
         GB_jit_C_link_flags == NULL ||
         GB_jit_C_libraries == NULL ||
+        GB_jit_C_cmake_libs == NULL ||
         GB_jit_C_compiler == NULL ||
         GB_jit_cache_path == NULL)
     { 
@@ -725,6 +745,7 @@ GrB_Info GB_jitifyer_alloc_space (void)
         strlen (GB_OMP_INC) +
         5 * GB_jit_cache_path_allocated + 7 * GB_KLEN +
         GB_jit_C_libraries_allocated +
+        GB_jit_C_cmake_libs_allocated +
         300 ;
     GB_MALLOC_STUFF (GB_jit_temp, len) ;
 
@@ -1019,6 +1040,95 @@ GrB_Info GB_jitifyer_set_C_libraries_worker (const char *new_C_libraries)
     // allocate workspace
     return (GB_jitifyer_alloc_space ( )) ;
 }
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_get_use_cmake: return true/false if cmake is in use
+//------------------------------------------------------------------------------
+
+bool GB_jitifyer_get_use_cmake (void)
+{
+    bool use_cmake ;
+    #pragma omp critical (GB_jitifyer_worker)
+    { 
+        use_cmake = GB_jit_use_cmake ;
+    }
+    return (use_cmake) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_use_cmake: set controls true/false to use cmake
+//------------------------------------------------------------------------------
+
+void GB_jitifyer_set_use_cmake (bool use_cmake)
+{
+    #pragma omp critical (GB_jitifyer_worker)
+    { 
+        #if GB_WINDOWS
+        // Windows requires cmake
+        GB_jit_use_cmake = true ;
+        #else
+        // all other platforms have the option to use cmake or a direct compile
+        GB_jit_use_cmake = use_cmake ;
+        #endif
+    }
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_get_C_cmake_libs: return the current C libraries
+//------------------------------------------------------------------------------
+
+const char *GB_jitifyer_get_C_cmake_libs (void)
+{
+    const char *s ;
+    #pragma omp critical (GB_jitifyer_worker)
+    { 
+        s = GB_jit_C_cmake_libs ;
+    }
+    return (s) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_C_cmake_libs: set new C libraries
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_set_C_cmake_libs (const char *new_cmake_libs)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    if (new_cmake_libs == NULL)
+    { 
+        return (GrB_NULL_POINTER) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // set the C libraries in a critical section
+    //--------------------------------------------------------------------------
+
+    GrB_Info info ;
+    #pragma omp critical (GB_jitifyer_worker)
+    { 
+        info = GB_jitifyer_set_C_cmake_libs (new_cmake_libs) ;
+    }
+    return (info) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_C_cmake_libs: set cmake libs in a critical section
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_set_C_cmake_libs_worker (const char *new_cmake_libs)
+{ 
+    // free the old C libraries string
+    GB_FREE_STUFF (GB_jit_C_cmake_libs) ;
+    // allocate the new GB_jit_C_cmake_libs
+    GB_COPY_STUFF (GB_jit_C_cmake_libs, new_cmake_libs) ;
+    // allocate workspace
+    return (GB_jitifyer_alloc_space ( )) ;
+}
+
 
 //------------------------------------------------------------------------------
 // GB_jitifyer_get_C_preface: return the current C libraries
@@ -1531,11 +1641,9 @@ GrB_Info GB_jitifyer_load_worker
     // try to load the lib*.so from the user's library folder
     //--------------------------------------------------------------------------
 
-    // FIXME: use GB_LIB_PREFIX instead of lib,
-    // from CMAKE_SHARED_LIBRARY_PREFIX
     uint32_t bucket = hash & 0xFF ;
-    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/lib%s%s",
-        GB_jit_cache_path, bucket, kernel_name, GB_LIB_SUFFIX) ;
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lib/%02x/%s%s%s",
+        GB_jit_cache_path, bucket, GB_LIB_PREFIX, kernel_name, GB_LIB_SUFFIX) ;
     void *dl_handle = GB_file_dlopen (GB_jit_temp) ;
 
     //--------------------------------------------------------------------------
@@ -1635,11 +1743,20 @@ GrB_Info GB_jitifyer_load_worker
                 type3, hash) ;
             fclose (fp) ;
             // compile the kernel to get the lib*.so file
-            GB_jitifyer_compile (kernel_name, bucket) ;
+            if (GB_jit_use_cmake)
+            {
+                // use cmake to compile the kernel
+                GB_jitifyer_cmake_compile (kernel_name, bucket) ;
+            }
+            else
+            {
+                // use the compiler to directly compile the kernel
+                GB_jitifyer_direct_compile (kernel_name, bucket) ;
+            }
             // load the kernel from the lib*.so file
-            // FIXME: use GB_LIB_PREFIX instead of lib
-            snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/lib%s%s",
-                GB_jit_cache_path, bucket, kernel_name, GB_LIB_SUFFIX) ;
+            snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lib/%02x/%s%s%s",
+                GB_jit_cache_path, bucket, GB_LIB_PREFIX, kernel_name,
+                GB_LIB_SUFFIX) ;
             dl_handle = GB_file_dlopen (GB_jit_temp) ;
         }
 
@@ -1691,6 +1808,9 @@ GrB_Info GB_jitifyer_load_worker
     }
 
     return (GrB_SUCCESS) ;
+    #else
+    (*dl_function) = NULL ;
+    return (GrB_INVALID_VALUE) ;
     #endif
 }
 
@@ -1960,82 +2080,95 @@ void GB_jitifyer_table_free (bool freeall)
 }
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_compile: compile a kernel
+// GB_jitifyer_cmake_compile: compile a kernel with cmake
 //------------------------------------------------------------------------------
+
+// This method works on any platform.
 
 // This method does not return any result.  If the compilation fails for any
 // reason, the subsequent load of the compiled kernel will fail.
 
+#define GB_BLD_DIR "%s/temp/%s"
+
+void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
+{ 
 #ifndef NJIT
 
-void GB_jitifyer_compile (char *kernel_name, uint32_t bucket)
-{ 
+    GBURBLE ("(jit: %s)\n", "cmake") ;
 
-#if 1
-    // remove any prior build folder and all its contents
+    // remove any prior build folder for this kernel, and all its contents
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        "cmake -E remove_directory "
-        "\"%s/c/%02x/%s_build\" ",
-        GB_jit_cache_path, bucket, kernel_name) ;   // build path
-    (void) system (GB_jit_temp) ;
+        "cmake -E remove_directory \"" GB_BLD_DIR "\"",
+        GB_jit_cache_path, kernel_name) ;   // build path
+    GB_command (GB_jit_temp) ;
 
-    // create the build folder
-    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/%s_build",
-        GB_jit_cache_path, bucket, kernel_name) ;
+    // create the build folder for this kernel
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, GB_BLD_DIR,
+        GB_jit_cache_path, kernel_name) ;
     if (!GB_file_mkdir (GB_jit_temp)) return ;
 
-    // create the CMakeLists.txt file in the build folder
-    snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        "%s/c/%02x/%s_build/CMakeLists.txt",
-        GB_jit_cache_path, bucket, kernel_name) ;
+    // create the CMakeLists.txt file in the build folder for this kernel
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, GB_BLD_DIR "/CMakeLists.txt",
+        GB_jit_cache_path, kernel_name) ;
     FILE *fp = fopen (GB_jit_temp, "w") ;
     if (fp == NULL) return ;
     fprintf (fp,
         "cmake_minimum_required ( VERSION 3.13 )\n"
         "set ( CMAKE_BUILD_TYPE \"Release\" )\n"
-        "set ( CMAKE_LIBRARY_OUTPUT_DIRECTORY \"%s/c/%02x\" )\n"
+        "set ( CMAKE_LIBRARY_OUTPUT_DIRECTORY \"%s/lib/%02x\" )\n"
         "project ( %s C )\n"
-        "include_directories ( \"%s/src\" )\n"
+        "include_directories ( \"%s/src\"%s)\n"
         "add_compile_definitions ( GB_JIT_RUNTIME )\n"
         "set ( CMAKE_C_FLAGS \"%s\" )\n"
         "add_library ( %s SHARED \"%s/c/%02x/%s.c\" )\n"
         "target_link_libraries ( %s PUBLIC %s )\n",
-        GB_jit_cache_path, bucket,  // library output dir: cache/c/bucket
+        GB_jit_cache_path, bucket,  // library output dir: cache/lib/bucket
         kernel_name,                // project name
         GB_jit_cache_path,          // include directories: cache/src
+        ((strlen (GB_OMP_INC_DIRS) == 0) ? " " : " \"" GB_OMP_INC_DIRS "\" "),
         GB_jit_C_flags,             // C flags
         kernel_name,                // target name for add_library command
         GB_jit_cache_path, bucket, kernel_name, // source file for add_library
         kernel_name,                // target name of the library
-        GB_jit_C_libraries) ;       // libraries to link against
+        GB_jit_C_cmake_libs) ;   // libraries to link against
     fclose (fp) ;
 
-    // generate the build system
+    // generate the build system for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        "cmake "
-        "-S \"%s/c/%02x/%s_build\" "
-        "-B \"%s/c/%02x/%s_build\" "
-        "-DCMAKE_C_COMPILER=\"%s\" ",
-        GB_jit_cache_path, bucket, kernel_name,     // -S source path
-        GB_jit_cache_path, bucket, kernel_name,     // -B build path
+        "cmake -S \"" GB_BLD_DIR "\" -B \"" GB_BLD_DIR "\""
+        " -DCMAKE_C_COMPILER=\"%s\" ",
+        GB_jit_cache_path, kernel_name,     // -S source path
+        GB_jit_cache_path, kernel_name,     // -B build path
         GB_jit_C_compiler) ;                        // C compiler to use
-    (void) system (GB_jit_temp) ;
+    GB_command (GB_jit_temp) ;
 
-    // compile the library
+    // compile the library for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        "cmake --build "
-        "\"%s/c/%02x/%s_build\" ",
-        GB_jit_cache_path, bucket, kernel_name) ;   // build path
-    (void) system (GB_jit_temp) ;
+        "cmake --build \"" GB_BLD_DIR "\"",
+        GB_jit_cache_path, kernel_name) ;   // build path
+    GB_command (GB_jit_temp) ;
 
     // remove the build folder and all its contents
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        "cmake -E remove_directory "
-        "\"%s/c/%02x/%s_build\" ",
-        GB_jit_cache_path, bucket, kernel_name) ;   // build path
-    (void) system (GB_jit_temp) ;
+        "cmake -E remove_directory \"" GB_BLD_DIR "\"",
+        GB_jit_cache_path, kernel_name) ;   // build path
+    GB_command (GB_jit_temp) ;
 
-#else
+#endif
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_direct_compile: compile a kernel with just the compiler
+//------------------------------------------------------------------------------
+
+// This method does not return any result.  If the compilation fails for any
+// reason, the subsequent load of the compiled kernel will fail.
+
+// This method does not work on Windows. 
+
+void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
+{
+#ifndef NJIT
 
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
 
@@ -2051,10 +2184,9 @@ void GB_jitifyer_compile (char *kernel_name, uint32_t bucket)
     "%s "                           // C compiler
     "%s "                           // C flags
     "%s "                           // C link flags
-    "-o %s/c/%02x/lib%s%s "         // lib*.so output file
+    "-o %s/lib/%02x/%s%s%s "        // lib*.so output file
     "%s/c/%02x/%s%s "               // *.o input file
-    "%s "                           // libraries to link with
-    ,
+    "%s ",                          // libraries to link with
 
     // compile:
     GB_jit_C_compiler,              // C compiler
@@ -2068,20 +2200,23 @@ void GB_jitifyer_compile (char *kernel_name, uint32_t bucket)
     GB_jit_C_compiler,              // C compiler
     GB_jit_C_flags,                 // C flags
     GB_jit_C_link_flags,            // C link flags
-    GB_jit_cache_path, bucket, kernel_name, GB_LIB_SUFFIX,  // lib*.so file
+    GB_jit_cache_path, bucket,  
+    GB_LIB_PREFIX, kernel_name, GB_LIB_SUFFIX,              // lib*.so file
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
     GB_jit_C_libraries) ;           // libraries to link with
 
-    GBURBLE ("(jit: compile: %s) ", GB_jit_temp) ;
-
     // compile the library and return result
-    int result = system (GB_jit_temp) ;
-    GBURBLE ("(jit: compile result: %d) ", result) ;
-#endif
+    // int result = system (GB_jit_temp) ;
+    GBURBLE ("(jit: %s) ", GB_jit_temp) ;
+    GB_command (GB_jit_temp) ;
 
+    // remove the *.o file
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/%s%s",
+        GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX) ;
+    remove (GB_jit_temp) ;
+
+#endif
 }
-
-#endif
 
 //------------------------------------------------------------------------------
 // GB_jitifyer_hash:  compute the hash

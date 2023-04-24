@@ -21,9 +21,9 @@
     #include <sys/stat.h>
     #include <errno.h>
 
-    #if GB_COMPILER_MSC
+    #if GB_WINDOWS
 
-        // MS Visual Studio
+        // Windows
         #include <io.h>
         #include <direct.h>
         #include <windows.h>
@@ -41,6 +41,7 @@
         // POSIX
         #include <unistd.h>
         #include <dlfcn.h>
+        #include <sys/wait.h>
         #define GB_OPEN         open
         #define GB_CLOSE        close
         #define GB_FDOPEN       fdopen
@@ -64,7 +65,7 @@ static bool GB_file_lock (FILE *fp, int fd)
 {
     #ifndef NJIT
     int result = 0 ;
-    #if GB_COMPILER_MSC
+    #if GB_WINDOWS
     // lock file for Windows
     _lock_file (fp) ;
     #else
@@ -94,7 +95,7 @@ static bool GB_file_unlock (FILE *fp, int fd)
 {
     #ifndef NJIT
     int result = 0 ;
-    #if GB_COMPILER_MSC
+    #if GB_WINDOWS
     // unlock file for Windows
     _unlock_file (fp) ;
     #else
@@ -279,7 +280,7 @@ bool GB_file_mkdir (char *path)
 void *GB_file_dlopen (char *library_name)
 {
     #ifndef NJIT
-    #if GB_COMPILER_MSC
+    #if GB_WINDOWS
     return ((void *) LoadLibrary (library_name)) ;
     #else
     return (dlopen (library_name, RTLD_LAZY)) ;
@@ -296,7 +297,7 @@ void *GB_file_dlopen (char *library_name)
 void *GB_file_dlsym (void *dl_handle, char *symbol)
 {
     #ifndef NJIT
-    #if GB_COMPILER_MSC
+    #if GB_WINDOWS
     return ((void *) GetProcAddress (dl_handle, symbol)) ;
     #else
     return (dlsym (dl_handle, symbol)) ;
@@ -313,10 +314,78 @@ void *GB_file_dlsym (void *dl_handle, char *symbol)
 void GB_file_dlclose (void *dl_handle)
 {
     #ifndef NJIT
-    #if GB_COMPILER_MSC
+    #if GB_WINDOWS
     FreeLibrary (dl_handle) ;
     #else
     dlclose (dl_handle) ;
+    #endif
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// GB_command: run a command in a child process
+//------------------------------------------------------------------------------
+
+// No error condition or status is returned.
+
+// If burble is on, stdout is left alone, so the stdout of the command is sent
+// to the stdout of the parent process.  If burble is off, stdout is sent to
+// /dev/null.
+
+// FIXME: what to do with stderr?  Use a log file? Burble it if that is on.
+
+void GB_command (char *command)
+{
+    #ifndef NJIT
+    bool burble = GB_Global_burble_get ( ) ;
+
+    #if GB_WINDOWS
+    {
+
+        //----------------------------------------------------------------------
+        // Windows variant
+        //----------------------------------------------------------------------
+
+        // FIXME: if burble is off, pipe stdout to /dev/null on Windows
+
+        // TODO
+        int result = system (command) ;
+
+    }
+    #else
+    {
+
+        //----------------------------------------------------------------------
+        // POSIX variant
+        //----------------------------------------------------------------------
+
+        pid_t child = fork ( ) ;
+        if (child == 0)
+        {
+            // child process remaps stdout to /dev/null and then executes
+            // the command
+            int devnull = 0 ;
+            if (!burble)
+            {
+                // silence the stdout of the command
+                int devnull = open ("/dev/null", O_WRONLY) ;
+                dup2 (devnull, STDOUT_FILENO) ;
+            }
+            int result = system (command) ;
+            if (!burble)
+            {
+                close (devnull) ;
+            }
+            exit (EXIT_SUCCESS) ;
+        }
+        else if (child > 0)
+        {
+            // parent waits for the child to finish
+            int status = 0 ;
+            waitpid (child, &status, 0) ;
+        }
+
+    }
     #endif
     #endif
 }

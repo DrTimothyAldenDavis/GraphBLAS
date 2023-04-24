@@ -254,6 +254,10 @@ GrB_Info GxB_Global_Option_set_CHAR      // set a global default option
 
             return (GB_jitifyer_set_C_libraries (value)) ;
 
+        case GxB_JIT_C_CMAKE_LIBS : 
+
+            return (GB_jitifyer_set_C_cmake_libs (value)) ;
+
         case GxB_JIT_C_PREFACE : 
 
             return (GB_jitifyer_set_C_preface (value)) ;
@@ -511,6 +515,15 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 char *C_libraries = va_arg (ap, char *) ;
                 va_end (ap) ;
                 return (GB_jitifyer_set_C_libraries (C_libraries)) ;
+            }
+
+        case GxB_JIT_C_CMAKE_LIBS : 
+
+            {
+                va_start (ap, field) ;
+                char *C_libraries = va_arg (ap, char *) ;
+                va_end (ap) ;
+                return (GB_jitifyer_set_C_cmake_libs (C_libraries)) ;
             }
 
         case GxB_JIT_C_PREFACE : 

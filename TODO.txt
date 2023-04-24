@@ -15,3 +15,6 @@ FIXME: testing, release date, delete this file (TODO.txt), port to Windows
     with all 4 combinations of: (NJIT on/off) x (COMPACT on/off)
     also do the same exhaustive tests in ./Test but with GB_DEBUG enabled
 
+FIXME: cmake stderr output: to log file?
+FIXME: Windows: pipe stdout to /dev/null if burble is off
+

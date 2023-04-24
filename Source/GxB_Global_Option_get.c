@@ -111,6 +111,11 @@ GrB_Info GxB_Global_Option_get_INT32    // gets the current global option
             (*value) = (int32_t) GB_jitifyer_get_control ( ) ;
             break ;
 
+        case GxB_JIT_USE_CMAKE : 
+
+            (*value) = (int32_t) GB_jitifyer_get_use_cmake ( ) ;
+            break ;
+
         default : 
 
             return (GrB_INVALID_VALUE) ;
@@ -317,6 +322,11 @@ GrB_Info GxB_Global_Option_get_CHAR     // gets the current global option
         case GxB_JIT_C_LIBRARIES : 
 
             (*value) = GB_jitifyer_get_C_libraries ( ) ;
+            break ;
+
+        case GxB_JIT_C_CMAKE_LIBS : 
+
+            (*value) = GB_jitifyer_get_C_cmake_libs ( ) ;
             break ;
 
         case GxB_JIT_C_PREFACE : 
@@ -873,6 +883,17 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
+        case GxB_JIT_C_CMAKE_LIBS : 
+
+            {
+                va_start (ap, field) ;
+                const char **libraries = va_arg (ap, const char **) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (libraries) ;
+                (*libraries) = GB_jitifyer_get_C_cmake_libs ( ) ;
+            }
+            break ;
+
         case GxB_JIT_C_PREFACE : 
 
             {
@@ -892,6 +913,17 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (control) ;
                 (*control) = (int) GB_jitifyer_get_control ( ) ;
+            }
+            break ;
+
+        case GxB_JIT_USE_CMAKE : 
+
+            {
+                va_start (ap, field) ;
+                int *use_cmake = va_arg (ap, int *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (use_cmake) ;
+                (*use_cmake) = (int) GB_jitifyer_get_use_cmake ( ) ;
             }
             break ;
 

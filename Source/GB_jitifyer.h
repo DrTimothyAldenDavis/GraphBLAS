@@ -324,11 +324,13 @@ bool GB_jitifyer_query
     GrB_Type type3
 ) ;
 
-void GB_jitifyer_compile (char *kernel_name, uint32_t bucket) ;
+void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket) ;
+void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket) ;
 
 GrB_Info GB_jitifyer_init (void) ;  // initialize the JIT
 
 GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition) ;
+bool GB_jitifyer_path_256 (char *folder) ;
 
 GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition) ;
 
@@ -363,9 +365,16 @@ const char *GB_jitifyer_get_C_libraries (void) ;
 GrB_Info GB_jitifyer_set_C_libraries (const char *new_C_libraries) ;
 GrB_Info GB_jitifyer_set_C_libraries_worker (const char *new_C_libraries) ;
 
+const char *GB_jitifyer_get_C_cmake_libs (void) ;
+GrB_Info GB_jitifyer_set_C_cmake_libs (const char *new_cmake_libs) ;
+GrB_Info GB_jitifyer_set_C_cmake_libs_worker (const char *new_cmake_libs) ;
+
 const char *GB_jitifyer_get_C_preface (void) ;
 GrB_Info GB_jitifyer_set_C_preface (const char *new_C_preface) ;
 GrB_Info GB_jitifyer_set_C_preface_worker (const char *new_C_preface) ;
+
+bool GB_jitifyer_get_use_cmake (void) ;
+void GB_jitifyer_set_use_cmake (bool use_cmake) ;
 
 #endif
 

@@ -229,7 +229,7 @@ if ( NOT GBNCPUFEAT )
 endif ( )
 
 # get the current library list
-get_target_property ( GB_LIST_LIB graphblas_matlab LINK_LIBRARIES )
+get_target_property ( GB_CMAKE_LIBRARIES graphblas_matlab LINK_LIBRARIES )
 
 #-------------------------------------------------------------------------------
 # print final C flags

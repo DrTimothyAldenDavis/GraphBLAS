@@ -8702,9 +8702,11 @@ field                       & value         & description \\
 \verb'GxB_JIT_C_COMPILER_NAME' & \verb'char *' & C compiler for JIT kernels \\
 \verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
 \verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
-\verb'GxB_JIT_C_LIBRARIES'    & \verb'char *' & libraries to link against \\
+\verb'GxB_JIT_C_LIBRARIES'    & \verb'char *' & libraries to link against (no cmake) \\
+\verb'GxB_JIT_C_CMAKE_LIBS'   & \verb'char *' & libraries to link against (with cmake) \\
 \verb'GxB_JIT_C_PREFACE'      & \verb'char *' & C code as preface to JIT kernels \\
 \verb'GxB_JIT_C_CONTROL'      & see below     & CPU JIT control \\
+\verb'GxB_JIT_USE_CMAKE'      & see below     & CPU JIT control \\
 \verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
 \hline
 \end{tabular}
@@ -8724,6 +8726,10 @@ and recompiled.  The stale kernel is overwitten with the new one, so there is
 no need to for the user to take any action to delete the stale kernel from the
 cache path.  If the cache path is changed via \verb'GxB_set', compiled kernels
 in the old cache folder are not copied over.  New ones are compiled instead.
+
+%----------------------------------------
+\subsubsection{\sf GxB\_JIT\_C\_CONTROL}
+%----------------------------------------
 
 The usage of the CPU JIT can be controlled via \verb'GxB_get/set' using the
 \verb'GxB_JIT_C_CONTROL' setting.  If the JIT is enabled at compile time, the
@@ -8832,6 +8838,57 @@ changed.  All PreJIT kernels are flagged as unchecked, just as they were
 flagged by \verb'GrB_init', so that they will be checked the next time they
 run.
 
+%----------------------------------------
+\subsubsection{\sf GxB\_JIT\_C\_COMPILER\_NAME}
+%----------------------------------------
+
+The \verb'GxB_JIT_C_COMPILER_NAME' string is the name of the C compiler to use,
+or its full path.
+By default it is set to the C compiler used to compile GraphBLAS itself.
+
+%----------------------------------------
+\subsubsection{\sf GxB\_JIT\_C\_COMPILER\_FLAGS}
+%----------------------------------------
+
+The \verb'GxB_JIT_C_COMPILER_FLAGS' string is the C compiler flags.
+By default it is set to the C compiler flags used to compile GraphBLAS itself.
+
+%----------------------------------------
+\subsubsection{\sf GxB\_JIT\_C\_LINKER\_FLAGS}
+%----------------------------------------
+
+The \verb'GxB_JIT_C_LINKER_FLAGS' string only affects the kernel compilation
+when cmake is not used to compile the kernels (see Section~\ref{use_cmake}).
+By default it is set to the C link flags used to compile GraphBLAS itself.
+If cmake is used to compile the kernels, then it determines the linker flags
+itself, and this cannot be modified.
+
+%----------------------------------------
+\subsubsection{\sf GxB\_JIT\_C\_LIBRARIES}
+%----------------------------------------
+
+The \verb'GxB_JIT_C_LIBRARIES' string is used to set the libraries to link
+against when cmake is not being used to compile the kernels (see
+Section~\ref{use_cmake}).  For example, on Linux it is set by default to the
+\verb'-lm', \verb'-ld', and OpenMP libraries used to link GraphBLAS itself.
+Any standalone library name is prepended with \verb'-l'.  If cmake is used to
+compile the kernels, this string is ignored.
+
+%----------------------------------------
+\subsubsection{\sf GxB\_JIT\_C\_CMAKE\_LIBS}
+%----------------------------------------
+
+The \verb'GxB_JIT_C_LIBRARIES' string is used to set the libraries to link
+against when cmake is being used to compile the kernels (see
+Section~\ref{use_cmake}).  For example, on Linux it is set by default to the
+\verb'm', \verb'dl', and OpenMP libraries used to link GraphBLAS itself.
+Libraries in the string should normally be separated by semicolons.  If cmake
+is not used to compile the kernels, this string is ignored.
+
+%----------------------------------------
+\subsubsection{\sf GxB\_JIT\_C\_PREFACE}
+%----------------------------------------
+
 The \verb'GxB_JIT_C_PREFACE' string is added at the top of each JIT kernel.  It
 is useful for providing additional \verb'#include' files that GraphBLAS does
 not provide.  It can also be useful for diagnostics and for configuring the
@@ -8842,20 +8899,34 @@ call GraphBLAS.  Any JIT kernels created will be tagged with this unique
 comment, which may be helpful to select specific kernels to copy into the
 \verb'PreJIT' folder.
 
-%-------------------------------------------------------------------------------
-\subsection{Mixing JIT kernels: MATLAB and Apple Silicon}
-%-------------------------------------------------------------------------------
+%----------------------------------------
+\subsubsection{\sf GxB\_JIT\_USE\_CMAKE}
+%----------------------------------------
+\label{use_cmake}
 
-In general, the JIT kernels compiled by the C interface and the kernels
-compiled while using GraphBLAS in MATLAB are interchangable, and the same cache
-folder can be used for both.  This is the default.
+Two methods are provided for compiling the JIT kernels: cmake, and a direct
+compiler/link command.  On Windows, only cmake may be used, and this setting
+is ignored (it is always true).  On Linux or Mac, the default is false since
+a direct compile/link is faster.  However, it is possible that some compilers
+are not handled properly with this method, so cmake can also be used on those
+platforms by setting the value of \verb'GxB_JIT_USE_CMAKE' to true.
 
-However, when using the \verb'@GrB' MATLAB interface to GraphBLAS on Apple
-Silicon, the MATLAB JIT kernels are compiled as x86 binaries and executed
-inside MATLAB via Rosetta.  The pure C installation may compile native Arm64
-binaries for its JIT kernels.  Do not mix the two.  In this case, set another
-cache path for MATLAB using \verb'GrB.jit' in MATLAB, or using \verb'GxB_set'
-in the C interface for your native Arm64 binaries.
+Normally the same version of cmake should be used to compile both GraphBLAS and
+the JIT kernels.  However, compiling GraphBLAS itself requires cmake v3.19 or
+later, while compiling the JIT kernels only requires cmake v3.13 or later.
+
+%----------------------------------------
+\subsubsection{\sf GxB\_JIT\_CACHE\_PATH}
+%----------------------------------------
+
+The \verb'GxB_JIT_CACHE_PATH' string is the full path to the user's cache
+folder (described above).  The default on Linux/Mac is
+\verb'~/.SuiteSparse/GraphBLAS/8.0.0' for GraphBLAS version 8.0.0.  On Windows,
+the cache folder is created inside the users' \verb'LOCALAPPDATA' folder,
+called \verb'SuiteSparse/GraphBLAS/8.0.0'.  When GraphBLAS starts,
+\verb'GrB_init' checks if the \verb'GRAPHBLAS_CACHE_PATH' environment variable
+exists, and initializes the cache path with that value instead of using the
+default.
 
 %-------------------------------------------------------------------------------
 \subsection{Compilation options: {\sf NJIT} and {\sf COMPACT}}
@@ -9016,6 +9087,21 @@ JIT does not second guess the user application; if it wants a new kernel,
 the JIT will compile it if the control is set to \verb'GxB_JIT_ON'.
 
 %-------------------------------------------------------------------------------
+\subsection{Mixing JIT kernels: MATLAB and Apple Silicon}
+%-------------------------------------------------------------------------------
+
+In general, the JIT kernels compiled by the C interface and the kernels
+compiled while using GraphBLAS in MATLAB are interchangable, and the same cache
+folder can be used for both.  This is the default.
+
+However, when using the \verb'@GrB' MATLAB interface to GraphBLAS on Apple
+Silicon, the MATLAB JIT kernels are compiled as x86 binaries and executed
+inside MATLAB via Rosetta.  The pure C installation may compile native Arm64
+binaries for its JIT kernels.  Do not mix the two.  In this case, set another
+cache path for MATLAB using \verb'GrB.jit' in MATLAB, or using \verb'GxB_set'
+in the C interface for your native Arm64 binaries.
+
+%-------------------------------------------------------------------------------
 \subsection{Future plans for the {\sf JIT} and {\sf PreJIT}}
 %-------------------------------------------------------------------------------
 \label{jit_future}
@@ -9102,8 +9188,10 @@ field                       & value         & description \\
 \verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
 \verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
 \verb'GxB_JIT_C_LIBRARIES'    & \verb'char *' & libraries to link against \\
+\verb'GxB_JIT_C_CMAKE_LIBS'   & \verb'char *' & libraries to link against \\
 \verb'GxB_JIT_C_PREFACE'      & \verb'char *' & C code as preface to JIT kernels \\
 \verb'GxB_JIT_C_CONTROL'      & see Section \ref{jit} & CPU JIT control \\
+\verb'GxB_JIT_USE_CMAKE'      & see Section \ref{jit} & CPU JIT: use cmake \\
 \verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
 \hline
 \end{tabular}
@@ -9125,7 +9213,6 @@ field                       & value         & description \\
 \end{tabular}
 }
 
-\newpage
 \item \verb'GxB_set (GrB_Vector v, field, value)' provides hints to
     SuiteSparse: GraphBLAS on how to store a particular vector.
 
@@ -9203,8 +9290,10 @@ field                       & value         & description \\
 \verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
 \verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
 \verb'GxB_JIT_C_LIBRARIES'    & \verb'char *' & libraries to link against \\
+\verb'GxB_JIT_C_CMAKE_LIBS'   & \verb'char *' & libraries to link against \\
 \verb'GxB_JIT_C_PREFACE'      & \verb'char *' & C code as preface to JIT kernels \\
 \verb'GxB_JIT_C_CONTROL'      & see Section \ref{jit} & CPU JIT control \\
+\verb'GxB_JIT_USE_CMAKE'      & see Section \ref{jit} & CPU JIT: use cmake \\
 \verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
 \hline
 \verb'GxB_MODE'                 & \verb'int'    & blocking/non-blocking \\
@@ -9627,6 +9716,8 @@ typedef enum
     GxB_JIT_C_PREFACE = 114,        // CPU JIT C preface
     GxB_JIT_C_CONTROL = 115,        // CPU JIT C control
     GxB_JIT_CACHE_PATH = 116,       // CPU/CUDA JIT path for compiled kernels
+    GxB_JIT_C_CMAKE_LIBS = 117,     // CPU JIT C libraries when using cmake
+    GxB_JIT_USE_CMAKE = 118,        // CPU JIT: use cmake or direct compile
 
     // for matrix/vector get only:
     GxB_SPARSITY_STATUS = 33,   // query the sparsity of a matrix or vector
@@ -9855,6 +9946,7 @@ The \verb'field' parameter can be
 \verb'GxB_JIT_C_LIBRRIES',
 \verb'GxB_JIT_C_PREFACE',
 \verb'GxB_JIT_C_CONTROL', or
+\verb'GxB_JIT_USE_CMAKE', or
 \verb'GxB_JIT_CACHE_PATH'.
 
 For example, the following usage sets the global hypersparsity ratio to 0.2,
@@ -9982,8 +10074,10 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
         \verb'GxB_JIT_C_COMPILER_FLAGS' & flags for the C compiler \\
         \verb'GxB_JIT_C_LINKER_FLAGS'   & link flags for the C compiler \\
         \verb'GxB_JIT_C_LIBRARIES'      & libraries to link against \\
+        \verb'GxB_JIT_C_CMAKE_LIBS'     & libraries to link against \\
         \verb'GxB_JIT_C_PREFACE'        & preface for JIT kernels \\
         \verb'GxB_JIT_C_CONTROL'        & CPU JIT control \\
+        \verb'GxB_JIT_USE_CMAKE'        & CPU JIT: use cmake or not \\ 
         \verb'GxB_JIT_CACHE_PATH'       & folder with compiled kernels \\
         \hline
         \verb'GxB_LIBRARY_NAME'         & the string
@@ -10176,10 +10270,14 @@ To set/get the global options:
     GxB_get (GxB_JIT_C_LINKER_FLAGS, char **flags) ;
     GxB_set (GxB_JIT_C_LIBRARIES, char *libraries) ;
     GxB_get (GxB_JIT_C_LIBRARIES, char **libraries) ;
+    GxB_set (GxB_JIT_C_CMAKE_LIBS, char *libraries) ;
+    GxB_get (GxB_JIT_C_CMAKE_LIBS, char **libraries) ;
     GxB_set (GxB_JIT_C_PREFACE, char *preface) ;
     GxB_get (GxB_JIT_C_PREFACE, char **preface) ;
     GxB_set (GxB_JIT_CACHE_PATH, char *cache) ;
     GxB_get (GxB_JIT_CACHE_PATH, char **cache) ;
+    GxB_set (GxB_JIT_USE_CMAKE, int use_cmake) ;
+    GxB_get (GxB_JIT_USE_CMAKE, int *use_cmake) ;
     GxB_set (GxB_JIT_C_CONTROL, int control) ;
     GxB_get (GxB_JIT_C_CONTROL, int *control) ;
     \end{verbatim} }
