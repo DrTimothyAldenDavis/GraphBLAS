@@ -1531,6 +1531,8 @@ GrB_Info GB_jitifyer_load_worker
     // try to load the lib*.so from the user's library folder
     //--------------------------------------------------------------------------
 
+    // FIXME: use GB_LIB_PREFIX instead of lib,
+    // from CMAKE_SHARED_LIBRARY_PREFIX
     uint32_t bucket = hash & 0xFF ;
     snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/lib%s%s",
         GB_jit_cache_path, bucket, kernel_name, GB_LIB_SUFFIX) ;
@@ -1635,6 +1637,7 @@ GrB_Info GB_jitifyer_load_worker
             // compile the kernel to get the lib*.so file
             GB_jitifyer_compile (kernel_name, bucket) ;
             // load the kernel from the lib*.so file
+            // FIXME: use GB_LIB_PREFIX instead of lib
             snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/lib%s%s",
                 GB_jit_cache_path, bucket, kernel_name, GB_LIB_SUFFIX) ;
             dl_handle = GB_file_dlopen (GB_jit_temp) ;
@@ -1968,6 +1971,72 @@ void GB_jitifyer_table_free (bool freeall)
 void GB_jitifyer_compile (char *kernel_name, uint32_t bucket)
 { 
 
+#if 1
+    // remove any prior build folder and all its contents
+    snprintf (GB_jit_temp, GB_jit_temp_allocated,
+        "cmake -E remove_directory "
+        "\"%s/c/%02x/%s_build\" ",
+        GB_jit_cache_path, bucket, kernel_name) ;   // build path
+    (void) system (GB_jit_temp) ;
+
+    // create the build folder
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/%s_build",
+        GB_jit_cache_path, bucket, kernel_name) ;
+    if (!GB_file_mkdir (GB_jit_temp)) return ;
+
+    // create the CMakeLists.txt file in the build folder
+    snprintf (GB_jit_temp, GB_jit_temp_allocated,
+        "%s/c/%02x/%s_build/CMakeLists.txt",
+        GB_jit_cache_path, bucket, kernel_name) ;
+    FILE *fp = fopen (GB_jit_temp, "w") ;
+    if (fp == NULL) return ;
+    fprintf (fp,
+        "cmake_minimum_required ( VERSION 3.13 )\n"
+        "set ( CMAKE_BUILD_TYPE \"Release\" )\n"
+        "set ( CMAKE_LIBRARY_OUTPUT_DIRECTORY \"%s/c/%02x\" )\n"
+        "project ( %s C )\n"
+        "include_directories ( \"%s/src\" )\n"
+        "add_compile_definitions ( GB_JIT_RUNTIME )\n"
+        "set ( CMAKE_C_FLAGS \"%s\" )\n"
+        "add_library ( %s SHARED \"%s/c/%02x/%s.c\" )\n"
+        "target_link_libraries ( %s PUBLIC %s )\n",
+        GB_jit_cache_path, bucket,  // library output dir: cache/c/bucket
+        kernel_name,                // project name
+        GB_jit_cache_path,          // include directories: cache/src
+        GB_jit_C_flags,             // C flags
+        kernel_name,                // target name for add_library command
+        GB_jit_cache_path, bucket, kernel_name, // source file for add_library
+        kernel_name,                // target name of the library
+        GB_jit_C_libraries) ;       // libraries to link against
+    fclose (fp) ;
+
+    // generate the build system
+    snprintf (GB_jit_temp, GB_jit_temp_allocated,
+        "cmake "
+        "-S \"%s/c/%02x/%s_build\" "
+        "-B \"%s/c/%02x/%s_build\" "
+        "-DCMAKE_C_COMPILER=\"%s\" ",
+        GB_jit_cache_path, bucket, kernel_name,     // -S source path
+        GB_jit_cache_path, bucket, kernel_name,     // -B build path
+        GB_jit_C_compiler) ;                        // C compiler to use
+    (void) system (GB_jit_temp) ;
+
+    // compile the library
+    snprintf (GB_jit_temp, GB_jit_temp_allocated,
+        "cmake --build "
+        "\"%s/c/%02x/%s_build\" ",
+        GB_jit_cache_path, bucket, kernel_name) ;   // build path
+    (void) system (GB_jit_temp) ;
+
+    // remove the build folder and all its contents
+    snprintf (GB_jit_temp, GB_jit_temp_allocated,
+        "cmake -E remove_directory "
+        "\"%s/c/%02x/%s_build\" ",
+        GB_jit_cache_path, bucket, kernel_name) ;   // build path
+    (void) system (GB_jit_temp) ;
+
+#else
+
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
 
     // compile:
@@ -2008,6 +2077,8 @@ void GB_jitifyer_compile (char *kernel_name, uint32_t bucket)
     // compile the library and return result
     int result = system (GB_jit_temp) ;
     GBURBLE ("(jit: compile result: %d) ", result) ;
+#endif
+
 }
 
 #endif
