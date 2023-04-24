@@ -108,7 +108,6 @@ static void check_table (void)
                 populated++ ;
             }
         }
-//      printf ("pop %ld %ld\n", populated, GB_jit_table_populated) ;
     }
     ASSERT (populated == GB_jit_table_populated) ;
 }
@@ -300,7 +299,6 @@ GrB_Info GB_jitifyer_init (void)
         // get the name and function pointer of the PreJIT kernel
         //----------------------------------------------------------------------
 
-        // printf ("k %d :\n", k) ;
         void *dl_function = Kernels [k] ;
         GB_jit_query_func dl_query = (GB_jit_query_func) Queries [k] ;
         if (dl_function == NULL || dl_query == NULL || Names [k] == NULL)
@@ -311,7 +309,6 @@ GrB_Info GB_jitifyer_init (void)
         char kernel_name [GB_KLEN+1] ;
         strncpy (kernel_name, Names [k], GB_KLEN) ;
         kernel_name [GB_KLEN] = '\0' ;
-        // printf ("   %p %p %s\n", dl_function, dl_query, kernel_name) ;
 
         //----------------------------------------------------------------------
         // parse the kernel name
@@ -323,8 +320,6 @@ GrB_Info GB_jitifyer_init (void)
         char *suffix = NULL ;
         GrB_Info info = GB_demacrofy_name (kernel_name, &name_space, &kname,
             &scode, &suffix) ;
-        // printf ("   (%s,%s,%s) code %0lx\n",
-        //  name_space, kname, suffix, scode) ;
 
         if (info != GrB_SUCCESS || !GB_STRING_MATCH (name_space, "GB_jit"))
         { 
@@ -397,7 +392,6 @@ GrB_Info GB_jitifyer_init (void)
         encoding->kcode = c ;
         encoding->code = scode ;
         encoding->suffix_len = (suffix == NULL) ? 0 : strlen (suffix) ;
-        // printf ("   %d %d\n", c, encoding->suffix_len) ;
 
         //----------------------------------------------------------------------
         // get the hash of this PreJIT kernel
@@ -416,7 +410,6 @@ GrB_Info GB_jitifyer_init (void)
         char *ignored [5] ;
         int version [3] ;
         (void) dl_query (&hash, version, ignored, NULL, NULL, 0, 0) ;
-        // printf ("   hash %0lx\n", hash) ;
 
         if (hash == 0 || hash == UINT64_MAX ||
             (version [0] != GxB_IMPLEMENTATION_MAJOR) ||
@@ -435,7 +428,6 @@ GrB_Info GB_jitifyer_init (void)
         if (GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) != NULL)
         { 
             // the kernel is a duplicate; ignore it
-            // printf ("   duplicate\n") ;
             continue ;
         }
 
@@ -443,7 +435,6 @@ GrB_Info GB_jitifyer_init (void)
         // insert the PreJIT kernel in the hash table
         //----------------------------------------------------------------------
 
-        // printf ("   insert:\n") ;
         if (!GB_jitifyer_insert (hash, encoding, suffix, NULL, dl_function, k))
         { 
             // out of memory
@@ -1920,7 +1911,6 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         // expand the existing hash table by a factor of 4 and rehash
         //----------------------------------------------------------------------
 
-        // printf ("rehash\n") ;
         ASSERT_TABLE_OK ;
         // create a new table that is four times the size
         int64_t new_size = 4 * GB_jit_table_size ;
@@ -1963,7 +1953,6 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         GB_jit_table_size = new_size ;
         GB_jit_table_bits = new_bits ;
         GB_jit_table_allocated = siz ;
-        // printf ("rehashed\n") ;
         ASSERT_TABLE_OK ;
     }
 
@@ -2066,10 +2055,7 @@ void GB_jitifyer_table_free (bool freeall)
         }
     }
 
-    // printf ("JIT populated %ld freeall %d\n",
-    //  GB_jit_table_populated, freeall) ;
     ASSERT (GB_IMPLIES (freeall, GB_jit_table_populated == 0)) ;
-
     if (GB_jit_table_populated == 0)
     { 
         // the JIT table is now empty, so free it

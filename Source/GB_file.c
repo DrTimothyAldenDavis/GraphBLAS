@@ -62,7 +62,7 @@
 // Returns true if successful, false on error
 
 static bool GB_file_lock (FILE *fp, int fd)
-{
+{ 
     #ifndef NJIT
     int result = 0 ;
     #if GB_WINDOWS
@@ -92,7 +92,7 @@ static bool GB_file_lock (FILE *fp, int fd)
 // Returns true if successful, false on error
 
 static bool GB_file_unlock (FILE *fp, int fd)
-{
+{ 
     #ifndef NJIT
     int result = 0 ;
     #if GB_WINDOWS
@@ -127,7 +127,7 @@ bool GB_file_open_and_lock  // true if successful, false on error
     FILE **fp_handle,   // file pointer of open file (NULL on error)
     int *fd_handle      // file descriptor of open file (-1 on error)
 )
-{
+{ 
 
     #ifndef NJIT
     if (filename == NULL || fp_handle == NULL || fd_handle == NULL)
@@ -185,7 +185,7 @@ bool GB_file_unlock_and_close   // true if successful, false on error
     FILE **fp_handle,       // file pointer, set to NULL on output
     int *fd_handle          // file descriptor, set to -1 on output
 )
-{
+{ 
 
     #ifndef NJIT
     if (fp_handle == NULL || fd_handle == NULL)
@@ -278,7 +278,7 @@ bool GB_file_mkdir (char *path)
 //------------------------------------------------------------------------------
 
 void *GB_file_dlopen (char *library_name)
-{
+{ 
     #ifndef NJIT
     #if GB_WINDOWS
     return ((void *) LoadLibrary (library_name)) ;
@@ -295,7 +295,7 @@ void *GB_file_dlopen (char *library_name)
 //------------------------------------------------------------------------------
 
 void *GB_file_dlsym (void *dl_handle, char *symbol)
-{
+{ 
     #ifndef NJIT
     #if GB_WINDOWS
     return ((void *) GetProcAddress (dl_handle, symbol)) ;
@@ -312,7 +312,7 @@ void *GB_file_dlsym (void *dl_handle, char *symbol)
 //------------------------------------------------------------------------------
 
 void GB_file_dlclose (void *dl_handle)
-{
+{ 
     #ifndef NJIT
     #if GB_WINDOWS
     FreeLibrary (dl_handle) ;
@@ -338,6 +338,12 @@ void GB_command (char *command)
 {
     #ifndef NJIT
     bool burble = GB_Global_burble_get ( ) ;
+    if (burble)
+    { 
+        // stdout and stderr are both allowed to go through to the user output
+        int result = system (command) ;
+        return ;
+    }
 
     #if GB_WINDOWS
     {
@@ -353,7 +359,7 @@ void GB_command (char *command)
 
     }
     #else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // POSIX variant
@@ -362,29 +368,25 @@ void GB_command (char *command)
         pid_t child = fork ( ) ;
         if (child == 0)
         {
-            // child process remaps stdout to /dev/null and then executes
-            // the command
-            int devnull = 0 ;
-            if (!burble)
-            {
-                // silence the stdout of the command
-                int devnull = open ("/dev/null", O_WRONLY) ;
-                dup2 (devnull, STDOUT_FILENO) ;
-            }
+            // child process remaps stdout to /dev/null; then does the command
+            // fprintf (stderr, "Child: %s\n", command) ;
+            // fflush (stderr) ;
+            int devnull = open ("/dev/null", O_WRONLY) ;
+            dup2 (devnull, STDOUT_FILENO) ;
             int result = system (command) ;
-            if (!burble)
-            {
-                close (devnull) ;
-            }
-            exit (EXIT_SUCCESS) ;
+            close (devnull) ;
+            // fprintf (stderr, "Child: done %d\n", result) ;
+            fflush (stderr) ;
+            _exit (EXIT_SUCCESS) ;
         }
         else if (child > 0)
         {
             // parent waits for the child to finish
+            // fprintf (stderr, "parent: wait for %d\n", child) ;
             int status = 0 ;
             waitpid (child, &status, 0) ;
+            // fprintf (stderr, "parent: got child %d\n", child) ;
         }
-
     }
     #endif
     #endif
