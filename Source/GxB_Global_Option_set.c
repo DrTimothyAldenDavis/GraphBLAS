@@ -74,6 +74,11 @@ GrB_Info GxB_Global_Option_set_INT32      // set a global default option
             GB_Global_print_one_based_set ((bool) value) ;
             break ;
 
+        case GxB_JIT_USE_CMAKE : 
+
+            GB_jitifyer_set_use_cmake ((bool) value) ;
+            break ;
+
         case GxB_JIT_C_CONTROL : 
 
             GB_jitifyer_set_control ((int) value) ;
@@ -534,6 +539,16 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 va_end (ap) ;
                 return (GB_jitifyer_set_C_preface (C_preface)) ;
             }
+
+        case GxB_JIT_USE_CMAKE : 
+
+            {
+                va_start (ap, field) ;
+                int value = va_arg (ap, int) ;
+                va_end (ap) ;
+                GB_jitifyer_set_use_cmake ((bool) value) ;
+            }
+            break ;
 
         case GxB_JIT_C_CONTROL : 
 

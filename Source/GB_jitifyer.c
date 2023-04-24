@@ -478,7 +478,7 @@ bool GB_jitifyer_path_256 (char *folder)
 }
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_establish_paths: make sure cache and src paths exist
+// GB_jitifyer_establish_paths: make sure cache and its folders exist
 //------------------------------------------------------------------------------
 
 // Returns GrB_SUCCESS if succesful, or GrB_OUT_OF_MEMORY if out of memory.  If
@@ -508,7 +508,7 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
     ok = ok && GB_file_mkdir (GB_jit_temp) ;
 
     // construct the temp path
-    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/temp", GB_jit_cache_path) ;
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/temp", GB_jit_cache_path);
     ok = ok && GB_file_mkdir (GB_jit_temp) ;
 
     //--------------------------------------------------------------------------

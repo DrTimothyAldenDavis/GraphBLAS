@@ -510,6 +510,9 @@ int main (void)
         GrB_free (&E) ;
     }
 
+    // try using cmake instead of a direct compile/link command
+    TRY (GxB_set (GxB_JIT_USE_CMAKE, true)) ;
+
     // C += ciso
     TRY (GrB_Matrix_assign_UDT (C, NULL, AddGauss, (void *) &ciso,
         GrB_ALL, 4, GrB_ALL, 4, NULL)) ;
@@ -532,9 +535,6 @@ int main (void)
     // pause the JIT
     printf ("JIT: paused\n") ;
     TRY (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_PAUSE)) ;
-
-    // try using cmake instead
-    TRY (GxB_set (GxB_JIT_USE_CMAKE, true)) ;
 
     // C += ciso
     printgauss (C, "\n=============== C: \n") ;
