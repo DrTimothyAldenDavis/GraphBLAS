@@ -9,7 +9,7 @@
 
 // These methods provide portable open/close/lock/unlock/mkdir functions, in
 // support of the JIT.  If the JIT is disabled at compile time, these functions
-// do nothing and return an error.
+// do nothing.
 
 #include "GB.h"
 #include "GB_file.h"
@@ -62,25 +62,28 @@
 
 static bool GB_file_lock (FILE *fp, int fd)
 { 
-    #ifndef NJIT
-    int result = 0 ;
-    #if GB_WINDOWS
-    // lock file for Windows
-    _lock_file (fp) ;
+    #ifdef NJIT
+    {
+        // JIT disabled
+        return (false) ;
+    }
+    #elif GB_WINDOWS
+    {
+        // lock file for Windows
+        _lock_file (fp) ;
+        return (true) ;
+    }
     #else
-    // lock file for POSIX
-    struct flock lock ;
-    lock.l_type = F_WRLCK ;
-    lock.l_whence = SEEK_SET ;
-    lock.l_start = 0 ;
-    lock.l_len = 0 ;
-    lock.l_pid = 0 ;
-    result = fcntl (fd, F_SETLKW, &lock) ;
-    #endif
-    return (result == 0) ;
-    #else
-    // JIT not enabled
-    return (false) ;
+    {
+        // lock file for POSIX
+        struct flock lock ;
+        lock.l_type = F_WRLCK ;
+        lock.l_whence = SEEK_SET ;
+        lock.l_start = 0 ;
+        lock.l_len = 0 ;
+        lock.l_pid = 0 ;
+        return (fcntl (fd, F_SETLKW, &lock) == 0) ;
+    }
     #endif
 }
 
@@ -92,25 +95,28 @@ static bool GB_file_lock (FILE *fp, int fd)
 
 static bool GB_file_unlock (FILE *fp, int fd)
 { 
-    #ifndef NJIT
-    int result = 0 ;
-    #if GB_WINDOWS
-    // unlock file for Windows
-    _unlock_file (fp) ;
+    #ifdef NJIT
+    {
+        // JIT disabled
+        return (false) ;
+    }
+    #elif GB_WINDOWS
+    {
+        // unlock file for Windows
+        _unlock_file (fp) ;
+        return (true) ;
+    }
     #else
-    // unlock file for POSIX
-    struct flock lock ;
-    lock.l_type = F_UNLCK ;
-    lock.l_whence = SEEK_SET ;
-    lock.l_start = 0 ;
-    lock.l_len = 0 ;
-    lock.l_pid = 0 ;
-    result = fcntl (fd, F_SETLKW, &lock) ;
-    #endif
-    return (result == 0) ;
-    #else
-    // JIT not enabled
-    return (false) ;
+    {
+        // unlock file for POSIX
+        struct flock lock ;
+        lock.l_type = F_UNLCK ;
+        lock.l_whence = SEEK_SET ;
+        lock.l_start = 0 ;
+        lock.l_len = 0 ;
+        lock.l_pid = 0 ;
+        return (fcntl (fd, F_SETLKW, &lock) == 0) ;
+    }
     #endif
 }
 
@@ -128,49 +134,52 @@ bool GB_file_open_and_lock  // true if successful, false on error
 )
 { 
 
-    #ifndef NJIT
-    if (filename == NULL || fp_handle == NULL || fd_handle == NULL)
+    #ifdef NJIT
     {
-        // failure: inputs invalid
+        // JIT disabled
         return (false) ;
     }
-
-    (*fp_handle) = NULL ;
-    (*fd_handle) = -1 ;
-
-    // open the file, creating it if it doesn't exist
-    int fd = GB_OPEN (filename, GB_READ_WRITE, GB_MODE) ;
-    if (fd == -1)
-    {
-        // failure: file does not exist or cannot be created
-        return (false) ;
-    }
-
-    // get the file pointer from the file descriptor
-    FILE *fp = GB_FDOPEN (fd, "w+") ;
-    if (fp == NULL)
-    {
-        // failure: cannot create file pointer from file descriptor
-        GB_CLOSE (fd) ;
-        return (false) ;
-    }
-
-    // lock the file
-    if (!GB_file_lock (fp, fd))
-    {
-        // failure: cannot lock the file
-        fclose (fp) ;
-        return (false) ;
-    }
-
-    // success: file exists, is open, and is locked for writing
-    (*fp_handle) = fp ;
-    (*fd_handle) = fd ;
-    return (true) ;
-
     #else
-    // JIT not enabled
-    return (false) ;
+    {
+        if (filename == NULL || fp_handle == NULL || fd_handle == NULL)
+        {
+            // failure: inputs invalid
+            return (false) ;
+        }
+
+        (*fp_handle) = NULL ;
+        (*fd_handle) = -1 ;
+
+        // open the file, creating it if it doesn't exist
+        int fd = GB_OPEN (filename, GB_READ_WRITE, GB_MODE) ;
+        if (fd == -1)
+        {
+            // failure: file does not exist or cannot be created
+            return (false) ;
+        }
+
+        // get the file pointer from the file descriptor
+        FILE *fp = GB_FDOPEN (fd, "w+") ;
+        if (fp == NULL)
+        {
+            // failure: cannot create file pointer from file descriptor
+            GB_CLOSE (fd) ;
+            return (false) ;
+        }
+
+        // lock the file
+        if (!GB_file_lock (fp, fd))
+        {
+            // failure: cannot lock the file
+            fclose (fp) ;
+            return (false) ;
+        }
+
+        // success: file exists, is open, and is locked for writing
+        (*fp_handle) = fp ;
+        (*fd_handle) = fd ;
+        return (true) ;
+    }
     #endif
 }
 
@@ -186,37 +195,40 @@ bool GB_file_unlock_and_close   // true if successful, false on error
 )
 { 
 
-    #ifndef NJIT
-    if (fp_handle == NULL || fd_handle == NULL)
+    #ifdef NJIT
     {
-        // failure: inputs invalid
+        // JIT disabled
         return (false) ;
     }
-
-    FILE *fp = (*fp_handle) ;
-    int fd = (*fd_handle) ;
-
-    (*fp_handle) = NULL ;
-    (*fd_handle) = -1 ;
-
-    if (fp == NULL || fd < 0)
-    {
-        // failure: inputs invalid
-        return (false) ;
-    }
-
-    // unlock the file
-    bool ok = GB_file_unlock (fp, fd) ;
-
-    // close the file
-    ok = ok && (fclose (fp) == 0) ;
-
-    // return result
-    return (ok) ;
-
     #else
-    // JIT not enabled
-    return (false) ;
+    {
+        if (fp_handle == NULL || fd_handle == NULL)
+        {
+            // failure: inputs invalid
+            return (false) ;
+        }
+
+        FILE *fp = (*fp_handle) ;
+        int fd = (*fd_handle) ;
+
+        (*fp_handle) = NULL ;
+        (*fd_handle) = -1 ;
+
+        if (fp == NULL || fd < 0)
+        {
+            // failure: inputs invalid
+            return (false) ;
+        }
+
+        // unlock the file
+        bool ok = GB_file_unlock (fp, fd) ;
+
+        // close the file
+        ok = ok && (fclose (fp) == 0) ;
+
+        // return result
+        return (ok) ;
+    }
     #endif
 }
 
@@ -226,7 +238,8 @@ bool GB_file_unlock_and_close   // true if successful, false on error
 
 // Create a directory, including all parent directories if they do not exist.
 // Returns true if the directory already exists or if it was successfully
-// created.  Returns false on error.
+// created.  Returns true if the JIT is disabled (the directory is not created
+// also not needed in that case).  Returns false on error.
 
 bool GB_file_mkdir (char *path)
 {
@@ -236,39 +249,42 @@ bool GB_file_mkdir (char *path)
         return (false) ;
     }
 
-    #ifndef NJIT
-    // create all the leading directories
-    int result = 0 ;
-    bool first = true ;
-    for (char *p = path ; *p ; p++)
+    #ifdef NJIT
     {
-        // look for a file separator
-        if (*p == '/' || *p == '\\')
-        {
-            // found a file separator
-            if (!first)
-            { 
-                // terminate the path at this file separator
-                char save = *p ;
-                *p = '\0' ;
-                // construct the directory at this path
-                result = GB_MKDIR (path) ;
-                // err = (result == -1) ? errno : 0 ;
-                // restore the path
-                *p = save ;
-            }
-            first = false ;
-        }
+        // JIT disabled; do not create the directory but do not return an error
+        return (true) ;
     }
-
-    // create the final directory
-    result = GB_MKDIR (path) ;
-    int err = (result == -1) ? errno : 0 ;
-    return (err == 0 || err == EEXIST) ;
-
     #else
-    // JIT not enabled; do not create the directory and do not return an error
-    return (true) ;
+    {
+        // create all the leading directories
+        int result = 0 ;
+        bool first = true ;
+        for (char *p = path ; *p ; p++)
+        {
+            // look for a file separator
+            if (*p == '/' || *p == '\\')
+            {
+                // found a file separator
+                if (!first)
+                { 
+                    // terminate the path at this file separator
+                    char save = *p ;
+                    *p = '\0' ;
+                    // construct the directory at this path
+                    result = GB_MKDIR (path) ;
+                    // err = (result == -1) ? errno : 0 ;
+                    // restore the path
+                    *p = save ;
+                }
+                first = false ;
+            }
+        }
+
+        // create the final directory
+        result = GB_MKDIR (path) ;
+        int err = (result == -1) ? errno : 0 ;
+        return (err == 0 || err == EEXIST) ;
+    }
     #endif
 }
 
@@ -278,14 +294,21 @@ bool GB_file_mkdir (char *path)
 
 void *GB_file_dlopen (char *library_name)
 { 
-    #ifndef NJIT
-    #if GB_WINDOWS
-    return ((void *) LoadLibrary (library_name)) ;
+    #ifdef NJIT
+    {
+        // JIT disabled
+        return (NULL) ;
+    }
+    #elif GB_WINDOWS
+    {
+        // open a Windows dll
+        return ((void *) LoadLibrary (library_name)) ;
+    }
     #else
-    return (dlopen (library_name, RTLD_LAZY)) ;
-    #endif
-    #else
-    return (NULL) ;
+    {
+        // open a POSIX dynamic library
+        return (dlopen (library_name, RTLD_LAZY)) ;
+    }
     #endif
 }
 
@@ -295,14 +318,21 @@ void *GB_file_dlopen (char *library_name)
 
 void *GB_file_dlsym (void *dl_handle, char *symbol)
 { 
-    #ifndef NJIT
-    #if GB_WINDOWS
-    return ((void *) GetProcAddress (dl_handle, symbol)) ;
+    #ifdef NJIT
+    {
+        // JIT disabled
+        return (NULL) ;
+    }
+    #elif GB_WINDOWS
+    {
+        // lookup a symbol in a Windows dll
+        return ((void *) GetProcAddress (dl_handle, symbol)) ;
+    }
     #else
-    return (dlsym (dl_handle, symbol)) ;
-    #endif
-    #else
-    return (NULL) ;
+    {
+        // lookup a symbol in a POSIX dynamic library
+        return (dlsym (dl_handle, symbol)) ;
+    }
     #endif
 }
 
@@ -312,28 +342,23 @@ void *GB_file_dlsym (void *dl_handle, char *symbol)
 
 void GB_file_dlclose (void *dl_handle)
 { 
-    #ifndef NJIT
-    #if GB_WINDOWS
-    FreeLibrary (dl_handle) ;
-    #else
-    dlclose (dl_handle) ;
-    #endif
-    #endif
-}
-
-//------------------------------------------------------------------------------
-// GB_command: run a command in a child process
-//------------------------------------------------------------------------------
-
-// No error condition or status is returned.
-
-// If burble is on, stdout is left alone, so the stdout of the command is sent
-// to the stdout of the parent process.  If burble is off, stdout is sent to
-// /dev/null (nul on Windows).  The redirect is handled by modifying the
-// command string in the caller.
-
-void GB_command (char *command)
-{
-    int result = system (command) ;
+    if (dl_handle != NULL)
+    {
+        #ifdef NJIT
+        {
+            // JIT disabled: do nothing
+        }
+        #elif GB_WINDOWS
+        {
+            // close a Windows dll
+            FreeLibrary (dl_handle) ;
+        }
+        #else
+        {
+            // close a POSIX dynamic library
+            dlclose (dl_handle) ;
+        }
+        #endif
+    }
 }
 

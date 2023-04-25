@@ -2123,13 +2123,31 @@ void GB_jitifyer_table_free (bool freeall)
 }
 
 //------------------------------------------------------------------------------
+// GB_jitifyer_command: run a command in a child process
+//------------------------------------------------------------------------------
+
+// No error condition or status is returned.
+
+// If burble is on, stdout is left alone, so the stdout of the command is sent
+// to the stdout of the parent process.  If burble is off, stdout is sent to
+// /dev/null (nul on Windows).  If there is no error log file, stderr is not
+// redirected; otherwise, it is redirected to that file.  The redirects are
+// handled by modifying the command string in the caller, so they do not have
+// to be handled here.
+
+static void GB_jitifyer_command (char *command)
+{
+    int result = system (command) ;
+}
+
+//------------------------------------------------------------------------------
 // GB_jitifyer_cmake_compile: compile a kernel with cmake
 //------------------------------------------------------------------------------
 
-// This method works on any platform.
+// This method does not return any error/success code.  If the compilation
+// fails for any reason, the subsequent load of the compiled kernel will fail.
 
-// This method does not return any result.  If the compilation fails for any
-// reason, the subsequent load of the compiled kernel will fail.
+// This method works on any platform.  For Windows, this method is always used.
 
 #define GB_BLD_DIR "%s/temp/%s"
 
@@ -2146,7 +2164,7 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
         "cmake -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
         GB_jit_cache_path, kernel_name,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
-    GB_command (GB_jit_temp) ;
+    GB_jitifyer_command (GB_jit_temp) ;
 
     // create the build folder for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated, GB_BLD_DIR,
@@ -2176,7 +2194,7 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
         kernel_name,                // target name for add_library command
         GB_jit_cache_path, bucket, kernel_name, // source file for add_library
         kernel_name,                // target name of the library
-        GB_jit_C_cmake_libs) ;   // libraries to link against
+        GB_jit_C_cmake_libs) ;      // libraries to link against
     fclose (fp) ;
 
     // generate the build system for this kernel
@@ -2187,21 +2205,21 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
         GB_jit_cache_path, kernel_name,     // -B build path
         GB_jit_C_compiler,                  // C compiler to use
         burble_stdout, err_redirect, GB_jit_error_log) ;
-    GB_command (GB_jit_temp) ;
+    GB_jitifyer_command (GB_jit_temp) ;
 
     // compile the library for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
         "cmake --build \"" GB_BLD_DIR "\" %s %s %s",
         GB_jit_cache_path, kernel_name,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
-    GB_command (GB_jit_temp) ;
+    GB_jitifyer_command (GB_jit_temp) ;
 
     // remove the build folder and all its contents
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
         "cmake -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
         GB_jit_cache_path, kernel_name,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
-    GB_command (GB_jit_temp) ;
+    GB_jitifyer_command (GB_jit_temp) ;
 
 #endif
 }
@@ -2210,8 +2228,8 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
 // GB_jitifyer_direct_compile: compile a kernel with just the compiler
 //------------------------------------------------------------------------------
 
-// This method does not return any result.  If the compilation fails for any
-// reason, the subsequent load of the compiled kernel will fail.
+// This method does not return any error/success code.  If the compilation
+// fails for any reason, the subsequent load of the compiled kernel will fail.
 
 // This method does not work on Windows. 
 
@@ -2267,7 +2285,7 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
 
     // compile the library and return result
     GBURBLE ("(jit: %s) ", GB_jit_temp) ;
-    GB_command (GB_jit_temp) ;
+    GB_jitifyer_command (GB_jit_temp) ;
 
     // remove the *.o file
     snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/%s%s",

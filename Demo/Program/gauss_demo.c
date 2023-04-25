@@ -573,6 +573,17 @@ int main (void)
         GrB_ALL, 4, GrB_ALL, 4, NULL)) ;
     printgauss (C, "\n=============== C = C * ciso (full JIT):\n") ;
 
+    gauss result ;
+    TRY (GrB_Matrix_extractElement_UDT (&result, C, 3, 3)) ;
+    if (result.real == 65 && result.imag == 1170)
+    {
+        fprintf (stderr, "gauss_demo: all tests pass\n") ;
+    }
+    else
+    {
+        fprintf (stderr, "gauss_demo: test failure\n") ;
+    }
+
     // free everything and finalize GraphBLAS
     GrB_free (&A) ;
     GrB_free (&B) ;

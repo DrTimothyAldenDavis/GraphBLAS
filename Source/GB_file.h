@@ -43,7 +43,5 @@ void *GB_file_dlsym (void *dl_handle, char *symbol) ;
 
 void GB_file_dlclose (void *dl_handle) ;
 
-void GB_command (char *command) ;
-
 #endif
 

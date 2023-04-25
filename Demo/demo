@@ -11,5 +11,6 @@
 ../build/import_demo < Matrix/west0067 > import_demo.out
 ../build/wildtype_demo                 > wildtype_demo.out
 
+../build/gauss_demo > gauss_demo1.out
 ../build/gauss_demo > gauss_demo.out
 exit 0
