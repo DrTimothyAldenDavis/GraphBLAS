@@ -373,6 +373,10 @@ const char *GB_jitifyer_get_C_preface (void) ;
 GrB_Info GB_jitifyer_set_C_preface (const char *new_C_preface) ;
 GrB_Info GB_jitifyer_set_C_preface_worker (const char *new_C_preface) ;
 
+const char *GB_jitifyer_get_error_log (void) ;
+GrB_Info GB_jitifyer_set_error_log (const char *new_error_log) ;
+GrB_Info GB_jitifyer_set_error_log_worker (const char *new_error_log) ;
+
 bool GB_jitifyer_get_use_cmake (void) ;
 void GB_jitifyer_set_use_cmake (bool use_cmake) ;
 

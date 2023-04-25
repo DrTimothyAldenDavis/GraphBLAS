@@ -41,7 +41,6 @@
         // POSIX
         #include <unistd.h>
         #include <dlfcn.h>
-        #include <sys/wait.h>
         #define GB_OPEN         open
         #define GB_CLOSE        close
         #define GB_FDOPEN       fdopen
@@ -268,7 +267,7 @@ bool GB_file_mkdir (char *path)
     return (err == 0 || err == EEXIST) ;
 
     #else
-    // JIT not enabled
+    // JIT not enabled; do not create the directory and do not return an error
     return (true) ;
     #endif
 }
@@ -330,65 +329,11 @@ void GB_file_dlclose (void *dl_handle)
 
 // If burble is on, stdout is left alone, so the stdout of the command is sent
 // to the stdout of the parent process.  If burble is off, stdout is sent to
-// /dev/null.
-
-// FIXME: what to do with stderr?  Use a log file? Burble it if that is on.
+// /dev/null (nul on Windows).  The redirect is handled by modifying the
+// command string in the caller.
 
 void GB_command (char *command)
 {
-    #ifndef NJIT
-    bool burble = GB_Global_burble_get ( ) ;
-    if (burble)
-    { 
-        // stdout and stderr are both allowed to go through to the user output
-        int result = system (command) ;
-        return ;
-    }
-
-    #if GB_WINDOWS
-    {
-
-        //----------------------------------------------------------------------
-        // Windows variant
-        //----------------------------------------------------------------------
-
-        // FIXME: if burble is off, pipe stdout to /dev/null on Windows
-
-        // TODO
-        int result = system (command) ;
-
-    }
-    #else
-    { 
-
-        //----------------------------------------------------------------------
-        // POSIX variant
-        //----------------------------------------------------------------------
-
-        pid_t child = fork ( ) ;
-        if (child == 0)
-        {
-            // child process remaps stdout to /dev/null; then does the command
-            // fprintf (stderr, "Child: %s\n", command) ;
-            // fflush (stderr) ;
-            int devnull = open ("/dev/null", O_WRONLY) ;
-            dup2 (devnull, STDOUT_FILENO) ;
-            int result = system (command) ;
-            close (devnull) ;
-            // fprintf (stderr, "Child: done %d\n", result) ;
-            fflush (stderr) ;
-            _exit (EXIT_SUCCESS) ;
-        }
-        else if (child > 0)
-        {
-            // parent waits for the child to finish
-            // fprintf (stderr, "parent: wait for %d\n", child) ;
-            int status = 0 ;
-            waitpid (child, &status, 0) ;
-            // fprintf (stderr, "parent: got child %d\n", child) ;
-        }
-    }
-    #endif
-    #endif
+    int result = system (command) ;
 }
 

@@ -267,6 +267,10 @@ GrB_Info GxB_Global_Option_set_CHAR      // set a global default option
 
             return (GB_jitifyer_set_C_preface (value)) ;
 
+        case GxB_JIT_ERROR_LOG : 
+
+            return (GB_jitifyer_set_error_log (value)) ;
+
         case GxB_JIT_CACHE_PATH : 
 
             return (GB_jitifyer_set_cache_path (value)) ;
@@ -559,6 +563,15 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 GB_jitifyer_set_control (value) ;
             }
             break ;
+
+        case GxB_JIT_ERROR_LOG : 
+
+            {
+                va_start (ap, field) ;
+                char *error_log = va_arg (ap, char *) ;
+                va_end (ap) ;
+                return (GB_jitifyer_set_error_log (error_log)) ;
+            }
 
         case GxB_JIT_CACHE_PATH : 
 

@@ -4075,7 +4075,8 @@ typedef enum            // for global options or matrix options
     GxB_JIT_CACHE_PATH = 116,       // CPU/CUDA JIT path for compiled kernels
     GxB_JIT_C_CMAKE_LIBS = 117,     // CPU JIT C libraries when using cmake
     GxB_JIT_USE_CMAKE = 118,        // CPU JIT: use cmake or direct compile
-//  GxB_JIT_CUDA_CONTROL = 119,     // CUDA JIT control (future)
+    GxB_JIT_ERROR_LOG = 119,        // CPU JIT: error log file
+//  GxB_JIT_CUDA_CONTROL = ...,     // CUDA JIT control (future)
 
     //------------------------------------------------------------
     // for GxB_Matrix_Option_get only:

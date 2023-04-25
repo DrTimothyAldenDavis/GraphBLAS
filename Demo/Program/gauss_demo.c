@@ -197,9 +197,11 @@ int main (void)
     printf ("Gauss demo.  Note that all transposes are array transposes,\n"
         "not matrix (conjugate) transposes.\n\n") ;
 
+//  try changing the error log file for compiler errors
+//  TRY (GxB_set (GxB_JIT_ERROR_LOG, "/tmp/grb_jit_errors.txt")) ;
+
 //  try changing the cache path
-//  TRY (GxB_set (GxB_JIT_CACHE_PATH,
-//      "/home/faculty/d/davis/mycache")) ;
+//  TRY (GxB_set (GxB_JIT_CACHE_PATH, "/home/faculty/d/davis/mycache")) ;
 
     TRY (GxB_print (GxB_CONTEXT_WORLD, 3)) ;
     char *compiler, *cache, *flags, *link, *libraries, *preface ;

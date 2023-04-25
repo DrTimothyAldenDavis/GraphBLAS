@@ -47,6 +47,10 @@ static bool GB_jit_use_cmake =
 static char    *GB_jit_cache_path = NULL ;
 static size_t   GB_jit_cache_path_allocated = 0 ;
 
+// path to error log file:
+static char    *GB_jit_error_log = NULL ;
+static size_t   GB_jit_error_log_allocated = 0 ;
+
 // name of the C compiler:
 static char    *GB_jit_C_compiler = NULL ;
 static size_t   GB_jit_C_compiler_allocated = 0 ;
@@ -158,6 +162,7 @@ void GB_jitifyer_finalize (bool freeall)
 { 
     GB_jitifyer_table_free (freeall) ;
     GB_FREE_STUFF (GB_jit_cache_path) ;
+    GB_FREE_STUFF (GB_jit_error_log) ;
     GB_FREE_STUFF (GB_jit_C_compiler) ;
     GB_FREE_STUFF (GB_jit_C_flags) ;
     GB_FREE_STUFF (GB_jit_C_link_flags) ;
@@ -242,6 +247,7 @@ GrB_Info GB_jitifyer_init (void)
     // initialize the remaining strings
     //--------------------------------------------------------------------------
 
+    GB_COPY_STUFF (GB_jit_error_log,     "") ;
     GB_COPY_STUFF (GB_jit_C_compiler,   GB_C_COMPILER) ;
     GB_COPY_STUFF (GB_jit_C_flags,      GB_C_FLAGS) ;
     GB_COPY_STUFF (GB_jit_C_link_flags, GB_C_LINK_FLAGS) ;
@@ -737,6 +743,7 @@ GrB_Info GB_jitifyer_alloc_space (void)
         5 * GB_jit_cache_path_allocated + 7 * GB_KLEN +
         GB_jit_C_libraries_allocated +
         GB_jit_C_cmake_libs_allocated +
+        GB_jit_error_log_allocated +
         300 ;
     GB_MALLOC_STUFF (GB_jit_temp, len) ;
 
@@ -806,6 +813,56 @@ GrB_Info GB_jitifyer_set_cache_path_worker (const char *new_cache_path)
     OK (GB_jitifyer_establish_paths (GrB_INVALID_VALUE)) ;
     // uncompress all the source files into the user source folder
     return (GB_jitifyer_extract_JITpackage (GrB_INVALID_VALUE)) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_get_error_log: return the current log file
+//------------------------------------------------------------------------------
+
+const char *GB_jitifyer_get_error_log (void)
+{
+    const char *s ;
+    #pragma omp critical (GB_jitifyer_worker)
+    { 
+        s = GB_jit_error_log ;
+    }
+    return (s) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_error_log: set a new log file
+//------------------------------------------------------------------------------
+
+// If the new_error_log is NULL or the empty string, stderr is not redirected to
+// a log file.
+
+GrB_Info GB_jitifyer_set_error_log (const char *new_error_log)
+{
+
+    //--------------------------------------------------------------------------
+    // set the log file in a critical section
+    //--------------------------------------------------------------------------
+
+    GrB_Info info ;
+    #pragma omp critical (GB_jitifyer_worker)
+    { 
+        info = GB_jitifyer_set_error_log_worker
+            ((new_error_log == NULL) ? "" : new_error_log) ;
+    }
+    return (info) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_error_log_worker: set log file in a critical section
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_set_error_log_worker (const char *new_error_log)
+{ 
+    // free the old log file
+    GB_FREE_STUFF (GB_jit_error_log) ;
+    // allocate the new GB_jit_error_log
+    GB_COPY_STUFF (GB_jit_error_log, new_error_log) ;
+    return (GB_jitifyer_alloc_space ( )) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1065,7 +1122,7 @@ void GB_jitifyer_set_use_cmake (bool use_cmake)
 }
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_get_C_cmake_libs: return the current C libraries
+// GB_jitifyer_get_C_cmake_libs: return the current cmake libs
 //------------------------------------------------------------------------------
 
 const char *GB_jitifyer_get_C_cmake_libs (void)
@@ -1079,7 +1136,7 @@ const char *GB_jitifyer_get_C_cmake_libs (void)
 }
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_set_C_cmake_libs: set new C libraries
+// GB_jitifyer_set_C_cmake_libs: set new cmake libs
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_set_C_cmake_libs (const char *new_cmake_libs)
@@ -1095,7 +1152,7 @@ GrB_Info GB_jitifyer_set_C_cmake_libs (const char *new_cmake_libs)
     }
 
     //--------------------------------------------------------------------------
-    // set the C libraries in a critical section
+    // set the cmake libs in a critical section
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
@@ -1112,7 +1169,7 @@ GrB_Info GB_jitifyer_set_C_cmake_libs (const char *new_cmake_libs)
 
 GrB_Info GB_jitifyer_set_C_cmake_libs_worker (const char *new_cmake_libs)
 { 
-    // free the old C libraries string
+    // free the old C_cmake_libs string
     GB_FREE_STUFF (GB_jit_C_cmake_libs) ;
     // allocate the new GB_jit_C_cmake_libs
     GB_COPY_STUFF (GB_jit_C_cmake_libs, new_cmake_libs) ;
@@ -1122,7 +1179,7 @@ GrB_Info GB_jitifyer_set_C_cmake_libs_worker (const char *new_cmake_libs)
 
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_get_C_preface: return the current C libraries
+// GB_jitifyer_get_C_preface: return the current C preface
 //------------------------------------------------------------------------------
 
 const char *GB_jitifyer_get_C_preface (void)
@@ -1136,7 +1193,7 @@ const char *GB_jitifyer_get_C_preface (void)
 }
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_set_C_preface: set new C libraries
+// GB_jitifyer_set_C_preface: set new C preface
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_set_C_preface (const char *new_C_preface)
@@ -1164,7 +1221,7 @@ GrB_Info GB_jitifyer_set_C_preface (const char *new_C_preface)
 }
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_set_C_preface_worker: set C libraries in a critical section
+// GB_jitifyer_set_C_preface_worker: set C preface in a critical section
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_set_C_preface_worker (const char *new_C_preface)
@@ -2081,11 +2138,14 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
 #ifndef NJIT
 
     GBURBLE ("(jit: %s)\n", "cmake") ;
+    char *burble_stdout = GB_Global_burble_get ( ) ? "" : GB_DEV_NULL ;
+    char *err_redirect = (strlen (GB_jit_error_log) > 0) ? " 2>> " : "" ;
 
     // remove any prior build folder for this kernel, and all its contents
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        "cmake -E remove_directory \"" GB_BLD_DIR "\"",
-        GB_jit_cache_path, kernel_name) ;   // build path
+        "cmake -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
+        GB_jit_cache_path, kernel_name,     // build path
+        burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_command (GB_jit_temp) ;
 
     // create the build folder for this kernel
@@ -2122,22 +2182,25 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
     // generate the build system for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
         "cmake -S \"" GB_BLD_DIR "\" -B \"" GB_BLD_DIR "\""
-        " -DCMAKE_C_COMPILER=\"%s\" ",
+        " -DCMAKE_C_COMPILER=\"%s\" %s %s %s",
         GB_jit_cache_path, kernel_name,     // -S source path
         GB_jit_cache_path, kernel_name,     // -B build path
-        GB_jit_C_compiler) ;                        // C compiler to use
+        GB_jit_C_compiler,                  // C compiler to use
+        burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_command (GB_jit_temp) ;
 
     // compile the library for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        "cmake --build \"" GB_BLD_DIR "\"",
-        GB_jit_cache_path, kernel_name) ;   // build path
+        "cmake --build \"" GB_BLD_DIR "\" %s %s %s",
+        GB_jit_cache_path, kernel_name,     // build path
+        burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_command (GB_jit_temp) ;
 
     // remove the build folder and all its contents
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        "cmake -E remove_directory \"" GB_BLD_DIR "\"",
-        GB_jit_cache_path, kernel_name) ;   // build path
+        "cmake -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
+        GB_jit_cache_path, kernel_name,     // build path
+        burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_command (GB_jit_temp) ;
 
 #endif
@@ -2156,43 +2219,53 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
 {
 #ifndef NJIT
 
+    char *burble_stdout = GB_Global_burble_get ( ) ? "" : GB_DEV_NULL ;
+    char *err_redirect = (strlen (GB_jit_error_log) > 0) ? " 2>> " : "" ;
+
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
 
     // compile:
-    "%s -DGB_JIT_RUNTIME=1 "        // compiler command
-    "%s "                           // C flags
-    "-I%s/src "                     // include source directory
-    "%s "                           // openmp include directories
-    "-o %s/c/%02x/%s%s "            // *.o output file
-    "-c %s/c/%02x/%s.c ; "          // *.c input file
+    "%s -DGB_JIT_RUNTIME=1 "            // compiler command
+    "%s "                               // C flags
+    "-I%s/src "                         // include source directory
+    "%s "                               // openmp include directories
+    "-o %s/c/%02x/%s%s "                // *.o output file
+    "-c %s/c/%02x/%s.c "                // *.c input file
+    "%s "                               // burble stdout
+    "%s %s ; "                          // error log file
 
     // link:
-    "%s "                           // C compiler
-    "%s "                           // C flags
-    "%s "                           // C link flags
-    "-o %s/lib/%02x/%s%s%s "        // lib*.so output file
-    "%s/c/%02x/%s%s "               // *.o input file
-    "%s ",                          // libraries to link with
+    "%s "                               // C compiler
+    "%s "                               // C flags
+    "%s "                               // C link flags
+    "-o %s/lib/%02x/%s%s%s "            // lib*.so output file
+    "%s/c/%02x/%s%s "                   // *.o input file
+    "%s "                               // libraries to link with
+    "%s"                                // burble stdout
+    "%s %s ",                           // error log file
 
     // compile:
-    GB_jit_C_compiler,              // C compiler
-    GB_jit_C_flags,                 // C flags
-    GB_jit_cache_path,              // include source directory (cache/src)
-    GB_OMP_INC,                     // openmp include
+    GB_jit_C_compiler,                  // C compiler
+    GB_jit_C_flags,                     // C flags
+    GB_jit_cache_path,                  // include source directory (cache/src)
+    GB_OMP_INC,                         // openmp include
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o output file
     GB_jit_cache_path, bucket, kernel_name,                 // *.c input file
+    burble_stdout,                      // burble stdout
+    err_redirect, GB_jit_error_log,     // error log file
 
     // link:
-    GB_jit_C_compiler,              // C compiler
-    GB_jit_C_flags,                 // C flags
-    GB_jit_C_link_flags,            // C link flags
+    GB_jit_C_compiler,                  // C compiler
+    GB_jit_C_flags,                     // C flags
+    GB_jit_C_link_flags,                // C link flags
     GB_jit_cache_path, bucket,  
     GB_LIB_PREFIX, kernel_name, GB_LIB_SUFFIX,              // lib*.so file
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
-    GB_jit_C_libraries) ;           // libraries to link with
+    GB_jit_C_libraries,                 // libraries to link with
+    burble_stdout,                      // burble stdout
+    err_redirect, GB_jit_error_log) ;   // error log file
 
     // compile the library and return result
-    // int result = system (GB_jit_temp) ;
     GBURBLE ("(jit: %s) ", GB_jit_temp) ;
     GB_command (GB_jit_temp) ;
 

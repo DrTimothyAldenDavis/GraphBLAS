@@ -9,12 +9,9 @@ v8.0.0 release:
     kernels are incompatible with the earlier DRAFT* versions of 8.0.0,
     however.
 
-FIXME: testing, release date, delete this file (TODO.txt), port to Windows
+FIXME: testing, release date, delete this file (TODO.txt), test on Windows
 
     exhaustive Tcov tests:
     with all 4 combinations of: (NJIT on/off) x (COMPACT on/off)
     also do the same exhaustive tests in ./Test but with GB_DEBUG enabled
-
-FIXME: cmake stderr output: to log file?
-FIXME: Windows: pipe stdout to /dev/null if burble is off
 

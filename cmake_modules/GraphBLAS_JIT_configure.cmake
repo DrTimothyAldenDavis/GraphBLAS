@@ -24,8 +24,7 @@ if ( APPLE )
     set ( GB_OBJ_SUFFIX ".o" )
 elseif ( WIN32 )
     # Windows
-    # FIXME: port to Windows
-    set ( GB_OBJ_SUFFIX ".dll" )
+    set ( GB_OBJ_SUFFIX ".obj" )
 else ( )
     # Linux / Unix
     set ( GB_C_FLAGS "${GB_C_FLAGS} -fPIC " )

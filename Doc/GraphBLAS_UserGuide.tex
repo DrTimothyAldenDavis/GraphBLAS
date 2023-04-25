@@ -8707,6 +8707,7 @@ field                       & value         & description \\
 \verb'GxB_JIT_C_PREFACE'      & \verb'char *' & C code as preface to JIT kernels \\
 \verb'GxB_JIT_C_CONTROL'      & see below     & CPU JIT control \\
 \verb'GxB_JIT_USE_CMAKE'      & see below     & CPU JIT control \\
+\verb'GxB_JIT_ERROR_LOG'      & \verb'char *' & error log file \\
 \verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
 \hline
 \end{tabular}
@@ -8914,6 +8915,16 @@ platforms by setting the value of \verb'GxB_JIT_USE_CMAKE' to true.
 Normally the same version of cmake should be used to compile both GraphBLAS and
 the JIT kernels.  However, compiling GraphBLAS itself requires cmake v3.19 or
 later, while compiling the JIT kernels only requires cmake v3.13 or later.
+
+%----------------------------------------
+\subsubsection{\sf GxB\_JIT\_ERROR\_LOG}
+%----------------------------------------
+
+The \verb'GxB_JIT_ERROR_LOG' string is the filename of the optional error
+log file.  By default, this string is empty, which means that any compiler
+errors are routed to the \verb'stderr' output of the user process.  If set
+to a non-empty string, any compiler errors are appended to this file.
+The string may be \verb'NULL', which means the same as an empty string.
 
 %----------------------------------------
 \subsubsection{\sf GxB\_JIT\_CACHE\_PATH}
@@ -9192,6 +9203,7 @@ field                       & value         & description \\
 \verb'GxB_JIT_C_PREFACE'      & \verb'char *' & C code as preface to JIT kernels \\
 \verb'GxB_JIT_C_CONTROL'      & see Section \ref{jit} & CPU JIT control \\
 \verb'GxB_JIT_USE_CMAKE'      & see Section \ref{jit} & CPU JIT: use cmake \\
+\verb'GxB_JIT_ERROR_LOG'      & \verb'char *' & error log file \\
 \verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
 \hline
 \end{tabular}
@@ -9294,6 +9306,7 @@ field                       & value         & description \\
 \verb'GxB_JIT_C_PREFACE'      & \verb'char *' & C code as preface to JIT kernels \\
 \verb'GxB_JIT_C_CONTROL'      & see Section \ref{jit} & CPU JIT control \\
 \verb'GxB_JIT_USE_CMAKE'      & see Section \ref{jit} & CPU JIT: use cmake \\
+\verb'GxB_JIT_ERROR_LOG'      & \verb'char *' & error log file \\
 \verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
 \hline
 \verb'GxB_MODE'                 & \verb'int'    & blocking/non-blocking \\
@@ -9718,6 +9731,7 @@ typedef enum
     GxB_JIT_CACHE_PATH = 116,       // CPU/CUDA JIT path for compiled kernels
     GxB_JIT_C_CMAKE_LIBS = 117,     // CPU JIT C libraries when using cmake
     GxB_JIT_USE_CMAKE = 118,        // CPU JIT: use cmake or direct compile
+    GxB_JIT_ERROR_LOG = 119,        // CPU JIT: error log file
 
     // for matrix/vector get only:
     GxB_SPARSITY_STATUS = 33,   // query the sparsity of a matrix or vector
@@ -9945,8 +9959,9 @@ The \verb'field' parameter can be
 \verb'GxB_JIT_C_LINKER_FLAGS',
 \verb'GxB_JIT_C_LIBRRIES',
 \verb'GxB_JIT_C_PREFACE',
-\verb'GxB_JIT_C_CONTROL', or
-\verb'GxB_JIT_USE_CMAKE', or
+\verb'GxB_JIT_C_CONTROL',
+\verb'GxB_JIT_USE_CMAKE',
+\verb'GxB_JIT_ERROR_LOG', or
 \verb'GxB_JIT_CACHE_PATH'.
 
 For example, the following usage sets the global hypersparsity ratio to 0.2,
@@ -10078,6 +10093,7 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
         \verb'GxB_JIT_C_PREFACE'        & preface for JIT kernels \\
         \verb'GxB_JIT_C_CONTROL'        & CPU JIT control \\
         \verb'GxB_JIT_USE_CMAKE'        & CPU JIT: use cmake or not \\ 
+        \verb'GxB_JIT_ERROR_LOG'        & error log file \\
         \verb'GxB_JIT_CACHE_PATH'       & folder with compiled kernels \\
         \hline
         \verb'GxB_LIBRARY_NAME'         & the string
@@ -10274,6 +10290,8 @@ To set/get the global options:
     GxB_get (GxB_JIT_C_CMAKE_LIBS, char **libraries) ;
     GxB_set (GxB_JIT_C_PREFACE, char *preface) ;
     GxB_get (GxB_JIT_C_PREFACE, char **preface) ;
+    GxB_set (GxB_JIT_ERROR_LOG, char *error_log) ;
+    GxB_get (GxB_JIT_ERROR_LOG, char **error_log) ;
     GxB_set (GxB_JIT_CACHE_PATH, char *cache) ;
     GxB_get (GxB_JIT_CACHE_PATH, char **cache) ;
     GxB_set (GxB_JIT_USE_CMAKE, int use_cmake) ;

@@ -3874,6 +3874,7 @@
 #define GB_jitifyer_get_C_link_flags GM_jitifyer_get_C_link_flags
 #define GB_jitifyer_get_control GM_jitifyer_get_control
 #define GB_jitifyer_get_C_preface GM_jitifyer_get_C_preface
+#define GB_jitifyer_get_error_log GM_jitifyer_get_error_log
 #define GB_jitifyer_get_use_cmake GM_jitifyer_get_use_cmake
 #define GB_jitifyer_hash GM_jitifyer_hash
 #define GB_jitifyer_hash_encoding GM_jitifyer_hash_encoding
@@ -3899,6 +3900,8 @@
 #define GB_jitifyer_set_control GM_jitifyer_set_control
 #define GB_jitifyer_set_C_preface GM_jitifyer_set_C_preface
 #define GB_jitifyer_set_C_preface_worker GM_jitifyer_set_C_preface_worker
+#define GB_jitifyer_set_error_log GM_jitifyer_set_error_log
+#define GB_jitifyer_set_error_log_worker GM_jitifyer_set_error_log_worker
 #define GB_jitifyer_set_use_cmake GM_jitifyer_set_use_cmake
 #define GB_jitifyer_table_free GM_jitifyer_table_free
 #define GB_jitifyer_worker GM_jitifyer_worker
@@ -4136,8 +4139,8 @@
 #define GB_LZ4_compress_fast_extState GM_LZ4_compress_fast_extState
 #define GB_LZ4_compress_fast_extState_fastReset GM_LZ4_compress_fast_extState_fastReset
 #define GB_LZ4_compress_forceExtDict GM_LZ4_compress_forceExtDict
-#define GB_LZ4_compress_HC GM_LZ4_compress_HC
 #define GB_LZ4_compressHC GM_LZ4_compressHC
+#define GB_LZ4_compress_HC GM_LZ4_compress_HC
 #define GB_LZ4_compressHC2 GM_LZ4_compressHC2
 #define GB_LZ4_compressHC2_continue GM_LZ4_compressHC2_continue
 #define GB_LZ4_compressHC2_limitedOutput GM_LZ4_compressHC2_limitedOutput

@@ -12,6 +12,13 @@
 
 #define GB_WINDOWS (defined (_WIN64) || defined (_WIN32))
 
+// to pipe stdout to /dev/null
+#if GB_WINDOWS
+#define GB_DEV_NULL " > nul"
+#else
+#define GB_DEV_NULL " > /dev/null"
+#endif
+
 bool GB_file_open_and_lock  // true if successful, false on error
 (
     // input
