@@ -11,6 +11,14 @@
 // support of the JIT.  If the JIT is disabled at compile time, these functions
 // do nothing.
 
+// Windows references:
+// https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/open-wopen
+// https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/close
+// https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/fdopen-wfdopen
+// https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/mkdir-wmkdir
+// https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/lock-file
+// https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/unlock-file
+
 #include "GB.h"
 #include "GB_file.h"
 
