@@ -30,8 +30,8 @@ INC = tmp_include/*
 SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
 LIBS = 
-I = -Itmp_include -I../rmm_wrap -I../zstd -I../zstd/zstd_subset -I../lz4
-CPPFLAGS = $(I) -DGBNCPUFEAT -DGBCOVER -DGB_DEBUGIFY_DEFN=1 $(RENAME)
+I = -Itmp_include -I../rmm_wrap -I../zstd -I../zstd/zstd_subset -I../lz4 -I../xxHash
+CPPFLAGS = $(I) -DGBNCPUFEAT -DGBCOVER $(MATLAB)
 SO_OPTS = $(LDFLAGS)
 
 ifeq ($(UNAME),Darwin)
@@ -50,7 +50,7 @@ default: $(SO_NAME)
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $(notdir $@)
 
 $(SO_NAME): $(OBJ)
-	$(CC) $(SO_OPTS) $^ $(LIBS) -o $@ -lm
+	$(CC) $(SO_OPTS) $^ $(LIBS) -o $@ -lm -ldl
 
 .KEEP: $(OBJ)
 
