@@ -98,12 +98,11 @@ v8.0.0 release:
 \begin{itemize}
 
     \item NOTE: if you have JIT kernels in your
-        \verb'~/.SuiteSparse/GraphBLAS/8.0.0' folder, delete them.
+        \verb'~/.SuiteSparse/GraphBLAS/8.0.0' folder, delete the entire folder.
         Normally, a new version of GraphBLAS will create a new folder and
-        ignore the old one, but this draft is still numbered 8.0.0.
-        Its kernels are incompatible with the earlier DRAFT* versions of 8.0.0,
+        ignore the old one, but this draft is still numbered 8.0.0.  Its
+        kernels are incompatible with the earlier DRAFT* versions of 8.0.0,
         however.
-        Also delete the \verb'~/.SuiteSparse/GraphBLAS/8.0.0/src' folder.
 
     \item {\bf Windows:} The JIT needs to be tested to Windows.
 
@@ -8720,7 +8719,7 @@ to be compiled.  If the kernel relies on user-defined types and/or operators, a
 check is made the first time the compiled kernel is loaded.  If the current
 definition of the user-defined type or operator does not exactly match the
 definition when the kernel was compiled, then the compiled kernel is discarded
-and recompiled.  The stale kernel is overwitten with the new one, so there is
+and recompiled.  The stale kernel is overwritten with the new one, so there is
 no need to for the user to take any action to delete the stale kernel from the
 cache path.  If the cache path is changed via \verb'GxB_set', compiled kernels
 in the old cache folder are not copied over.  New ones are compiled instead.
@@ -8774,9 +8773,11 @@ setting can be queried via \verb'GxB_get', if desired.
 The JIT control setting can be also changed by GraphBLAS itself, based on
 following error conditions.  These changes affect all kernels, not just the
 kernel causing the error.  If any of these cases occur, the call to GraphBLAS
-will return \verb'GrB_INVALID_VALUE' to indicate that some kind of JIT failure
-occured, or \verb'GrB_OUT_OF_MEMORY' for the last case below.  The error is
-also reported if the \verb'GxB_BURBLE' is enabled.
+will often return still return \verb'GrB_SUCCESS' because it can use its
+generic kernels instead.  It would return \verb'GrB_OUT_OF_MEMORY' for the last
+case below.  The error is also reported if the \verb'GxB_BURBLE' is enabled.
+If the JIT is disabled through any of these errors, it can be detected by
+\verb'GxB_get' to read the \verb'GxB_JIT_C_CONTROL' state.
 
 \begin{itemize}
 
@@ -8930,7 +8931,7 @@ The string may be \verb'NULL', which means the same as an empty string.
 The \verb'GxB_JIT_CACHE_PATH' string is the full path to the user's cache
 folder (described above).  The default on Linux/Mac is
 \verb'~/.SuiteSparse/GraphBLAS/8.0.0' for GraphBLAS version 8.0.0.  On Windows,
-the cache folder is created inside the users' \verb'LOCALAPPDATA' folder,
+the cache folder is created inside the user's \verb'LOCALAPPDATA' folder,
 called \verb'SuiteSparse/GraphBLAS/8.0.0'.  When GraphBLAS starts,
 \verb'GrB_init' checks if the \verb'GRAPHBLAS_CACHE_PATH' environment variable
 exists, and initializes the cache path with that value instead of using the
@@ -8984,12 +8985,13 @@ as RedisGraph.
 When GraphBLAS runs, it constructs JIT kernels in the user's cache folder,
 which by default is \verb'~/.SuiteSparse/GraphBLAS/8.0.0' for v8.0.0.  The
 kernels placed in a subfolder (\verb'c') and inside that folder they are
-further subdivided arbitrarily into subfolders (via an arbitary hash).  A
-single folder may grow too large for efficient access.  Once GraphBLAS has
-generated some kernels, some or all of them kernels can then incorporated into
-the compiled GraphBLAS library by copying them into the \verb'GraphBLAS/PreJIT'
-folder.  Be sure to move all the \verb'*.c' files into the single
-\verb'GraphBLAS/PreJIT' folder; do not keep the subfolder structure.
+further subdivided arbitrarily into subfolders (via an arbitary hash).  The
+files are split into subfolders because a single folder may grow too large for
+efficient access.  Once GraphBLAS has generated some kernels, some or all of
+them kernels can then incorporated into the compiled GraphBLAS library by
+copying them into the \verb'GraphBLAS/PreJIT' folder.  Be sure to move any
+\verb'*.c' files into the single \verb'GraphBLAS/PreJIT' folder; do not keep
+the subfolder structure.
 
 If GraphBLAS is then recompiled via cmake, the build system will detect these
 kernels, compile them, and make them available as pre-compiled JIT kernels.
@@ -9002,8 +9004,8 @@ GraphBLAS before it runs.
 from your cache folder (typically \verb'~/.SuiteSparse/GraphBLAS/8.0.0/c') into
 \verb'GraphBLAS/PreJIT', and recompile GraphBLAS.  There's no need to change
 any other cmake setting, and no need to do anything different in any
-applications that use GraphBLAS.  Do not copy the compiled files; they are not
-needed and will be ignored.  Just copy the \verb'*.c' files.
+applications that use GraphBLAS.  Do not copy the compiled libraries; they are
+not needed and will be ignored.  Just copy the \verb'*.c' files.
 
 If the resulting GraphBLAS library is installed for system-wide usage (say in a
 Linux distro, Python, RedisGraph, etc), the \verb'GraphBLAS/PreJIT' kernels
@@ -9025,7 +9027,8 @@ deleted.  The version mismatch will be detected during the call to
 user-defined type or operator is changed, the relevant kernels should also be
 deleted from \verb'GraphBLAS/PreJIT'.  For example, the
 \verb'GraphBLAS/Demo/Program/gauss_demo.c' program creates a user-defined
-\verb'gauss' type, and two operators, \verb'addgauss' and \verb'multgauss'.  If
+\verb'gauss' type, and two operators, \verb'addgauss' and \verb'multgauss'.  It
+then intentionally changes one of the operators just to test this feature.  If
 the type and/or operators are changed, then the \verb'*gauss*.c' files in the
 \verb'GraphBLAS/PreJIT' folder should be deleted.
 
@@ -9051,8 +9054,9 @@ GraphBLAS encounters a need for a particular kernel that has been removed from
 \verb'GraphBLAS/PreJIT', it will create it at run-time via the JIT, if
 permitted.  If not permitted, by either compiling GraphBLAS with the
 \verb'NJIT' option, or by using \verb'GxB_JIT_C_CONTROL' at run-time, the
-generic kernel will be used instead.  This will be slower than the PreJIT or
-JIT kernel, but GraphBLAS will still be functional.
+factory kernel or generic kernel will be used instead.  The generic kernel will
+be slower than the PreJIT or JIT kernel, but GraphBLAS will still be
+functional.
 
 In addition to a single \verb'README.txt' file, the \verb'GraphBLAS/PreJIT'
 folder includes a \verb'.gitignore' file that prevents any files in the folder
@@ -9999,17 +10003,10 @@ The \verb'field' parameter can be
 \verb'GxB_BITMAP_SWITCH',
 \verb'GxB_SPARSITY_CONTROL', or
 \verb'GxB_FORMAT'.
-
-For example, the following usage sets the hypersparsity ratio to 0.2, and the
+This example usage sets the hypersparsity ratio to 0.2, and the
 format of \verb'GxB_BY_COL', for a particular matrix \verb'A', and sets the
 sparsity control to \verb'GxB_SPARSE+GxB_FULL' (allowing the matrix to be held
-in CSC or FullC formats, but not BitmapC or HyperCSC).  SuiteSparse:GraphBLAS
-currently applies these changes immediately, but since they are simply hints,
-future versions of SuiteSparse:GraphBLAS may delay the change in format if it
-can obtain better performance.
-
-If the setting is just \verb'GxB_FULL' and some entries are missing, then
-the matrix is held in bitmap format.
+in CSC or FullC formats, but not BitmapC or HyperCSC):
 
 {\footnotesize
 \begin{verbatim}
@@ -10018,12 +10015,15 @@ the matrix is held in bitmap format.
     GxB_set (A, GxB_SPARSITY_CONTROL, GxB_SPARSE + GxB_FULL) ;
 \end{verbatim} }
 
-For performance, the matrix option should be set as soon as it is created with
-\verb'GrB_Matrix_new', so the internal transformation takes less time.
+SuiteSparse:GraphBLAS currently applies these changes immediately, but since
+they are simply hints, future versions of SuiteSparse:GraphBLAS may delay the
+change in format if it can obtain better performance.  If the setting is just
+\verb'GxB_FULL' and some entries are missing, then the matrix is held in bitmap
+format.  For best performance, the matrix option should be set as soon as it is
+created with \verb'GrB_Matrix_new', so the internal transformation takes less
+time.  If an error occurs, \verb'GrB_error(&err,A)' returns details about the
+error.
 
-If an error occurs, \verb'GrB_error(&err,A)' returns details about the error.
-
-\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Desc\_set:} set a {\sf GrB\_Descriptor} value}
 %===============================================================================
@@ -16479,9 +16479,10 @@ GraphBLAS folder.
 
     \begin{itemize}
     \item version 8:  This version is a major SO version increase, since
-        it removes user-visible features from SuiteSparse:GraphBLAS: the
-        \verb'GrB_Descriptor' no longer supports threading control, and some
-        features of the \verb'GxB_SelectOp' are removed (see below).
+        it removes a few minor user-visible features from
+        SuiteSparse:GraphBLAS: the \verb'GrB_Descriptor' no longer supports
+        threading control, and some features of the \verb'GxB_SelectOp' are
+        removed (see below).
     \item The JIT:  GraphBLAS v8.0.0 includes a JIT for the CPU kernels,
         which can compile kernels at run-time.  Added \verb'GxB_set/get'
         options and environment variables to control the JIT.

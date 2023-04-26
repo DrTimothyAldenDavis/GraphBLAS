@@ -3571,7 +3571,6 @@
 #define GB_code_type GM_code_type
 #define GB_colscale GM_colscale
 #define GB_colscale_jit GM_colscale_jit
-#define GB_command GM_command
 #define GB_compatible GM_compatible
 #define GB_concat GM_concat
 #define GB_concat_bitmap GM_concat_bitmap

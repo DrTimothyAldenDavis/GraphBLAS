@@ -1,14 +1,6 @@
 THIS IS A DRAFT.  The following features/revisions will appear in the stable
 v8.0.0 release:
 
-* NOTE: remove prior JIT kernels!
-
-    If you have JIT kernels in your ~/.SuiteSparse/GraphBLAS/8.0.0 folder,
-    delete them.  Normally, a new version of GraphBLAS will create a new folder
-    and ignore the old one, but this draft is still numbered 8.0.0.  Its
-    kernels are incompatible with the earlier DRAFT* versions of 8.0.0,
-    however.
-
 FIXME: testing, release date, delete this file (TODO.txt), test on Windows
 
     exhaustive Tcov tests:

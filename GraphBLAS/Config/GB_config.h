@@ -29,6 +29,11 @@
 #define GB_C_LINK_FLAGS " -shared "
 #endif
 
+// GB_LIB_PREFIX: library prefix (lib for Linux/Unix/Mac, empty for Windows):
+#ifndef GB_LIB_PREFIX
+#define GB_LIB_PREFIX   "lib"
+#endif
+
 // GB_LIB_SUFFIX: library suffix (.so for Linux/Unix, .dylib for Mac, etc):
 #ifndef GB_LIB_SUFFIX
 #define GB_LIB_SUFFIX   ".so"
@@ -39,14 +44,25 @@
 #define GB_OBJ_SUFFIX   ".o"
 #endif
 
-// GB_OMP_INC: include directories for OpenMP, if in use by GraphBLAS:
+// GB_OMP_INC: -I includes for OpenMP, if in use by GraphBLAS:
 #ifndef GB_OMP_INC
 #define GB_OMP_INC      ""
 #endif
 
-// GB_C_LIBRARIES: libraries to link with
+// GB_OMP_INC_DIRS: include directories OpenMP, if in use by GraphBLAS,
+// for cmake:
+#ifndef GB_OMP_INC_DIRS
+#define GB_OMP_INC_DIRS ""
+#endif
+
+// GB_C_LIBRARIES: libraries to link with when using direct compile/link:
 #ifndef GB_C_LIBRARIES
-#define GB_C_LIBRARIES  " -lm -ldl /usr/lib/gcc/x86_64-linux-gnu/9/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.so"
+#define GB_C_LIBRARIES  " -lm -ldl /usr/lib/gcc/x86_64-linux-gnu/7/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.so"
+#endif
+
+// GB_CMAKE_LIBRARIES: libraries to link with when using cmake
+#ifndef GB_CMAKE_LIBRARIES
+#define GB_CMAKE_LIBRARIES  "m;dl;/usr/lib/gcc/x86_64-linux-gnu/7/libgomp.so;/usr/lib/x86_64-linux-gnu/libpthread.so"
 #endif
 
 #endif
