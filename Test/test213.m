@@ -6,7 +6,7 @@ function test213
 
 rng ('default') ;
 
-GrB.burble (1) ;
+GB_mex_burble (1) ;
 
 n = 10 ;
 Cin.matrix = pi * sparse (ones (n,n)) ;
@@ -22,6 +22,6 @@ C1 = GB_mex_assign  (Cin, M, [ ], scalar, [ ], [ ], [ ]) ;
 C2 = GB_spec_assign (Cin, M, [ ], scalar, [ ], [ ], [ ], true) ;
 GB_spec_compare (C1, C2) ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('\ntest213: all tests passed\n') ;
 

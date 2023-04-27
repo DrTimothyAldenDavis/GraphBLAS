@@ -71,12 +71,12 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     bool C_iso = (ccode == 0) ;
 
     if (C_iso)
-    {
+    { 
         // C is iso; no operators are used
         fprintf (fp, "// semiring: symbolic only (C is iso)\n") ;
     }
     else
-    {
+    { 
         // general case
         fprintf (fp, "// semiring: (%s, %s%s, %s)\n",
             addop->name, mult->name, flipxy ? " (flipped)" : "",
@@ -92,7 +92,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     GrB_Type ztype = (zcode == 0) ? NULL : mult->ztype ;
 
     if (!C_iso)
-    {
+    { 
         GB_macrofy_typedefs (fp,
             (ccode == 0) ? NULL : ctype,
             (acode == 0) ? NULL : atype,
@@ -137,7 +137,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     bool is_pair   = (mult->opcode == GB_PAIR_binop_code) ;
 
     if (C_iso)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // ANY_PAIR_BOOL semiring: nothing to do
@@ -149,7 +149,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     else if (u_expr != NULL && f_expr != NULL &&
         (is_float || is_double || is_bool || is_first || is_second || is_pair
             || is_positional))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // create a fused multiply-add operator
@@ -166,23 +166,23 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
         // Since GB_MULT is not used, the fused GB_MULTADD must handle flipxy.
 
         if (flipxy)
-        {
+        { 
             fprintf (fp, "#define GB_MULTADD(z,y,x,j,k,i) ") ;
         }
         else
-        {
+        { 
             fprintf (fp, "#define GB_MULTADD(z,x,y,i,k,j) ") ;
         }
         for (const char *p = u_expr ; (*p) != '\0' ; p++)
         {
             // all update operators have a single 'y'
             if ((*p) == 'y')
-            {
+            { 
                 // inject the multiply operator; all have the form "z = ..."
                 fprintf (fp, "%s", f_expr + 4) ;
             }
             else
-            {
+            { 
                 // otherwise, print the update operator character
                 fprintf (fp, "%c", (*p)) ;
             }
@@ -191,7 +191,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // use a temporary variable for multiply-add
@@ -226,7 +226,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
         bool is_plus = (addop->opcode == GB_PLUS_binop_code) ;
         if (is_plus && (zcode >= GB_INT8_code && zcode <= GB_FP64_code))
-        {
+        { 
             // PLUS_PAIR_REAL semiring
             fprintf (fp, "#define GB_IS_PLUS_PAIR_REAL_SEMIRING 1\n") ;
 
@@ -257,17 +257,17 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
             }
         }
         else if (C_iso)
-        {
+        { 
             // ANY_PAIR_* (C is iso in this case, type is BOOL)
             fprintf (fp, "#define GB_IS_ANY_PAIR_SEMIRING 1\n") ;
         }
         else if (addop->opcode == GB_EQ_binop_code)
-        {
+        { 
             // semiring is eq_pair_bool
             fprintf (fp, "#define GB_IS_EQ_PAIR_SEMIRING 1\n") ;
         }
         else if (addop->opcode == GB_LXOR_binop_code)
-        {
+        { 
             // semiring is lxor_pair_bool
             fprintf (fp, "#define GB_IS_LXOR_PAIR_SEMIRING 1\n") ;
         }
@@ -277,19 +277,19 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
           || mult->opcode == GB_FIRSTJ1_binop_code
           || mult->opcode == GB_SECONDI_binop_code
           || mult->opcode == GB_SECONDI1_binop_code)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // MIN_FIRSTJ and MAX_FIRSTJ
         //----------------------------------------------------------------------
 
         if (addop->opcode == GB_MIN_binop_code)
-        {
+        { 
             // semiring is min_firstj or min_firstj1
             fprintf (fp, "#define GB_IS_MIN_FIRSTJ_SEMIRING 1\n") ;
         }
         else if (addop->opcode == GB_MAX_binop_code)
-        {
+        { 
             // semiring is max_firstj or max_firstj1
             fprintf (fp, "#define GB_IS_MAX_FIRSTJ_SEMIRING 1\n") ;
         }
@@ -298,7 +298,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     else if (addop->opcode == GB_PLUS_binop_code &&
               mult->opcode == GB_TIMES_binop_code &&
             (zcode == GB_FP32_code || zcode == GB_FP64_code))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // semiring is PLUS_TIMES_FP32 or PLUS_TIMES_FP64
@@ -314,35 +314,35 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
     switch (mult->opcode)
     {
-        case GB_PAIR_binop_code :
+        case GB_PAIR_binop_code : 
             fprintf (fp, "#define GB_IS_PAIR_MULTIPLIER 1\n") ;
             if (zcode == GB_FC32_code)
-            {
+            { 
                 fprintf (fp, "#define GB_PAIR_ONE GxB_CMPLXF (1,0)\n") ;
             }
             else if (zcode == GB_FC64_code)
-            {
+            { 
                 fprintf (fp, "#define GB_PAIR_ONE GxB_CMPLX (1,0)\n") ;
             }
             break ;
 
-        case GB_FIRSTI1_binop_code :
+        case GB_FIRSTI1_binop_code : 
             fprintf (fp, "#define GB_OFFSET 1\n") ;
-        case GB_FIRSTI_binop_code :
+        case GB_FIRSTI_binop_code : 
             fprintf (fp, "#define GB_IS_FIRSTI_MULTIPLIER 1\n") ;
             break ;
 
-        case GB_FIRSTJ1_binop_code :
-        case GB_SECONDI1_binop_code :
+        case GB_FIRSTJ1_binop_code : 
+        case GB_SECONDI1_binop_code : 
             fprintf (fp, "#define GB_OFFSET 1\n") ;
-        case GB_FIRSTJ_binop_code :
-        case GB_SECONDI_binop_code :
+        case GB_FIRSTJ_binop_code : 
+        case GB_SECONDI_binop_code : 
             fprintf (fp, "#define GB_IS_FIRSTJ_MULTIPLIER 1\n") ;
             break ;
 
-        case GB_SECONDJ1_binop_code :
+        case GB_SECONDJ1_binop_code : 
             fprintf (fp, "\n#define GB_OFFSET 1\n") ;
-        case GB_SECONDJ_binop_code :
+        case GB_SECONDJ_binop_code : 
             fprintf (fp, "#define GB_IS_SECONDJ_MULTIPLIER 1\n") ;
             break ;
 

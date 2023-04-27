@@ -64,13 +64,13 @@ void GB_macrofy_select          // construct all macros for GrB_select
     ytype_name = (ytype == NULL) ? "int64_t" : ytype->name ;
     ztype_name = ztype->name ;
     if (op->hash == 0)
-    {
+    { 
         // builtin operator
         fprintf (fp, "// op: (%s%s, %s)\n\n",
             op->name, flipij ? " (flipped ij)" : "", xtype_name) ;
     }
     else
-    {
+    { 
         // user-defined operator
         fprintf (fp,
             "// op: %s%s, ztype: %s, xtype: %s, ytype: %s\n\n",
@@ -135,18 +135,18 @@ void GB_macrofy_select          // construct all macros for GrB_select
         fprintf (fp, "#define GB_TEST_VALUE_OF_ENTRY(keep,p) \\\n"
                      "    bool keep ;                        \\\n") ;
         if (xcode == 0)
-        {
+        { 
             // operator does not depend on x
             fprintf (fp, "    GB_IDXUNOP (keep, , i, j, y) ;\n") ;
         }
         else if (acode == xcode)
-        {
+        { 
             // operator depends on x, but it has the same type as A
             fprintf (fp, "    GB_IDXUNOP (keep, Ax [%s], i, j, y) ;\n",
                 A_iso ? "0" : "p") ;
         }
         else
-        {
+        { 
             // must typecast from A to x
             fprintf (fp, "    GB_DECLAREA (x) ;                  \\\n"
                          "    GB_GETA (x, Ax, p, ) ;             \\\n"
@@ -162,33 +162,33 @@ void GB_macrofy_select          // construct all macros for GrB_select
         fprintf (fp, "#define GB_TEST_VALUE_OF_ENTRY(keep,p) \\\n"
                      "    GB_Z_TYPE z ;                      \\\n") ;
         if (xcode == 0)
-        {
+        { 
             // operator does not depend on x
             fprintf (fp, "    GB_IDXUNOP (z, , i, j, y) ; \\\n") ;
         }
         else if (acode == xcode)
-        {
+        { 
             // operator depends on x, but it has the same type as A
             fprintf (fp, "    GB_IDXUNOP (z, Ax [%s], i, j, y) ; \\\n",
                 A_iso ? "0" : "p") ;
         }
         else
-        {
+        { 
             // must typecast from A to x
             fprintf (fp, "    GB_DECLAREA (x) ;                  \\\n"
                          "    GB_GETA (x, Ax, p, ) ;             \\\n"
                          "    GB_IDXUNOP (z, x, i, j, y) ;       \\\n") ;
         }
         if (cast_z_to_bool == NULL)
-        {
+        { 
             fprintf (fp, "    bool keep = (bool) z ;\n") ;
         }
         else if (nargs == 3)
-        {
+        { 
             fprintf (fp, cast_z_to_bool, "    bool keep", "z", "z") ;
         }
         else
-        {
+        { 
             fprintf (fp, cast_z_to_bool, "    bool keep", "z") ;
         }
     }
@@ -200,13 +200,13 @@ void GB_macrofy_select          // construct all macros for GrB_select
     fprintf (fp, "\n// copy A(i,j) to C(i,j):\n"
         "#define GB_SELECT_ENTRY(Cx,pC,Ax,pA)") ;
     if (C_iso)
-    {
+    { 
         // C is iso:  A is iso, or the operator is VALUEEQ
         fprintf (fp, "\n") ;
         fprintf (fp, "#define GB_ISO_SELECT 1\n") ;
     }
     else
-    {
+    { 
         // C and A are both non-iso
         // this would need to typcase if A and C had different types
         ASSERT (!A_iso) ;

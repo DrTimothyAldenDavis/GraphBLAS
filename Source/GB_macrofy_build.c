@@ -51,12 +51,12 @@ void GB_macrofy_build           // construct all macros for GB_build
     const char *ttype_name = ttype->name ;
     const char *stype_name = stype->name ;
     if (dup->hash == 0)
-    {
+    { 
         // builtin operator
         fprintf (fp, "// op: (%s, %s)\n\n", dup->name, xtype_name) ;
     }
     else
-    {
+    { 
         // user-defined operator, or created by GB_build
         fprintf (fp,
             "// op: %s%s, ztype: %s, xtype: %s, ytype: %s\n\n",
@@ -94,7 +94,7 @@ void GB_macrofy_build           // construct all macros for GB_build
         (ttype == xtype) && (ttype == ytype) && (ttype == ztype) ;
 
     if (nocasting)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // GB_BLD_COPY: Tx [p] = Sx [k]
@@ -115,29 +115,33 @@ void GB_macrofy_build           // construct all macros for GB_build
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // GB_BLD_COPY: Tx [p] = (cast) Sx [k]
         //----------------------------------------------------------------------
 
         int nargs_s_to_t, nargs_s_to_y, nargs_t_to_x, nargs_z_to_t ;
-        const char *cast_s_to_t = GB_macrofy_cast_expression (fp, ttype, stype, &nargs_s_to_t) ;
-        const char *cast_s_to_y = GB_macrofy_cast_expression (fp, ytype, stype, &nargs_s_to_y) ;
-        const char *cast_t_to_x = GB_macrofy_cast_expression (fp, xtype, ttype, &nargs_t_to_x) ;
-        const char *cast_z_to_t = GB_macrofy_cast_expression (fp, ttype, ztype, &nargs_z_to_t) ;
+        const char *cast_s_to_t =
+            GB_macrofy_cast_expression (fp, ttype, stype, &nargs_s_to_t) ;
+        const char *cast_s_to_y =
+            GB_macrofy_cast_expression (fp, ytype, stype, &nargs_s_to_y) ;
+        const char *cast_t_to_x =
+            GB_macrofy_cast_expression (fp, xtype, ttype, &nargs_t_to_x) ;
+        const char *cast_z_to_t =
+            GB_macrofy_cast_expression (fp, ttype, ztype, &nargs_z_to_t) ;
 
         fprintf (fp, "#define GB_BLD_COPY(Tx,p,Sx,k)") ;
         if (cast_s_to_t == NULL)
-        {
+        { 
             fprintf (fp, " Tx [p] = (%s) Sx [k]", ttype_name) ;
         }
         else if (nargs_s_to_t == 3)
-        {
+        { 
             fprintf (fp, cast_s_to_t, " Tx [p]", "Sx [k]", "Sx [k]") ;
         }
         else
-        {
+        { 
             fprintf (fp, cast_s_to_t, " Tx [p]", "Sx [k]") ;
         }
         fprintf (fp, "\n") ;
@@ -151,15 +155,15 @@ void GB_macrofy_build           // construct all macros for GB_build
         // ytype y = (ytype) Sx [k] ;
         fprintf (fp, "    %s ", ytype_name) ;
         if (cast_s_to_y == NULL)
-        {
+        { 
             fprintf (fp, "y = (%s) Sx [k]", ytype_name) ;
         }
         else if (nargs_s_to_y == 3)
-        {
+        { 
             fprintf (fp, cast_s_to_y, "y", "Sx [k]", "Sx [k]") ;
         }
         else
-        {
+        { 
             fprintf (fp, cast_s_to_y, "y", "Sx [k]") ;
         }
         fprintf (fp, " ; \\\n") ;
@@ -167,15 +171,15 @@ void GB_macrofy_build           // construct all macros for GB_build
         // xtype x = (xtype) Tx [p] ;
         fprintf (fp, "    %s ", xtype_name) ;
         if (cast_t_to_x == NULL)
-        {
+        { 
             fprintf (fp, "x = (%s) Tx [p]", xtype_name) ;
         }
         else if (nargs_t_to_x == 3)
-        {
+        { 
             fprintf (fp, cast_t_to_x, "x", "Tx [p]", "Tx [p]") ;
         }
         else
-        {
+        { 
             fprintf (fp, cast_t_to_x, "x", "Tx [p]") ;
         }
         fprintf (fp, " ; \\\n") ;
@@ -186,15 +190,15 @@ void GB_macrofy_build           // construct all macros for GB_build
 
         // Tx [p] = (ttype) z ;
         if (cast_z_to_t == NULL)
-        {
+        { 
             fprintf (fp, "    Tx [p] = (%s) z", ttype_name) ;
         }
         else if (nargs_z_to_t == 3)
-        {
+        { 
             fprintf (fp, cast_z_to_t, "    Tx [p]", "z", "z") ;
         }
         else
-        {
+        { 
             fprintf (fp, cast_z_to_t, "    Tx [p]", "z") ;
         }
         fprintf (fp, " ;\n") ;

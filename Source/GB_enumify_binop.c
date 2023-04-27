@@ -22,7 +22,7 @@ void GB_enumify_binop
     GB_Type_code xcode, // op->xtype->code of the operator
     bool for_semiring   // true for A*B, false for A+B or A.*B
 )
-{
+{ 
 
     int e = 0 ;
 
@@ -33,7 +33,7 @@ void GB_enumify_binop
         // user-defined operator
         //----------------------------------------------------------------------
 
-        case GB_USER_binop_code :
+        case GB_USER_binop_code : 
 
             e = 0 ; break ;
 

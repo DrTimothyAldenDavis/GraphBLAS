@@ -7,7 +7,7 @@ function test206
 [~, ~, ~, types, ~, select_ops] = GB_spec_opsall ;
 types = types.all ;
 
-% GrB.burble (1) ;
+% GB_mex_burble (1) ;
 rng ('default') ;
 n = 10 ;
 Cin = sparse (n,n) ;
@@ -85,7 +85,7 @@ C1 = GB_mex_band (B, -2, 2) ;
 C2 = triu (tril (B,2), -2) ;
 assert (isequal (C1, C2)) ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 GB_builtin_complex_set (true) ;
 fprintf ('\ntest206: all tests passed\n') ;
 

@@ -64,13 +64,13 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     ytype_name = (ytype == NULL) ? "void" : ytype->name ;
     ztype_name = ztype->name ;
     if (op->hash == 0)
-    {
+    { 
         // builtin operator
         fprintf (fp, "// op: (%s%s, %s)\n\n",
             op->name, flipij ? " (flipped ij)" : "", xtype_name) ;
     }
     else
-    {
+    { 
         // user-defined operator
         fprintf (fp,
             "// op: %s%s, ztype: %s, xtype: %s, ytype: %s\n\n",
@@ -112,13 +112,13 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     char *y = y_dep  ? "y" : " " ;
     fprintf (fp, "#define GB_UNOP(Cx,pC,Ax,pA,A_iso,i,j,y)") ;
     if (ctype == ztype && no_typecast_of_A)
-    {
+    { 
         // no typecasting
         fprintf (fp, " GB_UNARYOP (Cx [pC], Ax [%s], %s, %s, %s)\n",
             pA, i, j, y) ;
     }
     else if (ctype == ztype)
-    {
+    { 
         // aij = (xtype) Ax [pC] must be typecast, but not z
         fprintf (fp, " \\\n"
             "{                                              \\\n"
@@ -128,7 +128,7 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
             "}\n", pA, i, j, y) ;
     }
     else if (no_typecast_of_A)
-    {
+    { 
         // Cx [pC] = (ctype) z must be typecast, but not aij
         fprintf (fp, " \\\n"
             "{                                              \\\n"
@@ -138,7 +138,7 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
             "}\n", pA, i, j, y) ;
     }
     else
-    {
+    { 
         // both must be typecast
         fprintf (fp, " \\\n"
             "{                                      \\\n"
@@ -155,13 +155,13 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     //--------------------------------------------------------------------------
 
     if (C_mat)
-    {
+    { 
         // C = op(A'), for unary op with transpose
         GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, false,
             false) ;
     }
     else
-    {
+    { 
         // Cx = op(A) for unary or index unary op apply, no transpose
         fprintf (fp, "\n// C type:\n") ;
         GB_macrofy_type (fp, "C", "_", ctype->name) ;

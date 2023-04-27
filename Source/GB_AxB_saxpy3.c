@@ -686,7 +686,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
-        {
+        { 
             info = GB_AxB_saxpy3_jit (C, M, Mask_comp,
                 Mask_struct, M_in_place, A, B, semiring, flipxy,
                 SaxpyTasks, ntasks, nfine, nthreads, do_sort, Werk) ;

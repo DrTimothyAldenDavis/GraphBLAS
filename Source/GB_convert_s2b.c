@@ -169,7 +169,7 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
         {
 
             #ifndef GBCOMPACT
-            {
+            { 
                 switch (asize)
                 {
                     #undef  GB_COPY
@@ -244,6 +244,7 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
 
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;

@@ -35,7 +35,7 @@ const char *GB_macrofy_cast_expression  // return cast expression
     const GB_Type_code xcode = xtype->code ;
 
     if (zcode == xcode)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // no typecasting
@@ -59,17 +59,17 @@ const char *GB_macrofy_cast_expression  // return cast expression
         //----------------------------------------------------------------------
 
         if (xcode == GB_FC32_code)
-        {
+        { 
             f = "%s = (GB_crealf (%s) != 0 || GB_cimagf (%s) != 0)" ;
             (*nargs) = 3 ;
         }
         else if (xcode == GB_FC64_code)
-        {
+        { 
             f = "%s = (GB_creal (%s) != 0 || GB_cimag (%s) != 0)" ;
             (*nargs) = 3 ;
         }
         else
-        {
+        { 
             f = "%s = ((%s) != 0)" ;
         }
 
@@ -257,7 +257,7 @@ const char *GB_macrofy_cast_expression  // return cast expression
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // all other cases: use ANSI C11 typecasting rules

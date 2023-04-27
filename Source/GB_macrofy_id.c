@@ -19,7 +19,7 @@ const char *GB_macrofy_id // return string encoding the value
     bool *has_byte,     // true if value is a single repeated byte
     uint8_t *byte       // repeated byte
 )
-{
+{ 
 
     const char *f ;
     int has = (zsize == 1) ;    // always true if z is a single byte

@@ -19,14 +19,14 @@ uint64_t GB_encodify_user_op      // encode a user defined op
     // input:
     const GB_Operator op
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check if the op is JIT'able
     //--------------------------------------------------------------------------
 
     if (op != NULL && op->hash == UINT64_MAX)
-    {
+    { 
         // cannot JIT this op
         memset (encoding, 0, sizeof (GB_jit_encoding)) ;
         (*suffix) = NULL ;

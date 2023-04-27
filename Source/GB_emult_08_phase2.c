@@ -249,7 +249,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     //--------------------------------------------------------------------------
 
     if (info == GrB_NO_VALUE)
-    {
+    { 
         info = GB_emult_08_jit (C, C_sparsity, M, Mask_struct,
             Mask_comp, op, A, B, C_to_M, C_to_A, C_to_B, TaskList, C_ntasks,
             C_nthreads) ;
@@ -274,6 +274,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
 
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;

@@ -67,16 +67,15 @@ void GB_macrofy_nvals
     //--------------------------------------------------------------------------
 
     if (asparsity == 2)
-    {
+    { 
         // bitmap case
         fprintf (fp, "#define GB_%s_NHELD(e) "
             "int64_t e = (%s->vlen * %s->vdim)\n", Aname, Aname, Aname) ;
     }
     else
-    {
+    { 
         // all other matrix formats
-        fprintf (fp, "#define GB_%s_NHELD(e) GB_%s_NVALS(e)\n",
-            Aname, Aname) ;
+        fprintf (fp, "#define GB_%s_NHELD(e) GB_%s_NVALS(e)\n", Aname, Aname) ;
     }
 }
 

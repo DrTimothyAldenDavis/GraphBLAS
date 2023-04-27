@@ -28,7 +28,7 @@ semiring.multiply = 'times' ;
 
 tol = 1e-12 ;
 
-% GrB.burble (1) ;
+% GB_mex_burble (1) ;
 
 for k = [false true]
     GB_builtin_complex_set (k) ;
@@ -68,7 +68,7 @@ for k = [false true]
 
 end
 
-% GrB.burble (0) ;
+% GB_mex_burble (0) ;
 
 GB_builtin_complex_set (true) ;
 

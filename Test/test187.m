@@ -31,6 +31,6 @@ for k1 = 1:length (types)
 end
 
 fprintf ('\n') ;
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('test187: all tests passed\n') ;
 

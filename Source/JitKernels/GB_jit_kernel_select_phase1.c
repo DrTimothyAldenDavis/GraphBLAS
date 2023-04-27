@@ -9,7 +9,7 @@
 
 GB_JIT_KERNEL_SELECT_PHASE1_PROTO (GB_jit_kernel) ;
 GB_JIT_KERNEL_SELECT_PHASE1_PROTO (GB_jit_kernel)
-{ 
+{
     #ifdef GB_JIT_RUNTIME
     // get callback functions
     GB_ek_slice_merge1_f GB_ek_slice_merge1 =

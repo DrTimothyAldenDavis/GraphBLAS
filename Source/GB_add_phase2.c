@@ -410,7 +410,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     if (info == GrB_NO_VALUE)
     {
         if (is_eWiseUnion)
-        {
+        { 
             info = GB_union_jit (C, C_sparsity, M, Mask_struct,
                 Mask_comp, op, A, B, alpha_scalar, beta_scalar,
                 Ch_is_Mh, C_to_M, C_to_A, C_to_B, 
@@ -420,7 +420,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                 B_ek_slicing, B_nthreads, B_ntasks) ;
         }
         else
-        {
+        { 
             info = GB_add_jit (C, C_sparsity, M, Mask_struct,
                 Mask_comp, op, A, B,
                 Ch_is_Mh, C_to_M, C_to_A, C_to_B, 
@@ -501,7 +501,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                 (opcode == GB_SECONDI1_binop_code) ;
             const int64_t offset = GB_positional_offset (opcode, NULL, NULL) ;
             if (op->ztype == GrB_INT64)
-            { 
+            {
 
                 // C(i,j) = positional_op (aij, bij)
                 #undef  GB_EWISEOP
@@ -513,18 +513,18 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                 }
 
                 if (is_eWiseUnion)
-                {
+                { 
                     #define GB_IS_EWISEUNION 1
                     #include "GB_add_template.c"
                 }
                 else
-                {
+                { 
                     #define GB_IS_EWISEUNION 0
                     #include "GB_add_template.c"
                 }
             }
             else
-            { 
+            {
 
                 // C(i,j) = positional_op (aij, bij)
                 #undef  GB_EWISEOP
@@ -537,12 +537,12 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                 }
 
                 if (is_eWiseUnion)
-                {
+                { 
                     #define GB_IS_EWISEUNION 1
                     #include "GB_add_template.c"
                 }
                 else
-                {
+                { 
                     #define GB_IS_EWISEUNION 0
                     #include "GB_add_template.c"
                 }
@@ -578,12 +578,12 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             }
 
             if (is_eWiseUnion)
-            {
+            { 
                 #define GB_IS_EWISEUNION 1
                 #include "GB_add_template.c"
             }
             else
-            {
+            { 
                 #define GB_IS_EWISEUNION 0
                 #include "GB_add_template.c"
             }
@@ -593,6 +593,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;

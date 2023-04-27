@@ -6,7 +6,7 @@ function test215
 
 rng ('default') ;
 
-GrB.burble (1) ;
+GB_mex_burble (1) ;
 
 n = 100 ;
 Cin = sparse (n, n) ;
@@ -36,6 +36,6 @@ C1 = GB_mex_mxm  (Cin, M, [ ], semiring, A, B, desc) ;
 C2 = GB_spec_mxm (Cin, M, [ ], semiring, A, B, desc) ;
 GB_spec_compare (C1, C2) ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('\ntest215: all tests passed\n') ;
 

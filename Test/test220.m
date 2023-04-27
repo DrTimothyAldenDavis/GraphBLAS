@@ -6,7 +6,7 @@ function test220
 
 rng ('default') ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 n = 100 ;
 Cin.matrix = spones (sprand (n, n, 0.01)) ;
 Cin.sparsity = 1 ;
@@ -32,7 +32,7 @@ C2 = GB_spec_kron (Cin, M, accum, op, A, B, [ ]) ;
 GB_spec_compare (C1, C2) ;
 assert (C1.iso) ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('\ntest220: all tests passed\n') ;
 
 

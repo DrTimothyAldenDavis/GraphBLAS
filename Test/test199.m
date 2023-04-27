@@ -6,7 +6,7 @@ function test199
 
 rng ('default') ;
 
-GrB.burble (1) ;
+GB_mex_burble (1) ;
 n = 10 ;
 A.matrix = sprand (n, n, 0.5) ;
 A.matrix (:,3) = sparse (n,1) ;
@@ -31,6 +31,6 @@ C2 = (A.matrix' * B.matrix) .* M.matrix ;
 err = norm (C1.matrix - C2, 1) ;
 assert (err < 1e-12) ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('test199: all tests passed\n') ;
 

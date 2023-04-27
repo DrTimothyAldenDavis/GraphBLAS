@@ -20,9 +20,9 @@ semiring.class = 'double' ;
 
 desc.axb = 'hash' ;
 nthreads_set (16, 1) ;
-GrB.burble (1) ;
+GB_mex_burble (1) ;
 C1 = GB_mex_mxm (S, [ ], [ ], semiring, A, B, desc) ;
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 
 C2 = A.matrix * B.matrix ;
 err = norm (C1.matrix - C2, 1) ;

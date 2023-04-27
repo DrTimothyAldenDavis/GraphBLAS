@@ -52,25 +52,25 @@ void GB_macrofy_cast_copy
     snprintf (carg, SLEN, "%sx [p%s]", cname, cname) ;
     char aarg [SLEN+1] ;
     if (A_iso)
-    {
+    { 
         snprintf (aarg, SLEN, "%sx [0]", aname) ;
     }
     else
-    {
+    { 
         snprintf (aarg, SLEN, "%sx [p%s]", aname, aname) ;
     }
 
     fprintf (fp, " ") ;
     if (f == NULL)
-    {
+    { 
         fprintf (fp, "%s = (%s) %s", carg, ctype->name, aarg) ;
     }
     else if (nargs == 3)
-    {
+    { 
         fprintf (fp, f, carg, aarg, aarg) ;
     }
     else
-    {
+    { 
         fprintf (fp, f, carg, aarg) ;
     }
     fprintf (fp, "\n") ;

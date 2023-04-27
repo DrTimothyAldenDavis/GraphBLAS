@@ -32,7 +32,7 @@ void GB_enumify_mask       // return enum to define mask macros
     int e = -1 ;
 
     if (mcode == 0)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // no mask is present
@@ -45,7 +45,7 @@ void GB_enumify_mask       // return enum to define mask macros
 
     }
     else if (Mask_struct)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // M is present, and structural (not valued).
@@ -56,7 +56,7 @@ void GB_enumify_mask       // return enum to define mask macros
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // M is present, and valued

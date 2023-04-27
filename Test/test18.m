@@ -98,8 +98,7 @@ for k1 = k1test % 1:length (types)
                 vvec = sparse (scale * sprandn (m,1, 0.2)) ;
 
                 % these tests do not convert real A and B into complex C for C
-                % = A.^B.  GrB.power handles that case.  So ensure the test
-                % matrices are all positive.
+                % = A.^B.  So ensure the test matrices are all positive.
                 if (isequal (binop, 'pow'))
                     Amat = abs (Amat) ;
                     Bmat = abs (Bmat) ;

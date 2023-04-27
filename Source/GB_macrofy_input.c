@@ -36,7 +36,7 @@ void GB_macrofy_input
     //--------------------------------------------------------------------------
 
     if (acode == 15)
-    {
+    { 
         // quick return: no input matrix (for binary op with bind 1st or 2nd)
         return ;
     }
@@ -49,7 +49,7 @@ void GB_macrofy_input
         GB_macrofy_nvals (fp, Aname, asparsity, A_iso_code) ;
         fprintf (fp, "#define GB_%s_ISO %d\n", Aname, A_iso_code) ;
         if (azombies >= 0)
-        {
+        { 
             // if negative, do not create the macro at all.  Typically this
             // means A has no zombies.  For GrB_wait, using GB_select to
             // delete zombies, it means A always has zombies.
@@ -79,7 +79,7 @@ void GB_macrofy_input
         //----------------------------------------------------------------------
 
         if (do_matrix_macros)
-        {
+        { 
             // aij is not needed as input to the operator
             GB_macrofy_type (fp, Aname, "2", "void") ;
         }
@@ -108,7 +108,7 @@ void GB_macrofy_input
         //      float w [32] ;
 
         if (do_matrix_macros)
-        {
+        { 
             GB_macrofy_type (fp, Aname, "2", a2type->name) ;
         }
 

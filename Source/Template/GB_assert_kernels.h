@@ -24,7 +24,7 @@
     {                                                                       \
         if (!(X))                                                           \
         {                                                                   \
-            GBDUMP ("assertion failed: " __FILE__ " line %d\n", __LINE__) ; \
+            GBDUMP ("JIT assertion failed: " __FILE__ " line %d\n", __LINE__) ;\
             GB_ABORT ;                                                      \
         }                                                                   \
     }
@@ -50,17 +50,17 @@
 // in GraphBLAS/Tcov, the test does not terminate.
 #undef GB_GOTCHA
 #ifdef GBCOVER
-#define GB_GOTCHA                                                   \
-{                                                                   \
-    fprintf (stderr, "Gotcha: " __FILE__ " line: %d\n", __LINE__) ; \
-    GBDUMP ("Gotcha: " __FILE__ " line: %d\n", __LINE__) ;          \
+#define GB_GOTCHA                                                           \
+{                                                                           \
+    fprintf (stderr, "\nJIT Gotcha: " __FILE__ " line: %d\n", __LINE__) ;   \
+    GBDUMP ("\nJIT Gotcha: " __FILE__ " line: %d\n", __LINE__) ;            \
 }
 #else
-#define GB_GOTCHA                                                   \
-{                                                                   \
-    fprintf (stderr, "gotcha: " __FILE__ " line: %d\n", __LINE__) ; \
-    GBDUMP ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;          \
-    GB_ABORT ;                                                      \
+#define GB_GOTCHA                                                           \
+{                                                                           \
+    fprintf (stderr, "\nJIT gotcha: " __FILE__ " line: %d\n", __LINE__) ;   \
+    GBDUMP ("\nJIT gotcha: " __FILE__ " line: %d\n", __LINE__) ;            \
+    GB_ABORT ;                                                              \
 }
 #endif
 

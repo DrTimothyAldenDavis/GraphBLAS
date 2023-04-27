@@ -5,7 +5,7 @@ function test197
 % SPDX-License-Identifier: Apache-2.0
 
 rng ('default') ;
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 n = 2e6 ;
 d = 1000 / n^2 ;
 A.matrix = sprand (n, n, d) ; A.sparsity = 1 ;

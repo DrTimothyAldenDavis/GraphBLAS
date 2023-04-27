@@ -334,7 +334,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     //--------------------------------------------------------------------------
 
     if (info == GrB_NO_VALUE)
-    {
+    { 
         info = GB_emult_04_jit (C, C_sparsity, M, Mask_struct, op,
             A, B, Cp_kfirst, M_ek_slicing, M_ntasks, M_nthreads) ;
     }
@@ -358,6 +358,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
 
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;

@@ -43,7 +43,7 @@ void GB_macrofy_unop
         ASSERT (op != NULL) ;
         bool is_macro = GB_macrofy_defn (fp, 3, op->name, op->defn) ;
         if (is_macro)
-        {
+        { 
             fprintf (fp, "// unary operator %s defined as a macro:\n",
                 op->name) ;
         }
@@ -51,14 +51,14 @@ void GB_macrofy_unop
         if (is_macro)
         {
             for (char *p = op->name ; (*p) != '\0' ; p++)
-            {
+            { 
                 int c = (*p) ;
                 fputc (toupper (c), fp) ;
             }
             fprintf (fp, " (z, x)\n") ;
         }
         else
-        {
+        { 
             fprintf (fp, " %s (&(z), &(x))\n", op->name) ;
         }
 
@@ -73,7 +73,7 @@ void GB_macrofy_unop
         ASSERT (op != NULL) ;
         bool is_macro = GB_macrofy_defn (fp, 3, op->name, op->defn) ;
         if (is_macro)
-        {
+        { 
             fprintf (fp, "// index unary operator %s defined as a macro:\n",
                 op->name) ;
         }
@@ -81,20 +81,20 @@ void GB_macrofy_unop
         if (is_macro)
         {
             for (char *p = op->name ; (*p) != '\0' ; p++)
-            {
+            { 
                 int c = (*p) ;
                 fputc (toupper (c), fp) ;
             }
             fprintf (fp, " (z, x, i, j, y)\n") ;
         }
         else
-        {
+        { 
             fprintf (fp, " %s (&(z), &(x), i, j, &(y))\n", op->name) ;
         }
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // built-in operator

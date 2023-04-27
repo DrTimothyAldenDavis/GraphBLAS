@@ -27,12 +27,12 @@ void GB_macrofy_bytes
 
     bool same = (nbytes > 0) ;
     for (int k = 0 ; k < nbytes ; k++)
-    {
+    { 
         same = same && (value [0] == value [k]) ;
     }
 
     if (same)
-    {
+    { 
         // all bytes are the same; use memset
         fprintf (fp,
             "#define GB_DECLARE_%s(%s) %s %s ; "
@@ -54,7 +54,7 @@ void GB_macrofy_bytes
         {
             fprintf (fp, "0x%02x", (int) (value [k])) ;
             if (k < nbytes-1)
-            {
+            { 
                 fprintf (fp, ", ") ;
                 if (k > 0 && k % 8 == 7) fprintf (fp, "\\\n        ") ;
             }
@@ -69,7 +69,7 @@ void GB_macrofy_bytes
     }
 
     if (same && is_identity)
-    {
+    { 
         // all the bytes of the identity value are the same
         fprintf (fp, "#define GB_HAS_IDENTITY_BYTE 1\n") ;
         fprintf (fp, "#define GB_IDENTITY_BYTE 0x%02x\n", (int) value [0]) ;

@@ -36,6 +36,9 @@ C.matrix = Cmat ; C.class = 'see below' ;
 S.matrix = Smat ; S.class = 'see below' ;
 X.matrix = Xmat ; X.class = 'see below' ;
 Bmask = logical (Bmat) ;
+A.sparsity = 8 ;
+C.sparsity = 8 ;
+X.sparsity = 8 ;
 
 for k1 = 1:length (types)
     type = types {k1}  ;

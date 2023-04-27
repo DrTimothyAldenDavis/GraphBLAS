@@ -41,15 +41,16 @@ void mexFunction
     if (nargin > 0)
     { 
         // set the JIT control
-        GxB_JIT_Control c ;
+        #define JIT(c) { OK (GxB_Global_Option_set (GxB_JIT_C_CONTROL, c)) ; }
         gb_mxstring_to_string (s, LEN, pargin [0], "s") ; 
-        if      (MATCH (s, "off"  )) c = GxB_JIT_OFF ;
-        else if (MATCH (s, "pause")) c = GxB_JIT_PAUSE ;
-        else if (MATCH (s, "run"  )) c = GxB_JIT_RUN ;
-        else if (MATCH (s, "load" )) c = GxB_JIT_LOAD ;
-        else if (MATCH (s, "on"   )) c = GxB_JIT_ON ;
+        if      (MATCH (s, ""     )) { /* do nothing */ ; }
+        else if (MATCH (s, "off"  )) JIT (GxB_JIT_OFF)
+        else if (MATCH (s, "pause")) JIT (GxB_JIT_PAUSE)
+        else if (MATCH (s, "run"  )) JIT (GxB_JIT_RUN)
+        else if (MATCH (s, "load" )) JIT (GxB_JIT_LOAD)
+        else if (MATCH (s, "on"   )) JIT (GxB_JIT_ON)
+        else if (MATCH (s, "flush")) { JIT (GxB_JIT_OFF) ; JIT (GxB_JIT_ON) ; }
         else ERROR2 ("unknown option: %s", s) ;
-        OK (GxB_Global_Option_set (GxB_JIT_C_CONTROL, c)) ;
     }
 
     //--------------------------------------------------------------------------

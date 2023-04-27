@@ -70,6 +70,6 @@ for d = [1e-4 0.01 0.2 0.8 inf]
 end
 
 fprintf ('\n') ;
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('test188: all tests passed\n') ;
 

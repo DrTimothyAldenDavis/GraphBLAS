@@ -14,7 +14,7 @@
 
 GB_JIT_KERNEL_TRANS_UNOP_PROTO (GB_jit_kernel) ;
 GB_JIT_KERNEL_TRANS_UNOP_PROTO (GB_jit_kernel)
-{ 
+{
     #include "GB_transpose_template.c"
     return (GrB_SUCCESS) ;
 }

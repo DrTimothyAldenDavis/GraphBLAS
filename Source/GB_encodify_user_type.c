@@ -19,14 +19,14 @@ uint64_t GB_encodify_user_type      // encode a user defined type
     // input:
     const GrB_Type type
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check if the type is JIT'able
     //--------------------------------------------------------------------------
 
     if (type != NULL && type->hash == UINT64_MAX)
-    {
+    { 
         // cannot JIT this type
         memset (encoding, 0, sizeof (GB_jit_encoding)) ;
         (*suffix) = NULL ;

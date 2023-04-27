@@ -23,22 +23,22 @@ void GB_macrofy_string
     {
         int c = (*p) ;
         if (c == '\n')
-        {
+        { 
             // handle the new-line character
             fprintf (fp, "\\n\" \\\n\"") ;
         }
         else if (c == '\\')
-        {
+        { 
             // handle the backslash character
             fprintf (fp, "\\\\") ;
         }
         else if (c == '"')
-        {
+        { 
             // handle the quote character
             fprintf (fp, "\\\"") ;
         }
         else
-        {
+        { 
             // all other characters
             fprintf (fp, "%c", c) ;
         }

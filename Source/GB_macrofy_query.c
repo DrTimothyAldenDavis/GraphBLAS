@@ -45,29 +45,29 @@ void GB_macrofy_query
 
     // create the definition string for op0
     if (builtin || op0 == NULL || op0->defn == NULL)
-    {
+    { 
         // op0 does not appear, or is builtin
         fprintf (fp, "    defn [0] = NULL ;\n") ;
     }
     else
-    {
+    { 
         // op0 is user-defined
         fprintf (fp, "    defn [0] = GB_%s_USER_DEFN ;\n", op0->name) ;
     }
 
     // create the definition string for op1
     if (builtin || op1 == NULL || op1->defn == NULL)
-    {
+    { 
         // op1 does not appear, or is builtin
         fprintf (fp, "    defn [1] = NULL ;\n") ;
     }
     else if (op0 == op1)
-    {
+    { 
         // op1 is user-defined, but the same as op0
         fprintf (fp, "    defn [1] = defn [0] ;\n") ;
     }
     else
-    {
+    { 
         // op1 is user-defined, and differs from op0
         fprintf (fp, "    defn [1] = GB_%s_USER_DEFN ;\n", op1->name) ;
     }
@@ -84,25 +84,25 @@ void GB_macrofy_query
     {
         GrB_Type type = types [k] ;
         if (builtin || type == NULL || type->defn == NULL)
-        {
+        { 
             // types [k] does not appear, or is builtin
             fprintf (fp, "    defn [%d] = NULL ;\n", k+2) ;
         }
         else
-        {
+        { 
             // see if the type definition already appears
             bool is_unique = true ;
             for (int j = 0 ; j < k ; j++)
             {
                 if (type == types [j])
-                {
+                { 
                     is_unique = false ;
                     fprintf (fp, "    defn [%d] = defn [%d] ;\n", k+2, j+2) ;
                     break ;
                 }
             }
             if (is_unique)
-            {
+            { 
                 // this type is unique, and user-defined
                 fprintf (fp, "    defn [%d] = GB_%s_USER_DEFN ;\n", k+2,
                     type->name) ;
@@ -115,7 +115,7 @@ void GB_macrofy_query
     //--------------------------------------------------------------------------
 
     if (monoid != NULL && monoid->hash != 0)
-    {
+    { 
         // only create the query_monoid method if the monoid is not builtin
         bool has_terminal = (monoid->terminal != NULL) ;
         int zsize = (int) monoid->op->ztype->size ;
@@ -126,7 +126,7 @@ void GB_macrofy_query
             "    if (id == NULL || memcmp (id, &zidentity, %d) != 0) "
                      "return (false) ;\n", zsize, tsize, zsize) ;
         if (has_terminal)
-        {
+        { 
             fprintf (fp,
             "    GB_DECLARE_TERMINAL_CONST (zterminal) ;\n"
             "    if (term == NULL || memcmp (term, &zterminal, %d) != 0) "

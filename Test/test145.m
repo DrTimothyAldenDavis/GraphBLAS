@@ -11,7 +11,12 @@ rng ('default') ;
 
 A = sparse (rand (4)) ;
 B = sparse (rand (4)) ;
-C = sparse (rand (4)) ;
+C.matrix = sparse (rand (4)) ;
+C.pattern = logical (ones (4)) ;
+C.sparsity = 8 ;
+C.iso = false ;
+C.class = 'double' ;
+
 AT = A' ;
 BT = B' ;
 

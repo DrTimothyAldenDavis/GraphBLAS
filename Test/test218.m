@@ -6,7 +6,7 @@ function test218
 
 rng ('default') ;
 
-GrB.burble (1) ;
+GB_mex_burble (1) ;
 
 n = 10 ;
 
@@ -27,6 +27,6 @@ C1 = GB_mex_Matrix_eWiseAdd  (Cin, [ ], [ ], op, A, B, [ ]) ;
 C2 = A.matrix + B.matrix ;
 assert (isequal (C1.matrix, C2)) ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('\ntest218: all tests passed\n') ;
 

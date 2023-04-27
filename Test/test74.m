@@ -120,6 +120,7 @@ for k0 = 1:size(m_list,2)
 
                 % C = A*B, no Mask, no typecasting, Gustavson
                 C1 = GB_mex_mxm  (C, [ ], [ ], semiring, A, B, dnn_Gus) ;
+                C0 = GB_spec_mxm (C, [ ], [ ], semiring, A, B, dnn_Gus) ;
                 GB_spec_compare (C0, C1, identity) ;
 
                 % C = A*B, no Mask, no typecasting, Hash
@@ -155,6 +156,8 @@ for k0 = 1:size(m_list,2)
                     A3.matrix = A3.matrix / max (A3.matrix, [ ], 'all') ;
                     B3 = Bfull ;
                     B3.matrix = B3.matrix / max (B3.matrix, [ ], 'all') ;
+                    A4 = AT ;
+                    A4.matrix = A4.matrix / max (A4.matrix, [ ], 'all') ;
 
                     % F2 += A * B
                     C1 = GB_mex_mxm_update  (F2, semiring, A2, B2, [ ]) ;
@@ -167,6 +170,11 @@ for k0 = 1:size(m_list,2)
                     % F2 += A2 * B3
                     C1 = GB_mex_mxm_update  (F2, semiring, A2, B3, [ ]) ;
                     C0 = GB_spec_mxm (F2, [ ], monoid, semiring, A2, B3, [ ]) ;
+                    GB_spec_compare (C0, C1, identity) ;
+
+                    % F2 += A4'*B3, no Mask, no typecasting
+                    C1 = GB_mex_mxm_update (F2, semiring, A4, B3, dtn) ;
+                    C0 = GB_spec_mxm (F2,[ ], monoid, semiring, A4, B3, dtn);
                     GB_spec_compare (C0, C1, identity) ;
 
                 else
@@ -184,6 +192,11 @@ for k0 = 1:size(m_list,2)
                     C0 = GB_spec_mxm (F, [ ], monoid, semiring, A, Bfull, [ ]) ;
                     GB_spec_compare (C0, C1, identity) ;
 
+                    % F += A'*Bfull, no Mask, no typecasting
+                    C1 = GB_mex_mxm_update (F, semiring, AT, Bfull, dtn) ;
+                    C0 = GB_spec_mxm (F, [ ], monoid, semiring, AT, Bfull, dtn);
+                    GB_spec_compare (C0, C1, identity) ;
+
                     % F += A_iso_full * B
                     Afull.iso = true ;
                     C1 = GB_mex_mxm_update  (F, semiring, Afull, B, [ ]) ;
@@ -194,7 +207,7 @@ for k0 = 1:size(m_list,2)
                     % F += A_iso_bitmap * B
                     % A_bitmap.iso = true ;
                     C1 = GB_mex_mxm_update  (F, semiring, A_bitmap, B, [ ]) ;
-                    C0 = GB_spec_mxm (F, [ ], monoid, semiring, A_bitmap, B, [ ]) ;
+                    C0 = GB_spec_mxm (F, [], monoid, semiring, A_bitmap, B, []);
                     GB_spec_compare (C0, C1, identity) ;
                     % A_bitmap.iso = false ;
 

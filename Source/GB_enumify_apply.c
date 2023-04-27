@@ -32,7 +32,7 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
     // A matrix:
     const GrB_Matrix A              // input matrix
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // get the types of X, Y, and Z
@@ -57,12 +57,12 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
         &depends_on_y, flipij, opcode, xcode) ;
 
     if (!depends_on_x)
-    {
+    { 
         xcode = 0 ;
     }
 
     if (!depends_on_y)
-    {
+    { 
         ycode = 0 ;
     }
 

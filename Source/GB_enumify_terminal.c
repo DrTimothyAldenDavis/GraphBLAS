@@ -18,20 +18,20 @@ void GB_enumify_terminal        // enumify the terminal value
     GB_Opcode opcode,           // built-in binary opcode of a monoid
     GB_Type_code zcode          // type code of the operator
 )
-{
+{ 
 
     int e = 31 ;                // default is a non-terminal monoid
 
     switch (opcode)
     {
 
-        case GB_PLUS_binop_code :
+        case GB_PLUS_binop_code : 
 
             // boolean PLUS (or) is terminal (true), others are not terminal
             e = (zcode == GB_BOOL_code) ? 2 : 31 ;
             break ;
 
-        case GB_TIMES_binop_code :
+        case GB_TIMES_binop_code : 
 
             switch (zcode)
             {
@@ -62,7 +62,7 @@ void GB_enumify_terminal        // enumify the terminal value
                 e = 3 ;                 // false
                 break ;
 
-        case GB_MIN_binop_code :
+        case GB_MIN_binop_code : 
 
             switch (zcode)
             {
@@ -81,7 +81,7 @@ void GB_enumify_terminal        // enumify the terminal value
             }
             break ;
 
-        case GB_MAX_binop_code :
+        case GB_MAX_binop_code : 
 
             switch (zcode)
             {

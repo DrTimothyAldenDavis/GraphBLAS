@@ -21,7 +21,7 @@ if (nargin < 1)
 end
 hack (1) = dohack ;     % modify "very_costly" in GxB_AxB_saxpy3_slice_balanced
 GB_mex_hack (hack) ;
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 
 semiring.multiply = 'times' ;
 semiring.add = 'plus' ;
@@ -85,7 +85,7 @@ for k = [1 2 4 16 128]
 end
 
 % restore global settings
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 nthreads_set (nthreads_save, chunk_save) ;
 GB_mex_hack (save) ;
 

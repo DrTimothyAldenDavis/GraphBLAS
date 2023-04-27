@@ -8,7 +8,7 @@ rng ('default') ;
 
 n = 10 ;
 
-% GrB.burble (1) ;
+% GB_mex_burble (1) ;
 Cin.matrix = logical (spones (sprand (n, n, 0.5))) ;
 Cin.iso = true ;
 
@@ -37,6 +37,6 @@ for s = [true false]
 
 end
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('\ntest211: all tests passed\n') ;
 

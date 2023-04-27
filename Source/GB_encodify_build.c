@@ -22,14 +22,14 @@ uint64_t GB_encodify_build      // encode an build problem
     const GrB_Type ttype,       // type of Tx array
     const GrB_Type stype        // type of Sx array
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check if the dup operator is JIT'able
     //--------------------------------------------------------------------------
 
     if (dup != NULL && dup->hash == UINT64_MAX)
-    {
+    { 
         // cannot JIT this dup operator
         memset (encoding, 0, sizeof (GB_jit_encoding)) ;
         (*suffix) = NULL ;

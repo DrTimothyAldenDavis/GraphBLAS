@@ -50,14 +50,14 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
     ASSERT (idxop_ecode >= 231 && idxop_ecode <= 254) ;
 
     if (!depends_on_x)
-    {
+    { 
         // VALUE* ops and user-defined index unary ops depend on x.  The
         // positional ops (tril, triu, row*, col*, diag*) do not.
         xcode = 0 ;
     }
 
     if (!depends_on_y)
-    {
+    { 
         // All index unary ops depend on y except for NONZOMBIE
         ycode = 0 ;
     }
@@ -86,7 +86,7 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
         C_sparsity = (A_sparsity == GxB_FULL) ? GxB_SPARSE : A_sparsity ;
     }
     else
-    {
+    { 
         C_sparsity = (A_sparsity == GxB_FULL) ? GxB_BITMAP : A_sparsity ;
     }
 

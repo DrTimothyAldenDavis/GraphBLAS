@@ -137,7 +137,8 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
 
     // pass (ywork, accum->ytype) in place of (scalar, scalar_type)
     if (info == GrB_NO_VALUE)
-    {
+    { 
+GB_GOTCHA ;
         info = GB_subassign_jit (C,
             /* C_replace: */ false,
             /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
@@ -158,6 +159,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
 
     if (info == GrB_NO_VALUE)
     { 
+GB_GOTCHA ;
         #include "GB_generic.h"
         GB_BURBLE_MATRIX (C, "(generic C(:,:)+=x assign) ") ;
 

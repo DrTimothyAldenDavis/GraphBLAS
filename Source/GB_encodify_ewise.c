@@ -31,14 +31,14 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     const GrB_Matrix A,         // NULL for apply bind1st
     const GrB_Matrix B          // NULL for apply bind2nd
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check if the binaryop is JIT'able
     //--------------------------------------------------------------------------
 
     if (binaryop != NULL && binaryop->hash == UINT64_MAX)
-    {
+    { 
         // cannot JIT this binaryop
         memset (encoding, 0, sizeof (GB_jit_encoding)) ;
         (*suffix) = NULL ;

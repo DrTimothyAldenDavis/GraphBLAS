@@ -48,41 +48,41 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     bool has_byte ;
     uint8_t byte ;
     if (C_iso)
-    {
+    { 
         // no values computed (C is iso)
         fprintf (fp, "#define GB_DECLARE_IDENTITY(z)\n") ;
         fprintf (fp, "#define GB_DECLARE_IDENTITY_CONST(z)\n") ;
     }
     else if (id_ecode <= 28)
-    {
+    { 
         // built-in monoid: a simple assignment
         const char *id_val = GB_macrofy_id (id_ecode, zsize, &has_byte, &byte) ;
         #define SLEN (256 + GxB_MAX_NAME_LEN)
         char id [SLEN] ;
         if (zcode == GB_FC32_code)
-        {
+        { 
             snprintf (id, SLEN, "%s z = GxB_CMPLXF (%s,0)",
                 ztype_name, id_val) ;
         }
         else if (zcode == GB_FC64_code)
-        {
+        { 
             snprintf (id, SLEN, "%s z = GxB_CMPLX (%s,0)",
                 ztype_name, id_val) ;
         }
         else
-        {
+        { 
             snprintf (id, SLEN, "%s z = %s", ztype_name, id_val) ;
         }
         fprintf (fp, "#define GB_DECLARE_IDENTITY(z) %s\n", id) ;
         fprintf (fp, "#define GB_DECLARE_IDENTITY_CONST(z) const %s\n", id) ;
         if (has_byte)
-        {
+        { 
             fprintf (fp, "#define GB_HAS_IDENTITY_BYTE 1\n") ;
             fprintf (fp, "#define GB_IDENTITY_BYTE 0x%02x\n", (int) byte) ;
         }
     }
     else
-    {
+    { 
         // user-defined monoid:  all we have are the bytes
         GB_macrofy_bytes (fp, "IDENTITY", "z",
             ztype_name, (uint8_t *) (monoid->identity), zsize, true) ;
@@ -111,13 +111,13 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 
     bool is_any_monoid = (term_ecode == 18) ;
     if (is_any_monoid || C_iso)
-    {
+    { 
         // ANY monoid is terminal but with no specific terminal value
         fprintf (fp, "#define GB_IS_ANY_MONOID 1\n") ;
         monoid_is_terminal = true ;
     }
     else if (monoid->terminal == NULL)
-    {
+    { 
         // monoid is not terminal (either built-in or user-defined)
         monoid_is_terminal = false ;
     }
@@ -129,26 +129,26 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         // its terminal value must still be constructed for the query function.
         monoid_is_terminal = !disable_terminal_condition ;
         if (monoid_is_terminal)
-        {
+        { 
             fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
         }
         const char *term_value = GB_macrofy_id (term_ecode, zsize, NULL, NULL) ;
         fprintf (fp, "#define GB_DECLARE_TERMINAL_CONST(zterminal) "
             "const %s zterminal = ", ztype_name) ;
         if (zcode == GB_FC32_code)
-        {
+        { 
             fprintf (fp, "GxB_CMPLXF (%s,0)\n", term_value) ;
         }
         else if (zcode == GB_FC64_code)
-        {
+        { 
             fprintf (fp, "GxB_CMPLX (%s,0)\n", term_value) ;
         }
         else
-        {
+        { 
             fprintf (fp, "%s\n", term_value) ;
         }
         if (monoid_is_terminal)
-        {
+        { 
             fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) "
                 "((z) == %s)\n", term_value) ;
             fprintf (fp, "#define GB_IF_TERMINAL_BREAK(z,zterminal) "
@@ -156,7 +156,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         }
     }
     else
-    {
+    { 
         // user-defined terminal monoid
         monoid_is_terminal = true ;
         fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
@@ -179,7 +179,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     bool is_complex = (zcode == GB_FC32_code || zcode == GB_FC64_code) ;
 
     if (is_complex)
-    {
+    { 
         fprintf (fp, "#define GB_Z_IS_COMPLEX 1\n") ;
     }
 
@@ -187,22 +187,22 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     {
         char *redop = NULL ;
         if (opcode == GB_PLUS_binop_code)
-        {
+        { 
             // #pragma omp simd reduction(+:z)
             redop = "+" ;
         }
         else if (opcode == GB_LXOR_binop_code || opcode == GB_BXOR_binop_code)
-        {
+        { 
             // #pragma omp simd reduction(^:z)
             redop = "^" ;
         }
         else if (opcode == GB_TIMES_binop_code)
-        {
+        { 
             // #pragma omp simd reduction(^:z)
             redop = "*" ;
         }
         if (redop != NULL)
-        {
+        { 
             // The monoid has a "#pragma omp simd reduction(redop:z)" statement.
             // There are other OpenMP reductions that could be exploited, but
             // many are for terminal monoids (logical and bitwise AND, OR).
@@ -222,32 +222,32 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     bool is_fp_real = (zcode == GB_FP32_code || zcode == GB_FP64_code) ;
 
     if (opcode == GB_PLUS_binop_code && zcode == GB_FC32_code)
-    {
+    { 
         // PLUS_FC32 monoid
         fprintf (fp, "#define GB_IS_PLUS_FC32_MONOID 1\n") ;
     }
     else if (opcode == GB_PLUS_binop_code && zcode == GB_FC64_code)
-    {
+    { 
         // PLUS_FC64 monoid
         fprintf (fp, "#define GB_IS_PLUS_FC64_MONOID 1\n") ;
     }
     else if (opcode == GB_MIN_binop_code && is_integer)
-    {
+    { 
         // IMIN monoid (min with any integer type)
         fprintf (fp, "#define GB_IS_IMIN_MONOID 1\n") ;
     }
     else if (opcode == GB_MAX_binop_code && is_integer)
-    {
-        // IMAX monoid (max with any integer typ)
+    { 
+        // IMAX monoid (max with any integer type)
         fprintf (fp, "#define GB_IS_IMAX_MONOID 1\n") ;
     }
     else if (opcode == GB_MIN_binop_code && is_fp_real)
-    {
+    { 
         // FMIN monoid (min with a real floating-point type)
         fprintf (fp, "#define GB_IS_FMIN_MONOID 1\n") ;
     }
     else if (opcode == GB_MAX_binop_code && is_fp_real)
-    {
+    { 
         // FMAX monoid (max with a real floating-point type)
         fprintf (fp, "#define GB_IS_FMAX_MONOID 1\n") ;
     }
@@ -259,7 +259,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         zcode == GB_FP32_code  || zcode == GB_FP64_code ||
         zcode == GB_FC32_code  || zcode == GB_FC64_code) ;
     if (ztype_ignore_overflow && !is_any_monoid)
-    {
+    { 
         // if the monoid is ANY, this is set to 1 by
         // GB_monoid_shared_definitions.h, so skip it here
         fprintf (fp, "#define GB_Z_IGNORE_OVERFLOW 1\n") ;
@@ -275,33 +275,33 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     bool has_atomic_write = false ;
     char *ztype_atomic = NULL ;
     if (zcode == 0)
-    {
+    { 
         // C is iso (any_pair symbolic semiring)
         fprintf (fp, "#define GB_Z_ATOMIC_BITS 0\n") ;
     }
     else if (zsize == sizeof (uint8_t))
-    {
+    { 
         // int8_t, uint8_t, and 8-bit user-defined types
         ztype_atomic = "uint8_t" ;
         has_atomic_write = true ;
         fprintf (fp, "#define GB_Z_ATOMIC_BITS 8\n") ;
     }
     else if (zsize == sizeof (uint16_t))
-    {
+    { 
         // int16_t, uint16_t, and 16-bit user-defined types
         ztype_atomic = "uint16_t" ;
         has_atomic_write = true ;
         fprintf (fp, "#define GB_Z_ATOMIC_BITS 16\n") ;
     }
     else if (zsize == sizeof (uint32_t))
-    {
+    { 
         // int32_t, uint32_t, float, and 32-bit user-defined types
         ztype_atomic = "uint32_t" ;
         has_atomic_write = true ;
         fprintf (fp, "#define GB_Z_ATOMIC_BITS 32\n") ;
     }
     else if (zsize == sizeof (uint64_t))
-    {
+    { 
         // int64_t, uint64_t, double, float complex, and 64-bit user types
         ztype_atomic = "uint64_t" ;
         has_atomic_write = true ;
@@ -326,7 +326,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     switch (opcode)
     {
 
-        case GB_ANY_binop_code   :
+        case GB_ANY_binop_code   : 
             // the ANY monoid is a special case.  It is done with an atomic
             // write, or no update at all.  The atomic write can be done for
             // float complex (64 bits) but not double complex (128 bits).
@@ -335,40 +335,40 @@ void GB_macrofy_monoid  // construct the macros for a monoid
             omp_atomic_version = is_real ? 2 : 0 ;
             break ;
 
-        case GB_LAND_binop_code  :
-        case GB_LOR_binop_code   :
-        case GB_LXOR_binop_code  :
-        case GB_BAND_binop_code  :
-        case GB_BOR_binop_code   :
-        case GB_BXOR_binop_code  :
+        case GB_LAND_binop_code  : 
+        case GB_LOR_binop_code   : 
+        case GB_LXOR_binop_code  : 
+        case GB_BAND_binop_code  : 
+        case GB_BOR_binop_code   : 
+        case GB_BXOR_binop_code  : 
             // OpenMP 4.0 atomic, not on MS Visual Studio
             has_atomic_update = true ;
             omp_atomic_version = 4 ;
             break ;
 
-        case GB_BXNOR_binop_code :
+        case GB_BXNOR_binop_code : 
         case GB_EQ_binop_code    : // LXNOR
-        case GB_MIN_binop_code   :
-        case GB_MAX_binop_code   :
+        case GB_MIN_binop_code   : 
+        case GB_MAX_binop_code   : 
             // these monoids can be done via atomic compare/exchange,
             // but not with an omp pragma
             has_atomic_update = true ;
             break ;
 
-        case GB_PLUS_binop_code  :
+        case GB_PLUS_binop_code  : 
             // even complex can be done atomically
             has_atomic_update = true ;
             omp_atomic_version = 2 ;
             break ;
 
-        case GB_TIMES_binop_code :
+        case GB_TIMES_binop_code : 
             // real monoids can be done atomically, not double complex
             has_atomic_update = is_real || (zcode == GB_FC32_code) ;
             // only the real case has an omp pragma
             omp_atomic_version = is_real ? 2 : 0 ;
             break ;
 
-        default :
+        default : 
             // all other monoids, including user-defined, can be done atomically
             // via compare-and-swap, if z has size 1, 2, 4, or 8 bytes.
             // Otherwise, they must be done in a critical section.
@@ -381,13 +381,13 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         // the monoid can be done atomically
         fprintf (fp, "#define GB_Z_HAS_ATOMIC_UPDATE 1\n") ;
         if (omp_atomic_version == 4)
-        {
+        { 
             // OpenMP 4.0 has an omp pragram but not OpenMP 2.0. 
             fprintf (fp, "#define GB_Z_HAS_OMP_ATOMIC_UPDATE "
                 "(!GB_COMPILER_MSC)\n") ;
         }
         else if (omp_atomic_version == 2)
-        {
+        { 
             // this update has an omp pragm 
             fprintf (fp, "#define GB_Z_HAS_OMP_ATOMIC_UPDATE 1\n") ;
         }
@@ -403,23 +403,23 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         monoid, add_ecode, zsize, zcode) ;
 
     if (monoid == NULL || zcode == 0)
-    {
+    { 
         // nothing to do: C is iso-valued.  For GrB_mxm only.
         ;
     }
     else if (user_monoid_atomically)
-    {
+    { 
         // CUDA atomic for a user monoid
         fprintf (fp, "#define GB_Z_HAS_CUDA_ATOMIC_USER 1\n") ;
         fprintf (fp, "#define GB_Z_CUDA_ATOMIC_TYPE %s\n", cuda_type) ;
     }
     else if (a == NULL)
-    {
+    { 
         // no CUDA atomics for this monoid
         ;
     }
     else
-    {
+    { 
         // CUDA atomic available for a built-in monoid
         fprintf (fp, "#define GB_Z_HAS_CUDA_ATOMIC_BUILTIN 1\n") ;
         fprintf (fp, "#define GB_Z_CUDA_ATOMIC %s\n", a) ;

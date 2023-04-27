@@ -16,7 +16,7 @@ void GB_macrofy_preface
     char *kernel_name,      // name of the kernel
     char *preface           // user-provided preface
 )
-{
+{ 
 
     const char *date = GxB_IMPLEMENTATION_DATE ;
     int len = strlen (date) ;

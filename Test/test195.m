@@ -101,7 +101,7 @@ for asparsity = [1 2 4 8]
 end
 
 % restore global settings
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 GB_mex_hack (save_hack) ;
 nthreads_set (nthreads_orig, chunk_orig) ;
 

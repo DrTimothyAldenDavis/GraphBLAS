@@ -6,7 +6,7 @@ function test219
 
 rng ('default') ;
 
-GrB.burble (1) ;
+GB_mex_burble (1) ;
 
 n = 103 ;
 
@@ -21,6 +21,6 @@ assert (c1 == c2) ;
 
 nthreads_set (save) ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('\ntest219: all tests passed\n') ;
 

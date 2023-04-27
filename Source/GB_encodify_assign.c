@@ -43,7 +43,7 @@ uint64_t GB_encodify_assign     // encode an assign problem
 
     if ((accum != NULL && accum->hash == UINT64_MAX) ||
         (accum == NULL && C->type->hash == UINT64_MAX))
-    {
+    { 
         // cannot JIT this accum operator or type
         memset (encoding, 0, sizeof (GB_jit_encoding)) ;
         (*suffix) = NULL ;
@@ -65,14 +65,14 @@ uint64_t GB_encodify_assign     // encode an assign problem
     // if hash is zero, it denotes a builtin binary operator or type
     uint64_t hash = 0 ;
     if (accum == NULL)
-    {
+    { 
         // use the hash and name of the C->type
         hash = C->type->hash ;
         encoding->suffix_len = (hash == 0) ? 0 : C->type->name_len ;
         (*suffix) = (hash == 0) ? NULL : C->type->name ;
     }
     else
-    {
+    { 
         // use the hash and name of the accum operator
         hash = accum->hash ;
         encoding->suffix_len = (hash == 0) ? 0 : accum->name_len ;

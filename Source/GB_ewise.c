@@ -300,6 +300,33 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // C is not empty.  Use a kernel that computes T<A>=A+B
         // where T starts out empty; just iterate over the entries in A.
 
+#if 1
+    if (GB_as_if_full (A1)                     // A and B are full
+        && GB_as_if_full (B1)
+        && !any_iso                         // A and B are not iso
+        && (M == NULL) && !Mask_comp        // no mask
+        && (C->is_csc == T_is_csc)          // no transpose of C
+        && no_typecast                      // no typecasting
+        && !op_is_positional                // op is not positional
+        && !any_bitmap                      // no bitmap matrices
+        && !any_pending_work)               // no matrix has pending work
+    {
+        if (GB_as_if_full (C)                  // C is full
+        && !C->iso                          // C is not iso
+        && accum == op)                     // accum is same as the op
+        {
+            if (!GB_IS_FULL (C)) { GB_GOTCHA ; }
+            if (!GB_IS_FULL (A1)) { GB_GOTCHA ; }
+            if (!GB_IS_FULL (B1)) { GB_GOTCHA ; }
+        }
+        else if (accum == NULL)
+        {
+            if (!GB_IS_FULL (A1)) { GB_GOTCHA ; }
+            if (!GB_IS_FULL (B1)) { GB_GOTCHA ; }
+        }
+    }
+#endif
+
     if (GB_IS_FULL (A1)                     // A and B are full
         && GB_IS_FULL (B1)
         && !any_iso                         // A and B are not iso

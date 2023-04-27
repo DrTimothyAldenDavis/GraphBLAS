@@ -212,6 +212,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
             Wf = GB_CALLOC_WORK (C->vlen * C->vdim, int8_t, &Wf_size) ;
             if (Wf == NULL)
             { 
+GB_GOTCHA ;
                 // out of memory
                 GB_FREE_ALL ;
                 return (GrB_OUT_OF_MEMORY) ;
@@ -288,7 +289,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
         (*done_in_place) = true ;
     }
     else
-    {
+    { 
         // out of memory, or other error
         GB_FREE_ALL ;
     }

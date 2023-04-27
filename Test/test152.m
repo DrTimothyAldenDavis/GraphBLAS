@@ -23,8 +23,11 @@ Bmat = 20 * Bmat5 ;
 
 C.matrix = sparse (ones (n)) ;
 C.pattern = sparse (true (n)) ;
+C.sparsity = 8 ;
 A.pattern = sparse (true (n)) ;
+A.sparsity = 8 ;
 B.pattern = sparse (true (n)) ;
+B.sparsity = 8 ;
 
 for k1 = 1:length (binops)
     opname = binops {k1} ;

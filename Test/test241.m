@@ -53,6 +53,6 @@ C1 = GB_mex_mxm  (C_csr, [ ], [ ], semiring, A_csr, B_csc, [ ]) ;
 C2 = A_csr.matrix * B_csc.matrix ;
 GB_spec_compare (C1, C2, 0, 1e-12) ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('\ntest241: all tests passed\n') ;
 

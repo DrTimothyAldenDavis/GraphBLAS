@@ -58,17 +58,17 @@
 // in GraphBLAS/Tcov, the test does not terminate.
 #undef GB_GOTCHA
 #ifdef GBCOVER
-#define GB_GOTCHA                                                   \
-{                                                                   \
-    fprintf (stderr, "Gotcha: " __FILE__ " line: %d\n", __LINE__) ; \
-    GBDUMP ("Gotcha: " __FILE__ " line: %d\n", __LINE__) ;          \
+#define GB_GOTCHA                                                       \
+{                                                                       \
+    fprintf (stderr, "\nGotcha: " __FILE__ " line: %d\n", __LINE__) ;   \
+    GBDUMP ("\nGotcha: " __FILE__ " line: %d\n", __LINE__) ;            \
 }
 #else
-#define GB_GOTCHA                                                   \
-{                                                                   \
-    fprintf (stderr, "gotcha: " __FILE__ " line: %d\n", __LINE__) ; \
-    GBDUMP ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;          \
-    GB_ABORT ;                                                      \
+#define GB_GOTCHA                                                       \
+{                                                                       \
+    fprintf (stderr, "\ngotcha: " __FILE__ " line: %d\n", __LINE__) ;   \
+    GBDUMP ("\ngotcha: " __FILE__ " line: %d\n", __LINE__) ;            \
+    GB_ABORT ;                                                          \
 }
 #endif
 

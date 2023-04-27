@@ -16,7 +16,7 @@ GrB_Info GB_Context_check       // check a GraphBLAS Context
     int pr,                     // print level
     FILE *f                     // file for output
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -26,6 +26,7 @@ GrB_Info GB_Context_check       // check a GraphBLAS Context
 
     if (Context == NULL)
     { 
+GB_GOTCHA ;
         GBPR0 ("NULL\n") ;
         return (GrB_NULL_POINTER) ;
     }

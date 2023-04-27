@@ -60,7 +60,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     ASSERT (binaryop != NULL) ;
 
     if (C_iso)
-    {
+    { 
         // values of C are not computed by the kernel
         binaryop_opcode = GB_PAIR_binop_code ;
         xcode = 0 ;
@@ -68,7 +68,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
         zcode = 0 ;
     }
     else
-    {
+    { 
         // normal case
         binaryop_opcode = binaryop->opcode ;
         xcode = binaryop->xtype->code ;
@@ -93,7 +93,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     // ISLE becomes LE
 
     if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
-    {
+    { 
         // rename the operator
         binaryop_opcode = GB_boolean_rename (binaryop_opcode) ;
     }
@@ -110,18 +110,18 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (binaryop_opcode) ;
 
     if (op_is_positional || op_is_pair || C_iso)
-    {
+    { 
         // x and y are not used
         xcode = 0 ;
         ycode = 0 ;
     }
     else if (op_is_second)
-    {
+    { 
         // x is not used
         xcode = 0 ;
     }
     else if (op_is_first)
-    {
+    { 
         // y is not used
         ycode = 0 ;
     }
@@ -130,7 +130,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool B_is_pattern = false ;
 
     if (is_eWiseMult || is_eWiseUnion)
-    {
+    { 
         A_is_pattern = (xcode == 0) ;   // A is not needed if x is not used
         B_is_pattern = (ycode == 0) ;   // B is not needed if x is not used
     }

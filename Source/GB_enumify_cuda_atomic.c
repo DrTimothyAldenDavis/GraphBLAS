@@ -22,7 +22,7 @@ bool GB_enumify_cuda_atomic
     size_t zsize,       // ztype->size
     int zcode           // ztype->code
 )
-{
+{ 
 
     // All built-in monoids are handled, except for the double complex cases of
     // ANY and TIMES.  Those need to be done the same way user-defined monoids
@@ -221,7 +221,7 @@ bool GB_enumify_cuda_atomic
     }
 
     if (monoid == NULL || zcode == 0)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso: no values computed so no need for any CUDA atomics
@@ -231,7 +231,7 @@ bool GB_enumify_cuda_atomic
 
     }
     else if (*user_monoid_atomically)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // user-defined monoid with a type of 16, 32, or 64 bits
@@ -254,7 +254,7 @@ bool GB_enumify_cuda_atomic
 
     }
     else if ((*a) == NULL)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // no CUDA atomic available
@@ -267,7 +267,7 @@ bool GB_enumify_cuda_atomic
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // CUDA atomic available for a built-in monoid

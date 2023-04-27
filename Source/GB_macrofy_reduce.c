@@ -67,12 +67,12 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
 
     fprintf (fp, "#define GB_GETA_AND_UPDATE(z,Ax,p)") ;
     if (atype == monoid->op->ztype)
-    {
+    { 
         // z += Ax [p], with no typecasting.  A is never iso.
         fprintf (fp, " GB_UPDATE (z, Ax [p])\n") ;
     }
     else
-    {
+    { 
         // aij = (ztype) Ax [p] ; z += aij ; with typecasting.  A is never iso.
         fprintf (fp, " \\\n"
                      "{                             \\\n"
@@ -107,17 +107,17 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     GB_Opcode opcode = monoid->op->opcode ;
 
     if (opcode == GB_ANY_binop_code)
-    {
+    { 
         // ANY monoid: do not use panel reduction method
         panel = 1 ;
     }
     else if (zcode == GB_BOOL_code)
-    {
+    { 
         // all boolean monoids, including user-defined
         panel = 8 ;
     }
     else
-    {
+    { 
 
         switch (monoid->op->opcode)
         {
@@ -160,15 +160,15 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
 
                 // all other monoids, including user-defined monoids
                 if (zsize <= 16)
-                {
+                { 
                     panel = 16 ;
                 }
                 else if (zsize <= 32)
-                {
+                { 
                     panel = 8 ;
                 }
                 else
-                {
+                { 
                     // type is large; do not use panel reduction method
                     panel = 1 ;
                 }

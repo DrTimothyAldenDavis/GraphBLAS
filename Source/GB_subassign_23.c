@@ -136,7 +136,7 @@ GrB_Info GB_subassign_23      // C += A; C is full
     //--------------------------------------------------------------------------
 
     if (info == GrB_NO_VALUE)
-    {
+    { 
         info = GB_subassign_jit (C,
             /* C_replace: */ false,
             /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,

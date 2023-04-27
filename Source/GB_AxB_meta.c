@@ -115,6 +115,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     if (semiring_in->multiply->binop_function == NULL &&
         (op_is_first || op_is_second))
     { 
+GB_GOTCHA ;
         // GB_rowscale and GB_colscale do not handle the implicit FIRST
         // operator for GB_reduce_to_vector.  They do handle any other
         // positional operator (FIRSTI, FIRSTJ, SECONDI, SECONDJ, etc).

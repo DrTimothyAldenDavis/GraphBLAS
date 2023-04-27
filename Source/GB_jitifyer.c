@@ -233,7 +233,7 @@ GrB_Info GB_jitifyer_init (void)
     }
 
     if (GB_jit_cache_path == NULL)
-    {
+    { 
         // cannot determine the JIT cache.  Disable loading and compiling, but
         // continue with the rest of the initializations.  The PreJIT could
         // still be used.
@@ -466,7 +466,7 @@ bool GB_jitifyer_path_256 (char *folder)
         GB_jit_cache_path, folder) ;
     bool ok = GB_file_mkdir (GB_jit_temp) ;
     for (uint32_t bucket = 0 ; bucket <= 0xFF ; bucket++)
-    {
+    { 
         snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/%s/%02x",
             GB_jit_cache_path, folder, bucket) ;
         ok = ok && GB_file_mkdir (GB_jit_temp) ;
@@ -487,7 +487,7 @@ bool GB_jitifyer_path_256 (char *folder)
 // GrB_SUCCESS is returned (except if an out of memory condition occurs).
 
 GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // construct the src and lock folders
@@ -535,7 +535,7 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
 // reason.
 
 GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
-{
+{ 
 
     #ifndef NJIT
 
@@ -548,7 +548,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     FILE *fp_lock = NULL ;
     int fd_lock = -1 ;
     if (GB_file_open_and_lock (GB_jit_temp, &fp_lock, &fd_lock) < 0)
-    {
+     {
         // failure; disable the JIT
         GBURBLE ("(jit: unable to access cache folder) ") ;
         GB_jit_control = GxB_JIT_RUN ;
@@ -563,7 +563,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
         GB_jit_cache_path) ;
     FILE *fp_graphblas = fopen (GB_jit_temp, "r") ;
     if (fp_graphblas != NULL)
-    {
+    { 
         int v1 = -1, v2 = -1, v3 = -1 ;
         int r = fscanf (fp_graphblas, "// SuiteSparse:GraphBLAS %d.%d.%d",
             &v1, &v2, &v3) ;
@@ -654,7 +654,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
 
     GB_file_unlock_and_close (&fp_lock, &fd_lock) ;
     if (!ok)
-    {
+    { 
         // failure; disable the JIT
         GBURBLE ("(jit: failure to write source to cache folder) ") ;
         GB_jit_control = GxB_JIT_RUN ;
@@ -688,14 +688,14 @@ void GB_jitifyer_set_control (int control)
 {
     #pragma omp critical (GB_jitifyer_worker)
     {
-        control = GB_IMAX (control, GxB_JIT_OFF) ;
+        control = GB_IMAX (control, (int) GxB_JIT_OFF) ;
         #ifndef NJIT
         // The full JIT is available.
-        control = GB_IMIN (control, GxB_JIT_ON) ;
+        control = GB_IMIN (control, (int) GxB_JIT_ON) ;
         #else
         // The JIT is restricted; only OFF, PAUSE, and RUN settings can be
         // used.  No JIT kernels can be loaded or compiled.
-        control = GB_IMIN (control, GxB_JIT_RUN) ;
+        control = GB_IMIN (control, (int) GxB_JIT_RUN) ;
         #endif
         GB_jit_control = (GxB_JIT_Control) control ;
         if (GB_jit_control == GxB_JIT_OFF)
@@ -714,7 +714,7 @@ void GB_jitifyer_set_control (int control)
 // Returns GrB_SUCCESS or GrB_OUT_OF_MEMORY.
 
 GrB_Info GB_jitifyer_alloc_space (void)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -755,7 +755,7 @@ GrB_Info GB_jitifyer_alloc_space (void)
 //------------------------------------------------------------------------------
 
 const char *GB_jitifyer_get_cache_path (void)
-{
+{ 
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
     { 
@@ -774,7 +774,7 @@ const char *GB_jitifyer_get_cache_path (void)
 // latter indicates that the requested path is not valid.
 
 GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -820,7 +820,7 @@ GrB_Info GB_jitifyer_set_cache_path_worker (const char *new_cache_path)
 //------------------------------------------------------------------------------
 
 const char *GB_jitifyer_get_error_log (void)
-{
+{ 
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
     { 
@@ -837,7 +837,7 @@ const char *GB_jitifyer_get_error_log (void)
 // a log file.
 
 GrB_Info GB_jitifyer_set_error_log (const char *new_error_log)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // set the log file in a critical section
@@ -870,7 +870,7 @@ GrB_Info GB_jitifyer_set_error_log_worker (const char *new_error_log)
 //------------------------------------------------------------------------------
 
 const char *GB_jitifyer_get_C_compiler (void)
-{
+{ 
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
     { 
@@ -884,7 +884,7 @@ const char *GB_jitifyer_get_C_compiler (void)
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -926,7 +926,7 @@ GrB_Info GB_jitifyer_set_C_compiler_worker (const char *new_C_compiler)
 //------------------------------------------------------------------------------
 
 const char *GB_jitifyer_get_C_flags (void)
-{
+{ 
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
     { 
@@ -940,7 +940,7 @@ const char *GB_jitifyer_get_C_flags (void)
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -982,7 +982,7 @@ GrB_Info GB_jitifyer_set_C_flags_worker (const char *new_C_flags)
 //------------------------------------------------------------------------------
 
 const char *GB_jitifyer_get_C_link_flags (void)
-{
+{ 
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
     { 
@@ -996,7 +996,7 @@ const char *GB_jitifyer_get_C_link_flags (void)
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_set_C_link_flags (const char *new_C_link_flags)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -1038,7 +1038,7 @@ GrB_Info GB_jitifyer_set_C_link_flags_worker (const char *new_C_link_flags)
 //------------------------------------------------------------------------------
 
 const char *GB_jitifyer_get_C_libraries (void)
-{
+{ 
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
     { 
@@ -1052,7 +1052,7 @@ const char *GB_jitifyer_get_C_libraries (void)
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_set_C_libraries (const char *new_C_libraries)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -1094,7 +1094,7 @@ GrB_Info GB_jitifyer_set_C_libraries_worker (const char *new_C_libraries)
 //------------------------------------------------------------------------------
 
 bool GB_jitifyer_get_use_cmake (void)
-{
+{ 
     bool use_cmake ;
     #pragma omp critical (GB_jitifyer_worker)
     { 
@@ -1108,7 +1108,7 @@ bool GB_jitifyer_get_use_cmake (void)
 //------------------------------------------------------------------------------
 
 void GB_jitifyer_set_use_cmake (bool use_cmake)
-{
+{ 
     #pragma omp critical (GB_jitifyer_worker)
     { 
         #if GB_WINDOWS
@@ -1140,7 +1140,7 @@ const char *GB_jitifyer_get_C_cmake_libs (void)
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_set_C_cmake_libs (const char *new_cmake_libs)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -1183,7 +1183,7 @@ GrB_Info GB_jitifyer_set_C_cmake_libs_worker (const char *new_cmake_libs)
 //------------------------------------------------------------------------------
 
 const char *GB_jitifyer_get_C_preface (void)
-{
+{ 
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
     { 
@@ -1197,7 +1197,7 @@ const char *GB_jitifyer_get_C_preface (void)
 //------------------------------------------------------------------------------
 
 GrB_Info GB_jitifyer_set_C_preface (const char *new_C_preface)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -1251,7 +1251,7 @@ bool GB_jitifyer_query
     GrB_Type type2,
     GrB_Type type3
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // get the terms to query
@@ -1375,7 +1375,7 @@ GrB_Info GB_jitifyer_load
         return (GrB_NO_VALUE) ;
     }
 
-    if (GB_jit_control <= GxB_JIT_PAUSE)
+    if ((GB_jit_control == GxB_JIT_OFF) || (GB_jit_control == GxB_JIT_PAUSE))
     { 
         // The JIT control has disabled all JIT kernels.  Punt to generic.
         GBURBLE ("(jit: paused) ") ;
@@ -1628,7 +1628,7 @@ GrB_Info GB_jitifyer_worker
     FILE *fp_klock = NULL ;
     int fd_klock = -1 ;
     if (GB_file_open_and_lock (GB_jit_temp, &fp_klock, &fd_klock) < 0)
-    {
+    { 
         // unable to lock the kernel
         // disable the JIT to avoid repeated load errors
         GB_jit_control = GxB_JIT_RUN ;
@@ -1772,7 +1772,7 @@ GrB_Info GB_jitifyer_load_worker
             GB_jit_cache_path, bucket, kernel_name) ;
         FILE *fp = fopen (GB_jit_temp, "w") ;
         if (fp != NULL)
-        {
+        { 
             // create the preface
             GB_macrofy_preface (fp, kernel_name, GB_jit_C_preface) ;
             // macrofy the kernel operators, types, and matrix formats
@@ -1792,12 +1792,12 @@ GrB_Info GB_jitifyer_load_worker
             fclose (fp) ;
             // compile the kernel to get the lib*.so file
             if (GB_jit_use_cmake)
-            {
+            { 
                 // use cmake to compile the kernel
                 GB_jitifyer_cmake_compile (kernel_name, bucket) ;
             }
             else
-            {
+            { 
                 // use the compiler to directly compile the kernel
                 GB_jitifyer_direct_compile (kernel_name, bucket) ;
             }
@@ -1993,7 +1993,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
                     knew = knew & new_bits ;
                     GB_jit_entry *e = &(new_table [knew]) ;
                     if (e->dl_function == NULL)
-                    {
+                    { 
                         // found an empty slot in the new table
                         new_table [knew] = GB_jit_table [k] ;
                         break ;
@@ -2064,7 +2064,7 @@ void GB_jitifyer_entry_free (GB_jit_entry *e)
     GB_Global_persistent_free ((void **) (&(e->suffix))) ;
     // unload the dl library
     if (e->dl_handle != NULL)
-    {
+    { 
         GB_file_dlclose (e->dl_handle) ;
         e->dl_handle = NULL ;
     }
@@ -2136,7 +2136,7 @@ void GB_jitifyer_table_free (bool freeall)
 // to be handled here.
 
 static void GB_jitifyer_command (char *command)
-{
+{ 
     int result = system (command) ;
 }
 
@@ -2234,7 +2234,8 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
 // This method does not work on Windows. 
 
 void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
-{
+{ 
+
 #ifndef NJIT
 
     char *burble_stdout = GB_Global_burble_get ( ) ? "" : GB_DEV_NULL ;

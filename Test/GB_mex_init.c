@@ -126,8 +126,6 @@ void mexFunction
         }
     }
 
-    // #include "GB_Test_init_mkl_template.c"
-
     // finalize GraphBLAS but tell it that it can be called again
     GB_mx_at_exit ( ) ;
 }

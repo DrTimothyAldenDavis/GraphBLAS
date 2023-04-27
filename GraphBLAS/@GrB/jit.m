@@ -11,11 +11,14 @@ function [s,path] = jit (s,path)
 %
 % GrB.jit controls the GraphBLAS JIT.  Its input/ouput s is a string:
 %
+%   ''          leave the JIT control unchanged.
 %   'off'       do not use the JIT, and free any loaded JIT kernels.
 %   'pause'     do not run JIT kernels but keep any already loaded.
 %   'run'       run JIT kernels if already loaded; no load/compile.
 %   'load'      able to load and run JIT kernels; may not compile.
 %   'on'        full JIT: able to compile, load, and run.
+%   'flush'     clear all loaded JIT kernels, then turn the JIT on;
+%               (the same as GrB.jit ('off') ; GrB.jit ('on')).
 %
 % Refer to the GraphBLAS User Guide for details (GxB_JIT_C_CONTROL).
 %

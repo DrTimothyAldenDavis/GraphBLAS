@@ -29,19 +29,19 @@ bool GB_macrofy_defn    // return true if operator is a macro
             "#define GB_GUARD_%s_DEFINED\n", name, name) ;
 
         if (defn [0] == '#')
-        {
+        { 
             // operator defined as macro
             is_macro = true ;
             fprintf (fp, "%s\n", defn) ;
         }
         else
-        {
+        { 
             // operator defined as function
             fprintf (fp, "GB_STATIC_INLINE\n%s\n", defn) ;
         }
 
         if (kind == 3)
-        {
+        { 
             // define the user-defined function as a string
             GB_macrofy_string (fp, name, defn) ;
         }

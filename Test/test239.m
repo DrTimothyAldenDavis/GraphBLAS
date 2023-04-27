@@ -17,7 +17,7 @@ tol = 1e-12 ;
 op.opname = 'plus' ;
 op.optype = 'double' ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 
 % non-iso
 alpha = 1 ;
@@ -77,6 +77,6 @@ C1 = GB_mex_Matrix_eWiseUnion  (C, [ ], [ ], op, A, alpha, B, beta, [ ]) ;
 C2 = GB_spec_Matrix_eWiseUnion (C, [ ], [ ], op, A, alpha, B, beta, [ ]) ;
 GB_spec_compare (C1, C2, tol) ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('test239: all tests passed\n') ;
 

@@ -6,7 +6,7 @@ function test222
 
 rng ('default') ;
 
-GrB.burble (1) ;
+GB_mex_burble (1) ;
 n = 10 ;
 
 A.matrix = pi * spones (sprand (n, n, 0.5)) ;
@@ -31,6 +31,6 @@ for sparsity = [1 2 4 8]
     assert (isequal (C1, C2)) ;
 end
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('\ntest222: all tests passed\n') ;
 

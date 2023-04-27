@@ -43,13 +43,13 @@ void GB_macrofy_binop
         if (is_monoid_or_build)
         {
             if (op->ztype == op->xtype)
-            {
+            { 
                 fprintf (fp, "#define GB_UPDATE(z,y)\n") ;
             }
             fprintf (fp, "#define %s(z,x,y)\n", macro_name) ;
         }
         else
-        {
+        { 
             fprintf (fp, "#define %s(z,x,y,i%s,j)\n", macro_name, karg) ;
         }
 
@@ -64,24 +64,24 @@ void GB_macrofy_binop
         ASSERT (op != NULL) ;
         bool is_macro = GB_macrofy_defn (fp, 3, op->name, op->defn) ;
         if (is_macro)
-        {
+        { 
             fprintf (fp, "// binary operator %s defined as a macro:\n",
                 op->name) ;
         }
 
         if (is_monoid_or_build)
-        {
+        { 
             // additive/build operator: no i,k,j parameters, never flipped
             fprintf (fp, "#define %s(z,x,y) ", macro_name) ;
         }
         else if (flipxy)
-        {
+        { 
             // flipped multiplicative or ewise operator
             // note: no positional operands for user-defined ops (yet)
             fprintf (fp, "#define %s(z,y,x,j%s,i) ", macro_name, karg) ;
         }
         else
-        {
+        { 
             // unflipped multiplicative or ewise operator
             fprintf (fp, "#define %s(z,x,y,i%s,j) ", macro_name, karg) ;
         }
@@ -89,19 +89,19 @@ void GB_macrofy_binop
         if (is_macro)
         {
             for (char *p = op->name ; (*p) != '\0' ; p++)
-            {
+            { 
                 int c = (*p) ;
                 fputc (toupper (c), fp) ;
             }
             fprintf (fp, " (z, x, y)\n") ;
         }
         else
-        {
+        { 
             fprintf (fp, " %s (&(z), &(x), &(y))\n", op->name) ;
         }
 
         if (is_monoid_or_build && op->ztype == op->xtype)
-        {
+        { 
             fprintf (fp, "#define GB_UPDATE(z,y) %s(z,z,y)\n", macro_name) ;
         }
 
@@ -383,7 +383,7 @@ void GB_macrofy_binop
                 break ;
 
             // div (float and double)
-            case  59 :
+            case  59 : 
                 f = "z = (x) / (y)" ;
                 u = "z /= y" ;
                 break ;
@@ -741,7 +741,7 @@ void GB_macrofy_binop
             if (op->ztype == op->xtype)
             {
                 if (g != NULL)
-                {
+                { 
                     // create an update expression of the form z += y,
                     // but it differs for the CPU and CUDA JIT kernels
                     fprintf (fp, "#ifdef  GB_CUDA_KERNEL\n"
@@ -751,12 +751,12 @@ void GB_macrofy_binop
                                  "#endif\n", g, u) ;
                 }
                 else if (u != NULL)
-                {
+                { 
                     // create an update expression of the form z += y
                     fprintf (fp, "#define GB_UPDATE(z,y) %s\n", u) ;
                 }
                 else
-                {
+                { 
                     // create an update expression of the form z = z + y
                     fprintf (fp, "#define GB_UPDATE(z,y) %s(z,z,y)\n",
                         macro_name) ;
@@ -764,12 +764,12 @@ void GB_macrofy_binop
             }
         }
         else if (flipxy)
-        {
+        { 
             // flipped multiplicative or ewise operator
             fprintf (fp, "#define %s(z,y,x,j%s,i) %s\n", macro_name, karg, f) ;
         }
         else
-        {
+        { 
             // unflipped multiplicative or ewise operator
             fprintf (fp, "#define %s(z,x,y,i%s,j) %s\n", macro_name, karg, f) ;
         }

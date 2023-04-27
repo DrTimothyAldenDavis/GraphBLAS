@@ -210,6 +210,7 @@ static inline bool GB_as_if_full
     // It can be converted to full.
     if (A == NULL)
     { 
+GB_GOTCHA ;
         return (false) ;
     }
     if (GB_IS_FULL (A))

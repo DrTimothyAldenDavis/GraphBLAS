@@ -17,7 +17,7 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
     const char *matrix_name,    // "C", "M", "A", or "B"
     int sparsity
 )
-{
+{ 
 
     fprintf (fp, "\n// %s matrix: ", matrix_name) ;
 
@@ -87,8 +87,7 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
                 matrix_name, matrix_name, matrix_name, matrix_name) ;
             break ;
 
-        default :
-            break ;
+        default : break ;
     }
 }
 

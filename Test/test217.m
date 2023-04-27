@@ -6,7 +6,7 @@ function test217
 
 rng ('default') ;
 
-GrB.burble (1) ;
+GB_mex_burble (1) ;
 
 n = 100 ;
 Cin.matrix = sprand (n, n, 0.5) ;
@@ -33,6 +33,6 @@ C1 = GB_mex_assign  (Cin, [ ], [ ], A, I0, J0, desc)
 C2 = GB_spec_assign (Cin, [ ], [ ], A, I1, J1, desc, false) ;
 GB_spec_compare (C1, C2) ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('\ntest217: all tests passed\n') ;
 

@@ -21,7 +21,7 @@ void GB_enumify_build       // enumerate a GB_build problem
     GrB_Type ttype,         // type of Tx
     GrB_Type stype          // type of Sx
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // get the types of X, Y, Z, S, and T
@@ -52,7 +52,7 @@ void GB_enumify_build       // enumerate a GB_build problem
     // ISLE becomes LE
 
     if (xcode == GB_BOOL_code)
-    {
+    { 
         // rename the operator
         dup_opcode = GB_boolean_rename (dup_opcode) ;
     }

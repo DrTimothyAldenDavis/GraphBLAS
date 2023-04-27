@@ -4,7 +4,7 @@ function test237
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 rng ('default') ;
 
 n = 32 ;
@@ -72,6 +72,6 @@ end
     C2 = GB_spec_mxm (F, [ ], accum, semiring, A, B, [ ]) ;
     GB_spec_compare (C1, C2, tol) ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('test237: all tests passed\n') ;
 

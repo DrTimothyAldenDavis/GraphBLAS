@@ -20,7 +20,7 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     GrB_Monoid monoid,      // the monoid to enumify
     GrB_Matrix A            // input matrix to monoid
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // get the monoid and type of A
@@ -52,7 +52,7 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
 
     GB_Type_code zcode = ztype->code ;
     if (zcode == GB_BOOL_code)
-    {
+    { 
         // rename the monoid
         reduce_opcode = GB_boolean_rename (reduce_opcode) ;
     }

@@ -310,7 +310,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
-        {
+        { 
             info = GB_AxB_saxbit_jit (C, M, Mask_comp,
                 Mask_struct, A, B, semiring, flipxy, ntasks, nthreads,
                 nfine_tasks_per_vector, use_coarse_tasks, use_atomics,
@@ -335,6 +335,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
 
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;

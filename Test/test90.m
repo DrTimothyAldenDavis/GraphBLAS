@@ -5,7 +5,7 @@ function test90
 % SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\n -------------- A*B plus_rdiv (user-defined semiring)\n') ;
-GrB.burble (1) ;
+GB_mex_burble (1) ;
 
     % 1001: Gustavson
     % 1003: dot
@@ -143,6 +143,6 @@ for N = [10 100] % 1000]
 
 end
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('\ntest90: all tests passed\n') ;
 

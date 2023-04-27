@@ -37,13 +37,13 @@ void GB_macrofy_name
 )
 {
     if (suffix == NULL)
-    {
+    { 
         // kernel uses only built-in types and operators
         snprintf (kernel_name, GB_KLEN-1, "%s__%s__%0*" PRIx64,
             name_space, kname, scode_digits, scode) ;
     }
     else
-    {
+    { 
         // kernel uses at least one built-in types and/or operator
         snprintf (kernel_name, GB_KLEN-1, "%s__%s__%0*" PRIx64 "__%s",
             name_space, kname, scode_digits, scode, suffix) ;

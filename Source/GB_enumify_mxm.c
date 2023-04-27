@@ -41,7 +41,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     GrB_Matrix A,
     GrB_Matrix B
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // get the semiring
@@ -91,17 +91,17 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // ISLE becomes LE
 
     if (C_iso)
-    {
+    { 
         zcode = 0 ;
     }
     else if (zcode == GB_BOOL_code)
-    {
+    { 
         // rename the monoid
         add_opcode = GB_boolean_rename (add_opcode) ;
     }
 
     if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
-    {
+    { 
         // rename the multiplicative operator
         mult_opcode = GB_boolean_rename (mult_opcode) ;
     }
@@ -117,12 +117,12 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     bool op_is_pair   = (mult_opcode == GB_PAIR_binop_code) ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (mult_opcode) ;
     if (op_is_second || op_is_pair || op_is_positional || C_iso)
-    {
+    { 
         // x is not used
         xcode = 0 ;
     }
     if (op_is_first  || op_is_pair || op_is_positional || C_iso)
-    {
+    { 
         // y is not used
         ycode = 0  ;
     }

@@ -36,7 +36,7 @@ void GB_macrofy_cast_output
 {
 
     if (ztype == NULL || xtype == NULL)
-    {
+    { 
         // empty macro if xtype or ztype are NULL (value not needed)
         fprintf (fp, "#define %s(%s,%s)\n", macro_name, zarg, xargs) ;
         return ;
@@ -46,7 +46,7 @@ void GB_macrofy_cast_output
     const char *f = GB_macrofy_cast_expression (fp, xtype, ztype, &nargs) ;
 
     if (f == NULL)
-    {
+    { 
         // ANSI C11 typecasting
         ASSERT (ztype != xtype) ;
         fprintf (fp, "#define %s(%s,%s) %s = (%s) (%s)\n",
@@ -57,11 +57,11 @@ void GB_macrofy_cast_output
         // GraphBLAS typecasting, or no typecasting
         fprintf (fp, "#define %s(%s,%s) ", macro_name, zarg, xargs) ;
         if (nargs == 3)
-        {
+        { 
             fprintf (fp, f, xexpr, zarg, zarg) ;
         }
         else
-        {
+        { 
             fprintf (fp, f, xexpr, zarg) ;
         }
         fprintf (fp, "\n") ;

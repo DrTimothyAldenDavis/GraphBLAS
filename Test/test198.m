@@ -6,7 +6,7 @@ function test198
 
 rng ('default') ;
 
-% GrB.burble (1) ;
+% GB_mex_burble (1) ;
 n = 10 ;
 C = sprand (n, n, 0.5) ;
 op.opname = 'sqrt' ;
@@ -25,6 +25,6 @@ C2 = sqrt (Ciso.matrix) ;
 err = norm (C1.matrix - C2, 1) ;
 assert (err < 1e-12) ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('test198: all tests passed\n') ;
 

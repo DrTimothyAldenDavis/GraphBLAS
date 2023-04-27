@@ -233,6 +233,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
 
             if (info != GrB_SUCCESS)
             { 
+GB_GOTCHA ;
                 // out of memory, or other error
                 GB_FREE_ALL ;
                 return (info) ;

@@ -103,7 +103,7 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     GB_Type_code xcode, ycode, zcode ;
 
     if (accum == NULL)
-    {
+    { 
         // accum is not present
         accum_opcode = GB_NOP_code ;
         xcode = 0 ;
@@ -111,7 +111,7 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
         zcode = 0 ;
     }
     else
-    {
+    { 
         accum_opcode = accum->opcode ;
         xcode = accum->xtype->code ;
         ycode = accum->ytype->code ;
@@ -135,7 +135,7 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     // ISLE becomes LE
 
     if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
-    {
+    { 
         // rename the operator
         accum_opcode = GB_boolean_rename (accum_opcode) ;
     }

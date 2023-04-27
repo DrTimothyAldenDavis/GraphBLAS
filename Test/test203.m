@@ -5,7 +5,7 @@ function test203
 % SPDX-License-Identifier: Apache-2.0
 
 rng ('default') ;
-% GrB.burble (1) ;
+% GB_mex_burble (1) ;
 n = 10 ;
 A.matrix = pi * spones (sprandn (n, n, 0.5)) ;
 A.class = 'double' ;
@@ -31,6 +31,6 @@ C1 = GB_mex_Matrix_extract (Cin, [ ], [ ], A, I0, I0, [ ]) ;
 C2 = A.matrix (I,I) ;
 assert (isequal (C1.matrix, C2)) ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('test203: all tests passed\n') ;
 

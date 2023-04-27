@@ -6,7 +6,7 @@ function test200
 
 rng ('default') ;
 
-% GrB.burble (1) ;
+% GB_mex_burble (1) ;
 n = 10 ;
 A.matrix = pi * sparse (ones (n)) ;
 A.sparsity = 8 ;    % full
@@ -95,6 +95,6 @@ for op = { 'plus', 'pair', 'first', 'second' }  % pair == oneb
     end
 end
 
-% GrB.burble (0) ;
+% GB_mex_burble (0) ;
 fprintf ('\ntest200: all tests passed\n') ;
 

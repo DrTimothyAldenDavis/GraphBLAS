@@ -20,14 +20,14 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
     GrB_Monoid monoid,      // the monoid to enumify
     GrB_Matrix A            // input matrix to reduce
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check if the monoid is JIT'able
     //--------------------------------------------------------------------------
 
     if (monoid->hash == UINT64_MAX)
-    {
+    { 
         // cannot JIT this monoid
         memset (encoding, 0, sizeof (GB_jit_encoding)) ;
         (*suffix) = NULL ;

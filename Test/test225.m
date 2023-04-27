@@ -4,7 +4,7 @@ function test225
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% GrB.burble (1) ;
+% GB_mex_burble (1) ;
 rng ('default') ;
 n = 1000 ;
 S = sprand (n, n, 0.01) ;
@@ -20,6 +20,6 @@ C1 = GB_mex_transpose  (S, Z, [ ], M, d2) ;
 C2 = GB_spec_transpose (S, Z, [ ], M, d2) ;
 GB_spec_compare (C1, C2) ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('test225: all tests passed\n') ;
 

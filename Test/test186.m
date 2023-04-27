@@ -108,7 +108,7 @@ for A_sparsity = [1 2 4 8]
 end
 
 % restore global settings
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 GB_mex_hack (save) ;
 
 fprintf ('\n') ;

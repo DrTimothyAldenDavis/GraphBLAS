@@ -6,7 +6,7 @@ function test221
 
 rng ('default') ;
 
-GrB.burble (1) ;
+GB_mex_burble (1) ;
 n = 10 ;
 Cin.matrix = spones (sprand (n, n, 0.5)) ;
 Cin.sparsity = 4 ;
@@ -22,7 +22,7 @@ C1 = GB_mex_assign  (Cin, [ ], accum, A, [ ], [ ], [ ]) ;
 C2 = GB_spec_assign (Cin, [ ], accum, A, [ ], [ ], [ ], false) ;
 GB_spec_compare (C1, C2) ;
 
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 fprintf ('\ntest221: all tests passed\n') ;
 
 

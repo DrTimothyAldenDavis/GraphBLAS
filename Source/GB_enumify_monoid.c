@@ -20,7 +20,7 @@ void GB_enumify_monoid  // enumerate a monoid
     int add_opcode,     // binary operator of the monoid
     int zcode           // type of the monoid (x, y, and z)
 )
-{
+{ 
 
     GB_enumify_binop (add_ecode, add_opcode, zcode, false) ;
     ASSERT (*add_ecode < 32) ;

@@ -50,7 +50,7 @@ void GB_macrofy_user_op         // construct a user-defined operator
     {
         int c = (int) (*p) ;
         if (c == '{')
-        {
+        { 
             fprintf (fp, ";\n") ;
             break ;
         }

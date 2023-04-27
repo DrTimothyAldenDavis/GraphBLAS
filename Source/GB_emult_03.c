@@ -238,7 +238,8 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
     info = GrB_NO_VALUE ;
 
     if (C_iso)
-    { 
+    {  
+GB_GOTCHA ;
 
         //----------------------------------------------------------------------
         // via the iso kernel
@@ -299,7 +300,7 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
     //--------------------------------------------------------------------------
 
     if (info == GrB_NO_VALUE)
-    {
+    { 
         info = GB_emult_03_jit (C, C_sparsity, M, Mask_struct,
             Mask_comp, op, A, B, Cp_kfirst, B_ek_slicing, B_ntasks,
             B_nthreads) ;
@@ -324,6 +325,7 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
 
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;

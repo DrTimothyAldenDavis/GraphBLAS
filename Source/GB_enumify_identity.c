@@ -18,7 +18,7 @@ void GB_enumify_identity
     GB_Opcode opcode,       // built-in binary opcode of a monoid
     GB_Type_code zcode      // type code of the operator
 )
-{
+{ 
 
     int e = 31 ;            // default: use the monoid->identity bytes
 

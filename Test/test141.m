@@ -35,6 +35,10 @@ C.matrix = Cmat ; C.class = 'see below' ;
 S.matrix = Smat ; S.class = 'see below' ;
 E.matrix = Emat ; E.class = 'see below' ;
 
+A.sparsity = 8 ;
+B.sparsity = 8 ;
+C.sparsity = 8 ;
+
 for k2 = 1:length(binops)
     binop = binops {k2}  ;
     if (isequal (binop, 'pow'))

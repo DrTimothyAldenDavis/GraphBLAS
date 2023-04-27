@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// A prior version of this method would call GB_mx_at_exit to finalize
+// GraphBLAS (and allow it to be called again).  This is slow, however,
+// so it has been removed.
+
 #include "GB_mex.h"
 
 void GB_mx_put_global
@@ -28,12 +32,6 @@ void GB_mx_put_global
     #ifdef GBCOVER
     if (cover) GB_cover_put ( ) ;
     #endif
-
-    //--------------------------------------------------------------------------
-    // finalize GraphBLAS, but allow it to be called again
-    //--------------------------------------------------------------------------
-
-    GB_mx_at_exit ( ) ;
 
     //--------------------------------------------------------------------------
     // check nmemtable and nmalloc

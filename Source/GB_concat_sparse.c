@@ -432,6 +432,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
 
             if (info != GrB_SUCCESS)
             { 
+GB_GOTCHA ;
                 // out of memory, or other error
                 GB_FREE_ALL ;
                 return (info) ;

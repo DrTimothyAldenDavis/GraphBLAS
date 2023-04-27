@@ -4,7 +4,7 @@ function test202
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% GrB.burble (1) ;
+% GB_mex_burble (1) ;
 n = 10 ;
 A.matrix = pi * spones (sprandn (n, n, 0.5)) ;
 A.class = 'double' ;
@@ -94,6 +94,6 @@ err = norm (C1.matrix - C2, 1) ;
 assert (err < 1e-12) 
 assert (C1.iso) ;
 
-% GrB.burble (0) ;
+% GB_mex_burble (0) ;
 fprintf ('test202: all tests passed\n') ;
 

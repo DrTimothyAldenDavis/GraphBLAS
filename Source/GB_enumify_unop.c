@@ -35,7 +35,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
     GB_Type_code xcode  // op->xtype->code of the operator
 )
-{
+{ 
 
     int e = 0 ;
     bool i_dep = false ;

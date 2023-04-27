@@ -69,7 +69,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     ASSERT_BINARYOP_OK (binaryop, "binaryop to macrofy", GB0) ;
 
     if (C_iso)
-    {
+    { 
         // values of C are not computed by the kernel
         xtype_name = "GB_void" ;
         ytype_name = "GB_void" ;
@@ -89,13 +89,13 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         ytype_name = ytype->name ;
         ztype_name = ztype->name ;
         if (binaryop->hash == 0)
-        {
+        { 
             // builtin operator
             fprintf (fp, "// op: (%s%s, %s)\n\n",
                 binaryop->name, flipxy ? " (flipped)" : "", xtype_name) ;
         }
         else
-        {
+        { 
             // user-defined operator, or created by GB_wait
             fprintf (fp,
                 "// op: %s%s%s, ztype: %s, xtype: %s, ytype: %s\n\n",
@@ -110,7 +110,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     //--------------------------------------------------------------------------
 
     if (!C_iso)
-    {
+    { 
         GB_macrofy_typedefs (fp, ctype,
             (acode == 0 || acode == 15) ? NULL : atype,
             (bcode == 0 || bcode == 15) ? NULL : btype,
@@ -131,7 +131,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         binaryop, NULL, NULL) ;
 
     if (binaryop->opcode == GB_SECOND_binop_code)
-    {
+    { 
         fprintf (fp, "#define GB_OP_IS_SECOND 1\n") ;
     }
 
@@ -150,15 +150,15 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 
     fprintf (fp, "#define GB_EWISEOP(Cx,p,aij,bij,i,j)") ;
     if (C_iso)
-    {
+    { 
         fprintf (fp, "\n") ;
     }
     else if (ctype == ztype)
-    {
+    { 
         fprintf (fp, " GB_BINOP (Cx [p], aij, bij, i, j)\n") ;
     }
     else
-    {
+    { 
         fprintf (fp, " \\\n"
             "{                                      \\\n"
             "    GB_Z_TYPE z ;                      \\\n"

@@ -30,14 +30,14 @@ uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
     const GrB_Matrix A,
     const GrB_Matrix B
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check if the semiring is JIT'able
     //--------------------------------------------------------------------------
 
     if (semiring->hash == UINT64_MAX)
-    {
+    { 
         // cannot JIT this semiring
         memset (encoding, 0, sizeof (GB_jit_encoding)) ;
         (*suffix) = NULL ;
