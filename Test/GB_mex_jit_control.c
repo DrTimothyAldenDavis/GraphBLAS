@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mex.h"
+#include "GB_mex_errors.h"
 
 void mexFunction
 (
@@ -17,23 +18,28 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
-    int c ;
+    GrB_Info info ;
+    GB_mx_get_global (true) ;
+    int c = -999909 ;
     if (nargin > 0)
     {
         // set the JIT control
         c = (int) mxGetScalar (pargin [0]) ;
+        // printf ("set control: %d\n", c) ;
         if (c < 0)
         {
             // reset the JIT; turn it off, then set to abs(c)
-            GxB_Global_Option_set_INT32 (GxB_JIT_C_CONTROL, GxB_JIT_OFF) ;
+            OK (GxB_Global_Option_set_INT32 (GxB_JIT_C_CONTROL, GxB_JIT_OFF)) ;
             c = GB_IABS (c) ;
         }
-        GxB_Global_Option_set_INT32 (GxB_JIT_C_CONTROL, c) ;
+        OK (GxB_Global_Option_set_INT32 (GxB_JIT_C_CONTROL, c)) ;
     }
 
     // get the JIT control
-    GxB_Global_Option_get_INT32 (GxB_JIT_C_CONTROL, &c) ;
+    OK (GxB_Global_Option_get_INT32 (GxB_JIT_C_CONTROL, &c)) ;
+    // printf ("jit control now: %d\n", c) ;
     pargout [0] = mxCreateDoubleScalar ((double) c) ;
+    GB_mx_put_global (true) ;
 }
 
 

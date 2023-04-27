@@ -20,7 +20,7 @@ function logstat (testscript, threads, jit_controls)
 
 % default JIT controls
 if (nargin < 3)
-    jit_controls {1} = -1 ;     % reset
+    jit_controls {1} = -4 ;     % reset
     jit_controls {2} = 0 ;      % off
 end
 
@@ -43,7 +43,7 @@ for jit_trial = 1:length (jit_controls)
     fprintf ('jit: %d\n', jit_control) ;
     if (jit_control < 0)
         GB_mex_finalize ;
-        GB_mex_jit_control (5) ;
+        GB_mex_jit_control (abs (jit_control)) ;
     elseif (~isempty (jit_control))
         GB_mex_jit_control (jit_control) ;
     end

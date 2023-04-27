@@ -195,6 +195,7 @@ GrB_Info GB_jitifyer_init (void)
         GxB_JIT_RUN ;   // JIT disabled at compile time; only PreJIT available.
                         // No JIT kernels can be loaded or compiled.
         #endif
+printf ("\nJIT init %d: %d\n", __LINE__, GB_jit_control) ;
 
     GB_jitifyer_finalize (true) ;
 
@@ -239,6 +240,7 @@ GrB_Info GB_jitifyer_init (void)
         // still be used.
         GBURBLE ("(jit: unable to access cache path, jit disabled) ") ;
         GB_jit_control = GxB_JIT_RUN ;
+printf ("JIT init %d: %d\n", __LINE__, GB_jit_control) ;
         GB_FREE_STUFF (GB_jit_cache_path) ;
         GB_COPY_STUFF (GB_jit_cache_path, "") ;
     }
@@ -444,7 +446,9 @@ GrB_Info GB_jitifyer_init (void)
         if (!GB_jitifyer_insert (hash, encoding, suffix, NULL, dl_function, k))
         { 
             // out of memory
+printf ("JIT: init pause, out of memory\n") ;
             GB_jit_control = GxB_JIT_PAUSE ;
+printf ("JIT init %d: %d\n", __LINE__, GB_jit_control) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
     }
@@ -519,6 +523,7 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
         // initializations.  The PreJIT could still be used.
         GBURBLE ("(jit: unable to access cache path, jit disabled) ") ;
         GB_jit_control = GxB_JIT_RUN ;
+printf ("JIT path %d: %d\n", __LINE__, GB_jit_control) ;
         GB_FREE_STUFF (GB_jit_cache_path) ;
         GB_COPY_STUFF (GB_jit_cache_path, "") ;
     }
@@ -552,6 +557,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
         // failure; disable the JIT
         GBURBLE ("(jit: unable to access cache folder) ") ;
         GB_jit_control = GxB_JIT_RUN ;
+printf ("JIT extract %d: %d\n", __LINE__, GB_jit_control) ;
         return (error_condition) ;
     }
 
@@ -580,26 +586,22 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     }
 
     //--------------------------------------------------------------------------
-    // find the largest uncompressed filesize
-    //--------------------------------------------------------------------------
-
-    size_t max_uncompressed = 0 ;
-    for (int k = 0 ; k < GB_JITpackage_nfiles ; k++)
-    { 
-        size_t uncompressed_size = GB_JITpackage_index [k].uncompressed_size ;
-        max_uncompressed = GB_IMAX (max_uncompressed, uncompressed_size) ;
-    }
-
-    //--------------------------------------------------------------------------
     // allocate workspace for the largest uncompressed file
     //--------------------------------------------------------------------------
 
     size_t dst_size = 0 ;
-    uint8_t *dst = GB_MALLOC_WORK (max_uncompressed+2, uint8_t, &dst_size) ;
+    for (int k = 0 ; k < GB_JITpackage_nfiles ; k++)
+    { 
+        size_t uncompressed_size = GB_JITpackage_index [k].uncompressed_size ;
+        dst_size = GB_IMAX (dst_size, uncompressed_size) ;
+    }
+
+    uint8_t *dst = GB_Global_persistent_malloc ((dst_size+2) * sizeof(uint8_t));
     if (dst == NULL)
     { 
         // out of memory; disable the JIT
         GB_jit_control = GxB_JIT_RUN ;
+printf ("JIT extract %d: %d\n", __LINE__, GB_jit_control) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -646,7 +648,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     // free workspace
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK (&dst, dst_size) ;
+    GB_Global_persistent_free ((void **) &dst) ;
 
     //--------------------------------------------------------------------------
     // unlock and close the lock/GB_src_lock file
@@ -658,6 +660,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
         // failure; disable the JIT
         GBURBLE ("(jit: failure to write source to cache folder) ") ;
         GB_jit_control = GxB_JIT_RUN ;
+printf ("JIT extract %d: %d\n", __LINE__, GB_jit_control) ;
         return (error_condition) ;
     }
     #endif
@@ -1413,6 +1416,7 @@ GrB_Info GB_jitifyer_load
             // already loaded may be run (handled above if dl_function was
             // found).  This kernel was not loaded, so punt to generic.
             GBURBLE ("(jit: not loaded) ") ;
+printf ("JIT not loaded %d: %d\n", __LINE__, GB_jit_control) ;
             return (GrB_NO_VALUE) ;
         }
     }
@@ -1551,6 +1555,7 @@ GrB_Info GB_jitifyer_worker
         // loaded may be run (handled above if dl_function was found).  This
         // kernel was not loaded, so punt to generic.
         GBURBLE ("(jit: not loaded) ") ;
+printf ("JIT not loaded %d: %d\n", __LINE__, GB_jit_control) ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -1632,6 +1637,7 @@ GrB_Info GB_jitifyer_worker
         // unable to lock the kernel
         // disable the JIT to avoid repeated load errors
         GB_jit_control = GxB_JIT_RUN ;
+printf ("JIT not locked %d: %d\n", __LINE__, GB_jit_control) ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -1711,6 +1717,7 @@ GrB_Info GB_jitifyer_load_worker
             ok = false ;
             GBURBLE ("(jit: library corrupted; jit disabled) ") ;
             GB_jit_control = GxB_JIT_RUN ;
+printf ("JIT corrupted %d: %d\n", __LINE__, GB_jit_control) ;
             return (GrB_NO_VALUE) ;
         }
 
@@ -1737,6 +1744,7 @@ GrB_Info GB_jitifyer_load_worker
                 GB_jit_control = GxB_JIT_RUN ;
                 GBURBLE ("(jit: must recompile but not permited to;"
                     " jit load disabled) ") ;
+printf ("JIT compile fail %d: %d\n", __LINE__, GB_jit_control) ;
                 return (GrB_NO_VALUE) ;
             }
             GBURBLE ("(jit: loaded but must recompile) ") ;
@@ -1758,6 +1766,7 @@ GrB_Info GB_jitifyer_load_worker
         { 
             // No new kernels may be compiled, so punt to generic.
             GBURBLE ("(jit: not compiled) ") ;
+printf ("JIT not compiled %d: %d\n", __LINE__, GB_jit_control) ;
             return (GrB_NO_VALUE) ;
         }
 
@@ -1818,6 +1827,7 @@ GrB_Info GB_jitifyer_load_worker
             GBURBLE ("(jit: compiler error; compilation disabled) ") ;
             // disable the JIT to avoid repeated compilation errors
             GB_jit_control = GxB_JIT_LOAD ;
+printf ("JIT compile err %d: %d\n", __LINE__, GB_jit_control) ;
             return (GrB_NO_VALUE) ;
         }
 
@@ -1840,6 +1850,7 @@ GrB_Info GB_jitifyer_load_worker
         dl_handle = NULL ;
         // disable the JIT to avoid repeated loading errors
         GB_jit_control = GxB_JIT_RUN ;
+printf ("JIT load err %d: %d\n", __LINE__, GB_jit_control) ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -1852,12 +1863,14 @@ GrB_Info GB_jitifyer_load_worker
         dl_handle = NULL ;
         // disable the JIT to avoid repeated errors
         GB_jit_control = GxB_JIT_PAUSE ;
+printf ("JIT hash err %d: %d\n", __LINE__, GB_jit_control) ;
         return (GrB_NO_VALUE) ;
     }
 
     return (GrB_SUCCESS) ;
     #else
     (*dl_function) = NULL ;
+printf ("JIT none %d: %d\n", __LINE__, GB_jit_control) ;
     return (GrB_INVALID_VALUE) ;
     #endif
 }

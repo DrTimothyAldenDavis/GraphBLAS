@@ -69,6 +69,7 @@ for k0 = 1:size(m_list,2)
                 continue ;
             end
             fprintf ('\n%-14s: ', [monoid.opname '.' monoid.optype]) ;
+            jit_reset
 
             for k1 = 1:length(mult_ops)
                 mulop = mult_ops {k1} ;
