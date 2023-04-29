@@ -58,8 +58,7 @@ typedef GB_Werk_struct *GB_Werk ;
 // The werkspace is allocated from the Werk static if it small enough and space
 // is available.  Otherwise it is allocated by malloc.
 
-// See GB_callbacks.h:
-// GB_CALLBACK_WERK_PUSH_PROTO (GB_werk_push) ;
+// See GB_callbacks.h for the prototype.
 
 //------------------------------------------------------------------------------
 // Werk helper macros
@@ -92,8 +91,7 @@ typedef GB_Werk_struct *GB_Werk ;
 // space is also being freed, but the assertion below ensures that the freeing
 // werkspace from the Werk stack is done in LIFO order, like a stack.
 
-// See GB_callbacks.h:
-// GB_CALLBACK_WERK_POP_PROTO (GB_werk_pop) ;
+// See GB_callbacks.h for the prototype.
 
 #endif
 

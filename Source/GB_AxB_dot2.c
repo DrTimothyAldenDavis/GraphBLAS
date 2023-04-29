@@ -316,7 +316,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     {
         // no mask is present so C can be bitmap or full
         if (A_is_full && B_is_full)
-        {
+        { 
             // C = A*B or A'*B, both A and B full: C is full
             C_sparsity = GxB_FULL ;
         }

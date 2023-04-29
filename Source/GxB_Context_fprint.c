@@ -17,6 +17,7 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
     FILE *f                         // file for output
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs

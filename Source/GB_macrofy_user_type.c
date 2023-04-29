@@ -18,6 +18,7 @@ void GB_macrofy_user_type       // construct a user-defined type
     const GrB_Type type         // type to construct in a JIT kernel
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -25,6 +26,7 @@ void GB_macrofy_user_type       // construct a user-defined type
 
     if (type->hash == 0 || type->hash == UINT64_MAX)
     { 
+GB_GOTCHA ;
         // skip if type is builtin or cannot be used in the JIT
         return ;
     }

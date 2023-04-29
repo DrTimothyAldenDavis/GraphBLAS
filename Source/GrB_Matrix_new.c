@@ -18,7 +18,7 @@ GrB_Info GrB_Matrix_new     // create a new matrix with no entries
     GrB_Index nrows,        // matrix dimension is nrows-by-ncols
     GrB_Index ncols
 )
-{
+{ 
     GB_WHERE1 ("GrB_Matrix_new (&A, type, nrows, ncols)") ;
     return (GB_Matrix_new (A, type, nrows, ncols)) ;
 }

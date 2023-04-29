@@ -37,16 +37,19 @@ GrB_Info GxB_Context_get_INT32      // get a parameter of a Context
     {
 
         case GxB_CONTEXT_NTHREADS :         // same as GxB_NTHREADS
+GB_GOTCHA ;
 
             (*value) = GB_Context_nthreads_max_get (Context) ;
             break ;
 
         case GxB_CONTEXT_GPU_ID :           // same as GxB_GPU_ID
+GB_GOTCHA ;
 
             (*value) = GB_Context_gpu_id_get (Context) ;
             break ;
 
         default : 
+GB_GOTCHA ;
 
             return (GrB_INVALID_VALUE) ;
     }
@@ -83,11 +86,13 @@ GrB_Info GxB_Context_get_FP64       // get a parameter in a Context
     {
 
         case GxB_CONTEXT_CHUNK :         // same as GxB_CHUNK
+GB_GOTCHA ;
 
             (*value) = GB_Context_chunk_get (Context) ;
             break ;
 
         default : 
+GB_GOTCHA ;
 
             return (GrB_INVALID_VALUE) ;
     }
@@ -125,6 +130,7 @@ GrB_Info GxB_Context_get            // get a parameter in a Context
     {
 
         case GxB_CONTEXT_NTHREADS :         // same as GxB_NTHREADS
+GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -136,6 +142,7 @@ GrB_Info GxB_Context_get            // get a parameter in a Context
             break ;
 
         case GxB_CONTEXT_GPU_ID :           // same as GxB_GPU_ID
+GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -147,6 +154,7 @@ GrB_Info GxB_Context_get            // get a parameter in a Context
             break ;
 
         case GxB_CONTEXT_CHUNK :            // same as GxB_CHUNK
+GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -158,6 +166,7 @@ GrB_Info GxB_Context_get            // get a parameter in a Context
             break ;
 
         default : 
+GB_GOTCHA ;
 
             return (GrB_INVALID_VALUE) ;
     }

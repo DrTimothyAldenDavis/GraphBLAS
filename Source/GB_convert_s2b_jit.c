@@ -27,7 +27,7 @@ GrB_Info GB_convert_s2b_jit    // convert sparse to bitmap
     const int A_ntasks,
     const int A_nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

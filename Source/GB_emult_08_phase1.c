@@ -73,7 +73,7 @@ GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
     ASSERT (A->vdim == B->vdim) ;
 
     if (M == NULL)
-    {
+    { 
         ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
         ASSERT (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B)) ;
     }

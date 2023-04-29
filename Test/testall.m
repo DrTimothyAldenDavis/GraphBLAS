@@ -64,7 +64,7 @@ clear o f b
 o = {-4} ;      % reset on
 f = {0} ;       % off
 b = {-4, 0} ;   % reset on; off
-o = b ;
+% o = b ;
 
 % start with the Werk stack enabled
 hack (2) = 0 ; GB_mex_hack (hack) ;
@@ -234,7 +234,7 @@ logstat ('test148',t,o) ; % ewise with alias
 % tests with decent rates (20 to 30/sec)
 %----------------------------------------
 
-logstat ('test157',t,b) ; % test sparsity formats
+logstat ('test157',t,o) ; % test sparsity formats
 logstat ('test182',s,o) ; % test for internal wait
 
 %----------------------------------------

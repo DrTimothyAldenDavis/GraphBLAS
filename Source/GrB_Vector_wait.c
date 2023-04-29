@@ -32,7 +32,7 @@ GrB_Info GrB_Vector_wait    // finish all work on a vector
     //--------------------------------------------------------------------------
 
     if (waitmode != GrB_COMPLETE && GB_ANY_PENDING_WORK (v))
-    {
+    { 
         GrB_Info info ;
         GB_BURBLE_START ("GrB_Vector_wait") ;
         GB_OK (GB_wait ((GrB_Matrix) v, "vector", Werk)) ;

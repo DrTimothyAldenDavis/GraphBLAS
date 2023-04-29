@@ -30,7 +30,7 @@ GrB_Info GB_AxB_dot2_jit        // C<M>=A'*B, dot2 method, via the JIT
     const int naslice,
     const int nbslice
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

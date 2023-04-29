@@ -114,12 +114,12 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (C_is_hyper && A->Y != NULL)
     {
         if (A->Y_shallow || GB_is_shallow (A->Y))
-        {
+        { 
             // A->Y is shallow, so create a deep copy for C
             GB_OK (GB_dup (&(C->Y), A->Y, Werk)) ;
         }
         else
-        {
+        { 
             // A->Y is not shallow, so transplant it into C
             C->Y = A->Y ;
             A->Y = NULL ;

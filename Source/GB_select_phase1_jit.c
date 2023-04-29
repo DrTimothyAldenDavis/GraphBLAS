@@ -29,7 +29,7 @@ GrB_Info GB_select_phase1_jit      // select phase1
     const int A_ntasks,
     const int A_nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

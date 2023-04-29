@@ -141,7 +141,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
         ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
         C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso) ;
     if (info != GrB_SUCCESS)
-    {
+    { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
         // Ch must not be freed since Ch is always shallow
         GB_FREE (Cp_handle, Cp_size) ;

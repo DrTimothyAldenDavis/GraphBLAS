@@ -23,7 +23,7 @@ GrB_Info GrB_Type_free          // free a user-defined type
         {
             size_t header_size = t->header_size ;
             if (header_size > 0)
-            { 
+            {
                 size_t defn_size = t->defn_size ;
                 if (defn_size > 0)
                 { 

@@ -209,7 +209,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         op = (GB_Operator) GB_unop_one (ctype->code) ;
     }
     else if (user_idxunop)
-    {
+    { 
         // do not apply the user op until after the transpose; replace with
         // no operator at all, with no typecast
         op = NULL ;

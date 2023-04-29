@@ -406,12 +406,12 @@ GrB_Info GB_assign_prep
         memcpy (Jcolon, RowColon, 3 * sizeof (int64_t)) ;
         // flip the sense of row/col assign
         if ((*assign_kind) == GB_ROW_ASSIGN)
-        {
+        { 
             // assignment to vector j = J [0], which is Rows [0]
             (*assign_kind) = GB_COL_ASSIGN ;
         }
         else if ((*assign_kind) == GB_COL_ASSIGN)
-        {
+        { 
             // assignment to index i = I [0], which is Cols [0]
             (*assign_kind) = GB_ROW_ASSIGN ;
         }
@@ -1167,7 +1167,7 @@ GrB_Info GB_assign_prep
     //--------------------------------------------------------------------------
 
     if (wait)
-    {
+    { 
         // Prior computations are not compatible with this assignment, so all
         // prior work must be finished.  This potentially costly.
         // delete any lingering zombies and assemble any pending tuples
@@ -1189,7 +1189,7 @@ GrB_Info GB_assign_prep
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for assign", GB0) ;
 
     if (C_iso_out)
-    {
+    { 
         GBURBLE ("(C iso assign) ") ;
     }
 

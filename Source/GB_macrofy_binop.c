@@ -44,12 +44,14 @@ void GB_macrofy_binop
         {
             if (op->ztype == op->xtype)
             { 
+GB_GOTCHA ;
                 fprintf (fp, "#define GB_UPDATE(z,y)\n") ;
             }
             fprintf (fp, "#define %s(z,x,y)\n", macro_name) ;
         }
         else
         { 
+GB_GOTCHA ;
             fprintf (fp, "#define %s(z,x,y,i%s,j)\n", macro_name, karg) ;
         }
 
@@ -65,6 +67,7 @@ void GB_macrofy_binop
         bool is_macro = GB_macrofy_defn (fp, 3, op->name, op->defn) ;
         if (is_macro)
         { 
+GB_GOTCHA ;
             fprintf (fp, "// binary operator %s defined as a macro:\n",
                 op->name) ;
         }
@@ -87,9 +90,11 @@ void GB_macrofy_binop
         }
 
         if (is_macro)
-        {
+        { 
+GB_GOTCHA ;
             for (char *p = op->name ; (*p) != '\0' ; p++)
             { 
+GB_GOTCHA ;
                 int c = (*p) ;
                 fputc (toupper (c), fp) ;
             }
@@ -259,9 +264,11 @@ void GB_macrofy_binop
 
             // eq for complex
             case  32 : 
+GB_GOTCHA ;
                 f = "z = GB_FC32_eq (x,y)" ;
                 break ;
             case  33 : 
+GB_GOTCHA ;
                 f = "z = GB_FC64_eq (x,y)" ;
                 break ;
 
@@ -286,9 +293,11 @@ void GB_macrofy_binop
 
             // ne for complex
             case  36 : 
+GB_GOTCHA ;
                 f = "z = GB_FC32_ne (x,y)" ;
                 break ;
             case  37 : 
+GB_GOTCHA ;
                 f = "z = GB_FC64_ne (x,y)" ;
                 break ;
 
@@ -462,6 +471,7 @@ void GB_macrofy_binop
 
             // bget
             case  75 : 
+GB_GOTCHA ;
                 f = "z = GJ_bitget_int8 (x,y)" ;
                 GB_macrofy_defn (fp, 0, "GJ_bitget_int8", GJ_bitget_int8_DEFN) ;
                 break ;
@@ -496,6 +506,7 @@ void GB_macrofy_binop
 
             // bset
             case  83 : 
+GB_GOTCHA ;
                 f = "z = GJ_bitset_int8 (x,y)" ;
                 GB_macrofy_defn (fp, 0, "GJ_bitset_int8", GJ_bitset_int8_DEFN) ;
                 break ;
@@ -530,6 +541,7 @@ void GB_macrofy_binop
 
             // bclr
             case  91 : 
+GB_GOTCHA ;
                 f = "z = GJ_bitclr_int8 (x,y)" ;
                 GB_macrofy_defn (fp, 0, "GJ_bitclr_int8", GJ_bitclr_int8_DEFN) ;
                 break ;
@@ -564,6 +576,7 @@ void GB_macrofy_binop
 
             // bshift
             case  99 : 
+GB_GOTCHA ;
                 f = "z = GJ_bitshift_int8 (x,y)" ;
                 GB_macrofy_defn (fp, 0, "GJ_bitshift_int8", GJ_bitshift_int8_DEFN) ;
                 break ;
@@ -598,6 +611,7 @@ void GB_macrofy_binop
 
             // pow (integer cases)
             case 107 : 
+GB_GOTCHA ;
                 f = "z = GJ_pow_int8 (x, y)" ;
                 GB_macrofy_defn (fp, 0, "GJ_pow", GJ_pow_DEFN) ;
                 GB_macrofy_defn (fp, 0, "GJ_cast_to_int8", GJ_cast_to_int8_DEFN) ;
@@ -693,8 +707,8 @@ void GB_macrofy_binop
             case 130 : f = "z = ldexp (x, y)" ; break ;
 
             // cmplex
-            case 131 : f = "z = GJ_CMPLX32 (x, y)" ; break ;
-            case 132 : f = "z = GJ_CMPLX64 (x, y)" ; break ;
+            case 131 : f = "z = GJ_CMPLX32 (x, y)" ; GB_GOTCHA ; break ;
+            case 132 : f = "z = GJ_CMPLX64 (x, y)" ; GB_GOTCHA ; break ;
 
             // pair, real
             case 133 : f = "z = 1" ; break ;
@@ -726,7 +740,7 @@ void GB_macrofy_binop
             // no-op: same as second operator
             //------------------------------------------------------------------
 
-            case 140 : 
+            case 140 :  GB_GOTCHA ;
             default  : f = "z = y" ; break ;
         }
 

@@ -60,6 +60,7 @@ GrB_Info GB_cast_array              // typecast an array
     GrB_Info info = GrB_NO_VALUE ;
 
     #ifndef GBCOMPACT
+    { 
 
         //----------------------------------------------------------------------
         // define the worker for the switch factory
@@ -81,7 +82,7 @@ GrB_Info GB_cast_array              // typecast an array
 
         #define GB_EXCLUDE_SAME_TYPES
         #include "GB_twotype_factory.c"
-
+    }
     #endif
 
     //--------------------------------------------------------------------------

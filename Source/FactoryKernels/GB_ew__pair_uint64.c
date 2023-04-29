@@ -131,6 +131,7 @@ GrB_Info GB (_AunionB__pair_uint64)
     const int B_ntasks
 )
 { 
+GB_GOTCHA ;
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else

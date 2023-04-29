@@ -27,6 +27,7 @@ assert (norm (C0 - C2.matrix, 1) < 1e-12) ;
 C2 = GB_mex_ewise_alias3 (C, 'plus', A, [ ]) ;
 assert (norm (C0 - C2.matrix, 1) < 1e-12) ;
 
+clear C A
 C.matrix = sparse (rand (n)) ;
 C.sparsity = 8 ;
 A.matrix = sparse (rand (n)) ;
@@ -52,6 +53,7 @@ C1 = GB_mex_Matrix_eWiseAdd (C, M, [ ], 'plus', M, M, desc) ;
 C2 = GB_mex_ewise_alias4 (C, M, 'plus', desc) ;
 assert (norm (C1.matrix - C2.matrix, 1) < 1e-12) ;
 
+clear M
 M.matrix = sparse (true (n)) ;
 M.sparsity = 8 ;
 C1 = GB_mex_Matrix_eWiseAdd (C, M, [ ], 'plus', M, M, desc) ;
@@ -65,6 +67,7 @@ C2 = GB_mex_ewise_alias5 (C, M, 'plus', A, desc) ;
 assert (norm (C1.matrix - C2.matrix, 1) < 1e-12) ;
 
 % C<M> = A+M
+clear A
 A.matrix = sparse (rand (n)) ;
 A.sparsity = 8 ;
 clear M

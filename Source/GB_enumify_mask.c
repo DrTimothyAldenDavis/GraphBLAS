@@ -65,39 +65,39 @@ void GB_enumify_mask       // return enum to define mask macros
         switch (mcode)
         {
 
-            case GB_BOOL_code:
-            case GB_INT8_code:
-            case GB_UINT8_code:
+            case GB_BOOL_code  : 
+            case GB_INT8_code  : 
+            case GB_UINT8_code : 
 
                 // valued mask, values are 1 byte in size
                 e = (!Mask_comp) ? 4 : 5 ;
                 break ;
 
-            case GB_INT16_code:
-            case GB_UINT16_code:
+            case GB_INT16_code  : 
+            case GB_UINT16_code : 
 
                 // valued mask, values are 2 bytes in size
                 e = (!Mask_comp) ? 6 : 7 ;
                 break ;
 
-            case GB_INT32_code:
-            case GB_UINT32_code:
-            case GB_FP32_code:
+            case GB_INT32_code  : 
+            case GB_UINT32_code : 
+            case GB_FP32_code   : 
 
                 // valued mask, values are 4 bytes in size
                 e = (!Mask_comp) ? 8 : 9 ;
                 break ;
 
-            case GB_INT64_code:
-            case GB_UINT64_code:
-            case GB_FC32_code:
-            case GB_FP64_code:
+            case GB_INT64_code  : 
+            case GB_UINT64_code : 
+            case GB_FC32_code   : 
+            case GB_FP64_code   : 
 
                 // valued mask, values are 8 bytes in size
                 e = (!Mask_comp) ? 10 : 11 ;
                 break ;
 
-            case GB_FC64_code:
+            case GB_FC64_code   : 
 
                 // valued mask, values are 16 bytes in size
                 e = (!Mask_comp) ? 12 : 13 ;

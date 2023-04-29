@@ -26,7 +26,7 @@ GrB_Info GB_split_sparse_jit      // split A into a sparse tile C
     const int C_ntasks,
     const int C_nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

@@ -30,7 +30,7 @@ GrB_Info GB_build_jit               // GB_builder JIT kernel
     const int64_t *restrict tnz_slice,
     int nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

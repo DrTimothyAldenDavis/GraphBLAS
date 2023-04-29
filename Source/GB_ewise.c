@@ -88,7 +88,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             GB_MATRIX_WAIT (alpha) ;
             GB_MATRIX_WAIT (beta) ;
             if (GB_nnz ((GrB_Matrix) alpha) == 0)
-            {
+            { 
                 GB_ERROR (GrB_EMPTY_OBJECT, "%s\n",
                     "alpha cannot be an empty scalar") ;
             }
@@ -301,6 +301,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // where T starts out empty; just iterate over the entries in A.
 
 #if 1
+    // FIXME: delete this block of code
     if (GB_as_if_full (A1)                     // A and B are full
         && GB_as_if_full (B1)
         && !any_iso                         // A and B are not iso

@@ -79,8 +79,9 @@ GrB_Info GB_ewise_fulln      // C = A+B
     // clear prior content and create C as a full matrix.  Keep the same type
     // and CSR/CSC for C.  Allocate the values of C but do not initialize them.
 
-    if (!GB_IS_FULL (C))
+    if (!GB_as_if_full (C))
     { 
+GB_GOTCHA ;
         // free the content of C and reallocate it as a non-iso full matrix
         ASSERT (C != A && C != B) ;
         GB_phybix_free (C) ;
@@ -92,6 +93,7 @@ GrB_Info GB_ewise_fulln      // C = A+B
     }
     else if (!GB_IS_FULL (C))
     { 
+GB_GOTCHA ;
         // ensure C is full
         GB_convert_any_to_full (C) ;
     }
@@ -138,6 +140,7 @@ GrB_Info GB_ewise_fulln      // C = A+B
 
     if (info == GrB_NO_VALUE)
     { 
+GB_GOTCHA ;
         info = GB_ewise_fulln_jit (C, op, A, B, nthreads) ;
     }
 
@@ -149,7 +152,7 @@ GrB_Info GB_ewise_fulln      // C = A+B
     //--------------------------------------------------------------------------
 
     if (info == GrB_SUCCESS)
-    {
+    { 
         ASSERT_MATRIX_OK (C, "C output, full C=A+B", GB0) ;
     }
     return (info) ;

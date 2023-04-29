@@ -49,7 +49,7 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
     (*zcode) = mult->ztype->code ;
 
     if (flipxy)
-    {
+    { 
         // quick return.  All built-in semirings have been handled already
         // in GB_AxB_meta, and flipxy is now false.  If flipxy is still true,
         // the semiring is not built-in.

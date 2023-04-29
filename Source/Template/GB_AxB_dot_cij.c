@@ -71,26 +71,31 @@
         }
         #elif GB_IS_EQ_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (boolean EQ (LXNOR) monoid)_PAIR semiring
             cij = 1 ;
         }
         #elif GB_IS_LXOR_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (boolean XOR monoid)_PAIR semiring
             cij = (GB_C_TYPE) (((uint64_t) vlen) & 0x1L) ;
         }
         #elif GB_IS_PLUS_8_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS int8, uint8 monoids)_PAIR semirings
             cij = (GB_C_TYPE) (((uint64_t) vlen) & 0xFFL) ;
         }
         #elif GB_IS_PLUS_16_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS int16, uint16 monoids)_PAIR semirings
             cij = (GB_C_TYPE) (((uint64_t) vlen) & 0xFFFFL) ;
         }
         #elif GB_IS_PLUS_32_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS int32, uint32 monoids)_PAIR semirings
             cij = (GB_C_TYPE) (((uint64_t) vlen) & 0xFFFFFFFFL) ;
         }
@@ -101,11 +106,13 @@
         }
         #elif GB_IS_PLUS_FC32_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS monoid for float complex)_PAIR semiring
             cij = GJ_CMPLX32 ((float) vlen, 0) ;
         }
         #elif GB_IS_PLUS_FC64_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS monoid for double complex)_PAIR semiring
             cij = GJ_CMPLX64 ((double) vlen, 0) ;
         }
@@ -202,26 +209,31 @@
         }
         #elif GB_IS_EQ_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (boolean EQ (LXNOR) monoid)_PAIR semiring
             cij = 1 ;
         }
         #elif GB_IS_LXOR_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (boolean XOR monoid)_PAIR semiring
             cij = (GB_C_TYPE) (((uint64_t) bjnz) & 0x1L) ;
         }
         #elif GB_IS_PLUS_8_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS int8, uint8 monoids)_PAIR semirings
             cij = (GB_C_TYPE) (((uint64_t) bjnz) & 0xFFL) ;
         }
         #elif GB_IS_PLUS_16_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS int16, uint16 monoids)_PAIR semirings
             cij = (GB_C_TYPE) (((uint64_t) bjnz) & 0xFFFFL) ;
         }
         #elif GB_IS_PLUS_32_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS int32, uint32 monoids)_PAIR semirings
             cij = (GB_C_TYPE) (((uint64_t) bjnz) & 0xFFFFFFFFL) ;
         }
@@ -232,11 +244,13 @@
         }
         #elif GB_IS_PLUS_FC32_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS monoid for float complex)_PAIR semiring
             cij = GJ_CMPLX32 ((float) bjnz, 0) ;
         }
         #elif GB_IS_PLUS_FC64_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS monoid for double complex)_PAIR semiring
             cij = GJ_CMPLX64 ((double) bjnz, 0) ;
         }
@@ -432,26 +446,31 @@
         }
         #elif GB_IS_EQ_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (boolean EQ (LXNOR) monoid)_PAIR semiring
             cij = 1 ;
         }
         #elif GB_IS_LXOR_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (boolean XOR monoid)_PAIR semiring
             cij = (GB_C_TYPE) (((uint64_t) ainz) & 0x1L) ;
         }
         #elif GB_IS_PLUS_8_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS int8, uint8 monoids)_PAIR semirings
             cij = (GB_C_TYPE) (((uint64_t) ainz) & 0xFFL) ;
         }
         #elif GB_IS_PLUS_16_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS int16, uint16 monoids)_PAIR semirings
             cij = (GB_C_TYPE) (((uint64_t) ainz) & 0xFFFFL) ;
         }
         #elif GB_IS_PLUS_32_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS int32, uint32 monoids)_PAIR semirings
             cij = (GB_C_TYPE) (((uint64_t) ainz) & 0xFFFFFFFFL) ;
         }
@@ -462,11 +481,13 @@
         }
         #elif GB_IS_PLUS_FC32_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS monoid for float complex)_PAIR semiring
             cij = GJ_CMPLX32 ((float) ainz, 0) ;
         }
         #elif GB_IS_PLUS_FC64_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS monoid for double complex)_PAIR semiring
             cij = GJ_CMPLX64 ((double) ainz, 0) ;
         }

@@ -25,7 +25,7 @@ GrB_Info GB_AxB_saxpy5_jit          // C+=A*B, saxpy5 method, via the JIT
     const int nthreads,
     const int64_t *B_slice
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

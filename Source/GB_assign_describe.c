@@ -37,12 +37,12 @@ void GB_assign_describe
     str [0] = '\0' ;
     char *Op ;
     if (accum == NULL)
-    {
+    { 
         // no accum operator is present
         Op = "" ;
     }
     else
-    {
+    { 
         // use a simpler version of accum->name
         if (accum->opcode == GB_USER_binop_code) Op = "op" ;
         else if (GB_STRING_MATCH (accum->name, "plus")) Op = "+" ;
@@ -66,16 +66,16 @@ void GB_assign_describe
     {
         // M is not present
         if (Mask_comp)
-        {
+        { 
             Mask = C_replace ? "<!,replace>" : "<!>" ;
         }
         else
-        {
+        { 
             Mask = C_replace ? "<replace>" : "" ;
         }
     }
     else
-    {
+    { 
         // M is present
         snprintf (Mask_string, GB_STRLEN, "<%sM%s%s%s>",
             (Mask_comp) ? "!" : "",
@@ -113,46 +113,46 @@ void GB_assign_describe
 
     switch (assign_kind)
     {
-        case GB_ROW_ASSIGN:
+        case GB_ROW_ASSIGN : 
             // C(i,J) = A
             snprintf (str, slen, "C%s(i,%s) %s= A ", Mask, Jstr, Op) ;
 //          snprintf (IJ, GB_STRLEN, "(i,%s)", Jstr) ;
 //          GBURBLE ("C%s%s %s= A ", Mask, IJ, Op) ;
             break ;
 
-        case GB_COL_ASSIGN:
+        case GB_COL_ASSIGN : 
             // C(I,j) = A
             snprintf (str, slen, "C%s(%s,j) %s= A ", Mask, Istr, Op) ;
 //          snprintf (IJ, GB_STRLEN, "(%s,j)", Istr) ;
 //          GBURBLE ("C%s%s %s= A ", Mask, IJ, Op) ;
             break ;
 
-        case GB_ASSIGN:
+        case GB_ASSIGN : 
             // C<M>(I,J) = A
 //          GBURBLE ("C%s%s %s= %s ", Mask, IJ, Op, S) ;
             if (Ikind == GB_ALL && Jkind == GB_ALL)
-            {
+            { 
                 // C<M> += A
                 snprintf (str, slen, "C%s %s= %s ", Mask, Op, S) ;
             }
             else
-            {
+            { 
                 // C<M>(I,J) = A
                 snprintf (str, slen, "C%s(%s,%s) %s= %s ", Mask, Istr, Jstr,
                     Op, S) ;
             }
             break ;
 
-        case GB_SUBASSIGN:
+        case GB_SUBASSIGN : 
             // C(I,J)<M> = A
 //          GBURBLE ("C%s%s %s= %s ", IJ, Mask, Op, S) ;
             if (Ikind == GB_ALL && Jkind == GB_ALL)
-            {
+            { 
                 // C<M> += A
                 snprintf (str, slen, "C%s %s= %s ", Mask, Op, S) ;
             }
             else
-            {
+            { 
                 // C<M>(I,J) = A
                 snprintf (str, slen, "C(%s,%s)%s %s= %s ", Istr, Jstr, Mask,
                     Op, S) ;

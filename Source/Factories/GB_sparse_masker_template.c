@@ -745,6 +745,7 @@
                             ASSERT (M_is_sparse || M_is_hyper) ;
                             for ( ; pZ < pZ_end ; pZ++)
                             { 
+GB_GOTCHA ;
                                 int64_t i = Zi [pZ] ;
                                 bool mij = false ;
                                 int64_t pright = pM_end - 1 ;

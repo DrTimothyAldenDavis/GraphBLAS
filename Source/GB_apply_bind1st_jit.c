@@ -23,7 +23,7 @@ GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
     const GrB_Matrix B,
     const int nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

@@ -25,7 +25,7 @@ GrB_Info GB_concat_sparse_jit      // concatenate A into a sparse matrix C
     const int A_ntasks,
     const int A_nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

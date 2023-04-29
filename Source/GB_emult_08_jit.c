@@ -31,7 +31,7 @@ GrB_Info GB_emult_08_jit      // C<#M>=A.*B, emult_08, via the JIT
     const int C_ntasks,
     const int C_nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

@@ -20,6 +20,7 @@ uint64_t GB_encodify_user_type      // encode a user defined type
     const GrB_Type type
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check if the type is JIT'able
@@ -27,6 +28,7 @@ uint64_t GB_encodify_user_type      // encode a user defined type
 
     if (type != NULL && type->hash == UINT64_MAX)
     { 
+GB_GOTCHA ;
         // cannot JIT this type
         memset (encoding, 0, sizeof (GB_jit_encoding)) ;
         (*suffix) = NULL ;

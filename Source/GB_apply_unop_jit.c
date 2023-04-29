@@ -26,7 +26,7 @@ GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
     const int A_ntasks,
     const int A_nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

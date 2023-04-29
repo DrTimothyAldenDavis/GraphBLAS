@@ -89,6 +89,7 @@ GrB_Info GB_transpose_ix        // transpose the pattern and values of a matrix
         //----------------------------------------------------------------------
 
         #ifndef GBCOMPACT
+        { 
 
             //------------------------------------------------------------------
             // define the worker for the switch factory
@@ -110,6 +111,7 @@ GrB_Info GB_transpose_ix        // transpose the pattern and values of a matrix
 
             #include "GB_twotype_factory.c"
 
+        }
         #endif
 
         //----------------------------------------------------------------------
@@ -131,7 +133,7 @@ GrB_Info GB_transpose_ix        // transpose the pattern and values of a matrix
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
-        {
+        { 
             GB_BURBLE_MATRIX (A, "(generic transpose) ") ;
             size_t csize = C->type->size ;
             GB_cast_function cast_A_to_X = GB_cast_factory (code1, code2) ;

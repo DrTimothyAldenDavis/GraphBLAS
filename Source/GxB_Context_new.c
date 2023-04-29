@@ -35,6 +35,7 @@ GrB_Info GxB_Context_new            // create a new Context
     Context = GB_MALLOC (1, struct GB_Context_opaque, &header_size);
     if (Context == NULL)
     { 
+GB_GOTCHA ;
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }

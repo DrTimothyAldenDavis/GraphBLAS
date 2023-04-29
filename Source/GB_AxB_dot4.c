@@ -125,7 +125,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         &xcode, &ycode, &zcode) ;
 
     if (add_binop_code == GB_ANY_binop_code)
-    {
+    { 
         // no work to do
         // future:: when the JIT is extended to handle the case when
         // accum != monoid->op, this case must be modified.
@@ -160,7 +160,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     int naslice, nbslice ;
 
     if (nthreads == 1)
-    {
+    { 
         naslice = 1 ;
         nbslice = 1 ;
     }
@@ -169,25 +169,25 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         bool A_is_sparse_or_hyper = GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A) ;
         bool B_is_sparse_or_hyper = GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B) ;
         if (A_is_sparse_or_hyper && B_is_sparse_or_hyper)
-        {
+        { 
             // both A and B are sparse/hyper; split them finely
             naslice = 16 * nthreads ;
             nbslice = 16 * nthreads ;
         }
         else if (!A_is_sparse_or_hyper && B_is_sparse_or_hyper)
-        {
+        { 
             // A is bitmap/full and B is sparse/hyper; only split B
             naslice = 1 ;
             nbslice = 16 * nthreads ;
         }
         else if (A_is_sparse_or_hyper && !B_is_sparse_or_hyper)
-        {
+        { 
             // A is sparse/hyper and B is bitmap/full; is only split A
             naslice = 16 * nthreads ;
             nbslice = 1 ;
         }
         else
-        {
+        { 
             // A and B are bitmap/full; split them coarsely
             naslice = nthreads ;
             nbslice = nthreads ;

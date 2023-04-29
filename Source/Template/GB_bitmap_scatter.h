@@ -15,8 +15,5 @@
 #define GB_BITMAP_M_SCATTER_SET_2   2
 #define GB_BITMAP_M_SCATTER_MOD_2   3
 
-// GB_CALLBACK_BITMAP_M_SCATTER_PROTO (GB_bitmap_M_scatter) ;
-// GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO (GB_bitmap_M_scatter_whole) ;
-
 #endif
 

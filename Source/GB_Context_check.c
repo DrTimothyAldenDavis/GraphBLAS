@@ -17,6 +17,7 @@ GrB_Info GB_Context_check       // check a GraphBLAS Context
     FILE *f                     // file for output
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs

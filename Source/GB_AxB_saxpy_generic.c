@@ -68,7 +68,7 @@ GrB_Info GB_AxB_saxpy_generic
     GB_void *restrict Wcx,
     int8_t *restrict Wf
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // get operators, functions, workspace, contents of A, B, and C

@@ -66,18 +66,18 @@
         {
             // A and C are both full or both bitmap
             if (A->b == NULL)
-            {
+            { 
                 // A and C are both full
                 #include "GB_transpose_full.c"
             }
             else
-            {
+            { 
                 // A and C are both bitmap
                 #include "GB_transpose_bitmap.c"
             }
         }
         else
-        {
+        { 
             // A is sparse or hypersparse; C is sparse
             #include "GB_transpose_sparse.c"
         }

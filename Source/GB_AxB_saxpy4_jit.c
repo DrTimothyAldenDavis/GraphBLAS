@@ -31,7 +31,7 @@ GrB_Info GB_AxB_saxpy4_jit          // C+=A*B, saxpy4 method, via the JIT
     GB_void *restrict Wcx,
     int8_t *restrict Wf
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

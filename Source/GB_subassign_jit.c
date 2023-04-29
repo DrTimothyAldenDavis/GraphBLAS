@@ -46,7 +46,7 @@ GrB_Info GB_subassign_jit
     const char *kname,          // kernel base name
     GB_Werk Werk
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

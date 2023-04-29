@@ -14,7 +14,7 @@ GrB_Info GxB_Scalar_memoryUsage  // return # of bytes used for a scalar
     size_t *size,           // # of bytes used by the scalar s
     const GrB_Scalar s      // GrB_Scalar to query
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

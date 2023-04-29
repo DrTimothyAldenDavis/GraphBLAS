@@ -19,7 +19,7 @@ GrB_Info GB_user_op_jit         // construct a user operator in a JIT kernel
     // input:
     const GB_Operator op        // unary, index unary, or binary op
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

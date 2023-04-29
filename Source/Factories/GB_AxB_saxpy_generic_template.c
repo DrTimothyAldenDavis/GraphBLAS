@@ -40,7 +40,7 @@
         }
     }
     #else
-    {
+    { 
         // C is bitmap
         #include "GB_AxB_saxbit_template.c"
     }

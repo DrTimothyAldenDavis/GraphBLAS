@@ -72,6 +72,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
     if (C_iso)
     { 
+GB_GOTCHA ;
         // C is iso; no operators are used
         fprintf (fp, "// semiring: symbolic only (C is iso)\n") ;
     }
@@ -138,6 +139,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
     if (C_iso)
     { 
+GB_GOTCHA ;
 
         //----------------------------------------------------------------------
         // ANY_PAIR_BOOL semiring: nothing to do
@@ -167,6 +169,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
         if (flipxy)
         { 
+GB_GOTCHA ;
             fprintf (fp, "#define GB_MULTADD(z,y,x,j,k,i) ") ;
         }
         else
@@ -227,30 +230,41 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
         bool is_plus = (addop->opcode == GB_PLUS_binop_code) ;
         if (is_plus && (zcode >= GB_INT8_code && zcode <= GB_FP64_code))
         { 
+GB_GOTCHA ;
             // PLUS_PAIR_REAL semiring
             fprintf (fp, "#define GB_IS_PLUS_PAIR_REAL_SEMIRING 1\n") ;
 
             switch (zcode)
             {
                 case GB_INT8_code    : 
+GB_GOTCHA ;
                 case GB_UINT8_code   : 
+GB_GOTCHA ;
                     fprintf (fp, "#define GB_IS_PLUS_8_PAIR_SEMIRING 1\n") ;
                     break ;
 
                 case GB_INT16_code   : 
+GB_GOTCHA ;
                 case GB_UINT16_code  : 
+GB_GOTCHA ;
                     fprintf (fp, "#define GB_IS_PLUS_16_PAIR_SEMIRING 1\n") ;
                     break ;
 
                 case GB_INT32_code   : 
+GB_GOTCHA ;
                 case GB_UINT32_code  : 
+GB_GOTCHA ;
                     fprintf (fp, "#define GB_IS_PLUS_32_PAIR_SEMIRING 1\n") ;
                     break ;
 
                 case GB_INT64_code   : 
+GB_GOTCHA ;
                 case GB_UINT64_code  : 
+GB_GOTCHA ;
                 case GB_FP32_code    : 
+GB_GOTCHA ;
                 case GB_FP64_code    : 
+GB_GOTCHA ;
                     fprintf (fp, "#define GB_IS_PLUS_BIG_PAIR_SEMIRING 1\n") ;
                     break ;
                 default:;
@@ -258,16 +272,19 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
         }
         else if (C_iso)
         { 
+GB_GOTCHA ;
             // ANY_PAIR_* (C is iso in this case, type is BOOL)
             fprintf (fp, "#define GB_IS_ANY_PAIR_SEMIRING 1\n") ;
         }
         else if (addop->opcode == GB_EQ_binop_code)
         { 
+GB_GOTCHA ;
             // semiring is eq_pair_bool
             fprintf (fp, "#define GB_IS_EQ_PAIR_SEMIRING 1\n") ;
         }
         else if (addop->opcode == GB_LXOR_binop_code)
         { 
+GB_GOTCHA ;
             // semiring is lxor_pair_bool
             fprintf (fp, "#define GB_IS_LXOR_PAIR_SEMIRING 1\n") ;
         }
@@ -285,11 +302,13 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
         if (addop->opcode == GB_MIN_binop_code)
         { 
+GB_GOTCHA ;
             // semiring is min_firstj or min_firstj1
             fprintf (fp, "#define GB_IS_MIN_FIRSTJ_SEMIRING 1\n") ;
         }
         else if (addop->opcode == GB_MAX_binop_code)
         { 
+GB_GOTCHA ;
             // semiring is max_firstj or max_firstj1
             fprintf (fp, "#define GB_IS_MAX_FIRSTJ_SEMIRING 1\n") ;
         }

@@ -14,7 +14,7 @@ GrB_Info GxB_Matrix_iso     // return iso status of a matrix
     bool *iso,              // true if the matrix is iso-valued
     const GrB_Matrix A      // matrix to query
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

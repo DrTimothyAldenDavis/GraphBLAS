@@ -39,7 +39,7 @@ GrB_Info GB_Iterator_attach
     //--------------------------------------------------------------------------
 
     if (GB_ANY_PENDING_WORK (A))
-    {
+    { 
         GrB_Info info ;
         GB_WERK ("GxB_Iterator_attach") ;
         GB_OK (GB_wait (A, "A", Werk)) ;

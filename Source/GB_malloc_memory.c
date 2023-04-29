@@ -21,7 +21,7 @@ static inline void *GB_malloc_helper
     size_t *size            // on input: # of bytes requested
                             // on output: # of bytes actually allocated
 )
-{
+{ 
     void *p = NULL ;
 
     // make sure the block is at least 8 bytes in size

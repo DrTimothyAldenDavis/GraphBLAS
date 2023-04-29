@@ -70,7 +70,7 @@
     #else
     {
         if (A_is_full && B_is_full)
-        {
+        { 
             // C, A, and B are all full
             #include "GB_add_full_30.c"
         }
@@ -78,12 +78,12 @@
         {
             // C and A are full; B is hypersparse, sparse, or bitmap
             if (B_is_bitmap)
-            {
+            { 
                 // C and A are full; B is bitmap
                 #include "GB_add_full_31.c"
             }
             else
-            {
+            { 
                 // C and A are full; B is sparse or hypersparse
                 #include "GB_add_full_32.c"
             }
@@ -92,12 +92,12 @@
         {
             // C and B are full; A is hypersparse, sparse, or bitmap
             if (A_is_bitmap)
-            {
+            { 
                 // C and B are full; A is bitmap
                 #include "GB_add_full_33.c"
             }
             else
-            {
+            { 
                 // C and B are full; A is hypersparse or sparse
                 #include "GB_add_full_34.c"
             }

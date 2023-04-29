@@ -206,7 +206,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
 
         }
         else if (A->type == ztype)
-        {
+        { 
 
             //------------------------------------------------------------------
             // via the factory kernel
@@ -247,7 +247,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
-        {
+        { 
             info = GB_reduce_to_scalar_jit (z, monoid, A, W, F, ntasks,
                 nthreads) ;
         }
@@ -296,7 +296,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 freduce (z, z, W +((k)*zsize))
 
             if (A->type == ztype)
-            { 
+            {
 
                 //--------------------------------------------------------------
                 // generic worker: sum up the entries, no typecasting
@@ -312,7 +312,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     freduce (t, t, Ax +((p)*zsize))
 
                 if (zterminal == NULL)
-                {
+                { 
                     // monoid is not terminal
                     #undef  GB_MONOID_IS_TERMINAL
                     #define GB_MONOID_IS_TERMINAL 0
@@ -323,7 +323,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     #include "GB_reduce_to_scalar_template.c"
                 }
                 else
-                {
+                { 
                     // break if terminal value reached
                     #undef  GB_MONOID_IS_TERMINAL
                     #define GB_MONOID_IS_TERMINAL 1
@@ -338,7 +338,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
 
             }
             else
-            { 
+            {
 
                 //--------------------------------------------------------------
                 // generic worker: sum up the entries, with typecasting
@@ -358,7 +358,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     freduce (t, t, awork)
 
                 if (zterminal == NULL)
-                {
+                { 
                     // monoid is not terminal
                     #undef  GB_MONOID_IS_TERMINAL
                     #define GB_MONOID_IS_TERMINAL 0
@@ -369,7 +369,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                     #include "GB_reduce_to_scalar_template.c"
                 }
                 else
-                {
+                { 
                     // break if terminal value reached
                     #undef  GB_MONOID_IS_TERMINAL
                     #define GB_MONOID_IS_TERMINAL 1
@@ -388,6 +388,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
 
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;

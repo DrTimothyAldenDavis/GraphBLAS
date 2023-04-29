@@ -90,11 +90,11 @@ GrB_Info GB_export      // export/unpack a matrix in any format
 
         case GxB_SPARSE : 
             if (is_sparse_vector)
-            {
+            { 
                 GB_RETURN_IF_NULL (nvals) ;
             }
             else
-            {
+            { 
                 GB_RETURN_IF_NULL (Ap) ; GB_RETURN_IF_NULL (Ap_size) ;
             }
             GB_RETURN_IF_NULL (Ai) ; GB_RETURN_IF_NULL (Ai_size) ;
@@ -198,11 +198,11 @@ GrB_Info GB_export      // export/unpack a matrix in any format
 
             // export A->p, unless A is a sparse vector in CSC format
             if (is_sparse_vector)
-            {
+            { 
                 (*nvals) = (*A)->p [1] ;
             }
             else
-            {
+            { 
                 #ifdef GB_MEMDUMP
                 printf ("export A->p from memtable: %p\n", (*A)->p) ;
                 #endif

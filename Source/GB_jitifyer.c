@@ -195,7 +195,6 @@ GrB_Info GB_jitifyer_init (void)
         GxB_JIT_RUN ;   // JIT disabled at compile time; only PreJIT available.
                         // No JIT kernels can be loaded or compiled.
         #endif
-printf ("\nJIT init %d: %d\n", __LINE__, GB_jit_control) ;
 
     GB_jitifyer_finalize (true) ;
 
@@ -206,16 +205,19 @@ printf ("\nJIT init %d: %d\n", __LINE__, GB_jit_control) ;
     char *cache_path = getenv ("GRAPHBLAS_CACHE_PATH") ;
     if (cache_path != NULL)
     { 
+GB_GOTCHA ;
         // use the environment variable GRAPHBLAS_CACHE_PATH as-is
         GB_COPY_STUFF (GB_jit_cache_path, cache_path) ;
     }
     else
     { 
+GB_GOTCHA ;
         // Linux, Mac, Unix: look for HOME
         char *home = getenv ("HOME") ;
         char *dot = "." ;
         if (home == NULL)
         { 
+GB_GOTCHA ;
             // Windows: look for LOCALAPPDATA
             home = getenv ("LOCALAPPDATA") ;
             dot = "" ;
@@ -235,12 +237,13 @@ printf ("\nJIT init %d: %d\n", __LINE__, GB_jit_control) ;
 
     if (GB_jit_cache_path == NULL)
     { 
+GB_GOTCHA ;
         // cannot determine the JIT cache.  Disable loading and compiling, but
         // continue with the rest of the initializations.  The PreJIT could
         // still be used.
         GBURBLE ("(jit: unable to access cache path, jit disabled) ") ;
         GB_jit_control = GxB_JIT_RUN ;
-printf ("JIT init %d: %d\n", __LINE__, GB_jit_control) ;
+printf ("\nJIT init %d: %d\n", __LINE__, GB_jit_control) ;
         GB_FREE_STUFF (GB_jit_cache_path) ;
         GB_COPY_STUFF (GB_jit_cache_path, "") ;
     }
@@ -311,6 +314,7 @@ printf ("JIT init %d: %d\n", __LINE__, GB_jit_control) ;
         GB_jit_query_func dl_query = (GB_jit_query_func) Queries [k] ;
         if (dl_function == NULL || dl_query == NULL || Names [k] == NULL)
         { 
+GB_GOTCHA ;
             // ignore this kernel
             continue ;
         }
@@ -331,6 +335,7 @@ printf ("JIT init %d: %d\n", __LINE__, GB_jit_control) ;
 
         if (info != GrB_SUCCESS || !GB_STRING_MATCH (name_space, "GB_jit"))
         { 
+GB_GOTCHA ;
             // kernel_name is invalid; ignore this kernel
             continue ;
         }
@@ -392,6 +397,7 @@ printf ("JIT init %d: %d\n", __LINE__, GB_jit_control) ;
         else if (IS ("user_type"    )) c = GB_JIT_KERNEL_USERTYPE ;
         else
         { 
+GB_GOTCHA ;
             // kernel_name is invalid; ignore this kernel
             continue ;
         }
@@ -424,6 +430,7 @@ printf ("JIT init %d: %d\n", __LINE__, GB_jit_control) ;
             (version [1] != GxB_IMPLEMENTATION_MINOR) ||
             (version [2] != GxB_IMPLEMENTATION_SUB))
         { 
+GB_GOTCHA ;
             // the kernel is stale; ignore it
             continue ;
         }
@@ -435,6 +442,7 @@ printf ("JIT init %d: %d\n", __LINE__, GB_jit_control) ;
         int64_t k1 = -1, kk = -1 ;
         if (GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) != NULL)
         { 
+GB_GOTCHA ;
             // the kernel is a duplicate; ignore it
             continue ;
         }
@@ -445,10 +453,10 @@ printf ("JIT init %d: %d\n", __LINE__, GB_jit_control) ;
 
         if (!GB_jitifyer_insert (hash, encoding, suffix, NULL, dl_function, k))
         { 
+GB_GOTCHA ;
             // out of memory
-printf ("JIT: init pause, out of memory\n") ;
             GB_jit_control = GxB_JIT_PAUSE ;
-printf ("JIT init %d: %d\n", __LINE__, GB_jit_control) ;
+printf ("\nJIT init %d: %d\n", __LINE__, GB_jit_control) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
     }
@@ -518,12 +526,13 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
 
     if (!ok)
     { 
+GB_GOTCHA ;
         // JIT is disabled, or cannot determine the JIT cache path.  path.
         // Disable loading and compiling, but continue with the rest of the
         // initializations.  The PreJIT could still be used.
         GBURBLE ("(jit: unable to access cache path, jit disabled) ") ;
         GB_jit_control = GxB_JIT_RUN ;
-printf ("JIT path %d: %d\n", __LINE__, GB_jit_control) ;
+printf ("\nJIT path %d: %d\n", __LINE__, GB_jit_control) ;
         GB_FREE_STUFF (GB_jit_cache_path) ;
         GB_COPY_STUFF (GB_jit_cache_path, "") ;
     }
@@ -553,11 +562,11 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     FILE *fp_lock = NULL ;
     int fd_lock = -1 ;
     if (GB_file_open_and_lock (GB_jit_temp, &fp_lock, &fd_lock) < 0)
-     {
+    { 
         // failure; disable the JIT
         GBURBLE ("(jit: unable to access cache folder) ") ;
         GB_jit_control = GxB_JIT_RUN ;
-printf ("JIT extract %d: %d\n", __LINE__, GB_jit_control) ;
+printf ("\nJIT extract %d: %d\n", __LINE__, GB_jit_control) ;
         return (error_condition) ;
     }
 
@@ -592,6 +601,7 @@ printf ("JIT extract %d: %d\n", __LINE__, GB_jit_control) ;
     size_t dst_size = 0 ;
     for (int k = 0 ; k < GB_JITpackage_nfiles ; k++)
     { 
+GB_GOTCHA ;
         size_t uncompressed_size = GB_JITpackage_index [k].uncompressed_size ;
         dst_size = GB_IMAX (dst_size, uncompressed_size) ;
     }
@@ -599,9 +609,10 @@ printf ("JIT extract %d: %d\n", __LINE__, GB_jit_control) ;
     uint8_t *dst = GB_Global_persistent_malloc ((dst_size+2) * sizeof(uint8_t));
     if (dst == NULL)
     { 
+GB_GOTCHA ;
         // out of memory; disable the JIT
         GB_jit_control = GxB_JIT_RUN ;
-printf ("JIT extract %d: %d\n", __LINE__, GB_jit_control) ;
+printf ("\nJIT extract %d: %d\n", __LINE__, GB_jit_control) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -612,12 +623,14 @@ printf ("JIT extract %d: %d\n", __LINE__, GB_jit_control) ;
     bool ok = true ;
     for (int k = 0 ; k < GB_JITpackage_nfiles ; k++)
     { 
+GB_GOTCHA ;
         // uncompress the blob
         uint8_t *src = GB_JITpackage_index [k].blob ;
         size_t src_size = GB_JITpackage_index [k].compressed_size ;
         size_t u = ZSTD_decompress (dst, dst_size, src, src_size) ;
         if (u != GB_JITpackage_index [k].uncompressed_size)
         { 
+GB_GOTCHA ;
             // blob is invalid
             ok = false ;
             break ;
@@ -629,6 +642,7 @@ printf ("JIT extract %d: %d\n", __LINE__, GB_jit_control) ;
         FILE *fp_src = fopen (GB_jit_temp, "w") ;
         if (fp_src == NULL)
         { 
+GB_GOTCHA ;
             // file cannot be created
             ok = false ;
             break ;
@@ -638,6 +652,7 @@ printf ("JIT extract %d: %d\n", __LINE__, GB_jit_control) ;
         fclose (fp_src) ;
         if (nwritten != u)
         { 
+GB_GOTCHA ;
             // file is invalid
             ok = false ;
             break ;
@@ -657,10 +672,11 @@ printf ("JIT extract %d: %d\n", __LINE__, GB_jit_control) ;
     GB_file_unlock_and_close (&fp_lock, &fd_lock) ;
     if (!ok)
     { 
+GB_GOTCHA ;
         // failure; disable the JIT
         GBURBLE ("(jit: failure to write source to cache folder) ") ;
         GB_jit_control = GxB_JIT_RUN ;
-printf ("JIT extract %d: %d\n", __LINE__, GB_jit_control) ;
+printf ("\nJIT extract %d: %d\n", __LINE__, GB_jit_control) ;
         return (error_condition) ;
     }
     #endif
@@ -730,6 +746,7 @@ GrB_Info GB_jitifyer_alloc_space (void)
         GB_jit_C_compiler == NULL ||
         GB_jit_cache_path == NULL)
     { 
+GB_GOTCHA ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -759,9 +776,10 @@ GrB_Info GB_jitifyer_alloc_space (void)
 
 const char *GB_jitifyer_get_cache_path (void)
 { 
+GB_GOTCHA ;
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         s = GB_jit_cache_path ;
     }
     return (s) ;
@@ -779,12 +797,14 @@ const char *GB_jitifyer_get_cache_path (void)
 GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path)
 { 
 
+GB_GOTCHA ;
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
 
     if (new_cache_path == NULL)
     { 
+GB_GOTCHA ;
         return (GrB_NULL_POINTER) ;
     }
 
@@ -794,7 +814,7 @@ GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path)
 
     GrB_Info info ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         info = GB_jitifyer_set_cache_path_worker (new_cache_path) ;
     }
     return (info) ;
@@ -806,6 +826,7 @@ GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path)
 
 GrB_Info GB_jitifyer_set_cache_path_worker (const char *new_cache_path)
 { 
+GB_GOTCHA ;
     // free the old the cache path
     GB_FREE_STUFF (GB_jit_cache_path) ;
     // allocate the new GB_jit_cache_path
@@ -824,9 +845,10 @@ GrB_Info GB_jitifyer_set_cache_path_worker (const char *new_cache_path)
 
 const char *GB_jitifyer_get_error_log (void)
 { 
+GB_GOTCHA ;
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         s = GB_jit_error_log ;
     }
     return (s) ;
@@ -842,13 +864,14 @@ const char *GB_jitifyer_get_error_log (void)
 GrB_Info GB_jitifyer_set_error_log (const char *new_error_log)
 { 
 
+GB_GOTCHA ;
     //--------------------------------------------------------------------------
     // set the log file in a critical section
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         info = GB_jitifyer_set_error_log_worker
             ((new_error_log == NULL) ? "" : new_error_log) ;
     }
@@ -861,6 +884,7 @@ GrB_Info GB_jitifyer_set_error_log (const char *new_error_log)
 
 GrB_Info GB_jitifyer_set_error_log_worker (const char *new_error_log)
 { 
+GB_GOTCHA ;
     // free the old log file
     GB_FREE_STUFF (GB_jit_error_log) ;
     // allocate the new GB_jit_error_log
@@ -874,9 +898,10 @@ GrB_Info GB_jitifyer_set_error_log_worker (const char *new_error_log)
 
 const char *GB_jitifyer_get_C_compiler (void)
 { 
+GB_GOTCHA ;
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         s = GB_jit_C_compiler ;
     }
     return (s) ;
@@ -888,6 +913,7 @@ const char *GB_jitifyer_get_C_compiler (void)
 
 GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler)
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -895,6 +921,7 @@ GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler)
 
     if (new_C_compiler == NULL)
     { 
+GB_GOTCHA ;
         return (GrB_NULL_POINTER) ;
     }
 
@@ -904,7 +931,7 @@ GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler)
 
     GrB_Info info ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         info = GB_jitifyer_set_C_compiler_worker (new_C_compiler) ;
     }
     return (info) ;
@@ -916,6 +943,7 @@ GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler)
 
 GrB_Info GB_jitifyer_set_C_compiler_worker (const char *new_C_compiler)
 { 
+GB_GOTCHA ;
     // free the old C compiler string
     GB_FREE_STUFF (GB_jit_C_compiler) ;
     // allocate the new GB_jit_C_compiler
@@ -930,9 +958,10 @@ GrB_Info GB_jitifyer_set_C_compiler_worker (const char *new_C_compiler)
 
 const char *GB_jitifyer_get_C_flags (void)
 { 
+GB_GOTCHA ;
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         s = GB_jit_C_flags ;
     }
     return (s) ;
@@ -944,6 +973,7 @@ const char *GB_jitifyer_get_C_flags (void)
 
 GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags)
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -951,6 +981,7 @@ GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags)
 
     if (new_C_flags == NULL)
     { 
+GB_GOTCHA ;
         return (GrB_NULL_POINTER) ;
     }
 
@@ -960,7 +991,7 @@ GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags)
 
     GrB_Info info ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         info = GB_jitifyer_set_C_flags_worker (new_C_flags) ;
     }
     return (info) ;
@@ -972,6 +1003,7 @@ GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags)
 
 GrB_Info GB_jitifyer_set_C_flags_worker (const char *new_C_flags)
 { 
+GB_GOTCHA ;
     // free the old C flag string
     GB_FREE_STUFF (GB_jit_C_flags) ;
     // allocate the new GB_jit_C_flags
@@ -986,9 +1018,10 @@ GrB_Info GB_jitifyer_set_C_flags_worker (const char *new_C_flags)
 
 const char *GB_jitifyer_get_C_link_flags (void)
 { 
+GB_GOTCHA ;
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         s = GB_jit_C_link_flags ;
     }
     return (s) ;
@@ -1000,6 +1033,7 @@ const char *GB_jitifyer_get_C_link_flags (void)
 
 GrB_Info GB_jitifyer_set_C_link_flags (const char *new_C_link_flags)
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -1007,6 +1041,7 @@ GrB_Info GB_jitifyer_set_C_link_flags (const char *new_C_link_flags)
 
     if (new_C_link_flags == NULL)
     { 
+GB_GOTCHA ;
         return (GrB_NULL_POINTER) ;
     }
 
@@ -1016,7 +1051,7 @@ GrB_Info GB_jitifyer_set_C_link_flags (const char *new_C_link_flags)
 
     GrB_Info info ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         info = GB_jitifyer_set_C_link_flags_worker (new_C_link_flags) ;
     }
     return (info) ;
@@ -1028,6 +1063,7 @@ GrB_Info GB_jitifyer_set_C_link_flags (const char *new_C_link_flags)
 
 GrB_Info GB_jitifyer_set_C_link_flags_worker (const char *new_C_link_flags)
 { 
+GB_GOTCHA ;
     // free the old C link flags string
     GB_FREE_STUFF (GB_jit_C_link_flags) ;
     // allocate the new GB_jit_C_link_flags
@@ -1042,9 +1078,10 @@ GrB_Info GB_jitifyer_set_C_link_flags_worker (const char *new_C_link_flags)
 
 const char *GB_jitifyer_get_C_libraries (void)
 { 
+GB_GOTCHA ;
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         s = GB_jit_C_libraries ;
     }
     return (s) ;
@@ -1056,6 +1093,7 @@ const char *GB_jitifyer_get_C_libraries (void)
 
 GrB_Info GB_jitifyer_set_C_libraries (const char *new_C_libraries)
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -1063,6 +1101,7 @@ GrB_Info GB_jitifyer_set_C_libraries (const char *new_C_libraries)
 
     if (new_C_libraries == NULL)
     { 
+GB_GOTCHA ;
         return (GrB_NULL_POINTER) ;
     }
 
@@ -1072,7 +1111,7 @@ GrB_Info GB_jitifyer_set_C_libraries (const char *new_C_libraries)
 
     GrB_Info info ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         info = GB_jitifyer_set_C_libraries_worker (new_C_libraries) ;
     }
     return (info) ;
@@ -1084,6 +1123,7 @@ GrB_Info GB_jitifyer_set_C_libraries (const char *new_C_libraries)
 
 GrB_Info GB_jitifyer_set_C_libraries_worker (const char *new_C_libraries)
 { 
+GB_GOTCHA ;
     // free the old C libraries string
     GB_FREE_STUFF (GB_jit_C_libraries) ;
     // allocate the new GB_jit_C_libraries
@@ -1098,9 +1138,10 @@ GrB_Info GB_jitifyer_set_C_libraries_worker (const char *new_C_libraries)
 
 bool GB_jitifyer_get_use_cmake (void)
 { 
+GB_GOTCHA ;
     bool use_cmake ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         use_cmake = GB_jit_use_cmake ;
     }
     return (use_cmake) ;
@@ -1112,8 +1153,9 @@ bool GB_jitifyer_get_use_cmake (void)
 
 void GB_jitifyer_set_use_cmake (bool use_cmake)
 { 
+GB_GOTCHA ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         #if GB_WINDOWS
         // Windows requires cmake
         GB_jit_use_cmake = true ;
@@ -1129,10 +1171,11 @@ void GB_jitifyer_set_use_cmake (bool use_cmake)
 //------------------------------------------------------------------------------
 
 const char *GB_jitifyer_get_C_cmake_libs (void)
-{
+{ 
+GB_GOTCHA ;
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         s = GB_jit_C_cmake_libs ;
     }
     return (s) ;
@@ -1144,6 +1187,7 @@ const char *GB_jitifyer_get_C_cmake_libs (void)
 
 GrB_Info GB_jitifyer_set_C_cmake_libs (const char *new_cmake_libs)
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -1151,6 +1195,7 @@ GrB_Info GB_jitifyer_set_C_cmake_libs (const char *new_cmake_libs)
 
     if (new_cmake_libs == NULL)
     { 
+GB_GOTCHA ;
         return (GrB_NULL_POINTER) ;
     }
 
@@ -1160,7 +1205,7 @@ GrB_Info GB_jitifyer_set_C_cmake_libs (const char *new_cmake_libs)
 
     GrB_Info info ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         info = GB_jitifyer_set_C_cmake_libs (new_cmake_libs) ;
     }
     return (info) ;
@@ -1172,6 +1217,7 @@ GrB_Info GB_jitifyer_set_C_cmake_libs (const char *new_cmake_libs)
 
 GrB_Info GB_jitifyer_set_C_cmake_libs_worker (const char *new_cmake_libs)
 { 
+GB_GOTCHA ;
     // free the old C_cmake_libs string
     GB_FREE_STUFF (GB_jit_C_cmake_libs) ;
     // allocate the new GB_jit_C_cmake_libs
@@ -1187,9 +1233,10 @@ GrB_Info GB_jitifyer_set_C_cmake_libs_worker (const char *new_cmake_libs)
 
 const char *GB_jitifyer_get_C_preface (void)
 { 
+GB_GOTCHA ;
     const char *s ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         s = GB_jit_C_preface ;
     }
     return (s) ;
@@ -1201,6 +1248,7 @@ const char *GB_jitifyer_get_C_preface (void)
 
 GrB_Info GB_jitifyer_set_C_preface (const char *new_C_preface)
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -1208,6 +1256,7 @@ GrB_Info GB_jitifyer_set_C_preface (const char *new_C_preface)
 
     if (new_C_preface == NULL)
     { 
+GB_GOTCHA ;
         return (GrB_NULL_POINTER) ;
     }
 
@@ -1217,7 +1266,7 @@ GrB_Info GB_jitifyer_set_C_preface (const char *new_C_preface)
 
     GrB_Info info ;
     #pragma omp critical (GB_jitifyer_worker)
-    { 
+    {
         info = GB_jitifyer_set_C_preface_worker (new_C_preface) ;
     }
     return (info) ;
@@ -1229,6 +1278,7 @@ GrB_Info GB_jitifyer_set_C_preface (const char *new_C_preface)
 
 GrB_Info GB_jitifyer_set_C_preface_worker (const char *new_C_preface)
 { 
+GB_GOTCHA ;
     // free the old strings that depend on the C preface
     GB_FREE_STUFF (GB_jit_C_preface) ;
     // allocate the new GB_jit_C_preface
@@ -1402,21 +1452,24 @@ GrB_Info GB_jitifyer_load
         (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) ;
         if (k1 >= 0)
         { 
+GB_GOTCHA ;
             // an unchecked PreJIT kernel; check it inside critical section
         }
         else if ((*dl_function) != NULL)
         { 
+GB_GOTCHA ;
             // found the kernel in the hash table
             GBURBLE ("(jit: run) ") ;
             return (GrB_SUCCESS) ;
         }
         else
         { 
+GB_GOTCHA ;
             // No kernels may be loaded or compiled, but existing kernels
             // already loaded may be run (handled above if dl_function was
             // found).  This kernel was not loaded, so punt to generic.
             GBURBLE ("(jit: not loaded) ") ;
-printf ("JIT not loaded %d: %d\n", __LINE__, GB_jit_control) ;
+printf ("\nJIT not loaded %d: %d\n", __LINE__, GB_jit_control) ;
             return (GrB_NO_VALUE) ;
         }
     }
@@ -1481,6 +1534,7 @@ GrB_Info GB_jitifyer_worker
                 type1, type2, type3) ;
             if (ok)
             { 
+GB_GOTCHA ;
                 // PreJIT kernel is fine; flag it as checked by flipping
                 // its prejit_index.
                 GBURBLE ("(prejit: ok) ") ;
@@ -1489,6 +1543,7 @@ GrB_Info GB_jitifyer_worker
             }
             else
             { 
+GB_GOTCHA ;
                 // remove the PreJIT kernel from the hash table; do not return.
                 // Instead, keep going and compile a JIT kernel.
                 GBURBLE ("(prejit: disabled) ") ;
@@ -1509,6 +1564,7 @@ GrB_Info GB_jitifyer_worker
             }
             else
             { 
+GB_GOTCHA ;
                 // the op has changed; need to re-JIT the kernel; do not return.
                 // Instead, keep going and compile a JIT kernel.
                 GBURBLE ("(jit: op changed) ") ;
@@ -1524,11 +1580,13 @@ GrB_Info GB_jitifyer_worker
             GB_user_type (&ignore, &defn) ;
             if (strcmp (defn, type1->defn) == 0)
             { 
+GB_GOTCHA ;
                 GBURBLE ("(jit: type ok) ") ;
                 return (GrB_SUCCESS) ;
             }
             else
             { 
+GB_GOTCHA ;
                 // type has changed; need to re-JIT the kernel; do not return.
                 // Instead, keep going and compile a JIT kernel.
                 GBURBLE ("(jit: type changed) ") ;
@@ -1551,11 +1609,12 @@ GrB_Info GB_jitifyer_worker
     if (GB_jit_control <= GxB_JIT_RUN)
     #endif
     { 
+GB_GOTCHA ;
         // No kernels may be loaded or compiled, but existing kernels already
         // loaded may be run (handled above if dl_function was found).  This
         // kernel was not loaded, so punt to generic.
         GBURBLE ("(jit: not loaded) ") ;
-printf ("JIT not loaded %d: %d\n", __LINE__, GB_jit_control) ;
+printf ("\nJIT not loaded %d: %d\n", __LINE__, GB_jit_control) ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -1608,6 +1667,7 @@ printf ("JIT not loaded %d: %d\n", __LINE__, GB_jit_control) ;
             break ;
 
         case GB_jit_user_type_family : 
+GB_GOTCHA ;
             scode_digits = 1 ;
             break ;
 
@@ -1634,10 +1694,11 @@ printf ("JIT not loaded %d: %d\n", __LINE__, GB_jit_control) ;
     int fd_klock = -1 ;
     if (GB_file_open_and_lock (GB_jit_temp, &fp_klock, &fd_klock) < 0)
     { 
+GB_GOTCHA ;
         // unable to lock the kernel
         // disable the JIT to avoid repeated load errors
         GB_jit_control = GxB_JIT_RUN ;
-printf ("JIT not locked %d: %d\n", __LINE__, GB_jit_control) ;
+printf ("\nJIT not locked %d: %d\n", __LINE__, GB_jit_control) ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -1713,11 +1774,12 @@ GrB_Info GB_jitifyer_load_worker
         bool ok = true ;
         if (dl_query == NULL)
         { 
+GB_GOTCHA ;
             // library is missing the GB_jit_query method
             ok = false ;
             GBURBLE ("(jit: library corrupted; jit disabled) ") ;
             GB_jit_control = GxB_JIT_RUN ;
-printf ("JIT corrupted %d: %d\n", __LINE__, GB_jit_control) ;
+printf ("\nJIT corrupted %d: %d\n", __LINE__, GB_jit_control) ;
             return (GrB_NO_VALUE) ;
         }
 
@@ -1734,6 +1796,7 @@ printf ("JIT corrupted %d: %d\n", __LINE__, GB_jit_control) ;
             dl_handle = NULL ;
             if (GB_jit_control == GxB_JIT_LOAD)
             { 
+GB_GOTCHA ;
                 // If the JIT control is set to GxB_JIT_LOAD, new kernels
                 // cannot be compiled.  This kernel has just been loaded but it
                 // has stale definition.  Loading it again will result in the
@@ -1744,7 +1807,7 @@ printf ("JIT corrupted %d: %d\n", __LINE__, GB_jit_control) ;
                 GB_jit_control = GxB_JIT_RUN ;
                 GBURBLE ("(jit: must recompile but not permited to;"
                     " jit load disabled) ") ;
-printf ("JIT compile fail %d: %d\n", __LINE__, GB_jit_control) ;
+printf ("\nJIT compile fail %d: %d\n", __LINE__, GB_jit_control) ;
                 return (GrB_NO_VALUE) ;
             }
             GBURBLE ("(jit: loaded but must recompile) ") ;
@@ -1764,9 +1827,10 @@ printf ("JIT compile fail %d: %d\n", __LINE__, GB_jit_control) ;
 
         if (GB_jit_control < GxB_JIT_ON)
         { 
+GB_GOTCHA ;
             // No new kernels may be compiled, so punt to generic.
             GBURBLE ("(jit: not compiled) ") ;
-printf ("JIT not compiled %d: %d\n", __LINE__, GB_jit_control) ;
+printf ("\nJIT not compiled %d: %d\n", __LINE__, GB_jit_control) ;
             return (GrB_NO_VALUE) ;
         }
 
@@ -1802,6 +1866,7 @@ printf ("JIT not compiled %d: %d\n", __LINE__, GB_jit_control) ;
             // compile the kernel to get the lib*.so file
             if (GB_jit_use_cmake)
             { 
+GB_GOTCHA ;
                 // use cmake to compile the kernel
                 GB_jitifyer_cmake_compile (kernel_name, bucket) ;
             }
@@ -1823,11 +1888,12 @@ printf ("JIT not compiled %d: %d\n", __LINE__, GB_jit_control) ;
 
         if (dl_handle == NULL)
         { 
+GB_GOTCHA ;
             // unable to create the kernel source or open lib*.so file
             GBURBLE ("(jit: compiler error; compilation disabled) ") ;
             // disable the JIT to avoid repeated compilation errors
             GB_jit_control = GxB_JIT_LOAD ;
-printf ("JIT compile err %d: %d\n", __LINE__, GB_jit_control) ;
+printf ("\nJIT compile err %d: %d\n", __LINE__, GB_jit_control) ;
             return (GrB_NO_VALUE) ;
         }
 
@@ -1844,13 +1910,14 @@ printf ("JIT compile err %d: %d\n", __LINE__, GB_jit_control) ;
     (*dl_function) = GB_file_dlsym (dl_handle, "GB_jit_kernel") ;
     if ((*dl_function) == NULL)
     { 
+GB_GOTCHA ;
         // unable to find GB_jit_kernel: punt to generic
         GBURBLE ("(jit: load error; JIT loading disabled) ") ;
         GB_file_dlclose (dl_handle) ; 
         dl_handle = NULL ;
         // disable the JIT to avoid repeated loading errors
         GB_jit_control = GxB_JIT_RUN ;
-printf ("JIT load err %d: %d\n", __LINE__, GB_jit_control) ;
+printf ("\nJIT load err %d: %d\n", __LINE__, GB_jit_control) ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -1858,19 +1925,20 @@ printf ("JIT load err %d: %d\n", __LINE__, GB_jit_control) ;
     if (!GB_jitifyer_insert (hash, encoding, suffix, dl_handle, (*dl_function),
         -1))
     { 
+GB_GOTCHA ;
         // unable to add kernel to hash table: punt to generic
         GB_file_dlclose (dl_handle) ; 
         dl_handle = NULL ;
         // disable the JIT to avoid repeated errors
         GB_jit_control = GxB_JIT_PAUSE ;
-printf ("JIT hash err %d: %d\n", __LINE__, GB_jit_control) ;
+printf ("\nJIT hash err %d: %d\n", __LINE__, GB_jit_control) ;
         return (GrB_NO_VALUE) ;
     }
 
     return (GrB_SUCCESS) ;
     #else
     (*dl_function) = NULL ;
-printf ("JIT none %d: %d\n", __LINE__, GB_jit_control) ;
+printf ("\nJIT none %d: %d\n", __LINE__, GB_jit_control) ;
     return (GrB_INVALID_VALUE) ;
     #endif
 }
@@ -1965,6 +2033,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         GB_jit_table = GB_Global_persistent_malloc (siz) ;
         if (GB_jit_table == NULL)
         { 
+GB_GOTCHA ;
             // out of memory
             return (false) ;
         }
@@ -1989,6 +2058,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         GB_jit_entry *new_table = GB_Global_persistent_malloc (siz) ;
         if (new_table == NULL)
         { 
+GB_GOTCHA ;
             // out of memory; leave the existing table as-is
             return (false) ;
         }
@@ -2048,6 +2118,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
                 e->suffix = GB_Global_persistent_malloc (suffix_len+1) ;
                 if (e->suffix == NULL)
                 { 
+GB_GOTCHA ;
                     // out of memory
                     return (false) ;
                 }
@@ -2111,6 +2182,7 @@ void GB_jitifyer_table_free (bool freeall)
                 // found an entry
                 if (e->dl_handle == NULL)
                 { 
+GB_GOTCHA ;
                     // flag the PreJIT kernel as unchecked
                     e->prejit_index = GB_UNFLIP (e->prejit_index) ;
                 }
@@ -2166,6 +2238,7 @@ static void GB_jitifyer_command (char *command)
 
 void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
 { 
+GB_GOTCHA ;
 #ifndef NJIT
 
     GBURBLE ("(jit: %s)\n", "cmake") ;

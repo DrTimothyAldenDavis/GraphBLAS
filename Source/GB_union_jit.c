@@ -43,7 +43,7 @@ GrB_Info GB_union_jit      // C=A+B, C<#M>=A+B, eWiseUnion, via the JIT
     const int B_nthreads,
     const int B_ntasks
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

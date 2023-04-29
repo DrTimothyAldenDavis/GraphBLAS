@@ -32,7 +32,7 @@ GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
     const int do_sort,          // if nonzero, try to sort in saxpy3
     GB_Werk Werk
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

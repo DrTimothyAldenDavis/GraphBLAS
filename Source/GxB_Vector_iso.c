@@ -14,7 +14,7 @@ GrB_Info GxB_Vector_iso     // return iso status of a vector
     bool *iso,              // true if the vector is iso-valued
     const GrB_Vector v      // vector to query
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

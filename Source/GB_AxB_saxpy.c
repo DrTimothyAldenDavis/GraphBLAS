@@ -227,7 +227,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 
     }
     else
-    { 
+    {
 
         //----------------------------------------------------------------------
         // bitmap method: C is bitmap

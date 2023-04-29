@@ -26,7 +26,7 @@ GrB_Info GB_AxB_dot3_jit        // C<M>=A'B, dot3, via the JIT
     const int ntasks,
     const int nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

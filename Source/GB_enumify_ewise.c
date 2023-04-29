@@ -61,6 +61,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
 
     if (C_iso)
     { 
+GB_GOTCHA ;
         // values of C are not computed by the kernel
         binaryop_opcode = GB_PAIR_binop_code ;
         xcode = 0 ;

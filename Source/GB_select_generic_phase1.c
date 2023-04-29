@@ -68,6 +68,7 @@ GrB_Info GB_select_generic_phase1
 
         if (op->ztype == GrB_BOOL)
         { 
+GB_GOTCHA ;
 
             //------------------------------------------------------------------
             // A is iso and z is bool
@@ -119,6 +120,7 @@ GrB_Info GB_select_generic_phase1
         }
         else
         { 
+GB_GOTCHA ;
 
             //------------------------------------------------------------------
             // A is non-iso and typecasting is required

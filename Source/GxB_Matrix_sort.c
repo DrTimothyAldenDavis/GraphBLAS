@@ -20,7 +20,7 @@ GrB_Info GxB_Matrix_sort
     GrB_Matrix A,           // matrix to sort
     const GrB_Descriptor desc
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

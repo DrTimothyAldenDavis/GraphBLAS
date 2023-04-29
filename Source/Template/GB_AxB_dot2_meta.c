@@ -125,7 +125,7 @@
             ASSERT (A_is_bitmap || GB_IS_FULL (A)) ;
             ASSERT (B_is_sparse) ;
             if (C_is_full)
-            {
+            { 
                 // C=A*B via dot products, where A is full and B is sparse,
                 // and C is full
                 ASSERT (GB_IS_FULL (A)) ;
@@ -182,7 +182,7 @@
             #undef  GB_C_IS_FULL
             #define GB_C_IS_FULL   1
             if (A_is_full && B_is_full)
-            {
+            { 
                 // A full, B full
                 #define GB_A_IS_SPARSE 0
                 #define GB_A_IS_HYPER  0
@@ -338,7 +338,7 @@
                 #undef GB_A_NOT_TRANSPOSED
             }
             else
-            {
+            { 
                 // C<#>M = A'*B, via dot2 method, A is implicitly transposed
                 #include "GB_meta16_factory.c"
             }

@@ -159,7 +159,7 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
 
     info = GrB_NO_VALUE ;
     #ifndef GBCOMPACT
-    {
+    { 
 
         //----------------------------------------------------------------------
         // define the worker for the switch factory

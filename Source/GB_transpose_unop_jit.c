@@ -24,7 +24,7 @@ GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
     int nworkspaces,
     int nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

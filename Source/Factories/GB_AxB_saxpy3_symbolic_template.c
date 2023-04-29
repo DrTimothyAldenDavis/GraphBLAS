@@ -99,15 +99,13 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
     const int64_t *restrict M_Yi = NULL ;
     const int64_t *restrict M_Yx = NULL ;
     int64_t M_hash_bits = 0 ;
+    if (M_is_hyper)
     { 
-        if (M_is_hyper)
-        {
-            // mask is present, and hypersparse
-            M_Yp = M->Y->p ;
-            M_Yi = M->Y->i ;
-            M_Yx = M->Y->x ;
-            M_hash_bits = M->Y->vdim - 1 ;
-        }
+        // mask is present, and hypersparse
+        M_Yp = M->Y->p ;
+        M_Yi = M->Y->i ;
+        M_Yx = M->Y->x ;
+        M_hash_bits = M->Y->vdim - 1 ;
     }
     #endif
 
@@ -431,7 +429,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
 
                     }
                     else
-                    {
+                    { 
 
                         //------------------------------------------------------
                         // M is sparse and scattered into Hf

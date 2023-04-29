@@ -41,7 +41,7 @@ GrB_Info GB_Semiring_check          // check a GraphBLAS semiring
     GrB_BinaryOp mult = semiring->multiply ;
 
     if (semiring->name == NULL)
-    {
+    { 
         // semiring contains a built-in monoid and multiply operator
         char *add_name  = (add  == NULL) ? "nil" : add->op->name ;
         char *mult_name = (mult == NULL) ? "nil" : mult->name ;
@@ -53,6 +53,7 @@ GrB_Info GB_Semiring_check          // check a GraphBLAS semiring
         GBPR0 (" (%s)", semiring->name) ;
         if (semiring->name_len != strlen (semiring->name))
         { 
+GB_GOTCHA ;
             GBPR0 ("    Semiring->name invalid\n") ;
             return (GrB_INVALID_OBJECT) ;
         }

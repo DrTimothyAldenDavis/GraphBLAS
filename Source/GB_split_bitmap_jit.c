@@ -23,7 +23,7 @@ GrB_Info GB_split_bitmap_jit      // split A into a bitmap tile C
     int64_t aistart,
     const int C_nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

@@ -85,7 +85,7 @@ GrB_Info GB_select_bitmap
         GB_select_iso (C->x, opcode, athunk, A->x, asize) ;
     }
     else
-    {
+    { 
         // Cx [0:anz-1] = Ax [0:anz-1]
         GB_memcpy (C->x, A->x, anz * asize, nthreads) ;
     }
@@ -97,7 +97,7 @@ GrB_Info GB_select_bitmap
     info = GrB_NO_VALUE ;
 
     if (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // bitmap selector for positional ops
@@ -107,13 +107,14 @@ GrB_Info GB_select_bitmap
             nthreads) ;
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // bitmap selector for VALUE* and user-defined ops
         //----------------------------------------------------------------------
 
         #ifndef GBCOMPACT
+        { 
 
             //------------------------------------------------------------------
             // via the factory kernel 
@@ -129,6 +130,7 @@ GrB_Info GB_select_bitmap
 
             #include "GB_select_entry_factory.c"
 
+        }
         #endif
 
         //----------------------------------------------------------------------
@@ -136,7 +138,7 @@ GrB_Info GB_select_bitmap
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
-        {
+        { 
             info = GB_select_bitmap_jit (C->b, &cnvals, C_iso,
                 A, flipij, ythunk, op, nthreads) ;
         }
@@ -146,7 +148,7 @@ GrB_Info GB_select_bitmap
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
-        {
+        { 
             info = GB_select_generic_bitmap (C->b, &cnvals, A, flipij, ythunk,
                 op, nthreads) ;
         }
@@ -158,6 +160,7 @@ GrB_Info GB_select_bitmap
 
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;

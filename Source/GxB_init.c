@@ -61,7 +61,7 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     void * (* user_realloc_function ) (void *, size_t), // optional, can be NULL
     void   (* user_free_function    ) (void *)          // required
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

@@ -288,7 +288,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
             //------------------------------------------------------------------
 
             if (info == GrB_NO_VALUE)
-            {
+            { 
                 info = GB_transpose_bind1st_jit (C, (GrB_BinaryOp) op,
                     scalarx, A, Workspaces, A_slice, nworkspaces, nthreads) ;
             }
@@ -336,7 +336,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
             //------------------------------------------------------------------
 
             if (info == GrB_NO_VALUE)
-            {
+            { 
                 info = GB_transpose_bind2nd_jit (C, (GrB_BinaryOp) op,
                     A, scalarx, Workspaces, A_slice, nworkspaces, nthreads) ;
             }

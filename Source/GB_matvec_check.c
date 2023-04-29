@@ -78,11 +78,11 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             GBPR0 ("float complex") ;
         }
         else if (A->type == GxB_FC64)
-        {
+        { 
             GBPR0 ("double complex") ;
         }
         else
-        {
+        { 
             GBPR0 ("%s", A->type->name) ;
         }
     }
@@ -691,7 +691,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         return (GrB_INVALID_OBJECT) ;
     }
     else if ((is_sparse || is_hyper) && anz != anz_actual)
-    {
+    { 
         // sparse/hypersparse with invalid nvals
         GBPR0 ("  invalid sparse/hypersparse entry count: " GBd " exist but"
             " A->nvals = " GBd "\n", anz_actual, anz) ;

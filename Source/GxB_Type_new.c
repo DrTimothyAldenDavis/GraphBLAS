@@ -55,7 +55,7 @@ GrB_Info GxB_Type_new
     (*type) = NULL ;
 
     if (sizeof_ctype == 0 && (type_defn == NULL || type_name == NULL))
-    {
+    { 
         // so the JIT is required to determine size of the type, but this
         // requires two valid strings: the type name and the type definition
         return (GrB_INVALID_VALUE) ;
@@ -164,10 +164,10 @@ GrB_Info GxB_Type_new
     //--------------------------------------------------------------------------
 
     if (sizeof_ctype == 0)
-    {
+    { 
         GrB_Info info = GB_user_type_jit (&sizeof_ctype, t) ;
         if (info != GrB_SUCCESS)
-        {
+        { 
             // unable to determine the type size
             GB_FREE (&t, header_size) ;
             return (GrB_INVALID_VALUE) ;

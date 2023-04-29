@@ -222,6 +222,7 @@ bool GB_enumify_cuda_atomic
 
     if (monoid == NULL || zcode == 0)
     { 
+GB_GOTCHA ;
 
         //----------------------------------------------------------------------
         // C is iso: no values computed so no need for any CUDA atomics

@@ -168,7 +168,7 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
         if (GB_IS_BITMAP (A) || GB_IS_FULL (A))
         {
             if (C_replace)
-            {
+            { 
 
                 //--------------------------------------------------------------
                 // C<M or !M,replace> += A where A is bitmap or full
@@ -208,7 +208,7 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
 
             }
             else
-            {
+            { 
 
                 //--------------------------------------------------------------
                 // C<M or !M> += A where A is bitmap or full

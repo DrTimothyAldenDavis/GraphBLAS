@@ -30,7 +30,7 @@ bool GB_all_aliased         // determine if A and B are all aliased
     //--------------------------------------------------------------------------
 
     if (A == B)
-    {
+    { 
         // two NULL matrices are equivalent
         return (true) ;
     }

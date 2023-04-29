@@ -50,7 +50,7 @@
                 GB_ATOMIC_READ
                 f = Hf [i] ;
                 if (!f)
-                {
+                { 
                     GB_ATOMIC_WRITE
                     Hf [i] = 2 ;
                     GB_Z_ATOMIC_WRITE_HX (i, t) ;   // Hx [i] = t

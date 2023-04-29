@@ -85,18 +85,18 @@
         if (M == NULL)
         {
             if (GB_IS_BITMAP (B))
-            {
+            { 
                 // C=A.*B, where A is sparse/hyper and B is bitmap
                 #include "GB_emult_02a.c"
             }
             else
-            {
+            { 
                 // C=A.*B, where A is sparse/hyper and B is full
                 #include "GB_emult_02b.c"
             }
         }
         else
-        {
+        { 
             // C<#M>=A.*B, where A is sparse/hyper; M and B are bitmap/full
             #include "GB_emult_02c.c"
         }

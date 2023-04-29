@@ -20,7 +20,7 @@ GrB_Info GrB_Descriptor_wait // no work, just check if GrB_Descriptor is valid
     GrB_Descriptor desc,
     GrB_WaitMode waitmode
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

@@ -112,7 +112,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
     GB_Opcode opcode = op->opcode ;
     if (op->xtype == GrB_BOOL)
-    {
+    { 
         opcode = GB_boolean_rename (opcode) ;
     }
 

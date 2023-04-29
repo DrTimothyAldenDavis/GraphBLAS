@@ -23,7 +23,7 @@ GrB_Info GB_apply_bind2nd_jit   // Cx = op (x,B), apply bind2nd via the JIT
     const GB_void *yscalar,
     const int nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

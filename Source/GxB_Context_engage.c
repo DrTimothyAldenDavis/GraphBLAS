@@ -36,6 +36,7 @@ GrB_Info GxB_Context_engage         // engage a Context
     GxB_Context Context             // Context to engage
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs

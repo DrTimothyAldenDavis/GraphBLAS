@@ -25,7 +25,7 @@ GrB_Info GB_transpose_bind2nd_jit
     int nworkspaces,
     int nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

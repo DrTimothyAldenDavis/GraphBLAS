@@ -107,18 +107,18 @@
 
         bool M_cleared = false ;
         if ((A_is_bitmap || A_is_full) && (B_is_bitmap || B_is_full))
-        {
+        { 
             // A and B are both bitmap/full
             #include "GB_add_bitmap_M_sparse_24.c"
             M_cleared = true ;      // M has also been cleared from C
         }
         else if (A_is_bitmap || A_is_full)
-        {
+        { 
             // A is bitmap/full, B is sparse/hyper
             #include "GB_add_bitmap_M_sparse_25.c"
         }
         else
-        {
+        { 
             // A is sparse/hyper, B is bitmap/full
             #include "GB_add_bitmap_M_sparse_26.c"
         }

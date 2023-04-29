@@ -44,14 +44,17 @@ void GB_macrofy_unop
         bool is_macro = GB_macrofy_defn (fp, 3, op->name, op->defn) ;
         if (is_macro)
         { 
+GB_GOTCHA ;
             fprintf (fp, "// unary operator %s defined as a macro:\n",
                 op->name) ;
         }
         fprintf (fp, "#define %s(z,x,%s,y) ", macro_name, ij) ;
         if (is_macro)
-        {
+        { 
+GB_GOTCHA ;
             for (char *p = op->name ; (*p) != '\0' ; p++)
             { 
+GB_GOTCHA ;
                 int c = (*p) ;
                 fputc (toupper (c), fp) ;
             }
@@ -74,14 +77,17 @@ void GB_macrofy_unop
         bool is_macro = GB_macrofy_defn (fp, 3, op->name, op->defn) ;
         if (is_macro)
         { 
+GB_GOTCHA ;
             fprintf (fp, "// index unary operator %s defined as a macro:\n",
                 op->name) ;
         }
         fprintf (fp, "#define %s(z,x,%s,y) ", macro_name, ij) ;
         if (is_macro)
-        {
+        { 
+GB_GOTCHA ;
             for (char *p = op->name ; (*p) != '\0' ; p++)
             { 
+GB_GOTCHA ;
                 int c = (*p) ;
                 fputc (toupper (c), fp) ;
             }
@@ -467,10 +473,10 @@ void GB_macrofy_unop
             // positional unary operators: z is int32 or int64, x is ignored
             //------------------------------------------------------------------
 
-            case 157 : f = "z = (i)" ;                  break ;
-            case 158 : f = "z = (i) + 1" ;              break ;
-            case 159 : f = "z = (j)" ;                  break ;
-            case 160 : f = "z = (j) + 1" ;              break ;
+            case 157 : f = "z = (i)" ;                  GB_GOTCHA ; break ;
+            case 158 : f = "z = (i) + 1" ;              GB_GOTCHA ; break ;
+            case 159 : f = "z = (j)" ;                  GB_GOTCHA ; break ;
+            case 160 : f = "z = (j) + 1" ;              GB_GOTCHA ; break ;
 
             //------------------------------------------------------------------
             // IndexUnaryOps
@@ -478,33 +484,33 @@ void GB_macrofy_unop
 
             case 231 : f = "z = (i >= 0)" ;             break ;
 
-            case 232 : f = "z = ((i) + (y))" ;          break ;
-            case 233 : f = "z = ((i) <= (y))" ;         break ;
-            case 234 : f = "z = ((i) > (y))" ;          break ;
+            case 232 : f = "z = ((i) + (y))" ;          GB_GOTCHA ; break ;
+            case 233 : f = "z = ((i) <= (y))" ;         GB_GOTCHA ; break ;
+            case 234 : f = "z = ((i) > (y))" ;          GB_GOTCHA ; break ;
 
-            case 235 : f = "z = ((j) + (y))" ;          break ;
-            case 236 : f = "z = ((j) <= (y))" ;         break ;
-            case 237 : f = "z = ((j) > (y))" ;          break ;
+            case 235 : f = "z = ((j) + (y))" ;          GB_GOTCHA ; break ;
+            case 236 : f = "z = ((j) <= (y))" ;         GB_GOTCHA ; break ;
+            case 237 : f = "z = ((j) > (y))" ;          GB_GOTCHA ; break ;
 
-            case 238 : f = "z = ((j) - ((i) + (y)))" ;  break ;
-            case 230 : f = "z = ((i) - ((j) + (y)))" ;  break ;
-            case 240 : f = "z = ((j) <= ((i) + (y)))" ; break ;
-            case 241 : f = "z = ((j) >= ((i) + (y)))" ; break ;
-            case 242 : f = "z = ((j) == ((i) + (y)))" ; break ;
-            case 243 : f = "z = ((j) != ((i) + (y)))" ; break ;
+            case 238 : f = "z = ((j) - ((i) + (y)))" ;  GB_GOTCHA ; break ;
+            case 230 : f = "z = ((i) - ((j) + (y)))" ;  GB_GOTCHA ; break ;
+            case 240 : f = "z = ((j) <= ((i) + (y)))" ; GB_GOTCHA ; break ;
+            case 241 : f = "z = ((j) >= ((i) + (y)))" ; GB_GOTCHA ; break ;
+            case 242 : f = "z = ((j) == ((i) + (y)))" ; GB_GOTCHA ; break ;
+            case 243 : f = "z = ((j) != ((i) + (y)))" ; GB_GOTCHA ; break ;
 
-            case 244 : f = "z = GB_FC32_ne (x,y)" ;     break ;
-            case 245 : f = "z = GB_FC64_ne (x,y)" ;     break ;
-            case 246 : f = "z = ((x) != (y))" ;         break ;
+            case 244 : f = "z = GB_FC32_ne (x,y)" ;     GB_GOTCHA ; break ;
+            case 245 : f = "z = GB_FC64_ne (x,y)" ;     GB_GOTCHA ; break ;
+            case 246 : f = "z = ((x) != (y))" ;         GB_GOTCHA ; break ;
 
-            case 247 : f = "z = GB_FC32_eq (x,y)" ;     break ;
-            case 248 : f = "z = GB_FC64_eq (x,y)" ;     break ;
-            case 249 : f = "z = ((x) == (y))" ;         break ;
+            case 247 : f = "z = GB_FC32_eq (x,y)" ;     GB_GOTCHA ; break ;
+            case 248 : f = "z = GB_FC64_eq (x,y)" ;     GB_GOTCHA ; break ;
+            case 249 : f = "z = ((x) == (y))" ;         GB_GOTCHA ; break ;
 
-            case 250 : f = "z = ((x) > (y))" ;          break ;
-            case 251 : f = "z = ((x) >= (y))" ;         break ;
-            case 252 : f = "z = ((x) < (y))" ;          break ;
-            case 253 : f = "z = ((x) <= (y))" ;         break ;
+            case 250 : f = "z = ((x) > (y))" ;          GB_GOTCHA ; break ;
+            case 251 : f = "z = ((x) >= (y))" ;         GB_GOTCHA ; break ;
+            case 252 : f = "z = ((x) < (y))" ;          GB_GOTCHA ; break ;
+            case 253 : f = "z = ((x) <= (y))" ;         GB_GOTCHA ; break ;
 
             default: ;
         }

@@ -64,7 +64,7 @@
     GB_C_NHELD (cnz) ;      // const int64_t cnz = GB_nnz_held (C) ;
     GB_DECLAREY (ywork) ;
     if (A_iso)
-    {
+    { 
         // get the iso value of A and typecast it to Y
         // ywork = (ytype) Ax [0]
         GB_COPY_aij_to_ywork (ywork, Ax, 0, true) ;

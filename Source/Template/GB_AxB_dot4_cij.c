@@ -34,6 +34,7 @@
 
         #if GB_IS_EQ_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (boolean EQ (LXNOR) monoid)_PAIR semiring
             cij = (cij == 1) ;
         }
@@ -68,11 +69,13 @@
         }
         #elif GB_IS_PLUS_FC32_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS monoid for float complex)_PAIR semiring
             cij = GJ_CMPLX32 (GB_crealf (cij) + (float) ainz, GB_imagf (cij)) ;
         }
         #elif GB_IS_PLUS_FC64_PAIR_SEMIRING
         { 
+GB_GOTCHA ;
             // (PLUS monoid for double complex)_PAIR semiring
             cij = GJ_CMPLX64 (GB_creal (cij) + (double) ainz, GB_imag (cij)) ;
         }

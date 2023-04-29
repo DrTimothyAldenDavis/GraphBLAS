@@ -140,7 +140,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
     //--------------------------------------------------------------------------
 
     if (M != NULL)
-    {
+    { 
         GB_SLICE_MATRIX (M, 8) ;
     }
 
@@ -194,7 +194,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
 
             int64_t hwork = 0 ;
             for (int tid = 0 ; tid < ntasks ; tid++)
-            {
+            { 
                 int64_t jstart, jend ;
                 GB_PARTITION (jstart, jend, B->vdim, tid, ntasks) ;
                 int64_t jtask = jend - jstart ;
@@ -208,7 +208,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
 
         }
         else if (!use_atomics)
-        {
+        { 
 
             //------------------------------------------------------------------
             // C<#M> = A*B using fine tasks and workspace, with no atomics

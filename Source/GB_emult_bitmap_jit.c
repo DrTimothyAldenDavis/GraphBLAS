@@ -28,7 +28,7 @@ GrB_Info GB_emult_bitmap_jit      // C<#M>=A.*B, emult_bitmap, via the JIT
     const int M_nthreads,
     const int C_nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

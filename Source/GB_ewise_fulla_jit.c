@@ -22,7 +22,7 @@ GrB_Info GB_ewise_fulla_jit    // C+=A+B via the JIT
     const GrB_Matrix B,
     const int nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

@@ -181,6 +181,7 @@ GrB_Info GB_split_full              // split a full matrix
 
                 if (info == GrB_NO_VALUE)
                 { 
+GB_GOTCHA ;
                     // user-defined types
                     #define GB_C_TYPE GB_void
                     #define GB_A_TYPE GB_void
@@ -193,6 +194,7 @@ GrB_Info GB_split_full              // split a full matrix
 
                 if (info != GrB_SUCCESS)
                 { 
+GB_GOTCHA ;
                     // out of memory, or other error
                     GB_FREE_ALL ;
                     return (info) ;

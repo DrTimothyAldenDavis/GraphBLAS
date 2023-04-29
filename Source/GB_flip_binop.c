@@ -25,7 +25,7 @@ GrB_BinaryOp GB_flip_binop  // flip a binary operator
     //--------------------------------------------------------------------------
 
     if (!(*flipxy))
-    {
+    { 
         // op is not flipped
         return (op) ;
     }
@@ -37,7 +37,7 @@ GrB_BinaryOp GB_flip_binop  // flip a binary operator
     //--------------------------------------------------------------------------
 
     if (for_ewise && GB_IS_BINARYOP_CODE_POSITIONAL (op->opcode))
-    {
+    { 
         // built-in positional ops (firsti, firstj, secondi, secondj) are
         // not flipped for eWise operations
         return (op) ;
@@ -191,7 +191,7 @@ GrB_BinaryOp GB_flip_binop  // flip a binary operator
 
             switch (xcode)
             {
-                case GB_BOOL_code   : return (GxB_ISLT_BOOL) ;
+                case GB_BOOL_code   : GB_GOTCHA ; return (GxB_ISLT_BOOL) ;
                 case GB_INT8_code   : return (GxB_ISLT_INT8) ;
                 case GB_INT16_code  : return (GxB_ISLT_INT16) ;
                 case GB_INT32_code  : return (GxB_ISLT_INT32) ;
@@ -210,7 +210,7 @@ GrB_BinaryOp GB_flip_binop  // flip a binary operator
 
             switch (xcode)
             {
-                case GB_BOOL_code   : return (GxB_ISGT_BOOL) ;
+                case GB_BOOL_code   : GB_GOTCHA ; return (GxB_ISGT_BOOL) ;
                 case GB_INT8_code   : return (GxB_ISGT_INT8) ;
                 case GB_INT16_code  : return (GxB_ISGT_INT16) ;
                 case GB_INT32_code  : return (GxB_ISGT_INT32) ;
@@ -233,7 +233,7 @@ GrB_BinaryOp GB_flip_binop  // flip a binary operator
 
             switch (xcode)
             {
-                case GB_BOOL_code   : return (GxB_ISLE_BOOL) ;
+                case GB_BOOL_code   : GB_GOTCHA ; return (GxB_ISLE_BOOL) ;
                 case GB_INT8_code   : return (GxB_ISLE_INT8) ;
                 case GB_INT16_code  : return (GxB_ISLE_INT16) ;
                 case GB_INT32_code  : return (GxB_ISLE_INT32) ;
@@ -252,7 +252,7 @@ GrB_BinaryOp GB_flip_binop  // flip a binary operator
 
             switch (xcode)
             {
-                case GB_BOOL_code   : return (GxB_ISGE_BOOL) ;
+                case GB_BOOL_code   : GB_GOTCHA ; return (GxB_ISGE_BOOL) ;
                 case GB_INT8_code   : return (GxB_ISGE_INT8) ;
                 case GB_INT16_code  : return (GxB_ISGE_INT16) ;
                 case GB_INT32_code  : return (GxB_ISGE_INT32) ;
@@ -275,7 +275,7 @@ GrB_BinaryOp GB_flip_binop  // flip a binary operator
 
             switch (xcode)
             {
-                case GB_BOOL_code   : return (GxB_RDIV_BOOL) ;
+                case GB_BOOL_code   : GB_GOTCHA ; return (GxB_RDIV_BOOL) ;
                 case GB_INT8_code   : return (GxB_RDIV_INT8) ;
                 case GB_INT16_code  : return (GxB_RDIV_INT16) ;
                 case GB_INT32_code  : return (GxB_RDIV_INT32) ;
@@ -296,7 +296,7 @@ GrB_BinaryOp GB_flip_binop  // flip a binary operator
 
             switch (xcode)
             {
-                case GB_BOOL_code   : return (GrB_DIV_BOOL) ;
+                case GB_BOOL_code   : GB_GOTCHA ; return (GrB_DIV_BOOL) ;
                 case GB_INT8_code   : return (GrB_DIV_INT8) ;
                 case GB_INT16_code  : return (GrB_DIV_INT16) ;
                 case GB_INT32_code  : return (GrB_DIV_INT32) ;
@@ -321,7 +321,7 @@ GrB_BinaryOp GB_flip_binop  // flip a binary operator
 
             switch (xcode)
             {
-                case GB_BOOL_code   : return (GxB_RMINUS_BOOL) ;
+                case GB_BOOL_code   : GB_GOTCHA ; return (GxB_RMINUS_BOOL) ;
                 case GB_INT8_code   : return (GxB_RMINUS_INT8) ;
                 case GB_INT16_code  : return (GxB_RMINUS_INT16) ;
                 case GB_INT32_code  : return (GxB_RMINUS_INT32) ;
@@ -342,7 +342,7 @@ GrB_BinaryOp GB_flip_binop  // flip a binary operator
 
             switch (xcode)
             {
-                case GB_BOOL_code   : return (GrB_MINUS_BOOL) ;
+                case GB_BOOL_code   : GB_GOTCHA ; return (GrB_MINUS_BOOL) ;
                 case GB_INT8_code   : return (GrB_MINUS_INT8) ;
                 case GB_INT16_code  : return (GrB_MINUS_INT16) ;
                 case GB_INT32_code  : return (GrB_MINUS_INT32) ;

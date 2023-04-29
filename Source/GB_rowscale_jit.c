@@ -23,7 +23,7 @@ GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
     const bool flipxy,
     const int nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

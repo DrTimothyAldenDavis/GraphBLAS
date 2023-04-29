@@ -129,15 +129,15 @@
     //--------------------------------------------------------------------------
 
     #if ( GB_EMULT_08_PHASE == 1 )
-
+    { 
         // phase1: symbolic phase
         #include "GB_emult_08_template.c"
-
+    }
     #else
-
+    { 
         // phase2: numerical phase
         #include "GB_emult_08_template.c"
-
+    }
     #endif
 }
 

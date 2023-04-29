@@ -108,7 +108,7 @@ void GB_macrofy_build           // construct all macros for GB_build
 
         fprintf (fp, "#define GB_BLD_DUP(Tx,p,Sx,k)") ;
         if (dup->opcode != GB_FIRST_binop_code)
-        {
+        { 
             fprintf (fp, " GB_UPDATE (Tx [p], Sx [k])") ;
         }
         fprintf (fp, "\n") ;
@@ -176,6 +176,7 @@ void GB_macrofy_build           // construct all macros for GB_build
         }
         else if (nargs_t_to_x == 3)
         { 
+GB_GOTCHA ;
             fprintf (fp, cast_t_to_x, "x", "Tx [p]", "Tx [p]") ;
         }
         else
@@ -195,6 +196,7 @@ void GB_macrofy_build           // construct all macros for GB_build
         }
         else if (nargs_z_to_t == 3)
         { 
+GB_GOTCHA ;
             fprintf (fp, cast_z_to_t, "    Tx [p]", "z", "z") ;
         }
         else

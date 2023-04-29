@@ -63,8 +63,10 @@
 
 GrB_Info GB_Context_engage (GxB_Context Context)
 { 
+GB_GOTCHA ;
     if (Context == GxB_CONTEXT_WORLD)
     { 
+GB_GOTCHA ;
         // GxB_Context_engage (GxB_CONTEXT_WORLD) is the same as engaging
         // NULL as the user thread context.
         Context = NULL ;
@@ -90,6 +92,7 @@ GrB_Info GB_Context_disengage (GxB_Context Context)
         if (Context == NULL || Context == GB_CONTEXT_THREAD ||
             GB_CONTEXT_THREAD == NULL || Context == GxB_CONTEXT_WORLD)
         { 
+GB_GOTCHA ;
             // If no Context provided on input: simply disengage whatever the
             // current Context is for this user thread.  If a non-NULL context
             // is provided and the current GB_CONTEXT_THREAD is not NULL, it
@@ -100,6 +103,7 @@ GrB_Info GB_Context_disengage (GxB_Context Context)
         }
         else
         { 
+GB_GOTCHA ;
             // A non-NULL Context was provided on input, but it doesn't match
             // the currently engaged Context.  This is an error.
             return (GrB_INVALID_VALUE) ;
@@ -122,6 +126,7 @@ int GB_Context_nthreads_max_get (GxB_Context Context)
     }
     else
     { 
+GB_GOTCHA ;
         nthreads_max = Context->nthreads_max ;
     }
     return (nthreads_max) ;
@@ -148,6 +153,7 @@ void GB_Context_nthreads_max_set
     }
     else
     { 
+GB_GOTCHA ;
         Context->nthreads_max = nthreads_max ;
     }
 }
@@ -167,6 +173,7 @@ double GB_Context_chunk_get (GxB_Context Context)
     }
     else
     { 
+GB_GOTCHA ;
         chunk = Context->chunk ;
     }
     return (chunk) ;
@@ -196,6 +203,7 @@ void GB_Context_chunk_set
     }
     else
     { 
+GB_GOTCHA ;
         Context->chunk = chunk ;
     }
 }
@@ -215,6 +223,7 @@ int GB_Context_gpu_id_get (GxB_Context Context)
     }
     else
     { 
+GB_GOTCHA ;
         gpu_id = Context->gpu_id ;
     }
     return (gpu_id) ;
@@ -223,6 +232,7 @@ int GB_Context_gpu_id_get (GxB_Context Context)
 //  GB_Context_gpu_id: get gpu_id from the current Context
 int GB_Context_gpu_id (void)
 { 
+GB_GOTCHA ;
     return (GB_Context_gpu_id_get (GB_CONTEXT_THREAD)) ;
 }
 
@@ -241,6 +251,7 @@ void GB_Context_gpu_id_set
     }
     else
     { 
+GB_GOTCHA ;
         Context->gpu_id = gpu_id ;
     }
 }

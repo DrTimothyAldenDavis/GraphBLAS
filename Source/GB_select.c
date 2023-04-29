@@ -80,6 +80,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     int64_t tncols = (A_transpose) ? GB_NROWS (A) : GB_NCOLS (A) ;
     if (GB_NROWS (C) != tnrows || GB_NCOLS (C) != tncols)
     { 
+GB_GOTCHA ;
         GB_ERROR (GrB_DIMENSION_MISMATCH,
             "Dimensions not compatible:\n"
             "output is " GBd "-by-" GBd "\n"
@@ -170,7 +171,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     bool op_is_bool_valued = (xcode == GB_BOOL_code &&
       (opcode >= GB_VALUENE_idxunop_code && opcode <= GB_VALUELE_idxunop_code)) ;
     if (op_is_bool_valued)
-    {
+    { 
         GB_cast_scalar (&bthunk, GB_BOOL_code, Thunk->x, ttype->code,
             sizeof (bool)) ;
     }
@@ -277,7 +278,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     is_empty = true ;
                 }
                 else
-                {
+                { 
                     // otherwise, use A(i,j) == true
                     bthunk = true ;
                 }
@@ -291,7 +292,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     make_copy = true ;
                 }
                 else
-                {
+                { 
                     // otherwise, use A(i,j) == true
                     bthunk = true ;
                 }
@@ -305,7 +306,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     is_empty = true ;
                 }
                 else
-                {
+                { 
                     // otherwise, use A(i,j) == false
                     bthunk = false ;
                 }
@@ -319,7 +320,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     make_copy = true ;
                 }
                 else
-                {
+                { 
                     // otherwise, use A(i,j) == false
                     bthunk = false ;
                 }
@@ -345,7 +346,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     struct GB_Scalar_opaque Thunk2_header ;
     int64_t ithunk = 0 ;
     if (negate_thunk)
-    {
+    { 
         // Thunk = -(int64_t) Thunk
         GB_cast_scalar (&ithunk, GB_INT64_code, Thunk->x, ttype->code,
             sizeof (int64_t)) ;
@@ -353,12 +354,12 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         Thunk2 = GB_Scalar_wrap (&Thunk2_header, GrB_INT64, &ithunk) ;
     }
     else if (op_is_bool_valued)
-    {
+    { 
         // Thunk = bthunk
         Thunk2 = GB_Scalar_wrap (&Thunk2_header, GrB_BOOL, &bthunk) ;
     }
     else
-    {
+    { 
         // use Thunk as-is
         Thunk2 = Thunk ;
     }

@@ -82,6 +82,7 @@ GrB_Info GB_select_generic_bitmap
         }
         else
         { 
+GB_GOTCHA ;
 
             //------------------------------------------------------------------
             // A is iso and z requires typecasting
@@ -121,6 +122,7 @@ GrB_Info GB_select_generic_bitmap
         }
         else
         { 
+GB_GOTCHA ;
 
             //------------------------------------------------------------------
             // A is non-iso and typecasting is required

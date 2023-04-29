@@ -48,11 +48,11 @@
     #else
     {
         if (nzombies > 0)
-        {
+        { 
             #include "GB_convert_s2b_zombies.c"
         }
         else
-        {
+        { 
             #include "GB_convert_s2b_nozombies.c"
         }
     }

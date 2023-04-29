@@ -208,15 +208,15 @@
             #else
             {
                 if (M == NULL)
-                {
+                { 
                     #include "GB_add_sparse_noM.c"
                 }
                 else if (M_is_sparse_or_hyper)
-                {
+                { 
                     #include "GB_add_sparse_M_sparse.c"
                 }
                 else
-                {
+                { 
                     #include "GB_add_sparse_M_bitmap.c"
                 }
             }

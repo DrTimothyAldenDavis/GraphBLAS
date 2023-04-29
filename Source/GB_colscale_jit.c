@@ -25,7 +25,7 @@ GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
     const int A_ntasks,
     const int A_nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

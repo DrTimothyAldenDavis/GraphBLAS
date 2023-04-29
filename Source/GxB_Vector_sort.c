@@ -20,7 +20,7 @@ GrB_Info GxB_Vector_sort
     GrB_Vector u,           // vector to sort
     const GrB_Descriptor desc
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

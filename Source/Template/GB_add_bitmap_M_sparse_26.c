@@ -33,7 +33,7 @@
                 if (b)
                 {
                     #if GB_IS_EWISEUNION
-                    {
+                    { 
                         // C (i,j) = alpha + B(i,j)
                         GB_LOAD_B (bij, Bx, p, B_iso) ;
                         GB_EWISEOP (Cx, p, alpha_scalar, bij,

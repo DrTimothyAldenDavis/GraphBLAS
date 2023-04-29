@@ -26,7 +26,7 @@ GrB_Info GB_unop_new
     const char *unop_defn,          // definition of the user function
     const GB_Opcode opcode          // opcode for the function
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

@@ -14,7 +14,7 @@
     int64_t p ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (p = 0 ; p < anz ; p++)
-    {
+    { 
         if (!GBB_A (Ab, p)) continue ;
         GB_DECLAREA (aij) ;
         GB_GETA (aij, Ax, p, false) ;

@@ -15,7 +15,7 @@ void GB_reduce_to_scalar_iso        // s = reduce (A) where A is iso
     GrB_Monoid monoid,              // monoid to use for the reduction
     GrB_Matrix A                    // matrix to reduce
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

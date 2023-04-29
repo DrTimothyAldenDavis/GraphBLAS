@@ -94,7 +94,7 @@ GrB_Info GB_deserialize_from_blob
         //----------------------------------------------------------------------
 
         if (nblocks > 1 || Sblocks [0] != X_len || s + X_len > blob_size)
-        {
+        { 
             // blob is invalid: guard against an unsafe memcpy
             ok = false ;
         }
@@ -133,7 +133,7 @@ GrB_Info GB_deserialize_from_blob
                 kstart >= kend || s_start >= s_end || s_size > INT32_MAX ||
                 s + s_start > blob_size || s + s_end > blob_size ||
                 kstart > X_len || kend > X_len || d_size > INT32_MAX)
-            {
+            { 
                 // blob is invalid
                 ok = false ;
             }
@@ -172,13 +172,13 @@ GrB_Info GB_deserialize_from_blob
         }
     }
     else
-    {
+    { 
         // unknown compression method
         ok = false ;
     }
 
     if (!ok)
-    {
+    { 
         // decompression failure; blob is invalid
         GB_FREE_ALL ;
         return (GrB_INVALID_OBJECT) ;
@@ -191,7 +191,7 @@ GrB_Info GB_deserialize_from_blob
     (*X_handle) = X ;
     (*X_size_handle) = X_size ;
     if (nblocks > 0)
-    {
+    { 
         s += Sblocks [nblocks-1] ;
     }
     (*s_handle) = s ;

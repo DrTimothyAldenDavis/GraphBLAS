@@ -61,7 +61,7 @@ GB_CALLBACK_EK_SLICE_MERGE1_PROTO (GB_ek_slice_merge1)
         //----------------------------------------------------------------------
 
         if (kfirst < klast)
-        {
+        { 
             ASSERT (kprior < klast) ;
             // This thread is the first one that did work on
             // A(:,klast), so use it to start the reduction.

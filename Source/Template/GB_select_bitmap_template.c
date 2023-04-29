@@ -29,12 +29,12 @@
     {
         int8_t *Ab = A->b ;
         if (Ab != NULL)
-        {
+        { 
             // A is bitmap
             #include "GB_select_bitmap_bitmap_template.c"
         }
         else
-        {
+        { 
             // A is full
             #include "GB_select_bitmap_full_template.c"
         }

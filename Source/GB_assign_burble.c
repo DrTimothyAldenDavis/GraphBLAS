@@ -21,14 +21,14 @@ void GB_assign_burble
     const GrB_Matrix A,         // input matrix, not transposed
     const int assign_kind       // row assign, col assign, assign, or subassign
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // quick return if burble is disabled
     //--------------------------------------------------------------------------
 
     if (!GB_Global_burble_get ( ))
-    {
+    { 
         return ;
     }
 

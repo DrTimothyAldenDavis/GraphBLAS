@@ -36,6 +36,7 @@ GrB_Info GxB_Context_free           // free a Context
             size_t header_size = Context->header_size ;
             if (header_size > 0)
             { 
+GB_GOTCHA ;
                 Context->magic = GB_FREED ;  // to help detect dangling pointers
                 Context->header_size = 0 ;
                 GB_FREE (Context_handle, header_size) ;

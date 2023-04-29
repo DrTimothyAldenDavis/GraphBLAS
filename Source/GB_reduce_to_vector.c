@@ -152,6 +152,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         case GB_FC32_code   : op = GxB_FIRST_FC32   ; break ;
         case GB_FC64_code   : op = GxB_FIRST_FC64   ; break ;
         default : 
+GB_GOTCHA ;
             // Create a FIRST_UDT binary operator.  The function pointer for
             // the FIRST_UDT op is NULL; it is not needed by FIRST.  The
             // function defn is also NULL.  In the JIT, the FIRST multiply
@@ -191,7 +192,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     semiring->header_size = 0 ;
     info = GB_Semiring_new (semiring, monoid, op) ;
     if (info != GrB_SUCCESS)
-    {
+    { 
         // out of memory
         // GB_Semiring_new allocates semiring->name if it uses the FIRST_UDT
         // operator created above, so it can run out of memory in that case.

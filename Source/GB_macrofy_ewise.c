@@ -70,6 +70,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 
     if (C_iso)
     { 
+GB_GOTCHA ;
         // values of C are not computed by the kernel
         xtype_name = "GB_void" ;
         ytype_name = "GB_void" ;
@@ -151,6 +152,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     fprintf (fp, "#define GB_EWISEOP(Cx,p,aij,bij,i,j)") ;
     if (C_iso)
     { 
+GB_GOTCHA ;
         fprintf (fp, "\n") ;
     }
     else if (ctype == ztype)

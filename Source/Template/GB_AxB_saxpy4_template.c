@@ -172,7 +172,7 @@
                     int64_t pC_start = j * cvlen ;  // get pointer to C(:,j)
 
                     for (int64_t i = 0 ; i < cvlen ; i++)
-                    {
+                    { 
                         int64_t pC = pC_start + i ;     // pointer to C(i,j)
                         int64_t pH = i * np + jj ;      // pointer to H(i,jj)
 
@@ -262,7 +262,7 @@
                     GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
 
                     #if GB_Z_HAS_ATOMIC_UPDATE
-                    {
+                    { 
                         // the monoid has an atomic update
                         GB_Z_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
                     }
@@ -273,7 +273,7 @@
                         // zero, the mutex is unlocked.
                         int8_t f ;
                         do
-                        {
+                        { 
                             // do this atomically:
                             // { f = Hf [i] ; Hf [i] = 1 ; }
                             GB_ATOMIC_CAPTURE_INT8 (f, Hf [i], 1) ;
@@ -342,7 +342,7 @@
 
             // Hx = identity
             #if GB_HAS_IDENTITY_BYTE
-            {
+            { 
                 memset (Hx, GB_IDENTITY_BYTE, cvlen * GB_C_SIZE) ;
             }
             #else
@@ -375,7 +375,7 @@
                 GB_GET_B_kj ;                   // bkj = B(k,j)
 
                 for ( ; pA < pA_end ; pA++)
-                {
+                { 
                     int64_t i = Ai [pA] ;       // get A(i,k) index
                     // W(i,k) += A(i,k) * B(k,j)
                     GB_MULT_A_ik_B_kj ;         // t = A(i,k)*B(k,j)
@@ -436,7 +436,7 @@
                 int64_t pW_start = w * cvlen ;      // pointer to W (:,w)
 
                 for (int64_t i = istart ; i < iend ; i++)
-                {
+                { 
                     int64_t pW = pW_start + i ;     // pointer to W(i,w)
                     int64_t pC = pC_start + i ;     // pointer to C(i,j)
                     // C(i,j) += W(i,w)

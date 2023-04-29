@@ -36,15 +36,15 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
 
     GB_CHECK_MAGIC (monoid) ;
     if (monoid->header_size == 0)
-    {
+    { 
         GBPR0 ("(built-in):") ;
     }
     else if (monoid->hash == 0)
-    {
+    { 
         GBPR0 ("(user-defined; same as built-in):") ;
     }
     else
-    {
+    { 
         GBPR0 ("(user-defined):") ;
     }
 

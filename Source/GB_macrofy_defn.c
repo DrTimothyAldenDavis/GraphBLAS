@@ -30,6 +30,7 @@ bool GB_macrofy_defn    // return true if operator is a macro
 
         if (defn [0] == '#')
         { 
+GB_GOTCHA ;
             // operator defined as macro
             is_macro = true ;
             fprintf (fp, "%s\n", defn) ;

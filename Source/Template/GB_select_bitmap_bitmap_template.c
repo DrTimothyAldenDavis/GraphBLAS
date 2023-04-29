@@ -25,12 +25,12 @@
         int8_t cb = Ab [p] ;
         #if defined ( GB_ENTRY_SELECTOR )
         if (cb)
-        {
+        { 
             GB_TEST_VALUE_OF_ENTRY (keep, p) ;
             cb = keep ;
         }
         #else
-        {
+        { 
             #if defined ( GB_TRIL_SELECTOR )
                 cb = cb && (j-i <= ithunk) ;
             #elif defined ( GB_TRIU_SELECTOR )

@@ -72,12 +72,12 @@ GrB_Info GxB_BinaryOp_new
     //--------------------------------------------------------------------------
 
     if (function == NULL)
-    {
+    { 
         GB_BURBLE_START ("GxB_BinaryOp_new") ;
         void *user_function ;
         info = GB_user_op_jit (&user_function, (GB_Operator) op) ;
         if (info != GrB_SUCCESS)
-        {
+        { 
             // unable to construct the function pointer
             GB_Op_free ((GB_Operator *) &op) ;
             return (GrB_NULL_POINTER) ;

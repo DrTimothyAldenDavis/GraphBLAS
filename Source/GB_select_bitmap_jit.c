@@ -25,7 +25,7 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
     const GrB_IndexUnaryOp op,
     const int nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

@@ -37,7 +37,7 @@ GrB_Info GB_Semiring_new            // create a semiring
 
     // z = multiply(x,y); type of z must match monoid z = add(z,z)
     if (multiply->ztype != add->op->ztype)
-    {
+    { 
         return (GrB_DOMAIN_MISMATCH) ;
     }
 
@@ -47,7 +47,7 @@ GrB_Info GB_Semiring_new            // create a semiring
     semiring->multiply = multiply ;
     semiring->name = NULL ;
     if (add->hash == 0 && multiply->hash == 0)
-    {
+    { 
         // semiring consists of builtin types and operators only;
         // no need for the semiring name or hash
         semiring->hash = 0 ;
@@ -61,7 +61,7 @@ GrB_Info GB_Semiring_new            // create a semiring
         semiring->name = GB_MALLOC (semiring->name_len + 1, char,
             &(semiring->name_size)) ;
         if (semiring->name == NULL)
-        {
+        { 
             // out of memory
             return (GrB_OUT_OF_MEMORY) ;
         }

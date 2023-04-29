@@ -43,6 +43,7 @@ void GB_macrofy_output
 
     if (C_iso)
     { 
+GB_GOTCHA ;
 
         //----------------------------------------------------------------------
         // no need to access the values of C

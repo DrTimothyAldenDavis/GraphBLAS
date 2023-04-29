@@ -150,7 +150,7 @@ bool GB_file_open_and_lock  // true if successful, false on error
     #else
     {
         if (filename == NULL || fp_handle == NULL || fd_handle == NULL)
-        {
+        { 
             // failure: inputs invalid
             return (false) ;
         }
@@ -161,7 +161,7 @@ bool GB_file_open_and_lock  // true if successful, false on error
         // open the file, creating it if it doesn't exist
         int fd = GB_OPEN (filename, GB_READ_WRITE, GB_MODE) ;
         if (fd == -1)
-        {
+        { 
             // failure: file does not exist or cannot be created
             return (false) ;
         }
@@ -169,7 +169,7 @@ bool GB_file_open_and_lock  // true if successful, false on error
         // get the file pointer from the file descriptor
         FILE *fp = GB_FDOPEN (fd, "w+") ;
         if (fp == NULL)
-        {
+        { 
             // failure: cannot create file pointer from file descriptor
             GB_CLOSE (fd) ;
             return (false) ;
@@ -177,7 +177,7 @@ bool GB_file_open_and_lock  // true if successful, false on error
 
         // lock the file
         if (!GB_file_lock (fp, fd))
-        {
+        { 
             // failure: cannot lock the file
             fclose (fp) ;
             return (false) ;
@@ -211,7 +211,7 @@ bool GB_file_unlock_and_close   // true if successful, false on error
     #else
     {
         if (fp_handle == NULL || fd_handle == NULL)
-        {
+        { 
             // failure: inputs invalid
             return (false) ;
         }
@@ -223,7 +223,7 @@ bool GB_file_unlock_and_close   // true if successful, false on error
         (*fd_handle) = -1 ;
 
         if (fp == NULL || fd < 0)
-        {
+        { 
             // failure: inputs invalid
             return (false) ;
         }
@@ -252,7 +252,7 @@ bool GB_file_unlock_and_close   // true if successful, false on error
 bool GB_file_mkdir (char *path)
 {
     if (path == NULL)
-    {
+    { 
         // invalid input
         return (false) ;
     }

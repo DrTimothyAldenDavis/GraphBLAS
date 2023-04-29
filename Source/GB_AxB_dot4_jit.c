@@ -29,7 +29,7 @@ GrB_Info GB_AxB_dot4_jit            // C+=A'*B, dot4 method, via the JIT
     const int nthreads,
     GB_Werk Werk
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

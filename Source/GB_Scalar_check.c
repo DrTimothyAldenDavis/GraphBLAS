@@ -27,6 +27,7 @@ GrB_Info GB_Scalar_check    // check a GraphBLAS GrB_Scalar
     GrB_Info info = GB_matvec_check ((GrB_Matrix) s, name, pr, f, "scalar") ;
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         // GrB_Matrix form is invalid already
         return (info) ;
     }

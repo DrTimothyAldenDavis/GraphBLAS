@@ -23,7 +23,7 @@ GrB_Info GB_concat_full_jit      // concatenate A into a full matrix C
     const GrB_Matrix A,
     const int A_nthreads
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

@@ -23,7 +23,7 @@ GrB_Info GB_concat_bitmap_jit      // concatenate A into a bitmap matrix C
     const GrB_Matrix A,
     GB_Werk Werk
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

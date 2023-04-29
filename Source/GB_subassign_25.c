@@ -112,6 +112,7 @@ GrB_Info GB_subassign_25
 
     if (C_iso)
     { 
+GB_GOTCHA ;
 
         //----------------------------------------------------------------------
         // via the iso kernel
@@ -177,7 +178,7 @@ GrB_Info GB_subassign_25
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
-        {
+        { 
             info = GB_subassign_jit (C,
                 /* C_replace: */ false,
                 /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,

@@ -14,7 +14,7 @@
     int64_t p ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (p = 0 ; p < bnz ; p++)
-    {
+    { 
         if (!GBB_B (Bb, p)) continue ;
         GB_DECLAREB (bij) ;
         GB_GETB (bij, Bx, p, false) ;

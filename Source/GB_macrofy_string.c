@@ -29,11 +29,13 @@ void GB_macrofy_string
         }
         else if (c == '\\')
         { 
+GB_GOTCHA ;
             // handle the backslash character
             fprintf (fp, "\\\\") ;
         }
         else if (c == '"')
         { 
+GB_GOTCHA ;
             // handle the quote character
             fprintf (fp, "\\\"") ;
         }

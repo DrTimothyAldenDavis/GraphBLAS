@@ -237,6 +237,7 @@ GB_GOTCHA ;
 
     info = GrB_NO_VALUE ;
     #ifndef GBCOMPACT
+    { 
 
         //----------------------------------------------------------------------
         // define the worker for the switch factory
@@ -260,6 +261,7 @@ GB_GOTCHA ;
         #define GB_NO_ANY_MONOID
         #include "GB_AxB_factory.c"
 
+    }
     #endif
 
     //--------------------------------------------------------------------------
@@ -290,6 +292,7 @@ GB_GOTCHA ;
     }
     else
     { 
+GB_GOTCHA ;
         // out of memory, or other error
         GB_FREE_ALL ;
     }

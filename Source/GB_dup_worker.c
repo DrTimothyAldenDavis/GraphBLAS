@@ -104,7 +104,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
         GB_memcpy (C->b, Ab, anz * sizeof (int8_t), nthreads_max) ;
     }
     if (Ai != NULL)
-    {
+    { 
         GB_memcpy (C->i, Ai, anz * sizeof (int64_t), nthreads_max) ;
     }
     if (numeric)

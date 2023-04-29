@@ -87,7 +87,7 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
                 matrix_name, matrix_name, matrix_name, matrix_name) ;
             break ;
 
-        default : break ;
+        default:;
     }
 }
 

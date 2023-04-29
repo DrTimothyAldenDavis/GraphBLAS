@@ -57,7 +57,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
         //----------------------------------------------------------------------
 
         case GB_ONE_unop_code       :       // z = 1
-
+GB_GOTCHA ;
             e = 1 ; break ;                 // z = 1
 
         case GB_IDENTITY_unop_code  :       // z = x
@@ -97,7 +97,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
             switch (xcode)
             {
                 default             : 
-                case GB_BOOL_code   : e =   1 ; break ; // z = 1 (minv for bool)
+                case GB_BOOL_code   : e =   1 ; GB_GOTCHA ; break ; // z = 1 (minv for bool)
                 case GB_INT8_code   : e =  11 ; break ; // z = GJ_idiv_* (1, x)
                 case GB_INT16_code  : e =  12 ; break ; // z = GJ_idiv_* (1, x)
                 case GB_INT32_code  : e =  13 ; break ; // z = GJ_idiv_* (1, x)
@@ -134,7 +134,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  26 ; break ; // z = sqrtf (x)
                 case GB_FP64_code   : e =  27 ; break ; // z = sqrt (x)
                 case GB_FC32_code   : e =  28 ; break ; // z = GB_csqrtf (x)
@@ -146,7 +146,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  30 ; break ; // z = logf (x)
                 case GB_FP64_code   : e =  31 ; break ; // z = log (x)
                 case GB_FC32_code   : e =  32 ; break ; // z = GB_clogf (x)
@@ -158,7 +158,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  34 ; break ; // z = expf (x)
                 case GB_FP64_code   : e =  35 ; break ; // z = exp (x)
                 case GB_FC32_code   : e =  36 ; break ; // z = GB_cexpf (x)
@@ -170,7 +170,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  38 ; break ; // z = sinf (x)
                 case GB_FP64_code   : e =  39 ; break ; // z = sin (x)
                 case GB_FC32_code   : e =  40 ; break ; // z = GB_csinf (x)
@@ -182,7 +182,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  42 ; break ; // z = cosf (x)
                 case GB_FP64_code   : e =  43 ; break ; // z = cos (x)
                 case GB_FC32_code   : e =  44 ; break ; // z = GB_cosf (x)
@@ -194,7 +194,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  46 ; break ; // z = tanf (x)
                 case GB_FP64_code   : e =  47 ; break ; // z = tan (x)
                 case GB_FC32_code   : e =  48 ; break ; // z = GB_tanf (x)
@@ -206,7 +206,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  50 ; break ; // z = asinf (x)
                 case GB_FP64_code   : e =  51 ; break ; // z = asin (x)
                 case GB_FC32_code   : e =  52 ; break ; // z = GB_asinf (x)
@@ -218,7 +218,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  54 ; break ; // z = acosf (x)
                 case GB_FP64_code   : e =  55 ; break ; // z = acos (x)
                 case GB_FC32_code   : e =  56 ; break ; // z = GB_acosf (x)
@@ -230,7 +230,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  58 ; break ; // z = atanf (x)
                 case GB_FP64_code   : e =  59 ; break ; // z = atan (x)
                 case GB_FC32_code   : e =  60 ; break ; // z = GB_atanf (x)
@@ -242,7 +242,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  62 ; break ; // z = sinhf (x)
                 case GB_FP64_code   : e =  63 ; break ; // z = sinh (x)
                 case GB_FC32_code   : e =  64 ; break ; // z = GB_sinhf (x)
@@ -254,7 +254,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  66 ; break ; // z = coshf (x)
                 case GB_FP64_code   : e =  67 ; break ; // z = cosh (x)
                 case GB_FC32_code   : e =  68 ; break ; // z = GB_coshf (x)
@@ -266,7 +266,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  70 ; break ; // z = tanhf (x)
                 case GB_FP64_code   : e =  71 ; break ; // z = tanh (x)
                 case GB_FC32_code   : e =  72 ; break ; // z = GB_tanhf (x)
@@ -278,7 +278,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  74 ; break ; // z = asinhf (x)
                 case GB_FP64_code   : e =  75 ; break ; // z = asinh (x)
                 case GB_FC32_code   : e =  76 ; break ; // z = GB_asinhf (x)
@@ -290,7 +290,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  78 ; break ; // z = acoshf (x)
                 case GB_FP64_code   : e =  79 ; break ; // z = acosh (x)
                 case GB_FC32_code   : e =  80 ; break ; // z = GB_acoshf (x)
@@ -302,7 +302,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  82 ; break ; // z = atanhf (x)
                 case GB_FP64_code   : e =  83 ; break ; // z = atanh (x)
                 case GB_FC32_code   : e =  84 ; break ; // z = GB_atanhf (x)
@@ -314,7 +314,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  86 ; break ; // z = GJ_signumf (x)
                 case GB_FP64_code   : e =  87 ; break ; // z = GJ_signum (x)
                 case GB_FC32_code   : e =  88 ; break ; // z = GJ_csignumf (x)
@@ -326,7 +326,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  90 ; break ; // z = ceilf (x)
                 case GB_FP64_code   : e =  91 ; break ; // z = ceil (x)
                 case GB_FC32_code   : e =  92 ; break ; // z = GJ_cceilf (x)
@@ -338,7 +338,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  94 ; break ; // z = floorf (x)
                 case GB_FP64_code   : e =  95 ; break ; // z = floor (x)
                 case GB_FC32_code   : e =  96 ; break ; // z = GJ_cfloorf (x)
@@ -350,7 +350,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e =  98 ; break ; // z = roundf (x)
                 case GB_FP64_code   : e =  99 ; break ; // z = round (x)
                 case GB_FC32_code   : e = 100 ; break ; // z = GJ_croundf (x)
@@ -362,7 +362,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e = 102 ; break ; // z = truncf (x)
                 case GB_FP64_code   : e = 103 ; break ; // z = trunc (x)
                 case GB_FC32_code   : e = 104 ; break ; // z = GJ_ctruncf (x)
@@ -374,7 +374,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e = 106 ; break ; // z = exp2f (x)
                 case GB_FP64_code   : e = 107 ; break ; // z = exp2 (x)
                 case GB_FC32_code   : e = 108 ; break ; // z = GJ_cexp2f (x)
@@ -386,7 +386,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e = 110 ; break ; // z = expm1f (x)
                 case GB_FP64_code   : e = 111 ; break ; // z = expm1 (x)
                 case GB_FC32_code   : e = 112 ; break ; // z = GJ_cexpm1f (x)
@@ -398,7 +398,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e = 114 ; break ; // z = log10f (x)
                 case GB_FP64_code   : e = 115 ; break ; // z = log10 (x)
                 case GB_FC32_code   : e = 116 ; break ; // z = GJ_clog10f (x)
@@ -410,7 +410,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e = 118 ; break ; // z = log1pf (x)
                 case GB_FP64_code   : e = 119 ; break ; // z = log1p (x)
                 case GB_FC32_code   : e = 120 ; break ; // z = GJ_clog1pf (x)
@@ -422,7 +422,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e = 122 ; break ; // z = log2f (x)
                 case GB_FP64_code   : e = 123 ; break ; // z = log2 (x)
                 case GB_FC32_code   : e = 124 ; break ; // z = GJ_clog2f (x)
@@ -438,7 +438,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e = 126 ; break ; // z = lgammaf (x)
                 case GB_FP64_code   : e = 127 ; break ; // z = lgamma (x)
             }
@@ -448,7 +448,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e = 128 ; break ; // z = tgammaf (x)
                 case GB_FP64_code   : e = 129 ; break ; // z = tgamma (x)
             }
@@ -458,7 +458,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e = 130 ; break ; // z = erff (x)
                 case GB_FP64_code   : e = 131 ; break ; // z = erf (x)
             }
@@ -468,7 +468,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e = 132 ; break ; // z = erfcf (x)
                 case GB_FP64_code   : e = 133 ; break ; // z = erfc (x)
             }
@@ -478,7 +478,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e = 134 ; break ; // z = cbrtf (x)
                 case GB_FP64_code   : e = 135 ; break ; // z = cbrt (x)
             }
@@ -488,7 +488,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e = 136 ; break ; // z = GJ_frexpxf (x)
                 case GB_FP64_code   : e = 137 ; break ; // z = GJ_frexpx (x)
             }
@@ -498,7 +498,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : e = 138 ; break ; // z = GJ_frexpef (x)
                 case GB_FP64_code   : e = 139 ; break ; // z = GJ_frexpe (x)
             }
@@ -512,7 +512,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FC32_code   : e = 140 ; break ; // z = GB_conjf (x)
                 case GB_FC64_code   : e = 141 ; break ; // z = GB_conj (x)
             }
@@ -526,7 +526,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FC32_code   : e = 142 ; break ; // z = GB_crealf (x)
                 case GB_FC64_code   : e = 143 ; break ; // z = GB_creal (x)
             }
@@ -536,7 +536,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FC32_code   : e = 144 ; break ; // z = GB_cimagf (x)
                 case GB_FC64_code   : e = 145 ; break ; // z = GB_cimag (x)
             }
@@ -546,7 +546,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FC32_code   : e = 146 ; break ; // z = GB_cargf (x)
                 case GB_FC64_code   : e = 147 ; break ; // z = GB_carg (x)
             }
@@ -560,7 +560,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : 
                 case GB_FP64_code   : e = 148 ; break ; // z = isinf (x)
                 case GB_FC32_code   : e = 149 ; break ; // z = GJ_cisinff (x)
@@ -572,7 +572,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : 
                 case GB_FP64_code   : e = 151 ; break ; // z = isnan (x)
                 case GB_FC32_code   : e = 152 ; break ; // z = GJ_cisnanf (x)
@@ -584,7 +584,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
             switch (xcode)
             {
-                default             : 
+                default:
                 case GB_FP32_code   : 
                 case GB_FP64_code   : e = 154 ; break ; // z = isfinite (x)
                 case GB_FC32_code   : e = 155 ; break ; // z = GJ_cisfinitef (x)
@@ -597,18 +597,22 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
         //----------------------------------------------------------------------
 
         case GB_POSITIONI_unop_code     :   // z = position_i(A(i,j)) == i
+GB_GOTCHA ;
             i_dep = true ;
             e = 157 ; break ;               // z = i
 
         case GB_POSITIONI1_unop_code    :   // z = position_i1(A(i,j)) == i+1
+GB_GOTCHA ;
             i_dep = true ;
             e = 158 ; break ;               // z = i+1
 
         case GB_POSITIONJ_unop_code     :   // z = position_j(A(i,j)) == j
+GB_GOTCHA ;
             j_dep = true ;
             e = 159 ; break ;               // z = j
 
         case GB_POSITIONJ1_unop_code    :   // z = position_j1(A(i,j)) == j+1
+GB_GOTCHA ;
             j_dep = true ;
             e = 160 ; break ;               // z = j+1
 
@@ -624,34 +628,41 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
         // Result is INT32 or INT64, depending on i and y:
         case GB_ROWINDEX_idxunop_code   :   // z = (i+y)
+GB_GOTCHA ;
             i_dep = true ;
             e = 232 ; break ;
 
         // Result is BOOL, depending on i and y:
         case GB_ROWLE_idxunop_code      :   // z = (i <= y)
+GB_GOTCHA ;
             i_dep = true ;
             e = 233 ; break ;
 
         case GB_ROWGT_idxunop_code      :   // z = (i > y)
+GB_GOTCHA ;
             i_dep = true ;
             e = 234 ; break ;
 
         // Result is INT32 or INT64, depending on j and y:
         case GB_COLINDEX_idxunop_code   :   // z = (j+y)
+GB_GOTCHA ;
             j_dep = true ;
             e = 235 ; break ;
 
         // Result is BOOL, depending on j and y:
         case GB_COLLE_idxunop_code      :   // z = (j <= y)
+GB_GOTCHA ;
             j_dep = true ;
             e = 236 ; break ;
 
         case GB_COLGT_idxunop_code      :   // z = (j > y)
+GB_GOTCHA ;
             j_dep = true ;
             e = 237 ; break ;
 
         // Result is INT32 or INT64, depending on i, j, and y:
         case GB_DIAGINDEX_idxunop_code  :   // z = (j-(i+y))
+GB_GOTCHA ;
             i_dep = true ;
             j_dep = true ;
             e = 238 ; break ;
@@ -663,21 +674,25 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
         // Result is BOOL, depending on i, j, and y:
         case GB_TRIL_idxunop_code       :   // z = (j <= (i+y))
+GB_GOTCHA ;
             i_dep = true ;
             j_dep = true ;
             e = 240 ; break ;
 
         case GB_TRIU_idxunop_code       :   // z = (j >= (i+y))
+GB_GOTCHA ;
             i_dep = true ;
             j_dep = true ;
             e = 241 ; break ;
 
         case GB_DIAG_idxunop_code       :   // z = (j == (i+y))
+GB_GOTCHA ;
             i_dep = true ;
             j_dep = true ;
             e = 242 ; break ;
 
         case GB_OFFDIAG_idxunop_code    :   // z = (j != (i+y))
+GB_GOTCHA ;
             i_dep = true ;
             j_dep = true ;
             e = 243 ; break ;
@@ -688,32 +703,38 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
 
         // Result is BOOL, depending on the value x and y:
         case GB_VALUENE_idxunop_code    :   // z = (x != y)
+GB_GOTCHA ;
 
             switch (xcode)
             {
-                case GB_FC32_code   : e = 244 ; break ; // GB_FC32_ne (x,y)
-                case GB_FC64_code   : e = 245 ; break ; // GB_FC64_ne (x,y)
-                default             : e = 246 ; break ; // z = (x != y)
+                case GB_FC32_code   : e = 244 ; GB_GOTCHA ; break ; // GB_FC32_ne (x,y)
+                case GB_FC64_code   : e = 245 ; GB_GOTCHA ; break ; // GB_FC64_ne (x,y)
+                default             : e = 246 ; GB_GOTCHA ; break ; // z = (x != y)
             }
             break ;
 
         case GB_VALUEEQ_idxunop_code    :   // z = (x == y)
+GB_GOTCHA ;
 
             switch (xcode)
             {
-                case GB_FC32_code   : e = 247 ; break ; // GB_FC32_eq (x,y)
-                case GB_FC64_code   : e = 248 ; break ; // GB_FC64_eq (x,y)
-                default             : e = 249 ; break ; // z = (x == y)
+                case GB_FC32_code   : e = 247 ; GB_GOTCHA ; break ; // GB_FC32_eq (x,y)
+                case GB_FC64_code   : e = 248 ; GB_GOTCHA ; break ; // GB_FC64_eq (x,y)
+                default             : e = 249 ; GB_GOTCHA ; break ; // z = (x == y)
             }
             break ;
 
         case GB_VALUEGT_idxunop_code    :   // z = (x > y)
+GB_GOTCHA ;
             e = 250 ; break ;
         case GB_VALUEGE_idxunop_code    :   // z = (x >= y)
+GB_GOTCHA ;
             e = 251 ; break ;
         case GB_VALUELT_idxunop_code    :   // z = (x < y)
+GB_GOTCHA ;
             e = 252 ; break ;
         case GB_VALUELE_idxunop_code    :   // z = (x <= y)
+GB_GOTCHA ;
             e = 253 ; break ;
 
         //----------------------------------------------------------------------

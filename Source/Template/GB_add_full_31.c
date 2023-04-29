@@ -24,7 +24,7 @@
             GB_EWISEOP (Cx, p, aij, bij, p % vlen, p / vlen) ;
         }
         else
-        { 
+        {
             #if GB_IS_EWISEUNION
             { 
                 // C (i,j) = A(i,j) + beta

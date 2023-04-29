@@ -58,7 +58,7 @@
                     GB_ATOMIC_READ
                     f = Hf [i] ;        // grab the entry
                     if (f == 2)         // if true, update C(i,j)
-                    {
+                    { 
                         GB_Z_ATOMIC_UPDATE_HX (i, t) ;  // Hx [i] += t
                         continue ;      // C(i,j) has been updated
                     }

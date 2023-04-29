@@ -19,7 +19,7 @@ int64_t GB_positional_offset        // return the positional thunk
 
     int64_t ithunk = 0 ;
     if (Thunk != NULL)
-    {
+    { 
         // get the value of the thunk, for positional idxunops
         GB_cast_scalar (&ithunk, GB_INT64_code, Thunk->x, Thunk->type->code,
             Thunk->type->size) ;
@@ -87,7 +87,7 @@ int64_t GB_positional_offset        // return the positional thunk
     }
 
     if (depends_on_j != NULL)
-    {
+    { 
         (*depends_on_j) = j_dep ;
     }
 

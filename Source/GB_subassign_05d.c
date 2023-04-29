@@ -71,6 +71,7 @@ GrB_Info GB_subassign_05d
 
     if (C->iso)
     { 
+GB_GOTCHA ;
         // work has already been done by GB_assign_prep
         return (GrB_SUCCESS) ;
     }

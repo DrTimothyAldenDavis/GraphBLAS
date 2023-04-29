@@ -225,11 +225,11 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
         }
 
         if ((*C_sparsity) == GxB_HYPERSPARSE || (*C_sparsity) == GxB_SPARSE)
-        {
+        { 
             (*saxpy_method) = GB_SAXPY_METHOD_3 ;
         }
         else
-        {
+        { 
             (*saxpy_method) = GB_SAXPY_METHOD_BITMAP ;
         }
     }

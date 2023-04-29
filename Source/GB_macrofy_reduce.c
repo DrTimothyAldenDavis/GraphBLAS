@@ -108,11 +108,13 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
 
     if (opcode == GB_ANY_binop_code)
     { 
+GB_GOTCHA ;
         // ANY monoid: do not use panel reduction method
         panel = 1 ;
     }
     else if (zcode == GB_BOOL_code)
     { 
+GB_GOTCHA ;
         // all boolean monoids, including user-defined
         panel = 8 ;
     }
@@ -124,7 +126,9 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
 
             // min and max
             case GB_MIN_binop_code : 
+GB_GOTCHA ;
             case GB_MAX_binop_code : 
+GB_GOTCHA ;
                 panel = 16 ;
                 break ;
 
@@ -139,19 +143,21 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
                 {
                     // integer:
                     case GB_INT8_code    : 
+GB_GOTCHA ;
                     case GB_UINT8_code   : 
                     case GB_INT16_code   : 
                     case GB_UINT16_code  : 
                     case GB_INT32_code   : 
                     case GB_UINT32_code  : panel = 64 ; break ;
                     case GB_INT64_code   : 
+GB_GOTCHA ;
                     case GB_UINT64_code  : panel = 32 ; break ;
 
                     // floating point:
-                    case GB_FP32_code    : panel = 64 ; break ;
+                    case GB_FP32_code    : panel = 64 ; GB_GOTCHA ; break ;
                     case GB_FP64_code    : panel = 32 ; break ;
-                    case GB_FC32_code    : panel = 32 ; break ;
-                    case GB_FC64_code    : panel = 16 ; break ;
+                    case GB_FC32_code    : panel = 32 ; GB_GOTCHA ; break ;
+                    case GB_FC64_code    : panel = 16 ; GB_GOTCHA ; break ;
                     default:;
                 }
                 break ;
@@ -165,10 +171,12 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
                 }
                 else if (zsize <= 32)
                 { 
+GB_GOTCHA ;
                     panel = 8 ;
                 }
                 else
                 { 
+GB_GOTCHA ;
                     // type is large; do not use panel reduction method
                     panel = 1 ;
                 }

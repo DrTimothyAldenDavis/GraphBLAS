@@ -11,7 +11,7 @@
 #include "GB_make_shallow.h"
 
 void GB (make_shallow) (GrB_Matrix A)
-{
+{ 
     if (A == NULL) return ;
     A->p_shallow = (A->p != NULL) ;
     A->h_shallow = (A->h != NULL) ;

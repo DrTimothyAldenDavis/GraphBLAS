@@ -161,7 +161,7 @@ GrB_Info GB_select_sparse
 
     info = GrB_NO_VALUE ;
     if (op_is_positional || opcode == GB_NONZOMBIE_idxunop_code)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // positional ops or nonzombie phase1 do not depend on the values
@@ -185,6 +185,7 @@ GrB_Info GB_select_sparse
              || (opcode == GB_USER_idxunop_code)) ;
 
         #ifndef GBCOMPACT
+        { 
 
             //------------------------------------------------------------------
             // via the factory kernel (includes user-defined ops)
@@ -203,6 +204,7 @@ GrB_Info GB_select_sparse
             #include "GB_select_entry_factory.c"
             #undef  GB_SEL_WORKER
 
+        }
         #endif
 
         //----------------------------------------------------------------------
@@ -210,7 +212,7 @@ GrB_Info GB_select_sparse
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
-        {
+        { 
             info = GB_select_phase1_jit (Cp, Wfirst, Wlast, C_iso, in_place_A,
                 A, ythunk, op, flipij, A_ek_slicing, A_ntasks, A_nthreads) ;
         }
@@ -220,7 +222,7 @@ GrB_Info GB_select_sparse
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
-        {
+        { 
             // generic entry selector, phase1
             info = GB_select_generic_phase1 (Cp, Wfirst, Wlast,
                 A, flipij, ythunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;
@@ -271,7 +273,7 @@ GrB_Info GB_select_sparse
 
     info = GrB_NO_VALUE ;
     if (op_is_positional || (opcode == GB_NONZOMBIE_idxunop_code && A_iso))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // positional ops do not depend on the values
@@ -296,6 +298,7 @@ GrB_Info GB_select_sparse
              || (opcode == GB_USER_idxunop_code)) ;
 
         #ifndef GBCOMPACT
+        { 
 
             //------------------------------------------------------------------
             // via the factory kernel
@@ -314,6 +317,7 @@ GrB_Info GB_select_sparse
             // launch the switch factory
             #include "GB_select_entry_factory.c"
 
+        }
         #endif
 
         //----------------------------------------------------------------------
@@ -321,7 +325,7 @@ GrB_Info GB_select_sparse
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
-        {
+        { 
             info = GB_select_phase2_jit (Ci, C_iso ? NULL : Cx, Cp, C_iso,
                 in_place_A, Cp_kfirst, A, flipij, ythunk, op, A_ek_slicing,
                 A_ntasks, A_nthreads) ;
@@ -332,7 +336,7 @@ GrB_Info GB_select_sparse
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
-        {
+        { 
             // generic entry selector, phase2
             info = GB_select_generic_phase2 (Ci, C_iso ? NULL : Cx, Cp,
                 Cp_kfirst, A, flipij, ythunk, op, A_ek_slicing, A_ntasks,
@@ -342,6 +346,7 @@ GrB_Info GB_select_sparse
 
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;

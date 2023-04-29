@@ -95,12 +95,12 @@
     //--------------------------------------------------------------------------
 
     #if defined ( GB_PHASE_1_OF_2 )
-
+    { 
         // phase1
         #include "GB_sparse_masker_template.c"
-
+    }
     #else
-
+    {
         // phase2
         if (R_sparsity == GxB_SPARSE || R_sparsity == GxB_HYPERSPARSE)
         { 
@@ -113,7 +113,7 @@
             ASSERT (R_sparsity == GxB_BITMAP) ;
             #include "GB_bitmap_masker_template.c"
         }
-
+    }
     #endif
 }
 

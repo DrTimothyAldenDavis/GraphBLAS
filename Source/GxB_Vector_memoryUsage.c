@@ -14,7 +14,7 @@ GrB_Info GxB_Vector_memoryUsage  // return # of bytes used for a vector
     size_t *size,           // # of bytes used by the vector v
     const GrB_Vector v      // vector to query
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

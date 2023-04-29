@@ -41,7 +41,7 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
     const int B_nthreads,
     const int B_ntasks
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

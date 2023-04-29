@@ -112,12 +112,12 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     int64_t thunk = 0 ;
 
     if (GB_OPCODE_IS_POSITIONAL (opcode))
-    {
+    { 
         thunk = GB_positional_offset (opcode, scalar, &depends_on_j) ;
     }
 
     if (depends_on_j)
-    {
+    { 
         // slice the entries for each task
         GB_SLICE_MATRIX (A, 32) ;
     }
@@ -256,7 +256,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // bool Cx = positional_op (A)
@@ -393,7 +393,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
-        {
+        { 
             info = GB_apply_unop_jit (Cx, ctype, op, flipij, A,
                 NULL, NULL, 0, A_nthreads) ;
         }
@@ -403,7 +403,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
-        {
+        { 
             GB_BURBLE_N (anz, "(generic unop apply: %s) ", op->name) ;
 
             size_t asize = Atype->size ;
@@ -428,7 +428,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
     }
     else if (op_is_binop)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // apply a binary operator (bound to a scalar)
@@ -520,7 +520,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             //------------------------------------------------------------------
 
             if (info == GrB_NO_VALUE)
-            {
+            { 
                 info = GB_apply_bind1st_jit (Cx, ctype,
                     (GrB_BinaryOp) op, scalarx, A, A_nthreads) ;
             }
@@ -567,7 +567,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             //------------------------------------------------------------------
 
             if (info == GrB_NO_VALUE)
-            {
+            { 
                 info = GB_apply_bind2nd_jit (Cx, ctype,
                     (GrB_BinaryOp) op, A, scalarx, A_nthreads) ;
             }
@@ -587,7 +587,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             ASSERT (!A->iso) ;
 
             if (binop_bind1st)
-            {
+            { 
                 // Cx = binop (scalar,Ax) with bind1st
                 GB_cast_function cast_A_to_Y = GB_cast_factory (ycode, acode) ;
                 #define GB_APPLY_OP(p)                              \
@@ -599,7 +599,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 #include "GB_apply_unop_ip.c"
             }
             else
-            {
+            { 
                 // Cx = binop (Ax,scalar) with bind2nd
                 GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ;
                 #define GB_APPLY_OP(p)                              \
@@ -650,7 +650,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
-        {
+        { 
             info = GB_apply_unop_jit (Cx, ctype, op, flipij, A,
                 ythunk, A_ek_slicing, A_ntasks, A_nthreads) ;
         }
@@ -660,7 +660,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)
-        {
+        { 
             GB_BURBLE_N (anz, "(generic apply: user-defined idxunop) ") ;
 
             // get A and C

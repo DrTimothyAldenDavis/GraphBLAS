@@ -33,7 +33,7 @@ void GB_expand_iso          // expand an iso scalar into an entire array
     //--------------------------------------------------------------------------
 
     if (GB_is_nonzero (scalar, size))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // the scalar is nonzero
@@ -117,7 +117,7 @@ void GB_expand_iso          // expand an iso scalar into an entire array
         }
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // the scalar is zero: use memset

@@ -332,6 +332,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;

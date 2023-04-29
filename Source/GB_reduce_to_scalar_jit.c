@@ -24,7 +24,7 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
     int ntasks,                 // # of tasks to use
     int nthreads                // # of threads to use
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

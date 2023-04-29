@@ -151,7 +151,7 @@ GrB_Info GB_selector
     if (opcode == GB_COLINDEX_idxunop_code ||
         opcode == GB_COLLE_idxunop_code ||
         opcode == GB_COLGT_idxunop_code)
-    {
+    { 
         return (GB_select_column (C, C_iso, op, A, ithunk, Werk)) ;
     }
 

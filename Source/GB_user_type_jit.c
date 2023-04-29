@@ -19,7 +19,7 @@ GrB_Info GB_user_type_jit       // construct a user type in a JIT kernel
     // input:
     const GrB_Type type         // user-defined type
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem
