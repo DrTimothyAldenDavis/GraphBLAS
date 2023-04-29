@@ -81,6 +81,7 @@ void GB_memoryUsage         // count # allocated blocks and their sizes
     {
         if (A->b_shallow)
         { 
+GB_GOTCHA ;
             (*mem_shallow) += A->b_size ;
         }
         else

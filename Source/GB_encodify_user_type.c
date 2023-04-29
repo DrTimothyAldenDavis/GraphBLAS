@@ -20,7 +20,6 @@ uint64_t GB_encodify_user_type      // encode a user defined type
     const GrB_Type type
 )
 { 
-GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check if the type is JIT'able

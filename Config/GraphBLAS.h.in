@@ -4664,6 +4664,7 @@ GrB_Info GxB_Context_disengage      // disengage a Context
             GrB_Vector       *: GrB_Vector_free       , \
             GrB_Matrix       *: GrB_Matrix_free       , \
             GrB_Descriptor   *: GrB_Descriptor_free   , \
+            GxB_Context      *: GxB_Context_free      , \
             GxB_Iterator     *: GxB_Iterator_free       \
     )                                                   \
     (object)

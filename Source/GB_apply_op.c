@@ -661,6 +661,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
         if (info == GrB_NO_VALUE)
         { 
+GB_GOTCHA ;
             GB_BURBLE_N (anz, "(generic apply: user-defined idxunop) ") ;
 
             // get A and C

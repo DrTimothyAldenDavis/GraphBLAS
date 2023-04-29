@@ -318,6 +318,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         }
         if (ni == 0)
         { 
+GB_GOTCHA ;
             // the list is empty
             ASSERT (imin == limit && imax == -1) ;
         }

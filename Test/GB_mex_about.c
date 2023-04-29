@@ -530,10 +530,10 @@ void mexFunction
 
     OK (GxB_Global_Option_set_(GxB_GLOBAL_GPU_ID, 1)) ;
     OK (GxB_Global_Option_get_(GxB_GLOBAL_GPU_ID, &gpu_id)) ;
-    CHECK (gpu_id == 1) ;
+    CHECK (gpu_id == -1) ;
 
     OK (GxB_Global_Option_get_INT32 (GxB_GLOBAL_GPU_ID, &gpu_id2)) ;
-    CHECK (gpu_id2 == 1) ;
+    CHECK (gpu_id2 == -1) ;
 
     //--------------------------------------------------------------------------
     // types

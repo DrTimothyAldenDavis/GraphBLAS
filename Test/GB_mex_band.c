@@ -123,7 +123,8 @@ void mexFunction
     }
 
     // create operator
-    // use the user-defined operator, from the LoHi_band function
+    // use the user-defined operator, from the LoHi_band function.
+    // This operator cannot be JIT'd because it doesn't have a name or defn.
     METHOD (GrB_IndexUnaryOp_new (&op, (GxB_index_unary_function) LoHi_band,
         GrB_BOOL, GrB_FP64, Thunk_type)) ;
 

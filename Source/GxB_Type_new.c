@@ -39,7 +39,7 @@
 GrB_Info GxB_Type_new
 (
     GrB_Type *type,             // handle of user type to create
-    size_t sizeof_ctype,        // size of the user type
+    size_t sizeof_type,         // size of the user type
     const char *type_name,      // name of the user type, or "sizeof (ctype)"
     const char *type_defn       // typedef of the C type (any length)
 )
@@ -54,9 +54,10 @@ GrB_Info GxB_Type_new
     GB_RETURN_IF_NULL (type) ;
     (*type) = NULL ;
 
-    if (sizeof_ctype == 0 && (type_defn == NULL || type_name == NULL))
+    if (sizeof_type == 0 && (type_defn == NULL || type_name == NULL))
     { 
-        // so the JIT is required to determine size of the type, but this
+GB_GOTCHA ;
+        // the JIT is required to determine size of the type, but this
         // requires two valid strings: the type name and the type definition
         return (GrB_INVALID_VALUE) ;
     }
@@ -76,7 +77,7 @@ GrB_Info GxB_Type_new
 
     // initialize the type
     t->header_size = header_size ;
-    t->size = sizeof_ctype ;
+    t->size = sizeof_type ;
     t->code = GB_UDT_code ;         // user-defined type
     memset (t->name, 0, GxB_MAX_NAME_LEN) ;   // no name yet
     t->defn = NULL ;                // no definition yet
@@ -122,7 +123,7 @@ GrB_Info GxB_Type_new
     { 
         // no type name, so give it a generic name, with the size of type only
         snprintf (t->name, GxB_MAX_NAME_LEN-1, "user_type_of_size_" GBu,
-            (uint64_t) sizeof_ctype) ;
+            (uint64_t) sizeof_type) ;
     }
 
     // ensure t->name is null-terminated
@@ -163,16 +164,16 @@ GrB_Info GxB_Type_new
     // determine the type size via the JIT, if necessary
     //--------------------------------------------------------------------------
 
-    if (sizeof_ctype == 0)
+    if (sizeof_type == 0)
     { 
-        GrB_Info info = GB_user_type_jit (&sizeof_ctype, t) ;
+        GrB_Info info = GB_user_type_jit (&sizeof_type, t) ;
         if (info != GrB_SUCCESS)
         { 
             // unable to determine the type size
-            GB_FREE (&t, header_size) ;
+            GrB_Type_free (&t) ;
             return (GrB_INVALID_VALUE) ;
         }
-        t->size = sizeof_ctype ;
+        t->size = sizeof_type ;
     }
 
     //--------------------------------------------------------------------------
@@ -185,9 +186,9 @@ GrB_Info GxB_Type_new
         // automatically on the stack.  These arrays are used for scalar values
         // for a given type.  If VLA is not supported, user-defined types can
         // be no larger than GB_VLA_MAXSIZE.
-        if (sizeof_ctype > GB_VLA_MAXSIZE)
+        if (sizeof_type > GB_VLA_MAXSIZE)
         {
-            GB_FREE (&t, header_size) ;
+            GrB_Type_free (&t) ;
             return (GrB_INVALID_VALUE) ;
         }
     }

@@ -99,14 +99,6 @@ void GB_assign_describe
     const char *Istr = (Ikind == GB_ALL) ? ":" : "I" ;
     const char *Jstr = (Jkind == GB_ALL) ? ":" : "J" ;
 
-//  char IJ [GB_STRLEN+1] ;
-//  snprintf (IJ, GB_STRLEN, "(%s,%s)", Istr, Jstr) ;
-//  if (Ikind == GB_ALL && Jkind == GB_ALL)
-//  {
-//      // do not print the (I,J) indices
-//      IJ [0] = '\0' ;
-//  }
-
     //--------------------------------------------------------------------------
     // burble the final result
     //--------------------------------------------------------------------------
@@ -114,22 +106,19 @@ void GB_assign_describe
     switch (assign_kind)
     {
         case GB_ROW_ASSIGN : 
+GB_GOTCHA ;
             // C(i,J) = A
             snprintf (str, slen, "C%s(i,%s) %s= A ", Mask, Jstr, Op) ;
-//          snprintf (IJ, GB_STRLEN, "(i,%s)", Jstr) ;
-//          GBURBLE ("C%s%s %s= A ", Mask, IJ, Op) ;
             break ;
 
         case GB_COL_ASSIGN : 
+GB_GOTCHA ;
             // C(I,j) = A
             snprintf (str, slen, "C%s(%s,j) %s= A ", Mask, Istr, Op) ;
-//          snprintf (IJ, GB_STRLEN, "(%s,j)", Istr) ;
-//          GBURBLE ("C%s%s %s= A ", Mask, IJ, Op) ;
             break ;
 
         case GB_ASSIGN : 
             // C<M>(I,J) = A
-//          GBURBLE ("C%s%s %s= %s ", Mask, IJ, Op, S) ;
             if (Ikind == GB_ALL && Jkind == GB_ALL)
             { 
                 // C<M> += A
@@ -137,6 +126,7 @@ void GB_assign_describe
             }
             else
             { 
+GB_GOTCHA ;
                 // C<M>(I,J) = A
                 snprintf (str, slen, "C%s(%s,%s) %s= %s ", Mask, Istr, Jstr,
                     Op, S) ;
@@ -145,7 +135,6 @@ void GB_assign_describe
 
         case GB_SUBASSIGN : 
             // C(I,J)<M> = A
-//          GBURBLE ("C%s%s %s= %s ", IJ, Mask, Op, S) ;
             if (Ikind == GB_ALL && Jkind == GB_ALL)
             { 
                 // C<M> += A
@@ -153,6 +142,7 @@ void GB_assign_describe
             }
             else
             { 
+GB_GOTCHA ;
                 // C<M>(I,J) = A
                 snprintf (str, slen, "C(%s,%s)%s %s= %s ", Istr, Jstr, Mask,
                     Op, S) ;

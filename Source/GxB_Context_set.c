@@ -48,7 +48,6 @@ GB_GOTCHA ;
             break ;
 
         default : 
-GB_GOTCHA ;
 
             return (GrB_INVALID_VALUE) ;
     }
@@ -89,7 +88,6 @@ GB_GOTCHA ;
             break ;
 
         default : 
-GB_GOTCHA ;
 
             return (GrB_INVALID_VALUE) ;
     }
@@ -126,7 +124,6 @@ GrB_Info GxB_Context_set            // set a parameter in a Context
     {
 
         case GxB_CONTEXT_NTHREADS :         // same as GxB_NTHREADS
-GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -137,7 +134,6 @@ GB_GOTCHA ;
             break ;
 
         case GxB_CONTEXT_GPU_ID :           // same as GxB_GPU_ID
-GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -148,7 +144,6 @@ GB_GOTCHA ;
             break ;
 
         case GxB_CONTEXT_CHUNK :            // same as GxB_CHUNK
-GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -159,7 +154,6 @@ GB_GOTCHA ;
             break ;
 
         default : 
-GB_GOTCHA ;
 
             return (GrB_INVALID_VALUE) ;
     }

@@ -119,7 +119,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
         case GB_COLGT_idxunop_code      : kind = "COLGT"     ; GB_GOTCHA ; break ;
         case GB_ROWLE_idxunop_code      : kind = "ROWLE"     ; GB_GOTCHA ; break ;
         case GB_ROWGT_idxunop_code      : kind = "ROWGT"     ; GB_GOTCHA ; break ;
-        default                         : kind = "ENTRY"     ; GB_GOTCHA ; break ;
+        default                         : kind = "ENTRY"     ; break ;
     }
     fprintf (fp, "#define GB_%s_SELECTOR\n", kind) ;
 

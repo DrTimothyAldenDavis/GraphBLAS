@@ -267,13 +267,14 @@
                         GB_Z_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
                     }
                     #else
-                    {
+                    { 
+GB_GOTCHA ;
                         // the update must be done in a critical section using
                         // the mutex byte Hf (i,j), located at Hf [i].  If
                         // zero, the mutex is unlocked.
                         int8_t f ;
                         do
-                        { 
+                        {
                             // do this atomically:
                             // { f = Hf [i] ; Hf [i] = 1 ; }
                             GB_ATOMIC_CAPTURE_INT8 (f, Hf [i], 1) ;

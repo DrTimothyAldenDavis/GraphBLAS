@@ -102,7 +102,6 @@ GrB_Info GxB_Global_Option_get_INT32    // gets the current global option
             break ;
 
         case GxB_PRINT_1BASED : 
-GB_GOTCHA ;
 
             (*value) = (int32_t) GB_Global_print_one_based_get ( ) ;
             break ;
@@ -113,7 +112,6 @@ GB_GOTCHA ;
             break ;
 
         case GxB_JIT_USE_CMAKE : 
-GB_GOTCHA ;
 
             (*value) = (int32_t) GB_jitifyer_get_use_cmake ( ) ;
             break ;
@@ -307,49 +305,41 @@ GrB_Info GxB_Global_Option_get_CHAR     // gets the current global option
         //----------------------------------------------------------------------
 
         case GxB_JIT_C_COMPILER_NAME : 
-GB_GOTCHA ;
 
             (*value) = GB_jitifyer_get_C_compiler ( ) ;
             break ;
 
         case GxB_JIT_C_COMPILER_FLAGS : 
-GB_GOTCHA ;
 
             (*value) = GB_jitifyer_get_C_flags ( ) ;
             break ;
 
         case GxB_JIT_C_LINKER_FLAGS : 
-GB_GOTCHA ;
 
             (*value) = GB_jitifyer_get_C_link_flags ( ) ;
             break ;
 
         case GxB_JIT_C_LIBRARIES : 
-GB_GOTCHA ;
 
             (*value) = GB_jitifyer_get_C_libraries ( ) ;
             break ;
 
         case GxB_JIT_C_CMAKE_LIBS : 
-GB_GOTCHA ;
 
             (*value) = GB_jitifyer_get_C_cmake_libs ( ) ;
             break ;
 
         case GxB_JIT_C_PREFACE : 
-GB_GOTCHA ;
 
             (*value) = GB_jitifyer_get_C_preface ( ) ;
             break ;
 
         case GxB_JIT_ERROR_LOG : 
-GB_GOTCHA ;
 
             (*value) = GB_jitifyer_get_error_log ( ) ;
             break ;
 
         case GxB_JIT_CACHE_PATH : 
-GB_GOTCHA ;
 
             (*value) = GB_jitifyer_get_cache_path ( ) ;
             break ;
@@ -792,7 +782,6 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         case GxB_PRINT_1BASED : 
-GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -856,7 +845,6 @@ GB_GOTCHA ;
         //----------------------------------------------------------------------
 
         case GxB_JIT_C_COMPILER_NAME : 
-GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -868,7 +856,6 @@ GB_GOTCHA ;
             break ;
 
         case GxB_JIT_C_COMPILER_FLAGS : 
-GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -880,7 +867,6 @@ GB_GOTCHA ;
             break ;
 
         case GxB_JIT_C_LINKER_FLAGS : 
-GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -892,7 +878,6 @@ GB_GOTCHA ;
             break ;
 
         case GxB_JIT_C_LIBRARIES : 
-GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -904,7 +889,6 @@ GB_GOTCHA ;
             break ;
 
         case GxB_JIT_C_CMAKE_LIBS : 
-GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -916,7 +900,6 @@ GB_GOTCHA ;
             break ;
 
         case GxB_JIT_C_PREFACE : 
-GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -928,7 +911,6 @@ GB_GOTCHA ;
             break ;
 
         case GxB_JIT_C_CONTROL : 
-GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -940,7 +922,6 @@ GB_GOTCHA ;
             break ;
 
         case GxB_JIT_USE_CMAKE : 
-GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -952,7 +933,6 @@ GB_GOTCHA ;
             break ;
 
         case GxB_JIT_ERROR_LOG : 
-GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -964,7 +944,6 @@ GB_GOTCHA ;
             break ;
 
         case GxB_JIT_CACHE_PATH : 
-GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;

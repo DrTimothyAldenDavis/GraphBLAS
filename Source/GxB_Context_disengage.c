@@ -30,7 +30,6 @@ GrB_Info GxB_Context_disengage      // disengage a Context
     GxB_Context Context             // Context to disengage
 )
 { 
-GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs

@@ -81,7 +81,6 @@ GrB_Info GB_ewise_fulln      // C = A+B
 
     if (!GB_as_if_full (C))
     { 
-GB_GOTCHA ;
         // free the content of C and reallocate it as a non-iso full matrix
         ASSERT (C != A && C != B) ;
         GB_phybix_free (C) ;

@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: move this to GB_helper.c; only used by 
+// GraphBLAS/@GrB/private/util/gb_get_shallow.c
+
 #include "GB.h"
 #include "GB_make_shallow.h"
 

@@ -93,9 +93,11 @@ if (malloc_debugging)
 end
 %}
 
-logstat ('test247',t,b) ; % GrB_mxm: fine Hash method
+logstat ('test250',t,o) ; % basic tests
+logstat ('test249',t,o) ; % GxB_Context object
+logstat ('test247',t,o) ; % GrB_mxm: fine Hash method
 logstat ('test246',t,o) ; % GrB_mxm parallelism (changes slice_balanced)
-logstat ('test01' ,t,o) ; % error handling
+logstat ('test01' ,t,b) ; % error handling
 logstat ('test245',t,b) ; % test complex row/col scale
 logstat ('test199',t,o) ; % test dot2 with hypersparse
 logstat ('test83' ,t,o) ; % GrB_assign with C_replace and empty J
@@ -129,7 +131,7 @@ logstat ('test174',t,o) ; % test GrB_assign C<A>=A
 logstat ('test155',t,o) ; % test GrB_*_setElement and GrB_*_removeElement
 logstat ('test156',t,o) ; % test GrB_assign C=A with typecasting
 logstat ('test136',s,o) ; % subassignment special cases
-logstat ('test02' ,t,o) ; % matrix copy and dup tests
+logstat ('test02' ,t,b) ; % matrix copy and dup tests
 logstat ('test109',t,b) ; % terminal monoid with user-defined type
 % logstat ('test109',s,o) ; % terminal monoid with user-defined type
 logstat ('test04' ,t,o) ; % simple mask and transpose test

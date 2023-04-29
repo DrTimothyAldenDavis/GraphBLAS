@@ -18,7 +18,6 @@ void GB_macrofy_user_type       // construct a user-defined type
     const GrB_Type type         // type to construct in a JIT kernel
 )
 { 
-GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs

@@ -85,7 +85,7 @@ GrB_Info GB_selectop_to_idxunop
                 case GB_FP64_code    : idxunop = GrB_VALUENE_FP64   ; break ;
                 case GB_FC32_code    : idxunop = GxB_VALUENE_FC32   ; GB_GOTCHA ; break ;
                 case GB_FC64_code    : idxunop = GxB_VALUENE_FC64   ; break ;
-                default              : idxunop = NULL               ; GB_GOTCHA ; break ;
+                default:;
             }
             break ;
 
@@ -107,7 +107,7 @@ GrB_Info GB_selectop_to_idxunop
                 case GB_FP64_code    : idxunop = GrB_VALUEEQ_FP64   ; break ;
                 case GB_FC32_code    : idxunop = GxB_VALUEEQ_FC32   ; GB_GOTCHA ; break ;
                 case GB_FC64_code    : idxunop = GxB_VALUEEQ_FC64   ; break ;
-                default              : idxunop = NULL               ; GB_GOTCHA ; break ;
+                default:;
             }
             break ;
 
@@ -127,7 +127,7 @@ GrB_Info GB_selectop_to_idxunop
                 case GB_UINT64_code  : idxunop = GrB_VALUEGT_UINT64 ; break ;
                 case GB_FP32_code    : idxunop = GrB_VALUEGT_FP32   ; break ;
                 case GB_FP64_code    : idxunop = GrB_VALUEGT_FP64   ; break ;
-                default              : idxunop = NULL               ; break ;
+                default:;
             }
             break ;
 
@@ -147,7 +147,7 @@ GrB_Info GB_selectop_to_idxunop
                 case GB_UINT64_code  : idxunop = GrB_VALUEGE_UINT64 ; break ;
                 case GB_FP32_code    : idxunop = GrB_VALUEGE_FP32   ; break ;
                 case GB_FP64_code    : idxunop = GrB_VALUEGE_FP64   ; break ;
-                default              : idxunop = NULL               ; break ;
+                default:;
             }
             break ;
 
@@ -167,7 +167,7 @@ GrB_Info GB_selectop_to_idxunop
                 case GB_UINT64_code  : idxunop = GrB_VALUELT_UINT64 ; break ;
                 case GB_FP32_code    : idxunop = GrB_VALUELT_FP32   ; break ;
                 case GB_FP64_code    : idxunop = GrB_VALUELT_FP64   ; break ;
-                default              : idxunop = NULL               ; break ;
+                default:;
             }
             break ;
 
@@ -187,7 +187,7 @@ GrB_Info GB_selectop_to_idxunop
                 case GB_UINT64_code  : idxunop = GrB_VALUELE_UINT64 ; break ;
                 case GB_FP32_code    : idxunop = GrB_VALUELE_FP32   ; break ;
                 case GB_FP64_code    : idxunop = GrB_VALUELE_FP64   ; break ;
-                default              : idxunop = NULL               ; break ;
+                default:;
             }
             break ;
 

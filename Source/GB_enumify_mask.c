@@ -74,23 +74,31 @@ void GB_enumify_mask       // return enum to define mask macros
                 break ;
 
             case GB_INT16_code  : 
+GB_GOTCHA ;
             case GB_UINT16_code : 
+GB_GOTCHA ;
 
                 // valued mask, values are 2 bytes in size
                 e = (!Mask_comp) ? 6 : 7 ;
                 break ;
 
             case GB_INT32_code  : 
+GB_GOTCHA ;
             case GB_UINT32_code : 
+GB_GOTCHA ;
             case GB_FP32_code   : 
+GB_GOTCHA ;
 
                 // valued mask, values are 4 bytes in size
                 e = (!Mask_comp) ? 8 : 9 ;
                 break ;
 
             case GB_INT64_code  : 
+GB_GOTCHA ;
             case GB_UINT64_code : 
+GB_GOTCHA ;
             case GB_FC32_code   : 
+GB_GOTCHA ;
             case GB_FP64_code   : 
 
                 // valued mask, values are 8 bytes in size
@@ -98,6 +106,7 @@ void GB_enumify_mask       // return enum to define mask macros
                 break ;
 
             case GB_FC64_code   : 
+GB_GOTCHA ;
 
                 // valued mask, values are 16 bytes in size
                 e = (!Mask_comp) ? 12 : 13 ;

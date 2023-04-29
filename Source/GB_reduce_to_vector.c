@@ -193,6 +193,7 @@ GB_GOTCHA ;
     info = GB_Semiring_new (semiring, monoid, op) ;
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ;
         // out of memory
         // GB_Semiring_new allocates semiring->name if it uses the FIRST_UDT
         // operator created above, so it can run out of memory in that case.

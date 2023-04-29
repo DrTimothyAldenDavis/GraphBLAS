@@ -63,7 +63,6 @@ void GB_macrofy_family
             break ;
 
         case GB_jit_user_type_family  : 
-GB_GOTCHA ;
             GB_macrofy_user_type (fp, type1) ;
             break ;
 

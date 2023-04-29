@@ -96,8 +96,8 @@ GB_GOTCHA ;
 
             switch (xcode)
             {
-                default             : 
-                case GB_BOOL_code   : e =   1 ; GB_GOTCHA ; break ; // z = 1 (minv for bool)
+                default:
+                case GB_BOOL_code   : e =   1 ; break ; // z = 1 (minv for bool)
                 case GB_INT8_code   : e =  11 ; break ; // z = GJ_idiv_* (1, x)
                 case GB_INT16_code  : e =  12 ; break ; // z = GJ_idiv_* (1, x)
                 case GB_INT32_code  : e =  13 ; break ; // z = GJ_idiv_* (1, x)

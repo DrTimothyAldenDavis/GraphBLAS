@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_about9: still more basic tests
+// GB_mex_about10: still more basic tests
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.

@@ -67,6 +67,7 @@ GrB_Info GrB_Semiring_new           // create a semiring
     (*semiring) = GB_MALLOC (1, struct GB_Semiring_opaque, &header_size) ;
     if (*semiring == NULL)
     { 
+GB_GOTCHA ;
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
