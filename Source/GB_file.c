@@ -151,7 +151,6 @@ bool GB_file_open_and_lock  // true if successful, false on error
     {
         if (filename == NULL || fp_handle == NULL || fd_handle == NULL)
         { 
-GB_GOTCHA ;
             // failure: inputs invalid
             return (false) ;
         }
@@ -163,7 +162,6 @@ GB_GOTCHA ;
         int fd = GB_OPEN (filename, GB_READ_WRITE, GB_MODE) ;
         if (fd == -1)
         { 
-GB_GOTCHA ;
             // failure: file does not exist or cannot be created
             return (false) ;
         }
@@ -171,8 +169,7 @@ GB_GOTCHA ;
         // get the file pointer from the file descriptor
         FILE *fp = GB_FDOPEN (fd, "w+") ;
         if (fp == NULL)
-        { 
-GB_GOTCHA ;
+        {
             // failure: cannot create file pointer from file descriptor
             GB_CLOSE (fd) ;
             return (false) ;
@@ -180,8 +177,7 @@ GB_GOTCHA ;
 
         // lock the file
         if (!GB_file_lock (fp, fd))
-        { 
-GB_GOTCHA ;
+        {
             // failure: cannot lock the file
             fclose (fp) ;
             return (false) ;
@@ -216,7 +212,6 @@ bool GB_file_unlock_and_close   // true if successful, false on error
     {
         if (fp_handle == NULL || fd_handle == NULL)
         { 
-GB_GOTCHA ;
             // failure: inputs invalid
             return (false) ;
         }
@@ -229,7 +224,6 @@ GB_GOTCHA ;
 
         if (fp == NULL || fd < 0)
         { 
-GB_GOTCHA ;
             // failure: inputs invalid
             return (false) ;
         }
@@ -259,7 +253,6 @@ bool GB_file_mkdir (char *path)
 {
     if (path == NULL)
     { 
-GB_GOTCHA ;
         // invalid input
         return (false) ;
     }

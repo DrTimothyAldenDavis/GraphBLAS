@@ -83,7 +83,7 @@ GrB_Info GB_selectop_to_idxunop
                 case GB_UINT64_code  : idxunop = GrB_VALUENE_UINT64 ; break ;
                 case GB_FP32_code    : idxunop = GrB_VALUENE_FP32   ; break ;
                 case GB_FP64_code    : idxunop = GrB_VALUENE_FP64   ; break ;
-                case GB_FC32_code    : idxunop = GxB_VALUENE_FC32   ; GB_GOTCHA ; break ;
+                case GB_FC32_code    : idxunop = GxB_VALUENE_FC32   ; break ;
                 case GB_FC64_code    : idxunop = GxB_VALUENE_FC64   ; break ;
                 default:;
             }
@@ -105,7 +105,7 @@ GrB_Info GB_selectop_to_idxunop
                 case GB_UINT64_code  : idxunop = GrB_VALUEEQ_UINT64 ; break ;
                 case GB_FP32_code    : idxunop = GrB_VALUEEQ_FP32   ; break ;
                 case GB_FP64_code    : idxunop = GrB_VALUEEQ_FP64   ; break ;
-                case GB_FC32_code    : idxunop = GxB_VALUEEQ_FC32   ; GB_GOTCHA ; break ;
+                case GB_FC32_code    : idxunop = GxB_VALUEEQ_FC32   ; break ;
                 case GB_FC64_code    : idxunop = GxB_VALUEEQ_FC64   ; break ;
                 default:;
             }

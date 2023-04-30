@@ -78,7 +78,7 @@ GB_GOTCHA ;
         GBPR0 ("(built-in positional): z=%s(x,y,i,k,j)\n", op->name) ;
     }
     else
-    {
+    { 
         // built-in
         GBPR0 ("(built-in): z=%s(x,y)\n", op->name) ;
     }
@@ -93,7 +93,7 @@ GB_GOTCHA ;
     int32_t name_len = op->name_len ;
     int32_t actual_len = strlen (op->name) ;
     if (opcode == GB_USER_binop_code && name_len != actual_len)
-    {
+    { 
         GBPR0 ("    BinaryOp has an invalid name_len\n") ;
         return (GrB_INVALID_OBJECT) ;
     }

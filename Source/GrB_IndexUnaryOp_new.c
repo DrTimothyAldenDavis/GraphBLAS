@@ -26,7 +26,6 @@ GrB_Info GRB (IndexUnaryOp_new)     // create a new user-defined IndexUnary op
     GrB_Type ytype                  // type of input y (the scalar)
 )
 { 
-GB_GOTCHA ;
     return (GxB_IndexUnaryOp_new (op, function, ztype, xtype, ytype,
         NULL, NULL)) ;
 }

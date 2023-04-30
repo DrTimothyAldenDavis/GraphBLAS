@@ -357,7 +357,7 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
     GrB_IndexUnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
 
 //------------------------------------------------------------------------------
-// built-in select operators (historical: do not use in new code)
+// built-in select operators (DEPRECATED: do not use in any code)
 //------------------------------------------------------------------------------
 
 #define GXB_SEL(op,name)                                                    \

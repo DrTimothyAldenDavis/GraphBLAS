@@ -17,7 +17,6 @@ GrB_Info GxB_SelectOp_ttype         // return type of thunk or NULL if generic
     GxB_SelectOp selectop           // select operator
 )
 { 
-GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs

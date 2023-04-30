@@ -692,7 +692,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
     else if ((is_sparse || is_hyper) && anz != anz_actual)
     { 
-GB_GOTCHA ;
         // sparse/hypersparse with invalid nvals
         GBPR0 ("  invalid sparse/hypersparse entry count: " GBd " exist but"
             " A->nvals = " GBd "\n", anz_actual, anz) ;

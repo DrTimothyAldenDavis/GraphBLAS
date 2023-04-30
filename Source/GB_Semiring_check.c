@@ -53,7 +53,6 @@ GrB_Info GB_Semiring_check          // check a GraphBLAS semiring
         GBPR0 (" (%s)", semiring->name) ;
         if (semiring->name_len != strlen (semiring->name))
         { 
-GB_GOTCHA ;
             GBPR0 ("    Semiring->name invalid\n") ;
             return (GrB_INVALID_OBJECT) ;
         }

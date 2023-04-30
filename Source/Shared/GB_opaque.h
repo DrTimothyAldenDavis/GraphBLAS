@@ -293,7 +293,7 @@ typedef enum
          (opcode) <= GB_SECONDJ1_binop_code)
 
     //==========================================================================
-    // built-in GxB_SelectOp operators (historical)
+    // built-in GxB_SelectOp operators (DEPRECATED: do not use)
     //==========================================================================
 
     // built-in positional select operators: thunk optional; defaults to zero

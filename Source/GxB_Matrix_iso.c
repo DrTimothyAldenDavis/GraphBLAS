@@ -15,7 +15,6 @@ GrB_Info GxB_Matrix_iso     // return iso status of a matrix
     const GrB_Matrix A      // matrix to query
 )
 { 
-GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs

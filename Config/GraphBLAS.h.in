@@ -1545,98 +1545,17 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 ) ;
 
 //==============================================================================
-// GxB_SelectOp: select operators (historical)
+// GxB_SelectOp: select operators (DEPRECATED: do not use)
 //==============================================================================
 
-// GrB_IndexUnaryOp should be used instead of GxB_SelectOp.
-
-// GxB_SelectOp is an operator used by GxB_select to select entries from an
-// input matrix A that are kept in the output C.  If an entry A(i,j) in the
-// matrix A, of size nrows-by-ncols, has the value aij, then it calls the
-// select function as result = f (i, j, aij, thunk).  If the function returns
-// true, the entry is kept in the output C.  If f returns false, the entry is
-// not kept in C.  The type of x for the GxB_SelectOp operator may be any of
-// the 11 built-in types, or any user-defined type.  It may also be GrB_NULL,
-// to indicate that the function is type-generic and does not depend at all on
-// the value aij.  In this case, x is passed to f as a NULL pointer.
-
-// The optional Thunk parameter to GxB_select is a GrB_Scalar.  For built-in
-// select operators (TRIL, TRIU, DIAG, and OFFDIAG), Thunk must have any
-// built-in type, and thunk = (int64_t) Thunk is used to specify the diagonal
-// for these operators.  Thunk may be NULL, in which case its value is treated
-// as zero, if it has a built-in type. The value of Thunk (if present) is not
-// modified by any built-in select operator.
-
-// User-defined GxB_SelectOp operators can no longer be constructed.
+// GrB_select and GrB_IndexUnaryOp should be used instead of GxB_select.
 
 typedef struct GB_SelectOp_opaque *GxB_SelectOp ;
-
-//------------------------------------------------------------------------------
-// built-in select operators (historical)
-//------------------------------------------------------------------------------
-
-// GxB_select (C, Mask, accum, op, A, Thunk, desc) always returns a matrix C of
-// the same size as A (or A' if GrB_TRAN is in the descriptor).
-
-GB_GLOBAL GxB_SelectOp
-
-    GxB_TRIL,       // C=tril(A,thunk):   returns true if ((j-i) <= thunk)
-    GxB_TRIU,       // C=triu(A,thunk):   returns true if ((j-i) >= thunk)
-    GxB_DIAG,       // C=diag(A,thunk):   returns true if ((j-i) == thunk)
-    GxB_OFFDIAG,    // C=A-diag(A,thunk): returns true if ((j-i) != thunk)
-
-    GxB_NONZERO,    // C=A(A ~= 0)
-    GxB_EQ_ZERO,    // C=A(A == 0)
-    GxB_GT_ZERO,    // C=A(A >  0)
-    GxB_GE_ZERO,    // C=A(A >= 0)
-    GxB_LT_ZERO,    // C=A(A <  0)
-    GxB_LE_ZERO,    // C=A(A <= 0)
-
-    GxB_NE_THUNK,   // C=A(A ~= thunk)
-    GxB_EQ_THUNK,   // C=A(A == thunk)
-    GxB_GT_THUNK,   // C=A(A >  thunk)
-    GxB_GE_THUNK,   // C=A(A >= thunk)
-    GxB_LT_THUNK,   // C=A(A <  thunk)
-    GxB_LE_THUNK ;  // C=A(A <= thunk)
-
-// For GxB_TRIL, GxB_TRIU, GxB_DIAG, and GxB_OFFDIAG, the parameter Thunk is a
-// GrB_Scalar of any built-in type.  If GrB_NULL, or empty, Thunk is treated as
-// zero.  Otherwise, the single entry is typecasted as (int64_t) Thunk.  These
-// select operators do not depend on the values of A, but just their position,
-// and they work on matrices of any type (all 13 built-in types and all
-// user-defined types).
-
-// For GxB_*ZERO, the result depends only on the value of A(i,j).  The Thunk
-// parameter to GxB_select is ignored and may be GrB_NULL.
-
-// GxB_NONZERO, GxB_EQ_ZERO, GxB_NE_THUNK, and GxB_EQ_THUNK work on all 13
-// built-in types (including complex).  They cannot be used for user-defined
-// types.
-
-// GxB_GT_*, GxB_GE_*, GxB_LT_*, and GxB_LE_* only work on the 11 built-in
-// real/integer/bool types (not complex).  They cannot be used for user-defined
-// types.
-
-//------------------------------------------------------------------------------
-// select operators: (historical)
-//------------------------------------------------------------------------------
-
-// User-defined GxB_SelectOps no longer be constructed.
-// GrB_IndexUnaryOp_new instead.
-
-// GxB_SelectOp_xtype is historical.  Use a GrB_IndexUnaryOp instead.
-GrB_Info GxB_SelectOp_xtype     // return the type of x
-(
-    GrB_Type *xtype,            // return type of input x
-    GxB_SelectOp selectop       // select operator
-) ;
-
-// GxB_SelectOp_ttype is historical.  Use a GrB_IndexUnaryOp instead.
-GrB_Info GxB_SelectOp_ttype     // return the type of thunk
-(
-    GrB_Type *ttype,            // return type of input thunk
-    GxB_SelectOp selectop       // select operator
-) ;
+GB_GLOBAL GxB_SelectOp GxB_TRIL, GxB_TRIU, GxB_DIAG, GxB_OFFDIAG, GxB_NONZERO,
+GxB_EQ_ZERO, GxB_GT_ZERO, GxB_GE_ZERO, GxB_LT_ZERO, GxB_LE_ZERO, GxB_NE_THUNK,
+GxB_EQ_THUNK, GxB_GT_THUNK, GxB_GE_THUNK, GxB_LT_THUNK, GxB_LE_THUNK ;
+GrB_Info GxB_SelectOp_xtype (GrB_Type *xtype, GxB_SelectOp selectop) ;
+GrB_Info GxB_SelectOp_ttype (GrB_Type *ttype, GxB_SelectOp selectop) ;
 
 //==============================================================================
 // GrB_IndexUnaryOp: a unary operator that depends on the row/col indices
@@ -7708,42 +7627,19 @@ GrB_Info GrB_Matrix_select_UDT      // C<M>=accum(C,op(A))
 #endif
 
 //==============================================================================
-// GxB_select: matrix and vector selection (historical)
+// GxB_select: matrix and vector selection (DEPRECATED: use GrB_select instead)
 //==============================================================================
 
-// GrB_select and with the GrB_IndexUnaryOp operators should be used instead.
-
-GrB_Info GxB_Vector_select          // w<mask> = accum (w, op(u,k))
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GxB_SelectOp op,          // operator to apply to the entries
-    const GrB_Vector u,             // first input:  vector u
-    const GrB_Scalar Thunk,         // optional input for the select operator
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
-GrB_Info GxB_Matrix_select          // C<Mask> = accum (C, op(A,k)) or op(A',k)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
-    const GxB_SelectOp op,          // operator to apply to the entries
-    const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Scalar Thunk,         // optional input for the select operator
-    const GrB_Descriptor desc       // descriptor for C, mask, and A
-) ;
-
+GrB_Info GxB_Vector_select (GrB_Vector w, const GrB_Vector mask,
+const GrB_BinaryOp accum, const GxB_SelectOp op, const GrB_Vector u,
+const GrB_Scalar Thunk, const GrB_Descriptor desc) ;
+GrB_Info GxB_Matrix_select (GrB_Matrix C, const GrB_Matrix Mask,
+const GrB_BinaryOp accum, const GxB_SelectOp op, const GrB_Matrix A,
+const GrB_Scalar Thunk, const GrB_Descriptor desc) ;
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_select(C,Mask,accum,op,A,Thunk,desc)    \
-    _Generic                                        \
-    (                                               \
-        (C),                                        \
-            GrB_Vector   : GxB_Vector_select ,      \
-            GrB_Matrix   : GxB_Matrix_select        \
-    )                                               \
-    (C, Mask, accum, op, A, Thunk, desc)
+#define GxB_select(C,Mask,accum,op,A,Thunk,desc) _Generic \
+((C), GrB_Vector:GxB_Vector_select , GrB_Matrix:GxB_Matrix_select ) \
+(C, Mask, accum, op, A, Thunk, desc)
 #endif
 
 //==============================================================================
@@ -9287,13 +9183,8 @@ GrB_Info GxB_IndexUnaryOp_fprint    // print and check a GrB_IndexUnaryOp
     FILE *f                         // file for output
 ) ;
 
-GrB_Info GxB_SelectOp_fprint        // print and check a GxB_SelectOp
-(
-    GxB_SelectOp selectop,          // object to print and check
-    const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
-    FILE *f                         // file for output
-) ;
+GrB_Info GxB_SelectOp_fprint (GxB_SelectOp op, const char *name,
+    GxB_Print_Level pr, FILE *f) ;
 
 GrB_Info GxB_Monoid_fprint          // print and check a GrB_Monoid
 (

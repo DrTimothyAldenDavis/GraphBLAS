@@ -216,7 +216,6 @@ GB_GOTCHA ;
         char *dot = "." ;
         if (home == NULL)
         { 
-GB_GOTCHA ;
             // Windows: look for LOCALAPPDATA
             home = getenv ("LOCALAPPDATA") ;
             dot = "" ;
@@ -235,14 +234,12 @@ GB_GOTCHA ;
     }
 
     if (GB_jit_cache_path == NULL)
-    { 
-GB_GOTCHA ;
+    {
         // cannot determine the JIT cache.  Disable loading and compiling, but
         // continue with the rest of the initializations.  The PreJIT could
         // still be used.
         GBURBLE ("(jit: unable to access cache path, jit disabled) ") ;
         GB_jit_control = GxB_JIT_RUN ;
-printf ("\nJIT init %d: %d\n", __LINE__, GB_jit_control) ;
         GB_FREE_STUFF (GB_jit_cache_path) ;
         GB_COPY_STUFF (GB_jit_cache_path, "") ;
     }
@@ -455,7 +452,6 @@ GB_GOTCHA ;
 GB_GOTCHA ;
             // out of memory
             GB_jit_control = GxB_JIT_PAUSE ;
-printf ("\nJIT init %d: %d\n", __LINE__, GB_jit_control) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
     }
@@ -526,12 +522,11 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
     if (!ok)
     { 
 GB_GOTCHA ;
-        // JIT is disabled, or cannot determine the JIT cache path.  path.
+        // JIT is disabled, or cannot determine the JIT cache path.
         // Disable loading and compiling, but continue with the rest of the
         // initializations.  The PreJIT could still be used.
         GBURBLE ("(jit: unable to access cache path, jit disabled) ") ;
         GB_jit_control = GxB_JIT_RUN ;
-printf ("\nJIT path %d: %d\n", __LINE__, GB_jit_control) ;
         GB_FREE_STUFF (GB_jit_cache_path) ;
         GB_COPY_STUFF (GB_jit_cache_path, "") ;
     }
@@ -565,7 +560,6 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
         // failure; disable the JIT
         GBURBLE ("(jit: unable to access cache folder) ") ;
         GB_jit_control = GxB_JIT_RUN ;
-printf ("\nJIT extract %d: %d\n", __LINE__, GB_jit_control) ;
         return (error_condition) ;
     }
 
@@ -610,7 +604,6 @@ printf ("\nJIT extract %d: %d\n", __LINE__, GB_jit_control) ;
 GB_GOTCHA ;
         // out of memory; disable the JIT
         GB_jit_control = GxB_JIT_RUN ;
-printf ("\nJIT extract %d: %d\n", __LINE__, GB_jit_control) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -673,7 +666,6 @@ GB_GOTCHA ;
         // failure; disable the JIT
         GBURBLE ("(jit: failure to write source to cache folder) ") ;
         GB_jit_control = GxB_JIT_RUN ;
-printf ("\nJIT extract %d: %d\n", __LINE__, GB_jit_control) ;
         return (error_condition) ;
     }
     #endif
@@ -1440,7 +1432,6 @@ GB_GOTCHA ;
             // already loaded may be run (handled above if dl_function was
             // found).  This kernel was not loaded, so punt to generic.
             GBURBLE ("(jit: not loaded) ") ;
-printf ("\nJIT not loaded %d: %d\n", __LINE__, GB_jit_control) ;
             return (GrB_NO_VALUE) ;
         }
     }
@@ -1584,7 +1575,6 @@ GB_GOTCHA ;
         // loaded may be run (handled above if dl_function was found).  This
         // kernel was not loaded, so punt to generic.
         GBURBLE ("(jit: not loaded) ") ;
-printf ("\nJIT not loaded %d: %d\n", __LINE__, GB_jit_control) ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -1667,7 +1657,6 @@ GB_GOTCHA ;
         // unable to lock the kernel
         // disable the JIT to avoid repeated load errors
         GB_jit_control = GxB_JIT_RUN ;
-printf ("\nJIT not locked %d: %d\n", __LINE__, GB_jit_control) ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -1748,7 +1737,6 @@ GB_GOTCHA ;
             ok = false ;
             GBURBLE ("(jit: library corrupted; jit disabled) ") ;
             GB_jit_control = GxB_JIT_RUN ;
-printf ("\nJIT corrupted %d: %d\n", __LINE__, GB_jit_control) ;
             return (GrB_NO_VALUE) ;
         }
 
@@ -1776,7 +1764,6 @@ GB_GOTCHA ;
                 GB_jit_control = GxB_JIT_RUN ;
                 GBURBLE ("(jit: must recompile but not permited to;"
                     " jit load disabled) ") ;
-printf ("\nJIT compile fail %d: %d\n", __LINE__, GB_jit_control) ;
                 return (GrB_NO_VALUE) ;
             }
             GBURBLE ("(jit: loaded but must recompile) ") ;
@@ -1799,7 +1786,6 @@ printf ("\nJIT compile fail %d: %d\n", __LINE__, GB_jit_control) ;
 GB_GOTCHA ;
             // No new kernels may be compiled, so punt to generic.
             GBURBLE ("(jit: not compiled) ") ;
-printf ("\nJIT not compiled %d: %d\n", __LINE__, GB_jit_control) ;
             return (GrB_NO_VALUE) ;
         }
 
@@ -1883,7 +1869,6 @@ GB_GOTCHA ;
         dl_handle = NULL ;
         // disable the JIT to avoid repeated loading errors
         GB_jit_control = GxB_JIT_RUN ;
-printf ("\nJIT load err %d: %d\n", __LINE__, GB_jit_control) ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -1897,14 +1882,12 @@ GB_GOTCHA ;
         dl_handle = NULL ;
         // disable the JIT to avoid repeated errors
         GB_jit_control = GxB_JIT_PAUSE ;
-printf ("\nJIT hash err %d: %d\n", __LINE__, GB_jit_control) ;
         return (GrB_NO_VALUE) ;
     }
 
     return (GrB_SUCCESS) ;
     #else
     (*dl_function) = NULL ;
-printf ("\nJIT none %d: %d\n", __LINE__, GB_jit_control) ;
     return (GrB_INVALID_VALUE) ;
     #endif
 }

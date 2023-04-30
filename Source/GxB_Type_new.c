@@ -56,7 +56,6 @@ GrB_Info GxB_Type_new
 
     if (sizeof_type == 0 && (type_defn == NULL || type_name == NULL))
     { 
-GB_GOTCHA ;
         // the JIT is required to determine size of the type, but this
         // requires two valid strings: the type name and the type definition
         return (GrB_INVALID_VALUE) ;

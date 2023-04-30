@@ -925,10 +925,10 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
             {
                 va_start (ap, field) ;
-                int *use_cmake = va_arg (ap, int *) ;
+                bool *use_cmake = va_arg (ap, bool *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (use_cmake) ;
-                (*use_cmake) = (int) GB_jitifyer_get_use_cmake ( ) ;
+                (*use_cmake) = GB_jitifyer_get_use_cmake ( ) ;
             }
             break ;
 

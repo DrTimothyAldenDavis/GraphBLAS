@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Matrix_select: select entries from a matrix
+// GxB_Matrix_select: select entries from a matrix: deprecated; do not use
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// C<M> = accum(C,select(A,k)) or accum(C,select(A',))
+// DEPRECATED: use GrB_Matrix_select instead.
 
 #define GB_FREE_ALL             \
 {                               \
@@ -34,7 +34,7 @@ GrB_Info GxB_Matrix_select  // C<M> = accum (C, select(A,k)) or select(A',k)
     //--------------------------------------------------------------------------
 
     GB_WHERE (C, "GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)") ;
-    GB_BURBLE_START ("GxB_select") ;
+    GB_BURBLE_START ("GxB_select:DEPRECATED") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M_in) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;

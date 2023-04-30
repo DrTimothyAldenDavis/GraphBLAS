@@ -15,7 +15,6 @@ GrB_Info GxB_Vector_iso     // return iso status of a vector
     const GrB_Vector v      // vector to query
 )
 { 
-GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs

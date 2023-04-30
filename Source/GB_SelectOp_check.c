@@ -25,8 +25,7 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
     GBPR0 ("\n    GraphBLAS SelectOp: %s: ", ((name != NULL) ? name : "")) ;
 
     if (op == NULL)
-    { 
-GB_GOTCHA ;
+    {
         GBPR0 ("NULL\n") ;
         return (GrB_NULL_POINTER) ;
     }
