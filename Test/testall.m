@@ -131,7 +131,7 @@ logstat ('test174',t,o) ; % test GrB_assign C<A>=A
 logstat ('test155',t,o) ; % test GrB_*_setElement and GrB_*_removeElement
 logstat ('test156',t,o) ; % test GrB_assign C=A with typecasting
 logstat ('test136',s,o) ; % subassignment special cases
-logstat ('test02' ,t,b) ; % matrix copy and dup tests
+logstat ('test02' ,t,o) ; % matrix copy and dup tests
 logstat ('test109',t,b) ; % terminal monoid with user-defined type
 % logstat ('test109',s,o) ; % terminal monoid with user-defined type
 logstat ('test04' ,t,o) ; % simple mask and transpose test

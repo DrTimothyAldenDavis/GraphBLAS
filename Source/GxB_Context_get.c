@@ -37,13 +37,11 @@ GrB_Info GxB_Context_get_INT32      // get a parameter of a Context
     {
 
         case GxB_CONTEXT_NTHREADS :         // same as GxB_NTHREADS
-GB_GOTCHA ;
 
             (*value) = GB_Context_nthreads_max_get (Context) ;
             break ;
 
         case GxB_CONTEXT_GPU_ID :           // same as GxB_GPU_ID
-GB_GOTCHA ;
 
             (*value) = GB_Context_gpu_id_get (Context) ;
             break ;

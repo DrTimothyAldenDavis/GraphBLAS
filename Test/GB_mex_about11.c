@@ -269,7 +269,6 @@ void mexFunction
     CHECK (mysize == sizeof (double)) ;
     OK (GrB_free (&MyType)) ;
 
-
     OK (GxB_Type_new (&MyType, 0, "mytype", "typedef int32_t mytype ;")) ;
     OK (GxB_Type_size (&mysize, MyType)) ;
     CHECK (mysize == sizeof (int32_t)) ;
@@ -308,7 +307,7 @@ void mexFunction
     OK (GxB_print (op, 3)) ;
     OK (GxB_print (monoid, 3)) ;
 
-    OK (GrB_Semiring_new (&sr, monoid, op)) ;
+    METHOD (GrB_Semiring_new (&sr, monoid, op)) ;
     OK (GxB_print (sr, 3)) ;
 
     expected = GrB_INVALID_OBJECT ;
@@ -418,6 +417,85 @@ void mexFunction
     CHECK (!ok) ;
 
     //--------------------------------------------------------------------------
+    // GxB_Context
+    //--------------------------------------------------------------------------
+
+    GxB_Context context1 = NULL, context2 = NULL ;
+    OK (GxB_Context_new (&context1)) ;
+    OK (GxB_Context_new (&context2)) ;
+    OK (GxB_Context_engage (context1)) ;
+    expected = GrB_INVALID_VALUE ;
+    ERR (GxB_Context_disengage (context2)) ;
+    OK (GxB_Context_set (context1, GxB_CHUNK, -1)) ;
+    double chunk = 0 ;
+    OK (GxB_Context_get (context1, GxB_CHUNK, &chunk)) ;
+    CHECK (chunk == GB_CHUNK_DEFAULT) ;
+    int id1 = 0 ;
+    OK (GxB_Context_set (context1, GxB_GPU_ID, 3)) ;
+    OK (GxB_Context_get (context1, GxB_GPU_ID, &id1)) ;
+    int id2 = GB_Context_gpu_id ( ) ;
+    CHECK (id1 == id2) ;
+
+    int nth ;
+    OK (GxB_Context_set_INT32 (context1, GxB_CONTEXT_NTHREADS, 33)) ;
+    OK (GxB_Context_get_INT32 (context1, GxB_CONTEXT_NTHREADS, &nth)) ;
+    CHECK (nth == 33) ;
+
+    OK (GxB_Context_set_FP64 (context1, GxB_CONTEXT_CHUNK, 1234)) ;
+    OK (GxB_Context_get_FP64 (context1, GxB_CONTEXT_CHUNK, &chunk)) ;
+    CHECK (chunk == 1234) ;
+
+    OK (GxB_Context_set_INT32 (context1, GxB_CONTEXT_GPU_ID, 40)) ;
+    OK (GxB_Context_get_INT32 (context1, GxB_CONTEXT_GPU_ID, &id1)) ;
+
+    GrB_free (&context1) ;
+    GrB_free (&context2) ;
+
+    //--------------------------------------------------------------------------
+    // memory usage
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&A, GrB_FP32, 5, 5)) ;
+    OK (GrB_assign (A, NULL, NULL, 1, GrB_ALL, 5, GrB_ALL, 5, NULL)) ;
+    OK (GrB_Matrix_removeElement (A, 0, 0)) ;
+    OK (GxB_print (A, 3)) ;
+    size_t mem = 0 ;
+    OK (GxB_Matrix_memoryUsage (&mem, A)) ;
+    printf ("memory: %lu\n", mem) ;
+    int64_t nallocs, nallocs2 ;
+    size_t mem_deep, mem_deep2, mem_shallow, mem_shallow2 ;
+    GB_memoryUsage (&nallocs, &mem_deep, &mem_shallow, A, false) ;
+    printf ("nallocs: %ld deep: %lu shallow %lu\n", nallocs,
+        mem_deep, mem_shallow) ;
+    A->b_shallow = true ;
+    OK (GxB_print (A, 3)) ;
+    GB_memoryUsage (&nallocs2, &mem_deep2, &mem_shallow2, A, false) ;
+    printf ("nallocs: %ld deep: %lu shallow %lu\n", nallocs2,
+        mem_deep2, mem_shallow2) ;
+    CHECK (nallocs == nallocs2 + 1) ;
+    CHECK (mem_deep == mem_deep2 + mem_shallow2) ;
+    CHECK (mem_shallow2 == 25) ;
+    A->b_shallow = false ;
+    GrB_free (&A) ;
+
+    //--------------------------------------------------------------------------
+    // GB_ijproperties
+    //--------------------------------------------------------------------------
+
+    GB_WERK ("about11") ;
+    GrB_Index I [1] = {0} ;
+    int Ikind = GB_LIST ;
+    int64_t Icolon [3] = {0,0,0}, imin_result, imax_result ;
+    bool I_is_unsorted, I_has_dupl, I_is_contig ;
+    OK (GB_ijproperties (I, 0, 0, 5,
+        &Ikind, Icolon,
+        &I_is_unsorted, &I_has_dupl, &I_is_contig,
+        &imin_result, &imax_result, Werk)) ;
+    printf ("ijproperties: imin %ld imax %ld\n", imin_result, imax_result) ;
+    CHECK (imin_result == 5) ;
+    CHECK (imax_result == -1) ;
+
+    //--------------------------------------------------------------------------
     // wrapup
     //--------------------------------------------------------------------------
 
@@ -428,6 +506,7 @@ void mexFunction
 
     OK (GxB_set (GxB_BURBLE, false)) ;
     GB_mx_put_global (true) ;
-    printf ("\nGB_mex_about11: all tests passed\n\n") ;
+    printf ("\nGB_mex_about11: (compiler errors above expected) "
+        "all tests passed\n\n") ;
 }
 

@@ -62,7 +62,6 @@ GrB_Info GB_Semiring_new            // create a semiring
             &(semiring->name_size)) ;
         if (semiring->name == NULL)
         { 
-GB_GOTCHA ;
             // out of memory
             return (GrB_OUT_OF_MEMORY) ;
         }

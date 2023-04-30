@@ -36,13 +36,11 @@ GrB_Info GxB_Context_set_INT32      // set a parameter in a Context
     {
 
         case GxB_CONTEXT_NTHREADS :         // same as GxB_NTHREADS
-GB_GOTCHA ;
 
             GB_Context_nthreads_max_set (Context, value) ;
             break ;
 
         case GxB_CONTEXT_GPU_ID :           // same as GxB_GPU_ID
-GB_GOTCHA ;
 
             GB_Context_gpu_id_set (Context, value) ;
             break ;
@@ -82,7 +80,6 @@ GrB_Info GxB_Context_set_FP64       // set a parameter in a Context
     {
 
         case GxB_CONTEXT_CHUNK :         // same as GxB_CHUNK
-GB_GOTCHA ;
 
             GB_Context_chunk_set (Context, value) ;
             break ;

@@ -100,7 +100,6 @@ GrB_Info GB_Context_disengage (GxB_Context Context)
         }
         else
         { 
-GB_GOTCHA ;
             // A non-NULL Context was provided on input, but it doesn't match
             // the currently engaged Context.  This is an error.
             return (GrB_INVALID_VALUE) ;
@@ -188,7 +187,6 @@ void GB_Context_chunk_set
 {
     if (chunk < 1)
     { 
-GB_GOTCHA ;
         chunk = GB_CHUNK_DEFAULT ;
     }
     if (Context == NULL || Context == GxB_CONTEXT_WORLD)
@@ -225,7 +223,6 @@ int GB_Context_gpu_id_get (GxB_Context Context)
 //  GB_Context_gpu_id: get gpu_id from the current Context
 int GB_Context_gpu_id (void)
 { 
-GB_GOTCHA ;
     return (GB_Context_gpu_id_get (GB_CONTEXT_THREAD)) ;
 }
 
