@@ -144,6 +144,7 @@ void mexFunction
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_COMPILER_FLAGS, &t)) ;
     CHECK (MATCH (t, "-g")) ;
     OK (GxB_Global_Option_set_CHAR (GxB_JIT_C_COMPILER_FLAGS, "-O0")) ;
+    OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_COMPILER_FLAGS, &t)) ;
     CHECK (MATCH (t, "-O0")) ;
 
     OK (GxB_get (GxB_JIT_C_CMAKE_LIBS, &s)) ;
@@ -176,6 +177,7 @@ void mexFunction
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_LINKER_FLAGS, &t)) ;
     CHECK (MATCH (t, "-shared")) ;
     OK (GxB_Global_Option_set_CHAR (GxB_JIT_C_LINKER_FLAGS, " -shared  ")) ;
+    OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_LINKER_FLAGS, &t)) ;
     CHECK (MATCH (t, " -shared  ")) ;
 
     OK (GxB_get (GxB_JIT_C_LIBRARIES, &s)) ;
