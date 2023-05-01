@@ -16,6 +16,7 @@ function logstat (testscript, threads, jit_controls)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+GB_mex_finalize ;
 [debug, compact, malloc, covered] = GB_mex_debug ;
 
 % default JIT controls
@@ -42,7 +43,6 @@ for jit_trial = 1:length (jit_controls)
 
     fprintf ('jit: %d\n', jit_control) ;
     if (jit_control < 0)
-        GB_mex_finalize ;
         GB_mex_jit_control (abs (jit_control)) ;
     elseif (~isempty (jit_control))
         GB_mex_jit_control (jit_control) ;

@@ -39,7 +39,7 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
     GB_WHERE1 ("GxB_Matrix_import_HyperCSC (&A, type, nrows, ncols, "
         "&Ap, &Ah, &Ai, &Ax, Ap_size, Ah_size, Ai_size, Ax_size, iso, "
         "nvec, jumbled, desc)") ;
-    GB_BURBLE_START ("GxB_Matrix_import_HyperCSC") ;
+    // GB_BURBLE_START ("GxB_Matrix_import_HyperCSC") ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
     GB_GET_DESCRIPTOR_IMPORT (desc, fast_import) ;
 
@@ -57,7 +57,7 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
         GxB_HYPERSPARSE, true,              // hypersparse by col
         iso, fast_import, true, Werk) ;
 
-    GB_BURBLE_END ;
+    // GB_BURBLE_END ;
     return (info) ;
 }
 

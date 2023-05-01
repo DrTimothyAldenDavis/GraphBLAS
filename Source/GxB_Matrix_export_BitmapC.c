@@ -35,7 +35,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
 
     GB_WHERE1 ("GxB_Matrix_export_BitmapC (&A, &type, &nrows, &ncols, "
         "&Ab, &Ax, &Ab_size, &Ax_size, &iso, &nvals, desc)") ;
-    GB_BURBLE_START ("GxB_Matrix_export_BitmapC") ;
+    // GB_BURBLE_START ("GxB_Matrix_export_BitmapC") ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
@@ -48,7 +48,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     if (!((*A)->is_csc))
     { 
         // A = A', done in-place, to put A in by-col format
-        GBURBLE ("(transpose) ") ;
+        GBURBLE ("(export transpose) ") ;
         GB_OK (GB_transpose_in_place (*A, true, Werk)) ;
     }
 
@@ -82,7 +82,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
         ASSERT (sparsity == GxB_BITMAP) ;
         ASSERT (is_csc) ;
     }
-    GB_BURBLE_END ;
+    // GB_BURBLE_END ;
     return (info) ;
 }
 

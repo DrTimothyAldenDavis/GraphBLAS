@@ -7,8 +7,9 @@ function test251
 
 fprintf ('test251 ------------ C+=A''*B when C is dense (plus-pair)\n') ;
 
+GB_mex_jit_control
 rng ('default') ;
-GB_mex_burble (0) ;
+GB_mex_burble (1) ;
 
 plus_pair.add = 'plus' ;
 plus_pair.multiply = 'oneb' ;   % same as pair
@@ -66,9 +67,9 @@ for A_sparsity = [1 2 4 8]
                 end
 
                 % X = C + A'*B using dot4
-GB_mex_burble (1) ;
+% GB_mex_burble (1) ;
                 X2 = GB_mex_mxm  (C, [ ], add_op, plus_pair, A, B, dtn_dot) ;
-GB_mex_burble (0) ;
+% GB_mex_burble (0) ;
                 X1 = GB_spec_mxm (C, [ ], add_op, plus_pair, A, B, dtn_dot) ;
                 GB_spec_compare (X1, X2, 0, tol) ;
 

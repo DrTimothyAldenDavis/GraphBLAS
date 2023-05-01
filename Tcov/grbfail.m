@@ -10,8 +10,9 @@ clear mex
 tstart = tic ;
 system ('make purge') ;
 grbmake ;
-testcov ;
-grbshow ;
+% testcov ;
+testfail ;
+% grbshow ;
 ttotal = toc (tstart) ;
 
 fprintf ('\nTotal time, incl compilation: %8.2f minutes\n', ttotal / 60) ;

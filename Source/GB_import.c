@@ -360,7 +360,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
         // The time for this check is proportional to the size of the 5 input
         // arrays, far higher than the O(1) time for the fast import.  However,
         // this check is essential if the input data is not trusted.
-        GBURBLE ("(secure) ") ;
+        GBURBLE ("(secure import) ") ;
         GB_OK (GB_matvec_check (*A, "secure import", GxB_SILENT, NULL, "")) ;
     }
 

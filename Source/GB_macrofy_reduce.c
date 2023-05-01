@@ -176,7 +176,7 @@ GB_GOTCHA ; // zsize <= 32
                 }
                 else
                 { 
-GB_GOTCHA ; // zsize > 32
+// GB_GOTCHA ; // zsize > 32
                     // type is large; do not use panel reduction method
                     panel = 1 ;
                 }

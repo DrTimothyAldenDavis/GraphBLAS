@@ -77,7 +77,7 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
-    ASSERT (C->type == semiring->add->ztype) ;
+    ASSERT (C->type == semiring->add->op->ztype) ;
 
     // A cannot be typecasted
     ASSERT_MATRIX_OK (A, "A for saxpy5 C+=A*B", GB0) ;

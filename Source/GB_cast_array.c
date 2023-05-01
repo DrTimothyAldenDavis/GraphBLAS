@@ -91,7 +91,7 @@ GrB_Info GB_cast_array              // typecast an array
 
     if (info == GrB_NO_VALUE)
     { 
-GB_GOTCHA ; // JIT for cast_array (untestable unless GBCOMPACT is on)
+// GB_GOTCHA ; // JIT for cast_array (untestable unless GBCOMPACT is on)
         GrB_Type ctype = GB_code_type (code1, NULL) ;
         GB_Operator op = GB_unop_identity (ctype, NULL) ;
         ASSERT_OP_OK (op, "id op for cast_array", GB0) ;

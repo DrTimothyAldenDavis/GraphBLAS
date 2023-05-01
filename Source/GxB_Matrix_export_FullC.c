@@ -32,7 +32,7 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
 
     GB_WHERE1 ("GxB_Matrix_export_FullC (&A, &type, &nrows, &ncols, "
         "&Ax, &Ax_size, &iso, desc)") ;
-    GB_BURBLE_START ("GxB_Matrix_export_FullC") ;
+    // GB_BURBLE_START ("GxB_Matrix_export_FullC") ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
@@ -56,7 +56,7 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     if (!((*A)->is_csc))
     { 
         // A = A', done in-place, to put A in by-col format
-        GBURBLE ("(transpose) ") ;
+        GBURBLE ("(export transpose) ") ;
         GB_OK (GB_transpose_in_place (*A, true, Werk)) ;
         GB_MATRIX_WAIT (*A) ;
     }
@@ -91,7 +91,7 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
         ASSERT (sparsity == GxB_FULL) ;
         ASSERT (is_csc) ;
     }
-    GB_BURBLE_END ;
+    // GB_BURBLE_END ;
     return (info) ;
 }
 

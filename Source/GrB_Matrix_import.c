@@ -310,7 +310,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     if (GB_check_if_iso (*A))
     { 
         // All entries in A are the same; convert A to iso
-        GBURBLE ("(post iso) ") ;
+        GBURBLE ("(import post iso) ") ;
         (*A)->iso = true ;
         GB_OK (GB_convert_any_to_iso (*A, NULL)) ;
     }
@@ -346,12 +346,12 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_import_, T) /* import a matrix */           \
 {                                                                              \
     GB_WHERE1 (GB_STR(prefix) "_Matrix_import_" GB_STR(T) " (&A, type, nrows," \
         " ncols, Ap, Ai, Ax, Ap_len, Ai_len, Ax_len, format)") ;               \
-    GB_BURBLE_START (GB_STR(prefix) "_Matrix_import_" GB_STR(T)) ;             \
+/*  GB_BURBLE_START (GB_STR(prefix) "_Matrix_import_" GB_STR(T)) ;  */         \
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;                                       \
     if (type->code != acode) return (GrB_DOMAIN_MISMATCH) ;                    \
     GrB_Info info = GB_import_worker (A, type, nrows, ncols, Ap, Ai,           \
-        (const void *) Ax, Ap_len, Ai_len, Ax_len, format, Werk) ;          \
-    GB_BURBLE_END ;                                                            \
+        (const void *) Ax, Ap_len, Ai_len, Ax_len, format, Werk) ;             \
+/*  GB_BURBLE_END ; */                                                         \
     return (info) ;                                                            \
 }
 

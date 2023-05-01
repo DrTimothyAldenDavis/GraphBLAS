@@ -36,7 +36,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     GB_WHERE1 ("GxB_Matrix_import_CSC (&A, type, nrows, ncols, "
         "&Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, iso, "
         "jumbled, desc)") ;
-    GB_BURBLE_START ("GxB_Matrix_import_CSC") ;
+    // GB_BURBLE_START ("GxB_Matrix_import_CSC") ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
     GB_GET_DESCRIPTOR_IMPORT (desc, fast_import) ;
 
@@ -54,7 +54,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
         GxB_SPARSE, true,                   // sparse by col
         iso, fast_import, true, Werk) ;
 
-    GB_BURBLE_END ;
+    // GB_BURBLE_END ;
     return (info) ;
 }
 

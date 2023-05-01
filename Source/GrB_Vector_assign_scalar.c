@@ -102,7 +102,6 @@ GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
     // if w has a user-defined type, its type must match the scalar type
     if (w->type->code == GB_UDT_code && w->type != scalar->type)
     { 
-GB_GOTCHA ; // domain mismatch
         GB_ERROR (GrB_DOMAIN_MISMATCH, "Input of type [%s]\n"
             "cannot be typecast to output of type [%s]",
             scalar->type->name, w->type->name) ;

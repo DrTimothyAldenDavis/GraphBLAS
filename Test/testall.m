@@ -93,6 +93,8 @@ if (malloc_debugging)
 end
 %}
 
+logstat ('test253',t,b) ; % basic JIT tests
+logstat ('test252',t,b) ; % basic tests
 logstat ('test251',t,b) ; % dot4, dot2, with plus_pair
 logstat ('test250',t,o) ; % basic tests
 logstat ('test249',t,o) ; % GxB_Context object
