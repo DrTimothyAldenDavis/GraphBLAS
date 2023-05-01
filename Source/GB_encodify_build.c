@@ -30,7 +30,7 @@ uint64_t GB_encodify_build      // encode an build problem
 
     if (dup != NULL && dup->hash == UINT64_MAX)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // no hash
         // cannot JIT this dup operator
         memset (encoding, 0, sizeof (GB_jit_encoding)) ;
         (*suffix) = NULL ;

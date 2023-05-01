@@ -1,5 +1,5 @@
 function C = GB_spec_Matrix_ewiseMult (C, Mask, accum, mult, A, B, descriptor)
-%GB_SPEC_MATRIX_EWISEMULT a mimic of GrB_Matrix_ewiseMult
+%GB_SPEC_MATRIX_EWISEMULT a mimic of GrB_Matrix_eWiseMult
 %
 % Usage:
 % C = GB_spec_Matrix_ewiseMult (C, Mask, accum, mult, A, B, descriptor)
@@ -70,4 +70,5 @@ T.class = ztype ;
 
 % C<Mask> = accum (C,T): apply the accum, then Mask, and return the result
 C = GB_spec_accum_mask (C, Mask, accum, T, C_replace, Mask_comp, 0) ;
+
 

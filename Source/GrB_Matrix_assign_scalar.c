@@ -111,7 +111,7 @@ GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),s)
     // if C has a user-defined type, its type must match the scalar type
     if (C->type->code == GB_UDT_code && C->type != scalar->type)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // domain mismatch
         GB_ERROR (GrB_DOMAIN_MISMATCH, "Input of type [%s]\n"
             "cannot be typecast to output of type [%s]",
             scalar->type->name, C->type->name) ;

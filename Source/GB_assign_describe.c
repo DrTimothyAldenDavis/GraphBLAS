@@ -106,13 +106,13 @@ void GB_assign_describe
     switch (assign_kind)
     {
         case GB_ROW_ASSIGN : 
-GB_GOTCHA ;
+GB_GOTCHA ; // burble row assign
             // C(i,J) = A
             snprintf (str, slen, "C%s(i,%s) %s= A ", Mask, Jstr, Op) ;
             break ;
 
         case GB_COL_ASSIGN : 
-GB_GOTCHA ;
+GB_GOTCHA ; // burble col assign
             // C(I,j) = A
             snprintf (str, slen, "C%s(%s,j) %s= A ", Mask, Istr, Op) ;
             break ;
@@ -126,7 +126,7 @@ GB_GOTCHA ;
             }
             else
             { 
-GB_GOTCHA ;
+GB_GOTCHA ; // burble assign, C<M>(I,J) = A
                 // C<M>(I,J) = A
                 snprintf (str, slen, "C%s(%s,%s) %s= %s ", Mask, Istr, Jstr,
                     Op, S) ;
@@ -142,8 +142,8 @@ GB_GOTCHA ;
             }
             else
             { 
-GB_GOTCHA ;
-                // C<M>(I,J) = A
+GB_GOTCHA ; // burble subassign, C<M>(I,J) = A
+                // C(I,J)<M> = A
                 snprintf (str, slen, "C(%s,%s)%s %s= %s ", Istr, Jstr, Mask,
                     Op, S) ;
             }

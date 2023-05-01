@@ -212,7 +212,7 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     }
     else
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // JIT failure
         // out of memory, or other error
         GB_FREE_ALL ;
     }

@@ -57,7 +57,7 @@ void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
         //----------------------------------------------------------------------
 
         case GB_ONE_unop_code       :       // z = 1
-GB_GOTCHA ;
+GB_GOTCHA ; // ONE
             e = 1 ; break ;                 // z = 1
 
         case GB_IDENTITY_unop_code  :       // z = x
@@ -597,22 +597,22 @@ GB_GOTCHA ;
         //----------------------------------------------------------------------
 
         case GB_POSITIONI_unop_code     :   // z = position_i(A(i,j)) == i
-GB_GOTCHA ;
+GB_GOTCHA ; // POSITIONI
             i_dep = true ;
             e = 157 ; break ;               // z = i
 
         case GB_POSITIONI1_unop_code    :   // z = position_i1(A(i,j)) == i+1
-GB_GOTCHA ;
+GB_GOTCHA ; // POSITIONI1
             i_dep = true ;
             e = 158 ; break ;               // z = i+1
 
         case GB_POSITIONJ_unop_code     :   // z = position_j(A(i,j)) == j
-GB_GOTCHA ;
+GB_GOTCHA ; // POSITIONJ
             j_dep = true ;
             e = 159 ; break ;               // z = j
 
         case GB_POSITIONJ1_unop_code    :   // z = position_j1(A(i,j)) == j+1
-GB_GOTCHA ;
+GB_GOTCHA ; // POSITIONJ1
             j_dep = true ;
             e = 160 ; break ;               // z = j+1
 
@@ -628,41 +628,41 @@ GB_GOTCHA ;
 
         // Result is INT32 or INT64, depending on i and y:
         case GB_ROWINDEX_idxunop_code   :   // z = (i+y)
-GB_GOTCHA ;
+GB_GOTCHA ; // ROWINDEX
             i_dep = true ;
             e = 232 ; break ;
 
         // Result is BOOL, depending on i and y:
         case GB_ROWLE_idxunop_code      :   // z = (i <= y)
-GB_GOTCHA ;
+GB_GOTCHA ; // ROWLE
             i_dep = true ;
             e = 233 ; break ;
 
         case GB_ROWGT_idxunop_code      :   // z = (i > y)
-GB_GOTCHA ;
+GB_GOTCHA ; // ROWGT
             i_dep = true ;
             e = 234 ; break ;
 
         // Result is INT32 or INT64, depending on j and y:
         case GB_COLINDEX_idxunop_code   :   // z = (j+y)
-GB_GOTCHA ;
+GB_GOTCHA ; // COLINDEX
             j_dep = true ;
             e = 235 ; break ;
 
         // Result is BOOL, depending on j and y:
         case GB_COLLE_idxunop_code      :   // z = (j <= y)
-GB_GOTCHA ;
+GB_GOTCHA ; // COLLE
             j_dep = true ;
             e = 236 ; break ;
 
         case GB_COLGT_idxunop_code      :   // z = (j > y)
-GB_GOTCHA ;
+GB_GOTCHA ; // COLGT
             j_dep = true ;
             e = 237 ; break ;
 
         // Result is INT32 or INT64, depending on i, j, and y:
         case GB_DIAGINDEX_idxunop_code  :   // z = (j-(i+y))
-GB_GOTCHA ;
+GB_GOTCHA ; // DIAGINDEX
             i_dep = true ;
             j_dep = true ;
             e = 238 ; break ;
@@ -674,25 +674,25 @@ GB_GOTCHA ;
 
         // Result is BOOL, depending on i, j, and y:
         case GB_TRIL_idxunop_code       :   // z = (j <= (i+y))
-GB_GOTCHA ;
+GB_GOTCHA ; // TRIL
             i_dep = true ;
             j_dep = true ;
             e = 240 ; break ;
 
         case GB_TRIU_idxunop_code       :   // z = (j >= (i+y))
-GB_GOTCHA ;
+GB_GOTCHA ; // TRIU
             i_dep = true ;
             j_dep = true ;
             e = 241 ; break ;
 
         case GB_DIAG_idxunop_code       :   // z = (j == (i+y))
-GB_GOTCHA ;
+GB_GOTCHA ; // DIAG
             i_dep = true ;
             j_dep = true ;
             e = 242 ; break ;
 
         case GB_OFFDIAG_idxunop_code    :   // z = (j != (i+y))
-GB_GOTCHA ;
+GB_GOTCHA ; // OFFDIAG
             i_dep = true ;
             j_dep = true ;
             e = 243 ; break ;
@@ -703,7 +703,7 @@ GB_GOTCHA ;
 
         // Result is BOOL, depending on the value x and y:
         case GB_VALUENE_idxunop_code    :   // z = (x != y)
-GB_GOTCHA ;
+GB_GOTCHA ; // VALUENE
 
             switch (xcode)
             {
@@ -714,7 +714,7 @@ GB_GOTCHA ;
             break ;
 
         case GB_VALUEEQ_idxunop_code    :   // z = (x == y)
-GB_GOTCHA ;
+GB_GOTCHA ; // VALUEEQ
 
             switch (xcode)
             {
@@ -725,16 +725,16 @@ GB_GOTCHA ;
             break ;
 
         case GB_VALUEGT_idxunop_code    :   // z = (x > y)
-GB_GOTCHA ;
+GB_GOTCHA ; // VALUEGT
             e = 250 ; break ;
         case GB_VALUEGE_idxunop_code    :   // z = (x >= y)
-GB_GOTCHA ;
+GB_GOTCHA ; // VALUEGE
             e = 251 ; break ;
         case GB_VALUELT_idxunop_code    :   // z = (x < y)
-GB_GOTCHA ;
+GB_GOTCHA ; // VALUELT
             e = 252 ; break ;
         case GB_VALUELE_idxunop_code    :   // z = (x <= y)
-GB_GOTCHA ;
+GB_GOTCHA ; // VALUELE
             e = 253 ; break ;
 
         //----------------------------------------------------------------------

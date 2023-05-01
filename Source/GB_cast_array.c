@@ -91,7 +91,7 @@ GrB_Info GB_cast_array              // typecast an array
 
     if (info == GrB_NO_VALUE)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // JIT for cast_array (untestable unless GBCOMPACT is on)
         GrB_Type ctype = GB_code_type (code1, NULL) ;
         GB_Operator op = GB_unop_identity (ctype, NULL) ;
         ASSERT_OP_OK (op, "id op for cast_array", GB0) ;
@@ -105,7 +105,7 @@ GB_GOTCHA ;
 
     if (info == GrB_NO_VALUE)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // generic for cast_array (untestable unless GBCOMPACT is on)
         GB_BURBLE_N (anz, "(generic cast array) ") ;
         int64_t csize = GB_code_size (code1, 0) ;
         int64_t asize = GB_code_size (code2, 0) ;

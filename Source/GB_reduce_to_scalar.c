@@ -370,7 +370,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 }
                 else
                 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // generic terminal
                     // break if terminal value reached
                     #undef  GB_MONOID_IS_TERMINAL
                     #define GB_MONOID_IS_TERMINAL 1
@@ -389,7 +389,7 @@ GB_GOTCHA ;
 
     if (info != GrB_SUCCESS)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // JIT failure
         // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;

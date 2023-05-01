@@ -40,15 +40,14 @@ GB_putc
 
 // special case semirings:
 GB_is_any_pair_semiring
-GB_is_plus_pair_real_semiring
-GB_is_eq_pair_semiring
 GB_is_lxor_pair_semiring
-GB_is_plus_8_pair_semiring
-GB_is_plus_16_pair_semiring
-GB_is_plus_32_pair_semiring
-GB_is_plus_big_pair_semiring
-GB_is_plus_fc32_pair_semiring
-GB_is_plus_fc64_pair_semiring
+GB_is_plus_pair_real_semiring
+GB_is_plus_pair_8_semiring
+GB_is_plus_pair_16_semiring
+GB_is_plus_pair_32_semiring
+GB_is_plus_pair_big_semiring
+GB_is_plus_pair_fc32_semiring
+GB_is_plus_pair_fc64_semiring
 GB_is_min_firstj_semiring
 GB_is_max_firstj_semiring
 GB_semiring_has_avx

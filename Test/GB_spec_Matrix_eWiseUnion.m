@@ -1,5 +1,5 @@
 function C = GB_spec_Matrix_eWiseUnion (C, Mask, accum, add, A, alpha, B, beta, descriptor, ignore)
-%GB_SPEC_MATRIX_EWISEADD a mimic of GxB_Matrix_eWiseUnion
+%GB_SPEC_MATRIX_EWISEUNION a mimic of GxB_Matrix_eWiseUnion
 %
 % Usage:
 % C = GB_spec_Matrix_eWiseUnion (C, Mask, accum, add, A, alpha, B, beta, descriptor)
@@ -100,4 +100,5 @@ T.class = ztype ;
 
 % C<Mask> = accum (C,T): apply the accum, then Mask, and return the result
 C = GB_spec_accum_mask (C, Mask, accum, T, C_replace, Mask_comp, 0) ;
+
 

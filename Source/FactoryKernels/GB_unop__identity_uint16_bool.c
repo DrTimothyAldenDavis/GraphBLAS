@@ -52,7 +52,7 @@ GrB_Info GB (_unop_apply__identity_uint16_bool)
     int64_t anz,
     int nthreads
 )
-{
+{ 
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else

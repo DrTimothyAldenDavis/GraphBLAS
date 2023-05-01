@@ -27,7 +27,7 @@ uint64_t GB_encodify_user_type      // encode a user defined type
 
     if (type != NULL && type->hash == UINT64_MAX)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // no hash
         // cannot JIT this type
         memset (encoding, 0, sizeof (GB_jit_encoding)) ;
         (*suffix) = NULL ;

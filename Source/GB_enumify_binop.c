@@ -288,7 +288,7 @@ void GB_enumify_binop
 
             switch (xcode)
             {
-                case GB_INT8_code   : e = 75 ; GB_GOTCHA ; break ;
+                case GB_INT8_code   : e = 75 ; GB_GOTCHA ; break ;  // bget
                 case GB_INT16_code  : e = 76 ; break ;
                 case GB_INT32_code  : e = 77 ; break ;
                 case GB_INT64_code  : e = 78 ; break ;
@@ -304,7 +304,7 @@ void GB_enumify_binop
 
             switch (xcode)
             {
-                case GB_INT8_code   : e = 83 ; GB_GOTCHA ; break ;
+                case GB_INT8_code   : e = 83 ; GB_GOTCHA ; break ;  // bset
                 case GB_INT16_code  : e = 84 ; break ;
                 case GB_INT32_code  : e = 85 ; break ;
                 case GB_INT64_code  : e = 86 ; break ;
@@ -320,7 +320,7 @@ void GB_enumify_binop
 
             switch (xcode)
             {
-                case GB_INT8_code   : e = 91 ; GB_GOTCHA ; break ;
+                case GB_INT8_code   : e = 91 ; GB_GOTCHA ; break ;  // bclr
                 case GB_INT16_code  : e = 92 ; break ;
                 case GB_INT32_code  : e = 93 ; break ;
                 case GB_INT64_code  : e = 94 ; break ;
@@ -336,7 +336,7 @@ void GB_enumify_binop
 
             switch (xcode)
             {
-                case GB_INT8_code   : e =  99 ; GB_GOTCHA ; break ;
+                case GB_INT8_code   : e =  99 ; GB_GOTCHA ; break ; // bshift
                 case GB_INT16_code  : e = 100 ; break ;
                 case GB_INT32_code  : e = 101 ; break ;
                 case GB_INT64_code  : e = 102 ; break ;
@@ -353,7 +353,7 @@ void GB_enumify_binop
             switch (xcode)
             {
                 case GB_BOOL_code   : e =  71 ; break ; // x >= y
-                case GB_INT8_code   : e = 107 ; GB_GOTCHA ; break ;
+                case GB_INT8_code   : e = 107 ; GB_GOTCHA ; break ; // pow
                 case GB_INT16_code  : e = 108 ; break ;
                 case GB_INT32_code  : e = 109 ; break ;
                 case GB_INT64_code  : e = 110 ; break ;
@@ -430,11 +430,11 @@ void GB_enumify_binop
             break ;
 
         case GB_CMPLX_binop_code :  // z = cmplx (x,y)
-GB_GOTCHA ; 
+GB_GOTCHA ; // cmplx
             switch (xcode)
             {
-                case GB_FP32_code   : e = 131 ; GB_GOTCHA ; break ;
-                case GB_FP64_code   : e = 132 ; GB_GOTCHA ; break ;
+                case GB_FP32_code   : e = 131 ; GB_GOTCHA ; break ; // cmplx
+                case GB_FP64_code   : e = 132 ; GB_GOTCHA ; break ; // cmplx
                 default: ;
             }
             break ;

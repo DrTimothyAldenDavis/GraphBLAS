@@ -285,7 +285,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
     if (info != GrB_SUCCESS)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // JIT failure
         // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;

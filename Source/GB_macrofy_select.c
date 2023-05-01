@@ -163,7 +163,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
                      "    GB_Z_TYPE z ;                      \\\n") ;
         if (xcode == 0)
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // operator does not depend on x
             // operator does not depend on x
             fprintf (fp, "    GB_IDXUNOP (z, , i, j, y) ; \\\n") ;
         }
@@ -186,12 +186,12 @@ GB_GOTCHA ;
         }
         else if (nargs == 3)
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // nargs 3
             fprintf (fp, cast_z_to_bool, "    bool keep", "z", "z") ;
         }
         else
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // cast to bool
             fprintf (fp, cast_z_to_bool, "    bool keep", "z") ;
         }
     }

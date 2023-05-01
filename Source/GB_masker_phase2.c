@@ -131,7 +131,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     }
     else if (znz == 0)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // Z empty
         // Z is empty: R is iso if C is iso
         R_iso = C->iso ;
     }

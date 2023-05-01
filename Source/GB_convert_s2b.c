@@ -244,7 +244,7 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
 
     if (info != GrB_SUCCESS)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // JIT failure
         // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;

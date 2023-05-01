@@ -1,5 +1,5 @@
 function [C,P] = GB_spec_Vector_sort (op, A, descriptor)
-%GB_SPEC_MATRIX_SORT a mimic of GxB_Vector_sort
+%GB_SPEC_VECTOR_SORT a mimic of GxB_Vector_sort
 %
 % Usage:
 % [C,P] = GB_spec_Vector_sort (op, A, descriptor)
@@ -52,4 +52,5 @@ P.class = 'int64' ;
         C.matrix (1:nvals, j) = T (:,1)     ; C.pattern (1:nvals, j) = true ;
         P.matrix (1:nvals, j) = T (:,2) - 1 ; P.pattern (1:nvals, j) = true ;
     end
+
 

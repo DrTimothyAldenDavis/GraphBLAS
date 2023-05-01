@@ -1,5 +1,5 @@
 function make (what)
-%MAKE compiles the @GrB interface to GraphBLAS (for testing only)
+%MAKE compiles the test interface to GraphBLAS
 % and dynamically links it with the libraries in ../build/libgraphblas.
 %
 % This @GrB interface to GraphBLAS is meant for testing and development,
@@ -227,4 +227,5 @@ if (ispc)
     cd ../../Test
     pwd
 end
+
 

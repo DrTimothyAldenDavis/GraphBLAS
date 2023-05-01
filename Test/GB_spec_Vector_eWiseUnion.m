@@ -1,5 +1,5 @@
 function w = GB_spec_Vector_eWiseUnion (w, mask, accum, add, u, alpha, v, beta, descriptor)
-%GB_SPEC_VECTOR_EWISEADD a mimic of GxB_Vector_eWiseUnion
+%GB_SPEC_VECTOR_EWISEUNION a mimic of GxB_Vector_eWiseUnion
 %
 % Usage:
 % w = GB_spec_Vector_eWiseUnion (w, mask, accum, add, u, v, descriptor)
@@ -37,5 +37,6 @@ if (isfield (descriptor, 'inp1'))
 end
 
 w = GB_spec_Matrix_eWiseUnion (w, mask, accum, add, u, alpha, v, beta, descriptor) ;
+
 
 

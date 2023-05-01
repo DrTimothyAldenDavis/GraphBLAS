@@ -334,14 +334,6 @@ else
     fprintf (f, 'm4_define(`GB_is_plus_pair_real_semiring'', `'')\n') ;
 end
 
-if (is_eq && is_pair)
-    % eq_pair_bool
-    fprintf (f, 'm4_define(`GB_is_eq_pair_semiring'', `%s'')\n', ...
-        '#define GB_IS_EQ_PAIR_SEMIRING 1') ;
-else
-    fprintf (f, 'm4_define(`GB_is_eq_pair_semiring'', `'')\n') ;
-end
-
 if (is_lxor && is_pair)
     % xor_pair_bool
     fprintf (f, 'm4_define(`GB_is_lxor_pair_semiring'', `%s'')\n', ...
@@ -352,26 +344,26 @@ end
 
 if (is_plus && ztype_nbits == 8 && is_pair)
     % plus_pair_(int8, uint8)
-    fprintf (f, 'm4_define(`GB_is_plus_8_pair_semiring'', `%s'')\n', ...
-        '#define GB_IS_PLUS_8_PAIR_SEMIRING 1') ;
+    fprintf (f, 'm4_define(`GB_is_plus_pair_8_semiring'', `%s'')\n', ...
+        '#define GB_IS_PLUS_PAIR_8_SEMIRING 1') ;
 else
-    fprintf (f, 'm4_define(`GB_is_plus_8_pair_semiring'', `'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_plus_pair_8_semiring'', `'')\n') ;
 end
 
 if (is_plus && ztype_nbits == 16 && is_pair)
     % plus_pair_(int16, uint16)
-    fprintf (f, 'm4_define(`GB_is_plus_16_pair_semiring'', `%s'')\n', ...
-        '#define GB_IS_PLUS_16_PAIR_SEMIRING 1') ;
+    fprintf (f, 'm4_define(`GB_is_plus_pair_16_semiring'', `%s'')\n', ...
+        '#define GB_IS_PLUS_PAIR_16_SEMIRING 1') ;
 else
-    fprintf (f, 'm4_define(`GB_is_plus_16_pair_semiring'', `'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_plus_pair_16_semiring'', `'')\n') ;
 end
 
 if (is_plus && ztype_nbits == 32 && is_integer && is_pair)
     % plus_pair_(int32, uint32)
-    fprintf (f, 'm4_define(`GB_is_plus_32_pair_semiring'', `%s'')\n', ...
-        '#define GB_IS_PLUS_32_PAIR_SEMIRING 1') ;
+    fprintf (f, 'm4_define(`GB_is_plus_pair_32_semiring'', `%s'')\n', ...
+        '#define GB_IS_PLUS_PAIR_32_SEMIRING 1') ;
 else
-    fprintf (f, 'm4_define(`GB_is_plus_32_pair_semiring'', `'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_plus_pair_32_semiring'', `'')\n') ;
 end
 
 if (is_plus && is_pair && ...
@@ -380,26 +372,26 @@ if (is_plus && is_pair && ...
      isequal (ztype, 'float') || ...
      isequal (ztype, 'double')))
     % plus_pair_(int64, uint64, float, double)
-    fprintf (f, 'm4_define(`GB_is_plus_big_pair_semiring'', `%s'')\n', ...
-        '#define GB_IS_PLUS_BIG_PAIR_SEMIRING 1') ;
+    fprintf (f, 'm4_define(`GB_is_plus_pair_big_semiring'', `%s'')\n', ...
+        '#define GB_IS_PLUS_PAIR_BIG_SEMIRING 1') ;
 else
-    fprintf (f, 'm4_define(`GB_is_plus_big_pair_semiring'', `'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_plus_pair_big_semiring'', `'')\n') ;
 end
 
 if (is_plus && is_pair && isequal (ztype, 'GxB_FC32_t'))
     % plus_pair_fc32
-    fprintf (f, 'm4_define(`GB_is_plus_fc32_pair_semiring'', `%s'')\n', ...
-        '#define GB_IS_PLUS_FC32_PAIR_SEMIRING 1') ;
+    fprintf (f, 'm4_define(`GB_is_plus_pair_fc32_semiring'', `%s'')\n', ...
+        '#define GB_IS_PLUS_PAIR_FC32_SEMIRING 1') ;
 else
-    fprintf (f, 'm4_define(`GB_is_plus_fc32_pair_semiring'', `'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_plus_pair_fc32_semiring'', `'')\n') ;
 end
 
 if (is_plus && is_pair && isequal (ztype, 'GxB_FC64_t'))
     % plus_pair_fc64
-    fprintf (f, 'm4_define(`GB_is_plus_fc64_pair_semiring'', `%s'')\n', ...
-        '#define GB_IS_PLUS_FC64_PAIR_SEMIRING 1') ;
+    fprintf (f, 'm4_define(`GB_is_plus_pair_fc64_semiring'', `%s'')\n', ...
+        '#define GB_IS_PLUS_PAIR_FC64_SEMIRING 1') ;
 else
-    fprintf (f, 'm4_define(`GB_is_plus_fc64_pair_semiring'', `'')\n') ;
+    fprintf (f, 'm4_define(`GB_is_plus_pair_fc64_semiring'', `'')\n') ;
 end
 
 if (codegen_contains (ztype, 'GxB_FC'))

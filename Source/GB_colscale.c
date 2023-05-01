@@ -360,7 +360,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
 
     if (info != GrB_SUCCESS)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // JIT failure
         // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;

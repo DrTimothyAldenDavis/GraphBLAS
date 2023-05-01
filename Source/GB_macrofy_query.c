@@ -63,7 +63,7 @@ void GB_macrofy_query
     }
     else if (op0 == op1)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // op0 == op1
         // op1 is user-defined, but the same as op0
         fprintf (fp, "    defn [1] = defn [0] ;\n") ;
     }

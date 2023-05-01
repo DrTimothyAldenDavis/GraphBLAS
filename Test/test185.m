@@ -87,7 +87,6 @@ for da = [0.01 0.1 .5 0.9 inf]
                 err = norm (C3 - C2.matrix, 1) ;
                 maxerr = max (maxerr, err) ;
                 assert (err < 1e-12) ;
-
             end
         end
     end

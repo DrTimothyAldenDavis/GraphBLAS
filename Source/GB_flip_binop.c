@@ -38,7 +38,7 @@ GrB_BinaryOp GB_flip_binop  // flip a binary operator
 
     if (for_ewise && GB_IS_BINARYOP_CODE_POSITIONAL (op->opcode))
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // positional binop for ewise
         // built-in positional ops (firsti, firstj, secondi, secondj) are
         // not flipped for eWise operations
         return (op) ;

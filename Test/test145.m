@@ -1,5 +1,5 @@
 function test145
-%TEST145 test dot4
+%TEST145 test dot4 with rdiv2 operator
 % GB_AxB_dot4 computes C+=A'*B when C is dense.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.

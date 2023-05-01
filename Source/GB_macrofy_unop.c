@@ -44,17 +44,17 @@ void GB_macrofy_unop
         bool is_macro = GB_macrofy_defn (fp, 3, op->name, op->defn) ;
         if (is_macro)
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // user macro
             fprintf (fp, "// unary operator %s defined as a macro:\n",
                 op->name) ;
         }
         fprintf (fp, "#define %s(z,x,%s,y) ", macro_name, ij) ;
         if (is_macro)
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // user macro
             for (char *p = op->name ; (*p) != '\0' ; p++)
             { 
-GB_GOTCHA ;
+GB_GOTCHA ; // user macro
                 int c = (*p) ;
                 fputc (toupper (c), fp) ;
             }
@@ -77,17 +77,17 @@ GB_GOTCHA ;
         bool is_macro = GB_macrofy_defn (fp, 3, op->name, op->defn) ;
         if (is_macro)
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // user macro
             fprintf (fp, "// index unary operator %s defined as a macro:\n",
                 op->name) ;
         }
         fprintf (fp, "#define %s(z,x,%s,y) ", macro_name, ij) ;
         if (is_macro)
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // user macro
             for (char *p = op->name ; (*p) != '\0' ; p++)
             { 
-GB_GOTCHA ;
+GB_GOTCHA ; // user macro
                 int c = (*p) ;
                 fputc (toupper (c), fp) ;
             }

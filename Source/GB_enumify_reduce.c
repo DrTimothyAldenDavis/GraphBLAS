@@ -53,7 +53,7 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     GB_Type_code zcode = ztype->code ;
     if (zcode == GB_BOOL_code)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // z bool
         // rename the monoid
         reduce_opcode = GB_boolean_rename (reduce_opcode) ;
     }

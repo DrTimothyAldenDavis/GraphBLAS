@@ -129,7 +129,7 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     }
     else if (no_typecast_of_A)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // z typecast
         // Cx [pC] = (ctype) z must be typecast, but not aij
         fprintf (fp, " \\\n"
             "{                                              \\\n"
@@ -140,7 +140,7 @@ GB_GOTCHA ;
     }
     else
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // both typecast
         // both must be typecast
         fprintf (fp, " \\\n"
             "{                                      \\\n"

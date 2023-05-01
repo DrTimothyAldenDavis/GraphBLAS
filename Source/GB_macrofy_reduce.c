@@ -108,13 +108,13 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
 
     if (opcode == GB_ANY_binop_code)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // any monoid
         // ANY monoid: do not use panel reduction method
         panel = 1 ;
     }
     else if (zcode == GB_BOOL_code)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // bool monoid
         // all boolean monoids, including user-defined
         panel = 8 ;
     }
@@ -126,9 +126,9 @@ GB_GOTCHA ;
 
             // min and max
             case GB_MIN_binop_code : 
-GB_GOTCHA ;
+GB_GOTCHA ; // min monoid
             case GB_MAX_binop_code : 
-GB_GOTCHA ;
+GB_GOTCHA ; // max monoid
                 panel = 16 ;
                 break ;
 
@@ -143,14 +143,14 @@ GB_GOTCHA ;
                 {
                     // integer:
                     case GB_INT8_code    : 
-GB_GOTCHA ;
+GB_GOTCHA ; // int8 reduce
                     case GB_UINT8_code   : 
                     case GB_INT16_code   : 
                     case GB_UINT16_code  : 
                     case GB_INT32_code   : 
                     case GB_UINT32_code  : panel = 64 ; break ;
                     case GB_INT64_code   : 
-GB_GOTCHA ;
+GB_GOTCHA ; // int64 reduce
                     case GB_UINT64_code  : panel = 32 ; break ;
 
                     // floating point:
@@ -171,12 +171,12 @@ GB_GOTCHA ;
                 }
                 else if (zsize <= 32)
                 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // zsize <= 32
                     panel = 8 ;
                 }
                 else
                 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // zsize > 32
                     // type is large; do not use panel reduction method
                     panel = 1 ;
                 }

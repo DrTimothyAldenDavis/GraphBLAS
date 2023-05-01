@@ -1,5 +1,5 @@
 function [S,p] = GB_spec_build (I, J, X, nrows, ncols, op, order, sclass)
-%GB_SPEC_BUILD a built-in version of GrB_Matrix_build and GrB_vector_build
+%GB_SPEC_BUILD a version of GrB_Matrix_build and GrB_vector_build
 %
 % Usage:
 % [S p] = GB_spec_build (I, J, X, nrows, ncols, op, order)
@@ -169,4 +169,5 @@ if (~isequal (optype, sclass))
     S.matrix = GB_mex_cast (S.matrix, sclass) ;
     S.class = sclass ;
 end
+
 

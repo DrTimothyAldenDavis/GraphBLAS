@@ -93,6 +93,7 @@ if (malloc_debugging)
 end
 %}
 
+logstat ('test251',t,b) ; % dot4, dot2, with plus_pair
 logstat ('test250',t,o) ; % basic tests
 logstat ('test249',t,o) ; % GxB_Context object
 logstat ('test247',t,o) ; % GrB_mxm: fine Hash method
@@ -133,7 +134,6 @@ logstat ('test156',t,o) ; % test GrB_assign C=A with typecasting
 logstat ('test136',s,o) ; % subassignment special cases
 logstat ('test02' ,t,o) ; % matrix copy and dup tests
 logstat ('test109',t,b) ; % terminal monoid with user-defined type
-% logstat ('test109',s,o) ; % terminal monoid with user-defined type
 logstat ('test04' ,t,o) ; % simple mask and transpose test
 logstat ('test207',t,o) ; % test iso subref
 logstat ('test221',t,o) ; % test C += A where C is bitmap and A is full

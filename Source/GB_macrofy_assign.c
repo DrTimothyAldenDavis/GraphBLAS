@@ -317,7 +317,6 @@ GB_GOTCHA ;
         }
         else if (A_iso)
         { 
-GB_GOTCHA ;
             // cwork = (ctype) Ax [0] already done
             fprintf (fp, " Cx [pC] = cwork\n") ;
         }

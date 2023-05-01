@@ -28,7 +28,7 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
 
     if (monoid->hash == UINT64_MAX)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // no hash
         // cannot JIT this monoid
         memset (encoding, 0, sizeof (GB_jit_encoding)) ;
         (*suffix) = NULL ;

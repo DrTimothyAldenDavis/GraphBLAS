@@ -92,7 +92,7 @@ GrB_Info GB_ewise_fulln      // C = A+B
     }
     else if (!GB_IS_FULL (C))
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // C as_if_full but not actually full
         // ensure C is full
         GB_convert_any_to_full (C) ;
     }
@@ -139,7 +139,7 @@ GB_GOTCHA ;
 
     if (info == GrB_NO_VALUE)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // JIT failure
         info = GB_ewise_fulln_jit (C, op, A, B, nthreads) ;
     }
 

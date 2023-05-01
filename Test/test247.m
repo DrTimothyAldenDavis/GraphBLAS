@@ -1,5 +1,5 @@
 function test247
-%TEST247: test saxpy3 fine-hash method
+%TEST247 test saxpy3 fine-hash method
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -32,4 +32,5 @@ assert (err < 1e-12) ;
 nthreads_set (nth, chk) ;
 
 fprintf ('\ntest247: all tests passed\n') ;
+
 
