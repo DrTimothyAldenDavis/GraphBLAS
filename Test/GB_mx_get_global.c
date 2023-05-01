@@ -45,9 +45,7 @@ bool GB_mx_get_global       // true if doing malloc_debug
     // get test coverage
     //--------------------------------------------------------------------------
 
-    #ifdef GBCOVER
-    if (cover) GB_cover_get ( ) ;
-    #endif
+    GB_cover_get (cover) ;
 
     //--------------------------------------------------------------------------
     // initialize GraphBLAS

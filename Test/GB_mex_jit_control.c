@@ -20,7 +20,7 @@ void mexFunction
 {
     GrB_Info info ;
     printf ("hi %s\n", __FILE__) ;
-    GB_mx_get_global (true) ;
+    bool malloc_debug = GB_mx_get_global (true) ;
     int c = -999909 ;
     if (nargin > 0)
     {
@@ -47,7 +47,6 @@ void mexFunction
     printf ("put global:\n") ;
     GB_mx_put_global (true) ;
     printf ("bye %s\n", __FILE__) ;
-
 }
 
 

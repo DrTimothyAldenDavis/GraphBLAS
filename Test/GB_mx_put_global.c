@@ -29,9 +29,7 @@ void GB_mx_put_global
     // log the statement coverage
     //--------------------------------------------------------------------------
 
-    #ifdef GBCOVER
-    if (cover) GB_cover_put ( ) ;
-    #endif
+    GB_cover_put (cover) ;
 
     //--------------------------------------------------------------------------
     // check nmemtable and nmalloc

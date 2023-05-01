@@ -67,7 +67,7 @@ void mexFunction
     {
         unsetenv ("GRAPHBLAS_CACHE_PATH") ;
     }
-    system ("cmake -E remove_directory /tmp/grbcache13") ;
+    // system ("cmake -E remove_directory /tmp/grbcache13") ;
     cache_env = getenv ("GRAPHBLAS_CACHE_PATH") ;
     CHECK (cache_env == NULL) ;
 

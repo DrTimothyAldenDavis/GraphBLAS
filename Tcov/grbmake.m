@@ -34,18 +34,14 @@ cfiles = [ dir('../Source/*.c') ; ...
            dir('../Source/FactoryKernels/*.c') ; ...
            dir('../PreJIT/*.c') ; ...
            dir('../Config/GB_prejit.c') ; ...
-           dir('../JITpackage/*.c') ; ...
-           dir('GB_cover_finish.c')
+           dir('../JITpackage/*.c')
            ] ;
 count = grbcover_edit (cfiles, count, 'tmp_source') ;
 fprintf ('cfile count: %d\n', count) ;
 
-% create the GB_cover_finish.c file and place in tmp_source
-f = fopen ('tmp_source/GB_cover_finish.c', 'w') ;
-fprintf (f, '#include "GB.h"\n') ;
-fprintf (f, 'int64_t GB_cov [GBCOVER_MAX] ;\n') ;
-fprintf (f, 'int GB_cover_max = %d ;\n', count) ;
-fclose (f) ;
+% revise this to match Source/Template/GB_coverage.h
+GBCOVER_MAX = 50000 ;
+assert (count < GBCOVER_MAX) ;
 
 % compile the libgraphblas_tcov.so library
 

@@ -73,13 +73,13 @@ malloc_debugging = stat ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
-dir
+% dir
 logstat ('test253',t,b) ; % basic JIT tests
-dir
-logstat ('test252',t,b) ; % basic tests
-dir
-logstat ('test251',t,b) ; % dot4, dot2, with plus_pair
-dir
-logstat ('test250',t,o) ; % basic tests
-dir
+% dir
+% logstat ('test252',t,b) ; % basic tests
+% dir
+% logstat ('test251',t,b) ; % dot4, dot2, with plus_pair
+% dir
+% logstat ('test250',t,o) ; % basic tests
+% dir
 

@@ -9,7 +9,7 @@ fprintf ('test251 ------------ C+=A''*B when C is dense (plus-pair)\n') ;
 
 GB_mex_jit_control
 rng ('default') ;
-GB_mex_burble (1) ;
+GB_mex_burble (0) ;
 
 plus_pair.add = 'plus' ;
 plus_pair.multiply = 'oneb' ;   % same as pair

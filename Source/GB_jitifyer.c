@@ -134,12 +134,11 @@ static void check_table (void)
     }                                   \
 }
 
-// #ifdef GB_MEMDUMP
-#if 1
+#ifdef GB_MEMDUMP
 
     #define GB_MALLOC_PERSISTENT(X,siz)                     \
     {                                                       \
-        X = GB_Global_persistent_malloc (10*(siz)+1024) ;   \
+        X = GB_Global_persistent_malloc (siz) ;             \
         printf ("persistent malloc (%4d): %p size %lu\n",   \
             __LINE__, X, siz) ;                             \
     }
@@ -1814,7 +1813,6 @@ GB_GOTCHA ; // must recompile but control is LOAD
         if (GB_jit_control < GxB_JIT_ON)
         { 
             // No new kernels may be compiled, so punt to generic.
-printf ("Jit: not compiled, at %d: %d\n", __LINE__, GB_jit_control) ;
             GBURBLE ("(jit: not compiled) ") ;
             return (GrB_NO_VALUE) ;
         }
@@ -2098,7 +2096,7 @@ GB_GOTCHA ; // out of memory
             { 
                 // allocate the suffix if the kernel is not builtin
                 // e->suffix = GB_Global_persistent_malloc (suffix_len+1) ;
-                GB_MALLOC_PERSISTENT (e->suffix, suffix_len+1) ;
+                GB_MALLOC_PERSISTENT (e->suffix, suffix_len+2) ;
                 if (e->suffix == NULL)
                 { 
 GB_GOTCHA ; // out of memory

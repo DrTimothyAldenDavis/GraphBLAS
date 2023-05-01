@@ -417,13 +417,13 @@ GrB_Scalar GB_mx_get_Scalar
 // the internal GB_cov array.  The built-in array is created if it doesn't
 // exist.  Thus, to clear the counts simply clear GraphBLAS_grbcov from the
 // built-in global workpace.
-void GB_cover_get (void) ;
+void GB_cover_get (bool cover) ;
 
 // GB_cover_put copies the internal GB_cov array back into the GraphBLAS_grbcov
 // array, for analysis and for subsequent statement counting.  This way,
 // multiple tests in built-in can be accumulated into a single array of
 // counters.
-void GB_cover_put (void) ;
+void GB_cover_put (bool cover) ;
 
 #endif
 

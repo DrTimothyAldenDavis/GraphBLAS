@@ -10,6 +10,7 @@
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
 #include "GB_file.h"
+#include "GB_jitifyer.h"
 
 #define USAGE "GB_mex_about11"
 
@@ -72,7 +73,7 @@ void mexFunction
 
     remove ("/tmp/grberr2.txt") ;
     remove ("/tmp/grb_error_log.txt") ;
-    system ("cmake -E remove_directory /tmp/grb_cache") ;
+//  system ("cmake -E remove_directory /tmp/grb_cache") ;
 
     //--------------------------------------------------------------------------
     // get/set tests
@@ -113,6 +114,7 @@ void mexFunction
     CHECK (use_cmake == true) ;
     OK (GxB_Global_Option_get_INT32 (GxB_JIT_USE_CMAKE, &use_cmake_int)) ;
     CHECK (use_cmake_int == 1) ;
+    OK (GxB_Global_Option_set_INT32 (GxB_JIT_USE_CMAKE, false)) ;
 
     GrB_Type MyType = NULL ;
     OK (GxB_Type_new (&MyType, 0, "mytype", "typedef double mytype ;")) ;
@@ -256,10 +258,14 @@ void mexFunction
 
     OK (GxB_get (GxB_JIT_CACHE_PATH, &cache)) ;
     printf ("default cache path: [%s]\n", cache) ;
+    int len = strlen (cache) ;
+    char *save_cache = mxMalloc (len+2) ;
+    strcpy (save_cache, cache) ;
     OK (GxB_set (GxB_JIT_CACHE_PATH, "/tmp/grb_cache")) ;
     OK (GxB_get (GxB_JIT_CACHE_PATH, &s)) ;
     printf ("new cache path: [%s]\n", s) ;
     CHECK (MATCH (s, "/tmp/grb_cache")) ;
+    printf ("\nhere cache path: [%s]\n", save_cache) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GxB_Global_Option_set_CHAR (999, "gunk")) ;
@@ -270,6 +276,7 @@ void mexFunction
     OK (GxB_Type_size (&mysize, MyType)) ;
     CHECK (mysize == sizeof (double)) ;
     OK (GrB_free (&MyType)) ;
+    printf ("\nhere cache path: [%s]\n", save_cache) ;
 
     OK (GxB_Type_new (&MyType, 0, "mytype", "typedef int32_t mytype ;")) ;
     OK (GxB_Type_size (&mysize, MyType)) ;
@@ -287,9 +294,15 @@ void mexFunction
     ERR (GxB_Type_new (&MyType, 0, NULL, "typedef int32_t mytype ;")) ;
     ERR (GxB_Type_new (&MyType, 0, "mytype", NULL)) ;
 
-    OK (GxB_Global_Option_set_CHAR (GxB_JIT_CACHE_PATH, cache)) ;
+    printf ("\nhere: %d\n", GB_jitifyer_get_control ( )) ;
+    printf ("set back to default cache path: [%s]\n", save_cache) ;
+    OK (GxB_Global_Option_set_CHAR (GxB_JIT_CACHE_PATH, save_cache)) ;
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_CACHE_PATH, &s)) ;
-    CHECK (MATCH (s, cache)) ;
+    printf ("cache [%s]\n" , save_cache) ;
+    printf ("s     [%s]\n" , s) ;
+    CHECK (MATCH (s, save_cache)) ;
+    mxFree (save_cache) ;
+    save_cache = NULL ;
 
     //--------------------------------------------------------------------------
     // GrB_Semiring_new memory tests
@@ -504,7 +517,7 @@ void mexFunction
     // remove temp files and folders
     remove ("/tmp/grberr2.txt") ;
     remove ("/tmp/grb_error_log.txt") ;
-    system ("cmake -E remove_directory /tmp/grb_cache") ;
+//  system ("cmake -E remove_directory /tmp/grb_cache") ;
 
     OK (GxB_set (GxB_BURBLE, false)) ;
     GB_mx_put_global (true) ;

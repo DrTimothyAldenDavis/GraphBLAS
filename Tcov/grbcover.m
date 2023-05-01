@@ -34,8 +34,7 @@ for k = nmex:-1:1
 end
 
 % list of C files to compile
-cfiles = [ dir('../Test/GB_mx_*.c') ; dir('GB_cover_util.c') ; ...
-    dir('../Demo/Source/usercomplex.c') ] ;
+cfiles = [ dir('../Test/GB_mx_*.c') ; dir('../Demo/Source/usercomplex.c') ] ;
 
 % list of *.h and template file dependencies
 hfiles = [ dir('../Test/*.h') ; dir('../Test/Template/*.c') ] ;
