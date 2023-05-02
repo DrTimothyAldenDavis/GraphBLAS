@@ -185,6 +185,7 @@ GrB_Info GB_select_sparse
              || (opcode == GB_USER_idxunop_code)) ;
 
         #ifndef GBCOMPACT
+        GB_IF_FACTORY_KERNELS_ENABLED
         { 
 
             //------------------------------------------------------------------
@@ -203,7 +204,6 @@ GrB_Info GB_select_sparse
             // launch the switch factory
             #include "GB_select_entry_factory.c"
             #undef  GB_SEL_WORKER
-
         }
         #endif
 
@@ -298,6 +298,7 @@ GrB_Info GB_select_sparse
              || (opcode == GB_USER_idxunop_code)) ;
 
         #ifndef GBCOMPACT
+        GB_IF_FACTORY_KERNELS_ENABLED
         { 
 
             //------------------------------------------------------------------
@@ -316,7 +317,6 @@ GrB_Info GB_select_sparse
 
             // launch the switch factory
             #include "GB_select_entry_factory.c"
-
         }
         #endif
 

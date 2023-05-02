@@ -213,6 +213,8 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
             //------------------------------------------------------------------
 
             #ifndef GBCOMPACT
+            GB_IF_FACTORY_KERNELS_ENABLED
+            { 
 
                 //--------------------------------------------------------------
                 // define the worker for the switch factory
@@ -238,7 +240,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 ASSERT (typecode <= GB_UDT_code) ;
 
                 #include "GB_red_factory.c"
-
+            }
             #endif
         }
 

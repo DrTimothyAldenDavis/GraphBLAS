@@ -654,6 +654,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         GBURBLE ("(sparse saxpy) ") ;
 
         #ifndef GBCOMPACT
+        GB_IF_FACTORY_KERNELS_ENABLED
+        { 
 
             //------------------------------------------------------------------
             // define the worker for the switch factory
@@ -678,7 +680,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             { 
                 #include "GB_AxB_factory.c"
             }
-
+        }
         #endif
 
         //----------------------------------------------------------------------

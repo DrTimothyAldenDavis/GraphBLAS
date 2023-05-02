@@ -263,6 +263,8 @@ GB_GOTCHA ; // C iso
         //----------------------------------------------------------------------
 
         #ifndef GBCOMPACT
+        GB_IF_FACTORY_KERNELS_ENABLED
+        { 
 
             //------------------------------------------------------------------
             // define the worker for the switch factory
@@ -291,7 +293,7 @@ GB_GOTCHA ; // C iso
                 #define GB_NO_COMMUTATIVE_BINARY_OPS
                 #include "GB_binop_factory.c"
             }
-
+        }
         #endif
     }
 

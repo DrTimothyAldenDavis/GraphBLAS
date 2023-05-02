@@ -148,6 +148,8 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
             //------------------------------------------------------------------
 
             #ifndef GBCOMPACT
+            GB_IF_FACTORY_KERNELS_ENABLED
+            { 
                 if (ccode == acode)
                 {
                     // no typecasting needed
@@ -195,6 +197,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
                         default:;
                     }
                 }
+            }
             #endif
 
             //------------------------------------------------------------------

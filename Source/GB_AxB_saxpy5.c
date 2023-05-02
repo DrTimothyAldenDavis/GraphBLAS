@@ -159,6 +159,7 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
 
     info = GrB_NO_VALUE ;
     #ifndef GBCOMPACT
+    GB_IF_FACTORY_KERNELS_ENABLED
     { 
 
         //----------------------------------------------------------------------
@@ -181,7 +182,6 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
         // disable the ANY monoid
         #define GB_NO_ANY_MONOID
         #include "GB_AxB_factory.c"
-    
     }
     #endif
 

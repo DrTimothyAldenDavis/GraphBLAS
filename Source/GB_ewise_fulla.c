@@ -78,6 +78,8 @@ GrB_Info GB_ewise_fulla        // C += A+B, all matrices full
     info = GrB_NO_VALUE ;
 
     #ifndef GBCOMPACT
+    GB_IF_FACTORY_KERNELS_ENABLED
+    { 
 
         //----------------------------------------------------------------------
         // define the worker for the switch factory
@@ -86,10 +88,10 @@ GrB_Info GB_ewise_fulla        // C += A+B, all matrices full
         #define GB_Cewise_fulla(op,xname) \
             GB (_Cewise_fulla_ ## op ## xname)
 
-        #define GB_BINOP_WORKER(op,xname)                                   \
-        {                                                                   \
-            info = GB_Cewise_fulla(op,xname) (C, A, B, nthreads) ;     \
-        }                                                                   \
+        #define GB_BINOP_WORKER(op,xname)                               \
+        {                                                               \
+            info = GB_Cewise_fulla(op,xname) (C, A, B, nthreads) ;      \
+        }                                                               \
         break ;
 
         //----------------------------------------------------------------------
@@ -104,7 +106,7 @@ GrB_Info GB_ewise_fulla        // C += A+B, all matrices full
             #define GB_BINOP_SUBSET
             #include "GB_binop_factory.c"
         }
-
+    }
     #endif
 
     //--------------------------------------------------------------------------

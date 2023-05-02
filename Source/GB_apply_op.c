@@ -359,32 +359,35 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
         // determine number of threads to use
         #ifndef GBCOMPACT
-        if (Atype == op->xtype || opcode == GB_IDENTITY_unop_code)
+        GB_IF_FACTORY_KERNELS_ENABLED
         { 
+            if (Atype == op->xtype || opcode == GB_IDENTITY_unop_code)
+            { 
 
-            // The switch factory is used if the op is IDENTITY, or if no
-            // typecasting is being done.  IDENTITY operator can do arbitrary
-            // typecasting (it is not used if no typecasting is done).
+                // The switch factory is used if the op is IDENTITY, or if no
+                // typecasting.  IDENTITY operator can do arbitrary typecasting
+                // (it is not used if no typecasting is done).
 
-            //------------------------------------------------------------------
-            // define the worker for the switch factory
-            //------------------------------------------------------------------
+                //---------------------------------------------------------------
+                // define the worker for the switch factory
+                //---------------------------------------------------------------
 
-            #define GB_unop_apply(unop,zname,aname) \
-                GB (_unop_apply_ ## unop ## zname ## aname)
+                #define GB_unop_apply(unop,zname,aname) \
+                    GB (_unop_apply_ ## unop ## zname ## aname)
 
-            #define GB_WORKER(unop,zname,ztype,aname,atype)             \
-            {                                                           \
-                info = GB_unop_apply (unop,zname,aname) (Cx, Ax, Ab,    \
-                    anz, A_nthreads) ;                                  \
-            }                                                           \
-            break ;
+                #define GB_WORKER(unop,zname,ztype,aname,atype)             \
+                {                                                           \
+                    info = GB_unop_apply (unop,zname,aname) (Cx, Ax, Ab,    \
+                        anz, A_nthreads) ;                                  \
+                }                                                           \
+                break ;
 
-            //------------------------------------------------------------------
-            // launch the switch factory
-            //------------------------------------------------------------------
+                //---------------------------------------------------------------
+                // launch the switch factory
+                //---------------------------------------------------------------
 
-            #include "GB_unop_factory.c"
+                #include "GB_unop_factory.c"
+            }
         }
         #endif
 
@@ -488,30 +491,33 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             //------------------------------------------------------------------
 
             #ifndef GBCOMPACT
-            if (GB_binop_builtin (op->xtype, false, Atype, false,
-                (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
+            GB_IF_FACTORY_KERNELS_ENABLED
             { 
+                if (GB_binop_builtin (op->xtype, false, Atype, false,
+                    (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
+                { 
 
-                //--------------------------------------------------------------
-                // define the worker for the switch factory
-                //--------------------------------------------------------------
+                    //-----------------------------------------------------------
+                    // define the worker for the switch factory
+                    //-----------------------------------------------------------
 
-                #define GB_bind1st(binop,xname) GB (_bind1st_ ## binop ## xname)
-                #define GB_BINOP_WORKER(binop,xname)                    \
-                {                                                       \
-                    info = GB_bind1st (binop, xname) (Cx, scalarx, Ax,  \
-                        Ab, anz, A_nthreads) ;                          \
-                }                                                       \
-                break ;
+                    #define GB_bind1st(binop,xname) GB (_bind1st_ ## binop ## xname)
+                    #define GB_BINOP_WORKER(binop,xname)                    \
+                    {                                                       \
+                        info = GB_bind1st (binop, xname) (Cx, scalarx, Ax,  \
+                            Ab, anz, A_nthreads) ;                          \
+                    }                                                       \
+                    break ;
 
-                //--------------------------------------------------------------
-                // launch the switch factory
-                //--------------------------------------------------------------
+                    //-----------------------------------------------------------
+                    // launch the switch factory
+                    //-----------------------------------------------------------
 
-                #define GB_NO_FIRST
-                #define GB_NO_SECOND
-                #define GB_NO_PAIR
-                #include "GB_binop_factory.c"
+                    #define GB_NO_FIRST
+                    #define GB_NO_SECOND
+                    #define GB_NO_PAIR
+                    #include "GB_binop_factory.c"
+                }
             }
             #endif
 
@@ -534,31 +540,34 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             //------------------------------------------------------------------
 
             #ifndef GBCOMPACT
-            if (GB_binop_builtin (Atype, false, op->ytype, false,
-                (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
+            GB_IF_FACTORY_KERNELS_ENABLED
             { 
+                if (GB_binop_builtin (Atype, false, op->ytype, false,
+                    (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
+                { 
 
-                //--------------------------------------------------------------
-                // define the worker for the switch factory
-                //--------------------------------------------------------------
+                    //----------------------------------------------------------
+                    // define the worker for the switch factory
+                    //----------------------------------------------------------
 
-                #define GB_bind2nd(binop,xname) GB (_bind2nd_ ## binop ## xname)
-                #undef  GB_BINOP_WORKER
-                #define GB_BINOP_WORKER(binop,xname)                    \
-                {                                                       \
-                    info = GB_bind2nd (binop, xname) (Cx, Ax, scalarx,  \
-                        Ab, anz, A_nthreads) ;                          \
-                }                                                       \
-                break ;
+                    #define GB_bind2nd(binop,xname) GB (_bind2nd_ ## binop ## xname)
+                    #undef  GB_BINOP_WORKER
+                    #define GB_BINOP_WORKER(binop,xname)                    \
+                    {                                                       \
+                        info = GB_bind2nd (binop, xname) (Cx, Ax, scalarx,  \
+                            Ab, anz, A_nthreads) ;                          \
+                    }                                                       \
+                    break ;
 
-                //--------------------------------------------------------------
-                // launch the switch factory
-                //--------------------------------------------------------------
+                    //----------------------------------------------------------
+                    // launch the switch factory
+                    //----------------------------------------------------------
 
-                #define GB_NO_FIRST
-                #define GB_NO_SECOND
-                #define GB_NO_PAIR
-                #include "GB_binop_factory.c"
+                    #define GB_NO_FIRST
+                    #define GB_NO_SECOND
+                    #define GB_NO_PAIR
+                    #include "GB_binop_factory.c"
+                }
             }
             #endif
 

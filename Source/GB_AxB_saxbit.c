@@ -272,6 +272,8 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
         GBURBLE ("(bitmap saxpy) ") ;
 
         #ifndef GBCOMPACT
+        GB_IF_FACTORY_KERNELS_ENABLED
+        { 
 
             //------------------------------------------------------------------
             // define the worker for the switch factory
@@ -302,7 +304,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
             { 
                 #include "GB_AxB_factory.c"
             }
-
+        }
         #endif
 
         //----------------------------------------------------------------------

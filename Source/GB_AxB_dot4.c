@@ -229,6 +229,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
 
     info = GrB_NO_VALUE ;
     #ifndef GBCOMPACT
+    GB_IF_FACTORY_KERNELS_ENABLED
+    { 
 
         //----------------------------------------------------------------------
         // define the worker for the switch factory
@@ -249,7 +251,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         // disabled the ANY monoid
         #define GB_NO_ANY_MONOID
         #include "GB_AxB_factory.c"
-
+    }
     #endif
 
     //--------------------------------------------------------------------------

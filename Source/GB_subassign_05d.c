@@ -97,6 +97,8 @@ GB_GOTCHA ; // C iso
     info = GrB_NO_VALUE ;
 
     #ifndef GBCOMPACT
+    GB_IF_FACTORY_KERNELS_ENABLED
+    { 
 
         //----------------------------------------------------------------------
         // define the worker for the switch factory
@@ -136,6 +138,7 @@ GB_GOTCHA ; // C iso
             case GB_FC64_code   : GB_WORKER (_fc64  )
             default: ;
         }
+    }
     #endif
 
     //--------------------------------------------------------------------------

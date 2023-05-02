@@ -60,6 +60,7 @@ GrB_Info GB_cast_array              // typecast an array
     GrB_Info info = GrB_NO_VALUE ;
 
     #ifndef GBCOMPACT
+    GB_IF_FACTORY_KERNELS_ENABLED
     { 
 
         //----------------------------------------------------------------------

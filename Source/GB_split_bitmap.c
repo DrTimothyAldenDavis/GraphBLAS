@@ -121,49 +121,52 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
                 //--------------------------------------------------------------
 
                 #ifndef GBCOMPACT
-                // no typecasting needed
-                switch (asize)
-                {
-                    #undef  GB_COPY
-                    #define GB_COPY(pC,pA) Cx [pC] = Ax [pA]
+                GB_IF_FACTORY_KERNELS_ENABLED
+                { 
+                    // no typecasting needed
+                    switch (asize)
+                    {
+                        #undef  GB_COPY
+                        #define GB_COPY(pC,pA) Cx [pC] = Ax [pA]
 
-                    case GB_1BYTE : // uint8, int8, bool, or 1-byte user
-                        #define GB_C_TYPE uint8_t
-                        #define GB_A_TYPE uint8_t
-                        #include "GB_split_bitmap_template.c"
-                        info = GrB_SUCCESS ;
-                        break ;
+                        case GB_1BYTE : // uint8, int8, bool, or 1-byte user
+                            #define GB_C_TYPE uint8_t
+                            #define GB_A_TYPE uint8_t
+                            #include "GB_split_bitmap_template.c"
+                            info = GrB_SUCCESS ;
+                            break ;
 
-                    case GB_2BYTE : // uint16, int16, or 2-byte user
-                        #define GB_C_TYPE uint16_t
-                        #define GB_A_TYPE uint16_t
-                        #include "GB_split_bitmap_template.c"
-                        info = GrB_SUCCESS ;
-                        break ;
+                        case GB_2BYTE : // uint16, int16, or 2-byte user
+                            #define GB_C_TYPE uint16_t
+                            #define GB_A_TYPE uint16_t
+                            #include "GB_split_bitmap_template.c"
+                            info = GrB_SUCCESS ;
+                            break ;
 
-                    case GB_4BYTE : // uint32, int32, float, or 4-byte user
-                        #define GB_C_TYPE uint32_t
-                        #define GB_A_TYPE uint32_t
-                        #include "GB_split_bitmap_template.c"
-                        info = GrB_SUCCESS ;
-                        break ;
+                        case GB_4BYTE : // uint32, int32, float, or 4-byte user
+                            #define GB_C_TYPE uint32_t
+                            #define GB_A_TYPE uint32_t
+                            #include "GB_split_bitmap_template.c"
+                            info = GrB_SUCCESS ;
+                            break ;
 
-                    case GB_8BYTE : // uint64, int64, double, float complex,
-                                    // or 8-byte user defined
-                        #define GB_C_TYPE uint64_t
-                        #define GB_A_TYPE uint64_t
-                        #include "GB_split_bitmap_template.c"
-                        info = GrB_SUCCESS ;
-                        break ;
+                        case GB_8BYTE : // uint64, int64, double, float complex,
+                                        // or 8-byte user defined
+                            #define GB_C_TYPE uint64_t
+                            #define GB_A_TYPE uint64_t
+                            #include "GB_split_bitmap_template.c"
+                            info = GrB_SUCCESS ;
+                            break ;
 
-                    case GB_16BYTE : // double complex or 16-byte user-defined
-                        #define GB_C_TYPE GB_blob16
-                        #define GB_A_TYPE GB_blob16
-                        #include "GB_split_bitmap_template.c"
-                        info = GrB_SUCCESS ;
-                        break ;
+                        case GB_16BYTE : // double complex or 16-byte user-defined
+                            #define GB_C_TYPE GB_blob16
+                            #define GB_A_TYPE GB_blob16
+                            #include "GB_split_bitmap_template.c"
+                            info = GrB_SUCCESS ;
+                            break ;
 
-                    default:;
+                        default:;
+                    }
                 }
                 #endif
             }

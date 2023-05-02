@@ -14,6 +14,8 @@
 
 #include "GB_helper.h"
 
+bool GB_factory_kernels_enabled = true ;
+
 //------------------------------------------------------------------------------
 // GB_NTHREADS_HELPER: determine the number of threads to use
 //------------------------------------------------------------------------------

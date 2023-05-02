@@ -89,6 +89,7 @@ GrB_Info GB_transpose_ix        // transpose the pattern and values of a matrix
         //----------------------------------------------------------------------
 
         #ifndef GBCOMPACT
+        GB_IF_FACTORY_KERNELS_ENABLED
         { 
 
             //------------------------------------------------------------------
@@ -110,7 +111,6 @@ GrB_Info GB_transpose_ix        // transpose the pattern and values of a matrix
             //------------------------------------------------------------------
 
             #include "GB_twotype_factory.c"
-
         }
         #endif
 

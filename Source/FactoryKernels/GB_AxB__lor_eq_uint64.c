@@ -231,7 +231,7 @@ GrB_Info GB (_Asaxpy4B__lor_eq_uint64)
             const int nthreads,
             const int64_t *B_slice
         )
-        { 
+        {
             #include "GB_AxB_saxpy5_unrolled.c"
         }
 

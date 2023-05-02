@@ -277,6 +277,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
         info = GrB_NO_VALUE ;
         #ifndef GBCOMPACT
+        GB_IF_FACTORY_KERNELS_ENABLED
+        { 
 
             //------------------------------------------------------------------
             // define the worker for the switch factory
@@ -304,7 +306,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
             { 
                 #include "GB_AxB_factory.c"
             }
-
+        }
         #endif
 
         //----------------------------------------------------------------------

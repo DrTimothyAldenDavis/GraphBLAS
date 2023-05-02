@@ -269,7 +269,7 @@ m4_divert(if_semiring_has_avx)
                 const int nthreads,
                 const int64_t *B_slice
             )
-            { 
+            {
                 #include "GB_AxB_saxpy5_unrolled.c"
             }
 
@@ -305,7 +305,7 @@ m4_divert(if_semiring_has_avx)
                 const int nthreads,
                 const int64_t *B_slice
             )
-            { 
+            {
                 #include "GB_AxB_saxpy5_unrolled.c"
             }
 
@@ -333,7 +333,7 @@ m4_divert(if_saxpy5_enabled)
             const int nthreads,
             const int64_t *B_slice
         )
-        { 
+        {
             #include "GB_AxB_saxpy5_unrolled.c"
         }
 

@@ -299,6 +299,8 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
         //----------------------------------------------------------------------
 
         #ifndef GBCOMPACT
+        GB_IF_FACTORY_KERNELS_ENABLED
+        { 
 
             //------------------------------------------------------------------
             // define the worker for the switch factory
@@ -325,7 +327,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
                 #define GB_NO_PAIR
                 #include "GB_binop_factory.c"
             }
-
+        }
         #endif
     }
 

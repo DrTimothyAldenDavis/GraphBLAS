@@ -105,6 +105,8 @@ GB_GOTCHA ; // C as_if_full but not actually full
     info = GrB_NO_VALUE ;
 
     #ifndef GBCOMPACT
+    GB_IF_FACTORY_KERNELS_ENABLED
+    { 
 
         //----------------------------------------------------------------------
         // define the worker for the switch factory
@@ -113,10 +115,10 @@ GB_GOTCHA ; // C as_if_full but not actually full
         #define GB_Cewise_fulln(op,xname) \
             GB (_Cewise_fulln_ ## op ## xname)
 
-        #define GB_BINOP_WORKER(op,xname)                                   \
-        {                                                                   \
-            info = GB_Cewise_fulln(op,xname) (C, A, B, nthreads) ;   \
-        }                                                                   \
+        #define GB_BINOP_WORKER(op,xname)                           \
+        {                                                           \
+            info = GB_Cewise_fulln(op,xname) (C, A, B, nthreads) ;  \
+        }                                                           \
         break ;
 
         //----------------------------------------------------------------------
@@ -130,7 +132,7 @@ GB_GOTCHA ; // C as_if_full but not actually full
         { 
             #include "GB_binop_factory.c"
         }
-
+    }
     #endif
 
     //--------------------------------------------------------------------------

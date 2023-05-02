@@ -1,28 +1,49 @@
-function logstat (testscript, threads, jit_controls)
+function logstat (testscript, threads, jit_controls, factory_controls)
 %LOGSTAT run a GraphBLAS test and log the results to log.txt 
 %
-% logstat (testscript, threads, jit_control)
+% logstat (testscript, threads, jit_controls, factory_controls)
 %
 % threads: defaults to threads{1} = [4 1], which uses 4 threads and a tiny
 % chunk size of 1.
 %
-% jit_control: a parameter for GB_mex_jit_control (-1: reset, 0 to 5: off,
-% pause, run, load, on).  Defaults to -1, so the JIT kernels from the prior
-% test are cleared from the JIT hash table, and then the JIT is renabled.  This
-% is to prevent a sequence of many tests to run out of memory from loading too
-% many JIT kernels.  If jit_control is empty, the JIT control is left
-% unchanged.
+% jit_controls: a parameter for GB_mex_jit_control (0 to 5: off, pause, run,
+% load, on).  JIT kernels from the prior test are always cleared from the JIT
+% hash table, and then the JIT is renabled.  This is to prevent a sequence of
+% many tests to run out of memory from loading too many JIT kernels.  If
+% jit_controls is empty, the JIT control is left unchanged.
+%
+% factory_controls: 1 to enable the factory kernels, 0 to disable them.
+% If empty, default is enabled.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 GB_mex_finalize ;
+GB_mex_factory_control (1) ;
 [debug, compact, malloc, covered] = GB_mex_debug ;
+
+% hack
+% jit_controls = [ ] ;
+% factory_controls = [ ] ;
 
 % default JIT controls
 if (nargin < 3)
-    jit_controls {1} = -4 ;     % reset
-    jit_controls {2} = 0 ;      % off
+    jit_controls = [ ] ;
+end
+if (isempty (jit_controls))
+    jit_controls {1} = 4 ;      % JIT on
+    jit_controls {2} = 0 ;      % JIT off
+    jit_controls {3} = 4 ;      % JIT on
+end
+
+% default factory controls
+if (nargin < 4)
+    factory_controls = [ ] ;
+end
+if (isempty (factory_controls))
+    factory_controls {1} = 1 ;  % factory on
+    factory_controls {2} = 1 ;  % factory on
+    factory_controls {3} = 0 ;  % factory off
 end
 
 if (nargin < 2)
@@ -46,16 +67,18 @@ if (~isempty (strfind (pwd, 'Tcov')))
     fclose (fp) ;
 end
 
-for jit_trial = 1:length (jit_controls)
+for control_trial = 1:length (jit_controls)
 
-    jit_control = jit_controls {jit_trial} ;
-
-    fprintf ('jit: %d\n', jit_control) ;
-    if (jit_control < 0)
-        GB_mex_jit_control (abs (jit_control)) ;
-    elseif (~isempty (jit_control))
+    jit_control = jit_controls {control_trial} ;
+    factory_control = factory_controls {control_trial} ;
+    fprintf ('jit: %d factory: %d\n', jit_control) ;
+    if (~isempty (jit_control))
         GB_mex_jit_control (jit_control) ;
     end
+    if (isempty (factory_control))
+        factory_control = 1 ;
+    end
+    GB_mex_factory_control (factory_control) ;
 
     for trial = 1:length (threads)
 
@@ -101,7 +124,8 @@ for jit_trial = 1:length (jit_controls)
             fprintf (' [cover]') ;
         end
         fprintf (' [nthreads: %d chunk: %g]', nthreads, chunk) ;
-        fprintf (' jit: %d\n', GB_mex_jit_control) ;
+        fprintf (' jit: %d', GB_mex_jit_control) ;
+        fprintf (' factory: %d\n', GB_mex_factory_control) ;
 
         t1 = tic ;
         runtest (testscript)

@@ -223,6 +223,8 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         //----------------------------------------------------------------------
 
         #ifndef GBCOMPACT
+        GB_IF_FACTORY_KERNELS_ENABLED
+        { 
 
             //------------------------------------------------------------------
             // define the worker for the switch factory
@@ -251,7 +253,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
                 #define GB_NO_PAIR
                 #include "GB_binop_factory.c"
             }
-
+        }
         #endif
     }
 

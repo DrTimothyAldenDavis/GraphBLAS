@@ -227,6 +227,8 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         info = GrB_NO_VALUE ;
 
         #ifndef GBCOMPACT
+        GB_IF_FACTORY_KERNELS_ENABLED
+        { 
 
             //------------------------------------------------------------------
             // define the worker for the switch factory
@@ -255,7 +257,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
                 #include "GB_binop_factory.c"
                 #undef  GB_BINOP_IS_SEMIRING_MULTIPLIER
             }
-
+        }
         #endif
 
         //----------------------------------------------------------------------

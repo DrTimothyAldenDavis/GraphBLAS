@@ -65,6 +65,8 @@ o = {-4} ;      % reset on
 f = {0} ;       % off
 b = {-4, 0} ;   % reset on; off
 % o = b ;
+o = [ ] ;
+b = [ ] ;
 
 % start with the Werk stack enabled
 hack (2) = 0 ; GB_mex_hack (hack) ;

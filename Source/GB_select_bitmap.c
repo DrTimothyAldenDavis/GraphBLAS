@@ -114,6 +114,7 @@ GrB_Info GB_select_bitmap
         //----------------------------------------------------------------------
 
         #ifndef GBCOMPACT
+        GB_IF_FACTORY_KERNELS_ENABLED
         { 
 
             //------------------------------------------------------------------
@@ -129,7 +130,6 @@ GrB_Info GB_select_bitmap
             break ;
 
             #include "GB_select_entry_factory.c"
-
         }
         #endif
 

@@ -1218,6 +1218,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 // T and Sx are not iso; call in the workers
 
                 #ifndef GBCOMPACT
+                GB_IF_FACTORY_KERNELS_ENABLED
+                { 
 
                     //----------------------------------------------------------
                     // define the worker for the switch factory
@@ -1245,7 +1247,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                         opcode = GB_boolean_rename (opcode) ;
                     }
                     #include "GB_bld_factory.c"
-
+                }
                 #endif
             }
 

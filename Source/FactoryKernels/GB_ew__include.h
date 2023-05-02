@@ -4047,35 +4047,6 @@ GrB_Info GB (_AaddB__pair_bool)
     const int B_ntasks
 ) ;
 
-GrB_Info GB (_AunionB__pair_bool)
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GB_void *alpha_scalar_in,
-    const GB_void *beta_scalar_in,
-    const bool Ch_is_Mh,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const GB_task_struct *restrict TaskList,
-    const int C_ntasks,
-    const int C_nthreads,
-    const int64_t *restrict M_ek_slicing,
-    const int M_nthreads,
-    const int M_ntasks,
-    const int64_t *restrict A_ek_slicing,
-    const int A_nthreads,
-    const int A_ntasks,
-    const int64_t *restrict B_ek_slicing,
-    const int B_nthreads,
-    const int B_ntasks
-) ;
-
 
 GrB_Info GB (_Cewise_fulln__pair_int8)
 (
@@ -4094,35 +4065,6 @@ GrB_Info GB (_AaddB__pair_int8)
     const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const bool Ch_is_Mh,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const GB_task_struct *restrict TaskList,
-    const int C_ntasks,
-    const int C_nthreads,
-    const int64_t *restrict M_ek_slicing,
-    const int M_nthreads,
-    const int M_ntasks,
-    const int64_t *restrict A_ek_slicing,
-    const int A_nthreads,
-    const int A_ntasks,
-    const int64_t *restrict B_ek_slicing,
-    const int B_nthreads,
-    const int B_ntasks
-) ;
-
-GrB_Info GB (_AunionB__pair_int8)
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GB_void *alpha_scalar_in,
-    const GB_void *beta_scalar_in,
     const bool Ch_is_Mh,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
@@ -4177,35 +4119,6 @@ GrB_Info GB (_AaddB__pair_int16)
     const int B_ntasks
 ) ;
 
-GrB_Info GB (_AunionB__pair_int16)
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GB_void *alpha_scalar_in,
-    const GB_void *beta_scalar_in,
-    const bool Ch_is_Mh,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const GB_task_struct *restrict TaskList,
-    const int C_ntasks,
-    const int C_nthreads,
-    const int64_t *restrict M_ek_slicing,
-    const int M_nthreads,
-    const int M_ntasks,
-    const int64_t *restrict A_ek_slicing,
-    const int A_nthreads,
-    const int A_ntasks,
-    const int64_t *restrict B_ek_slicing,
-    const int B_nthreads,
-    const int B_ntasks
-) ;
-
 
 GrB_Info GB (_Cewise_fulln__pair_int32)
 (
@@ -4224,35 +4137,6 @@ GrB_Info GB (_AaddB__pair_int32)
     const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const bool Ch_is_Mh,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const GB_task_struct *restrict TaskList,
-    const int C_ntasks,
-    const int C_nthreads,
-    const int64_t *restrict M_ek_slicing,
-    const int M_nthreads,
-    const int M_ntasks,
-    const int64_t *restrict A_ek_slicing,
-    const int A_nthreads,
-    const int A_ntasks,
-    const int64_t *restrict B_ek_slicing,
-    const int B_nthreads,
-    const int B_ntasks
-) ;
-
-GrB_Info GB (_AunionB__pair_int32)
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GB_void *alpha_scalar_in,
-    const GB_void *beta_scalar_in,
     const bool Ch_is_Mh,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
@@ -4307,35 +4191,6 @@ GrB_Info GB (_AaddB__pair_int64)
     const int B_ntasks
 ) ;
 
-GrB_Info GB (_AunionB__pair_int64)
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GB_void *alpha_scalar_in,
-    const GB_void *beta_scalar_in,
-    const bool Ch_is_Mh,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const GB_task_struct *restrict TaskList,
-    const int C_ntasks,
-    const int C_nthreads,
-    const int64_t *restrict M_ek_slicing,
-    const int M_nthreads,
-    const int M_ntasks,
-    const int64_t *restrict A_ek_slicing,
-    const int A_nthreads,
-    const int A_ntasks,
-    const int64_t *restrict B_ek_slicing,
-    const int B_nthreads,
-    const int B_ntasks
-) ;
-
 
 GrB_Info GB (_Cewise_fulln__pair_uint8)
 (
@@ -4354,35 +4209,6 @@ GrB_Info GB (_AaddB__pair_uint8)
     const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const bool Ch_is_Mh,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const GB_task_struct *restrict TaskList,
-    const int C_ntasks,
-    const int C_nthreads,
-    const int64_t *restrict M_ek_slicing,
-    const int M_nthreads,
-    const int M_ntasks,
-    const int64_t *restrict A_ek_slicing,
-    const int A_nthreads,
-    const int A_ntasks,
-    const int64_t *restrict B_ek_slicing,
-    const int B_nthreads,
-    const int B_ntasks
-) ;
-
-GrB_Info GB (_AunionB__pair_uint8)
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GB_void *alpha_scalar_in,
-    const GB_void *beta_scalar_in,
     const bool Ch_is_Mh,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
@@ -4437,35 +4263,6 @@ GrB_Info GB (_AaddB__pair_uint16)
     const int B_ntasks
 ) ;
 
-GrB_Info GB (_AunionB__pair_uint16)
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GB_void *alpha_scalar_in,
-    const GB_void *beta_scalar_in,
-    const bool Ch_is_Mh,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const GB_task_struct *restrict TaskList,
-    const int C_ntasks,
-    const int C_nthreads,
-    const int64_t *restrict M_ek_slicing,
-    const int M_nthreads,
-    const int M_ntasks,
-    const int64_t *restrict A_ek_slicing,
-    const int A_nthreads,
-    const int A_ntasks,
-    const int64_t *restrict B_ek_slicing,
-    const int B_nthreads,
-    const int B_ntasks
-) ;
-
 
 GrB_Info GB (_Cewise_fulln__pair_uint32)
 (
@@ -4484,35 +4281,6 @@ GrB_Info GB (_AaddB__pair_uint32)
     const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const bool Ch_is_Mh,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const GB_task_struct *restrict TaskList,
-    const int C_ntasks,
-    const int C_nthreads,
-    const int64_t *restrict M_ek_slicing,
-    const int M_nthreads,
-    const int M_ntasks,
-    const int64_t *restrict A_ek_slicing,
-    const int A_nthreads,
-    const int A_ntasks,
-    const int64_t *restrict B_ek_slicing,
-    const int B_nthreads,
-    const int B_ntasks
-) ;
-
-GrB_Info GB (_AunionB__pair_uint32)
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GB_void *alpha_scalar_in,
-    const GB_void *beta_scalar_in,
     const bool Ch_is_Mh,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
@@ -4567,35 +4335,6 @@ GrB_Info GB (_AaddB__pair_uint64)
     const int B_ntasks
 ) ;
 
-GrB_Info GB (_AunionB__pair_uint64)
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GB_void *alpha_scalar_in,
-    const GB_void *beta_scalar_in,
-    const bool Ch_is_Mh,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const GB_task_struct *restrict TaskList,
-    const int C_ntasks,
-    const int C_nthreads,
-    const int64_t *restrict M_ek_slicing,
-    const int M_nthreads,
-    const int M_ntasks,
-    const int64_t *restrict A_ek_slicing,
-    const int A_nthreads,
-    const int A_ntasks,
-    const int64_t *restrict B_ek_slicing,
-    const int B_nthreads,
-    const int B_ntasks
-) ;
-
 
 GrB_Info GB (_Cewise_fulln__pair_fp32)
 (
@@ -4614,35 +4353,6 @@ GrB_Info GB (_AaddB__pair_fp32)
     const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const bool Ch_is_Mh,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const GB_task_struct *restrict TaskList,
-    const int C_ntasks,
-    const int C_nthreads,
-    const int64_t *restrict M_ek_slicing,
-    const int M_nthreads,
-    const int M_ntasks,
-    const int64_t *restrict A_ek_slicing,
-    const int A_nthreads,
-    const int A_ntasks,
-    const int64_t *restrict B_ek_slicing,
-    const int B_nthreads,
-    const int B_ntasks
-) ;
-
-GrB_Info GB (_AunionB__pair_fp32)
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GB_void *alpha_scalar_in,
-    const GB_void *beta_scalar_in,
     const bool Ch_is_Mh,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
@@ -4697,35 +4407,6 @@ GrB_Info GB (_AaddB__pair_fp64)
     const int B_ntasks
 ) ;
 
-GrB_Info GB (_AunionB__pair_fp64)
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GB_void *alpha_scalar_in,
-    const GB_void *beta_scalar_in,
-    const bool Ch_is_Mh,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const GB_task_struct *restrict TaskList,
-    const int C_ntasks,
-    const int C_nthreads,
-    const int64_t *restrict M_ek_slicing,
-    const int M_nthreads,
-    const int M_ntasks,
-    const int64_t *restrict A_ek_slicing,
-    const int A_nthreads,
-    const int A_ntasks,
-    const int64_t *restrict B_ek_slicing,
-    const int B_nthreads,
-    const int B_ntasks
-) ;
-
 
 GrB_Info GB (_Cewise_fulln__pair_fc32)
 (
@@ -4762,35 +4443,6 @@ GrB_Info GB (_AaddB__pair_fc32)
     const int B_ntasks
 ) ;
 
-GrB_Info GB (_AunionB__pair_fc32)
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GB_void *alpha_scalar_in,
-    const GB_void *beta_scalar_in,
-    const bool Ch_is_Mh,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const GB_task_struct *restrict TaskList,
-    const int C_ntasks,
-    const int C_nthreads,
-    const int64_t *restrict M_ek_slicing,
-    const int M_nthreads,
-    const int M_ntasks,
-    const int64_t *restrict A_ek_slicing,
-    const int A_nthreads,
-    const int A_ntasks,
-    const int64_t *restrict B_ek_slicing,
-    const int B_nthreads,
-    const int B_ntasks
-) ;
-
 
 GrB_Info GB (_Cewise_fulln__pair_fc64)
 (
@@ -4809,35 +4461,6 @@ GrB_Info GB (_AaddB__pair_fc64)
     const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const bool Ch_is_Mh,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const GB_task_struct *restrict TaskList,
-    const int C_ntasks,
-    const int C_nthreads,
-    const int64_t *restrict M_ek_slicing,
-    const int M_nthreads,
-    const int M_ntasks,
-    const int64_t *restrict A_ek_slicing,
-    const int A_nthreads,
-    const int A_ntasks,
-    const int64_t *restrict B_ek_slicing,
-    const int B_nthreads,
-    const int B_ntasks
-) ;
-
-GrB_Info GB (_AunionB__pair_fc64)
-(
-    GrB_Matrix C,
-    const int C_sparsity,
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    const GB_void *alpha_scalar_in,
-    const GB_void *beta_scalar_in,
     const bool Ch_is_Mh,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,

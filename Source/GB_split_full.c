@@ -115,7 +115,8 @@ GrB_Info GB_split_full              // split a full matrix
                 //--------------------------------------------------------------
 
                 #ifndef GBCOMPACT
-                {
+                GB_IF_FACTORY_KERNELS_ENABLED
+                { 
                     // no typecasting needed
                     switch (asize)
                     {

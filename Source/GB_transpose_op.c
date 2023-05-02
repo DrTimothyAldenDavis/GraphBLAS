@@ -115,32 +115,35 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
         //----------------------------------------------------------------------
 
         #ifndef GBCOMPACT
-        if (Atype == op->xtype || opcode == GB_IDENTITY_unop_code)
+        GB_IF_FACTORY_KERNELS_ENABLED
         { 
+            if (Atype == op->xtype || opcode == GB_IDENTITY_unop_code)
+            { 
 
-            // The switch factory is used if the unop is IDENTITY, or if no
-            // typecasting is being done.  The IDENTITY operator can do
-            // arbitrary typecasting.
+                // The switch factory is used if the unop is IDENTITY, or if no
+                // typecasting is being done.  The IDENTITY operator can do
+                // arbitrary typecasting.
 
-            //------------------------------------------------------------------
-            // define the worker for the switch factory
-            //------------------------------------------------------------------
+                //---------------------------------------------------------------
+                // define the worker for the switch factory
+                //---------------------------------------------------------------
 
-            #define GB_unop_tran(opname,zname,aname) \
-                GB (_unop_tran_ ## opname ## zname ## aname)
+                #define GB_unop_tran(opname,zname,aname) \
+                    GB (_unop_tran_ ## opname ## zname ## aname)
 
-            #define GB_WORKER(opname,zname,ztype,aname,atype)               \
-            {                                                               \
-                info = GB_unop_tran (opname,zname,aname)                    \
-                    (C, A, Workspaces, A_slice, nworkspaces, nthreads) ;    \
-            }                                                               \
-            break ;
+                #define GB_WORKER(opname,zname,ztype,aname,atype)               \
+                {                                                               \
+                    info = GB_unop_tran (opname,zname,aname)                    \
+                        (C, A, Workspaces, A_slice, nworkspaces, nthreads) ;    \
+                }                                                               \
+                break ;
 
-            //------------------------------------------------------------------
-            // launch the switch factory
-            //------------------------------------------------------------------
+                //---------------------------------------------------------------
+                // launch the switch factory
+                //---------------------------------------------------------------
 
-            #include "GB_unop_factory.c"
+                #include "GB_unop_factory.c"
+            }
         }
         #endif
 
@@ -254,32 +257,35 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
             //------------------------------------------------------------------
 
             #ifndef GBCOMPACT
-            if (GB_binop_builtin (op->xtype, false, Atype, false,
-                (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
+            GB_IF_FACTORY_KERNELS_ENABLED
             { 
+                if (GB_binop_builtin (op->xtype, false, Atype, false,
+                    (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
+                { 
 
-                //--------------------------------------------------------------
-                // define the worker for the switch factory
-                //--------------------------------------------------------------
+                    //-----------------------------------------------------------
+                    // define the worker for the switch factory
+                    //-----------------------------------------------------------
 
-                #define GB_bind1st_tran(op,xname) \
-                    GB (_bind1st_tran_ ## op ## xname)
+                    #define GB_bind1st_tran(op,xname) \
+                        GB (_bind1st_tran_ ## op ## xname)
 
-                #define GB_BINOP_WORKER(op,xname)                           \
-                {                                                           \
-                    info = GB_bind1st_tran (op, xname) (C, scalarx, A,      \
-                        Workspaces, A_slice, nworkspaces, nthreads) ;       \
-                }                                                           \
-                break ;
+                    #define GB_BINOP_WORKER(op,xname)                           \
+                    {                                                           \
+                        info = GB_bind1st_tran (op, xname) (C, scalarx, A,      \
+                            Workspaces, A_slice, nworkspaces, nthreads) ;       \
+                    }                                                           \
+                    break ;
 
-                //--------------------------------------------------------------
-                // launch the switch factory
-                //--------------------------------------------------------------
+                    //-----------------------------------------------------------
+                    // launch the switch factory
+                    //-----------------------------------------------------------
 
-                #define GB_NO_FIRST
-                #define GB_NO_SECOND
-                #define GB_NO_PAIR
-                #include "GB_binop_factory.c"
+                    #define GB_NO_FIRST
+                    #define GB_NO_SECOND
+                    #define GB_NO_PAIR
+                    #include "GB_binop_factory.c"
+                }
             }
             #endif
 
@@ -302,32 +308,35 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
             //------------------------------------------------------------------
 
             #ifndef GBCOMPACT
-            if (GB_binop_builtin (Atype, false, op->ytype, false,
-                (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
+            GB_IF_FACTORY_KERNELS_ENABLED
             { 
+                if (GB_binop_builtin (Atype, false, op->ytype, false,
+                    (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
+                { 
 
-                //--------------------------------------------------------------
-                // define the worker for the switch factory
-                //--------------------------------------------------------------
+                    //-----------------------------------------------------------
+                    // define the worker for the switch factory
+                    //-----------------------------------------------------------
 
-                #define GB_bind2nd_tran(op,xname) \
-                    GB (_bind2nd_tran_ ## op ## xname)
-                #undef  GB_BINOP_WORKER
-                #define GB_BINOP_WORKER(op,xname)                           \
-                {                                                           \
-                    info = GB_bind2nd_tran (op, xname) (C, A, scalarx,      \
-                        Workspaces, A_slice, nworkspaces, nthreads) ;       \
-                }                                                           \
-                break ;
+                    #define GB_bind2nd_tran(op,xname) \
+                        GB (_bind2nd_tran_ ## op ## xname)
+                    #undef  GB_BINOP_WORKER
+                    #define GB_BINOP_WORKER(op,xname)                           \
+                    {                                                           \
+                        info = GB_bind2nd_tran (op, xname) (C, A, scalarx,      \
+                            Workspaces, A_slice, nworkspaces, nthreads) ;       \
+                    }                                                           \
+                    break ;
 
-                //--------------------------------------------------------------
-                // launch the switch factory
-                //--------------------------------------------------------------
+                    //-----------------------------------------------------------
+                    // launch the switch factory
+                    //-----------------------------------------------------------
 
-                #define GB_NO_FIRST
-                #define GB_NO_SECOND
-                #define GB_NO_PAIR
-                #include "GB_binop_factory.c"
+                    #define GB_NO_FIRST
+                    #define GB_NO_SECOND
+                    #define GB_NO_PAIR
+                    #include "GB_binop_factory.c"
+                }
             }
             #endif
 

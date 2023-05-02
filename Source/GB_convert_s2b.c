@@ -169,6 +169,7 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
         {
 
             #ifndef GBCOMPACT
+            GB_IF_FACTORY_KERNELS_ENABLED
             { 
                 switch (asize)
                 {

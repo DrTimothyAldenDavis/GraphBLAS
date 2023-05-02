@@ -230,41 +230,31 @@ GB_GOTCHA ; // flipxy
         bool is_plus = (addop->opcode == GB_PLUS_binop_code) ;
         if (is_plus && (zcode >= GB_INT8_code && zcode <= GB_FP64_code))
         { 
-GB_GOTCHA ; // plus-pair-real (any type)
+
             // PLUS_PAIR_REAL semiring
             fprintf (fp, "#define GB_IS_PLUS_PAIR_REAL_SEMIRING 1\n") ;
 
             switch (zcode)
             {
                 case GB_INT8_code    : 
-GB_GOTCHA ;
                 case GB_UINT8_code   : 
-GB_GOTCHA ;
                     fprintf (fp, "#define GB_IS_PLUS_PAIR_8_SEMIRING 1\n") ;
                     break ;
 
                 case GB_INT16_code   : 
-GB_GOTCHA ;
                 case GB_UINT16_code  : 
-GB_GOTCHA ;
                     fprintf (fp, "#define GB_IS_PLUS_PAIR_16_SEMIRING 1\n") ;
                     break ;
 
                 case GB_INT32_code   : 
-GB_GOTCHA ;
                 case GB_UINT32_code  : 
-GB_GOTCHA ;
                     fprintf (fp, "#define GB_IS_PLUS_PAIR_32_SEMIRING 1\n") ;
                     break ;
 
                 case GB_INT64_code   : 
-GB_GOTCHA ;
                 case GB_UINT64_code  : 
-GB_GOTCHA ;
                 case GB_FP32_code    : 
-GB_GOTCHA ;
                 case GB_FP64_code    : 
-GB_GOTCHA ;
                     fprintf (fp, "#define GB_IS_PLUS_PAIR_BIG_SEMIRING 1\n") ;
                     break ;
                 default:;

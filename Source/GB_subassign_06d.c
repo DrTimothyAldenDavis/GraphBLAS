@@ -110,6 +110,8 @@ GrB_Info GB_subassign_06d
         //----------------------------------------------------------------------
 
         #ifndef GBCOMPACT
+        GB_IF_FACTORY_KERNELS_ENABLED
+        { 
 
             //------------------------------------------------------------------
             // define the worker for the switch factory
@@ -147,7 +149,7 @@ GrB_Info GB_subassign_06d
                     default: ;
                 }
             }
-
+        }
         #endif
 
         //----------------------------------------------------------------------

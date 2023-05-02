@@ -237,6 +237,7 @@ GB_GOTCHA ; // z has no atomic update
 
     info = GrB_NO_VALUE ;
     #ifndef GBCOMPACT
+    GB_IF_FACTORY_KERNELS_ENABLED
     { 
 
         //----------------------------------------------------------------------

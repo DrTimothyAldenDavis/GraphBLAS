@@ -101,6 +101,8 @@ GrB_Info GB_subassign_23      // C += A; C is full
     info = GrB_NO_VALUE ;
 
     #ifndef GBCOMPACT
+    GB_IF_FACTORY_KERNELS_ENABLED
+    { 
 
         //----------------------------------------------------------------------
         // define the worker for the switch factory
@@ -128,7 +130,7 @@ GrB_Info GB_subassign_23      // C += A; C is full
             // accumulate sparse matrix into full matrix with built-in operator
             #include "GB_binop_factory.c"
         }
-
+    }
     #endif
 
     //--------------------------------------------------------------------------
