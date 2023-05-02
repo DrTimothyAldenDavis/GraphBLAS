@@ -45,7 +45,6 @@
     // get C, M, and A
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_sparsity (M) == GB_sparsity (C)) ;
     int64_t *restrict Ci = C->i ;
 
     ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;

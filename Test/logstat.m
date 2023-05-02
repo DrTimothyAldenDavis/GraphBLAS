@@ -37,6 +37,15 @@ else
     end
 end
 
+n = 1 ;
+if (~isempty (strfind (pwd, 'Tcov')))
+    % load in the # of lines in the test coverage
+    fp = fopen ('tmp_cover/count', 'r') ;
+    n = textscan (fp, '%f') ;
+    n = n {1} ;
+    fclose (fp) ;
+end
+
 for jit_trial = 1:length (jit_controls)
 
     jit_control = jit_controls {jit_trial} ;
@@ -116,7 +125,6 @@ for jit_trial = 1:length (jit_controls)
             end
             if (~isempty (GraphBLAS_grbcov))
                 c = sum (GraphBLAS_grbcov > 0) ;
-                n = length (GraphBLAS_grbcov) ;
                 if (c == n)
                     % full coverage reached with this test
                     fprintf (   '%5d:   all %5d full 100%% %8.2f/s', ...

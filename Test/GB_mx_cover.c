@@ -13,9 +13,6 @@
 
 #include "GB_mex.h"
 
-// global array for test coverage
-int64_t GB_cov [GBCOVER_MAX] ;
-
 //------------------------------------------------------------------------------
 // GB_cover_get: copy coverage counts from the workspace
 //------------------------------------------------------------------------------

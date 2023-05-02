@@ -14,8 +14,9 @@ if (ispc)
     error ('The tests in Tcov are not ported to Windows') ;
 end
 
-% copy the GB_rename.h file
+% copy the GB_rename.h and GB_coverage.c files
 copyfile ('../GraphBLAS/rename/GB_rename.h', 'tmp_include/GB_rename.h') ;
+copyfile ('GB_coverage.c', 'tmp_source/GB_coverage.c') ;
 
 % create the include files and place in tmp_include
 hfiles = [ dir('../Include/*') ; ...
@@ -38,6 +39,11 @@ cfiles = [ dir('../Source/*.c') ; ...
            ] ;
 count = grbcover_edit (cfiles, count, 'tmp_source') ;
 fprintf ('cfile count: %d\n', count) ;
+
+% save the count
+fp = fopen ('tmp_cover/count', 'w') ;
+fprintf (fp, '%d\n', count) ;
+fclose (fp) ;
 
 % revise this to match Source/Template/GB_coverage.h
 GBCOVER_MAX = 50000 ;
