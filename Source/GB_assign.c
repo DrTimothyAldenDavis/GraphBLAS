@@ -286,7 +286,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
             // This code requires C and M not to be aliased to each other.
             ASSERT (M != NULL) ;
-            ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS C==M in C_replace_phase
+            ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS C==M in C_replace_phase
             ASSERT (!whole_submatrix) ;
             ASSERT (!GB_IS_BITMAP (C)) ;
             ASSERT (!GB_IS_FULL (C)) ;

@@ -51,7 +51,7 @@ GrB_Info GB_subassign_23      // C += A; C is full
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
+    ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
 
     //--------------------------------------------------------------------------
     // check inputs

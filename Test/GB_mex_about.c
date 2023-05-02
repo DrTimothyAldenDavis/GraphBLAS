@@ -658,12 +658,12 @@ void mexFunction
     OK (GrB_Matrix_setElement_BOOL (B, true, 0, 0)) ;
     OK (GrB_Matrix_wait_(A, GrB_MATERIALIZE)) ;
     OK (GrB_Matrix_wait_(B, GrB_MATERIALIZE)) ;
-    CHECK (!GB_aliased (A, B)) ;
+    CHECK (!GB_any_aliased (A, B)) ;
     int64_t *Bh_save = B->h ;
     B->h = A->h ; B->h_shallow = true ;
-    CHECK (GB_aliased (A, B)) ;
+    CHECK (GB_any_aliased (A, B)) ;
     B->h = Bh_save ; B->h_shallow = false ;
-    CHECK (!GB_aliased (A, B)) ;
+    CHECK (!GB_any_aliased (A, B)) ;
     OK (GxB_Matrix_fprint_(A, 3, NULL)) ;
     OK (GxB_Matrix_fprint_(B, 3, NULL)) ;
     GrB_Matrix_free_(&A) ;

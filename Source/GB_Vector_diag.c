@@ -39,7 +39,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     ASSERT_MATRIX_OK (A, "A input for GB_Vector_diag", GB0) ;
     ASSERT_MATRIX_OK (V, "V input for GB_Vector_diag", GB0) ;
     ASSERT (GB_VECTOR_OK (V)) ;             // V is a vector on input
-    ASSERT (!GB_aliased (A, V)) ;           // A and V cannot be aliased
+    ASSERT (!GB_any_aliased (A, V)) ;           // A and V cannot be aliased
     ASSERT (!GB_IS_HYPERSPARSE (V)) ;       // vectors cannot be hypersparse
 
     struct GB_Matrix_opaque T_header ;

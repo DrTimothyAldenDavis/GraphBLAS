@@ -90,5 +90,7 @@ double GB_helper10       // norm (x-y,p), or -1 on error
     GrB_Index n
 ) ;
 
+void GB_make_shallow (GrB_Matrix A) ;
+
 #endif
 

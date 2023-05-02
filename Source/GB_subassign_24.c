@@ -36,7 +36,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
+    ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
     ASSERT (!GB_is_shallow (C)) ;
 
     //--------------------------------------------------------------------------

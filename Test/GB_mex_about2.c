@@ -251,24 +251,24 @@ void mexFunction
     CHECK (!GB_ij_is_in_list (NULL, 0, 0, GB_STRIDE, Icolon)) ;
 
     //--------------------------------------------------------------------------
-    // GB_aliased
+    // GB_any_aliased
     //--------------------------------------------------------------------------
 
     OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
     OK (GrB_Matrix_setElement_INT32 (A, 12345, 0, 0)) ;
     OK (GrB_Matrix_dup (&C, A)) ;
-    CHECK (!GB_aliased (A, C)) ;
+    CHECK (!GB_any_aliased (A, C)) ;
     GB_FREE (&(C->p), C->p_size) ;
     C->p = A->p ;
     C->p_shallow = true ;
-    CHECK (GB_aliased (A, C)) ;
+    CHECK (GB_any_aliased (A, C)) ;
     C->p = NULL ;
     C->p_shallow = false ;
-    CHECK (!GB_aliased (A, C)) ;
+    CHECK (!GB_any_aliased (A, C)) ;
     GB_FREE (&(C->i), C->i_size) ;
     C->i = A->i ;
     C->i_shallow = true ;
-    CHECK (GB_aliased (A, C)) ;
+    CHECK (GB_any_aliased (A, C)) ;
     C->i = NULL ;
     C->i_shallow = false ;
     GrB_Matrix_free_(&A) ;

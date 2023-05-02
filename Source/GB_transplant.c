@@ -41,7 +41,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     GrB_Info info ;
     ASSERT (Ahandle != NULL) ;
     GrB_Matrix A = *Ahandle ;
-    ASSERT (!GB_aliased (C, A)) ;
+    ASSERT (!GB_any_aliased (C, A)) ;
 
     ASSERT_MATRIX_OK (A, "A before transplant", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;    // zombies in A transplanted into C

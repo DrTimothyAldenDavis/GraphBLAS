@@ -58,8 +58,8 @@ GrB_Info GB_subassign_06n
     ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
     ASSERT (!GB_IS_BITMAP (M)) ;    // Method 06n is not used for M bitmap
     ASSERT (!GB_IS_BITMAP (A)) ;    // Method 06n is not used for A bitmap
-    ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
-    ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
+    ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
+    ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
 
     ASSERT_MATRIX_OK (C, "C input for 06n", GB0) ;
     ASSERT_MATRIX_OK (M, "M input for 06n", GB0) ;

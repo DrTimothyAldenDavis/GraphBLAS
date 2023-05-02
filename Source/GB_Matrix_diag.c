@@ -40,7 +40,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     ASSERT_MATRIX_OK (C, "C input for GB_Matrix_diag", GB0) ;
     ASSERT_MATRIX_OK (V_in, "V input for GB_Matrix_diag", GB0) ;
     ASSERT (GB_VECTOR_OK (V_in)) ;       // V_in is a vector on input
-    ASSERT (!GB_aliased (C, V_in)) ;     // C and V_in cannot be aliased
+    ASSERT (!GB_any_aliased (C, V_in)) ;     // C and V_in cannot be aliased
     ASSERT (!GB_IS_HYPERSPARSE (V_in)) ; // vectors cannot be hypersparse
 
     struct GB_Matrix_opaque T_header ;

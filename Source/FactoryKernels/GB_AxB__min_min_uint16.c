@@ -271,26 +271,26 @@ GrB_Info GB (_Asaxpy3B__min_min_uint16)
     const int ntasks, const int nfine, const int nthreads, const int do_sort,
     GB_Werk Werk
 )
-{
+{ 
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
     ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;
     if (M == NULL)
-    { 
+    {
         // C = A*B, no mask
         return (GB (_Asaxpy3B_noM__min_min_uint16) (C, A, B,
             SaxpyTasks, ntasks, nfine, nthreads, do_sort, Werk)) ;
     }
     else if (!Mask_comp)
-    { 
+    {
         // C<M> = A*B
         return (GB (_Asaxpy3B_M__min_min_uint16) (C,
             M, Mask_struct, M_in_place, A, B,
             SaxpyTasks, ntasks, nfine, nthreads, do_sort, Werk)) ;
     }
     else
-    { 
+    {
         // C<!M> = A*B
         return (GB (_Asaxpy3B_notM__min_min_uint16) (C,
             M, Mask_struct, M_in_place, A, B,
@@ -321,7 +321,7 @@ GrB_Info GB (_Asaxpy3B__min_min_uint16)
         int nthreads_max = GB_Context_nthreads_max ( ) ;
         double chunk = GB_Context_chunk ( ) ;
         if (GB_IS_SPARSE (A) && GB_IS_SPARSE (B))
-        { 
+        {
             // both A and B are sparse
             #define GB_META16
             #define GB_NO_MASK 0
@@ -338,7 +338,7 @@ GrB_Info GB (_Asaxpy3B__min_min_uint16)
             #include "GB_AxB_saxpy3_template.c"
         }
         else
-        { 
+        {
             // general case
             #undef GB_META16
             #define GB_NO_MASK 0
@@ -371,7 +371,7 @@ GrB_Info GB (_Asaxpy3B__min_min_uint16)
         int nthreads_max = GB_Context_nthreads_max ( ) ;
         double chunk = GB_Context_chunk ( ) ;
         if (GB_IS_SPARSE (A) && GB_IS_SPARSE (B))
-        { 
+        {
             // both A and B are sparse
             #define GB_META16
             #define GB_NO_MASK 1
@@ -388,7 +388,7 @@ GrB_Info GB (_Asaxpy3B__min_min_uint16)
             #include "GB_AxB_saxpy3_template.c"
         }
         else
-        { 
+        {
             // general case
             #undef GB_META16
             #define GB_NO_MASK 1
@@ -423,7 +423,7 @@ GrB_Info GB (_Asaxpy3B__min_min_uint16)
         int nthreads_max = GB_Context_nthreads_max ( ) ;
         double chunk = GB_Context_chunk ( ) ;
         if (GB_IS_SPARSE (A) && GB_IS_SPARSE (B))
-        { 
+        {
             // both A and B are sparse
             #define GB_META16
             #define GB_NO_MASK 0
@@ -440,7 +440,7 @@ GrB_Info GB (_Asaxpy3B__min_min_uint16)
             #include "GB_AxB_saxpy3_template.c"
         }
         else
-        { 
+        {
             // general case
             #undef GB_META16
             #define GB_NO_MASK 0

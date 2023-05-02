@@ -48,7 +48,7 @@ GrB_Info GB_subassign_02
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
-    ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
+    ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
 
     //--------------------------------------------------------------------------
     // S = C(I,J)

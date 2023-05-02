@@ -16,7 +16,6 @@ name = sprintf ('%s_%s', binop, fname) ;
 
 % function names
 fprintf (f, 'm4_define(`_AaddB'', `_AaddB__%s'')\n', name) ;
-fprintf (f, 'm4_define(`_AunionB'', `_AunionB__%s'')\n', name) ;
 fprintf (f, 'm4_define(`_Cewise_fulln'', `_Cewise_fulln__%s'')\n', name) ;
 
 % subset of operators for GB_ewise_fulla
@@ -101,17 +100,19 @@ switch (binop)
         fprintf (f, 'm4_define(`if_binop_bind_is_enabled'', `0'')\n') ;
 end
 
-% subset of operators for GB_emult
+% subset of operators for emult and eWiseUnion
 switch (binop)
     case { 'pair' }
-        % disable emult for these operators
+        % disable emult and eWiseUnion for these operators
+        fprintf (f, 'm4_define(`_AunionB'',    `(none)'')\n') ;
         fprintf (f, 'm4_define(`_AemultB_08'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`_AemultB_02'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`_AemultB_04'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`_AemultB_bitmap'', `(none)'')\n') ;
         fprintf (f, 'm4_define(`if_binop_emult_is_enabled'', `-1'')\n') ;
     otherwise
-        % enable emult for these operators
+        % enable emult and eWiseUnion for these operators
+        fprintf (f, 'm4_define(`_AunionB'', `_AunionB__%s'')\n', name) ;
         fprintf (f, 'm4_define(`_AemultB_08'', `_AemultB_08__%s'')\n', name) ;
         fprintf (f, 'm4_define(`_AemultB_02'', `_AemultB_02__%s'')\n', name) ;
         fprintf (f, 'm4_define(`_AemultB_04'', `_AemultB_04__%s'')\n', name) ;

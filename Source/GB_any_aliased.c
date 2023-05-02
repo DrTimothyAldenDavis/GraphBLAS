@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_aliased: determine if two matrices are aliased in any way
+// GB_any_aliased: determine if two matrices are aliased in any way
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -12,14 +12,12 @@
 // always be shallow, in either A or B, or both.  NULL pointers are not
 // aliased.
 
-// FIXME: rename GB_any_aliased
-
 #include "GB.h"
 
 // true if pointers p1 and p2 are aliased and not NULL
 #define GB_POINTER_ALIASED(p1,p2) ((p1) == (p2) && (p1) != NULL)
 
-bool GB_aliased             // determine if A and B are aliased
+bool GB_any_aliased             // determine if A and B are aliased
 (
     GrB_Matrix A,           // input A matrix
     GrB_Matrix B            // input B matrix
@@ -77,7 +75,7 @@ bool GB_aliased             // determine if A and B are aliased
         aliased = true ;
     }
 
-    if (GB_aliased (A->Y, B->Y))
+    if (GB_any_aliased (A->Y, B->Y))
     { 
         ASSERT (A->Y_shallow || B->Y_shallow) ;
         aliased = true ;

@@ -14,8 +14,8 @@
 // in GrB_mxm (C, C, accum, C, C, ...), which is valid.  Internal routines are
 // more restrictive.
 
-// GB_aliased also checks the content of A and B
-bool GB_aliased             // determine if A and B are aliased in any way
+// GB_any_aliased also checks the content of A and B
+bool GB_any_aliased             // determine if A and B are aliased in any way
 (
     GrB_Matrix A,           // input A matrix
     GrB_Matrix B            // input B matrix

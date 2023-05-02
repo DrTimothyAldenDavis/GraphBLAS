@@ -502,8 +502,8 @@ GB_GOTCHA ; // FIRST, GB_reduce_to_vector
     {
         // C cannot be done in-place if it is aliased with any input matrix.
         // Also cannot compute C in-place if it is to be transposed.
-        bool C_aliased = GB_aliased (C_in, M) || GB_aliased (C_in, A) ||
-            GB_aliased (C_in, B) ;
+        bool C_aliased = GB_any_aliased (C_in, M) || GB_any_aliased (C_in, A) ||
+            GB_any_aliased (C_in, B) ;
         if (C_transpose || C_aliased)
         { 
             can_do_in_place = false ;

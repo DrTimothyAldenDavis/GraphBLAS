@@ -591,7 +591,7 @@ void mexFunction
     save = A->x ;
     A->x = C->x ;
     A->x_shallow = true ;
-    CHECK (GB_aliased (A, C)) ;
+    CHECK (GB_any_aliased (A, C)) ;
     A->x = save ;
     A->x_shallow = false ;
     GrB_Matrix_free_(&A) ;

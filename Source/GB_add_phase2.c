@@ -355,51 +355,65 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         //----------------------------------------------------------------------
 
         #ifndef GBCOMPACT
-
-            //------------------------------------------------------------------
-            // define the worker for the switch factory
-            //------------------------------------------------------------------
-
-            #define GB_AaddB(mult,xname) GB (_AaddB_ ## mult ## xname)
-            #define GB_AunionB(mult,xname) GB (_AunionB_ ## mult ## xname)
-
-            #define GB_BINOP_WORKER(mult,xname)                             \
-            {                                                               \
-                if (is_eWiseUnion)                                          \
-                {                                                           \
-                    info = GB_AunionB(mult,xname) (C, C_sparsity,           \
-                        M, Mask_struct, Mask_comp, A, B,                    \
-                        alpha_scalar, beta_scalar,                          \
-                        Ch_is_Mh, C_to_M, C_to_A, C_to_B,                   \
-                        TaskList, C_ntasks, C_nthreads,                     \
-                        M_ek_slicing, M_nthreads, M_ntasks,                 \
-                        A_ek_slicing, A_nthreads, A_ntasks,                 \
-                        B_ek_slicing, B_nthreads, B_ntasks) ;               \
-                }                                                           \
-                else                                                        \
-                {                                                           \
-                    info = GB_AaddB(mult,xname) (C, C_sparsity,             \
-                        M, Mask_struct, Mask_comp, A, B,                    \
-                        Ch_is_Mh, C_to_M, C_to_A, C_to_B,                   \
-                        TaskList, C_ntasks, C_nthreads,                     \
-                        M_ek_slicing, M_nthreads, M_ntasks,                 \
-                        A_ek_slicing, A_nthreads, A_ntasks,                 \
-                        B_ek_slicing, B_nthreads, B_ntasks) ;               \
-                }                                                           \
-            }                                                               \
-            break ;
-
-            //------------------------------------------------------------------
-            // launch the switch factory
-            //------------------------------------------------------------------
-
+        {
             GB_Type_code xcode, ycode, zcode ;
             if (!op_is_positional &&
                 GB_binop_builtin (A->type, false, B->type, false,
                 op, false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
-            { 
-                #include "GB_binop_factory.c"
+            {
+                if (is_eWiseUnion)
+                { 
+
+                    //----------------------------------------------------------
+                    // define the worker for the switch factory
+                    //----------------------------------------------------------
+
+                    #define GB_AuniB(mult,xname) GB (_AunionB_ ## mult ## xname)
+                    #define GB_BINOP_WORKER(mult,xname)                     \
+                        info = GB_AuniB(mult,xname) (C, C_sparsity,         \
+                            M, Mask_struct, Mask_comp, A, B,                \
+                            alpha_scalar, beta_scalar,                      \
+                            Ch_is_Mh, C_to_M, C_to_A, C_to_B,               \
+                            TaskList, C_ntasks, C_nthreads,                 \
+                            M_ek_slicing, M_nthreads, M_ntasks,             \
+                            A_ek_slicing, A_nthreads, A_ntasks,             \
+                            B_ek_slicing, B_nthreads, B_ntasks) ;
+
+                    //----------------------------------------------------------
+                    // launch the switch factory
+                    //----------------------------------------------------------
+
+                    // eWiseUnion is always iso for the PAIR operator
+                    #define GB_NO_PAIR
+                    #include "GB_binop_factory.c"
+
+                }
+                else
+                { 
+
+                    //----------------------------------------------------------
+                    // define the worker for the switch factory
+                    //----------------------------------------------------------
+
+                    #define GB_AaddB(mult,xname) GB (_AaddB_ ## mult ## xname)
+                    #undef  GB_BINOP_WORKER
+                    #define GB_BINOP_WORKER(mult,xname)                     \
+                        info = GB_AaddB(mult,xname) (C, C_sparsity,         \
+                            M, Mask_struct, Mask_comp, A, B,                \
+                            Ch_is_Mh, C_to_M, C_to_A, C_to_B,               \
+                            TaskList, C_ntasks, C_nthreads,                 \
+                            M_ek_slicing, M_nthreads, M_ntasks,             \
+                            A_ek_slicing, A_nthreads, A_ntasks,             \
+                            B_ek_slicing, B_nthreads, B_ntasks) ;
+
+                    //----------------------------------------------------------
+                    // launch the switch factory
+                    //----------------------------------------------------------
+
+                    #include "GB_binop_factory.c"
+                }
             }
+        }
         #endif
     }
 

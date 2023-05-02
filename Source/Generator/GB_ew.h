@@ -65,6 +65,7 @@ GrB_Info GB (_AaddB)
     const int B_ntasks
 ) ;
 
+m4_divert(if_binop_emult_is_enabled)
 GrB_Info GB (_AunionB)
 (
     GrB_Matrix C,
@@ -94,7 +95,6 @@ GrB_Info GB (_AunionB)
     const int B_ntasks
 ) ;
 
-m4_divert(if_binop_emult_is_enabled)
 GrB_Info GB (_AemultB_08)
 (
     GrB_Matrix C,

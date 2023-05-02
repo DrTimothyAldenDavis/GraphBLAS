@@ -50,7 +50,7 @@ GrB_Info GB_subassign_05d
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
+    ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
 
     //--------------------------------------------------------------------------
     // get inputs

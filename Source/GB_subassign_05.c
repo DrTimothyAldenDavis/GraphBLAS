@@ -49,7 +49,7 @@ GrB_Info GB_subassign_05
     //--------------------------------------------------------------------------
 
     ASSERT (!GB_IS_BITMAP (C)) ;
-    ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
+    ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
 
     //--------------------------------------------------------------------------
     // get inputs

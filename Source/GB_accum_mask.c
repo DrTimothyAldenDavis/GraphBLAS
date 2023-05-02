@@ -261,8 +261,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     // GB_transplant for Z=T and GB_transplant_conform in GB_mask for C=Z).
     // So in this case, GB_subassign takes more work.
 
-    if (GB_aliased (C, M)) GBURBLE ("(C aliased with M) ") ;
-    if (GB_aliased (C, T)) GBURBLE ("(C aliased with T) ") ;
+    if (GB_any_aliased (C, M)) GBURBLE ("(C aliased with M) ") ;
+    if (GB_any_aliased (C, T)) GBURBLE ("(C aliased with T) ") ;
 
     bool use_subassign = false ;
 
@@ -282,7 +282,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // C): use GB_subassign if the update is small (resuling in a small
             // number of pending tuples), and if C is not aliased with M or T.
             use_subassign = (tnz + cnpending <= cnz)
-                && !GB_aliased (C, M) && !GB_aliased (C, T) ;
+                && !GB_any_aliased (C, M) && !GB_any_aliased (C, T) ;
         }
     }
 

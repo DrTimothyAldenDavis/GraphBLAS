@@ -115,7 +115,7 @@ void mexFunction
 
     GxB_print (A,3) ;
     GxB_print (B,3) ;
-    CHECK (GB_aliased (A, B)) ;
+    CHECK (GB_any_aliased (A, B)) ;
     OK (GrB_Matrix_free (&B)) ;
 
     OK (GxB_Matrix_fprint (A, "A still valid (hypersparse)", 3, NULL)) ;

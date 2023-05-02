@@ -26,7 +26,6 @@
 // since GraphBLAS requires R2018a with the interleaved complex data type.
 
 #include "gb_interface.h"
-#include "GB_make_shallow.h"
 
 #define IF(error,message) \
     CHECK_ERROR (error, "invalid GraphBLAS struct (" message ")" ) ;
@@ -361,7 +360,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         }
 
         // tell GraphBLAS the matrix is shallow
-        GB (make_shallow) (A) ;
+        GB_make_shallow (A) ;
 
     }
     else
@@ -505,7 +504,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         }
 
         // tell GraphBLAS the matrix is shallow
-        GB (make_shallow) (A) ;
+        GB_make_shallow (A) ;
     }
 
     //--------------------------------------------------------------------------

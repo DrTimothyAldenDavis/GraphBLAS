@@ -257,7 +257,7 @@ GrB_Info GB_mask                // C<M> = Z
 
         if (C_replace)
         {
-            if (GB_aliased (C_result, M))
+            if (GB_any_aliased (C_result, M))
             { 
                 // C_result and M are aliased.  This is OK, unless C_replace is
                 // true.  In this case, M must be left unchanged but C_result

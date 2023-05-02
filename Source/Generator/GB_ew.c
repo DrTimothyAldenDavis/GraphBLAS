@@ -172,6 +172,7 @@ GrB_Info GB (_AaddB)
 // eWiseUnion: C=A+B, C<M>=A+B, C<!M>=A+B
 //------------------------------------------------------------------------------
 
+m4_divert(if_binop_emult_is_enabled)
 GrB_Info GB (_AunionB)
 (
     GrB_Matrix C,
@@ -215,7 +216,6 @@ GrB_Info GB (_AunionB)
     #endif
 }
 
-m4_divert(if_binop_emult_is_enabled)
 //------------------------------------------------------------------------------
 // eWiseMult: C=A.*B, C<M>=A.*B, or C<M!>=A.*B where C is sparse/hyper
 //------------------------------------------------------------------------------

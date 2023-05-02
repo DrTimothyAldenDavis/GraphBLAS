@@ -647,7 +647,7 @@ GrB_Info GB_assign_prep
         // C_replace is already effectively false (see no_mask condition above)
         ASSERT ((*C_replace) == false) ;
 
-        if (GB_aliased (C, A) && !A_transpose && !scalar_expansion)
+        if (GB_any_aliased (C, A) && !A_transpose && !scalar_expansion)
         { 
             // C = C, with C and A aliased, no transpose, no mask, no accum
             // operator, both I and J are ":", Mask_comp false.  C is not
@@ -948,7 +948,7 @@ GrB_Info GB_assign_prep
     // TODO: bitmap assign can handle C==M and C==A aliasing in some cases
 
     // If C is aliased to A and/or M, a copy of C typically must be made.
-    bool C_aliased = GB_aliased (C, A) || GB_aliased (C, M) ;
+    bool C_aliased = GB_any_aliased (C, A) || GB_any_aliased (C, M) ;
 
     // However, if C == M is aliased, M is structural and not complemented, I
     // and J are both ":", and scalar assignment is being done, then the alias
@@ -968,14 +968,14 @@ GrB_Info GB_assign_prep
     if ((*C_replace) && ((*assign_kind) != GB_SUBASSIGN))
     { 
         // the C_replace phase requires C and M_in not to be aliased
-        C_aliased = C_aliased || GB_aliased (C, M_in) ;
+        C_aliased = C_aliased || GB_any_aliased (C, M_in) ;
     }
 
     if (C_exploit_alias_with_M)
     {
         // C<C,s>=scalar, and C_replace can be ignored.
         ASSERT (C_aliased) ;            // C is aliased with M, but this is OK
-        ASSERT (!GB_aliased (C, A)) ;   // A is not present so C != A
+        ASSERT (!GB_any_aliased (C, A)) ;   // A is not present so C != A
         if (*C_replace)
         { 
             GBURBLE ("(C_replace ignored) ") ;

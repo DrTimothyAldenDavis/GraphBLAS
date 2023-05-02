@@ -60,7 +60,7 @@ GrB_Info GB_subassign_06d
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (GB_IS_BITMAP (C) || GB_IS_FULL (C)) ;
-    ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
+    ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
 
     ASSERT_MATRIX_OK (A, "A for subassign method_06d", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;

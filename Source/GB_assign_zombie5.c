@@ -64,7 +64,7 @@ GrB_Info GB_assign_zombie5
     ASSERT (!GB_ZOMBIES (M)) ; 
     ASSERT (!GB_JUMBLED (M)) ;      // binary search on M
     ASSERT (!GB_PENDING (M)) ; 
-    ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
+    ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
 
     //--------------------------------------------------------------------------
     // get C

@@ -636,3 +636,27 @@ double GB_helper10       // norm (x-y,p), or -1 on error
     return (s) ;
 }
 
+//------------------------------------------------------------------------------
+// GB_make_shallow.c: force a matrix to have purely shallow components
+//------------------------------------------------------------------------------
+
+void GB_make_shallow (GrB_Matrix A)
+{ 
+    if (A == NULL) return ;
+    A->p_shallow = (A->p != NULL) ;
+    A->h_shallow = (A->h != NULL) ;
+    A->b_shallow = (A->b != NULL) ;
+    A->i_shallow = (A->i != NULL) ;
+    A->x_shallow = (A->x != NULL) ;
+    #ifdef GB_MEMDUMP
+    printf ("remove from memtable: Ap:%p Ah:%p Ab:%p Ai:%p Ax:%p\n",
+        A->p, A->h, A->b, A->i, A->x) ;
+    #endif
+    if (A->p != NULL) GB_Global_memtable_remove (A->p) ;
+    if (A->h != NULL) GB_Global_memtable_remove (A->h) ;
+    if (A->b != NULL) GB_Global_memtable_remove (A->b) ;
+    if (A->i != NULL) GB_Global_memtable_remove (A->i) ;
+    if (A->x != NULL) GB_Global_memtable_remove (A->x) ;
+    GB_make_shallow (A->Y) ;
+}
+
