@@ -41,29 +41,9 @@ void GB_macrofy_unop
         //----------------------------------------------------------------------
 
         ASSERT (op != NULL) ;
-        bool is_macro = GB_macrofy_defn (fp, 3, op->name, op->defn) ;
-        if (is_macro)
-        { 
-GB_GOTCHA ; // user macro
-            fprintf (fp, "// unary operator %s defined as a macro:\n",
-                op->name) ;
-        }
-        fprintf (fp, "#define %s(z,x,%s,y) ", macro_name, ij) ;
-        if (is_macro)
-        { 
-GB_GOTCHA ; // user macro
-            for (char *p = op->name ; (*p) != '\0' ; p++)
-            { 
-GB_GOTCHA ; // user macro
-                int c = (*p) ;
-                fputc (toupper (c), fp) ;
-            }
-            fprintf (fp, " (z, x)\n") ;
-        }
-        else
-        { 
-            fprintf (fp, " %s (&(z), &(x))\n", op->name) ;
-        }
+        GB_macrofy_defn (fp, 3, op->name, op->defn) ;
+        fprintf (fp, "#define %s(z,x,%s,y)  %s (&(z), &(x))\n", macro_name,
+            ij, op->name) ;
 
     }
     else if (ecode == 254)
@@ -74,29 +54,9 @@ GB_GOTCHA ; // user macro
         //----------------------------------------------------------------------
 
         ASSERT (op != NULL) ;
-        bool is_macro = GB_macrofy_defn (fp, 3, op->name, op->defn) ;
-        if (is_macro)
-        { 
-GB_GOTCHA ; // user macro
-            fprintf (fp, "// index unary operator %s defined as a macro:\n",
-                op->name) ;
-        }
-        fprintf (fp, "#define %s(z,x,%s,y) ", macro_name, ij) ;
-        if (is_macro)
-        { 
-GB_GOTCHA ; // user macro
-            for (char *p = op->name ; (*p) != '\0' ; p++)
-            { 
-GB_GOTCHA ; // user macro
-                int c = (*p) ;
-                fputc (toupper (c), fp) ;
-            }
-            fprintf (fp, " (z, x, i, j, y)\n") ;
-        }
-        else
-        { 
-            fprintf (fp, " %s (&(z), &(x), i, j, &(y))\n", op->name) ;
-        }
+        GB_macrofy_defn (fp, 3, op->name, op->defn) ;
+        fprintf (fp, "#define %s(z,x,%s,y) %s (&(z), &(x), i, j, &(y))\n",
+            macro_name, ij, op->name) ;
 
     }
     else
@@ -499,18 +459,18 @@ GB_GOTCHA ; // user macro
             case 242 : f = "z = ((j) == ((i) + (y)))" ; GB_GOTCHA ; break ;
             case 243 : f = "z = ((j) != ((i) + (y)))" ; GB_GOTCHA ; break ;
 
-            case 244 : f = "z = GB_FC32_ne (x,y)" ;     GB_GOTCHA ; break ;
-            case 245 : f = "z = GB_FC64_ne (x,y)" ;     GB_GOTCHA ; break ;
-            case 246 : f = "z = ((x) != (y))" ;         GB_GOTCHA ; break ;
+            case 244 : f = "z = GB_FC32_ne (x,y)" ;     break ;
+            case 245 : f = "z = GB_FC64_ne (x,y)" ;     break ;
+            case 246 : f = "z = ((x) != (y))" ;         break ;
 
-            case 247 : f = "z = GB_FC32_eq (x,y)" ;     GB_GOTCHA ; break ;
-            case 248 : f = "z = GB_FC64_eq (x,y)" ;     GB_GOTCHA ; break ;
-            case 249 : f = "z = ((x) == (y))" ;         GB_GOTCHA ; break ;
+            case 247 : f = "z = GB_FC32_eq (x,y)" ;     break ;
+            case 248 : f = "z = GB_FC64_eq (x,y)" ;     break ;
+            case 249 : f = "z = ((x) == (y))" ;         break ;
 
-            case 250 : f = "z = ((x) > (y))" ;          GB_GOTCHA ; break ;
-            case 251 : f = "z = ((x) >= (y))" ;         GB_GOTCHA ; break ;
-            case 252 : f = "z = ((x) < (y))" ;          GB_GOTCHA ; break ;
-            case 253 : f = "z = ((x) <= (y))" ;         GB_GOTCHA ; break ;
+            case 250 : f = "z = ((x) > (y))" ;          break ;
+            case 251 : f = "z = ((x) >= (y))" ;         break ;
+            case 252 : f = "z = ((x) < (y))" ;          break ;
+            case 253 : f = "z = ((x) <= (y))" ;         break ;
 
             default: ;
         }

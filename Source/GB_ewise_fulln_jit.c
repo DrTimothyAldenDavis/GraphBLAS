@@ -23,7 +23,6 @@ GrB_Info GB_ewise_fulln_jit  // C=A+B via the JIT
     const int nthreads
 )
 { 
-GB_GOTCHA ; // ewise_fulln_jit
 
     //--------------------------------------------------------------------------
     // encodify the problem

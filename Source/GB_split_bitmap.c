@@ -158,7 +158,7 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
                             info = GrB_SUCCESS ;
                             break ;
 
-                        case GB_16BYTE : // double complex or 16-byte user-defined
+                        case GB_16BYTE : // double complex or 16-byte user
                             #define GB_C_TYPE GB_blob16
                             #define GB_A_TYPE GB_blob16
                             #include "GB_split_bitmap_template.c"
@@ -190,7 +190,6 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
 
             if (info == GrB_NO_VALUE)
             { 
-GB_GOTCHA ; // generic
                 // user-defined types
                 #define GB_C_TYPE GB_void
                 #define GB_A_TYPE GB_void

@@ -440,7 +440,6 @@
         }
         #elif GB_IS_PLUS_PAIR_8_SEMIRING
         { 
-// GB_GOTCHA ; // plus-8-pair
             // (PLUS int8, uint8 monoids)_PAIR semirings
             cij = (GB_C_TYPE) (((uint64_t) ainz) & 0xFFL) ;
         }

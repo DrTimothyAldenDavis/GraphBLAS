@@ -68,19 +68,19 @@ if (~isempty (strfind (pwd, 'Tcov')))
 end
 
 for control_trial = 1:length (jit_controls)
-
-    jit_control = jit_controls {control_trial} ;
-    factory_control = factory_controls {control_trial} ;
-    fprintf ('jit: %d factory: %d\n', jit_control) ;
-    if (~isempty (jit_control))
-        GB_mex_jit_control (jit_control) ;
-    end
-    if (isempty (factory_control))
-        factory_control = 1 ;
-    end
-    GB_mex_factory_control (factory_control) ;
-
     for trial = 1:length (threads)
+
+        GB_mex_finalize ;
+        jit_control = jit_controls {control_trial} ;
+        factory_control = factory_controls {control_trial} ;
+        if (~isempty (jit_control))
+            GB_mex_jit_control (jit_control) ;
+        end
+        if (isempty (factory_control))
+            factory_control = 1 ;
+        end
+        GB_mex_factory_control (factory_control) ;
+        fprintf ('\nTrial: jit: %d factory: %d\n', jit_control, factory_control) ;
 
         clast = grb_get_coverage ;
 

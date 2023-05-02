@@ -8,6 +8,7 @@ if (ispc)
     error ('The tests in Tcov are not ported to Windows') ;
 end
 
+GB_mex_finalize ;
 infiles = [ dir('tmp_source/*.*') ; dir('tmp_include/*.*') ] ;
 
 nfiles = length (infiles) ;

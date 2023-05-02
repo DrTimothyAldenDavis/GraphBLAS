@@ -268,7 +268,6 @@ GB_GOTCHA ; // C iso
         }
         else if (addop->opcode == GB_LXOR_binop_code)
         { 
-GB_GOTCHA ; // lxor-pair semiring
             // semiring is lxor_pair_bool
             fprintf (fp, "#define GB_IS_LXOR_PAIR_SEMIRING 1\n") ;
         }
@@ -286,13 +285,11 @@ GB_GOTCHA ; // lxor-pair semiring
 
         if (addop->opcode == GB_MIN_binop_code)
         { 
-GB_GOTCHA ; // min firstj semiring
             // semiring is min_firstj or min_firstj1
             fprintf (fp, "#define GB_IS_MIN_FIRSTJ_SEMIRING 1\n") ;
         }
         else if (addop->opcode == GB_MAX_binop_code)
         { 
-GB_GOTCHA ; // max firstj semiring
             // semiring is max_firstj or max_firstj1
             fprintf (fp, "#define GB_IS_MAX_FIRSTJ_SEMIRING 1\n") ;
         }

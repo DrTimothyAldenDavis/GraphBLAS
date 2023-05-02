@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_flip_binop:  flip a binary operator for an eWise operation or GrB_mxm
+// GB_flip_binop:  flip a binary operator for GrB_mxm
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -14,7 +14,6 @@ GrB_BinaryOp GB_flip_binop  // flip a binary operator
 (
     // input:
     GrB_BinaryOp op,        // binary operator to flip
-    bool for_ewise,         // if true: flip for eWise, else for semiring
     // input/output:
     bool *flipxy            // true on input, set to false if op is flipped
 )
@@ -31,18 +30,6 @@ GrB_BinaryOp GB_flip_binop  // flip a binary operator
     }
 
     (*flipxy) = false ;     // set below to true if the op is not flipped
-
-    //--------------------------------------------------------------------------
-    // handle positional binary operators for ewise operations
-    //--------------------------------------------------------------------------
-
-    if (for_ewise && GB_IS_BINARYOP_CODE_POSITIONAL (op->opcode))
-    { 
-GB_GOTCHA ; // positional binop for ewise
-        // built-in positional ops (firsti, firstj, secondi, secondj) are
-        // not flipped for eWise operations
-        return (op) ;
-    }
 
     //--------------------------------------------------------------------------
     // handle the general case: both ewise and mxm
@@ -192,7 +179,7 @@ GB_GOTCHA ; // positional binop for ewise
 
             switch (xcode)
             {
-                case GB_BOOL_code   : GB_GOTCHA ; return (GxB_ISLT_BOOL) ;
+                case GB_BOOL_code   : return (GxB_ISLT_BOOL) ;
                 case GB_INT8_code   : return (GxB_ISLT_INT8) ;
                 case GB_INT16_code  : return (GxB_ISLT_INT16) ;
                 case GB_INT32_code  : return (GxB_ISLT_INT32) ;
@@ -211,7 +198,7 @@ GB_GOTCHA ; // positional binop for ewise
 
             switch (xcode)
             {
-                case GB_BOOL_code   : GB_GOTCHA ; return (GxB_ISGT_BOOL) ;
+                case GB_BOOL_code   : return (GxB_ISGT_BOOL) ;
                 case GB_INT8_code   : return (GxB_ISGT_INT8) ;
                 case GB_INT16_code  : return (GxB_ISGT_INT16) ;
                 case GB_INT32_code  : return (GxB_ISGT_INT32) ;
@@ -234,7 +221,7 @@ GB_GOTCHA ; // positional binop for ewise
 
             switch (xcode)
             {
-                case GB_BOOL_code   : GB_GOTCHA ; return (GxB_ISLE_BOOL) ;
+                case GB_BOOL_code   : return (GxB_ISLE_BOOL) ;
                 case GB_INT8_code   : return (GxB_ISLE_INT8) ;
                 case GB_INT16_code  : return (GxB_ISLE_INT16) ;
                 case GB_INT32_code  : return (GxB_ISLE_INT32) ;
@@ -253,7 +240,7 @@ GB_GOTCHA ; // positional binop for ewise
 
             switch (xcode)
             {
-                case GB_BOOL_code   : GB_GOTCHA ; return (GxB_ISGE_BOOL) ;
+                case GB_BOOL_code   : return (GxB_ISGE_BOOL) ;
                 case GB_INT8_code   : return (GxB_ISGE_INT8) ;
                 case GB_INT16_code  : return (GxB_ISGE_INT16) ;
                 case GB_INT32_code  : return (GxB_ISGE_INT32) ;
@@ -276,7 +263,7 @@ GB_GOTCHA ; // positional binop for ewise
 
             switch (xcode)
             {
-                case GB_BOOL_code   : GB_GOTCHA ; return (GxB_RDIV_BOOL) ;
+                case GB_BOOL_code   : return (GxB_RDIV_BOOL) ;
                 case GB_INT8_code   : return (GxB_RDIV_INT8) ;
                 case GB_INT16_code  : return (GxB_RDIV_INT16) ;
                 case GB_INT32_code  : return (GxB_RDIV_INT32) ;
@@ -297,7 +284,7 @@ GB_GOTCHA ; // positional binop for ewise
 
             switch (xcode)
             {
-                case GB_BOOL_code   : GB_GOTCHA ; return (GrB_DIV_BOOL) ;
+                case GB_BOOL_code   : return (GrB_DIV_BOOL) ;
                 case GB_INT8_code   : return (GrB_DIV_INT8) ;
                 case GB_INT16_code  : return (GrB_DIV_INT16) ;
                 case GB_INT32_code  : return (GrB_DIV_INT32) ;
@@ -322,7 +309,7 @@ GB_GOTCHA ; // positional binop for ewise
 
             switch (xcode)
             {
-                case GB_BOOL_code   : GB_GOTCHA ; return (GxB_RMINUS_BOOL) ;
+                case GB_BOOL_code   : return (GxB_RMINUS_BOOL) ;
                 case GB_INT8_code   : return (GxB_RMINUS_INT8) ;
                 case GB_INT16_code  : return (GxB_RMINUS_INT16) ;
                 case GB_INT32_code  : return (GxB_RMINUS_INT32) ;
@@ -343,7 +330,7 @@ GB_GOTCHA ; // positional binop for ewise
 
             switch (xcode)
             {
-                case GB_BOOL_code   : GB_GOTCHA ; return (GrB_MINUS_BOOL) ;
+                case GB_BOOL_code   : return (GrB_MINUS_BOOL) ;
                 case GB_INT8_code   : return (GrB_MINUS_INT8) ;
                 case GB_INT16_code  : return (GrB_MINUS_INT16) ;
                 case GB_INT32_code  : return (GrB_MINUS_INT32) ;

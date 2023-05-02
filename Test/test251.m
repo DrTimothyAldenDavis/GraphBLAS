@@ -13,7 +13,6 @@ GB_mex_burble (0) ;
 
 plus_pair.add = 'plus' ;
 plus_pair.multiply = 'oneb' ;   % same as pair
-% plus_pair.class = 'double' ;
 [~, ~, ~, types, ~, ~, ~,] = GB_spec_opsall ;
 types = types.all ;
 
@@ -67,24 +66,19 @@ for A_sparsity = [1 2 4 8]
                 end
 
                 % X = C + A'*B using dot4
-% GB_mex_burble (1) ;
                 X2 = GB_mex_mxm  (C, [ ], add_op, plus_pair, A, B, dtn_dot) ;
-% GB_mex_burble (0) ;
                 X1 = GB_spec_mxm (C, [ ], add_op, plus_pair, A, B, dtn_dot) ;
                 GB_spec_compare (X1, X2, 0, tol) ;
 
-%{
                 % X = A'*B using dot2/dot3
                 X2 = GB_mex_mxm  (C0, [ ], [ ], plus_pair, A, B, dtn_dot) ;
                 X1 = GB_spec_mxm (C0, [ ], [ ], plus_pair, A, B, dtn_dot) ;
-                GB_spec_compare (X1, X2) ;
+                GB_spec_compare (X1, X2, 0, tol) ;
 
                 % X = C + A'*B using saxpy
                 X2 = GB_mex_mxm  (C, [ ], add_op, plus_pair, A, B, dtn_sax) ;
                 X1 = GB_spec_mxm (C, [ ], add_op, plus_pair, A, B, dtn_sax) ;
                 GB_spec_compare (X1, X2) ;
-%}
-
             end
         end
     end

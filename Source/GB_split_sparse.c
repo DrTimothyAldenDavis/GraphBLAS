@@ -258,7 +258,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                         #undef  GB_COPY
                         #define GB_COPY(pC,pA) Cx [pC] = Ax [pA] ;
 
-                        case GB_1BYTE : // uint8, int8, bool, or 1-byte user-defined
+                        case GB_1BYTE : // uint8, int8, bool, or 1-byte user
                             #define GB_C_TYPE uint8_t
                             #define GB_A_TYPE uint8_t
                             #include "GB_split_sparse_template.c"
@@ -287,7 +287,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                             info = GrB_SUCCESS ;
                             break ;
 
-                        case GB_16BYTE : // double complex or 16-byte user-defined
+                        case GB_16BYTE : // double complex or 16-byte user
                             #define GB_C_TYPE GB_blob16
                             #define GB_A_TYPE GB_blob16
                             #include "GB_split_sparse_template.c"
@@ -319,7 +319,6 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
             if (info == GrB_NO_VALUE)
             { 
-GB_GOTCHA ; // generic
                 // user-defined types
                 #define GB_C_TYPE GB_void
                 #define GB_A_TYPE GB_void

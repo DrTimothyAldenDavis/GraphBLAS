@@ -101,8 +101,8 @@ void GB_enumify_binop
             switch (xcode)
             {
                 case GB_BOOL_code   : e = 15 ; break ; // x == y
-                case GB_FC32_code   : e = 32 ; GB_GOTCHA ; break ; // GB_FC32_eq (x,y)
-                case GB_FC64_code   : e = 33 ; GB_GOTCHA ; break ; // GB_FC64_eq (x,y)
+                case GB_FC32_code   : e = 32 ; break ; // GB_FC32_eq (x,y)
+                case GB_FC64_code   : e = 33 ; break ; // GB_FC64_eq (x,y)
                 default             : e = 15 ; break ; // x == y, not a monoid
             }
             break ;
@@ -113,8 +113,8 @@ void GB_enumify_binop
             switch (xcode)
             {
                 case GB_BOOL_code   : e = 16 ; break ; // x ^ y
-                case GB_FC32_code   : e = 36 ; GB_GOTCHA ; break ; // GB_FC32_ne (x,y)
-                case GB_FC64_code   : e = 37 ; GB_GOTCHA ; break ; // GB_FC64_ne (x,y)
+                case GB_FC32_code   : e = 36 ; break ; // GB_FC32_ne (x,y)
+                case GB_FC64_code   : e = 37 ; break ; // GB_FC64_ne (x,y)
                 default             : e =141 ; break ; // x != y
             }
             break ;
@@ -288,7 +288,7 @@ void GB_enumify_binop
 
             switch (xcode)
             {
-                case GB_INT8_code   : e = 75 ; GB_GOTCHA ; break ;  // bget
+                case GB_INT8_code   : e = 75 ; break ;  // bget
                 case GB_INT16_code  : e = 76 ; break ;
                 case GB_INT32_code  : e = 77 ; break ;
                 case GB_INT64_code  : e = 78 ; break ;
@@ -304,7 +304,7 @@ void GB_enumify_binop
 
             switch (xcode)
             {
-                case GB_INT8_code   : e = 83 ; GB_GOTCHA ; break ;  // bset
+                case GB_INT8_code   : e = 83 ; break ;  // bset
                 case GB_INT16_code  : e = 84 ; break ;
                 case GB_INT32_code  : e = 85 ; break ;
                 case GB_INT64_code  : e = 86 ; break ;
@@ -320,7 +320,7 @@ void GB_enumify_binop
 
             switch (xcode)
             {
-                case GB_INT8_code   : e = 91 ; GB_GOTCHA ; break ;  // bclr
+                case GB_INT8_code   : e = 91 ; break ;  // bclr
                 case GB_INT16_code  : e = 92 ; break ;
                 case GB_INT32_code  : e = 93 ; break ;
                 case GB_INT64_code  : e = 94 ; break ;
@@ -336,7 +336,7 @@ void GB_enumify_binop
 
             switch (xcode)
             {
-                case GB_INT8_code   : e =  99 ; GB_GOTCHA ; break ; // bshift
+                case GB_INT8_code   : e =  99 ; break ; // bshift
                 case GB_INT16_code  : e = 100 ; break ;
                 case GB_INT32_code  : e = 101 ; break ;
                 case GB_INT64_code  : e = 102 ; break ;
@@ -353,7 +353,7 @@ void GB_enumify_binop
             switch (xcode)
             {
                 case GB_BOOL_code   : e =  71 ; break ; // x >= y
-                case GB_INT8_code   : e = 107 ; GB_GOTCHA ; break ; // pow
+                case GB_INT8_code   : e = 107 ; break ; // pow
                 case GB_INT16_code  : e = 108 ; break ;
                 case GB_INT32_code  : e = 109 ; break ;
                 case GB_INT64_code  : e = 110 ; break ;
@@ -430,11 +430,11 @@ void GB_enumify_binop
             break ;
 
         case GB_CMPLX_binop_code :  // z = cmplx (x,y)
-GB_GOTCHA ; // cmplx
+
             switch (xcode)
             {
-                case GB_FP32_code   : e = 131 ; GB_GOTCHA ; break ; // cmplx
-                case GB_FP64_code   : e = 132 ; GB_GOTCHA ; break ; // cmplx
+                case GB_FP32_code   : e = 131 ; break ; // cmplx
+                case GB_FP64_code   : e = 132 ; break ; // cmplx
                 default: ;
             }
             break ;

@@ -553,7 +553,7 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
 
     if (!ok)
     { 
-// GB_GOTCHA ; // cannot create directories
+GB_GOTCHA ; // cannot create directories
         // JIT is disabled, or cannot determine the JIT cache path.
         // Disable loading and compiling, but continue with the rest of the
         // initializations.  The PreJIT could still be used.
@@ -1449,14 +1449,14 @@ GB_GOTCHA ; // need to check PreJIT
         }
         else if ((*dl_function) != NULL)
         { 
-// GB_GOTCHA ; // jit: run
+GB_GOTCHA ; // jit: run
             // found the kernel in the hash table
             GBURBLE ("(jit: run) ") ;
             return (GrB_SUCCESS) ;
         }
         else
         { 
-// GB_GOTCHA ; // kernel not loaded
+GB_GOTCHA ; // kernel not loaded
             // No kernels may be loaded or compiled, but existing kernels
             // already loaded may be run (handled above if dl_function was
             // found).  This kernel was not loaded, so punt to generic.
@@ -1555,7 +1555,7 @@ GB_GOTCHA ; // prejit disabled
             }
             else
             { 
-// GB_GOTCHA ; // op changed
+GB_GOTCHA ; // op changed
                 // the op has changed; need to re-JIT the kernel; do not return.
                 // Instead, keep going and compile a JIT kernel.
                 GBURBLE ("(jit: op changed) ") ;
@@ -1571,7 +1571,7 @@ GB_GOTCHA ; // prejit disabled
             GB_user_type (&ignore, &defn) ;
             if (strcmp (defn, type1->defn) == 0)
             { 
-// GB_GOTCHA ; // type OK
+GB_GOTCHA ; // type OK
                 GBURBLE ("(jit: type ok) ") ;
                 return (GrB_SUCCESS) ;
             }

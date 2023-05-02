@@ -141,7 +141,6 @@ GB_GOTCHA ; // C as_if_full but not actually full
 
     if (info == GrB_NO_VALUE)
     { 
-GB_GOTCHA ; // JIT failure
         info = GB_ewise_fulln_jit (C, op, A, B, nthreads) ;
     }
 

@@ -60,6 +60,11 @@ if (test_contains (type, 'complex'))
     end
 end
 
+if (type (1) == 'u')
+    % A is uint8, uint16, uint32, or uint64
+    A.matrix = abs (A.matrix) ;
+end
+
 A.class = type ;
 A.pattern = logical (spones (A.matrix)) ;
 A.iso = false ;

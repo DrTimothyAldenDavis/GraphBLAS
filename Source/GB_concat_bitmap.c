@@ -188,15 +188,15 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
                                 info = GrB_SUCCESS ;
                                 break ;
 
-                            case GB_4BYTE : // uint32, int32, float, or 4-byte user
+                            case GB_4BYTE : // uint32, int32, float, or 4-byte
                                 #define GB_C_TYPE uint32_t
                                 #define GB_A_TYPE uint32_t
                                 #include "GB_concat_bitmap_template.c"
                                 info = GrB_SUCCESS ;
                                 break ;
 
-                            case GB_8BYTE : // uint64, int64, double, float complex,
-                                            // or 8-byte user defined
+                            case GB_8BYTE : // uint64, int64, double, float
+                                            // complex, or 8-byte user defined
                                 #define GB_C_TYPE uint64_t
                                 #define GB_A_TYPE uint64_t
                                 #include "GB_concat_bitmap_template.c"

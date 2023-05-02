@@ -108,13 +108,11 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
 
     if (opcode == GB_ANY_binop_code)
     { 
-GB_GOTCHA ; // any monoid
         // ANY monoid: do not use panel reduction method
         panel = 1 ;
     }
     else if (zcode == GB_BOOL_code)
     { 
-GB_GOTCHA ; // bool monoid
         // all boolean monoids, including user-defined
         panel = 8 ;
     }
@@ -126,9 +124,7 @@ GB_GOTCHA ; // bool monoid
 
             // min and max
             case GB_MIN_binop_code : 
-GB_GOTCHA ; // min monoid
             case GB_MAX_binop_code : 
-GB_GOTCHA ; // max monoid
                 panel = 16 ;
                 break ;
 
@@ -143,21 +139,19 @@ GB_GOTCHA ; // max monoid
                 {
                     // integer:
                     case GB_INT8_code    : 
-GB_GOTCHA ; // int8 reduce
                     case GB_UINT8_code   : 
                     case GB_INT16_code   : 
                     case GB_UINT16_code  : 
                     case GB_INT32_code   : 
                     case GB_UINT32_code  : panel = 64 ; break ;
                     case GB_INT64_code   : 
-GB_GOTCHA ; // int64 reduce
                     case GB_UINT64_code  : panel = 32 ; break ;
 
                     // floating point:
-                    case GB_FP32_code    : panel = 64 ; GB_GOTCHA ; break ;
+                    case GB_FP32_code    : panel = 64 ; break ;
                     case GB_FP64_code    : panel = 32 ; break ;
-                    case GB_FC32_code    : panel = 32 ; GB_GOTCHA ; break ;
-                    case GB_FC64_code    : panel = 16 ; GB_GOTCHA ; break ;
+                    case GB_FC32_code    : panel = 32 ; break ;
+                    case GB_FC64_code    : panel = 16 ; break ;
                     default:;
                 }
                 break ;
@@ -176,7 +170,7 @@ GB_GOTCHA ; // zsize <= 32
                 }
                 else
                 { 
-// GB_GOTCHA ; // zsize > 32
+GB_GOTCHA ; // zsize > 32
                     // type is large; do not use panel reduction method
                     panel = 1 ;
                 }

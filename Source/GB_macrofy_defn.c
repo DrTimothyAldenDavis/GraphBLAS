@@ -10,47 +10,31 @@
 #include "GB.h"
 #include "GB_stringify.h"
 
-bool GB_macrofy_defn    // return true if operator is a macro
+void GB_macrofy_defn    // construct a defn for an operator
 (
     FILE *fp,
     int kind,           // 0: built-in function
-                        // 3: user-defined function or macro
+                        // 3: user-defined function
     const char *name,
     const char *defn
 )
 {
-    bool is_macro = false ;
 
     if (name != NULL && defn != NULL)
     {
         // construct the guard to prevent duplicate definitions
         fprintf (fp,
             "#ifndef GB_GUARD_%s_DEFINED\n"
-            "#define GB_GUARD_%s_DEFINED\n", name, name) ;
-
-        if (defn [0] == '#')
-        { 
-GB_GOTCHA ; // user macro
-            // operator defined as macro
-            is_macro = true ;
-            fprintf (fp, "%s\n", defn) ;
-        }
-        else
-        { 
-            // operator defined as function
-            fprintf (fp, "GB_STATIC_INLINE\n%s\n", defn) ;
-        }
-
+            "#define GB_GUARD_%s_DEFINED\n"
+            "GB_STATIC_INLINE\n%s\n",
+            name, name, defn) ;
         if (kind == 3)
         { 
             // define the user-defined function as a string
             GB_macrofy_string (fp, name, defn) ;
         }
-
         // end the guard
         fprintf (fp, "#endif\n") ;
     }
-
-    return (is_macro) ;
 }
 

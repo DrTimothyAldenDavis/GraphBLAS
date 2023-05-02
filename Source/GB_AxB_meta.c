@@ -458,7 +458,7 @@ GB_GOTCHA ; // FIRST, GB_reduce_to_vector
     GrB_Semiring semiring = &semiring_struct ;
     memcpy (semiring, semiring_in, sizeof (struct GB_Semiring_opaque)) ;
     semiring->header_size = 0 ;
-    semiring->multiply = GB_flip_binop (semiring_in->multiply, false, &flipxy) ;
+    semiring->multiply = GB_flip_binop (semiring_in->multiply, &flipxy) ;
 
     opcode = semiring->multiply->opcode  ;
     op_is_first  = (opcode == GB_FIRST_binop_code) ;

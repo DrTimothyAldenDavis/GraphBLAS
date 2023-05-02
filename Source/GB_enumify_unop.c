@@ -703,38 +703,32 @@ GB_GOTCHA ; // OFFDIAG
 
         // Result is BOOL, depending on the value x and y:
         case GB_VALUENE_idxunop_code    :   // z = (x != y)
-GB_GOTCHA ; // VALUENE
 
             switch (xcode)
             {
-                case GB_FC32_code   : e = 244 ; GB_GOTCHA ; break ; // GB_FC32_ne (x,y)
-                case GB_FC64_code   : e = 245 ; GB_GOTCHA ; break ; // GB_FC64_ne (x,y)
-                default             : e = 246 ; GB_GOTCHA ; break ; // z = (x != y)
+                case GB_FC32_code   : e = 244 ; break ; // GB_FC32_ne (x,y)
+                case GB_FC64_code   : e = 245 ; break ; // GB_FC64_ne (x,y)
+                default             : e = 246 ; break ; // z = (x != y)
             }
             break ;
 
         case GB_VALUEEQ_idxunop_code    :   // z = (x == y)
-GB_GOTCHA ; // VALUEEQ
 
             switch (xcode)
             {
-                case GB_FC32_code   : e = 247 ; GB_GOTCHA ; break ; // GB_FC32_eq (x,y)
-                case GB_FC64_code   : e = 248 ; GB_GOTCHA ; break ; // GB_FC64_eq (x,y)
-                default             : e = 249 ; GB_GOTCHA ; break ; // z = (x == y)
+                case GB_FC32_code   : e = 247 ; break ; // GB_FC32_eq (x,y)
+                case GB_FC64_code   : e = 248 ; break ; // GB_FC64_eq (x,y)
+                default             : e = 249 ; break ; // z = (x == y)
             }
             break ;
 
         case GB_VALUEGT_idxunop_code    :   // z = (x > y)
-GB_GOTCHA ; // VALUEGT
             e = 250 ; break ;
         case GB_VALUEGE_idxunop_code    :   // z = (x >= y)
-GB_GOTCHA ; // VALUEGE
             e = 251 ; break ;
         case GB_VALUELT_idxunop_code    :   // z = (x < y)
-GB_GOTCHA ; // VALUELT
             e = 252 ; break ;
         case GB_VALUELE_idxunop_code    :   // z = (x <= y)
-GB_GOTCHA ; // VALUELE
             e = 253 ; break ;
 
         //----------------------------------------------------------------------

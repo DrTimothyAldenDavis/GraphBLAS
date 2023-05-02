@@ -46,7 +46,7 @@ fprintf (fp, '%d\n', count) ;
 fclose (fp) ;
 
 % revise this to match Source/Template/GB_coverage.h
-GBCOVER_MAX = 50000 ;
+GBCOVER_MAX = 31000 ;
 assert (count < GBCOVER_MAX) ;
 
 % compile the libgraphblas_tcov.so library

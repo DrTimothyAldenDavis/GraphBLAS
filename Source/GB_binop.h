@@ -30,7 +30,6 @@ GrB_BinaryOp GB_flip_binop  // flip a binary operator
 (
     // input:
     GrB_BinaryOp op,        // binary operator to flip
-    bool for_ewise,         // if true: flip for eWise, else for semiring
     // input/output:
     bool *flipxy            // true on input, set to false if op is flipped
 ) ;

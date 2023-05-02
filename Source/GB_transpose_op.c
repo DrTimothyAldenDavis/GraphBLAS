@@ -124,23 +124,23 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
                 // typecasting is being done.  The IDENTITY operator can do
                 // arbitrary typecasting.
 
-                //---------------------------------------------------------------
+                //--------------------------------------------------------------
                 // define the worker for the switch factory
-                //---------------------------------------------------------------
+                //--------------------------------------------------------------
 
                 #define GB_unop_tran(opname,zname,aname) \
                     GB (_unop_tran_ ## opname ## zname ## aname)
 
-                #define GB_WORKER(opname,zname,ztype,aname,atype)               \
-                {                                                               \
-                    info = GB_unop_tran (opname,zname,aname)                    \
-                        (C, A, Workspaces, A_slice, nworkspaces, nthreads) ;    \
-                }                                                               \
+                #define GB_WORKER(opname,zname,ztype,aname,atype)            \
+                {                                                            \
+                    info = GB_unop_tran (opname,zname,aname)                 \
+                        (C, A, Workspaces, A_slice, nworkspaces, nthreads) ; \
+                }                                                            \
                 break ;
 
-                //---------------------------------------------------------------
+                //--------------------------------------------------------------
                 // launch the switch factory
-                //---------------------------------------------------------------
+                //--------------------------------------------------------------
 
                 #include "GB_unop_factory.c"
             }
@@ -263,23 +263,23 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
                     (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
                 { 
 
-                    //-----------------------------------------------------------
+                    //----------------------------------------------------------
                     // define the worker for the switch factory
-                    //-----------------------------------------------------------
+                    //----------------------------------------------------------
 
                     #define GB_bind1st_tran(op,xname) \
                         GB (_bind1st_tran_ ## op ## xname)
 
-                    #define GB_BINOP_WORKER(op,xname)                           \
-                    {                                                           \
-                        info = GB_bind1st_tran (op, xname) (C, scalarx, A,      \
-                            Workspaces, A_slice, nworkspaces, nthreads) ;       \
-                    }                                                           \
+                    #define GB_BINOP_WORKER(op,xname)                       \
+                    {                                                       \
+                        info = GB_bind1st_tran (op, xname) (C, scalarx, A,  \
+                            Workspaces, A_slice, nworkspaces, nthreads) ;   \
+                    }                                                       \
                     break ;
 
-                    //-----------------------------------------------------------
+                    //----------------------------------------------------------
                     // launch the switch factory
-                    //-----------------------------------------------------------
+                    //----------------------------------------------------------
 
                     #define GB_NO_FIRST
                     #define GB_NO_SECOND
@@ -314,23 +314,23 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
                     (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
                 { 
 
-                    //-----------------------------------------------------------
+                    //----------------------------------------------------------
                     // define the worker for the switch factory
-                    //-----------------------------------------------------------
+                    //----------------------------------------------------------
 
                     #define GB_bind2nd_tran(op,xname) \
                         GB (_bind2nd_tran_ ## op ## xname)
                     #undef  GB_BINOP_WORKER
-                    #define GB_BINOP_WORKER(op,xname)                           \
-                    {                                                           \
-                        info = GB_bind2nd_tran (op, xname) (C, A, scalarx,      \
-                            Workspaces, A_slice, nworkspaces, nthreads) ;       \
-                    }                                                           \
+                    #define GB_BINOP_WORKER(op,xname)                       \
+                    {                                                       \
+                        info = GB_bind2nd_tran (op, xname) (C, A, scalarx,  \
+                            Workspaces, A_slice, nworkspaces, nthreads) ;   \
+                    }                                                       \
                     break ;
 
-                    //-----------------------------------------------------------
+                    //----------------------------------------------------------
                     // launch the switch factory
-                    //-----------------------------------------------------------
+                    //----------------------------------------------------------
 
                     #define GB_NO_FIRST
                     #define GB_NO_SECOND

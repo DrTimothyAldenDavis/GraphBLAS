@@ -19,6 +19,7 @@
     GrB_Matrix_free_(&A) ;              \
     GrB_Matrix_free_(&B) ;              \
     GrB_Matrix_free_(&C) ;              \
+    GrB_free (&op) ;                    \
     GB_mx_put_global (true) ;           \
 }
 
@@ -32,7 +33,6 @@ void mexFunction
 {
     struct GB_Matrix_opaque C_header ;
     GrB_Matrix C = NULL ;
-//  GrB_Matrix C = GB_clear_static_header (&C_header) ;
 
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Matrix A = NULL ;
@@ -46,9 +46,6 @@ void mexFunction
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
-
-    #define GET_DEEP_COPY ;
-    #define FREE_DEEP_COPY ;
 
     // get A and B
     A = GB_mx_mxArray_to_Matrix (pargin [0], "A", false, true) ;
@@ -80,8 +77,15 @@ void mexFunction
     GrB_Index nrows, ncols ;
     GrB_Matrix_nrows (&nrows, A) ;
     GrB_Matrix_ncols (&ncols, A) ;
-    GrB_Matrix_new (&C, op->ztype, nrows, ncols) ;
+
+    #define GET_DEEP_COPY                                   \
+    GrB_Matrix_new (&C, op->ztype, nrows, ncols) ;          \
     GxB_Matrix_Option_set (C, GxB_FORMAT, GxB_BY_COL) ;
+
+    #define FREE_DEEP_COPY                                  \
+    GrB_Matrix_free_(&C) ;
+
+    GET_DEEP_COPY ;
     METHOD (GrB_Matrix_eWiseAdd_BinaryOp (C, B, NULL, op, A, B, NULL)) ;
 
     // return C as a plain sparse matrix

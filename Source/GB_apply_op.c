@@ -497,11 +497,12 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                     (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
                 { 
 
-                    //-----------------------------------------------------------
+                    //----------------------------------------------------------
                     // define the worker for the switch factory
-                    //-----------------------------------------------------------
+                    //----------------------------------------------------------
 
-                    #define GB_bind1st(binop,xname) GB (_bind1st_ ## binop ## xname)
+                    #define GB_bind1st(binop,xname) \
+                        GB (_bind1st_ ## binop ## xname)
                     #define GB_BINOP_WORKER(binop,xname)                    \
                     {                                                       \
                         info = GB_bind1st (binop, xname) (Cx, scalarx, Ax,  \
@@ -509,9 +510,9 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                     }                                                       \
                     break ;
 
-                    //-----------------------------------------------------------
+                    //----------------------------------------------------------
                     // launch the switch factory
-                    //-----------------------------------------------------------
+                    //----------------------------------------------------------
 
                     #define GB_NO_FIRST
                     #define GB_NO_SECOND
@@ -550,7 +551,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                     // define the worker for the switch factory
                     //----------------------------------------------------------
 
-                    #define GB_bind2nd(binop,xname) GB (_bind2nd_ ## binop ## xname)
+                    #define GB_bind2nd(binop,xname) \
+                        GB (_bind2nd_ ## binop ## xname)
                     #undef  GB_BINOP_WORKER
                     #define GB_BINOP_WORKER(binop,xname)                    \
                     {                                                       \

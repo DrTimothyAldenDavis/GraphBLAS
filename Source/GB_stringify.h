@@ -703,7 +703,7 @@ void GB_macrofy_binop
 // operator definitions and typecasting
 //------------------------------------------------------------------------------
 
-bool GB_macrofy_defn    // return true if user-defined operator is a macro
+void GB_macrofy_defn    // construct a defn for an operator
 (
     FILE *fp,
     int kind,           // 0: built-in function
