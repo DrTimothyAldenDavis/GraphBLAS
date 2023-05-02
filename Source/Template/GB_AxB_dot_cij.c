@@ -445,13 +445,11 @@
         }
         #elif GB_IS_PLUS_PAIR_16_SEMIRING
         { 
-// GB_GOTCHA ; // plus-16-pair
             // (PLUS int16, uint16 monoids)_PAIR semirings
             cij = (GB_C_TYPE) (((uint64_t) ainz) & 0xFFFFL) ;
         }
         #elif GB_IS_PLUS_PAIR_32_SEMIRING
         { 
-// GB_GOTCHA ; // plus-32-pair
             // (PLUS int32, uint32 monoids)_PAIR semirings
             cij = (GB_C_TYPE) (((uint64_t) ainz) & 0xFFFFFFFFL) ;
         }

@@ -667,7 +667,8 @@ GB_GOTCHA ; // DIAGINDEX
             j_dep = true ;
             e = 238 ; break ;
 
-        case GB_FLIPDIAGINDEX_idxunop_code :// z = (i-(j+y))
+        case GB_FLIPDIAGINDEX_idxunop_code : // z = (i-(j+y))
+GB_GOTCHA ; // FLIPDIAGINDEX
             i_dep = true ;
             j_dep = true ;
             e = 239 ; break ;

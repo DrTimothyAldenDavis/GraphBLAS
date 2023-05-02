@@ -13,7 +13,7 @@
 
 // the JIT run time kernels use abort directly from libc:
 #undef  GB_ABORT
-#define GB_ABORT printf ("abort!\n") ; /* abort ( ) */
+#define GB_ABORT /* abort ( ) */ ;
 
 #undef ASSERT
 

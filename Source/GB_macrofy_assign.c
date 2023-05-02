@@ -190,7 +190,6 @@ GB_GOTCHA ;
             }
             else
             { 
-GB_GOTCHA ;
                 fprintf (fp, " \\\n"
                     "{                                          \\\n") ;
             }
@@ -359,7 +358,6 @@ GB_GOTCHA ;
         GB_macrofy_type (fp, "A", "_", atype->name) ;
         if (accum != NULL)
         { 
-GB_GOTCHA ; // accum is present, scalar assignment
             // accum is present
             // ywork = (ytype) scalar 
             GB_macrofy_cast_input (fp, "GB_COPY_scalar_to_ywork", "ywork",

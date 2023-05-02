@@ -108,21 +108,18 @@
                     }
                     #elif GB_IS_PLUS_PAIR_8_SEMIRING
                     { 
-// GB_GOTCHA ; // plus-8-pair
                         // (PLUS int8, uint8 monoids)_PAIR semirings
                         uint64_t t = ((uint64_t) cij) + vlen ;
                         cij = (GB_C_TYPE) (t & 0xFFL) ;
                     }
                     #elif GB_IS_PLUS_PAIR_16_SEMIRING
                     { 
-// GB_GOTCHA ; // plus-16-pair
                         // (PLUS int16, uint16 monoids)_PAIR semirings
                         uint64_t t = ((uint64_t) cij) + vlen ;
                         cij = (GB_C_TYPE) (t & 0xFFFFL) ;
                     }
                     #elif GB_IS_PLUS_PAIR_32_SEMIRING
                     { 
-// GB_GOTCHA ; // plus-32-pair
                         // (PLUS int32, uint32 monoids)_PAIR semirings
                         uint64_t t = ((uint64_t) cij) + vlen ;
                         cij = (GB_C_TYPE) (t & 0xFFFFFFFFL) ;
@@ -802,14 +799,12 @@
                     }
                     #elif GB_IS_PLUS_PAIR_16_SEMIRING
                     { 
-// GB_GOTCHA ; // plus-16-pair
                         // (PLUS int16, uint16 monoids)_PAIR semirings
                         uint64_t t = ((uint64_t) cij) + bjnz ;
                         cij = (GB_C_TYPE) (t & 0xFFFFL) ;
                     }
                     #elif GB_IS_PLUS_PAIR_32_SEMIRING
                     { 
-// GB_GOTCHA ; // plus-32-pair
                         // (PLUS int32, uint32 monoids)_PAIR semirings
                         uint64_t t = ((uint64_t) cij) + bjnz ;
                         cij = (GB_C_TYPE) (t & 0xFFFFFFFFL) ;
