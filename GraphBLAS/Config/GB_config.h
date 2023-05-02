@@ -15,13 +15,13 @@
 
 // GB_C_COMPILER: the C compiler used to compile GraphBLAS:
 #ifndef GB_C_COMPILER
-#define GB_C_COMPILER   "/usr/bin/cc"
+#define GB_C_COMPILER   "/usr/bin/gcc"
 #endif
 
 // GB_C_FLAGS: the C compiler flags used to compile GraphBLAS.  Used
 // for compiling and linking:
 #ifndef GB_C_FLAGS
-#define GB_C_FLAGS      " -DGBMATLAB=1  -Wundef  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -O3 -DNDEBUG -fopenmp  -fPIC "
+#define GB_C_FLAGS      " -DGBMATLAB=1  -Wundef  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -g -fopenmp  -fPIC "
 #endif
 
 // GB_C_LINK_FLAGS: the flags passed to the C compiler for the link phase:

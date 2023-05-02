@@ -4294,7 +4294,7 @@ void mexFunction
     OK (GB_Matrix_check (A, "valid pending pi", G3, NULL)) ;
     OK (GrB_Matrix_nvals (&nvals, A)) ;
     OK (GB_Matrix_check (A, "valid pending pi again", G3, NULL)) ;
-    printf ("nvals %ld\n", nvals) ;
+    printf ("nvals %lu\n", nvals) ;
     OK (GrB_Matrix_wait_(A, GrB_MATERIALIZE)) ;
     CHECK (nvals == 1) ;
 
@@ -4443,6 +4443,7 @@ void mexFunction
     printf ("\n###### get nvals; assemble the pending tuples ##### \n") ;
 
     OK (GrB_Matrix_nvals (&nvals, A)) ;
+    printf ("nvals: %lu\n", nvals) ;
     OK (GrB_Matrix_wait_(A, GrB_MATERIALIZE)) ;
 
     Werk->where = "GB_Matrix_check" ;

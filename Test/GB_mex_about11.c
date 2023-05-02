@@ -73,7 +73,7 @@ void mexFunction
 
     remove ("/tmp/grberr2.txt") ;
     remove ("/tmp/grb_error_log.txt") ;
-//  system ("cmake -E remove_directory /tmp/grb_cache") ;
+    system ("rm -rf /tmp/grb_cache") ;
 
     //--------------------------------------------------------------------------
     // get/set tests
@@ -517,7 +517,7 @@ void mexFunction
     // remove temp files and folders
     remove ("/tmp/grberr2.txt") ;
     remove ("/tmp/grb_error_log.txt") ;
-//  system ("cmake -E remove_directory /tmp/grb_cache") ;
+    system ("rm -rf /tmp/grb_cache") ;
 
     OK (GxB_set (GxB_BURBLE, false)) ;
     GB_mx_put_global (true) ;
