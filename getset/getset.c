@@ -192,7 +192,7 @@ GrB_Info GrB_Scalar_set_ENUM   (GrB_Scalar o, GrB_Field f, int t)
 
 GrB_Info GrB_Scalar_set_VOID   (GrB_Scalar o, GrB_Field f, void *t /*, int n */)
 {
-    printf ("scalar set enum   : o: %d, f: %d, t [%p]\n",
+    printf ("scalar set void   : o: %d, f: %d, t [%p]\n",
         o->stuff, f, t) ;
     return (GrB_SUCCESS) ;
 }
@@ -218,7 +218,7 @@ GrB_Info GrB_Global_set_ENUM   (GrB_Field f, int t)
 
 GrB_Info GrB_Global_set_VOID   (GrB_Field f, void *t /*, int n */)
 {
-    printf ("global set enum   : f: %d, t [%p]\n", f, t) ;
+    printf ("global set void   : f: %d, t [%p]\n", f, t) ;
     return (GrB_SUCCESS) ;
 }
 
@@ -252,15 +252,11 @@ int main (void)
     GB_SCALAR_SET (x, 1, "mine") ;
     GB_SCALAR_SET (x, 2, 32) ;
     GB_SCALAR_SET (x, 3, x) ;
-
-    // broken:
     GB_SCALAR_SET (x, 4, g) ;
 
     GB_GLOBAL_SET (4, "yours") ;
     GB_GLOBAL_SET (5, 101) ;
     GB_GLOBAL_SET (6, y) ;
-
-    // broken:
     GB_GLOBAL_SET (7, g) ;
 
     // GrB_set (x, GrB_NAME, "mine") ;
