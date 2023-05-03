@@ -293,7 +293,6 @@ GB_GOTCHA ; // z has no atomic update
     }
     else
     { 
-GB_GOTCHA ; // JIT failure
         // out of memory, or other error
         GB_FREE_ALL ;
     }

@@ -1412,6 +1412,15 @@ GrB_Info GB_jitifyer_load
     // check for quick return
     //--------------------------------------------------------------------------
 
+    #ifdef GBMATLAB
+    if (GB_Global_hack_get (3) != 0)
+    {
+        // the JIT can be disabled for testing, to test error handling
+        GBURBLE ("(jit: test error handling) ") ;
+        return (GrB_NOT_IMPLEMENTED) ;
+    }
+    #endif
+
     GrB_Info info ;
     if (hash == UINT64_MAX)
     { 

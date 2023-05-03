@@ -102,6 +102,7 @@ if (malloc_debugging)
 end
 %}
 
+logstat ('test256'    ,t, j4  , f0  ) ; % JIT error handling
 logstat ('test255'    ,t, j4  , f1  ) ; % flip binop
 logstat ('test254'    ,t, j440, f100) ; %% mask types
 logstat ('test253'    ,t, j4  , f1  ) ; % basic JIT tests
@@ -109,7 +110,7 @@ logstat ('test252'    ,t, j4  , f1  ) ; % basic tests
 logstat ('test251'    ,t, j404, f110) ; % dot4, dot2, with plus_pair
 logstat ('test250'    ,t, j44 , f10 ) ; % basic tests
 logstat ('test249'    ,t, j4  , f1  ) ; % GxB_Context object
-logstat ('test247'    ,t, j404, f110) ; % GrB_mxm: fine Hash method
+logstat ('test247'    ,t, j44 , f10 ) ; % GrB_mxm: fine Hash method
 logstat ('test246'    ,t, j4  , f1  ) ; % GrB_mxm parallelism (slice_balanced)
 
 logstat ('test01'     ,t, j44 , f10 ) ; % error handling
@@ -132,7 +133,7 @@ logstat ('test240'    ,t, j4  , f1  ) ; % test dot4, saxpy4, and saxpy5
 logstat ('test186'    ,t, j40 , f11 ) ; % saxpy, all formats  (slice_balanced)
 logstat ('test186(0)' ,t, j4  , f1  ) ; % repeat with default slice_balanced
 logstat ('test186'    ,s, j4  , f1  ) ; % repeat, but single-threaded
-logstat ('test150'    ,t, j40 , f10 ) ; % mxm zombies, typecasting (dot3, saxpy)
+logstat ('test150'    ,t, j40 , f10 ) ; %% mxm zombies, typecasting (dot3, saxpy)
 
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
@@ -154,7 +155,7 @@ logstat ('test04'     ,t, j4  , f1  ) ; % simple mask and transpose test
 logstat ('test207'    ,t, j4  , f1  ) ; % test iso subref
 logstat ('test221'    ,t, j4  , f1  ) ; % test C += A, C is bitmap and A is full
 logstat ('test162'    ,t, j4  , f1  ) ; % test C<M>=A*B with very sparse M
-logstat ('test159'    ,t, j40 , f10 ) ; % test A*B
+logstat ('test159'    ,t, j40 , f10 ) ; %% test A*B
 logstat ('test09'     ,t, j4  , f1  ) ; % duplicate I,J test of GB_mex_subassign
 logstat ('test132'    ,t, j4  , f1  ) ; % setElement
 logstat ('test141'    ,t, j404, f110) ; % eWiseAdd with dense matrices
@@ -204,7 +205,7 @@ logstat ('test151b'   ,t, j404, f110) ; % test bshift operator
 logstat ('test184'    ,t, j4  , f1  ) ; % special cases: mxm, transpose, build
 logstat ('test191'    ,t, j40 , f10 ) ; %% test split
 logstat ('test188'    ,t, j40 , f11 ) ; % test concat
-logstat ('test237'    ,t, j44 , f10 ) ; % test GrB_mxm (saxpy4)
+logstat ('test237'    ,t, j4040, f1100) ; % test GrB_mxm (saxpy4)
 
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 

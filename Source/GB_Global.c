@@ -95,7 +95,7 @@ typedef struct
     // for testing and development
     //--------------------------------------------------------------------------
 
-    int64_t hack [3] ;              // settings for testing/development only
+    int64_t hack [4] ;              // settings for testing/development only
 
     //--------------------------------------------------------------------------
     // diagnostic output
@@ -194,7 +194,7 @@ static GB_Global_struct GB_Global =
     .malloc_debug_count = 0,     // counter for testing memory handling
 
     // for testing and development only
-    .hack = {0, 0, 0},
+    .hack = {0, 0, 0, 0},
 
     // diagnostics
     .burble = false,

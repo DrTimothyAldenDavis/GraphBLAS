@@ -16,7 +16,6 @@
 
 // Reduce entries in a matrix to a scalar, c = accum (c, reduce_to_scalar(A)))
 
-
 // All entries in the matrix are "summed" to a single scalar t using the reduce
 // monoid, which must be associative (otherwise the results are undefined).
 // The result is either assigned to the output scalar c (if accum is NULL), or

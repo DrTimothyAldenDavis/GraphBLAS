@@ -337,7 +337,6 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
 
     if (info != GrB_SUCCESS)
     { 
-GB_GOTCHA ; // JIT failure
         // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;

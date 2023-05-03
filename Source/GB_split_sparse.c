@@ -337,7 +337,6 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
             if (info != GrB_SUCCESS)
             { 
-GB_GOTCHA ; // JIT error
                 // out of memory, or other error
                 GB_FREE_ALL ;
                 return (info) ;

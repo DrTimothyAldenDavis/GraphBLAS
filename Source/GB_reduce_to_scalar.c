@@ -391,7 +391,6 @@ GB_GOTCHA ; // generic terminal
 
     if (info != GrB_SUCCESS)
     { 
-GB_GOTCHA ; // JIT failure
         // out of memory, or other error
         GB_FREE_ALL ;
         return (info) ;
