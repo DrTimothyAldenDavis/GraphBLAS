@@ -245,13 +245,15 @@ int main (void)
 //  GrB_set (x, GrB_NAME, "mine") ;
 //  GrB_set (3, 99) ;
 
-    GB_SCALAR_SET (x, GrB_NAME, "mine") ;
-    GB_SCALAR_SET (x, GrB_NAME, 32) ;
-    GB_SCALAR_SET (x, GrB_NAME, x) ;
+    // using int's 1 to 6 for the GrB_Field:
 
-    GB_GLOBAL_SET (3, "yours") ;
-    GB_GLOBAL_SET (3, 101) ;
-    GB_GLOBAL_SET (3, y) ;
+    GB_SCALAR_SET (x, 1, "mine") ;
+    GB_SCALAR_SET (x, 2, 32) ;
+    GB_SCALAR_SET (x, 3, x) ;
+
+    GB_GLOBAL_SET (4, "yours") ;
+    GB_GLOBAL_SET (5, 101) ;
+    GB_GLOBAL_SET (6, y) ;
 
     // GrB_set (x, GrB_NAME, "mine") ;
     // GrB_set (3, 99) ;
