@@ -643,7 +643,7 @@ double GB_helper10       // norm (x-y,p), or -1 on error
 //------------------------------------------------------------------------------
 
 void GB_make_shallow (GrB_Matrix A)
-{ 
+{
     if (A == NULL) return ;
     A->p_shallow = (A->p != NULL) ;
     A->h_shallow = (A->h != NULL) ;

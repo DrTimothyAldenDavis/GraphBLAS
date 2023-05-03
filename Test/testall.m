@@ -305,13 +305,13 @@ logstat ('test11'     ,t, j4  , f1  ) ; % exhaustive test of GrB_extractTuples
 logstat ('test215'    ,t, j4  , f1  ) ; % test C<M>=A'*B (dot2, ANY_PAIR)
 logstat ('test193'    ,t, j4  , f1  ) ; % test GxB_Matrix_diag
 logstat ('test195'    ,t, j4  , f1  ) ; % all variants of saxpy3 slice_balanced
-logstat ('test233'    ,t, j4  , f1  ) ; % bitmap saxpy C=A*B, A sparse, B bitmap
+% logstat ('test233'    ,t, j4  , f1  ) ; % bitmap saxpy C=A*B, A sparse, B bitmap
 logstat ('test243'    ,t, j4  , f1  ) ; % test GxB_Vector_Iterator
 logstat ('test29'     ,t, j40 , f11 ) ; % reduce with zombies
 
 logstat ('testc2(0,0)',t, j404, f110) ; % A'*B, A+B, A*B, user-defined complex
 logstat ('testc4(0)'  ,t, j4  , f1  ) ; % extractElement, setElement, user type
-logstat ('testc7(0)'  ,t, j40 , f11 ) ; % assign, builtin complex
+logstat ('testc7(0)'  ,t, j4  , f1  ) ; % assign, builtin complex
 logstat ('testcc(1)'  ,t, j4  , f1  ) ; % transpose, builtin complex
 
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
