@@ -95,7 +95,7 @@ GrB_Info GB_deserialize_from_blob
 
         if (nblocks > 1 || Sblocks [0] != X_len || s + X_len > blob_size)
         { 
-GB_GOTCHA ; // blob invalid
+// GB_GOTCHA ; // blob invalid
             // blob is invalid: guard against an unsafe memcpy
             ok = false ;
         }
@@ -135,7 +135,7 @@ GB_GOTCHA ; // blob invalid
                 s + s_start > blob_size || s + s_end > blob_size ||
                 kstart > X_len || kend > X_len || d_size > INT32_MAX)
             { 
-GB_GOTCHA ; // blob invalid
+// GB_GOTCHA ; // blob invalid
                 // blob is invalid
                 ok = false ;
             }
@@ -175,14 +175,14 @@ GB_GOTCHA ; // blob invalid
     }
     else
     { 
-GB_GOTCHA ; // blob invalid
+// GB_GOTCHA ; // blob invalid
         // unknown compression method
         ok = false ;
     }
 
     if (!ok)
     { 
-GB_GOTCHA ; // blob invalid
+// GB_GOTCHA ; // blob invalid
         // decompression failure; blob is invalid
         GB_FREE_ALL ;
         return (GrB_INVALID_OBJECT) ;

@@ -212,7 +212,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
             Wf = GB_CALLOC_WORK (C->vlen * C->vdim, int8_t, &Wf_size) ;
             if (Wf == NULL)
             { 
-GB_GOTCHA ; // z has no atomic update
+// GB_GOTCHA ; // z has no atomic update
                 // out of memory
                 GB_FREE_ALL ;
                 return (GrB_OUT_OF_MEMORY) ;

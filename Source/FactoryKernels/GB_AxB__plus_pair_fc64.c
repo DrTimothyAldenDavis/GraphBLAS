@@ -40,8 +40,6 @@
 
 // special case semirings:
 
-#define GB_IS_PLUS_PAIR_FC64_SEMIRING 1
-
 // monoid properties:
 #define GB_Z_TYPE GxB_FC64_t
 #define GB_DECLARE_IDENTITY(z) GxB_FC64_t z = GxB_CMPLX(0,0)

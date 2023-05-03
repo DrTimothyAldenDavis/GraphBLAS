@@ -32,7 +32,6 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     GB_Werk Werk
 )
 {
-// double tt1 = GB_omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -256,7 +255,6 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         (*mask_applied) = (M != NULL && info == GrB_SUCCESS) ;
     }
 
-// tt1 = GB_omp_get_wtime ( ) - tt1 ; printf ("saxpy time: %g\n", tt1) ;
     return (info) ;
 }
 

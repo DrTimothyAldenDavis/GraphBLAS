@@ -18,10 +18,6 @@
 
 {
 
-    #if defined ( GB_TIMING ) && !defined ( GB_JIT_RUNTIME)
-    double ttt = GB_omp_get_wtime ( ) ;
-    #endif
-
     //--------------------------------------------------------------------------
     // get M, A, B, and C
     //--------------------------------------------------------------------------
@@ -331,23 +327,11 @@
         }
     }
 
-    #if defined ( GB_TIMING ) && !defined ( GB_JIT_RUNTIME)
-    ttt = GB_omp_get_wtime ( ) - ttt ;
-    GB_Global_timing_add (9, ttt) ;
-    ttt = GB_omp_get_wtime ( ) ;
-    #endif
-
     //==========================================================================
     // phase3/phase4: count nnz(C(:,j)) for fine tasks, cumsum of Cp
     //==========================================================================
 
     GB_AxB_saxpy3_cumsum (C, SaxpyTasks, nfine, chunk, nthreads, Werk) ;
-
-    #if defined ( GB_TIMING ) && !defined ( GB_JIT_RUNTIME)
-    ttt = GB_omp_get_wtime ( ) - ttt ;
-    GB_Global_timing_add (10, ttt) ;
-    ttt = GB_omp_get_wtime ( ) ;
-    #endif
 
     //==========================================================================
     // phase5: numeric phase for coarse tasks, gather for fine tasks
@@ -372,12 +356,6 @@
     int64_t  *restrict Ci = C->i ;
     #if ( !GB_IS_ANY_PAIR_SEMIRING )
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
-    #endif
-
-    #if defined ( GB_TIMING ) && !defined ( GB_JIT_RUNTIME)
-    ttt = GB_omp_get_wtime ( ) - ttt ;
-    GB_Global_timing_add (11, ttt) ;
-    ttt = GB_omp_get_wtime ( ) ;
     #endif
 
     bool C_jumbled = false ;
@@ -630,12 +608,6 @@
     //--------------------------------------------------------------------------
 
     C->jumbled = C_jumbled ;    // C is jumbled if any task left it jumbled
-
-    #if defined ( GB_TIMING ) && !defined ( GB_JIT_RUNTIME)
-    ttt = GB_omp_get_wtime ( ) - ttt ;
-    GB_Global_timing_add (12, ttt) ;
-    #endif
-
 }
 
 #undef GB_NO_MASK

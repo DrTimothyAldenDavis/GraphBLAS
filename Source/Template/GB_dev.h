@@ -25,8 +25,5 @@
 // (GraphBLAS will be exceedingly slow; this is for development only)
 // #define GB_MEMDUMP
 
-// to turn on diagnostic timings.  See GrB.timing in the @GrB interface.
-// #define GB_TIMING
-
 #endif
 

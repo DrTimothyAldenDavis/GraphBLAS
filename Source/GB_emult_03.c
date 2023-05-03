@@ -239,7 +239,7 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
 
     if (C_iso)
     {  
-GB_GOTCHA ; // C iso
+// GB_GOTCHA ; // C iso
 
         //----------------------------------------------------------------------
         // via the iso kernel

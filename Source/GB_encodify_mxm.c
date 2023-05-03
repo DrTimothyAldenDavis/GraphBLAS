@@ -38,7 +38,7 @@ uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
 
     if (semiring->hash == UINT64_MAX)
     { 
-GB_GOTCHA ; // no hash
+// GB_GOTCHA ; // no hash
         // cannot JIT this semiring
         memset (encoding, 0, sizeof (GB_jit_encoding)) ;
         (*suffix) = NULL ;

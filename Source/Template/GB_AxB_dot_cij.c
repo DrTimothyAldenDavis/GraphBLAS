@@ -95,18 +95,16 @@
             // (PLUS int64, uint64, float, or double)_PAIR semirings
             cij = (GB_C_TYPE) vlen ;
         }
-        #elif GB_IS_PLUS_PAIR_FC32_SEMIRING
-        { 
-// GB_GOTCHA ; // plus-fc32-pair
-            // (PLUS monoid for float complex)_PAIR semiring
-            cij = GJ_CMPLX32 ((float) vlen, 0) ;
-        }
-        #elif GB_IS_PLUS_PAIR_FC64_SEMIRING
-        { 
-// GB_GOTCHA ; // plus-fc64-pair
-            // (PLUS monoid for double complex)_PAIR semiring
-            cij = GJ_CMPLX64 ((double) vlen, 0) ;
-        }
+//      #elif GB_IS_PLUS_PAIR_FC32_SEMIRING
+//      {
+//          // (PLUS monoid for float complex)_PAIR semiring
+//          cij = GJ_CMPLX32 ((float) vlen, 0) ;
+//      }
+//      #elif GB_IS_PLUS_PAIR_FC64_SEMIRING
+//      {
+//          // (PLUS monoid for double complex)_PAIR semiring
+//          cij = GJ_CMPLX64 ((double) vlen, 0) ;
+//      }
         #elif GB_IS_MIN_FIRSTJ_SEMIRING
         { 
             // MIN_FIRSTJ semiring: take the first entry
@@ -224,18 +222,16 @@
             // (PLUS int64, uint64, float, or double)_PAIR semirings
             cij = (GB_C_TYPE) bjnz ;
         }
-        #elif GB_IS_PLUS_PAIR_FC32_SEMIRING
-        { 
-// GB_GOTCHA ; // plus-fc32-pair
-            // (PLUS monoid for float complex)_PAIR semiring
-            cij = GJ_CMPLX32 ((float) bjnz, 0) ;
-        }
-        #elif GB_IS_PLUS_PAIR_FC64_SEMIRING
-        { 
-// GB_GOTCHA ; // plus-fc64-pair
-            // (PLUS monoid for double complex)_PAIR semiring
-            cij = GJ_CMPLX64 ((double) bjnz, 0) ;
-        }
+//      #elif GB_IS_PLUS_PAIR_FC32_SEMIRING
+//      {
+//          // (PLUS monoid for float complex)_PAIR semiring
+//          cij = GJ_CMPLX32 ((float) bjnz, 0) ;
+//      }
+//      #elif GB_IS_PLUS_PAIR_FC64_SEMIRING
+//      {
+//          // (PLUS monoid for double complex)_PAIR semiring
+//          cij = GJ_CMPLX64 ((double) bjnz, 0) ;
+//      }
         #elif GB_IS_MIN_FIRSTJ_SEMIRING
         { 
             // MIN_FIRSTJ semiring: take the first entry in B(:,j)
@@ -452,18 +448,16 @@
             // (PLUS int64, uint64, float, or double)_PAIR semirings
             cij = (GB_C_TYPE) ainz ;
         }
-        #elif GB_IS_PLUS_PAIR_FC32_SEMIRING
-        { 
-// GB_GOTCHA ; // plus-fc32-pair
-            // (PLUS monoid for float complex)_PAIR semiring
-            cij = GJ_CMPLX32 ((float) ainz, 0) ;
-        }
-        #elif GB_IS_PLUS_PAIR_FC64_SEMIRING
-        { 
-// GB_GOTCHA ; // plus-fc64-pair
-            // (PLUS monoid for double complex)_PAIR semiring
-            cij = GJ_CMPLX64 ((double) ainz, 0) ;
-        }
+//      #elif GB_IS_PLUS_PAIR_FC32_SEMIRING
+//      {
+//          // (PLUS monoid for float complex)_PAIR semiring
+//          cij = GJ_CMPLX32 ((float) ainz, 0) ;
+//      }
+//      #elif GB_IS_PLUS_PAIR_FC64_SEMIRING
+//      {
+//          // (PLUS monoid for double complex)_PAIR semiring
+//          cij = GJ_CMPLX64 ((double) ainz, 0) ;
+//      }
         #elif GB_IS_MIN_FIRSTJ_SEMIRING
         { 
             // MIN_FIRSTJ semiring: take the first entry in A(:,i)

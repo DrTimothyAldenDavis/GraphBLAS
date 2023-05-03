@@ -41,10 +41,6 @@ GrB_Info GB_mxm                     // C<M> = A*B
 )
 {
 
-    #ifdef GB_TIMING
-    double ttt = GB_omp_get_wtime ( ) ;
-    #endif
-
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
@@ -142,8 +138,6 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GB_CLEAR_STATIC_HEADER (MT, &MT_header) ;
     GB_CLEAR_STATIC_HEADER (T, &T_header) ;
 
-// for (int k = 0 ; k < 40 ; k++) GB_Global_timing_clear (k) ;
-
     bool mask_applied = false ;
     bool done_in_place = false ;
     bool M_transposed = false ;
@@ -152,24 +146,12 @@ GrB_Info GB_mxm                     // C<M> = A*B
         B_transpose, flipxy, &mask_applied, &done_in_place, AxB_method,
         do_sort, Werk)) ;
 
-// for (int k = 0 ; k < 40 ; k++)
-// {
-//      double t = GB_Global_timing_get (k) ;
-//      if (t > 0) printf ("%2d: %g\n", k, t) ;
-// }
-
     if (done_in_place)
     { 
         // C has been computed in-place; no more work to do
         GB_FREE_ALL ;
         GB_OK (GB_conform (C, Werk)) ;
         ASSERT_MATRIX_OK (C, "C from GB_mxm (in-place)", GB0) ;
-
-        #ifdef GB_TIMING
-        ttt = GB_omp_get_wtime ( ) - ttt ;
-        GB_Global_timing_add (0, ttt) ;
-        #endif
-
         return (info) ;
     }
 
@@ -235,11 +217,6 @@ GrB_Info GB_mxm                     // C<M> = A*B
         }
         #endif
     }
-
-    #ifdef GB_TIMING
-    ttt = GB_omp_get_wtime ( ) - ttt ;
-    GB_Global_timing_add (0, ttt) ;
-    #endif
 
     return (info) ;
 }

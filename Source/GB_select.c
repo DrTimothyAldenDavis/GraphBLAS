@@ -80,7 +80,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     int64_t tncols = (A_transpose) ? GB_NROWS (A) : GB_NCOLS (A) ;
     if (GB_NROWS (C) != tnrows || GB_NCOLS (C) != tncols)
     { 
-GB_GOTCHA ; // select dimensions
+// GB_GOTCHA ; // select dimensions
         GB_ERROR (GrB_DIMENSION_MISMATCH,
             "Dimensions not compatible:\n"
             "output is " GBd "-by-" GBd "\n"

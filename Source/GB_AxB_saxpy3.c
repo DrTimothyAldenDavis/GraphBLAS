@@ -137,10 +137,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 )
 {
 
-    #ifdef GB_TIMING
-    double ttt = GB_omp_get_wtime ( ) ;
-    #endif
-
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
@@ -272,12 +268,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         ASSERT (C_sparsity == GxB_SPARSE) ;
     }
 
-    #ifdef GB_TIMING
-    ttt = GB_omp_get_wtime ( ) - ttt ;
-    GB_Global_timing_add (3, ttt) ;
-    ttt = GB_omp_get_wtime ( ) ;
-    #endif
-
     //==========================================================================
     // phase0: create parallel tasks and allocate workspace
     //==========================================================================
@@ -308,12 +298,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             &SaxpyTasks, &SaxpyTasks_size, &apply_mask, &M_in_place,
             &ntasks, &nfine, &nthreads, Werk) ;
     }
-
-    #ifdef GB_TIMING
-    ttt = GB_omp_get_wtime ( ) - ttt ;
-    GB_Global_timing_add (4, ttt) ;
-    ttt = GB_omp_get_wtime ( ) ;
-    #endif
 
     if (info == GrB_NO_VALUE)
     { 
@@ -605,22 +589,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // a total of 5.9 second for phase 7 (the numerical work below).
     // Figure out a faster method.
 
-    #ifdef GB_TIMING
-    ttt = GB_omp_get_wtime ( ) - ttt ;
-    GB_Global_timing_add (5, ttt) ;
-    ttt = GB_omp_get_wtime ( ) ;
-    #endif
-
     GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, M_in_place,
         A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
-
-// the above phase takes 1.6 seconds for 64 trials of the web graph.
-
-    #ifdef GB_TIMING
-    ttt = GB_omp_get_wtime ( ) - ttt ;
-    GB_Global_timing_add (6, ttt) ;
-    ttt = GB_omp_get_wtime ( ) ;
-    #endif
 
     //==========================================================================
     // C = A*B, via saxpy3 method, phases 2 to 5
@@ -720,12 +690,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // prune empty vectors, free workspace, and return result
     //--------------------------------------------------------------------------
 
-    #ifdef GB_TIMING
-    ttt = GB_omp_get_wtime ( ) - ttt ;
-    GB_Global_timing_add (7, ttt) ;
-    ttt = GB_omp_get_wtime ( ) ;
-    #endif
-
     C->magic = GB_MAGIC ;
     GB_FREE_WORKSPACE ;
     GB_OK (GB_hypermatrix_prune (C, Werk)) ;
@@ -733,12 +697,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     (*mask_applied) = apply_mask ;
-
-    #ifdef GB_TIMING
-    ttt = GB_omp_get_wtime ( ) - ttt ;
-    GB_Global_timing_add (8, ttt) ;
-    #endif
-
     return (info) ;
 }
 

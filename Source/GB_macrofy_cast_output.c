@@ -37,7 +37,7 @@ void GB_macrofy_cast_output
 
     if (ztype == NULL || xtype == NULL)
     { 
-GB_GOTCHA ; // empty
+// GB_GOTCHA ; // empty
         // empty macro if xtype or ztype are NULL (value not needed)
         fprintf (fp, "#define %s(%s,%s)\n", macro_name, zarg, xargs) ;
         return ;
@@ -59,7 +59,7 @@ GB_GOTCHA ; // empty
         fprintf (fp, "#define %s(%s,%s) ", macro_name, zarg, xargs) ;
         if (nargs == 3)
         { 
-GB_GOTCHA ; // nargs 3
+// GB_GOTCHA ; // nargs 3
             fprintf (fp, f, xexpr, zarg, zarg) ;
         }
         else

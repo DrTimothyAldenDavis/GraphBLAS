@@ -40,8 +40,16 @@ for A_sparsity = [1 2 4 8]
         end
         B.sparsity = B_sparsity ;
 
-        for k = 1:length(types)
-            type = types {k} ;
+        for k = 0:length(types)
+            if (k == 0)
+                type = 'logical' ;
+                add_op.opname = 'xor' ;
+                plus_pair.add = 'xor' ;
+            else
+                type = types {k} ;
+                add_op.opname = 'plus' ;
+                plus_pair.add = 'plus' ;
+            end
             plus_pair.class = type ;
             add_op.optype = type ;
             if (test_contains (type, 'single'))
