@@ -295,7 +295,7 @@ logstat ('test54'     ,t, j4  , f1  ) ; % assign and extract with begin:inc:end
 logstat ('test129'    ,t, j4  , f1  ) ; % test GxB_select (tril, nonz, hyper)
 logstat ('test69'     ,t, j4  , f1  ) ; % assign and subassign with alias
 logstat ('test230'    ,t, j4  , f1  ) ; % test apply with idxunops
-logstat ('test74'     ,t, j404, f110) ; % test GrB_mxm on all semirings
+logstat ('test74'     ,t, j40 , f11 ) ; % test GrB_mxm on all semirings
 logstat ('test127'    ,t, j404, f110) ; % test eWiseAdd, eWiseMult
 logstat ('test19'     ,t, j4  , f1  ) ; % GxB_subassign, many pending operators
 
