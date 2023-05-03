@@ -241,6 +241,8 @@ int main (void)
     GrB_Scalar_new (&y) ;
     x->stuff = 42 ;
     y->stuff = 99 ;
+    int garbage [4] ;
+    void *g = garbage ;
 
 //  GrB_set (x, GrB_NAME, "mine") ;
 //  GrB_set (3, 99) ;
@@ -250,10 +252,12 @@ int main (void)
     GB_SCALAR_SET (x, 1, "mine") ;
     GB_SCALAR_SET (x, 2, 32) ;
     GB_SCALAR_SET (x, 3, x) ;
+    GB_SCALAR_SET (x, 4, g) ;
 
     GB_GLOBAL_SET (4, "yours") ;
     GB_GLOBAL_SET (5, 101) ;
     GB_GLOBAL_SET (6, y) ;
+    GB_GLOBAL_SET (7, g) ;
 
     // GrB_set (x, GrB_NAME, "mine") ;
     // GrB_set (3, 99) ;
