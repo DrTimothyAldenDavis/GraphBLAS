@@ -76,6 +76,9 @@ f11 = {1,1} ;       % factory on, on
 j4040 = {4,0,4,0} ;    % JIT     on, off, on , off
 f1100 = {1,1,0,0} ;    % factory on, on , off, off
 
+j440 = {4,4,0} ;    % JIT     on, on , off
+f100 = {1,0,0} ;    % factory on, off, off
+
 % start with the Werk stack enabled
 hack (2) = 0 ; GB_mex_hack (hack) ;
 
@@ -100,14 +103,14 @@ end
 %}
 
 logstat ('test255'    ,t, j4  , f1  ) ; % flip binop
-logstat ('test254'    ,t, j4040, f1100) ; %% mask types
+logstat ('test254'    ,t, j440, f100) ; %% mask types
 logstat ('test253'    ,t, j4  , f1  ) ; % basic JIT tests
 logstat ('test252'    ,t, j4  , f1  ) ; % basic tests
 logstat ('test251'    ,t, j404, f110) ; % dot4, dot2, with plus_pair
 logstat ('test250'    ,t, j44 , f10 ) ; % basic tests
 logstat ('test249'    ,t, j4  , f1  ) ; % GxB_Context object
 logstat ('test247'    ,t, j404, f110) ; % GrB_mxm: fine Hash method
-logstat ('test246'    ,t, j44 , f10 ) ; % GrB_mxm parallelism (slice_balanced)
+logstat ('test246'    ,t, j4  , f1  ) ; % GrB_mxm parallelism (slice_balanced)
 
 logstat ('test01'     ,t, j44 , f10 ) ; % error handling
 logstat ('test245'    ,t, j404, f110) ; % test complex row/col scale
@@ -125,7 +128,7 @@ logstat ('test222'    ,t, j4  , f1  ) ; % test user selectop for iso matrices
 
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
 
-logstat ('test240'    ,t, j44 , f10 ) ; % test dot4, saxpy4, and saxpy5
+logstat ('test240'    ,t, j4  , f1  ) ; % test dot4, saxpy4, and saxpy5
 logstat ('test186'    ,t, j40 , f11 ) ; % saxpy, all formats  (slice_balanced)
 logstat ('test186(0)' ,t, j4  , f1  ) ; % repeat with default slice_balanced
 logstat ('test186'    ,s, j4  , f1  ) ; % repeat, but single-threaded
@@ -254,7 +257,7 @@ logstat ('test148'    ,t, j4  , f1  ) ; % ewise with alias
 %----------------------------------------
 
 logstat ('test157'    ,t, j4  , f1  ) ; % test sparsity formats
-logstat ('test182'    ,s, j44 , f10 ) ; % test for internal wait
+logstat ('test182'    ,s, j4  , f1  ) ; % test for internal wait
 
 %----------------------------------------
 % tests with decent rates (10 to 20/sec)
@@ -265,15 +268,15 @@ logstat ('test130'    ,t, j4  , f1  ) ; % GrB_apply, hypersparse cases
 logstat ('test124'    ,t, j4  , f1  ) ; % GrB_extract, case 6
 logstat ('test138'    ,s, j4  , f1  ) ; % assign, coarse-only tasks in IxJ slice
 logstat ('test227'    ,t, j4  , f1  ) ; % test kron
-logstat ('test125'    ,t, j40 , f10 ) ; %% test GrB_mxm: row and column scaling
+logstat ('test125'    ,t, j4  , f1  ) ; % test GrB_mxm: row and column scaling
 
 %----------------------------------------
 % 1 to 10/sec
 %----------------------------------------
 
 logstat ('test234'    ,t, j40 , f11 ) ; % test GxB_eWiseUnion
-logstat ('test242'    ,t, j40 , f11 ) ; % test GxB_Iterator for matrices
-logstat ('test173'    ,t, j44 , f10 ) ; % test GrB_assign C<A>=A
+logstat ('test242'    ,t, j4  , f1  ) ; % test GxB_Iterator for matrices
+logstat ('test173'    ,t, j4  , f1  ) ; % test GrB_assign C<A>=A
 logstat ('test200'    ,t, j4  , f1  ) ; % test iso full matrix multiply
 logstat ('test197'    ,t, j4  , f1  ) ; % test large sparse split
 logstat ('test84'     ,t, j4  , f1  ) ; % GrB_assign (row/col with C CSR/CSC)
@@ -284,7 +287,7 @@ logstat ('test80'     ,t, j4  , f1  ) ; % test GrB_mxm on all semirings
 logstat ('test151'    ,t, j44 , f10 ) ; % test bitwise operators
 logstat ('test23'     ,t, j40 , f11 ) ; % quick test of GB_*_build
 logstat ('test135'    ,t, j4  , f1  ) ; % reduce to scalar
-logstat ('test160'    ,s, j404, f110) ; % test A*B, single threaded
+logstat ('test160'    ,s, j40 , f11 ) ; % test A*B, single threaded
 logstat ('test54'     ,t, j4  , f1  ) ; % assign and extract with begin:inc:end
 logstat ('test129'    ,t, j4  , f1  ) ; % test GxB_select (tril, nonz, hyper)
 logstat ('test69'     ,t, j4  , f1  ) ; % assign and subassign with alias
