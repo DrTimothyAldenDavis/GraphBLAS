@@ -252,11 +252,15 @@ int main (void)
     GB_SCALAR_SET (x, 1, "mine") ;
     GB_SCALAR_SET (x, 2, 32) ;
     GB_SCALAR_SET (x, 3, x) ;
+
+    // broken:
     GB_SCALAR_SET (x, 4, g) ;
 
     GB_GLOBAL_SET (4, "yours") ;
     GB_GLOBAL_SET (5, 101) ;
     GB_GLOBAL_SET (6, y) ;
+
+    // broken:
     GB_GLOBAL_SET (7, g) ;
 
     // GrB_set (x, GrB_NAME, "mine") ;
