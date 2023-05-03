@@ -124,7 +124,7 @@ void mexFunction
 
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_COMPILER_NAME, &c)) ;
     printf ("default compiler [%s]\n", c) ;
-    len = strlen (c) ;
+    int len = strlen (c) ;
     char *save_c = mxMalloc (len+2) ;
     strcpy (save_c, c) ;
     OK (GxB_set (GxB_JIT_C_COMPILER_NAME, "cc")) ;
@@ -263,7 +263,7 @@ void mexFunction
 
     OK (GxB_get (GxB_JIT_CACHE_PATH, &cache)) ;
     printf ("default cache path: [%s]\n", cache) ;
-    int len = strlen (cache) ;
+    len = strlen (cache) ;
     char *save_cache = mxMalloc (len+2) ;
     strcpy (save_cache, cache) ;
     OK (GxB_set (GxB_JIT_CACHE_PATH, "/tmp/grb_cache")) ;
