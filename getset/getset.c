@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef enum
 {
@@ -74,19 +75,25 @@ struct GB_Scalar_opaque     // a simple GrB_Scalar, just to be self-contained
     int stuff ;
 } ;
 
+struct GB_Vector_opaque     // a simple GrB_Vector, just to be self-contained
+{
+    int morestuff [8] ;
+} ;
+
 typedef struct GB_Scalar_opaque *GrB_Scalar ;
+typedef struct GB_Vector_opaque *GrB_Vector ;
 
 GrB_Info GrB_Scalar_set_Scalar (GrB_Scalar o, GrB_Field f, GrB_Scalar t) ;
 GrB_Info GrB_Scalar_set_String (GrB_Scalar o, GrB_Field f, char *t) ;
 GrB_Info GrB_Scalar_set_ENUM   (GrB_Scalar o, GrB_Field f, int t) ;
 GrB_Info GrB_Scalar_set_VOID   (GrB_Scalar o, GrB_Field f, void *t /*, int n */) ;
 
-/*
 GrB_Info GrB_Vector_set_Scalar (GrB_Vector o, GrB_Field f, GrB_Scalar t) ;
 GrB_Info GrB_Vector_set_String (GrB_Vector o, GrB_Field f, char *t) ;
 GrB_Info GrB_Vector_set_ENUM   (GrB_Vector o, GrB_Field f, int t) ;
-GrB_Info GrB_Vector_set_VOID   (GrB_Vector o, GrB_Field f, void *t, int n) ;
+GrB_Info GrB_Vector_set_VOID   (GrB_Vector o, GrB_Field f, void *t /*, int n */) ;
 
+/*
 GrB_Info GrB_Matrix_set_Scalar (GrB_Matrix o, GrB_Field f, GrB_Scalar t) ;
 GrB_Info GrB_Matrix_set_String (GrB_Matrix o, GrB_Field f, char *t) ;
 GrB_Info GrB_Matrix_set_ENUM   (GrB_Matrix o, GrB_Field f, int t) ;
@@ -155,6 +162,30 @@ GrB_Info GrB_Global_set_VOID   (GrB_Field f, void *t /*, int n */) ;
             void *      : GrB_Scalar_set_VOID                               \
     ) (o,f,t)
 
+// OK:
+#define GB_SET(o,f,t)                                                       \
+    _Generic                                                                \
+    (                                                                       \
+        (o),                                                                \
+            GrB_Scalar :                                                    \
+                _Generic                                                    \
+                (                                                           \
+                    (t),                                                    \
+                        GrB_Scalar  : GrB_Scalar_set_Scalar ,               \
+                        char *      : GrB_Scalar_set_String ,               \
+                        int         : GrB_Scalar_set_ENUM   ,               \
+                        void *      : GrB_Scalar_set_VOID                   \
+                ) ,                                                         \
+            GrB_Vector :                                                    \
+                _Generic                                                    \
+                (                                                           \
+                    (t),                                                    \
+                        GrB_Scalar  : GrB_Vector_set_Scalar ,               \
+                        char *      : GrB_Vector_set_String ,               \
+                        int         : GrB_Vector_set_ENUM   ,               \
+                        void *      : GrB_Vector_set_VOID                   \
+                )                                                           \
+    ) (o,f,t)
 
 // broken:
 #define GrB_set(arg1,arg2,...)                                              \
@@ -197,6 +228,35 @@ GrB_Info GrB_Scalar_set_VOID   (GrB_Scalar o, GrB_Field f, void *t /*, int n */)
     return (GrB_SUCCESS) ;
 }
 
+GrB_Info GrB_Vector_set_Scalar (GrB_Vector o, GrB_Field f, GrB_Scalar t)
+{
+    printf ("vector set scalar: o: %d, f: %d, t->stuff [%d]\n",
+        o->morestuff [0], f, t->stuff) ;
+    return (GrB_SUCCESS) ;
+}
+
+GrB_Info GrB_Vector_set_String (GrB_Vector o, GrB_Field f, char *t)
+{
+    printf ("vector set char   : o: %d, f: %d, t [%s]\n",
+        o->morestuff [0], f, t) ;
+    return (GrB_SUCCESS) ;
+}
+
+GrB_Info GrB_Vector_set_ENUM   (GrB_Vector o, GrB_Field f, int t)
+{
+    printf ("vector set enum   : o: %d, f: %d, t [%d]\n",
+        o->morestuff [0], f, t) ;
+    return (GrB_SUCCESS) ;
+}
+
+GrB_Info GrB_Vector_set_VOID   (GrB_Vector o, GrB_Field f, void *t /*, int n */)
+{
+    printf ("vector set void   : o: %d, f: %d, t [%p]\n",
+        o->morestuff [0], f, t) ;
+    return (GrB_SUCCESS) ;
+}
+
+
 GrB_Info GrB_Global_set_Scalar (GrB_Field f, GrB_Scalar t)
 {
     printf ("global set scalar: f: %d, t->stuff [%d]\n",
@@ -234,13 +294,29 @@ GrB_Info GrB_Scalar_free (GrB_Scalar *xhandle)
     (*xhandle) = NULL ;
 }
 
+GrB_Info GrB_Vector_new (GrB_Vector *vhandle)
+{
+    (*vhandle) = calloc (1, sizeof (struct GB_Scalar_opaque)) ;
+}
+
+GrB_Info GrB_Vector_free (GrB_Vector *xhandle)
+{
+    GrB_Vector x = *xhandle ;
+    free (x) ;
+    (*xhandle) = NULL ;
+}
+
 int main (void)
 {
     GrB_Scalar x, y ;
+    GrB_Vector v ;
     GrB_Scalar_new (&x) ;
     GrB_Scalar_new (&y) ;
+    GrB_Vector_new (&v) ;
     x->stuff = 42 ;
     y->stuff = 99 ;
+    v->morestuff [0] = 777 ;
+//  memset (v->morestuff, 0, 8 * sizeof (int)) ;
     int garbage [4] ;
     void *g = garbage ;
 
@@ -249,19 +325,35 @@ int main (void)
 
     // using int's 1 to 6 for the GrB_Field:
 
+    printf ("\nScalar set:\n") ;
     GB_SCALAR_SET (x, 1, "mine") ;
     GB_SCALAR_SET (x, 2, 32) ;
     GB_SCALAR_SET (x, 3, x) ;
     GB_SCALAR_SET (x, 4, g) ;
 
+    printf ("\nGlobal set:\n") ;
     GB_GLOBAL_SET (4, "yours") ;
     GB_GLOBAL_SET (5, 101) ;
     GB_GLOBAL_SET (6, y) ;
     GB_GLOBAL_SET (7, g) ;
 
+    printf ("\nScalar set but more generic:\n") ;
+    GB_SET (x, 1, "mine") ;
+    GB_SET (x, 2, 32) ;
+    GB_SET (x, 3, x) ;
+    GB_SET (x, 4, g) ;
+
+    printf ("\nVector set but more generic:\n") ;
+    GB_SET (v, 1, "mine") ;
+    GB_SET (v, 2, 32) ;
+    GB_SET (v, 3, x) ;
+    GB_SET (v, 4, g) ;
+
     // GrB_set (x, GrB_NAME, "mine") ;
     // GrB_set (3, 99) ;
 
     GrB_Scalar_free (&x) ;
+    GrB_Scalar_free (&y) ;
+    GrB_Vector_free (&v) ;
 }
 
