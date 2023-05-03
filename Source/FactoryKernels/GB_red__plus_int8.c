@@ -30,8 +30,11 @@
 #define GB_PANEL 64
 
 // disable this operator and use the generic case if these conditions hold
-#define GB_DISABLE \
-    (defined(GxB_NO_PLUS) || defined(GxB_NO_INT8) || defined(GxB_NO_PLUS_INT8))
+#if (defined(GxB_NO_PLUS) || defined(GxB_NO_INT8) || defined(GxB_NO_PLUS_INT8))
+#define GB_DISABLE 1
+#else
+#define GB_DISABLE 0
+#endif
 
 #include "GB_monoid_shared_definitions.h"
 

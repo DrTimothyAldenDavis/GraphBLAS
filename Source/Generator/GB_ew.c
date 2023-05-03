@@ -39,8 +39,7 @@ GB_ctype_is_atype
 GB_ctype_is_btype
 
 // disable this operator and use the generic case if these conditions hold
-#define GB_DISABLE \
-    GB_disable
+GB_disable
 
 #include "GB_ewise_shared_definitions.h"
 

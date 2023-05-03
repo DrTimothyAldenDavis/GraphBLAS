@@ -35,8 +35,7 @@ GB_ctype
 }
 
 // disable this operator and use the generic case if these conditions hold
-#define GB_DISABLE \
-    GB_disable
+GB_disable
 
 #include "GB_apply_shared_definitions.h"
 

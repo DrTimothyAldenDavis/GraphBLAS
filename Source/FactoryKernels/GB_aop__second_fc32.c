@@ -50,8 +50,11 @@
 }
 
 // disable this operator and use the generic case if these conditions hold
-#define GB_DISABLE \
-    (defined(GxB_NO_SECOND) || defined(GxB_NO_FC32) || defined(GxB_NO_SECOND_FC32) || GB_COMPILER_MSC_2019_OR_NEWER)
+#if (defined(GxB_NO_SECOND) || defined(GxB_NO_FC32) || defined(GxB_NO_SECOND_FC32) || GB_COMPILER_MSC_2019_OR_NEWER)
+#define GB_DISABLE 1
+#else
+#define GB_DISABLE 0
+#endif
 
 #include "GB_assign_shared_definitions.h"
 

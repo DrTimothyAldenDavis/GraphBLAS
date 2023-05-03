@@ -125,7 +125,7 @@ if (isequal (ytype, 'GxB_FC32_t') && ...
     % MS Visual Studio 2019.  These files trigger a bug in the compiler.
     disable = [disable ' || GB_COMPILER_MSC_2019_OR_NEWER'] ;
 end
-fprintf (f, 'm4_define(`GB_disable'', `(%s)'')\n', disable) ;
+fprintf (f, 'm4_define(`GB_disable'', `#if (%s)\n#define GB_DISABLE 1\n#else\n#define GB_DISABLE 0\n#endif\n'')\n', disable) ;
 
 fprintf (f, 'm4_divert(0)\n') ;
 fclose (f) ;

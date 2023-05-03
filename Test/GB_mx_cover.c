@@ -54,7 +54,6 @@ void GB_cover_get (bool cover)
 
         // getting paranoid here; this should never happen
         if (g == NULL) mexErrMsgTxt ("g null!") ;
-        if (GB_cov == NULL) mexErrMsgTxt ("GB_cov is NULL!") ;
 
         // copy the count from the GraphBLAS_grbcov into GB_cov
         memcpy (GB_cov, g, GBCOVER_MAX * sizeof (int64_t)) ;

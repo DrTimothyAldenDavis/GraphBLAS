@@ -24,8 +24,11 @@
 #define GB_AX_MASK(Ax,pA,asize) (Ax [pA] != 0)
 
 // disable this operator and use the generic case if these conditions hold
-#define GB_DISABLE \
-    (defined(GxB_NO_UINT8))
+#if (defined(GxB_NO_UINT8))
+#define GB_DISABLE 1
+#else
+#define GB_DISABLE 0
+#endif
 
 #include "GB_assign_shared_definitions.h"
 

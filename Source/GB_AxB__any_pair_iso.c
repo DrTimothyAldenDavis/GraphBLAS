@@ -61,8 +61,7 @@
 #define GB_IS_PAIR_MULTIPLIER 1
 
 // disable this semiring and use the generic case if these conditions hold
-#define GB_DISABLE \
-    0
+#define GB_DISABLE 0
 
 #include "GB_mxm_shared_definitions.h"
 

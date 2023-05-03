@@ -838,7 +838,7 @@ end
 % create the disable flag
 if (is_any_pair)
     % never disable the any_pair_iso semiring
-    fprintf (f, 'm4_define(`GB_disable'', `0'')\n') ;
+    fprintf (f, 'm4_define(`GB_disable'', `#define GB_DISABLE 0'')\n') ;
 else
     disable  = sprintf ('defined(GxB_NO_%s)', upper (addop)) ;
     if (~isequal (addop, multop))
@@ -851,7 +851,7 @@ else
     end
     disable = [disable (sprintf (' || defined(GxB_NO_%s_%s_%s)', ...
         upper (addop), upper (multop), upper (fname))) ] ;
-    fprintf (f, 'm4_define(`GB_disable'', `(%s)'')\n', disable) ;
+    fprintf (f, 'm4_define(`GB_disable'', `#if (%s)\n#define GB_DISABLE 1\n#else\n#define GB_DISABLE 0\n#endif\n'')\n', disable) ;
 end
 
 fprintf (f, 'm4_divert(0)\n') ;

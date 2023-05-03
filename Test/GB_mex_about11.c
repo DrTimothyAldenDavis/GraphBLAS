@@ -124,6 +124,9 @@ void mexFunction
 
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_COMPILER_NAME, &c)) ;
     printf ("default compiler [%s]\n", c) ;
+    len = strlen (c) ;
+    char *save_c = mxMalloc (len+2) ;
+    strcpy (save_c, c) ;
     OK (GxB_set (GxB_JIT_C_COMPILER_NAME, "cc")) ;
     OK (GxB_get (GxB_JIT_C_COMPILER_NAME, &s)) ;
     CHECK (MATCH (s, "cc")) ;
@@ -135,8 +138,10 @@ void mexFunction
 
     #ifdef __APPLE__
     // reset the compiler back to the default on the Mac
-    OK (GxB_Global_Option_set_CHAR (GxB_JIT_C_COMPILER_NAME, c)) ;
+    OK (GxB_Global_Option_set_CHAR (GxB_JIT_C_COMPILER_NAME, save_c)) ;
     #endif
+    mxFree (save_c) ;
+    save_c = NULL ;
 
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_COMPILER_FLAGS, &s)) ;
     printf ("default flags [%s]\n", s) ;

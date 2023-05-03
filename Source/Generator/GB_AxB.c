@@ -87,8 +87,7 @@ GB_is_firstj_multiplier
 GB_is_secondj_multiplier
 
 // disable this semiring and use the generic case if these conditions hold
-#define GB_DISABLE \
-    GB_disable
+GB_disable
 
 #include "GB_mxm_shared_definitions.h"
 

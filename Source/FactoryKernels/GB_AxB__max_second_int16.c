@@ -60,8 +60,11 @@
 // special case multipliers:
 
 // disable this semiring and use the generic case if these conditions hold
-#define GB_DISABLE \
-    (defined(GxB_NO_MAX) || defined(GxB_NO_SECOND) || defined(GxB_NO_INT16) || defined(GxB_NO_MAX_INT16) || defined(GxB_NO_SECOND_INT16) || defined(GxB_NO_MAX_SECOND_INT16))
+#if (defined(GxB_NO_MAX) || defined(GxB_NO_SECOND) || defined(GxB_NO_INT16) || defined(GxB_NO_MAX_INT16) || defined(GxB_NO_SECOND_INT16) || defined(GxB_NO_MAX_SECOND_INT16))
+#define GB_DISABLE 1
+#else
+#define GB_DISABLE 0
+#endif
 
 #include "GB_mxm_shared_definitions.h"
 

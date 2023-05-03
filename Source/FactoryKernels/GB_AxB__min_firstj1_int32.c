@@ -61,8 +61,11 @@
 #define GB_IS_FIRSTJ_MULTIPLIER 1 /* or FIRSTJ1 */
 
 // disable this semiring and use the generic case if these conditions hold
-#define GB_DISABLE \
-    (defined(GxB_NO_MIN) || defined(GxB_NO_FIRSTJ1) || defined(GxB_NO_INT32) || defined(GxB_NO_MIN_INT32) || defined(GxB_NO_FIRSTJ1_INT32) || defined(GxB_NO_MIN_FIRSTJ1_INT32))
+#if (defined(GxB_NO_MIN) || defined(GxB_NO_FIRSTJ1) || defined(GxB_NO_INT32) || defined(GxB_NO_MIN_INT32) || defined(GxB_NO_FIRSTJ1_INT32) || defined(GxB_NO_MIN_FIRSTJ1_INT32))
+#define GB_DISABLE 1
+#else
+#define GB_DISABLE 0
+#endif
 
 #include "GB_mxm_shared_definitions.h"
 

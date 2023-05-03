@@ -134,7 +134,7 @@ fprintf (f, 'm4_define(`GB_add_op'', `#define GB_ADD(z,zin,a) %s'')\n', add_op) 
 disable  = sprintf ('defined(GxB_NO_%s)', upper (opname)) ;
 disable = [disable (sprintf (' || defined(GxB_NO_%s)', upper (aname)))] ;
 disable = [disable (sprintf (' || defined(GxB_NO_%s_%s)', upper (opname), upper (aname)))] ;
-fprintf (f, 'm4_define(`GB_disable'', `(%s)'')\n', disable) ;
+fprintf (f, 'm4_define(`GB_disable'', `#if (%s)\n#define GB_DISABLE 1\n#else\n#define GB_DISABLE 0\n#endif\n'')\n', disable) ;
 
 fprintf (f, 'm4_divert(0)\n') ;
 fclose (f) ;

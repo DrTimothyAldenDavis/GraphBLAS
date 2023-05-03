@@ -35,8 +35,11 @@
 }
 
 // disable this operator and use the generic case if these conditions hold
-#define GB_DISABLE \
-    (defined(GxB_NO_ABS) || defined(GxB_NO_FP64))
+#if (defined(GxB_NO_ABS) || defined(GxB_NO_FP64))
+#define GB_DISABLE 1
+#else
+#define GB_DISABLE 0
+#endif
 
 #include "GB_apply_shared_definitions.h"
 

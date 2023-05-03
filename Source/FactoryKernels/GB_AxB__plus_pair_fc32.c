@@ -62,8 +62,11 @@
 #define GB_PAIR_ONE GxB_CMPLXF (1,0)
 
 // disable this semiring and use the generic case if these conditions hold
-#define GB_DISABLE \
-    (defined(GxB_NO_PLUS) || defined(GxB_NO_PAIR) || defined(GxB_NO_FC32) || defined(GxB_NO_PLUS_FC32) || defined(GxB_NO_PAIR_FC32) || defined(GxB_NO_PLUS_PAIR_FC32))
+#if (defined(GxB_NO_PLUS) || defined(GxB_NO_PAIR) || defined(GxB_NO_FC32) || defined(GxB_NO_PLUS_FC32) || defined(GxB_NO_PAIR_FC32) || defined(GxB_NO_PLUS_PAIR_FC32))
+#define GB_DISABLE 1
+#else
+#define GB_DISABLE 0
+#endif
 
 #include "GB_mxm_shared_definitions.h"
 

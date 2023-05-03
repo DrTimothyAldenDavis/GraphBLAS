@@ -25,8 +25,11 @@
 #define GB_Y_TYPE uint32_t
 
 // disable this operator and use the generic case if these conditions hold
-#define GB_DISABLE \
-    (defined(GxB_NO_MIN) || defined(GxB_NO_UINT32) || defined(GxB_NO_MIN_UINT32))
+#if (defined(GxB_NO_MIN) || defined(GxB_NO_UINT32) || defined(GxB_NO_MIN_UINT32))
+#define GB_DISABLE 1
+#else
+#define GB_DISABLE 0
+#endif
 
 #include "GB_kernel_shared_definitions.h"
 

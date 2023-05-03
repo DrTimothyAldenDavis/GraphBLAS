@@ -25,8 +25,7 @@ GB_xtype
 GB_ytype
 
 // disable this operator and use the generic case if these conditions hold
-#define GB_DISABLE \
-    GB_disable
+GB_disable
 
 #include "GB_kernel_shared_definitions.h"
 
