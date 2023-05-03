@@ -320,8 +320,8 @@ void mexFunction
     OK (GxB_print (sr, 3)) ;
     GrB_free (&sr) ;
 
-    OK (GxB_BinaryOp_new (&op, myplus, GrB_FP32, GrB_FP32, GrB_FP32, "myplus",
-        MYPLUS_DEFN)) ;
+    OK (GxB_BinaryOp_new (&op, (GxB_binary_function) myplus,
+        GrB_FP32, GrB_FP32, GrB_FP32, "myplus", MYPLUS_DEFN)) ;
     float zero = 0 ;
     OK (GrB_Monoid_new (&monoid, op, zero)) ;
     OK (GxB_print (op, 3)) ;
@@ -382,7 +382,7 @@ void mexFunction
     expected = GrB_INVALID_OBJECT ;
     A->nvals++ ;
     ERR (GxB_print (A, 3)) ;
-    scalar = A ;
+    scalar = (GrB_Scalar) A ;
     ERR (GxB_print (scalar, 3)) ;
     A->nvals-- ;
     OK (GxB_print (A, 3)) ;
@@ -390,7 +390,7 @@ void mexFunction
     GrB_IndexUnaryOp MyIdxOp = NULL ;
     #undef GrB_IndexUnaryOp_new
     #undef GrM_IndexUnaryOp_new
-    OK (GrM_IndexUnaryOp_new (&MyIdxOp, myidx,
+    OK (GrM_IndexUnaryOp_new (&MyIdxOp, (GxB_index_unary_function) myidx,
         GrB_INT64, GrB_INT64, GrB_INT64)) ;
     OK (GxB_print (MyIdxOp, 3)) ;
     OK (GrB_apply (A, NULL, NULL, MyIdxOp, A, 0, NULL)) ;
@@ -403,7 +403,7 @@ void mexFunction
     GrB_free (&MyIdxOp) ;
 
     GrB_UnaryOp MyUnOp = NULL ;
-    OK (GrB_UnaryOp_new (&MyUnOp, myinc, GrB_FP32, GrB_FP32)) ;
+    OK (GrB_UnaryOp_new (&MyUnOp, (GxB_unary_function) myinc, GrB_FP32, GrB_FP32)) ;
     OK (GxB_print (MyUnOp, 3)) ;
     OK (GrB_apply (A, NULL, NULL, MyUnOp, A, NULL)) ;
     OK (GxB_print (A, 3)) ;
