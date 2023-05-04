@@ -9173,7 +9173,15 @@ These hints have no effect on the results of any GraphBLAS operation (except
 perhaps floating-point roundoff differences), but they can have a great impact
 on the amount of time or memory taken.
 
+\begin{note}
+{\bf NOTE:} In the next release, \verb'GxB_get' and \verb'GxB_set' will be
+replaced by \verb'GrB_*_get' and \verb'GrB_*_set', using the v2.1 C API
+Specification.
+\end{note}
+
+%-------------------------------------------------------------------------------
 \subsection{{\sf GxB\_set}: overview}
+%-------------------------------------------------------------------------------
 
 \begin{itemize}
 
@@ -9274,7 +9282,9 @@ field                       & value         & description \\
 \end{itemize}
 
 \newpage
+%-------------------------------------------------------------------------------
 \subsection{{\sf GxB\_get}: overview}
+%-------------------------------------------------------------------------------
 
 \verb'GxB_get' queries a \verb'GrB_Descriptor', a \verb'GrB_Matrix',
 a \verb'GrB_Vector', or the global options.
@@ -9299,32 +9309,32 @@ field                       & value         & description \\
 \verb'GxB_FLUSH'            & see below     & diagnostic output \\
 \verb'GxB_PRINT_1BASED'     & \verb'int'    & for printing matrices/vectors \\
 \hline
-\verb'GxB_JIT_C_COMPILER_NAME' & \verb'char *' & C compiler for JIT kernels \\
-\verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
-\verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
-\verb'GxB_JIT_C_LIBRARIES'    & \verb'char *' & libraries to link against \\
-\verb'GxB_JIT_C_CMAKE_LIBS'   & \verb'char *' & libraries to link against \\
-\verb'GxB_JIT_C_PREFACE'      & \verb'char *' & C code as preface to JIT kernels \\
+\verb'GxB_JIT_C_COMPILER_NAME' & \verb'const char *' & C compiler for JIT kernels \\
+\verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'const char *' & flags for the C compiler \\
+\verb'GxB_JIT_C_LINKER_FLAGS' & \verb'const char *' & link flags for the C compiler \\
+\verb'GxB_JIT_C_LIBRARIES'    & \verb'const char *' & libraries to link against \\
+\verb'GxB_JIT_C_CMAKE_LIBS'   & \verb'const char *' & libraries to link against \\
+\verb'GxB_JIT_C_PREFACE'      & \verb'const char *' & C code as preface to JIT kernels \\
 \verb'GxB_JIT_C_CONTROL'      & see Section \ref{jit} & CPU JIT control \\
 \verb'GxB_JIT_USE_CMAKE'      & see Section \ref{jit} & CPU JIT: use cmake \\
-\verb'GxB_JIT_ERROR_LOG'      & \verb'char *' & error log file \\
-\verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
+\verb'GxB_JIT_ERROR_LOG'      & \verb'const char *' & error log file \\
+\verb'GxB_JIT_CACHE_PATH'     & \verb'const char *' & folder with compiled kernels \\
 \hline
 \verb'GxB_MODE'                 & \verb'int'    & blocking/non-blocking \\
-\verb'GxB_LIBRARY_NAME'         & \verb'char *' & name of library \\
+\verb'GxB_LIBRARY_NAME'         & \verb'const char *' & name of library \\
 \verb'GxB_LIBRARY_VERSION'      & \verb'int [3]' & library version \\
-\verb'GxB_LIBRARY_DATE'         & \verb'char *' & release date \\
-\verb'GxB_LIBRARY_ABOUT'        & \verb'char *' & about the library \\
-\verb'GxB_LIBRARY_LICENSE'      & \verb'char *' & license \\
-\verb'GxB_LIBRARY_COMPILE_DATE' & \verb'char *' & date of compilation \\
-\verb'GxB_LIBRARY_COMPILE_TIME' & \verb'char *' & time of compilation \\
+\verb'GxB_LIBRARY_DATE'         & \verb'const char *' & release date \\
+\verb'GxB_LIBRARY_ABOUT'        & \verb'const char *' & about the library \\
+\verb'GxB_LIBRARY_LICENSE'      & \verb'const char *' & license \\
+\verb'GxB_LIBRARY_COMPILE_DATE' & \verb'const char *' & date of compilation \\
+\verb'GxB_LIBRARY_COMPILE_TIME' & \verb'const char *' & time of compilation \\
 \verb'GxB_LIBRARY_OPENMP'       & \verb'bool'   & true if compiled with OpenMP\\
-\verb'GxB_LIBRARY_URL'          & \verb'char *' & url of library \\
+\verb'GxB_LIBRARY_URL'          & \verb'const char *' & url of library \\
 \verb'GxB_API_VERSION'          & \verb'int [3]' & C API version \\
-\verb'GxB_API_DATE'             & \verb'char *' & C API date \\
-\verb'GxB_API_ABOUT'            & \verb'char *' & about the C API \\
-\verb'GxB_API_URL'              & \verb'char *' & \verb'http://graphblas.org' \\
-\verb'GxB_COMPILER_NAME'        & \verb'char *' & C compiler name \\
+\verb'GxB_API_DATE'             & \verb'const char *' & C API date \\
+\verb'GxB_API_ABOUT'            & \verb'const char *' & about the C API \\
+\verb'GxB_API_URL'              & \verb'const char *' & \verb'http://graphblas.org' \\
+\verb'GxB_COMPILER_NAME'        & \verb'const char *' & C compiler name \\
 \verb'GxB_COMPILER_VERSION'     & \verb'int [3]' & C compiler version \\
 \hline
 \end{tabular}
@@ -10113,7 +10123,16 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
 }
 \vspace{0.2in}
 
-For example:
+{\bf NOTE:} The strings returned by \verb'GxB_get' are \verb'const char *'.
+They are ``owned'' by the GraphBLAS library itself, not by the user
+application.  They cannot be freed or modified in any way.  A subsequent call
+to \verb'GxB_set' can free them and reallocate them, so they are only valid
+until that point.  If you want to keep a string returned by \verb'GxB_get',
+make a copy immediately after calling \verb'GxB_get', into a character array
+owned by the user application.  The \verb'GxB_JIT_*' strings are the only ones
+this affects.
+
+Below is an example:
 
 {\footnotesize
 \begin{verbatim}
