@@ -4761,7 +4761,7 @@ void mexFunction
     ERR (GxB_Global_Option_get_FUNCTION (-1, &ignore5)) ;
     CHECK (ignore5 == NULL) ;
 
-    char *ignore6 = NULL ;
+    const char *ignore6 = NULL ;
     ERR (GxB_Global_Option_get_CHAR (-1, &ignore6)) ;
     CHECK (ignore6 == NULL) ;
 

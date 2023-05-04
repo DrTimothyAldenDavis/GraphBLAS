@@ -51,7 +51,7 @@ void mexFunction
     OK (GrB_Scalar_setElement (scalar, 3.1416)) ;
 
     GrB_Info expected = GrB_DOMAIN_MISMATCH ;
-    char *error ;
+    const char *error ;
 
     ERR (GrB_Matrix_assign_Scalar (A, NULL, NULL, scalar,
         GrB_ALL, 3, GrB_ALL, 3, NULL)) ;

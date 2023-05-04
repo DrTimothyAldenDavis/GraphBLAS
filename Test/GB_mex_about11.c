@@ -52,7 +52,7 @@ void mexFunction
     GrB_Matrix A = NULL ;
     GrB_Vector v = NULL ;
     GrB_Scalar scalar = NULL ;
-    char *s = NULL, *t = NULL, *c = NULL, *cache = NULL ;
+    const char *s = NULL, *t = NULL, *c = NULL, *cache = NULL ;
     GrB_Info info, expected ;
     bool onebased = false, iso = false ;
     int use_cmake_int = 0, onebased_int = 1, control = 99 ;

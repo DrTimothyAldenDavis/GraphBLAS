@@ -62,7 +62,7 @@ void mexFunction
     CHECK (chunk = 2e6) ;
 
     int32_t ver [3] ;
-    char *compiler ;
+    const char *compiler ;
     OK (GxB_Global_Option_get_INT32 (GxB_COMPILER_VERSION, ver)) ;
     OK (GxB_Global_Option_get_CHAR (GxB_COMPILER_NAME, &compiler)) ;
     printf ("compiler: %s %d.%d.%d\n", compiler, ver [0], ver [1], ver [2]) ;
