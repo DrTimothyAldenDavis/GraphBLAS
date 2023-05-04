@@ -18,7 +18,10 @@ set ( GB_LIB_PREFIX "${CMAKE_SHARED_LIBRARY_PREFIX}" )
 if ( APPLE )
     # MacOS
     set ( GB_C_FLAGS "${GB_C_FLAGS} -fPIC " )
-    set ( GB_C_FLAGS "${GB_C_FLAGS} -arch ${CMAKE_HOST_SYSTEM_PROCESSOR} " )
+    if ( NOT GBMATLAB )
+        # MATLAB on the Mac is not a native application
+        set ( GB_C_FLAGS "${GB_C_FLAGS} -arch ${CMAKE_HOST_SYSTEM_PROCESSOR} " )
+    endif ( )
     set ( GB_C_FLAGS "${GB_C_FLAGS} -isysroot ${CMAKE_OSX_SYSROOT} " )
     set ( GB_C_LINK_FLAGS "${GB_C_LINK_FLAGS} -dynamiclib " )
     set ( GB_OBJ_SUFFIX ".o" )
