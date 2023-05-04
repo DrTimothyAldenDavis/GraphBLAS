@@ -29,6 +29,9 @@ set ( SUITESPARSE_SECOND_LEVEL true )
 # CUDA is under development for now, and not deployed in production:
 set ( SUITESPARSE_CUDA off )
 
+set ( GBMATLAB on )
+set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBMATLAB=1 " )
+
 include ( SuiteSparsePolicy )
 include ( GraphBLAS_JIT_paths )
 
@@ -91,9 +94,6 @@ endif ( )
 #-------------------------------------------------------------------------------
 # determine build type
 #-------------------------------------------------------------------------------
-
-set ( GBMATLAB on )
-set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBMATLAB=1 " )
 
 message ( STATUS "CMAKE build type:          " ${CMAKE_BUILD_TYPE} )
 
