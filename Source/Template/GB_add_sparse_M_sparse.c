@@ -232,7 +232,7 @@
             }
             else if (M_is_A)
             { 
-GB_GOTCHA ; // M is A
+// GB_GOTCHA ; // M is A
                 // A is aliased to M
                 pA = pM ;
                 afound = true ;
@@ -260,7 +260,7 @@ GB_GOTCHA ; // M is A
             }
             else if (M_is_B)
             { 
-GB_GOTCHA ; // M is B
+// GB_GOTCHA ; // M is B
                 // B is aliased to M
                 pB = pM ;
                 bfound = true ;

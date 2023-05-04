@@ -66,7 +66,7 @@
     GB_DECLAREC (cwork) ;
     if (A_iso)
     { 
-GB_GOTCHA ; // A iso
+// GB_GOTCHA ; // A iso
         // get the iso value of A and typecast to C->type
         // cwork = (ctype) Ax [0]
         GB_COPY_aij_to_cwork (cwork, Ax, 0, true) ;

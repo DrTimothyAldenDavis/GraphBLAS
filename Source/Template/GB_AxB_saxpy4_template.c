@@ -268,7 +268,7 @@
                     }
                     #else
                     { 
-GB_GOTCHA ; // z has no atomic update
+// GB_GOTCHA ; // z has no atomic update
                         // the update must be done in a critical section using
                         // the mutex byte Hf (i,j), located at Hf [i].  If
                         // zero, the mutex is unlocked.
