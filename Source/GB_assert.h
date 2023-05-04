@@ -72,9 +72,6 @@
 }
 #endif
 
-#undef  GB_GOTCHA
-#define GB_GOTCHA compiler error here; gotcha disabled
-
 #undef  GB_HERE
 #define GB_HERE GBDUMP ("%2d: Here: " __FILE__ "\n", __LINE__) ;
 

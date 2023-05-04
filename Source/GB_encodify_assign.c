@@ -44,7 +44,7 @@ uint64_t GB_encodify_assign     // encode an assign problem
     if ((accum != NULL && accum->hash == UINT64_MAX) ||
         (accum == NULL && C->type->hash == UINT64_MAX))
     { 
-// GB_GOTCHA ; // no hash 
+GB_GOTCHA ; // no hash 
         // cannot JIT this accum operator or type
         memset (encoding, 0, sizeof (GB_jit_encoding)) ;
         (*suffix) = NULL ;

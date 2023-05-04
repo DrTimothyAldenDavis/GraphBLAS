@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_band: C = tril (triu (A,lo), hi), or with A'
+// GB_mex_band2: C = tril (triu (A,lo), hi), or with A' with typecasting
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -11,7 +11,7 @@
 
 #include "GB_mex.h"
 
-#define USAGE "C = GB_mex_band (A, lo, hi, atranspose)"
+#define USAGE "C = GB_mex_band2 (A, lo, hi, atranspose)"
 
 #define FREE_ALL                        \
 {                                       \
@@ -39,15 +39,15 @@
 #define LOHI_DEFN                                       \
 "typedef struct { int64_t lo ; int64_t hi ; } LoHi_type ;"
 
-void LoHi_band (bool *z, /* x is unused: */ const void *x,
+void LoHi_band2 (int16_t *z, /* x is unused: */ const void *x,
     GrB_Index i, GrB_Index j, const LoHi_type *thunk) ;
 
-void LoHi_band (bool *z, /* x is unused: */ const void *x,
+void LoHi_band2 (int16_t *z, /* x is unused: */ const void *x,
     GrB_Index i, GrB_Index j, const LoHi_type *thunk)
 {
     int64_t i2 = (int64_t) i ;
     int64_t j2 = (int64_t) j ;
-    (*z) = ((thunk->lo <= (j2-i2)) && ((j2-i2) <= thunk->hi)) ;
+    (*z) = (int64_t) ((thunk->lo <= (j2-i2)) && ((j2-i2) <= thunk->hi)) ;
 }
 
 void mexFunction
@@ -109,10 +109,10 @@ void mexFunction
     }
 
     // create operator
-    // use the user-defined operator, from the LoHi_band function.
+    // use the user-defined operator, from the LoHi_band2 function.
     // This operator cannot be JIT'd because it doesn't have a name or defn.
-    METHOD (GrB_IndexUnaryOp_new (&op, (GxB_index_unary_function) LoHi_band,
-        GrB_BOOL, GrB_FP64, Thunk_type)) ;
+    METHOD (GxB_IndexUnaryOp_new (&op, (GxB_index_unary_function) LoHi_band2,
+        GrB_INT16, GrB_FP64, Thunk_type)) ;
 
     GrB_Index nrows, ncols ;
     GrB_Matrix_nrows (&nrows, A) ;
