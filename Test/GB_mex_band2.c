@@ -87,7 +87,6 @@ void mexFunction
 
     // create the Thunk
     LoHi_type bandwidth  ;
-//  OK (GrB_Type_new (&Thunk_type, sizeof (LoHi_type))) ;
     OK (GxB_Type_new (&Thunk_type, sizeof (LoHi_type),
         "LoHi_type", LOHI_DEFN)) ;
 
@@ -111,7 +110,7 @@ void mexFunction
     // create operator
     // use the user-defined operator, from the LoHi_band2 function.
     // This operator cannot be JIT'd because it doesn't have a name or defn.
-    METHOD (GxB_IndexUnaryOp_new (&op, (GxB_index_unary_function) LoHi_band2,
+    METHOD (GrB_IndexUnaryOp_new (&op, (GxB_index_unary_function) LoHi_band2,
         GrB_INT16, GrB_FP64, Thunk_type)) ;
 
     GrB_Index nrows, ncols ;
@@ -138,15 +137,11 @@ void mexFunction
         // this is just to test the Vector version
         OK (GrB_Vector_select_Scalar ((GrB_Vector) C, NULL, NULL, op,
             (GrB_Vector) A, Thunk, NULL)) ;
-//      OK (GxB_Vector_select_((GrB_Vector) C, NULL, NULL, op, (GrB_Vector) A,
-//          Thunk, NULL)) ;
     }
     else
     {
-//      OK (GxB_Matrix_select_(C, NULL, NULL, op, A, Thunk, desc)) ;
         OK (GrB_Matrix_select_Scalar (C, NULL, NULL, op, A, Thunk, desc)) ;
     }
-
 
     // return C as a sparse matrix and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", false) ;

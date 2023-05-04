@@ -25,7 +25,6 @@ void GB_macrofy_user_type       // construct a user-defined type
 
     if (type->hash == 0 || type->hash == UINT64_MAX)
     { 
-// GB_GOTCHA ; // no hash
         // skip if type is builtin or cannot be used in the JIT
         return ;
     }

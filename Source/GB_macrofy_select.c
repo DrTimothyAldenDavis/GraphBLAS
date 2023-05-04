@@ -108,17 +108,17 @@ void GB_macrofy_select          // construct all macros for GrB_select
     char *kind ;
     switch (op->opcode)
     {
-        case GB_TRIL_idxunop_code       : kind = "TRIL"      ; /* GB_GOTCHA */ ; break ;
-        case GB_TRIU_idxunop_code       : kind = "TRIU"      ; /* GB_GOTCHA */ ; break ;
-        case GB_DIAG_idxunop_code       : kind = "DIAG"      ; /* GB_GOTCHA */ ; break ;
-        case GB_DIAGINDEX_idxunop_code  :   /* GB_GOTCHA */ ;
-        case GB_OFFDIAG_idxunop_code    : kind = "OFFDIAG"   ; /* GB_GOTCHA */ ; break ;
-        case GB_ROWINDEX_idxunop_code   : kind = "ROWINDEX"  ; /* GB_GOTCHA */ ; break ;
-        case GB_COLINDEX_idxunop_code   : kind = "COLINDEX"  ; /* GB_GOTCHA */ ; break ;
-        case GB_COLLE_idxunop_code      : kind = "COLLE"     ; /* GB_GOTCHA */ ; break ;
-        case GB_COLGT_idxunop_code      : kind = "COLGT"     ; /* GB_GOTCHA */ ; break ;
-        case GB_ROWLE_idxunop_code      : kind = "ROWLE"     ; /* GB_GOTCHA */ ; break ;
-        case GB_ROWGT_idxunop_code      : kind = "ROWGT"     ; /* GB_GOTCHA */ ; break ;
+        case GB_TRIL_idxunop_code       : kind = "TRIL"      ; GB_GOTCHA ; break ;
+        case GB_TRIU_idxunop_code       : kind = "TRIU"      ; GB_GOTCHA ; break ;
+        case GB_DIAG_idxunop_code       : kind = "DIAG"      ; GB_GOTCHA ; break ;
+        case GB_DIAGINDEX_idxunop_code  :   GB_GOTCHA ;
+        case GB_OFFDIAG_idxunop_code    : kind = "OFFDIAG"   ; GB_GOTCHA ; break ;
+        case GB_ROWINDEX_idxunop_code   : kind = "ROWINDEX"  ; GB_GOTCHA ; break ;
+        case GB_COLINDEX_idxunop_code   : kind = "COLINDEX"  ; GB_GOTCHA ; break ;
+        case GB_COLLE_idxunop_code      : kind = "COLLE"     ; GB_GOTCHA ; break ;
+        case GB_COLGT_idxunop_code      : kind = "COLGT"     ; GB_GOTCHA ; break ;
+        case GB_ROWLE_idxunop_code      : kind = "ROWLE"     ; GB_GOTCHA ; break ;
+        case GB_ROWGT_idxunop_code      : kind = "ROWGT"     ; GB_GOTCHA ; break ;
         default                         : kind = "ENTRY"     ; break ;
     }
     fprintf (fp, "#define GB_%s_SELECTOR\n", kind) ;
@@ -163,7 +163,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
                      "    GB_Z_TYPE z ;                      \\\n") ;
         if (xcode == 0)
         { 
-// GB_GOTCHA ; // operator does not depend on x
+GB_GOTCHA ; // operator does not depend on x
             // operator does not depend on x
             fprintf (fp, "    GB_IDXUNOP (z, , i, j, y) ; \\\n") ;
         }
@@ -186,12 +186,12 @@ void GB_macrofy_select          // construct all macros for GrB_select
         }
         else if (nargs == 3)
         { 
-// GB_GOTCHA ; // nargs 3
+GB_GOTCHA ; // nargs 3
             fprintf (fp, cast_z_to_bool, "    bool keep", "z", "z") ;
         }
         else
         { 
-// GB_GOTCHA ; // cast to bool
+GB_GOTCHA ; // cast to bool
             fprintf (fp, cast_z_to_bool, "    bool keep", "z") ;
         }
     }

@@ -372,7 +372,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
                 }
                 else
                 { 
-// GB_GOTCHA ; // generic terminal
+GB_GOTCHA ; // generic terminal
                     // break if terminal value reached
                     #undef  GB_MONOID_IS_TERMINAL
                     #define GB_MONOID_IS_TERMINAL 1

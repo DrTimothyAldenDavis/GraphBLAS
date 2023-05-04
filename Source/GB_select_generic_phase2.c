@@ -100,7 +100,6 @@ GrB_Info GB_select_generic_phase2
         }
         else
         { 
-GB_GOTCHA ; // A iso, z typecast
 
             //------------------------------------------------------------------
             // A is iso and z requires typecasting
@@ -164,7 +163,6 @@ GB_GOTCHA ; // A iso, z typecast
         }
         else
         { 
-GB_GOTCHA ; // A non-iso, z typecast
 
             //------------------------------------------------------------------
             // A is non-iso and typecasting is required

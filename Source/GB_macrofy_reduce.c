@@ -165,12 +165,12 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
                 }
                 else if (zsize <= 32)
                 { 
-// GB_GOTCHA ; // zsize <= 32
+GB_GOTCHA ; // zsize <= 32
                     panel = 8 ;
                 }
                 else
                 { 
-// GB_GOTCHA ; // zsize > 32
+GB_GOTCHA ; // zsize > 32
                     // type is large; do not use panel reduction method
                     panel = 1 ;
                 }

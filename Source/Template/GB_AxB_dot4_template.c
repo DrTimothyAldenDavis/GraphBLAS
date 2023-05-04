@@ -101,7 +101,7 @@
 
                     #if GB_IS_LXOR_PAIR_SEMIRING
                     { 
-// GB_GOTCHA ; // lxor-pair
+GB_GOTCHA ; // lxor-pair
                         // (boolean XOR monoid)_PAIR semiring
                         uint64_t t = ((uint64_t) cij) + vlen ;
                         cij = (GB_C_TYPE) (t & 0x1L) ;
@@ -784,7 +784,7 @@
 
                     #if GB_IS_LXOR_PAIR_SEMIRING
                     { 
-// GB_GOTCHA ; // lxor-pair
+GB_GOTCHA ; // lxor-pair
                         // (boolean XOR monoid)_PAIR semiring
                         uint64_t t = ((uint64_t) cij) + bjnz ;
                         cij = (GB_C_TYPE) (t & 0x1L) ;

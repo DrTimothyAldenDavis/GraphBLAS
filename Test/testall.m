@@ -104,6 +104,7 @@ if (malloc_debugging)
 end
 %}
 
+logstat ('test257'    ,t, j4  , f0  ) ; % JIT error handling
 logstat ('test256'    ,t, j4  , f0  ) ; % JIT error handling
 logstat ('test255'    ,t, j4  , f1  ) ; % flip binop
 logstat ('test254'    ,t, j440, f100) ; %% mask types

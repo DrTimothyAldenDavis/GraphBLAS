@@ -92,7 +92,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
 
     if (C_iso)
     { 
-// GB_GOTCHA ; // C iso
+GB_GOTCHA ; // C iso
         zcode = 0 ;
     }
     else if (zcode == GB_BOOL_code)
