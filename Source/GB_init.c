@@ -61,7 +61,7 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    if (GB_Global_GrB_init_called_get ( ))
+    if (GB_Global_init_called_get ( ))
     { 
         // GrB_init can only be called once
         return (GrB_INVALID_VALUE) ;
@@ -94,7 +94,7 @@ GrB_Info GB_init            // start up GraphBLAS
         return (GrB_NULL_POINTER) ;
     }
 
-    GB_Global_GrB_init_called_set (true) ;
+    GB_Global_init_called_set (true) ;
 
     // GrB_init passes in the ANSI C11 malloc/calloc/realloc/free.
 

@@ -29,7 +29,7 @@ typedef struct
 
     GrB_Mode mode ;             // GrB_NONBLOCKING, GrB_BLOCKING
                                 // GxB_NONBLOCKING_GPU, or GxB_BLOCKING_GPU
-    bool GrB_init_called ;      // true if GrB_init already called
+    bool init_called ;          // true if GrB_init already called
 
     //--------------------------------------------------------------------------
     // hypersparsity and CSR/CSC format control
@@ -149,7 +149,7 @@ static GB_Global_struct GB_Global =
     .mode = GrB_NONBLOCKING,    // default is nonblocking, no GPU
 
     // initialization flag
-    .GrB_init_called = false,   // GrB_init has not yet been called
+    .init_called = false,       // GrB_init has not yet been called
 
     // min dimension                density
     #define GB_BITSWITCH_1          ((float) 0.04)
@@ -237,17 +237,17 @@ GrB_Mode GB_Global_mode_get (void)
 }
 
 //------------------------------------------------------------------------------
-// GrB_init_called
+// init_called
 //------------------------------------------------------------------------------
 
-void GB_Global_GrB_init_called_set (bool GrB_init_called)
+void GB_Global_init_called_set (bool init_called)
 { 
-    GB_Global.GrB_init_called = GrB_init_called ;
+    GB_Global.init_called = init_called ;
 }
 
-bool GB_Global_GrB_init_called_get (void)
+bool GB_Global_init_called_get (void)
 { 
-    return (GB_Global.GrB_init_called) ;
+    return (GB_Global.init_called) ;
 }
 
 //------------------------------------------------------------------------------

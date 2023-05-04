@@ -360,6 +360,7 @@ void mexFunction
 
     int all_version [3] = { -1, -1, -1 } ;
     unsigned int version = 0 , subversion = 9999 ;
+    const
     char *name, *date, *about, *license, *compile_date, *compile_time, *url ;
 
     OK (GrB_getVersion (&version, &subversion)) ;
@@ -376,7 +377,7 @@ void mexFunction
     CHECK (strcmp (about, GxB_SPEC_ABOUT) == 0) ;
     printf ("About the spec:\n%s\n", about) ;
 
-    char *str ;
+    const char *str ;
     OK (GxB_Global_Option_get_CHAR (GxB_API_ABOUT, &str)) ;
     CHECK (strcmp (str, GxB_SPEC_ABOUT) == 0) ;
 

@@ -38,7 +38,7 @@
 
 // C is a matrix, vector, scalar, or descriptor
 #define GB_WHERE(C,where_string)                                    \
-    if (!GB_Global_GrB_init_called_get ( ))                         \
+    if (!GB_Global_init_called_get ( ))                         \
     {                                                               \
         return (GrB_PANIC) ; /* GrB_init not called */              \
     }                                                               \
@@ -53,7 +53,7 @@
 
 // create the Werk, with no error logging
 #define GB_WHERE1(where_string)                                     \
-    if (!GB_Global_GrB_init_called_get ( ))                         \
+    if (!GB_Global_init_called_get ( ))                         \
     {                                                               \
         return (GrB_PANIC) ; /* GrB_init not called */              \
     }                                                               \

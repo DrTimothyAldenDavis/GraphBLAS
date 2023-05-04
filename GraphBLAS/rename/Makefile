@@ -29,5 +29,22 @@ go:
             | grep -v Iterator >> temp.h
 	grep " GB_"  lib \
             | grep -v Iterator >> temp.h
-	awk -f rename.awk < temp.h > GB_rename.h
+	echo "#define GB_complex GM_complex" >> temp.h
+	echo "#define GB_complexf GM_complexf" >> temp.h
+	sort temp.h | awk -f rename.awk > GB_rename.h
 	rm temp.h lib
+
+# on the Mac, use "make mac"
+mac:
+	nm -gA ../../build/libgraphblas.dylib | grep -v "__" > lib
+	grep " _GrB_" lib \
+            | grep -v GrB_Type_new \
+            | grep -v GrB_UnaryOp_new \
+            | grep -v GrB_IndexUnaryOp_new \
+            | grep -v GrB_BinaryOp_new > temp.h
+	grep " _GxB_" lib \
+            | grep -v Iterator >> temp.h
+	grep " _GB_"  lib \
+            | grep -v Iterator >> temp.h
+	sort temp.h | awk -f rename_mac.awk > GB_rename.h
+
