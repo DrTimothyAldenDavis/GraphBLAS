@@ -3351,8 +3351,8 @@
 #define GB_add_phase1 GM_add_phase1
 #define GB_add_phase2 GM_add_phase2
 #define GB_add_sparsity GM_add_sparsity
-#define GB_aliased GM_aliased
 #define GB_all_aliased GM_all_aliased
+#define GB_any_aliased GM_any_aliased
 #define GB_apply GM_apply
 #define GB_apply_bind1st_jit GM_apply_bind1st_jit
 #define GB_apply_bind2nd_jit GM_apply_bind2nd_jit
@@ -3687,6 +3687,7 @@
 #define GB_extract GM_extract
 #define GB_extractTuples GM_extractTuples
 #define GB_extract_vector_list GM_extract_vector_list
+#define GB_factory_kernels_enabled GM_factory_kernels_enabled
 #define GB_FC32_div GM_FC32_div
 #define GB_FC32_pow GM_FC32_pow
 #define GB_FC64_div GM_FC64_div
@@ -4138,8 +4139,8 @@
 #define GB_LZ4_compress_fast_extState GM_LZ4_compress_fast_extState
 #define GB_LZ4_compress_fast_extState_fastReset GM_LZ4_compress_fast_extState_fastReset
 #define GB_LZ4_compress_forceExtDict GM_LZ4_compress_forceExtDict
-#define GB_LZ4_compressHC GM_LZ4_compressHC
 #define GB_LZ4_compress_HC GM_LZ4_compress_HC
+#define GB_LZ4_compressHC GM_LZ4_compressHC
 #define GB_LZ4_compressHC2 GM_LZ4_compressHC2
 #define GB_LZ4_compressHC2_continue GM_LZ4_compressHC2_continue
 #define GB_LZ4_compressHC2_limitedOutput GM_LZ4_compressHC2_limitedOutput
