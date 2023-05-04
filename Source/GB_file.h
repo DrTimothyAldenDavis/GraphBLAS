@@ -10,7 +10,11 @@
 #ifndef GB_FILE_H
 #define GB_FILE_H
 
-#define GB_WINDOWS (defined (_WIN64) || defined (_WIN32))
+#if (defined (_WIN64) || defined (_WIN32))
+#define GB_WINDOWS 1
+#else
+#define GB_WINDOWS 0
+#endif
 
 // to pipe stdout to /dev/null
 #if GB_WINDOWS
