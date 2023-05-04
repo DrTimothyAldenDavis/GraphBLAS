@@ -1,3 +1,3 @@
 go:
-	cc getset.c -o getset
-	./getset
+	cc getset2.c -o getset2
+	./getset2
