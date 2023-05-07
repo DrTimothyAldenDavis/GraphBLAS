@@ -479,21 +479,11 @@ endif ( )
 
 include ( GraphBLAS_JIT_configure )
 
-file ( MAKE_DIRECTORY ${GRAPHBLAS_CACHE_PATH} )
-file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/src" )
-file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/lib" )
-file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/temp" )
-file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/lock" )
-file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/c" )
-file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/cu" )
-
 configure_file ( "Config/GB_config.h.in"
     "${PROJECT_SOURCE_DIR}/Config/GB_config.h"
     NEWLINE_STYLE LF )
 
-configure_file ( "Config/GB_prejit.c.in"
-    "${PROJECT_SOURCE_DIR}/Config/GB_prejit.c"
-    NEWLINE_STYLE LF )
+include ( GraphBLAS_PreJIT )
 
 #-------------------------------------------------------------------------------
 # dump all variables, for debugging only

@@ -28,3 +28,4 @@ C2 = GB_spec_assign (C, [ ], [ ], scalar, I , J , [ ], true) ;
 GB_spec_compare (C1, C2) ;
 assert (isequal (C0, C1.matrix)) ;
 
+fprintf ('test138: all tests pass\n') ;

@@ -49,7 +49,6 @@ static void GB_AxB_scalar_iso         // c = mult(a,b) or c=mult(b,a)
     {
         if (fmult == NULL)
         { 
-GB_GOTCHA ; // fmult NULL (see GB_reduce_to_vector)
             // fmult is the implicit FIRST operator from GB_reduce_to_vector
             // c = (ztype) a
             GB_cast_scalar (c, zcode, a, acode, asize) ;

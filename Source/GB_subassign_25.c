@@ -112,7 +112,6 @@ GrB_Info GB_subassign_25
 
     if (C_iso)
     { 
-GB_GOTCHA ; // C iso
 
         //----------------------------------------------------------------------
         // via the iso kernel

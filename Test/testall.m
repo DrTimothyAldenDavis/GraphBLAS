@@ -104,6 +104,9 @@ if (malloc_debugging)
 end
 %}
 
+logstat ('test260'    ,t, j4  , f0  ) ; % demacrofy name
+logstat ('test259'    ,t, j4  , f0  ) ; % plus_plus_fp32 semiring
+logstat ('test258'    ,t, j4  , f0  ) ; % reduce-to-vector for UDT
 logstat ('test257'    ,t, j4  , f0  ) ; % JIT error handling
 logstat ('test256'    ,t, j4  , f0  ) ; % JIT error handling
 logstat ('test255'    ,t, j4  , f1  ) ; % flip binop

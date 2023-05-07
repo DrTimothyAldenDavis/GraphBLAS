@@ -46,6 +46,8 @@ for k1 = 1:length (types)
 
     A.class = type ;
     id = test_cast (0, type) ;
+    A_iso = A ;
+    A_iso.iso = true ;
 
     for k3 = 1:3
 
@@ -88,6 +90,14 @@ for k1 = 1:length (types)
 
         C0 = GB_spec_assign (S, M, [ ], A, [ ], [ ], desc, false) ;
         C1 = GB_mex_assign  (S, M, [ ], A, [ ], [ ], desc) ;
+        GB_spec_compare (C0, C1) ;
+
+        %---------------------------------------
+        % C<M> = A where A is iso full and C starts empty
+        %---------------------------------------
+
+        C0 = GB_spec_assign (S, M, [ ], A_iso, [ ], [ ], desc, false) ;
+        C1 = GB_mex_assign  (S, M, [ ], A_iso, [ ], [ ], desc) ;
         GB_spec_compare (C0, C1) ;
 
         %---------------------------------------

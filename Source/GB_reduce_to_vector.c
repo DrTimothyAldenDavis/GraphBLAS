@@ -152,7 +152,6 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         case GB_FC32_code   : op = GxB_FIRST_FC32   ; break ;
         case GB_FC64_code   : op = GxB_FIRST_FC64   ; break ;
         default : 
-GB_GOTCHA ; // FIRST_UDT
             // Create a FIRST_UDT binary operator.  The function pointer for
             // the FIRST_UDT op is NULL; it is not needed by FIRST.  The
             // function defn is also NULL.  In the JIT, the FIRST multiply
@@ -193,7 +192,6 @@ GB_GOTCHA ; // FIRST_UDT
     info = GB_Semiring_new (semiring, monoid, op) ;
     if (info != GrB_SUCCESS)
     { 
-GB_GOTCHA ; // FIRST_UDT
         // out of memory
         // GB_Semiring_new allocates semiring->name if it uses the FIRST_UDT
         // operator created above, so it can run out of memory in that case.
@@ -202,6 +200,11 @@ GB_GOTCHA ; // FIRST_UDT
     }
 
     ASSERT_SEMIRING_OK (semiring, "semiring for reduce-to-vector", GB0) ;
+
+    if (GB_Global_burble_get ( ))
+    { 
+        GB_Semiring_check (semiring, "semiring for reduce-to-vector", 3, NULL) ;
+    }
 
     //--------------------------------------------------------------------------
     // reduce the matrix to a vector via C<M> = accum (C, A*B)

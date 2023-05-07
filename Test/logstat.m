@@ -48,6 +48,10 @@ end
 
 if (nargin < 2)
     % by default, use 4 threads and a tiny chunk size of 1
+    threads = [ ] ;
+end
+
+if (isempty (threads))
     threads {1} = [4 1] ;
 else
     % only the # of threads is specified; also set the chunk size to 1

@@ -54,6 +54,8 @@ GrB_BinaryOp My_rdiv = NULL ;
 #define MY_RDIV                                                 \
 "void my_rdiv (double *z, const double *x, const double *y)\n"  \
 "{\n"                                                           \
+"    // escape this quote: \"\n"                                \
+"    /* escape this backslash \\ */\n"                          \
 "    (*z) = (*y) / (*x) ;\n"                                    \
 "}"
 
