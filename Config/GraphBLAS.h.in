@@ -10847,8 +10847,6 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 #define GxB_COMPRESSION_LZ4HC 2000  // LZ4HC, with default level 9
 #define GxB_COMPRESSION_ZSTD  3000  // ZSTD, with default level 1
 
-#define GxB_COMPRESSION_INTEL   1000000 // not yet supported
-
 // Most of the above methods have a level parameter that controls the tradeoff
 // between run time and the amount of compression obtained.  Higher levels
 // result in a more compact result, at the cost of higher run time:

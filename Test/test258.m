@@ -4,6 +4,6 @@ function test258
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-GB_mex_about17 ;
+GB_mex_test17 ;
 fprintf ('test258: all tests passed.\n') ;
 

@@ -30,7 +30,7 @@ INC = tmp_include/*
 SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
 LIBS = 
-I = -Itmp_include -I../Test -I../rmm_wrap -I../zstd -I../zstd/zstd_subset -I../lz4 -I../xxHash
+I = -Itmp_include -I../Test -I../rmm_wrap -I../zstd -I../zstd/zstd_subset -I../lz4 -I../xxHash -I../Source/JitKernels
 CPPFLAGS = $(I) -DGBNCPUFEAT -DGBCOVER $(MATLAB)
 SO_OPTS = $(LDFLAGS)
 

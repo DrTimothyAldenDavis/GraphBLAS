@@ -92,7 +92,6 @@ GrB_Info GB_ewise_fulln      // C = A+B
     }
     else if (!GB_IS_FULL (C))
     { 
-GB_GOTCHA ; // C as_if_full but not actually full
         // ensure C is full
         GB_convert_any_to_full (C) ;
     }

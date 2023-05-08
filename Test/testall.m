@@ -65,6 +65,7 @@ f110 = {1,1,0} ;    % factory on, on , off
 j4 = {4} ;          % JIT     on
 f1 = {1} ;          % factory on
 
+j0 = {0} ;          % JIT off
 f0 = {0} ;          % factory off
 
 % run twice
@@ -94,16 +95,8 @@ malloc_debugging = stat ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
-%{
-if (malloc_debugging)
-    debug_off
-end
-logstat ('test74'     ,t, j404, f110) ; % test GrB_mxm on all semirings
-if (malloc_debugging)
-    debug_on
-end
-%}
-
+logstat ('test262'    ,t, j0  , f1  ) ; % GB_mask
+logstat ('test261'    ,t, j4  , f0  ) ; % serialize/deserialize error handling
 logstat ('test260'    ,t, j4  , f0  ) ; % demacrofy name
 logstat ('test259'    ,t, j4  , f0  ) ; % plus_plus_fp32 semiring
 logstat ('test258'    ,t, j4  , f0  ) ; % reduce-to-vector for UDT
@@ -270,7 +263,7 @@ logstat ('test182'    ,s, j4  , f1  ) ; % test for internal wait
 % tests with decent rates (10 to 20/sec)
 %----------------------------------------
 
-logstat ('test108'    ,t, j4  , f1  ) ; % boolean monoids
+logstat ('test108'    ,t, j40 , f10 ) ; % boolean monoids
 logstat ('test130'    ,t, j4  , f1  ) ; % GrB_apply, hypersparse cases
 logstat ('test124'    ,t, j4  , f1  ) ; % GrB_extract, case 6
 logstat ('test138'    ,s, j4  , f1  ) ; % assign, coarse-only tasks in IxJ slice

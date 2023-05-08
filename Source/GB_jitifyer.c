@@ -1431,7 +1431,6 @@ GrB_Info GB_jitifyer_load
     if ((GB_jit_control == GxB_JIT_OFF) || (GB_jit_control == GxB_JIT_PAUSE))
     { 
         // The JIT control has disabled all JIT kernels.  Punt to generic.
-        GBURBLE ("(jit: paused) ") ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -1457,7 +1456,6 @@ GrB_Info GB_jitifyer_load
         else if ((*dl_function) != NULL)
         { 
             // found the kernel in the hash table
-            GBURBLE ("(jit: run) ") ;
             return (GrB_SUCCESS) ;
         }
         else
@@ -1465,7 +1463,6 @@ GrB_Info GB_jitifyer_load
             // No kernels may be loaded or compiled, but existing kernels
             // already loaded may be run (handled above if dl_function was
             // found).  This kernel was not loaded, so punt to generic.
-            GBURBLE ("(jit: not loaded) ") ;
             return (GrB_NO_VALUE) ;
         }
     }
@@ -1553,7 +1550,6 @@ GrB_Info GB_jitifyer_worker
             GB_user_op (&ignore, &defn) ;
             if (strcmp (defn, op->defn) == 0)
             { 
-                GBURBLE ("(jit: op ok) ") ;
                 return (GrB_SUCCESS) ;
             }
             else
@@ -1575,7 +1571,6 @@ GB_GOTCHA ; // error: op changed
             if (strcmp (defn, type1->defn) == 0)
             { 
 GB_GOTCHA ; // type OK
-                GBURBLE ("(jit: type ok) ") ;
                 return (GrB_SUCCESS) ;
             }
             else
@@ -1589,7 +1584,6 @@ GB_GOTCHA ; // type OK
         else
         { 
             // JIT kernel, or checked PreJIT kernel
-            GBURBLE ("(jit: run) ") ;
             return (GrB_SUCCESS) ;
         }
     }
@@ -1605,7 +1599,6 @@ GB_GOTCHA ; // type OK
         // No kernels may be loaded or compiled, but existing kernels already
         // loaded may be run (handled above if dl_function was found).  This
         // kernel was not loaded, so punt to generic.
-        GBURBLE ("(jit: not loaded) ") ;
         return (GrB_NO_VALUE) ;
     }
 

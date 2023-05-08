@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_about3: still more basic tests
+// GB_mex_test3: still more basic tests
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -13,7 +13,7 @@
 #include "GB_mex_errors.h"
 #include "GB_bitmap_assign_methods.h"
 
-#define USAGE "GB_mex_about3"
+#define USAGE "GB_mex_test3"
 
 int myprintf (const char *restrict format, ...) ;
 
@@ -781,6 +781,6 @@ void mexFunction
     GrB_Type_free_(&My4x64) ;
     GB_mx_put_global (true) ;   
     fclose (f) ;
-    printf ("\nGB_mex_about3: all tests passed\n\n") ;
+    printf ("\nGB_mex_test3: all tests passed\n\n") ;
 }
 

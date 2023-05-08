@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_about8: still more basic tests
+// GB_mex_test8: still more basic tests
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -12,7 +12,7 @@
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
 
-#define USAGE "GB_mex_about8"
+#define USAGE "GB_mex_test8"
 #define FREE_ALL ;
 #define GET_DEEP_COPY ;
 #define FREE_DEEP_COPY ;
@@ -84,6 +84,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GB_mx_put_global (true) ;   
-    printf ("\nGB_mex_about8: all tests passed\n\n") ;
+    printf ("\nGB_mex_test8: all tests passed\n\n") ;
 }
 

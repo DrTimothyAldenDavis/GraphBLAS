@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_about10: still more basic tests
+// GB_mex_test10: still more basic tests
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -10,7 +10,7 @@
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
 
-#define USAGE "GB_mex_about10"
+#define USAGE "GB_mex_test10"
 
 void mexFunction
 (
@@ -120,6 +120,6 @@ void mexFunction
     t = GB_omp_get_wtime ( ) - t ;
     printf ("test time %g sec, max threads %d\n", t, nthreads_max) ;
     GB_mx_put_global (true) ;
-    printf ("\nGB_mex_about10: all tests passed\n\n") ;
+    printf ("\nGB_mex_test10: all tests passed\n\n") ;
 }
 

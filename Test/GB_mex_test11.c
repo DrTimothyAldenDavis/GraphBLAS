@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_about11: JIT testing and set/get
+// GB_mex_test11: JIT testing and set/get
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -12,7 +12,7 @@
 #include "GB_file.h"
 #include "GB_jitifyer.h"
 
-#define USAGE "GB_mex_about11"
+#define USAGE "GB_mex_test11"
 
 #define FREE_ALL ;
 #define GET_DEEP_COPY ;
@@ -65,7 +65,7 @@ void mexFunction
 
     GrB_Descriptor desc = NULL ;
     bool malloc_debug = GB_mx_get_global (true) ;
-    printf ("GB_mex_about11: malloc_debug: %d\n", malloc_debug) ;
+    printf ("GB_mex_test11: malloc_debug: %d\n", malloc_debug) ;
 
     //--------------------------------------------------------------------------
     // remove temp files and folders
@@ -526,7 +526,7 @@ void mexFunction
 
     OK (GxB_set (GxB_BURBLE, false)) ;
     GB_mx_put_global (true) ;
-    printf ("\nGB_mex_about11: (compiler errors above expected) "
+    printf ("\nGB_mex_test11: (compiler errors above expected) "
         "all tests passed\n\n") ;
 }
 

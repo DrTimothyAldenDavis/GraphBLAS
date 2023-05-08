@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_about2: more basic tests
+// GB_mex_test2: more basic tests
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -13,7 +13,7 @@
 #include "GB_mex_errors.h"
 #include "GB_ij.h"
 
-#define USAGE "GB_mex_about2"
+#define USAGE "GB_mex_test2"
 
 typedef struct
 {
@@ -672,6 +672,6 @@ void mexFunction
     GB_mx_put_global (true) ;   
     fclose (f) ;
     printf ("\nAll errors printed above were expected.\n") ;
-    printf ("GB_mex_about2: all tests passed\n\n") ;
+    printf ("GB_mex_test2: all tests passed\n\n") ;
 }
 

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_about18: demacrofy tests
+// GB_mex_test18: demacrofy tests
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -11,7 +11,7 @@
 #include "GB_mex_errors.h"
 #include "GB_stringify.h"
 
-#define USAGE "GB_mex_about18"
+#define USAGE "GB_mex_test18"
 
 #define FREE_ALL ;
 #define GET_DEEP_COPY ;
@@ -74,6 +74,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GB_mx_put_global (true) ;
-    printf ("\nGB_mex_about18:  all tests passed\n\n") ;
+    printf ("\nGB_mex_test18:  all tests passed\n\n") ;
 }
 

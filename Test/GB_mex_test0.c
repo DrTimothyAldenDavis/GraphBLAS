@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_errors: test error handling
+// GB_mex_test0: test error handling
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -15,7 +15,7 @@
 
 #include "GB_mex.h"
 
-#define USAGE "GB_mex_errors"
+#define USAGE "GB_mex_test0"
 
 #define FREE_ALL                                                          \
 {                                                                         \
@@ -129,7 +129,7 @@ void mexFunction
     GB_Global_malloc_tracking_set (true) ;
 
     fprintf (f,"\n========================================================\n") ;
-    fprintf (f,"=== GB_mex_errors : testing error handling =============\n") ;
+    fprintf (f,"=== GB_mex_test0 : testing error handling =============\n") ;
     fprintf (f,"========================================================\n") ;
     fprintf (f,"many errors are expected\n") ;
 

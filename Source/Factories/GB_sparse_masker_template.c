@@ -520,7 +520,7 @@
                 {
                     int64_t i = p + iC_first ;
                     Ri [pR + p] = i ;
-                    int64_t iM = (pM < pM_end) ? GBI_M (Mi, pM, vlen) : INT64_MAX;
+                    int64_t iM = (pM < pM_end) ? GBI_M (Mi,pM,vlen) : INT64_MAX;
                     bool mij = false ;
                     if (i == iM)
                     { 
@@ -745,7 +745,7 @@
                             ASSERT (M_is_sparse || M_is_hyper) ;
                             for ( ; pZ < pZ_end ; pZ++)
                             { 
-GB_GOTCHA ;
+GB_GOTCHA ; // wrapup, C now empty, M(:,j) much denser than Z(:,j), all sparse
                                 int64_t i = Zi [pZ] ;
                                 bool mij = false ;
                                 int64_t pright = pM_end - 1 ;

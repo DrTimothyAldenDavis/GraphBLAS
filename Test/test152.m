@@ -23,7 +23,6 @@ Bmat = 20 * Bmat5 ;
 
 C.matrix = sparse (ones (n)) ;
 C.pattern = sparse (true (n)) ;
-C.sparsity = 8 ;
 A.pattern = sparse (true (n)) ;
 A.sparsity = 8 ;
 B.pattern = sparse (true (n)) ;
@@ -71,10 +70,12 @@ for k1 = 1:length (binops)
 
         fprintf ('.') ;
 
-        C1 = GB_spec_Matrix_eWiseAdd (C, [ ], [ ], op, A, B, [ ]) ;
-        C2 = GB_mex_Matrix_eWiseAdd  (C, [ ], [ ], op, A, B, [ ]) ;
-        GB_spec_compare (C1, C2, 0, tol) ;
-
+        for C_sparsity = [2 8]
+            C.sparsity = C_sparsity ;
+            C1 = GB_spec_Matrix_eWiseAdd (C, [ ], [ ], op, A, B, [ ]) ;
+            C2 = GB_mex_Matrix_eWiseAdd  (C, [ ], [ ], op, A, B, [ ]) ;
+            GB_spec_compare (C1, C2, 0, tol) ;
+        end
     end
 end
 

@@ -71,7 +71,7 @@
         }
         #elif GB_IS_LXOR_PAIR_SEMIRING
         { 
-// GB_GOTCHA ; // lxor-pair
+// GB_GOTCHA ; // lxor-pair: F'*F
             // (boolean XOR monoid)_PAIR semiring
             cij = (GB_C_TYPE) (((uint64_t) vlen) & 0x1L) ;
         }
@@ -198,7 +198,7 @@
         }
         #elif GB_IS_LXOR_PAIR_SEMIRING
         { 
-// GB_GOTCHA ; // lxor-pair
+// GB_GOTCHA ; // lxor-pair: F'*S
             // (boolean XOR monoid)_PAIR semiring
             cij = (GB_C_TYPE) (((uint64_t) bjnz) & 0x1L) ;
         }
@@ -424,7 +424,7 @@
         }
         #elif GB_IS_LXOR_PAIR_SEMIRING
         { 
-// GB_GOTCHA ; // lxor-pair
+// GB_GOTCHA ; // lxor-pair: S'*F
             // (boolean XOR monoid)_PAIR semiring
             cij = (GB_C_TYPE) (((uint64_t) ainz) & 0x1L) ;
         }

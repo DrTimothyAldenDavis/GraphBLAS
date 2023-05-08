@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_about: print the 'about' information
+// GB_mex_test1: various tests
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -13,7 +13,7 @@
 #include "GB_mex_errors.h"
 #include "GB_AxB_saxpy.h"
 
-#define USAGE "GB_mex_about"
+#define USAGE "GB_mex_test1"
 
 GrB_Info ack (int64_t *stuff, GrB_Matrix GunkIt) ;
 
@@ -1395,10 +1395,9 @@ void mexFunction
     // wrapup
     //--------------------------------------------------------------------------
 
-    // #include "GB_Test_about_mkl_template.c"
     GB_mx_put_global (true) ;   
     fclose (f) ;
     printf ("\nAll errors printed above were expected.\n") ;
-    printf ("GB_mex_about: all tests passed\n\n") ;
+    printf ("GB_mex_test1: all tests passed\n\n") ;
 }
 

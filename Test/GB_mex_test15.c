@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_about15: JIT error handling
+// GB_mex_test15: JIT error handling
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -10,7 +10,7 @@
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
 
-#define USAGE "GB_mex_about15"
+#define USAGE "GB_mex_test15"
 
 #define FREE_ALL ;
 #define GET_DEEP_COPY ;
@@ -217,6 +217,6 @@ void mexFunction
     GrB_free (&F3) ;
 
     GB_mx_put_global (true) ;
-    printf ("\nGB_mex_about15:  all tests passed\n\n") ;
+    printf ("\nGB_mex_test15:  all tests passed\n\n") ;
 }
 
