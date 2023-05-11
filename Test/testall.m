@@ -96,6 +96,13 @@ malloc_debugging = stat ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
+hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
+logstat ('test240'    ,t, j4  , f1  ) ; % test dot4, saxpy4, and saxpy5
+logstat ('test240'    ,s, j4  , f1  ) ; % test dot4, saxpy4, and saxpy5 (one task)
+logstat ('test237'    ,t, j4040, f1100) ; % test GrB_mxm (saxpy4)
+logstat ('test237'    ,s, j4040, f1100) ; % test GrB_mxm (saxpy4)
+hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
+
 logstat ('test267'    ,t, j40 , f00 ) ; % JIT error handling
 logstat ('test266'    ,t, j4  , f0  ) ; % JIT error handling
 logstat ('test265'    ,t, j4  , f0  ) ; % reduce to scalar with user types
@@ -107,7 +114,6 @@ logstat ('test260'    ,t, j4  , f0  ) ; % demacrofy name
 logstat ('test259'    ,t, j4  , f0  ) ; % plus_plus_fp32 semiring
 logstat ('test258'    ,t, j4  , f0  ) ; % reduce-to-vector for UDT
 logstat ('test257'    ,t, j4  , f0  ) ; % JIT error handling
-logstat ('test256'    ,t, j4  , f0  ) ; % JIT error handling
 logstat ('test255'    ,t, j4  , f1  ) ; % flip binop
 logstat ('test254'    ,t, j440, f100) ; %% mask types
 logstat ('test253'    ,t, j4  , f1  ) ; % basic JIT tests
@@ -134,7 +140,7 @@ logstat ('test222'    ,t, j4  , f1  ) ; % test user selectop for iso matrices
 
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
 
-logstat ('test240'    ,t, j4  , f1  ) ; % test dot4, saxpy4, and saxpy5
+logstat ('test256'    ,t, j4  , f0  ) ; % JIT error handling
 logstat ('test186'    ,t, j40 , f11 ) ; % saxpy, all formats  (slice_balanced)
 logstat ('test186(0)' ,t, j4  , f1  ) ; % repeat with default slice_balanced
 logstat ('test186'    ,s, j4  , f1  ) ; % repeat, but single-threaded
@@ -211,6 +217,7 @@ logstat ('test184'    ,t, j4  , f1  ) ; % special cases: mxm, transpose, build
 logstat ('test191'    ,t, j40 , f10 ) ; %% test split
 logstat ('test188'    ,t, j40 , f11 ) ; % test concat
 logstat ('test237'    ,t, j4040, f1100) ; % test GrB_mxm (saxpy4)
+logstat ('test237'    ,s, j4040, f1100) ; % test GrB_mxm (saxpy4)
 
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 

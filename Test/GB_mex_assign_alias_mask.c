@@ -64,6 +64,7 @@ void mexFunction
     GrB_Index nrows, ncols ;
     GrB_Matrix_nrows (&nrows, C) ;
     GrB_Matrix_ncols (&ncols, C) ;
+    GxB_print (A, 2) ;
 
     // C<A> = A
     METHOD (GxB_Matrix_subassign_(C, A, NULL, A,

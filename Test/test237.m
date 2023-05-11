@@ -21,8 +21,6 @@ for kind = 1:2
 
     accum.opname = add ;
     accum.optype = class ;
-    % fprintf ('\n----------------- accum:\n') ;
-    % GB_mex_binaryop (accum) ;
 
     tol = 1e-12 ;
 
@@ -30,45 +28,7 @@ for kind = 1:2
     semiring.multiply = 'times' ;
     semiring.add = add ;
     semiring.class = class ;
-    % GB_mex_semiring (semiring, 3) ;
 
-%{
-    for k = [1 2 4 8 32]
-
-        A = GB_spec_random (n, n, 0.3, 1, class) ;
-        B = GB_spec_random (n, k, 0.3, 1, class) ;
-        B.sparsity = 4 ;    % bitmap
-        F = GB_spec_random (n, k, inf, 1, class) ;
-        F.sparsity = 8 ;    % full
-
-        % fprintf ('\n----------------- F += S*B:\n\n') ;
-        A.sparsity = 2 ;
-        C1 = GB_mex_mxm  (F, [ ], accum, semiring, A, B, [ ]) ;
-        C2 = GB_spec_mxm (F, [ ], accum, semiring, A, B, [ ]) ;
-        GB_spec_compare (C1, C2, tol) ;
-
-        % fprintf ('\n----------------- F += H*B:\n\n') ;
-        A.sparsity = 1 ;
-        C1 = GB_mex_mxm  (F, [ ], accum, semiring, A, B, [ ]) ;
-        C2 = GB_spec_mxm (F, [ ], accum, semiring, A, B, [ ]) ;
-        GB_spec_compare (C1, C2, tol) ;
-
-        B = GB_spec_random (n, k, inf, 1, class) ;
-        B.sparsity = 8 ;    % full
-
-        % fprintf ('\n----------------- F += S*F:\n\n') ;
-        A.sparsity = 2 ;
-        C1 = GB_mex_mxm  (F, [ ], accum, semiring, A, B, [ ]) ;
-        C2 = GB_spec_mxm (F, [ ], accum, semiring, A, B, [ ]) ;
-        GB_spec_compare (C1, C2, tol) ;
-
-        % fprintf ('\n----------------- F += H*F:\n\n') ;
-        A.sparsity = 1 ;
-        C1 = GB_mex_mxm  (F, [ ], accum, semiring, A, B, [ ]) ;
-        C2 = GB_spec_mxm (F, [ ], accum, semiring, A, B, [ ]) ;
-        GB_spec_compare (C1, C2, tol) ;
-    end
-%}
     % k = 1 with a sparser A matrix
 
     A = GB_spec_random (n, n, 0.05, 1, class) ;

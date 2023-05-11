@@ -9292,6 +9292,11 @@ a \verb'GrB_Vector', or the global options.
 \begin{itemize}
 
 \item \verb'GxB_get (field, &value)' retrieves the value of a global option.
+NOTE: the \verb'const char *' values returned by \verb'GxB_get' are pointers
+to memory spaces ``owned'' by the GraphBLAS library.  Do not modify them.
+Subsequent calls to GraphBLAS (particularly setting the JIT control strings)
+can change those strings.  The user application must copy those strings into
+its own memory space if the strings are to be kept.
 
 {\footnotesize
 \begin{tabular}{lll}
@@ -9711,59 +9716,11 @@ The \verb'GxB_Option_Field' enumerated type gives the type of the \verb'field'
 parameter for the second argument of \verb'GxB_set' and \verb'GxB_get',
 for setting global options or matrix options.
 
+NOTE: The enum values have changed with v8.0.0, to be compatible with the
+future updates from the v2.1 C API specification.
+
 {\footnotesize
 \begin{verbatim}
-
-#define GxB_NTHREADS 5
-#define GxB_CHUNK 7
-
-typedef enum
-{
-    // for matrix/vector get/set and global get/set:
-    GxB_HYPER_SWITCH = 0,    // defines switch to hypersparse (double value)
-    GxB_BITMAP_SWITCH = 34,  // defines switch to hypersparse (double value)
-    GxB_FORMAT = 1,     // defines CSR/CSC format: GxB_BY_ROW or GxB_BY_COL
-    GxB_SPARSITY_CONTROL = 32,  // control the sparsity of a matrix or vector
-
-    // for global get/set only:
-    GxB_GLOBAL_NTHREADS = GxB_NTHREADS, // max number of threads to use
-    GxB_GLOBAL_CHUNK = GxB_CHUNK,       // chunk size for small problems
-    GxB_BURBLE = 99,                    // diagnositic output
-    GxB_PRINTF = 101,               // printf function for diagnostic output
-    GxB_FLUSH = 102,                // flush function for diagnostic output
-    GxB_PRINT_1BASED = 104, // print matrices as 0-based or 1-based
-
-    GxB_JIT_C_COMPILER_NAME = 110,  // CPU JIT C compiler name
-    GxB_JIT_C_COMPILER_FLAGS = 111, // CPU JIT C compiler flags
-    GxB_JIT_C_LINKER_FLAGS = 112,   // CPU JIT C linker flags
-    GxB_JIT_C_LIBRARIES = 113,      // CPU JIT C libraries
-    GxB_JIT_C_PREFACE = 114,        // CPU JIT C preface
-    GxB_JIT_C_CONTROL = 115,        // CPU JIT C control
-    GxB_JIT_CACHE_PATH = 116,       // CPU/CUDA JIT path for compiled kernels
-    GxB_JIT_C_CMAKE_LIBS = 117,     // CPU JIT C libraries when using cmake
-    GxB_JIT_USE_CMAKE = 118,        // CPU JIT: use cmake or direct compile
-    GxB_JIT_ERROR_LOG = 119,        // CPU JIT: error log file
-
-    // for matrix/vector get only:
-    GxB_SPARSITY_STATUS = 33,   // query the sparsity of a matrix or vector
-
-    // for global get only:
-    GxB_MODE = 2,       // mode passed to GrB_init (blocking or non-blocking)
-    GxB_LIBRARY_NAME = 8,           // name of the library (char *)
-    GxB_LIBRARY_VERSION = 9,        // library version (3 int's)
-    GxB_LIBRARY_DATE = 10,          // date of the library (char *)
-    GxB_LIBRARY_ABOUT = 11,         // about the library (char *)
-    GxB_LIBRARY_URL = 12,           // URL for the library (char *)
-    GxB_LIBRARY_LICENSE = 13,       // license of the library (char *)
-    GxB_LIBRARY_COMPILE_DATE = 14,  // date library was compiled (char *)
-    GxB_LIBRARY_COMPILE_TIME = 15,  // time library was compiled (char *)
-    GxB_LIBRARY_OPENMP = 25,        // library compiled with OpenMP
-    GxB_API_VERSION = 16,           // API version (3 int's)
-    GxB_API_DATE = 17,              // date of the API (char *)
-    GxB_API_ABOUT = 18,             // about the API (char *)
-    GxB_API_URL = 19,               // URL for the API (char *)
-}
-GxB_Option_Field ;
 \end{verbatim} }
 
 The \verb'GxB_FORMAT' field can be by row or by column, set to a value

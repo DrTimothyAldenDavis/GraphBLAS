@@ -49,6 +49,7 @@ void mexFunction
 
     GrB_Info info ;
     bool malloc_debug = GB_mx_get_global (true) ;
+    OK (GxB_set (GxB_BURBLE, true)) ;
 
     //--------------------------------------------------------------------------
     // create the Gauss type and Add operator and monoid
@@ -162,6 +163,7 @@ void mexFunction
     GrB_free (&A) ;
     GrB_free (&v) ;
 
+    OK (GxB_set (GxB_BURBLE, false)) ;
     GB_mx_put_global (true) ;
     printf ("\nGB_mex_test17:  all tests passed\n\n") ;
 }

@@ -65,7 +65,7 @@ void mexFunction
     GB_mx_at_exit ( ) ;
     GrB_Info info = GrB_init (911) ;
     printf ("expected error: [%d]\n", info) ;
-    mxAssert (info == GrB_INVALID_VALUE, "error must be 'invalid value'") ;
+    CHECK (info == GrB_INVALID_VALUE) ;
 
     // call GrB_init:
     bool malloc_debug = GB_mx_get_global (true) ;

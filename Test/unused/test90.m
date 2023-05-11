@@ -7,10 +7,10 @@ function test90
 fprintf ('\n -------------- A*B plus_rdiv (user-defined semiring)\n') ;
 GB_mex_burble (1) ;
 
-    % 1001: Gustavson
-    % 1003: dot
-    % 1004: hash
-    % 1005: saxpy
+    % 7081: Gustavson
+    % 7083: dot
+    % 7084: hash
+    % 7085: saxpy
 
 rng ('default') ;
 
@@ -30,7 +30,7 @@ for N = [10 100] % 1000]
     C2 = GB_mex_rdiv (A, B) ;
     assert (norm (C1-C2,1) / norm (C1,1) < 1e-10) ;
 
-    for method = [1001 1003 1004 1005]
+    for method = [7081 7083 7084 7085]
         fprintf ('method: %d\n', method) ;
         cprint = (N <= 10) ;
         C2 = GB_mex_rdiv (A, B, method, cprint) ;
@@ -65,7 +65,7 @@ for N = [10 100] % 1000]
     at = 0 ; 
     bt = 0 ;
     C0 = X*B ;
-    for method = [1001 1003 1004 1005]
+    for method = [7081 7083 7084 7085]
         fprintf ('method: %d\n', method) ;
         C5 = GB_mex_rdiv2 (A, B, at, bt, method, flipxy) ;
         assert (norm (C0-C5,1) / norm (C5,1) < 1e-5) ;
@@ -75,7 +75,7 @@ for N = [10 100] % 1000]
     at = 1 ; 
     bt = 0 ;
     C0 = X'*B ;
-    for method = [1001 1003 1004 1005]
+    for method = [7081 7083 7084 7085]
         fprintf ('method: %d\n', method) ;
         C5 = GB_mex_rdiv2 (A, B, at, bt, method, flipxy) ;
         assert (norm (C0-C5,1) / norm (C5,1) < 1e-5) ;
@@ -85,7 +85,7 @@ for N = [10 100] % 1000]
     at = 0 ; 
     bt = 1 ;
     C0 = X*B' ;
-    for method = [1001 1003 1004 1005]
+    for method = [7081 7083 7084 7085]
         fprintf ('method: %d\n', method) ;
         C5 = GB_mex_rdiv2 (A, B, at, bt, method, flipxy) ;
         assert (norm (C0-C5,1) / norm (C5,1) < 1e-5) ;
@@ -95,7 +95,7 @@ for N = [10 100] % 1000]
     at = 1 ; 
     bt = 1 ;
     C0 = X'*B' ;
-    for method = [1001 1003 1004 1005]
+    for method = [7081 7083 7084 7085]
         fprintf ('method: %d\n', method) ;
         C5 = GB_mex_rdiv2 (A, B, at, bt, method, flipxy) ;
         assert (norm (C0-C5,1) / norm (C5,1) < 1e-5) ;
@@ -105,7 +105,7 @@ for N = [10 100] % 1000]
     at = 0 ; 
     bt = 0 ;
     C0 = A*Y ;
-    for method = [1001 1003 1004 1005]
+    for method = [7081 7083 7084 7085]
         fprintf ('method: %d\n', method) ;
         C5 = GB_mex_rdiv2 (A, B, at, bt, method, flipxy) ;
         assert (norm (C0-C5,1) / norm (C5,1) < 1e-5) ;
@@ -115,7 +115,7 @@ for N = [10 100] % 1000]
     at = 1 ; 
     bt = 0 ;
     C0 = A'*Y ;
-    for method = [1001 1003 1004 1005]
+    for method = [7081 7083 7084 7085]
         fprintf ('method %d\n', method) ;
         C5 = GB_mex_rdiv2 (A, B, at, bt, method, flipxy) ;
         assert (norm (C0-C5,1) / norm (C5,1) < 1e-5) ;
@@ -125,7 +125,7 @@ for N = [10 100] % 1000]
     at = 0 ; 
     bt = 1 ;
     C0 = A*Y' ;
-    for method = [1001 1003 1004 1005]
+    for method = [7081 7083 7084 7085]
         fprintf ('method %d\n', method) ;
         C5 = GB_mex_rdiv2 (A, B, at, bt, method, flipxy) ;
         assert (norm (C0-C5,1) / norm (C5,1) < 1e-5) ;
@@ -135,7 +135,7 @@ for N = [10 100] % 1000]
     at = 1 ; 
     bt = 1 ;
     C0 = A'*Y' ;
-    for method = [1001 1003 1004 1005]
+    for method = [7081 7083 7084 7085]
         fprintf ('method %d\n', method) ;
         C5 = GB_mex_rdiv2 (A, B, at, bt, method, flipxy) ;
         assert (norm (C0-C5,1) / norm (C5,1) < 1e-5) ;

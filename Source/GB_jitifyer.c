@@ -573,6 +573,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     int fd_lock = -1 ;
     if (GB_file_open_and_lock (GB_jit_temp, &fp_lock, &fd_lock) < 0)
     { 
+GB_GOTCHA ; // unable to access cache folder
         // failure; disable the JIT
         GBURBLE ("(jit: unable to access cache folder) ") ;
         GB_jit_control = GxB_JIT_RUN ;
@@ -1429,15 +1430,18 @@ GrB_Info GB_jitifyer_load
         (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) ;
         if (k1 >= 0)
         { 
+GB_GOTCHA ; // unchecked PreJIT, jit control: RUN
             // an unchecked PreJIT kernel; check it inside critical section
         }
         else if ((*dl_function) != NULL)
         { 
+// GB_GOTCHA ; // found kernel, jit control: RUN    OK (gauss_demo)
             // found the kernel in the hash table
             return (GrB_SUCCESS) ;
         }
         else
         { 
+// GB_GOTCHA ; // did not find kernel, jit control: RUN     OK (gauss_demo)
             // No kernels may be loaded or compiled, but existing kernels
             // already loaded may be run (handled above if dl_function was
             // found).  This kernel was not loaded, so punt to generic.
@@ -1572,6 +1576,7 @@ GrB_Info GB_jitifyer_worker
     if (GB_jit_control <= GxB_JIT_RUN)
     #endif
     { 
+GB_GOTCHA ; // did not find kernel, jit control: RUN
         // No kernels may be loaded or compiled, but existing kernels already
         // loaded may be run (handled above if dl_function was found).  This
         // kernel was not loaded, so punt to generic.
@@ -1817,6 +1822,7 @@ GrB_Info GB_jitifyer_load_worker
             // compile the kernel to get the lib*.so file
             if (GB_jit_use_cmake)
             { 
+// GB_GOTCHA ; // use cmake to compile the kernel   OK (gauss_demo)
                 // use cmake to compile the kernel
                 GB_jitifyer_cmake_compile (kernel_name, bucket) ;
             }
@@ -1857,7 +1863,7 @@ GrB_Info GB_jitifyer_load_worker
 
     (*dl_function) = GB_file_dlsym (dl_handle, "GB_jit_kernel") ;
     if ((*dl_function) == NULL)
-    { 
+    {
         // JIT error: dlsym unable to find GB_jit_kernel: punt to generic
         GBURBLE ("(jit: load error; JIT loading disabled) ") ;
         GB_file_dlclose (dl_handle) ; 
@@ -2179,6 +2185,7 @@ static void GB_jitifyer_command (char *command)
 
 void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
 { 
+// GB_GOTCHA ; // cmake     OK (gauss_demo)
 #ifndef NJIT
 
     GBURBLE ("(jit: %s)\n", "cmake") ;

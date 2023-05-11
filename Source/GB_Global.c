@@ -240,12 +240,12 @@ GrB_Mode GB_Global_mode_get (void)
 // init_called
 //------------------------------------------------------------------------------
 
-void GB_Global_init_called_set (bool init_called)
+void GB_Global_GrB_init_called_set (bool init_called)
 { 
     GB_Global.init_called = init_called ;
 }
 
-bool GB_Global_init_called_get (void)
+bool GB_Global_GrB_init_called_get (void)
 { 
     return (GB_Global.init_called) ;
 }

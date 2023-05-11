@@ -57,6 +57,8 @@
     const int8_t   *restrict Ab = A->b ;
     const int64_t avlen = A->vlen ;
 
+    ASSERT (C->iso == A->iso) ;
+
     #ifdef GB_ISO_ASSIGN
     ASSERT (C->iso) ;
     #else
@@ -65,9 +67,12 @@
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     GB_DECLAREC (cwork) ;
     if (A_iso)
-    { 
+    {
         // get the iso value of A and typecast to C->type
         // cwork = (ctype) Ax [0]
+        // This is no longer used.  If A is iso, so is C, and in that case,
+        // GB_ISO_ASSIGN is true and cwork is not used here.
+        ASSERT (GB_DEAD_CODE) ;
         GB_COPY_aij_to_cwork (cwork, Ax, 0, true) ;
     }
     #endif

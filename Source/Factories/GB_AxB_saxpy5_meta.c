@@ -126,7 +126,7 @@
                 #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION
                     #if GB_COMPILER_SUPPORTS_AVX512F && GB_V4_512
                     if (GB_Global_cpu_features_avx512f ( ))
-                    { 
+                    {
                         // x86_64 with AVX512f
                         GB_AxB_saxpy5_unrolled_avx512f (C, A, B,
                             ntasks, nthreads, B_slice) ;
@@ -135,7 +135,7 @@
                     #endif
                     #if GB_COMPILER_SUPPORTS_AVX2 && GB_V4_256
                     if (GB_Global_cpu_features_avx2 ( ))
-                    { 
+                    {
                         // x86_64 with AVX2
                         GB_AxB_saxpy5_unrolled_avx2 (C, A, B,
                             ntasks, nthreads, B_slice) ;

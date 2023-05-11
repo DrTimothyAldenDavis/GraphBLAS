@@ -179,11 +179,8 @@ void GB_macrofy_select          // construct all macros for GrB_select
                          "    GB_GETA (x, Ax, p, ) ;             \\\n"
                          "    GB_IDXUNOP (z, x, i, j, y) ;       \\\n") ;
         }
-        if (cast_z_to_bool == NULL)
-        { 
-            fprintf (fp, "    bool keep = (bool) z ;\n") ;
-        }
-        else if (nargs == 3)
+        ASSERT (cast_z_to_bool != NULL) ;
+        if (nargs == 3)
         { 
             fprintf (fp, cast_z_to_bool, "    bool keep", "z", "z") ;
         }

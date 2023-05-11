@@ -26,7 +26,7 @@ void gb_usage       // check usage and make sure GrB.init has been called
     // make sure GrB.init has been called
     //--------------------------------------------------------------------------
 
-    if (!GB_Global_init_called_get ( ))
+    if (!GB_Global_GrB_init_called_get ( ))
     {
 
         //----------------------------------------------------------------------

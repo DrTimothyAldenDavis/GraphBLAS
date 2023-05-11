@@ -38,8 +38,8 @@ for do_real = 0:1
     tm = toc ;
     fprintf ('built-in %g\n', tm) ;
 
-        % 1001: Gustavson
-        % 1003: dot
+        % 7081: Gustavson
+        % 7083: dot
 
     for k = [false true]
         GB_builtin_complex_set (k) ;

@@ -57,7 +57,7 @@ bool GB_mx_get_global       // true if doing malloc_debug
     // save JIT control
     GxB_JIT_Control control = GB_jitifyer_get_control ( ) ;
 
-    if (!GB_Global_init_called_get ( ))
+    if (!GB_Global_GrB_init_called_get ( ))
     {
         // call GxB_init (see also gb_usage in @GrB)
         mexAtExit (GB_mx_at_exit) ;

@@ -217,10 +217,10 @@ void mexFunction
 
     // get the axb_method
     // 0 or not present: default
-    // 1001: Gustavson
-    // 1003: dot
-    // 1004: hash
-    // 1005: saxpy
+    // 7081: Gustavson
+    // 7083: dot
+    // 7084: hash
+    // 7085: saxpy
     GET_SCALAR (4, GrB_Desc_Value, AxB_method, GxB_DEFAULT) ;
 
     if (! ((AxB_method == GxB_DEFAULT) ||

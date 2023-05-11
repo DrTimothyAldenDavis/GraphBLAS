@@ -54,6 +54,7 @@ void mexFunction
     OK (GxB_get (GxB_JIT_C_CONTROL, &c)) ;
     if (c == GxB_JIT_ON)
     {
+        printf ("JIT on\n") ;
         OK (GxB_UnaryOp_new (&op1, NULL, GrB_BOOL, GrB_BOOL, "mygunk",
             MYGUNK1_DEFN)) ;
         OK (GxB_UnaryOp_new (&op2, NULL, GrB_BOOL, GrB_BOOL, "mygunk",
@@ -83,6 +84,7 @@ void mexFunction
     }
     else
     {
+        printf ("JIT off\n") ;
         GrB_Info expected = GrB_NULL_POINTER ;
         ERR (GxB_UnaryOp_new (&op1, NULL, GrB_BOOL, GrB_BOOL, "mygunk",
             MYGUNK1_DEFN)) ;

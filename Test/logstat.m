@@ -22,10 +22,6 @@ GB_mex_finalize ;
 GB_mex_factory_control (1) ;
 [debug, compact, malloc, covered] = GB_mex_debug ;
 
-% hack
-% jit_controls = [ ] ;
-% factory_controls = [ ] ;
-
 % default JIT controls
 if (nargin < 3)
     jit_controls = [ ] ;

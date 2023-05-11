@@ -745,6 +745,8 @@
                             ASSERT (M_is_sparse || M_is_hyper) ;
                             for ( ; pZ < pZ_end ; pZ++)
                             { 
+GB_GOTCHA ; // wrapup, C now empty, M(:,j) > 32 Z(:,j); C, M and Z all sparse
+
                                 // wrapup, C now empty, M(:,j) much denser than
                                 // Z(:,j); C, M and Z all sparse
                                 int64_t i = Zi [pZ] ;
