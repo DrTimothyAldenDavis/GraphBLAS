@@ -57,7 +57,6 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        printf ("here %d\n", info) ;
         GB_FREE (&op, header_size) ;
         return (info) ;
     }

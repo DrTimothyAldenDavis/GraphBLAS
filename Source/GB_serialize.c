@@ -373,7 +373,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
         // GxB_Matrix_serialize: giving the blob to the user; remove it from
         // the list of malloc'd blocks
         #ifdef GB_MEMDUMP
-        printf ("removing blob %p size %ld from memtable\n", blob,
+        printf ("removing blob %p size %ld from memtable\n", blob,  // MEMDUMP
             blob_size_allocated) ;
         #endif
         GB_Global_memtable_remove (blob) ;

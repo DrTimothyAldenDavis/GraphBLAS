@@ -81,10 +81,10 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     fprintf (fp, "#define GB_ASSIGN_KIND ") ;
     switch (assign_kind)
     {
-        case GB_ASSIGN     : fprintf (fp, "GB_ASSIGN\n"     ) ; GB_GOTCHA ; break ;
+        case GB_ASSIGN     : fprintf (fp, "GB_ASSIGN\n"     ) ; break ;
         case GB_SUBASSIGN  : fprintf (fp, "GB_SUBASSIGN\n"  ) ; break ;
-        case GB_ROW_ASSIGN : fprintf (fp, "GB_ROW_ASSIGN\n" ) ; GB_GOTCHA ; break ;
-        case GB_COL_ASSIGN : fprintf (fp, "GB_COL_ASSIGN\n" ) ; GB_GOTCHA ; break ;
+        case GB_ROW_ASSIGN : fprintf (fp, "GB_ROW_ASSIGN\n" ) ; break ;
+        case GB_COL_ASSIGN : fprintf (fp, "GB_COL_ASSIGN\n" ) ; break ;
         default:;
     }
 
@@ -92,9 +92,9 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     switch (Ikind)
     {
         case GB_ALL    : fprintf (fp, "GB_ALL\n"    ) ; break ;
-        case GB_RANGE  : fprintf (fp, "GB_RANGE\n"  ) ; GB_GOTCHA ; break ;
-        case GB_STRIDE : fprintf (fp, "GB_STRIDE\n" ) ; GB_GOTCHA ; break ;
-        case GB_LIST   : fprintf (fp, "GB_LIST\n"   ) ; GB_GOTCHA ; break ;
+        case GB_RANGE  : fprintf (fp, "GB_RANGE\n"  ) ; break ;
+        case GB_STRIDE : fprintf (fp, "GB_STRIDE\n" ) ; break ;
+        case GB_LIST   : fprintf (fp, "GB_LIST\n"   ) ; break ;
         default:;
     }
 
@@ -102,9 +102,9 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     switch (Jkind)
     {
         case GB_ALL    : fprintf (fp, "GB_ALL\n"    ) ; break ;
-        case GB_RANGE  : fprintf (fp, "GB_RANGE\n"  ) ; GB_GOTCHA ; break ;
-        case GB_STRIDE : fprintf (fp, "GB_STRIDE\n" ) ; GB_GOTCHA ; break ;
-        case GB_LIST   : fprintf (fp, "GB_LIST\n"   ) ; GB_GOTCHA ; break ;
+        case GB_RANGE  : fprintf (fp, "GB_RANGE\n"  ) ; break ;
+        case GB_STRIDE : fprintf (fp, "GB_STRIDE\n" ) ; break ;
+        case GB_LIST   : fprintf (fp, "GB_LIST\n"   ) ; break ;
         default:;
     }
 
@@ -185,7 +185,6 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
             fprintf (fp, "#define GB_ACCUMULATE_scalar(Cx,pC,ywork)") ;
             if (C_iso)
             { 
-GB_GOTCHA ;
                 fprintf (fp, "\n") ;
             }
             else
@@ -200,7 +199,6 @@ GB_GOTCHA ;
             fprintf (fp, "#define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork)") ;
             if (C_iso)
             { 
-GB_GOTCHA ;
                 fprintf (fp, "\n") ;
             }
             else
@@ -236,7 +234,6 @@ GB_GOTCHA ;
             }
             else
             { 
-GB_GOTCHA ;
                 // xwork = (xtype) Cx [pC]
                 xname = "xwork" ;
                 fprintf (fp,
@@ -255,7 +252,6 @@ GB_GOTCHA ;
                 }
                 else
                 { 
-GB_GOTCHA ;
                     // Cx [pC] = f (x,y)
                     fprintf (fp,
                     "    GB_ACCUM_OP (Cx [pC], %s, %s) ;          \\\n"
@@ -264,7 +260,6 @@ GB_GOTCHA ;
             }
             else
             { 
-GB_GOTCHA ;
                 // zwork = f (x,y)
                 // Cx [pC] = (ctype) zwork
                 fprintf (fp,
@@ -311,7 +306,6 @@ GB_GOTCHA ;
         fprintf (fp, "#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork)");
         if (C_iso)
         { 
-GB_GOTCHA ;
             fprintf (fp, "\n");
         }
         else if (A_iso)
@@ -332,7 +326,6 @@ GB_GOTCHA ;
     // xwork = (xtype) C(i,j)
     if (C_iso)
     { 
-GB_GOTCHA ;
         fprintf (fp, "#define GB_COPY_C_to_xwork(xwork,Cx,pC)\n");
     }
     else

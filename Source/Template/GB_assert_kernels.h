@@ -46,23 +46,9 @@
 #undef  GB_IMPLIES
 #define GB_IMPLIES(p,q) (!(p) || (q))
 
-// for finding tests that trigger statement coverage.  If running a test
-// in GraphBLAS/Tcov, the test does not terminate.
-#undef GB_GOTCHA
-#ifdef GBCOVER
-#define GB_GOTCHA                                                           \
-{                                                                           \
-    fprintf (stderr, "\nJIT Gotcha: " __FILE__ " line: %d\n", __LINE__) ;   \
-    GBDUMP ("\nJIT Gotcha: " __FILE__ " line: %d\n", __LINE__) ;            \
-}
-#else
-#define GB_GOTCHA                                                           \
-{                                                                           \
-    fprintf (stderr, "\nJIT gotcha: " __FILE__ " line: %d\n", __LINE__) ;   \
-    GBDUMP ("\nJIT gotcha: " __FILE__ " line: %d\n", __LINE__) ;            \
-    GB_ABORT ;                                                              \
-}
-#endif
+// The JIT kernels do not trigger the 'gotcha'.
+#undef  GB_GOTCHA
+#define GB_GOTCHA
 
 #undef  GB_HERE
 #define GB_HERE GBDUMP ("%2d: Here: " __FILE__ "\n", __LINE__) ;

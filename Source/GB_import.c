@@ -238,7 +238,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
             { 
                 // for debugging only
                 #ifdef GB_MEMDUMP
-                printf ("import A->h to memtable: %p\n", (*A)->h) ;
+                printf ("import A->h to memtable: %p\n", (*A)->h) ; // MEMDUMP
                 #endif
                 GB_Global_memtable_add ((*A)->h, (*A)->h_size) ;
             }
@@ -263,7 +263,8 @@ GrB_Info GB_import      // import/pack a matrix in any format
                 { 
                     // for debugging only
                     #ifdef GB_MEMDUMP
-                    printf ("import A->p to memtable: %p\n", (*A)->p) ;
+                    printf ("import A->p to memtable: %p\n", // MEMDUMP
+                        (*A)->p) ;
                     #endif
                     GB_Global_memtable_add ((*A)->p, (*A)->p_size) ;
                 }
@@ -276,7 +277,8 @@ GrB_Info GB_import      // import/pack a matrix in any format
             { 
                 // for debugging only
                 #ifdef GB_MEMDUMP
-                printf ("import A->i to memtable: %p\n", (*A)->i) ;
+                printf ("import A->i to memtable: %p\n", // MEMDUMP
+                    (*A)->i) ;
                 #endif
                 GB_Global_memtable_add ((*A)->i, (*A)->i_size) ;
             }
@@ -292,7 +294,8 @@ GrB_Info GB_import      // import/pack a matrix in any format
             { 
                 // for debugging only
                 #ifdef GB_MEMDUMP
-                printf ("import A->b to memtable: %p\n", (*A)->b) ;
+                printf ("import A->b to memtable: %p\n", // MEMDUMP
+                    (*A)->b) ;
                 #endif
                 GB_Global_memtable_add ((*A)->b, (*A)->b_size) ;
             }
@@ -313,7 +316,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
         { 
             // for debugging only
             #ifdef GB_MEMDUMP
-            printf ("import A->x to memtable: %p size: %lu\n",
+            printf ("import A->x to memtable: %p size: %lu\n",  // MEMDUMP
                 (*A)->x, Ax_size) ;
             #endif
             GB_Global_memtable_add ((*A)->x, (*A)->x_size) ;

@@ -83,7 +83,6 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
 
     if (opcode == GB_DIAG_idxunop_code)
     { 
-GB_GOTCHA ; // diag opcode
         C_sparsity = (A_sparsity == GxB_FULL) ? GxB_SPARSE : A_sparsity ;
     }
     else

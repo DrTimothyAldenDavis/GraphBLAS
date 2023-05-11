@@ -20,7 +20,7 @@
     {                                                               \
         if (p != NULL && (*(p)) != NULL)                            \
         {                                                           \
-            printf ("free (%s, line %d): %p size %lu\n",            \
+            printf ("free (%s, line %d): %p size %lu\n", /* MEMDUMP */ \
                 __FILE__, __LINE__, (*p), s) ;                      \
         }                                                           \
         GB_free_memory ((void **) p, s) ;                           \
@@ -28,23 +28,23 @@
 
     #define GB_CALLOC(n,type,s)                                     \
         (type *) GB_calloc_memory (n, sizeof (type), s) ;           \
-        ; printf ("calloc  (%s, line %d): size %lu\n",              \
+        ; printf ("calloc  (%s, line %d): size %lu\n",  /* MEMDUMP */ \
             __FILE__, __LINE__, *(s)) ;
 
     #define GB_MALLOC(n,type,s)                                     \
         (type *) GB_malloc_memory (n, sizeof (type), s) ;           \
-        ; printf ("malloc  (%s, line %d): size %lu\n",              \
+        ; printf ("malloc  (%s, line %d): size %lu\n", /* MEMDUMP */    \
             __FILE__, __LINE__, *(s)) ;
 
     #define GB_REALLOC(p,nnew,type,s,ok)                            \
         p = (type *) GB_realloc_memory (nnew, sizeof (type),        \
             (void *) p, s, ok) ;                                    \
-        ; printf ("realloc (%s, line %d): size %lu\n",              \
+        ; printf ("realloc (%s, line %d): size %lu\n", /* MEMDUMP */    \
             __FILE__, __LINE__, *(s)) ;
 
     #define GB_XALLOC(use_calloc,iso,n,type_size,s)                 \
         GB_xalloc_memory (use_calloc, iso, n, type_size, s) ;       \
-        ; printf ("xalloc (%s, line %d): size %lu\n",               \
+        ; printf ("xalloc (%s, line %d): size %lu\n", /* MEMDUMP */     \
             __FILE__, __LINE__, *(s)) ;
 
 #else

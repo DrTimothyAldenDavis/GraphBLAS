@@ -49,7 +49,6 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     uint8_t byte ;
     if (C_iso)
     { 
-GB_GOTCHA ; // C iso
         // no values computed (C is iso)
         fprintf (fp, "#define GB_DECLARE_IDENTITY(z)\n") ;
         fprintf (fp, "#define GB_DECLARE_IDENTITY_CONST(z)\n") ;
@@ -133,23 +132,12 @@ GB_GOTCHA ; // C iso
         { 
             fprintf (fp, "#define GB_MONOID_IS_TERMINAL 1\n") ;
         }
+        // there are no built-in terminal monoids, except ANY, handled above
+        ASSERT (zcode != GB_FC32_code && zcode != GB_FC64_code) ;
         const char *term_value = GB_macrofy_id (term_ecode, zsize, NULL, NULL) ;
         fprintf (fp, "#define GB_DECLARE_TERMINAL_CONST(zterminal) "
             "const %s zterminal = ", ztype_name) ;
-        if (zcode == GB_FC32_code)
-        { 
-GB_GOTCHA ; // terminal complex
-            fprintf (fp, "GxB_CMPLXF (%s,0)\n", term_value) ;
-        }
-        else if (zcode == GB_FC64_code)
-        { 
-GB_GOTCHA ; // terminal complex
-            fprintf (fp, "GxB_CMPLX (%s,0)\n", term_value) ;
-        }
-        else
-        { 
-            fprintf (fp, "%s\n", term_value) ;
-        }
+        fprintf (fp, "%s\n", term_value) ;
         if (monoid_is_terminal)
         { 
             fprintf (fp, "#define GB_TERMINAL_CONDITION(z,zterminal) "
@@ -279,7 +267,6 @@ GB_GOTCHA ; // terminal complex
     char *ztype_atomic = NULL ;
     if (zcode == 0)
     { 
-GB_GOTCHA ; // C iso
         // C is iso (any_pair symbolic semiring)
         fprintf (fp, "#define GB_Z_ATOMIC_BITS 0\n") ;
     }
@@ -408,7 +395,6 @@ GB_GOTCHA ; // C iso
 
     if (monoid == NULL || zcode == 0)
     { 
-GB_GOTCHA ; // C iso
         // nothing to do: C is iso-valued.  For GrB_mxm only.
         ;
     }

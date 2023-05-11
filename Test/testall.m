@@ -95,6 +95,11 @@ malloc_debugging = stat ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
+logstat ('test267'    ,t, j40 , f00 ) ; % JIT error handling
+logstat ('test266'    ,t, j4  , f0  ) ; % JIT error handling
+logstat ('test265'    ,t, j4  , f0  ) ; % reduce to scalar with user types
+logstat ('test264'    ,t, j4  , f0  ) ; % enumify / macrofy tests
+logstat ('test263'    ,t, j4  , f0  ) ; % JIT tests
 logstat ('test262'    ,t, j0  , f1  ) ; % GB_mask
 logstat ('test261'    ,t, j4  , f0  ) ; % serialize/deserialize error handling
 logstat ('test260'    ,t, j4  , f0  ) ; % demacrofy name

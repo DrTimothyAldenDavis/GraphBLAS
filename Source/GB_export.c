@@ -170,7 +170,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
 
     // export A->x
     #ifdef GB_MEMDUMP
-    printf ("export A->x from memtable: %p\n", (*A)->x) ;
+    printf ("export A->x from memtable: %p\n", (*A)->x) ;   // MEMDUMP
     #endif
     GB_Global_memtable_remove ((*A)->x) ;
     (*Ax) = (*A)->x ; (*A)->x = NULL ;
@@ -183,7 +183,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
 
             // export A->h
             #ifdef GB_MEMDUMP
-            printf ("export A->h from memtable: %p\n", (*A)->h) ;
+            printf ("export A->h from memtable: %p\n", (*A)->h) ;   // MEMDUMP
             #endif
             GB_Global_memtable_remove ((*A)->h) ;
             (*Ah) = (GrB_Index *) ((*A)->h) ; (*A)->h = NULL ;
@@ -204,7 +204,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
             else
             { 
                 #ifdef GB_MEMDUMP
-                printf ("export A->p from memtable: %p\n", (*A)->p) ;
+                printf ("export A->p from memtable: %p\n", (*A)->p) ; // MEMDUMP
                 #endif
                 GB_Global_memtable_remove ((*A)->p) ;
                 (*Ap) = (GrB_Index *) ((*A)->p) ; (*A)->p = NULL ;
@@ -213,7 +213,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
 
             // export A->i
             #ifdef GB_MEMDUMP
-            printf ("export A->i from memtable: %p\n", (*A)->i) ;
+            printf ("export A->i from memtable: %p\n", (*A)->i) ;   // MEMDUMP
             #endif
             GB_Global_memtable_remove ((*A)->i) ;
             (*Ai) = (GrB_Index *) ((*A)->i) ; (*A)->i = NULL ;
@@ -225,7 +225,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
 
             // export A->b
             #ifdef GB_MEMDUMP
-            printf ("export A->b from memtable: %p\n", (*A)->b) ;
+            printf ("export A->b from memtable: %p\n", (*A)->b) ;   // MEMDUMP
             #endif
             GB_Global_memtable_remove ((*A)->b) ;
             (*Ab) = (*A)->b ; (*A)->b = NULL ;

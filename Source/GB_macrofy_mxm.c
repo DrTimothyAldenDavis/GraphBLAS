@@ -72,7 +72,6 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 
     if (C_iso)
     { 
-GB_GOTCHA ; // C iso
         // C is iso; no operators are used
         fprintf (fp, "// semiring: symbolic only (C is iso)\n") ;
     }
@@ -139,7 +138,6 @@ GB_GOTCHA ; // C iso
 
     if (C_iso)
     { 
-GB_GOTCHA ; // C iso
 
         //----------------------------------------------------------------------
         // ANY_PAIR_BOOL semiring: nothing to do
@@ -169,7 +167,6 @@ GB_GOTCHA ; // C iso
 
         if (flipxy)
         { 
-GB_GOTCHA ; // flipxy
             fprintf (fp, "#define GB_MULTADD(z,y,x,j,k,i) ") ;
         }
         else
@@ -262,7 +259,6 @@ GB_GOTCHA ; // flipxy
         }
         else if (C_iso)
         { 
-GB_GOTCHA ; // C iso
             // ANY_PAIR_* (C is iso in this case, type is BOOL)
             fprintf (fp, "#define GB_IS_ANY_PAIR_SEMIRING 1\n") ;
         }

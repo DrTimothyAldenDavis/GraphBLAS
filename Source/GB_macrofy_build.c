@@ -176,7 +176,6 @@ void GB_macrofy_build           // construct all macros for GB_build
         }
         else if (nargs_t_to_x == 3)
         { 
-GB_GOTCHA ; // nargs 3
             fprintf (fp, cast_t_to_x, "x", "Tx [p]", "Tx [p]") ;
         }
         else
@@ -196,7 +195,6 @@ GB_GOTCHA ; // nargs 3
         }
         else if (nargs_z_to_t == 3)
         { 
-GB_GOTCHA ; // nargs 3
             fprintf (fp, cast_z_to_t, "    Tx [p]", "z", "z") ;
         }
         else

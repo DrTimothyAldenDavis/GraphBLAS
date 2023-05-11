@@ -44,14 +44,12 @@ void GB_macrofy_binop
         {
             if (op->ztype == op->xtype)
             { 
-GB_GOTCHA ; // C iso
                 fprintf (fp, "#define GB_UPDATE(z,y)\n") ;
             }
             fprintf (fp, "#define %s(z,x,y)\n", macro_name) ;
         }
         else
         { 
-GB_GOTCHA ; // C iso
             fprintf (fp, "#define %s(z,x,y,i%s,j)\n", macro_name, karg) ;
         }
 
@@ -711,7 +709,6 @@ GB_GOTCHA ; // C iso
             // no-op: same as second operator
             //------------------------------------------------------------------
 
-            case 140 :  GB_GOTCHA ; // no-op
             default  : f = "z = y" ; break ;
         }
 

@@ -33,7 +33,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     bool copy_to_C  = GB_RSHIFT (scode, 48, 1) ;
 
     // C in, A, and B iso-valued and flipxy (one hex digit)
-//  bool C_in_iso   = GB_RSHIFT (scode, 47, 1) ;
+    bool C_in_iso   = GB_RSHIFT (scode, 47, 1) ;
     int A_iso_code  = GB_RSHIFT (scode, 46, 1) ;
     int B_iso_code  = GB_RSHIFT (scode, 45, 1) ;
     bool flipxy     = GB_RSHIFT (scode, 44, 1) ;
@@ -70,7 +70,6 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 
     if (C_iso)
     { 
-GB_GOTCHA ; // C iso
         // values of C are not computed by the kernel
         xtype_name = "GB_void" ;
         ytype_name = "GB_void" ;
@@ -147,12 +146,11 @@ GB_GOTCHA ; // C iso
     //--------------------------------------------------------------------------
 
     GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, C_iso,
-        false) ;
+        C_in_iso) ;
 
     fprintf (fp, "#define GB_EWISEOP(Cx,p,aij,bij,i,j)") ;
     if (C_iso)
     { 
-GB_GOTCHA ; // C iso
         fprintf (fp, "\n") ;
     }
     else if (ctype == ztype)

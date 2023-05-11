@@ -104,11 +104,6 @@ static void check_table (void)
             {
                 uint64_t hash = e->hash ;
                 uint64_t k2 = (hash & GB_jit_table_bits) ;
-//              printf ("  %4ld table %6ld(%6lu):%4ld "
-//                  "%p %p (%0lx,%d,%d) %0lx (%s)\n",
-//                  populated, k, k2, e->prejit_index, e->dl_function,
-//                  e->dl_handle, e->encoding.code, e->encoding.kcode,
-//                  e->encoding.suffix_len, hash, e->suffix) ;
                 populated++ ;
             }
         }
@@ -139,7 +134,7 @@ static void check_table (void)
     #define GB_MALLOC_PERSISTENT(X,siz)                     \
     {                                                       \
         X = GB_Global_persistent_malloc (siz) ;             \
-        printf ("persistent malloc (%4d): %p size %lu\n",   \
+        printf ("persistent malloc (%4d): %p size %lu\n",   /* MEMDUMP */ \
             __LINE__, X, siz) ;                             \
     }
 
@@ -147,7 +142,7 @@ static void check_table (void)
     {                                                       \
         if (X != NULL)                                      \
         {                                                   \
-            printf ("persistent free   (%4d): %p\n",        \
+            printf ("persistent free   (%4d): %p\n",        /* MEMDUMP */ \
             __LINE__, X) ;                                  \
         }                                                   \
         GB_Global_persistent_free ((void **) &(X)) ;        \
@@ -340,12 +335,7 @@ GrB_Info GB_jitifyer_init (void)
 
         void *dl_function = Kernels [k] ;
         GB_jit_query_func dl_query = (GB_jit_query_func) Queries [k] ;
-        if (dl_function == NULL || dl_query == NULL || Names [k] == NULL)
-        { 
-GB_GOTCHA ; // error: PreJIT NULL
-            // ignore this kernel
-            continue ;
-        }
+        ASSERT (dl_function != NULL && dl_query != NULL && Names [k] != NULL) ;
         char kernel_name [GB_KLEN+1] ;
         strncpy (kernel_name, Names [k], GB_KLEN) ;
         kernel_name [GB_KLEN] = '\0' ;
@@ -362,9 +352,8 @@ GB_GOTCHA ; // error: PreJIT NULL
             &scode, &suffix) ;
 
         if (info != GrB_SUCCESS || !GB_STRING_MATCH (name_space, "GB_jit"))
-        { 
-GB_GOTCHA ; // error: PreJIT invalid name
-            // kernel_name is invalid; ignore this kernel
+        {
+            // PreJIT error: kernel_name is invalid; ignore this kernel
             continue ;
         }
 
@@ -424,9 +413,8 @@ GB_GOTCHA ; // error: PreJIT invalid name
         else if (IS ("user_op"      )) c = GB_JIT_KERNEL_USEROP ;
         else if (IS ("user_type"    )) c = GB_JIT_KERNEL_USERTYPE ;
         else
-        { 
-GB_GOTCHA ; // error: PreJIT invalid name
-            // kernel_name is invalid; ignore this kernel
+        {
+            // PreJIT error: kernel_name is invalid; ignore this kernel
             continue ;
         }
 
@@ -457,9 +445,8 @@ GB_GOTCHA ; // error: PreJIT invalid name
             (version [0] != GxB_IMPLEMENTATION_MAJOR) ||
             (version [1] != GxB_IMPLEMENTATION_MINOR) ||
             (version [2] != GxB_IMPLEMENTATION_SUB))
-        { 
-GB_GOTCHA ; // error: PreJIT stale
-            // the kernel is stale; ignore it
+        {
+            // PreJIT error: the kernel is stale; ignore it
             continue ;
         }
 
@@ -469,9 +456,8 @@ GB_GOTCHA ; // error: PreJIT stale
 
         int64_t k1 = -1, kk = -1 ;
         if (GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) != NULL)
-        { 
-GB_GOTCHA ; // error: PreJIT duplicate
-            // the kernel is a duplicate; ignore it
+        {
+            // PreJIT error: the kernel is a duplicate; ignore it
             continue ;
         }
 
@@ -480,9 +466,8 @@ GB_GOTCHA ; // error: PreJIT duplicate
         //----------------------------------------------------------------------
 
         if (!GB_jitifyer_insert (hash, encoding, suffix, NULL, dl_function, k))
-        { 
-GB_GOTCHA ; // error: out of memory
-            // out of memory
+        {
+            // PreJIT error: out of memory
             GB_jit_control = GxB_JIT_PAUSE ;
             return (GrB_OUT_OF_MEMORY) ;
         }
@@ -553,7 +538,6 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
 
     if (!ok)
     { 
-GB_GOTCHA ; // error: cannot create directories
         // JIT is disabled, or cannot determine the JIT cache path.
         // Disable loading and compiling, but continue with the rest of the
         // initializations.  The PreJIT could still be used.
@@ -633,9 +617,8 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     uint8_t *dst ;
     GB_MALLOC_PERSISTENT (dst, (dst_size+2) * sizeof(uint8_t)) ;
     if (dst == NULL)
-    { 
-GB_GOTCHA ; // error: out of memory
-        // out of memory; disable the JIT
+    {
+        // JITPackage error: out of memory; disable the JIT
         GB_jit_control = GxB_JIT_RUN ;
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -652,9 +635,8 @@ GB_GOTCHA ; // error: out of memory
         size_t src_size = GB_JITpackage_index [k].compressed_size ;
         size_t u = ZSTD_decompress (dst, dst_size, src, src_size) ;
         if (u != GB_JITpackage_index [k].uncompressed_size)
-        { 
-GB_GOTCHA ; // error: blob invalid
-            // blob is invalid
+        {
+            // JITPackage error: blob is invalid
             ok = false ;
             break ;
         }
@@ -664,9 +646,8 @@ GB_GOTCHA ; // error: blob invalid
         // open the file
         FILE *fp_src = fopen (GB_jit_temp, "w") ;
         if (fp_src == NULL)
-        { 
-GB_GOTCHA ; // error: file not created
-            // file cannot be created
+        {
+            // JITPackage error: file cannot be created
             ok = false ;
             break ;
         }
@@ -674,9 +655,8 @@ GB_GOTCHA ; // error: file not created
         size_t nwritten = fwrite (dst, sizeof (uint8_t), u, fp_src) ;
         fclose (fp_src) ;
         if (nwritten != u)
-        { 
-GB_GOTCHA ; // error: invalid file
-            // file is invalid
+        {
+            // JITPackage error: file is invalid
             ok = false ;
             break ;
         }
@@ -695,9 +675,8 @@ GB_GOTCHA ; // error: invalid file
 
     GB_file_unlock_and_close (&fp_lock, &fd_lock) ;
     if (!ok)
-    { 
-GB_GOTCHA ; // error: cannot write kernel source
-        // failure; disable the JIT
+    {
+        // JITPackage error: disable the JIT
         GBURBLE ("(jit: failure to write source to cache folder) ") ;
         GB_jit_control = GxB_JIT_RUN ;
         return (error_condition) ;
@@ -768,9 +747,8 @@ GrB_Info GB_jitifyer_alloc_space (void)
         GB_jit_C_cmake_libs == NULL ||
         GB_jit_C_compiler == NULL ||
         GB_jit_cache_path == NULL)
-    { 
-GB_GOTCHA ; // error: out of memory
-        // out of memory
+    {
+        // JIT error: out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -1554,7 +1532,6 @@ GrB_Info GB_jitifyer_worker
             }
             else
             { 
-GB_GOTCHA ; // error: op changed
                 // the op has changed; need to re-JIT the kernel; do not return.
                 // Instead, keep going and compile a JIT kernel.
                 GBURBLE ("(jit: op changed) ") ;
@@ -1570,7 +1547,6 @@ GB_GOTCHA ; // error: op changed
             GB_user_type (&ignore, &defn) ;
             if (strcmp (defn, type1->defn) == 0)
             { 
-GB_GOTCHA ; // type OK
                 return (GrB_SUCCESS) ;
             }
             else
@@ -1676,9 +1652,8 @@ GB_GOTCHA ; // type OK
     FILE *fp_klock = NULL ;
     int fd_klock = -1 ;
     if (GB_file_open_and_lock (GB_jit_temp, &fp_klock, &fd_klock) < 0)
-    { 
-GB_GOTCHA ; // error: cannot lock kernel
-        // unable to lock the kernel
+    {
+        // JIT error: unable to lock the kernel
         // disable the JIT to avoid repeated load errors
         GB_jit_control = GxB_JIT_RUN ;
         return (GrB_NO_VALUE) ;
@@ -1755,9 +1730,8 @@ GrB_Info GB_jitifyer_load_worker
 
         bool ok = true ;
         if (dl_query == NULL)
-        { 
-GB_GOTCHA ; // error: corrupted library
-            // library is missing the GB_jit_query method
+        {
+            // JIT error: library is missing the GB_jit_query method
             ok = false ;
             GBURBLE ("(jit: library corrupted; jit disabled) ") ;
             GB_jit_control = GxB_JIT_RUN ;
@@ -1777,7 +1751,6 @@ GB_GOTCHA ; // error: corrupted library
             dl_handle = NULL ;
             if (GB_jit_control == GxB_JIT_LOAD)
             { 
-GB_GOTCHA ; // error: must recompile but control is LOAD
                 // If the JIT control is set to GxB_JIT_LOAD, new kernels
                 // cannot be compiled.  This kernel has just been loaded but it
                 // has stale definition.  Loading it again will result in the
@@ -1885,8 +1858,7 @@ GB_GOTCHA ; // error: must recompile but control is LOAD
     (*dl_function) = GB_file_dlsym (dl_handle, "GB_jit_kernel") ;
     if ((*dl_function) == NULL)
     { 
-GB_GOTCHA ; // error: dlsym failed
-        // unable to find GB_jit_kernel: punt to generic
+        // JIT error: dlsym unable to find GB_jit_kernel: punt to generic
         GBURBLE ("(jit: load error; JIT loading disabled) ") ;
         GB_file_dlclose (dl_handle) ; 
         dl_handle = NULL ;
@@ -1898,9 +1870,8 @@ GB_GOTCHA ; // error: dlsym failed
     // insert the new kernel into the hash table
     if (!GB_jitifyer_insert (hash, encoding, suffix, dl_handle, (*dl_function),
         -1))
-    { 
-GB_GOTCHA ; // error: cannot insert in hash table
-        // unable to add kernel to hash table: punt to generic
+    {
+        // JIT error: unable to add kernel to hash table: punt to generic
         GB_file_dlclose (dl_handle) ; 
         dl_handle = NULL ;
         // disable the JIT to avoid repeated errors
@@ -2004,9 +1975,8 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         siz = GB_JITIFIER_INITIAL_SIZE * sizeof (struct GB_jit_entry_struct) ;
         GB_MALLOC_PERSISTENT (GB_jit_table, siz) ;
         if (GB_jit_table == NULL)
-        { 
-GB_GOTCHA ; // error: out of memory
-            // out of memory
+        {
+            // JIT error: out of memory
             return (false) ;
         }
         memset (GB_jit_table, 0, siz) ;
@@ -2030,9 +2000,8 @@ GB_GOTCHA ; // error: out of memory
         GB_jit_entry *new_table ;
         GB_MALLOC_PERSISTENT (new_table, siz) ;
         if (new_table == NULL)
-        { 
-GB_GOTCHA ; // error: out of memory
-            // out of memory; leave the existing table as-is
+        {
+            // JIT error: out of memory; leave the existing table as-is
             return (false) ;
         }
 
@@ -2090,9 +2059,8 @@ GB_GOTCHA ; // error: out of memory
                 // allocate the suffix if the kernel is not builtin
                 GB_MALLOC_PERSISTENT (e->suffix, suffix_len+2) ;
                 if (e->suffix == NULL)
-                { 
-GB_GOTCHA ; // error: out of memory
-                    // out of memory
+                {
+                    // JIT error: out of memory
                     return (false) ;
                 }
                 strncpy (e->suffix, suffix, suffix_len+1) ;
