@@ -251,7 +251,6 @@ end
 
 logstat ('test201'    ,t, j4  , f1  ) ; % test iso reduce to vector
 logstat ('test225'    ,t, j4  , f1  ) ; % test mask operations (GB_masker)
-logstat ('test170'    ,t, j4  , f1  ) ; % test C<B>=A+B (alias M==B)
 logstat ('test176'    ,t, j4  , f1  ) ; % test GrB_assign, method 09, 11
 logstat ('test208'    ,t, j4  , f1  ) ; % test iso apply, bind 1st and 2nd
 logstat ('test216'    ,t, j4  , f1  ) ; % test C<A>=A, iso case

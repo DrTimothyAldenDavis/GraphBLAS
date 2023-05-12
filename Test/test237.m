@@ -16,18 +16,18 @@ for kind = 1:2
         class = 'double' ;
     else
         add = 'times' ;
-        class = 'double complex' ;
+        class = 'single complex' ;
     end
 
     accum.opname = add ;
     accum.optype = class ;
 
-    tol = 1e-12 ;
+    tol = 1e-6 ;
 
-    % fprintf ('\n----------------- semiring:\n') ;
     semiring.multiply = 'times' ;
     semiring.add = add ;
     semiring.class = class ;
+    semiring
 
     % k = 1 with a sparser A matrix
 
@@ -37,11 +37,10 @@ for kind = 1:2
     F = GB_spec_random (n, 1, inf, 1, class) ;
     F.sparsity = 8 ;    % full
 
-    % fprintf ('\n----------------- F += S*F:\n\n') ;
     A.sparsity = 2 ;
     C1 = GB_mex_mxm  (F, [ ], accum, semiring, A, B, [ ]) ;
     C2 = GB_spec_mxm (F, [ ], accum, semiring, A, B, [ ]) ;
-    GB_spec_compare (C1, C2, tol) ;
+    GB_spec_compare (C1, C2, [ ], tol) ;
 end
 
 GB_mex_burble (0) ;

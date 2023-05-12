@@ -137,9 +137,10 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         return (info) ;
     }
 
-    GBURBLE ("add:(%s<%s>=%s+%s) ",
+    GBURBLE ("add:(%s<%s%s>=%s+%s) ",
         GB_sparsity_char (C_sparsity),
         GB_sparsity_char_matrix (M),
+        ((M != NULL) && !apply_mask) ? " (mask later)" : "",
         GB_sparsity_char_matrix (A),
         GB_sparsity_char_matrix (B)) ;
 

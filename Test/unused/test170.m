@@ -7,6 +7,7 @@ function test170
 rng ('default') ;
 
 fprintf ('test170:\n') ;
+GB_mex_burble (1) ;
 
 n = 30 ;
 
@@ -20,5 +21,6 @@ C1 = spones (B.matrix) .* (A.matrix+B.matrix) ;
 C2 = GB_mex_AplusB_M_aliased (A, B, 'plus') ;
 GB_spec_compare (C1, C2) ;
 
+GB_mex_burble (0) ;
 fprintf ('test170: all tests passed\n') ;
 
