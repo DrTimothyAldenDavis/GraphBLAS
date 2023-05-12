@@ -16,7 +16,7 @@ These files should be valid PreJIT kernels:
     GB_jit__AxB_dot2__2c1f046bbb0bbbcd.c
     GB_jit__user_op__0__my_rdiv.c
 
-This file will contain intentional errors: FIXME
+This file will contain an index of the kernels listed above:
 
     GB_prejit.c
 
