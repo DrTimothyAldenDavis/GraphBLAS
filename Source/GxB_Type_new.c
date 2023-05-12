@@ -166,6 +166,7 @@ GrB_Info GxB_Type_new
     if (sizeof_type == 0)
     { 
         GrB_Info info = GB_user_type_jit (&sizeof_type, t) ;
+        printf ("info is %d sizeof type %lu\n", info, sizeof_type) ;
         if (info != GrB_SUCCESS)
         { 
             // unable to determine the type size

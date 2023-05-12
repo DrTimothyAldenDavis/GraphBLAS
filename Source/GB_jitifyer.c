@@ -116,15 +116,21 @@ static void check_table (void)
 #endif
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_finalize: free the JIT table and all the strings
+// malloc/free macros
 //------------------------------------------------------------------------------
+
+// The JIT must use persistent malloc/free methods when GraphBLAS is used in
+// MATLAB.  Outside of MATLAB, these are the same as malloc/free passed to
+// GxB_init (or ANSI C malloc/free if using GrB_init).  Inside MATLAB,
+// GB_Global_persistent_malloc uses the same malloc/free given to GxB_init, but
+// then calls mexMakeMemoryPersistent to ensure the memory is not freed when a
+// mexFunction returns to the MATLAB m-file caller.
 
 #define OK(method)                      \
 {                                       \
     GrB_Info myinfo = (method) ;        \
     if (myinfo != GrB_SUCCESS)          \
     {                                   \
-        GB_jitifyer_finalize (false) ;  \
         return (myinfo) ;               \
     }                                   \
 }
@@ -173,7 +179,6 @@ static void check_table (void)
     GB_MALLOC_PERSISTENT (X, (len) + 2) ;               \
     if (X == NULL)                                      \
     {                                                   \
-        GB_jitifyer_finalize (false) ;                  \
         return (GrB_OUT_OF_MEMORY) ;                    \
     }                                                   \
     X ## _allocated = (len) + 2 ;                       \
@@ -186,9 +191,13 @@ static void check_table (void)
     strncpy (X, src, X ## _allocated) ;                 \
 }
 
-void GB_jitifyer_finalize (bool freeall)
+//------------------------------------------------------------------------------
+// GB_jitifyer_finalize: free the JIT table and all the strings
+//------------------------------------------------------------------------------
+
+void GB_jitifyer_finalize (void)
 { 
-    GB_jitifyer_table_free (freeall) ;
+    GB_jitifyer_table_free (true) ;
     GB_FREE_STUFF (GB_jit_cache_path) ;
     GB_FREE_STUFF (GB_jit_error_log) ;
     GB_FREE_STUFF (GB_jit_C_compiler) ;
@@ -224,7 +233,7 @@ GrB_Info GB_jitifyer_init (void)
                         // No JIT kernels can be loaded or compiled.
         #endif
 
-    GB_jitifyer_finalize (true) ;
+    GB_jitifyer_finalize ( ) ;
 
     //--------------------------------------------------------------------------
     // find the GB_jit_cache_path
@@ -265,7 +274,7 @@ GrB_Info GB_jitifyer_init (void)
         // cannot determine the JIT cache.  Disable loading and compiling, but
         // continue with the rest of the initializations.  The PreJIT could
         // still be used.
-        GBURBLE ("(jit: unable to access cache path, jit disabled) ") ;
+        GBURBLE ("(jit init: unable to access cache path, jit disabled) ") ;
         GB_jit_control = GxB_JIT_RUN ;
         GB_FREE_STUFF (GB_jit_cache_path) ;
         GB_COPY_STUFF (GB_jit_cache_path, "") ;
@@ -572,10 +581,9 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     FILE *fp_lock = NULL ;
     int fd_lock = -1 ;
     if (GB_file_open_and_lock (GB_jit_temp, &fp_lock, &fd_lock) < 0)
-    { 
-GB_GOTCHA ; // unable to access cache folder
+    {
         // failure; disable the JIT
-        GBURBLE ("(jit: unable to access cache folder) ") ;
+        GBURBLE ("(jit: unable to write to source cache, jit disabled) ") ;
         GB_jit_control = GxB_JIT_RUN ;
         return (error_condition) ;
     }
@@ -678,7 +686,7 @@ GB_GOTCHA ; // unable to access cache folder
     if (!ok)
     {
         // JITPackage error: disable the JIT
-        GBURBLE ("(jit: failure to write source to cache folder) ") ;
+        GBURBLE ("(jit: unable to write to source cache, jit disabled) ") ;
         GB_jit_control = GxB_JIT_RUN ;
         return (error_condition) ;
     }
@@ -1430,18 +1438,15 @@ GrB_Info GB_jitifyer_load
         (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) ;
         if (k1 >= 0)
         { 
-GB_GOTCHA ; // unchecked PreJIT, jit control: RUN
             // an unchecked PreJIT kernel; check it inside critical section
         }
         else if ((*dl_function) != NULL)
         { 
-// GB_GOTCHA ; // found kernel, jit control: RUN    OK (gauss_demo)
             // found the kernel in the hash table
             return (GrB_SUCCESS) ;
         }
         else
         { 
-// GB_GOTCHA ; // did not find kernel, jit control: RUN     OK (gauss_demo)
             // No kernels may be loaded or compiled, but existing kernels
             // already loaded may be run (handled above if dl_function was
             // found).  This kernel was not loaded, so punt to generic.
@@ -1576,7 +1581,6 @@ GrB_Info GB_jitifyer_worker
     if (GB_jit_control <= GxB_JIT_RUN)
     #endif
     { 
-GB_GOTCHA ; // did not find kernel, jit control: RUN
         // No kernels may be loaded or compiled, but existing kernels already
         // loaded may be run (handled above if dl_function was found).  This
         // kernel was not loaded, so punt to generic.
@@ -1822,7 +1826,6 @@ GrB_Info GB_jitifyer_load_worker
             // compile the kernel to get the lib*.so file
             if (GB_jit_use_cmake)
             { 
-// GB_GOTCHA ; // use cmake to compile the kernel   OK (gauss_demo)
                 // use cmake to compile the kernel
                 GB_jitifyer_cmake_compile (kernel_name, bucket) ;
             }
@@ -2185,7 +2188,6 @@ static void GB_jitifyer_command (char *command)
 
 void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
 { 
-// GB_GOTCHA ; // cmake     OK (gauss_demo)
 #ifndef NJIT
 
     GBURBLE ("(jit: %s)\n", "cmake") ;

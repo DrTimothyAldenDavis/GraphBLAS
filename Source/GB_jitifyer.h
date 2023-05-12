@@ -334,8 +334,7 @@ bool GB_jitifyer_path_256 (char *folder) ;
 
 GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition) ;
 
-void GB_jitifyer_finalize (bool freeall) ;      // finalize the JIT
-
+void GB_jitifyer_finalize (void) ;              // finalize the JIT
 void GB_jitifyer_table_free (bool freeall) ;    // free the JIT table
 
 GrB_Info GB_jitifyer_alloc_space (void) ;

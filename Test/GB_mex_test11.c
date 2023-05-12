@@ -114,10 +114,18 @@ void mexFunction
     CHECK (use_cmake == true) ;
     OK (GxB_Global_Option_get_INT32 (GxB_JIT_USE_CMAKE, &use_cmake_int)) ;
     CHECK (use_cmake_int == 1) ;
-    OK (GxB_Global_Option_set_INT32 (GxB_JIT_USE_CMAKE, false)) ;
 
+    // try cmake
     GrB_Type MyType = NULL ;
-    OK (GxB_Type_new (&MyType, 0, "mytype", "typedef double mytype ;")) ;
+    info = GxB_Type_new (&MyType, 0, "mytype", "typedef double mytype ;") ;
+    if (info != GrB_SUCCESS || MyType->size != sizeof (double))
+    {
+        // cmake didn't work
+        OK (GrB_free (&MyType)) ;
+        OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
+        OK (GxB_Global_Option_set_INT32 (GxB_JIT_USE_CMAKE, false)) ;
+        OK (GxB_Type_new (&MyType, 0, "mytype", "typedef double mytype ;")) ;
+    }
     OK (GxB_Type_size (&mysize, MyType)) ;
     CHECK (mysize == sizeof (double)) ;
     OK (GrB_free (&MyType)) ;
@@ -270,7 +278,7 @@ void mexFunction
     OK (GxB_get (GxB_JIT_CACHE_PATH, &s)) ;
     printf ("new cache path: [%s]\n", s) ;
     CHECK (MATCH (s, "/tmp/grb_cache")) ;
-    printf ("\nhere cache path: [%s]\n", save_cache) ;
+    printf ("\nat %d cache path: [%s]\n", __LINE__, save_cache) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GxB_Global_Option_set_CHAR (999, "gunk")) ;
@@ -281,7 +289,6 @@ void mexFunction
     OK (GxB_Type_size (&mysize, MyType)) ;
     CHECK (mysize == sizeof (double)) ;
     OK (GrB_free (&MyType)) ;
-    printf ("\nhere cache path: [%s]\n", save_cache) ;
 
     OK (GxB_Type_new (&MyType, 0, "mytype", "typedef int32_t mytype ;")) ;
     OK (GxB_Type_size (&mysize, MyType)) ;
@@ -299,9 +306,22 @@ void mexFunction
     ERR (GxB_Type_new (&MyType, 0, NULL, "typedef int32_t mytype ;")) ;
     ERR (GxB_Type_new (&MyType, 0, "mytype", NULL)) ;
 
-    printf ("\nhere: %d\n", GB_jitifyer_get_control ( )) ;
+    printf ("\nhere %d control is now: %d\n", __LINE__,
+        GB_jitifyer_get_control ( )) ;
+
+    // invalid cache path
+    expected = GrB_INVALID_VALUE ;
+    ERR (GxB_Global_Option_set_CHAR (GxB_JIT_CACHE_PATH, "/root/noperm")) ;
+    OK (GxB_get (GxB_JIT_C_CONTROL, &control)) ;
+    CHECK (control == GxB_JIT_RUN) ;
+
+    printf ("\nhere %d control is now: %d\n", __LINE__,
+        GB_jitifyer_get_control ( )) ;
+
+    // restore cache path
     printf ("set back to default cache path: [%s]\n", save_cache) ;
     OK (GxB_Global_Option_set_CHAR (GxB_JIT_CACHE_PATH, save_cache)) ;
+    OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_CACHE_PATH, &s)) ;
     printf ("cache [%s]\n" , save_cache) ;
     printf ("s     [%s]\n" , s) ;

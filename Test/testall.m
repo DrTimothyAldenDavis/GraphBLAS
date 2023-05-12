@@ -96,11 +96,18 @@ malloc_debugging = stat ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
+logstat ('test268'    ,t, j4  , f1  ) ; % C<M>=Z sparse masker
+jall = {4,3,2,1,4,2} ;
+fall = {1,1,1,1,0,0} ;
+logstat ('test145'    ,t, jall, fall) ; % dot4 for C += A'*B
+
 hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
+
 logstat ('test240'    ,t, j4  , f1  ) ; % test dot4, saxpy4, and saxpy5
-logstat ('test240'    ,s, j4  , f1  ) ; % test dot4, saxpy4, and saxpy5 (one task)
-logstat ('test237'    ,t, j4040, f1100) ; % test GrB_mxm (saxpy4)
-logstat ('test237'    ,s, j4040, f1100) ; % test GrB_mxm (saxpy4)
+logstat ('test240'    ,s, j4  , f1  ) ; % test dot4, saxpy4, and saxpy5 (1 task)
+logstat ('test237'    ,t, j440, f100) ; % test GrB_mxm (saxpy4)
+logstat ('test237'    ,s, j40 , f10 ) ; % test GrB_mxm (saxpy4) (1 task)
+
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
 logstat ('test267'    ,t, j40 , f00 ) ; % JIT error handling
@@ -119,7 +126,7 @@ logstat ('test254'    ,t, j440, f100) ; %% mask types
 logstat ('test253'    ,t, j4  , f1  ) ; % basic JIT tests
 logstat ('test252'    ,t, j4  , f1  ) ; % basic tests
 logstat ('test251'    ,t, j404, f110) ; % dot4, dot2, with plus_pair
-logstat ('test250'    ,t, j44 , f10 ) ; % basic tests
+logstat ('test250'    ,t, j44 , f10 ) ; % JIT tests, set/get, other tests
 logstat ('test249'    ,t, j4  , f1  ) ; % GxB_Context object
 logstat ('test247'    ,t, j4  , f1  ) ; % GrB_mxm: fine Hash method
 logstat ('test246'    ,t, j4  , f1  ) ; % GrB_mxm parallelism (slice_balanced)
@@ -169,7 +176,7 @@ logstat ('test159'    ,t, j40 , f10 ) ; %% test A*B
 logstat ('test09'     ,t, j4  , f1  ) ; % duplicate I,J test of GB_mex_subassign
 logstat ('test132'    ,t, j4  , f1  ) ; % setElement
 logstat ('test141'    ,t, j404, f110) ; % eWiseAdd with dense matrices
-logstat ('testc2(1,1)',t, j404, f110) ; % complex tests (quick case, builtin)
+logstat ('testc2(1,1)',t, j44 , f10 ) ; % complex tests (quick case, builtin)
 logstat ('test214'    ,t, j4  , f1  ) ; % test C<M>=A'*B (tricount)
 logstat ('test213'    ,t, j4  , f1  ) ; % test iso assign (method 05d)
 logstat ('test206'    ,t, j44 , f10 ) ; % test iso select
@@ -257,7 +264,6 @@ logstat ('test216'    ,t, j4  , f1  ) ; % test C<A>=A, iso case
 logstat ('test142'    ,t, j4040, f1100) ; %% test GrB_assign with accum
 logstat ('test137'    ,s, j40 , f11 ) ; % GrB_eWiseMult, FIRST and SECOND
 logstat ('test139'    ,s, j4  , f1  ) ; % merge sort, special cases
-logstat ('test145'    ,t, j40 , f11 ) ; % dot4 for C += A'*B
 logstat ('test172'    ,t, j4  , f1  ) ; % test eWiseMult with M bitmap/full
 logstat ('test148'    ,t, j4  , f1  ) ; % ewise with alias
 

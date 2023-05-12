@@ -1,5 +1,5 @@
 function test250
-%TEST250 basic tests
+%TEST250 JIT tests, set/get, other tests
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

@@ -17,7 +17,7 @@
 
 GrB_Info GrB_finalize ( )
 { 
-    GB_jitifyer_finalize (true) ;
+    GB_jitifyer_finalize ( ) ;
     return (GrB_SUCCESS) ;
 }
 
