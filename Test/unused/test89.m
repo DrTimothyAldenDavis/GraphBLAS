@@ -65,13 +65,13 @@ for do_real = 0:1
         % method (Gustavson) which is selected by the auto-strategy.
 
         tic 
-        C2 = GB_mex_AxB (A, B, 0, 0, 1004) ;
+        C2 = GB_mex_AxB (A, B, 0, 0, 7084) ;
         tg = toc ;
         err = norm (C1-C2,1) ;
         fprintf ('GraphBLAS %g speedup %g (hash) err: %g\n', tg, tm/tg, err) ;
 
         tic
-        C2 = GB_mex_AxB (A, B, 0, 0, 1003) ;
+        C2 = GB_mex_AxB (A, B, 0, 0, 7083) ;
         tg = toc ;
         err = norm (C1-C2,1) ;
         fprintf ('GraphBLAS %g speedup %g (dot) err: %g\n', tg, tm/tg, err) ;

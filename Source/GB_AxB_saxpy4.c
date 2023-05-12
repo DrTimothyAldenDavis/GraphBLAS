@@ -204,6 +204,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
         }
         else if (z_has_no_atomic_update)
         { 
+GB_GOTCHA ;
             // The atomic fine tasks use the monoid's atomic update, which is
             // available for most factory kernels.  The TIMES monoid for the
             // complex types (FC32 and FC64) requires a critical section for
