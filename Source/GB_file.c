@@ -38,7 +38,7 @@
         #define GB_OPEN         _open
         #define GB_CLOSE        _close
         #define GB_FDOPEN       _fdopen
-        #define GB_MKDIR        _mkdir (path)
+        #define GB_MKDIR(path)  _mkdir (path)
         #define GB_READ_ONLY    (_O_RDONLY)
         #define GB_WRITE_ONLY   (_O_WRONLY | _O_CREAT | _O_APPEND)
         #define GB_READ_WRITE   (_O_RDWR   | _O_CREAT | _O_APPEND)
