@@ -90,7 +90,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     }
 
     int32_t name_len = op->name_len ;
-    int32_t actual_len = strlen (op->name) ;
+    int32_t actual_len = (int32_t) strlen (op->name) ;
     if (opcode == GB_USER_binop_code && name_len != actual_len)
     { 
         GBPR0 ("    BinaryOp has an invalid name_len\n") ;

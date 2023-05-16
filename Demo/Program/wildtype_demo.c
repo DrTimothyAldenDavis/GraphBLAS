@@ -112,18 +112,13 @@ void wildtype_print_matrix (GrB_Matrix A, char *name)
 
 void wildadd (wildtype *z, const wildtype *x, const wildtype *y)
 {
-//  printf ("\n adding:\n") ;
     for (int i = 0 ; i < 4 ; i++)
     {
         for (int j = 0 ; j < 4 ; j++)
         {
-//          printf ("   x(%d,%d) = %g\n", i,j, (x)->stuff [i][j]) ;
-//          printf ("   y(%d,%d) = %g\n", i,j, (y)->stuff [i][j]) ;
             z->stuff [i][j] = x->stuff [i][j] + y->stuff [i][j] ;
-//          printf ("   z(%d,%d) = %g\n", i,j, (z)->stuff [i][j]) ;
         }
     }
-    // strcpy (z->whatstuff, "this was added") ;
     const char *psrc = "this was added" ;
     char *pdst = z->whatstuff ;
     while ((*pdst++ = *psrc++)) ;
@@ -133,28 +128,6 @@ void wildadd (wildtype *z, const wildtype *x, const wildtype *y)
 // GxB_print output readable.  This example defines wildadd as either a
 // macro or as a function.
 
-#if 0
-// wildadd defined as a macro
-#define WILDADD_DEFN                                                        \
-"#define WILDADD(z,x,y)                                               \\\n" \
-"{                                                                    \\\n" \
-"    printf (\"\\n adding:\\n\") ; \\\n" \
-"   for (int i = 0 ; i < 4 ; i++)                                     \\\n" \
-"   {                                                                 \\\n" \
-"       for (int j = 0 ; j < 4 ; j++)                                 \\\n" \
-"       {                                                             \\\n" \
-"           printf (\"   x(%d,%d) = %g\\n\", i,j, (x).stuff [i][j]) ; \\\n" \
-"           printf (\"   y(%d,%d) = %g\\n\", i,j, (y).stuff [i][j]) ; \\\n" \
-"           (z).stuff [i][j] = (x).stuff [i][j] + (y).stuff [i][j] ;  \\\n" \
-"           printf (\"   z(%d,%d) = %g\\n\", i,j, (z).stuff [i][j]) ; \\\n" \
-"       }                                                             \\\n" \
-"   }                                                                 \\\n" \
-"   const char *psrc = \"this was added\" ;                           \\\n" \
-"   char *pdst = (z).whatstuff ;                                      \\\n" \
-"   while ((*pdst++ = *psrc++)) ;                                     \\\n" \
-"}"
-#else
-// wildadd defined as a function
 #define WILDADD_DEFN                                                        \
 "void wildadd (wildtype *z, const wildtype *x, const wildtype *y)       \n" \
 "{                                                                      \n" \
@@ -169,7 +142,6 @@ void wildadd (wildtype *z, const wildtype *x, const wildtype *y)
 "   char *pdst = z->whatstuff ;                                         \n" \
 "   while ((*pdst++ = *psrc++)) ;                                       \n" \
 "}"
-#endif
 
 //------------------------------------------------------------------------------
 // multiply two wildtypes "scalars"
@@ -188,7 +160,6 @@ void wildmult (wildtype *z, const wildtype *x, const wildtype *y)
             }
         }
     }
-    // strcpy (z->whatstuff, "this was multiplied") ;
     const char *psrc = "this was multiplied" ;
     char *pdst = z->whatstuff ;
     while ((*pdst++ = *psrc++)) ;
@@ -234,7 +205,7 @@ int main (void)
     GB_Global_hack_set (2, 1) ; // always use the GPU
     #endif
 
-    GxB_set (GxB_BURBLE, true) ;
+    GxB_Global_Option_set (GxB_BURBLE, true) ;
     int nthreads ;
     GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads) ;
     fprintf (stderr, "wildtype demo: nthreads %d\n", nthreads) ;
@@ -289,7 +260,7 @@ int main (void)
 
     // create the WildType
     GxB_Type_new (&WildType, sizeof (wildtype), "wildtype", WILDTYPE_DEFN) ;
-    GxB_print (WildType, 3) ;
+    GxB_Type_fprint (WildType, "WildType", GxB_COMPLETE, stdout) ;
 
     // get its properties
     size_t s ;
@@ -346,14 +317,14 @@ int main (void)
     GxB_BinaryOp_new (&WildAdd, 
         (GxB_binary_function) wildadd, WildType, WildType, WildType,
         "wildadd", WILDADD_DEFN) ;
-    GxB_print (WildAdd, 3) ;
+    GxB_BinaryOp_fprint (WildAdd, "WildAdd", GxB_COMPLETE, stdout) ;
 
     // create the WildMult operator
     GrB_BinaryOp WildMult ;
     GxB_BinaryOp_new (&WildMult, 
         (GxB_binary_function) wildmult, WildType, WildType, WildType,
         "wildmult", WILDMULT_DEFN) ;
-    GxB_print (WildMult, 3) ;
+    GxB_BinaryOp_fprint (WildMult, "WildMult", GxB_COMPLETE, stdout) ;
 
     // create a matrix B with B (7,2) = scalar2
     GrB_Matrix B ;
@@ -416,14 +387,14 @@ int main (void)
     printf ("\n------ C<M>=C*C'----------------------------------------\n") ;
     GrB_Matrix M ;
     GrB_Matrix_new (&M, GrB_BOOL, 10, 10) ;
-    GrB_Matrix_setElement (M, true, 2, 2) ;
-    GrB_Matrix_setElement (M, true, 2, 3) ;
-    GrB_Matrix_setElement (M, true, 3, 2) ;
-    GrB_Matrix_setElement (M, true, 3, 3) ;
+    GrB_Matrix_setElement_BOOL (M, true, 2, 2) ;
+    GrB_Matrix_setElement_BOOL (M, true, 2, 3) ;
+    GrB_Matrix_setElement_BOOL (M, true, 3, 2) ;
+    GrB_Matrix_setElement_BOOL (M, true, 3, 3) ;
     printf ("\nThe mask matrix M:\n") ;
-    GxB_print (M, 3) ;
+    GxB_Matrix_fprint (M, "M", GxB_COMPLETE, stdout) ;
 
-//  GxB_set (GxB_BURBLE, true) ;
+//  GxB_Global_Option_set (GxB_BURBLE, true) ;
     GrB_mxm (C, M, NULL, InTheWild, C, C, GrB_DESC_RST1) ;
     wildtype_print_matrix (C, "output C") ;
 
@@ -437,7 +408,7 @@ int main (void)
     memset (&sum, 0, sizeof (wildtype)) ;
     GrB_Matrix_reduce_UDT (&sum, NULL, WildAdder, C, NULL) ;
     wildtype_print (&sum, "sum (again)") ;
-//  GxB_set (GxB_BURBLE, false) ;
+//  GxB_Global_Option_set (GxB_BURBLE, false) ;
 
 //  for (int k = 0 ; k < 100 ; k++)
 //  {
@@ -474,33 +445,6 @@ int main (void)
         GrB_Matrix_error (&s, C) ;
         printf ("\nThis is supposed to fail, as a demo of GrB_error:\n%s\n", s);
     }
-
-#if 0
-    // try a large problem
-    GrB_Matrix_free (&C) ;
-    int64_t n = 100000 ;
-    int64_t nz = 10000000 ;
-    GrB_Matrix_new (&C, WildType, n, n) ;
-    for (int64_t k = 0 ; k < nz ; k++)
-    {
-        int64_t i = rand ( ) % n ;
-        int64_t j = rand ( ) % n ;
-        GrB_Matrix_setElement_UDT (C, &scalar1, i, j) ;
-    }
-    GrB_Matrix_setElement_UDT (C, &scalar2, 0, 0) ;
-    GrB_Matrix_wait (C, GrB_MATERIALIZE) ;
-    GxB_Matrix_fprint (C, "C (large problem)", GxB_SUMMARY, NULL) ;
-    // reduce C to a scalar using the WildAdder monoid
-    memset (&sum, 0, sizeof (wildtype)) ;
-    GxB_set (GxB_BURBLE, true) ;
-    GrB_Matrix_reduce_UDT (&sum, NULL, WildAdder, C, NULL) ;
-    wildtype_print (&sum, "sum (large problem, first time)") ;
-    // again, to test the JIT lookup
-    memset (&sum, 0, sizeof (wildtype)) ;
-    GrB_Matrix_reduce_UDT (&sum, NULL, WildAdder, C, NULL) ;
-    wildtype_print (&sum, "sum (large problem, again)") ;
-//  GxB_set (GxB_BURBLE, false) ;
-#endif
 
     // free everyting
     GrB_Matrix_free (&C) ;

@@ -32,6 +32,7 @@
 #define GB_B2TYPE void
 #define GB_DECLAREB(bkj)
 #define GB_GETB(bkj,Bx,pB,B_iso)
+#define GB_B_SIZE 0
 
 // C matrix
 #define GB_C_ISO 0

@@ -182,10 +182,10 @@ GrB_Info GB_select_generic_bitmap
 
 static inline void GB_select_iso
 (
-    void *Cx,                       // output iso value (same type as A)
+    GB_void *Cx,                    // output iso value (same type as A)
     const GB_Opcode opcode,         // selector opcode
-    const void *athunk,             // thunk scalar, of size asize
-    const void *Ax,                 // Ax [0] scalar, of size asize
+    const GB_void *athunk,          // thunk scalar, of size asize
+    const GB_void *Ax,              // Ax [0] scalar, of size asize
     const size_t asize
 )
 {

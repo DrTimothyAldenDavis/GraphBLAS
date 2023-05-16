@@ -35,6 +35,8 @@ else ( )
     set ( GB_OBJ_SUFFIX ".o" )
 endif ( )
 
+string ( REPLACE "\"" "\\\"" ${GB_C_FLAGS} GB_C_FLAGS )
+
 # construct the -I list for OpenMP
 if ( OPENMP_FOUND )
     set ( GB_OMP_INC_DIRS ${OpenMP_C_INCLUDE_DIRS} )

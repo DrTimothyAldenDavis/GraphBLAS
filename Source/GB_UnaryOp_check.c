@@ -62,7 +62,7 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
     }
 
     int32_t name_len = op->name_len ;
-    int32_t actual_len = strlen (op->name) ;
+    int32_t actual_len = (int32_t) strlen (op->name) ;
     if (opcode == GB_USER_unop_code && name_len != actual_len)
     { 
         GBPR0 ("    UnaryOp has an invalid name_len\n") ;

@@ -430,7 +430,8 @@ GrB_Info GB_jitifyer_init (void)
         #undef IS
         encoding->kcode = c ;
         encoding->code = scode ;
-        encoding->suffix_len = (suffix == NULL) ? 0 : strlen (suffix) ;
+        encoding->suffix_len = (suffix == NULL) ? 0 :
+            ((int32_t) strlen (suffix)) ;
 
         //----------------------------------------------------------------------
         // get the hash of this PreJIT kernel
@@ -2339,7 +2340,9 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
 //------------------------------------------------------------------------------
 
 // xxHash uses switch statements with no default case.
+#if GB_COMPILER_GCC
 #pragma GCC diagnostic ignored "-Wswitch-default"
+#endif
 
 #define XXH_INLINE_ALL
 #define XXH_NO_STREAM

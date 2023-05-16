@@ -38,7 +38,7 @@ int main (void)
     OK (GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads_max)) ;
     nthreads_max = MIN (nthreads_max, 256) ;
     printf ("context demo: nthreads_max %d\n", nthreads_max) ;
-    OK (GxB_print (GxB_CONTEXT_WORLD, 3)) ;
+    OK (GxB_Context_fprint (GxB_CONTEXT_WORLD, "World", GxB_COMPLETE, stdout)) ;
 
     // use only a power of 2 number of threads
     int nthreads = 1 ;

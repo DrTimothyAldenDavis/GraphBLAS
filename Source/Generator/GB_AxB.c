@@ -32,6 +32,7 @@ GB_btype
 GB_b2type
 GB_declareb
 GB_getb
+GB_bsize
 
 // C matrix
 GB_c_iso
