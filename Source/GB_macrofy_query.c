@@ -30,6 +30,7 @@ void GB_macrofy_query
 
     fprintf (fp, 
         "GB_JIT_QUERY_PROTO (GB_jit_query) ;\n"
+        "GB_GLOBAL\n"
         "GB_JIT_QUERY_PROTO (GB_jit_query)\n"
         "{\n"
         "    (*hash) = 0x%016" PRIx64 " ;\n"
