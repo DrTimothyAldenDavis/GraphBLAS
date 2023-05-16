@@ -195,6 +195,7 @@ int main (void)
     GrB_Info info ;
     TRY (GrB_init (GrB_NONBLOCKING)) ;
     TRY (GxB_Global_Option_set (GxB_BURBLE, true)) ;
+    TRY (GxB_Global_Option_set (GxB_JIT_USE_CMAKE, true)) ;
     printf ("Gauss demo.  Note that all transposes are array transposes,\n"
         "not matrix (conjugate) transposes.\n\n") ;
 
