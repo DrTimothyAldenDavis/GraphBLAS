@@ -310,7 +310,10 @@ void *GB_file_dlopen (char *library_name)
     #elif GB_WINDOWS
     {
         // open a Windows dll
-        return ((void *) LoadLibrary (library_name)) ;
+        printf ("load library: [%s]\n", library_name) ;
+        HINSTANCE hdll = LoadLibrary (library_name) ;
+        printf ("hdll %p\n", hdll) ;
+        return ((void *) hdll) ;
     }
     #else
     {
