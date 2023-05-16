@@ -2220,7 +2220,7 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
     if (fp == NULL) return ;
     fprintf (fp,
         "cmake_minimum_required ( VERSION 3.13 )\n"
-        "set ( CMAKE_LIBRARY_OUTPUT_DIRECTORY \"%s/lib/%02x\" )\n"
+        "set ( CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE \"%s/lib/%02x\" )\n"
         "project ( %s C )\n"
         "include_directories ( \"%s/src\"%s)\n"
         "add_compile_definitions ( GB_JIT_RUNTIME )\n",
