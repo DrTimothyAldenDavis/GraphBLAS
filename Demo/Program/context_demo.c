@@ -30,6 +30,9 @@
 
 int main (void)
 {
+#if defined ( _MSC_VER )
+    printf ("context_demo: requires OpenMP 4.0 (not supported on Windows)\n") ;
+#else
 
     // start GraphBLAS
     OK (GrB_init (GrB_NONBLOCKING)) ;
@@ -139,5 +142,6 @@ int main (void)
     free (J) ;
     free (X) ;
     OK (GrB_finalize ( )) ;
+#endif
 }
 
