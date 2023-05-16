@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 GB_JIT_KERNEL_USER_OP_PROTO (GB_jit_kernel) ;
+GB_GLOBAL
 GB_JIT_KERNEL_USER_OP_PROTO (GB_jit_kernel)
 {
     (*user_function) = ((void *) GB_USER_OP_FUNCTION) ;

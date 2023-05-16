@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 GB_JIT_KERNEL_USER_TYPE_PROTO (GB_jit_kernel) ;
+GB_GLOBAL
 GB_JIT_KERNEL_USER_TYPE_PROTO (GB_jit_kernel)
 {
     (*user_type_size) = sizeof (GB_USER_TYPE) ;
