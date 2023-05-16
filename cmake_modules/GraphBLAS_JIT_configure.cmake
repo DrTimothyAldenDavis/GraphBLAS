@@ -74,6 +74,7 @@ if ( NOT NJIT OR ENABLE_CUDA )
     message ( STATUS "JIT openmp inc: ${GB_OMP_INC}" )
     message ( STATUS "JIT openmp dirs ${GB_OMP_INC_DIRS}" )
     message ( STATUS "JIT libraries:  ${GB_C_LIBRARIES}" )
+    message ( STATUS "JIT cmake libs: ${GB_CMAKE_LIBRARIES}" )
 endif ( )
 
 # create the JIT cache directories
