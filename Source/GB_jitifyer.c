@@ -2258,12 +2258,14 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ;
 
+#if 0
     // remove the build folder and all its contents
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
         "cmake -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
         GB_jit_cache_path, kernel_name,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ;
+#endif
 
 #endif
 }
