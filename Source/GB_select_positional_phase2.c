@@ -45,7 +45,7 @@ GrB_Info GB_select_positional_phase2
     // phase1: positional operators and nonzombie iso selector
     //--------------------------------------------------------------------------
 
-    #define GB_A_TYPE void
+    #define GB_A_TYPE GB_void
     #include "GB_select_shared_definitions.h"
 
     if (A->iso)

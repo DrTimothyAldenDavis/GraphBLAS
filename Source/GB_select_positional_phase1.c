@@ -87,7 +87,7 @@ GrB_Info GB_select_positional_phase1
 
         case GB_NONZOMBIE_idxunop_code : 
             // keep A(i,j) if it's not a zombie
-            #define GB_A_TYPE void
+            #define GB_A_TYPE GB_void
             #define GB_TEST_VALUE_OF_ENTRY(keep,p) bool keep = (i >= 0)
             #include "GB_select_entry_phase1_template.c"
             break ;

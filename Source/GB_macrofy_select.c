@@ -60,7 +60,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
     xtype = (xcode == 0) ? NULL : op->xtype ;
     ytype = (ycode == 0) ? GrB_INT64 : op->ytype ;
     ztype = op->ztype ;
-    xtype_name = (xtype == NULL) ? "void" : xtype->name ;
+    xtype_name = (xtype == NULL) ? "GB_void" : xtype->name ;
     ytype_name = (ytype == NULL) ? "int64_t" : ytype->name ;
     ztype_name = ztype->name ;
     if (op->hash == 0)
