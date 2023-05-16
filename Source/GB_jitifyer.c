@@ -2222,7 +2222,7 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
         "cmake_minimum_required ( VERSION 3.13 )\n"
         "set ( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS true )\n"
         "set ( CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE \"%s/lib/%02x\" )\n"
-        "project ( %s C )\n"
+        "project ( %s LANGUAGES C )\n"
         "include_directories ( \"%s/src\"%s)\n"
         "add_compile_definitions ( GB_JIT_RUNTIME )\n",
         GB_jit_cache_path, bucket,  // library output dir: cache/lib/bucket
