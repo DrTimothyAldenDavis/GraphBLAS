@@ -2220,11 +2220,7 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
         "include_directories ( \"%s/src\"%s)\n"
         "add_compile_definitions ( GB_JIT_RUNTIME )\n"
         "set ( CMAKE_C_FLAGS \"%s\" )\n"
-        "add_library ( %s SHARED \"%s/c/%02x/%s.c\" )\n"
-        "target_link_libraries ( %s PUBLIC %s )\n"
-        "message ( STATUS \"compiler: ${CMAKE_C_COMPILER}\" )\n"
-        "message ( STATUS \"C flags : ${CMAKE_C_FLAGS}\" )\n"
-        "message ( STATUS \"C link  : ${CMAKE_SHARED_LINKER_FLAGS}\" )\n",
+        "add_library ( %s SHARED \"%s/c/%02x/%s.c\" )\n",
         GB_jit_cache_path, bucket,  // library output dir: cache/lib/bucket
         kernel_name,                // project name
         GB_jit_cache_path,          // include directories: cache/src
@@ -2232,8 +2228,17 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
         GB_jit_C_flags,             // C flags
         kernel_name,                // target name for add_library command
         GB_jit_cache_path, bucket, kernel_name, // source file for add_library
-        kernel_name,                // target name of the library
-        GB_jit_C_cmake_libs) ;      // libraries to link against
+        kernel_name) ;              // target name of the library
+    if (strlen (GB_jit_C_cmake_libs) > 0)
+    {
+        fprintf (fp,
+            "target_link_libraries ( %s PUBLIC %s )\n",
+            GB_jit_C_cmake_libs) ;      // libraries to link against
+    }
+    fprintf (fp,
+        "message ( STATUS \"compiler: ${CMAKE_C_COMPILER}\" )\n"
+        "message ( STATUS \"C flags : ${CMAKE_C_FLAGS}\" )\n"
+        "message ( STATUS \"C link  : ${CMAKE_SHARED_LINKER_FLAGS}\" )\n") ;
     fclose (fp) ;
 
     // generate the build system for this kernel
