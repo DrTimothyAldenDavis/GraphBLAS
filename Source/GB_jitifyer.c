@@ -2224,14 +2224,21 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
         "set ( CMAKE_LIBRARY_OUTPUT_DIRECTORY \"%s/lib/%02x\" )\n"
         "project ( %s C )\n"
         "include_directories ( \"%s/src\"%s)\n"
-        "add_compile_definitions ( GB_JIT_RUNTIME )\n"
-        "set ( CMAKE_C_FLAGS \"%s\" )\n"
-        "add_library ( %s SHARED \"%s/c/%02x/%s.c\" )\n",
+        "add_compile_definitions ( GB_JIT_RUNTIME )\n",
         GB_jit_cache_path, bucket,  // library output dir: cache/lib/bucket
         kernel_name,                // project name
         GB_jit_cache_path,          // include directories: cache/src
-        ((strlen (GB_OMP_INC_DIRS) == 0) ? " " : " \"" GB_OMP_INC_DIRS "\" "),
-        GB_jit_C_flags,             // C flags
+        ((strlen (GB_OMP_INC_DIRS) == 0) ? " " : " \"" GB_OMP_INC_DIRS "\" ")) ;
+    // print the C flags, but escape any double quote characters
+    fprintf (fp, "set ( CMAKE_C_FLAGS \"") ;
+    for (char *p = GB_jit_C_flags ; *p != '\0' ; p++)
+    {
+        if (*p == '"') fprintf (fp, "\\") ;
+        fprintf (fp, "%c", *p) ;
+    }
+    fprintf (fp, "\" )\n") ;
+    fprintf (fp,
+        "add_library ( %s SHARED \"%s/c/%02x/%s.c\" )\n",
         kernel_name,                // target name for add_library command
         GB_jit_cache_path, bucket, kernel_name) ; // source file for add_library
     if (strlen (GB_jit_C_cmake_libs) > 0)
