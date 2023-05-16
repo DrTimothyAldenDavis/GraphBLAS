@@ -2227,12 +2227,12 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
         ((strlen (GB_OMP_INC_DIRS) == 0) ? " " : " \"" GB_OMP_INC_DIRS "\" "),
         GB_jit_C_flags,             // C flags
         kernel_name,                // target name for add_library command
-        GB_jit_cache_path, bucket, kernel_name, // source file for add_library
-        kernel_name) ;              // target name of the library
+        GB_jit_cache_path, bucket, kernel_name) ; // source file for add_library
     if (strlen (GB_jit_C_cmake_libs) > 0)
     {
         fprintf (fp,
             "target_link_libraries ( %s PUBLIC %s )\n",
+            kernel_name,                // target name of the library
             GB_jit_C_cmake_libs) ;      // libraries to link against
     }
     fprintf (fp,

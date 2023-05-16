@@ -78,8 +78,11 @@ GrB_UnaryOp Complex_real = NULL, Complex_imag = NULL,
 
 GrB_UnaryOp Complex_complex_real = NULL, Complex_complex_imag = NULL ;
 
+GB_GLOBAL
 GrB_Type Complex = NULL ;
+GB_GLOBAL
 GrB_Monoid   Complex_plus_monoid = NULL, Complex_times_monoid = NULL ;
+GB_GLOBAL
 GrB_Semiring Complex_plus_times = NULL ;
 
 //------------------------------------------------------------------------------

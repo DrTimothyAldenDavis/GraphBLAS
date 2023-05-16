@@ -373,7 +373,7 @@ endif ( )
 
 # get the current library list, before linking with cuda and rmm
 get_target_property ( GB_CMAKE_LIBRARIES graphblas LINK_LIBRARIES )
-if ( ${GB_CMAKE_LIBRARIES} MATCHES "NOTFOUND" )
+if ( NOT GB_CMAKE_LIBRARIES )
     set ( GB_CMAKE_LIBRARIES "" )
 endif ( )
 
