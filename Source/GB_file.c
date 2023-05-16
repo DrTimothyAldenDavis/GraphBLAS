@@ -341,6 +341,7 @@ void *GB_file_dlsym (void *dl_handle, char *symbol)
         printf ("dl_handle %p\n", dl_handle) ;
         void *p = GetProcAddress (dl_handle, symbol) ;
         printf ("dl_func %p\n", p) ;
+        printf ("error %s\n", GetLastError ( )) ;
         return ((void *) p) ;
     }
     #else
