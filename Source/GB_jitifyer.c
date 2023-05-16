@@ -280,6 +280,12 @@ GrB_Info GB_jitifyer_init (void)
         GB_COPY_STUFF (GB_jit_cache_path, "") ;
     }
 
+    // replace backslash with forward slash
+    for (char *p = GB_jit_cache_path ; *p != '\0' ; p++)
+    {
+        if ((*p) == '\\') (*p) = '/' ; 
+    }
+
     //--------------------------------------------------------------------------
     // initialize the remaining strings
     //--------------------------------------------------------------------------
