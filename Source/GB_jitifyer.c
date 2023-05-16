@@ -2247,6 +2247,22 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
             kernel_name,                // target name of the library
             GB_jit_C_cmake_libs) ;      // libraries to link against
     }
+
+    fprintf (fp, 
+        "if ( WIN32 )\n"
+        "    target_compile_definitions ( %s PRIVATE GB_DLL_EXPORT )\n"
+        "endif ( )\n", kernel_name) ;
+
+    fprintf (fp, 
+        "set_target_properties ( %s PROPERTIES VERSION %d.%d.%d\n"
+        "    C_STANDARD 11\n"
+        "    C_STANDARD_REQUIRED ON\n"
+        "    WINDOWS_EXPORT_ALL_SYMBOLS ON )\n",
+        kernel_name,
+        GxB_IMPLEMENTATION_MAJOR,
+        GxB_IMPLEMENTATION_MINOR,
+        GxB_IMPLEMENTATION_SUB) ;
+
     fprintf (fp,
         "message ( STATUS \"compiler: ${CMAKE_C_COMPILER}\" )\n"
         "message ( STATUS \"C flags : ${CMAKE_C_FLAGS}\" )\n"
