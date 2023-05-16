@@ -192,6 +192,7 @@ void printgauss (GrB_Matrix A, char *name)
 int main (void)
 {
     // start GraphBLAS
+    GrB_Info info ;
     TRY (GrB_init (GrB_NONBLOCKING)) ;
     TRY (GxB_Global_Option_set (GxB_BURBLE, true)) ;
     printf ("Gauss demo.  Note that all transposes are array transposes,\n"
@@ -203,7 +204,7 @@ int main (void)
 //  try changing the cache path
 //  TRY (GxB_Global_Option_set (GxB_JIT_CACHE_PATH, "/home/faculty/d/davis/mycache")) ;
 
-    OK (GxB_Context_fprint (GxB_CONTEXT_WORLD, "World", GxB_COMPLETE, stdout)) ;
+    TRY (GxB_Context_fprint (GxB_CONTEXT_WORLD, "World", GxB_COMPLETE, stdout)) ;
     char *compiler, *cache, *flags, *link, *libraries, *preface ;
     TRY (GxB_Global_Option_get (GxB_JIT_C_COMPILER_NAME, &compiler)) ;
     TRY (GxB_Global_Option_get (GxB_JIT_C_COMPILER_FLAGS, &flags)) ;
@@ -235,7 +236,7 @@ int main (void)
     // its type defintion does not match this one.  The burble will say "jit:
     // loaded but must recompile" in this case.
     GrB_Type BadGauss = NULL ;
-    GrB_Info info = GxB_Type_new (&BadGauss, 0, "gauss", BAD_GAUSS_DEFN) ;
+    info = GxB_Type_new (&BadGauss, 0, "gauss", BAD_GAUSS_DEFN) ;
     if (info != GrB_SUCCESS)
     {
         // JIT disabled

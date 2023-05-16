@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-# GraphBLAS/GraphBLAS_JIT_paths.cmake:  configure the JIT paths
+# GraphBLAS/GraphBLAS_JIT_configure.cmake:  configure the JIT
 #-------------------------------------------------------------------------------
 
 # SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -35,7 +35,7 @@ else ( )
     set ( GB_OBJ_SUFFIX ".o" )
 endif ( )
 
-string ( REPLACE "\"" "\\\"" ${GB_C_FLAGS} GB_C_FLAGS )
+string ( REPLACE "\"" "\\\"" GB_C_FLAGS ${GB_C_FLAGS} )
 
 # construct the -I list for OpenMP
 if ( OPENMP_FOUND )
