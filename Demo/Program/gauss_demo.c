@@ -277,8 +277,6 @@ int main (void)
         OK (sizeof_gauss == sizeof (gauss)) ;
     }
 
-#if 0
-
     // create the BadAddGauss operator; use a NULL function pointer to test the
     // JIT.  Like the BadGauss type, this will always require a JIT
     // compilation, because the type will not match the good 'addgauss'
@@ -612,7 +610,6 @@ int main (void)
     GrB_Monoid_free (&AddMonoid) ;
     GrB_BinaryOp_free (&MultGauss) ;
     GrB_Semiring_free (&GaussSemiring) ;
-#endif
     GrB_finalize ( ) ;
 }
 
