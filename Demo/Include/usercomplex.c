@@ -1403,3 +1403,6 @@ GrB_Info Complex_finalize ( )
     return (GrB_SUCCESS) ;
 }
 
+#undef U
+#undef B
+
