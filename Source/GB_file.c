@@ -337,6 +337,7 @@ void *GB_file_dlsym (void *dl_handle, char *symbol)
     #elif GB_WINDOWS
     {
         // lookup a symbol in a Windows dll
+        setLastError (0) ;
         printf ("GetProcess of %s\n", symbol) ;     // FIXME
         printf ("dl_handle %p\n", dl_handle) ;      // FIXME
         void *p = GetProcAddress (dl_handle, symbol) ;
