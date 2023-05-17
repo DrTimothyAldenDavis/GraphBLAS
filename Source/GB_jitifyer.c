@@ -2202,7 +2202,6 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
     if (fp == NULL) return ;
     fprintf (fp,
         "cmake_minimum_required ( VERSION 3.13 )\n"
-//      "set ( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS true )\n"
         "project ( GBjit LANGUAGES C )\n"
         "include_directories ( \"%s/src\"%s)\n"
         "add_compile_definitions ( GB_JIT_RUNTIME )\n",
@@ -2229,17 +2228,12 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
     }
 
     fprintf (fp, 
-//      "if ( WIN32 )\n"
-//      "    target_compile_definitions ( %s PRIVATE GB_DLL_EXPORT )\n"
-//      "endif ( )\n"
         "set_target_properties ( %s PROPERTIES\n"
         "    C_STANDARD 11 C_STANDARD_REQUIRED ON )\n"
-//      "    WINDOWS_EXPORT_ALL_SYMBOLS ON )\n"
         "install ( TARGETS %s\n"
         "    LIBRARY DESTINATION \"%s/lib/%02x\"\n"
         "    ARCHIVE DESTINATION \"%s/lib/%02x\"\n"
         "    RUNTIME DESTINATION \"%s/lib/%02x\" )\n",
-//      kernel_name,
         kernel_name,
         kernel_name,
         GB_jit_cache_path, bucket,
@@ -2272,14 +2266,12 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ;
 
-#if 0
     // remove the build folder and all its contents
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
         "cmake -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
         GB_jit_cache_path, hash,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ;
-#endif
 
 #endif
 }
