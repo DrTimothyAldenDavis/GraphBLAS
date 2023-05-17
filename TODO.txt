@@ -1,7 +1,7 @@
 THIS IS A DRAFT.  The following features/revisions will appear in the stable
 v8.0.0 release:
 
-FIXME: release date, delete this file (TODO.txt), test on Windows
+FIXME: release date, delete this file (TODO.txt)
 
     exhaustive Tcov tests:
     with all 4 combinations of: (NJIT on/off) x (COMPACT on/off)

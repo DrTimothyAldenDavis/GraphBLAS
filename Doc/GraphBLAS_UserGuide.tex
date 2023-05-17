@@ -88,27 +88,6 @@ See Sections~\ref{context} and \ref{jit} for details.
 \end{abstract}
 
 \newpage
-\begin{warning}
-NOTE: this version:
-\input{GraphBLAS_version.tex}
-is a DRAFT.  The following features/revisions will appear in the stable
-v8.0.0 release:
-\end{warning}
-
-\begin{itemize}
-
-    \item NOTE: if you have JIT kernels in your
-        \verb'~/.SuiteSparse/GrB8.0.0' folder, delete the entire folder.
-        Normally, a new version of GraphBLAS will create a new folder and
-        ignore the old one, but this draft is still numbered 8.0.0.  Its
-        kernels are incompatible with the earlier DRAFT* versions of 8.0.0,
-        however.
-
-    \item {\bf Windows:} The JIT needs to be tested to Windows.
-
-\end{itemize}
-
-\newpage
 {\small
 \tableofcontents
 }
@@ -16017,8 +15996,10 @@ SuiteSparse:GraphBLAS.
 
 \item AVX acceleration is not enabled.
 
-\item The ninja code generator does not work with MS Visual Studio to
-build GraphBLAS, because of a limitation in cmake.
+\item You must compile with 64-bit computing enabled (x64).  Otherwise, a
+compiler error will occur (\verb'InterlockedExchange64', \verb'InterlockdOr64'
+and other methods will not be found).
+
 \end{itemize}
 
 If you use a recent \verb'gcc' or \verb'icx' compiler on Windows other than the
@@ -16044,6 +16025,9 @@ Visual Studio 2019, but may work for earlier versions.
     \begin{verbatim}
     cmake ..  \end{verbatim} }
     \vspace{-0.1in}
+
+    Alternatively, use the \verb'cmake' gui program to configure
+    the cmake build system for GraphBLAS.
 
 \item The \verb'cmake' command generates many files in
     \verb'SuiteSparse/GraphBLAS/build', and the file \verb'graphblas.sln' in

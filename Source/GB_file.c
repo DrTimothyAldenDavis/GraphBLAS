@@ -310,9 +310,7 @@ void *GB_file_dlopen (char *library_name)
     #elif GB_WINDOWS
     {
         // open a Windows dll
-        printf ("load library: [%s]\n", library_name) ;     // FIXME
         HINSTANCE hdll = LoadLibrary (library_name) ;
-        printf ("hdll %p\n", hdll) ;        // FIXME
         return ((void *) hdll) ;
     }
     #else
@@ -337,12 +335,7 @@ void *GB_file_dlsym (void *dl_handle, char *symbol)
     #elif GB_WINDOWS
     {
         // lookup a symbol in a Windows dll
-        SetLastError (0) ;
-        printf ("GetProcess of %s\n", symbol) ;     // FIXME
-        printf ("dl_handle %p\n", dl_handle) ;      // FIXME
-        void *p = GetProcAddress (dl_handle, symbol) ;
-        printf ("dl_func %p\n", p) ;        // FIXME
-        printf ("error %d\n", GetLastError ( )) ;       // FIXME
+        void *p = (void *) GetProcAddress (dl_handle, symbol) ;
         return ((void *) p) ;
     }
     #else
