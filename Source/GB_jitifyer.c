@@ -2258,7 +2258,7 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
 
     // compile the library for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        "cmake --build \"" GB_BLD_DIR "\" %s %s %s --config Release",
+        "cmake --build \"" GB_BLD_DIR "\" --config Release %s %s %s",
         // can add "--verbose" here too
         GB_jit_cache_path, kernel_name,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
