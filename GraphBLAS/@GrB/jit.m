@@ -24,8 +24,8 @@ function [s,path] = jit (s,path)
 %
 % A second input/output parameter gives the path to a cache folder where
 % GraphBLAS keeps the kernels it compiles for the user.  By default, this
-% is ~/.SuiteSparse/GraphBLAS/8.0.0 for GraphBLAS v8.0.0, with a new
-% cache path used for each future @GrB version.
+% is ~/.SuiteSparse/GrB8.0.0 for GraphBLAS v8.0.0, with a new cache path
+% used % for each future @GrB version.
 %
 % On Apple Silicon, the MATLAB JIT kernels are compiled as x86 binaries,
 % but the pure C installation may compile native Arm64 binaries.  Do not

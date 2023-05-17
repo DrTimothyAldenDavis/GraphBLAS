@@ -20,10 +20,10 @@ if ( DEFINED ENV{GRAPHBLAS_CACHE_PATH} )
     set ( GRAPHBLAS_CACHE_PATH "$ENV{GRAPHBLAS_CACHE_PATH}" )
 elseif ( DEFINED ENV{HOME} )
     # use the current HOME environment variable from cmake (for Linux, Unix, Mac)
-    set ( GRAPHBLAS_CACHE_PATH "$ENV{HOME}/.SuiteSparse/GraphBLAS/${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" )
+    set ( GRAPHBLAS_CACHE_PATH "$ENV{HOME}/.SuiteSparse/GrB${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" )
 elseif ( WIN32 )
     # use LOCALAPPDATA for Windows
-    set ( GRAPHBLAS_CACHE_PATH "$ENV{LOCALAPPDATA}/SuiteSparse/GraphBLAS/${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" )
+    set ( GRAPHBLAS_CACHE_PATH "$ENV{LOCALAPPDATA}/SuiteSparse/GrB${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" )
 else ( )
     # otherwise the cache path must be set at run time by GB_jitifyer_init
     set ( GRAPHBLAS_CACHE_PATH "" )

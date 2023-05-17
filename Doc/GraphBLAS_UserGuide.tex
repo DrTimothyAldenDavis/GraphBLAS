@@ -98,7 +98,7 @@ v8.0.0 release:
 \begin{itemize}
 
     \item NOTE: if you have JIT kernels in your
-        \verb'~/.SuiteSparse/GraphBLAS/8.0.0' folder, delete the entire folder.
+        \verb'~/.SuiteSparse/GrB8.0.0' folder, delete the entire folder.
         Normally, a new version of GraphBLAS will create a new folder and
         ignore the old one, but this draft is still numbered 8.0.0.  Its
         kernels are incompatible with the earlier DRAFT* versions of 8.0.0,
@@ -8670,7 +8670,7 @@ Corey Nolet, with NVIDIA.
 When GraphBLAS is compiled, the \verb'cmake' build system creates a {\em cache}
 folder where it will keep any kernels created and compiled by the JIT
 (both source code and compiled libraries for each kernel).  The
-default folder is \verb'~/.SuiteSparse/GraphBLAS/8.0.0' for SuiteSparse:
+default folder is \verb'~/.SuiteSparse/GrB8.0.0' for SuiteSparse:
 GraphBLAS version v8.0.0, where the tilde refers to the user's home directory.
 The version numbers in the folder name are set automatically, so that a new
 version will ignore kernels compiled by an older version of GraphBLAS.  If the
@@ -8931,9 +8931,9 @@ The string may be \verb'NULL', which means the same as an empty string.
 
 The \verb'GxB_JIT_CACHE_PATH' string is the full path to the user's cache
 folder (described above).  The default on Linux/Mac is
-\verb'~/.SuiteSparse/GraphBLAS/8.0.0' for GraphBLAS version 8.0.0.  On Windows,
+\verb'~/.SuiteSparse/GrB8.0.0' for GraphBLAS version 8.0.0.  On Windows,
 the cache folder is created inside the user's \verb'LOCALAPPDATA' folder,
-called \verb'SuiteSparse/GraphBLAS/8.0.0'.  When GraphBLAS starts,
+called \verb'SuiteSparse/GrB8.0.0'.  When GraphBLAS starts,
 \verb'GrB_init' checks if the \verb'GRAPHBLAS_CACHE_PATH' environment variable
 exists, and initializes the cache path with that value instead of using the
 default.
@@ -8984,7 +8984,7 @@ as RedisGraph.
 \label{prejit}
 
 When GraphBLAS runs, it constructs JIT kernels in the user's cache folder,
-which by default is \verb'~/.SuiteSparse/GraphBLAS/8.0.0' for v8.0.0.  The
+which by default is \verb'~/.SuiteSparse/GrB8.0.0' for v8.0.0.  The
 kernels placed in a subfolder (\verb'c') and inside that folder they are
 further subdivided arbitrarily into subfolders (via an arbitary hash).  The
 files are split into subfolders because a single folder may grow too large for
@@ -9002,7 +9002,7 @@ one time created at run-time by the GraphBLAS JIT, but are now compiled into
 GraphBLAS before it runs.
 
 {\bf It's that simple.}  Just copy the source files for any kernels you want
-from your cache folder (typically \verb'~/.SuiteSparse/GraphBLAS/8.0.0/c') into
+from your cache folder (typically \verb'~/.SuiteSparse/GrB8.0.0/c') into
 \verb'GraphBLAS/PreJIT', and recompile GraphBLAS.  There's no need to change
 any other cmake setting, and no need to do anything different in any
 applications that use GraphBLAS.  Do not copy the compiled libraries; they are

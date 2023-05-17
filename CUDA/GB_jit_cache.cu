@@ -39,7 +39,7 @@ namespace jit {
             std::string Major_ver = GB_XSTR (GxB_IMPLEMENTATION_MAJOR) ;
             std::string Minor_ver = GB_XSTR (GxB_IMPLEMENTATION_MINOR) ;
             std::string Imple_sub = GB_XSTR (GxB_IMPLEMENTATION_SUB) ;
-            return std::string(home_dir) + "/.SuiteSparse/GraphBLAS/"
+            return std::string(home_dir) + "/.SuiteSparse/GrB"
                    + Major_ver+"."+Minor_ver+"."+Imple_sub;
         } else {
             return std::string();

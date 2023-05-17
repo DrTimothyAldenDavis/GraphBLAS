@@ -262,7 +262,7 @@ GrB_Info GB_jitifyer_init (void)
             size_t len = strlen (home) + 60 ;
             GB_MALLOC_STUFF (GB_jit_cache_path, len) ;
             snprintf (GB_jit_cache_path, GB_jit_cache_path_allocated,
-                "%s/%sSuiteSparse/GraphBLAS/%d.%d.%d", home, dot,
+                "%s/%sSuiteSparse/GrB%d.%d.%d", home, dot,
                 GxB_IMPLEMENTATION_MAJOR,
                 GxB_IMPLEMENTATION_MINOR,
                 GxB_IMPLEMENTATION_SUB) ;
@@ -2202,10 +2202,9 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
     fprintf (fp,
         "cmake_minimum_required ( VERSION 3.13 )\n"
 //      "set ( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS true )\n"
-        "project ( %s LANGUAGES C )\n"
+        "project ( GBjit LANGUAGES C )\n"
         "include_directories ( \"%s/src\"%s)\n"
         "add_compile_definitions ( GB_JIT_RUNTIME )\n",
-        kernel_name,                // project name
         GB_jit_cache_path,          // include directories: cache/src
         ((strlen (GB_OMP_INC_DIRS) == 0) ? " " : " \"" GB_OMP_INC_DIRS "\" ")) ;
     // print the C flags, but escape any double quote characters

@@ -1,7 +1,7 @@
 GraphBLAS/PreJIT:  This folder is empty in the GraphBLAS distribution.
 
 JIT kernel source files created by GraphBLAS may be placed in this folder by
-the end user, by copying them from your ~/.SuiteSparse/GraphBLAS/*.*.* folder.
+the end user, by copying them from your ~/.SuiteSparse/GrB*.*.* folder.
 If GraphBLAS is then recompiled via cmake, the build system will compile all of
 these kernels and make them available as 'pre-compiled JIT kernels'.  The
 kernels are no longer JIT kernels since they are not compiled at run-time, but
@@ -19,7 +19,7 @@ If the type and/or operators are changed, then the *gauss*.c files in this
 folder should be deleted, so that the JIT can recompile them with the new
 definition.  Otherwise, GraphBLAS will detect that the definitions do not
 match, and it will not use the related kernels in this file.  Instead, it will
-compile new ones in your ~/.SuiteSparse/GraphBLAS/*.*.* folder.  GraphBLAS will
+compile new ones in your ~/.SuiteSparse/GrB*.*.* folder.  GraphBLAS will
 work with stale functions in this folder.  It will compile them and include
 them in libgraphblas.so, but not use them at all.  So deleting them will reduce
 the size of the compiled libgraphblas.so library.
