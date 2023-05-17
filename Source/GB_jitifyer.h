@@ -324,7 +324,7 @@ bool GB_jitifyer_query
     GrB_Type type3
 ) ;
 
-void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket) ;
+void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash) ;
 void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket) ;
 
 GrB_Info GB_jitifyer_init (void) ;  // initialize the JIT

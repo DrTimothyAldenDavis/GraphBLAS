@@ -544,8 +544,8 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
     snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/src", GB_jit_cache_path) ;
     ok = ok && GB_file_mkdir (GB_jit_temp) ;
 
-    // construct the temp path
-    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/temp", GB_jit_cache_path);
+    // construct the tmp path
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/tmp", GB_jit_cache_path);
     ok = ok && GB_file_mkdir (GB_jit_temp) ;
 
     //--------------------------------------------------------------------------
@@ -1662,8 +1662,8 @@ GrB_Info GB_jitifyer_worker
     //--------------------------------------------------------------------------
 
     uint32_t bucket = hash & 0xFF ;
-    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lock/%02x/%s_lock",
-        GB_jit_cache_path, bucket, kernel_name) ;
+    snprintf (GB_jit_temp, GB_jit_temp_allocated,
+        "%s/lock/%02x/%016" PRIx64 "_lock", GB_jit_cache_path, bucket, hash) ;
     FILE *fp_klock = NULL ;
     int fd_klock = -1 ;
     if (GB_file_open_and_lock (GB_jit_temp, &fp_klock, &fd_klock) < 0)
@@ -1814,7 +1814,7 @@ GrB_Info GB_jitifyer_load_worker
         if (GB_jit_use_cmake)
         { 
             // use cmake to compile the kernel
-            GB_jitifyer_cmake_compile (kernel_name, bucket) ;
+            GB_jitifyer_cmake_compile (kernel_name, hash) ;
         }
         else
         { 
@@ -2172,12 +2172,13 @@ static void GB_jitifyer_command (char *command)
 
 // This method works on any platform.  For Windows, this method is always used.
 
-#define GB_BLD_DIR "%s/temp/%s"
+#define GB_BLD_DIR "%s/tmp/%016" PRIx64
 
-void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
+void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
 { 
 #ifndef NJIT
 
+    uint32_t bucket = hash & 0xFF ;
     GBURBLE ("(jit: %s)\n", "cmake") ;
     char *burble_stdout = GB_Global_burble_get ( ) ? "" : GB_DEV_NULL ;
     char *err_redirect = (strlen (GB_jit_error_log) > 0) ? " 2>> " : "" ;
@@ -2185,18 +2186,18 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
     // remove any prior build folder for this kernel, and all its contents
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
         "cmake -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
-        GB_jit_cache_path, kernel_name,     // build path
+        GB_jit_cache_path, hash,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ;
 
     // create the build folder for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated, GB_BLD_DIR,
-        GB_jit_cache_path, kernel_name) ;
+        GB_jit_cache_path, hash) ;
     if (!GB_file_mkdir (GB_jit_temp)) return ;
 
     // create the CMakeLists.txt file in the build folder for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated, GB_BLD_DIR "/CMakeLists.txt",
-        GB_jit_cache_path, kernel_name) ;
+        GB_jit_cache_path, hash) ;
     FILE *fp = fopen (GB_jit_temp, "w") ;
     if (fp == NULL) return ;
     fprintf (fp,
@@ -2250,8 +2251,8 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
         "cmake -S \"" GB_BLD_DIR "\" -B \"" GB_BLD_DIR "\""
         " -DCMAKE_C_COMPILER=\"%s\" %s %s %s",
-        GB_jit_cache_path, kernel_name,     // -S source path
-        GB_jit_cache_path, kernel_name,     // -B build path
+        GB_jit_cache_path, hash,     // -S source path
+        GB_jit_cache_path, hash,     // -B build path
         GB_jit_C_compiler,                  // C compiler to use
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ;
@@ -2260,14 +2261,14 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
         "cmake --build \"" GB_BLD_DIR "\" --config Release %s %s %s",
         // can add "--verbose" here too
-        GB_jit_cache_path, kernel_name,     // build path
+        GB_jit_cache_path, hash,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ;
 
     // install the library
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
         "cmake --install \"" GB_BLD_DIR "\" %s %s %s",
-        GB_jit_cache_path, kernel_name,     // build path
+        GB_jit_cache_path, hash,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ;
 
@@ -2275,7 +2276,7 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
     // remove the build folder and all its contents
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
         "cmake -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
-        GB_jit_cache_path, kernel_name,     // build path
+        GB_jit_cache_path, hash,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ;
 #endif
