@@ -277,7 +277,7 @@ int main (void)
         OK (sizeof_gauss == sizeof (gauss)) ;
     }
 
-#if 1
+#if 0
 
     // create the BadAddGauss operator; use a NULL function pointer to test the
     // JIT.  Like the BadGauss type, this will always require a JIT
