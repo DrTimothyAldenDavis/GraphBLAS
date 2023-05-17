@@ -140,6 +140,7 @@ void ijgauss (int64_t *z, const gauss *x, GrB_Index i, GrB_Index j,
 // not recommended for large matrices.  However, it looks nice for this demo
 // since the matrix is small.
 
+#undef  OK
 #define OK(x)                   \
 {                               \
     if (!(x))                   \
@@ -150,6 +151,7 @@ void ijgauss (int64_t *z, const gauss *x, GrB_Index i, GrB_Index j,
     }                           \
 }
 
+#undef  TRY
 #define TRY(method)             \
 {                               \
     GrB_Info info = method ;    \
@@ -271,10 +273,12 @@ int main (void)
         }
         TRY (GxB_Type_fprint (Gauss, "Gauss", GxB_COMPLETE, stdout)) ;
         TRY (GxB_Type_size (&sizeof_gauss, Gauss)) ;
+//      printf ("sizeof_gauss  %lu %lu\n", sizeof_gauss, sizeof (gauss)) ;
         OK (sizeof_gauss == sizeof (gauss)) ;
     }
 
-#if 0
+#if 1
+
     // create the BadAddGauss operator; use a NULL function pointer to test the
     // JIT.  Like the BadGauss type, this will always require a JIT
     // compilation, because the type will not match the good 'addgauss'
@@ -289,7 +293,8 @@ int main (void)
         TRY (GrB_BinaryOp_new (&BadAddGauss, (void *) badaddgauss,
             Gauss, Gauss, Gauss)) ;
     }
-    TRY (GxB_BinaryOp_fprint (BadAddGauss, "BadAddGauss", GxB_COMPLETE, stdout)) ;
+    TRY (GxB_BinaryOp_fprint (BadAddGauss, "BadAddGauss", GxB_COMPLETE,
+        stdout)) ;
     GrB_BinaryOp_free (&BadAddGauss) ;
 
     // create the AddGauss operator; use a NULL function pointer to test the
@@ -336,7 +341,8 @@ int main (void)
     // create the GaussSemiring
     GrB_Semiring GaussSemiring ;
     TRY (GrB_Semiring_new (&GaussSemiring, AddMonoid, MultGauss)) ;
-    TRY (GxB_Semiring_fprint (GaussSemiring, "GaussSemiring", GxB_COMPLETE, stdout)) ;
+    TRY (GxB_Semiring_fprint (GaussSemiring, "GaussSemiring", GxB_COMPLETE,
+        stdout)) ;
 
     // create a 4-by-4 Gauss matrix, each entry A(i,j) = (i+1,2-j),
     // except A(0,0) is missing
@@ -426,19 +432,23 @@ int main (void)
     printgauss (C, "\n=============== Gauss C += A*B:\n") ;
 
     // C = ciso+A
-    TRY (GrB_Matrix_apply_BinaryOp1st_UDT (C, NULL, NULL, AddGauss, (void *) &ciso, A, NULL)) ;
+    TRY (GrB_Matrix_apply_BinaryOp1st_UDT (C, NULL, NULL, AddGauss,
+        (void *) &ciso, A, NULL)) ;
     printgauss (C, "\n=============== Gauss C = (1,-2) + A:\n") ;
 
     // C = A*ciso
-    TRY (GrB_Matrix_apply_BinaryOp2nd_UDT (C, NULL, NULL, MultGauss, A, (void *) &ciso, NULL)) ;
+    TRY (GrB_Matrix_apply_BinaryOp2nd_UDT (C, NULL, NULL, MultGauss, A,
+        (void *) &ciso, NULL)) ;
     printgauss (C, "\n=============== Gauss C = A*(1,-2):\n") ;
 
     // C = A'*ciso
-    TRY (GrB_Matrix_apply_BinaryOp2nd_UDT (C, NULL, NULL, MultGauss, A, (void *) &ciso, GrB_DESC_T0)) ;
+    TRY (GrB_Matrix_apply_BinaryOp2nd_UDT (C, NULL, NULL, MultGauss, A,
+        (void *) &ciso, GrB_DESC_T0)) ;
     printgauss (C, "\n=============== Gauss C = A'*(1,-2):\n") ;
 
     // C = ciso*A'
-    TRY (GrB_Matrix_apply_BinaryOp1st_UDT (C, NULL, NULL, MultGauss, (void *) &ciso, A, GrB_DESC_T1)) ;
+    TRY (GrB_Matrix_apply_BinaryOp1st_UDT (C, NULL, NULL, MultGauss,
+        (void *) &ciso, A, GrB_DESC_T1)) ;
     printgauss (C, "\n=============== Gauss C = (1,-2)*A':\n") ;
 
     // create the RealGauss unary op
@@ -507,7 +517,8 @@ int main (void)
         for (int k = 0 ; k < 4 ; k++)
         {
             printgauss (CTiles [k], "\n=============== C Tile from Z:\n") ;
-            TRY (GxB_Matrix_fprint (CTiles [k], "CTiles [k]", GxB_COMPLETE, stdout)) ;
+            TRY (GxB_Matrix_fprint (CTiles [k], "CTiles [k]", GxB_COMPLETE,
+                stdout)) ;
             GrB_Matrix_free (& (CTiles [k])) ;
         }
 
@@ -533,7 +544,8 @@ int main (void)
     for (int k = 0 ; k < 4 ; k++)
     {
         printgauss (STiles [k], "\n=============== S Tile from C:\n") ;
-        TRY (GxB_Matrix_fprint (STiles [k], "STiles [k]", GxB_COMPLETE, stdout)) ;
+        TRY (GxB_Matrix_fprint (STiles [k], "STiles [k]", GxB_COMPLETE,
+            stdout)) ;
         GrB_Matrix_free (& (STiles [k])) ;
     }
 

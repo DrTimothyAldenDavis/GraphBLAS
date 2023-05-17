@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/Demo/Source/get_matrix.c: get matrix from file, or create random
+// GraphBLAS/Demo/Include/get_matrix.c: get matrix from file, or create random
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -12,6 +12,7 @@
 
 #include "GraphBLAS.h"
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
     GrB_Matrix_free (&A) ;          \
     GrB_Descriptor_free (&desc) ;   \

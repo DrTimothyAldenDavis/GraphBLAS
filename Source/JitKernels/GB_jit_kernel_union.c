@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-GB_JIT_KERNEL_UNION_PROTO (GB_jit_kernel) ;
-GB_JIT_KERNEL_UNION_PROTO (GB_jit_kernel)
+GB_JIT_GLOBAL GB_JIT_KERNEL_UNION_PROTO (GB_jit_kernel) ;
+GB_JIT_GLOBAL GB_JIT_KERNEL_UNION_PROTO (GB_jit_kernel)
 {
     #define GB_IS_EWISEUNION 1
     GB_X_TYPE alpha_scalar = (*((GB_X_TYPE *) alpha_scalar_in)) ;

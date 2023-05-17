@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/Demo/Source/usercomplex.c:  complex numbers as a user-defined type
+// GraphBLAS/Demo/Include/usercomplex.c:  complex numbers as a user-defined type
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.

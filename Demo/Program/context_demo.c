@@ -9,6 +9,7 @@
 
 #include "GraphBLAS.h"
 #include "simple_rand.h"
+#include "simple_rand.c"
 #define MIN(x,y) ((x) < (y)) ? (x) : (y)
 #define MAX(x,y) ((x) > (y)) ? (x) : (y)
 #ifdef _OPENMP
@@ -18,6 +19,7 @@
 #define TIMER 0
 #endif
 
+#undef  OK
 #define OK(method)                                                      \
 {                                                                       \
     GrB_Info info = (method) ;                                          \

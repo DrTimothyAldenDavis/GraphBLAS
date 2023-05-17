@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-GB_JIT_KERNEL_ADD_PROTO (GB_jit_kernel) ;
-GB_JIT_KERNEL_ADD_PROTO (GB_jit_kernel)
+GB_JIT_GLOBAL GB_JIT_KERNEL_ADD_PROTO (GB_jit_kernel) ;
+GB_JIT_GLOBAL GB_JIT_KERNEL_ADD_PROTO (GB_jit_kernel)
 {
     #define GB_IS_EWISEUNION 0
     #include "GB_add_template.c"

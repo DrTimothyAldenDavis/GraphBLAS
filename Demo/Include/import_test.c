@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SuiteSparse/GraphBLAS/Demo/Source/import_test: test import/export
+// SuiteSparse/GraphBLAS/Demo/Include/import_test: test import/export
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -14,6 +14,7 @@
 #pragma warning (disable: 556)
 #endif
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
 {                                   \
     GrB_Matrix_free (C_handle) ;    \

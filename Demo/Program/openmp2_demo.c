@@ -29,6 +29,7 @@
 #define NTRIALS 1000
 #define N 6
 
+#undef  OK
 #define OK(method)                                                  \
 {                                                                   \
     GrB_Info info = method ;                                        \

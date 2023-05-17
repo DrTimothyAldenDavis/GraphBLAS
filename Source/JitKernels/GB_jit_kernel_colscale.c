@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-GB_JIT_KERNEL_COLSCALE_PROTO (GB_jit_kernel) ;
-GB_JIT_KERNEL_COLSCALE_PROTO (GB_jit_kernel)
+GB_JIT_GLOBAL GB_JIT_KERNEL_COLSCALE_PROTO (GB_jit_kernel) ;
+GB_JIT_GLOBAL GB_JIT_KERNEL_COLSCALE_PROTO (GB_jit_kernel)
 {
     #include "GB_colscale_template.c"
     return (GrB_SUCCESS) ;

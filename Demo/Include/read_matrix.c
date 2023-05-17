@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/Demo/Source/read_matrix.c: read a matrix from stdin
+// GraphBLAS/Demo/Include/read_matrix.c: read a matrix from stdin
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -18,6 +18,7 @@
 #include "GraphBLAS.h"
 
 // free all workspace; this used by the OK(...) macro if an error occurs
+#undef  FREE_ALL
 #define FREE_ALL                    \
     if (I  != NULL) free (I) ;      \
     if (J  != NULL) free (J) ;      \

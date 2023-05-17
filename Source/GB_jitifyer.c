@@ -682,7 +682,6 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     // free workspace
     //--------------------------------------------------------------------------
 
-    // GB_Global_persistent_free ((void **) &dst) ;
     GB_FREE_PERSISTENT (dst) ;
 
     //--------------------------------------------------------------------------
@@ -1743,42 +1742,18 @@ GrB_Info GB_jitifyer_load_worker
         // library is loaded but make sure the defn match
         GB_jit_query_func dl_query = (GB_jit_query_func)
             GB_file_dlsym (dl_handle, "GB_jit_query") ;
-
-        bool ok = true ;
-        if (dl_query == NULL)
-        {
-            // JIT error: library is missing the GB_jit_query method
-            ok = false ;
-            GBURBLE ("(jit: library corrupted; jit disabled) ") ;
-            GB_jit_control = GxB_JIT_RUN ;
-            return (GrB_NO_VALUE) ;
-        }
-
+        bool ok = (dl_query != NULL) ;
         if (ok)
         { 
             ok = GB_jitifyer_query (dl_query, hash, semiring, monoid, op,
                 type1, type2, type3) ;
         }
-
         if (!ok)
         { 
             // library is loaded but needs to change, so close it
-            GB_file_dlclose (dl_handle) ;
-            dl_handle = NULL ;
-            if (GB_jit_control == GxB_JIT_LOAD)
-            { 
-                // If the JIT control is set to GxB_JIT_LOAD, new kernels
-                // cannot be compiled.  This kernel has just been loaded but it
-                // has stale definition.  Loading it again will result in the
-                // same issue, but will take a lot of time if the kernel is
-                // loaded again and again, since no new kernels can be
-                // compiled.  Set the JIT control to GxB_JIT_RUN to avoid this
-                // performance issue.
-                GB_jit_control = GxB_JIT_RUN ;
-                GBURBLE ("(jit: must recompile but not permited to;"
-                    " jit load disabled) ") ;
-                return (GrB_NO_VALUE) ;
-            }
+            GB_file_dlclose (dl_handle) ; dl_handle = NULL ;
+            // remove the library itself so it doesn't cause the error again
+            remove (GB_jit_temp) ;
             GBURBLE ("(jit: loaded but must recompile) ") ;
         }
     }
@@ -1830,23 +1805,27 @@ GrB_Info GB_jitifyer_load_worker
             GB_macrofy_query (fp, builtin, monoid, op1, op2, type1, type2,
                 type3, hash) ;
             fclose (fp) ;
-            // compile the kernel to get the lib*.so file
-            if (GB_jit_use_cmake)
-            { 
-                // use cmake to compile the kernel
-                GB_jitifyer_cmake_compile (kernel_name, bucket) ;
-            }
-            else
-            { 
-                // use the compiler to directly compile the kernel
-                GB_jitifyer_direct_compile (kernel_name, bucket) ;
-            }
-            // load the kernel from the lib*.so file
-            snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lib/%02x/%s%s%s",
-                GB_jit_cache_path, bucket, GB_LIB_PREFIX, kernel_name,
-                GB_LIB_SUFFIX) ;
-            dl_handle = GB_file_dlopen (GB_jit_temp) ;
         }
+
+        // if the source file was not created above, the compilation will
+        // gracefully fail.
+
+        // compile the kernel to get the lib*.so file
+        if (GB_jit_use_cmake)
+        { 
+            // use cmake to compile the kernel
+            GB_jitifyer_cmake_compile (kernel_name, bucket) ;
+        }
+        else
+        { 
+            // use the compiler to directly compile the kernel
+            GB_jitifyer_direct_compile (kernel_name, bucket) ;
+        }
+        // load the kernel from the lib*.so file
+        snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lib/%02x/%s%s%s",
+            GB_jit_cache_path, bucket, GB_LIB_PREFIX, kernel_name,
+            GB_LIB_SUFFIX) ;
+        dl_handle = GB_file_dlopen (GB_jit_temp) ;
 
         //----------------------------------------------------------------------
         // handle any error conditions
@@ -1858,6 +1837,8 @@ GrB_Info GB_jitifyer_load_worker
             GBURBLE ("(jit: compiler error; compilation disabled) ") ;
             // disable the JIT to avoid repeated compilation errors
             GB_jit_control = GxB_JIT_LOAD ;
+            // remove the compiled library
+            remove (GB_jit_temp) ;
             return (GrB_NO_VALUE) ;
         }
 
@@ -1876,10 +1857,11 @@ GrB_Info GB_jitifyer_load_worker
     {
         // JIT error: dlsym unable to find GB_jit_kernel: punt to generic
         GBURBLE ("(jit: load error; JIT loading disabled) ") ;
-        GB_file_dlclose (dl_handle) ; 
-        dl_handle = NULL ;
+        GB_file_dlclose (dl_handle) ; dl_handle = NULL ;
         // disable the JIT to avoid repeated loading errors
         GB_jit_control = GxB_JIT_RUN ;
+        // remove the compiled library
+        remove (GB_jit_temp) ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -1888,10 +1870,11 @@ GrB_Info GB_jitifyer_load_worker
         -1))
     {
         // JIT error: unable to add kernel to hash table: punt to generic
-        GB_file_dlclose (dl_handle) ; 
-        dl_handle = NULL ;
+        GB_file_dlclose (dl_handle) ; dl_handle = NULL ;
         // disable the JIT to avoid repeated errors
         GB_jit_control = GxB_JIT_PAUSE ;
+        // remove the compiled library
+        remove (GB_jit_temp) ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -2102,13 +2085,11 @@ void GB_jitifyer_entry_free (GB_jit_entry *e)
 {
     e->dl_function = NULL ;
     GB_jit_table_populated-- ;
-    // GB_Global_persistent_free ((void **) (&(e->suffix))) ;
     GB_FREE_PERSISTENT (e->suffix) ;
     // unload the dl library
     if (e->dl_handle != NULL)
     { 
-        GB_file_dlclose (e->dl_handle) ;
-        e->dl_handle = NULL ;
+        GB_file_dlclose (e->dl_handle) ; e->dl_handle = NULL ;
     }
     ASSERT_TABLE_OK ;
 }
@@ -2220,12 +2201,10 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
     if (fp == NULL) return ;
     fprintf (fp,
         "cmake_minimum_required ( VERSION 3.13 )\n"
-        "set ( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS true )\n"
-        "set ( CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE \"%s/lib/%02x\" )\n"
+//      "set ( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS true )\n"
         "project ( %s LANGUAGES C )\n"
         "include_directories ( \"%s/src\"%s)\n"
         "add_compile_definitions ( GB_JIT_RUNTIME )\n",
-        GB_jit_cache_path, bucket,  // library output dir: cache/lib/bucket
         kernel_name,                // project name
         GB_jit_cache_path,          // include directories: cache/src
         ((strlen (GB_OMP_INC_DIRS) == 0) ? " " : " \"" GB_OMP_INC_DIRS "\" ")) ;
@@ -2250,24 +2229,22 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
     }
 
     fprintf (fp, 
-        "if ( WIN32 )\n"
-        "    target_compile_definitions ( %s PRIVATE GB_DLL_EXPORT )\n"
-        "endif ( )\n", kernel_name) ;
-
-    fprintf (fp, 
-        "set_target_properties ( %s PROPERTIES VERSION %d.%d.%d\n"
-        "    C_STANDARD 11\n"
-        "    C_STANDARD_REQUIRED ON\n"
-        "    WINDOWS_EXPORT_ALL_SYMBOLS ON )\n",
+//      "if ( WIN32 )\n"
+//      "    target_compile_definitions ( %s PRIVATE GB_DLL_EXPORT )\n"
+//      "endif ( )\n"
+        "set_target_properties ( %s PROPERTIES\n"
+        "    C_STANDARD 11 C_STANDARD_REQUIRED ON )\n"
+//      "    WINDOWS_EXPORT_ALL_SYMBOLS ON )\n"
+        "install ( TARGETS %s\n"
+        "    LIBRARY DESTINATION \"%s/lib/%02x\"\n"
+        "    ARCHIVE DESTINATION \"%s/lib/%02x\"\n"
+        "    RUNTIME DESTINATION \"%s/lib/%02x\" )\n",
+//      kernel_name,
         kernel_name,
-        GxB_IMPLEMENTATION_MAJOR,
-        GxB_IMPLEMENTATION_MINOR,
-        GxB_IMPLEMENTATION_SUB) ;
-
-    fprintf (fp,
-        "message ( STATUS \"compiler: ${CMAKE_C_COMPILER}\" )\n"
-        "message ( STATUS \"C flags : ${CMAKE_C_FLAGS}\" )\n"
-        "message ( STATUS \"C link  : ${CMAKE_SHARED_LINKER_FLAGS}\" )\n") ;
+        kernel_name,
+        GB_jit_cache_path, bucket,
+        GB_jit_cache_path, bucket,
+        GB_jit_cache_path, bucket) ;
     fclose (fp) ;
 
     // generate the build system for this kernel
@@ -2282,7 +2259,15 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
 
     // compile the library for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        "cmake --build \"" GB_BLD_DIR "\" %s %s %s --config Release --verbose",
+        "cmake --build \"" GB_BLD_DIR "\" %s %s %s --config Release",
+        // can add "--verbose" here too
+        GB_jit_cache_path, kernel_name,     // build path
+        burble_stdout, err_redirect, GB_jit_error_log) ;
+    GB_jitifyer_command (GB_jit_temp) ;
+
+    // install the library
+    snprintf (GB_jit_temp, GB_jit_temp_allocated,
+        "cmake --install \"" GB_BLD_DIR "\" %s %s %s",
         GB_jit_cache_path, kernel_name,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ;

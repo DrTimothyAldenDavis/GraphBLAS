@@ -9,8 +9,8 @@
 
 #include "GB_AxB_saxpy3_template.h"
 
-GB_JIT_KERNEL_AXB_SAXBIT_PROTO (GB_jit_kernel) ;
-GB_JIT_KERNEL_AXB_SAXBIT_PROTO (GB_jit_kernel)
+GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXBIT_PROTO (GB_jit_kernel) ;
+GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_SAXBIT_PROTO (GB_jit_kernel)
 {
     #ifdef GB_JIT_RUNTIME
     // get callback functions

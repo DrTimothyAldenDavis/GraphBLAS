@@ -22,7 +22,18 @@
 // indices that appear in the files.  The file C.tsv is the filename of the
 // output file for C=kron(A,B), also with 1-based indices.
 
+#include "graphblas_demos.h"
+#include "simple_rand.c"
+#include "usercomplex.h"
+#include "usercomplex.c"
+#include "wathen.c"
+#include "get_matrix.c"
+#include "random_matrix.c"
+#include "import_test.c"
+#include "read_matrix.c"
+
 // macro used by OK(...) to free workspace if an error occurs
+#undef  FREE_ALL
 #define FREE_ALL                            \
     GrB_Matrix_free (&A) ;                  \
     GrB_Matrix_free (&B) ;                  \
@@ -34,8 +45,6 @@
     if (J != NULL) free (J) ;               \
     if (X != NULL) free (X) ;               \
     GrB_finalize ( ) ;
-
-#include "graphblas_demos.h"
 
 int main (int argc, char **argv)
 {

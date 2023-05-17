@@ -9,7 +9,7 @@
 
 // If a user-defined operator needs access to the GraphBLAS complex types,
 // GxB_FC32_t and GxB_FC64_t types, then this file can be #include'd in the
-// defining string.  See Demo/Source/usercomplex.h for an example.
+// defining string.  See Demo/Include/usercomplex.h for an example.
 
 // See:
 // https://www.drdobbs.com/complex-arithmetic-in-the-intersection-o/184401628#

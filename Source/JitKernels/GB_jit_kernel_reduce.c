@@ -75,8 +75,8 @@
 // appear in GraphBLAS/Source/Template.  They are used by both the pre-compiled
 // kernels in GraphBLAS/Source/FactoryKernels, and by the JIT kernel here.
 
-GB_JIT_KERNEL_REDUCE_PROTO (GB_jit_kernel) ;
-GB_JIT_KERNEL_REDUCE_PROTO (GB_jit_kernel)
+GB_JIT_GLOBAL GB_JIT_KERNEL_REDUCE_PROTO (GB_jit_kernel) ;
+GB_JIT_GLOBAL GB_JIT_KERNEL_REDUCE_PROTO (GB_jit_kernel)
 {
     GB_Z_TYPE z = (* ((GB_Z_TYPE *) result)) ;
     GB_Z_TYPE *W = (GB_Z_TYPE *) Workspace ;

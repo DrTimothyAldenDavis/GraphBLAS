@@ -9,8 +9,8 @@
 
 // C+=A'*B: dot product, C is full, dot4 method
 
-GB_JIT_KERNEL_AXB_DOT4_PROTO (GB_jit_kernel) ;
-GB_JIT_KERNEL_AXB_DOT4_PROTO (GB_jit_kernel)
+GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_DOT4_PROTO (GB_jit_kernel) ;
+GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_DOT4_PROTO (GB_jit_kernel)
 {
     #ifdef GB_JIT_RUNTIME
     // get callback functions

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/Demo/Source/Source/random_matrix.c: create a random matrix
+// GraphBLAS/Demo/Include/random_matrix.c: create a random matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -11,6 +11,7 @@
 
 #include "GraphBLAS.h"
 
+#undef  FREE_ALL
 #define FREE_ALL                    \
     GrB_Matrix_free (&A) ;          \
     GrB_Matrix_free (&Areal) ;      \

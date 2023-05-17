@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/Demo/Source/wathen.c: a finite-element matrix on a regular mesh
+// GraphBLAS/Demo/Include/wathen.c: a finite-element matrix on a regular mesh
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -48,6 +48,7 @@ GrB_Info wathen             // construct a random Wathen matrix
     }
 
     // macro to free all workspace.  Not every method uses every object
+    #undef  FREE_ALL
     #define FREE_ALL                            \
         GrB_Matrix_free (&A) ;                  \
         GrB_Matrix_free (&F) ;                  \
