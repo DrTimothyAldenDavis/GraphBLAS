@@ -1,4 +1,4 @@
-Version 8.0.0.beta1, May 18, 2023   % FIXME: remove beta1 for v8.0.0
+Version 8.0.0, May 18, 2023
 
     * version 8:  This version is a major SO version increase, since
         it removes a few minor user-visible features from SuiteSparse:GraphBLAS:

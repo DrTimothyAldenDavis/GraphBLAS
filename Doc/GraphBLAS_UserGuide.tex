@@ -8649,8 +8649,8 @@ Corey Nolet, with NVIDIA.
 When GraphBLAS is compiled, the \verb'cmake' build system creates a {\em cache}
 folder where it will keep any kernels created and compiled by the JIT
 (both source code and compiled libraries for each kernel).  The
-default folder is \verb'~/.SuiteSparse/GrB8.0.0' for SuiteSparse:
-GraphBLAS version v8.0.0, where the tilde refers to the user's home directory.
+default folder is \verb'~/.SuiteSparse/GrB8.0.0' for SuiteSparse:GraphBLAS
+version v8.0.0, where the tilde refers to the user's home directory.
 The version numbers in the folder name are set automatically, so that a new
 version will ignore kernels compiled by an older version of GraphBLAS.  If the
 \verb'GRAPHBLAS_CACHE_PATH' environment variable is set when GraphBLAS is
@@ -9130,7 +9130,7 @@ consideration.
 
 \subsubsection{Better performance for multithreaded user programs:}
 This version is thread-safe when used in a multithread user application, but a
-better JIT critical section (many readers, 1 writer) might be needed.  The
+better JIT critical section (many readers, one writer) might be needed.  The
 current critical section may be sufficiently fast since the typical case of
 work done inside the critical section is a single hash table lookup.  However,
 the performance issues related to this have not been tested.  This has no
@@ -16434,7 +16434,7 @@ GraphBLAS folder.
 
 \begin{itemize}
 
-\item Version 8.0.0.beta1 (May 18, 2023)    % FIXME: remove beta for v8.0.0
+\item Version 8.0.0 (May 18, 2023)
 
     \begin{itemize}
     \item version 8:  This version is a major SO version increase, since
