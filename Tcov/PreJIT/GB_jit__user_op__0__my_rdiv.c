@@ -29,8 +29,8 @@ void my_rdiv (double *z, const double *x, const double *y)
 #define GB_jit_query  GB_jit__user_op__0__my_rdiv_query
 #endif
 #include "GB_jit_kernel_user_op.c"
-GB_JIT_QUERY_PROTO (GB_jit_query) ;
-GB_JIT_QUERY_PROTO (GB_jit_query)
+GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query) ;
+GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query)
 {
     (*hash) = 0xa98ff14e387744fe ;
     v [0] = 8 ; v [1] = 0 ; v [2] = 0 ;

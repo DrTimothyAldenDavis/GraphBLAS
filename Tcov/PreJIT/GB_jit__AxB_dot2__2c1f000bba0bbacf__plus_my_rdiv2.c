@@ -119,8 +119,8 @@ void my_rdiv2 (double *z, const double *x, const float *y)
 #define GB_jit_query  GB_jit__AxB_dot2__2c1f000bba0bbacf__plus_my_rdiv2_query
 #endif
 #include "GB_jit_kernel_AxB_dot2.c"
-GB_JIT_QUERY_PROTO (GB_jit_query) ;
-GB_JIT_QUERY_PROTO (GB_jit_query)
+GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query) ;
+GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query)
 {
     (*hash) = 0x31aff911c5850713 ;
     v [0] = 8 ; v [1] = 0 ; v [2] = 0 ;
