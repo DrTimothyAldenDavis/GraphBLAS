@@ -572,7 +572,7 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
 
 // Returns GrB_SUCCESS if successful, GrB_OUT_OF_MEMORY if out of memory, or
 // error_condition if the files cannot be written to the cache folder for any
-// reason.
+// reason.  If the JIT is disabled at compile time, this method does nothing.
 
 GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
 { 

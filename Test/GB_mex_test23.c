@@ -39,8 +39,28 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     OK (GxB_set (GxB_BURBLE, true)) ;
-    GrB_Info expected = GrB_INVALID_VALUE ;
-    ERR (GxB_Global_Option_set_CHAR (GxB_JIT_CACHE_PATH, "/root")) ;
+    int save, c ;
+    OK (GxB_get (GxB_JIT_C_CONTROL, &save)) ;
+    OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
+    OK (GxB_get (GxB_JIT_C_CONTROL, &c)) ;
+
+    if (c == GxB_JIT_ON)
+    {
+        // JIT is enabled
+        GrB_Info expected = GrB_INVALID_VALUE ;
+        ERR (GxB_Global_Option_set_CHAR (GxB_JIT_CACHE_PATH, "/myroot")) ;
+    }
+    else
+    {
+        // JIT is disabled
+        printf ("JIT disabled\n") ;
+        OK (GxB_Global_Option_set_CHAR (GxB_JIT_CACHE_PATH, "/myroot")) ;
+        char *s ;
+        OK (GxB_Global_Option_get_CHAR (GxB_JIT_CACHE_PATH, &s)) ;
+        CHECK (MATCH (s, "/myroot")) ;
+    }
+
+    OK (GxB_set (GxB_JIT_C_CONTROL, save)) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS

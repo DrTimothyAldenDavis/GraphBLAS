@@ -247,7 +247,7 @@ bool GB_file_unlock_and_close   // true if successful, false on error
 // Create a directory, including all parent directories if they do not exist.
 // Returns true if the directory already exists or if it was successfully
 // created.  Returns true if the JIT is disabled (the directory is not created
-// also not needed in that case).  Returns false on error.
+// but also not needed in that case).  Returns false on error.
 
 bool GB_file_mkdir (char *path)
 {
