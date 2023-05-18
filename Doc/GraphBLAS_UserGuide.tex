@@ -16434,17 +16434,20 @@ GraphBLAS folder.
 
 \begin{itemize}
 
-\item Version 8.0.0 (DRAFT) % FIXME set the date
+\item Version 8.0.0.beta1 (May 18, 2023)    % FIXME: remove beta for v8.0.0
 
     \begin{itemize}
     \item version 8:  This version is a major SO version increase, since
         it removes a few minor user-visible features from
         SuiteSparse:GraphBLAS: the \verb'GrB_Descriptor' no longer supports
         threading control, and some features of the \verb'GxB_SelectOp' are
-        removed (see below).
+        removed (see below).  Enum values have been changed for compatibility
+        with the upcoming \verb'GrB_set/get' features in the V2.1 C API.
     \item The JIT:  GraphBLAS v8.0.0 includes a JIT for the CPU kernels,
         which can compile kernels at run-time.  Added \verb'GxB_set/get'
-        options and environment variables to control the JIT.
+        options and environment variables to control the JIT.  The
+        \verb'GxB_*Op_new' methods can accept NULL function pointers, if the
+        strings are provided, valid, and the JIT is enabled.
     \item \verb'GxB_Type_new': the size of the type can be given as zero,
         in which case the size is determined via a JIT kernel.
     \item \verb'GxB_UnaryOp_new', \verb'GxB_BinaryOp_new', and

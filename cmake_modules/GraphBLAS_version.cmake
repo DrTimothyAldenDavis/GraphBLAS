@@ -8,7 +8,7 @@
 #-------------------------------------------------------------------------------
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "(DRAFT10) May 17, 2023" )  # FIXME: set the date
+set ( GraphBLAS_DATE "(beta1) May 18, 2023" )  # FIXME: remove beta1 for v8.0.0
 set ( GraphBLAS_VERSION_MAJOR 8 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   0 )

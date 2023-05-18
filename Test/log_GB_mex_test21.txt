@@ -430,7 +430,7 @@ GB_enumify_mxm / GB_macrofy_mxm, any_pair fp32
 
 ================================================================================
 GB_enumify_select / GB_macrofy_select: rowindex
-// op: (rowindex, void)
+// op: (rowindex, GB_void)
 
 // unary operator types:
 #define GB_Z_TYPE int32_t
@@ -478,7 +478,7 @@ GB_enumify_select / GB_macrofy_select: rowindex
 
 ================================================================================
 GB_enumify_select / GB_macrofy_select: rowindex
-// op: (rowindex, void)
+// op: (rowindex, GB_void)
 
 // unary operator types:
 #define GB_Z_TYPE int64_t
@@ -526,7 +526,7 @@ GB_enumify_select / GB_macrofy_select: rowindex
 
 ================================================================================
 GB_enumify_select / GB_macrofy_select: colindex
-// op: (colindex, void)
+// op: (colindex, GB_void)
 
 // unary operator types:
 #define GB_Z_TYPE int32_t
@@ -574,7 +574,7 @@ GB_enumify_select / GB_macrofy_select: colindex
 
 ================================================================================
 GB_enumify_select / GB_macrofy_select: colindex
-// op: (colindex, void)
+// op: (colindex, GB_void)
 
 // unary operator types:
 #define GB_Z_TYPE int64_t
@@ -622,7 +622,7 @@ GB_enumify_select / GB_macrofy_select: colindex
 
 ================================================================================
 GB_enumify_select / GB_macrofy_select: diagindex
-// op: (diagindex, void)
+// op: (diagindex, GB_void)
 
 // unary operator types:
 #define GB_Z_TYPE int32_t
@@ -670,7 +670,7 @@ GB_enumify_select / GB_macrofy_select: diagindex
 
 ================================================================================
 GB_enumify_select / GB_macrofy_select: diagindex
-// op: (diagindex, void)
+// op: (diagindex, GB_void)
 
 // unary operator types:
 #define GB_Z_TYPE int64_t
@@ -718,7 +718,7 @@ GB_enumify_select / GB_macrofy_select: diagindex
 
 ================================================================================
 GB_enumify_select / GB_macrofy_select: tril
-// op: (tril, void)
+// op: (tril, GB_void)
 
 // unary operator types:
 #define GB_Z_TYPE bool
@@ -766,7 +766,7 @@ GB_enumify_select / GB_macrofy_select: tril
 
 ================================================================================
 GB_enumify_select / GB_macrofy_select: triu
-// op: (triu, void)
+// op: (triu, GB_void)
 
 // unary operator types:
 #define GB_Z_TYPE bool
@@ -814,7 +814,7 @@ GB_enumify_select / GB_macrofy_select: triu
 
 ================================================================================
 GB_enumify_select / GB_macrofy_select: diag
-// op: (diag, void)
+// op: (diag, GB_void)
 
 // unary operator types:
 #define GB_Z_TYPE bool
@@ -862,7 +862,7 @@ GB_enumify_select / GB_macrofy_select: diag
 
 ================================================================================
 GB_enumify_select / GB_macrofy_select: offdiag
-// op: (offdiag, void)
+// op: (offdiag, GB_void)
 
 // unary operator types:
 #define GB_Z_TYPE bool
@@ -910,7 +910,7 @@ GB_enumify_select / GB_macrofy_select: offdiag
 
 ================================================================================
 GB_enumify_select / GB_macrofy_select: colle
-// op: (colle, void)
+// op: (colle, GB_void)
 
 // unary operator types:
 #define GB_Z_TYPE bool
@@ -958,7 +958,7 @@ GB_enumify_select / GB_macrofy_select: colle
 
 ================================================================================
 GB_enumify_select / GB_macrofy_select: colgt
-// op: (colgt, void)
+// op: (colgt, GB_void)
 
 // unary operator types:
 #define GB_Z_TYPE bool
@@ -1006,7 +1006,7 @@ GB_enumify_select / GB_macrofy_select: colgt
 
 ================================================================================
 GB_enumify_select / GB_macrofy_select: rowle
-// op: (rowle, void)
+// op: (rowle, GB_void)
 
 // unary operator types:
 #define GB_Z_TYPE bool
@@ -1054,7 +1054,7 @@ GB_enumify_select / GB_macrofy_select: rowle
 
 ================================================================================
 GB_enumify_select / GB_macrofy_select: rowgt
-// op: (rowgt, void)
+// op: (rowgt, GB_void)
 
 // unary operator types:
 #define GB_Z_TYPE bool
@@ -1102,7 +1102,7 @@ GB_enumify_select / GB_macrofy_select: rowgt
 
 ================================================================================
 GB_enumify_select / GB_macrofy_select: flipdiagindex
-// op: (flipdiagindex, void)
+// op: (flipdiagindex, GB_void)
 
 // unary operator types:
 #define GB_Z_TYPE int32_t
@@ -1150,7 +1150,7 @@ GB_enumify_select / GB_macrofy_select: flipdiagindex
 
 ================================================================================
 GB_enumify_select / GB_macrofy_select: flipdiagindex
-// op: (flipdiagindex, void)
+// op: (flipdiagindex, GB_void)
 
 // unary operator types:
 #define GB_Z_TYPE int64_t
