@@ -16,14 +16,14 @@
 #include "GB_Template.h"
 #include "GB_jit_kernel_proto.h"
 
-#ifdef GB_JIT_RUNTIME
-    // for JIT kernels
-    #if defined (_MSC_VER) && !(defined (__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER))
-        #define GB_JIT_GLOBAL extern __declspec ( dllexport )
-    #else
-        #define GB_JIT_GLOBAL
-    #endif
+// for JIT kernels
+#if defined (_MSC_VER) && !(defined (__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER))
+    #define GB_JIT_GLOBAL extern __declspec ( dllexport )
 #else
+    #define GB_JIT_GLOBAL
+#endif
+
+#ifndef GB_JIT_RUNTIME
     // for PreJIT kernels
     #include "GB_callbacks.h"
 #endif
