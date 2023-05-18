@@ -2,7 +2,7 @@
 // GrB_error: return an error string describing the last error
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -33,13 +33,6 @@ GrB_Info GrB_BinaryOp_error (const char **error, const GrB_BinaryOp op)
 }
 
 GrB_Info GrB_IndexUnaryOp_error (const char **error, const GrB_IndexUnaryOp op)
-{ 
-    GB_RETURN_IF_NULL (error) ;
-    (*error) = empty ;
-    return (GrB_SUCCESS) ;
-}
-
-GrB_Info GxB_SelectOp_error (const char **error, const GxB_SelectOp op)
 { 
     GB_RETURN_IF_NULL (error) ;
     (*error) = empty ;
