@@ -76,10 +76,20 @@ void mexFunction
     system ("rm -rf /tmp/grb_cache") ;
 
     //--------------------------------------------------------------------------
-    // get/set tests
+    // determine if GraphBLAS was compiled with NJIT
     //--------------------------------------------------------------------------
 
     OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
+    OK (GxB_get (GxB_JIT_C_CONTROL, &control)) ;
+    bool jit_enabled = (control == GxB_JIT_ON) ;
+
+    //--------------------------------------------------------------------------
+    // get/set tests
+    //--------------------------------------------------------------------------
+
+if (jit_enabled)
+{
+
     OK (GrB_Matrix_new (&A, GrB_FP32, 3, 4)) ;
     OK (GrB_assign (A, NULL, NULL, 1, GrB_ALL, 3, GrB_ALL, 4, NULL)) ;
     OK (GxB_Matrix_iso (&iso, A)) ;
@@ -328,6 +338,7 @@ void mexFunction
     CHECK (MATCH (s, save_cache)) ;
     mxFree (save_cache) ;
     save_cache = NULL ;
+}
 
     //--------------------------------------------------------------------------
     // GrB_Semiring_new memory tests
@@ -441,6 +452,8 @@ void mexFunction
     // GB_file tests
     //--------------------------------------------------------------------------
 
+if (jit_enabled)
+{
     bool ok = GB_file_mkdir (NULL) ;
     CHECK (!ok) ;
     ok = GB_file_unlock_and_close (NULL, NULL) ;
@@ -455,6 +468,7 @@ void mexFunction
 
     ok = GB_file_open_and_lock ("/nopermission", &fp, &fd) ;
     CHECK (!ok) ;
+}
 
     //--------------------------------------------------------------------------
     // GxB_Context
