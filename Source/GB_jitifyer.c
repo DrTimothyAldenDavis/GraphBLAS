@@ -587,7 +587,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
         GB_jit_cache_path) ;
     FILE *fp_lock = NULL ;
     int fd_lock = -1 ;
-    if (GB_file_open_and_lock (GB_jit_temp, &fp_lock, &fd_lock) < 0)
+    if (!GB_file_open_and_lock (GB_jit_temp, &fp_lock, &fd_lock))
     {
         // failure; disable the JIT
         GBURBLE ("(jit: unable to write to source cache, jit disabled) ") ;
@@ -1666,7 +1666,7 @@ GrB_Info GB_jitifyer_worker
         "%s/lock/%02x/%016" PRIx64 "_lock", GB_jit_cache_path, bucket, hash) ;
     FILE *fp_klock = NULL ;
     int fd_klock = -1 ;
-    if (GB_file_open_and_lock (GB_jit_temp, &fp_klock, &fd_klock) < 0)
+    if (!GB_file_open_and_lock (GB_jit_temp, &fp_klock, &fd_klock))
     {
         // JIT error: unable to lock the kernel
         // disable the JIT to avoid repeated load errors
