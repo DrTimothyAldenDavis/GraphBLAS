@@ -29,7 +29,7 @@ typedef struct
 
     GrB_Mode mode ;             // GrB_NONBLOCKING, GrB_BLOCKING
                                 // GxB_NONBLOCKING_GPU, or GxB_BLOCKING_GPU
-    bool GrB_init_called ;      // true if GrB_init already called
+    bool init_called ;          // true if GrB_init already called
 
     //--------------------------------------------------------------------------
     // hypersparsity and CSR/CSC format control
@@ -149,7 +149,7 @@ static GB_Global_struct GB_Global =
     .mode = GrB_NONBLOCKING,    // default is nonblocking, no GPU
 
     // initialization flag
-    .GrB_init_called = false,   // GrB_init has not yet been called
+    .init_called = false,       // GrB_init has not yet been called
 
     // min dimension                density
     #define GB_BITSWITCH_1          ((float) 0.04)
@@ -237,17 +237,17 @@ GrB_Mode GB_Global_mode_get (void)
 }
 
 //------------------------------------------------------------------------------
-// GrB_init_called
+// init_called
 //------------------------------------------------------------------------------
 
-void GB_Global_GrB_init_called_set (bool GrB_init_called)
+void GB_Global_GrB_init_called_set (bool init_called)
 { 
-    GB_Global.GrB_init_called = GrB_init_called ;
+    GB_Global.init_called = init_called ;
 }
 
 bool GB_Global_GrB_init_called_get (void)
 { 
-    return (GB_Global.GrB_init_called) ;
+    return (GB_Global.init_called) ;
 }
 
 //------------------------------------------------------------------------------
@@ -423,11 +423,11 @@ void GB_Global_abort (void)
 void GB_Global_memtable_dump (void)
 {
     #ifdef GB_DEBUG
-    printf ("\nmemtable dump: %d nmalloc " GBd "\n", GB_Global.nmemtable,
-        GB_Global.nmalloc) ;
+    printf ("\nmemtable dump: %d nmalloc " GBd "\n",    // MEMDUMP
+        GB_Global.nmemtable, GB_Global.nmalloc) ;
     for (int k = 0 ; k < GB_Global.nmemtable ; k++)
     {
-        printf ("  %4d: %12p : %ld\n", k,
+        printf ("  %4d: %12p : %ld\n", k,               // MEMDUMP
             GB_Global.memtable_p [k],
             GB_Global.memtable_s [k]) ;
     }
@@ -457,7 +457,7 @@ void GB_Global_memtable_add (void *p, size_t size)
     #ifdef GB_DEBUG
     bool fail = false ;
     #ifdef GB_MEMDUMP
-    printf ("memtable add %p size %ld\n", p, size) ;
+    printf ("memtable add %p size %ld\n", p, size) ;    // MEMDUMP
     #endif
     #pragma omp critical(GB_memtable)
     {
@@ -469,9 +469,9 @@ void GB_Global_memtable_add (void *p, size_t size)
             {
                 if (p == GB_Global.memtable_p [i])
                 {
-                    printf ("\nadd duplicate %p size %ld\n", p, size) ;
+                    printf ("\nadd duplicate %p size %ld\n",    // MEMDUMP
+                        p, size) ;
                     GB_Global_memtable_dump ( ) ;
-                    printf ("Hey %d %p\n", i,p) ;
                     fail = true ;
                     break ;
                 }
@@ -515,7 +515,7 @@ size_t GB_Global_memtable_size (void *p)
     }
     if (!found)
     {
-        printf ("\nFAIL: %p not found\n", p) ;
+        printf ("\nFAIL: %p not found\n", p) ;      // MEMDUMP
         GB_Global_memtable_dump ( ) ;
         ASSERT (0) ;
     }
@@ -561,7 +561,7 @@ void GB_Global_memtable_remove (void *p)
     #ifdef GB_DEBUG
     bool found = false ;
     #ifdef GB_MEMDUMP
-    printf ("memtable remove %p ", p) ;
+    printf ("memtable remove %p ", p) ;             // MEMDUMP
     #endif
     #pragma omp critical(GB_memtable)
     {
@@ -581,7 +581,7 @@ void GB_Global_memtable_remove (void *p)
     }
     if (!found)
     {
-        printf ("remove %p NOT FOUND\n", p) ;
+        printf ("remove %p NOT FOUND\n", p) ;       // MEMDUMP
         GB_Global_memtable_dump ( ) ;
     }
     ASSERT (found) ;

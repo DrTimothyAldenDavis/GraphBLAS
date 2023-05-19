@@ -77,7 +77,7 @@ if (~have_octave)
 end
 
 mexfunctions = dir ('GB_mex_*.c') ;
-cfiles = [ dir('../Demo/Source/usercomplex.c') ; dir('GB_mx_*.c') ] ;
+cfiles = [ dir('../Demo/Include/usercomplex.c') ; dir('GB_mx_*.c') ] ;
 
 hfiles = [ dir('*.h') ; dir('Template/*.c') ; dir('../Demo/Include/usercomplex.h') ] ;
 inc = '-ITemplate -I../Include -I../Source -I../Source/Template -I../lz4 -I../rmm_wrap' ;

@@ -37,7 +37,7 @@ GrB_Info GB_select_positional_bitmap
     // positional operators when C is bitmap
     //--------------------------------------------------------------------------
 
-    #define GB_A_TYPE void
+    #define GB_A_TYPE GB_void
     #include "GB_select_shared_definitions.h"
 
     switch (opcode)

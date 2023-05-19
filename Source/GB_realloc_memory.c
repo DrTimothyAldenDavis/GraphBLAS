@@ -145,7 +145,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         if (!pretend_to_fail)
         { 
             #ifdef GB_MEMDUMP
-            printf ("hard realloc %p oldsize %ld newsize %ld\n",
+            printf ("hard realloc %p oldsize %ld newsize %ld\n",    // MEMDUMP
                 p, oldsize_allocated, newsize_allocated) ;
             #endif
             pnew = GB_Global_realloc_function (p, newsize_allocated) ;

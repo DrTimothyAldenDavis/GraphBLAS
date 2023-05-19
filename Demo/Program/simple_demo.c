@@ -29,6 +29,7 @@
 */
 
 #include "simple_rand.h"
+#include "simple_rand.c"
 #include <stdio.h>
 #include <stdlib.h>
 

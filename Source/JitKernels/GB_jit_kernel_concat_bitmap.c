@@ -10,8 +10,8 @@
 // cij = op (aij)
 #define GB_COPY(pC,pA,A_iso) GB_UNOP (Cx, pC, Ax, pA, A_iso, i, j, y)
 
-GB_JIT_KERNEL_CONCAT_BITMAP_PROTO (GB_jit_kernel) ;
-GB_JIT_KERNEL_CONCAT_BITMAP_PROTO (GB_jit_kernel)
+GB_JIT_GLOBAL GB_JIT_KERNEL_CONCAT_BITMAP_PROTO (GB_jit_kernel) ;
+GB_JIT_GLOBAL GB_JIT_KERNEL_CONCAT_BITMAP_PROTO (GB_jit_kernel)
 {
     #ifdef GB_JIT_RUNTIME
     // get callback functions

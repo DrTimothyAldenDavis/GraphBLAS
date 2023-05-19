@@ -1945,7 +1945,11 @@
    #define GxB_NO_TIMES_PLUS_FC32       1
    #define GxB_NO_TIMES_PLUS_FC64       1
 
+// GxB_TIMES_TIMES_FC32 is required for testing (GraphBLAS/Test and Tcov),
+// so it is not disabled when GraphBLAS is compiled for MATLAB.
+   #ifndef GBMATLAB
    #define GxB_NO_TIMES_TIMES_FC32      1
+   #endif
    #define GxB_NO_TIMES_TIMES_FC64      1
 
 // needed by GrB_reduce to vector, or s = prod (A) in @GrB interface

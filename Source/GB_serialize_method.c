@@ -62,28 +62,6 @@ void GB_serialize_method
         case GxB_COMPRESSION_ZSTD :     // ZSTD: level 1 to 19; default 1.
             if ((*level) <= 0 || (*level) > 19) (*level) = 1 ;
             break ;
-
-//      These cases will be uncommented when the methods are implemented:
-
-//      case GxB_COMPRESSION_ZLIB:
-//          // level 1 to 9, with a default of 6
-//          if ((*level) <= 0 || (*level) > 9) (*level) = 6 ;
-//          break ;
-
-//      case GxB_COMPRESSION_LZO:
-//          // level 1 (X1ST) to 2 (XST), with a default of 2
-//          if ((*level) <= 0 || (*level) > 2) (*level) = 2 ;
-//          break ;
-
-//      case GxB_COMPRESSION_BZIP2:
-//          // level 1 to 9, with a default of 9
-//          if ((*level) <= 0 || (*level) > 9) (*level) = 9 ;
-//          break ;
-
-//      case GxB_COMPRESSION_LZSS:
-//          (*level) = 0 ;              // level is ignored
-//          break ;
-
     }
 }
 

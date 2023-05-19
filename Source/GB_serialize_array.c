@@ -232,7 +232,7 @@ GrB_Info GB_serialize_array
         char *dst = (char *) Blocks [blockid].p ;           // destination
         int srcSize = (int) (kend - kstart) ;               // size of source
         size_t dsize = Blocks [blockid].p_size_allocated ;  // size of dest
-        int dstCapacity = GB_IMIN (dsize, INT32_MAX) ;
+        int dstCapacity = (int) GB_IMIN (dsize, INT32_MAX) ;
         int s ;
         size_t s64 ;
         switch (algo)

@@ -201,6 +201,11 @@
         // without any mask.  The test for when to use M here should ignore A
         // or B if they are bitmap or full.
 
+        // If A or B are aliased to M, but the rest of "easy mask" condition is
+        // not triggered, then GB_add_sparsity will decide to apply the mask
+        // later, not in this phase.  As a result, if M is present, it is not
+        // aliased to A or B.
+
         // (+) TODO: if C and M are sparse/hyper, and A and B are both
         // bitmap/full, then use GB_emult_04_template instead, but with (Ab [p]
         // || Bb [p]) instead of (Ab [p] && Bb [p]).
@@ -230,13 +235,6 @@
                 pA = pA_start + (i - iA_first) ;
                 afound = GBB_A (Ab, pA) ;
             }
-            else if (M_is_A)
-            { 
-// GB_GOTCHA ; // M is A
-                // A is aliased to M
-                pA = pM ;
-                afound = true ;
-            }
             else
             { 
                 // A is sparse; use binary search.  This is slow unless
@@ -257,13 +255,6 @@
                 // B is dense; use quick lookup
                 pB = pB_start + (i - iB_first) ;
                 bfound = GBB_B (Bb, pB) ;
-            }
-            else if (M_is_B)
-            { 
-// GB_GOTCHA ; // M is B
-                // B is aliased to M
-                pB = pM ;
-                bfound = true ;
             }
             else
             { 

@@ -67,7 +67,8 @@ GrB_Info GB_init            // start up GraphBLAS
         return (GrB_INVALID_VALUE) ;
     }
 
-    if (mode < GrB_NONBLOCKING || mode > GxB_BLOCKING_GPU)
+    if (!(mode == GrB_NONBLOCKING || mode == GrB_BLOCKING ||
+          mode == GxB_NONBLOCKING_GPU || mode == GxB_BLOCKING_GPU))
     { 
         // invalid mode
         return (GrB_INVALID_VALUE) ;

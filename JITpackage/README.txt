@@ -14,7 +14,7 @@ GB_JITpackage.c file.  When GraphBLAS is compiled via cmake, it compiles
 GB_JITpackage.c into the libgraphblas.so (or dylib, dll, whatever).
 
 When GraphBLAS starts, GrB_init checks the user source folder to ensure
-~/.SuiteSparse/GraphBLAS/x.y.z/src exists (where x.y.z is the current GraphBLAS
+~/.SuiteSparse/GrBx.y.z/src exists (where x.y.z is the current GraphBLAS
 version number), and that it contains all the GraphBLAS source code.  If not,
 it uncompresses each file from its compressed form in GB_JITpackage.c, and
 writes it to the user source folder.

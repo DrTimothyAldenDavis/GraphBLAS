@@ -19,7 +19,7 @@ void GB_macrofy_preface
 { 
 
     const char *date = GxB_IMPLEMENTATION_DATE ;
-    int len = strlen (date) ;
+    int len = (int) strlen (date) ;
     fprintf (fp,
         "//--------------------------------------"
         "----------------------------------------\n"

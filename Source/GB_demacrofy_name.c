@@ -66,7 +66,6 @@ GrB_Info GB_demacrofy_name
     size_t len = strlen (kernel_name) ;  
     if (len < 4 || len > GB_KLEN)
     { 
-// GB_GOTCHA ;
         // kernel_name is invalid; ignore this kernel
         return (GrB_NO_VALUE) ;
     }
@@ -88,19 +87,16 @@ GrB_Info GB_demacrofy_name
             ASSERT (kernel_name [k] != '\0') ;
             if (ndouble == 1)
             { 
-// GB_GOTCHA ;
                 // save the start of the kname component of the kernel_name
                 (*kname) = &(kernel_name [k]) ;
             }
             else if (ndouble == 2)
             { 
-// GB_GOTCHA ;
                 // save the start of the scode component of the kernel_name
                 scode_string = &(kernel_name [k]) ;
             }
             else if (ndouble == 3)
             { 
-// GB_GOTCHA ;
                 // save the start of the suffix component of the kernel_name
                 (*suffix) = &(kernel_name [k]) ;
                 // the rest of the kernel_name is the entire suffix, so quit
@@ -111,7 +107,6 @@ GrB_Info GB_demacrofy_name
 
     if (ndouble < 2)
     { 
-// GB_GOTCHA ;
         // didn't find 2 pairs of double underscores
         // kernel_name is invalid; ignore this kernel
         return (GrB_NO_VALUE) ;
@@ -124,7 +119,6 @@ GrB_Info GB_demacrofy_name
     uint64_t scode_result = 0 ;
     if (sscanf (scode_string, "%" SCNx64, &scode_result) != 1)
     { 
-// GB_GOTCHA ;
         // didn't find the scode: kernel_name is invalid; ignore this kernel
         return (GrB_NO_VALUE) ;
     }

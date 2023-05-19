@@ -13,7 +13,7 @@
 # get the version
 #-------------------------------------------------------------------------------
 
-cmake_minimum_required ( VERSION 3.19 )
+cmake_minimum_required ( VERSION 3.16 )
 
 set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
     ${CMAKE_SOURCE_DIR}/../cmake_modules )
@@ -28,6 +28,9 @@ set ( SUITESPARSE_SECOND_LEVEL true )
 
 # CUDA is under development for now, and not deployed in production:
 set ( SUITESPARSE_CUDA off )
+
+set ( GBMATLAB on )
+set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBMATLAB=1 " )
 
 include ( SuiteSparsePolicy )
 include ( GraphBLAS_JIT_paths )
@@ -91,9 +94,6 @@ endif ( )
 #-------------------------------------------------------------------------------
 # determine build type
 #-------------------------------------------------------------------------------
-
-set ( GBMATLAB on )
-set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBMATLAB=1 " )
 
 message ( STATUS "CMAKE build type:          " ${CMAKE_BUILD_TYPE} )
 
@@ -253,14 +253,7 @@ install ( TARGETS graphblas_matlab
 
 include ( GraphBLAS_JIT_configure )
 
-file ( MAKE_DIRECTORY ${GRAPHBLAS_CACHE_PATH} )
-file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/src" )
-
 configure_file ( "../Config/GB_config.h.in"
     "${PROJECT_SOURCE_DIR}/Config/GB_config.h"
-    NEWLINE_STYLE LF )
-
-configure_file ( "../Config/GB_prejit.c.in"
-    "${PROJECT_SOURCE_DIR}/../Config/GB_prejit.c"
     NEWLINE_STYLE LF )
 

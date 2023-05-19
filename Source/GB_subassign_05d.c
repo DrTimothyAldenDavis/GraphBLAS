@@ -69,12 +69,8 @@ GrB_Info GB_subassign_05d
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!GB_PENDING (M)) ;
 
-    if (C->iso)
-    { 
-// GB_GOTCHA ; // C iso
-        // work has already been done by GB_assign_prep
-        return (GrB_SUCCESS) ;
-    }
+    // quick return if work has already been done by GB_assign_prep
+    if (C->iso) return (GrB_SUCCESS) ;
 
     const GB_Type_code ccode = C->type->code ;
     const size_t csize = C->type->size ;

@@ -60,7 +60,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
     xtype = (xcode == 0) ? NULL : op->xtype ;
     ytype = (ycode == 0) ? GrB_INT64 : op->ytype ;
     ztype = op->ztype ;
-    xtype_name = (xtype == NULL) ? "void" : xtype->name ;
+    xtype_name = (xtype == NULL) ? "GB_void" : xtype->name ;
     ytype_name = (ytype == NULL) ? "int64_t" : ytype->name ;
     ztype_name = ztype->name ;
     if (op->hash == 0)
@@ -108,17 +108,17 @@ void GB_macrofy_select          // construct all macros for GrB_select
     char *kind ;
     switch (op->opcode)
     {
-        case GB_TRIL_idxunop_code       : kind = "TRIL"      ; /* GB_GOTCHA */ ; break ;
-        case GB_TRIU_idxunop_code       : kind = "TRIU"      ; /* GB_GOTCHA */ ; break ;
-        case GB_DIAG_idxunop_code       : kind = "DIAG"      ; /* GB_GOTCHA */ ; break ;
-        case GB_DIAGINDEX_idxunop_code  :   /* GB_GOTCHA */ ;
-        case GB_OFFDIAG_idxunop_code    : kind = "OFFDIAG"   ; /* GB_GOTCHA */ ; break ;
-        case GB_ROWINDEX_idxunop_code   : kind = "ROWINDEX"  ; /* GB_GOTCHA */ ; break ;
-        case GB_COLINDEX_idxunop_code   : kind = "COLINDEX"  ; /* GB_GOTCHA */ ; break ;
-        case GB_COLLE_idxunop_code      : kind = "COLLE"     ; /* GB_GOTCHA */ ; break ;
-        case GB_COLGT_idxunop_code      : kind = "COLGT"     ; /* GB_GOTCHA */ ; break ;
-        case GB_ROWLE_idxunop_code      : kind = "ROWLE"     ; /* GB_GOTCHA */ ; break ;
-        case GB_ROWGT_idxunop_code      : kind = "ROWGT"     ; /* GB_GOTCHA */ ; break ;
+        case GB_TRIL_idxunop_code       : kind = "TRIL"      ; break ;
+        case GB_TRIU_idxunop_code       : kind = "TRIU"      ; break ;
+        case GB_DIAG_idxunop_code       : kind = "DIAG"      ; break ;
+        case GB_DIAGINDEX_idxunop_code  : 
+        case GB_OFFDIAG_idxunop_code    : kind = "OFFDIAG"   ; break ;
+        case GB_ROWINDEX_idxunop_code   : kind = "ROWINDEX"  ; break ;
+        case GB_COLINDEX_idxunop_code   : kind = "COLINDEX"  ; break ;
+        case GB_COLLE_idxunop_code      : kind = "COLLE"     ; break ;
+        case GB_COLGT_idxunop_code      : kind = "COLGT"     ; break ;
+        case GB_ROWLE_idxunop_code      : kind = "ROWLE"     ; break ;
+        case GB_ROWGT_idxunop_code      : kind = "ROWGT"     ; break ;
         default                         : kind = "ENTRY"     ; break ;
     }
     fprintf (fp, "#define GB_%s_SELECTOR\n", kind) ;
@@ -158,12 +158,11 @@ void GB_macrofy_select          // construct all macros for GrB_select
         // must typecast z to keep
         int nargs ;
         const char *cast_z_to_bool = GB_macrofy_cast_expression (fp,
-            ztype, GrB_BOOL, &nargs) ;
+            GrB_BOOL, ztype, &nargs) ;
         fprintf (fp, "#define GB_TEST_VALUE_OF_ENTRY(keep,p) \\\n"
                      "    GB_Z_TYPE z ;                      \\\n") ;
         if (xcode == 0)
         { 
-// GB_GOTCHA ; // operator does not depend on x
             // operator does not depend on x
             fprintf (fp, "    GB_IDXUNOP (z, , i, j, y) ; \\\n") ;
         }
@@ -180,18 +179,13 @@ void GB_macrofy_select          // construct all macros for GrB_select
                          "    GB_GETA (x, Ax, p, ) ;             \\\n"
                          "    GB_IDXUNOP (z, x, i, j, y) ;       \\\n") ;
         }
-        if (cast_z_to_bool == NULL)
+        ASSERT (cast_z_to_bool != NULL) ;
+        if (nargs == 3)
         { 
-            fprintf (fp, "    bool keep = (bool) z ;\n") ;
-        }
-        else if (nargs == 3)
-        { 
-// GB_GOTCHA ; // nargs 3
             fprintf (fp, cast_z_to_bool, "    bool keep", "z", "z") ;
         }
         else
         { 
-// GB_GOTCHA ; // cast to bool
             fprintf (fp, cast_z_to_bool, "    bool keep", "z") ;
         }
     }

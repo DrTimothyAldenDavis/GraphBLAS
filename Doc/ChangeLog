@@ -1,9 +1,11 @@
-Version 8.0.0 (DRAFT)   FIXME: set the date
+Version 8.0.0, May 18, 2023
 
     * version 8:  This version is a major SO version increase, since
         it removes a few minor user-visible features from SuiteSparse:GraphBLAS:
         the GrB_Descriptor no longer supports threading control, and some
-        features of the GxB_SelectOp are removed (see below).
+        features of the GxB_SelectOp are removed (see below).  Enum values have
+        been changed for compatibility with the upcoming GrB_set/get features
+        in the V2.1 C API.
     * The JIT:  GraphBLAS v8.0.0 now includes a JIT for the CPU kernels, which
         can compile kernels at run time.  Added GxB_set/get options and
         environment variables to control the JIT.  The GxB_*Op_new methods can

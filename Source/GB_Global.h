@@ -24,7 +24,7 @@ GrB_Mode GB_Global_mode_get (void) ;
 void     GB_Global_sort_set (int sort) ;
 int      GB_Global_sort_get (void) ;
 
-void     GB_Global_GrB_init_called_set (bool GrB_init_called) ;
+void     GB_Global_GrB_init_called_set (bool init_called) ;
 bool     GB_Global_GrB_init_called_get (void) ;
 
 void     GB_Global_hyper_switch_set (float hyper_switch) ;

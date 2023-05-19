@@ -38,7 +38,7 @@
         #define GB_OPEN         _open
         #define GB_CLOSE        _close
         #define GB_FDOPEN       _fdopen
-        #define GB_MKDIR        _mkdir (path)
+        #define GB_MKDIR(path)  _mkdir (path)
         #define GB_READ_ONLY    (_O_RDONLY)
         #define GB_WRITE_ONLY   (_O_WRONLY | _O_CREAT | _O_APPEND)
         #define GB_READ_WRITE   (_O_RDWR   | _O_CREAT | _O_APPEND)
@@ -247,7 +247,7 @@ bool GB_file_unlock_and_close   // true if successful, false on error
 // Create a directory, including all parent directories if they do not exist.
 // Returns true if the directory already exists or if it was successfully
 // created.  Returns true if the JIT is disabled (the directory is not created
-// also not needed in that case).  Returns false on error.
+// but also not needed in that case).  Returns false on error.
 
 bool GB_file_mkdir (char *path)
 {
@@ -310,7 +310,8 @@ void *GB_file_dlopen (char *library_name)
     #elif GB_WINDOWS
     {
         // open a Windows dll
-        return ((void *) LoadLibrary (library_name)) ;
+        HINSTANCE hdll = LoadLibrary (library_name) ;
+        return ((void *) hdll) ;
     }
     #else
     {
@@ -334,7 +335,8 @@ void *GB_file_dlsym (void *dl_handle, char *symbol)
     #elif GB_WINDOWS
     {
         // lookup a symbol in a Windows dll
-        return ((void *) GetProcAddress (dl_handle, symbol)) ;
+        void *p = (void *) GetProcAddress (dl_handle, symbol) ;
+        return ((void *) p) ;
     }
     #else
     {

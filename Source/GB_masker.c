@@ -94,6 +94,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
 
     ASSERT (C->vdim == Z->vdim && C->vlen == Z->vlen) ;
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;
+    ASSERT (GB_IMPLIES (M->iso, Mask_struct)) ;
 
     //--------------------------------------------------------------------------
     // determine the sparsity of R

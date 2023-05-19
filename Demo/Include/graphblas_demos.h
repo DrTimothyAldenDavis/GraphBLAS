@@ -55,7 +55,7 @@
 
 #include "GraphBLAS.h"
 #include "simple_rand.h"
-#include "usercomplex.h"
+// #include "usercomplex.h"
 
 #undef MIN
 #undef MAX

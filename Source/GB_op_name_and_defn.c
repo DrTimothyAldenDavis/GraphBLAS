@@ -93,7 +93,7 @@ GrB_Info GB_op_name_and_defn
     op_name [GxB_MAX_NAME_LEN-1] = '\0' ;
 
     // get the operator name length and hash the name
-    (*op_name_len) = strlen (op_name) ;
+    (*op_name_len) = (int32_t) strlen (op_name) ;
 
     // a user-defined op can only be JIT'd if it has a name and defn.
     // a new builtin op (created by GB_reduce_to_vector) can always be JIT'd.

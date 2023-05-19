@@ -25,7 +25,6 @@ void GB_macrofy_user_op         // construct a user-defined operator
 
     if (op->hash == 0 || op->hash == UINT64_MAX)
     { 
-// GB_GOTCHA ; // no hash
         // skip if op is builtin or cannot be used in the JIT
         return ;
     }

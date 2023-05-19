@@ -54,6 +54,8 @@ GrB_BinaryOp My_rdiv = NULL ;
 #define MY_RDIV                                                 \
 "void my_rdiv (double *z, const double *x, const double *y)\n"  \
 "{\n"                                                           \
+"    // escape this quote: \"\n"                                \
+"    /* escape this backslash \\ */\n"                          \
 "    (*z) = (*y) / (*x) ;\n"                                    \
 "}"
 
@@ -168,10 +170,10 @@ void mexFunction
 
     // get the axb_method
     // 0 or not present: default
-    // 1001: Gustavson
-    // 1003: dot
-    // 1004: hash
-    // 1005: saxpy
+    // 7081: Gustavson
+    // 7083: dot
+    // 7084: hash
+    // 7085: saxpy
     GET_SCALAR (2, GrB_Desc_Value, AxB_method, GxB_DEFAULT) ;
 
     // get the cprint flag

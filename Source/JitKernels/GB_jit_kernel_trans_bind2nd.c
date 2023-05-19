@@ -16,8 +16,8 @@
     GB_EWISEOP (Cx, pC, aij, y, 0, 0) ;         \
 }
 
-GB_JIT_KERNEL_TRANS_BIND2ND_PROTO (GB_jit_kernel) ;
-GB_JIT_KERNEL_TRANS_BIND2ND_PROTO (GB_jit_kernel)
+GB_JIT_GLOBAL GB_JIT_KERNEL_TRANS_BIND2ND_PROTO (GB_jit_kernel) ;
+GB_JIT_GLOBAL GB_JIT_KERNEL_TRANS_BIND2ND_PROTO (GB_jit_kernel)
 {
     GB_Y_TYPE y = (*((const GB_Y_TYPE *) y_input)) ;
     #include "GB_transpose_template.c"

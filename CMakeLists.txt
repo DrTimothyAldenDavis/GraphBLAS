@@ -11,7 +11,7 @@
 # get the version
 #-------------------------------------------------------------------------------
 
-cmake_minimum_required ( VERSION 3.19 )
+cmake_minimum_required ( VERSION 3.16 )
 
 set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
     ${CMAKE_SOURCE_DIR}/cmake_modules )
@@ -162,7 +162,7 @@ configure_file ( "CUDA/Config/GB_cuda_common_jitFactory.hpp.in"
     NEWLINE_STYLE LF )
 
 #-------------------------------------------------------------------------------
-# include directories for both graphblas and graphblasdemo libraries
+# include directories for both graphblas and the demos
 #-------------------------------------------------------------------------------
 
 if ( COMPACT )
@@ -373,6 +373,9 @@ endif ( )
 
 # get the current library list, before linking with cuda and rmm
 get_target_property ( GB_CMAKE_LIBRARIES graphblas LINK_LIBRARIES )
+if ( NOT GB_CMAKE_LIBRARIES )
+    set ( GB_CMAKE_LIBRARIES "" )
+endif ( )
 
 if ( SUITESPARSE_CUDA )
     target_link_libraries ( graphblas PUBLIC ${GB_CUDA} ${GB_RMM} )
@@ -388,38 +391,13 @@ endif ( )
 message ( STATUS "CMAKE C flags: ${CMAKE_C_FLAGS} " )
 
 #-------------------------------------------------------------------------------
-# Demo library and programs
+# Demo programs
 #-------------------------------------------------------------------------------
 
 option ( DEMO "ON: Build the demo programs.  OFF (default): do not build the demo programs." off )
 if ( DEMO )
 
-    #---------------------------------------------------------------------------
-    # demo library
-    #---------------------------------------------------------------------------
-
     message ( STATUS "Also compiling the demos in GraphBLAS/Demo" )
-
-    file ( GLOB DEMO_SOURCES "Demo/Source/*.c" )
-    add_library ( graphblasdemo SHARED ${DEMO_SOURCES} )
-
-    set_target_properties ( graphblasdemo PROPERTIES
-        VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
-        SOVERSION ${GraphBLAS_VERSION_MAJOR}
-        C_STANDARD_REQUIRED 11 )
-    set_property ( TARGET graphblasdemo PROPERTY C_STANDARD 11 )
-    target_link_libraries ( graphblasdemo PUBLIC graphblas
-        ${GB_CUDA} ${GB_RMM} )
-
-    if ( NOT NSTATIC )
-        add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
-        set_target_properties ( graphblasdemo_static PROPERTIES
-            VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
-            C_STANDARD_REQUIRED 11 )
-        set_property ( TARGET graphblasdemo_static PROPERTY C_STANDARD 11 )
-        target_link_libraries ( graphblasdemo_static PUBLIC
-            graphblas_static ${GB_CUDA} ${GB_RMM} )
-    endif ( )
 
     #---------------------------------------------------------------------------
     # Demo programs
@@ -438,17 +416,17 @@ if ( DEMO )
     add_executable ( gauss_demo    "Demo/Program/gauss_demo.c" )
 
     # Libraries required for Demo programs
-    target_link_libraries ( openmp_demo   PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( openmp2_demo  PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( complex_demo  PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( kron_demo     PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( simple_demo   PUBLIC graphblasdemo ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( openmp_demo   PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( openmp2_demo  PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( complex_demo  PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( kron_demo     PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( simple_demo   PUBLIC ${GB_CUDA} ${GB_RMM} )
     target_link_libraries ( wildtype_demo PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
     target_link_libraries ( reduce_demo   PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( import_demo   PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( wathen_demo   PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( context_demo  PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( gauss_demo    PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( import_demo   PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( wathen_demo   PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( context_demo  PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( gauss_demo    PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
 
 else ( )
 
@@ -479,21 +457,11 @@ endif ( )
 
 include ( GraphBLAS_JIT_configure )
 
-file ( MAKE_DIRECTORY ${GRAPHBLAS_CACHE_PATH} )
-file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/src" )
-file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/lib" )
-file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/temp" )
-file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/lock" )
-file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/c" )
-file ( MAKE_DIRECTORY "${GRAPHBLAS_CACHE_PATH}/cu" )
-
 configure_file ( "Config/GB_config.h.in"
     "${PROJECT_SOURCE_DIR}/Config/GB_config.h"
     NEWLINE_STYLE LF )
 
-configure_file ( "Config/GB_prejit.c.in"
-    "${PROJECT_SOURCE_DIR}/Config/GB_prejit.c"
-    NEWLINE_STYLE LF )
+include ( GraphBLAS_PreJIT )
 
 #-------------------------------------------------------------------------------
 # dump all variables, for debugging only

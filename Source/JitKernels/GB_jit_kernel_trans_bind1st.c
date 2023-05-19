@@ -15,8 +15,8 @@
     GB_EWISEOP (Cx, pC, x, aij, 0, 0) ;         \
 }
 
-GB_JIT_KERNEL_TRANS_BIND1ST_PROTO (GB_jit_kernel) ;
-GB_JIT_KERNEL_TRANS_BIND1ST_PROTO (GB_jit_kernel)
+GB_JIT_GLOBAL GB_JIT_KERNEL_TRANS_BIND1ST_PROTO (GB_jit_kernel) ;
+GB_JIT_GLOBAL GB_JIT_KERNEL_TRANS_BIND1ST_PROTO (GB_jit_kernel)
 {
     #define GB_BIND_1ST
     GB_X_TYPE x = (*((const GB_X_TYPE *) x_input)) ;

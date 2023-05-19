@@ -57,7 +57,7 @@ GrB_Info GB_Semiring_new            // create a semiring
         // construct the semiring name
         size_t add_len  = strlen (semiring->add->op->name) ;
         size_t mult_len = strlen (semiring->multiply->name) ;
-        semiring->name_len = add_len + mult_len + 1 ;
+        semiring->name_len = (int32_t) (add_len + mult_len + 1) ;
         semiring->name = GB_MALLOC (semiring->name_len + 1, char,
             &(semiring->name_size)) ;
         if (semiring->name == NULL)

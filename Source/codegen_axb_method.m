@@ -659,12 +659,14 @@ fprintf (f, 'm4_define(`GB_declarea'', `#define GB_DECLAREA(aik)%s'')\n', gb_dec
 if (is_first || is_pair || is_positional)
     % value of B is ignored for the FIRST, PAIR, and positional operators
     fprintf (f, 'm4_define(`GB_btype'',  `#define GB_B_TYPE void'')\n') ;
+    fprintf (f, 'm4_define(`GB_bsize'',  `#define GB_B_SIZE 0'')\n') ;
     fprintf (f, 'm4_define(`GB_b2type'', `#define GB_B2TYPE void'')\n') ;
     fprintf (f, 'm4_define(`GB_b_is_pattern'', `#define GB_B_IS_PATTERN 1'')\n') ;
     gb_getb = '' ;
     gb_declareb = '' ;
 else
     fprintf (f, 'm4_define(`GB_btype'',  `#define GB_B_TYPE %s'')\n', xytype) ;
+    fprintf (f, 'm4_define(`GB_bsize'',  `'')\n') ;
     fprintf (f, 'm4_define(`GB_b2type'', `#define GB_B2TYPE %s'')\n', xytype) ;
     fprintf (f, 'm4_define(`GB_b_is_pattern'', `'')\n') ;
     gb_getb = ' bkj = Bx [(B_iso) ? 0 : (pB)]' ;

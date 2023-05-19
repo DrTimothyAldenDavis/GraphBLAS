@@ -39,19 +39,6 @@
 #define LOHI_DEFN                                       \
 "typedef struct { int64_t lo ; int64_t hi ; } LoHi_type ;"
 
-#if 0
-bool LoHi_band (GrB_Index i, GrB_Index j,
-    /* x is unused: */ const void *x, const LoHi_type *thunk) ;
-
-bool LoHi_band (GrB_Index i, GrB_Index j,
-    /* x is unused: */ const void *x, const LoHi_type *thunk)
-{
-    int64_t i2 = (int64_t) i ;
-    int64_t j2 = (int64_t) j ;
-    return ((thunk->lo <= (j2-i2)) && ((j2-i2) <= thunk->hi)) ;
-}
-
-#else
 void LoHi_band (bool *z, /* x is unused: */ const void *x,
     GrB_Index i, GrB_Index j, const LoHi_type *thunk) ;
 
@@ -62,7 +49,6 @@ void LoHi_band (bool *z, /* x is unused: */ const void *x,
     int64_t j2 = (int64_t) j ;
     (*z) = ((thunk->lo <= (j2-i2)) && ((j2-i2) <= thunk->hi)) ;
 }
-#endif
 
 void mexFunction
 (
@@ -101,7 +87,6 @@ void mexFunction
 
     // create the Thunk
     LoHi_type bandwidth  ;
-//  OK (GrB_Type_new (&Thunk_type, sizeof (LoHi_type))) ;
     OK (GxB_Type_new (&Thunk_type, sizeof (LoHi_type),
         "LoHi_type", LOHI_DEFN)) ;
 
@@ -152,15 +137,11 @@ void mexFunction
         // this is just to test the Vector version
         OK (GrB_Vector_select_Scalar ((GrB_Vector) C, NULL, NULL, op,
             (GrB_Vector) A, Thunk, NULL)) ;
-//      OK (GxB_Vector_select_((GrB_Vector) C, NULL, NULL, op, (GrB_Vector) A,
-//          Thunk, NULL)) ;
     }
     else
     {
-//      OK (GxB_Matrix_select_(C, NULL, NULL, op, A, Thunk, desc)) ;
         OK (GrB_Matrix_select_Scalar (C, NULL, NULL, op, A, Thunk, desc)) ;
     }
-
 
     // return C as a sparse matrix and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", false) ;

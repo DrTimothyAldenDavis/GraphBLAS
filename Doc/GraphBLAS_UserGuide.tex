@@ -88,27 +88,6 @@ See Sections~\ref{context} and \ref{jit} for details.
 \end{abstract}
 
 \newpage
-\begin{warning}
-NOTE: this version:
-\input{GraphBLAS_version.tex}
-is a DRAFT.  The following features/revisions will appear in the stable
-v8.0.0 release:
-\end{warning}
-
-\begin{itemize}
-
-    \item NOTE: if you have JIT kernels in your
-        \verb'~/.SuiteSparse/GraphBLAS/8.0.0' folder, delete the entire folder.
-        Normally, a new version of GraphBLAS will create a new folder and
-        ignore the old one, but this draft is still numbered 8.0.0.  Its
-        kernels are incompatible with the earlier DRAFT* versions of 8.0.0,
-        however.
-
-    \item {\bf Windows:} The JIT needs to be tested to Windows.
-
-\end{itemize}
-
-\newpage
 {\small
 \tableofcontents
 }
@@ -8670,8 +8649,8 @@ Corey Nolet, with NVIDIA.
 When GraphBLAS is compiled, the \verb'cmake' build system creates a {\em cache}
 folder where it will keep any kernels created and compiled by the JIT
 (both source code and compiled libraries for each kernel).  The
-default folder is \verb'~/.SuiteSparse/GraphBLAS/8.0.0' for SuiteSparse:
-GraphBLAS version v8.0.0, where the tilde refers to the user's home directory.
+default folder is \verb'~/.SuiteSparse/GrB8.0.0' for SuiteSparse:GraphBLAS
+version v8.0.0, where the tilde refers to the user's home directory.
 The version numbers in the folder name are set automatically, so that a new
 version will ignore kernels compiled by an older version of GraphBLAS.  If the
 \verb'GRAPHBLAS_CACHE_PATH' environment variable is set when GraphBLAS is
@@ -8911,8 +8890,9 @@ are not handled properly with this method, so cmake can also be used on those
 platforms by setting the value of \verb'GxB_JIT_USE_CMAKE' to true.
 
 Normally the same version of cmake should be used to compile both GraphBLAS and
-the JIT kernels.  However, compiling GraphBLAS itself requires cmake v3.19 or
-later, while compiling the JIT kernels only requires cmake v3.13 or later.
+the JIT kernels.  However, compiling GraphBLAS itself requires cmake v3.16 or
+later (v3.19 for some options), while compiling the JIT kernels only requires
+cmake v3.13 or later.
 
 %----------------------------------------
 \subsubsection{\sf GxB\_JIT\_ERROR\_LOG}
@@ -8930,9 +8910,9 @@ The string may be \verb'NULL', which means the same as an empty string.
 
 The \verb'GxB_JIT_CACHE_PATH' string is the full path to the user's cache
 folder (described above).  The default on Linux/Mac is
-\verb'~/.SuiteSparse/GraphBLAS/8.0.0' for GraphBLAS version 8.0.0.  On Windows,
+\verb'~/.SuiteSparse/GrB8.0.0' for GraphBLAS version 8.0.0.  On Windows,
 the cache folder is created inside the user's \verb'LOCALAPPDATA' folder,
-called \verb'SuiteSparse/GraphBLAS/8.0.0'.  When GraphBLAS starts,
+called \verb'SuiteSparse/GrB8.0.0'.  When GraphBLAS starts,
 \verb'GrB_init' checks if the \verb'GRAPHBLAS_CACHE_PATH' environment variable
 exists, and initializes the cache path with that value instead of using the
 default.
@@ -8983,7 +8963,7 @@ as RedisGraph.
 \label{prejit}
 
 When GraphBLAS runs, it constructs JIT kernels in the user's cache folder,
-which by default is \verb'~/.SuiteSparse/GraphBLAS/8.0.0' for v8.0.0.  The
+which by default is \verb'~/.SuiteSparse/GrB8.0.0' for v8.0.0.  The
 kernels placed in a subfolder (\verb'c') and inside that folder they are
 further subdivided arbitrarily into subfolders (via an arbitary hash).  The
 files are split into subfolders because a single folder may grow too large for
@@ -9001,7 +8981,7 @@ one time created at run-time by the GraphBLAS JIT, but are now compiled into
 GraphBLAS before it runs.
 
 {\bf It's that simple.}  Just copy the source files for any kernels you want
-from your cache folder (typically \verb'~/.SuiteSparse/GraphBLAS/8.0.0/c') into
+from your cache folder (typically \verb'~/.SuiteSparse/GrB8.0.0/c') into
 \verb'GraphBLAS/PreJIT', and recompile GraphBLAS.  There's no need to change
 any other cmake setting, and no need to do anything different in any
 applications that use GraphBLAS.  Do not copy the compiled libraries; they are
@@ -9150,7 +9130,7 @@ consideration.
 
 \subsubsection{Better performance for multithreaded user programs:}
 This version is thread-safe when used in a multithread user application, but a
-better JIT critical section (many readers, 1 writer) might be needed.  The
+better JIT critical section (many readers, one writer) might be needed.  The
 current critical section may be sufficiently fast since the typical case of
 work done inside the critical section is a single hash table lookup.  However,
 the performance issues related to this have not been tested.  This has no
@@ -9173,7 +9153,15 @@ These hints have no effect on the results of any GraphBLAS operation (except
 perhaps floating-point roundoff differences), but they can have a great impact
 on the amount of time or memory taken.
 
+\begin{note}
+{\bf NOTE:} In the next release, \verb'GxB_get' and \verb'GxB_set' will be
+replaced by \verb'GrB_*_get' and \verb'GrB_*_set', using the v2.1 C API
+Specification.
+\end{note}
+
+%-------------------------------------------------------------------------------
 \subsection{{\sf GxB\_set}: overview}
+%-------------------------------------------------------------------------------
 
 \begin{itemize}
 
@@ -9273,8 +9261,9 @@ field                       & value         & description \\
 
 \end{itemize}
 
-\newpage
+%-------------------------------------------------------------------------------
 \subsection{{\sf GxB\_get}: overview}
+%-------------------------------------------------------------------------------
 
 \verb'GxB_get' queries a \verb'GrB_Descriptor', a \verb'GrB_Matrix',
 a \verb'GrB_Vector', or the global options.
@@ -9282,6 +9271,11 @@ a \verb'GrB_Vector', or the global options.
 \begin{itemize}
 
 \item \verb'GxB_get (field, &value)' retrieves the value of a global option.
+NOTE: the \verb'const char *' values returned by \verb'GxB_get' are pointers
+to memory spaces ``owned'' by the GraphBLAS library.  Do not modify them.
+Subsequent calls to GraphBLAS (particularly setting the JIT control strings)
+can change those strings.  The user application must copy those strings into
+its own memory space if the strings are to be kept.
 
 {\footnotesize
 \begin{tabular}{lll}
@@ -9299,32 +9293,32 @@ field                       & value         & description \\
 \verb'GxB_FLUSH'            & see below     & diagnostic output \\
 \verb'GxB_PRINT_1BASED'     & \verb'int'    & for printing matrices/vectors \\
 \hline
-\verb'GxB_JIT_C_COMPILER_NAME' & \verb'char *' & C compiler for JIT kernels \\
-\verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'char *' & flags for the C compiler \\
-\verb'GxB_JIT_C_LINKER_FLAGS' & \verb'char *' & link flags for the C compiler \\
-\verb'GxB_JIT_C_LIBRARIES'    & \verb'char *' & libraries to link against \\
-\verb'GxB_JIT_C_CMAKE_LIBS'   & \verb'char *' & libraries to link against \\
-\verb'GxB_JIT_C_PREFACE'      & \verb'char *' & C code as preface to JIT kernels \\
+\verb'GxB_JIT_C_COMPILER_NAME' & \verb'const char *' & C compiler for JIT kernels \\
+\verb'GxB_JIT_C_COMPILER_FLAGS'& \verb'const char *' & flags for the C compiler \\
+\verb'GxB_JIT_C_LINKER_FLAGS' & \verb'const char *' & link flags for the C compiler \\
+\verb'GxB_JIT_C_LIBRARIES'    & \verb'const char *' & libraries to link against \\
+\verb'GxB_JIT_C_CMAKE_LIBS'   & \verb'const char *' & libraries to link against \\
+\verb'GxB_JIT_C_PREFACE'      & \verb'const char *' & C code as preface to JIT kernels \\
 \verb'GxB_JIT_C_CONTROL'      & see Section \ref{jit} & CPU JIT control \\
 \verb'GxB_JIT_USE_CMAKE'      & see Section \ref{jit} & CPU JIT: use cmake \\
-\verb'GxB_JIT_ERROR_LOG'      & \verb'char *' & error log file \\
-\verb'GxB_JIT_CACHE_PATH'     & \verb'char *' & folder with compiled kernels \\
+\verb'GxB_JIT_ERROR_LOG'      & \verb'const char *' & error log file \\
+\verb'GxB_JIT_CACHE_PATH'     & \verb'const char *' & folder with compiled kernels \\
 \hline
 \verb'GxB_MODE'                 & \verb'int'    & blocking/non-blocking \\
-\verb'GxB_LIBRARY_NAME'         & \verb'char *' & name of library \\
+\verb'GxB_LIBRARY_NAME'         & \verb'const char *' & name of library \\
 \verb'GxB_LIBRARY_VERSION'      & \verb'int [3]' & library version \\
-\verb'GxB_LIBRARY_DATE'         & \verb'char *' & release date \\
-\verb'GxB_LIBRARY_ABOUT'        & \verb'char *' & about the library \\
-\verb'GxB_LIBRARY_LICENSE'      & \verb'char *' & license \\
-\verb'GxB_LIBRARY_COMPILE_DATE' & \verb'char *' & date of compilation \\
-\verb'GxB_LIBRARY_COMPILE_TIME' & \verb'char *' & time of compilation \\
+\verb'GxB_LIBRARY_DATE'         & \verb'const char *' & release date \\
+\verb'GxB_LIBRARY_ABOUT'        & \verb'const char *' & about the library \\
+\verb'GxB_LIBRARY_LICENSE'      & \verb'const char *' & license \\
+\verb'GxB_LIBRARY_COMPILE_DATE' & \verb'const char *' & date of compilation \\
+\verb'GxB_LIBRARY_COMPILE_TIME' & \verb'const char *' & time of compilation \\
 \verb'GxB_LIBRARY_OPENMP'       & \verb'bool'   & true if compiled with OpenMP\\
-\verb'GxB_LIBRARY_URL'          & \verb'char *' & url of library \\
+\verb'GxB_LIBRARY_URL'          & \verb'const char *' & url of library \\
 \verb'GxB_API_VERSION'          & \verb'int [3]' & C API version \\
-\verb'GxB_API_DATE'             & \verb'char *' & C API date \\
-\verb'GxB_API_ABOUT'            & \verb'char *' & about the C API \\
-\verb'GxB_API_URL'              & \verb'char *' & \verb'http://graphblas.org' \\
-\verb'GxB_COMPILER_NAME'        & \verb'char *' & C compiler name \\
+\verb'GxB_API_DATE'             & \verb'const char *' & C API date \\
+\verb'GxB_API_ABOUT'            & \verb'const char *' & about the C API \\
+\verb'GxB_API_URL'              & \verb'const char *' & \verb'http://graphblas.org' \\
+\verb'GxB_COMPILER_NAME'        & \verb'const char *' & C compiler name \\
 \verb'GxB_COMPILER_VERSION'     & \verb'int [3]' & C compiler version \\
 \hline
 \end{tabular}
@@ -9701,59 +9695,11 @@ The \verb'GxB_Option_Field' enumerated type gives the type of the \verb'field'
 parameter for the second argument of \verb'GxB_set' and \verb'GxB_get',
 for setting global options or matrix options.
 
+NOTE: The enum values have changed with v8.0.0, to be compatible with the
+future updates from the v2.1 C API specification.
+
 {\footnotesize
 \begin{verbatim}
-
-#define GxB_NTHREADS 5
-#define GxB_CHUNK 7
-
-typedef enum
-{
-    // for matrix/vector get/set and global get/set:
-    GxB_HYPER_SWITCH = 0,    // defines switch to hypersparse (double value)
-    GxB_BITMAP_SWITCH = 34,  // defines switch to hypersparse (double value)
-    GxB_FORMAT = 1,     // defines CSR/CSC format: GxB_BY_ROW or GxB_BY_COL
-    GxB_SPARSITY_CONTROL = 32,  // control the sparsity of a matrix or vector
-
-    // for global get/set only:
-    GxB_GLOBAL_NTHREADS = GxB_NTHREADS, // max number of threads to use
-    GxB_GLOBAL_CHUNK = GxB_CHUNK,       // chunk size for small problems
-    GxB_BURBLE = 99,                    // diagnositic output
-    GxB_PRINTF = 101,               // printf function for diagnostic output
-    GxB_FLUSH = 102,                // flush function for diagnostic output
-    GxB_PRINT_1BASED = 104, // print matrices as 0-based or 1-based
-
-    GxB_JIT_C_COMPILER_NAME = 110,  // CPU JIT C compiler name
-    GxB_JIT_C_COMPILER_FLAGS = 111, // CPU JIT C compiler flags
-    GxB_JIT_C_LINKER_FLAGS = 112,   // CPU JIT C linker flags
-    GxB_JIT_C_LIBRARIES = 113,      // CPU JIT C libraries
-    GxB_JIT_C_PREFACE = 114,        // CPU JIT C preface
-    GxB_JIT_C_CONTROL = 115,        // CPU JIT C control
-    GxB_JIT_CACHE_PATH = 116,       // CPU/CUDA JIT path for compiled kernels
-    GxB_JIT_C_CMAKE_LIBS = 117,     // CPU JIT C libraries when using cmake
-    GxB_JIT_USE_CMAKE = 118,        // CPU JIT: use cmake or direct compile
-    GxB_JIT_ERROR_LOG = 119,        // CPU JIT: error log file
-
-    // for matrix/vector get only:
-    GxB_SPARSITY_STATUS = 33,   // query the sparsity of a matrix or vector
-
-    // for global get only:
-    GxB_MODE = 2,       // mode passed to GrB_init (blocking or non-blocking)
-    GxB_LIBRARY_NAME = 8,           // name of the library (char *)
-    GxB_LIBRARY_VERSION = 9,        // library version (3 int's)
-    GxB_LIBRARY_DATE = 10,          // date of the library (char *)
-    GxB_LIBRARY_ABOUT = 11,         // about the library (char *)
-    GxB_LIBRARY_URL = 12,           // URL for the library (char *)
-    GxB_LIBRARY_LICENSE = 13,       // license of the library (char *)
-    GxB_LIBRARY_COMPILE_DATE = 14,  // date library was compiled (char *)
-    GxB_LIBRARY_COMPILE_TIME = 15,  // time library was compiled (char *)
-    GxB_LIBRARY_OPENMP = 25,        // library compiled with OpenMP
-    GxB_API_VERSION = 16,           // API version (3 int's)
-    GxB_API_DATE = 17,              // date of the API (char *)
-    GxB_API_ABOUT = 18,             // about the API (char *)
-    GxB_API_URL = 19,               // URL for the API (char *)
-}
-GxB_Option_Field ;
 \end{verbatim} }
 
 The \verb'GxB_FORMAT' field can be by row or by column, set to a value
@@ -10113,7 +10059,16 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
 }
 \vspace{0.2in}
 
-For example:
+{\bf NOTE:} The strings returned by \verb'GxB_get' are \verb'const char *'.
+They are ``owned'' by the GraphBLAS library itself, not by the user
+application.  They cannot be freed or modified in any way.  A subsequent call
+to \verb'GxB_set' can free them and reallocate them, so they are only valid
+until that point.  If you want to keep a string returned by \verb'GxB_get',
+make a copy immediately after calling \verb'GxB_get', into a character array
+owned by the user application.  The \verb'GxB_JIT_*' strings are the only ones
+this affects.
+
+Below is an example:
 
 {\footnotesize
 \begin{verbatim}
@@ -10216,7 +10171,6 @@ For example:
     if (scontrol & GxB_BITMAP     ) printf ("A may become bitmap\n") ;
     if (scontrol & GxB_FULL       ) printf ("A may become full\n") ; \end{verbatim} }
 
-\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Desc\_get:} retrieve a {\sf GrB\_Descriptor} value}
 %===============================================================================
@@ -16042,8 +15996,10 @@ SuiteSparse:GraphBLAS.
 
 \item AVX acceleration is not enabled.
 
-\item The ninja code generator does not work with MS Visual Studio to
-build GraphBLAS, because of a limitation in cmake.
+\item You must compile with 64-bit computing enabled (x64).  Otherwise, a
+compiler error will occur (\verb'InterlockedExchange64', \verb'InterlockdOr64'
+and other methods will not be found).
+
 \end{itemize}
 
 If you use a recent \verb'gcc' or \verb'icx' compiler on Windows other than the
@@ -16069,6 +16025,9 @@ Visual Studio 2019, but may work for earlier versions.
     \begin{verbatim}
     cmake ..  \end{verbatim} }
     \vspace{-0.1in}
+
+    Alternatively, use the \verb'cmake' gui program to configure
+    the cmake build system for GraphBLAS.
 
 \item The \verb'cmake' command generates many files in
     \verb'SuiteSparse/GraphBLAS/build', and the file \verb'graphblas.sln' in
@@ -16475,17 +16434,20 @@ GraphBLAS folder.
 
 \begin{itemize}
 
-\item Version 8.0.0 (DRAFT) % FIXME set the date
+\item Version 8.0.0 (May 18, 2023)
 
     \begin{itemize}
     \item version 8:  This version is a major SO version increase, since
         it removes a few minor user-visible features from
         SuiteSparse:GraphBLAS: the \verb'GrB_Descriptor' no longer supports
         threading control, and some features of the \verb'GxB_SelectOp' are
-        removed (see below).
+        removed (see below).  Enum values have been changed for compatibility
+        with the upcoming \verb'GrB_set/get' features in the V2.1 C API.
     \item The JIT:  GraphBLAS v8.0.0 includes a JIT for the CPU kernels,
         which can compile kernels at run-time.  Added \verb'GxB_set/get'
-        options and environment variables to control the JIT.
+        options and environment variables to control the JIT.  The
+        \verb'GxB_*Op_new' methods can accept NULL function pointers, if the
+        strings are provided, valid, and the JIT is enabled.
     \item \verb'GxB_Type_new': the size of the type can be given as zero,
         in which case the size is determined via a JIT kernel.
     \item \verb'GxB_UnaryOp_new', \verb'GxB_BinaryOp_new', and

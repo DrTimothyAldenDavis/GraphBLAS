@@ -328,7 +328,7 @@ typedef enum
     //--------------------------------------------------------------------------
 
     GrB_NO_VALUE = 1,           // A(i,j) requested but not there
-    GxB_EXHAUSTED = 2,          // iterator is exhausted
+    GxB_EXHAUSTED = 7089,       // iterator is exhausted
 
     //--------------------------------------------------------------------------
     // errors:
@@ -372,8 +372,8 @@ typedef enum
     GrB_NONBLOCKING = 0,        // methods may return with pending computations
     GrB_BLOCKING = 1,           // no computations are ever left pending
 //  DRAFT: in progress, do not use:
-    GxB_NONBLOCKING_GPU = 2,    // non-blocking mode, allow use of GPU(s)
-    GxB_BLOCKING_GPU = 3,       // blocking mode, allow use of GPU(s)
+    GxB_NONBLOCKING_GPU = 7099, // non-blocking mode, allow use of GPU(s)
+    GxB_BLOCKING_GPU = 7098,    // blocking mode, allow use of GPU(s)
 }
 GrB_Mode ;
 
@@ -482,11 +482,11 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
 // The following are enumerated values in both the GrB_Desc_Field and the
 // GxB_Option_Field for global options.  They are defined with the same integer
 // value for both enums, so the user can use them for both.
-#define GxB_NTHREADS 5
-#define GxB_CHUNK 7
+#define GxB_NTHREADS 7086
+#define GxB_CHUNK 7087
 
 // GPU control (DRAFT: in progress, do not use)
-#define GxB_GPU_ID 26
+#define GxB_GPU_ID 7088
 
 typedef enum
 {
@@ -494,10 +494,10 @@ typedef enum
     GrB_MASK = 1,   // descriptor for the mask input of a method
     GrB_INP0 = 2,   // descriptor for the first input of a method
     GrB_INP1 = 3,   // descriptor for the second input of a method
-    GxB_AxB_METHOD = 1000,  // descriptor for selecting C=A*B algorithm
-    GxB_SORT = 35,          // control sort in GrB_mxm
-    GxB_COMPRESSION = 36,   // select compression for serialize
-    GxB_IMPORT = 37,        // secure vs fast import
+    GxB_AxB_METHOD = 7090,  // descriptor for selecting C=A*B algorithm
+    GxB_SORT = 7091,          // control sort in GrB_mxm
+    GxB_COMPRESSION = 7092,   // select compression for serialize
+    GxB_IMPORT = 7093,        // secure vs fast import
 }
 GrB_Desc_Field ;
 
@@ -517,13 +517,13 @@ typedef enum
     GrB_TRAN = 3,       // use the transpose of the input
 
     // for GxB_AxB_METHOD only:
-    GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
-    GxB_AxB_DOT       = 1003,   // dot product
-    GxB_AxB_HASH      = 1004,   // hash-based saxpy method
-    GxB_AxB_SAXPY     = 1005,   // saxpy method (any kind)
+    GxB_AxB_GUSTAVSON = 7081,   // gather-scatter saxpy method
+    GxB_AxB_DOT       = 7083,   // dot product
+    GxB_AxB_HASH      = 7084,   // hash-based saxpy method
+    GxB_AxB_SAXPY     = 7085,   // saxpy method (any kind)
 
     // for GxB_IMPORT only:
-    GxB_SECURE_IMPORT = 502     // GxB*_pack* methods trust their input data
+    GxB_SECURE_IMPORT = 7080    // GxB*_pack* methods trust their input data
 }
 GrB_Desc_Value ;
 
@@ -3937,8 +3937,6 @@ GrB_Info GxB_Vector_diag    // extract a diagonal from a matrix, as a vector
 //      GxB_Global_Option_set:  sets an option for all future matrices
 //      GxB_Global_Option_get:  queries current option for all future matrices
 
-#define GxB_HYPER 0     // (historical, use GxB_HYPER_SWITCH)
-
 typedef enum            // for global options or matrix options
 {
 
@@ -3946,30 +3944,30 @@ typedef enum            // for global options or matrix options
     // for GxB_Matrix_Option_get/set and GxB_Global_Option_get/set:
     //------------------------------------------------------------
 
-    GxB_HYPER_SWITCH = 0,   // defines switch to hypersparse (a double value)
-    GxB_BITMAP_SWITCH = 34, // defines switch to bitmap (a double value)
-    GxB_FORMAT = 1,         // defines CSR/CSC format: GxB_BY_ROW or GxB_BY_COL
+    GxB_HYPER_SWITCH = 7000,    // switch to hypersparse (double value)
+    GxB_BITMAP_SWITCH = 7001,   // switch to bitmap (double value)
+    GxB_FORMAT = 7002,          // CSR/CSC format: GxB_BY_ROW or GxB_BY_COL
 
     //------------------------------------------------------------
     // for GxB_Global_Option_get only:
     //------------------------------------------------------------
 
-    GxB_MODE = 2,       // mode passed to GrB_init (blocking or non-blocking)
-    GxB_LIBRARY_NAME = 8,           // name of the library (char *)
-    GxB_LIBRARY_VERSION = 9,        // library version (3 int's)
-    GxB_LIBRARY_DATE = 10,          // date of the library (char *)
-    GxB_LIBRARY_ABOUT = 11,         // about the library (char *)
-    GxB_LIBRARY_URL = 12,           // URL for the library (char *)
-    GxB_LIBRARY_LICENSE = 13,       // license of the library (char *)
-    GxB_LIBRARY_COMPILE_DATE = 14,  // date library was compiled (char *)
-    GxB_LIBRARY_COMPILE_TIME = 15,  // time library was compiled (char *)
-    GxB_API_VERSION = 16,           // API version (3 int's)
-    GxB_API_DATE = 17,              // date of the API (char *)
-    GxB_API_ABOUT = 18,             // about the API (char *)
-    GxB_API_URL = 19,               // URL for the API (char *)
-    GxB_COMPILER_VERSION = 23,      // compiler version (3 int's)
-    GxB_COMPILER_NAME = 24,         // compiler name (char *)
-    GxB_LIBRARY_OPENMP = 25,        // library compiled with OpenMP
+    GxB_MODE = 7003,                 // mode passed to GrB_init
+    GxB_LIBRARY_NAME = 7004,         // name of the library (char *)
+    GxB_LIBRARY_VERSION = 7005,      // library version (3 int's)
+    GxB_LIBRARY_DATE = 7006,         // date of the library (char *)
+    GxB_LIBRARY_ABOUT = 7007,        // about the library (char *)
+    GxB_LIBRARY_URL = 7008,          // URL for the library (char *)
+    GxB_LIBRARY_LICENSE = 7009,      // license of the library (char *)
+    GxB_LIBRARY_COMPILE_DATE = 7010, // date library was compiled (char *)
+    GxB_LIBRARY_COMPILE_TIME = 7011, // time library was compiled (char *)
+    GxB_API_VERSION = 7012,          // API version (3 int's)
+    GxB_API_DATE = 7013,             // date of the API (char *)
+    GxB_API_ABOUT = 7014,            // about the API (char *)
+    GxB_API_URL = 7015,              // URL for the API (char *)
+    GxB_COMPILER_VERSION = 7016,     // compiler version (3 int's)
+    GxB_COMPILER_NAME = 7017,        // compiler name (char *)
+    GxB_LIBRARY_OPENMP = 7018,       // library compiled with OpenMP
 
     //------------------------------------------------------------
     // for GxB_Global_Option_get/set only:
@@ -3979,45 +3977,44 @@ typedef enum            // for global options or matrix options
     GxB_GLOBAL_CHUNK = GxB_CHUNK,        // chunk size for small problems.
     GxB_GLOBAL_GPU_ID = GxB_GPU_ID,      // which GPU to use (DRAFT)
 
-    GxB_BURBLE = 99,    // diagnostic output (bool *)
-    GxB_PRINTF = 101,   // printf function diagnostic output
-    GxB_FLUSH = 102,    // flush function diagnostic output
-    GxB_MEMORY_POOL = 103,  // no longer used
-    GxB_PRINT_1BASED = 104,   // print matrices as 0-based or 1-based
+    GxB_BURBLE = 7019,               // diagnostic output (bool *)
+    GxB_PRINTF = 7020,               // printf function diagnostic output
+    GxB_FLUSH = 7021,                // flush function diagnostic output
+    GxB_MEMORY_POOL = 7022,          // no longer used
+    GxB_PRINT_1BASED = 7023,         // print matrices as 0-based or 1-based
 
-    GxB_JIT_C_COMPILER_NAME = 110,  // CPU JIT C compiler name
-    GxB_JIT_C_COMPILER_FLAGS = 111, // CPU JIT C compiler flags
-    GxB_JIT_C_LINKER_FLAGS = 112,   // CPU JIT C linker flags
-    GxB_JIT_C_LIBRARIES = 113,      // CPU JIT C libraries
-    GxB_JIT_C_PREFACE = 114,        // CPU JIT C preface
-    GxB_JIT_C_CONTROL = 115,        // CPU JIT C control
-    GxB_JIT_CACHE_PATH = 116,       // CPU/CUDA JIT path for compiled kernels
-    GxB_JIT_C_CMAKE_LIBS = 117,     // CPU JIT C libraries when using cmake
-    GxB_JIT_USE_CMAKE = 118,        // CPU JIT: use cmake or direct compile
-    GxB_JIT_ERROR_LOG = 119,        // CPU JIT: error log file
-//  GxB_JIT_CUDA_CONTROL = ...,     // CUDA JIT control (future)
+    GxB_JIT_C_COMPILER_NAME = 7024,  // CPU JIT C compiler name
+    GxB_JIT_C_COMPILER_FLAGS = 7025, // CPU JIT C compiler flags
+    GxB_JIT_C_LINKER_FLAGS = 7026,   // CPU JIT C linker flags
+    GxB_JIT_C_LIBRARIES = 7027,      // CPU JIT C libraries
+    GxB_JIT_C_PREFACE = 7028,        // CPU JIT C preface
+    GxB_JIT_C_CONTROL = 7029,        // CPU JIT C control
+    GxB_JIT_CACHE_PATH = 7030,       // CPU/CUDA JIT path for compiled kernels
+    GxB_JIT_C_CMAKE_LIBS = 7031,     // CPU JIT C libraries when using cmake
+    GxB_JIT_USE_CMAKE = 7032,        // CPU JIT: use cmake or direct compile
+    GxB_JIT_ERROR_LOG = 7033,        // CPU JIT: error log file
 
     //------------------------------------------------------------
     // for GxB_Matrix_Option_get only:
     //------------------------------------------------------------
 
-    GxB_SPARSITY_STATUS = 33,       // hyper, sparse, bitmap or full (1,2,4,8)
-    GxB_IS_HYPER = 6,               // historical; use GxB_SPARSITY_STATUS
+    GxB_SPARSITY_STATUS = 7034,     // hyper, sparse, bitmap or full (1,2,4,8)
+    GxB_IS_HYPER = 7035,            // historical; use GxB_SPARSITY_STATUS
 
     //------------------------------------------------------------
     // for GxB_Matrix_Option_get/set only:
     //------------------------------------------------------------
 
-    GxB_SPARSITY_CONTROL = 32,      // sparsity control: 0 to 15; see below
+    GxB_SPARSITY_CONTROL = 7036,    // sparsity control: 0 to 15; see below
 
     //------------------------------------------------------------
     // memory functions (GxB_Global_Option_get only):
     //------------------------------------------------------------
 
-    GxB_MALLOC_FUNCTION = 105,
-    GxB_CALLOC_FUNCTION = 106,
-    GxB_REALLOC_FUNCTION = 107,
-    GxB_FREE_FUNCTION = 108,
+    GxB_MALLOC_FUNCTION = 7037,
+    GxB_CALLOC_FUNCTION = 7038,
+    GxB_REALLOC_FUNCTION = 7039,
+    GxB_FREE_FUNCTION = 7040,
 
 } GxB_Option_Field ;
 
@@ -10846,8 +10843,6 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 #define GxB_COMPRESSION_LZ4   1000  // LZ4
 #define GxB_COMPRESSION_LZ4HC 2000  // LZ4HC, with default level 9
 #define GxB_COMPRESSION_ZSTD  3000  // ZSTD, with default level 1
-
-#define GxB_COMPRESSION_INTEL   1000000 // not yet supported
 
 // Most of the above methods have a level parameter that controls the tradeoff
 // between run time and the amount of compression obtained.  Higher levels

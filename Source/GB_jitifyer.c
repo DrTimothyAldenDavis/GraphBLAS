@@ -104,11 +104,6 @@ static void check_table (void)
             {
                 uint64_t hash = e->hash ;
                 uint64_t k2 = (hash & GB_jit_table_bits) ;
-//              printf ("  %4ld table %6ld(%6lu):%4ld "
-//                  "%p %p (%0lx,%d,%d) %0lx (%s)\n",
-//                  populated, k, k2, e->prejit_index, e->dl_function,
-//                  e->dl_handle, e->encoding.code, e->encoding.kcode,
-//                  e->encoding.suffix_len, hash, e->suffix) ;
                 populated++ ;
             }
         }
@@ -121,15 +116,21 @@ static void check_table (void)
 #endif
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_finalize: free the JIT table and all the strings
+// malloc/free macros
 //------------------------------------------------------------------------------
+
+// The JIT must use persistent malloc/free methods when GraphBLAS is used in
+// MATLAB.  Outside of MATLAB, these are the same as malloc/free passed to
+// GxB_init (or ANSI C malloc/free if using GrB_init).  Inside MATLAB,
+// GB_Global_persistent_malloc uses the same malloc/free given to GxB_init, but
+// then calls mexMakeMemoryPersistent to ensure the memory is not freed when a
+// mexFunction returns to the MATLAB m-file caller.
 
 #define OK(method)                      \
 {                                       \
     GrB_Info myinfo = (method) ;        \
     if (myinfo != GrB_SUCCESS)          \
     {                                   \
-        GB_jitifyer_finalize (false) ;  \
         return (myinfo) ;               \
     }                                   \
 }
@@ -139,7 +140,7 @@ static void check_table (void)
     #define GB_MALLOC_PERSISTENT(X,siz)                     \
     {                                                       \
         X = GB_Global_persistent_malloc (siz) ;             \
-        printf ("persistent malloc (%4d): %p size %lu\n",   \
+        printf ("persistent malloc (%4d): %p size %lu\n",   /* MEMDUMP */ \
             __LINE__, X, siz) ;                             \
     }
 
@@ -147,7 +148,7 @@ static void check_table (void)
     {                                                       \
         if (X != NULL)                                      \
         {                                                   \
-            printf ("persistent free   (%4d): %p\n",        \
+            printf ("persistent free   (%4d): %p\n",        /* MEMDUMP */ \
             __LINE__, X) ;                                  \
         }                                                   \
         GB_Global_persistent_free ((void **) &(X)) ;        \
@@ -178,7 +179,6 @@ static void check_table (void)
     GB_MALLOC_PERSISTENT (X, (len) + 2) ;               \
     if (X == NULL)                                      \
     {                                                   \
-        GB_jitifyer_finalize (false) ;                  \
         return (GrB_OUT_OF_MEMORY) ;                    \
     }                                                   \
     X ## _allocated = (len) + 2 ;                       \
@@ -191,9 +191,13 @@ static void check_table (void)
     strncpy (X, src, X ## _allocated) ;                 \
 }
 
-void GB_jitifyer_finalize (bool freeall)
+//------------------------------------------------------------------------------
+// GB_jitifyer_finalize: free the JIT table and all the strings
+//------------------------------------------------------------------------------
+
+void GB_jitifyer_finalize (void)
 { 
-    GB_jitifyer_table_free (freeall) ;
+    GB_jitifyer_table_free (true) ;
     GB_FREE_STUFF (GB_jit_cache_path) ;
     GB_FREE_STUFF (GB_jit_error_log) ;
     GB_FREE_STUFF (GB_jit_C_compiler) ;
@@ -229,7 +233,7 @@ GrB_Info GB_jitifyer_init (void)
                         // No JIT kernels can be loaded or compiled.
         #endif
 
-    GB_jitifyer_finalize (true) ;
+    GB_jitifyer_finalize ( ) ;
 
     //--------------------------------------------------------------------------
     // find the GB_jit_cache_path
@@ -258,7 +262,7 @@ GrB_Info GB_jitifyer_init (void)
             size_t len = strlen (home) + 60 ;
             GB_MALLOC_STUFF (GB_jit_cache_path, len) ;
             snprintf (GB_jit_cache_path, GB_jit_cache_path_allocated,
-                "%s/%sSuiteSparse/GraphBLAS/%d.%d.%d", home, dot,
+                "%s/%sSuiteSparse/GrB%d.%d.%d", home, dot,
                 GxB_IMPLEMENTATION_MAJOR,
                 GxB_IMPLEMENTATION_MINOR,
                 GxB_IMPLEMENTATION_SUB) ;
@@ -270,10 +274,16 @@ GrB_Info GB_jitifyer_init (void)
         // cannot determine the JIT cache.  Disable loading and compiling, but
         // continue with the rest of the initializations.  The PreJIT could
         // still be used.
-        GBURBLE ("(jit: unable to access cache path, jit disabled) ") ;
+        GBURBLE ("(jit init: unable to access cache path, jit disabled) ") ;
         GB_jit_control = GxB_JIT_RUN ;
         GB_FREE_STUFF (GB_jit_cache_path) ;
         GB_COPY_STUFF (GB_jit_cache_path, "") ;
+    }
+
+    // replace backslash with forward slash
+    for (char *p = GB_jit_cache_path ; *p != '\0' ; p++)
+    {
+        if ((*p) == '\\') (*p) = '/' ; 
     }
 
     //--------------------------------------------------------------------------
@@ -340,12 +350,7 @@ GrB_Info GB_jitifyer_init (void)
 
         void *dl_function = Kernels [k] ;
         GB_jit_query_func dl_query = (GB_jit_query_func) Queries [k] ;
-        if (dl_function == NULL || dl_query == NULL || Names [k] == NULL)
-        { 
-// GB_GOTCHA ; // PreJIT NULL
-            // ignore this kernel
-            continue ;
-        }
+        ASSERT (dl_function != NULL && dl_query != NULL && Names [k] != NULL) ;
         char kernel_name [GB_KLEN+1] ;
         strncpy (kernel_name, Names [k], GB_KLEN) ;
         kernel_name [GB_KLEN] = '\0' ;
@@ -362,9 +367,8 @@ GrB_Info GB_jitifyer_init (void)
             &scode, &suffix) ;
 
         if (info != GrB_SUCCESS || !GB_STRING_MATCH (name_space, "GB_jit"))
-        { 
-// GB_GOTCHA ; // PreJIT invalid name
-            // kernel_name is invalid; ignore this kernel
+        {
+            // PreJIT error: kernel_name is invalid; ignore this kernel
             continue ;
         }
 
@@ -424,16 +428,16 @@ GrB_Info GB_jitifyer_init (void)
         else if (IS ("user_op"      )) c = GB_JIT_KERNEL_USEROP ;
         else if (IS ("user_type"    )) c = GB_JIT_KERNEL_USERTYPE ;
         else
-        { 
-// GB_GOTCHA ; // PreJIT invalid name
-            // kernel_name is invalid; ignore this kernel
+        {
+            // PreJIT error: kernel_name is invalid; ignore this kernel
             continue ;
         }
 
         #undef IS
         encoding->kcode = c ;
         encoding->code = scode ;
-        encoding->suffix_len = (suffix == NULL) ? 0 : strlen (suffix) ;
+        encoding->suffix_len = (suffix == NULL) ? 0 :
+            ((int32_t) strlen (suffix)) ;
 
         //----------------------------------------------------------------------
         // get the hash of this PreJIT kernel
@@ -457,9 +461,8 @@ GrB_Info GB_jitifyer_init (void)
             (version [0] != GxB_IMPLEMENTATION_MAJOR) ||
             (version [1] != GxB_IMPLEMENTATION_MINOR) ||
             (version [2] != GxB_IMPLEMENTATION_SUB))
-        { 
-// GB_GOTCHA ; // PreJIT stale
-            // the kernel is stale; ignore it
+        {
+            // PreJIT error: the kernel is stale; ignore it
             continue ;
         }
 
@@ -469,9 +472,8 @@ GrB_Info GB_jitifyer_init (void)
 
         int64_t k1 = -1, kk = -1 ;
         if (GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) != NULL)
-        { 
-// GB_GOTCHA ; // PreJIT duplicate
-            // the kernel is a duplicate; ignore it
+        {
+            // PreJIT error: the kernel is a duplicate; ignore it
             continue ;
         }
 
@@ -480,9 +482,8 @@ GrB_Info GB_jitifyer_init (void)
         //----------------------------------------------------------------------
 
         if (!GB_jitifyer_insert (hash, encoding, suffix, NULL, dl_function, k))
-        { 
-// GB_GOTCHA ; // out of memory
-            // out of memory
+        {
+            // PreJIT error: out of memory
             GB_jit_control = GxB_JIT_PAUSE ;
             return (GrB_OUT_OF_MEMORY) ;
         }
@@ -543,8 +544,8 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
     snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/src", GB_jit_cache_path) ;
     ok = ok && GB_file_mkdir (GB_jit_temp) ;
 
-    // construct the temp path
-    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/temp", GB_jit_cache_path);
+    // construct the tmp path
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/tmp", GB_jit_cache_path);
     ok = ok && GB_file_mkdir (GB_jit_temp) ;
 
     //--------------------------------------------------------------------------
@@ -553,7 +554,6 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
 
     if (!ok)
     { 
-// GB_GOTCHA ; // cannot create directories
         // JIT is disabled, or cannot determine the JIT cache path.
         // Disable loading and compiling, but continue with the rest of the
         // initializations.  The PreJIT could still be used.
@@ -572,7 +572,7 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
 
 // Returns GrB_SUCCESS if successful, GrB_OUT_OF_MEMORY if out of memory, or
 // error_condition if the files cannot be written to the cache folder for any
-// reason.
+// reason.  If the JIT is disabled at compile time, this method does nothing.
 
 GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
 { 
@@ -587,10 +587,10 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
         GB_jit_cache_path) ;
     FILE *fp_lock = NULL ;
     int fd_lock = -1 ;
-    if (GB_file_open_and_lock (GB_jit_temp, &fp_lock, &fd_lock) < 0)
-    { 
+    if (!GB_file_open_and_lock (GB_jit_temp, &fp_lock, &fd_lock))
+    {
         // failure; disable the JIT
-        GBURBLE ("(jit: unable to access cache folder) ") ;
+        GBURBLE ("(jit: unable to write to source cache, jit disabled) ") ;
         GB_jit_control = GxB_JIT_RUN ;
         return (error_condition) ;
     }
@@ -631,12 +631,10 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     }
 
     uint8_t *dst ;
-//  uint8_t *dst = GB_Global_persistent_malloc ((dst_size+2) * sizeof(uint8_t));
     GB_MALLOC_PERSISTENT (dst, (dst_size+2) * sizeof(uint8_t)) ;
     if (dst == NULL)
-    { 
-// GB_GOTCHA ; // out of memory
-        // out of memory; disable the JIT
+    {
+        // JITPackage error: out of memory; disable the JIT
         GB_jit_control = GxB_JIT_RUN ;
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -653,9 +651,8 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
         size_t src_size = GB_JITpackage_index [k].compressed_size ;
         size_t u = ZSTD_decompress (dst, dst_size, src, src_size) ;
         if (u != GB_JITpackage_index [k].uncompressed_size)
-        { 
-// GB_GOTCHA ; // blob invalid
-            // blob is invalid
+        {
+            // JITPackage error: blob is invalid
             ok = false ;
             break ;
         }
@@ -665,9 +662,8 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
         // open the file
         FILE *fp_src = fopen (GB_jit_temp, "w") ;
         if (fp_src == NULL)
-        { 
-// GB_GOTCHA ; // file not created
-            // file cannot be created
+        {
+            // JITPackage error: file cannot be created
             ok = false ;
             break ;
         }
@@ -675,9 +671,8 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
         size_t nwritten = fwrite (dst, sizeof (uint8_t), u, fp_src) ;
         fclose (fp_src) ;
         if (nwritten != u)
-        { 
-// GB_GOTCHA ; // invalid file
-            // file is invalid
+        {
+            // JITPackage error: file is invalid
             ok = false ;
             break ;
         }
@@ -687,7 +682,6 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     // free workspace
     //--------------------------------------------------------------------------
 
-    // GB_Global_persistent_free ((void **) &dst) ;
     GB_FREE_PERSISTENT (dst) ;
 
     //--------------------------------------------------------------------------
@@ -696,10 +690,9 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
 
     GB_file_unlock_and_close (&fp_lock, &fd_lock) ;
     if (!ok)
-    { 
-// GB_GOTCHA ; // cannot write kernel source
-        // failure; disable the JIT
-        GBURBLE ("(jit: failure to write source to cache folder) ") ;
+    {
+        // JITPackage error: disable the JIT
+        GBURBLE ("(jit: unable to write to source cache, jit disabled) ") ;
         GB_jit_control = GxB_JIT_RUN ;
         return (error_condition) ;
     }
@@ -769,9 +762,8 @@ GrB_Info GB_jitifyer_alloc_space (void)
         GB_jit_C_cmake_libs == NULL ||
         GB_jit_C_compiler == NULL ||
         GB_jit_cache_path == NULL)
-    { 
-// GB_GOTCHA ; // out of memory
-        // out of memory
+    {
+        // JIT error: out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -1432,7 +1424,6 @@ GrB_Info GB_jitifyer_load
     if ((GB_jit_control == GxB_JIT_OFF) || (GB_jit_control == GxB_JIT_PAUSE))
     { 
         // The JIT control has disabled all JIT kernels.  Punt to generic.
-        GBURBLE ("(jit: paused) ") ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -1453,23 +1444,18 @@ GrB_Info GB_jitifyer_load
         (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) ;
         if (k1 >= 0)
         { 
-// GB_GOTCHA ; // need to check PreJIT
             // an unchecked PreJIT kernel; check it inside critical section
         }
         else if ((*dl_function) != NULL)
         { 
-// GB_GOTCHA ; // jit: run
             // found the kernel in the hash table
-            GBURBLE ("(jit: run) ") ;
             return (GrB_SUCCESS) ;
         }
         else
         { 
-// GB_GOTCHA ; // kernel not loaded
             // No kernels may be loaded or compiled, but existing kernels
             // already loaded may be run (handled above if dl_function was
             // found).  This kernel was not loaded, so punt to generic.
-            GBURBLE ("(jit: not loaded) ") ;
             return (GrB_NO_VALUE) ;
         }
     }
@@ -1534,7 +1520,6 @@ GrB_Info GB_jitifyer_worker
                 type1, type2, type3) ;
             if (ok)
             { 
-// GB_GOTCHA ; // prejit ok
                 // PreJIT kernel is fine; flag it as checked by flipping
                 // its prejit_index.
                 GBURBLE ("(prejit: ok) ") ;
@@ -1543,7 +1528,6 @@ GrB_Info GB_jitifyer_worker
             }
             else
             { 
-// GB_GOTCHA ; // prejit disabled
                 // remove the PreJIT kernel from the hash table; do not return.
                 // Instead, keep going and compile a JIT kernel.
                 GBURBLE ("(prejit: disabled) ") ;
@@ -1559,12 +1543,10 @@ GrB_Info GB_jitifyer_worker
             GB_user_op (&ignore, &defn) ;
             if (strcmp (defn, op->defn) == 0)
             { 
-                GBURBLE ("(jit: op ok) ") ;
                 return (GrB_SUCCESS) ;
             }
             else
             { 
-// GB_GOTCHA ; // op changed
                 // the op has changed; need to re-JIT the kernel; do not return.
                 // Instead, keep going and compile a JIT kernel.
                 GBURBLE ("(jit: op changed) ") ;
@@ -1580,8 +1562,6 @@ GrB_Info GB_jitifyer_worker
             GB_user_type (&ignore, &defn) ;
             if (strcmp (defn, type1->defn) == 0)
             { 
-// GB_GOTCHA ; // type OK
-                GBURBLE ("(jit: type ok) ") ;
                 return (GrB_SUCCESS) ;
             }
             else
@@ -1595,7 +1575,6 @@ GrB_Info GB_jitifyer_worker
         else
         { 
             // JIT kernel, or checked PreJIT kernel
-            GBURBLE ("(jit: run) ") ;
             return (GrB_SUCCESS) ;
         }
     }
@@ -1608,11 +1587,9 @@ GrB_Info GB_jitifyer_worker
     if (GB_jit_control <= GxB_JIT_RUN)
     #endif
     { 
-// GB_GOTCHA ; // kernel not loaded (RUN or less)
         // No kernels may be loaded or compiled, but existing kernels already
         // loaded may be run (handled above if dl_function was found).  This
         // kernel was not loaded, so punt to generic.
-        GBURBLE ("(jit: not loaded) ") ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -1685,14 +1662,13 @@ GrB_Info GB_jitifyer_worker
     //--------------------------------------------------------------------------
 
     uint32_t bucket = hash & 0xFF ;
-    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lock/%02x/%s_lock",
-        GB_jit_cache_path, bucket, kernel_name) ;
+    snprintf (GB_jit_temp, GB_jit_temp_allocated,
+        "%s/lock/%02x/%016" PRIx64 "_lock", GB_jit_cache_path, bucket, hash) ;
     FILE *fp_klock = NULL ;
     int fd_klock = -1 ;
-    if (GB_file_open_and_lock (GB_jit_temp, &fp_klock, &fd_klock) < 0)
-    { 
-// GB_GOTCHA ; // cannot lock kernel
-        // unable to lock the kernel
+    if (!GB_file_open_and_lock (GB_jit_temp, &fp_klock, &fd_klock))
+    {
+        // JIT error: unable to lock the kernel
         // disable the JIT to avoid repeated load errors
         GB_jit_control = GxB_JIT_RUN ;
         return (GrB_NO_VALUE) ;
@@ -1766,44 +1742,18 @@ GrB_Info GB_jitifyer_load_worker
         // library is loaded but make sure the defn match
         GB_jit_query_func dl_query = (GB_jit_query_func)
             GB_file_dlsym (dl_handle, "GB_jit_query") ;
-
-        bool ok = true ;
-        if (dl_query == NULL)
-        { 
-// GB_GOTCHA ; // corrupted library
-            // library is missing the GB_jit_query method
-            ok = false ;
-            GBURBLE ("(jit: library corrupted; jit disabled) ") ;
-            GB_jit_control = GxB_JIT_RUN ;
-            return (GrB_NO_VALUE) ;
-        }
-
+        bool ok = (dl_query != NULL) ;
         if (ok)
         { 
             ok = GB_jitifyer_query (dl_query, hash, semiring, monoid, op,
                 type1, type2, type3) ;
         }
-
         if (!ok)
         { 
             // library is loaded but needs to change, so close it
-            GB_file_dlclose (dl_handle) ;
-            dl_handle = NULL ;
-            if (GB_jit_control == GxB_JIT_LOAD)
-            { 
-// GB_GOTCHA ; // must recompile but control is LOAD
-                // If the JIT control is set to GxB_JIT_LOAD, new kernels
-                // cannot be compiled.  This kernel has just been loaded but it
-                // has stale definition.  Loading it again will result in the
-                // same issue, but will take a lot of time if the kernel is
-                // loaded again and again, since no new kernels can be
-                // compiled.  Set the JIT control to GxB_JIT_RUN to avoid this
-                // performance issue.
-                GB_jit_control = GxB_JIT_RUN ;
-                GBURBLE ("(jit: must recompile but not permited to;"
-                    " jit load disabled) ") ;
-                return (GrB_NO_VALUE) ;
-            }
+            GB_file_dlclose (dl_handle) ; dl_handle = NULL ;
+            // remove the library itself so it doesn't cause the error again
+            remove (GB_jit_temp) ;
             GBURBLE ("(jit: loaded but must recompile) ") ;
         }
     }
@@ -1855,23 +1805,27 @@ GrB_Info GB_jitifyer_load_worker
             GB_macrofy_query (fp, builtin, monoid, op1, op2, type1, type2,
                 type3, hash) ;
             fclose (fp) ;
-            // compile the kernel to get the lib*.so file
-            if (GB_jit_use_cmake)
-            { 
-                // use cmake to compile the kernel
-                GB_jitifyer_cmake_compile (kernel_name, bucket) ;
-            }
-            else
-            { 
-                // use the compiler to directly compile the kernel
-                GB_jitifyer_direct_compile (kernel_name, bucket) ;
-            }
-            // load the kernel from the lib*.so file
-            snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lib/%02x/%s%s%s",
-                GB_jit_cache_path, bucket, GB_LIB_PREFIX, kernel_name,
-                GB_LIB_SUFFIX) ;
-            dl_handle = GB_file_dlopen (GB_jit_temp) ;
         }
+
+        // if the source file was not created above, the compilation will
+        // gracefully fail.
+
+        // compile the kernel to get the lib*.so file
+        if (GB_jit_use_cmake)
+        { 
+            // use cmake to compile the kernel
+            GB_jitifyer_cmake_compile (kernel_name, hash) ;
+        }
+        else
+        { 
+            // use the compiler to directly compile the kernel
+            GB_jitifyer_direct_compile (kernel_name, bucket) ;
+        }
+        // load the kernel from the lib*.so file
+        snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lib/%02x/%s%s%s",
+            GB_jit_cache_path, bucket, GB_LIB_PREFIX, kernel_name,
+            GB_LIB_SUFFIX) ;
+        dl_handle = GB_file_dlopen (GB_jit_temp) ;
 
         //----------------------------------------------------------------------
         // handle any error conditions
@@ -1883,6 +1837,8 @@ GrB_Info GB_jitifyer_load_worker
             GBURBLE ("(jit: compiler error; compilation disabled) ") ;
             // disable the JIT to avoid repeated compilation errors
             GB_jit_control = GxB_JIT_LOAD ;
+            // remove the compiled library
+            remove (GB_jit_temp) ;
             return (GrB_NO_VALUE) ;
         }
 
@@ -1898,27 +1854,27 @@ GrB_Info GB_jitifyer_load_worker
 
     (*dl_function) = GB_file_dlsym (dl_handle, "GB_jit_kernel") ;
     if ((*dl_function) == NULL)
-    { 
-// GB_GOTCHA ; // dlsym failed
-        // unable to find GB_jit_kernel: punt to generic
+    {
+        // JIT error: dlsym unable to find GB_jit_kernel: punt to generic
         GBURBLE ("(jit: load error; JIT loading disabled) ") ;
-        GB_file_dlclose (dl_handle) ; 
-        dl_handle = NULL ;
+        GB_file_dlclose (dl_handle) ; dl_handle = NULL ;
         // disable the JIT to avoid repeated loading errors
         GB_jit_control = GxB_JIT_RUN ;
+        // remove the compiled library
+        remove (GB_jit_temp) ;
         return (GrB_NO_VALUE) ;
     }
 
     // insert the new kernel into the hash table
     if (!GB_jitifyer_insert (hash, encoding, suffix, dl_handle, (*dl_function),
         -1))
-    { 
-// GB_GOTCHA ; // cannot insert in hash table
-        // unable to add kernel to hash table: punt to generic
-        GB_file_dlclose (dl_handle) ; 
-        dl_handle = NULL ;
+    {
+        // JIT error: unable to add kernel to hash table: punt to generic
+        GB_file_dlclose (dl_handle) ; dl_handle = NULL ;
         // disable the JIT to avoid repeated errors
         GB_jit_control = GxB_JIT_PAUSE ;
+        // remove the compiled library
+        remove (GB_jit_temp) ;
         return (GrB_NO_VALUE) ;
     }
 
@@ -2016,12 +1972,10 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         //----------------------------------------------------------------------
 
         siz = GB_JITIFIER_INITIAL_SIZE * sizeof (struct GB_jit_entry_struct) ;
-//      GB_jit_table = GB_Global_persistent_malloc (siz) ;
         GB_MALLOC_PERSISTENT (GB_jit_table, siz) ;
         if (GB_jit_table == NULL)
-        { 
-// GB_GOTCHA ; // out of memory
-            // out of memory
+        {
+            // JIT error: out of memory
             return (false) ;
         }
         memset (GB_jit_table, 0, siz) ;
@@ -2043,12 +1997,10 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         int64_t new_bits = new_size - 1 ;
         siz = new_size * sizeof (struct GB_jit_entry_struct) ;
         GB_jit_entry *new_table ;
-//      new_table = GB_Global_persistent_malloc (siz) ;
         GB_MALLOC_PERSISTENT (new_table, siz) ;
         if (new_table == NULL)
-        { 
-// GB_GOTCHA ; // out of memory
-            // out of memory; leave the existing table as-is
+        {
+            // JIT error: out of memory; leave the existing table as-is
             return (false) ;
         }
 
@@ -2104,12 +2056,10 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
             if (!builtin)
             { 
                 // allocate the suffix if the kernel is not builtin
-                // e->suffix = GB_Global_persistent_malloc (suffix_len+1) ;
                 GB_MALLOC_PERSISTENT (e->suffix, suffix_len+2) ;
                 if (e->suffix == NULL)
-                { 
-// GB_GOTCHA ; // out of memory
-                    // out of memory
+                {
+                    // JIT error: out of memory
                     return (false) ;
                 }
                 strncpy (e->suffix, suffix, suffix_len+1) ;
@@ -2135,13 +2085,11 @@ void GB_jitifyer_entry_free (GB_jit_entry *e)
 {
     e->dl_function = NULL ;
     GB_jit_table_populated-- ;
-    // GB_Global_persistent_free ((void **) (&(e->suffix))) ;
     GB_FREE_PERSISTENT (e->suffix) ;
     // unload the dl library
     if (e->dl_handle != NULL)
     { 
-        GB_file_dlclose (e->dl_handle) ;
-        e->dl_handle = NULL ;
+        GB_file_dlclose (e->dl_handle) ; e->dl_handle = NULL ;
     }
     ASSERT_TABLE_OK ;
 }
@@ -2173,7 +2121,6 @@ void GB_jitifyer_table_free (bool freeall)
                 // found an entry
                 if (e->dl_handle == NULL)
                 { 
-// GB_GOTCHA ; // flag PreJIT
                     // flag the PreJIT kernel as unchecked
                     e->prejit_index = GB_UNFLIP (e->prejit_index) ;
                 }
@@ -2225,12 +2172,13 @@ static void GB_jitifyer_command (char *command)
 
 // This method works on any platform.  For Windows, this method is always used.
 
-#define GB_BLD_DIR "%s/temp/%s"
+#define GB_BLD_DIR "%s/tmp/%016" PRIx64
 
-void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
+void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
 { 
 #ifndef NJIT
 
+    uint32_t bucket = hash & 0xFF ;
     GBURBLE ("(jit: %s)\n", "cmake") ;
     char *burble_stdout = GB_Global_burble_get ( ) ? "" : GB_DEV_NULL ;
     char *err_redirect = (strlen (GB_jit_error_log) > 0) ? " 2>> " : "" ;
@@ -2238,65 +2186,90 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint32_t bucket)
     // remove any prior build folder for this kernel, and all its contents
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
         "cmake -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
-        GB_jit_cache_path, kernel_name,     // build path
+        GB_jit_cache_path, hash,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ;
 
     // create the build folder for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated, GB_BLD_DIR,
-        GB_jit_cache_path, kernel_name) ;
+        GB_jit_cache_path, hash) ;
     if (!GB_file_mkdir (GB_jit_temp)) return ;
 
     // create the CMakeLists.txt file in the build folder for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated, GB_BLD_DIR "/CMakeLists.txt",
-        GB_jit_cache_path, kernel_name) ;
+        GB_jit_cache_path, hash) ;
     FILE *fp = fopen (GB_jit_temp, "w") ;
     if (fp == NULL) return ;
     fprintf (fp,
         "cmake_minimum_required ( VERSION 3.13 )\n"
-        "set ( CMAKE_BUILD_TYPE \"Release\" )\n"
-        "set ( CMAKE_LIBRARY_OUTPUT_DIRECTORY \"%s/lib/%02x\" )\n"
-        "project ( %s C )\n"
+        "project ( GBjit LANGUAGES C )\n"
         "include_directories ( \"%s/src\"%s)\n"
-        "add_compile_definitions ( GB_JIT_RUNTIME )\n"
-        "set ( CMAKE_C_FLAGS \"%s\" )\n"
-        "add_library ( %s SHARED \"%s/c/%02x/%s.c\" )\n"
-        "target_link_libraries ( %s PUBLIC %s )\n"
-        "message ( STATUS \"compiler: ${CMAKE_C_COMPILER}\" )\n"
-        "message ( STATUS \"C flags : ${CMAKE_C_FLAGS}\" )\n"
-        "message ( STATUS \"C link  : ${CMAKE_SHARED_LINKER_FLAGS}\" )\n",
-        GB_jit_cache_path, bucket,  // library output dir: cache/lib/bucket
-        kernel_name,                // project name
+        "add_compile_definitions ( GB_JIT_RUNTIME )\n",
         GB_jit_cache_path,          // include directories: cache/src
-        ((strlen (GB_OMP_INC_DIRS) == 0) ? " " : " \"" GB_OMP_INC_DIRS "\" "),
-        GB_jit_C_flags,             // C flags
+        ((strlen (GB_OMP_INC_DIRS) == 0) ? " " : " \"" GB_OMP_INC_DIRS "\" ")) ;
+    // print the C flags, but escape any double quote characters
+    fprintf (fp, "set ( CMAKE_C_FLAGS \"") ;
+    for (char *p = GB_jit_C_flags ; *p != '\0' ; p++)
+    {
+        if (*p == '"') fprintf (fp, "\\") ;
+        fprintf (fp, "%c", *p) ;
+    }
+    fprintf (fp, "\" )\n") ;
+    fprintf (fp,
+        "add_library ( %s SHARED \"%s/c/%02x/%s.c\" )\n",
         kernel_name,                // target name for add_library command
-        GB_jit_cache_path, bucket, kernel_name, // source file for add_library
-        kernel_name,                // target name of the library
-        GB_jit_C_cmake_libs) ;      // libraries to link against
+        GB_jit_cache_path, bucket, kernel_name) ; // source file for add_library
+    if (strlen (GB_jit_C_cmake_libs) > 0)
+    {
+        fprintf (fp,
+            "target_link_libraries ( %s PUBLIC %s )\n",
+            kernel_name,                // target name of the library
+            GB_jit_C_cmake_libs) ;      // libraries to link against
+    }
+
+    fprintf (fp, 
+        "set_target_properties ( %s PROPERTIES\n"
+        "    C_STANDARD 11 C_STANDARD_REQUIRED ON )\n"
+        "install ( TARGETS %s\n"
+        "    LIBRARY DESTINATION \"%s/lib/%02x\"\n"
+        "    ARCHIVE DESTINATION \"%s/lib/%02x\"\n"
+        "    RUNTIME DESTINATION \"%s/lib/%02x\" )\n",
+        kernel_name,
+        kernel_name,
+        GB_jit_cache_path, bucket,
+        GB_jit_cache_path, bucket,
+        GB_jit_cache_path, bucket) ;
     fclose (fp) ;
 
     // generate the build system for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
         "cmake -S \"" GB_BLD_DIR "\" -B \"" GB_BLD_DIR "\""
         " -DCMAKE_C_COMPILER=\"%s\" %s %s %s",
-        GB_jit_cache_path, kernel_name,     // -S source path
-        GB_jit_cache_path, kernel_name,     // -B build path
+        GB_jit_cache_path, hash,     // -S source path
+        GB_jit_cache_path, hash,     // -B build path
         GB_jit_C_compiler,                  // C compiler to use
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ;
 
     // compile the library for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        "cmake --build \"" GB_BLD_DIR "\" %s %s %s",
-        GB_jit_cache_path, kernel_name,     // build path
+        "cmake --build \"" GB_BLD_DIR "\" --config Release %s %s %s",
+        // can add "--verbose" here too
+        GB_jit_cache_path, hash,     // build path
+        burble_stdout, err_redirect, GB_jit_error_log) ;
+    GB_jitifyer_command (GB_jit_temp) ;
+
+    // install the library
+    snprintf (GB_jit_temp, GB_jit_temp_allocated,
+        "cmake --install \"" GB_BLD_DIR "\" %s %s %s",
+        GB_jit_cache_path, hash,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ;
 
     // remove the build folder and all its contents
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
         "cmake -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
-        GB_jit_cache_path, kernel_name,     // build path
+        GB_jit_cache_path, hash,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ;
 
@@ -2380,7 +2353,9 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
 //------------------------------------------------------------------------------
 
 // xxHash uses switch statements with no default case.
+#if GB_COMPILER_GCC
 #pragma GCC diagnostic ignored "-Wswitch-default"
+#endif
 
 #define XXH_INLINE_ALL
 #define XXH_NO_STREAM

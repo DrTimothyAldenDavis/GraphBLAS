@@ -34,7 +34,7 @@ for k = nmex:-1:1
 end
 
 % list of C files to compile
-cfiles = [ dir('../Test/GB_mx_*.c') ; dir('../Demo/Source/usercomplex.c') ] ;
+cfiles = [ dir('../Test/GB_mx_*.c') ; dir('../Demo/Include/usercomplex.c') ] ;
 
 % list of *.h and template file dependencies
 hfiles = [ dir('../Test/*.h') ; dir('../Test/Template/*.c') ] ;
@@ -42,6 +42,7 @@ hfiles = [ dir('../Test/*.h') ; dir('../Test/Template/*.c') ] ;
 % list of include directories
 inc = '-Itmp_include -I../Test -I../Test/Template -I../lz4 -I../rmm_wrap' ;
 inc = [inc ' -I../zstd -I../zstd/zstd_subset -I. -I../xxHash'] ;
+inc = [inc ' -I../Source/JitKernels '] ;
 
 have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 if (have_octave)

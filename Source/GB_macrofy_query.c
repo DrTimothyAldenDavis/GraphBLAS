@@ -29,8 +29,8 @@ void GB_macrofy_query
     //--------------------------------------------------------------------------
 
     fprintf (fp, 
-        "GB_JIT_QUERY_PROTO (GB_jit_query) ;\n"
-        "GB_JIT_QUERY_PROTO (GB_jit_query)\n"
+        "GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query) ;\n"
+        "GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query)\n"
         "{\n"
         "    (*hash) = 0x%016" PRIx64 " ;\n"
         "    v [0] = %d ; v [1] = %d ; v [2] = %d ;\n",
@@ -63,7 +63,6 @@ void GB_macrofy_query
     }
     else if (op0 == op1)
     { 
-// GB_GOTCHA ; // op0 == op1
         // op1 is user-defined, but the same as op0
         fprintf (fp, "    defn [1] = defn [0] ;\n") ;
     }

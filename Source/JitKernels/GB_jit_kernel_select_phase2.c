@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-GB_JIT_KERNEL_SELECT_PHASE2_PROTO (GB_jit_kernel) ;
-GB_JIT_KERNEL_SELECT_PHASE2_PROTO (GB_jit_kernel)
+GB_JIT_GLOBAL GB_JIT_KERNEL_SELECT_PHASE2_PROTO (GB_jit_kernel) ;
+GB_JIT_GLOBAL GB_JIT_KERNEL_SELECT_PHASE2_PROTO (GB_jit_kernel)
 {
     GB_A_TYPE *restrict Cx = (GB_A_TYPE *) Cx_out ;
     #if GB_DEPENDS_ON_Y

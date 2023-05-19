@@ -49,31 +49,33 @@ GB_spec_compare (C1, C2) ;
 X = 1./A ;
 C1 = X*B ;
 
-C2 = GB_mex_rdiv  (A, B,   1003) ;
+method = 7083 ;
+
+C2 = GB_mex_rdiv  (A, B,   method) ;
 assert (norm (C1-C2,1) < 1e-5)
 
-C2 = GB_mex_rdiv2 (A, B,   false, false, 1003, 0) ;
+C2 = GB_mex_rdiv2 (A, B,   false, false, method, 0) ;
 assert (norm (C1-C2,1) < 1e-5)
 
-C2 = GB_mex_rdiv2 (AT, B,  true,  false, 1003, 0) ;
+C2 = GB_mex_rdiv2 (AT, B,  true,  false, method, 0) ;
 assert (norm (C1-C2,1) < 1e-5)
 
-C2 = GB_mex_rdiv2 (A, BT,  false, true,  1003, 0) ;
+C2 = GB_mex_rdiv2 (A, BT,  false, true,  method, 0) ;
 assert (norm (C1-C2,1) < 1e-5)
 
-C2 = GB_mex_rdiv2 (AT, BT, true,  true,  1003, 0) ;
+C2 = GB_mex_rdiv2 (AT, BT, true,  true,  method, 0) ;
 assert (norm (C1-C2,1) < 1e-5)
 
 X = 1./B ;
 C1 = A*X ;
 
-C2 = GB_mex_rdiv2 (A, B,   false, false, 1003, 1) ;
+C2 = GB_mex_rdiv2 (A, B,   false, false, method, 1) ;
 assert (norm (C1-C2,1) < 1e-5)
 
-C2 = GB_mex_rdiv2 (AT, B,  true,  false, 1003, 1) ;
+C2 = GB_mex_rdiv2 (AT, B,  true,  false, method, 1) ;
 assert (norm (C1-C2,1) < 1e-5)
 
-C2 = GB_mex_rdiv2 (A, BT,  false, true,  1003, 1) ;
+C2 = GB_mex_rdiv2 (A, BT,  false, true,  method, 1) ;
 assert (norm (C1-C2,1) < 1e-5)
 
 % update C in place with dot4:
@@ -81,21 +83,21 @@ X = 1./B ;
 C0 = A*X ;
 C1 = A*X + pi ;
 
-[C2, inplace] = GB_mex_rdiv2 (A, B,   false, false, 1003, 1, pi) ;
+[C2, inplace] = GB_mex_rdiv2 (A, B,   false, false, method, 1, pi) ;
 if (inplace)
     assert (norm (C1-C2,1) < 1e-5)
 else
     assert (norm (C0-C2,1) < 1e-5)
 end
 
-[C2, inplace] = GB_mex_rdiv2 (AT, B,  true,  false, 1003, 1, pi) ;
+[C2, inplace] = GB_mex_rdiv2 (AT, B,  true,  false, method, 1, pi) ;
 if (inplace)
     assert (norm (C1-C2,1) < 1e-5)
 else
     assert (norm (C0-C2,1) < 1e-5)
 end
 
-[C2, inplace] = GB_mex_rdiv2 (A, BT,  false, true,  1003, 1, pi) ;
+[C2, inplace] = GB_mex_rdiv2 (A, BT,  false, true,  method, 1, pi) ;
 if (inplace)
     assert (norm (C1-C2,1) < 1e-5)
 else

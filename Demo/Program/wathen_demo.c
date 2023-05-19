@@ -7,18 +7,22 @@
 
 //------------------------------------------------------------------------------
 
-// Construct a matrix using the Demo/Source/wathen.c method.
+// Construct a matrix using the wathen method.
 //
 //  wathen_demo nx ny method nthreads
 
-// macro used by OK(...) to free workspace if an error occurs
-#define FREE_ALL            \
-    GrB_Matrix_free (&A) ;  \
-
 #include "graphblas_demos.h"
+#include "simple_rand.h"
+#include "simple_rand.c"
+#include "wathen.c"
 #ifdef _OPENMP
 #include "omp.h"
 #endif
+
+// macro used by OK(...) to free workspace if an error occurs
+#undef  FREE_ALL
+#define FREE_ALL            \
+    GrB_Matrix_free (&A) ;  \
 
 int main (int argc, char **argv)
 {
