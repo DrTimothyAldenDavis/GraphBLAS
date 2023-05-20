@@ -762,7 +762,7 @@ GB_MONOID_DEF  ( BXNOR_UINT64 , uint64_t  , 0xFFFFFFFFFFFFFFFF )
         GB_MAGIC, 0,                /* magic and header_size */             \
         & GB_OPAQUE (GB_EVAL4 (add, _, GB_XTYPE, _MONOID)),                 \
         & GB_OPAQUE (GB_EVAL3 (mult, _, GB_XTYPE)),                         \
-        0                           /* hash */                              \
+        NULL, 0, 0, 0               /* name, name_len, name_size, hash */   \
     } ;                                                                     \
     GrB_Semiring GXB (GB_SEMIRING_NAME (add, mult)) =                       \
          & GB_OPAQUE (GB_SEMIRING_NAME (add, mult)) ;
@@ -774,7 +774,7 @@ GB_MONOID_DEF  ( BXNOR_UINT64 , uint64_t  , 0xFFFFFFFFFFFFFFFF )
         GB_MAGIC, 0,                /* magic and header_size */             \
         & GB_OPAQUE (GB_EVAL2 (add, _BOOL_MONOID)),                         \
         & GB_OPAQUE (GB_EVAL3 (mult, _, GB_XTYPE)),                         \
-        0                           /* hash */                              \
+        NULL, 0, 0, 0               /* name, name_len, name_size, hash */   \
     } ;
 
 #define GXB_SEMIRING_COMPARE(add,mult)                                      \
