@@ -38,18 +38,28 @@ void mexFunction
 
     GrB_Vector v ;
     GrB_Index nmax = GrB_INDEX_MAX + 1 ;
+    GrB_Index nvals ;
 
     for (GrB_Index n = nmax - 5 ; n <= nmax ; n++)
     {
         printf ("n %lu, nmax %lu, (n == nmax): %d\n", n, nmax, n == nmax) ;
         OK (GrB_Vector_new (&v, GrB_BOOL, n)) ;
         OK (GrB_assign (v, NULL, NULL, true, GrB_ALL, n, NULL)) ;
-        OK (GxB_print (v, 3)) ;
-        GrB_Index nvals ;
+        OK (GxB_print (v, 1)) ;
         OK (GrB_Vector_nvals (&nvals, v)) ;
         CHECK (nvals == n) ;
         OK (GrB_Vector_free (&v)) ;
     }
+
+    GrB_Matrix A ;
+    GrB_Index n = (GrB_INDEX_MAX + 1) / 2 ;
+    OK (GrB_Matrix_new (&A, GrB_BOOL, n, 2)) ;
+    OK (GrB_assign (A, NULL, NULL, true, GrB_ALL, n, GrB_ALL, 2, NULL)) ;
+    OK (GxB_print (A, 1)) ;
+    OK (GrB_Matrix_nvals (&nvals, A)) ;
+    printf ("nvals (A) %lu\n", nvals) ;
+    CHECK (nvals == INT64_MAX) ;
+    OK (GrB_Matrix_free (&A)) ;
 
     //--------------------------------------------------------------------------
     // GxB_Context_error
