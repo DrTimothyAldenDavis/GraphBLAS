@@ -1,4 +1,4 @@
-// SuiteSparse:GraphBLAS 8.0.0
+// SuiteSparse:GraphBLAS 8.0.1
 //------------------------------------------------------------------------------
 // GraphBLAS.h: definitions for the GraphBLAS package
 //------------------------------------------------------------------------------
@@ -238,10 +238,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "May 18, 2023"
+#define GxB_IMPLEMENTATION_DATE "May 20, 2023"
 #define GxB_IMPLEMENTATION_MAJOR 8
 #define GxB_IMPLEMENTATION_MINOR 0
-#define GxB_IMPLEMENTATION_SUB   0
+#define GxB_IMPLEMENTATION_SUB   1
 #define GxB_SPEC_DATE "Nov 15, 2021"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 0
@@ -4654,6 +4654,7 @@ GrB_Info GrB_Matrix_error       (const char **error, const GrB_Matrix     A) ;
 GrB_Info GrB_Descriptor_error   (const char **error, const GrB_Descriptor d) ;
 // GxB_Scalar_error is historical: use GrB_Scalar_error instead
 GrB_Info GxB_Scalar_error       (const char **error, const GrB_Scalar     s) ;
+GrB_Info GxB_Context_error      (const char **error, const GxB_Context Context);
 
 // GrB_error (error,object) polymorphic function:
 #if GxB_STDC_VERSION >= 201112L
@@ -4670,6 +4671,7 @@ GrB_Info GxB_Scalar_error       (const char **error, const GrB_Scalar     s) ;
                   GrB_Scalar       : GrB_Scalar_error       ,   \
                   GrB_Vector       : GrB_Vector_error       ,   \
                   GrB_Matrix       : GrB_Matrix_error       ,   \
+                  GxB_Context      : GxB_Context_error      ,   \
                   GrB_Descriptor   : GrB_Descriptor_error       \
     )                                                           \
     (error, object)

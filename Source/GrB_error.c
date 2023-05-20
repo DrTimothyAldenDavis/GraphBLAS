@@ -11,6 +11,13 @@
 
 const char empty [8] = "" ;
 
+GrB_Info GxB_Context_error (const char **error, const GxB_Context context)
+{ 
+    GB_RETURN_IF_NULL (error) ;
+    (*error) = empty ;
+    return (GrB_SUCCESS) ;
+}
+
 GrB_Info GrB_Type_error (const char **error, const GrB_Type type)
 { 
     GB_RETURN_IF_NULL (error) ;
