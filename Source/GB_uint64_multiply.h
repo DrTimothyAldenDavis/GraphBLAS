@@ -30,9 +30,9 @@ GB_STATIC_INLINE bool GB_uint64_multiply    // c = a*b, return true if ok
 )
 {
 
-    if (a == 0 || b == 0)
-    {
-        (*c) = 0 ;
+    if (a <= 1 || b <= 1)
+    { 
+        (*c) = a*b ;
         return (true) ;
     }
 
