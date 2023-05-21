@@ -8461,7 +8461,7 @@ GrB_Info GxB_Context_new        // create a new context
 
 A new context is created and initialized with the current global settings for
 \verb'GxB_NTHREADS' and \verb'GxB_CHUNK'.  See \verb'GxB_Global_Option_get'.
-The context object will have an effect on any calls to GraphBLAS until it
+The context object will not have an effect on any calls to GraphBLAS until it
 is {\em engaged} by a user thread.
 
 \newpage
