@@ -21,21 +21,31 @@ GrB_Info GB_op_string_get
     // get the field
     //--------------------------------------------------------------------------
 
+    (*value) = '\0' ;
     GrB_Type type = NULL ;
+    char *name ;
 
     switch ((int) field)
     {
         case GrB_NAME : 
 
-            {
-                const char *name = GB_op_name_get (op) ;
-                if (name == NULL)
-                { 
-                    return (GrB_INVALID_VALUE) ;
-                }
-                strcpy (value, name) ;
+            name = GB_op_name_get (op) ;
+            if (name == NULL)
+            { 
+                return (GrB_INVALID_VALUE) ;
             }
-            break ;
+            strcpy (value, name) ;
+            #pragma omp flush
+            return (GrB_SUCCESS) ;
+
+        case GxB_DEFINITION : 
+
+            if (op->defn != NULL)
+            { 
+                strcpy (value, op->defn) ;
+            }
+            #pragma omp flush
+            return (GrB_SUCCESS) ;
 
         case GrB_INPUT1TYPE_STRING : type = op->xtype ; break ;
         case GrB_INPUT2TYPE_STRING : type = op->ytype ; break ;

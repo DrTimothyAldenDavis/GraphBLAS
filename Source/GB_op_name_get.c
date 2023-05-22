@@ -63,6 +63,8 @@ const char *GB_op_name_get (GB_Operator op)
                 case GB_FP64_code    : return ("GrB_IDENTITY_FP64"  ) ;
                 case GB_FC32_code    : return ("GxB_IDENTITY_FC32"  ) ;
                 case GB_FC64_code    : return ("GxB_IDENTITY_FC64"  ) ;
+                // see GB_unop_identity:
+                case GB_UDT_code     : return ("identity_udt") ;
                 default :;
             }
             break ;
@@ -845,6 +847,8 @@ const char *GB_op_name_get (GB_Operator op)
                 case GB_FP64_code    : return ("GrB_FIRST_FP64"  ) ;
                 case GB_FC32_code    : return ("GxB_FIRST_FC32"  ) ;
                 case GB_FC64_code    : return ("GxB_FIRST_FC64"  ) ;
+                // see GB_reduce_to_vector:
+                case GB_UDT_code     : return ("1st_udt") ;
                 default :;
             }
             break ;
@@ -866,6 +870,8 @@ const char *GB_op_name_get (GB_Operator op)
                 case GB_FP64_code    : return ("GrB_SECOND_FP64"  ) ;
                 case GB_FC32_code    : return ("GxB_SECOND_FC32"  ) ;
                 case GB_FC64_code    : return ("GxB_SECOND_FC64"  ) ;
+                // see GB_binop_second:
+                case GB_UDT_code     : return ("2nd_udt") ;
                 default :;
             }
             break ;
@@ -1701,7 +1707,9 @@ const char *GB_op_name_get (GB_Operator op)
         // operator not recognized
         //----------------------------------------------------------------------
 
-        default : return (NULL) ;
+        default :;
     }
+
+    return (NULL) ;
 }
 

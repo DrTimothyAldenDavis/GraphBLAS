@@ -85,15 +85,21 @@ GrB_Info GB_op_name_and_defn
     }
     else
     { 
-        // the user-defined op has no name, so give it a generic name
-        strncpy (op_name, "user_op", GxB_MAX_NAME_LEN-1) ;
+        // user-defined op with no name (yet)
+        op_name [0] = '\0' ;
     }
 
     // ensure op_name is null-terminated
     op_name [GxB_MAX_NAME_LEN-1] = '\0' ;
 
-    // get the operator name length and hash the name
+    // get the operator name length
     (*op_name_len) = (int32_t) strlen (op_name) ;
+    if ((*op_name_len) == 0)
+    { 
+        // the user-defined op has no name, so give it a generic name
+        strncpy (op_name, "[unnamed_user_op]", GxB_MAX_NAME_LEN-1) ;
+        (*op_name_len) = (int32_t) strlen (op_name) ;
+    }
 
     // a user-defined op can only be JIT'd if it has a name and defn.
     // a new builtin op (created by GB_reduce_to_vector) can always be JIT'd.

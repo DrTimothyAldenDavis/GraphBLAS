@@ -4601,13 +4601,16 @@ typedef enum
     GrB_ELTYPE_CODE = 102,
     GrB_ELTYPE_STRING = 106,
 
-    // GrB_*Op, GrB_Monoid, and GrB_Semiring
+    // GrB_*Op, GrB_Monoid, and GrB_Semiring:
     GrB_INPUT1TYPE_CODE = 103,
     GrB_INPUT2TYPE_CODE = 104,
     GrB_OUTPUTTYPE_CODE = 105,
     GrB_INPUT1TYPE_STRING = 107,
     GrB_INPUT2TYPE_STRING = 108,
     GrB_OUTPUTTYPE_STRING = 109,
+
+    // GrB_UnaryOp, GrB_BinaryOp, and GrB_IndexUnaryOp:
+    GxB_DEFINITION = 7041,
 
 }
 GrB_Field ;
