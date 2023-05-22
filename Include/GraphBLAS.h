@@ -1,4 +1,4 @@
-// SuiteSparse:GraphBLAS 8.0.0
+// SuiteSparse:GraphBLAS 8.1.0
 //------------------------------------------------------------------------------
 // GraphBLAS.h: definitions for the GraphBLAS package
 //------------------------------------------------------------------------------
@@ -238,13 +238,13 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "May 18, 2023"
+#define GxB_IMPLEMENTATION_DATE "(draft) May 20, 2023"
 #define GxB_IMPLEMENTATION_MAJOR 8
-#define GxB_IMPLEMENTATION_MINOR 0
+#define GxB_IMPLEMENTATION_MINOR 1
 #define GxB_IMPLEMENTATION_SUB   0
-#define GxB_SPEC_DATE "Nov 15, 2021"
+#define GxB_SPEC_DATE "(projected) Sep 15, 2023"
 #define GxB_SPEC_MAJOR 2
-#define GxB_SPEC_MINOR 0
+#define GxB_SPEC_MINOR 1
 #define GxB_SPEC_SUB   0
 
 // compile-time access to the C API Version number of this library.
@@ -342,6 +342,9 @@ typedef enum
     GrB_DIMENSION_MISMATCH = -6,    // matrix dimensions do not match
     GrB_OUTPUT_NOT_EMPTY = -7,      // output matrix already has values
     GrB_NOT_IMPLEMENTED = -8,       // method not implemented
+#if (GRB_SUBVERSION > 0)
+    GrB_ALREADY_SET = -9,           // field already written to
+#endif
     GrB_PANIC = -101,               // unknown error
     GrB_OUT_OF_MEMORY = -102,       // out of memory
     GrB_INSUFFICIENT_SPACE = -103,  // output array not large enough
@@ -4558,6 +4561,446 @@ GrB_Info GxB_Context_disengage      // disengage a Context
 #endif
 
 //==============================================================================
+// GrB_set and GrB_get
+//==============================================================================
+
+#if (GRB_SUBVERSION > 0)
+
+typedef struct GB_Global_opaque *GrB_Global ;
+GB_GLOBAL const GrB_Global GrB_GLOBAL ;
+
+typedef enum
+{
+
+    //--------------------------------------------------------------------------
+    // GrB enums in the C API
+    //--------------------------------------------------------------------------
+
+    // GrB_Descriptor only:
+    GrB_OUTP_FIELD = 0,   // descriptor for output of a method
+    GrB_MASK_FIELD = 1,   // descriptor for the mask input of a method
+    GrB_INP0_FIELD = 2,   // descriptor for the first input of a method
+    GrB_INP1_FIELD = 3,   // descriptor for the second input of a method
+
+    // all objects, including GrB_GLOBAL:
+    GrB_NAME = 10,
+
+    // GrB_GLOBAL only:
+    GrB_LIBRARY_VER_MAJOR = 11,     // SuiteSparse:GraphBLAS version
+    GrB_LIBRARY_VER_MINOR = 12,
+    GrB_LIBRARY_VER_PATCH = 13,
+    GrB_API_VER_MAJOR = 14,         // C API version
+    GrB_API_VER_MINOR = 15,
+    GrB_API_VER_PATCH = 16,
+    GrB_BLOCKING_MODE = 17,
+
+    // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize?):
+    GrB_STORAGE_ORIENTATION_HINT = 100,
+
+    // GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize?):
+    GrB_ELTYPE_CODE = 102,
+    GrB_ELTYPE_STRING = 106,
+
+    // GrB_*Op, GrB_Monoid, and GrB_Semiring
+    GrB_INPUT1TYPE_CODE = 103,
+    GrB_INPUT2TYPE_CODE = 104,
+    GrB_OUTPUTTYPE_CODE = 105,
+    GrB_INPUT1TYPE_STRING = 107,
+    GrB_INPUT2TYPE_STRING = 108,
+    GrB_OUTPUTTYPE_STRING = 109,
+
+}
+GrB_Field ;
+
+typedef enum
+{
+    GrB_ROWMAJOR = 0,
+    GrB_COLMAJOR = 1,
+    GrB_BOTH     = 2,
+    GrB_UNKNOWN  = 3,
+}
+GrB_Orientation ;
+
+typedef enum
+{
+    GrB_UDT_CODE    = 0,
+    GrB_BOOL_CODE   = 1,
+    GrB_INT8_CODE   = 2,
+    GrB_UINT8_CODE  = 3,
+    GrB_INT16_CODE  = 4,
+    GrB_UINT16_CODE = 5,
+    GrB_INT32_CODE  = 6,
+    GrB_UINT32_CODE = 7,
+    GrB_INT64_CODE  = 8,
+    GrB_UINT64_CODE = 9,
+    GrB_FP32_CODE   = 10,
+    GrB_FP64_CODE   = 11,
+    GxB_FC32_CODE   = 7100,
+    GxB_FC64_CODE   = 7101,
+}
+GrB_Type_Code ;
+
+//------------------------------------------------------------------------------
+// GrB_get: get a scalar, string, enum, size, or void * from an object
+//------------------------------------------------------------------------------
+
+GrB_Info GrB_Scalar_get_Scalar (GrB_Scalar, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_Scalar_get_String (GrB_Scalar, char *    , GrB_Field) ;
+GrB_Info GrB_Scalar_get_ENUM   (GrB_Scalar, int *     , GrB_Field) ;
+GrB_Info GrB_Scalar_get_SIZE   (GrB_Scalar, size_t *  , GrB_Field) ;
+GrB_Info GrB_Scalar_get_VOID   (GrB_Scalar, void *    , GrB_Field) ;
+
+GrB_Info GrB_Vector_get_Scalar (GrB_Vector, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_Vector_get_String (GrB_Vector, char *    , GrB_Field) ;
+GrB_Info GrB_Vector_get_ENUM   (GrB_Vector, int *     , GrB_Field) ;
+GrB_Info GrB_Vector_get_SIZE   (GrB_Vector, size_t *  , GrB_Field) ;
+GrB_Info GrB_Vector_get_VOID   (GrB_Vector, void *    , GrB_Field) ;
+
+GrB_Info GrB_Matrix_get_Scalar (GrB_Matrix, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_Matrix_get_String (GrB_Matrix, char *    , GrB_Field) ;
+GrB_Info GrB_Matrix_get_ENUM   (GrB_Matrix, int *     , GrB_Field) ;
+GrB_Info GrB_Matrix_get_SIZE   (GrB_Matrix, size_t *  , GrB_Field) ;
+GrB_Info GrB_Matrix_get_VOID   (GrB_Matrix, void *    , GrB_Field) ;
+
+GrB_Info GrB_UnaryOp_get_Scalar (GrB_UnaryOp, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_UnaryOp_get_String (GrB_UnaryOp, char *    , GrB_Field) ;
+GrB_Info GrB_UnaryOp_get_ENUM   (GrB_UnaryOp, int *     , GrB_Field) ;
+GrB_Info GrB_UnaryOp_get_SIZE   (GrB_UnaryOp, size_t *  , GrB_Field) ;
+GrB_Info GrB_UnaryOp_get_VOID   (GrB_UnaryOp, void *    , GrB_Field) ;
+
+GrB_Info GrB_IndexUnaryOp_get_Scalar (GrB_IndexUnaryOp, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_IndexUnaryOp_get_String (GrB_IndexUnaryOp, char *    , GrB_Field) ;
+GrB_Info GrB_IndexUnaryOp_get_ENUM   (GrB_IndexUnaryOp, int *     , GrB_Field) ;
+GrB_Info GrB_IndexUnaryOp_get_SIZE   (GrB_IndexUnaryOp, size_t *  , GrB_Field) ;
+GrB_Info GrB_IndexUnaryOp_get_VOID   (GrB_IndexUnaryOp, void *    , GrB_Field) ;
+
+GrB_Info GrB_BinaryOp_get_Scalar (GrB_BinaryOp, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_BinaryOp_get_String (GrB_BinaryOp, char *    , GrB_Field) ;
+GrB_Info GrB_BinaryOp_get_ENUM   (GrB_BinaryOp, int *     , GrB_Field) ;
+GrB_Info GrB_BinaryOp_get_SIZE   (GrB_BinaryOp, size_t *  , GrB_Field) ;
+GrB_Info GrB_BinaryOp_get_VOID   (GrB_BinaryOp, void *    , GrB_Field) ;
+
+GrB_Info GrB_Monoid_get_Scalar (GrB_Monoid, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_Monoid_get_String (GrB_Monoid, char *    , GrB_Field) ;
+GrB_Info GrB_Monoid_get_ENUM   (GrB_Monoid, int *     , GrB_Field) ;
+GrB_Info GrB_Monoid_get_SIZE   (GrB_Monoid, size_t *  , GrB_Field) ;
+GrB_Info GrB_Monoid_get_VOID   (GrB_Monoid, void *    , GrB_Field) ;
+
+GrB_Info GrB_Semiring_get_Scalar (GrB_Semiring, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_Semiring_get_String (GrB_Semiring, char *    , GrB_Field) ;
+GrB_Info GrB_Semiring_get_ENUM   (GrB_Semiring, int *     , GrB_Field) ;
+GrB_Info GrB_Semiring_get_SIZE   (GrB_Semiring, size_t *  , GrB_Field) ;
+GrB_Info GrB_Semiring_get_VOID   (GrB_Semiring, void *    , GrB_Field) ;
+
+GrB_Info GrB_Descriptor_get_Scalar (GrB_Descriptor, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_Descriptor_get_String (GrB_Descriptor, char *    , GrB_Field) ;
+GrB_Info GrB_Descriptor_get_ENUM   (GrB_Descriptor, int *     , GrB_Field) ;
+GrB_Info GrB_Descriptor_get_SIZE   (GrB_Descriptor, size_t *  , GrB_Field) ;
+GrB_Info GrB_Descriptor_get_VOID   (GrB_Descriptor, void *    , GrB_Field) ;
+
+GrB_Info GrB_Type_get_Scalar (GrB_Type, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_Type_get_String (GrB_Type, char *    , GrB_Field) ;
+GrB_Info GrB_Type_get_ENUM   (GrB_Type, int *     , GrB_Field) ;
+GrB_Info GrB_Type_get_SIZE   (GrB_Type, size_t *  , GrB_Field) ;
+GrB_Info GrB_Type_get_VOID   (GrB_Type, void *    , GrB_Field) ;
+
+GrB_Info GrB_Global_get_Scalar (GrB_Global, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_Global_get_String (GrB_Global, char *    , GrB_Field) ;
+GrB_Info GrB_Global_get_ENUM   (GrB_Global, int *     , GrB_Field) ;
+GrB_Info GrB_Global_get_SIZE   (GrB_Global, size_t *  , GrB_Field) ;
+GrB_Info GrB_Global_get_VOID   (GrB_Global, void *    , GrB_Field) ;
+
+// GrB_get (object, value, field):
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_get(object,value,field)                                         \
+    _Generic                                                                \
+    (                                                                       \
+        (object),                                                           \
+            GrB_Scalar :                                                    \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_Scalar_get_Scalar ,               \
+                        char *      : GrB_Scalar_get_String ,               \
+                        int *       : GrB_Scalar_get_ENUM   ,               \
+                        size_t *    : GrB_Scalar_get_SIZE   ,               \
+                        void *      : GrB_Scalar_get_VOID                   \
+                ) ,                                                         \
+            GrB_Vector :                                                    \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_Vector_get_Scalar ,               \
+                        char *      : GrB_Vector_get_String ,               \
+                        int *       : GrB_Vector_get_ENUM   ,               \
+                        size_t *    : GrB_Vector_get_SIZE   ,               \
+                        void *      : GrB_Vector_get_VOID                   \
+                ) ,                                                         \
+            GrB_Matrix :                                                    \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_Matrix_get_Scalar ,               \
+                        char *      : GrB_Matrix_get_String ,               \
+                        int *       : GrB_Matrix_get_ENUM   ,               \
+                        size_t *    : GrB_Matrix_get_SIZE   ,               \
+                        void *      : GrB_Matrix_get_VOID                   \
+                ) ,                                                         \
+            GrB_UnaryOp :                                                   \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_UnaryOp_get_Scalar ,              \
+                        char *      : GrB_UnaryOp_get_String ,              \
+                        int *       : GrB_UnaryOp_get_ENUM   ,              \
+                        size_t *    : GrB_UnaryOp_get_SIZE   ,              \
+                        void *      : GrB_UnaryOp_get_VOID                  \
+                ) ,                                                         \
+            GrB_IndexUnaryOp :                                              \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_IndexUnaryOp_get_Scalar ,         \
+                        char *      : GrB_IndexUnaryOp_get_String ,         \
+                        int *       : GrB_IndexUnaryOp_get_ENUM   ,         \
+                        size_t *    : GrB_IndexUnaryOp_get_SIZE   ,         \
+                        void *      : GrB_IndexUnaryOp_get_VOID             \
+                ) ,                                                         \
+            GrB_BinaryOp :                                                  \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_BinaryOp_get_Scalar ,             \
+                        char *      : GrB_BinaryOp_get_String ,             \
+                        int *       : GrB_BinaryOp_get_ENUM   ,             \
+                        size_t *    : GrB_BinaryOp_get_SIZE   ,             \
+                        void *      : GrB_BinaryOp_get_VOID                 \
+                ) ,                                                         \
+            GrB_Monoid :                                                    \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_Monoid_get_Scalar ,               \
+                        char *      : GrB_Monoid_get_String ,               \
+                        int *       : GrB_Monoid_get_ENUM   ,               \
+                        size_t *    : GrB_Monoid_get_SIZE   ,               \
+                        void *      : GrB_Monoid_get_VOID                   \
+                ) ,                                                         \
+            GrB_Semiring :                                                  \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_Semiring_get_Scalar ,             \
+                        char *      : GrB_Semiring_get_String ,             \
+                        int *       : GrB_Semiring_get_ENUM   ,             \
+                        size_t *    : GrB_Semiring_get_SIZE   ,             \
+                        void *      : GrB_Semiring_get_VOID                 \
+                ) ,                                                         \
+            GrB_Type :                                                      \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_Type_get_Scalar ,                 \
+                        char *      : GrB_Type_get_String ,                 \
+                        int *       : GrB_Type_get_ENUM   ,                 \
+                        size_t *    : GrB_Type_get_SIZE   ,                 \
+                        void *      : GrB_Type_get_VOID                     \
+                ) ,                                                         \
+            GrB_Descriptor :                                                \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_Descriptor_get_Scalar ,           \
+                        char *      : GrB_Descriptor_get_String ,           \
+                        int *       : GrB_Descriptor_get_ENUM   ,           \
+                        size_t *    : GrB_Descriptor_get_SIZE   ,           \
+                        void *      : GrB_Descriptor_get_VOID               \
+                ) ,                                                         \
+            GrB_Global :                                                    \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_Global_get_Scalar ,               \
+                        char *      : GrB_Global_get_String ,               \
+                        int *       : GrB_Global_get_ENUM   ,               \
+                        size_t *    : GrB_Global_get_SIZE   ,               \
+                        void *      : GrB_Global_get_VOID                   \
+                )                                                           \
+    ) (object, value, field)
+#endif
+
+//------------------------------------------------------------------------------
+// GrB_set: set a scalar, string, enum, size, or void * of an object
+//------------------------------------------------------------------------------
+
+GrB_Info GrB_Scalar_set_Scalar (GrB_Scalar, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_Scalar_set_String (GrB_Scalar, char *    , GrB_Field) ;
+GrB_Info GrB_Scalar_set_ENUM   (GrB_Scalar, int       , GrB_Field) ;
+GrB_Info GrB_Scalar_set_VOID   (GrB_Scalar, void *    , GrB_Field, size_t) ;
+
+GrB_Info GrB_Vector_set_Scalar (GrB_Vector, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_Vector_set_String (GrB_Vector, char *    , GrB_Field) ;
+GrB_Info GrB_Vector_set_ENUM   (GrB_Vector, int       , GrB_Field) ;
+GrB_Info GrB_Vector_set_VOID   (GrB_Vector, void *    , GrB_Field, size_t) ;
+
+GrB_Info GrB_Matrix_set_Scalar (GrB_Matrix, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_Matrix_set_String (GrB_Matrix, char *    , GrB_Field) ;
+GrB_Info GrB_Matrix_set_ENUM   (GrB_Matrix, int       , GrB_Field) ;
+GrB_Info GrB_Matrix_set_VOID   (GrB_Matrix, void *    , GrB_Field, size_t) ;
+
+GrB_Info GrB_UnaryOp_set_Scalar (GrB_UnaryOp, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_UnaryOp_set_String (GrB_UnaryOp, char *    , GrB_Field) ;
+GrB_Info GrB_UnaryOp_set_ENUM   (GrB_UnaryOp, int       , GrB_Field) ;
+GrB_Info GrB_UnaryOp_set_VOID   (GrB_UnaryOp, void *    , GrB_Field, size_t) ;
+
+GrB_Info GrB_IndexUnaryOp_set_Scalar (GrB_IndexUnaryOp, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_IndexUnaryOp_set_String (GrB_IndexUnaryOp, char *    , GrB_Field) ;
+GrB_Info GrB_IndexUnaryOp_set_ENUM   (GrB_IndexUnaryOp, int       , GrB_Field) ;
+GrB_Info GrB_IndexUnaryOp_set_VOID   (GrB_IndexUnaryOp, void *    , GrB_Field,
+                                                                    size_t) ;
+
+GrB_Info GrB_BinaryOp_set_Scalar (GrB_BinaryOp, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_BinaryOp_set_String (GrB_BinaryOp, char *    , GrB_Field) ;
+GrB_Info GrB_BinaryOp_set_ENUM   (GrB_BinaryOp, int       , GrB_Field) ;
+GrB_Info GrB_BinaryOp_set_VOID   (GrB_BinaryOp, void *    , GrB_Field, size_t) ;
+
+GrB_Info GrB_Monoid_set_Scalar (GrB_Monoid, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_Monoid_set_String (GrB_Monoid, char *    , GrB_Field) ;
+GrB_Info GrB_Monoid_set_ENUM   (GrB_Monoid, int       , GrB_Field) ;
+GrB_Info GrB_Monoid_set_VOID   (GrB_Monoid, void *    , GrB_Field, size_t) ;
+
+GrB_Info GrB_Semiring_set_Scalar (GrB_Semiring, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_Semiring_set_String (GrB_Semiring, char *    , GrB_Field) ;
+GrB_Info GrB_Semiring_set_ENUM   (GrB_Semiring, int       , GrB_Field) ;
+GrB_Info GrB_Semiring_set_VOID   (GrB_Semiring, void *    , GrB_Field, size_t) ;
+
+GrB_Info GrB_Descriptor_set_Scalar (GrB_Descriptor, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_Descriptor_set_String (GrB_Descriptor, char *    , GrB_Field) ;
+GrB_Info GrB_Descriptor_set_ENUM   (GrB_Descriptor, int       , GrB_Field) ;
+GrB_Info GrB_Descriptor_set_VOID   (GrB_Descriptor, void *    , GrB_Field,
+                                                                size_t) ;
+
+GrB_Info GrB_Type_set_Scalar (GrB_Type, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_Type_set_String (GrB_Type, char *    , GrB_Field) ;
+GrB_Info GrB_Type_set_ENUM   (GrB_Type, int       , GrB_Field) ;
+GrB_Info GrB_Type_set_VOID   (GrB_Type, void *    , GrB_Field, size_t) ;
+
+GrB_Info GrB_Global_set_Scalar (GrB_Global, GrB_Scalar, GrB_Field) ;
+GrB_Info GrB_Global_set_String (GrB_Global, char *    , GrB_Field) ;
+GrB_Info GrB_Global_set_ENUM   (GrB_Global, int       , GrB_Field) ;
+GrB_Info GrB_Global_set_VOID   (GrB_Global, void *    , GrB_Field, size_t) ;
+
+// GrB_set (object, value, field) or (object, value, field, size) for _VOID
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_set(object,value,...)                                           \
+    _Generic                                                                \
+    (                                                                       \
+        (object),                                                           \
+            GrB_Scalar :                                                    \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_Scalar_set_Scalar ,               \
+                        char *      : GrB_Scalar_set_String ,               \
+                        int         : GrB_Scalar_set_ENUM   ,               \
+                        void *      : GrB_Scalar_set_VOID                   \
+                ) ,                                                         \
+            GrB_Vector :                                                    \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_Vector_set_Scalar ,               \
+                        char *      : GrB_Vector_set_String ,               \
+                        int         : GrB_Vector_set_ENUM   ,               \
+                        void *      : GrB_Vector_set_VOID                   \
+                ) ,                                                         \
+            GrB_Matrix :                                                    \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_Matrix_set_Scalar ,               \
+                        char *      : GrB_Matrix_set_String ,               \
+                        int         : GrB_Matrix_set_ENUM   ,               \
+                        void *      : GrB_Matrix_set_VOID                   \
+                ) ,                                                         \
+            GrB_UnaryOp :                                                   \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_UnaryOp_set_Scalar ,              \
+                        char *      : GrB_UnaryOp_set_String ,              \
+                        int         : GrB_UnaryOp_set_ENUM   ,              \
+                        void *      : GrB_UnaryOp_set_VOID                  \
+                ) ,                                                         \
+            GrB_IndexUnaryOp :                                              \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_IndexUnaryOp_set_Scalar ,         \
+                        char *      : GrB_IndexUnaryOp_set_String ,         \
+                        int         : GrB_IndexUnaryOp_set_ENUM   ,         \
+                        void *      : GrB_IndexUnaryOp_set_VOID             \
+                ) ,                                                         \
+            GrB_BinaryOp :                                                  \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_BinaryOp_set_Scalar ,             \
+                        char *      : GrB_BinaryOp_set_String ,             \
+                        int         : GrB_BinaryOp_set_ENUM   ,             \
+                        void *      : GrB_BinaryOp_set_VOID                 \
+                ) ,                                                         \
+            GrB_Monoid :                                                    \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_Monoid_set_Scalar ,               \
+                        char *      : GrB_Monoid_set_String ,               \
+                        int         : GrB_Monoid_set_ENUM   ,               \
+                        void *      : GrB_Monoid_set_VOID                   \
+                ) ,                                                         \
+            GrB_Semiring :                                                  \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_Semiring_set_Scalar ,             \
+                        char *      : GrB_Semiring_set_String ,             \
+                        int         : GrB_Semiring_set_ENUM   ,             \
+                        void *      : GrB_Semiring_set_VOID                 \
+                ) ,                                                         \
+            GrB_Type :                                                      \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_Type_set_Scalar ,                 \
+                        char *      : GrB_Type_set_String ,                 \
+                        int         : GrB_Type_set_ENUM   ,                 \
+                        void *      : GrB_Type_set_VOID                     \
+                ) ,                                                         \
+            GrB_Descriptor :                                                \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_Descriptor_set_Scalar ,           \
+                        char *      : GrB_Descriptor_set_String ,           \
+                        int         : GrB_Descriptor_set_ENUM   ,           \
+                        void *      : GrB_Descriptor_set_VOID               \
+                ) ,                                                         \
+            GrB_Global :                                                    \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GrB_Global_set_Scalar ,               \
+                        char *      : GrB_Global_set_String ,               \
+                        int         : GrB_Global_set_ENUM   ,               \
+                        void *      : GrB_Global_set_VOID                   \
+                )                                                           \
+    ) (object, value, __VA_ARGS__)
+#endif
+
+#endif
+
+//==============================================================================
 // GrB_free: free any GraphBLAS object
 //==============================================================================
 
@@ -4654,6 +5097,7 @@ GrB_Info GrB_Matrix_error       (const char **error, const GrB_Matrix     A) ;
 GrB_Info GrB_Descriptor_error   (const char **error, const GrB_Descriptor d) ;
 // GxB_Scalar_error is historical: use GrB_Scalar_error instead
 GrB_Info GxB_Scalar_error       (const char **error, const GrB_Scalar     s) ;
+GrB_Info GxB_Context_error      (const char **error, const GxB_Context Context);
 
 // GrB_error (error,object) polymorphic function:
 #if GxB_STDC_VERSION >= 201112L
@@ -4670,6 +5114,7 @@ GrB_Info GxB_Scalar_error       (const char **error, const GrB_Scalar     s) ;
                   GrB_Scalar       : GrB_Scalar_error       ,   \
                   GrB_Vector       : GrB_Vector_error       ,   \
                   GrB_Matrix       : GrB_Matrix_error       ,   \
+                  GxB_Context      : GxB_Context_error      ,   \
                   GrB_Descriptor   : GrB_Descriptor_error       \
     )                                                           \
     (error, object)

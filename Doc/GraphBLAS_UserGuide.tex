@@ -8461,7 +8461,7 @@ GrB_Info GxB_Context_new        // create a new context
 
 A new context is created and initialized with the current global settings for
 \verb'GxB_NTHREADS' and \verb'GxB_CHUNK'.  See \verb'GxB_Global_Option_get'.
-The context object will have an effect on any calls to GraphBLAS until it
+The context object will not have an effect on any calls to GraphBLAS until it
 is {\em engaged} by a user thread.
 
 \newpage
@@ -16433,6 +16433,16 @@ GraphBLAS folder.
 %-------------------------------------------------------------------------------
 
 \begin{itemize}
+
+\item Version 8.0.1, May 22, 2023
+
+    \begin{itemize}
+    \item (48) bug fix: \verb'GrB_*_nvals'
+        returned \verb'UINT64_MAX' ('infinity') for a
+        \verb'GrB_Vector' of size n-by-$2^{60}$; it should return $2^{60}$.
+        Caught by Erik Welch, NVIDIA.
+    \item added \verb'GxB_Context_error'
+    \end{itemize}
 
 \item Version 8.0.0 (May 18, 2023)
 
