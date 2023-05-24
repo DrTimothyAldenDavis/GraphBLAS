@@ -70,7 +70,7 @@ GrB_Info GrB_Scalar_get_String
     // get the field
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_name_get ((GrB_Matrix) s, value, field) ;
+    return (GB_name_get ((GrB_Matrix) s, value, field)) ;
 }
 
 //------------------------------------------------------------------------------

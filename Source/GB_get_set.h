@@ -48,5 +48,8 @@ GrB_Info GB_op_size_get   (GB_Operator op, size_t *   value, GrB_Field field) ;
 const char *GB_op_name_get (GB_Operator op) ;
 GrB_Info GB_op_string_set (GB_Operator op, char * value, GrB_Field field) ;
 
+const char *GB_monoid_name_get (GrB_Monoid monoid) ;
+const char *GB_semiring_name_get (GrB_Semiring semiring) ;
+
 #endif
 

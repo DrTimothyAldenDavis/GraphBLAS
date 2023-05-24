@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GrB_Vector_get_*: get a field in a matrix
+// GrB_Semiring_get_*: get a field in a semiring
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -10,12 +10,14 @@
 #include "GB_get_set.h"
 
 //------------------------------------------------------------------------------
-// GrB_Vector_get_Scalar
+// GrB_Semiring_get_Scalar
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Vector_get_Scalar
+// FUTURE: add identity and terminal of the monoid.
+
+GrB_Info GrB_Semiring_get_Scalar
 (
-    GrB_Vector v,
+    GrB_Semiring semiring,
     GrB_Scalar value,
     GrB_Field field
 )
@@ -25,50 +27,26 @@ GrB_Info GrB_Vector_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Vector_get_Scalar (v, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
+    GB_WHERE1 ("GrB_Semiring_get_Scalar (semiring, value, field)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
     GB_RETURN_IF_NULL_OR_FAULTY (value) ;
-    ASSERT_VECTOR_OK (v, "v to get option", GB0) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring to get option", GB0) ;
 
     //--------------------------------------------------------------------------
     // get the field
     //--------------------------------------------------------------------------
 
-    int i ;
-    GrB_Info info = GB_matvec_get ((GrB_Matrix) v, &i, field) ;
-    if (info == GrB_SUCCESS)
-    { 
-        // field specifies an int: assign it to the scalar
-        info = GB_setElement ((GrB_Matrix) value, NULL, &i, 0, 0,
-            GB_INT32_code, Werk) ;
-    }
-    else
-    {
-        float x ;
-        switch ((int) field)
-        {
-            case GxB_BITMAP_SWITCH : 
-                x = v->bitmap_switch ;
-                break ;
-
-            default : 
-                return (GrB_INVALID_VALUE) ;
-        }
-        // field specifies a float: assign it to the scalar
-        info = GB_setElement ((GrB_Matrix) value, NULL, &x, 0, 0,
-            GB_FP32_code, Werk) ;
-    }
-
-    return (info) ;
+    return (GB_op_scalar_get ((GB_Operator) (semiring->multiply),
+        value, field, Werk)) ;
 }
 
 //------------------------------------------------------------------------------
-// GrB_Vector_get_String
+// GrB_Semiring_get_String
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Vector_get_String
+GrB_Info GrB_Semiring_get_String
 (
-    GrB_Vector v,
+    GrB_Semiring semiring,
     char * value,
     GrB_Field field
 )
@@ -78,25 +56,54 @@ GrB_Info GrB_Vector_get_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Vector_get_String (v, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
+    GB_WHERE1 ("GrB_Semiring_get_String (semiring, value, field)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
     GB_RETURN_IF_NULL (value) ;
-    ASSERT_VECTOR_OK (v, "v to get option", GB0) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring to get option", GB0) ;
 
     //--------------------------------------------------------------------------
     // get the field
     //--------------------------------------------------------------------------
 
-    return (GB_name_get ((GrB_Matrix) v, value, field)) ;
+    (*value) = '\0' ;
+    const char *name ;
+
+    switch ((int) field)
+    {
+        case GrB_NAME : 
+
+            name = GB_semiring_name_get (semiring) ;
+            if (name == NULL)
+            { 
+                // construct a name for a user-defined semiring
+                sprintf (value, "%s_%s_SEMIRING",
+                    semiring->add->op->name, semiring->multiply->name) ;
+            }
+            else
+            { 
+                strcpy (value, name) ;
+            }
+            #pragma omp flush
+            return (GrB_SUCCESS) ;
+
+        case GrB_INPUT1TYPE_STRING : 
+        case GrB_INPUT2TYPE_STRING : 
+        case GrB_OUTPUTTYPE_STRING : 
+            return (GB_op_string_get ((GB_Operator) (semiring->multiply),
+                value, field)) ;
+
+        default : ;
+            return (GrB_INVALID_VALUE) ;
+    }
 }
 
 //------------------------------------------------------------------------------
-// GrB_Vector_get_ENUM
+// GrB_Semiring_get_ENUM
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Vector_get_ENUM
+GrB_Info GrB_Semiring_get_ENUM
 (
-    GrB_Vector v,
+    GrB_Semiring semiring,
     int * value,
     GrB_Field field
 )
@@ -106,25 +113,25 @@ GrB_Info GrB_Vector_get_ENUM
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Vector_get_ENUM (v, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
+    GB_WHERE1 ("GrB_Semiring_get_ENUM (semiring, value, field)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
     GB_RETURN_IF_NULL (value) ;
-    ASSERT_VECTOR_OK (v, "v to get option", GB0) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring to get option", GB0) ;
 
     //--------------------------------------------------------------------------
     // get the field
     //--------------------------------------------------------------------------
 
-    return (GB_matvec_get ((GrB_Matrix) v, value, field)) ;
+    return (GB_op_enum_get ((GB_Operator) (semiring->multiply), value, field)) ;
 }
 
 //------------------------------------------------------------------------------
-// GrB_Vector_get_SIZE
+// GrB_Semiring_get_SIZE
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Vector_get_SIZE
+GrB_Info GrB_Semiring_get_SIZE
 (
-    GrB_Vector v,
+    GrB_Semiring semiring,
     size_t * value,
     GrB_Field field
 )
@@ -134,25 +141,54 @@ GrB_Info GrB_Vector_get_SIZE
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Vector_get_SIZE (v, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
+    GB_WHERE1 ("GrB_Semiring_get_SIZE (semiring, value, field)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
     GB_RETURN_IF_NULL (value) ;
-    ASSERT_VECTOR_OK (v, "v to get option", GB0) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring to get option", GB0) ;
 
     //--------------------------------------------------------------------------
     // get the field
     //--------------------------------------------------------------------------
 
-    return (GB_name_size_get (value, field)) ;
+    switch ((int) field)
+    {
+
+        case GrB_NAME : 
+
+            (*value) = GxB_MAX_NAME_LEN ;
+            if (semiring->add->op->opcode == GB_USER_binop_code ||
+                semiring->multiply->opcode == GB_USER_binop_code)
+            { 
+                (*value) += GxB_MAX_NAME_LEN + strlen ("__SEMIRING") ;
+            }
+            break ;
+
+        case GrB_INPUT1TYPE_STRING : 
+        case GrB_INPUT2TYPE_STRING : 
+        case GrB_OUTPUTTYPE_STRING : 
+            (*value) = GxB_MAX_NAME_LEN ;
+            break ;
+
+        default : 
+            return (GrB_INVALID_VALUE) ;
+    }
+
+    #pragma omp flush
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------
-// GrB_Vector_get_VOID
+// GrB_Semiring_get_VOID
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Vector_get_VOID
+// FUTURE: semiring->add and semiring->multiply to replace GxB_Semiring_add
+// and GxB_Semiring_multiply.
+
+// FUTURE: add identity and terminal of the monoid.
+
+GrB_Info GrB_Semiring_get_VOID
 (
-    GrB_Vector v,
+    GrB_Semiring semiring,
     void * value,
     GrB_Field field
 )

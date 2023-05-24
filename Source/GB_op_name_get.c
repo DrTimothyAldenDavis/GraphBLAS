@@ -1278,6 +1278,27 @@ const char *GB_op_name_get (GB_Operator op)
             }
             break ;
 
+        case GB_EQ_binop_code        :  // z = (x == y), is LXNOR for bool
+
+            switch (xcode)
+            { 
+                case GB_BOOL_code    : return ("GrB_LXNOR"    ) ;
+                case GB_INT8_code    : return ("GrB_EQ_INT8"  ) ;
+                case GB_INT16_code   : return ("GrB_EQ_INT16" ) ;
+                case GB_INT32_code   : return ("GrB_EQ_INT32" ) ;
+                case GB_INT64_code   : return ("GrB_EQ_INT64" ) ;
+                case GB_UINT8_code   : return ("GrB_EQ_UINT8" ) ;
+                case GB_UINT16_code  : return ("GrB_EQ_UINT16") ;
+                case GB_UINT32_code  : return ("GrB_EQ_UINT32") ;
+                case GB_UINT64_code  : return ("GrB_EQ_UINT64") ;
+                case GB_FP32_code    : return ("GrB_EQ_FP32"  ) ;
+                case GB_FP64_code    : return ("GrB_EQ_FP64"  ) ;
+                case GB_FC32_code    : return ("GxB_EQ_FC32"  ) ;
+                case GB_FC64_code    : return ("GxB_EQ_FC64"  ) ;
+                default :;
+            }
+            break ;
+
         case GB_BOR_binop_code       :   // z = (x | y), bitwise or
 
             switch (xcode)
@@ -1402,27 +1423,6 @@ const char *GB_op_name_get (GB_Operator op)
                 case GB_UINT16_code  : return ("GxB_BSHIFT_UINT16") ;
                 case GB_UINT32_code  : return ("GxB_BSHIFT_UINT32") ;
                 case GB_UINT64_code  : return ("GxB_BSHIFT_UINT64") ;
-                default :;
-            }
-            break ;
-
-        case GB_EQ_binop_code        :  // z = (x == y), is LXNOR for bool
-
-            switch (xcode)
-            { 
-                case GB_BOOL_code    : return ("GrB_LXNOR"    ) ;
-                case GB_INT8_code    : return ("GrB_EQ_INT8"  ) ;
-                case GB_INT16_code   : return ("GrB_EQ_INT16" ) ;
-                case GB_INT32_code   : return ("GrB_EQ_INT32" ) ;
-                case GB_INT64_code   : return ("GrB_EQ_INT64" ) ;
-                case GB_UINT8_code   : return ("GrB_EQ_UINT8" ) ;
-                case GB_UINT16_code  : return ("GrB_EQ_UINT16") ;
-                case GB_UINT32_code  : return ("GrB_EQ_UINT32") ;
-                case GB_UINT64_code  : return ("GrB_EQ_UINT64") ;
-                case GB_FP32_code    : return ("GrB_EQ_FP32"  ) ;
-                case GB_FP64_code    : return ("GrB_EQ_FP64"  ) ;
-                case GB_FC32_code    : return ("GxB_EQ_FC32"  ) ;
-                case GB_FC64_code    : return ("GxB_EQ_FC64"  ) ;
                 default :;
             }
             break ;

@@ -91,7 +91,7 @@ GrB_Info GrB_Matrix_get_String
     // get the field
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_name_get (A, value, field) ;
+    return (GB_name_get (A, value, field)) ;
 }
 
 //------------------------------------------------------------------------------
