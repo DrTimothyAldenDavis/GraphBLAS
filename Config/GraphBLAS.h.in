@@ -4610,6 +4610,9 @@ typedef enum
     GrB_INPUT2TYPE_STRING = 108,
     GrB_OUTPUTTYPE_STRING = 109,
 
+    // GrB_Type (readable only):  size of the type
+    GrB_SIZE = 110,
+
     // GrB_UnaryOp, GrB_BinaryOp, and GrB_IndexUnaryOp:
     GxB_DEFINITION = 7041,
 

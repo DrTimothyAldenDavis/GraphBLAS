@@ -51,5 +51,20 @@ GrB_Info GB_op_string_set (GB_Operator op, char * value, GrB_Field field) ;
 const char *GB_monoid_name_get (GrB_Monoid monoid) ;
 const char *GB_semiring_name_get (GrB_Semiring semiring) ;
 
+GrB_Info GB_object_string_set
+(
+    // input:
+    bool user_defined,
+    bool jitable,
+    char *value,
+    int field,
+    // output:
+    char *name,
+    int32_t *name_len,
+    char **defn,
+    size_t *defn_size,
+    uint64_t *hash
+) ;
+
 #endif
 

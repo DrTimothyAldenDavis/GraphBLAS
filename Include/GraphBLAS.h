@@ -282,10 +282,11 @@
 
 // The 'spec' string describes the GraphBLAS spec:
 #define GxB_SPEC_ABOUT \
-"GraphBLAS C API, by Aydin Buluc, Timothy Mattson, Scott McMillan,\n"         \
-"Jose' Moreira, Carl Yang, and Benjamin Brock.  Based on 'GraphBLAS\n"        \
-"Mathematics by Jeremy Kepner.  See also 'Graph Algorithms in the Language\n" \
-"of Linear Algebra,' edited by J. Kepner and J. Gilbert, SIAM, 2011.\n"
+"GraphBLAS C API, by Benjamin Brock, Aydin Buluc, Raye Kimmerer,\n" \
+"Jim Kitchen, Major Kumar, Timothy Mattson, Scott McMillan, Jose' Moreira,\n" \
+"Erik Welch, and Carl Yang.  Based on 'GraphBLAS Mathematics by Jeremy\n" \
+"Kepner.  See also 'Graph Algorithms in the Language of Linear Algebra,'\n" \
+"edited by J. Kepner and J. Gilbert, SIAM, 2011.\n"
 
 //==============================================================================
 // GrB_Index: the GraphBLAS integer
@@ -4608,6 +4609,9 @@ typedef enum
     GrB_INPUT1TYPE_STRING = 107,
     GrB_INPUT2TYPE_STRING = 108,
     GrB_OUTPUTTYPE_STRING = 109,
+
+    // GrB_Type (readable only):  size of the type
+    GrB_SIZE = 110,
 
     // GrB_UnaryOp, GrB_BinaryOp, and GrB_IndexUnaryOp:
     GxB_DEFINITION = 7041,

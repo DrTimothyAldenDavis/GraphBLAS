@@ -23,7 +23,7 @@ GrB_Info GB_op_string_get
 
     (*value) = '\0' ;
     GrB_Type type = NULL ;
-    char *name ;
+    const char *name ;
 
     switch ((int) field)
     {
