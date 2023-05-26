@@ -104,7 +104,7 @@ GrB_Info GrB_Descriptor_get_Scalar
     int i ;
     GrB_Info info = GB_desc_get (desc, &i, field) ;
     if (info == GrB_SUCCESS)
-    {
+    { 
         info = GB_setElement ((GrB_Matrix) value, NULL, &i, 0, 0,   
             GB_INT32_code, Werk) ;
     }
@@ -121,7 +121,7 @@ GrB_Info GrB_Descriptor_get_String
     char * value,
     GrB_Field field
 )
-{
+{ 
     return (GrB_NOT_IMPLEMENTED) ;
 }
 
@@ -135,7 +135,7 @@ GrB_Info GrB_Descriptor_get_ENUM
     int * value,
     GrB_Field field
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -163,7 +163,7 @@ GrB_Info GrB_Descriptor_get_SIZE
     size_t * value,
     GrB_Field field
 )
-{
+{ 
     return (GrB_NOT_IMPLEMENTED) ;
 }
 
@@ -177,7 +177,7 @@ GrB_Info GrB_Descriptor_get_VOID
     void * value,
     GrB_Field field
 )
-{
+{ 
     return (GrB_NOT_IMPLEMENTED) ;
 }
 

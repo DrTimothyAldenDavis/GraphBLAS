@@ -21,7 +21,7 @@ GrB_Info GrB_Semiring_get_Scalar
     GrB_Scalar value,
     GrB_Field field
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

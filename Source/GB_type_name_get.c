@@ -31,7 +31,7 @@ void GB_type_name_get
         case GB_FP64_code   : strcpy (name, "GrB_FP64")   ; break ;
         case GB_FC32_code   : strcpy (name, "GxB_FC32")   ; break ;
         case GB_FC64_code   : strcpy (name, "GxB_FC64")   ; break ;
-        default : 
+        default:
         case GB_UDT_code    : strcpy (name, type->name)   ; break ;
     }
 }

@@ -19,7 +19,7 @@ GrB_Info GrB_Monoid_set_Scalar
     GrB_Scalar value,
     GrB_Field field
 )
-{
+{ 
     return (GrB_NOT_IMPLEMENTED) ;
 }
 
@@ -28,7 +28,7 @@ GrB_Info GrB_Monoid_set_Scalar
 //------------------------------------------------------------------------------
 
 GrB_Info GrB_Monoid_set_String
-(
+( 
     GrB_Monoid monoid,
     char * value,
     GrB_Field field
@@ -47,7 +47,7 @@ GrB_Info GrB_Monoid_set_ENUM
     int value,
     GrB_Field field
 )
-{
+{ 
     return (GrB_NOT_IMPLEMENTED) ;
 }
 
@@ -62,7 +62,7 @@ GrB_Info GrB_Monoid_set_VOID
     GrB_Field field,
     size_t size
 )
-{
+{ 
     return (GrB_NOT_IMPLEMENTED) ;
 }
 

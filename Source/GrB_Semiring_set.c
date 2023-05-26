@@ -19,7 +19,7 @@ GrB_Info GrB_Semiring_set_Scalar
     GrB_Scalar value,
     GrB_Field field
 )
-{
+{ 
     return (GrB_NOT_IMPLEMENTED) ;
 }
 
@@ -33,7 +33,7 @@ GrB_Info GrB_Semiring_set_String
     char * value,
     GrB_Field field
 )
-{
+{ 
     return (GrB_NOT_IMPLEMENTED) ;
 }
 
@@ -47,7 +47,7 @@ GrB_Info GrB_Semiring_set_ENUM
     int value,
     GrB_Field field
 )
-{
+{ 
     return (GrB_NOT_IMPLEMENTED) ;
 }
 
@@ -62,7 +62,7 @@ GrB_Info GrB_Semiring_set_VOID
     GrB_Field field,
     size_t size
 )
-{
+{ 
     return (GrB_NOT_IMPLEMENTED) ;
 }
 

@@ -22,7 +22,7 @@ GrB_Info GrB_Monoid_get_Scalar
     GrB_Scalar value,
     GrB_Field field
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

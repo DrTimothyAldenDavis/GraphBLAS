@@ -3,7 +3,7 @@ Version 8.0.1, May 22, 2023
     * (48) bug fix: GrB_*_nvals returned UINT64_MAX ('infinity') for a
         GrB_Vector of size n-by-2^60; it should return 2^60.
         Caught by Erik Welch, NVIDIA.
-    * added GxB_Context_error
+    * added GxB_Context_error and GxB_Context_wait
 
 Version 8.0.0, May 18, 2023
 

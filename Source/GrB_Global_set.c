@@ -217,7 +217,7 @@ GrB_Info GrB_Global_set_ENUM
     int value,
     GrB_Field field
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -244,7 +244,7 @@ GrB_Info GrB_Global_set_VOID
     GrB_Field field,
     size_t size
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

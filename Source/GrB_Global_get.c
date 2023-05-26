@@ -169,7 +169,7 @@ GrB_Info GrB_Global_get_Scalar
             GB_INT32_code, Werk) ;
     }
     else
-    {
+    { 
         double x ;
         switch ((int) field)
         {
@@ -359,7 +359,7 @@ GrB_Info GrB_Global_get_ENUM
     int * value,
     GrB_Field field
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -386,7 +386,7 @@ GrB_Info GrB_Global_get_SIZE
     size_t * value,
     GrB_Field field
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -408,7 +408,7 @@ GrB_Info GrB_Global_get_SIZE
         (*value) = strlen (s) + 1 ;
     }
     else
-    {
+    { 
         switch ((int) field)
         {
 

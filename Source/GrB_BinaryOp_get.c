@@ -19,7 +19,7 @@ GrB_Info GrB_BinaryOp_get_Scalar
     GrB_Scalar value,
     GrB_Field field
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -47,7 +47,7 @@ GrB_Info GrB_BinaryOp_get_String
     char * value,
     GrB_Field field
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -75,7 +75,7 @@ GrB_Info GrB_BinaryOp_get_ENUM
     int * value,
     GrB_Field field
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -103,7 +103,7 @@ GrB_Info GrB_BinaryOp_get_SIZE
     size_t * value,
     GrB_Field field
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -131,7 +131,7 @@ GrB_Info GrB_BinaryOp_get_VOID
     void * value,
     GrB_Field field
 )
-{
+{ 
     return (GrB_NOT_IMPLEMENTED) ;
 }
 

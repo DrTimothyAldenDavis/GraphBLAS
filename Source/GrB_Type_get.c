@@ -19,7 +19,7 @@ GrB_Info GrB_Type_get_Scalar
     GrB_Scalar value,
     GrB_Field field
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -138,10 +138,6 @@ GrB_Info GrB_Type_get_ENUM
             (*value) = (int) GB_type_code_get (type->code) ;
             break ;
 
-        case GrB_SIZE : 
-            (*value) = (int) type->size ;
-            break ;
-
         default : 
             return (GrB_INVALID_VALUE) ;
     }
@@ -207,7 +203,7 @@ GrB_Info GrB_Type_get_VOID
     void * value,
     GrB_Field field
 )
-{
+{ 
     return (GrB_NOT_IMPLEMENTED) ;
 }
 

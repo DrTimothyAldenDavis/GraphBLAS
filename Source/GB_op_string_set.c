@@ -15,7 +15,7 @@ GrB_Info GB_op_string_set
     char * value,
     GrB_Field field
 )
-{
+{ 
 
     GB_Opcode opcode = op->opcode ;
     bool user_defined = (opcode == GB_USER_unop_code) ||

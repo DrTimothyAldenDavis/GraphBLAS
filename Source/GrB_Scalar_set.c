@@ -19,7 +19,7 @@ GrB_Info GrB_Scalar_set_Scalar
     GrB_Scalar value,
     GrB_Field field
 )
-{
+{ 
     // all settings are ignored
     return (GrB_SUCCESS) ;
 }
@@ -62,7 +62,7 @@ GrB_Info GrB_Scalar_set_ENUM
     int value,
     GrB_Field field
 )
-{
+{ 
     // all settings are ignored
     return (GrB_SUCCESS) ;
 }

@@ -190,7 +190,7 @@ GrB_Info GrB_Descriptor_set_String
     char * value,
     GrB_Field field
 )
-{
+{  
     return (GrB_NOT_IMPLEMENTED) ;
 }
 
@@ -204,7 +204,7 @@ GrB_Info GrB_Descriptor_set_ENUM
     int value,
     GrB_Field field
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -227,12 +227,12 @@ GrB_Info GrB_Descriptor_set_ENUM
 
 GrB_Info GrB_Descriptor_set_VOID
 (
-    GrB_Descriptor desdesc,
+    GrB_Descriptor desc,
     void * value,
     GrB_Field field,
     size_t size
 )
-{
+{ 
     return (GrB_NOT_IMPLEMENTED) ;
 }
 

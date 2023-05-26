@@ -43,7 +43,7 @@ GrB_Info GrB_Matrix_get_Scalar
             GB_INT32_code, Werk) ;
     }
     else
-    {
+    { 
         float x ;
         switch ((int) field)
         {
