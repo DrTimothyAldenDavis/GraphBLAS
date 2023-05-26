@@ -14,7 +14,7 @@ GrB_Info GB_name_get (GrB_Matrix A, char *name, int field)
     switch (field)
     {
         case GrB_NAME : 
-            *name = '\0' ;     // TODO: give GrB_Matrix a name
+            (*name) = '\0' ;     // TODO: give GrB_Matrix a name
             break ;
         case GrB_ELTYPE_STRING : 
             GB_type_name_get (name, A->type) ;

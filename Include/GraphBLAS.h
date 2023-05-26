@@ -403,7 +403,12 @@ GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
 // GrB_getVersion: GraphBLAS C API version
 //==============================================================================
 
-// GrB_getVersion provides a runtime access of the C API Version.
+// GrB_getVersion provides a runtime access of the C API Version.  Can also be
+// done with two calls to GrB_Global_get_ENUM with the v2.1 C API:
+//
+//      GrB_get (GrB_GLOBAL, &version,    GrB_API_VER_MAJOR) ;
+//      GrB_get (GrB_GLOBAL, &subversion, GrB_API_VER_MINOR) ;
+
 GrB_Info GrB_getVersion         // runtime access to C API version number
 (
     unsigned int *version,      // returns GRB_VERSION
@@ -4593,27 +4598,32 @@ typedef enum
     GrB_API_VER_MAJOR = 14,         // C API version
     GrB_API_VER_MINOR = 15,
     GrB_API_VER_PATCH = 16,
-    GrB_BLOCKING_MODE = 17,
+    GrB_BLOCKING_MODE = 17,         // GrB_Mode
 
     // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize?):
-    GrB_STORAGE_ORIENTATION_HINT = 100,
+    GrB_STORAGE_ORIENTATION_HINT = 100, // GrB_Orientation
 
     // GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize?):
-    GrB_ELTYPE_CODE = 102,
-    GrB_ELTYPE_STRING = 106,
+    GrB_ELTYPE_CODE = 102,          // a GrB_Type_code (see below)
+    GrB_ELTYPE_STRING = 106,        // name of the type
 
     // GrB_*Op, GrB_Monoid, and GrB_Semiring:
-    GrB_INPUT1TYPE_CODE = 103,
+    GrB_INPUT1TYPE_CODE = 103,      // GrB_Type_code
     GrB_INPUT2TYPE_CODE = 104,
     GrB_OUTPUTTYPE_CODE = 105,
-    GrB_INPUT1TYPE_STRING = 107,
+    GrB_INPUT1TYPE_STRING = 107,    // name of the type
     GrB_INPUT2TYPE_STRING = 108,
     GrB_OUTPUTTYPE_STRING = 109,
 
     // GrB_Type (readable only):  size of the type
-    GrB_SIZE = 110,
+    GrB_SIZE = 110,                 // FIXME: not yet in the C API but should be
 
-    // GrB_UnaryOp, GrB_BinaryOp, and GrB_IndexUnaryOp:
+    //--------------------------------------------------------------------------
+    // SuiteSparse extensions:
+    //--------------------------------------------------------------------------
+
+    // GrB_Type, GrB_UnaryOp, GrB_BinaryOp, and GrB_IndexUnaryOp:  only valid
+    // for user-defined types.
     GxB_DEFINITION = 7041,
 
 }
@@ -4630,20 +4640,20 @@ GrB_Orientation ;
 
 typedef enum
 {
-    GrB_UDT_CODE    = 0,
-    GrB_BOOL_CODE   = 1,
-    GrB_INT8_CODE   = 2,
-    GrB_UINT8_CODE  = 3,
-    GrB_INT16_CODE  = 4,
-    GrB_UINT16_CODE = 5,
-    GrB_INT32_CODE  = 6,
-    GrB_UINT32_CODE = 7,
-    GrB_INT64_CODE  = 8,
-    GrB_UINT64_CODE = 9,
-    GrB_FP32_CODE   = 10,
-    GrB_FP64_CODE   = 11,
-    GxB_FC32_CODE   = 7100,
-    GxB_FC64_CODE   = 7101,
+    GrB_UDT_CODE    = 0,        // user-defined type
+    GrB_BOOL_CODE   = 1,        // GraphBLAS: GrB_BOOL      C: bool
+    GrB_INT8_CODE   = 2,        // GraphBLAS: GrB_INT8      C: int8_t
+    GrB_UINT8_CODE  = 3,        // GraphBLAS: GrB_UINT8     C: uint8_t
+    GrB_INT16_CODE  = 4,        // GraphBLAS: GrB_INT16     C: int16_t
+    GrB_UINT16_CODE = 5,        // GraphBLAS: GrB_UINT16    C: uint16_t
+    GrB_INT32_CODE  = 6,        // GraphBLAS: GrB_INT32     C: int32_t
+    GrB_UINT32_CODE = 7,        // GraphBLAS: GrB_UINT32    C: uint32_t
+    GrB_INT64_CODE  = 8,        // GraphBLAS: GrB_INT64     C: int64_t
+    GrB_UINT64_CODE = 9,        // GraphBLAS: GrB_UINT64    C: uint64_t
+    GrB_FP32_CODE   = 10,       // GraphBLAS: GrB_FP32      C: float
+    GrB_FP64_CODE   = 11,       // GraphBLAS: GrB_FP64      C: double
+    GxB_FC32_CODE   = 7070,     // GraphBLAS: GxB_FC32      C: float complex
+    GxB_FC64_CODE   = 7071,     // GraphBLAS: GxB_FC64      C: double complex
 }
 GrB_Type_Code ;
 
@@ -4716,6 +4726,12 @@ GrB_Info GrB_Global_get_String (GrB_Global, char *    , GrB_Field) ;
 GrB_Info GrB_Global_get_ENUM   (GrB_Global, int *     , GrB_Field) ;
 GrB_Info GrB_Global_get_SIZE   (GrB_Global, size_t *  , GrB_Field) ;
 GrB_Info GrB_Global_get_VOID   (GrB_Global, void *    , GrB_Field) ;
+
+GrB_Info GxB_Context_get_Scalar (GxB_Context, GrB_Scalar, GrB_Field) ;
+GrB_Info GxB_Context_get_String (GxB_Context, char *    , GrB_Field) ;
+GrB_Info GxB_Context_get_ENUM   (GxB_Context, int *     , GrB_Field) ;
+GrB_Info GxB_Context_get_SIZE   (GxB_Context, size_t *  , GrB_Field) ;
+GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
 
 // GrB_get (object, value, field):
 #if GxB_STDC_VERSION >= 201112L
@@ -4832,6 +4848,16 @@ GrB_Info GrB_Global_get_VOID   (GrB_Global, void *    , GrB_Field) ;
                         int *       : GrB_Global_get_ENUM   ,               \
                         size_t *    : GrB_Global_get_SIZE   ,               \
                         void *      : GrB_Global_get_VOID                   \
+                ) ,                                                         \
+            GxB_Context :                                                   \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GxB_Context_get_Scalar ,              \
+                        char *      : GxB_Context_get_String ,              \
+                        int *       : GxB_Context_get_ENUM   ,              \
+                        size_t *    : GxB_Context_get_SIZE   ,              \
+                        void *      : GxB_Context_get_VOID                  \
                 )                                                           \
     ) (object, value, field)
 #endif
@@ -4896,6 +4922,11 @@ GrB_Info GrB_Global_set_Scalar (GrB_Global, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Global_set_String (GrB_Global, char *    , GrB_Field) ;
 GrB_Info GrB_Global_set_ENUM   (GrB_Global, int       , GrB_Field) ;
 GrB_Info GrB_Global_set_VOID   (GrB_Global, void *    , GrB_Field, size_t) ;
+
+GrB_Info GxB_Context_set_Scalar (GxB_Context, GrB_Scalar, GrB_Field) ;
+GrB_Info GxB_Context_set_String (GxB_Context, char *    , GrB_Field) ;
+GrB_Info GxB_Context_set_ENUM   (GxB_Context, int       , GrB_Field) ;
+GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
 
 // GrB_set (object, value, field) or (object, value, field, size) for _VOID
 #if GxB_STDC_VERSION >= 201112L
@@ -5001,6 +5032,15 @@ GrB_Info GrB_Global_set_VOID   (GrB_Global, void *    , GrB_Field, size_t) ;
                         char *      : GrB_Global_set_String ,               \
                         int         : GrB_Global_set_ENUM   ,               \
                         void *      : GrB_Global_set_VOID                   \
+                ) ,                                                         \
+            GxB_Context :                                                   \
+                _Generic                                                    \
+                (                                                           \
+                    (value),                                                \
+                        GrB_Scalar  : GxB_Context_set_Scalar ,              \
+                        char *      : GxB_Context_set_String ,              \
+                        int         : GxB_Context_set_ENUM   ,              \
+                        void *      : GxB_Context_set_VOID                  \
                 )                                                           \
     ) (object, value, __VA_ARGS__)
 #endif
@@ -5059,6 +5099,7 @@ GrB_Info GrB_Descriptor_wait   (GrB_Descriptor desc    , GrB_WaitMode waitmode);
 GrB_Info GrB_Scalar_wait       (GrB_Scalar     s       , GrB_WaitMode waitmode);
 GrB_Info GrB_Vector_wait       (GrB_Vector     v       , GrB_WaitMode waitmode);
 GrB_Info GrB_Matrix_wait       (GrB_Matrix     A       , GrB_WaitMode waitmode);
+GrB_Info GxB_Context_wait      (GxB_Context    Context , GrB_WaitMode waitmode);
 
 // GrB_wait (object,waitmode) polymorphic function:
 #if GxB_STDC_VERSION >= 201112L
@@ -5075,7 +5116,8 @@ GrB_Info GrB_Matrix_wait       (GrB_Matrix     A       , GrB_WaitMode waitmode);
             GrB_Scalar       : GrB_Scalar_wait       ,  \
             GrB_Vector       : GrB_Vector_wait       ,  \
             GrB_Matrix       : GrB_Matrix_wait       ,  \
-            GrB_Descriptor   : GrB_Descriptor_wait      \
+            GrB_Descriptor   : GrB_Descriptor_wait   ,  \
+            GxB_Context      : GxB_Context_wait         \
     )                                                   \
     (object, waitmode)
 #endif
