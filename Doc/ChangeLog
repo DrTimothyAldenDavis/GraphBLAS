@@ -4,7 +4,8 @@ Version 8.0.1, May 27, 2023
         GrB_Vector of size n-by-2^60; it should return 2^60.
         Caught by Erik Welch, NVIDIA.
     * added GxB_Context_error and GxB_Context_wait
-    * C++: changed complex typedefs for C++ that #include GraphBLAS.h
+    * C++: changed complex typedefs for C++ that #include GraphBLAS.h;
+        update from Markus Muetzel
 
 Version 8.0.0, May 18, 2023
 
