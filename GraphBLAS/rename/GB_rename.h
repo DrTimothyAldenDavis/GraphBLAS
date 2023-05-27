@@ -2852,6 +2852,7 @@
 #define GxB_CONJ_FC64 GxM_CONJ_FC64
 #define GxB_Context_disengage GxM_Context_disengage
 #define GxB_Context_engage GxM_Context_engage
+#define GxB_Context_error GxM_Context_error
 #define GxB_Context_fprint GxM_Context_fprint
 #define GxB_Context_free GxM_Context_free
 #define GxB_Context_get_FP64 GxM_Context_get_FP64
@@ -2861,6 +2862,7 @@
 #define GxB_Context_set_FP64 GxM_Context_set_FP64
 #define GxB_Context_set GxM_Context_set
 #define GxB_Context_set_INT32 GxM_Context_set_INT32
+#define GxB_Context_wait GxM_Context_wait
 #define GxB_CONTEXT_WORLD GxM_CONTEXT_WORLD
 #define GxB_COPYSIGN_FP32 GxM_COPYSIGN_FP32
 #define GxB_COPYSIGN_FP64 GxM_COPYSIGN_FP64

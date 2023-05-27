@@ -4591,6 +4591,7 @@ GrB_Info GrB_Descriptor_wait   (GrB_Descriptor desc    , GrB_WaitMode waitmode);
 GrB_Info GrB_Scalar_wait       (GrB_Scalar     s       , GrB_WaitMode waitmode);
 GrB_Info GrB_Vector_wait       (GrB_Vector     v       , GrB_WaitMode waitmode);
 GrB_Info GrB_Matrix_wait       (GrB_Matrix     A       , GrB_WaitMode waitmode);
+GrB_Info GxB_Context_wait      (GxB_Context    Context , GrB_WaitMode waitmode);
 
 // GrB_wait (object,waitmode) polymorphic function:
 #if GxB_STDC_VERSION >= 201112L
@@ -4607,10 +4608,12 @@ GrB_Info GrB_Matrix_wait       (GrB_Matrix     A       , GrB_WaitMode waitmode);
             GrB_Scalar       : GrB_Scalar_wait       ,  \
             GrB_Vector       : GrB_Vector_wait       ,  \
             GrB_Matrix       : GrB_Matrix_wait       ,  \
+            GxB_Context      : GxB_Context_wait      ,  \
             GrB_Descriptor   : GrB_Descriptor_wait      \
     )                                                   \
     (object, waitmode)
 #endif
+
 
 // NOTE: GxB_Scalar_wait is historical; use GrB_Scalar_wait instead
 GrB_Info GxB_Scalar_wait (GrB_Scalar *s) ;
