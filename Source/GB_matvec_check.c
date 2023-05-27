@@ -16,6 +16,10 @@
 #define GB_DEVELOPER 0
 #endif
 
+// FIXME
+#undef  GB_DEVELOPER
+#define GB_DEVELOPER 1
+
 #include "GB_Pending.h"
 #include "GB.h"
 

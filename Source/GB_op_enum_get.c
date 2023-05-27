@@ -15,7 +15,7 @@ GrB_Info GB_op_enum_get
     int * value,
     GrB_Field field
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // get the field
@@ -32,7 +32,7 @@ GrB_Info GB_op_enum_get
     }
 
     if (type == NULL)
-    {
+    { 
         return (GrB_INVALID_VALUE) ;
     }
 

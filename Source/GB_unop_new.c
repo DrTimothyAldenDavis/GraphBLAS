@@ -65,7 +65,6 @@ GrB_Info GB_unop_new
         // output:
         op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_size),
         // input:
-        unop_name, unop_defn, "GxB_unary_function", 18,
-        opcode == GB_USER_unop_code, jitable)) ;
+        unop_name, unop_defn, opcode == GB_USER_unop_code, jitable)) ;
 }
 

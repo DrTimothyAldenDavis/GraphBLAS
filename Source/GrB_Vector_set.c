@@ -66,20 +66,6 @@ GrB_Info GrB_Vector_set_String
     GrB_Field field
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE1 ("GrB_Vector_set_String (v, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
-    GB_RETURN_IF_NULL (value) ;
-    ASSERT_VECTOR_OK (v, "v to set option", GB0) ;
-
-    //--------------------------------------------------------------------------
-    // set the field
-    //--------------------------------------------------------------------------
-
     return (GrB_NOT_IMPLEMENTED) ;      // TODO: set the name
 }
 

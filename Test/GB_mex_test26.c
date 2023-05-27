@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_test25: test GrB_get and GrB_set
+// GB_mex_test26: test GrB_get and GrB_set (type, scalar, vector, matrix)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -38,14 +38,7 @@ void mexFunction
     GrB_Matrix A = NULL ;
     GrB_Vector v = NULL ;
     GrB_Scalar s = NULL, s_fp64 = NULL, s_int32 = NULL, s_fp32 = NULL ;
-    GrB_UnaryOp unop = NULL ;
-    GrB_BinaryOp binop = NULL ;
-    GrB_IndexUnaryOp idxunop = NULL ;
-    GrB_Descriptor desc = NULL ;
-    GrB_Monoid monoid = NULL ;
     GrB_Type type = NULL ;
-    GrB_Semiring semiring = NULL ;
-    GxB_Context Context = NULL ;
     uint8_t stuff [256] ;
     void *nothing = stuff ;
     size_t size ;
@@ -53,6 +46,7 @@ void mexFunction
     char defn [2048] ;
     int code, i ;
     float fvalue ;
+    double dvalue ;
 
     OK (GrB_Scalar_new (&s_fp64, GrB_FP64)) ;
     OK (GrB_Scalar_new (&s_fp32, GrB_FP32)) ;
@@ -193,9 +187,7 @@ void mexFunction
     CHECK (MATCH (defn, "")) ;
 
     // user-defined type
-    #undef GrB_Type_new
-    #undef GrM_Type_new
-    OK (GrM_Type_new (&type, sizeof (mytype))) ;
+    OK (GrB_Type_new (&type, sizeof (mytype))) ;
     OK (GxB_print (type, 3)) ;
     OK (GrB_Type_set_String_(type, "mytype", GrB_NAME)) ;
     CHECK (type->hash == UINT64_MAX) ;
@@ -292,6 +284,12 @@ void mexFunction
     ERR (GrB_Scalar_get_ENUM_(s_int32, &i, 0)) ;
     ERR (GrB_Scalar_get_SIZE_(s, &size, 0)) ;
 
+    ERR (GrB_Scalar_set_Scalar_(s, s_int32, 0)) ;
+    OK (GrB_Scalar_set_Scalar_(s, s_int32, GrB_STORAGE_ORIENTATION_HINT)) ;
+
+    ERR (GrB_Scalar_set_ENUM_(s, 0, 0)) ;
+    OK (GrB_Scalar_set_ENUM_(s, 0, GrB_STORAGE_ORIENTATION_HINT)) ;
+
     //--------------------------------------------------------------------------
     // GrB_Vector get/set
     //--------------------------------------------------------------------------
@@ -320,11 +318,11 @@ void mexFunction
     GxB_print (v, 3) ;
 
     OK (GrB_Vector_get_ENUM_(v, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
-    printf ("scalar storage: %d\n", i) ;
+    printf ("vector storage: %d\n", i) ;
     CHECK (i == GrB_COLMAJOR) ;
 
     OK (GrB_Vector_get_ENUM_(v, &i, GxB_FORMAT)) ;
-    printf ("scalar storage: %d\n", i) ;
+    printf ("vector storage: %d\n", i) ;
     CHECK (i == GxB_BY_COL) ;
 
     OK (GrB_Vector_get_ENUM_(v, &i, GxB_SPARSITY_CONTROL)) ;
@@ -348,6 +346,110 @@ void mexFunction
     printf ("bitmap switch: %g\n", fvalue) ;
     CHECK (abs (fvalue - 0.04) < 1e-6) ;
 
+    OK (GrB_Scalar_setElement_FP32_(s_fp32, 0.5)) ;
+    OK (GrB_Vector_set_Scalar_(v, s_fp32, GxB_BITMAP_SWITCH)) ;
+    OK (GrB_Vector_get_Scalar_(v, s_fp64, GxB_BITMAP_SWITCH)) ;
+    OK (GrB_Scalar_extractElement_FP64_(&dvalue, s_fp64)) ;
+    printf ("bitmap switch: %g\n", dvalue) ;
+    CHECK (abs (dvalue - 0.5) < 1e-6) ;
+
+    OK (GrB_Scalar_setElement_INT32_(s_int32, GxB_BITMAP)) ;
+    OK (GrB_Vector_set_Scalar_(v, s_int32, GxB_SPARSITY_CONTROL)) ;
+    GxB_print (v, 3) ;
+
+    OK (GrB_Vector_get_ENUM_(v, &i, GxB_SPARSITY_STATUS)) ;
+    printf ("sparsity status: %d\n", i) ;
+    CHECK (i == GxB_BITMAP) ;
+
+    ERR (GrB_Vector_set_Scalar_(v, s_int32, GxB_HYPER_SWITCH)) ;
+    ERR (GrB_Vector_get_Scalar_(v, s_int32, GxB_HYPER_SWITCH)) ;
+
+    expected = GrB_NOT_IMPLEMENTED ;
+    ERR (GrB_Vector_set_String_(v, "new_name", GrB_NAME)) ;
+    ERR (GrB_Vector_set_VOID_(v, nothing, 0, 1)) ;
+
+    //--------------------------------------------------------------------------
+    // GrB_Matrix get/set
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&A, GrB_FP32, 5, 5)) ;
+
+    expected = GrB_NOT_IMPLEMENTED ;
+    ERR (GrB_Matrix_get_VOID_(A, nothing, 0)) ;
+
+    OK (GrB_Matrix_get_SIZE_(A, &size, GrB_ELTYPE_STRING)) ;
+    CHECK (size == GxB_MAX_NAME_LEN) ;
+    OK (GrB_Matrix_get_String_(A, name, GrB_ELTYPE_STRING)) ;
+    CHECK (MATCH (name, "GrB_FP32")) ;
+
+    OK (GrB_Matrix_get_String_(A, name, GrB_NAME)) ;
+    CHECK (MATCH (name, "")) ;
+
+    OK (GrB_Matrix_get_ENUM_(A, &code, GrB_ELTYPE_CODE)) ;
+    CHECK (code == GrB_FP32_CODE) ;
+
+    i = -1 ;
+    OK (GrB_Matrix_get_Scalar_(A, s_int32, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == GrB_FP32_CODE) ;
+
+    GxB_print (A, 3) ;
+
+    OK (GrB_Matrix_get_ENUM_(A, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
+    printf ("matrix storage: %d\n", i) ;
+    CHECK (i == GrB_COLMAJOR) ;
+
+    OK (GrB_Matrix_get_ENUM_(A, &i, GxB_FORMAT)) ;
+    printf ("matrix storage: %d\n", i) ;
+    CHECK (i == GxB_BY_COL) ;
+
+    OK (GrB_Matrix_get_ENUM_(A, &i, GxB_SPARSITY_CONTROL)) ;
+    printf ("sparsity control: %d\n", i) ;
+    CHECK (i == GxB_AUTO_SPARSITY) ;
+
+    OK (GrB_assign (A, NULL, NULL, 1, GrB_ALL, 5, GrB_ALL, 5, NULL)) ;
+    GxB_print (A, 3) ;
+
+    OK (GrB_Matrix_get_ENUM_(A, &i, GxB_SPARSITY_STATUS)) ;
+    printf ("sparsity status: %d\n", i) ;
+    CHECK (i == GxB_FULL) ;
+
+    expected = GrB_INVALID_VALUE ;
+    ERR (GrB_Matrix_get_ENUM_(A, &i, 0)) ;
+    ERR (GrB_Matrix_get_SIZE_(A, &size, 0)) ;
+
+    fvalue = -1 ;
+    OK (GrB_Matrix_get_Scalar_(A, s_fp32, GxB_BITMAP_SWITCH)) ;
+    OK (GrB_Scalar_extractElement_FP32_(&fvalue, s_fp32)) ;
+    printf ("bitmap switch: %g\n", fvalue) ;
+    CHECK (abs (fvalue - 0.04) < 1e-6) ;
+
+    OK (GrB_Scalar_setElement_FP32_(s_fp32, 0.5)) ;
+    OK (GrB_Matrix_set_Scalar_(A, s_fp32, GxB_BITMAP_SWITCH)) ;
+    OK (GrB_Matrix_get_Scalar_(A, s_fp64, GxB_BITMAP_SWITCH)) ;
+    OK (GrB_Scalar_extractElement_FP64_(&dvalue, s_fp64)) ;
+    printf ("bitmap switch: %g\n", dvalue) ;
+    CHECK (abs (dvalue - 0.5) < 1e-6) ;
+
+    OK (GrB_Scalar_setElement_INT32_(s_int32, GxB_BITMAP)) ;
+    OK (GrB_Matrix_set_Scalar_(A, s_int32, GxB_SPARSITY_CONTROL)) ;
+    GxB_print (A, 3) ;
+
+    OK (GrB_Matrix_get_ENUM_(A, &i, GxB_SPARSITY_STATUS)) ;
+    printf ("sparsity status: %d\n", i) ;
+    CHECK (i == GxB_BITMAP) ;
+
+    OK (GrB_Scalar_setElement_FP32_(s_fp32, 0.25)) ;
+    OK (GrB_Matrix_set_Scalar_(A, s_fp32, GxB_HYPER_SWITCH)) ;
+    OK (GrB_Matrix_get_Scalar_(A, s_fp64, GxB_HYPER_SWITCH)) ;
+    OK (GrB_Scalar_extractElement_FP64_(&dvalue, s_fp64)) ;
+    printf ("hyper switch: %g\n", dvalue) ;
+    CHECK (abs (dvalue - 0.25) < 1e-6) ;
+
+    expected = GrB_NOT_IMPLEMENTED ;
+    ERR (GrB_Matrix_set_String_(A, "new_name", GrB_NAME)) ;
+    ERR (GrB_Matrix_set_VOID_(A, nothing, 0, 1)) ;
+
     //--------------------------------------------------------------------------
     // finalize GraphBLAS
     //--------------------------------------------------------------------------
@@ -358,14 +460,7 @@ void mexFunction
     GrB_free (&s_fp64) ;
     GrB_free (&s_fp32) ;
     GrB_free (&s_int32) ;
-    GrB_free (&unop) ;
-    GrB_free (&binop) ;
-    GrB_free (&idxunop) ;
-    GrB_free (&desc) ;
-    GrB_free (&monoid) ;
     GrB_free (&type) ;
-    GrB_free (&semiring) ;
-    GrB_free (&Context) ;
     GB_mx_put_global (true) ;
     printf ("\nGB_mex_test26:  all tests passed\n\n") ;
 }

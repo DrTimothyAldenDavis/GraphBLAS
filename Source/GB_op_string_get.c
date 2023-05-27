@@ -32,6 +32,7 @@ GrB_Info GB_op_string_get
             name = GB_op_name_get (op) ;
             if (name == NULL)
             { 
+                printf ("no name\n") ;
                 return (GrB_INVALID_VALUE) ;
             }
             strcpy (value, name) ;

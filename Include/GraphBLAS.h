@@ -747,31 +747,11 @@ GB_GLOBAL GrB_Type
 // GrB_Type_new:  create a new type
 //------------------------------------------------------------------------------
 
-// GrB_Type_new is implemented both as a macro and a function.  Both are
-// user-callable.  The default is to use the macro, since this allows the name
-// of the type to be saved as a string, for subsequent error reporting by
-// GrB_error.
-
-#undef GrB_Type_new
-#undef GrM_Type_new
-
-GrB_Info GRB (Type_new)         // create a new GraphBLAS type
+GrB_Info GrB_Type_new           // create a new GraphBLAS type
 (
     GrB_Type *type,             // handle of user type to create
     size_t sizeof_ctype         // size = sizeof (ctype) of the C type
 ) ;
-
-// user code should not directly use GB_STR or GB_XSTR
-// GB_STR: convert the content of x into a string "x"
-#define GB_XSTR(x) GB_STR(x)
-#define GB_STR(x) #x
-
-// GrB_Type_new as a user-callable macro, which allows the name of the ctype
-// to be added to the new type.  The type_defn is unknown.
-#define GrB_Type_new(utype, sizeof_ctype) \
-        GxB_Type_new(utype, sizeof_ctype, GB_STR(sizeof_ctype), NULL)
-#define GrM_Type_new(utype, sizeof_ctype) \
-        GxB_Type_new(utype, sizeof_ctype, GB_STR(sizeof_ctype), NULL)
 
 // GxB_Type_new creates a type with a name and definition that are known to
 // GraphBLAS, as strings.  The type_name is any valid string (max length of 128
@@ -1022,23 +1002,16 @@ GB_GLOBAL GrB_UnaryOp
 
 typedef void (*GxB_unary_function)  (void *, const void *) ;
 
-// GrB_UnaryOp_new creates a user-defined unary op, with an automatic
-// detection of the operator name.
-#undef GrB_UnaryOp_new
-#undef GrM_UnaryOp_new
-GrB_Info GRB (UnaryOp_new)           // create a new user-defined unary operator
+// GrB_UnaryOp_new creates a user-defined unary op (with no name or defn)
+GrB_Info GrB_UnaryOp_new            // create a new user-defined unary operator
 (
     GrB_UnaryOp *unaryop,           // handle for the new unary operator
     GxB_unary_function function,    // pointer to the unary function
     GrB_Type ztype,                 // type of output z
     GrB_Type xtype                  // type of input x
 ) ;
-#define GrB_UnaryOp_new(op,f,z,x) \
-        GxB_UnaryOp_new(op,f,z,x, GB_STR(f), NULL)
-#define GrM_UnaryOp_new(op,f,z,x) \
-        GxM_UnaryOp_new(op,f,z,x, GB_STR(f), NULL)
 
-// GxB_UnaryOp_new creates a named user-defined unary op.
+// GxB_UnaryOp_new creates a named and defined user-defined unary op.
 GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
 (
     GrB_UnaryOp *unaryop,           // handle for the new unary operator
@@ -1483,11 +1456,8 @@ GB_GLOBAL GrB_BinaryOp GxB_IGNORE_DUP ;
 
 typedef void (*GxB_binary_function) (void *, const void *, const void *) ;
 
-// GrB_BinaryOp_new creates a user-defined binary op, with an automatic
-// detection of the operator name.
-#undef GrB_BinaryOp_new
-#undef GrM_BinaryOp_new
-GrB_Info GRB (BinaryOp_new)
+// GrB_BinaryOp_new creates a user-defined binary op (no name or defn)
+GrB_Info GrB_BinaryOp_new
 (
     GrB_BinaryOp *binaryop,         // handle for the new binary operator
     GxB_binary_function function,   // pointer to the binary function
@@ -1495,12 +1465,8 @@ GrB_Info GRB (BinaryOp_new)
     GrB_Type xtype,                 // type of input x
     GrB_Type ytype                  // type of input y
 ) ;
-#define GrB_BinaryOp_new(op,f,z,x,y) \
-        GxB_BinaryOp_new(op,f,z,x,y, GB_STR(f), NULL)
-#define GrM_BinaryOp_new(op,f,z,x,y) \
-        GxM_BinaryOp_new(op,f,z,x,y, GB_STR(f), NULL)
 
-// GxB_BinaryOp_new creates a named user-defined binary op.
+// GxB_BinaryOp_new creates a named and defined user-defined binary op.
 GrB_Info GxB_BinaryOp_new
 (
     GrB_BinaryOp *op,               // handle for the new binary operator
@@ -1585,12 +1551,9 @@ typedef void (*GxB_index_unary_function)
     const void *y       // input scalar y
 ) ;
 
-// GrB_IndexUnaryOp_new creates a user-defined unary op, with an automatic
-// detection of the operator name.
-#undef GrB_IndexUnaryOp_new
-#undef GrM_IndexUnaryOp_new
+// GrB_IndexUnaryOp_new creates a user-defined unary op (no name or defn)
 
-GrB_Info GRB (IndexUnaryOp_new)     // create a new user-defined IndexUnary op
+GrB_Info GrB_IndexUnaryOp_new       // create a new user-defined IndexUnary op
 (
     GrB_IndexUnaryOp *op,           // handle for the new IndexUnary operator
     GxB_index_unary_function function,    // pointer to IndexUnary function
@@ -1598,11 +1561,6 @@ GrB_Info GRB (IndexUnaryOp_new)     // create a new user-defined IndexUnary op
     GrB_Type xtype,                 // type of input x (the A(i,j) entry)
     GrB_Type ytype                  // type of input y (the scalar)
 ) ;
-
-#define GrB_IndexUnaryOp_new(op,f,z,x,y) \
-        GxB_IndexUnaryOp_new(op,f,z,x,y, GB_STR(f), NULL)
-#define GrM_IndexUnaryOp_new(op,f,z,x,y) \
-        GxM_IndexUnaryOp_new(op,f,z,x,y, GB_STR(f), NULL)
 
 GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
 (
@@ -9732,6 +9690,11 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
     GxB_Print_Level pr,             // print level
     FILE *f                         // file for output
 ) ;
+
+// user code should not directly use GB_STR or GB_XSTR
+// GB_STR: convert the content of x into a string "x"
+#define GB_XSTR(x) GB_STR(x)
+#define GB_STR(x) #x
 
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_fprint(object,pr,f)                                 \

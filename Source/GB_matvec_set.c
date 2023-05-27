@@ -34,8 +34,7 @@ GrB_Info GB_matvec_set
 
             if (is_vector)
             { 
-                // the hint is ignored
-                return (GrB_SUCCESS) ;
+                return (GrB_INVALID_VALUE) ;
             }
             A->hyper_switch = fvalue ;
             break ;

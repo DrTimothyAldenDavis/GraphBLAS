@@ -40,7 +40,7 @@ GrB_Info GxB_Type_new
 (
     GrB_Type *type,             // handle of user type to create
     size_t sizeof_type,         // size of the user type
-    const char *type_name,      // name of the user type, or "sizeof (ctype)"
+    const char *type_name,      // name of the user type
     const char *type_defn       // typedef of the C type (any length)
 )
 {
@@ -83,40 +83,13 @@ GrB_Info GxB_Type_new
     t->defn_size = 0 ;
 
     //--------------------------------------------------------------------------
-    // get the name: as a type_name or "sizeof (type_name)"
+    // get the name
     //--------------------------------------------------------------------------
 
     if (type_name != NULL)
     {
         // copy the type_name into the working name
-        char working [GxB_MAX_NAME_LEN] ;
-        memset (working, 0, GxB_MAX_NAME_LEN) ;
-        strncpy (working, type_name, GxB_MAX_NAME_LEN-1) ;
-
-        // look for "sizeof" in the name
-        char *p = NULL ;
-        p = strstr (working, "sizeof") ;
-        if (p != NULL)
-        { 
-            // "sizeof" appears in the input string, advance past it
-            p += 6 ;
-
-            // find leading "(" if it appears, and advance to one char past it
-            char *p2 = strstr (p, "(") ;
-            if (p2 != NULL) p = p2 + 1 ;
-
-            // find trailing ")" if it appears, and delete it
-            p2 = strstr (p, ")") ;
-            if (p2 != NULL) *p2 = '\0' ;
-
-            // p now contains the final name, copy it to the output name
-            strncpy (t->name, p, GxB_MAX_NAME_LEN-1) ;
-        }
-        else
-        { 
-            // "sizeof" does not appear, take the input type_name as-is
-            memcpy (t->name, working, GxB_MAX_NAME_LEN) ;
-        }
+        strncpy (t->name, type_name, GxB_MAX_NAME_LEN-1) ;
     }
     else
     { 

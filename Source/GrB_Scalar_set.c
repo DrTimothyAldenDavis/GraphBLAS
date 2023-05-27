@@ -21,7 +21,8 @@ GrB_Info GrB_Scalar_set_Scalar
 )
 { 
     // all settings are ignored
-    return (GrB_SUCCESS) ;
+    return ((field == GrB_STORAGE_ORIENTATION_HINT) ?
+        GrB_SUCCESS : GrB_INVALID_VALUE) ;
 }
 
 //------------------------------------------------------------------------------
@@ -35,20 +36,6 @@ GrB_Info GrB_Scalar_set_String
     GrB_Field field
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE1 ("GrB_Scalar_set_String (v, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
-    GB_RETURN_IF_NULL (value) ;
-    ASSERT_VECTOR_OK (v, "v to set option", GB0) ;
-
-    //--------------------------------------------------------------------------
-    // set the field
-    //--------------------------------------------------------------------------
-
     return (GrB_NOT_IMPLEMENTED) ;      // TODO: set the name
 }
 
@@ -64,7 +51,8 @@ GrB_Info GrB_Scalar_set_ENUM
 )
 { 
     // all settings are ignored
-    return (GrB_SUCCESS) ;
+    return ((field == GrB_STORAGE_ORIENTATION_HINT) ?
+        GrB_SUCCESS : GrB_INVALID_VALUE) ;
 }
 
 //------------------------------------------------------------------------------

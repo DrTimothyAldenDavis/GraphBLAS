@@ -67,7 +67,6 @@ GrB_Info GB_binop_new
         // output:
         op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_size),
         // input:
-        binop_name, binop_defn, "GxB_binary_function", 19,
-        opcode == GB_USER_binop_code, jitable)) ;
+        binop_name, binop_defn, opcode == GB_USER_binop_code, jitable)) ;
 }
 
