@@ -1359,38 +1359,6 @@ value to indicate that \verb'A(i,j)' is not present in the matrix.  That
 method does not have an input/output object so it cannot return an error
 string.
 
-% The \verb'GrB_error' function is a polymorphic function for the
-% following variants:
-
-% \begin{mdframed}[userdefinedwidth=6in]
-% {\footnotesize
-% \begin{verbatim}
-% GrB_Info GrB_Type_error         (const char **err, const GrB_Type type) ;
-% GrB_Info GrB_UnaryOp_error      (const char **err, const GrB_UnaryOp op) ;
-% GrB_Info GrB_BinaryOp_error     (const char **err, const GrB_BinaryOp op) ;
-% GrB_Info GrB_IndexUnaryOp_error (const char **err, const GrB_IndexUnaryOp op) ;
-% GrB_Info GrB_Monoid_error       (const char **err, const GrB_Monoid monoid) ;
-% GrB_Info GrB_Semiring_error     (const char **err, const GrB_Semiring semiring) ;
-% GrB_Info GrB_Scalar_error       (const char **err, const GrB_Scalar s) ;
-% GrB_Info GrB_Vector_error       (const char **err, const GrB_Vector v) ;
-% GrB_Info GrB_Matrix_error       (const char **err, const GrB_Vector A) ;
-% GrB_Info GrB_Descriptor_error   (const char **err, const GrB_Descriptor d) ;
-% \end{verbatim}
-% }\end{mdframed}
-
-% Currently, only \verb'GrB_Matrix_error', \verb'GrB_Vector_error',
-% \verb'GrB_Scalar_error', and \verb'GrB_Descriptor_error' are able to return
-% non-empty error strings.  The latter can return an error string only from
-% \verb'GrB_Descriptor_set' and \verb'GxB_set(d,...)'.
-
-% The only GraphBLAS methods (Section~\ref{objects}) that return an error string
-% are \verb'*setElement', \verb'*removeElement',
-% \verb'GxB_Matrix_Option_set(A,...)', \newline
-% \verb'GxB_Vector_Option_set(v,...)', \verb'GrB_Descriptor_set', and
-% \verb'GxB_Desc_set(d,...)'.  All GraphBLAS operations discussed in
-% Section~\ref{operations} can return an error string in their input/output
-% object, except for \verb'GrB_reduce' when reducing to a scalar.
-
 %===============================================================================
 \subsection{{\sf GrB\_finalize:} finish GraphBLAS} %============================
 %===============================================================================
@@ -8441,6 +8409,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_Context_disengage'     & disengage a context                  & \ref{context_disengage} \\
 \verb'GxB_Context_fprint'        & check/print a context                & \ref{context_print} \\
 \verb'GxB_Context_free'          & free a context                       & \ref{context_free} \\
+\verb'GxB_Context_wait'          & wait for a context                   & \ref{context_wait} \\
 \hline
 \end{tabular}
 }
@@ -8461,7 +8430,7 @@ GrB_Info GxB_Context_new        // create a new context
 
 A new context is created and initialized with the current global settings for
 \verb'GxB_NTHREADS' and \verb'GxB_CHUNK'.  See \verb'GxB_Global_Option_get'.
-The context object will have an effect on any calls to GraphBLAS until it
+The context object will not have an effect on any calls to GraphBLAS until it
 is {\em engaged} by a user thread.
 
 \newpage
@@ -8614,6 +8583,27 @@ Either usage:
 frees the \verb'Context' and sets \verb'Context' to \verb'NULL'.  It
 safely does nothing if passed a \verb'NULL' handle, or if
 \verb'Context == NULL' on input.
+
+%-------------------------------------------------------------------------------
+\subsection{{\sf GxB\_Context\_wait:} wait for a context}
+%-------------------------------------------------------------------------------
+\label{context_wait}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_wait               // wait for a context
+(
+    GxB_Context Context,        // context to wait for
+    GrB_WaitMode mode           // GrB_COMPLETE or GrB_MATERIALIZE
+) ;
+\end{verbatim}
+}\end{mdframed}
+
+After creating or modifying a context, a GraphBLAS library may choose to
+exploit non-blocking mode to delay its creation.  Currently,
+SuiteSparse:GraphBLAS currently does nothing except to ensure that
+\verb'Context' is valid.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -16433,6 +16423,18 @@ GraphBLAS folder.
 %-------------------------------------------------------------------------------
 
 \begin{itemize}
+
+\item Version 8.0.1, May 27, 2023
+
+    \begin{itemize}
+    \item (48) bug fix: \verb'GrB_*_nvals'
+        returned \verb'UINT64_MAX' ('infinity') for a
+        \verb'GrB_Vector' of size n-by-$2^{60}$; it should return $2^{60}$.
+        Caught by Erik Welch, NVIDIA.
+    \item added \verb'GxB_Context_error' and \verb'GxB_Context_wait'
+    \item \verb'C++': changed complex typedefs for \verb'C++' that
+        include GraphBLAS.h.  Update from Markus M\"{u}tzel.
+    \end{itemize}
 
 \item Version 8.0.0 (May 18, 2023)
 

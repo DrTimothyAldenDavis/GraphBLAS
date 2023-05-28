@@ -96,6 +96,7 @@ malloc_debugging = stat ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
+logstat ('test272'    ,t, j0  , f1  ) ; % Context
 logstat ('test268'    ,t, j4  , f1  ) ; % C<M>=Z sparse masker
 jall = {4,3,2,1,4,2} ;
 fall = {1,1,1,1,0,0} ;

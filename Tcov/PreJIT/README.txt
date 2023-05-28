@@ -5,9 +5,12 @@ This file has an intentionally stale function definition:
 
     GB_jit__AxB_dot2__2c1f000bbb0bbbcd__plus_my_rdiv.c
 
-These files should be valid PreJIT kernels:
+This file has an intentionally stale GraphBLAS version:
 
     GB_jit__AxB_dot2__2c1f000bba0bbac7__plus_my_rdiv2.c
+
+These files should be valid PreJIT kernels:
+
     GB_jit__AxB_dot2__2c1f000bba0bbacf__plus_my_rdiv2.c
     GB_jit__AxB_dot2__2c1f100bba0baacf__plus_my_rdiv2.c
     GB_jit__AxB_dot2__2c1f100bba0babcd__plus_my_rdiv2.c

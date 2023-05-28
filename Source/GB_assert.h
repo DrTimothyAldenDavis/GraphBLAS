@@ -164,3 +164,9 @@
 #define ASSERT_DESCRIPTOR_OK_OR_NULL(d,name,pr)  \
     ASSERT_OK_OR_NULL (GB_Descriptor_check (d, name, pr, NULL))
 
+#define ASSERT_CONTEXT_OK(c,name,pr)  \
+    ASSERT_OK (GB_context_check (c, name, pr, NULL))
+
+#define ASSERT_CONTEXT_OK_OR_NULL(c,name,pr)  \
+    ASSERT_OK_OR_NULL (GB_context_check (c, name, pr, NULL))
+

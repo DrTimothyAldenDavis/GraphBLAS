@@ -21,7 +21,7 @@
 // GB_C_FLAGS: the C compiler flags used to compile GraphBLAS.  Used
 // for compiling and linking:
 #ifndef GB_C_FLAGS
-#define GB_C_FLAGS      " -DGBMATLAB=1  -Wundef  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -O3 -DNDEBUG -fopenmp  -fPIC "
+#define GB_C_FLAGS      " -DGBMATLAB=1  -Wundef  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -g -fopenmp  -fPIC "
 #endif
 
 // GB_C_LINK_FLAGS: the flags passed to the C compiler for the link phase:
@@ -57,12 +57,12 @@
 
 // GB_C_LIBRARIES: libraries to link with when using direct compile/link:
 #ifndef GB_C_LIBRARIES
-#define GB_C_LIBRARIES  " -lm -ldl /usr/lib/gcc/x86_64-linux-gnu/9/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.so"
+#define GB_C_LIBRARIES  " -lm -ldl /usr/lib/gcc/x86_64-linux-gnu/7/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.so"
 #endif
 
 // GB_CMAKE_LIBRARIES: libraries to link with when using cmake
 #ifndef GB_CMAKE_LIBRARIES
-#define GB_CMAKE_LIBRARIES  "m;dl;/usr/lib/gcc/x86_64-linux-gnu/9/libgomp.so;/usr/lib/x86_64-linux-gnu/libpthread.so"
+#define GB_CMAKE_LIBRARIES  "m;dl;/usr/lib/gcc/x86_64-linux-gnu/7/libgomp.so;/usr/lib/x86_64-linux-gnu/libpthread.so"
 #endif
 
 #endif
