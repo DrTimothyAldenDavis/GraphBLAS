@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 // GB_jit__user_op__0__my_rdiv.c
 //------------------------------------------------------------------------------
-// SuiteSparse:GraphBLAS v8.0.0, Timothy A. Davis, (c) 2017-2023,
+// SuiteSparse:GraphBLAS v8.0.1, Timothy A. Davis, (c) 2017-2023,
 // All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 // The above copyright and license do not apply to any
@@ -16,11 +16,15 @@ void my_rdiv (double *z, const double *x, const double *y)
 
 void my_rdiv (double *z, const double *x, const double *y)
 {
+    // escape this quote: "
+    /* escape this backslash \ */
     (*z) = (*y) / (*x) ;
 }
 #define GB_my_rdiv_USER_DEFN \
 "void my_rdiv (double *z, const double *x, const double *y)\n" \
 "{\n" \
+"    // escape this quote: \"\n" \
+"    /* escape this backslash \\ */\n" \
 "    (*z) = (*y) / (*x) ;\n" \
 "}"
 #define GB_USER_OP_DEFN GB_my_rdiv_USER_DEFN
@@ -33,7 +37,7 @@ GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query) ;
 GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query)
 {
     (*hash) = 0xa98ff14e387744fe ;
-    v [0] = 8 ; v [1] = 0 ; v [2] = 0 ;
+    v [0] = 8 ; v [1] = 0 ; v [2] = 1 ;
     defn [0] = GB_my_rdiv_USER_DEFN ;
     defn [1] = NULL ;
     defn [2] = NULL ;
