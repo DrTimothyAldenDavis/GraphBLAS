@@ -96,6 +96,7 @@ malloc_debugging = stat ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
+logstat ('test274'    ,t, j0  , f1  ) ; % index unary op get/set
 logstat ('test273'    ,t, j0  , f1  ) ; % global get/set
 logstat ('test272'    ,t, j0  , f1  ) ; % Context
 logstat ('test271'    ,t, j0  , f1  ) ; % binary op get/set

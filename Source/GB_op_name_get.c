@@ -705,7 +705,7 @@ const char *GB_op_name_get (GB_Operator op)
 
         case GB_TRIL_idxunop_code      : return ("GrB_TRIL"   ) ;
         case GB_TRIU_idxunop_code      : return ("GrB_TRIU"   ) ;
-        case GB_DIAG_idxunop_code      : return ("GrB_TRIU"   ) ;
+        case GB_DIAG_idxunop_code      : return ("GrB_DIAG"   ) ;
         case GB_OFFDIAG_idxunop_code   : return ("GrB_OFFDIAG") ;
         case GB_COLLE_idxunop_code     : return ("GrB_COLLE"  ) ;
         case GB_COLGT_idxunop_code     : return ("GrB_COLGT"  ) ;
