@@ -74,7 +74,7 @@ GrB_Info GB_object_string_set
 
             if ((*defn) != NULL)
             { 
-                // name already defined
+                // definition already defined
                 return (GrB_ALREADY_SET) ;
             }
 
@@ -82,6 +82,7 @@ GrB_Info GB_object_string_set
             (*defn) = GB_MALLOC (len+1, char, defn_size) ;
             if ((*defn) == NULL)
             { 
+GB_GOTCHA ; // out of memory for defn
                 // out of memory
                 return (GrB_OUT_OF_MEMORY) ;
             }

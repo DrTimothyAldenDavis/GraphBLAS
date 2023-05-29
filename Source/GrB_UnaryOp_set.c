@@ -42,7 +42,7 @@ GrB_Info GrB_UnaryOp_set_String
     GB_WHERE1 ("GrB_UnaryOp_set_String (op, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_RETURN_IF_NULL (value) ;
-    ASSERT_UNARYOP_OK (op, "unaryop for get", GB0) ;
+    ASSERT_UNARYOP_OK (op, "unaryop for set", GB0) ;
 
     //--------------------------------------------------------------------------
     // set the field

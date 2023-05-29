@@ -235,6 +235,11 @@ void mexFunction
     GETNAME (GxB_COSH_FC32) ;
     GETNAME (GxB_COSH_FC64) ;
 
+    GETNAME (GxB_TANH_FP32) ;
+    GETNAME (GxB_TANH_FP64) ;
+    GETNAME (GxB_TANH_FC32) ;
+    GETNAME (GxB_TANH_FC64) ;
+
     GETNAME (GxB_ATANH_FP32) ;
     GETNAME (GxB_ATANH_FP64) ;
     GETNAME (GxB_ATANH_FC32) ;
@@ -269,6 +274,11 @@ void mexFunction
     GETNAME (GxB_ROUND_FP64) ;
     GETNAME (GxB_ROUND_FC32) ;
     GETNAME (GxB_ROUND_FC64) ;
+
+    GETNAME (GxB_TRUNC_FP32) ;
+    GETNAME (GxB_TRUNC_FP64) ;
+    GETNAME (GxB_TRUNC_FC32) ;
+    GETNAME (GxB_TRUNC_FC64) ;
 
     GETNAME (GxB_EXP2_FP32) ;
     GETNAME (GxB_EXP2_FP64) ;
@@ -338,6 +348,16 @@ void mexFunction
     GETNAME (GxB_ISFINITE_FC32) ;
     GETNAME (GxB_ISFINITE_FC64) ;
 
+    GETNAME (GxB_POSITIONI_INT32) ;
+    GETNAME (GxB_POSITIONI_INT64) ;
+    GETNAME (GxB_POSITIONI1_INT32) ;
+    GETNAME (GxB_POSITIONI1_INT64) ;
+
+    GETNAME (GxB_POSITIONJ_INT32) ;
+    GETNAME (GxB_POSITIONJ_INT64) ;
+    GETNAME (GxB_POSITIONJ1_INT32) ;
+    GETNAME (GxB_POSITIONJ1_INT64) ;
+
     //--------------------------------------------------------------------------
     // other get/set methods for GrB_UnaryOp
     //--------------------------------------------------------------------------
@@ -375,6 +395,9 @@ void mexFunction
     CHECK (size == GxB_MAX_NAME_LEN) ;
     OK (GrB_UnaryOp_get_SIZE_(unop, &size, GxB_DEFINITION)) ;
     CHECK (size == 1) ;
+
+    expected = GrB_INVALID_VALUE ;
+    ERR (GrB_UnaryOp_set_String_(unop, "[invalid name]", GrB_NAME)) ;
     OK (GrB_UnaryOp_set_String_(unop, "myfunc", GrB_NAME)) ;
     OK (GrB_UnaryOp_get_String_(unop, name, GrB_NAME)) ;
     CHECK (MATCH (name, "myfunc")) ;
@@ -387,6 +410,18 @@ void mexFunction
 
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_UnaryOp_get_ENUM_(unop, &code, GrB_INPUT2TYPE_CODE)) ;
+    ERR (GrB_UnaryOp_set_String_(unop, "another_name", 999)) ;
+    ERR (GrB_UnaryOp_get_SIZE(unop, &size, 999)) ;
+
+    expected = GrB_ALREADY_SET ;
+    ERR (GrB_UnaryOp_set_String_(unop, "another_name", GrB_NAME)) ;
+    ERR (GrB_UnaryOp_set_String_(unop, "another_defn", GxB_DEFINITION)) ;
+    ERR (GrB_UnaryOp_set_String_(GrB_LNOT, "another_name", GrB_NAME)) ;
+
+    expected = GrB_NOT_IMPLEMENTED ;
+    ERR (GrB_UnaryOp_set_Scalar_(unop, s_int32, 0)) ;
+    ERR (GrB_UnaryOp_set_ENUM_(unop, 0, 0)) ;
+    ERR (GrB_UnaryOp_set_VOID_(unop, nothing, 0, 0)) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS

@@ -415,11 +415,13 @@ GrB_Info GrB_Global_get_SIZE
             case GxB_BITMAP_SWITCH : 
 
                 (*value) = sizeof (double) * GxB_NBITMAP_SWITCH ;
+                info = GrB_SUCCESS ;
                 break ;
 
             case GxB_COMPILER_VERSION : 
 
                 (*value) = sizeof (int32_t) * 3 ;
+                info = GrB_SUCCESS ;
                 break ;
 
             default : 

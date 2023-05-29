@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_test28: test GrB_get and GrB_set (unary ops)
+// GB_mex_test28: test GrB_get and GrB_set (binary ops)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -558,6 +558,8 @@ void mexFunction
     GETNAME (GxB_SECONDJ_INT32) ;   GETNAME (GxB_SECONDJ_INT64) ;
     GETNAME (GxB_SECONDJ1_INT32) ;  GETNAME (GxB_SECONDJ1_INT64) ;
 
+    GETNAME (GxB_IGNORE_DUP) ;
+
     //--------------------------------------------------------------------------
     // other get/set methods for GrB_BinaryOp
     //--------------------------------------------------------------------------
@@ -567,6 +569,9 @@ void mexFunction
 
     OK (GrB_BinaryOp_get_String_(GrB_MAX_FP32, name, GrB_INPUT1TYPE_STRING)) ;
     CHECK (MATCH (name, "GrB_FP32")) ;
+
+    OK (GrB_BinaryOp_get_String_(GrB_MAX_INT32, name, GrB_INPUT2TYPE_STRING)) ;
+    CHECK (MATCH (name, "GrB_INT32")) ;
 
     OK (GrB_BinaryOp_get_ENUM_(GrB_MAX_FP64, &code, GrB_OUTPUTTYPE_CODE)) ;
     CHECK (code == GrB_FP64_CODE) ;
@@ -591,6 +596,7 @@ void mexFunction
 
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_BinaryOp_get_ENUM_(GrB_LAND, &code, GrB_NAME)) ;
+    ERR (GrB_BinaryOp_get_String_(GrB_MAX_INT32, name, 999)) ;
 
     expected = GrB_NOT_IMPLEMENTED ;
     ERR (GrB_BinaryOp_get_VOID_(GrB_LAND, nothing, 0)) ;
@@ -612,6 +618,11 @@ void mexFunction
 
     OK (GrB_BinaryOp_get_ENUM_(binop, &code, GrB_INPUT2TYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
+
+    expected = GrB_NOT_IMPLEMENTED ;
+    ERR (GrB_BinaryOp_set_Scalar_(binop, s_int32, 0)) ;
+    ERR (GrB_BinaryOp_set_ENUM_(binop, 0, 0)) ;
+    ERR (GrB_BinaryOp_set_VOID_(binop, nothing, 0, 0)) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS

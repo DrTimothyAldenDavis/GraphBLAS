@@ -57,7 +57,7 @@ GrB_Info GxB_Context_set_Scalar
 
     if (info != GrB_SUCCESS)
     { 
-        return (info) ;
+        return ((info == GrB_NO_VALUE) ? GrB_EMPTY_OBJECT : info) ;
     }
 
     switch (field)

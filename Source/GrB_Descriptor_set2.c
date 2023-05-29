@@ -173,11 +173,11 @@ GrB_Info GrB_Descriptor_set_Scalar
 
     int i ;
     GrB_Info info = GrB_Scalar_extractElement_INT32 (&i, value) ;
-    if (info == GrB_SUCCESS)
+    if (info != GrB_SUCCESS)
     { 
-        info = GB_desc_set (desc, i, field, Werk) ;
-    }
-    return (info) ;
+        return ((info == GrB_NO_VALUE) ? GrB_EMPTY_OBJECT : info) ;
+    } 
+    return (GB_desc_set (desc, i, field, Werk)) ;
 }
 
 //------------------------------------------------------------------------------

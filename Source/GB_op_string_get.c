@@ -30,11 +30,6 @@ GrB_Info GB_op_string_get
         case GrB_NAME : 
 
             name = GB_op_name_get (op) ;
-            if (name == NULL)
-            { 
-                printf ("no name\n") ;
-                return (GrB_INVALID_VALUE) ;
-            }
             strcpy (value, name) ;
             #pragma omp flush
             return (GrB_SUCCESS) ;

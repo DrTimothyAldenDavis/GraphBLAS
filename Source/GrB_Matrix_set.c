@@ -52,11 +52,12 @@ GrB_Info GrB_Matrix_set_Scalar
             break ;
     }
 
-    if (info == GrB_SUCCESS)
+    if (info != GrB_SUCCESS)
     { 
-        info = GB_matvec_set (A, false, ivalue, fvalue, field, Werk) ;
-    }
-    return (info) ;
+        return ((info == GrB_NO_VALUE) ? GrB_EMPTY_OBJECT : info) ;
+    } 
+
+    return (GB_matvec_set (A, false, ivalue, fvalue, field, Werk)) ;
 }
 
 //------------------------------------------------------------------------------

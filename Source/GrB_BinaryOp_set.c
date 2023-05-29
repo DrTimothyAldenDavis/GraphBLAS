@@ -40,9 +40,12 @@ GrB_Info GrB_BinaryOp_set_String
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GrB_BinaryOp_set_String (op, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (op) ;
+    if (op != GxB_IGNORE_DUP) 
+    { 
+        GB_RETURN_IF_NULL_OR_FAULTY (op) ;
+        ASSERT_BINARYOP_OK (op, "binaryop for set", GB0) ;
+    }
     GB_RETURN_IF_NULL (value) ;
-    ASSERT_BINARYOP_OK (op, "binop for get", GB0) ;
 
     //--------------------------------------------------------------------------
     // set the field

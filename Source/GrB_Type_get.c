@@ -42,7 +42,7 @@ GrB_Info GrB_Type_get_Scalar
             i = (int) GB_type_code_get (type->code) ;
             break ;
 
-        case GrB_SIZE : 
+        case GrB_SIZE :     // FIXME: not yet in the draft spec
             i = (int) type->size ;
             break ;
 
@@ -181,7 +181,7 @@ GrB_Info GrB_Type_get_SIZE
             (*value) = GxB_MAX_NAME_LEN ;
             break ;
 
-        case GrB_SIZE : 
+        case GrB_SIZE :     // FIXME: not yet in the draft spec
             (*value) = type->size ;
             break ;
 

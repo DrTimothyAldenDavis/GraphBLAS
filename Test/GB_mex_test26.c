@@ -290,6 +290,10 @@ void mexFunction
     ERR (GrB_Scalar_set_ENUM_(s, 0, 0)) ;
     OK (GrB_Scalar_set_ENUM_(s, 0, GrB_STORAGE_ORIENTATION_HINT)) ;
 
+    expected = GrB_NOT_IMPLEMENTED ;
+    ERR (GrB_Scalar_set_String_(s, "name", GrB_NAME)) ;
+    ERR (GrB_Scalar_set_VOID_(s, nothing, 0, 0)) ;
+
     //--------------------------------------------------------------------------
     // GrB_Vector get/set
     //--------------------------------------------------------------------------
@@ -324,6 +328,10 @@ void mexFunction
     OK (GrB_Vector_get_ENUM_(v, &i, GxB_FORMAT)) ;
     printf ("vector storage: %d\n", i) ;
     CHECK (i == GxB_BY_COL) ;
+
+    OK (GrB_Vector_set_ENUM_(v, GrB_ROWMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
+    OK (GrB_Vector_get_ENUM_(v, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
+    CHECK (i == GrB_COLMAJOR) ;
 
     OK (GrB_Vector_get_ENUM_(v, &i, GxB_SPARSITY_CONTROL)) ;
     printf ("sparsity control: %d\n", i) ;
@@ -360,6 +368,11 @@ void mexFunction
     OK (GrB_Vector_get_ENUM_(v, &i, GxB_SPARSITY_STATUS)) ;
     printf ("sparsity status: %d\n", i) ;
     CHECK (i == GxB_BITMAP) ;
+
+    OK (GrB_Vector_set_ENUM_(v, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
+    OK (GrB_Vector_get_ENUM_(v, &i, GxB_SPARSITY_STATUS)) ;
+    printf ("sparsity status: %d\n", i) ;
+    CHECK (i == GxB_SPARSE) ;
 
     ERR (GrB_Vector_set_Scalar_(v, s_int32, GxB_HYPER_SWITCH)) ;
     ERR (GrB_Vector_get_Scalar_(v, s_int32, GxB_HYPER_SWITCH)) ;
@@ -449,6 +462,29 @@ void mexFunction
     expected = GrB_NOT_IMPLEMENTED ;
     ERR (GrB_Matrix_set_String_(A, "new_name", GrB_NAME)) ;
     ERR (GrB_Matrix_set_VOID_(A, nothing, 0, 1)) ;
+
+    OK (GrB_Matrix_set_ENUM_(A, GrB_ROWMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
+    OK (GrB_Matrix_get_ENUM_(A, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
+    CHECK (i == GrB_ROWMAJOR) ;
+    OK (GrB_Matrix_get_ENUM_(A, &i, GxB_FORMAT)) ;
+    CHECK (i == GxB_BY_ROW) ;
+    GxB_print (A, 3) ;
+
+    OK (GrB_Matrix_set_ENUM_(A, GrB_COLMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
+    OK (GrB_Matrix_get_ENUM_(A, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
+    CHECK (i == GrB_COLMAJOR) ;
+    OK (GrB_Matrix_get_ENUM_(A, &i, GxB_FORMAT)) ;
+    CHECK (i == GxB_BY_COL) ;
+    GxB_print (A, 3) ;
+
+    expected = GrB_INVALID_VALUE ;
+    ERR (GrB_Matrix_set_ENUM_(A, 99, GxB_FORMAT)) ;
+    ERR (GrB_Matrix_set_ENUM_(A, 99, 999)) ;
+    ERR (GrB_Matrix_get_String_(A, defn, 999)) ;
+    ERR (GrB_Matrix_get_Scalar(A, s_int32, 999)) ;
+
+    OK (GrB_Matrix_get_SIZE_(A, &size, GrB_NAME)) ;
+    CHECK (size == GxB_MAX_NAME_LEN) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS

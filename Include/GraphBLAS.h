@@ -135,28 +135,10 @@
 // This is a copy of GraphBLAS/Source/Shared/GxB_complex.h.  It is included
 // here as a full copy so that the GraphBLAS.h file can be self contained.
 
-// See:
-// https://www.drdobbs.com/complex-arithmetic-in-the-intersection-o/184401628#
-
 #ifndef GXB_COMPLEX_H
 #define GXB_COMPLEX_H
 
-    #if defined ( __cplusplus )
-
-        extern "C++"
-        {
-            // C++ complex types
-            #include <cmath>
-            #include <complex>
-            #undef I
-            typedef std::complex<float>  GxB_FC32_t ;
-            typedef std::complex<double> GxB_FC64_t ;
-        }
-        #define GxB_CMPLXF(r,i) GxB_FC32_t(r,i)
-        #define GxB_CMPLX(r,i)  GxB_FC64_t(r,i)
-        #define GB_HAS_CMPLX_MACROS 1
-
-    #elif defined (_MSC_VER) && !(defined (__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER))
+    #if defined (_MSC_VER) && !(defined (__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER))
 
         // Microsoft Windows complex types for C
         #include <complex.h>
@@ -172,8 +154,8 @@
         // ANSI C11 complex types
         #include <complex.h>
         #undef I
-        typedef float  complex GxB_FC32_t ;
-        typedef double complex GxB_FC64_t ;
+        typedef float  _Complex GxB_FC32_t ;
+        typedef double _Complex GxB_FC64_t ;
         #if (defined (CMPLX) && defined (CMPLXF))
             // use the ANSI C11 CMPLX and CMPLXF macros
             #define GxB_CMPLX(r,i) CMPLX (r,i)
@@ -5074,8 +5056,8 @@ GrB_Info GxB_Context_wait      (GxB_Context    Context , GrB_WaitMode waitmode);
             GrB_Scalar       : GrB_Scalar_wait       ,  \
             GrB_Vector       : GrB_Vector_wait       ,  \
             GrB_Matrix       : GrB_Matrix_wait       ,  \
-            GrB_Descriptor   : GrB_Descriptor_wait   ,  \
-            GxB_Context      : GxB_Context_wait         \
+            GxB_Context      : GxB_Context_wait      ,  \
+            GrB_Descriptor   : GrB_Descriptor_wait      \
     )                                                   \
     (object, waitmode)
 #endif

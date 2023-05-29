@@ -42,7 +42,7 @@ GrB_Info GrB_IndexUnaryOp_set_String
     GB_WHERE1 ("GrB_IndexUnaryOp_set_String (op, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_RETURN_IF_NULL (value) ;
-    ASSERT_INDEXUNARYOP_OK (op, "idxunop for get", GB0) ;
+    ASSERT_INDEXUNARYOP_OK (op, "idxunop for set", GB0) ;
 
     //--------------------------------------------------------------------------
     // set the field

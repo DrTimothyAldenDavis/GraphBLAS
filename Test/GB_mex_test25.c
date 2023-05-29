@@ -70,6 +70,7 @@ void mexFunction
     CHECK (s != NULL) ;
     CHECK (strlen (s) == 0) ;
     printf ("GxB_Context_error [%s] ok\n", s) ;
+    OK (GxB_Context_wait (GxB_CONTEXT_WORLD, GrB_COMPLETE)) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS

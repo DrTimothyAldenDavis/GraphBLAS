@@ -77,7 +77,8 @@ GrB_Info GB_matvec_set
             }
             break ;
 
-        default : return (GrB_INVALID_VALUE) ;
+        default : 
+            return (GrB_INVALID_VALUE) ;
     }
 
     //--------------------------------------------------------------------------

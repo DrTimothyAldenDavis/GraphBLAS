@@ -47,12 +47,12 @@ GrB_Info GrB_Vector_set_Scalar
             break ;
     }
 
-    if (info == GrB_SUCCESS)
+    if (info != GrB_SUCCESS)
     { 
-        info = GB_matvec_set ((GrB_Matrix) v, true, value_int, value_float,
-            field, Werk) ;
-    }
-    return (info) ;
+        return ((info == GrB_NO_VALUE) ? GrB_EMPTY_OBJECT : info) ;
+    } 
+    return (GB_matvec_set ((GrB_Matrix) v, true, value_int, value_float,
+            field, Werk)) ;
 }
 
 //------------------------------------------------------------------------------

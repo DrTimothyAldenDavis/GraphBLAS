@@ -139,7 +139,7 @@ GrB_Info GrB_Global_set_Scalar
             break ;
     }
 
-    return (info) ;
+    return ((info == GrB_NO_VALUE) ? GrB_EMPTY_OBJECT : info) ;
 }
 
 //------------------------------------------------------------------------------
