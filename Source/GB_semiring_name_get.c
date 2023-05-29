@@ -720,6 +720,648 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
             break ;
 
         //----------------------------------------------------------------------
+        case GB_ISEQ_binop_code   :    // z = (x == y)
+        //----------------------------------------------------------------------
+
+            switch (add_opcode)
+            {
+
+                case GB_MIN_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_MIN_ISEQ_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_MIN_ISEQ_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_MIN_ISEQ_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_MIN_ISEQ_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_MIN_ISEQ_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_MIN_ISEQ_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_MIN_ISEQ_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_MIN_ISEQ_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_MIN_ISEQ_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_MIN_ISEQ_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_MAX_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_MAX_ISEQ_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_MAX_ISEQ_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_MAX_ISEQ_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_MAX_ISEQ_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_MAX_ISEQ_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_MAX_ISEQ_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_MAX_ISEQ_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_MAX_ISEQ_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_MAX_ISEQ_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_MAX_ISEQ_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_PLUS_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_PLUS_ISEQ_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_PLUS_ISEQ_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_PLUS_ISEQ_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_PLUS_ISEQ_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_PLUS_ISEQ_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_PLUS_ISEQ_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_PLUS_ISEQ_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_PLUS_ISEQ_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_PLUS_ISEQ_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_PLUS_ISEQ_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_TIMES_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_TIMES_ISEQ_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_TIMES_ISEQ_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_TIMES_ISEQ_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_TIMES_ISEQ_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_TIMES_ISEQ_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_TIMES_ISEQ_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_TIMES_ISEQ_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_TIMES_ISEQ_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_TIMES_ISEQ_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_TIMES_ISEQ_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_ANY_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_BOOL_code   : return ("GxB_ANY_ISEQ_BOOL"  ) ;
+                        case GB_INT8_code   : return ("GxB_ANY_ISEQ_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_ANY_ISEQ_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_ANY_ISEQ_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_ANY_ISEQ_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_ANY_ISEQ_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_ANY_ISEQ_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_ANY_ISEQ_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_ANY_ISEQ_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_ANY_ISEQ_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_ANY_ISEQ_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                default: ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        case GB_ISNE_binop_code   :    // z = (x == y)
+        //----------------------------------------------------------------------
+
+            switch (add_opcode)
+            {
+
+                case GB_MIN_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_MIN_ISNE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_MIN_ISNE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_MIN_ISNE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_MIN_ISNE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_MIN_ISNE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_MIN_ISNE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_MIN_ISNE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_MIN_ISNE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_MIN_ISNE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_MIN_ISNE_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_MAX_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_MAX_ISNE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_MAX_ISNE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_MAX_ISNE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_MAX_ISNE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_MAX_ISNE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_MAX_ISNE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_MAX_ISNE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_MAX_ISNE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_MAX_ISNE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_MAX_ISNE_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_PLUS_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_PLUS_ISNE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_PLUS_ISNE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_PLUS_ISNE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_PLUS_ISNE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_PLUS_ISNE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_PLUS_ISNE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_PLUS_ISNE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_PLUS_ISNE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_PLUS_ISNE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_PLUS_ISNE_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_TIMES_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_TIMES_ISNE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_TIMES_ISNE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_TIMES_ISNE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_TIMES_ISNE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_TIMES_ISNE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_TIMES_ISNE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_TIMES_ISNE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_TIMES_ISNE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_TIMES_ISNE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_TIMES_ISNE_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_ANY_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_BOOL_code   : return ("GxB_ANY_ISNE_BOOL"  ) ;
+                        case GB_INT8_code   : return ("GxB_ANY_ISNE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_ANY_ISNE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_ANY_ISNE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_ANY_ISNE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_ANY_ISNE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_ANY_ISNE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_ANY_ISNE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_ANY_ISNE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_ANY_ISNE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_ANY_ISNE_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                default: ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        case GB_ISGT_binop_code   :    // z = (x == y)
+        //----------------------------------------------------------------------
+
+            switch (add_opcode)
+            {
+
+                case GB_MIN_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_MIN_ISGT_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_MIN_ISGT_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_MIN_ISGT_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_MIN_ISGT_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_MIN_ISGT_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_MIN_ISGT_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_MIN_ISGT_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_MIN_ISGT_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_MIN_ISGT_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_MIN_ISGT_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_MAX_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_MAX_ISGT_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_MAX_ISGT_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_MAX_ISGT_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_MAX_ISGT_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_MAX_ISGT_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_MAX_ISGT_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_MAX_ISGT_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_MAX_ISGT_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_MAX_ISGT_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_MAX_ISGT_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_PLUS_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_PLUS_ISGT_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_PLUS_ISGT_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_PLUS_ISGT_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_PLUS_ISGT_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_PLUS_ISGT_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_PLUS_ISGT_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_PLUS_ISGT_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_PLUS_ISGT_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_PLUS_ISGT_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_PLUS_ISGT_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_TIMES_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_TIMES_ISGT_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_TIMES_ISGT_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_TIMES_ISGT_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_TIMES_ISGT_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_TIMES_ISGT_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_TIMES_ISGT_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_TIMES_ISGT_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_TIMES_ISGT_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_TIMES_ISGT_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_TIMES_ISGT_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_ANY_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_BOOL_code   : return ("GxB_ANY_ISGT_BOOL"  ) ;
+                        case GB_INT8_code   : return ("GxB_ANY_ISGT_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_ANY_ISGT_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_ANY_ISGT_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_ANY_ISGT_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_ANY_ISGT_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_ANY_ISGT_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_ANY_ISGT_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_ANY_ISGT_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_ANY_ISGT_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_ANY_ISGT_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                default: ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        case GB_ISLT_binop_code   :    // z = (x == y)
+        //----------------------------------------------------------------------
+
+            switch (add_opcode)
+            {
+
+                case GB_MIN_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_MIN_ISLT_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_MIN_ISLT_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_MIN_ISLT_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_MIN_ISLT_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_MIN_ISLT_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_MIN_ISLT_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_MIN_ISLT_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_MIN_ISLT_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_MIN_ISLT_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_MIN_ISLT_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_MAX_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_MAX_ISLT_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_MAX_ISLT_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_MAX_ISLT_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_MAX_ISLT_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_MAX_ISLT_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_MAX_ISLT_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_MAX_ISLT_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_MAX_ISLT_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_MAX_ISLT_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_MAX_ISLT_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_PLUS_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_PLUS_ISLT_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_PLUS_ISLT_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_PLUS_ISLT_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_PLUS_ISLT_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_PLUS_ISLT_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_PLUS_ISLT_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_PLUS_ISLT_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_PLUS_ISLT_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_PLUS_ISLT_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_PLUS_ISLT_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_TIMES_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_TIMES_ISLT_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_TIMES_ISLT_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_TIMES_ISLT_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_TIMES_ISLT_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_TIMES_ISLT_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_TIMES_ISLT_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_TIMES_ISLT_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_TIMES_ISLT_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_TIMES_ISLT_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_TIMES_ISLT_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_ANY_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_BOOL_code   : return ("GxB_ANY_ISLT_BOOL"  ) ;
+                        case GB_INT8_code   : return ("GxB_ANY_ISLT_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_ANY_ISLT_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_ANY_ISLT_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_ANY_ISLT_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_ANY_ISLT_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_ANY_ISLT_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_ANY_ISLT_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_ANY_ISLT_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_ANY_ISLT_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_ANY_ISLT_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                default: ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        case GB_ISGE_binop_code   :    // z = (x == y)
+        //----------------------------------------------------------------------
+
+            switch (add_opcode)
+            {
+
+                case GB_MIN_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_MIN_ISGE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_MIN_ISGE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_MIN_ISGE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_MIN_ISGE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_MIN_ISGE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_MIN_ISGE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_MIN_ISGE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_MIN_ISGE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_MIN_ISGE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_MIN_ISGE_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_MAX_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_MAX_ISGE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_MAX_ISGE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_MAX_ISGE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_MAX_ISGE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_MAX_ISGE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_MAX_ISGE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_MAX_ISGE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_MAX_ISGE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_MAX_ISGE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_MAX_ISGE_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_PLUS_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_PLUS_ISGE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_PLUS_ISGE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_PLUS_ISGE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_PLUS_ISGE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_PLUS_ISGE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_PLUS_ISGE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_PLUS_ISGE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_PLUS_ISGE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_PLUS_ISGE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_PLUS_ISGE_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_TIMES_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_TIMES_ISGE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_TIMES_ISGE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_TIMES_ISGE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_TIMES_ISGE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_TIMES_ISGE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_TIMES_ISGE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_TIMES_ISGE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_TIMES_ISGE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_TIMES_ISGE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_TIMES_ISGE_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_ANY_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_BOOL_code   : return ("GxB_ANY_ISGE_BOOL"  ) ;
+                        case GB_INT8_code   : return ("GxB_ANY_ISGE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_ANY_ISGE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_ANY_ISGE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_ANY_ISGE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_ANY_ISGE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_ANY_ISGE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_ANY_ISGE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_ANY_ISGE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_ANY_ISGE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_ANY_ISGE_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                default: ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
+        case GB_ISLE_binop_code   :    // z = (x == y)
+        //----------------------------------------------------------------------
+
+            switch (add_opcode)
+            {
+
+                case GB_MIN_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_MIN_ISLE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_MIN_ISLE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_MIN_ISLE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_MIN_ISLE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_MIN_ISLE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_MIN_ISLE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_MIN_ISLE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_MIN_ISLE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_MIN_ISLE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_MIN_ISLE_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_MAX_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_MAX_ISLE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_MAX_ISLE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_MAX_ISLE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_MAX_ISLE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_MAX_ISLE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_MAX_ISLE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_MAX_ISLE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_MAX_ISLE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_MAX_ISLE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_MAX_ISLE_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_PLUS_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_PLUS_ISLE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_PLUS_ISLE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_PLUS_ISLE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_PLUS_ISLE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_PLUS_ISLE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_PLUS_ISLE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_PLUS_ISLE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_PLUS_ISLE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_PLUS_ISLE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_PLUS_ISLE_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_TIMES_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_INT8_code   : return ("GxB_TIMES_ISLE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_TIMES_ISLE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_TIMES_ISLE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_TIMES_ISLE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_TIMES_ISLE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_TIMES_ISLE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_TIMES_ISLE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_TIMES_ISLE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_TIMES_ISLE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_TIMES_ISLE_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                case GB_ANY_binop_code:
+
+                    switch (xcode)
+                    {
+                        // 10 real, non-boolean types
+                        case GB_BOOL_code   : return ("GxB_ANY_ISLE_BOOL"  ) ;
+                        case GB_INT8_code   : return ("GxB_ANY_ISLE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_ANY_ISLE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_ANY_ISLE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_ANY_ISLE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_ANY_ISLE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_ANY_ISLE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_ANY_ISLE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_ANY_ISLE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_ANY_ISLE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_ANY_ISLE_FP64"  ) ;
+                        default: ;
+                    }
+                    break ;
+
+                default: ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
         case GB_RMINUS_binop_code   :    // z = y - x (reverse minus)
         //----------------------------------------------------------------------
 
@@ -911,18 +1553,18 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types, plus 2 complex
-                        case GB_INT8_code   : return ("GxB_TIMES_RMINUS_INT8"  ) ;
-                        case GB_INT16_code  : return ("GxB_TIMES_RMINUS_INT16" ) ;
-                        case GB_INT32_code  : return ("GxB_TIMES_RMINUS_INT32" ) ;
-                        case GB_INT64_code  : return ("GxB_TIMES_RMINUS_INT64" ) ;
-                        case GB_UINT8_code  : return ("GxB_TIMES_RMINUS_UINT8" ) ;
-                        case GB_UINT16_code : return ("GxB_TIMES_RMINUS_UINT16") ;
-                        case GB_UINT32_code : return ("GxB_TIMES_RMINUS_UINT32") ;
-                        case GB_UINT64_code : return ("GxB_TIMES_RMINUS_UINT64") ;
-                        case GB_FP32_code   : return ("GxB_TIMES_RMINUS_FP32"  ) ;
-                        case GB_FP64_code   : return ("GxB_TIMES_RMINUS_FP64"  ) ;
-                        case GB_FC32_code   : return ("GxB_TIMES_RMINUS_FC32"  ) ;
-                        case GB_FC64_code   : return ("GxB_TIMES_RMINUS_FC64"  ) ;
+                        case GB_INT8_code   : return ("GxB_TIMES_TIMES_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_TIMES_TIMES_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_TIMES_TIMES_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_TIMES_TIMES_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_TIMES_TIMES_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_TIMES_TIMES_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_TIMES_TIMES_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_TIMES_TIMES_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_TIMES_TIMES_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_TIMES_TIMES_FP64"  ) ;
+                        case GB_FC32_code   : return ("GxB_TIMES_TIMES_FC32"  ) ;
+                        case GB_FC64_code   : return ("GxB_TIMES_TIMES_FC64"  ) ;
                         default: ;
                     }
                     break ;
@@ -932,19 +1574,19 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types, plus 2 complex
-                        case GB_BOOL_code   : return ("GxB_ANY_RMINUS_BOOL"  ) ;
-                        case GB_INT8_code   : return ("GxB_ANY_RMINUS_INT8"  ) ;
-                        case GB_INT16_code  : return ("GxB_ANY_RMINUS_INT16" ) ;
-                        case GB_INT32_code  : return ("GxB_ANY_RMINUS_INT32" ) ;
-                        case GB_INT64_code  : return ("GxB_ANY_RMINUS_INT64" ) ;
-                        case GB_UINT8_code  : return ("GxB_ANY_RMINUS_UINT8" ) ;
-                        case GB_UINT16_code : return ("GxB_ANY_RMINUS_UINT16") ;
-                        case GB_UINT32_code : return ("GxB_ANY_RMINUS_UINT32") ;
-                        case GB_UINT64_code : return ("GxB_ANY_RMINUS_UINT64") ;
-                        case GB_FP32_code   : return ("GxB_ANY_RMINUS_FP32"  ) ;
-                        case GB_FP64_code   : return ("GxB_ANY_RMINUS_FP64"  ) ;
-                        case GB_FC32_code   : return ("GxB_ANY_RMINUS_FC32"  ) ;
-                        case GB_FC64_code   : return ("GxB_ANY_RMINUS_FC64"  ) ;
+                        case GB_BOOL_code   : return ("GxB_ANY_TIMES_BOOL"  ) ;
+                        case GB_INT8_code   : return ("GxB_ANY_TIMES_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_ANY_TIMES_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_ANY_TIMES_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_ANY_TIMES_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_ANY_TIMES_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_ANY_TIMES_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_ANY_TIMES_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_ANY_TIMES_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_ANY_TIMES_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_ANY_TIMES_FP64"  ) ;
+                        case GB_FC32_code   : return ("GxB_ANY_TIMES_FC32"  ) ;
+                        case GB_FC64_code   : return ("GxB_ANY_TIMES_FC64"  ) ;
                         default: ;
                     }
                     break ;
@@ -1761,17 +2403,17 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types, plus boolean
-                        case GB_BOOL_code   : return ("GxB_LOR_GE_BOOL"  ) ;
-                        case GB_INT8_code   : return ("GxB_LOR_GE_INT8"  ) ;
-                        case GB_INT16_code  : return ("GxB_LOR_GE_INT16" ) ;
-                        case GB_INT32_code  : return ("GxB_LOR_GE_INT32" ) ;
-                        case GB_INT64_code  : return ("GxB_LOR_GE_INT64" ) ;
-                        case GB_UINT8_code  : return ("GxB_LOR_GE_UINT8" ) ;
-                        case GB_UINT16_code : return ("GxB_LOR_GE_UINT16") ;
-                        case GB_UINT32_code : return ("GxB_LOR_GE_UINT32") ;
-                        case GB_UINT64_code : return ("GxB_LOR_GE_UINT64") ;
-                        case GB_FP32_code   : return ("GxB_LOR_GE_FP32"  ) ;
-                        case GB_FP64_code   : return ("GxB_LOR_GE_FP64"  ) ;
+                        case GB_BOOL_code   : return ("GxB_LOR_LE_BOOL"  ) ;
+                        case GB_INT8_code   : return ("GxB_LOR_LE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_LOR_LE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_LOR_LE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_LOR_LE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_LOR_LE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_LOR_LE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_LOR_LE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_LOR_LE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_LOR_LE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_LOR_LE_FP64"  ) ;
                         default: ;
                     }
                     break ;
@@ -1781,17 +2423,17 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types, plus boolean
-                        case GB_BOOL_code   : return ("GxB_LAND_GE_BOOL"  ) ;
-                        case GB_INT8_code   : return ("GxB_LAND_GE_INT8"  ) ;
-                        case GB_INT16_code  : return ("GxB_LAND_GE_INT16" ) ;
-                        case GB_INT32_code  : return ("GxB_LAND_GE_INT32" ) ;
-                        case GB_INT64_code  : return ("GxB_LAND_GE_INT64" ) ;
-                        case GB_UINT8_code  : return ("GxB_LAND_GE_UINT8" ) ;
-                        case GB_UINT16_code : return ("GxB_LAND_GE_UINT16") ;
-                        case GB_UINT32_code : return ("GxB_LAND_GE_UINT32") ;
-                        case GB_UINT64_code : return ("GxB_LAND_GE_UINT64") ;
-                        case GB_FP32_code   : return ("GxB_LAND_GE_FP32"  ) ;
-                        case GB_FP64_code   : return ("GxB_LAND_GE_FP64"  ) ;
+                        case GB_BOOL_code   : return ("GxB_LAND_LE_BOOL"  ) ;
+                        case GB_INT8_code   : return ("GxB_LAND_LE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_LAND_LE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_LAND_LE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_LAND_LE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_LAND_LE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_LAND_LE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_LAND_LE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_LAND_LE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_LAND_LE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_LAND_LE_FP64"  ) ;
                         default: ;
                     }
                     break ;
@@ -1801,17 +2443,17 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types, plus boolean
-                        case GB_BOOL_code   : return ("GxB_LXOR_GE_BOOL"  ) ;
-                        case GB_INT8_code   : return ("GxB_LXOR_GE_INT8"  ) ;
-                        case GB_INT16_code  : return ("GxB_LXOR_GE_INT16" ) ;
-                        case GB_INT32_code  : return ("GxB_LXOR_GE_INT32" ) ;
-                        case GB_INT64_code  : return ("GxB_LXOR_GE_INT64" ) ;
-                        case GB_UINT8_code  : return ("GxB_LXOR_GE_UINT8" ) ;
-                        case GB_UINT16_code : return ("GxB_LXOR_GE_UINT16") ;
-                        case GB_UINT32_code : return ("GxB_LXOR_GE_UINT32") ;
-                        case GB_UINT64_code : return ("GxB_LXOR_GE_UINT64") ;
-                        case GB_FP32_code   : return ("GxB_LXOR_GE_FP32"  ) ;
-                        case GB_FP64_code   : return ("GxB_LXOR_GE_FP64"  ) ;
+                        case GB_BOOL_code   : return ("GxB_LXOR_LE_BOOL"  ) ;
+                        case GB_INT8_code   : return ("GxB_LXOR_LE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_LXOR_LE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_LXOR_LE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_LXOR_LE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_LXOR_LE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_LXOR_LE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_LXOR_LE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_LXOR_LE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_LXOR_LE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_LXOR_LE_FP64"  ) ;
                         default: ;
                     }
                     break ;
@@ -1821,17 +2463,17 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types, plus boolean
-                        case GB_BOOL_code   : return ("GxB_EQ_GE_BOOL"  ) ;
-                        case GB_INT8_code   : return ("GxB_EQ_GE_INT8"  ) ;
-                        case GB_INT16_code  : return ("GxB_EQ_GE_INT16" ) ;
-                        case GB_INT32_code  : return ("GxB_EQ_GE_INT32" ) ;
-                        case GB_INT64_code  : return ("GxB_EQ_GE_INT64" ) ;
-                        case GB_UINT8_code  : return ("GxB_EQ_GE_UINT8" ) ;
-                        case GB_UINT16_code : return ("GxB_EQ_GE_UINT16") ;
-                        case GB_UINT32_code : return ("GxB_EQ_GE_UINT32") ;
-                        case GB_UINT64_code : return ("GxB_EQ_GE_UINT64") ;
-                        case GB_FP32_code   : return ("GxB_EQ_GE_FP32"  ) ;
-                        case GB_FP64_code   : return ("GxB_EQ_GE_FP64"  ) ;
+                        case GB_BOOL_code   : return ("GxB_EQ_LE_BOOL"  ) ;
+                        case GB_INT8_code   : return ("GxB_EQ_LE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_EQ_LE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_EQ_LE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_EQ_LE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_EQ_LE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_EQ_LE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_EQ_LE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_EQ_LE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_EQ_LE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_EQ_LE_FP64"  ) ;
                         default: ;
                     }
                     break ;
@@ -1841,17 +2483,17 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types, plus boolean
-                        case GB_BOOL_code   : return ("GxB_ANY_GE_BOOL"  ) ;
-                        case GB_INT8_code   : return ("GxB_ANY_GE_INT8"  ) ;
-                        case GB_INT16_code  : return ("GxB_ANY_GE_INT16" ) ;
-                        case GB_INT32_code  : return ("GxB_ANY_GE_INT32" ) ;
-                        case GB_INT64_code  : return ("GxB_ANY_GE_INT64" ) ;
-                        case GB_UINT8_code  : return ("GxB_ANY_GE_UINT8" ) ;
-                        case GB_UINT16_code : return ("GxB_ANY_GE_UINT16") ;
-                        case GB_UINT32_code : return ("GxB_ANY_GE_UINT32") ;
-                        case GB_UINT64_code : return ("GxB_ANY_GE_UINT64") ;
-                        case GB_FP32_code   : return ("GxB_ANY_GE_FP32"  ) ;
-                        case GB_FP64_code   : return ("GxB_ANY_GE_FP64"  ) ;
+                        case GB_BOOL_code   : return ("GxB_ANY_LE_BOOL"  ) ;
+                        case GB_INT8_code   : return ("GxB_ANY_LE_INT8"  ) ;
+                        case GB_INT16_code  : return ("GxB_ANY_LE_INT16" ) ;
+                        case GB_INT32_code  : return ("GxB_ANY_LE_INT32" ) ;
+                        case GB_INT64_code  : return ("GxB_ANY_LE_INT64" ) ;
+                        case GB_UINT8_code  : return ("GxB_ANY_LE_UINT8" ) ;
+                        case GB_UINT16_code : return ("GxB_ANY_LE_UINT16") ;
+                        case GB_UINT32_code : return ("GxB_ANY_LE_UINT32") ;
+                        case GB_UINT64_code : return ("GxB_ANY_LE_UINT64") ;
+                        case GB_FP32_code   : return ("GxB_ANY_LE_FP32"  ) ;
+                        case GB_FP64_code   : return ("GxB_ANY_LE_FP64"  ) ;
                         default: ;
                     }
                     break ;
@@ -2144,7 +2786,7 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
 
                 case GB_LOR_binop_code  : if (xbool) return ("GrB_LOR_LAND_SEMIRING_BOOL" ) ;
                 case GB_LAND_binop_code : if (xbool) return ("GxB_LAND_LAND_BOOL"         ) ;
-                case GB_EQ_binop_code   : if (xbool) return ("GxB_LXNOR_LAND_BOOL"        ) ;
+                case GB_EQ_binop_code   : if (xbool) return ("GxB_EQ_LAND_BOOL"           ) ;
                 case GB_LXOR_binop_code : if (xbool) return ("GrB_LXOR_LAND_SEMIRING_BOOL") ;
 
                 default: ;

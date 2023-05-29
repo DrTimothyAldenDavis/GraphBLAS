@@ -13,9 +13,6 @@
 // GrB_Monoid_get_Scalar
 //------------------------------------------------------------------------------
 
-// FUTURE: add identity and terminal, to replace
-// GxB_Monoid_identity and GxB_Monoid_terminal.
-
 GrB_Info GrB_Monoid_get_Scalar
 (
     GrB_Monoid monoid,
@@ -37,7 +34,7 @@ GrB_Info GrB_Monoid_get_Scalar
     // get the field
     //--------------------------------------------------------------------------
 
-    return (GB_op_scalar_get ((GB_Operator) (monoid->op), value, field, Werk)) ;
+    return (GB_monoid_get (monoid, value, field, Werk)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -167,6 +164,10 @@ GrB_Info GrB_Monoid_get_SIZE
             (*value) = GxB_MAX_NAME_LEN ;
             break ;
 
+        case GxB_MONOID_OPERATOR : 
+            (*value) = sizeof (GrB_BinaryOp) ;
+            break ;
+
         default : 
             return (GrB_INVALID_VALUE) ;
     }
@@ -179,11 +180,6 @@ GrB_Info GrB_Monoid_get_SIZE
 // GrB_Monoid_get_VOID
 //------------------------------------------------------------------------------
 
-// FUTURE: monoid->op to replace GxB_Monoid_operator.
-
-// FUTURE: can also add identity and terminal, to replace
-// GxB_Monoid_identity and GxB_Monoid_terminal.
-
 GrB_Info GrB_Monoid_get_VOID
 (
     GrB_Monoid monoid,
@@ -191,6 +187,32 @@ GrB_Info GrB_Monoid_get_VOID
     GrB_Field field
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_WHERE1 ("GrB_Monoid_get_VOID (monoid, value, field)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
+    GB_RETURN_IF_NULL (value) ;
+    ASSERT_MONOID_OK (monoid, "monoid to get option", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // get the field
+    //--------------------------------------------------------------------------
+
+    switch ((int) field)
+    {
+
+        case GxB_MONOID_OPERATOR : 
+            memcpy (value, &(monoid->op), sizeof (GrB_BinaryOp)) ;
+            break ;
+
+        default : 
+            return (GrB_INVALID_VALUE) ;
+    }
+
+    #pragma omp flush
+    return (GrB_SUCCESS) ;
 }
 

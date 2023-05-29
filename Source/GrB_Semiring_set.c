@@ -34,7 +34,7 @@ GrB_Info GrB_Semiring_set_String
     GrB_Field field
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;
+    return ((field == GrB_NAME) ? GrB_ALREADY_SET : GrB_NOT_IMPLEMENTED) ;
 }
 
 //------------------------------------------------------------------------------

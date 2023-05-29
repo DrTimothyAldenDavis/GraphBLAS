@@ -764,22 +764,16 @@ GrB_Info GxB_Type_new           // create a new named GraphBLAS type
     const char *type_defn       // typedef for the type (no max length)
 ) ;
 
-GrB_Info GxB_Type_name      // return the name of a GraphBLAS type
-(
-    char *type_name,        // name of the type (char array of size at least
-                            // GxB_MAX_NAME_LEN, owned by the user application).
-    const GrB_Type type
-) ;
-
-GrB_Info GxB_Type_size          // determine the size of the type
-(
-    size_t *size,               // the sizeof the type
-    const GrB_Type type         // type to determine the sizeof
-) ;
+// GxB_Type_name and GxB_Type_size are historical; use GrB_get instead.
+GrB_Info GxB_Type_name (char *type_name, const GrB_Type type) ;
+GrB_Info GxB_Type_size (size_t *size, const GrB_Type type) ;
 
 GrB_Info GxB_Type_from_name     // return the built-in GrB_Type from a name
 (
-    GrB_Type *type,             // built-in type, or NULL if user-defined
+    GrB_Type *type,             // built-in type, or NULL if user-defined.
+                                // The name can be the underlying C type
+                                // ("int8_t") or the GraphBLAS name
+                                // ("GrB_INT8").
     const char *type_name       // array of size at least GxB_MAX_NAME_LEN
 ) ;
 
@@ -1004,29 +998,12 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     const char *unop_defn           // definition of the user function
 ) ;
 
-// GxB_UnaryOp_ztype is historical.  Use GxB_UnaryOp_ztype_name instead.
-GrB_Info GxB_UnaryOp_ztype          // return the type of z
-(
-    GrB_Type *ztype,                // return type of output z
-    GrB_UnaryOp unaryop             // unary operator
-) ;
-GrB_Info GxB_UnaryOp_ztype_name     // return the type_name of z
-(
-    char *type_name,                // user array of size GxB_MAX_NAME_LEN
-    const GrB_UnaryOp unaryop       // unary operator
-) ;
-
-// GxB_UnaryOp_xtype is historical.  Use GxB_UnaryOp_xtype_name instead.
-GrB_Info GxB_UnaryOp_xtype          // return the type of x
-(
-    GrB_Type *xtype,                // return type of input x
-    GrB_UnaryOp unaryop             // unary operator
-) ;
-GrB_Info GxB_UnaryOp_xtype_name     // return the type_name of x
-(
-    char *type_name,                // user array of size GxB_MAX_NAME_LEN
-    const GrB_UnaryOp unaryop       // unary operator
-) ;
+// GxB_UnaryOp_ztype, GxB_UnaryOp_ztype_name, GxB_UnaryOp_xtype, and
+// GxB_UnaryOp_xtype_name are historical.  Use GrB_get instead.
+GrB_Info GxB_UnaryOp_ztype (GrB_Type *ztype, GrB_UnaryOp unaryop) ;
+GrB_Info GxB_UnaryOp_ztype_name (char *type_name, const GrB_UnaryOp unaryop) ;
+GrB_Info GxB_UnaryOp_xtype (GrB_Type *xtype, GrB_UnaryOp unaryop) ;
+GrB_Info GxB_UnaryOp_xtype_name (char *type_name, const GrB_UnaryOp unaryop) ;
 
 GrB_Info GrB_UnaryOp_free           // free a user-created unary operator
 (
@@ -1460,41 +1437,15 @@ GrB_Info GxB_BinaryOp_new
     const char *binop_defn          // definition of the user function
 ) ;
 
-// NOTE: GxB_BinaryOp_ztype is historical.  Use GxB_BinaryOp_ztype_name instead.
-GrB_Info GxB_BinaryOp_ztype         // return the type of z
-(
-    GrB_Type *ztype,                // return type of output z
-    GrB_BinaryOp binaryop           // binary operator to query
-) ;
-GrB_Info GxB_BinaryOp_ztype_name    // return the type_name of z
-(
-    char *type_name,                // user array of size GxB_MAX_NAME_LEN
-    const GrB_BinaryOp binaryop     // binary operator to query
-) ;
-
-// NOTE: GxB_BinaryOp_xtype is historical.  Use GxB_BinaryOp_xtype_name instead.
-GrB_Info GxB_BinaryOp_xtype         // return the type of x
-(
-    GrB_Type *xtype,                // return type of input x
-    GrB_BinaryOp binaryop           // binary operator to query
-) ;
-GrB_Info GxB_BinaryOp_xtype_name    // return the type_name of x
-(
-    char *type_name,                // user array of size GxB_MAX_NAME_LEN
-    const GrB_BinaryOp binaryop     // binary operator to query
-) ;
-
-// NOTE: GxB_BinaryOp_ytype is historical.  Use GxB_BinaryOp_ytype_name instead.
-GrB_Info GxB_BinaryOp_ytype         // return the type of y
-(
-    GrB_Type *ytype,                // return type of input y
-    GrB_BinaryOp binaryop           // binary operator to query
-) ;
-GrB_Info GxB_BinaryOp_ytype_name    // return the type_name of y
-(
-    char *type_name,                // user array of size GxB_MAX_NAME_LEN
-    const GrB_BinaryOp binaryop     // binary operator to query
-) ;
+// GxB_BinaryOp_ztype, GxB_BinaryOp_ztype_name, GxB_BinaryOp_xtype,
+// GxB_BinaryOp_xtype_name, GxB_BinaryOp_ytype, GxB_BinaryOp_ytype_name, are
+// historical.  Use GrB_get instead.
+GrB_Info GxB_BinaryOp_ztype (GrB_Type *ztype, GrB_BinaryOp op) ;
+GrB_Info GxB_BinaryOp_ztype_name (char *type_name, const GrB_BinaryOp op) ;
+GrB_Info GxB_BinaryOp_xtype (GrB_Type *xtype, GrB_BinaryOp op) ;
+GrB_Info GxB_BinaryOp_xtype_name (char *type_name, const GrB_BinaryOp op) ;
+GrB_Info GxB_BinaryOp_ytype (GrB_Type *ytype, GrB_BinaryOp op) ;
+GrB_Info GxB_BinaryOp_ytype_name (char *type_name, const GrB_BinaryOp op) ;
 
 GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 (
@@ -1555,26 +1506,11 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     const char *idxop_defn          // definition of the user function
 ) ;
 
-GrB_Info GxB_IndexUnaryOp_ztype_name    // return the type_name of z
-(
-    char *type_name,                    // user array of size GxB_MAX_NAME_LEN
-    const GrB_IndexUnaryOp op           // IndexUnary operator
-) ;
-
-// For TRIL, TRIU, DIAG, OFFDIAG, COLLE, COLGT, ROWLE, and ROWGT,
-// the xtype_name is an empty string (""), since these functions do not depend
-// on the type of the matrix input.
-GrB_Info GxB_IndexUnaryOp_xtype_name    // return the type_name of x
-(
-    char *type_name,                    // user array of size GxB_MAX_NAME_LEN
-    const GrB_IndexUnaryOp op           // select operator
-) ;
-
-GrB_Info GxB_IndexUnaryOp_ytype_name    // return the type_name of the scalary y
-(
-    char *type_name,                    // user array of size GxB_MAX_NAME_LEN
-    const GrB_IndexUnaryOp op           // select operator
-) ;
+// GxB_IndexUnaryOp_ztype_name, GxB_IndexUnaryOp_xtype_name, and
+// GxB_IndexUnaryOp_ytype_name are historical.  Use GrB_get instead.
+GrB_Info GxB_IndexUnaryOp_ztype_name (char *, const GrB_IndexUnaryOp op) ;
+GrB_Info GxB_IndexUnaryOp_xtype_name (char *, const GrB_IndexUnaryOp op) ;
+GrB_Info GxB_IndexUnaryOp_ytype_name (char *, const GrB_IndexUnaryOp op) ;
 
 GrB_Info GrB_IndexUnaryOp_free  // free a user-created IndexUnaryOp
 (
@@ -1937,25 +1873,11 @@ GrB_Info GxB_Monoid_terminal_new             // create a monoid
     (monoid, op, identity, terminal)
 #endif
 
-GrB_Info GxB_Monoid_operator        // return the monoid operator
-(
-    GrB_BinaryOp *op,               // returns the binary op of the monoid
-    GrB_Monoid monoid               // monoid to query
-) ;
-
-GrB_Info GxB_Monoid_identity        // return the monoid identity
-(
-    void *identity,                 // returns the identity of the monoid
-    GrB_Monoid monoid               // monoid to query
-) ;
-
-GrB_Info GxB_Monoid_terminal        // return the monoid terminal
-(
-    bool *has_terminal,             // true if the monoid has a terminal value
-    void *terminal,                 // returns the terminal of the monoid,
-                                    // unmodified if has_terminal is false
-    GrB_Monoid monoid               // monoid to query
-) ;
+// GxB_Monoid_operator, GxB_Monoid_identity, and GxB_Monoid_terminal are
+// historical.  Use GrB_get instead.
+GrB_Info GxB_Monoid_operator (GrB_BinaryOp *op, GrB_Monoid monoid) ;
+GrB_Info GxB_Monoid_identity (void *identity, GrB_Monoid monoid) ;
+GrB_Info GxB_Monoid_terminal (bool *, void *terminal, GrB_Monoid monoid) ;
 
 GrB_Info GrB_Monoid_free            // free a user-created monoid
 (
@@ -1975,17 +1897,10 @@ GrB_Info GrB_Semiring_new           // create a semiring
     GrB_BinaryOp multiply           // multiply operator of the semiring
 ) ;
 
-GrB_Info GxB_Semiring_add           // return the add monoid of a semiring
-(
-    GrB_Monoid *add,                // returns add monoid of the semiring
-    GrB_Semiring semiring           // semiring to query
-) ;
-
-GrB_Info GxB_Semiring_multiply      // return multiply operator of a semiring
-(
-    GrB_BinaryOp *multiply,         // returns multiply operator of the semiring
-    GrB_Semiring semiring           // semiring to query
-) ;
+// GxB_Semiring_add and GxB_Semiring_multiply are historical.  Use GrB_get
+// instead.
+GrB_Info GxB_Semiring_add (GrB_Monoid *add, GrB_Semiring semiring) ;
+GrB_Info GxB_Semiring_multiply (GrB_BinaryOp *multiply, GrB_Semiring semiring) ;
 
 GrB_Info GrB_Semiring_free          // free a user-created semiring
 (
@@ -2028,18 +1943,10 @@ GrB_Info GrB_Scalar_nvals   // get the number of entries in a GrB_Scalar
     const GrB_Scalar s      // GrB_Scalar to query
 ) ;
 
-// NOTE: GxB_Scalar_type is historical.  Use GxB_Scalar_type_name instead.
-GrB_Info GxB_Scalar_type    // get the type of a GrB_Scalar
-(
-    GrB_Type *type,         // returns the type of the GrB_Scalar
-    const GrB_Scalar s      // GrB_Scalar to query
-) ;
-GrB_Info GxB_Scalar_type_name      // return the name of the type of a scalar
-(
-    char *type_name,        // name of the type (char array of size at least
-                            // GxB_MAX_NAME_LEN, owned by the user application).
-    const GrB_Scalar s      // GrB_Scalar to query
-) ;
+// GxB_Scalar_type and GxB_Scalar_type_name are historical.  Use GrB_get
+// instead.
+GrB_Info GxB_Scalar_type (GrB_Type *type, const GrB_Scalar s) ;
+GrB_Info GxB_Scalar_type_name (char *type_name, const GrB_Scalar s) ;
 
 GrB_Info GxB_Scalar_memoryUsage  // return # of bytes used for a scalar
 (
@@ -2359,18 +2266,10 @@ GrB_Info GrB_Vector_nvals   // get the number of entries in a vector
     const GrB_Vector v      // vector to query
 ) ;
 
-// NOTE: GxB_Vector_type is historical.  Use GxB_Vector_type_name instead.
-GrB_Info GxB_Vector_type    // get the type of a vector
-(
-    GrB_Type *type,         // returns the type of the vector
-    const GrB_Vector v      // vector to query
-) ;
-GrB_Info GxB_Vector_type_name      // return the name of the type of a vector
-(
-    char *type_name,        // name of the type (char array of size at least
-                            // GxB_MAX_NAME_LEN, owned by the user application).
-    const GrB_Vector v      // vector to query
-) ;
+// GxB_Vector_type and GxB_Vector_type_name are historical.  Use GrB_get
+// instead.
+GrB_Info GxB_Vector_type (GrB_Type *type, const GrB_Vector v) ;
+GrB_Info GxB_Vector_type_name (char *type_name, const GrB_Vector v) ;
 
 GrB_Info GxB_Vector_memoryUsage  // return # of bytes used for a vector
 (
@@ -3044,18 +2943,10 @@ GrB_Info GrB_Matrix_nvals   // get the number of entries in a matrix
     const GrB_Matrix A      // matrix to query
 ) ;
 
-// NOTE: GxB_Matrix_type is historical.  Use GxB_Matrix_type_name instead.
-GrB_Info GxB_Matrix_type    // get the type of a matrix
-(
-    GrB_Type *type,         // returns the type of the matrix
-    const GrB_Matrix A      // matrix to query
-) ;
-GrB_Info GxB_Matrix_type_name      // return the name of the type of a matrix
-(
-    char *type_name,        // name of the type (char array of size at least
-                            // GxB_MAX_NAME_LEN, owned by the user application).
-    const GrB_Matrix A      // matrix to query
-) ;
+// GxB_Matrix_type and GxB_Matrix_type_name are historical.  Use GrB_get
+// instead.
+GrB_Info GxB_Matrix_type (GrB_Type *type, const GrB_Matrix A) ;
+GrB_Info GxB_Matrix_type_name (char *type_name, const GrB_Matrix A) ;
 
 GrB_Info GxB_Matrix_memoryUsage  // return # of bytes used for a matrix
 (
@@ -4564,7 +4455,16 @@ typedef enum
 
     // GrB_Type, GrB_UnaryOp, GrB_BinaryOp, and GrB_IndexUnaryOp:  only valid
     // for user-defined types.
-    GxB_DEFINITION = 7041,
+    GxB_DEFINITION = 7041,          // typedef or function definition
+
+    // GrB_Monoid and GrB_Semiring:
+    GxB_MONOID_IDENTITY = 7042,     // monoid identity value
+    GxB_MONOID_TERMINAL = 7043,     // monoid terminal value
+    GxB_MONOID_OPERATOR = 7044,     // monoid binary operator
+
+    // GrB_Semiring only:
+    GxB_SEMIRING_MONOID = 7045,             // semiring monoid
+    GxB_SEMIRING_MULTIPLY_OPERATOR = 7046,  // semiring multiplicatve op
 
 }
 GrB_Field ;

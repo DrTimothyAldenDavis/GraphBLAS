@@ -13,8 +13,6 @@
 // GrB_Semiring_get_Scalar
 //------------------------------------------------------------------------------
 
-// FUTURE: add identity and terminal of the monoid.
-
 GrB_Info GrB_Semiring_get_Scalar
 (
     GrB_Semiring semiring,
@@ -36,8 +34,15 @@ GrB_Info GrB_Semiring_get_Scalar
     // get the field
     //--------------------------------------------------------------------------
 
-    return (GB_op_scalar_get ((GB_Operator) (semiring->multiply),
-        value, field, Werk)) ;
+    switch ((int) field)
+    {
+        case GxB_MONOID_IDENTITY : 
+        case GxB_MONOID_TERMINAL : 
+            return (GB_monoid_get (semiring->add, value, field, Werk)) ;
+        default : 
+            return (GB_op_scalar_get ((GB_Operator) (semiring->multiply),
+                value, field, Werk)) ;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -169,6 +174,15 @@ GrB_Info GrB_Semiring_get_SIZE
             (*value) = GxB_MAX_NAME_LEN ;
             break ;
 
+        case GxB_MONOID_OPERATOR : 
+        case GxB_SEMIRING_MULTIPLY_OPERATOR : 
+            (*value) = sizeof (GrB_BinaryOp) ;
+            break ;
+
+        case GxB_SEMIRING_MONOID : 
+            (*value) = sizeof (GrB_Monoid) ;
+            break ;
+
         default : 
             return (GrB_INVALID_VALUE) ;
     }
@@ -181,11 +195,6 @@ GrB_Info GrB_Semiring_get_SIZE
 // GrB_Semiring_get_VOID
 //------------------------------------------------------------------------------
 
-// FUTURE: semiring->add and semiring->multiply to replace GxB_Semiring_add
-// and GxB_Semiring_multiply.
-
-// FUTURE: add identity and terminal of the monoid.
-
 GrB_Info GrB_Semiring_get_VOID
 (
     GrB_Semiring semiring,
@@ -193,6 +202,40 @@ GrB_Info GrB_Semiring_get_VOID
     GrB_Field field
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_WHERE1 ("GrB_Semiring_get_VOID (semiring, value, field)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
+    GB_RETURN_IF_NULL (value) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring to get option", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // get the field
+    //--------------------------------------------------------------------------
+
+    switch ((int) field)
+    {
+
+        case GxB_MONOID_OPERATOR : 
+            memcpy (value, &(semiring->add->op), sizeof (GrB_BinaryOp)) ;
+            break ;
+
+        case GxB_SEMIRING_MONOID : 
+            memcpy (value, &(semiring->add), sizeof (GrB_Monoid)) ;
+            break ;
+
+        case GxB_SEMIRING_MULTIPLY_OPERATOR : 
+            memcpy (value, &(semiring->multiply), sizeof (GrB_BinaryOp)) ;
+            break ;
+
+        default : 
+            return (GrB_INVALID_VALUE) ;
+    }
+
+    #pragma omp flush
+    return (GrB_SUCCESS) ;
 }
 

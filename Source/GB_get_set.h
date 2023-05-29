@@ -66,5 +66,13 @@ GrB_Info GB_object_string_set
     uint64_t *hash
 ) ;
 
+GrB_Info GB_monoid_get
+(
+    GrB_Monoid monoid,
+    GrB_Scalar value,
+    GrB_Field field,
+    GB_Werk Werk
+) ;
+
 #endif
 

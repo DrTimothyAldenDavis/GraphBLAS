@@ -33,8 +33,8 @@ GrB_Info GrB_Monoid_set_String
     char * value,
     GrB_Field field
 )
-{
-    return (GrB_NOT_IMPLEMENTED) ;
+{ 
+    return ((field == GrB_NAME) ? GrB_ALREADY_SET : GrB_NOT_IMPLEMENTED) ;
 }
 
 //------------------------------------------------------------------------------

@@ -7,10 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// GxB_Type_from_name returns the built-in GrB_Type corresponding to the
-// C name of the type as a string.  For user-defined types, type is returned
-// as NULL.  This is not an error condition.  This allows the user to write
-// code such as this:
+// GxB_Type_from_name returns the built-in GrB_Type corresponding to the C name
+// of the type as a string, or the GraphBLAS name of the type.  For
+// user-defined types, type is returned as NULL.  This is not an error
+// condition.  This allows the user to write code such as this:
 
 /*
     typedef struct { double x ; char stuff [16] ; } myfirsttype ;
@@ -26,10 +26,10 @@
 
     // later on, to query the type of A:
     size_t typesize ;
-    GxB_Type_size (&typesize, type) ;       // works for any type
+    GrB_get (type, &typesize, GrB_SIZE) ;       // works for any type
     GrB_Type atype ;
     char atype_name [GxB_MAX_NAME_LEN] ;
-    GxB_Matrix_type_name (atype_name, A) ;
+    GrB_get (A, atype_name, GrB_NAME) ;
     GxB_Type_from_name (&atype, atype_name) ;
     if (atype == NULL)
     {
@@ -57,8 +57,8 @@
 
 // As a result, the GxB_Matrix_type function that appears in SuiteSparse
 // GraphBLAS has been declared "historical" and its use is discouraged.  It
-// won't be removed, to preserve backward compatibility, but it will eventually
-// removed from the user guide.  Use the string-based type mechanism instead.
+// won't be removed, to preserve backward compatibility, but it is removed from
+// the user guide.  Use the string-based type mechanism instead.
 
 #include "GB.h"
 
@@ -83,20 +83,32 @@ GrB_Info GxB_Type_from_name     // return the GrB_Type from a name
     #define MATCH(s) (strncmp (type_name, s, GxB_MAX_NAME_LEN) == 0)
 
     if      (MATCH ("bool"          )) (*type) = GrB_BOOL   ;
+    else if (MATCH ("GrB_BOOL"      )) (*type) = GrB_BOOL   ;
     else if (MATCH ("int8_t"        )) (*type) = GrB_INT8   ;
+    else if (MATCH ("GrB_INT8"      )) (*type) = GrB_INT8   ;
     else if (MATCH ("int16_t"       )) (*type) = GrB_INT16  ;
+    else if (MATCH ("GrB_INT16"     )) (*type) = GrB_INT16  ;
     else if (MATCH ("int32_t"       )) (*type) = GrB_INT32  ;
+    else if (MATCH ("GrB_INT32"     )) (*type) = GrB_INT32  ;
     else if (MATCH ("int64_t"       )) (*type) = GrB_INT64  ;
+    else if (MATCH ("GrB_INT64"     )) (*type) = GrB_INT64  ;
     else if (MATCH ("uint8_t"       )) (*type) = GrB_UINT8  ;
+    else if (MATCH ("GrB_UINT8"     )) (*type) = GrB_UINT8  ;
     else if (MATCH ("uint16_t"      )) (*type) = GrB_UINT16 ;
+    else if (MATCH ("GrB_UINT16"    )) (*type) = GrB_UINT16 ;
     else if (MATCH ("uint32_t"      )) (*type) = GrB_UINT32 ;
     else if (MATCH ("uint64_t"      )) (*type) = GrB_UINT64 ;
+    else if (MATCH ("GrB_UINT64"    )) (*type) = GrB_UINT64 ;
     else if (MATCH ("float"         )) (*type) = GrB_FP32   ;
+    else if (MATCH ("GrB_FP32"      )) (*type) = GrB_FP32   ;
     else if (MATCH ("double"        )) (*type) = GrB_FP64   ;
+    else if (MATCH ("GrB_FP64"      )) (*type) = GrB_FP64   ;
     else if (MATCH ("float complex" )) (*type) = GxB_FC32   ;
     else if (MATCH ("GxB_FC32_t"    )) (*type) = GxB_FC32   ;
+    else if (MATCH ("GxB_FC32"      )) (*type) = GxB_FC32   ;
     else if (MATCH ("double complex")) (*type) = GxB_FC64   ;
     else if (MATCH ("GxB_FC64_t"    )) (*type) = GxB_FC64   ;
+    else if (MATCH ("GxB_FC64"      )) (*type) = GxB_FC64   ;
     else
     {
         // This is not an error.  Returning type as NULL means that A has a
