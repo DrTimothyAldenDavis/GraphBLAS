@@ -3330,6 +3330,10 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
         default: ;
     }
 
+    //-------------------------------------------------------------------------
+    // user-defined semiring
+    //-------------------------------------------------------------------------
+
     // FIXME: allow user-defined semiring names to be set
 
     return (NULL) ;

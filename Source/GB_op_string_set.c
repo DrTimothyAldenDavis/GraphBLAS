@@ -27,7 +27,7 @@ GrB_Info GB_op_string_set
         (op->xtype->hash != UINT64_MAX) &&
         (op->ytype == NULL || op->ytype->hash != UINT64_MAX) ;
 
-    return (GB_object_string_set (user_defined, jitable, value, field,
+    return (GB_op_or_type_string_set (user_defined, jitable, value, field,
         op->name, &(op->name_len), &(op->defn), &(op->defn_size),
         &(op->hash))) ;
 }

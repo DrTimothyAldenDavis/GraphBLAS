@@ -69,16 +69,10 @@ GrB_Info GrB_Monoid_get_String
     {
         case GrB_NAME : 
 
+            // get the name of the monoid
             name = GB_monoid_name_get (monoid) ;
-            if (name == NULL)
-            { 
-                // FIXME: return an empty string instead
-                // construct a name for a user-defined monoid
-                sprintf (value, "%s_MONOID", monoid->op->name) ;
-            }
-            else
-            { 
-                // get the name of a built-in monoid
+            if (name != NULL)
+            {
                 strcpy (value, name) ;
             }
             #pragma omp flush

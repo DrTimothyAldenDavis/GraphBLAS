@@ -2387,8 +2387,8 @@ uint64_t GB_jitifyer_hash
     bool jitable            // true if the object can be JIT'd
 )
 { 
-    if (bytes == NULL || nbytes == 0) return (0) ;
     if (!jitable) return (UINT64_MAX) ;
+    if (bytes == NULL || nbytes == 0) return (0) ;
     uint64_t hash ;
     hash = XXH3_64bits (bytes, nbytes) ;
     return ((hash == 0 || hash == UINT64_MAX) ? GB_MAGIC : hash) ;

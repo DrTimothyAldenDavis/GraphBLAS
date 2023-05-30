@@ -456,6 +456,8 @@ GrB_Info GrB_Global_get_VOID
     // get the field
     //--------------------------------------------------------------------------
 
+    // FIXME: add GxB_*_FUNCTION
+
     switch ((int) field)
     {
 

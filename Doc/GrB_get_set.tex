@@ -1,0 +1,1310 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{GraphBLAS Options ({\sf GrB\_get} and {\sf GrB\_set})}
+\label{options}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The latest v2.1 C API adds a pair of methods, \verb'GrB_get' and \verb'GrB_set'
+that allows the user to query GraphBLAS objects and change their state.  These
+two methods are polymorphic wrappers for a suite of methods for each object.
+They replace the \verb'GxB_get' and \verb'GxB_set' methods in
+SuiteSparse:GraphBLAS v8.0.1 and earlier.
+
+The general polymorphic signatures of these methods are given below:
+
+{\small
+\begin{verbatim}
+GrB_Info GrB_get (object, value, GrB_Field field) ;
+GrB_Info GrB_set (object, value, GrB_Field field) ;
+GrB_Info GrB_set (object, void *value, GrB_Field field, size_t s) ; \end{verbatim}}
+
+where \verb'object' can be any GraphBLAS object.  The \verb'value' can be a
+\verb'GrB_Scalar', an \verb'int' (or a pointer to \verb'int' for
+\verb'GrB_get'), a string (\verb'char *'), or a \verb'void *' pointer.  In the
+latter case, \verb'GrB_set' requires an additional parameter (\verb'size_t s')
+that specifies the size of the object pointed to by \verb'void *value'.
+
+If the return value of \verb'GrB_get' is a string (\verb'char *') or an untyped
+array (\verb'void *'), the user application must provide an array of the right
+size.  The size of the array must first be determined by \verb'GrB_get' with
+the same field parameter (the third parameter), but with \verb'size_t *value'
+as the second parameter.  For example, to get the name of the library, the
+following sequence can be used:
+
+{\small
+\begin{verbatim}
+    size_t len ;
+    GrB_get (GrB_GLOBAL, &len, GrB_NAME) ;
+    char *name = malloc (len) ;
+    GrB_get (GrB_GLOBAL, name, GrB_NAME) ;
+    printf ("The library is: %s\n", name) ; \end{verbatim} }
+
+%-------------------------------------------------------------------------------
+\subsection{Enum types for get/set: {\sf GrB\_Field}, {\sf GrB\_Orientation},
+and {\sf GrB\_Type\_Code}}
+\label{get_set_enums}
+%-------------------------------------------------------------------------------
+
+The get/set methods share a \verb'GrB_Field' enum type to specify which
+component of the object is to be set or retrieved.  Not all objects accept all
+fields.
+
+{\footnotesize
+\begin{verbatim}
+typedef enum
+{
+    // GrB_Descriptor only:
+    GrB_OUTP_FIELD = 0,     // descriptor for output of a method
+    GrB_MASK_FIELD = 1,     // descriptor for the mask input of a method
+    GrB_INP0_FIELD = 2,     // descriptor for the first input of a method
+    GrB_INP1_FIELD = 3,     // descriptor for the second input of a method
+
+    // all objects, including GrB_GLOBAL:
+    GrB_NAME = 10,          // name of the object, as a string
+
+    // GrB_GLOBAL only:
+    GrB_LIBRARY_VER_MAJOR = 11,     // SuiteSparse:GraphBLAS version
+    GrB_LIBRARY_VER_MINOR = 12,
+    GrB_LIBRARY_VER_PATCH = 13,
+    GrB_API_VER_MAJOR = 14,         // C API version
+    GrB_API_VER_MINOR = 15,
+    GrB_API_VER_PATCH = 16,
+    GrB_BLOCKING_MODE = 17,         // GrB_Mode
+
+    // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize?):
+    GrB_STORAGE_ORIENTATION_HINT = 100, // GrB_Orientation
+
+    // GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize?):
+    GrB_ELTYPE_CODE = 102,          // a GrB_Type_code (see below)
+    GrB_ELTYPE_STRING = 106,        // name of the type
+
+    // GrB_*Op, GrB_Monoid, and GrB_Semiring:
+    GrB_INPUT1TYPE_CODE = 103,      // GrB_Type_code
+    GrB_INPUT2TYPE_CODE = 104,
+    GrB_OUTPUTTYPE_CODE = 105,
+    GrB_INPUT1TYPE_STRING = 107,    // name of the type, as a string
+    GrB_INPUT2TYPE_STRING = 108,
+    GrB_OUTPUTTYPE_STRING = 109,
+
+    // GrB_Type (readable only):
+    GrB_SIZE = 110,                 // size of the type
+
+    // GrB_Type, GrB_UnaryOp, GrB_BinaryOp, and GrB_IndexUnaryOp:  only valid
+    // for user-defined types.
+    GxB_DEFINITION = 7041,          // typedef or function definition
+
+    // GrB_Monoid and GrB_Semiring:
+    GxB_MONOID_IDENTITY = 7042,     // monoid identity value
+    GxB_MONOID_TERMINAL = 7043,     // monoid terminal value
+    GxB_MONOID_OPERATOR = 7044,     // monoid binary operator
+
+    // GrB_Semiring only:
+    GxB_SEMIRING_MONOID = 7045,             // semiring monoid
+    GxB_SEMIRING_MULTIPLY_OPERATOR = 7046,  // semiring multiplicatve op
+}
+GrB_Field ;
+
+#define GxB_NTHREADS 7086
+#define GxB_CHUNK 7087
+
+typedef enum            // more SuiteSparse extensions:
+{
+
+    // GrB_get/GrB_set for GrB_Matrix and GrB_GLOBAL:
+    GxB_HYPER_SWITCH = 7000,    // switch to hypersparse (double value)
+    GxB_BITMAP_SWITCH = 7001,   // switch to bitmap (double value)
+
+    // GrB_get for GrB_GLOBAL:
+    GxB_LIBRARY_DATE = 7006,         // date of the library (char *)
+    GxB_LIBRARY_ABOUT = 7007,        // about the library (char *)
+    GxB_LIBRARY_URL = 7008,          // URL for the library (char *)
+    GxB_LIBRARY_LICENSE = 7009,      // license of the library (char *)
+    GxB_LIBRARY_COMPILE_DATE = 7010, // date library was compiled (char *)
+    GxB_LIBRARY_COMPILE_TIME = 7011, // time library was compiled (char *)
+    GxB_API_DATE = 7013,             // date of the API (char *)
+    GxB_API_ABOUT = 7014,            // about the API (char *)
+    GxB_API_URL = 7015,              // URL for the API (char *)
+    GxB_COMPILER_VERSION = 7016,     // compiler version (3 int's)
+    GxB_COMPILER_NAME = 7017,        // compiler name (char *)
+    GxB_LIBRARY_OPENMP = 7018,       // library compiled with OpenMP
+
+    // GrB_get/GrB_set for GrB_GLOBAL:
+    GxB_GLOBAL_NTHREADS = GxB_NTHREADS,  // max number of threads to use
+    GxB_GLOBAL_CHUNK = GxB_CHUNK,        // chunk size for small problems.
+    GxB_BURBLE = 7019,               // diagnostic output (bool *)
+    GxB_PRINTF = 7020,               // printf function diagnostic output
+    GxB_FLUSH = 7021,                // flush function diagnostic output
+    GxB_PRINT_1BASED = 7023,         // print matrices as 0-based or 1-based
+    GxB_JIT_C_COMPILER_NAME = 7024,  // CPU JIT C compiler name
+    GxB_JIT_C_COMPILER_FLAGS = 7025, // CPU JIT C compiler flags
+    GxB_JIT_C_LINKER_FLAGS = 7026,   // CPU JIT C linker flags
+    GxB_JIT_C_LIBRARIES = 7027,      // CPU JIT C libraries
+    GxB_JIT_C_PREFACE = 7028,        // CPU JIT C preface
+    GxB_JIT_C_CONTROL = 7029,        // CPU JIT C control
+    GxB_JIT_CACHE_PATH = 7030,       // CPU/CUDA JIT path for compiled kernels
+    GxB_JIT_C_CMAKE_LIBS = 7031,     // CPU JIT C libraries when using cmake
+    GxB_JIT_USE_CMAKE = 7032,        // CPU JIT: use cmake or direct compile
+    GxB_JIT_ERROR_LOG = 7033,        // CPU JIT: error log file
+
+    // GrB_get for GrB_Matrix:
+    GxB_SPARSITY_STATUS = 7034,     // hyper, sparse, bitmap or full (1,2,4,8)
+
+    // GrB_get/GrB_set for GrB_Matrix:
+    GxB_SPARSITY_CONTROL = 7036,    // sparsity control: 0 to 15; see below
+
+    // GrB_get for GrB_GLOBAL:
+    GxB_MALLOC_FUNCTION = 7037,
+    GxB_CALLOC_FUNCTION = 7038,
+    GxB_REALLOC_FUNCTION = 7039,
+    GxB_FREE_FUNCTION = 7040,
+
+} GxB_Option_Field ;
+
+typedef enum
+{
+    GrB_ROWMAJOR = 0,
+    GrB_COLMAJOR = 1,
+    GrB_BOTH     = 2,
+    GrB_UNKNOWN  = 3,
+}
+GrB_Orientation ;
+
+typedef enum
+{
+    GrB_UDT_CODE    = 0,        // user-defined type
+    GrB_BOOL_CODE   = 1,        // GraphBLAS: GrB_BOOL      C: bool
+    GrB_INT8_CODE   = 2,        // GraphBLAS: GrB_INT8      C: int8_t
+    GrB_UINT8_CODE  = 3,        // GraphBLAS: GrB_UINT8     C: uint8_t
+    GrB_INT16_CODE  = 4,        // GraphBLAS: GrB_INT16     C: int16_t
+    GrB_UINT16_CODE = 5,        // GraphBLAS: GrB_UINT16    C: uint16_t
+    GrB_INT32_CODE  = 6,        // GraphBLAS: GrB_INT32     C: int32_t
+    GrB_UINT32_CODE = 7,        // GraphBLAS: GrB_UINT32    C: uint32_t
+    GrB_INT64_CODE  = 8,        // GraphBLAS: GrB_INT64     C: int64_t
+    GrB_UINT64_CODE = 9,        // GraphBLAS: GrB_UINT64    C: uint64_t
+    GrB_FP32_CODE   = 10,       // GraphBLAS: GrB_FP32      C: float
+    GrB_FP64_CODE   = 11,       // GraphBLAS: GrB_FP64      C: double
+    GxB_FC32_CODE   = 7070,     // GraphBLAS: GxB_FC32      C: float complex
+    GxB_FC64_CODE   = 7071,     // GraphBLAS: GxB_FC64      C: double complex
+}
+GrB_Type_Code ; \end{verbatim}}
+
+%-------------------------------------------------------------------------------
+\newpage
+\subsection{Global Options ({\sf GrB\_Global})}
+\label{get_set_global}
+%-------------------------------------------------------------------------------
+
+A single object \verb'GrB_GLOBAL' whose type is \verb'GrB_Global' is used to
+denote global settings to read or modify.  To use it with \verb'GrB_get' and
+\verb'GrB_set', pass in \verb'GrB_GLOBAL' as the first parameter.
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+typedef struct GB_Global_opaque *GrB_Global ;
+GB_GLOBAL const GrB_Global GrB_GLOBAL ;
+
+GrB_Info GrB_get (GrB_Global g, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Global g, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Global g, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Global g, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Global g, void *     value, GrB_Field f) ;
+
+GrB_Info GrB_set (GrB_Global g, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Global g, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Global g, int        value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Global g, void *     value, GrB_Field f, size_t s) ;
+\end{verbatim}
+}\end{mdframed}
+
+
+%-------------------------------------------------------------------------------
+\subsubsection{Global Options for {\sf GrB\_get}}
+%-------------------------------------------------------------------------------
+
+\vspace{0.1in}
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+\verb'GrB_Field'                    & \verb'GrB_get' options (\verb'value' is \verb'int *' or \verb'GrB_Scalar') \\
+\hline
+\verb'GrB_LIBRARY_VER_MAJOR'        & major version of the library \\
+\verb'GrB_LIBRARY_VER_MINOR'        & minor version of the library \\
+\verb'GrB_LIBRARY_VER_PATCH'        & patch version of the library \\
+\verb'GrB_API_VER_MAJOR'            & major version of the API \\
+\verb'GrB_API_VER_MINOR'            & major version of the API \\
+\verb'GrB_API_VER_PATCH'            & major version of the API \\
+\verb'GrB_BLOCKING_MODE'            & blocking mode (\verb'GrB_BLOCKING' or \verb'GrB_NONBLOCKING') \\
+\verb'GrB_STORAGE_ORIENTATION_HINT' & see \verb'GrB_Orientation': default format for matrices \\
+\hline
+% \verb'GxB_MODE'                   & same as \verb'GrB_BLOCKING_MODE', but with GPU modes added \\
+\verb'GxB_NTHREADS'                 & number of OpenMP threads used \\
+% \verb'GxB_GPU_ID'                 & which GPU to use \\
+\verb'GxB_BURBLE'                   & diagnostic output (true/false) \\
+\verb'GxB_LIBRARY_OPENMP'           & if OpenMP is in use (true/false) \\
+\verb'GxB_PRINT_1BASED'             & matrices printed as 1-based or 0-based (true/false) \\
+\verb'GxB_JIT_C_CONTROL'            & see Section~\ref{jit} \\
+\verb'GxB_JIT_USE_CMAKE'            & see Section~\ref{jit} \\
+\hline
+\end{tabular}
+}
+\vspace{0.05in}
+
+% \vspace{0.1in}
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'GrB_Scalar' only) \\
+\hline
+\verb'GxB_HYPER_SWITCH'             & global hypersparsity control (\verb'double').
+                                        Section~\ref{hypersparse}. \\
+\verb'GxB_CHUNK'                    & global chunk size for parallel task creation (\verb'double') \\
+\hline
+\end{tabular}
+}
+\vspace{0.05in}
+
+% \vspace{0.1in}
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'char *' only) \\
+\hline
+\verb'GrB_NAME'                     & name of the library (\verb'"SuiteSparse:GraphBLAS"') \\
+\hline
+% \verb'GxB_LIBRARY_NAME'           &
+\verb'GxB_LIBRARY_DATE'             & library release date \\
+\verb'GxB_LIBRARY_ABOUT'            & details about the library \\
+\verb'GxB_LIBRARY_LICENSE'          & license of the library \\
+\verb'GxB_LIBRARY_COMPILE_DATE'     & date the library was compiled \\
+\verb'GxB_LIBRARY_COMPILE_TIME'     & time the library was compiled \\
+\verb'GxB_LIBRARY_URL'              & URL for the library \\
+\verb'GxB_API_DATE'                 & C API release date \\
+\verb'GxB_API_ABOUT'                & about the C API \\
+\verb'GxB_API_URL'                  & URL for the C API \\
+\verb'GxB_COMPILER_NAME'            & name of the compiler used to compile the library \\
+\hline
+\verb'GxB_JIT_C_COMPILER_NAME'      & See Section~\ref{jit} \\
+\verb'GxB_JIT_C_COMPILER_FLAGS'     & " \\
+\verb'GxB_JIT_C_LINKER_FLAGS'       & " \\
+\verb'GxB_JIT_C_LIBRARIES'          & " \\
+\verb'GxB_JIT_C_CMAKE_LIBS'         & " \\
+\verb'GxB_JIT_C_PREFACE'            & " \\
+\verb'GxB_JIT_ERROR_LOG'            & " \\
+\verb'GxB_JIT_CACHE_PATH'           & " \\
+\hline
+\end{tabular}
+}
+\vspace{0.05in}
+
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'void *' only) \\
+\hline
+\verb'GxB_BITMAP_SWITCH'            & a \verb'double' array of size \verb'GxB_NBITMAP_SWITCH'.
+                                        See Section~\ref{bitmap_switch}. \\
+\verb'GxB_COMPILER_VERSION'         & an \verb'int' array of size 3, with
+                                        the version of the compiler used to
+                                        compile the library. \\
+\hline
+\end{tabular}
+}
+
+%-------------------------------------------------------------------------------
+\subsubsection{Global Options for {\sf GrB\_set}}
+%-------------------------------------------------------------------------------
+
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+\verb'GrB_Field'                    & \verb'GrB_set' options (\verb'value' is \verb'int' or \verb'GrB_Scalar') \\
+\hline
+\verb'GrB_STORAGE_ORIENTATION_HINT' & See \verb'GrB_Orientation': default format for matrices.
+                                      Matrices are held by row, unless this
+                                      value is set to \verb'GrB_COLMAJOR'. \\
+\hline
+\verb'GxB_NTHREADS'                 & number of OpenMP threads to use \\
+% \verb'GxB_GPU_ID'                   & which GPU to use \\
+\verb'GxB_BURBLE'                   & diagnostic output (true/false) \\
+\verb'GxB_PRINT_1BASED'             & matrices printed as 1-based or 0-based (true/false) \\
+\verb'GxB_JIT_USE_CMAKE'            & see Section~\ref{jit} \\
+\verb'GxB_JIT_C_CONTROL'            & " \\
+\hline
+\end{tabular}
+}
+
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+                                    & \verb'GrB_set' options (\verb'value' is \verb'GrB_Scalar') \\
+\hline
+\verb'GxB_HYPER_SWITCH'             & global hypersparsity control (\verb'double').
+                                        Section~\ref{hypersparse}. \\
+\verb'GxB_CHUNK'                    & global chunk size for parallel task creation (\verb'double') \\
+\hline
+\end{tabular}
+}
+
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+                                    & \verb'GrB_set' options (\verb'value' is \verb'char *' only) \\
+\verb'GxB_JIT_C_COMPILER_NAME'      & see Section~\ref{jit} \\
+\verb'GxB_JIT_C_COMPILER_FLAGS'     & " \\
+\verb'GxB_JIT_C_LINKER_FLAGS'       & " \\
+\verb'GxB_JIT_C_LIBRARIES'          & " \\
+\verb'GxB_JIT_C_CMAKE_LIBS'         & " \\
+\verb'GxB_JIT_C_PREFACE'            & " \\
+\verb'GxB_JIT_ERROR_LOG'            & " \\
+\verb'GxB_JIT_CACHE_PATH'           & " \\
+\hline
+\end{tabular}
+}
+
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+                                    & \verb'GrB_set' options (\verb'value' is \verb'void *' only) \\
+\hline
+\verb'GxB_BITMAP_SWITCH'            & a \verb'double' array of size \verb'GxB_NBITMAP_SWITCH'.
+                                        See Section~\ref{bitmap_switch}. \\
+\verb'GxB_PRINTF'                   & pointer to \verb'printf' function for diagnostic output. \\
+\verb'GxB_FLUSH'                    & pointer to \verb'flush' function for diagnostic output. \\
+\hline
+\end{tabular}
+}
+
+
+%-------------------------------------------------------------------------------
+\subsubsection{Global diagnostic settings}
+%-------------------------------------------------------------------------------
+
+\verb'GrB_set (GrB_GLOBAL, ..., GxB_BURBLE)' controls the burble setting.  It can also be
+controlled via \verb'GrB.burble(b)' in the MATLAB/Octave interface.
+
+{\footnotesize
+\begin{verbatim}
+     GrB_set (GrB_GLOBAL, true,  GxB_BURBLE) ;   // enable burble
+     GrB_set (GrB_GLOBAL, false, GxB_BURBLE) ;  // disable burble \end{verbatim}}
+
+If enabled, SuiteSparse:GraphBLAS reports which internal kernels it uses, and
+how much time is spent.  If you see the word \verb'generic', it means that
+SuiteSparse:GraphBLAS was unable to use its JIT kernels, or its faster kernels
+in \verb'Source/FactoryKernels', but used a generic kernel that relies on
+function pointers.  This is done for user-defined types and operators, and when
+typecasting is performed, and it is typically slower than the JIT kernels
+or kernels in \verb'Source/FactoryKernels'.
+
+If you see a lot of \verb'wait' statements, it may mean that a lot of time is
+spent finishing a matrix or vector.  This may be the result of an inefficient
+use of the \verb'setElement' and \verb'assign' methods.  If this occurs you
+might try changing the sparsity format of a vector or matrix to
+\verb'GxB_BITMAP', assuming there's enough space for it.
+
+The following setting allows the user application to change the
+function used to print diagnostic output:
+
+{\small
+\begin{verbatim}
+    GrB_set (GrB_GLOBAL, (void *) printf, GxB_PRINTF, sizeof (void *)) ; \end{verbatim} }
+
+This also controls the output of the
+\verb'GxB_*print' functions.  By default this parameter is \verb'NULL', in
+which case the ANSI C11 \verb'printf' function is used.  The parameter is a
+function pointer with the same signature as the ANSI C11 \verb'printf'
+function.  The MATLAB/Octave interface to GraphBLAS sets it to \verb'mexPrintf'
+so that GraphBLAS can print to the MATLAB/Octave Command Window.
+
+After each call to the \verb'printf' function, an optional
+\verb'flush' function is called, which is \verb'NULL' by default.  If
+\verb'NULL', the function is not used.  This can be changed with:
+
+{\small
+\begin{verbatim}
+    GrB_set (GrB_GLOBAL, (void *) flush, GxB_FLUSH, sizeof (void *)) ; \end{verbatim} }
+
+The \verb'flush' function takes no
+arguments, and returns an \verb'int' which is 0 if successful, or any nonzero
+value on failure (the same output as the ANSI C11 \verb'fflush' function,
+except that \verb'flush' has no inputs).
+
+%-------------------------------------------------------------------------------
+\subsubsection{OpenMP parallelism}
+%-------------------------------------------------------------------------------
+\label{omp_parallelism}
+
+SuiteSparse:GraphBLAS is a parallel library, based on OpenMP.  By
+default, all GraphBLAS operations will use up to the maximum number of threads
+specified by the \verb'omp_get_max_threads' OpenMP function.  For small
+problems, GraphBLAS may choose to use fewer threads, using two parameters: the
+maximum number of threads to use (which may differ from the
+\verb'omp_get_max_threads' value), and a parameter called the \verb'chunk'.
+Suppose \verb'work' is a measure of the work an operation needs to perform (say
+the number of entries in the two input matrices for \verb'GrB_eWiseAdd').  No
+more than \verb'floor(work/chunk)' threads will be used (or one thread if the
+ratio is less than 1).
+
+\verb'GxB_NTHREADS' controls how many threads a method uses.
+    By default (if set to zero, or \verb'GrB_DEFAULT'), all available threads
+    are used.  The maximum available threads is controlled by the global
+    setting, which is \verb'omp_get_max_threads ( )' by default.  If set to
+    some positive integer \verb'nthreads' less than this maximum, at most
+    \verb'nthreads' threads will be used.
+
+\verb'GxB_CHUNK' is a \verb'double' value that controls how many threads
+    a method uses for small problems.
+The default \verb'chunk' value is 65,536, but this may change in future
+versions, or it may be modified when GraphBLAS is installed on a particular
+machine.
+
+Both parameters can be set in two ways:
+
+\begin{itemize}
+
+\item Globally:  If the following methods are used, then all subsequent
+GraphBLAS operations will use these settings.  Note the typecast,
+\verb'(double)' \verb'chunk'.  This is necessary if a literal constant such as
+\verb'20000' is passed as this argument.  The type of the constant must be
+\verb'double'.
+
+    {\footnotesize
+    \begin{verbatim}
+    int nthreads_max = 40 ;
+    GrB_set (GrB_GLOBAL, nthreads_max, GxB_NTHREADS) ;
+    GrB_Scalar_new (&s, GrB_FP64) ;
+    GrB_Scalar_setElement (s, (double) 20000) ;
+    GrB_set (GrB_GLOBAL, s, GxB_CHUNK) ; \end{verbatim} }
+
+\item Context: this object can be used to choose a different number of
+threads used in calls to GraphBLAS from different user threads, exploiting
+nested parallelism.  Refer to Section~\ref{context}.  If a thread has engaged a
+context object, it ignores the global settings for \verb'GxB_NTHREADS' and
+\verb'GxB_CHUNK', and uses the settings in its own context instead.
+
+\end{itemize}
+
+The smaller of \verb'nthreads_max' and \verb'floor(work/chunk)' is used for any
+given GraphBLAS operation, except that a single thread is used if this value is
+zero or less.
+
+If either parameter is set to \verb'GrB_DEFAULT', then default values are used.
+The default for \verb'nthreads_max' is the return value from
+\verb'omp_get_max_threads', and the default chunk size is currently 65,536.
+
+If a descriptor value for either parameter is left at its default, or set to
+\verb'GrB_DEFAULT', then the global setting is used.  This global setting may
+have been modified from its default, and this modified value will be used.
+
+For example, suppose \verb'omp_get_max_threads' reports 8 threads.  If \newline
+\verb'GrB_set (GrB_GLOBAL, 4, GxB_NTHREADS)' is used, then the global setting is four
+threads, not eight.
+
+GraphBLAS may be compiled without OpenMP, by setting \verb'-DNOPENMP=1'.
+The library will be thread-safe, with one exception.  \verb'GrB_wait' is
+intended to provide thread-safety by flushing the cache of one user thread
+so the object can be safely read by another thread.  This is accomplished
+with \verb'pragma omp flush', but if OpenMP is not available, this does
+nothing.  If OpenMP is not available or \verb'-DNOPEMP=1' is used, then
+user applications need to ensure their own thread safety when one user thread
+computes a result that is then read by another thread.
+
+You can query GraphBLAS at run-time to ask if it was compiled with OpenMP:
+
+\begin{verbatim}
+    bool have_openmp ;
+    GrB_get (GrB_GLOBAL, &have_openmp, GxB_LIBRARY_OPENMP) ;
+    if (!have_openmp) printf ("GraphBLAS not compiled with OpenMP\n") :
+\end{verbatim}
+
+Compiling GraphBLAS without OpenMP is not recommended for installation in a
+package manager (Linux, conda-forge, spack, brew, vcpkg, etc).
+
+%-------------------------------------------------------------------------------
+\subsubsection{Other global options}
+%-------------------------------------------------------------------------------
+
+\verb'GrB_BLOCKING_MODE' can only be queried by \verb'GrB_get'; it cannot be
+modified by \verb'GrB_set'.  The mode is the value passed to \verb'GrB_init'
+(blocking or non-blocking).
+
+All threads in the same user application share the same global options,
+including hypersparsity, bitmap options, and CSR/CSC format determined by
+\verb'GrB_set', and the blocking mode determined by \verb'GrB_init'.
+Specific format and hypersparsity parameters of each matrix are specific to
+that matrix and can be independently changed.
+
+The \verb'GrB_LIBRARY_*' and \verb'GxB_LIBRARY_*' options can be used to query
+the current implementation of SuiteSparse:GraphBLAS.  The \verb'GrB_API_*' and
+\verb'GxB_API_*' options can be used to query the current GraphBLAS C API
+Specification.
+
+%-------------------------------------------------------------------------------
+\newpage
+\subsection{{\sf GrB\_Type} Options}
+\label{get_set_type}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_get (GrB_Type t, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Type t, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Type t, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Type t, size_t *   value, GrB_Field f) ;
+
+GrB_Info GrB_set (GrB_Type t, char *     value, GrB_Field f) ;
+\end{verbatim}
+}\end{mdframed}
+
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+\hline
+\verb'GrB_Field'                    & \verb'GrB_get' options (\verb'value' is \verb'int *' or \verb'GrB_Scalar') \\
+\hline
+\verb'GrB_ELTYPE_CODE'              & See \verb'GrB_Type_Code': an enum specifying the type \\
+\hline
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'GrB_Scalar') \\
+\hline
+\verb'GrB_SIZE'                     & \verb'sizeof' the type, in bytes \\
+\hline
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'char *') \\
+\hline
+\verb'GrB_NAME'                     & name of the type. \\
+% \verb'GrB_ELTYPE_STRING'  & FIXME: remove this? \\
+\verb'GxB_DEFINITION'               & type definition, as a C \verb'typedef'; built-in types return an
+                                            empty string. \\
+\hline
+\end{tabular}
+}
+
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+                                    & \verb'GrB_set' options (\verb'value' is \verb'char *') \\
+\hline
+\verb'GrB_NAME'                     & name of the type.  This can only be set once for user-defined types.
+                                        Its size can be at most \verb'GxB_MAX_NAME_LEN', including the
+                                        \verb'nul' terminating byte. \\
+% \verb'GrB_ELTYPE_STRING'
+\verb'GxB_DEFINITION'               & type definition, as a C \verb'typedef'.  This can only be set once for
+                                            user-defined types. \\
+\end{tabular}
+}
+
+Built-in types cannot be modified by \verb'GrB_set'.  User-defined types can be
+used without setting their name or definition, but they can be used in JIT
+kernels only when both the name and the definition are set.
+
+%-------------------------------------------------------------------------------
+\newpage
+\subsection{{\sf GrB\_UnaryOp} Options}
+\label{get_set_unop}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_get (GrB_UnaryOp op, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_UnaryOp op, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_UnaryOp op, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_UnaryOp op, size_t *   value, GrB_Field f) ;
+
+GrB_Info GrB_set (GrB_UnaryOp op, char *     value, GrB_Field f) ;
+\end{verbatim}
+}\end{mdframed}
+
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+\hline
+\verb'GrB_Field'                    & \verb'GrB_get' options (\verb'value' is \verb'int *' or \verb'GrB_Scalar') \\
+\hline
+\verb'GrB_INPUT1TYPE_CODE'          & input type (\verb'GrB_Type_code') \\
+\verb'GrB_OUTPUTTYPE_CODE'          & output type \\
+\hline
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'char *') \\
+\hline
+\verb'GrB_NAME'                     & name of the operator. \\
+\verb'GxB_DEFINITION'               & definition for a user-defined operator, as a C function; built-in operators
+                                        return an empty string. \\
+\verb'GrB_INPUT1TYPE_STRING'        & name of the input type \\
+\verb'GrB_OUTPUTTYPE_STRING'        & name of the output type \\
+\hline
+\end{tabular}
+}
+
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+                                    & \verb'GrB_set' options (\verb'value' is \verb'char *') \\
+\hline
+\verb'GrB_NAME'                     & name of the operator.  This can only be set once for user-defined operators.
+                                        Its size can be at most \verb'GxB_MAX_NAME_LEN', including the
+                                        \verb'nul' terminating byte. \\
+\verb'GxB_DEFINITION'               & operator definition, as a C function.  This can only be
+                                        set once for user-defined operators. \\
+\hline
+\end{tabular}
+}
+
+%-------------------------------------------------------------------------------
+\newpage
+\subsection{{\sf GrB\_IndexUnaryOp} Options}
+\label{get_set_idxunop}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_get (GrB_IndexUnaryOp op, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_IndexUnaryOp op, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_IndexUnaryOp op, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_IndexUnaryOp op, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_IndexUnaryOp op, void *     value, GrB_Field f) ;
+
+GrB_Info GrB_set (GrB_IndexUnaryOp op, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_IndexUnaryOp op, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_IndexUnaryOp op, int        value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_IndexUnaryOp op, void *     value, GrB_Field f, size_t s) ;
+\end{verbatim}
+}\end{mdframed}
+
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+\hline
+\verb'GrB_Field'                    & \verb'GrB_get' options (\verb'value' is \verb'int *' or \verb'GrB_Scalar') \\
+\hline
+\verb'GrB_INPUT1TYPE_CODE'          & 1st input type (\verb'GrB_Type_code') \\
+\verb'GrB_INPUT2TYPE_CODE'          & 2nd input type \\
+\verb'GrB_OUTPUTTYPE_CODE'          & output type \\
+\hline
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'char *') \\
+\hline
+\verb'GrB_NAME'                     & name of the operator. \\
+\verb'GxB_DEFINITION'               & definition for a user-defined operator, as a C function; built-in operators
+                                        return an empty string. \\
+\verb'GrB_INPUT1TYPE_STRING'        & name of the 1st input type \\
+\verb'GrB_INPUT2TYPE_STRING'        & name of the 2nd input type \\
+\verb'GrB_OUTPUTTYPE_STRING'        & name of the output type \\
+\hline
+\end{tabular}
+}
+
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+                                    & \verb'GrB_set' options (\verb'value' is \verb'char *') \\
+\hline
+\verb'GrB_NAME'                     & name of the operator.  This can only be set once for user-defined operators.
+                                        Its size can be at most \verb'GxB_MAX_NAME_LEN', including the
+                                        \verb'nul' terminating byte. \\
+\verb'GxB_DEFINITION'               & operator definition, as a C function.  This can only be
+                                        set once for user-defined operators. \\
+\hline
+\end{tabular}
+}
+
+%-------------------------------------------------------------------------------
+\newpage
+\subsection{{\sf GrB\_BinaryOp} Options}
+\label{get_set_binop}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_get (GrB_BinaryOp op, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_BinaryOp op, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_BinaryOp op, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_BinaryOp op, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_BinaryOp op, void *     value, GrB_Field f) ;
+
+GrB_Info GrB_set (GrB_BinaryOp op, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_BinaryOp op, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_BinaryOp op, int        value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_BinaryOp op, void *     value, GrB_Field f, size_t s) ;
+\end{verbatim}
+}\end{mdframed}
+
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+\hline
+\verb'GrB_Field'                    & \verb'GrB_get' options (\verb'value' is \verb'int *' or \verb'GrB_Scalar') \\
+\hline
+\verb'GrB_INPUT1TYPE_CODE'          & 1st input type (\verb'GrB_Type_code') \\
+\verb'GrB_INPUT2TYPE_CODE'          & 2nd input type \\
+\verb'GrB_OUTPUTTYPE_CODE'          & output type \\
+\hline
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'char *') \\
+\hline
+\verb'GrB_NAME'                     & name of the operator. \\
+\verb'GxB_DEFINITION'               & definition for a user-defined operator, as a C function; built-in operators
+                                        return an empty string. \\
+\verb'GrB_INPUT1TYPE_STRING'        & name of the 1st input type \\
+\verb'GrB_INPUT2TYPE_STRING'        & name of the 2nd input type \\
+\verb'GrB_OUTPUTTYPE_STRING'        & name of the output type \\
+\hline
+\end{tabular}
+}
+
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+                                    & \verb'GrB_set' options (\verb'value' is \verb'char *') \\
+\hline
+\verb'GrB_NAME'                     & name of the operator.  This can only be set once for user-defined operators.
+                                        Its size can be at most \verb'GxB_MAX_NAME_LEN', including the
+                                        \verb'nul' terminating byte. \\
+\verb'GxB_DEFINITION'               & operator definition, as a C function.  This can only be
+                                        set once for user-defined operators. \\
+\hline
+\end{tabular}
+}
+
+%-------------------------------------------------------------------------------
+\newpage
+\subsection{{\sf GrB\_Monoid} Options}
+\label{get_set_monoid}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_get (GrB_Monoid, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Monoid, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Monoid, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Monoid, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Monoid, void *     value, GrB_Field f) ;
+
+GrB_Info GrB_set (GrB_Monoid, char *     value, GrB_Field f) ;
+\end{verbatim}
+}\end{mdframed}
+
+\noindent
+{\small
+\begin{tabular}{p{2.2in}p{3.5in}}
+\hline
+\hline
+\verb'GrB_Field'                    & \verb'GrB_get' options (\verb'value' is \verb'int *' or \verb'GrB_Scalar') \\
+\hline
+\verb'GrB_INPUT1TYPE_CODE'          & 1st input type (\verb'GrB_Type_code') \\
+\verb'GrB_INPUT2TYPE_CODE'          & 2nd input type \\
+\verb'GrB_OUTPUTTYPE_CODE'          & output type.
+Note that all input/output types of the binary operator of monoid are the same. \\
+\hline
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'char *') \\
+\hline
+\verb'GrB_NAME'                     & name of the monoid. \\
+\verb'GrB_INPUT1TYPE_STRING'        & name of the 1st input type \\
+\verb'GrB_INPUT2TYPE_STRING'        & name of the 2nd input type \\
+\verb'GrB_OUTPUTTYPE_STRING'        & name of the output type \\
+\hline
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'GrB_Scalar') \\
+\hline
+\verb'GxB_MONOID_IDENTITY'          & identity value of the monoid.  The type of the \verb'GrB_Scalar'
+                                        must match  the monoid type exactly. \\
+\verb'GxB_MONOID_TERMINAL'          & terminal value of a terminal monoid.  The type of the \verb'GrB_Scalar'
+                                        must match  the monoid type exactly.  If the monoid is not terminal,
+                                        the \verb'GrB_Scalar' is returned with no entry. \\
+\hline
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'void *') \\
+\verb'GxB_MONOID_OPERATOR'          & binary operator of the monoid, as a \verb'GrB_BinaryOp' \\
+\hline
+\hline
+                                    & \verb'GrB_set' options (\verb'value' is \verb'char *') \\
+\verb'GrB_NAME'                     & name of the monoid. 
+                                        This can only be set for user-defined monoids
+                                        (any number of times). \\
+\hline
+\end{tabular}
+}
+
+%-------------------------------------------------------------------------------
+\newpage
+\subsection{{\sf GrB\_Semiring} Options}
+\label{get_set_semiring}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_get (GrB_Semiring, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Semiring, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Semiring, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Semiring, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Semiring, void *     value, GrB_Field f) ;
+
+GrB_Info GrB_set (GrB_Semiring, GrB_Scalar value, GrB_Field f) ;
+\end{verbatim}
+}\end{mdframed}
+
+\noindent
+{\small
+\begin{tabular}{p{2.25in}p{3.5in}}
+\hline
+\hline
+\verb'GrB_Field'                    & \verb'GrB_get' options (\verb'value' is \verb'int *' or \verb'GrB_Scalar') \\
+\hline
+\verb'GrB_INPUT1TYPE_CODE'          & 1st input type (\verb'GrB_Type_code') of the multiplicative operator \\
+\verb'GrB_INPUT2TYPE_CODE'          & 2nd input type of the multiplicative operator\\
+\verb'GrB_OUTPUTTYPE_CODE'          & output type of the multiplicative operator, and type of the monoid. \\
+\hline
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'char *') \\
+\hline
+\verb'GrB_NAME'                     & name of the semiring. \\
+\verb'GrB_INPUT1TYPE_STRING'        & name of the 1st input type (\verb'GrB_Type_code')
+                                        of the multiplicative operator \\
+\verb'GrB_INPUT2TYPE_STRING'        & name of the 2nd input type of the multiplicative operator\\
+\verb'GrB_OUTPUTTYPE_STRING'        & name of the output type of the multiplicative operator,
+                                        and type of the monoid. \\
+\hline
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'GrB_Scalar') \\
+\hline
+\verb'GxB_MONOID_IDENTITY'          & identity value of the monoid.  The type of the \verb'GrB_Scalar'
+                                        must match  the monoid type exactly. \\
+\verb'GxB_MONOID_TERMINAL'          & terminal value of a terminal monoid.  The type of the \verb'GrB_Scalar'
+                                        must match  the monoid type exactly.  If the monoid is not terminal,
+                                        the \verb'GrB_Scalar' is returned with no entry. \\
+\hline
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'void *') \\
+\hline
+\verb'GxB_MONOID_OPERATOR'          & binary operator of the monoid, as a \verb'GrB_BinaryOp' \\
+\verb'GxB_SEMIRING_MONOID'          & monoid of the semiring, as a \verb'GrB_Monoid' \\
+\verb'GxB_SEMIRING_MULTIPLY_OPERATOR' & multiplicative operator of the semiring, as a \verb'GrB_BinaryOp' \\
+\hline
+\hline
+                                    & \verb'GrB_set' options (\verb'value' is \verb'char *') \\
+\hline
+\verb'GrB_NAME'                     & name of the semiring.
+                                        This can only be set for user-defined semirings
+                                        (any number of times). \\
+\hline
+\end{tabular}
+}
+
+%-------------------------------------------------------------------------------
+\newpage
+\subsection{{\sf GrB\_Matrix} Options}
+\label{get_set_matrix}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_get (GrB_Matrix, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Matrix, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Matrix, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Matrix, size_t *   value, GrB_Field f) ;
+
+GrB_Info GrB_set (GrB_Matrix, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Matrix, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Matrix, int        value, GrB_Field f) ;
+\end{verbatim}
+}\end{mdframed}
+
+\noindent
+{\small
+\begin{tabular}{p{2.25in}p{3.5in}}
+\hline
+\hline
+\verb'GrB_Field'                    & \verb'GrB_get' options (\verb'value' is \verb'int *' or \verb'GrB_Scalar') \\
+\hline
+\verb'GrB_STORAGE_ORIENTATION_HINT' & See \verb'GrB_Orientation'. \\
+\verb'GrB_ELTYPE_CODE'              & matrix type \\
+\verb'GxB_SPARSITY_CONTROL'         & 0 to 15; see below \\
+\verb'GxB_SPARSITY_STATUS'          & see below. \\
+\hline
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'char *') \\
+\hline
+\verb'GrB_NAME'                     & name of the matrix. \\
+\verb'GrB_ELTYPE_STRING'            & name of the type of the matrix. \\
+\hline
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'GrB_Scalar') \\
+\hline
+\hline
+\verb'GxB_HYPER_SWITCH'             & a \verb'float' value; see below \\
+\verb'GxB_BITMAP_SWITCH'            & a \verb'float' value; see below \\
+\hline
+                                    & \verb'GrB_get' options (\verb'value' is \verb'void *') \\
+\hline
+\hline
+                                    & \verb'GrB_set' options (\verb'value' is \verb'char *') \\
+\hline
+\verb'GrB_NAME'                     & name of the matrix.
+                                        This can be set any number of times. \\
+\hline
+\hline
+                                    & \verb'GrB_set' options (\verb'value' is \verb'GrB_Scalar') \\
+\hline
+\verb'GxB_HYPER_SWITCH'             & a \verb'float' value; see below \\
+\verb'GxB_BITMAP_SWITCH'            & a \verb'float' value; see below \\
+\hline
+\end{tabular}
+}
+
+%-------------------------------------------------------------------------------
+\subsubsection{Storing a matrix by row or by column}
+%-------------------------------------------------------------------------------
+
+The GraphBLAS \verb'GrB_Matrix' is entirely opaque to the user application, and
+the GraphBLAS API does not specify how the matrix should be stored.  However,
+choices made in how the matrix is represented in a particular implementation,
+such as SuiteSparse:GraphBLAS, can have a large impact on performance.
+
+Many graph algorithms are just as fast in any format, but some algorithms are
+much faster in one format or the other.  For example, suppose the user
+application stores a directed graph as a matrix \verb'A', with the edge $(i,j)$
+represented as the value \verb'A(i,j)', and the application makes many accesses
+to the $i$th row of the matrix, with \verb'GrB_Col_extract'
+\verb'(w,...,A,GrB_ALL,...,i,desc)' with the transposed descriptor
+(\verb'GrB_INP0' set to \verb'GrB_TRAN').  If the matrix is stored by column
+this can be extremely slow, just like the expression \verb'w=A(i,:)' in MATLAB,
+where \verb'i' is a scalar.  Since this is a typical use-case in graph
+algorithms, the default format in SuiteSparse:GraphBLAS is to store its
+matrices by row, in Compressed Sparse Row format (CSR).
+
+MATLAB stores its sparse matrices by column, in ``non-hypersparse'' format, in
+what is called the Compressed Sparse Column format, or CSC for short.  An
+\verb'm'-by-\verb'n' matrix in MATLAB is represented as a set of \verb'n'
+column vectors, each with a sorted list of row indices and values of the
+nonzero entries in that column.  As a result, \verb'w=A(:,j)' is very fast in
+MATLAB, since the result is already held in the data structure a single list,
+the $j$th column vector.  However, \verb'w=A(i,:)' is very slow in MATLAB,
+since every column in the matrix has to be searched to see if it contains row
+\verb'i'.  In MATLAB, if many such accesses are made, it is much better to
+transpose the matrix (say \verb"AT=A'") and then use \verb"w=AT(:,i)" instead.
+This can have a dramatic impact on the performance of MATLAB.
+
+Likewise, if \verb'u' is a very sparse column vector and \verb'A' is stored by
+column, then \verb"w=u'*A" (via \verb'GrB_vxm') is slower than \verb'w=A*u'
+(via \verb'GrB_mxv').  The opposite is true if the matrix is stored by row.
+
+SuiteSparse:GraphBLAS stores its matrices by row, by default (with one
+exception described below).  However, it can also be instructed to store any
+selected matrices, or all matrices, by column instead (just like MATLAB), so
+that \verb'w=A(:,j)' (via \verb'GrB_Col_extract') is very fast.  The change in
+data format has no effect on the result, just the time and memory usage.  To
+use a column-oriented format by default, the following can be done in a user
+application that tends to access its matrices by column.
+
+    {\footnotesize
+    \begin{verbatim}
+    GrB_init (...) ;
+    // just after GrB_init: do the following:
+    GrB_set (GrB_GLOBAL, GrB_COLMAJOR, GrB_STORAGE_ORIENTATION_HINT) ; \end{verbatim} }
+
+If this is done, and no other \verb'GrB_set' calls are made with \newline
+\verb'GrB_STORAGE_ORIENATION_HINT', all matrices will be stored by column.
+The default format is \verb'GrB_ROWMAJOR'.
+
+All vectors (\verb'GrB_Vector') are held by column, and this cannot be changed.
+
+By default, matrices of size \verb'm-by-1' are held by column, regardless of
+the global setting described above.  Matrices of size \verb'1-by-n' with
+\verb'n' not equal to 1 are held by row, regardless of the global setting.
+The global setting only affects matrices with both \verb'm > 1' and \verb'n > 1'.
+Empty matrices (\verb'0-by-0') are also controlled by the global setting.
+
+After creating a matrix with \verb'GrB_Matrix_new (&A, ...)',
+its format can be changed arbitrarily with:
+
+    {\footnotesize
+    \begin{verbatim}
+    GrB_set (A, GrB_COLMAJOR, GrB_STORAGE_ORIENTATION_HINT) ;
+    GrB_set (A, GrB_ROWMAJOR, GrB_STORAGE_ORIENTATION_HINT) ; \end{verbatim} }
+
+If set to other values (\verb'GrB_BOTH' or \verb'GrB_UNKNOWN'), the
+format is changed to \verb'GrB_ROWMAJOR'.
+
+With this setting, even an \verb'm-by-1' matrix can then be changed to be held
+by row, for example.  Likewise, once a \verb'1-by-n' matrix is created, it can
+be converted to column-oriented format.
+
+%-------------------------------------------------------------------------------
+\subsubsection{Hypersparse matrices}
+\label{hypersparse}
+%-------------------------------------------------------------------------------
+
+MATLAB can store an \verb'm'-by-\verb'n' matrix with a very large value of
+\verb'm', since a CSC data structure takes $O(n+|{\bf A}|)$ memory, independent
+of \verb'm', where $|{\bf A}|$ is the number of nonzeros in the matrix.  It
+cannot store a matrix with a huge \verb'n', and this structure is also
+inefficient when $|{\bf A}|$ is much smaller than \verb'n'.  In contrast,
+SuiteSparse:GraphBLAS can store its matrices in {\em hypersparse} format,
+taking only $O(|{\bf A}|)$ memory, independent of how it is stored (by row or
+by column) and independent of both \verb'm' and \verb'n'
+\cite{BulucGilbert08,BulucGilbert12}.
+
+In both the CSR and CSC formats, the matrix is held as a set of sparse vectors.
+In non-hypersparse format, the set of sparse vectors is itself dense; all
+vectors are present, even if they are empty.  For example, an
+\verb'm'-by-\verb'n' matrix in non-hypersparse CSC format contains \verb'n'
+sparse vectors.  Each column vector takes at least one integer to represent,
+even for a column with no entries.  This allows for quick lookup for a
+particular vector, but the memory required is $O(n+|{\bf A}|)$.  With a
+hypersparse CSC format, the set of vectors itself is sparse, and columns with
+no entries take no memory at all.  The drawback of the hypersparse format is
+that finding an arbitrary column vector \verb'j', such as for the computation
+\verb'C=A(:,j)', takes $O(\log k)$ time if there $k \le n$ vectors in the data
+structure.  One advantage of the hypersparse structure is the memory required
+for an \verb'm'-by-\verb'n' hypersparse CSC matrix is only $O(|{\bf A}|)$,
+independent of \verb'm' and \verb'n'.  Algorithms that must visit all non-empty
+columns of a matrix are much faster when working with hypersparse matrices,
+since empty columns can be skipped.
+
+The \verb'hyper_switch' parameter controls the hypersparsity of the internal
+data structure for a matrix.  The parameter is typically in the range 0 to 1.
+The default is \verb'hyper_switch' = \verb'GxB_HYPER_DEFAULT', which is an
+\verb'extern' \verb'const' \verb'double' value, currently set to 0.0625, or
+1/16.  This default ratio may change in the future.
+
+The \verb'hyper_switch' determines how the matrix is converted between the
+hypersparse and non-hypersparse formats.  Let $n$ be the number of columns of a
+CSC matrix, or the number of rows of a CSR matrix.  The matrix can have at most
+$n$ non-empty vectors.
+
+Let $k$ be the actual number of non-empty vectors.  That is, for the CSC
+format, $k \le n$ is the number of columns that have at least one entry.  Let
+$h$ be the value of \verb'hyper_switch'.
+
+If a matrix is currently hypersparse, it can be converted to non-hypersparse if
+the either condition $n \le 1$ or $k > 2nh$ holds, or both.  Otherwise, it
+stays hypersparse.  Note that if $n \le 1$ the matrix is always stored as
+non-hypersparse.
+
+If currently non-hypersparse, it can be converted to hypersparse if
+both conditions $n > 1$ and $k \le nh$ hold.  Otherwise, it stays
+non-hypersparse.  Note that if $n \le 1$ the matrix always remains
+non-hypersparse.
+
+The default value of \verb'hyper_switch' is assigned at startup by
+\verb'GrB_init', and can then be modified globally with \verb'GrB_set'.  All
+new matrices are created with the same \verb'hyper_switch', determined by the
+global value.  Once a particular matrix \verb'A' has been constructed, its
+hypersparsity ratio can be modified from the default with:
+
+    {\footnotesize
+    \begin{verbatim}
+    double hyper_switch = 0.2 ;
+    GrB_set (A, hyper_switch, GxB_HYPER_SWITCH) ; \end{verbatim}}
+
+To force a matrix to always be non-hypersparse, use \verb'hyper_switch' equal to
+\verb'GxB_NEVER_HYPER'.  To force a matrix to always stay hypersparse, set
+\verb'hyper_switch' to \verb'GxB_ALWAYS_HYPER'.
+
+A \verb'GrB_Matrix' can thus be held in one of four formats: any combination of
+hyper/non-hyper and CSR/CSC.  All \verb'GrB_Vector' objects are always stored
+in non-hypersparse CSC format.
+
+A new matrix created via \verb'GrB_Matrix_new' starts with $k=0$ and is created
+in hypersparse form by default unless $n \le 1$ or if $h<0$, where $h$ is the
+global \verb'hyper_switch' value.  The matrix is created in either
+\verb'GrB_ROWMAJOR' or \verb'GrB_COLMAJOR' format, as determined by the last call
+to
+\verb'GrB_set(GrB_GLOBAL,' \verb'..., GrB_STORAGE_ORIENTATION_HINT,...)' or \verb'GrB_init'.
+
+A new matrix \verb'C' created via \verb'GrB_dup (&C,A)' inherits the CSR/CSC
+format, hypersparsity format, and \verb'hyper_switch' from \verb'A'.
+
+%-------------------------------------------------------------------------------
+\subsubsection{Bitmap matrices}
+\label{bitmap_switch}
+%-------------------------------------------------------------------------------
+
+By default, SuiteSparse:GraphBLAS switches between all four formats
+(hypersparse, sparse, bitmap, and full) automatically.  Let $d = |{\bf A}|/mn$
+for an $m$-by-$n$ matrix $\bf A$ with $|{\bf A}|$ entries.  If the matrix is
+currently in sparse or hypersparse format, and is modified so that $d$ exceeds
+a given threshold, it is converted into bitmap format.  The default threshold
+is controlled by the \verb'GxB_BITMAP_SWITCH' setting, which can be set
+globally, or for a particular matrix or vector.
+
+The default value of the switch to bitmap format depends on $\min(m,n)$, for a
+matrix of size $m$-by-$n$.  For the global setting, the bitmap switch is a
+\verb'double' array of size \verb'GxB_NBITMAP_SWITCH'.  The defaults are given
+below:
+
+\vspace{0.2in}
+{\small
+\begin{tabular}{lll}
+parameter & default & matrix sizes \\
+\hline
+\verb'bitmap_switch [0]' & 0.04 & $\min(m,n) = 1$ (and all vectors) \\
+\verb'bitmap_switch [1]' & 0.05 & $\min(m,n) = 2$ \\
+\verb'bitmap_switch [2]' & 0.06 & $\min(m,n) = 3$ to 4 \\
+\verb'bitmap_switch [3]' & 0.08 & $\min(m,n) = 5$ to 8 \\
+\verb'bitmap_switch [4]' & 0.10 & $\min(m,n) = 9$ to 16\\
+\verb'bitmap_switch [5]' & 0.20 & $\min(m,n) = 17$ to 32\\
+\verb'bitmap_switch [6]' & 0.30 & $\min(m,n) = 33$ to 64 \\
+\verb'bitmap_switch [7]' & 0.40 & $\min(m,n) > 64$ \\
+\end{tabular}
+}
+\vspace{0.2in}
+
+That is, by default a \verb'GrB_Vector' is held in bitmap format if its density
+exceeds 4\%.  To change the global settings, do the following:
+
+{\footnotesize
+\begin{verbatim}
+    double bswitch [GxB_NBITMAP_SWITCH] = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8 } ;
+    GrB_set (GrB_GLOBAL, (void *) bswitch, GxB_BITMAP_SWITCH) ;
+\end{verbatim}
+}
+
+If the matrix is currently in bitmap format, it is converted to full if all
+entries are present, or to sparse/hypersparse if $d$ drops below $b/2$, if its
+bitmap switch is $b$.  A matrix or vector with $d$ between $b/2$ and $b$
+remains in its current format.
+
+%-------------------------------------------------------------------------------
+\subsubsection{Sparsity status}
+%-------------------------------------------------------------------------------
+
+The sparsity status of a matrix can be queried with the following, which
+returns a value of \verb'GxB_HYPERSPARSE' (1), \verb'GxB_SPARSE' (2),
+\verb'GxB_BITMAP' (4), or \verb'GxB_FULL' (8).
+
+{\footnotesize
+\begin{verbatim}
+    int sparsity ;
+    GrB_get (A, &sparsity, GxB_SPARSITY_STATUS) ; \end{verbatim}}
+
+The sparsity format of a matrix can be controlled with the field set to
+\verb'GxB_SPARSITY_CONTROL', for which the \verb'value' can be any mix (a sum or bitwise
+or) of \verb'GxB_HYPERSPARSE', \verb'GxB_SPARSE', \verb'GxB_BITMAP', and
+\verb'GxB_FULL'.  By default, a matrix or vector can be held in any format,
+with the default setting \verb'GxB_AUTO_SPARSITY', which is equal to
+\verb'GxB_HYPERSPARSE' + \verb'GxB_SPARSE' + \verb'GxB_BITMAP' +
+\verb'GxB_FULL' (15).  To enable a matrix to take on just \verb'GxB_SPARSE' or
+\verb'GxB_FULL' formats, but not \verb'GxB_HYPERSPARSE' or \verb'GxB_BITMAP',
+for example, use the following:
+
+{\footnotesize
+\begin{verbatim}
+    GrB_set (A, GxB_SPARSE + GxB_FULL, GxB_SPARSITY_CONTROL) ; \end{verbatim}}
+
+In this case, SuiteSparse:GraphBLAS will hold the matrix in sparse format
+(\verb'CSR' or \verb'CSC', depending on its
+\verb'GrB_STORAGE_ORIENTATION_HINT'), unless all entries are present, in which
+case it will be converted to full format.
+
+Only the least significant 4 bits of the sparsity control are considered, so
+the formats can be bitwise negated.  For example, to allow for any format
+except full:
+
+{\footnotesize
+\begin{verbatim}
+    GrB_set (A, ~GxB_FULL, GxB_SPARSITY_CONTROL) ; \end{verbatim}}
+
+%-------------------------------------------------------------------------------
+\newpage
+\subsection{{\sf GrB\_Vector} Options}
+\label{get_set_vector}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_get (GrB_Vector, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Vector, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Vector, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Vector, size_t *   value, GrB_Field f) ;
+
+GrB_Info GrB_set (GrB_Vector, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Vector, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Vector, int        value, GrB_Field f) ;
+\end{verbatim}
+}\end{mdframed}
+
+%-------------------------------------------------------------------------------
+\subsection{{\sf GrB\_Scalar} Options}
+\label{get_set_scalar}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_get (GrB_Scalar, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Scalar, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Scalar, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Scalar, size_t *   value, GrB_Field f) ;
+
+GrB_Info GrB_set (GrB_Scalar, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Scalar, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Scalar, int        value, GrB_Field f) ;
+\end{verbatim}
+}\end{mdframed}
+
+%-------------------------------------------------------------------------------
+\subsection{{\sf GrB\_Descriptor} Options}
+\label{get_set_descriptor}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_get (GrB_Descriptor, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Descriptor, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Descriptor, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Descriptor, size_t *   value, GrB_Field f) ;
+
+GrB_Info GrB_set (GrB_Descriptor, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Descriptor, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Descriptor, int        value, GrB_Field f) ;
+\end{verbatim}
+}\end{mdframed}
+
+%-------------------------------------------------------------------------------
+\subsection{{\sf GxB\_Context} Options}
+\label{get_set_context}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_get (GxB_Context, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GxB_Context, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GxB_Context, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GxB_Context, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GxB_Context, void *     value, GrB_Field f) ;
+
+GrB_Info GrB_set (GxB_Context, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_set (GxB_Context, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GxB_Context, int        value, GrB_Field f) ;
+GrB_Info GrB_set (GxB_Context, void *     value, GrB_Field f, size_t s) ;
+\end{verbatim}
+}\end{mdframed}
+

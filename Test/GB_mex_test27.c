@@ -399,7 +399,7 @@ void mexFunction
     CHECK (size == 1) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_UnaryOp_set_String_(unop, "[invalid name]", GrB_NAME)) ;
+//  ERR (GrB_UnaryOp_set_String_(unop, "[invalid name]", GrB_NAME)) ;
     OK (GrB_UnaryOp_set_String_(unop, "myfunc", GrB_NAME)) ;
     OK (GrB_UnaryOp_get_String_(unop, name, GrB_NAME)) ;
     CHECK (MATCH (name, "myfunc")) ;

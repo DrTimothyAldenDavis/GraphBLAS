@@ -91,12 +91,6 @@ GrB_Info GxB_Type_new
         // copy the type_name into the working name
         strncpy (t->name, type_name, GxB_MAX_NAME_LEN-1) ;
     }
-    else
-    { 
-        // no type name, so give it a generic name
-        // FIXME: give unnamed type an empty string for its name
-        snprintf (t->name, GxB_MAX_NAME_LEN-1, "[unnamed_user_type]") ;
-    }
 
     // ensure t->name is null-terminated
     t->name [GxB_MAX_NAME_LEN-1] = '\0' ;
@@ -105,7 +99,7 @@ GrB_Info GxB_Type_new
     t->name_len = (int32_t) strlen (t->name) ;
     // type can be JIT'd only if it has a name and defn
     t->hash = GB_jitifyer_hash (t->name, t->name_len,
-        (type_name != NULL && type_defn != NULL)) ;
+        (t->name_len > 0 && type_defn != NULL)) ;
 
     //--------------------------------------------------------------------------
     // get the typedef, if present

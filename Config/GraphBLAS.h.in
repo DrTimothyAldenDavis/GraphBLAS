@@ -3788,22 +3788,22 @@ typedef enum            // for global options or matrix options
 
     GxB_HYPER_SWITCH = 7000,    // switch to hypersparse (double value)
     GxB_BITMAP_SWITCH = 7001,   // switch to bitmap (double value)
-    GxB_FORMAT = 7002,          // CSR/CSC format: GxB_BY_ROW or GxB_BY_COL
+    GxB_FORMAT = 7002,          // historical; use GrB_STORAGE_ORIENTATION_HINT
 
     //------------------------------------------------------------
     // for GxB_Global_Option_get only:
     //------------------------------------------------------------
 
-    GxB_MODE = 7003,                 // mode passed to GrB_init
-    GxB_LIBRARY_NAME = 7004,         // name of the library (char *)
-    GxB_LIBRARY_VERSION = 7005,      // library version (3 int's)
+    GxB_MODE = 7003,                 // historical; use GrB_BLOCKING_MODE
+    GxB_LIBRARY_NAME = 7004,         // historical; use GrB_NAME
+    GxB_LIBRARY_VERSION = 7005,      // historical; use GrB_LIBRARY_VER_*
     GxB_LIBRARY_DATE = 7006,         // date of the library (char *)
     GxB_LIBRARY_ABOUT = 7007,        // about the library (char *)
     GxB_LIBRARY_URL = 7008,          // URL for the library (char *)
     GxB_LIBRARY_LICENSE = 7009,      // license of the library (char *)
     GxB_LIBRARY_COMPILE_DATE = 7010, // date library was compiled (char *)
     GxB_LIBRARY_COMPILE_TIME = 7011, // time library was compiled (char *)
-    GxB_API_VERSION = 7012,          // API version (3 int's)
+    GxB_API_VERSION = 7012,          // historical; use GrB_API_VER_*
     GxB_API_DATE = 7013,             // date of the API (char *)
     GxB_API_ABOUT = 7014,            // about the API (char *)
     GxB_API_URL = 7015,              // URL for the API (char *)
@@ -3819,7 +3819,7 @@ typedef enum            // for global options or matrix options
     GxB_GLOBAL_CHUNK = GxB_CHUNK,        // chunk size for small problems.
     GxB_GLOBAL_GPU_ID = GxB_GPU_ID,      // which GPU to use (DRAFT)
 
-    GxB_BURBLE = 7019,               // diagnostic output (bool *)
+    GxB_BURBLE = 7019,               // diagnostic output
     GxB_PRINTF = 7020,               // printf function diagnostic output
     GxB_FLUSH = 7021,                // flush function diagnostic output
     GxB_MEMORY_POOL = 7022,          // no longer used

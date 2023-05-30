@@ -2146,7 +2146,7 @@ void mexFunction
     OK (GrB_Monoid_get_SIZE_(monoid, &size, GrB_NAME)) ;
     OK (GrB_Monoid_get_String_(monoid, name, GrB_NAME)) ;
     printf ("\nuser monoid: [%s]\n", name) ;
-    CHECK (MATCH (name, "myadd_MONOID")) ;
+    CHECK (MATCH (name, "")) ;
     CHECK (size == GxB_MAX_NAME_LEN + strlen ("_MONOID")) ;
     OK (GxB_print (monoid, 3)) ;
 
@@ -2167,13 +2167,16 @@ void mexFunction
     OK (GrB_Semiring_get_SIZE_(semiring, &size, GrB_NAME)) ;
     OK (GrB_Semiring_get_String_(semiring, name, GrB_NAME)) ;
     printf ("\nuser semiring: [%s]\n", name) ;
-    CHECK (MATCH (name, "myadd_mytimes_SEMIRING")) ;
+    // CHECK (MATCH (name, "myadd_mytimes_SEMIRING")) ;
+    CHECK (MATCH (name, "")) ;
     CHECK (size == 2*GxB_MAX_NAME_LEN + strlen ("__SEMIRING")) ;
     OK (GxB_print (semiring, 3)) ;
 
     printf ("\nsemiring with terminal monoid:\n") ;
     int32_t id_int32 ;
-    OK (GxB_print (GrB_MAX_TIMES_SEMIRING_INT32, 3)) ;
+    OK (GrB_Semiring_get_String_(GrB_MAX_TIMES_SEMIRING_INT32,
+        name, GrB_NAME)) ;
+    OK (GxB_Semiring_fprint (GrB_MAX_TIMES_SEMIRING_INT32, name, 3, NULL)) ;
     OK (GrB_Monoid_get_Scalar_ (GrB_MAX_TIMES_SEMIRING_INT32, s_int32,
         GxB_MONOID_IDENTITY)) ;
     OK (GrB_Scalar_nvals (&nvals, s_int32)) ;

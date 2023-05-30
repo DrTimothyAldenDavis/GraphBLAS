@@ -78,16 +78,9 @@ GrB_Info GrB_Semiring_get_String
         case GrB_NAME : 
 
             name = GB_semiring_name_get (semiring) ;
-            if (name == NULL)
+            if (name != NULL)
             { 
-                // FIXME: return an empty string instead
-                // construct a name for a user-defined semiring
-                sprintf (value, "%s_%s_SEMIRING",
-                    semiring->add->op->name, semiring->multiply->name) ;
-            }
-            else
-            { 
-                // get the name of a built-in semiring
+                // get the name of the semiring
                 strcpy (value, name) ;
             }
             #pragma omp flush

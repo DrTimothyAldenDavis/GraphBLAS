@@ -14,8 +14,7 @@ GrB_Info GB_name_get (GrB_Matrix A, char *name, int field)
     switch (field)
     {
         case GrB_NAME : 
-            // FIXME: give GrB_Matrix/GrB_Vector/GrB_Scalar a name
-            (*name) = '\0' ;
+            (*name) = '\0' ; // FIXME: give matrix/vector/scalar a name
             break ;
         case GrB_ELTYPE_STRING : 
             GB_type_name_get (name, A->type) ;

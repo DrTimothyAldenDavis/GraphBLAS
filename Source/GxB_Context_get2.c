@@ -90,7 +90,7 @@ GrB_Info GxB_Context_get_String
     GrB_Field field
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;  // FIXME set the name of a GrB_Context
+    return (GrB_NOT_IMPLEMENTED) ;  // FIXME set the name of a GxB_Context
 }
 
 //------------------------------------------------------------------------------
@@ -151,7 +151,7 @@ GrB_Info GxB_Context_get_SIZE
     GrB_Field field
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;
+    return (GrB_NOT_IMPLEMENTED) ;  // FIXME: get the size of the name
 }
 
 //------------------------------------------------------------------------------

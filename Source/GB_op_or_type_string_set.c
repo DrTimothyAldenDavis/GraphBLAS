@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_object_string_set: set the name or defn of a user-defined type or op
+// GB_op_or_type_string_set: set the name or defn of a user-defined type or op
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -11,7 +11,7 @@
 #include <ctype.h>
 #include "GB_jitifyer.h"
 
-GrB_Info GB_object_string_set
+GrB_Info GB_op_or_type_string_set
 (
     // input:
     bool user_defined,
@@ -48,18 +48,16 @@ GrB_Info GB_object_string_set
     {
         case GrB_NAME : 
 
-            // FIXME: check for empty string instead
-            if (name [0] != '[')    // default name: "[unnamed_user_*]"
+            if (name [0] != '\0')
             { 
                 // name already defined
                 return (GrB_ALREADY_SET) ;
             }
 
-            if (value [0] == '[' || len == 0 || len >= GxB_MAX_NAME_LEN)
+            if (len == 0 || len >= GxB_MAX_NAME_LEN)
             { 
-                // invalid name: "[" denotes an unnamed user type, the name
-                // cannot be empty, and the name cannot exceed
-                // GxB_MAX_NAME_LEN-1 characters.
+                // invalid name: the name cannot be empty, and the name cannot
+                // exceed GxB_MAX_NAME_LEN-1 characters.
                 return (GrB_INVALID_VALUE) ;
             }
 

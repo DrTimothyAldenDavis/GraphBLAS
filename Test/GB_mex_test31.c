@@ -264,7 +264,8 @@ void mexFunction
     OK (GrB_Monoid_get_SIZE_(monoid, &size, GrB_NAME)) ;
     OK (GrB_Monoid_get_String_(monoid, name, GrB_NAME)) ;
     printf ("\nuser monoid: [%s]\n", name) ;
-    CHECK (MATCH (name, "myfunc_MONOID")) ;
+    // CHECK (MATCH (name, "myfunc_MONOID")) ;
+    CHECK (MATCH (name, "")) ;
     CHECK (size == GxB_MAX_NAME_LEN + strlen ("_MONOID")) ;
     OK (GxB_print (monoid, 3)) ;
 
