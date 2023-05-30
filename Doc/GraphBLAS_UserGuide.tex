@@ -7603,7 +7603,7 @@ GrB_Desc_Field ;
 typedef enum
 {
     // for all GrB_Descriptor fields:
-    GxB_DEFAULT = 0,    // default behavior of the method
+    GrB_DEFAULT = 0,    // default behavior of the method
     // for GrB_OUTP only:
     GrB_REPLACE = 1,    // clear the output before assigning new values to it
     // for GrB_MASK only:
@@ -7708,7 +7708,7 @@ GrB_Desc_Value ;
 
     \begin{itemize}
 
-    \item \verb'GxB_DEFAULT' means that a method is selected automatically.
+    \item \verb'GrB_DEFAULT' means that a method is selected automatically.
 
     \item \verb'GxB_AxB_SAXPY': select any saxpy-based method:
         \verb'GxB_AxB_GUSTAVSON', and/or
@@ -7769,7 +7769,7 @@ GrB_Desc_Value ;
     unjumbled form, or provided as input to a method that requires it to not be
     jumbled, then sorting it during the matrix multiplication is faster.
     By default, these methods leave the result in jumbled form (a {\em lazy
-    sort}), if \verb'GxB_SORT' is set to zero (\verb'GxB_DEFAULT').  A nonzero
+    sort}), if \verb'GxB_SORT' is set to zero (\verb'GrB_DEFAULT').  A nonzero
     value will inform the matrix multiplication to sort its result, instead.
 
 \item \verb'GxB_COMPRESSION' selects the compression method for serialization.
@@ -7879,7 +7879,7 @@ field      & &  \\
 \hline
 
 \verb'GrB_OUTP'
-    & \verb'GxB_DEFAULT':
+    & \verb'GrB_DEFAULT':
     The output matrix is not cleared.  The operation computes
     ${\bf C \langle M \rangle = C \odot T}$.
     & \verb'GrB_REPLACE':
@@ -7890,7 +7890,7 @@ field      & &  \\
 \hline
 
 \verb'GrB_MASK'
-    & \verb'GxB_DEFAULT':
+    & \verb'GrB_DEFAULT':
     The Mask is not complemented.  \verb'Mask(i,j)=1' means the value $C_{ij}$
     can be modified by the operation, while \verb'Mask(i,j)=0' means the value
     $C_{ij}$ shall not be modified by the operation.
@@ -7909,7 +7909,7 @@ field      & &  \\
 \hline
 
 \verb'GrB_INP0'
-    & \verb'GxB_DEFAULT':
+    & \verb'GrB_DEFAULT':
     The first input is not transposed prior to using it in the operation.
     & \verb'GrB_TRAN':
     The first input is transposed prior to using it in the operation.  Only
@@ -7918,7 +7918,7 @@ field      & &  \\
 \hline
 
 \verb'GrB_INP1'
-    & \verb'GxB_DEFAULT':
+    & \verb'GrB_DEFAULT':
     The second input is not transposed prior to using it in the operation.
     & \verb'GrB_TRAN':
     The second input is transposed prior to using it in the operation.  Only
@@ -7927,7 +7927,7 @@ field      & &  \\
 \hline
 
 \verb'GrB_AxB_METHOD'
-    & \verb'GxB_DEFAULT':
+    & \verb'GrB_DEFAULT':
     The method for \verb'C=A*B' is selected automatically.
     & \verb'GxB_AxB_'{\em method}: The selected method is used to compute
     \verb'C=A*B'.  \\
@@ -9400,7 +9400,7 @@ more than \verb'floor(work/chunk)' threads will be used (or one thread if the
 ratio is less than 1).
 
 \verb'GxB_NTHREADS' controls how many threads a method uses.
-    By default (if set to zero, or \verb'GxB_DEFAULT'), all available threads
+    By default (if set to zero, or \verb'GrB_DEFAULT'), all available threads
     are used.  The maximum available threads is controlled by the global
     setting, which is \verb'omp_get_max_threads ( )' by default.  If set to
     some positive integer \verb'nthreads' less than this maximum, at most
@@ -9440,12 +9440,12 @@ The smaller of \verb'nthreads_max' and \verb'floor(work/chunk)' is used for any
 given GraphBLAS operation, except that a single thread is used if this value is
 zero or less.
 
-If either parameter is set to \verb'GxB_DEFAULT', then default values are used.
+If either parameter is set to \verb'GrB_DEFAULT', then default values are used.
 The default for \verb'nthreads_max' is the return value from
 \verb'omp_get_max_threads', and the default chunk size is currently 65,536.
 
 If a descriptor value for either parameter is left at its default, or set to
-\verb'GxB_DEFAULT', then the global setting is used.  This global setting may
+\verb'GrB_DEFAULT', then the global setting is used.  This global setting may
 have been modified from its default, and this modified value will be used.
 
 For example, suppose \verb'omp_get_max_threads' reports 8 threads.  If \newline
@@ -10300,21 +10300,21 @@ To set/get a descriptor field:
 
     {\footnotesize
     \begin{verbatim}
-    GxB_set (GrB_Descriptor d, GrB_OUTP, GxB_DEFAULT) ;
+    GxB_set (GrB_Descriptor d, GrB_OUTP, GrB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GrB_OUTP, GrB_REPLACE) ;
     GxB_get (GrB_Descriptor d, GrB_OUTP, GrB_Desc_Value *v) ;
-    GxB_set (GrB_Descriptor d, GrB_MASK, GxB_DEFAULT) ;
+    GxB_set (GrB_Descriptor d, GrB_MASK, GrB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GrB_MASK, GrB_COMP) ;
     GxB_set (GrB_Descriptor d, GrB_MASK, GrB_STRUCTURE) ;
     GxB_set (GrB_Descriptor d, GrB_MASK, GrB_COMP+GrB_STRUCTURE) ;
     GxB_get (GrB_Descriptor d, GrB_MASK, GrB_Desc_Value *v) ;
-    GxB_set (GrB_Descriptor d, GrB_INP0, GxB_DEFAULT) ;
+    GxB_set (GrB_Descriptor d, GrB_INP0, GrB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GrB_INP0, GrB_TRAN) ;
     GxB_get (GrB_Descriptor d, GrB_INP0, GrB_Desc_Value *v) ;
-    GxB_set (GrB_Descriptor d, GrB_INP1, GxB_DEFAULT) ;
+    GxB_set (GrB_Descriptor d, GrB_INP1, GrB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GrB_INP1, GrB_TRAN) ;
     GxB_get (GrB_Descriptor d, GrB_INP1, GrB_Desc_Value *v) ;
-    GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_DEFAULT) ;
+    GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GrB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_HASH) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_SAXPY) ;

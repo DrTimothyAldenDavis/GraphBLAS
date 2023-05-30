@@ -382,10 +382,12 @@ void mexFunction
     OK (GrB_Scalar_extractElement_INT32_(&code, s_int32)) ;
     CHECK (code == GrB_BOOL_CODE) ;
 
-    expected = GrB_INVALID_VALUE ;
+    expected = GrB_NO_VALUE ;
     ERR (GrB_UnaryOp_get_ENUM_(GrB_BNOT_UINT8, &code, GrB_INPUT2TYPE_CODE)) ;
-    ERR (GrB_UnaryOp_get_ENUM_(GrB_BNOT_UINT8, &code, GrB_NAME)) ;
     ERR (GrB_UnaryOp_get_Scalar_(GrB_LNOT, s_int32, GrB_INPUT2TYPE_CODE)) ;
+
+    expected = GrB_INVALID_VALUE ;
+    ERR (GrB_UnaryOp_get_ENUM_(GrB_BNOT_UINT8, &code, GrB_NAME)) ;
 
     expected = GrB_NOT_IMPLEMENTED ;
     ERR (GrB_UnaryOp_get_VOID_(GrB_LNOT, nothing, 0)) ;
@@ -408,8 +410,10 @@ void mexFunction
     CHECK (unop->hash != UINT64_MAX) ;
     OK (GxB_print (unop, 3)) ;
 
-    expected = GrB_INVALID_VALUE ;
+    expected = GrB_NO_VALUE ;
     ERR (GrB_UnaryOp_get_ENUM_(unop, &code, GrB_INPUT2TYPE_CODE)) ;
+
+    expected = GrB_INVALID_VALUE ;
     ERR (GrB_UnaryOp_set_String_(unop, "another_name", 999)) ;
     ERR (GrB_UnaryOp_get_SIZE(unop, &size, 999)) ;
 

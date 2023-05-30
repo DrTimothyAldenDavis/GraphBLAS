@@ -195,10 +195,12 @@ void mexFunction
     OK (GrB_Scalar_extractElement_INT32_(&code, s_int32)) ;
     CHECK (code == GrB_BOOL_CODE) ;
 
-    expected = GrB_INVALID_VALUE ;
+    expected = GrB_NO_VALUE ;
     ERR (GrB_IndexUnaryOp_get_ENUM_(GrB_TRIL, &code, GrB_INPUT1TYPE_CODE)) ;
-    ERR (GrB_IndexUnaryOp_get_ENUM_(GrB_TRIL, &code, GrB_NAME)) ;
     ERR (GrB_IndexUnaryOp_get_Scalar_(GrB_TRIL, s_int32, GrB_INPUT1TYPE_CODE)) ;
+
+    expected = GrB_INVALID_VALUE ;
+    ERR (GrB_IndexUnaryOp_get_ENUM_(GrB_TRIL, &code, GrB_NAME)) ;
 
     expected = GrB_NOT_IMPLEMENTED ;
     ERR (GrB_IndexUnaryOp_get_VOID_(GrB_TRIL, nothing, 0)) ;

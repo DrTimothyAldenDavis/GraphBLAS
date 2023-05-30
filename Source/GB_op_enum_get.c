@@ -29,11 +29,13 @@ GrB_Info GB_op_enum_get
         case GrB_INPUT2TYPE_CODE : type = op->ytype ; break ;
         case GrB_OUTPUTTYPE_CODE : type = op->ztype ; break ;
         default : ;
+            return (GrB_INVALID_VALUE) ;
     }
 
     if (type == NULL)
     { 
-        return (GrB_INVALID_VALUE) ;
+        // operator does not depend on this input
+        return (GrB_NO_VALUE) ;
     }
 
     (*value) = (int) GB_type_code_get (type->code) ;

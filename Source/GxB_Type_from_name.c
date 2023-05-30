@@ -25,8 +25,11 @@
     // ... create a matrix A of some built-in or user-defined type
 
     // later on, to query the type of A:
+    GrB_Scalar tsize ;
+    GrB_Scalar_new (&tsize, GrB_INT32) ;
+    GrB_get (type, tsize, GrB_SIZE) ;       // works for any type
     size_t typesize ;
-    GrB_get (type, &typesize, GrB_SIZE) ;       // works for any type
+    GrB_Scalar_extractElement (&typesize, tsize) ;
     GrB_Type atype ;
     char atype_name [GxB_MAX_NAME_LEN] ;
     GrB_get (A, atype_name, GrB_NAME) ;

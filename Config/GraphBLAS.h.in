@@ -403,13 +403,13 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
 
 // The GrB_Descriptor is used to modify the behavior of GraphBLAS operations.
 //
-// GrB_OUTP: can be GxB_DEFAULT or GrB_REPLACE.  If GrB_REPLACE, then C is
+// GrB_OUTP: can be GrB_DEFAULT or GrB_REPLACE.  If GrB_REPLACE, then C is
 //       cleared after taking part in the accum operation but before the mask.
 //       In other words, C<Mask> = accum (C,T) is split into Z = accum(C,T) ;
 //       C=0 ; C<Mask> = Z.
 //
-// GrB_MASK: can be GxB_DEFAULT, GrB_COMP, GrB_STRUCTURE, or set to both
-//      GrB_COMP and GrB_STRUCTURE.  If GxB_DEFAULT, the mask is used
+// GrB_MASK: can be GrB_DEFAULT, GrB_COMP, GrB_STRUCTURE, or set to both
+//      GrB_COMP and GrB_STRUCTURE.  If GrB_DEFAULT, the mask is used
 //      normally, where Mask(i,j)=1 means C(i,j) can be modified by C<Mask>=Z,
 //      and Mask(i,j)=0 means it cannot be modified even if Z(i,j) is has been
 //      computed and differs from C(i,j).  If GrB_COMP, this is the same as
@@ -417,7 +417,7 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
 //      the value of the mask is not considered, just its pattern.  The
 //      GrB_COMP and GrB_STRUCTURE settings can be combined.
 //
-// GrB_INP0: can be GxB_DEFAULT or GrB_TRAN.  If GxB_DEFAULT, the first input
+// GrB_INP0: can be GrB_DEFAULT or GrB_TRAN.  If GrB_DEFAULT, the first input
 //      is used as-is.  If GrB_TRAN, it is transposed.  Only matrices are
 //      transposed this way.  Vectors are never transposed via the
 //      GrB_Descriptor.
@@ -427,7 +427,7 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
 // GxB_AxB_METHOD: this is a hint to SuiteSparse:GraphBLAS on which algorithm
 //      it should use to compute C=A*B, in GrB_mxm, GrB_mxv, and GrB_vxm.
 //      SuiteSparse:GraphBLAS has four different heuristics, and the default
-//      method (GxB_DEFAULT) selects between them automatically.  The complete
+//      method (GrB_DEFAULT) selects between them automatically.  The complete
 //      rule is in the User Guide.  The brief discussion here assumes all
 //      matrices are stored by column.  All methods compute the same result,
 //      except that floating-point roundoff may differ when working on
@@ -457,7 +457,7 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
 //      state, with indices out of order.  The sort is left pending.  Some
 //      methods can tolerate jumbled matrices on input, so this can be faster.
 //      However, in some cases, it can be faster for GrB_mxm to sort its output
-//      as it is computed.  With GxB_SORT set to GxB_DEFAULT, the sort is left
+//      as it is computed.  With GxB_SORT set to GrB_DEFAULT, the sort is left
 //      pending.  With GxB_SORT set to a nonzero value, GrB_mxm typically sorts
 //      the resulting matrix C (but not always; this is just a hint).  If
 //      GrB_init is called with GrB_BLOCKING mode, the sort will always be
@@ -495,7 +495,8 @@ GrB_Desc_Field ;
 typedef enum
 {
     // for all GrB_Descriptor fields:
-    GxB_DEFAULT = 0,    // default behavior of the method
+    GrB_DEFAULT = 0,    // default behavior of the method
+    GxB_DEFAULT = 0,    // historical; use GrB_DEFAULT instead
 
     // for GrB_OUTP only:
     GrB_REPLACE = 1,    // clear the output before assigning new values to it
@@ -503,6 +504,7 @@ typedef enum
     // for GrB_MASK only:
     GrB_COMP = 2,       // use the structural complement of the input
     GrB_STRUCTURE = 4,  // use the only pattern of the mask, not its values
+    GrB_COMP_STRUCTURE = 6, // shorthand for GrB_COMP + GrB_STRUCTURE
 
     // for GrB_INP0 and GrB_INP1 only:
     GrB_TRAN = 3,       // use the transpose of the input
@@ -519,7 +521,7 @@ typedef enum
 GrB_Desc_Value ;
 
 // default for GxB pack is to trust the input data
-#define GxB_FAST_IMPORT GxB_DEFAULT
+#define GxB_FAST_IMPORT ((int) GrB_DEFAULT)
 
 typedef struct GB_Descriptor_opaque *GrB_Descriptor ;
 
@@ -4335,25 +4337,26 @@ GrB_Info GxB_Context_disengage      // disengage a Context
 
 // To set/get a descriptor field:
 //
-//      GxB_set (GrB_Descriptor d, GrB_OUTP, GxB_DEFAULT) ;
+//      GxB_set (GrB_Descriptor d, GrB_OUTP, GrB_DEFAULT) ;
 //      GxB_set (GrB_Descriptor d, GrB_OUTP, GrB_REPLACE) ;
 //      GxB_get (GrB_Descriptor d, GrB_OUTP, GrB_Desc_Value *v) ;
 //
-//      GxB_set (GrB_Descriptor d, GrB_MASK, GxB_DEFAULT) ;
+//      GxB_set (GrB_Descriptor d, GrB_MASK, GrB_DEFAULT) ;
 //      GxB_set (GrB_Descriptor d, GrB_MASK, GrB_COMP) ;
 //      GxB_set (GrB_Descriptor d, GrB_MASK, GrB_STRUCTURE) ;
 //      GxB_set (GrB_Descriptor d, GrB_MASK, GrB_COMP + GrB_STRUCTURE) ;
+//      GxB_set (GrB_Descriptor d, GrB_MASK, GrB_COMP_GrB_STRUCTURE) ;
 //      GxB_get (GrB_Descriptor d, GrB_MASK, GrB_Desc_Value *v) ;
 //
-//      GxB_set (GrB_Descriptor d, GrB_INP0, GxB_DEFAULT) ;
+//      GxB_set (GrB_Descriptor d, GrB_INP0, GrB_DEFAULT) ;
 //      GxB_set (GrB_Descriptor d, GrB_INP0, GrB_TRAN) ;
 //      GxB_get (GrB_Descriptor d, GrB_INP0, GrB_Desc_Value *v) ;
 //
-//      GxB_set (GrB_Descriptor d, GrB_INP1, GxB_DEFAULT) ;
+//      GxB_set (GrB_Descriptor d, GrB_INP1, GrB_DEFAULT) ;
 //      GxB_set (GrB_Descriptor d, GrB_INP1, GrB_TRAN) ;
 //      GxB_get (GrB_Descriptor d, GrB_INP1, GrB_Desc_Value *v) ;
 //
-//      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_DEFAULT) ;
+//      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GrB_DEFAULT) ;
 //      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON) ;
 //      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_HASH) ;
 //      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_SAXPY) ;
@@ -4414,13 +4417,13 @@ typedef enum
     //--------------------------------------------------------------------------
 
     // GrB_Descriptor only:
-    GrB_OUTP_FIELD = 0,   // descriptor for output of a method
-    GrB_MASK_FIELD = 1,   // descriptor for the mask input of a method
-    GrB_INP0_FIELD = 2,   // descriptor for the first input of a method
-    GrB_INP1_FIELD = 3,   // descriptor for the second input of a method
+    GrB_OUTP_FIELD = 0,     // descriptor for output of a method
+    GrB_MASK_FIELD = 1,     // descriptor for the mask input of a method
+    GrB_INP0_FIELD = 2,     // descriptor for the first input of a method
+    GrB_INP1_FIELD = 3,     // descriptor for the second input of a method
 
     // all objects, including GrB_GLOBAL:
-    GrB_NAME = 10,
+    GrB_NAME = 10,          // name of the object, as a string
 
     // GrB_GLOBAL only:
     GrB_LIBRARY_VER_MAJOR = 11,     // SuiteSparse:GraphBLAS version
@@ -4442,12 +4445,12 @@ typedef enum
     GrB_INPUT1TYPE_CODE = 103,      // GrB_Type_code
     GrB_INPUT2TYPE_CODE = 104,
     GrB_OUTPUTTYPE_CODE = 105,
-    GrB_INPUT1TYPE_STRING = 107,    // name of the type
+    GrB_INPUT1TYPE_STRING = 107,    // name of the type, as a string
     GrB_INPUT2TYPE_STRING = 108,
     GrB_OUTPUTTYPE_STRING = 109,
 
-    // GrB_Type (readable only):  size of the type
-    GrB_SIZE = 110,                 // FIXME: not yet in the C API but should be
+    // GrB_Type (readable only):
+    GrB_SIZE = 110,                 // size of the type
 
     //--------------------------------------------------------------------------
     // SuiteSparse extensions:

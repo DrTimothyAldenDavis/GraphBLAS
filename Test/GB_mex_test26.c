@@ -141,44 +141,57 @@ void mexFunction
     CHECK (code == GxB_FC64_CODE) ;
 
     // type size
-    OK (GrB_Type_get_SIZE_(GrB_BOOL, &size, GrB_SIZE)) ;
-    CHECK (size == sizeof (bool)) ;
+    OK (GrB_Type_get_Scalar_(GrB_BOOL, s_int32, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == sizeof (bool)) ;
 
-    OK (GrB_Type_get_SIZE_(GrB_INT8, &size, GrB_SIZE)) ;
-    CHECK (size == sizeof (int8_t)) ;
+    OK (GrB_Type_get_Scalar_(GrB_INT8, s_int32, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == sizeof (int8_t)) ;
 
-    OK (GrB_Type_get_SIZE_(GrB_INT16, &size, GrB_SIZE)) ;
-    CHECK (size == sizeof (int16_t)) ;
+    OK (GrB_Type_get_Scalar_(GrB_INT16, s_int32, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == sizeof (int16_t)) ;
 
-    OK (GrB_Type_get_SIZE_(GrB_INT32, &size, GrB_SIZE)) ;
-    CHECK (size == sizeof (int32_t)) ;
+    OK (GrB_Type_get_Scalar_(GrB_INT32, s_int32, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == sizeof (int32_t)) ;
 
-    OK (GrB_Type_get_SIZE_(GrB_INT64, &size, GrB_SIZE)) ;
-    CHECK (size == sizeof (int64_t)) ;
+    OK (GrB_Type_get_Scalar_(GrB_INT64, s_int32, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == sizeof (int64_t)) ;
 
-    OK (GrB_Type_get_SIZE_(GrB_UINT8, &size, GrB_SIZE)) ;
-    CHECK (size == sizeof (uint8_t)) ;
+    OK (GrB_Type_get_Scalar_(GrB_UINT8, s_int32, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == sizeof (uint8_t)) ;
 
-    OK (GrB_Type_get_SIZE_(GrB_UINT16, &size, GrB_SIZE)) ;
-    CHECK (size == sizeof (uint16_t)) ;
+    OK (GrB_Type_get_Scalar_(GrB_UINT16, s_int32, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == sizeof (uint16_t)) ;
 
-    OK (GrB_Type_get_SIZE_(GrB_UINT32, &size, GrB_SIZE)) ;
-    CHECK (size == sizeof (uint32_t)) ;
+    OK (GrB_Type_get_Scalar_(GrB_UINT32, s_int32, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == sizeof (uint32_t)) ;
 
-    OK (GrB_Type_get_SIZE_(GrB_UINT64, &size, GrB_SIZE)) ;
-    CHECK (size == sizeof (uint64_t)) ;
+    OK (GrB_Type_get_Scalar_(GrB_UINT64, s_int32, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == sizeof (uint64_t)) ;
 
-    OK (GrB_Type_get_SIZE_(GrB_FP32, &size, GrB_SIZE)) ;
-    CHECK (size == sizeof (float)) ;
+    OK (GrB_Type_get_Scalar_(GrB_FP32, s_int32, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == sizeof (float)) ;
 
-    OK (GrB_Type_get_SIZE_(GrB_FP64, &size, GrB_SIZE)) ;
-    CHECK (size == sizeof (double)) ;
+    OK (GrB_Type_get_Scalar_(GrB_FP64, s_int32, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == sizeof (double)) ;
 
-    OK (GrB_Type_get_SIZE_(GxB_FC32, &size, GrB_SIZE)) ;
-    CHECK (size == sizeof (float complex)) ;
+    OK (GrB_Type_get_Scalar_(GxB_FC32, s_int32, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == sizeof (float complex)) ;
 
-    OK (GrB_Type_get_SIZE_(GxB_FC64, &size, GrB_SIZE)) ;
-    CHECK (size == sizeof (double complex)) ;
+    OK (GrB_Type_get_Scalar_(GxB_FC64, s_int32, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == sizeof (double complex)) ;
 
     // built-in type definition
     OK (GrB_Type_get_SIZE_(GrB_BOOL, &size, GxB_DEFINITION)) ;
@@ -206,8 +219,9 @@ void mexFunction
     OK (GrB_Type_get_String_(type, defn, GxB_DEFINITION)) ;
     CHECK (MATCH (defn, MYTYPE_DEFN)) ;
 
-    OK (GrB_Type_get_SIZE_(type, &size, GrB_SIZE)) ;
-    CHECK (size == sizeof (mytype)) ;
+    OK (GrB_Type_get_Scalar_(type, s_int32, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == sizeof (mytype)) ;
 
     OK (GrB_Type_get_ENUM_(type, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_UDT_CODE) ;
@@ -229,6 +243,7 @@ void mexFunction
     ERR (GrB_Type_get_Scalar_(type, s_int32, GrB_OUTP)) ;
     ERR (GrB_Type_get_String_(type, name, GrB_OUTP)) ;
     ERR (GrB_Type_get_SIZE_(type, &size, GrB_OUTP)) ;
+    ERR (GrB_Type_get_SIZE_(GrB_FP32, &size, GrB_SIZE)) ;
 
     expected = GrB_NOT_IMPLEMENTED ;
     ERR (GrB_Type_get_VOID_(type, nothing, 0)) ;

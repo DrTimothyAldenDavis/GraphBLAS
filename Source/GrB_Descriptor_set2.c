@@ -43,28 +43,28 @@ static GrB_Info GB_desc_set
 
         case GrB_OUTP : 
 
-            if (! (value == GxB_DEFAULT || value == GrB_REPLACE))
+            if (! (value == GrB_DEFAULT || value == GrB_REPLACE))
             { 
                 GB_ERROR (GrB_INVALID_VALUE,
                         "invalid descriptor value [%d] for GrB_OUTP field;\n"
-                        "must be GxB_DEFAULT [%d] or GrB_REPLACE [%d]",
-                        value, (int) GxB_DEFAULT, (int) GrB_REPLACE) ;
+                        "must be GrB_DEFAULT [%d] or GrB_REPLACE [%d]",
+                        value, (int) GrB_DEFAULT, (int) GrB_REPLACE) ;
             }
             desc->out = (GrB_Desc_Value) value ;
             break ;
 
         case GrB_MASK : 
 
-            if (! (value == GxB_DEFAULT ||
+            if (! (value == GrB_DEFAULT ||
                    value == GrB_COMP ||
                    value == GrB_STRUCTURE ||
                    value == (GrB_COMP + GrB_STRUCTURE)))
             { 
                 GB_ERROR (GrB_INVALID_VALUE,
                         "invalid descriptor value [%d] for GrB_MASK field;\n"
-                        "must be GxB_DEFAULT [%d], GrB_COMP [%d],\n"
+                        "must be GrB_DEFAULT [%d], GrB_COMP [%d],\n"
                         "GrB_STRUCTURE [%d], or GrB_COMP+GrB_STRUCTURE [%d]",
-                        value, (int) GxB_DEFAULT, (int) GrB_COMP,
+                        value, (int) GrB_DEFAULT, (int) GrB_COMP,
                         (int) GrB_STRUCTURE,
                         (int) (GrB_COMP + GrB_STRUCTURE)) ;
             }
@@ -79,40 +79,40 @@ static GrB_Info GB_desc_set
 
         case GrB_INP0 : 
 
-            if (! (value == GxB_DEFAULT || value == GrB_TRAN))
+            if (! (value == GrB_DEFAULT || value == GrB_TRAN))
             { 
                 GB_ERROR (GrB_INVALID_VALUE,
                         "invalid descriptor value [%d] for GrB_INP0 field;\n"
-                        "must be GxB_DEFAULT [%d] or GrB_TRAN [%d]",
-                        value, (int) GxB_DEFAULT, (int) GrB_TRAN) ;
+                        "must be GrB_DEFAULT [%d] or GrB_TRAN [%d]",
+                        value, (int) GrB_DEFAULT, (int) GrB_TRAN) ;
             }
             desc->in0 = (GrB_Desc_Value) value ;
             break ;
 
         case GrB_INP1 : 
 
-            if (! (value == GxB_DEFAULT || value == GrB_TRAN))
+            if (! (value == GrB_DEFAULT || value == GrB_TRAN))
             { 
                 GB_ERROR (GrB_INVALID_VALUE,
                         "invalid descriptor value [%d] for GrB_INP1 field;\n"
-                        "must be GxB_DEFAULT [%d] or GrB_TRAN [%d]",
-                        value, (int) GxB_DEFAULT, (int) GrB_TRAN) ;
+                        "must be GrB_DEFAULT [%d] or GrB_TRAN [%d]",
+                        value, (int) GrB_DEFAULT, (int) GrB_TRAN) ;
             }
             desc->in1 = (GrB_Desc_Value) value ;
             break ;
 
         case GxB_AxB_METHOD : 
 
-            if (! (value == GxB_DEFAULT  || value == GxB_AxB_GUSTAVSON
+            if (! (value == GrB_DEFAULT  || value == GxB_AxB_GUSTAVSON
                 || value == GxB_AxB_DOT
                 || value == GxB_AxB_HASH || value == GxB_AxB_SAXPY))
             { 
                 GB_ERROR (GrB_INVALID_VALUE,
                         "invalid descriptor value [%d] for GrB_AxB_METHOD"
-                        " field;\nmust be GxB_DEFAULT [%d], GxB_AxB_GUSTAVSON"
+                        " field;\nmust be GrB_DEFAULT [%d], GxB_AxB_GUSTAVSON"
                         " [%d]\nGxB_AxB_DOT [%d]"
                         " GxB_AxB_HASH [%d] or GxB_AxB_SAXPY [%d]",
-                        value, (int) GxB_DEFAULT, (int) GxB_AxB_GUSTAVSON,
+                        value, (int) GrB_DEFAULT, (int) GxB_AxB_GUSTAVSON,
                         (int) GxB_AxB_DOT,
                         (int) GxB_AxB_HASH, (int) GxB_AxB_SAXPY) ;
             }
@@ -134,7 +134,7 @@ static GrB_Info GB_desc_set
             // In case the user application does not check the return value
             // of this method, an error condition is never returned.
             desc->import =
-                (value == GxB_DEFAULT) ? GxB_FAST_IMPORT : GxB_SECURE_IMPORT ;
+                (value == GrB_DEFAULT) ? GxB_FAST_IMPORT : GxB_SECURE_IMPORT ;
             break ;
 
         default : 

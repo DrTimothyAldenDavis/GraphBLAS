@@ -27,44 +27,44 @@ static GrB_Info GB_desc_get
     {
         case GrB_OUTP : 
 
-            (*value) = (int32_t) ((desc == NULL) ? GxB_DEFAULT : desc->out) ;
+            (*value) = (int32_t) ((desc == NULL) ? GrB_DEFAULT : desc->out) ;
             break ;
 
         case GrB_MASK : 
 
-            (*value) = (int32_t) ((desc == NULL) ? GxB_DEFAULT : desc->mask) ;
+            (*value) = (int32_t) ((desc == NULL) ? GrB_DEFAULT : desc->mask) ;
             break ;
 
         case GrB_INP0 : 
 
-            (*value) = (int32_t) ((desc == NULL) ? GxB_DEFAULT : desc->in0) ;
+            (*value) = (int32_t) ((desc == NULL) ? GrB_DEFAULT : desc->in0) ;
             break ;
 
         case GrB_INP1 : 
 
-            (*value) = (int32_t) ((desc == NULL) ? GxB_DEFAULT : desc->in1) ;
+            (*value) = (int32_t) ((desc == NULL) ? GrB_DEFAULT : desc->in1) ;
             break ;
 
         case GxB_AxB_METHOD : 
 
-            (*value) = (int32_t) ((desc == NULL) ? GxB_DEFAULT : desc->axb) ;
+            (*value) = (int32_t) ((desc == NULL) ? GrB_DEFAULT : desc->axb) ;
             break ;
 
         case GxB_SORT : 
 
-            (*value) = (int32_t) ((desc == NULL) ? GxB_DEFAULT : desc->do_sort);
+            (*value) = (int32_t) ((desc == NULL) ? GrB_DEFAULT : desc->do_sort);
             break ;
 
         case GxB_COMPRESSION : 
 
             (*value) = (int32_t) ((desc == NULL) ?
-                GxB_DEFAULT : desc->compression) ; 
+                GrB_DEFAULT : desc->compression) ; 
             break ;
 
         case GxB_IMPORT : 
 
-            (*value) = (int32_t) ((desc == NULL) ? GxB_DEFAULT : desc->import) ;
-            if ((*value) != GxB_DEFAULT) (*value) = GxB_SECURE_IMPORT ;
+            (*value) = (int32_t) ((desc == NULL) ? GrB_DEFAULT : desc->import) ;
+            if ((*value) != GrB_DEFAULT) (*value) = GxB_SECURE_IMPORT ;
             break ;
 
         default : 

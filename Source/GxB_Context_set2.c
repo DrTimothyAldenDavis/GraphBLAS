@@ -63,7 +63,7 @@ GrB_Info GxB_Context_set_Scalar
     switch (field)
     {
 
-        default : 
+        default:
         case GxB_CONTEXT_NTHREADS :         // same as GxB_NTHREADS
 
             GB_Context_nthreads_max_set (Context, ivalue) ;
