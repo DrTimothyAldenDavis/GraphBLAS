@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_object_string_set: set the name or defn of a user-defined object
+// GB_object_string_set: set the name or defn of a user-defined type or op
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -28,17 +28,17 @@ GrB_Info GB_object_string_set
 {
 
     //--------------------------------------------------------------------------
-    // quick return for built-in types
+    // quick return for built-in types and operators
     //--------------------------------------------------------------------------
 
     if (!user_defined)
     { 
-        // built-in type
+        // built-in type or operator
         return (GrB_ALREADY_SET) ;
     }
 
     //--------------------------------------------------------------------------
-    // set the name or defn of a user-defined type
+    // set the name or defn of a user-defined type or operator
     //--------------------------------------------------------------------------
 
     size_t len = strlen (value) ;
@@ -48,6 +48,7 @@ GrB_Info GB_object_string_set
     {
         case GrB_NAME : 
 
+            // FIXME: check for empty string instead
             if (name [0] != '[')    // default name: "[unnamed_user_*]"
             { 
                 // name already defined
@@ -82,7 +83,6 @@ GrB_Info GB_object_string_set
             (*defn) = GB_MALLOC (len+1, char, defn_size) ;
             if ((*defn) == NULL)
             { 
-GB_GOTCHA ; // out of memory for defn
                 // out of memory
                 return (GrB_OUT_OF_MEMORY) ;
             }

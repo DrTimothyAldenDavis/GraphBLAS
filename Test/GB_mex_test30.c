@@ -217,7 +217,7 @@ void mexFunction
     OK (GrB_IndexUnaryOp_get_String_(op, name, GrB_NAME)) ;
     CHECK (MATCH (name, "myfunc")) ;
     CHECK (op->hash == UINT64_MAX) ;
-    OK (GrB_IndexUnaryOp_set_String_(op, MYFUNC_DEFN, GxB_DEFINITION)) ;
+    METHOD (GrB_IndexUnaryOp_set_String (op, MYFUNC_DEFN, GxB_DEFINITION)) ;
     OK (GrB_IndexUnaryOp_get_String_(op, defn, GxB_DEFINITION)) ;
     CHECK (MATCH (defn, MYFUNC_DEFN)) ;
     CHECK (op->hash != UINT64_MAX) ;

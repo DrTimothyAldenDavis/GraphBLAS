@@ -401,6 +401,7 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
     ERR (GrB_Descriptor_get_SIZE_ (GrB_DESC_T1, &size, GrB_OUTP)) ;
     ERR (GrB_Descriptor_set_Scalar_ (GrB_DESC_T1, s_int32, GrB_MASK)) ;
     ERR (GrB_Descriptor_set_Scalar (NULL, s_int32, GrB_MASK)) ;
+    ERR (GrB_Descriptor_set_ENUM_ (desc, GrB_DEFAULT, GrB_NAME)) ;
 
     char *err ;
     ERR (GrB_Descriptor_set_ENUM_ (desc, 999, GrB_OUTP)) ;

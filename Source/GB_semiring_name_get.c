@@ -357,7 +357,6 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types
-                        case GB_BOOL_code   : return ("GxB_ANY_MIN_BOOL"  ) ;
                         case GB_INT8_code   : return ("GxB_ANY_MIN_INT8"  ) ;
                         case GB_INT16_code  : return ("GxB_ANY_MIN_INT16" ) ;
                         case GB_INT32_code  : return ("GxB_ANY_MIN_INT32" ) ;
@@ -466,7 +465,6 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types
-                        case GB_BOOL_code   : return ("GxB_ANY_MAX_BOOL"  ) ;
                         case GB_INT8_code   : return ("GxB_ANY_MAX_INT8"  ) ;
                         case GB_INT16_code  : return ("GxB_ANY_MAX_INT16" ) ;
                         case GB_INT32_code  : return ("GxB_ANY_MAX_INT32" ) ;
@@ -488,10 +486,6 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
         //----------------------------------------------------------------------
         case GB_PLUS_binop_code    :    // z = x + y
         //----------------------------------------------------------------------
-
-            // 56 semirings:
-            // 50: (min,max,plus,times,any) for 10 real non-boolean
-            // 6: (plus,times,any) for 2 complex types
 
             switch (add_opcode)
             {
@@ -581,7 +575,6 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types, plus 2 complex
-                        case GB_BOOL_code   : return ("GxB_ANY_PLUS_BOOL"  ) ;
                         case GB_INT8_code   : return ("GxB_ANY_PLUS_INT8"  ) ;
                         case GB_INT16_code  : return ("GxB_ANY_PLUS_INT16" ) ;
                         case GB_INT32_code  : return ("GxB_ANY_PLUS_INT32" ) ;
@@ -698,7 +691,6 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types, plus 2 complex
-                        case GB_BOOL_code   : return ("GxB_ANY_MINUS_BOOL"  ) ;
                         case GB_INT8_code   : return ("GxB_ANY_MINUS_INT8"  ) ;
                         case GB_INT16_code  : return ("GxB_ANY_MINUS_INT16" ) ;
                         case GB_INT32_code  : return ("GxB_ANY_MINUS_INT32" ) ;
@@ -807,7 +799,6 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types
-                        case GB_BOOL_code   : return ("GxB_ANY_ISEQ_BOOL"  ) ;
                         case GB_INT8_code   : return ("GxB_ANY_ISEQ_INT8"  ) ;
                         case GB_INT16_code  : return ("GxB_ANY_ISEQ_INT16" ) ;
                         case GB_INT32_code  : return ("GxB_ANY_ISEQ_INT32" ) ;
@@ -914,7 +905,6 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types
-                        case GB_BOOL_code   : return ("GxB_ANY_ISNE_BOOL"  ) ;
                         case GB_INT8_code   : return ("GxB_ANY_ISNE_INT8"  ) ;
                         case GB_INT16_code  : return ("GxB_ANY_ISNE_INT16" ) ;
                         case GB_INT32_code  : return ("GxB_ANY_ISNE_INT32" ) ;
@@ -1021,7 +1011,6 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types
-                        case GB_BOOL_code   : return ("GxB_ANY_ISGT_BOOL"  ) ;
                         case GB_INT8_code   : return ("GxB_ANY_ISGT_INT8"  ) ;
                         case GB_INT16_code  : return ("GxB_ANY_ISGT_INT16" ) ;
                         case GB_INT32_code  : return ("GxB_ANY_ISGT_INT32" ) ;
@@ -1128,7 +1117,6 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types
-                        case GB_BOOL_code   : return ("GxB_ANY_ISLT_BOOL"  ) ;
                         case GB_INT8_code   : return ("GxB_ANY_ISLT_INT8"  ) ;
                         case GB_INT16_code  : return ("GxB_ANY_ISLT_INT16" ) ;
                         case GB_INT32_code  : return ("GxB_ANY_ISLT_INT32" ) ;
@@ -1235,7 +1223,6 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types
-                        case GB_BOOL_code   : return ("GxB_ANY_ISGE_BOOL"  ) ;
                         case GB_INT8_code   : return ("GxB_ANY_ISGE_INT8"  ) ;
                         case GB_INT16_code  : return ("GxB_ANY_ISGE_INT16" ) ;
                         case GB_INT32_code  : return ("GxB_ANY_ISGE_INT32" ) ;
@@ -1342,7 +1329,6 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types
-                        case GB_BOOL_code   : return ("GxB_ANY_ISLE_BOOL"  ) ;
                         case GB_INT8_code   : return ("GxB_ANY_ISLE_INT8"  ) ;
                         case GB_INT16_code  : return ("GxB_ANY_ISLE_INT16" ) ;
                         case GB_INT32_code  : return ("GxB_ANY_ISLE_INT32" ) ;
@@ -1457,7 +1443,6 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types, plus 2 complex
-                        case GB_BOOL_code   : return ("GxB_ANY_RMINUS_BOOL"  ) ;
                         case GB_INT8_code   : return ("GxB_ANY_RMINUS_INT8"  ) ;
                         case GB_INT16_code  : return ("GxB_ANY_RMINUS_INT16" ) ;
                         case GB_INT32_code  : return ("GxB_ANY_RMINUS_INT32" ) ;
@@ -1574,7 +1559,6 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types, plus 2 complex
-                        case GB_BOOL_code   : return ("GxB_ANY_TIMES_BOOL"  ) ;
                         case GB_INT8_code   : return ("GxB_ANY_TIMES_INT8"  ) ;
                         case GB_INT16_code  : return ("GxB_ANY_TIMES_INT16" ) ;
                         case GB_INT32_code  : return ("GxB_ANY_TIMES_INT32" ) ;
@@ -1691,7 +1675,6 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types, plus 2 complex
-                        case GB_BOOL_code   : return ("GxB_ANY_DIV_BOOL"  ) ;
                         case GB_INT8_code   : return ("GxB_ANY_DIV_INT8"  ) ;
                         case GB_INT16_code  : return ("GxB_ANY_DIV_INT16" ) ;
                         case GB_INT32_code  : return ("GxB_ANY_DIV_INT32" ) ;
@@ -1808,7 +1791,6 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
                     switch (xcode)
                     {
                         // 10 real, non-boolean types, plus 2 complex
-                        case GB_BOOL_code   : return ("GxB_ANY_RDIV_BOOL"  ) ;
                         case GB_INT8_code   : return ("GxB_ANY_RDIV_INT8"  ) ;
                         case GB_INT16_code  : return ("GxB_ANY_RDIV_INT16" ) ;
                         case GB_INT32_code  : return ("GxB_ANY_RDIV_INT32" ) ;
@@ -3347,6 +3329,8 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
 
         default: ;
     }
+
+    // FIXME: allow user-defined semiring names to be set
 
     return (NULL) ;
 }

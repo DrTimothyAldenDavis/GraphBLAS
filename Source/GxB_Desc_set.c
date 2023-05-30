@@ -37,7 +37,7 @@ GrB_Info GxB_Desc_set_INT32     // set a parameter in a descriptor
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (desc == NULL || desc->header_size == 0)
+    if (desc != NULL && desc->header_size == 0)
     { 
         // built-in descriptors may not be modified
         return (GrB_INVALID_VALUE) ;
@@ -191,7 +191,7 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (desc == NULL || desc->header_size == 0)
+    if (desc != NULL && desc->header_size == 0)
     { 
         // built-in descriptors may not be modified
         return (GrB_INVALID_VALUE) ;

@@ -128,7 +128,6 @@ static GrB_Info GB_desc_set
             break ;
 
         default : 
-
             return (GrB_INVALID_VALUE) ;
     }
 
@@ -187,7 +186,7 @@ GrB_Info GrB_Descriptor_set_String
     GrB_Field field
 )
 {  
-    return (GrB_NOT_IMPLEMENTED) ;
+    return (GrB_NOT_IMPLEMENTED) ; // FIXME: user-defined GrB_Descriptor name
 }
 
 //------------------------------------------------------------------------------

@@ -396,6 +396,10 @@ void mexFunction
     ERR (GrB_Vector_set_String_(v, "new_name", GrB_NAME)) ;
     ERR (GrB_Vector_set_VOID_(v, nothing, 0, 1)) ;
 
+    expected = GrB_EMPTY_OBJECT ;
+    OK (GrB_Scalar_clear (s_int32)) ;
+    ERR (GrB_Vector_set_Scalar_(v, s_int32, GxB_FORMAT)) ;
+
     //--------------------------------------------------------------------------
     // GrB_Matrix get/set
     //--------------------------------------------------------------------------
@@ -497,6 +501,10 @@ void mexFunction
     ERR (GrB_Matrix_set_ENUM_(A, 99, 999)) ;
     ERR (GrB_Matrix_get_String_(A, defn, 999)) ;
     ERR (GrB_Matrix_get_Scalar(A, s_int32, 999)) ;
+
+    expected = GrB_EMPTY_OBJECT ;
+    OK (GrB_Scalar_clear (s_int32)) ;
+    ERR (GrB_Matrix_set_Scalar_(A, s_int32, GxB_FORMAT)) ;
 
     OK (GrB_Matrix_get_SIZE_(A, &size, GrB_NAME)) ;
     CHECK (size == GxB_MAX_NAME_LEN) ;

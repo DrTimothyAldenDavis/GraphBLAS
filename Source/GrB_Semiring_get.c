@@ -80,6 +80,7 @@ GrB_Info GrB_Semiring_get_String
             name = GB_semiring_name_get (semiring) ;
             if (name == NULL)
             { 
+                // FIXME: return an empty string instead
                 // construct a name for a user-defined semiring
                 sprintf (value, "%s_%s_SEMIRING",
                     semiring->add->op->name, semiring->multiply->name) ;

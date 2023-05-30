@@ -94,6 +94,7 @@ GrB_Info GxB_Type_new
     else
     { 
         // no type name, so give it a generic name
+        // FIXME: give unnamed type an empty string for its name
         snprintf (t->name, GxB_MAX_NAME_LEN-1, "[unnamed_user_type]") ;
     }
 

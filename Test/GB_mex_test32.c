@@ -2132,15 +2132,15 @@ void mexFunction
     ERR (GrB_Semiring_get_String_(GrB_PLUS_TIMES_SEMIRING_INT32, name,
         999)) ;
 
-    ERR (GrB_Semiring_get_VOID_(GrB_LAND_MONOID_BOOL, nothing, 0)) ;
+    ERR (GrB_Semiring_get_VOID_(GrB_LOR_LAND_SEMIRING_BOOL, nothing, 0)) ;
 
     OK (GrB_BinaryOp_new (&times, mytimes, GrB_FP32, GrB_FP32, GrB_FP32)) ;
     OK (GrB_BinaryOp_set_String_(times, "mytimes", GrB_NAME)) ;
-    OK (GrB_BinaryOp_set_String_(times, MYTIMES_DEFN, GxB_DEFINITION)) ;
+    METHOD (GrB_BinaryOp_set_String (times, MYTIMES_DEFN, GxB_DEFINITION)) ;
 
     OK (GrB_BinaryOp_new (&add, myadd, GrB_FP32, GrB_FP32, GrB_FP32)) ;
     OK (GrB_BinaryOp_set_String_(add, "myadd", GrB_NAME)) ;
-    OK (GrB_BinaryOp_set_String_(add, MYADD_DEFN, GxB_DEFINITION)) ;
+    METHOD (GrB_BinaryOp_set_String (add, MYADD_DEFN, GxB_DEFINITION)) ;
 
     OK (GrB_Monoid_new_FP32 (&monoid, add, (float) 0.0)) ;
     OK (GrB_Monoid_get_SIZE_(monoid, &size, GrB_NAME)) ;
@@ -2155,7 +2155,7 @@ void mexFunction
     OK (GrB_Semiring_get_SIZE_(semiring, &size, GrB_INPUT1TYPE_STRING)) ;
     CHECK (size == GxB_MAX_NAME_LEN) ;
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_Semiring_get_SIZE_(monoid, &size, GrB_INPUT1TYPE_CODE)) ;
+    ERR (GrB_Semiring_get_SIZE_(semiring, &size, GrB_INPUT1TYPE_CODE)) ;
 
     expected = GrB_NOT_IMPLEMENTED ;
     ERR (GrB_Semiring_set_Scalar_(semiring, s_int32, 0)) ;

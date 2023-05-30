@@ -72,6 +72,7 @@ GrB_Info GrB_Monoid_get_String
             name = GB_monoid_name_get (monoid) ;
             if (name == NULL)
             { 
+                // FIXME: return an empty string instead
                 // construct a name for a user-defined monoid
                 sprintf (value, "%s_MONOID", monoid->op->name) ;
             }

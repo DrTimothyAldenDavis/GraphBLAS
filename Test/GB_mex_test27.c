@@ -404,7 +404,7 @@ void mexFunction
     OK (GrB_UnaryOp_get_String_(unop, name, GrB_NAME)) ;
     CHECK (MATCH (name, "myfunc")) ;
     CHECK (unop->hash == UINT64_MAX) ;
-    OK (GrB_UnaryOp_set_String_(unop, MYFUNC_DEFN, GxB_DEFINITION)) ;
+    METHOD (GrB_UnaryOp_set_String (unop, MYFUNC_DEFN, GxB_DEFINITION)) ;
     OK (GrB_UnaryOp_get_String_(unop, defn, GxB_DEFINITION)) ;
     CHECK (MATCH (defn, MYFUNC_DEFN)) ;
     CHECK (unop->hash != UINT64_MAX) ;

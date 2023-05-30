@@ -90,7 +90,7 @@ GrB_Info GxB_Context_get_String
     GrB_Field field
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;
+    return (GrB_NOT_IMPLEMENTED) ;  // FIXME set the name of a GrB_Context
 }
 
 //------------------------------------------------------------------------------

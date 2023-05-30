@@ -66,7 +66,7 @@ GrB_Info GrB_Vector_set_String
     GrB_Field field
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;      // TODO: set the name
+    return (GrB_NOT_IMPLEMENTED) ;      // FIXME: set the name of a GrB_Vector
 }
 
 //------------------------------------------------------------------------------

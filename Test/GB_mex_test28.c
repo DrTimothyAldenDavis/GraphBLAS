@@ -610,7 +610,7 @@ void mexFunction
     OK (GrB_BinaryOp_get_String_(binop, name, GrB_NAME)) ;
     CHECK (MATCH (name, "myfunc")) ;
     CHECK (binop->hash == UINT64_MAX) ;
-    OK (GrB_BinaryOp_set_String_(binop, MYFUNC_DEFN, GxB_DEFINITION)) ;
+    METHOD (GrB_BinaryOp_set_String (binop, MYFUNC_DEFN, GxB_DEFINITION)) ;
     OK (GrB_BinaryOp_get_String_(binop, defn, GxB_DEFINITION)) ;
     CHECK (MATCH (defn, MYFUNC_DEFN)) ;
     CHECK (binop->hash != UINT64_MAX) ;

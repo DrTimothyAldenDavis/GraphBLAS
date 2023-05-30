@@ -1697,6 +1697,7 @@ const char *GB_op_name_get (GB_Operator op)
         default :;
     }
 
+    // FIXME: return empty string for the name instead
     return ("[unnamed op]") ;
 }
 

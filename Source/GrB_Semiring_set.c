@@ -34,6 +34,7 @@ GrB_Info GrB_Semiring_set_String
     GrB_Field field
 )
 { 
+    // FIXME: allow a user-defined semiring to be named
     return ((field == GrB_NAME) ? GrB_ALREADY_SET : GrB_NOT_IMPLEMENTED) ;
 }
 

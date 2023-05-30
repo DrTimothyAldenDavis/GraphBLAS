@@ -222,10 +222,27 @@ void mexFunction
     OK (GrB_Global_get_Scalar_ (GrB_GLOBAL, s_fp64, GxB_HYPER_SWITCH)) ;
     OK (GrB_Scalar_extractElement (&dvalue, s_fp64)) ;
     printf ("hyper switch: %g\n", dvalue) ;
+    OK (GrB_Scalar_setElement (s_fp64, 0.75)) ;
+    OK (GrB_Global_set_Scalar_ (GrB_GLOBAL, s_fp64, GxB_HYPER_SWITCH)) ;
+    OK (GrB_Scalar_clear (s_fp64)) ;
+    OK (GrB_Global_get_Scalar_ (GrB_GLOBAL, s_fp64, GxB_HYPER_SWITCH)) ;
+    OK (GrB_Scalar_extractElement (&dvalue, s_fp64)) ;
+    CHECK (dvalue == 0.75) ;
+
+    OK (GrB_Scalar_setElement_FP64 (s_fp64, 0.75)) ;
+    OK (GrB_Global_set_Scalar_ (GrB_GLOBAL, s_fp64, GxB_HYPER_SWITCH)) ;
+    OK (GrB_Scalar_clear (s_fp64)) ;
 
     OK (GrB_Global_get_Scalar_ (GrB_GLOBAL, s_fp64, GxB_CHUNK)) ;
     OK (GrB_Scalar_extractElement (&dvalue, s_fp64)) ;
     printf ("chunk:        %g\n", dvalue) ;
+    OK (GrB_Scalar_setElement (s_fp64, 8901)) ;
+    OK (GrB_Global_set_Scalar_ (GrB_GLOBAL, s_fp64, GxB_CHUNK)) ;
+    OK (GrB_Scalar_clear (s_fp64)) ;
+    OK (GrB_Global_get_Scalar_ (GrB_GLOBAL, s_fp64, GxB_CHUNK)) ;
+    OK (GrB_Scalar_extractElement (&dvalue, s_fp64)) ;
+    CHECK (dvalue == 8901) ;
+
 
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Global_get_Scalar_ (GrB_GLOBAL, s_fp64, GrB_ELTYPE_CODE)) ;
@@ -389,6 +406,7 @@ void mexFunction
     ERR (GrB_Global_set_VOID_ (GrB_GLOBAL, (void *) NULL, 0, 0)) ;
 
     ERR (GrB_Global_set_VOID_ (GrB_GLOBAL, (void *) NULL, GxB_PRINTF, 0)) ;
+    ERR (GrB_Global_set_VOID_ (GrB_GLOBAL, (void *) NULL, GxB_FLUSH, 0)) ;
     OK (GrB_Global_set_VOID_ (GrB_GLOBAL, (void *) myprintf, GxB_PRINTF,
         sizeof (GB_printf_function_t))) ;
     OK (GrB_Global_set_VOID_ (GrB_GLOBAL, (void *) myflush, GxB_FLUSH,

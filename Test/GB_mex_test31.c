@@ -258,7 +258,7 @@ void mexFunction
 
     OK (GrB_BinaryOp_new (&binop, myfunc, GrB_FP32, GrB_FP32, GrB_FP32)) ;
     OK (GrB_BinaryOp_set_String_(binop, "myfunc", GrB_NAME)) ;
-    OK (GrB_BinaryOp_set_String_(binop, MYFUNC_DEFN, GxB_DEFINITION)) ;
+    METHOD (GrB_BinaryOp_set_String (binop, MYFUNC_DEFN, GxB_DEFINITION)) ;
 
     OK (GrB_Monoid_new_FP32 (&monoid, binop, (float) 0.0)) ;
     OK (GrB_Monoid_get_SIZE_(monoid, &size, GrB_NAME)) ;
@@ -317,6 +317,10 @@ void mexFunction
         GxB_MONOID_IDENTITY)) ;
     ERR (GrB_Monoid_get_Scalar_ (GrB_MAX_MONOID_INT32, s_fp64,
         GxB_MONOID_TERMINAL)) ;
+
+    expected = GrB_INVALID_VALUE ;
+    ERR (GrB_Monoid_get_Scalar_ (GrB_MAX_MONOID_INT32, s_fp64,
+        GrB_OUTP_FIELD)) ;
 
     op = NULL ;
     OK (GrB_Monoid_get_SIZE_ (monoid, &size, GxB_MONOID_OPERATOR)) ;

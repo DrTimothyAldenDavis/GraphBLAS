@@ -67,6 +67,7 @@ GrB_Info GB_op_name_and_defn
     if ((*op_name_len) == 0)
     { 
         // the user-defined op has no name, so give it a generic name
+        // FIXME: give unnamed op an empty string for its name
         strncpy (op_name, "[unnamed_user_op]", GxB_MAX_NAME_LEN-1) ;
         (*op_name_len) = (int32_t) strlen (op_name) ;
     }

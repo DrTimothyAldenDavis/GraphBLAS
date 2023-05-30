@@ -185,6 +185,7 @@ GrB_Info GrB_Descriptor_get_String
     DNAME (GrB_DESC_RSCT0  ) ;
     DNAME (GrB_DESC_RSCT0T1) ;
 
+    // FIXME: allow user-defined descriptors to be named
     (*value) = '\0' ;
     return (GrB_NOT_IMPLEMENTED) ;
 }

@@ -23,7 +23,7 @@ GrB_Info GB_monoid_get
     //--------------------------------------------------------------------------
 
     switch ((int) field)
-    { 
+    {
         case GrB_INPUT1TYPE_CODE : 
         case GrB_INPUT2TYPE_CODE : 
         case GrB_OUTPUTTYPE_CODE : 

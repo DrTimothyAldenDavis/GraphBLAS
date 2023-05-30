@@ -203,6 +203,8 @@ const char *GB_monoid_name_get (GrB_Monoid monoid)
         // user-defined monoids or operator not recognized
         //----------------------------------------------------------------------
 
+        // FIXME: all user-defined monoid names to be set
+
         default :;
     }
 
