@@ -77,6 +77,7 @@ GrB_Info GrB_Monoid_get_String
             }
             else
             { 
+                // get the name of a built-in monoid
                 strcpy (value, name) ;
             }
             #pragma omp flush

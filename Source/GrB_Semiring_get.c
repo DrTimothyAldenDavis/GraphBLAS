@@ -86,6 +86,7 @@ GrB_Info GrB_Semiring_get_String
             }
             else
             { 
+                // get the name of a built-in semiring
                 strcpy (value, name) ;
             }
             #pragma omp flush
