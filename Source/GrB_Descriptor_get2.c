@@ -93,9 +93,9 @@ GrB_Info GrB_Descriptor_get_Scalar
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GrB_Descriptor_get_Scalar (desc, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (desc) ;
+    GB_RETURN_IF_FAULTY (desc) ;
     GB_RETURN_IF_NULL_OR_FAULTY (value) ;
-    ASSERT_DESCRIPTOR_OK (desc, "desc for get", GB0) ;
+    ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for get", GB0) ;
 
     //--------------------------------------------------------------------------
     // get the field
@@ -115,6 +115,15 @@ GrB_Info GrB_Descriptor_get_Scalar
 // GrB_Descriptor_get_String
 //------------------------------------------------------------------------------
 
+#define DNAME(d)                    \
+{                                   \
+    if (desc == d)                  \
+    {                               \
+        strcpy (value, #d) ;        \
+        return (GrB_SUCCESS) ;      \
+    }                               \
+}
+
 GrB_Info GrB_Descriptor_get_String
 (
     GrB_Descriptor desc,
@@ -122,6 +131,61 @@ GrB_Info GrB_Descriptor_get_String
     GrB_Field field
 )
 { 
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_WHERE1 ("GrB_Descriptor_get_String (desc, value, field)") ;
+    GB_RETURN_IF_FAULTY (desc) ;
+    GB_RETURN_IF_NULL (value) ;
+    ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for get", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // get the name
+    //--------------------------------------------------------------------------
+
+    DNAME (GrB_NULL        ) ;
+    DNAME (GrB_DESC_T1     ) ;
+    DNAME (GrB_DESC_T0     ) ;
+    DNAME (GrB_DESC_T0T1   ) ;
+
+    DNAME (GrB_DESC_C      ) ;
+    DNAME (GrB_DESC_CT1    ) ;
+    DNAME (GrB_DESC_CT0    ) ;
+    DNAME (GrB_DESC_CT0T1  ) ;
+
+    DNAME (GrB_DESC_S      ) ;
+    DNAME (GrB_DESC_ST1    ) ;
+    DNAME (GrB_DESC_ST0    ) ;
+    DNAME (GrB_DESC_ST0T1  ) ;
+
+    DNAME (GrB_DESC_SC     ) ;
+    DNAME (GrB_DESC_SCT1   ) ;
+    DNAME (GrB_DESC_SCT0   ) ;
+    DNAME (GrB_DESC_SCT0T1 ) ;
+
+    DNAME (GrB_DESC_R      ) ;
+    DNAME (GrB_DESC_RT1    ) ;
+    DNAME (GrB_DESC_RT0    ) ;
+    DNAME (GrB_DESC_RT0T1  ) ;
+
+    DNAME (GrB_DESC_RC     ) ;
+    DNAME (GrB_DESC_RCT1   ) ;
+    DNAME (GrB_DESC_RCT0   ) ;
+    DNAME (GrB_DESC_RCT0T1 ) ;
+
+    DNAME (GrB_DESC_RS     ) ;
+    DNAME (GrB_DESC_RST1   ) ;
+    DNAME (GrB_DESC_RST0   ) ;
+    DNAME (GrB_DESC_RST0T1 ) ;
+
+    DNAME (GrB_DESC_RSC    ) ;
+    DNAME (GrB_DESC_RSCT1  ) ;
+    DNAME (GrB_DESC_RSCT0  ) ;
+    DNAME (GrB_DESC_RSCT0T1) ;
+
+    (*value) = '\0' ;
     return (GrB_NOT_IMPLEMENTED) ;
 }
 
@@ -142,9 +206,9 @@ GrB_Info GrB_Descriptor_get_ENUM
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GrB_Descriptor_get_ENUM (desc, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (desc) ;
+    GB_RETURN_IF_FAULTY (desc) ;
     GB_RETURN_IF_NULL (value) ;
-    ASSERT_DESCRIPTOR_OK (desc, "desc for get", GB0) ;
+    ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for get", GB0) ;
 
     //--------------------------------------------------------------------------
     // get the field
@@ -163,8 +227,13 @@ GrB_Info GrB_Descriptor_get_SIZE
     size_t * value,
     GrB_Field field
 )
-{ 
-    return (GrB_NOT_IMPLEMENTED) ;
+{
+    if (field == GrB_NAME)
+    { 
+        (*value) = GxB_MAX_NAME_LEN ;
+        return (GrB_SUCCESS) ;
+    }
+    return (GrB_INVALID_VALUE) ;
 }
 
 //------------------------------------------------------------------------------

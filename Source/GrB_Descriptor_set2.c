@@ -23,16 +23,6 @@ static GrB_Info GB_desc_set
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    if (desc != NULL && desc->header_size == 0)
-    { 
-        // built-in descriptors may not be modified
-        return (GrB_INVALID_VALUE) ;
-    }
-
-    //--------------------------------------------------------------------------
     // set the parameter
     //--------------------------------------------------------------------------
 
@@ -41,7 +31,7 @@ static GrB_Info GB_desc_set
     switch (field)
     {
 
-        case GrB_OUTP : 
+        case GrB_OUTP :             // same as GrB_OUTP_FIELD
 
             if (! (value == GrB_DEFAULT || value == GrB_REPLACE))
             { 
@@ -53,7 +43,7 @@ static GrB_Info GB_desc_set
             desc->out = (GrB_Desc_Value) value ;
             break ;
 
-        case GrB_MASK : 
+        case GrB_MASK :             // same as GrB_MASK_FIELD
 
             if (! (value == GrB_DEFAULT ||
                    value == GrB_COMP ||
@@ -77,7 +67,7 @@ static GrB_Info GB_desc_set
             desc->mask = (GrB_Desc_Value) mask ;
             break ;
 
-        case GrB_INP0 : 
+        case GrB_INP0 :             // same as GrB_INP0_FIELD
 
             if (! (value == GrB_DEFAULT || value == GrB_TRAN))
             { 
@@ -89,7 +79,7 @@ static GrB_Info GB_desc_set
             desc->in0 = (GrB_Desc_Value) value ;
             break ;
 
-        case GrB_INP1 : 
+        case GrB_INP1 :             // same as GrB_INP1_FIELD
 
             if (! (value == GrB_DEFAULT || value == GrB_TRAN))
             { 
@@ -162,6 +152,12 @@ GrB_Info GrB_Descriptor_set_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
+    if (desc == NULL || desc->header_size == 0)
+    { 
+        // built-in descriptors may not be modified
+        return (GrB_INVALID_VALUE) ;
+    }
+
     GB_WHERE (desc, "GrB_Descriptor_set_Scalar (desc, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (desc) ;
     GB_RETURN_IF_NULL_OR_FAULTY (value) ;
@@ -209,6 +205,12 @@ GrB_Info GrB_Descriptor_set_ENUM
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
+
+    if (desc == NULL || desc->header_size == 0)
+    { 
+        // built-in descriptors may not be modified
+        return (GrB_INVALID_VALUE) ;
+    }
 
     GB_WHERE (desc, "GrB_Descriptor_set_ENUM (desc, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (desc) ;
