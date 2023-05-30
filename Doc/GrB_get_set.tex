@@ -677,12 +677,8 @@ GrB_Info GrB_get (GrB_IndexUnaryOp op, GrB_Scalar value, GrB_Field f) ;
 GrB_Info GrB_get (GrB_IndexUnaryOp op, char *     value, GrB_Field f) ;
 GrB_Info GrB_get (GrB_IndexUnaryOp op, int *      value, GrB_Field f) ;
 GrB_Info GrB_get (GrB_IndexUnaryOp op, size_t *   value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_IndexUnaryOp op, void *     value, GrB_Field f) ;
 
-GrB_Info GrB_set (GrB_IndexUnaryOp op, GrB_Scalar value, GrB_Field f) ;
 GrB_Info GrB_set (GrB_IndexUnaryOp op, char *     value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_IndexUnaryOp op, int        value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_IndexUnaryOp op, void *     value, GrB_Field f, size_t s) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -738,12 +734,8 @@ GrB_Info GrB_get (GrB_BinaryOp op, GrB_Scalar value, GrB_Field f) ;
 GrB_Info GrB_get (GrB_BinaryOp op, char *     value, GrB_Field f) ;
 GrB_Info GrB_get (GrB_BinaryOp op, int *      value, GrB_Field f) ;
 GrB_Info GrB_get (GrB_BinaryOp op, size_t *   value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_BinaryOp op, void *     value, GrB_Field f) ;
 
-GrB_Info GrB_set (GrB_BinaryOp op, GrB_Scalar value, GrB_Field f) ;
 GrB_Info GrB_set (GrB_BinaryOp op, char *     value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_BinaryOp op, int        value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_BinaryOp op, void *     value, GrB_Field f, size_t s) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -1299,12 +1291,10 @@ GrB_Info GrB_get (GxB_Context, GrB_Scalar value, GrB_Field f) ;
 GrB_Info GrB_get (GxB_Context, char *     value, GrB_Field f) ;
 GrB_Info GrB_get (GxB_Context, int *      value, GrB_Field f) ;
 GrB_Info GrB_get (GxB_Context, size_t *   value, GrB_Field f) ;
-GrB_Info GrB_get (GxB_Context, void *     value, GrB_Field f) ;
 
 GrB_Info GrB_set (GxB_Context, GrB_Scalar value, GrB_Field f) ;
 GrB_Info GrB_set (GxB_Context, char *     value, GrB_Field f) ;
 GrB_Info GrB_set (GxB_Context, int        value, GrB_Field f) ;
-GrB_Info GrB_set (GxB_Context, void *     value, GrB_Field f, size_t s) ;
 \end{verbatim}
 }\end{mdframed}
 
