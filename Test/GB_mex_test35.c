@@ -140,7 +140,7 @@ void mexFunction
     CHECK (i == GrB_ROWMAJOR) ;
     OK (GrB_Matrix_get_ENUM_(A, &i, GxB_FORMAT)) ;
     CHECK (i == GxB_BY_ROW) ;
-    GxB_print (A, 3) ;
+    // GxB_print (A, 3) ;
 
     // free the blob and recreate it
     mxFree (blob) ; blob = NULL ; blob_size = 0 ;
@@ -150,7 +150,7 @@ void mexFunction
     CHECK (i == GrB_ROWMAJOR) ;
     OK (GxB_Blob_get_ENUM_(blob, &i, GxB_FORMAT, blob_size)) ;
     CHECK (i == GxB_BY_ROW) ;
-    GxB_print (A, 3) ;
+    // GxB_print (A, 3) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Matrix_get_String_(A, defn, 999)) ;
@@ -185,7 +185,7 @@ void mexFunction
     OK (GxB_Blob_get_Scalar_(blob, s_int32, GxB_SPARSITY_STATUS,
         blob_size)) ;
     OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
-    GxB_print (A, 3) ;
+    // GxB_print (A, 3) ;
     CHECK (i == GxB_BITMAP) ;
 
     expected = GrB_INVALID_VALUE ;
@@ -195,7 +195,7 @@ void mexFunction
     OK (GrB_Type_new (&type, sizeof (mytype))) ;
     OK (GrB_Type_set_String_ (type, "mytype", GrB_NAME)) ;
     OK (GrB_Type_set_String_ (type, MYTYPE_DEFN, GxB_DEFINITION)) ;
-    OK (GxB_print (type, 3)) ;
+    // OK (GxB_print (type, 3)) ;
     GrB_free (&A) ;
 
     int one = 1 ;
