@@ -159,6 +159,59 @@ void mexFunction
     OK (GrB_Matrix_get_SIZE_(A, &size, GrB_NAME)) ;
     CHECK (size == GxB_MAX_NAME_LEN) ;
 
+    expected = GrB_INVALID_OBJECT ;
+    uint8_t *b = (uint8_t *) blob ;
+    ERR (GxB_Blob_get_ENUM_(blob, &i, GxB_FORMAT, 20)) ;
+    b [0]++ ;
+    ERR (GxB_Blob_get_ENUM_(blob, &i, GxB_FORMAT, blob_size)) ;
+    b [0]-- ;
+    OK (GxB_Blob_get_ENUM_(blob, &i, GxB_FORMAT, blob_size)) ;
+    CHECK (i == GxB_BY_ROW) ;
+
+    OK (GxB_Blob_get_Scalar_(blob, s_int32, GrB_STORAGE_ORIENTATION_HINT,
+        blob_size)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == GrB_ROWMAJOR) ;
+
+    OK (GxB_Blob_get_Scalar_(blob, s_int32, GxB_FORMAT, blob_size)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == GxB_BY_ROW) ;
+
+    OK (GxB_Blob_get_Scalar_(blob, s_int32, GxB_SPARSITY_CONTROL,
+        blob_size)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    CHECK (i == GxB_BITMAP) ;
+
+    OK (GxB_Blob_get_Scalar_(blob, s_int32, GxB_SPARSITY_STATUS,
+        blob_size)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+    GxB_print (A, 3) ;
+    CHECK (i == GxB_BITMAP) ;
+
+    expected = GrB_INVALID_VALUE ;
+    ERR (GxB_Blob_get_Scalar_(blob, s_int32, GrB_NAME, blob_size)) ;
+    ERR (GxB_Blob_get_Scalar_(blob, name, GrB_SIZE, blob_size)) ;
+
+    OK (GrB_Type_new (&type, sizeof (mytype))) ;
+    OK (GrB_Type_set_String_ (type, "mytype", GrB_NAME)) ;
+    OK (GrB_Type_set_String_ (type, MYTYPE_DEFN, GxB_DEFINITION)) ;
+    OK (GxB_print (type, 3)) ;
+    GrB_free (&A) ;
+
+    int one = 1 ;
+    OK (GrB_Matrix_new (&A, type, 5, 5)) ;
+    OK (GrB_Matrix_setElement (A, (void *) &one, 0, 0)) ;
+    OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
+    OK (GxB_print (A, 3)) ;
+    OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
+
+    // free the blob and recreate it
+    mxFree (blob) ; blob = NULL ; blob_size = 0 ;
+    OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
+
+    OK (GxB_Blob_get_String_(blob, name, GrB_ELTYPE_STRING, blob_size)) ;
+    CHECK (MATCH (name, "mytype")) ;
+
     //--------------------------------------------------------------------------
     // finalize GraphBLAS
     //--------------------------------------------------------------------------

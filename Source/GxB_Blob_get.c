@@ -11,10 +11,10 @@
 #include "GB_serialize.h"
 
 //------------------------------------------------------------------------------
-// GB_blob_get: get all properties of the blob
+// GB_blob_header_get: get all properties of the blob
 //------------------------------------------------------------------------------
 
-static GrB_Info GB_blob_get
+static GrB_Info GB_blob_header_get
 (
     // output:
     char *type_name,            // name of the type (char array of size at
@@ -104,19 +104,9 @@ static GrB_Info GB_blob_get
     else if (typecode == GB_UDT_code)
     { 
         // blob has a user-defined type
-        if (blob_size < GB_BLOB_HEADER_SIZE + GxB_MAX_NAME_LEN)
-        { 
-            // blob is invalid
-            return (GrB_INVALID_OBJECT) ;
-        }
         // get the name of the user type from the blob
         memcpy (type_name, ((GB_void *) blob) + GB_BLOB_HEADER_SIZE,
             GxB_MAX_NAME_LEN) ;
-    }
-    else
-    { 
-        // blob is invalid
-        return (GrB_INVALID_OBJECT) ;
     }
 
     // this should already be in the blob, but set it to null just in case
@@ -159,7 +149,7 @@ GrB_Info GxB_Blob_get_Scalar
     int sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
-    GrB_Info info = GB_blob_get (type_name, &type_code, &sparsity_status,
+    GrB_Info info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
         &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage, blob, blob_size) ;
 
     //--------------------------------------------------------------------------
@@ -260,7 +250,7 @@ GrB_Info GxB_Blob_get_String
     int sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
-    GrB_Info info = GB_blob_get (type_name, &type_code, &sparsity_status,
+    GrB_Info info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
         &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage, blob, blob_size) ;
 
     //--------------------------------------------------------------------------
@@ -317,7 +307,7 @@ GrB_Info GxB_Blob_get_ENUM
     int sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
-    GrB_Info info = GB_blob_get (type_name, &type_code, &sparsity_status,
+    GrB_Info info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
         &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage, blob, blob_size) ;
 
     //--------------------------------------------------------------------------
