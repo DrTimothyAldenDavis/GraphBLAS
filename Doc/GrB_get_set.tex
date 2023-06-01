@@ -803,13 +803,13 @@ later on after the operator is created.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_Monoid, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Monoid, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Monoid, int *      value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Monoid, size_t *   value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Monoid, void *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Monoid monoid, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Monoid monoid, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Monoid monoid, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Monoid monoid, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Monoid monoid, void *     value, GrB_Field f) ;
 
-GrB_Info GrB_set (GrB_Monoid, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Monoid monoid, char *     value, GrB_Field f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -897,13 +897,13 @@ operator of the corresponding built-in monoid:
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_Semiring, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Semiring, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Semiring, int *      value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Semiring, size_t *   value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Semiring, void *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Semiring semiring, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Semiring semiring, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Semiring semiring, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Semiring semiring, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Semiring semiring, void *     value, GrB_Field f) ;
 
-GrB_Info GrB_set (GrB_Semiring, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Semiring semiring, GrB_Scalar value, GrB_Field f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -992,14 +992,14 @@ The binary op and monoid returned are aliases, not new objects.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_Matrix, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Matrix, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Matrix, int *      value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Matrix, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Matrix A, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Matrix A, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Matrix A, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Matrix A, size_t *   value, GrB_Field f) ;
 
-GrB_Info GrB_set (GrB_Matrix, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Matrix, char *     value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Matrix, int        value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Matrix A, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Matrix A, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Matrix A, int        value, GrB_Field f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -1291,14 +1291,14 @@ except full:
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_Vector, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Vector, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Vector, int *      value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Vector, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Vector v, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Vector v, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Vector v, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Vector v, size_t *   value, GrB_Field f) ;
 
-GrB_Info GrB_set (GrB_Vector, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Vector, char *     value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Vector, int        value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Vector v, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Vector v, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Vector v, int        value, GrB_Field f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -1335,14 +1335,14 @@ hypersparse.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_Scalar, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Scalar, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Scalar, int *      value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Scalar, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Scalar s, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Scalar s, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Scalar s, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Scalar s, size_t *   value, GrB_Field f) ;
 
-GrB_Info GrB_set (GrB_Scalar, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Scalar, char *     value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Scalar, int        value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Scalar s, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Scalar s, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Scalar s, int        value, GrB_Field f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -1376,14 +1376,14 @@ a 1-by-1 matrix, and is always in column major form.  It is never hypersparse.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_Descriptor, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Descriptor, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Descriptor, int *      value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Descriptor, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Descriptor desc, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Descriptor desc, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Descriptor desc, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Descriptor desc, size_t *   value, GrB_Field f) ;
 
-GrB_Info GrB_set (GrB_Descriptor, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Descriptor, char *     value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Descriptor, int        value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Descriptor desc, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Descriptor desc, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Descriptor desc, int        value, GrB_Field f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -1515,14 +1515,14 @@ field      & &  \\
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GxB_Context, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GxB_Context, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GxB_Context, int *      value, GrB_Field f) ;
-GrB_Info GrB_get (GxB_Context, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GxB_Context Context, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_get (GxB_Context Context, char *     value, GrB_Field f) ;
+GrB_Info GrB_get (GxB_Context Context, int *      value, GrB_Field f) ;
+GrB_Info GrB_get (GxB_Context Context, size_t *   value, GrB_Field f) ;
 
-GrB_Info GrB_set (GxB_Context, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_set (GxB_Context, char *     value, GrB_Field f) ;
-GrB_Info GrB_set (GxB_Context, int        value, GrB_Field f) ;
+GrB_Info GrB_set (GxB_Context Context, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_set (GxB_Context Context, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GxB_Context Context, int        value, GrB_Field f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -1556,10 +1556,10 @@ GrB_Info GrB_set (GxB_Context, int        value, GrB_Field f) ;
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (void *blob, GrB_Scalar value, GrB_Field f, size_t blobsize) ;
-GrB_Info GrB_get (void *blob, char *     value, GrB_Field f, size_t blobsize) ;
-GrB_Info GrB_get (void *blob, int *      value, GrB_Field f, size_t blobsize) ;
-GrB_Info GrB_get (void *blob, size_t *   value, GrB_Field f, size_t blobsize) ;
+GrB_Info GrB_get (const void *blob, GrB_Scalar value, GrB_Field f, size_t blobsize) ;
+GrB_Info GrB_get (const void *blob, char *     value, GrB_Field f, size_t blobsize) ;
+GrB_Info GrB_get (const void *blob, int *      value, GrB_Field f, size_t blobsize) ;
+GrB_Info GrB_get (const void *blob, size_t *   value, GrB_Field f, size_t blobsize) ;
 \end{verbatim}
 }\end{mdframed}
 
