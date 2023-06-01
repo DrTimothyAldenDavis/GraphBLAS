@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Blob_get_*: query the contents of a serialized blob
+// GxB_Serialized_get_*: query the contents of a serialized blob
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -121,10 +121,10 @@ static GrB_Info GB_blob_header_get
 }
 
 //------------------------------------------------------------------------------
-// GxB_Blob_get_Scalar
+// GxB_Serialized_get_Scalar
 //------------------------------------------------------------------------------
 
-GrB_Info GxB_Blob_get_Scalar
+GrB_Info GxB_Serialized_get_Scalar
 (
     const void * blob,
     GrB_Scalar value,
@@ -137,7 +137,7 @@ GrB_Info GxB_Blob_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Blob_get_Scalar (blob, value, field)") ;
+    GB_WHERE1 ("GxB_Serialized_get_Scalar (blob, value, field)") ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL_OR_FAULTY (value) ;
 
@@ -222,10 +222,10 @@ GrB_Info GxB_Blob_get_Scalar
 }
 
 //------------------------------------------------------------------------------
-// GxB_Blob_get_String
+// GxB_Serialized_get_String
 //------------------------------------------------------------------------------
 
-GrB_Info GxB_Blob_get_String
+GrB_Info GxB_Serialized_get_String
 (
     const void * blob,
     char * value,
@@ -238,7 +238,7 @@ GrB_Info GxB_Blob_get_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Blob_get_String (blob, value, field)") ;
+    GB_WHERE1 ("GxB_Serialized_get_String (blob, value, field)") ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (value) ;
 
@@ -279,10 +279,10 @@ GrB_Info GxB_Blob_get_String
 }
 
 //------------------------------------------------------------------------------
-// GxB_Blob_get_ENUM
+// GxB_Serialized_get_ENUM
 //------------------------------------------------------------------------------
 
-GrB_Info GxB_Blob_get_ENUM
+GrB_Info GxB_Serialized_get_ENUM
 (
     const void * blob,
     int * value,
@@ -295,7 +295,7 @@ GrB_Info GxB_Blob_get_ENUM
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Blob_get_ENUM (blob, value, field)") ;
+    GB_WHERE1 ("GxB_Serialized_get_ENUM (blob, value, field)") ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (value) ;
 
@@ -353,10 +353,10 @@ GrB_Info GxB_Blob_get_ENUM
 }
 
 //------------------------------------------------------------------------------
-// GxB_Blob_get_SIZE
+// GxB_Serialized_get_SIZE
 //------------------------------------------------------------------------------
 
-GrB_Info GxB_Blob_get_SIZE
+GrB_Info GxB_Serialized_get_SIZE
 (
     const void * blob,
     size_t * value,
@@ -369,7 +369,7 @@ GrB_Info GxB_Blob_get_SIZE
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Blob_get_SIZE (blob, value, field)") ;
+    GB_WHERE1 ("GxB_Serialized_get_SIZE (blob, value, field)") ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (value) ;
 
@@ -381,10 +381,10 @@ GrB_Info GxB_Blob_get_SIZE
 }
 
 //------------------------------------------------------------------------------
-// GxB_Blob_get_VOID
+// GxB_Serialized_get_VOID
 //------------------------------------------------------------------------------
 
-GrB_Info GxB_Blob_get_VOID
+GrB_Info GxB_Serialized_get_VOID
 (
     const void * blob,
     void * value,

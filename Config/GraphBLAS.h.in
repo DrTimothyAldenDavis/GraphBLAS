@@ -4100,11 +4100,11 @@ GrB_Info GrB_Matrix_get_ENUM   (GrB_Matrix, int *     , GrB_Field) ;
 GrB_Info GrB_Matrix_get_SIZE   (GrB_Matrix, size_t *  , GrB_Field) ;
 GrB_Info GrB_Matrix_get_VOID   (GrB_Matrix, void *    , GrB_Field) ;
 
-GrB_Info GxB_Blob_get_Scalar (const void *, GrB_Scalar, GrB_Field, size_t) ;
-GrB_Info GxB_Blob_get_String (const void *, char *    , GrB_Field, size_t) ;
-GrB_Info GxB_Blob_get_ENUM   (const void *, int *     , GrB_Field, size_t) ;
-GrB_Info GxB_Blob_get_SIZE   (const void *, size_t *  , GrB_Field, size_t) ;
-GrB_Info GxB_Blob_get_VOID   (const void *, void *    , GrB_Field, size_t) ;
+GrB_Info GxB_Serialized_get_Scalar (const void *, GrB_Scalar, GrB_Field, size_t) ;
+GrB_Info GxB_Serialized_get_String (const void *, char *    , GrB_Field, size_t) ;
+GrB_Info GxB_Serialized_get_ENUM   (const void *, int *     , GrB_Field, size_t) ;
+GrB_Info GxB_Serialized_get_SIZE   (const void *, size_t *  , GrB_Field, size_t) ;
+GrB_Info GxB_Serialized_get_VOID   (const void *, void *    , GrB_Field, size_t) ;
 
 GrB_Info GrB_UnaryOp_get_Scalar (GrB_UnaryOp, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_UnaryOp_get_String (GrB_UnaryOp, char *    , GrB_Field) ;
@@ -4290,21 +4290,21 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                 _Generic                                                    \
                 (                                                           \
                     (value),                                                \
-                        GrB_Scalar  : GxB_Blob_get_Scalar ,                 \
-                        char *      : GxB_Blob_get_String ,                 \
-                        int *       : GxB_Blob_get_ENUM   ,                 \
-                        size_t *    : GxB_Blob_get_SIZE   ,                 \
-                        void *      : GxB_Blob_get_VOID                     \
+                        GrB_Scalar  : GxB_Serialized_get_Scalar ,           \
+                        char *      : GxB_Serialized_get_String ,           \
+                        int *       : GxB_Serialized_get_ENUM   ,           \
+                        size_t *    : GxB_Serialized_get_SIZE   ,           \
+                        void *      : GxB_Serialized_get_VOID               \
                 ) ,                                                         \
             void *:                                                         \
                 _Generic                                                    \
                 (                                                           \
                     (value),                                                \
-                        GrB_Scalar  : GxB_Blob_get_Scalar ,                 \
-                        char *      : GxB_Blob_get_String ,                 \
-                        int *       : GxB_Blob_get_ENUM   ,                 \
-                        size_t *    : GxB_Blob_get_SIZE   ,                 \
-                        void *      : GxB_Blob_get_VOID                     \
+                        GrB_Scalar  : GxB_Serialized_get_Scalar ,           \
+                        char *      : GxB_Serialized_get_String ,           \
+                        int *       : GxB_Serialized_get_ENUM   ,           \
+                        size_t *    : GxB_Serialized_get_SIZE   ,           \
+                        void *      : GxB_Serialized_get_VOID               \
                 )                                                           \
     ) (object, value, __VA_ARGS__)
 #endif

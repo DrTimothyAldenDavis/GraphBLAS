@@ -53,7 +53,7 @@ void mexFunction
     OK (GrB_Scalar_new (&s_int32, GrB_INT32)) ;
 
     //--------------------------------------------------------------------------
-    // GxB_Blob_get
+    // GxB_Serialized_get
     //--------------------------------------------------------------------------
 
     OK (GrB_Matrix_new (&A, GrB_FP32, 5, 5)) ;
@@ -62,33 +62,34 @@ void mexFunction
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
 
     expected = GrB_NOT_IMPLEMENTED ;
-    ERR (GxB_Blob_get_VOID_(blob, nothing, 0, blob_size)) ;
+    ERR (GxB_Serialized_get_VOID_(blob, nothing, 0, blob_size)) ;
 
-    OK (GxB_Blob_get_SIZE_(blob, &size, GrB_ELTYPE_STRING, blob_size)) ;
+    OK (GxB_Serialized_get_SIZE_(blob, &size, GrB_ELTYPE_STRING, blob_size)) ;
     CHECK (size == GxB_MAX_NAME_LEN) ;
-    OK (GxB_Blob_get_String_(blob, name, GrB_ELTYPE_STRING, blob_size)) ;
+    OK (GxB_Serialized_get_String_(blob, name, GrB_ELTYPE_STRING, blob_size)) ;
     CHECK (MATCH (name, "GrB_FP32")) ;
 
-    OK (GxB_Blob_get_String_(blob, name, GrB_NAME, blob_size)) ;
+    OK (GxB_Serialized_get_String_(blob, name, GrB_NAME, blob_size)) ;
     CHECK (MATCH (name, "")) ;
 
-    OK (GxB_Blob_get_ENUM_(blob, &code, GrB_ELTYPE_CODE, blob_size)) ;
+    OK (GxB_Serialized_get_ENUM_(blob, &code, GrB_ELTYPE_CODE, blob_size)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
     i = -1 ;
-    OK (GxB_Blob_get_Scalar_(blob, s_int32, GrB_ELTYPE_CODE, blob_size)) ;
+    OK (GxB_Serialized_get_Scalar_(blob, s_int32, GrB_ELTYPE_CODE, blob_size)) ;
     OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
     CHECK (i == GrB_FP32_CODE) ;
 
-    OK (GxB_Blob_get_ENUM_(blob, &i, GrB_STORAGE_ORIENTATION_HINT, blob_size)) ;
+    OK (GxB_Serialized_get_ENUM_(blob, &i, GrB_STORAGE_ORIENTATION_HINT,
+        blob_size)) ;
     printf ("blob storage: %d\n", i) ;
     CHECK (i == GrB_COLMAJOR) ;
 
-    OK (GxB_Blob_get_ENUM_(blob, &i, GxB_FORMAT, blob_size)) ;
+    OK (GxB_Serialized_get_ENUM_(blob, &i, GxB_FORMAT, blob_size)) ;
     printf ("blob storage: %d\n", i) ;
     CHECK (i == GxB_BY_COL) ;
 
-    OK (GxB_Blob_get_ENUM_(blob, &i, GxB_SPARSITY_CONTROL, blob_size)) ;
+    OK (GxB_Serialized_get_ENUM_(blob, &i, GxB_SPARSITY_CONTROL, blob_size)) ;
     printf ("blob sparsity control: %d\n", i) ;
     CHECK (i == GxB_AUTO_SPARSITY) ;
 
@@ -99,16 +100,17 @@ void mexFunction
     mxFree (blob) ; blob = NULL ; blob_size = 0 ;
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
 
-    OK (GxB_Blob_get_ENUM_(blob, &i, GxB_SPARSITY_STATUS, blob_size)) ;
+    OK (GxB_Serialized_get_ENUM_(blob, &i, GxB_SPARSITY_STATUS, blob_size)) ;
     printf ("blob sparsity status: %d\n", i) ;
     CHECK (i == GxB_FULL) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GxB_Blob_get_ENUM_(blob, &i, 0, blob_size)) ;
-    ERR (GxB_Blob_get_SIZE_(blob, &size, 0, blob_size)) ;
+    ERR (GxB_Serialized_get_ENUM_(blob, &i, 0, blob_size)) ;
+    ERR (GxB_Serialized_get_SIZE_(blob, &size, 0, blob_size)) ;
 
     fvalue = -1 ;
-    OK (GxB_Blob_get_Scalar_(blob, s_fp32, GxB_BITMAP_SWITCH, blob_size)) ;
+    OK (GxB_Serialized_get_Scalar_(blob, s_fp32, GxB_BITMAP_SWITCH,
+        blob_size)) ;
     OK (GrB_Scalar_extractElement_FP32_(&fvalue, s_fp32)) ;
     printf ("blob bitmap switch: %g\n", fvalue) ;
     CHECK (abs (fvalue - 0.04) < 1e-6) ;
@@ -119,7 +121,7 @@ void mexFunction
     mxFree (blob) ; blob = NULL ; blob_size = 0 ;
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
 
-    OK (GxB_Blob_get_ENUM_(blob, &i, GxB_SPARSITY_STATUS, blob_size)) ;
+    OK (GxB_Serialized_get_ENUM_(blob, &i, GxB_SPARSITY_STATUS, blob_size)) ;
     printf ("blob sparsity status: %d\n", i) ;
     CHECK (i == GxB_BITMAP) ;
 
@@ -130,7 +132,7 @@ void mexFunction
     mxFree (blob) ; blob = NULL ; blob_size = 0 ;
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
 
-    OK (GxB_Blob_get_Scalar_(blob, s_fp64, GxB_HYPER_SWITCH, blob_size)) ;
+    OK (GxB_Serialized_get_Scalar_(blob, s_fp64, GxB_HYPER_SWITCH, blob_size)) ;
     OK (GrB_Scalar_extractElement_FP64_(&dvalue, s_fp64)) ;
     printf ("blob hyper switch: %g\n", dvalue) ;
     CHECK (abs (dvalue - 0.25) < 1e-6) ;
@@ -146,9 +148,10 @@ void mexFunction
     mxFree (blob) ; blob = NULL ; blob_size = 0 ;
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
 
-    OK (GxB_Blob_get_ENUM_(blob, &i, GrB_STORAGE_ORIENTATION_HINT, blob_size)) ;
+    OK (GxB_Serialized_get_ENUM_(blob, &i, GrB_STORAGE_ORIENTATION_HINT,
+        blob_size)) ;
     CHECK (i == GrB_ROWMAJOR) ;
-    OK (GxB_Blob_get_ENUM_(blob, &i, GxB_FORMAT, blob_size)) ;
+    OK (GxB_Serialized_get_ENUM_(blob, &i, GxB_FORMAT, blob_size)) ;
     CHECK (i == GxB_BY_ROW) ;
     // GxB_print (A, 3) ;
 
@@ -161,36 +164,36 @@ void mexFunction
 
     expected = GrB_INVALID_OBJECT ;
     uint8_t *b = (uint8_t *) blob ;
-    ERR (GxB_Blob_get_ENUM_(blob, &i, GxB_FORMAT, 20)) ;
+    ERR (GxB_Serialized_get_ENUM_(blob, &i, GxB_FORMAT, 20)) ;
     b [0]++ ;
-    ERR (GxB_Blob_get_ENUM_(blob, &i, GxB_FORMAT, blob_size)) ;
+    ERR (GxB_Serialized_get_ENUM_(blob, &i, GxB_FORMAT, blob_size)) ;
     b [0]-- ;
-    OK (GxB_Blob_get_ENUM_(blob, &i, GxB_FORMAT, blob_size)) ;
+    OK (GxB_Serialized_get_ENUM_(blob, &i, GxB_FORMAT, blob_size)) ;
     CHECK (i == GxB_BY_ROW) ;
 
-    OK (GxB_Blob_get_Scalar_(blob, s_int32, GrB_STORAGE_ORIENTATION_HINT,
+    OK (GxB_Serialized_get_Scalar_(blob, s_int32, GrB_STORAGE_ORIENTATION_HINT,
         blob_size)) ;
     OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
     CHECK (i == GrB_ROWMAJOR) ;
 
-    OK (GxB_Blob_get_Scalar_(blob, s_int32, GxB_FORMAT, blob_size)) ;
+    OK (GxB_Serialized_get_Scalar_(blob, s_int32, GxB_FORMAT, blob_size)) ;
     OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
     CHECK (i == GxB_BY_ROW) ;
 
-    OK (GxB_Blob_get_Scalar_(blob, s_int32, GxB_SPARSITY_CONTROL,
+    OK (GxB_Serialized_get_Scalar_(blob, s_int32, GxB_SPARSITY_CONTROL,
         blob_size)) ;
     OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
     CHECK (i == GxB_BITMAP) ;
 
-    OK (GxB_Blob_get_Scalar_(blob, s_int32, GxB_SPARSITY_STATUS,
+    OK (GxB_Serialized_get_Scalar_(blob, s_int32, GxB_SPARSITY_STATUS,
         blob_size)) ;
     OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
     // GxB_print (A, 3) ;
     CHECK (i == GxB_BITMAP) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GxB_Blob_get_Scalar_(blob, s_int32, GrB_NAME, blob_size)) ;
-    ERR (GxB_Blob_get_Scalar_(blob, name, GrB_SIZE, blob_size)) ;
+    ERR (GxB_Serialized_get_Scalar_(blob, s_int32, GrB_NAME, blob_size)) ;
+    ERR (GxB_Serialized_get_Scalar_(blob, name, GrB_SIZE, blob_size)) ;
 
     OK (GrB_Type_new (&type, sizeof (mytype))) ;
     OK (GrB_Type_set_String_ (type, "mytype", GrB_NAME)) ;
@@ -209,7 +212,7 @@ void mexFunction
     mxFree (blob) ; blob = NULL ; blob_size = 0 ;
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
 
-    OK (GxB_Blob_get_String_(blob, name, GrB_ELTYPE_STRING, blob_size)) ;
+    OK (GxB_Serialized_get_String_(blob, name, GrB_ELTYPE_STRING, blob_size)) ;
     CHECK (MATCH (name, "mytype")) ;
 
     //--------------------------------------------------------------------------
