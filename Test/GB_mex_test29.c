@@ -429,6 +429,25 @@ void mexFunction
         printf ("compiler version [%d] = %d\n", k, cv [k]) ;
     }
 
+    void *f = NULL ;
+    OK (GrB_Global_get_VOID_(GrB_GLOBAL, (void *) &f, GxB_MALLOC_FUNCTION)) ;
+    CHECK (f == mxMalloc) ;
+    OK (GrB_Global_get_VOID_(GrB_GLOBAL, (void *) &f, GxB_REALLOC_FUNCTION)) ;
+    CHECK (f == mxRealloc) ;
+    OK (GrB_Global_get_VOID (GrB_GLOBAL, (void *) &f, GxB_CALLOC_FUNCTION)) ;
+    CHECK (f == mxCalloc) ;
+    OK (GrB_Global_get_VOID (GrB_GLOBAL, (void *) &f, GxB_FREE_FUNCTION)) ;
+    CHECK (f == mxFree) ;
+
+    OK (GrB_Global_get_SIZE_ (GrB_GLOBAL, &size, GxB_MALLOC_FUNCTION)) ;
+    CHECK (size == sizeof (void *)) ;
+    OK (GrB_Global_get_SIZE_ (GrB_GLOBAL, &size, GxB_REALLOC_FUNCTION)) ;
+    CHECK (size == sizeof (void *)) ;
+    OK (GrB_Global_get_SIZE_ (GrB_GLOBAL, &size, GxB_CALLOC_FUNCTION)) ;
+    CHECK (size == sizeof (void *)) ;
+    OK (GrB_Global_get_SIZE_ (GrB_GLOBAL, &size, GxB_FREE_FUNCTION)) ;
+    CHECK (size == sizeof (void *)) ;
+
     //--------------------------------------------------------------------------
     // finalize GraphBLAS
     //--------------------------------------------------------------------------

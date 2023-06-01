@@ -44,19 +44,19 @@ GrB_Info GrB_Vector_get_Scalar
     }
     else
     {
-        float x ;
+        double x ;
         switch ((int) field)
         {
             case GxB_BITMAP_SWITCH : 
-                x = v->bitmap_switch ;
+                x = (double) (v->bitmap_switch) ;
                 break ;
 
             default : 
                 return (GrB_INVALID_VALUE) ;
         }
-        // field specifies a float: assign it to the scalar
+        // field specifies a double: assign it to the scalar
         info = GB_setElement ((GrB_Matrix) value, NULL, &x, 0, 0,
-            GB_FP32_code, Werk) ;
+            GB_FP64_code, Werk) ;
     }
 
     return (info) ;

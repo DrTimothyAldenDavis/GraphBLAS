@@ -138,6 +138,10 @@ GrB_Info GrB_Type_get_ENUM
             (*value) = (int) GB_type_code_get (type->code) ;
             break ;
 
+        case GrB_SIZE : 
+            (*value) = (int) type->size ;
+            break ;
+
         default : 
             return (GrB_INVALID_VALUE) ;
     }

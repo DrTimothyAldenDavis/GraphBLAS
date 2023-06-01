@@ -918,6 +918,7 @@
 #define GB_memoryUsage GM_memoryUsage
 #define GB_memset GM_memset
 #define GB_Monoid_check GM_Monoid_check
+#define GB_monoid_get GM_monoid_get
 #define GB_monoid_name_get GM_monoid_name_get
 #define GB_Monoid_new GM_Monoid_new
 #define GB_msort_1_create_merge_tasks GM_msort_1_create_merge_tasks
@@ -938,7 +939,6 @@
 #define GB_nonzombie_func GM_nonzombie_func
 #define GB_nvals GM_nvals
 #define GB_nvec_nonempty GM_nvec_nonempty
-#define GB_object_string_set GM_object_string_set
 #define GB_omp_get_max_threads GM_omp_get_max_threads
 #define GB_omp_get_wtime GM_omp_get_wtime
 #define GB_op_enum_get GM_op_enum_get
@@ -947,6 +947,7 @@
 #define GB_op_is_second GM_op_is_second
 #define GB_op_name_and_defn GM_op_name_and_defn
 #define GB_op_name_get GM_op_name_get
+#define GB_op_or_type_string_set GM_op_or_type_string_set
 #define GB_op_scalar_get GM_op_scalar_get
 #define GB_op_size_get GM_op_size_get
 #define GB_op_string_get GM_op_string_get

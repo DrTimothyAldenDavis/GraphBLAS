@@ -104,7 +104,6 @@ GrB_Info GrB_Global_set_Scalar
     //--------------------------------------------------------------------------
 
     double dvalue = 0 ;
-    float fvalue = 0 ;
     int ivalue = 0 ;
     GrB_Info info ;
 
@@ -113,10 +112,10 @@ GrB_Info GrB_Global_set_Scalar
 
         case GxB_HYPER_SWITCH : 
 
-            info = GrB_Scalar_extractElement_FP32 (&fvalue, value) ;
+            info = GrB_Scalar_extractElement_FP64 (&dvalue, value) ;
             if (info == GrB_SUCCESS)
             {
-                GB_Global_hyper_switch_set (fvalue) ;
+                GB_Global_hyper_switch_set ((float) dvalue) ;
             }
             break ;
 

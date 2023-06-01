@@ -35,6 +35,12 @@
 #define GrB_Matrix_get_SIZE_(...)               GrB_get (__VA_ARGS__)
 #define GrB_Matrix_get_VOID_(...)               GrB_get (__VA_ARGS__)
 
+#define GxB_Blob_get_Scalar_(...)               GrB_get (__VA_ARGS__)
+#define GxB_Blob_get_String_(...)               GrB_get (__VA_ARGS__)
+#define GxB_Blob_get_ENUM_(...)                 GrB_get (__VA_ARGS__)
+#define GxB_Blob_get_SIZE_(...)                 GrB_get (__VA_ARGS__)
+#define GxB_Blob_get_VOID_(...)                 GrB_get (__VA_ARGS__)
+
 #define GrB_UnaryOp_get_Scalar_(...)            GrB_get (__VA_ARGS__)
 #define GrB_UnaryOp_get_String_(...)            GrB_get (__VA_ARGS__)
 #define GrB_UnaryOp_get_ENUM_(...)              GrB_get (__VA_ARGS__)

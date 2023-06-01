@@ -140,7 +140,7 @@ void mexFunction
     OK (GrB_Type_get_ENUM_(GxB_FC64, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GxB_FC64_CODE) ;
 
-    // type size
+    // type size (using a GrB_Scalar)
     OK (GrB_Type_get_Scalar_(GrB_BOOL, s_int32, GrB_SIZE)) ;
     OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
     CHECK (i == sizeof (bool)) ;
@@ -193,6 +193,47 @@ void mexFunction
     OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
     CHECK (i == sizeof (double complex)) ;
 
+    // type size (using an int)
+    OK (GrB_Type_get_ENUM_(GrB_BOOL, &i, GrB_SIZE)) ;
+    CHECK (i == sizeof (bool)) ;
+
+    OK (GrB_Type_get_ENUM_(GrB_INT8, &i, GrB_SIZE)) ;
+    CHECK (i == sizeof (int8_t)) ;
+
+    OK (GrB_Type_get_ENUM_(GrB_INT16, &i, GrB_SIZE)) ;
+    CHECK (i == sizeof (int16_t)) ;
+
+    OK (GrB_Type_get_ENUM_(GrB_INT32, &i, GrB_SIZE)) ;
+    CHECK (i == sizeof (int32_t)) ;
+
+    OK (GrB_Type_get_ENUM_(GrB_INT64, &i, GrB_SIZE)) ;
+    CHECK (i == sizeof (int64_t)) ;
+
+    OK (GrB_Type_get_ENUM_(GrB_UINT8, &i, GrB_SIZE)) ;
+    CHECK (i == sizeof (uint8_t)) ;
+
+    OK (GrB_Type_get_ENUM_(GrB_UINT16, &i, GrB_SIZE)) ;
+    CHECK (i == sizeof (uint16_t)) ;
+
+    OK (GrB_Type_get_ENUM_(GrB_UINT32, &i, GrB_SIZE)) ;
+    CHECK (i == sizeof (uint32_t)) ;
+
+    OK (GrB_Type_get_ENUM_(GrB_UINT64, &i, GrB_SIZE)) ;
+    CHECK (i == sizeof (uint64_t)) ;
+
+    OK (GrB_Type_get_ENUM_(GrB_FP32, &i, GrB_SIZE)) ;
+    CHECK (i == sizeof (float)) ;
+
+    OK (GrB_Type_get_ENUM_(GrB_FP64, &i, GrB_SIZE)) ;
+    CHECK (i == sizeof (double)) ;
+
+    OK (GrB_Type_get_ENUM_(GxB_FC32, &i, GrB_SIZE)) ;
+    CHECK (i == sizeof (float complex)) ;
+
+    OK (GrB_Type_get_ENUM_(GxB_FC64, &i, GrB_SIZE)) ;
+    CHECK (i == sizeof (double complex)) ;
+
+
     // built-in type definition
     OK (GrB_Type_get_SIZE_(GrB_BOOL, &size, GxB_DEFINITION)) ;
     CHECK (size == 1) ;
@@ -202,6 +243,8 @@ void mexFunction
     // user-defined type
     OK (GrB_Type_new (&type, sizeof (mytype))) ;
     OK (GxB_print (type, 3)) ;
+    expected = GrB_INVALID_VALUE ;
+    ERR (GrB_Type_set_String_(type, "", GrB_NAME)) ;
     OK (GrB_Type_set_String_(type, "mytype", GrB_NAME)) ;
     CHECK (type->hash == UINT64_MAX) ;
     OK (GrB_Type_set_String_(type, MYTYPE_DEFN, GxB_DEFINITION)) ;
@@ -521,6 +564,6 @@ void mexFunction
     GrB_free (&s_int32) ;
     GrB_free (&type) ;
     GB_mx_put_global (true) ;
-    printf ("\nGB_mex_test26:  all tests passed\n\n") ;
+    printf ("\nGB_mex_test26:  all tests passed.\n\n") ;
 }
 

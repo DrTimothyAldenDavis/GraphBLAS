@@ -44,23 +44,23 @@ GrB_Info GrB_Matrix_get_Scalar
     }
     else
     { 
-        float x ;
+        double x ;
         switch ((int) field)
         {
             case GxB_HYPER_SWITCH : 
-                x = A->hyper_switch ;
+                x = (double) (A->hyper_switch) ;
                 break ;
 
             case GxB_BITMAP_SWITCH : 
-                x = A->bitmap_switch ;
+                x = (double) (A->bitmap_switch) ;
                 break ;
 
             default : 
                 return (GrB_INVALID_VALUE) ;
         }
-        // field specifies a float: assign it to the scalar
+        // field specifies a double: assign it to the scalar
         info = GB_setElement ((GrB_Matrix) value, NULL, &x, 0, 0,
-            GB_FP32_code, Werk) ;
+            GB_FP64_code, Werk) ;
     }
 
     return (info) ;

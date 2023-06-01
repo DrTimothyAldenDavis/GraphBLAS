@@ -170,7 +170,7 @@ GrB_Info GrB_Semiring_get_SIZE
             break ;
 
         case GxB_MONOID_OPERATOR : 
-        case GxB_SEMIRING_MULTIPLY_OPERATOR : 
+        case GxB_SEMIRING_MULTIPLY : 
             (*value) = sizeof (GrB_BinaryOp) ;
             break ;
 
@@ -222,7 +222,7 @@ GrB_Info GrB_Semiring_get_VOID
             memcpy (value, &(semiring->add), sizeof (GrB_Monoid)) ;
             break ;
 
-        case GxB_SEMIRING_MULTIPLY_OPERATOR : 
+        case GxB_SEMIRING_MULTIPLY : 
             memcpy (value, &(semiring->multiply), sizeof (GrB_BinaryOp)) ;
             break ;
 

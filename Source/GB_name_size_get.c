@@ -13,7 +13,7 @@ GrB_Info GB_name_size_get (size_t *value, int field)
 {
     switch (field)
     {
-        case GrB_NAME : 
+        case GrB_NAME :     // FIXME: this depends on the object
         case GrB_ELTYPE_STRING : 
             (*value) = GxB_MAX_NAME_LEN ;
             break ;

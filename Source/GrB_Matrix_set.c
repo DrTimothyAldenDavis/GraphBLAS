@@ -33,7 +33,7 @@ GrB_Info GrB_Matrix_set_Scalar
     // set the field
     //--------------------------------------------------------------------------
 
-    float fvalue = 0 ;
+    double dvalue = 0 ;
     int ivalue = 0 ;
     GrB_Info info ;
 
@@ -43,7 +43,7 @@ GrB_Info GrB_Matrix_set_Scalar
         case GxB_HYPER_SWITCH : 
         case GxB_BITMAP_SWITCH : 
 
-            info = GrB_Scalar_extractElement_FP32 (&fvalue, value) ;
+            info = GrB_Scalar_extractElement_FP64 (&dvalue, value) ;
             break ;
 
         default : 
@@ -57,7 +57,7 @@ GrB_Info GrB_Matrix_set_Scalar
         return ((info == GrB_NO_VALUE) ? GrB_EMPTY_OBJECT : info) ;
     } 
 
-    return (GB_matvec_set (A, false, ivalue, fvalue, field, Werk)) ;
+    return (GB_matvec_set (A, false, ivalue, dvalue, field, Werk)) ;
 }
 
 //------------------------------------------------------------------------------

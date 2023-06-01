@@ -33,17 +33,17 @@ GrB_Info GrB_Vector_set_Scalar
     // set the field
     //--------------------------------------------------------------------------
 
-    float value_float = 0 ;
-    int value_int = 0 ;
+    double dvalue = 0 ;
+    int ivalue = 0 ;
     GrB_Info info ;
 
     switch ((int) field)
     {
         case GxB_BITMAP_SWITCH : 
-            info = GrB_Scalar_extractElement_FP32 (&value_float, value) ;
+            info = GrB_Scalar_extractElement_FP64 (&dvalue, value) ;
             break ;
         default : 
-            info = GrB_Scalar_extractElement_INT32 (&value_int, value) ;
+            info = GrB_Scalar_extractElement_INT32 (&ivalue, value) ;
             break ;
     }
 
@@ -51,8 +51,7 @@ GrB_Info GrB_Vector_set_Scalar
     { 
         return ((info == GrB_NO_VALUE) ? GrB_EMPTY_OBJECT : info) ;
     } 
-    return (GB_matvec_set ((GrB_Matrix) v, true, value_int, value_float,
-            field, Werk)) ;
+    return (GB_matvec_set ((GrB_Matrix) v, true, ivalue, dvalue, field, Werk)) ;
 }
 
 //------------------------------------------------------------------------------

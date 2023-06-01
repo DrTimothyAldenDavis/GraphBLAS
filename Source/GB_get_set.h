@@ -34,7 +34,7 @@ GrB_Info GB_matvec_set
     GrB_Matrix A,
     bool is_vector,         // true if A is a GrB_Vector
     int ivalue,
-    float fvalue,
+    double dvalue,
     int field,
     GB_Werk Werk
 ) ;

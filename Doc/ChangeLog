@@ -4,7 +4,7 @@ Version 8.1.0, FIXME
     * GrB_Type_new, GrB_UnaryOp_new, GrB_IndexUnaryOp_new: no longer macros,
         since GrB_set can be used to set the names of the operators.
 
-Version 8.0.1, May 27, 2023
+Version 8.0.1, May 30, 2023
 
     * (48) bug fix: GrB_*_nvals returned UINT64_MAX ('infinity') for a
         GrB_Vector of size n-by-2^60; it should return 2^60.

@@ -2202,8 +2202,7 @@ void mexFunction
     OK (GrB_Semiring_get_SIZE_ (semiring, &size, GxB_SEMIRING_MONOID)) ;
     CHECK (size == sizeof (GrB_Monoid)) ;
 
-    OK (GrB_Semiring_get_SIZE_ (semiring, &size,
-        GxB_SEMIRING_MULTIPLY_OPERATOR)) ;
+    OK (GrB_Semiring_get_SIZE_ (semiring, &size, GxB_SEMIRING_MULTIPLY)) ;
     CHECK (size == sizeof (GrB_BinaryOp)) ;
 
     OK (GrB_Semiring_get_VOID_ (semiring, (void *) (&mon),
@@ -2211,7 +2210,7 @@ void mexFunction
     CHECK (mon == monoid) ;
 
     OK (GrB_Semiring_get_VOID_ (semiring, (void *) (&op),
-        GxB_SEMIRING_MULTIPLY_OPERATOR)) ;
+        GxB_SEMIRING_MULTIPLY)) ;
     CHECK (op == times) ;
 
     //--------------------------------------------------------------------------

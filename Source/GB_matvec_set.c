@@ -16,7 +16,7 @@ GrB_Info GB_matvec_set
     GrB_Matrix A,
     bool is_vector,         // true if A is a GrB_Vector
     int ivalue,
-    float fvalue,
+    double dvalue,
     int field,
     GB_Werk Werk
 )
@@ -36,12 +36,12 @@ GrB_Info GB_matvec_set
             { 
                 return (GrB_INVALID_VALUE) ;
             }
-            A->hyper_switch = fvalue ;
+            A->hyper_switch = (float) dvalue ;
             break ;
 
         case GxB_BITMAP_SWITCH : 
 
-            A->bitmap_switch = fvalue ;
+            A->bitmap_switch = (float) dvalue ;
             break ;
 
         case GxB_SPARSITY_CONTROL : 

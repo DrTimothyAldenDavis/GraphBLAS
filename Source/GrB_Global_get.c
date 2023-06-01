@@ -415,13 +415,19 @@ GrB_Info GrB_Global_get_SIZE
             case GxB_BITMAP_SWITCH : 
 
                 (*value) = sizeof (double) * GxB_NBITMAP_SWITCH ;
-                info = GrB_SUCCESS ;
                 break ;
 
             case GxB_COMPILER_VERSION : 
 
                 (*value) = sizeof (int32_t) * 3 ;
-                info = GrB_SUCCESS ;
+                break ;
+
+            case GxB_MALLOC_FUNCTION : 
+            case GxB_CALLOC_FUNCTION : 
+            case GxB_REALLOC_FUNCTION : 
+            case GxB_FREE_FUNCTION : 
+
+                (*value) = sizeof (void *) ;
                 break ;
 
             default : 
@@ -429,7 +435,9 @@ GrB_Info GrB_Global_get_SIZE
                 return (GrB_INVALID_VALUE) ;
         }
     }
-    return (info) ;
+
+    #pragma omp flush
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------
@@ -456,8 +464,6 @@ GrB_Info GrB_Global_get_VOID
     // get the field
     //--------------------------------------------------------------------------
 
-    // FIXME: add GxB_*_FUNCTION
-
     switch ((int) field)
     {
 
@@ -479,6 +485,34 @@ GrB_Info GrB_Global_get_VOID
                 ivalue [0] = GB_COMPILER_MAJOR ;
                 ivalue [1] = GB_COMPILER_MINOR ;
                 ivalue [2] = GB_COMPILER_SUB ;
+            }
+            break ;
+
+        case GxB_MALLOC_FUNCTION : 
+            {
+                void **func = (void **) value ;
+                (*func) = GB_Global_malloc_function_get ( ) ;
+            }
+            break ;
+
+        case GxB_CALLOC_FUNCTION : 
+            {
+                void **func = (void **) value ;
+                (*func) = GB_Global_calloc_function_get ( ) ;
+            }
+            break ;
+
+        case GxB_REALLOC_FUNCTION : 
+            {
+                void **func = (void **) value ;
+                (*func) = GB_Global_realloc_function_get ( ) ;
+            }
+            break ;
+
+        case GxB_FREE_FUNCTION : 
+            {
+                void **func = (void **) value ;
+                (*func) = GB_Global_free_function_get ( ) ;
             }
             break ;
 
