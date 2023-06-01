@@ -96,6 +96,7 @@ malloc_debugging = stat ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
+logstat ('test279'    ,t, j0  , f1  ) ; % blob get/set
 logstat ('test278'    ,t, j0  , f1  ) ; % descriptor get/set
 logstat ('test277'    ,t, j0  , f1  ) ; % context get/set
 logstat ('test276'    ,t, j0  , f1  ) ; % semiring get/set
