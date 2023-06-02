@@ -28,7 +28,6 @@ GrB_Info GB_user_name_set
     if (len == 0)
     { 
         // no new name; leave the object unnamed
-        printf ("no new name\n") ;
         return (GrB_SUCCESS) ;
     }
 
@@ -38,7 +37,6 @@ GrB_Info GB_user_name_set
     if (user_name == NULL)
     { 
         // out of memory
-        printf ("out of memory\n") ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -46,9 +44,6 @@ GrB_Info GB_user_name_set
     strcpy (user_name, new_name) ;
     (*object_user_name) = user_name ;
     (*object_user_name_size) = user_name_size ;
-
-    printf ("set name ok [%s]:%d\n", *object_user_name,
-        (int) (*object_user_name_size)) ;
     return (GrB_SUCCESS) ;
 }
 

@@ -202,7 +202,7 @@ GrB_Info GxB_Context_get_SIZE
         (*value) = Context->user_name_size ;
     }
     else
-    {
+    { 
         (*value) = GxB_MAX_NAME_LEN ;
     }
     return (GrB_SUCCESS) ;

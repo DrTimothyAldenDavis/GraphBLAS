@@ -2156,6 +2156,8 @@ void mexFunction
     CHECK (size == GxB_MAX_NAME_LEN) ;
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Semiring_get_SIZE_(semiring, &size, GrB_INPUT1TYPE_CODE)) ;
+    ERR (GrB_Semiring_set_String_(GrB_MAX_TIMES_SEMIRING_INT32, "stuff",
+        GrB_NAME)) ;
 
     expected = GrB_NOT_IMPLEMENTED ;
     ERR (GrB_Semiring_set_Scalar_(semiring, s_int32, 0)) ;

@@ -390,6 +390,16 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
     OK (GrB_Descriptor_get_String_ (desc, name, GrB_NAME)) ;
     printf ("got name: [%s]\n", name) ;
     CHECK (MATCH (name, "user_name")) ;
+    OK (GrB_Descriptor_set_String_ (desc, "", GrB_NAME)) ;
+    OK (GrB_Descriptor_get_String_ (desc, name, GrB_NAME)) ;
+    printf ("got name: [%s]\n", name) ;
+    CHECK (MATCH (name, "")) ;
+    METHOD (GrB_Descriptor_set_String_ (desc, "yet another name", GrB_NAME)) ;
+    OK (GrB_Descriptor_get_String_ (desc, name, GrB_NAME)) ;
+    printf ("got name: [%s]\n", name) ;
+    CHECK (MATCH (name, "yet another name")) ;
+    OK (GrB_Descriptor_get_SIZE_ (desc, &size, GrB_NAME)) ;
+    CHECK (size == strlen (name) + 1) ;
 
     //--------------------------------------------------------------------------
     // error handling
@@ -408,6 +418,7 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
     ERR (GrB_Descriptor_set_Scalar_ (GrB_DESC_T1, s_int32, GrB_MASK)) ;
     ERR (GrB_Descriptor_set_Scalar (NULL, s_int32, GrB_MASK)) ;
     ERR (GrB_Descriptor_set_ENUM_ (desc, GrB_DEFAULT, GrB_NAME)) ;
+    ERR (GrB_Descriptor_set_String_ (GrB_DESC_T1, "newname", GrB_NAME)) ;
 
     char *err ;
     ERR (GrB_Descriptor_set_ENUM_ (desc, 999, GrB_OUTP)) ;

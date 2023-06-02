@@ -327,6 +327,7 @@ void mexFunction
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Monoid_get_Scalar_ (GrB_MAX_MONOID_INT32, s_fp64,
         GrB_OUTP_FIELD)) ;
+    ERR (GrB_Monoid_set_String_(GrB_MAX_MONOID_INT32, "newname", GrB_NAME)) ;
 
     op = NULL ;
     OK (GrB_Monoid_get_SIZE_ (monoid, &size, GxB_MONOID_OPERATOR)) ;

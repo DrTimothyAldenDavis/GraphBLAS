@@ -134,6 +134,8 @@ void mexFunction
     OK (GxB_Context_set_String_ (context, "another_name", GrB_NAME)) ;
     OK (GxB_Context_get_String_ (context, name, GrB_NAME)) ;
     CHECK (MATCH (name, "another_name")) ;
+    OK (GxB_Context_get_SIZE_ (context, &size, GrB_NAME)) ;
+    CHECK (size == strlen (name) + 1) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS
