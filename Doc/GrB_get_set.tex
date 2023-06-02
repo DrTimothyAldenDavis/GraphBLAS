@@ -1605,7 +1605,7 @@ SuiteSparse:GraphBLAS extends the spec by allowing both \verb'int' and
 \verb'GrB_LIBRARY_VER*', \verb'GrB_API_VER*', and \verb'GrB_SIZE'.
 
 \item
-The spec states that the name of objects only be set once.
+The spec states that the name of objects can only be set once.
 SuiteSparse:GraphBLAS will allow the names of all objects except types and
 operators to be set any number of times.  Both the spec and
 SuiteSparse:GraphBLAS allow the name of a user-defined type or operator to be
@@ -1642,6 +1642,4 @@ FIXME: The ability to get/set the name of matrices, vectors, scalars
 is not yet implemented.  The ability to save the name of a matrix into
 the serialized blob and to get it with \verb'GrB_get' is not implemented.
 \end{warning}
-
-
 
