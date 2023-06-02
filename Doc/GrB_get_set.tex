@@ -1551,7 +1551,7 @@ GrB_Info GrB_set (GxB_Context Context, int        value, GrB_Field f) ;
 \label{get_set_blob}
 %-------------------------------------------------------------------------------
 
-\begin{mdframed}[userdefinedwidth=6in]
+\begin{mdframed}[userdefinedwidth=6.5in]
 {\footnotesize
 \begin{verbatim}
 GrB_Info GrB_get (const void *blob, GrB_Scalar value, GrB_Field f, size_t blobsize) ;
@@ -1605,10 +1605,11 @@ SuiteSparse:GraphBLAS extends the spec by allowing both \verb'int' and
 \verb'GrB_LIBRARY_VER*', \verb'GrB_API_VER*', and \verb'GrB_SIZE'.
 
 \item
-The spec states that the name of a \verb'GrB_Monoid' or \verb'GrB_Semiring' can
-only be set once.  SuiteSparse:GraphBLAS will allow the names of these
-objects to be set any number of times.  Both the spec and SuiteSparse:GraphBLAS
-allow the name of a user-defined type or operator to be set at most once.
+The spec states that the name of objects only be set once.
+SuiteSparse:GraphBLAS will allow the names of all objects except types and
+operators to be set any number of times.  Both the spec and
+SuiteSparse:GraphBLAS allow the name of a user-defined type or operator to be
+set at most once.
 
 \item
 The spec does not place a limit on the length of any name of any object.
@@ -1616,7 +1617,8 @@ SuiteSparse:GraphBLAS limits the name length of types and operators to 128
 (including the \verb'nul' terminating byte), which is given by
 \verb'GxB_MAX_NAME_LEN'.  If a name is longer, SuiteSparse:GraphBLAS returns
 the \verb'GrB_INVALID_VALUE' error code.  All other names can be of
-any length.
+any length.  Any names will work, but the JIT requires these names to match
+the C type (for \verb'GrB_Type') or the C function name (for \verb'GrB_*Op').
 
 \item
 The spec defines methods that are available for future use but currently have
@@ -1636,9 +1638,9 @@ I've suggested that it be dropped from the spec).
 \end{alert}
 
 \begin{warning}
-FIXME: The ability to set the name of matrices, vectors, scalars,
-user-defined descriptors, monoids, semirings, and user-defined
-\verb'GxB_Context' objects is not yet implemented.
+FIXME: The ability to get/set the name of matrices, vectors, scalars
+is not yet implemented.  The ability to save the name of a matrix into
+the serialized blob and to get it with \verb'GrB_get' is not implemented.
 \end{warning}
 
 
