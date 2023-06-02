@@ -185,8 +185,31 @@ GrB_Info GrB_Descriptor_set_String
     char * value,
     GrB_Field field
 )
-{  
-    return (GrB_NOT_IMPLEMENTED) ; // FIXME: user-defined GrB_Descriptor name
+{ 
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    if (desc == NULL || desc->header_size == 0 || field != GrB_NAME)
+    { 
+        // built-in descriptors may not be modified
+        return (GrB_INVALID_VALUE) ;
+    }
+
+    GB_WHERE (desc, "GrB_Descriptor_set_String (desc, value, field)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (desc) ;
+    GB_RETURN_IF_NULL (value) ;
+    ASSERT_DESCRIPTOR_OK (desc, "desc to set", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // set the field
+    //--------------------------------------------------------------------------
+
+    printf ("set desc name to [%s]\n", value) ;
+
+    return (GB_user_name_set (&(desc->user_name), &(desc->user_name_size),
+        value)) ;
 }
 
 //------------------------------------------------------------------------------

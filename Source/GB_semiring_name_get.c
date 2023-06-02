@@ -12,6 +12,12 @@
 const char *GB_semiring_name_get (GrB_Semiring semiring)
 {
 
+    if (semiring->user_name_size > 0)
+    { 
+        // user-defined semiring, with name defined by GrB_set
+        return (semiring->user_name) ;
+    }
+
     GB_Opcode add_opcode = semiring->add->op->opcode ;
     GB_Opcode mult_opcode = semiring->multiply->opcode ;
     GB_Type_code zcode = semiring->add->op->ztype->code ;
@@ -3329,12 +3335,6 @@ const char *GB_semiring_name_get (GrB_Semiring semiring)
 
         default: ;
     }
-
-    //-------------------------------------------------------------------------
-    // user-defined semiring
-    //-------------------------------------------------------------------------
-
-    // FIXME: allow user-defined semiring names to be set
 
     return (NULL) ;
 }

@@ -101,11 +101,21 @@ void mexFunction
     CHECK (fvalue == 2048) ;
     printf ("new chunk: %g\n", fvalue) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
-    ERR (GxB_Context_get_SIZE_ (GxB_CONTEXT_WORLD, &size, 0)) ;
-    ERR (GxB_Context_get_VOID_ (GxB_CONTEXT_WORLD, nothing, 0)) ;
-    ERR (GxB_Context_get_String_ (GxB_CONTEXT_WORLD, name, GrB_NAME)) ;
+    OK (GxB_Context_get_SIZE_ (GxB_CONTEXT_WORLD, &size, GrB_NAME)) ;
+    CHECK (size == GxB_MAX_NAME_LEN) ;
+    OK (GxB_Context_get_String_ (GxB_CONTEXT_WORLD, name, GrB_NAME)) ;
+    printf ("name of world [%s]\n", name) ;
+    CHECK (MATCH (name, "GxB_CONTEXT_WORLD")) ;
+
+    expected = GrB_INVALID_VALUE ;
     ERR (GxB_Context_set_String_ (GxB_CONTEXT_WORLD, "newname", GrB_NAME)) ;
+    OK (GxB_Context_get_String_ (GxB_CONTEXT_WORLD, name, GrB_NAME)) ;
+    CHECK (MATCH (name, "GxB_CONTEXT_WORLD")) ;
+
+    ERR (GxB_Context_get_SIZE_ (GxB_CONTEXT_WORLD, &size, GxB_FORMAT)) ;
+
+    expected = GrB_NOT_IMPLEMENTED ;
+    ERR (GxB_Context_get_VOID_ (GxB_CONTEXT_WORLD, nothing, 0)) ;
     ERR (GxB_Context_set_VOID_ (GxB_CONTEXT_WORLD, nothing, 0, 0)) ;
 
     expected = GrB_INVALID_VALUE ;
@@ -117,6 +127,13 @@ void mexFunction
     expected = GrB_EMPTY_OBJECT ;
     OK (GrB_Scalar_clear (s_int32)) ;
     ERR (GxB_Context_set_Scalar_ (GxB_CONTEXT_WORLD, s_int32, GxB_NTHREADS)) ;
+
+    OK (GxB_Context_new (&context)) ;
+    OK (GxB_Context_get_String_ (context, name, GrB_NAME)) ;
+    CHECK (MATCH (name, "")) ;
+    OK (GxB_Context_set_String_ (context, "another_name", GrB_NAME)) ;
+    OK (GxB_Context_get_String_ (context, name, GrB_NAME)) ;
+    CHECK (MATCH (name, "another_name")) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS

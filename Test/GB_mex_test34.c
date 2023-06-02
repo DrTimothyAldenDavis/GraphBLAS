@@ -384,13 +384,19 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
     DSET (desc, GxB_SECURE_IMPORT   , GxB_IMPORT) ;
     DSET (desc, GrB_DEFAULT         , GxB_IMPORT) ;
 
+    OK (GrB_Descriptor_get_String_ (desc, name, GrB_NAME)) ;
+    CHECK (MATCH (name, "")) ;
+    OK (GrB_Descriptor_set_String_ (desc, "user_name", GrB_NAME)) ;
+    OK (GrB_Descriptor_get_String_ (desc, name, GrB_NAME)) ;
+    printf ("got name: [%s]\n", name) ;
+    CHECK (MATCH (name, "user_name")) ;
+
     //--------------------------------------------------------------------------
     // error handling
     //--------------------------------------------------------------------------
 
     printf ("\nerror handling:\n") ;
     expected = GrB_NOT_IMPLEMENTED ;
-    ERR (GrB_Descriptor_get_String_ (desc, name, GrB_NAME)) ;
     ERR (GrB_Descriptor_get_VOID_ (GrB_DESC_T1, nothing, GrB_NAME)) ;
     ERR (GrB_Descriptor_set_VOID_ (desc, nothing, 0, 0)) ;
 
@@ -429,7 +435,6 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
     ERR (GrB_Descriptor_set_Scalar_ (desc, s_int32, GrB_MASK)) ;
 
     expected = GrB_NOT_IMPLEMENTED ;
-    ERR (GrB_Descriptor_set_String_ (desc, "user_name", GrB_NAME)) ;
     ERR (GrB_Descriptor_set_VOID_ (desc, nothing, 0, 0)) ;
     ERR (GrB_Descriptor_get_VOID_ (desc, nothing, 0)) ;
 

@@ -90,7 +90,34 @@ GrB_Info GxB_Context_get_String
     GrB_Field field
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;  // FIXME set the name of a GxB_Context
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_WHERE1 ("GxB_Context_get_String (Context, value, field)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (Context) ;
+    GB_RETURN_IF_NULL (value) ;
+    ASSERT_CONTEXT_OK (Context, "context for get", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // get the field
+    //--------------------------------------------------------------------------
+
+    (*value) = '\0' ;
+    if (Context == GxB_CONTEXT_WORLD)
+    { 
+        // built-in Context
+        strcpy (value, "GxB_CONTEXT_WORLD") ;
+    }
+    else if (Context->user_name_size > 0)
+    { 
+        // user-defined Context, with name defined by GrB_set
+        strcpy (value, Context->user_name) ;
+    }
+
+    #pragma omp flush
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------
@@ -151,7 +178,34 @@ GrB_Info GxB_Context_get_SIZE
     GrB_Field field
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;  // FIXME: get the size of the name
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_WHERE1 ("GxB_Context_get_SIZE (Context, value, field)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (Context) ;
+    GB_RETURN_IF_NULL (value) ;
+    ASSERT_CONTEXT_OK (Context, "context for get", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // get the field
+    //--------------------------------------------------------------------------
+
+    if (field != GrB_NAME)
+    { 
+        return (GrB_INVALID_VALUE) ;
+    }
+
+    if (Context->user_name != NULL)
+    { 
+        (*value) = Context->user_name_size ;
+    }
+    else
+    {
+        (*value) = GxB_MAX_NAME_LEN ;
+    }
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------

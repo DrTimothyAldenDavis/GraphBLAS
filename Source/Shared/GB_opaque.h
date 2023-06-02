@@ -407,6 +407,9 @@ struct GB_Monoid_opaque     // content of GrB_Monoid
     int64_t magic ;         // for detecting uninitialized objects
     size_t header_size ;    // size of the malloc'd block for this struct, or 0
     // ---------------------//
+    char *user_name ;       // user name for GrB_get/GrB_set
+    size_t user_name_size ; // allocated size of user_name for GrB_get/GrB_set
+    // ---------------------//
     GrB_BinaryOp op ;       // binary operator of the monoid
     void *identity ;        // identity of the monoid; type is op->ztype
     void *terminal ;        // early-exit (NULL if no value); type is op->ztype
@@ -421,10 +424,13 @@ struct GB_Semiring_opaque   // content of GrB_Semiring
     int64_t magic ;         // for detecting uninitialized objects
     size_t header_size ;    // size of the malloc'd block for this struct, or 0
     // ---------------------//
+    char *user_name ;       // user name for GrB_get/GrB_set
+    size_t user_name_size ; // allocated size of user_name for GrB_get/GrB_set
+    // ---------------------//
     GrB_Monoid add ;        // add operator of the semiring
     GrB_BinaryOp multiply ; // multiply operator of the semiring
-    char *name ;            // name of the type; NULL for builtin
-    int32_t name_len ;      // length of user-defined name; 0 for builtin
+    char *name ;            // name of the semiring; NULL for builtin
+    int32_t name_len ;      // length of name; 0 for builtin
     size_t name_size ;      // allocated size of the name
     uint64_t hash ;         // if 0, semiring uses only builtin ops and types
 } ;
@@ -434,6 +440,9 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     // first 4 items exactly match GrB_Matrix, GrB_Vector, GrB_Scalar structs:
     int64_t magic ;         // for detecting uninitialized objects
     size_t header_size ;    // size of the malloc'd block for this struct, or 0
+    // ---------------------//
+    char *user_name ;       // user name for GrB_get/GrB_set
+    size_t user_name_size ; // allocated size of user_name for GrB_get/GrB_set
     // ---------------------//
     char *logger ;          // error logger string
     size_t logger_size ;    // size of the malloc'd block for logger, or 0
@@ -452,6 +461,9 @@ struct GB_Context_opaque    // content of GxB_Context
 {
     int64_t magic ;         // for detecting uninitialized objects
     size_t header_size ;    // size of the malloc'd block for this struct, or 0
+    // ---------------------//
+    char *user_name ;       // user name for GrB_get/GrB_set
+    size_t user_name_size ; // allocated size of user_name for GrB_get/GrB_set
     // ---------------------//
     // OpenMP thread(s):
     double chunk ;          // chunk size for # of threads for small problems

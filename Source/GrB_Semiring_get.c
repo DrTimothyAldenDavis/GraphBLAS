@@ -150,17 +150,16 @@ GrB_Info GrB_Semiring_get_SIZE
     // get the field
     //--------------------------------------------------------------------------
 
+    const char *name ;
+
     switch ((int) field)
     {
 
         case GrB_NAME : 
 
-            (*value) = GxB_MAX_NAME_LEN ;
-            if (semiring->add->op->opcode == GB_USER_binop_code ||
-                semiring->multiply->opcode == GB_USER_binop_code)
-            { 
-                (*value) += GxB_MAX_NAME_LEN + strlen ("__SEMIRING") ;
-            }
+            // get the length of the semiring user_name, or built-in name
+            name = GB_semiring_name_get (semiring) ;
+            (*value) = (name == NULL) ? 1 : (strlen (name) + 1) ;
             break ;
 
         case GrB_INPUT1TYPE_STRING : 

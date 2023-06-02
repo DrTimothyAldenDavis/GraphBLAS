@@ -69,6 +69,7 @@ GB_TYPEDEF (GxB, FC64  , GxB_FC64_t, "GxB_FC64_t") ;
     struct GB_Descriptor_opaque GB_OPAQUE (desc_ ## name) =                 \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
         "", 0,                      /* logger */                            \
         (GrB_Desc_Value) (out),                                             \
         (GrB_Desc_Value) (mask),                                            \
@@ -572,6 +573,7 @@ const GxB_Format_Value GxB_FORMAT_DEFAULT = GxB_BY_ROW ;
     struct GB_Monoid_opaque GB_OPAQUE (GB_EVAL2 (op, _MONOID)) =            \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
         & GB_OPAQUE (op),           /* additive operator */                 \
         & GB_OPAQUE (GB_EVAL2 (identity_, op)),     /* identity */          \
         NULL,                                       /* terminal */          \
@@ -587,6 +589,7 @@ const GxB_Format_Value GxB_FORMAT_DEFAULT = GxB_BY_ROW ;
     struct GB_Monoid_opaque GB_OPAQUE (GB_EVAL2 (op, _MONOID)) =            \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
         & GB_OPAQUE (op),           /* additive operator */                 \
         & GB_OPAQUE (GB_EVAL2 (identity_, op)),     /* identity */          \
         & GB_OPAQUE (GB_EVAL2 (terminal_, op)),     /* terminal */          \
@@ -760,6 +763,7 @@ GB_MONOID_DEF  ( BXNOR_UINT64 , uint64_t  , 0xFFFFFFFFFFFFFFFF )
     struct GB_Semiring_opaque GB_OPAQUE (GB_SEMIRING_NAME(add, mult)) =     \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
         & GB_OPAQUE (GB_EVAL4 (add, _, GB_XTYPE, _MONOID)),                 \
         & GB_OPAQUE (GB_EVAL3 (mult, _, GB_XTYPE)),                         \
         NULL, 0, 0, 0               /* name, name_len, name_size, hash */   \
@@ -772,6 +776,7 @@ GB_MONOID_DEF  ( BXNOR_UINT64 , uint64_t  , 0xFFFFFFFFFFFFFFFF )
     struct GB_Semiring_opaque GB_OPAQUE (GB_SEMIRING_NAME(add, mult)) =     \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
         & GB_OPAQUE (GB_EVAL2 (add, _BOOL_MONOID)),                         \
         & GB_OPAQUE (GB_EVAL3 (mult, _, GB_XTYPE)),                         \
         NULL, 0, 0, 0               /* name, name_len, name_size, hash */   \
@@ -1003,7 +1008,8 @@ struct GB_Context_opaque GB_OPAQUE (CONTEXT_WORLD) =
 {
     GB_MAGIC,                       // magic: initialized
     0,                              // header_size: statically allocated
-    // revised by GrB_init:
+    NULL, 0,                        // no user_name for GrB_get/GrB_set
+    // revised by GxB_Context_get/set:
     (double) GB_CHUNK_DEFAULT,      // chunk
     1,                              // nthreads_max
     -1,                             // gpu_id

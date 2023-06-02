@@ -264,9 +264,8 @@ void mexFunction
     OK (GrB_Monoid_get_SIZE_(monoid, &size, GrB_NAME)) ;
     OK (GrB_Monoid_get_String_(monoid, name, GrB_NAME)) ;
     printf ("\nuser monoid: [%s]\n", name) ;
-    // CHECK (MATCH (name, "myfunc_MONOID")) ;
     CHECK (MATCH (name, "")) ;
-    CHECK (size == GxB_MAX_NAME_LEN + strlen ("_MONOID")) ;
+    CHECK (size == 1) ;
     OK (GxB_print (monoid, 3)) ;
 
     OK (GrB_Monoid_get_SIZE_(monoid, &size, GrB_INPUT1TYPE_STRING)) ;
@@ -279,7 +278,13 @@ void mexFunction
     ERR (GrB_Monoid_set_ENUM_(monoid, 0, 0)) ;
     ERR (GrB_Monoid_set_VOID_(monoid, nothing, 0, 0)) ;
     expected = GrB_ALREADY_SET ;
-    ERR (GrB_Monoid_set_String_(monoid, "stuff", GrB_NAME)) ;
+
+    OK (GrB_Monoid_set_String_(monoid, "monoid_stuff", GrB_NAME)) ;
+    OK (GrB_Monoid_get_String_(monoid, name, GrB_NAME)) ;
+    printf ("\nuser monoid: [%s]\n", name) ;
+    CHECK (MATCH (name, "monoid_stuff")) ;
+    OK (GrB_Monoid_get_SIZE_(monoid, &size, GrB_NAME)) ;
+    CHECK (size == strlen (name) + 1) ;
 
     printf ("\nterminal monoid:\n") ;
     int32_t id_int32 ;

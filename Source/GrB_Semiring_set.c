@@ -34,8 +34,28 @@ GrB_Info GrB_Semiring_set_String
     GrB_Field field
 )
 { 
-    // FIXME: allow a user-defined semiring to be named
-    return ((field == GrB_NAME) ? GrB_ALREADY_SET : GrB_NOT_IMPLEMENTED) ;
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_WHERE1 ("GrB_Semiring_set_String (semiring, value, field)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
+    GB_RETURN_IF_NULL (value) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring to get option", GB0) ;
+
+    if (semiring->header_size == 0 || field != GrB_NAME)
+    { 
+        // built-in semirings may not be modified
+        return (GrB_INVALID_VALUE) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // set the field
+    //--------------------------------------------------------------------------
+
+    return (GB_user_name_set (&(semiring->user_name),
+        &(semiring->user_name_size), value)) ;
 }
 
 //------------------------------------------------------------------------------

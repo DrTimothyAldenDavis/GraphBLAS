@@ -94,7 +94,28 @@ GrB_Info GxB_Context_set_String
     GrB_Field field
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;  // FIXME return name of a GxB_Context
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_WHERE1 ("GxB_Context_set_String (Context, value, field)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (Context) ;
+    GB_RETURN_IF_NULL (value) ;
+    ASSERT_CONTEXT_OK (Context, "Context to get option", GB0) ;
+
+    if (Context == GxB_CONTEXT_WORLD || field != GrB_NAME)
+    { 
+        // built-in GxB_CONTEXT_WORLD may not be modified
+        return (GrB_INVALID_VALUE) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // set the field
+    //--------------------------------------------------------------------------
+
+    return (GB_user_name_set (&(Context->user_name),
+        &(Context->user_name_size), value)) ;
 }
 
 //------------------------------------------------------------------------------

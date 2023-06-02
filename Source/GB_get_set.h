@@ -74,5 +74,14 @@ GrB_Info GB_monoid_get
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_user_name_set
+(
+    // input/output
+    char **object_user_name,        // user_name of the object
+    size_t *object_user_name_size,  // user_name_size of the object
+    // input
+    const char *new_name            // new name for the object
+) ;
+
 #endif
 

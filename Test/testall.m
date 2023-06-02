@@ -103,7 +103,7 @@ logstat ('test276'    ,t, j0  , f1  ) ; % semiring get/set
 logstat ('test275'    ,t, j0  , f1  ) ; % monoid get/set
 logstat ('test274'    ,t, j0  , f1  ) ; % index unary op get/set
 logstat ('test273'    ,t, j0  , f1  ) ; % global get/set
-logstat ('test272'    ,t, j0  , f1  ) ; % Context
+logstat ('test272'    ,t, j0  , f1  ) ; % misc simple tests
 logstat ('test271'    ,t, j0  , f1  ) ; % binary op get/set
 logstat ('test270'    ,t, j0  , f1  ) ; % unary op get/set
 logstat ('test269'    ,t, j0  , f1  ) ; % get/set for type, scalar, vec, mtx

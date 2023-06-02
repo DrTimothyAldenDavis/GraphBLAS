@@ -12,6 +12,12 @@
 const char *GB_monoid_name_get (GrB_Monoid monoid)
 {
 
+    if (monoid->user_name_size > 0)
+    { 
+        // user-defined monoid, with name defined by GrB_set
+        return (monoid->user_name) ;
+    }
+
     GB_Opcode opcode = monoid->op->opcode ;
     GB_Type_code zcode = monoid->op->ztype->code ;
 
@@ -199,13 +205,7 @@ const char *GB_monoid_name_get (GrB_Monoid monoid)
             }
             break ;
 
-        //----------------------------------------------------------------------
-        // user-defined monoids or operator not recognized
-        //----------------------------------------------------------------------
-
-        // FIXME: all user-defined monoid names to be set
-
-        default :;
+        default: ;
     }
 
     return (NULL) ;

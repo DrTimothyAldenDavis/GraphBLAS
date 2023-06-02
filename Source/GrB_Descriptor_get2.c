@@ -185,8 +185,20 @@ GrB_Info GrB_Descriptor_get_String
     DNAME (GrB_DESC_RSCT0  ) ;
     DNAME (GrB_DESC_RSCT0T1) ;
 
-    (*value) = '\0' ; // FIXME: allow user-defined descriptors to be named
-    return (GrB_NOT_IMPLEMENTED) ;
+    // user-defined descriptor
+    (*value) = '\0' ;
+
+    printf ("get user name [%s]:%d\n", desc->user_name,
+        (int) (desc->user_name_size)) ; 
+
+    if (desc->user_name_size > 0)
+    { 
+        // user-defined descriptor, with name defined by GrB_set
+        strcpy (value, desc->user_name) ;
+    }
+
+    #pragma omp flush
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------
@@ -228,12 +240,34 @@ GrB_Info GrB_Descriptor_get_SIZE
     GrB_Field field
 )
 {
-    if (field == GrB_NAME)
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_WHERE1 ("GrB_Descriptor_get_SIZE (desc, value, field)") ;
+    GB_RETURN_IF_FAULTY (desc) ;
+    GB_RETURN_IF_NULL (value) ;
+    ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for get", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // get the field
+    //--------------------------------------------------------------------------
+
+    if (field != GrB_NAME)
     { 
-        (*value) = GxB_MAX_NAME_LEN ;
-        return (GrB_SUCCESS) ;
+        return (GrB_INVALID_VALUE) ;
     }
-    return (GrB_INVALID_VALUE) ;
+
+    if (desc != NULL && desc->user_name != NULL)
+    { 
+        (*value) = desc->user_name_size ;
+    }
+    else
+    {
+        (*value) = GxB_MAX_NAME_LEN ;
+    }
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------
