@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_op_name_get: get the name of any operator
+// GB_op_name_get: get the user_name of any operator
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -1688,7 +1688,7 @@ const char *GB_op_name_get (GB_Operator op)
 
         case GB_USER_unop_code :
         case GB_USER_idxunop_code :
-        case GB_USER_binop_code :   return (op->name) ;
+        case GB_USER_binop_code :   return (op->user_name) ;
 
         //----------------------------------------------------------------------
         // operator not recognized

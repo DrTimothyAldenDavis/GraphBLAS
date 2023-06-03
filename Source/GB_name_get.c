@@ -11,14 +11,23 @@
 
 GrB_Info GB_name_get (GrB_Matrix A, char *name, int field)
 {
+    const char *typename ;
+    (*name) = '\0' ;
+
     switch (field)
     {
-        case GrB_NAME : 
-            (*name) = '\0' ; // FIXME: give matrix/vector/scalar a name
+
+        case GrB_NAME :  // FIXME: give matrix/vector/scalar a name
             break ;
+
         case GrB_ELTYPE_STRING : 
-            GB_type_name_get (name, A->type) ;
+            typename = GB_type_name_get (A->type) ;
+            if (typename != NULL)
+            {
+                strcpy (name, typename) ;
+            }
             break ;
+
         default : 
             return (GrB_INVALID_VALUE) ;
     }

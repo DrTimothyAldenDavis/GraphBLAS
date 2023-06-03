@@ -22,9 +22,9 @@ GrB_Type_Code GB_type_code_get  // return the GrB_Type_Code for the code
     const GB_Type_code code     // type code to convert
 ) ;
 
-void GB_type_name_get (char *name, GrB_Type type) ;
+const char *GB_type_name_get (GrB_Type type) ;
 
-GrB_Info GB_name_size_get (size_t *value, int field) ;
+GrB_Info GB_name_size_get (GrB_Matrix A, size_t *value, int field) ;
 GrB_Info GB_name_get (GrB_Matrix A, char *name, int field) ;
 
 GrB_Info GB_matvec_get (GrB_Matrix A, int *value, int field) ;
@@ -59,6 +59,8 @@ GrB_Info GB_op_or_type_string_set
     char *value,
     int field,
     // output:
+    char **user_name,
+    size_t *user_name_size,
     char *name,
     int32_t *name_len,
     char **defn,

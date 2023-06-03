@@ -209,18 +209,18 @@ typedef enum
     // GrB_Type (readable only):
     GrB_SIZE = 110,                 // size of the type
 
-    // GrB_Type, GrB_UnaryOp, GrB_BinaryOp, and GrB_IndexUnaryOp:  only valid
-    // for user-defined types.
-    GxB_DEFINITION = 7041,          // typedef or function definition
+    // GrB_Type, GrB_UnaryOp, GrB_BinaryOp, and GrB_IndexUnaryOp:
+    GxB_JIT_C_NAME = 7041,          // C type or function name
+    GxB_JIT_C_DEFINITION = 7042,    // C typedef or function definition
 
     // GrB_Monoid and GrB_Semiring:
-    GxB_MONOID_IDENTITY = 7042,     // monoid identity value
-    GxB_MONOID_TERMINAL = 7043,     // monoid terminal value
-    GxB_MONOID_OPERATOR = 7044,     // monoid binary operator
+    GxB_MONOID_IDENTITY = 7043,     // monoid identity value
+    GxB_MONOID_TERMINAL = 7044,     // monoid terminal value
+    GxB_MONOID_OPERATOR = 7045,     // monoid binary operator
 
     // GrB_Semiring only:
-    GxB_SEMIRING_MONOID = 7045,     // semiring monoid
-    GxB_SEMIRING_MULTIPLY = 7046,   // semiring multiplicative op
+    GxB_SEMIRING_MONOID = 7046,     // semiring monoid
+    GxB_SEMIRING_MULTIPLY = 7047,   // semiring multiplicative op
 }
 GrB_Field ;
 
@@ -611,15 +611,16 @@ GrB_Info GrB_set (GrB_Type t, char *     value, GrB_Field f) ;
 \verb'GrB_ELTYPE_CODE'              & R    & \verb'int'    & type code (see \verb'GrB_Type_Code') \\
 \verb'GrB_SIZE'                     & R    & \verb'int'    & \verb'sizeof' the type \\
 \hline
-\verb'GrB_NAME'                     & R/W1 & \verb'char *' & 
-    For built-in types, this returns the GraphBLAS name (\verb'"GrB_BOOL"' for
-    \verb'GrB_BOOL', for example).  For user-defined types, this must be a
-    valid name of a C type to enable its use in the JIT.  Other names are
-    allowed (such as \verb'"My own edge type; a double and an int"') but the
-    type cannot be used in any JIT kernels.  The length of the name can be at
-    most \verb'GxB_MAX_NAME_LEN', including the \verb'nul' terminating byte.
-    It can be set at most once. \\
-\verb'GxB_DEFINITION'               & R/W1 & \verb'char *' &
+\verb'GrB_NAME'                     & R/W  & \verb'char *' &
+    name of the type.  For built-in types, this returns the GraphBLAS
+    name (\verb'"GrB_FP32"' for \verb'GrB_FP32', for example).
+    For user-defined types, the name can be any string of any length.  It is
+    not used by the JIT.  It can be set any number of times. \\
+\verb'GxB_JIT_C_NAME'               & R/W1 & \verb'char *' & 
+    This must be a valid name of a C type to enable its use in the JIT.  The
+    length of the name can be at most \verb'GxB_MAX_NAME_LEN', including the
+    \verb'nul' terminating byte.  It can be set at most once. \\
+\verb'GxB_JIT_C_DEFINITION'               & R/W1 & \verb'char *' &
     type definition, as a C \verb'typedef';
     built-in types return an empty string. 
     It can be set at most once. \\
@@ -666,18 +667,18 @@ GrB_Info GrB_set (GrB_UnaryOp op, char *     value, GrB_Field f) ;
 \verb'GrB_INPUT1TYPE_STRING'        & R    & \verb'char *' & name of the input type \\
 \verb'GrB_OUTPUTTYPE_STRING'        & R    & \verb'char *' & name of the output type \\
 \hline
-\verb'GrB_NAME'                     & R/W1 & \verb'char *' &
-    name of the operator.  For built-in operators, this returns the GraphBLAS name
-    (\verb'"GrB_LNOT"' for \verb'GrB_LNOT', for example).  For user-defined
-    operators, this must be a valid name of a C function to enable its use in the
-    JIT.  Other names are allowed (such as \verb'"My own function"') but the
-    operator cannot be used in any JIT kernels.  The length of the name can be
-    at most \verb'GxB_MAX_NAME_LEN', including the \verb'nul' terminating byte.
-    It can be set at most once. \\
-\verb'GxB_DEFINITION'               & R/W1 & \verb'char *' &
+\verb'GrB_NAME'                     & R/W  & \verb'char *' &
+    name of the operator.  For built-in operators, this returns the GraphBLAS
+    name (\verb'"GrB_LNOT"' for \verb'GrB_LNOT', for example).
+    For user-defined operators, the name can be any string of any length.  It
+    is not used by the JIT.  It can be set any number of times. \\
+\verb'GxB_JIT_C_NAME'               & R/W1 & \verb'char *' & This must be a
+    valid name of a C function to enable its use in the JIT.  The length of the
+    name can be at most \verb'GxB_MAX_NAME_LEN', including the \verb'nul'
+    terminating byte.  It can be set at most once. \\
+\verb'GxB_JIT_C_DEFINITION'         & R/W1 & \verb'char *' &
     definition for a user-defined operator, as a C function; built-in operators
-    return an empty string.
-    It can be set at most once. \\
+    return an empty string.  It can be set at most once. \\
 \hline
 \end{tabular}
 }
@@ -717,18 +718,18 @@ GrB_Info GrB_set (GrB_IndexUnaryOp op, char *     value, GrB_Field f) ;
 \verb'GrB_INPUT2TYPE_STRING'        & R    & \verb'char *' & name of the 2nd input type \\
 \verb'GrB_OUTPUTTYPE_STRING'        & R    & \verb'char *' & name of the output type \\
 \hline
-\verb'GrB_NAME'                     & R/W1 & \verb'char *' &
-    name of the operator.  For built-in operators, this returns the GraphBLAS name
-    (\verb'"GrB_TRIL"' for \verb'GrB_TRIL', for example).  For user-defined
-    operators, this must be a valid name of a C function to enable its use in the
-    JIT.  Other names are allowed (such as \verb'"My own function"') but the
-    operator cannot be used in any JIT kernels.  The length of the name can be
-    at most \verb'GxB_MAX_NAME_LEN', including the \verb'nul' terminating byte.
-    It can be set at most once. \\
-\verb'GxB_DEFINITION'               & R/W1 & \verb'char *' &
+\verb'GrB_NAME'                     & R/W  & \verb'char *' &
+    name of the operator.  For built-in operators, this returns the GraphBLAS
+    name (\verb'"GrB_TRIL"' for \verb'GrB_TRIL', for example).
+    For user-defined operators, the name can be any string of any length.  It
+    is not used by the JIT.  It can be set any number of times. \\
+\verb'GxB_JIT_C_NAME'               & R/W1 & \verb'char *' & This must be a
+    valid name of a C function to enable its use in the JIT.  The length of the
+    name can be at most \verb'GxB_MAX_NAME_LEN', including the \verb'nul'
+    terminating byte.  It can be set at most once. \\
+\verb'GxB_JIT_C_DEFINITION'         & R/W1 & \verb'char *' &
     definition for a user-defined operator, as a C function; built-in operators
-    return an empty string.
-    It can be set at most once. \\
+    return an empty string.  It can be set at most once. \\
 \hline
 \end{tabular}
 }
@@ -768,18 +769,18 @@ GrB_Info GrB_set (GrB_BinaryOp op, char *     value, GrB_Field f) ;
 \verb'GrB_INPUT2TYPE_STRING'        & R    & \verb'char *' & name of the 2nd input type \\
 \verb'GrB_OUTPUTTYPE_STRING'        & R    & \verb'char *' & name of the output type \\
 \hline
-\verb'GrB_NAME'                     & R/W1 & \verb'char *' &
-    name of the operator.  For built-in operators, this returns the GraphBLAS name
-    (\verb'"GrB_LOR"' for \verb'GrB_LOR', for example).  For user-defined
-    operators, this must be a valid name of a C function to enable its use in the
-    JIT.  Other names are allowed (such as \verb'"My own function"') but the
-    operator cannot be used in any JIT kernels.  The length of the name can be
-    at most \verb'GxB_MAX_NAME_LEN', including the \verb'nul' terminating byte.
-    It can be set at most once. \\
-\verb'GxB_DEFINITION'               & R/W1 & \verb'char *' &
+\verb'GrB_NAME'                     & R/W  & \verb'char *' &
+    name of the operator.  For built-in operators, this returns the GraphBLAS
+    name (\verb'"GrB_LOR"' for \verb'GrB_LOR', for example).
+    For user-defined operators, the name can be any string of any length.  It
+    is not used by the JIT.  It can be set any number of times. \\
+\verb'GxB_JIT_C_NAME'               & R/W1 & \verb'char *' & This must be a
+    valid name of a C function to enable its use in the JIT.  The length of the
+    name can be at most \verb'GxB_MAX_NAME_LEN', including the \verb'nul'
+    terminating byte.  It can be set at most once. \\
+\verb'GxB_JIT_C_DEFINITION'         & R/W1 & \verb'char *' &
     definition for a user-defined operator, as a C function; built-in operators
-    return an empty string.
-    It can be set at most once. \\
+    return an empty string.  It can be set at most once. \\
 \hline
 \end{tabular}
 }
@@ -832,8 +833,7 @@ GrB_Info GrB_set (GrB_Monoid monoid, char *     value, GrB_Field f) ;
     name of the monoid.  For built-in operators, this returns the GraphBLAS
     name (\verb'"GrB_LOR_MONOID"' for \verb'GrB_LOR_MONOID_BOOL', for example).
     For user-defined monoids, the name can be any string of any length.  It is
-    not used by the JIT.
-    It can be set any number of times. \\
+    not used by the JIT.  It can be set any number of times. \\
 \hline
 \verb'GxB_MONOID_IDENTITY'          & R  & \verb'GrB_Scalar' &
     identity value of the monoid.  The type of the \verb'GrB_Scalar'

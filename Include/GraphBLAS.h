@@ -4034,19 +4034,18 @@ typedef enum
     // SuiteSparse extensions:
     //--------------------------------------------------------------------------
 
-    // GrB_Type, GrB_UnaryOp, GrB_BinaryOp, and GrB_IndexUnaryOp:  only valid
-    // for user-defined types.
-    GxB_DEFINITION = 7041,          // typedef or function definition
+    // GrB_Type, GrB_UnaryOp, GrB_BinaryOp, and GrB_IndexUnaryOp:
+    GxB_JIT_C_NAME = 7041,          // C type or function name
+    GxB_JIT_C_DEFINITION = 7042,    // C typedef or function definition
 
     // GrB_Monoid and GrB_Semiring:
-    GxB_MONOID_IDENTITY = 7042,     // monoid identity value
-    GxB_MONOID_TERMINAL = 7043,     // monoid terminal value
-    GxB_MONOID_OPERATOR = 7044,     // monoid binary operator
+    GxB_MONOID_IDENTITY = 7043,     // monoid identity value
+    GxB_MONOID_TERMINAL = 7044,     // monoid terminal value
+    GxB_MONOID_OPERATOR = 7045,     // monoid binary operator
 
     // GrB_Semiring only:
-    GxB_SEMIRING_MONOID = 7045,     // semiring monoid
-    GxB_SEMIRING_MULTIPLY = 7046,   // semiring multiplicative op
-
+    GxB_SEMIRING_MONOID = 7046,     // semiring monoid
+    GxB_SEMIRING_MULTIPLY = 7047,   // semiring multiplicative op
 }
 GrB_Field ;
 

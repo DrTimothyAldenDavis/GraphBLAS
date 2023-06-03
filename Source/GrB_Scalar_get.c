@@ -126,7 +126,7 @@ GrB_Info GrB_Scalar_get_SIZE
     // get the field
     //--------------------------------------------------------------------------
 
-    return (GB_name_size_get (value, field)) ;
+    return (GB_name_size_get ((GrB_Matrix) s, value, field)) ;
 }
 
 //------------------------------------------------------------------------------

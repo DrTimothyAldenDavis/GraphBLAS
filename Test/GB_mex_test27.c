@@ -394,18 +394,19 @@ void mexFunction
 
     OK (GrB_UnaryOp_new (&unop, myfunc, GrB_FP32, GrB_FP32)) ;
     OK (GrB_UnaryOp_get_SIZE_(unop, &size, GrB_NAME)) ;
-    CHECK (size == GxB_MAX_NAME_LEN) ;
-    OK (GrB_UnaryOp_get_SIZE_(unop, &size, GxB_DEFINITION)) ;
+    CHECK (size == 1) ;
+    OK (GrB_UnaryOp_get_SIZE_(unop, &size, GxB_JIT_C_NAME)) ;
+    CHECK (size == 1) ;
+    OK (GrB_UnaryOp_get_SIZE_(unop, &size, GxB_JIT_C_DEFINITION)) ;
     CHECK (size == 1) ;
 
     expected = GrB_INVALID_VALUE ;
-//  ERR (GrB_UnaryOp_set_String_(unop, "[invalid name]", GrB_NAME)) ;
-    OK (GrB_UnaryOp_set_String_(unop, "myfunc", GrB_NAME)) ;
-    OK (GrB_UnaryOp_get_String_(unop, name, GrB_NAME)) ;
+    OK (GrB_UnaryOp_set_String_(unop, "myfunc", GxB_JIT_C_NAME)) ;
+    OK (GrB_UnaryOp_get_String_(unop, name, GxB_JIT_C_NAME)) ;
     CHECK (MATCH (name, "myfunc")) ;
     CHECK (unop->hash == UINT64_MAX) ;
-    METHOD (GrB_UnaryOp_set_String (unop, MYFUNC_DEFN, GxB_DEFINITION)) ;
-    OK (GrB_UnaryOp_get_String_(unop, defn, GxB_DEFINITION)) ;
+    METHOD (GrB_UnaryOp_set_String (unop, MYFUNC_DEFN, GxB_JIT_C_DEFINITION)) ;
+    OK (GrB_UnaryOp_get_String_(unop, defn, GxB_JIT_C_DEFINITION)) ;
     CHECK (MATCH (defn, MYFUNC_DEFN)) ;
     CHECK (unop->hash != UINT64_MAX) ;
     OK (GxB_print (unop, 3)) ;
@@ -418,9 +419,9 @@ void mexFunction
     ERR (GrB_UnaryOp_get_SIZE(unop, &size, 999)) ;
 
     expected = GrB_ALREADY_SET ;
-    ERR (GrB_UnaryOp_set_String_(unop, "another_name", GrB_NAME)) ;
-    ERR (GrB_UnaryOp_set_String_(unop, "another_defn", GxB_DEFINITION)) ;
-    ERR (GrB_UnaryOp_set_String_(GrB_LNOT, "another_name", GrB_NAME)) ;
+    ERR (GrB_UnaryOp_set_String_(unop, "another_name", GxB_JIT_C_NAME)) ;
+    ERR (GrB_UnaryOp_set_String_(unop, "another_defn", GxB_JIT_C_DEFINITION)) ;
+    ERR (GrB_UnaryOp_set_String_(GrB_LNOT, "another_name", GxB_JIT_C_NAME)) ;
 
     expected = GrB_NOT_IMPLEMENTED ;
     ERR (GrB_UnaryOp_set_Scalar_(unop, s_int32, 0)) ;

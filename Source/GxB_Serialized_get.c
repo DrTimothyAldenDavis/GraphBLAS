@@ -99,12 +99,12 @@ static GrB_Info GB_blob_header_get
         // blob has a built-in type; the name is not in the blob
         GrB_Type blob_type = GB_code_type ((GB_Type_code) typecode, NULL) ;
         ASSERT (blob_type != NULL) ;
-        GB_type_name_get (type_name, blob_type) ;
+        strcpy (type_name, GB_type_name_get (blob_type)) ;
     }
     else if (typecode == GB_UDT_code)
     { 
         // blob has a user-defined type
-        // get the name of the user type from the blob
+        // get the JIT name of the user type from the blob
         memcpy (type_name, ((GB_void *) blob) + GB_BLOB_HEADER_SIZE,
             GxB_MAX_NAME_LEN) ;
     }
@@ -261,6 +261,7 @@ GrB_Info GxB_Serialized_get_String
     {
         switch (field)
         {
+
             case GrB_NAME : 
                 (*value) = '\0' ; // FIXME: give the blob a name
                 break ;
@@ -374,10 +375,37 @@ GrB_Info GxB_Serialized_get_SIZE
     GB_RETURN_IF_NULL (value) ;
 
     //--------------------------------------------------------------------------
+    // read the blob
+    //--------------------------------------------------------------------------
+
+    char type_name [GxB_MAX_NAME_LEN] ;
+    int sparsity_status, sparsity_ctrl, type_code, storage ;
+    double hyper_sw, bitmap_sw ;
+
+    GrB_Info info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
+        &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage, blob, blob_size) ;
+
+    //--------------------------------------------------------------------------
     // get the field
     //--------------------------------------------------------------------------
 
-    return (GB_name_size_get (value, field)) ;
+    switch (field)
+    {
+
+        case GrB_NAME :     
+            (*value) = 1 ;      // FIXME : name of blob
+            break ;
+
+        case GrB_ELTYPE_STRING : 
+            (*value) = strlen (type_name) + 1 ;
+            break ;
+
+        default : 
+            return (GrB_INVALID_VALUE) ;
+    }
+
+    #pragma omp flush
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------

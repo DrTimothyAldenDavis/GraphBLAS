@@ -603,15 +603,17 @@ void mexFunction
 
     OK (GrB_BinaryOp_new (&binop, myfunc, GrB_FP32, GrB_FP32, GrB_FP32)) ;
     OK (GrB_BinaryOp_get_SIZE_(binop, &size, GrB_NAME)) ;
-    CHECK (size == GxB_MAX_NAME_LEN) ;
-    OK (GrB_BinaryOp_get_SIZE_(binop, &size, GxB_DEFINITION)) ;
     CHECK (size == 1) ;
-    OK (GrB_BinaryOp_set_String_(binop, "myfunc", GrB_NAME)) ;
-    OK (GrB_BinaryOp_get_String_(binop, name, GrB_NAME)) ;
+    OK (GrB_BinaryOp_get_SIZE_(binop, &size, GxB_JIT_C_NAME)) ;
+    CHECK (size == 1) ;
+    OK (GrB_BinaryOp_get_SIZE_(binop, &size, GxB_JIT_C_DEFINITION)) ;
+    CHECK (size == 1) ;
+    OK (GrB_BinaryOp_set_String_(binop, "myfunc", GxB_JIT_C_NAME)) ;
+    OK (GrB_BinaryOp_get_String_(binop, name, GxB_JIT_C_NAME)) ;
     CHECK (MATCH (name, "myfunc")) ;
     CHECK (binop->hash == UINT64_MAX) ;
-    METHOD (GrB_BinaryOp_set_String (binop, MYFUNC_DEFN, GxB_DEFINITION)) ;
-    OK (GrB_BinaryOp_get_String_(binop, defn, GxB_DEFINITION)) ;
+    METHOD (GrB_BinaryOp_set_String (binop, MYFUNC_DEFN, GxB_JIT_C_DEFINITION)) ;
+    OK (GrB_BinaryOp_get_String_(binop, defn, GxB_JIT_C_DEFINITION)) ;
     CHECK (MATCH (defn, MYFUNC_DEFN)) ;
     CHECK (binop->hash != UINT64_MAX) ;
     OK (GxB_print (binop, 3)) ;

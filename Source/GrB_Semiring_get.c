@@ -159,28 +159,34 @@ GrB_Info GrB_Semiring_get_SIZE
 
             // get the length of the semiring user_name, or built-in name
             name = GB_semiring_name_get (semiring) ;
-            (*value) = (name == NULL) ? 1 : (strlen (name) + 1) ;
             break ;
 
         case GrB_INPUT1TYPE_STRING : 
+            name = GB_type_name_get (semiring->multiply->xtype) ;
+            break ;
+
         case GrB_INPUT2TYPE_STRING : 
+            name = GB_type_name_get (semiring->multiply->ytype) ;
+            break ;
+
         case GrB_OUTPUTTYPE_STRING : 
-            (*value) = GxB_MAX_NAME_LEN ;
+            name = GB_type_name_get (semiring->multiply->ztype) ;
             break ;
 
         case GxB_MONOID_OPERATOR : 
         case GxB_SEMIRING_MULTIPLY : 
             (*value) = sizeof (GrB_BinaryOp) ;
-            break ;
+            return (GrB_SUCCESS) ;
 
         case GxB_SEMIRING_MONOID : 
             (*value) = sizeof (GrB_Monoid) ;
-            break ;
+            return (GrB_SUCCESS) ;
 
         default : 
             return (GrB_INVALID_VALUE) ;
     }
 
+    (*value) = (name == NULL) ? 1 : (strlen (name) + 1) ;
     #pragma omp flush
     return (GrB_SUCCESS) ;
 }

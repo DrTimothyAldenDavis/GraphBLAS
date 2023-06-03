@@ -207,18 +207,20 @@ void mexFunction
 
     OK (GrB_IndexUnaryOp_new (&op, myfunc, GrB_BOOL, GrB_FP32, GrB_FP32)) ;
     OK (GrB_IndexUnaryOp_get_SIZE_(op, &size, GrB_NAME)) ;
-    CHECK (size == GxB_MAX_NAME_LEN) ;
-    OK (GrB_IndexUnaryOp_get_SIZE_(op, &size, GxB_DEFINITION)) ;
+    CHECK (size == 1) ;
+    OK (GrB_IndexUnaryOp_get_SIZE_(op, &size, GxB_JIT_C_NAME)) ;
+    printf ("size %lu\n", size) ;
+    CHECK (size == 1) ;
+    OK (GrB_IndexUnaryOp_get_SIZE_(op, &size, GxB_JIT_C_DEFINITION)) ;
     CHECK (size == 1) ;
 
     expected = GrB_INVALID_VALUE ;
-//  ERR (GrB_IndexUnaryOp_set_String_(op, "[invalid name]", GrB_NAME)) ;
-    OK (GrB_IndexUnaryOp_set_String_(op, "myfunc", GrB_NAME)) ;
-    OK (GrB_IndexUnaryOp_get_String_(op, name, GrB_NAME)) ;
+    OK (GrB_IndexUnaryOp_set_String_(op, "myfunc", GxB_JIT_C_NAME)) ;
+    OK (GrB_IndexUnaryOp_get_String_(op, name, GxB_JIT_C_NAME)) ;
     CHECK (MATCH (name, "myfunc")) ;
     CHECK (op->hash == UINT64_MAX) ;
-    METHOD (GrB_IndexUnaryOp_set_String (op, MYFUNC_DEFN, GxB_DEFINITION)) ;
-    OK (GrB_IndexUnaryOp_get_String_(op, defn, GxB_DEFINITION)) ;
+    METHOD (GrB_IndexUnaryOp_set_String (op, MYFUNC_DEFN, GxB_JIT_C_DEFINITION)) ;
+    OK (GrB_IndexUnaryOp_get_String_(op, defn, GxB_JIT_C_DEFINITION)) ;
     CHECK (MATCH (defn, MYFUNC_DEFN)) ;
     CHECK (op->hash != UINT64_MAX) ;
     OK (GxB_print (op, 3)) ;
@@ -228,9 +230,9 @@ void mexFunction
     ERR (GrB_IndexUnaryOp_get_SIZE(op, &size, 999)) ;
 
     expected = GrB_ALREADY_SET ;
-    ERR (GrB_IndexUnaryOp_set_String_(op, "another_name", GrB_NAME)) ;
-    ERR (GrB_IndexUnaryOp_set_String_(op, "another_defn", GxB_DEFINITION)) ;
-    ERR (GrB_IndexUnaryOp_set_String_(GrB_LNOT, "another_name", GrB_NAME)) ;
+    ERR (GrB_IndexUnaryOp_set_String_(op, "another_name", GxB_JIT_C_NAME)) ;
+    ERR (GrB_IndexUnaryOp_set_String_(op, "another_defn", GxB_JIT_C_DEFINITION)) ;
+    ERR (GrB_IndexUnaryOp_set_String_(GrB_LNOT, "another_name", GxB_JIT_C_NAME)) ;
 
     expected = GrB_NOT_IMPLEMENTED ;
     ERR (GrB_IndexUnaryOp_set_Scalar_(op, s_int32, 0)) ;

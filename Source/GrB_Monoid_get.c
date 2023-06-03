@@ -151,23 +151,23 @@ GrB_Info GrB_Monoid_get_SIZE
 
             // get the length of the monoid user_name, or built-in name
             name = GB_monoid_name_get (monoid) ;
-            (*value) = (name == NULL) ? 1 : (strlen (name) + 1) ;
             break ;
 
         case GrB_INPUT1TYPE_STRING : 
         case GrB_INPUT2TYPE_STRING : 
         case GrB_OUTPUTTYPE_STRING : 
-            (*value) = GxB_MAX_NAME_LEN ;
+            name = GB_type_name_get (monoid->op->ztype) ;
             break ;
 
         case GxB_MONOID_OPERATOR : 
             (*value) = sizeof (GrB_BinaryOp) ;
-            break ;
+            return (GrB_SUCCESS) ;
 
         default : 
             return (GrB_INVALID_VALUE) ;
     }
 
+    (*value) = (name == NULL) ? 1 : (strlen (name) + 1) ;
     #pragma omp flush
     return (GrB_SUCCESS) ;
 }

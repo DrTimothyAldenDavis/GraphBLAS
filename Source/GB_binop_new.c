@@ -45,6 +45,8 @@ GrB_Info GB_binop_new
     //--------------------------------------------------------------------------
 
     op->magic = GB_MAGIC ;
+    op->user_name = NULL ;
+    op->user_name_size = 0 ;
     op->ztype = ztype ;
     op->xtype = xtype ;
     op->ytype = ytype ;

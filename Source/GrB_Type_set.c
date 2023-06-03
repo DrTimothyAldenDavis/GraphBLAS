@@ -48,9 +48,12 @@ GrB_Info GrB_Type_set_String
     // set the name or defn of a user-defined type
     //--------------------------------------------------------------------------
 
-    return (GB_op_or_type_string_set (type->code == GB_UDT_code, true, value,
-        field, type->name, &(type->name_len), &(type->defn),
-        &(type->defn_size), &(type->hash))) ;
+    bool user_defined = (type->code == GB_UDT_code) ;
+
+    return (GB_op_or_type_string_set (user_defined, true, value, field,
+        &(type->user_name), &(type->user_name_size),
+        type->name, &(type->name_len), &(type->defn), &(type->defn_size),
+        &(type->hash))) ;
 }
 
 //------------------------------------------------------------------------------

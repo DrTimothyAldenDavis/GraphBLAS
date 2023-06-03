@@ -76,6 +76,8 @@ GrB_Info GxB_Type_new
 
     // initialize the type
     t->header_size = header_size ;
+    t->user_name = NULL ;
+    t->user_name_size = 0 ;
     t->size = sizeof_type ;
     t->code = GB_UDT_code ;         // user-defined type
     memset (t->name, 0, GxB_MAX_NAME_LEN) ;   // no name yet

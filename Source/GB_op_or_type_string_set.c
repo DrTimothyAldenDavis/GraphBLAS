@@ -19,6 +19,8 @@ GrB_Info GB_op_or_type_string_set
     char *value,
     int field,
     // output:
+    char **user_name,
+    size_t *user_name_size,
     char *name,
     int32_t *name_len,
     char **defn,
@@ -46,7 +48,12 @@ GrB_Info GB_op_or_type_string_set
 
     switch (field)
     {
+
         case GrB_NAME : 
+
+            return (GB_user_name_set (user_name, user_name_size, value)) ;
+
+        case GxB_JIT_C_NAME : 
 
             if (name [0] != '\0')
             { 
@@ -58,6 +65,7 @@ GrB_Info GB_op_or_type_string_set
             { 
                 // invalid name: the name cannot be empty, and the name cannot
                 // exceed GxB_MAX_NAME_LEN-1 characters.
+                printf ("bakd len %lu\n", len) ;
                 return (GrB_INVALID_VALUE) ;
             }
 
@@ -69,7 +77,7 @@ GrB_Info GB_op_or_type_string_set
             compute_hash = ((*defn) != NULL) ;
             break ;
 
-        case GxB_DEFINITION : 
+        case GxB_JIT_C_DEFINITION : 
 
             if ((*defn) != NULL)
             { 
@@ -92,6 +100,7 @@ GrB_Info GB_op_or_type_string_set
             break ;
 
         default : 
+            printf ("bakd field %d\n", field) ;
             return (GrB_INVALID_VALUE) ;
     }
 

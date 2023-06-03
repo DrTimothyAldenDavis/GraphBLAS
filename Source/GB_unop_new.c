@@ -42,6 +42,8 @@ GrB_Info GB_unop_new
     //--------------------------------------------------------------------------
 
     op->magic = GB_MAGIC ;
+    op->user_name = NULL ;
+    op->user_name_size = 0 ;
     op->xtype = xtype ;
     op->ztype = ztype ;
     op->ytype = NULL ;

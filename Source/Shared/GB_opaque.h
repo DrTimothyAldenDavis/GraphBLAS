@@ -363,10 +363,13 @@ struct GB_Type_opaque       // content of GrB_Type
     int64_t magic ;         // for detecting uninitialized objects
     size_t header_size ;    // size of the malloc'd block for this struct, or 0
     // ---------------------//
+    char *user_name ;       // user name for GrB_get/GrB_set
+    size_t user_name_size ; // allocated size of user_name for GrB_get/GrB_set
+    // ---------------------//
     size_t size ;           // size of the type
     GB_Type_code code ;     // the type code
-    int32_t name_len ;      // length of user-defined name; 0 for builtin
-    char name [GxB_MAX_NAME_LEN] ;  // name of the type
+    int32_t name_len ;      // length of JIT name; 0 for builtin
+    char name [GxB_MAX_NAME_LEN] ;  // JIT name of the type
     char *defn ;            // type definition
     size_t defn_size ;      // allocated size of the definition
     uint64_t hash ;         // if 0, type is builtin.

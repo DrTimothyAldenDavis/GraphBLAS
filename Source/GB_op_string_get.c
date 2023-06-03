@@ -27,14 +27,24 @@ GrB_Info GB_op_string_get
 
     switch ((int) field)
     {
+
         case GrB_NAME : 
 
             name = GB_op_name_get (op) ;
-            strcpy (value, name) ;
+            if (name != NULL)
+            {
+                strcpy (value, name) ;
+            }
             #pragma omp flush
             return (GrB_SUCCESS) ;
 
-        case GxB_DEFINITION : 
+        case GxB_JIT_C_NAME : 
+
+            strcpy (value, op->name) ;
+            #pragma omp flush
+            return (GrB_SUCCESS) ;
+
+        case GxB_JIT_C_DEFINITION : 
 
             if (op->defn != NULL)
             { 
@@ -54,7 +64,11 @@ GrB_Info GB_op_string_get
         return (GrB_INVALID_VALUE) ;
     }
 
-    GB_type_name_get (value, type) ;
+    name = GB_type_name_get (type) ;
+    if (name != NULL)
+    {
+        strcpy (value, name) ;
+    }
     #pragma omp flush
     return (GrB_SUCCESS) ;
 }

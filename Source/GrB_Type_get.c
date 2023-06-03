@@ -80,18 +80,26 @@ GrB_Info GrB_Type_get_String
     //--------------------------------------------------------------------------
 
     (*value) = '\0' ;
-    char *name ;
+    const char *name ;
 
     switch ((int) field)
     {
         case GrB_NAME : 
 
-            GB_type_name_get (value, type) ;
-            break ;
+            name = GB_type_name_get (type) ;
+            if (name != NULL)
+            {
+                strcpy (value, name) ;
+            }
             #pragma omp flush
             return (GrB_SUCCESS) ;
 
-        case GxB_DEFINITION : 
+        case GxB_JIT_C_NAME : 
+
+            strcpy (value, type->name) ;
+            break ;
+
+        case GxB_JIT_C_DEFINITION : 
 
             if (type->defn != NULL)
             { 
@@ -134,11 +142,14 @@ GrB_Info GrB_Type_get_ENUM
 
     switch ((int) field)
     {
+
         case GrB_ELTYPE_CODE : 
+
             (*value) = (int) GB_type_code_get (type->code) ;
             break ;
 
         case GrB_SIZE : 
+
             (*value) = (int) type->size ;
             break ;
 
@@ -175,20 +186,31 @@ GrB_Info GrB_Type_get_SIZE
     // get the field
     //--------------------------------------------------------------------------
 
+    const char *s ;
+
     switch ((int) field)
     {
-        case GxB_DEFINITION : 
-            (*value) = ((type->defn == NULL) ? 0 : strlen (type->defn)) + 1 ;
-            break ;
 
         case GrB_NAME : 
-            (*value) = GxB_MAX_NAME_LEN ;
+
+            s = GB_type_name_get (type) ;
+            break ;
+
+        case GxB_JIT_C_NAME : 
+
+            s = type->name ;
+            break ;
+
+        case GxB_JIT_C_DEFINITION : 
+
+            s = type->defn ;
             break ;
 
         default : 
             return (GrB_INVALID_VALUE) ;
     }
 
+    (*value) = ((s == NULL) ? 0 : strlen (s)) + 1 ;
     #pragma omp flush
     return (GrB_SUCCESS) ;
 }

@@ -58,7 +58,10 @@ void mexFunction
 
     // type name size
     OK (GrB_Type_get_SIZE_(GrB_BOOL, &size, GrB_NAME)) ;
-    CHECK (size == GxB_MAX_NAME_LEN) ;
+    CHECK (size == strlen ("GrB_BOOL") + 1) ;
+
+    OK (GrB_Type_get_SIZE_(GrB_BOOL, &size, GxB_JIT_C_NAME)) ;
+    CHECK (size == strlen ("bool") + 1) ;
 
     // type name
     OK (GrB_Type_get_String_(GrB_BOOL, name, GrB_NAME)) ;
@@ -99,6 +102,46 @@ void mexFunction
 
     OK (GrB_Type_get_String_(GxB_FC64, name, GrB_NAME)) ;
     CHECK (MATCH (name, "GxB_FC64")) ;
+
+    // type JIT name
+    OK (GrB_Type_get_String_(GrB_BOOL, name, GxB_JIT_C_NAME)) ;
+    CHECK (MATCH (name, "bool")) ;
+
+    OK (GrB_Type_get_String_(GrB_INT8, name, GxB_JIT_C_NAME)) ;
+    CHECK (MATCH (name, "int8_t")) ;
+
+    OK (GrB_Type_get_String_(GrB_INT16, name, GxB_JIT_C_NAME)) ;
+    CHECK (MATCH (name, "int16_t")) ;
+
+    OK (GrB_Type_get_String_(GrB_INT32, name, GxB_JIT_C_NAME)) ;
+    CHECK (MATCH (name, "int32_t")) ;
+
+    OK (GrB_Type_get_String_(GrB_INT64, name, GxB_JIT_C_NAME)) ;
+    CHECK (MATCH (name, "int64_t")) ;
+
+    OK (GrB_Type_get_String_(GrB_UINT8, name, GxB_JIT_C_NAME)) ;
+    CHECK (MATCH (name, "uint8_t")) ;
+
+    OK (GrB_Type_get_String_(GrB_UINT16, name, GxB_JIT_C_NAME)) ;
+    CHECK (MATCH (name, "uint16_t")) ;
+
+    OK (GrB_Type_get_String_(GrB_UINT32, name, GxB_JIT_C_NAME)) ;
+    CHECK (MATCH (name, "uint32_t")) ;
+
+    OK (GrB_Type_get_String_(GrB_UINT64, name, GxB_JIT_C_NAME)) ;
+    CHECK (MATCH (name, "uint64_t")) ;
+
+    OK (GrB_Type_get_String_(GrB_FP32, name, GxB_JIT_C_NAME)) ;
+    CHECK (MATCH (name, "float")) ;
+
+    OK (GrB_Type_get_String_(GrB_FP64, name, GxB_JIT_C_NAME)) ;
+    CHECK (MATCH (name, "double")) ;
+
+    OK (GrB_Type_get_String_(GxB_FC32, name, GxB_JIT_C_NAME)) ;
+    CHECK (MATCH (name, "GxB_FC32_t")) ;
+
+    OK (GrB_Type_get_String_(GxB_FC64, name, GxB_JIT_C_NAME)) ;
+    CHECK (MATCH (name, "GxB_FC64_t")) ;
 
     // type code
     OK (GrB_Type_get_ENUM_(GrB_BOOL, &code, GrB_ELTYPE_CODE)) ;
@@ -235,31 +278,39 @@ void mexFunction
 
 
     // built-in type definition
-    OK (GrB_Type_get_SIZE_(GrB_BOOL, &size, GxB_DEFINITION)) ;
+    OK (GrB_Type_get_SIZE_(GrB_BOOL, &size, GxB_JIT_C_DEFINITION)) ;
     CHECK (size == 1) ;
-    OK (GrB_Type_get_String_(GrB_BOOL, defn, GxB_DEFINITION)) ;
+    OK (GrB_Type_get_String_(GrB_BOOL, defn, GxB_JIT_C_DEFINITION)) ;
     CHECK (MATCH (defn, "")) ;
 
     // user-defined type
     OK (GrB_Type_new (&type, sizeof (mytype))) ;
     OK (GxB_print (type, 3)) ;
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_Type_set_String_(type, "", GrB_NAME)) ;
-    OK (GrB_Type_set_String_(type, "mytype", GrB_NAME)) ;
+    ERR (GrB_Type_set_String_(type, "", GxB_JIT_C_NAME)) ;
+    OK (GrB_Type_set_String_(type, "mytype", GxB_JIT_C_NAME)) ;
     CHECK (type->hash == UINT64_MAX) ;
-    OK (GrB_Type_set_String_(type, MYTYPE_DEFN, GxB_DEFINITION)) ;
+    OK (GrB_Type_set_String_(type, MYTYPE_DEFN, GxB_JIT_C_DEFINITION)) ;
     OK (GxB_print (type, 3)) ;
     CHECK (type->hash != UINT64_MAX) ;
     printf ("    hash: %016lx\n", type->hash) ;
 
     OK (GrB_Type_get_SIZE_(type, &size, GrB_NAME)) ;
-    CHECK (size == GxB_MAX_NAME_LEN) ;
-    OK (GrB_Type_get_String_(type, name, GrB_NAME)) ;
-    CHECK (MATCH (name, "mytype")) ;
+    CHECK (size == 1) ;
+    OK (GrB_Type_set_String_ (type, "user name of a type", GrB_NAME)) ;
+    OK (GrB_Type_get_SIZE_(type, &size, GrB_NAME)) ;
+    CHECK (size == strlen ("user name of a type") + 1) ;
+    OK (GrB_Type_get_String_ (type, name, GrB_NAME)) ;
+    CHECK (MATCH (name, "user name of a type")) ;
 
-    OK (GrB_Type_get_SIZE_(type, &size, GxB_DEFINITION)) ;
+    OK (GrB_Type_get_String_(type, name, GxB_JIT_C_NAME)) ;
+    CHECK (MATCH (name, "mytype")) ;
+    OK (GrB_Type_get_SIZE_(type, &size, GxB_JIT_C_NAME)) ;
+    CHECK (size == strlen ("mytype") + 1) ;
+
+    OK (GrB_Type_get_SIZE_(type, &size, GxB_JIT_C_DEFINITION)) ;
     CHECK (size == strlen (MYTYPE_DEFN) + 1) ;
-    OK (GrB_Type_get_String_(type, defn, GxB_DEFINITION)) ;
+    OK (GrB_Type_get_String_(type, defn, GxB_JIT_C_DEFINITION)) ;
     CHECK (MATCH (defn, MYTYPE_DEFN)) ;
 
     OK (GrB_Type_get_Scalar_(type, s_int32, GrB_SIZE)) ;
@@ -304,7 +355,7 @@ void mexFunction
     ERR (GrB_Scalar_get_VOID_(s, nothing, 0)) ;
 
     OK (GrB_Scalar_get_SIZE_(s, &size, GrB_ELTYPE_STRING)) ;
-    CHECK (size == GxB_MAX_NAME_LEN) ;
+    CHECK (size == strlen ("GrB_FP32") + 1) ;
     OK (GrB_Scalar_get_String_(s, name, GrB_ELTYPE_STRING)) ;
     CHECK (MATCH (name, "GrB_FP32")) ;
 
@@ -362,7 +413,7 @@ void mexFunction
     ERR (GrB_Vector_get_VOID_(v, nothing, 0)) ;
 
     OK (GrB_Vector_get_SIZE_(v, &size, GrB_ELTYPE_STRING)) ;
-    CHECK (size == GxB_MAX_NAME_LEN) ;
+    CHECK (size == strlen ("GrB_FP32") + 1) ;
     OK (GrB_Vector_get_String_(v, name, GrB_ELTYPE_STRING)) ;
     CHECK (MATCH (name, "GrB_FP32")) ;
 
@@ -453,7 +504,7 @@ void mexFunction
     ERR (GrB_Matrix_get_VOID_(A, nothing, 0)) ;
 
     OK (GrB_Matrix_get_SIZE_(A, &size, GrB_ELTYPE_STRING)) ;
-    CHECK (size == GxB_MAX_NAME_LEN) ;
+    CHECK (size == strlen ("GrB_FP32") + 1) ;
     OK (GrB_Matrix_get_String_(A, name, GrB_ELTYPE_STRING)) ;
     CHECK (MATCH (name, "GrB_FP32")) ;
 
@@ -550,7 +601,7 @@ void mexFunction
     ERR (GrB_Matrix_set_Scalar_(A, s_int32, GxB_FORMAT)) ;
 
     OK (GrB_Matrix_get_SIZE_(A, &size, GrB_NAME)) ;
-    CHECK (size == GxB_MAX_NAME_LEN) ;
+    CHECK (size == 1) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS

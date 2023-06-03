@@ -188,9 +188,6 @@ GrB_Info GrB_Descriptor_get_String
     // user-defined descriptor
     (*value) = '\0' ;
 
-    printf ("get user name [%s]:%d\n", desc->user_name,
-        (int) (desc->user_name_size)) ; 
-
     if (desc->user_name_size > 0)
     { 
         // user-defined descriptor, with name defined by GrB_set

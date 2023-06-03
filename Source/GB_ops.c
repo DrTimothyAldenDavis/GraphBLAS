@@ -38,6 +38,7 @@
     struct GB_Type_opaque GB_OPAQUE (type) =                                \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
         sizeof (ctype),             /* sizeof the type */                   \
         GB_ ## type ## _code,       /* type code */                         \
         0, name,                    /* name_len and name */                 \
@@ -141,6 +142,7 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
     struct GB_UnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                       \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
         & GB_OPAQUE (ztype),        /* ztype */                             \
         & GB_OPAQUE (xtype),        /* xtype */                             \
         NULL,                       /* ytype */                             \
@@ -174,6 +176,7 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
     struct GB_BinaryOp_opaque GB_OPAQUE (GB_OP (op)) =                      \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
         & GB_OPAQUE (ztype),        /* ztype */                             \
         & GB_OPAQUE (xtype),                                                \
         & GB_OPAQUE (ytype),                                                \
@@ -212,6 +215,7 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
     struct GB_UnaryOp_opaque GB_OPAQUE (op ## _ ## type) =                  \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
         & GB_OPAQUE (type),         /* ztype */                             \
         & GB_OPAQUE (type),         /* xtype */                             \
         NULL,                       /* ytype */                             \
@@ -227,6 +231,7 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
     struct GB_BinaryOp_opaque GB_OPAQUE (op ## _ ## type) =                 \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
         & GB_OPAQUE (type),         /* ztype */                             \
         & GB_OPAQUE (type),         /* xtype */                             \
         & GB_OPAQUE (type),         /* ytype */                             \
@@ -276,6 +281,7 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
     struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
         & GB_OPAQUE (GB_XTYPE),     /* ztype */                             \
         NULL,                       /* xtype */                             \
         & GB_OPAQUE (GB_XTYPE),     /* ytype */                             \
@@ -294,6 +300,7 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
     struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
         & GB_OPAQUE (GB_XTYPE),     /* ztype */                             \
         NULL,                       /* xtype */                             \
         & GB_OPAQUE (GB_XTYPE),     /* ytype */                             \
@@ -313,6 +320,7 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
     struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
         & GB_OPAQUE (BOOL),         /* ztype */                             \
         NULL,                       /* xtype */                             \
         & GB_OPAQUE (GB_XTYPE),     /* ytype */                             \
@@ -330,6 +338,7 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
     struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
         & GB_OPAQUE (BOOL),         /* ztype */                             \
         & GB_OPAQUE (GB_XTYPE),     /* xtype */                             \
         & GB_OPAQUE (GB_XTYPE),     /* ytype */                             \
@@ -347,6 +356,7 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
     struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
         & GB_OPAQUE (BOOL),         /* ztype */                             \
         & GB_OPAQUE (GB_XTYPE),     /* xtype */                             \
         & GB_OPAQUE (GB_XTYPE),     /* ytype */                             \
@@ -489,6 +499,7 @@ GrB_BinaryOp GrB_LXNOR = & GB_OPAQUE (EQ_BOOL) ;
 struct GB_BinaryOp_opaque GB_OPAQUE (IGNORE_DUP) =
 {
     GB_MAGIC2, 0,               // magic and header_size
+    NULL, 0,                    // no user_name for GrB_get/GrB_set
     NULL,                       // ztype
     NULL,                       // xtype
     NULL,                       // ytype
@@ -522,6 +533,7 @@ extern void GB_nonzombie_func (bool *z, const void *x,
 struct GB_IndexUnaryOp_opaque GB_OPAQUE (NONZOMBIE) =
 {
     GB_MAGIC, 0,                // magic and header_size
+    NULL, 0,                    // no user_name for GrB_get/GrB_set
     & GB_OPAQUE (BOOL),         // ztype
     NULL,                       // xtype
     & GB_OPAQUE (INT64),        // ytype

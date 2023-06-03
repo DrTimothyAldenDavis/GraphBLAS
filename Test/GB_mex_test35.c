@@ -65,7 +65,7 @@ void mexFunction
     ERR (GxB_Serialized_get_VOID_(blob, nothing, 0, blob_size)) ;
 
     OK (GxB_Serialized_get_SIZE_(blob, &size, GrB_ELTYPE_STRING, blob_size)) ;
-    CHECK (size == GxB_MAX_NAME_LEN) ;
+    CHECK (size == strlen ("GrB_FP32") + 1) ;
     OK (GxB_Serialized_get_String_(blob, name, GrB_ELTYPE_STRING, blob_size)) ;
     CHECK (MATCH (name, "GrB_FP32")) ;
 
@@ -160,7 +160,7 @@ void mexFunction
     ERR (GrB_Matrix_get_Scalar(A, s_int32, 999)) ;
 
     OK (GrB_Matrix_get_SIZE_(A, &size, GrB_NAME)) ;
-    CHECK (size == GxB_MAX_NAME_LEN) ;
+    CHECK (size == 1) ;
 
     expected = GrB_INVALID_OBJECT ;
     uint8_t *b = (uint8_t *) blob ;
@@ -196,8 +196,8 @@ void mexFunction
     ERR (GxB_Serialized_get_Scalar_(blob, name, GrB_SIZE, blob_size)) ;
 
     OK (GrB_Type_new (&type, sizeof (mytype))) ;
-    OK (GrB_Type_set_String_ (type, "mytype", GrB_NAME)) ;
-    OK (GrB_Type_set_String_ (type, MYTYPE_DEFN, GxB_DEFINITION)) ;
+    OK (GrB_Type_set_String_ (type, "mytype", GxB_JIT_C_NAME)) ;
+    OK (GrB_Type_set_String_ (type, MYTYPE_DEFN, GxB_JIT_C_DEFINITION)) ;
     // OK (GxB_print (type, 3)) ;
     GrB_free (&A) ;
 
