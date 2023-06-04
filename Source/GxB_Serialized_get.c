@@ -88,7 +88,7 @@ static GrB_Info GB_blob_header_get
     (*storage) = (is_csc) ? GrB_COLMAJOR : GrB_ROWMAJOR ;
 
     //--------------------------------------------------------------------------
-    // determine the matrix type_code and type_name
+    // determine the matrix type_code and C type_name
     //--------------------------------------------------------------------------
 
     (*type_code) = (int) GB_type_code_get (typecode) ;
@@ -97,14 +97,12 @@ static GrB_Info GB_blob_header_get
     if (typecode >= GB_BOOL_code && typecode < GB_UDT_code)
     { 
         // blob has a built-in type; the name is not in the blob
-        GrB_Type blob_type = GB_code_type ((GB_Type_code) typecode, NULL) ;
-        ASSERT (blob_type != NULL) ;
-        strcpy (type_name, GB_type_name_get (blob_type)) ;
+        strcpy (type_name, GB_code_string (typecode)) ;
     }
     else if (typecode == GB_UDT_code)
     { 
         // blob has a user-defined type
-        // get the JIT name of the user type from the blob
+        // get the GxB_JIT_C_NAME of the user type from the blob
         memcpy (type_name, ((GB_void *) blob) + GB_BLOB_HEADER_SIZE,
             GxB_MAX_NAME_LEN) ;
     }
@@ -257,17 +255,29 @@ GrB_Info GxB_Serialized_get_String
     // get the field
     //--------------------------------------------------------------------------
 
+    (*value) = '\0' ;
+    const char *name ;
+
     if (info == GrB_SUCCESS)
     {
         switch (field)
         {
 
             case GrB_NAME : 
-                (*value) = '\0' ; // FIXME: give the blob a name
+                // FIXME: give the blob a name
+                break ;
+
+            case GxB_JIT_C_NAME : 
+                strcpy (value, type_name) ;
                 break ;
 
             case GrB_ELTYPE_STRING : 
-                strcpy (value, type_name) ;
+                // FIXME: return the user_name of user-defined type
+                name = GB_code_name_get (type_code, NULL) ;
+                if (name != NULL)
+                {
+                    strcpy (value, name) ;
+                }
                 break ;
 
             default : 
@@ -389,23 +399,34 @@ GrB_Info GxB_Serialized_get_SIZE
     // get the field
     //--------------------------------------------------------------------------
 
-    switch (field)
+    const char *name ;
+
+    if (info == GrB_SUCCESS)
     {
+        switch (field)
+        {
 
-        case GrB_NAME :     
-            (*value) = 1 ;      // FIXME : name of blob
-            break ;
+            case GrB_NAME :     
+    GB_GOTCHA ;
+                (*value) = 1 ;      // FIXME : name of blob
+                break ;
 
-        case GrB_ELTYPE_STRING : 
-            (*value) = strlen (type_name) + 1 ;
-            break ;
+            case GxB_JIT_C_NAME : 
+                (*value) = strlen (type_name) + 1 ;
+                break ;
 
-        default : 
-            return (GrB_INVALID_VALUE) ;
+            case GrB_ELTYPE_STRING : 
+                // FIXME: return the user_name of user-defined type
+                name = GB_code_name_get (type_code, NULL) ;
+                (*value) = (name == NULL) ? 1 : (strlen (name) + 1) ;
+                break ;
+
+            default : 
+                return (GrB_INVALID_VALUE) ;
+        }
     }
-
     #pragma omp flush
-    return (GrB_SUCCESS) ;
+    return (info) ;
 }
 
 //------------------------------------------------------------------------------

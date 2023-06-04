@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_op_size_get: get a field in an op
+// GB_op_size_get: get the size of a string in an op
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -27,16 +27,20 @@ GrB_Info GB_op_size_get
     {
 
         case GxB_JIT_C_DEFINITION : 
-            s = op->defn ;
-            break ;
+            (*value) = (op->defn == NULL) ? 1 : (strlen (op->defn) + 1) ;
+            #pragma omp flush
+            return (GrB_SUCCESS) ;
 
         case GxB_JIT_C_NAME : 
-            s = op->name ;
-            break ;
+            (*value) = strlen (op->name) + 1 ;
+            #pragma omp flush
+            return (GrB_SUCCESS) ;
 
         case GrB_NAME : 
             s = GB_op_name_get (op) ;
-            break ;
+            (*value) = (s == NULL) ? 1 : (strlen (s) + 1) ;
+            #pragma omp flush
+            return (GrB_SUCCESS) ;
 
         case GrB_INPUT1TYPE_STRING : 
             s = GB_type_name_get (op->xtype) ;
@@ -54,9 +58,9 @@ GrB_Info GB_op_size_get
             return (GrB_INVALID_VALUE) ;
     }
 
-    (*value) = ((s == NULL) ? 0 : strlen (s)) + 1 ;
+    (*value) = (s == NULL) ? 1 : (strlen (s) + 1) ;
 
     #pragma omp flush
-    return (GrB_SUCCESS) ;
+    return ((s == NULL) ? GrB_NO_VALUE : GrB_SUCCESS) ;
 }
 

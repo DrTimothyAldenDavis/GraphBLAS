@@ -65,7 +65,6 @@ GrB_Info GB_op_or_type_string_set
             { 
                 // invalid name: the name cannot be empty, and the name cannot
                 // exceed GxB_MAX_NAME_LEN-1 characters.
-                printf ("bakd len %lu\n", len) ;
                 return (GrB_INVALID_VALUE) ;
             }
 
@@ -100,7 +99,6 @@ GrB_Info GB_op_or_type_string_set
             break ;
 
         default : 
-            printf ("bakd field %d\n", field) ;
             return (GrB_INVALID_VALUE) ;
     }
 

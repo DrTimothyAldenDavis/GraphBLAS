@@ -35,7 +35,7 @@ GrB_Info GrB_Vector_get_Scalar
     //--------------------------------------------------------------------------
 
     int i ;
-    GrB_Info info = GB_matvec_get ((GrB_Matrix) v, &i, field) ;
+    GrB_Info info = GB_matvec_enum_get ((GrB_Matrix) v, &i, field) ;
     if (info == GrB_SUCCESS)
     { 
         // field specifies an int: assign it to the scalar
@@ -87,7 +87,7 @@ GrB_Info GrB_Vector_get_String
     // get the field
     //--------------------------------------------------------------------------
 
-    return (GB_name_get ((GrB_Matrix) v, value, field)) ;
+    return (GB_matvec_name_get ((GrB_Matrix) v, value, field)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ GrB_Info GrB_Vector_get_ENUM
     // get the field
     //--------------------------------------------------------------------------
 
-    return (GB_matvec_get ((GrB_Matrix) v, value, field)) ;
+    return (GB_matvec_enum_get ((GrB_Matrix) v, value, field)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -143,7 +143,7 @@ GrB_Info GrB_Vector_get_SIZE
     // get the field
     //--------------------------------------------------------------------------
 
-    return (GB_name_size_get ((GrB_Matrix) v, value, field)) ;
+    return (GB_matvec_name_size_get ((GrB_Matrix) v, value, field)) ;
 }
 
 //------------------------------------------------------------------------------

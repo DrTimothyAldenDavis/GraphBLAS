@@ -206,8 +206,6 @@ GrB_Info GrB_Descriptor_set_String
     // set the field
     //--------------------------------------------------------------------------
 
-    printf ("set desc name to [%s]\n", value) ;
-
     return (GB_user_name_set (&(desc->user_name), &(desc->user_name_size),
         value)) ;
 }

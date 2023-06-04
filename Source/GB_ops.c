@@ -375,6 +375,7 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
     struct GB_SelectOp_opaque GB_OPAQUE (op) =                              \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
+        NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
         & GB_OPAQUE (BOOL),         /* ztype */                             \
         NULL,                       /* xtype */                             \
         NULL,                       /* thunk type */                        \

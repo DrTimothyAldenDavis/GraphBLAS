@@ -16,20 +16,43 @@
 #define GET_DEEP_COPY ;
 #define FREE_DEEP_COPY ;
 
+#define GETOP(op,opname)                                                \
+{                                                                       \
+    size_t siz1, siz2, siz3 ;                                           \
+    OK (GrB_BinaryOp_get_String (op, name, GrB_NAME)) ;                 \
+    CHECK (MATCH (name, opname)) ;                                      \
+    OK (GrB_BinaryOp_get_String (op, cname, GxB_JIT_C_NAME)) ;      \
+    printf ("%s: %s\n", name, cname) ; \
+    OK (GrB_BinaryOp_get_SIZE (op, &size, GrB_NAME)) ;                  \
+    CHECK (size == strlen (name) + 1) ;                                 \
+    GrB_Info info2, info3 ;                                             \
+    info2 = GrB_BinaryOp_get_SIZE (op, &siz1, GrB_INPUT1TYPE_STRING) ;  \
+    info3 = GrB_BinaryOp_get_String (op, name, GrB_INPUT1TYPE_STRING) ; \
+    CHECK (info2 == info3) ;                                            \
+    CHECK (siz1 == strlen (name) + 1) ;                                 \
+    if (info2 == GrB_NO_VALUE) { CHECK (siz1 == 1) ; }                  \
+    info2 = GrB_BinaryOp_get_SIZE (op, &siz2, GrB_INPUT2TYPE_STRING) ;  \
+    info3 = GrB_BinaryOp_get_String (op, name, GrB_INPUT2TYPE_STRING) ; \
+    CHECK (info2 == info3) ;                                            \
+    CHECK (siz2 == strlen (name) + 1) ;                                 \
+    if (info2 == GrB_NO_VALUE) { CHECK (siz2 == 1) ; }                  \
+    info2 = GrB_BinaryOp_get_SIZE (op, &siz3, GrB_OUTPUTTYPE_STRING) ;  \
+    info3 = GrB_BinaryOp_get_String (op, name, GrB_OUTPUTTYPE_STRING) ; \
+    CHECK (info2 == info3) ;                                            \
+    CHECK (siz3 == strlen (name) + 1) ;                                 \
+    if (info2 == GrB_NO_VALUE) { CHECK (siz3 == 1) ; }                  \
+}
+
 #define GETNAME(op)                                         \
 {                                                           \
-    OK (GrB_BinaryOp_get_String (op, name, GrB_NAME)) ;     \
-/*  printf ("\nname: [%s]", name) ;                     */  \
+    GETOP (op, #op) ;                                       \
 /*  OK (GxB_BinaryOp_fprint (op, "binop", 3, NULL)) ;   */  \
-    CHECK (MATCH (name, #op)) ;                             \
 }
 
 #define GETNAM2(op,alias)                                   \
 {                                                           \
-    OK (GrB_BinaryOp_get_String (op, name, GrB_NAME)) ;     \
-/*  printf ("\nname: [%s]", name) ;                 */      \
+    GETOP (op,alias) ;                                      \
 /*  OK (GxB_BinaryOp_fprint (op, "binop", 3, NULL)) ; */    \
-    CHECK (MATCH (name, alias)) ;                           \
 }
 
 void myfunc (float *z, const float *x, const float *y) ;
@@ -58,6 +81,7 @@ void mexFunction
     void *nothing = stuff ;
     size_t size ;
     char name [256] ;
+    char cname [256] ;
     char defn [2048] ;
     int code, i ;
     float fvalue ;
@@ -567,14 +591,23 @@ void mexFunction
     OK (GrB_BinaryOp_get_ENUM_(GrB_MAX_FP32, &code, GrB_INPUT1TYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
+    OK (GrB_BinaryOp_get_SIZE_(GrB_MAX_FP32, &size, GrB_INPUT1TYPE_STRING)) ;
+    CHECK (size == strlen ("GrB_FP32") + 1) ;
+
     OK (GrB_BinaryOp_get_String_(GrB_MAX_FP32, name, GrB_INPUT1TYPE_STRING)) ;
     CHECK (MATCH (name, "GrB_FP32")) ;
+
+    OK (GrB_BinaryOp_get_SIZE_(GrB_MAX_INT32, &size, GrB_INPUT2TYPE_STRING)) ;
+    CHECK (size == strlen ("GrB_INT32") + 1) ;
 
     OK (GrB_BinaryOp_get_String_(GrB_MAX_INT32, name, GrB_INPUT2TYPE_STRING)) ;
     CHECK (MATCH (name, "GrB_INT32")) ;
 
     OK (GrB_BinaryOp_get_ENUM_(GrB_MAX_FP64, &code, GrB_OUTPUTTYPE_CODE)) ;
     CHECK (code == GrB_FP64_CODE) ;
+
+    OK (GrB_BinaryOp_get_SIZE_(GrB_MAX_FP64, &size, GrB_OUTPUTTYPE_STRING)) ;
+    CHECK (size == strlen ("GrB_FP64") + 1) ;
 
     OK (GrB_BinaryOp_get_String_(GrB_MAX_FP64, name, GrB_OUTPUTTYPE_STRING)) ;
     CHECK (MATCH (name, "GrB_FP64")) ;

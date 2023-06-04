@@ -56,12 +56,15 @@ GrB_Info GB_op_string_get
         case GrB_INPUT1TYPE_STRING : type = op->xtype ; break ;
         case GrB_INPUT2TYPE_STRING : type = op->ytype ; break ;
         case GrB_OUTPUTTYPE_STRING : type = op->ztype ; break ;
-        default : ;
+
+        default : 
+            return (GrB_INVALID_VALUE) ;
     }
 
     if (type == NULL)
-    {
-        return (GrB_INVALID_VALUE) ;
+    { 
+        // operator does not depend on this input
+        return (GrB_NO_VALUE) ;
     }
 
     name = GB_type_name_get (type) ;

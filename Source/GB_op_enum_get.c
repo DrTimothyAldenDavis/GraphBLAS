@@ -22,6 +22,7 @@ GrB_Info GB_op_enum_get
     //--------------------------------------------------------------------------
 
     GrB_Type type = NULL ;
+    (*value) = -1 ;
 
     switch ((int) field)
     {

@@ -16,20 +16,41 @@
 #define GET_DEEP_COPY ;
 #define FREE_DEEP_COPY ;
 
+#define GETOP(op,opname)                                                \
+{                                                                       \
+    size_t siz1, siz2, siz3 ;                                           \
+    OK (GrB_Monoid_get_String (op, name, GrB_NAME)) ;                   \
+    CHECK (MATCH (name, opname)) ;                                      \
+    OK (GrB_Monoid_get_SIZE (op, &size, GrB_NAME)) ;                    \
+    CHECK (size == strlen (name) + 1) ;                                 \
+    GrB_Info info2, info3 ;                                             \
+    info2 = GrB_Monoid_get_SIZE (op, &siz1, GrB_INPUT1TYPE_STRING) ;    \
+    info3 = GrB_Monoid_get_String (op, name, GrB_INPUT1TYPE_STRING) ;   \
+    CHECK (info2 == info3) ;                                            \
+    CHECK (siz1 == strlen (name) + 1) ;                                 \
+    CHECK (info2 == GrB_SUCCESS) ;                                      \
+    info2 = GrB_Monoid_get_SIZE (op, &siz2, GrB_INPUT2TYPE_STRING) ;    \
+    info3 = GrB_Monoid_get_String (op, name, GrB_INPUT2TYPE_STRING) ;   \
+    CHECK (info2 == info3) ;                                            \
+    CHECK (siz2 == strlen (name) + 1) ;                                 \
+    CHECK (info2 == GrB_SUCCESS) ;                                      \
+    info2 = GrB_Monoid_get_SIZE (op, &siz3, GrB_OUTPUTTYPE_STRING) ;    \
+    info3 = GrB_Monoid_get_String (op, name, GrB_OUTPUTTYPE_STRING) ;   \
+    CHECK (info2 == info3) ;                                            \
+    CHECK (siz3 == strlen (name) + 1) ;                                 \
+    CHECK (info2 == GrB_SUCCESS) ;                                      \
+}
+
 #define GETNAME(op)                                         \
 {                                                           \
-    OK (GrB_Monoid_get_String (op, name, GrB_NAME)) ;       \
-/*  printf ("\nname: [%s]", name) ;                     */  \
+    GETOP (op, #op) ;                                       \
 /*  OK (GxB_Monoid_fprint (op, "binop", 3, NULL)) ;     */  \
-    CHECK (MATCH (name, #op)) ;                             \
 }
 
 #define GETNAM2(op,alias)                                   \
 {                                                           \
-    OK (GrB_Monoid_get_String (op, name, GrB_NAME)) ;       \
-/*  printf ("\nname: [%s]", name) ;                 */      \
+    GETOP (op,alias) ;                                      \
 /*  OK (GxB_Monoid_fprint (op, "binop", 3, NULL)) ;     */  \
-    CHECK (MATCH (name, alias)) ;                           \
 }
 
 void myfunc (float *z, const float *x, const float *y) ;

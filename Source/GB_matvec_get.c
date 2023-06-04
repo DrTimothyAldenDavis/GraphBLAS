@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_matvec_get: get an enum field from a matrix
+// GB_matvec_enum_get: get an enum field from a matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 #include "GB_get_set.h"
 
-GrB_Info GB_matvec_get (GrB_Matrix A, int *value, int field)
+GrB_Info GB_matvec_enum_get (GrB_Matrix A, int *value, int field)
 {
     switch (field)
     {

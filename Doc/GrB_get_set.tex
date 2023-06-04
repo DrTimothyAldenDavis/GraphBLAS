@@ -604,7 +604,7 @@ GrB_Info GrB_set (GrB_Type t, char *     value, GrB_Field f) ;
 
 \noindent
 {\small
-\begin{tabular}{|l|l|l|p{3.4in}|}
+\begin{tabular}{|l|l|l|p{2.85in}|}
 \hline
 \verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
@@ -617,9 +617,11 @@ GrB_Info GrB_set (GrB_Type t, char *     value, GrB_Field f) ;
     For user-defined types, the name can be any string of any length.  It is
     not used by the JIT.  It can be set any number of times. \\
 \verb'GxB_JIT_C_NAME'               & R/W1 & \verb'char *' & 
-    This must be a valid name of a C type to enable its use in the JIT.  The
-    length of the name can be at most \verb'GxB_MAX_NAME_LEN', including the
-    \verb'nul' terminating byte.  It can be set at most once. \\
+    This must be a valid name of a C type to enable its use in the JIT.  For
+    built-in types, this returns the C name of the type (\verb'"float"' for
+    \verb'GrB_FP32', for example). The length of the name can be at most
+    \verb'GxB_MAX_NAME_LEN', including the \verb'nul' terminating byte.  It can
+    be set at most once. \\
 \verb'GxB_JIT_C_DEFINITION'               & R/W1 & \verb'char *' &
     type definition, as a C \verb'typedef';
     built-in types return an empty string. 
@@ -672,10 +674,10 @@ GrB_Info GrB_set (GrB_UnaryOp op, char *     value, GrB_Field f) ;
     name (\verb'"GrB_LNOT"' for \verb'GrB_LNOT', for example).
     For user-defined operators, the name can be any string of any length.  It
     is not used by the JIT.  It can be set any number of times. \\
-\verb'GxB_JIT_C_NAME'               & R/W1 & \verb'char *' & This must be a
-    valid name of a C function to enable its use in the JIT.  The length of the
-    name can be at most \verb'GxB_MAX_NAME_LEN', including the \verb'nul'
-    terminating byte.  It can be set at most once. \\
+\verb'GxB_JIT_C_NAME'               & R/W1 & \verb'char *' &
+    This must be a valid name of a C function to enable its use in the JIT.
+    The length of the name can be at most \verb'GxB_MAX_NAME_LEN', including
+    the \verb'nul' terminating byte.  It can be set at most once. \\
 \verb'GxB_JIT_C_DEFINITION'         & R/W1 & \verb'char *' &
     definition for a user-defined operator, as a C function; built-in operators
     return an empty string.  It can be set at most once. \\
@@ -723,10 +725,10 @@ GrB_Info GrB_set (GrB_IndexUnaryOp op, char *     value, GrB_Field f) ;
     name (\verb'"GrB_TRIL"' for \verb'GrB_TRIL', for example).
     For user-defined operators, the name can be any string of any length.  It
     is not used by the JIT.  It can be set any number of times. \\
-\verb'GxB_JIT_C_NAME'               & R/W1 & \verb'char *' & This must be a
-    valid name of a C function to enable its use in the JIT.  The length of the
-    name can be at most \verb'GxB_MAX_NAME_LEN', including the \verb'nul'
-    terminating byte.  It can be set at most once. \\
+\verb'GxB_JIT_C_NAME'               & R/W1 & \verb'char *' &
+    This must be a valid name of a C function to enable its use in the JIT.
+    The length of the name can be at most \verb'GxB_MAX_NAME_LEN', including
+    the \verb'nul' terminating byte.  It can be set at most once. \\
 \verb'GxB_JIT_C_DEFINITION'         & R/W1 & \verb'char *' &
     definition for a user-defined operator, as a C function; built-in operators
     return an empty string.  It can be set at most once. \\
@@ -774,10 +776,10 @@ GrB_Info GrB_set (GrB_BinaryOp op, char *     value, GrB_Field f) ;
     name (\verb'"GrB_LOR"' for \verb'GrB_LOR', for example).
     For user-defined operators, the name can be any string of any length.  It
     is not used by the JIT.  It can be set any number of times. \\
-\verb'GxB_JIT_C_NAME'               & R/W1 & \verb'char *' & This must be a
-    valid name of a C function to enable its use in the JIT.  The length of the
-    name can be at most \verb'GxB_MAX_NAME_LEN', including the \verb'nul'
-    terminating byte.  It can be set at most once. \\
+\verb'GxB_JIT_C_NAME'               & R/W1 & \verb'char *' &
+    This must be a valid name of a C function to enable its use in the JIT.
+    The length of the name can be at most \verb'GxB_MAX_NAME_LEN', including
+    the \verb'nul' terminating byte.  It can be set at most once. \\
 \verb'GxB_JIT_C_DEFINITION'         & R/W1 & \verb'char *' &
     definition for a user-defined operator, as a C function; built-in operators
     return an empty string.  It can be set at most once. \\
@@ -1018,6 +1020,7 @@ GrB_Info GrB_set (GrB_Matrix A, int        value, GrB_Field f) ;
 \verb'GrB_NAME'                     & R/W  & \verb'char *' & name of the matrix.
                                         This can be set any number of times. \\
 \verb'GrB_ELTYPE_STRING'            & R    & \verb'char *' & name of the type of the matrix. \\
+\verb'GxB_JIT_C_NAME'               & R    & \verb'char *' & JIT C name of the type of the matrix. \\
 \hline
 \verb'GxB_HYPER_SWITCH'             & R/W  & \verb'double' & See Section~\ref{hypersparse} \\
 \verb'GxB_BITMAP_SWITCH'            & R/W  & \verb'double' & See Section~\ref{bitmap_switch} \\
@@ -1315,6 +1318,7 @@ GrB_Info GrB_set (GrB_Vector v, int        value, GrB_Field f) ;
 \verb'GrB_NAME'                     & R/W  & \verb'char *' & name of the vector.
                                         This can be set any number of times. \\
 \verb'GrB_ELTYPE_STRING'            & R    & \verb'char *' & name of the type of the vector. \\
+\verb'GxB_JIT_C_NAME'               & R    & \verb'char *' & JIT C name of the type of the vector. \\
 \hline
 \verb'GxB_BITMAP_SWITCH'            & R/W  & \verb'double' & See Section~\ref{bitmap_switch} \\
 \hline
@@ -1359,6 +1363,7 @@ GrB_Info GrB_set (GrB_Scalar s, int        value, GrB_Field f) ;
 \verb'GrB_NAME'                     & R/W  & \verb'char *' & name of the scalar.
                                         This can be set any number of times. \\
 \verb'GrB_ELTYPE_STRING'            & R    & \verb'char *' & name of the type of the scalar. \\
+\verb'GxB_JIT_C_NAME'               & R    & \verb'char *' & JIT C name of the type of the scalar. \\
 \hline
 \end{tabular}
 }
@@ -1575,6 +1580,7 @@ GrB_Info GrB_get (const void *blob, size_t *   value, GrB_Field f, size_t blobsi
 \hline
 \verb'GrB_NAME'                     & R    & \verb'char *' & name of the matrix in the blob. \\
 \verb'GrB_ELTYPE_STRING'            & R    & \verb'char *' & name of the type of the matrix in the blob. \\
+\verb'GxB_JIT_C_NAME'               & R    & \verb'char *' & JIT C name of the type of the matrix in the blob. \\
 \hline
 \verb'GxB_HYPER_SWITCH'             & R    & \verb'double' & See Section~\ref{hypersparse} \\
 \verb'GxB_BITMAP_SWITCH'            & R    & \verb'double' & See Section~\ref{bitmap_switch} \\
@@ -1596,7 +1602,8 @@ modified by \verb'GrB_set'.
 \item
 SuiteSparse:GraphBLAS extends the get/set methods by adding many \verb'GxB'
 options and a set of \verb'GxB_Context_set/get' methods for its
-\verb'GxB_Context' object.
+\verb'GxB_Context' object.  (This is stated in the first part of the
+User Guide, and will not be mentioned here in the final user guide).
 
 \item
 SuiteSparse:GraphBLAS extends the spec by allowing both \verb'int' and
@@ -1606,19 +1613,8 @@ SuiteSparse:GraphBLAS extends the spec by allowing both \verb'int' and
 
 \item
 The spec states that the name of objects can only be set once.
-SuiteSparse:GraphBLAS will allow the names of all objects except types and
-operators to be set any number of times.  Both the spec and
-SuiteSparse:GraphBLAS allow the name of a user-defined type or operator to be
-set at most once.
-
-\item
-The spec does not place a limit on the length of any name of any object.
-SuiteSparse:GraphBLAS limits the name length of types and operators to 128
-(including the \verb'nul' terminating byte), which is given by
-\verb'GxB_MAX_NAME_LEN'.  If a name is longer, SuiteSparse:GraphBLAS returns
-the \verb'GrB_INVALID_VALUE' error code.  All other names can be of
-any length.  Any names will work, but the JIT requires these names to match
-the C type (for \verb'GrB_Type') or the C function name (for \verb'GrB_*Op').
+SuiteSparse:GraphBLAS allows the names of all objects
+to be set any number of times.
 
 \item
 The spec defines methods that are available for future use but currently have
@@ -1626,20 +1622,12 @@ no settings to get or set.  SuiteSparse:GraphBLAS returns
 \verb'GrB_NOT_IMPLEMENTED' for these methods.  The spec does not state what the
 return value should be in this case.
 
-\item
-The spec states that the name of a \verb'GrB_Type' can be queried via both
-\verb'GrB_NAME' and \verb'GrB_ELTYPE_STRING'.  SuiteSparse:GraphBLAS only
-implements \verb'GrB_NAME' and returns \verb'GrB_INVALID_VALUE' if asked for
-the \verb'GrB_ELTYPE_STRING' of a \verb'GrB_Type'. (I can easily add this but
-I've suggested that it be dropped from the spec).
-
 \end{enumerate}
 
 \end{alert}
 
 \begin{warning}
-FIXME: The ability to get/set the name of matrices, vectors, scalars
-is not yet implemented.  The ability to save the name of a matrix into
-the serialized blob and to get it with \verb'GrB_get' is not implemented.
+FIXME: The ability to get/set the name of matrices, vectors, scalars,
+and serialized blobs is not yet fully implemented.
 \end{warning}
 

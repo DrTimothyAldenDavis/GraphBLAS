@@ -85,6 +85,7 @@ GrB_Info GrB_Type_get_String
     switch ((int) field)
     {
         case GrB_NAME : 
+        case GrB_ELTYPE_STRING : 
 
             name = GB_type_name_get (type) ;
             if (name != NULL)
@@ -192,6 +193,7 @@ GrB_Info GrB_Type_get_SIZE
     {
 
         case GrB_NAME : 
+        case GrB_ELTYPE_STRING : 
 
             s = GB_type_name_get (type) ;
             break ;
@@ -210,7 +212,7 @@ GrB_Info GrB_Type_get_SIZE
             return (GrB_INVALID_VALUE) ;
     }
 
-    (*value) = ((s == NULL) ? 0 : strlen (s)) + 1 ;
+    (*value) = (s == NULL) ? 1 : (strlen (s) + 1) ;
     #pragma omp flush
     return (GrB_SUCCESS) ;
 }

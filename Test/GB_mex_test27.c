@@ -16,20 +16,42 @@
 #define GET_DEEP_COPY ;
 #define FREE_DEEP_COPY ;
 
+#define GETOP(op,opname)                                                \
+{                                                                       \
+    OK (GrB_UnaryOp_get_String (op, name, GrB_NAME)) ;                  \
+    CHECK (MATCH (name, opname)) ;                                      \
+    OK (GrB_UnaryOp_get_String (op, cname, GxB_JIT_C_NAME)) ;           \
+    printf ("%s: %s\n", name, cname) ; \
+    OK (GrB_UnaryOp_get_SIZE (op, &size, GrB_NAME)) ;                   \
+    CHECK (size == strlen (name) + 1) ;                                 \
+    GrB_Info info2, info3 ;                                             \
+    info2 = GrB_UnaryOp_get_SIZE (op, &size, GrB_INPUT1TYPE_STRING) ;   \
+    info3 = GrB_UnaryOp_get_String (op, name, GrB_INPUT1TYPE_STRING) ;  \
+    CHECK (info2 == info3) ;                                            \
+    CHECK (size == strlen (name) + 1) ;                                 \
+    if (info2 == GrB_NO_VALUE) { CHECK (size == 1) ; }                  \
+    info2 = GrB_UnaryOp_get_SIZE (op, &size, GrB_INPUT2TYPE_STRING) ;   \
+    info3 = GrB_UnaryOp_get_String (op, name, GrB_INPUT2TYPE_STRING) ;  \
+    CHECK (info2 == info3) ;                                            \
+    CHECK (size == 1) ;                                                 \
+    CHECK (info2 == GrB_NO_VALUE) ;                                     \
+    info2 = GrB_UnaryOp_get_SIZE (op, &size, GrB_OUTPUTTYPE_STRING) ;   \
+    info3 = GrB_UnaryOp_get_String (op, name, GrB_OUTPUTTYPE_STRING) ;  \
+    CHECK (info2 == info3) ;                                            \
+    CHECK (size == strlen (name) + 1) ;                                 \
+    if (info2 == GrB_NO_VALUE) { CHECK (size == 1) ; }                  \
+}
+
 #define GETNAME(op)                                         \
 {                                                           \
-    OK (GrB_UnaryOp_get_String (op, name, GrB_NAME)) ;      \
-/*  printf ("\nname: [%s]", name) ;                 */      \
+    GETOP (op, #op) ;                                       \
 /*  OK (GxB_UnaryOp_fprint (op, "unop", 3, NULL)) ; */      \
-    CHECK (MATCH (name, #op)) ;                             \
 }
 
 #define GETNAM2(op,alias)                                   \
 {                                                           \
-    OK (GrB_UnaryOp_get_String (op, name, GrB_NAME)) ;      \
-/*  printf ("\nname: [%s]", name) ;                 */      \
+    GETOP (op,alias) ;                                      \
 /*  OK (GxB_UnaryOp_fprint (op, "unop", 3, NULL)) ; */      \
-    CHECK (MATCH (name, alias)) ;                           \
 }
 
 void myfunc (float *z, const float *x) ;
@@ -58,6 +80,7 @@ void mexFunction
     void *nothing = stuff ;
     size_t size ;
     char name [256] ;
+    char cname [256] ;
     char defn [2048] ;
     int code, i ;
     float fvalue ;
@@ -385,6 +408,8 @@ void mexFunction
     expected = GrB_NO_VALUE ;
     ERR (GrB_UnaryOp_get_ENUM_(GrB_BNOT_UINT8, &code, GrB_INPUT2TYPE_CODE)) ;
     ERR (GrB_UnaryOp_get_Scalar_(GrB_LNOT, s_int32, GrB_INPUT2TYPE_CODE)) ;
+    ERR (GrB_UnaryOp_get_String_(GrB_BNOT_UINT8, name, GrB_INPUT2TYPE_STRING)) ;
+    ERR (GrB_UnaryOp_get_SIZE_(GrB_BNOT_UINT8, &size, GrB_INPUT2TYPE_STRING)) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_UnaryOp_get_ENUM_(GrB_BNOT_UINT8, &code, GrB_NAME)) ;

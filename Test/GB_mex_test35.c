@@ -69,6 +69,11 @@ void mexFunction
     OK (GxB_Serialized_get_String_(blob, name, GrB_ELTYPE_STRING, blob_size)) ;
     CHECK (MATCH (name, "GrB_FP32")) ;
 
+    OK (GxB_Serialized_get_SIZE_(blob, &size, GxB_JIT_C_NAME, blob_size)) ;
+    CHECK (size == strlen ("float") + 1) ;
+    OK (GxB_Serialized_get_String_(blob, name, GxB_JIT_C_NAME, blob_size)) ;
+    CHECK (MATCH (name, "float")) ;
+
     OK (GxB_Serialized_get_String_(blob, name, GrB_NAME, blob_size)) ;
     CHECK (MATCH (name, "")) ;
 
@@ -212,8 +217,11 @@ void mexFunction
     mxFree (blob) ; blob = NULL ; blob_size = 0 ;
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
 
-    OK (GxB_Serialized_get_String_(blob, name, GrB_ELTYPE_STRING, blob_size)) ;
+    OK (GxB_Serialized_get_String_(blob, name, GxB_JIT_C_NAME, blob_size)) ;
     CHECK (MATCH (name, "mytype")) ;
+
+    OK (GxB_Serialized_get_String_(blob, name, GrB_ELTYPE_STRING, blob_size)) ;
+    CHECK (MATCH (name, "")) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS

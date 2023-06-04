@@ -96,6 +96,7 @@ malloc_debugging = stat ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
+logstat ('test250'    ,t, j44 , f10 ) ; % JIT tests, set/get, other tests
 logstat ('test279'    ,t, j0  , f1  ) ; % blob get/set
 logstat ('test278'    ,t, j0  , f1  ) ; % descriptor get/set
 logstat ('test277'    ,t, j0  , f1  ) ; % context get/set
@@ -122,7 +123,6 @@ logstat ('test237'    ,s, j40 , f10 ) ; % test GrB_mxm (saxpy4) (1 task)
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
 logstat ('test267'    ,t, j40 , f00 ) ; % JIT error handling
-logstat ('test266'    ,t, j4  , f0  ) ; % JIT error handling
 logstat ('test265'    ,t, j4  , f0  ) ; % reduce to scalar with user types
 logstat ('test264'    ,t, j4  , f0  ) ; % enumify / macrofy tests
 logstat ('test263'    ,t, j4  , f0  ) ; % JIT tests
@@ -137,7 +137,6 @@ logstat ('test254'    ,t, j440, f100) ; %% mask types
 logstat ('test253'    ,t, j4  , f1  ) ; % basic JIT tests
 logstat ('test252'    ,t, j4  , f1  ) ; % basic tests
 logstat ('test251'    ,t, j404, f110) ; % dot4, dot2, with plus_pair
-logstat ('test250'    ,t, j44 , f10 ) ; % JIT tests, set/get, other tests
 logstat ('test249'    ,t, j4  , f1  ) ; % GxB_Context object
 logstat ('test247'    ,t, j4  , f1  ) ; % GrB_mxm: fine Hash method
 logstat ('test246'    ,t, j4  , f1  ) ; % GrB_mxm parallelism (slice_balanced)

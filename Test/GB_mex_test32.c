@@ -16,20 +16,41 @@
 #define GET_DEEP_COPY ;
 #define FREE_DEEP_COPY ;
 
-#define GETNAME(sm)                                         \
-{                                                           \
-    OK (GrB_Semiring_get_String (sm, name, GrB_NAME)) ;     \
-/*  printf ("\nname: [%s]", name) ;                 */      \
-/*  OK (GxB_Semiring_fprint (sm, "semiring", 3, NULL)) ; */ \
-    CHECK (MATCH (name, #sm)) ;                             \
+#define GETOP(op,opname)                                                \
+{                                                                       \
+    size_t siz1, siz2, siz3 ;                                           \
+    OK (GrB_Semiring_get_String (op, name, GrB_NAME)) ;                 \
+    CHECK (MATCH (name, opname)) ;                                      \
+    OK (GrB_Semiring_get_SIZE (op, &size, GrB_NAME)) ;                  \
+    CHECK (size == strlen (name) + 1) ;                                 \
+    GrB_Info info2, info3 ;                                             \
+    info2 = GrB_Semiring_get_SIZE (op, &siz1, GrB_INPUT1TYPE_STRING) ;  \
+    info3 = GrB_Semiring_get_String (op, name, GrB_INPUT1TYPE_STRING) ; \
+    CHECK (info2 == info3) ;                                            \
+    CHECK (siz1 == strlen (name) + 1) ;                                 \
+    if (info2 == GrB_NO_VALUE) { CHECK (siz1 == 1) ; }                  \
+    info2 = GrB_Semiring_get_SIZE (op, &siz2, GrB_INPUT2TYPE_STRING) ;  \
+    info3 = GrB_Semiring_get_String (op, name, GrB_INPUT2TYPE_STRING) ; \
+    CHECK (info2 == info3) ;                                            \
+    CHECK (siz2 == strlen (name) + 1) ;                                 \
+    if (info2 == GrB_NO_VALUE) { CHECK (siz1 == 1) ; }                  \
+    info2 = GrB_Semiring_get_SIZE (op, &siz3, GrB_OUTPUTTYPE_STRING) ;  \
+    info3 = GrB_Semiring_get_String (op, name, GrB_OUTPUTTYPE_STRING) ; \
+    CHECK (info2 == info3) ;                                            \
+    CHECK (siz3 == strlen (name) + 1) ;                                 \
+    if (info2 == GrB_NO_VALUE) { CHECK (siz1 == 1) ; }                  \
 }
 
-#define GETNAM2(sm,alias)                                   \
+#define GETNAME(op)                                         \
 {                                                           \
-    OK (GrB_Semiring_get_String (sm, name, GrB_NAME)) ;     \
-/*  printf ("\nname: [%s]", name) ;                 */      \
+    GETOP (op, #op) ;                                       \
 /*  OK (GxB_Semiring_fprint (sm, "semiring", 3, NULL)) ; */ \
-    CHECK (MATCH (name, alias)) ;                           \
+}
+
+#define GETNAM2(op,alias)                                   \
+{                                                           \
+    GETOP (op,alias) ;                                      \
+/*  OK (GxB_Semiring_fprint (sm, "semiring", 3, NULL)) ; */ \
 }
 
 void mytimes (float *z, const float *x, const float *y) ;
@@ -2091,9 +2112,17 @@ void mexFunction
         GrB_INPUT1TYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
+    OK (GrB_Semiring_get_SIZE_(GrB_PLUS_TIMES_SEMIRING_FP32, &size,
+        GrB_INPUT1TYPE_STRING)) ;
+    CHECK (size == strlen ("GrB_FP32") + 1) ;
+
     OK (GrB_Semiring_get_String_(GrB_PLUS_TIMES_SEMIRING_FP32, name,
         GrB_INPUT1TYPE_STRING)) ;
     CHECK (MATCH (name, "GrB_FP32")) ;
+
+    OK (GrB_Semiring_get_SIZE_(GrB_MAX_PLUS_SEMIRING_INT32, &size,
+        GrB_INPUT2TYPE_STRING)) ;
+    CHECK (size == strlen ("GrB_INT32") + 1) ;
 
     OK (GrB_Semiring_get_String_(GrB_MAX_PLUS_SEMIRING_INT32, name,
         GrB_INPUT2TYPE_STRING)) ;
@@ -2102,6 +2131,10 @@ void mexFunction
     OK (GrB_Semiring_get_ENUM_(GrB_PLUS_TIMES_SEMIRING_FP64, &code,
         GrB_OUTPUTTYPE_CODE)) ;
     CHECK (code == GrB_FP64_CODE) ;
+
+    OK (GrB_Semiring_get_SIZE_(GrB_PLUS_TIMES_SEMIRING_FP64, &size,
+        GrB_OUTPUTTYPE_STRING)) ;
+    CHECK (size == strlen ("GrB_FP64") + 1) ;
 
     OK (GrB_Semiring_get_String_(GrB_PLUS_TIMES_SEMIRING_FP64, name,
         GrB_OUTPUTTYPE_STRING)) ;
