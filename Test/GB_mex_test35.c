@@ -77,6 +77,12 @@ void mexFunction
     OK (GxB_Serialized_get_String_(blob, name, GrB_NAME, blob_size)) ;
     CHECK (MATCH (name, "")) ;
 
+    OK (GxB_Serialized_get_String_(blob, name, GrB_ELTYPE_STRING, blob_size)) ;
+    CHECK (MATCH (name, "GrB_FP32")) ;
+
+    OK (GxB_Serialized_get_SIZE_(blob, &size, GrB_ELTYPE_STRING, blob_size)) ;
+    CHECK (size == strlen ("GrB_FP32") + 1) ;
+
     OK (GxB_Serialized_get_ENUM_(blob, &code, GrB_ELTYPE_CODE, blob_size)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
@@ -101,6 +107,18 @@ void mexFunction
     OK (GrB_assign (A, NULL, NULL, 1, GrB_ALL, 5, GrB_ALL, 5, NULL)) ;
     OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
 
+    OK (GrB_Matrix_get_String_ (A, name, GxB_JIT_C_NAME)) ;
+    CHECK (MATCH (name, "float")) ;
+
+    OK (GrB_Matrix_get_SIZE_(A, &size, GrB_NAME)) ;
+    CHECK (size == 1) ;
+    OK (GrB_Matrix_get_String_(A, name, GrB_NAME)) ;
+    CHECK (MATCH (name, "")) ;
+
+    OK (GrB_Matrix_set_String_(A, "A matrix", GrB_NAME)) ;
+    OK (GrB_Matrix_get_String_(A, name, GrB_NAME)) ;
+    CHECK (MATCH (name, "A matrix")) ;
+
     // free the blob and recreate it
     mxFree (blob) ; blob = NULL ; blob_size = 0 ;
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
@@ -108,6 +126,22 @@ void mexFunction
     OK (GxB_Serialized_get_ENUM_(blob, &i, GxB_SPARSITY_STATUS, blob_size)) ;
     printf ("blob sparsity status: %d\n", i) ;
     CHECK (i == GxB_FULL) ;
+
+    OK (GxB_Serialized_get_String_ (blob, name, GrB_NAME, blob_size)) ;
+    printf ("name: [%s]\n", name) ;
+    CHECK (MATCH (name, "A matrix")) ;
+    OK (GxB_Serialized_get_String_ (blob, &size, GrB_NAME, blob_size)) ;
+    CHECK (size == strlen ("A matrix") + 1) ;
+
+    OK (GxB_Serialized_get_String_ (blob, name, GrB_ELTYPE_STRING, blob_size)) ;
+    CHECK (MATCH (name, "GrB_FP32")) ;
+    OK (GxB_Serialized_get_String_(blob, &size, GrB_ELTYPE_STRING, blob_size)) ;
+    CHECK (size == strlen ("GrB_FP32") + 1) ;
+
+    OK (GxB_Serialized_get_String_ (blob, name, GxB_JIT_C_NAME, blob_size)) ;
+    CHECK (MATCH (name, "float")) ;
+    OK (GxB_Serialized_get_String_ (blob, &size, GxB_JIT_C_NAME, blob_size)) ;
+    CHECK (size == strlen ("float") + 1) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GxB_Serialized_get_ENUM_(blob, &i, 0, blob_size)) ;
@@ -125,6 +159,8 @@ void mexFunction
     // free the blob and recreate it
     mxFree (blob) ; blob = NULL ; blob_size = 0 ;
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
+
+    OK (GxB_Serialized_get_String_(A, name, GxB_JIT_C_NAME)) ;
 
     OK (GxB_Serialized_get_ENUM_(blob, &i, GxB_SPARSITY_STATUS, blob_size)) ;
     printf ("blob sparsity status: %d\n", i) ;
@@ -165,7 +201,7 @@ void mexFunction
     ERR (GrB_Matrix_get_Scalar(A, s_int32, 999)) ;
 
     OK (GrB_Matrix_get_SIZE_(A, &size, GrB_NAME)) ;
-    CHECK (size == 1) ;
+    CHECK (size == strlen ("A matrix") + 1) ;
 
     expected = GrB_INVALID_OBJECT ;
     uint8_t *b = (uint8_t *) blob ;
@@ -217,10 +253,23 @@ void mexFunction
     mxFree (blob) ; blob = NULL ; blob_size = 0 ;
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
 
+    OK (GxB_Serialized_get_String_(blob, name, GrB_NAME, blob_size)) ;
+    CHECK (MATCH (name, "")) ;
+
     OK (GxB_Serialized_get_String_(blob, name, GxB_JIT_C_NAME, blob_size)) ;
     CHECK (MATCH (name, "mytype")) ;
 
     OK (GxB_Serialized_get_String_(blob, name, GrB_ELTYPE_STRING, blob_size)) ;
+    CHECK (MATCH (name, "")) ;
+
+    GrB_free (&type) ;
+    OK (GrB_Type_new (&type, sizeof (mytype))) ;
+
+    // free the blob and recreate it
+    mxFree (blob) ; blob = NULL ; blob_size = 0 ;
+    OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
+
+    OK (GxB_Serialized_get_String_(blob, name, GxB_JIT_C_NAME, blob_size)) ;
     CHECK (MATCH (name, "")) ;
 
     //--------------------------------------------------------------------------

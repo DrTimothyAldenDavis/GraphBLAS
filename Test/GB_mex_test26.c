@@ -592,9 +592,15 @@ void mexFunction
     OK (GrB_Matrix_get_SIZE_(A, &size, GrB_NAME)) ;
     CHECK (MATCH (name, "matrix name")) ;
     CHECK (size == strlen (name) + 1) ;
+    OK (GrB_Matrix_get_String_(A, name, GxB_JIT_C_NAME)) ;
+    CHECK (MATCH (name, "float")) ;
+    OK (GrB_Matrix_get_SIZE_(A, &size, GxB_JIT_C_NAME)) ;
+    CHECK (size == strlen ("float") + 1) ;
 
     expected = GrB_INVALID_VALUE ;
+    ERR (GrB_Matrix_set_String_ (A, "garbage", 999)) ;
     ERR (GrB_Matrix_set_VOID_(A, nothing, 0, 1)) ;
+    ERR (GrB_Matrix_get_SIZE_(A, &size, 999)) ;
 
     OK (GrB_Matrix_set_ENUM_(A, GrB_ROWMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
     OK (GrB_Matrix_get_ENUM_(A, &i, GrB_STORAGE_ORIENTATION_HINT)) ;

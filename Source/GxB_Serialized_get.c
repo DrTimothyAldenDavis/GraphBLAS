@@ -25,10 +25,12 @@ static GrB_Info GB_blob_header_get
     double *hyper_sw,           // hyper_switch
     double *bitmap_sw,          // bitmap_switch
     int *storage,               // GrB_COLMAJOR or GrB_ROWMAJOR
+    char **user_name,           // GrB_NAME of the blob
+    char **eltype_string,       // GrB_ELTYPE_STRING of the type of the blob
 
     // input, not modified:
-    const void *blob,       // the blob
-    GrB_Index blob_size     // size of the blob
+    const GB_void *blob,        // the blob
+    GrB_Index blob_size         // size of the blob
 )
 {
 
@@ -111,6 +113,86 @@ static GrB_Info GB_blob_header_get
     type_name [GxB_MAX_NAME_LEN-1] = '\0' ;
 
     //--------------------------------------------------------------------------
+    // get the compressed block sizes from the blob for each array
+    //--------------------------------------------------------------------------
+
+    GB_BLOB_READS (Cp_Sblocks, Cp_nblocks) ;
+    GB_BLOB_READS (Ch_Sblocks, Ch_nblocks) ;
+    GB_BLOB_READS (Cb_Sblocks, Cb_nblocks) ;
+    GB_BLOB_READS (Ci_Sblocks, Ci_nblocks) ;
+    GB_BLOB_READS (Cx_Sblocks, Cx_nblocks) ;
+
+    //--------------------------------------------------------------------------
+    // skip past each array (Cp, Ch, Cb, Ci, and Cx)
+    //--------------------------------------------------------------------------
+
+    switch (*sparsity_status)
+    {
+        case GxB_HYPERSPARSE : 
+            // skip Cp, Ch, and Ci
+            s += (Cp_nblocks > 0) ? Cp_Sblocks [Cp_nblocks-1] : 0 ;
+            s += (Ch_nblocks > 0) ? Ch_Sblocks [Ch_nblocks-1] : 0 ;
+            s += (Ci_nblocks > 0) ? Ci_Sblocks [Ci_nblocks-1] : 0 ;
+            break ;
+
+        case GxB_SPARSE : 
+            // skip Cp and Ci
+            s += (Cp_nblocks > 0) ? Cp_Sblocks [Cp_nblocks-1] : 0 ;
+            s += (Ci_nblocks > 0) ? Ci_Sblocks [Ci_nblocks-1] : 0 ;
+            break ;
+            break ;
+
+        case GxB_BITMAP : 
+            // skip Cb
+            s += (Cb_nblocks > 0) ? Cb_Sblocks [Cb_nblocks-1] : 0 ;
+            break ;
+
+        case GxB_FULL : 
+            break ;
+        default: ;
+    }
+
+    // skip Cx
+    s += (Cx_nblocks > 0) ? Cx_Sblocks [Cx_nblocks-1] : 0 ;
+
+    //--------------------------------------------------------------------------
+    // get the GrB_NAME and GrB_ELTYPE_STRING
+    //--------------------------------------------------------------------------
+
+    // v8.1.0 adds two nul-terminated uncompressed strings to the end of the
+    // blob.  If the strings are empty, the nul terminators still appear.
+
+    (*user_name) = NULL ;
+    (*eltype_string) = NULL ;
+
+    if (version >= GxB_VERSION (8,1,0))
+    { 
+
+        //----------------------------------------------------------------------
+        // look for the two nul bytes in blob [s : blob_size-1]
+        //----------------------------------------------------------------------
+
+        int nfound = 0 ;
+        size_t ss [2] ;
+        for (size_t p = s ; p < blob_size && nfound < 2 ; p++)
+        {
+            if (blob [p] == 0)
+            { 
+                ss [nfound++] = p ;
+            }
+        }
+
+        if (nfound == 2)
+        { 
+            // extract the GrB_NAME and GrB_ELTYPE_STRING from the blob
+            (*user_name) = (char *) (blob + s) ;
+            (*eltype_string) = (char *) (blob + ss [0] + 1) ;
+//          printf ("deserialize user_name %lu:[%s] eltype %lu:[%s]\n",
+//              s, *user_name, ss [0] + 1, *eltype_string) ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
@@ -143,12 +225,13 @@ GrB_Info GxB_Serialized_get_Scalar
     // read the blob
     //--------------------------------------------------------------------------
 
-    char type_name [GxB_MAX_NAME_LEN] ;
+    char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
     int sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
     GrB_Info info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
-        &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage, blob, blob_size) ;
+        &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
+        &user_name, &eltype_string, blob, blob_size) ;
 
     //--------------------------------------------------------------------------
     // get the field
@@ -244,12 +327,13 @@ GrB_Info GxB_Serialized_get_String
     // read the blob
     //--------------------------------------------------------------------------
 
-    char type_name [GxB_MAX_NAME_LEN] ;
+    char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
     int sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
     GrB_Info info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
-        &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage, blob, blob_size) ;
+        &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
+        &user_name, &eltype_string, blob, blob_size) ;
 
     //--------------------------------------------------------------------------
     // get the field
@@ -264,7 +348,10 @@ GrB_Info GxB_Serialized_get_String
         {
 
             case GrB_NAME : 
-                // FIXME: give the blob a name
+                if (user_name != NULL)
+                { 
+                    strcpy (value, user_name) ;
+                }
                 break ;
 
             case GxB_JIT_C_NAME : 
@@ -272,11 +359,9 @@ GrB_Info GxB_Serialized_get_String
                 break ;
 
             case GrB_ELTYPE_STRING : 
-                // FIXME: return the user_name of user-defined type
-                name = GB_code_name_get (type_code, NULL) ;
-                if (name != NULL)
+                if (eltype_string != NULL)
                 {
-                    strcpy (value, name) ;
+                    strcpy (value, eltype_string) ;
                 }
                 break ;
 
@@ -314,12 +399,13 @@ GrB_Info GxB_Serialized_get_ENUM
     // read the blob
     //--------------------------------------------------------------------------
 
-    char type_name [GxB_MAX_NAME_LEN] ;
+    char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
     int sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
     GrB_Info info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
-        &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage, blob, blob_size) ;
+        &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
+        &user_name, &eltype_string, blob, blob_size) ;
 
     //--------------------------------------------------------------------------
     // get the field
@@ -388,12 +474,13 @@ GrB_Info GxB_Serialized_get_SIZE
     // read the blob
     //--------------------------------------------------------------------------
 
-    char type_name [GxB_MAX_NAME_LEN] ;
+    char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
     int sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
     GrB_Info info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
-        &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage, blob, blob_size) ;
+        &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
+        &user_name, &eltype_string, blob, blob_size) ;
 
     //--------------------------------------------------------------------------
     // get the field
@@ -407,8 +494,7 @@ GrB_Info GxB_Serialized_get_SIZE
         {
 
             case GrB_NAME :     
-    GB_GOTCHA ;
-                (*value) = 1 ;      // FIXME : name of blob
+                (*value) = (user_name == NULL) ? 1 : (strlen (user_name) + 1) ;
                 break ;
 
             case GxB_JIT_C_NAME : 
@@ -416,9 +502,8 @@ GrB_Info GxB_Serialized_get_SIZE
                 break ;
 
             case GrB_ELTYPE_STRING : 
-                // FIXME: return the user_name of user-defined type
-                name = GB_code_name_get (type_code, NULL) ;
-                (*value) = (name == NULL) ? 1 : (strlen (name) + 1) ;
+                (*value) = (eltype_string == NULL) ?
+                    1 : (strlen (eltype_string) + 1) ;
                 break ;
 
             default : 

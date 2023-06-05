@@ -117,6 +117,7 @@ void mexFunction
     expected = GrB_INVALID_VALUE ;
     ERR (GxB_Context_get_VOID_ (GxB_CONTEXT_WORLD, nothing, 0)) ;
     ERR (GxB_Context_set_VOID_ (GxB_CONTEXT_WORLD, nothing, 0, 0)) ;
+    ERR (GxB_Context_get_String_ (GxB_CONTEXT_WORLD, name, 999)) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GxB_Context_get_ENUM_ (GxB_CONTEXT_WORLD, &i, GrB_NAME)) ;

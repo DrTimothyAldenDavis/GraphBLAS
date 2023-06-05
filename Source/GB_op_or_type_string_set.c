@@ -51,13 +51,14 @@ GrB_Info GB_op_or_type_string_set
 
         case GrB_NAME : 
 
+            // FIXME: spec says check for GrB_ALREADY_SET
             return (GB_user_name_set (user_name, user_name_size, value)) ;
 
         case GxB_JIT_C_NAME : 
 
             if (name [0] != '\0')
             { 
-                // name already defined
+                // JIT C name already defined
                 return (GrB_ALREADY_SET) ;
             }
 
@@ -80,7 +81,7 @@ GrB_Info GB_op_or_type_string_set
 
             if ((*defn) != NULL)
             { 
-                // definition already defined
+                // JIT C definition already set
                 return (GrB_ALREADY_SET) ;
             }
 

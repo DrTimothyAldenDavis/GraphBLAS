@@ -18,7 +18,7 @@ GrB_Info GB_matvec_name_get (GrB_Matrix A, char *name, int field)
     {
 
         case GrB_NAME : 
-            if (A->user_name_size > 0)
+            if (A->user_name != NULL)
             {
                 strcpy (name, A->user_name) ;
             }
