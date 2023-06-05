@@ -220,7 +220,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "(draft) June 1, 2023"
+#define GxB_IMPLEMENTATION_DATE "(draft) June 5, 2023"
 #define GxB_IMPLEMENTATION_MAJOR 8
 #define GxB_IMPLEMENTATION_MINOR 1
 #define GxB_IMPLEMENTATION_SUB   0
@@ -10738,7 +10738,7 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     fread (blob, sizeof (uint8_t), blob_size, f) ;
     fclose (f) ;
     char type_name [GxB_MAX_NAME_LEN] ;
-    GxB_deserialize_type_name (type_name, blob, blob_size) ;
+    GrB_get (blob, type_name, GxB_JIT_C_NAME, blob_size) ;
     printf ("blob type is: %s\n", type_name) ;
     GrB_Type user_type = NULL ;
     if (strncmp (type_name, "myquaternion", GxB_MAX_NAME_LEN) == 0)
@@ -10893,23 +10893,8 @@ GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
     const GrB_Descriptor desc       // to control # of threads used
 ) ;
 
-// GxB_deserialize_type_name extracts the type_name of the GrB_Type of the
-// GrB_Matrix or GrB_Vector held in a serialized blob.  On input, type_name
-// must point to a user-owned char array of size at least GxB_MAX_NAME_LEN (it
-// must not point into the blob itself).  On output, type_name will contain a
-// null-terminated string with the corresponding C type name.  If the blob
-// holds a matrix of a built-in type, the name is returned as "bool" for
-// GrB_BOOL, "uint8_t" for GrB_UINT8, "float complex" for GxB_FC32, etc.
-// See GxB_Type_name to convert this name into a GrB_Type.
-GrB_Info GxB_deserialize_type_name  // return the type name of a blob
-(
-    // output:
-    char *type_name,        // name of the type (char array of size at least
-                            // GxB_MAX_NAME_LEN, owned by the user application).
-    // input, not modified:
-    const void *blob,       // the blob
-    GrB_Index blob_size     // size of the blob
-) ;
+// historical; use GrB_get with GxB_JIT_C_NAME instead.
+GrB_Info GxB_deserialize_type_name (char *, const void *, GrB_Index) ;
 
 //==============================================================================
 // GxB_Vector_sort and GxB_Matrix_sort: sort a matrix or vector

@@ -5133,7 +5133,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_Matrix_deserialize'   & deserialize a matrix             & \ref{matrix_deserialize} \\
 \verb'GxB_Matrix_deserialize'   & deserialize a matrix             & \ref{matrix_deserialize_GxB} \\
 \hline
-\verb'GrB_deserialize_type_name' & return the name of type of the blob & \ref{deserialize_type_name} \\
+\verb'GrB_get' & get blob properties & See Section~\ref{get_set_blob} \\
 \hline
 \end{tabular}
 }
@@ -5426,33 +5426,6 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
 } \end{mdframed}
 
 Identical to \verb'GrB_Matrix_deserialize'.
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_deserialize\_type\_name:} name of the type of a blob}
-%-------------------------------------------------------------------------------
-\label{deserialize_type_name}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_deserialize_type_name  // return the type name of a blob
-(
-    // output:
-    char *type_name,        // name of the type (char array of size at least
-                            // GxB_MAX_NAME_LEN, owned by the user application).
-    // input, not modified:
-    const void *blob,       // the blob
-    GrB_Index blob_size     // size of the blob
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GrB_deserialize_type_name' returns the name of type of the matrix or
-vector serialized into the blob.  This method works for any blob, from
-% \verb'GrB_Vector_serialize',
-\verb'GxB_Vector_serialize',
-\verb'GrB_Matrix_serialize', or \verb'GxB_Matrix_serialize'.
 
 \newpage
 %===============================================================================

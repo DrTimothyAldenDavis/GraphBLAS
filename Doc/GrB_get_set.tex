@@ -632,7 +632,7 @@ GrB_Info GrB_set (GrB_Type t, char *     value, GrB_Field f) ;
 
 Built-in types cannot be modified by \verb'GrB_set'.  User-defined types can be
 used without setting their name or definition, but they can be used in JIT
-kernels only when both the name and the definition are set.
+kernels only when both the JIT C name and the definition are set.
 
 To use the JIT, all operators, monoids, and semirings that access this type
 must be defined after the user-defined type has been given both a name and a
@@ -685,9 +685,9 @@ GrB_Info GrB_set (GrB_UnaryOp op, char *     value, GrB_Field f) ;
 \end{tabular}
 }
 
-Built-in operators cannot be modified by \verb'GrB_set'.  User-defined operators can be
-used without setting their name or definition, but they can be used in JIT
-kernels only when both the name and the definition are set.
+Built-in operators cannot be modified by \verb'GrB_set'.  User-defined
+operators can be used without setting their name or definition, but they can be
+used in JIT kernels only when both the JIT C name and the definition are set.
 
 %-------------------------------------------------------------------------------
 \newpage
@@ -738,7 +738,7 @@ GrB_Info GrB_set (GrB_IndexUnaryOp op, char *     value, GrB_Field f) ;
 
 Built-in operators cannot be modified by \verb'GrB_set'.  User-defined
 operators can be used without setting their name or definition, but they can be
-used in JIT kernels only when both the name and the definition are set.
+used in JIT kernels only when both the JIT C name and the definition are set.
 
 %-------------------------------------------------------------------------------
 \newpage
@@ -789,10 +789,10 @@ GrB_Info GrB_set (GrB_BinaryOp op, char *     value, GrB_Field f) ;
 
 Built-in operators cannot be modified by \verb'GrB_set'.  User-defined
 operators can be used without setting their name or definition, but they can be
-used in JIT kernels only when both the name and the definition are set.
+used in JIT kernels only when both the JIT C name and the definition are set.
 
-To use the JIT, all monoids and semirings that access this binary operator must be
-defined after the user-defined operator has been given both a name and a
+To use the JIT, all monoids and semirings that access this binary operator must
+be defined after the user-defined operator has been given both a name and a
 definition.  GraphBLAS can use a monoid or semiring that uses a binary operator
 without a name, but it cannot use the JIT, even if the operator is given a name
 later on after the operator is created.
@@ -932,10 +932,9 @@ GrB_Info GrB_set (GrB_Semiring semiring, GrB_Scalar value, GrB_Field f) ;
 \hline
 \verb'GrB_NAME'                     & R/W  & \verb'char *' &
     name of the semiring.  For built-in operators, this returns the GraphBLAS
-    name (\verb'"GrB_LOR_LAND_SEMIRING_BOOL"' for \verb'GrB_LOR_MONOID_BOOL', for example).
-    For user-defined monoids, the name can be any string of any length.  It is
-    not used by the JIT.
-    It can be set any number of times. \\
+    name (\verb'"GrB_LOR_LAND_SEMIRING_BOOL"' for \verb'GrB_LOR_MONOID_BOOL',
+    for example).  For user-defined monoids, the name can be any string of any
+    length.  It is not used by the JIT.  It can be set any number of times. \\
 \hline
 \end{tabular}
 }
@@ -1593,6 +1592,10 @@ a {\em blob} as a single array of bytes that contains all content of a
 values that can be queried for a \verb'GrB_Matrix'.  The blob cannot be
 modified by \verb'GrB_set'.
 
+Note that these \verb'GrB_get' methods add a fourth parameter, the size of
+the blob.  All other \verb'GrB_get' methods have just three parameters:
+the object, the value, and the field.
+
 %-------------------------------------------------------------------------------
 \newpage
 \begin{alert}
@@ -1611,16 +1614,11 @@ SuiteSparse:GraphBLAS extends the spec by allowing both \verb'int' and
 \verb'GrB_LIBRARY_VER*', \verb'GrB_API_VER*', and \verb'GrB_SIZE'.
 
 \item
-The spec states that the name of types and operators can only be set once.
-SuiteSparse:GraphBLAS allows the names of all objects
-to be set any number of times.
+The spec states that the \verb'GrB_NAME' of types, operators, monoids, and
+semirings can only be set once.  SuiteSparse:GraphBLAS allows the
+\verb'GrB_NAME' of all objects to be set any number of times.
 
 \end{enumerate}
 
 \end{alert}
-
-\begin{warning}
-FIXME: The ability to get/set the name of matrices, vectors, scalars,
-and serialized blobs is not yet fully implemented.
-\end{warning}
 

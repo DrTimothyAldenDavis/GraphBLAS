@@ -10,6 +10,8 @@
 #include "GB.h"
 #include "GB_serialize.h"
 
+// This method is historical; use GrB_get instead.
+
 // GxB_deserialize_type_name extracts the JIT C type_name of the GrB_Type of
 // the GrB_Matrix or GrB_Vector held in a serialized blob.  On input, type_name
 // must point to a user-owned char array of size at least GxB_MAX_NAME_LEN (it
