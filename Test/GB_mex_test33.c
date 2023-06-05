@@ -114,7 +114,7 @@ void mexFunction
 
     ERR (GxB_Context_get_SIZE_ (GxB_CONTEXT_WORLD, &size, GxB_FORMAT)) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GxB_Context_get_VOID_ (GxB_CONTEXT_WORLD, nothing, 0)) ;
     ERR (GxB_Context_set_VOID_ (GxB_CONTEXT_WORLD, nothing, 0, 0)) ;
 

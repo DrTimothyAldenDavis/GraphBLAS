@@ -631,7 +631,7 @@ void mexFunction
     ERR (GrB_BinaryOp_get_ENUM_(GrB_LAND, &code, GrB_NAME)) ;
     ERR (GrB_BinaryOp_get_String_(GrB_MAX_INT32, name, 999)) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GrB_BinaryOp_get_VOID_(GrB_LAND, nothing, 0)) ;
 
     OK (GrB_BinaryOp_new (&binop, myfunc, GrB_FP32, GrB_FP32, GrB_FP32)) ;
@@ -654,7 +654,7 @@ void mexFunction
     OK (GrB_BinaryOp_get_ENUM_(binop, &code, GrB_INPUT2TYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GrB_BinaryOp_set_Scalar_(binop, s_int32, 0)) ;
     ERR (GrB_BinaryOp_set_ENUM_(binop, 0, 0)) ;
     ERR (GrB_BinaryOp_set_VOID_(binop, nothing, 0, 0)) ;

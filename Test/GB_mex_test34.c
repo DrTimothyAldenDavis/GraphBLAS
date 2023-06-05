@@ -406,7 +406,7 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
     //--------------------------------------------------------------------------
 
     printf ("\nerror handling:\n") ;
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GrB_Descriptor_get_VOID_ (GrB_DESC_T1, nothing, GrB_NAME)) ;
     ERR (GrB_Descriptor_set_VOID_ (desc, nothing, 0, 0)) ;
 
@@ -445,7 +445,7 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
     OK (GrB_Scalar_clear (s_int32)) ;
     ERR (GrB_Descriptor_set_Scalar_ (desc, s_int32, GrB_MASK)) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GrB_Descriptor_set_VOID_ (desc, nothing, 0, 0)) ;
     ERR (GrB_Descriptor_get_VOID_ (desc, nothing, 0)) ;
 

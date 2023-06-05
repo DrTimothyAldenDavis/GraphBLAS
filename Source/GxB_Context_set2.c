@@ -174,6 +174,6 @@ GrB_Info GxB_Context_set_VOID
     size_t size
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;
+    return (GrB_INVALID_VALUE) ;
 }
 

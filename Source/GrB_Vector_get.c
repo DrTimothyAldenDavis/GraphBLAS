@@ -157,6 +157,6 @@ GrB_Info GrB_Vector_get_VOID
     GrB_Field field
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;
+    return (GrB_INVALID_VALUE) ;
 }
 

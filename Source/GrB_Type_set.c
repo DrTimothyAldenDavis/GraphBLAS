@@ -20,7 +20,7 @@ GrB_Info GrB_Type_set_Scalar
     GrB_Field field
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;
+    return (GrB_INVALID_VALUE) ;
 }
 
 //------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ GrB_Info GrB_Type_set_ENUM
     GrB_Field field
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;
+    return (GrB_INVALID_VALUE) ;
 }
 
 //------------------------------------------------------------------------------
@@ -82,6 +82,6 @@ GrB_Info GrB_Type_set_VOID
     size_t size
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;
+    return (GrB_INVALID_VALUE) ;
 }
 

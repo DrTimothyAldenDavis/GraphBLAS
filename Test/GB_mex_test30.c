@@ -228,7 +228,7 @@ void mexFunction
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_IndexUnaryOp_get_ENUM_(GrB_TRIL, &code, GrB_NAME)) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GrB_IndexUnaryOp_get_VOID_(GrB_TRIL, nothing, 0)) ;
 
     OK (GrB_IndexUnaryOp_new (&op, myfunc, GrB_BOOL, GrB_FP32, GrB_FP32)) ;
@@ -258,9 +258,9 @@ void mexFunction
     expected = GrB_ALREADY_SET ;
     ERR (GrB_IndexUnaryOp_set_String_(op, "another_name", GxB_JIT_C_NAME)) ;
     ERR (GrB_IndexUnaryOp_set_String_(op, "another_defn", GxB_JIT_C_DEFINITION)) ;
-    ERR (GrB_IndexUnaryOp_set_String_(GrB_LNOT, "another_name", GxB_JIT_C_NAME)) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
+    ERR (GrB_IndexUnaryOp_set_String_(GrB_LNOT, "newname", GxB_JIT_C_NAME)) ;
     ERR (GrB_IndexUnaryOp_set_Scalar_(op, s_int32, 0)) ;
     ERR (GrB_IndexUnaryOp_set_ENUM_(op, 0, 0)) ;
     ERR (GrB_IndexUnaryOp_set_VOID_(op, nothing, 0, 0)) ;

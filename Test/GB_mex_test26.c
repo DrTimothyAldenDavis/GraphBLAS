@@ -341,7 +341,7 @@ void mexFunction
     ERR (GrB_Type_get_SIZE_(type, &size, GrB_OUTP)) ;
     ERR (GrB_Type_get_SIZE_(GrB_FP32, &size, GrB_SIZE)) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GrB_Type_get_VOID_(type, nothing, 0)) ;
     ERR (GrB_Type_set_Scalar_(type, s_int32, 0)) ;
     ERR (GrB_Type_set_ENUM_(type, 3, 0)) ;
@@ -353,7 +353,7 @@ void mexFunction
 
     OK (GrB_Scalar_new (&s, GrB_FP32)) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GrB_Scalar_get_VOID_(s, nothing, 0)) ;
 
     OK (GrB_Scalar_get_SIZE_(s, &size, GrB_ELTYPE_STRING)) ;
@@ -407,7 +407,7 @@ void mexFunction
     CHECK (MATCH (name, "scalar name")) ;
     CHECK (size == strlen (name) + 1) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GrB_Scalar_set_VOID_(s, nothing, 0, 0)) ;
 
     //--------------------------------------------------------------------------
@@ -416,7 +416,7 @@ void mexFunction
 
     OK (GrB_Vector_new (&v, GrB_FP32, 10)) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GrB_Vector_get_VOID_(v, nothing, 0)) ;
 
     OK (GrB_Vector_get_SIZE_(v, &size, GrB_ELTYPE_STRING)) ;
@@ -499,7 +499,7 @@ void mexFunction
     CHECK (MATCH (name, "vector name")) ;
     CHECK (size == strlen (name) + 1) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GrB_Vector_set_VOID_(v, nothing, 0, 1)) ;
 
     expected = GrB_EMPTY_OBJECT ;
@@ -512,7 +512,7 @@ void mexFunction
 
     OK (GrB_Matrix_new (&A, GrB_FP32, 5, 5)) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GrB_Matrix_get_VOID_(A, nothing, 0)) ;
 
     OK (GrB_Matrix_get_SIZE_(A, &size, GrB_ELTYPE_STRING)) ;
@@ -593,7 +593,7 @@ void mexFunction
     CHECK (MATCH (name, "matrix name")) ;
     CHECK (size == strlen (name) + 1) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GrB_Matrix_set_VOID_(A, nothing, 0, 1)) ;
 
     OK (GrB_Matrix_set_ENUM_(A, GrB_ROWMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;

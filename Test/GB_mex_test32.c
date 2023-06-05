@@ -2195,11 +2195,10 @@ void mexFunction
     ERR (GrB_Semiring_set_String_(GrB_MAX_TIMES_SEMIRING_INT32, "stuff",
         GrB_NAME)) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GrB_Semiring_set_Scalar_(semiring, s_int32, 0)) ;
     ERR (GrB_Semiring_set_ENUM_(semiring, 0, 0)) ;
     ERR (GrB_Semiring_set_VOID_(semiring, nothing, 0, 0)) ;
-    expected = GrB_ALREADY_SET ;
 
     OK (GrB_Semiring_get_String_(semiring, name, GrB_NAME)) ;
     CHECK (MATCH (name, "")) ;

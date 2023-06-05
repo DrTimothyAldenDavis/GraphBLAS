@@ -184,7 +184,7 @@ void mexFunction
     printf ("expected error: [%s]\n", s) ;
 
     info = GrB_Matrix_reduce_BinaryOp (w, NULL, NULL, GrB_DIV_FP32, C, NULL) ;
-    CHECK (info == GrB_NOT_IMPLEMENTED) ;
+    CHECK (info == GrB_INVALID_VALUE) ;
     OK (GrB_error (&s, w)) ;
     printf ("expected error: [%s]\n", s) ;
     GrB_Vector_free_(&w) ;

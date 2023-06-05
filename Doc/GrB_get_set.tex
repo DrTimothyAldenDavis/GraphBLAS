@@ -1307,7 +1307,7 @@ GrB_Info GrB_set (GrB_Vector v, int        value, GrB_Field f) ;
 
 \noindent
 {\small
-\begin{tabular}{|l|l|l|p{2.2in}|}
+\begin{tabular}{|l|l|l|p{3in}|}
 \hline
 \verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
@@ -1315,8 +1315,8 @@ GrB_Info GrB_set (GrB_Vector v, int        value, GrB_Field f) ;
 \verb'GxB_SPARSITY_CONTROL'         & R/W  & \verb'int'    & See Section~\ref{sparsity_status} \\
 \verb'GxB_SPARSITY_STATUS'          & R    & \verb'int'    & See Section~\ref{sparsity_status} \\
 \hline
-\verb'GrB_NAME'                     & R/W  & \verb'char *' & name of the vector.
-                                        This can be set any number of times. \\
+\verb'GrB_NAME'                     & R/W  & \verb'char *' & name of the vector. \\
+%                                       This can be set any number of times. \\
 \verb'GrB_ELTYPE_STRING'            & R    & \verb'char *' & name of the type of the vector. \\
 \verb'GxB_JIT_C_NAME'               & R    & \verb'char *' & JIT C name of the type of the vector. \\
 \hline
@@ -1324,7 +1324,6 @@ GrB_Info GrB_set (GrB_Vector v, int        value, GrB_Field f) ;
 \hline
 \end{tabular}
 }
-\vspace{0.1in}
 
 See Section~\ref{get_set_matrix}; a \verb'GrB_Vector' is treated as if it were
 an $n$-by-1 matrix, and is always in column major form.  It is never
@@ -1352,7 +1351,7 @@ GrB_Info GrB_set (GrB_Scalar s, int        value, GrB_Field f) ;
 
 \noindent
 {\small
-\begin{tabular}{|l|l|l|p{2.2in}|}
+\begin{tabular}{|l|l|l|p{3in}|}
 \hline
 \verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
@@ -1360,8 +1359,8 @@ GrB_Info GrB_set (GrB_Scalar s, int        value, GrB_Field f) ;
 \verb'GrB_ELTYPE_CODE'              & R    & \verb'int'    & scalar type \\
 \verb'GxB_SPARSITY_STATUS'          & R    & \verb'int'    & See Section~\ref{sparsity_status} \\
 \hline
-\verb'GrB_NAME'                     & R/W  & \verb'char *' & name of the scalar.
-                                        This can be set any number of times. \\
+\verb'GrB_NAME'                     & R/W  & \verb'char *' & name of the scalar. \\
+%                                       This can be set any number of times. \\
 \verb'GrB_ELTYPE_STRING'            & R    & \verb'char *' & name of the type of the scalar. \\
 \verb'GxB_JIT_C_NAME'               & R    & \verb'char *' & JIT C name of the type of the scalar. \\
 \hline
@@ -1612,15 +1611,9 @@ SuiteSparse:GraphBLAS extends the spec by allowing both \verb'int' and
 \verb'GrB_LIBRARY_VER*', \verb'GrB_API_VER*', and \verb'GrB_SIZE'.
 
 \item
-The spec states that the name of objects can only be set once.
+The spec states that the name of types and operators can only be set once.
 SuiteSparse:GraphBLAS allows the names of all objects
 to be set any number of times.
-
-\item
-The spec defines methods that are available for future use but currently have
-no settings to get or set.  SuiteSparse:GraphBLAS returns
-\verb'GrB_NOT_IMPLEMENTED' for these methods.  The spec does not state what the
-return value should be in this case.
 
 \end{enumerate}
 

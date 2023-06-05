@@ -36,7 +36,7 @@ GrB_Info GB_op_or_type_string_set
     if (!user_defined)
     { 
         // built-in type or operator
-        return (GrB_ALREADY_SET) ;
+        return (GrB_INVALID_VALUE) ;
     }
 
     //--------------------------------------------------------------------------

@@ -61,7 +61,7 @@ void mexFunction
     OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GxB_Serialized_get_VOID_(blob, nothing, 0, blob_size)) ;
 
     OK (GxB_Serialized_get_SIZE_(blob, &size, GrB_ELTYPE_STRING, blob_size)) ;

@@ -298,11 +298,10 @@ void mexFunction
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Monoid_get_SIZE_(monoid, &size, GrB_INPUT1TYPE_CODE)) ;
 
-    expected = GrB_NOT_IMPLEMENTED ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GrB_Monoid_set_Scalar_(monoid, s_int32, 0)) ;
     ERR (GrB_Monoid_set_ENUM_(monoid, 0, 0)) ;
     ERR (GrB_Monoid_set_VOID_(monoid, nothing, 0, 0)) ;
-    expected = GrB_ALREADY_SET ;
 
     OK (GrB_Monoid_set_String_(monoid, "monoid_stuff", GrB_NAME)) ;
     OK (GrB_Monoid_get_String_(monoid, name, GrB_NAME)) ;

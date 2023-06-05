@@ -132,6 +132,6 @@ GrB_Info GrB_UnaryOp_get_VOID
     GrB_Field field
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;
+    return (GrB_INVALID_VALUE) ;
 }
 
