@@ -27,8 +27,8 @@ const char *GB_code_name_get (GB_Type_code code, char *user_name) ;
 
 GrB_Info GB_matvec_name_size_get (GrB_Matrix A, size_t *value, int field) ;
 GrB_Info GB_matvec_name_get (GrB_Matrix A, char *name, int field) ;
-
 GrB_Info GB_matvec_enum_get (GrB_Matrix A, int *value, int field) ;
+GrB_Info GB_matvec_name_set (GrB_Matrix A, char *value, int field) ;
 
 GrB_Info GB_matvec_set
 (

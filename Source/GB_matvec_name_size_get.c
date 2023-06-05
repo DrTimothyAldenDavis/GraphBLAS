@@ -17,7 +17,7 @@ GrB_Info GB_matvec_name_size_get (GrB_Matrix A, size_t *value, int field)
     {
 
         case GrB_NAME :     
-            // name = A->user_name ; // FIXME: matrix name
+            name = A->user_name ;
             break ;
 
         case GxB_JIT_C_NAME : 

@@ -71,7 +71,21 @@ GrB_Info GrB_Matrix_set_String
     GrB_Field field
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;      // FIXME: set the name of a GrB_Matrix
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_WHERE1 ("GrB_Matrix_set_String (A, value, field)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL (value) ;
+    ASSERT_MATRIX_OK (A, "A to set option", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // set the field
+    //--------------------------------------------------------------------------
+
+    return (GB_matvec_name_set (A, value, field)) ;
 }
 
 //------------------------------------------------------------------------------

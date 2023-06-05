@@ -358,6 +358,9 @@ GB_Opcode ;
 // when A->p array is allocated but not initialized.
 #define GB_MAGIC2 0x7265745f786f62ULL
 
+// Nearly all GraphBLAS objects contain the same first 4 items (except for
+// GB_Global_opaque, which has just the first 2).
+
 struct GB_Type_opaque       // content of GrB_Type
 {
     int64_t magic ;         // for detecting uninitialized objects
@@ -368,8 +371,8 @@ struct GB_Type_opaque       // content of GrB_Type
     // ---------------------//
     size_t size ;           // size of the type
     GB_Type_code code ;     // the type code
-    int32_t name_len ;      // length of JIT name; 0 for builtin
-    char name [GxB_MAX_NAME_LEN] ;  // JIT name of the type
+    int32_t name_len ;      // length of JIT C name; 0 for builtin
+    char name [GxB_MAX_NAME_LEN] ;  // JIT C name of the type
     char *defn ;            // type definition
     size_t defn_size ;      // allocated size of the definition
     uint64_t hash ;         // if 0, type is builtin.
@@ -440,7 +443,7 @@ struct GB_Semiring_opaque   // content of GrB_Semiring
 
 struct GB_Descriptor_opaque // content of GrB_Descriptor
 {
-    // first 4 items exactly match GrB_Matrix, GrB_Vector, GrB_Scalar structs:
+    // first 6 items exactly match GrB_Matrix, GrB_Vector, GrB_Scalar structs:
     int64_t magic ;         // for detecting uninitialized objects
     size_t header_size ;    // size of the malloc'd block for this struct, or 0
     // ---------------------//
@@ -449,6 +452,7 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     // ---------------------//
     char *logger ;          // error logger string
     size_t logger_size ;    // size of the malloc'd block for logger, or 0
+    // ---------------------//
     // specific to the descriptor struct:
     GrB_Desc_Value out ;    // output descriptor
     GrB_Desc_Value mask ;   // mask descriptor

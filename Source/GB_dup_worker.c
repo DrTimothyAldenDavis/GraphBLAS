@@ -15,6 +15,7 @@
 // dynamic header, depending on C->static_header.
 
 #include "GB.h"
+#include "GB_get_set.h"
 #define GB_FREE_ALL ;
 
 GrB_Info GB_dup_worker      // make an exact copy of a matrix
@@ -115,14 +116,30 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     }
 
     C->magic = GB_MAGIC ;      // C->p and C->h are now initialized
-    #ifdef GB_DEBUG
-    if (numeric) ASSERT_MATRIX_OK (C, "C duplicate of A", GB0) ;
-    #endif
+
+    //--------------------------------------------------------------------------
+    // copy the user_name of A into C, if present
+    //--------------------------------------------------------------------------
+
+    if (A->user_name_size > 0)
+    { 
+        info = GB_user_name_set (&(C->user_name), &(C->user_name_size),
+            A->user_name) ;
+        if (info != GrB_SUCCESS)
+        { 
+            // out of memory
+            GB_Matrix_free (Chandle) ;
+            return (info) ;
+        }
+    }
 
     //--------------------------------------------------------------------------
     // return the result
     //--------------------------------------------------------------------------
 
+    #ifdef GB_DEBUG
+    if (numeric) ASSERT_MATRIX_OK (C, "C duplicate of A", GB0) ;
+    #endif
     return (GrB_SUCCESS) ;
 }
 

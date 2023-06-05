@@ -104,6 +104,11 @@ GrB_Info GxB_Context_get_String
     // get the field
     //--------------------------------------------------------------------------
 
+    if (field != GrB_NAME)
+    { 
+        return (GrB_INVALID_VALUE) ;
+    }
+
     (*value) = '\0' ;
     if (Context == GxB_CONTEXT_WORLD)
     { 

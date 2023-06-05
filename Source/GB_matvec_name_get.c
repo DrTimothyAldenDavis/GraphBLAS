@@ -17,7 +17,11 @@ GrB_Info GB_matvec_name_get (GrB_Matrix A, char *name, int field)
     switch (field)
     {
 
-        case GrB_NAME :  // FIXME: give matrix/vector/scalar a name
+        case GrB_NAME : 
+            if (A->user_name_size > 0)
+            {
+                strcpy (name, A->user_name) ;
+            }
             break ;
 
         case GxB_JIT_C_NAME : 

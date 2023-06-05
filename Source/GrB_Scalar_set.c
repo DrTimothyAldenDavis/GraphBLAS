@@ -15,7 +15,7 @@
 
 GrB_Info GrB_Scalar_set_Scalar
 (
-    GrB_Scalar v,
+    GrB_Scalar s,
     GrB_Scalar value,
     GrB_Field field
 )
@@ -31,12 +31,26 @@ GrB_Info GrB_Scalar_set_Scalar
 
 GrB_Info GrB_Scalar_set_String
 (
-    GrB_Scalar v,
+    GrB_Scalar s,
     char * value,
     GrB_Field field
 )
 { 
-    return (GrB_NOT_IMPLEMENTED) ;      // FIXME: set the name of a GrB_Scalar
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_WHERE1 ("GrB_Scalar_set_String (s, value, field)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (s) ;
+    GB_RETURN_IF_NULL (value) ;
+    ASSERT_SCALAR_OK (s, "s to set option", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // set the field
+    //--------------------------------------------------------------------------
+
+    return (GB_matvec_name_set ((GrB_Matrix) s, value, field)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -45,7 +59,7 @@ GrB_Info GrB_Scalar_set_String
 
 GrB_Info GrB_Scalar_set_ENUM
 (
-    GrB_Scalar v,
+    GrB_Scalar s,
     int value,
     GrB_Field field
 )
@@ -61,7 +75,7 @@ GrB_Info GrB_Scalar_set_ENUM
 
 GrB_Info GrB_Scalar_set_VOID
 (
-    GrB_Scalar v,
+    GrB_Scalar s,
     void * value,
     GrB_Field field,
     size_t size

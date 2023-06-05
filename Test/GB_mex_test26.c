@@ -320,8 +320,10 @@ void mexFunction
     OK (GrB_Type_get_ENUM_(type, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_UDT_CODE) ;
 
+    OK (GrB_Type_get_String_(type, name, GrB_ELTYPE_STRING)) ;
+    CHECK (MATCH (name, "user name of a type")) ;
+
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_Type_get_String_(type, name, GrB_ELTYPE_STRING)) ;
     ERR (GrB_Type_get_ENUM_(type, &code, GrB_ELTYPE_STRING)) ;
 
     i = -1 ;
@@ -399,8 +401,13 @@ void mexFunction
     ERR (GrB_Scalar_set_ENUM_(s, 0, 0)) ;
     OK (GrB_Scalar_set_ENUM_(s, 0, GrB_STORAGE_ORIENTATION_HINT)) ;
 
+    OK (GrB_Scalar_set_String_(s, "scalar name", GrB_NAME)) ;
+    OK (GrB_Scalar_get_String_(s, name, GrB_NAME)) ;
+    OK (GrB_Scalar_get_SIZE_(s, &size, GrB_NAME)) ;
+    CHECK (MATCH (name, "scalar name")) ;
+    CHECK (size == strlen (name) + 1) ;
+
     expected = GrB_NOT_IMPLEMENTED ;
-    ERR (GrB_Scalar_set_String_(s, "name", GrB_NAME)) ;
     ERR (GrB_Scalar_set_VOID_(s, nothing, 0, 0)) ;
 
     //--------------------------------------------------------------------------
@@ -486,8 +493,13 @@ void mexFunction
     ERR (GrB_Vector_set_Scalar_(v, s_int32, GxB_HYPER_SWITCH)) ;
     ERR (GrB_Vector_get_Scalar_(v, s_int32, GxB_HYPER_SWITCH)) ;
 
+    OK (GrB_Vector_set_String_(v, "vector name", GrB_NAME)) ;
+    OK (GrB_Vector_get_String_(v, name, GrB_NAME)) ;
+    OK (GrB_Vector_get_SIZE_(v, &size, GrB_NAME)) ;
+    CHECK (MATCH (name, "vector name")) ;
+    CHECK (size == strlen (name) + 1) ;
+
     expected = GrB_NOT_IMPLEMENTED ;
-    ERR (GrB_Vector_set_String_(v, "new_name", GrB_NAME)) ;
     ERR (GrB_Vector_set_VOID_(v, nothing, 0, 1)) ;
 
     expected = GrB_EMPTY_OBJECT ;
@@ -572,8 +584,16 @@ void mexFunction
     printf ("hyper switch: %g\n", dvalue) ;
     CHECK (abs (dvalue - 0.25) < 1e-6) ;
 
+    OK (GrB_Matrix_get_SIZE_(A, &size, GrB_NAME)) ;
+    CHECK (size == 1) ;
+
+    OK (GrB_Matrix_set_String_(A, "matrix name", GrB_NAME)) ;
+    OK (GrB_Matrix_get_String_(A, name, GrB_NAME)) ;
+    OK (GrB_Matrix_get_SIZE_(A, &size, GrB_NAME)) ;
+    CHECK (MATCH (name, "matrix name")) ;
+    CHECK (size == strlen (name) + 1) ;
+
     expected = GrB_NOT_IMPLEMENTED ;
-    ERR (GrB_Matrix_set_String_(A, "new_name", GrB_NAME)) ;
     ERR (GrB_Matrix_set_VOID_(A, nothing, 0, 1)) ;
 
     OK (GrB_Matrix_set_ENUM_(A, GrB_ROWMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
@@ -599,9 +619,6 @@ void mexFunction
     expected = GrB_EMPTY_OBJECT ;
     OK (GrB_Scalar_clear (s_int32)) ;
     ERR (GrB_Matrix_set_Scalar_(A, s_int32, GxB_FORMAT)) ;
-
-    OK (GrB_Matrix_get_SIZE_(A, &size, GrB_NAME)) ;
-    CHECK (size == 1) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS
