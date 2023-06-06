@@ -1337,10 +1337,7 @@ out-of-memory conditions result in an empty string from \verb'GrB_error'.
 SuiteSparse:GraphBLAS reports many helpful details via \verb'GrB_error'.  For
 example, if a row or column index is out of bounds, the report will state what
 those bounds are.  If a matrix dimension is incorrect, the mismatching
-dimensions will be provided.  \verb'GrB_BinaryOp_new', \verb'GrB_UnaryOp_new',
-and \verb'GrB_IndexUnaryOp_new' record the name the function passed to them, and
-\verb'GrB_Type_new' records the name of its type parameter, and these are
-printed if the user-defined types and operators are used incorrectly.  Refer to
+dimensions will be provided.  Refer to
 the output of the example programs in the \verb'Demo' and \verb'Test' folder,
 which intentionally generate errors to illustrate the use of \verb'GrB_error'.
 
@@ -1500,8 +1497,8 @@ GraphBLAS function       & purpose                          & Section \\
 \verb'GxB_Type_new'      & create a user-defined type,
                             with name and definition        & \ref{type_new_named} \\
 \verb'GrB_Type_wait'     & wait for a user-defined type     & \ref{type_wait} \\
-\verb'GrB_get'           & return the size of a type        & \ref{get_set_type} \\
-\verb'GrB_get'           & return the name of a type        & \ref{get_set_type} \\
+\verb'GrB_get'           & get properties of a type         & \ref{get_set_type} \\
+\verb'GrB_set'           & set the type name/definitition   & \ref{get_set_type} \\
 \verb'GxB_Type_from_name'& return the type from its name    & \ref{type_from_name} \\
 \verb'GrB_Type_free'     & free a user-defined type         & \ref{type_free} \\
 \hline
@@ -1627,6 +1624,19 @@ feature useful for interfaces in languages other than C, which could create
 valid strings for C types but would not have a reliable way to determine the
 size of the type.
 
+The above example is identical to the following usage, except that
+\verb'GrB_Type_new' requires \verb'sizeof_ctype' to be nonzero, and equal
+to the size of the C type.
+
+    {\footnotesize
+    \begin{verbatim}
+    typedef struct { float x [4][4] ; int color ; } myquaternion ;
+    GrB_Type MyQtype ;
+    GxB_Type_new (&MyQtype, sizeof (myquaternion)) ;
+    GrB_set (MyQtype, "myquaternion", GxB_JIT_C_NAME) ;
+    GrB_set (MyQtype, "typedef struct { float x [4][4] ; int color ; } myquaternion ;"
+        GxB_JIT_C_DEFINITION) ; \end{verbatim}}
+
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Type\_wait:} wait for a type}
 %-------------------------------------------------------------------------------
@@ -1664,9 +1674,15 @@ GrB_Info GxB_Type_from_name     // return the built-in GrB_Type from a name
 \end{verbatim}
 }\end{mdframed}
 
-Returns the built-in type from the corresponding name of the type.  For
-example, \verb'GxB_Type_from_name (&type, "bool")' returns \verb'GrB_BOOL'.  If
-the name is from a user-defined type, the \verb'type' is returned as
+Returns the built-in type from the corresponding name of the type.  The following
+examples both return \verb'type' as \verb'GrB_BOOL'.
+
+{\footnotesize
+\begin{verbatim}
+    GxB_Type_from_name (&type, "bool") ;
+    GxB_Type_from_name (&type, "GrB_BOOL") ; }\end{verbatim} }
+
+If the name is from a user-defined type, the \verb'type' is returned as
 \verb'NULL'.  This is not an error condition.  The user application must itself
 do this translation since GraphBLAS does not keep a registry of all
 user-defined types.
@@ -1705,7 +1721,6 @@ example.
         else { ... this is now an error ... the type of A is unknown.  }
     }\end{verbatim} }
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Type\_free:} free a user-defined type}
 %-------------------------------------------------------------------------------
@@ -1957,8 +1972,8 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_UnaryOp_new'   & create a user-defined unary operator         & \ref{unaryop_new} \\
 \verb'GxB_UnaryOp_new'   & create a named user-defined unary operator   & \ref{unaryop_new_named} \\
 \verb'GrB_UnaryOp_wait'  & wait for a user-defined unary operator       & \ref{unaryop_wait} \\
-\verb'GrB_get' & return the name of the type of the output $z$ for $z=f(x)$   & \ref{get_set_unop} \\
-\verb'GrB_get' & return the name of the type of the input $x$ for $z=f(x)$    & \ref{get_set_unop} \\
+\verb'GrB_get'           & get properties of an operator    & \ref{get_set_unop} \\
+\verb'GrB_set'           & set the operator name/definition & \ref{get_set_unop} \\
 \verb'GrB_UnaryOp_free'  & free a user-defined unary operator   & \ref{unaryop_free} \\
 \hline
 \end{tabular}
@@ -2053,6 +2068,19 @@ copied into the \verb'PreJIT' folder, the \verb'function' may be \verb'NULL'.
 In this case, a JIT kernel is compiled that contains just the user-defined
 function.  If the JIT is disabled and the \verb'function' is \verb'NULL', this
 method returns \verb'GrB_NULL_POINTER'.
+
+The above example is identical to the following usage, except that
+\verb'GrB_UnaryOp_new' requires a non-NULL function pointer.
+
+    {\footnotesize
+    \begin{verbatim}
+    void square (double *z, double *x) { (*z) = (*x) * (*x) ; } ;
+    ...
+    GrB_Type Square ;
+    GrB_UnaryOp_new (&Square, square, GrB_FP64, GrB_FP64) ;
+    GrB_set (Square, "square", GxB_JIT_C_NAME) ;
+    GrB_set (Square, "void square (double *z, double *x) { (*z) = (*x) * (*x) ; } ;",
+        GxB_JIT_C_DEFINITION) ; \end{verbatim}}
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -2416,9 +2444,8 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_BinaryOp_new'   & create a user-defined binary operator   & \ref{binaryop_new} \\
 \verb'GxB_BinaryOp_new'   & create a named user-defined binary operator   & \ref{binaryop_new_named} \\
 \verb'GrB_BinaryOp_wait'  & wait for a user-defined binary operator & \ref{binaryop_wait} \\
-\verb'GrB_get' & return the type of the output $z$ for $z=f(x,y)$    & \ref{get_set_binop} \\
-\verb'GrB_get' & return the type of the input $x$ for $z=f(x,y)$     & \ref{get_set_binop} \\
-\verb'GrB_get' & return the type of the input $y$ for $z=f(x,y)$     & \ref{get_set_binop} \\
+\verb'GrB_get'           & get properties of an operator    & \ref{get_set_binop} \\
+\verb'GrB_set'           & set the operator name/definition & \ref{get_set_binop} \\
 \verb'GrB_BinaryOp_free'  & free a user-defined binary operator     & \ref{binaryop_free} \\
 \hline
 \end{tabular}
@@ -2512,6 +2539,20 @@ into the \verb'PreJIT' folder, the \verb'function' may be \verb'NULL'.  In this
 case, a JIT kernel is compiled that contains just the user-defined function.
 If the JIT is disabled and the \verb'function' is \verb'NULL', this method
 returns \verb'GrB_NULL_POINTER'.
+
+The above example is identical to the following usage, except that
+\verb'GrB_BinaryOp_new' requires a non-NULL function pointer.
+
+{\footnotesize
+\begin{verbatim}
+void absdiff (double *z, double *x, double *y) { (*z) = fabs ((*x) - (*y)) ; } ;
+...
+GrB_Type AbsDiff ;
+GrB_BinaryOp_new (&AbsDiff, absdiff, GrB_FP64, GrB_FP64, GrB_FP64) ;
+GrB_set (AbsDiff, "absdiff", GxB_JIT_C_NAME) ;
+GrB_set (AbsDiff,
+  "void absdiff (double *z, double *x, double *y) { (*z) = fabs ((*x) - (*y)) ; }",
+  GxB_JIT_C_DEFINITION) ;\end{verbatim}}
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_BinaryOp\_wait:} wait for a binary operator}
@@ -2697,9 +2738,8 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_IndexUnaryOp_new'   & create a user-defined index-unary operator   & \ref{idxunop_new} \\
 \verb'GxB_IndexUnaryOp_new'   & create a named user-defined index-unary operator   & \ref{idxunop_new_named} \\
 \verb'GrB_IndexUnaryOp_wait'  & wait for a user-defined index-unary operator  & \ref{idxunop_wait} \\
-\verb'GrB_get' & return the type of the output $z$        & \ref{get_set_idxunop} \\
-\verb'GrB_get' & return the type of the input $x$         & \ref{get_set_idxunop} \\
-\verb'GrB_get' & return the type of the scalar $y$        & \ref{get_set_idxunop} \\
+\verb'GrB_get'           & get properties of an operator    & \ref{get_set_idxunop} \\
+\verb'GrB_set'           & set the operator name/definition & \ref{get_set_idxunop} \\
 \verb'GrB_IndexUnaryOp_free'  & free a user-defined index-unary operator      & \ref{idxunop_free} \\
 \hline
 \end{tabular}
@@ -2774,12 +2814,66 @@ entire function itself.
 
 The two strings \verb'idxop_name' and \verb'idxop_defn' are optional, but are
 required to enable the JIT compilation of kernels that use this operator.
+The strings can also be set the \verb'GrB_set' after the operator is created
+with \verb'GrB_IndexUnaryOp_new'.  For example:
+
+{\footnotesize
+\begin{verbatim}
+    void banded_idx
+    (
+        bool *z,
+        const int64_t *x,   // unused
+        int64_t i,
+        int64_t j,
+        const int64_t *thunk
+    )
+    {
+        // d = abs (j-i)
+        int64_t d = j-i ;
+        if (d < 0) d = -d ;
+        (*z) = (d <= *thunk) ;
+    }
+
+    #define BANDED_IDX_DEFN                     \
+    "void banded_idx                        \n" \
+    "(                                      \n" \
+    "    bool *z,                           \n" \
+    "    const int64_t *x,   // unused      \n" \
+    "    int64_t i,                         \n" \
+    "    int64_t j,                         \n" \
+    "    const int64_t *thunk               \n" \
+    ")                                      \n" \
+    "{                                      \n" \
+    "    int64_t d = j-i ;                  \n" \
+    "    if (d < 0) d = -d ;                \n" \
+    "    (*z) = (d <= *thunk) ;             \n" \
+    "}"
+
+    GxB_IndexUnaryOp_new (&Banded,
+        (GxB_index_unary_function) banded_idx,
+        GrB_BOOL, GrB_INT64, GrB_INT64,
+        "banded_idx", BANDED_IDX_DEFN)) ;\end{verbatim}}
 
 If JIT compilation is enabled, or if the corresponding JIT kernel has been
 copied into the \verb'PreJIT' folder, the \verb'function' may be \verb'NULL'.
 In this case, a JIT kernel is compiled that contains just the user-defined
 function.  If the JIT is disabled and the \verb'function' is \verb'NULL', this
 method returns \verb'GrB_NULL_POINTER'.
+
+The above example is identical to the following usage
+except that \verb'GrB_IndexUnaryOp_new' requires a non-NULL function pointer.
+The \verb'banded_idx' function is defined the same as above.
+
+{\footnotesize
+\begin{verbatim}
+    void banded_idx ... see above
+    #define BANDED_IDX_DEFN  ... see above
+
+    GrB_IndexUnaryOp_new (&Banded,
+        (GxB_index_unary_function) banded_idx,
+        GrB_BOOL, GrB_INT64, GrB_INT64) ;
+    GrB_set (Banded, "banded_idx", GxB_JIT_C_NAME)) ;
+    GrB_set (Banded, BANDED_IDX_DEFN, GxB_JIT_C_DEFINITION)) ;\end{verbatim}}
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_IndexUnaryOp\_wait:} wait for an index-unary operator}
@@ -2948,9 +3042,8 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_Monoid_new'       & create a user-defined monoid                  & \ref{monoid_new} \\
 \verb'GrB_Monoid_wait'      & wait for a user-defined monoid                & \ref{monoid_wait} \\
 \verb'GxB_Monoid_terminal_new'  & create a monoid that has a terminal value & \ref{monoid_terminal_new} \\
-\verb'GrB_get'  & return the monoid operator                    & \ref{get_set_monoid} \\
-\verb'GrB_get'  & return the monoid identity value              & \ref{get_set_monoid} \\
-\verb'GrB_get'  & return the monoid terminal value (if any)     & \ref{get_set_monoid} \\
+\verb'GrB_get'  & get properties of a monoid       & \ref{get_set_monoid} \\
+\verb'GrB_set'  & set the monoid name              & \ref{get_set_monoid} \\
 \verb'GrB_Monoid_free'      & free a monoid                                 & \ref{monoid_free} \\
 \hline
 \end{tabular}
@@ -3129,8 +3222,8 @@ GraphBLAS function   & purpose                                      & Section \\
 \hline
 \verb'GrB_Semiring_new'       & create a user-defined semiring           & \ref{semiring_new} \\
 \verb'GrB_Semiring_wait'      & wait for a user-defined semiring         & \ref{semiring_wait} \\
-\verb'GrB_get'  & return the additive monoid of a semiring & \ref{get_set_semiring} \\
-\verb'GrB_get'  & return the binary operator of a semiring & \ref{get_set_semiring} \\
+\verb'GrB_get'  & get properties of a semiring       & \ref{get_set_semiring} \\
+\verb'GrB_set'  & set the semiring name              & \ref{get_set_semiring} \\
 \verb'GrB_Semiring_free'      & free a semiring                          & \ref{semiring_free} \\
 \hline
 \end{tabular}
@@ -3328,7 +3421,8 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_Scalar_dup'            & copy a scalar                        & \ref{scalar_dup} \\
 \verb'GrB_Scalar_clear'          & clear a scalar of its entry          & \ref{scalar_clear} \\
 \verb'GrB_Scalar_nvals'          & return number of entries in a scalar & \ref{scalar_nvals}  \\
-\verb'GrB_get'      & return name of the type of a scalar  & \ref{get_set_scalar} \\
+\verb'GrB_get'  & get properties of a scalar       & \ref{get_set_scalar} \\
+\verb'GrB_set'  & set properties of a scalar       & \ref{get_set_scalar} \\
 \verb'GrB_Scalar_setElement'     & set the single entry of a scalar     & \ref{scalar_setElement} \\
 \verb'GrB_Scalar_extractElement' & get the single entry from a scalar   & \ref{scalar_extractElement} \\
 \verb'GxB_Scalar_memoryUsage'    & memory used by a scalar              & \ref{scalar_memusage} \\
@@ -3425,6 +3519,7 @@ If two different scalars are needed, then this should be used instead:
 Then \verb's' and \verb't' are two different scalars that currently have
 the same value, but they do not depend on each other.  Modifying one has no
 effect on the other.
+The \verb'GrB_NAME' is copied into the new scalar.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Scalar\_clear:} clear a scalar of its entry}
@@ -3581,7 +3676,8 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_Vector_clear'          & clear a vector of all entries    & \ref{vector_clear} \\
 \verb'GrB_Vector_size'           & size of a vector                 & \ref{vector_size} \\
 \verb'GrB_Vector_nvals'          & number of entries in a vector    & \ref{vector_nvals} \\
-\verb'GrB_get'                   & name of the type of a vector     & \ref{get_set_vector} \\
+\verb'GrB_get'  & get properties of a vector       & \ref{get_set_vector} \\
+\verb'GrB_set'  & set properties of a vector       & \ref{get_set_vector} \\
 \verb'GrB_Vector_build'          & build a vector from tuples       & \ref{vector_build} \\
 \verb'GxB_Vector_build_Scalar'   & build a vector from tuples       & \ref{vector_build_Scalar} \\
 \verb'GrB_Vector_setElement'     & add an entry to a vector         & \ref{vector_setElement} \\
@@ -3720,6 +3816,7 @@ If two different vectors are needed, then this should be used instead:
 Then \verb'w' and \verb'u' are two different vectors that currently have the
 same set of values, but they do not depend on each other.  Modifying one has
 no effect on the other.
+The \verb'GrB_NAME' is copied into the new vector.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_clear:}         clear a vector of all entries}
@@ -4110,7 +4207,8 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_Matrix_nrows'         & number of rows of a matrix            & \ref{matrix_nrows} \\
 \verb'GrB_Matrix_ncols'         & number of columns of a matrix         & \ref{matrix_ncols} \\
 \verb'GrB_Matrix_nvals'         & number of entries in a matrix         & \ref{matrix_nvals} \\
-\verb'GrB_get'                  & type of a matrix                      & \ref{get_set_matrix} \\
+\verb'GrB_get'  & get properties of a matrix       & \ref{get_set_matrix} \\
+\verb'GrB_set'  & set properties of a matrix       & \ref{get_set_matrix} \\
 \verb'GrB_Matrix_build'         & build a matrix from tuples            & \ref{matrix_build} \\
 \verb'GxB_Matrix_build_Scalar'  & build a matrix from tuples            & \ref{matrix_build_Scalar} \\
 \verb'GrB_Matrix_setElement'    & add an entry to a matrix              & \ref{matrix_setElement} \\
@@ -4294,6 +4392,7 @@ two different matrices are needed, then this should be used instead:
 Then \verb'C' and \verb'A' are two different matrices that currently have the
 same set of values, but they do not depend on each other.  Modifying one has
 no effect on the other.
+The \verb'GrB_NAME' is copied into the new matrix.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_clear:}        clear a matrix of all entries}
@@ -5053,9 +5152,14 @@ in this case).  The array of bytes can be written to a file, sent to another
 process over an MPI channel, or operated on in any other way that moves the
 bytes around.  The contents of the array cannot be interpreted except by
 deserialization back into a vector or matrix, by the same library (and
-sometimes the same version) that created the blob.  Currently, all versions of
-SuiteSparse:GraphBLAS that implement serialization/deserialization use the same
-format for the blob, so the library versions are compatible with each other.
+sometimes the same version) that created the blob.
+
+All versions of SuiteSparse:GraphBLAS that implement
+serialization/deserialization use essentially the same format for the blob, so
+the library versions are compatible with each other.  Version v8.1.0 adds the
+\verb'GrB_NAME' and \verb'GrB_ELTYPE_STRING' to the blob in an upward
+compatible manner, so that older versions of SS:GraphBLAS can read the blobs
+created by v8.1.0; they simply ignore those components.
 
 There are two forms of serialization: \verb'GrB*serialize' and
 \verb'GxB*serialize'.  For the \verb'GrB' form, the blob must first be
@@ -5133,7 +5237,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_Matrix_deserialize'   & deserialize a matrix             & \ref{matrix_deserialize} \\
 \verb'GxB_Matrix_deserialize'   & deserialize a matrix             & \ref{matrix_deserialize_GxB} \\
 \hline
-\verb'GrB_get' & get blob properties & See Section~\ref{get_set_blob} \\
+\verb'GrB_get' & get blob properties & \ref{get_set_blob} \\
 \hline
 \end{tabular}
 }
@@ -7384,8 +7488,8 @@ GraphBLAS function   & purpose                                      & Section \\
 \hline
 \verb'GrB_Descriptor_new'        & create a descriptor                  & \ref{descriptor_new} \\
 \verb'GrB_Descriptor_wait'       & wait for a descriptor                & \ref{descriptor_wait} \\
-\verb'GrB_set'              & set a parameter in a descriptor      & \ref{get_set_descriptor}  \\
 \verb'GrB_get'              & get a parameter from a descriptor    & \ref{get_set_descriptor}  \\
+\verb'GrB_set'              & set a parameter in a descriptor      & \ref{get_set_descriptor}  \\
 \verb'GrB_Descriptor_free'       & free a descriptor                    & \ref{descriptor_free} \\
 \hline
 \end{tabular}
@@ -7837,8 +7941,8 @@ The next sections describe the methods for a \verb'GxB_Context':
 GraphBLAS function   & purpose                                      & Section \\
 \hline
 \verb'GxB_Context_new'           & create a context                     & \ref{context_new} \\
-\verb'GrB_set'                   & set a value in a context             & \ref{get_set_context} \\
 \verb'GrB_get'                   & get a value from a context           & \ref{get_set_context} \\
+\verb'GrB_set'                   & set a value in a context             & \ref{get_set_context} \\
 \verb'GxB_Context_engage'        & engage a context                     & \ref{context_engage} \\
 \verb'GxB_Context_disengage'     & disengage a context                  & \ref{context_disengage} \\
 \verb'GxB_Context_fprint'        & check/print a context                & \ref{context_print} \\

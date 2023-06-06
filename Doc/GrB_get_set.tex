@@ -660,7 +660,7 @@ GrB_Info GrB_set (GrB_UnaryOp op, char *     value, GrB_Field f) ;
 
 \noindent
 {\small
-\begin{tabular}{|l|l|l|p{3in}|}
+\begin{tabular}{|l|l|l|p{2.8in}|}
 \hline
 \verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
@@ -709,7 +709,7 @@ GrB_Info GrB_set (GrB_IndexUnaryOp op, char *     value, GrB_Field f) ;
 
 \noindent
 {\small
-\begin{tabular}{|l|l|l|p{3in}|}
+\begin{tabular}{|l|l|l|p{2.8in}|}
 \hline
 \verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
@@ -760,7 +760,7 @@ GrB_Info GrB_set (GrB_BinaryOp op, char *     value, GrB_Field f) ;
 
 \noindent
 {\small
-\begin{tabular}{|l|l|l|p{3in}|}
+\begin{tabular}{|l|l|l|p{2.8in}|}
 \hline
 \verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
@@ -832,8 +832,8 @@ GrB_Info GrB_set (GrB_Monoid monoid, char *     value, GrB_Field f) ;
 \verb'GrB_OUTPUTTYPE_STRING'        & R    & \verb'char *' & name of the output type \\
 \hline
 \verb'GrB_NAME'                     & R/W  & \verb'char *' &
-    name of the monoid.  For built-in operators, this returns the GraphBLAS
-    name (\verb'"GrB_LOR_MONOID"' for \verb'GrB_LOR_MONOID_BOOL', for example).
+    name of the monoid.  For built-in monoids, this returns the GraphBLAS
+    name (\verb'"GrB_LOR_MONOID_BOOL"' for \verb'GrB_LOR_MONOID_BOOL', for example).
     For user-defined monoids, the name can be any string of any length.  It is
     not used by the JIT.  It can be set any number of times. \\
 \hline
@@ -911,7 +911,7 @@ GrB_Info GrB_set (GrB_Semiring semiring, GrB_Scalar value, GrB_Field f) ;
 
 \noindent
 {\small
-\begin{tabular}{|l|l|l|p{2.5in}|}
+\begin{tabular}{|l|l|l|p{2.8in}|}
 \hline
 \verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
@@ -931,9 +931,9 @@ GrB_Info GrB_set (GrB_Semiring semiring, GrB_Scalar value, GrB_Field f) ;
     and the monoid type. \\
 \hline
 \verb'GrB_NAME'                     & R/W  & \verb'char *' &
-    name of the semiring.  For built-in operators, this returns the GraphBLAS
-    name (\verb'"GrB_LOR_LAND_SEMIRING_BOOL"' for \verb'GrB_LOR_MONOID_BOOL',
-    for example).  For user-defined monoids, the name can be any string of any
+    name of the semiring.  For built-in semirings, this returns the GraphBLAS
+    name (\verb'"GrB_LOR_LAND_SEMIRING_BOOL"' for \verb'GrB_LOR_LAND_SEMIRING_BOOL',
+    for example).  For user-defined semirings, the name can be any string of any
     length.  It is not used by the JIT.  It can be set any number of times. \\
 \hline
 \end{tabular}
@@ -1392,7 +1392,7 @@ GrB_Info GrB_set (GrB_Descriptor desc, int        value, GrB_Field f) ;
 
 \noindent
 {\small
-\begin{tabular}{|l|l|l|p{3.5in}|}
+\begin{tabular}{|l|l|l|p{3.3in}|}
 \hline
 \verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
@@ -1597,16 +1597,9 @@ the blob.  All other \verb'GrB_get' methods have just three parameters:
 the object, the value, and the field.
 
 %-------------------------------------------------------------------------------
-\newpage
 \begin{alert}
 {\bf SPEC:} 
 \begin{enumerate}
-\item
-SuiteSparse:GraphBLAS extends the get/set methods by adding many \verb'GxB'
-options and a set of \verb'GxB_Context_set/get' methods for its
-\verb'GxB_Context' object.  (This is stated in the first part of the
-User Guide, and will not be mentioned here in the final user guide).
-
 \item
 SuiteSparse:GraphBLAS extends the spec by allowing both \verb'int' and
 \verb'GrB_Scalar' values for many options for which the spec allows only
