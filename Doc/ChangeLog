@@ -3,6 +3,14 @@ Version 8.1.0, FIXME
     * GrB_get/GrB_set: new functions from the v2.1 C API.
     * GrB_Type_new, GrB_UnaryOp_new, GrB_IndexUnaryOp_new: no longer macros,
         since GrB_set can be used to set the names of the operators.
+    * historical methods:  many methods are replaced by GrB_get and GrB_set.
+        They remain in SuiteSparse:GraphBLAS but have been declared historical.
+        Terse prototypes exist in GraphBLAS.h, and any discussion is removed
+        from the User Guide:  GxB_get, GxB_set, and the methods they call, and
+        many more.  Use GrB_get/set in place those methods, and for:
+        GxB_*type_name, GxB_*type, GxB_Monoid_operator, GxB_Monoid_identity,
+        GxB_Monoid_terminal, GxB_Semiring_add, GxB_Semiring_multiply.  Use
+        GrB_STORAGE_ORIENTATION_HINT in place of GxB_FORMAT.
 
 Version 8.0.1, May 30, 2023
 

@@ -14718,6 +14718,16 @@ GraphBLAS folder.
     \item \verb'GrB_Type_new', \verb'GrB_UnaryOp_new',
         \verb'GrB_IndexUnaryOp_new': no longer macros, since \verb'GrB_set' can
         be used to set the names of the operators.
+    \item historical methods:  many methods are replaced by \verb'GrB_get' and
+        \verb'GrB_set'.  They remain in SuiteSparse:GraphBLAS but have been
+        declared historical.  Terse prototypes exist in GraphBLAS.h, and any
+        discussion is removed from the User Guide:  \verb'GxB_get',
+        \verb'GxB_set', and the methods they call, and many more.  Use
+        \verb'GrB_get/set' in place those methods, and for:
+        \verb'GxB_*type_name', \verb'GxB_*type', \verb'GxB_Monoid_operator',
+        \verb'GxB_Monoid_identity', \verb'GxB_Monoid_terminal',
+        \verb'GxB_Semiring_add', \verb'GxB_Semiring_multiply'.  Use
+        \verb'GrB_STORAGE_ORIENTATION_HINT' in place of \verb'GxB_FORMAT'.
     \end{itemize}
 
 \item Version 8.0.1, May 30, 2023
