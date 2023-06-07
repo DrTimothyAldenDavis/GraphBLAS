@@ -107,10 +107,12 @@ static GrB_Info GB_blob_header_get
         // get the GxB_JIT_C_NAME of the user type from the blob
         memcpy (type_name, ((GB_void *) blob) + GB_BLOB_HEADER_SIZE,
             GxB_MAX_NAME_LEN) ;
+        s += GxB_MAX_NAME_LEN ;
     }
 
     // this should already be in the blob, but set it to null just in case
     type_name [GxB_MAX_NAME_LEN-1] = '\0' ;
+//  printf ("JIT C type name [%s]\n", type_name) ;
 
     //--------------------------------------------------------------------------
     // get the compressed block sizes from the blob for each array
@@ -139,7 +141,6 @@ static GrB_Info GB_blob_header_get
             // skip Cp and Ci
             s += (Cp_nblocks > 0) ? Cp_Sblocks [Cp_nblocks-1] : 0 ;
             s += (Ci_nblocks > 0) ? Ci_Sblocks [Ci_nblocks-1] : 0 ;
-            break ;
             break ;
 
         case GxB_BITMAP : 

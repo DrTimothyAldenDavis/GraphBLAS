@@ -262,8 +262,19 @@ void mexFunction
     OK (GxB_Serialized_get_String_(blob, name, GrB_ELTYPE_STRING, blob_size)) ;
     CHECK (MATCH (name, "")) ;
 
+    GrB_free (&A) ;
     GrB_free (&type) ;
     OK (GrB_Type_new (&type, sizeof (mytype))) ;
+    OK (GrB_Matrix_new (&A, type, 50, 50)) ;
+    OK (GrB_Matrix_setElement (A, (void *) &one, 0, 0)) ;
+    OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
+    OK (GrB_Matrix_set_ENUM_(A, GxB_HYPERSPARSE, GxB_SPARSITY_CONTROL)) ;
+
+    OK (GrB_Matrix_set_String_(A, "A hyper", GrB_NAME)) ;
+    OK (GrB_Matrix_get_String_(A, name, GrB_NAME)) ;
+    printf ("name [%s]\n", name) ;
+    CHECK (MATCH (name, "A hyper")) ;
+    GxB_print (A, 3) ;
 
     // free the blob and recreate it
     mxFree (blob) ; blob = NULL ; blob_size = 0 ;
@@ -271,6 +282,24 @@ void mexFunction
 
     OK (GxB_Serialized_get_String_(blob, name, GxB_JIT_C_NAME, blob_size)) ;
     CHECK (MATCH (name, "")) ;
+    OK (GxB_Serialized_get_String_(blob, name, GrB_NAME, blob_size)) ;
+    printf ("name [%s]\n", name) ;
+    CHECK (MATCH (name, "A hyper")) ;
+
+    OK (GrB_Type_set_String_ (type, "mytype", GxB_JIT_C_NAME)) ;
+    OK (GrB_Type_set_String_ (type, "my type", GrB_NAME)) ;
+
+    // free the blob and recreate it
+    mxFree (blob) ; blob = NULL ; blob_size = 0 ;
+    OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
+
+    OK (GxB_Serialized_get_String_(blob, name, GxB_JIT_C_NAME, blob_size)) ;
+    CHECK (MATCH (name, "mytype")) ;
+    OK (GxB_Serialized_get_String_(blob, name, GrB_ELTYPE_STRING, blob_size)) ;
+    CHECK (MATCH (name, "my type")) ;
+    OK (GxB_Serialized_get_String_(blob, name, GrB_NAME, blob_size)) ;
+    printf ("name [%s]\n", name) ;
+    CHECK (MATCH (name, "A hyper")) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS

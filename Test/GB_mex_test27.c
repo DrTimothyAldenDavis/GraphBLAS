@@ -446,6 +446,7 @@ void mexFunction
     expected = GrB_ALREADY_SET ;
     ERR (GrB_UnaryOp_set_String_(unop, "another_name", GxB_JIT_C_NAME)) ;
     ERR (GrB_UnaryOp_set_String_(unop, "another_defn", GxB_JIT_C_DEFINITION)) ;
+    CHECK (MATCH ("GrB_ALREADY_SET", GB_status_code (GrB_ALREADY_SET))) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_UnaryOp_set_String_(GrB_LNOT, "another_name", GxB_JIT_C_NAME)) ;

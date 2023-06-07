@@ -393,8 +393,6 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     }
     blob [s++] = 0 ;    // terminate the GrB_ELTYPE_STRING with a nul byte
 
-    if (s != blob_size_required) { GB_GOTCHA ; }    // FIXME
-
     ASSERT (s == blob_size_required) ;
 
     //--------------------------------------------------------------------------
