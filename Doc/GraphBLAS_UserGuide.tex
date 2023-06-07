@@ -16424,6 +16424,13 @@ GraphBLAS folder.
 
 \begin{itemize}
 
+\item Version 8.0.2, June 7, 2023
+
+    \item added \verb'-DJITINT=option':  use \verb'-DJITINIT' to set the
+        initial state of the \verb'GxB_JIT_C_CONTROL' (4:on, 3:load, 2:run,
+        1:pause, 0:off).  The default is 4 (on) if the JIT is enabled, or 2 (run)
+        if \verb'-DNJIT=1' is set.
+
 \item Version 8.0.1, May 27, 2023
 
     \begin{itemize}

@@ -209,12 +209,14 @@ int main (void)
 
     TRY (GxB_Context_fprint (GxB_CONTEXT_WORLD, "World", GxB_COMPLETE, stdout)) ;
     char *compiler, *cache, *flags, *link, *libraries, *preface ;
+    int control ;
     TRY (GxB_Global_Option_get (GxB_JIT_C_COMPILER_NAME, &compiler)) ;
     TRY (GxB_Global_Option_get (GxB_JIT_C_COMPILER_FLAGS, &flags)) ;
     TRY (GxB_Global_Option_get (GxB_JIT_C_LINKER_FLAGS, &link)) ;
     TRY (GxB_Global_Option_get (GxB_JIT_C_LIBRARIES, &libraries)) ;
     TRY (GxB_Global_Option_get (GxB_JIT_C_PREFACE, &preface)) ;
     TRY (GxB_Global_Option_get (GxB_JIT_CACHE_PATH, &cache)) ;
+    TRY (GxB_Global_Option_get (GxB_JIT_C_CONTROL, &control)) ;
     printf ("JIT configuration: ------------------\n") ;
     printf ("JIT C compiler:   [%s]\n", compiler) ;
     printf ("JIT C flags:      [%s]\n", flags) ;
@@ -222,6 +224,10 @@ int main (void)
     printf ("JIT C libraries:  [%s]\n", libraries) ;
     printf ("JIT C preface:    [%s]\n", preface) ;
     printf ("JIT cache:        [%s]\n", cache) ;
+    printf ("JIT C control:    [%d]\n", control) ;
+    TRY (GxB_Global_Option_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
+    TRY (GxB_Global_Option_get (GxB_JIT_C_CONTROL, &control)) ;
+    printf ("JIT C control:    [%d] reset\n", control) ;
     printf ("-------------------------------------\n\n") ;
 
     // revise the header for each JIT kernel; this is not required but appears
