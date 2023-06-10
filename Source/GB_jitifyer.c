@@ -79,13 +79,15 @@ static size_t   GB_jit_C_preface_allocated = 0 ;
 static char    *GB_jit_temp = NULL ;
 static size_t   GB_jit_temp_allocated = 0 ;
 
-static GxB_JIT_Control GB_jit_control =
-    #ifndef NJIT
-    GxB_JIT_ON ;        // JIT enabled
-    #else
-    GxB_JIT_RUN ;       // JIT disabled at compile time; only PreJIT available.
-                        // No JIT kernels can be loaded or compiled.
-    #endif
+// compile with -DJITINIT=4 (for example) to set the initial JIT C control
+#ifdef JITINIT
+#define GB_JIT_C_CONTROL_INIT JITINIT
+#else
+// default initial state
+#define GB_JIT_C_CONTROL_INIT GxB_JIT_ON
+#endif
+
+static GxB_JIT_Control GB_jit_control = GB_JIT_C_CONTROL_INIT ;
 
 //------------------------------------------------------------------------------
 // check_table: check if the hash table is OK
@@ -222,16 +224,20 @@ GrB_Info GB_jitifyer_init (void)
 {
 
     //--------------------------------------------------------------------------
-    // enable the JIT
+    // initialize the JIT control
     //--------------------------------------------------------------------------
 
-    GB_jit_control =
-        #ifndef NJIT
-        GxB_JIT_ON ;    // JIT enabled
-        #else
-        GxB_JIT_RUN ;   // JIT disabled at compile time; only PreJIT available.
-                        // No JIT kernels can be loaded or compiled.
-        #endif
+    int control = (int) GB_JIT_C_CONTROL_INIT ;
+    control = GB_IMAX (control, (int) GxB_JIT_OFF) ;
+    #ifndef NJIT
+    // The full JIT is available.
+    control = GB_IMIN (control, (int) GxB_JIT_ON) ;
+    #else
+    // The JIT is restricted; only OFF, PAUSE, and RUN settings can be
+    // used.  No JIT kernels can be loaded or compiled.
+    control = GB_IMIN (control, (int) GxB_JIT_RUN) ;
+    #endif
+    GB_jit_control = (GxB_JIT_Control) control ;
 
     GB_jitifyer_finalize ( ) ;
 

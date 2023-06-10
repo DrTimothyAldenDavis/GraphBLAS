@@ -54,3 +54,9 @@ if ( COMPACT )
     message ( STATUS "GBCOMPACT: enabled; FactoryKernels will not be built" )
 endif ( )
 
+set ( JITINIT 4
+    CACHE STRING "Initial JIT control 4:on, 3:load, 2:run, 1:pause, 0:off (default 4)" )
+if ( NOT ( ${JITINIT} EQUAL 4 ))
+    add_compile_definitions ( JITINIT=${JITINIT} )
+endif ( )
+
