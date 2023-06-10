@@ -47,7 +47,8 @@ add_library(rmm_wrap rmm_wrap.cpp rmm_wrap.hpp rmm_wrap.h)
 set_target_properties (rmm_wrap PROPERTIES
 		VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
 		SOVERSION ${GraphBLAS_VERSION_MAJOR}
-		C_STANDARD_REQUIRED 11
+		C_STANDARD 11
+		C_STANDARD_REQUIRED ON
 		PUBLIC_HEADER "rmm_wrap.h" )
 
 add_executable(rmm_wrap_test rmm_wrap_test.c rmm_wrap.cpp rmm_wrap.hpp rmm_wrap.h)

@@ -234,10 +234,10 @@ add_library ( graphblas SHARED ${GRAPHBLAS_SOURCES} )
 set_target_properties ( graphblas PROPERTIES
     VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
     SOVERSION ${GraphBLAS_VERSION_MAJOR}
-    C_STANDARD_REQUIRED 11
+    C_STANDARD 11
+    C_STANDARD_REQUIRED ON
     PUBLIC_HEADER "Include/GraphBLAS.h"
     WINDOWS_EXPORT_ALL_SYMBOLS ON )
-set_property ( TARGET graphblas PROPERTY C_STANDARD 11 )
 
 if ( SUITESPARSE_CUDA )
     add_dependencies ( graphblas graphblascuda )
@@ -261,14 +261,13 @@ if ( NOT NSTATIC )
        VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
        OUTPUT_NAME graphblas
        SOVERSION ${GraphBLAS_VERSION_MAJOR}
-       C_STANDARD_REQUIRED 11 )
+        C_STANDARD 11
+        C_STANDARD_REQUIRED ON )
 
     if ( MSVC )
         set_target_properties ( graphblas_static PROPERTIES
             OUTPUT_NAME graphblas_static )
     endif ( )
-
-    set_property ( TARGET graphblas_static PROPERTY C_STANDARD 11 )
 
     if ( SUITESPARSE_CUDA )
         add_dependencies ( graphblas_static graphblascuda )
@@ -314,7 +313,8 @@ endif ( )
 
 # libm:
 if ( NOT WIN32 )
-    target_link_libraries ( graphblas PUBLIC m )
+    set ( GB_M "m" )
+    target_link_libraries ( graphblas PRIVATE m )
     if ( NOT NSTATIC )
         target_link_libraries ( graphblas_static PUBLIC m )
     endif ( )
@@ -322,7 +322,7 @@ endif ( )
 
 # libdl
 if ( NOT WIN32 )
-    target_link_libraries ( graphblas PUBLIC dl )
+    target_link_libraries ( graphblas PRIVATE dl )
     if ( NOT NSTATIC )
         target_link_libraries ( graphblas_static PUBLIC dl )
     endif ( )
@@ -331,7 +331,7 @@ endif ( )
 # atomic
 include ( SuiteSparseAtomic )
 if ( LIBATOMIC_REQUIRED )
-    target_link_libraries ( graphblas PUBLIC atomic )
+    target_link_libraries ( graphblas PRIVATE atomic )
     if ( NOT NSTATIC )
         target_link_libraries ( graphblas_static PUBLIC atomic )
     endif ( )
@@ -344,9 +344,16 @@ endif ( )
 if ( OPENMP_FOUND )
     message ( STATUS "CMAKE OpenMP libraries:    ${OpenMP_C_LIBRARIES}" )
     message ( STATUS "CMAKE OpenMP include:      ${OpenMP_C_INCLUDE_DIRS}" )
-    target_link_libraries ( graphblas PUBLIC ${OpenMP_C_LIBRARIES} )
+    # revert to ${OpenMP_C_LIBRARIES}:
+    target_link_libraries ( graphblas PRIVATE ${OpenMP_C_LIBRARIES} )
+    # cannot use OpenMP::OpenMP_C because the JIT is configured with
+    # LINK_LIBRARIES.  Those are -l lists passed directly to the
+    # C compiler, and this is converted into "-lOpenMP::OpenMP_C".
+    # So this breaks:
+    # target_link_libraries ( graphblas PRIVATE OpenMP::OpenMP_C )
     if ( NOT NSTATIC )
         target_link_libraries ( graphblas_static PUBLIC ${OpenMP_C_LIBRARIES} )
+        # target_link_libraries ( graphblas_static PUBLIC OpenMP::OpenMP_C )
     endif ( )
     message ( STATUS "CMAKE OpenMP C flags:      ${OpenMP_C_FLAGS}" )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} " )
@@ -378,7 +385,7 @@ if ( NOT GB_CMAKE_LIBRARIES )
 endif ( )
 
 if ( SUITESPARSE_CUDA )
-    target_link_libraries ( graphblas PUBLIC ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( graphblas PRIVATE ${GB_CUDA} ${GB_RMM} )
     if ( NOT NSTATIC )
         target_link_libraries ( graphblas_static PUBLIC ${GB_CUDA} ${GB_RMM} )
     endif ( )
@@ -416,17 +423,23 @@ if ( DEMO )
     add_executable ( gauss_demo    "Demo/Program/gauss_demo.c" )
 
     # Libraries required for Demo programs
-    target_link_libraries ( openmp_demo   PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( openmp2_demo  PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( complex_demo  PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( kron_demo     PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( simple_demo   PUBLIC ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( wildtype_demo PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( reduce_demo   PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( import_demo   PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( wathen_demo   PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( context_demo  PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( gauss_demo    PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( openmp_demo   PUBLIC graphblas ${GB_M} ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( openmp2_demo  PUBLIC graphblas ${GB_M} ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( complex_demo  PUBLIC graphblas ${GB_M} ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( kron_demo     PUBLIC graphblas ${GB_M} ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( simple_demo   PUBLIC           ${GB_M} ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( wildtype_demo PUBLIC graphblas ${GB_M} ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( reduce_demo   PUBLIC graphblas ${GB_M} ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( import_demo   PUBLIC graphblas ${GB_M} ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( wathen_demo   PUBLIC graphblas ${GB_M} ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( context_demo  PUBLIC graphblas ${GB_M} ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( gauss_demo    PUBLIC graphblas ${GB_M} ${GB_CUDA} ${GB_RMM} )
+    if ( OPENMP_FOUND )
+        target_link_libraries ( openmp_demo   PUBLIC OpenMP::OpenMP_C )
+        target_link_libraries ( openmp2_demo  PUBLIC OpenMP::OpenMP_C )
+        target_link_libraries ( reduce_demo   PUBLIC OpenMP::OpenMP_C )
+        target_link_libraries ( wathen_demo   PUBLIC OpenMP::OpenMP_C )
+    endif ( )
 
 else ( )
 

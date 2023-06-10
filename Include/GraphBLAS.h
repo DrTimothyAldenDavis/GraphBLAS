@@ -220,7 +220,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "June 7, 2023"
+#define GxB_IMPLEMENTATION_DATE "June 9, 2023 (FIXME: date)"
 #define GxB_IMPLEMENTATION_MAJOR 8
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   2
@@ -358,6 +358,11 @@ typedef enum
     GxB_BLOCKING_GPU = 7098,    // blocking mode, allow use of GPU(s)
 }
 GrB_Mode ;
+
+#if defined ( __cplusplus )
+extern "C"
+{
+#endif
 
 GrB_Info GrB_init           // start up GraphBLAS
 (
@@ -12007,6 +12012,10 @@ void       GxB_Iterator_get_UDT    (GxB_Iterator iterator,
         ((iterator)->iso ? 0 : ((iterator)->type_size * (iterator)->p)),    \
         (iterator)->type_size)                                              \
 )
+
+#if defined ( __cplusplus )
+}
+#endif
 
 #endif
 
