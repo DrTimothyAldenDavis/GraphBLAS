@@ -359,6 +359,11 @@ typedef enum
 }
 GrB_Mode ;
 
+#if defined ( __cplusplus )
+extern "C"
+{
+#endif
+
 GrB_Info GrB_init           // start up GraphBLAS
 (
     GrB_Mode mode           // blocking or non-blocking mode, no GPU
@@ -12007,6 +12012,10 @@ void       GxB_Iterator_get_UDT    (GxB_Iterator iterator,
         ((iterator)->iso ? 0 : ((iterator)->type_size * (iterator)->p)),    \
         (iterator)->type_size)                                              \
 )
+
+#if defined ( __cplusplus )
+}
+#endif
 
 #endif
 
