@@ -23,7 +23,6 @@ project ( GRAPHBLAS_CUDA
 
 cmake_policy ( SET CMP0135 NEW )    # URL download timestamp policy
 
-set ( CMAKE_C_STANDARD 11)
 set ( CMAKE_CXX_STANDARD 17 )
 
 set ( CMAKE_CUDA_FLAGS "-cudart=static -lineinfo " )
@@ -40,7 +39,8 @@ add_library ( graphblascuda SHARED ${GRAPHBLAS_CUDA_SOURCES} )
 set_target_properties ( graphblascuda PROPERTIES
     VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
     SOVERSION ${GraphBLAS_VERSION_MAJOR}
-    C_STANDARD_REQUIRED 11 )
+    C_STANDARD 11
+    C_STANDARD_REQUIRED ON )
 
 # find rmm_wrap, the malloc/calloc/realloc/free wrapper for the Rapids
 # memory manager
