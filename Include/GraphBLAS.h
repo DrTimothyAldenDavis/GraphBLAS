@@ -220,7 +220,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "(draft) June 16, 2023"
+#define GxB_IMPLEMENTATION_DATE "(draft) June 17, 2023"
 #define GxB_IMPLEMENTATION_MAJOR 8
 #define GxB_IMPLEMENTATION_MINOR 1
 #define GxB_IMPLEMENTATION_SUB   0
@@ -3701,6 +3701,7 @@ typedef enum            // for global options or matrix options
     //------------------------------------------------------------
 
     GxB_HYPER_SWITCH = 7000,    // switch to hypersparse (double value)
+    GxB_HYPER_HASH = 7048,      // hyper_hash control (int64 value)
     GxB_BITMAP_SWITCH = 7001,   // switch to bitmap (double value)
     GxB_FORMAT = 7002,          // historical; use GrB_STORAGE_ORIENTATION_HINT
 

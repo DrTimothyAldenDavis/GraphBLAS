@@ -105,6 +105,7 @@ GrB_Info GrB_Global_set_Scalar
 
     double dvalue = 0 ;
     int ivalue = 0 ;
+    int64_t i64value = 0 ;
     GrB_Info info ;
 
     switch ((int) field)
@@ -125,6 +126,15 @@ GrB_Info GrB_Global_set_Scalar
             if (info == GrB_SUCCESS)
             {
                 GB_Context_chunk_set (NULL, dvalue) ;
+            }
+            break ;
+
+        case GxB_HYPER_HASH : 
+
+            info = GrB_Scalar_extractElement_INT64 (&i64value, value) ;
+            if (info == GrB_SUCCESS)
+            {
+                GB_Global_hyper_hash_set (i64value) ;
             }
             break ;
 

@@ -232,6 +232,7 @@ typedef enum            // more SuiteSparse extensions for GrB_Field:
 
     // GrB_get/GrB_set for GrB_Matrix and GrB_GLOBAL:
     GxB_HYPER_SWITCH = 7000,    // switch to hypersparse (double value)
+    GxB_HYPER_HASH = 7048,      // hyper_hash control (int64 value)
     GxB_BITMAP_SWITCH = 7001,   // switch to bitmap (double value)
 
     // GrB_get for GrB_GLOBAL:
@@ -375,6 +376,8 @@ GrB_Info GrB_set (GrB_Global g, void *     value, GrB_Field f, size_t s) ;
 \hline
 \verb'GxB_HYPER_SWITCH'             & R/W  & \verb'double' & global hypersparsity control. \newline
                                                                 See Section~\ref{hypersparse}. \\
+\verb'GxB_HYPER_HASH'               & R/W  & \verb'int64_t' & global hypersparsity (hyper-hash)
+                                                                control \\
 \verb'GxB_CHUNK'                    & R/W  & \verb'double' & global chunk size for parallel task creation.
                                                                 See Section~\ref{omp_parallelism}. \\
 \hline

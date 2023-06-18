@@ -3701,6 +3701,7 @@ typedef enum            // for global options or matrix options
     //------------------------------------------------------------
 
     GxB_HYPER_SWITCH = 7000,    // switch to hypersparse (double value)
+    GxB_HYPER_HASH = 7048,      // hyper_hash control (int64 value)
     GxB_BITMAP_SWITCH = 7001,   // switch to bitmap (double value)
     GxB_FORMAT = 7002,          // historical; use GrB_STORAGE_ORIENTATION_HINT
 

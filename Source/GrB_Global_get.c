@@ -171,26 +171,36 @@ GrB_Info GrB_Global_get_Scalar
     else
     { 
         double x ;
+        int64_t i64 ; 
         switch ((int) field)
         {
 
             case GxB_HYPER_SWITCH : 
 
                 x = (double) GB_Global_hyper_switch_get ( ) ;
+                info = GB_setElement ((GrB_Matrix) value, NULL, &x, 0, 0,
+                    GB_FP64_code, Werk) ;
+
                 break ;
 
             case GxB_GLOBAL_CHUNK :         // same as GxB_CHUNK
 
                 x = GB_Context_chunk_get (NULL) ;
+                info = GB_setElement ((GrB_Matrix) value, NULL, &x, 0, 0,
+                    GB_FP64_code, Werk) ;
+                break ;
+
+            case GxB_HYPER_HASH : 
+
+                i64 = GB_Global_hyper_hash_get ( ) ;
+                info = GB_setElement ((GrB_Matrix) value, NULL, &i64, 0, 0,
+                    GB_INT64_code, Werk) ;
                 break ;
 
             default : 
 
                 return (GrB_INVALID_VALUE) ;
         }
-        // field specifies a double: assign it to the scalar
-        info = GB_setElement ((GrB_Matrix) value, NULL, &x, 0, 0,
-            GB_FP64_code, Werk) ;
     }
 
     return (info) ;
