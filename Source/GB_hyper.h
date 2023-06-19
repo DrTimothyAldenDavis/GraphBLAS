@@ -101,14 +101,14 @@ static inline bool GB_lookup        // find j = Ah [k]
         bool found ;
         GB_BINARY_SEARCH (j, Ah, (*pleft), pright, found) ; // ok (historical)
         if (found)
-        { 
+        {
             // j appears in the hyperlist at Ah [pleft]
             // k = (*pleft)
             (*pstart) = Ap [(*pleft)] ;
             (*pend)   = Ap [(*pleft)+1] ;
         }
         else
-        { 
+        {
             // j does not appear in the hyperlist Ah
             // k = -1
             (*pstart) = -1 ;

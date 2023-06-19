@@ -209,6 +209,7 @@ hack (2) = 1 ; GB_mex_hack (hack) ; % disable the Werk stack
 
 logstat ('test14'     ,t, j404, f110) ; % GrB_reduce
 logstat ('test180'    ,s, j4  , f1  ) ; % test assign and subassign (1 thread)
+logstat ('test180'    ,t, j4  , f1  ) ; % test assign and subassign (4 threads)
 logstat ('test236'    ,t, j4  , f1  ) ; % test GxB_Matrix_sort, GxB_Vector_sort
 
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
