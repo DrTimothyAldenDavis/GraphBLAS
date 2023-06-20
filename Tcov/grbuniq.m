@@ -1,5 +1,5 @@
 
-load grbstat
+% load grbstat
 ntests = length (GraphBLAS_grbcovs) ;
 n = length (GraphBLAS_grbcovs {1}) ;
 G = cell2mat (GraphBLAS_grbcovs') ;
@@ -24,8 +24,8 @@ for k = 1:ntests
     my_uniq = (Mine (k,:) > 0) & U ;
     n_uniq = sum (my_uniq) ;
     t = T (k) ;
-    fprintf ('%3d %-20s : %5d %6.2f', k, GraphBLAS_scripts {k}, n_uniq, t) ;
-    fprintf ('   %8.2f ', t / n_uniq) ;
+    fprintf ('%3d %-20s : %5d %9.2f', k, GraphBLAS_scripts {k}, n_uniq, t) ;
+    fprintf ('   %10.2f ', t/n_uniq) ;
     if (n_uniq == 0)
         fprintf ('<<<<<<<<<<<') ;
     else
@@ -34,6 +34,30 @@ for k = 1:ntests
     fprintf ('\n') ;
 end
 
+fprintf ('\n====================================\n') ;
+
+[ignore I] = sort (T, 'descend') ;
+for kk = 1:ntests
+    k = I (kk) ;
+    my_uniq = (Mine (k,:) > 0) & U ;
+    n_uniq = sum (my_uniq) ;
+    t = T (k) ;
+    fprintf ('%3d %3d %-20s : %5d %9.2f', kk, k, GraphBLAS_scripts {k}, n_uniq, t) ;
+    fprintf ('   %10.2f ', t/n_uniq) ;
+    if (n_uniq == 0)
+        fprintf ('<<<<<<<<<<<') ;
+        Mine (k,:) = 0 ;
+        S = sum (Mine) ;
+        U = (S == 1) ;
+    else
+        keeper = [keeper k] ;
+    end
+    fprintf ('\n') ;
+end
+
+
+
+%{
 fprintf ('\n====================================\n') ;
 
 Mine2 = Mine (keeper, :) ;
@@ -48,7 +72,7 @@ for k = 1:ntests2
     n_uniq = sum (my_uniq) ;
     t = T2 (k) ;
     fprintf ('%3d %-20s : %5d %6.2f', k, Scr {k}, n_uniq, t) ;
-    fprintf ('   %8.2f ', t / n_uniq) ;
+    fprintf ('   %10.2f ', t/n_uniq) ;
     if (n_uniq == 0)
         fprintf ('<<<<<<<<<<<') ;
     else
@@ -60,3 +84,4 @@ end
 sum (T) /60
 sum (T2) /60
 (sum (T) - sum (T2)) / 60
+%}
