@@ -74,6 +74,7 @@ f10 = {1,0} ;       % factory on, off
 f00 = {0,0} ;       % factory off, off
 
 % run twice
+j04 = {0,4} ;       % JIT     off, off
 j40 = {4,0} ;       % JIT     on, off
 f11 = {1,1} ;       % factory on, on
 
