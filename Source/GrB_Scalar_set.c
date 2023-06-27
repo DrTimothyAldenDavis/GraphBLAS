@@ -54,13 +54,13 @@ GrB_Info GrB_Scalar_set_String
 }
 
 //------------------------------------------------------------------------------
-// GrB_Scalar_set_ENUM
+// GrB_Scalar_set_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Scalar_set_ENUM
+GrB_Info GrB_Scalar_set_INT32
 (
     GrB_Scalar s,
-    int value,
+    int32_t value,
     GrB_Field field
 )
 { 

@@ -188,7 +188,8 @@ logstat ('test04'     ,t, j4  , f1  ) ; % simple mask and transpose test
 logstat ('test207'    ,t, j4  , f1  ) ; % test iso subref
 logstat ('test221'    ,t, j4  , f1  ) ; % test C += A, C is bitmap and A is full
 logstat ('test162'    ,t, j4  , f1  ) ; % test C<M>=A*B with very sparse M
-logstat ('test159'    ,t, j40 , f10 ) ; %% test A*B
+%ogstat ('test159'    ,t, j40 , f10 ) ; %% test A*B
+logstat ('test159'    ,t, j0  , f0  ) ; %% test A*B
 logstat ('test09'     ,t, j4  , f1  ) ; % duplicate I,J test of GB_mex_subassign
 logstat ('test132'    ,t, j4  , f1  ) ; % setElement
 %ogstat ('test141'    ,t, j404, f110) ; % eWiseAdd with dense matrices

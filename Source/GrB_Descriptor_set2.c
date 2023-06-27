@@ -16,7 +16,7 @@
 static GrB_Info GB_desc_set
 (
     GrB_Descriptor desc,        // descriptor to modify
-    int value,                  // value to change it to
+    int32_t value,              // value to change it to
     int field,                  // parameter to change
     GB_Werk Werk
 )
@@ -166,7 +166,7 @@ GrB_Info GrB_Descriptor_set_Scalar
     // set the field
     //--------------------------------------------------------------------------
 
-    int i ;
+    int32_t i ;
     GrB_Info info = GrB_Scalar_extractElement_INT32 (&i, value) ;
     if (info != GrB_SUCCESS)
     { 
@@ -211,13 +211,13 @@ GrB_Info GrB_Descriptor_set_String
 }
 
 //------------------------------------------------------------------------------
-// GrB_Descriptor_set_ENUM
+// GrB_Descriptor_set_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Descriptor_set_ENUM
+GrB_Info GrB_Descriptor_set_INT32
 (
     GrB_Descriptor desc,
-    int value,
+    int32_t value,
     GrB_Field field
 )
 { 
@@ -232,7 +232,7 @@ GrB_Info GrB_Descriptor_set_ENUM
         return (GrB_INVALID_VALUE) ;
     }
 
-    GB_WHERE (desc, "GrB_Descriptor_set_ENUM (desc, value, field)") ;
+    GB_WHERE (desc, "GrB_Descriptor_set_INT32 (desc, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (desc) ;
     ASSERT_DESCRIPTOR_OK (desc, "desc to set", GB0) ;
 

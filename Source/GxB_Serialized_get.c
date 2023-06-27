@@ -19,12 +19,12 @@ static GrB_Info GB_blob_header_get
     // output:
     char *type_name,            // name of the type (char array of size at
                                 // least GxB_MAX_NAME_LEN)
-    int *type_code,             // type code of the matrix
-    int *sparsity_status,       // sparsity status
-    int *sparsity_ctrl,         // sparsity control
+    int32_t *type_code,         // type code of the matrix
+    int32_t *sparsity_status,   // sparsity status
+    int32_t *sparsity_ctrl,     // sparsity control
     double *hyper_sw,           // hyper_switch
     double *bitmap_sw,          // bitmap_switch
-    int *storage,               // GrB_COLMAJOR or GrB_ROWMAJOR
+    int32_t *storage,           // GrB_COLMAJOR or GrB_ROWMAJOR
     char **user_name,           // GrB_NAME of the blob
     char **eltype_string,       // GrB_ELTYPE_STRING of the type of the blob
 
@@ -93,7 +93,7 @@ static GrB_Info GB_blob_header_get
     // determine the matrix type_code and C type_name
     //--------------------------------------------------------------------------
 
-    (*type_code) = (int) GB_type_code_get (typecode) ;
+    (*type_code) = GB_type_code_get (typecode) ;
     memset (type_name, 0, GxB_MAX_NAME_LEN) ;
 
     if (typecode >= GB_BOOL_code && typecode < GB_UDT_code)
@@ -227,7 +227,7 @@ GrB_Info GxB_Serialized_get_Scalar
     //--------------------------------------------------------------------------
 
     char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
-    int sparsity_status, sparsity_ctrl, type_code, storage ;
+    int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
     GrB_Info info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
@@ -239,7 +239,7 @@ GrB_Info GxB_Serialized_get_Scalar
     //--------------------------------------------------------------------------
 
     double dvalue = 0 ;
-    int ivalue = 0 ;
+    int32_t ivalue = 0 ;
     bool is_double = false ;
 
     if (info == GrB_SUCCESS)
@@ -293,7 +293,7 @@ GrB_Info GxB_Serialized_get_Scalar
         }
         else
         { 
-            // field specifies an int: assign it to the scalar
+            // field specifies an int32_t: assign it to the scalar
             info = GB_setElement ((GrB_Matrix) value, NULL, &ivalue, 0, 0,
                 GB_INT32_code, Werk) ;
         }
@@ -329,7 +329,7 @@ GrB_Info GxB_Serialized_get_String
     //--------------------------------------------------------------------------
 
     char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
-    int sparsity_status, sparsity_ctrl, type_code, storage ;
+    int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
     GrB_Info info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
@@ -376,13 +376,13 @@ GrB_Info GxB_Serialized_get_String
 }
 
 //------------------------------------------------------------------------------
-// GxB_Serialized_get_ENUM
+// GxB_Serialized_get_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GxB_Serialized_get_ENUM
+GrB_Info GxB_Serialized_get_INT32
 (
     const void * blob,
-    int * value,
+    int32_t * value,
     GrB_Field field,
     size_t blob_size
 )
@@ -392,7 +392,7 @@ GrB_Info GxB_Serialized_get_ENUM
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Serialized_get_ENUM (blob, value, field, blobsize)") ;
+    GB_WHERE1 ("GxB_Serialized_get_INT32 (blob, value, field, blobsize)") ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (value) ;
 
@@ -401,7 +401,7 @@ GrB_Info GxB_Serialized_get_ENUM
     //--------------------------------------------------------------------------
 
     char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
-    int sparsity_status, sparsity_ctrl, type_code, storage ;
+    int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
     GrB_Info info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
@@ -476,7 +476,7 @@ GrB_Info GxB_Serialized_get_SIZE
     //--------------------------------------------------------------------------
 
     char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
-    int sparsity_status, sparsity_ctrl, type_code, storage ;
+    int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
     GrB_Info info = GB_blob_header_get (type_name, &type_code, &sparsity_status,

@@ -9,7 +9,7 @@
 
 #include "GB_get_set.h"
 
-GrB_Info GB_matvec_enum_get (GrB_Matrix A, int *value, int field)
+GrB_Info GB_matvec_enum_get (GrB_Matrix A, int32_t *value, int field)
 {
     switch (field)
     {

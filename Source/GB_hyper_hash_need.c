@@ -40,7 +40,7 @@ bool GB_hyper_hash_need
     // vectors it has.  A->Y should be built if A has a significant number of
     // non-empty vectors.
 
-    // FIXME: make this also a per-matrix parameter for GrB_get/set
+    // FUTURE: make this also a per-matrix parameter for GrB_get/set
 
     int64_t hyper_hash = GB_Global_hyper_hash_get ( ) ;
 

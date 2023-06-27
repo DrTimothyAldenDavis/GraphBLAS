@@ -82,7 +82,7 @@ void mexFunction
     char name [256] ;
     char cname [256] ;
     char defn [2048] ;
-    int code, i ;
+    int32_t code, i ;
     float fvalue ;
     double dvalue ;
 
@@ -385,13 +385,13 @@ void mexFunction
     // other get/set methods for GrB_UnaryOp
     //--------------------------------------------------------------------------
 
-    OK (GrB_UnaryOp_get_ENUM_(GrB_ABS_FP32, &code, GrB_INPUT1TYPE_CODE)) ;
+    OK (GrB_UnaryOp_get_INT32_(GrB_ABS_FP32, &code, GrB_INPUT1TYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
     OK (GrB_UnaryOp_get_String_(GrB_ABS_FP32, name, GrB_INPUT1TYPE_STRING)) ;
     CHECK (MATCH (name, "GrB_FP32")) ;
 
-    OK (GrB_UnaryOp_get_ENUM_(GrB_ABS_FP64, &code, GrB_OUTPUTTYPE_CODE)) ;
+    OK (GrB_UnaryOp_get_INT32_(GrB_ABS_FP64, &code, GrB_OUTPUTTYPE_CODE)) ;
     CHECK (code == GrB_FP64_CODE) ;
 
     OK (GrB_UnaryOp_get_String_(GrB_ABS_FP64, name, GrB_OUTPUTTYPE_STRING)) ;
@@ -406,13 +406,13 @@ void mexFunction
     CHECK (code == GrB_BOOL_CODE) ;
 
     expected = GrB_NO_VALUE ;
-    ERR (GrB_UnaryOp_get_ENUM_(GrB_BNOT_UINT8, &code, GrB_INPUT2TYPE_CODE)) ;
+    ERR (GrB_UnaryOp_get_INT32_(GrB_BNOT_UINT8, &code, GrB_INPUT2TYPE_CODE)) ;
     ERR (GrB_UnaryOp_get_Scalar_(GrB_LNOT, s_int32, GrB_INPUT2TYPE_CODE)) ;
     ERR (GrB_UnaryOp_get_String_(GrB_BNOT_UINT8, name, GrB_INPUT2TYPE_STRING)) ;
     ERR (GrB_UnaryOp_get_SIZE_(GrB_BNOT_UINT8, &size, GrB_INPUT2TYPE_STRING)) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_UnaryOp_get_ENUM_(GrB_BNOT_UINT8, &code, GrB_NAME)) ;
+    ERR (GrB_UnaryOp_get_INT32_(GrB_BNOT_UINT8, &code, GrB_NAME)) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_UnaryOp_get_VOID_(GrB_LNOT, nothing, 0)) ;
@@ -437,7 +437,7 @@ void mexFunction
     OK (GxB_print (unop, 3)) ;
 
     expected = GrB_NO_VALUE ;
-    ERR (GrB_UnaryOp_get_ENUM_(unop, &code, GrB_INPUT2TYPE_CODE)) ;
+    ERR (GrB_UnaryOp_get_INT32_(unop, &code, GrB_INPUT2TYPE_CODE)) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_UnaryOp_set_String_(unop, "another_name", 999)) ;
@@ -451,7 +451,7 @@ void mexFunction
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_UnaryOp_set_String_(GrB_LNOT, "another_name", GxB_JIT_C_NAME)) ;
     ERR (GrB_UnaryOp_set_Scalar_(unop, s_int32, 0)) ;
-    ERR (GrB_UnaryOp_set_ENUM_(unop, 0, 0)) ;
+    ERR (GrB_UnaryOp_set_INT32_(unop, 0, 0)) ;
     ERR (GrB_UnaryOp_set_VOID_(unop, nothing, 0, 0)) ;
 
     //--------------------------------------------------------------------------

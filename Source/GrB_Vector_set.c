@@ -34,7 +34,7 @@ GrB_Info GrB_Vector_set_Scalar
     //--------------------------------------------------------------------------
 
     double dvalue = 0 ;
-    int ivalue = 0 ;
+    int32_t ivalue = 0 ;
     GrB_Info info ;
 
     switch ((int) field)
@@ -83,13 +83,13 @@ GrB_Info GrB_Vector_set_String
 }
 
 //------------------------------------------------------------------------------
-// GrB_Vector_set_ENUM
+// GrB_Vector_set_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Vector_set_ENUM
+GrB_Info GrB_Vector_set_INT32
 (
     GrB_Vector v,
-    int value,
+    int32_t value,
     GrB_Field field
 )
 { 
@@ -98,7 +98,7 @@ GrB_Info GrB_Vector_set_ENUM
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Vector_set_ENUM (v, value, field)") ;
+    GB_WHERE1 ("GrB_Vector_set_INT32 (v, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
     ASSERT_VECTOR_OK (v, "v to set option", GB0) ;
 

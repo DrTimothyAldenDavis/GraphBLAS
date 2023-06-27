@@ -60,7 +60,7 @@ void mexFunction
     size_t size ;
     char name [256] ;
     char defn [2048], defn2 [2048] ;
-    int code, i ;
+    int32_t code, i ;
     float fvalue ;
     double dvalue ;
 
@@ -72,137 +72,137 @@ void mexFunction
     // global set/get
     //--------------------------------------------------------------------------
 
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GrB_LIBRARY_VER_MAJOR)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GrB_LIBRARY_VER_MAJOR)) ;
     CHECK (i == GxB_IMPLEMENTATION_MAJOR) ;
 
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GrB_LIBRARY_VER_MINOR)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GrB_LIBRARY_VER_MINOR)) ;
     CHECK (i == GxB_IMPLEMENTATION_MINOR) ;
 
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GrB_LIBRARY_VER_PATCH)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GrB_LIBRARY_VER_PATCH)) ;
     CHECK (i == GxB_IMPLEMENTATION_SUB) ;
 
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GrB_API_VER_MAJOR)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GrB_API_VER_MAJOR)) ;
     CHECK (i == GxB_SPEC_MAJOR) ;
 
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GrB_API_VER_MINOR)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GrB_API_VER_MINOR)) ;
     CHECK (i == GxB_SPEC_MINOR) ;
 
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GrB_API_VER_PATCH)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GrB_API_VER_PATCH)) ;
     CHECK (i == GxB_SPEC_SUB) ;
 
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GrB_BLOCKING_MODE)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GrB_BLOCKING_MODE)) ;
     CHECK (i == GrB_NONBLOCKING) ;
 
     i = -1 ;
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GxB_MODE)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GxB_MODE)) ;
     CHECK (i == GrB_NONBLOCKING) ;
 
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
     CHECK (i == GrB_COLMAJOR) ;
 
-        OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, GrB_ROWMAJOR,
+        OK (GrB_Global_set_INT32_ (GrB_GLOBAL, GrB_ROWMAJOR,
             GrB_STORAGE_ORIENTATION_HINT)) ;
-        OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i,
+        OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i,
             GrB_STORAGE_ORIENTATION_HINT)) ;
         CHECK (i == GrB_ROWMAJOR) ;
 
-        OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, GrB_COLMAJOR,
+        OK (GrB_Global_set_INT32_ (GrB_GLOBAL, GrB_COLMAJOR,
             GrB_STORAGE_ORIENTATION_HINT)) ;
-        OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i,
+        OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i,
             GrB_STORAGE_ORIENTATION_HINT)) ;
         CHECK (i == GrB_COLMAJOR) ;
 
-        OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, GrB_BOTH,
+        OK (GrB_Global_set_INT32_ (GrB_GLOBAL, GrB_BOTH,
             GrB_STORAGE_ORIENTATION_HINT)) ;
-        OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i,
+        OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i,
             GrB_STORAGE_ORIENTATION_HINT)) ;
         CHECK (i == GrB_ROWMAJOR) ;
 
-        OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, GrB_COLMAJOR,
+        OK (GrB_Global_set_INT32_ (GrB_GLOBAL, GrB_COLMAJOR,
             GrB_STORAGE_ORIENTATION_HINT)) ;
-        OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i,
+        OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i,
             GrB_STORAGE_ORIENTATION_HINT)) ;
         CHECK (i == GrB_COLMAJOR) ;
 
-        OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, GrB_UNKNOWN,
+        OK (GrB_Global_set_INT32_ (GrB_GLOBAL, GrB_UNKNOWN,
             GrB_STORAGE_ORIENTATION_HINT)) ;
-        OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i,
+        OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i,
             GrB_STORAGE_ORIENTATION_HINT)) ;
         CHECK (i == GrB_ROWMAJOR) ;
 
-        OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, GrB_COLMAJOR,
+        OK (GrB_Global_set_INT32_ (GrB_GLOBAL, GrB_COLMAJOR,
             GrB_STORAGE_ORIENTATION_HINT)) ;
-        OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i,
+        OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i,
             GrB_STORAGE_ORIENTATION_HINT)) ;
         CHECK (i == GrB_COLMAJOR) ;
     
         expected = GrB_INVALID_VALUE ;
-        ERR (GrB_Global_set_ENUM_ (GrB_GLOBAL, 999,
+        ERR (GrB_Global_set_INT32_ (GrB_GLOBAL, 999,
             GrB_STORAGE_ORIENTATION_HINT)) ;
 
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GxB_FORMAT)) ;
-    ERR (GrB_Global_set_ENUM_ (GrB_GLOBAL, 999, GxB_FORMAT)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GxB_FORMAT)) ;
+    ERR (GrB_Global_set_INT32_ (GrB_GLOBAL, 999, GxB_FORMAT)) ;
     CHECK (i == GxB_BY_COL) ;
 
-    int nth ;
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &nth, GxB_GLOBAL_NTHREADS)) ;
+    int32_t nth ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &nth, GxB_GLOBAL_NTHREADS)) ;
     printf ("nthreads: %d\n", nth) ;
-    OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, 2, GxB_GLOBAL_NTHREADS)) ;
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GxB_GLOBAL_NTHREADS)) ;
+    OK (GrB_Global_set_INT32_ (GrB_GLOBAL, 2, GxB_GLOBAL_NTHREADS)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GxB_GLOBAL_NTHREADS)) ;
     CHECK (i == 2) ;
-    OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, nth, GxB_GLOBAL_NTHREADS)) ;
+    OK (GrB_Global_set_INT32_ (GrB_GLOBAL, nth, GxB_GLOBAL_NTHREADS)) ;
 
-    int gpu ;
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &gpu, GxB_GLOBAL_GPU_ID)) ;
+    int32_t gpu ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &gpu, GxB_GLOBAL_GPU_ID)) ;
     printf ("gpu id:   %d\n", gpu) ;
-    OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, 2, GxB_GLOBAL_GPU_ID)) ;
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GxB_GLOBAL_GPU_ID)) ;
+    OK (GrB_Global_set_INT32_ (GrB_GLOBAL, 2, GxB_GLOBAL_GPU_ID)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GxB_GLOBAL_GPU_ID)) ;
     CHECK (i == -1) ;
-    OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, gpu, GxB_GLOBAL_GPU_ID)) ;
+    OK (GrB_Global_set_INT32_ (GrB_GLOBAL, gpu, GxB_GLOBAL_GPU_ID)) ;
 
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GxB_BURBLE)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GxB_BURBLE)) ;
     printf ("burble:   %d\n", i) ;
-    OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, 1, GxB_BURBLE)) ;
+    OK (GrB_Global_set_INT32_ (GrB_GLOBAL, 1, GxB_BURBLE)) ;
     OK (GrB_Matrix_new (&A, GrB_FP32, 3, 3)) ;
     OK (GrB_assign (A, NULL, NULL, 3, GrB_ALL, 3, GrB_ALL, 3, NULL)) ;
-    OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, 0, GxB_BURBLE)) ;
+    OK (GrB_Global_set_INT32_ (GrB_GLOBAL, 0, GxB_BURBLE)) ;
     OK (GrB_assign (A, NULL, NULL, 4, GrB_ALL, 3, GrB_ALL, 3, NULL)) ;
     OK (GxB_print (A, 2)) ;
 
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GxB_LIBRARY_OPENMP)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GxB_LIBRARY_OPENMP)) ;
     CHECK (i == 1) ;
 
-    int onebase ;
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &onebase, GxB_PRINT_1BASED)) ;
+    int32_t onebase ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &onebase, GxB_PRINT_1BASED)) ;
     printf ("1based:   %d\n", i) ;
-    OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, 1, GxB_PRINT_1BASED)) ;
+    OK (GrB_Global_set_INT32_ (GrB_GLOBAL, 1, GxB_PRINT_1BASED)) ;
     OK (GxB_print (A, 2)) ;
-    OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, onebase, GxB_PRINT_1BASED)) ;
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GxB_PRINT_1BASED)) ;
+    OK (GrB_Global_set_INT32_ (GrB_GLOBAL, onebase, GxB_PRINT_1BASED)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GxB_PRINT_1BASED)) ;
     CHECK (i == onebase) ;
 
-    int control ;
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &control, GxB_JIT_C_CONTROL)) ;
+    int32_t control ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &control, GxB_JIT_C_CONTROL)) ;
     printf ("jit ctrl: %d\n", control) ;
     for (int c = 0 ; c <= GxB_JIT_ON ; c++)
     {
-        int b ;
-        OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, c, GxB_JIT_C_CONTROL)) ;
-        OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &b, GxB_JIT_C_CONTROL)) ;
+        int32_t b ;
+        OK (GrB_Global_set_INT32_ (GrB_GLOBAL, c, GxB_JIT_C_CONTROL)) ;
+        OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &b, GxB_JIT_C_CONTROL)) ;
         CHECK (c == b) ;
     }
-    OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, control, GxB_JIT_C_CONTROL)) ;
+    OK (GrB_Global_set_INT32_ (GrB_GLOBAL, control, GxB_JIT_C_CONTROL)) ;
 
-    int use_cmake ;
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &use_cmake, GxB_JIT_USE_CMAKE)) ;
+    int32_t use_cmake ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &use_cmake, GxB_JIT_USE_CMAKE)) ;
     printf ("jit cmake %d\n", use_cmake) ;
-    OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, 1, GxB_JIT_USE_CMAKE)) ;
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GxB_JIT_USE_CMAKE)) ;
+    OK (GrB_Global_set_INT32_ (GrB_GLOBAL, 1, GxB_JIT_USE_CMAKE)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GxB_JIT_USE_CMAKE)) ;
     CHECK (i == 1) ;
-    OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, use_cmake, GxB_JIT_USE_CMAKE)) ;
+    OK (GrB_Global_set_INT32_ (GrB_GLOBAL, use_cmake, GxB_JIT_USE_CMAKE)) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_Global_set_ENUM_ (GrB_GLOBAL, 1, GrB_BLOCKING_MODE)) ;
+    ERR (GrB_Global_set_INT32_ (GrB_GLOBAL, 1, GrB_BLOCKING_MODE)) ;
     expected = GrB_EMPTY_OBJECT ;
     ERR (GrB_Global_set_Scalar_ (GrB_GLOBAL, s_int32,
         GrB_STORAGE_ORIENTATION_HINT)) ;
@@ -215,8 +215,8 @@ void mexFunction
     OK (GrB_Global_get_Scalar_ (GrB_GLOBAL, s_int32, GxB_JIT_C_CONTROL)) ;
     OK (GrB_Scalar_extractElement (&i, s_int32)) ;
     CHECK (i == 1) ;
-    OK (GrB_Global_set_ENUM_ (GrB_GLOBAL, control, GxB_JIT_C_CONTROL)) ;
-    OK (GrB_Global_get_ENUM_ (GrB_GLOBAL, &i, GxB_JIT_C_CONTROL)) ;
+    OK (GrB_Global_set_INT32_ (GrB_GLOBAL, control, GxB_JIT_C_CONTROL)) ;
+    OK (GrB_Global_get_INT32_ (GrB_GLOBAL, &i, GxB_JIT_C_CONTROL)) ;
     CHECK (i == control) ;
 
     OK (GrB_Global_get_Scalar_ (GrB_GLOBAL, s_fp64, GxB_HYPER_SWITCH)) ;
@@ -246,7 +246,7 @@ void mexFunction
 
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Global_get_Scalar_ (GrB_GLOBAL, s_fp64, GrB_ELTYPE_CODE)) ;
-    ERR (GrB_Global_get_ENUM_   (GrB_GLOBAL, &i, GrB_ELTYPE_CODE)) ;
+    ERR (GrB_Global_get_INT32_  (GrB_GLOBAL, &i, GrB_ELTYPE_CODE)) ;
     ERR (GrB_Global_get_SIZE_   (GrB_GLOBAL, &size, GrB_ELTYPE_CODE)) ;
     ERR (GrB_Global_get_String_ (GrB_GLOBAL, name, GrB_ELTYPE_CODE)) ;
     ERR (GrB_Global_get_VOID_   (GrB_GLOBAL, nothing, GrB_ELTYPE_CODE)) ;

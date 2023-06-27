@@ -90,13 +90,13 @@ GrB_Info GrB_Monoid_get_String
 }
 
 //------------------------------------------------------------------------------
-// GrB_Monoid_get_ENUM
+// GrB_Monoid_get_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Monoid_get_ENUM
+GrB_Info GrB_Monoid_get_INT32
 (
     GrB_Monoid monoid,
-    int * value,
+    int32_t * value,
     GrB_Field field
 )
 { 
@@ -105,7 +105,7 @@ GrB_Info GrB_Monoid_get_ENUM
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Monoid_get_ENUM (monoid, value, field)") ;
+    GB_WHERE1 ("GrB_Monoid_get_INT32 (monoid, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_MONOID_OK (monoid, "monoid to get option", GB0) ;

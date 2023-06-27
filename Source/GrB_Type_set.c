@@ -57,13 +57,13 @@ GrB_Info GrB_Type_set_String
 }
 
 //------------------------------------------------------------------------------
-// GrB_Type_set_ENUM
+// GrB_Type_set_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Type_set_ENUM
+GrB_Info GrB_Type_set_INT32
 (
     GrB_Type type,
-    int value,
+    int32_t value,
     GrB_Field field
 )
 { 

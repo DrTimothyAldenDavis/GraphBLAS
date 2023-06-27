@@ -52,13 +52,13 @@ GrB_Info GrB_UnaryOp_set_String
 }
 
 //------------------------------------------------------------------------------
-// GrB_UnaryOp_set_ENUM
+// GrB_UnaryOp_set_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_UnaryOp_set_ENUM
+GrB_Info GrB_UnaryOp_set_INT32
 (
     GrB_UnaryOp op,
-    int value,
+    int32_t value,
     GrB_Field field
 )
 { 

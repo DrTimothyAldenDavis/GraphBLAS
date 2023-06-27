@@ -66,13 +66,13 @@ GrB_Info GrB_UnaryOp_get_String
 }
 
 //------------------------------------------------------------------------------
-// GrB_UnaryOp_get_ENUM
+// GrB_UnaryOp_get_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_UnaryOp_get_ENUM
+GrB_Info GrB_UnaryOp_get_INT32
 (
     GrB_UnaryOp op,
-    int * value,
+    int32_t * value,
     GrB_Field field
 )
 { 
@@ -81,7 +81,7 @@ GrB_Info GrB_UnaryOp_get_ENUM
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_UnaryOp_get_ENUM (op, value, field)") ;
+    GB_WHERE1 ("GrB_UnaryOp_get_INT32 (op, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_UNARYOP_OK (op, "unaryop for get", GB0) ;

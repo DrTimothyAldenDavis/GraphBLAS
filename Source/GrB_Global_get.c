@@ -26,7 +26,7 @@ const GrB_Global GrB_GLOBAL = & GB_OPAQUE (WORLD_OBJECT) ;
 // GB_global_enum_get: get an enum value from the global state
 //------------------------------------------------------------------------------
 
-static GrB_Info GB_global_enum_get (int *value, int field)
+static GrB_Info GB_global_enum_get (int32_t *value, int field)
 {
 
     switch (field)
@@ -160,7 +160,7 @@ GrB_Info GrB_Global_get_Scalar
     // get the field
     //--------------------------------------------------------------------------
 
-    int i ;
+    int32_t i ;
     GrB_Info info = GB_global_enum_get (&i, field) ;
     if (info == GrB_SUCCESS)
     { 
@@ -360,13 +360,13 @@ GrB_Info GrB_Global_get_String
 }
 
 //------------------------------------------------------------------------------
-// GrB_Global_get_ENUM
+// GrB_Global_get_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Global_get_ENUM
+GrB_Info GrB_Global_get_INT32
 (
     GrB_Global g,
-    int * value,
+    int32_t * value,
     GrB_Field field
 )
 { 
@@ -375,7 +375,7 @@ GrB_Info GrB_Global_get_ENUM
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Global_get_ENUM (g, value, field)") ;
+    GB_WHERE1 ("GrB_Global_get_INT32 (g, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (g) ;
     GB_RETURN_IF_NULL (value) ;
 

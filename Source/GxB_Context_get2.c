@@ -35,7 +35,7 @@ GrB_Info GxB_Context_get_Scalar
     //--------------------------------------------------------------------------
 
     double dvalue = 0 ;
-    int ivalue = 0 ;
+    int32_t ivalue = 0 ;
     GrB_Info info ;
 
     switch ((int) field)
@@ -126,13 +126,13 @@ GrB_Info GxB_Context_get_String
 }
 
 //------------------------------------------------------------------------------
-// GxB_Context_get_ENUM
+// GxB_Context_get_INT
 //------------------------------------------------------------------------------
 
-GrB_Info GxB_Context_get_ENUM
+GrB_Info GxB_Context_get_INT
 (
     GxB_Context Context,
-    int * value,
+    int32_t * value,
     GrB_Field field
 )
 { 
@@ -141,7 +141,7 @@ GrB_Info GxB_Context_get_ENUM
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Context_get_ENUM (Context, value, field)") ;
+    GB_WHERE1 ("GxB_Context_get_INT (Context, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (Context) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_CONTEXT_OK (Context, "context for get", GB0) ;

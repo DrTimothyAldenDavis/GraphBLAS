@@ -60,13 +60,13 @@ GrB_Info GrB_Monoid_set_String
 }
 
 //------------------------------------------------------------------------------
-// GrB_Monoid_set_ENUM
+// GrB_Monoid_set_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Monoid_set_ENUM
+GrB_Info GrB_Monoid_set_INT32
 (
     GrB_Monoid monoid,
-    int value,
+    int32_t value,
     GrB_Field field
 )
 { 

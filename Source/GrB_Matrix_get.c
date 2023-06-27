@@ -34,7 +34,7 @@ GrB_Info GrB_Matrix_get_Scalar
     // get the field
     //--------------------------------------------------------------------------
 
-    int i ;
+    int32_t i ;
     GrB_Info info = GB_matvec_enum_get (A, &i, field) ;
     if (info == GrB_SUCCESS)
     { 
@@ -95,13 +95,13 @@ GrB_Info GrB_Matrix_get_String
 }
 
 //------------------------------------------------------------------------------
-// GrB_Matrix_get_ENUM
+// GrB_Matrix_get_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Matrix_get_ENUM
+GrB_Info GrB_Matrix_get_INT32
 (
     GrB_Matrix A,
-    int * value,
+    int32_t * value,
     GrB_Field field
 )
 { 
@@ -110,7 +110,7 @@ GrB_Info GrB_Matrix_get_ENUM
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Matrix_get_ENUM (A, value, field)") ;
+    GB_WHERE1 ("GrB_Matrix_get_INT32 (A, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_MATRIX_OK (A, "A to get option", GB0) ;

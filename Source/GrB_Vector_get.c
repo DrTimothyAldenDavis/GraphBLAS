@@ -34,11 +34,11 @@ GrB_Info GrB_Vector_get_Scalar
     // get the field
     //--------------------------------------------------------------------------
 
-    int i ;
+    int32_t i ;
     GrB_Info info = GB_matvec_enum_get ((GrB_Matrix) v, &i, field) ;
     if (info == GrB_SUCCESS)
     { 
-        // field specifies an int: assign it to the scalar
+        // field specifies an int32_t: assign it to the scalar
         info = GB_setElement ((GrB_Matrix) value, NULL, &i, 0, 0,
             GB_INT32_code, Werk) ;
     }
@@ -91,13 +91,13 @@ GrB_Info GrB_Vector_get_String
 }
 
 //------------------------------------------------------------------------------
-// GrB_Vector_get_ENUM
+// GrB_Vector_get_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Vector_get_ENUM
+GrB_Info GrB_Vector_get_INT32
 (
     GrB_Vector v,
-    int * value,
+    int32_t * value,
     GrB_Field field
 )
 { 
@@ -106,7 +106,7 @@ GrB_Info GrB_Vector_get_ENUM
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Vector_get_ENUM (v, value, field)") ;
+    GB_WHERE1 ("GrB_Vector_get_INT32 (v, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_VECTOR_OK (v, "v to get option", GB0) ;

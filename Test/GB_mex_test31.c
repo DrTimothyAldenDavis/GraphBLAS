@@ -81,7 +81,7 @@ void mexFunction
     size_t size ;
     char name [256] ;
     char defn [2048] ;
-    int code, i ;
+    int32_t code, i ;
     float fvalue ;
     double dvalue ;
     GrB_Index nvals = 999 ;
@@ -235,7 +235,7 @@ void mexFunction
     // other get/set methods for GrB_Monoid
     //--------------------------------------------------------------------------
 
-    OK (GrB_Monoid_get_ENUM_(GrB_MAX_MONOID_FP32, &code, GrB_INPUT1TYPE_CODE)) ;
+    OK (GrB_Monoid_get_INT32_(GrB_MAX_MONOID_FP32, &code, GrB_INPUT1TYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
     OK (GrB_Monoid_get_String_(GrB_MAX_MONOID_FP32, name,
@@ -246,7 +246,7 @@ void mexFunction
         GrB_INPUT2TYPE_STRING)) ;
     CHECK (MATCH (name, "GrB_INT32")) ;
 
-    OK (GrB_Monoid_get_ENUM_(GrB_MAX_MONOID_FP64, &code, GrB_OUTPUTTYPE_CODE)) ;
+    OK (GrB_Monoid_get_INT32_(GrB_MAX_MONOID_FP64, &code, GrB_OUTPUTTYPE_CODE)) ;
     CHECK (code == GrB_FP64_CODE) ;
 
     OK (GrB_Monoid_get_String_(GrB_MAX_MONOID_FP64, name,
@@ -263,7 +263,7 @@ void mexFunction
     OK (GrB_Scalar_extractElement_INT32_(&code, s_int32)) ;
     CHECK (code == GrB_BOOL_CODE) ;
 
-    OK (GrB_Monoid_get_ENUM_(GrB_PLUS_MONOID_FP64, &code,
+    OK (GrB_Monoid_get_INT32_(GrB_PLUS_MONOID_FP64, &code,
         GrB_INPUT2TYPE_CODE)) ;
     CHECK (code == GrB_FP64_CODE) ;
 
@@ -273,7 +273,7 @@ void mexFunction
     CHECK (code == GrB_BOOL_CODE) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_Monoid_get_ENUM_(GrB_LAND_MONOID_BOOL, &code, GrB_NAME)) ;
+    ERR (GrB_Monoid_get_INT32_(GrB_LAND_MONOID_BOOL, &code, GrB_NAME)) ;
     ERR (GrB_Monoid_get_String_(GrB_MAX_MONOID_INT32, name, 999)) ;
     ERR (GrB_Monoid_get_VOID_(GrB_LAND_MONOID_BOOL, nothing, 0)) ;
 
@@ -300,7 +300,7 @@ void mexFunction
 
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Monoid_set_Scalar_(monoid, s_int32, 0)) ;
-    ERR (GrB_Monoid_set_ENUM_(monoid, 0, 0)) ;
+    ERR (GrB_Monoid_set_INT32_(monoid, 0, 0)) ;
     ERR (GrB_Monoid_set_VOID_(monoid, nothing, 0, 0)) ;
 
     OK (GrB_Monoid_set_String_(monoid, "monoid_stuff", GrB_NAME)) ;

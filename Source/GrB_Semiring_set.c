@@ -60,13 +60,13 @@ GrB_Info GrB_Semiring_set_String
 }
 
 //------------------------------------------------------------------------------
-// GrB_Semiring_set_ENUM
+// GrB_Semiring_set_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Semiring_set_ENUM
+GrB_Info GrB_Semiring_set_INT32
 (
     GrB_Semiring semiring,
-    int value,
+    int32_t value,
     GrB_Field field
 )
 { 

@@ -83,7 +83,7 @@ void mexFunction
     char name [256] ;
     char cname [256] ;
     char defn [2048] ;
-    int code, i ;
+    int32_t code, i ;
     float fvalue ;
     double dvalue ;
 
@@ -588,7 +588,7 @@ void mexFunction
     // other get/set methods for GrB_BinaryOp
     //--------------------------------------------------------------------------
 
-    OK (GrB_BinaryOp_get_ENUM_(GrB_MAX_FP32, &code, GrB_INPUT1TYPE_CODE)) ;
+    OK (GrB_BinaryOp_get_INT32_(GrB_MAX_FP32, &code, GrB_INPUT1TYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
     OK (GrB_BinaryOp_get_SIZE_(GrB_MAX_FP32, &size, GrB_INPUT1TYPE_STRING)) ;
@@ -603,7 +603,7 @@ void mexFunction
     OK (GrB_BinaryOp_get_String_(GrB_MAX_INT32, name, GrB_INPUT2TYPE_STRING)) ;
     CHECK (MATCH (name, "GrB_INT32")) ;
 
-    OK (GrB_BinaryOp_get_ENUM_(GrB_MAX_FP64, &code, GrB_OUTPUTTYPE_CODE)) ;
+    OK (GrB_BinaryOp_get_INT32_(GrB_MAX_FP64, &code, GrB_OUTPUTTYPE_CODE)) ;
     CHECK (code == GrB_FP64_CODE) ;
 
     OK (GrB_BinaryOp_get_SIZE_(GrB_MAX_FP64, &size, GrB_OUTPUTTYPE_STRING)) ;
@@ -620,7 +620,7 @@ void mexFunction
     OK (GrB_Scalar_extractElement_INT32_(&code, s_int32)) ;
     CHECK (code == GrB_BOOL_CODE) ;
 
-    OK (GrB_BinaryOp_get_ENUM_(GrB_PLUS_FP64, &code, GrB_INPUT2TYPE_CODE)) ;
+    OK (GrB_BinaryOp_get_INT32_(GrB_PLUS_FP64, &code, GrB_INPUT2TYPE_CODE)) ;
     CHECK (code == GrB_FP64_CODE) ;
 
     OK (GrB_BinaryOp_get_Scalar_(GrB_LAND, s_int32, GrB_INPUT2TYPE_CODE)) ;
@@ -628,7 +628,7 @@ void mexFunction
     CHECK (code == GrB_BOOL_CODE) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_BinaryOp_get_ENUM_(GrB_LAND, &code, GrB_NAME)) ;
+    ERR (GrB_BinaryOp_get_INT32_(GrB_LAND, &code, GrB_NAME)) ;
     ERR (GrB_BinaryOp_get_String_(GrB_MAX_INT32, name, 999)) ;
 
     expected = GrB_INVALID_VALUE ;
@@ -651,12 +651,12 @@ void mexFunction
     CHECK (binop->hash != UINT64_MAX) ;
     OK (GxB_print (binop, 3)) ;
 
-    OK (GrB_BinaryOp_get_ENUM_(binop, &code, GrB_INPUT2TYPE_CODE)) ;
+    OK (GrB_BinaryOp_get_INT32_(binop, &code, GrB_INPUT2TYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_BinaryOp_set_Scalar_(binop, s_int32, 0)) ;
-    ERR (GrB_BinaryOp_set_ENUM_(binop, 0, 0)) ;
+    ERR (GrB_BinaryOp_set_INT32_(binop, 0, 0)) ;
     ERR (GrB_BinaryOp_set_VOID_(binop, nothing, 0, 0)) ;
 
     //--------------------------------------------------------------------------

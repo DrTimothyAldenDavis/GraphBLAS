@@ -87,7 +87,7 @@ void mexFunction
     size_t size ;
     char name [1024] ;
     char defn [2048] ;
-    int code, i ;
+    int32_t code, i ;
     float fvalue ;
     double dvalue ;
     GrB_Index nvals = 999 ;
@@ -2108,7 +2108,7 @@ void mexFunction
     // other methods
     //--------------------------------------------------------------------------
 
-    OK (GrB_Semiring_get_ENUM_(GrB_PLUS_TIMES_SEMIRING_FP32, &code,
+    OK (GrB_Semiring_get_INT32_(GrB_PLUS_TIMES_SEMIRING_FP32, &code,
         GrB_INPUT1TYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
@@ -2128,7 +2128,7 @@ void mexFunction
         GrB_INPUT2TYPE_STRING)) ;
     CHECK (MATCH (name, "GrB_INT32")) ;
 
-    OK (GrB_Semiring_get_ENUM_(GrB_PLUS_TIMES_SEMIRING_FP64, &code,
+    OK (GrB_Semiring_get_INT32_(GrB_PLUS_TIMES_SEMIRING_FP64, &code,
         GrB_OUTPUTTYPE_CODE)) ;
     CHECK (code == GrB_FP64_CODE) ;
 
@@ -2150,7 +2150,7 @@ void mexFunction
     OK (GrB_Scalar_extractElement_INT32_(&code, s_int32)) ;
     CHECK (code == GrB_BOOL_CODE) ;
 
-    OK (GrB_Semiring_get_ENUM_(GrB_PLUS_TIMES_SEMIRING_FP64, &code,
+    OK (GrB_Semiring_get_INT32_(GrB_PLUS_TIMES_SEMIRING_FP64, &code,
         GrB_INPUT2TYPE_CODE)) ;
     CHECK (code == GrB_FP64_CODE) ;
 
@@ -2160,7 +2160,7 @@ void mexFunction
     CHECK (code == GrB_BOOL_CODE) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_Semiring_get_ENUM_(GrB_LOR_LAND_SEMIRING_BOOL, &code,
+    ERR (GrB_Semiring_get_INT32_(GrB_LOR_LAND_SEMIRING_BOOL, &code,
         GrB_NAME)) ;
     ERR (GrB_Semiring_get_String_(GrB_PLUS_TIMES_SEMIRING_INT32, name,
         999)) ;
@@ -2197,7 +2197,7 @@ void mexFunction
 
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Semiring_set_Scalar_(semiring, s_int32, 0)) ;
-    ERR (GrB_Semiring_set_ENUM_(semiring, 0, 0)) ;
+    ERR (GrB_Semiring_set_INT32_(semiring, 0, 0)) ;
     ERR (GrB_Semiring_set_VOID_(semiring, nothing, 0, 0)) ;
 
     OK (GrB_Semiring_get_String_(semiring, name, GrB_NAME)) ;

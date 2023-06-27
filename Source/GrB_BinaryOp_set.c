@@ -55,13 +55,13 @@ GrB_Info GrB_BinaryOp_set_String
 }
 
 //------------------------------------------------------------------------------
-// GrB_BinaryOp_set_ENUM
+// GrB_BinaryOp_set_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_BinaryOp_set_ENUM
+GrB_Info GrB_BinaryOp_set_INT32
 (
     GrB_BinaryOp op,
-    int value,
+    int32_t value,
     GrB_Field field
 )
 { 

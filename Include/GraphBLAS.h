@@ -220,7 +220,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "(draft) June 17, 2023"
+#define GxB_IMPLEMENTATION_DATE "(draft) June 26, 2023"
 #define GxB_IMPLEMENTATION_MAJOR 8
 #define GxB_IMPLEMENTATION_MINOR 1
 #define GxB_IMPLEMENTATION_SUB   0
@@ -386,7 +386,7 @@ GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
 //==============================================================================
 
 // GrB_getVersion provides a runtime access of the C API Version.  Can also be
-// done with two calls to GrB_Global_get_ENUM with the v2.1 C API:
+// done with two calls to GrB_Global_get_INT32 with the v2.1 C API:
 //
 //      GrB_get (GrB_GLOBAL, &version,    GrB_API_VER_MAJOR) ;
 //      GrB_get (GrB_GLOBAL, &subversion, GrB_API_VER_MINOR) ;
@@ -4084,79 +4084,79 @@ GrB_Type_Code ;
 
 GrB_Info GrB_Scalar_get_Scalar (GrB_Scalar, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Scalar_get_String (GrB_Scalar, char *    , GrB_Field) ;
-GrB_Info GrB_Scalar_get_ENUM   (GrB_Scalar, int *     , GrB_Field) ;
+GrB_Info GrB_Scalar_get_INT32  (GrB_Scalar, int32_t * , GrB_Field) ;
 GrB_Info GrB_Scalar_get_SIZE   (GrB_Scalar, size_t *  , GrB_Field) ;
 GrB_Info GrB_Scalar_get_VOID   (GrB_Scalar, void *    , GrB_Field) ;
 
 GrB_Info GrB_Vector_get_Scalar (GrB_Vector, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Vector_get_String (GrB_Vector, char *    , GrB_Field) ;
-GrB_Info GrB_Vector_get_ENUM   (GrB_Vector, int *     , GrB_Field) ;
+GrB_Info GrB_Vector_get_INT32  (GrB_Vector, int32_t * , GrB_Field) ;
 GrB_Info GrB_Vector_get_SIZE   (GrB_Vector, size_t *  , GrB_Field) ;
 GrB_Info GrB_Vector_get_VOID   (GrB_Vector, void *    , GrB_Field) ;
 
 GrB_Info GrB_Matrix_get_Scalar (GrB_Matrix, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Matrix_get_String (GrB_Matrix, char *    , GrB_Field) ;
-GrB_Info GrB_Matrix_get_ENUM   (GrB_Matrix, int *     , GrB_Field) ;
+GrB_Info GrB_Matrix_get_INT32  (GrB_Matrix, int32_t * , GrB_Field) ;
 GrB_Info GrB_Matrix_get_SIZE   (GrB_Matrix, size_t *  , GrB_Field) ;
 GrB_Info GrB_Matrix_get_VOID   (GrB_Matrix, void *    , GrB_Field) ;
 
 GrB_Info GxB_Serialized_get_Scalar (const void *, GrB_Scalar, GrB_Field, size_t) ;
 GrB_Info GxB_Serialized_get_String (const void *, char *    , GrB_Field, size_t) ;
-GrB_Info GxB_Serialized_get_ENUM   (const void *, int *     , GrB_Field, size_t) ;
+GrB_Info GxB_Serialized_get_INT32  (const void *, int32_t * , GrB_Field, size_t) ;
 GrB_Info GxB_Serialized_get_SIZE   (const void *, size_t *  , GrB_Field, size_t) ;
 GrB_Info GxB_Serialized_get_VOID   (const void *, void *    , GrB_Field, size_t) ;
 
 GrB_Info GrB_UnaryOp_get_Scalar (GrB_UnaryOp, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_UnaryOp_get_String (GrB_UnaryOp, char *    , GrB_Field) ;
-GrB_Info GrB_UnaryOp_get_ENUM   (GrB_UnaryOp, int *     , GrB_Field) ;
+GrB_Info GrB_UnaryOp_get_INT32  (GrB_UnaryOp, int32_t * , GrB_Field) ;
 GrB_Info GrB_UnaryOp_get_SIZE   (GrB_UnaryOp, size_t *  , GrB_Field) ;
 GrB_Info GrB_UnaryOp_get_VOID   (GrB_UnaryOp, void *    , GrB_Field) ;
 
 GrB_Info GrB_IndexUnaryOp_get_Scalar (GrB_IndexUnaryOp, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_IndexUnaryOp_get_String (GrB_IndexUnaryOp, char *    , GrB_Field) ;
-GrB_Info GrB_IndexUnaryOp_get_ENUM   (GrB_IndexUnaryOp, int *     , GrB_Field) ;
+GrB_Info GrB_IndexUnaryOp_get_INT32  (GrB_IndexUnaryOp, int32_t * , GrB_Field) ;
 GrB_Info GrB_IndexUnaryOp_get_SIZE   (GrB_IndexUnaryOp, size_t *  , GrB_Field) ;
 GrB_Info GrB_IndexUnaryOp_get_VOID   (GrB_IndexUnaryOp, void *    , GrB_Field) ;
 
 GrB_Info GrB_BinaryOp_get_Scalar (GrB_BinaryOp, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_BinaryOp_get_String (GrB_BinaryOp, char *    , GrB_Field) ;
-GrB_Info GrB_BinaryOp_get_ENUM   (GrB_BinaryOp, int *     , GrB_Field) ;
+GrB_Info GrB_BinaryOp_get_INT32  (GrB_BinaryOp, int32_t * , GrB_Field) ;
 GrB_Info GrB_BinaryOp_get_SIZE   (GrB_BinaryOp, size_t *  , GrB_Field) ;
 GrB_Info GrB_BinaryOp_get_VOID   (GrB_BinaryOp, void *    , GrB_Field) ;
 
 GrB_Info GrB_Monoid_get_Scalar (GrB_Monoid, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Monoid_get_String (GrB_Monoid, char *    , GrB_Field) ;
-GrB_Info GrB_Monoid_get_ENUM   (GrB_Monoid, int *     , GrB_Field) ;
+GrB_Info GrB_Monoid_get_INT32  (GrB_Monoid, int32_t * , GrB_Field) ;
 GrB_Info GrB_Monoid_get_SIZE   (GrB_Monoid, size_t *  , GrB_Field) ;
 GrB_Info GrB_Monoid_get_VOID   (GrB_Monoid, void *    , GrB_Field) ;
 
 GrB_Info GrB_Semiring_get_Scalar (GrB_Semiring, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Semiring_get_String (GrB_Semiring, char *    , GrB_Field) ;
-GrB_Info GrB_Semiring_get_ENUM   (GrB_Semiring, int *     , GrB_Field) ;
+GrB_Info GrB_Semiring_get_INT32  (GrB_Semiring, int32_t * , GrB_Field) ;
 GrB_Info GrB_Semiring_get_SIZE   (GrB_Semiring, size_t *  , GrB_Field) ;
 GrB_Info GrB_Semiring_get_VOID   (GrB_Semiring, void *    , GrB_Field) ;
 
 GrB_Info GrB_Descriptor_get_Scalar (GrB_Descriptor, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Descriptor_get_String (GrB_Descriptor, char *    , GrB_Field) ;
-GrB_Info GrB_Descriptor_get_ENUM   (GrB_Descriptor, int *     , GrB_Field) ;
+GrB_Info GrB_Descriptor_get_INT32  (GrB_Descriptor, int32_t * , GrB_Field) ;
 GrB_Info GrB_Descriptor_get_SIZE   (GrB_Descriptor, size_t *  , GrB_Field) ;
 GrB_Info GrB_Descriptor_get_VOID   (GrB_Descriptor, void *    , GrB_Field) ;
 
 GrB_Info GrB_Type_get_Scalar (GrB_Type, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Type_get_String (GrB_Type, char *    , GrB_Field) ;
-GrB_Info GrB_Type_get_ENUM   (GrB_Type, int *     , GrB_Field) ;
+GrB_Info GrB_Type_get_INT32  (GrB_Type, int32_t * , GrB_Field) ;
 GrB_Info GrB_Type_get_SIZE   (GrB_Type, size_t *  , GrB_Field) ;
 GrB_Info GrB_Type_get_VOID   (GrB_Type, void *    , GrB_Field) ;
 
 GrB_Info GrB_Global_get_Scalar (GrB_Global, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Global_get_String (GrB_Global, char *    , GrB_Field) ;
-GrB_Info GrB_Global_get_ENUM   (GrB_Global, int *     , GrB_Field) ;
+GrB_Info GrB_Global_get_INT32  (GrB_Global, int32_t * , GrB_Field) ;
 GrB_Info GrB_Global_get_SIZE   (GrB_Global, size_t *  , GrB_Field) ;
 GrB_Info GrB_Global_get_VOID   (GrB_Global, void *    , GrB_Field) ;
 
 GrB_Info GxB_Context_get_Scalar (GxB_Context, GrB_Scalar, GrB_Field) ;
 GrB_Info GxB_Context_get_String (GxB_Context, char *    , GrB_Field) ;
-GrB_Info GxB_Context_get_ENUM   (GxB_Context, int *     , GrB_Field) ;
+GrB_Info GxB_Context_get_INT    (GxB_Context, int32_t * , GrB_Field) ;
 GrB_Info GxB_Context_get_SIZE   (GxB_Context, size_t *  , GrB_Field) ;
 GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
 
@@ -4172,7 +4172,7 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_Scalar_get_Scalar ,               \
                         char *      : GrB_Scalar_get_String ,               \
-                        int *       : GrB_Scalar_get_ENUM   ,               \
+                        int32_t *   : GrB_Scalar_get_INT32  ,               \
                         size_t *    : GrB_Scalar_get_SIZE   ,               \
                         void *      : GrB_Scalar_get_VOID                   \
                 ) ,                                                         \
@@ -4182,7 +4182,7 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_Vector_get_Scalar ,               \
                         char *      : GrB_Vector_get_String ,               \
-                        int *       : GrB_Vector_get_ENUM   ,               \
+                        int32_t *   : GrB_Vector_get_INT32  ,               \
                         size_t *    : GrB_Vector_get_SIZE   ,               \
                         void *      : GrB_Vector_get_VOID                   \
                 ) ,                                                         \
@@ -4192,7 +4192,7 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_Matrix_get_Scalar ,               \
                         char *      : GrB_Matrix_get_String ,               \
-                        int *       : GrB_Matrix_get_ENUM   ,               \
+                        int32_t *   : GrB_Matrix_get_INT32  ,               \
                         size_t *    : GrB_Matrix_get_SIZE   ,               \
                         void *      : GrB_Matrix_get_VOID                   \
                 ) ,                                                         \
@@ -4202,7 +4202,7 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_UnaryOp_get_Scalar ,              \
                         char *      : GrB_UnaryOp_get_String ,              \
-                        int *       : GrB_UnaryOp_get_ENUM   ,              \
+                        int32_t *   : GrB_UnaryOp_get_INT32  ,              \
                         size_t *    : GrB_UnaryOp_get_SIZE   ,              \
                         void *      : GrB_UnaryOp_get_VOID                  \
                 ) ,                                                         \
@@ -4212,7 +4212,7 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_IndexUnaryOp_get_Scalar ,         \
                         char *      : GrB_IndexUnaryOp_get_String ,         \
-                        int *       : GrB_IndexUnaryOp_get_ENUM   ,         \
+                        int32_t *   : GrB_IndexUnaryOp_get_INT32  ,         \
                         size_t *    : GrB_IndexUnaryOp_get_SIZE   ,         \
                         void *      : GrB_IndexUnaryOp_get_VOID             \
                 ) ,                                                         \
@@ -4222,7 +4222,7 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_BinaryOp_get_Scalar ,             \
                         char *      : GrB_BinaryOp_get_String ,             \
-                        int *       : GrB_BinaryOp_get_ENUM   ,             \
+                        int32_t *   : GrB_BinaryOp_get_INT32  ,             \
                         size_t *    : GrB_BinaryOp_get_SIZE   ,             \
                         void *      : GrB_BinaryOp_get_VOID                 \
                 ) ,                                                         \
@@ -4232,7 +4232,7 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_Monoid_get_Scalar ,               \
                         char *      : GrB_Monoid_get_String ,               \
-                        int *       : GrB_Monoid_get_ENUM   ,               \
+                        int32_t *   : GrB_Monoid_get_INT32  ,               \
                         size_t *    : GrB_Monoid_get_SIZE   ,               \
                         void *      : GrB_Monoid_get_VOID                   \
                 ) ,                                                         \
@@ -4242,7 +4242,7 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_Semiring_get_Scalar ,             \
                         char *      : GrB_Semiring_get_String ,             \
-                        int *       : GrB_Semiring_get_ENUM   ,             \
+                        int32_t *   : GrB_Semiring_get_INT32  ,             \
                         size_t *    : GrB_Semiring_get_SIZE   ,             \
                         void *      : GrB_Semiring_get_VOID                 \
                 ) ,                                                         \
@@ -4252,7 +4252,7 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_Type_get_Scalar ,                 \
                         char *      : GrB_Type_get_String ,                 \
-                        int *       : GrB_Type_get_ENUM   ,                 \
+                        int32_t *   : GrB_Type_get_INT32  ,                 \
                         size_t *    : GrB_Type_get_SIZE   ,                 \
                         void *      : GrB_Type_get_VOID                     \
                 ) ,                                                         \
@@ -4262,7 +4262,7 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_Descriptor_get_Scalar ,           \
                         char *      : GrB_Descriptor_get_String ,           \
-                        int *       : GrB_Descriptor_get_ENUM   ,           \
+                        int32_t *   : GrB_Descriptor_get_INT32  ,           \
                         size_t *    : GrB_Descriptor_get_SIZE   ,           \
                         void *      : GrB_Descriptor_get_VOID               \
                 ) ,                                                         \
@@ -4272,7 +4272,7 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_Global_get_Scalar ,               \
                         char *      : GrB_Global_get_String ,               \
-                        int *       : GrB_Global_get_ENUM   ,               \
+                        int32_t *   : GrB_Global_get_INT32  ,               \
                         size_t *    : GrB_Global_get_SIZE   ,               \
                         void *      : GrB_Global_get_VOID                   \
                 ) ,                                                         \
@@ -4282,7 +4282,7 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                     (value),                                                \
                         GrB_Scalar  : GxB_Context_get_Scalar ,              \
                         char *      : GxB_Context_get_String ,              \
-                        int *       : GxB_Context_get_ENUM   ,              \
+                        int32_t *   : GxB_Context_get_INT    ,              \
                         size_t *    : GxB_Context_get_SIZE   ,              \
                         void *      : GxB_Context_get_VOID                  \
                 ) ,                                                         \
@@ -4292,7 +4292,7 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                     (value),                                                \
                         GrB_Scalar  : GxB_Serialized_get_Scalar ,           \
                         char *      : GxB_Serialized_get_String ,           \
-                        int *       : GxB_Serialized_get_ENUM   ,           \
+                        int32_t *   : GxB_Serialized_get_INT32  ,           \
                         size_t *    : GxB_Serialized_get_SIZE   ,           \
                         void *      : GxB_Serialized_get_VOID               \
                 ) ,                                                         \
@@ -4302,7 +4302,7 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                     (value),                                                \
                         GrB_Scalar  : GxB_Serialized_get_Scalar ,           \
                         char *      : GxB_Serialized_get_String ,           \
-                        int *       : GxB_Serialized_get_ENUM   ,           \
+                        int32_t *   : GxB_Serialized_get_INT32  ,           \
                         size_t *    : GxB_Serialized_get_SIZE   ,           \
                         void *      : GxB_Serialized_get_VOID               \
                 )                                                           \
@@ -4315,64 +4315,64 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
 
 GrB_Info GrB_Scalar_set_Scalar (GrB_Scalar, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Scalar_set_String (GrB_Scalar, char *    , GrB_Field) ;
-GrB_Info GrB_Scalar_set_ENUM   (GrB_Scalar, int       , GrB_Field) ;
+GrB_Info GrB_Scalar_set_INT32  (GrB_Scalar, int32_t   , GrB_Field) ;
 GrB_Info GrB_Scalar_set_VOID   (GrB_Scalar, void *    , GrB_Field, size_t) ;
 
 GrB_Info GrB_Vector_set_Scalar (GrB_Vector, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Vector_set_String (GrB_Vector, char *    , GrB_Field) ;
-GrB_Info GrB_Vector_set_ENUM   (GrB_Vector, int       , GrB_Field) ;
+GrB_Info GrB_Vector_set_INT32  (GrB_Vector, int32_t   , GrB_Field) ;
 GrB_Info GrB_Vector_set_VOID   (GrB_Vector, void *    , GrB_Field, size_t) ;
 
 GrB_Info GrB_Matrix_set_Scalar (GrB_Matrix, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Matrix_set_String (GrB_Matrix, char *    , GrB_Field) ;
-GrB_Info GrB_Matrix_set_ENUM   (GrB_Matrix, int       , GrB_Field) ;
+GrB_Info GrB_Matrix_set_INT32  (GrB_Matrix, int32_t   , GrB_Field) ;
 GrB_Info GrB_Matrix_set_VOID   (GrB_Matrix, void *    , GrB_Field, size_t) ;
 
 GrB_Info GrB_UnaryOp_set_Scalar (GrB_UnaryOp, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_UnaryOp_set_String (GrB_UnaryOp, char *    , GrB_Field) ;
-GrB_Info GrB_UnaryOp_set_ENUM   (GrB_UnaryOp, int       , GrB_Field) ;
+GrB_Info GrB_UnaryOp_set_INT32  (GrB_UnaryOp, int32_t   , GrB_Field) ;
 GrB_Info GrB_UnaryOp_set_VOID   (GrB_UnaryOp, void *    , GrB_Field, size_t) ;
 
 GrB_Info GrB_IndexUnaryOp_set_Scalar (GrB_IndexUnaryOp, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_IndexUnaryOp_set_String (GrB_IndexUnaryOp, char *    , GrB_Field) ;
-GrB_Info GrB_IndexUnaryOp_set_ENUM   (GrB_IndexUnaryOp, int       , GrB_Field) ;
+GrB_Info GrB_IndexUnaryOp_set_INT32  (GrB_IndexUnaryOp, int32_t   , GrB_Field) ;
 GrB_Info GrB_IndexUnaryOp_set_VOID   (GrB_IndexUnaryOp, void *    , GrB_Field,
                                                                     size_t) ;
 
 GrB_Info GrB_BinaryOp_set_Scalar (GrB_BinaryOp, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_BinaryOp_set_String (GrB_BinaryOp, char *    , GrB_Field) ;
-GrB_Info GrB_BinaryOp_set_ENUM   (GrB_BinaryOp, int       , GrB_Field) ;
+GrB_Info GrB_BinaryOp_set_INT32  (GrB_BinaryOp, int32_t   , GrB_Field) ;
 GrB_Info GrB_BinaryOp_set_VOID   (GrB_BinaryOp, void *    , GrB_Field, size_t) ;
 
 GrB_Info GrB_Monoid_set_Scalar (GrB_Monoid, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Monoid_set_String (GrB_Monoid, char *    , GrB_Field) ;
-GrB_Info GrB_Monoid_set_ENUM   (GrB_Monoid, int       , GrB_Field) ;
+GrB_Info GrB_Monoid_set_INT32  (GrB_Monoid, int32_t   , GrB_Field) ;
 GrB_Info GrB_Monoid_set_VOID   (GrB_Monoid, void *    , GrB_Field, size_t) ;
 
 GrB_Info GrB_Semiring_set_Scalar (GrB_Semiring, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Semiring_set_String (GrB_Semiring, char *    , GrB_Field) ;
-GrB_Info GrB_Semiring_set_ENUM   (GrB_Semiring, int       , GrB_Field) ;
+GrB_Info GrB_Semiring_set_INT32  (GrB_Semiring, int32_t   , GrB_Field) ;
 GrB_Info GrB_Semiring_set_VOID   (GrB_Semiring, void *    , GrB_Field, size_t) ;
 
 GrB_Info GrB_Descriptor_set_Scalar (GrB_Descriptor, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Descriptor_set_String (GrB_Descriptor, char *    , GrB_Field) ;
-GrB_Info GrB_Descriptor_set_ENUM   (GrB_Descriptor, int       , GrB_Field) ;
+GrB_Info GrB_Descriptor_set_INT32  (GrB_Descriptor, int32_t   , GrB_Field) ;
 GrB_Info GrB_Descriptor_set_VOID   (GrB_Descriptor, void *    , GrB_Field,
                                                                 size_t) ;
 
 GrB_Info GrB_Type_set_Scalar (GrB_Type, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Type_set_String (GrB_Type, char *    , GrB_Field) ;
-GrB_Info GrB_Type_set_ENUM   (GrB_Type, int       , GrB_Field) ;
+GrB_Info GrB_Type_set_INT32  (GrB_Type, int32_t   , GrB_Field) ;
 GrB_Info GrB_Type_set_VOID   (GrB_Type, void *    , GrB_Field, size_t) ;
 
 GrB_Info GrB_Global_set_Scalar (GrB_Global, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Global_set_String (GrB_Global, char *    , GrB_Field) ;
-GrB_Info GrB_Global_set_ENUM   (GrB_Global, int       , GrB_Field) ;
+GrB_Info GrB_Global_set_INT32  (GrB_Global, int32_t   , GrB_Field) ;
 GrB_Info GrB_Global_set_VOID   (GrB_Global, void *    , GrB_Field, size_t) ;
 
 GrB_Info GxB_Context_set_Scalar (GxB_Context, GrB_Scalar, GrB_Field) ;
 GrB_Info GxB_Context_set_String (GxB_Context, char *    , GrB_Field) ;
-GrB_Info GxB_Context_set_ENUM   (GxB_Context, int       , GrB_Field) ;
+GrB_Info GxB_Context_set_INT    (GxB_Context, int32_t   , GrB_Field) ;
 GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
 
 // GrB_set (object, value, field) or (object, value, field, size) for _VOID
@@ -4387,7 +4387,7 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_Scalar_set_Scalar ,               \
                         char *      : GrB_Scalar_set_String ,               \
-                        int         : GrB_Scalar_set_ENUM   ,               \
+                        int32_t     : GrB_Scalar_set_INT32  ,               \
                         void *      : GrB_Scalar_set_VOID                   \
                 ) ,                                                         \
             GrB_Vector :                                                    \
@@ -4396,7 +4396,7 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_Vector_set_Scalar ,               \
                         char *      : GrB_Vector_set_String ,               \
-                        int         : GrB_Vector_set_ENUM   ,               \
+                        int32_t     : GrB_Vector_set_INT32  ,               \
                         void *      : GrB_Vector_set_VOID                   \
                 ) ,                                                         \
             GrB_Matrix :                                                    \
@@ -4405,7 +4405,7 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_Matrix_set_Scalar ,               \
                         char *      : GrB_Matrix_set_String ,               \
-                        int         : GrB_Matrix_set_ENUM   ,               \
+                        int32_t     : GrB_Matrix_set_INT32  ,               \
                         void *      : GrB_Matrix_set_VOID                   \
                 ) ,                                                         \
             GrB_UnaryOp :                                                   \
@@ -4414,7 +4414,7 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_UnaryOp_set_Scalar ,              \
                         char *      : GrB_UnaryOp_set_String ,              \
-                        int         : GrB_UnaryOp_set_ENUM   ,              \
+                        int32_t     : GrB_UnaryOp_set_INT32  ,              \
                         void *      : GrB_UnaryOp_set_VOID                  \
                 ) ,                                                         \
             GrB_IndexUnaryOp :                                              \
@@ -4423,7 +4423,7 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_IndexUnaryOp_set_Scalar ,         \
                         char *      : GrB_IndexUnaryOp_set_String ,         \
-                        int         : GrB_IndexUnaryOp_set_ENUM   ,         \
+                        int32_t     : GrB_IndexUnaryOp_set_INT32  ,         \
                         void *      : GrB_IndexUnaryOp_set_VOID             \
                 ) ,                                                         \
             GrB_BinaryOp :                                                  \
@@ -4432,7 +4432,7 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_BinaryOp_set_Scalar ,             \
                         char *      : GrB_BinaryOp_set_String ,             \
-                        int         : GrB_BinaryOp_set_ENUM   ,             \
+                        int32_t     : GrB_BinaryOp_set_INT32  ,             \
                         void *      : GrB_BinaryOp_set_VOID                 \
                 ) ,                                                         \
             GrB_Monoid :                                                    \
@@ -4441,7 +4441,7 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_Monoid_set_Scalar ,               \
                         char *      : GrB_Monoid_set_String ,               \
-                        int         : GrB_Monoid_set_ENUM   ,               \
+                        int32_t     : GrB_Monoid_set_INT32  ,               \
                         void *      : GrB_Monoid_set_VOID                   \
                 ) ,                                                         \
             GrB_Semiring :                                                  \
@@ -4450,7 +4450,7 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_Semiring_set_Scalar ,             \
                         char *      : GrB_Semiring_set_String ,             \
-                        int         : GrB_Semiring_set_ENUM   ,             \
+                        int32_t     : GrB_Semiring_set_INT32  ,             \
                         void *      : GrB_Semiring_set_VOID                 \
                 ) ,                                                         \
             GrB_Type :                                                      \
@@ -4459,7 +4459,7 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_Type_set_Scalar ,                 \
                         char *      : GrB_Type_set_String ,                 \
-                        int         : GrB_Type_set_ENUM   ,                 \
+                        int32_t     : GrB_Type_set_INT32  ,                 \
                         void *      : GrB_Type_set_VOID                     \
                 ) ,                                                         \
             GrB_Descriptor :                                                \
@@ -4468,7 +4468,7 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_Descriptor_set_Scalar ,           \
                         char *      : GrB_Descriptor_set_String ,           \
-                        int         : GrB_Descriptor_set_ENUM   ,           \
+                        int32_t     : GrB_Descriptor_set_INT32  ,           \
                         void *      : GrB_Descriptor_set_VOID               \
                 ) ,                                                         \
             GrB_Global :                                                    \
@@ -4477,7 +4477,7 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
                     (value),                                                \
                         GrB_Scalar  : GrB_Global_set_Scalar ,               \
                         char *      : GrB_Global_set_String ,               \
-                        int         : GrB_Global_set_ENUM   ,               \
+                        int32_t     : GrB_Global_set_INT32  ,               \
                         void *      : GrB_Global_set_VOID                   \
                 ) ,                                                         \
             GxB_Context :                                                   \
@@ -4486,7 +4486,7 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
                     (value),                                                \
                         GrB_Scalar  : GxB_Context_set_Scalar ,              \
                         char *      : GxB_Context_set_String ,              \
-                        int         : GxB_Context_set_ENUM   ,              \
+                        int32_t     : GxB_Context_set_INT    ,              \
                         void *      : GxB_Context_set_VOID                  \
                 )                                                           \
     ) (object, value, __VA_ARGS__)

@@ -14,7 +14,7 @@
 static GrB_Info GB_desc_get
 (
     GrB_Descriptor desc,        // descriptor to query; NULL is ok
-    int *value,                 // return value of the descriptor
+    int32_t *value,             // return value of the descriptor
     int field                   // parameter to query
 )
 {
@@ -101,7 +101,7 @@ GrB_Info GrB_Descriptor_get_Scalar
     // get the field
     //--------------------------------------------------------------------------
 
-    int i ;
+    int32_t i ;
     GrB_Info info = GB_desc_get (desc, &i, field) ;
     if (info == GrB_SUCCESS)
     { 
@@ -199,13 +199,13 @@ GrB_Info GrB_Descriptor_get_String
 }
 
 //------------------------------------------------------------------------------
-// GrB_Descriptor_get_ENUM
+// GrB_Descriptor_get_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Descriptor_get_ENUM
+GrB_Info GrB_Descriptor_get_INT32
 (
     GrB_Descriptor desc,
-    int * value,
+    int32_t * value,
     GrB_Field field
 )
 { 
@@ -214,7 +214,7 @@ GrB_Info GrB_Descriptor_get_ENUM
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Descriptor_get_ENUM (desc, value, field)") ;
+    GB_WHERE1 ("GrB_Descriptor_get_INT32 (desc, value, field)") ;
     GB_RETURN_IF_FAULTY (desc) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for get", GB0) ;

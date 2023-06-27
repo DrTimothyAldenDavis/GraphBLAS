@@ -40,7 +40,7 @@ void mexFunction
     size_t size ;
     char name [256] ;
     char defn [2048] ;
-    int code, i ;
+    int32_t code, i ;
     float fvalue ;
     double dvalue ;
 
@@ -52,16 +52,16 @@ void mexFunction
     // GxB_Context get/set
     //--------------------------------------------------------------------------
 
-    int nthreads1 = 999, nthreads2 = 777 ;
+    int32_t nthreads1 = 999, nthreads2 = 777 ;
     GxB_get (GxB_NTHREADS, &nthreads1) ;
     printf ("nthreads: %d\n", nthreads1) ;
 
-    OK (GxB_Context_get_ENUM_ (GxB_CONTEXT_WORLD, &nthreads2, GxB_NTHREADS)) ;
+    OK (GxB_Context_get_INT_ (GxB_CONTEXT_WORLD, &nthreads2, GxB_NTHREADS)) ;
     printf ("nthreads: %d\n", nthreads2) ;
     CHECK (nthreads1 == nthreads2) ;
 
-    OK (GxB_Context_set_ENUM_ (GxB_CONTEXT_WORLD, 7, GxB_NTHREADS)) ;
-    OK (GxB_Context_get_ENUM_ (GxB_CONTEXT_WORLD, &nthreads2, GxB_NTHREADS)) ;
+    OK (GxB_Context_set_INT_ (GxB_CONTEXT_WORLD, 7, GxB_NTHREADS)) ;
+    OK (GxB_Context_get_INT_ (GxB_CONTEXT_WORLD, &nthreads2, GxB_NTHREADS)) ;
     CHECK (nthreads2 == 7) ;
 
     OK (GxB_Global_Option_get (GxB_NTHREADS, &i)) ;
@@ -75,13 +75,13 @@ void mexFunction
 
     GxB_set (GxB_NTHREADS, nthreads1) ;
 
-    int gpu ;
-    OK (GxB_Context_get_ENUM_ (GxB_CONTEXT_WORLD, &gpu, GxB_GPU_ID)) ;
+    int32_t gpu ;
+    OK (GxB_Context_get_INT_ (GxB_CONTEXT_WORLD, &gpu, GxB_GPU_ID)) ;
     CHECK (gpu == -1) ;
 
     gpu = 4 ;
-    OK (GxB_Context_set_ENUM_ (GxB_CONTEXT_WORLD, 3, GxB_GPU_ID)) ;
-    OK (GxB_Context_get_ENUM_ (GxB_CONTEXT_WORLD, &gpu, GxB_GPU_ID)) ;
+    OK (GxB_Context_set_INT_ (GxB_CONTEXT_WORLD, 3, GxB_GPU_ID)) ;
+    OK (GxB_Context_get_INT_ (GxB_CONTEXT_WORLD, &gpu, GxB_GPU_ID)) ;
     CHECK (gpu == -1) ;
 
     OK (GxB_Context_set_Scalar_ (GxB_CONTEXT_WORLD, s_int32, GxB_GPU_ID)) ;
@@ -120,9 +120,9 @@ void mexFunction
     ERR (GxB_Context_get_String_ (GxB_CONTEXT_WORLD, name, 999)) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GxB_Context_get_ENUM_ (GxB_CONTEXT_WORLD, &i, GrB_NAME)) ;
+    ERR (GxB_Context_get_INT_ (GxB_CONTEXT_WORLD, &i, GrB_NAME)) ;
     ERR (GxB_Context_get_Scalar_ (GxB_CONTEXT_WORLD, s_fp32, GrB_NAME)) ;
-    ERR (GxB_Context_set_ENUM_ (GxB_CONTEXT_WORLD, 7, GrB_NAME)) ;
+    ERR (GxB_Context_set_INT_ (GxB_CONTEXT_WORLD, 7, GrB_NAME)) ;
     ERR (GxB_Context_set_Scalar_ (GxB_CONTEXT_WORLD, s_fp64, GrB_NAME)) ;
 
     expected = GrB_EMPTY_OBJECT ;

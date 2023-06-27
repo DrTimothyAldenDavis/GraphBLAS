@@ -98,13 +98,13 @@ GrB_Info GrB_Semiring_get_String
 }
 
 //------------------------------------------------------------------------------
-// GrB_Semiring_get_ENUM
+// GrB_Semiring_get_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Semiring_get_ENUM
+GrB_Info GrB_Semiring_get_INT32
 (
     GrB_Semiring semiring,
-    int * value,
+    int32_t * value,
     GrB_Field field
 )
 { 
@@ -113,7 +113,7 @@ GrB_Info GrB_Semiring_get_ENUM
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Semiring_get_ENUM (semiring, value, field)") ;
+    GB_WHERE1 ("GrB_Semiring_get_INT32 (semiring, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_SEMIRING_OK (semiring, "semiring to get option", GB0) ;

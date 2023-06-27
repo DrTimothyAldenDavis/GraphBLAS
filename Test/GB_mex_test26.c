@@ -44,7 +44,7 @@ void mexFunction
     size_t size ;
     char name [256] ;
     char defn [2048] ;
-    int code, i ;
+    int32_t code, i ;
     float fvalue ;
     double dvalue ;
 
@@ -144,43 +144,43 @@ void mexFunction
     CHECK (MATCH (name, "GxB_FC64_t")) ;
 
     // type code
-    OK (GrB_Type_get_ENUM_(GrB_BOOL, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_BOOL, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_BOOL_CODE) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_INT8, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_INT8, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_INT8_CODE) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_INT16, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_INT16, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_INT16_CODE) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_INT32, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_INT32, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_INT32_CODE) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_INT64, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_INT64, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_INT64_CODE) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_UINT8, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_UINT8, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_UINT8_CODE) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_UINT16, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_UINT16, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_UINT16_CODE) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_UINT32, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_UINT32, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_UINT32_CODE) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_UINT64, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_UINT64, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_UINT64_CODE) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_FP32, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_FP32, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_FP64, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_FP64, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_FP64_CODE) ;
 
-    OK (GrB_Type_get_ENUM_(GxB_FC32, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GxB_FC32, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GxB_FC32_CODE) ;
 
-    OK (GrB_Type_get_ENUM_(GxB_FC64, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GxB_FC64, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GxB_FC64_CODE) ;
 
     // type size (using a GrB_Scalar)
@@ -236,44 +236,44 @@ void mexFunction
     OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
     CHECK (i == sizeof (double complex)) ;
 
-    // type size (using an int)
-    OK (GrB_Type_get_ENUM_(GrB_BOOL, &i, GrB_SIZE)) ;
+    // type size (using an int32_t)
+    OK (GrB_Type_get_INT32_(GrB_BOOL, &i, GrB_SIZE)) ;
     CHECK (i == sizeof (bool)) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_INT8, &i, GrB_SIZE)) ;
+    OK (GrB_Type_get_INT32_(GrB_INT8, &i, GrB_SIZE)) ;
     CHECK (i == sizeof (int8_t)) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_INT16, &i, GrB_SIZE)) ;
+    OK (GrB_Type_get_INT32_(GrB_INT16, &i, GrB_SIZE)) ;
     CHECK (i == sizeof (int16_t)) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_INT32, &i, GrB_SIZE)) ;
+    OK (GrB_Type_get_INT32_(GrB_INT32, &i, GrB_SIZE)) ;
     CHECK (i == sizeof (int32_t)) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_INT64, &i, GrB_SIZE)) ;
+    OK (GrB_Type_get_INT32_(GrB_INT64, &i, GrB_SIZE)) ;
     CHECK (i == sizeof (int64_t)) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_UINT8, &i, GrB_SIZE)) ;
+    OK (GrB_Type_get_INT32_(GrB_UINT8, &i, GrB_SIZE)) ;
     CHECK (i == sizeof (uint8_t)) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_UINT16, &i, GrB_SIZE)) ;
+    OK (GrB_Type_get_INT32_(GrB_UINT16, &i, GrB_SIZE)) ;
     CHECK (i == sizeof (uint16_t)) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_UINT32, &i, GrB_SIZE)) ;
+    OK (GrB_Type_get_INT32_(GrB_UINT32, &i, GrB_SIZE)) ;
     CHECK (i == sizeof (uint32_t)) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_UINT64, &i, GrB_SIZE)) ;
+    OK (GrB_Type_get_INT32_(GrB_UINT64, &i, GrB_SIZE)) ;
     CHECK (i == sizeof (uint64_t)) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_FP32, &i, GrB_SIZE)) ;
+    OK (GrB_Type_get_INT32_(GrB_FP32, &i, GrB_SIZE)) ;
     CHECK (i == sizeof (float)) ;
 
-    OK (GrB_Type_get_ENUM_(GrB_FP64, &i, GrB_SIZE)) ;
+    OK (GrB_Type_get_INT32_(GrB_FP64, &i, GrB_SIZE)) ;
     CHECK (i == sizeof (double)) ;
 
-    OK (GrB_Type_get_ENUM_(GxB_FC32, &i, GrB_SIZE)) ;
+    OK (GrB_Type_get_INT32_(GxB_FC32, &i, GrB_SIZE)) ;
     CHECK (i == sizeof (float complex)) ;
 
-    OK (GrB_Type_get_ENUM_(GxB_FC64, &i, GrB_SIZE)) ;
+    OK (GrB_Type_get_INT32_(GxB_FC64, &i, GrB_SIZE)) ;
     CHECK (i == sizeof (double complex)) ;
 
 
@@ -317,14 +317,14 @@ void mexFunction
     OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
     CHECK (i == sizeof (mytype)) ;
 
-    OK (GrB_Type_get_ENUM_(type, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(type, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_UDT_CODE) ;
 
     OK (GrB_Type_get_String_(type, name, GrB_ELTYPE_STRING)) ;
     CHECK (MATCH (name, "user name of a type")) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_Type_get_ENUM_(type, &code, GrB_ELTYPE_STRING)) ;
+    ERR (GrB_Type_get_INT32_(type, &code, GrB_ELTYPE_STRING)) ;
 
     i = -1 ;
     OK (GrB_Type_get_Scalar_(type, s_int32, GrB_ELTYPE_CODE)) ;
@@ -344,7 +344,7 @@ void mexFunction
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Type_get_VOID_(type, nothing, 0)) ;
     ERR (GrB_Type_set_Scalar_(type, s_int32, 0)) ;
-    ERR (GrB_Type_set_ENUM_(type, 3, 0)) ;
+    ERR (GrB_Type_set_INT32_(type, 3, 0)) ;
     ERR (GrB_Type_set_VOID_(type, nothing, 0, 256)) ;
 
     //--------------------------------------------------------------------------
@@ -364,7 +364,7 @@ void mexFunction
     OK (GrB_Scalar_get_String_(s, name, GrB_NAME)) ;
     CHECK (MATCH (name, "")) ;
 
-    OK (GrB_Scalar_get_ENUM_(s, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Scalar_get_INT32_(s, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
     i = -1 ;
@@ -374,32 +374,32 @@ void mexFunction
 
     GxB_print (s, 3) ;
 
-    OK (GrB_Scalar_get_ENUM_(s, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
+    OK (GrB_Scalar_get_INT32_(s, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
     printf ("scalar storage: %d\n", i) ;
     CHECK (i == GrB_COLMAJOR) ;
 
-    OK (GrB_Scalar_get_ENUM_(s, &i, GxB_FORMAT)) ;
+    OK (GrB_Scalar_get_INT32_(s, &i, GxB_FORMAT)) ;
     printf ("scalar storage: %d\n", i) ;
     CHECK (i == GxB_BY_COL) ;
 
-    OK (GrB_Scalar_get_ENUM_(s, &i, GxB_SPARSITY_CONTROL)) ;
+    OK (GrB_Scalar_get_INT32_(s, &i, GxB_SPARSITY_CONTROL)) ;
     printf ("sparsity control: %d\n", i) ;
     CHECK (i == GxB_AUTO_SPARSITY) ;
 
     GxB_print (s_int32, 3) ;
-    OK (GrB_Scalar_get_ENUM_(s_int32, &i, GxB_SPARSITY_STATUS)) ;
+    OK (GrB_Scalar_get_INT32_(s_int32, &i, GxB_SPARSITY_STATUS)) ;
     printf ("sparsity status: %d\n", i) ;
     CHECK (i == GxB_FULL) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_Scalar_get_ENUM_(s_int32, &i, 0)) ;
+    ERR (GrB_Scalar_get_INT32_(s_int32, &i, 0)) ;
     ERR (GrB_Scalar_get_SIZE_(s, &size, 0)) ;
 
     ERR (GrB_Scalar_set_Scalar_(s, s_int32, 0)) ;
     OK (GrB_Scalar_set_Scalar_(s, s_int32, GrB_STORAGE_ORIENTATION_HINT)) ;
 
-    ERR (GrB_Scalar_set_ENUM_(s, 0, 0)) ;
-    OK (GrB_Scalar_set_ENUM_(s, 0, GrB_STORAGE_ORIENTATION_HINT)) ;
+    ERR (GrB_Scalar_set_INT32_(s, 0, 0)) ;
+    OK (GrB_Scalar_set_INT32_(s, 0, GrB_STORAGE_ORIENTATION_HINT)) ;
 
     OK (GrB_Scalar_set_String_(s, "scalar name", GrB_NAME)) ;
     OK (GrB_Scalar_get_String_(s, name, GrB_NAME)) ;
@@ -427,7 +427,7 @@ void mexFunction
     OK (GrB_Vector_get_String_(v, name, GrB_NAME)) ;
     CHECK (MATCH (name, "")) ;
 
-    OK (GrB_Vector_get_ENUM_(v, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Vector_get_INT32_(v, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
     i = -1 ;
@@ -437,31 +437,31 @@ void mexFunction
 
     GxB_print (v, 3) ;
 
-    OK (GrB_Vector_get_ENUM_(v, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
+    OK (GrB_Vector_get_INT32_(v, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
     printf ("vector storage: %d\n", i) ;
     CHECK (i == GrB_COLMAJOR) ;
 
-    OK (GrB_Vector_get_ENUM_(v, &i, GxB_FORMAT)) ;
+    OK (GrB_Vector_get_INT32_(v, &i, GxB_FORMAT)) ;
     printf ("vector storage: %d\n", i) ;
     CHECK (i == GxB_BY_COL) ;
 
-    OK (GrB_Vector_set_ENUM_(v, GrB_ROWMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
-    OK (GrB_Vector_get_ENUM_(v, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
+    OK (GrB_Vector_set_INT32_(v, GrB_ROWMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
+    OK (GrB_Vector_get_INT32_(v, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
     CHECK (i == GrB_COLMAJOR) ;
 
-    OK (GrB_Vector_get_ENUM_(v, &i, GxB_SPARSITY_CONTROL)) ;
+    OK (GrB_Vector_get_INT32_(v, &i, GxB_SPARSITY_CONTROL)) ;
     printf ("sparsity control: %d\n", i) ;
     CHECK (i == GxB_AUTO_SPARSITY) ;
 
     OK (GrB_assign (v, NULL, NULL, 1, GrB_ALL, 10, NULL)) ;
     GxB_print (v, 3) ;
 
-    OK (GrB_Vector_get_ENUM_(v, &i, GxB_SPARSITY_STATUS)) ;
+    OK (GrB_Vector_get_INT32_(v, &i, GxB_SPARSITY_STATUS)) ;
     printf ("sparsity status: %d\n", i) ;
     CHECK (i == GxB_FULL) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_Vector_get_ENUM_(v, &i, 0)) ;
+    ERR (GrB_Vector_get_INT32_(v, &i, 0)) ;
     ERR (GrB_Vector_get_SIZE_(v, &size, 0)) ;
 
     fvalue = -1 ;
@@ -481,12 +481,12 @@ void mexFunction
     OK (GrB_Vector_set_Scalar_(v, s_int32, GxB_SPARSITY_CONTROL)) ;
     GxB_print (v, 3) ;
 
-    OK (GrB_Vector_get_ENUM_(v, &i, GxB_SPARSITY_STATUS)) ;
+    OK (GrB_Vector_get_INT32_(v, &i, GxB_SPARSITY_STATUS)) ;
     printf ("sparsity status: %d\n", i) ;
     CHECK (i == GxB_BITMAP) ;
 
-    OK (GrB_Vector_set_ENUM_(v, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
-    OK (GrB_Vector_get_ENUM_(v, &i, GxB_SPARSITY_STATUS)) ;
+    OK (GrB_Vector_set_INT32_(v, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
+    OK (GrB_Vector_get_INT32_(v, &i, GxB_SPARSITY_STATUS)) ;
     printf ("sparsity status: %d\n", i) ;
     CHECK (i == GxB_SPARSE) ;
 
@@ -523,7 +523,7 @@ void mexFunction
     OK (GrB_Matrix_get_String_(A, name, GrB_NAME)) ;
     CHECK (MATCH (name, "")) ;
 
-    OK (GrB_Matrix_get_ENUM_(A, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Matrix_get_INT32_(A, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
     i = -1 ;
@@ -533,27 +533,27 @@ void mexFunction
 
     GxB_print (A, 3) ;
 
-    OK (GrB_Matrix_get_ENUM_(A, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
+    OK (GrB_Matrix_get_INT32_(A, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
     printf ("matrix storage: %d\n", i) ;
     CHECK (i == GrB_COLMAJOR) ;
 
-    OK (GrB_Matrix_get_ENUM_(A, &i, GxB_FORMAT)) ;
+    OK (GrB_Matrix_get_INT32_(A, &i, GxB_FORMAT)) ;
     printf ("matrix storage: %d\n", i) ;
     CHECK (i == GxB_BY_COL) ;
 
-    OK (GrB_Matrix_get_ENUM_(A, &i, GxB_SPARSITY_CONTROL)) ;
+    OK (GrB_Matrix_get_INT32_(A, &i, GxB_SPARSITY_CONTROL)) ;
     printf ("sparsity control: %d\n", i) ;
     CHECK (i == GxB_AUTO_SPARSITY) ;
 
     OK (GrB_assign (A, NULL, NULL, 1, GrB_ALL, 5, GrB_ALL, 5, NULL)) ;
     GxB_print (A, 3) ;
 
-    OK (GrB_Matrix_get_ENUM_(A, &i, GxB_SPARSITY_STATUS)) ;
+    OK (GrB_Matrix_get_INT32_(A, &i, GxB_SPARSITY_STATUS)) ;
     printf ("sparsity status: %d\n", i) ;
     CHECK (i == GxB_FULL) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_Matrix_get_ENUM_(A, &i, 0)) ;
+    ERR (GrB_Matrix_get_INT32_(A, &i, 0)) ;
     ERR (GrB_Matrix_get_SIZE_(A, &size, 0)) ;
 
     fvalue = -1 ;
@@ -573,7 +573,7 @@ void mexFunction
     OK (GrB_Matrix_set_Scalar_(A, s_int32, GxB_SPARSITY_CONTROL)) ;
     GxB_print (A, 3) ;
 
-    OK (GrB_Matrix_get_ENUM_(A, &i, GxB_SPARSITY_STATUS)) ;
+    OK (GrB_Matrix_get_INT32_(A, &i, GxB_SPARSITY_STATUS)) ;
     printf ("sparsity status: %d\n", i) ;
     CHECK (i == GxB_BITMAP) ;
 
@@ -602,23 +602,23 @@ void mexFunction
     ERR (GrB_Matrix_set_VOID_(A, nothing, 0, 1)) ;
     ERR (GrB_Matrix_get_SIZE_(A, &size, 999)) ;
 
-    OK (GrB_Matrix_set_ENUM_(A, GrB_ROWMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
-    OK (GrB_Matrix_get_ENUM_(A, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
+    OK (GrB_Matrix_set_INT32_(A, GrB_ROWMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
+    OK (GrB_Matrix_get_INT32_(A, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
     CHECK (i == GrB_ROWMAJOR) ;
-    OK (GrB_Matrix_get_ENUM_(A, &i, GxB_FORMAT)) ;
+    OK (GrB_Matrix_get_INT32_(A, &i, GxB_FORMAT)) ;
     CHECK (i == GxB_BY_ROW) ;
     GxB_print (A, 3) ;
 
-    OK (GrB_Matrix_set_ENUM_(A, GrB_COLMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
-    OK (GrB_Matrix_get_ENUM_(A, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
+    OK (GrB_Matrix_set_INT32_(A, GrB_COLMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
+    OK (GrB_Matrix_get_INT32_(A, &i, GrB_STORAGE_ORIENTATION_HINT)) ;
     CHECK (i == GrB_COLMAJOR) ;
-    OK (GrB_Matrix_get_ENUM_(A, &i, GxB_FORMAT)) ;
+    OK (GrB_Matrix_get_INT32_(A, &i, GxB_FORMAT)) ;
     CHECK (i == GxB_BY_COL) ;
     GxB_print (A, 3) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_Matrix_set_ENUM_(A, 99, GxB_FORMAT)) ;
-    ERR (GrB_Matrix_set_ENUM_(A, 99, 999)) ;
+    ERR (GrB_Matrix_set_INT32_(A, 99, GxB_FORMAT)) ;
+    ERR (GrB_Matrix_set_INT32_(A, 99, 999)) ;
     ERR (GrB_Matrix_get_String_(A, defn, 999)) ;
     ERR (GrB_Matrix_get_Scalar(A, s_int32, 999)) ;
 

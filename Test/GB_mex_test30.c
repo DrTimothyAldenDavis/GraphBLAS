@@ -87,7 +87,7 @@ void mexFunction
     char name [256] ;
     char cname [256] ;
     char defn [2048] ;
-    int code, i ;
+    int32_t code, i ;
     float fvalue ;
     double dvalue ;
 
@@ -201,13 +201,13 @@ void mexFunction
     // other get/set methods for GrB_IndexUnaryOp
     //--------------------------------------------------------------------------
 
-    OK (GrB_IndexUnaryOp_get_ENUM_(GrB_VALUEGE_FP32, &code, GrB_INPUT1TYPE_CODE)) ;
+    OK (GrB_IndexUnaryOp_get_INT32_(GrB_VALUEGE_FP32, &code, GrB_INPUT1TYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
     OK (GrB_IndexUnaryOp_get_String_(GrB_VALUEGE_FP32, name, GrB_INPUT1TYPE_STRING)) ;
     CHECK (MATCH (name, "GrB_FP32")) ;
 
-    OK (GrB_IndexUnaryOp_get_ENUM_(GrB_VALUEGE_FP64, &code, GrB_OUTPUTTYPE_CODE)) ;
+    OK (GrB_IndexUnaryOp_get_INT32_(GrB_VALUEGE_FP64, &code, GrB_OUTPUTTYPE_CODE)) ;
     CHECK (code == GrB_BOOL_CODE) ;
 
     OK (GrB_IndexUnaryOp_get_String_(GrB_VALUEGE_FP64, name, GrB_OUTPUTTYPE_STRING)) ;
@@ -222,11 +222,11 @@ void mexFunction
     CHECK (code == GrB_BOOL_CODE) ;
 
     expected = GrB_NO_VALUE ;
-    ERR (GrB_IndexUnaryOp_get_ENUM_(GrB_TRIL, &code, GrB_INPUT1TYPE_CODE)) ;
+    ERR (GrB_IndexUnaryOp_get_INT32_(GrB_TRIL, &code, GrB_INPUT1TYPE_CODE)) ;
     ERR (GrB_IndexUnaryOp_get_Scalar_(GrB_TRIL, s_int32, GrB_INPUT1TYPE_CODE)) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_IndexUnaryOp_get_ENUM_(GrB_TRIL, &code, GrB_NAME)) ;
+    ERR (GrB_IndexUnaryOp_get_INT32_(GrB_TRIL, &code, GrB_NAME)) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_IndexUnaryOp_get_VOID_(GrB_TRIL, nothing, 0)) ;
@@ -262,7 +262,7 @@ void mexFunction
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_IndexUnaryOp_set_String_(GrB_LNOT, "newname", GxB_JIT_C_NAME)) ;
     ERR (GrB_IndexUnaryOp_set_Scalar_(op, s_int32, 0)) ;
-    ERR (GrB_IndexUnaryOp_set_ENUM_(op, 0, 0)) ;
+    ERR (GrB_IndexUnaryOp_set_INT32_(op, 0, 0)) ;
     ERR (GrB_IndexUnaryOp_set_VOID_(op, nothing, 0, 0)) ;
 
     //--------------------------------------------------------------------------

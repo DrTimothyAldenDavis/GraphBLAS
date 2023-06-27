@@ -14,7 +14,7 @@
 // GB_global_enum_set: get an enum value from the global state
 //------------------------------------------------------------------------------
 
-static GrB_Info GB_global_enum_set (int value, int field)
+static GrB_Info GB_global_enum_set (int32_t value, int field)
 {
 
     switch (field)
@@ -104,7 +104,7 @@ GrB_Info GrB_Global_set_Scalar
     //--------------------------------------------------------------------------
 
     double dvalue = 0 ;
-    int ivalue = 0 ;
+    int32_t ivalue = 0 ;
     int64_t i64value = 0 ;
     GrB_Info info ;
 
@@ -217,13 +217,13 @@ GrB_Info GrB_Global_set_String
 }
 
 //------------------------------------------------------------------------------
-// GrB_Global_set_ENUM
+// GrB_Global_set_INT32
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Global_set_ENUM
+GrB_Info GrB_Global_set_INT32
 (
     GrB_Global g,
-    int value,
+    int32_t value,
     GrB_Field field
 )
 { 
@@ -232,7 +232,7 @@ GrB_Info GrB_Global_set_ENUM
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Global_set_ENUM (g, value, field)") ;
+    GB_WHERE1 ("GrB_Global_set_INT32 (g, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (g) ;
 
     //--------------------------------------------------------------------------
