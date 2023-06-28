@@ -37,8 +37,10 @@ void mexFunction
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Matrix A = NULL ;
     GrB_Vector v = NULL ;
-    GrB_Scalar s = NULL, s_fp64 = NULL, s_int32 = NULL, s_fp32 = NULL ;
+    GrB_Scalar s = NULL, s_fp64 = NULL, s_int32 = NULL, s_fp32 = NULL,
+        s_uint64 = NULL ;
     GrB_Type type = NULL ;
+    uint64_t u64 ;
     uint8_t stuff [256] ;
     void *nothing = stuff ;
     size_t size ;
@@ -51,6 +53,7 @@ void mexFunction
     OK (GrB_Scalar_new (&s_fp64, GrB_FP64)) ;
     OK (GrB_Scalar_new (&s_fp32, GrB_FP32)) ;
     OK (GrB_Scalar_new (&s_int32, GrB_INT32)) ;
+    OK (GrB_Scalar_new (&s_uint64, GrB_UINT64)) ;
 
     //--------------------------------------------------------------------------
     // GrB_Type get/set
@@ -183,58 +186,58 @@ void mexFunction
     OK (GrB_Type_get_INT32_(GxB_FC64, &code, GrB_ELTYPE_CODE)) ;
     CHECK (code == GxB_FC64_CODE) ;
 
-    // type size (using a GrB_Scalar)
-    OK (GrB_Type_get_Scalar_(GrB_BOOL, s_int32, GrB_SIZE)) ;
-    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
-    CHECK (i == sizeof (bool)) ;
+    // type size (using a GrB_Scalar): recommended type of GrB_UINT64
+    OK (GrB_Type_get_Scalar_(GrB_BOOL, s_uint64, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u64, s_uint64)) ;
+    CHECK (u64 == sizeof (bool)) ;
 
-    OK (GrB_Type_get_Scalar_(GrB_INT8, s_int32, GrB_SIZE)) ;
-    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
-    CHECK (i == sizeof (int8_t)) ;
+    OK (GrB_Type_get_Scalar_(GrB_INT8, s_uint64, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u64, s_uint64)) ;
+    CHECK (u64 == sizeof (int8_t)) ;
 
-    OK (GrB_Type_get_Scalar_(GrB_INT16, s_int32, GrB_SIZE)) ;
-    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
-    CHECK (i == sizeof (int16_t)) ;
+    OK (GrB_Type_get_Scalar_(GrB_INT16, s_uint64, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u64, s_uint64)) ;
+    CHECK (u64 == sizeof (int16_t)) ;
 
-    OK (GrB_Type_get_Scalar_(GrB_INT32, s_int32, GrB_SIZE)) ;
-    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
-    CHECK (i == sizeof (int32_t)) ;
+    OK (GrB_Type_get_Scalar_(GrB_INT32, s_uint64, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u64, s_uint64)) ;
+    CHECK (u64 == sizeof (int32_t)) ;
 
-    OK (GrB_Type_get_Scalar_(GrB_INT64, s_int32, GrB_SIZE)) ;
-    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
-    CHECK (i == sizeof (int64_t)) ;
+    OK (GrB_Type_get_Scalar_(GrB_INT64, s_uint64, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u64, s_uint64)) ;
+    CHECK (u64 == sizeof (int64_t)) ;
 
-    OK (GrB_Type_get_Scalar_(GrB_UINT8, s_int32, GrB_SIZE)) ;
-    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
-    CHECK (i == sizeof (uint8_t)) ;
+    OK (GrB_Type_get_Scalar_(GrB_UINT8, s_uint64, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u64, s_uint64)) ;
+    CHECK (u64 == sizeof (uint8_t)) ;
 
-    OK (GrB_Type_get_Scalar_(GrB_UINT16, s_int32, GrB_SIZE)) ;
-    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
-    CHECK (i == sizeof (uint16_t)) ;
+    OK (GrB_Type_get_Scalar_(GrB_UINT16, s_uint64, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u64, s_uint64)) ;
+    CHECK (u64 == sizeof (uint16_t)) ;
 
-    OK (GrB_Type_get_Scalar_(GrB_UINT32, s_int32, GrB_SIZE)) ;
-    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
-    CHECK (i == sizeof (uint32_t)) ;
+    OK (GrB_Type_get_Scalar_(GrB_UINT32, s_uint64, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u64, s_uint64)) ;
+    CHECK (u64 == sizeof (uint32_t)) ;
 
-    OK (GrB_Type_get_Scalar_(GrB_UINT64, s_int32, GrB_SIZE)) ;
-    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
-    CHECK (i == sizeof (uint64_t)) ;
+    OK (GrB_Type_get_Scalar_(GrB_UINT64, s_uint64, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u64, s_uint64)) ;
+    CHECK (u64 == sizeof (uint64_t)) ;
 
-    OK (GrB_Type_get_Scalar_(GrB_FP32, s_int32, GrB_SIZE)) ;
-    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
-    CHECK (i == sizeof (float)) ;
+    OK (GrB_Type_get_Scalar_(GrB_FP32, s_uint64, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u64, s_uint64)) ;
+    CHECK (u64 == sizeof (float)) ;
 
-    OK (GrB_Type_get_Scalar_(GrB_FP64, s_int32, GrB_SIZE)) ;
-    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
-    CHECK (i == sizeof (double)) ;
+    OK (GrB_Type_get_Scalar_(GrB_FP64, s_uint64, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u64, s_uint64)) ;
+    CHECK (u64 == sizeof (double)) ;
 
-    OK (GrB_Type_get_Scalar_(GxB_FC32, s_int32, GrB_SIZE)) ;
-    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
-    CHECK (i == sizeof (float complex)) ;
+    OK (GrB_Type_get_Scalar_(GxB_FC32, s_uint64, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u64, s_uint64)) ;
+    CHECK (u64 == sizeof (float complex)) ;
 
-    OK (GrB_Type_get_Scalar_(GxB_FC64, s_int32, GrB_SIZE)) ;
-    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
-    CHECK (i == sizeof (double complex)) ;
+    OK (GrB_Type_get_Scalar_(GxB_FC64, s_uint64, GrB_SIZE)) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u64, s_uint64)) ;
+    CHECK (u64 == sizeof (double complex)) ;
 
     // type size (using an int32_t)
     OK (GrB_Type_get_INT32_(GrB_BOOL, &i, GrB_SIZE)) ;
@@ -659,6 +662,7 @@ void mexFunction
     GrB_free (&s_fp64) ;
     GrB_free (&s_fp32) ;
     GrB_free (&s_int32) ;
+    GrB_free (&s_uint64) ;
     GrB_free (&type) ;
     GB_mx_put_global (true) ;
     printf ("\nGB_mex_test26:  all tests passed.\n\n") ;

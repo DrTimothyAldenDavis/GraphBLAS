@@ -233,7 +233,7 @@ void mexFunction
 
     expected = GrB_INVALID_VALUE ;
     ERR (GxB_Serialized_get_Scalar_(blob, s_int32, GrB_NAME, blob_size)) ;
-    ERR (GxB_Serialized_get_Scalar_(blob, name, GrB_SIZE, blob_size)) ;
+    ERR (GxB_Serialized_get_Scalar_(blob, name, 9999, blob_size)) ;
 
     OK (GrB_Type_new (&type, sizeof (mytype))) ;
     OK (GrB_Type_set_String_ (type, "mytype", GxB_JIT_C_NAME)) ;

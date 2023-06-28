@@ -35,23 +35,25 @@ GrB_Info GrB_Type_get_Scalar
     //--------------------------------------------------------------------------
 
     int32_t i ;
+    uint64_t u ;
 
     switch ((int) field)
     {
         case GrB_ELTYPE_CODE : 
             i = (int32_t) GB_type_code_get (type->code) ;
+            return (GB_setElement ((GrB_Matrix) value, NULL, &i, 0, 0,
+                GB_INT32_code, Werk)) ;
             break ;
 
         case GrB_SIZE : 
-            i = (int32_t) type->size ;
+            u = (uint64_t) type->size ;
+            return (GB_setElement ((GrB_Matrix) value, NULL, &u, 0, 0,
+                GB_UINT64_code, Werk)) ;
             break ;
 
         default : 
             return (GrB_INVALID_VALUE) ;
     }
-
-    return (GB_setElement ((GrB_Matrix) value, NULL, &i, 0, 0, GB_INT32_code,
-        Werk)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -151,6 +153,8 @@ GrB_Info GrB_Type_get_INT32
 
         case GrB_SIZE : 
 
+            // int32_t is fine for small types but for GrB_Scalar,
+            // UINT64 is used instead (see above)
             (*value) = (int32_t) type->size ;
             break ;
 

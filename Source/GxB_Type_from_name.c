@@ -26,7 +26,7 @@
 
     // later on, to query the type of A:
     GrB_Scalar tsize ;
-    GrB_Scalar_new (&tsize, GrB_INT32) ;
+    GrB_Scalar_new (&tsize, GrB_UINT32) ;
     GrB_get (type, tsize, GrB_SIZE) ;       // works for any type
     size_t typesize ;
     GrB_Scalar_extractElement (&typesize, tsize) ;
