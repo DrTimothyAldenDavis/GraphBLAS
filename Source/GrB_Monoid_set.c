@@ -54,9 +54,8 @@ GrB_Info GrB_Monoid_set_String
     // set the field
     //--------------------------------------------------------------------------
 
-    // FIXME: spec says check for GrB_ALREADY_SET
     return (GB_user_name_set (&(monoid->user_name),
-        &(monoid->user_name_size), value)) ;
+        &(monoid->user_name_size), value, true)) ;
 }
 
 //------------------------------------------------------------------------------

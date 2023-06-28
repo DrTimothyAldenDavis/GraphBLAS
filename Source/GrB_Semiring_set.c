@@ -54,9 +54,8 @@ GrB_Info GrB_Semiring_set_String
     // set the field
     //--------------------------------------------------------------------------
 
-    // FIXME: spec says check for GrB_ALREADY_SET
     return (GB_user_name_set (&(semiring->user_name),
-        &(semiring->user_name_size), value)) ;
+        &(semiring->user_name_size), value, true)) ;
 }
 
 //------------------------------------------------------------------------------

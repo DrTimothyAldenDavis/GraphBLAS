@@ -310,6 +310,10 @@ void mexFunction
     OK (GrB_Monoid_get_SIZE_(monoid, &size, GrB_NAME)) ;
     CHECK (size == strlen (name) + 1) ;
 
+    expected = GrB_ALREADY_SET ;
+    ERR (GrB_Monoid_set_String_(monoid, "another user name", GrB_NAME)) ;
+    printf ("    test GrB_ALREADY_SET: ok\n") ;
+
     printf ("\nterminal monoid:\n") ;
     int32_t id_int32 ;
     OK (GxB_print (GrB_MAX_MONOID_INT32, 3)) ;

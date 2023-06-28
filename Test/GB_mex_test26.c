@@ -303,6 +303,10 @@ void mexFunction
     OK (GrB_Type_get_String_ (type, name, GrB_NAME)) ;
     CHECK (MATCH (name, "user name of a type")) ;
 
+    expected = GrB_ALREADY_SET ;
+    ERR (GrB_Type_set_String_ (type, "another user name of a type", GrB_NAME)) ;
+    printf ("    test GrB_ALREADY_SET: ok\n") ;
+
     OK (GrB_Type_get_String_(type, name, GxB_JIT_C_NAME)) ;
     CHECK (MATCH (name, "mytype")) ;
     OK (GrB_Type_get_SIZE_(type, &size, GxB_JIT_C_NAME)) ;
@@ -407,6 +411,12 @@ void mexFunction
     CHECK (MATCH (name, "scalar name")) ;
     CHECK (size == strlen (name) + 1) ;
 
+    OK (GrB_Scalar_set_String_(s, "another scalar name", GrB_NAME)) ;
+    OK (GrB_Scalar_get_String_(s, name, GrB_NAME)) ;
+    OK (GrB_Scalar_get_SIZE_(s, &size, GrB_NAME)) ;
+    CHECK (MATCH (name, "another scalar name")) ;
+    CHECK (size == strlen (name) + 1) ;
+
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Scalar_set_VOID_(s, nothing, 0, 0)) ;
 
@@ -497,6 +507,12 @@ void mexFunction
     OK (GrB_Vector_get_String_(v, name, GrB_NAME)) ;
     OK (GrB_Vector_get_SIZE_(v, &size, GrB_NAME)) ;
     CHECK (MATCH (name, "vector name")) ;
+    CHECK (size == strlen (name) + 1) ;
+
+    OK (GrB_Vector_set_String_(v, "another vector name", GrB_NAME)) ;
+    OK (GrB_Vector_get_String_(v, name, GrB_NAME)) ;
+    OK (GrB_Vector_get_SIZE_(v, &size, GrB_NAME)) ;
+    CHECK (MATCH (name, "another vector name")) ;
     CHECK (size == strlen (name) + 1) ;
 
     expected = GrB_INVALID_VALUE ;
@@ -592,6 +608,13 @@ void mexFunction
     OK (GrB_Matrix_get_SIZE_(A, &size, GrB_NAME)) ;
     CHECK (MATCH (name, "matrix name")) ;
     CHECK (size == strlen (name) + 1) ;
+
+    OK (GrB_Matrix_set_String_(A, "another matrix name", GrB_NAME)) ;
+    OK (GrB_Matrix_get_String_(A, name, GrB_NAME)) ;
+    OK (GrB_Matrix_get_SIZE_(A, &size, GrB_NAME)) ;
+    CHECK (MATCH (name, "another matrix name")) ;
+    CHECK (size == strlen (name) + 1) ;
+
     OK (GrB_Matrix_get_String_(A, name, GxB_JIT_C_NAME)) ;
     CHECK (MATCH (name, "float")) ;
     OK (GrB_Matrix_get_SIZE_(A, &size, GxB_JIT_C_NAME)) ;

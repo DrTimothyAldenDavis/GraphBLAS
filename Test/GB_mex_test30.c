@@ -251,6 +251,13 @@ void mexFunction
     CHECK (op->hash != UINT64_MAX) ;
     OK (GxB_print (op, 3)) ;
 
+    OK (GrB_IndexUnaryOp_set_String_(op, "user name for myfunc", GrB_NAME)) ;
+    OK (GrB_IndexUnaryOp_get_String_(op, name, GrB_NAME)) ;
+    CHECK (MATCH (name, "user name for myfunc")) ;
+    expected = GrB_ALREADY_SET ;
+    ERR (GrB_IndexUnaryOp_set_String_(op, "another user name", GrB_NAME)) ;
+    printf ("    test GrB_ALREADY_SET: ok\n") ;
+
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_IndexUnaryOp_set_String_(op, "another_name", 999)) ;
     ERR (GrB_IndexUnaryOp_get_SIZE(op, &size, 999)) ;

@@ -207,7 +207,7 @@ GrB_Info GrB_Descriptor_set_String
     //--------------------------------------------------------------------------
 
     return (GB_user_name_set (&(desc->user_name), &(desc->user_name_size),
-        value)) ;
+        value, false)) ;
 }
 
 //------------------------------------------------------------------------------

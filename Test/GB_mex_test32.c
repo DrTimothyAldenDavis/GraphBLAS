@@ -2209,6 +2209,10 @@ void mexFunction
     CHECK (size == strlen (name) + 1) ;
     OK (GxB_print (semiring, 3)) ;
 
+    expected = GrB_ALREADY_SET ;
+    ERR (GrB_Semiring_set_String_(semiring, "another user name", GrB_NAME)) ;
+    printf ("    test GrB_ALREADY_SET: ok\n") ;
+
     printf ("\nsemiring with terminal monoid:\n") ;
     int32_t id_int32 ;
     OK (GrB_Semiring_get_String_(GrB_MAX_TIMES_SEMIRING_INT32,

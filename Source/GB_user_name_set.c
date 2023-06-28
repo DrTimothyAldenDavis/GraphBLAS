@@ -15,9 +15,18 @@ GrB_Info GB_user_name_set
     char **object_user_name,        // user_name of the object
     size_t *object_user_name_size,  // user_name_size of the object
     // input
-    const char *new_name            // new name for the object
+    const char *new_name,           // new name for the object
+    const bool only_once            // if true, the name of the object can
+                                    // only be set once
 )
 { 
+
+    if (only_once && (*object_user_name) != NULL)
+    { 
+        // types, operators, monoids, and semirings can have their GrB_NAME
+        // set at most once
+        return (GrB_ALREADY_SET) ;
+    }
 
     // free the object user_name, if it already exists
     GB_FREE (object_user_name, (*object_user_name_size)) ;

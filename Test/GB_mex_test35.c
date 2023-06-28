@@ -229,7 +229,6 @@ void mexFunction
     OK (GxB_Serialized_get_Scalar_(blob, s_int32, GxB_SPARSITY_STATUS,
         blob_size)) ;
     OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
-    // GxB_print (A, 3) ;
     CHECK (i == GxB_BITMAP) ;
 
     expected = GrB_INVALID_VALUE ;
@@ -239,7 +238,6 @@ void mexFunction
     OK (GrB_Type_new (&type, sizeof (mytype))) ;
     OK (GrB_Type_set_String_ (type, "mytype", GxB_JIT_C_NAME)) ;
     OK (GrB_Type_set_String_ (type, MYTYPE_DEFN, GxB_JIT_C_DEFINITION)) ;
-    // OK (GxB_print (type, 3)) ;
     GrB_free (&A) ;
 
     int32_t one = 1 ;

@@ -429,12 +429,20 @@ void mexFunction
     OK (GrB_UnaryOp_set_String_(unop, "myfunc", GxB_JIT_C_NAME)) ;
     OK (GrB_UnaryOp_get_String_(unop, name, GxB_JIT_C_NAME)) ;
     CHECK (MATCH (name, "myfunc")) ;
+
     CHECK (unop->hash == UINT64_MAX) ;
     METHOD (GrB_UnaryOp_set_String (unop, MYFUNC_DEFN, GxB_JIT_C_DEFINITION)) ;
     OK (GrB_UnaryOp_get_String_(unop, defn, GxB_JIT_C_DEFINITION)) ;
     CHECK (MATCH (defn, MYFUNC_DEFN)) ;
     CHECK (unop->hash != UINT64_MAX) ;
     OK (GxB_print (unop, 3)) ;
+
+    OK (GrB_UnaryOp_set_String_(unop, "user name for myfunc", GrB_NAME)) ;
+    OK (GrB_UnaryOp_get_String_(unop, name, GrB_NAME)) ;
+    CHECK (MATCH (name, "user name for myfunc")) ;
+    expected = GrB_ALREADY_SET ;
+    ERR (GrB_UnaryOp_set_String_(unop, "another user name", GrB_NAME)) ;
+    printf ("    test GrB_ALREADY_SET: ok\n") ;
 
     expected = GrB_NO_VALUE ;
     ERR (GrB_UnaryOp_get_INT32_(unop, &code, GrB_INPUT2TYPE_CODE)) ;

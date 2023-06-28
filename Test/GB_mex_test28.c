@@ -651,6 +651,13 @@ void mexFunction
     CHECK (binop->hash != UINT64_MAX) ;
     OK (GxB_print (binop, 3)) ;
 
+    OK (GrB_BinaryOp_set_String_(binop, "user name for myfunc", GrB_NAME)) ;
+    OK (GrB_BinaryOp_get_String_(binop, name, GrB_NAME)) ;
+    CHECK (MATCH (name, "user name for myfunc")) ;
+    expected = GrB_ALREADY_SET ;
+    ERR (GrB_BinaryOp_set_String_(binop, "another user name", GrB_NAME)) ;
+    printf ("    test GrB_ALREADY_SET: ok\n") ;
+
     OK (GrB_BinaryOp_get_INT32_(binop, &code, GrB_INPUT2TYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
