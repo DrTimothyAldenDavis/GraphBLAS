@@ -645,17 +645,25 @@ definition.  GraphBLAS can use an operator that uses a type without a name,
 but it cannot use the JIT, even if the type is given a name later on after
 the operator is created.
 
-The size of the type can be returned as an \verb'int32_t' C scalar, or as
-a \verb'GrB_Scalar' of type \verb'GrB_UINT64'.  The latter case allows
-arbitrary type sizes to be handled.  In practice, SuiteSparse:GraphBLAS
-would currently not work with types larger than \verb'INT32_MAX', so either
-method will work.  Both of the examples below return the size of
-\verb'GrB_FP32' as \verb'sizeof (float)':
+The size of the type can be returned as an \verb'int32_t' C scalar, or as a
+\verb'GrB_Scalar', normally of type \verb'GrB_INT32' (according to the v2.1 C
+API).  Typecasting of the value of the size is done as needed, if the scalar
+has a different type.  A \verb'GrB_Scalar' of type \verb'GrB_UINT64' is perhaps
+safest (as shown in the example below), since it allows arbitrary type sizes to
+be handled.  In practice, SuiteSparse:GraphBLAS would currently not work with
+types larger than \verb'INT32_MAX', so either method will work.  All three of
+the examples below return the size of \verb'GrB_FP32' as \verb'sizeof (float)':
 
 {\footnotesize
 \begin{verbatim}
     int32_t size ;
     GrB_get (GrB_FP32, &size, GrB_SIZE) ;
+    assert (size == sizeof (float)) ;
+
+    GrB_Scalar t ;
+    GrB_Scalar_new (&t, GrB_INT32) ;
+    GrB_get (GrB_FP32, t, GrB_SIZE) ;
+    GrB_Scalar_extractElement (&size, t) ;
     assert (size == sizeof (float)) ;
 
     uint64_t size2 ;
@@ -664,13 +672,6 @@ method will work.  Both of the examples below return the size of
     GrB_get (GrB_FP32, s, GrB_SIZE) ;
     GrB_Scalar_extractElement (&size2, s) ;
     assert (size2 == sizeof (float)) ; \end{verbatim}}
-
-\begin{alert}
-{\bf SPEC:} the v2.1 spec states that the above scalar \verb's' should be of
-type \verb'GrB_INT32'.  Such a scalar will work with SuiteSparse:GraphBLAS, but
-the type \verb'GrB_UINT64' is recommended, to avoid possible integer overflow
-for very large types.
-\end{alert}
 
 %-------------------------------------------------------------------------------
 \newpage

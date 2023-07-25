@@ -1,5 +1,5 @@
 \documentclass[12pt]{article}
-% \batchmode
+\batchmode
 \usepackage{url}
 \urlstyle{sf}
 \usepackage[svgnames]{xcolor}
@@ -84,6 +84,8 @@ SuiteSparse:GraphBLAS is under the Apache-2.0 license.
 Version 8.0 adds several new features, in particular a JIT for compiling
 kernels at run-time, and a new \verb'GxB_Context' object.
 See Sections~\ref{context} and \ref{jit} for details.
+Version 8.1 adds the \verb'GrB_get' and \verb'GrB_set' methods;
+see Section~\ref{options}.
 
 \end{abstract}
 
@@ -5499,11 +5501,12 @@ This method creates a matrix \verb'A' by deserializing the contents of the
 blob, constructed by either \verb'GrB_Matrix_serialize' or
 \verb'GxB_Matrix_serialize'.
 
-\begin{alert}
-{\bf SPEC:} The specification requires the \verb'type' to always be non-NULL.
-As an extension, SuiteSparse:GraphBLAS allows \verb'type' to be NULL if
-the blob contains a serialized matrix with a built-in type.
-\end{alert}
+% extended in the v2.1 C API (type may be NULL):
+The \verb'type' may be \verb'NULL' if the blob holds a serialized matrix with a
+built-in type.  In this case, the type is determined automatically.  For
+user-defined types, the \verb'type' must match the type of the matrix in the
+blob.  The \verb'GrB_get' method can be used to query the blob for the name of
+this type.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_deserialize:}    deserialize a matrix}
