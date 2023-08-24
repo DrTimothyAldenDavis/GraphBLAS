@@ -84,7 +84,7 @@ SuiteSparse:GraphBLAS is under the Apache-2.0 license.
 Version 8.0 adds several new features, in particular a JIT for compiling
 kernels at run-time, and a new \verb'GxB_Context' object.
 See Sections~\ref{context} and \ref{jit} for details.
-Version 8.1 adds the \verb'GrB_get' and \verb'GrB_set' methods;
+Version 9.0 adds the \verb'GrB_get' and \verb'GrB_set' methods;
 see Section~\ref{options}.
 
 \end{abstract}
@@ -5158,10 +5158,10 @@ sometimes the same version) that created the blob.
 
 All versions of SuiteSparse:GraphBLAS that implement
 serialization/deserialization use essentially the same format for the blob, so
-the library versions are compatible with each other.  Version v8.1.0 adds the
+the library versions are compatible with each other.  Version v9.0.0 adds the
 \verb'GrB_NAME' and \verb'GrB_ELTYPE_STRING' to the blob in an upward
 compatible manner, so that older versions of SS:GraphBLAS can read the blobs
-created by v8.1.0; they simply ignore those components.
+created by v9.0.0; they simply ignore those components.
 
 There are two forms of serialization: \verb'GrB*serialize' and
 \verb'GxB*serialize'.  For the \verb'GrB' form, the blob must first be
