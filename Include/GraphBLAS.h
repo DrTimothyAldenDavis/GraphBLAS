@@ -1,4 +1,4 @@
-// SuiteSparse:GraphBLAS 8.1.0
+// SuiteSparse:GraphBLAS 9.0.0
 //------------------------------------------------------------------------------
 // GraphBLAS.h: definitions for the GraphBLAS package
 //------------------------------------------------------------------------------
@@ -220,11 +220,11 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "(draft) June 26, 2023"
-#define GxB_IMPLEMENTATION_MAJOR 8
-#define GxB_IMPLEMENTATION_MINOR 1
+#define GxB_IMPLEMENTATION_DATE "Sept 15, 2023"
+#define GxB_IMPLEMENTATION_MAJOR 9
+#define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
-#define GxB_SPEC_DATE "(projected) Sep 15, 2023"
+#define GxB_SPEC_DATE "Sept 15, 2023"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 1
 #define GxB_SPEC_SUB   0
