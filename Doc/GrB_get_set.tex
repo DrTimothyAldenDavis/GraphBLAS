@@ -350,6 +350,17 @@ GrB_Info GrB_set (GrB_Global g, void *     value, GrB_Field f, size_t s) ;
                                                                 or \verb'GrB_NONBLOCKING') \\
 \verb'GxB_LIBRARY_OPENMP'           & R    & \verb'int32_t'& if OpenMP is in use (true/false) \\
 \hline
+\end{tabular}
+}
+\vspace{0.05in}
+
+\vspace{0.1in}
+\noindent
+{\small
+\begin{tabular}{|l|l|l|p{2.5in}|}
+\hline
+\verb'GrB_Field'                    & R/W  & C type        & description \\
+\hline
 \verb'GrB_STORAGE_ORIENTATION_HINT' & R/W  & \verb'int32_t'& see \verb'GrB_Orientation': default
                                                             format for matrices. \\
 %                                                           Matrices are held by row, unless this
@@ -362,17 +373,6 @@ GrB_Info GrB_set (GrB_Global g, void *     value, GrB_Field f, size_t s) ;
 \verb'GxB_PRINT_1BASED'             & R/W  & \verb'int32_t'& matrices printed as 1-based or 0-based  \\
 \verb'GxB_JIT_C_CONTROL'            & R/W  & \verb'int32_t'& see Section~\ref{jit} \\
 \verb'GxB_JIT_USE_CMAKE'            & R/W  & \verb'int32_t'& see Section~\ref{jit} \\
-\hline
-\end{tabular}
-}
-\vspace{0.05in}
-
-\vspace{0.1in}
-\noindent
-{\small
-\begin{tabular}{|l|l|l|p{2.5in}|}
-\hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
 \verb'GxB_HYPER_SWITCH'             & R/W  & \verb'double' & global hypersparsity control. \newline
                                                                 See Section~\ref{hypersparse}. \\
@@ -403,6 +403,15 @@ GrB_Info GrB_set (GrB_Global g, void *     value, GrB_Field f, size_t s) ;
 \verb'GxB_JIT_ERROR_LOG'            & R/W  & \verb'char *' & " \\
 \verb'GxB_JIT_CACHE_PATH'           & R/W  & \verb'char *' & " \\
 \hline
+\end{tabular}
+}
+
+\vspace{0.1in}
+\noindent
+{\small
+\begin{tabular}{|l|l|l|p{2.5in}|}
+\hline
+\verb'GrB_Field'                    & R/W  & C type        & description \\
 \verb'GxB_BITMAP_SWITCH'            & R/W  & \verb'void *' & \verb'double' array of size \newline
                                                                 \verb'GxB_NBITMAP_SWITCH'.  \newline
                                                                 See Section~\ref{bitmap_switch}. \\
@@ -421,7 +430,7 @@ GrB_Info GrB_set (GrB_Global g, void *     value, GrB_Field f, size_t s) ;
 \end{tabular}
 }
 
-\newpage
+% \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{Global diagnostic settings}
 \label{diag}
