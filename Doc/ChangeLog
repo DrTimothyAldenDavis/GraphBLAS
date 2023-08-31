@@ -1,14 +1,12 @@
 Version 9.0.0, Sept 15, 2023
 
     * GrB_get/GrB_set: new functions from the v2.1 C API.
-
     * GrB_Type_new, GrB_UnaryOp_new, GrB_IndexUnaryOp_new: no longer macros,
         since GrB_set can be used to set the names of the operators.  These
         methods no longer extract the name, so the default name is now the
         empty string.  This is because GrB_get/set can only set these names
         once.  This is a non-compatible change of behaviour for these 3
         methods, so SuiteSprase:GraphBLAS must become v9.0.0.
-
     * historical methods:  many methods are replaced by GrB_get and GrB_set.
         They remain in SuiteSparse:GraphBLAS but have been declared historical.
         Terse prototypes exist in GraphBLAS.h, and any discussion is removed
@@ -20,16 +18,16 @@ Version 9.0.0, Sept 15, 2023
     * hyper_hash: constructed only if the # of non-empty vectors in a
         hypersparse matrix is large
 
-Version 8.0.3, Aug 25, 2023
+FIXME DATE, 2023: version 8.2.0
 
-    * update to cmake build system: using cmake namespaces instead of
-        FindGraphBLAS.cmake, contributed by Markus Muetzel.
+    * cmake updates: SuiteSparse:: namespace by Markus Muetzel
 
 Version 8.0.2, June 16, 2023
 
     * added -DJITINIT=option:  use -DJITINIT to set the initial state of
         the GxB_JIT_CONTROL (4:on, 3:load, 2:run, 1:pause, 0:off).  The default
         is 4 (on) if the JIT is enabled, or 2 (run) if -DNJIT=1 is set.
+    * xxHash: upgraded to latest version as of June 16, 2023
 
 Version 8.0.1, May 27, 2023
 
