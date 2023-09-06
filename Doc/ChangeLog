@@ -16,7 +16,7 @@ Version 9.0.0, Sept 15, 2023
         GxB_Monoid_terminal, GxB_Semiring_add, GxB_Semiring_multiply.  Use
         GrB_STORAGE_ORIENTATION_HINT in place of GxB_FORMAT.
     * hyper_hash: constructed only if the # of non-empty vectors in a
-        hypersparse matrix is large
+        hypersparse matrix is large (> 1024, by default)
 
 FIXME DATE, 2023: version 8.2.0
 
