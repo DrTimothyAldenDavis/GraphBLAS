@@ -227,8 +227,7 @@ To cite this package, please use the following:
 
     T. Davis, Algorithm 10xx: SuiteSparse:GraphBLAS: parallel graph
     algorithms in the language of sparse linear algebra, ACM Trans on
-    Mathematical Software, just acceped, 2023.  See the pdf in
-    https://github.com/DrTimothyAldenDavis/GraphBLAS/tree/stable/Doc .
+    Mathematical Software, to appear, 2023.
     https://doi.org/10.1145/3577195
 
     T. Davis, Algorithm 1000: SuiteSparse:GraphBLAS: graph algorithms in
