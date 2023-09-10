@@ -325,9 +325,7 @@ typedef enum
     GrB_DIMENSION_MISMATCH = -6,    // matrix dimensions do not match
     GrB_OUTPUT_NOT_EMPTY = -7,      // output matrix already has values
     GrB_NOT_IMPLEMENTED = -8,       // method not implemented
-#if (GRB_SUBVERSION > 0)
     GrB_ALREADY_SET = -9,           // field already written to
-#endif
     GrB_PANIC = -101,               // unknown error
     GrB_OUT_OF_MEMORY = -102,       // out of memory
     GrB_INSUFFICIENT_SPACE = -103,  // output array not large enough
@@ -3983,8 +3981,6 @@ GrB_Info GxB_Context_get       (GxB_Context, GxB_Context_Field, ...) ;
 // GrB_set and GrB_get
 //==============================================================================
 
-#if (GRB_SUBVERSION > 0)
-
 typedef struct GB_Global_opaque *GrB_Global ;
 GB_GLOBAL const GrB_Global GrB_GLOBAL ;
 
@@ -4307,7 +4303,6 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                         void *      : GxB_Serialized_get_VOID               \
                 )                                                           \
     ) (object, value, __VA_ARGS__)
-#endif
 
 //------------------------------------------------------------------------------
 // GrB_set: set a scalar, string, enum, size, or void * of an object
