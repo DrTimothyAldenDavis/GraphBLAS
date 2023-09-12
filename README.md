@@ -4,7 +4,7 @@ SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 
 SPDX-License-Identifier: Apache-2.0
 
-VERSION 8.2.0, Sept 8, 2023
+VERSION 9.0.0, Sept 15, 2023
 
 SuiteSparse:GraphBLAS is a complete implementation of the GraphBLAS standard,
 which defines a set of sparse matrix operations on an extended algebra of
@@ -128,9 +128,9 @@ PreJIT:         a folder for JIT kernels that are to be integrated into the
 
 Versions v5.2.0 and earlier conform to the version 1.3.0 (Sept 25, 2019) of the
 GraphBLAS C API Specification.  Versions v6.0.0 and later conform to the
-version 2.0.0 (Nov, 2021) of the GraphBLAS C API Specification.  This library
-also includes several additional functions and features as extensions to the
-spec.
+version 2.0.0 (Nov, 2021) of the GraphBLAS C API Specification.   Versions
+9.0.0 and later conform to the v2.1.0 C API.  This library also includes
+several additional functions and features as extensions to the spec.
 
 All functions, objects, and macros with the prefix GxB are extensions to
 the spec.  Functions, objects, and macros with prefix GB must not be accessed
@@ -227,8 +227,7 @@ To cite this package, please use the following:
 
     T. Davis, Algorithm 10xx: SuiteSparse:GraphBLAS: parallel graph
     algorithms in the language of sparse linear algebra, ACM Trans on
-    Mathematical Software, just acceped, 2023.  See the pdf in
-    https://github.com/DrTimothyAldenDavis/GraphBLAS/tree/stable/Doc .
+    Mathematical Software, to appear, 2023.
     https://doi.org/10.1145/3577195
 
     T. Davis, Algorithm 1000: SuiteSparse:GraphBLAS: graph algorithms in
