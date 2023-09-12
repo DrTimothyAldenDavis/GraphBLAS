@@ -80,14 +80,12 @@ __global__ void GB_jit_AxB_dot3_phase1
     const bool M_is_hyper = M->h != NULL ;
     ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
 
-    const int64_t *__restrict__ Ah = A->h ;
     const int64_t *__restrict__ Ap = A->p ;
     const int64_t *__restrict__ Ai = A->i ;
     const int64_t avlen = A->vlen ;
 //  const int64_t anz = GB_nnz(A) ;
     const GB_A_NVALS (anz) ;
 
-    const int64_t *__restrict__ Bh = B->h ;
     const int64_t *__restrict__ Bp = B->p ;
     const int64_t *__restrict__ Bi = B->i ;
     const int64_t bvlen = B->vlen ;
@@ -95,17 +93,23 @@ __global__ void GB_jit_AxB_dot3_phase1
     const GB_B_NVALS (bnz) ;
 
     #if GB_A_IS_HYPER
-    const int64_t *__restrict__ A_Yp = A->Y->p ;
-    const int64_t *__restrict__ A_Yi = A->Y->i ;
-    const int64_t *__restrict__ A_Yx = (int64_t *) A->Y->x ;
-    const int64_t A_hash_bits = A->Y->vdim - 1 ;
+    const int64_t anvec = A->nvec ;
+    const int64_t *__restrict__ Ah = A->h ;
+    const int64_t *__restrict__ A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+    const int64_t *__restrict__ A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
+    const int64_t *__restrict__ A_Yx = (int64_t *)
+        ((A->Y == NULL) ? NULL : A->Y->x) ;
+    const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
     #endif
 
     #if GB_B_IS_HYPER
-    const int64_t *__restrict__ B_Yp = B->Y->p ;
-    const int64_t *__restrict__ B_Yi = B->Y->i ;
-    const int64_t *__restrict__ B_Yx = (int64_t *) B->Y->x ;
-    const int64_t B_hash_bits = B->Y->vdim - 1 ;
+    const int64_t bnvec = B->nvec ;
+    const int64_t *__restrict__ Bh = B->h ;
+    const int64_t *__restrict__ B_Yp = (B->Y == NULL) ? NULL : B->Y->p ;
+    const int64_t *__restrict__ B_Yi = (B->Y == NULL) ? NULL : B->Y->i ;
+    const int64_t *__restrict__ B_Yx = (int64_t *)
+        ((B->Y == NULL) ? NULL : B->Y->x) ;
+    const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;
     #endif
 
     // int64_t *restrict Cp = C->p ;    // copy of Mp
@@ -220,8 +224,8 @@ __global__ void GB_jit_AxB_dot3_phase1
 
                 int64_t pB, pB_end ;
                 #if GB_B_IS_HYPER
-                GB_hyper_hash_lookup (Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
-                    j, &pB, &pB_end) ;
+                GB_hyper_hash_lookup (Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx,
+                    B_hash_bits, j, &pB, &pB_end) ;
                 #elif GB_B_IS_SPARSE
                 pB       = Bp[j] ;
                 pB_end   = Bp[j+1] ;
@@ -241,8 +245,8 @@ __global__ void GB_jit_AxB_dot3_phase1
 
                     int64_t pA, pA_end ;
                     #if GB_A_IS_HYPER
-                    GB_hyper_hash_lookup (Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
-                        i, &pA, &pA_end) ;
+                    GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx,
+                        A_hash_bits, i, &pA, &pA_end) ;
                     #elif GB_A_IS_SPARSE
                     pA       = Ap[i] ;
                     pA_end   = Ap[i+1] ;

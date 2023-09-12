@@ -114,17 +114,23 @@ __global__ void AxB_dot3_phase3_mp
     ASSERT (GB_B_IS_HYPER || GB_B_IS_SPARSE) ;
 
     #if GB_A_IS_HYPER
-    const int64_t *__restrict__ A_Yp = A->Y->p ;
-    const int64_t *__restrict__ A_Yi = A->Y->i ;
-    const int64_t *__restrict__ A_Yx = (int64_t *) A->Y->x ;
-    const int64_t A_hash_bits = A->Y->vdim - 1 ;
+    const int64_t anvec = A->nvec ;
+    const int64_t *__restrict__ Ah = A->h ;
+    const int64_t *__restrict__ A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+    const int64_t *__restrict__ A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
+    const int64_t *__restrict__ A_Yx = (int64_t *)
+        ((A->Y == NULL) ? NULL : A->Y->x) ;
+    const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
     #endif
 
     #if GB_B_IS_HYPER
-    const int64_t *__restrict__ B_Yp = B->Y->p ;
-    const int64_t *__restrict__ B_Yi = B->Y->i ;
-    const int64_t *__restrict__ B_Yx = (int64_t *) B->Y->x ;
-    const int64_t B_hash_bits = B->Y->vdim - 1 ;
+    const int64_t bnvec = B->nvec ;
+    const int64_t *__restrict__ Bh = B->h ;
+    const int64_t *__restrict__ B_Yp = (B->Y == NULL) ? NULL : B->Y->p ;
+    const int64_t *__restrict__ B_Yi = (B->Y == NULL) ? NULL : B->Y->i ;
+    const int64_t *__restrict__ B_Yx = (int64_t *)
+        ((B->Y == NULL) ? NULL : B->Y->x) ;
+    const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;
     #endif
 
     // zombie count
@@ -162,7 +168,7 @@ __global__ void AxB_dot3_phase3_mp
         // find A(:,i)
         int64_t pA_start, pA_end ;
         #if GB_A_IS_HYPER
-        GB_hyper_hash_lookup (Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
+        GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
             i, &pA_start, &pA_end) ;
         #else
         pA_start = Ap[i] ;
@@ -192,7 +198,7 @@ __global__ void AxB_dot3_phase3_mp
         // find B(:,j)
         int64_t pB_start, pB_end ;
         #if GB_B_IS_HYPER
-        GB_hyper_hash_lookup (Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
+        GB_hyper_hash_lookup (Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
            j, &pB_start, &pB_end) ;
         #else
         pB_start = Bp[j] ;
