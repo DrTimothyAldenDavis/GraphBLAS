@@ -361,6 +361,11 @@ typedef enum
 }
 GrB_Mode ;
 
+#if defined ( __cplusplus )
+extern "C"
+{
+#endif
+
 GrB_Info GrB_init           // start up GraphBLAS
 (
     GrB_Mode mode           // blocking or non-blocking mode, no GPU
@@ -4563,6 +4568,7 @@ GrB_Info GxB_Context_wait      (GxB_Context    Context , GrB_WaitMode waitmode);
     )                                                   \
     (object, waitmode)
 #endif
+
 
 // NOTE: GxB_Scalar_wait is historical; use GrB_Scalar_wait instead
 GrB_Info GxB_Scalar_wait (GrB_Scalar *s) ;
@@ -11946,6 +11952,10 @@ void       GxB_Iterator_get_UDT    (GxB_Iterator iterator,
         ((iterator)->iso ? 0 : ((iterator)->type_size * (iterator)->p)),    \
         (iterator)->type_size)                                              \
 )
+
+#if defined ( __cplusplus )
+}
+#endif
 
 #endif
 
