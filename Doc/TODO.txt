@@ -7,12 +7,36 @@ Future features:
 
     pack/unpack COO
     kernel fusion
-    CUDA kernels
+    CUDA kernels (Intel GPU, AMD GPU, etc)
     option for 32-bit indices
     fine-grain parallelism for dot-product based mxm, mxv, vxm,
         then add GxB_vxvt (outer product) and GxB_vtxv (inner product)
         (or call them GxB_outerProduct and GxB_innerProduct?)
-    aggregators
-    index binary ops
+    aggregators (mode for CDPL, median, ...)
+
+        GrB_mxm (C, NULL, NULL, A, B, GxB_MODE_SECOND, ...b
+
+        monoid:  z = f(x,y)
+        aggregator:  z = f (x [n], workspace, n)
+
+        semiring: (monoid, multbinop)
+        semiring: (aggreg, multbinop)
+
+        CDPL:  matrix-times-dense vector; mode is easy
+        general case: user-define aggregator
+            z = f (set of values)
+
+            y = A*x     <<<< x dense, easy
+            C<M>=A*B'   <<<< masked dot product, feasible
+            C=A*B       <<< impossible
+
+                T = B'
+                S = A*B using PLUS_ONE, pattern
+                S(i,j) = size of set intersection of A(i,:) and B(:,j)
+                C<S>=A*T'   <<<< masked dot product, feasible
+
+    index binary ops: can do argmin, argmax, GxB_SECONDI
+
     GrB_extract with GrB_Vectors instead of (GrB_Index *) arrays for I and J
+    GrB_select "
 
