@@ -23,8 +23,8 @@ include ( GraphBLAS_version )
 #-------------------------------------------------------------------------------
 
 # CUDA is under development for now, and not deployed in production:
-  set ( ENABLE_CUDA false )
-# set ( ENABLE_CUDA true )
+# set ( ENABLE_CUDA false )
+  set ( ENABLE_CUDA true )
 
 #-------------------------------------------------------------------------------
 # SuiteSparse policies
