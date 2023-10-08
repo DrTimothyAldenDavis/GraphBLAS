@@ -15,18 +15,18 @@
 
 // GB_C_COMPILER: the C compiler used to compile GraphBLAS:
 #ifndef GB_C_COMPILER
-#define GB_C_COMPILER   "/usr/bin/cc"
+#define GB_C_COMPILER   "/Library/Developer/CommandLineTools/usr/bin/cc"
 #endif
 
 // GB_C_FLAGS: the C compiler flags used to compile GraphBLAS.  Used
 // for compiling and linking:
 #ifndef GB_C_FLAGS
-#define GB_C_FLAGS      " -Wundef  -std=c11 -lm -Wno-pragmas  -fexcess-precision=fast  -fcx-limited-range  -fno-math-errno  -fwrapv  -O3 -DNDEBUG -fopenmp  -fPIC "
+#define GB_C_FLAGS      " -O3 -DNDEBUG -Xclang -fopenmp  -fPIC  -arch arm64  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk "
 #endif
 
 // GB_C_LINK_FLAGS: the flags passed to the C compiler for the link phase:
 #ifndef GB_C_LINK_FLAGS
-#define GB_C_LINK_FLAGS " -shared "
+#define GB_C_LINK_FLAGS " -dynamiclib "
 #endif
 
 // GB_LIB_PREFIX: library prefix (lib for Linux/Unix/Mac, empty for Windows):
@@ -36,7 +36,7 @@
 
 // GB_LIB_SUFFIX: library suffix (.so for Linux/Unix, .dylib for Mac, etc):
 #ifndef GB_LIB_SUFFIX
-#define GB_LIB_SUFFIX   ".so"
+#define GB_LIB_SUFFIX   ".dylib"
 #endif
 
 // GB_OBJ_SUFFIX: object suffix (.o for Linux/Unix/Mac, .obj for Windows):
@@ -46,23 +46,23 @@
 
 // GB_OMP_INC: -I includes for OpenMP, if in use by GraphBLAS:
 #ifndef GB_OMP_INC
-#define GB_OMP_INC      ""
+#define GB_OMP_INC      " -I/usr/local/include"
 #endif
 
 // GB_OMP_INC_DIRS: include directories OpenMP, if in use by GraphBLAS,
 // for cmake:
 #ifndef GB_OMP_INC_DIRS
-#define GB_OMP_INC_DIRS ""
+#define GB_OMP_INC_DIRS "/usr/local/include"
 #endif
 
 // GB_C_LIBRARIES: libraries to link with when using direct compile/link:
 #ifndef GB_C_LIBRARIES
-#define GB_C_LIBRARIES  " -lm -ldl /usr/lib/gcc/x86_64-linux-gnu/9/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.so"
+#define GB_C_LIBRARIES  " -lm -ldl /usr/local/lib/libomp.dylib"
 #endif
 
 // GB_CMAKE_LIBRARIES: libraries to link with when using cmake
 #ifndef GB_CMAKE_LIBRARIES
-#define GB_CMAKE_LIBRARIES  "m;dl;/usr/lib/gcc/x86_64-linux-gnu/9/libgomp.so;/usr/lib/x86_64-linux-gnu/libpthread.so"
+#define GB_CMAKE_LIBRARIES  "m;dl;/usr/local/lib/libomp.dylib"
 #endif
 
 #endif
