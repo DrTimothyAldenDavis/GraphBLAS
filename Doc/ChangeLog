@@ -1,4 +1,4 @@
-Sept 26, 2023: version 9.0.0
+Oct 13, 2023: version 9.0.0
 
     * GrB_get/GrB_set: new functions from the v2.1 C API.
     * GrB_Type_new, GrB_UnaryOp_new, GrB_IndexUnaryOp_new: no longer macros,
@@ -20,6 +20,8 @@ Sept 26, 2023: version 9.0.0
 
 Oct 7, 2023: version 8.2.1
 
+    * (50) bug fix: remove undefined behavior in Source/GB_add.c with
+        Cnvec_nonempty, caught by Yves Vandreissche, Intel
     * (49) bug fix: GrB_mxm saxpy4 and saxpy5 had incorrectly handling of
         typecasting in v8.0.0 to v8.2.0 (caught by Erik Welch)
     * cross-compiler support: replace check_c_source_runs with _compiles,
