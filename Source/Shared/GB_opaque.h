@@ -107,8 +107,8 @@ typedef enum
     GB_ERF_unop_code       = 35,   // z = erf (x)
     GB_ERFC_unop_code      = 36,   // z = erfc (x)
     GB_CBRT_unop_code      = 37,   // z = cbrt (x)
-    GB_FREXPX_unop_code    = 38,   // z = frexpx (x), mantissa of ANSI C11 frexp
-    GB_FREXPE_unop_code    = 39,   // z = frexpe (x), exponent of ANSI C11 frexp
+    GB_FREXPX_unop_code    = 38,   // z = frexpx (x), mantissa of C11 frexp
+    GB_FREXPE_unop_code    = 39,   // z = frexpe (x), exponent of C11 frexp
 
     //--------------------------------------------------------------------------
     // unary operators for complex types only

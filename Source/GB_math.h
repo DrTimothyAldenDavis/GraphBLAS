@@ -841,9 +841,9 @@ inline GxB_FC64_t GB_csignum (GxB_FC64_t x)
 // complex functions
 //------------------------------------------------------------------------------
 
-// The ANSI C11 math.h header defines the ceil, floor, round, trunc,
+// The C11 math.h header defines the ceil, floor, round, trunc,
 // exp2, expm1, log10, log1pm, or log2 functions for float and double,
-// but the corresponding functions do not appear in the ANSI C11 complex.h.
+// but the corresponding functions do not appear in the C11 complex.h.
 // These functions are used instead, for float complex and double complex.
 
 //------------------------------------------------------------------------------

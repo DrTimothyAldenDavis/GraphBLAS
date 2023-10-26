@@ -29,7 +29,7 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
 //------------------------------------------------------------------------------
 
 // The GraphBLAS C API states that typecasting follows the rules of the C
-// language.  However, the ANSI C11 language specification states that results
+// language.  However, the C11 language specification states that results
 // are undefined when typecasting a float or double to an integer value that is
 // outside the range of the integer type.  GraphBLAS handles this case by
 // typecasting a float or double that is larger than the maximum integer to the
@@ -196,9 +196,9 @@ inline void GB (_cast_ ## ztype ## _ ## xtype)                          \
 // typecast to boolean
 //------------------------------------------------------------------------------
 
-// Typecasting a NaN to a bool results in 'true', as defined by the ANSI C11
+// Typecasting a NaN to a bool results in 'true', as defined by the C11
 // standard (NaN converts to true, since Nan != 0 is true).  GraphBLAS follows
-// the ANSI C11 standard in this case.
+// the C11 standard in this case.
 
 #undef  GB_CAST
 #define GB_CAST(ztype,x) (ztype) x
