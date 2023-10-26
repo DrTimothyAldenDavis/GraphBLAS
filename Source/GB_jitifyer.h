@@ -376,6 +376,10 @@ const char *GB_jitifyer_get_C_compiler (void) ;
 GrB_Info GB_jitifyer_set_C_compiler (const char *new_C_compiler) ;
 GrB_Info GB_jitifyer_set_C_compiler_worker (const char *new_C_compiler) ;
 
+const char *GB_jitifyer_get_CMake (void) ;
+GrB_Info GB_jitifyer_set_CMake (const char *new_CMake) ;
+GrB_Info GB_jitifyer_set_CMake_worker (const char *new_CMake) ;
+
 const char *GB_jitifyer_get_C_flags (void) ;
 GrB_Info GB_jitifyer_set_C_flags (const char *new_C_flags) ;
 GrB_Info GB_jitifyer_set_C_flags_worker (const char *new_C_flags) ;

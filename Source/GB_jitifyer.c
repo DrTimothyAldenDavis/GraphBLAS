@@ -55,6 +55,9 @@ static size_t   GB_jit_error_log_allocated = 0 ;
 static char    *GB_jit_C_compiler = NULL ;
 static size_t   GB_jit_C_compiler_allocated = 0 ;
 
+static char    *GB_jit_CMake = NULL ;
+static size_t  GB_jit_CMake_allocated = 0 ;
+
 // flags for the C compiler:
 static char    *GB_jit_C_flags = NULL ;
 static size_t   GB_jit_C_flags_allocated = 0 ;
@@ -1018,6 +1021,62 @@ GrB_Info GB_jitifyer_set_C_compiler_worker (const char *new_C_compiler)
     GB_FREE_STUFF (GB_jit_C_compiler) ;
     // allocate the new GB_jit_C_compiler
     GB_COPY_STUFF (GB_jit_C_compiler, new_C_compiler) ;
+    // allocate workspace
+    return (GB_jitifyer_alloc_space ( )) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_get_CMake: return the current CMake executable
+//------------------------------------------------------------------------------
+
+const char *GB_jitifyer_get_CMake (void)
+{ 
+    const char *s ;
+    #pragma omp critical (GB_jitifyer_worker)
+    {
+        s = GB_jit_CMake ;
+    }
+    return (s) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_CMake: set a new CMake executable
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_set_CMake (const char *new_CMake)
+{ 
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    if (new_CMake == NULL)
+    { 
+        return (GrB_NULL_POINTER) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // set the CMake executable in a critical section
+    //--------------------------------------------------------------------------
+
+    GrB_Info info ;
+    #pragma omp critical (GB_jitifyer_worker)
+    {
+        info = GB_jitifyer_set_CMake_worker (new_CMake) ;
+    }
+    return (info) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_jitifyer_set_CMake_worker: set CMake executable in a critical section
+//------------------------------------------------------------------------------
+
+GrB_Info GB_jitifyer_set_CMake_worker (const char *new_CMake)
+{ 
+    // free the old C compiler string
+    GB_FREE_STUFF (GB_jit_CMake) ;
+    // allocate the new GB_jit_CMake
+    GB_COPY_STUFF (GB_jit_CMake, new_CMake) ;
     // allocate workspace
     return (GB_jitifyer_alloc_space ( )) ;
 }
@@ -2355,7 +2414,7 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
 
     // remove any prior build folder for this kernel, and all its contents
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        GB_SH_C "cmake -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
+        GB_SH_C "%s -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
         GB_jit_cache_path, hash,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ; // OK: see security comment above
@@ -2413,8 +2472,9 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
 
     // generate the build system for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        GB_SH_C "cmake -S \"" GB_BLD_DIR "\" -B \"" GB_BLD_DIR "\""
+        GB_SH_C "%s -S \"" GB_BLD_DIR "\" -B \"" GB_BLD_DIR "\""
         " -DCMAKE_C_COMPILER=\"%s\" %s %s %s",
+        GB_jit_CMake,
         GB_jit_cache_path, hash,     // -S source path
         GB_jit_cache_path, hash,     // -B build path
         GB_jit_C_compiler,                  // C compiler to use
@@ -2423,22 +2483,25 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
 
     // compile the library for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        GB_SH_C "cmake --build \"" GB_BLD_DIR "\" --config Release %s %s %s",
+        GB_SH_C "%s --build \"" GB_BLD_DIR "\" --config Release %s %s %s",
         // can add "--verbose" here too
+        GB_jit_CMake,
         GB_jit_cache_path, hash,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ; // OK: see security comment above
 
     // install the library
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        GB_SH_C "cmake --install \"" GB_BLD_DIR "\" %s %s %s",
+        GB_SH_C "%s --install \"" GB_BLD_DIR "\" %s %s %s",
+        GB_jit_CMake,
         GB_jit_cache_path, hash,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ; // OK: see security comment above
 
     // remove the build folder and all its contents
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        GB_SH_C "cmake -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
+        GB_SH_C "%s -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
+        GB_jit_CMake,
         GB_jit_cache_path, hash,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ; // OK: see security comment above
