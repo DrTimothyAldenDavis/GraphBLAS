@@ -468,8 +468,8 @@ function used to print diagnostic output:
 
 This also controls the output of the
 \verb'GxB_*print' functions.  By default this parameter is \verb'NULL', in
-which case the ANSI C11 \verb'printf' function is used.  The parameter is a
-function pointer with the same signature as the ANSI C11 \verb'printf'
+which case the C11 \verb'printf' function is used.  The parameter is a
+function pointer with the same signature as the C11 \verb'printf'
 function.  The MATLAB/Octave interface to GraphBLAS sets it to \verb'mexPrintf'
 so that GraphBLAS can print to the MATLAB/Octave Command Window.
 
@@ -483,7 +483,7 @@ After each call to the \verb'printf' function, an optional
 
 The \verb'flush' function takes no
 arguments, and returns an \verb'int' which is 0 if successful, or any nonzero
-value on failure (the same output as the ANSI C11 \verb'fflush' function,
+value on failure (the same output as the C11 \verb'fflush' function,
 except that \verb'flush' has no inputs).
 
 %-------------------------------------------------------------------------------

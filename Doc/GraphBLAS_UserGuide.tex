@@ -630,7 +630,7 @@ complete list of error codes).  Typecasting can only be done between built-in
 types, and it follows the rules of the ANSI C language (not MATLAB) wherever
 the rules of ANSI C are well-defined.
 
-However, unlike MATLAB, the ANSI C11 language specification states that the
+However, unlike MATLAB, the C11 language specification states that the
 results of typecasting a \verb'float' or \verb'double' to an integer type is
 not always defined.  In SuiteSparse:GraphBLAS, whenever C leaves the result
 undefined the rules used in MATLAB are followed.  In particular \verb'+Inf'
@@ -1482,7 +1482,7 @@ type              &                  &                          & \\
 }
 \vspace{0.2in}
 
-The ANSI C11 definitions of \verb'float complex' and \verb'double complex'
+The C11 definitions of \verb'float complex' and \verb'double complex'
 are not always available.  The \verb'GraphBLAS.h' header defines them as
 \verb'GxB_FC32_t' and \verb'GxB_FC64_t', respectively.
 
@@ -1547,7 +1547,7 @@ The second parameter should be passed as \verb'sizeof(ctype)'.  The only
 requirement on the C type is that \verb'sizeof(ctype)' is valid in C, and
 that the type reside in a contiguous block of memory so that it can be moved
 with \verb'memcpy'.  For example, to create a user-defined type called
-\verb'Complex' for double-precision complex values using the ANSI C11
+\verb'Complex' for double-precision complex values using the C11
 \verb'double complex' type, the following can be used.  A complete example can
 be found in the \verb'usercomplex.c' and \verb'usercomplex.h' files in the
 \verb'Demo' folder.
@@ -1951,7 +1951,7 @@ not their values.
 User-defined positional operators cannot be defined by \verb'GrB_UnaryOp_new'.
 
 \verb'GxB_FREXPX' and \verb'GxB_FREXPE' return the mantissa and exponent,
-respectively, from the ANSI C11 \verb'frexp' function.  The exponent is
+respectively, from the C11 \verb'frexp' function.  The exponent is
 returned as a floating-point value, not an integer.
 
 The operators \verb'GxB_EXPM1_FC*' and \verb'GxB_LOG1P_FC*' for complex
@@ -2299,7 +2299,7 @@ GraphBLAS name        & types (domains)            & $z=f(x,y)$      & descripti
 \vspace{0.2in}
 
 The following operators are defined for real floating-point types only (\verb'GrB_FP32' and  \verb'GrB_FP64').
-They are identical to the ANSI C11 functions of the same name.  The last one in the table constructs
+They are identical to the C11 functions of the same name.  The last one in the table constructs
 the corresponding complex type.
 
 \vspace{0.2in}
@@ -2312,10 +2312,10 @@ GraphBLAS name        & types (domains)            & $z=f(x,y)$      & descripti
 \hline
 \verb'GxB_ATAN2_'$F$     & $F \times F \rightarrow F$ & $z = \tan^{-1}(y/x)$ & 4-quadrant arc tangent  \\
 \verb'GxB_HYPOT_'$F$     & $F \times F \rightarrow F$ & $z = \sqrt{x^2+y^2}$ & hypotenuse \\
-\verb'GxB_FMOD_'$F$      & $F \times F \rightarrow F$ &                      & ANSI C11 \verb'fmod' \\
-\verb'GxB_REMAINDER_'$F$ & $F \times F \rightarrow F$ &                      & ANSI C11 \verb'remainder' \\
-\verb'GxB_LDEXP_'$F$     & $F \times F \rightarrow F$ &                      & ANSI C11 \verb'ldexp' \\
-\verb'GxB_COPYSIGN_'$F$  & $F \times F \rightarrow F$ &                      & ANSI C11 \verb'copysign' \\
+\verb'GxB_FMOD_'$F$      & $F \times F \rightarrow F$ &                      & C11 \verb'fmod' \\
+\verb'GxB_REMAINDER_'$F$ & $F \times F \rightarrow F$ &                      & C11 \verb'remainder' \\
+\verb'GxB_LDEXP_'$F$     & $F \times F \rightarrow F$ &                      & C11 \verb'ldexp' \\
+\verb'GxB_COPYSIGN_'$F$  & $F \times F \rightarrow F$ &                      & C11 \verb'copysign' \\
 \hline
 \verb'GxB_CMPLX_'$F$     & $F \times F \rightarrow Z$ & $z = x + y \times i$ & complex from real \& imag \\
 \hline
@@ -4580,7 +4580,7 @@ pure deep copy of a matrix.
 
 The parameter \verb'X' is a pointer to any C equivalent built-in type, or a
 \verb'void *' pointer.  The \verb'GrB_Matrix_build' function uses the
-\verb'_Generic' feature of ANSI C11 to detect the type of pointer passed as the
+\verb'_Generic' feature of C11 to detect the type of pointer passed as the
 parameter \verb'X'.  If \verb'X' is a pointer to a built-in type, then the
 function can do the right typecasting.  If \verb'X' is a \verb'void *' pointer,
 then it can only assume \verb'X' to be a pointer to a user-defined type that is
@@ -4661,7 +4661,7 @@ sometime later.
 
 The scalar \verb'x' is typecasted into the type of \verb'C'.  Any value can be
 passed to this function and its type will be detected, via the \verb'_Generic'
-feature of ANSI C11.  For a user-defined type, \verb'x' is a \verb'void *'
+feature of C11.  For a user-defined type, \verb'x' is a \verb'void *'
 pointer that points to a memory space holding a single entry of this
 user-defined type.  This user-defined type must exactly match the user-defined
 type of \verb'C' since no typecasting is done between user-defined types.
@@ -5395,10 +5395,10 @@ Deserializing a vector is identical to deserializing a matrix;
 see Section \ref{matrix_deserialize_GxB} for more information.
 
 The blob is allocated with the \verb'malloc' function passed to
-\verb'GxB_init', or the ANSI C11 \verb'malloc' if \verb'GrB_init' was used
+\verb'GxB_init', or the C11 \verb'malloc' if \verb'GrB_init' was used
 to initialize GraphBLAS.  The blob must be freed by the matching \verb'free'
 method, either the \verb'free' function passed to \verb'GxB_init' or
-the ANSI C11 \verb'free' if \verb'GrB_init' was used.
+the C11 \verb'free' if \verb'GrB_init' was used.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_serializeSize:}  return size of serialized matrix}
@@ -5481,10 +5481,10 @@ internally, and fills it with the serialized matrix.  By default, ZSTD (level 1)
 compression is used, but other options can be selected via the descriptor.
 
 The blob is allocated with the \verb'malloc' function passed to
-\verb'GxB_init', or the ANSI C11 \verb'malloc' if \verb'GrB_init' was used
+\verb'GxB_init', or the C11 \verb'malloc' if \verb'GrB_init' was used
 to initialize GraphBLAS.  The blob must be freed by the matching \verb'free'
 method, either the \verb'free' function passed to \verb'GxB_init' or
-the ANSI C11 \verb'free' if \verb'GrB_init' was used.
+the C11 \verb'free' if \verb'GrB_init' was used.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -9985,7 +9985,7 @@ entries that are already present in \verb'C'.
 The \verb'<type> x' notation is otherwise the same as
 \verb'GrB_Matrix_setElement' (see Section~\ref{matrix_setElement}).  Any value
 can be passed to this function and its type will be detected, via the
-\verb'_Generic' feature of ANSI C11.  For a user-defined type, \verb'x' is a
+\verb'_Generic' feature of C11.  For a user-defined type, \verb'x' is a
 \verb'void *' pointer that points to a memory space holding a single entry of a
 scalar that has exactly the same user-defined type as the matrix \verb'C'.
 This user-defined type must exactly match the user-defined type of \verb'C'
@@ -10263,7 +10263,7 @@ entries that are already present in \verb'C'.
 The \verb'<type> x' notation is otherwise the same as
 \verb'GrB_Matrix_setElement' (see Section~\ref{matrix_setElement}).  Any value
 can be passed to this function and its type will be detected, via the
-\verb'_Generic' feature of ANSI C11.  For a user-defined type, \verb'x' is a
+\verb'_Generic' feature of C11.  For a user-defined type, \verb'x' is a
 \verb'void *' pointer that points to a memory space holding a single entry of a
 scalar that has exactly the same user-defined type as the matrix \verb'C'.
 This user-defined type must exactly match the user-defined type of \verb'C'
@@ -13943,7 +13943,7 @@ Prior to v3.3, GraphBLAS did not have a native complex type.  It now appears as
 the \verb'GxB_FC64' predefined type, but a complex type can also easily added
 as a user-defined type.  The \verb'Complex_init' function in the
 \verb'usercomplex.c' file in the \verb'Demo' folder creates the \verb'Complex'
-type based on the ANSI C11 \verb'double complex' type.
+type based on the C11 \verb'double complex' type.
 It creates a full suite of operators that correspond to every
 built-in GraphBLAS operator, both binary and unary.  In addition, it
 creates the operators listed in the following table, where $D$ is
@@ -14022,7 +14022,7 @@ if GraphBLAS is compiled without OpenMP.
 \subsection{On Linux and Mac}
 %----------------------------------------
 
-GraphBLAS makes extensive use of features in the ANSI C11 standard, and thus a
+GraphBLAS makes extensive use of features in the C11 standard, and thus a
 C compiler supporting this version of the C standard is required to use
 all features of GraphBLAS.
 
@@ -14092,7 +14092,7 @@ After compiling the library, you can compile the demos with
 GraphBLAS folder.
 
 If \verb'cmake' or \verb'make' fail, it might be that your default compiler
-does not support ANSI C11.  Try another compiler.  For example, try one of
+does not support C11.  Try another compiler.  For example, try one of
 these options.  Go into the \verb'build' directory and type one of these:
 
     {\small
@@ -14274,7 +14274,7 @@ Linux.
 %----------------------------------------
 
 SuiteSparse:GraphBLAS is now ported to Microsoft Visual Studio.  However, that
-compiler is not ANSI C11 compliant. As a result, GraphBLAS on Windows will have
+compiler is not C11 compliant. As a result, GraphBLAS on Windows will have
 a few minor limitations.
 
 \begin{itemize}
@@ -14617,7 +14617,7 @@ the example below, to set the compiler flags you need.
     # check which compiler is being used.  If you need to make
     # compiler-specific modifications, here is the place to do it.
     if ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-        # cmake 2.8 workaround: gcc needs to be told to do ANSI C11.
+        # cmake 2.8 workaround: gcc needs to be told to do C11.
         # cmake 3.0 doesn't have this problem.
         set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -lm " )
         ...
@@ -14897,7 +14897,7 @@ GraphBLAS folder.
 
     \begin{itemize}
     \item add non-\verb'va_arg' methods: \verb'va_arg'-based \verb'GxB_get/set'
-        methods are ANSI C11 but cause issues for cffi in Python.  As a
+        methods are C11 but cause issues for cffi in Python.  As a
         temporary workaround, new methods have been added that do not use
         \verb'va_arg'.  The existing \verb'GxB_get/set' methods are not
         changed.  The new methods are not in the user guide, since all of the
@@ -15488,7 +15488,7 @@ GraphBLAS folder.
     are not available.  Use the equivalent non-polymorphic functions instead,
     when compiling GraphBLAS with MS Visual Studio.  In addition,
     variable-length arrays are not supported, so user-defined types are limited
-    to 128 bytes in size.  These changes have no effect if you have an ANSI C11
+    to 128 bytes in size.  These changes have no effect if you have an C11
     compliant compiler.
 
     \verb'@GrB' interface modified:  \verb'GrB.init' is now required.
