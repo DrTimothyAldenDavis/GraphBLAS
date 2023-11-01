@@ -239,45 +239,48 @@ void mexFunction
     OK (GrB_Scalar_extractElement_UINT64_(&u64, s_uint64)) ;
     CHECK (u64 == sizeof (double complex)) ;
 
-    // type size (using an int32_t)
-    OK (GrB_Type_get_INT32_(GrB_BOOL, &i, GrB_SIZE)) ;
-    CHECK (i == sizeof (bool)) ;
 
-    OK (GrB_Type_get_INT32_(GrB_INT8, &i, GrB_SIZE)) ;
-    CHECK (i == sizeof (int8_t)) ;
+    // type size (using a size_t)
+    size = 0 ;
+    OK (GrB_Type_get_SIZE_(GrB_BOOL, &size, GrB_SIZE)) ;
+    CHECK (size == sizeof (bool)) ;
 
-    OK (GrB_Type_get_INT32_(GrB_INT16, &i, GrB_SIZE)) ;
-    CHECK (i == sizeof (int16_t)) ;
+    OK (GrB_Type_get_SIZE_(GrB_INT8, &size, GrB_SIZE)) ;
+    CHECK (size == sizeof (int8_t)) ;
 
-    OK (GrB_Type_get_INT32_(GrB_INT32, &i, GrB_SIZE)) ;
-    CHECK (i == sizeof (int32_t)) ;
+    OK (GrB_Type_get_SIZE_(GrB_INT16, &size, GrB_SIZE)) ;
+    CHECK (size == sizeof (int16_t)) ;
 
-    OK (GrB_Type_get_INT32_(GrB_INT64, &i, GrB_SIZE)) ;
-    CHECK (i == sizeof (int64_t)) ;
+    OK (GrB_Type_get_SIZE_(GrB_INT32, &size, GrB_SIZE)) ;
+    CHECK (size == sizeof (int32_t)) ;
 
-    OK (GrB_Type_get_INT32_(GrB_UINT8, &i, GrB_SIZE)) ;
-    CHECK (i == sizeof (uint8_t)) ;
+    OK (GrB_Type_get_SIZE_(GrB_INT64, &size, GrB_SIZE)) ;
+    CHECK (size == sizeof (int64_t)) ;
 
-    OK (GrB_Type_get_INT32_(GrB_UINT16, &i, GrB_SIZE)) ;
-    CHECK (i == sizeof (uint16_t)) ;
+    OK (GrB_Type_get_SIZE_(GrB_UINT8, &size, GrB_SIZE)) ;
+    CHECK (size == sizeof (uint8_t)) ;
 
-    OK (GrB_Type_get_INT32_(GrB_UINT32, &i, GrB_SIZE)) ;
-    CHECK (i == sizeof (uint32_t)) ;
+    OK (GrB_Type_get_SIZE_(GrB_UINT16, &size, GrB_SIZE)) ;
+    CHECK (size == sizeof (uint16_t)) ;
 
-    OK (GrB_Type_get_INT32_(GrB_UINT64, &i, GrB_SIZE)) ;
-    CHECK (i == sizeof (uint64_t)) ;
+    OK (GrB_Type_get_SIZE_(GrB_UINT32, &size, GrB_SIZE)) ;
+    CHECK (size == sizeof (uint32_t)) ;
 
-    OK (GrB_Type_get_INT32_(GrB_FP32, &i, GrB_SIZE)) ;
-    CHECK (i == sizeof (float)) ;
+    OK (GrB_Type_get_SIZE_(GrB_UINT64, &size, GrB_SIZE)) ;
+    CHECK (size == sizeof (uint64_t)) ;
 
-    OK (GrB_Type_get_INT32_(GrB_FP64, &i, GrB_SIZE)) ;
-    CHECK (i == sizeof (double)) ;
+    OK (GrB_Type_get_SIZE_(GrB_FP32, &size, GrB_SIZE)) ;
+    CHECK (size == sizeof (float)) ;
 
-    OK (GrB_Type_get_INT32_(GxB_FC32, &i, GrB_SIZE)) ;
-    CHECK (i == sizeof (float complex)) ;
+    OK (GrB_Type_get_SIZE_(GrB_FP64, &size, GrB_SIZE)) ;
+    CHECK (size == sizeof (double)) ;
 
-    OK (GrB_Type_get_INT32_(GxB_FC64, &i, GrB_SIZE)) ;
-    CHECK (i == sizeof (double complex)) ;
+    OK (GrB_Type_get_SIZE_(GxB_FC32, &size, GrB_SIZE)) ;
+    CHECK (size == sizeof (float complex)) ;
+
+    OK (GrB_Type_get_SIZE_(GxB_FC64, &size, GrB_SIZE)) ;
+    CHECK (size == sizeof (double complex)) ;
+
 
 
     // built-in type definition
@@ -346,7 +349,8 @@ void mexFunction
     ERR (GrB_Type_get_Scalar_(type, s_int32, GrB_OUTP)) ;
     ERR (GrB_Type_get_String_(type, name, GrB_OUTP)) ;
     ERR (GrB_Type_get_SIZE_(type, &size, GrB_OUTP)) ;
-    ERR (GrB_Type_get_SIZE_(GrB_FP32, &size, GrB_SIZE)) ;
+
+    ERR (GrB_Type_get_SIZE_(GrB_FP32, &i, GrB_SIZE)) ;
 
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Type_get_VOID_(type, nothing, 0)) ;
