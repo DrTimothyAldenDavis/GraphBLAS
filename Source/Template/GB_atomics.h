@@ -10,7 +10,7 @@
 // All atomic operations used by SuiteSparse:GraphBLAS appear in this file.
 // OpenMP 4.0 or later is preferred.
 
-// These atomic operations assume either an ANSI C11 compiler that supports
+// These atomic operations assume either an C11 compiler that supports
 // OpenMP 3.1 or later, or Microsoft Visual Studio on 64-bit Windows (which
 // only supports OpenMP 2.0).  SuiteSparse:GraphBLAS is not supported on 32-bit
 // Windows.
