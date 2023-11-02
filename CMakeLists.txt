@@ -2,7 +2,7 @@
 # GraphBLAS/CMakeLists.txt:  cmake script for GraphBLAS
 #-------------------------------------------------------------------------------
 
-# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
 # See the User Guide for details on how to compile SuiteSparse:GraphBLAS.
@@ -240,12 +240,13 @@ set_target_properties ( GraphBLAS PROPERTIES
     WINDOWS_EXPORT_ALL_SYMBOLS ON )
 
 target_include_directories ( GraphBLAS
-    INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Include>
               $<INSTALL_INTERFACE:${SUITESPARSE_INCLUDEDIR}> )
 
 if ( SUITESPARSE_CUDA )
     add_dependencies ( GraphBLAS GraphBLAS_CUDA )
 #   add_dependencies ( GraphBLAS rmm_wrap )
+    target_compile_definitions ( GraphBLAS PRIVATE "SUITESPARSE_CUDA" )
 endif ( )
 
 if ( WIN32 )
@@ -281,6 +282,7 @@ if ( NOT NSTATIC )
         add_dependencies ( GraphBLAS_static GraphBLAS_CUDA )
         set ( GRAPHBLAS_STATIC_MODULES "${GRAPHBLAS_STATIC_MODULES} GraphBLAS_CUDA" )
 #       add_dependencies ( GraphBLAS_static rmm_wrap )
+        target_compile_definitions ( GraphBLAS_static PRIVATE "SUITESPARSE_CUDA" )
     endif ( )
 endif ( )
 
@@ -489,21 +491,30 @@ export ( EXPORT GraphBLASTargets
 # install export target and config for find_package
 install ( EXPORT GraphBLASTargets
     NAMESPACE SuiteSparse::
-    DESTINATION ${SUITESPARSE_LIBDIR}/cmake/GraphBLAS )
+    DESTINATION ${SUITESPARSE_PKGFILEDIR}/cmake/GraphBLAS )
 
+# generate config file to be used in common build tree
+set ( SUITESPARSE_IN_BUILD_TREE ON )
 configure_package_config_file (
     Config/GraphBLASConfig.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/GraphBLASConfig.cmake
-    INSTALL_DESTINATION ${SUITESPARSE_LIBDIR}/cmake/GraphBLAS )
+    INSTALL_DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/GraphBLASConfig.cmake )
+
+# generate config file to be installed
+set ( SUITESPARSE_IN_BUILD_TREE OFF )
+configure_package_config_file (
+    Config/GraphBLASConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/target/GraphBLASConfig.cmake
+    INSTALL_DESTINATION ${SUITESPARSE_PKGFILEDIR}/cmake/GraphBLAS )
 
 write_basic_package_version_file (
     ${CMAKE_CURRENT_BINARY_DIR}/GraphBLASConfigVersion.cmake
     COMPATIBILITY SameMajorVersion )
 
 install ( FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/GraphBLASConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/target/GraphBLASConfig.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/GraphBLASConfigVersion.cmake
-    DESTINATION ${SUITESPARSE_LIBDIR}/cmake/GraphBLAS )
+    DESTINATION ${SUITESPARSE_PKGFILEDIR}/cmake/GraphBLAS )
 
 #-------------------------------------------------------------------------------
 # create pkg-config file
@@ -558,7 +569,7 @@ if ( NOT MSVC )
         NEWLINE_STYLE LF )
     install ( FILES
         ${CMAKE_CURRENT_BINARY_DIR}/GraphBLAS.pc
-        DESTINATION ${SUITESPARSE_LIBDIR}/pkgconfig )
+        DESTINATION ${SUITESPARSE_PKGFILEDIR}/pkgconfig )
 endif ( )
 
 #-------------------------------------------------------------------------------
