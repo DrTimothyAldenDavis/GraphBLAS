@@ -662,11 +662,10 @@ The size of the type can be returned as a \verb'size_t' C scalar, or as a
     assert (size == sizeof (float)) ;
 
     GrB_Scalar s ;
-    uint64_t size2 ;
     GrB_Scalar_new (&s, GrB_UINT64) ;
     GrB_get (GrB_FP32, s, GrB_SIZE) ;
-    GrB_Scalar_extractElement (&size2, s) ;
-    assert (size2 == sizeof (float)) ; \end{verbatim}}
+    GrB_Scalar_extractElement (&size, s) ;
+    assert (size == sizeof (float)) ; \end{verbatim}}
 
 %-------------------------------------------------------------------------------
 \newpage
