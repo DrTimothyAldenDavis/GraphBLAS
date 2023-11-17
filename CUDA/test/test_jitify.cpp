@@ -1,5 +1,13 @@
+//------------------------------------------------------------------------------
+// GraphBLAS/CUDA/test/test_jitify.cpp
+//------------------------------------------------------------------------------
+
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 #include "jitify.hpp"
-#include "../GB_jit_launcher.h"
+#include "GB_cuda_jitify_launcher.h"
 
 int main(int argc, char **argv) {
 

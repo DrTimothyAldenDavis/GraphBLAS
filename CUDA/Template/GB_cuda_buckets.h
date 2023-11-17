@@ -1,13 +1,13 @@
 //------------------------------------------------------------------------------
-// GB_cuda_buckets.h: definitions for buckets using for dot3 
+// GraphBLAS/CUDA/Template/GB_cuda_buckets.h: bucket definitions for dot3
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-//------------------------------------------------------------------------------
+// FIXME: rename this file to GB_cuda_dot3_buckets.h (or .cuh? .hpp?)
 
-// This file is #include'd only in the GraphBLAS/CUDA/GB_cuda*.cu source files.
+//------------------------------------------------------------------------------
 
 #ifndef GB_CUDA_BUCKETS_H
 #define GB_CUDA_BUCKETS_H
@@ -21,6 +21,7 @@
 // dot3:  C<M>=A'B, M is sparse or hyper, C is sparse or hyper
 // 32 kernels A,B: (hyper,sparse,bitmap,full)^2 x (M and C are sparse/hyper)
 
+// FIXME: rename enum values to GB_DOT3_BUCKET*
 typedef enum
 {
     GB_BUCKET_ZOMBIE = 0,       // C(i,j) is a zombie (not a bucket)
@@ -33,7 +34,7 @@ typedef enum
     GB_BUCKET_SPDN = 2,         // spdn: sparse vector has lots of entries;
                                 // use a whole warp for each dot product
 }
-GB_bucket_code ;
+GB_bucket_code ;    // FIXME: rename GB_dot3_bucket_code
 
 // These may use another bucket enum:
 

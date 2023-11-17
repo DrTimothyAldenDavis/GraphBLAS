@@ -1,7 +1,12 @@
 //------------------------------------------------------------------------------
-// GB_jit_AxB_dot3_dense_phase1: phase1 for dot3, A and B are bitmap/full
+// GraphBLAS/CUDA/JitKernels/GB_cuda_jit_AxB_dot3_dense_phase1.cuh
 //------------------------------------------------------------------------------
 
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
+// phase1 for dot3, A and B are bitmap/full
 // dense phase1: symbolic load balancing and data partition
 // to assign work to different 'buckets' for later compute
 

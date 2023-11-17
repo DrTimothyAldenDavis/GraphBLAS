@@ -1,10 +1,14 @@
 //------------------------------------------------------------------------------
-// template/GB_jit_reduce.cu
+// GraphBLAS/CUDA/JitKernels/GB_cuda_jit_reduce.cuh
 //------------------------------------------------------------------------------
 
-// The GB_jit_reduce CUDA kernel reduces a GrB_Matrix A of any type T_A, to a
-// scalar of type T_Z.  Each threadblock (blockIdx.x) reduces its portion of Ax
-// to a single scalar, and then atomics are used across the threadblocks.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
+// The GB_cuda_jit_reduce CUDA kernel reduces a GrB_Matrix A of any type T_A,
+// to a scalar of type T_Z.  Each threadblock (blockIdx.x) reduces its portion
+// of Ax to a single scalar, and then atomics are used across the threadblocks.
 
 // Both the grid and block are 1D, so blockDim.x is the # threads in a
 // threadblock, and the # of threadblocks is grid.x
@@ -97,7 +101,7 @@ T_Z GB_block_Reduce(thread_block g, T_Z val)
 //------------------------------------------------------------------------------
 
 template< typename T_A, typename T_Z>
-__global__ void GB_jit_reduce
+__global__ void GB_jit_reduce   // FIXME rename
 (
     GrB_Matrix A,   // matrix to reduce
     void *zscalar,  // scalar result, at least sizeof (uint32_t)

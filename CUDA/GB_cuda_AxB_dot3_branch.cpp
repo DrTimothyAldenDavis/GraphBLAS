@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot3_cuda_branch: decide if GPU should be used for dot3 mxm
+// GraphBLAS/CUDA/GB_cuda_AxB_dot3_branch: decide to use GPU for dot3
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -17,7 +17,7 @@ extern "C"
 #include "GB_cuda.h"
 #include <cuda_runtime.h>
 
-bool GB_AxB_dot3_cuda_branch 
+bool GB_cuda_AxB_dot3_branch 
 (
     const GrB_Matrix M,             // mask matrix
     const bool Mask_struct,         // if true, use the only structure of M

@@ -1,5 +1,9 @@
 //------------------------------------------------------------------------------
-// AxB_dot3_phase3_spdn.cu 
+// GraphBLAS/CUDA/JitKernels/GB_cuda_jit_AxB_dot3_phase3_spdn.cuh
+//------------------------------------------------------------------------------
+
+// SPDX-License-Identifier: Apache-2.0
+
 //------------------------------------------------------------------------------
 
 // This CUDA kernel produces the semi-ring product of two
@@ -67,7 +71,7 @@ template<
     typename T_C, typename T_A, typename T_B,
     typename T_Z, typename T_X, typename T_Y,
     uint64_t srcode>
-__global__ void AxB_dot3_phase3_spdn
+__global__ void AxB_dot3_phase3_spdn        // FIXME rename
 (
     int64_t start,
     int64_t end,

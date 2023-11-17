@@ -1,8 +1,13 @@
 //------------------------------------------------------------------------------
-// templates/GB_AxB_cuda_dot3_phase2: fill the global buckets
+// GraphBLAS/CUDA/JitKernels/GB_cuda_jit_GB_AxB_phase2.cuh
 //------------------------------------------------------------------------------
 
-// TODO describe me
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+// fill the global buckets
+//------------------------------------------------------------------------------
+
 #pragma once
 #include "GB_cuda_kernel.h"
 #include "GB_mxm_shared_definitions.h"
@@ -114,7 +119,7 @@ __inline__ __device__ uint64_t warp_ReduceSumPlus_uint64( thread_block_tile<tile
 // GB_AxB_cuda_dot3_phase1.  The launch geometry of this kernel must match the
 // GB_AxB_cuda_dot3_phase1 kernel, with the same # of threads and threadblocks.
 
-__global__ void AxB_phase2
+__global__ void AxB_phase2  // FIXME rename
 (
     // input, not modified:
     int64_t *__restrict__ blockbucket,    // global bucket count, of size NBUCKETS*nblocks

@@ -1,6 +1,12 @@
 //------------------------------------------------------------------------------
-// template/GB_jit_AxB_dot3_phase1.cuh: build nanobuckets, hunt for pre-zombies
+// GraphBLAS/CUDA/JitKernels/GB_cuda_jit_AxB_dot3_phase1.cuh
 //------------------------------------------------------------------------------
+
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
+// build nanobuckets, hunt for pre-zombies
 
 // dot3, phase1: symbolic load balancing and data partition
 // to assign work to different 'buckets' for later compute

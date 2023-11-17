@@ -1,5 +1,13 @@
+//------------------------------------------------------------------------------
+// GraphBLAS/CUDA/GB_cuda_jitify_launcher.h
+//------------------------------------------------------------------------------
+
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 /*
- * Copyright (c) 2019,2020 NVIDIA CORPORATION.
+ * Copyright (c) 2019,2023 NVIDIA CORPORATION.
  *
  * Copyright 2018-2019 BlazingDB, Inc.
  *     Copyright 2018 Christian Noboa Mardini <christian@blazingdb.com>
@@ -17,10 +25,15 @@
  * limitations under the License.
  */
 
-#ifndef GB_JIT_LAUNCHER_H
-#define GB_JIT_LAUNCHER_H
+//------------------------------------------------------------------------------
 
-#include <GB_jit_cache.h>
+// FIXME: rename .hpp?
+
+#ifndef GB_CUDA_JITIFY_LAUNCHER_H
+#define GB_CUDA_JITIFY_LAUNCHER_H
+
+#include "GB_cuda_jitify_cache.h"
+
 #include <unordered_map>
 #include <memory>
 #include <string>
