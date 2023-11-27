@@ -1,5 +1,10 @@
 //------------------------------------------------------------------------------
-// AxB_dot3_phase3_mp.cu 
+// GraphBLAS/CUDA/JitKernels/GB_cuda_jit_AxB_dot3_phase3_mp.cuh
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 //------------------------------------------------------------------------------
 
 // This CUDA kernel produces the semi-ring product of two
@@ -78,7 +83,7 @@ template<
     typename T_C, typename T_A, typename T_B,
     typename T_Z, typename T_X, typename T_Y,
     uint64_t srcode>
-__global__ void AxB_dot3_phase3_mp
+__global__ void AxB_dot3_phase3_mp  // FIXME rename
 (
     int64_t start,
     int64_t end,
@@ -337,7 +342,7 @@ __global__ void AxB_dot3_phase3_mp
                 #else
                     if (Aind == Bind)
                     {
-                        // cij += aki + bkj
+                        // cij += aki * bkj
                         GB_DOT_MERGE (pA + pA_start, pB + pB_start) ;
                         // TODO check terminal condition, using tile.any
                     }

@@ -1,9 +1,9 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/GB_cuda_atomics: CUDA atomics for GraphBLAS
+// GraphBLAS/CUDA/Template/GB_cuda_atomics.cuh: CUDA atomics for GraphBLAS
 //------------------------------------------------------------------------------
 
 /*
- * Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2023, NVIDIA CORPORATION. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

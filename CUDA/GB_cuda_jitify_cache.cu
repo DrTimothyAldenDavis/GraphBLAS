@@ -1,5 +1,13 @@
+//------------------------------------------------------------------------------
+// GraphBLAS/CUDA/GB_cuda_jitify_cache.cu
+//------------------------------------------------------------------------------
+
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 /*
- * Copyright (c) 2019,2020 NVIDIA CORPORATION.
+ * Copyright (c) 2019,2023 NVIDIA CORPORATION.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +22,8 @@
  * limitations under the License.
  */
 
+//------------------------------------------------------------------------------
+
 #include <stdio.h>
 #include <unistd.h>
 #include <errno.h>
@@ -23,7 +33,7 @@
 #include <sys/types.h>
 #include <filesystem>
 
-#include "GB_jit_cache.h"
+#include "GB_cuda_jitify_cache.h"
 #include "GraphBLAS.h"
 // from GraphBLAS.h (for example):
 // #define GxB_IMPLEMENTATION_MAJOR 6
@@ -91,9 +101,10 @@ std::string getCacheDir() {
   if ( (stat( kernel_cache_path.c_str(), &st) != 0) ) {
     // `mkdir -p` the kernel cache path if it doesn't exist
 //    printf("cache is going to path %s\n", kernel_cache_path.c_str());
-    int status;
-    //status = std::filesystem::create_directories(kernel_cache_path.c_str());
-    status = std::filesystem::create_directories(kernel_cache_path);
+    // int status;
+    // status = std::filesystem::create_directories(kernel_cache_path.c_str());
+    // status = 
+    std::filesystem::create_directories(kernel_cache_path);
 //    if (status != 0 ) return std::string();
     //boost::filesystem::create_directories(kernel_cache_path);
   }

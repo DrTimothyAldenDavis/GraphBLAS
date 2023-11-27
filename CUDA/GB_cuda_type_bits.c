@@ -1,4 +1,11 @@
+//------------------------------------------------------------------------------
+// GraphBLAS/CUDA/GB_cuda_type_bits
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
 
 #undef GBCUDA_CPLUSPLUS
 #include "GB.h"

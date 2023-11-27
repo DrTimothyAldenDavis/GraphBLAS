@@ -1,5 +1,9 @@
 //------------------------------------------------------------------------------
-// GB_jit_AxB_dot3_phase3_dndn.cuh:
+// GraphBLAS/CUDA/JitKernels/GB_cuda_jit_AxB_dot3_phase3_dndn.cuh
+//------------------------------------------------------------------------------
+
+// SPDX-License-Identifier: Apache-2.0
+
 //------------------------------------------------------------------------------
 
 // This CUDA kernel produces the semiring product of two

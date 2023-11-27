@@ -1,3 +1,11 @@
+//------------------------------------------------------------------------------
+// GraphBLAS/CUDA/JitKernels/GB_cuda_jit_AxB_dot3_phase3_vsvs.cuh
+//------------------------------------------------------------------------------
+
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 //******************************************************************************
 //  Sparse dot version of Matrix-Matrix multiply with mask 
 //  Each thread in this kernel is responsible for m vector-pairs(x,y), 

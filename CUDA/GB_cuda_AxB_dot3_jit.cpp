@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot3_cuda: compute C<M> = A'*B in parallel, on the GPU(s)
+// GraphBLAS/CUDA/GB_cuda_AxB_dot3_jit: compute C<M> = A'*B on GPU(s)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -18,11 +18,10 @@ extern "C"
     #include "GB_mxm.h"
 }
 
-#include "GB_jit_cache.h"
+#include "GB_cuda_jitify_cache.h"
 #include "GB_cuda_common_jitFactory.hpp"
 #include "GB_cuda_reduce_jitFactory.hpp"
 #include "GB_cuda_mxm_dot3_jitFactory.hpp"
-#include "GB_cuda_type_wrap.hpp"
 #include "test/GpuTimer.h"
 
 /*
@@ -60,7 +59,7 @@ void print_array(void *arr, I size, const char *name) {
 // GB_AxB_dot3_cuda
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
+GrB_Info GB_cuda_AxB_dot3_jit       // C<M> = A'*B using dot product method
 (
     GrB_Matrix C,                   // output matrix
     const GrB_Matrix M,             // mask matrix

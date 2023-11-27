@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-// GB_cuda_common_jitFactory.hpp: common defines for all jitFactory classes
+// GraphBLAS/CUDA/GB_cuda_common_jitFactory.hpp: for all jitFactory classes
 //------------------------------------------------------------------------------
 
-// (c) Nvidia Corp. 2020 All rights reserved
+// (c) Nvidia Corp. 2023 All rights reserved
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -16,8 +16,8 @@
 // configured by cmake from the following file:
 // GraphBLAS/CUDA/Config/GB_cuda_common_jitFactory.hpp.in
 
-#ifndef GB_COMMON_JITFACTORY_H
-#define GB_COMMON_JITFACTORY_H
+#ifndef GB_CUDA_COMMON_JITFACTORY_HPP
+#define GB_CUDA_COMMON_JITFACTORY_HPP
 
 #pragma once
 
@@ -30,11 +30,9 @@ extern "C"
 
 #include <iostream>
 #include <cstdint>
-#include "GB_jit_cache.h"
-#include "GB_jit_launcher.h"
+#include "GB_cuda_jitify_cache.h"
+#include "GB_cuda_jitify_launcher.h"
 #include "GB_cuda_mxm_factory.hpp"
-#include "GB_cuda_buckets.h"
-#include "GB_cuda_type_wrap.hpp"
 #include "GB_cuda_error.h"
 #include "../rmm_wrap/rmm_wrap.h"
 #include "GB_iceil.h"
@@ -53,6 +51,9 @@ static const std::vector<std::string> GB_jit_cuda_compiler_flags{
 //   "-I../templates",
 //   "-I../CUDA",
 //   "-I../Source/Shared",
+
+// FIXME: just this?
+// "-I" + jit::get_user_graphblas_source_path() + "/src",
 
    // Add includes relative to GRAPHBLAS_SOURCE_PATH variable
    "-I" + jit::get_user_graphblas_source_path() + "/CUDA",

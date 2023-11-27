@@ -1,3 +1,10 @@
+//------------------------------------------------------------------------------
+// GraphBLAS/CUDA/GB_cuda_jitify_launcher.cu
+//------------------------------------------------------------------------------
+
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
 
 /*
  * Copyright (c) 2019,2020 NVIDIA CORPORATION.
@@ -18,7 +25,7 @@
  * limitations under the License.
  */
 
-#include <GB_jit_launcher.h>
+#include "GB_cuda_jitify_launcher.h"
 #include <cstdint>
 
 namespace jit {

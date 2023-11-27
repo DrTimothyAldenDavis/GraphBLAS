@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-// GB_reduce_to_scalar_cuda_branch: when to use GPU for scalar reduction
+// GraphBLAS/CUDA/GB_cuda_reduce_to_scalar_branch: decide to use GPU for reduce
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -11,7 +11,7 @@
 
 #include "GB_cuda.h"
 
-bool GB_reduce_to_scalar_cuda_branch    // return true to use the GPU
+bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
 (
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A              // input matrix

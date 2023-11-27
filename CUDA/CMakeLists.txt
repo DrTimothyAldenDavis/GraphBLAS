@@ -56,7 +56,7 @@ set ( GRAPHBLAS_CUDA_INCLUDES
         ../Source/Template
         ../Source/Factories
         ../Include
-        ../CUDA )
+        ../CUDA ../CUDA/JitKernels ../CUDA/Template )
 
 message ( STATUS "GraphBLAS CUDA includes: ${GRAPHBLAS_CUDA_INCLUDES}" )
 

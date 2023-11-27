@@ -1,8 +1,11 @@
 //------------------------------------------------------------------------------
-// GB_cuda_mxm_dot3_factory
+// GraphBLAS/CUDA/GB_cuda_mxm_dot3_jitFactory.hpp
 //------------------------------------------------------------------------------
 
 // SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 /*
  * Copyright (c) 2017-2019, NVIDIA CORPORATION. All rights reserved.
  *
@@ -31,21 +34,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//------------------------------------------------------------------------------
-
 #ifndef GB_MXM_DOT3_JITFACTORY_H
 #define GB_MXM_DOT3_JITFACTORY_H
 
 #pragma once
 
 /**
- * This file is responsible for picking all the parameters and what kernel variaiton we will use for a given instance
+ * This file is responsible for picking all the parameters and what kernel
+ * variaiton we will use for a given instance
  * - data types
  * - semiring types
  * - binary ops
  * - monoids
  *
- * Kernel factory says "Here's the actual instance I want you to build with the given parameters"
+ * Kernel factory says "Here's the actual instance I want you to build with the
+ * given parameters"
  */
 
 
