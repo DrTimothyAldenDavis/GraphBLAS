@@ -342,7 +342,7 @@ __global__ void AxB_dot3_phase3_mp  // FIXME rename
                 #else
                     if (Aind == Bind)
                     {
-                        // cij += aki + bkj
+                        // cij += aki * bkj
                         GB_DOT_MERGE (pA + pA_start, pB + pB_start) ;
                         // TODO check terminal condition, using tile.any
                     }
