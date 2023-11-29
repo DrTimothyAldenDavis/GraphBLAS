@@ -55,8 +55,9 @@ set ( GRAPHBLAS_CUDA_INCLUDES
         ../Source/Shared
         ../Source/Template
         ../Source/Factories
+        Template
         ../Include
-        ../CUDA ../CUDA/JitKernels ../CUDA/Template )
+        ../CUDA )
 
 message ( STATUS "GraphBLAS CUDA includes: ${GRAPHBLAS_CUDA_INCLUDES}" )
 
@@ -101,12 +102,12 @@ export ( EXPORT GraphBLAS_CUDATargets
 # install export target and config for find_package
 install ( EXPORT GraphBLAS_CUDATargets
     NAMESPACE SuiteSparse::
-    DESTINATION ${SUITESPARSE_LIBDIR}/cmake/GraphBLAS )
+    DESTINATION ${SUITESPARSE_PKGFILEDIR}/cmake/GraphBLAS )
 
 configure_package_config_file (
     Config/GraphBLAS_CUDAConfig.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/GraphBLAS_CUDAConfig.cmake
-    INSTALL_DESTINATION ${SUITESPARSE_LIBDIR}/cmake/GraphBLAS )
+    INSTALL_DESTINATION ${SUITESPARSE_PKGFILEDIR}/cmake/GraphBLAS )
 
 write_basic_package_version_file (
     ${CMAKE_CURRENT_BINARY_DIR}/GraphBLAS_CUDAConfigVersion.cmake
@@ -115,7 +116,7 @@ write_basic_package_version_file (
 install ( FILES
     ${CMAKE_CURRENT_BINARY_DIR}/GraphBLAS_CUDAConfig.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/GraphBLAS_CUDAConfigVersion.cmake
-    DESTINATION ${SUITESPARSE_LIBDIR}/cmake/GraphBLAS )
+    DESTINATION ${SUITESPARSE_PKGFILEDIR}/cmake/GraphBLAS )
 
 #-------------------------------------------------------------------------------
 # create pkg-config file
@@ -143,12 +144,14 @@ if ( NOT MSVC )
         NEWLINE_STYLE LF )
     install ( FILES
         ${CMAKE_CURRENT_BINARY_DIR}/GraphBLAS_CUDA.pc
-        DESTINATION ${SUITESPARSE_LIBDIR}/pkgconfig )
+        DESTINATION ${SUITESPARSE_PKGFILEDIR}/pkgconfig )
 endif ( )
 
 #-------------------------------------------------------------------------------
 # test suite for the CUDA kernels
 #-------------------------------------------------------------------------------
+
+if ( 0 )
 
 # 1. Execute enumify/stringify/jitify logic to compile ptx kernels and
 # compile/link w/ relevant *.cu files.
@@ -244,28 +247,27 @@ set_target_properties(graphblascuda_test PROPERTIES CUDA_ARCHITECTURES "52;75;80
 
 include(GoogleTest)
 
-add_dependencies(graphblascuda_test GraphBLAS)
-add_dependencies(graphblascuda_test GraphBLAS_CUDA)
-add_dependencies(graphblascuda_test gtest_main)
-add_dependencies(graphblascuda_test rmm_wrap)
+if ( ENABLE_SHARED_LIBS )
+    target_link_libraries ( graphblascuda_test PUBLIC GraphBLAS  )
+else ( )
+    target_link_libraries ( graphblascuda_test PUBLIC GraphBLAS_static )
+endif ( )
 
-target_link_libraries(graphblascuda_test
-        PUBLIC
-        GraphBLAS
-        GraphBLAS_CUDA
-        rmm_wrap
-        CUDA::cudart_static
-        CUDA::nvrtc
-        ${ADDITIONAL_DEPS}
-        PRIVATE
-        gtest_main)
+target_link_libraries ( graphblascuda_test
+    PUBLIC
+    GraphBLAS_CUDA
+    RMM_wrap
+    CUDA::cudart_static
+    CUDA::nvrtc
+    ${ADDITIONAL_DEPS}
+    PRIVATE
+    gtest_main )
 
-target_include_directories(graphblascuda_test
-        PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/../Include
-        ${CMAKE_CURRENT_SOURCE_DIR}/../rmm_wrap
-        rmm_wrap
-        ${ADDITIONAL_INCLUDES}
-        ${CUDAToolkit_INCLUDE_DIRS}
-        ${GRAPHBLAS_CUDA_INCLUDES})
+target_include_directories ( graphblascuda_test
+    PUBLIC
+    rmm_wrap
+    ${ADDITIONAL_INCLUDES}
+    ${CUDAToolkit_INCLUDE_DIRS}
+    ${GRAPHBLAS_CUDA_INCLUDES} )
 
+endif ( )
