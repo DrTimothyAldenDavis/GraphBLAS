@@ -96,9 +96,9 @@
         #define GB_GLOBAL extern __declspec ( dllexport )
     #elif defined ( GB_STATIC )
         // Compiling the user application on Windows, importing symbols from
-        // a static GraphBLAS library on Windows. The user application must do:
-        //      #define GB_STATIC
-        //      #include "GraphBLAS.h"
+        // a static GraphBLAS library on Windows. The user application must
+        // define GB_STATIC (e.g., with the pre-processor flag -DGB_STATIC) for
+        // all compilation units that include "GraphBLAS.h".
         #define GB_GLOBAL extern
     #else
         // Compiling the user application on Windows, importing symbols from
@@ -124,7 +124,7 @@
 // C95: 199409L
 #define GxB_STDC_VERSION __STDC_VERSION__
 #else
-// assume ANSI C (C90 / C89)
+// assume C90 / C89
 #define GxB_STDC_VERSION 199001L
 #endif
 
@@ -205,10 +205,10 @@
     // NVIDIA nvcc
     #define GB_restrict __restrict__
 #elif GxB_STDC_VERSION >= 199901L
-    // ANSI C99 or later
+    // C99 or later
     #define GB_restrict restrict
 #else
-    // ANSI C95 and earlier: no restrict keyword
+    // C95 and earlier: no restrict keyword
     #define GB_restrict
 #endif
 
@@ -240,13 +240,13 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Nov 26, 2023"
+#define GxB_IMPLEMENTATION_DATE "Dec 30, 2023"
 #define GxB_IMPLEMENTATION_MAJOR 9
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
-#define GxB_SPEC_DATE "Dec 31, 2023"
+#define GxB_SPEC_DATE "Nov 15, 2021"
 #define GxB_SPEC_MAJOR 2
-#define GxB_SPEC_MINOR 1
+#define GxB_SPEC_MINOR 0
 #define GxB_SPEC_SUB   0
 
 // compile-time access to the C API Version number of this library.
