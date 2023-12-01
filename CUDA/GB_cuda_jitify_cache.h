@@ -39,8 +39,6 @@
 namespace jit {
 
 std::string get_user_home_cache_dir();
-std::string get_user_graphblas_source_path();
-std::string getCacheDir(void);
 
 template <typename Tv>
 using named_prog = std::pair<std::string, std::shared_ptr<Tv>>;
@@ -225,7 +223,7 @@ private:
         else { // Find file cached T object
             bool successful_read = false;
             std::string serialized;
-            std::string cache_dir = getCacheDir();
+            std::string cache_dir = get_user_home_cache_dir();
             std::string file_name = cache_dir + "/" + name;
             if (not cache_dir.empty() ) {
                 // TODO: Use OS-agnostic path separator here
@@ -285,7 +283,7 @@ private:
             bool successful_read = false;
             std::string serialized;
             #if defined(JITIFY_USE_CACHE)
-                std::string cache_dir = getCacheDir();
+                std::string cache_dir = get_user_home_cache_dir() ;
                 if (not cache_dir.empty() ) {
                     // TODO: Use OS-agnostic path separator
                     std::string file_name = cache_dir + "/" + name;

@@ -35,90 +35,30 @@
 
 #include "GB_cuda_jitify_cache.h"
 #include "GraphBLAS.h"
-// from GraphBLAS.h (for example):
-// #define GxB_IMPLEMENTATION_MAJOR 6
-// #define GxB_IMPLEMENTATION_MINOR 0
-// #define GxB_IMPLEMENTATION_SUB   3
+extern "C"
+{
+    #include "GB.h"
+    #include "GB_jitifyer.h"
+}
 
 namespace jit {
 
 // Get the directory in home to use for storing the cache
     std::string get_user_home_cache_dir() {
-        auto home_dir = std::getenv("HOME");
-        if (home_dir != nullptr) {
-            std::string Major_ver = GB_XSTR (GxB_IMPLEMENTATION_MAJOR) ;
-            std::string Minor_ver = GB_XSTR (GxB_IMPLEMENTATION_MINOR) ;
-            std::string Imple_sub = GB_XSTR (GxB_IMPLEMENTATION_SUB) ;
-            return std::string(home_dir) + "/.SuiteSparse/GrB"
-                   + Major_ver+"."+Minor_ver+"."+Imple_sub;
-        } else {
-            return std::string();
+        const char *path = GB_jitifyer_get_cache_path ( ) ;
+        if (path == NULL)
+        {
+            return std::string ("") ;
+        }
+        else
+        {
+            return std::string (path) ;
         }
     }
-
-// Get the directory in home to use for storing the cache
-    std::string get_user_graphblas_source_path() {
-        auto gb_home = std::getenv("GRAPHBLAS_SOURCE_PATH");
-        if (gb_home != nullptr) return std::string(gb_home);
-        else return std::string();
-    }
-
-
-// Default `GRAPHBLAS_CACHE_PATH` to `$HOME/.GraphBLAS`.
-// This definition can be overridden at compile time by specifying a
-// `-DGRAPHBLAS_CACHE_PATH=/kernel/cache/path` CMake argument.
-// This path is used in the `getCacheDir()` function below.
-#if !defined(GRAPHBLAS_CACHE_PATH)
-#define GRAPHBLAS_CACHE_PATH get_user_home_cache_dir() 
-#endif
-
-/**
- * @brief Get the string path to the JITIFY kernel cache directory.
- *
- * This path can be overridden at runtime by defining an environment variable
- * named `GRAPHBLAS_CACHE_PATH`. The value of this variable must be a path
- * under which the process' user has read/write priveleges.
- *
- * This function returns a path to the cache directory, creating it if it
- * doesn't exist.
- *
- * The default cache directory is `$HOME/.GraphBLAS`. If no overrides
- * are used and if $HOME is not defined, returns an empty path and file 
- * caching is not used.
- **/
-std::string getCacheDir() {
-  // The environment variable always overrides the
-  // default/compile-time value of `GRAPHBLAS_CACHE_PATH`
-  // FIXME: use GB_jitifyer_get_cache_path ( ) here.
-  //std::cout<<"Cache-dir runtime=>"<< get_user_home_cache_dir() << std::endl;
-  auto kernel_cache_path_env = std::getenv("GRAPHBLAS_CACHE_PATH");
-  //auto kernel_cache_path_env = get_user_home_cache_dir();
-  auto kernel_cache_path = (kernel_cache_path_env != nullptr ? kernel_cache_path_env
-                                       : GRAPHBLAS_CACHE_PATH);
-
-  struct stat st;
-  //if ( (stat( kernel_cache_path.c_str(), &st) != 0) ) {
-  if ( (stat( kernel_cache_path.c_str(), &st) != 0) ) {
-    // `mkdir -p` the kernel cache path if it doesn't exist
-//    printf("cache is going to path %s\n", kernel_cache_path.c_str());
-    // int status;
-    // status = std::filesystem::create_directories(kernel_cache_path.c_str());
-    // status = 
-    std::filesystem::create_directories(kernel_cache_path);
-//    if (status != 0 ) return std::string();
-    //boost::filesystem::create_directories(kernel_cache_path);
-  }
-  return std::string(kernel_cache_path);
-}
 
 GBJitCache::GBJitCache() { }
 
 GBJitCache::~GBJitCache() { }
-
-
-//void GBJitCache::macrofy() {
-//    printf("GOT HERE and shouldn't have!\n");
-//}
 
 
 std::mutex GBJitCache::_kernel_cache_mutex;

@@ -46,19 +46,7 @@ static const std::vector<std::string> GB_jit_cuda_compiler_flags{
    "-remove-unused-globals",
    "-w",
    "-D__CUDACC_RTC__",
-//   "-I.",
-//   "-I..",
-//   "-I../templates",
-//   "-I../CUDA",
-//   "-I../Source/Shared",
-
-// FIXME: just this?
-// "-I" + jit::get_user_graphblas_source_path() + "/src",
-
-   // Add includes relative to GRAPHBLAS_SOURCE_PATH variable
-   "-I" + jit::get_user_graphblas_source_path() + "/CUDA",
-   "-I" + jit::get_user_graphblas_source_path() + "/Source/Shared",
-   "-I" + jit::get_user_graphblas_source_path() + "/CUDA/templates",
+   "-I" + jit::get_user_home_cache_dir() + "/src",
    "-I/usr/local/cuda/include",
 
    // FIXME: add SUITESPARSE_CUDA_ARCHITECTURES here, via config
