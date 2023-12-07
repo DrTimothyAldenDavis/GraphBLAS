@@ -548,6 +548,9 @@ GrB_Info GB_jitifyer_establish_paths (GrB_Info error_condition)
 
     // construct the c, lib, and lock paths and their 256 subfolders
     ok = ok && GB_jitifyer_path_256 ("c") ;
+// FIXME?
+//  ok = ok && GB_jitifyer_path_256 ("cu") ;
+//  ok = ok && GB_jitifyer_path_256 ("cu_lib") ;
     ok = ok && GB_jitifyer_path_256 ("lib") ;
     ok = ok && GB_jitifyer_path_256 ("lock") ;
 

@@ -19,10 +19,9 @@ version number), and that it contains all the GraphBLAS source code.  If not,
 it uncompresses each file from its compressed form in GB_JITpackage.c, and
 writes it to the user source folder.
 
-If you propose a pull request, please do *not* post your changes to the
-GB_JITpackage.c file.  I will do that myself, and only post the change when a
-version is released.  Otherwise, there is to much churn on the file.  A single
-character change to GraphBLAS.h, for example, changes the entire byte stream of
-the compressed version in GB_JITpackage.c, and the git commits are uselessly
-large.
+To create the GB_JITpackage.c file without "make", do the following:
+
+    cd build
+    cmake ..
+    cmake --build .
 

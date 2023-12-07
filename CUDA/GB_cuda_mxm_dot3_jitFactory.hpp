@@ -72,7 +72,7 @@ class dense_phase1launchFactory
 {
   // FIXME: this is the full name.  Why?  See below for partial name.
   // Need to be consistent in naming schemes.
-  std::string kernel_name = "GB_jit_AxB_dot3_dense_phase1";
+  std::string kernel_name = "GB_cuda_jit_AxB_dot3_dense_phase1";
 
   GB_cuda_mxm_factory &mxm_factory_;
 
@@ -154,7 +154,7 @@ public:
 template<int threads_per_block=32, int chunk_size = 128>
 class phase1launchFactory 
 {
-  std::string kernel_name = "GB_jit_AxB_dot3_phase1";
+  std::string kernel_name = "GB_cuda_jit_AxB_dot3_phase1";
 
   GB_cuda_mxm_factory &mxm_factory_;
 
@@ -238,7 +238,7 @@ template<int threads_per_block = 32, int chunk_size = 128>
 class phase2launchFactory
 {
 
-  std::string base_name = "GB_jit";
+  std::string base_name = "GB_cuda_jit";
   // FIXME: this is the partial name.  Why?  See above.
   std::string kernel_name = "AxB_phase2";
 
@@ -302,7 +302,7 @@ template< int threads_per_block = 32, int chunk_size = 128>
 class phase2endlaunchFactory
 {
 
-  std::string base_name = "GB_jit";
+  std::string base_name = "GB_cuda_jit";        // FIXME: sync this
   std::string kernel_name = "AxB_phase2end";
 
 public:
@@ -358,7 +358,7 @@ public:
 
 class mxm_dense_launchFactory
 {
-  std::string base_name = "GB_jit";
+  std::string base_name = "GB_cuda_jit";
   std::string kernel_name = "AxB_dot3_phase3_dndn";
 
   GB_cuda_mxm_factory &mxm_factory_;
@@ -469,7 +469,7 @@ private:
 
 class mxm_sparse_dense_launchFactory
 {
-  std::string base_name = "GB_jit";
+  std::string base_name = "GB_cuda_jit";
   std::string kernel_name = "AxB_dot3";
 
   GB_cuda_mxm_factory &mxm_factory_;
@@ -580,7 +580,7 @@ private:
 
 class phase3launchFactory
 {
-  std::string base_name = "GB_jit";
+  std::string base_name = "GB_cuda_jit";
   std::string kernel_name = "AxB_dot3";
 
   GB_cuda_mxm_factory &mxm_factory_;

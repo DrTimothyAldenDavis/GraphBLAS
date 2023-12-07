@@ -69,7 +69,7 @@ class reduceFactory
     // class properties
     //--------------------------------------------------------------------------
 
-    std::string base_name = "GB_jit";
+    std::string base_name = "GB_cuda_jit";
     std::string kernel_name = "reduce";
 
     int threads_per_block = 320 ;
