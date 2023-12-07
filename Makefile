@@ -32,11 +32,11 @@ library:
 
 # install only in SuiteSparse/lib and SuiteSparse/include
 local:
-	( cd build && cmake $(CMAKE_OPTIONS) -DLOCAL_INSTALL=1 .. && cmake --build . --config Release -j${JOBS} )
+	( cd build && cmake $(CMAKE_OPTIONS) -USUITESPARSE_PKGFILEDIR -DLOCAL_INSTALL=1 .. && cmake --build . --config Release -j${JOBS} )
 
 # install only in /usr/local (default)
 global:
-	( cd build && cmake $(CMAKE_OPTIONS) -DLOCAL_INSTALL=0 .. && cmake --build . --config Release -j${JOBS} )
+	( cd build && cmake $(CMAKE_OPTIONS) -USUITESPARSE_PKGFILEDIR -DLOCAL_INSTALL=0 .. && cmake --build . --config Release -j${JOBS} )
 
 # enable CUDA (NOTE: not ready for production use)
 cuda:
@@ -65,10 +65,10 @@ demos: all
 # diff the demo output
 demodiffs: demos
 	echo "Comparing demo output:"
-	- diff -w Demo/Output/simple_demo.out       Demo/simple_demo.out
-	- diff -w Demo/Output/complex_demo_out.m    Demo/complex_demo_out.m
-	- diff -w Demo/Output/wildtype_demo.out     Demo/wildtype_demo.out
-	- diff -w Demo/Output/gauss_demo.out        Demo/gauss_demo.out
+	- diff -w Demo/Output/simple_demo.out       build/simple_demo.out
+	- diff -w Demo/Output/complex_demo_out.m    build/complex_demo_out.m
+	- diff -w Demo/Output/wildtype_demo.out     build/wildtype_demo.out
+	- diff -w Demo/Output/gauss_demo.out        build/gauss_demo.out
 
 # just do 'make' in build; do not rerun the cmake script
 remake:

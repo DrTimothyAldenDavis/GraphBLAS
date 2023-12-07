@@ -7,9 +7,17 @@
 
 //------------------------------------------------------------------------------
 
+// GrB_UnaryOp_new is implemented both as a macro and a function.  Both are
+// user-callable.  The macro is used by default since it can capture the name
+// of the unary function.
+
 #include "GB.h"
 
-GrB_Info GrB_UnaryOp_new            // create a new user-defined unary operator
+// the macro version of this function must first be #undefined
+#undef GrB_UnaryOp_new
+#undef GrM_UnaryOp_new
+
+GrB_Info GRB (UnaryOp_new)          // create a new user-defined unary operator
 (
     GrB_UnaryOp *unaryop,           // handle for the new unary operator
     GxB_unary_function function,    // pointer to the unary function

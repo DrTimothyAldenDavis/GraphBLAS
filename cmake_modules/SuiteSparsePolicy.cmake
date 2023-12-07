@@ -15,21 +15,28 @@
 #                       set ( CMAKE_BUILD_TYPE Debug )
 #
 #   ENABLE_CUDA:        if set to true, CUDA is enabled for the project.
-#                       Default: true for CHOLMOD and SPQR, false for GraphBLAS
-#                       (for which CUDA is in progress and not ready for
-#                       production use).
+#                       Default: true for CHOLMOD and SPQR, which use the GPU
+#                       for their numerical factorizsation.  The flag is false
+#                       for GraphBLAS since CUDA for that package is in
+#                       progress and not ready for production use.
+#                       CUDA acceleration not supported on Windows with MSVC.
 #
 #   LOCAL_INSTALL:      if true, "cmake --install" will install
 #                       into SuiteSparse/lib and SuiteSparse/include.
 #                       if false, "cmake --install" will install into the
 #                       default prefix (or the one configured with
 #                       CMAKE_INSTALL_PREFIX).  Requires cmake 3.19.
+#                       This is ignored when using the root CMakeLists.txt.
+#                       Set CMAKE_INSTALL_PREFIX instead.
 #                       Default: false
 #
-#   NSTATIC:            if true, static libraries are not built.
-#                       Default: false, except for GraphBLAS, which
+#   BUILD_SHARED_LIBS:  if true, shared libraries are built.
+#                       Default: true.
+#
+#   BUILD_STATIC_LIBS:  if true, static libraries are built.
+#                       Default: true, except for GraphBLAS, which
 #                       takes a long time to compile so the default for
-#                       GraphBLAS is true.
+#                       GraphBLAS is false.
 #
 #   SUITESPARSE_CUDA_ARCHITECTURES:  a string, such as "all" or
 #                       "35;50;75;80" that lists the CUDA architectures to use
@@ -68,9 +75,25 @@
 #                       explicitly, if the defaults are not appropriate for your
 #                       system.
 #                       Default: false
+#
+#   SUITESPARSE_PKGFILEDIR: where to install the CMake Config and pkg-config
+#                       files.  This defaults to the same directory as where
+#                       the compiled libraries are installed, in a subfolder
+#                       called cmake.  If not already set in the cache,
+#                       LOCAL_INSTALL=0 defines this as "lib", and the
+#                       CMAKE_INSTALL_PREFIX is added.  LOCAL_INSTALL=1 defines
+#                       this as SuiteSparse/lib.  This variable is cached so
+#                       that if it is not set, or unset first, it remains
+#                       unchanged (see "make local" and "make global" in the
+#                       SuiteSparse_config/Makefile for an example).
+#
+#   SUITESPARSE_INCLUDEDIR_POSTFIX : # Postfix for installation target of
+#                       header from SuiteSparse. Default: suitesparse, so the
+#                       default include directory is:
+#                       CMAKE_INSTALL_PREFIX/include/suitesparse
 
-message ( STATUS "Source:        ${CMAKE_SOURCE_DIR} ")
-message ( STATUS "Build:         ${CMAKE_BINARY_DIR} ")
+message ( STATUS "Source:           ${CMAKE_SOURCE_DIR} ")
+message ( STATUS "Build:            ${CMAKE_BINARY_DIR} ")
 
 cmake_policy ( SET CMP0042 NEW )    # enable MACOSX_RPATH by default
 cmake_policy ( SET CMP0048 NEW )    # VERSION variable policy
@@ -92,19 +115,30 @@ include ( GNUInstallDirs )
 set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
     ${CMAKE_SOURCE_DIR}/cmake_modules )
 
-# NSTATIC option
-if ( NSTATIC_DEFAULT_ON )
-    option ( NSTATIC "ON (default): do not build static libraries.  OFF: build static libraries" on )
+# BUILD_SHARED_LIBS and BUILD_STATIC_LIBS options
+option ( BUILD_SHARED_LIBS "OFF: do not build shared libraries.  ON (default): build shared libraries" ON )
+
+if ( BUILD_STATIC_LIBS_DEFAULT_OFF )
+    option ( BUILD_STATIC_LIBS "OFF (default): do not build static libraries.  ON: build static libraries" OFF )
 else ( )
-    option ( NSTATIC "ON: do not build static libraries.  OFF (default): build static libraries" off )
+    # For backwards compatibility, use NSTATIC if it is set.
+    if ( NSTATIC )
+        option ( BUILD_STATIC_LIBS "OFF: do not build static libraries.  ON (default): build static libraries" OFF )
+    else ( )
+        option ( BUILD_STATIC_LIBS "OFF: do not build static libraries.  ON (default): build static libraries" ON )
+    endif ( )
+endif ( )
+
+if ( NOT BUILD_SHARED_LIBS AND NOT BUILD_STATIC_LIBS )
+    message ( FATAL_ERROR "At least one of BUILD_SHARED_LIBS or BUILD_STATIC_LIBS must be set to ON." )
 endif ( )
 
 # installation options
-if ( ${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.19.0" )
+if ( NOT SUITESPARSE_ROOT_CMAKELISTS AND ${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.19.0" )
     # the LOCAL_INSTALL option requires cmake 3.19.0 or later
-    option ( LOCAL_INSTALL "Install in SuiteSparse/lib" off )
+    option ( LOCAL_INSTALL "Install in SuiteSparse/lib" OFF )
 else ( )
-    set ( LOCAL_INSTALL off )
+    set ( LOCAL_INSTALL OFF )
 endif ( )
 
 if ( SUITESPARSE_SECOND_LEVEL )
@@ -121,31 +155,36 @@ endif ( )
 # find this one without "make install"
 set ( CMAKE_BUILD_RPATH ${CMAKE_BUILD_RPATH} ${CMAKE_BINARY_DIR} )
 
-# determine if this Package is inside the SuiteSparse folder
-set ( INSIDE_SUITESPARSE false )
-if ( LOCAL_INSTALL )
-    # if you do not want to install local copies of SuiteSparse
-    # packages in SuiteSparse/lib and SuiteSparse/, set
-    # LOCAL_INSTALL to false in your CMake options.
-    if ( SUITESPARSE_SECOND_LEVEL )
-        # the package is normally located at the 2nd level inside SuiteSparse
-        # (SuiteSparse/GraphBLAS/GraphBLAS/ for example)
-        if ( EXISTS ${CMAKE_SOURCE_DIR}/../../SuiteSparse_config )
-            set ( INSIDE_SUITESPARSE true )
+if ( NOT SUITESPARSE_ROOT_CMAKELISTS )
+    # determine if this Package is inside the SuiteSparse folder
+    set ( INSIDE_SUITESPARSE false )
+    if ( LOCAL_INSTALL )
+        # if you do not want to install local copies of SuiteSparse
+        # packages in SuiteSparse/lib and SuiteSparse/, set
+        # LOCAL_INSTALL to false in your CMake options.
+        if ( SUITESPARSE_SECOND_LEVEL )
+            # the package is normally located at the 2nd level inside SuiteSparse
+            # (SuiteSparse/GraphBLAS/GraphBLAS/ for example)
+            if ( EXISTS ${CMAKE_SOURCE_DIR}/../../SuiteSparse_config )
+                set ( INSIDE_SUITESPARSE true )
+            endif ( )
+        else ( )
+            # typical case, the package is at the 1st level inside SuiteSparse
+            # (SuiteSparse/AMD for example)
+            if ( EXISTS ${CMAKE_SOURCE_DIR}/../SuiteSparse_config )
+                set ( INSIDE_SUITESPARSE true )
+            endif ( )
         endif ( )
-    else ( )
-        # typical case, the package is at the 1st level inside SuiteSparse
-        # (SuiteSparse/AMD for example)
-        if ( EXISTS ${CMAKE_SOURCE_DIR}/../SuiteSparse_config )
-            set ( INSIDE_SUITESPARSE true )
+
+        if ( NOT INSIDE_SUITESPARSE )
+            message ( FATAL_ERROR "Unsupported layout for local installation. Correct the directory layout or unset LOCAL_INSTALL." )
         endif ( )
-    endif ( )
 
-    if ( NOT INSIDE_SUITESPARSE )
-        message ( FATAL_ERROR "Unsupported layout for local installation. Correct the directory layout or unset LOCAL_INSTALL." )
     endif ( )
-
 endif ( )
+
+set ( SUITESPARSE_INCLUDEDIR_POSTFIX "suitesparse" CACHE STRING
+    "Postfix for installation target of header from SuiteSparse (default: \"suitesparse\")" )
 
 if ( LOCAL_INSTALL )
     if ( INSIDE_SUITESPARSE )
@@ -160,11 +199,11 @@ if ( LOCAL_INSTALL )
         endif ( )
     endif ( )
     set ( SUITESPARSE_LIBDIR ${SUITESPARSE_LOCAL_PREFIX}/lib )
-    set ( SUITESPARSE_INCLUDEDIR ${SUITESPARSE_LOCAL_PREFIX}/include )
+    set ( SUITESPARSE_INCLUDEDIR ${SUITESPARSE_LOCAL_PREFIX}/include/${SUITESPARSE_INCLUDEDIR_POSTFIX} )
     set ( SUITESPARSE_BINDIR ${SUITESPARSE_LOCAL_PREFIX}/bin )
 else ( )
     set ( SUITESPARSE_LIBDIR ${CMAKE_INSTALL_LIBDIR} )
-    set ( SUITESPARSE_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR} )
+    set ( SUITESPARSE_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/${SUITESPARSE_INCLUDEDIR_POSTFIX} )
     set ( SUITESPARSE_BINDIR ${CMAKE_INSTALL_BINDIR} )
 endif ( )
 
@@ -174,17 +213,21 @@ if ( INSIDE_SUITESPARSE )
     set ( CMAKE_BUILD_RPATH   ${CMAKE_BUILD_RPATH}   ${SUITESPARSE_LIBDIR} )
 endif ( )
 
-message ( STATUS "Install lib:     ${SUITESPARSE_LIBDIR}" )
-message ( STATUS "Install include: ${SUITESPARSE_INCLUDEDIR}" )
-message ( STATUS "Install bin:     ${SUITESPARSE_BINDIR}" )
-message ( STATUS "Install rpath:   ${CMAKE_INSTALL_RPATH}" )
-message ( STATUS "Build   rpath:   ${CMAKE_BUILD_RPATH}" )
+set ( SUITESPARSE_PKGFILEDIR ${SUITESPARSE_LIBDIR} CACHE STRING
+    "Directory where CMake Config and pkg-config files will be installed" )
+
+message ( STATUS "Install lib:      ${SUITESPARSE_LIBDIR}" )
+message ( STATUS "Install include:  ${SUITESPARSE_INCLUDEDIR}" )
+message ( STATUS "Install bin:      ${SUITESPARSE_BINDIR}" )
+message ( STATUS "Install pkg-file: ${SUITESPARSE_PKGFILEDIR}" )
+message ( STATUS "Install rpath:    ${CMAKE_INSTALL_RPATH}" )
+message ( STATUS "Build   rpath:    ${CMAKE_BUILD_RPATH}" )
 
 if ( NOT CMAKE_BUILD_TYPE )
     set ( CMAKE_BUILD_TYPE Release )
 endif ( )
 
-message ( STATUS "Build type:    ${CMAKE_BUILD_TYPE} ")
+message ( STATUS "Build type:       ${CMAKE_BUILD_TYPE} ")
 
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
@@ -195,16 +238,16 @@ set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 include ( CheckLanguage )
 option ( NFORTRAN "ON: do not try to use Fortran. OFF (default): try Fortran" off )
 if ( NFORTRAN )
-    message ( STATUS "Fortran: not enabled" )
+    message ( STATUS "Fortran:          not enabled" )
 else ( )
     check_language ( Fortran )
     if ( CMAKE_Fortran_COMPILER )
         enable_language ( Fortran )
-        message ( STATUS "Fortran: ${CMAKE_Fortran_COMPILER}" )
+        message ( STATUS "Fortran:          ${CMAKE_Fortran_COMPILER}" )
     else ( )
         # Fortran not available:
         set ( NFORTRAN true )
-        message ( STATUS "Fortran: not available" )
+        message ( STATUS "Fortran:          not available" )
     endif ( )
 endif ( )
 
@@ -223,48 +266,47 @@ endif ( )
 # find CUDA
 #-------------------------------------------------------------------------------
 
-if ( ENABLE_CUDA )
+if ( ENABLE_CUDA AND NOT MSVC )
 
     # try finding CUDA
     check_language ( CUDA )
-    message ( STATUS "Looking for CUDA" )
+    # message ( STATUS "Looking for CUDA" )
     if ( CMAKE_CUDA_COMPILER )
         # with CUDA:
-        message ( STATUS "Find CUDA tool kit:" )
+        # message ( STATUS "Find CUDA tool kit:" )
         # FindCUDAToolKit needs to have C or CXX enabled first (see above)
-        include ( FindCUDAToolkit )
-        message ( STATUS "CUDA toolkit found:   " ${CUDAToolkit_FOUND} )
-        message ( STATUS "CUDA toolkit version: " ${CUDAToolkit_VERSION} )
-        message ( STATUS "CUDA toolkit include: " ${CUDAToolkit_INCLUDE_DIRS} )
-        message ( STATUS "CUDA toolkit lib dir: " ${CUDAToolkit_LIBRARY_DIR} )
+        find_package ( CUDAToolkit )
+        message ( STATUS "CUDA toolkit :    " ${CUDAToolkit_FOUND} )
+        message ( STATUS "CUDA toolkit ver: " ${CUDAToolkit_VERSION} )
+        message ( STATUS "CUDA toolkit inc: " ${CUDAToolkit_INCLUDE_DIRS} )
+        message ( STATUS "CUDA toolkit lib: " ${CUDAToolkit_LIBRARY_DIR} )
         if ( CUDAToolkit_VERSION VERSION_LESS "11.2" )
             # CUDA is present but too old
-            message ( STATUS "CUDA: not enabled (CUDA 11.2 or later required)" )
-            set ( SUITESPARSE_CUDA off )
+            message ( STATUS "CUDA:               not enabled (CUDA 11.2 or later required)" )
+            set ( SUITESPARSE_CUDA OFF )
         else ( )
             # CUDA 11.2 or later present
             enable_language ( CUDA )
-            set ( SUITESPARSE_CUDA on )
+            set ( SUITESPARSE_CUDA ON )
         endif ( )
     else ( )
         # without CUDA:
-        message ( STATUS "CUDA: not found" )
-        set ( SUITESPARSE_CUDA off )
+        message ( STATUS "CUDA:             not found" )
+        set ( SUITESPARSE_CUDA OFF )
     endif ( )
 
 else ( )
 
     # CUDA is disabled
-    set ( SUITESPARSE_CUDA off )
+    set ( SUITESPARSE_CUDA OFF )
 
 endif ( )
 
 if ( SUITESPARSE_CUDA )
-    message ( STATUS "CUDA: enabled" )
-    add_compile_definitions ( SUITESPARSE_CUDA )
+    message ( STATUS "CUDA:             enabled" )
     set ( SUITESPARSE_CUDA_ARCHITECTURES "52;75;80" CACHE STRING "CUDA architectures" )
     set ( CMAKE_CUDA_ARCHITECTURES ${SUITESPARSE_CUDA_ARCHITECTURES} )
 else ( )
-    message ( STATUS "CUDA: not enabled" )
+    message ( STATUS "CUDA:             not enabled" )
 endif ( )
 

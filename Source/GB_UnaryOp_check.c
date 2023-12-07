@@ -49,10 +49,7 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
     { 
         GBPR0 ("(built-in): ") ;
     }
-    int32_t name_len = op->name_len ;
-    int32_t actual_len = (int32_t) strlen (op->name) ;
-    char *op_name = (actual_len > 0) ? op->name : "f" ;
-    GBPR0 ("z=%s(x)\n", op_name) ;
+    GBPR0 ("z=%s(x)\n", op->name) ;
 
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
     bool op_is_one = (opcode == GB_ONE_unop_code) ;
@@ -64,6 +61,8 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
         return (GrB_INVALID_OBJECT) ;
     }
 
+    int32_t name_len = op->name_len ;
+    int32_t actual_len = (int32_t) strlen (op->name) ;
     if (opcode == GB_USER_unop_code && name_len != actual_len)
     { 
         GBPR0 ("    UnaryOp has an invalid name_len\n") ;

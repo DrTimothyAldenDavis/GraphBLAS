@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
+extern "C" {
 #include "GraphBLAS.h"
+}
 #include "rmm_wrap.h"
 
 #include "test_utility.hpp"

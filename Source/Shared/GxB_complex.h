@@ -30,13 +30,13 @@
 
     #else
 
-        // C11 complex types
+        // ANSI C11 complex types
         #include <complex.h>
         #undef I
         typedef float  _Complex GxB_FC32_t ;
         typedef double _Complex GxB_FC64_t ;
         #if (defined (CMPLX) && defined (CMPLXF))
-            // use the C11 CMPLX and CMPLXF macros
+            // use the ANSI C11 CMPLX and CMPLXF macros
             #define GxB_CMPLX(r,i) CMPLX (r,i)
             #define GxB_CMPLXF(r,i) CMPLXF (r,i)
             #define GB_HAS_CMPLX_MACROS 1

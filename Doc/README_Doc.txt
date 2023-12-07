@@ -43,7 +43,7 @@ HPEC19.pdf
     SuiteSparse:GraphBLAS. In IEEE HPEC’19. IEEE, 2019. Grand Challenge
     Champion, for high performance. See http://www.ieee-hpec.org/.
 
-Davis_HPEC18.pdf            
+Davis_HPEC18.pdf
 
     T. A. Davis. Graph algorithms via SuiteSparse:GraphBLAS: triangle counting
     and K-truss. In IEEE HPEC’18. IEEE, 2018. Grand Challenge Innovation

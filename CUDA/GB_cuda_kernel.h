@@ -75,9 +75,6 @@ typedef struct GB_Semiring_opaque *GrB_Semiring ;
 typedef struct GB_Scalar_opaque *GrB_Scalar ;
 typedef struct GB_Vector_opaque *GrB_Vector ;
 typedef struct GB_Matrix_opaque *GrB_Matrix ;
-typedef struct GB_Context_opaque *GxB_Context ;
-typedef struct GB_Global_opaque *GrB_Global ;
-typedef struct GB_Iterator_opaque *GxB_Iterator ;
 
 #define GxB_HYPERSPARSE 1   // store matrix in hypersparse form
 #define GxB_SPARSE      2   // store matrix as sparse form (compressed vector)
