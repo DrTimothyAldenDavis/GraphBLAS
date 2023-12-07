@@ -42,8 +42,8 @@ if ( NOT BUILD_SHARED_LIBS )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-set ( ENABLE_CUDA OFF )
-# set ( ENABLE_CUDA ON )
+# set ( ENABLE_CUDA OFF )
+  set ( ENABLE_CUDA ON )
 
 include ( SuiteSparsePolicy )
 
