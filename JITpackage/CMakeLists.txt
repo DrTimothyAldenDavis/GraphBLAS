@@ -24,27 +24,10 @@ file ( GLOB GRB_SOURCE_FILES
     "../CUDA/JitKernels/*h"
     "../Source/Shared/*.h" )
 
-# add_custom_command ( TARGET grb_jitpackage POST_BUILD
-#    COMMAND $<TARGET_FILE:grb_jitpackage>
-#    ARGS ${GRB_SOURCE_FILES}
-#    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-#    DEPENDS ${GRB_SOURCE_FILES}
-#    COMMENT "Generating compressed sources for JIT compiler..."
-# )
-
 add_custom_target ( grb_jitpackage_source ALL
     COMMAND $<TARGET_FILE:grb_jitpackage> ${GRB_SOURCE_FILES}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${GRB_SOURCE_FILES}
     COMMENT "Generating compressed sources for JIT compiler..."
 )
-
-# add_custom_command ( OUTPUT GB_JITpackage.c
-#     COMMAND $<TARGET_FILE:grb_jitpackage> ${GRB_SOURCE_FILES}
-#     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-#     DEPENDS ${GRB_SOURCE_FILES} grb_jitpackage
-#     COMMENT "Generating compressed sources for JIT compiler..."
-# )
-
-# add_custom_target ( grb_jitpackage_source DEPENDS GB_JITpackage.c )
 

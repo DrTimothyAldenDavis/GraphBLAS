@@ -40,17 +40,37 @@ extern "C"
 // amount of shared memory to use in CUDA kernel launches
 constexpr unsigned int SMEM = 0 ;
 
-static const std::vector<std::string> GB_jit_cuda_compiler_flags{
+#if 0
+
+static const std::vector<std::string> GB_jit_cuda_compiler_flags{   // OLD
    "-std=c++17",
    //"-G",
    "-remove-unused-globals",
    "-w",
    "-D__CUDACC_RTC__",
-   "-I" + jit::get_user_home_cache_dir() + "/src",
+// "-I" + jit::get_user_home_cache_dir(),   // FIXME: add +/cu/00
+// "-I" + jit::get_user_home_cache_dir() + "/src",
    "-I/usr/local/cuda/include",
-
    // FIXME: add SUITESPARSE_CUDA_ARCHITECTURES here, via config
 };
+
+#endif
+
+inline std::vector<std::string> GB_cuda_jit_compiler_flags ( )
+{
+    return (
+        std::vector<std::string>  (
+        {"-std=c++17",
+        //"-G",
+        "-remove-unused-globals",
+        "-w",
+        "-D__CUDACC_RTC__",
+        "-I" + jit::get_user_home_cache_dir(),   // FIXME: add +/cu/00
+        "-I" + jit::get_user_home_cache_dir() + "/src",
+        "-I/usr/local/cuda/include"
+        // FIXME: add SUITESPARSE_CUDA_ARCHITECTURES here, via config
+        })) ;
+} ;
 
 // FIXME: rename GB_jit_cuda_header_names or something
 static const std::vector<std::string> header_names ={};

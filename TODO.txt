@@ -1,0 +1,11 @@
+
+GraphBLAS:
+
+    don't just check 1st line of GraphBLAS.h when deciding to unpack
+    the src in user cache folder. Use a crc test.
+
+CUDA:
+
+    finding src
+
+    kernel source location, and name

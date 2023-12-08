@@ -56,26 +56,6 @@
 
 namespace jit {
 
-#if 0
-const std::vector<std::string> GB_jit_cuda_compiler_flags{
-    "-std=c++17",
-            "--use_fast_math",
-            "-remove-unused-globals",
-            "-w",
-            "-lcudart",
-            "-D__CUDACC_RTC__",
-            "-I.",
-            "-I..",
-            "-I../../Include",
-            "-I../../Source",
-            "-I../../Source/Template",
-//          "-Ilocal_cub/block",
-            "-Itemplates",
-            "-I/usr/local/cuda/include" // FIXME: remove this?
-};
-#endif
-
-
 /**
  * @brief Class used to handle compilation and execution of JIT kernels
  * 

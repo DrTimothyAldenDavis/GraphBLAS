@@ -11,6 +11,10 @@
 
 int main(int argc, char **argv) {
 
+#if 0
+
+BROKEN
+
     std::string named_program = "GB_jit_AxB_phase2";
     std::string kern_name = "AxB_phase2";
 
@@ -29,7 +33,8 @@ int main(int argc, char **argv) {
 
     std::string hashable_name = "GB_jit_AxB_phase2";
     std::stringstream string_to_be_jitted ;
-    string_to_be_jitted << hashable_name << std::endl << R"(#include "GB_jit_AxB_dot3_phase2.cuh")";
+    string_to_be_jitted << hashable_name << std::endl <<
+    R"(#include "GB_jit_AxB_dot3_phase2.cuh")"; // FIXME: wrong name
 
     jit::launcher( hashable_name,
                    string_to_be_jitted.str(),
@@ -41,6 +46,6 @@ int main(int argc, char **argv) {
             .launch( nanobuckets, blockBucket, bucketp, bucket, C->mat, cnz);
 
 
-
+#endif
 
 }

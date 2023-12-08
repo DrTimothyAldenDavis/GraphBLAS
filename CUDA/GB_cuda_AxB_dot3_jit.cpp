@@ -290,7 +290,7 @@ GrB_Info GB_cuda_AxB_dot3_jit       // C<M> = A'*B using dot product method
 
         dense_phase1launchFactory dp1lf(my_mxm_spec);
 
-        GBURBLE ("(GPU phase1 start nblk = %d) ",
+        GBURBLE ("(GPU dense phase1 start nblk = %d) ",
             dp1lf.get_number_of_blocks(M)) ;
         kernel_timer.Start();
             dp1lf.jitGridBlockLaunch(C, M, A, B, stream);
@@ -380,7 +380,8 @@ GrB_Info GB_cuda_AxB_dot3_jit       // C<M> = A'*B using dot product method
         // phase1: assign each C(i,j) to a bucket, and count them
         //----------------------------------------------------------------------
 
-        GBURBLE ("(GPU phase1 start nblk = %d) ", p1lf.get_number_of_blocks(M));
+        GBURBLE ("(GPU sparse phase1 start nblk = %d) ",
+            p1lf.get_number_of_blocks(M));
         kernel_timer.Start();
         p1lf.jitGridBlockLaunch(Nanobuckets, Blockbucket, C, M, A, B, stream);
         CU_OK (cudaStreamSynchronize(stream));
