@@ -9,6 +9,7 @@
 #include <gtest/gtest.h>
 
 #include "GraphBLAS.h"
+#undef I
 #include "rmm_wrap.h"
 
 #include "test_utility.hpp"

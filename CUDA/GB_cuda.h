@@ -20,6 +20,7 @@ extern "C"
 
 #define GB_LIBRARY
 #include "GraphBLAS.h"
+#undef I
 
 extern "C"
 {
