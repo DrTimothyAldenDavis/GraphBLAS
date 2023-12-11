@@ -1,5 +1,5 @@
 \documentclass[12pt]{article}
-% \batchmode
+\batchmode
 \usepackage{url}
 \urlstyle{sf}
 \usepackage[svgnames]{xcolor}
@@ -9094,6 +9094,19 @@ cache path for MATLAB using \verb'GrB.jit' in MATLAB, or using \verb'GxB_set'
 in the C interface for your native Arm64 binaries.
 
 %-------------------------------------------------------------------------------
+\subsection{Updating the JIT when GraphBLAS source code changes}
+%-------------------------------------------------------------------------------
+
+If you edit the GraphBLAS source code itself or add any files to
+\verb'GraphBLAS/PreJIT', read the instructions in
+\verb'GraphBLAS/JITpackage/README.txt' for details on how to update the JIT
+source code.
+
+If your cache folder (\verb'~/.SuiteSparse/GrBx.y.z') changes in any way
+except via GraphBLAS itself, simply delete your cache folder.  GraphBLAS will
+then reconstruct the kernels there as needed.
+
+%-------------------------------------------------------------------------------
 \subsection{Future plans for the {\sf JIT} and {\sf PreJIT}}
 %-------------------------------------------------------------------------------
 \label{jit_future}
@@ -12062,6 +12075,7 @@ and suppose \verb'y' is a vector of length 2 with the values \verb'[5 7]'.
 {\small
 \begin{verbatim}
     #include "GraphBLAS.h"
+    #undef I    /* complex.h #define's I, used below as an array */
     #include <stdio.h>
     int main (void)
     {
@@ -16457,6 +16471,13 @@ GraphBLAS folder.
 %-------------------------------------------------------------------------------
 
 \begin{itemize}
+
+\item Dec 30, 2023: version 8.3.1
+
+    \begin{itemize}
+    \item remove \verb'#undef I' from \verb'GraphBLAS.h', so as not to conflict
+        with the definition of \verb'I' from \verb'complex.h'.
+    \end{itemize}
 
 \item Dec 30, 2023: version 8.3.0
 

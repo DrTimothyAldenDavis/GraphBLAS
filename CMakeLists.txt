@@ -42,7 +42,7 @@ if ( NOT BUILD_SHARED_LIBS )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-set ( ENABLE_CUDA OFF )
+  set ( ENABLE_CUDA OFF )
 # set ( ENABLE_CUDA ON )
 
 include ( SuiteSparsePolicy )
@@ -274,7 +274,7 @@ if ( BUILD_SHARED_LIBS )
 
     if ( NOT NJIT )
         # Make sure compressed sources are built before library
-        add_dependencies ( GraphBLAS grb_jitpackage )
+        add_dependencies ( GraphBLAS grb_jitpackage_source )
     endif ( )
 endif ( )
 
@@ -319,7 +319,7 @@ if ( BUILD_STATIC_LIBS )
 
     if ( NOT NJIT )
         # Make sure compressed sources are built before library
-        add_dependencies ( GraphBLAS_static grb_jitpackage )
+        add_dependencies ( GraphBLAS_static grb_jitpackage_source )
     endif ( )
 
 endif ( )
@@ -649,10 +649,19 @@ if ( NOT MSVC )
     else ( )
         set ( includedir "\${prefix}/${SUITESPARSE_INCLUDEDIR}")
     endif ( )
+    if ( BUILD_SHARED_LIBS )
+        set ( SUITESPARSE_LIB_BASE_NAME $<TARGET_FILE_BASE_NAME:GraphBLAS> )
+    else ( )
+        set ( SUITESPARSE_LIB_BASE_NAME $<TARGET_FILE_BASE_NAME:GraphBLAS_static> )
+    endif ( )
     configure_file (
         Config/GraphBLAS.pc.in
-        GraphBLAS.pc
+        GraphBLAS.pc.out
         @ONLY
+        NEWLINE_STYLE LF )
+    file ( GENERATE
+        OUTPUT GraphBLAS.pc
+        INPUT ${CMAKE_CURRENT_BINARY_DIR}/GraphBLAS.pc.out
         NEWLINE_STYLE LF )
     install ( FILES
         ${CMAKE_CURRENT_BINARY_DIR}/GraphBLAS.pc
