@@ -39,7 +39,7 @@ GrB_Info GrB_Type_get_Scalar
 
     switch ((int) field)
     {
-        case GrB_ELTYPE_CODE : 
+        case GrB_EL_TYPE_CODE : 
             i = (int32_t) GB_type_code_get (type->code) ;
             return (GB_setElement ((GrB_Matrix) value, NULL, &i, 0, 0,
                 GB_INT32_code, Werk)) ;
@@ -87,7 +87,7 @@ GrB_Info GrB_Type_get_String
     switch ((int) field)
     {
         case GrB_NAME : 
-        case GrB_ELTYPE_STRING : 
+        case GrB_EL_TYPE_STRING : 
 
             name = GB_type_name_get (type) ;
             if (name != NULL)
@@ -146,7 +146,7 @@ GrB_Info GrB_Type_get_INT32
     switch ((int) field)
     {
 
-        case GrB_ELTYPE_CODE : 
+        case GrB_EL_TYPE_CODE : 
 
             (*value) = (int32_t) GB_type_code_get (type->code) ;
             break ;
@@ -195,7 +195,7 @@ GrB_Info GrB_Type_get_SIZE
             return (GrB_SUCCESS) ;
 
         case GrB_NAME : 
-        case GrB_ELTYPE_STRING : 
+        case GrB_EL_TYPE_STRING : 
 
             s = GB_type_name_get (type) ;
             break ;

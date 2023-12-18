@@ -133,7 +133,7 @@
 //------------------------------------------------------------------------------
 
 #ifndef SUITESPARSE_CUDA
-#define SUITESPARSE_CUDA
+/* #undef SUITESPARSE_CUDA */
 #endif
 
 //------------------------------------------------------------------------------
@@ -4034,17 +4034,17 @@ typedef enum
     // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize?):
     GrB_STORAGE_ORIENTATION_HINT = 100, // GrB_Orientation
 
-    // GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize?):
-    GrB_ELTYPE_CODE = 102,          // a GrB_Type_code (see below)
-    GrB_ELTYPE_STRING = 106,        // name of the type
+    // GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize):
+    GrB_EL_TYPE_CODE = 102,         // a GrB_Type_code (see below)
+    GrB_EL_TYPE_STRING = 106,       // name of the type
 
     // GrB_*Op, GrB_Monoid, and GrB_Semiring:
-    GrB_INPUT1TYPE_CODE = 103,      // GrB_Type_code
-    GrB_INPUT2TYPE_CODE = 104,
-    GrB_OUTPUTTYPE_CODE = 105,
-    GrB_INPUT1TYPE_STRING = 107,    // name of the type, as a string
-    GrB_INPUT2TYPE_STRING = 108,
-    GrB_OUTPUTTYPE_STRING = 109,
+    GrB_INP0_TYPE_CODE = 103,       // GrB_Type_code
+    GrB_INP1_TYPE_CODE = 104,
+    GrB_OUTP_TYPE_CODE = 105,
+    GrB_INP0_TYPE_STRING = 107,     // name of the type, as a string
+    GrB_INP1_TYPE_STRING = 108,
+    GrB_OUTP_TYPE_STRING = 109,
 
     // GrB_Type (readable only):
     GrB_SIZE = 110,                 // size of the type

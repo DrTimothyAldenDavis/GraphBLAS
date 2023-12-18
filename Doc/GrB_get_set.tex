@@ -194,17 +194,17 @@ typedef enum
     // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize?):
     GrB_STORAGE_ORIENTATION_HINT = 100, // GrB_Orientation
 
-    // GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize?):
-    GrB_ELTYPE_CODE = 102,          // a GrB_Type_code (see below)
-    GrB_ELTYPE_STRING = 106,        // name of the type
+    // GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize):
+    GrB_EL_TYPE_CODE = 102,         // a GrB_Type_code (see below)
+    GrB_EL_TYPE_STRING = 106,       // name of the type
 
     // GrB_*Op, GrB_Monoid, and GrB_Semiring:
-    GrB_INPUT1TYPE_CODE = 103,      // GrB_Type_code
-    GrB_INPUT2TYPE_CODE = 104,
-    GrB_OUTPUTTYPE_CODE = 105,
-    GrB_INPUT1TYPE_STRING = 107,    // name of the type, as a string
-    GrB_INPUT2TYPE_STRING = 108,
-    GrB_OUTPUTTYPE_STRING = 109,
+    GrB_INP1_TYPE_CODE = 103,       // GrB_Type_code
+    GrB_INP2_TYPE_CODE = 104,
+    GrB_OUTP_TYPE_CODE = 105,
+    GrB_INP1_TYPE_STRING = 107,     // name of the type, as a string
+    GrB_INP2_TYPE_STRING = 108,
+    GrB_OUTP_TYPE_STRING = 109,
 
     // GrB_Type (readable only):
     GrB_SIZE = 110,                 // size of the type
@@ -620,7 +620,7 @@ GrB_Info GrB_set (GrB_Type t, char *     value, GrB_Field f) ;
 \hline
 \verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
-\verb'GrB_ELTYPE_CODE'              & R    & \verb'int32_t'& type code (see \verb'GrB_Type_Code') \\
+\verb'GrB_EL_TYPE_CODE'             & R    & \verb'int32_t'& type code (see \verb'GrB_Type_Code') \\
 \verb'GrB_SIZE'                     & R    & \verb'size_t' & \verb'sizeof' the type \\
 \hline
 \verb'GrB_NAME'                     & R/W1 & \verb'char *' &    % GrB_ALREADY_SET (type)
@@ -691,10 +691,10 @@ GrB_Info GrB_set (GrB_UnaryOp op, char *     value, GrB_Field f) ;
 \hline
 \verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
-\verb'GrB_INPUT1TYPE_CODE'          & R    & \verb'int32_t'& input type code (see \verb'GrB_Type_code') \\
-\verb'GrB_OUTPUTTYPE_CODE'          & R    & \verb'int32_t'& output type code \\
-\verb'GrB_INPUT1TYPE_STRING'        & R    & \verb'char *' & name of the input type \\
-\verb'GrB_OUTPUTTYPE_STRING'        & R    & \verb'char *' & name of the output type \\
+\verb'GrB_INP0_TYPE_CODE'          & R    & \verb'int32_t'& input type code (see \verb'GrB_Type_code') \\
+\verb'GrB_OUTP_TYPE_CODE'          & R    & \verb'int32_t'& output type code \\
+\verb'GrB_INP0_TYPE_STRING'        & R    & \verb'char *' & name of the input type \\
+\verb'GrB_OUTP_TYPE_STRING'        & R    & \verb'char *' & name of the output type \\
 \hline
 \verb'GrB_NAME'                     & R/W1 & \verb'char *' &    % GrB_ALREADY_SET (unop)
     name of the operator.  For built-in operators, this returns the GraphBLAS
@@ -740,12 +740,12 @@ GrB_Info GrB_set (GrB_IndexUnaryOp op, char *     value, GrB_Field f) ;
 \hline
 \verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
-\verb'GrB_INPUT1TYPE_CODE'          & R    & \verb'int32_t'& 1st input type code (see \verb'GrB_Type_code') \\
-\verb'GrB_INPUT2TYPE_CODE'          & R    & \verb'int32_t'& 2nd input type code \\
-\verb'GrB_OUTPUTTYPE_CODE'          & R    & \verb'int32_t'& output type code \\
-\verb'GrB_INPUT1TYPE_STRING'        & R    & \verb'char *' & name of the 1st input type \\
-\verb'GrB_INPUT2TYPE_STRING'        & R    & \verb'char *' & name of the 2nd input type \\
-\verb'GrB_OUTPUTTYPE_STRING'        & R    & \verb'char *' & name of the output type \\
+\verb'GrB_INP0_TYPE_CODE'          & R    & \verb'int32_t'& 1st input type code (see \verb'GrB_Type_code') \\
+\verb'GrB_INP1_TYPE_CODE'          & R    & \verb'int32_t'& 2nd input type code \\
+\verb'GrB_OUTP_TYPE_CODE'          & R    & \verb'int32_t'& output type code \\
+\verb'GrB_INP0_TYPE_STRING'        & R    & \verb'char *' & name of the 1st input type \\
+\verb'GrB_INP1_TYPE_STRING'        & R    & \verb'char *' & name of the 2nd input type \\
+\verb'GrB_OUTP_TYPE_STRING'        & R    & \verb'char *' & name of the output type \\
 \hline
 \verb'GrB_NAME'                     & R/W1 & \verb'char *' &    % GrB_ALREADY_SET (idxunop)
     name of the operator.  For built-in operators, this returns the GraphBLAS
@@ -791,12 +791,12 @@ GrB_Info GrB_set (GrB_BinaryOp op, char *     value, GrB_Field f) ;
 \hline
 \verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
-\verb'GrB_INPUT1TYPE_CODE'          & R    & \verb'int32_t'& 1st input type code (see \verb'GrB_Type_code') \\
-\verb'GrB_INPUT2TYPE_CODE'          & R    & \verb'int32_t'& 2nd input type code \\
-\verb'GrB_OUTPUTTYPE_CODE'          & R    & \verb'int32_t'& output type code \\
-\verb'GrB_INPUT1TYPE_STRING'        & R    & \verb'char *' & name of the 1st input type \\
-\verb'GrB_INPUT2TYPE_STRING'        & R    & \verb'char *' & name of the 2nd input type \\
-\verb'GrB_OUTPUTTYPE_STRING'        & R    & \verb'char *' & name of the output type \\
+\verb'GrB_INP0_TYPE_CODE'          & R    & \verb'int32_t'& 1st input type code (see \verb'GrB_Type_code') \\
+\verb'GrB_INP1_TYPE_CODE'          & R    & \verb'int32_t'& 2nd input type code \\
+\verb'GrB_OUTP_TYPE_CODE'          & R    & \verb'int32_t'& output type code \\
+\verb'GrB_INP0_TYPE_STRING'        & R    & \verb'char *' & name of the 1st input type \\
+\verb'GrB_INP1_TYPE_STRING'        & R    & \verb'char *' & name of the 2nd input type \\
+\verb'GrB_OUTP_TYPE_STRING'        & R    & \verb'char *' & name of the output type \\
 \hline
 \verb'GrB_NAME'                     & R/W1 & \verb'char *' &    % GrB_ALREADY_SET (binop)
     name of the operator.  For built-in operators, this returns the GraphBLAS
@@ -850,13 +850,13 @@ GrB_Info GrB_set (GrB_Monoid monoid, char *     value, GrB_Field f) ;
 \hline
 \verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
-\verb'GrB_INPUT1TYPE_CODE'          & R    & \verb'int32_t'& 1st input type code \newline
+\verb'GrB_INP0_TYPE_CODE'          & R    & \verb'int32_t'& 1st input type code \newline
                                                              (see \verb'GrB_Type_code') \\
-\verb'GrB_INPUT2TYPE_CODE'          & R    & \verb'int32_t'& 2nd input type code \\
-\verb'GrB_OUTPUTTYPE_CODE'          & R    & \verb'int32_t'& output type code \\
-\verb'GrB_INPUT1TYPE_STRING'        & R    & \verb'char *' & name of the 1st input type \\
-\verb'GrB_INPUT2TYPE_STRING'        & R    & \verb'char *' & name of the 2nd input type \\
-\verb'GrB_OUTPUTTYPE_STRING'        & R    & \verb'char *' & name of the output type \\
+\verb'GrB_INP1_TYPE_CODE'          & R    & \verb'int32_t'& 2nd input type code \\
+\verb'GrB_OUTP_TYPE_CODE'          & R    & \verb'int32_t'& output type code \\
+\verb'GrB_INP0_TYPE_STRING'        & R    & \verb'char *' & name of the 1st input type \\
+\verb'GrB_INP1_TYPE_STRING'        & R    & \verb'char *' & name of the 2nd input type \\
+\verb'GrB_OUTP_TYPE_STRING'        & R    & \verb'char *' & name of the output type \\
 \hline
 \verb'GrB_NAME'                     & R/W1 & \verb'char *' &    % GrB_ALREADY_SET (monoid)
     name of the monoid.  For built-in monoids, this returns the GraphBLAS
@@ -942,18 +942,18 @@ GrB_Info GrB_set (GrB_Semiring semiring, GrB_Scalar value, GrB_Field f) ;
 \hline
 \verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
-\verb'GrB_INPUT1TYPE_CODE'          & R    & \verb'int32_t'& 1st input type code (see \verb'GrB_Type_code')
+\verb'GrB_INP0_TYPE_CODE'          & R    & \verb'int32_t'& 1st input type code (see \verb'GrB_Type_code')
     of the multiplicative operator \\
-\verb'GrB_INPUT2TYPE_CODE'          & R    & \verb'int32_t'& 2nd input type code
+\verb'GrB_INP1_TYPE_CODE'          & R    & \verb'int32_t'& 2nd input type code
     of the multiplicative operator \\
-\verb'GrB_OUTPUTTYPE_CODE'          & R    & \verb'int32_t'& output type code 
+\verb'GrB_OUTP_TYPE_CODE'          & R    & \verb'int32_t'& output type code 
     of the multiplicative operator,
     and the monoid type. \\
-\verb'GrB_INPUT1TYPE_STRING'        & R    & \verb'char *' & name of the 1st input type
+\verb'GrB_INP0_TYPE_STRING'        & R    & \verb'char *' & name of the 1st input type
     of the multiplicative operator \\
-\verb'GrB_INPUT2TYPE_STRING'        & R    & \verb'char *' & name of the 2nd input type
+\verb'GrB_INP1_TYPE_STRING'        & R    & \verb'char *' & name of the 2nd input type
     of the multiplicative operator \\
-\verb'GrB_OUTPUTTYPE_STRING'        & R    & \verb'char *' & name of the output type
+\verb'GrB_OUTP_TYPE_STRING'        & R    & \verb'char *' & name of the output type
     of the multiplicative operator,
     and the monoid type. \\
 \hline
@@ -1039,13 +1039,13 @@ GrB_Info GrB_set (GrB_Matrix A, int32_t    value, GrB_Field f) ;
 \hline
 \verb'GrB_STORAGE_ORIENTATION_HINT' & R/W  & \verb'int32_t'& See \verb'GrB_Orientation', \newline
                                                              and Section~\ref{storage_orientation}. \\
-\verb'GrB_ELTYPE_CODE'              & R    & \verb'int32_t'& matrix type \\
+\verb'GrB_EL_TYPE_CODE'             & R    & \verb'int32_t'& matrix type \\
 \verb'GxB_SPARSITY_CONTROL'         & R/W  & \verb'int32_t'& See Section~\ref{sparsity_status} \\
 \verb'GxB_SPARSITY_STATUS'          & R    & \verb'int32_t'& See Section~\ref{sparsity_status} \\
 \hline
 \verb'GrB_NAME'                     & R/W  & \verb'char *' & name of the matrix.
                                         This can be set any number of times. \\
-\verb'GrB_ELTYPE_STRING'            & R    & \verb'char *' & name of the type of the matrix. \\
+\verb'GrB_EL_TYPE_STRING'           & R    & \verb'char *' & name of the type of the matrix. \\
 \verb'GxB_JIT_C_NAME'               & R    & \verb'char *' & JIT C name of the type of the matrix. \\
 \hline
 \verb'GxB_HYPER_SWITCH'             & R/W  & \verb'double' & See Section~\ref{hypersparse} \\
@@ -1337,13 +1337,13 @@ GrB_Info GrB_set (GrB_Vector v, int32_t    value, GrB_Field f) ;
 \hline
 \verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
-\verb'GrB_ELTYPE_CODE'              & R    & \verb'int32_t'& vector type \\
+\verb'GrB_EL_TYPE_CODE'             & R    & \verb'int32_t'& vector type \\
 \verb'GxB_SPARSITY_CONTROL'         & R/W  & \verb'int32_t'& See Section~\ref{sparsity_status} \\
 \verb'GxB_SPARSITY_STATUS'          & R    & \verb'int32_t'& See Section~\ref{sparsity_status} \\
 \hline
 \verb'GrB_NAME'                     & R/W  & \verb'char *' & name of the vector. \\
 %                                       This can be set any number of times. \\
-\verb'GrB_ELTYPE_STRING'            & R    & \verb'char *' & name of the type of the vector. \\
+\verb'GrB_EL_TYPE_STRING'           & R    & \verb'char *' & name of the type of the vector. \\
 \verb'GxB_JIT_C_NAME'               & R    & \verb'char *' & JIT C name of the type of the vector. \\
 \hline
 \verb'GxB_BITMAP_SWITCH'            & R/W  & \verb'double' & See Section~\ref{bitmap_switch} \\
@@ -1382,12 +1382,12 @@ GrB_Info GrB_set (GrB_Scalar s, int32_t    value, GrB_Field f) ;
 \verb'GrB_Field'                    & R/W  & C type        & description \\
 \hline
 
-\verb'GrB_ELTYPE_CODE'              & R    & \verb'int32_t'& scalar type \\
+\verb'GrB_EL_TYPE_CODE'             & R    & \verb'int32_t'& scalar type \\
 \verb'GxB_SPARSITY_STATUS'          & R    & \verb'int32_t'& See Section~\ref{sparsity_status} \\
 \hline
 \verb'GrB_NAME'                     & R/W  & \verb'char *' & name of the scalar. \\
 %                                       This can be set any number of times. \\
-\verb'GrB_ELTYPE_STRING'            & R    & \verb'char *' & name of the type of the scalar. \\
+\verb'GrB_EL_TYPE_STRING'           & R    & \verb'char *' & name of the type of the scalar. \\
 \verb'GxB_JIT_C_NAME'               & R    & \verb'char *' & JIT C name of the type of the scalar. \\
 \hline
 \end{tabular}
@@ -1616,12 +1616,12 @@ GrB_Info GrB_get (const void *blob, size_t *   value, GrB_Field f, size_t blobsi
 \hline
 \verb'GrB_STORAGE_ORIENTATION_HINT' & R    & \verb'int32_t'& See \verb'GrB_Orientation', \newline
                                                              and Section~\ref{storage_orientation}. \\
-\verb'GrB_ELTYPE_CODE'              & R    & \verb'int32_t'& type of matrix in the blob \\
+\verb'GrB_EL_TYPE_CODE'             & R    & \verb'int32_t'& type of matrix in the blob \\
 \verb'GxB_SPARSITY_CONTROL'         & R    & \verb'int32_t'& See Section~\ref{sparsity_status} \\
 \verb'GxB_SPARSITY_STATUS'          & R    & \verb'int32_t'& See Section~\ref{sparsity_status} \\
 \hline
 \verb'GrB_NAME'                     & R    & \verb'char *' & name of the matrix in the blob. \\
-\verb'GrB_ELTYPE_STRING'            & R    & \verb'char *' & name of the type of the matrix in the blob. \\
+\verb'GrB_EL_TYPE_STRING'           & R    & \verb'char *' & name of the type of the matrix in the blob. \\
 \verb'GxB_JIT_C_NAME'               & R    & \verb'char *' & JIT C name of the type of the matrix in the blob. \\
 \hline
 \verb'GxB_HYPER_SWITCH'             & R    & \verb'double' & See Section~\ref{hypersparse} \\

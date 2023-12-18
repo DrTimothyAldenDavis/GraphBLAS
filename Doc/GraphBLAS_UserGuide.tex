@@ -1726,7 +1726,7 @@ example.
     GrB_Scalar_extractElement (&typesize, GrB_UINT64) ;
     GrB_Type atype ;
     char atype_name [GxB_MAX_NAME_LEN] ;
-    GrB_get (A, atype_name, GrB_ELTYPE_STRING) ;
+    GrB_get (A, atype_name, GrB_EL_TYPE_STRING) ;
     GxB_Type_from_name (&atype, atype_name) ;
     if (atype == NULL)
     {
@@ -5172,7 +5172,7 @@ sometimes the same version) that created the blob.
 All versions of SuiteSparse:GraphBLAS that implement
 serialization/deserialization use essentially the same format for the blob, so
 the library versions are compatible with each other.  Version v9.0.0 adds the
-\verb'GrB_NAME' and \verb'GrB_ELTYPE_STRING' to the blob in an upward
+\verb'GrB_NAME' and \verb'GrB_EL_TYPE_STRING' to the blob in an upward
 compatible manner, so that older versions of SS:GraphBLAS can read the blobs
 created by v9.0.0; they simply ignore those components.
 

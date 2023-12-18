@@ -147,43 +147,43 @@ void mexFunction
     CHECK (MATCH (name, "GxB_FC64_t")) ;
 
     // type code
-    OK (GrB_Type_get_INT32_(GrB_BOOL, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_BOOL, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GrB_BOOL_CODE) ;
 
-    OK (GrB_Type_get_INT32_(GrB_INT8, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_INT8, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GrB_INT8_CODE) ;
 
-    OK (GrB_Type_get_INT32_(GrB_INT16, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_INT16, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GrB_INT16_CODE) ;
 
-    OK (GrB_Type_get_INT32_(GrB_INT32, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_INT32, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GrB_INT32_CODE) ;
 
-    OK (GrB_Type_get_INT32_(GrB_INT64, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_INT64, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GrB_INT64_CODE) ;
 
-    OK (GrB_Type_get_INT32_(GrB_UINT8, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_UINT8, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GrB_UINT8_CODE) ;
 
-    OK (GrB_Type_get_INT32_(GrB_UINT16, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_UINT16, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GrB_UINT16_CODE) ;
 
-    OK (GrB_Type_get_INT32_(GrB_UINT32, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_UINT32, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GrB_UINT32_CODE) ;
 
-    OK (GrB_Type_get_INT32_(GrB_UINT64, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_UINT64, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GrB_UINT64_CODE) ;
 
-    OK (GrB_Type_get_INT32_(GrB_FP32, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_FP32, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
-    OK (GrB_Type_get_INT32_(GrB_FP64, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GrB_FP64, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GrB_FP64_CODE) ;
 
-    OK (GrB_Type_get_INT32_(GxB_FC32, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GxB_FC32, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GxB_FC32_CODE) ;
 
-    OK (GrB_Type_get_INT32_(GxB_FC64, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(GxB_FC64, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GxB_FC64_CODE) ;
 
     // type size (using a GrB_Scalar): recommended type of GrB_UINT64
@@ -327,17 +327,17 @@ void mexFunction
     OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
     CHECK (i == sizeof (mytype)) ;
 
-    OK (GrB_Type_get_INT32_(type, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_INT32_(type, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GrB_UDT_CODE) ;
 
-    OK (GrB_Type_get_String_(type, name, GrB_ELTYPE_STRING)) ;
+    OK (GrB_Type_get_String_(type, name, GrB_EL_TYPE_STRING)) ;
     CHECK (MATCH (name, "user name of a type")) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_Type_get_INT32_(type, &code, GrB_ELTYPE_STRING)) ;
+    ERR (GrB_Type_get_INT32_(type, &code, GrB_EL_TYPE_STRING)) ;
 
     i = -1 ;
-    OK (GrB_Type_get_Scalar_(type, s_int32, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Type_get_Scalar_(type, s_int32, GrB_EL_TYPE_CODE)) ;
     OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
     CHECK (i == GrB_UDT_CODE) ;
 
@@ -367,19 +367,19 @@ void mexFunction
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Scalar_get_VOID_(s, nothing, 0)) ;
 
-    OK (GrB_Scalar_get_SIZE_(s, &size, GrB_ELTYPE_STRING)) ;
+    OK (GrB_Scalar_get_SIZE_(s, &size, GrB_EL_TYPE_STRING)) ;
     CHECK (size == strlen ("GrB_FP32") + 1) ;
-    OK (GrB_Scalar_get_String_(s, name, GrB_ELTYPE_STRING)) ;
+    OK (GrB_Scalar_get_String_(s, name, GrB_EL_TYPE_STRING)) ;
     CHECK (MATCH (name, "GrB_FP32")) ;
 
     OK (GrB_Scalar_get_String_(s, name, GrB_NAME)) ;
     CHECK (MATCH (name, "")) ;
 
-    OK (GrB_Scalar_get_INT32_(s, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Scalar_get_INT32_(s, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
     i = -1 ;
-    OK (GrB_Scalar_get_Scalar_(s, s_int32, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Scalar_get_Scalar_(s, s_int32, GrB_EL_TYPE_CODE)) ;
     OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
     CHECK (i == GrB_FP32_CODE) ;
 
@@ -436,19 +436,19 @@ void mexFunction
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Vector_get_VOID_(v, nothing, 0)) ;
 
-    OK (GrB_Vector_get_SIZE_(v, &size, GrB_ELTYPE_STRING)) ;
+    OK (GrB_Vector_get_SIZE_(v, &size, GrB_EL_TYPE_STRING)) ;
     CHECK (size == strlen ("GrB_FP32") + 1) ;
-    OK (GrB_Vector_get_String_(v, name, GrB_ELTYPE_STRING)) ;
+    OK (GrB_Vector_get_String_(v, name, GrB_EL_TYPE_STRING)) ;
     CHECK (MATCH (name, "GrB_FP32")) ;
 
     OK (GrB_Vector_get_String_(v, name, GrB_NAME)) ;
     CHECK (MATCH (name, "")) ;
 
-    OK (GrB_Vector_get_INT32_(v, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Vector_get_INT32_(v, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
     i = -1 ;
-    OK (GrB_Vector_get_Scalar_(v, s_int32, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Vector_get_Scalar_(v, s_int32, GrB_EL_TYPE_CODE)) ;
     OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
     CHECK (i == GrB_FP32_CODE) ;
 
@@ -538,19 +538,19 @@ void mexFunction
     expected = GrB_INVALID_VALUE ;
     ERR (GrB_Matrix_get_VOID_(A, nothing, 0)) ;
 
-    OK (GrB_Matrix_get_SIZE_(A, &size, GrB_ELTYPE_STRING)) ;
+    OK (GrB_Matrix_get_SIZE_(A, &size, GrB_EL_TYPE_STRING)) ;
     CHECK (size == strlen ("GrB_FP32") + 1) ;
-    OK (GrB_Matrix_get_String_(A, name, GrB_ELTYPE_STRING)) ;
+    OK (GrB_Matrix_get_String_(A, name, GrB_EL_TYPE_STRING)) ;
     CHECK (MATCH (name, "GrB_FP32")) ;
 
     OK (GrB_Matrix_get_String_(A, name, GrB_NAME)) ;
     CHECK (MATCH (name, "")) ;
 
-    OK (GrB_Matrix_get_INT32_(A, &code, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Matrix_get_INT32_(A, &code, GrB_EL_TYPE_CODE)) ;
     CHECK (code == GrB_FP32_CODE) ;
 
     i = -1 ;
-    OK (GrB_Matrix_get_Scalar_(A, s_int32, GrB_ELTYPE_CODE)) ;
+    OK (GrB_Matrix_get_Scalar_(A, s_int32, GrB_EL_TYPE_CODE)) ;
     OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
     CHECK (i == GrB_FP32_CODE) ;
 
