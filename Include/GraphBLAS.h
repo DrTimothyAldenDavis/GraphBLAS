@@ -4031,7 +4031,7 @@ typedef enum
     GrB_API_VER_PATCH = 16,
     GrB_BLOCKING_MODE = 17,         // GrB_Mode
 
-    // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize?):
+    // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar:
     GrB_STORAGE_ORIENTATION_HINT = 100, // GrB_Orientation
 
     // GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize):
