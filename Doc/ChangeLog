@@ -18,9 +18,10 @@ Dec 30, 2023: version 9.0.0
     * hyper_hash: constructed only if the # of non-empty vectors in a
         hypersparse matrix is large (> 1024, by default)
 
-Dec 30, 2023: version 8.3.0
+Dec 30, 2023: version 8.3.1
 
     * major change to build system: by Markus Mützel
+    * GraphBLAS.h: remove "undef I" 
 
 Oct 7, 2023: version 8.2.1
 

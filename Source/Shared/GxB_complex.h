@@ -17,11 +17,10 @@
 #ifndef GXB_COMPLEX_H
 #define GXB_COMPLEX_H
 
-    #if ( _MSC_VER && !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )
+    #if defined (_MSC_VER) && !(defined (__INTEL_COMPILER) || defined(__INTEL_CLANG_COMPILER))
 
         // Microsoft Windows complex types for C
         #include <complex.h>
-        #undef I
         typedef _Fcomplex GxB_FC32_t ;
         typedef _Dcomplex GxB_FC64_t ;
         #define GxB_CMPLXF(r,i) (_FCbuild (r,i))
@@ -32,7 +31,6 @@
 
         // C11 complex types
         #include <complex.h>
-        #undef I
         typedef float  _Complex GxB_FC32_t ;
         typedef double _Complex GxB_FC64_t ;
         #if (defined (CMPLX) && defined (CMPLXF))

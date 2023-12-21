@@ -132,8 +132,8 @@
 // CUDA (currently experimental, not for production use)
 //------------------------------------------------------------------------------
 
-#ifndef SUITESPARSE_CUDA
-/* #undef SUITESPARSE_CUDA */
+#ifndef SUITESPARSE_HAS_CUDA
+/* #undef SUITESPARSE_HAS_CUDA */
 #endif
 
 //------------------------------------------------------------------------------
