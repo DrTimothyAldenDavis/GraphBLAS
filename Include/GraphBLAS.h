@@ -132,8 +132,8 @@
 // CUDA (currently experimental, not for production use)
 //------------------------------------------------------------------------------
 
-#ifndef SUITESPARSE_HAS_CUDA
-#define SUITESPARSE_HAS_CUDA
+#ifndef GRAPHBLAS_HAS_CUDA
+#define GRAPHBLAS_HAS_CUDA
 #endif
 
 //------------------------------------------------------------------------------
