@@ -165,6 +165,13 @@ else ( )
         ${CMAKE_SOURCE_DIR}/../lib/cmake )
 endif ( )
 
+# allow libraries to "see" each other if they are installed in a non-default LIBRARY_PATH
+list ( FIND CMAKE_INSTALL_RPATH "$ORIGIN" _idx )
+if ( _idx LESS 0 )
+    # "$ORIGIN" not yet included in CMAKE_INSTALL_RPATH
+    list ( PREPEND CMAKE_INSTALL_RPATH "$ORIGIN" )
+endif ( )
+
 set ( INSIDE_SUITESPARSE OFF )
 if ( NOT SUITESPARSE_ROOT_CMAKELISTS )
     # determine if this Package is inside the SuiteSparse folder
@@ -283,12 +290,7 @@ endif ( )
 # find CUDA
 #-------------------------------------------------------------------------------
 
-if ( MSVC )
-    option ( SUITESPARSE_USE_CUDA "ON: enable CUDA acceleration for SuiteSparse, OFF (default): do not use CUDA" OFF )
-    message ( STATUS "CUDA on MSVC is under development and may not be fully functional (it is disabled by default)" )
-else ( )
-    option ( SUITESPARSE_USE_CUDA "ON (default): enable CUDA acceleration for SuiteSparse, OFF: do not use CUDA" ON )
-endif ( )
+option ( SUITESPARSE_USE_CUDA "ON (default): enable CUDA acceleration for SuiteSparse, OFF: do not use CUDA" ON )
 
 if ( SUITESPARSE_USE_CUDA )
 
