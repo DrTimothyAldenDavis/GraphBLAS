@@ -1,3 +1,14 @@
+FIXME for 9.0.0: date and version
+FIXME for 9.0.0: turn off CUDA
+FIXME for 9.0.0: rebuild Doc/*pdf
+FIXME for 9.0.0: Doc/ChangeLog
+FIXME for 9.0.0: remove this TODO.txt file (put back for 9.0.1)
+FIXME for 9.0.0: copy v2.1 C API into Doc/
+FIXME for 9.0.0: Tcov coverage: make sure it is 100%
+FIXME for 9.0.0: make sure LAGraph 1.0.2, 1.1,0 and 1.2.0 work with 9.0.0
+FIXME for 9.0.0: make sure gbmake, gbtest, gbdemos work
+
+For 9.0.1: and beyond:
 
 GraphBLAS:
 
@@ -8,12 +19,6 @@ CUDA:
 
     finding src
     kernel source location, and name
-
-
-For SS:GrB v9.0.0:
-
-    track any changes to the v2.1 C API and release v9.0.0 when the
-    v2.1 C API is released.
 
 Future features:
 

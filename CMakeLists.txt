@@ -42,7 +42,7 @@ if ( NOT BUILD_SHARED_LIBS )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-# set ( GRAPHBLAS_USE_CUDA OFF )
+# set ( GRAPHBLAS_USE_CUDA OFF )    # FIXME for 9.0.0: turn off CUDA
   set ( GRAPHBLAS_USE_CUDA ON )
 
 include ( SuiteSparsePolicy )
@@ -117,6 +117,7 @@ if ( OpenMP_C_FOUND )
 else ( )
     set ( GRAPHBLAS_HAS_OPENMP OFF )
 endif ( )
+message ( STATUS "GraphBLAS has OpenMP: ${GRAPHBLAS_HAS_OPENMP}" )
 
 # check for strict usage
 if ( SUITESPARSE_USE_STRICT AND GRAPHBLAS_USE_OPENMP AND NOT GRAPHBLAS_HAS_OPENMP )
@@ -732,5 +733,5 @@ endif ( )
 #-------------------------------------------------------------------------------
 
 if ( NOT SUITESPARSE_ROOT_CMAKELISTS )
-    include ( SuiteSparseReport )
+    include ( GraphBLASReport )
 endif ( )
