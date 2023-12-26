@@ -489,7 +489,7 @@ if (jit_enabled)
     OK (GxB_Context_engage (context1)) ;
     expected = GrB_INVALID_VALUE ;
     ERR (GxB_Context_disengage (context2)) ;
-    OK (GxB_Context_set (context1, GxB_CHUNK, -1)) ;
+    OK (GxB_Context_set (context1, GxB_CHUNK, (double) -1)) ;
     double chunk = 0 ;
     OK (GxB_Context_get (context1, GxB_CHUNK, &chunk)) ;
     CHECK (chunk == GB_CHUNK_DEFAULT) ;
@@ -511,6 +511,7 @@ if (jit_enabled)
     OK (GxB_Context_set_INT32 (context1, GxB_CONTEXT_GPU_ID, 40)) ;
     OK (GxB_Context_get_INT32 (context1, GxB_CONTEXT_GPU_ID, &id1)) ;
 
+    OK (GxB_Context_disengage (NULL)) ;
     GrB_free (&context1) ;
     GrB_free (&context2) ;
 

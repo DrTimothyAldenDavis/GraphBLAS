@@ -63,7 +63,7 @@ README.md file with further details.
 
 CMakeLists.txt:  cmake instructions to compile GraphBLAS
 
-cmake_modules:  additional cmake files
+`cmake_modules`:  additional cmake files
 
 Config:         version-dependent files used by CMake
 
@@ -100,7 +100,7 @@ CUDA:           GPU interface, a work in progress.  This is being developed in
 
 CONTRIBUTOR-LICENSE.txt:    how to contribute to SuiteSparse:GraphBLAS
 
-cpu_features: (c) Google.com, Apache 2.0 license.
+`cpu_features`: (c) Google.com, Apache 2.0 license.
 
 logo:           the (awesome!) GraphBLAS logo by Jakab Rokob, CC BY 4.0 license
 
@@ -108,7 +108,7 @@ lz4:            LZ4 compression, (c) 2011-2016, Yann Collet, BSD2 license
 zstd:           ZSTD compression, (c) Meta, by Yann Collet, BSD3 license
 xxHash:         xxHash code, (c) 2012-2021, Yann Collet
 
-rmm_wrap:       Rapids Memory Manager, (c) NVIDIA, to use with CUDA.
+`rmm_wrap`:     Rapids Memory Manager, (c) NVIDIA, to use with CUDA.
                 (draft; not yet in use)
 
 
@@ -244,7 +244,7 @@ file, and in the GraphBLAS User Guide):
 (1) LZ4, xxHash, and ZSTD by Yann Collet, appearing here under the
 BSD2 or BSD3 licenses.
 
-(2) cpu_features (c) Google, Apache 2.0 license with components (c) IBM and
-Intel (also Apache 2.0), and the cpu_featurer/ndk_compat component (c)
+(2) `cpu_features` (c) Google, Apache 2.0 license with components (c) IBM and
+Intel (also Apache 2.0), and the `cpu_featurer/ndk_compat` component (c)
 The Android Open Source Project (BSD-2-clause)
 

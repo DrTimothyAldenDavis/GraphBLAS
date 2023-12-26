@@ -14774,11 +14774,11 @@ GraphBLAS folder.
     \item \verb'GrB_get/GrB_set': new functions from the v2.1 C API.
     \item \verb'GrB_Type_new', \verb'GrB_UnaryOp_new',
         \verb'GrB_IndexUnaryOp_new': no longer macros, since \verb'GrB_set' can
-        be used to set the names of the operators.
-        These methods no longer extract the name, so the default name is now the
-        empty string.  This is because \verb'GrB_get/set' can only set these names
-        once.  This is a non-compatible change of behaviour for these 3
-        methods, so SuiteSprase:GraphBLAS must become v9.0.0.
+        be used to set the names of the operators.  These methods no longer
+        extract the name, so the default name is now the empty string.  This is
+        because \verb'GrB_get/set' can only set these names once.  This is a
+        non-compatible change of behavior for these 3 methods, so
+        SuiteSparse:GraphBLAS must become v9.0.0.
     \item historical methods:  many methods are replaced by \verb'GrB_get' and
         \verb'GrB_set'.  They remain in SuiteSparse:GraphBLAS but have been
         declared historical.  Terse prototypes exist in GraphBLAS.h, and any
@@ -14789,8 +14789,8 @@ GraphBLAS folder.
         \verb'GxB_Monoid_identity', \verb'GxB_Monoid_terminal',
         \verb'GxB_Semiring_add', \verb'GxB_Semiring_multiply'.  Use \newline
         \verb'GrB_STORAGE_ORIENTATION_HINT' in place of \verb'GxB_FORMAT'.
-    \item \verb'hyper_hash': constructed only if the number of non-empty vectors in a
-        hypersparse matrix is large ($> 1024$, by default)
+    \item \verb'hyper_hash': constructed only if the number of non-empty
+        vectors in a hypersparse matrix is large ($> 1024$, by default).
     \end{itemize}
 
 \item Dec 30, 2023: version 8.3.1

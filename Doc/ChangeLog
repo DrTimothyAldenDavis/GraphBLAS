@@ -5,8 +5,8 @@ Jan 1, 2024: version 9.0.0 FIXME for 9.0.0
         since GrB_set can be used to set the names of the operators.  These
         methods no longer extract the name, so the default name is now the
         empty string.  This is because GrB_get/set can only set these names
-        once.  This is a non-compatible change of behaviour for these 3
-        methods, so SuiteSprase:GraphBLAS must become v9.0.0.
+        once.  This is a non-compatible change of behavior for these 3
+        methods, so SuiteSparse:GraphBLAS must become v9.0.0.
     * historical methods:  many methods are replaced by GrB_get and GrB_set.
         They remain in SuiteSparse:GraphBLAS but have been declared historical.
         Terse prototypes exist in GraphBLAS.h, and any discussion is removed
