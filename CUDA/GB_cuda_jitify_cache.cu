@@ -34,8 +34,8 @@
 #include <filesystem>
 
 #include "GB_cuda_jitify_cache.h"
-#include "GraphBLAS.h"
-#undef I
+#include "GraphBLAS_cuda.h"
+
 extern "C"
 {
     #include "GB.h"

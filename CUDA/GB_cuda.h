@@ -18,9 +18,7 @@ extern "C"
     #include "GB_warnings.h"
 }
 
-#define GB_LIBRARY
-#include "GraphBLAS.h"
-#undef I
+#include "GraphBLAS_cuda.h"
 
 extern "C"
 {

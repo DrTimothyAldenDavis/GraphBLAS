@@ -21,11 +21,11 @@
 
 #pragma once
 
+#include "GraphBLAS_cuda.h"
+
 extern "C"
 {
     #include "GB.h"
-    #include "GraphBLAS.h"
-    #undef I
     #include "GB_stringify.h"
 }
 

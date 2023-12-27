@@ -2,9 +2,7 @@ FIXME for 9.0.0: date and version
 FIXME for 9.0.0: rebuild Doc/*pdf
 FIXME for 9.0.0: Doc/ChangeLog
 FIXME for 9.0.0: copy v2.1 C API into Doc/
-
 FIXME for 9.0.0: turn off CUDA
-FIXME for 9.0.0: remove C++ complex defn in GraphBLAS.h
 
 --------------------------------------------------------------------------------
 FUTURE plans For 9.0.1: and beyond:
