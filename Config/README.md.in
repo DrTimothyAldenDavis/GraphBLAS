@@ -196,7 +196,7 @@ To support the development of GraphBLAS, contact the author (davis@tamu.edu) or
 the Texas A&M Foundation (True Brown, tbrown@txamfoundation.com; or Kevin
 McGinnis, kmcginnis@txamfoundation.com) for details.
 
-SuiteSparse:GraphBLAS, is copyrighted by Timothy A. Davis, (c) 2017-2023, All
+SuiteSparse:GraphBLAS, is copyrighted by Timothy A. Davis, (c) 2017-2024, All
 Rights Reserved.  davis@tamu.edu.
 
 -----------------------------------------------------------------------------

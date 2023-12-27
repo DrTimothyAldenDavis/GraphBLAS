@@ -43,7 +43,7 @@ endif ( )
 
 # CUDA is under development for now, and not deployed in production:
   set ( GRAPHBLAS_USE_CUDA OFF )
-# set ( GRAPHBLAS_USE_CUDA ON )    # FIXME for 9.0.1: turn on CUDA
+# set ( GRAPHBLAS_USE_CUDA ON )
 
 include ( SuiteSparsePolicy )
 
