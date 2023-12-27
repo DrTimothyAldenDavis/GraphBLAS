@@ -8,13 +8,13 @@
 #-------------------------------------------------------------------------------
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Jan 1, 2023" )   # FIXME for 9.0.0: date
+set ( GraphBLAS_DATE "Jan 1, 2024" )
 set ( GraphBLAS_VERSION_MAJOR 9 CACHE STRING "" FORCE )
 set ( GraphBLAS_VERSION_MINOR 0 CACHE STRING "" FORCE )
-set ( GraphBLAS_VERSION_SUB   1 CACHE STRING "" FORCE )     # FIXME for 9.0.0
+set ( GraphBLAS_VERSION_SUB   0 CACHE STRING "" FORCE )
 
 # GraphBLAS C API Specification version, at graphblas.org
-set ( GraphBLAS_API_DATE "Dec 22, 2023" )   # FIXME for 9.0.0
+set ( GraphBLAS_API_DATE "Dec 22, 2023" )
 set ( GraphBLAS_API_VERSION_MAJOR 2 )
 set ( GraphBLAS_API_VERSION_MINOR 1 )
 set ( GraphBLAS_API_VERSION_SUB   0 )

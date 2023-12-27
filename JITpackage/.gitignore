@@ -1,2 +1,4 @@
 # Ignore the constructed GB_JITpackage.c file
-GB_JITpackage.c
+
+# FUTURE: add GB_JITpackage.c to .gitignore and remove it from github
+# GB_JITpackage.c
