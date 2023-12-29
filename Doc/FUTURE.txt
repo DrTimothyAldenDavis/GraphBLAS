@@ -1,6 +1,3 @@
-FIXME for 9.0.0: copy v2.1 C API into Doc/
-
---------------------------------------------------------------------------------
 FUTURE plans For 9.0.1: and beyond:
 
 GraphBLAS:
