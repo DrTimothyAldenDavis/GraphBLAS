@@ -72,7 +72,7 @@ class dense_phase1launchFactory
 {
   // FIXME: this is the full name.  Why?  See below for partial name.
   // Need to be consistent in naming schemes.
-  std::string kernel_name = "GB_cuda_jit_AxB_dot3_dense_phase1";
+  std::string kernel_name ;
 
   GB_cuda_mxm_factory &mxm_factory_;
 
@@ -117,6 +117,15 @@ public:
 
     std::stringstream string_to_be_jitted ;
 
+    char kernel_name_c [GB_KLEN] ;
+    GB_macrofy_name (kernel_name_c,
+        /* name space: */ "GB_cuda_jit",
+        /* kname: */ "AxB_dot3_dense_phase1",
+        /* scode_digits: */ 16,
+        /* scode: */ sr_code,
+        /* suffix: */ NULL) ;   // FIXME: set this via GB_encoding_mxm
+    printf ("new name [%s]\n", kernel_name_c) ;
+
     string_to_be_jitted << kernel_name << std::endl <<
     R"(#include "GB_cuda_kernel.h")" << std::endl <<
     R"(#include ")" << mxm_factory_.filename << R"(")" << std::endl <<
@@ -154,7 +163,7 @@ public:
 template<int threads_per_block=32, int chunk_size = 128>
 class phase1launchFactory 
 {
-  std::string kernel_name = "GB_cuda_jit_AxB_dot3_phase1";
+  std::string kernel_name ; // was "GB_cuda_jit_AxB_dot3_phase1";
 
   GB_cuda_mxm_factory &mxm_factory_;
 
@@ -200,10 +209,23 @@ public:
 
     std::stringstream string_to_be_jitted ;
 
+    // create the kernel name
+    char kernel_name_c [GB_KLEN] ;
+    GB_macrofy_name (kernel_name_c,
+        /* name space: */ "GB_cuda_jit",
+        /* kname: */ "AxB_dot3_phase1",
+        /* scode_digits: */ 16,
+        /* scode: */ sr_code,
+        /* suffix: */ NULL) ;   // FIXME: set this via GB_encoding_mxm
+    printf ("\nnew name [%s]\n", kernel_name_c) ;
+    kernel_name = std::string (kernel_name_c) ;
+
+    // create the kernel
     string_to_be_jitted << kernel_name << std::endl <<
     R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#define GB_cuda_jit_kernel )" << kernel_name << std::endl <<
     R"(#include ")" << mxm_factory_.filename << R"(")" << std::endl <<
-    R"(#include ")" << kernel_name << R"(.cuh")" << std::endl;
+    R"(#include "GB_cuda_jit_AxB_dot3_phase1.cuh")" << std::endl;
 
     std::cout << "header names:" << std::endl ;
 //  std::cout << header_names << std::endl ;
@@ -218,8 +240,8 @@ public:
     {
         std::cout << "     " << s << std::endl ;
     }
-    std::cout << "kernel_name + sr_code_str .jtfy:" << std::endl ;
-    std::cout << kernel_name + "_" + sr_code_str + ".jtfy" << std::endl ;
+    std::cout << "cuda jit kernel_name:" << std::endl ;
+    std::cout << kernel_name + ".jtfy" << std::endl ;
     std::cout << "jit::get_user_home_cache_dir ( ):" << std::endl ;
     std::cout << jit::get_user_home_cache_dir ( ) << std::endl ;
 
@@ -229,12 +251,12 @@ public:
     dim3 block(get_threads_per_block());
 
     std::cout << "HERE I AM 1" << std::endl ;
-    jit::launcher( kernel_name + "_" + sr_code_str + ".jtfy",
+    jit::launcher( kernel_name + ".jtfy",
                    string_to_be_jitted.str(),
                    header_names,
                    GB_cuda_jit_compiler_flags ( ),
                    file_callback)
-                 .set_kernel_inst(  kernel_name, template_types)
+                 .set_kernel_inst(  kernel_name )
                  .configure(grid, block, SMEM, stream)
                  .launch( nanobuckets, blockBucket, C, M, A, B);
 

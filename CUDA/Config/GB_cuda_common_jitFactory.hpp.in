@@ -62,7 +62,7 @@ inline std::vector<std::string> GB_cuda_jit_compiler_flags ( )
     return (
         std::vector<std::string>  (
         {"-std=c++17",
-        //"-G",
+        "-G",
         "-remove-unused-globals",
         "-w",
         "-D__CUDACC_RTC__",
