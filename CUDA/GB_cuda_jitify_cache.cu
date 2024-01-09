@@ -121,28 +121,6 @@ named_prog<jitify::experimental::KernelInstantiation> GBJitCache::getKernelInsta
     );
 }
 
-named_prog<jitify::experimental::KernelInstantiation> GBJitCache::getKernelInstantiation(
-    std::string const& kern_name,
-    named_prog<jitify::experimental::Program> const& named_program)
-{
-    // Lock for thread safety
-    std::lock_guard<std::mutex> lock(_kernel_cache_mutex);
-
-    std::string prog_name = std::get<0>(named_program);
-    jitify::experimental::Program& program = *std::get<1>(named_program);
-
-    // Make instance name e.g. "prog_binop.kernel_v_v_int_int_long int_Add"
-    std::string kern_inst_name = kern_name;
-
-    printf(" got kernel instance %s\n",kern_inst_name.c_str());
-
-    return getCached(kern_inst_name, kernel_inst_map, 
-        [&](){return program.kernel(kern_name)
-                            .instantiate();
-        }
-    );
-}
-
 // Another overload for getKernelInstantiation which might be useful to get
 // kernel instantiations in one step
 // ------------------------------------------------------------------------

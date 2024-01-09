@@ -54,9 +54,8 @@ using namespace cooperative_groups;
 // FIXME: What if all entries are in one bucket;
 // can we skip the bucket creation?
 
-#define chunk_size 128
-
-__global__ void GB_cuda_jit_kernel  // was GB_jit_AxB_dot3_phase1
+template<typename T_M, uint64_t srcode, int chunk_size = 128>
+__global__ void GB_jit_AxB_dot3_phase1
 (
     // outputs, preallocated in global memory:
     int64_t *nanobuckets,   // array of size NBUCKETS-blockDim.x-by-gridDim.x

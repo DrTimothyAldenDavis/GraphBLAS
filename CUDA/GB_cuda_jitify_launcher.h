@@ -113,14 +113,6 @@ class launcher {
     return *this;
   }
 
-  launcher& set_kernel_inst(
-    const std::string& kernel_name
-  )
-  { // program is a member variable of the launcher
-    kernel_inst = cache_instance.getKernelInstantiation(kernel_name, program);
-    return *this;
-  }
-
   /**
    * @brief Handle the Jitify API to launch using information 
    *  contained in the members of `this`
