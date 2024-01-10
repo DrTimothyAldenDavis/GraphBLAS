@@ -902,6 +902,7 @@
 #define GB_macrofy_cast_input GM_macrofy_cast_input
 #define GB_macrofy_cast_output GM_macrofy_cast_output
 #define GB_macrofy_defn GM_macrofy_defn
+#define GB_macrofy_decl GM_macrofy_decl
 #define GB_macrofy_ewise GM_macrofy_ewise
 #define GB_macrofy_family GM_macrofy_family
 #define GB_macrofy_id GM_macrofy_id

@@ -56,7 +56,7 @@ static char    *GB_jit_C_compiler = NULL ;
 static size_t   GB_jit_C_compiler_allocated = 0 ;
 
 static char    *GB_jit_CMake = NULL ;
-static size_t  GB_jit_CMake_allocated = 0 ;
+static size_t   GB_jit_CMake_allocated = 0 ;
 
 // flags for the C compiler:
 static char    *GB_jit_C_flags = NULL ;
@@ -362,6 +362,7 @@ GrB_Info GB_jitifyer_init (void)
     GB_COPY_STUFF (GB_jit_C_cmake_libs, GB_CMAKE_LIBRARIES) ;
     GB_COPY_STUFF (GB_jit_C_preface,    "") ;
     GB_COPY_STUFF (GB_jit_CUDA_preface, "") ;
+    GB_COPY_STUFF (GB_jit_CMake, "cmake") ;
     OK (GB_jitifyer_alloc_space ( )) ;
 
     //--------------------------------------------------------------------------
@@ -1919,6 +1920,7 @@ GrB_Info GB_jitifyer_load_worker
         GB_jit_cache_path, bucket, GB_LIB_PREFIX, kernel_name, GB_LIB_SUFFIX) ;
     void *dl_handle = GB_file_dlopen (GB_jit_temp) ;
     GB_jit_kcode kcode = encoding->kcode ;
+    char *object_paths [3] ;
 
     //--------------------------------------------------------------------------
     // check if the kernel was found, but needs to be compiled anyway
@@ -1976,6 +1978,13 @@ GrB_Info GB_jitifyer_load_worker
         snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/%s.%s",
             GB_jit_cache_path, bucket, kernel_name, kernel_filetype) ;
         FILE *fp = fopen (GB_jit_temp, "w") ;
+        object_paths [0] = (op != NULL && op->defn != NULL && (GB_STRNCMP(op->defn, GB_jit_isobj_symbol) == 0)) ?
+            op->defn + strlen(GB_jit_isobj_symbol) : "" ;
+        object_paths [1] = (op1 != NULL && op1->defn != NULL && op1 != op && (GB_STRNCMP(op1->defn, GB_jit_isobj_symbol) == 0)) ?
+            op1->defn + strlen(GB_jit_isobj_symbol) : "" ;
+        object_paths [2] = (op2 != NULL && op2->defn != NULL && op2 != op1 && op2 != op && (GB_STRNCMP(op2->defn, GB_jit_isobj_symbol) == 0)) ? 
+            op2->defn + strlen(GB_jit_isobj_symbol) : "" ;
+        
         if (fp != NULL)
         { 
             // create the preface
@@ -1999,7 +2008,6 @@ GrB_Info GB_jitifyer_load_worker
                 type3, hash, kcode) ;
             fclose (fp) ;
         }
-
         // if the source file was not created above, the compilation will
         // gracefully fail.
 
@@ -2012,12 +2020,12 @@ GrB_Info GB_jitifyer_load_worker
         else if (GB_jit_use_cmake)
         { 
             // use cmake to compile the CPU kernel
-            GB_jitifyer_cmake_compile (kernel_name, hash) ;
+            GB_jitifyer_cmake_compile (kernel_name, hash, object_paths) ;
         }
         else
         { 
             // use the compiler to directly compile the CPU kernel
-            GB_jitifyer_direct_compile (kernel_name, bucket) ;
+            GB_jitifyer_direct_compile (kernel_name, bucket, object_paths) ;
         }
 
         // load the kernel from the lib*.so file
@@ -2396,7 +2404,7 @@ static void GB_jitifyer_command (char *command)
 
 #define GB_BLD_DIR "%s/tmp/%016" PRIx64
 
-void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
+void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash, char **object_paths)
 { 
 #ifndef NJIT
 
@@ -2448,12 +2456,15 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
         "add_library ( %s SHARED \"%s/c/%02x/%s.c\" )\n",
         kernel_name,                // target name for add_library command
         GB_jit_cache_path, bucket, kernel_name) ; // source file for add_library
-    if (GB_STRLEN (GB_jit_C_cmake_libs) > 0)
+    if (GB_STRLEN (GB_jit_C_cmake_libs) > 0 || GB_STRLEN (object_paths[0]) > 0 || GB_STRLEN (object_paths[1]) > 0 || GB_STRLEN (object_paths[2]) > 0)
     {
         fprintf (fp,
-            "target_link_libraries ( %s PUBLIC %s )\n",
+            "target_link_libraries ( %s PUBLIC %s%s%s%s )\n",
             kernel_name,                // target name of the library
-            GB_jit_C_cmake_libs) ;      // libraries to link against
+            GB_jit_C_cmake_libs, 
+            object_paths[0],
+            object_paths[1],
+            object_paths[2]) ;      // libraries and/or object files to link against
     }
 
     fprintf (fp, 
@@ -2611,7 +2622,7 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
 // FUTURE: get this method to work in MSVC, since it's much faster than using
 // cmake on Windows.
 
-void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
+void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket, char **object_paths)
 { 
 
 #ifndef NJIT
@@ -2638,7 +2649,7 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
     "%s "                               // C flags
     "%s "                               // C link flags
     "-o %s/lib/%02x/%s%s%s "            // lib*.so output file
-    "%s/c/%02x/%s%s "                   // *.o input file
+    "%s/c/%02x/%s%s%s%s%s "             // *.o input file
     "%s "                               // libraries to link with
     "%s "                               // burble stdout
     "%s %s\"",                          // error log file
@@ -2659,7 +2670,8 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
     GB_jit_C_link_flags,                // C link flags
     GB_jit_cache_path, bucket,  
     GB_LIB_PREFIX, kernel_name, GB_LIB_SUFFIX,              // lib*.so file
-    GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
+    GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o input file,
+    object_paths[0], object_paths[1], object_paths[2],      // possible object file paths
     GB_jit_C_libraries,                 // libraries to link with
     burble_stdout,                      // burble stdout
     err_redirect, GB_jit_error_log) ;   // error log file

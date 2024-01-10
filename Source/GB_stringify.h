@@ -34,6 +34,7 @@ void GB_macrofy_preface
 #define GB_LSHIFT(x,k) (((uint64_t) x) << k)
 #define GB_RSHIFT(x,k,b) ((x >> k) & ((((uint64_t)0x00000001) << b) -1))
 
+#define GB_STRNCMP(s1, s2) strncmp(s1, s2, strlen(s2)-1)
 //------------------------------------------------------------------------------
 // GB_macrofy_name: create the kernel name
 //------------------------------------------------------------------------------
@@ -727,6 +728,14 @@ void GB_macrofy_defn    // construct a defn for an operator
                         // 3: user-defined function or macro
     const char *name,
     const char *defn
+) ;
+
+void GB_macrofy_decl    // construct a decl for an operator
+(
+    FILE *fp,
+    int kind,           // 0: built-in function
+                        // 3: user-defined function
+    GB_Operator op
 ) ;
 
 void GB_macrofy_string

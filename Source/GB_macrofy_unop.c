@@ -19,6 +19,8 @@
 #include "GB_math.h"
 #include "GB_stringify.h"
 #include <ctype.h>
+#include "GB_config.h"
+#include "GB_jitifyer.h"
 
 void GB_macrofy_unop
 (
@@ -30,10 +32,10 @@ void GB_macrofy_unop
     GB_Operator op              // GrB_UnaryOp or GrB_IndexUnaryOp
 )
 {
-
+    bool justdecl ;
     const char *f = "" ;
     const char *ij = (flipij) ? "j,i" : "i,j" ;
-
+    justdecl = !(op->defn != NULL ? GB_STRNCMP(op->defn, GB_jit_isobj_symbol) : true) ;
     if (ecode == 0)
     {
 
@@ -42,20 +44,33 @@ void GB_macrofy_unop
         //----------------------------------------------------------------------
 
         ASSERT (op != NULL) ;
-        GB_macrofy_defn (fp, 3, op->name, op->defn) ;
+        if (justdecl)
+        {
+            GB_macrofy_decl (fp, 3, op) ;
+        }
+        else
+        {
+            GB_macrofy_defn (fp, 3, op->name, op->defn) ;
+        }
         fprintf (fp, "#define %s(z,x,%s,y)  %s (&(z), &(x))\n", macro_name,
             ij, op->name) ;
 
     }
     else if (ecode == 254)
     {
-
         //----------------------------------------------------------------------
         // user-defined GrB_IndexUnaryOp
         //----------------------------------------------------------------------
 
         ASSERT (op != NULL) ;
-        GB_macrofy_defn (fp, 3, op->name, op->defn) ;
+        if (justdecl)
+        {
+            GB_macrofy_decl (fp, 3, op) ;
+        }
+        else
+        {
+            GB_macrofy_defn (fp, 3, op->name, op->defn) ;
+        }
         fprintf (fp, "#define %s(z,x,%s,y) %s (&(z), &(x), i, j, &(y))\n",
             macro_name, ij, op->name) ;
 

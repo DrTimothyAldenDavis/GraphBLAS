@@ -229,6 +229,11 @@ GrB_Info GrB_Global_set_String
 
                 info = GB_jitifyer_set_cache_path (value) ;
                 break ;
+        
+            case GxB_JIT_CMAKE :
+
+                return (GB_jitifyer_set_CMake (value)) ;
+                break ;
 
             default : 
 

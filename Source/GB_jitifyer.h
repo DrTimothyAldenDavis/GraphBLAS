@@ -10,7 +10,11 @@
 #ifndef GB_JITIFYER_H
 #define GB_JITIFYER_H
 
+
 #include "GB_jit_kernel_proto.h"
+#include "GB_config.h"
+
+static const char GB_jit_isobj_symbol[] = "GB_ISOBJ";
 
 //------------------------------------------------------------------------------
 // get list of PreJIT kernels: function pointers and names
@@ -347,8 +351,9 @@ bool GB_jitifyer_query
     GrB_Type type3
 ) ;
 
-void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash) ;
-void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket) ;
+// Raye: I'm not yet sure if nvcc will do LTO easily. So I will leave off object_paths for now.
+void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash, char **object_paths) ;
+void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket, char **object_paths) ;
 void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket) ;
 
 GrB_Info GB_jitifyer_init (void) ;  // initialize the JIT
