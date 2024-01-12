@@ -7,8 +7,8 @@
 //------------------------------------------------------------------------------
 
 // This CUDA kernel produces the semiring product of two
-// dense matrices of types T_A and T_B and common index space size n, to a  
-// output matrix of type T_C. The matrices are dense, with uniform
+// dense matrices of types GB_A_TYPE and GB_B_TYPE and common index space size n, to a  
+// output matrix of type GB_C_TYPE. The matrices are dense, with uniform
 // non-zeros and sparsity patterns. 
 // ie. we want to produce C = A'*B in the sense of the given semi-ring.
 
@@ -63,16 +63,16 @@ using namespace cooperative_groups;
 // warp_ReduceSum
 //------------------------------------------------------------------------------
 
-template< typename T_Z, int warp_sz>
-__inline__ __device__ T_Z warp_ReduceSum(thread_block_tile<warp_sz> g, T_Z val)
+__inline__ __device__ GB_Z_TYPE warp_ReduceSum(thread_block_tile<32> g,
+    GB_Z_TYPE val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
-    // FIXME: only works if sizeof(T_Z) <= 32 bytes
+    // FIXME: only works if sizeof(GB_Z_TYPE) <= 32 bytes
     // FIXME: the ANY monoid needs the cij_exists for each thread
     for (int i = g.size() / 2; i > 0; i /= 2)
     {
-        T_Z next = g.shfl_down( val, i) ;
+        GB_Z_TYPE next = g.shfl_down( val, i) ;
         GB_ADD( val, val, next ); 
     }
     return val; // note: only thread 0 will return full sum
@@ -82,11 +82,7 @@ __inline__ __device__ T_Z warp_ReduceSum(thread_block_tile<warp_sz> g, T_Z val)
 // AxB_dot3_phase3_dndn
 //------------------------------------------------------------------------------
 
-template<
-    typename T_C, typename T_A, typename T_B,
-    typename T_Z, typename T_X, typename T_Y,
-    uint64_t srcode>
-__global__ void AxB_dot3_phase3_dndn
+__global__ void GB_cuda_jit_kernel // was AxB_dot3_phase3_dndn
 (
     GrB_Matrix C,
     GrB_Matrix M,
@@ -96,12 +92,12 @@ __global__ void AxB_dot3_phase3_dndn
 {
     // TODO: Figure out how to use graphblas-specific INFINITY macro
     #ifndef INFINITY
-    #define INFINITY std::numeric_limits<T_C>::max()
+    #define INFINITY std::numeric_limits<GB_C_TYPE>::max()
     #endif
 
-    const T_A *__restrict__ Ax = (T_A *)A->x  ;
-    const T_B *__restrict__ Bx = (T_B *)B->x  ;
-          T_C *__restrict__ Cx = (T_C *)C->x  ;
+    const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *)A->x  ;
+    const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *)B->x  ;
+          GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *)C->x  ;
           int64_t *__restrict__ Ci = C->i ;
     const int64_t *__restrict__ Mi = M->i ;
     #if GB_M_IS_HYPER
@@ -226,7 +222,7 @@ __global__ void AxB_dot3_phase3_dndn
 
         #if !GB_C_ISO
         // FIXME: the ANY monoid needs the cij_exists for each thread
-        cij = warp_ReduceSum<T_Z, 32> ( tile, cij);
+        cij = warp_ReduceSum<32> ( tile, cij);
         #endif
 
         // write result for this block to global mem
@@ -234,7 +230,7 @@ __global__ void AxB_dot3_phase3_dndn
         {
             if (cij_exists)
             {
-                GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (T_C) cij
+                GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (GB_C_TYPE) cij
                 Ci [pair_id] = i ;
             }
             else

@@ -99,7 +99,7 @@ __device__ void blockBucketExclusiveSum(int bucketId, int64_t *d_data, int nbloc
 // warp_ReduceSumPlus_uint64
 //------------------------------------------------------------------------------
 
-template< int tile_sz>
+#define tile_sz 32
 __inline__ __device__ uint64_t warp_ReduceSumPlus_uint64( thread_block_tile<tile_sz> tile, uint64_t val)
 {
     // Each iteration halves the number of active threads
@@ -119,7 +119,7 @@ __inline__ __device__ uint64_t warp_ReduceSumPlus_uint64( thread_block_tile<tile
 // GB_AxB_cuda_dot3_phase1.  The launch geometry of this kernel must match the
 // GB_AxB_cuda_dot3_phase1 kernel, with the same # of threads and threadblocks.
 
-__global__ void AxB_phase2  // FIXME rename
+__global__ void GB_cuda_jit_kernel // AxB_phase2
 (
     // input, not modified:
     int64_t *__restrict__ blockbucket,    // global bucket count, of size NBUCKETS*nblocks
@@ -161,7 +161,7 @@ __global__ void AxB_phase2  // FIXME rename
          }
          this_thread_block().sync(); 
 
-         s[b]  = warp_ReduceSumPlus_uint64<32>( tile, s[b]);
+         s[b]  = warp_ReduceSumPlus_uint64( tile, s[b]);
      }
 
     if (threadIdx.x ==0 )

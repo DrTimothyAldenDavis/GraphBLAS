@@ -13,16 +13,15 @@
 //  using a serial merge algorithm on the sparse vectors. 
 //  m = 256/sz, where sz is in {4, 16, 64, 256}
 //  For a vector-pair, sz = xnz + ynz 
-//  Template on <T_C, T_M, T_A, T_B>
 //  Parameters:
 
 //  int64_t start          <- start of vector pairs for this kernel
 //  int64_t end            <- end of vector pairs for this kernel
 //  int64_t *Bucket        <- array of pair indices for all kernels 
-//  matrix<T_C> *C         <- result matrix 
-//  matrix<T_M> *M         <- mask matrix
-//  matrix<T_A> *A         <- input matrix A
-//  matrix<T_B> *B         <- input matrix B
+//  C         <- result matrix 
+//  M         <- mask matrix
+//  A         <- input matrix A
+//  B         <- input matrix B
 //  int sz                 <- nnz of very sparse vectors
 
 //  Blocksize is 1024, uses warp and block reductions to count zombies produced.
@@ -42,12 +41,12 @@
 #include "GB_cuda_dot3_defn.h"
 
 using namespace cooperative_groups;
+#define tile_sz 32
 
 //------------------------------------------------------------------------------
 // GB_warp_ReduceSumPlus_int64
 //------------------------------------------------------------------------------
 
-template< int tile_sz>
 __inline__ __device__ 
 int64_t GB_warp_ReduceSumPlus_int64( thread_block_tile<tile_sz> g, int64_t val)
 {
@@ -59,6 +58,7 @@ int64_t GB_warp_ReduceSumPlus_int64( thread_block_tile<tile_sz> g, int64_t val)
         val +=  g.shfl_down( val, i);
     }
     */
+    // assuming tile_sz is 32:
     val +=  g.shfl_down( val, 16);
     val +=  g.shfl_down( val, 8);
     val +=  g.shfl_down( val, 4);
@@ -71,18 +71,17 @@ int64_t GB_warp_ReduceSumPlus_int64( thread_block_tile<tile_sz> g, int64_t val)
 // GB_block_ReduceSum_int64
 //------------------------------------------------------------------------------
 
-template<int warpSize>
 __inline__ __device__
 int64_t GB_block_ReduceSum_int64(thread_block g, int64_t val)
 {
-  static __shared__ int64_t shared[warpSize]; // Shared mem for 32 partial sums
+  static __shared__ int64_t shared[tile_sz]; // Shared mem for 32 partial sums
 
-  int lane = threadIdx.x & 31 ; // % warpSize;
-  int wid  = threadIdx.x >> 5 ; // / warpSize;
-  thread_block_tile<warpSize> tile = tiled_partition<warpSize>( g );
+  int lane = threadIdx.x & 31 ; // % tile_sz;
+  int wid  = threadIdx.x >> 5 ; // / tile_sz;
+  thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( g );
 
   // Each warp performs partial reduction
-  val = GB_warp_ReduceSumPlus_int64<warpSize>( tile, val);    
+  val = GB_warp_ReduceSumPlus_int64( tile, val);    
 
   // Wait for all partial reductions
   if (lane==0) shared[wid]=val; // Write reduced value to shared memory
@@ -91,10 +90,10 @@ int64_t GB_block_ReduceSum_int64(thread_block g, int64_t val)
   //if (wid > 0 ) return val;
 
   //read from shared memory only if that warp existed
-  val = (threadIdx.x <  (blockDim.x / warpSize ) ) ? shared[lane] : 0;
+  val = (threadIdx.x <  (blockDim.x / tile_sz ) ) ? shared[lane] : 0;
 
   // Final reduce within first warp
-  if (wid==0) val = GB_warp_ReduceSumPlus_int64<warpSize>( tile, val);
+  if (wid==0) val = GB_warp_ReduceSumPlus_int64( tile, val);
 
   return val;
 }
@@ -103,11 +102,8 @@ int64_t GB_block_ReduceSum_int64(thread_block g, int64_t val)
 // AxB_dot3_phase3_vsvs
 //------------------------------------------------------------------------------
 
-template<
-    typename T_C, typename T_A, typename T_B,
-    typename T_Z, typename T_X, typename T_Y, uint64_t srcode>
-__global__ void AxB_dot3_phase3_vsvs
-( 
+__global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsvs
+(
   int64_t start,
   int64_t end,
   int64_t *Bucket,  // do the work in Bucket [start:end-1]
@@ -121,7 +117,7 @@ __global__ void AxB_dot3_phase3_vsvs
 
     // TODO: Figure out how to use graphblas-specific INFINITY macro
     #ifndef INFINITY
-    #define INFINITY std::numeric_limits<T_C>::max()
+    #define INFINITY std::numeric_limits<GB_C_TYPE>::max()
     #endif
 
     int64_t dots = end - start;
@@ -133,9 +129,9 @@ __global__ void AxB_dot3_phase3_vsvs
 //
 //   int dots = (nvecs +m -1)/m;
 //   */
-    const T_A *__restrict__ Ax = (T_A *)A->x  ;
-    const T_B *__restrict__ Bx = (T_B *)B->x  ;
-          T_C *__restrict__ Cx = (T_C *)C->x  ;
+    const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *)A->x  ;
+    const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *)B->x  ;
+          GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *)C->x  ;
           int64_t *__restrict__ Ci = C->i ;
     const int64_t *__restrict__ Mi = M->i ;
     #if GB_M_IS_HYPER
@@ -243,7 +239,7 @@ __global__ void AxB_dot3_phase3_vsvs
         GB_CIJ_EXIST_POSTCHECK ;
         if (cij_exists)
         {
-            GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (T_C) cij
+            GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (GB_C_TYPE) cij
             Ci [pair_id] = i ;
         }
         else
@@ -257,7 +253,7 @@ __global__ void AxB_dot3_phase3_vsvs
     // FIXME: use this in spdn and vsdn:
     this_thread_block().sync(); 
 
-    my_nzombies = GB_block_ReduceSum_int64<32>( this_thread_block(), my_nzombies);
+    my_nzombies = GB_block_ReduceSum_int64( this_thread_block(), my_nzombies);
     this_thread_block().sync(); 
 
     if( threadIdx.x == 0 && my_nzombies > 0)

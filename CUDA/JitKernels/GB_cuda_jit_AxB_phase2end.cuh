@@ -17,8 +17,7 @@
 //#include <cub/block/block_scan.cuh>
 //using namespace cooperative_groups;
 
-__global__
-void AxB_phase2end
+__global__ void GB_cuda_jit_kernel // AxB_phase2end
     (
         // input, not modified:
         const int64_t *__restrict__ nanobuckets,    // array of size NBUCKETS-blockDim.x-by-nblocks

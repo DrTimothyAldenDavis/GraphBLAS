@@ -32,7 +32,6 @@ using namespace cooperative_groups;
 // GB_AxB_dense_phase1 is a CUDA kernel that scans all entries in M and
 // assigns i,j coordinates for each entries and stores in Mi and Ci. 
 
-// template<typename T_M, uint64_t srcode, int chunk_size = 128>
 #define chunk_size 128
 
 __global__ void GB_cuda_jit_kernel // GB_jit_AxB_dot3_dense_phase1

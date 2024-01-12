@@ -6,8 +6,8 @@
 
 //------------------------------------------------------------------------------
 
-// The GB_cuda_jit_reduce CUDA kernel reduces a GrB_Matrix A of any type T_A,
-// to a scalar of type T_Z.  Each threadblock (blockIdx.x) reduces its portion
+// The GB_cuda_jit_reduce CUDA kernel reduces a GrB_Matrix A of any type GB_A_TYPE,
+// to a scalar of type GB_Z_TYPE.  Each threadblock (blockIdx.x) reduces its portion
 // of Ax to a single scalar, and then atomics are used across the threadblocks.
 
 // Both the grid and block are 1D, so blockDim.x is the # threads in a
@@ -39,18 +39,20 @@ using namespace cooperative_groups;
 // GB_warp_Reduce: reduce all entries in a warp to a single scalar
 //------------------------------------------------------------------------------
 
-// GB_warp_Reduce assumes WARPSIZE is 32 threads.
+// GB_warp_Reduce assumes tile_sz is 32 threads.
+#define tile_sz 32
+#define log2_tile_sz 5
 
-template<typename T_Z>
 __inline__ __device__
-T_Z GB_warp_Reduce( thread_block_tile<WARPSIZE> g, T_Z val)
+GB_Z_TYPE GB_warp_Reduce( thread_block_tile<tile_sz> g, GB_Z_TYPE val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial val[k] to val[lane+k]
 
-    // FIXME: doesn't work unless sizeof(T_Z) <= 32 bytes
+    // FIXME: doesn't work unless sizeof(GB_Z_TYPE) <= 32 bytes
 
-    T_Z fold = g.shfl_down ( val, 16) ;
+    // assumes tile_size is 32:
+    GB_Z_TYPE fold = g.shfl_down ( val, 16) ;
     GB_ADD ( val, val, fold ) ;
     fold = g.shfl_down ( val, 8) ;
     GB_ADD ( val, val, fold ) ;
@@ -67,17 +69,16 @@ T_Z GB_warp_Reduce( thread_block_tile<WARPSIZE> g, T_Z val)
 // GB_block_Reduce: reduce across all warps into a single scalar
 //------------------------------------------------------------------------------
 
-template<typename T_Z>
 __inline__ __device__
-T_Z GB_block_Reduce(thread_block g, T_Z val)
+GB_Z_TYPE GB_block_Reduce(thread_block g, GB_Z_TYPE val)
 {
-    static __shared__ T_Z shared [WARPSIZE] ;
-    int lane = threadIdx.x & (WARPSIZE-1) ;
-    int wid  = threadIdx.x >> LOG2_WARPSIZE ;
-    thread_block_tile<WARPSIZE> tile = tiled_partition<WARPSIZE>( g ) ;
+    static __shared__ GB_Z_TYPE shared [tile_sz] ;
+    int lane = threadIdx.x & (tile_sz-1) ;
+    int wid  = threadIdx.x >> log2_tile_sz ;
+    thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( g ) ;
 
     // Each warp performs partial reduction
-    val = GB_warp_Reduce<T_Z>( tile, val) ;
+    val = GB_warp_Reduce( tile, val) ;
 
     // Wait for all partial reductions
     if (lane == 0)
@@ -92,7 +93,7 @@ T_Z GB_block_Reduce(thread_block g, T_Z val)
         shared [lane] : zid ;
 
     // Final reduce within first warp
-    val = GB_warp_Reduce<T_Z>( tile, val) ;
+    val = GB_warp_Reduce( tile, val) ;
     return (val) ;
 }
 
@@ -100,8 +101,7 @@ T_Z GB_block_Reduce(thread_block g, T_Z val)
 // GB_jit_reduce: reduce all entries in a matrix to a single scalar
 //------------------------------------------------------------------------------
 
-template< typename T_A, typename T_Z>
-__global__ void GB_jit_reduce   // FIXME rename
+__global__ void GB_cuda_jit_kernel // GB_jit_reduce
 (
     GrB_Matrix A,   // matrix to reduce
     void *zscalar,  // scalar result, at least sizeof (uint32_t)
@@ -114,13 +114,13 @@ __global__ void GB_jit_reduce   // FIXME rename
     // initializations
     //--------------------------------------------------------------------------
 
-    const T_A *__restrict__ Ax = (T_A *) A->x ;
+    const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
 
-    // each thread reduces its result into zmine, of type T_Z
+    // each thread reduces its result into zmine, of type GB_Z_TYPE
     GB_DECLARE_IDENTITY (zmine) ; // GB_Z_TYPE zmine = identity ;
 
     // On input, zscalar is already initialized to the monoid identity value.
-    // If T_Z has size less than 4 bytes, zscalar has been upscaled to 4 bytes.
+    // If GB_Z_TYPE has size less than 4 bytes, zscalar has been upscaled to 4 bytes.
 
     //--------------------------------------------------------------------------
     // phase 1: each thread reduces a part of the matrix to its own scalar
@@ -197,7 +197,7 @@ __global__ void GB_jit_reduce   // FIXME rename
     // phase 2: each threadblock reduces all threads into a scalar
     //--------------------------------------------------------------------------
 
-    zmine = GB_block_Reduce< T_Z >( this_thread_block(), zmine) ;
+    zmine = GB_block_Reduce( this_thread_block(), zmine) ;
     this_thread_block().sync() ;
 
     //--------------------------------------------------------------------------

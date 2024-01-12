@@ -11,13 +11,12 @@
 //  Each thread in this kernel is responsible for m vector-pairs(x,y), 
 //  m = 256/sz, where sz is in {4, 16, 64, 256}
 //  We know each non-zero on the sparse side will hit a dense value.
-//  Template on <T_C, T_A, T_B, T_X, T_Y, T_Z >
 //  Parameters:
 
-//  matrix<T_C> *C         <- C result matrix 
-//  matrix<T_C> *M         <- Mask matrix 
-//  matrix<T_A> *A         <- A matrix to multiply, sparse 
-//  matrix<T_B> *B         <- B matrix to multiply, dense in sparse format? 
+//  C         <- C result matrix 
+//  M         <- Mask matrix 
+//  A         <- A matrix to multiply, sparse 
+//  B         <- B matrix to multiply, dense in sparse format? 
 //******************************************************************************
 
 #pragma once
@@ -41,8 +40,7 @@ using namespace cooperative_groups;
 //------------------------------------------------------------------------------
 
 // for counting zombies only (always int64_t)
-template< int warpSize >
-__device__ int64_t reduce_sum_int64(thread_block_tile<warpSize> g, int64_t val)
+__device__ int64_t reduce_sum_int64(thread_block_tile<tile_sz> g, int64_t val)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
@@ -57,11 +55,7 @@ __device__ int64_t reduce_sum_int64(thread_block_tile<warpSize> g, int64_t val)
 // AxB_dot3_phase3_vsdn
 //------------------------------------------------------------------------------
 
-template<
-    typename T_C, typename T_A, typename T_B,
-    typename T_Z, typename T_X, typename T_Y,
-    uint64_t srcode>
-__global__ void AxB_dot3_phase3_vsdn
+__global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsdn
 ( 
   int64_t start,
   int64_t end,
@@ -75,12 +69,12 @@ __global__ void AxB_dot3_phase3_vsdn
 {
     // TODO: Figure out how to use graphblas-specific INFINITY macro
     #ifndef INFINITY
-    #define INFINITY std::numeric_limits<T_C>::max()
+    #define INFINITY std::numeric_limits<GB_C_TYPE>::max()
     #endif
 
-    const T_A *__restrict__ Ax = (T_A *)A->x  ;
-    const T_B *__restrict__ Bx = (T_B *)B->x  ;
-          T_C *__restrict__ Cx = (T_C *)C->x  ;
+    const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *)A->x  ;
+    const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *)B->x  ;
+          GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *)C->x  ;
     int64_t *__restrict__ Ci = C->i ;
     const int64_t *__restrict__ Mi = M->i ;
     #if GB_M_IS_HYPER
@@ -277,7 +271,7 @@ __global__ void AxB_dot3_phase3_vsdn
         GB_CIJ_EXIST_POSTCHECK
         if (cij_exists)
         {
-            GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (T_C) cij
+            GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (GB_C_TYPE) cij
             Ci [pair_id] = i ;
         }
         else

@@ -109,11 +109,7 @@ public:
     filecache.getFile (mxm_factory_) ;
 
     uint64_t sr_code = mxm_factory_.sr_code  ;
-    int mask_ecode = GB_RSHIFT (sr_code, 20, 4) ;
-    bool mask_no_type = (mask_ecode < 4) ;
-    auto sr_code_str = std::to_string(sr_code) ;
-    std::vector<std::string> template_types = {
-        (mask_no_type) ? "bool" : M->type->name, sr_code_str };
+    std::vector<std::string> template_types = { } ;
 
     std::stringstream string_to_be_jitted ;
 
@@ -126,10 +122,12 @@ public:
         /* suffix: */ NULL) ;   // FIXME: set this via GB_encoding_mxm
     printf ("new name [%s]\n", kernel_name_c) ;
 
+    // create the kernel
     string_to_be_jitted << kernel_name << std::endl <<
     R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#define GB_cuda_jit_kernel )" << kernel_name << std::endl <<
     R"(#include ")" << mxm_factory_.filename << R"(")" << std::endl <<
-    R"(#include ")" << kernel_name << R"(.cuh")" << std::endl;
+    R"(#include "GB_cuda_jit_AxB_dense_phase1.cuh")" << std::endl;
 
     bool result = false;
 
@@ -137,7 +135,7 @@ public:
     dim3 block(get_threads_per_block());
 
     std::cout << "HERE I AM 7" << std::endl ;
-    jit::launcher( kernel_name + "_" + sr_code_str + ".jtfy",
+    jit::launcher( kernel_name + ".jtfy",
                    string_to_be_jitted.str(),
                    header_names,
                    GB_cuda_jit_compiler_flags ( ),
@@ -201,11 +199,8 @@ public:
     filecache.getFile (mxm_factory_) ;
 
     uint64_t sr_code = mxm_factory_.sr_code ;
-    int mask_ecode = GB_RSHIFT (sr_code, 20, 4) ;
-    bool mask_no_type = (mask_ecode < 4) ;
-    auto sr_code_str = std::to_string(sr_code) ;
-    std::vector<std::string> template_types = {
-        (mask_no_type) ? "bool" : M->type->name, sr_code_str };
+    // no templates
+    std::vector<std::string> template_types = { } ;
 
     std::stringstream string_to_be_jitted ;
 
@@ -228,13 +223,10 @@ public:
     R"(#include "GB_cuda_jit_AxB_dot3_phase1.cuh")" << std::endl;
 
     std::cout << "header names:" << std::endl ;
-//  std::cout << header_names << std::endl ;
     for (std::string s : header_names)
     {
         std::cout << "     " << s << std::endl ;
     }
-//  std::cout << "string_to_be_jitted :" << std::endl ;
-//  std::cout << string_to_be_jitted << std::endl ;
     std::cout << "GB_cuda_jit_compiler_flags ( ):" << std::endl ;
     for (std::string s : GB_cuda_jit_compiler_flags ( ))
     {
@@ -256,7 +248,7 @@ public:
                    header_names,
                    GB_cuda_jit_compiler_flags ( ),
                    file_callback)
-                 .set_kernel_inst(  kernel_name )
+                 .set_kernel_inst(  kernel_name, template_types)
                  .configure(grid, block, SMEM, stream)
                  .launch( nanobuckets, blockBucket, C, M, A, B);
 
@@ -274,9 +266,7 @@ template<int threads_per_block = 32, int chunk_size = 128>
 class phase2launchFactory
 {
 
-  std::string base_name = "GB_cuda_jit";
-  // FIXME: this is the partial name.  Why?  See above.
-  std::string kernel_name = "AxB_phase2";
+//std::string base_name = "GB_cuda_jit";
 
 public:
 
@@ -307,14 +297,18 @@ public:
       dim3 grid(get_number_of_blocks(M));
       dim3 block(get_threads_per_block());
 
-      std::string hashable_name = base_name + "_" + kernel_name;
       std::stringstream string_to_be_jitted ;
-      string_to_be_jitted << hashable_name << std::endl <<
-        R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
+
+    // create the kernel
+    std::string kernel_name = "GB_cuda_jit__AxB_phase2";
+    string_to_be_jitted << kernel_name << std::endl <<
+    R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#define GB_cuda_jit_kernel )" << kernel_name << std::endl <<
+    R"(#include "GB_cuda_jit_AxB_phase2.cuh")" << std::endl;
 
       const int64_t mnz = GB_nnz (M) ;
     std::cout << "HERE I AM 2" << std::endl ;
-      jit::launcher( hashable_name,
+      jit::launcher( kernel_name + ".jtfy",
                      string_to_be_jitted.str(),
                      header_names,
                      GB_cuda_jit_compiler_flags ( ),
@@ -339,8 +333,7 @@ template< int threads_per_block = 32, int chunk_size = 128>
 class phase2endlaunchFactory
 {
 
-  std::string base_name = "GB_cuda_jit";
-  std::string kernel_name = "AxB_phase2end";
+//std::string base_name = "GB_cuda_jit";
 
 public:
 
@@ -367,13 +360,17 @@ public:
       dim3 grid(get_number_of_blocks(M));
       dim3 block(get_threads_per_block());
 
-      std::string hashable_name = base_name + "_" + kernel_name;
       std::stringstream string_to_be_jitted ;
-      string_to_be_jitted << hashable_name << std::endl <<
-        R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
+
+    // create the kernel
+    std::string kernel_name = "GB_cuda_jit__AxB_phase2end";
+    string_to_be_jitted << kernel_name << std::endl <<
+    R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#define GB_cuda_jit_kernel )" << kernel_name << std::endl <<
+    R"(#include "GB_cuda_jit_AxB_phase2end.cuh")" << std::endl;
 
     std::cout << "HERE I AM 3" << std::endl ;
-      jit::launcher( hashable_name,
+      jit::launcher( kernel_name + ".jtfy",
                      string_to_be_jitted.str(),
                      header_names,
                      GB_cuda_jit_compiler_flags ( ),
@@ -396,8 +393,6 @@ public:
 
 class mxm_dense_launchFactory
 {
-  std::string base_name = "GB_cuda_jit";
-  std::string kernel_name = "AxB_dot3_phase3_dndn";
 
   GB_cuda_mxm_factory &mxm_factory_;
 
@@ -425,40 +420,46 @@ public:
     int gridsz, blocksz;
 
     std::stringstream final_kernel_name_ss;
-    final_kernel_name_ss << kernel_name;
+    final_kernel_name_ss << "AxB_dot3_phase3_dndn";
 
     /**
      * Configure geometry and kernel function name based on sparsity of C and number of vectors in M
      */
     configure( nz, mnvec, final_kernel_name_ss, blocksz, gridsz);
 
-    auto sr_code = std::to_string(mxm_factory_.sr_code);    // FIXME: make hexadecimal
+    uint64_t sr_code = mxm_factory_.sr_code ;
 
     GrB_BinaryOp mult = mxm_factory_.semiring->multiply ;
 
-    std::string hashable_name = base_name + "_" + final_kernel_name_ss.str();
     std::stringstream string_to_be_jitted ;
-    std::vector<std::string> template_types =
-    {
-        C->type->name, A->type->name, B->type->name,
-        mult->ztype->name, mult->xtype->name, mult->ytype->name,
-        sr_code
-    };
+    std::vector<std::string> template_types = { } ;
 
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (mxm_factory_) ;
 
-    string_to_be_jitted << hashable_name << std::endl <<
+    char kernel_name_c [GB_KLEN] ;
+    GB_macrofy_name (kernel_name_c,
+        /* name space: */ "GB_cuda_jit",
+        /* kname: */ final_kernel_name_ss.str().c_str(),
+        /* scode_digits: */ 16,
+        /* scode: */ sr_code,
+        /* suffix: */ NULL) ;   // FIXME: set this via GB_encoding_mxm
+    printf ("\nnew name [%s]\n", kernel_name_c) ;
+    std::string kernel_name = std::string (kernel_name_c) ;
+
+    // create the kernel
+    string_to_be_jitted << kernel_name << std::endl <<
     R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#define GB_cuda_jit_kernel )" << kernel_name << std::endl <<
     R"(#include ")" << mxm_factory_.filename << R"(")" << std::endl <<
-    R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
+    R"(#include "GB_cuda_jit_)" << final_kernel_name_ss.str() << R"(.cuh")" << std::endl;
 
     dim3 grid(gridsz);
     dim3 block(blocksz);
 
     GBURBLE ("(GPU dot3 mxm dense launch nblocks,blocksize= %d,%d )\n", gridsz,blocksz) ;
     std::cout << "HERE I AM 4" << std::endl ;
-    jit::launcher( hashable_name + "_" + sr_code,
+    jit::launcher( kernel_name + ".jtfy",
                    string_to_be_jitted.str(),
                    header_names,
                    GB_cuda_jit_compiler_flags ( ),
@@ -508,8 +509,6 @@ private:
 
 class mxm_sparse_dense_launchFactory
 {
-  std::string base_name = "GB_cuda_jit";
-  std::string kernel_name = "AxB_dot3";
 
   GB_cuda_mxm_factory &mxm_factory_;
 
@@ -537,48 +536,51 @@ public:
     int gridsz, blocksz;
 
     std::stringstream final_kernel_name_ss;
-    final_kernel_name_ss << kernel_name;
+    final_kernel_name_ss << "AxB_dot3_spdn" ;
 
     /**
      * Configure geometry and kernel function name based on sparsity of C and number of vectors in M
      */
     configure( nz, mnvec, final_kernel_name_ss, blocksz, gridsz);
 
-    auto sr_code = std::to_string(mxm_factory_.sr_code);
+    uint64_t sr_code = mxm_factory_.sr_code ;
 
     GrB_BinaryOp mult = mxm_factory_.semiring->multiply ;
 
-    std::string hashable_name = base_name + "_" + final_kernel_name_ss.str();
     std::stringstream string_to_be_jitted ;
-    std::vector<std::string> template_types =
-    {
-        C->type->name, A->type->name, B->type->name,
-        mult->ztype->name, mult->xtype->name, mult->ytype->name,
-        sr_code
-    };
+    std::vector<std::string> template_types = { } ;
 
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (mxm_factory_) ;
 
-    string_to_be_jitted << hashable_name << std::endl <<
+    char kernel_name_c [GB_KLEN] ;
+    GB_macrofy_name (kernel_name_c,
+        /* name space: */ "GB_cuda_jit",
+        /* kname: */ final_kernel_name_ss.str().c_str(),
+        /* scode_digits: */ 16,
+        /* scode: */ sr_code,
+        /* suffix: */ NULL) ;   // FIXME: set this via GB_encoding_mxm
+    printf ("\nnew name [%s]\n", kernel_name_c) ;
+    std::string kernel_name = std::string (kernel_name_c) ;
+
+    // create the kernel
+    string_to_be_jitted << kernel_name << std::endl <<
     R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#define GB_cuda_jit_kernel )" << kernel_name << std::endl <<
     R"(#include ")" << mxm_factory_.filename << R"(")" << std::endl <<
-    R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
+    R"(#include "GB_cuda_jit_)" << final_kernel_name_ss.str() << R"(.cuh")" << std::endl;
 
     dim3 grid(gridsz);
     dim3 block(blocksz);
 
     GBURBLE ("(GPU dot3 mxm sparse_dense launch nblocks,blocksize= %d,%d )\n", gridsz,blocksz) ;
     std::cout << "HERE I AM 5" << std::endl ;
-    jit::launcher( hashable_name + "_" + sr_code,
+    jit::launcher( kernel_name + ".jtfy",
                    string_to_be_jitted.str(),
                    header_names,
                    GB_cuda_jit_compiler_flags ( ),
                    file_callback)
                .set_kernel_inst(final_kernel_name_ss.str(), template_types )
-                               // { C->type->name,
-                               //   A->type->name,
-                               //   B->type->name })
                .configure(grid, block, SMEM, stream) //if commented, use implicit 1D configure in launch
                .launch(
                         C,                 // final output matrix
@@ -620,8 +622,7 @@ private:
 
 class phase3launchFactory
 {
-  std::string base_name = "GB_cuda_jit";
-  std::string kernel_name = "AxB_dot3";
+//std::string base_name = "GB_cuda_jit";
 
   GB_cuda_mxm_factory &mxm_factory_;
 
@@ -654,51 +655,57 @@ public:
     int gridsz, blocksz, sz = 4;
 
     std::stringstream final_kernel_name_ss;
-    final_kernel_name_ss << kernel_name << "_";
+    final_kernel_name_ss << "AxB_dot3" ;
 
     /**
      * Configure geometry and kernel function name based on sparsity of C and number of vectors in M
      */
-    auto sr_code = std::to_string(mxm_factory_.sr_code);
+//  auto sr_code = std::to_string(mxm_factory_.sr_code);
 
-    configure2( nz, mnvec, final_kernel_name_ss, blocksz, gridsz, sz, mxm_factory_.sr_code);
+    uint64_t sr_code = mxm_factory_.sr_code ;
 
+    configure2( nz, mnvec, final_kernel_name_ss, blocksz, gridsz, sz, sr_code);
 
     GrB_BinaryOp mult = mxm_factory_.semiring->multiply ;
 
-    std::string hashable_name = base_name + "_" + final_kernel_name_ss.str();
     std::stringstream string_to_be_jitted ;
-    std::vector<std::string> template_types =
-    {
-        C->type->name, A->type->name, B->type->name,
-        mult->ztype->name, mult->xtype->name, mult->ytype->name,
-        sr_code
-    };
+    std::vector<std::string> template_types = { } ;
 
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (mxm_factory_) ;
 
-    // FIXME: why is "hashable_name" used sometimes, and sometimes "kernel_name"?
-    string_to_be_jitted << hashable_name << std::endl <<
+    char kernel_name_c [GB_KLEN] ;
+    GB_macrofy_name (kernel_name_c,
+        /* name space: */ "GB_cuda_jit",
+        /* kname: */ final_kernel_name_ss.str().c_str(),
+        /* scode_digits: */ 16,
+        /* scode: */ sr_code,
+        /* suffix: */ NULL) ;   // FIXME: set this via GB_encoding_mxm
+    printf ("\nnew name [%s]\n", kernel_name_c) ;
+    std::string kernel_name = std::string (kernel_name_c) ;
+
+    // create the kernel
+    string_to_be_jitted << kernel_name << std::endl <<
     R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#define GB_cuda_jit_kernel )" << kernel_name << std::endl <<
     R"(#include ")" << mxm_factory_.filename << R"(")" << std::endl <<
-    R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
+    R"(#include "GB_cuda_jit_)" << final_kernel_name_ss.str() << R"(.cuh")" << std::endl;
 
     dim3 grid(gridsz);
     dim3 block(blocksz);
 
     GBURBLE ("(GPU phase3 launch %s st,end=%ld,%ld nblocks,blocksize= %d,%d )\n", this->Opname.c_str(),
               start,end,gridsz,blocksz) ;
-    std::cout << "HERE I AM 6" << std::endl ;
-    jit::launcher( hashable_name + "_" + sr_code,
+    std::cout << "HERE I AM 6, string to be jitted:" << std::endl ;
+    std::cout << string_to_be_jitted.str() << std::endl ;
+    std::cout << "HERE I AM 6b, jit::launcher" << std::endl ;
+
+    jit::launcher( kernel_name + ".jtfy",
                    string_to_be_jitted.str(),
                    header_names,
                    GB_cuda_jit_compiler_flags ( ),
                    file_callback)
                .set_kernel_inst(final_kernel_name_ss.str(), template_types )
-                               // { C->type->name,
-                               //   A->type->name,
-                               //   B->type->name })
                .configure(grid, block, SMEM, stream) //if commented, use implicit 1D configure in launch
                .launch(
                         start,             // input/output:
@@ -746,7 +753,7 @@ private:
             //--------------------------------------------------------------
 
             case GB_BUCKET_VSVS :
-                Opname = "phase3_vsvs" ;
+                Opname = "_phase3_vsvs" ;
                 blocksz = 256;
                 work_per_thread = 4;
                 
@@ -765,7 +772,7 @@ private:
             //--------------------------------------------------------------
 
             case GB_BUCKET_MERGEPATH :
-                Opname = "phase3_mp" ;
+                Opname = "_phase3_mp" ;
                 blocksz = 32;
                 work_per_thread = 256 ;
 
@@ -803,7 +810,7 @@ private:
             //--------------------------------------------------------------
 
             case GB_BUCKET_VSDN :
-                Opname = "phase3_vsdn" ;
+                Opname = "_phase3_vsdn" ;
 
                 // FIXME:
                 blocksz = 256;
@@ -824,7 +831,7 @@ private:
             //--------------------------------------------------------------
 
             case GB_BUCKET_SPDN :
-                Opname = "phase3_spdn" ;
+                Opname = "_phase3_spdn" ;
 
                 // FIXME:
                 blocksz = 32;
