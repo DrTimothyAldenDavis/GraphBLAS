@@ -464,7 +464,9 @@ public:
                    header_names,
                    GB_cuda_jit_compiler_flags ( ),
                    file_callback)
-               .set_kernel_inst(final_kernel_name_ss.str(), template_types )
+// was:        .set_kernel_inst(final_kernel_name_ss.str(), template_types )
+// fixed:
+               .set_kernel_inst(  kernel_name, template_types)
                                // { C->type->name,
                                //   A->type->name,
                                //   B->type->name })
@@ -580,7 +582,9 @@ public:
                    header_names,
                    GB_cuda_jit_compiler_flags ( ),
                    file_callback)
-               .set_kernel_inst(final_kernel_name_ss.str(), template_types )
+// was:        .set_kernel_inst(final_kernel_name_ss.str(), template_types )
+// fixed:
+               .set_kernel_inst(  kernel_name, template_types)
                .configure(grid, block, SMEM, stream) //if commented, use implicit 1D configure in launch
                .launch(
                         C,                 // final output matrix
@@ -705,7 +709,9 @@ public:
                    header_names,
                    GB_cuda_jit_compiler_flags ( ),
                    file_callback)
-               .set_kernel_inst(final_kernel_name_ss.str(), template_types )
+// was:        .set_kernel_inst(final_kernel_name_ss.str(), template_types )
+// fixed:
+               .set_kernel_inst(  kernel_name, template_types)
                .configure(grid, block, SMEM, stream) //if commented, use implicit 1D configure in launch
                .launch(
                         start,             // input/output:
