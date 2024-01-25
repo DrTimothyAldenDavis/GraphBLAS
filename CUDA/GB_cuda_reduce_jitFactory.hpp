@@ -69,8 +69,8 @@ class reduceFactory
     // class properties
     //--------------------------------------------------------------------------
 
-    std::string base_name = "GB_cuda_jit";
-    std::string kernel_name = "reduce";
+//  std::string base_name = "GB_cuda_jit";
+//  std::string kernel_name = "reduce";
 
     int threads_per_block = 320 ;
     int work_per_thread = 256;
@@ -139,16 +139,37 @@ class reduceFactory
         jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
         filecache.getFile (reduce_factory_) ;
 
-        auto rcode = std::to_string(reduce_factory_.rcode);
-        bool has_cheeseburger = GB_RSHIFT (reduce_factory_.rcode, 27, 1) ;
+        uint64_t rcode = reduce_factory_.rcode ;
+//      auto rcode = std::to_string(reduce_factory_.rcode);
+        bool has_cheeseburger = GB_RSHIFT (rcode, 27, 1) ;
         GBURBLE ("has_cheeseburger %d\n", has_cheeseburger) ;
 
-        std::string hashable_name = base_name + "_" + kernel_name;
+// added:
+        char kernel_name_c [GB_KLEN] ;
+        GB_macrofy_name (kernel_name_c,
+            /* name space: */ "GB_cuda_jit",
+            /* kname: */ "reduce",
+            /* scode_digits: */ 16,
+            /* scode: */ rcode,
+            /* suffix: */ NULL) ;   // FIXME: set this via GB_encoding_mxm
+        printf ("new name [%s]\n", kernel_name_c) ;
+        std::string kernel_name = std::string (kernel_name_c) ;
+
+        // create the kernel
+// was:
+//      std::string hashable_name = base_name + "_" + kernel_name;
         std::stringstream string_to_be_jitted ;
-        string_to_be_jitted << hashable_name << std::endl <<
+//      string_to_be_jitted << hashable_name << std::endl <<
+//      R"(#include "GB_cuda_kernel.h")" << std::endl <<
+//      R"(#include ")" << reduce_factory_.filename << R"(")" << std::endl <<
+//      R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
+
+// now:
+        string_to_be_jitted << kernel_name << std::endl <<
         R"(#include "GB_cuda_kernel.h")" << std::endl <<
+        R"(#define GB_cuda_jit_kernel )" << kernel_name << std::endl <<
         R"(#include ")" << reduce_factory_.filename << R"(")" << std::endl <<
-        R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
+        R"(#include "GB_cuda_jit_reduce.cuh")" << std::endl;
 
         int64_t anvals = GB_nnz_held (A) ;
 
@@ -191,18 +212,29 @@ class reduceFactory
         GBURBLE ("(cuda reduce launch %d threads in %d blocks)",
             blocksz, gridsz ) ;
 
-        // construct and launch the kernel
-        // FIXME: use same name scheme as the CPU jit
-        // FIXME: where does it go if it fails?  try/catch?
-        jit::launcher(hashable_name + "_" + rcode,
+//      // construct and launch the kernel
+// now:
+        jit::launcher( kernel_name + ".jtfy",
                 string_to_be_jitted.str(),
                 header_names,
                 GB_cuda_jit_compiler_flags ( ),
-                file_callback)  // FIXME: where is file_callback defined?
-           .set_kernel_inst(  hashable_name ,
-                { A->type->name, monoid->op->ztype->name })
-           .configure(grid, block, SMEM, stream)
-           .launch (A, zscalar, V, anvals) ;
+                file_callback)
+            .set_kernel_inst (kernel_name, { /* no template types */ })
+            .configure(grid, block, SMEM, stream)
+            .launch (A, zscalar, V, anvals) ;
+
+// was:
+//      // FIXME: use same name scheme as the CPU jit
+//      // FIXME: where does it go if it fails?  try/catch?
+//      jit::launcher(hashable_name + "_" + rcode,
+//              string_to_be_jitted.str(),
+//              header_names,
+//              GB_cuda_jit_compiler_flags ( ),
+//              file_callback)  // FIXME: where is file_callback defined?
+//         .set_kernel_inst(  hashable_name ,
+//              { A->type->name, monoid->op->ztype->name })
+//         .configure(grid, block, SMEM, stream)
+//         .launch (A, zscalar, V, anvals) ;
 
         // synchronize before copying result to host
         CHECK_CUDA (cudaStreamSynchronize (stream)) ;

@@ -70,9 +70,6 @@ template<int threads_per_block, int chunk_size> class dense_phase1launchFactory 
 template<int threads_per_block=32, int chunk_size = 128>
 class dense_phase1launchFactory 
 {
-  // FIXME: this is the full name.  Why?  See below for partial name.
-  // Need to be consistent in naming schemes.
-  std::string kernel_name ;
 
   GB_cuda_mxm_factory &mxm_factory_;
 
@@ -121,6 +118,7 @@ public:
         /* scode: */ sr_code,
         /* suffix: */ NULL) ;   // FIXME: set this via GB_encoding_mxm
     printf ("new name [%s]\n", kernel_name_c) ;
+    std::string kernel_name = std::string (kernel_name_c) ;
 
     // create the kernel
     string_to_be_jitted << kernel_name << std::endl <<
@@ -161,7 +159,6 @@ public:
 template<int threads_per_block=32, int chunk_size = 128>
 class phase1launchFactory 
 {
-  std::string kernel_name ; // was "GB_cuda_jit_AxB_dot3_phase1";
 
   GB_cuda_mxm_factory &mxm_factory_;
 
@@ -213,7 +210,7 @@ public:
         /* scode: */ sr_code,
         /* suffix: */ NULL) ;   // FIXME: set this via GB_encoding_mxm
     printf ("\nnew name [%s]\n", kernel_name_c) ;
-    kernel_name = std::string (kernel_name_c) ;
+    std::string kernel_name = std::string (kernel_name_c) ;
 
     // create the kernel
     string_to_be_jitted << kernel_name << std::endl <<
