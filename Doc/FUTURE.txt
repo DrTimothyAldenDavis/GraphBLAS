@@ -12,6 +12,8 @@ CUDA:
 
 Future features:
 
+    cumulative sum (or other monoid)
+
     pack/unpack COO
     kernel fusion
     CUDA kernels
