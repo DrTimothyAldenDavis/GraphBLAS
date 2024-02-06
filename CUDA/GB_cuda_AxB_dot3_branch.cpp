@@ -13,7 +13,7 @@
 
 extern "C" 
 {
-  #include "GB_mxm.h"
+    #include "GB.h"
 }
 #include "GB_cuda.h"
 #include <cuda_runtime.h>

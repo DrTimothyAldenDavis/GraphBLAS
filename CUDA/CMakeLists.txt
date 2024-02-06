@@ -29,7 +29,6 @@ set ( CMAKE_CUDA_FLAGS "-cudart=static -lineinfo " )
 set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fPIC " )
 
 add_compile_definitions ( GBNCPUFEAT )
-add_compile_definitions ( GBCUDA_CPLUSPLUS )
 
 message ( STATUS "C++ flags for CUDA: ${CMAKE_CXX_FLAGS}" )
 

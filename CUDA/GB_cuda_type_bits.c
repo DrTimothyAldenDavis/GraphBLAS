@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#undef GBCUDA_CPLUSPLUS
 #include "GB.h"
 
 size_t GB_cuda_type_bits (GB_Type_code);

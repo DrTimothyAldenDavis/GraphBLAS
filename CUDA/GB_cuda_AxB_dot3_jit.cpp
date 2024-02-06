@@ -15,7 +15,7 @@
 #include "GB_cuda.h"
 extern "C"
 {
-    #include "GB_mxm.h"
+    #include "GB.h"
 }
 
 #include "GB_cuda_jitify_cache.h"

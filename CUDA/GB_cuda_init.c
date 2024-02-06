@@ -12,7 +12,6 @@
 // assumed.  Then each GPU is "warmed up" by allocating a small amount of
 // memory.
 
-#undef GBCUDA_CPLUSPLUS
 #include "GB.h"
 
 GrB_Info GB_cuda_init (void)

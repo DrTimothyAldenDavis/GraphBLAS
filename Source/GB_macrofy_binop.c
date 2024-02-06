@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
+#include "GB_math.h"
 #include "GB_stringify.h"
 #include <ctype.h>
 
