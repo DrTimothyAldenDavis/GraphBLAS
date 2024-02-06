@@ -163,6 +163,12 @@ if ( DEFINED GBAVX512F )
 endif ( )
 
 #-------------------------------------------------------------------------------
+# check compiler features
+#-------------------------------------------------------------------------------
+
+include ( GraphBLAS_complex )
+
+#-------------------------------------------------------------------------------
 # determine build type
 #-------------------------------------------------------------------------------
 
@@ -325,7 +331,7 @@ if ( BUILD_STATIC_LIBS )
         C_STANDARD_REQUIRED ON
         PUBLIC_HEADER "Include/GraphBLAS.h" )
 
-    if ( MSVC )
+    if ( MSVC OR ("${CMAKE_C_SIMULATE_ID}" STREQUAL "MSVC") )
         set_target_properties ( GraphBLAS_static PROPERTIES
             OUTPUT_NAME graphblas_static )
     endif ( )
