@@ -2,14 +2,13 @@
 // GraphBLAS/CUDA/GB_cuda_reduce_to_scalar_branch: decide to use GPU for reduce
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 // Decide branch direction for GPU use for the reduction to scalar
 
-#include "GB_cuda.h"
+#include "GB_cuda_reduce.h"
 
 bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
 (
@@ -23,7 +22,7 @@ bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
     {
         // one or more types are not yet supported on the GPU
         // FIXME: remove debug output here:
-        std::cout << "Not using cuda path: type size not supported"
+        std::cout << "Not using cuda path: type not supported"
             <<  std::endl ;
         return (false) ;
     }

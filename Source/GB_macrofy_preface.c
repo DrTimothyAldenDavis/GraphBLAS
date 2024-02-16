@@ -14,9 +14,11 @@ void GB_macrofy_preface
 (
     FILE *fp,               // target file to write, already open
     char *kernel_name,      // name of the kernel
-    char *preface           // user-provided preface
+    char *C_preface,        // user-provided preface for CPU JIT kernels
+    char *CUDA_preface,     // user-provided preface for CUDA JIT kernels
+    GB_jit_kcode kcode
 )
-{ 
+{
 
     const char *date = GxB_IMPLEMENTATION_DATE ;
     int len = (int) strlen (date) ;
@@ -33,13 +35,23 @@ void GB_macrofy_preface
         "// user-defined types and operators defined below.\n"
         "//--------------------------------------"
         "----------------------------------------\n"
-        "%s\n"
-        "#include \"GB_jit_kernel.h\"\n\n",
         kernel_name,
         GxB_IMPLEMENTATION_MAJOR,
         GxB_IMPLEMENTATION_MINOR,
         GxB_IMPLEMENTATION_SUB,
-        date + GB_IMAX (0, len - 4),
-        preface) ;
+        date + GB_IMAX (0, len - 4)) ;
+
+    if (kcode >= GB_JIT_CUDA_NONE)
+    {
+        // for CUDA JIT kernels
+        fprintf (fp, "#define GB_CUDA_KERNEL\n%s\n", CUDA_preface) ;
+    }
+    else
+    {
+        // CPU JIT kernels
+        fprintf (fp, "%s\n", C_preface) ;
+    }
+
+    fprintf (fp, "#include \"GB_jit_kernel.h\"\n\n") ;
 }
 

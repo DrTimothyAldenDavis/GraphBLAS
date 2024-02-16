@@ -20,9 +20,8 @@ extern "C"
 
 #include "GB_cuda_jitify_cache.h"
 #include "GB_cuda_common_jitFactory.hpp"
-#include "GB_cuda_reduce_jitFactory.hpp"
 #include "GB_cuda_mxm_dot3_jitFactory.hpp"
-#include "test/GpuTimer.h"
+#include "GpuTimer.h"
 
 /*
 template<typename T, typename I>

@@ -40,6 +40,17 @@
 #define GB_STATIC_INLINE static __device__ __inline__
 
 //------------------------------------------------------------------------------
+// C++ and CUDA #include files
+//------------------------------------------------------------------------------
+
+#include <limits>
+#include <type_traits>
+#include <cstdint>
+#include <cmath>
+#include <stdio.h>
+#include <cooperative_groups.h>
+
+//------------------------------------------------------------------------------
 // subset of GraphBLAS.h
 //------------------------------------------------------------------------------
 
@@ -52,7 +63,6 @@
 #define restrict GB_restrict
 
 #include <stdint.h>
-//#include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -260,4 +270,10 @@ static __device__ __inline__ int64_t GB_search_for_vector_device
 
     return (k) ;
 }
+
+//------------------------------------------------------------------------------
+// final #include files
+//------------------------------------------------------------------------------
+
+#include "GB_cuda_atomics.cuh"
 

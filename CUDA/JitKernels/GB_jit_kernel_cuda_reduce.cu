@@ -1,14 +1,15 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/JitKernels/GB_cuda_jit_reduce.cuh
+// GraphBLAS/CUDA/JitKernels/GB_jit_cuda_reduce.cu
 //------------------------------------------------------------------------------
 
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// The GB_cuda_jit_reduce CUDA kernel reduces a GrB_Matrix A of any type GB_A_TYPE,
-// to a scalar of type GB_Z_TYPE.  Each threadblock (blockIdx.x) reduces its portion
-// of Ax to a single scalar, and then atomics are used across the threadblocks.
+// The GB_cuda_jit_reduce CUDA kernel reduces a GrB_Matrix A of any type
+// GB_A_TYPE, to a scalar of type GB_Z_TYPE.  Each threadblock (blockIdx.x)
+// reduces its portion of Ax to a single scalar, and then atomics are used
+// across the threadblocks.
 
 // Both the grid and block are 1D, so blockDim.x is the # threads in a
 // threadblock, and the # of threadblocks is grid.x
@@ -21,19 +22,11 @@
 
 // If the reduction is done on the GPU, A will never be iso-valued.
 
-#include <limits>
-#include <type_traits>
-#include "GB_cuda_kernel.h"
-#include "GB_monoid_shared_definitions.h"
-#include "GB_cuda_atomics.cuh"
-#include <cstdint>
-#include <cooperative_groups.h>
-
 #if GB_C_ISO
 #error "kernel undefined for C iso"
 #endif
 
-using namespace cooperative_groups;
+using namespace cooperative_groups ;
 
 //------------------------------------------------------------------------------
 // GB_warp_Reduce: reduce all entries in a warp to a single scalar
@@ -98,15 +91,17 @@ GB_Z_TYPE GB_block_Reduce(thread_block g, GB_Z_TYPE val)
 }
 
 //------------------------------------------------------------------------------
-// GB_jit_reduce: reduce all entries in a matrix to a single scalar
+// GB_cuda_reduce_kernel: reduce all entries in a matrix to a single scalar
 //------------------------------------------------------------------------------
 
-__global__ void GB_cuda_jit_kernel // GB_jit_reduce
+__global__ void GB_cuda_reduce_kernel
 (
-    GrB_Matrix A,   // matrix to reduce
+    // output:
     void *zscalar,  // scalar result, at least sizeof (uint32_t)
     GrB_Matrix V,   // matrix result, for partial reduction (or NULL)
-    int64_t anz     // # of entries in A: anz = GB_nnz_held (A)
+    // input:
+    GrB_Matrix A,   // matrix to reduce
+    int64_t anz     // # of entries in A
 )
 {
 
@@ -120,7 +115,8 @@ __global__ void GB_cuda_jit_kernel // GB_jit_reduce
     GB_DECLARE_IDENTITY (zmine) ; // GB_Z_TYPE zmine = identity ;
 
     // On input, zscalar is already initialized to the monoid identity value.
-    // If GB_Z_TYPE has size less than 4 bytes, zscalar has been upscaled to 4 bytes.
+    // If GB_Z_TYPE has size less than 4 bytes, zscalar has been upscaled to 4
+    // bytes.
 
     //--------------------------------------------------------------------------
     // phase 1: each thread reduces a part of the matrix to its own scalar
@@ -227,5 +223,19 @@ __global__ void GB_cuda_jit_kernel // GB_jit_reduce
 
         #endif
     }
+}
+
+//------------------------------------------------------------------------------
+// host function to launch the CUDA kernel
+//------------------------------------------------------------------------------
+
+GB_JIT_CUDA_KERNEL_REDUCE_PROTO (GB_jit_kernel) ;
+GB_JIT_CUDA_KERNEL_REDUCE_PROTO (GB_jit_kernel)
+{
+    dim3 grid (gridsz) ;
+    dim3 block (blocksz) ;
+    GB_A_NHELD (anz) ;      // anz = # of entries held in A
+    GB_cuda_reduce_kernel <<<grid, block, 0, stream>>> (zscalar, V, A, anz) ;
+    return (GrB_SUCCESS) ;
 }
 

@@ -3772,6 +3772,8 @@ typedef enum            // for global options or matrix options
     GxB_JIT_USE_CMAKE = 7032,        // CPU JIT: use cmake or direct compile
     GxB_JIT_ERROR_LOG = 7033,        // CPU JIT: error log file
 
+    GxB_JIT_CUDA_PREFACE = 7100,     // CUDA JIT C++ preface
+
     //------------------------------------------------------------
     // GrB_get for GrB_Matrix:
     //------------------------------------------------------------

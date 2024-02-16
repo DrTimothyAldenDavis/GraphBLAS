@@ -50,6 +50,8 @@ extern "C"
 
 #define CU_OK(call) CHECK_CUDA_SIMPLE(call)
 
+#include "GB_cuda_error.h"
+
 //------------------------------------------------------------------------------
 // GB_CUDA_CATCH: catch error from a try { ... } region
 //------------------------------------------------------------------------------

@@ -93,6 +93,8 @@ void gbcov_put (void) ;
 // MATCH(s,t) compares two strings and returns true if equal
 #define MATCH(s,t) (strcmp(s,t) == 0)
 
+    if (info != GrB_SUCCESS)                                \
+
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 
 // largest integer representable as a double
@@ -111,29 +113,6 @@ typedef enum            // output of GrB.methods
                         // entries present, sparse otherwise)
 }
 kind_enum_t ;
-
-// [I,J,X] = GrB.extracttuples (A, desc) can return I and J in three ways:
-//
-//      one-based double:   just like [I,J,X] = find (A)
-//      one-based int64:    I and J are one-based, as built-in but int64.
-//      zero-based int64:   I and J are zero-based, and int64.  This is meant
-//                          for internal use in GrB methods, but it is also
-//                          the
-//
-// The descriptor is also used for GrB.build, GrB.extract, GrB.assign, and
-// GrB.subassign.  In that case, the type is determined by the input arrays I
-// and J.
-//
-// desc.base can be one of several strings:
-//
-//      'default'           the default is used
-//      'zero-based'        the type is always int64
-//      'one-based'         the type is inferred from the inputs I and J
-//      'one-based int'     the type is int64, and one-based
-//      'one-based double'  the type is double, and one-based
-//
-// Note that there is no option for zero-based double.
-
 typedef enum            // type of indices
 {
     BASE_DEFAULT = 0,   // The type is determined automatically.  It is

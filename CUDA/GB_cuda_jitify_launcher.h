@@ -27,7 +27,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: rename .hpp?
+// FIXME: delete this file; the GraphBLAS GB_jitifyer does not need it.
 
 #ifndef GB_CUDA_JITIFY_LAUNCHER_H
 #define GB_CUDA_JITIFY_LAUNCHER_H

@@ -22,6 +22,8 @@
  * limitations under the License.
  */
 
+// FIXME: delete this file; the GraphBLAS GB_jitifyer does not need it.
+
 #ifndef GB_JIT_CACHE_H_
 #define GB_JIT_CACHE_H_
 

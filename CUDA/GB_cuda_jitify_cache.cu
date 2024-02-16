@@ -22,6 +22,8 @@
  * limitations under the License.
  */
 
+// FIXME: delete this file; the GraphBLAS GB_jitifyer does not need it.
+
 //------------------------------------------------------------------------------
 
 #include <stdio.h>
