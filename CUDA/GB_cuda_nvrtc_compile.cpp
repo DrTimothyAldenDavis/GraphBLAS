@@ -29,6 +29,9 @@ void GB_cuda_nvrtc_compile
     // FIXME:  see GB_jitifyer_direct_compile for an example of how this
     // works on the CPU, for a CPU JIT kernel.
 
+    GBURBLE ("(jit compiling cuda with nvrtc: %s/c/%02x/%s.cu) ",
+        GB_jit_cache_path, bucket, kernel_name) ;
+
     // "#include  %s/GB_jit__cuda_reduce__ac1f881.cu", GB_jit_cache_path
 
 }

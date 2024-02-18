@@ -47,11 +47,11 @@ bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
     {
         // FIXME: gpu_id = GB_Context_gpu_id_get ( ) ;
         // cudaSetDevice (gpu_id) ;
-        return true;
+        return (true) ;
     }
     else
     {
-        return false;
+        return (false) ;
     }
 }
 

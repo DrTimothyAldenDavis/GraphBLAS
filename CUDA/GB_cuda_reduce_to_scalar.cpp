@@ -13,10 +13,11 @@
 // threadblock.  Then GB_reduce_to_scalar on the CPU sees this V as the result,
 // and calls itself recursively to continue the reduction.
 
-#define GB_FREE_ALL             \
-{                               \
-    rmm_wrap_free (zscalar) ;   \
-    GB_Matrix_free (&V) ;       \
+#define GB_FREE_ALL                                         \
+{                                                           \
+    rmm_wrap_free (zscalar) ;                               \
+    GB_Matrix_free (&V) ;                                   \
+    if (stream != nullptr) cudaStreamDestroy (stream) ;     \
 }
 
 #include "GB_cuda_reduce.h"
@@ -41,15 +42,15 @@ GrB_Info GB_cuda_reduce_to_scalar
     GB_void *zscalar = NULL ;
     GrB_Matrix V = NULL ;
     (*V_handle) = NULL ;
-    GrB_Info info ;
+    GrB_Info info = GrB_SUCCESS ;
+    cudaStream_t stream = nullptr ;
 
     //--------------------------------------------------------------------------
     // create the stream
     //--------------------------------------------------------------------------
 
     // FIXME: use the stream pool
-    cudaStream_t stream = 0 ;
-    CHECK_CUDA (cudaStreamCreate (&stream)) ;
+    CUDA_OK (cudaStreamCreate (&stream)) ;
 
     //--------------------------------------------------------------------------
     // determine problem characteristics and allocate worksbace
@@ -90,11 +91,11 @@ GrB_Info GB_cuda_reduce_to_scalar
         // the kernel launch can reduce A to zscalar all by itself
         // allocate and initialize zscalar (upscaling it to at least 32 bits)
         size_t zscalar_size = GB_IMAX (zsize, sizeof (uint32_t)) ;
-        (GB_void *) rmm_wrap_malloc (zscalar_size) ;
         zscalar = (GB_void *) rmm_wrap_malloc (zscalar_size) ;
         if (zscalar == NULL)
         {
             // out of memory
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
         GB_cuda_upscale_identity (zscalar, monoid) ;
@@ -104,13 +105,8 @@ GrB_Info GB_cuda_reduce_to_scalar
         // allocate a full GrB_Matrix V for the partial result, of size
         // gridsz-by-1, and of type ztype.  V is allocated but not
         // initialized.
-        GrB_Info info = GB_new_bix (&V, ztype, gridsz, 1, GB_Ap_null,
-            true, GxB_FULL, false, 0, -1, gridsz, true, false) ;
-        if (info != GrB_SUCCESS)
-        {
-            // out of memory
-            return (info) ;
-        }
+        GB_OK (GB_new_bix (&V, ztype, gridsz, 1, GB_Ap_null,
+            true, GxB_FULL, false, 0, -1, gridsz, true, false)) ;
     }
 
     GBURBLE ("(cuda reduce launch %d threads in %d blocks)",
@@ -120,22 +116,19 @@ GrB_Info GB_cuda_reduce_to_scalar
     // reduce C to a scalar via the CUDA JIT
     //--------------------------------------------------------------------------
 
-    // FIXME: could let the function itself allocate zscalar and V:
-    // GB_cuda_reduce_to_scalar_jit (&zscalar, &V, monoid, A,
-    //     stream, gridsz, blocksz) ;
-    GB_cuda_reduce_to_scalar_jit (zscalar, V, monoid, A,
-        stream, gridsz, blocksz) ;
+//  final call looks like this:
+//  GB_OK (GB_cuda_reduce_to_scalar_jit (zscalar, V, monoid, A,
+//      stream, gridsz, blocksz)) ;
+
+//  debugging for now, to die early if the CUDA fails to compile, load, or run:
+    info = (GB_cuda_reduce_to_scalar_jit (zscalar, V, monoid, A,
+        stream, gridsz, blocksz)) ;
+    if (info == GrB_NO_VALUE) info = GrB_PANIC ;
+    GB_OK (info) ;
 
     //--------------------------------------------------------------------------
-    // get result
+    // return result and destroy the stream
     //--------------------------------------------------------------------------
-
-    // FIXME: sometimes we use CHECK_CUDA, sometimes CU_OK.  Need to
-    // be consistent.  Also, if this method fails, zscalar
-    // must be freed: we can do this in the CU_OK or CHECK_CUDA macros.
-    // Or in a try/catch?
-
-    // FIXME: this could be folded into GB_cuda_reduce_to_scalar_jit:
 
     if (has_cheeseburger)
     {
@@ -150,12 +143,8 @@ GrB_Info GB_cuda_reduce_to_scalar
         (*V_handle) = V ;
     }
 
-    //--------------------------------------------------------------------------
-    // synchronize before copying result to host
-    //--------------------------------------------------------------------------
-
-    CHECK_CUDA (cudaStreamSynchronize (stream)) ;
-    CHECK_CUDA (cudaStreamDestroy (stream)) ;
+    CUDA_OK (cudaStreamSynchronize (stream)) ;
+    CUDA_OK (cudaStreamDestroy (stream)) ;
     return (GrB_SUCCESS) ;
 }
 

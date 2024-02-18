@@ -79,4 +79,29 @@ inline void __printLastCudaError(const char *errorMessage, const char *file,
 }
 #define CHECK_CUDA(call) checkCudaErrors( call )
 
+//------------------------------------------------------------------------------
+// CUDA_OK: like GB_OK but for calls to cuda* methods
+//------------------------------------------------------------------------------
+
+// FIXME: always use this method, not the above methods.
+
+// FIXME: GrB_NO_VALUE means something in CUDA failed, and the caller will then
+// do the computation on the CPU.  Need to turn off the JIT for CUDA kernels
+// (but not CPU kernels) if some CUDA error occurred.  Current JIT control does
+// not distinguish between CPU and CUDA failures.
+
+#define CUDA_OK(cudaMethod)                                                 \
+{                                                                           \
+    cudaError_t cuda_error = cudaMethod ;                                   \
+    if (cuda_error != cudaSuccess)                                          \
+    {                                                                       \
+        GrB_Info info = (cuda_error == cudaErrorMemoryAllocation) ?         \
+            GrB_OUT_OF_MEMORY : GrB_NO_VALUE ;                              \
+        GBURBLE ("(cuda failed: %d:%s file:%s line:%d) ", (int) cuda_error, \
+            cudaGetErrorString (cuda_error), __FILE__, __LINE__) ;          \
+        GB_FREE_ALL ;                                                       \
+        return (info) ;                                                     \
+    }                                                                       \
+}
+
 #endif
