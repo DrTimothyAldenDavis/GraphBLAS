@@ -79,7 +79,7 @@ if ( TARGET grb_jitpackage )
         "../Source/Template/*.[ch]"
         "../Source/JitKernels/*.[ch]"
         "../CUDA/Template/*h"
-        "../CUDA/JitKernels/*h"
+        "../CUDA/JitKernels/*.cu*"
         "../Source/Shared/*.h" )
 
     add_custom_command ( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/GB_JITpackage.c

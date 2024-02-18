@@ -160,5 +160,12 @@ bool GB_cuda_AxB_dot3_branch
     const bool flipxy               // if true, do z=fmult(b,a) vs fmult(a,b)
 );
 
+void GB_cuda_nvrtc_compile
+(
+    char *kernel_name,          // name of the kernel
+    int bucket,                 // bucket to place the kernel in
+    char *GB_jit_cache_path     // location of GraphBLAS cache
+) ;
+
 #endif
 

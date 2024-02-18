@@ -57,6 +57,41 @@
 #ifndef GRAPHBLAS_H
 #define GRAPHBLAS_H
 
+typedef enum
+{
+
+    GrB_SUCCESS = 0,            // all is well
+
+    //--------------------------------------------------------------------------
+    // informational codes, not an error:
+    //--------------------------------------------------------------------------
+
+    GrB_NO_VALUE = 1,           // A(i,j) requested but not there
+    GxB_EXHAUSTED = 7089,       // iterator is exhausted
+
+    //--------------------------------------------------------------------------
+    // errors:
+    //--------------------------------------------------------------------------
+
+    GrB_UNINITIALIZED_OBJECT = -1,  // object has not been initialized
+    GrB_NULL_POINTER = -2,          // input pointer is NULL
+    GrB_INVALID_VALUE = -3,         // generic error; some value is bad
+    GrB_INVALID_INDEX = -4,         // row or column index is out of bounds
+    GrB_DOMAIN_MISMATCH = -5,       // object domains are not compatible
+    GrB_DIMENSION_MISMATCH = -6,    // matrix dimensions do not match
+    GrB_OUTPUT_NOT_EMPTY = -7,      // output matrix already has values
+    GrB_NOT_IMPLEMENTED = -8,       // method not implemented
+    GrB_ALREADY_SET = -9,           // field already written to
+    GrB_PANIC = -101,               // unknown error
+    GrB_OUT_OF_MEMORY = -102,       // out of memory
+    GrB_INSUFFICIENT_SPACE = -103,  // output array not large enough
+    GrB_INVALID_OBJECT = -104,      // object is corrupted
+    GrB_INDEX_OUT_OF_BOUNDS = -105, // row or col index out of bounds
+    GrB_EMPTY_OBJECT = -106         // an object does not contain a value
+
+}
+GrB_Info ;
+
 #undef restrict
 #undef GB_restrict
 #define GB_restrict __restrict__

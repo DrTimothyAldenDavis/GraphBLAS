@@ -1344,7 +1344,6 @@ GrB_Info GB_jitifyer_set_CUDA_preface_worker (const char *new_CUDA_preface)
     GB_COPY_STUFF (GB_jit_CUDA_preface, new_CUDA_preface) ;
     return (GrB_SUCCESS) ;
 }
-}
 
 //------------------------------------------------------------------------------
 // GB_jitifyer_query: check if the type/op/monoid definitions match
@@ -1862,10 +1861,12 @@ GrB_Info GB_jitifyer_load_worker
 
         GBURBLE ("(jit: compile and load) ") ;
         int32_t kcode = encoding->kcode ;
+        const char *kernel_filetype =
+            (kcode < GB_JIT_CUDA_KERNEL) ? "c" : "cu" ;
 
         // create (or recreate) the kernel source, compile it, and load it
-        snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/%s.c",
-            GB_jit_cache_path, bucket, kernel_name) ;
+        snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/%s.%s",
+            GB_jit_cache_path, bucket, kernel_name, kernel_filetype) ;
         FILE *fp = fopen (GB_jit_temp, "w") ;
         if (fp != NULL)
         { 
@@ -1882,7 +1883,7 @@ GrB_Info GB_jitifyer_load_worker
                          "#endif\n"
                          "#include \"GB_jit_kernel_%s.%s\"\n",
                          kernel_name, kernel_name, kname,
-                         (kcode < GB_JIT_CUDA_KERNEL) ? "c" : "cu") ;
+                         kernel_filetype) ;
 
             // macrofy the query function
             bool builtin = (encoding->suffix_len == 0) ;

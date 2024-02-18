@@ -34,14 +34,14 @@ void GB_macrofy_preface
         "// The above copyright and license do not apply to any\n"
         "// user-defined types and operators defined below.\n"
         "//--------------------------------------"
-        "----------------------------------------\n"
+        "----------------------------------------\n",
         kernel_name,
         GxB_IMPLEMENTATION_MAJOR,
         GxB_IMPLEMENTATION_MINOR,
         GxB_IMPLEMENTATION_SUB,
         date + GB_IMAX (0, len - 4)) ;
 
-    if (kcode >= GB_JIT_CUDA_NONE)
+    if (kcode >= GB_JIT_CUDA_KERNEL)
     {
         // for CUDA JIT kernels
         fprintf (fp, "#define GB_CUDA_KERNEL\n%s\n", CUDA_preface) ;
@@ -52,6 +52,7 @@ void GB_macrofy_preface
         fprintf (fp, "%s\n", C_preface) ;
     }
 
+    // for all kernels: CPU and CUDA
     fprintf (fp, "#include \"GB_jit_kernel.h\"\n\n") ;
 }
 

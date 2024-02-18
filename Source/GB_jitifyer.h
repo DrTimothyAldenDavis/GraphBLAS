@@ -179,6 +179,9 @@ typedef enum
     // reduce to scalar on the GPU
     GB_JIT_CUDA_KERNEL_REDUCE   = 1001,
 
+    // rowscale
+    GB_JIT_CUDA_KERNEL_ROWSCALE = 1011,
+
 }
 GB_jit_kcode ;
 
