@@ -80,7 +80,7 @@ bool GB_cuda_get_device_properties  // true if OK, false if failure
                                          cudaDevAttrComputeCapabilityMajor,
                                          device) ) ;
     CHECK_CUDA_SIMPLE( cudaDeviceGetAttribute (&compute_capability_minor,
-                                         cudaDevAttrComputeCapabilityMajor,
+                                         cudaDevAttrComputeCapabilityMinor,
                                          device) ) ;
 
     CHECK_CUDA_SIMPLE ( cudaSetDevice( device ) ) ;

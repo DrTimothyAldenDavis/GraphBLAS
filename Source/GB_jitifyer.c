@@ -1898,8 +1898,8 @@ GrB_Info GB_jitifyer_load_worker
         // compile the kernel to get the lib*.so file
         if (kcode >= GB_JIT_CUDA_KERNEL)
         {
-            // use NVRTC to directly compile the CUDA kernel
-            GB_jitifyer_nvrtc_compile (kernel_name, bucket) ;
+            // use NVCC to directly compile the CUDA kernel
+            GB_jitifyer_nvcc_compile (kernel_name, bucket) ;
         }
         else if (GB_jit_use_cmake)
         { 
@@ -2390,27 +2390,83 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
 }
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_nvrtc_compile: compile a CUDA kernel with NVRTC
+// GB_jitifyer_nvcc_compile: compile a CUDA kernel with NVRTC
 //------------------------------------------------------------------------------
 
-void GB_jitifyer_nvrtc_compile (char *kernel_name, uint32_t bucket)
+// Compiles a CUDA JIT kernel in a *.cu file, containing host code that
+// launches one or more device kernels.
+
+// The input file has the form:
+//
+//      %s/c/%02x/%s or [cache_path]/c/[bucket]/[kernel_name].cu
+//
+// and the libary file is linked as
+//
+//      %s/lib/%02x/lib%s.so or [cache_path]/lib/[bucket]/lib[kernel_name].so
+//
+// All other temporary files (including *.o object files) are removed.
+
+void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
 {
+
 #if defined ( GRAPHBLAS_HAS_CUDA ) && !defined ( NJIT )
 
-    // compile the input file, of the form:
-    // %s/c/%02x/%s or [cache_path]/c/[bucket]/[kernel_name].cu
+    char *burble_stdout = GB_Global_burble_get ( ) ? "" : GB_DEV_NULL ;
+    char *err_redirect = (strlen (GB_jit_error_log) > 0) ? " 2>> " : "" ;
 
-    // and link the libary file as
-    // %s/lib/%02x/lib%s.so or [cache_path]/lib/[bucket]/lib[kernel_name].so
+    GBURBLE ("(jit compiling cuda with nvcc: %s/c/%02x/%s.cu) ",
+        GB_jit_cache_path, bucket, kernel_name) ;
 
-    GB_cuda_nvrtc_compile (
-        kernel_name,            // name of the kernel
-        bucket,                 // bucket to place the kernel in
-        GB_jit_cache_path) ;    // path to src, c, lib, and tmp folders
+    snprintf (GB_jit_temp, GB_jit_temp_allocated,
 
+    // compile:
+    "sh -c \""                          // execute with POSIX shell
+    "nvcc "                             // compiler command
+    "-DGB_JIT_RUNTIME=1  "              // nvcc flags
+    "-I/usr/local/cuda/include -std=c++17 -arch=sm_60 -dc -dlink -rdc true "
+    "-I%s/src "                         // include source directory
+    "-o %s/c/%02x/%s%s "                // *.o output file
+    "-c %s/c/%02x/%s.cu "               // *.cu input file
+    "%s "                               // burble stdout
+    "%s %s ; "                          // error log file
+
+    // link:
+    "nvcc "                             // compiler
+    "-DGB_JIT_RUNTIME=1  "              // nvcc flags
+    "-I/usr/local/cuda/include -std=c++17 -arch=sm_60 "
+    " -shared "
+    "-o %s/lib/%02x/%s%s%s "            // lib*.so output file
+    "%s/c/%02x/%s%s "                   // *.o input file
+    " -cudart shared "
+//  "%s "                               // libraries to link with (any?)
+    "%s "                               // burble stdout
+    "%s %s\"",                          // error log file
+
+    // compile:
+    GB_jit_cache_path,                  // include source directory (cache/src)
+    GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o output file
+    GB_jit_cache_path, bucket, kernel_name,                 // *.cu input file
+    burble_stdout,                      // burble stdout
+    err_redirect, GB_jit_error_log,     // error log file
+
+    // link:
+    GB_jit_cache_path, bucket,  
+    GB_LIB_PREFIX, kernel_name, GB_LIB_SUFFIX,              // lib*.so file
+    GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
+//  GB_jit_C_libraries                  // libraries to link with
+    burble_stdout,                      // burble stdout
+    err_redirect, GB_jit_error_log) ;   // error log file
+
+    // compile the library and return result
+    GBURBLE ("\n(jit: %s) ", GB_jit_temp) ;
+    GB_jitifyer_command (GB_jit_temp) ; // OK: see security comment above
+
+    // remove the *.o file
+    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/%s%s",
+        GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX) ;
+    remove (GB_jit_temp) ;
 #endif
 }
-
 
 //------------------------------------------------------------------------------
 // GB_jitifyer_direct_compile: compile a kernel with just the compiler
