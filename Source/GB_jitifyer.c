@@ -2422,8 +2422,9 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     // compile:
     "sh -c \""                          // execute with POSIX shell
     "nvcc "                             // compiler command
+    "-forward-unknown-to-host-compiler "
     "-DGB_JIT_RUNTIME=1  "              // nvcc flags
-    "-I/usr/local/cuda/include -std=c++17 -arch=sm_60 -dc -dlink -rdc true "
+    "-I/usr/local/cuda/include -std=c++17 -arch=sm_60 -fPIC "
     "-I%s/src "                         // include source directory
     "-o %s/c/%02x/%s%s "                // *.o output file
     "-c %s/c/%02x/%s.cu "               // *.cu input file

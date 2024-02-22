@@ -130,6 +130,8 @@ GrB_Info GB_cuda_reduce_to_scalar
     // return result and destroy the stream
     //--------------------------------------------------------------------------
 
+    CUDA_OK (cudaStreamSynchronize (stream)) ;
+
     if (has_cheeseburger)
     {
         // return the scalar result
@@ -143,7 +145,6 @@ GrB_Info GB_cuda_reduce_to_scalar
         (*V_handle) = V ;
     }
 
-    CUDA_OK (cudaStreamSynchronize (stream)) ;
     CUDA_OK (cudaStreamDestroy (stream)) ;
     return (GrB_SUCCESS) ;
 }
