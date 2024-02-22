@@ -2462,9 +2462,11 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     GB_jitifyer_command (GB_jit_temp) ; // OK: see security comment above
 
     // remove the *.o file
-    snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/%s%s",
-        GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX) ;
-    remove (GB_jit_temp) ;
+// keep it for now:
+//  snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/c/%02x/%s%s",
+//      GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX) ;
+//  remove (GB_jit_temp) ;
+
 #endif
 }
 
