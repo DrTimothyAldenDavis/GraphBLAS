@@ -668,7 +668,8 @@ void GB_macrofy_query
     GrB_Type type0,
     GrB_Type type1,
     GrB_Type type2,
-    uint64_t hash       // hash code for the kernel
+    uint64_t hash,      // hash code for the kernel
+    GB_jit_kcode kcode
 ) ;
 
 //------------------------------------------------------------------------------

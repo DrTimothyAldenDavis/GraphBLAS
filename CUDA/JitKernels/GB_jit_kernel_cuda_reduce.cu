@@ -229,7 +229,11 @@ __global__ void GB_cuda_reduce_kernel
 // host function to launch the CUDA kernel
 //------------------------------------------------------------------------------
 
+extern "C"
+{
 GB_JIT_CUDA_KERNEL_REDUCE_PROTO (GB_jit_kernel) ;
+}
+
 GB_JIT_CUDA_KERNEL_REDUCE_PROTO (GB_jit_kernel)
 {
     dim3 grid (gridsz) ;

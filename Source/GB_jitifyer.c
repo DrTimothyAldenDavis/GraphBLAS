@@ -1860,7 +1860,7 @@ GrB_Info GB_jitifyer_load_worker
         //----------------------------------------------------------------------
 
         GBURBLE ("(jit: compile and load) ") ;
-        int32_t kcode = encoding->kcode ;
+        GB_jit_kcode kcode = encoding->kcode ;
         const char *kernel_filetype =
             (kcode < GB_JIT_CUDA_KERNEL) ? "c" : "cu" ;
 
@@ -1888,7 +1888,7 @@ GrB_Info GB_jitifyer_load_worker
             // macrofy the query function
             bool builtin = (encoding->suffix_len == 0) ;
             GB_macrofy_query (fp, builtin, monoid, op1, op2, type1, type2,
-                type3, hash) ;
+                type3, hash, kcode) ;
             fclose (fp) ;
         }
 

@@ -8,7 +8,10 @@
 
 #include "GB_cuda_reduce.h"
 
-typedef GB_JIT_CUDA_KERNEL_REDUCE_PROTO ((*GB_jit_dl_function)) ;
+extern "C"
+{
+    typedef GB_JIT_CUDA_KERNEL_REDUCE_PROTO ((*GB_jit_dl_function)) ;
+}
 
 GrB_Info GB_cuda_reduce_to_scalar_jit   // z = reduce_to_scalar (A) via CUDA JIT
 (
