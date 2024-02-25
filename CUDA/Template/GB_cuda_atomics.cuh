@@ -2,7 +2,7 @@
 // GraphBLAS/CUDA/Template/GB_cuda_atomics.cuh: CUDA atomics for GraphBLAS
 //------------------------------------------------------------------------------
 
-// yet still more stuff here
+// Atomic device functions for CUDA JIT kernels.  Not used on the host.
 
 /*
  * Copyright (c) 2023, NVIDIA CORPORATION. All rights reserved.

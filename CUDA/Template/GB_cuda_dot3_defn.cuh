@@ -1,12 +1,10 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/Template/GB_cuda_dot3_defn.h: defns just for dot3
+// GraphBLAS/CUDA/Template/GB_cuda_dot3_defn.cuh: defns just for dot3
 //------------------------------------------------------------------------------
 
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// FIXME: rename this to .cuh?   It is only #included by GB_cuda_jit*
 
 #pragma once
 

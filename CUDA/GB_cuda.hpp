@@ -81,8 +81,8 @@ extern "C"
 // NBUCKETS buckets: computed by up to NBUCKETS-1 kernel launches (zombies need
 // no work...), using different kernels (with different configurations
 // depending on the bucket).
-
-#include "GB_cuda_buckets.h"
+// FIXME: this is only needed by the AxB_dot3 kernel
+#include "GB_cuda_AxB_dot3_buckets.hpp"
 
 extern "C"
 {

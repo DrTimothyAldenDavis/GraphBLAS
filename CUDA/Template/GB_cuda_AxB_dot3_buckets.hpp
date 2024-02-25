@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/Template/GB_cuda_buckets.h: bucket definitions for dot3
+// GraphBLAS/CUDA/Template/GB_cuda_AxB_dot3_buckets.hpp: bucket defn for dot3
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -9,8 +9,8 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GB_CUDA_BUCKETS_H
-#define GB_CUDA_BUCKETS_H
+#ifndef GB_CUDA_AXB_DOT3_BUCKETS_HPP
+#define GB_CUDA_AXB_DOT3_BUCKETS_HPP
 
 #define NBUCKETS 3
 

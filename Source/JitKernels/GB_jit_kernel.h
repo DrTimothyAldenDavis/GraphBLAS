@@ -19,7 +19,7 @@
     #include "GB_Template.h"
 #else
     // for CUDA JIT kernels:
-    #include "GB_cuda_kernel.h"
+    #include "GB_cuda_kernel.cuh"
 #endif
 
 // for all JIT kernels

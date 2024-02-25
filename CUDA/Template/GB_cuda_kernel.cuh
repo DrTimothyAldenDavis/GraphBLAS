@@ -1,13 +1,14 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/Template/GB_cuda_kernel.h: definitions for CUDA kernels
+// GraphBLAS/CUDA/Template/GB_cuda_kernel.cuh: definitions for CUDA kernels
 //------------------------------------------------------------------------------
 
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// This file is #include'd into all CUDA kernels for GraphBLAS.  It provides
-// a subset of GraphBLAS.h and GB.h, plus other definitions.
+// This file is #include'd into all device functions for CUDA JIT kernels for
+// GraphBLAS.  It provides a subset of GraphBLAS.h and GB.h, plus other
+// definitions.  It is not used on the host.
 
 // FIXME: rename to .cuh?
 
