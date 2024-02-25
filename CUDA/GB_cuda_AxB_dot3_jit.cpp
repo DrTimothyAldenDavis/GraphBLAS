@@ -19,17 +19,6 @@
 #include "GB_cuda_mxm_dot3_jitFactory.hpp"
 #include "GB_cuda_timer.hpp"
 
-/*
-template<typename T, typename I>
-void print_array(void *arr, I size, const char *name) {
-    std::cout << "Printing " << name << std::endl;
-    for(I i = 0; i < size; ++i) {
-        std::cout << static_cast<T*>(arr)[i] << ", ";
-    }
-    std::cout << std::endl << "Done." << std::endl;
-}
-*/
-
 #undef  GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE                                               \
 {                                                                       \
