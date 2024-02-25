@@ -1,13 +1,13 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/test/GpuTimer.h
+// GraphBLAS/CUDA/test/GB_cuda_timer.hpp
 //------------------------------------------------------------------------------
 
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-#ifndef __GPU_TIMER_H__
-#define __GPU_TIMER_H__
+#ifndef GB_CUDA_TIMER_HPP
+#define GB_CUDA_TIMER_HPP
 
 #include <cuda_runtime.h>
 struct GpuTimer
@@ -44,6 +44,7 @@ struct GpuTimer
               cudaEventElapsedTime(&elapsed, start, stop);
               return elapsed;
           }
-};
+} ;
 
-#endif  /* __GPU_TIMER_H__ */
+#endif
+

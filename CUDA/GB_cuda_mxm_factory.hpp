@@ -16,7 +16,7 @@
 // FIXME do we need the iostrean any more?
 #include <iostream>
 #include <cstdint>
-#include "GB_cuda_jitify_cache.h"
+#include "GB_cuda_jitify_cache.hpp"
 
 extern "C"
 {
@@ -24,10 +24,6 @@ extern "C"
     #include "GB_binop.h"
     #include "GB_stringify.h"
 }
-
-// FIXME: do we need the file_callback method?
-// Define function pointer we will use later
-//std::istream* (*file_callback)(std::string, std::iostream&);
 
 //------------------------------------------------------------------------------
 // GB_cuda_mxm_factory

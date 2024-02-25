@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/GB_cuda.h
+// GraphBLAS/CUDA/GB_cuda.hpp
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GB_CUDA_H
-#define GB_CUDA_H
+#ifndef GB_CUDA_HPP
+#define GB_CUDA_HPP
 
 extern "C"
 { 
@@ -18,7 +18,7 @@ extern "C"
     #include "GB_warnings.h"
 }
 
-#include "GraphBLAS_cuda.h"
+#include "GraphBLAS_cuda.hpp"
 
 extern "C"
 {
@@ -30,7 +30,8 @@ extern "C"
 // Finally, include the CUDA definitions
 #include "cuda_runtime.h"
 #include "cuda.h"
-// #include "cub.cuh"
+
+// FIXME: NVIDIA jitify.hpp will be removed:
 #include "jitify.hpp"
 #include "GB_cuda_mxm_factory.hpp"
 
@@ -50,7 +51,7 @@ extern "C"
 
 #define CU_OK(call) CHECK_CUDA_SIMPLE(call)
 
-#include "GB_cuda_error.h"
+#include "GB_cuda_error.hpp"
 
 //------------------------------------------------------------------------------
 // GB_CUDA_CATCH: catch error from a try { ... } region

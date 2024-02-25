@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_cuda.h"
+#include "GB_cuda.hpp"
 #define GB_FREE_ALL ;
 
 GrB_Info GB_cuda_matrix_prefetch

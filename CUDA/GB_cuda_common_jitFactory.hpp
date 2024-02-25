@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include "GraphBLAS_cuda.h"
+#include "GraphBLAS_cuda.hpp"
 
 extern "C"
 {
@@ -33,10 +33,10 @@ extern "C"
 
 #include <iostream>
 #include <cstdint>
-#include "GB_cuda_jitify_cache.h"
-#include "GB_cuda_jitify_launcher.h"
+#include "GB_cuda_jitify_cache.hpp"
+#include "GB_cuda_jitify_launcher.hpp"
 #include "GB_cuda_mxm_factory.hpp"
-#include "GB_cuda_error.h"
+#include "GB_cuda_error.hpp"
 #include "../rmm_wrap/rmm_wrap.h"
 #include "GB_iceil.h"
 

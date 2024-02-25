@@ -203,11 +203,6 @@ configure_file ( "Config/README.md.in"
     "${PROJECT_SOURCE_DIR}/README.md"
     NEWLINE_STYLE LF )
 
-# for CUDA
-configure_file ( "CUDA/Config/GB_cuda_common_jitFactory.hpp.in"
-    "${PROJECT_SOURCE_DIR}/CUDA/GB_cuda_common_jitFactory.hpp"
-    NEWLINE_STYLE LF )
-
 #-------------------------------------------------------------------------------
 # include directories for both graphblas and the demos
 #-------------------------------------------------------------------------------

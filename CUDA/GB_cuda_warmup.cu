@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_cuda.h"
+#include "GB_cuda.hpp"
 
 bool GB_cuda_warmup (int device)
 {
@@ -29,11 +29,8 @@ bool GB_cuda_warmup (int device)
         printf ("Hey!! where's da memory???\n") ;
         return (false) ;
     }
-//    printf ("oooo nice block of memory of size %lu\n", size) ;
     GB_free_memory ( &p, size) ;
-//    printf ("be free, block of memory of size %lu\n", size) ;
 
-//    printf ("good ol' cudaMalloc just to be sure\n");
     cudaMalloc ( &p, size ) ;
     if (p == NULL)
     {
@@ -42,10 +39,8 @@ bool GB_cuda_warmup (int device)
     }
     cudaFree (p) ;
 
-//    printf ("GPU %d nice and toasty now\n", device) ;
-
     // TODO check for jit cache? or in GB_init?
 
-    return  true; //(err == cudaSuccess) ;
+    return (true) ;
 }
 

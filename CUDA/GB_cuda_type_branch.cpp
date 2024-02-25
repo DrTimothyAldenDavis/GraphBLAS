@@ -14,7 +14,7 @@
 
 // All built-in types pass this rule.
 
-#include "GB_cuda.h"
+#include "GB_cuda.hpp"
 
 bool GB_cuda_type_branch            // return true if the type is OK on GPU
 (

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_cuda_reduce.h: CPU definitions for CUDA reductions
+// GB_cuda_reduce.hpp: CPU definitions for CUDA reductions
 //------------------------------------------------------------------------------
 
 // SPDX-License-Identifier: Apache-2.0
@@ -9,7 +9,7 @@
 #ifndef GB_CUDA_REDUCE_H
 #define GB_CUDA_REDUCE_H
 
-#include "GB_cuda.h"
+#include "GB_cuda.hpp"
 
 GrB_Info GB_cuda_reduce_to_scalar_jit   // z = reduce_to_scalar (A) via CUDA JIT
 (

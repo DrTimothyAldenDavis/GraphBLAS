@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/GB_cuda_error.h
+// GraphBLAS/CUDA/GB_cuda_error.hpp
 //------------------------------------------------------------------------------
 
 // SPDX-License-Identifier: Apache-2.0
@@ -23,8 +23,8 @@
  */
 
 
-#ifndef GB_CUDA_ERROR_H
-#define GB_CUDA_ERROR_H
+#ifndef GB_CUDA_ERROR_HPP
+#define GB_CUDA_ERROR_HPP
 
 #include <cuda_runtime.h>
 
@@ -105,3 +105,4 @@ inline void __printLastCudaError(const char *errorMessage, const char *file,
 }
 
 #endif
+

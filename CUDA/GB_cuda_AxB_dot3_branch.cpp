@@ -9,13 +9,7 @@
 
 // Decide branch direction for GPU use for the dot-product MxM
 
-#include "GraphBLAS_cuda.h"
-
-extern "C" 
-{
-    #include "GB.h"
-}
-#include "GB_cuda.h"
+#include "GB_cuda.hpp"
 #include <cuda_runtime.h>
 
 bool GB_cuda_AxB_dot3_branch 

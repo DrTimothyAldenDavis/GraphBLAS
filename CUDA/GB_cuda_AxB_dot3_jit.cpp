@@ -12,16 +12,12 @@
 // and B can have any sparsity format.  C is computed as sparse or hypersparse,
 // with the same format as M.
 
-#include "GB_cuda.h"
-extern "C"
-{
-    #include "GB.h"
-}
+#include "GB_cuda.hpp"
 
-#include "GB_cuda_jitify_cache.h"
+#include "GB_cuda_jitify_cache.hpp"
 #include "GB_cuda_common_jitFactory.hpp"
 #include "GB_cuda_mxm_dot3_jitFactory.hpp"
-#include "GpuTimer.h"
+#include "GB_cuda_timer.hpp"
 
 /*
 template<typename T, typename I>

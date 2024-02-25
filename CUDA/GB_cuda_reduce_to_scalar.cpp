@@ -20,7 +20,7 @@
     if (stream != nullptr) cudaStreamDestroy (stream) ;     \
 }
 
-#include "GB_cuda_reduce.h"
+#include "GB_cuda_reduce.hpp"
 
 GrB_Info GB_cuda_reduce_to_scalar
 (

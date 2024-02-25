@@ -6,7 +6,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_cuda_reduce.h"
+#include "GB_cuda_reduce.hpp"
 
 extern "C"
 {

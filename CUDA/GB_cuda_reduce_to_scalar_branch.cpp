@@ -8,7 +8,7 @@
 
 // Decide branch direction for GPU use for the reduction to scalar
 
-#include "GB_cuda_reduce.h"
+#include "GB_cuda_reduce.hpp"
 
 bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
 (

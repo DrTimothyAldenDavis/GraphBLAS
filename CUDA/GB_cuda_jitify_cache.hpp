@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/GB_cuda_jitify_cache.h
+// GraphBLAS/CUDA/GB_cuda_jitify_cache.hpp
 //------------------------------------------------------------------------------
 
 // SPDX-License-Identifier: Apache-2.0
@@ -24,8 +24,8 @@
 
 // FIXME: delete this file; the GraphBLAS GB_jitifyer does not need it.
 
-#ifndef GB_JIT_CACHE_H_
-#define GB_JIT_CACHE_H_
+#ifndef GB_CUDA_JITIFY_CACHE_HPP
+#define GB_CUDA_JITIFY_CACHE_HPP
 
 #include <jitify.hpp>
 #include <unordered_map>
@@ -326,4 +326,5 @@ private:
 } // namespace jit
 
 
-#endif // GB_JIT_CACHE_H_
+#endif
+
