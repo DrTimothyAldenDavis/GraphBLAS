@@ -111,8 +111,6 @@ __global__ void GB_cuda_reduce_kernel
 
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
 
-    printf ("I am cuda, thread %d\n", threadIdx.x) ;
-
     // each thread reduces its result into zmine, of type GB_Z_TYPE
     GB_DECLARE_IDENTITY (zmine) ; // GB_Z_TYPE zmine = identity ;
 
@@ -211,18 +209,13 @@ __global__ void GB_cuda_reduce_kernel
 
         #elif GB_Z_HAS_CUDA_ATOMIC_BUILTIN
 
-printf ("cuda thread zero has cheeseburger: block %d\n", blockIdx.x) ;
-
             // cast the result to the CUDA atomic type, and reduce
             // atomically to the global zscalar
             GB_Z_CUDA_ATOMIC_TYPE *z = (GB_Z_CUDA_ATOMIC_TYPE *) zscalar ;
             GB_Z_CUDA_ATOMIC_TYPE zsum = (GB_Z_CUDA_ATOMIC_TYPE) zmine ;
-printf ("cuda atomic zsum: %g\n", (double) zsum) ;
             GB_Z_CUDA_ATOMIC <GB_Z_CUDA_ATOMIC_TYPE> (z, zsum) ;
 
         #else
-
-printf ("cuda thread zero has no cheeseburger: block %d\n", blockIdx.x) ;
 
             // save my result in V
             GB_Z_TYPE *Vx = (GB_Z_TYPE) V->x ;
@@ -246,9 +239,7 @@ GB_JIT_CUDA_KERNEL_REDUCE_PROTO (GB_jit_kernel)
     dim3 grid (gridsz) ;
     dim3 block (blocksz) ;
     GB_A_NHELD (anz) ;      // anz = # of entries held in A
-    printf ("\nLaunching CUDA reduce kernel: anz %g\n", (double) anz) ;
     GB_cuda_reduce_kernel <<<grid, block, 0, stream>>> (zscalar, V, A, anz) ;
-    printf ("\nDid the CUDA kernel\n") ;
     return (GrB_SUCCESS) ;
 }
 

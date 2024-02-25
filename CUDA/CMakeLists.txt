@@ -153,3 +153,14 @@ if ( NOT MSVC )
         DESTINATION ${SUITESPARSE_PKGFILEDIR}/pkgconfig )
 endif ( )
 
+#-------------------------------------------------------------------------------
+# report
+#-------------------------------------------------------------------------------
+
+message ( STATUS "CMAKE_CUDA_ARCHITECTURES: ${CMAKE_CUDA_ARCHITECTURES} ")
+message ( STATUS "CMAKE_CUDA_COMPILER: ${CMAKE_CUDA_COMPILER} ")
+message ( STATUS "CMAKE_CUDA_FLAGS: ${CMAKE_CUDA_FLAGS} ")
+message ( STATUS "CMAKE_CUDA_FLAGS_RELEASE: ${CMAKE_CUDA_FLAGS_RELEASE} ")
+message ( STATUS "CMAKE_CUDA_FLAGS_DEBUG: ${CMAKE_CUDA_FLAGS_DEBUG} ")
+
+
