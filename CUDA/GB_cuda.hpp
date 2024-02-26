@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/GB_cuda.h
+// GraphBLAS/CUDA/GB_cuda.hpp
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GB_CUDA_H
-#define GB_CUDA_H
+#ifndef GB_CUDA_HPP
+#define GB_CUDA_HPP
 
 extern "C"
 { 
@@ -18,7 +18,7 @@ extern "C"
     #include "GB_warnings.h"
 }
 
-#include "GraphBLAS_cuda.h"
+#include "GraphBLAS_cuda.hpp"
 
 extern "C"
 {
@@ -30,7 +30,8 @@ extern "C"
 // Finally, include the CUDA definitions
 #include "cuda_runtime.h"
 #include "cuda.h"
-// #include "cub.cuh"
+
+// FIXME: NVIDIA jitify.hpp will be removed:
 #include "jitify.hpp"
 #include "GB_cuda_mxm_factory.hpp"
 
@@ -49,6 +50,8 @@ extern "C"
   } while (0)
 
 #define CU_OK(call) CHECK_CUDA_SIMPLE(call)
+
+#include "GB_cuda_error.hpp"
 
 //------------------------------------------------------------------------------
 // GB_CUDA_CATCH: catch error from a try { ... } region
@@ -78,8 +81,8 @@ extern "C"
 // NBUCKETS buckets: computed by up to NBUCKETS-1 kernel launches (zombies need
 // no work...), using different kernels (with different configurations
 // depending on the bucket).
-
-#include "GB_cuda_buckets.h"
+// FIXME: this is only needed by the AxB_dot3 kernel
+#include "GB_cuda_AxB_dot3_buckets.hpp"
 
 extern "C"
 {
@@ -131,7 +134,7 @@ GrB_Info GB_cuda_matrix_advise
 
 void GB_cuda_upscale_identity
 (
-    GB_void *identity_upscaled,     // output: at least sizeof (uint16_t)
+    GB_void *identity_upscaled,     // output: at least sizeof (uint32_t)
     GrB_Monoid monoid               // input: monoid to upscale
 ) ;
 

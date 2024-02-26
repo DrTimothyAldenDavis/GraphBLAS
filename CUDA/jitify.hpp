@@ -1,3 +1,5 @@
+// FIXME: delete this file; the GraphBLAS GB_jitifyer does not need it.
+
 /*
  * Copyright (c) 2017-2019, NVIDIA CORPORATION. All rights reserved.
  *

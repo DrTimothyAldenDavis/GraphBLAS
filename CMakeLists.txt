@@ -60,7 +60,7 @@ endif ( )
 
 if ( SUITESPARSE_HAS_CUDA AND GRAPHBLAS_USE_CUDA )
     # FOR NOW: do not compile FactoryKernels when developing the CUDA kernels
-#   set ( GRAPHBLAS_COMPACT ON )
+    set ( GRAPHBLAS_COMPACT ON )
     message ( STATUS "GraphBLAS CUDA JIT: enabled")
     enable_language ( CUDA )
     set ( GRAPHBLAS_HAS_CUDA ON )
@@ -201,11 +201,6 @@ configure_file ( "Config/GraphBLAS_API_version.tex.in"
     NEWLINE_STYLE LF )
 configure_file ( "Config/README.md.in"
     "${PROJECT_SOURCE_DIR}/README.md"
-    NEWLINE_STYLE LF )
-
-# for CUDA
-configure_file ( "CUDA/Config/GB_cuda_common_jitFactory.hpp.in"
-    "${PROJECT_SOURCE_DIR}/CUDA/GB_cuda_common_jitFactory.hpp"
     NEWLINE_STYLE LF )
 
 #-------------------------------------------------------------------------------

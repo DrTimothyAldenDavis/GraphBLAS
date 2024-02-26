@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/GB_cuda_jitify_launcher.h
+// GraphBLAS/CUDA/GB_cuda_jitify_launcher.hpp
 //------------------------------------------------------------------------------
 
 // SPDX-License-Identifier: Apache-2.0
@@ -27,12 +27,12 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: rename .hpp?
+// FIXME: delete this file; the GraphBLAS GB_jitifyer does not need it.
 
-#ifndef GB_CUDA_JITIFY_LAUNCHER_H
-#define GB_CUDA_JITIFY_LAUNCHER_H
+#ifndef GB_CUDA_JITIFY_LAUNCHER_HPP
+#define GB_CUDA_JITIFY_LAUNCHER_HPP
 
-#include "GB_cuda_jitify_cache.h"
+#include "GB_cuda_jitify_cache.hpp"
 
 #include <unordered_map>
 #include <memory>

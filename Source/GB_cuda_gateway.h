@@ -122,7 +122,7 @@ bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
     const GrB_Matrix A              // input matrix
 ) ;
 
-GrB_Info GB_cuda_reduce_to_scalar_jit
+GrB_Info GB_cuda_reduce_to_scalar
 (
     // output:
     GB_void *s,                 // note: statically allocated on CPU stack; if

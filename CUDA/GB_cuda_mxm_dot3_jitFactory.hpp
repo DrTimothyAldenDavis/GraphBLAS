@@ -122,7 +122,7 @@ public:
 
     // create the kernel
     string_to_be_jitted << kernel_name << std::endl <<
-    R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#include "GB_cuda_kernel.cuh")" << std::endl <<
     R"(#define GB_cuda_jit_kernel )" << kernel_name << std::endl <<
     R"(#include ")" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "GB_cuda_jit_AxB_dense_phase1.cuh")" << std::endl;
@@ -214,7 +214,7 @@ public:
 
     // create the kernel
     string_to_be_jitted << kernel_name << std::endl <<
-    R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#include "GB_cuda_kernel.cuh")" << std::endl <<
     R"(#define GB_cuda_jit_kernel )" << kernel_name << std::endl <<
     R"(#include ")" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "GB_cuda_jit_AxB_dot3_phase1.cuh")" << std::endl;
@@ -299,7 +299,7 @@ public:
     // create the kernel
     std::string kernel_name = "GB_cuda_jit__AxB_phase2";
     string_to_be_jitted << kernel_name << std::endl <<
-    R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#include "GB_cuda_kernel.cuh")" << std::endl <<
     R"(#define GB_cuda_jit_kernel )" << kernel_name << std::endl <<
     R"(#include "GB_cuda_jit_AxB_phase2.cuh")" << std::endl;
 
@@ -362,7 +362,7 @@ public:
     // create the kernel
     std::string kernel_name = "GB_cuda_jit__AxB_phase2end";
     string_to_be_jitted << kernel_name << std::endl <<
-    R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#include "GB_cuda_kernel.cuh")" << std::endl <<
     R"(#define GB_cuda_jit_kernel )" << kernel_name << std::endl <<
     R"(#include "GB_cuda_jit_AxB_phase2end.cuh")" << std::endl;
 
@@ -446,7 +446,7 @@ public:
 
     // create the kernel
     string_to_be_jitted << kernel_name << std::endl <<
-    R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#include "GB_cuda_kernel.cuh")" << std::endl <<
     R"(#define GB_cuda_jit_kernel )" << kernel_name << std::endl <<
     R"(#include ")" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "GB_cuda_jit_)" << final_kernel_name_ss.str() << R"(.cuh")" << std::endl;
@@ -564,7 +564,7 @@ public:
 
     // create the kernel
     string_to_be_jitted << kernel_name << std::endl <<
-    R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#include "GB_cuda_kernel.cuh")" << std::endl <<
     R"(#define GB_cuda_jit_kernel )" << kernel_name << std::endl <<
     R"(#include ")" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "GB_cuda_jit_)" << final_kernel_name_ss.str() << R"(.cuh")" << std::endl;
@@ -687,7 +687,7 @@ public:
 
     // create the kernel
     string_to_be_jitted << kernel_name << std::endl <<
-    R"(#include "GB_cuda_kernel.h")" << std::endl <<
+    R"(#include "GB_cuda_kernel.cuh")" << std::endl <<
     R"(#define GB_cuda_jit_kernel )" << kernel_name << std::endl <<
     R"(#include ")" << mxm_factory_.filename << R"(")" << std::endl <<
     R"(#include "GB_cuda_jit_)" << final_kernel_name_ss.str() << R"(.cuh")" << std::endl;

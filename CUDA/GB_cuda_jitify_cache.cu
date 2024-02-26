@@ -22,6 +22,8 @@
  * limitations under the License.
  */
 
+// FIXME: delete this file; the GraphBLAS GB_jitifyer does not need it.
+
 //------------------------------------------------------------------------------
 
 #include <stdio.h>
@@ -33,8 +35,8 @@
 #include <sys/types.h>
 #include <filesystem>
 
-#include "GB_cuda_jitify_cache.h"
-#include "GraphBLAS_cuda.h"
+#include "GB_cuda_jitify_cache.hpp"
+#include "GraphBLAS_cuda.hpp"
 
 extern "C"
 {

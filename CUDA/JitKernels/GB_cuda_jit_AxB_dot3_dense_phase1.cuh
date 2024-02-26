@@ -17,9 +17,9 @@
 #pragma once
 
 #include <limits>
-#include "GB_cuda_kernel.h"
+#include "GB_cuda_kernel.cuh"
 #include "GB_mxm_shared_definitions.h"
-#include "GB_cuda_buckets.h"
+#include "GB_cuda_AxB_dot3_buckets.hpp"
 #include <cub/block/block_scan.cuh>
 #include <cooperative_groups.h>
 

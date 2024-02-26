@@ -1,4 +1,4 @@
-// SuiteSparse:GraphBLAS 9.1.1
+// SuiteSparse:GraphBLAS 9.1.2
 //------------------------------------------------------------------------------
 // GraphBLAS.h: definitions for the GraphBLAS package
 //------------------------------------------------------------------------------
@@ -237,7 +237,7 @@
 #define GxB_IMPLEMENTATION_DATE "Feb XX, 2024"
 #define GxB_IMPLEMENTATION_MAJOR 9
 #define GxB_IMPLEMENTATION_MINOR 1
-#define GxB_IMPLEMENTATION_SUB   1
+#define GxB_IMPLEMENTATION_SUB   2
 #define GxB_SPEC_DATE "Dec 22, 2023"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 1
@@ -3771,6 +3771,8 @@ typedef enum            // for global options or matrix options
     GxB_JIT_C_CMAKE_LIBS = 7031,     // CPU JIT C libraries when using cmake
     GxB_JIT_USE_CMAKE = 7032,        // CPU JIT: use cmake or direct compile
     GxB_JIT_ERROR_LOG = 7033,        // CPU JIT: error log file
+
+    GxB_JIT_CUDA_PREFACE = 7100,     // CUDA JIT C++ preface
 
     //------------------------------------------------------------
     // GrB_get for GrB_Matrix:

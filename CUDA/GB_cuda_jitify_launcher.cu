@@ -25,7 +25,7 @@
  * limitations under the License.
  */
 
-#include "GB_cuda_jitify_launcher.h"
+#include "GB_cuda_jitify_launcher.hpp"
 #include <cstdint>
 
 namespace jit {

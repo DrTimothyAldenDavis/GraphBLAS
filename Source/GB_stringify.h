@@ -22,7 +22,9 @@ void GB_macrofy_preface
 (
     FILE *fp,               // target file to write, already open
     char *kernel_name,      // name of the kernel
-    char *preface           // user-provided preface
+    char *C_preface,        // user-provided preface for CPU JIT kernels
+    char *CUDA_preface,     // user-provided preface for CUDA JIT kernels
+    GB_jit_kcode kcode
 ) ;
 
 //------------------------------------------------------------------------------
@@ -73,6 +75,7 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
                                 // except for the suffix
     char **suffix,              // suffix for user-defined kernel
     // input:
+    const GB_jit_kcode kcode,   // kernel to encode
     GrB_Monoid monoid,      // the monoid to enumify
     GrB_Matrix A            // input matrix to reduce
 ) ;
@@ -665,7 +668,8 @@ void GB_macrofy_query
     GrB_Type type0,
     GrB_Type type1,
     GrB_Type type2,
-    uint64_t hash       // hash code for the kernel
+    uint64_t hash,      // hash code for the kernel
+    GB_jit_kcode kcode
 ) ;
 
 //------------------------------------------------------------------------------

@@ -28,17 +28,11 @@
 //******************************************************************************
 
 #pragma once
-#include <limits>
-#include <cstdint>
-#include <cmath>
-#include <stdio.h>
-#include <cooperative_groups.h>
-#include "GB_cuda_kernel.h"
+#include "GB_cuda_kernel.cuh"
 #include "GB_mxm_shared_definitions.h"
-#include "GB_cuda_atomics.cuh"
 #include "GB_hash.h"
 #include "GB_hyper_hash_lookup.h"
-#include "GB_cuda_dot3_defn.h"
+#include "GB_cuda_dot3_defn.cuh"
 
 using namespace cooperative_groups;
 #define tile_sz 32

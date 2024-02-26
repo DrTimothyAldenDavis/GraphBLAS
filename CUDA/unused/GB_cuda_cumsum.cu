@@ -18,7 +18,7 @@
 // sum (count [0..j-1]).  count [n] is implicitly zero on input.
 // On output, count [n] is the total sum.
 
-#include "GB_cuda.h"
+#include "GB_cuda.hpp"
 // #include <local_cub/device/device_scan.cuh>
 #include <cub/device/device_scan.cuh>
 
