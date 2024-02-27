@@ -583,6 +583,19 @@ GrB_Info GB_jit_kernel_rowscale                                         \
     int32_t blocksz                                                     \
 )
 
+#define GB_JIT_CUDA_KERNEL_DOT3_PROTO(GB_jit_kernel_AxB_dot3)           \
+GrB_Info GB_jit_kernel_AxB_dot3                                         \
+(                                                                       \
+    GrB_Matrix C,                                                       \
+    const GrB_Matrix M,                                                 \
+    const GrB_Matrix A,                                                 \
+    const GrB_Matrix B,                                                 \
+    cudaStream_t stream,                                                \
+    int device,                                                         \
+    int number_of_sms,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
+)
+
 //------------------------------------------------------------------------------
 // shorthand macros for GB_prejit.c:
 //------------------------------------------------------------------------------
@@ -634,6 +647,7 @@ GrB_Info GB_jit_kernel_rowscale                                         \
 //------------------------------------------------------------------------------
 
 #define JIT_CUDA_RED(g)  GB_JIT_CUDA_KERNEL_REDUCE_PROTO(g) ;
+#define JIT_CUDA_DOT3(g) GB_JIT_CUDA_KERNEL_DOT3_PROTO(g) ;
 
 #endif
 

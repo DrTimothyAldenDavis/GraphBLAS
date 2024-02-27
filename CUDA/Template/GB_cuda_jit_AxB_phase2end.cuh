@@ -5,31 +5,24 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-// fill the global buckets
+
+// dot3_phase2end: fill the global buckets
+
 //------------------------------------------------------------------------------
 
-#pragma once
-#include "GB_cuda_kernel.cuh"
-#include "GB_mxm_shared_definitions.h"
-#include "GB_cuda_AxB_dot3_buckets.hpp"
-
-//#include <cooperative_groups.h>
-//#include <cub/block/block_scan.cuh>
-//using namespace cooperative_groups;
-
-__global__ void GB_cuda_jit_kernel // AxB_phase2end
-    (
-        // input, not modified:
-        const int64_t *__restrict__ nanobuckets,    // array of size NBUCKETS-blockDim.x-by-nblocks
-        const int64_t *__restrict__ blockbucket,    // global bucket count, of size NBUCKETS*nblocks
-        // output:
-        const int64_t *__restrict__ bucketp,        // global bucket cumsum, of size NBUCKETS+1
-              int64_t *__restrict__ bucket,         // global buckets, of size cnz (== mnz)
-        const int64_t *__restrict__ offset,         // global offsets, for each bucket
-        // inputs, not modified:
-        const GrB_Matrix C,      // output matrix
-        const int64_t cnz        // number of entries in C and M
-    )
+__global__ void GB_cuda_AxB_phase2end_kernel
+(
+    // input, not modified:
+    const int64_t *__restrict__ nanobuckets,    // array of size NBUCKETS-blockDim.x-by-nblocks
+    const int64_t *__restrict__ blockbucket,    // global bucket count, of size NBUCKETS*nblocks
+    // output:
+    const int64_t *__restrict__ bucketp,        // global bucket cumsum, of size NBUCKETS+1
+          int64_t *__restrict__ bucket,         // global buckets, of size cnz (== mnz)
+    const int64_t *__restrict__ offset,         // global offsets, for each bucket
+    // inputs, not modified:
+    const GrB_Matrix C,      // output matrix
+    const int64_t cnz        // number of entries in C and M
+)
 {
 
     //--------------------------------------------------------------------------

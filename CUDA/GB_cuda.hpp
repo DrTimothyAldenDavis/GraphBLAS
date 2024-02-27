@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/GB_cuda.hpp
+// GraphBLAS/CUDA/GB_cuda.hpp: include file for host CUDA methods (not for JIT)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -25,29 +25,22 @@ extern "C"
     #include <cassert>
     #include <cmath>
     #include "GB.h"
+    #include "GB_stringify.h"
+    #include "GB_iceil.h"
 }
 
 // Finally, include the CUDA definitions
 #include "cuda_runtime.h"
 #include "cuda.h"
 
-// FIXME: NVIDIA jitify.hpp will be removed:
-#include "jitify.hpp"
-#include "GB_cuda_mxm_factory.hpp"
-
+#include <limits>
 #include <iostream>
+#include <cstdint>
+#include <stdint.h>
+#include <stdio.h>
+
 #include "GB_cuda_error.hpp"
-
-// NBUCKETS buckets: computed by up to NBUCKETS-1 kernel launches (zombies need
-// no work...), using different kernels (with different configurations
-// depending on the bucket).
-// FIXME: this is only needed by the AxB_dot3 kernel
-#include "GB_cuda_AxB_dot3_buckets.hpp"
-
-extern "C"
-{
-    #include "GB_stringify.h"
-}
+#include "GB_cuda_timer.hpp"
 
 //------------------------------------------------------------------------------
 // prefetch and memadvise
@@ -55,6 +48,7 @@ extern "C"
 
 // for the "which" parameter of GB_cuda_matrix_prefetch:
 // FIXME: rename this to GB_WHATEVER_P for GB_cuda_matrix_advise
+
 #define GB_PREFETCH_P   1
 #define GB_PREFETCH_H   2
 #define GB_PREFETCH_Y   4

@@ -14,27 +14,15 @@
 //  mask and computes total work required to form C. Then it classifies each
 //  dot product into a set of buckets for efficient compute. 
 
-#pragma once
-
-#include <limits>
-#include "GB_cuda_kernel.cuh"
-#include "GB_mxm_shared_definitions.h"
-#include "GB_cuda_AxB_dot3_buckets.hpp"
-#include <cub/block/block_scan.cuh>
-#include <cooperative_groups.h>
-
-using namespace cooperative_groups;
-
 //------------------------------------------------------------------------------
-// GB_jit_AxB_dot3_dense_phase1: lookup i,j pairs and store in Mi, Ci 
+// GB_cuda_AxB_dot3_dense_phase1_kernel: lookup i,j pairs and store in Mi, Ci 
 //------------------------------------------------------------------------------
 
-// GB_AxB_dense_phase1 is a CUDA kernel that scans all entries in M and
-// assigns i,j coordinates for each entries and stores in Mi and Ci. 
+// GB_cuda_AxB_dot3_dense_phase1_kernel is a CUDA kernel that scans all entries
+// in M and assigns i,j coordinates for each entries and stores in Mi and Ci. 
+// A and B are both bitmap/full.  C and M are sparse/hypersparse.
 
-#define chunk_size 128
-
-__global__ void GB_cuda_jit_kernel // GB_jit_AxB_dot3_dense_phase1
+__global__ void GB_cuda_AxB_dot3_dense_phase1_kernel
 (
     // input/output:
     GrB_Matrix C,           // final output matrix
@@ -53,7 +41,6 @@ __global__ void GB_cuda_jit_kernel // GB_jit_AxB_dot3_dense_phase1
     #endif
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
-//  const int64_t mnz =  GB_nnz(M) ;
     const GB_M_NVALS (mnz) ;
 
     int64_t *__restrict__ Ci = C->i ;   // for zombies, or bucket assignment

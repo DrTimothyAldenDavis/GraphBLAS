@@ -22,27 +22,19 @@
 //  M         <- mask matrix
 //  A         <- input matrix A
 //  B         <- input matrix B
-//  int sz                 <- nnz of very sparse vectors
 
 //  Blocksize is 1024, uses warp and block reductions to count zombies produced.
 //******************************************************************************
-
-#pragma once
-#include "GB_cuda_kernel.cuh"
-#include "GB_mxm_shared_definitions.h"
-#include "GB_hash.h"
-#include "GB_hyper_hash_lookup.h"
-#include "GB_cuda_dot3_defn.cuh"
-
-using namespace cooperative_groups;
-#define tile_sz 32
 
 //------------------------------------------------------------------------------
 // GB_warp_ReduceSumPlus_int64
 //------------------------------------------------------------------------------
 
-__inline__ __device__ 
-int64_t GB_warp_ReduceSumPlus_int64( thread_block_tile<tile_sz> g, int64_t val)
+__inline__ __device__ int64_t GB_warp_ReduceSumPlus_int64
+(
+    thread_block_tile<tile_sz> g,
+    int64_t val
+)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
@@ -65,8 +57,10 @@ int64_t GB_warp_ReduceSumPlus_int64( thread_block_tile<tile_sz> g, int64_t val)
 // GB_block_ReduceSum_int64
 //------------------------------------------------------------------------------
 
-__inline__ __device__
-int64_t GB_block_ReduceSum_int64(thread_block g, int64_t val)
+__inline__ __device__ int64_t GB_block_ReduceSum_int64
+(
+    thread_block g, int64_t val
+)
 {
   static __shared__ int64_t shared[tile_sz]; // Shared mem for 32 partial sums
 
@@ -93,10 +87,10 @@ int64_t GB_block_ReduceSum_int64(thread_block g, int64_t val)
 }
 
 //------------------------------------------------------------------------------
-// AxB_dot3_phase3_vsvs
+// GB_cuda_AxB_dot3_phase3_vsvs_kernel
 //------------------------------------------------------------------------------
 
-__global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsvs
+__global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
 (
   int64_t start,
   int64_t end,
@@ -104,27 +98,16 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsvs
   GrB_Matrix C,
   GrB_Matrix M,
   GrB_Matrix A,
-  GrB_Matrix B,
-  int sz            // unused
+  GrB_Matrix B
 )
 {
 
-    // TODO: Figure out how to use graphblas-specific INFINITY macro
-    #ifndef INFINITY
-    #define INFINITY std::numeric_limits<GB_C_TYPE>::max()
-    #endif
-
-    int64_t dots = end - start;
-   // sz = expected non-zeros per dot
-//   /*
-//   int m = (gridDim.x*blockDim.x)*256/sz;
-//   int dpt = (nvecs+ gridDim.x*blockDim.x -1)/(gridDim.x*blockDim.x);
-//   m = dpt < m ? dpt : m;
-//
-//   int dots = (nvecs +m -1)/m;
-//   */
+    #if !GB_A_IS_PATTERN
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *)A->x  ;
+    #endif
+    #if !GB_B_IS_PATTERN
     const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *)B->x  ;
+    #endif
           GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *)C->x  ;
           int64_t *__restrict__ Ci = C->i ;
     const int64_t *__restrict__ Mi = M->i ;
@@ -162,17 +145,10 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsvs
     const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;
     #endif
 
-    //int64_t pfirst, plast;
-
-    //GB_PARTITION (pfirst, plast, dots, blockIdx.x, gridDim.x ) ;
-
     int64_t my_nzombies = 0 ;
 
     int all_in_one = ( (end - start) == (M->p)[(M->nvec)] ) ;
 
-  //for ( int64_t kk = pfirst+ threadIdx.x ;
-  //              kk < plast;
-  //              kk += blockDim.x )
     for ( int64_t kk = start+ threadIdx.x +blockDim.x*blockIdx.x ;
                   kk < end;
                   kk += blockDim.x*gridDim.x )

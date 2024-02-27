@@ -15,22 +15,8 @@
 //  mask and computes total work required to form C. Then it classifies each
 //  dot product into a set of buckets for efficient compute. 
 
-#pragma once
-
-#include <limits>
-#include <stdint.h>
-#include "GB_cuda_kernel.cuh"
-#include "GB_mxm_shared_definitions.h"
-#include "GB_hash.h"
-#include "GB_hyper_hash_lookup.h"
-#include "GB_cuda_AxB_dot3_buckets.hpp"
-#include <cub/block/block_scan.cuh>
-#include <cooperative_groups.h>
-
-using namespace cooperative_groups;
-
 //------------------------------------------------------------------------------
-// GB_jit_AxB_dot3_phase1: build nanobuckets, hunt for pre-zombies
+// GB_jit_AxB_dot3_phase1_kernel: build nanobuckets, hunt for pre-zombies
 //------------------------------------------------------------------------------
 
 // GB_AxB_cuda_dot3_phase1 is a CUDA kernel that scans all entries in C and
@@ -54,9 +40,7 @@ using namespace cooperative_groups;
 // FIXME: What if all entries are in one bucket;
 // can we skip the bucket creation?
 
-#define chunk_size 128
-
-__global__ void GB_cuda_jit_kernel  // was GB_jit_AxB_dot3_phase1
+__global__ void GB_jit_AxB_dot3_phase1_kernel
 (
     // outputs, preallocated in global memory:
     int64_t *nanobuckets,   // array of size NBUCKETS-blockDim.x-by-gridDim.x
@@ -74,7 +58,9 @@ __global__ void GB_cuda_jit_kernel  // was GB_jit_AxB_dot3_phase1
     // get C, M, A, and B
     //--------------------------------------------------------------------------
 
+    #if GB_M_IS_HYPER
     const int64_t *__restrict__ Mh = M->h ;
+    #endif
     const int64_t *__restrict__ Mp = M->p ;
     const int64_t *__restrict__ Mi = M->i ;
     #if !GB_MASK_STRUCT
@@ -82,22 +68,22 @@ __global__ void GB_cuda_jit_kernel  // was GB_jit_AxB_dot3_phase1
     #endif
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
-//  const int64_t mnz = GB_nnz(M) ;
     const GB_M_NVALS (mnz) ;
-    const bool M_is_hyper = M->h != NULL ;
     ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
 
     const int64_t *__restrict__ Ap = A->p ;
-    const int64_t *__restrict__ Ai = A->i ;
+//  const int64_t *__restrict__ Ai = A->i ;
+    #if GB_A_IS_BITMAP || GB_A_IS_FULL
     const int64_t avlen = A->vlen ;
-//  const int64_t anz = GB_nnz(A) ;
-    const GB_A_NVALS (anz) ;
+    #endif
+//  const GB_A_NVALS (anz) ;
 
     const int64_t *__restrict__ Bp = B->p ;
-    const int64_t *__restrict__ Bi = B->i ;
+//  const int64_t *__restrict__ Bi = B->i ;
+    #if GB_B_IS_BITMAP || GB_B_IS_FULL
     const int64_t bvlen = B->vlen ;
-//  const int64_t bnz = GB_nnz(B);
-    const GB_B_NVALS (bnz) ;
+    #endif
+//  const GB_B_NVALS (bnz) ;
 
     #if GB_A_IS_HYPER
     const int64_t anvec = A->nvec ;

@@ -47,24 +47,15 @@
     See also denseDotProduct.cu.
 */
 
-#pragma once
-#include <limits>
-#include <cstdint>
-#include "GB_cuda_kernel.cuh"
-#include "GB_mxm_shared_definitions.h"
-#include <cooperative_groups.h>
-
-// Using tile size fixed at compile time, we don't need shared memory
-#define tile_sz 32 
-
-using namespace cooperative_groups;
-
 //------------------------------------------------------------------------------
-// warp_ReduceSum
+// warp_ReduceSum_dndn
 //------------------------------------------------------------------------------
 
-__inline__ __device__ GB_Z_TYPE warp_ReduceSum(thread_block_tile<32> g,
-    GB_Z_TYPE val)
+__inline__ __device__ GB_Z_TYPE warp_ReduceSum_dndn
+(
+    thread_block_tile<32> g,
+    GB_Z_TYPE val
+)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
@@ -79,10 +70,10 @@ __inline__ __device__ GB_Z_TYPE warp_ReduceSum(thread_block_tile<32> g,
 }
 
 //------------------------------------------------------------------------------
-// AxB_dot3_phase3_dndn
+// GB_cuda_AxB_dot3_phase3_dndn_kernel
 //------------------------------------------------------------------------------
 
-__global__ void GB_cuda_jit_kernel // was AxB_dot3_phase3_dndn
+__global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
 (
     GrB_Matrix C,
     GrB_Matrix M,
@@ -90,13 +81,13 @@ __global__ void GB_cuda_jit_kernel // was AxB_dot3_phase3_dndn
     GrB_Matrix B
 )
 {
-    // TODO: Figure out how to use graphblas-specific INFINITY macro
-    #ifndef INFINITY
-    #define INFINITY std::numeric_limits<GB_C_TYPE>::max()
-    #endif
 
+    #if !GB_A_IS_PATTERN
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *)A->x  ;
+    #endif
+    #if !GB_A_IS_PATTERN
     const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *)B->x  ;
+    #endif
           GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *)C->x  ;
           int64_t *__restrict__ Ci = C->i ;
     const int64_t *__restrict__ Mi = M->i ;
@@ -149,7 +140,7 @@ __global__ void GB_cuda_jit_kernel // was AxB_dot3_phase3_dndn
 
             //      if (threadIdx.x == 0 ){
             //          printf("tid=%d, i,j = %d,%d  nnzA= %d, nnzB=%d\n",
-            //                 threadIdx.x, (int)i,(int)j,  (int)nnzA, (int)nnzB);
+            //          threadIdx.x, (int)i,(int)j,  (int)nnzA, (int)nnzB);
             //      }
             //      __syncthreads();
 
@@ -178,7 +169,8 @@ __global__ void GB_cuda_jit_kernel // was AxB_dot3_phase3_dndn
                     cij_exists |= b ;
                     if (b)
                     {
-                        GB_MULTADD ( cij, aki, bkj, i, k, j ) ;        // cij += aki * bkj
+                        // cij += aki * bkj
+                        GB_MULTADD ( cij, aki, bkj, i, k, j ) ;
                     }
                 }
             }
@@ -190,7 +182,8 @@ __global__ void GB_cuda_jit_kernel // was AxB_dot3_phase3_dndn
                     {
                         GB_GETA (aki, Ax, pA+k, ) ;           // aki = A(k,i)
                         GB_GETB (bkj, Bx, pB+k, ) ;           // bkj = B(k,j)
-                        GB_MULTADD ( cij, aki, bkj, i, k, j ) ;        // cij += aki * bkj
+                        // cij += aki * bkj
+                        GB_MULTADD ( cij, aki, bkj, i, k, j ) ;
                         cij_exists = true ;
                     }
                 }
@@ -203,7 +196,8 @@ __global__ void GB_cuda_jit_kernel // was AxB_dot3_phase3_dndn
                     {
                         GB_GETA (aki, Ax, pA+k, ) ;           // aki = A(k,i)
                         GB_GETB (bkj, Bx, pB+k, ) ;           // bkj = B(k,j)
-                        GB_MULTADD ( cij, aki, bkj, i, k, j ) ;        // cij += aki * bkj
+                        // cij += aki * bkj
+                        GB_MULTADD ( cij, aki, bkj, i, k, j ) ;
                         cij_exists = true ;
                     }
                 }
@@ -222,7 +216,7 @@ __global__ void GB_cuda_jit_kernel // was AxB_dot3_phase3_dndn
 
         #if !GB_C_ISO
         // FIXME: the ANY monoid needs the cij_exists for each thread
-        cij = warp_ReduceSum<32> ( tile, cij);
+        cij = warp_ReduceSum_dndn<32> ( tile, cij);
         #endif
 
         // write result for this block to global mem
@@ -230,7 +224,8 @@ __global__ void GB_cuda_jit_kernel // was AxB_dot3_phase3_dndn
         {
             if (cij_exists)
             {
-                GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (GB_C_TYPE) cij
+                // Cx [pair_id] = (GB_C_TYPE) cij
+                GB_PUTC (cij, Cx, pair_id) ;
                 Ci [pair_id] = i ;
             }
             else

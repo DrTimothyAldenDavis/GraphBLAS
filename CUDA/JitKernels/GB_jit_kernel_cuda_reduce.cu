@@ -26,18 +26,20 @@
 #error "kernel undefined for C iso"
 #endif
 
+// GB_warp_Reduce assumes tile_sz is 32 threads.
+#define tile_sz 32
+#define log2_tile_sz 5
+
 using namespace cooperative_groups ;
 
 //------------------------------------------------------------------------------
 // GB_warp_Reduce: reduce all entries in a warp to a single scalar
 //------------------------------------------------------------------------------
 
-// GB_warp_Reduce assumes tile_sz is 32 threads.
-#define tile_sz 32
-#define log2_tile_sz 5
-
-__inline__ __device__
-GB_Z_TYPE GB_warp_Reduce( thread_block_tile<tile_sz> g, GB_Z_TYPE val)
+__inline__ __device__ GB_Z_TYPE GB_warp_Reduce
+(
+    thread_block_tile<tile_sz> g, GB_Z_TYPE val
+)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial val[k] to val[lane+k]
@@ -62,8 +64,11 @@ GB_Z_TYPE GB_warp_Reduce( thread_block_tile<tile_sz> g, GB_Z_TYPE val)
 // GB_block_Reduce: reduce across all warps into a single scalar
 //------------------------------------------------------------------------------
 
-__inline__ __device__
-GB_Z_TYPE GB_block_Reduce(thread_block g, GB_Z_TYPE val)
+__inline__ __device__ GB_Z_TYPE GB_block_Reduce
+(
+    thread_block g,
+    GB_Z_TYPE val
+)
 {
     static __shared__ GB_Z_TYPE shared [tile_sz] ;
     int lane = threadIdx.x & (tile_sz-1) ;
@@ -231,7 +236,7 @@ __global__ void GB_cuda_reduce_kernel
 
 extern "C"
 {
-GB_JIT_CUDA_KERNEL_REDUCE_PROTO (GB_jit_kernel) ;
+    GB_JIT_CUDA_KERNEL_REDUCE_PROTO (GB_jit_kernel) ;
 }
 
 GB_JIT_CUDA_KERNEL_REDUCE_PROTO (GB_jit_kernel)

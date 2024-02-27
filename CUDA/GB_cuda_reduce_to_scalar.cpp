@@ -15,7 +15,7 @@
 
 #define GB_FREE_ALL                                         \
 {                                                           \
-    rmm_wrap_free (zscalar) ;                               \
+    GB_FREE_WORK (&zscalar, zscalar_size) ;                 \
     GB_Matrix_free (&V) ;                                   \
     if (stream != nullptr) cudaStreamDestroy (stream) ;     \
     stream = nullptr ;                                      \
@@ -41,6 +41,7 @@ GrB_Info GB_cuda_reduce_to_scalar
     //--------------------------------------------------------------------------
 
     GB_void *zscalar = NULL ;
+    size_t zscalar_size = 0 ;
     GrB_Matrix V = NULL ;
     (*V_handle) = NULL ;
     GrB_Info info = GrB_SUCCESS ;
@@ -60,8 +61,6 @@ GrB_Info GB_cuda_reduce_to_scalar
     int threads_per_block = 320 ;
     int work_per_thread = 256;
 //  int number_of_sms = GB_Global_gpu_sm_get (0) ;
-
-    GBURBLE ("\n(launch reduce factory) \n") ;
 
     GrB_Type ztype = monoid->op->ztype ;
     size_t zsize = ztype->size ;
@@ -91,8 +90,8 @@ GrB_Info GB_cuda_reduce_to_scalar
     {
         // the kernel launch can reduce A to zscalar all by itself
         // allocate and initialize zscalar (upscaling it to at least 32 bits)
-        size_t zscalar_size = GB_IMAX (zsize, sizeof (uint32_t)) ;
-        zscalar = (GB_void *) rmm_wrap_malloc (zscalar_size) ;
+        size_t zscalar_space = GB_IMAX (zsize, sizeof (uint32_t)) ;
+        zscalar = GB_MALLOC (zscalar_space, GB_void, &zscalar_size) ;
         if (zscalar == NULL)
         {
             // out of memory
@@ -138,7 +137,7 @@ GrB_Info GB_cuda_reduce_to_scalar
         // return the scalar result
         // s = zscalar (but only the first zsize bytes of it)
         memcpy (s, zscalar, zsize) ;
-        rmm_wrap_free (zscalar) ;
+        GB_FREE_WORK (&zscalar, zscalar_size) ;
     }
     else
     {

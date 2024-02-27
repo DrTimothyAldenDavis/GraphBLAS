@@ -116,6 +116,11 @@ bool GB_cuda_get_device_properties
     GB_cuda_device *prop
 ) ;
 
+bool GB_cuda_type_branch            // return true if the type is OK on GPU
+(
+    const GrB_Type type             // type to query
+) ;
+
 bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
 (
     const GrB_Monoid monoid,        // monoid to do the reduction
@@ -156,7 +161,7 @@ bool GB_cuda_type_branch            // return true if the type is OK on GPU
     const GrB_Type type             // type to query
 ) ;
 
-GrB_Info GB_cuda_AxB_dot3_jit       // C<M> = A'*B using dot product method
+GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
 (
     GrB_Matrix C,                   // output matrix, static header
     const GrB_Matrix M,             // mask matrix
