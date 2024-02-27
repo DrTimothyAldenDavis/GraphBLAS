@@ -197,8 +197,8 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         info = GrB_NO_VALUE ;
 
         #if defined ( GRAPHBLAS_HAS_CUDA )
-         if (GB_cuda_rowscale_branch (D, B, mult, flipxy)) {
-            info = GB_cuda_rowscale (C, D, B, semiring, flipxy) ;
+        if (GB_cuda_rowscale_branch (D, B, mult, flipxy)) {
+            info = GB_cuda_rowscale (C, D, B, mult, flipxy) ;
         }
         #endif
 

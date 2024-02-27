@@ -1,5 +1,4 @@
-#include "GraphBLAS_cuda.hpp"
-#include "GB_cuda.hpp"
+#include "GB_cuda_ewise.hpp"
 
 #undef GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE ;
@@ -17,11 +16,15 @@ GrB_Info GB_cuda_rowscale
 )
 {
     // FIXME: use the stream pool
-    // cudaStream_t stream ;
-    // CHECK_CUDA (cudaStreamCreate (&stream)) ;
+    cudaStream_t stream ;
+    CUDA_OK (cudaStreamCreate (&stream)) ;
 
     printf ("Entered GPU rowscale\n") ;
 
+    // compute gridsz, blocksz, call GB_cuda_rowscale_jit
+    
+    CUDA_OK (cudaStreamSynchronize (stream)) ;
+    CUDA_OK (cudaStreamDestroy (stream)) ;
     return GrB_SUCCESS ; 
 
 }

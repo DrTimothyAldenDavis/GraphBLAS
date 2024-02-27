@@ -55,7 +55,6 @@ GB_JIT_CUDA_KERNEL_ROWSCALE_PROTO (GB_jit_kernel)
     dim3 block (blocksz) ;
     
     GB_cuda_rowscale_kernel <<<grid, block, 0, stream>>> (C, D, B) ;
-    cudaStreamSynchronize (stream) ;
 
     return (GrB_SUCCESS) ;
 }
