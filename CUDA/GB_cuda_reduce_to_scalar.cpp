@@ -18,6 +18,7 @@
     rmm_wrap_free (zscalar) ;                               \
     GB_Matrix_free (&V) ;                                   \
     if (stream != nullptr) cudaStreamDestroy (stream) ;     \
+    stream = nullptr ;                                      \
 }
 
 #include "GB_cuda_reduce.hpp"

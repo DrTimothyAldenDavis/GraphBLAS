@@ -36,47 +36,7 @@ extern "C"
 #include "GB_cuda_mxm_factory.hpp"
 
 #include <iostream>
-
-#define CHECK_CUDA_SIMPLE(call)                                           \
-  do {                                                                    \
-    cudaError_t err = call;                                               \
-    if (err != cudaSuccess) {                                             \
-      const char* str = cudaGetErrorName( err);                           \
-      std::cout << "(CUDA runtime) returned " << str;                     \
-      std::cout << " (" << __FILE__ << ":" << __LINE__ << ":" << __func__ \
-                << "())" << std::endl;                                    \
-      return (GrB_PANIC) ;                                                \
-    }                                                                     \
-  } while (0)
-
-#define CU_OK(call) CHECK_CUDA_SIMPLE(call)
-
 #include "GB_cuda_error.hpp"
-
-//------------------------------------------------------------------------------
-// GB_CUDA_CATCH: catch error from a try { ... } region
-//------------------------------------------------------------------------------
-
-//  #define GB_FREE_ALL { some macro to free all temporaries }
-//  GrB_Info info ;
-//  try { ... do stuff that can throw an exception }
-//  GB_CUDA_CATCH (info) ;
-
-#define GB_CUDA_CATCH(info)                                     \
-    catch (std::exception& e)                                   \
-    {                                                           \
-        printf ("CUDA error: %s\n", e.what ( )) ;               \
-        info = GrB_PANIC ;                                      \
-        /* out_of_memory : info = GrB_OUT_OF_MEMORY ; */        \
-        /* nulltpr:  info = ... ; */                            \
-        /* no gpus here: info = GrB_PANIC ; */                  \
-    }                                                           \
-    if (info != GrB_SUCCESS)                                    \
-    {                                                           \
-        /* CUDA failed */                                       \
-        GB_FREE_ALL ;                                           \
-        return (info) ;                                         \
-    }
 
 // NBUCKETS buckets: computed by up to NBUCKETS-1 kernel launches (zombies need
 // no work...), using different kernels (with different configurations

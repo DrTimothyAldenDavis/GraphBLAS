@@ -23,8 +23,8 @@
 #define GB_FREE_WORKSPACE                                               \
 {                                                                       \
     /* FIXME: use a stream pool instead */                              \
-    CU_OK (cudaStreamSynchronize(stream));                              \
-    CU_OK (cudaStreamDestroy(stream));                                  \
+    if (stream != nullptr) cudaStreamDestroy (stream) ;                 \
+    stream = nullptr ;                                                  \
     GB_FREE_WORK (&Nanobuckets, Nb_size) ;                              \
     GB_FREE_WORK (&Blockbucket, Bb_size) ;                              \
     GB_FREE_WORK (&Bucketp, Bup_size) ;                                 \
@@ -55,10 +55,19 @@ GrB_Info GB_cuda_AxB_dot3_jit       // C<M> = A'*B using dot product method
 )
 {
 
-    // FIXME: pass in a stream instead, or checkout a stream
-    cudaStream_t stream = NULL ;
-    CU_OK (cudaStreamCreate(&stream));
+    int64_t *Nanobuckets = NULL ; size_t Nb_size  = 0 ;
+    int64_t *Blockbucket = NULL ; size_t Bb_size  = 0 ;
+    int64_t *Bucket = NULL      ; size_t Bu_size  = 0 ;
+    int64_t *Bucketp = NULL     ; size_t Bup_size = 0 ;
+    int64_t *offset = NULL      ; size_t O_size   = 0 ;
+    cudaStream_t stream = nullptr ;
 
+    //--------------------------------------------------------------------------
+    // create the stream
+    //--------------------------------------------------------------------------
+
+    // FIXME: pass in a stream instead, or checkout a stream
+    CUDA_OK (cudaStreamCreate (&stream)) ;
     GpuTimer kernel_timer; 
 
     //--------------------------------------------------------------------------
@@ -92,25 +101,16 @@ GrB_Info GB_cuda_AxB_dot3_jit       // C<M> = A'*B using dot product method
 
     ASSERT (A->vlen == B->vlen) ;
     GBURBLE ("(GPU dot3) ") ;
-    //printf ("\nM -------------\n") ; GxB_Matrix_fprint (M, "M", GxB_SHORT, stdout) ;
-    //printf ("\nA -------------\n") ; GxB_Matrix_fprint (A, "A", GxB_SHORT, stdout) ;
-    //printf ("\nB -------------\n") ; GxB_Matrix_fprint (B, "B", GxB_SHORT, stdout) ;
 
     //--------------------------------------------------------------------------
     // initializations
     //--------------------------------------------------------------------------
 
-    int64_t *Nanobuckets = NULL ; size_t Nb_size  = 0 ;
-    int64_t *Blockbucket = NULL ; size_t Bb_size  = 0 ;
-    int64_t *Bucket = NULL      ; size_t Bu_size  = 0 ;
-    int64_t *Bucketp = NULL     ; size_t Bup_size = 0 ;
-    int64_t *offset = NULL      ; size_t O_size   = 0 ;
-
     int device = -1;
 
     // FIXME: control the GPU to use via the descriptor
-    CU_OK (cudaSetDevice( 0 ));
-    CU_OK (cudaGetDevice(&device));
+    CUDA_OK (cudaSetDevice ( 0 )) ;
+    CUDA_OK (cudaGetDevice (&device)) ;
 
     //--------------------------------------------------------------------------
     // get M
@@ -156,28 +156,24 @@ GrB_Info GB_cuda_AxB_dot3_jit       // C<M> = A'*B using dot product method
         return (info) ;
     }
 
-//  try this with GB_Ap_null, above in GB_new_bix
-//  C->p = M->p ; C->p_shallow = true ;
-//  C->h = M->h ; C->h_shallow = true ;
-
     //--------------------------------------------------------------------------
     // Pre-fetch arrays that will be used on the device
     //--------------------------------------------------------------------------
 
     // GB_cuda_matrix_advise (C, cnvec, cnz, which, what, device)
     // advise C
-    CU_OK (cudaMemAdvise (C->p, (cnvec+1) * sizeof ( int64_t),
+    CUDA_OK (cudaMemAdvise (C->p, (cnvec+1) * sizeof ( int64_t),
         cudaMemAdviseSetPreferredLocation, device)) ;
     if (M_is_hyper)
     { 
-        CU_OK (cudaMemAdvise (C->h, cnvec * sizeof ( int64_t),
+        CUDA_OK (cudaMemAdvise (C->h, cnvec * sizeof ( int64_t),
             cudaMemAdviseSetPreferredLocation, device)) ;
     }
-    CU_OK (cudaMemAdvise (C->i, (cnz+1) * sizeof ( int64_t),
+    CUDA_OK (cudaMemAdvise (C->i, (cnz+1) * sizeof ( int64_t),
         cudaMemAdviseSetPreferredLocation, device)) ;
     if (!C_iso)
     {
-        CU_OK (cudaMemAdvise (C->x, (cnz+1) * C->type->size ,
+        CUDA_OK (cudaMemAdvise (C->x, (cnz+1) * C->type->size ,
             cudaMemAdviseSetPreferredLocation, device)) ;
     }
 
@@ -190,11 +186,11 @@ GrB_Info GB_cuda_AxB_dot3_jit       // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     // FIXME: use shallow?
-    CU_OK (cudaMemcpyAsync (C->p, M->p, (cnvec+1) * sizeof (int64_t),
+    CUDA_OK (cudaMemcpyAsync (C->p, M->p, (cnvec+1) * sizeof (int64_t),
         cudaMemcpyDefault, stream)) ;
     if (M_is_hyper)
     { 
-        CU_OK (cudaMemcpyAsync (C->h, M->h, cnvec * sizeof (int64_t),
+        CUDA_OK (cudaMemcpyAsync (C->h, M->h, cnvec * sizeof (int64_t),
             cudaMemcpyDefault, stream)) ;
     }
 
@@ -278,7 +274,7 @@ GrB_Info GB_cuda_AxB_dot3_jit       // C<M> = A'*B using dot product method
             dp1lf.get_number_of_blocks(M)) ;
         kernel_timer.Start();
             dp1lf.jitGridBlockLaunch(C, M, A, B, stream);
-            CU_OK (cudaStreamSynchronize(stream));
+            CUDA_OK (cudaStreamSynchronize(stream));
         kernel_timer.Stop();
         GBURBLE ("(GPU phase1 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
 
@@ -286,7 +282,7 @@ GrB_Info GB_cuda_AxB_dot3_jit       // C<M> = A'*B using dot product method
         GBURBLE ("(GPU Dense full x full launch ) ") ;
         kernel_timer.Start();
             mdlf.jitGridBlockLaunch( C, M, A, B, stream);
-            CU_OK (cudaStreamSynchronize(stream));  // only for timing
+            CUDA_OK (cudaStreamSynchronize(stream));  // only for timing
         kernel_timer.Stop();
         GBURBLE ("(GPU Dense full x full done %12.6g ms, rate=%12.6g)\n", 
                kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
@@ -335,29 +331,29 @@ GrB_Info GB_cuda_AxB_dot3_jit       // C<M> = A'*B using dot product method
 
         // FIXME: do async with streams
         // FIXME: do we need any of these?
-        //CU_OK (cudaMemsetAsync(Nanobuckets, 0,
+        //CUDA_OK (cudaMemsetAsync(Nanobuckets, 0,
         //    nanobuckets_size * sizeof(int64_t), stream));
-        //CU_OK (cudaMemsetAsync(Blockbucket, 0,
+        //CUDA_OK (cudaMemsetAsync(Blockbucket, 0,
         //    blockbuckets_size * sizeof(int64_t), stream));
-        CU_OK (cudaMemsetAsync(Bucketp, 0,
+        CUDA_OK (cudaMemsetAsync(Bucketp, 0,
             (NBUCKETS+1) * sizeof(int64_t), stream));
-        CU_OK (cudaMemsetAsync(offset, 0,
+        CUDA_OK (cudaMemsetAsync(offset, 0,
             NBUCKETS * sizeof(int64_t), stream));
-        //CU_OK (cudaMemsetAsync(Bucket, 0,
+        //CUDA_OK (cudaMemsetAsync(Bucket, 0,
         //    mnz * sizeof(int64_t), stream));
 
         //----------------------------------------------------------------------
         // phase1 and phase2: place each C(i,j) in a bucket
         //----------------------------------------------------------------------
 
-        CU_OK (cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t),
+        CUDA_OK (cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t),
             cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
-        CU_OK (cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t),
+        CUDA_OK (cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t),
             cudaMemAdviseSetAccessedBy, device));
 
-        CU_OK (cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t),
+        CUDA_OK (cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t),
             cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
-        CU_OK (cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t),
+        CUDA_OK (cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t),
             cudaMemAdviseSetAccessedBy, device));
 
         //----------------------------------------------------------------------
@@ -368,7 +364,7 @@ GrB_Info GB_cuda_AxB_dot3_jit       // C<M> = A'*B using dot product method
             p1lf.get_number_of_blocks(M));
         kernel_timer.Start();
         p1lf.jitGridBlockLaunch(Nanobuckets, Blockbucket, C, M, A, B, stream);
-        CU_OK (cudaStreamSynchronize(stream));
+        CUDA_OK (cudaStreamSynchronize(stream));
         kernel_timer.Stop();
 
         GBURBLE ("(GPU phase1 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
@@ -383,7 +379,7 @@ GrB_Info GB_cuda_AxB_dot3_jit       // C<M> = A'*B using dot product method
         p2lf.jitGridBlockLaunch(Blockbucket, offset, M, stream);
         kernel_timer.Stop();
 
-        CU_OK (cudaStreamSynchronize(stream));
+        CUDA_OK (cudaStreamSynchronize(stream));
 
         int64_t s= offset[0];
         C->nzombies = s;
@@ -408,7 +404,7 @@ GrB_Info GB_cuda_AxB_dot3_jit       // C<M> = A'*B using dot product method
             p2elf.jitGridBlockLaunch(Nanobuckets, Blockbucket,
                              Bucketp, Bucket, offset, C, M, stream);
 
-            CU_OK (cudaStreamSynchronize(stream));
+            CUDA_OK (cudaStreamSynchronize(stream));
             kernel_timer.Stop();
             GBURBLE ("(GPU phase2end done %12.6g ms)\n",kernel_timer.Elapsed());
         }
@@ -429,7 +425,7 @@ GrB_Info GB_cuda_AxB_dot3_jit       // C<M> = A'*B using dot product method
                 kernel_timer.Start();
                 p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket,
                     C, M, A, B, stream);
-                CU_OK (cudaStreamSynchronize(stream));  // only for timing
+                CUDA_OK (cudaStreamSynchronize(stream));  // only for timing
                 kernel_timer.Stop();
                 GBURBLE ("(GPU phase3 bucket %d done %12.6g ms, rate=%12.6g)\n",
                     bucket, kernel_timer.Elapsed(),
@@ -442,6 +438,7 @@ GrB_Info GB_cuda_AxB_dot3_jit       // C<M> = A'*B using dot product method
     // free workspace and return result
     //--------------------------------------------------------------------------
 
+    CUDA_OK (cudaStreamSynchronize (stream)) ;
     GB_FREE_WORKSPACE ;
     return GrB_SUCCESS; 
 }
