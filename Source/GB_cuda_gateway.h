@@ -134,6 +134,23 @@ GrB_Info GB_cuda_reduce_to_scalar
     const GrB_Matrix A
 ) ;
 
+bool GB_cuda_rowscale_branch
+(
+    const GrB_Matrix D,
+    const GrB_Matrix B,
+    const GrB_Semiring semiring,
+    const bool flipxy
+) ;
+
+GrB_Info GB_cuda_rowscale
+(
+    GrB_Matrix C,
+    const GrB_Matrix D,
+    const GrB_Matrix B,
+    const GrB_Semiring semiring,
+    const bool flipxy
+) ;
+
 bool GB_cuda_type_branch            // return true if the type is OK on GPU
 (
     const GrB_Type type             // type to query

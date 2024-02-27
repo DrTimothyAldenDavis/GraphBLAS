@@ -194,6 +194,14 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
                 GB_Type_compatible (B->type, mult->ytype))) ;
         }
 
+        info = GrB_NO_VALUE ;
+
+        #if defined ( GRAPHBLAS_HAS_CUDA )
+         if (GB_cuda_rowscale_branch (D, B, mult, flipxy)) {
+            info = GB_cuda_rowscale (C, D, B, semiring, flipxy) ;
+        }
+        #endif
+
         //----------------------------------------------------------------------
         // determine the number of threads to use
         //----------------------------------------------------------------------
@@ -207,36 +215,37 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         // via the factory kernel
         //----------------------------------------------------------------------
 
-        info = GrB_NO_VALUE ;
         #ifndef GBCOMPACT
         GB_IF_FACTORY_KERNELS_ENABLED
-        { 
-
-            //------------------------------------------------------------------
-            // define the worker for the switch factory
-            //------------------------------------------------------------------
-
-            #define GB_DxB(mult,xname) GB (_DxB_ ## mult ## xname)
-
-            #define GB_BINOP_WORKER(mult,xname)                     \
-            {                                                       \
-                info = GB_DxB(mult,xname) (C, D, B, nthreads) ;     \
-            }                                                       \
-            break ;
-
-            //------------------------------------------------------------------
-            // launch the switch factory
-            //------------------------------------------------------------------
-
-            GB_Type_code xcode, ycode, zcode ;
-            if (GB_binop_builtin (D->type, D_is_pattern, B->type, B_is_pattern,
-                mult, flipxy, &opcode, &xcode, &ycode, &zcode))
+        if (info == GrB_NO_VALUE){
             { 
-                // C=D*B, rowscale with built-in operator
-                #define GB_BINOP_IS_SEMIRING_MULTIPLIER
-                #define GB_NO_PAIR
-                #include "GB_binop_factory.c"
-                #undef  GB_BINOP_IS_SEMIRING_MULTIPLIER
+
+                //------------------------------------------------------------------
+                // define the worker for the switch factory
+                //------------------------------------------------------------------
+
+                #define GB_DxB(mult,xname) GB (_DxB_ ## mult ## xname)
+
+                #define GB_BINOP_WORKER(mult,xname)                     \
+                {                                                       \
+                    info = GB_DxB(mult,xname) (C, D, B, nthreads) ;     \
+                }                                                       \
+                break ;
+
+                //------------------------------------------------------------------
+                // launch the switch factory
+                //------------------------------------------------------------------
+
+                GB_Type_code xcode, ycode, zcode ;
+                if (GB_binop_builtin (D->type, D_is_pattern, B->type, B_is_pattern,
+                    mult, flipxy, &opcode, &xcode, &ycode, &zcode))
+                { 
+                    // C=D*B, rowscale with built-in operator
+                    #define GB_BINOP_IS_SEMIRING_MULTIPLIER
+                    #define GB_NO_PAIR
+                    #include "GB_binop_factory.c"
+                    #undef  GB_BINOP_IS_SEMIRING_MULTIPLIER
+                }
             }
         }
         #endif

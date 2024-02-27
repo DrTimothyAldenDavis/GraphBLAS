@@ -572,6 +572,17 @@ GrB_Info GB_jit_kernel_reduce                                           \
     int32_t blocksz                                                     \
 )
 
+#define GB_JIT_CUDA_KERNEL_ROWSCALE_PROTO(GB_jit_kernel_rowscale)       \
+GrB_Info GB_jit_kernel_rowscale                                         \
+(                                                                       \
+    GrB_Matrix C,                                                       \
+    GrB_Matrix D,                                                       \
+    GrB_Matrix B,                                                       \
+    cudaStream_t stream,                                                \
+    int32_t gridsz,                                                     \
+    int32_t blocksz                                                     \
+)
+
 //------------------------------------------------------------------------------
 // shorthand macros for GB_prejit.c:
 //------------------------------------------------------------------------------
