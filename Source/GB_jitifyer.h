@@ -176,11 +176,17 @@ typedef enum
 
     GB_JIT_CUDA_KERNEL          = 1000, // no CUDA kernel
 
-    // reduce to scalar on the GPU
-    GB_JIT_CUDA_KERNEL_REDUCE   = 1001,
+    // reduce to scalar in CUDA
+    GB_JIT_CUDA_KERNEL_REDUCE   = 1001, // GB_cuda_reduce_to_scalar
 
-    // rowscale
+    // C<M> = A*B, except for row/col scale (which are ewise methods)
+    // ...
+    GB_JIT_CUDA_KERNEL_AXB_DOT3 = 1004, // GB_cuda_AxB_dot3
+
+    // ewise methods:
+    // ...
     GB_JIT_CUDA_KERNEL_ROWSCALE = 1011,
+    // ...
 
 }
 GB_jit_kcode ;

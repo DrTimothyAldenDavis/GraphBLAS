@@ -19,28 +19,16 @@
 //  B         <- B matrix to multiply, dense in sparse format? 
 //******************************************************************************
 
-#pragma once
-#include <limits>
-#include <cstdint>
-#include <stdio.h>
-#include "GB_cuda_kernel.cuh"
-#include "GB_mxm_shared_definitions.h"
-#include "GB_hash.h"
-#include "GB_hyper_hash_lookup.h"
-#include <cooperative_groups.h>
-#define tile_sz 32
-//#include "local_cub/block/block_reduce.cuh"
-#include <cub/block/block_reduce.cuh>
-#include "GB_cuda_dot3_defn.cuh"
-
-using namespace cooperative_groups;
-
 //------------------------------------------------------------------------------
 // reduce_sum_int64
 //------------------------------------------------------------------------------
 
 // for counting zombies only (always int64_t)
-__device__ int64_t reduce_sum_int64(thread_block_tile<tile_sz> g, int64_t val)
+__device__ int64_t reduce_sum_int64
+(
+    thread_block_tile<tile_sz> g,
+    int64_t val
+)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
@@ -52,10 +40,10 @@ __device__ int64_t reduce_sum_int64(thread_block_tile<tile_sz> g, int64_t val)
 }
 
 //------------------------------------------------------------------------------
-// AxB_dot3_phase3_vsdn
+// GB_cuda_AxB_dot3_phase3_vsdn_kernel
 //------------------------------------------------------------------------------
 
-__global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsdn
+__global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
 ( 
   int64_t start,
   int64_t end,
@@ -63,17 +51,16 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsdn
   GrB_Matrix C, 
   GrB_Matrix M, 
   GrB_Matrix A, 
-  GrB_Matrix B,
-  int sz            // unused (FIXME: remove this)
+  GrB_Matrix B
 )
 {
-    // TODO: Figure out how to use graphblas-specific INFINITY macro
-    #ifndef INFINITY
-    #define INFINITY std::numeric_limits<GB_C_TYPE>::max()
-    #endif
 
+    #if !GB_A_IS_PATTERN
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *)A->x  ;
+    #endif
+    #if !GB_B_IS_PATTERN
     const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *)B->x  ;
+    #endif
           GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *)C->x  ;
     int64_t *__restrict__ Ci = C->i ;
     const int64_t *__restrict__ Mi = M->i ;
@@ -119,20 +106,9 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsdn
     const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;
     #endif
 
-//   typedef cub::BlockReduce<int, 32> BlockReduce;
-//   __shared__ typename BlockReduce::TempStorage temp_storage;
-
-//   if( threadIdx.x ==0)
-//      printf("thd:%d %d dots/thrd, nvec = %d blockDim=%d\n",threadIdx.x, sz, nvec, blockDim.x);
-//   __syncthreads();
-
     int64_t pair_id; 
 
     int64_t zc = 0 ;
-
-//       if (threadIdx.x ==0)
-//         printf("thd%u pi=%lld\n",tid, start+threadIdx.x);
-//       __syncthreads();
 
     int all_in_one = ( (end - start) == (M->p)[(M->nvec)] ) ;
 
@@ -271,7 +247,8 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsdn
         GB_CIJ_EXIST_POSTCHECK
         if (cij_exists)
         {
-            GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (GB_C_TYPE) cij
+            // Cx [pair_id] = (GB_C_TYPE) cij
+            GB_PUTC (cij, Cx, pair_id) ;
             Ci [pair_id] = i ;
         }
         else

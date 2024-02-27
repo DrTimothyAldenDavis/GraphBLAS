@@ -6,11 +6,11 @@
 
 //------------------------------------------------------------------------------
 
-// This CUDA kernel produces the semi-ring product of two
-// sparse matrices of types GB_A_TYPE and GB_B_TYPE and common index space size n, to a  
-// output matrix of type GB_C_TYPE. The matrices are sparse, with different numbers
-// of non-zeros and different sparsity patterns. 
-// ie. we want to produce C = A'*B in the sense of the given semi-ring.
+// This CUDA kernel produces the semi-ring product of two sparse matrices of
+// types GB_A_TYPE and GB_B_TYPE and common index space size n, to an output
+// matrix of type GB_C_TYPE. The matrices are sparse, with different numbers of
+// non-zeros and different sparsity patterns.  ie. we want to produce C = A'*B
+// in the sense of the given semi-ring.
 
 // This version uses an entire threadblock to compute each C(i,j) dot product.
 
@@ -25,48 +25,11 @@
 //  GrB_Matrix A         <- input matrix A
 //  GrB_Matrix B         <- input matrix B
 
-#pragma once
-
-#include <limits>
-#include <cstdint>
-#include <cooperative_groups.h>
-#include "GB_cuda_kernel.cuh"
-#include "GB_mxm_shared_definitions.h"
-#include "GB_hash.h"
-#include "GB_hyper_hash_lookup.h"
-#include "GB_cuda_dot3_defn.cuh"
-
-// Using tile size fixed at compile time, we don't need shared memory
-#define tile_sz 32 
-
-using namespace cooperative_groups;
-
 //------------------------------------------------------------------------------
-// GB_reduce_sum
+// GB_cuda_AxB_dot3_phase3_spdn_kernel
 //------------------------------------------------------------------------------
 
-__device__ __inline__ 
-GB_Z_TYPE GB_reduce_sum(thread_block_tile<tile_sz> g, GB_Z_TYPE val)
-{
-    // Each iteration halves the number of active threads
-    // Each thread adds its partial sum[i] to sum[lane+i]
-    // Temporary GB_Z_TYPE is necessary to handle arbirary ops
-    // FIXME: only works if sizeof(GB_Z_TYPE) <= 32 bytes
-    // FIXME: the ANY monoid needs the cij_exists for each thread
-    #pragma unroll
-    for (int i = warp_sz >> 1; i > 0; i >>= 1)
-    {
-        GB_Z_TYPE next = g.shfl_down( val, i);
-        GB_ADD( val, val, next ); 
-    }
-    return val;
-}
-
-//------------------------------------------------------------------------------
-// AxB_dot3_phase3_spdn
-//------------------------------------------------------------------------------
-
-__global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_spdn
+__global__ void GB_cuda_AxB_dot3_phase3_spdn_kernel
 (
     int64_t start,
     int64_t end,
@@ -74,18 +37,16 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_spdn
     GrB_Matrix C,
     GrB_Matrix M,
     GrB_Matrix A,
-    GrB_Matrix B,
-    int sz              // FIXME: unused
+    GrB_Matrix B
 )
 {
 
-    // TODO: Figure out how to use graphblas-specific INFINITY macro
-    #ifndef INFINITY
-    #define INFINITY std::numeric_limits<GB_C_TYPE>::max()
-    #endif
-
+    #if !GB_A_IS_PATTERN
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *)A->x  ;
+    #endif
+    #if !GB_B_IS_PATTERN
     const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *)B->x  ;
+    #endif
           GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *)C->x  ;
           int64_t *__restrict__ Ci = C->i ;
     const int64_t *__restrict__ Mi = M->i ;
@@ -202,13 +163,15 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_spdn
                 //--------------------------------------------------------------
 
                 cij_exists = true ;
-                for (int64_t p = pB + threadIdx.x ; p < pB_end ; p += blockDim.x)
+                for (int64_t p = pB + threadIdx.x ; p < pB_end ;
+                    p += blockDim.x)
                 {
                     int64_t k = Bi [p] ;        // next row index of B(:,j)
                     // cij += A(k,i) * B(k,j)
                     GB_GETA ( aki, Ax, pA+k, ) ;           // aki = A(k,i)
                     GB_GETB ( bkj, Bx, p, ) ;              // bkj = B(k,j)
-                    GB_MULTADD ( cij, aki, bkj, i, k, j ) ;        // cij += aki * bkj
+                    // cij += aki * bkj
+                    GB_MULTADD ( cij, aki, bkj, i, k, j ) ;
                     GB_DOT_TERMINAL (cij) ;     // break if cij == terminal
                 }
             }
@@ -241,13 +204,15 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_spdn
                 //--------------------------------------------------------------
 
                 cij_exists = true ;
-                for (int64_t p = pA + threadIdx.x ; p < pA_end ; p += blockDim.x)
+                for (int64_t p = pA + threadIdx.x ; p < pA_end ;
+                    p += blockDim.x)
                 {
                     int64_t k = Ai [p] ;        // next row index of A(:,i)
                     // cij += A(k,i) * B(k,j)
                     GB_GETA ( aki, Ax, p, ) ;               // aki = A(i,k)
                     GB_GETB ( bkj, Bx, pB+k, ) ;            // bkj = B(j,k)
-                    GB_MULTADD ( cij, aki, bkj, i, k, j) ;         // cij += aik * bjk
+                    // cij += aik * bjk
+                    GB_MULTADD ( cij, aki, bkj, i, k, j) ;
                     GB_DOT_TERMINAL (cij) ;     // break if cij == terminal
                 }
             }
@@ -295,7 +260,8 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_spdn
         {
             if (cij_exists)
             {
-                GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (GB_C_TYPE) cij
+                // Cx [pair_id] = (GB_C_TYPE) cij
+                GB_PUTC (cij, Cx, pair_id) ;
                 Ci [pair_id] = i ;
             }
             else

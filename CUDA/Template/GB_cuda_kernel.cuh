@@ -10,9 +10,22 @@
 // GraphBLAS.  It provides a subset of GraphBLAS.h and GB.h, plus other
 // definitions.  It is not used on the host.
 
-// FIXME: rename to .cuh?
-
 #pragma once
+
+//------------------------------------------------------------------------------
+// C++ and CUDA #include files
+//------------------------------------------------------------------------------
+
+#include <limits>
+#include <type_traits>
+#include <cstdint>
+#include <cmath>
+#include <stdio.h>
+#include <cooperative_groups.h>
+
+//------------------------------------------------------------------------------
+// CUDA kernel definitions
+//------------------------------------------------------------------------------
 
 #define GB_CUDA_KERNEL
 
@@ -39,17 +52,6 @@
 // for internal static inline functions
 #undef  GB_STATIC_INLINE
 #define GB_STATIC_INLINE static __device__ __inline__
-
-//------------------------------------------------------------------------------
-// C++ and CUDA #include files
-//------------------------------------------------------------------------------
-
-#include <limits>
-#include <type_traits>
-#include <cstdint>
-#include <cmath>
-#include <stdio.h>
-#include <cooperative_groups.h>
 
 //------------------------------------------------------------------------------
 // subset of GraphBLAS.h
@@ -184,12 +186,12 @@ GrB_Desc_Value ;
 // subset of GB.h
 //------------------------------------------------------------------------------
 
-//#include GB_iceil.h
+// from GB_iceil.h:
 #define GB_ICEIL(a,b) (((a) + (b) - 1) / (b))
-//#include GB_imin.h
+// from GB_imin.h:
 #define GB_IMAX(x,y) (((x) > (y)) ? (x) : (y))
 #define GB_IMIN(x,y) (((x) < (y)) ? (x) : (y))
-//#include GB_zombie.h
+// from GB_zombie.h:
 #define GB_FLIP(i)             (-(i)-2)
 #define GB_IS_FLIPPED(i)       ((i) < 0)
 #define GB_IS_ZOMBIE(i)        ((i) < 0)
@@ -205,6 +207,7 @@ GrB_Desc_Value ;
 #include "GB_int64_mult.h"
 #define GB_HAS_CMPLX_MACROS 1
 #include "GB_complex.h"
+#include "GB_memory_macros.h"
 
 // version for the GPU, with fewer branches
 #define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                             \
@@ -311,5 +314,13 @@ static __device__ __inline__ int64_t GB_search_for_vector_device
 // final #include files
 //------------------------------------------------------------------------------
 
+#include "GB_cuda_error.hpp"
+#include "GB_printf_kernels.h"
 #include "GB_cuda_atomics.cuh"
+
+extern "C"
+{
+    #include "GB_werk.h"
+    #include "GB_callback.h"
+}
 
