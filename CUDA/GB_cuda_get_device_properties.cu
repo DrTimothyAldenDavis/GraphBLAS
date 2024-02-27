@@ -68,7 +68,7 @@ bool GB_cuda_get_device_properties  // true if OK, false if failure
     memset (prop, 0, sizeof (GB_cuda_device)) ;
 
     int old_device ;
-    CU_OK (cudaGetDevice (&old_device ) ) ;
+    CU_OK (cudaGetDevice (&old_device )) ;
 
     //--------------------------------------------------------------------------
     // get the properties
@@ -78,15 +78,15 @@ bool GB_cuda_get_device_properties  // true if OK, false if failure
     size_t memfree, memtotal ;
 
     CU_OK (cudaDeviceGetAttribute (&num_sms,
-                cudaDevAttrMultiProcessorCount, device) ) ;
+                cudaDevAttrMultiProcessorCount, device)) ;
     CU_OK (cudaDeviceGetAttribute (&compute_capability_major,
-                cudaDevAttrComputeCapabilityMajor, device) ) ;
+                cudaDevAttrComputeCapabilityMajor, device)) ;
     CU_OK (cudaDeviceGetAttribute (&compute_capability_minor,
-                cudaDevAttrComputeCapabilityMinor, device) ) ;
+                cudaDevAttrComputeCapabilityMinor, device)) ;
 
-    CU_OK (cudaSetDevice (device ) ) ;
-    CU_OK (cudaMemGetInfo (&memfree, &memtotal) ) ;
-    CU_OK (cudaSetDevice (old_device ) ) ;
+    CU_OK (cudaSetDevice (device )) ;
+    CU_OK (cudaMemGetInfo (&memfree, &memtotal)) ;
+    CU_OK (cudaSetDevice (old_device )) ;
 
     prop->total_global_memory = memtotal ;
     prop->number_of_sms = num_sms ;
