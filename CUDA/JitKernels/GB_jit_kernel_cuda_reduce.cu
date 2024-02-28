@@ -30,8 +30,6 @@
 #define tile_sz 32
 #define log2_tile_sz 5
 
-using namespace cooperative_groups ;
-
 //------------------------------------------------------------------------------
 // GB_warp_Reduce: reduce all entries in a warp to a single scalar
 //------------------------------------------------------------------------------
@@ -127,7 +125,7 @@ __global__ void GB_cuda_reduce_kernel
     // phase 1: each thread reduces a part of the matrix to its own scalar
     //--------------------------------------------------------------------------
 
-    #if GB_A_IS_SPARSE || GB_A_IS_HYPERSPARSE
+    #if GB_A_IS_SPARSE || GB_A_IS_HYPER
     {
 
         //----------------------------------------------------------------------
@@ -181,7 +179,7 @@ __global__ void GB_cuda_reduce_kernel
         // A is bitmap
         //----------------------------------------------------------------------
 
-        const uint8_t *__restrict__ Ab = A->b ;
+        const int8_t *__restrict__ Ab = A->b ;
         for (int64_t p = blockIdx.x * blockDim.x + threadIdx.x ;
             p < anz ;
             p += blockDim.x * gridDim.x)

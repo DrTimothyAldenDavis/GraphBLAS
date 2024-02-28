@@ -1,18 +1,22 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/JitKernels/GB_jit_cuda_AxB_dot3.cu
+// GraphBLAS/CUDA/JitKernels/GB_jit_kernel_cuda_AxB_dot3.cu
 //------------------------------------------------------------------------------
 
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-#define GB_FREE_ALL                                                     \
-{                                                                       \
-    GB_FREE_WORK (&Nanobuckets, Nb_size) ;                              \
-    GB_FREE_WORK (&Blockbucket, Bb_size) ;                              \
-    GB_FREE_WORK (&Bucketp, Bup_size) ;                                 \
-    GB_FREE_WORK (&offset, O_size) ;                                    \
-    GB_FREE_WORK (&Bucket, Bu_size) ;                                   \
+//------------------------------------------------------------------------------
+// GB_jit_kernel_cuda_AxB_dot3: C<M>=A'*B using the dot3 method on the GPU.
+//------------------------------------------------------------------------------
+
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_FREE_WORK (&Nanobuckets, Nb_size) ;  \
+    GB_FREE_WORK (&Blockbucket, Bb_size) ;  \
+    GB_FREE_WORK (&Bucketp, Bup_size) ;     \
+    GB_FREE_WORK (&offset, O_size) ;        \
+    GB_FREE_WORK (&Bucket, Bu_size) ;       \
 }
 
 #if GB_C_ISO
@@ -20,15 +24,14 @@
 #error "kernel undefined for C iso"
 #endif
 
-#include <cub/block/block_scan.cuh>
-#include <cooperative_groups.h>
-
-using namespace cooperative_groups ;
-
 // TODO: Figure out how to use graphblas-specific INFINITY macro
 #ifndef INFINITY
 #define INFINITY std::numeric_limits<GB_C_TYPE>::max()
 #endif
+
+//------------------------------------------------------------------------------
+// kernel launch geometry
+//------------------------------------------------------------------------------
 
 #define chunk_size 128
 
@@ -153,10 +156,10 @@ __device__ __inline__ GB_Z_TYPE GB_reduce_sum
     // FIXME: only works if sizeof(GB_Z_TYPE) <= 32 bytes
     // FIXME: the ANY monoid needs the cij_exists for each thread
     #pragma unroll
-    for (int i = tile_sz >> 1; i > 0; i >>= 1)
+    for (int i = tile_sz >> 1 ; i > 0 ; i >>= 1)
     {
-        GB_Z_TYPE next = g.shfl_down( val, i);
-        GB_ADD( val, val, next ); 
+        GB_Z_TYPE next = g.shfl_down (val, i) ;
+        GB_ADD (val, val, next) ; 
     }
     return val;
 }
@@ -174,8 +177,8 @@ __device__ __inline__ GB_Z_TYPE GB_reduce_sum
     #include "GB_cuda_jit_AxB_dot3_phase1.cuh"
     #include "GB_cuda_jit_AxB_phase2.cuh"
     #include "GB_cuda_jit_AxB_phase2end.cuh"
-    #if ((GB_A_IS_SPARSE || GB_A_IS_HYPERSPARSE) && \
-         (GB_B_IS_SPARSE || GB_B_IS_HYPERSPARSE))
+    #if ((GB_A_IS_SPARSE || GB_A_IS_HYPER) && \
+         (GB_B_IS_SPARSE || GB_B_IS_HYPER))
         // sparse-sparse
         #include "GB_cuda_jit_AxB_dot3_phase3_mp.cuh"
         #include "GB_cuda_jit_AxB_dot3_phase3_vsvs.cuh"
@@ -418,20 +421,20 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         // phase3: do the numerical work
         //----------------------------------------------------------------------
 
-        for ( int bucket = 1 ; bucket < NBUCKETS ; bucket++)
+        for (int bucket = 1 ; bucket < NBUCKETS ; bucket++)
         {
             int64_t start = Bucketp [bucket] ;
             int64_t end   = Bucketp [bucket + 1] ;
-            int64_t cnz = end - start ;
+            int64_t cnz_in_bucket = end - start ;
             int gridsz, blocksz, work_per_thread ;
-            if (cnz > 0)
+            if (cnz_in_bucket > 0)
             {
 
 //              GBURBLE ("(GPU phase3 bucket %d launch ) ", bucket) ;
 //              kernel_timer.Start();
 
-                #if ((GB_A_IS_SPARSE || GB_A_IS_HYPERSPARSE) && \
-                     (GB_B_IS_SPARSE || GB_B_IS_HYPERSPARSE))
+                #if ((GB_A_IS_SPARSE || GB_A_IS_HYPER) && \
+                     (GB_B_IS_SPARSE || GB_B_IS_HYPER))
 
                     switch (bucket)
                     {
@@ -444,11 +447,12 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                         {
                             blocksz = 256 ;
                             work_per_thread = 4 ;
-                            if (cnz > (2<<12))
+                            if (cnz_in_bucket > (2<<12))
                             {
                                 blocksz = 512 ;
                             }
-                            gridsz = GB_ICEIL (cnz, work_per_thread*blocksz) ;
+                            gridsz = GB_ICEIL (cnz_in_bucket,
+                                work_per_thread*blocksz) ;
                             gridsz = GB_IMIN (gridsz, 256*number_of_sms) ;
                             dim3 grid_3 (gridsz) ;
                             GB_cuda_AxB_dot3_phase3_vsvs_kernel
@@ -465,12 +469,13 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                         {
                             blocksz = 32 ;
                             work_per_thread = 256 ;
-                            if (cnz > (2<<20))
+                            if (cnz_in_bucket > (2<<20))
                             {
                                 work_per_thread = 1024 ;
                             }
-                            gridsz = GB_ICEIL (cnz, work_per_thread) ;
-                            if ((gridsz < number_of_sms) && (cnz > (2<<20)))
+                            gridsz = GB_ICEIL (cnz_in_bucket, work_per_thread) ;
+                            if ((gridsz < number_of_sms) &&
+                                (cnz_in_bucket > (2<<20)))
                             {
                                 gridsz = number_of_sms ;
                             }
@@ -497,11 +502,12 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                             // FIXME:
                             blocksz = 256 ;
                             work_per_thread = 4 ;
-                            if (cnz > (2<<12))
+                            if (cnz_in_bucket > (2<<12))
                             {
                                 blocksz = 512 ;
                             }
-                            gridsz = GB_ICEIL (cnz, work_per_thread*blocksz) ;
+                            gridsz = GB_ICEIL (cnz_in_bucket,
+                                work_per_thread*blocksz) ;
                             gridsz = GB_IMIN (gridsz, 256*number_of_sms) ;
                             dim3 grid_3 (gridsz) ;
                             GB_cuda_AxB_dot3_phase3_vsdn_kernel
@@ -519,16 +525,18 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                             // FIXME:
                             blocksz = 32 ;
                             work_per_thread = 256 ;
-                            if (cnz > (2<<20))
+                            if (cnz_in_bucket > (2<<20))
                             {
                                 work_per_thread = 1024 ;
                             }
-                            gridsz = GB_ICEIL (cnz, work_per_thread) ;
-                            if ((gridsz < number_of_sms) && (cnz > (2<<20)))
+                            gridsz = GB_ICEIL (cnz_in_bucket, work_per_thread) ;
+                            if ((gridsz < number_of_sms) &&
+                                (cnz_in_bucket > (2<<20)))
                             {
                                 gridsz = number_of_sms ;
                             }
                             gridsz = GB_IMIN (gridsz, 256*number_of_sms) ;
+                            dim3 grid_3 (gridsz) ;
                             GB_cuda_AxB_dot3_phase3_spdn_kernel
                                 <<<grid_3, block, 0, stream>>>
                                 (start, end, Bucket, C, M, A, B) ;

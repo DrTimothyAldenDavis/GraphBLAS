@@ -7,7 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-#include "GraphBLAS.h"
+// #include "GraphBLAS.h"
+#include "graphblas_demos.h"
+
 #undef I
 #if defined ( _OPENMP )
 #include <omp.h>
@@ -24,7 +26,10 @@ int main (void)
     #endif
 
     // start GraphBLAS
-    GrB_init (GrB_NONBLOCKING) ;
+    // GrB_init (GrB_NONBLOCKING) ;
+    GxB_init (GxB_NONBLOCKING_GPU, NULL, NULL, NULL, NULL) ;
+    GB_Global_hack_set (2, 1) ;
+
     int nthreads ;
     GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads) ;
     printf ("demo: reduce a matrix to a scalar, nthreads: %d\n", nthreads) ;

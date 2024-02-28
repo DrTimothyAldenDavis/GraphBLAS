@@ -170,4 +170,6 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump) ;
     }                                                                   \
 }
 
+void GB_Global_hack_set (int k, int64_t hack) ;
+
 #endif

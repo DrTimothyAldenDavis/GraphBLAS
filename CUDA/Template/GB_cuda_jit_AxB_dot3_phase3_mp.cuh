@@ -96,17 +96,9 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
     // zombie count
     int64_t zc = 0;
 
-    int64_t pair_id;
-
     // set thread ID
 //  int tid_global = threadIdx.x+ blockDim.x* blockIdx.x;
     int tid = threadIdx.x;
-
-//  int b = blockIdx.x ;
-
-    // total items to be inspected
-    int64_t ainz = 0;
-    int64_t bjnz = 0;
 
     thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( this_thread_block());
     int all_in_one = ( (end - start) == (M->p)[(M->nvec)] ) ;
@@ -118,7 +110,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
          kk += gridDim.x )
     {
 
-        pair_id = all_in_one ? kk : Bucket [kk] ;
+        int64_t pair_id = all_in_one ? kk : Bucket [kk] ;
         int64_t i = Mi[pair_id];
         int64_t k = Ci[pair_id] >> 4;
 
@@ -135,7 +127,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
         pA_end   = Ap[i+1] ;
         #endif
 
-        ainz = pA_end - pA_start ;
+        int64_t ainz = pA_end - pA_start ;
 
         GB_DECLAREA (aki) ;
         GB_DECLAREB (bkj) ;
@@ -164,7 +156,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
         pB_end   = Bp[j+1] ;
         #endif
 
-        bjnz = pB_end - pB_start;          // bjnz
+        int64_t bjnz = pB_end - pB_start;          // bjnz
         int shared_steps_B = (bjnz + shared_vector_size -1)/shared_vector_size;
          
         __shared__ int64_t Bj_s[shared_vector_size];

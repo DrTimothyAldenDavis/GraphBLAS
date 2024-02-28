@@ -31,7 +31,10 @@ int main (int argc, char **argv)
 {
     GrB_Matrix A = NULL ;
     GrB_Info info ;
-    OK (GrB_init (GrB_NONBLOCKING)) ;
+    // OK (GrB_init (GrB_NONBLOCKING)) ;
+    GxB_init (GxB_NONBLOCKING_GPU, NULL, NULL, NULL, NULL) ;
+    GB_Global_hack_set (2, 1) ;
+
     int nthreads ;
     OK (GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads)) ;
     fprintf (stderr, "import_demo: nthreads: %d\n", nthreads) ;

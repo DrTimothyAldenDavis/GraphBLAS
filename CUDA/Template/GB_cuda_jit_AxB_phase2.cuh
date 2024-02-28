@@ -66,7 +66,6 @@ __inline__ __device__ void blockBucketExclusiveSum
         int loc = block_id + threadIdx.x;
         if ( loc < nblocks)
         {
-            //printf("block %di loading tid=%d\n",block_id,tid);
             data  = blockbucket[bucketId*nblocks +loc ] ;
         }
         this_thread_block().sync();

@@ -103,7 +103,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
     #endif
 
     // zombie count
-    int64_t zc = 0;
+    uint64_t zc = 0;
 
     int64_t start = 0;
     int64_t end   = M->p[M->nvec];
@@ -137,12 +137,6 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
 
             int64_t pB     = (B->vlen)*j;
             int64_t pB_end = pB +(B->vlen);
-
-            //      if (threadIdx.x == 0 ){
-            //          printf("tid=%d, i,j = %d,%d  nnzA= %d, nnzB=%d\n",
-            //          threadIdx.x, (int)i,(int)j,  (int)nnzA, (int)nnzB);
-            //      }
-            //      __syncthreads();
 
             // convert global data pointer to the local pointer of this block
             GB_DECLAREA (aki) ;
@@ -239,7 +233,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
 
         if( threadIdx.x ==0 && zc > 0)
         {
-            GB_cuda_atomic_add <int64_t>( &(C->nzombies), zc) ;
+            GB_cuda_atomic_add <uint64_t>( &(C->nzombies), zc) ;
         }
     }
 }

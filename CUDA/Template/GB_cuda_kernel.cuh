@@ -21,7 +21,9 @@
 #include <cstdint>
 #include <cmath>
 #include <stdio.h>
+#include <cub/block/block_scan.cuh>
 #include <cooperative_groups.h>
+using namespace cooperative_groups ;
 
 //------------------------------------------------------------------------------
 // CUDA kernel definitions
@@ -250,7 +252,7 @@ GrB_Desc_Value ;
 static __device__ __inline__ int64_t GB_search_for_vector_device
 (
     const int64_t p,                // search for vector k that contains p
-    const int64_t *restrict Ap,  // vector pointers to search
+    const int64_t *restrict Ap,     // vector pointers to search
     int64_t kleft,                  // left-most k to search
     int64_t anvec,                  // Ap is of size anvec+1
     int64_t avlen                   // A->vlen
@@ -317,6 +319,8 @@ static __device__ __inline__ int64_t GB_search_for_vector_device
 #include "GB_cuda_error.hpp"
 #include "GB_printf_kernels.h"
 #include "GB_cuda_atomics.cuh"
+#include "GB_hash.h"
+#include "GB_hyper_hash_lookup.h"
 
 extern "C"
 {

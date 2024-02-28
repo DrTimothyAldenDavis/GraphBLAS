@@ -81,7 +81,7 @@ inline auto make_cuda()
 
 inline auto make_managed()
 {
-    std::cout << "Inside make_managed" << std::endl;
+    // std::cout << "Inside make_managed" << std::endl;
     return std::make_shared<rmm::mr::managed_memory_resource>() ;
 }
 
@@ -131,16 +131,16 @@ inline auto make_and_set_managed_pool
     std::size_t maximum_size
 )
 {
-      std::cout<< " make_managed_pool called with  init_size"
-      <<initial_size<<" max_size "<<maximum_size<<"\n";
+    // std::cout<< " make_managed_pool called with  init_size"
+    //   <<initial_size<<" max_size "<<maximum_size<<"\n";
 
     auto resource = rmm::mr::make_owning_wrapper<rmm::mr::pool_memory_resource>
                         ( make_managed(), initial_size, maximum_size ) ;
 
-    std::cout << "Created resource" << std::endl;
+    // std::cout << "Created resource" << std::endl;
     rmm::mr::set_current_device_resource( resource.get()) ;
 
-    std::cout << "Set resource" << std::endl;
+    // std::cout << "Set resource" << std::endl;
     return resource;
 }
 
@@ -194,13 +194,14 @@ int get_current_device(void) {
 //------------------------------------------------------------------------------
 // rmm_wrap_initialize: initialize rmm_wrap_context[device_id]
 //------------------------------------------------------------------------------
-int rmm_wrap_initialize             // returns -1 on error, 0 on success
+
+int rmm_wrap_initialize     // returns -1 on error, 0 on success
 (
-    uint32_t device_id,             // 2, 5, or 7
-    RMM_MODE mode,                  // TODO: describe. Should we default this?
-    size_t init_pool_size,     // TODO: describe. Should we default this?
-    size_t max_pool_size,       // TODO: describe. Should we default this?
-    size_t stream_pool_size     // TODO: describe. Should we default this?
+    uint32_t device_id,     // 2, 5, or 7
+    RMM_MODE mode,          // TODO: describe. Should we default this?
+    size_t init_pool_size,  // TODO: describe. Should we default this?
+    size_t max_pool_size,   // TODO: describe. Should we default this?
+    size_t stream_pool_size // TODO: describe. Should we default this?
 )
 {
 
@@ -213,7 +214,7 @@ int rmm_wrap_initialize             // returns -1 on error, 0 on success
 
     if(stream_pool_size <= 0)
     {
-        std::cout << "Stream pool size must be >=0" << std::endl;
+        // std::cout << "Stream pool size must be >=0" << std::endl;
         // failed to create the alloc_map
         return (-1) ;
     }
@@ -230,7 +231,7 @@ int rmm_wrap_initialize             // returns -1 on error, 0 on success
     //--------------------------------------------------------------------------
 
     // Set CUDA stream pool
-    std::cout << "Creating rmm_wrap stream pool" << std::endl;
+    // std::cout << "Creating rmm_wrap stream pool" << std::endl;
     rmm_wrap_context[device_id]->stream_pool = make_and_set_cuda_stream_pool(stream_pool_size);
     RMM_WRAP_CHECK_CUDA(cudaStreamCreate(&(rmm_wrap_context[device_id]->main_stream)));
 
@@ -255,8 +256,9 @@ int rmm_wrap_initialize             // returns -1 on error, 0 on success
     }
     else if ( mode == rmm_wrap_managed )
     {
-        std::cout << "Seting managed pool" << std::endl;
-        rmm_wrap_context[device_id]->resource = make_and_set_managed_pool( init_pool_size, max_pool_size);
+        // std::cout << "Seting managed pool" << std::endl;
+        rmm_wrap_context[device_id]->resource = 
+            make_and_set_managed_pool( init_pool_size, max_pool_size);
     }
     else
     {
@@ -264,7 +266,7 @@ int rmm_wrap_initialize             // returns -1 on error, 0 on success
         return (-1) ;
     }
 
-    std::cout << "Setting mode for rmm_wrap context" << std::endl;
+    // std::cout << "Setting mode for rmm_wrap context" << std::endl;
     // Mark down the mode for reference later
     rmm_wrap_context[device_id]->mode = mode;
 
@@ -272,11 +274,11 @@ int rmm_wrap_initialize             // returns -1 on error, 0 on success
     // create size map to lookup size of each allocation
     //--------------------------------------------------------------------------
 
-    std::cout << "Setting size_map for rmm_wrap context" << std::endl;
+    // std::cout << "Setting size_map for rmm_wrap context" << std::endl;
     rmm_wrap_context[device_id]->size_map = std::make_shared<alloc_map> () ;
     if (rmm_wrap_context[device_id]->size_map.get() == NULL)
     {
-        std::cout << "Failed to create size_map" << std::endl;
+        // std::cout << "Failed to create size_map" << std::endl;
         // failed to create the alloc_map
         return (-1) ;
     }
@@ -316,7 +318,7 @@ int rmm_wrap_initialize_all_same
 
             intermediate.erase(std::remove_if(intermediate.begin(), intermediate.end(), ::isspace), intermediate.end());
             uint32_t device_id = static_cast<uint32_t>(stoi(intermediate));
-            std::cout << "Found device_id " << device_id << std::endl;
+            // std::cout << "Found device_id " << device_id << std::endl;
             devices.push_back(device_id);
         }
     /**
@@ -325,7 +327,7 @@ int rmm_wrap_initialize_all_same
      */
     } else {
         devices.push_back(0);
-        std::cout << "Using default device_id 0" << std::endl;
+        // std::cout << "Using default device_id 0" << std::endl;
     }
 
     // Allocate rmm_wrap_contexts
@@ -333,7 +335,7 @@ int rmm_wrap_initialize_all_same
     for(int i = 0; i < devices.size(); ++i) {
         rmm_wrap_context[i] = NULL;
         uint32_t device_id = devices[i];
-        std::cout << "Creating rmm_wrap_context for device_id " << device_id << std::endl;
+        // std::cout << "Creating rmm_wrap_context for device_id " << device_id << std::endl;
         int ret = rmm_wrap_initialize(device_id, mode, init_pool_size, max_pool_size, stream_pool_size);
         if(ret < 0) {
             return ret;
@@ -560,7 +562,7 @@ void rmm_wrap_deallocate( void *p, std::size_t size)
        //actual_size = am->at( (std::size_t)(p) )  ;
        auto iter = am->find( (std::size_t)(p) )  ;
        if (iter != am->end() ) actual_size = iter->second;
-       else std::cout<< " rmm_wrap:: tried to free unallocated pointer ! " << p ;
+       // else std::cout<< " rmm_wrap:: tried to free unallocated pointer ! " << p ;
     }
 
     if (actual_size == 0)

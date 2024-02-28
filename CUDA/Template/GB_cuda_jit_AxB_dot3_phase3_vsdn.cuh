@@ -32,7 +32,7 @@ __device__ int64_t reduce_sum_int64
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
-    for (int i = g.size() / 2; i > 0; i /= 2)
+    for (int64_t i = g.size() / 2; i > 0; i /= 2)
     {
         val += g.shfl_down(val,i) ;
     }
@@ -45,15 +45,24 @@ __device__ int64_t reduce_sum_int64
 
 __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
 ( 
-  int64_t start,
-  int64_t end,
-  int64_t *Bucket,  // do the work in Bucket [start:end-1]
-  GrB_Matrix C, 
-  GrB_Matrix M, 
-  GrB_Matrix A, 
-  GrB_Matrix B
+    int64_t start,
+    int64_t end,
+    int64_t *Bucket,  // do the work in Bucket [start:end-1]
+    GrB_Matrix C, 
+    GrB_Matrix M, 
+    GrB_Matrix A, 
+    GrB_Matrix B
 )
 {
+
+    // sparse-times-dense or dense-times-sparse
+    #if !(((GB_A_IS_SPARSE || GB_A_IS_HYPER) &&         \
+           (GB_B_IS_BITMAP || GB_B_IS_FULL))            \
+            ||                                          \
+            ((GB_B_IS_SPARSE || GB_B_IS_HYPER) &&       \
+             (GB_A_IS_BITMAP || GB_A_IS_FULL)))
+    #error "vsdn: for sparse-dense or dense-sparse cases only"
+    #endif
 
     #if !GB_A_IS_PATTERN
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *)A->x  ;
@@ -71,6 +80,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
     #if GB_A_IS_HYPER || GB_A_IS_SPARSE
     const int64_t *__restrict__ Ai = A->i ;
     const int64_t *__restrict__ Ap = A->p ;
+    #else
+    const int64_t avlen = A->vlen ;
     #endif
 
     #if GB_A_IS_BITMAP
@@ -80,6 +91,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
     #if GB_B_IS_HYPER || GB_B_IS_SPARSE
     const int64_t *__restrict__ Bi = B->i ;
     const int64_t *__restrict__ Bp = B->p ;
+    #else
+    const int64_t bvlen = B->vlen ;
     #endif
 
     #if GB_B_IS_BITMAP
@@ -106,62 +119,72 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
     const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;
     #endif
 
-    int64_t pair_id; 
+    int64_t zc = 0 ;        // zombie count
 
-    int64_t zc = 0 ;
+    GB_M_NVALS (mnz) ;
+    ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
+    int64_t cnz_in_bucket = end - start ;
+    int all_in_one = (cnz_in_bucket == mnz) ;
 
-    int all_in_one = ( (end - start) == (M->p)[(M->nvec)] ) ;
-
-    for (int64_t kk = start +threadIdx.x +blockIdx.x*blockDim.x; 
-                 kk < end ;  
-                 kk += gridDim.x*blockDim.x  )
+    for (int64_t kk = start + threadIdx.x + blockIdx.x*blockDim.x ;
+                 kk < end ;
+                 kk += gridDim.x*blockDim.x)
     {
 
-        int64_t pair_id = all_in_one ? kk : Bucket[ kk ];
-        int64_t i = Mi[pair_id];  // cols from mask
+        //----------------------------------------------------------------------
+        // get the entry C(i,j)
+        //----------------------------------------------------------------------
 
-        // FIXME: use another variable, not "k" here:
-        int64_t k = Ci[pair_id] >> 4;  // vector of C encoded in phase1
+        int64_t pair_id = all_in_one ? kk : Bucket[ kk ];
+        int64_t i = Mi [pair_id] ;
+
+        int64_t k = Ci [pair_id] >> 4;  // vector of C encoded in phase1
 
         // j = k or j = Mh [k] if C and M are hypersparse
         int64_t j = GBH_M (Mh, k) ;
 
-        // Prep row offsets for both A and B
+        //----------------------------------------------------------------------
+        // get A(:,i)
+        //----------------------------------------------------------------------
 
-        // find A(:,i)
-        int64_t pA, pA_end ;
         #if GB_A_IS_HYPER
+        int64_t pA, pA_end ;
         GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
             i, &pA, &pA_end) ;
         #elif GB_A_IS_SPARSE
-        pA     = Ap[i] ;
-        pA_end = Ap[i+1] ;
+        int64_t pA     = Ap[i] ;
+        int64_t pA_end = Ap[i+1] ;
         #else
-        // A is bitmap or full
-        pA     = (A->vlen)*i;
-        pA_end = pA +(A->vlen);
+        // A is bitmap or full: only pA is needed
+        int64_t pA = avlen * i ;
         #endif
 
-        // find B(:,j)
-        int64_t pB, pB_end ;
+        //----------------------------------------------------------------------
+        // get B(:,j)
+        //----------------------------------------------------------------------
+
         #if GB_B_IS_HYPER
+        int64_t pB, pB_end ;
         GB_hyper_hash_lookup (Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
             j, &pB, &pB_end) ;
         #elif GB_B_IS_SPARSE
-        pB       = Bp[j];   // col of C
-        pB_end   = Bp[j+1];
+        int64_t pB       = Bp [j] ;
+        int64_t pB_end   = Bp [j+1] ;
         #else
-        // B is bitmap or full
-        pB   = (B->vlen)*j;
-        pB_end = pB +(B->vlen);
+        // B is bitmap or full: only pB is needed
+        int64_t pB = bvlen * j ;
         #endif
+
+        //----------------------------------------------------------------------
+        // C(i,j) = A(:,i)'*B(:,j)
+        //----------------------------------------------------------------------
 
         GB_DECLAREA (aki) ;
         GB_DECLAREB (bkj) ;
         GB_DECLARE_IDENTITY (cij) ;         // GB_Z_TYPE cij = identity
         bool cij_exists = false ;
 
-        int64_t my_nzombies = 0;
+        int64_t my_nzombies = 0 ;
 
         #if ( GB_A_IS_FULL )
         {
@@ -174,7 +197,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
                 //--------------------------------------------------------------
 
                 cij_exists = true ;
-                for (int64_t p = pB ; p < pB_end ; ++p)
+                for (int64_t p = pB ; p < pB_end ; p++)
                 {
                     int64_t k = Bi [p] ;        // next row index of B(:,j)
                     // cij += A(k,i) * B(k,j)
@@ -191,7 +214,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
             // A is bitmap and B is sparse/hyper
             //------------------------------------------------------------------
 
-            for (int64_t p = pB ; p < pB_end ; ++p)
+            for (int64_t p = pB ; p < pB_end ; p++)
             {
                 int64_t k = Bi [p] ;        // next row index of B(:,j)
                 if (Ab [pA+k])              // check if A(k,i) exists
@@ -213,7 +236,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
                 //--------------------------------------------------------------
 
                 cij_exists = true ;
-                for (int64_t p = pA ; p < pA_end ; ++p)
+                for (int64_t p = pA ; p < pA_end ; p++)
                 {
                     int64_t k = Ai [p] ;        // next row index of A(:,i)
                     // cij += A(k,i) * B(k,j)
@@ -231,7 +254,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
             // A is sparse/hyper and B is bitmap
             //------------------------------------------------------------------
 
-            for (int64_t p = pA ; p < pA_end ; ++p)
+            for (int64_t p = pA ; p < pA_end ; p++)
             {
                 int64_t k = Ai [p] ;        // next row index of A(:,i)
                 if (Bb [pB+k])              // check if B(k,j) exists
@@ -243,6 +266,10 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
             }
         }
         #endif
+
+        //----------------------------------------------------------------------
+        // save C(i,j) or declare it a zombie
+        //----------------------------------------------------------------------
 
         GB_CIJ_EXIST_POSTCHECK
         if (cij_exists)
@@ -258,16 +285,19 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
         }
 
         // FIXME: use the same method as vsvs for counting zombies
+
         // sum up the zombie count:
-        thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( this_thread_block());
-        zc += reduce_sum_int64<tile_sz>(tile, my_nzombies);
+        thread_block_tile<tile_sz> tile =
+            tiled_partition<tile_sz> (this_thread_block ()) ;
+        zc += reduce_sum_int64 (tile, my_nzombies) ;
     }
 
-    if(threadIdx.x == 0 && zc > 0)
+    if (threadIdx.x == 0 && zc > 0)
     {
         // this threadblock accumulates its zombie count into the global
         // zombie count
-        GB_cuda_atomic_add <int64_t>( &(C->nzombies), zc) ;
+        uint64_t zu = (uint64_t) zc ;
+        GB_cuda_atomic_add <uint64_t>( &(C->nzombies), zu) ;
     }
 }
 

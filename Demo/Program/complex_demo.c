@@ -76,7 +76,9 @@ int main (int argc, char **argv)
 
     // initialize GraphBLAS and create the user-defined Complex type
     GrB_Info info ;
-    GrB_init (GrB_NONBLOCKING) ;
+    // GrB_init (GrB_NONBLOCKING) ;
+    GxB_init (GxB_NONBLOCKING_GPU, NULL, NULL, NULL, NULL) ;
+    GB_Global_hack_set (2, 1) ;
     int nthreads ;
     GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads) ;
     fprintf (stderr, "complex_demo: nthreads: %d\n", nthreads) ;

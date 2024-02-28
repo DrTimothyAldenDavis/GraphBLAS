@@ -12,7 +12,6 @@
 
 #include "GB_cuda.hpp"
 #include "GB_hash.h"
-#include "GB_hyper_hash_lookup.h"
 
 GrB_Info GB_cuda_AxB_dot3_jit
 (

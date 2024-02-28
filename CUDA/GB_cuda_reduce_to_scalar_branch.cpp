@@ -51,6 +51,7 @@ bool GB_cuda_reduce_to_scalar_branch    // return true to use the GPU
     }
     else
     {
+        std::cout << "Not using cuda path for reduce." <<  std::endl;
         return (false) ;
     }
 }

@@ -27,13 +27,13 @@
 //******************************************************************************
 
 //------------------------------------------------------------------------------
-// GB_warp_ReduceSumPlus_int64
+// GB_warp_ReduceSumPlus_uint64
 //------------------------------------------------------------------------------
 
-__inline__ __device__ int64_t GB_warp_ReduceSumPlus_int64
+__inline__ __device__ uint64_t GB_warp_ReduceSumPlus_uint64
 (
     thread_block_tile<tile_sz> g,
-    int64_t val
+    uint64_t val
 )
 {
     // Each iteration halves the number of active threads
@@ -54,22 +54,22 @@ __inline__ __device__ int64_t GB_warp_ReduceSumPlus_int64
 }
 
 //------------------------------------------------------------------------------
-// GB_block_ReduceSum_int64
+// GB_block_ReduceSum_uint64
 //------------------------------------------------------------------------------
 
-__inline__ __device__ int64_t GB_block_ReduceSum_int64
+__inline__ __device__ uint64_t GB_block_ReduceSum_uint64
 (
-    thread_block g, int64_t val
+    thread_block g, uint64_t val
 )
 {
-  static __shared__ int64_t shared[tile_sz]; // Shared mem for 32 partial sums
+  static __shared__ uint64_t shared[tile_sz]; // Shared mem for 32 partial sums
 
   int lane = threadIdx.x & 31 ; // % tile_sz;
   int wid  = threadIdx.x >> 5 ; // / tile_sz;
   thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( g );
 
   // Each warp performs partial reduction
-  val = GB_warp_ReduceSumPlus_int64( tile, val);    
+  val = GB_warp_ReduceSumPlus_uint64( tile, val);    
 
   // Wait for all partial reductions
   if (lane==0) shared[wid]=val; // Write reduced value to shared memory
@@ -81,7 +81,7 @@ __inline__ __device__ int64_t GB_block_ReduceSum_int64
   val = (threadIdx.x <  (blockDim.x / tile_sz ) ) ? shared[lane] : 0;
 
   // Final reduce within first warp
-  if (wid==0) val = GB_warp_ReduceSumPlus_int64( tile, val);
+  if (wid==0) val = GB_warp_ReduceSumPlus_uint64( tile, val);
 
   return val;
 }
@@ -115,15 +115,13 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
     const int64_t *__restrict__ Mh = M->h ;
     #endif
 
-    #if GB_A_IS_HYPER || GB_A_IS_SPARSE
+    ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
     const int64_t *__restrict__ Ai = A->i ;
     const int64_t *__restrict__ Ap = A->p ;
-    #endif
 
-    #if GB_B_IS_HYPER || GB_B_IS_SPARSE
+    ASSERT (GB_B_IS_HYPER || GB_B_IS_SPARSE) ;
     const int64_t *__restrict__ Bi = B->i ;
     const int64_t *__restrict__ Bp = B->p ;
-    #endif
 
     #if GB_A_IS_HYPER
     const int64_t anvec = A->nvec ;
@@ -145,7 +143,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
     const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;
     #endif
 
-    int64_t my_nzombies = 0 ;
+    uint64_t my_nzombies = 0 ;
 
     int all_in_one = ( (end - start) == (M->p)[(M->nvec)] ) ;
 
@@ -167,8 +165,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
         GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
            i, &pA, &pA_end) ;
         #else
-        pA       = Ap[i] ;
-        pA_end   = Ap[i+1] ;
+        pA     = Ap [i] ;
+        pA_end = Ap [i+1] ;
         #endif
 
         // find B(:,j):  B is always sparse or hypersparse
@@ -177,8 +175,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
         GB_hyper_hash_lookup (Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
            j, &pB, &pB_end) ;
         #else
-        pB       = Bp[j] ;
-        pB_end   = Bp[j+1] ;
+        pB     = Bp [j] ;
+        pB_end = Bp [j+1] ;
         #endif
 
         GB_DECLAREA (aki) ;
@@ -209,7 +207,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
         GB_CIJ_EXIST_POSTCHECK ;
         if (cij_exists)
         {
-            GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (GB_C_TYPE) cij
+            GB_PUTC (cij, Cx, pair_id) ;    // Cx [pair_id] = (GB_C_TYPE) cij
             Ci [pair_id] = i ;
         }
         else
@@ -223,12 +221,12 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
     // FIXME: use this in spdn and vsdn:
     this_thread_block().sync(); 
 
-    my_nzombies = GB_block_ReduceSum_int64( this_thread_block(), my_nzombies);
+    my_nzombies = GB_block_ReduceSum_uint64 (this_thread_block(), my_nzombies) ;
     this_thread_block().sync(); 
 
     if( threadIdx.x == 0 && my_nzombies > 0)
     {
-        GB_cuda_atomic_add <uint64_t>( &(C->nzombies), (uint64_t) my_nzombies) ;
+        GB_cuda_atomic_add <uint64_t>( &(C->nzombies), my_nzombies) ;
     }
 }
 

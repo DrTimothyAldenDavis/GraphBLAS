@@ -10,7 +10,8 @@
 // Each "scalar" entry of this type consists of a 4x4 matrix and a string of
 // length 64.
 
-#include "GraphBLAS.h"
+// #include "GraphBLAS.h"
+#include "graphblas_demos.h"
 #undef I
 
 #if defined __INTEL_COMPILER
@@ -197,7 +198,10 @@ int main (void)
 
     // start GraphBLAS
     #if 1
-    GrB_init (GrB_NONBLOCKING) ;
+    // GrB_init (GrB_NONBLOCKING) ;
+    GxB_init (GxB_NONBLOCKING_GPU, NULL, NULL, NULL, NULL) ;
+    GB_Global_hack_set (2, 1) ;
+
     #else
     GxB_init (GxB_NONBLOCKING_GPU, NULL, NULL, NULL, NULL, NULL) ;
     GxB_set (GxB_GPU_ID, 0) ;

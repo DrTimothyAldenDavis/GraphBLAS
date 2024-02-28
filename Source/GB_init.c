@@ -192,6 +192,7 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     #pragma omp flush
+    GB_Global_hack_set (2,1) ;  // HACK FIXME
     return (GrB_SUCCESS) ;
 }
 
