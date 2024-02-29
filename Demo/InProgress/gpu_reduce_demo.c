@@ -23,8 +23,7 @@ int main (void)
     #endif
 
     // start GraphBLAS
-    // GrB_init (GrB_NONBLOCKING) ;
-    GxB_init (GxB_NONBLOCKING_GPU, NULL, NULL, NULL, NULL) ;
+    GrB_init (GrB_NONBLOCKING) ;
     printf ("demo: reduce a matrix to a scalar\n") ;
 
     int nthreads_max ;

@@ -198,10 +198,7 @@ int main (void)
 
     // start GraphBLAS
     #if 1
-    // GrB_init (GrB_NONBLOCKING) ;
-    GxB_init (GxB_NONBLOCKING_GPU, NULL, NULL, NULL, NULL) ;
-    GB_Global_hack_set (2, 1) ;
-
+    GrB_init (GrB_NONBLOCKING) ;
     #else
     GxB_init (GxB_NONBLOCKING_GPU, NULL, NULL, NULL, NULL, NULL) ;
     GxB_set (GxB_GPU_ID, 0) ;

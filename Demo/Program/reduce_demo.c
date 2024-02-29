@@ -26,9 +26,7 @@ int main (void)
     #endif
 
     // start GraphBLAS
-    // GrB_init (GrB_NONBLOCKING) ;
-    GxB_init (GxB_NONBLOCKING_GPU, NULL, NULL, NULL, NULL) ;
-    GB_Global_hack_set (2, 1) ;
+    GrB_init (GrB_NONBLOCKING) ;
 
     int nthreads ;
     GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads) ;
