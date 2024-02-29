@@ -2,13 +2,13 @@
 // GraphBLAS/CUDA/JitKernels/GB_jit_kernel_cuda_AxB_dot3.cu
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// This file: Copyright (c) 2024, NVIDIA CORPORATION. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
 // GB_jit_kernel_cuda_AxB_dot3: C<M>=A'*B using the dot3 method on the GPU.
-//------------------------------------------------------------------------------
 
 #define GB_FREE_ALL                         \
 {                                           \

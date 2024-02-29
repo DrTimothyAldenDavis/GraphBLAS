@@ -2,6 +2,8 @@
 // GraphBLAS/CUDA/JitKernels/GB_cuda_jit_AxB_dot3_phase3_vsvs.cuh
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// This file: Copyright (c) 2024, NVIDIA CORPORATION. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------

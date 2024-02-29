@@ -2,6 +2,7 @@
 // GraphBLAS/CUDA/GB_cuda_reduce_to_scalar_branch: decide to use GPU for reduce
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------

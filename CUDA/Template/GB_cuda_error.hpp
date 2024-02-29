@@ -2,6 +2,7 @@
 // GraphBLAS/CUDA/GB_cuda_error.hpp: call a cuda method and check its result
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
