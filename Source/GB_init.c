@@ -193,7 +193,9 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     #pragma omp flush
-//  GB_Global_hack_set (2,1) ;  // HACK FIXME
+//  GB_Global_hack_set (2,0) ;  // HACK FIXME: default: use GPU if problem big enough
+    GB_Global_hack_set (2,1) ;  // HACK FIXME: force the GPU never to be used
+//  GB_Global_hack_set (2,2) ;  // HACK FIXME: force the GPU always to be used
     return (GrB_SUCCESS) ;
 }
 
