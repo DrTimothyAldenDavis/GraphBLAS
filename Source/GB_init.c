@@ -44,7 +44,7 @@
 
 GrB_Info GB_init            // start up GraphBLAS
 (
-    const GrB_Mode mode,    // blocking or non-blocking mode
+    GrB_Mode mode,          // blocking or non-blocking mode
 
     // pointers to memory management functions.
     void * (* malloc_function  ) (size_t),          // required
@@ -79,6 +79,7 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     #if defined ( GRAPHBLAS_HAS_CUDA )
+    mode = GxB_NONBLOCKING_GPU ;    // HACK FIXME
     if (mode == GxB_NONBLOCKING_GPU || mode == GxB_BLOCKING_GPU)
     {
         // ignore the memory management function pointers and use rmm_wrap_*
@@ -192,7 +193,7 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     #pragma omp flush
-    GB_Global_hack_set (2,1) ;  // HACK FIXME
+//  GB_Global_hack_set (2,1) ;  // HACK FIXME
     return (GrB_SUCCESS) ;
 }
 

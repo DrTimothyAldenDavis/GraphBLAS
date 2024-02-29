@@ -74,7 +74,6 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     //--------------------------------------------------------------------------
 
 #if defined ( GRAPHBLAS_HAS_CUDA )
-    mode = GxB_NONBLOCKING_GPU ;        // HACK FIXME
     if (mode == GxB_BLOCKING_GPU || mode == GxB_NONBLOCKING_GPU)
     {
         return (GB_init (mode,              // blocking or non-blocking mode
