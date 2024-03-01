@@ -34,20 +34,7 @@
 //  GrB_Matrix M           <- mask matrix
 //  GrB_Matrix A           <- input matrix A
 //  GrB_Matrix B           <- input matrix B
-//  int sz                 <- size parameter (not used) 
-
-/* FIXME: This kernel needs to be split into 4 methods:
-
-        (A bitmap) * (B bitmap)
-        (A full ) * (B bitmap)
-        (A bitmap) * (B full)
-        (A full) * (B full)
-
-    The buckets are not needed at all.  A single pass can be done.
-    C and M would still be sparse or hypersparse.
-
-    See also denseDotProduct.cu.
-*/
+/
 
 //------------------------------------------------------------------------------
 // warp_ReduceSum_dndn
@@ -107,7 +94,6 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
     // zombie count
     uint64_t zc = 0;
 
-    int64_t start = 0;
     int64_t end   = M->p[M->nvec];
 
     // total items to be inspected
@@ -116,9 +102,9 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
     int s = blockDim.x;
 
     // Main loop over pairs 
-    for ( int64_t pair_id  = start + blockIdx.x; //warp per pair 
-                  pair_id  < end;  
-                  pair_id += gridDim.x )
+    for (int64_t pair_id  = blockIdx.x ; // warp per pair 
+                 pair_id  < end;  
+                 pair_id += gridDim.x)
     {
 
         // get M(i,j) and C(i,j)
@@ -128,6 +114,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
         GB_DECLARE_IDENTITY (cij) ;         // GB_Z_TYPE cij = identity
 
         // skip if C(i,j) is a prezombie
+        // FIXME: test not needed if GB_MASK_STRUCT is defined
         if (kk >= 0)
         {
 

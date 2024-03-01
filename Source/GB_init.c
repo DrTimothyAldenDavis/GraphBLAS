@@ -188,7 +188,7 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_timing_clear_all ( ) ;
 
     //--------------------------------------------------------------------------
-    // set up the JIT folder locations and compiler flags
+    // set up the JIT setting and emit the source to the cache folder
     //--------------------------------------------------------------------------
 
     GB_OK (GB_jitifyer_init ( )) ;
@@ -200,8 +200,8 @@ GrB_Info GB_init            // start up GraphBLAS
     #pragma omp flush
 //  this hack_get setting is used by GB_ngpus_to_use:
 //  GB_Global_hack_set (2,0) ;  // HACK FIXME: default: GPU for big enough probs
-//  GB_Global_hack_set (2,1) ;  // HACK FIXME: force the GPU always to be used
-    GB_Global_hack_set (2,2) ;  // HACK FIXME: force the GPU never to be used
+    GB_Global_hack_set (2,1) ;  // HACK FIXME: force the GPU always to be used
+//  GB_Global_hack_set (2,2) ;  // HACK FIXME: force the GPU never to be used
     return (GrB_SUCCESS) ;
 }
 

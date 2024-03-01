@@ -86,6 +86,9 @@ static __device__ __inline__ int64_t GB_search_for_vector_device
     // check inputs
     //--------------------------------------------------------------------------
 
+    // FIXME: this test is known at compile-time, and
+    // GB_search_for_vector_ddevice is not needed if A is full or bitmap
+
     if (Ap == NULL)
     { 
         // A is full or bitmap
@@ -93,7 +96,7 @@ static __device__ __inline__ int64_t GB_search_for_vector_device
         return ((avlen == 0) ? 0 : (p / avlen)) ;
     }
 
-    // A is sparse
+    // A is sparse or hypersparse
     ASSERT (p >= 0 && p < Ap [anvec]) ;
 
     //--------------------------------------------------------------------------
@@ -104,6 +107,8 @@ static __device__ __inline__ int64_t GB_search_for_vector_device
     int64_t kright = anvec ;
     bool found ;
     GB_SPLIT_BINARY_SEARCH (p, Ap, k, kright, found) ;
+
+    // FIXME: this is not needed if the search is approximate:
     if (found)
     {
         // Ap [k] == p has been found, but if k is an empty vector, then the

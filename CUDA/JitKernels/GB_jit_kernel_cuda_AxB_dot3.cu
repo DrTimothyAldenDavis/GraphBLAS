@@ -105,7 +105,6 @@
 // dot3:  C<M>=A'B, M is sparse or hyper, C is sparse or hyper
 // 32 kernels A,B: (hyper,sparse,bitmap,full)^2 x (M and C are sparse/hyper)
 
-// FIXME: rename enum values to GB_DOT3_BUCKET*
 typedef enum
 {
     GB_BUCKET_ZOMBIE = 0,       // C(i,j) is a zombie (not a bucket)

@@ -8,7 +8,11 @@
 //------------------------------------------------------------------------------
 
 // GrB_init (or GxB_init) must called before any other GraphBLAS operation.
-// GrB_finalize must be called as the last GraphBLAS operation.
+// GrB_finalize must be called as the last GraphBLAS operation.  To use CUDA
+// and its RMM memory manager: use a mode of GxB_BLOCKING_GPU or
+// GxB_NONBLOCKING_GPU.
+
+// FIXME: rename GxB_*BLOCKING_GPU to GxB_*BLOCKING_CUDA.
 
 #include "GB.h"
 #include "GB_init.h"

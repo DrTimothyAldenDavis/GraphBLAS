@@ -63,19 +63,22 @@ __global__ void GB_cuda_AxB_dot3_dense_phase1_kernel
     // assign all entries of C to the buckets
     //--------------------------------------------------------------------------
 
+    // FIXME: if A and B are both dense, and both B->vlen > 0 and A->vlen > 0,
+    // then only a single phase is needed.
+
     // all threads in this block will compute the same values for these:
+    // FIXME define these inside the loop
     int64_t pfirst, plast, kfirst, klast ;
 
     int64_t chunk_max = GB_ICEIL (mnz, chunk_size) ;
-    //      (mnz + chunk_size -1)/chunk_size;
-    for ( int64_t chunk = blockIdx.x;
-                  chunk < chunk_max;
-                  chunk += gridDim.x )
+    for (int64_t chunk = blockIdx.x ; chunk < chunk_max ; chunk += gridDim.x )
     {
 
         //----------------------------------------------------------------------
         // determine the work done by this iteration, "chunk"
         //----------------------------------------------------------------------
+
+        // FIXME: make this a static device function:
 
         // The slice for each task contains entries pfirst:plast-1 of M and C.
         // This iteration "chunk" computes Ci and Cx [pfirst...plast-1], using
@@ -128,9 +131,9 @@ __global__ void GB_cuda_AxB_dot3_dense_phase1_kernel
         // assign entries in C(i,j) to the buckets
         //----------------------------------------------------------------------
 
-        for ( int64_t pM = pfirst + threadIdx.x;
-                      pM < pfirst + my_chunk_size;
-                      pM += blockDim.x )
+        for (int64_t pM = pfirst + threadIdx.x ;
+                     pM < pfirst + my_chunk_size ;
+                     pM += blockDim.x)
         {
             int64_t k = ks [pM - pfirst] ;  // get the k value of Mi,Mx [pM].
             // j = k or j = Mh [k] if C and M are hypersparse, but j is not
@@ -139,15 +142,15 @@ __global__ void GB_cuda_AxB_dot3_dense_phase1_kernel
             #if GB_MASK_STRUCT
             {
                 // no need to check the value of M(i,j); no prezombies
-                Ci[pM] = (k << 4) ;
+                Ci [pM] = (k << 4) ;
             }
             #else
             {
                 bool mij = (bool) GB_MCAST (Mx,pM,) ;
                 int64_t i = Mi [ pM ] ;
                 // FIXME: no need for k<<4, just place k or GB_FLIP(i) in Ci
-                Ci[pM] = (!mij) * ( GB_FLIP(i) << 4)
-                       +   mij  * ((k<<4) ) ;
+                Ci [pM] = (!mij) * ( GB_FLIP(i) << 4)
+                        +   mij  * ((k<<4) ) ;
             }
             #endif
         }

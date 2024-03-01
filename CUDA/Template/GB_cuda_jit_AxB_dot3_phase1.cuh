@@ -142,6 +142,8 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
         // find the vector k that contains each entry C(i,j) in this chunk
         //----------------------------------------------------------------------
 
+        // FIXME: make this a static device function.
+
         // The slice for each task contains entries pfirst:plast-1 of M and C.
         // This iteration "chunk" computes Ci and Cx [pfirst...plast-1], using
         // Mi and Mx [pfirst:plast-1].  All threads in the thread block are
@@ -154,9 +156,21 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
         if (plast > mnz) plast = mnz ;
         int64_t my_chunk_size = plast - pfirst ;
 
+        // FIXME: these 2 calls to GB_search_for_vector are mimics of
+        // GB_ek_slice_search on the CPU, except the 2nd search differs by 1
+        // (plast on the CPU, plast-1 here).
+
+        // FIXME: GB_search_for_vector_device doesn't need to be exact,
+        // even for kfirst.
+
         // find the first vector of the slice for this chunk: the
         // vector that owns the entry Mi [pfirst] and Mx [pfirst].
         kfirst = GB_search_for_vector_device (pfirst, Mp, 0, mnvec, mvlen) ;
+
+        // FIXME: klast is just for a heuristic, to compute the slope. It
+        // does not have to be accurate.  Can we use a faster method to find
+        // an approximate klast?  In particular, the linear-time "k++" in
+        // GB_search_for_vector_device could be skipped.
 
         // find the last vector of the slice for task blockIdx.x: the
         // vector that owns the entry Mi [plast-1] and Mx [plast-1].
