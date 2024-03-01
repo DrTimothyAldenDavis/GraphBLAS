@@ -31,7 +31,8 @@
 // The calloc function pointer is also optional and can be NULL.
 
 // If the mode is GxB_BLOCKING_GPU or GxB_NONBLOCKING_GPU, the 4 function
-// pointers are ignored, and rmm_wrap_malloc/.../rmm_wrap_free are used instead.
+// pointers are ignored, and rmm_wrap_malloc/.../rmm_wrap_free are used
+// instead.
 
 #define GB_FREE_ALL ;
 #include "GB.h"
@@ -78,6 +79,8 @@ GrB_Info GB_init            // start up GraphBLAS
     // establish malloc/calloc/realloc/free
     //--------------------------------------------------------------------------
 
+    bool malloc_is_thread_safe = true ;
+
     #if defined ( GRAPHBLAS_HAS_CUDA )
     mode = GxB_NONBLOCKING_GPU ;    // HACK FIXME
     if (mode == GxB_NONBLOCKING_GPU || mode == GxB_BLOCKING_GPU)
@@ -87,6 +90,8 @@ GrB_Info GB_init            // start up GraphBLAS
         calloc_function  = rmm_wrap_calloc ;
         realloc_function = rmm_wrap_realloc ;
         free_function    = rmm_wrap_free ;
+        // the rmm_wrap methods are not thread-safe
+        malloc_is_thread_safe = false ;
     }
     #endif
 
@@ -105,7 +110,7 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_realloc_function_set (realloc_function) ; // ok if NULL
     GB_Global_free_function_set    (free_function   ) ; // cannot be NULL
 
-    GB_Global_malloc_is_thread_safe_set (true) ; // malloc must be thread-safe
+    GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe) ;
     GB_Global_memtable_clear ( ) ;
 
     GB_Global_malloc_tracking_set (false) ;
@@ -193,9 +198,10 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     #pragma omp flush
-//  GB_Global_hack_set (2,0) ;  // HACK FIXME: default: use GPU if problem big enough
-    GB_Global_hack_set (2,1) ;  // HACK FIXME: force the GPU never to be used
-//  GB_Global_hack_set (2,2) ;  // HACK FIXME: force the GPU always to be used
+//  this hack_get setting is used by GB_ngpus_to_use:
+//  GB_Global_hack_set (2,0) ;  // HACK FIXME: default: GPU for big enough probs
+//  GB_Global_hack_set (2,1) ;  // HACK FIXME: force the GPU always to be used
+    GB_Global_hack_set (2,2) ;  // HACK FIXME: force the GPU never to be used
     return (GrB_SUCCESS) ;
 }
 

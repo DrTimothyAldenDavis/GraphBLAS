@@ -197,13 +197,7 @@ int main (void)
 {
 
     // start GraphBLAS
-    #if 1
     GrB_init (GrB_NONBLOCKING) ;
-    #else
-    GxB_init (GxB_NONBLOCKING_GPU, NULL, NULL, NULL, NULL, NULL) ;
-    GxB_set (GxB_GPU_ID, 0) ;
-    GB_Global_hack_set (2, 1) ; // always use the GPU
-    #endif
 
     GxB_Global_Option_set (GxB_BURBLE, true) ;
     int nthreads ;

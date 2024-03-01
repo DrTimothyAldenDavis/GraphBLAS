@@ -65,19 +65,16 @@ static inline int GB_ngpus_to_use
 
     // get # of GPUs avaiable
     int gpu_count = GB_Global_gpu_count_get ( ) ;
-    // printf ("(GPU:: hack %d count %d) ", gpu_hack, gpu_count) ;
 
     if (gpu_hack == 2 || gpu_count == 0)
     {
         // never use the GPU(s)
-        // printf ("(GPU:: disabled, gpu_count: %d) ", gpu_count) ;
         return (0) ;
     }
     else if (gpu_hack == 1)
     {
         // always use all available GPU(s)
         // fixme for CUDA: allow 1 to gpu_count to be requested
-        // printf ("(GPU:: force using the GPU: %d) ", gpu_count) ;
         return (gpu_count) ;
     }
     else
@@ -85,8 +82,6 @@ static inline int GB_ngpus_to_use
         // default: use no more than max_gpus_to_use
         double gpu_chunk = 2e6 ;
         double max_gpus_to_use = floor (work / gpu_chunk) ;
-        // printf ("(GPU:: work %g gpu_chunk: %g max gpus to use: %g) ",
-        //    work, gpu_chunk, max_gpus_to_use) ;
         // but use no more than the # of GPUs available
         if (max_gpus_to_use > gpu_count) return (gpu_count) ;
         return ((int) max_gpus_to_use) ;

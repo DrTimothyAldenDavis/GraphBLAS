@@ -30,9 +30,6 @@ bool GB_cuda_AxB_dot3_branch
         !GB_cuda_type_branch (semiring->multiply->ztype))
     {
         // one or more types are not yet supported on the GPU
-        // FIXME: remove debug output here:
-//      std::cout << "Not using cuda path: type not supported"
-//      << std::endl ;
         return (false) ;
     }
 
@@ -58,5 +55,5 @@ bool GB_cuda_AxB_dot3_branch
 //      std::cout << "Not using cuda path for dot3." <<  std::endl;
         return false ;
     }
-
 }
+

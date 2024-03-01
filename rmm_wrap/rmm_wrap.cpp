@@ -36,6 +36,8 @@
 // RMM_Wrap_Handle: a global object containing the RMM context
 //------------------------------------------------------------------------------
 
+// NOTE: this is not thread-safe
+
 // rmm_wrap_context is a pointer to an array of global RMM_Wrap_Handle objects
 // (one per GPU) that all methods in this file can access.  The array of
 // objects cannot be accessed outside this file.
@@ -81,7 +83,6 @@ inline auto make_cuda()
 
 inline auto make_managed()
 {
-    // std::cout << "Inside make_managed" << std::endl;
     return std::make_shared<rmm::mr::managed_memory_resource>() ;
 }
 
@@ -131,8 +132,6 @@ inline auto make_and_set_managed_pool
     std::size_t maximum_size
 )
 {
-    // std::cout<< " make_managed_pool called with  init_size"
-    //   <<initial_size<<" max_size "<<maximum_size<<"\n";
 
     auto resource = rmm::mr::make_owning_wrapper<rmm::mr::pool_memory_resource>
                         ( make_managed(), initial_size, maximum_size ) ;
@@ -185,7 +184,9 @@ void rmm_wrap_finalize (void)
 //------------------------------------------------------------------------------
 // get_current_device: helper to get id for currently selected device
 //------------------------------------------------------------------------------
-int get_current_device(void) {
+
+int get_current_device(void)
+{
     int device_id;
     cudaGetDevice(&device_id);
     return device_id;
@@ -208,8 +209,10 @@ int rmm_wrap_initialize     // returns -1 on error, 0 on success
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
-    if(rmm_wrap_context[device_id] != NULL) {
-        return (-1);
+
+    if (rmm_wrap_context[device_id] != NULL)
+    {
+        return (-1) ;
     }
 
     if(stream_pool_size <= 0)
@@ -293,12 +296,14 @@ int rmm_wrap_initialize     // returns -1 on error, 0 on success
 int rmm_wrap_initialize_all_same
 (
     RMM_MODE mode,              // TODO: describe. Should we default this?
-    size_t init_pool_size,     // TODO: describe. Should we default this?
+    size_t init_pool_size,      // TODO: describe. Should we default this?
     size_t max_pool_size,       // TODO: describe. Should we default this?
     size_t stream_pool_size     // TODO: describe. Should we default this?
-) {
+)
+{
 
-    if(rmm_wrap_context != NULL) {
+    if (rmm_wrap_context != NULL)
+    {
         return (-1);
     }
 
@@ -349,7 +354,8 @@ int rmm_wrap_initialize_all_same
 // rmm_wrap_get_next_stream_from_pool: return the next available stream from the pool
 // Output is cudaStream_t
 //------------------------------------------------------------------------------
-void* rmm_wrap_get_next_stream_from_pool(void) {
+void* rmm_wrap_get_next_stream_from_pool(void)
+{
     return rmm_wrap_context[get_current_device()]->stream_pool->get_stream();
 }
 
@@ -357,7 +363,8 @@ void* rmm_wrap_get_next_stream_from_pool(void) {
 // rmm_wrap_get_stream_from_pool: return specific stream from the pool
 // Output is cudaStream_t
 //------------------------------------------------------------------------------
-void* rmm_wrap_get_stream_from_pool(std::size_t stream_id) {
+void* rmm_wrap_get_stream_from_pool(std::size_t stream_id)
+{
     return rmm_wrap_context[get_current_device()]->stream_pool->get_stream(stream_id);
 }
 
@@ -365,7 +372,8 @@ void* rmm_wrap_get_stream_from_pool(std::size_t stream_id) {
 // rmm_wrap_get_main_stream: return the main cuda stream
 // Output is cudaStream_t
 //------------------------------------------------------------------------------
-void* rmm_wrap_get_main_stream(void) {
+void* rmm_wrap_get_main_stream(void)
+{
     return rmm_wrap_context[get_current_device()]->main_stream;
 }
 //------------------------------------------------------------------------------
@@ -479,7 +487,10 @@ void rmm_wrap_free (void *p)
 
 void *rmm_wrap_allocate( std::size_t *size)
 {
-    if (rmm_wrap_context == NULL) return (NULL) ;
+    if (rmm_wrap_context == NULL)
+    {
+        return (NULL) ;
+    }
 
     uint32_t device_id = get_current_device();
 
@@ -500,9 +511,6 @@ void *rmm_wrap_allocate( std::size_t *size)
     {
         *size += (256 - aligned) ;
     }
-
-//  printf(" rmm_wrap_alloc %ld bytes\n",*size) ;
-
 
     rmm::mr::device_memory_resource *memoryresource =
         rmm::mr::get_current_device_resource() ;
@@ -527,7 +535,10 @@ void *rmm_wrap_allocate( std::size_t *size)
 
 void rmm_wrap_deallocate( void *p, std::size_t size)
 {
-    if (rmm_wrap_context == NULL) return ;
+    if (rmm_wrap_context == NULL)
+    {
+        return ;
+    }
 
     // Note: there are 3 PANIC cases below.  The API of rmm_wrap_deallocate
     // does not allow an error condition to be returned.  These PANICs could be
@@ -545,6 +556,7 @@ void rmm_wrap_deallocate( void *p, std::size_t size)
     }
 
     uint32_t device_id = get_current_device();
+
     // check the size given.  If the input size is zero, then the
     // size is unknown (say rmm_wrap_free(p)).  In that case, just trust the
     // hashmap.  Otherwise, double-check to make sure the size is correct.
