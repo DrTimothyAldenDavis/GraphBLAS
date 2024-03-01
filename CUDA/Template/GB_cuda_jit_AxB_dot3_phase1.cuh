@@ -15,7 +15,7 @@
 
 // This kernel scans the non-zero pattern in A and B, takes into account the
 // mask and computes total work required to form C. Then it classifies each dot
-// product into a set of buckets for efficient compute. 
+// product into a set of buckets for efficient compute.
 
 // GB_AxB_cuda_dot3_phase1 is a CUDA kernel that scans all entries in C and
 // assigns them to each of the NBUCKETS buckets.  The output is a
@@ -65,7 +65,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
     const GB_M_TYPE *__restrict__ Mx = (GB_M_TYPE *) M->x ;
     #endif
     const int64_t mnvec = M->nvec ;
-    const int64_t mvlen = M->vlen ;
+    // const int64_t mvlen = M->vlen ;
     const GB_M_NVALS (mnz) ;
     ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
 
@@ -125,93 +125,26 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
 
     __shared__ int64_t ks [chunk_size] ;
 
-    // FIXME: why place these 4 scalars outside the for-loop below?
-    // all threads in this block will compute the same values for these:
-    int64_t pfirst ;
-
-    // FIXME: use this instead of 'chunk':
-    // FIXME: since chunk_size is a power of 2, use "<<" instead of "*"
-    // for (int64_t pfirst = blockIdx.x * chunk_size ; pfirst < mnz ;
-    //      pfirst += gridDim.x * chunk_size)
-
-    int64_t chunk_max = GB_ICEIL (mnz, chunk_size) ;
-    for (int64_t chunk = blockIdx.x ; chunk < chunk_max ; chunk += gridDim.x)
+    for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
+                 pfirst < mnz ;
+                 pfirst += gridDim.x << log2_chunk_size)
     {
 
         //----------------------------------------------------------------------
         // find the vector k that contains each entry C(i,j) in this chunk
         //----------------------------------------------------------------------
 
-        int64_t my_chunk_size ;
+        // This threadblock works on Mi/Mx and Ci/Mx, in positions pfirst to
+        // pfirst + my_chunk_size - 1.
 
-{
-        // FIXME: make this a static device function.
-
-        // The slice for each task contains entries pfirst:plast-1 of M and C.
-        // This iteration "chunk" computes Ci and Cx [pfirst...plast-1], using
-        // Mi and Mx [pfirst:plast-1].  All threads in the thread block are
-        // used for this "chunk".
-
-        pfirst = chunk_size * chunk ;       // FIXME see above
-
-        int64_t plast  = pfirst + chunk_size ;
-        // plast = GB_IMIN (plast, mnz) ;
-        if (plast > mnz) plast = mnz ;
-        my_chunk_size = plast - pfirst ;
-
-        // FIXME: these 2 calls to GB_search_for_vector are mimics of
-        // GB_ek_slice_search on the CPU, except the 2nd search differs by 1
-        // (plast on the CPU, plast-1 here).
-
-        // FIXME: GB_search_for_vector_device doesn't need to be exact,
-        // even for kfirst.
-
-        // find the first vector of the slice for this chunk: the
-        // vector that owns the entry Mi [pfirst] and Mx [pfirst].
-        int64_t kfirst = GB_search_for_vector_device (pfirst, Mp, 0, mnvec, mvlen) ;
-
-        // FIXME: klast is just for a heuristic, to compute the slope. It
-        // does not have to be accurate.  Can we use a faster method to find
-        // an approximate klast?  In particular, the linear-time "k++" in
-        // GB_search_for_vector_device could be skipped.
-
-        // find the last vector of the slice for task blockIdx.x: the
-        // vector that owns the entry Mi [plast-1] and Mx [plast-1].
-        int64_t klast = GB_search_for_vector_device (plast-1, Mp, kfirst, mnvec, mvlen);
-
-        // number of vectors in C and M for this "chunk" iteration, where
-        // Mp [kfirst:klast] will be operated on.
-        int64_t nk = klast - kfirst + 1 ;
-        // search for k values for each entry pfirst:plast-1
-        float slope = ((float) nk) / ((float) my_chunk_size) ;
-        int64_t mnvec1 = mnvec - 1 ;
-        for (int64_t kk = threadIdx.x ; kk < my_chunk_size ; kk += blockDim.x)
-        {
-            // get a rough estimate of k for the kkth entry in ks
-            int64_t k = kfirst + (int64_t) (slope * ((float) kk)) ;
-            // k cannot be smaller than kfirst, but might be bigger than
-            // mnvec-1, so ensure it is in the valid range, kfirst to mnvec-1
-            // k = GB_IMIN (k, mnvec-1) ;
-            if (k > mnvec1) k = mnvec1 ; 
-            // look for p in Mp, where p is in range pfirst:plast-1
-            // where pfirst >= 0 and plast < mnz
-            int64_t p = kk + pfirst ;
-            // linear-time search for the k value of the pth entry
-            while ( Mp [ k + 1 ] <= p ) k++ ;
-            while ( Mp [ k     ] >  p ) k-- ;
-            ks [kk] = k ;
-        }
-
-        this_thread_block().sync() ;
-}
+        int64_t my_chunk_size = GB_cuda_ek_slice (Mp, mnvec, mnz, pfirst,
+            chunk_size, /* output: */ ks) ;
 
         //----------------------------------------------------------------------
         // assign entries in C(i,j) to the buckets
         //----------------------------------------------------------------------
 
-        for (int64_t pM = pfirst + threadIdx.x ;
-                     pM < pfirst + my_chunk_size ;
-                     pM += blockDim.x)
+        for (int64_t kk = threadIdx.x ; kk < my_chunk_size ; kk += blockDim.x)
         {
 
             //------------------------------------------------------------------
@@ -222,7 +155,8 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
             // or j = Mh [k] if C is hypersparse
 
             GB_bucket_code bucket = GB_BUCKET_ZOMBIE ;
-            int64_t k = ks [pM - pfirst] ;  // get the k value of Mi,Mx [pM]
+            int64_t pM = kk + pfirst ;
+            int64_t k = ks [kk] ;           // get the k value of Mi,Mx [pM]
             int64_t i = Mi [pM] ;
 
             if (GB_MCAST (Mx, pM, ))        // if (M (i,j) is true):

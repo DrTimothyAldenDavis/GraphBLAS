@@ -192,6 +192,9 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     // M is sparse or hypersparse; C is the same as M
     nthreads = GB_nthreads (cnvec, chunk, nthreads_max) ;
+
+    printf ("nthreads here for memcpy: %d\n", nthreads) ;
+
     // TODO: try this with Cp and Ch shallow
     GB_memcpy (Cp, Mp, (cnvec+1) * sizeof (int64_t), nthreads) ;
     if (M_is_hyper)
@@ -208,6 +211,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
+    printf ("nthreads here for dot3_1: %d\n", nthreads) ;
     GB_OK (GB_AxB_dot3_one_slice (&TaskList, &TaskList_size, &ntasks, &nthreads,
         M, Werk)) ;
 
@@ -249,6 +253,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         C, Werk)) ;
 
     GBURBLE ("nthreads %d ntasks %d ", nthreads, ntasks) ;
+    printf ("nthreads here for dot3_2: %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------
     // C<M> = A'*B, via masked dot product method and built-in semiring
@@ -304,6 +309,11 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
             { 
                 #include "GB_AxB_factory.c"
             }
+
+            if (info == GrB_SUCCESS)
+            {
+                GBURBLE (" factory ") ;
+            }
         }
         #endif
 
@@ -313,6 +323,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
         if (info == GrB_NO_VALUE)
         { 
+printf ("do dot3 on the CPU JIT:\n") ;
             info = GB_AxB_dot3_jit (C, M, Mask_struct, A, B,
                 semiring, flipxy, TaskList, ntasks, nthreads) ;
         }
@@ -323,6 +334,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
         if (info == GrB_NO_VALUE)
         { 
+printf ("dot3 generic!\n") ;
             #define GB_DOT3_GENERIC
             GB_BURBLE_MATRIX (C, "(generic C<M>=A'*B) ") ;
             #include "GB_AxB_dot_generic.c"

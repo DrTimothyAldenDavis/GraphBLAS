@@ -33,14 +33,13 @@
 // kernel launch geometry
 //------------------------------------------------------------------------------
 
+// FIXME: some duplicates here
 #define chunk_size 128
-
-// Using tile size fixed at compile time, we don't need shared memory
+#define log2_chunk_size 7
 #define tile_sz 32 
-
 #define shared_vector_size 128 
-
 #define blocksize  32
+#define threads_per_block 32
 
 //------------------------------------------------------------------------------
 // operators
@@ -176,6 +175,7 @@ __device__ __inline__ GB_Z_TYPE GB_reduce_sum
     #include "GB_cuda_jit_AxB_dot3_phase3_dndn.cuh"
 #else
     // sparse-sparse, sparse-dense, or dense-sparse
+    #include "GB_cuda_ek_slice.cuh"
     #include "GB_cuda_jit_AxB_dot3_phase1.cuh"
     #include "GB_cuda_jit_AxB_phase2.cuh"
     #include "GB_cuda_jit_AxB_phase2end.cuh"
@@ -226,7 +226,6 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
     const GB_M_NVALS (mnz) ;
     int nblks_1 = (mnz + chunk_size - 1) / chunk_size ;
     int number_of_blocks_1 = GB_IMIN (nblks_1,  chunk_size * number_of_sms) ;
-    #define threads_per_block 32
 
     // most methods can use these launch geometries:
     dim3 grid_1 (number_of_blocks_1) ;
