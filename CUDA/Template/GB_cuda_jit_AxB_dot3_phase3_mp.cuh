@@ -2,31 +2,32 @@
 // GraphBLAS/CUDA/JitKernels/GB_cuda_jit_AxB_dot3_phase3_mp.cuh
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// This file: Copyright (c) 2024, NVIDIA CORPORATION. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// This CUDA kernel produces the semi-ring product of two
-// sparse matrices of types GB_A_TYPE and GB_B_TYPE and common index space size n, to a  
-// output matrix of type GB_C_TYPE. The matrices are sparse, with different numbers
-// of non-zeros and different sparsity patterns. 
-// ie. we want to produce C = A'*B in the sense of the given semi-ring.
+// This CUDA kernel produces the semi-ring product of two sparse matrices of
+// types GB_A_TYPE and GB_B_TYPE and common index space size n, to a  output
+// matrix of type GB_C_TYPE. The matrices are sparse, with different numbers of
+// non-zeros and different sparsity patterns.  ie. we want to produce C = A'*B
+// in the sense of the given semi-ring.
 
-// This version uses a merge-path algorithm, when the sizes nnzA and nnzB are 
-// relatively close in size, neither is very sparse nor dense, for any size of N.
-// Handles arbitrary sparsity patterns with guaranteed load balance.
+// This version uses a merge-path algorithm, when the sizes nnzA and nnzB are
+// relatively close in size, neither is very sparse nor dense, for any size of
+// N.  Handles arbitrary sparsity patterns with guaranteed load balance.
 
 // Both the grid and block are 1D, so blockDim.x is the # threads in a
 // threadblock, and the # of threadblocks is grid.x
 
-// Let b = blockIdx.x, and let s be blockDim.x. s= 32 with a variable number
-// of active threads = min( min(g_xnz, g_ynz), 32) 
+// Let b = blockIdx.x, and let s be blockDim.x. s= 32 with a variable number of
+// active threads = min( min(g_xnz, g_ynz), 32) 
 
-// Thus, threadblock b owns a part of the index set spanned by g_xi and g_yi.  Its job
-// is to find the intersection of the index sets g_xi and g_yi, perform the semi-ring dot
-// product on those items in the intersection, and finally reduce this data to a scalar, 
-// on exit write it to g_odata [b].
+// Thus, threadblock b owns a part of the index set spanned by g_xi and g_yi.
+// Its job is to find the intersection of the index sets g_xi and g_yi, perform
+// the semi-ring dot product on those items in the intersection, and finally
+// reduce this data to a scalar, on exit write it to g_odata [b].
 
 //  int64_t start          <- start of vector pairs for this kernel
 //  int64_t end            <- end of vector pairs for this kernel
@@ -36,45 +37,11 @@
 //  GrB_Matrix A           <- input matrix A
 //  GrB_Matrix B           <- input matrix B
 
-#pragma once
-
-#include "GB_cuda_kernel.cuh"
-#include "GB_mxm_shared_definitions.h"
-#include "GB_hash.h"
-#include "GB_hyper_hash_lookup.h"
-#include "GB_cuda_dot3_defn.cuh"
-
-// Using tile size fixed at compile time, we don't need shared memory
-#define tile_sz 32 
-
-using namespace cooperative_groups;
-
 //------------------------------------------------------------------------------
-// GB_reduce_sum
+// GB_cuda_AxB_dot3_phase3_mp_kernel
 //------------------------------------------------------------------------------
-
-__device__ __inline__ 
-GB_Z_TYPE GB_reduce_sum(thread_block_tile<tile_sz> g, GB_Z_TYPE val)
-{
-    // Each iteration halves the number of active threads
-    // Each thread adds its partial sum[i] to sum[lane+i]
-    // Temporary GB_Z_TYPE is necessary to handle arbirary ops
-    // FIXME: only works if sizeof(GB_Z_TYPE) <= 32 bytes
-    // FIXME: the ANY monoid needs the cij_exists for each thread
-    #pragma unroll
-    for (int i = tile_sz >> 1; i > 0; i >>= 1)
-    {
-        GB_Z_TYPE next = g.shfl_down( val, i);
-        GB_ADD( val, val, next ); 
-    }
-    return val;
-}
-
-//------------------------------------------------------------------------------
-// AxB_dot3_phase3_mp
-//------------------------------------------------------------------------------
-
-__global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_mp
+  
+__global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
 (
     int64_t start,
     int64_t end,
@@ -82,18 +49,16 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_mp
     GrB_Matrix C,
     GrB_Matrix M,
     GrB_Matrix A,
-    GrB_Matrix B,
-    int sz
+    GrB_Matrix B
 )
 {
 
-    // TODO: Figure out how to use graphblas-specific INFINITY macro
-    #ifndef INFINITY
-    #define INFINITY std::numeric_limits<GB_C_TYPE>::max()
-    #endif
-
+    #if !GB_A_IS_PATTERN
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *)A->x  ;
+    #endif
+    #if !GB_B_IS_PATTERN
     const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *)B->x  ;
+    #endif
           GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *)C->x  ;
           int64_t *__restrict__ Ci = C->i ;
     const int64_t *__restrict__ Mi = M->i ;
@@ -132,17 +97,9 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_mp
     // zombie count
     int64_t zc = 0;
 
-    int64_t pair_id;
-
     // set thread ID
-    int tid_global = threadIdx.x+ blockDim.x* blockIdx.x;
+//  int tid_global = threadIdx.x+ blockDim.x* blockIdx.x;
     int tid = threadIdx.x;
-
-    int b = blockIdx.x ;
-
-    // total items to be inspected
-    int64_t ainz = 0;
-    int64_t bjnz = 0;
 
     thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( this_thread_block());
     int all_in_one = ( (end - start) == (M->p)[(M->nvec)] ) ;
@@ -154,7 +111,7 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_mp
          kk += gridDim.x )
     {
 
-        pair_id = all_in_one ? kk : Bucket [kk] ;
+        int64_t pair_id = all_in_one ? kk : Bucket [kk] ;
         int64_t i = Mi[pair_id];
         int64_t k = Ci[pair_id] >> 4;
 
@@ -171,7 +128,7 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_mp
         pA_end   = Ap[i+1] ;
         #endif
 
-        ainz = pA_end - pA_start ;
+        int64_t ainz = pA_end - pA_start ;
 
         GB_DECLAREA (aki) ;
         GB_DECLAREB (bkj) ;
@@ -179,7 +136,6 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_mp
 
         int cij_exists = 0 ;       // FIXME: make a bool
 
-        #define shared_vector_size 128 
         __shared__ int64_t Ai_s[shared_vector_size];
         int shared_steps_A = (ainz + shared_vector_size -1)/shared_vector_size;
 
@@ -201,7 +157,7 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_mp
         pB_end   = Bp[j+1] ;
         #endif
 
-        bjnz = pB_end - pB_start;          // bjnz
+        int64_t bjnz = pB_end - pB_start;          // bjnz
         int shared_steps_B = (bjnz + shared_vector_size -1)/shared_vector_size;
          
         __shared__ int64_t Bj_s[shared_vector_size];
@@ -212,14 +168,7 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_mp
             Bj_s[i] = Bi[ i + pB_start];
         }   
         this_thread_block().sync();
-     
-  //if (threadIdx.x ==0 ) {
-  //  printf("block %d  doing dot %lld  i,j= %lld,%lld\n", blockIdx.x, pair_id, i, j);
-  //  printf("block %d  doing dot %lld  ainz,bjnz= %lld,%lld, A_steps=%d, B_steps=%d\n", 
-  //          blockIdx.x, pair_id, ainz, bjnz, shared_steps_A, shared_steps_B);
-  //}
-  //this_thread_block().sync();
-    
+
         //we want more than one intersection per thread
         while ( (shared_steps_A > 0) && (shared_steps_B > 0) )
         {
@@ -229,40 +178,28 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_mp
             if ( shared_steps_B > 1) bwork = shared_vector_size;  
             int64_t nxy = awork + bwork;
 
-            int work_per_thread = (nxy + blockDim.x -1)/blockDim.x;  // ceil Divide by 32 = blockDim.x 
+            // ceil Divide by 32 = blockDim.x :
+            int work_per_thread = (nxy + blockDim.x -1)/blockDim.x;
             int diag     = GB_IMIN( work_per_thread*tid, nxy);
             int diag_end = GB_IMIN( diag + work_per_thread, nxy);
-            //printf(" thd%d parts = %u wpt = %u diag, diag_end  = %u,%u\n",tid, blockDim.x, work_per_thread, diag, diag_end); 
 
-            //if (1) //(threadIdx.x == 0)
-            //{
-            //    printf ("pair %ld tid%d work_per_thread %d nxy %ld parts %d diag %d diag_end %d Astep=%d, Bstep=%d\n",
-            //        pair_id, threadIdx.x, work_per_thread, nxy, blockDim.x, diag, diag_end,shared_steps_A,shared_steps_B) ;
-            //}
-            //this_thread_block().sync();
+            // bwork takes place of bjnz:
+            int x_min = GB_IMAX( (diag - bwork) , 0);
 
-            int x_min = GB_IMAX( (diag - bwork) , 0); //bwork takes place of bjnz
-            int x_max = GB_IMIN( diag, awork);      //awork takes place of ainz
+            //awork takes place of ainz:
+            int x_max = GB_IMIN( diag, awork);
 
             while ( x_min < x_max)
             {
                 //binary search for correct diag break
                 int pivot = (x_min +x_max) >> 1;
-                //printf("start search thd%u piv=%u xmin,xmax = %u,%u diag_end=%d\n", tid_global, pivot, x_min, x_max, diag_end);
                 int64_t Apiv =  Ai_s[pivot] ;
                 int64_t Bpiv = Bj_s[diag -pivot -1] ;
 
-                // if ( Apiv < Bpiv ) {
-                //    x_min = pivot +1;
-                // }
-                // else {
-                //    x_max = pivot;
-                // }
-                x_min = (pivot + 1)* (Apiv < Bpiv)   + x_min * (1 - (Apiv < Bpiv));
-                x_max = pivot * (1 - (Apiv < Bpiv))  + x_max * (Apiv < Bpiv);
+                x_min = (pivot + 1)* (Apiv < Bpiv)  + x_min * (1 - (Apiv < Bpiv));
+                x_max = pivot * (1 - (Apiv < Bpiv)) + x_max * (Apiv < Bpiv);
 
             }
-            //printf("start search thd%u xcoord= %u diag=%d, diag_end=%d\n", tid_global, x_min, diag, diag_end);
 
             int xcoord = x_min;
             int ycoord = diag -x_min -1;
@@ -276,8 +213,6 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_mp
             int tx_start = xcoord; // +pA_start;
             int ty_start = diag -xcoord; // +pB_start; 
 
-            //if (x_start != y_start)
-            //   printf("start thd%u  xs,ys = %i,%i\n", tid_global, x_start, y_start);
 
             x_min = GB_IMAX( (diag_end - bwork), 0); //bwork replace bjnz
             x_max = GB_IMIN( diag_end, awork);      //awork replace ainz
@@ -288,16 +223,10 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_mp
                 int64_t Apiv = Ai_s[pivot] ;
                 int64_t Bpiv = Bj_s[diag_end -pivot -1] ;
 
-                //if ( Apiv < Bpiv ) {
-                //   x_min = pivot +1;
-                //}
-                //else {
-                //   x_max = pivot;
-                //}
                 x_min = (pivot + 1)* (Apiv < Bpiv)   + x_min * (1 - (Apiv < Bpiv));
                 x_max = pivot * (1 - (Apiv < Bpiv))  + x_max * (Apiv < Bpiv);
             }
-            //printf("end search thd%u x_coord = %u diag=%d, diag_end=%d\n", tid_global, x_min, diag, diag_end);
+
             xcoord = x_min;
             ycoord = diag_end -x_min -1;
 
@@ -308,21 +237,6 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_mp
             //merge-path dot product
             int64_t pA = tx_start;       // pA
             int64_t pB = ty_start;       // pB
-
-            //if (1) // threadIdx.x == 0)
-            //{
-            //    printf ("%d tx_start %d\n", threadIdx.x, tx_start) ;
-            //    printf ("%d tx_end   %d\n", threadIdx.x, tx_end  ) ;
-            //    printf ("%d ty_start %d\n", threadIdx.x, ty_start) ;
-            //    printf ("%d ty_end   %d\n", threadIdx.x, ty_end  ) ;
-            //}
-            //this_thread_block().sync();
-
-            //    if(threadIdx.x == 0 ) {
-            //        printf("blk%d, thd%d k=%d, l=%d, tx_start=%d, ty_start=%d, tx_end=%d, ty_end=%d\n",
-            //      blockIdx.x, tid_global, k, l, tx_start, ty_start, tx_end, ty_end);
-            //    }
-            //  this_thread_block().sync();
 
             while ( pA < tx_end && pB < ty_end ) 
             {
@@ -407,14 +321,6 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_mp
         // reduce sum per-thread values to a single scalar, get OR of flag
         //----------------------------------------------------------------------
 
-        /*
-        if (tid == 0)
-        {
-            printf ("reduce %d : %d exists = %d\n", b,  cij, cij_exists) ;
-        }
-        __syncthreads();
-        */
-
         // Do vote here for control.
         cij_exists = tile.any (cij_exists) ;
         tile.sync ( ) ;
@@ -432,7 +338,8 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_mp
         {
             if (cij_exists)
             {
-                GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (GB_C_TYPE) cij
+                // Cx [pair_id] = (GB_C_TYPE) cij
+                GB_PUTC (cij, Cx, pair_id) ;
                 Ci [pair_id] = i ;
             }
             else

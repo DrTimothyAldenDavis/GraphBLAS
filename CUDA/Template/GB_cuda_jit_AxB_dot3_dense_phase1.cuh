@@ -2,6 +2,8 @@
 // GraphBLAS/CUDA/JitKernels/GB_cuda_jit_AxB_dot3_dense_phase1.cuh
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// This file: Copyright (c) 2024, NVIDIA CORPORATION. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -14,27 +16,15 @@
 //  mask and computes total work required to form C. Then it classifies each
 //  dot product into a set of buckets for efficient compute. 
 
-#pragma once
-
-#include <limits>
-#include "GB_cuda_kernel.cuh"
-#include "GB_mxm_shared_definitions.h"
-#include "GB_cuda_AxB_dot3_buckets.hpp"
-#include <cub/block/block_scan.cuh>
-#include <cooperative_groups.h>
-
-using namespace cooperative_groups;
-
 //------------------------------------------------------------------------------
-// GB_jit_AxB_dot3_dense_phase1: lookup i,j pairs and store in Mi, Ci 
+// GB_cuda_AxB_dot3_dense_phase1_kernel: lookup i,j pairs and store in Mi, Ci 
 //------------------------------------------------------------------------------
 
-// GB_AxB_dense_phase1 is a CUDA kernel that scans all entries in M and
-// assigns i,j coordinates for each entries and stores in Mi and Ci. 
+// GB_cuda_AxB_dot3_dense_phase1_kernel is a CUDA kernel that scans all entries
+// in M and assigns i,j coordinates for each entries and stores in Mi and Ci. 
+// A and B are both bitmap/full.  C and M are sparse/hypersparse.
 
-#define chunk_size 128
-
-__global__ void GB_cuda_jit_kernel // GB_jit_AxB_dot3_dense_phase1
+__global__ void GB_cuda_AxB_dot3_dense_phase1_kernel
 (
     // input/output:
     GrB_Matrix C,           // final output matrix
@@ -53,7 +43,6 @@ __global__ void GB_cuda_jit_kernel // GB_jit_AxB_dot3_dense_phase1
     #endif
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
-//  const int64_t mnz =  GB_nnz(M) ;
     const GB_M_NVALS (mnz) ;
 
     int64_t *__restrict__ Ci = C->i ;   // for zombies, or bucket assignment
@@ -74,19 +63,22 @@ __global__ void GB_cuda_jit_kernel // GB_jit_AxB_dot3_dense_phase1
     // assign all entries of C to the buckets
     //--------------------------------------------------------------------------
 
+    // FIXME: if A and B are both dense, and both B->vlen > 0 and A->vlen > 0,
+    // then only a single phase is needed.
+
     // all threads in this block will compute the same values for these:
+    // FIXME define these inside the loop
     int64_t pfirst, plast, kfirst, klast ;
 
     int64_t chunk_max = GB_ICEIL (mnz, chunk_size) ;
-    //      (mnz + chunk_size -1)/chunk_size;
-    for ( int64_t chunk = blockIdx.x;
-                  chunk < chunk_max;
-                  chunk += gridDim.x )
+    for (int64_t chunk = blockIdx.x ; chunk < chunk_max ; chunk += gridDim.x )
     {
 
         //----------------------------------------------------------------------
         // determine the work done by this iteration, "chunk"
         //----------------------------------------------------------------------
+
+        // FIXME: make this a static device function:
 
         // The slice for each task contains entries pfirst:plast-1 of M and C.
         // This iteration "chunk" computes Ci and Cx [pfirst...plast-1], using
@@ -139,9 +131,9 @@ __global__ void GB_cuda_jit_kernel // GB_jit_AxB_dot3_dense_phase1
         // assign entries in C(i,j) to the buckets
         //----------------------------------------------------------------------
 
-        for ( int64_t pM = pfirst + threadIdx.x;
-                      pM < pfirst + my_chunk_size;
-                      pM += blockDim.x )
+        for (int64_t pM = pfirst + threadIdx.x ;
+                     pM < pfirst + my_chunk_size ;
+                     pM += blockDim.x)
         {
             int64_t k = ks [pM - pfirst] ;  // get the k value of Mi,Mx [pM].
             // j = k or j = Mh [k] if C and M are hypersparse, but j is not
@@ -150,15 +142,15 @@ __global__ void GB_cuda_jit_kernel // GB_jit_AxB_dot3_dense_phase1
             #if GB_MASK_STRUCT
             {
                 // no need to check the value of M(i,j); no prezombies
-                Ci[pM] = (k << 4) ;
+                Ci [pM] = (k << 4) ;
             }
             #else
             {
                 bool mij = (bool) GB_MCAST (Mx,pM,) ;
                 int64_t i = Mi [ pM ] ;
                 // FIXME: no need for k<<4, just place k or GB_FLIP(i) in Ci
-                Ci[pM] = (!mij) * ( GB_FLIP(i) << 4)
-                       +   mij  * ((k<<4) ) ;
+                Ci [pM] = (!mij) * ( GB_FLIP(i) << 4)
+                        +   mij  * ((k<<4) ) ;
             }
             #endif
         }

@@ -2,6 +2,8 @@
 // GraphBLAS/CUDA/JitKernels/GB_cuda_jit_AxB_dot3_phase3_vsvs.cuh
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// This file: Copyright (c) 2024, NVIDIA CORPORATION. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -22,27 +24,19 @@
 //  M         <- mask matrix
 //  A         <- input matrix A
 //  B         <- input matrix B
-//  int sz                 <- nnz of very sparse vectors
 
 //  Blocksize is 1024, uses warp and block reductions to count zombies produced.
 //******************************************************************************
 
-#pragma once
-#include "GB_cuda_kernel.cuh"
-#include "GB_mxm_shared_definitions.h"
-#include "GB_hash.h"
-#include "GB_hyper_hash_lookup.h"
-#include "GB_cuda_dot3_defn.cuh"
-
-using namespace cooperative_groups;
-#define tile_sz 32
-
 //------------------------------------------------------------------------------
-// GB_warp_ReduceSumPlus_int64
+// GB_warp_ReduceSumPlus_uint64
 //------------------------------------------------------------------------------
 
-__inline__ __device__ 
-int64_t GB_warp_ReduceSumPlus_int64( thread_block_tile<tile_sz> g, int64_t val)
+__inline__ __device__ uint64_t GB_warp_ReduceSumPlus_uint64
+(
+    thread_block_tile<tile_sz> g,
+    uint64_t val
+)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial sum[i] to sum[lane+i]
@@ -62,20 +56,22 @@ int64_t GB_warp_ReduceSumPlus_int64( thread_block_tile<tile_sz> g, int64_t val)
 }
 
 //------------------------------------------------------------------------------
-// GB_block_ReduceSum_int64
+// GB_block_ReduceSum_uint64
 //------------------------------------------------------------------------------
 
-__inline__ __device__
-int64_t GB_block_ReduceSum_int64(thread_block g, int64_t val)
+__inline__ __device__ uint64_t GB_block_ReduceSum_uint64
+(
+    thread_block g, uint64_t val
+)
 {
-  static __shared__ int64_t shared[tile_sz]; // Shared mem for 32 partial sums
+  static __shared__ uint64_t shared[tile_sz]; // Shared mem for 32 partial sums
 
   int lane = threadIdx.x & 31 ; // % tile_sz;
   int wid  = threadIdx.x >> 5 ; // / tile_sz;
   thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( g );
 
   // Each warp performs partial reduction
-  val = GB_warp_ReduceSumPlus_int64( tile, val);    
+  val = GB_warp_ReduceSumPlus_uint64( tile, val);    
 
   // Wait for all partial reductions
   if (lane==0) shared[wid]=val; // Write reduced value to shared memory
@@ -87,16 +83,16 @@ int64_t GB_block_ReduceSum_int64(thread_block g, int64_t val)
   val = (threadIdx.x <  (blockDim.x / tile_sz ) ) ? shared[lane] : 0;
 
   // Final reduce within first warp
-  if (wid==0) val = GB_warp_ReduceSumPlus_int64( tile, val);
+  if (wid==0) val = GB_warp_ReduceSumPlus_uint64( tile, val);
 
   return val;
 }
 
 //------------------------------------------------------------------------------
-// AxB_dot3_phase3_vsvs
+// GB_cuda_AxB_dot3_phase3_vsvs_kernel
 //------------------------------------------------------------------------------
 
-__global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsvs
+__global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
 (
   int64_t start,
   int64_t end,
@@ -104,27 +100,16 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsvs
   GrB_Matrix C,
   GrB_Matrix M,
   GrB_Matrix A,
-  GrB_Matrix B,
-  int sz            // unused
+  GrB_Matrix B
 )
 {
 
-    // TODO: Figure out how to use graphblas-specific INFINITY macro
-    #ifndef INFINITY
-    #define INFINITY std::numeric_limits<GB_C_TYPE>::max()
-    #endif
-
-    int64_t dots = end - start;
-   // sz = expected non-zeros per dot
-//   /*
-//   int m = (gridDim.x*blockDim.x)*256/sz;
-//   int dpt = (nvecs+ gridDim.x*blockDim.x -1)/(gridDim.x*blockDim.x);
-//   m = dpt < m ? dpt : m;
-//
-//   int dots = (nvecs +m -1)/m;
-//   */
+    #if !GB_A_IS_PATTERN
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *)A->x  ;
+    #endif
+    #if !GB_B_IS_PATTERN
     const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *)B->x  ;
+    #endif
           GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *)C->x  ;
           int64_t *__restrict__ Ci = C->i ;
     const int64_t *__restrict__ Mi = M->i ;
@@ -132,15 +117,13 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsvs
     const int64_t *__restrict__ Mh = M->h ;
     #endif
 
-    #if GB_A_IS_HYPER || GB_A_IS_SPARSE
+    ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
     const int64_t *__restrict__ Ai = A->i ;
     const int64_t *__restrict__ Ap = A->p ;
-    #endif
 
-    #if GB_B_IS_HYPER || GB_B_IS_SPARSE
+    ASSERT (GB_B_IS_HYPER || GB_B_IS_SPARSE) ;
     const int64_t *__restrict__ Bi = B->i ;
     const int64_t *__restrict__ Bp = B->p ;
-    #endif
 
     #if GB_A_IS_HYPER
     const int64_t anvec = A->nvec ;
@@ -162,17 +145,13 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsvs
     const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;
     #endif
 
-    //int64_t pfirst, plast;
+    uint64_t my_nzombies = 0 ;
 
-    //GB_PARTITION (pfirst, plast, dots, blockIdx.x, gridDim.x ) ;
-
-    int64_t my_nzombies = 0 ;
-
+    // FIXME
+    // GB_M_NVALS (mnz)
+    // then use mnz, not M->p[M->nvec]
     int all_in_one = ( (end - start) == (M->p)[(M->nvec)] ) ;
 
-  //for ( int64_t kk = pfirst+ threadIdx.x ;
-  //              kk < plast;
-  //              kk += blockDim.x )
     for ( int64_t kk = start+ threadIdx.x +blockDim.x*blockIdx.x ;
                   kk < end;
                   kk += blockDim.x*gridDim.x )
@@ -191,8 +170,8 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsvs
         GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
            i, &pA, &pA_end) ;
         #else
-        pA       = Ap[i] ;
-        pA_end   = Ap[i+1] ;
+        pA     = Ap [i] ;
+        pA_end = Ap [i+1] ;
         #endif
 
         // find B(:,j):  B is always sparse or hypersparse
@@ -201,8 +180,8 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsvs
         GB_hyper_hash_lookup (Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
            j, &pB, &pB_end) ;
         #else
-        pB       = Bp[j] ;
-        pB_end   = Bp[j+1] ;
+        pB     = Bp [j] ;
+        pB_end = Bp [j+1] ;
         #endif
 
         GB_DECLAREA (aki) ;
@@ -233,7 +212,7 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsvs
         GB_CIJ_EXIST_POSTCHECK ;
         if (cij_exists)
         {
-            GB_PUTC (cij, Cx, pair_id) ;        // Cx [pair_id] = (GB_C_TYPE) cij
+            GB_PUTC (cij, Cx, pair_id) ;    // Cx [pair_id] = (GB_C_TYPE) cij
             Ci [pair_id] = i ;
         }
         else
@@ -247,12 +226,12 @@ __global__ void GB_cuda_jit_kernel // AxB_dot3_phase3_vsvs
     // FIXME: use this in spdn and vsdn:
     this_thread_block().sync(); 
 
-    my_nzombies = GB_block_ReduceSum_int64( this_thread_block(), my_nzombies);
+    my_nzombies = GB_block_ReduceSum_uint64 (this_thread_block(), my_nzombies) ;
     this_thread_block().sync(); 
 
     if( threadIdx.x == 0 && my_nzombies > 0)
     {
-        GB_cuda_atomic_add <uint64_t>( &(C->nzombies), (uint64_t) my_nzombies) ;
+        GB_cuda_atomic_add <uint64_t>( &(C->nzombies), my_nzombies) ;
     }
 }
 

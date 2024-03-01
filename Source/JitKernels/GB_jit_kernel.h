@@ -32,7 +32,6 @@
 
 #ifndef GB_JIT_RUNTIME
     // for PreJIT kernels (CPU and CUDA)
-    #include "GB_callback.h"
     #include "GB_callbacks.h"
 #endif
 

@@ -2,6 +2,12 @@
 // GraphBLAS/CUDA/Template/GB_cuda_atomics.cuh: CUDA atomics for GraphBLAS
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// This file: Copyright (c) 2024, NVIDIA CORPORATION. All rights reserved.
+// SPDX-License-Identifier: BSD-3-Clause
+
+//------------------------------------------------------------------------------
+
 // Atomic device functions for CUDA JIT kernels.  Not used on the host.
 
 /*
@@ -31,7 +37,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * SPDX-License-Identifier: BSD-3-Clause
  */
 
 //------------------------------------------------------------------------------

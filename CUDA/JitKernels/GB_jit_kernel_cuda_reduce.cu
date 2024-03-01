@@ -2,6 +2,8 @@
 // GraphBLAS/CUDA/JitKernels/GB_jit_cuda_reduce.cu
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// This file: Copyright (c) 2024, NVIDIA CORPORATION. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -26,24 +28,25 @@
 #error "kernel undefined for C iso"
 #endif
 
-using namespace cooperative_groups ;
+// GB_warp_Reduce assumes tile_sz is 32 threads.
+#define tile_sz 32
+#define log2_tile_sz 5
 
 //------------------------------------------------------------------------------
 // GB_warp_Reduce: reduce all entries in a warp to a single scalar
 //------------------------------------------------------------------------------
 
-// GB_warp_Reduce assumes tile_sz is 32 threads.
-#define tile_sz 32
-#define log2_tile_sz 5
-
-__inline__ __device__
-GB_Z_TYPE GB_warp_Reduce( thread_block_tile<tile_sz> g, GB_Z_TYPE val)
+__inline__ __device__ GB_Z_TYPE GB_warp_Reduce
+(
+    thread_block_tile<tile_sz> g, GB_Z_TYPE val
+)
 {
     // Each iteration halves the number of active threads
     // Each thread adds its partial val[k] to val[lane+k]
 
     // FIXME: doesn't work unless sizeof(GB_Z_TYPE) <= 32 bytes
 
+#if ( GB_Z_NBITS <= 8*32 )
     // assumes tile_size is 32:
     GB_Z_TYPE fold = g.shfl_down ( val, 16) ;
     GB_ADD ( val, val, fold ) ;
@@ -55,6 +58,10 @@ GB_Z_TYPE GB_warp_Reduce( thread_block_tile<tile_sz> g, GB_Z_TYPE val)
     GB_ADD ( val, val, fold ) ;
     fold = g.shfl_down ( val, 1) ;
     GB_ADD ( val, val, fold ) ;
+#else
+    // use shared memory; do not use shfl_down
+    #error "not implemented yet"
+#endif
     return (val) ; // note: only thread 0 will return full val
 }
 
@@ -62,8 +69,11 @@ GB_Z_TYPE GB_warp_Reduce( thread_block_tile<tile_sz> g, GB_Z_TYPE val)
 // GB_block_Reduce: reduce across all warps into a single scalar
 //------------------------------------------------------------------------------
 
-__inline__ __device__
-GB_Z_TYPE GB_block_Reduce(thread_block g, GB_Z_TYPE val)
+__inline__ __device__ GB_Z_TYPE GB_block_Reduce
+(
+    thread_block g,
+    GB_Z_TYPE val
+)
 {
     static __shared__ GB_Z_TYPE shared [tile_sz] ;
     int lane = threadIdx.x & (tile_sz-1) ;
@@ -122,7 +132,7 @@ __global__ void GB_cuda_reduce_kernel
     // phase 1: each thread reduces a part of the matrix to its own scalar
     //--------------------------------------------------------------------------
 
-    #if GB_A_IS_SPARSE || GB_A_IS_HYPERSPARSE
+    #if GB_A_IS_SPARSE || GB_A_IS_HYPER
     {
 
         //----------------------------------------------------------------------
@@ -176,7 +186,7 @@ __global__ void GB_cuda_reduce_kernel
         // A is bitmap
         //----------------------------------------------------------------------
 
-        const uint8_t *__restrict__ Ab = A->b ;
+        const int8_t *__restrict__ Ab = A->b ;
         for (int64_t p = blockIdx.x * blockDim.x + threadIdx.x ;
             p < anz ;
             p += blockDim.x * gridDim.x)
@@ -231,7 +241,7 @@ __global__ void GB_cuda_reduce_kernel
 
 extern "C"
 {
-GB_JIT_CUDA_KERNEL_REDUCE_PROTO (GB_jit_kernel) ;
+    GB_JIT_CUDA_KERNEL_REDUCE_PROTO (GB_jit_kernel) ;
 }
 
 GB_JIT_CUDA_KERNEL_REDUCE_PROTO (GB_jit_kernel)

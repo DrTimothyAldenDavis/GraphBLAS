@@ -2,6 +2,8 @@
 // GraphBLAS/CUDA/JitKernels/GB_cuda_jit_AxB_dot3_phase1.cuh
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// This file: Copyright (c) 2024, NVIDIA CORPORATION. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -11,27 +13,9 @@
 // dot3, phase1: symbolic load balancing and data partition
 // to assign work to different 'buckets' for later compute
 
-//  This kernel scans the non-zero pattern in A and B, takes into account the
-//  mask and computes total work required to form C. Then it classifies each
-//  dot product into a set of buckets for efficient compute. 
-
-#pragma once
-
-#include <limits>
-#include <stdint.h>
-#include "GB_cuda_kernel.cuh"
-#include "GB_mxm_shared_definitions.h"
-#include "GB_hash.h"
-#include "GB_hyper_hash_lookup.h"
-#include "GB_cuda_AxB_dot3_buckets.hpp"
-#include <cub/block/block_scan.cuh>
-#include <cooperative_groups.h>
-
-using namespace cooperative_groups;
-
-//------------------------------------------------------------------------------
-// GB_jit_AxB_dot3_phase1: build nanobuckets, hunt for pre-zombies
-//------------------------------------------------------------------------------
+// This kernel scans the non-zero pattern in A and B, takes into account the
+// mask and computes total work required to form C. Then it classifies each dot
+// product into a set of buckets for efficient compute. 
 
 // GB_AxB_cuda_dot3_phase1 is a CUDA kernel that scans all entries in C and
 // assigns them to each of the NBUCKETS buckets.  The output is a
@@ -54,9 +38,7 @@ using namespace cooperative_groups;
 // FIXME: What if all entries are in one bucket;
 // can we skip the bucket creation?
 
-#define chunk_size 128
-
-__global__ void GB_cuda_jit_kernel  // was GB_jit_AxB_dot3_phase1
+__global__ void GB_jit_AxB_dot3_phase1_kernel
 (
     // outputs, preallocated in global memory:
     int64_t *nanobuckets,   // array of size NBUCKETS-blockDim.x-by-gridDim.x
@@ -74,7 +56,9 @@ __global__ void GB_cuda_jit_kernel  // was GB_jit_AxB_dot3_phase1
     // get C, M, A, and B
     //--------------------------------------------------------------------------
 
+    #if GB_M_IS_HYPER
     const int64_t *__restrict__ Mh = M->h ;
+    #endif
     const int64_t *__restrict__ Mp = M->p ;
     const int64_t *__restrict__ Mi = M->i ;
     #if !GB_MASK_STRUCT
@@ -82,22 +66,16 @@ __global__ void GB_cuda_jit_kernel  // was GB_jit_AxB_dot3_phase1
     #endif
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
-//  const int64_t mnz = GB_nnz(M) ;
     const GB_M_NVALS (mnz) ;
-    const bool M_is_hyper = M->h != NULL ;
     ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
 
+    #if GB_A_IS_SPARSE || GB_A_IS_HYPER
     const int64_t *__restrict__ Ap = A->p ;
-    const int64_t *__restrict__ Ai = A->i ;
-    const int64_t avlen = A->vlen ;
-//  const int64_t anz = GB_nnz(A) ;
-    const GB_A_NVALS (anz) ;
+    #endif
 
+    #if GB_B_IS_SPARSE || GB_B_IS_HYPER
     const int64_t *__restrict__ Bp = B->p ;
-    const int64_t *__restrict__ Bi = B->i ;
-    const int64_t bvlen = B->vlen ;
-//  const int64_t bnz = GB_nnz(B);
-    const GB_B_NVALS (bnz) ;
+    #endif
 
     #if GB_A_IS_HYPER
     const int64_t anvec = A->nvec ;
@@ -132,63 +110,78 @@ __global__ void GB_cuda_jit_kernel  // was GB_jit_AxB_dot3_phase1
     //--------------------------------------------------------------------------
     // clear the bucket counters
     //--------------------------------------------------------------------------
-    int64_t my_bucket[NBUCKETS];
 
-    // ASSERT (mnz > 0) ;
-    // ASSERT (gridDim.x <= mnz) ;
-
+    int64_t my_bucket [NBUCKETS] ;
     // each thread uses NBUCKETS bucket counters, held in register
     #pragma unroll
-    for(int b = 0; b < NBUCKETS; ++b) {
-        my_bucket[b] = 0;
+    for (int b = 0 ; b < NBUCKETS ; b++)
+    {
+        my_bucket [b] = 0 ;
     }
+
+    //--------------------------------------------------------------------------
+    // assign buckets to all entries in C(i,j), one chunk at a time
+    //--------------------------------------------------------------------------
 
     __shared__ int64_t ks [chunk_size] ;
 
-    //--------------------------------------------------------------------------
-    // assign all entries of C to the buckets
-    //--------------------------------------------------------------------------
-
+    // FIXME: why place these 4 scalars outside the for-loop below?
     // all threads in this block will compute the same values for these:
-    int64_t pfirst, plast, kfirst, klast ;
+    int64_t pfirst ;
+
+    // FIXME: use this instead of 'chunk':
+    // FIXME: since chunk_size is a power of 2, use "<<" instead of "*"
+    // for (int64_t pfirst = blockIdx.x * chunk_size ; pfirst < mnz ;
+    //      pfirst += gridDim.x * chunk_size)
 
     int64_t chunk_max = GB_ICEIL (mnz, chunk_size) ;
-    //      (mnz + chunk_size -1)/chunk_size;
-    for ( int64_t chunk = blockIdx.x;
-                  chunk < chunk_max;
-                  chunk += gridDim.x )
+    for (int64_t chunk = blockIdx.x ; chunk < chunk_max ; chunk += gridDim.x)
     {
 
         //----------------------------------------------------------------------
-        // determine the work done by this iteration, "chunk"
+        // find the vector k that contains each entry C(i,j) in this chunk
         //----------------------------------------------------------------------
+
+        int64_t my_chunk_size ;
+
+{
+        // FIXME: make this a static device function.
 
         // The slice for each task contains entries pfirst:plast-1 of M and C.
         // This iteration "chunk" computes Ci and Cx [pfirst...plast-1], using
         // Mi and Mx [pfirst:plast-1].  All threads in the thread block are
         // used for this "chunk".
-        pfirst = chunk_size * chunk ;
-        plast  = pfirst + chunk_size ;
+
+        pfirst = chunk_size * chunk ;       // FIXME see above
+
+        int64_t plast  = pfirst + chunk_size ;
         // plast = GB_IMIN (plast, mnz) ;
         if (plast > mnz) plast = mnz ;
-        int64_t my_chunk_size = plast - pfirst ;
+        my_chunk_size = plast - pfirst ;
+
+        // FIXME: these 2 calls to GB_search_for_vector are mimics of
+        // GB_ek_slice_search on the CPU, except the 2nd search differs by 1
+        // (plast on the CPU, plast-1 here).
+
+        // FIXME: GB_search_for_vector_device doesn't need to be exact,
+        // even for kfirst.
 
         // find the first vector of the slice for this chunk: the
         // vector that owns the entry Mi [pfirst] and Mx [pfirst].
-        kfirst = GB_search_for_vector_device (pfirst, Mp, 0, mnvec, mvlen) ;
+        int64_t kfirst = GB_search_for_vector_device (pfirst, Mp, 0, mnvec, mvlen) ;
+
+        // FIXME: klast is just for a heuristic, to compute the slope. It
+        // does not have to be accurate.  Can we use a faster method to find
+        // an approximate klast?  In particular, the linear-time "k++" in
+        // GB_search_for_vector_device could be skipped.
 
         // find the last vector of the slice for task blockIdx.x: the
         // vector that owns the entry Mi [plast-1] and Mx [plast-1].
-        klast = GB_search_for_vector_device (plast-1, Mp, kfirst, mnvec, mvlen);
+        int64_t klast = GB_search_for_vector_device (plast-1, Mp, kfirst, mnvec, mvlen);
 
         // number of vectors in C and M for this "chunk" iteration, where
         // Mp [kfirst:klast] will be operated on.
         int64_t nk = klast - kfirst + 1 ;
-
-        //----------------------------------------------------------------------
-        // fill ks to find all indices
-        //----------------------------------------------------------------------
-
         // search for k values for each entry pfirst:plast-1
         float slope = ((float) nk) / ((float) my_chunk_size) ;
         int64_t mnvec1 = mnvec - 1 ;
@@ -208,63 +201,78 @@ __global__ void GB_cuda_jit_kernel  // was GB_jit_AxB_dot3_phase1
             while ( Mp [ k     ] >  p ) k-- ;
             ks [kk] = k ;
         }
-        this_thread_block().sync();
+
+        this_thread_block().sync() ;
+}
 
         //----------------------------------------------------------------------
         // assign entries in C(i,j) to the buckets
         //----------------------------------------------------------------------
 
-        for ( int64_t pM = pfirst + threadIdx.x;
-                      pM < pfirst + my_chunk_size;
-                      pM += blockDim.x )
+        for (int64_t pM = pfirst + threadIdx.x ;
+                     pM < pfirst + my_chunk_size ;
+                     pM += blockDim.x)
         {
+
+            //------------------------------------------------------------------
+            // get C(i,j): zombie if A(:,i) and B(:,j) are empty or M(i,j) false
+            //------------------------------------------------------------------
+
+            // C(i,j) is in the kth vector of C, where j == k if C is sparse,
+            // or j = Mh [k] if C is hypersparse
+
             GB_bucket_code bucket = GB_BUCKET_ZOMBIE ;
-            int64_t k = ks [pM - pfirst] ;  // get the k value of Mi,Mx [pM].
-            int64_t i = Mi [ pM ] ;
-            int64_t j = GBH_M (Mh, k) ;     // note that Ch and Mh are the same
-            if ( GB_MCAST ( Mx, pM, ) )
+            int64_t k = ks [pM - pfirst] ;  // get the k value of Mi,Mx [pM]
+            int64_t i = Mi [pM] ;
+
+            if (GB_MCAST (Mx, pM, ))        // if (M (i,j) is true):
             {
 
                 //--------------------------------------------------------------
                 // get B(:,j)
                 //--------------------------------------------------------------
 
-                int64_t pB, pB_end ;
+                #if GB_B_IS_SPARSE || GB_B_IS_HYPER
+                int64_t j = GBH_M (Mh, k) ; // that Ch and Mh are the same
+                int64_t pB, pB_end, bjnz ;
+                #endif
+
                 #if GB_B_IS_HYPER
                 GB_hyper_hash_lookup (Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx,
                     B_hash_bits, j, &pB, &pB_end) ;
-                #elif GB_B_IS_SPARSE
-                pB       = Bp[j] ;
-                pB_end   = Bp[j+1] ;
-                #else
-                // B is bitmap or full
-                pB       = bvlen * j ;
-                pB_end   = pB + j ;
-                #endif
-
-                int64_t bjnz = pB_end - pB ;
+                bjnz = pB_end - pB ;
                 if (bjnz > 0)
+                #elif GB_B_IS_SPARSE
+                pB     = Bp [j] ;
+                pB_end = Bp [j+1] ;
+                bjnz = pB_end - pB ;        // # of entries in B(:,j)
+                if (bjnz > 0)
+                #else
+                // B is bitmap or full: no need to look up B(:,j)
+                #endif
                 {
 
                     //----------------------------------------------------------
                     // get A(:,i)
                     //----------------------------------------------------------
 
-                    int64_t pA, pA_end ;
+                    #if GB_A_IS_SPARSE || GB_A_IS_HYPER
+                    int64_t pA, pA_end, ainz ;
+                    #endif
+
                     #if GB_A_IS_HYPER
                     GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx,
                         A_hash_bits, i, &pA, &pA_end) ;
-                    #elif GB_A_IS_SPARSE
-                    pA       = Ap[i] ;
-                    pA_end   = Ap[i+1] ;
-                    #else
-                    // A is bitmap or full
-                    pA       = avlen * i ;
-                    pA_end   = pA + i ;
-                    #endif
-
-                    int64_t ainz = pA_end - pA ;
+                    ainz = pA_end - pA ;
                     if (ainz > 0)
+                    #elif GB_A_IS_SPARSE
+                    pA     = Ap [i] ;
+                    pA_end = Ap [i+1] ;
+                    ainz = pA_end - pA ;        // # of entries in A(:,i)
+                    if (ainz > 0)
+                    #else
+                    // A is bitmap or full: no need to look up A(:,i)
+                    #endif
                     {
                         // determine the bucket for C(i,j)
                         #if (GB_A_IS_SPARSE || GB_A_IS_HYPER) && \
@@ -292,12 +300,20 @@ __global__ void GB_cuda_jit_kernel  // was GB_jit_AxB_dot3_phase1
                 }
             }
 
-            Ci[pM] = (bucket == GB_BUCKET_ZOMBIE) * ( GB_FLIP(i) << 4)
-                   + (bucket != GB_BUCKET_ZOMBIE) * ((k<<4) + bucket) ;
-            my_bucket[bucket]++;
+            //------------------------------------------------------------------
+            // assign C(i,j) to its bucket
+            //------------------------------------------------------------------
+
+            // encode the bucket or zombie status in the row index of C(i,j)
+            Ci [pM] = (bucket == GB_BUCKET_ZOMBIE) * ( GB_FLIP(i) << 4)
+                    + (bucket != GB_BUCKET_ZOMBIE) * ((k<<4) + bucket) ;
+
+            // each thread counts its own bucket sizes
+            my_bucket [bucket]++ ;
         }
     }
-    this_thread_block().sync();
+
+    this_thread_block().sync() ;
 
     //--------------------------------------------------------------------------
     // cumulative sum of each bucket
@@ -314,17 +330,17 @@ __global__ void GB_cuda_jit_kernel  // was GB_jit_AxB_dot3_phase1
         nanobuckets + blockIdx.x * (NBUCKETS * blockDim.x) + threadIdx.x ;
 
     #pragma unroll
-    for (int b = 0; b < NBUCKETS; ++b)
+    for (int b = 0 ; b < NBUCKETS ; b++)
     {
         if ( threadIdx.x == blockDim.x-1)
         {
             blockbucket [blockIdx.x + b * gridDim.x] = my_bucket[b] ;
         }
-        this_thread_block().sync();
+        this_thread_block().sync() ;
 
         BlockCumSum(temp_storage).ExclusiveSum( my_bucket[b], my_bucket[b]) ;
 
-        this_thread_block().sync();
+        this_thread_block().sync() ;
 
         nanobucket [b * blockDim.x] = my_bucket[b] ;
     }
@@ -338,7 +354,7 @@ __global__ void GB_cuda_jit_kernel  // was GB_jit_AxB_dot3_phase1
     if (threadIdx.x == blockDim.x - 1 )
     {
         #pragma unroll
-        for(int b = 0; b < NBUCKETS; ++b)
+        for (int b = 0; b < NBUCKETS; ++b)
         {
             blockbucket [b * gridDim.x + blockIdx.x] += my_bucket[b];
         }
