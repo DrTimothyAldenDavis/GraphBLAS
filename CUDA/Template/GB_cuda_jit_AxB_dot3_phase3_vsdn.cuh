@@ -61,8 +61,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
     #if !(((GB_A_IS_SPARSE || GB_A_IS_HYPER) &&         \
            (GB_B_IS_BITMAP || GB_B_IS_FULL))            \
             ||                                          \
-            ((GB_B_IS_SPARSE || GB_B_IS_HYPER) &&       \
-             (GB_A_IS_BITMAP || GB_A_IS_FULL)))
+          ((GB_B_IS_SPARSE || GB_B_IS_HYPER) &&         \
+           (GB_A_IS_BITMAP || GB_A_IS_FULL)))
     #error "vsdn: for sparse-dense or dense-sparse cases only"
     #endif
 

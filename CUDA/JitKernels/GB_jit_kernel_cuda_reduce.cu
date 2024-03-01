@@ -46,6 +46,7 @@ __inline__ __device__ GB_Z_TYPE GB_warp_Reduce
 
     // FIXME: doesn't work unless sizeof(GB_Z_TYPE) <= 32 bytes
 
+#if ( GB_Z_NBITS <= 8*32 )
     // assumes tile_size is 32:
     GB_Z_TYPE fold = g.shfl_down ( val, 16) ;
     GB_ADD ( val, val, fold ) ;
@@ -57,6 +58,10 @@ __inline__ __device__ GB_Z_TYPE GB_warp_Reduce
     GB_ADD ( val, val, fold ) ;
     fold = g.shfl_down ( val, 1) ;
     GB_ADD ( val, val, fold ) ;
+#else
+    // use shared memory; do not use shfl_down
+    #error "not implemented yet"
+#endif
     return (val) ; // note: only thread 0 will return full val
 }
 

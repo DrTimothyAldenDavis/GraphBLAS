@@ -147,6 +147,9 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
 
     uint64_t my_nzombies = 0 ;
 
+    // FIXME
+    // GB_M_NVALS (mnz)
+    // then use mnz, not M->p[M->nvec]
     int all_in_one = ( (end - start) == (M->p)[(M->nvec)] ) ;
 
     for ( int64_t kk = start+ threadIdx.x +blockDim.x*blockIdx.x ;

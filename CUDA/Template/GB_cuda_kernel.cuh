@@ -48,10 +48,6 @@ using namespace cooperative_groups ;
 
 //------------------------------------------------------------------------------
 
-#ifndef INFINITY
-#define INFINITY (std::numeric_limits<double>::max())
-#endif
-
 // for internal static inline functions
 #undef  GB_STATIC_INLINE
 #define GB_STATIC_INLINE static __device__ __inline__

@@ -27,18 +27,12 @@
 // The work is to load the data, do the multiply and add work and finally 
 // reduce this data to a scalar, and write it to Cx[pair].
 
-//  int64_t start          <- start of vector pairs for this kernel
-//  int64_t end            <- end of vector pairs for this kernel
-//  int64_t *Bucket        <- array of pair indices for all kernels 
-//  GrB_Matrix C           <- result matrix 
-//  GrB_Matrix M           <- mask matrix
-//  GrB_Matrix A           <- input matrix A
-//  GrB_Matrix B           <- input matrix B
-/
-
 //------------------------------------------------------------------------------
 // warp_ReduceSum_dndn
 //------------------------------------------------------------------------------
+
+// FIXME: make this the same static device function
+// #include "GB_reduce_whatever.cuh"
 
 __inline__ __device__ GB_Z_TYPE warp_ReduceSum_dndn
 (
@@ -64,12 +58,16 @@ __inline__ __device__ GB_Z_TYPE warp_ReduceSum_dndn
 
 __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
 (
-    GrB_Matrix C,
-    GrB_Matrix M,
-    GrB_Matrix A,
-    GrB_Matrix B
+    GrB_Matrix C,   // result matrix
+    GrB_Matrix M,   // mask matrix
+    GrB_Matrix A,   // input matrix A
+    GrB_Matrix B    // input matrix B
 )
 {
+
+    //--------------------------------------------------------------------------
+    // get C, M, A, and B
+    //--------------------------------------------------------------------------
 
     #if !GB_A_IS_PATTERN
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *)A->x  ;
@@ -94,16 +92,15 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
     // zombie count
     uint64_t zc = 0;
 
-    int64_t end   = M->p[M->nvec];
+    GB_M_NVALS (mnz) ;
 
     // total items to be inspected
-    int64_t nnzA = A->vlen;
-    int64_t nnzB = B->vlen;
-    int s = blockDim.x;
+    int64_t vlen = A->vlen ;
+    ASSERT (vlen == B->vlen) ;
 
     // Main loop over pairs 
     for (int64_t pair_id  = blockIdx.x ; // warp per pair 
-                 pair_id  < end;  
+                 pair_id  < mnz ;
                  pair_id += gridDim.x)
     {
 
@@ -113,19 +110,21 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
         bool cij_exists = false ;
         GB_DECLARE_IDENTITY (cij) ;         // GB_Z_TYPE cij = identity
 
+        // FIXME: test for kk >= 0 not needed if GB_MASK_STRUCT is defined and
+        // vlen > 0
+
         // skip if C(i,j) is a prezombie
-        // FIXME: test not needed if GB_MASK_STRUCT is defined
         if (kk >= 0)
         {
 
             // j = kk or j = Mh [kk] if C and M are hypersparse
             int64_t j = GBH_M (Mh, kk) ;
 
-            int64_t pA     = (A->vlen)*i;
-            int64_t pA_end = pA +(A->vlen);
+            int64_t pA     = vlen * i ;
+            // int64_t pA_end = pA +(A->vlen);
 
-            int64_t pB     = (B->vlen)*j;
-            int64_t pB_end = pB +(B->vlen);
+            int64_t pB     = vlen * j ;
+            // int64_t pB_end = pB +(B->vlen);
 
             // convert global data pointer to the local pointer of this block
             GB_DECLAREA (aki) ;
@@ -133,8 +132,10 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
 
             #if GB_A_IS_FULL && GB_B_IS_FULL
             {
+                // FIXME: when both A and B are full, use another method
+                // (single pass)
                 cij_exists = true ;
-                for (int64_t k = threadIdx.x ; k < nnzA ; k += s)
+                for (int64_t k = threadIdx.x ; k < vlen ; k += blockDim.x)
                 { 
                     // cij += A(k,i) * B(k,j)
                     GB_GETA (aki, Ax, pA+k, ) ;           // aki = A(k,i)
@@ -144,7 +145,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
             }
             #elif GB_A_IS_BITMAP && GB_B_IS_BITMAP
             {
-                for ( int64_t k = threadIdx.x ; k < nnzA ; k += s)
+                for ( int64_t k = threadIdx.x ; k < vlen ; k += blockDim.x)
                 { 
                     GB_GETA (aki, Ax, pA+k, ) ;           // aki = A(k,i)
                     GB_GETB (bkj, Bx, pB+k, ) ;           // bkj = B(k,j)
@@ -159,7 +160,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
             }
             #elif GB_A_IS_FULL && GB_B_IS_BITMAP
             {
-                for ( int64_t k = threadIdx.x ; k < nnzA ; k += s)
+                for ( int64_t k = threadIdx.x ; k < vlen ; k += blockDim.x)
                 { 
                     if (Bb [pB+k])
                     {
@@ -173,7 +174,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
             }
             #elif GB_A_IS_BITMAP && GB_B_IS_FULL
             {
-                for ( int64_t k = threadIdx.x ; k < nnzA ; k += s)
+                for ( int64_t k = threadIdx.x ; k < vlen ; k += blockDim.x)
                 { 
                     if (Ab [pB+k])
                     {
@@ -201,6 +202,10 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
         // FIXME: the ANY monoid needs the cij_exists for each thread
         cij = warp_ReduceSum_dndn<32> ( tile, cij);
         #endif
+
+        // FIXME: if A and B are full, and GB_MASK_STRUCT is true, cij_exists
+        // is always true, unless vlen is zero (and then all entries are
+        // zombies and there's nothing to do).
 
         // write result for this block to global mem
         if (threadIdx.x == 0)

@@ -24,9 +24,9 @@
 #error "kernel undefined for C iso"
 #endif
 
-// TODO: Figure out how to use graphblas-specific INFINITY macro
+// FIXME: Figure out how to use graphblas-specific INFINITY macro
 #ifndef INFINITY
-#define INFINITY std::numeric_limits<GB_C_TYPE>::max()
+#define INFINITY std::numeric_limits<double>::max()
 #endif
 
 //------------------------------------------------------------------------------
@@ -142,6 +142,9 @@ GB_bucket_code ;    // FIXME: rename GB_dot3_bucket_code
 //------------------------------------------------------------------------------
 // GB_reduce_sum
 //------------------------------------------------------------------------------
+
+// FIXME: do
+// #include "GB_reduce_sum.cuh"
 
 __device__ __inline__ GB_Z_TYPE GB_reduce_sum
 (
@@ -444,6 +447,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
                         case GB_BUCKET_VSVS :
                         {
+                            // FIXME: should be a function of cuda architecture
                             blocksz = 256 ;
                             work_per_thread = 4 ;
                             if (cnz_in_bucket > (2<<12))
@@ -466,6 +470,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
                         case GB_BUCKET_MERGEPATH :
                         {
+                            // FIXME: should be a function of cuda architecture
                             blocksz = 32 ;
                             work_per_thread = 256 ;
                             if (cnz_in_bucket > (2<<20))
@@ -498,7 +503,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
                         case GB_BUCKET_VSDN :
                         {
-                            // FIXME:
+                            // FIXME: should be a function of cuda architecture
                             blocksz = 256 ;
                             work_per_thread = 4 ;
                             if (cnz_in_bucket > (2<<12))
@@ -521,7 +526,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
                         case GB_BUCKET_SPDN :
                         {
-                            // FIXME:
+                            // FIXME: should be a function of cuda architecture
                             blocksz = 32 ;
                             work_per_thread = 256 ;
                             if (cnz_in_bucket > (2<<20))

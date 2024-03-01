@@ -127,7 +127,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
 
     // FIXME: why place these 4 scalars outside the for-loop below?
     // all threads in this block will compute the same values for these:
-    int64_t pfirst, plast, kfirst, klast ;
+    int64_t pfirst ;
 
     // FIXME: use this instead of 'chunk':
     // FIXME: since chunk_size is a power of 2, use "<<" instead of "*"
@@ -142,6 +142,9 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
         // find the vector k that contains each entry C(i,j) in this chunk
         //----------------------------------------------------------------------
 
+        int64_t my_chunk_size ;
+
+{
         // FIXME: make this a static device function.
 
         // The slice for each task contains entries pfirst:plast-1 of M and C.
@@ -151,10 +154,10 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
 
         pfirst = chunk_size * chunk ;       // FIXME see above
 
-        plast  = pfirst + chunk_size ;
+        int64_t plast  = pfirst + chunk_size ;
         // plast = GB_IMIN (plast, mnz) ;
         if (plast > mnz) plast = mnz ;
-        int64_t my_chunk_size = plast - pfirst ;
+        my_chunk_size = plast - pfirst ;
 
         // FIXME: these 2 calls to GB_search_for_vector are mimics of
         // GB_ek_slice_search on the CPU, except the 2nd search differs by 1
@@ -165,7 +168,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
 
         // find the first vector of the slice for this chunk: the
         // vector that owns the entry Mi [pfirst] and Mx [pfirst].
-        kfirst = GB_search_for_vector_device (pfirst, Mp, 0, mnvec, mvlen) ;
+        int64_t kfirst = GB_search_for_vector_device (pfirst, Mp, 0, mnvec, mvlen) ;
 
         // FIXME: klast is just for a heuristic, to compute the slope. It
         // does not have to be accurate.  Can we use a faster method to find
@@ -174,7 +177,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
 
         // find the last vector of the slice for task blockIdx.x: the
         // vector that owns the entry Mi [plast-1] and Mx [plast-1].
-        klast = GB_search_for_vector_device (plast-1, Mp, kfirst, mnvec, mvlen);
+        int64_t klast = GB_search_for_vector_device (plast-1, Mp, kfirst, mnvec, mvlen);
 
         // number of vectors in C and M for this "chunk" iteration, where
         // Mp [kfirst:klast] will be operated on.
@@ -200,6 +203,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
         }
 
         this_thread_block().sync() ;
+}
 
         //----------------------------------------------------------------------
         // assign entries in C(i,j) to the buckets
