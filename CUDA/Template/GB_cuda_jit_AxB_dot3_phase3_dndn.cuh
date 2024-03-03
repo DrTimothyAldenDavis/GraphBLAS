@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 // This CUDA kernel produces the semiring product of two dense matrices of
-// types GB_A_TYPE and GB_B_TYPE and common index space size n, to a  output
+// types GB_A_TYPE and GB_B_TYPE and common index space size n, to an output
 // matrix of type GB_C_TYPE. The matrices are dense, with uniform non-zeros and
 // sparsity patterns.  ie. we want to produce C = A'*B in the sense of the
 // given semi-ring.
@@ -97,6 +97,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
     // total items to be inspected
     int64_t vlen = A->vlen ;
     ASSERT (vlen == B->vlen) ;
+    ASSERT (vlen > 0) ;
 
     //--------------------------------------------------------------------------
     // compute C(i,j) = A(:,i)'*B(:,j) for each entry in M(i,j)
@@ -126,21 +127,14 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
 
             // j = kth or j = Mh [kth] if C and M are hypersparse
             int64_t j = GBH_M (Mh, kth) ;
-
             int64_t pA = vlen * i ;
-            // int64_t pA_end = pA +(A->vlen);
-
             int64_t pB = vlen * j ;
-            // int64_t pB_end = pB +(B->vlen);
 
-            // convert global data pointer to the local pointer of this block
             GB_DECLAREA (aki) ;
             GB_DECLAREB (bkj) ;
 
             #if GB_A_IS_FULL && GB_B_IS_FULL
             {
-                // FIXME: when both A and B are full, use another method
-                // (single pass)
                 cij_exists = true ;
                 for (int64_t k = threadIdx.x ; k < vlen ; k += blockDim.x)
                 { 
@@ -200,6 +194,9 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
         // reduce per-thread sums to a single scalar
         //----------------------------------------------------------------------
 
+        // FIXME: no need to do this if C(i,j) is a zombie (cij_exists is
+        // always false), or if A and B are both full and C(i,j) is not a
+        // zombile (cij_exists is always true).
         // Do vote here for control.
         thread_block_tile<32> tile = tiled_partition<32>( this_thread_block() );
         cij_exists = tile.any( cij_exists);
@@ -211,8 +208,10 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
         #endif
 
         // FIXME: if A and B are full, and GB_MASK_STRUCT is true, cij_exists
-        // is always true, unless vlen is zero (and then all entries are
-        // zombies and there's nothing to do).
+        // is always true because vlen > 0 always holds for this kernel.
+
+        // FIXME: if kth < 0, C(i,j) is a prezombie, and Ci [pM] already holds
+        // GB_FLIP (i).
 
         // write result for this block to global mem
         if (threadIdx.x == 0)
@@ -226,10 +225,11 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
             else
             {
                 // cij is a zombie
-                zc++;
+                zc++ ;
                 Ci [pM] = GB_FLIP (i) ;
             }
         }
+
         // __syncthreads ( ) ;
 
         if( threadIdx.x ==0 && zc > 0)

@@ -423,7 +423,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         // phase3: do the numerical work
         //----------------------------------------------------------------------
 
-        kernel_timer.Start();
+        // kernel_timer.Start();
 
         for (int bucket = 1 ; bucket < NBUCKETS ; bucket++)
         {
