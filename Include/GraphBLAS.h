@@ -279,7 +279,7 @@
 // The 'spec' string describes the GraphBLAS spec:
 #define GxB_SPEC_ABOUT \
 "GraphBLAS C API, by Benjamin Brock, Aydin Buluc, Raye Kimmerer,\n" \
-"Jim Kitchen, Major Kumar, Timothy Mattson, Scott McMillan, Jose' Moreira,\n" \
+"Jim Kitchen, Manoj Kumar, Timothy Mattson, Scott McMillan, Jose' Moreira,\n" \
 "Erik Welch, and Carl Yang.  Based on 'GraphBLAS Mathematics by Jeremy\n" \
 "Kepner.  See also 'Graph Algorithms in the Language of Linear Algebra,'\n" \
 "edited by J. Kepner and J. Gilbert, SIAM, 2011.\n"

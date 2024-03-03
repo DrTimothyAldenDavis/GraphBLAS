@@ -8,11 +8,11 @@
 
 //------------------------------------------------------------------------------
 
-// This CUDA kernel produces the semiring product of two
-// dense matrices of types GB_A_TYPE and GB_B_TYPE and common index space size n, to a  
-// output matrix of type GB_C_TYPE. The matrices are dense, with uniform
-// non-zeros and sparsity patterns. 
-// ie. we want to produce C = A'*B in the sense of the given semi-ring.
+// This CUDA kernel produces the semiring product of two dense matrices of
+// types GB_A_TYPE and GB_B_TYPE and common index space size n, to a  output
+// matrix of type GB_C_TYPE. The matrices are dense, with uniform non-zeros and
+// sparsity patterns.  ie. we want to produce C = A'*B in the sense of the
+// given semi-ring.
 
 // This version uses a simple warp-based dense dot product algorithm, when the
 // vectors coming from both A and B are dense, for any size of N.
@@ -98,20 +98,28 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
     int64_t vlen = A->vlen ;
     ASSERT (vlen == B->vlen) ;
 
-    // Main loop over pairs 
-    for (int64_t pair_id  = blockIdx.x ; // warp per pair 
-                 pair_id  < mnz ;
-                 pair_id += gridDim.x)
+    //--------------------------------------------------------------------------
+    // compute C(i,j) = A(:,i)'*B(:,j) for each entry in M(i,j)
+    //--------------------------------------------------------------------------
+
+    for (int64_t pM = blockIdx.x ; pM < mnz ; pM += gridDim.x)
     {
 
+        //----------------------------------------------------------------------
         // get M(i,j) and C(i,j)
-        int64_t i = Mi[pair_id];
-        int64_t kk = Ci[pair_id] >> 4;      // FIXME: can remove ">> 4"
+        //----------------------------------------------------------------------
+
+        int64_t i = Mi [pM] ;
+        int64_t kk = Ci [pM] >> 4 ;         // FIXME: can remove ">> 4"
         bool cij_exists = false ;
         GB_DECLARE_IDENTITY (cij) ;         // GB_Z_TYPE cij = identity
 
         // FIXME: test for kk >= 0 not needed if GB_MASK_STRUCT is defined and
         // vlen > 0
+
+        //----------------------------------------------------------------------
+        // The threadblock cooperates to compute a single entry C(i,j)
+        //----------------------------------------------------------------------
 
         // skip if C(i,j) is a prezombie
         if (kk >= 0)
@@ -120,10 +128,10 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
             // j = kk or j = Mh [kk] if C and M are hypersparse
             int64_t j = GBH_M (Mh, kk) ;
 
-            int64_t pA     = vlen * i ;
+            int64_t pA = vlen * i ;
             // int64_t pA_end = pA +(A->vlen);
 
-            int64_t pB     = vlen * j ;
+            int64_t pB = vlen * j ;
             // int64_t pB_end = pB +(B->vlen);
 
             // convert global data pointer to the local pointer of this block
@@ -212,18 +220,18 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
         {
             if (cij_exists)
             {
-                // Cx [pair_id] = (GB_C_TYPE) cij
-                GB_PUTC (cij, Cx, pair_id) ;
-                Ci [pair_id] = i ;
+                // Cx [pM] = (GB_C_TYPE) cij
+                GB_PUTC (cij, Cx, pM) ;
+                Ci [pM] = i ;
             }
             else
             {
                 // cij is a zombie
                 zc++;
-                Ci [pair_id] = GB_FLIP (i) ;
+                Ci [pM] = GB_FLIP (i) ;
             }
         }
-        //__syncthreads ( ) ;
+        // __syncthreads ( ) ;
 
         if( threadIdx.x ==0 && zc > 0)
         {

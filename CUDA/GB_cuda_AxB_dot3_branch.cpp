@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Decide branch direction for GPU use for the dot-product MxM
+// Decide branch direction for GPU use for the dot-product C<M>=A'*B
 
 #include "GB_cuda.hpp"
 #include <cuda_runtime.h>
@@ -33,13 +33,16 @@ bool GB_cuda_AxB_dot3_branch
         return (false) ;
     }
 
+    if (A->vlen == 0)
+    {
+        // C has no entries: no need to compute it on the GPU
+        return (false) ;
+    }
+
     // very rough estimate of the work to do
     double adeg = ((double) GB_nnz (A)) / ((double) GB_IMAX (1, A->nvec)) ;
     double bdeg = ((double) GB_nnz (B)) / ((double) GB_IMAX (1, B->nvec)) ;
     double work = GB_nnz (M) * GB_IMIN (adeg, bdeg) ;
-
-    // TODO if A or B are not accessed (first, 2nd, or pair ops)
-    // then the type if A can be user-defined here, for CUDA.
 
     int ngpus_to_use = GB_ngpus_to_use (work) ;
     GBURBLE (" work:%g GPUs:%d ", work, ngpus_to_use) ;

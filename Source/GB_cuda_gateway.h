@@ -66,7 +66,7 @@ static inline int GB_ngpus_to_use
     // get # of GPUs avaiable
     int gpu_count = GB_Global_gpu_count_get ( ) ;
 
-    if (gpu_hack == 2 || gpu_count == 0)
+    if (gpu_hack == 2 || gpu_count == 0 || work == 0)
     {
         // never use the GPU(s)
         return (0) ;
@@ -87,7 +87,6 @@ static inline int GB_ngpus_to_use
         return ((int) max_gpus_to_use) ;
     }
 }
-
 
 //------------------------------------------------------------------------------
 // GB_cuda_* gateway functions

@@ -169,13 +169,14 @@ __device__ __inline__ GB_Z_TYPE GB_reduce_sum
 // CUDA device kernels for each case
 //------------------------------------------------------------------------------
 
+#include "GB_cuda_ek_slice.cuh"
+
 #if ((GB_A_IS_BITMAP || GB_A_IS_FULL) && (GB_B_IS_BITMAP || GB_B_IS_FULL))
     // dense-dense
     #include "GB_cuda_jit_AxB_dot3_dense_phase1.cuh"
     #include "GB_cuda_jit_AxB_dot3_phase3_dndn.cuh"
 #else
     // sparse-sparse, sparse-dense, or dense-sparse
-    #include "GB_cuda_ek_slice.cuh"
     #include "GB_cuda_jit_AxB_dot3_phase1.cuh"
     #include "GB_cuda_jit_AxB_phase2.cuh"
     #include "GB_cuda_jit_AxB_phase2end.cuh"
