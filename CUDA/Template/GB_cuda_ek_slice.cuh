@@ -25,12 +25,19 @@ static __device__ __inline__ int64_t GB_cuda_ek_slice_setup
 )
 {
 
+    //--------------------------------------------------------------------------
+    // determine the range of entryes pfirst:plast-1 for this chunk
+    //--------------------------------------------------------------------------
+
     // The slice for each threadblock contains entries pfirst:plast-1 of A.
     // The threadblock works on a chunk of entries in Ai/Ax [pfirst...plast-1].
 
+    ASSERT (pfirst < anz) ;
+    ASSERT (max_pchunk > 0) ;
     int64_t plast = pfirst + max_pchunk ;
     plast = GB_IMIN (plast, anz) ;
     (*my_chunk_size) = plast - pfirst ;
+    ASSERT ((*my_chunk_size) > 0) ;
 
     //--------------------------------------------------------------------------
     // estimate the first and last vectors for this chunk

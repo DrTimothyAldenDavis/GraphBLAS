@@ -196,6 +196,8 @@ __device__ __inline__ GB_Z_TYPE GB_reduce_sum
 // host function to launch the CUDA kernels for dot3 on the GPU
 //------------------------------------------------------------------------------
 
+// #include "GB_cuda_timer.hpp"
+
 extern "C"
 {
     GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel) ;
@@ -203,6 +205,12 @@ extern "C"
 
 GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 {
+
+    // GpuTimer kernel_timer ;
+
+    //--------------------------------------------------------------------------
+    // get callback functions
+    //--------------------------------------------------------------------------
 
     #ifdef GB_JIT_RUNTIME
     // get callback functions
@@ -258,14 +266,14 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         // dense case, phase 1
         //----------------------------------------------------------------------
 
-//      kernel_timer.Start();
+        // kernel_timer.Start();
         GB_cuda_AxB_dot3_dense_phase1_kernel <<<grid_1, block, 0, stream>>>
             (C, M) ;
 
         CUDA_OK (cudaStreamSynchronize(stream)) ;  // is this needed?
 
-//      kernel_timer.Stop();
-//      GBURBLE ("(GPU phase1 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
+        // kernel_timer.Stop();
+        // printf ("(GPU phase1 %12.6g ms )\n", kernel_timer.Elapsed()) ;
 
         //----------------------------------------------------------------------
         // dense case, phase "3" (FIXME: rename to dense_phase2)
@@ -282,16 +290,11 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         int gridsz = GB_ICEIL (mnz, work_per_thread*blocksz) ;
         dim3 grid_2 (gridsz) ;
 
-//      GBURBLE ("(GPU Dense full x full launch ) ") ;
-//      kernel_timer.Start();
+        // kernel_timer.Start();
 
         GB_cuda_AxB_dot3_phase3_dndn_kernel <<grid_2, block, 0, stream>>
             (C, M, A, B) ;
 
-        CUDA_OK (cudaStreamSynchronize(stream));  // only for timing
-//      kernel_timer.Stop();
-//      GBURBLE ("(GPU Dense full x full done %12.6g ms, rate=%12.6g)\n", 
-//             kernel_timer.Elapsed(), (mnvec)/(1000*kernel_timer.Elapsed())) ;  
     }
     #else
     {
@@ -357,16 +360,15 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         // phase1: assign each C(i,j) to a bucket, and count them
         //----------------------------------------------------------------------
 
-//      GBURBLE ("(GPU sparse phase1 start nblk = %d) ", number_of_blocks_1) ;
-//      kernel_timer.Start();
+        // kernel_timer.Start();
 
         GB_jit_AxB_dot3_phase1_kernel <<<grid_1, block, 0, stream>>>
             (Nanobuckets, Blockbucket, C, M, A, B) ;
 
         CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-//      kernel_timer.Stop();
-//      GBURBLE ("(GPU phase1 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
+        // kernel_timer.Stop();
+        // printf ("(GPU phase1 %12.6g ms )\n", kernel_timer.Elapsed()) ;
 
         //----------------------------------------------------------------------
         // phase2: cumsum across the blockbuckets, propagate to thread level
@@ -376,10 +378,9 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         int number_of_blocks_2 = (number_of_blocks_1 + threads_per_block - 1)
             / threads_per_block ;
 
-//      GBURBLE ("(GPU phase2 start nblk=%d ) ", number_of_blocks_2) ;
         dim3 grid_2 (number_of_blocks_2) ;
 
-//      kernel_timer.Start();
+        // kernel_timer.Start();
 
         GB_cuda_AxB_phase2_kernel <<<grid_2, block, 0, stream>>>
             (Blockbucket, offset, number_of_blocks_1) ;
@@ -399,8 +400,8 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
             }
         }
 
-//      kernel_timer.Stop();
-//      GBURBLE ("(GPU phase2 done %12.6g ms )\n", kernel_timer.Elapsed()) ;
+        // kernel_timer.Stop();
+        // printf ("(GPU phase2 %12.6g ms )\n", kernel_timer.Elapsed()) ;
 
         //----------------------------------------------------------------------
         // phase2end
@@ -408,20 +409,21 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
         if (!all_in_one) 
         {
-//          GBURBLE ("(GPU phase2end start nblk=%d) ",  ntasks) ;
-//          kernel_timer.Start();
+            // kernel_timer.Start();
 
             GB_cuda_AxB_phase2end_kernel <<<grid_1, block, 0, stream>>>
                 (Nanobuckets, Blockbucket, Bucketp, Bucket, offset, C, mnz) ;
 
             CUDA_OK (cudaStreamSynchronize (stream)) ;
-//          kernel_timer.Stop();
-//          GBURBLE ("(GPU phase2end done %12.6g ms)\n",kernel_timer.Elapsed());
+            // kernel_timer.Stop();
+            // printf ("(GPU phase2end %12.6g ms)\n",kernel_timer.Elapsed());
         }
 
         //----------------------------------------------------------------------
         // phase3: do the numerical work
         //----------------------------------------------------------------------
+
+        kernel_timer.Start();
 
         for (int bucket = 1 ; bucket < NBUCKETS ; bucket++)
         {
@@ -431,9 +433,6 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
             int gridsz, blocksz, work_per_thread ;
             if (cnz_in_bucket > 0)
             {
-
-//              GBURBLE ("(GPU phase3 bucket %d launch ) ", bucket) ;
-//              kernel_timer.Start();
 
                 #if ((GB_A_IS_SPARSE || GB_A_IS_HYPER) && \
                      (GB_B_IS_SPARSE || GB_B_IS_HYPER))
@@ -547,21 +546,22 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                             break ;
                         }
                     }
-
                 #endif
-
-//              CUDA_OK (cudaStreamSynchronize (stream)) ;  // only for timing
-//              kernel_timer.Stop();
-//              GBURBLE ("(GPU phase3 bucket %d done %12.6g ms, rate=%12.6g)\n",
-//                  bucket, kernel_timer.Elapsed(),
-//                  (end-start)/(1000*kernel_timer.Elapsed())) ; 
-
             }
         }
     }
     #endif
 
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
+
     CUDA_OK (cudaStreamSynchronize (stream)) ;
+
+    // kernel_timer.Stop();
+    // printf ("(GPU phase3 %12.6g ms, rate=%12.6g)\n",
+    //     kernel_timer.Elapsed(), mnz/(1000*kernel_timer.Elapsed())) ; 
+
     GB_FREE_ALL ;
     return (GrB_SUCCESS) ;
 }
