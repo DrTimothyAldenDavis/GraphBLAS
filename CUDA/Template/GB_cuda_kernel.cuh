@@ -36,9 +36,6 @@ using namespace cooperative_groups ;
 #undef  ASSERT
 #define ASSERT(x)
 
-// FIXME: move this to where it's used
-#define chunksize 128 
-
 //------------------------------------------------------------------------------
 // NVIDIA warp size
 //------------------------------------------------------------------------------

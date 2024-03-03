@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/JitKernels/GB_cuda_jit_GB_AxB_phase2.cuh
+// GraphBLAS/CUDA/JitKernels/GB_cuda_jit_GB_AxB_dot3_phase2.cuh
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 
-// AxB_phase2: fill the global buckets
+// AxB_dot3_phase2: fill the global buckets
 
 //------------------------------------------------------------------------------
 // BlockPrefixCallbackOp
@@ -19,7 +19,8 @@
 struct BlockPrefixCallbackOp
 {
     // Running prefix
-    int64_t running_total;
+    int64_t running_total ;
+
     // Constructor
     __device__ BlockPrefixCallbackOp (int64_t running_total) :
         running_total(running_total) {}
@@ -29,9 +30,9 @@ struct BlockPrefixCallbackOp
     // block-wide scan.
     __device__ int64_t operator()(int64_t block_aggregate)
     {
-        int64_t old_prefix = running_total;
-        running_total += block_aggregate;
-        return old_prefix;
+        int64_t old_prefix = running_total ;
+        running_total += block_aggregate ;
+        return old_prefix ;
     }
 } ;
 
@@ -48,72 +49,56 @@ __inline__ __device__ void blockBucketExclusiveSum
 {
 
     // Specialize BlockScan for a 1D block of 32 threads
-    typedef cub::BlockScan<int64_t, 32, cub::BLOCK_SCAN_WARP_SCANS> BlockScan;
+    typedef cub::BlockScan<int64_t, 32, cub::BLOCK_SCAN_WARP_SCANS> BlockScan ;
 
     // Allocate shared memory for BlockScan
-    __shared__ typename BlockScan::TempStorage temp_storage;
+    __shared__ typename BlockScan::TempStorage temp_storage ;
 
     // Initialize running total
-    BlockPrefixCallbackOp prefix_op(0);
+    BlockPrefixCallbackOp prefix_op (0) ;
 
     // Have the block iterate over segments of items
-    int64_t data=0;
+    int64_t data = 0 ;
 
-    int64_t *blockbucket= d_data;
+    int64_t *blockbucket = d_data ;
 
-    for (int block_id = 0; block_id < nblocks; block_id += blocksize)
+    for (int block_id = 0 ; block_id < nblocks ; block_id += blocksize)
     {
         // Load a segment of consecutive items that are blocked across threads
 
         int loc = block_id + threadIdx.x;
-        if ( loc < nblocks)
+        if (loc < nblocks)
         {
-            data  = blockbucket[bucketId*nblocks +loc ] ;
+            data = blockbucket [bucketId*nblocks + loc] ;
         }
-        this_thread_block().sync();
+        this_thread_block().sync() ;
 
         // Collectively compute the block-wide exclusive prefix sum
-        BlockScan(temp_storage).ExclusiveSum( data, data, prefix_op);
-        this_thread_block().sync();
+        BlockScan(temp_storage).ExclusiveSum (data, data, prefix_op) ;
+        this_thread_block().sync() ;
 
-        if ( loc < nblocks)
+        if (loc < nblocks)
         {
-            blockbucket [bucketId*nblocks   +loc ]  = data  ;
+            blockbucket [bucketId*nblocks + loc] = data ;
         }
-        //this_thread_block().sync();
 
-        data = 0;
+        // this_thread_block().sync();
+
+        data = 0 ;
     }
 }
 
 //------------------------------------------------------------------------------
-// warp_ReduceSumPlus_uint64
+// GB_cuda_AxB_dot3_phase2_kernel
 //------------------------------------------------------------------------------
 
-__inline__ __device__ uint64_t warp_ReduceSumPlus_uint64
-(
-    thread_block_tile<tile_sz> tile,
-    uint64_t val
-)
-{
-    // Each iteration halves the number of active threads
-    // Each thread adds its partial sum[i] to sum[lane+i]
-    for (int i = tile.size() / 2; i > 0; i /= 2) {
-        val +=  tile.shfl_down( val, i);
-    }
-    return val; // note: only thread 0 will return full sum
-}
-
-//------------------------------------------------------------------------------
-// GB_cuda_AxB_phase2_kernel
-//------------------------------------------------------------------------------
-
-// GB_AxB_cuda_dot3_phase2 is a CUDA kernel that takes as input the
+// GB_cuda_AxB__dot3_phase2 is a CUDA kernel that takes as input the
 // nanobuckets and blockbucket arrays computed by the first phase kernel,
-// GB_AxB_cuda_dot3_phase1.  The launch geometry of this kernel must match the
-// GB_AxB_cuda_dot3_phase1 kernel, with the same # of threads and threadblocks.
+// GB_cuda_AxB__dot3_phase1.  The launch geometry of this kernel must match
+// the GB_cuda_AxB_dot3_phase1 kernel, with the same # of threads and
+// threadblocks.
 
-__global__ void GB_cuda_AxB_phase2_kernel
+__global__ void GB_cuda_AxB_dot3_phase2_kernel
 (
     // input, not modified:
     int64_t *__restrict__ blockbucket,  // global bucket count,
@@ -134,44 +119,46 @@ __global__ void GB_cuda_AxB_phase2_kernel
     // entry blockbucket [bucket * nblocks + t] holds the # of entries
     // in the bucket (in range 0 to NBUCKETS-1) found by threadblock t.
 
-    //__shared__ uint64_t offset [NBUCKETS] ;
-    uint64_t s[NBUCKETS];
+    uint64_t s [NBUCKETS] ;
 
     #pragma unroll
-    for(int b = 0; b < NBUCKETS; ++b){
-        s[b] = 0;
+    for (int b = 0 ; b < NBUCKETS ; b++)
+    {
+        s [b] = 0 ;
     }
 
     thread_block_tile<32> tile = tiled_partition<32>(this_thread_block() );
 
-    int64_t tid = threadIdx.x  + blockIdx.x * blockDim.x;
-
      #pragma unroll
-     for(int b = 0; b < NBUCKETS; ++b) {
-         for( tid = threadIdx.x + blockIdx.x * blockDim.x;
-              tid < nblocks;
-              tid += blockDim.x*gridDim.x) {
-            s[b]  += blockbucket[  b * nblocks +tid] ;
-         }
-         this_thread_block().sync(); 
+     for (int b = 0 ; b < NBUCKETS ; b++)
+     {
+        for (int64_t tid = threadIdx.x + blockIdx.x * blockDim.x ;
+              tid < nblocks ;
+              tid += blockDim.x*gridDim.x)
+        {
+            s [b] += blockbucket [b * nblocks + tid] ;
+        }
+        this_thread_block().sync(); 
 
-         s[b]  = warp_ReduceSumPlus_uint64( tile, s[b]);
+        s [b] = warp_ReduceSumPlus_uint64 (tile, s [b]) ;
      }
 
-    if (threadIdx.x ==0 )
+    if (threadIdx.x == 0)
     {
         #pragma unroll
-        for(int b = 0; b < NBUCKETS; ++b) {
-            atomicAdd( (unsigned long long int*)&(offset[b]), s[b]);
+        for (int b = 0 ; b < NBUCKETS ; b++)
+        {
+            atomicAdd ((unsigned long long int*) &(offset [b]), s [b]) ;
         }
     }
     this_thread_block().sync(); 
 
-    if( gridDim.x >= NBUCKETS)
+    if (gridDim.x >= NBUCKETS)
     {
         // Cumulative sum across blocks for each bucket
-        if (blockIdx.x <NBUCKETS) {
-            blockBucketExclusiveSum( blockIdx.x, blockbucket, nblocks ) ;
+        if (blockIdx.x <NBUCKETS)
+        {
+            blockBucketExclusiveSum (blockIdx.x, blockbucket, nblocks) ;
         }
     }
     else
@@ -179,8 +166,9 @@ __global__ void GB_cuda_AxB_phase2_kernel
         if (blockIdx.x == 0)
         {
             #pragma unroll
-            for(int b = 0; b < NBUCKETS; ++b) {
-                blockBucketExclusiveSum( b, blockbucket, nblocks ) ;
+            for (int b = 0 ; b < NBUCKETS ; b++)
+            {
+                blockBucketExclusiveSum (b, blockbucket, nblocks) ;
             }
         }
     }

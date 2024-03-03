@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GraphBLAS/CUDA/JitKernels/GB_cuda_jit_AxB_phase2end.cuh
+// GraphBLAS/CUDA/JitKernels/GB_cuda_jit_AxB_dot3_phase2end.cuh
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -9,10 +9,10 @@
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-// GB_cuda_AxB_phase2end_kernel: fill the global buckets
+// GB_cuda_AxB_dot3_phase2end_kernel: fill the global buckets
 //------------------------------------------------------------------------------
 
-__global__ void GB_cuda_AxB_phase2end_kernel
+__global__ void GB_cuda_AxB_dot3_phase2end_kernel
 (
     // input, not modified:
     const int64_t *__restrict__ nanobuckets,  // array of size
@@ -23,7 +23,7 @@ __global__ void GB_cuda_AxB_phase2end_kernel
     const int64_t *__restrict__ bucketp,      // global bucket cumsum,
                                               // of size NBUCKETS+1
           int64_t *__restrict__ bucket,       // global buckets, of size
-                                              // cnz (== mnz)
+                                              // cnz == mnz
     const int64_t *__restrict__ offset,       // global offsets for each bucket
     // inputs, not modified:
     const GrB_Matrix C,      // output matrix
@@ -59,17 +59,17 @@ __global__ void GB_cuda_AxB_phase2end_kernel
     // its set of NBUCKETS nanobuckets.  The nanobuckets are a column of length
     // NBUCKETS, with stride equal to blockDim.x.
 
-    const int64_t *nanobucket = taskbucket + threadIdx.x;
+    const int64_t *nanobucket = taskbucket + threadIdx.x ;
 
     // Each thread loads its NBUCKETS nanobucket values into registers.
-    int64_t my_bucket[NBUCKETS];
+    int64_t my_bucket [NBUCKETS] ;
 
     #pragma unroll 
     for (int b = 0 ; b < NBUCKETS ; b++)
     {
-        my_bucket[b] = nanobucket [b * blockDim.x]
-                     + blockbucket [b * gridDim.x + blockIdx.x]
-                     + bucketp [b] ;
+        my_bucket [b] = nanobucket [b * blockDim.x]
+                      + blockbucket [b * gridDim.x + blockIdx.x]
+                      + bucketp [b] ;
     }
 
     // Now each thread has an index into the global set of NBUCKETS buckets,
@@ -81,34 +81,38 @@ __global__ void GB_cuda_AxB_phase2end_kernel
 
     // The slice for task blockIdx.x contains entries pfirst:plast-1 of M and
     // C, which is the part of C operated on by this threadblock.
-    int64_t pfirst, plast ;
 
-    __shared__ int64_t bucket_idx[chunksize];
-//  __shared__ int64_t bucket_s[NBUCKETS][chunksize];
+    // FIXME: why is bucket_idx needed?
+    __shared__ int64_t bucket_idx [chunk_size] ;
 
-    // FIXME: see comment about pfirst for-loop in dot3_phase1
-    int64_t chunk_max = (cnz + chunksize -1) / chunksize ;
-    for (int64_t chunk = blockIdx.x ; chunk < chunk_max ; chunk += gridDim.x)
+//  int64_t chunk_max = (cnz + chunk_size -1) / chunk_size ;
+//  for (int64_t chunk = blockIdx.x ; chunk < chunk_max ; chunk += gridDim.x)
+
+    for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
+                 pfirst < cnz ;
+                 pfirst += gridDim.x << log2_chunk_size)
     {
 
-        pfirst = chunksize * chunk ;
-        plast  = GB_IMIN( chunksize * (chunk+1), cnz ) ;
+        // pfirst = chunk_size * chunk ;
+        // plast  = GB_IMIN( chunk_size * (chunk+1), cnz ) ;
+        int64_t plast = pfirst + chunk_size ;
+        plast = GB_IMIN (plast, cnz) ;
 
-        for ( int64_t p = pfirst + threadIdx.x; p < plast ; p += blockDim.x )
+        for (int64_t p = pfirst + threadIdx.x ; p < plast ; p += blockDim.x)
         {
             // get the entry C(i,j), and extract its bucket.  Then
             // place the entry C(i,j) in the global bucket it belongs to.
-            int tid = p - pfirst;
+            int tid = p - pfirst ;
 
             // TODO: these writes to global are not coalesced.  Instead: each
             // threadblock could buffer its writes to NBUCKETS buffers and when
             // the buffers are full they can be written to global.
 
-            int ibucket = Ci[p] & 0xF;
+            int ibucket = Ci [p] & 0xF;
 
             //bucket[my_bucket[ibucket]++] = p;
             //int idx = (my_bucket[ibucket]  - pfirst); 
-            //my_bucket[ibucket] +=  1; //blockDim.x;
+            //my_bucket[ibucket] +=  1; //blockDim.x ;
             //int idx = (my_bucket[ibucket]++ - pfirst) & 0x7F;
             //bucket_s[ibucket][ idx ] = p;
 
@@ -123,11 +127,13 @@ __global__ void GB_cuda_AxB_phase2end_kernel
             //}
         }
 
-        for ( int64_t p = pfirst + threadIdx.x; p < plast ; p+= blockDim.x )
+        // FIXME: can't this be merged with the loop above?  Or is it a
+        // partial implementation of a coalesced write to the global bucket
+        // array?
+
+        for (int64_t p = pfirst + threadIdx.x ; p < plast ; p += blockDim.x)
         {
             int tid = p - pfirst ;
-            //int ibucket = Ci[p] & 0xF;
-            //bucket[ p ] = bucket_s[ibucket][tid];
             bucket [bucket_idx [tid]] = p ;
         }
     }

@@ -28,31 +28,6 @@
 // reduce this data to a scalar, and write it to Cx[pair].
 
 //------------------------------------------------------------------------------
-// warp_ReduceSum_dndn
-//------------------------------------------------------------------------------
-
-// FIXME: make this the same static device function
-// #include "GB_reduce_whatever.cuh"
-
-__inline__ __device__ GB_Z_TYPE warp_ReduceSum_dndn
-(
-    thread_block_tile<32> g,
-    GB_Z_TYPE val
-)
-{
-    // Each iteration halves the number of active threads
-    // Each thread adds its partial sum[i] to sum[lane+i]
-    // FIXME: only works if sizeof(GB_Z_TYPE) <= 32 bytes
-    // FIXME: the ANY monoid needs the cij_exists for each thread
-    for (int i = g.size() / 2; i > 0; i /= 2)
-    {
-        GB_Z_TYPE next = g.shfl_down( val, i) ;
-        GB_ADD( val, val, next ); 
-    }
-    return val; // note: only thread 0 will return full sum
-}
-
-//------------------------------------------------------------------------------
 // GB_cuda_AxB_dot3_phase3_dndn_kernel
 //------------------------------------------------------------------------------
 

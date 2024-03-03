@@ -10,14 +10,7 @@
 
 // GB_jit_kernel_cuda_AxB_dot3: C<M>=A'*B using the dot3 method on the GPU.
 
-#define GB_FREE_ALL                         \
-{                                           \
-    GB_FREE_WORK (&Nanobuckets, Nb_size) ;  \
-    GB_FREE_WORK (&Blockbucket, Bb_size) ;  \
-    GB_FREE_WORK (&Bucketp, Bup_size) ;     \
-    GB_FREE_WORK (&offset, O_size) ;        \
-    GB_FREE_WORK (&Bucket, Bu_size) ;       \
-}
+#define GB_FREE_ALL ;
 
 #if GB_C_ISO
 // FIXME
@@ -138,32 +131,7 @@ GB_bucket_code ;    // FIXME: rename GB_dot3_bucket_code
     // a bitmap/sparse kernel
     // ...
 
-//------------------------------------------------------------------------------
-// GB_reduce_sum
-//------------------------------------------------------------------------------
-
-// FIXME: do
-// #include "GB_reduce_sum.cuh"
-
-__device__ __inline__ GB_Z_TYPE GB_reduce_sum
-(
-    thread_block_tile<tile_sz> g,
-    GB_Z_TYPE val
-)
-{
-    // Each iteration halves the number of active threads
-    // Each thread adds its partial sum[i] to sum[lane+i]
-    // Temporary GB_Z_TYPE is necessary to handle arbirary ops
-    // FIXME: only works if sizeof(GB_Z_TYPE) <= 32 bytes
-    // FIXME: the ANY monoid needs the cij_exists for each thread
-    #pragma unroll
-    for (int i = tile_sz >> 1 ; i > 0 ; i >>= 1)
-    {
-        GB_Z_TYPE next = g.shfl_down (val, i) ;
-        GB_ADD (val, val, next) ; 
-    }
-    return val;
-}
+#include "GB_cuda_shfl_down.cuh"
 
 //------------------------------------------------------------------------------
 // CUDA device kernels for each case
@@ -177,9 +145,20 @@ __device__ __inline__ GB_Z_TYPE GB_reduce_sum
     #include "GB_cuda_jit_AxB_dot3_phase3_dndn.cuh"
 #else
     // sparse-sparse, sparse-dense, or dense-sparse
+
+    #undef  GB_FREE_ALL
+    #define GB_FREE_ALL                         \
+    {                                           \
+        GB_FREE_WORK (&Nanobuckets, Nb_size) ;  \
+        GB_FREE_WORK (&Blockbucket, Bb_size) ;  \
+        GB_FREE_WORK (&Bucketp, Bup_size) ;     \
+        GB_FREE_WORK (&offset, O_size) ;        \
+        GB_FREE_WORK (&Bucket, Bu_size) ;       \
+    }
+
     #include "GB_cuda_jit_AxB_dot3_phase1.cuh"
-    #include "GB_cuda_jit_AxB_phase2.cuh"
-    #include "GB_cuda_jit_AxB_phase2end.cuh"
+    #include "GB_cuda_jit_AxB_dot3_phase2.cuh"
+    #include "GB_cuda_jit_AxB_dot3_phase2end.cuh"
     #if ((GB_A_IS_SPARSE || GB_A_IS_HYPER) && \
          (GB_B_IS_SPARSE || GB_B_IS_HYPER))
         // sparse-sparse
@@ -222,11 +201,16 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
     // declare workspace
     //--------------------------------------------------------------------------
 
+    #if ((GB_A_IS_BITMAP || GB_A_IS_FULL) && (GB_B_IS_BITMAP || GB_B_IS_FULL))
+    // dense-dense case requires no workspace
+    #else
+    // sparse-sparse, sparse-dense, and dense-sparse requires workspace
     int64_t *Nanobuckets = NULL ; size_t Nb_size  = 0 ;
     int64_t *Blockbucket = NULL ; size_t Bb_size  = 0 ;
     int64_t *Bucket = NULL      ; size_t Bu_size  = 0 ;
     int64_t *Bucketp = NULL     ; size_t Bup_size = 0 ;
     int64_t *offset = NULL      ; size_t O_size   = 0 ;
+    #endif
 
     //--------------------------------------------------------------------------
     // get problem size
@@ -257,8 +241,8 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
         // Idea is to have each task work on a continguous block of columns of
         // C Note: for small tests, mnz is small so ntasks is be governed by
-        // chunksize, not chunk_size*number_of_sms.  For large problems in
-        // production, chunksize is less important since ntasks will likely be
+        // chunk_size, not chunk_size*number_of_sms.  For large problems in
+        // production, chunk_size is less important since ntasks will likely be
         // bounded by chunk_size*number_of_sms (say 128*80 = 10,240 on a V100,
         // for the default chunk_size of 128).
 
@@ -382,7 +366,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
         // kernel_timer.Start();
 
-        GB_cuda_AxB_phase2_kernel <<<grid_2, block, 0, stream>>>
+        GB_cuda_AxB_dot3_phase2_kernel <<<grid_2, block, 0, stream>>>
             (Blockbucket, offset, number_of_blocks_1) ;
 
         CUDA_OK (cudaStreamSynchronize (stream)) ;
@@ -411,7 +395,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         {
             // kernel_timer.Start();
 
-            GB_cuda_AxB_phase2end_kernel <<<grid_1, block, 0, stream>>>
+            GB_cuda_AxB_dot3_phase2end_kernel <<<grid_1, block, 0, stream>>>
                 (Nanobuckets, Blockbucket, Bucketp, Bucket, offset, C, mnz) ;
 
             CUDA_OK (cudaStreamSynchronize (stream)) ;

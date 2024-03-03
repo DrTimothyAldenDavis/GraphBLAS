@@ -22,26 +22,6 @@
 //******************************************************************************
 
 //------------------------------------------------------------------------------
-// reduce_sum_int64
-//------------------------------------------------------------------------------
-
-// for counting zombies only (always int64_t)
-__device__ int64_t reduce_sum_int64
-(
-    thread_block_tile<tile_sz> g,
-    int64_t val
-)
-{
-    // Each iteration halves the number of active threads
-    // Each thread adds its partial sum[i] to sum[lane+i]
-    for (int64_t i = g.size() / 2; i > 0; i /= 2)
-    {
-        val += g.shfl_down(val,i) ;
-    }
-    return val; // note: only thread 0 will return full sum
-}
-
-//------------------------------------------------------------------------------
 // GB_cuda_AxB_dot3_phase3_vsdn_kernel
 //------------------------------------------------------------------------------
 
