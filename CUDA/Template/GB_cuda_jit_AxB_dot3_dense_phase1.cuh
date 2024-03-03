@@ -10,17 +10,14 @@
 
 // phase1 for dot3, A and B are bitmap/full.
 // dense phase1: symbolic load balancing and data partition.
-// to assign work to different 'buckets' for later compute.
 
 // This kernel scans the non-zero pattern in A and B, takes into account the
-// mask and computes total work required to form C. Then it classifies each
-// dot product into a set of buckets for efficient compute. 
-
-// FIXME: if A and B are both dense, and both B->vlen > 0 and A->vlen > 0, then
-// only a single phase is needed.
+// mask and computes total work required to form C. Then it computes the vector
+// k that contains each entry C(i,j) that isn't a zombie, or sets C(i,j) to its
+// zombie status.
 
 //------------------------------------------------------------------------------
-// GB_cuda_AxB_dot3_dense_phase1_kernel: lookup i,j pairs and store in Mi, Ci 
+// GB_cuda_AxB_dot3_dense_phase1_kernel: lookup i,k pairs and store in Ci 
 //------------------------------------------------------------------------------
 
 // GB_cuda_AxB_dot3_dense_phase1_kernel is a CUDA kernel that scans all entries
@@ -45,25 +42,21 @@ __global__ void GB_cuda_AxB_dot3_dense_phase1_kernel
     const GB_M_TYPE *__restrict__ Mx = (GB_M_TYPE *) M->x ;
     #endif
     const int64_t mnvec = M->nvec ;
-//  const int64_t mvlen = M->vlen ;
     const GB_M_NVALS (mnz) ;
 
-    int64_t *__restrict__ Ci = C->i ;   // for zombies, or bucket assignment
+    int64_t *__restrict__ Ci = C->i ;   // for zombies, or vector k
 
     // Ci [p] for an entry C(i,j) contains either GB_FLIP(i) if C(i,j) is a
-    // zombie, or (k << 4) + bucket otherwise, where C(:,j) is the kth vector
-    // of C (j = Ch [k] if hypersparse or j = k if standard sparse), and where
-    // bucket is the bucket assignment for C(i,j).  The bucket can be recovered
-    // from Ci by bucket = Ci & 0xF
-
-    // ASSERT (mnz > 0) ;
-    // ASSERT (gridDim.x <= mnz) ;
+    // zombie, or k otherwise, where C(:,j) is the kth vector of C (j = Ch [k]
+    // if hypersparse or j = k if standard sparse).
 
     //--------------------------------------------------------------------------
-    // assign buckets to all entries in C(i,j), one chunk at a time
+    // determine the vector k of all entries in C(i,j), one chunk at a time
     //--------------------------------------------------------------------------
 
+#if 0
     __shared__ int64_t ks [chunk_size] ;
+#endif
 
 //  int64_t chunk_max = GB_ICEIL (mnz, chunk_size) ;
 //  for (int64_t chunk = blockIdx.x ; chunk < chunk_max ; chunk += gridDim.x )
@@ -77,14 +70,21 @@ __global__ void GB_cuda_AxB_dot3_dense_phase1_kernel
         // find the vector k that contains each entry C(i,j) in this chunk
         //----------------------------------------------------------------------
 
-        // This threadblock works on Mi/Mx and Ci/Mx, in positions pfirst to
+        // This threadblock works on Mi/Mx and Ci/Cx, in positions pfirst to
         // pfirst + my_chunk_size - 1.
 
+#if 0
         int64_t my_chunk_size = GB_cuda_ek_slice (Mp, mnvec, mnz, pfirst,
             chunk_size, /* output: */ ks) ;
+#else
+        int64_t my_chunk_size, mnvec1 ;
+        float slope ;
+        int64_t kfirst = GB_cuda_ek_slice_setup (Mp, mnvec, mnz, pfirst,
+            chunk_size, &my_chunk_size, &mnvec1, &slope) ;
+#endif
 
         //----------------------------------------------------------------------
-        // assign entries in C(i,j) to the buckets
+        // assign entries in C(i,j): either its vector k or its zombie status
         //----------------------------------------------------------------------
 
 //      for (int64_t pM = pfirst + threadIdx.x ;
@@ -93,23 +93,27 @@ __global__ void GB_cuda_AxB_dot3_dense_phase1_kernel
 
         for (int64_t kk = threadIdx.x ; kk < my_chunk_size ; kk += blockDim.x)
         {
-            int64_t pM = kk + pfirst ;
+
+#if 0
             int64_t k = ks [kk] ;       // get the k value of Mi,Mx [pM].
-            // j = k or j = Mh [k] if C and M are hypersparse, but j is not
-            // needed here.
+#else
+            int64_t k = GB_cuda_ek_slice_entry (kk, pfirst, Mp, mnvec1, kfirst,
+                slope) ;
+#endif
+
+            int64_t pM = kk + pfirst ;
 
             #if GB_MASK_STRUCT
             {
                 // no need to check the value of M(i,j); no prezombies
-                Ci [pM] = (k << 4) ;
+                Ci [pM] = k ;
             }
             #else
             {
                 bool mij = (bool) GB_MCAST (Mx, pM, ) ;
                 int64_t i = Mi [pM] ;
-                // FIXME: no need for k<<4, just place k or GB_FLIP(i) in Ci
-                Ci [pM] = (!mij) * (GB_FLIP(i) << 4)
-                        +   mij  * ((k << 4)) ;
+                Ci [pM] = (!mij) * (GB_FLIP (i))
+                        +   mij  * (k) ;
             }
             #endif
         }

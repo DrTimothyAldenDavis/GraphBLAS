@@ -90,7 +90,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
     #endif
 
     // zombie count
-    uint64_t zc = 0;
+    uint64_t zc = 0 ;
 
     GB_M_NVALS (mnz) ;
 
@@ -110,23 +110,22 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
         //----------------------------------------------------------------------
 
         int64_t i = Mi [pM] ;
-        int64_t kk = Ci [pM] >> 4 ;         // FIXME: can remove ">> 4"
+        int64_t kth = Ci [pM] ;             // C(i,j) is in the kth vector of C
         bool cij_exists = false ;
         GB_DECLARE_IDENTITY (cij) ;         // GB_Z_TYPE cij = identity
-
-        // FIXME: test for kk >= 0 not needed if GB_MASK_STRUCT is defined and
-        // vlen > 0
 
         //----------------------------------------------------------------------
         // The threadblock cooperates to compute a single entry C(i,j)
         //----------------------------------------------------------------------
 
+        #ifndef GB_MASK_STRUCT
         // skip if C(i,j) is a prezombie
-        if (kk >= 0)
+        if (kth >= 0)
+        #endif
         {
 
-            // j = kk or j = Mh [kk] if C and M are hypersparse
-            int64_t j = GBH_M (Mh, kk) ;
+            // j = kth or j = Mh [kth] if C and M are hypersparse
+            int64_t j = GBH_M (Mh, kth) ;
 
             int64_t pA = vlen * i ;
             // int64_t pA_end = pA +(A->vlen);
