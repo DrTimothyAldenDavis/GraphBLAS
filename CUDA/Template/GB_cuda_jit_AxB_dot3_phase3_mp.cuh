@@ -329,7 +329,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
         if (cij_exists)
         {
             // FIXME: the ANY monoid needs the cij_exists for each thread
-           cij = GB_reduce_sum ( tile, cij );
+            cij = GB_cuda_warp_reduce_ztype (tile, cij) ;
         }
         #endif
 

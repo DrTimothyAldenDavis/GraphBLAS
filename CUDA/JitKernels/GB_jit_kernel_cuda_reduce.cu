@@ -28,7 +28,7 @@
 #error "kernel undefined for C iso"
 #endif
 
-// GB_warp_Reduce assumes tile_sz is 32 threads.
+// FIXME: put these definitions in GB_cuda_kernel.h:
 #define tile_sz 32
 #define log2_tile_sz 5
 
@@ -50,7 +50,7 @@ __inline__ __device__ GB_Z_TYPE GB_block_Reduce
     thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( g ) ;
 
     // Each warp performs partial reduction
-    val = GB_warp_Reduce( tile, val) ;
+    val = GB_cuda_warp_reduce_ztype (tile, val) ;
 
     // Wait for all partial reductions
     if (lane == 0)
@@ -61,11 +61,10 @@ __inline__ __device__ GB_Z_TYPE GB_block_Reduce
 
     GB_DECLARE_IDENTITY_CONST (zid) ;   // const GB_Z_TYPE zid = identity ;
 
-    val = (threadIdx.x < (blockDim.x >> LOG2_WARPSIZE)) ?
-        shared [lane] : zid ;
+    val = (threadIdx.x < (blockDim.x >> LOG2_WARPSIZE)) ?  shared [lane] : zid ;
 
     // Final reduce within first warp
-    val = GB_warp_Reduce( tile, val) ;
+    val = GB_cuda_warp_reduce_ztype (tile, val) ;
     return (val) ;
 }
 

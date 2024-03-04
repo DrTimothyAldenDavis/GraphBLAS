@@ -140,7 +140,7 @@ __global__ void GB_cuda_AxB_dot3_phase2_kernel
         }
         this_thread_block().sync(); 
 
-        s [b] = warp_ReduceSumPlus_uint64 (tile, s [b]) ;
+        s [b] = GB_cuda_warp_sum_uint64 (tile, s [b]) ;
      }
 
     if (threadIdx.x == 0)

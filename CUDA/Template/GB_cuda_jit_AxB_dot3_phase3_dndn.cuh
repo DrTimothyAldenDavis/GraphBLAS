@@ -171,15 +171,21 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
 
         // FIXME: no need to do this if C(i,j) is a zombie (cij_exists is
         // always false), or if A and B are both full and C(i,j) is not a
-        // zombile (cij_exists is always true).
+        // zombie (cij_exists is always true).
+
+        // FIXME: this only works if the size of the thread block is 32,
+        // right?
+
         // Do vote here for control.
-        thread_block_tile<32> tile = tiled_partition<32>( this_thread_block() );
-        cij_exists = tile.any( cij_exists);
+        thread_block_tile<32> tile = tiled_partition<32> (this_thread_block()) ;
+
+        // FIXME: tile.any takes an int predicate, not bool. How does this work?
+        cij_exists = tile.any (cij_exists) ;
         tile.sync();
 
         #if !GB_C_ISO
         // FIXME: the ANY monoid needs the cij_exists for each thread
-        cij = warp_ReduceSum_dndn<32> ( tile, cij);
+        cij = GB_cuda_warp_reduce_ztype (tile, cij) ;
         #endif
 
         // FIXME: if A and B are full, and GB_MASK_STRUCT is true, cij_exists
