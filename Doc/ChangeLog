@@ -10,6 +10,11 @@ Feb XX, 2024: version 9.1.0
         in C11 or MSVC.  Contributed by Markus Mützel.
     * port to clang-cl: fixing the GxB_get and GxB_set macro
 
+Mar 1, 2024: version 9.0.3
+
+    * (52) performance bug fix: JIT kernels since v8.3.1 were not compiled with
+        OpenMP.
+
 Feb 26, 2024: version 9.0.2
 
     * (51) bug fix: GraphBLAS/Makefile "make static" was incorrect.

@@ -2,6 +2,8 @@
 // GraphBLAS/CUDA/JitKernels/GB_cuda_jit_AxB_dot3_phase1.cuh
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// This file: Copyright (c) 2024, NVIDIA CORPORATION. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -11,13 +13,9 @@
 // dot3, phase1: symbolic load balancing and data partition
 // to assign work to different 'buckets' for later compute
 
-//  This kernel scans the non-zero pattern in A and B, takes into account the
-//  mask and computes total work required to form C. Then it classifies each
-//  dot product into a set of buckets for efficient compute. 
-
-//------------------------------------------------------------------------------
-// GB_jit_AxB_dot3_phase1_kernel: build nanobuckets, hunt for pre-zombies
-//------------------------------------------------------------------------------
+// This kernel scans the non-zero pattern in A and B, takes into account the
+// mask and computes total work required to form C. Then it classifies each dot
+// product into a set of buckets for efficient compute.
 
 // GB_AxB_cuda_dot3_phase1 is a CUDA kernel that scans all entries in C and
 // assigns them to each of the NBUCKETS buckets.  The output is a
@@ -67,23 +65,17 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
     const GB_M_TYPE *__restrict__ Mx = (GB_M_TYPE *) M->x ;
     #endif
     const int64_t mnvec = M->nvec ;
-    const int64_t mvlen = M->vlen ;
+    // const int64_t mvlen = M->vlen ;
     const GB_M_NVALS (mnz) ;
     ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
 
+    #if GB_A_IS_SPARSE || GB_A_IS_HYPER
     const int64_t *__restrict__ Ap = A->p ;
-//  const int64_t *__restrict__ Ai = A->i ;
-    #if GB_A_IS_BITMAP || GB_A_IS_FULL
-    const int64_t avlen = A->vlen ;
     #endif
-//  const GB_A_NVALS (anz) ;
 
+    #if GB_B_IS_SPARSE || GB_B_IS_HYPER
     const int64_t *__restrict__ Bp = B->p ;
-//  const int64_t *__restrict__ Bi = B->i ;
-    #if GB_B_IS_BITMAP || GB_B_IS_FULL
-    const int64_t bvlen = B->vlen ;
     #endif
-//  const GB_B_NVALS (bnz) ;
 
     #if GB_A_IS_HYPER
     const int64_t anvec = A->nvec ;
@@ -118,139 +110,124 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
     //--------------------------------------------------------------------------
     // clear the bucket counters
     //--------------------------------------------------------------------------
-    int64_t my_bucket[NBUCKETS];
 
-    // ASSERT (mnz > 0) ;
-    // ASSERT (gridDim.x <= mnz) ;
-
+    int64_t my_bucket [NBUCKETS] ;
     // each thread uses NBUCKETS bucket counters, held in register
     #pragma unroll
-    for(int b = 0; b < NBUCKETS; ++b) {
-        my_bucket[b] = 0;
+    for (int b = 0 ; b < NBUCKETS ; b++)
+    {
+        my_bucket [b] = 0 ;
     }
 
+    //--------------------------------------------------------------------------
+    // assign buckets to all entries in C(i,j), one chunk at a time
+    //--------------------------------------------------------------------------
+
+#if 0
+    // removing ks saves about 10% of the phase1 time
+    // (19.5 msec to 17.5 msec for the com-Orkut matrix)
     __shared__ int64_t ks [chunk_size] ;
+#endif
 
-    //--------------------------------------------------------------------------
-    // assign all entries of C to the buckets
-    //--------------------------------------------------------------------------
-
-    // all threads in this block will compute the same values for these:
-    int64_t pfirst, plast, kfirst, klast ;
-
-    int64_t chunk_max = GB_ICEIL (mnz, chunk_size) ;
-    //      (mnz + chunk_size -1)/chunk_size;
-    for ( int64_t chunk = blockIdx.x;
-                  chunk < chunk_max;
-                  chunk += gridDim.x )
+    for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
+                 pfirst < mnz ;
+                 pfirst += gridDim.x << log2_chunk_size)
     {
 
         //----------------------------------------------------------------------
-        // determine the work done by this iteration, "chunk"
+        // find the vector k that contains each entry C(i,j) in this chunk
         //----------------------------------------------------------------------
 
-        // The slice for each task contains entries pfirst:plast-1 of M and C.
-        // This iteration "chunk" computes Ci and Cx [pfirst...plast-1], using
-        // Mi and Mx [pfirst:plast-1].  All threads in the thread block are
-        // used for this "chunk".
-        pfirst = chunk_size * chunk ;
-        plast  = pfirst + chunk_size ;
-        // plast = GB_IMIN (plast, mnz) ;
-        if (plast > mnz) plast = mnz ;
-        int64_t my_chunk_size = plast - pfirst ;
+        // This threadblock works on Mi/Mx and Ci/Mx, in positions pfirst to
+        // pfirst + my_chunk_size - 1.
 
-        // find the first vector of the slice for this chunk: the
-        // vector that owns the entry Mi [pfirst] and Mx [pfirst].
-        kfirst = GB_search_for_vector_device (pfirst, Mp, 0, mnvec, mvlen) ;
-
-        // find the last vector of the slice for task blockIdx.x: the
-        // vector that owns the entry Mi [plast-1] and Mx [plast-1].
-        klast = GB_search_for_vector_device (plast-1, Mp, kfirst, mnvec, mvlen);
-
-        // number of vectors in C and M for this "chunk" iteration, where
-        // Mp [kfirst:klast] will be operated on.
-        int64_t nk = klast - kfirst + 1 ;
-
-        //----------------------------------------------------------------------
-        // fill ks to find all indices
-        //----------------------------------------------------------------------
-
-        // search for k values for each entry pfirst:plast-1
-        float slope = ((float) nk) / ((float) my_chunk_size) ;
-        int64_t mnvec1 = mnvec - 1 ;
-        for (int64_t kk = threadIdx.x ; kk < my_chunk_size ; kk += blockDim.x)
-        {
-            // get a rough estimate of k for the kkth entry in ks
-            int64_t k = kfirst + (int64_t) (slope * ((float) kk)) ;
-            // k cannot be smaller than kfirst, but might be bigger than
-            // mnvec-1, so ensure it is in the valid range, kfirst to mnvec-1
-            // k = GB_IMIN (k, mnvec-1) ;
-            if (k > mnvec1) k = mnvec1 ; 
-            // look for p in Mp, where p is in range pfirst:plast-1
-            // where pfirst >= 0 and plast < mnz
-            int64_t p = kk + pfirst ;
-            // linear-time search for the k value of the pth entry
-            while ( Mp [ k + 1 ] <= p ) k++ ;
-            while ( Mp [ k     ] >  p ) k-- ;
-            ks [kk] = k ;
-        }
-        this_thread_block().sync();
+#if 0
+        int64_t my_chunk_size = GB_cuda_ek_slice (Mp, mnvec, mnz, pfirst,
+            chunk_size, /* output: */ ks) ;
+#else
+        int64_t my_chunk_size, mnvec1 ;
+        float slope ;
+        int64_t kfirst = GB_cuda_ek_slice_setup (Mp, mnvec, mnz, pfirst,
+            chunk_size, &my_chunk_size, &mnvec1, &slope) ;
+#endif
 
         //----------------------------------------------------------------------
         // assign entries in C(i,j) to the buckets
         //----------------------------------------------------------------------
 
-        for ( int64_t pM = pfirst + threadIdx.x;
-                      pM < pfirst + my_chunk_size;
-                      pM += blockDim.x )
+        for (int64_t kk = threadIdx.x ; kk < my_chunk_size ; kk += blockDim.x)
         {
+
+            //------------------------------------------------------------------
+            // determine the kth vector that contains the pth entry
+            //------------------------------------------------------------------
+
+#if 0
+            int64_t k = ks [kk] ;           // get the k value of Mi,Mx [pM]
+#else
+            int64_t k = GB_cuda_ek_slice_entry (kk, pfirst, Mp, mnvec1, kfirst,
+                slope) ;
+#endif
+
+            //------------------------------------------------------------------
+            // get C(i,j): zombie if A(:,i) and B(:,j) are empty or M(i,j) false
+            //------------------------------------------------------------------
+
+            // C(i,j) is in the kth vector of C, where j == k if C is sparse,
+            // or j = Mh [k] if C is hypersparse
+
             GB_bucket_code bucket = GB_BUCKET_ZOMBIE ;
-            int64_t k = ks [pM - pfirst] ;  // get the k value of Mi,Mx [pM].
-            int64_t i = Mi [ pM ] ;
-            int64_t j = GBH_M (Mh, k) ;     // note that Ch and Mh are the same
-            if ( GB_MCAST ( Mx, pM, ) )
+            int64_t pM = kk + pfirst ;
+            int64_t i = Mi [pM] ;
+
+            if (GB_MCAST (Mx, pM, ))        // if (M (i,j) is true):
             {
 
                 //--------------------------------------------------------------
                 // get B(:,j)
                 //--------------------------------------------------------------
 
-                int64_t pB, pB_end ;
+                #if GB_B_IS_SPARSE || GB_B_IS_HYPER
+                int64_t j = GBH_M (Mh, k) ; // that Ch and Mh are the same
+                int64_t pB, pB_end, bjnz ;
+                #endif
+
                 #if GB_B_IS_HYPER
                 GB_hyper_hash_lookup (Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx,
                     B_hash_bits, j, &pB, &pB_end) ;
-                #elif GB_B_IS_SPARSE
-                pB       = Bp[j] ;
-                pB_end   = Bp[j+1] ;
-                #else
-                // B is bitmap or full
-                pB       = bvlen * j ;
-                pB_end   = pB + j ;
-                #endif
-
-                int64_t bjnz = pB_end - pB ;
+                bjnz = pB_end - pB ;
                 if (bjnz > 0)
+                #elif GB_B_IS_SPARSE
+                pB     = Bp [j] ;
+                pB_end = Bp [j+1] ;
+                bjnz = pB_end - pB ;        // # of entries in B(:,j)
+                if (bjnz > 0)
+                #else
+                // B is bitmap or full: no need to look up B(:,j)
+                #endif
                 {
 
                     //----------------------------------------------------------
                     // get A(:,i)
                     //----------------------------------------------------------
 
-                    int64_t pA, pA_end ;
+                    #if GB_A_IS_SPARSE || GB_A_IS_HYPER
+                    int64_t pA, pA_end, ainz ;
+                    #endif
+
                     #if GB_A_IS_HYPER
                     GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx,
                         A_hash_bits, i, &pA, &pA_end) ;
-                    #elif GB_A_IS_SPARSE
-                    pA       = Ap[i] ;
-                    pA_end   = Ap[i+1] ;
-                    #else
-                    // A is bitmap or full
-                    pA       = avlen * i ;
-                    pA_end   = pA + i ;
-                    #endif
-
-                    int64_t ainz = pA_end - pA ;
+                    ainz = pA_end - pA ;
                     if (ainz > 0)
+                    #elif GB_A_IS_SPARSE
+                    pA     = Ap [i] ;
+                    pA_end = Ap [i+1] ;
+                    ainz = pA_end - pA ;        // # of entries in A(:,i)
+                    if (ainz > 0)
+                    #else
+                    // A is bitmap or full: no need to look up A(:,i)
+                    #endif
                     {
                         // determine the bucket for C(i,j)
                         #if (GB_A_IS_SPARSE || GB_A_IS_HYPER) && \
@@ -278,12 +255,20 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
                 }
             }
 
-            Ci[pM] = (bucket == GB_BUCKET_ZOMBIE) * ( GB_FLIP(i) << 4)
-                   + (bucket != GB_BUCKET_ZOMBIE) * ((k<<4) + bucket) ;
-            my_bucket[bucket]++;
+            //------------------------------------------------------------------
+            // assign C(i,j) to its bucket
+            //------------------------------------------------------------------
+
+            // encode the bucket or zombie status in the row index of C(i,j)
+            Ci [pM] = (bucket == GB_BUCKET_ZOMBIE) * ( GB_FLIP(i) << 4)
+                    + (bucket != GB_BUCKET_ZOMBIE) * ((k<<4) + bucket) ;
+
+            // each thread counts its own bucket sizes
+            my_bucket [bucket]++ ;
         }
     }
-    this_thread_block().sync();
+
+    this_thread_block().sync() ;
 
     //--------------------------------------------------------------------------
     // cumulative sum of each bucket
@@ -300,17 +285,17 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
         nanobuckets + blockIdx.x * (NBUCKETS * blockDim.x) + threadIdx.x ;
 
     #pragma unroll
-    for (int b = 0; b < NBUCKETS; ++b)
+    for (int b = 0 ; b < NBUCKETS ; b++)
     {
         if ( threadIdx.x == blockDim.x-1)
         {
             blockbucket [blockIdx.x + b * gridDim.x] = my_bucket[b] ;
         }
-        this_thread_block().sync();
+        this_thread_block().sync() ;
 
         BlockCumSum(temp_storage).ExclusiveSum( my_bucket[b], my_bucket[b]) ;
 
-        this_thread_block().sync();
+        this_thread_block().sync() ;
 
         nanobucket [b * blockDim.x] = my_bucket[b] ;
     }
@@ -324,7 +309,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
     if (threadIdx.x == blockDim.x - 1 )
     {
         #pragma unroll
-        for(int b = 0; b < NBUCKETS; ++b)
+        for (int b = 0; b < NBUCKETS; ++b)
         {
             blockbucket [b * gridDim.x + blockIdx.x] += my_bucket[b];
         }

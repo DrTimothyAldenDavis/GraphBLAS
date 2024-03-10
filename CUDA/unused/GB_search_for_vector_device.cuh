@@ -1,25 +1,8 @@
 //------------------------------------------------------------------------------
-// GB_search_for_vector_template: find the vector k that contains p
+// GB_search_for_vector_device
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
-// SPDX-License-Identifier: Apache-2.0
-
-//------------------------------------------------------------------------------
-
-// Given an index p, find k so that Ap [k] <= p && p < Ap [k+1].  The search is
-// limited to k in the range Ap [kleft ... anvec].
-
-// A->p can come from any matrix: hypersparse, sparse, bitmap, or full.
-// For the latter two cases, A->p is NULL.
-
-#ifndef GB_SEARCH_FOR_VECTOR_H
-#define GB_SEARCH_FOR_VECTOR_H
-
-#ifdef GB_CUDA_KERNEL
-__device__
-#endif
-static inline int64_t GB_search_for_vector // return vector k that contains p
+static __device__ __inline__ int64_t GB_search_for_vector_device
 (
     const int64_t p,                // search for vector k that contains p
     const int64_t *restrict Ap,     // vector pointers to search
@@ -51,6 +34,8 @@ static inline int64_t GB_search_for_vector // return vector k that contains p
     int64_t kright = anvec ;
     bool found ;
     GB_SPLIT_BINARY_SEARCH (p, Ap, k, kright, found) ;
+
+    // FIXME: this is not needed if the search is approximate:
     if (found)
     {
         // Ap [k] == p has been found, but if k is an empty vector, then the
@@ -81,6 +66,4 @@ static inline int64_t GB_search_for_vector // return vector k that contains p
 
     return (k) ;
 }
-
-#endif
 

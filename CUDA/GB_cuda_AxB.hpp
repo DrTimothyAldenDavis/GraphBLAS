@@ -2,7 +2,7 @@
 // GraphBLAS/CUDA/GB_cuda_AxB.hpp
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -12,7 +12,6 @@
 
 #include "GB_cuda.hpp"
 #include "GB_hash.h"
-#include "GB_hyper_hash_lookup.h"
 
 GrB_Info GB_cuda_AxB_dot3_jit
 (

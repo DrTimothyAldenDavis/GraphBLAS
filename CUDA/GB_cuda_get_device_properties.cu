@@ -2,7 +2,8 @@
 // GraphBLAS/CUDA/GB_cuda_get_device_properties: get the properties of a GPU
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// This file: Copyright (c) 2024, NVIDIA CORPORATION. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -93,7 +94,8 @@ bool GB_cuda_get_device_properties  // true if OK, false if failure
     prop->compute_capability_major = compute_capability_major ;
     prop->compute_capability_minor = compute_capability_minor ;
 
-    printf ("Device: %d: memory: %ld SMs: %d compute: %d.%d\n",
+    // FIXME: remove this printf
+    printf ("\nDevice: %d: memory: %ld SMs: %d compute: %d.%d\n",
         device, prop->total_global_memory, prop->number_of_sms,
         prop->compute_capability_major, prop->compute_capability_minor) ;
 

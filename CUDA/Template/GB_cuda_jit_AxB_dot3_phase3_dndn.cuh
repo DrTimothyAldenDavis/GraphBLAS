@@ -2,15 +2,17 @@
 // GraphBLAS/CUDA/JitKernels/GB_cuda_jit_AxB_dot3_phase3_dndn.cuh
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// This file: Copyright (c) 2024, NVIDIA CORPORATION. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// This CUDA kernel produces the semiring product of two
-// dense matrices of types GB_A_TYPE and GB_B_TYPE and common index space size n, to a  
-// output matrix of type GB_C_TYPE. The matrices are dense, with uniform
-// non-zeros and sparsity patterns. 
-// ie. we want to produce C = A'*B in the sense of the given semi-ring.
+// This CUDA kernel produces the semiring product of two dense matrices of
+// types GB_A_TYPE and GB_B_TYPE and common index space size n, to an output
+// matrix of type GB_C_TYPE. The matrices are dense, with uniform non-zeros and
+// sparsity patterns.  ie. we want to produce C = A'*B in the sense of the
+// given semi-ring.
 
 // This version uses a simple warp-based dense dot product algorithm, when the
 // vectors coming from both A and B are dense, for any size of N.
@@ -25,62 +27,22 @@
 // The work is to load the data, do the multiply and add work and finally 
 // reduce this data to a scalar, and write it to Cx[pair].
 
-//  int64_t start          <- start of vector pairs for this kernel
-//  int64_t end            <- end of vector pairs for this kernel
-//  int64_t *Bucket        <- array of pair indices for all kernels 
-//  GrB_Matrix C           <- result matrix 
-//  GrB_Matrix M           <- mask matrix
-//  GrB_Matrix A           <- input matrix A
-//  GrB_Matrix B           <- input matrix B
-//  int sz                 <- size parameter (not used) 
-
-/* FIXME: This kernel needs to be split into 4 methods:
-
-        (A bitmap) * (B bitmap)
-        (A full ) * (B bitmap)
-        (A bitmap) * (B full)
-        (A full) * (B full)
-
-    The buckets are not needed at all.  A single pass can be done.
-    C and M would still be sparse or hypersparse.
-
-    See also denseDotProduct.cu.
-*/
-
-//------------------------------------------------------------------------------
-// warp_ReduceSum_dndn
-//------------------------------------------------------------------------------
-
-__inline__ __device__ GB_Z_TYPE warp_ReduceSum_dndn
-(
-    thread_block_tile<32> g,
-    GB_Z_TYPE val
-)
-{
-    // Each iteration halves the number of active threads
-    // Each thread adds its partial sum[i] to sum[lane+i]
-    // FIXME: only works if sizeof(GB_Z_TYPE) <= 32 bytes
-    // FIXME: the ANY monoid needs the cij_exists for each thread
-    for (int i = g.size() / 2; i > 0; i /= 2)
-    {
-        GB_Z_TYPE next = g.shfl_down( val, i) ;
-        GB_ADD( val, val, next ); 
-    }
-    return val; // note: only thread 0 will return full sum
-}
-
 //------------------------------------------------------------------------------
 // GB_cuda_AxB_dot3_phase3_dndn_kernel
 //------------------------------------------------------------------------------
 
 __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
 (
-    GrB_Matrix C,
-    GrB_Matrix M,
-    GrB_Matrix A,
-    GrB_Matrix B
+    GrB_Matrix C,   // result matrix
+    GrB_Matrix M,   // mask matrix
+    GrB_Matrix A,   // input matrix A
+    GrB_Matrix B    // input matrix B
 )
 {
+
+    //--------------------------------------------------------------------------
+    // get C, M, A, and B
+    //--------------------------------------------------------------------------
 
     #if !GB_A_IS_PATTERN
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *)A->x  ;
@@ -103,55 +65,53 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
     #endif
 
     // zombie count
-    int64_t zc = 0;
+    uint64_t zc = 0 ;
 
-    int64_t start = 0;
-    int64_t end   = M->p[M->nvec];
+    GB_M_NVALS (mnz) ;
 
     // total items to be inspected
-    int64_t nnzA = A->vlen;
-    int64_t nnzB = B->vlen;
-    int s = blockDim.x;
+    int64_t vlen = A->vlen ;
+    ASSERT (vlen == B->vlen) ;
+    ASSERT (vlen > 0) ;
 
-    // Main loop over pairs 
-    for ( int64_t pair_id  = start + blockIdx.x; //warp per pair 
-                  pair_id  < end;  
-                  pair_id += gridDim.x )
+    //--------------------------------------------------------------------------
+    // compute C(i,j) = A(:,i)'*B(:,j) for each entry in M(i,j)
+    //--------------------------------------------------------------------------
+
+    for (int64_t pM = blockIdx.x ; pM < mnz ; pM += gridDim.x)
     {
 
+        //----------------------------------------------------------------------
         // get M(i,j) and C(i,j)
-        int64_t i = Mi[pair_id];
-        int64_t kk = Ci[pair_id] >> 4;      // FIXME: can remove ">> 4"
+        //----------------------------------------------------------------------
+
+        int64_t i = Mi [pM] ;
+        int64_t kth = Ci [pM] ;             // C(i,j) is in the kth vector of C
         bool cij_exists = false ;
         GB_DECLARE_IDENTITY (cij) ;         // GB_Z_TYPE cij = identity
 
+        //----------------------------------------------------------------------
+        // The threadblock cooperates to compute a single entry C(i,j)
+        //----------------------------------------------------------------------
+
+        #ifndef GB_MASK_STRUCT
         // skip if C(i,j) is a prezombie
-        if (kk >= 0)
+        if (kth >= 0)
+        #endif
         {
 
-            // j = kk or j = Mh [kk] if C and M are hypersparse
-            int64_t j = GBH_M (Mh, kk) ;
+            // j = kth or j = Mh [kth] if C and M are hypersparse
+            int64_t j = GBH_M (Mh, kth) ;
+            int64_t pA = vlen * i ;
+            int64_t pB = vlen * j ;
 
-            int64_t pA     = (A->vlen)*i;
-            int64_t pA_end = pA +(A->vlen);
-
-            int64_t pB     = (B->vlen)*j;
-            int64_t pB_end = pB +(B->vlen);
-
-            //      if (threadIdx.x == 0 ){
-            //          printf("tid=%d, i,j = %d,%d  nnzA= %d, nnzB=%d\n",
-            //          threadIdx.x, (int)i,(int)j,  (int)nnzA, (int)nnzB);
-            //      }
-            //      __syncthreads();
-
-            // convert global data pointer to the local pointer of this block
             GB_DECLAREA (aki) ;
             GB_DECLAREB (bkj) ;
 
             #if GB_A_IS_FULL && GB_B_IS_FULL
             {
                 cij_exists = true ;
-                for (int64_t k = threadIdx.x ; k < nnzA ; k += s)
+                for (int64_t k = threadIdx.x ; k < vlen ; k += blockDim.x)
                 { 
                     // cij += A(k,i) * B(k,j)
                     GB_GETA (aki, Ax, pA+k, ) ;           // aki = A(k,i)
@@ -161,7 +121,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
             }
             #elif GB_A_IS_BITMAP && GB_B_IS_BITMAP
             {
-                for ( int64_t k = threadIdx.x ; k < nnzA ; k += s)
+                for ( int64_t k = threadIdx.x ; k < vlen ; k += blockDim.x)
                 { 
                     GB_GETA (aki, Ax, pA+k, ) ;           // aki = A(k,i)
                     GB_GETB (bkj, Bx, pB+k, ) ;           // bkj = B(k,j)
@@ -176,7 +136,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
             }
             #elif GB_A_IS_FULL && GB_B_IS_BITMAP
             {
-                for ( int64_t k = threadIdx.x ; k < nnzA ; k += s)
+                for ( int64_t k = threadIdx.x ; k < vlen ; k += blockDim.x)
                 { 
                     if (Bb [pB+k])
                     {
@@ -190,7 +150,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
             }
             #elif GB_A_IS_BITMAP && GB_B_IS_FULL
             {
-                for ( int64_t k = threadIdx.x ; k < nnzA ; k += s)
+                for ( int64_t k = threadIdx.x ; k < vlen ; k += blockDim.x)
                 { 
                     if (Ab [pB+k])
                     {
@@ -209,37 +169,53 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
         // reduce per-thread sums to a single scalar
         //----------------------------------------------------------------------
 
+        // FIXME: no need to do this if C(i,j) is a zombie (cij_exists is
+        // always false), or if A and B are both full and C(i,j) is not a
+        // zombie (cij_exists is always true).
+
+        // FIXME: this only works if the size of the thread block is 32,
+        // right?
+
         // Do vote here for control.
-        thread_block_tile<32> tile = tiled_partition<32>( this_thread_block() );
-        cij_exists = tile.any( cij_exists);
+        thread_block_tile<32> tile = tiled_partition<32> (this_thread_block()) ;
+
+        // FIXME: tile.any takes an int predicate, not bool. How does this work?
+        cij_exists = tile.any (cij_exists) ;
         tile.sync();
 
         #if !GB_C_ISO
         // FIXME: the ANY monoid needs the cij_exists for each thread
-        cij = warp_ReduceSum_dndn<32> ( tile, cij);
+        cij = GB_cuda_warp_reduce_ztype (tile, cij) ;
         #endif
+
+        // FIXME: if A and B are full, and GB_MASK_STRUCT is true, cij_exists
+        // is always true because vlen > 0 always holds for this kernel.
+
+        // FIXME: if kth < 0, C(i,j) is a prezombie, and Ci [pM] already holds
+        // GB_FLIP (i).
 
         // write result for this block to global mem
         if (threadIdx.x == 0)
         {
             if (cij_exists)
             {
-                // Cx [pair_id] = (GB_C_TYPE) cij
-                GB_PUTC (cij, Cx, pair_id) ;
-                Ci [pair_id] = i ;
+                // Cx [pM] = (GB_C_TYPE) cij
+                GB_PUTC (cij, Cx, pM) ;
+                Ci [pM] = i ;
             }
             else
             {
                 // cij is a zombie
-                zc++;
-                Ci [pair_id] = GB_FLIP (i) ;
+                zc++ ;
+                Ci [pM] = GB_FLIP (i) ;
             }
         }
-        //__syncthreads ( ) ;
+
+        // __syncthreads ( ) ;
 
         if( threadIdx.x ==0 && zc > 0)
         {
-            GB_cuda_atomic_add <int64_t>( &(C->nzombies), zc) ;
+            GB_cuda_atomic_add <uint64_t>( &(C->nzombies), zc) ;
         }
     }
 }

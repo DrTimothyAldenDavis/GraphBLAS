@@ -2,7 +2,7 @@
 // GraphBLAS/CUDA/GB_cuda_type_branch: decide if GPU can be used on a type
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -11,6 +11,8 @@
 // bytes.  In addition, the shfl_down primitives require the type to be 32
 // bytes or less.  If user-defined type has a different size, it cannot be done
 // on the GPU.
+
+// FIXME: get the CUDA kernels to work on large types
 
 // All built-in types pass this rule.
 
