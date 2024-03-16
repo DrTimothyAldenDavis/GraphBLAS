@@ -28,42 +28,11 @@
 #error "kernel undefined for C iso"
 #endif
 
-// GB_warp_Reduce assumes tile_sz is 32 threads.
+// FIXME: put these definitions in GB_cuda_kernel.h:
 #define tile_sz 32
 #define log2_tile_sz 5
 
-//------------------------------------------------------------------------------
-// GB_warp_Reduce: reduce all entries in a warp to a single scalar
-//------------------------------------------------------------------------------
-
-__inline__ __device__ GB_Z_TYPE GB_warp_Reduce
-(
-    thread_block_tile<tile_sz> g, GB_Z_TYPE val
-)
-{
-    // Each iteration halves the number of active threads
-    // Each thread adds its partial val[k] to val[lane+k]
-
-    // FIXME: doesn't work unless sizeof(GB_Z_TYPE) <= 32 bytes
-
-#if ( GB_Z_NBITS <= 8*32 )
-    // assumes tile_size is 32:
-    GB_Z_TYPE fold = g.shfl_down ( val, 16) ;
-    GB_ADD ( val, val, fold ) ;
-    fold = g.shfl_down ( val, 8) ;
-    GB_ADD ( val, val, fold ) ;
-    fold = g.shfl_down ( val, 4) ;
-    GB_ADD ( val, val, fold ) ;
-    fold = g.shfl_down ( val, 2) ;
-    GB_ADD ( val, val, fold ) ;
-    fold = g.shfl_down ( val, 1) ;
-    GB_ADD ( val, val, fold ) ;
-#else
-    // use shared memory; do not use shfl_down
-    #error "not implemented yet"
-#endif
-    return (val) ; // note: only thread 0 will return full val
-}
+#include "GB_cuda_shfl_down.cuh"
 
 //------------------------------------------------------------------------------
 // GB_block_Reduce: reduce across all warps into a single scalar
@@ -81,7 +50,7 @@ __inline__ __device__ GB_Z_TYPE GB_block_Reduce
     thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( g ) ;
 
     // Each warp performs partial reduction
-    val = GB_warp_Reduce( tile, val) ;
+    val = GB_cuda_warp_reduce_ztype (tile, val) ;
 
     // Wait for all partial reductions
     if (lane == 0)
@@ -92,11 +61,10 @@ __inline__ __device__ GB_Z_TYPE GB_block_Reduce
 
     GB_DECLARE_IDENTITY_CONST (zid) ;   // const GB_Z_TYPE zid = identity ;
 
-    val = (threadIdx.x < (blockDim.x >> LOG2_WARPSIZE)) ?
-        shared [lane] : zid ;
+    val = (threadIdx.x < (blockDim.x >> LOG2_WARPSIZE)) ?  shared [lane] : zid ;
 
     // Final reduce within first warp
-    val = GB_warp_Reduce( tile, val) ;
+    val = GB_cuda_warp_reduce_ztype (tile, val) ;
     return (val) ;
 }
 

@@ -22,26 +22,6 @@
 //******************************************************************************
 
 //------------------------------------------------------------------------------
-// reduce_sum_int64
-//------------------------------------------------------------------------------
-
-// for counting zombies only (always int64_t)
-__device__ int64_t reduce_sum_int64
-(
-    thread_block_tile<tile_sz> g,
-    int64_t val
-)
-{
-    // Each iteration halves the number of active threads
-    // Each thread adds its partial sum[i] to sum[lane+i]
-    for (int64_t i = g.size() / 2; i > 0; i /= 2)
-    {
-        val += g.shfl_down(val,i) ;
-    }
-    return val; // note: only thread 0 will return full sum
-}
-
-//------------------------------------------------------------------------------
 // GB_cuda_AxB_dot3_phase3_vsdn_kernel
 //------------------------------------------------------------------------------
 
@@ -121,7 +101,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
     const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;
     #endif
 
-    int64_t zc = 0 ;        // zombie count
+    uint64_t zc = 0 ;       // zombie count
 
     GB_M_NVALS (mnz) ;
     ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
@@ -186,7 +166,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
         GB_DECLARE_IDENTITY (cij) ;         // GB_Z_TYPE cij = identity
         bool cij_exists = false ;
 
-        int64_t my_nzombies = 0 ;
+        uint64_t my_nzombies = 0 ;
 
         #if ( GB_A_IS_FULL )
         {
@@ -286,20 +266,17 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
             Ci [pair_id] = GB_FLIP (i) ;
         }
 
-        // FIXME: use the same method as vsvs for counting zombies
-
         // sum up the zombie count:
         thread_block_tile<tile_sz> tile =
             tiled_partition<tile_sz> (this_thread_block ()) ;
-        zc += reduce_sum_int64 (tile, my_nzombies) ;
+        zc += GB_cuda_warp_sum_uint64 (tile, my_nzombies) ;
     }
 
     if (threadIdx.x == 0 && zc > 0)
     {
         // this threadblock accumulates its zombie count into the global
         // zombie count
-        uint64_t zu = (uint64_t) zc ;
-        GB_cuda_atomic_add <uint64_t>( &(C->nzombies), zu) ;
+        GB_cuda_atomic_add <uint64_t>( &(C->nzombies), zc) ;
     }
 }
 

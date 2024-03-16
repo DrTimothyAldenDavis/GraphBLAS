@@ -12,6 +12,8 @@
 // bytes or less.  If user-defined type has a different size, it cannot be done
 // on the GPU.
 
+// FIXME: get the CUDA kernels to work on large types
+
 // All built-in types pass this rule.
 
 #include "GB_cuda.hpp"

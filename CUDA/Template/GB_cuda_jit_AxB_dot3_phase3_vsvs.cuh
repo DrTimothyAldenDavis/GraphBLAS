@@ -29,63 +29,45 @@
 //******************************************************************************
 
 //------------------------------------------------------------------------------
-// GB_warp_ReduceSumPlus_uint64
-//------------------------------------------------------------------------------
-
-__inline__ __device__ uint64_t GB_warp_ReduceSumPlus_uint64
-(
-    thread_block_tile<tile_sz> g,
-    uint64_t val
-)
-{
-    // Each iteration halves the number of active threads
-    // Each thread adds its partial sum[i] to sum[lane+i]
-    /*
-    #pragma unroll
-    for (int i = tile_sz >> 1; i > 0; i >>= 1) {
-        val +=  g.shfl_down( val, i);
-    }
-    */
-    // assuming tile_sz is 32:
-    val +=  g.shfl_down( val, 16);
-    val +=  g.shfl_down( val, 8);
-    val +=  g.shfl_down( val, 4);
-    val +=  g.shfl_down( val, 2);
-    val +=  g.shfl_down( val, 1);
-    return val; // note: only thread 0 will return full sum
-}
-
-//------------------------------------------------------------------------------
 // GB_block_ReduceSum_uint64
 //------------------------------------------------------------------------------
 
 __inline__ __device__ uint64_t GB_block_ReduceSum_uint64
 (
-    thread_block g, uint64_t val
+    thread_block g,     // FIXME: g is used for thread_block_tile elsewhere;
+                        // be consistent.
+    uint64_t val
 )
 {
-  static __shared__ uint64_t shared[tile_sz]; // Shared mem for 32 partial sums
+    // Shared mem for 32 partial sums
+    static __shared__ uint64_t shared [tile_sz] ;
 
-  int lane = threadIdx.x & 31 ; // % tile_sz;
-  int wid  = threadIdx.x >> 5 ; // / tile_sz;
-  thread_block_tile<tile_sz> tile = tiled_partition<tile_sz>( g );
+    // FIXME: assumes tile_sz is 32:  (use an #if .. #else ... #endif)
+    int lane = threadIdx.x & 31 ; // % tile_sz;
+    int wid  = threadIdx.x >> 5 ; // / tile_sz;
+    thread_block_tile<tile_sz> tile = tiled_partition<tile_sz> (g) ;
 
-  // Each warp performs partial reduction
-  val = GB_warp_ReduceSumPlus_uint64( tile, val);    
+    // Each warp performs partial reduction
+    val = GB_cuda_warp_sum_uint64 (tile, val) ;    
 
-  // Wait for all partial reductions
-  if (lane==0) shared[wid]=val; // Write reduced value to shared memory
-  g.sync();                     // Wait for all partial reductions
+    // Wait for all partial reductions
+    if (lane == 0)
+    {
+        shared [wid] = val ; // Write reduced value to shared memory
+    }
 
-  //if (wid > 0 ) return val;
+    g.sync();                     // Wait for all partial reductions
 
-  //read from shared memory only if that warp existed
-  val = (threadIdx.x <  (blockDim.x / tile_sz ) ) ? shared[lane] : 0;
+    // read from shared memory only if that warp existed
+    val = (threadIdx.x <  (blockDim.x / tile_sz ) ) ? shared[lane] : 0;
 
-  // Final reduce within first warp
-  if (wid==0) val = GB_warp_ReduceSumPlus_uint64( tile, val);
+    // Final reduce within first warp
+    if (wid == 0)
+    {
+        val = GB_cuda_warp_sum_uint64 (tile, val) ;
+    }
 
-  return val;
+    return (val) ;
 }
 
 //------------------------------------------------------------------------------
@@ -94,13 +76,13 @@ __inline__ __device__ uint64_t GB_block_ReduceSum_uint64
 
 __global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
 (
-  int64_t start,
-  int64_t end,
-  int64_t *Bucket,  // do the work in Bucket [start:end-1]
-  GrB_Matrix C,
-  GrB_Matrix M,
-  GrB_Matrix A,
-  GrB_Matrix B
+    int64_t start,
+    int64_t end,
+    int64_t *Bucket,  // do the work in Bucket [start:end-1]
+    GrB_Matrix C,
+    GrB_Matrix M,
+    GrB_Matrix A,
+    GrB_Matrix B
 )
 {
 
@@ -147,14 +129,12 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
 
     uint64_t my_nzombies = 0 ;
 
-    // FIXME
-    // GB_M_NVALS (mnz)
-    // then use mnz, not M->p[M->nvec]
-    int all_in_one = ( (end - start) == (M->p)[(M->nvec)] ) ;
+    GB_M_NVALS (mnz) ;
+    int all_in_one = ( (end - start) == mnz ) ;
 
-    for ( int64_t kk = start+ threadIdx.x +blockDim.x*blockIdx.x ;
-                  kk < end;
-                  kk += blockDim.x*gridDim.x )
+    for (int64_t kk = start + threadIdx.x + blockDim.x*blockIdx.x ;
+                 kk < end ;
+                 kk += blockDim.x*gridDim.x )
     {
         int64_t pair_id = all_in_one ? kk : Bucket[ kk ];
 
