@@ -1,4 +1,4 @@
-// SuiteSparse:GraphBLAS 9.1.2
+// SuiteSparse:GraphBLAS 9.1.0
 //------------------------------------------------------------------------------
 // GraphBLAS.h: definitions for the GraphBLAS package
 //------------------------------------------------------------------------------
@@ -133,7 +133,7 @@
 //------------------------------------------------------------------------------
 
 #ifndef GRAPHBLAS_HAS_CUDA
-#define GRAPHBLAS_HAS_CUDA
+/* #undef GRAPHBLAS_HAS_CUDA */
 #endif
 
 //------------------------------------------------------------------------------
@@ -237,7 +237,7 @@
 #define GxB_IMPLEMENTATION_DATE "Feb XX, 2024"
 #define GxB_IMPLEMENTATION_MAJOR 9
 #define GxB_IMPLEMENTATION_MINOR 1
-#define GxB_IMPLEMENTATION_SUB   2
+#define GxB_IMPLEMENTATION_SUB   0
 #define GxB_SPEC_DATE "Dec 22, 2023"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 1
