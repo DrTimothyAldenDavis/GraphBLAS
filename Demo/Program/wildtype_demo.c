@@ -10,7 +10,6 @@
 // Each "scalar" entry of this type consists of a 4x4 matrix and a string of
 // length 64.
 
-// #include "GraphBLAS.h"
 #include "graphblas_demos.h"
 #undef I
 
