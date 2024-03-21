@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// #include "GraphBLAS.h"
 #include "graphblas_demos.h"
 #undef I
 
@@ -205,7 +204,6 @@ int main (void)
     // start GraphBLAS
     GrB_Info info = GrB_SUCCESS ;
     TRY (GrB_init (GrB_NONBLOCKING)) ;
-
     TRY (GxB_Global_Option_set (GxB_BURBLE, true)) ;
 
     // try using cmake to build all JIT kernels, just as a test.  This setting
