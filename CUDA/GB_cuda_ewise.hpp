@@ -26,5 +26,20 @@ GrB_Info GB_cuda_rowscale_jit
     int32_t blocksz
 ) ;
 
+GrB_Info GB_cuda_colscale_jit
+(
+    // output:
+    GrB_Matrix C,
+    // input:
+    GrB_Matrix A,
+    GrB_Matrix D,
+    GrB_BinaryOp binaryop,
+    bool flipxy,
+    // CUDA stream and launch parameters:
+    cudaStream_t stream,
+    int32_t gridsz,
+    int32_t blocksz
+) ;
+
 #endif
 

@@ -13,7 +13,7 @@ __global__ void GB_cuda_colscale_kernel
 
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
     const GB_B_TYPE *__restrict__ Dx = (GB_B_TYPE *) B->x ;
-    const GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) C->x ;
+    GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) C->x ;
 
     #ifdef GB_JIT_KERNEL
     #define A_iso GB_A_ISO
