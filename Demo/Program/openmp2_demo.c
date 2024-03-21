@@ -85,7 +85,6 @@ int main (int argc, char **argv)
 
     // start GraphBLAS
     OK (GrB_init (GrB_NONBLOCKING)) ;
-
     int nthreads ;
     OK (GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads)) ;
     int ver [3] ;
