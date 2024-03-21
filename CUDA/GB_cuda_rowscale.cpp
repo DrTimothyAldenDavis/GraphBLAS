@@ -6,6 +6,9 @@
 #undef GB_FREE_ALL
 #define GB_FREE_ALL ;
 
+#define BLOCK_SIZE 128
+#define LOG2_BLOCK_SIZE 7
+
 GrB_Info GB_cuda_rowscale
 (
     GrB_Matrix C,
@@ -19,10 +22,18 @@ GrB_Info GB_cuda_rowscale
     cudaStream_t stream ;
     CUDA_OK (cudaStreamCreate (&stream)) ;
 
-    printf ("Entered GPU rowscale\n") ;
-
     // compute gridsz, blocksz, call GB_cuda_rowscale_jit
+    GrB_Index bnz ;
+    GrB_Matrix_nvals (&bnz, B) ;
     
+    int32_t gridsz = 1 + (bnz >> LOG2_BLOCK_SIZE) ;
+
+    GrB_Info info = GB_cuda_rowscale_jit ( C, D, B, 
+        semiring->multiply, flipxy, stream, gridsz, BLOCK_SIZE) ;
+    
+    if (info == GrB_NO_VALUE) info = GrB_PANIC ;
+    GB_OK (info) ;
+
     CUDA_OK (cudaStreamSynchronize (stream)) ;
     CUDA_OK (cudaStreamDestroy (stream)) ;
     return GrB_SUCCESS ; 
