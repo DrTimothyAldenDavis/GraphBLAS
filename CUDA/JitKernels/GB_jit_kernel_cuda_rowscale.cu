@@ -9,7 +9,7 @@ __global__ void GB_cuda_rowscale_kernel
 {
     const GB_A_TYPE *__restrict__ Dx = (GB_A_TYPE *) D->x ;
     const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *) B->x ;
-          GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) C->x ;
+    const GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) C->x ;
 
     #ifdef GB_JIT_KERNEL
     #define D_iso GB_A_ISO
@@ -27,9 +27,7 @@ __global__ void GB_cuda_rowscale_kernel
     // ntasks = GB_IMIN (bnz, ntasks) ;     take care of this when setting gridsz/blocksz
     int tid = blockIdx.x * blockDim.x + threadIdx.x;
 
-    int64_t pstart, pend ;
-    GB_PARTITION (pstart, pend, bnz, tid, ntasks) ;
-    for (int64_t p = pstart ; p < pend ; p++)
+    for (int64_t p = tid ; p < bnz ; p += ntasks)
     {
         int64_t i = GBI_B (Bi, p, bvlen) ;      // get row index of B(i,j)
         GB_DECLAREA (dii) ;

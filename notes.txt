@@ -64,6 +64,11 @@ Process:
     d. Calls GB_jitifyer_load_worker, which finishes the load/compile step
     
 
+4. GB_jitifyer_load_worker
+    - Does main load/compile work, inside both intra-process (critical section) and inter-process (file lock)
+      guards
+    a. Checks if kernel is already compiled
+    b. 
 
 Macrofying:
     1. macrofy_preface
@@ -73,6 +78,7 @@ Macrofying:
             - Includes GB_Template.h which includes all main GraphBLAS headers
             - undef's structure access macros to be redefined below
     2. macrofy_family
+        - Main part of macrofy
         - Prints the family-relevant macros
         - Starts by switching over kernel family (apply, reduce, mxm, ...)
             - Low-level macrofy extracts problem characteristics from
@@ -119,6 +125,45 @@ Kernel development notes:
         - Mainly need to analyze rowscale template code
     - Understand structure of CUDA kernel (entry point, jit point, etc.)
 
-- Rowscale plan:
+- Overall plan:
     - Start working on template code
     - Work backwards to entry point/jit entry
+
+- Rowscale notes:
+    - Do NOT use GB_PARTITION to divide work for threads
+        - Do not want consecutive threads operating on blocks of data
+          with large separation between them, since they will reside on the
+          same warp and cause locality issues. This means that each thread should
+          "jump" through the data by the grid/block size.
+
+- Colscale notes:
+    - Key idea: At the kernel level, generally all matrices are viewed as being stored by column
+    - Issue with colscale: Cannot easily identify the column that an entry belongs to
+    - cuda_ek_slice: slices e entries among ntasks tasks
+        - Applies only for sparse/hypersparse formats
+        - Example: CUDA/Template/GB_cuda_jit_AxB_dot3_dense_phase1
+        - Core idea:
+            - Divide work into chunks (size of chunk given by max_pchunk)
+            - One threadblock may own multiple chunks; staggered
+                - blk 0 will start at chunk 0, then chunk gridDim, then gridDim * 2, ...
+                - hybrid approach for work distribution; thread allocation contiguous within chunks but jumps across chunks
+            
+        - 3 components:
+            1. cuda_ek_slice
+                - Takes Ap, anvec, anz, pfirst (first entry of work for this threadblock),
+                   max_pchunk
+                - Computes ks for all entries in the given chunk [pfirst, min(pfirst + max_pchunk - 1, anz - 1)]
+            2. cuda_ek_slice_setup
+                - Gives the kfirst/klast estimates, slope
+                    - slope: rate at which k changes w.r.t one step of p
+                        - sparser matrices -> bigger slope (intuition)                    
+            3. cuda_ek_slice_entry
+                - Uses estimates + slope from ek_slice_setup to get an exact
+                  k-value for a p-value
+
+- Apply notes:
+    - Can use a unary op, index unary op, or binary op
+    - Entry point: GB_apply
+        a. ...
+    - Main work: GB_apply_op
+    

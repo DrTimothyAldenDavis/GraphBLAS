@@ -186,8 +186,8 @@ typedef enum
     // ewise methods:
     // ...
     GB_JIT_CUDA_KERNEL_ROWSCALE = 1011,
+    GB_JIT_CUDA_KERNEL_COLSCALE = 1012,
     // ...
-
 }
 GB_jit_kcode ;
 

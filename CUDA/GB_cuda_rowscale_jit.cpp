@@ -36,9 +36,9 @@ GrB_Info GB_cuda_rowscale_jit
     // get the kernel function pointer, loading or compiling it if needed
     //--------------------------------------------------------------------------
 
-    oid *dl_function ;
+    void *dl_function ;
     GrB_Info info = GB_jitifyer_load (&dl_function,
-        GB_jit_ewise_family, "rowscale",
+        GB_jit_ewise_family, "cuda_rowscale",
         hash, &encoding, suffix, NULL, NULL,
         (GB_Operator) binaryop, C->type, D->type, B->type) ;
     if (info != GrB_SUCCESS) return (info) ;
