@@ -1,5 +1,8 @@
 using namespace cooperative_groups ;
 
+// do not #include functions inside of other functions!
+#include "GB_cuda_ek_slice.cuh"
+
 #define log2_chunk_size 7
 #define chunk_size 128
 
@@ -15,20 +18,15 @@ __global__ void GB_cuda_colscale_kernel
     const GB_B_TYPE *__restrict__ Dx = (GB_B_TYPE *) B->x ;
     GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) C->x ;
 
-    #ifdef GB_JIT_KERNEL
     #define A_iso GB_A_ISO
     #define D_iso GB_B_ISO
-    #else
-    const bool A_iso = A->iso ;
-    const bool D_iso = D->iso ;
-    #endif
-
-    #include "GB_cuda_ek_slice.cuh"
 
     const int64_t *__restrict__ Ai = A->i ;
     const int64_t *__restrict__ Ap = A->p ;
-    GB_A_NVALS (anz) ;
+    GB_A_NVALS (anz) ; // this should be GB_A_NHELD for bitmap/full case
     const int64_t anvec = A->nvec ;
+
+    // TODO: Handle bitmap/full case
 
     for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
                  pfirst < anz ;
@@ -41,6 +39,13 @@ __global__ void GB_cuda_colscale_kernel
             
             // alternate:
             // why not just do ek_slice_setup for one thread per block then this_thread_block.sync()?
+            // answer:
+            // better than having a syncrhonization barrier
+            
+            // question: why chunks are necessary? why not just do ek_slice_setup across all entries in one go?
+            // answer: the slope method is only useful for a small range of entries; non-uniform entry distributions
+            //         can distort the usefulness of the slope (will require an exhaustive linear search)
+            //         for a large range of entries
 
             for (int64_t curr_p = threadIdx.x ; curr_p < my_chunk_size ; curr_p += blockDim.x)
             {
