@@ -583,6 +583,17 @@ GrB_Info GB_jit_kernel_rowscale                                         \
     int32_t blocksz                                                     \
 )
 
+#define GB_JIT_CUDA_KERNEL_COLSCALE_PROTO(GB_jit_kernel_colscale)       \
+GrB_Info GB_jit_kernel_colscale                                         \
+(                                                                       \
+    GrB_Matrix C,                                                       \
+    GrB_Matrix A,                                                       \
+    GrB_Matrix B,                                                       \
+    cudaStream_t stream,                                                \
+    int32_t gridsz,                                                     \
+    int32_t blocksz                                                     \
+)
+
 #define GB_JIT_CUDA_KERNEL_DOT3_PROTO(GB_jit_kernel_AxB_dot3)           \
 GrB_Info GB_jit_kernel_AxB_dot3                                         \
 (                                                                       \

@@ -3,8 +3,8 @@ using namespace cooperative_groups ;
 // do not #include functions inside of other functions!
 #include "GB_cuda_ek_slice.cuh"
 
-#define log2_chunk_size 7
-#define chunk_size 128
+#define log2_chunk_size 10
+#define chunk_size 1024
 
 __global__ void GB_cuda_colscale_kernel
 (
@@ -23,11 +23,29 @@ __global__ void GB_cuda_colscale_kernel
 
     const int64_t *__restrict__ Ai = A->i ;
     const int64_t *__restrict__ Ap = A->p ;
-    GB_A_NVALS (anz) ; // this should be GB_A_NHELD for bitmap/full case
+    const int64_t *__restrict__ Ab = A->b ;
+    GB_A_NHELD (anz) ;
     const int64_t anvec = A->nvec ;
+    const int64_t avlen = A->vlen ;
 
-    // TODO: Handle bitmap/full case
+    #if defined(GB_A_IS_BITMAP) || defined(GB_A_IS_FULL)
+    // bitmap/full case
+    int ntasks = blockDim.x * gridDim.x ;
+    int tid = blockIdx.x * blockDim.x + threadIdx.x ;
+    for (int64_t p = tid ; p < anz ; p += ntasks)
+    {
+        if (!GBB_A (Ab, p)) { continue ; }
 
+        int col_idx = p % avlen ;
+        GB_DECLAREB (dii) ;
+        GB_GETB (dii, Dx, col_idx, D_iso) ;
+        GB_DECLAREA (aij) ;
+        GB_GETA (aij, Ax, p, A_iso) ;
+        // C has same sparsity as A; ewise op code does not change
+        GB_EWISEOP (Cx, p, aij, dii, 0, 0) ;
+    }
+    #else
+    // sparse/hypersparse case (cuda_ek_slice only works for sparse/hypersparse)
     for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
                  pfirst < anz ;
                  pfirst += gridDim.x << log2_chunk_size )
@@ -58,6 +76,8 @@ __global__ void GB_cuda_colscale_kernel
                 GB_EWISEOP (Cx, pfirst + curr_p, aij, dii, 0, 0) ;
             }
         }
+
+    #endif
 }
 
 extern "C" {
@@ -69,6 +89,8 @@ GB_JIT_CUDA_KERNEL_COLSCALE_PROTO (GB_jit_kernel)
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_JUMBLED (D)) ;
+    ASSERT (!GB_IS_BITMAP (D)) ;
+    ASSERT (!GB_IS_FULL (D)) ;
     ASSERT (!C->iso) ;
 
     dim3 grid (gridsz) ;

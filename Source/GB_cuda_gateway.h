@@ -151,6 +151,23 @@ GrB_Info GB_cuda_rowscale
     const bool flipxy
 ) ;
 
+bool GB_cuda_colscale_branch
+(
+    const GrB_Matrix A,
+    const GrB_Matrix D,
+    const GrB_Semiring semiring,
+    const bool flipxy
+) ;
+
+GrB_Info GB_cuda_colscale
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GrB_Matrix D,
+    const GrB_Semiring semiring,
+    const bool flipxy
+) ;
+
 bool GB_cuda_type_branch            // return true if the type is OK on GPU
 (
     const GrB_Type type             // type to query

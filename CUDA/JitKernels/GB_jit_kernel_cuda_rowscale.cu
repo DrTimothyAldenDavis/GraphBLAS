@@ -11,20 +11,14 @@ __global__ void GB_cuda_rowscale_kernel
     const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *) B->x ;
     GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) C->x ;
 
-    #ifdef GB_JIT_KERNEL
     #define D_iso GB_A_ISO
     #define B_iso GB_B_ISO
-    #else
-    const bool D_iso = D->iso ;
-    const bool B_iso = B->iso ;
-    #endif
 
     const int64_t *__restrict__ Bi = B->i ;
-    GB_B_NVALS (bnz) ;
+    GB_B_NHELD (bnz) ;
     const int64_t bvlen = B->vlen ;
 
     int ntasks = gridDim.x * blockDim.x;
-    // ntasks = GB_IMIN (bnz, ntasks) ;     take care of this when setting gridsz/blocksz
     int tid = blockIdx.x * blockDim.x + threadIdx.x;
 
     for (int64_t p = tid ; p < bnz ; p += ntasks)
@@ -46,6 +40,8 @@ GB_JIT_CUDA_KERNEL_ROWSCALE_PROTO (GB_jit_kernel)
 {
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (!GB_JUMBLED (D)) ;
+    ASSERT (!GB_IS_BITMAP (D)) ;
+    ASSERT (!GB_IS_FULL (D)) ;
     ASSERT (GB_JUMBLED_OK (B)) ;
     ASSERT (!C->iso) ;
 
