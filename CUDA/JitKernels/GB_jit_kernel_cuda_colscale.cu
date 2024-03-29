@@ -18,10 +18,7 @@ __global__ void GB_cuda_colscale_kernel
     const GB_B_TYPE *__restrict__ Dx = (GB_B_TYPE *) B->x ;
     GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) C->x ;
 
-    #define A_iso GB_A_ISO
-    #define D_iso GB_B_ISO
-
-    const int64_t *__restrict__ Ai = A->i ;
+//  const int64_t *__restrict__ Ai = A->i ;
     const int64_t *__restrict__ Ap = A->p ;
     const int64_t *__restrict__ Ah = A->h ;
     const int8_t *__restrict__ Ab = A->b ;
@@ -35,13 +32,18 @@ __global__ void GB_cuda_colscale_kernel
     int tid = blockIdx.x * blockDim.x + threadIdx.x ;
     for (int64_t p = tid ; p < anz ; p += ntasks)
     {
+        // ask Joe:
+        #ifdef GB_A_IS_BITMAP
         if (!GBB_A (Ab, p)) { continue ; }
+        #endif
 
-        int col_idx = p % avlen ;
+        // the pth entry in A is A(i,j) where i = p%avlen and j = p/avlen
+        int64_t col_idx = p / avlen ;
+//      int64_t row_idx = p % avlen ;
         GB_DECLAREB (dii) ;
-        GB_GETB (dii, Dx, col_idx, D_iso) ;
+        GB_GETB (dii, Dx, col_idx, ) ;
         GB_DECLAREA (aij) ;
-        GB_GETA (aij, Ax, p, A_iso) ;
+        GB_GETA (aij, Ax, p, ) ;
         // C has same sparsity as A; ewise op code does not change
         GB_EWISEOP (Cx, p, aij, dii, 0, 0) ;
     }
@@ -72,9 +74,9 @@ __global__ void GB_cuda_colscale_kernel
                 k = GBH_A (Ah, k) ;
 
                 GB_DECLAREB (dii) ;
-                GB_GETB (dii, Dx, k, D_iso) ;
+                GB_GETB (dii, Dx, k, ) ;
                 GB_DECLAREA (aij) ;
-                GB_GETA (aij, Ax, pfirst + curr_p, A_iso) ;
+                GB_GETA (aij, Ax, pfirst + curr_p, ) ;
                 GB_EWISEOP (Cx, pfirst + curr_p, aij, dii, 0, 0) ;
             }
         }
