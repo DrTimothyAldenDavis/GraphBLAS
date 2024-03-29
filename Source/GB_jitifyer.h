@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jitifyer.h: definitions for the CPU jitifyer
+// GB_jitifyer.h: definitions for the CPU and CUDA jitifyer
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
