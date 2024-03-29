@@ -23,7 +23,8 @@ __global__ void GB_cuda_colscale_kernel
 
     const int64_t *__restrict__ Ai = A->i ;
     const int64_t *__restrict__ Ap = A->p ;
-    const int64_t *__restrict__ Ab = A->b ;
+    const int64_t *__restrict__ Ah = A->h ;
+    const int8_t *__restrict__ Ab = A->b ;
     GB_A_NHELD (anz) ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
@@ -68,6 +69,7 @@ __global__ void GB_cuda_colscale_kernel
             for (int64_t curr_p = threadIdx.x ; curr_p < my_chunk_size ; curr_p += blockDim.x)
             {
                 int64_t k = GB_cuda_ek_slice_entry (curr_p, pfirst, Ap, anvec_sub1, kfirst, slope) ;
+                k = GBH_A (Ah, k) ;
 
                 GB_DECLAREB (dii) ;
                 GB_GETB (dii, Dx, k, D_iso) ;

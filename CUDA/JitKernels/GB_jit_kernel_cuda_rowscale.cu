@@ -15,6 +15,7 @@ __global__ void GB_cuda_rowscale_kernel
     #define B_iso GB_B_ISO
 
     const int64_t *__restrict__ Bi = B->i ;
+    const int8_t *__restrict__ Bb = B->b ;
     GB_B_NHELD (bnz) ;
     const int64_t bvlen = B->vlen ;
 
@@ -23,6 +24,8 @@ __global__ void GB_cuda_rowscale_kernel
 
     for (int64_t p = tid ; p < bnz ; p += ntasks)
     {
+        if (!GBB_B (Bb, p)) { continue ; }
+
         int64_t i = GBI_B (Bi, p, bvlen) ;      // get row index of B(i,j)
         GB_DECLAREA (dii) ;
         GB_GETA (dii, Dx, i, D_iso) ;           // dii = D(i,i)

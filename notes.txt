@@ -164,6 +164,5 @@ Kernel development notes:
 - Apply notes:
     - Can use a unary op, index unary op, or binary op
     - Entry point: GB_apply
-        a. ...
     - Main work: GB_apply_op
     
