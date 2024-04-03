@@ -192,6 +192,7 @@ static void check_table (void)
 
 #define GB_COPY_STUFF(X,src)                            \
 {                                                       \
+    ASSERT (src != NULL) ;                              \
     size_t len = strlen (src) ;                         \
     GB_MALLOC_STUFF (X, len) ;                          \
     strncpy (X, src, X ## _allocated) ;                 \
@@ -347,7 +348,7 @@ GrB_Info GB_jitifyer_init (void)
     // initialize the remaining strings
     //--------------------------------------------------------------------------
 
-    GB_COPY_STUFF (GB_jit_error_log,     "") ;
+    GB_COPY_STUFF (GB_jit_error_log,    "") ;
     GB_COPY_STUFF (GB_jit_C_compiler,   GB_C_COMPILER) ;
     GB_COPY_STUFF (GB_jit_C_flags,      GB_C_FLAGS) ;
     GB_COPY_STUFF (GB_jit_C_link_flags, GB_C_LINK_FLAGS) ;
@@ -495,8 +496,7 @@ GrB_Info GB_jitifyer_init (void)
         #undef IS
         encoding->kcode = c ;
         encoding->code = scode ;
-        encoding->suffix_len = (suffix == NULL) ? 0 :
-            ((int32_t) strlen (suffix)) ;
+        encoding->suffix_len = (int32_t) GB_STRLEN (suffix) ;
 
         //----------------------------------------------------------------------
         // get the hash of this PreJIT kernel
@@ -2331,7 +2331,8 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
     uint32_t bucket = hash & 0xFF ;
     GBURBLE ("(jit: %s)\n", "cmake") ;
     char *burble_stdout = GB_Global_burble_get ( ) ? "" : GB_DEV_NULL ;
-    char *err_redirect = (strlen (GB_jit_error_log) > 0) ? " 2>> " : " 2>&1 " ;
+    char *err_redirect = (GB_STRLEN (GB_jit_error_log) > 0) ?
+        " 2>> " : " 2>&1 " ;
 
 #if defined (__MINGW32__)
 #define GB_SH_C "sh -c "
@@ -2375,7 +2376,7 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
         "add_library ( %s SHARED \"%s/c/%02x/%s.c\" )\n",
         kernel_name,                // target name for add_library command
         GB_jit_cache_path, bucket, kernel_name) ; // source file for add_library
-    if (strlen (GB_jit_C_cmake_libs) > 0)
+    if (GB_STRLEN (GB_jit_C_cmake_libs) > 0)
     {
         fprintf (fp,
             "target_link_libraries ( %s PUBLIC %s )\n",
@@ -2455,7 +2456,8 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
 #if defined ( GRAPHBLAS_HAS_CUDA ) && !defined ( NJIT )
 
     char *burble_stdout = GB_Global_burble_get ( ) ? "" : GB_DEV_NULL ;
-    char *err_redirect = (strlen (GB_jit_error_log) > 0) ? " 2>> " : " 2>&1 " ;
+    char *err_redirect = (GB_STRLEN (GB_jit_error_log) > 0) ?
+        " 2>> " : " 2>&1 " ;
 
     GBURBLE ("(jit compiling cuda with nvcc: %s/c/%02x/%s.cu) ",
         GB_jit_cache_path, bucket, kernel_name) ;
@@ -2532,7 +2534,8 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
 #ifndef NJIT
 
     char *burble_stdout = GB_Global_burble_get ( ) ? "" : GB_DEV_NULL ;
-    char *err_redirect = (strlen (GB_jit_error_log) > 0) ? " 2>> " : " 2>&1 " ;
+    char *err_redirect = (GB_STRLEN (GB_jit_error_log) > 0) ?
+        " 2>> " : " 2>&1 " ;
 
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
 
