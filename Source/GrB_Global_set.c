@@ -361,6 +361,6 @@ GrB_Info GrB_Global_set_VOID
     }
 
     #pragma omp flush
-    return (GrB_SUCCESS) ;
+    return (info) ;
 }
 
