@@ -217,6 +217,50 @@ void GB_jitifyer_finalize (void)
 }
 
 //------------------------------------------------------------------------------
+// GB_jitifyer_sanitize
+//------------------------------------------------------------------------------
+
+// Replace invalid characters in a string with underscore.
+
+void GB_jitifyer_sanitize (char *string, size_t len)
+{
+    for (int k = 0 ; k < len ; k++)
+    {
+        // check for the end of the string
+        if (string [k] == '\0') break ;
+        #ifdef _WIN32
+        // check the colon for "C:...", only in the second character
+        if (k == 1 && string [k] == ':') continue ;
+        #endif
+        // replace backslash with forward slash
+        if (string [k] == '\\')
+        { 
+            string [k] = '/' ;
+            continue ;
+        }
+        // replace other invalid characters with "_"
+        static char valid_character_set [ ] =
+        "abcdefghijklmnopqrstuvwxyz"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "0123456789.-_/" ;
+        bool ok = false ;
+        for (char *s = valid_character_set ; *s != '\0' ; s++)
+        {
+            if (string [k] == *s)
+            { 
+                ok = true ;
+                break ;
+            }
+        }
+        if (!ok)
+        { 
+            // replace a bad character with an underscore
+            string [k] = '_' ;
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
 // GB_jitifyer_init: initialize the JIT folders, flags, etc
 //------------------------------------------------------------------------------
 
@@ -296,11 +340,8 @@ GrB_Info GB_jitifyer_init (void)
         GB_COPY_STUFF (GB_jit_cache_path, "") ;
     }
 
-    // replace backslash with forward slash
-    for (char *p = GB_jit_cache_path ; *p != '\0' ; p++)
-    {
-        if ((*p) == '\\') (*p) = '/' ; 
-    }
+    // sanitize the cache path
+    GB_jitifyer_sanitize (GB_jit_cache_path, GB_jit_cache_path_allocated) ;
 
     //--------------------------------------------------------------------------
     // initialize the remaining strings
@@ -862,6 +903,8 @@ GrB_Info GB_jitifyer_set_cache_path_worker (const char *new_cache_path)
     GB_FREE_STUFF (GB_jit_cache_path) ;
     // allocate the new GB_jit_cache_path
     GB_COPY_STUFF (GB_jit_cache_path, new_cache_path) ;
+    // sanitize the cache path
+    GB_jitifyer_sanitize (GB_jit_cache_path, GB_jit_cache_path_allocated) ;
     // allocate workspace
     OK (GB_jitifyer_alloc_space ( )) ;
     // set the src path and make sure cache and src paths are accessible
