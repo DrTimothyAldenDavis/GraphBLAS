@@ -452,11 +452,13 @@ GrB_Info GrB_Global_get_SIZE
                 case GxB_BITMAP_SWITCH : 
 
                     (*value) = sizeof (double) * GxB_NBITMAP_SWITCH ;
+                    info = GrB_SUCCESS ;
                     break ;
 
                 case GxB_COMPILER_VERSION : 
 
                     (*value) = sizeof (int32_t) * 3 ;
+                    info = GrB_SUCCESS ;
                     break ;
 
                 case GxB_MALLOC_FUNCTION : 
@@ -465,6 +467,7 @@ GrB_Info GrB_Global_get_SIZE
                 case GxB_FREE_FUNCTION : 
 
                     (*value) = sizeof (void *) ;
+                    info = GrB_SUCCESS ;
                     break ;
 
                 default : 
@@ -518,6 +521,7 @@ GrB_Info GrB_Global_get_VOID
                         dvalue [k] = (double) GB_Global_bitmap_switch_get (k) ;
                     }
                 }
+                info = GrB_SUCCESS ;
                 break ;
 
             case GxB_COMPILER_VERSION : 
@@ -528,6 +532,7 @@ GrB_Info GrB_Global_get_VOID
                     ivalue [1] = GB_COMPILER_MINOR ;
                     ivalue [2] = GB_COMPILER_SUB ;
                 }
+                info = GrB_SUCCESS ;
                 break ;
 
             case GxB_MALLOC_FUNCTION : 
@@ -535,6 +540,7 @@ GrB_Info GrB_Global_get_VOID
                     void **func = (void **) value ;
                     (*func) = GB_Global_malloc_function_get ( ) ;
                 }
+                info = GrB_SUCCESS ;
                 break ;
 
             case GxB_CALLOC_FUNCTION : 
@@ -542,6 +548,7 @@ GrB_Info GrB_Global_get_VOID
                     void **func = (void **) value ;
                     (*func) = GB_Global_calloc_function_get ( ) ;
                 }
+                info = GrB_SUCCESS ;
                 break ;
 
             case GxB_REALLOC_FUNCTION : 
@@ -549,6 +556,7 @@ GrB_Info GrB_Global_get_VOID
                     void **func = (void **) value ;
                     (*func) = GB_Global_realloc_function_get ( ) ;
                 }
+                info = GrB_SUCCESS ;
                 break ;
 
             case GxB_FREE_FUNCTION : 
@@ -556,6 +564,7 @@ GrB_Info GrB_Global_get_VOID
                     void **func = (void **) value ;
                     (*func) = GB_Global_free_function_get ( ) ;
                 }
+                info = GrB_SUCCESS ;
                 break ;
 
             default : 
