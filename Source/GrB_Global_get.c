@@ -364,7 +364,7 @@ GrB_Info GrB_Global_get_String
     #pragma omp critical (GB_global_get_set)
     {
         const char *s ;
-        GB_global_string_get (&s, field) ;
+        info = GB_global_string_get (&s, field) ;
         if (info == GrB_SUCCESS)
         { 
             strcpy (value, s) ;
