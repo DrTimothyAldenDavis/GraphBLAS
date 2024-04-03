@@ -1,3 +1,7 @@
+Apr 7, 2024: version 9.1.1
+
+    * JIT: sanitizing the JIT cache path, better burble for compiler errors
+
 Mar 22, 2024: version 9.1.0
 
     * minor updates to build system
