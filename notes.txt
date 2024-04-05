@@ -119,6 +119,8 @@ New GPU JIT notes:
 
 Progress notes:
 Kernel development notes:
+- Useful guide: https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html
+- Good tips: https://on-demand.gputechconf.com/gtc/2017/presentation/s7122-stephen-jones-cuda-optimization-tips-tricks-and-techniques.pdf
 - Fork GraphBLAS, establish personal branch
 - Start with rowscale
     - Understand how rowscale works on CPU
@@ -165,4 +167,17 @@ Kernel development notes:
     - Can use a unary op, index unary op, or binary op
     - Entry point: GB_apply
     - Main work: GB_apply_op
+        - 5 cases:
+            1. Positional op (not user-defined)
+                - Handled by templates (NOT JIT)
+            2. Iso op
+                - When C is iso. Handled by iso kernel (NOT JIT)
+            3. Unary op (not positional)
+                - Tries factory kernel, then CUDA JIT, then JIT then generic
+            4. Binary op (not positional)
+                - bind1st/bind2nd: is the scalar on left or right
+                - Same process as (3)
+            5. User-defined indexunaryop (not positional)
+
+                
     

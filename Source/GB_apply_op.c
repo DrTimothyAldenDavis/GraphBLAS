@@ -391,6 +391,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         }
         #endif
 
+        // TODO: CUDA JIT unop entry point here
+
         //----------------------------------------------------------------------
         // via the JIT or PreJIT kernel
         //----------------------------------------------------------------------
@@ -655,6 +657,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             cast_s (ywork, scalar->x, ssize) ;
             ythunk = ywork ;
         }
+
+        // TODO: CUDA JIT unop entry point here
 
         //----------------------------------------------------------------------
         // via the JIT or PreJIT kernel
