@@ -41,8 +41,18 @@
 #define GRAPHBLAS_H
 
 //==============================================================================
-// include files required by GraphBLAS
+//=== GraphBLAS macros, typedefs, enums, and global variables  =================
 //==============================================================================
+
+// This GraphBLAS.h header file is split into two parts.  The first part
+// defines macros, typedefs, enums, global variables, and pulls in standard C
+// #include files.
+
+// The second part defines all of the user-callable GrB_* 
+
+//------------------------------------------------------------------------------
+// include files required by GraphBLAS
+//------------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <errno.h>
@@ -56,12 +66,20 @@
 #include <math.h>
 #include <stdarg.h>
 
-//==============================================================================
-// renaming for use in MATLAB R2021a or later
-//==============================================================================
+//------------------------------------------------------------------------------
+// helper macros
+//------------------------------------------------------------------------------
 
 #define GB_CAT2(x,y) x ## y
 #define GB_EVAL2(x,y) GB_CAT2 (x,y)
+
+// GB_STR: convert the content of x into a string "x"
+#define GB_XSTR(x) GB_STR(x)
+#define GB_STR(x) #x
+
+//------------------------------------------------------------------------------
+// renaming for use in MATLAB R2021a or later
+//------------------------------------------------------------------------------
 
 #if defined ( GBMATLAB ) && !defined ( GB_JIT_RUNTIME )
     // All symbols must be renamed for the @GrB interface when using MATLAB
@@ -375,10 +393,16 @@ typedef enum
 }
 GrB_Mode ;
 
+//==============================================================================
+// GrB_init / GrB_finalize
+//==============================================================================
+
 #if defined ( __cplusplus )
 extern "C"
 {
 #endif
+
+#ifndef GB_CUDA_FOLDER
 
 GrB_Info GrB_init           // start up GraphBLAS
 (
@@ -413,6 +437,8 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
     unsigned int *version,      // returns GRB_VERSION
     unsigned int *subversion    // returns GRB_SUBVERSION
 ) ;
+
+#endif  // GB_CUDA_FOLDER
 
 //==============================================================================
 // GrB_Descriptor: the GraphBLAS descriptor
@@ -542,6 +568,8 @@ GrB_Desc_Value ;
 
 typedef struct GB_Descriptor_opaque *GrB_Descriptor ;
 
+#ifndef GB_CUDA_FOLDER
+
 GrB_Info GrB_Descriptor_new     // create a new descriptor
 (
     GrB_Descriptor *descriptor  // handle of descriptor to create
@@ -561,6 +589,8 @@ GrB_Info GrB_Descriptor_free    // free a descriptor
 (
     GrB_Descriptor *descriptor  // handle of descriptor to free
 ) ;
+
+#endif  // GB_CUDA_FOLDER
 
 // Predefined descriptors and their values:
 
@@ -702,6 +732,10 @@ GB_GLOBAL GrB_Type
 // GrB_Type_new:  create a new type
 //------------------------------------------------------------------------------
 
+#define GxB_MAX_NAME_LEN 128
+
+#ifndef GB_CUDA_FOLDER
+
 GrB_Info GrB_Type_new           // create a new GraphBLAS type
 (
     GrB_Type *type,             // handle of user type to create
@@ -726,8 +760,6 @@ GrB_Info GrB_Type_new           // create a new GraphBLAS type
 //
 // At most GxB_MAX_NAME_LEN characters are accessed in type_name; characters
 // beyond that limit are silently ignored.
-
-#define GxB_MAX_NAME_LEN 128
 
 GrB_Info GxB_Type_new           // create a new named GraphBLAS type
 (
@@ -754,6 +786,8 @@ GrB_Info GrB_Type_free          // free a user-defined type
 (
     GrB_Type *type              // handle of user-defined type to free
 ) ;
+
+#endif  // GB_CUDA_FOLDER
 
 //==============================================================================
 // GrB_UnaryOp: unary operators
@@ -951,6 +985,8 @@ GB_GLOBAL GrB_UnaryOp
 
 typedef void (*GxB_unary_function)  (void *, const void *) ;
 
+#ifndef GB_CUDA_FOLDER
+
 // GrB_UnaryOp_new creates a user-defined unary op (with no name or defn)
 GrB_Info GrB_UnaryOp_new            // create a new user-defined unary operator
 (
@@ -981,6 +1017,8 @@ GrB_Info GrB_UnaryOp_free           // free a user-created unary operator
 (
     GrB_UnaryOp *unaryop            // handle of unary operator to free
 ) ;
+
+#endif  // GB_CUDA_FOLDER
 
 //==============================================================================
 // GrB_BinaryOp: binary operators
@@ -1387,6 +1425,8 @@ GB_GLOBAL GrB_BinaryOp GxB_IGNORE_DUP ;
 
 typedef void (*GxB_binary_function) (void *, const void *, const void *) ;
 
+#ifndef GB_CUDA_FOLDER
+
 // GrB_BinaryOp_new creates a user-defined binary op (no name or defn)
 GrB_Info GrB_BinaryOp_new
 (
@@ -1422,6 +1462,8 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
     GrB_BinaryOp *binaryop          // handle of binary operator to free
 ) ;
 
+#endif  // GB_CUDA_FOLDER
+
 //==============================================================================
 // GxB_SelectOp: select operators (DEPRECATED: do not use)
 //==============================================================================
@@ -1431,8 +1473,10 @@ typedef struct GB_SelectOp_opaque *GxB_SelectOp ;
 GB_GLOBAL GxB_SelectOp GxB_TRIL, GxB_TRIU, GxB_DIAG, GxB_OFFDIAG, GxB_NONZERO,
 GxB_EQ_ZERO, GxB_GT_ZERO, GxB_GE_ZERO, GxB_LT_ZERO, GxB_LE_ZERO, GxB_NE_THUNK,
 GxB_EQ_THUNK, GxB_GT_THUNK, GxB_GE_THUNK, GxB_LT_THUNK, GxB_LE_THUNK ;
+#ifndef GB_CUDA_FOLDER
 GrB_Info GxB_SelectOp_xtype (GrB_Type *xtype, GxB_SelectOp selectop) ;
 GrB_Info GxB_SelectOp_ttype (GrB_Type *ttype, GxB_SelectOp selectop) ;
+#endif  // GB_CUDA_FOLDER
 
 //==============================================================================
 // GrB_IndexUnaryOp: a unary operator that depends on the row/col indices
@@ -1452,6 +1496,8 @@ typedef void (*GxB_index_unary_function)
     GrB_Index j,        // column index of A(i,j), or zero for v(i)
     const void *y       // input scalar y
 ) ;
+
+#ifndef GB_CUDA_FOLDER
 
 // GrB_IndexUnaryOp_new creates a user-defined unary op (no name or defn)
 
@@ -1484,6 +1530,8 @@ GrB_Info GrB_IndexUnaryOp_free  // free a user-created IndexUnaryOp
 (
     GrB_IndexUnaryOp *op        // handle of IndexUnary to free
 ) ;
+
+#endif  // GB_CUDA_FOLDER
 
 //------------------------------------------------------------------------------
 // built-in IndexUnaryOps
@@ -1578,6 +1626,8 @@ GB_GLOBAL GrB_IndexUnaryOp
 // op(x,identity) = op(identity,x) = x.
 
 typedef struct GB_Monoid_opaque *GrB_Monoid ;
+
+#ifndef GB_CUDA_FOLDER
 
 GrB_Info GrB_Monoid_new_BOOL        // create a new boolean monoid
 (
@@ -1847,11 +1897,15 @@ GrB_Info GrB_Monoid_free            // free a user-created monoid
     GrB_Monoid *monoid              // handle of monoid to free
 ) ;
 
+#endif  // GB_CUDA_FOLDER
+
 //==============================================================================
 // GrB_Semiring
 //==============================================================================
 
 typedef struct GB_Semiring_opaque *GrB_Semiring ;
+
+#ifndef GB_CUDA_FOLDER
 
 GrB_Info GrB_Semiring_new           // create a semiring
 (
@@ -1869,12 +1923,16 @@ GrB_Info GrB_Semiring_free          // free a user-created semiring
     GrB_Semiring *semiring          // handle of semiring to free
 ) ;
 
+#endif  // GB_CUDA_FOLDER
+
 //==============================================================================
 // GrB_Scalar: a GraphBLAS scalar
 //==============================================================================
 
 typedef struct GB_Scalar_opaque *GxB_Scalar ;   // historical: use GrB_Scalar
 typedef struct GB_Scalar_opaque *GrB_Scalar ;   // use this instead
+
+#ifndef GB_CUDA_FOLDER
 
 // These methods create, free, copy, and clear a GrB_Scalar.  The nvals,
 // and type methods return basic information about a GrB_Scalar.
@@ -2184,11 +2242,15 @@ GrB_Info GrB_Scalar_extractElement  // x = s
 #define GxB_Scalar_extractElement(x,s) GrB_Scalar_extractElement (x, s)
 #endif
 
+#endif  // GB_CUDA_FOLDER
+
 //==============================================================================
 // GrB_Vector: a GraphBLAS vector
 //==============================================================================
 
 typedef struct GB_Vector_opaque *GrB_Vector ;
+
+#ifndef GB_CUDA_FOLDER
 
 // These methods create, free, copy, and clear a vector.  The size, nvals,
 // and type methods return basic information about a vector.
@@ -2846,11 +2908,15 @@ GrB_Info GrB_Vector_extractTuples           // [I,~,X] = find (v)
     (Ilist, X, nvals, v)
 #endif
 
+#endif  // GB_CUDA_FOLDER
+
 //==============================================================================
 // GrB_Matrix: a GraphBLAS matrix
 //==============================================================================
 
 typedef struct GB_Matrix_opaque *GrB_Matrix ;
+
+#ifndef GB_CUDA_FOLDER
 
 // These methods create, free, copy, and clear a matrix.  The nrows, ncols,
 // nvals, and type methods return basic information about a matrix.
@@ -3699,6 +3765,8 @@ GrB_Info GxB_Vector_diag    // extract a diagonal from a matrix, as a vector
     const GrB_Descriptor desc       // unused, except threading control
 ) ;
 
+#endif  // GB_CUDA_FOLDER
+
 //==============================================================================
 // SuiteSparse:GraphBLAS options
 //==============================================================================
@@ -3913,6 +3981,8 @@ typedef enum
 }
 GxB_Context_Field ;
 
+#ifndef GB_CUDA_FOLDER
+
 GrB_Info GxB_Context_new            // create a new Context
 (
     GxB_Context *Context            // handle of Context to create
@@ -3997,6 +4067,8 @@ GrB_Info GxB_Context_get       (GxB_Context, GxB_Context_Field, ...) ;
     )                                                           \
     (arg1, __VA_ARGS__)
 #endif
+
+#endif  // GB_CUDA_FOLDER
 
 //==============================================================================
 // GrB_set and GrB_get
@@ -4099,6 +4171,7 @@ GrB_Type_Code ;
 // GrB_get: get a scalar, string, enum, size, or void * from an object
 //------------------------------------------------------------------------------
 
+#ifndef GB_CUDA_FOLDER
 GrB_Info GrB_Scalar_get_Scalar (GrB_Scalar, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_Scalar_get_String (GrB_Scalar, char *    , GrB_Field) ;
 GrB_Info GrB_Scalar_get_INT32  (GrB_Scalar, int32_t * , GrB_Field) ;
@@ -4324,6 +4397,7 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
                         void *      : GxB_Serialized_get_VOID               \
                 )                                                           \
     ) (object, value, __VA_ARGS__)
+#endif
 
 //------------------------------------------------------------------------------
 // GrB_set: set a scalar, string, enum, size, or void * of an object
@@ -4508,7 +4582,7 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
     ) (object, value, __VA_ARGS__)
 #endif
 
-#endif
+#endif  // GB_CUDA_FOLDER
 
 //==============================================================================
 // GrB_free: free any GraphBLAS object
@@ -4517,6 +4591,8 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
 // for null and invalid objects
 #define GrB_NULL NULL
 #define GrB_INVALID_HANDLE NULL
+
+#ifndef GB_CUDA_FOLDER
 
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_free(object)                                \
@@ -4539,6 +4615,8 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
     (object)
 #endif
 
+#endif
+
 //==============================================================================
 // GrB_wait: finish computations
 //==============================================================================
@@ -4549,6 +4627,8 @@ typedef enum
     GrB_MATERIALIZE = 1     // object is complete
 }
 GrB_WaitMode ;
+
+#ifndef GB_CUDA_FOLDER
 
 // Finish all pending work in a specific object.
 
@@ -4584,7 +4664,6 @@ GrB_Info GxB_Context_wait      (GxB_Context    Context , GrB_WaitMode waitmode);
     )                                                   \
     (object, waitmode)
 #endif
-
 
 // NOTE: GxB_Scalar_wait is historical; use GrB_Scalar_wait instead
 GrB_Info GxB_Scalar_wait (GrB_Scalar *s) ;
@@ -4933,6 +5012,8 @@ GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
     (C, Mask, accum, op, A, alpha, B, beta, desc)
 #endif
 
+#endif  // GB_CUDA_FOLDER
+
 //==============================================================================
 // GrB_extract: extract a submatrix or subvector
 //==============================================================================
@@ -4976,6 +5057,8 @@ GB_GLOBAL const uint64_t *GrB_ALL ;
 //      I [GxB_BEGIN ] = 10 ;               // the start of the sequence
 //      I [GxB_INC   ] = 2 ;                // the magnitude of the increment
 //      I [GxB_END   ] = 1 ;                // the end of the sequence
+
+#ifndef GB_CUDA_FOLDER
 
 GrB_Info GrB_Vector_extract         // w<mask> = accum (w, u(I))
 (
@@ -8058,6 +8141,7 @@ GrB_Info GrB_Matrix_kronecker_Semiring  // C<M> = accum (C, kron(A,B))
     (C, Mask, accum, op, A, B, desc)
 #endif
 
+#endif  // GB_CUDA_FOLDER
 
 //==============================================================================
 // GrB_Monoid: built-in monoids
@@ -9004,6 +9088,8 @@ GB_GLOBAL GrB_Semiring
 // GrB_*_resize:  change the size of a matrix or vector
 //==============================================================================
 
+#ifndef GB_CUDA_FOLDER
+
 // If the dimensions decrease, entries that fall outside the resized matrix or
 // vector are deleted.
 
@@ -9049,6 +9135,8 @@ GrB_Info GxB_Vector_resize      // change the size of a vector (historical)
     )                                                       \
     (arg1, __VA_ARGS__)
 #endif
+
+#endif  // GB_CUDA_FOLDER
 
 //==============================================================================
 // GxB_fprint and GxB_print: print the contents of a GraphBLAS object
@@ -9105,6 +9193,8 @@ typedef enum
     GxB_COMPLETE_VERBOSE = 5  // GxB_COMPLETE but with "%.15g" for doubles
 }
 GxB_Print_Level ;
+
+#ifndef GB_CUDA_FOLDER
 
 GrB_Info GxB_Type_fprint            // print and check a GrB_Type
 (
@@ -9196,11 +9286,6 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
     GxB_Print_Level pr,             // print level
     FILE *f                         // file for output
 ) ;
-
-// user code should not directly use GB_STR or GB_XSTR
-// GB_STR: convert the content of x into a string "x"
-#define GB_XSTR(x) GB_STR(x)
-#define GB_STR(x) #x
 
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_fprint(object,pr,f)                                 \
@@ -10245,6 +10330,8 @@ GrB_Info GxB_pack_HyperHash         // move Y into A->Y
     const GrB_Descriptor desc       // unused
 ) ;
 
+#endif  // GB_CUDA_FOLDER
+
 //==============================================================================
 // GrB import/export
 //==============================================================================
@@ -10272,6 +10359,8 @@ typedef enum
     GrB_COO_FORMAT = 2      // triplet format (like input to GrB*build)
 }
 GrB_Format ;
+
+#ifndef GB_CUDA_FOLDER
 
 GrB_Info GrB_Matrix_import_BOOL     // import a GrB_BOOL matrix
 (
@@ -10691,6 +10780,8 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     GrB_Matrix A            // matrix to export
 ) ;
 
+#endif  // GB_CUDA_FOLDER
+
 //==============================================================================
 // serialize/deserialize
 //==============================================================================
@@ -10823,6 +10914,8 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 // If the method is negative, no compression is performed.  If the method is
 // positive but unrecognized, the default is used (GxB_COMPRESSION_ZSTD,
 // level 1).
+
+#ifndef GB_CUDA_FOLDER
 
 GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 (
@@ -11968,6 +12061,8 @@ void       GxB_Iterator_get_UDT    (GxB_Iterator iterator,
         ((iterator)->iso ? 0 : ((iterator)->type_size * (iterator)->p)),    \
         (iterator)->type_size)                                              \
 )
+
+#endif  // GB_CUDA_FOLDER
 
 #if defined ( __cplusplus )
 }

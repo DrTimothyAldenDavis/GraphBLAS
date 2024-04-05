@@ -126,7 +126,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
     // FIXME: tune this loop (and all others) for GPU architectures, where # of
     // threadblocks can differ on different GPUs.
 
-    // grid-stide loop for each threadblock:
+    // grid-stride loop for each threadblock:
     for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
                  pfirst < mnz ;
                  pfirst += gridDim.x << log2_chunk_size)
