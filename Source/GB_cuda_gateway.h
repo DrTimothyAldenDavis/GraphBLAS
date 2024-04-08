@@ -173,8 +173,15 @@ bool GB_cuda_apply_binop_branch
     const GrB_Type ctype,
     const GrB_BinaryOp op,
     const GrB_Matrix A,
-    const bool bind1st,
+    const bool bind1st
 ) ;
+
+bool GB_cuda_apply_unop_branch
+(
+    const GrB_Type ctype,
+    const GrB_Matrix A
+) ;
+
 
 bool GB_cuda_type_branch            // return true if the type is OK on GPU
 (

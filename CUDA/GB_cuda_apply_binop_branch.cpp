@@ -6,7 +6,7 @@ bool GB_cuda_apply_binop_branch
     const GrB_Type ctype,
     const GrB_BinaryOp op,
     const GrB_Matrix A,
-    const bool bind1st,
+    const bool bind1st
 )
 {
     bool ok = GB_cuda_type_branch (ctype) && GB_cuda_type_branch (A->type) ;

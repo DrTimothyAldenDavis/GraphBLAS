@@ -23,8 +23,7 @@ GrB_Info GB_cuda_rowscale
     CUDA_OK (cudaStreamCreate (&stream)) ;
 
     // compute gridsz, blocksz, call GB_cuda_rowscale_jit
-    GrB_Index bnz ;
-    GrB_Matrix_nvals (&bnz, B) ;
+    GrB_Index bnz = GB_nnz_held (B) ;
     
     int32_t gridsz = 1 + (bnz >> LOG2_BLOCK_SIZE) ;
 

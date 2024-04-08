@@ -4,11 +4,11 @@
 bool GB_cuda_apply_unop_branch
 (
     const GrB_Type ctype,
-    const GrB_Matrix A,
+    const GrB_Matrix A
 )
 {
     bool ok = GB_cuda_type_branch (ctype) && GB_cuda_type_branch (A->type) ;
-    
+
     if (!ok)
     {
         return false;
