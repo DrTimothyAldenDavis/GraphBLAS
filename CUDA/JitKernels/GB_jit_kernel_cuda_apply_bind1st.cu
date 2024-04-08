@@ -38,7 +38,7 @@ GB_JIT_CUDA_KERNEL_APPLY_BIND1ST_PROTO (GB_jit_kernel)
     dim3 grid (gridsz) ;
     dim3 block (blocksz) ;
     
-    GB_cuda_apply_bind1st_kernel <<<grid, block, 0, stream>>> (Cx, scalarx, A) ;
+    GB_cuda_apply_bind1st_kernel <<<grid, block, 0, stream>>> (Cx, scalarx, B) ;
 
     return (GrB_SUCCESS) ;
 }

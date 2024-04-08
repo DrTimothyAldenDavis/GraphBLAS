@@ -167,29 +167,33 @@ Kernel development notes:
     - Can use a unary op, index unary op, or binary op
     - Entry point: GB_apply
     - Main work: GB_apply_op
-        - 5 cases:
-            1. Positional op (not user-defined)
+        - Overview of all ops:
+            1. unops (GrB_UnaryOp):
+                - Have both positional/non-positional
+                - Non-positional are plain z = f(x), and can be user-defined
+                - Positional: GxB_POSITION* (does NOT depend on x). CANNOT be user-defined, non-spec
+                    - f(x) = i/j
+            2. binops (GrB_BinaryOp):
+                - Like unop, has positional/non-positional
+                - Non-positional: are plain z = f(x, y), can be user-defined
+                - Positional: GxB_{FIRST | SECOND}* (does NOT depend on x, y). CANNOT be user-defined, non-spec
+                    - Always gives row/col, based on I or J name
+            3. indexunaryops (GrB_IndexUnaryOp)
+                - Part of spec, fulfill the role of positional unops
+                - Only positional op that can be user-defined
+                - While positional unops do NOT consider the input,
+                  IndexUnaryOps can (the "thunk")
+                  - thunk can be used for comparisons, add a constant offset, etc
+
+            - Positional ops always return int64, int32, or bool
+            - Non-positional return type can be based on type of matrix
+
+        - 5 cases for apply_op:
+            1. Positional op (not user-defined, but can still be an indexunaryop)
+                - Handles all 3 of above ops, positional variants, not user-defined
                 - Handled by templates (NOT JIT)
                 - Ideally, should be handled by JIT. Problem: positional binops not jitted
                     - Solution: Convert positional binops to positional unops
-                - Overview of all ops:
-                    a. unops (GrB_UnaryOp):
-                        - Have both positional/non-positional
-                        - Non-positional are plain z = f(x)
-                        - Positional: GxB_POSITION* (does NOT depend on x)
-                            - f(x) = i/j
-                    b. binops (GrB_BinaryOp):
-                        - Like unop, has positional/non-positional
-                        - Non-positional: are plain z = f(x, y)
-                        - Positional: GxB_{FIRST | SECOND}* (does NOT depend on x, y)
-                            - Always gives row/col, based on I or J name
-                    c. indexunaryops (GrB_IndexUnaryOp)
-                        - Part of spec, fulfill the role of positional unops
-                        - While positional unops do NOT consider the input,
-                          IndexUnaryOps can (the "thunk")
-                          - thunk adds a constant offset to result
-                    
-
             2. Iso op
                 - When C is iso. Handled by iso kernel (NOT JIT)
             3. Unary op (not positional)
@@ -198,6 +202,33 @@ Kernel development notes:
                 - bind1st/bind2nd: is the scalar on left or right
                 - Same process as (3)
             5. User-defined indexunaryop
-                - Need to handle all "depends on" cases (i, j, x, y) since
+                - Need to handle all "depends on" cases (i, j, y) since
                   user-defined
+
+        - Progress notes:
+            - binops (bind1st/bind2nd) -> straightforward
+            - unops:
+                1. Positional ops: needs to handle positional unops and idxunops
+                    a. Needed for input: 
+                        - Cx (of type int64_t, int32_t, or bool respectively, can get by GB_C_TYPE)
+                        - thunk
+                        - A matrix
+                    b. Needed for branch input:
+                        - None for now? (should always be true?)
+                2. Non-positional ops
+                    a. Needed for input:
+                        - Cx (could be whatever type)
+                        - A matrix
+                    b. Needed for branch input:
+                        - Ctype
+                        - A matrix (for checking A->type)
+                3. Consolidated kernel:
+                    a. Needed for input:
+                        - Cx (whatever type)
+                        - thunk
+                        - A matrix
+                    b. Needed for branch input:
+                        - Requirements for non-positional branch input
+                
+
 

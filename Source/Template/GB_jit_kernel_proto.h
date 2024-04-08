@@ -594,6 +594,22 @@ GrB_Info GB_jit_kernel_colscale                                         \
     int32_t blocksz                                                     \
 )
 
+#define GB_JIT_CUDA_KERNEL_APPLY_BIND1ST_PROTO(GB_jit_kernel_apply_bind1st) \
+GrB_Info GB_jit_kernel_apply_bind1st                                        \
+(                                                                           \
+    GB_void *Cx,                                                            \
+    GB_void *scalarx,                                                       \
+    GrB_Matrix B                                                            \
+)                                                                           \
+
+#define GB_JIT_CUDA_KERNEL_APPLY_UNOP_PROTO(GB_jit_kernel_apply_unop)       \
+GrB_Info GB_jit_kernel_apply_unop                                           \
+(                                                                           \
+    GB_void *Cx,                                                            \
+    GB_void *thunk_value,                                                   \
+    GrB_Matrix A                                                            \
+)                                                                           \
+
 #define GB_JIT_CUDA_KERNEL_DOT3_PROTO(GB_jit_kernel_AxB_dot3)           \
 GrB_Info GB_jit_kernel_AxB_dot3                                         \
 (                                                                       \
