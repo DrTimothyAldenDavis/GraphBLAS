@@ -170,6 +170,26 @@ Kernel development notes:
         - 5 cases:
             1. Positional op (not user-defined)
                 - Handled by templates (NOT JIT)
+                - Ideally, should be handled by JIT. Problem: positional binops not jitted
+                    - Solution: Convert positional binops to positional unops
+                - Overview of all ops:
+                    a. unops (GrB_UnaryOp):
+                        - Have both positional/non-positional
+                        - Non-positional are plain z = f(x)
+                        - Positional: GxB_POSITION* (does NOT depend on x)
+                            - f(x) = i/j
+                    b. binops (GrB_BinaryOp):
+                        - Like unop, has positional/non-positional
+                        - Non-positional: are plain z = f(x, y)
+                        - Positional: GxB_{FIRST | SECOND}* (does NOT depend on x, y)
+                            - Always gives row/col, based on I or J name
+                    c. indexunaryops (GrB_IndexUnaryOp)
+                        - Part of spec, fulfill the role of positional unops
+                        - While positional unops do NOT consider the input,
+                          IndexUnaryOps can (the "thunk")
+                          - thunk adds a constant offset to result
+                    
+
             2. Iso op
                 - When C is iso. Handled by iso kernel (NOT JIT)
             3. Unary op (not positional)
@@ -177,7 +197,7 @@ Kernel development notes:
             4. Binary op (not positional)
                 - bind1st/bind2nd: is the scalar on left or right
                 - Same process as (3)
-            5. User-defined indexunaryop (not positional)
+            5. User-defined indexunaryop
+                - Need to handle all "depends on" cases (i, j, x, y) since
+                  user-defined
 
-                
-    

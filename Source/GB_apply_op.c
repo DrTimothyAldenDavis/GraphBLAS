@@ -357,6 +357,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         ASSERT_OP_OK (op, "unop for GB_apply_op", GB0) ;
         ASSERT (!A->iso) ;
 
+        // TODO: CUDA JIT unop entry point here
+
         // determine number of threads to use
         #ifndef GBCOMPACT
         GB_IF_FACTORY_KERNELS_ENABLED
@@ -390,8 +392,6 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             }
         }
         #endif
-
-        // TODO: CUDA JIT unop entry point here
 
         //----------------------------------------------------------------------
         // via the JIT or PreJIT kernel
@@ -492,6 +492,12 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             // z = binop (scalar,Ax)
             //------------------------------------------------------------------
 
+            // #if defined ( GRAPHBLAS_HAS_CUDA )
+            // if (GB_cuda_apply_binop_branch (ctype, (GrB_BinaryOp) op, A, true)) {
+            //     info = GB_cuda_apply_bind1st_jit (Cx, scalarx, A) ;
+            // } 
+            // #endif
+
             #ifndef GBCOMPACT
             GB_IF_FACTORY_KERNELS_ENABLED
             { 
@@ -541,6 +547,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             //------------------------------------------------------------------
             // z = binop (Ax,scalar)
             //------------------------------------------------------------------
+            
+            // TODO: binop bind2nd CUDA JIT entry point here
 
             #ifndef GBCOMPACT
             GB_IF_FACTORY_KERNELS_ENABLED
