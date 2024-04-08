@@ -37,7 +37,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     GB_void *Cx,                    // output array
     const GrB_Type ctype,           // type of C
     const GB_iso_code C_code_iso,   // C non-iso, or code to compute C iso value
-        const GB_Operator op,       // unary/index-unary/binop to apply
+        const GB_Operator op_in,    // unary/index-unary/binop to apply
         const GrB_Scalar scalar,    // scalar to bind to binary operator
         bool binop_bind1st,         // if true, C=binop(s,A), else C=binop(A,s)
         bool flipij,                // if true, flip i,j for user idxunop
@@ -51,6 +51,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+    GB_Operator op = op_in ;
     ASSERT (Cx != NULL) ;
     ASSERT_MATRIX_OK (A, "A input for GB_apply_op", GB0) ;
     ASSERT (GB_JUMBLED_OK (A)) ;        // A can be jumbled
@@ -84,11 +85,57 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     GB_Opcode opcode ;
     bool op_is_unop = false ;
     bool op_is_binop = false ;
+    bool is64 = false ;
+    bool is32 = false ;
+
     if (op != NULL)
     { 
         opcode = op->opcode ;
         op_is_unop = GB_IS_UNARYOP_CODE (opcode) ;
         op_is_binop = GB_IS_BINARYOP_CODE (opcode) ;
+        is64 = (op->ztype == GrB_INT64) ;
+        is32 = (op->ztype == GrB_INT32) ;
+
+        if (op_is_binop && GB_OPCODE_IS_POSITIONAL (opcode))
+        {
+            // rename positional binary ops to positional unary ops
+            GrB_UnaryOp op1 = NULL ;
+            switch (opcode)
+            {
+                case GB_FIRSTI_binop_code    : // z = first_i(A(i,j),y) == i
+                case GB_SECONDI_binop_code   : // z = second_i(x,A(i,j)) == i
+                    // rename FIRSTI and SECONDI to POSITIONI
+                    op1 = is64 ? GxB_POSITIONI_INT64 : GxB_POSITIONI_INT32 ;
+                    break ;
+
+                case GB_FIRSTI1_binop_code   : // z = first_i1(A(i,j),y) == i+1
+                case GB_SECONDI1_binop_code  : // z = second_i1(x,A(i,j)) == i+1
+                    // rename FIRSTI1 and SECONDI1 to POSITIONI1
+                    op1 = is64 ? GxB_POSITIONI1_INT64 : GxB_POSITIONI1_INT32 ;
+                    break ;
+
+                case GB_FIRSTJ_binop_code    : // z = first_j(A(i,j),y) == j
+                case GB_SECONDJ_binop_code   : // z = second_j(x,A(i,j)) == j
+                    // rename FIRSTJ and SECONDJ to POSITIONJ
+                    op1 = is64 ? GxB_POSITIONJ_INT64 : GxB_POSITIONJ_INT32 ;
+                    break ;
+
+                case GB_FIRSTJ1_binop_code   : // z = first_j1(A(i,j),y) == j+1
+                case GB_SECONDJ1_binop_code  : // z = second_j1(x,A(i,j)) == j+1
+                    // rename FIRSTJ1 and SECONDJ1 to POSITIONJ1
+                    op1 = is64 ? GxB_POSITIONJ1_INT64 : GxB_POSITIONJ1_INT32 ;
+                    break ;
+
+                default:;
+            }
+            ASSERT (op1 != NULL) ;
+            op = (GB_Operator) op1 ;
+            opcode = op->opcode ;
+            op_is_unop = true ;
+            op_is_binop = false ;
+            ASSERT (GB_OPCODE_IS_POSITIONAL (opcode)) ;
+        }
+
     }
     else
     { 
@@ -133,8 +180,6 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         // via the positional kernel
         //----------------------------------------------------------------------
 
-        bool is64 = (op->ztype == GrB_INT64) ;
-        bool is32 = (op->ztype == GrB_INT32) ;
         ASSERT_OP_OK (op, "positional unop/idxunop/binop: GB_apply_op", GB0) ;
 
         // get A and C
@@ -160,10 +205,6 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
                 case GB_POSITIONI_unop_code  : // z = position_i(A(i,j)) == i
                 case GB_POSITIONI1_unop_code : // z = position_i1(A(i,j)) == i+1
-                case GB_FIRSTI_binop_code    : // z = first_i(A(i,j),y) == i
-                case GB_FIRSTI1_binop_code   : // z = first_i1(A(i,j),y) == i+1
-                case GB_SECONDI_binop_code   : // z = second_i(x,A(i,j)) == i
-                case GB_SECONDI1_binop_code  : // z = second_i1(x,A(i,j)) == i+1
                 case GB_ROWINDEX_idxunop_code : // z = i+thunk
                     #define GB_APPLY_OP(p)                      \
                         int64_t i = GBI_A (Ai, p, avlen) ;      \
@@ -173,10 +214,6 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
                 case GB_POSITIONJ_unop_code  : // z = position_j(A(i,j)) == j
                 case GB_POSITIONJ1_unop_code : // z = position_j1(A(i,j)) == j+1
-                case GB_FIRSTJ_binop_code    : // z = first_j(A(i,j),y) == j
-                case GB_FIRSTJ1_binop_code   : // z = first_j1(A(i,j),y) == j+1
-                case GB_SECONDJ_binop_code   : // z = second_j(x,A(i,j)) == j
-                case GB_SECONDJ1_binop_code  : // z = second_j1(x,A(i,j)) == j+1
                 case GB_COLINDEX_idxunop_code : // z = j+thunk
                     #define GB_APPLY_OP(p)                      \
                         Cz [p] = (j + thunk) ;
@@ -214,10 +251,6 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
                 case GB_POSITIONI_unop_code  : // z = position_i(A(i,j)) == i
                 case GB_POSITIONI1_unop_code : // z = position_i1(A(i,j)) == i+1
-                case GB_FIRSTI_binop_code    : // z = first_i(A(i,j),y) == i
-                case GB_FIRSTI1_binop_code   : // z = first_i1(A(i,j),y) == i+1
-                case GB_SECONDI_binop_code   : // z = second_i(x,A(i,j)) == i
-                case GB_SECONDI1_binop_code  : // z = second_i1(x,A(i,j)) == i+1
                 case GB_ROWINDEX_idxunop_code : // z = i+thunk
                     #define GB_APPLY_OP(p)                      \
                         int64_t i = GBI_A (Ai, p, avlen) ;      \
@@ -227,10 +260,6 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
                 case GB_POSITIONJ_unop_code  : // z = position_j(A(i,j)) == j
                 case GB_POSITIONJ1_unop_code : // z = position_j1(A(i,j)) == j+1
-                case GB_FIRSTJ_binop_code    : // z = first_j(A(i,j),y) == j
-                case GB_FIRSTJ1_binop_code   : // z = first_j1(A(i,j),y) == j+1
-                case GB_SECONDJ_binop_code   : // z = second_j(x,A(i,j)) == j
-                case GB_SECONDJ1_binop_code  : // z = second_j1(x,A(i,j)) == j+1
                 case GB_COLINDEX_idxunop_code : // z = j+thunk
                     #define GB_APPLY_OP(p)                      \
                         Cz [p] = (int32_t) (j + thunk) ;
@@ -370,9 +399,9 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 // typecasting.  IDENTITY operator can do arbitrary typecasting
                 // (it is not used if no typecasting is done).
 
-                //---------------------------------------------------------------
+                //--------------------------------------------------------------
                 // define the worker for the switch factory
-                //---------------------------------------------------------------
+                //--------------------------------------------------------------
 
                 #define GB_unop_apply(unop,zname,aname) \
                     GB (_unop_apply_ ## unop ## zname ## aname)
@@ -384,9 +413,9 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 }                                                           \
                 break ;
 
-                //---------------------------------------------------------------
+                //--------------------------------------------------------------
                 // launch the switch factory
-                //---------------------------------------------------------------
+                //--------------------------------------------------------------
 
                 #include "GB_unop_factory.c"
             }
