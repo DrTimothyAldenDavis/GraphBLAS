@@ -26,7 +26,7 @@ static __device__ __inline__ int64_t GB_cuda_ek_slice_setup
 {
 
     //--------------------------------------------------------------------------
-    // determine the range of entryes pfirst:plast-1 for this chunk
+    // determine the range of entries pfirst:plast-1 for this chunk
     //--------------------------------------------------------------------------
 
     // The slice for each threadblock contains entries pfirst:plast-1 of A.
