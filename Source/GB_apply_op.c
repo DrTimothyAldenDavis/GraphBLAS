@@ -180,7 +180,16 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         // via the positional kernel
         //----------------------------------------------------------------------
 
-        ASSERT_OP_OK (op, "positional unop/idxunop/binop: GB_apply_op", GB0) ;
+        ASSERT_OP_OK (op, "positional unop/idxunop: GB_apply_op", GB0) ;
+
+        /*
+        TODO: Need to put in GB_cuda_gateway.h
+        #if defined ( GRAPHBLAS_HAS_CUDA )
+        if (GB_cuda_apply_unop_branch (ctype, A)) {
+            info = GB_cuda_apply_unop_jit (Cx, op, A) ;
+        } 
+        #endif
+        */
 
         // get A and C
         const int64_t *restrict Ah = A->h ;
@@ -523,7 +532,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
             // #if defined ( GRAPHBLAS_HAS_CUDA )
             // if (GB_cuda_apply_binop_branch (ctype, (GrB_BinaryOp) op, A, true)) {
-            //     info = GB_cuda_apply_bind1st_jit (Cx, scalarx, A) ;
+            //     info = GB_cuda_apply_bind1st_jit (Cx, (GrB_BinaryOp) op, scalarx, A) ;
             // } 
             // #endif
 

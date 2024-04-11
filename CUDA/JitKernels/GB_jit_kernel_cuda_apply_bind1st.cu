@@ -2,14 +2,14 @@ using namespace cooperative_groups ;
 
 __global__ void GB_cuda_apply_bind1st_kernel
 (
-    GB_void *Cx,
+    GB_void *Cx_out,
     GB_void *scalarx,
     GrB_Matrix B,
 )
 {
     const GB_X_TYPE x = * ((GB_X_TYPE *) scalarx) ; // gets scalarx [0]
     const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *) B->x ;
-    GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) Cx ;
+    GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) Cx_out ;
 
     const int8_t *__restrict__ Bb = B->b ;
 
