@@ -14,12 +14,13 @@
 GrB_Info GB_cuda_apply_unop_jit
 (
     // output:
-    GrB_Matrix C,
+    GB_void *Cx,
     // input:
-    GrB_Matrix D,
-    GrB_Matrix B,
-    GrB_BinaryOp binaryop,
-    bool flipxy,
+    const GrB_Type ctype,
+    const GB_Operator op,
+    const bool flipij,
+    const GrB_Matrix A,
+    const GB_void *ythunk,
     // CUDA stream and launch parameters:
     cudaStream_t stream,
     int32_t gridsz,

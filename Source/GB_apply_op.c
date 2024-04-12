@@ -182,189 +182,187 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
         ASSERT_OP_OK (op, "positional unop/idxunop: GB_apply_op", GB0) ;
 
-        /*
-        TODO: Need to put in GB_cuda_gateway.h
         #if defined ( GRAPHBLAS_HAS_CUDA )
         if (GB_cuda_apply_unop_branch (ctype, A)) {
-            info = GB_cuda_apply_unop_jit (Cx, op, A) ;
+            info = GB_cuda_apply_unop (Cx, ctype, op, flipij, A, (GB_void *) &thunk) ;
         } 
         #endif
-        */
+        
+        if (info == GrB_NO_VALUE)
+        {
+            // get A and C
+            const int64_t *restrict Ah = A->h ;
+            const int64_t *restrict Ap = A->p ;
+            const int64_t *restrict Ai = A->i ;
+            int64_t avlen = A->vlen ;
 
-        // get A and C
-        const int64_t *restrict Ah = A->h ;
-        const int64_t *restrict Ap = A->p ;
-        const int64_t *restrict Ai = A->i ;
-        int64_t avlen = A->vlen ;
+            //----------------------------------------------------------------------
+            // Cx = positional_op (A)
+            //----------------------------------------------------------------------
 
-        //----------------------------------------------------------------------
-        // Cx = positional_op (A)
-        //----------------------------------------------------------------------
+            if (is64)
+            { 
 
-        if (is64)
-        { 
+                //------------------------------------------------------------------
+                // int64 Cx = positional_op (A)
+                //------------------------------------------------------------------
 
-            //------------------------------------------------------------------
-            // int64 Cx = positional_op (A)
-            //------------------------------------------------------------------
+                int64_t *restrict Cz = (int64_t *) Cx ;
+                switch (opcode)
+                {
 
-            int64_t *restrict Cz = (int64_t *) Cx ;
-            switch (opcode)
-            {
+                    case GB_POSITIONI_unop_code  : // z = position_i(A(i,j)) == i
+                    case GB_POSITIONI1_unop_code : // z = position_i1(A(i,j)) == i+1
+                    case GB_ROWINDEX_idxunop_code : // z = i+thunk
+                        #define GB_APPLY_OP(p)                      \
+                            int64_t i = GBI_A (Ai, p, avlen) ;      \
+                            Cz [p] = (i + thunk) ;
+                        #include "GB_apply_unop_ip.c"
+                        break ;
 
-                case GB_POSITIONI_unop_code  : // z = position_i(A(i,j)) == i
-                case GB_POSITIONI1_unop_code : // z = position_i1(A(i,j)) == i+1
-                case GB_ROWINDEX_idxunop_code : // z = i+thunk
-                    #define GB_APPLY_OP(p)                      \
-                        int64_t i = GBI_A (Ai, p, avlen) ;      \
-                        Cz [p] = (i + thunk) ;
-                    #include "GB_apply_unop_ip.c"
-                    break ;
+                    case GB_POSITIONJ_unop_code  : // z = position_j(A(i,j)) == j
+                    case GB_POSITIONJ1_unop_code : // z = position_j1(A(i,j)) == j+1
+                    case GB_COLINDEX_idxunop_code : // z = j+thunk
+                        #define GB_APPLY_OP(p)                      \
+                            Cz [p] = (j + thunk) ;
+                        #include "GB_apply_unop_ijp.c"
+                        break ;
 
-                case GB_POSITIONJ_unop_code  : // z = position_j(A(i,j)) == j
-                case GB_POSITIONJ1_unop_code : // z = position_j1(A(i,j)) == j+1
-                case GB_COLINDEX_idxunop_code : // z = j+thunk
-                    #define GB_APPLY_OP(p)                      \
-                        Cz [p] = (j + thunk) ;
-                    #include "GB_apply_unop_ijp.c"
-                    break ;
+                    case GB_DIAGINDEX_idxunop_code : // z = (j-(i+thunk)
+                        #define GB_APPLY_OP(p)                      \
+                            int64_t i = GBI_A (Ai, p, avlen) ;      \
+                            Cz [p] = (j - (i+thunk)) ;
+                        #include "GB_apply_unop_ijp.c"
+                        break ;
 
-                case GB_DIAGINDEX_idxunop_code : // z = (j-(i+thunk)
-                    #define GB_APPLY_OP(p)                      \
-                        int64_t i = GBI_A (Ai, p, avlen) ;      \
-                        Cz [p] = (j - (i+thunk)) ;
-                    #include "GB_apply_unop_ijp.c"
-                    break ;
+                    case GB_FLIPDIAGINDEX_idxunop_code : // z = (i-(j+thunk)
+                        #define GB_APPLY_OP(p)                      \
+                            int64_t i = GBI_A (Ai, p, avlen) ;      \
+                            Cz [p] = (i - (j+thunk)) ;
+                        #include "GB_apply_unop_ijp.c"
+                        break ;
 
-                case GB_FLIPDIAGINDEX_idxunop_code : // z = (i-(j+thunk)
-                    #define GB_APPLY_OP(p)                      \
-                        int64_t i = GBI_A (Ai, p, avlen) ;      \
-                        Cz [p] = (i - (j+thunk)) ;
-                    #include "GB_apply_unop_ijp.c"
-                    break ;
+                    default: ;
+                }
 
-                default: ;
             }
+            else if (is32)
+            { 
 
-        }
-        else if (is32)
-        { 
+                //------------------------------------------------------------------
+                // int32 Cx = positional_op (A)
+                //------------------------------------------------------------------
 
-            //------------------------------------------------------------------
-            // int32 Cx = positional_op (A)
-            //------------------------------------------------------------------
+                int32_t *restrict Cz = (int32_t *) Cx ;
+                switch (opcode)
+                {
 
-            int32_t *restrict Cz = (int32_t *) Cx ;
-            switch (opcode)
-            {
+                    case GB_POSITIONI_unop_code  : // z = position_i(A(i,j)) == i
+                    case GB_POSITIONI1_unop_code : // z = position_i1(A(i,j)) == i+1
+                    case GB_ROWINDEX_idxunop_code : // z = i+thunk
+                        #define GB_APPLY_OP(p)                      \
+                            int64_t i = GBI_A (Ai, p, avlen) ;      \
+                            Cz [p] = (int32_t) (i + thunk) ;
+                        #include "GB_apply_unop_ip.c"
+                        break ;
 
-                case GB_POSITIONI_unop_code  : // z = position_i(A(i,j)) == i
-                case GB_POSITIONI1_unop_code : // z = position_i1(A(i,j)) == i+1
-                case GB_ROWINDEX_idxunop_code : // z = i+thunk
-                    #define GB_APPLY_OP(p)                      \
-                        int64_t i = GBI_A (Ai, p, avlen) ;      \
-                        Cz [p] = (int32_t) (i + thunk) ;
-                    #include "GB_apply_unop_ip.c"
-                    break ;
+                    case GB_POSITIONJ_unop_code  : // z = position_j(A(i,j)) == j
+                    case GB_POSITIONJ1_unop_code : // z = position_j1(A(i,j)) == j+1
+                    case GB_COLINDEX_idxunop_code : // z = j+thunk
+                        #define GB_APPLY_OP(p)                      \
+                            Cz [p] = (int32_t) (j + thunk) ;
+                        #include "GB_apply_unop_ijp.c"
+                        break ;
 
-                case GB_POSITIONJ_unop_code  : // z = position_j(A(i,j)) == j
-                case GB_POSITIONJ1_unop_code : // z = position_j1(A(i,j)) == j+1
-                case GB_COLINDEX_idxunop_code : // z = j+thunk
-                    #define GB_APPLY_OP(p)                      \
-                        Cz [p] = (int32_t) (j + thunk) ;
-                    #include "GB_apply_unop_ijp.c"
-                    break ;
+                    case GB_DIAGINDEX_idxunop_code : // z = (j-(i+thunk)
+                        #define GB_APPLY_OP(p)                      \
+                            int64_t i = GBI_A (Ai, p, avlen) ;      \
+                            Cz [p] = (int32_t) (j - (i+thunk)) ;
+                        #include "GB_apply_unop_ijp.c"
+                        break ;
 
-                case GB_DIAGINDEX_idxunop_code : // z = (j-(i+thunk)
-                    #define GB_APPLY_OP(p)                      \
-                        int64_t i = GBI_A (Ai, p, avlen) ;      \
-                        Cz [p] = (int32_t) (j - (i+thunk)) ;
-                    #include "GB_apply_unop_ijp.c"
-                    break ;
+                    case GB_FLIPDIAGINDEX_idxunop_code : // z = (i-(j+thunk)
+                        #define GB_APPLY_OP(p)                      \
+                            int64_t i = GBI_A (Ai, p, avlen) ;      \
+                            Cz [p] = (int32_t) (i - (j+thunk)) ;
+                        #include "GB_apply_unop_ijp.c"
+                        break ;
 
-                case GB_FLIPDIAGINDEX_idxunop_code : // z = (i-(j+thunk)
-                    #define GB_APPLY_OP(p)                      \
-                        int64_t i = GBI_A (Ai, p, avlen) ;      \
-                        Cz [p] = (int32_t) (i - (j+thunk)) ;
-                    #include "GB_apply_unop_ijp.c"
-                    break ;
+                    default: ;
+                }
 
-                default: ;
             }
+            else
+            { 
 
-        }
-        else
-        { 
+                //------------------------------------------------------------------
+                // bool Cx = positional_op (A)
+                //------------------------------------------------------------------
 
-            //------------------------------------------------------------------
-            // bool Cx = positional_op (A)
-            //------------------------------------------------------------------
+                ASSERT (op->ztype == GrB_BOOL) ;
+                bool *restrict Cz = (bool *) Cx ;
+                switch (opcode)
+                {
 
-            ASSERT (op->ztype == GrB_BOOL) ;
-            bool *restrict Cz = (bool *) Cx ;
-            switch (opcode)
-            {
+                    case GB_TRIL_idxunop_code : // z = (j <= (i+thunk))
+                        #define GB_APPLY_OP(p)                      \
+                            int64_t i = GBI_A (Ai, p, avlen) ;      \
+                            Cz [p] = (j <= (i + thunk)) ;
+                        #include "GB_apply_unop_ijp.c"
+                        break ; ;
 
-                case GB_TRIL_idxunop_code : // z = (j <= (i+thunk))
-                    #define GB_APPLY_OP(p)                      \
-                        int64_t i = GBI_A (Ai, p, avlen) ;      \
-                        Cz [p] = (j <= (i + thunk)) ;
-                    #include "GB_apply_unop_ijp.c"
-                    break ; ;
+                    case GB_TRIU_idxunop_code : // z = (j >= (i+thunk))
+                        #define GB_APPLY_OP(p)                      \
+                            int64_t i = GBI_A (Ai, p, avlen) ;      \
+                            Cz [p] = (j >= (i + thunk)) ;
+                        #include "GB_apply_unop_ijp.c"
+                        break ; ;
 
-                case GB_TRIU_idxunop_code : // z = (j >= (i+thunk))
-                    #define GB_APPLY_OP(p)                      \
-                        int64_t i = GBI_A (Ai, p, avlen) ;      \
-                        Cz [p] = (j >= (i + thunk)) ;
-                    #include "GB_apply_unop_ijp.c"
-                    break ; ;
+                    case GB_DIAG_idxunop_code : // z = (j == (i+thunk))
+                        #define GB_APPLY_OP(p)                      \
+                            int64_t i = GBI_A (Ai, p, avlen) ;      \
+                            Cz [p] = (j == (i + thunk)) ;
+                        #include "GB_apply_unop_ijp.c"
+                        break ; ;
 
-                case GB_DIAG_idxunop_code : // z = (j == (i+thunk))
-                    #define GB_APPLY_OP(p)                      \
-                        int64_t i = GBI_A (Ai, p, avlen) ;      \
-                        Cz [p] = (j == (i + thunk)) ;
-                    #include "GB_apply_unop_ijp.c"
-                    break ; ;
+                    case GB_OFFDIAG_idxunop_code : // z = (j != (i+thunk))
+                        #define GB_APPLY_OP(p)                      \
+                            int64_t i = GBI_A (Ai, p, avlen) ;      \
+                            Cz [p] = (j != (i + thunk)) ;
+                        #include "GB_apply_unop_ijp.c"
+                        break ; ;
 
-                case GB_OFFDIAG_idxunop_code : // z = (j != (i+thunk))
-                    #define GB_APPLY_OP(p)                      \
-                        int64_t i = GBI_A (Ai, p, avlen) ;      \
-                        Cz [p] = (j != (i + thunk)) ;
-                    #include "GB_apply_unop_ijp.c"
-                    break ; ;
+                    case GB_COLLE_idxunop_code : // z = (j <= thunk)
+                        #define GB_APPLY_OP(p)                      \
+                            Cz [p] = (j <= thunk) ;
+                        #include "GB_apply_unop_ijp.c"
+                        break ; ;
 
-                case GB_COLLE_idxunop_code : // z = (j <= thunk)
-                    #define GB_APPLY_OP(p)                      \
-                        Cz [p] = (j <= thunk) ;
-                    #include "GB_apply_unop_ijp.c"
-                    break ; ;
+                    case GB_COLGT_idxunop_code : // z = (j > thunk)
+                        #define GB_APPLY_OP(p)                      \
+                            Cz [p] = (j > thunk) ;
+                        #include "GB_apply_unop_ijp.c"
+                        break ; ;
 
-                case GB_COLGT_idxunop_code : // z = (j > thunk)
-                    #define GB_APPLY_OP(p)                      \
-                        Cz [p] = (j > thunk) ;
-                    #include "GB_apply_unop_ijp.c"
-                    break ; ;
+                    case GB_ROWLE_idxunop_code : // z = (i <= thunk)
+                        #define GB_APPLY_OP(p)                      \
+                            int64_t i = GBI_A (Ai, p, avlen) ;      \
+                            Cz [p] = (i <= thunk) ;
+                        #include "GB_apply_unop_ip.c"
+                        break ; ;
 
-                case GB_ROWLE_idxunop_code : // z = (i <= thunk)
-                    #define GB_APPLY_OP(p)                      \
-                        int64_t i = GBI_A (Ai, p, avlen) ;      \
-                        Cz [p] = (i <= thunk) ;
-                    #include "GB_apply_unop_ip.c"
-                    break ; ;
+                    case GB_ROWGT_idxunop_code : // z = (i > thunk)
+                        #define GB_APPLY_OP(p)                      \
+                            int64_t i = GBI_A (Ai, p, avlen) ;      \
+                            Cz [p] = (i > thunk) ;
+                        #include "GB_apply_unop_ip.c"
+                        break ; ;
 
-                case GB_ROWGT_idxunop_code : // z = (i > thunk)
-                    #define GB_APPLY_OP(p)                      \
-                        int64_t i = GBI_A (Ai, p, avlen) ;      \
-                        Cz [p] = (i > thunk) ;
-                    #include "GB_apply_unop_ip.c"
-                    break ; ;
-
-                default: ;
+                    default: ;
+                }
             }
+            info = GrB_SUCCESS ;
         }
-
-        info = GrB_SUCCESS ;
-
     }
     else if (C_code_iso != GB_NON_ISO)
     {
@@ -395,38 +393,45 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         ASSERT_OP_OK (op, "unop for GB_apply_op", GB0) ;
         ASSERT (!A->iso) ;
 
-        // TODO: CUDA JIT unop entry point here
+        #if defined ( GRAPHBLAS_HAS_CUDA )
+        if (GB_cuda_apply_unop_branch (ctype, A)) {
+            info = GB_cuda_apply_unop (Cx, ctype, op, flipij, A, NULL) ;
+        } 
+        #endif
 
         // determine number of threads to use
         #ifndef GBCOMPACT
-        GB_IF_FACTORY_KERNELS_ENABLED
-        { 
-            if (Atype == op->xtype || opcode == GB_IDENTITY_unop_code)
+        if (info == GrB_NO_VALUE)
+        {
+            GB_IF_FACTORY_KERNELS_ENABLED
             { 
+                if (Atype == op->xtype || opcode == GB_IDENTITY_unop_code)
+                { 
 
-                // The switch factory is used if the op is IDENTITY, or if no
-                // typecasting.  IDENTITY operator can do arbitrary typecasting
-                // (it is not used if no typecasting is done).
+                    // The switch factory is used if the op is IDENTITY, or if no
+                    // typecasting.  IDENTITY operator can do arbitrary typecasting
+                    // (it is not used if no typecasting is done).
 
-                //--------------------------------------------------------------
-                // define the worker for the switch factory
-                //--------------------------------------------------------------
+                    //--------------------------------------------------------------
+                    // define the worker for the switch factory
+                    //--------------------------------------------------------------
 
-                #define GB_unop_apply(unop,zname,aname) \
-                    GB (_unop_apply_ ## unop ## zname ## aname)
+                    #define GB_unop_apply(unop,zname,aname) \
+                        GB (_unop_apply_ ## unop ## zname ## aname)
 
-                #define GB_WORKER(unop,zname,ztype,aname,atype)             \
-                {                                                           \
-                    info = GB_unop_apply (unop,zname,aname) (Cx, Ax, Ab,    \
-                        anz, A_nthreads) ;                                  \
-                }                                                           \
-                break ;
+                    #define GB_WORKER(unop,zname,ztype,aname,atype)             \
+                    {                                                           \
+                        info = GB_unop_apply (unop,zname,aname) (Cx, Ax, Ab,    \
+                            anz, A_nthreads) ;                                  \
+                    }                                                           \
+                    break ;
 
-                //--------------------------------------------------------------
-                // launch the switch factory
-                //--------------------------------------------------------------
+                    //--------------------------------------------------------------
+                    // launch the switch factory
+                    //--------------------------------------------------------------
 
-                #include "GB_unop_factory.c"
+                    #include "GB_unop_factory.c"
+                }
             }
         }
         #endif
@@ -704,7 +709,11 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             ythunk = ywork ;
         }
 
-        // TODO: CUDA JIT unop entry point here
+        #if defined ( GRAPHBLAS_HAS_CUDA )
+        if (GB_cuda_apply_unop_branch (ctype, A)) {
+            info = GB_cuda_apply_unop (Cx, ctype, op, flipij, A, ythunk) ;
+        } 
+        #endif
 
         //----------------------------------------------------------------------
         // via the JIT or PreJIT kernel

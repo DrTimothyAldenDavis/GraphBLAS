@@ -6,15 +6,14 @@ using namespace cooperative_groups ;
 __global__ void GB_cuda_apply_unop_kernel
 (
     GB_void *Cx_out,
-    GB_void *thunk_value,
+    const GB_void *thunk,
     GrB_Matrix A
 )
 {
 
     GB_A_NHELD (anz) ;
-    GB_Y_TYPE thunk ;
 
-    const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
+    const GB_A_TYPE *Ax = (GB_A_TYPE *) A->x ;
     const int64_t *__restrict__ Ai = (int64_t *) A->i ;
     const int64_t *__restrict__ Ah = (int64_t *) A->h ;
     const int64_t *__restrict__ Ap = (int64_t *) A->p ;
@@ -32,9 +31,10 @@ __global__ void GB_cuda_apply_unop_kernel
 
     #if ( GB_DEPENDS_ON_Y )
         // get thunk value (of type GB_Y_TYPE)
-        // if there is no thunk, will remain uninitialized; ok since ignored
-        // by macros
-        thunk = * ((GB_Y_TYPE *) thunk_value) ;
+        GB_Y_TYPE thunk_value = * ((GB_Y_TYPE *) thunk) ;
+    #else
+        // replace uses of thunk_value (not used)
+        #define thunk_value _
     #endif
 
     #if ( GB_A_IS_BITMAP || GB_A_IS_FULL )
@@ -45,7 +45,7 @@ __global__ void GB_cuda_apply_unop_kernel
 
             int64_t col_idx = p / avlen ;
             int64_t row_idx = p % avlen ;
-            GB_UNOP (Cx, p, Ax, p, A_iso, row_idx, col_idx, thunk) ;
+            GB_UNOP (Cx, p, Ax, p, A_iso, row_idx, col_idx, thunk_value) ;
         }
     #else
 
@@ -66,7 +66,7 @@ __global__ void GB_cuda_apply_unop_kernel
                         int64_t k = GB_cuda_ek_slice_entry (curr_p, pfirst, Ap, anvec_sub1, kfirst, slope) ;
                         int64_t col_idx = GBH_A (Ah, k) ;
                         int64_t row_idx = GBI_A (Ai, pfirst + curr_p, avlen) ;
-                        GB_UNOP (Cx, p, Ax, p, A_iso, row_idx, col_idx, thunk) ;
+                        GB_UNOP (Cx, p, Ax, p, A_iso, row_idx, col_idx, thunk_value) ;
                     }
                 }
         #else
@@ -74,7 +74,7 @@ __global__ void GB_cuda_apply_unop_kernel
             for (int p = tid ; p < anz ; p += nthreads)
             {
                 int64_t row_idx = GBI_A (Ai, p, avlen) ;
-                GB_UNOP (Cx, p, Ax, p, A_iso, row_idx, /* col_idx */, thunk) ;  
+                GB_UNOP (Cx, p, Ax, p, A_iso, row_idx, /* col_idx */, thunk_value) ;  
             }
         #endif
     #endif
@@ -89,7 +89,7 @@ GB_JIT_CUDA_KERNEL_APPLY_UNOP_PROTO (GB_jit_kernel)
     dim3 grid (gridsz) ;
     dim3 block (blocksz) ;
 
-    GB_cuda_apply_unop_kernel <<<grid, block, 0, stream>>> (Cx, thunk, A) ;
+    GB_cuda_apply_unop_kernel <<<grid, block, 0, stream>>> (Cx, ythunk, A) ;
 
     return (GrB_SUCCESS) ;
 }

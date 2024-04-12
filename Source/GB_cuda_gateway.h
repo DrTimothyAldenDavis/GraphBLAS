@@ -182,6 +182,16 @@ bool GB_cuda_apply_unop_branch
     const GrB_Matrix A
 ) ;
 
+GrB_Info GB_cuda_apply_unop
+(
+    GB_void *Cx,
+    const GrB_Type ctype,
+    const GB_Operator op,
+    const bool flipij,
+    const GrB_Matrix A,
+    const GB_void *ythunk
+) ;
+
 
 bool GB_cuda_type_branch            // return true if the type is OK on GPU
 (

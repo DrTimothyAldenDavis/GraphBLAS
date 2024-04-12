@@ -600,14 +600,20 @@ GrB_Info GB_jit_kernel_apply_bind1st                                        \
     GB_void *Cx,                                                            \
     GB_void *scalarx,                                                       \
     GrB_Matrix B                                                            \
+    cudaStream_t stream,                                                    \
+    int32_t gridsz,                                                         \
+    int32_t blocksz                                                         \
 )                                                                           \
 
 #define GB_JIT_CUDA_KERNEL_APPLY_UNOP_PROTO(GB_jit_kernel_apply_unop)       \
 GrB_Info GB_jit_kernel_apply_unop                                           \
 (                                                                           \
     GB_void *Cx,                                                            \
-    GB_void *thunk_value,                                                   \
-    GrB_Matrix A                                                            \
+    GrB_Matrix A,                                                           \
+    const GB_void *ythunk,                                                  \
+    cudaStream_t stream,                                                    \
+    int32_t gridsz,                                                         \
+    int32_t blocksz                                                         \
 )                                                                           \
 
 #define GB_JIT_CUDA_KERNEL_DOT3_PROTO(GB_jit_kernel_AxB_dot3)           \
