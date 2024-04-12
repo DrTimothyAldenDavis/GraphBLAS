@@ -10,18 +10,20 @@ bool GB_cuda_apply_binop_branch
 )
 {
     bool ok = GB_cuda_type_branch (ctype) && GB_cuda_type_branch (A->type) ;
-    if (bind1st)
+
+    if (op->xtype != NULL)
     {
         ok = ok && GB_cuda_type_branch (op->xtype) ;
     }
-    else
+    if (op->ytype != NULL)
     {
         ok = ok && GB_cuda_type_branch (op->ytype) ;
     }
-
-    if (!ok)
+    if (op->ztype != NULL)
     {
-        return false;
+        ok = ok && GB_cuda_type_branch (op->ztype) ;
     }
-    return true;
+
+    return (ok) ;
 }
+
