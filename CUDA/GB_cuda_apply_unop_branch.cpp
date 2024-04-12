@@ -11,7 +11,7 @@ bool GB_cuda_apply_unop_branch
 
     if (!ok)
     {
-        return false;
+        return false ;
     }
-    return true;
+    return true ;
 }

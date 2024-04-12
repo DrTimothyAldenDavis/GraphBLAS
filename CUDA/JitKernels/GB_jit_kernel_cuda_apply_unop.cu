@@ -1,5 +1,7 @@
 using namespace cooperative_groups ;
 
+#include "GB_cuda_ek_slice.cuh"
+
 #define log2_chunk_size 10
 #define chunk_size 1024
 
@@ -13,7 +15,7 @@ __global__ void GB_cuda_apply_unop_kernel
 
     GB_A_NHELD (anz) ;
 
-    const GB_A_TYPE *Ax = (GB_A_TYPE *) A->x ;
+    const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
     const int64_t *__restrict__ Ai = (int64_t *) A->i ;
     const int64_t *__restrict__ Ah = (int64_t *) A->h ;
     const int64_t *__restrict__ Ap = (int64_t *) A->p ;
@@ -39,7 +41,7 @@ __global__ void GB_cuda_apply_unop_kernel
 
     #if ( GB_A_IS_BITMAP || GB_A_IS_FULL )
         // bitmap/full case
-        for (int p = tid ; p < anz ; p += nthreads)
+        for (int64_t p = tid ; p < anz ; p += nthreads)
         {
             if (!GBB_A (Ab, p)) { continue ; }
 
@@ -52,9 +54,9 @@ __global__ void GB_cuda_apply_unop_kernel
         // sparse/hypersparse case
         #if ( GB_DEPENDS_ON_J )
             // need to do ek_slice method
-            for (int64_t pfirst = blockIdx << log2_chunk_size ; 
+            for (int64_t pfirst = blockIdx.x << log2_chunk_size ; 
                         pfirst < anz ;
-                        pfirst += girdDim.x << log2_chunk_size )
+                        pfirst += gridDim.x << log2_chunk_size )
                 {
                     int64_t my_chunk_size, anvec_sub1 ;
                     float slope ;
@@ -66,12 +68,14 @@ __global__ void GB_cuda_apply_unop_kernel
                         int64_t k = GB_cuda_ek_slice_entry (curr_p, pfirst, Ap, anvec_sub1, kfirst, slope) ;
                         int64_t col_idx = GBH_A (Ah, k) ;
                         int64_t row_idx = GBI_A (Ai, pfirst + curr_p, avlen) ;
-                        GB_UNOP (Cx, p, Ax, p, A_iso, row_idx, col_idx, thunk_value) ;
+
+                        GB_UNOP (Cx, pfirst + curr_p, Ax, pfirst + curr_p, 
+                            A_iso, row_idx, col_idx, thunk_value) ;
                     }
                 }
         #else
             // can do normal method
-            for (int p = tid ; p < anz ; p += nthreads)
+            for (int64_t p = tid ; p < anz ; p += nthreads)
             {
                 int64_t row_idx = GBI_A (Ai, p, avlen) ;
                 GB_UNOP (Cx, p, Ax, p, A_iso, row_idx, /* col_idx */, thunk_value) ;  
