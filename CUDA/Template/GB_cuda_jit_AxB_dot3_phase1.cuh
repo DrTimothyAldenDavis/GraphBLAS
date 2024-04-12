@@ -101,6 +101,8 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
     // int64_t *restrict Ch = C->h ;    // copy of Mh
     int64_t *__restrict__ Ci = C->i ;   // for zombies, or bucket assignment
 
+    // FIXME: use (k << 2) not (k << 4)
+
     // Ci [p] for an entry C(i,j) contains either GB_FLIP(i) if C(i,j) is a
     // zombie, or (k << 4) + bucket otherwise, where C(:,j) is the kth vector
     // of C (j = Ch [k] if hypersparse or j = k if standard sparse), and
@@ -250,7 +252,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
 
             // encode the bucket or zombie status in the row index of C(i,j)
             Ci [pM] = (bucket == GB_BUCKET_ZOMBIE) * ( GB_FLIP(i) << 4)
-                    + (bucket != GB_BUCKET_ZOMBIE) * ((k<<4) + bucket) ;
+                    + (bucket != GB_BUCKET_ZOMBIE) * ((k << 4) + bucket) ;
 
             // each thread counts its own bucket sizes
             my_bucket [bucket]++ ;

@@ -197,8 +197,8 @@ __global__ void GB_cuda_reduce_kernel
         #else
 
             // save my result in V
-            GB_Z_TYPE *Vx = (GB_Z_TYPE) V->x ;
-            Vx [blockIdx.x] = zscalar ;
+            GB_Z_TYPE *Vx = (GB_Z_TYPE *) V->x ;
+            Vx [blockIdx.x] = *((GB_Z_TYPE *) zscalar) ;
 
         #endif
     }

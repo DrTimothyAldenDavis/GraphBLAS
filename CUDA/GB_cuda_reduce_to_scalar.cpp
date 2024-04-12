@@ -63,7 +63,6 @@ GrB_Info GB_cuda_reduce_to_scalar
     int blocksz = 320 ;             // # threads in each block
     int work_per_thread = 256 ;     // work each thread does in a single block
     int number_of_sms = GB_Global_gpu_sm_get (0) ;
-    printf ("# of sm: %d\n", number_of_sms) ;
 
     GrB_Type ztype = monoid->op->ztype ;
     size_t zsize = ztype->size ;
