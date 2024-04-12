@@ -1,7 +1,10 @@
 #include "GB_cuda_apply.hpp"
 
 #undef GB_FREE_WORKSPACE
-#define GB_FREE_WORKSPACE ;
+#define GB_FREE_WORKSPACE                           \
+{                                                   \
+    GB_FREE_WORK (&ythunk_cuda, ythunk_cuda_size) ; \
+}
 
 #undef GB_FREE_ALL
 #define GB_FREE_ALL ;
@@ -19,6 +22,21 @@ GrB_Info GB_cuda_apply_unop
     const GB_void *ythunk
 )
 {
+
+    GB_void *ythunk_cuda = NULL ;
+    size_t ythunk_cuda_size = 0 ;
+    if (ythunk != NULL)
+    {
+        // make a copy of ythunk, since ythunk might be allocated on
+        // the CPU stack and thus not accessible to the CUDA kernel.
+        ythunk_cuda = GB_MALLOC_WORK (op->ytype->size, GB_void, &ythunk_cuda_size) ;
+        if (ythunk_cuda == NULL)
+        {
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+        memcpy (ythunk_cuda, ythunk, op->ytype->size) ;
+    }
+
     // FIXME: use the stream pool
     cudaStream_t stream ;
     CUDA_OK (cudaStreamCreate (&stream)) ;
@@ -28,13 +46,15 @@ GrB_Info GB_cuda_apply_unop
     int32_t gridsz = 1 + (anz >> LOG2_BLOCK_SIZE) ;
 
     GrB_Info info = GB_cuda_apply_unop_jit (Cx, ctype, op, flipij, A, 
-        ythunk, stream, gridsz, BLOCK_SIZE) ;
+        ythunk_cuda, stream, gridsz, BLOCK_SIZE) ;
 
     if (info == GrB_NO_VALUE) info = GrB_PANIC ;
     GB_OK (info) ;
 
     CUDA_OK (cudaStreamSynchronize (stream)) ;
     CUDA_OK (cudaStreamDestroy (stream)) ;
+
+    GB_FREE_WORKSPACE ;
     return GrB_SUCCESS ; 
 
 }
