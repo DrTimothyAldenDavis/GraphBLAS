@@ -150,6 +150,7 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     #if defined ( GRAPHBLAS_HAS_CUDA )
+    mode = GxB_NONBLOCKING_GPU ;    // HACK FIXME: force GPU to be used
     if (mode == GxB_BLOCKING_GPU || mode == GxB_NONBLOCKING_GPU)
     {
         // initialize the GPUs
