@@ -183,7 +183,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         ASSERT_OP_OK (op, "positional unop/idxunop: GB_apply_op", GB0) ;
 
         #if defined ( GRAPHBLAS_HAS_CUDA )
-        if (GB_cuda_apply_unop_branch (ctype, A)) {
+        if (GB_cuda_apply_unop_branch (ctype, A, op)) {
             info = GB_cuda_apply_unop (Cx, ctype, op, flipij, A, (GB_void *) &thunk) ;
         } 
         #endif
@@ -394,7 +394,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         ASSERT (!A->iso) ;
 
         #if defined ( GRAPHBLAS_HAS_CUDA )
-        if (GB_cuda_apply_unop_branch (ctype, A)) {
+        if (GB_cuda_apply_unop_branch (ctype, A, op)) {
             info = GB_cuda_apply_unop (Cx, ctype, op, flipij, A, NULL) ;
         } 
         #endif
@@ -710,7 +710,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         }
 
         #if defined ( GRAPHBLAS_HAS_CUDA )
-        if (GB_cuda_apply_unop_branch (ctype, A)) {
+        if (GB_cuda_apply_unop_branch (ctype, A, op)) {
             info = GB_cuda_apply_unop (Cx, ctype, op, flipij, A, ythunk) ;
         } 
         #endif

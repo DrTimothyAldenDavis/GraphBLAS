@@ -121,6 +121,9 @@ Progress notes:
 Kernel development notes:
 - Useful guide: https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html
 - Good tips: https://on-demand.gputechconf.com/gtc/2017/presentation/s7122-stephen-jones-cuda-optimization-tips-tricks-and-techniques.pdf
+- Resources for warp-level primitives/reduction techniques:
+    - https://developer.nvidia.com/blog/using-cuda-warp-level-primitives/
+    - https://developer.download.nvidia.com/assets/cuda/files/reduction.pdf
 - Fork GraphBLAS, establish personal branch
 - Start with rowscale
     - Understand how rowscale works on CPU

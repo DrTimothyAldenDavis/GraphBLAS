@@ -179,7 +179,8 @@ bool GB_cuda_apply_binop_branch
 bool GB_cuda_apply_unop_branch
 (
     const GrB_Type ctype,
-    const GrB_Matrix A
+    const GrB_Matrix A,
+    const GB_Operator op
 ) ;
 
 GrB_Info GB_cuda_apply_unop
