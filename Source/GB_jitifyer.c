@@ -1854,6 +1854,7 @@ GrB_Info GB_jitifyer_load_worker
     snprintf (GB_jit_temp, GB_jit_temp_allocated, "%s/lib/%02x/%s%s%s",
         GB_jit_cache_path, bucket, GB_LIB_PREFIX, kernel_name, GB_LIB_SUFFIX) ;
     void *dl_handle = GB_file_dlopen (GB_jit_temp) ;
+    GB_jit_kcode kcode = encoding->kcode ;
 
     //--------------------------------------------------------------------------
     // check if the kernel was found, but needs to be compiled anyway
@@ -1903,7 +1904,6 @@ GrB_Info GB_jitifyer_load_worker
         //----------------------------------------------------------------------
 
         GBURBLE ("(jit: compile and load) ") ;
-        GB_jit_kcode kcode = encoding->kcode ;
         const char *kernel_filetype =
             (kcode < GB_JIT_CUDA_KERNEL) ? "c" : "cu" ;
 
@@ -1979,7 +1979,14 @@ GrB_Info GB_jitifyer_load_worker
     }
     else
     { 
-        GBURBLE ("(jit: load) ") ;
+        if (kcode >= GB_JIT_CUDA_KERNEL)
+        {
+            GBURBLE ("(jit: cuda load) ") ;
+        }
+        else
+        {
+            GBURBLE ("(jit: cpu load) ") ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -2434,7 +2441,7 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
 }
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_nvcc_compile: compile a CUDA kernel with NVRTC
+// GB_jitifyer_nvcc_compile: compile a CUDA kernel with nvcc
 //------------------------------------------------------------------------------
 
 // Compiles a CUDA JIT kernel in a *.cu file, containing host code that
@@ -2466,10 +2473,17 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
 
     // compile:
     "sh -c \""                          // execute with POSIX shell
+    // FIXME: use GB_CUDA_COMPILER here:
     "nvcc "                             // compiler command
     "-forward-unknown-to-host-compiler "
     "-DGB_JIT_RUNTIME=1  "              // nvcc flags
-    "-I/usr/local/cuda/include -std=c++17 -arch=sm_60 -fPIC "
+    // FIXME: add GB_CUDA_INC here:
+    "-I/usr/local/cuda/include -std=c++17 " 
+    // FIXME: use GB_CUDA_ARCHITECTURES here:
+    " -arch=sm_60 "
+    " -fPIC " 
+    // FIXME: add GB_CUDA_FLAGS here:
+    " -G "   // HACK FIXME
     "-I%s/src "                         // include source directory
     "-o %s/c/%02x/%s%s "                // *.o output file
     "-c %s/c/%02x/%s.cu "               // *.cu input file

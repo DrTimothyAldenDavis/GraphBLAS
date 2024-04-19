@@ -1,5 +1,8 @@
 TODO (Mar 2024):
 
+    GB_CUDA_FLAGS: get from GB_config.h, allow user to modify them, etc
+        and pass to nvcc.  Also GB_CUDA_COMPILER (default to nvcc)
+
     complex data types
     set/get cuda archictures
     CUDA PreJIT kernels
