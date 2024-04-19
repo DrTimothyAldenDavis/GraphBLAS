@@ -75,13 +75,15 @@ __global__ void GB_cuda_AxB_dot3_dense_phase1_kernel
         // assign entries in C(i,j): either its vector k or its zombie status
         //----------------------------------------------------------------------
 
-        for (int64_t kk = threadIdx.x ; kk < my_chunk_size ; kk += blockDim.x)
+        for (int64_t pdelta = threadIdx.x ;
+                     pdelta < my_chunk_size ;
+                     pdelta += blockDim.x)
         {
 
             // get the pM and k value of Mi,Mx [pM]:
-            int64_t k = GB_cuda_ek_slice_entry (kk, pfirst, Mp, mnvec1, kfirst,
-                slope) ;
-            int64_t pM = kk + pfirst ;
+            int64_t pM ;    // = pfirst + pdelta
+            int64_t k = GB_cuda_ek_slice_entry (&pM, pdelta, pfirst, Mp, mnvec1,
+                kfirst, slope) ;
 
             #if GB_MASK_STRUCT
             {
