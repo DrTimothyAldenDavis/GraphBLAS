@@ -111,6 +111,7 @@ __global__ void GB_cuda_reduce_kernel
         {
             // check for zombies during the reduction
             const int64_t *__restrict__ Ai = A->i ;
+            // grid-stride loop:
             for (int64_t p = blockIdx.x * blockDim.x + threadIdx.x ;
                 p < anz ;
                 p += blockDim.x * gridDim.x)
@@ -196,8 +197,8 @@ __global__ void GB_cuda_reduce_kernel
         #else
 
             // save my result in V
-            GB_Z_TYPE *Vx = (GB_Z_TYPE) V->x ;
-            Vx [blockIdx.x] = zscalar ;
+            GB_Z_TYPE *Vx = (GB_Z_TYPE *) V->x ;
+            Vx [blockIdx.x] = *((GB_Z_TYPE *) zscalar) ;
 
         #endif
     }

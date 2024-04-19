@@ -7,11 +7,14 @@ TODO (Mar 2024):
     dot3: allow iso
     use a stream pool (from RMM)
     can rmm_wrap be thread safe?
-    # of threadblocks in reduce : Joe
-    reduce calls GB_enumify_reduce twice
     set/get which GPU(s) to use
-    data types > 32 bytes : Joe (wildtype demo, type branch)
     handling nvcc compiler errors
+
+    Tim:
+    reduce calls GB_enumify_reduce twice     
+
+    Joe:
+    data types > 32 bytes : Joe (wildtype demo, type branch)
 
 --------------------------------------------------------------------------------
 

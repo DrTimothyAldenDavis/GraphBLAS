@@ -22,7 +22,6 @@
 #endif
 
 #define GB_CUDA_FOLDER
-#define GB_LIBRARY
 #include "GraphBLAS.h"
 #undef I
 

@@ -2294,7 +2294,7 @@ void GB_jitifyer_table_free (bool freeall)
 
 // NOTE: this call to system(...) *cannot* be sanitized; CodeQL flags calls to
 // GB_jitifyer_command as security issues, but this is intentional.  The JIT
-// allows the end user to create arbitary user-defined types and operators,
+// allows the end user to create arbitrary user-defined types and operators,
 // which GraphBLAS then injects into C source code of a JIT kernel created at
 // run time.  The end user can also specify an arbitrary compiler to compile
 // JIT kernels.  This code injection is intentional, and required for the JIT.
