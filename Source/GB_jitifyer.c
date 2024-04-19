@@ -223,6 +223,9 @@ void GB_jitifyer_finalize (void)
 
 // Replace invalid characters in a string with underscore.
 
+// FIXME: allow spaces in the string, but fix the use of the string so
+// that a path can include spaces.
+
 void GB_jitifyer_sanitize (char *string, size_t len)
 {
     for (int k = 0 ; k < len ; k++)

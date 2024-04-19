@@ -200,8 +200,6 @@ __global__ void GB_cuda_reduce_kernel
 
             // save my zmine result in V
             GB_Z_TYPE *Vx = (GB_Z_TYPE *) V->x ;
-//          printf ("zmine pointer: %p\n", &zmine) ;
-//          printf ("z size : %d %d %d\n", GB_Z_SIZE, (int) sizeof (GB_Z_TYPE)) ;
             Vx [blockIdx.x] = zmine ;
 
         #endif
