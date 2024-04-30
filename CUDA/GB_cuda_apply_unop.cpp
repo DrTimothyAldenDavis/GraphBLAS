@@ -43,7 +43,7 @@ GrB_Info GB_cuda_apply_unop
 
     GrB_Index anz = GB_nnz_held (A) ;
 
-    int32_t gridsz = 1 + (anz >> LOG2_BLOCK_SIZE) ;
+    int32_t gridsz = GB_ICEIL (anz, BLOCK_SIZE) ; 
 
     GrB_Info info = GB_cuda_apply_unop_jit (Cx, ctype, op, flipij, A, 
         ythunk_cuda, stream, gridsz, BLOCK_SIZE) ;

@@ -5,8 +5,7 @@ bool GB_cuda_apply_binop_branch
 (
     const GrB_Type ctype,
     const GrB_BinaryOp op,
-    const GrB_Matrix A,
-    const bool bind1st
+    const GrB_Matrix A
 )
 {
     bool ok = GB_cuda_type_branch (ctype) && GB_cuda_type_branch (A->type) ;
@@ -23,6 +22,8 @@ bool GB_cuda_apply_binop_branch
     {
         ok = ok && GB_cuda_type_branch (op->ztype) ;
     }
+
+    ok = ok && (op != NULL && op->hash != UINT64_MAX) ; 
 
     return (ok) ;
 }

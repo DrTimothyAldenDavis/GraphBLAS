@@ -195,7 +195,8 @@ Kernel development notes:
             1. Positional op (not user-defined, but can still be an indexunaryop)
                 - Handles all 3 of above ops, positional variants, not user-defined
                 - Handled by templates (NOT JIT)
-                - Ideally, should be handled by JIT. Problem: positional binops not jitted
+                - Ideally, should be handled by JIT. Problem: positional binops not handled by
+                  GB_macrofy_apply.
                     - Solution: Convert positional binops to positional unops
             2. Iso op
                 - When C is iso. Handled by iso kernel (NOT JIT)
@@ -232,6 +233,7 @@ Kernel development notes:
                         - A matrix
                     b. Needed for branch input:
                         - Requirements for non-positional branch input
+                - IMPORTANT: Make sure the op is jittable, else will fail due to error handling             
                 
 
 

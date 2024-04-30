@@ -1,29 +1,29 @@
 using namespace cooperative_groups ;
 
-__global__ void GB_cuda_apply_bind1st_kernel
+__global__ void GB_cuda_apply_bind2nd_kernel
 (
     GB_void *Cx_out,
+    GrB_Matrix A,
     GB_void *scalarx,
-    GrB_Matrix B,
 )
 {
     const GB_X_TYPE x = * ((GB_X_TYPE *) scalarx) ; // gets scalarx [0]
-    const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *) B->x ;
+    const GB_A_TYPE *__restrict__ Ax = (GB_B_TYPE *) A->x ;
     GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) Cx_out ;
 
-    const int8_t *__restrict__ Bb = B->b ;
+    const int8_t *__restrict__ Ab = A->b ;
 
-    GB_B_NHELD (nvals) ;
+    GB_A_NHELD (nvals) ;
 
     int tid = blockDim.x * blockIdx.x + threadIdx.x;
     int nthreads = blockDim.x * gridDim.x ;
 
     for (int p = tid ; p < nvals ; p += nthreads)
     {
-        if (!GBB_B (Bb, p)) { continue ; }
-        GB_DECLAREB (bij) ;
-        GB_GETB (bij, Bx, p, false) ;
-        GB_EWISEOP (Cx, p, x, bij, /* i */, /* j */) ;
+        if (!GBB_A (Ab, p)) { continue ; }
+        GB_DECLAREA (aij) ;
+        GB_GETA (aij, ax, p, false) ;
+        GB_EWISEOP (Cx, p, aij, x, /* i */, /* j */) ;
     }
 }
 

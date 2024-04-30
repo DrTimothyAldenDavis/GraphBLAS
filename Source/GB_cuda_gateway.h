@@ -172,8 +172,7 @@ bool GB_cuda_apply_binop_branch
 (
     const GrB_Type ctype,
     const GrB_BinaryOp op,
-    const GrB_Matrix A,
-    const bool bind1st
+    const GrB_Matrix A
 ) ;
 
 bool GB_cuda_apply_unop_branch
@@ -191,6 +190,16 @@ GrB_Info GB_cuda_apply_unop
     const bool flipij,
     const GrB_Matrix A,
     const GB_void *ythunk
+) ;
+
+GrB_Info GB_cuda_apply_binop
+(
+    GB_void *Cx,
+    const GrB_Type ctype,
+    const GrB_BinaryOp op,
+    const GrB_Matrix A, 
+    const GB_void *scalarx,
+    const bool bind1st
 ) ;
 
 

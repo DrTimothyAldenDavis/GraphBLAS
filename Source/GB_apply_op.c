@@ -535,40 +535,43 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             // z = binop (scalar,Ax)
             //------------------------------------------------------------------
 
-            // #if defined ( GRAPHBLAS_HAS_CUDA )
-            // if (GB_cuda_apply_binop_branch (ctype, (GrB_BinaryOp) op, A, true)) {
-            //     info = GB_cuda_apply_bind1st_jit (Cx, (GrB_BinaryOp) op, scalarx, A) ;
-            // } 
-            // #endif
+            #if defined ( GRAPHBLAS_HAS_CUDA )
+            if (GB_cuda_apply_binop_branch (ctype, (GrB_BinaryOp) op, A)) {
+                info = GB_cuda_apply_binop (Cx, ctype, (GrB_BinaryOp) op, A, scalarx, true) ;
+            } 
+            #endif
 
             #ifndef GBCOMPACT
-            GB_IF_FACTORY_KERNELS_ENABLED
-            { 
-                if (GB_binop_builtin (op->xtype, false, Atype, false,
-                    (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
+            if (info == GrB_NO_VALUE)
+            {
+                GB_IF_FACTORY_KERNELS_ENABLED
                 { 
+                    if (GB_binop_builtin (op->xtype, false, Atype, false,
+                        (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
+                    { 
 
-                    //----------------------------------------------------------
-                    // define the worker for the switch factory
-                    //----------------------------------------------------------
+                        //----------------------------------------------------------
+                        // define the worker for the switch factory
+                        //----------------------------------------------------------
 
-                    #define GB_bind1st(binop,xname) \
-                        GB (_bind1st_ ## binop ## xname)
-                    #define GB_BINOP_WORKER(binop,xname)                    \
-                    {                                                       \
-                        info = GB_bind1st (binop, xname) (Cx, scalarx, Ax,  \
-                            Ab, anz, A_nthreads) ;                          \
-                    }                                                       \
-                    break ;
+                        #define GB_bind1st(binop,xname) \
+                            GB (_bind1st_ ## binop ## xname)
+                        #define GB_BINOP_WORKER(binop,xname)                    \
+                        {                                                       \
+                            info = GB_bind1st (binop, xname) (Cx, scalarx, Ax,  \
+                                Ab, anz, A_nthreads) ;                          \
+                        }                                                       \
+                        break ;
 
-                    //----------------------------------------------------------
-                    // launch the switch factory
-                    //----------------------------------------------------------
+                        //----------------------------------------------------------
+                        // launch the switch factory
+                        //----------------------------------------------------------
 
-                    #define GB_NO_FIRST
-                    #define GB_NO_SECOND
-                    #define GB_NO_PAIR
-                    #include "GB_binop_factory.c"
+                        #define GB_NO_FIRST
+                        #define GB_NO_SECOND
+                        #define GB_NO_PAIR
+                        #include "GB_binop_factory.c"
+                    }
                 }
             }
             #endif
@@ -591,7 +594,12 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             // z = binop (Ax,scalar)
             //------------------------------------------------------------------
             
-            // TODO: binop bind2nd CUDA JIT entry point here
+            #if defined ( GRAPHBLAS_HAS_CUDA )
+            if (GB_cuda_apply_binop_branch (ctype, (GrB_BinaryOp) op, A)) {
+                info = GB_cuda_apply_binop (Cx, ctype, (GrB_BinaryOp) op, A, scalarx, false) ;
+            } 
+            #endif
+
 
             #ifndef GBCOMPACT
             GB_IF_FACTORY_KERNELS_ENABLED

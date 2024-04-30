@@ -30,12 +30,12 @@ GrB_Info GB_cuda_apply_unop_jit
 GrB_Info GB_cuda_apply_bind1st_jit
 (
     // output:
-    GrB_Matrix C,
+    GB_void *Cx,
     // input:
-    GrB_Matrix A,
-    GrB_Matrix D,
-    GrB_BinaryOp binaryop,
-    bool flipxy,
+    const GrB_Type ctype,
+    const GrB_BinaryOp op,
+    const GrB_Matrix A,
+    const GB_void *xscalar,
     // CUDA stream and launch parameters:
     cudaStream_t stream,
     int32_t gridsz,
@@ -45,12 +45,12 @@ GrB_Info GB_cuda_apply_bind1st_jit
 GrB_Info GB_cuda_apply_bind2nd_jit
 (
     // output:
-    GrB_Matrix C,
+    GB_void *Cx,
     // input:
-    GrB_Matrix A,
-    GrB_Matrix D,
-    GrB_BinaryOp binaryop,
-    bool flipxy,
+    const GrB_Type ctype,
+    const GrB_BinaryOp op,
+    const GrB_Matrix A,
+    const GB_void *xscalar,
     // CUDA stream and launch parameters:
     cudaStream_t stream,
     int32_t gridsz,

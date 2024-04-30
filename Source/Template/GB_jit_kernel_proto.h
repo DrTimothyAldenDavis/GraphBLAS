@@ -598,8 +598,19 @@ GrB_Info GB_jit_kernel_colscale                                         \
 GrB_Info GB_jit_kernel_apply_bind1st                                        \
 (                                                                           \
     GB_void *Cx,                                                            \
-    GB_void *scalarx,                                                       \
-    GrB_Matrix B                                                            \
+    const GB_void *scalarx,                                                 \
+    GrB_Matrix B,                                                           \
+    cudaStream_t stream,                                                    \
+    int32_t gridsz,                                                         \
+    int32_t blocksz                                                         \
+)                                                                           \
+
+#define GB_JIT_CUDA_KERNEL_APPLY_BIND2ND_PROTO(GB_jit_kernel_apply_bind2nd) \
+GrB_Info GB_jit_kernel_apply_bind2nd                                        \
+(                                                                           \
+    GB_void *Cx,                                                            \
+    GrB_Matrix A,                                                           \
+    const GB_void *scalarx,                                                 \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
     int32_t blocksz                                                         \
