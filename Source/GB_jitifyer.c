@@ -1976,7 +1976,7 @@ GrB_Info GB_jitifyer_load_worker
             GB_jit_control = GxB_JIT_LOAD ;
             // remove the compiled library
             remove (GB_jit_temp) ;
-            return (GrB_NO_VALUE) ;
+            return (GrB_NO_VALUE) ;     // FIXME: use another error code?
         }
 
     }
@@ -2006,7 +2006,7 @@ GrB_Info GB_jitifyer_load_worker
         GB_jit_control = GxB_JIT_RUN ;
         // remove the compiled library
         remove (GB_jit_temp) ;
-        return (GrB_NO_VALUE) ;
+        return (GrB_NO_VALUE) ;     // FIXME: use another error code?
     }
 
     // insert the new kernel into the hash table

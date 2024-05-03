@@ -16,9 +16,6 @@ TODO (Mar 2024):
     Tim:
     reduce calls GB_enumify_reduce twice     
 
-    Joe:
-    data types > 32 bytes : Joe (wildtype demo, type branch)
-
 --------------------------------------------------------------------------------
 
 all the FIXMEs
