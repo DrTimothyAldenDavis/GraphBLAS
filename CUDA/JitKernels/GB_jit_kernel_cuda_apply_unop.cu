@@ -16,20 +16,25 @@ __global__ void GB_cuda_apply_unop_kernel
     GB_A_NHELD (anz) ;
 
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
+
+    #if ( GB_A_IS_SPARSE || GB_A_IS_HYPER )
     const int64_t *__restrict__ Ai = (int64_t *) A->i ;
     const int64_t *__restrict__ Ah = (int64_t *) A->h ;
-    const int64_t *__restrict__ Ap = (int64_t *) A->p ;
-    const int8_t *__restrict__ Ab = (int8_t *) A->b ;
+        #if ( GB_DEPENDS_ON_J )
+        const int64_t *__restrict__ Ap = (int64_t *) A->p ;
+        #endif
+    #endif
 
+    #if ( GB_A_IS_BITMAP )
+    const int8_t *__restrict__ Ab = (int8_t *) A->b ;
+    #endif
+    
     GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) Cx_out;
 
     #define A_iso GB_A_ISO
 
     int tid = blockDim.x * blockIdx.x + threadIdx.x ;
     int nthreads = blockDim.x * gridDim.x ;
-
-    const int64_t anvec = A->nvec ;
-    const int64_t avlen = A->vlen ;
 
     #if ( GB_DEPENDS_ON_Y )
         // get thunk value (of type GB_Y_TYPE)
@@ -45,14 +50,20 @@ __global__ void GB_cuda_apply_unop_kernel
         {
             if (!GBB_A (Ab, p)) { continue ; }
 
-            int64_t col_idx = p / avlen ;
-            int64_t row_idx = p % avlen ;
+            #if ( GB_DEPENDS_ON_I )
+            int64_t row_idx = p % A->vlen ;
+            #endif
+
+            #if ( GB_DEPENDS_ON_J )
+            int64_t col_idx = p / A->vlen ;
+            #endif
+
             GB_UNOP (Cx, p, Ax, p, A_iso, row_idx, col_idx, thunk_value) ;
         }
     #else
-
         // sparse/hypersparse case
         #if ( GB_DEPENDS_ON_J )
+            const int64_t anvec = A->nvec ;
             // need to do ek_slice method
             for (int64_t pfirst = blockIdx.x << log2_chunk_size ; 
                         pfirst < anz ;
@@ -68,13 +79,17 @@ __global__ void GB_cuda_apply_unop_kernel
                         int64_t p_final ;
                         int64_t k = GB_cuda_ek_slice_entry (&p_final, pdelta, pfirst, Ap, anvec_sub1, kfirst, slope) ;
                         int64_t col_idx = GBH_A (Ah, k) ;
-                        int64_t row_idx = GBI_A (Ai, p_final, avlen) ;
+
+                        #if ( GB_DEPENDS_ON_I )
+                        int64_t row_idx = GBI_A (Ai, p_final, A->vlen) ;
+                        #endif
 
                         GB_UNOP (Cx, p_final, Ax, p_final, 
                             A_iso, row_idx, col_idx, thunk_value) ;
                     }
                 }
         #else
+            const int64_t avlen = A->vlen ;
             // can do normal method
             for (int64_t p = tid ; p < anz ; p += nthreads)
             {

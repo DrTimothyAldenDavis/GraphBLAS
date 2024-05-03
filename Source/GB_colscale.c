@@ -234,6 +234,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
 
         #ifndef GBCOMPACT
         GB_IF_FACTORY_KERNELS_ENABLED
+        if (info == GrB_NO_VALUE)
         { 
 
             //------------------------------------------------------------------

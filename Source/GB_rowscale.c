@@ -216,35 +216,34 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
 
         #ifndef GBCOMPACT
         GB_IF_FACTORY_KERNELS_ENABLED
-        if (info == GrB_NO_VALUE){
+        if (info == GrB_NO_VALUE)
+        { 
+
+            //------------------------------------------------------------------
+            // define the worker for the switch factory
+            //------------------------------------------------------------------
+
+            #define GB_DxB(mult,xname) GB (_DxB_ ## mult ## xname)
+
+            #define GB_BINOP_WORKER(mult,xname)                     \
+            {                                                       \
+                info = GB_DxB(mult,xname) (C, D, B, nthreads) ;     \
+            }                                                       \
+            break ;
+
+            //------------------------------------------------------------------
+            // launch the switch factory
+            //------------------------------------------------------------------
+
+            GB_Type_code xcode, ycode, zcode ;
+            if (GB_binop_builtin (D->type, D_is_pattern, B->type, B_is_pattern,
+                mult, flipxy, &opcode, &xcode, &ycode, &zcode))
             { 
-
-                //------------------------------------------------------------------
-                // define the worker for the switch factory
-                //------------------------------------------------------------------
-
-                #define GB_DxB(mult,xname) GB (_DxB_ ## mult ## xname)
-
-                #define GB_BINOP_WORKER(mult,xname)                     \
-                {                                                       \
-                    info = GB_DxB(mult,xname) (C, D, B, nthreads) ;     \
-                }                                                       \
-                break ;
-
-                //------------------------------------------------------------------
-                // launch the switch factory
-                //------------------------------------------------------------------
-
-                GB_Type_code xcode, ycode, zcode ;
-                if (GB_binop_builtin (D->type, D_is_pattern, B->type, B_is_pattern,
-                    mult, flipxy, &opcode, &xcode, &ycode, &zcode))
-                { 
-                    // C=D*B, rowscale with built-in operator
-                    #define GB_BINOP_IS_SEMIRING_MULTIPLIER
-                    #define GB_NO_PAIR
-                    #include "GB_binop_factory.c"
-                    #undef  GB_BINOP_IS_SEMIRING_MULTIPLIER
-                }
+                // C=D*B, rowscale with built-in operator
+                #define GB_BINOP_IS_SEMIRING_MULTIPLIER
+                #define GB_NO_PAIR
+                #include "GB_binop_factory.c"
+                #undef  GB_BINOP_IS_SEMIRING_MULTIPLIER
             }
         }
         #endif

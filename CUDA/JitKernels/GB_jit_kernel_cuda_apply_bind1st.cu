@@ -11,8 +11,10 @@ __global__ void GB_cuda_apply_bind1st_kernel
     const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *) B->x ;
     GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) Cx_out ;
 
+    #if ( GB_B_IS_BITMAP )
     const int8_t *__restrict__ Bb = B->b ;
-
+    #endif
+    
     GB_B_NHELD (nvals) ;
 
     int tid = blockDim.x * blockIdx.x + threadIdx.x;
