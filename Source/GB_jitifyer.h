@@ -184,10 +184,13 @@ typedef enum
     GB_JIT_CUDA_KERNEL_AXB_DOT3 = 1004, // GB_cuda_AxB_dot3
 
     // ewise methods:
-    // ...
-    GB_JIT_CUDA_KERNEL_ROWSCALE = 1011,
-    // ...
-
+    GB_JIT_CUDA_KERNEL_COLSCALE = 1011,
+    GB_JIT_CUDA_KERNEL_ROWSCALE = 1012,
+    GB_JIT_CUDA_KERNEL_APPLYBIND1 = 1013,
+    GB_JIT_CUDA_KERNEL_APPLYBIND2 = 1014,
+    //... (up to 15 ewise methods?)
+    // apply methods:
+    GB_JIT_CUDA_KERNEL_APPLYUNOP = 1026
 }
 GB_jit_kcode ;
 
