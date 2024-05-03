@@ -9,32 +9,38 @@ using namespace cooperative_groups ;
 __global__ void GB_cuda_colscale_kernel
 (
     GrB_Matrix C,
-    GrB_Matirx A,
+    GrB_Matrix A,
     GrB_Matrix D
 )
 {
 
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
-    const GB_B_TYPE *__restrict__ Dx = (GB_B_TYPE *) B->x ;
+    const GB_B_TYPE *__restrict__ Dx = (GB_B_TYPE *) D->x ;
     GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) C->x ;
 
-//  const int64_t *__restrict__ Ai = A->i ;
+    #if ( GB_A_IS_SPARSE || GB_A_IS_HYPER )
     const int64_t *__restrict__ Ap = A->p ;
-    const int64_t *__restrict__ Ah = A->h ;
+        #if ( GB_A_IS_HYPER )
+        const int64_t *__restrict__ Ah = A->h ;
+        #endif
+    #endif
+
+    #if ( GB_A_IS_BITMAP )
     const int8_t *__restrict__ Ab = A->b ;
+    #endif
+
     GB_A_NHELD (anz) ;
-    const int64_t anvec = A->nvec ;
-    const int64_t avlen = A->vlen ;
 
     #if (GB_A_IS_BITMAP || GB_A_IS_FULL)
+        const int64_t avlen = A->vlen ;
         // bitmap/full case
         int ntasks = blockDim.x * gridDim.x ;
         int tid = blockIdx.x * blockDim.x + threadIdx.x ;
         for (int64_t p = tid ; p < anz ; p += ntasks)
         {
             // ask Joe:
-            #ifdef GB_A_IS_BITMAP
-                if (!GBB_A (Ab, p)) { continue ; }
+            #if ( GB_A_IS_BITMAP )
+            if (!GBB_A (Ab, p)) { continue ; }
             #endif
 
             // the pth entry in A is A(i,j) where i = p%avlen and j = p/avlen
@@ -48,6 +54,7 @@ __global__ void GB_cuda_colscale_kernel
             GB_EWISEOP (Cx, p, aij, dii, 0, 0) ;
         }
     #else
+        const int64_t anvec = A->nvec ;
         // sparse/hypersparse case (cuda_ek_slice only works for sparse/hypersparse)
         for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
                     pfirst < anz ;

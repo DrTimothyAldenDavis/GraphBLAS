@@ -41,10 +41,8 @@ GrB_Info GB_cuda_apply_bind2nd_jit
         hash, &encoding, suffix, NULL, NULL,
         (GB_Operator) op, ctype, A->type, NULL) ;
     if (info != GrB_SUCCESS){ 
-        printf ("oopsies\n") ;
         return (info) ;
     }
-    printf ("passed here in bind2nd jit\n") ;
 
     //--------------------------------------------------------------------------
     // call the jit kernel and return result

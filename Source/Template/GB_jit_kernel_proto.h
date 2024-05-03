@@ -588,7 +588,7 @@ GrB_Info GB_jit_kernel_colscale                                         \
 (                                                                       \
     GrB_Matrix C,                                                       \
     GrB_Matrix A,                                                       \
-    GrB_Matrix B,                                                       \
+    GrB_Matrix D,                                                       \
     cudaStream_t stream,                                                \
     int32_t gridsz,                                                     \
     int32_t blocksz                                                     \

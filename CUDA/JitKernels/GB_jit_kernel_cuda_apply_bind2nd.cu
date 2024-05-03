@@ -7,12 +7,14 @@ __global__ void GB_cuda_apply_bind2nd_kernel
     const GB_void *scalarx
 )
 {
-    const GB_X_TYPE x = * ((GB_X_TYPE *) scalarx) ; // gets scalarx [0]
+    const GB_Y_TYPE x = * ((GB_Y_TYPE *) scalarx) ; // gets scalarx [0]
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
     GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) Cx_out ;
 
+    #if ( GB_A_IS_BITMAP )
     const int8_t *__restrict__ Ab = A->b ;
-
+    #endif
+    
     GB_A_NHELD (nvals) ;
 
     int tid = blockDim.x * blockIdx.x + threadIdx.x;
