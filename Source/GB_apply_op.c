@@ -602,34 +602,37 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
 
             #ifndef GBCOMPACT
-            GB_IF_FACTORY_KERNELS_ENABLED
-            { 
-                if (GB_binop_builtin (Atype, false, op->ytype, false,
-                    (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
-                { 
+            if (info == GrB_NO_VALUE)
+            {
+                GB_IF_FACTORY_KERNELS_ENABLED
+                {  
+                    if (GB_binop_builtin (Atype, false, op->ytype, false,
+                        (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
+                    { 
 
-                    //----------------------------------------------------------
-                    // define the worker for the switch factory
-                    //----------------------------------------------------------
+                        //----------------------------------------------------------
+                        // define the worker for the switch factory
+                        //----------------------------------------------------------
 
-                    #define GB_bind2nd(binop,xname) \
-                        GB (_bind2nd_ ## binop ## xname)
-                    #undef  GB_BINOP_WORKER
-                    #define GB_BINOP_WORKER(binop,xname)                    \
-                    {                                                       \
-                        info = GB_bind2nd (binop, xname) (Cx, Ax, scalarx,  \
-                            Ab, anz, A_nthreads) ;                          \
-                    }                                                       \
-                    break ;
+                        #define GB_bind2nd(binop,xname) \
+                            GB (_bind2nd_ ## binop ## xname)
+                        #undef  GB_BINOP_WORKER
+                        #define GB_BINOP_WORKER(binop,xname)                    \
+                        {                                                       \
+                            info = GB_bind2nd (binop, xname) (Cx, Ax, scalarx,  \
+                                Ab, anz, A_nthreads) ;                          \
+                        }                                                       \
+                        break ;
 
-                    //----------------------------------------------------------
-                    // launch the switch factory
-                    //----------------------------------------------------------
+                        //----------------------------------------------------------
+                        // launch the switch factory
+                        //----------------------------------------------------------
 
-                    #define GB_NO_FIRST
-                    #define GB_NO_SECOND
-                    #define GB_NO_PAIR
-                    #include "GB_binop_factory.c"
+                        #define GB_NO_FIRST
+                        #define GB_NO_SECOND
+                        #define GB_NO_PAIR
+                        #include "GB_binop_factory.c"
+                    }
                 }
             }
             #endif

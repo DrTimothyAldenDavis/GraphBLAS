@@ -68,16 +68,17 @@ __global__ void GB_cuda_colscale_kernel
                 //         can distort the usefulness of the slope (will require an exhaustive linear search)
                 //         for a large range of entries
 
-                for (int64_t curr_p = threadIdx.x ; curr_p < my_chunk_size ; curr_p += blockDim.x)
+                for (int64_t pdelta = threadIdx.x ; pdelta < my_chunk_size ; pdelta += blockDim.x)
                 {
-                    int64_t k = GB_cuda_ek_slice_entry (curr_p, pfirst, Ap, anvec_sub1, kfirst, slope) ;
+                    int64_t p_final ;
+                    int64_t k = GB_cuda_ek_slice_entry (&p_final, pdelta, pfirst, Ap, anvec_sub1, kfirst, slope) ;
                     k = GBH_A (Ah, k) ;
 
                     GB_DECLAREB (dii) ;
                     GB_GETB (dii, Dx, k, ) ;
                     GB_DECLAREA (aij) ;
-                    GB_GETA (aij, Ax, pfirst + curr_p, ) ;
-                    GB_EWISEOP (Cx, pfirst + curr_p, aij, dii, 0, 0) ;
+                    GB_GETA (aij, Ax, p_final, ) ;
+                    GB_EWISEOP (Cx, p_final, aij, dii, 0, 0) ;
                 }
             }
     #endif

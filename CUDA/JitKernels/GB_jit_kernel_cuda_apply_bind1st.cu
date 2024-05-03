@@ -3,8 +3,8 @@ using namespace cooperative_groups ;
 __global__ void GB_cuda_apply_bind1st_kernel
 (
     GB_void *Cx_out,
-    GB_void *scalarx,
-    GrB_Matrix B,
+    const GB_void *scalarx,
+    GrB_Matrix B
 )
 {
     const GB_X_TYPE x = * ((GB_X_TYPE *) scalarx) ; // gets scalarx [0]

@@ -63,13 +63,14 @@ __global__ void GB_cuda_apply_unop_kernel
                     int64_t kfirst = GB_cuda_ek_slice_setup (Ap, anvec, anz, pfirst,
                         chunk_size, &my_chunk_size, &anvec_sub1, &slope) ;
 
-                    for (int64_t curr_p = threadIdx.x ; curr_p < my_chunk_size ; curr_p += blockDim.x)
+                    for (int64_t pdelta = threadIdx.x ; pdelta < my_chunk_size ; pdelta += blockDim.x)
                     {
-                        int64_t k = GB_cuda_ek_slice_entry (curr_p, pfirst, Ap, anvec_sub1, kfirst, slope) ;
+                        int64_t p_final ;
+                        int64_t k = GB_cuda_ek_slice_entry (&p_final, pdelta, pfirst, Ap, anvec_sub1, kfirst, slope) ;
                         int64_t col_idx = GBH_A (Ah, k) ;
-                        int64_t row_idx = GBI_A (Ai, pfirst + curr_p, avlen) ;
+                        int64_t row_idx = GBI_A (Ai, p_final, avlen) ;
 
-                        GB_UNOP (Cx, pfirst + curr_p, Ax, pfirst + curr_p, 
+                        GB_UNOP (Cx, p_final, Ax, p_final, 
                             A_iso, row_idx, col_idx, thunk_value) ;
                     }
                 }
