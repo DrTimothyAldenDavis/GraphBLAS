@@ -253,7 +253,7 @@ GrB_Info GB_jitifyer_load
     GrB_Type type3
 ) ;
 
-GrB_Info GB_jitifyer_worker
+GrB_Info GB_jitifyer_load2_worker
 (
     // output:
     void **dl_function,         // pointer to JIT kernel
@@ -336,6 +336,7 @@ typedef GB_JIT_QUERY_PROTO ((*GB_jit_query_func)) ;
 bool GB_jitifyer_query
 (
     GB_jit_query_func dl_query,
+    const bool builtin,         // true if method is all builtin
     uint64_t hash,              // hash code for the kernel
     // operator and type definitions
     GrB_Semiring semiring,

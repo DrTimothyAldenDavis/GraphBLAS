@@ -25,7 +25,7 @@ GrB_Info GB_cuda_apply_unop
 
     GB_void *ythunk_cuda = NULL ;
     size_t ythunk_cuda_size = 0 ;
-    if (ythunk != NULL)
+    if (ythunk != NULL && op != NULL && op->ytype != NULL)
     {
         // make a copy of ythunk, since ythunk might be allocated on
         // the CPU stack and thus not accessible to the CUDA kernel.

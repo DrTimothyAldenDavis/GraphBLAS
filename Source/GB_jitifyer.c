@@ -1400,6 +1400,7 @@ GrB_Info GB_jitifyer_set_CUDA_preface_worker (const char *new_CUDA_preface)
 bool GB_jitifyer_query
 (
     GB_jit_query_func dl_query,
+    const bool builtin,         // true if method is all builtin
     uint64_t hash,              // hash code for the kernel
     // operator and type definitions
     GrB_Semiring semiring,
@@ -1464,11 +1465,11 @@ bool GB_jitifyer_query
     //--------------------------------------------------------------------------
 
     char *defn [5] ;
-    defn [0] = (op1 == NULL) ? NULL : op1->defn ;
-    defn [1] = (op2 == NULL) ? NULL : op2->defn ;
-    defn [2] = (type1 == NULL) ? NULL : type1->defn ;
-    defn [3] = (type2 == NULL) ? NULL : type2->defn ;
-    defn [4] = (type3 == NULL) ? NULL : type3->defn ;
+    defn [0] = (builtin || op1 == NULL) ? NULL : op1->defn ;
+    defn [1] = (builtin || op2 == NULL) ? NULL : op2->defn ;
+    defn [2] = (builtin || type1 == NULL) ? NULL : type1->defn ;
+    defn [3] = (builtin || type2 == NULL) ? NULL : type2->defn ;
+    defn [4] = (builtin || type3 == NULL) ? NULL : type3->defn ;
 
     for (int k = 0 ; k < 5 ; k++)
     {
@@ -1587,7 +1588,7 @@ GrB_Info GB_jitifyer_load
 
     #pragma omp critical (GB_jitifyer_worker)
     { 
-        info = GB_jitifyer_worker (dl_function, family, kname, hash,
+        info = GB_jitifyer_load2_worker (dl_function, family, kname, hash,
             encoding, suffix, semiring, monoid, op, type1, type2, type3) ;
     }
 
@@ -1595,10 +1596,10 @@ GrB_Info GB_jitifyer_load
 }
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_worker: do the work for GB_jitifyer_load in a critical section
+// GB_jitifyer_load2_worker: do the work for GB_jitifyer_load in a critical section
 //------------------------------------------------------------------------------
 
-GrB_Info GB_jitifyer_worker
+GrB_Info GB_jitifyer_load2_worker
 (
     // output:
     void **dl_function,         // pointer to JIT kernel
@@ -1637,8 +1638,9 @@ GrB_Info GB_jitifyer_worker
             int32_t nkernels = 0 ;
             GB_prejit (&nkernels, &Kernels, &Queries, &Names) ;
             GB_jit_query_func dl_query = (GB_jit_query_func) Queries [k1] ;
-            bool ok = GB_jitifyer_query (dl_query, hash, semiring, monoid, op,
-                type1, type2, type3) ;
+            bool builtin = (encoding->suffix_len == 0) ;
+            bool ok = GB_jitifyer_query (dl_query, builtin, hash, semiring,
+                monoid, op, type1, type2, type3) ;
             if (ok)
             { 
                 // PreJIT kernel is fine; flag it as checked by flipping
@@ -1871,8 +1873,9 @@ GrB_Info GB_jitifyer_load_worker
         bool ok = (dl_query != NULL) ;
         if (ok)
         { 
-            ok = GB_jitifyer_query (dl_query, hash, semiring, monoid, op,
-                type1, type2, type3) ;
+            bool builtin = (encoding->suffix_len == 0) ;
+            ok = GB_jitifyer_query (dl_query, builtin, hash, semiring,
+                monoid, op, type1, type2, type3) ;
         }
         if (!ok)
         { 
