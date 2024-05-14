@@ -43,7 +43,7 @@ if ( SUITESPARSE_HAS_CUDA AND GRAPHBLAS_USE_CUDA )
     set ( GRAPHBLAS_COMPACT on )
 endif ( )
 
-option ( GRAPHBLAS_COMPACT "ON: do not compile FactoryKernels.  OFF (default): compile FactoryKernels" OFF )
+option ( GRAPHBLAS_COMPACT "ON: do not compile FactoryKernels.  OFF (default): compile FactoryKernels" ON )
 option ( GRAPHBLAS_USE_JIT "ON (default): use the CPU JIT.  OFF: do not use the CPU JIT" ON )
 
 if ( GRAPHBLAS_USE_JIT )
