@@ -24,6 +24,12 @@ bool GB_cuda_type_branch            // return true if the type is OK on GPU
         return (true) ;
     }
 
+    if (type == GxB_FC32 || type == GxB_FC64)
+    {
+        // FIXME: complex types not yet supported in CUDA
+        return (false) ;
+    }
+
     size_t size = type->size ;
 
     if (size == sizeof (uint8_t) || size == sizeof (uint16_t))
