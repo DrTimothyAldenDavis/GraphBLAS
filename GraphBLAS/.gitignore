@@ -1,0 +1,2 @@
+# Ignore the configured file for cmake:
+GraphBLAS_MATLAB_OpenMP.cmake
