@@ -14057,7 +14057,7 @@ if GraphBLAS is compiled without OpenMP.
 %----------------------------------------
 
 A \verb'cmake' build system is available for Linux, Mac, and Windows.
-For Linux or Mac, a simple Makefile wrapper is availble.  Simple do:
+For Linux or Mac, a simple Makefile wrapper is availble.  Simply do:
 
     {\small
     \begin{verbatim}
@@ -14071,15 +14071,15 @@ As of GraphBLAS 9.2.0, a new and simpler method for compiling GraphBLAS and its
 MATLAB interface has been added.  In the MATLAB/Octave Command Window, simply
 type:
 
-
     {\small
     \begin{verbatim}
     cd GraphBLAS/GraphBLAS
     graphblas_install \end{verbatim} }
 
-This will use \verb'cmake' to compile the GraphBLAS library.  You can skip
-the details in the remainder of this section.  Next, add your \verb'GraphBLAS/GraphBLAS'
-folder to your path, by editting your \verb'startup.m' script.  Add this line:
+This will use \verb'cmake' to compile the GraphBLAS library.  You can skip the
+details in the remainder of this section.  Next, add your
+\verb'GraphBLAS/GraphBLAS' folder to your path, by editting your
+\verb'startup.m' script.  Add this line:
 
     {\small
     \begin{verbatim}
@@ -14089,7 +14089,27 @@ folder to your path, by editting your \verb'startup.m' script.  Add this line:
 where \verb'/home/me/GraphBLAS' is the top-level folder containing your
 copy of GraphBLAS.
 
-After \verb'make' in the top-level directory to compile the library, type
+The \verb'graphblas_install' MATLAB script may fail to run \verb'cmake'.
+If it does, it will print the following workaround, where the commands it
+tells you to use will differ depending on the platform:
+
+    {\small
+    \begin{verbatim}
+    Building GraphBLAS with cmake failed.  Try this outside of MATLAB:
+
+       cmake  ..
+       cmake --build . --config Release -j40
+
+    Then do this inside MATLAB:
+
+        cd /home/me/GraphBLAS/GraphBLAS/@GrB/private
+        gbmake \end{verbatim} }
+
+\noindent
+where \verb'/home/me/GraphBLAS' is your copy of GraphBLAS.
+
+After building the GraphBLAS library with \verb'cmake' and its MATLAB
+interface with \verb'gbmake', type
 \verb'make demo' to run the demos (also in the top-level directory).  The
 output of the demos will be compared with expected output files in
 \verb'Demo/Output'.

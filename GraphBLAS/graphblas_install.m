@@ -65,14 +65,8 @@ try
         cd ../build
     end
 
-    % configure with cmake
-    cmd = sprintf ('cmake %s ..', cmake_options) ;
-    fprintf ('\n================================\n%s\n', cmd) ;
-    [status, result] = system (cmd, '-echo') ;
-    if (status ~= 0)
-        cd (here) ;
-        error ('GrB:mex', 'GraphBLAS library not compiled') ;
-    end
+    % cmd1: configure with cmake
+    cmd1 = sprintf ('cmake %s ..', cmake_options) ;
 
     % build the GraphBLAS library
     if (ispc)
@@ -81,25 +75,43 @@ try
         else
             library = 'graphblas' ;
         end
-        cmd = sprintf ('devenv %s.sln /build "release|x64" /project %s', ...
+        cmd2 = sprintf ('devenv %s.sln /build "release|x64" /project %s', ...
             library, library) ;
     else
-        cmd = sprintf ('cmake --build . --config Release -j%d', threads) ;
+        cmd2 = sprintf ('cmake --build . --config Release -j%d', threads) ;
     end
-    fprintf ('\n================================\n%s\n', cmd) ;
-    [status, result] = system (cmd, '-echo') ;
+
+    % execute cmd1: configure with cmake
+    fprintf ('\n================================\n%s\n', cmd1) ;
+    [status, result] = system (cmd1, '-echo') ;
+    if (status ~= 0)
+        cd (here) ;
+        error ('GrB:mex', 'GraphBLAS library not compiled') ;
+    end
+
+    % execute cmd2: build the GraphBLAS library
+    fprintf ('\n================================\n%s\n', cmd2) ;
+    [status, result] = system (cmd2, '-echo') ;
     cd (here) ;
     if (status ~= 0)
         error ('GrB:mex', 'GraphBLAS library not compiled') ;
     end
 
-    % build the GraphBLAS MATLAB interface
-    cd '@GrB/private'
-    gbmake
-
 catch me
     me
+    fprintf ('Building GraphBLAS with cmake failed.  Try this outside of MATLAB:\n') ;
+    fprintf ('\n   %s\n', cmd1) ;
+    fprintf ('   %s\n', cmd2) ;
+    cd (here) ;
+
+    fprintf ('\nThen do this inside MATLAB:\n\n') ;
+    fprintf ('    cd %s/@GrB/private\n    gbmake\n', here) ;
+    return ;
 end
+
+% build the GraphBLAS MATLAB interface
+cd '@GrB/private'
+gbmake
 
 cd (here) ;
 

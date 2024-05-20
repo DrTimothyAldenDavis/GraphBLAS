@@ -37,11 +37,11 @@ SO_OPTS = $(LDFLAGS)
 ifeq ($(UNAME),Darwin)
     # Mac
     SO_NAME = libgraphblas_tcov.dylib
-    SO_OPTS += -dynamiclib -shared -Wl,-install_name -Wl,$(SO_NAME) -undefined dynamic_lookup
+    SO_OPTS += -dynamiclib -shared -Wl,-install_name -Wl,$(SO_NAME) -undefined dynamic_lookup -Wl,'-rpath .'
 else
     # Linux
     SO_NAME = libgraphblas_tcov.so
-    SO_OPTS += -shared -Wl,-soname -Wl,$(SO_NAME) -Wl,--no-undefined
+    SO_OPTS += -shared -Wl,-soname -Wl,$(SO_NAME) -Wl,--no-undefined -Wl,-rpath=.
 endif
 
 default: $(SO_NAME)
