@@ -223,7 +223,7 @@ void GB_jitifyer_finalize (void)
 
 // Replace invalid characters in a string with underscore.
 
-// FIXME: allow spaces in the string, but fix the use of the string so
+// FIXME NOW: allow spaces in the string, but fix the use of the string so
 // that a path can include spaces.
 
 void GB_jitifyer_sanitize (char *string, size_t len)
@@ -2489,7 +2489,7 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     " -arch=sm_60 "
     " -fPIC " 
     // FIXME: add GB_CUDA_FLAGS here:
-    " -G "   // HACK FIXME
+    " -G "   // HACK FIXME (for CUDA)
     "-I%s/src "                         // include source directory
     "-o %s/c/%02x/%s%s "                // *.o output file
     "-c %s/c/%02x/%s.cu "               // *.cu input file

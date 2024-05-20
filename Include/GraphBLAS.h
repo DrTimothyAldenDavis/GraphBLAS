@@ -1,4 +1,4 @@
-// SuiteSparse:GraphBLAS 9.1.2
+// SuiteSparse:GraphBLAS 9.2.0
 //------------------------------------------------------------------------------
 // GraphBLAS.h: definitions for the GraphBLAS package
 //------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ extern "C"
 //------------------------------------------------------------------------------
 
 #ifndef GRAPHBLAS_HAS_CUDA
-#define GRAPHBLAS_HAS_CUDA
+/* #undef GRAPHBLAS_HAS_CUDA */
 #endif
 
 //------------------------------------------------------------------------------
@@ -259,10 +259,10 @@ extern "C"
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Apr XX, 2024"
+#define GxB_IMPLEMENTATION_DATE "May XX, 2024"
 #define GxB_IMPLEMENTATION_MAJOR 9
-#define GxB_IMPLEMENTATION_MINOR 1
-#define GxB_IMPLEMENTATION_SUB   2
+#define GxB_IMPLEMENTATION_MINOR 2
+#define GxB_IMPLEMENTATION_SUB   0
 #define GxB_SPEC_DATE "Dec 22, 2023"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 1
