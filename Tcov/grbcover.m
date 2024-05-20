@@ -91,9 +91,14 @@ elseif (isunix)
     rpath = '-rpath=' ;
 end
 
-if (ismac || isunix)
+rpath = sprintf (' -Wl,%s''''%s'''' ', rpath, pwd) ;
+if (ismac)
+    % Mac
+    flags = [ flags   ' CFLAGS="$CXXFLAGS -fPIC -Wno-pragmas" '] ;
+    flags = [ flags ' CXXFLAGS="$CXXFLAGS -fPIC -Wno-pragmas" '] ;
+    flags = [ flags  ' LDFLAGS=''$LDFLAGS -fPIC ' rpath ' '' '] ;
+elseif (isunix)
     % Linux
-    rpath = sprintf (' -Wl,%s''''%s'''' ', rpath, pwd) ;
     flags = [ flags   ' CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas" '] ;
     flags = [ flags ' CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas" '] ;
     flags = [ flags  ' LDFLAGS=''$LDFLAGS  -fopenmp -fPIC ' rpath ' '' '] ;
