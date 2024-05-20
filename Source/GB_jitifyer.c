@@ -2423,7 +2423,7 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash, char **object_
     // remove any prior build folder for this kernel, and all its contents
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
         GB_SH_C "%s -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
-        GB_jit_cache_path, hash,     // build path
+        GB_jit_CMake, GB_jit_cache_path, hash,     // build path
         burble_stdout, err_redirect, GB_jit_error_log) ;
     GB_jitifyer_command (GB_jit_temp) ; // OK: see security comment above
 

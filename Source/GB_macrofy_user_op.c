@@ -47,7 +47,6 @@ void GB_macrofy_user_op         // construct a user-defined operator
     //--------------------------------------------------------------------------
     if (op->defn != NULL && GB_STRNCMP(op->defn, GB_jit_isobj_symbol) == 0)
     {
-        fprintf(stderr, "We made it here!: %i\n %s vs. %s\n", GB_STRNCMP(op->defn, GB_jit_isobj_symbol), op->defn, GB_jit_isobj_symbol) ;
         GB_macrofy_decl(fp, 3, op) ;
     }
     else

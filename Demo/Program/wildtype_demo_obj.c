@@ -210,7 +210,7 @@ int main (void)
     GxB_Global_Option_set (GxB_BURBLE, true) ;
     int nthreads ;
     GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads) ;
-    fprintf (stderr, "wildtype demo: nthreads %d\n", nthreads) ;
+    fprintf (stderr, "wildtype_obj demo: nthreads %d\n", nthreads) ;
 
     /* via #defines:
     fprintf (stderr, LINE2 "SuiteSparse:GraphBLAS Version %d.%d.%d, %s\n" LINE2
