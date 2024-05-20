@@ -40,7 +40,7 @@ if (ismac)
     % use the OpenMP library inside MATLAB
     o = [matlabroot '/bin/maca64/libomp.dylib'] ;
     if (isfile (o))
-        openmp_library = ['''' o ''''] ;
+        openmp_library = o ;
     end
 end
 

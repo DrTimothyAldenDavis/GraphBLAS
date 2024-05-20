@@ -515,7 +515,7 @@ GrB_Info GB_jitifyer_init (void)
         // time the kernel is run.
 
         uint64_t hash = 0 ;
-        char *ignored [5] ;
+        const char *ignored [5] ;
         int version [3] ;
         (void) dl_query (&hash, version, ignored, NULL, NULL, 0, 0) ;
 
@@ -1417,7 +1417,7 @@ bool GB_jitifyer_query
     //--------------------------------------------------------------------------
 
     int version [3] ;
-    char *library_defn [5] ;
+    const char *library_defn [5] ;
     size_t zsize = 0 ;
     size_t tsize = 0 ;
     void *id = NULL ;
