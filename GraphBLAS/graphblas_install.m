@@ -73,6 +73,7 @@ try
     end
 
     % cmd1: configure with cmake
+    build_folder = pwd ;
     cmd1 = sprintf ('cmake %s ..', cmake_options) ;
 
     % build the GraphBLAS library
@@ -107,8 +108,7 @@ try
 catch me
     me
     fprintf ('Building GraphBLAS with cmake failed.  Try this outside of MATLAB:\n') ;
-    fprintf ('\n   %s\n', cmd1) ;
-    fprintf ('   %s\n', cmd2) ;
+    fprintf ('\n    cd %s\n    %s\n    %s\n', build_folder, cmd1, cmd2) ;
     cd (here) ;
 
     fprintf ('\nThen do this inside MATLAB:\n\n') ;
