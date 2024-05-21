@@ -38,9 +38,16 @@ end
 openmp_library = '${OpenMP_C_LIBRARIES}' ;
 if (ismac)
     % use the OpenMP library inside MATLAB
+    % look for libomp.dylib for Apple Silicon Macs
     o = [matlabroot '/bin/maca64/libomp.dylib'] ;
     if (isfile (o))
         openmp_library = o ;
+    else
+        % look for libiomp5.dylib for Intel Macs
+        o = [matlabroot '/sys/os/maci64/libiomp5.dylib'] ;
+        if (isfile (o))
+            openmp_library = o ;
+        end
     end
 end
 
