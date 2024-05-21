@@ -8180,7 +8180,7 @@ field                       & value         & description \\
 \vspace{0.15in}
 
 To control the JIT in the MATLAB \verb'@GrB' interface, use the \verb'GrB.jit'
-method.  Refer to \verb'help GrB.jit' for details. 
+method.  Refer to \verb'help GrB.jit' for details.
 
 Kernels compiled during one run of a user application are kept in the cache
 folder, so that when the user application runs again, the kernels do not have
@@ -14056,8 +14056,15 @@ if GraphBLAS is compiled without OpenMP.
 \subsection{Quick Start}
 %----------------------------------------
 
+GraphBLAS requires \verb'cmake' version 3.20 or later.
+It optionally can use OpenMP for best performance.
+For OpenMP on the Mac, see Section~\ref{mac_openmp}.
+Without OpenMP, GraphBLAS will be significantly slower since it is a highly
+parallel package.
+
 A \verb'cmake' build system is available for Linux, Mac, and Windows.
-For Linux or Mac, a simple Makefile wrapper is availble.  Simply do:
+For Linux or Mac, a simple Makefile wrapper is available that accesses this
+cmake build system.  Simply do:
 
     {\small
     \begin{verbatim}
@@ -14066,6 +14073,21 @@ For Linux or Mac, a simple Makefile wrapper is availble.  Simply do:
 
 For Windows, open CMake and use the provided \verb'CMakeLists.txt' file
 to build GraphBLAS in the \verb'GraphBLAS/build' folder.
+
+Next, try the demos with \verb'make demos'.
+The output of the demos will be compared with expected
+output files in \verb'Demo/Output'.\footnote{
+NOTE:
+DO NOT publish benchmarks of these demos, and do not link against the
+demo library in any user application.  These codes are sometimes slow,
+and are meant as simple illustrations only, not for performance.  The fastest
+methods are in LAGraph, not in GraphBLAS/Demo.  Benchmark LAGraph
+instead.  Eventually, all GraphBLAS/Demos methods will be removed, and LAGraph
+will serve all uses: for illustration, benchmarking, and production uses.}
+
+%----------------------------------------
+\subsection{Quick Start for MATLAB/Octave}
+%----------------------------------------
 
 As of GraphBLAS 9.2.0, a new and simpler method for compiling GraphBLAS and its
 MATLAB interface has been added.  In the MATLAB/Octave Command Window, simply
@@ -14079,7 +14101,8 @@ type:
 This will use \verb'cmake' to compile the GraphBLAS library.  You can skip the
 details in the remainder of this section.  Next, add your
 \verb'GraphBLAS/GraphBLAS' folder to your path, by editting your
-\verb'startup.m' script.  Add this line:
+\verb'startup.m' script (usually in your \verb'Documents/MATLAB' folder).
+Add this line:
 
     {\small
     \begin{verbatim}
@@ -14097,6 +14120,7 @@ tells you to use will differ depending on the platform:
     \begin{verbatim}
     Building GraphBLAS with cmake failed.  Try this outside of MATLAB:
 
+       cd /home/me/GraphBLAS/GraphBLAS/build
        cmake  ..
        cmake --build . --config Release -j40
 
@@ -14107,20 +14131,6 @@ tells you to use will differ depending on the platform:
 
 \noindent
 where \verb'/home/me/GraphBLAS' is your copy of GraphBLAS.
-
-After building the GraphBLAS library with \verb'cmake' and its MATLAB
-interface with \verb'gbmake', type
-\verb'make demo' to run the demos (also in the top-level directory).  The
-output of the demos will be compared with expected output files in
-\verb'Demo/Output'.
-
-NOTE:
-DO NOT publish benchmarks of these demos, and do not link against the
-demo library in any user application.  These codes are sometimes slow,
-and are meant as simple illustrations only, not for performance.  The fastest
-methods are in LAGraph, not in SuiteSparse/GraphBLAS/Demo.  Benchmark LAGraph
-instead.  Eventually, all GraphBLAS/Demos methods will be removed, and LAGraph
-will serve all uses: for illustration, benchmarking, and production uses.
 
 %----------------------------------------
 \subsection{More details}
@@ -14142,17 +14152,11 @@ but in a few special cases significantly slower.  The Intel \verb'icc' compiler
 is not recommended; it results in poor performance for
 \verb'#pragma omp atomic'.
 
-On the Mac (OS X), \verb'clang' 8.0.0 in \verb'Xcode' version 8.2.1 is
-sufficient, although earlier versions of \verb'Xcode' may work as well.  For
-the GNU \verb'gcc' compiler, version 4.9 or later is required, but best
-performance is obtained in 9.3 or later.  Version 3.13 or later of \verb'cmake'
-is required; version 3.17 is preferred.
-
-If you are using a pre-C11 ANSI C compiler, such as Microsoft Visual Studio,
-then the \verb'_Generic' keyword is not available.  SuiteSparse:GraphBLAS
-will still compile, but you will not have access to polymorphic functions
-such as \verb'GrB_assign'.  You will need to use the non-polymorphic functions
-instead.
+If you are using a C compiler that does not support the C11 standard, such as
+\verb'cl' in Microsoft Visual Studio, then the \verb'_Generic' keyword is not
+available.  SuiteSparse:GraphBLAS will still compile, but you will not have
+access to polymorphic functions such as \verb'GrB_assign'.  You will need to
+use the non-polymorphic functions instead.
 
 To compile SuiteSparse:GraphBLAS, simply type \verb'make' in the main GraphBLAS
 folder, which compiles the library with your default system compiler.  This
@@ -14227,98 +14231,41 @@ to use 32 parallel jobs and the \verb'gcc' compiler, do the following:
     JOBS=32 CC=gcc make \end{verbatim} }
 
 %----------------------------------------
-\subsubsection{On the Mac (Intel-based) using gcc}
+\subsubsection{On the Mac (Intel or ARM)}
 %----------------------------------------
 
-SuiteSparse:GraphBLAS requires OpenMP for its internal parallelism, but
-OpenMP is not on the Mac by default.
-
-If you have the Intel compiler and OpenMP library, then use the following
-in the top-level \verb'GraphBLAS' folder.  OpenMP will be found automatically:
-
-    {\small
-    \begin{verbatim}
-    make CC=icc CXX=icpc \end{verbatim} }
-
-The following instructions work on MacOS Big Sur (v11.3)
-and MacOS Monterey (12.1), using
-cmake 3.13 or later:
-
+GraphBLAS requires \verb'cmake' v3.20 or later, and it optionally uses
+\verb'make' to simplify the use of the cmake build system.  It also needs
+other Apple Command Line Tools from Xcode.
 First install Xcode (see \url{https://developer.apple.com/xcode}),
 and then install the command line tools for Xcode:
 
     {\small
     \begin{verbatim}
-    cd /Applications/Utilities
-    xcode-select —install \end{verbatim} }
+    xcode-select --install \end{verbatim} }
 
-Next, install brew, at \url{https://brew.sh}.
+Next, install brew, at \url{https://brew.sh}, or \verb'spack'.
+Use brew or spack to install cmake version 3.20 or later.
 
-If not used for the MATLAB mexFunction interface, a recent update of the Apple
-Clang compiler now works with \verb'libomp' and the
-\verb'GraphBLAS/CMakeLists.txt'.  To use the MATLAB mexFunction, however, you
-must use \verb'gcc' (\verb'gcc-11' is recommended).  Using Clang will result in
-a segfault when you attempt to use the \verb'@GrB' interface in MATLAB.
+%----------------------------------------
+\subsubsection{On the Intel-based Mac}
+%----------------------------------------
 
-With MacOS Big Sur install \verb'gcc-11', \verb'cmake', and OpenMP, and then
-compile GraphBLAS.  cmake 3.13 or later is required.  For the MATLAB
-mexFunctions, you must use \verb'gcc-11'; the \verb'libomp' from \verb'brew'
-will allow you to compile the mexFunctions but they will not work properly.
+If you have the Intel compiler and its OpenMP library, then use the following
+in the top-level \verb'GraphBLAS' folder.  The Intel OpenMP library
+will be found automatically:
 
     {\small
     \begin{verbatim}
-    brew install cmake
-    brew install libomp
-    brew install gcc
-    cd GraphBLAS/GraphBLAS
-    make CC=gcc-11 CXX=g++-11 JOBS=8 \end{verbatim} }
-
-The above instructions assume MATLAB, using
-\verb'libgraphblas_matlab.dylib', since MATLAB includes its
-own copy of SuiteSparse:GraphBLAS (\verb'libmwgraphblas.dylib') but at version
-v3.3.3, not the latest version.
-
-Next, compile the MATLAB mexFunctions.  I had to edit this file first:
-
-{\small
-\begin{verbatim}
-/Users/davis/Library/Application Support/MathWorks/MATLAB/R2021a/mex_C_maci64.xml \end{verbatim} }
-
-where you would replace \verb'davis' with your MacOS user name.
-Change lines 4 and 18, where both cases of \verb'MACOSX_DEPLOYMENT_TARGET=10.14'
-must become \verb"MACOSX_DEPLOYMENT_TARGET=11.3".  Otherwise, MATLAB
-complains that the \verb'libgraphblas_matlab.dylib' was built for 11.3 but
-linked for 10.14.
-
-Next, type the following in the MATLAB Command Window:
-
-    {\small
-    \begin{verbatim}
-    cd GraphBLAS/GraphBLAS/@GrB/private
-    gbmake \end{verbatim} }
-
-Then add the paths to your \verb'startup.m' file (usually in
-\verb'~/Documents/MATLAB/startup.m').  For example, my path is:
-
-    {\small
-    \begin{verbatim}
-    addpath ('/Users/davis/GraphBLAS/GraphBLAS') ; \end{verbatim} }
-
-Finally, you can run the tests to see if your installation works:
-
-    {\small
-    \begin{verbatim}
-    cd ../../test
-    gbtest \end{verbatim} }
+    make CC=icc CXX=icpc \end{verbatim} }
 
 %----------------------------------------
 \subsubsection{MATLAB on the Mac (Apple Silicon based)}
 %----------------------------------------
 
 MATLAB on the Apple-Silicon-based Mac is now a native ARM64 application (as of
-R2023b).  These instructions assume you are using the native MATLAB version
-(R2023b or later).  GraphBLAS 9.2.0 and later are not supported for
-earlier versions of MATLAB on Apple Silicon.
+R2023b).  GraphBLAS is not supported for earlier versions of MATLAB on Apple
+Silicon.
 
 Note that GraphBLAS must use the same OpenMP library as MATLAB.  This is
 handled by the \verb'graphblas_install.m' script.
@@ -14328,9 +14275,9 @@ handled by the \verb'graphblas_install.m' script.
 \label{sec:windows}
 %----------------------------------------
 
-SuiteSparse:GraphBLAS is now ported to Microsoft Visual Studio.  However, that
-compiler is not C11 compliant. As a result, GraphBLAS on Windows will have
-a few minor limitations.
+SuiteSparse:GraphBLAS can be compiled by the Microsoft C compiler (\verb'cl')
+using Microsoft Visual Studio.  However, that compiler is not C11 compliant. As
+a result, GraphBLAS on Windows will have a few minor limitations.
 
 \begin{itemize}
 \item The MS Visual Studio compiler does not support the \verb'_Generic'
@@ -14366,7 +14313,7 @@ Visual Studio 2019, but may work for earlier versions.
     Version 2019 is preferred, but earlier versions may also work.
 
 \item Open a terminal window and type this in the
-    \verb'SuiteSparse/GraphBLAS/build' folder:
+    \verb'GraphBLAS/build' folder:
 
     \vspace{-0.1in}
     {\small
@@ -14378,7 +14325,7 @@ Visual Studio 2019, but may work for earlier versions.
     the cmake build system for GraphBLAS.
 
 \item The \verb'cmake' command generates many files in
-    \verb'SuiteSparse/GraphBLAS/build', and the file \verb'graphblas.sln' in
+    \verb'GraphBLAS/build', and the file \verb'graphblas.sln' in
     particular.  Open the generated \verb'graphblas.sln' file in Visual Studio.
 
 \item Optionally: right-click \verb'graphblas' in the left panel (Solution
@@ -14433,30 +14380,19 @@ Visual Studio 2019, but may work for earlier versions.
 
 %----------------------------------------
 \subsubsection{Mac using clang}
+\label{mac_openmp}
 %----------------------------------------
 
-MATLAB on the Mac now includes its own OpenMP library.  If you do not have
-a recent copy of MATLAB, you may need to install a copy of OpenMP first.
-
-To use OpenMP with clang on the Mac, try installing it from the 
+To use OpenMP with clang on the Mac, try installing it from the
     \url{https://mac.r-project.org/openmp/} project.
 Be sure to check that page for the OpenMP version
 that matches your version of Apple Xcode.
-If using Xcode 13.3 to 13.4.1, use:
+For example, if using Xcode 13.3 to 13.4.1, use:
 
     {\scriptsize
     \begin{verbatim}
     curl -O https://mac.r-project.org/openmp/openmp-13.0.0-darwin21-Release.tar.gz
     sudo tar fvxz openmp-13.0.0-darwin21-Release.tar.gz -C /
-    \end{verbatim} }
-
-
-For Xcode 14+ use the following instead.
-
-    {\scriptsize
-    \begin{verbatim}
-    curl -O https://mac.r-project.org/openmp/openmp-14.0.6-darwin20-Release.tar.gz
-    sudo tar fvxz openmp-14.0.6-darwin20-Release.tar.gz -C /
     \end{verbatim} }
 
 These commands will install universal binaries (ARM and x86) for
@@ -14470,8 +14406,8 @@ These commands will install universal binaries (ARM and x86) for
     /usr/local/include/omp-tools.h
     \end{verbatim} }
 
-Once you do this, the GraphBLAS Cmake should find this copy of OpenMP
-for clang.
+Once you do this, the GraphBLAS cmake build system should find this copy of
+OpenMP for clang.
 
 %----------------------------------------
 \subsubsection{Linking issues after installation}
