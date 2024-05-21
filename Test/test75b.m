@@ -92,6 +92,7 @@ n_semirings = 0 ;
 for k1 = 1:length(mult_ops)
     mulop = mult_ops {k1} ;
     fprintf ('\n%-10s ', mulop) ;
+    GB_mex_finalize ;
 
     for k2 = 1:length(add_ops)
         addop = add_ops {k2} ;
