@@ -11,6 +11,8 @@
 #include "GB_math.h"
 #include "GB_stringify.h"
 #include <ctype.h>
+#include "GB_config.h"
+#include "GB_jitifyer.h"
 
 void GB_macrofy_binop
 (
@@ -64,7 +66,15 @@ void GB_macrofy_binop
         //----------------------------------------------------------------------
 
         ASSERT (op != NULL) ;
-        GB_macrofy_defn (fp, 3, op->name, op->defn) ;
+        if (op->defn != NULL && GB_STRNCMP(op->defn, GB_jit_isobj_symbol) == 0)
+        {
+            GB_macrofy_decl (fp, 3, (GB_Operator) op) ;
+        }
+        else
+        {
+            GB_macrofy_defn (fp, 3, op->name, op->defn) ;
+        }
+        
 
         if (is_monoid_or_build)
         { 

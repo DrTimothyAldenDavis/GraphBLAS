@@ -29,6 +29,7 @@ in Demo/Program:
     kron_demo.c             demo program to test GrB_kronecker
     simple_demo.c           demo program to test simple_rand
     wildtype_demo.c         demo program, arbitrary struct as user-defined type
+    wildtype_demo_obj.c     demo program, same as wildtype_demo using obj files
     openmp_demo.c           demo program using OpenMP
 
 --------------------------------------------------------------------------------

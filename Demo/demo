@@ -10,6 +10,8 @@
 
 ../build/import_demo < Matrix/west0067 > ../build/import_demo.out
 ../build/wildtype_demo                 > ../build/wildtype_demo.out
+cc -c Program/wildadd.c
+../build/wildtype_demo_obj > ../build/wildtype_demo_obj.out
 
 ../build/gauss_demo > ../build/gauss_demo1.out
 ../build/gauss_demo > ../build/gauss_demo.out

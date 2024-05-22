@@ -9,6 +9,8 @@
 
 #include "GB.h"
 #include "GB_stringify.h"
+#include "GB_config.h"
+#include "GB_jitifyer.h"
 
 void GB_macrofy_user_op         // construct a user-defined operator
 (
@@ -33,8 +35,6 @@ void GB_macrofy_user_op         // construct a user-defined operator
     // construct the name
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "#define GB_USER_OP_FUNCTION %s\n", op->name) ;
-
     //--------------------------------------------------------------------------
     // construct the typedefs
     //--------------------------------------------------------------------------
@@ -45,24 +45,30 @@ void GB_macrofy_user_op         // construct a user-defined operator
     //--------------------------------------------------------------------------
     // construct the function prototype
     //--------------------------------------------------------------------------
-
-    for (char *p = op->defn ; *p ; p++)
+    if (op->defn != NULL && GB_STRNCMP(op->defn, GB_jit_isobj_symbol) == 0)
     {
-        int c = (int) (*p) ;
-        if (c == '{')
-        { 
-            fprintf (fp, ";\n") ;
-            break ;
-        }
-        fputc (c, fp) ;
+        GB_macrofy_decl(fp, 3, op) ;
     }
+    else
+    {
+        for (char *p = op->defn ; *p ; p++)
+        {
+            int c = (int) (*p) ;
+            if (c == '{')
+            { 
+                fprintf (fp, ";\n") ;
+                break ;
+            }
+            fputc (c, fp) ;
+        }
 
-    //--------------------------------------------------------------------------
-    // construct the user function itself
-    //--------------------------------------------------------------------------
-
-    fprintf (fp, "\n%s\n", op->defn) ;
-    GB_macrofy_string (fp, op->name, op->defn) ;
+        //----------------------------------------------------------------------
+        // construct the user function itself
+        //----------------------------------------------------------------------
+        fprintf (fp, "\n%s\n", op->defn) ;
+        GB_macrofy_string (fp, op->name, op->defn) ;
+    }
     fprintf (fp, "#define GB_USER_OP_DEFN GB_%s_USER_DEFN\n", op->name) ;
+    fprintf (fp, "#define GB_USER_OP_FUNCTION %s\n", op->name) ;
 }
 
