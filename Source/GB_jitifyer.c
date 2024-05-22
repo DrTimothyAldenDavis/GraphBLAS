@@ -28,7 +28,12 @@ typedef GB_JIT_KERNEL_USER_TYPE_PROTO ((*GB_user_type_f)) ;
 
 // The strings are used to create filenames and JIT compilation commands.
 
+#ifdef GBCOVER
+// use a smaller JIT table size during test coverage
+#define GB_JITIFIER_INITIAL_SIZE (1024)
+#else
 #define GB_JITIFIER_INITIAL_SIZE (32*1024)
+#endif
 
 static GB_jit_entry *GB_jit_table = NULL ;
 static int64_t  GB_jit_table_size = 0 ;  // always a power of 2
@@ -146,8 +151,8 @@ static void check_table (void)
     #define GB_MALLOC_PERSISTENT(X,siz)                     \
     {                                                       \
         X = GB_Global_persistent_malloc (siz) ;             \
-        printf ("persistent malloc (%4d): %p size %lu\n",   /* MEMDUMP */ \
-            __LINE__, X, siz) ;                             \
+        printf ("persistent malloc (%4d): %p size %g\n",   /* MEMDUMP */ \
+            __LINE__, X, (double) siz) ;                    \
     }
 
     #define GB_FREE_PERSISTENT(X)                           \
@@ -1417,7 +1422,7 @@ bool GB_jitifyer_query
     //--------------------------------------------------------------------------
 
     int version [3] ;
-    const char *library_defn [5] ;
+    const char *ldef [5] ;
     size_t zsize = 0 ;
     size_t tsize = 0 ;
     void *id = NULL ;
@@ -1454,7 +1459,7 @@ bool GB_jitifyer_query
     //--------------------------------------------------------------------------
 
     uint64_t hash2 = 0 ;
-    bool ok = dl_query (&hash2, version, library_defn, id, term, zsize, tsize) ;
+    bool ok = dl_query (&hash2, version, ldef, id, term, zsize, tsize) ;
     ok = ok && (version [0] == GxB_IMPLEMENTATION_MAJOR) &&
                (version [1] == GxB_IMPLEMENTATION_MINOR) &&
                (version [2] == GxB_IMPLEMENTATION_SUB) &&
@@ -1465,29 +1470,18 @@ bool GB_jitifyer_query
     //--------------------------------------------------------------------------
 
     char *defn [5] ;
-    defn [0] = (builtin || op1 == NULL) ? NULL : op1->defn ;
-    defn [1] = (builtin || op2 == NULL) ? NULL : op2->defn ;
+    defn [0] = (builtin || op1   == NULL) ? NULL : op1->defn ;
+    defn [1] = (builtin || op2   == NULL) ? NULL : op2->defn ;
     defn [2] = (builtin || type1 == NULL) ? NULL : type1->defn ;
     defn [3] = (builtin || type2 == NULL) ? NULL : type2->defn ;
     defn [4] = (builtin || type3 == NULL) ? NULL : type3->defn ;
 
     for (int k = 0 ; k < 5 ; k++)
-    {
-        if ((defn [k] != NULL) != (library_defn [k] != NULL))
-        { 
-            // one is not NULL but the other is NULL
-            ok = false ;
-        }
-        else if (defn [k] != NULL)
-        { 
-            // both definitions are present
-            // ensure the definition hasn't changed
-            ok = ok && (strcmp (defn [k], library_defn [k]) == 0) ;
-        }
-        else
-        { 
-            // both definitions are NULL, so they match
-        }
+    { 
+        // ensure the definition hasn't changed
+        ok = ok && (strcmp (
+            ((defn [k] == NULL) ? "" : defn [k]),
+            ((ldef [k] == NULL) ? "" : ldef [k])) == 0) ;
     }
     return (ok) ;
 }
