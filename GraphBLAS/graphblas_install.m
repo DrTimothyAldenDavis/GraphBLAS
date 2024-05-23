@@ -4,12 +4,30 @@ function graphblas_install (cmake_options)
 % Usage:
 %   graphblas_install
 %
-% MATLAB 9.4 (R2018a) or Octave 7 later is required.
+% MATLAB 9.4 (R2018a) or Octave 7 later is required.  This function must
+% be run while your current working directory is the same as the directory
+% that contains graphblas_install.m.
 %
 % See also mex.
 %
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
+
+% make sure we
+here = pwd ;
+my_fullpath = mfilename ('fullpath') ;
+slash = strfind (my_fullpath, filesep) ;
+if (~isempty (slash))
+    slash = slash (end) ;
+    my_folder = my_fullpath (1:slash-1) ;
+    if (~isequal (my_folder, here))
+        fprintf ('current working directory is: %s\n', here) ;
+        fprintf ('graphblas_install is in     : %s\n', my_folder) ;
+        fprintf ('do this before running graphblas_install:\n') ;
+        fprintf ('   cd %s\n', my_folder) ;
+        error ('graphblas_install must be run when in its containing folder') ;
+    end
+end
 
 have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 
@@ -59,7 +77,6 @@ fclose (f) ;
 
 % build the GraphBLAS library
 threads = maxNumCompThreads * 2 ;
-here = pwd ;
 
 try
 

@@ -1,4 +1,4 @@
-May XX, 2024: version 9.2.0     FIXME
+May 22, 2024: version 9.2.0
 
     * Added graphblas_install.m: for a simpler method of compiling
         the MATLAB/Octave interface for GraphBLAS.

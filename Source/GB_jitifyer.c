@@ -228,8 +228,9 @@ void GB_jitifyer_finalize (void)
 
 // Replace invalid characters in a string with underscore.
 
-// FIXME NOW: allow spaces in the string, but fix the use of the string so
-// that a path can include spaces.
+// Valid characters: letters, numbers, space, and four others (dot, dash,
+// underscore, and slash).  Backslash is valid but replaced with slash.
+// All other invalid characters are replaced with underscore.
 
 void GB_jitifyer_sanitize (char *string, size_t len)
 {
@@ -251,7 +252,7 @@ void GB_jitifyer_sanitize (char *string, size_t len)
         static char valid_character_set [ ] =
         "abcdefghijklmnopqrstuvwxyz"
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "0123456789.-_/" ;
+        "0123456789 .-_/" ;
         bool ok = false ;
         for (char *s = valid_character_set ; *s != '\0' ; s++)
         {
@@ -968,6 +969,8 @@ GrB_Info GB_jitifyer_set_error_log_worker (const char *new_error_log)
     GB_FREE_STUFF (GB_jit_error_log) ;
     // allocate the new GB_jit_error_log
     GB_COPY_STUFF (GB_jit_error_log, new_error_log) ;
+    // sanitize the error log
+    GB_jitifyer_sanitize (GB_jit_error_log, GB_jit_error_log_allocated) ;
     return (GB_jitifyer_alloc_space ( )) ;
 }
 
@@ -2338,8 +2341,9 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
     uint32_t bucket = hash & 0xFF ;
     GBURBLE ("(jit: %s)\n", "cmake") ;
     char *burble_stdout = GB_Global_burble_get ( ) ? "" : GB_DEV_NULL ;
-    char *err_redirect = (GB_STRLEN (GB_jit_error_log) > 0) ?
-        " 2>> " : " 2>&1 " ;
+    bool have_log = (GB_STRLEN (GB_jit_error_log) > 0) ;
+    char *err_redirect = have_log ?  " 2>> " : " 2>&1 " ;
+    char *log_quote = have_log ? "\"" : "" ;
 
 #if defined (__MINGW32__)
 #define GB_SH_C "sh -c "
@@ -2349,9 +2353,10 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
 
     // remove any prior build folder for this kernel, and all its contents
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        GB_SH_C "cmake -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
+        GB_SH_C "cmake -E remove_directory \"" GB_BLD_DIR "\" %s %s %s%s%s",
         GB_jit_cache_path, hash,     // build path
-        burble_stdout, err_redirect, GB_jit_error_log) ;
+        burble_stdout, err_redirect,
+        log_quote, GB_jit_error_log, log_quote) ;
     GB_jitifyer_command (GB_jit_temp) ; // OK: see security comment above
 
     // create the build folder for this kernel
@@ -2408,33 +2413,34 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
     // generate the build system for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
         GB_SH_C "cmake -S \"" GB_BLD_DIR "\" -B \"" GB_BLD_DIR "\""
-        " -DCMAKE_C_COMPILER=\"%s\" %s %s %s",
+        " -DCMAKE_C_COMPILER=\"%s\" %s %s %s%s%s",
         GB_jit_cache_path, hash,     // -S source path
         GB_jit_cache_path, hash,     // -B build path
         GB_jit_C_compiler,                  // C compiler to use
-        burble_stdout, err_redirect, GB_jit_error_log) ;
+        burble_stdout, err_redirect, log_quote, GB_jit_error_log, log_quote) ;
     GB_jitifyer_command (GB_jit_temp) ; // OK: see security comment above
 
     // compile the library for this kernel
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        GB_SH_C "cmake --build \"" GB_BLD_DIR "\" --config Release %s %s %s",
+        GB_SH_C "cmake --build \"" GB_BLD_DIR
+        "\" --config Release %s %s %s%s%s",
         // can add "--verbose" here too
         GB_jit_cache_path, hash,     // build path
-        burble_stdout, err_redirect, GB_jit_error_log) ;
+        burble_stdout, err_redirect, log_quote, GB_jit_error_log, log_quote) ;
     GB_jitifyer_command (GB_jit_temp) ; // OK: see security comment above
 
     // install the library
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        GB_SH_C "cmake --install \"" GB_BLD_DIR "\" %s %s %s",
+        GB_SH_C "cmake --install \"" GB_BLD_DIR "\" %s %s %s%s%s",
         GB_jit_cache_path, hash,     // build path
-        burble_stdout, err_redirect, GB_jit_error_log) ;
+        burble_stdout, err_redirect, log_quote, GB_jit_error_log, log_quote) ;
     GB_jitifyer_command (GB_jit_temp) ; // OK: see security comment above
 
     // remove the build folder and all its contents
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
-        GB_SH_C "cmake -E remove_directory \"" GB_BLD_DIR "\" %s %s %s",
+        GB_SH_C "cmake -E remove_directory \"" GB_BLD_DIR "\" %s %s %s%s%s",
         GB_jit_cache_path, hash,     // build path
-        burble_stdout, err_redirect, GB_jit_error_log) ;
+        burble_stdout, err_redirect, log_quote, GB_jit_error_log, log_quote) ;
     GB_jitifyer_command (GB_jit_temp) ; // OK: see security comment above
 
 #endif
@@ -2463,8 +2469,9 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
 #if defined ( GRAPHBLAS_HAS_CUDA ) && !defined ( NJIT )
 
     char *burble_stdout = GB_Global_burble_get ( ) ? "" : GB_DEV_NULL ;
-    char *err_redirect = (GB_STRLEN (GB_jit_error_log) > 0) ?
-        " 2>> " : " 2>&1 " ;
+    bool have_log = (GB_STRLEN (GB_jit_error_log) > 0) ;
+    char *err_redirect = have_log ?  " 2>> " : " 2>&1 " ;
+    char *log_quote = have_log ? "'" : "" ;
 
     GBURBLE ("(jit compiling cuda with nvcc: %s/c/%02x/%s.cu) ",
         GB_jit_cache_path, bucket, kernel_name) ;
@@ -2484,30 +2491,30 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     " -fPIC " 
     // FIXME: add GB_CUDA_FLAGS here:
     " -G "   // HACK FIXME (for CUDA)
-    "-I%s/src "                         // include source directory
-    "-o %s/c/%02x/%s%s "                // *.o output file
-    "-c %s/c/%02x/%s.cu "               // *.cu input file
+    "-I '%s/src' "                      // include source directory
+    "-o '%s/c/%02x/%s%s' "              // *.o output file
+    "-c '%s/c/%02x/%s.cu' "             // *.cu input file
     "%s "                               // burble stdout
-    "%s %s ; "                          // error log file
+    "%s %s%s%s ; "                      // error log file
 
     // link:
     "nvcc "                             // compiler
     "-DGB_JIT_RUNTIME=1  "              // nvcc flags
     "-I/usr/local/cuda/include -std=c++17 -arch=sm_60 "
     " -shared "
-    "-o %s/lib/%02x/%s%s%s "            // lib*.so output file
-    "%s/c/%02x/%s%s "                   // *.o input file
+    "-o '%s/lib/%02x/%s%s%s' "          // lib*.so output file
+    "'%s/c/%02x/%s%s' "                 // *.o input file
     " -cudart shared "
 //  "%s "                               // libraries to link with (any?)
     "%s "                               // burble stdout
-    "%s %s\"",                          // error log file
+    "%s %s%s%s\"",                      // error log file
 
     // compile:
     GB_jit_cache_path,                  // include source directory (cache/src)
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o output file
     GB_jit_cache_path, bucket, kernel_name,                 // *.cu input file
     burble_stdout,                      // burble stdout
-    err_redirect, GB_jit_error_log,     // error log file
+    err_redirect, log_quote, GB_jit_error_log, log_quote,   // error log file
 
     // link:
     GB_jit_cache_path, bucket,  
@@ -2515,7 +2522,7 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
 //  GB_jit_C_libraries                  // libraries to link with
     burble_stdout,                      // burble stdout
-    err_redirect, GB_jit_error_log) ;   // error log file
+    err_redirect, log_quote, GB_jit_error_log, log_quote) ; // error log file
 
     // compile the library and return result
     GBURBLE ("\n(jit: %s) ", GB_jit_temp) ;
@@ -2548,8 +2555,9 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
 #ifndef NJIT
 
     char *burble_stdout = GB_Global_burble_get ( ) ? "" : GB_DEV_NULL ;
-    char *err_redirect = (GB_STRLEN (GB_jit_error_log) > 0) ?
-        " 2>> " : " 2>&1 " ;
+    bool have_log = (GB_STRLEN (GB_jit_error_log) > 0) ;
+    char *err_redirect = have_log ?  " 2>> " : " 2>&1 " ;
+    char *log_quote = have_log ? "'" : "" ;
 
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
 
@@ -2557,22 +2565,22 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
     "sh -c \""                          // execute with POSIX shell
     "%s "                               // compiler command
     "-DGB_JIT_RUNTIME=1 %s "            // C flags
-    "-I%s/src "                         // include source directory
+    "-I'%s/src' "                       // include source directory
     "%s "                               // openmp include directories
-    "-o %s/c/%02x/%s%s "                // *.o output file
-    "-c %s/c/%02x/%s.c "                // *.c input file
+    "-o '%s/c/%02x/%s%s' "              // *.o output file
+    "-c '%s/c/%02x/%s.c' "              // *.c input file
     "%s "                               // burble stdout
-    "%s %s ; "                          // error log file
+    "%s %s%s%s ; "                      // error log file
 
     // link:
     "%s "                               // C compiler
     "%s "                               // C flags
     "%s "                               // C link flags
-    "-o %s/lib/%02x/%s%s%s "            // lib*.so output file
-    "%s/c/%02x/%s%s "                   // *.o input file
+    "-o '%s/lib/%02x/%s%s%s' "          // lib*.so output file
+    "'%s/c/%02x/%s%s' "                 // *.o input file
     "%s "                               // libraries to link with
     "%s "                               // burble stdout
-    "%s %s\"",                          // error log file
+    "%s %s%s%s\"",                      // error log file
 
     // compile:
     GB_jit_C_compiler,                  // C compiler
@@ -2582,7 +2590,7 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o output file
     GB_jit_cache_path, bucket, kernel_name,                 // *.c input file
     burble_stdout,                      // burble stdout
-    err_redirect, GB_jit_error_log,     // error log file
+    err_redirect, log_quote, GB_jit_error_log, log_quote,   // error log file
 
     // link:
     GB_jit_C_compiler,                  // C compiler
@@ -2593,7 +2601,7 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
     GB_jit_cache_path, bucket, kernel_name, GB_OBJ_SUFFIX,  // *.o input file
     GB_jit_C_libraries,                 // libraries to link with
     burble_stdout,                      // burble stdout
-    err_redirect, GB_jit_error_log) ;   // error log file
+    err_redirect, log_quote, GB_jit_error_log, log_quote) ; // error log file
 
     // compile the library and return result
     GBURBLE ("(jit: %s) ", GB_jit_temp) ;
