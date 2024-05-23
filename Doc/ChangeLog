@@ -1,5 +1,7 @@
-Apr 9, 2024: version 9.1.1
+May 22, 2024: version 9.2.0
 
+    * Added graphblas_install.m: for a simpler method of compiling
+        the MATLAB/Octave interface for GraphBLAS.
     * JIT: sanitizing the JIT cache path, better burble for compiler errors
     * GrB_get/GrB_set: better handling of concurrent get/set between different
         user threads
